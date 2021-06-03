@@ -171,6 +171,9 @@ public:
    * Also considers probably changed paths by user */
   QString getSimulatorFilesPathBest(const atools::fs::FsPaths::SimulatorTypeVector& types) const;
 
+  /* Same as above but for simulator base path */
+  QString getSimulatorBasePathBest(const atools::fs::FsPaths::SimulatorTypeVector& types) const;
+
   dm::NavdatabaseStatus getNavDatabaseStatus() const
   {
     return navDatabaseStatus;

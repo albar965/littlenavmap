@@ -417,7 +417,7 @@ public:
    *  Also calculates maximum number of user points. */
   void updateAll();
 
-  /* Use a expensive heuristic to update the missing regions in all airports
+  /* Use an expensive heuristic to update the missing regions in all airports
    * before export for formats which need it. */
   void updateAirportRegions();
 

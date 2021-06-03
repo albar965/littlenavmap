@@ -185,6 +185,7 @@ void RouteExportFormatMap::initCallbacks(RouteExport *routeExport)
   (*this)[MDR         ].CB(bind(&RouteExport::routeExportMdrMulti,          routeExport, _1));
   (*this)[TFDI        ].CB(bind(&RouteExport::routeExportTfdiMulti,         routeExport, _1));
   (*this)[PLNISG      ].CB(bind(&RouteExport::routeExportIsgMulti,          routeExport, _1));
+  (*this)[PMS50       ].CB(bind(&RouteExport::routeExportPms50Multi,        routeExport, _1));
   /* *INDENT-ON* */
 
 #undef CB
@@ -193,8 +194,6 @@ void RouteExportFormatMap::initCallbacks(RouteExport *routeExport)
 void RouteExportFormatMap::init()
 {
   using namespace rexp;
-  using rexp::FILE;
-  using rexp::NONE;
 
   QString rxptooltip = tr("\nExport navaids and airports as user defined waypoints avoid locked waypoints due to different AIRAC cycles.\n"
                           "This saves all waypoints as user defined waypoints when exporting flight plans.\n"
@@ -230,7 +229,7 @@ void RouteExportFormatMap::init()
   INS(HTML,         RF(HTML,         NONE,             tr("html"),            tr("Other"),     tr("HTML flight plan web page")                                       ));
   INS(FPR,          RF(FPR,          AIRPORTS,         tr("fpr"),             tr("Aircraft"),  tr("Majestic Dash MJC8 Q400")                                         ));
   INS(FPL,          RF(FPL,          AIRPORTS,         tr("fpl"),             tr("Aircraft"),  tr("IXEG Boeing 737")                                                 ));
-  INS(CORTEIN,      RF(CORTEIN,      FILE|AIRPORTS,    tr("corte.in"),        tr("Aircraft"),  tr("Flight Factor Airbus")                                            ));
+  INS(CORTEIN,      RF(CORTEIN,      FILEAPP|AIRPORTS, tr("corte.in"),        tr("Aircraft"),  tr("Flight Factor Airbus")                                            ));
   INS(RXPGNS,       RF(RXPGNS,       AIRPORTS,         tr("fpl"),             tr("Garmin"),    tr("Reality XP GNS 530W/430W V2")                                     ));
   INS(RXPGNSUWP,    RF(RXPGNSUWP,    AIRPORTS|GARMIN_AS_WAYPOINTS, tr("fpl"), tr("Garmin"),    tr("Reality XP GNS 530W/430W V2 with user defined waypoints") +
                                                                                                rxptooltip                                                            ));
@@ -240,7 +239,7 @@ void RouteExportFormatMap::init()
   INS(FLTPLAN,      RF(FLTPLAN,      AIRPORTS,         tr("fltplan"),         tr("Aircraft"),  tr("iFly")                                                            ));
   INS(XFMC,         RF(XFMC,         AIRPORTS,         tr("fpl"),             tr("FMC"),       tr("X-FMC")                                                           ));
   INS(UFMC,         RF(UFMC,         AIRPORTS,         tr("ufmc"),            tr("FMC"),       tr("UFMC")                                                            ));
-  INS(PROSIM,       RF(PROSIM,       FILE|AIRPORTS,    tr("companyroutes.xml"), tr("Simulator"), tr("ProSim")                                                        ));
+  INS(PROSIM,       RF(PROSIM,       FILEAPP|AIRPORTS, tr("companyroutes.xml"), tr("Simulator"), tr("ProSim")                                                        ));
   INS(BBS,          RF(BBS,          AIRPORTS,         tr("pln"),             tr("Aircraft"),  tr("BlackBox Simulations Airbus")                                     ));
   INS(VFP,          RF(VFP,          AIRPORTS,         tr("vfp"),             tr("Online"),    tr("VATSIM vPilot or SWIFT")                                          ));
   INS(IVAP,         RF(IVAP,         AIRPORTS,         tr("fpl"),             tr("Online"),    tr("IvAp for IVAO")                                                   ));
@@ -252,6 +251,7 @@ void RouteExportFormatMap::init()
   INS(MDR,          RF(MDR,          AIRPORTS,         tr("mdr"),             tr("Aircraft"),  tr("Leonardo Maddog X")                                               ));
   INS(TFDI,         RF(TFDI,         AIRPORTS,         tr("xml"),             tr("Aircraft"),  tr("TFDi Design 717")                                                 ));
   INS(PLNISG,       RF(PLNISG,       AIRPORTS,         tr("pln"),             tr("FMS"),       tr("ISG Integrated Simavionics gauges")                               ));
+  INS(PMS50,        RF(PMS50,        FILEREP|AIRPORTS, tr("fpl.pln"),         tr("Garmin"),    tr("PMS50 GTN750")                                                    ));
   /* *INDENT-ON* */
 
 #undef RF
@@ -282,7 +282,11 @@ void RouteExportFormatMap::updateDefaultPaths()
     xpFilesPath = documents;
 
   // Get MSFS base path ===========================
-  QString msfsBasePath = NavApp::getSimulatorFilesPathBest({FsPaths::MSFS});
+  QString msfsFilesPath = NavApp::getSimulatorFilesPathBest({FsPaths::MSFS});
+  if(msfsFilesPath.isEmpty())
+    msfsFilesPath = documents;
+
+  QString msfsBasePath = NavApp::getSimulatorBasePathBest({FsPaths::MSFS});
   if(msfsBasePath.isEmpty())
     msfsBasePath = documents;
 
@@ -334,7 +338,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   /* *INDENT-OFF* */
   (*this)[LNMPLN      ].DP(lnmplnFiles);
   (*this)[PLN         ].DP(fsxP3dBasePath);
-  (*this)[PLNMSFS     ].DP(msfsBasePath);
+  (*this)[PLNMSFS     ].DP(msfsFilesPath);
   (*this)[PLNANNOTATED].DP(fsxP3dBasePath);
   (*this)[FMS3        ].DP(xpFilesPath);
   (*this)[FMS11       ].DP(xpFilesPath);
@@ -371,6 +375,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[MDR         ].DP(fsxP3dBasePath);
   (*this)[TFDI        ].DP(fsxP3dBasePath + SEP + "SimObjects" + SEP + "Airplanes" + SEP + "TFDi_Design_717" + SEP + "Documents" + SEP + "Company Routes");
   (*this)[PLNISG      ].DP(fsxP3dBasePath + SEP + "ISG" + SEP + "FlightPlans"); // C:\Program Files\Lockheed Martin\Prepar3D v4\ISG\FlightPlans
+  (*this)[PMS50       ].DP(msfsBasePath + SEP + "Community" + SEP + "pms50-gtn750-premium" + SEP + "fpl" + SEP + "gtn750");
   /* *INDENT-ON* */
 #undef DP
 
@@ -394,7 +399,7 @@ void RouteExportFormat::updatePathError()
   pathError.clear();
   if(QFile::exists(path))
   {
-    if(isExportToFile())
+    if(isAppendToFile())
     {
       // Export target is a file ===========
       if(!QFileInfo(path).isFile())
@@ -409,7 +414,7 @@ void RouteExportFormat::updatePathError()
   }
   else
   {
-    if(isExportToFile())
+    if(isAppendToFile())
       pathError = tr("File does not exist");
     else
       pathError = tr("Directory does not exist");
@@ -424,7 +429,7 @@ void RouteExportFormat::setPath(const QString& value)
 
 QString RouteExportFormat::getFilter() const
 {
-  if(isExportToFile())
+  if(isAppendToFile() || isReplaceFile())
     return "(" + format + ")";
   else
     return "(*." + format + ")";

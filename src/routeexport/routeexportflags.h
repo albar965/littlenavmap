@@ -56,6 +56,7 @@ enum RouteExportFormatType : quint16
   RXPGTNUWP = 33, /* Reality XP GTN with user defined waypoints */
   GFP = 8, /* Garmin GFP Format */
   GFPUWP = 34, /* Garmin GFP Format with user defined waypoints */
+  PMS50 = 39, /* Garmin PMS50 GTN750  */
 
   /* Online ================ */
   VFP = 9, /* vPilot VATSIM */
@@ -90,7 +91,7 @@ enum RouteExportFormatType : quint16
   GPX = 28, /* Garmin exchange format. Not a flight plan format.  */
   HTML = 29, /* Export as HTML page */
 
-  // Next = 39
+  // Next = 40
 };
 
 /* Flags for export format. Some flags are saved to the configuration,
@@ -98,8 +99,8 @@ enum RouteExportFormatType : quint16
 enum RouteExportFormatFlag : quint16
 {
   NONE = 0,
-  FILE = 1 << 0, /* Append to file instead of saving to folder.
-                  * path and default path contain filename instead of directory if this is the case. */
+  FILEAPP = 1 << 0, /* Append to file instead of saving to folder.
+                     * path and default path contain filename instead of directory if this is the case. */
   SELECTED = 1 << 1, /* Selected for multiexport in dialog. Saved to configuration. */
 
   MANUAL = 1 << 2, /* Format is cloned and selected for manual export from file menu. Temporary flag. */
@@ -110,6 +111,7 @@ enum RouteExportFormatFlag : quint16
   AIRPORTS = 1 << 5, /* Valid departure and destination airports are needed */
   CYCLE = 1 << 6, /* Format needs a valid AIRAC cycle */
   GARMIN_AS_WAYPOINTS = 1 << 7, /* Format to export Garmin as waypoints. */
+  FILEREP = 1 << 8, /* Fixed filename. Select folder or file and program creates or overwrites file on export. */
 
   SAVED_FLAGS = SELECTED /* Saved to configuration. */
 };

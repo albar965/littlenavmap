@@ -605,17 +605,13 @@ QString DatabaseManager::getSimulatorFilesPathBest(const FsPaths::SimulatorTypeV
     case atools::fs::FsPaths::P3D_V3:
     case atools::fs::FsPaths::P3D_V4:
     case atools::fs::FsPaths::P3D_V5:
-      return FsPaths::getFilesPath(type);
-
-    // Ignore user changes of path for now
     case atools::fs::FsPaths::MSFS:
-      // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalState
-      // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator
+      // Ignore user changes of path for now
       return FsPaths::getFilesPath(type);
 
-    // Might change with base path by user
     case atools::fs::FsPaths::XPLANE11:
       {
+        // Might change with base path by user
         QString base = getSimulatorBasePath(type);
         if(!base.isEmpty())
           return atools::buildPathNoCase({base, "Output", "FMS plans"});
@@ -625,6 +621,30 @@ QString DatabaseManager::getSimulatorFilesPathBest(const FsPaths::SimulatorTypeV
     case atools::fs::FsPaths::ALL_SIMULATORS:
     case atools::fs::FsPaths::UNKNOWN:
       break;
+  }
+  return QString();
+}
+
+QString DatabaseManager::getSimulatorBasePathBest(const FsPaths::SimulatorTypeVector& types) const
+{
+  FsPaths::SimulatorType type = simulators.getBestInstalled(types);
+  switch(type)
+  {
+    // All not depending on installation path which might be changed by the user
+    case atools::fs::FsPaths::FSX:
+    case atools::fs::FsPaths::FSX_SE:
+    case atools::fs::FsPaths::P3D_V2:
+    case atools::fs::FsPaths::P3D_V3:
+    case atools::fs::FsPaths::P3D_V4:
+    case atools::fs::FsPaths::P3D_V5:
+    case atools::fs::FsPaths::XPLANE11:
+    case atools::fs::FsPaths::MSFS:
+      return FsPaths::getBasePath(type);
+
+    case atools::fs::FsPaths::DFD:
+    case atools::fs::FsPaths::ALL_SIMULATORS:
+    case atools::fs::FsPaths::UNKNOWN:
+      return QString();
   }
   return QString();
 }

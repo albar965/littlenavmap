@@ -120,12 +120,17 @@ public:
     return flags.testFlag(rexp::MANUAL);
   }
 
-  bool isExportToFile() const
+  bool isAppendToFile() const
   {
-    return flags.testFlag(rexp::FILE);
+    return flags.testFlag(rexp::FILEAPP);
   }
 
-  /* Format is cloned and selected for manual export from file dialog. Forces file dialog to be shown. */
+  bool isReplaceFile() const
+  {
+    return flags.testFlag(rexp::FILEREP);
+  }
+
+  /* Format is cloned and selected for manual export from file dialog. Forces file dialog to be shown. Temporary flag. */
   bool isFileDialog() const
   {
     return flags.testFlag(rexp::FILEDIALOG);

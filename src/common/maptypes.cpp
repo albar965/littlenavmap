@@ -1813,7 +1813,7 @@ QStringList arincNameNameVariants(const QString& name)
 
 QString runwayBestFit(const QString& procRunwayName, const QStringList& airportRunwayNames)
 {
-  // Get a extended list that also contains all variants like 09C vs 9C
+  // Get an extended list that also contains all variants like 09C vs 9C
   QStringList names;
   for(const QString& r : airportRunwayNames)
     names.append(map::runwayNameZeroPrefixVariants(r));

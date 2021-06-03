@@ -205,6 +205,7 @@ public:
   static atools::fs::FsPaths::SimulatorType getCurrentSimulatorDb();
   static QString getCurrentSimulatorBasePath();
   static QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type);
+  static QString getSimulatorBasePathBest(const QVector<atools::fs::FsPaths::SimulatorType>& types);
   static QString getSimulatorFilesPathBest(const QVector<atools::fs::FsPaths::SimulatorType>& types);
   static bool hasSimulator(atools::fs::FsPaths::SimulatorType type);
   static bool hasAnyMsSimulator();

@@ -368,7 +368,6 @@ void RouteMultiExportDialog::updateModel()
   {
     // Userdata needed in callbacks
     int userdata = format.getTypeAsInt();
-    bool file = format.isExportToFile();
 
     // Reset and select buttons =============================================================
     // Top level dummy widget
@@ -391,8 +390,8 @@ void RouteMultiExportDialog::updateModel()
 
     QPushButton *selectButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/fileopen.svg"),
                                                 QString(), cellWidget);
-    selectButton->setToolTip(tr("Select a %1 that will be used to export the flight plan").
-                             arg(file ? tr("existing file") : tr("directory")));
+    selectButton->setToolTip(tr("Select %1 that will be used to export the flight plan").
+                             arg(format.isAppendToFile() ? tr("an existing file") : tr("a directory")));
     selectButton->setProperty(FORMAT_PROP_NAME, userdata);
     selectButton->setProperty(ROW_PROP_NAME, row);
     selectButton->setAutoFillBackground(true);
@@ -446,7 +445,7 @@ void RouteMultiExportDialog::updateModel()
     item = new QStandardItem(format.getFormat());
     item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
     item->setData(userdata, FORMAT_TYPE_ROLE);
-    item->setToolTip(file ? tr("Filename") : tr("File extension"));
+    item->setToolTip(format.isAppendToFile() || format.isReplaceFile() ? tr("Filename") : tr("File extension"));
     itemModel->setItem(row, EXTENSION, item);
 
     // Path =============================================================
@@ -526,7 +525,7 @@ void RouteMultiExportDialog::selectPath(rexp::RouteExportFormatType type, int ro
   const RouteExportFormat fmt = formatMap->value(type);
   QString filepath;
 
-  if(fmt.isExportToFile())
+  if(fmt.isAppendToFile())
   {
     // Format use a file to append plan
     filepath = atools::gui::Dialog(this).openFileDialog(tr("Select Export File for %1").arg(fmt.getComment()),

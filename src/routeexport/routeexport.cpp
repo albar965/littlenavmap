@@ -174,7 +174,7 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
   else
   {
     // Called from multiexport action or multiexport dialog ======================================
-    if(format.isExportToFile())
+    if(format.isAppendToFile())
     {
       // Append to file
       dontComfirmOverwrite = true;
@@ -182,7 +182,7 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
 
     // Build filename
     QString name;
-    if(format.isExportToFile())
+    if(format.isAppendToFile())
       name = format.getPath();
     else
       name = format.getPath() + QDir::separator() + filename;
@@ -208,7 +208,7 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
 
       case RouteMultiExportDialog::RENAME_EXISTING:
         // Rotate for new files - otherwise keep it since appending is desired
-        if(!format.isExportToFile())
+        if(!format.isAppendToFile())
           rotateFile(name);
         routeFile = name;
         break;
@@ -223,7 +223,7 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
 
 QString RouteExport::exportFileMulti(const RouteExportFormat& format, const QString& filename)
 {
-  return exportFile(format, QString() /* settingsPrefix */, QString() /* path */, filename, format.isExportToFile());
+  return exportFile(format, QString() /* settingsPrefix */, QString() /* path */, filename, format.isAppendToFile());
 }
 
 void RouteExport::rotateFile(const QString& filename)
@@ -892,6 +892,37 @@ bool RouteExport::routeExportTfdiMulti(const RouteExportFormat& format)
       {
         Route route = buildAdjustedRoute(rf::DEFAULT_OPTS_NO_PROC);
         flightplanIO->saveTfdi(route.getFlightplan(), routeFile, route.getJetAirwayFlags());
+      }
+      catch(atools::Exception& e)
+      {
+        atools::gui::ErrorHandler(mainWindow).handleException(e);
+        return false;
+      }
+      catch(...)
+      {
+        atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+        return false;
+      }
+
+      formatExportedCallback(format, routeFile);
+      return true;
+    }
+  }
+  return false;
+}
+
+bool RouteExport::routeExportPms50Multi(const RouteExportFormat& format)
+{
+  qDebug() << Q_FUNC_INFO;
+  if(routeValidateMulti(format))
+  {
+    QString routeFile = exportFileMulti(format, "fpl.pln");
+    if(!routeFile.isEmpty())
+    {
+      try
+      {
+        Route route = buildAdjustedRoute(rf::DEFAULT_OPTS_MSFS);
+        flightplanIO->savePlnMsfs(route.getFlightplan(), routeFile);
       }
       catch(atools::Exception& e)
       {

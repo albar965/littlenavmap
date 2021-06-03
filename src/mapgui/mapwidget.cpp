@@ -199,7 +199,7 @@ void MapWidget::addFullScreenExitButton()
   pushButtonExitFullscreen->setToolTip(tr("Leave fullscreen mode and restore normal window layout"));
   pushButtonExitFullscreen->setStatusTip(pushButtonExitFullscreen->toolTip());
 
-  // Need to set palette since button inherits a empty one from the mapwidget
+  // Need to set palette since button inherits an empty one from the mapwidget
   pushButtonExitFullscreen->setPalette(QApplication::palette());
   pushButtonExitFullscreen->setFont(QApplication::font());
   pushButtonExitFullscreen->adjustSize();

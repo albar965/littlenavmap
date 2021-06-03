@@ -581,6 +581,11 @@ QString NavApp::getSimulatorFilesPathBest(const QVector<atools::fs::FsPaths::Sim
   return databaseManager->getSimulatorFilesPathBest(types);
 }
 
+QString NavApp::getSimulatorBasePathBest(const QVector<atools::fs::FsPaths::SimulatorType>& types)
+{
+  return databaseManager->getSimulatorBasePathBest(types);
+}
+
 bool NavApp::hasSimulator(atools::fs::FsPaths::SimulatorType type)
 {
   return atools::fs::FsPaths::hasSimulator(type);

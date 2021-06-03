@@ -196,6 +196,9 @@ public:
   /* Integrated Simavionics / ISG - FSX/PLN format with modified user waypoints */
   bool routeExportIsgMulti(const RouteExportFormat& format);
 
+  /* PMS50 GTN750 fpl.pln - MSFS PLN format */
+  bool routeExportPms50Multi(const RouteExportFormat& format);
+
   /* End of methods for multiexport ========================================================= */
 
   /* Check if route has valid departure  and destination and departure parking.
@@ -288,7 +291,7 @@ private:
    * Uses all paths, descriptions, etc. from given RouteExportFormat. */
   QString exportFileMulti(const RouteExportFormat& format, const QString& filename);
 
-  /* Called by all export functions that are used only in multiexport and manual export.
+  /* Called by all export functions that are used in multiexport and manual export.
    * Saves file dialog location and state. */
   QString exportFile(const RouteExportFormat& format, const QString& settingsPrefix, const QString& path,
                      const QString& filename, bool dontComfirmOverwrite = false);
