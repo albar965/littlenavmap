@@ -5,7 +5,8 @@ For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 
 # Version 2.6.12.beta
 
-This version contains mostly bug fixes, adaption to MSFS scenery library changes and support for the new X-Plane TCAS scheme.
+This version contains mostly bug fixes, adaption to MSFS scenery library changes, support for the new
+X-Plane TCAS scheme and a reworked webserver/webpage.
 
 ## Important Notes
 
@@ -94,6 +95,9 @@ This version contains mostly bug fixes, adaption to MSFS scenery library changes
 * Avoiding crash if previously created logbook entry cannot be found on landing.
 
 ## User Interface and General
+
+* Completely reworked webserver/webpage. Now with mouse wheel zoom, a mode to follow the user
+  aircraft and more. Big thanks to [u-an-i](https://github.com/u-an-i) for implementing this!
 
 * Now using new X-Plane TCAS AI and traffic scheme based on `sim/cockpit2/tcas/targets` datarefs.
   Note that X-Plane provides only limited information about AI or multiplayer aircraft. Only
