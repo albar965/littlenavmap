@@ -129,35 +129,44 @@
   margin-top: 5px;
 }
 
-#toolbarsOptions fieldset:last-child {
+#toolbarsOptions fieldset + fieldset.has-legend {
+  margin-top: 2px;
+}
+
+#toolbarsOptions fieldset.has-legend:last-child {
+  margin-bottom: 1px;
+}
+
+#toolbarsOptions fieldset:not(.has-legend):last-child {
   margin-bottom: -2.5px;
 }
 
 #toolbarsOptions legend {
-  font-size: 12px;
+  font-size: 10px;
+  font-family: sans-serif;
 }
 
 #toolbarsOptions .input-block {
   align-items: center;
-  font-size: 13px;
+  font-size: 12px;
   font-weight: bold;
   margin: 2.5px;
 }
 
-#toolbarsOptions .input-block:hover {
+#toolbarsOptions .input-block:hover, #toolbarsOptions select:hover {
   outline: 1px solid #ff0;
 }
 
 #toolbarsOptions input[type="radio"] {
+  margin: -1px 0 0 10px;
+}
+
+#toolbarsOptions input[type="checkbox"] {
   margin-left: 10px;
 }
 
-#toolbarsOptions input[type="checkbox"] + label {
-  padding-left: 26px;
-}
-
-#toolbarsOptions input[type="radio"] + label {
-  padding-left: 32px;
+#toolbarsOptions input[type="radio"] + label, #toolbarsOptions input[type="checkbox"] + label {
+  padding: 3px 0 3px 32px;
 }
 
 #toolbarsOptions input[type="radio"]:checked + label {
@@ -167,4 +176,15 @@
 
 #toolbarsOptions .input-block label {
   color: #fff;
+  font-family: sans-serif;
+}
+
+
+#toolbarsOptions select {
+  padding: 5px;
+}
+
+#toolbarsOptions select, #toolbarsOptions option {
+  font-family: sans-serif;
+  font-size: 12px;
 }
