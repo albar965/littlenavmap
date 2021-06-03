@@ -281,7 +281,7 @@ void InfoController::anchorClicked(const QUrl& url)
       else if(query.hasQueryItem("lonx") && query.hasQueryItem("laty"))
       {
         // Zoom to position =========================================
-        float distanceKm = 0.f;
+        float distanceKm = 0.f; // Default is set by user for no doubleClick
         if(query.hasQueryItem("distance"))
           distanceKm = query.queryItemValue("distance").toFloat();
 

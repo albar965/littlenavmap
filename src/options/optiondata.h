@@ -770,13 +770,13 @@ public:
     return simUpdateBox;
   }
 
-  /* Default zoom distance for point objects */
+  /* Default zoom distance for point objects using double click */
   float getMapZoomShowClick() const
   {
     return mapZoomShowClick;
   }
 
-  /* Default zoom distance for point objects */
+  /* Default zoom distance for point objects selected from menu or information window */
   float getMapZoomShowMenu() const
   {
     return mapZoomShowMenu;

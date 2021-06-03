@@ -84,9 +84,6 @@ using formatter::courseTextFromTrue;
 namespace ahtml = atools::util::html;
 namespace ageo = atools::geo;
 
-const float HELIPAD_DISTANCE_KM = 0.200f;
-const float STARTPOS_DISTANCE_KM = 0.500f;
-
 const float NEAREST_MAX_DISTANCE_AIRPORT_NM = 75.f;
 const float NEAREST_MAX_DISTANCE_NAVAID_NM = 50.f;
 const int NEAREST_MAX_NUM_AIRPORT = 10;
@@ -908,7 +905,6 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
     {
       // Helipads ==============================================================
       const SqlRecordVector *heliVector = infoQuery->getHelipadInformation(airport.id);
-
       if(heliVector != nullptr)
       {
         for(const SqlRecord& heliRec : *heliVector)
@@ -926,9 +922,8 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
           Pos pos(heliRec.valueFloat("lonx"), heliRec.valueFloat("laty"));
 
           if(!print)
-            html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2&distance=%3").
-                   arg(pos.getLonX()).arg(pos.getLatY()).arg(HELIPAD_DISTANCE_KM),
-                   ahtml::BOLD | ahtml::LINK_NO_UL).br();
+            html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
+                   arg(pos.getLonX()).arg(pos.getLatY()), ahtml::BOLD | ahtml::LINK_NO_UL).br();
 
           if(closed)
             html.text(tr("Is Closed"));
@@ -978,9 +973,8 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
           if(print)
             html.text(startText);
           else
-            html.a(startText, QString("lnm://show?lonx=%1&laty=%2&distance=%3").
-                   arg(pos.getLonX()).arg(pos.getLatY()).arg(STARTPOS_DISTANCE_KM),
-                   ahtml::LINK_NO_UL);
+            html.a(startText, QString("lnm://show?lonx=%1&laty=%2").
+                   arg(pos.getLonX()).arg(pos.getLatY()), ahtml::LINK_NO_UL);
           i++;
         }
       }
