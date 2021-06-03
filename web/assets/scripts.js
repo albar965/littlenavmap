@@ -117,27 +117,23 @@ function submitMapRouteCmd() {
 }
 
 /*
- * Toggles to and from the alternative UI
+ * Toggles to and from the legacy UI
  */
 function toggleLegacyUI() {
   var activeUI = sessionStorage.getItem("activeUI");
   if(activeUI !== null) {
     switch(activeUI) {
       case "2021-a":
-        sessionStorage.setItem("activeUI", "legacy");
         location.href = "legacy.html";
         break;
       case "legacy":
-        sessionStorage.setItem("activeUI", "2021-a");
         location.href = "index.html";
         break;
       default:
-        sessionStorage.setItem("activeUI", "2021-a");
         location.href = "index.html";
 
     }
   } else {
-    sessionStorage.setItem("activeUI", "legacy");
     location.href = "legacy.html";
   }
 }

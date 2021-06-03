@@ -1,10 +1,9 @@
 <!DOCTYPE html>
-<html id="alternative" lang="en">
+<html id="ui-2021-a" lang="en">
   <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="/assets/styles.css">
     <link rel="stylesheet" href="/assets/styles-2021-a-layout-internal.css">
     <link rel="stylesheet" href="/assets/styles-2021-a-look-internal.css">
     <title>
@@ -22,40 +21,41 @@
         <div id="toolbarOuter" class="toolbar" onclick="setActive(event)">
           <button id="buttonMap" class="active"><a href="map.html" target="contentiframe">Map</a></button>
           <button id="buttonFlightPlan"><a href="flightplan.html" target="contentiframe">Flight Plan</a></button>
-          <button id="buttonAircraft"><a href="aircraft.html" target="contentiframe">Aircraft</a></button>
           <button id="buttonProgress"><a href="progress.html" target="contentiframe">Progress</a></button>
-          <button id="buttonAirport"><a href="airport.html" target="contentiframe">Airport</a></button>
+          <button id="buttonAircraft"><a href="aircraft.html" target="contentiframe">Aircraft</a></button>
+          <button id="buttonAirport"><a href="airport.html" target="contentiframe">Airports</a></button>
           <button id="buttonHelp"><a href="{helpUrl}" target="contentiframe">Help</a></button>
         </div>
         <div id="toggleOptionsContainer">
           <div id="toggleOptionsToggle" onclick="toggleToolbarsOptions(event)">
             <div id="toolbarsOptions">
               <form>
-                <fieldset>
+                <fieldset class="has-legend" onchange="setToolbarPosition(event)">
                   <legend>Position</legend>
                   <div class="input-block">
-                    <input type="radio" id="toolbarPositionTop" name="position" value="top" checked onchange="setToolbarPosition(this)"><label for="toolbarPositionTop">top</label>
+                    <input type="radio" id="toolbarPositionTop" name="position" value="top" checked><label for="toolbarPositionTop">top</label>
                   </div>
                   <div class="input-block">
-                    <input type="radio" id="toolbarPositionRight" name="position" value="right" onchange="setToolbarPosition(this)"><label for="toolbarPositionRight">right</label>
+                    <input type="radio" id="toolbarPositionRight" name="position" value="right"><label for="toolbarPositionRight">right</label>
                   </div>
                   <div class="input-block">
-                    <input type="radio" id="toolbarPositionBottom" name="position" value="bottom" onchange="setToolbarPosition(this)"><label for="toolbarPositionBottom">bottom</label>
+                    <input type="radio" id="toolbarPositionBottom" name="position" value="bottom"><label for="toolbarPositionBottom">bottom</label>
                   </div>
                   <div class="input-block">
-                    <input type="radio" id="toolbarPositionLeft" name="position" value="left" onchange="setToolbarPosition(this)"><label for="toolbarPositionLeft">left</label>
+                    <input type="radio" id="toolbarPositionLeft" name="position" value="left"><label for="toolbarPositionLeft">left</label>
                   </div>
                 </fieldset>
-                <fieldset>
+                <fieldset class="has-legend">
                   <legend>Theme</legend>
                   <select onchange="switchTheme(this)" onclick="event.stopPropagation()" name="theme" title="theme switcher">
                     <option value="">Default</option>
                     <option value="doremi">Doremi</option>
                   </select>
                 </fieldset>
-                <fieldset>
+                <fieldset class="has-legend">
+                  <legend>Toggles</legend>
                   <div class="input-block">
-                    <input type="checkbox" id="toolbarLegacyUIToggle" checked onclick="toggleLegacyUI()"><label for="toolbarLegacyUIToggle">Toggle <span style="white-space:nowrap">"legacy ui"</span></label>
+                    <input type="checkbox" id="toolbarLegacyUIToggle" onclick="toggleLegacyUI()"><label for="toolbarLegacyUIToggle"><span class="keep-1-lined">"legacy ui"</span></label>
                   </div>
                 </fieldset>
               </form>
