@@ -2097,8 +2097,8 @@ Para MSFS, isso deve apontar para o diretório que contém &amp;quot;Comunidade 
 <context>
     <name>DatabaseManager</name>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="690"/>
-        <location filename="src/db/databasemanager.cpp" line="740"/>
+        <location filename="src/db/databasemanager.cpp" line="710"/>
+        <location filename="src/db/databasemanager.cpp" line="760"/>
         <source> - AIRAC Cycle %1</source>
         <translation></translation>
     </message>
@@ -2132,88 +2132,88 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation type="vanished">Não foi possível ler as configurações do cenário &quot;%1&quot;. Razão: %2.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1433"/>
+        <location filename="src/db/databasemanager.cpp" line="1453"/>
         <source>Counting files ...</source>
         <translation>Contando arquivos ...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1528"/>
+        <location filename="src/db/databasemanager.cpp" line="1548"/>
         <source> - Load Scenery Library Errors</source>
         <translation> - Carregar erros da biblioteca de cenários</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1520"/>
+        <location filename="src/db/databasemanager.cpp" line="1540"/>
         <source>&lt;b&gt;File:&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;Error:&lt;/b&gt; %2&lt;br/&gt;</source>
         <translation>&lt;b&gt;Arquivo:&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;Erro:&lt;/b&gt; %2&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1153"/>
+        <location filename="src/db/databasemanager.cpp" line="1173"/>
         <source>&amp;quot;&lt;br/&gt;&amp;quot;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1484"/>
+        <location filename="src/db/databasemanager.cpp" line="1504"/>
         <source>&lt;b&gt;If you wish to report this error attach the log and configuration files to your report, add all other available information and send it to one of the contact addresses below.&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</source>
         <translation>&lt;b&gt;Se você deseja reportar este erro, anexe os arquivos de log e configuração ao seu relatório, adicione todas as outras informações disponíveis e envie-o para um dos endereços de contato abaixo.&lt;/b&gt;&lt;h/&gt;%1&lt;hr/&gt;%2</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1515"/>
+        <location filename="src/db/databasemanager.cpp" line="1535"/>
         <source>&lt;b&gt;More files ...&lt;/b&gt;</source>
         <translation>&lt;b&gt;Mais arquivos ...&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1501"/>
+        <location filename="src/db/databasemanager.cpp" line="1521"/>
         <source>&lt;b&gt;More scenery entries ...&lt;/b&gt;</source>
         <translation>&lt;b&gt;Mais entradas de cenário ...&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1148"/>
+        <location filename="src/db/databasemanager.cpp" line="1168"/>
         <source>&lt;p style=&quot;white-space:pre&quot;&gt;Detected a modification of one or more database files:&lt;br/&gt;&lt;br/&gt;&amp;quot;%1&amp;quot;&lt;br/&gt;&lt;br/&gt;Always close &lt;i&gt;%2&lt;/i&gt; before copying, overwriting or updating scenery library databases.&lt;/p&gt;</source>
         <oldsource>&lt;p style=&quot;white-space:pre&quot;&gt;Detected a modification of one or more database files:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Always close %2 before copying, overwriting or updating scenery library databases.&lt;/p&gt;</oldsource>
         <translation>&lt;p style=&quot;white-space:pre&quot;&gt;Foi detectado uma modificação em um ou mais arquivos do banco de dados:&lt;br/&gt;&lt;br/&gt;&amp;quot;%1&amp;quot;&lt;br/&gt;&lt;br/&gt;Sempre fechar &lt;i&gt;%2&lt;/i&gt; antes de copiar, sobrescrever ou atualizar os bancos de dados da biblioteca de cenários.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1221"/>
+        <location filename="src/db/databasemanager.cpp" line="1241"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read base path &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Either the &quot;OneStore&quot; or the &quot;Steam&quot; paths have to exist.&lt;br/&gt;The path &quot;Community&quot; is always needed for add-ons.&lt;/p&gt;</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Não é possível ler o caminho base &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Razão:&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Os caminhos &quot;OneStore&quot; ou &quot;Steam&quot; devem existir.&lt;br/&gt;O caminho &quot;Comunidade&quot; é sempre necessário para add-ons.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1231"/>
+        <location filename="src/db/databasemanager.cpp" line="1251"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read base path &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;/p&gt;</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Não é possível ler o caminho de base &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Razão:&lt;br/&gt;%2&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1249"/>
+        <location filename="src/db/databasemanager.cpp" line="1269"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read scenery configuration &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Enable the option &quot;Read inactive or disabled Scenery Entries&quot;&lt;br/&gt;or start X-Plane once to create the file.&lt;/p&gt;</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Não é possível ler a configuração do cenário &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Razão:&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Habilite a opção &quot;Ler entradas de cenários inativos ou desabilitados&quot;&lt;br/&gt;ou inicie o X-Plane uma vez para criar o arquivo.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1267"/>
+        <location filename="src/db/databasemanager.cpp" line="1287"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read scenery configuration &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;/p&gt;</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Não é possível ler a configuração do cenário &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Razão:&lt;br/&gt;%2&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1506"/>
+        <location filename="src/db/databasemanager.cpp" line="1526"/>
         <source>&lt;b&gt;Scenery Title: %1&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Título do Cenário: %1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1624"/>
+        <location filename="src/db/databasemanager.cpp" line="1644"/>
         <source>&lt;big&gt;Done.&lt;/big&gt;</source>
         <translation>&lt;big&gt;Feito.&lt;/big&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1481"/>
+        <location filename="src/db/databasemanager.cpp" line="1501"/>
         <source>&lt;h3&gt;Found %1 errors in %2 scenery entries when loading the scenery database&lt;/h3&gt;</source>
         <translation>&lt;h3&gt;Encontrado %1 erros em %2 entradas do cenário ao carregar o banco de dados do cenário&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1492"/>
+        <location filename="src/db/databasemanager.cpp" line="1512"/>
         <source>&lt;hr/&gt;Some files or scenery directories could not be read.&lt;br/&gt;You should check if the airports of the affected sceneries display correctly and show the correct information.&lt;hr/&gt;</source>
         <translation>&lt;hr/&gt;Alguns arquivos ou diretórios do cenário não podem ser lidos.&lt;br/&gt; Você deve verificar se os aeroportos dos cenários afetados são exibidos corretamente e mostram as informações corretas.&lt;hr/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1811"/>
+        <location filename="src/db/databasemanager.cpp" line="1831"/>
         <source>&lt;p&gt;&lt;big&gt;Currently Loaded:&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;big&gt;Carregado Atualmente:&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</translation>
     </message>
@@ -2228,7 +2228,7 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation>Não é possível copiar o banco de dados&lt;br/&gt;&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;&lt;br/&gt;para&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="900"/>
+        <location filename="src/db/databasemanager.cpp" line="920"/>
         <source>Cannot open %1 database. Reason:&lt;br/&gt;&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Is another instance of &lt;i&gt;%3&lt;/i&gt; running?&lt;br/&gt;&lt;br/&gt;Exiting now.</source>
         <oldsource>Cannot open %1 database. Reason:
 
@@ -2260,12 +2260,12 @@ Exiting now.</oldsource>
         <translation>Exclusão do banco de dados&lt;br/&gt;&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;&lt;br/&gt;falhou.&lt;br/&gt;&lt;br/&gt;Remova o arquivo do banco de dados manualmente e reinicie o programa.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="805"/>
+        <location filename="src/db/databasemanager.cpp" line="825"/>
         <source>Disabled %1.</source>
         <translation>Desativado %1.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="716"/>
+        <location filename="src/db/databasemanager.cpp" line="736"/>
         <source>Do &amp;not use %1 database</source>
         <translation>&amp;Não use o banco de dados da %1</translation>
     </message>
@@ -2275,22 +2275,22 @@ Exiting now.</oldsource>
         <translation>Não &amp;mostre esta caixa de diálogo novamente e ignore no futuro.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="719"/>
+        <location filename="src/db/databasemanager.cpp" line="739"/>
         <source>Do not use %1 database</source>
         <translation>Não use %1 banco de dados</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="771"/>
+        <location filename="src/db/databasemanager.cpp" line="791"/>
         <source>&lt;p&gt;Note that airport information is limited in this mode.&lt;br/&gt;This means that aprons, taxiways, parking positions, runway surface information and other information is not available.&lt;/p&gt;&lt;p&gt;Additionally, smaller airports might be missing.&lt;/p&gt;&lt;p&gt;Runway layout might not match the runway layout in the simulator if you use stock or older airport scenery.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Click the link below for more information:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Navigation Databases&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;Observe que as informações do aeroporto são limitadas neste modo.&lt;br/&gt; Isso significa que aprons, parking, pista, informações da superfície da pista e outras informações não estão disponíveis.&lt;/p&gt;&lt;p&gt;Além disso, aeroportos menores podem estar faltando.&lt;/p&gt;&lt;p&gt;O layout da pista de decolagem pode não corresponder ao layout da pista no simulador se você usar ações ou cenários de aeroportos mais antigos.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Clique no link abaixo para mais informações:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Navigation Databases&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="795"/>
+        <location filename="src/db/databasemanager.cpp" line="815"/>
         <source>Enabled all features for %1.</source>
         <translation>Habilitar todos os recursos para %1.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="800"/>
+        <location filename="src/db/databasemanager.cpp" line="820"/>
         <source>Enabled navaids, airways, airspaces and procedures for %1.</source>
         <translation>Habilitar navaids, aerovias,espaços aéreos e procedimentos para %1.</translation>
     </message>
@@ -2300,9 +2300,9 @@ Exiting now.</oldsource>
         <translation>Apagando banco de dados para %1 ...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1772"/>
-        <location filename="src/db/databasemanager.cpp" line="1781"/>
-        <location filename="src/db/databasemanager.cpp" line="1790"/>
+        <location filename="src/db/databasemanager.cpp" line="1792"/>
+        <location filename="src/db/databasemanager.cpp" line="1801"/>
+        <location filename="src/db/databasemanager.cpp" line="1810"/>
         <source>None</source>
         <translation>Nenhum</translation>
     </message>
@@ -2328,8 +2328,8 @@ Exiting now.</oldsource>
         <translation>Preparando Banco de Dados %1: Criando índices ...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1464"/>
-        <location filename="src/db/databasemanager.cpp" line="1471"/>
+        <location filename="src/db/databasemanager.cpp" line="1484"/>
+        <location filename="src/db/databasemanager.cpp" line="1491"/>
         <source>Processed files:
 %1
 </source>
@@ -2338,12 +2338,12 @@ Exiting now.</oldsource>
 </translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="744"/>
+        <location filename="src/db/databasemanager.cpp" line="764"/>
         <source>Switch to %1 database</source>
         <translation>Mude para %1 banco de dados</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="847"/>
+        <location filename="src/db/databasemanager.cpp" line="867"/>
         <source>Switched to %1.</source>
         <translation>Mudou para %1.</translation>
     </message>
@@ -2358,22 +2358,22 @@ Exiting now.</oldsource>
         <translation>Os bancos de dados para os simuladores abaixo não são compatíveis com esta versão do programa ou foram carregados de forma incompleta:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Apague-os?&lt;br/&gt;&lt;br/&gt;%2</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="708"/>
+        <location filename="src/db/databasemanager.cpp" line="728"/>
         <source>Use %1 for &amp;Navaids and Procedures</source>
         <translation>Usar %1 para &amp;Navaids e Procedimentos</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="701"/>
+        <location filename="src/db/databasemanager.cpp" line="721"/>
         <source>Use %1 for &amp;all Features</source>
         <translation>Usar %1 para &amp;todos os Recursos</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="704"/>
+        <location filename="src/db/databasemanager.cpp" line="724"/>
         <source>Use all of %1 database features</source>
         <translation>Usar para todos os %1 recursos do banco de dados</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="711"/>
+        <location filename="src/db/databasemanager.cpp" line="731"/>
         <source>Use only navaids, airways, airspaces and procedures from %1 database</source>
         <translation>Use somente navaids, aerovia, espaço aéreo e procedimentos para %1 banco de dados</translation>
     </message>
@@ -22481,7 +22481,7 @@ Os espaços são substituídos por sublinhados.</translation>
     </message>
     <message>
         <location filename="src/common/dirtool.cpp" line="113"/>
-        <location filename="src/db/databasemanager.cpp" line="780"/>
+        <location filename="src/db/databasemanager.cpp" line="800"/>
         <location filename="src/gui/mainwindow.cpp" line="2449"/>
         <location filename="src/gui/mainwindow.cpp" line="3280"/>
         <location filename="src/gui/mainwindow.cpp" line="3308"/>
@@ -24975,7 +24975,7 @@ Calculado com base no perfil de performance da aeronave.</translation>
         <translation>Veículos</translation>
     </message>
     <message>
-        <location filename="src/navapp.cpp" line="1075"/>
+        <location filename="src/navapp.cpp" line="1080"/>
         <source>Version %5 (revision %6)</source>
         <translation>Versão %5 (revisão %6)</translation>
     </message>
@@ -25101,12 +25101,12 @@ Calculado com base no perfil de performance da aeronave.</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="470"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="475"/>
         <source>Error reading multiexport configuration: Invalid magic number. Not a multiexport configuration.</source>
         <translation>Erro ao ler a configuração multiexport: Número mágico inválido. Não é uma configuração multiexport.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="480"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="485"/>
         <source>Error reading multiexport configuration: Invalid version. Incompatible multiexport configuration.</source>
         <translation>Erro ao ler a configuração multiexport: Versão inválida. Configuração multiexport incompatível.</translation>
     </message>
@@ -26366,8 +26366,8 @@ A posição inicial está agora configurada para a pista principal mais longa do
 <context>
     <name>RouteExport</name>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1187"/>
-        <location filename="src/routeexport/routeexport.cpp" line="1254"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1219"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1286"/>
         <source>Do not &amp;show this dialog again and save Flight Plan in the future.</source>
         <oldsource>Do not show this dialog again and save Flight Plan in the future.</oldsource>
         <translation>Não &amp;mostre esta caixa de diálogo novamente e guarde o Plano de Voo no futuro.</translation>
@@ -26393,7 +26393,7 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation type="vanished">Plano de voo adicionado a corte.in.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1116"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1148"/>
         <source>Flight plan and track saved as GPX.</source>
         <translation>Plano de voo e track salvado em GPX.</translation>
     </message>
@@ -26418,7 +26418,7 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation type="vanished">Plano de voo salvo como GFP.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1114"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1146"/>
         <source>Flight plan saved as GPX.</source>
         <translation>Plano de voo salvo como GPX.</translation>
     </message>
@@ -26531,17 +26531,17 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation type="vanished">Arquivos HTML %1;; Todos os Arquivos (*)</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1144"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1176"/>
         <source>Flight plan saved as HTML.</source>
         <translation>Plano de voo salvo como HTML.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1240"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1272"/>
         <source>Select Start &amp;Position</source>
         <translation>Selecione &amp;Posição Inicial</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1185"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1217"/>
         <source>Do not &amp;show this dialog again and export all files in the future.</source>
         <oldsource>Do not show this dialog again and export all files in the future.</oldsource>
         <translation>Não &amp;mostre esta caixa de diálogo novamente e exporte todos os arquivos no futuro.</translation>
@@ -26553,17 +26553,17 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="358"/>
+        <location filename="src/routeexport/routeexport.cpp" line="359"/>
         <source>Flight plan saved as FMS 3.</source>
         <translation>Plano de voo salvo como FMS 3.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="393"/>
+        <location filename="src/routeexport/routeexport.cpp" line="394"/>
         <source>Flight plan saved as FMS 11.</source>
         <translation>Plano de voo salvo como FMS 11.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1241"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1273"/>
         <source>Show &amp;Departure on Map</source>
         <translation>Mostrar &amp;Partida no Mapa</translation>
     </message>
@@ -26580,13 +26580,13 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation type="vanished">Arquivos UFMC %1;; Todos os Arquivos (*)</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1764"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1796"/>
         <source>While reading from companyroutes.xml file:</source>
         <translation>Durante a leitura do arquivo companyroutes.xml:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1312"/>
-        <location filename="src/routeexport/routeexport.cpp" line="1421"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1344"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1453"/>
         <source>While saving GFP file:</source>
         <translation>Ao salvar o arquivo GFP:</translation>
     </message>
@@ -26704,12 +26704,12 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation type="vanished">%1 Arquivos %2</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="336"/>
+        <location filename="src/routeexport/routeexport.cpp" line="337"/>
         <source>Flight plan saved as %1PLN.</source>
         <translation>Plano de voo salvo como %1 PLN.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="337"/>
+        <location filename="src/routeexport/routeexport.cpp" line="338"/>
         <source>annotated </source>
         <translation>anotado </translation>
     </message>
@@ -26718,7 +26718,7 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation type="obsolete">Plano de voo salvo em FMS.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1188"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1220"/>
         <source>
 
 Really continue?</source>
@@ -26727,17 +26727,17 @@ Really continue?</source>
 Deseja continuar?</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1196"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1228"/>
         <source>Flight Plan must have a valid airport as start and destination and might not be usable for the selected export formats.</source>
         <translation>O plano de voo deve ter um aeroporto válido com partida e destino e pode não ser utilizável para os formatos de exportação selecionados.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1199"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1231"/>
         <source>Flight Plan must have a valid airport as start and destination and might not be usable by the simulator.</source>
         <translation>O Plano de Voo deve ter um aeroporto válido com partida e destino e pode não ser utilizável pelo simulador.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1217"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1249"/>
         <source>One or more of the selected export formats require a valid AIRAC cycle.
 
 </source>
@@ -26746,7 +26746,7 @@ Deseja continuar?</translation>
 </translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1219"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1251"/>
         <source>The export format requires a valid AIRAC cycle.
 
 </source>
@@ -26755,14 +26755,14 @@ Deseja continuar?</translation>
 </translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1221"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1253"/>
         <source>The selected scenery database does not contain AIRAC cycle information.
 This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery.</source>
         <translation>O banco de dados de cenário selecionado não contém informações sobre o ciclo AIRAC.
 Isso pode acontecer se você salvar um plano de voo baseado no cenário FSX, Prepar3D ou MSFS.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1247"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1279"/>
         <source>One or more of the selected export formats support setting a parking spot as a start position.
 
 </source>
@@ -26771,37 +26771,37 @@ Isso pode acontecer se você salvar um plano de voo baseado no cenário FSX, Pre
 </translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1250"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1282"/>
         <source>The departure airport has parking spots but no parking was selected for this Flight Plan.</source>
         <translation>O aeroporto de partida tem vagas de estacionamento, mas nenhum estacionamento foi selecionado para este Plano de Voo.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1333"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1365"/>
         <source>While saving TXT or FPL file:</source>
         <translation>Ao salvar o arquivo TXT ou FPL:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1376"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1408"/>
         <source>While saving UFMC file:</source>
         <translation>Ao salvar o arquivo UFMC:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1504"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1536"/>
         <source>While saving VFP file:</source>
         <translation>Ao salvar o arquivo VFP:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1633"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1665"/>
         <source>While saving FPL file:</source>
         <translation>Ao salvar o arquivo FPL:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1686"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1718"/>
         <source>While reading corte.in file:</source>
         <translation>Ao ler o arquivo corte.in:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1818"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1850"/>
         <source>While saving to companyroutes.xml file:</source>
         <translation>Ao salvar no arquivo companyroutes.xml:</translation>
     </message>
@@ -26814,7 +26814,7 @@ Isso pode acontecer se você salvar um plano de voo baseado no cenário FSX, Pre
         <translation type="obsolete">Não &amp;mostre esta caixa de diálogo novamente e salve no futuro.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1718"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1750"/>
         <source>While saving to corte.in file:</source>
         <translation>Ao salvar o arquivo corte.in:</translation>
     </message>
@@ -27020,22 +27020,22 @@ Isso pode acontecer se você salvar um plano de voo baseado no cenário FSX, Pre
 <context>
     <name>RouteExportFormat</name>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="401"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="406"/>
         <source>Expected file but given path is a directory</source>
         <translation>Arquivo esperado, mas o caminho fornecido é um diretório</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="407"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="412"/>
         <source>Expected directory but given path is a file</source>
         <translation>Diretório esperado, mas o caminho fornecido é um arquivo</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="413"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="418"/>
         <source>File does not exist</source>
         <translation>Arquivo não existe</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="415"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="420"/>
         <source>Directory does not exist</source>
         <translation>Diretório não existe</translation>
     </message>
@@ -27043,119 +27043,120 @@ Isso pode acontecer se você salvar um plano de voo baseado no cenário FSX, Pre
 <context>
     <name>RouteExportFormatMap</name>
     <message>
+        <location filename="src/routeexport/routeexportformat.cpp" line="212"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="213"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="214"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="215"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="244"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="254"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="243"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="253"/>
         <source>pln</source>
         <translation></translation>
     </message>
     <message>
+        <location filename="src/routeexport/routeexportformat.cpp" line="212"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="213"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="214"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="215"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="216"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="217"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="221"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="243"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="220"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="242"/>
         <source>Simulator</source>
         <translation>Simulador</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="213"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="212"/>
         <source>FSX and Prepar3D</source>
         <translation>FSX e Prepar3D</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="214"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="213"/>
         <source>Microsoft Flight Simulator 2020</source>
         <translation></translation>
     </message>
     <message>
+        <location filename="src/routeexport/routeexportformat.cpp" line="215"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="216"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="217"/>
         <source>fms</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="217"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="216"/>
         <source>X-Plane FMS 11</source>
         <translation></translation>
     </message>
     <message>
+        <location filename="src/routeexport/routeexportformat.cpp" line="217"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="218"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="219"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="220"/>
         <source>flp</source>
         <translation></translation>
     </message>
     <message>
+        <location filename="src/routeexport/routeexportformat.cpp" line="217"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="218"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="219"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="220"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="224"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="225"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="226"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="227"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="230"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="231"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="232"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="233"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="240"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="244"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="239"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="243"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="247"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="248"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="249"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="250"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="251"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="252"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="253"/>
         <source>Aircraft</source>
         <translation>Aeronave</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="218"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="217"/>
         <source>Aerosoft Airbus and others</source>
         <translation>Airbus Aerosoft e outros</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="219"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="218"/>
         <source>Aerosoft CRJ</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="221"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="220"/>
         <source>fgfp</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="221"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="220"/>
         <source>FlightGear</source>
         <translation></translation>
     </message>
     <message>
+        <location filename="src/routeexport/routeexportformat.cpp" line="221"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="222"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="223"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="236"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="237"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="238"/>
         <source>gfp</source>
         <translation></translation>
     </message>
     <message>
+        <location filename="src/routeexport/routeexportformat.cpp" line="221"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="222"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="223"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="233"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="234"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="235"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="236"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="237"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="238"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="254"/>
         <source>Garmin</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="222"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="221"/>
         <source>Flight1 Garmin GTN 650/750</source>
         <translation></translation>
     </message>
     <message>
+        <location filename="src/routeexport/routeexportformat.cpp" line="224"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="225"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="226"/>
         <source>txt</source>
         <translation></translation>
     </message>
@@ -27164,31 +27165,31 @@ Isso pode acontecer se você salvar um plano de voo baseado no cenário FSX, Pre
         <translation type="vanished">Rotate MD-80, JARDesign e outros</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="227"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="249"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="251"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="226"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="248"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="250"/>
         <source>rte</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="227"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="226"/>
         <source>PMDG aircraft</source>
         <translation>PMDG Aeronaves</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="228"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="227"/>
         <source>gpx</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="228"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="230"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="250"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="227"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="229"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="249"/>
         <source>Other</source>
         <translation>Outros</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="199"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="198"/>
         <source>
 Export navaids and airports as user defined waypoints avoid locked waypoints due to different AIRAC cycles.
 This saves all waypoints as user defined waypoints when exporting flight plans.
@@ -27199,17 +27200,17 @@ Isso salva todos os waypoints como: waypoints definidos pelo usuário ao exporta
 Observe que não é possível exportar procedimentos se estiver habilitado.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="208"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="207"/>
         <source>lnmpln</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="208"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="207"/>
         <source>Little Navmap</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="208"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="207"/>
         <source>Little Navmap native flight plan format
 Use this format to save and backup your plans since it covers all features like remarks and more.
 Note that using this option is the same as using &quot;Save&quot; or &quot;Save as&quot; in the file menu.</source>
@@ -27218,238 +27219,248 @@ Use este formato para salvar e fazer backup de seus planos, pois abrange todos o
 Observe que usar esta opção é o mesmo que usar &quot;Salvar&quot; ou &quot;Salvar como&quot; no menu de arquivo.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="215"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="214"/>
         <source>FSX and Prepar3D annotated
 Only for old Little Navmap versions.</source>
         <translation>FSX e Prepar3D anotados
 Apenas para versões antigas do Little Navmap.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="216"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="215"/>
         <source>X-Plane FMS 3
 Old limited format.</source>
         <translation>X-Plane FMS 3
 Formato antigo limitado.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="220"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="219"/>
         <source>Aerosoft CRJ for MSFS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="223"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="222"/>
         <source>Flight1 Garmin GTN 650/750 with user defined waypoints</source>
         <translation>Flight1 Garmin GTN 650/750 com waypoints definidos pelo usuário</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="225"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="224"/>
         <source>Rotate MD-80 and others</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="226"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="225"/>
         <source>JARDesign aircraft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="228"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="227"/>
         <source>Garmin exchange format for Google Earth and others
 Exported with aircraft track and flight plan.</source>
         <translation>Formato de troca Garmin para Google Earth e outros
 Exportado com o rastro da aeronave e plano de voo.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="230"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="229"/>
         <source>html</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="230"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="229"/>
         <source>HTML flight plan web page</source>
         <translation>Página da web do plano de voo em HTML</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="231"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="230"/>
         <source>fpr</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="231"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="230"/>
         <source>Majestic Dash MJC8 Q400</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="232"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="231"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="233"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="234"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="235"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="241"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="240"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="245"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="246"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="247"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="248"/>
         <source>fpl</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="232"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="231"/>
         <source>IXEG Boeing 737</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="233"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="232"/>
         <source>corte.in</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="233"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="232"/>
         <source>Flight Factor Airbus</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="234"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="233"/>
         <source>Reality XP GNS 530W/430W V2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="235"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="234"/>
         <source>Reality XP GNS 530W/430W V2 with user defined waypoints</source>
         <translation>Reality XP GNS 530W/430W V2 com waypoints definidos pelo usuário</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="237"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="236"/>
         <source>Reality XP GTN 750/650 Touch</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="238"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="237"/>
         <source>Reality XP GTN 750/650 Touch with user defined waypoints</source>
         <translation>Reality XP GTN 750/650 Touch com waypoints definidos pelo usuário</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="240"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="239"/>
         <source>fltplan</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="240"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="239"/>
         <source>iFly</source>
         <translation></translation>
     </message>
     <message>
+        <location filename="src/routeexport/routeexportformat.cpp" line="240"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="241"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="242"/>
         <source>FMC</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="241"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="240"/>
         <source>X-FMC</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="242"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="241"/>
         <source>ufmc</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="242"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="241"/>
         <source>UFMC</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="243"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="242"/>
         <source>companyroutes.xml</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="243"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="242"/>
         <source>ProSim</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="244"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="243"/>
         <source>BlackBox Simulations Airbus</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="245"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="244"/>
         <source>vfp</source>
         <translation></translation>
     </message>
     <message>
+        <location filename="src/routeexport/routeexportformat.cpp" line="244"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="245"/>
         <location filename="src/routeexport/routeexportformat.cpp" line="246"/>
-        <location filename="src/routeexport/routeexportformat.cpp" line="247"/>
         <source>Online</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="245"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="244"/>
         <source>VATSIM vPilot or SWIFT</source>
         <translation>VATSIM vPilot ou SWIFT</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="246"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="245"/>
         <source>IvAp for IVAO</source>
         <translation>IvAp para IVAO</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="247"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="246"/>
         <source>X-IVAP for IVAO</source>
         <translation>X-IVAP para IVAO</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="248"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="247"/>
         <source>FeelThere or Wilco</source>
         <translation>FeelThere ou Wilco</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="249"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="248"/>
         <source>Level-D</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="250"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="249"/>
         <source>efbr</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="250"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="249"/>
         <source>AivlaSoft EFB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="251"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="250"/>
         <source>QualityWings</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="252"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="251"/>
         <source>mdr</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="252"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="251"/>
         <source>Leonardo Maddog X</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="253"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="252"/>
         <source>xml</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="253"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="252"/>
         <source>TFDi Design 717</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="254"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="253"/>
         <source>FMS</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="254"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="253"/>
         <source>ISG Integrated Simavionics gauges</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/routeexport/routeexportformat.cpp" line="254"/>
+        <source>fpl.pln</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/routeexport/routeexportformat.cpp" line="254"/>
+        <source>PMS50 GTN750</source>
         <translation type="unfinished"></translation>
     </message>
 </context>
@@ -27658,27 +27669,25 @@ or Filename</source>
 ou nome de arquivo</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="394"/>
         <source>Select a %1 that will be used to export the flight plan</source>
-        <translation>Selecione um %1 que será usado para exportar o plano de voo</translation>
+        <translation type="vanished">Selecione um %1 que será usado para exportar o plano de voo</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="395"/>
         <source>existing file</source>
-        <translation>arquivo existente</translation>
+        <translation type="vanished">arquivo existente</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="449"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="448"/>
         <source>Filename</source>
         <translation>Nome do Arquivo</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="449"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="448"/>
         <source>File extension</source>
         <translation>Extensão de arquivo</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="586"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="585"/>
         <source>Reset selection and paths back to default?</source>
         <translation>Redefinir seleção e caminhos de volta ao padrão?</translation>
     </message>
@@ -27693,13 +27702,12 @@ Press F2 or double click to edit.</oldsource>
 Pressione F2 ou clique duas vezes para editar o caminho.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="395"/>
         <source>directory</source>
-        <translation>diretório</translation>
+        <translation type="vanished">diretório</translation>
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="326"/>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="456"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="455"/>
         <source>Press F2 or double click to edit path</source>
         <translation>Pressione F2 ou clique duas vezes para editar o caminho</translation>
     </message>
@@ -27723,17 +27731,32 @@ Exportar agora / Redefinir caminho</translation>
         <translation>Caminho de Exportação</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="384"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="383"/>
         <source>Flight plan format will be exported with multiexport when checked</source>
         <translation>O formato do plano de voo será exportado com multiexport quando verificado</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="403"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="393"/>
+        <source>Select %1 that will be used to export the flight plan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="394"/>
+        <source>an existing file</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="394"/>
+        <source>a directory</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="402"/>
         <source>Export flight plan now</source>
         <translation>Exportar plano de voo agora</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="411"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="410"/>
         <source>Reset path back to default.
 The default path is determined by the current scenery library or simulator selection.
 If not applicable, the best estimate from installed simulators is used.</source>
@@ -27742,27 +27765,27 @@ O caminho padrão é determinado pela biblioteca de cenários atual ou seleção
 Se não for aplicável, a melhor estimativa de simuladores instalados é usada.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="532"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="531"/>
         <source>Select Export File for %1</source>
         <translation>Selecione Exportar Arquivo para %1</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="533"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="532"/>
         <source>Flight Plan Files %1;;All Files (*)</source>
         <translation>Arquivos de Plano de Voo %1;;Todos os Arquivos (*)</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="540"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="539"/>
         <source>Select Export Directory for %1</source>
         <translation>Selecione Exportar Diretório para %1</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="673"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="672"/>
         <source>&amp;Enable Export for %1</source>
         <translation>&amp;Habilitar Exportação para %1</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="676"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="675"/>
         <source>&amp;Enable for Export</source>
         <translation>&amp;Habilitar para exportação</translation>
     </message>
