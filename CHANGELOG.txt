@@ -10,64 +10,65 @@ This version contains mostly bug fixes, adaption to MSFS scenery library changes
 ## Important Notes
 
 * You have to update/reinstall *Little Navconnect* and *Little Xpconnect* if you use these since
-the data protocol has changed.
+  the data protocol has changed. This version is compatible with *Little Navconnect* 2.6.10.beta
+  and *Little Xpconnect* 1.0.23.beta or newer.
 * Aircraft label settings are reset back to default. Adjust these in the options dialog on page
-`Map Display 2`.
+  `Map Display 2`.
 * All MSFS scenery library related changes need at least MSFS version 1.16.2 .
 * Do not use the scenery library mode `Do not use Navigraph Database` if you have the Navigraph
-udpate installed. You will see errors in procedures. Instead update the scenery database of *Little
-Navmap* using the Navigraph FMS Data Manager.
+  udpate installed. You will see errors in procedures. Instead update the scenery database of *Little
+  Navmap* using the Navigraph FMS Data Manager.
 
 ## Changes from 2.6.11 to 2.6.12.beta
 
 ### Flight Plans
 
 * Corrected loading and saving of GPX tracks. Now also saving timestamps and considering
-disconnected trail segments. A flight where the aircraft was moved or warped during flight results
-in a straight line connecting the two segments. Changing aircraft, restarting the simulator or
-*Little Navmap* results in disconnected trail segments.
+  disconnected trail segments. A flight where the aircraft was moved or warped during flight results
+  in a straight line connecting the two segments. Changing aircraft, restarting the simulator or
+  *Little Navmap* results in disconnected trail segments.
 * Fixed issue causing error messages on flight plan elevation profile calculation if destination
-airport is below sea level and an approach procedure is used.
+  airport is below sea level and an approach procedure is used.
 * Flight cruise altitude was set wrongly after calculating route with metric altitude units.
 * Now omitting visual reporting points (like `VP123`) and other obscure numbered waypoints from
-route calculation. Simplified and optimized loading of routing network.
+  route calculation. Simplified and optimized loading of routing network.
 * Fixed issue where a flight plan calculation resulted in not optimal routes. This happened when a
-nearby navaid connected to the airway system could not be found.
+  nearby navaid connected to the airway system could not be found.
 
 ### Flight Plan Export
 
 * Enabled departure parking position for MSFS flight plan export and import. Enabled check for
-parking position for MSFS export which shows a warning if starting on a runway.
+  parking position for MSFS export which shows a warning if starting on a runway.
 * More relaxed user waypoint naming conventions for MSFS. Now allowing more special characters.
 * Corrected Aerosoft CRJ flight plan export. Adapted changed keywords in flp file and compressing
-airway segments now. #632
+  airway segments now. #632
 * Added export of modified PLN format for Integrated Simavionics / ISG devices and gauges.
 * Export option for MSFS PMS50 GTN750 Garmin added. This export saves the flight plan using a fixed
-filename `fpl.pln`.
+  filename `fpl.pln`.
 * Now always adding procedure entry and exit waypoints for flight plan export formats not
-supporting procedures like FSX/P3D PLN. User can an additional waypoint in the simulator if needed.
+  supporting procedures like FSX/P3D PLN. User can an additional waypoint in the simulator if needed.
 * Corrected default flight plan pattern to use departure and destination ident if flight plan
-pattern is empty. Used departure airport ident wrongly before.
+  pattern is empty. Used departure airport ident wrongly before.
 * Changes to allow updates for new export formats.
 
 ### Procedures and Scenery Library
 
 * Now fully recognizing SID and STAR from MSFS scenery library. Many thanks to
-[icykoneko](https://github.com/icykoneko) for implementing this. #649
+  [icykoneko](https://github.com/icykoneko) for implementing this. #649
 * Adapted loading of approach procedures and some airport structures to new MSFS changes since
-1.16.2. This fixes the issue of empty and not selectable approaches in the procedure tab.
+  1.16.2. This fixes the issue of empty and not selectable approaches in the procedure tab.
 * Constant turn radius legs in procedures are now correctly depicted for MSFS.
 * Fixed issue where some navaids did not get airport ident assigned if in different BGL file.
 * Other improvements for procedure drawing.
 * Added speed limit for MSFS procedure legs.
 * Now checking all MSFS procedures before saving in the database. A warning will be logged and the
-procedure will be omitted if not valid.
+  procedure will be omitted if not valid.
 * Now omitting closed dummy airport structures having no runways and no start positions which are
-used by MSFS as POIs.
+  used by MSFS as POIs.
 * Fixed issue where an error was shown when loading `Library.xml` files from add-on aircraft.
 * `Library.xml` files are now considered when excluding folders from loading.
 * Removed exception for invalid files in X-Plane CIFP path. Now simply writing a warning to the log
-file.
+  file.
 
 ### Map
 
