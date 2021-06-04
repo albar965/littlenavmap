@@ -2,10 +2,6 @@ html, body {
   touch-action: none;
 }
 
-body {
-  overflow: hidden;   /* prevent a peculiar disabled vertical scrollbar when retina disabled and header horizontally scrolled; this is a fullscreen nobodyscroll ui anyway */
-}
-
 
 .indicator-scrollable-toright, .indicator-scrollable-toleft {
   position: relative;
@@ -44,6 +40,16 @@ form:first-of-type, .formparts:first-of-type {
   margin-left: 0;
 }
 
+
+.input-group {
+  display: inline-flex;
+  font-size: 12px;
+  align-items: center;
+}
+
+.input-group label {
+  padding-left: 5px;        /* padding instead of margin lets area act as hit area */
+}
 
 .slider-container {
   vertical-align: middle;
@@ -84,7 +90,7 @@ input:not([type=text]), button, label[for] {
 }
 
 .enlarge {
-  transform: scale(2.5) !important;
+  transform: scale(2) !important;
   outline: 1px solid #f50;
 }
 
@@ -164,9 +170,21 @@ input:not([type=text]), button, label[for] {
 
 
 #mapcontainer {
-  z-index: 1;
-  position: relative;
-  width: 100%;
+  flex: 1 0;
+}
+
+#map {
+  opacity: 0;
+  transform: scale(.9);
+}
+
+.withtransition {
+  transition: opacity 1s cubic-bezier( 0, 1, 0.4, 1 ), transform .5s cubic-bezier( 0, 1, 0.4, 1 );
+}
+
+#map.shown {
+  opacity: 1;
+  transform: scale(1);
 }
 
 
