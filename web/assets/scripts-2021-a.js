@@ -35,52 +35,88 @@ function injectUpdates(origin) {
   }
 
   function updateMapPage(page) {
+    /*
+     * settings (developer modifiable)
+     */
     var defaultMapQuality = 30;
+    var zoomingMapQuality = 3;
+    var resizingMapQuality = 3;
+
+    /*
+     * settings (code modifiable)
+     */
+    var realPixelsPerCSSPixel = /*devicePixelRatio ||*/ 1;
 
 
-    var realPixelsPerCSSPixel = devicePixelRatio || 1;
-
-
-    var refresher = ocd.querySelector("#refreshselect");
+    /*
+     * elements
+     */
+    var refresher = ocd.querySelector("#refreshDelay");
+    var refreshToggle = ocd.querySelector("#refreshMapToggle");
     var refreshTypeWAC = ocd.querySelector("#refreshWithAircraft");
     var centerDistance = ocd.querySelector("#centerDistance");
 
     var airportText = ocd.querySelector("#airporttext");
 
     var iAParent = ocd.querySelector("#interactionParent");
-
     var mapElement = ocd.querySelector("#map");
 
 
+    /*
+     * map image handling
+     */
+    var mapUpdateNotifiables = [];
+    var mapUpdateCounter = 0;
     var mapImageLoaded = true;
+    var forceLock = false;
+
     mapElement.onload = function() {
       mapImageLoaded = true;
+      forceLock = false;
+      while(mapUpdateNotifiables.length) {
+        var notifiable = mapUpdateNotifiables.shift();
+        if(notifiable) {
+          notifiable(mapUpdateCounter);
+        }
+      }
     };
 
     /**
-     * explicit map source update, performance version requires every parameter!
+     * API: map source update, notifiable = function to take notification
      */
-    function updateMapImage(command, quality) {
-      mapImageLoaded = false;
-      mapElement.src = "/mapimage?format=jpg&quality=" + quality + "&width=" + ~~(mapElement.parentElement.clientWidth * realPixelsPerCSSPixel) + "&height=" + ~~(mapElement.parentElement.clientHeight * realPixelsPerCSSPixel) + "&session&" + command + "=" + Math.random();
+    function updateMapImage(command, quality, force, notifiable) {
+      mapUpdateNotifiables.push(notifiable);
+      if(mapImageLoaded || force && !forceLock) {
+        mapImageLoaded = false;
+        forceLock = force;
+        mapElement.src = "/mapimage?format=jpg&quality=" + quality + "&width=" + ~~(mapElement.parentElement.clientWidth * realPixelsPerCSSPixel) + "&height=" + ~~(mapElement.parentElement.clientHeight * realPixelsPerCSSPixel) + "&session&" + command + "=" + Math.random();
+      }
+      return ++mapUpdateCounter;
     }
 
+    /*
+     * API: get transformed user setting for map zoom in map command format
+     */
     function getZoomDistance() {
       return ~~Math.pow(2, centerDistance.value);
     }
 
-    var imageRequestTimeout = null;
-    // override default function to stay within our new ui look
-    ocw.reloadMap = function(force) {
-      clearTimeout(imageRequestTimeout);                            // only let the last size from resizing trigger a map update
-      imageRequestTimeout = setTimeout(function() {
-        mapElement.style.display = "none";                          // to get dimensions of parent unaffected by prior existing larger image enlarging parent when resizing
-        updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&distance=" + getZoomDistance() + "&cmd" : "distance=" + getZoomDistance() + "&reload", defaultMapQuality);
-        mapElement.style.display = "block";
-      }, force ? 0 : 50);
-    };
-    ocw.reloadMap();                                                // equals former body[onload]
 
+    /*
+     * Event handling: resize window
+     */
+    var imageRequestTimeout = null;
+    ocw.sizeMapToContainer = function() {
+      ocw.clearTimeout(imageRequestTimeout);
+      updateMapImage(refreshTypeWAC.checked ? ("mapcmd=user&distance=" + getZoomDistance() + "&cmd") : ("distance=" + getZoomDistance() + "&reload"), resizingMapQuality);
+      imageRequestTimeout = ocw.setTimeout(function() {       // update after the resizing stopped to have an image for the final size "for certain"
+        updateMapImage(refreshTypeWAC.checked ? ("mapcmd=user&distance=" + getZoomDistance() + "&cmd") : ("distance=" + getZoomDistance() + "&reload"), defaultMapQuality, true);
+      }, 200);
+    };
+
+    /*
+     * Event handling: mousemove over map
+     */
     mapElement.parentElement.onmousemove = function(e) {
       var s = e.currentTarget.clientHeight / e.currentTarget.clientWidth;
       var x = e.offsetX - e.currentTarget.clientWidth / 2;
@@ -100,20 +136,24 @@ function injectUpdates(origin) {
       }
     };
 
+    /*
+     * Event handling: click map
+     */
     ocw.handleInteraction = function(e) {
       var shift = e.currentTarget.getAttribute("data-shift");
-      shift !== null ? updateMapImage("mapcmd=" + shift + "&cmd", defaultMapQuality) : 0;         // on touch devices, without initial HTML attribute, shift === null when pinching for zoom in
+      shift !== null ? updateMapImage("mapcmd=" + shift + "&cmd", defaultMapQuality, true) : 0;         // on touch devices, without initial HTML attribute, shift === null when pinching for zoom in
     };
 
+    /*
+     * Event handling: mousewheel / finger pinch map
+     */
     var mapWheelZoomTimeout = null;
     var mapZoomCore = function(condition) {
-      if(mapImageLoaded) {
-        ocw.clearTimeout(mapWheelZoomTimeout);
-        updateMapImage("mapcmd=" + (condition ? "in" : "out") + "&cmd", 3);
-        mapWheelZoomTimeout = ocw.setTimeout(function() {
-          updateMapImage("reload", defaultMapQuality);
-        }, 1000);
-      }
+      ocw.clearTimeout(mapWheelZoomTimeout);
+      updateMapImage("mapcmd=" + (condition ? "in" : "out") + "&cmd", zoomingMapQuality);
+      mapWheelZoomTimeout = ocw.setTimeout(function() {
+        updateMapImage("reload", defaultMapQuality, true);
+      }, 750);
     };
     mapElement.onwheel = function(e) {
       mapZoomCore(e.deltaY < 0);
@@ -122,6 +162,9 @@ function injectUpdates(origin) {
       mapZoomCore(e.scale > 1);
     };
 
+    /*
+     * Event handling: header options bar scrolling
+     */
     var header = ocd.querySelector("#header");
     function headerIndicators() {
       if(header.firstElementChild.scrollWidth > header.firstElementChild.clientWidth) {
@@ -145,74 +188,130 @@ function injectUpdates(origin) {
     header.firstElementChild.addEventListener("scroll", headerIndicators);
     headerIndicators();
 
-    ocw.checkRefresh = function() {
-      if(refreshTypeWAC.checked && refresher.value > 0) {
+
+    /*
+     * Option Commands Handling: refresh
+     */
+    // prevent users from "mapipulation" by adjusting for all features whose setting's values create an "auto" map
+    function adjustForAutoMapSettings() {
+      if(refreshTypeWAC.checked && refreshToggle.checked) {
         iAParent.setAttribute("disabled", "");
       } else {
         iAParent.removeAttribute("disabled");
       }
-    };
+    }
 
-    // only called for auto refresh, page initialisation now reloadMap
-    // was copy from script.js refreshMapPage() follows adjusted for document and window, as well as interval function being contained, plus new functionality
-    ocw.refreshPage = function() {
-      ocw.checkRefresh();
+    var mapRefresher = new (function() {
+      var refreshMapTimeout = null;
+      var looping = false;
+      var timeStartLastRequest = 0;
+      var refreshIn = 0;
 
-      var refreshvalue = refresher.value;
-      if (refreshvalue != ocw.currentInterval) {
-        ocw.currentInterval = refreshvalue;
-
-        // Value has changed - stop udpates
-        ocw.clearInterval(ocw.timeoutHandle);
-
-        var xhttp = new XMLHttpRequest();
-        xhttp.open("GET", "/refresh?session&maprefresh=" + refreshvalue, true);
-        xhttp.send();
-
-        if (ocw.currentInterval > 0) {
-          // Set interval timer for periodical reload
-          ocw.timeoutHandle = ocw.setInterval(function() {
-            if(mapImageLoaded) {                                  // on short intervals with high-res images on slower server machines, the previous image might not have been created yet by the server and a new request results in cancellation of the old processing possibly resulting in an image never getting delivered
-              updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&distance=" + getZoomDistance() + "&cmd" : "distance=" + getZoomDistance() + "&reload", defaultMapQuality);
-            }
-          }, ocw.currentInterval * 1000);
+      function notifiable(id) {     // ignore if some(one/thing) else interrupted own request and thus time data is not accurate
+        var durationTilImageHere = performance.now() - timeStartLastRequest;
+        refreshIn = ~~(refresher.value * 1000 - durationTilImageHere);
+        if(looping) {
+          looper();
         }
       }
+
+      function requester() {
+        timeStartLastRequest = performance.now();
+        updateMapImage(refreshTypeWAC.checked ? ("mapcmd=user&distance=" + getZoomDistance() + "&cmd") : ("distance=" + getZoomDistance() + "&reload"), defaultMapQuality, false, notifiable);
+      }
+
+      function looper() {
+        refreshMapTimeout = ocw.setTimeout(requester, Math.max(0, refreshIn));     // be >= 0
+      }
+
+      // does stop before
+      this.start = function() {
+        this.stop();
+        looping = true;
+        refreshIn = 0;
+        looper();
+      };
+
+      this.stop = function() {
+        ocw.clearTimeout(refreshMapTimeout);
+        looping = false;
+      };
+    })();
+
+    function adjustDelay() {
+        var xhttp = new XMLHttpRequest();
+        xhttp.open("GET", "/refresh?session&maprefresh=" + (refreshToggle.checked ? refresher.value : 0), true);
+        xhttp.send();
     };
-    centerDistance.addEventListener("change", function() {
-      storeState("centerdistance", this.value);
+
+    ocw.checkRefresh = function() {
+        adjustDelay();
+        refreshToggle.checked ? mapRefresher.start() : mapRefresher.stop();
+        refresher.disabled = !refreshToggle.checked;
+        adjustForAutoMapSettings();
+        return refreshToggle.checked;
+    };
+
+    ocw.delayRefresh = function() {
+      ocw.checkRefresh();
+    };
+
+    ocw.refreshMap = function() {
+      updateMapImage(refreshTypeWAC.checked ? ("mapcmd=user&distance=" + getZoomDistance() + "&cmd") : ("distance=" + getZoomDistance() + "&reload"), defaultMapQuality, true);
+    };
+
+
+    // caring and handling state changes and restoration after content switch (after outer ui other button presses)
+    refreshToggle.addEventListener("click", function() {
+      storeState("autorefresh", this.checked);
     });
-    var retrievedState = retrieveState("centerdistance", null);
+    refreshToggle.checked = retrieveState("autorefresh", false);
+    refresher.addEventListener("input", function() {
+      storeState("refreshdelay", this.value);
+    });
+    var retrievedState = retrieveState("refreshdelay", null);
     if(retrievedState !== null) {
-      centerDistance.value = retrievedState;
-      ocd.querySelector('#refreshvalue2').textContent = retrievedState;
+      refresher.value = retrievedState;
     }
+
+    /*
+     * Option Commands Handling: aircraft
+     */
+    ocw.toggleCenterAircraft = function () {
+      ocw.checkRefresh();
+    };
+
+    ocw.centerMapOnAircraft = function() {
+      updateMapImage("mapcmd=user&distance=" + getZoomDistance() + "&cmd", defaultMapQuality, true);
+    };
+
+    // caring and handling state changes and restoration after content switch
     refreshTypeWAC.addEventListener("click", function() {
       storeState("refreshwithaircraft", this.checked);
     });
     refreshTypeWAC.checked = retrieveState("refreshwithaircraft", false);
-    refresher.addEventListener("change", function() {
-      storeState("refreshinterval", this.value);
+    centerDistance.addEventListener("change", function() {
+      storeState("centerdistance", this.value);
+      ocw.checkRefresh();
     });
-    retrievedState = retrieveState("refreshinterval", null);
+    retrievedState = retrieveState("centerdistance", null);
     if(retrievedState !== null) {
-      refresher.value = retrievedState;
-      refresher.dispatchEvent(new Event("change"));
-      refresher.dispatchEvent(new Event("input"));
+      centerDistance.value = retrievedState;
+      ocd.querySelector('#refreshvalue2').textContent = retrievedState;
     }
 
-    ocw.centerMapOnAircraft = function() {
-      updateMapImage("mapcmd=user&distance=" + getZoomDistance() + "&cmd", defaultMapQuality);
-    };
 
+    /*
+     * Option Commands Handling: waypoints and airports
+     */
     function handleAutomap(withFunction) {
-      if(refreshTypeWAC.checked && refresher.value > 0) {
+      if(refreshTypeWAC.checked && refreshToggle.checked) {
         if(!refreshTypeWAC.classList.contains("enlarge")) {
-          setTimeout(function() {
-            setTimeout(function() {
+          ocw.setTimeout(function() {
+            ocw.setTimeout(function() {
               refreshTypeWAC.checked = false;
               withFunction();
-              setTimeout(function() {
+              ocw.setTimeout(function() {
                 refreshTypeWAC.classList.remove("enlarge");
               }, 250);
             }, 250);
@@ -226,14 +325,18 @@ function injectUpdates(origin) {
 
     // override default function to stay within our new ui look
     ocw.submitMapRouteCmd = function() {
-      handleAutomap(function(){updateMapImage("mapcmd=route&distance=" + getZoomDistance() + "&cmd", defaultMapQuality)});
+      handleAutomap(function(){updateMapImage("mapcmd=route&distance=" + getZoomDistance() + "&cmd", defaultMapQuality, true)});
     };
 
     // override default function to stay within our new ui look
     ocw.submitMapAirportCmd = function() {
-      handleAutomap(function(){updateMapImage("mapcmd=airport&airport=" + airportText.value + "&distance=" + getZoomDistance() + "&cmd", defaultMapQuality)});
+      handleAutomap(function(){updateMapImage("mapcmd=airport&airport=" + airportText.value + "&distance=" + getZoomDistance() + "&cmd", defaultMapQuality, true)});
     };
 
+
+    /*
+     * Option Commands Handling: prevent standby
+     */
     var standbyPreventionVideo = ocd.querySelector("#preventstandbyVideoContainer").contentDocument.querySelector("video");    // iOS need video with audio track to have it work as standby preventer
     standbyPreventionVideo.addEventListener("play", function() {
       standbyPreventionVideo.classList.add("running");
@@ -265,7 +368,7 @@ function injectUpdates(origin) {
       preventStandby.click();
     }
 
-    ocw.toggleRetinaMap = function(innerorigin) {
+    /*ocw.toggleRetinaMap = function(innerorigin) {
       if(innerorigin.checked) {
         realPixelsPerCSSPixel = devicePixelRatio || 1;
         storeState("retinaon", true);
@@ -278,6 +381,36 @@ function injectUpdates(origin) {
     var retinaToggle = ocd.querySelector("#retinaToggle");
     if(retrieveState("retinaon", retinaToggle.checked) !== retinaToggle.checked) {
       retinaToggle.click();
+    }*/
+
+
+    /*
+     * Initial Page initialisations: map
+     */
+    var transitionElement = mapElement.parentElement;
+    function initiallyShowMap() {
+      function show() {
+        mapElement.removeEventListener("load", show);
+        transitionElement.classList.remove("initially");
+        transitionElement.classList.remove("transition");
+        transitionElement.classList.remove("toshow");
+      }
+      mapElement.addEventListener("load", show);
+      ocw.checkRefresh() || ocw.refreshMap();                                       // takes over for former body[onload]
+      storeState("mapshown", true);
+    }
+    if(!retrieveState("mapshown", false)) {
+      transitionElement.classList.add("toshow");
+      transitionElement.classList.remove("initially");
+      setTimeout(function() {
+        transitionElement.classList.add("transition");
+        setTimeout(function() {
+          transitionElement.classList.remove("toshow");
+          setTimeout(initiallyShowMap, 3000);
+        }, 0);
+      }, 0);
+    } else {
+      initiallyShowMap();
     }
 
   }
@@ -348,6 +481,13 @@ function closeToolbarsOptions() {
  */
 function setToolbarPosition(e) {
   document.querySelector("[data-toolbarsplacement]").setAttribute("data-toolbarsplacement", e.target.value);
+  localStorage.setItem("toolbarsplacement", e.target.value);
+}
+var gotten = localStorage.getItem("toolbarsplacement");
+if(gotten) {
+  var destination = document.querySelector("input[type=radio][name=position][value=" + gotten + "]");
+  destination.checked = true;
+  destination.dispatchEvent(new Event("change", {bubbles: true}));
 }
 
 /*
@@ -360,11 +500,18 @@ function switchTheme(origin) {
   }
   if(origin.value !== "") {
     themeCSS = document.createElement("link");
-    themeCSS.href = "/assets/styles-2021-a-look-userdefined-theme-" + origin.value + ".css";
+    themeCSS.href = "/themes/styles-2021-a-look-userdefined-theme-" + origin.value + ".css";
     themeCSS.rel = "stylesheet";
     themeCSS.id = "themeCSS";
     document.head.appendChild(themeCSS);
   }
+  localStorage.setItem("themeCSS", origin.value);
+}
+gotten = localStorage.getItem("themeCSS");
+if(gotten) {
+  var destination = document.querySelector("select[name=theme]");
+  destination.value = gotten;
+  destination.dispatchEvent(new Event("change", {bubbles: true}));
 }
 
 /*
