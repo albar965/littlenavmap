@@ -14,48 +14,52 @@
       window.currentInterval = -1;
     </script>
   </head>
-  <body id="mapPage" onresize="reloadMap()" style="margin:0;height:100%;display:flex;flex-direction:column">
-    <div id="header" style="margin:.5em;flex:0 1">
+  <body id="mapPage" onresize="sizeMapToContainer()" style="margin:0;height:100%;display:flex;flex-direction:column">
+    <div id="header" style="margin:.5em;flex:0 1;user-select:none">
       <div style="white-space:nowrap;overflow:auto">
-        <form id="refreshform" name="refreshform">
+        <form id="refreshform" onsubmit="checkRefresh();return false" name="refreshform">
           <span class="formparts">
-            <span class="slider-container">
-              <input type="range" min="0" max="120" step="1" value="0" onchange="refreshPage()" oninput="document.querySelector('#refreshvalue').setAttribute('content', this.value)" id="refreshselect" style="width:200px"><br>
-              <label style="font-size:11px;display:block;margin-top:-3px">refresh every <span id="refreshvalue" style="width:21px;text-align:right;display:inline-block" content="0"></span> s</label>
+            <span class="input-group">
+              <input type="checkbox" onclick="checkRefresh()" id="refreshMapToggle"> <label for="refreshMapToggle">auto<br>refresh</label>
             </span>
-            <button type="button" onclick="reloadMap(true)">Now</button>
+            <span class="input-group" style="margin-left:3px">
+              <input type="number" value="1" step="1" min="1" onchange="delayRefresh()" id="refreshDelay" style="width:40px;text-align:right" disabled><label> s delay</label>
+            </span>
+            <button type="button" onclick="refreshMap()" style="margin-left:10px">Now</button>
           </span>
-          <span class="formparts" style="margin-left:10px">
-            <span>
-              <input type="checkbox" onclick="checkRefresh()" id="refreshWithAircraft"> <label for="refreshWithAircraft">center is Aircraft</label>
+          <span class="formparts" style="margin-left:13px">
+            <span class="input-group">
+              <input type="checkbox" onclick="toggleCenterAircraft()" id="refreshWithAircraft"> <label for="refreshWithAircraft">center<br>is Aircraft</label>
             </span>
-            <span class="slider-container" style="margin-left:5px">
-              <input type="range" min="0" max="11" step="1" value="5" oninput="document.querySelector('#refreshvalue2').textContent=this.value" id="centerDistance" style="width:140px"><br>
-              <label style="font-size:11px;display:block;margin-top:-3px"><span id="refreshvalue2" style="width:25px;text-align:right;display:inline-block">5</span> zoom from center</label>
+            <span class="slider-container" style="margin-left:3px">
+              <input type="range" min="0" max="11" step="1" value="5" oninput="document.querySelector('#refreshvalue2').textContent=this.value" id="centerDistance" style="width:120px"><br>
+              <label style="font-size:11px;display:block;margin-top:-3px"><span id="refreshvalue2" style="width:15px;text-align:right;display:inline-block">5</span> zoom from center</label>
             </span>
-            <button type="button" onclick="centerMapOnAircraft()">Here</button>
+            <button type="button" onclick="centerMapOnAircraft()" style="margin-left:10px">Here</button>
           </span>
         </form>
         <form id="flightplanform" name="flightplanform">
           <button type="button" onclick="submitMapRouteCmd()">center all Waypoints</button>
         </form>
-        <form id="airportform" action="javascript:submitMapAirportCmd()" name="airportform">
-          <input id="airporttext" type="text" placeholder="ICAO" name="airportident" value=""> <button type="button" onclick="submitMapAirportCmd()">center Airport</button>
+        <form id="airportform" onsubmit="submitMapAirportCmd();return false" name="airportform">
+          <input id="airporttext" type="text" placeholder="ICAO" name="airportident" value="" style="width:40px;text-align:center;text-transform:uppercase"> <button type="button" onclick="submitMapAirportCmd()">center Airport</button>
         </form>
         <form id="optionsform">
           <span class="formparts">
-            <input type="checkbox" value="true" name="preventstandby" onclick="preventStandby(this)" id="preventstandby"> <label for="preventstandby">prevent device standby</label>
+            <span class="input-group">
+              <input type="checkbox" value="true" name="preventstandby" onclick="preventStandby(this)" id="preventstandby"> <label for="preventstandby">prevent<br>device standby</label>
+            </span>
           </span>
-          <span class="formparts" id="retinaOption">
+          <!--span class="formparts" id="retinaOption">
             <input type="checkbox" checked value="true" name="use Retina map" onclick="toggleRetinaMap(this)" id="retinaToggle"> <label for="retinaToggle">Retina map (bigger download, longer creation duration)</label>
-          </span>
+          </span-->
         </form>
         <iframe src="preventstandbyvideo.html" id="preventstandbyVideoContainer" title="cachable standby prevention resource"></iframe>
       </div>
     </div>
-    <div id="interactionParent" style="flex:1 0">
-      <div id="mapcontainer" onclick="handleInteraction(event)">
-        <img id="map" src="images/littlenavmap.svg" alt="Map" style="width:100%;height:100%;object-fit:contain;display:none">
+    <div id="interactionParent" style="flex:1 0;overflow:hidden">
+      <div id="mapcontainer" class="initially" onclick="handleInteraction(event)">
+        <img id="map" src="images/littlenavmap.svg" alt="Map" style="width:100%;height:100%;object-fit:contain;display:block">
       </div>
     </div>
   </body>

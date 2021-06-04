@@ -2,8 +2,17 @@ html, body {
   touch-action: none;
 }
 
-body {
-  overflow: hidden;   /* prevent a peculiar disabled vertical scrollbar when retina disabled and header horizontally scrolled; this is a fullscreen nobodyscroll ui anyway */
+
+@media (min-width: 1281px) {
+  #header {
+    padding: 0 12px;
+  }
+}
+
+@media (max-width: 1280px) {
+  #header {
+    padding: 0 4px;
+  }
 }
 
 
@@ -45,6 +54,17 @@ form:first-of-type, .formparts:first-of-type {
 }
 
 
+.input-group {
+  display: inline-flex;
+  font-size: 12px;
+  align-items: center;
+}
+
+.input-group label {
+  padding-left: 5px;        /* padding instead of margin lets area act as hit area */
+}
+
+
 .slider-container {
   vertical-align: middle;
   display: inline-block;
@@ -78,13 +98,17 @@ input:not([type=text]), button, label[for] {
   cursor: pointer;
 }
 
+input[disabled]:hover {
+  cursor: url(../images/there.cur), auto;
+}
+
 
 #refreshWithAircraft {
   transition: all 1.5s;
 }
 
 .enlarge {
-  transform: scale(2.5) !important;
+  transform: scale(2) !important;
   outline: 1px solid #f50;
 }
 
@@ -119,6 +143,7 @@ input:not([type=text]), button, label[for] {
 
 #interactionParent {
   display: flex;
+  perspective: 1000px;
 }
 
 #interactionParent[disabled] {
@@ -164,9 +189,49 @@ input:not([type=text]), button, label[for] {
 
 
 #mapcontainer {
-  z-index: 1;
+  flex: 1 0;
+  transform-style: preserve-3d;
   position: relative;
-  width: 100%;
+  opacity: 1;
+  transform: scale(1);
+}
+
+#mapcontainer.initially {
+  opacity: 0;
+}
+
+.transition {
+  transition: transform 2s linear;
+}
+
+@keyframes clearview {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.transition::after {
+  animation: clearview 1s 2s both;
+  content: "";
+  display: block;
+  height: 100vh;
+  width: 100vw;
+  position: absolute;
+  z-index: 2;
+  top: 0;
+  left: 0;
+  transform: translate3d(0px, 0px, 400px);
+  border-radius: 50%;
+  opacity: 0;
+  pointer-events: none;
+  background: linear-gradient(135deg, rgba(255,255,255,0) 0%, rgba(255,150,255,.13) 74%, rgba(255,0,255,.5) 100%);
+}
+
+#mapcontainer.toshow {
+  transform: scale3d(.25,.25,.25) rotate3d(0, 1, 0, -80deg) rotate3d(1, 0, 0, 86deg) rotate3d(0, 0, 1, 30deg);
 }
 
 
