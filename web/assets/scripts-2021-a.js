@@ -74,15 +74,15 @@ function injectUpdates(origin) {
      * map source update, notifiable = function to take notification
      */
     function updateMapImage(command, quality, force, notifiable) {
+        mapUpdateNotifiables.push(notifiable);
       if(mapImageLoaded || force && !forceLock) {
         mapImageLoaded = false;
         forceLock = force;
-        mapUpdateNotifiables.push(notifiable);
-        mapElement.style.display = "none";                          // to get dimensions of parent unaffected by prior existing larger image enlarging parent when resizing
+        //mapElement.style.display = "none";                          // to get dimensions of parent unaffected by prior existing larger image enlarging parent when resizing
         mapElement.src = "/mapimage?format=jpg&quality=" + quality + "&width=" + ~~(mapElement.parentElement.clientWidth * realPixelsPerCSSPixel) + "&height=" + ~~(mapElement.parentElement.clientHeight * realPixelsPerCSSPixel) + "&session&" + command + "=" + Math.random();
-        mapElement.style.display = "block";
-        return ++mapUpdateCounter;
+        //mapElement.style.display = "block";
       }
+        return ++mapUpdateCounter;
     }
 
     function getZoomDistance() {
@@ -95,7 +95,7 @@ function injectUpdates(origin) {
       updateMapImage(refreshTypeWAC.checked ? ("mapcmd=user&distance=" + getZoomDistance() + "&cmd") : ("distance=" + getZoomDistance() + "&reload"), resizingMapQuality);
       imageRequestTimeout = ocw.setTimeout(function() {       // update after the resizing stopped to have an image for the final size "for certain"
         updateMapImage(refreshTypeWAC.checked ? ("mapcmd=user&distance=" + getZoomDistance() + "&cmd") : ("distance=" + getZoomDistance() + "&reload"), defaultMapQuality, true);
-      }, 75);
+      }, 200);
     };
 
     mapElement.parentElement.onmousemove = function(e) {
@@ -193,7 +193,9 @@ function injectUpdates(origin) {
         refreshMapTimeout = ocw.setTimeout(requester, Math.max(0, refreshIn));     // be >= 0
       }
 
+      // does stop before
       this.start = function() {
+        this.stop();
         looping = true;
         refreshIn = 0;
         looper();
@@ -211,7 +213,7 @@ function injectUpdates(origin) {
         xhttp.send();
     };
 
-    ocw.toggleRefresh = function() {
+    ocw.checkRefresh = function() {
         adjustDelay();
         refreshToggle.checked ? mapRefresher.start() : mapRefresher.stop();
         refresher.disabled = !refreshToggle.checked;
@@ -220,9 +222,7 @@ function injectUpdates(origin) {
     };
 
     ocw.delayRefresh = function() {
-      adjustDelay()
-      mapRefresher.stop();
-      mapRefresher.start();
+      ocw.checkRefresh();
     };
 
     refreshToggle.addEventListener("click", function() {
@@ -238,9 +238,7 @@ function injectUpdates(origin) {
     }
 
     ocw.toggleCenterAircraft = function () {
-      adjustForAutoMapSettings();
-      mapRefresher.stop();
-      mapRefresher.start();
+      ocw.checkRefresh();
     };
 
     refreshTypeWAC.addEventListener("click", function() {
@@ -249,8 +247,7 @@ function injectUpdates(origin) {
     refreshTypeWAC.checked = retrieveState("refreshwithaircraft", false);
     centerDistance.addEventListener("change", function() {
       storeState("centerdistance", this.value);
-      mapRefresher.stop();
-      mapRefresher.start();
+      ocw.checkRefresh();
     });
     retrievedState = retrieveState("centerdistance", null);
     if(retrievedState !== null) {
@@ -258,19 +255,35 @@ function injectUpdates(origin) {
       ocd.querySelector('#refreshvalue2').textContent = retrievedState;
     }
 
-    if(!retrieveState("mapshown", false)) {
-      mapElement.classList.add("withtransition");
-      var transitionDuration = 1000;
-    } else {
-      var transitionDuration = 0;
-    }
-    mapElement.classList.add("shown");
-    setTimeout(function() {
-      if(!ocw.toggleRefresh()) {                                                // takes over for former body[onload]
-        updateMapImage(refreshTypeWAC.checked ? ("mapcmd=user&distance=" + getZoomDistance() + "&cmd") : ("distance=" + getZoomDistance() + "&reload"), defaultMapQuality);
+    ocw.refreshMap = function() {
+      updateMapImage(refreshTypeWAC.checked ? ("mapcmd=user&distance=" + getZoomDistance() + "&cmd") : ("distance=" + getZoomDistance() + "&reload"), defaultMapQuality, true);
+    };
+
+    var transitionElement = mapElement.parentElement;
+    function initiallyShowMap() {
+      function show() {
+        mapElement.removeEventListener("load", show);
+        transitionElement.classList.remove("initially");
+        transitionElement.classList.remove("transition");
+        transitionElement.classList.remove("toshow");
       }
+      mapElement.addEventListener("load", show);
+      ocw.checkRefresh() || ocw.refreshMap();                                       // takes over for former body[onload]
       storeState("mapshown", true);
-    }, transitionDuration);
+    }
+    if(!retrieveState("mapshown", false)) {
+      transitionElement.classList.add("toshow");
+      transitionElement.classList.remove("initially");
+      setTimeout(function() {
+        transitionElement.classList.add("transition");
+        setTimeout(function() {
+          transitionElement.classList.remove("toshow");
+          setTimeout(initiallyShowMap, 3000);
+        }, 0);
+      }, 0);
+    } else {
+      initiallyShowMap();
+    }
 
     ocw.centerMapOnAircraft = function() {
       updateMapImage("mapcmd=user&distance=" + getZoomDistance() + "&cmd", defaultMapQuality, true);
@@ -419,6 +432,13 @@ function closeToolbarsOptions() {
  */
 function setToolbarPosition(e) {
   document.querySelector("[data-toolbarsplacement]").setAttribute("data-toolbarsplacement", e.target.value);
+  localStorage.setItem("toolbarsplacement", e.target.value);
+}
+var gotten = localStorage.getItem("toolbarsplacement");
+if(gotten) {
+  var destination = document.querySelector("input[type=radio][name=position][value=" + gotten + "]");
+  destination.checked = true;
+  destination.dispatchEvent(new Event("change", {bubbles: true}));
 }
 
 /*
@@ -436,6 +456,13 @@ function switchTheme(origin) {
     themeCSS.id = "themeCSS";
     document.head.appendChild(themeCSS);
   }
+  localStorage.setItem("themeCSS", origin.value);
+}
+gotten = localStorage.getItem("themeCSS");
+if(gotten) {
+  var destination = document.querySelector("select[name=theme]");
+  destination.value = gotten;
+  destination.dispatchEvent(new Event("change", {bubbles: true}));
 }
 
 /*
