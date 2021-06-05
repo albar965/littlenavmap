@@ -38,7 +38,7 @@ function injectUpdates(origin) {
     /*
      * settings (developer modifiable)
      */
-    var defaultMapQuality = 30;
+    var defaultMapQuality = 17;
     var zoomingMapQuality = 3;
     var resizingMapQuality = 3;
 
@@ -417,11 +417,11 @@ function injectUpdates(origin) {
 
 
   var toDo = {
-    "#airportPage": updateAirportPage,
+    "#mapPage": updateMapPage,
+    "#flightplanPage": updateGenericPage,
     "#progressPage": updateProgressPage,
     "#aircraftPage": updateGenericPage,
-    "#flightplanPage": updateGenericPage,
-    "#mapPage": updateMapPage
+    "#airportPage": updateAirportPage
   };
 
   for(var i in toDo) {
