@@ -32,7 +32,8 @@ X-Plane TCAS scheme and a reworked web user interface.
   airport is below sea level and an approach procedure is used.
 * Flight cruise altitude was set wrongly after calculating route with metric altitude units.
 * Now omitting visual reporting points (like `VP123`) and other obscure numbered waypoints from
-  route calculation. Simplified and optimized loading of routing network.
+  route calculation. Also ignoring half degree points like `H5711` in north atlantic now. Simplified
+  and optimized loading of routing network.
 * Fixed issue where a flight plan calculation resulted in not optimal routes. This happened when a
   nearby navaid connected to the airway system could not be found.
 
