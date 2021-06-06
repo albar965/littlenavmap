@@ -88,28 +88,22 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
            << "header" << endl << request.getHeaderMap()
            << "parameter" << endl << request.getParameterMap();
 
-  if(path.contains(".."))
-  {
-    // Not allowed to go parent for security
-    showError(request, response, 403, "Forbidden.");
-    return;
-  }
-
-  Parameter params(request);
   if(path == "/mapimage")
+  {
     // ===========================================================================
     // Requests for map images only - either with or without session
     handleMapImage(request, response);
+  }
   else
   {
+    Parameter params(request);
+
     HttpSession session = getSession(request, response);
     if(path == "/refresh")
     {
       // ===========================================================================
       // Remember the refresh values in the session. This is called when changing the refresh drop down boxes and
       // is used to keep the value when the page is reloaded
-      session = getSession(request, response);
-
       if(params.has("aircraftrefresh"))
         session.set("aircraftrefresh", params.asInt("aircraftrefresh"));
       if(params.has("flightplanrefresh"))
@@ -121,9 +115,16 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
     }
     else // all other paths
     {
+      if (path.contains(".."))
+      {
+        // Not allowed to go parent for security
+        showError(request, response, 403, "Forbidden.");
+        return;
+      }
+
       if(params.has("mapcmd"))
         // All map commands like "in", "out", "left" or "right" need a session
-        getSession(request, response).set("mapcmd", params.asStr("mapcmd"));
+        session.set("mapcmd", params.asStr("mapcmd"));
 
       if(!request.getParameter("airportident").isEmpty())
         // Remember the ident in the session. This is used to keep the value when the page is reloaded.
@@ -181,19 +182,19 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
             // Put refresh values back in page by inserting select control ==============================
             if(t.contains("{aircraftrefreshsel}"))
               t.setVariable("aircraftrefreshsel",
-                            buildRefreshSelect(getSession(request, response).get("aircraftrefresh").toInt()));
+                            buildRefreshSelect(session.get("aircraftrefresh").toInt()));
 
             if(t.contains("{flightplanrefreshsel}"))
               t.setVariable("flightplanrefreshsel",
-                            buildRefreshSelect(getSession(request, response).get("flightplanrefresh").toInt()));
+                            buildRefreshSelect(session.get("flightplanrefresh").toInt()));
 
             if(t.contains("{maprefreshsel}"))
               t.setVariable("maprefreshsel",
-                            buildRefreshSelect(getSession(request, response).get("maprefresh").toInt()));
+                            buildRefreshSelect(session.get("maprefresh").toInt()));
 
             if(t.contains("{progressrefreshsel}"))
               t.setVariable("progressrefreshsel",
-                            buildRefreshSelect(getSession(request, response).get("progressrefresh").toInt()));
+                            buildRefreshSelect(session.get("progressrefresh").toInt()));
 
             // ===========================================================================
             // Aircraft registration, weight, etc.
@@ -298,17 +299,13 @@ void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& response
   Parameter params(request);
 
   // Extract values from parameter list ===========================================
-  int quality = params.asInt("quality", -1);
   int width = params.asInt("width", 0);
   int height = params.asInt("height", 0);
 
-  // Image format, jpg is default and only jpg and png allowed ===========================================
-  QString format = params.asEnum("format", "jpg", {"jpg", "png"});
-
-  MapPixmap mapPixmap;
-
   // Distance as KM
   float requestedDistanceKm = atools::geo::nmToKm(params.asFloat("distance", 100.0f));
+
+  MapPixmap mapPixmap;
 
   if(params.has("session"))
   {
@@ -316,84 +313,98 @@ void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& response
     // Stateful handling using a session which has the last zoom and position
     HttpSession session = getSession(request, response);
 
-    if(session.contains("lon") && session.contains("lat") &&
-       session.contains("requested_distance") && session.contains("corrected_distance"))
-    {
-      // Session already contains distance and position values from an earlier call
-      // Values are also initialized from visible map display when creating session
-      QString mapcmd = params.asStr("mapcmd");
+    QString mapcmd = params.asStr("mapcmd");
 
-      if(mapcmd == "user")
-        // Show user aircraft
+    switch(mapcmd) {
+      case "user":
         mapPixmap = emit getPixmapObject(width, height, web::USER_AIRCRAFT, QString(), requestedDistanceKm);
-      else if(mapcmd == "route")
-        // Center flight plan
+        break;
+      case "route":
         mapPixmap = emit getPixmapObject(width, height, web::ROUTE, QString(), requestedDistanceKm);
-      else if(mapcmd == "airport")
-        // Show an airport by ident
-        mapPixmap = emit getPixmapObject(width, height, web::AIRPORT, params.asStr(
-                                           "airport").toUpper(), requestedDistanceKm);
-      else
-      {
-        // When zooming in or out use the last corrected distance (i.e. actual distance) as a base
-        float distance = (mapcmd == "in" || mapcmd == "out") ?
-                         session.get("corrected_distance").toFloat() : session.get("requested_distance").toFloat();
+        break;
+      case "airport":
+        mapPixmap = emit getPixmapObject(width, height, web::AIRPORT, params.asStr("airport").toUpper(), requestedDistanceKm);
+        break;
+      default:
+        if(session.contains("lon") && session.contains("lat") && session.contains("corrected_distance"))
+        {
+          // When zooming in or out use the last corrected distance (i.e. actual distance) as a base
+          float distance = (mapcmd == "in" || mapcmd == "out") ?
+            session.get("corrected_distance").toFloat() : requestedDistanceKm;        // use client-given distance for all commands other than zoom
 
-        // Zoom or move map
-        mapPixmap = emit getPixmapPosDistance(width, height,
-                                              atools::geo::Pos(session.get("lon").toFloat(),
-                                                               session.get("lat").toFloat()),
-                                              distance, mapcmd);
-      }
+          // Zoom or move map
+          mapPixmap = emit getPixmapPosDistance(
+            width,
+            height,
+            atools::geo::Pos(
+              session.get("lon").toFloat(),
+              session.get("lat").toFloat()
+            ),
+            distance,
+            mapcmd
+          );
+        }
+        else
+          return showErrorPixmap(response, width, height, 500, "Internal server error. Incomplete session.");
+    }
 
-      if(!mapPixmap.hasError())
-      {
-        // Push results from last map call into session
-        session.set("requested_distance", QVariant(mapPixmap.requestedDistanceKm));
-        session.set("corrected_distance", QVariant(mapPixmap.correctedDistanceKm));
-        session.set("lon", mapPixmap.pos.getLonX());
-        session.set("lat", mapPixmap.pos.getLatY());
-      }
+    if(mapPixmap.hasNoError())
+    {
+      // Push results from last map call into session
+      session.set("requested_distance", QVariant(mapPixmap.requestedDistanceKm));
+      session.set("corrected_distance", QVariant(mapPixmap.correctedDistanceKm));
+      session.set("lon", mapPixmap.pos.getLonX());
+      session.set("lat", mapPixmap.pos.getLatY());
     }
     else
-      showError(request, response, 500, "Internal server error. Incomplete session.");
-  }
-  // ============================================================================
-  // Session-less / state-less calls ============================================
-  else if(params.has("user"))
-    // User aircraft =======================
-    mapPixmap = emit getPixmapObject(width, height, web::USER_AIRCRAFT, QString(), requestedDistanceKm);
-  else if(params.has("route"))
-    // Center flight plan =======================
-    mapPixmap = emit getPixmapObject(width, height, web::ROUTE, QString(), requestedDistanceKm);
-  else if(params.has("airport"))
-    // Show airport =======================
-    mapPixmap = emit getPixmapObject(width, height, web::AIRPORT, params.asStr("airport"), requestedDistanceKm);
-  else if(params.has("leftlon") && params.has("toplat") && params.has("rightlon") && params.has("bottomlat"))
-  {
-    // Show rectangle =======================
-    atools::geo::Rect rect(params.asFloat("leftlon"), params.asFloat("toplat"),
-                           params.asFloat("rightlon"), params.asFloat("bottomlat"));
-    mapPixmap = emit getPixmapRect(width, height, rect);
-  }
-  else if(params.has("distance") || (params.has("lon") && params.has("lat")))
-  {
-    // Show position =======================
-    atools::geo::Pos pos;
-    if(params.has("lon") && params.has("lat"))
-    {
-      pos.setLonX(params.asFloat("lon"));
-      pos.setLatY(params.asFloat("lat"));
-    }
-
-    mapPixmap = emit getPixmapPosDistance(width, height, pos, requestedDistanceKm, QString());
+      return showErrorPixmap(response, width, height, 404, mapPixmap.error);
   }
   else
-    // Show current map view =======================
-    mapPixmap = emit getPixmap(width, height);
-
-  if(mapPixmap.isValid() && !mapPixmap.hasError())
   {
+    // ============================================================================
+    // Session-less / state-less calls ============================================
+    if(params.has("user"))
+      // User aircraft =======================
+      mapPixmap = emit getPixmapObject(width, height, web::USER_AIRCRAFT, QString(), requestedDistanceKm);
+    else if(params.has("route"))
+      // Center flight plan =======================
+      mapPixmap = emit getPixmapObject(width, height, web::ROUTE, QString(), requestedDistanceKm);
+    else if(params.has("airport"))
+      // Show airport =======================
+      mapPixmap = emit getPixmapObject(width, height, web::AIRPORT, params.asStr("airport"), requestedDistanceKm);
+    else if(params.has("leftlon") && params.has("toplat") && params.has("rightlon") && params.has("bottomlat"))
+    {
+      // Show rectangle =======================
+      atools::geo::Rect rect(params.asFloat("leftlon"), params.asFloat("toplat"),
+        params.asFloat("rightlon"), params.asFloat("bottomlat"));
+      mapPixmap = emit getPixmapRect(width, height, rect);
+    }
+    else if(params.has("distance") || (params.has("lon") && params.has("lat")))
+    {
+      // Show position =======================
+      atools::geo::Pos pos;
+      if(params.has("lon") && params.has("lat"))
+      {
+        pos.setLonX(params.asFloat("lon"));
+        pos.setLatY(params.asFloat("lat"));
+      }
+
+      mapPixmap = emit getPixmapPosDistance(width, height, pos, requestedDistanceKm, QString());
+    }
+    else
+      // Show current map view =======================
+      mapPixmap = emit getPixmap(width, height);
+
+    if(mapPixmap.hasError())
+      return showErrorPixmap(response, width, height, 404, mapPixmap.error);
+  }
+
+  if(mapPixmap.isValid())
+  {
+    // Image format, jpg is default and only jpg and png allowed ===========================================
+    QString format = params.asEnum("format", "jpg", { "jpg", "png" });
+    int quality = params.asInt("quality", -1);
+
     // ===========================================================================
     // Write pixmap as image
     QByteArray bytes;
@@ -403,12 +414,12 @@ void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& response
     if(format == "jpg")
     {
       response.setHeader("Content-Type", "image/jpeg");
-      mapPixmap.pixmap.save(&buffer, "JPG", quality);
+      mapPixmap.pixmap.save(&buffer, format, quality);      // parameter is case-insensitive, use string sharing
     }
     else if(format == "png")
     {
       response.setHeader("Content-Type", "image/png");
-      mapPixmap.pixmap.save(&buffer, "PNG", quality);
+      mapPixmap.pixmap.save(&buffer, format, quality);      // parameter is case-insensitive, use string sharing
     }
     else
       // Should never happen
@@ -417,8 +428,7 @@ void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& response
     response.write(bytes);
   }
   else
-    // Show error message as image
-    showErrorPixmap(response, width, height, 404, mapPixmap.error);
+    showErrorPixmap(response, width, height, 500, "null image");      // TODO: evaluate deliver predefined image: previous drawing failed, procedural error image drawing might fail as well
 }
 
 void RequestHandler::showErrorPixmap(HttpResponse& response, int width, int height, int status, const QString& text)
@@ -475,8 +485,12 @@ void RequestHandler::showError(HttpRequest& request, HttpResponse& response, int
 stefanfrings::HttpSession RequestHandler::getSession(HttpRequest& request, HttpResponse& response)
 {
   HttpSession session = WebApp::getSessionStore()->getSession(request, response);
-  if(!session.contains("lon") || !session.contains("lat"))
+  if(session.contains("lon") && session.contains("lat"))
   {
+    qInfo() << Q_FUNC_INFO << "Found session" << session.getAll();
+    return session;
+  }
+  else {
     // Session does not exist - initialize with defaults from current map view
     atools::geo::Pos pos = emit getCurrentMapWidgetPos();
     session.set("requested_distance", pos.getAltitude());
@@ -484,10 +498,8 @@ stefanfrings::HttpSession RequestHandler::getSession(HttpRequest& request, HttpR
     session.set("lon", pos.getLonX());
     session.set("lat", pos.getLatY());
     qInfo() << Q_FUNC_INFO << "Created session" << session.getAll();
+    return session;
   }
-  else
-    qInfo() << Q_FUNC_INFO << "Found session" << session.getAll();
-  return session;
 }
 
 QString RequestHandler::buildRefreshSelect(int defaultValue)
