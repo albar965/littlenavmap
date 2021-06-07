@@ -423,16 +423,20 @@ bool RouteExport::routeExportInternalFlp(const RouteExportFormat& format, bool c
     {
       using namespace std::placeholders;
       auto exportFunc = &FlightplanIO::saveFlp;
+      rf::RouteAdjustOptions options = rf::DEFAULT_OPTS;
       if(crj)
       {
         // Adapt to the format changes between the different aircraft (not sure if these are real)
         if(msfs)
+        {
           exportFunc = &FlightplanIO::saveMsfsCrjFlp;
+          options = rf::DEFAULT_OPTS_MSFS_CRJ;
+        }
         else
           exportFunc = &FlightplanIO::saveCrjFlp;
       }
 
-      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS, std::bind(exportFunc, flightplanIO, _1, _2)))
+      if(exportFlighplan(routeFile, options, std::bind(exportFunc, flightplanIO, _1, _2)))
       {
         formatExportedCallback(format, routeFile);
         return true;

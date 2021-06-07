@@ -52,6 +52,8 @@ enum RouteAdjustOption
   /* Always add entry and exit waypoints for procedures. This is used for formats not supporting procedures. */
   DEFAULT_OPTS_NO_PROC = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT_ALWAYS,
 
+  DEFAULT_OPTS_MSFS_CRJ = rf::DEFAULT_OPTS | SAVE_AIRWAY_WP,
+
   /* LNMPLN save and load format. Does not mangle anything. */
   DEFAULT_OPTS_LNMPLN = FIX_PROC_ENTRY_EXIT | SAVE_LNMPLN,
 
