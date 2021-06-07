@@ -2508,40 +2508,6 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
           }
         }
       } // if((saveApproachWp && (leg.getProcedureType() & proc::PROCEDURE_ARRIVAL)) || ...
-
-      if(msfs && i == route.getDepartureAirportLegIndex())
-      {
-        // For MSFS: Always add runway information to departure airport =======================================
-        // Approach legs are not saved
-
-        QString departRw;
-        if(!sid.isEmpty() && !sid.procedureRunway.isEmpty())
-          // Use runway from SID if available
-          departRw = sid.procedureRunway;
-        else
-        {
-          // if there is a departure position on a runway and there is no SID
-          const RouteLeg& departureAirportLeg = route.getDepartureAirportLeg();
-          map::MapStart start = departureAirportLeg.getDepartureStart();
-          if(start.isRunway())
-            // Use runway from start position
-            departRw = start.runwayName;
-          else
-          {
-            // Pick best runway and ignore parking
-            NavApp::getAirportQuerySim()->getBestStartPositionForAirport(start, departureAirportLeg.getAirport().id);
-            departRw = start.runwayName;
-          }
-        }
-
-        if(!departRw.isEmpty())
-        {
-          int number = 0;
-          QString designator;
-          map::runwayNameSplit(departRw, &number, &designator);
-          entry.setRunway(QString::number(number), map::runwayDesignatorLong(designator));
-        }
-      }
     } // for(int i = 0; i < entries.size(); i++)
 
     // Now remove of all procedure legs in the flight plan =====================
