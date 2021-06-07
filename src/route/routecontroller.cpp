@@ -1430,7 +1430,12 @@ bool RouteController::saveFlightplanLnmInternal()
 {
   try
   {
+    // Update AIRAC cycle
     route.updateRouteCycleMetadata();
+
+    // Copy loaded procedures back to properties to ensure that only valid ones are saved
+    // Additionally remove duplicate waypoint
+    route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */, true /* cleanup route */);
 
     // Create a copy which allows to change altitude
     // Copy altitudes to flight plan entries
