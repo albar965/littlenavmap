@@ -2454,8 +2454,8 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 
           if(!rw.isEmpty())
           {
-            map::runwayNameSplit(rw, &number, &designator);
-            entry.setRunway(QString::number(number), map::runwayDesignatorLong(designator));
+            atools::fs::util::runwayNameSplit(rw, &number, &designator);
+            entry.setRunway(QString::number(number), atools::fs::util::runwayDesignatorLong(designator));
           }
         }
 
@@ -2576,8 +2576,8 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
         int number = 0;
         QString designator;
 
-        map::runwayNameSplit(appr.procedureRunway, &number, &designator);
-        entry.setRunway(QString::number(number), map::runwayDesignatorLong(designator));
+        atools::fs::util::runwayNameSplit(appr.procedureRunway, &number, &designator);
+        entry.setRunway(QString::number(number), atools::fs::util::runwayDesignatorLong(designator));
         entry.setApproach(appr.approachType, appr.approachSuffix);
       }
     }
@@ -2852,7 +2852,7 @@ void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ils, map::MapRunway
     if(ils.isEmpty())
     {
       // ILS does not even match runway - try fuzzy
-      QStringList variants = map::runwayNameVariants(approachLegs.runwayEnd.name);
+      QStringList variants = atools::fs::util::runwayNameVariants(approachLegs.runwayEnd.name);
       for(const QString& runwayVariant : variants)
         ils.append(NavApp::getMapQuery()->getIlsByAirportAndRunway(destIdent, runwayVariant));
     }

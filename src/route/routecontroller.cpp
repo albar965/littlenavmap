@@ -71,6 +71,7 @@
 #include "gui/choicedialog.h"
 #include "geo/calculations.h"
 #include "routing/routenetworkloader.h"
+#include "fs/util/fsutil.h"
 
 #include <QClipboard>
 #include <QFile>
@@ -961,7 +962,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   // FSX and P3D use this field for helipad or runway numbers where the latter one is zero prefixed.
   // MSFS has no helipad number and we need a zero prefix added to the runway number to allow database queries
   if(format == atools::fs::pln::MSFS_PLN)
-    flightplan.setDepartureParkingName(map::runwayNamePrefixZero(flightplan.getDepartureParkingName()));
+    flightplan.setDepartureParkingName(atools::fs::util::runwayNamePrefixZero(flightplan.getDepartureParkingName()));
 
   assignFlightplanPerfProperties(flightplan);
   route.setFlightplan(flightplan);
@@ -1068,7 +1069,6 @@ void RouteController::loadAlternateFromFlightplan()
   alternateErrors = notFound;
 }
 
-/* Fill the route procedure legs structures with data based on the procedure properties in the flight plan */
 void RouteController::loadProceduresFromFlightplan(bool clearOldProcedureProperties)
 {
   if(route.isEmpty())
@@ -4634,7 +4634,8 @@ QString RouteController::buildFlightplanLabel(bool print, bool widget, bool titl
           approachRunway = arrivalLegs.runwayEnd.name;
         }
 
-        if(!approachRunway.isEmpty() && !starRunway.isEmpty() && !map::runwayEqual(approachRunway, starRunway))
+        if(!approachRunway.isEmpty() && !starRunway.isEmpty() &&
+           !atools::fs::util::runwayEqual(approachRunway, starRunway))
         {
           boldTextFlag << true;
           procedureText.append(

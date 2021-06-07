@@ -32,6 +32,7 @@
 #include "navapp.h"
 #include "settings/settings.h"
 #include "db/databasemanager.h"
+#include "fs/util/fsutil.h"
 
 using namespace Marble;
 using namespace atools::sql;
@@ -488,7 +489,7 @@ map::MapIls MapQuery::getIlsById(int id)
 QVector<map::MapIls> MapQuery::getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway)
 {
   QVector<map::MapIls> ils;
-  for(const QString& rname: map::runwayNameZeroPrefixVariants(runway))
+  for(const QString& rname : atools::fs::util::runwayNameZeroPrefixVariants(runway))
   {
     ils = ilsByAirportAndRunway(airportIdent, rname);
     if(!ils.isEmpty())
@@ -987,7 +988,7 @@ const QList<map::MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
 void MapQuery::getRunwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name,
                                        const map::MapAirport& airport, bool navData)
 {
-  for(const QString& rname: map::runwayNameZeroPrefixVariants(name))
+  for(const QString& rname : atools::fs::util::runwayNameZeroPrefixVariants(name))
   {
     runwayEndByNameFuzzy(runwayEnds, rname, airport, navData);
     if(!runwayEnds.isEmpty())
@@ -1003,7 +1004,7 @@ void MapQuery::runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const 
 
   if(!name.isEmpty())
   {
-    QString bestRunway = map::runwayBestFit(name, aquery->getRunwayNames(airport.id));
+    QString bestRunway = atools::fs::util::runwayBestFit(name, aquery->getRunwayNames(airport.id));
 
     if(!bestRunway.isEmpty())
       getMapObjectByIdent(result, map::RUNWAYEND, bestRunway, QString(), airport.ident,
@@ -1014,7 +1015,7 @@ void MapQuery::runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const 
   {
     // Get heading of runway by name
     int rwnum = 0;
-    map::runwayNameSplit(name, &rwnum);
+    atools::fs::util::runwayNameSplit(name, &rwnum);
 
     // Create a dummy with the airport position as the last resort
     map::MapRunwayEnd end;

@@ -41,6 +41,7 @@
 #include "gui/griddelegate.h"
 #include "geo/calculations.h"
 #include "gui/dialog.h"
+#include "fs/util/fsutil.h"
 
 #include <QMenu>
 #include <QMouseEvent>
@@ -422,7 +423,7 @@ void ProcedureSearch::updateFilterBoxes()
     {
       QSet<QString> runways;
       for(const SqlRecord& recApp : *recAppVector)
-        runways.insert(map::runwayBestFit(recApp.valueStr("runway_name"), runwayNames));
+        runways.insert(atools::fs::util::runwayBestFit(recApp.valueStr("runway_name"), runwayNames));
 
       // Sort list of runways
       QList<QString> runwaylist = runways.toList();
@@ -466,7 +467,7 @@ void ProcedureSearch::fillApproachTreeWidget()
       // Collect all procedures from the database
       for(SqlRecord recApp : *recAppVector)
       {
-        QString rwname = map::runwayBestFit(recApp.valueStr("runway_name"), runwayNames);
+        QString rwname = atools::fs::util::runwayBestFit(recApp.valueStr("runway_name"), runwayNames);
 
         proc::MapProcedureTypes type = buildTypeFromApproachRec(recApp);
 

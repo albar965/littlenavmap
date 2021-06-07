@@ -156,6 +156,7 @@ int main(int argc, char *argv[])
     QGuiApplication::setAttribute(Qt::AA_Use96Dpi, true);
   }
 
+  // Show dialog on exception in main event queue - can be disabled for debugging purposes
   NavApp::setShowExceptionDialog(earlySettings.value("Options/ExceptionDialog", true).toBool());
 
   // Create application object ===========================================================

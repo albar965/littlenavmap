@@ -27,6 +27,7 @@
 #include "settings/settings.h"
 #include "navapp.h"
 #include "sql/sqlutil.h"
+#include "fs/util/fsutil.h"
 
 using namespace Marble;
 using namespace atools::sql;
@@ -295,7 +296,7 @@ map::MapRunwayEnd AirportQuery::getRunwayEndById(int id)
 void AirportQuery::getRunwayEndByNames(map::MapResult& result, const QString& runwayName,
                                        const QString& airportIdent)
 {
-  for(const QString& rname: map::runwayNameZeroPrefixVariants(runwayName))
+  for(const QString& rname : atools::fs::util::runwayNameZeroPrefixVariants(runwayName))
   {
     runwayEndByNames(result, rname, airportIdent);
     if(!result.runwayEnds.isEmpty())
@@ -448,7 +449,7 @@ void AirportQuery::getBestStartPositionForAirport(map::MapStart& start, int airp
   {
     while(query.next())
     {
-      if(map::runwayEqual(runwayName, query.valueStr("runway_name")))
+      if(atools::fs::util::runwayEqual(runwayName, query.valueStr("runway_name")))
       {
         mapTypesFactory->fillStart(query.record(), start);
         break;
@@ -482,7 +483,7 @@ void AirportQuery::getBestStartPositionForAirport(map::MapStart& start, int airp
 void AirportQuery::getStartByNameAndPos(map::MapStart& start, int airportId,
                                         const QString& runwayEndName, const ageo::Pos& position)
 {
-  for(const QString& rname: map::runwayNameZeroPrefixVariants(runwayEndName))
+  for(const QString& rname : atools::fs::util::runwayNameZeroPrefixVariants(runwayEndName))
   {
     startByNameAndPos(start, airportId, rname, position);
     if(start.isValid())
@@ -810,7 +811,7 @@ QStringList AirportQuery::getRunwayNames(int airportId)
 map::MapRunwayEnd AirportQuery::getRunwayEndByName(int airportId, const QString& runway)
 {
   map::MapRunwayEnd end;
-  for(const QString& rname: map::runwayNameZeroPrefixVariants(runway))
+  for(const QString& rname : atools::fs::util::runwayNameZeroPrefixVariants(runway))
   {
     end = runwayEndByName(airportId, rname);
     if(end.isValid())
@@ -826,10 +827,10 @@ map::MapRunwayEnd AirportQuery::runwayEndByName(int airportId, const QString& ru
   {
     for(const map::MapRunway& mr : *aprunways)
     {
-      if(map::runwayEqual(mr.primaryName, runway))
+      if(atools::fs::util::runwayEqual(mr.primaryName, runway))
         return getRunwayEndById(mr.primaryEndId);
 
-      if(map::runwayEqual(mr.secondaryName, runway))
+      if(atools::fs::util::runwayEqual(mr.secondaryName, runway))
         return getRunwayEndById(mr.secondaryEndId);
     }
   }

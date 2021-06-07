@@ -24,6 +24,7 @@
 #include "query/querytypes.h"
 #include "common/constants.h"
 #include "common/maptypes.h"
+#include "fs/util/fsutil.h"
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlDatabase;
@@ -152,7 +153,7 @@ const atools::sql::SqlRecordVector *InfoQuery::getIlsInformationSimByName(const 
                                                                           const QString& runway)
 {
   const atools::sql::SqlRecordVector *retval = nullptr;
-  for(const QString& rname: map::runwayNameZeroPrefixVariants(runway))
+  for(const QString& rname : atools::fs::util::runwayNameZeroPrefixVariants(runway))
   {
     retval = ilsInformationSimByName(airportIdent, rname);
     if(retval != nullptr && !retval->isEmpty())

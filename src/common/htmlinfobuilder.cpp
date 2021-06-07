@@ -1299,7 +1299,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
 
         int rwEndId = recApp.valueInt("runway_end_id");
 
-        QString runwayIdent = map::runwayBestFit(recApp.valueStr("runway_name"), runwayNames);
+        QString runwayIdent = atools::fs::util::runwayBestFit(recApp.valueStr("runway_name"), runwayNames);
         QString runwayTxt = runwayIdent;
 
         if(!runwayTxt.isEmpty())

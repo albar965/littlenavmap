@@ -1121,37 +1121,6 @@ QString startType(const map::MapStart& start);
 
 QString helipadText(const map::MapHelipad& helipad);
 
-/* Split runway name into parts and return true if name matches a runway number */
-bool runwayNameSplit(const QString& name, int *number = nullptr, QString *designator = nullptr);
-
-/* Split runway name into parts and return true if name matches a runway number. Number is zero prefixed. */
-bool runwayNameSplit(const QString& name, QString *number = nullptr, QString *designator = nullptr);
-
-QString runwayDesignatorLong(const QString& name);
-
-/* Get the closes matching runway name from the list of airport runways or empty if none */
-QString runwayBestFit(const QString& procRunwayName, const QStringList& airportRunwayNames);
-
-/* Gives all variants of the runway (+1 and -1) plus the original one as the first in the list.
- *  Can deal with prefix "RW" and keeps it. */
-QStringList runwayNameVariants(QString name);
-
-/* Returns all variants of zero prefixed runways 09 vs 9. E.g. for "09C" returns "9C".
- *  Can deal with prefix "RW" and keeps it. */
-QStringList runwayNameZeroPrefixVariants(QString name);
-
-/* Prefixes any runway number with zeros if needed. "9C" to "09C", for example. Returns "name" if not a runway. */
-QString runwayNamePrefixZero(const QString& name);
-
-/* Gives all variants of the runway (+1 and -1) plus the original one as the first in the list for an
- * ARINC name like N32 or I19-Y */
-QStringList arincNameNameVariants(const QString& name);
-
-/* Compare runway numbers fuzzy by ignoring a deviation of one */
-bool runwayAlmostEqual(const QString& name1, const QString& name2);
-
-/* Compare runway numbers by ignoring leading zero */
-bool runwayEqual(QString name1, QString name2);
 
 /* Route index from base type */
 int routeIndex(const map::MapBase *base);

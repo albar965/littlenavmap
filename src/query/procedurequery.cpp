@@ -26,6 +26,7 @@
 #include "common/constants.h"
 #include "geo/line.h"
 #include "fs/pln/flightplan.h"
+#include "fs/util/fsutil.h"
 
 #include "sql/sqlquery.h"
 
@@ -2257,7 +2258,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
       if(approachId == -1)
       {
         // Try again with variants of the ARINC approach name in case the runway was renamed
-        QStringList variants = map::arincNameNameVariants(arincName);
+        QStringList variants = atools::fs::util::arincNameNameVariants(arincName);
         if(!variants.isEmpty())
           variants.removeFirst();
 
@@ -2495,7 +2496,7 @@ int ProcedureQuery::findApproachId(const map::MapAirport& airport, atools::sql::
   if(id == -1 && !runway.isEmpty())
   {
     // Try again with runway variants in case runway was renamed and runway is required
-    QStringList variants = map::runwayNameVariants(runway);
+    QStringList variants = atools::fs::util::runwayNameVariants(runway);
 
     if(!variants.isEmpty())
       // Remove original since this was already queried
@@ -2520,7 +2521,7 @@ bool ProcedureQuery::doesRunwayMatch(const QString& runway, const QString& runwa
     // Nothing to match - get all procedures
     return true;
 
-  if(map::runwayEqual(runway, runwayFromQuery))
+  if(atools::fs::util::runwayEqual(runway, runwayFromQuery))
     return true;
 
   return doesSidStarRunwayMatch(runway, arincName, airportRunways);
@@ -2537,13 +2538,13 @@ bool ProcedureQuery::doesSidStarRunwayMatch(const QString& runway, const QString
   {
     // Check which runways are assigned from values like "RW12B"
     QString rwBaseName = arincName.mid(2, 2);
-    if(airportRunways.contains(runway) && map::runwayEqual(runway, rwBaseName + "L"))
+    if(airportRunways.contains(runway) && atools::fs::util::runwayEqual(runway, rwBaseName + "L"))
       return true;
 
-    if(airportRunways.contains(runway) && map::runwayEqual(runway, rwBaseName + "R"))
+    if(airportRunways.contains(runway) && atools::fs::util::runwayEqual(runway, rwBaseName + "R"))
       return true;
 
-    if(airportRunways.contains(runway) && map::runwayEqual(runway, rwBaseName + "C"))
+    if(airportRunways.contains(runway) && atools::fs::util::runwayEqual(runway, rwBaseName + "C"))
       return true;
   }
 
