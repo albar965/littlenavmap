@@ -1,12 +1,15 @@
 Numbers (#) refer to GitHub issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
+This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
-# Version 2.6.12.beta
+# Version 2.6.13
 
 This version contains mostly bug fixes, adaption to MSFS scenery library changes, support for the new
 X-Plane TCAS scheme and a reworked web user interface.
+
+Version 2.6.12.beta was an unofficial beta release.
 
 ## Important Notes
 
@@ -16,11 +19,12 @@ X-Plane TCAS scheme and a reworked web user interface.
 * Aircraft label settings are reset back to default. Adjust these in the options dialog on page
   `Map Display 2`.
 * All MSFS scenery library related changes need at least MSFS version 1.16.2 .
+* MSFS users need to reload the scenery library to new features like SID and STAR.
 * Do not use the scenery library mode `Do not use Navigraph Database` if you have the Navigraph
   udpate installed. You will see errors in procedures. Instead update the scenery database of *Little
   Navmap* using the Navigraph FMS Data Manager.
 
-## Changes from 2.6.11 to 2.6.12.beta
+## Changes from 2.6.11 to 2.6.13
 
 ### Flight Plans
 
@@ -42,8 +46,9 @@ X-Plane TCAS scheme and a reworked web user interface.
 * Enabled departure parking position for MSFS flight plan export and import. Enabled check for
   parking position for MSFS export which shows a warning if starting on a runway.
 * More relaxed user waypoint naming conventions for MSFS. Now allowing more special characters.
-* Corrected Aerosoft CRJ flight plan export. Adapted changed keywords in flp file and compressing
-  airway segments now. #632
+* Corrected Aerosoft CRJ flight plan export as far as possible. Now exporting a list of waypoints
+  instead of airway routes for MSFS CRJ to minimize issues when loading plan in aircraft.
+  Adapted changed keywords in `.flp` file and compressing airway segments now. #632
 * Added export of modified PLN format for Integrated Simavionics / ISG devices and gauges.
 * Export option for MSFS PMS50 GTN750 Garmin added. This export saves the flight plan using a fixed
   filename `fpl.pln`.
@@ -52,6 +57,8 @@ X-Plane TCAS scheme and a reworked web user interface.
 * Corrected default flight plan pattern to use departure and destination ident if flight plan
   pattern is empty. Used departure airport ident wrongly before.
 * Changes to allow updates for new export formats.
+* Now clearing invalid procedures (red error message below flight plan table) before saving LNMPLN.
+  Reloading a saved LNMPLN clears any error messages now.
 
 ### Procedures and Scenery Library
 
@@ -122,6 +129,12 @@ X-Plane TCAS scheme and a reworked web user interface.
   to avoid blocking main thread on startup. This could have caused stutters when starting X-Plane.
 * Chinese translation revised. Thanks to [Tong Hui](https://github.com/tonghuix) and
   [yudongx](https://github.com/yudongx) for their effort.
+
+===============================================================================
+
+# Version 2.6.12.beta
+
+Unofficial beta release.
 
 ===============================================================================
 
