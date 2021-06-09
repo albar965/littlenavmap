@@ -45,6 +45,8 @@ Version 2.6.12.beta was an unofficial beta release.
 
 * Enabled departure parking position for MSFS flight plan export and import. Enabled check for
   parking position for MSFS export which shows a warning if starting on a runway.
+  You can also set a fuel pad as starting position but note that runways and helipads as starting
+  positions will be ignored by MSFS.
 * More relaxed user waypoint naming conventions for MSFS. Now allowing more special characters.
 * Corrected Aerosoft CRJ flight plan export as far as possible. Now exporting a list of waypoints
   instead of airway routes for MSFS CRJ to minimize issues when loading plan in aircraft.
@@ -129,6 +131,7 @@ Version 2.6.12.beta was an unofficial beta release.
   to avoid blocking main thread on startup. This could have caused stutters when starting X-Plane.
 * Chinese translation revised. Thanks to [Tong Hui](https://github.com/tonghuix) and
   [yudongx](https://github.com/yudongx) for their effort.
+* Small updates to user manual regarding MSFS limitations.
 
 ===============================================================================
 
