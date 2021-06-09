@@ -14,8 +14,8 @@ Version 2.6.12.beta was an unofficial beta release.
 ## Important Notes
 
 * You have to update/reinstall *Little Navconnect* and *Little Xpconnect* if you use these since
-  the data protocol has changed. This version is compatible with *Little Navconnect* 2.6.10.beta
-  and *Little Xpconnect* 1.0.23.beta or newer.
+  the data protocol has changed. This version is compatible with *Little Navconnect* 2.6.11
+  and *Little Xpconnect* 1.0.24 or newer.
 * Aircraft label settings are reset back to default. Adjust these in the options dialog on page
   `Map Display 2`.
 * All MSFS scenery library related changes need at least MSFS version 1.16.2 .
