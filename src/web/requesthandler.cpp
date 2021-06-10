@@ -88,20 +88,14 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
            << "header" << endl << request.getHeaderMap()
            << "parameter" << endl << request.getParameterMap();
 
-  if(path.contains(".."))
-  {
-    // Not allowed to go parent for security
-    showError(request, response, 403, "Forbidden.");
-    return;
-  }
-
-  Parameter params(request);
   if(path == "/mapimage")
     // ===========================================================================
     // Requests for map images only - either with or without session
     handleMapImage(request, response);
   else
   {
+    Parameter params(request);
+
     HttpSession session = getSession(request, response);
     if(path == "/refresh")
     {
@@ -121,6 +115,13 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
     }
     else // all other paths
     {
+      if(path.contains(".."))
+      {
+        // Not allowed to go parent for security
+        showError(request, response, 403, "Forbidden.");
+        return;
+      }
+
       if(params.has("mapcmd"))
         // All map commands like "in", "out", "left" or "right" need a session
         getSession(request, response).set("mapcmd", params.asStr("mapcmd"));
@@ -298,17 +299,13 @@ void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& response
   Parameter params(request);
 
   // Extract values from parameter list ===========================================
-  int quality = params.asInt("quality", -1);
   int width = params.asInt("width", 0);
   int height = params.asInt("height", 0);
 
-  // Image format, jpg is default and only jpg and png allowed ===========================================
-  QString format = params.asEnum("format", "jpg", {"jpg", "png"});
-
-  MapPixmap mapPixmap;
-
   // Distance as KM
   float requestedDistanceKm = atools::geo::nmToKm(params.asFloat("distance", 100.0f));
+
+  MapPixmap mapPixmap;
 
   if(params.has("session"))
   {
@@ -399,6 +396,11 @@ void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& response
     QByteArray bytes;
     QBuffer buffer(&bytes);
     buffer.open(QIODevice::WriteOnly);
+
+    int quality = params.asInt("quality", -1);
+
+    // Image format, jpg is default and only jpg and png allowed ===========================================
+    QString format = params.asEnum("format", "jpg", {"jpg", "png"});
 
     if(format == "jpg")
     {
