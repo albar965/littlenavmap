@@ -108,7 +108,6 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
       // ===========================================================================
       // Remember the refresh values in the session. This is called when changing the refresh drop down boxes and
       // is used to keep the value when the page is reloaded
-      session = getSession(request, response);
 
       if(params.has("aircraftrefresh"))
         session.set("aircraftrefresh", params.asInt("aircraftrefresh"));
@@ -123,7 +122,7 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
     {
       if(params.has("mapcmd"))
         // All map commands like "in", "out", "left" or "right" need a session
-        getSession(request, response).set("mapcmd", params.asStr("mapcmd"));
+        session.set("mapcmd", params.asStr("mapcmd"));
 
       if(!request.getParameter("airportident").isEmpty())
         // Remember the ident in the session. This is used to keep the value when the page is reloaded.
@@ -181,19 +180,19 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
             // Put refresh values back in page by inserting select control ==============================
             if(t.contains("{aircraftrefreshsel}"))
               t.setVariable("aircraftrefreshsel",
-                            buildRefreshSelect(getSession(request, response).get("aircraftrefresh").toInt()));
+                            buildRefreshSelect(session.get("aircraftrefresh").toInt()));
 
             if(t.contains("{flightplanrefreshsel}"))
               t.setVariable("flightplanrefreshsel",
-                            buildRefreshSelect(getSession(request, response).get("flightplanrefresh").toInt()));
+                            buildRefreshSelect(session.get("flightplanrefresh").toInt()));
 
             if(t.contains("{maprefreshsel}"))
               t.setVariable("maprefreshsel",
-                            buildRefreshSelect(getSession(request, response).get("maprefresh").toInt()));
+                            buildRefreshSelect(session.get("maprefresh").toInt()));
 
             if(t.contains("{progressrefreshsel}"))
               t.setVariable("progressrefreshsel",
-                            buildRefreshSelect(getSession(request, response).get("progressrefresh").toInt()));
+                            buildRefreshSelect(session.get("progressrefresh").toInt()));
 
             // ===========================================================================
             // Aircraft registration, weight, etc.
@@ -475,7 +474,12 @@ void RequestHandler::showError(HttpRequest& request, HttpResponse& response, int
 stefanfrings::HttpSession RequestHandler::getSession(HttpRequest& request, HttpResponse& response)
 {
   HttpSession session = WebApp::getSessionStore()->getSession(request, response);
-  if(!session.contains("lon") || !session.contains("lat"))
+  if(session.contains("lon") && session.contains("lat"))
+  {
+    qInfo() << Q_FUNC_INFO << "Found session" << session.getAll();
+    return session;
+  }
+  else
   {
     // Session does not exist - initialize with defaults from current map view
     atools::geo::Pos pos = emit getCurrentMapWidgetPos();
@@ -484,10 +488,8 @@ stefanfrings::HttpSession RequestHandler::getSession(HttpRequest& request, HttpR
     session.set("lon", pos.getLonX());
     session.set("lat", pos.getLatY());
     qInfo() << Q_FUNC_INFO << "Created session" << session.getAll();
+    return session;
   }
-  else
-    qInfo() << Q_FUNC_INFO << "Found session" << session.getAll();
-  return session;
 }
 
 QString RequestHandler::buildRefreshSelect(int defaultValue)
