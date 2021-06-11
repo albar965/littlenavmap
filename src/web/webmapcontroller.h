@@ -45,9 +45,19 @@ struct MapPixmap
     return !error.isEmpty();
   }
 
+  bool hasNoError() const
+  {
+    return error.isEmpty();
+  }
+
   bool isValid() const
   {
     return !pixmap.isNull();
+  }
+
+  bool isInvalid() const
+  {
+    return pixmap.isNull();
   }
 
 };

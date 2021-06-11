@@ -316,24 +316,23 @@ void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& response
     // Stateful handling using a session which has the last zoom and position
     HttpSession session = getSession(request, response);
 
-    if(session.contains("lon") && session.contains("lat") &&
-       session.contains("requested_distance") && session.contains("corrected_distance"))
-    {
-      // Session already contains distance and position values from an earlier call
-      // Values are also initialized from visible map display when creating session
-      QString mapcmd = params.asStr("mapcmd");
+    // Session already contains distance and position values from an earlier call
+    // Values are also initialized from visible map display when creating session
+    QString mapcmd = params.asStr("mapcmd");
 
-      if(mapcmd == "user")
-        // Show user aircraft
-        mapPixmap = emit getPixmapObject(width, height, web::USER_AIRCRAFT, QString(), requestedDistanceKm);
-      else if(mapcmd == "route")
-        // Center flight plan
-        mapPixmap = emit getPixmapObject(width, height, web::ROUTE, QString(), requestedDistanceKm);
-      else if(mapcmd == "airport")
-        // Show an airport by ident
-        mapPixmap = emit getPixmapObject(width, height, web::AIRPORT, params.asStr(
-                                           "airport").toUpper(), requestedDistanceKm);
-      else
+    if(mapcmd == "user")
+      // Show user aircraft
+      mapPixmap = emit getPixmapObject(width, height, web::USER_AIRCRAFT, QString(), requestedDistanceKm);
+    else if(mapcmd == "route")
+      // Center flight plan
+      mapPixmap = emit getPixmapObject(width, height, web::ROUTE, QString(), requestedDistanceKm);
+    else if(mapcmd == "airport")
+      // Show an airport by ident
+      mapPixmap = emit getPixmapObject(width, height, web::AIRPORT, params.asStr(
+                                         "airport").toUpper(), requestedDistanceKm);
+    else
+    {
+      if(session.contains("lon") && session.contains("lat") && session.contains("corrected_distance"))        // a previous PR made check for "requested_distance" obsolete
       {
         // When zooming in or out use the last corrected distance (i.e. actual distance) as a base
         float distance = (mapcmd == "in" || mapcmd == "out") ?
@@ -345,54 +344,63 @@ void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& response
                                                                session.get("lat").toFloat()),
                                               distance, mapcmd);
       }
+      else
+        showError(request, response, 500, "Internal server error. Incomplete session.");
+    }
 
-      if(!mapPixmap.hasError())
-      {
-        // Push results from last map call into session
-        session.set("requested_distance", QVariant(mapPixmap.requestedDistanceKm));
-        session.set("corrected_distance", QVariant(mapPixmap.correctedDistanceKm));
-        session.set("lon", mapPixmap.pos.getLonX());
-        session.set("lat", mapPixmap.pos.getLatY());
-      }
+    if(mapPixmap.hasNoError())
+    {
+      // Push results from last map call into session
+      session.set("requested_distance", QVariant(mapPixmap.requestedDistanceKm));
+      session.set("corrected_distance", QVariant(mapPixmap.correctedDistanceKm));
+      session.set("lon", mapPixmap.pos.getLonX());
+      session.set("lat", mapPixmap.pos.getLatY());
     }
     else
-      showError(request, response, 500, "Internal server error. Incomplete session.");
-  }
-  // ============================================================================
-  // Session-less / state-less calls ============================================
-  else if(params.has("user"))
-    // User aircraft =======================
-    mapPixmap = emit getPixmapObject(width, height, web::USER_AIRCRAFT, QString(), requestedDistanceKm);
-  else if(params.has("route"))
-    // Center flight plan =======================
-    mapPixmap = emit getPixmapObject(width, height, web::ROUTE, QString(), requestedDistanceKm);
-  else if(params.has("airport"))
-    // Show airport =======================
-    mapPixmap = emit getPixmapObject(width, height, web::AIRPORT, params.asStr("airport"), requestedDistanceKm);
-  else if(params.has("leftlon") && params.has("toplat") && params.has("rightlon") && params.has("bottomlat"))
-  {
-    // Show rectangle =======================
-    atools::geo::Rect rect(params.asFloat("leftlon"), params.asFloat("toplat"),
-                           params.asFloat("rightlon"), params.asFloat("bottomlat"));
-    mapPixmap = emit getPixmapRect(width, height, rect);
-  }
-  else if(params.has("distance") || (params.has("lon") && params.has("lat")))
-  {
-    // Show position =======================
-    atools::geo::Pos pos;
-    if(params.has("lon") && params.has("lat"))
-    {
-      pos.setLonX(params.asFloat("lon"));
-      pos.setLatY(params.asFloat("lat"));
-    }
-
-    mapPixmap = emit getPixmapPosDistance(width, height, pos, requestedDistanceKm, QString());
+      return showErrorPixmap(response, width, height, 404, mapPixmap.error);
   }
   else
-    // Show current map view =======================
-    mapPixmap = emit getPixmap(width, height);
+  {
+    // ============================================================================
+    // Session-less / state-less calls ============================================
+    if(params.has("user"))
+      // User aircraft =======================
+      mapPixmap = emit getPixmapObject(width, height, web::USER_AIRCRAFT, QString(), requestedDistanceKm);
+    else if(params.has("route"))
+      // Center flight plan =======================
+      mapPixmap = emit getPixmapObject(width, height, web::ROUTE, QString(), requestedDistanceKm);
+    else if(params.has("airport"))
+      // Show airport =======================
+      mapPixmap = emit getPixmapObject(width, height, web::AIRPORT, params.asStr("airport"), requestedDistanceKm);
+    else if(params.has("leftlon") && params.has("toplat") && params.has("rightlon") && params.has("bottomlat"))
+    {
+      // Show rectangle =======================
+      atools::geo::Rect rect(params.asFloat("leftlon"), params.asFloat("toplat"),
+                             params.asFloat("rightlon"), params.asFloat("bottomlat"));
+      mapPixmap = emit getPixmapRect(width, height, rect);
+    }
+    else if(params.has("distance") || (params.has("lon") && params.has("lat")))
+    {
+      // Show position =======================
+      atools::geo::Pos pos;
+      if(params.has("lon") && params.has("lat"))
+      {
+        pos.setLonX(params.asFloat("lon"));
+        pos.setLatY(params.asFloat("lat"));
+      }
 
-  if(mapPixmap.isValid() && !mapPixmap.hasError())
+      mapPixmap = emit getPixmapPosDistance(width, height, pos, requestedDistanceKm, QString());
+    }
+    else
+      // Show current map view =======================
+      mapPixmap = emit getPixmap(width, height);
+
+    if(mapPixmap.hasError())
+      // Show error message as image
+      return showErrorPixmap(response, width, height, 404, mapPixmap.error);
+  }
+
+  if(mapPixmap.isValid())
   {
     // ===========================================================================
     // Write pixmap as image
