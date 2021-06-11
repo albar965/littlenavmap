@@ -103,7 +103,13 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
   else
   {
     HttpSession session = getSession(request, response);
-    if(path == "/refresh")
+    if(path == "/zoom")
+    {
+      session.set("requested_distance", QVariant(params.asStr("to", "32.0")));        // use value which is used as default on reading distance
+      response.setHeader("Content-Type", "application/json");                         // web ui expects a response (currently any)
+      response.write(session.get("requested_distance").toString().toUtf8());
+    }
+    else if(path == "/refresh")
     {
       // ===========================================================================
       // Remember the refresh values in the session. This is called when changing the refresh drop down boxes and
@@ -293,7 +299,7 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
   } // else mapimage
 }
 
-void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& response)
+inline void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& response)
 {
   Parameter params(request);
 
@@ -307,14 +313,14 @@ void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& response
 
   MapPixmap mapPixmap;
 
-  // Distance as KM
-  float requestedDistanceKm = atools::geo::nmToKm(params.asFloat("distance", 100.0f));
-
   if(params.has("session"))
   {
     // ===========================================================================
     // Stateful handling using a session which has the last zoom and position
     HttpSession session = getSession(request, response);
+
+    // Distance as KM
+    float requestedDistanceKm = atools::geo::nmToKm(params.asFloat("distance", session.contains("requested_distance") ? session.get("requested_distance").toFloat() : 32.0f));     // set default as value which last was requested otherwise set it as value JS delivers as default on opening from default HTML value
 
     // Session already contains distance and position values from an earlier call
     // Values are also initialized from visible map display when creating session
@@ -361,6 +367,9 @@ void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& response
   }
   else
   {
+    // Distance as KM
+    float requestedDistanceKm = atools::geo::nmToKm(params.asFloat("distance", 32.0f));     // set default as value which JS delivers as default on opening from default HTML value
+
     // ============================================================================
     // Session-less / state-less calls ============================================
     if(params.has("user"))
@@ -487,8 +496,8 @@ stefanfrings::HttpSession RequestHandler::getSession(HttpRequest& request, HttpR
   {
     // Session does not exist - initialize with defaults from current map view
     atools::geo::Pos pos = emit getCurrentMapWidgetPos();
-    session.set("requested_distance", pos.getAltitude());
-    session.set("corrected_distance", pos.getAltitude());
+    session.set("requested_distance", QVariant(32.0f));             // 32.0 is the default JS delivers from new web ui HTML default
+    session.set("corrected_distance", QVariant(32.0f));             // 32.0 is the default JS delivers from new web ui HTML default
     session.set("lon", pos.getLonX());
     session.set("lat", pos.getLatY());
     qInfo() << Q_FUNC_INFO << "Created session" << session.getAll();

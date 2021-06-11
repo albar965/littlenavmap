@@ -108,9 +108,9 @@ function injectUpdates(origin) {
     var imageRequestTimeout = null;
     ocw.sizeMapToContainer = function() {
       ocw.clearTimeout(imageRequestTimeout);
-      updateMapImage(refreshTypeWAC.checked ? ("mapcmd=user&distance=" + getZoomDistance() + "&cmd") : ("distance=" + getZoomDistance() + "&reload"), resizingMapQuality);
+      updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&cmd" : "&reload", resizingMapQuality);
       imageRequestTimeout = ocw.setTimeout(function() {       // update after the resizing stopped to have an image for the final size "for certain"
-        updateMapImage(refreshTypeWAC.checked ? ("mapcmd=user&distance=" + getZoomDistance() + "&cmd") : ("distance=" + getZoomDistance() + "&reload"), defaultMapQuality, true);
+        updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&cmd" : "&reload", defaultMapQuality, true);
       }, 200);
     };
 
@@ -217,7 +217,7 @@ function injectUpdates(origin) {
 
       function requester() {
         timeStartLastRequest = performance.now();
-        updateMapImage(refreshTypeWAC.checked ? ("mapcmd=user&distance=" + getZoomDistance() + "&cmd") : ("distance=" + getZoomDistance() + "&reload"), defaultMapQuality, false, notifiable);
+        updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&cmd" : "&reload", defaultMapQuality, false, notifiable);
       }
 
       function looper() {
@@ -257,7 +257,7 @@ function injectUpdates(origin) {
     };
 
     ocw.refreshMap = function() {
-      updateMapImage(refreshTypeWAC.checked ? ("mapcmd=user&distance=" + getZoomDistance() + "&cmd") : ("distance=" + getZoomDistance() + "&reload"), defaultMapQuality, true);
+      updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&cmd" : "&reload", defaultMapQuality, true);
     };
 
 
@@ -282,7 +282,7 @@ function injectUpdates(origin) {
     };
 
     ocw.centerMapOnAircraft = function() {
-      updateMapImage("mapcmd=user&distance=" + getZoomDistance() + "&cmd", defaultMapQuality, true);
+      updateMapImage("mapcmd=user&cmd", defaultMapQuality, true);
     };
 
     // caring and handling state changes and restoration after content switch
@@ -291,12 +291,16 @@ function injectUpdates(origin) {
     });
     refreshTypeWAC.checked = retrieveState("refreshwithaircraft", false);
     centerDistance.addEventListener("change", function() {
-      storeState("centerdistance", this.value);
+      var xhttp = new XMLHttpRequest();
+      xhttp.open("GET", "/zoom?to=" + getZoomDistance(), false);
+      xhttp.send();
       ocw.checkRefresh();
+      storeState("centerdistance", this.value);
     });
     retrievedState = retrieveState("centerdistance", null);
     if(retrievedState !== null) {
       centerDistance.value = retrievedState;
+      centerDistance.dispatchEvent(new Event("change"));
       ocd.querySelector('#refreshvalue2').textContent = retrievedState;
     }
 
@@ -325,12 +329,12 @@ function injectUpdates(origin) {
 
     // override default function to stay within our new ui look
     ocw.submitMapRouteCmd = function() {
-      handleAutomap(function(){updateMapImage("mapcmd=route&distance=" + getZoomDistance() + "&cmd", defaultMapQuality, true)});
+      handleAutomap(function(){updateMapImage("mapcmd=route&cmd", defaultMapQuality, true)});
     };
 
     // override default function to stay within our new ui look
     ocw.submitMapAirportCmd = function() {
-      handleAutomap(function(){updateMapImage("mapcmd=airport&airport=" + airportText.value + "&distance=" + getZoomDistance() + "&cmd", defaultMapQuality, true)});
+      handleAutomap(function(){updateMapImage("mapcmd=airport&airport=" + airportText.value + "&cmd", defaultMapQuality, true)});
     };
 
 
