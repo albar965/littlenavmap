@@ -18,7 +18,7 @@
 #ifndef LNM_WEBTOOLS_H
 #define LNM_WEBTOOLS_H
 
-#include <QHash>
+#include <QMultiMap>
 
 namespace stefanfrings {
 class HttpRequest;
@@ -52,7 +52,7 @@ public:
   bool has(const QString& key) const;
 
 private:
-  QHash<QString, QString> params;
+  QMultiMap<QByteArray, QByteArray> params;
 };
 
 #endif // LNM_WEBTOOLS_H
