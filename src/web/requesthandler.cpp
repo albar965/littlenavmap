@@ -97,7 +97,13 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
     Parameter params(request);
 
     HttpSession session = getSession(request, response);
-    if(path == "/refresh")
+    if(path == "/zoom")
+    {
+      session.set("requested_distance", QVariant(params.asStr("to", "32.0")));        // use value which is used as default on reading distance
+      response.setHeader("Content-Type", "application/json");                         // web ui expects a response (currently any)
+      response.write(session.get("requested_distance").toString().toUtf8());
+    }
+    else if(path == "/refresh")
     {
       // ===========================================================================
       // Remember the refresh values in the session. This is called when changing the refresh drop down boxes and
@@ -293,13 +299,16 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
   } // else mapimage
 }
 
-void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& response)
+inline void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& response)
 {
   Parameter params(request);
 
   // Extract values from parameter list ===========================================
   int width = params.asInt("width", 0);
   int height = params.asInt("height", 0);
+
+  // Image format, jpg is default and only jpg and png allowed ===========================================
+  QString format = params.asEnum("format", "jpg", {"jpg", "png"});
 
   // Distance as KM
   float requestedDistanceKm = atools::geo::nmToKm(params.asFloat("distance", 100.0f));
@@ -312,24 +321,26 @@ void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& response
     // Stateful handling using a session which has the last zoom and position
     HttpSession session = getSession(request, response);
 
-    if(session.contains("lon") && session.contains("lat") &&
-       session.contains("requested_distance") && session.contains("corrected_distance"))
-    {
-      // Session already contains distance and position values from an earlier call
-      // Values are also initialized from visible map display when creating session
-      QString mapcmd = params.asStr("mapcmd");
+    // Distance as KM
+    float requestedDistanceKm = atools::geo::nmToKm(params.asFloat("distance", session.contains("requested_distance") ? session.get("requested_distance").toFloat() : 32.0f));     // set default as value which last was requested otherwise set it as value JS delivers as default on opening from default HTML value
 
-      if(mapcmd == "user")
-        // Show user aircraft
-        mapPixmap = emit getPixmapObject(width, height, web::USER_AIRCRAFT, QString(), requestedDistanceKm);
-      else if(mapcmd == "route")
-        // Center flight plan
-        mapPixmap = emit getPixmapObject(width, height, web::ROUTE, QString(), requestedDistanceKm);
-      else if(mapcmd == "airport")
-        // Show an airport by ident
-        mapPixmap = emit getPixmapObject(width, height, web::AIRPORT, params.asStr(
-                                           "airport").toUpper(), requestedDistanceKm);
-      else
+    // Session already contains distance and position values from an earlier call
+    // Values are also initialized from visible map display when creating session
+    QString mapcmd = params.asStr("mapcmd");
+
+    if(mapcmd == "user")
+      // Show user aircraft
+      mapPixmap = emit getPixmapObject(width, height, web::USER_AIRCRAFT, QString(), requestedDistanceKm);
+    else if(mapcmd == "route")
+      // Center flight plan
+      mapPixmap = emit getPixmapObject(width, height, web::ROUTE, QString(), requestedDistanceKm);
+    else if(mapcmd == "airport")
+      // Show an airport by ident
+      mapPixmap = emit getPixmapObject(width, height, web::AIRPORT, params.asStr(
+                                         "airport").toUpper(), requestedDistanceKm);
+    else
+    {
+      if(session.contains("lon") && session.contains("lat") && session.contains("corrected_distance"))        // a previous PR made check for "requested_distance" obsolete
       {
         // When zooming in or out use the last corrected distance (i.e. actual distance) as a base
         float distance = (mapcmd == "in" || mapcmd == "out") ?
@@ -341,54 +352,66 @@ void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& response
                                                                session.get("lat").toFloat()),
                                               distance, mapcmd);
       }
+      else
+        showError(request, response, 500, "Internal server error. Incomplete session.");
+    }
 
-      if(!mapPixmap.hasError())
-      {
-        // Push results from last map call into session
-        session.set("requested_distance", QVariant(mapPixmap.requestedDistanceKm));
-        session.set("corrected_distance", QVariant(mapPixmap.correctedDistanceKm));
-        session.set("lon", mapPixmap.pos.getLonX());
-        session.set("lat", mapPixmap.pos.getLatY());
-      }
+    if(mapPixmap.hasNoError())
+    {
+      // Push results from last map call into session
+      session.set("requested_distance", QVariant(mapPixmap.requestedDistanceKm));
+      session.set("corrected_distance", QVariant(mapPixmap.correctedDistanceKm));
+      session.set("lon", mapPixmap.pos.getLonX());
+      session.set("lat", mapPixmap.pos.getLatY());
     }
     else
-      showError(request, response, 500, "Internal server error. Incomplete session.");
-  }
-  // ============================================================================
-  // Session-less / state-less calls ============================================
-  else if(params.has("user"))
-    // User aircraft =======================
-    mapPixmap = emit getPixmapObject(width, height, web::USER_AIRCRAFT, QString(), requestedDistanceKm);
-  else if(params.has("route"))
-    // Center flight plan =======================
-    mapPixmap = emit getPixmapObject(width, height, web::ROUTE, QString(), requestedDistanceKm);
-  else if(params.has("airport"))
-    // Show airport =======================
-    mapPixmap = emit getPixmapObject(width, height, web::AIRPORT, params.asStr("airport"), requestedDistanceKm);
-  else if(params.has("leftlon") && params.has("toplat") && params.has("rightlon") && params.has("bottomlat"))
-  {
-    // Show rectangle =======================
-    atools::geo::Rect rect(params.asFloat("leftlon"), params.asFloat("toplat"),
-                           params.asFloat("rightlon"), params.asFloat("bottomlat"));
-    mapPixmap = emit getPixmapRect(width, height, rect);
-  }
-  else if(params.has("distance") || (params.has("lon") && params.has("lat")))
-  {
-    // Show position =======================
-    atools::geo::Pos pos;
-    if(params.has("lon") && params.has("lat"))
-    {
-      pos.setLonX(params.asFloat("lon"));
-      pos.setLatY(params.asFloat("lat"));
-    }
-
-    mapPixmap = emit getPixmapPosDistance(width, height, pos, requestedDistanceKm, QString());
+      return showErrorPixmap(response, width, height, 404, mapPixmap.error);
   }
   else
-    // Show current map view =======================
-    mapPixmap = emit getPixmap(width, height);
+  {
+    // Distance as KM
+    float requestedDistanceKm = atools::geo::nmToKm(params.asFloat("distance", 32.0f));     // set default as value which JS delivers as default on opening from default HTML value
 
-  if(mapPixmap.isValid() && !mapPixmap.hasError())
+    // ============================================================================
+    // Session-less / state-less calls ============================================
+    if(params.has("user"))
+      // User aircraft =======================
+      mapPixmap = emit getPixmapObject(width, height, web::USER_AIRCRAFT, QString(), requestedDistanceKm);
+    else if(params.has("route"))
+      // Center flight plan =======================
+      mapPixmap = emit getPixmapObject(width, height, web::ROUTE, QString(), requestedDistanceKm);
+    else if(params.has("airport"))
+      // Show airport =======================
+      mapPixmap = emit getPixmapObject(width, height, web::AIRPORT, params.asStr("airport"), requestedDistanceKm);
+    else if(params.has("leftlon") && params.has("toplat") && params.has("rightlon") && params.has("bottomlat"))
+    {
+      // Show rectangle =======================
+      atools::geo::Rect rect(params.asFloat("leftlon"), params.asFloat("toplat"),
+                             params.asFloat("rightlon"), params.asFloat("bottomlat"));
+      mapPixmap = emit getPixmapRect(width, height, rect);
+    }
+    else if(params.has("distance") || (params.has("lon") && params.has("lat")))
+    {
+      // Show position =======================
+      atools::geo::Pos pos;
+      if(params.has("lon") && params.has("lat"))
+      {
+        pos.setLonX(params.asFloat("lon"));
+        pos.setLatY(params.asFloat("lat"));
+      }
+
+      mapPixmap = emit getPixmapPosDistance(width, height, pos, requestedDistanceKm, QString());
+    }
+    else
+      // Show current map view =======================
+      mapPixmap = emit getPixmap(width, height);
+
+    if(mapPixmap.hasError())
+      // Show error message as image
+      return showErrorPixmap(response, width, height, 404, mapPixmap.error);
+  }
+
+  if(mapPixmap.isValid())
   {
     // ===========================================================================
     // Write pixmap as image
@@ -485,8 +508,8 @@ stefanfrings::HttpSession RequestHandler::getSession(HttpRequest& request, HttpR
   {
     // Session does not exist - initialize with defaults from current map view
     atools::geo::Pos pos = emit getCurrentMapWidgetPos();
-    session.set("requested_distance", pos.getAltitude());
-    session.set("corrected_distance", pos.getAltitude());
+    session.set("requested_distance", QVariant(32.0f));             // 32.0 is the default JS delivers from new web ui HTML default
+    session.set("corrected_distance", QVariant(32.0f));             // 32.0 is the default JS delivers from new web ui HTML default
     session.set("lon", pos.getLonX());
     session.set("lat", pos.getLatY());
     qInfo() << Q_FUNC_INFO << "Created session" << session.getAll();
