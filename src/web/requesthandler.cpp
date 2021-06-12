@@ -337,7 +337,7 @@ void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& response
       {
         // When zooming in or out use the last corrected distance (i.e. actual distance) as a base
         float distance = (mapcmd == "in" || mapcmd == "out") ?
-                         session.get("corrected_distance").toFloat() : session.get("requested_distance").toFloat();
+                         session.get("corrected_distance").toFloat() : requestedDistanceKm;        // use client-given distance for all commands other than zoom in and out
 
         // Zoom or move map
         mapPixmap = emit getPixmapPosDistance(width, height,
