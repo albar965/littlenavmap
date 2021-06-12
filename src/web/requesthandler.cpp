@@ -99,9 +99,9 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
     HttpSession session = getSession(request, response);
     if(path == "/zoom")
     {
-      session.set("requested_distance", QVariant(params.asStr("to", "32.0")));        // use value which is used as default on reading distance
+      session.set("requested_distance", QVariant(params.asFloat("to", 32.0f)));        // use value which is used as default on reading distance
       response.setHeader("Content-Type", "application/json");                         // web ui expects a response (currently any)
-      response.write(session.get("requested_distance").toString().toUtf8());
+      response.write(QString::number(session.get("requested_distance").toFloat()).toUtf8());
     }
     else if(path == "/refresh")
     {
