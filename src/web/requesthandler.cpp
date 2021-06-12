@@ -307,12 +307,6 @@ inline void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& r
   int width = params.asInt("width", 0);
   int height = params.asInt("height", 0);
 
-  // Image format, jpg is default and only jpg and png allowed ===========================================
-  QString format = params.asEnum("format", "jpg", {"jpg", "png"});
-
-  // Distance as KM
-  float requestedDistanceKm = atools::geo::nmToKm(params.asFloat("distance", 100.0f));
-
   MapPixmap mapPixmap;
 
   if(params.has("session"))

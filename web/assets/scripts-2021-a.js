@@ -218,8 +218,7 @@ function injectUpdates(origin) {
 
       function requester() {
         timeStartLastRequest = performance.now();
-        updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&cmd" : "&reload", defaultMapQuality, false, notifiable);
-//        updateMapImage(refreshTypeWAC.checked ? ("mapcmd=user&distance=" + getZoomDistance() + "&cmd") : ("distance=" + getZoomDistance() + "&reload"), refresher.value < 6 ? fastRefreshMapQuality : defaultMapQuality, false, notifiable);
+        updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&cmd" : "&reload", refresher.value < 6 ? fastRefreshMapQuality : defaultMapQuality, false, notifiable);
       }
 
       function looper() {
