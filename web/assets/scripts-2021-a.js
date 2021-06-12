@@ -109,9 +109,9 @@ function injectUpdates(origin) {
     var imageRequestTimeout = null;
     ocw.sizeMapToContainer = function() {
       ocw.clearTimeout(imageRequestTimeout);
-      updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&cmd" : "&reload", resizingMapQuality);
+      updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&cmd" : "reload", resizingMapQuality);
       imageRequestTimeout = ocw.setTimeout(function() {       // update after the resizing stopped to have an image for the final size "for certain"
-        updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&cmd" : "&reload", defaultMapQuality, true);
+        updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&cmd" : "reload", defaultMapQuality, true);
       }, 200);
     };
 
@@ -218,7 +218,7 @@ function injectUpdates(origin) {
 
       function requester() {
         timeStartLastRequest = performance.now();
-        updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&cmd" : "&reload", defaultMapQuality, false, notifiable);
+        updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&cmd" : "reload", defaultMapQuality, false, notifiable);
 //        updateMapImage(refreshTypeWAC.checked ? ("mapcmd=user&distance=" + getZoomDistance() + "&cmd") : ("distance=" + getZoomDistance() + "&reload"), refresher.value < 6 ? fastRefreshMapQuality : defaultMapQuality, false, notifiable);
       }
 
@@ -259,7 +259,7 @@ function injectUpdates(origin) {
     };
 
     ocw.refreshMap = function() {
-      updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&cmd" : "&reload", defaultMapQuality, true);
+      updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&cmd" : "reload", defaultMapQuality, true);
     };
 
     // caring and handling state changes and restoration after content switch (after outer ui other button presses)
