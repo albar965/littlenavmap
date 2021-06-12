@@ -95,7 +95,7 @@ MapPixmap WebMapController::getPixmapObject(int width, int height, web::ObjectTy
         mapPixmap.error = tr("No flight plan");
       }
       else
-        mapPixmap = getPixmapRect(width, height, NavApp::getRouteRect());
+        mapPixmap = getPixmapPosDistance(width, height, NavApp::getRouteRect().getCenter(), distanceKm, QString());
       break;
 
     case web::AIRPORT:

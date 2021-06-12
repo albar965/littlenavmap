@@ -38,7 +38,8 @@ function injectUpdates(origin) {
     /*
      * settings (developer modifiable)
      */
-    var defaultMapQuality = 30;
+    var defaultMapQuality = 30;                                                       // no observed difference across 30 to 100
+    var fastRefreshMapQuality = 17;                                                   // below 17 JPEG artifacts on vertical lines are significantly visible: doubled lines. 18 to 21 (something around these) are significantly more artifacted too including an off blue ocean color. space saved compared to default: around 150 KB or 40 % at 1080p
     var zoomingMapQuality = 3;
     var resizingMapQuality = 3;
 
@@ -218,6 +219,7 @@ function injectUpdates(origin) {
       function requester() {
         timeStartLastRequest = performance.now();
         updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&cmd" : "&reload", defaultMapQuality, false, notifiable);
+//        updateMapImage(refreshTypeWAC.checked ? ("mapcmd=user&distance=" + getZoomDistance() + "&cmd") : ("distance=" + getZoomDistance() + "&reload"), refresher.value < 6 ? fastRefreshMapQuality : defaultMapQuality, false, notifiable);
       }
 
       function looper() {
@@ -259,7 +261,6 @@ function injectUpdates(origin) {
     ocw.refreshMap = function() {
       updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&cmd" : "&reload", defaultMapQuality, true);
     };
-
 
     // caring and handling state changes and restoration after content switch (after outer ui other button presses)
     refreshToggle.addEventListener("click", function() {
@@ -420,12 +421,12 @@ function injectUpdates(origin) {
   }
 
 
-  var toDo = {
-    "#airportPage": updateAirportPage,
+  var toDo = {                                                                      // ordered according to assumed likelihood of access: first assumedly accessed page is checked first: code is done. currently equals the outer ui menu button order.
+    "#mapPage": updateMapPage,
+    "#flightplanPage": updateGenericPage,
     "#progressPage": updateProgressPage,
     "#aircraftPage": updateGenericPage,
-    "#flightplanPage": updateGenericPage,
-    "#mapPage": updateMapPage
+    "#airportPage": updateAirportPage
   };
 
   for(var i in toDo) {
