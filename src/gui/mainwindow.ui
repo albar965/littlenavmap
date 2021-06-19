@@ -8517,6 +8517,9 @@ Disabled if a navdatabase does not allow it.</string>
    <property name="statusTip">
     <string>OpenStreetMap Mapnik online map theme</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+1</string>
+   </property>
   </action>
   <action name="actionMapThemeStamenTerrain">
    <property name="checkable">
@@ -8530,6 +8533,9 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="statusTip">
     <string>Stamen Terrain online map theme</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+3</string>
    </property>
   </action>
   <action name="actionMapThemeCartoLight">
@@ -8545,6 +8551,9 @@ Disabled if a navdatabase does not allow it.</string>
    <property name="statusTip">
     <string>CARTO Light online map theme</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+4</string>
+   </property>
   </action>
   <action name="actionMapThemeCartoDark">
    <property name="checkable">
@@ -8558,6 +8567,9 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="statusTip">
     <string>CARTO Dark online map theme</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+5</string>
    </property>
   </action>
   <action name="actionMapThemeOpenTopoMap">
@@ -8573,6 +8585,9 @@ Disabled if a navdatabase does not allow it.</string>
    <property name="statusTip">
     <string>OpenTopoMap online map theme</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+2</string>
+   </property>
   </action>
   <action name="actionMapThemePlain">
    <property name="checkable">
@@ -8586,6 +8601,9 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="statusTip">
     <string>Plain offline map theme</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+7</string>
    </property>
   </action>
   <action name="actionMapThemeAtlas">
@@ -8601,6 +8619,9 @@ Disabled if a navdatabase does not allow it.</string>
    <property name="statusTip">
     <string>Atlas offline map theme</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+8</string>
+   </property>
   </action>
   <action name="actionMapThemeSimple">
    <property name="checkable">
@@ -8614,6 +8635,9 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="statusTip">
     <string>Simple offline map theme</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+6</string>
    </property>
   </action>
   <action name="actionHelpMapLegend">
@@ -11917,8 +11941,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcType"/>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
  </buttongroups>
 </ui>
