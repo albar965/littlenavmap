@@ -99,7 +99,7 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
     HttpSession session = getSession(request, response);
     if(path == "/zoom")
     {
-      session.set("requested_distance", QVariant(params.asFloat("to", 32.0f)));        // use value which is used as default on reading distance
+      session.set("requested_distance", QVariant(atools::geo::nmToKm(params.asFloat("to", 32.0f))));        // use value which is used as default on reading distance
       response.setHeader("Content-Type", "application/json");                         // web ui expects a response (currently any)
       response.write(QString::number(session.get("requested_distance").toFloat()).toUtf8());
     }
@@ -316,7 +316,15 @@ inline void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& r
     HttpSession session = getSession(request, response);
 
     // Distance as KM
-    float requestedDistanceKm = atools::geo::nmToKm(params.asFloat("distance", session.contains("requested_distance") ? session.get("requested_distance").toFloat() : 32.0f));     // set default as value which last was requested otherwise set it as value JS delivers as default on opening from default HTML value
+    float requestedDistanceKm;
+    float requestedDistance = params.asFloat("distance", 0.0f);
+    if(requestedDistance == 0.0f) {
+      requestedDistanceKm = session.contains("requested_distance") ? session.get("requested_distance").toFloat() : atools::geo::nmToKm(32.0f);
+    }
+    else
+    {
+      requestedDistanceKm = atools::geo::nmToKm(requestedDistance);
+    }
 
     // Session already contains distance and position values from an earlier call
     // Values are also initialized from visible map display when creating session
@@ -502,8 +510,8 @@ stefanfrings::HttpSession RequestHandler::getSession(HttpRequest& request, HttpR
   {
     // Session does not exist - initialize with defaults from current map view
     atools::geo::Pos pos = emit getCurrentMapWidgetPos();
-    session.set("requested_distance", QVariant(32.0f));             // 32.0 is the default JS delivers from new web ui HTML default
-    session.set("corrected_distance", QVariant(32.0f));             // 32.0 is the default JS delivers from new web ui HTML default
+    session.set("requested_distance", QVariant(atools::geo::nmToKm(32.0f)));             // 32.0 is the default JS delivers from new web ui HTML default
+    session.set("corrected_distance", QVariant(atools::geo::nmToKm(32.0f)));             // 32.0 is the default JS delivers from new web ui HTML default
     session.set("lon", pos.getLonX());
     session.set("lat", pos.getLatY());
     qInfo() << Q_FUNC_INFO << "Created session" << session.getAll();
