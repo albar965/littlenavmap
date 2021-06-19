@@ -2284,8 +2284,11 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
                     arg(runwayErrorString(properties.value(pln::APPROACHRW))));
     }
   }
-  else if(properties.contains(pln::APPROACH) || properties.contains(pln::APPROACHTYPE))
+
+  if(approachId == -1 && (properties.contains(pln::APPROACH) || properties.contains(pln::APPROACHTYPE)))
   {
+    // Nothing found by ARINC id but type and fix name given try this next
+
     // Get an approach id by name or type =================================================================
 
     // Use approach name
