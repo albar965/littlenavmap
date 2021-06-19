@@ -1922,7 +1922,10 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
               arg(locale.toString(frequencyForTacanChannel(vor.channel) / 100.f, 'f', 2)));
 
   if(!vor.tacan && !vor.dmeOnly)
-    html.row2(tr("Magnetic declination:"), map::magvarText(vor.magvar));
+    html.row2(tr("Calibrated declination:"), map::magvarText(vor.magvar));
+
+  if(info)
+    html.row2(tr("Magnetic declination:"), map::magvarText(NavApp::getMagVar(vor.position)));
 
   if(vor.getPosition().getAltitude() < INVALID_ALTITUDE_VALUE)
     html.row2(tr("Elevation:"), Unit::altFeet(vor.getPosition().getAltitude()));
