@@ -33,7 +33,6 @@ struct MapPixmap
 {
   QPixmap pixmap;
   atools::geo::Pos pos; /* Map center */
-  atools::geo::Rect rect; /* Shown rectangle */
   float requestedDistanceKm, /* Requested zoom distance */
         correctedDistanceKm; /* Actual zoom distance which can differ from above due to blur avoidance. */
 

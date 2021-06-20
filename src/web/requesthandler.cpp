@@ -434,7 +434,7 @@ inline void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& r
   }
   else
     // Show error message as image
-    showErrorPixmap(response, width, height, 404, mapPixmap.error);
+    showErrorPixmap(response, width, height, 404, QStringLiteral(u"invalid pixmap"));
 }
 
 void RequestHandler::showErrorPixmap(HttpResponse& response, int width, int height, int status, const QString& text)

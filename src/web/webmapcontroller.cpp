@@ -112,6 +112,7 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
     }
     else
     {
+      qWarning() << Q_FUNC_INFO << errorCase;
       MapPixmap mappixmap;
       mappixmap.error = errorCase;
       return mappixmap;
@@ -123,35 +124,27 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
     // Copy all map settings
     mapPaintWidget->copySettings(*NavApp::getMapWidget());
 
-    // Prepare marble for drawing by issuing a dummy paint event
-    mapPaintWidget->prepareDraw(width, height);
-
-    // Zoom one out for sharp maps
-    mapPaintWidget->setAvoidBlurredMap(true);
-
     // Do not center world rectangle when resizing map widget
     mapPaintWidget->setKeepWorldRect(false);
 
     // Jump to position without zooming for sharp map
-    mapPaintWidget->showPosNotAdjusted(pos, distanceKm, false);
-
-    MapPixmap mappixmap;
+    mapPaintWidget->showPosNotAdjusted(pos, distanceKm);
 
     if(!mapCommand.isEmpty())
     {
       // Move or zoom map by command
       if(mapCommand == QLatin1String("left"))
-        mapPaintWidget->moveLeft();
+        mapPaintWidget->moveLeft(Marble::Instant);
       else if(mapCommand == QLatin1String("right"))
-        mapPaintWidget->moveRight();
+        mapPaintWidget->moveRight(Marble::Instant);
       else if(mapCommand == QLatin1String("up"))
-        mapPaintWidget->moveUp();
+        mapPaintWidget->moveUp(Marble::Instant);
       else if(mapCommand == QLatin1String("down"))
-        mapPaintWidget->moveDown();
+        mapPaintWidget->moveDown(Marble::Instant);
       else if(mapCommand == QLatin1String("in"))
-        mapPaintWidget->zoomIn();
+        mapPaintWidget->zoomIn(Marble::Instant);
       else if(mapCommand == QLatin1String("out"))
-        mapPaintWidget->zoomOut();
+        mapPaintWidget->zoomOut(Marble::Instant);
       else
       {
         qWarning() << Q_FUNC_INFO << "Invalid map command" << mapCommand;
@@ -160,23 +153,25 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
     }
 
     // Jump to next sharp level
-    mapPaintWidget->zoomIn();
-    mapPaintWidget->zoomOut();
+    mapPaintWidget->zoomIn(Marble::Instant);
+    mapPaintWidget->zoomOut(Marble::Instant);
 
-    if(mapCommand == QLatin1String("in") || mapCommand == QLatin1String("out"))
-      // Requested is equal to result when zooming
-      mappixmap.requestedDistanceKm = static_cast<float>(mapPaintWidget->distance());
-    else
-      // What was requested
-      mappixmap.requestedDistanceKm = distanceKm;
+    MapPixmap mappixmap;
 
     // The actual zoom distance
     mappixmap.correctedDistanceKm = static_cast<float>(mapPaintWidget->distance());
 
+    if(mapCommand == QLatin1String("in") || mapCommand == QLatin1String("out"))
+      // Requested is equal to result when zooming
+      mappixmap.requestedDistanceKm = mappixmap.correctedDistanceKm;
+    else
+      // What was requested
+      mappixmap.requestedDistanceKm = distanceKm;
+
     // Fill result object
     mappixmap.pixmap = mapPaintWidget->getPixmap(width, height);
     mappixmap.pos = mapPaintWidget->getCurrentViewCenterPos();
-    mappixmap.rect = mapPaintWidget->getCurrentViewRect();
+
     return mappixmap;
   }
   else
@@ -191,7 +186,6 @@ MapPixmap WebMapController::getPixmapRect(int width, int height, atools::geo::Re
   if(verbose)
     qDebug() << Q_FUNC_INFO << width << "x" << height << rect;
 
-  MapPixmap mapPixmap;
   if(rect.isValid())
   {
     if(mapPaintWidget != nullptr)
@@ -199,27 +193,31 @@ MapPixmap WebMapController::getPixmapRect(int width, int height, atools::geo::Re
       // Copy all map settings
       mapPaintWidget->copySettings(*NavApp::getMapWidget());
 
-      // Prepare marble for drawing by issuing a dummy paint event
-      mapPaintWidget->prepareDraw(width, height);
-
       // Do not center world rectangle when resizing
       mapPaintWidget->setKeepWorldRect(false);
 
-      mapPaintWidget->showRect(rect, false /* doubleClick */);
+      mapPaintWidget->showRectStreamlined(rect);
+
+      MapPixmap mapPixmap;
 
       // No distance requested. Therefore requested is equal to actual
       mapPixmap.correctedDistanceKm = mapPixmap.requestedDistanceKm = static_cast<float>(mapPaintWidget->distance());
       mapPixmap.pixmap = mapPaintWidget->getPixmap(width, height);
       mapPixmap.pos = mapPaintWidget->getCurrentViewCenterPos();
-      mapPixmap.rect = mapPaintWidget->getCurrentViewRect();
+
+      return mapPixmap;
     }
     else
+    {
       qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
+      return MapPixmap();
+    }
   }
   else
   {
     qWarning() << Q_FUNC_INFO << errorCase;
+    MapPixmap mapPixmap;
     mapPixmap.error = errorCase;
+    return mapPixmap;
   }
-  return mapPixmap;
 }
