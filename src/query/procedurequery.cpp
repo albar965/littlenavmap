@@ -101,9 +101,9 @@ const proc::MapProcedureLeg *ProcedureQuery::getApproachLeg(const map::MapAirpor
   {
     // Ensure it is in the cache - reload if needed
     const MapProcedureLegs *legs = getApproachLegs(airport, approachId);
-    if(legs != nullptr && approachLegIndex.contains(legId))
+    if(legs != nullptr && procedureLegIndex.contains(legId))
       // Use index to get leg
-      return &legs->at(approachLegIndex.value(legId).second);
+      return &legs->at(procedureLegIndex.value(legId).second);
   }
   qWarning() << "approach leg with id" << legId << "not found";
   return nullptr;
@@ -634,9 +634,9 @@ proc::MapProcedureLegs *ProcedureQuery::fetchApproachLegs(const map::MapAirport&
     postProcessLegs(airport, *legs, true /*addArtificialLegs*/);
 
     for(int i = 0; i < legs->size(); i++)
-      approachLegIndex.insert(legs->at(i).legId, std::make_pair(approachId, i));
+      procedureLegIndex.insert(legs->at(i).legId, std::make_pair(approachId, i));
 
-    approachCache.insert(approachId, legs);
+    procedureCache.insert(approachId, legs);
     return legs;
   }
 }
@@ -813,7 +813,7 @@ void ProcedureQuery::postProcessLegs(const map::MapAirport& airport, proc::MapPr
   processLegsDistanceAndCourse(legs);
 
   // Correct overlapping conflicting altitude restrictions
-  processLegsFixRestrictions(legs);
+  processLegsFixRestrictions(airport, legs);
 
   // Update bounding rectangle
   updateBounding(legs);
@@ -1130,23 +1130,44 @@ void ProcedureQuery::processLegErrors(proc::MapProcedureLegs& legs) const
   }
 }
 
-void ProcedureQuery::processLegsFixRestrictions(proc::MapProcedureLegs& legs) const
+void ProcedureQuery::processLegsFixRestrictions(const map::MapAirport& airport, proc::MapProcedureLegs& legs) const
 {
   for(int i = 1; i < legs.size(); i++)
   {
     proc::MapProcedureLeg& leg = legs[i];
     proc::MapProcedureLeg& prevLeg = legs[i - 1];
 
-    if(legs.at(i - 1).isTransition() && legs.at(i).isApproach() && leg.type == proc::INITIAL_FIX &&
-       atools::almostEqual(leg.altRestriction.alt1, prevLeg.altRestriction.alt1) &&
+    if(prevLeg.isTransition() && leg.isApproach() && leg.type == proc::INITIAL_FIX &&
        leg.fixIdent == prevLeg.fixIdent)
-      // Found the connection between transition and approach with same altitudes
-      // Use restriction of the initial fix
-      prevLeg.altRestriction.descriptor = leg.altRestriction.descriptor;
+    {
+      // Found the connection between transition and approach
+
+      if(leg.altRestriction.isValid() && prevLeg.altRestriction.isValid() &&
+         atools::almostEqual(leg.altRestriction.alt1, prevLeg.altRestriction.alt1))
+        // Use restriction of the initial fix - erase restriction of the transition leg
+        prevLeg.altRestriction.descriptor = proc::MapAltRestriction::NONE;
+
+      if(leg.speedRestriction.isValid() && prevLeg.speedRestriction.isValid() &&
+         atools::almostEqual(leg.speedRestriction.speed, prevLeg.speedRestriction.speed))
+        // Use speed of the initial fix - erase restriction of the transition leg
+        prevLeg.speedRestriction.descriptor = proc::MapSpeedRestriction::NONE;
+    }
 
     if(leg.isFinalEndpointFix())
       // FEP has altitude above TDZ - ignore this here
       leg.altRestriction.descriptor = proc::MapAltRestriction::NONE;
+
+    if(prevLeg.isApproach() && leg.isMissed() && prevLeg.altRestriction.isValid())
+    {
+      // Last leg before missed approach - usually runway
+      // Correct restriction where it is wrongly below airport altitude for some
+
+      if(prevLeg.altRestriction.alt1 < airport.position.getAltitude())
+      {
+        prevLeg.altRestriction.alt1 = std::ceil(airport.position.getAltitude());
+        qWarning() << Q_FUNC_INFO << "Final leg altitude below airport altitude" << airport.ident;
+      }
+    }
   }
 }
 
@@ -1882,9 +1903,9 @@ void ProcedureQuery::initQueries()
 
 void ProcedureQuery::deInitQueries()
 {
-  approachCache.clear();
+  procedureCache.clear();
   transitionCache.clear();
-  approachLegIndex.clear();
+  procedureLegIndex.clear();
   transitionLegIndex.clear();
 
   delete approachLegQuery;
@@ -2175,17 +2196,17 @@ void ProcedureQuery::clearCache()
 {
   qDebug() << Q_FUNC_INFO;
 
-  approachCache.clear();
+  procedureCache.clear();
   transitionCache.clear();
-  approachLegIndex.clear();
+  procedureLegIndex.clear();
   transitionLegIndex.clear();
 }
 
-QVector<int> ProcedureQuery::getTransitionIdsForApproach(int approachId)
+QVector<int> ProcedureQuery::getTransitionIdsForProcedure(int procedureId)
 {
   QVector<int> transitionIds;
 
-  transitionIdsForApproachQuery->bindValue(":id", approachId);
+  transitionIdsForApproachQuery->bindValue(":id", procedureId);
   transitionIdsForApproachQuery->exec();
 
   while(transitionIdsForApproachQuery->next())

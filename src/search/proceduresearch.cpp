@@ -689,7 +689,7 @@ void ProcedureSearch::fetchSingleTransitionId(MapProcedureRef& ref)
     if(legs != nullptr && legs->approachLegs.isEmpty())
     {
       // Special case for SID which consists only of transition legs
-      QVector<int> transitionIds = procedureQuery->getTransitionIdsForApproach(ref.approachId);
+      QVector<int> transitionIds = procedureQuery->getTransitionIdsForProcedure(ref.approachId);
       if(!transitionIds.isEmpty())
         ref.transitionId = transitionIds.first();
     }

@@ -35,10 +35,13 @@ class SqlQuery;
 class MapQuery;
 class AirportQuery;
 
-/* Loads and caches approaches and transitions. The corresponding approach is also loaded and cached if a
+/* Loads and caches approaches and transitions. Approaches is here a synonym for all procedures which include
+ * final approaches, SID and STAR but excludes transitions.
+ *
+ * The corresponding approach is also loaded and cached if a
  * transition is loaded since legs depend on each other.
  *
- * All navaids and procedure are taken from the nav database.
+ * All navaids and procedure are taken from the nav database which might contain data from nav or simulator.
  * All structs of MapAirport are converted to simulator database airports when passed in.
  */
 class ProcedureQuery
@@ -53,34 +56,42 @@ public:
   ProcedureQuery(atools::sql::SqlDatabase *sqlDbNav);
   ~ProcedureQuery();
 
+  /* Do not allow copying */
   ProcedureQuery(const ProcedureQuery& other) = delete;
   ProcedureQuery& operator=(const ProcedureQuery& other) = delete;
 
+  /* Get procedure legs from cached procedures */
   const proc::MapProcedureLeg *getApproachLeg(const map::MapAirport& airport, int approachId, int legId);
   const proc::MapProcedureLeg *getTransitionLeg(const map::MapAirport& airport, int legId);
 
-  /* Get approach only */
+  /* Get all legs of an approach */
   const proc::MapProcedureLegs *getApproachLegs(map::MapAirport airport, int approachId);
 
   /* Get transition and its approach */
   const proc::MapProcedureLegs *getTransitionLegs(map::MapAirport airport, int transitionId);
 
-  QVector<int> getTransitionIdsForApproach(int approachId);
+  /* Get all available transitions for the given procedure ID (approach.approach_id in database */
+  QVector<int> getTransitionIdsForProcedure(int procedureId);
 
+  /* Resolves all procedures based on given properties and loads them from the database.
+   * Procedures are partially resolved in a fuzzy way. */
   void getLegsForFlightplanProperties(const QHash<QString, QString> properties,
                                       const map::MapAirport& departure,
                                       const map::MapAirport& destination,
                                       proc::MapProcedureLegs& arrivalLegs, proc::MapProcedureLegs& starLegs,
                                       proc::MapProcedureLegs& sidLegs, QStringList& errors);
 
+  /* Get dot-separated SID/STAR and the respective transition from the properties */
   static QString getSidAndTransition(QHash<QString, QString>& properties);
   static QString getStarAndTransition(QHash<QString, QString>& properties);
 
+  /* Populate the property list for given procedures */
   static void fillFlightplanProcedureProperties(QHash<QString, QString>& properties,
                                                 const proc::MapProcedureLegs& arrivalLegs,
                                                 const proc::MapProcedureLegs& starLegs,
                                                 const proc::MapProcedureLegs& sidLegs);
 
+  /* Removes properties from the given map based on given types */
   static void clearFlightplanProcedureProperties(QHash<QString, QString>& properties,
                                                  const proc::MapProcedureTypes& type);
 
@@ -91,6 +102,7 @@ public:
                 bool strict = false);
   int getStarTransitionId(map::MapAirport destination, const QString& starTrans, int starId, bool strict = false);
 
+  /* Creates a user defined VFR approach procedure */
   void createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airportSim,
                             const map::MapRunwayEnd& runwayEndSim, float distance, float altitude);
 
@@ -139,8 +151,8 @@ private:
                              bool addArtificialLegs) const;
 
   /* Adjust conflicting altitude restrictions where a transition ends with "A2000" and is the same as the following
-   * initial fix having "2000" */
-  void processLegsFixRestrictions(proc::MapProcedureLegs& legs) const;
+   * initial fix having "2000". Also corrects final altitude restriction if below airport. */
+  void processLegsFixRestrictions(const map::MapAirport& airport, proc::MapProcedureLegs& legs) const;
 
   /* Assign magnetic variation from the navaids */
   void updateMagvar(const map::MapAirport& airport, proc::MapProcedureLegs& legs) const;
@@ -200,10 +212,10 @@ private:
 
   /* approach ID and transition ID to full lists
    * The approach also has to be stored for transitions since the handover can modify approach legs (CI legs, etc.) */
-  QCache<int, proc::MapProcedureLegs> approachCache, transitionCache;
+  QCache<int, proc::MapProcedureLegs> procedureCache, transitionCache;
 
   /* maps leg ID to approach/transition ID and index in list */
-  QHash<int, std::pair<int, int> > approachLegIndex, transitionLegIndex;
+  QHash<int, std::pair<int, int> > procedureLegIndex, transitionLegIndex;
 
   MapQuery *mapQuery = nullptr;
   AirportQuery *airportQueryNav = nullptr;
