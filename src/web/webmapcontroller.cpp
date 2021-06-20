@@ -65,7 +65,7 @@ MapPixmap WebMapController::getPixmap(int width, int height)
     qDebug() << Q_FUNC_INFO << width << "x" << height;
 
   return getPixmapPosDistance(width, height, atools::geo::EMPTY_POS,
-                              static_cast<float>(NavApp::getMapWidget()->distance()), QStringLiteral(u""));
+                              static_cast<float>(NavApp::getMapWidget()->distance()), QLatin1String(""));
 }
 
 MapPixmap WebMapController::getPixmapObject(int width, int height, web::ObjectType type, const QString& ident,
@@ -79,7 +79,7 @@ MapPixmap WebMapController::getPixmapObject(int width, int height, web::ObjectTy
   switch(type)
   {
     case web::USER_AIRCRAFT: {
-      mapPixmap = getPixmapPosDistance(width, height, NavApp::getUserAircraftPos(), distanceKm, QStringLiteral(u""), tr("No user aircraft"));
+      mapPixmap = getPixmapPosDistance(width, height, NavApp::getUserAircraftPos(), distanceKm, QLatin1String(""), tr("No user aircraft"));
       break;
     }
 
@@ -89,7 +89,7 @@ MapPixmap WebMapController::getPixmapObject(int width, int height, web::ObjectTy
     }
 
     case web::AIRPORT: {
-      mapPixmap = getPixmapPosDistance(width, height, NavApp::getAirportPos(ident), distanceKm, QStringLiteral(u""), tr("Airport %1 not found").arg(ident));
+      mapPixmap = getPixmapPosDistance(width, height, NavApp::getAirportPos(ident), distanceKm, QLatin1String(""), tr("Airport %1 not found").arg(ident));
       break;
     }
   }
@@ -104,7 +104,7 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
 
   if(!pos.isValid())
   {
-    if(errorCase == QStringLiteral(u""))
+    if(errorCase == QLatin1String(""))
     {
       // Use current map position
       pos.setLonX(static_cast<float>(NavApp::getMapWidget()->centerLongitude()));
@@ -140,17 +140,17 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
     if(!mapCommand.isEmpty())
     {
       // Move or zoom map by command
-      if(mapCommand == "left")
+      if(mapCommand == QLatin1String("left"))
         mapPaintWidget->moveLeft();
-      else if(mapCommand == "right")
+      else if(mapCommand == QLatin1String("right"))
         mapPaintWidget->moveRight();
-      else if(mapCommand == "up")
+      else if(mapCommand == QLatin1String("up"))
         mapPaintWidget->moveUp();
-      else if(mapCommand == "down")
+      else if(mapCommand == QLatin1String("down"))
         mapPaintWidget->moveDown();
-      else if(mapCommand == "in")
+      else if(mapCommand == QLatin1String("in"))
         mapPaintWidget->zoomIn();
-      else if(mapCommand == "out")
+      else if(mapCommand == QLatin1String("out"))
         mapPaintWidget->zoomOut();
       else
       {
@@ -163,7 +163,7 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
     mapPaintWidget->zoomIn();
     mapPaintWidget->zoomOut();
 
-    if(mapCommand == "in" || mapCommand == "out")
+    if(mapCommand == QLatin1String("in") || mapCommand == QLatin1String("out"))
       // Requested is equal to result when zooming
       mappixmap.requestedDistanceKm = static_cast<float>(mapPaintWidget->distance());
     else

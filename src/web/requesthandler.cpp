@@ -91,7 +91,7 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
              << "header" << endl << request.getHeaderMap()
              << "parameter" << endl << request.getParameterMap();
 
-  if(path == "/mapimage")
+  if(path == QLatin1String("/mapimage"))
     // ===========================================================================
     // Requests for map images only - either with or without session
     handleMapImage(request, response);
@@ -100,24 +100,24 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
     Parameter params(request);
 
     HttpSession session = getSession(request, response);
-    if(path == "/refresh")
+    if(path == QLatin1String("/refresh"))
     {
       // ===========================================================================
       // Remember the refresh values in the session. This is called when changing the refresh drop down boxes and
       // is used to keep the value when the page is reloaded
 
-      if(params.has("aircraftrefresh"))
-        session.set("aircraftrefresh", params.asInt("aircraftrefresh"));
-      if(params.has("flightplanrefresh"))
-        session.set("flightplanrefresh", params.asInt("flightplanrefresh"));
-      if(params.has("maprefresh"))
-        session.set("maprefresh", params.asInt("maprefresh"));
-      if(params.has("progressrefresh"))
-        session.set("progressrefresh", params.asInt("progressrefresh"));
+      if(params.has(QStringLiteral(u"aircraftrefresh")))
+        session.set("aircraftrefresh", params.asInt(QStringLiteral(u"aircraftrefresh")));
+      if(params.has(QStringLiteral(u"flightplanrefresh")))
+        session.set("flightplanrefresh", params.asInt(QStringLiteral(u"flightplanrefresh")));
+      if(params.has(QStringLiteral(u"maprefresh")))
+        session.set("maprefresh", params.asInt(QStringLiteral(u"maprefresh")));
+      if(params.has(QStringLiteral(u"progressrefresh")))
+        session.set("progressrefresh", params.asInt(QStringLiteral(u"progressrefresh")));
     }
     else // all other paths
     {
-      if(!path.contains(".."))
+      if(!path.contains(QStringLiteral(u"..")))
       {
 
         // mapcmd are for path /mapimage
@@ -141,8 +141,8 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
           if(fi.isDir())
           {
             // is a directory - use index.html
-            file = file + (file.endsWith("/") ? QString() : "/") + "index" + extension;
-            fi = QFileInfo(docroot + "/" + file);
+            file = file + (file.endsWith("/") ? QStringLiteral(u"") : QStringLiteral(u"/")) + QStringLiteral(u"index") + extension;
+            fi = QFileInfo(docroot + QStringLiteral(u"/") + file);
           }
 
           if(fi.filePath().startsWith(docroot))
@@ -168,63 +168,63 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
                   t.enableWarnings();
 
                 // Set general variables ==============================
-                t.setVariable("applicationName", QApplication::applicationName());
-                t.setVariable("applicationVersion", QApplication::applicationVersion());
-                t.setVariable("helpUrl", atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineUrl + "WEBSERVER.html",
+                t.setVariable(QStringLiteral(u"applicationName"), QApplication::applicationName());
+                t.setVariable(QStringLiteral(u"applicationVersion"), QApplication::applicationVersion());
+                t.setVariable(QStringLiteral(u"helpUrl"), atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineUrl + QStringLiteral(u"WEBSERVER.html"),
                                                                                  lnm::helpLanguageOnline()).toString());
 
                 // Put refresh values back in page by inserting select control ==============================
-                if(t.contains("{aircraftrefreshsel}"))
-                  t.setVariable("aircraftrefreshsel",
-                                buildRefreshSelect(session.get("aircraftrefresh").toInt()));
+                if(t.contains(QStringLiteral(u"{aircraftrefreshsel}")))
+                  t.setVariable(QStringLiteral(u"aircraftrefreshsel"),
+                                buildRefreshSelect(session.get("aircraftrefresh").toInt()));      // does session entry exist?
 
-                if(t.contains("{flightplanrefreshsel}"))
-                  t.setVariable("flightplanrefreshsel",
-                                buildRefreshSelect(session.get("flightplanrefresh").toInt()));
+                if(t.contains(QStringLiteral(u"{flightplanrefreshsel}")))
+                  t.setVariable(QStringLiteral(u"flightplanrefreshsel"),
+                                buildRefreshSelect(session.get("flightplanrefresh").toInt()));    // does session entry exist?
 
-                if(t.contains("{maprefreshsel}"))
-                  t.setVariable("maprefreshsel",
-                                buildRefreshSelect(session.get("maprefresh").toInt()));
+                if(t.contains(QStringLiteral(u"{maprefreshsel}")))
+                  t.setVariable(QStringLiteral(u"maprefreshsel"),
+                                buildRefreshSelect(session.get("maprefresh").toInt()));           // does session entry exist?
 
-                if(t.contains("{progressrefreshsel}"))
-                  t.setVariable("progressrefreshsel",
-                                buildRefreshSelect(session.get("progressrefresh").toInt()));
+                if(t.contains(QStringLiteral(u"{progressrefreshsel}")))
+                  t.setVariable(QStringLiteral(u"progressrefreshsel"),
+                                buildRefreshSelect(session.get("progressrefresh").toInt()));      // does session entry exist?
 
                 // ===========================================================================
                 // Aircraft registration, weight, etc.
                 atools::util::HtmlBuilder html(mapcolors::webTableBackgroundColor, mapcolors::webTableAltBackgroundColor);
 
                 atools::fs::sc::SimConnectUserAircraft userAircraft;
-                if(t.contains("{aircraftProgressText}") || t.contains("{aircraftText}"))
+                if(t.contains(QStringLiteral(u"{aircraftProgressText}")) || t.contains(QStringLiteral(u"{aircraftText}")))
                   userAircraft = emit getUserAircraft();
 
-                if(t.contains("{aircraftText}"))
+                if(t.contains(QStringLiteral(u"{aircraftText}")))
                 {
                   html.clear();
                   htmlInfoBuilder->aircraftText(userAircraft, html);
                   htmlInfoBuilder->aircraftTextWeightAndFuel(userAircraft, html);
-                  t.setVariable("aircraftText", html.getHtml());
+                  t.setVariable(QStringLiteral(u"aircraftText"), html.getHtml());
                 }
 
                 // ===========================================================================
                 // Aircraft progress
-                if(t.contains("{aircraftProgressText}"))
+                if(t.contains(QStringLiteral(u"{aircraftProgressText}")))
                 {
                   Route route = emit getRoute();
                   html.clear();
                   htmlInfoBuilder->aircraftProgressText(userAircraft, html, route,
                                                         false /* show more/less switch */, false /* less */);
-                  t.setVariable("aircraftProgressText", html.getHtml());
+                  t.setVariable(QStringLiteral(u"aircraftProgressText"), html.getHtml());
                 }
 
                 // ===========================================================================
                 // Flight plan
-                if(t.contains("{flightplanText}"))
-                  t.setVariable("flightplanText", emit getFlightplanTableAsHtml(20, false));
+                if(t.contains(QStringLiteral(u"{flightplanText}")))
+                  t.setVariable(QStringLiteral(u"flightplanText"), emit getFlightplanTableAsHtml(20, false));
 
                 // ===========================================================================
                 // Airport information
-                if(t.contains("{airportText}"))
+                if(t.contains(QStringLiteral(u"{airportText}")))
                 {
                   // Reload airport ident from session
                   QString ident = session.get("airport_ident").toString().toUpper();
@@ -239,42 +239,42 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
 
                     if(airportTexts.size() == 5)
                     {
-                      t.setCondition("hasAirport", true);
-                      t.setCondition("hasError", false);
+                      t.setCondition(QStringLiteral(u"hasAirport"), true);
+                      t.setCondition(QStringLiteral(u"hasError"), false);
 
-                      t.setVariable("airportText", airportTexts.at(0));
-                      t.setVariable("airportRunwayText", airportTexts.at(1));
-                      t.setVariable("airportComText", airportTexts.at(2));
-                      t.setVariable("airportProcedureText", airportTexts.at(3));
-                      t.setVariable("airportWeatherText", airportTexts.at(4));
+                      t.setVariable(QStringLiteral(u"airportText"), airportTexts.at(0));
+                      t.setVariable(QStringLiteral(u"airportRunwayText"), airportTexts.at(1));
+                      t.setVariable(QStringLiteral(u"airportComText"), airportTexts.at(2));
+                      t.setVariable(QStringLiteral(u"airportProcedureText"), airportTexts.at(3));
+                      t.setVariable(QStringLiteral(u"airportWeatherText"), airportTexts.at(4));
                     }
                     else
                     {
                       // Error - not found
-                      t.setCondition("hasAirport", false);
+                      t.setCondition(QStringLiteral(u"hasAirport"), false);
                       errMessage = tr("No airport found for %1.").arg(ident);
                     }
                   }
                   else
                     // Nothing to display - leave page empty
-                    t.setCondition("hasAirport", false);
+                    t.setCondition(QStringLiteral(u"hasAirport"), false);
                 }
 
                 if(!errMessage.isEmpty())
                 {
                   // No airport found - display error message ==========
-                  t.setCondition("hasError", true);
-                  t.setVariable("errorText", errMessage);
+                  t.setCondition(QStringLiteral(u"hasError"), true);
+                  t.setVariable(QStringLiteral(u"errorText"), errMessage);
                 }
                 else
-                  t.setCondition("hasError", false);
+                  t.setCondition(QStringLiteral(u"hasError"), false);
 
                 // ===========================================================================
                 // Write resonse
                 response.write(t.toUtf8(), true);
               }
               else
-                showError(request, response, 500, "Internal server error. Template empty.");
+                showError(request, response, 500, QStringLiteral(u"Internal server error. Template empty."));
             }
             else
               // ===========================================================================
@@ -282,15 +282,15 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
               WebApp::getStaticFileController()->service(request, response);
           }
           else
-            showError(request, response, 403, "Forbidden.");
+            showError(request, response, 403, QStringLiteral(u"Forbidden."));
         }
         else
           // File or folder does not exist
-          showError(request, response, 404, "Not found.");
+          showError(request, response, 404, QStringLiteral(u"Not found."));
       }
       else
         // Not allowed to go parent for security
-        showError(request, response, 403, "Forbidden.");
+        showError(request, response, 403, QStringLiteral(u"Forbidden."));
     } // else other paths
   } // else mapimage
 }
@@ -300,8 +300,8 @@ inline void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& r
   Parameter params(request);
 
   // Extract values from parameter list ===========================================
-  int width = params.asInt("width", 0);
-  int height = params.asInt("height", 0);
+  int width = params.asInt(QStringLiteral(u"width"), 0);
+  int height = params.asInt(QStringLiteral(u"height"), 0);
 
   MapPixmap mapPixmap;
 
@@ -316,7 +316,7 @@ inline void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& r
 
     // Distance as KM
     float requestedDistanceKm;
-    float requestedDistance = params.asFloat("distance", -1.0f);
+    float requestedDistance = params.asFloat(QStringLiteral(u"distance"), -1.0f);
     if(requestedDistance == -1.0f) {
       requestedDistanceKm = session.get("requested_distance").toFloat();
     }
@@ -325,18 +325,18 @@ inline void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& r
       requestedDistanceKm = atools::geo::nmToKm(requestedDistance);
     }
 
-    QString mapcmd = params.asStr("mapcmd", QStringLiteral(u""));
+    QString mapcmd = params.asStr(QStringLiteral(u"mapcmd"), QStringLiteral(u""));
 
-    if(mapcmd == "user")
+    if(mapcmd == QLatin1String("user"))
       // Show user aircraft
       mapPixmap = emit getPixmapObject(width, height, web::USER_AIRCRAFT, QStringLiteral(u""), requestedDistanceKm);
-    else if(mapcmd == "route")
+    else if(mapcmd == QLatin1String("route"))
       // Center flight plan
       mapPixmap = emit getPixmapObject(width, height, web::ROUTE, QStringLiteral(u""), requestedDistanceKm);
-    else if(mapcmd == "airport")
+    else if(mapcmd == QLatin1String("airport"))
       // Show an airport by ident
       mapPixmap = emit getPixmapObject(width, height, web::AIRPORT, params.asStr(
-                                         "airport").toUpper(), requestedDistanceKm);
+                                         QStringLiteral(u"airport")).toUpper(), requestedDistanceKm);
     else
     {
         // When zooming in or out use the last corrected distance (i.e. actual distance) as a base
@@ -344,7 +344,7 @@ inline void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& r
         mapPixmap = emit getPixmapPosDistance(width, height,
                                               atools::geo::Pos(session.get("lon").toFloat(),
                                                                session.get("lat").toFloat()),
-                                              (mapcmd == "in" || mapcmd == "out") ?
+                                              (mapcmd == QLatin1String("in") || mapcmd == QLatin1String("out")) ?
                                                                        session.get("corrected_distance").toFloat() : requestedDistanceKm, mapcmd);
     }
 
@@ -362,34 +362,34 @@ inline void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& r
   else
   {
     // Distance as KM
-    float requestedDistanceKm = atools::geo::nmToKm(params.asFloat("distance", 32.0f));     // set default as value which JS delivers as default on opening from default HTML value
+    float requestedDistanceKm = atools::geo::nmToKm(params.asFloat(QStringLiteral(u"distance"), 32.0f));     // set default as value which JS delivers as default on opening from default HTML value
 
     // ============================================================================
     // Session-less / state-less calls ============================================
-    if(params.has("user"))
+    if(params.has(QStringLiteral(u"user")))
       // User aircraft =======================
       mapPixmap = emit getPixmapObject(width, height, web::USER_AIRCRAFT, QStringLiteral(u""), requestedDistanceKm);
-    else if(params.has("route"))
+    else if(params.has(QStringLiteral(u"route")))
       // Center flight plan =======================
       mapPixmap = emit getPixmapObject(width, height, web::ROUTE, QStringLiteral(u""), requestedDistanceKm);
-    else if(params.has("airport"))
+    else if(params.has(QStringLiteral(u"airport")))
       // Show airport =======================
       mapPixmap = emit getPixmapObject(width, height, web::AIRPORT, params.asStr("airport"), requestedDistanceKm);
-    else if(params.has("leftlon") && params.has("toplat") && params.has("rightlon") && params.has("bottomlat"))
+    else if(params.has(QStringLiteral(u"leftlon")) && params.has(QStringLiteral(u"toplat")) && params.has(QStringLiteral(u"rightlon")) && params.has(QStringLiteral(u"bottomlat")))
     {
       // Show rectangle =======================
-      atools::geo::Rect rect(params.asFloat("leftlon"), params.asFloat("toplat"),
-                             params.asFloat("rightlon"), params.asFloat("bottomlat"));
+      atools::geo::Rect rect(params.asFloat(QStringLiteral(u"leftlon")), params.asFloat(QStringLiteral(u"toplat")),
+                             params.asFloat(QStringLiteral(u"rightlon")), params.asFloat(QStringLiteral(u"bottomlat")));
       mapPixmap = emit getPixmapRect(width, height, rect);
     }
-    else if(params.has("distance") || (params.has("lon") && params.has("lat")))
+    else if(params.has(QStringLiteral(u"distance")) || (params.has(QStringLiteral(u"lon")) && params.has(QStringLiteral(u"lat"))))
     {
       // Show position =======================
       atools::geo::Pos pos;
-      if(params.has("lon") && params.has("lat"))
+      if(params.has(QStringLiteral(u"lon")) && params.has(QStringLiteral(u"lat")))
       {
-        pos.setLonX(params.asFloat("lon"));
-        pos.setLatY(params.asFloat("lat"));
+        pos.setLonX(params.asFloat(QStringLiteral(u"lon")));
+        pos.setLatY(params.asFloat(QStringLiteral(u"lat")));
       }
 
       mapPixmap = emit getPixmapPosDistance(width, height, pos, requestedDistanceKm, QStringLiteral(u""));
@@ -411,17 +411,17 @@ inline void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& r
     QBuffer buffer(&bytes);
     buffer.open(QIODevice::WriteOnly);
 
-    int quality = params.asInt("quality", -1);
+    int quality = params.asInt(QStringLiteral(u"quality"), -1);
 
     // Image format, jpg is default and only jpg and png allowed ===========================================
-    QString format = params.asEnum("format", "jpg", {"jpg", "png"});
+    QString format = params.asEnum(QStringLiteral(u"format"), QStringLiteral(u"jpg"), {QStringLiteral(u"jpg"), QStringLiteral(u"png")});
 
-    if(format == "jpg")
+    if(format == QLatin1String("jpg"))
     {
       response.setHeader("Content-Type", "image/jpeg");
       mapPixmap.pixmap.save(&buffer, "JPG", quality);
     }
-    else if(format == "png")
+    else if(format == QLatin1String("png"))
     {
       response.setHeader("Content-Type", "image/png");
       mapPixmap.pixmap.save(&buffer, "PNG", quality);
