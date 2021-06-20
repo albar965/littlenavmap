@@ -86,15 +86,15 @@ int ProcedureQuery::approachIdForTransitionId(int transitionId)
 const proc::MapProcedureLeg *ProcedureQuery::getApproachLeg(const map::MapAirport& airport, int approachId, int legId)
 {
 #ifndef DEBUG_APPROACH_NO_CACHE
-  if(approachLegIndex.contains(legId))
+  if(procedureLegIndex.contains(legId))
   {
     // Already in index
-    std::pair<int, int> val = approachLegIndex.value(legId);
+    std::pair<int, int> val = procedureLegIndex.value(legId);
 
     // Ensure it is in the cache - reload if needed
     const MapProcedureLegs *legs = getApproachLegs(airport, val.first);
     if(legs != nullptr)
-      return &legs->at(approachLegIndex.value(legId).second);
+      return &legs->at(procedureLegIndex.value(legId).second);
   }
   else
 #endif
