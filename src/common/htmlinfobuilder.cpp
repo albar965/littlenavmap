@@ -3323,7 +3323,17 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       }
 
       html.table();
+      // Current date and time ========================================
       dateAndTime(userAircaft, html);
+
+      // Flown distance ========================================
+      // Stored in map widget
+      float distanceFlownNm = NavApp::getTakeoffFlownDistanceNm();
+      QDateTime takeoffDateTime = NavApp::getTakeoffDateTime();
+      if(distanceFlownNm > 0.f && distanceFlownNm < map::INVALID_DISTANCE_VALUE && takeoffDateTime.isValid())
+        html.row2(tr("Flown:"), tr("%1 since takoff at %2").arg(Unit::distNm(distanceFlownNm)).
+                  arg(locale.toString(takeoffDateTime.time(), QLocale::ShortFormat)) +
+                  tr(" ") + takeoffDateTime.timeZoneAbbreviation());
       html.tableEnd();
 
       // Route distances ===============================================================

@@ -2077,7 +2077,10 @@ void MainWindow::routeResetAll()
     if(choiceDialog.isChecked(RESTART_PERF))
       NavApp::getAircraftPerfController()->restartCollection(true /* do not ask questions */);
     if(choiceDialog.isChecked(RESTART_LOGBOOK))
+    {
       NavApp::getLogdataController()->resetTakeoffLandingDetection();
+      mapWidget->resetTakeoffLandingDetection();
+    }
     if(choiceDialog.isChecked(REMOVE_MARKS))
       clearRangeRingsAndDistanceMarkers(true /* quiet */);
   }

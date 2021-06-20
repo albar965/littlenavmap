@@ -361,9 +361,8 @@ void MapWidget::takeoffLandingTimeout()
     // In air after  status has changed
     qDebug() << Q_FUNC_INFO << "Takeoff detected" << aircraft.getZuluTime();
 
+    takeoffTimeSim = takeoffLandingLastAircraft.getZuluTime();
     takeoffLandingDistanceNm = 0.;
-    takeoffLandingAverageTasKts = aircraft.getTrueAirspeedKts();
-    takeoffLastSampleTimeMs = takeoffTimeMs = aircraft.getZuluTime().toMSecsSinceEpoch();
 
     emit aircraftTakeoff(aircraft);
   }
@@ -371,9 +370,17 @@ void MapWidget::takeoffLandingTimeout()
   {
     // On ground after status has changed
     qDebug() << Q_FUNC_INFO << "Landing detected takeoffLandingDistanceNm" << takeoffLandingDistanceNm;
-    emit aircraftLanding(aircraft, static_cast<float>(takeoffLandingDistanceNm),
-                         static_cast<float>(takeoffLandingAverageTasKts));
+    emit aircraftLanding(aircraft, static_cast<float>(takeoffLandingDistanceNm));
   }
+}
+
+void MapWidget::resetTakeoffLandingDetection()
+{
+  takeoffLandingTimer.stop();
+  fuelOnOffTimer.stop();
+  takeoffLandingDistanceNm = 0.;
+  takeoffLandingLastAircraft = atools::fs::sc::SimConnectUserAircraft();
+  takeoffTimeSim = QDateTime();
 }
 
 void MapWidget::jumpBackToAircraftUpdateDistance()
@@ -2068,24 +2075,6 @@ void MapWidget::simDataCalcTakeoffLanding(const atools::fs::sc::SimConnectUserAi
     // Check manhattan distance in degree to minimize samples
     if(takeoffLandingLastAircraft.getPosition().distanceSimpleTo(aircraft.getPosition()) > epsilon)
     {
-      if(takeoffTimeMs > 0)
-      {
-        // Calculate averaget TAS
-        qint64 currentSampleTime = aircraft.getZuluTime().toMSecsSinceEpoch();
-
-        // Only every ten seconds since the simulator timestamps are not precise enough
-        if(currentSampleTime > takeoffLastSampleTimeMs + 10000)
-        {
-          qint64 lastPeriod = currentSampleTime - takeoffLastSampleTimeMs;
-          qint64 flightimeToCurrentPeriod = currentSampleTime - takeoffTimeMs;
-
-          if(flightimeToCurrentPeriod > 0)
-            takeoffLandingAverageTasKts = ((takeoffLandingAverageTasKts * (takeoffLastSampleTimeMs - takeoffTimeMs)) +
-                                           (aircraft.getTrueAirspeedKts() * lastPeriod)) / flightimeToCurrentPeriod;
-          takeoffLastSampleTimeMs = currentSampleTime;
-        }
-      }
-
       takeoffLandingDistanceNm +=
         atools::geo::meterToNm(takeoffLandingLastAircraft.getPosition().distanceMeterTo(aircraft.getPosition()));
 
@@ -2552,7 +2541,7 @@ void MapWidget::overlayStateFromMenu()
 
 void MapWidget::connectOverlayMenus()
 {
-  for(QAction *action : mapOverlays.values())
+  for(QAction *action : mapOverlays)
     connect(action, &QAction::toggled, this, &MapWidget::overlayStateFromMenu);
 
   for(const QString& name : mapOverlays.keys())
@@ -2625,7 +2614,7 @@ void MapWidget::saveState()
 
   overlayStateToMenu();
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
-  for(QAction *action : mapOverlays.values())
+  for(QAction *action : mapOverlays)
     state.save(action);
 }
 
@@ -2689,7 +2678,7 @@ void MapWidget::restoreState()
   aircraftTrackLogbook->setMaxTrackEntries(OptionData::instance().getAircraftTrackMaxPoints());
 
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
-  for(QAction *action : mapOverlays.values())
+  for(QAction *action : mapOverlays)
     state.restore(action);
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
