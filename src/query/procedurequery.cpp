@@ -623,8 +623,8 @@ proc::MapProcedureLegs *ProcedureQuery::fetchApproachLegs(const map::MapAirport&
   Q_ASSERT(airport.navdata);
 
 #ifndef DEBUG_APPROACH_NO_CACHE
-  if(approachCache.contains(approachId))
-    return approachCache.object(approachId);
+  if(procedureCache.contains(approachId))
+    return procedureCache.object(approachId);
   else
 #endif
   {
