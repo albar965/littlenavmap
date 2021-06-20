@@ -141,7 +141,7 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
           if(fi.isDir())
           {
             // is a directory - use index.html
-            file = file + (file.endsWith("/") ? QStringLiteral(u"") : QStringLiteral(u"/")) + QStringLiteral(u"index") + extension;
+            file = file + (file.endsWith("/") ? QLatin1String("") : QStringLiteral(u"/")) + QStringLiteral(u"index") + extension;
             fi = QFileInfo(docroot + QStringLiteral(u"/") + file);
           }
 
@@ -325,14 +325,14 @@ inline void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& r
       requestedDistanceKm = atools::geo::nmToKm(requestedDistance);
     }
 
-    QString mapcmd = params.asStr(QStringLiteral(u"mapcmd"), QStringLiteral(u""));
+    QString mapcmd = params.asStr(QStringLiteral(u"mapcmd"), QLatin1String(""));
 
     if(mapcmd == QLatin1String("user"))
       // Show user aircraft
-      mapPixmap = emit getPixmapObject(width, height, web::USER_AIRCRAFT, QStringLiteral(u""), requestedDistanceKm);
+      mapPixmap = emit getPixmapObject(width, height, web::USER_AIRCRAFT, QLatin1String(""), requestedDistanceKm);
     else if(mapcmd == QLatin1String("route"))
       // Center flight plan
-      mapPixmap = emit getPixmapObject(width, height, web::ROUTE, QStringLiteral(u""), requestedDistanceKm);
+      mapPixmap = emit getPixmapObject(width, height, web::ROUTE, QLatin1String(""), requestedDistanceKm);
     else if(mapcmd == QLatin1String("airport"))
       // Show an airport by ident
       mapPixmap = emit getPixmapObject(width, height, web::AIRPORT, params.asStr(
@@ -368,10 +368,10 @@ inline void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& r
     // Session-less / state-less calls ============================================
     if(params.has(QStringLiteral(u"user")))
       // User aircraft =======================
-      mapPixmap = emit getPixmapObject(width, height, web::USER_AIRCRAFT, QStringLiteral(u""), requestedDistanceKm);
+      mapPixmap = emit getPixmapObject(width, height, web::USER_AIRCRAFT, QLatin1String(""), requestedDistanceKm);
     else if(params.has(QStringLiteral(u"route")))
       // Center flight plan =======================
-      mapPixmap = emit getPixmapObject(width, height, web::ROUTE, QStringLiteral(u""), requestedDistanceKm);
+      mapPixmap = emit getPixmapObject(width, height, web::ROUTE, QLatin1String(""), requestedDistanceKm);
     else if(params.has(QStringLiteral(u"airport")))
       // Show airport =======================
       mapPixmap = emit getPixmapObject(width, height, web::AIRPORT, params.asStr("airport"), requestedDistanceKm);
@@ -392,7 +392,7 @@ inline void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& r
         pos.setLatY(params.asFloat(QStringLiteral(u"lat")));
       }
 
-      mapPixmap = emit getPixmapPosDistance(width, height, pos, requestedDistanceKm, QStringLiteral(u""));
+      mapPixmap = emit getPixmapPosDistance(width, height, pos, requestedDistanceKm, QLatin1String(""));
     }
     else
       // Show current map view =======================

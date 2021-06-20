@@ -98,7 +98,7 @@ public:
 
   /* Get map at given position and distance. Command can be used to zoom in/out or scroll from the given position:
    * "in", "out", "left", "right", "up" and "down".  */
-  MapPixmap getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm, QString mapCommand, const QString& errorCase = QLatin1String(""));
+  MapPixmap getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm, const QString& mapCommand, const QString& errorCase = QLatin1String(""));
 
   /* Zoom to rectangel on map. */
   MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect, const QString& errorCase = tr("Invalid rectangle"));

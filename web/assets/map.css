@@ -62,6 +62,7 @@ form:first-of-type, .formparts:first-of-type {
 
 .input-group label {
   padding-left: 5px;        /* padding instead of margin lets area act as hit area */
+  line-height: 12px;
 }
 
 

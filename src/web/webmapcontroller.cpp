@@ -97,7 +97,7 @@ MapPixmap WebMapController::getPixmapObject(int width, int height, web::ObjectTy
 }
 
 MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm,
-                                                 QString mapCommand, const QString& errorCase)
+                                                 const QString& mapCommand, const QString& errorCase)
 {
   if(verbose)
     qDebug() << Q_FUNC_INFO << width << "x" << height << pos << "distanceKm" << distanceKm << "cmd" << mapCommand;
