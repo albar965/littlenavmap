@@ -65,10 +65,10 @@ MapPixmap WebMapController::getPixmap(int width, int height)
     qDebug() << Q_FUNC_INFO << width << "x" << height;
 
   return getPixmapPosDistance(width, height, atools::geo::EMPTY_POS,
-                              static_cast<float>(NavApp::getMapWidget()->distance()), QString());
+                              static_cast<float>(NavApp::getMapWidget()->distance()), QStringLiteral(u""));
 }
 
-MapPixmap WebMapController::getPixmapObject(int width, int height, web::ObjectType type, QString ident,
+MapPixmap WebMapController::getPixmapObject(int width, int height, web::ObjectType type, const QString& ident,
                                             float distanceKm)
 {
   if(verbose)
@@ -78,45 +78,45 @@ MapPixmap WebMapController::getPixmapObject(int width, int height, web::ObjectTy
   MapPixmap mapPixmap;
   switch(type)
   {
-    case web::USER_AIRCRAFT:
-      if(!NavApp::getUserAircraftPos().isValid())
-      {
-        qWarning() << Q_FUNC_INFO << "invalid user aircraft";
-        mapPixmap.error = tr("No user aircraft");
-      }
-      else
-        mapPixmap = getPixmapPosDistance(width, height, NavApp::getUserAircraftPos(), distanceKm, QString());
+    case web::USER_AIRCRAFT: {
+      mapPixmap = getPixmapPosDistance(width, height, NavApp::getUserAircraftPos(), distanceKm, QStringLiteral(u""), tr("No user aircraft"));
       break;
+    }
 
-    case web::ROUTE:
-      if(!NavApp::getRouteRect().isValid())
-      {
-        qWarning() << Q_FUNC_INFO << "invalid route";
-        mapPixmap.error = tr("No flight plan");
-      }
-      else
-        mapPixmap = getPixmapPosDistance(width, height, NavApp::getRouteRect().getCenter(), distanceKm, QString());
+    case web::ROUTE: {
+      mapPixmap = getPixmapRect(width, height, NavApp::getRouteRect(), tr("No flight plan"));
       break;
+    }
 
-    case web::AIRPORT:
-      atools::geo::Pos pos = NavApp::getAirportPos(ident);
-      if(!pos.isValid())
-      {
-        qWarning() << Q_FUNC_INFO << "invalid airport";
-        mapPixmap.error = tr("Airport %1 not found").arg(ident);
-      }
-      else
-        mapPixmap = getPixmapPosDistance(width, height, NavApp::getAirportPos(ident), distanceKm, QString());
+    case web::AIRPORT: {
+      mapPixmap = getPixmapPosDistance(width, height, NavApp::getAirportPos(ident), distanceKm, QStringLiteral(u""), tr("Airport %1 not found").arg(ident));
       break;
+    }
   }
   return mapPixmap;
 }
 
 MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm,
-                                                 QString mapCommand)
+                                                 QString mapCommand, const QString& errorCase)
 {
   if(verbose)
     qDebug() << Q_FUNC_INFO << width << "x" << height << pos << "distanceKm" << distanceKm << "cmd" << mapCommand;
+
+  if(!pos.isValid())
+  {
+    if(errorCase == QStringLiteral(u""))
+    {
+      // Use current map position
+      pos.setLonX(static_cast<float>(NavApp::getMapWidget()->centerLongitude()));
+      pos.setLatY(static_cast<float>(NavApp::getMapWidget()->centerLatitude()));
+    }
+    else
+    {
+      MapPixmap mappixmap;
+      mappixmap.error = errorCase;
+      return mappixmap;
+    }
+  }
 
   if(mapPaintWidget != nullptr)
   {
@@ -128,13 +128,6 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
 
     // Zoom one out for sharp maps
     mapPaintWidget->setAvoidBlurredMap(true);
-
-    if(!pos.isValid())
-    {
-      // Use current map position
-      pos.setLonX(static_cast<float>(NavApp::getMapWidget()->centerLongitude()));
-      pos.setLatY(static_cast<float>(NavApp::getMapWidget()->centerLatitude()));
-    }
 
     // Do not center world rectangle when resizing map widget
     mapPaintWidget->setKeepWorldRect(false);
@@ -193,15 +186,15 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
   }
 }
 
-MapPixmap WebMapController::getPixmapRect(int width, int height, atools::geo::Rect rect)
+MapPixmap WebMapController::getPixmapRect(int width, int height, atools::geo::Rect rect, const QString& errorCase)
 {
   if(verbose)
     qDebug() << Q_FUNC_INFO << width << "x" << height << rect;
 
   MapPixmap mapPixmap;
-  if(mapPaintWidget != nullptr && rect.isValid())
+  if(rect.isValid())
   {
-    if(mapPaintWidget != nullptr && rect.isValid())
+    if(mapPaintWidget != nullptr)
     {
       // Copy all map settings
       mapPaintWidget->copySettings(*NavApp::getMapWidget());
@@ -221,12 +214,12 @@ MapPixmap WebMapController::getPixmapRect(int width, int height, atools::geo::Re
       mapPixmap.rect = mapPaintWidget->getCurrentViewRect();
     }
     else
-    {
-      qWarning() << Q_FUNC_INFO << "invalid rect";
-      mapPixmap.error = tr("Invalid rectangle");
-    }
+      qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
   }
   else
-    qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
+  {
+    qWarning() << Q_FUNC_INFO << errorCase;
+    mapPixmap.error = errorCase;
+  }
   return mapPixmap;
 }
