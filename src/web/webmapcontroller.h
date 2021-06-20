@@ -101,7 +101,7 @@ public:
   MapPixmap getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm, QString mapCommand, const QString& errorCase = QStringLiteral(u""));
 
   /* Zoom to rectangel on map. */
-  MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect, const QString& errorCase = QStringLiteral(u"Invalid rectangle"));
+  MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect, const QString& errorCase = tr("Invalid rectangle"));
 
 private:
   MapPaintWidget *mapPaintWidget = nullptr;
