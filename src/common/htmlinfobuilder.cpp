@@ -3244,7 +3244,7 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
   }
 }
 
-void HtmlInfoBuilder::dateAndTime(const SimConnectUserAircraft *userAircraft, HtmlBuilder& html) const
+void HtmlInfoBuilder::dateTimeAndFlown(const SimConnectUserAircraft *userAircraft, HtmlBuilder& html) const
 {
   html.row2(tr("Date and Time:"),
             locale.toString(userAircraft->getZuluTime(), QLocale::ShortFormat) +
@@ -3255,10 +3255,21 @@ void HtmlInfoBuilder::dateAndTime(const SimConnectUserAircraft *userAircraft, Ht
             locale.toString(userAircraft->getLocalTime().time(), QLocale::ShortFormat) +
             tr(" ") +
             userAircraft->getLocalTime().timeZoneAbbreviation()
+
 #ifdef DEBUG_INFORMATION
             + "[" + locale.toString(userAircraft->getLocalTime(), QLocale::ShortFormat) + "]"
 #endif
             );
+
+  // Flown distance ========================================
+  // Stored in map widget
+  float distanceFlownNm = NavApp::getTakeoffFlownDistanceNm();
+  QDateTime takeoffDateTime = NavApp::getTakeoffDateTime();
+  if(distanceFlownNm > 0.f && distanceFlownNm < map::INVALID_DISTANCE_VALUE && takeoffDateTime.isValid())
+    html.row2(tr("Flown:"), tr("%1 since takoff at %2").arg(Unit::distNm(distanceFlownNm)).
+              arg(locale.toString(takeoffDateTime.time(), QLocale::ShortFormat)) +
+              tr(" ") + takeoffDateTime.timeZoneAbbreviation());
+
 }
 
 void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircraft& aircraft,
@@ -3324,16 +3335,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
       html.table();
       // Current date and time ========================================
-      dateAndTime(userAircaft, html);
-
-      // Flown distance ========================================
-      // Stored in map widget
-      float distanceFlownNm = NavApp::getTakeoffFlownDistanceNm();
-      QDateTime takeoffDateTime = NavApp::getTakeoffDateTime();
-      if(distanceFlownNm > 0.f && distanceFlownNm < map::INVALID_DISTANCE_VALUE && takeoffDateTime.isValid())
-        html.row2(tr("Flown:"), tr("%1 since takoff at %2").arg(Unit::distNm(distanceFlownNm)).
-                  arg(locale.toString(takeoffDateTime.time(), QLocale::ShortFormat)) +
-                  tr(" ") + takeoffDateTime.timeZoneAbbreviation());
+      dateTimeAndFlown(userAircaft, html);
       html.tableEnd();
 
       // Route distances ===============================================================
@@ -3687,7 +3689,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       else
         html.b(tr("No Active Flight Plan Leg."));
       html.table();
-      dateAndTime(userAircaft, html);
+      dateTimeAndFlown(userAircaft, html);
       html.tableEnd();
     }
   } // if(!route.isEmpty() && userAircaft != nullptr && info)
@@ -3695,7 +3697,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   {
     html.warning(tr("No Flight Plan."));
     html.table();
-    dateAndTime(userAircaft, html);
+    dateTimeAndFlown(userAircaft, html);
     html.tableEnd();
   }
 

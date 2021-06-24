@@ -444,7 +444,8 @@ private:
   /* Delay display of elevation display to avoid lagging mouse movements */
   QTimer elevationDisplayTimer;
 
-  /* Delay takeoff and landing messages to avoid false recognition of bumpy landings */
+  /* Delay takeoff and landing messages to avoid false recognition of bumpy landings.
+   * Calls MapWidget::takeoffLandingTimeout()  */
   QTimer takeoffLandingTimer, fuelOnOffTimer;
 
   /* Flown distance from takeoff event */

@@ -352,37 +352,6 @@ void MapWidget::fuelOnOffTimeout()
   }
 }
 
-void MapWidget::takeoffLandingTimeout()
-{
-  const atools::fs::sc::SimConnectUserAircraft aircraft = getScreenIndexConst()->getLastUserAircraft();
-
-  if(aircraft.isFlying())
-  {
-    // In air after  status has changed
-    qDebug() << Q_FUNC_INFO << "Takeoff detected" << aircraft.getZuluTime();
-
-    takeoffTimeSim = takeoffLandingLastAircraft.getZuluTime();
-    takeoffLandingDistanceNm = 0.;
-
-    emit aircraftTakeoff(aircraft);
-  }
-  else
-  {
-    // On ground after status has changed
-    qDebug() << Q_FUNC_INFO << "Landing detected takeoffLandingDistanceNm" << takeoffLandingDistanceNm;
-    emit aircraftLanding(aircraft, static_cast<float>(takeoffLandingDistanceNm));
-  }
-}
-
-void MapWidget::resetTakeoffLandingDetection()
-{
-  takeoffLandingTimer.stop();
-  fuelOnOffTimer.stop();
-  takeoffLandingDistanceNm = 0.;
-  takeoffLandingLastAircraft = atools::fs::sc::SimConnectUserAircraft();
-  takeoffTimeSim = QDateTime();
-}
-
 void MapWidget::jumpBackToAircraftUpdateDistance()
 {
   QVariantList values = jumpBack->getValues();
@@ -2087,10 +2056,50 @@ void MapWidget::simDataCalcTakeoffLanding(const atools::fs::sc::SimConnectUserAi
      !aircraft.isSimPaused() && !aircraft.isSimReplay() &&
      !last.isSimPaused() && !last.isSimReplay())
   {
+#ifdef DEBUG_INFORMATION_TAKEOFFLANDING
+    qDebug() << Q_FUNC_INFO << "all valid";
+#endif
     // start timer to emit takeoff/landing signal
     if(last.isFlying() != aircraft.isFlying())
+    {
+#ifdef DEBUG_INFORMATION_TAKEOFFLANDING
+      qDebug() << Q_FUNC_INFO << "last flying != current flying";
+#endif
+      // Call MapWidget::takeoffLandingTimeout() later
       takeoffLandingTimer.start(aircraft.isFlying() ? TAKEOFF_TIMEOUT : LANDING_TIMEOUT);
+    }
   }
+}
+
+void MapWidget::takeoffLandingTimeout()
+{
+  const atools::fs::sc::SimConnectUserAircraft aircraft = getScreenIndexConst()->getLastUserAircraft();
+
+  if(aircraft.isFlying())
+  {
+    // In air after  status has changed
+    qDebug() << Q_FUNC_INFO << "Takeoff detected" << aircraft.getZuluTime();
+
+    takeoffTimeSim = takeoffLandingLastAircraft.getZuluTime();
+    takeoffLandingDistanceNm = 0.;
+
+    emit aircraftTakeoff(aircraft);
+  }
+  else
+  {
+    // On ground after status has changed
+    qDebug() << Q_FUNC_INFO << "Landing detected takeoffLandingDistanceNm" << takeoffLandingDistanceNm;
+    emit aircraftLanding(aircraft, static_cast<float>(takeoffLandingDistanceNm));
+  }
+}
+
+void MapWidget::resetTakeoffLandingDetection()
+{
+  takeoffLandingTimer.stop();
+  fuelOnOffTimer.stop();
+  takeoffLandingDistanceNm = 0.;
+  takeoffLandingLastAircraft = atools::fs::sc::SimConnectUserAircraft();
+  takeoffTimeSim = QDateTime();
 }
 
 void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
@@ -2113,10 +2122,6 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   qDebug() << Q_FUNC_INFO << "=========================================================";
 #endif
   const atools::fs::sc::SimConnectUserAircraft& last = getScreenIndexConst()->getLastUserAircraft();
-
-  // Check for takeoff, landing and fuel consumption changes ===========
-  simDataCalcTakeoffLanding(aircraft, last);
-  simDataCalcFuelOnOff(aircraft, last);
 
   // Create screen coordinates =============================
   CoordinateConverter conv(viewport());
@@ -2217,6 +2222,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
     // Check if any data like heading has changed which requires a redraw
     bool dataHasChanged = posHasChanged ||
+                          last.isFlying() != aircraft.isFlying() ||
+                          last.isOnGround() != aircraft.isOnGround() ||
                           angleAbsDiff(last.getHeadingDegMag(), aircraft.getHeadingDegMag()) > deltas.headingDelta || // Heading has changed
                           almostNotEqual(last.getIndicatedSpeedKts(),
                                          aircraft.getIndicatedSpeedKts(), deltas.speedDelta) || // Speed has changed
@@ -2230,7 +2237,12 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     // We can update this after checking for time difference
     lastSimUpdateMs = now;
 
+    // Check for takeoff, landing and fuel consumption changes ===========
+    simDataCalcTakeoffLanding(aircraft, last);
+    simDataCalcFuelOnOff(aircraft, last);
+
     if(dataHasChanged)
+      // Also changes local "last"
       getScreenIndex()->updateLastSimData(simulatorData);
 
     // Option to udpate always
