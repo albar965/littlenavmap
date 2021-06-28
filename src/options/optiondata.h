@@ -227,7 +227,7 @@ enum UpdateChannels
   STABLE_BETA_DEVELOP
 };
 
-/* comboBoxOptionsStartupUpdateChannels - what updates to check for */
+/* radioButtonOptionsOnlineIvao - online network to use */
 enum OnlineNetwork
 {
   ONLINE_NONE,
@@ -243,7 +243,8 @@ enum OnlineFormat
 {
   ONLINE_FORMAT_VATSIM,
   ONLINE_FORMAT_IVAO,
-  ONLINE_FORMAT_VATSIM_JSON
+  ONLINE_FORMAT_VATSIM_JSON,
+  ONLINE_FORMAT_IVAO_JSON
 };
 
 } // namespace opts
@@ -982,10 +983,13 @@ public:
     return onlineNetwork;
   }
 
+  /* Get data format for selected online service. whazzup.txt, JSON, etc. */
   opts::OnlineFormat getOnlineFormat() const;
 
   /* URL to "status.txt" or empty if not applicable */
   QString getOnlineStatusUrl() const;
+
+  /* URL to "transceivers.json" or empty if not applicable. Only for VATSIM JSON format 3 */
   QString getOnlineTransceiverUrl() const;
 
   /* URL to "whazzup.txt" or empty if not applicable */
@@ -1437,10 +1441,10 @@ private:
       onlineVatsimReload = 180,
       onlineVatsimTransceiverReload = 180,
       onlinePilotEdgeReload = 180,
-      onlineIvaoReload = 180;
+      onlineIvaoReload = 15;
 
   QString onlineVatsimStatusUrl, onlineVatsimTransceiverUrl;
-  QString onlineIvaoStatusUrl;
+  QString onlineIvaoWhazzupUrl;
   QString onlinePilotEdgeStatusUrl;
 
   /* Webserver values */

@@ -51,7 +51,7 @@ opts::OnlineFormat OptionData::getOnlineFormat() const
       return opts::ONLINE_FORMAT_VATSIM_JSON;
 
     case opts::ONLINE_IVAO:
-      return opts::ONLINE_FORMAT_IVAO;
+      return opts::ONLINE_FORMAT_IVAO_JSON;
 
     case opts::ONLINE_PILOTEDGE:
       return opts::ONLINE_FORMAT_VATSIM;
@@ -65,13 +65,11 @@ QString OptionData::getOnlineStatusUrl() const
   {
     case opts::ONLINE_CUSTOM:
     case opts::ONLINE_NONE:
+    case opts::ONLINE_IVAO:
       return QString();
 
     case opts::ONLINE_VATSIM:
       return onlineVatsimStatusUrl;
-
-    case opts::ONLINE_IVAO:
-      return onlineIvaoStatusUrl;
 
     case opts::ONLINE_PILOTEDGE:
       return onlinePilotEdgeStatusUrl;
@@ -103,14 +101,14 @@ QString OptionData::getOnlineWhazzupUrl() const
 {
   switch(onlineNetwork)
   {
-    case opts::ONLINE_NONE:
-      return QString();
-
     case opts::ONLINE_CUSTOM:
       return onlineWhazzupUrl;
 
-    case opts::ONLINE_VATSIM:
     case opts::ONLINE_IVAO:
+      return onlineIvaoWhazzupUrl;
+
+    case opts::ONLINE_NONE:
+    case opts::ONLINE_VATSIM:
     case opts::ONLINE_PILOTEDGE:
     case opts::ONLINE_CUSTOM_STATUS:
       return QString();

@@ -51,6 +51,9 @@ static const int MIN_DISTANCE_DUPLICATE_M = atools::geo::nmToMeter(900);
 static const int MIN_DISTANCE_DUPLICATE_M = atools::geo::nmToMeter(30);
 #endif
 
+// Minimum reload time for whazzup files (JSON or txt)
+static const int MIN_RELOAD_TIME_SECONDS = 15;
+
 using atools::fs::sc::SimConnectAircraft;
 using atools::fs::online::OnlinedataManager;
 using atools::util::HttpDownloader;
@@ -69,6 +72,9 @@ atools::fs::online::Format convertFormat(opts::OnlineFormat format)
 
     case opts::ONLINE_FORMAT_IVAO:
       return atools::fs::online::IVAO;
+
+    case opts::ONLINE_FORMAT_IVAO_JSON:
+      return atools::fs::online::IVAO_JSON2;
   }
   return atools::fs::online::UNKNOWN;
 }
@@ -318,8 +324,9 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
 
     // Contains servers and does not need an extra download
     bool vatsimJson = format == atools::fs::online::VATSIM_JSON3;
+    bool ivaoJson = format == atools::fs::online::IVAO_JSON2;
 
-    if(manager->readFromWhazzup(uncompress(data, Q_FUNC_INFO, vatsimJson /* utf8 */),
+    if(manager->readFromWhazzup(uncompress(data, Q_FUNC_INFO, ivaoJson || vatsimJson /* utf8 */),
                                 format, manager->getLastUpdateTimeFromWhazzup()))
     {
       // Get all callsigns and positions from online list to allow deduplication
@@ -327,7 +334,7 @@ void OnlinedataController::downloadFinished(const QByteArray& data, QString url)
       manager->getClientCallsignAndPosMap(clientCallsignAndPosMap);
 
       QString whazzupVoiceUrlFromStatus = manager->getWhazzupVoiceUrlFromStatus();
-      if(!vatsimJson && !whazzupVoiceUrlFromStatus.isEmpty() &&
+      if(!vatsimJson && !ivaoJson && !whazzupVoiceUrlFromStatus.isEmpty() &&
          lastServerDownload < now.addSecs(-MIN_SERVER_DOWNLOAD_INTERVAL_MIN * 60))
       {
         // Next in chain is server file
@@ -739,7 +746,7 @@ void OnlinedataController::startDownloadTimer()
     }
     else
     {
-      intervalSeconds = std::max(intervalSeconds, 60);
+      intervalSeconds = std::max(intervalSeconds, MIN_RELOAD_TIME_SECONDS);
       source = "networks.cfg";
     }
   }

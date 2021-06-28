@@ -2672,27 +2672,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     html.row2If(tr("Visual Range:"), Unit::distNm(onlineRec.valueInt("visual_range")));
     html.row2If(tr("ATIS:"), onlineRec.valueStr("atis").replace("^\\A7", "\n"));
     html.row2If(tr("ATIS Time:"), locale.toString(onlineRec.valueDateTime("atis_time")));
-
-    float qnh = onlineRec.valueFloat("qnh_mb");
-    if(qnh > 0.f && qnh < 10000.f)
-      html.row2(tr("Sea Level Pressure:"), locale.toString(qnh, 'f', 0) + tr(" hPa, ") +
-                locale.toString(ageo::mbarToInHg(qnh), 'f', 2) + tr(" inHg"));
-
-    if(onlineRec.isNull("administrative_rating") || onlineRec.isNull("atc_pilot_rating"))
-      html.row2If(tr("Combined Rating:"), onlineRec.valueStr("combined_rating"));
-
-    if(!onlineRec.isNull("administrative_rating"))
-      html.row2If(tr("Administrative Rating:"),
-                  atools::fs::online::admRatingText(onlineRec.valueInt("administrative_rating")));
-    if(!onlineRec.isNull("atc_pilot_rating"))
-      html.row2If(tr("ATC Rating:"), atools::fs::online::atcRatingText(onlineRec.valueInt("atc_pilot_rating")));
-
     html.row2If(tr("Connection Time:"), locale.toString(onlineRec.valueDateTime("connection_time")));
-
-    if(!onlineRec.valueStr("software_name").isEmpty())
-      html.row2If(tr("Software:"), tr("%1 %2").
-                  arg(onlineRec.valueStr("software_name")).
-                  arg(onlineRec.valueStr("software_version")));
 
     // Always unknown
     // html.row2If(tr("Simulator:"), atools::fs::online::simulatorText(onlineRec.valueInt("simulator")));
@@ -3093,31 +3073,10 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
     // General online information =================================================================
     head(html, tr("Online Information"));
     html.table();
-
     html.row2If(tr("VID:"), onlineRec.valueStr("vid"));
     html.row2If(tr("Name:"), onlineRec.valueStr("name"));
     html.row2If(tr("Server:"), onlineRec.valueStr("server"));
-
-    float qnh = onlineRec.valueFloat("qnh_mb");
-    if(qnh > 0.f && qnh < 10000.f)
-      html.row2(tr("Sea Level Pressure:"), locale.toString(qnh, 'f', 0) + tr(" hPa, ") +
-                locale.toString(ageo::mbarToInHg(qnh), 'f', 2) + tr(" inHg"));
-
-    if(onlineRec.isNull("administrative_rating") || onlineRec.isNull("atc_pilot_rating"))
-      html.row2If(tr("Combined Rating:"), onlineRec.valueStr("combined_rating"));
-
-    if(!onlineRec.isNull("administrative_rating"))
-      html.row2If(tr("Administrative Rating:"),
-                  atools::fs::online::admRatingText(onlineRec.valueInt("administrative_rating")));
-    if(!onlineRec.isNull("atc_pilot_rating"))
-      html.row2If(tr("ATC Rating:"), atools::fs::online::pilotRatingText(onlineRec.valueInt("atc_pilot_rating")));
-
     html.row2If(tr("Connection Time:"), locale.toString(onlineRec.valueDateTime("connection_time")));
-
-    if(!onlineRec.valueStr("software_name").isEmpty())
-      html.row2If(tr("Software:"), tr("%1 %2").
-                  arg(onlineRec.valueStr("software_name")).
-                  arg(onlineRec.valueStr("software_version")));
     html.row2If(tr("Simulator:"), atools::fs::online::simulatorText(onlineRec.valueInt("simulator")));
     html.tableEnd();
 
@@ -3125,8 +3084,7 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
     head(html, tr("Flight Plan"));
     html.table();
 
-    if(onlineRec.valueBool("prefile"))
-      html.row2(tr("Is Prefile"));
+    html.row2If(tr("State:"), onlineRec.valueStr("state"));
 
     QString spd = onlineRec.valueStr("flightplan_cruising_speed");
     QString alt = onlineRec.valueStr("flightplan_cruising_level");
@@ -3147,9 +3105,6 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
     else
       html.row2If(tr("Cruising Level:"), alt);
 
-    float range = onlineRec.valueFloat("visual_range");
-    if(range > 0.f && range < map::INVALID_ALTITUDE_VALUE)
-      html.row2If(tr("Visual Range:"), Unit::distNm(range));
     html.row2If(tr("Flight Rules:"), onlineRec.valueStr("flightplan_flight_rules"));
     html.row2If(tr("Type of Flight:"), onlineRec.valueStr("flightplan_type_of_flight"));
 

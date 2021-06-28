@@ -5451,6 +5451,11 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
                    <string>JSON (VATSIM)</string>
                   </property>
                  </item>
+                 <item>
+                  <property name="text">
+                   <string>JSON (IVAO)</string>
+                  </property>
+                 </item>
                 </widget>
                </item>
                <item row="5" column="0">

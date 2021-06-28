@@ -1043,7 +1043,7 @@ void OptionsDialog::restoreState()
   od.onlineVatsimTransceiverReload = networkSettings.value("vatsim/updatetransceiver") == "auto" ? -1 :
                                      networkSettings.value("vatsim/updatetransceiver").toInt();
 
-  od.onlineIvaoStatusUrl = networkSettings.value("ivao/statusurl").toString();
+  od.onlineIvaoWhazzupUrl = networkSettings.value("ivao/whazzupurl").toString();
   od.onlineIvaoReload = networkSettings.value("ivao/update") == "auto" ? -1 :
                         networkSettings.value("ivao/update").toInt();
 
@@ -1052,7 +1052,7 @@ void OptionsDialog::restoreState()
                              networkSettings.value("pilotedge/update").toInt();
 
   // Disable selection based on what was found in the file
-  ui->radioButtonOptionsOnlineIvao->setVisible(!od.onlineIvaoStatusUrl.isEmpty());
+  ui->radioButtonOptionsOnlineIvao->setVisible(!od.onlineIvaoWhazzupUrl.isEmpty());
   ui->radioButtonOptionsOnlinePilotEdge->setVisible(!od.onlinePilotEdgeStatusUrl.isEmpty());
   ui->radioButtonOptionsOnlineVatsim->setVisible(!od.onlineVatsimStatusUrl.isEmpty());
 
