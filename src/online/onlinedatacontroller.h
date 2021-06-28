@@ -110,7 +110,7 @@ public:
   /* Get aircraft from last bounding rectangle query from cache. */
   const QList<atools::fs::sc::SimConnectAircraft> *getAircraftFromCache();
 
-  /* Fill aircraft object from table client */
+  /* Fill aircraft object from table "client" in database. */
   void getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int id);
 
   static void fillAircraftFromClient(atools::fs::sc::SimConnectAircraft& ac, const atools::sql::SqlRecord& record);
