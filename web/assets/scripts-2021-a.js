@@ -85,7 +85,7 @@ function injectUpdates(origin) {
     /**
      * API: map source update, notifiable = function to take notification
      */
-    function updateMapImage(command, quality, force, notifiable) {
+    var updateMapImage_realPixels = function(command, quality, force, notifiable) {
       mapUpdateNotifiables.push(notifiable);
       if(mapImageLoaded || force && !forceLock) {
         mapImageLoaded = false;
@@ -93,13 +93,35 @@ function injectUpdates(origin) {
         mapElement.src = "/mapimage?format=jpg&quality=" + quality + "&width=" + ~~(mapElement.parentElement.clientWidth * realPixelsPerCSSPixel) + "&height=" + ~~(mapElement.parentElement.clientHeight * realPixelsPerCSSPixel) + "&session&" + command + "=" + Math.random();
       }
       return ++mapUpdateCounter;
+    };
+    // same as updateMapImage_realPixels except width and height are as delivered by JS (= in CSS pixels (which are real when devicePixelRatio == 1))
+    var updateMapImage_cssPixels = function(command, quality, force, notifiable) {
+      mapUpdateNotifiables.push(notifiable);
+      if(mapImageLoaded || force && !forceLock) {
+        mapImageLoaded = false;
+        forceLock = force;
+        mapElement.src = "/mapimage?format=jpg&quality=" + quality + "&width=" + ~~mapElement.parentElement.clientWidth + "&height=" + ~~mapElement.parentElement.clientHeight + "&session&" + command + "=" + Math.random();
+      }
+      return ++mapUpdateCounter;
+    };
+
+    function setMapImageUpdateFunction() {
+      window.updateMapImage = realPixelsPerCSSPixel === 1 ? updateMapImage_cssPixels : updateMapImage_realPixels;
     }
+    setMapImageUpdateFunction();
 
     /*
      * API: get transformed user setting for map zoom in map command format
      */
     function getZoomDistance() {
       return ~~Math.pow(2, centerDistance.value);
+    }
+
+    /*
+     * returns the map command equalling a reload taking relevant settings into account
+     */
+    function mapCommand() {
+      return refreshTypeWAC.checked ? "mapcmd=user&cmd" : "reload";
     }
 
 
@@ -109,9 +131,9 @@ function injectUpdates(origin) {
     var imageRequestTimeout = null;
     ocw.sizeMapToContainer = function() {
       ocw.clearTimeout(imageRequestTimeout);
-      updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&cmd" : "reload", resizingMapQuality);
+      updateMapImage(mapCommand(), resizingMapQuality);
       imageRequestTimeout = ocw.setTimeout(function() {       // update after the resizing stopped to have an image for the final size "for certain"
-        updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&cmd" : "reload", defaultMapQuality, true);
+        updateMapImage(mapCommand(), defaultMapQuality, true);
       }, 200);
     };
 
@@ -218,7 +240,7 @@ function injectUpdates(origin) {
 
       function requester() {
         timeStartLastRequest = performance.now();
-        updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&cmd" : "reload", refresher.value < 6 ? fastRefreshMapQuality : defaultMapQuality, false, notifiable);
+        updateMapImage(mapCommand(), refresher.value < 6 ? fastRefreshMapQuality : defaultMapQuality, false, notifiable);
       }
 
       function looper() {
@@ -258,7 +280,7 @@ function injectUpdates(origin) {
     };
 
     ocw.refreshMap = function() {
-      updateMapImage(refreshTypeWAC.checked ? "mapcmd=user&cmd" : "reload", defaultMapQuality, true);
+      updateMapImage(mapCommand(), defaultMapQuality, true);
     };
 
     // caring and handling state changes and restoration after content switch (after outer ui other button presses)
@@ -290,19 +312,6 @@ function injectUpdates(origin) {
       storeState("refreshwithaircraft", this.checked);
     });
     refreshTypeWAC.checked = retrieveState("refreshwithaircraft", false);
-    centerDistance.addEventListener("change", function() {
-      var xhttp = new XMLHttpRequest();
-      xhttp.open("GET", "/zoom?to=" + getZoomDistance(), false);
-      xhttp.send();
-      ocw.checkRefresh();
-      storeState("centerdistance", this.value);
-    });
-    retrievedState = retrieveState("centerdistance", null);
-    if(retrievedState !== null) {
-      centerDistance.value = retrievedState;
-      centerDistance.dispatchEvent(new Event("change"));
-      ocd.querySelector('#refreshvalue2').textContent = retrievedState;
-    }
 
 
     /*
@@ -341,35 +350,61 @@ function injectUpdates(origin) {
     /*
      * Option Commands Handling: prevent standby
      */
-    var standbyPreventionVideo = ocd.querySelector("#preventstandbyVideoContainer").contentDocument.querySelector("video");    // iOS need video with audio track to have it work as standby preventer
-    standbyPreventionVideo.addEventListener("play", function() {
-      standbyPreventionVideo.classList.add("running");
-    });
-    standbyPreventionVideo.addEventListener("timeupdate", function() {         // iOS iPad showed a "unprecision" of 2s, thus rewinding after 2s before the end lead to the video ending and rewinding not applied anymore; loop HTML attribute appeared to get ignored
-      standbyPreventionVideo.currentTime > 6 ? standbyPreventionVideo.currentTime = 4 : 0;
-    });
-    standbyPreventionVideo.addEventListener("pause", function() {
-      standbyPreventionVideo.classList.remove("running");
-    });
+    var standbyPreventionVideoContainer = ocd.querySelector("#preventstandbyVideoContainer");
+    var standbyPreventionVideo = null;
+    function handleVideo() {
+      standbyPreventionVideo = standbyPreventionVideoContainer.contentDocument.querySelector("video");    // iOS needs video with audio track to have it work as standby preventer
+      standbyPreventionVideo.addEventListener("play", function() {
+        standbyPreventionVideo.classList.add("running");
+      });
+      standbyPreventionVideo.addEventListener("timeupdate", function() {                                  // iOS iPad showed a "unprecision" of 2s, thus rewinding after 2s before the end lead to the video ending and rewinding not applied anymore; loop HTML attribute appeared to get ignored
+        standbyPreventionVideo.currentTime > 6 ? standbyPreventionVideo.currentTime = 4 : 0;
+      });
+      standbyPreventionVideo.addEventListener("pause", function() {
+        standbyPreventionVideo.classList.remove("running");
+      });
+    }
+    var preventStandbyToggle = ocd.querySelector("#preventstandby");
     var testTimeout;
+    function enableStandbyPrevention() {
+      standbyPreventionVideo.play();
+      storeState("preventingstandby", true);
+      testTimeout = ocw.setTimeout(function() {
+        if(standbyPreventionVideo.paused) {                                                               // being paused despite instructing play can occur on "restoring state" after content switch because playing is denied by iOS on page load, content switch is a page load and playing would be autoplay
+          preventStandbyToggle.click();
+        }
+      }, 1000);
+    }
+    function disableStandbyPrevention() {
+      ocw.clearTimeout(testTimeout);
+      standbyPreventionVideo.pause();
+      storeState("preventingstandby", false);
+    }
     ocw.preventStandby = function(innerorigin) {
       if(innerorigin.checked) {
-        standbyPreventionVideo.play();
-        storeState("preventingstandby", true);
-        testTimeout = ocw.setTimeout(function() {
-          if(standbyPreventionVideo.paused) {                                 // being paused despite instructing play can occur on "restoring state" after content switch which is a page reload on iOS because it is denied by iOS as it is like an autoplay on page load
-            ocd.querySelector("#preventstandby").click();
-          }
-        }, 1000);
+        if(standbyPreventionVideo !== null) {
+          enableStandbyPrevention();
+        } else {
+          standbyPreventionVideoContainer.onload = function() {
+            handleVideo();
+            enableStandbyPrevention();
+          };
+          standbyPreventionVideoContainer.src = "preventstandbyvideo.html";
+        }
       } else {
-        ocw.clearTimeout(testTimeout);
-        standbyPreventionVideo.pause();
-        storeState("preventingstandby", false);
+        if(standbyPreventionVideo !== null) {
+          disableStandbyPrevention();
+        } else {
+          standbyPreventionVideoContainer.onload = function() {
+            handleVideo();
+            disableStandbyPrevention();
+          };
+          standbyPreventionVideoContainer.src = "preventstandbyvideo.html";
+        }
       }
     };
-    var preventStandby = ocd.querySelector("#preventstandby");
-    if(retrieveState("preventingstandby", preventStandby.checked) !== preventStandby.checked) {
-      preventStandby.click();
+    if(retrieveState("preventingstandby", preventStandbyToggle.checked) !== preventStandbyToggle.checked) {
+      preventStandbyToggle.click();
     }
 
     /*ocw.toggleRetinaMap = function(innerorigin) {
@@ -380,7 +415,8 @@ function injectUpdates(origin) {
         realPixelsPerCSSPixel = 1;
         storeState("retinaon", false);
       }
-      ocw.reloadMap(true);
+      setMapImageUpdateFunction();
+      ocw.refreshMap();
     }
     var retinaToggle = ocd.querySelector("#retinaToggle");
     if(retrieveState("retinaon", retinaToggle.checked) !== retinaToggle.checked) {
@@ -515,7 +551,7 @@ gotten = localStorage.getItem("themeCSS");
 if(gotten) {
   var destination = document.querySelector("select[name=theme]");
   destination.value = gotten;
-  destination.dispatchEvent(new Event("change", {bubbles: true}));
+  destination.dispatchEvent(new Event("change"));
 }
 
 /*

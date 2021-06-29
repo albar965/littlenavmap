@@ -63,9 +63,9 @@ signals:
    * Therefore, it is necessary to use queued signals to separate
    * a thread from the HTTP server.*/
   MapPixmap getPixmap(int width, int height);
-  MapPixmap getPixmapObject(int width, int height, web::ObjectType type, QString ident, float distanceKm);
-  MapPixmap getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm, QString mapCommand);
-  MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect);
+  MapPixmap getPixmapObject(int width, int height, web::ObjectType type, const QString& ident, float distanceKm);
+  MapPixmap getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm, const QString& mapCommand, const QString& errorCase = QLatin1String(""));
+  MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect, const QString& errorCase = tr("Invalid rectangle"));
 
   atools::fs::sc::SimConnectUserAircraft getUserAircraft();
   Route getRoute();

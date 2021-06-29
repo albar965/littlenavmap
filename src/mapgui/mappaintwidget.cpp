@@ -724,10 +724,11 @@ void MapPaintWidget::setDistanceToMap(double distanceKm, bool allowAdjust)
     adjustMapDistance();
 }
 
-void MapPaintWidget::showPosNotAdjusted(const atools::geo::Pos& pos, float distanceKm, bool doubleClick)
+void MapPaintWidget::showPosNotAdjusted(const atools::geo::Pos& pos, float distanceKm)
 {
-  if(checkPos(pos))
-    showPosInternal(pos, distanceKm, doubleClick, false /* allow adjust */);
+    Pos normPos = pos.normalized();
+    centerOn(normPos.getLonX(), normPos.getLatY());
+    setDistance(std::min(std::max((double)distanceKm, MINIMUM_DISTANCE_KM / 2.), MAXIMUM_DISTANCE_KM));
 }
 
 void MapPaintWidget::showPos(const atools::geo::Pos& pos, float distanceKm, bool doubleClick)
@@ -761,6 +762,33 @@ void MapPaintWidget::showPosInternal(const atools::geo::Pos& pos, float distance
   centerPosOnMap(pos);
   if(distanceKm < map::INVALID_DISTANCE_VALUE)
     setDistanceToMap(distanceKm, allowAdjust);
+}
+
+void MapPaintWidget::showRectStreamlined(const atools::geo::Rect& rect)
+{
+  if(rect.isPoint(POS_IS_POINT_EPSILON))
+    showPosNotAdjusted(rect.getTopLeft(), 0.f);
+  else
+  {
+    float w = std::abs(rect.getWidthDegree());
+    float h = std::abs(rect.getHeightDegree());
+
+    if(atools::almostEqual(w, 0.f, POS_IS_POINT_EPSILON))
+      // Workaround for marble not being able to center certain lines
+      // Turn rect into a square
+      centerRectOnMap(Rect(rect.getWest() - h / 2, rect.getNorth(), rect.getEast() + h / 2, rect.getSouth()));
+    else if(atools::almostEqual(h, 0.f, POS_IS_POINT_EPSILON))
+      // Turn rect into a square
+      centerRectOnMap(Rect(rect.getWest(), rect.getNorth() + w / 2, rect.getEast(), rect.getSouth() - w / 2));
+    else
+      // Center on rectangle
+      centerRectOnMap(rect);
+
+    float distanceKm = atools::geo::nmToKm(Unit::rev(OptionData::instance().getMapZoomShowMenu(), Unit::distNmF));
+
+    if(distance() < distanceKm)
+      setDistanceToMap(distanceKm);
+  }
 }
 
 void MapPaintWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
