@@ -154,127 +154,7 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
 
             if(file.endsWith(extension))
             {
-              // Use all .html files as templates - template handler wants file without extension
-              file.chop(extension.size());
-
-              // Get HTML template from cache
-              response.setHeader("Content-Type", "text/html; charset=UTF-8");
-              Template t = WebApp::getTemplateCache()->getTemplate(file, request.getHeader("Accept-Language"));
-              QString errMessage;
-
-              if(!t.isEmpty())
-              {
-                if(verbose)
-                  t.enableWarnings();
-
-                // Set general variables ==============================
-                t.setVariable(QStringLiteral(u"applicationName"), QApplication::applicationName());
-                t.setVariable(QStringLiteral(u"applicationVersion"), QApplication::applicationVersion());
-                t.setVariable(QStringLiteral(u"helpUrl"), atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineUrl + QStringLiteral(u"WEBSERVER.html"),
-                                                                                 lnm::helpLanguageOnline()).toString());
-
-                // Put refresh values back in page by inserting select control ==============================
-                if(t.contains(QStringLiteral(u"{aircraftrefreshsel}")))
-                  t.setVariable(QStringLiteral(u"aircraftrefreshsel"),
-                                buildRefreshSelect(session.get("aircraftrefresh").toInt()));      // does session entry exist?
-
-                if(t.contains(QStringLiteral(u"{flightplanrefreshsel}")))
-                  t.setVariable(QStringLiteral(u"flightplanrefreshsel"),
-                                buildRefreshSelect(session.get("flightplanrefresh").toInt()));    // does session entry exist?
-
-                if(t.contains(QStringLiteral(u"{maprefreshsel}")))
-                  t.setVariable(QStringLiteral(u"maprefreshsel"),
-                                buildRefreshSelect(session.get("maprefresh").toInt()));           // does session entry exist?
-
-                if(t.contains(QStringLiteral(u"{progressrefreshsel}")))
-                  t.setVariable(QStringLiteral(u"progressrefreshsel"),
-                                buildRefreshSelect(session.get("progressrefresh").toInt()));      // does session entry exist?
-
-                // ===========================================================================
-                // Aircraft registration, weight, etc.
-                atools::util::HtmlBuilder html(mapcolors::webTableBackgroundColor, mapcolors::webTableAltBackgroundColor);
-
-                atools::fs::sc::SimConnectUserAircraft userAircraft;
-                if(t.contains(QStringLiteral(u"{aircraftProgressText}")) || t.contains(QStringLiteral(u"{aircraftText}")))
-                  userAircraft = emit getUserAircraft();
-
-                if(t.contains(QStringLiteral(u"{aircraftText}")))
-                {
-                  html.clear();
-                  htmlInfoBuilder->aircraftText(userAircraft, html);
-                  htmlInfoBuilder->aircraftTextWeightAndFuel(userAircraft, html);
-                  t.setVariable(QStringLiteral(u"aircraftText"), html.getHtml());
-                }
-
-                // ===========================================================================
-                // Aircraft progress
-                if(t.contains(QStringLiteral(u"{aircraftProgressText}")))
-                {
-                  Route route = emit getRoute();
-                  html.clear();
-                  htmlInfoBuilder->aircraftProgressText(userAircraft, html, route,
-                                                        false /* show more/less switch */, false /* less */);
-                  t.setVariable(QStringLiteral(u"aircraftProgressText"), html.getHtml());
-                }
-
-                // ===========================================================================
-                // Flight plan
-                if(t.contains(QStringLiteral(u"{flightplanText}")))
-                  t.setVariable(QStringLiteral(u"flightplanText"), emit getFlightplanTableAsHtml(20, false));
-
-                // ===========================================================================
-                // Airport information
-                if(t.contains(QStringLiteral(u"{airportText}")))
-                {
-                  // Reload airport ident from session
-                  QString ident = session.get("airport_ident").toString().toUpper();
-
-                  if(ident.isEmpty())
-                    ident = request.getParameter("airportident");
-
-                  if(!ident.isEmpty())
-                  {
-                    // Get airport information as HTML in the string list. Order is main, runway, com, procedure and weather.
-                    QStringList airportTexts = emit getAirportText(ident);
-
-                    if(airportTexts.size() == 5)
-                    {
-                      t.setCondition(QStringLiteral(u"hasAirport"), true);
-                      t.setCondition(QStringLiteral(u"hasError"), false);
-
-                      t.setVariable(QStringLiteral(u"airportText"), airportTexts.at(0));
-                      t.setVariable(QStringLiteral(u"airportRunwayText"), airportTexts.at(1));
-                      t.setVariable(QStringLiteral(u"airportComText"), airportTexts.at(2));
-                      t.setVariable(QStringLiteral(u"airportProcedureText"), airportTexts.at(3));
-                      t.setVariable(QStringLiteral(u"airportWeatherText"), airportTexts.at(4));
-                    }
-                    else
-                    {
-                      // Error - not found
-                      t.setCondition(QStringLiteral(u"hasAirport"), false);
-                      errMessage = tr("No airport found for %1.").arg(ident);
-                    }
-                  }
-                  else
-                    // Nothing to display - leave page empty
-                    t.setCondition(QStringLiteral(u"hasAirport"), false);
-                }
-
-                if(!errMessage.isEmpty())
-                {
-                  // No airport found - display error message ==========
-                  t.setCondition(QStringLiteral(u"hasError"), true);
-                  t.setVariable(QStringLiteral(u"errorText"), errMessage);
-                }
-                else
-                  t.setCondition(QStringLiteral(u"hasError"), false);
-
-                // ===========================================================================
-                // Write resonse
-                response.write(t.toUtf8(), true);
-              }
-              else
-                showError(request, response, 500, QStringLiteral(u"Internal server error. Template empty."));
+              handleHtmlFileRequest(request, response, session, file, extension);
             }
             else
               // ===========================================================================
@@ -435,6 +315,135 @@ inline void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& r
   else
     // Show error message as image
     showErrorPixmap(response, width, height, 404, QStringLiteral(u"invalid pixmap"));
+}
+
+inline void RequestHandler::handleHtmlFileRequest(HttpRequest& request, HttpResponse& response, HttpSession& session, QString& file, const QString& extension)
+{
+
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << " for " << file;
+
+    // Use all .html files as templates - template handler wants file without extension
+    file.chop(extension.size());
+
+    // Get HTML template from cache
+    response.setHeader("Content-Type", "text/html; charset=UTF-8");
+    Template t = WebApp::getTemplateCache()->getTemplate(file, request.getHeader("Accept-Language"));
+    QString errMessage;
+
+    if(!t.isEmpty())
+    {
+      if(verbose)
+        t.enableWarnings();
+
+      // Set general variables ==============================
+      t.setVariable(QStringLiteral(u"applicationName"), QApplication::applicationName());
+      t.setVariable(QStringLiteral(u"applicationVersion"), QApplication::applicationVersion());
+      t.setVariable(QStringLiteral(u"helpUrl"), atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineUrl + QStringLiteral(u"WEBSERVER.html"),
+                                                                       lnm::helpLanguageOnline()).toString());
+
+      // Put refresh values back in page by inserting select control ==============================
+      if(t.contains(QStringLiteral(u"{aircraftrefreshsel}")))
+        t.setVariable(QStringLiteral(u"aircraftrefreshsel"),
+                      buildRefreshSelect(session.get("aircraftrefresh").toInt()));      // does session entry exist?
+
+      if(t.contains(QStringLiteral(u"{flightplanrefreshsel}")))
+        t.setVariable(QStringLiteral(u"flightplanrefreshsel"),
+                      buildRefreshSelect(session.get("flightplanrefresh").toInt()));    // does session entry exist?
+
+      if(t.contains(QStringLiteral(u"{maprefreshsel}")))
+        t.setVariable(QStringLiteral(u"maprefreshsel"),
+                      buildRefreshSelect(session.get("maprefresh").toInt()));           // does session entry exist?
+
+      if(t.contains(QStringLiteral(u"{progressrefreshsel}")))
+        t.setVariable(QStringLiteral(u"progressrefreshsel"),
+                      buildRefreshSelect(session.get("progressrefresh").toInt()));      // does session entry exist?
+
+      // ===========================================================================
+      // Aircraft registration, weight, etc.
+      atools::util::HtmlBuilder html(mapcolors::webTableBackgroundColor, mapcolors::webTableAltBackgroundColor);
+
+      atools::fs::sc::SimConnectUserAircraft userAircraft;
+      if(t.contains(QStringLiteral(u"{aircraftProgressText}")) || t.contains(QStringLiteral(u"{aircraftText}")))
+        userAircraft = emit getUserAircraft();
+
+      if(t.contains(QStringLiteral(u"{aircraftText}")))
+      {
+        html.clear();
+        htmlInfoBuilder->aircraftText(userAircraft, html);
+        htmlInfoBuilder->aircraftTextWeightAndFuel(userAircraft, html);
+        t.setVariable(QStringLiteral(u"aircraftText"), html.getHtml());
+      }
+
+      // ===========================================================================
+      // Aircraft progress
+      if(t.contains(QStringLiteral(u"{aircraftProgressText}")))
+      {
+        Route route = emit getRoute();
+        html.clear();
+        htmlInfoBuilder->aircraftProgressText(userAircraft, html, route,
+                                              false /* show more/less switch */, false /* less */);
+        t.setVariable(QStringLiteral(u"aircraftProgressText"), html.getHtml());
+      }
+
+      // ===========================================================================
+      // Flight plan
+      if(t.contains(QStringLiteral(u"{flightplanText}")))
+        t.setVariable(QStringLiteral(u"flightplanText"), emit getFlightplanTableAsHtml(20, false));
+
+      // ===========================================================================
+      // Airport information
+      if(t.contains(QStringLiteral(u"{airportText}")))
+      {
+        // Reload airport ident from session
+        QString ident = session.get("airport_ident").toString().toUpper();
+
+        if(ident.isEmpty())
+          ident = request.getParameter("airportident");
+
+        if(!ident.isEmpty())
+        {
+          // Get airport information as HTML in the string list. Order is main, runway, com, procedure and weather.
+          QStringList airportTexts = emit getAirportText(ident);
+
+          if(airportTexts.size() == 5)
+          {
+            t.setCondition(QStringLiteral(u"hasAirport"), true);
+            t.setCondition(QStringLiteral(u"hasError"), false);
+
+            t.setVariable(QStringLiteral(u"airportText"), airportTexts.at(0));
+            t.setVariable(QStringLiteral(u"airportRunwayText"), airportTexts.at(1));
+            t.setVariable(QStringLiteral(u"airportComText"), airportTexts.at(2));
+            t.setVariable(QStringLiteral(u"airportProcedureText"), airportTexts.at(3));
+            t.setVariable(QStringLiteral(u"airportWeatherText"), airportTexts.at(4));
+          }
+          else
+          {
+            // Error - not found
+            t.setCondition(QStringLiteral(u"hasAirport"), false);
+            errMessage = tr("No airport found for %1.").arg(ident);
+          }
+        }
+        else
+          // Nothing to display - leave page empty
+          t.setCondition(QStringLiteral(u"hasAirport"), false);
+      }
+
+      if(!errMessage.isEmpty())
+      {
+        // No airport found - display error message ==========
+        t.setCondition(QStringLiteral(u"hasError"), true);
+        t.setVariable(QStringLiteral(u"errorText"), errMessage);
+      }
+      else
+        t.setCondition(QStringLiteral(u"hasError"), false);
+
+      // ===========================================================================
+      // Write resonse
+      response.write(t.toUtf8(), true);
+    }
+    else
+      showError(request, response, 500, QStringLiteral(u"Internal server error. Template empty."));
 }
 
 void RequestHandler::showErrorPixmap(HttpResponse& response, int width, int height, int status, const QString& text)

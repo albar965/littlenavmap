@@ -87,6 +87,9 @@ private:
   /* Handle stateful and stateless map image requests. */
   void handleMapImage(stefanfrings::HttpRequest& request, stefanfrings::HttpResponse& response);
 
+  /* Handle html file requests. */
+  void handleHtmlFileRequest(stefanfrings::HttpRequest& request, stefanfrings::HttpResponse& response, stefanfrings::HttpSession& session, QString& file, const QString& extension);
+
   /* Build the select dropdown box HTML code with the default value pre-selected. */
   QString buildRefreshSelect(int defaultValue);
 
