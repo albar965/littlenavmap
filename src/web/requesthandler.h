@@ -22,6 +22,7 @@
 
 #include "web/webflags.h"
 #include "web/webmapcontroller.h"
+#include "webapi/webapicontroller.h"
 
 #include <QPixmap>
 
@@ -51,8 +52,8 @@ class RequestHandler :
 
 public:
   /* Prepare connections to other objects. Handler is ready to accept connections when instantiated. */
-  RequestHandler(QObject *parent, WebMapController *webMapController, HtmlInfoBuilder *htmlInfoBuilderParam,
-                 bool verboseParam);
+  RequestHandler(QObject *parent, WebMapController *webMapController, WebApiController *webApiController,
+                 HtmlInfoBuilder *htmlInfoBuilderParam, bool verboseParam);
   virtual ~RequestHandler() override;
 
   /* Doing all the work right here. */
@@ -73,6 +74,9 @@ signals:
   QStringList getAirportText(QString ident);
   atools::geo::Pos getCurrentMapWidgetPos();
 
+  /* Calls to WebApiController */
+  WebApiResponse serviceWebApi(WebApiRequest& request);
+
 private:
   /* fetch parameters as a string map from request */
   QHash<QString, QString> parameters(stefanfrings::HttpRequest& request) const;
@@ -86,6 +90,9 @@ private:
 
   /* Handle stateful and stateless map image requests. */
   void handleMapImage(stefanfrings::HttpRequest& request, stefanfrings::HttpResponse& response);
+
+  /* Handle stateful and stateless api requests. */
+  void handleWebApiRequest(stefanfrings::HttpRequest& request, stefanfrings::HttpResponse& response);
 
   /* Handle html file requests. */
   void handleHtmlFileRequest(stefanfrings::HttpRequest& request, stefanfrings::HttpResponse& response, stefanfrings::HttpSession& session, QString& file, const QString& extension);

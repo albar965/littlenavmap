@@ -26,6 +26,7 @@
 #include "info/infocontroller.h"
 #include "route/routecontroller.h"
 #include "web/webmapcontroller.h"
+#include "webapi/webapicontroller.h"
 #include "web/webtools.h"
 #include "web/webapp.h"
 #include "common/mapcolors.h"
@@ -44,7 +45,7 @@
 
 using namespace stefanfrings;
 
-RequestHandler::RequestHandler(QObject *parent, WebMapController *webMapController,
+RequestHandler::RequestHandler(QObject *parent, WebMapController *webMapController,WebApiController *webApiController,
                                HtmlInfoBuilder *htmlInfoBuilderParam, bool verboseParam)
   : HttpRequestHandler(parent), htmlInfoBuilder(htmlInfoBuilderParam), verbose(verboseParam)
 {
@@ -74,6 +75,9 @@ RequestHandler::RequestHandler(QObject *parent, WebMapController *webMapControll
           Qt::BlockingQueuedConnection);
   connect(this, &RequestHandler::getPixmapRect, webMapController, &WebMapController::getPixmapRect,
           Qt::BlockingQueuedConnection);
+
+  /* Connect WebApiController to serviceWebApi signal */
+  connect(this,&RequestHandler::serviceWebApi, webApiController, &WebApiController::service,Qt::BlockingQueuedConnection);
 }
 
 RequestHandler::~RequestHandler()
@@ -95,6 +99,10 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
     // ===========================================================================
     // Requests for map images only - either with or without session
     handleMapImage(request, response);
+  else if(path.startsWith(QLatin1String("/api")))
+    // ===========================================================================
+    // Requests for web api - either with or without session
+    handleWebApiRequest(request, response);
   else
   {
     Parameter params(request);
@@ -316,6 +324,31 @@ inline void RequestHandler::handleMapImage(HttpRequest& request, HttpResponse& r
     // Show error message as image
     showErrorPixmap(response, width, height, 404, QStringLiteral(u"invalid pixmap"));
 }
+
+
+inline void RequestHandler::handleWebApiRequest(HttpRequest& request, HttpResponse& response)
+{
+  // Map API request
+  WebApiRequest apiRequest;
+  apiRequest.path = request.getPath();
+  apiRequest.method = request.getMethod();
+  apiRequest.headers = request.getHeaderMap();
+  apiRequest.parameters = request.getParameterMap();
+  apiRequest.body = request.getBody();
+
+  // Call API in-sync
+  WebApiResponse result = emit serviceWebApi(apiRequest);
+
+  // Map API response
+  response.setStatus(result.status);
+  QMultiMap<QByteArray, QByteArray>::iterator i;
+  for (i = result.headers.begin(); i != result.headers.end(); ++i)
+      response.setHeader(i.key(),i.value());
+
+  // Write output
+  response.write(result.body, true);
+}
+
 
 inline void RequestHandler::handleHtmlFileRequest(HttpRequest& request, HttpResponse& response, HttpSession& session, QString& file, const QString& extension)
 {
