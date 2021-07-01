@@ -1307,6 +1307,7 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clear
     clearFlightplanProcedureProperties(proc::PROCEDURE_ALL);
 
   ProcedureQuery::fillFlightplanProcedureProperties(flightplan.getProperties(), approachLegs, starLegs, sidLegs);
+  updateIndicesAndOffsets();
 }
 
 void Route::removeLegs(int from, int to)
@@ -1484,16 +1485,19 @@ void Route::updateIndicesAndOffsets()
   // Update offsets
   for(int i = 0; i < size(); i++)
   {
-    RouteLeg& leg = (*this)[i];
+    const proc::MapProcedureLeg& leg = at(i).getProcedureLeg();
 
-    if(leg.getProcedureLeg().isAnyDeparture() && sidLegsOffset == map::INVALID_INDEX_VALUE)
-      sidLegsOffset = i;
+    if(leg.isValid())
+    {
+      if(leg.isAnyDeparture() && sidLegsOffset == map::INVALID_INDEX_VALUE)
+        sidLegsOffset = i;
 
-    if(leg.getProcedureLeg().isAnyStar() && starLegsOffset == map::INVALID_INDEX_VALUE)
-      starLegsOffset = i;
+      if(leg.isAnyStar() && starLegsOffset == map::INVALID_INDEX_VALUE)
+        starLegsOffset = i;
 
-    if(leg.getProcedureLeg().isArrival() && approachLegsOffset == map::INVALID_INDEX_VALUE)
-      approachLegsOffset = i;
+      if(leg.isArrival() && approachLegsOffset == map::INVALID_INDEX_VALUE)
+        approachLegsOffset = i;
+    }
   }
   updateAlternateIndicesAndOffsets();
 }
