@@ -300,6 +300,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   Pos fixPos = leg.fixPos.isValid() ? leg.fixPos : airport.position;
   Pos recFixPos = leg.recFixPos.isValid() ? leg.recFixPos : airport.position;
 
+  // ============================================================================================
   // Load full navaid information for fix and set fix position
   if(leg.fixType == "W" || leg.fixType == "TW")
   {
@@ -313,23 +314,43 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   }
   else if(leg.fixType == "V")
   {
+    // Get both VOR with region and ILS without region
     mapObjectByIdent(leg.navaids, map::VOR, leg.fixIdent, leg.fixRegion, QString(), fixPos);
-    if(!leg.navaids.vors.isEmpty())
+    mapObjectByIdent(leg.navaids, map::ILS, leg.fixIdent, QString(), airport.ident, fixPos);
+
+    if(leg.navaids.hasVor() && leg.navaids.hasIls())
+    {
+      // Remove the one with is farther away from the airport or fix position
+      if(leg.navaids.vors.first().position.distanceMeterTo(leg.recFixPos) <
+         leg.navaids.ils.first().position.distanceMeterTo(leg.recFixPos))
+        leg.navaids.clear(map::ILS); // VOR is closer
+      else
+        leg.navaids.clear(map::VOR); // ILS is closer
+    }
+
+    if(leg.navaids.hasVor())
     {
       leg.fixPos = leg.navaids.vors.first().position;
       leg.magvar = leg.navaids.vors.first().magvar;
       leg.navId = leg.navaids.vors.first().id;
+
+      // Also update region and type if missing
+      if(leg.fixRegion.isEmpty())
+        leg.fixRegion = leg.navaids.vors.first().region;
+      if(leg.fixType.isEmpty())
+        leg.fixType = "V";
     }
-    else
+    else if(leg.navaids.hasIls())
     {
-      // Try ILS if VOR or DME could not be found
-      mapObjectByIdent(leg.navaids, map::ILS, leg.fixIdent, QString(), airport.ident, fixPos);
-      if(!leg.navaids.ils.isEmpty())
-      {
-        leg.fixPos = leg.navaids.ils.first().position;
-        leg.magvar = leg.navaids.ils.first().magvar;
-        leg.navId = leg.navaids.ils.first().id;
-      }
+      leg.fixPos = leg.navaids.ils.first().position;
+      leg.magvar = leg.navaids.ils.first().magvar;
+      leg.navId = leg.navaids.ils.first().id;
+
+      // Also update region and type if missing
+      if(leg.fixRegion.isEmpty())
+        leg.fixRegion = leg.navaids.ils.first().region;
+      if(leg.fixType.isEmpty())
+        leg.fixType = "L";
     }
   }
   else if(leg.fixType == "N" || leg.fixType == "TN")
@@ -382,6 +403,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     else
     {
       // Use a VOR or DME as fallback
+      leg.navaids.clear();
       mapObjectByIdent(leg.navaids, map::VOR, leg.fixIdent, QString(), airport.ident, fixPos);
       if(!leg.navaids.vors.isEmpty())
       {
@@ -397,6 +419,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
       else
       {
         // Use a NDB as second fallback
+        leg.navaids.clear();
         mapObjectByIdent(leg.navaids, map::NDB, leg.fixIdent, QString(), airport.ident, fixPos);
         if(!leg.navaids.ndbs.isEmpty())
         {
@@ -413,6 +436,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     }
   }
 
+  // ============================================================================================
   // Load navaid information for recommended fix and set fix position
   // Also update magvar if not already set
   map::MapResult recResult;
@@ -430,27 +454,49 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   }
   else if(leg.recFixType == "V")
   {
+    // Get both VOR with region and ILS without region
     mapObjectByIdent(recResult, map::VOR, leg.recFixIdent, leg.recFixRegion, QString(), recFixPos);
-    if(!recResult.vors.isEmpty())
+    mapObjectByIdent(recResult, map::ILS, leg.recFixIdent, QString(), airport.ident, recFixPos);
+
+    if(recResult.hasVor() && recResult.hasIls())
+    {
+      // Remove the one with is farther away from the airport or fix position
+      if(recResult.vors.first().position.distanceMeterTo(leg.recFixPos) <
+         recResult.ils.first().position.distanceMeterTo(leg.recFixPos))
+        recResult.clear(map::ILS); // VOR is closer
+      else
+        recResult.clear(map::VOR); // ILS is closer
+    }
+
+    if(recResult.hasVor())
     {
       leg.recFixPos = recResult.vors.first().position;
       leg.recNavId = recResult.vors.first().id;
 
       if(!(leg.magvar < map::INVALID_MAGVAR))
         leg.magvar = recResult.vors.first().magvar;
-    }
-    else
-    {
-      // ILS as fallback
-      mapObjectByIdent(recResult, map::ILS, leg.recFixIdent, QString(), airport.ident, recFixPos);
-      if(!recResult.ils.isEmpty())
-      {
-        leg.recFixPos = recResult.ils.first().position;
-        leg.recNavId = recResult.ils.first().id;
 
-        if(!(leg.magvar < map::INVALID_MAGVAR))
-          leg.magvar = recResult.ils.first().magvar;
-      }
+      // Also update region and type if missing
+      if(leg.recFixRegion.isEmpty())
+        leg.recFixRegion = recResult.vors.first().region;
+
+      if(leg.recFixType.isEmpty())
+        leg.recFixType = "V";
+    }
+    else if(recResult.hasIls())
+    {
+      leg.recFixPos = recResult.ils.first().position;
+      leg.recNavId = recResult.ils.first().id;
+
+      if(!(leg.magvar < map::INVALID_MAGVAR))
+        leg.magvar = recResult.ils.first().magvar;
+
+      // Also update region and type if missing
+      if(leg.recFixRegion.isEmpty())
+        leg.recFixRegion = recResult.ils.first().region;
+
+      if(leg.recFixType.isEmpty())
+        leg.recFixType = "L";
     }
   }
   else if(leg.recFixType == "N" || leg.recFixType == "TN")
@@ -491,6 +537,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     else
     {
       // Use a VOR or DME as fallback
+      recResult.clear();
       mapObjectByIdent(recResult, map::VOR, leg.recFixIdent, QString(), airport.ident, recFixPos);
       if(!recResult.vors.isEmpty())
       {
@@ -509,6 +556,7 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
       else
       {
         // Use a NDB as second fallback
+        recResult.clear();
         mapObjectByIdent(recResult, map::NDB, leg.recFixIdent, QString(), airport.ident, recFixPos);
         if(!recResult.ndbs.isEmpty())
         {
