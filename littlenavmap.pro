@@ -383,6 +383,8 @@ SOURCES += \
   src/web/webflags.cpp \
   src/web/webmapcontroller.cpp \
   src/web/webtools.cpp \
+  src/webapi/abstractactionscontroller.cpp \
+  src/webapi/airportactionscontroller.cpp \
   src/webapi/webapicontroller.cpp
 
 HEADERS  += \
@@ -546,7 +548,11 @@ HEADERS  += \
   src/web/webflags.h \
   src/web/webmapcontroller.h \
   src/web/webtools.h \
-  src/webapi/webapicontroller.h
+  src/webapi/abstractactionscontroller.h \
+  src/webapi/airportactionscontroller.h \
+  src/webapi/webapicontroller.h \
+  src/webapi/webapirequest.h \
+  src/webapi/webapiresponse.h
 
 FORMS += \
   src/connect/connectdialog.ui \

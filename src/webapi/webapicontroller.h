@@ -18,29 +18,9 @@
 #ifndef LNM_WebApiController_H
 #define LNM_WebApiController_H
 
-#include "geo/rect.h"
-
-/**
- * @brief Generic WebApiRequest POD object
- */
-class WebApiRequest {
-public:
-    QByteArray path;
-    QByteArray method;
-    QMultiMap<QByteArray, QByteArray> headers;
-    QMultiMap<QByteArray, QByteArray> parameters;
-    QByteArray body;
-};
-
-/**
- * @brief Generic WebApiResponse POD object
- */
-class WebApiResponse {
-public:
-    int status;
-    QMultiMap<QByteArray, QByteArray> headers;
-    QByteArray body;
-};
+#include <QObject>
+#include "webapi/webapirequest.h"
+#include "webapi/webapiresponse.h"
 
 /**
  * @brief The WebApiController class resolving WebApiRequests to WebApiResponses
@@ -56,15 +36,21 @@ public:
 
   WebApiController(const WebApiController& other) = delete;
   WebApiController& operator=(const WebApiController& other) = delete;
-
   /**
-   * @brief Return API response for provided request
+   * @brief Resolves request path to requested controller and action.
+   * Instantiates requested controller dynamically and invokes method/action
+   * to process the response to return.
+   * @example e.g. /airport/default -> AirportActionsController::defaultAction(...)
    * @param request
    * @return response
    */
   WebApiResponse service(WebApiRequest& request);
 
 private:
+  /**
+   * @brief register available controllers for dynamic invocation
+   */
+  void registerControllers();
   bool verbose = false;
 };
 

@@ -16,17 +16,26 @@
 *****************************************************************************/
 
 #include "webapi/webapicontroller.h"
+#include "webapi/airportactionscontroller.h"
 
+#include "geo/rect.h"
 #include <navapp.h>
 #include "navapp.h"
 
 #include <QDebug>
+#include <QMetaMethod>
 
 
 WebApiController::WebApiController(QObject *parent, bool verboseParam)
   : QObject(parent), verbose(verboseParam)
 {
-  qDebug() << Q_FUNC_INFO;
+    qDebug() << Q_FUNC_INFO;
+    registerControllers();
+}
+
+void WebApiController::registerControllers(){
+
+    qRegisterMetaType<AirportActionsController*>("AirportActionsController*");
 }
 
 WebApiController::~WebApiController()
@@ -43,6 +52,24 @@ WebApiResponse WebApiController::service(WebApiRequest& request)
 
   // Create response object
   WebApiResponse response;
+
+  // Set controller and action by string
+  QByteArray controllerName = "AirportActionsController";
+  QByteArray actionName = "defaultAction";
+
+  // Get controller class id
+  int id = QMetaType::type(controllerName+"*");
+
+  if (id != 0) {
+
+      // Create controller instance
+      const QMetaObject* mo = QMetaType::metaObjectForType(id);
+      QObject* controller = mo->newInstance(Q_ARG(QObject*, parent()),Q_ARG(bool, verbose));
+
+      // Invoke action on instance
+      QMetaObject::invokeMethod(controller,actionName.data(),Qt::DirectConnection);
+
+  }
 
   // Example
   response.body = NavApp::getAirportPos("EDDM").toString().toUtf8();
