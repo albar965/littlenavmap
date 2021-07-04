@@ -441,6 +441,16 @@ bool NavApp::isUserAircraftValid()
   return mainWindow->getMapWidget()->getUserAircraft().isFullyValid();
 }
 
+float NavApp::getTakeoffFlownDistanceNm()
+{
+  return mainWindow->getMapWidget()->getTakeoffFlownDistanceNm();
+}
+
+QDateTime NavApp::getTakeoffDateTime()
+{
+  return mainWindow->getMapWidget()->getTakeoffDateTime();
+}
+
 const atools::fs::sc::SimConnectUserAircraft& NavApp::getUserAircraft()
 {
   return mainWindow->getMapWidget()->getUserAircraft();

@@ -48,7 +48,7 @@ OnlineClientSearch::OnlineClientSearch(QMainWindow *parent, QTableView *tableVie
   append(Column("flightplan_departure_aerodrome", ui->lineEditOnlineClientDeparture, tr("Departure")).filter()).
   append(Column("flightplan_destination_aerodrome", ui->lineEditOnlineClientDestination, tr("Destination")).filter()).
 
-  append(Column("prefile", tr("Prefile"))).
+  append(Column("state", tr("State"))).
   append(Column("on_ground", tr("On Ground"))).
   append(Column("groundspeed", tr("Groundspeed\n%speed%"))).
   append(Column("altitude", tr("Altitude\n%alt%"))).
@@ -63,9 +63,6 @@ OnlineClientSearch::OnlineClientSearch(QMainWindow *parent, QTableView *tableVie
   append(Column("flightplan_type_of_flight", tr("ICAO Flight\nType")).hidden()).
   append(Column("flightplan_enroute_minutes", tr("Enroute\nhh:mm")).hidden()).
   append(Column("flightplan_endurance_minutes", tr("Endurance\nhh:mm")).hidden()).
-  append(Column("combined_rating", tr("Combined\nRating"))).
-  append(Column("administrative_rating", tr("Admin\nRating"))).
-  append(Column("atc_pilot_rating", tr("Pilot\nRating"))).
   append(Column("connection_time", tr("Connection\nTime"))).
   append(Column("client_type").hidden()).
   append(Column("heading").hidden()).
@@ -199,17 +196,8 @@ QString OnlineClientSearch::formatModelData(const Column *col, const QVariant& d
   if(!displayRoleValue.isNull())
   {
     // Called directly by the model for export functions
-    if(col->getColumnName() == "on_ground" || col->getColumnName() == "prefile")
+    if(col->getColumnName() == "on_ground")
       return displayRoleValue.toInt() > 0 ? tr("Yes") : QString();
-    else if(col->getColumnName() == "administrative_rating")
-      return atools::fs::online::admRatingText(
-        static_cast<atools::fs::online::adm::AdministrativeRating>(displayRoleValue.toInt()));
-    else if(col->getColumnName() == "atc_pilot_rating")
-      return atools::fs::online::pilotRatingText(
-        static_cast<atools::fs::online::pilot::PilotRating>(displayRoleValue.toInt()));
-    else if(col->getColumnName() == "facility_type")
-      return atools::fs::online::facilityTypeText(
-        static_cast<atools::fs::online::fac::FacilityType>(displayRoleValue.toInt()));
     else if(col->getColumnName() == "atis")
       return displayRoleValue.toString().simplified();
     else if(col->getColumnName() == "atis_time" || col->getColumnName() == "connection_time")

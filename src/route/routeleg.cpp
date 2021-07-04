@@ -49,6 +49,9 @@ const static atools::fs::pln::FlightplanEntry EMPTY_FLIGHTPLAN_ENTRY;
 // Appended to X-Plane free parking names - obsolete
 const static QLatin1Literal PARKING_NO_NUMBER(" NULL");
 
+/* Maximum distance for parking spot to saved coordinate */
+const float MAX_PARKING_DIST_METER = 50.f;
+
 RouteLeg::RouteLeg(atools::fs::pln::Flightplan *parentFlightplan)
   : flightplan(parentFlightplan)
 {
@@ -192,11 +195,12 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
           {
             // Not found at airway search for any navaid with the given name nearby
             assignAnyNavaid(flightplanEntry, last, maxDistance);
-            qWarning() << "No waypoints for" << flightplanEntry->getIdent() << flightplanEntry->getAirway();
+            qWarning() << Q_FUNC_INFO << "No waypoints for" << flightplanEntry->getIdent() <<
+              flightplanEntry->getAirway();
           }
         }
         else
-          qWarning() << "Cannot resolve unknwon flight plan entry" << flightplanEntry->getIdent();
+          qWarning() << Q_FUNC_INFO << "Cannot resolve unknwon flight plan entry" << flightplanEntry->getIdent();
       }
       break;
 
@@ -211,40 +215,34 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
 
         validWaypoint = true;
 
-        // Resolve parking ==============================
+        // Reset start and parking
+        start = map::MapStart();
+        parking = map::MapParking();
+
+        // Resolve parking if first airport ==============================
         QString name = flightplan->getDepartureParkingName().trimmed();
+        QList<map::MapParking> parkings;
         if(!name.isEmpty() && prevLeg == nullptr)
         {
+          // There is a parking name and this is the departure airport
+          bool translateName = false;
           if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11 || name.endsWith(PARKING_NO_NUMBER))
           {
-            // X-Plane =============================================================================
-            // Do not resolve parking for X-Plane databases
-            // X-Plane style parking - name only
+            // X-Plane style parking - name only ======
             if(name.endsWith(PARKING_NO_NUMBER))
-              name.chop(PARKING_NO_NUMBER.size());
+              name.chop(PARKING_NO_NUMBER.size()); // remove " NULL"
 
-            // Get nearest with the same name
-            QList<map::MapParking> parkings;
+            // Get parking spots with the same name - list is sorted by distance
             airportQuery->getParkingByName(parkings, airport.id, name, flightplan->getDepartureParkingPosition());
 
-            if(parkings.isEmpty())
-            {
-              // Always try runway or helipad if no start positions found
-              qWarning() << "Found no parking spots for" << name;
-              assignRunwayOrHelipad(name);
-            }
-            else
-            {
-              parking = parkings.first();
-              // Update flightplan with found name
-              flightplan->setDepartureParkingName(name);
-              flightplan->setDepartureParkingType(atools::fs::pln::PARKING);
-            }
+            // Leave name as is
+            translateName = false;
           }
           else
           {
-            // FSX/P3D =============================================================================
-            // Resolve parking if first airport
+            // FSX/P3D ================================
+
+            // Extract text and number suffix
             QRegularExpressionMatch match = PARKING_TO_NAME_AND_NUM.match(name);
 
             // Convert parking name to the format used in the database
@@ -252,40 +250,42 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
 
             if(!parkingName.isEmpty())
             {
-              // Seems to be a parking position
-              int number = QString(match.captured(2)).toInt();
-              QList<map::MapParking> parkings;
-              airportQuery->getParkingByNameAndNumber(parkings, airport.id,
-                                                      map::parkingDatabaseName(parkingName), number);
-
-              if(parkings.isEmpty())
-              {
-                // Always try runway or helipad if no start positions found
-                qWarning() << "Found no parking spots for" << parkingName << number;
-                assignRunwayOrHelipad(name);
-              }
-              else
-              {
-                if(parkings.size() > 1)
-                  qWarning() << "Found multiple parking spots for" << parkingName << number;
-
-                parking = parkings.first();
-                // Update flightplan with found name
-                flightplan->setDepartureParkingName(map::parkingNameForFlightplan(parking));
-                flightplan->setDepartureParkingType(atools::fs::pln::PARKING);
-              }
+              // Seems to be a parking position - extract FSX style
+              airportQuery->getParkingByNameAndNumber(parkings, airport.id, map::parkingDatabaseName(parkingName),
+                                                      QString(match.captured(2)).toInt());
+              translateName = true;
             }
-            else
-              // Name does not match FSX patter try runway or helipads
-              assignRunwayOrHelipad(name);
           }
-        }
-        else
-        {
-          // Airport is not departure reset start and parking
-          start = map::MapStart();
-          parking = map::MapParking();
-        }
+
+          // Assign found values to leg =====================================================
+          if(parkings.isEmpty() ||
+             parkings.first().position.distanceMeterTo(flightplan->getDepartureParkingPosition()) >
+             MAX_PARKING_DIST_METER)
+          {
+            // No parking found or too far away
+            // Always try runway or helipad if no start positions found
+            qWarning() << Q_FUNC_INFO << "Found no parking spots for" << name;
+            assignRunwayOrHelipad(name);
+          }
+          else
+          {
+            if(parkings.size() > 1)
+              qWarning() << Q_FUNC_INFO << "Found multiple parking spots for" << name;
+
+            // Found one and position is close enough
+            parking = parkings.first();
+
+            // Update flightplan with found name
+            if(translateName)
+              // FSX style name
+              flightplan->setDepartureParkingName(map::parkingNameForFlightplan(parking));
+            else
+              // X-Plane as is
+              flightplan->setDepartureParkingName(name);
+
+            flightplan->setDepartureParkingType(atools::fs::pln::PARKING);
+          }
+        } // if(!name.isEmpty() && prevLeg == nullptr)
       }
       break;
 
@@ -853,10 +853,10 @@ bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors, bool
                    (atools::charAt(name, 0).isLetter() && atools::charAt(name, 1).isLetter() &&
                     atools::charAt(name, 2).isNumber() && atools::charAt(name, 3).isNumber());
 
-      QString type = track ? tr("Track or airway") : tr("Airway");
       invalid = true;
       if(errors != nullptr)
-        errors->append(tr("%1 %2 not found for %3.").arg(type).arg(name).arg(getIdent()));
+        errors->append(tr("%1 %2 not found for %3.").
+                       arg(track ? tr("Track or airway") : tr("Airway")).arg(name).arg(getIdent()));
       if(trackError != nullptr)
         *trackError |= track;
     }
@@ -946,9 +946,10 @@ void RouteLeg::assignRunwayOrHelipad(const QString& name)
   NavApp::getAirportQuerySim()->getStartByNameAndPos(start, airport.id, name,
                                                      flightplan->getDepartureParkingPosition());
 
-  if(!start.isValid())
+  if(!start.isValid() ||
+     start.position.distanceMeterTo(flightplan->getDepartureParkingPosition()) > MAX_PARKING_DIST_METER)
   {
-    qWarning() << "Found no start positions";
+    qWarning() << Q_FUNC_INFO << "Found no start positions for" << name;
     // Clear departure position in flight plan
     flightplan->setDepartureParkingName(QString());
     flightplan->setDepartureParkingType(atools::fs::pln::NO_POS);

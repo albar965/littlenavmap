@@ -60,9 +60,6 @@ OnlineCenterSearch::OnlineCenterSearch(QMainWindow *parent, QTableView *tableVie
   append(Column("server", ui->lineEditOnlineCenterServer, tr("Server")).filter()).
   append(Column("frequency", tr("Frequency\nMHz"))).
   append(Column("visual_range", tr("Range\n%dist%"))).
-  append(Column("combined_rating", tr("Combined\nRating"))).
-  append(Column("administrative_rating", tr("Admin\nRating"))).
-  append(Column("atc_pilot_rating", tr("ATC\nRating"))).
   append(Column("atis", tr("ATIS"))).
   append(Column("atis_time", tr("ATIS\nTime"))).
   append(Column("connection_time", tr("Connection\nTime"))).
@@ -204,12 +201,6 @@ QString OnlineCenterSearch::formatModelData(const Column *col, const QVariant& d
              displayRoleValue.toFloat() < map::INVALID_ALTITUDE_VALUE &&
              displayRoleValue.toFloat() > 0.f ?
              Unit::distNm(displayRoleValue.toFloat(), false) : QString();
-    else if(col->getColumnName() == "administrative_rating")
-      return atools::fs::online::admRatingText(
-        static_cast<atools::fs::online::adm::AdministrativeRating>(displayRoleValue.toInt()));
-    else if(col->getColumnName() == "atc_pilot_rating")
-      return atools::fs::online::atcRatingText(
-        static_cast<atools::fs::online::atc::AtcRating>(displayRoleValue.toInt()));
     else if(col->getColumnName() == "facility_type")
       return atools::fs::online::facilityTypeText(
         static_cast<atools::fs::online::fac::FacilityType>(displayRoleValue.toInt()));

@@ -168,6 +168,9 @@ public:
   static bool isConnectedAndAircraftFlying();
   static bool isUserAircraftValid();
 
+  static float getTakeoffFlownDistanceNm();
+  static QDateTime getTakeoffDateTime() ;
+
   static const atools::fs::sc::SimConnectUserAircraft& getUserAircraft();
   static const atools::fs::sc::SimConnectData& getSimConnectData();
   static const atools::geo::Pos& getUserAircraftPos();

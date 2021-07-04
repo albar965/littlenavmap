@@ -101,8 +101,7 @@ public:
 
   /* Takeoff and landing events from map widget which will create a log entry if enabled */
   void aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft);
-  void aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, float flownDistanceNm,
-                       float averageTasKts);
+  void aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, float flownDistanceNm);
 
   /* Get record or struct from database */
   map::MapLogbookEntry getLogEntryById(int id);
@@ -182,8 +181,7 @@ signals:
 
 private:
   /* Create a logbook entry on takeoff and update it on landing */
-  void createTakeoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff, float flownDistanceNm,
-                            float averageTasKts);
+  void createTakeoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff, float flownDistanceNm);
 
   /* Callback function for X-Plane import */
   static void fetchAirportCoordinates(atools::geo::Pos& pos, QString& name, const QString& airportIdent);

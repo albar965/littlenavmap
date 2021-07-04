@@ -668,12 +668,22 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
 
       for(const map::MapOnlineAircraft& mapOnlineAircraft : result.onlineAircraft)
       {
-        infoBuilder->aircraftText(mapOnlineAircraft.getAircraft(), html, num++, odc->getNumClients());
-        infoBuilder->aircraftProgressText(mapOnlineAircraft.getAircraft(), html, Route(),
+        atools::fs::sc::SimConnectAircraft ac;
+        NavApp::getOnlinedataController()->getClientAircraftById(ac, mapOnlineAircraft.getId());
+
+        if(!ac.isValid())
+        {
+          // Not found - use aircraft from iterator
+          ac = mapOnlineAircraft.getAircraft();
+          qWarning() << Q_FUNC_INFO << "Online aircraft not found"
+                     << mapOnlineAircraft.getId() << mapOnlineAircraft.getAircraft().getAirplaneRegistration();
+        }
+
+        infoBuilder->aircraftText(ac, html, num++, odc->getNumClients());
+        infoBuilder->aircraftProgressText(ac, html, Route(),
                                           false /* show more/less switch */, false /* true if less info mode */);
-        infoBuilder->aircraftOnlineText(mapOnlineAircraft.getAircraft(),
-                                        odc->getClientRecordById(mapOnlineAircraft.getId()), html);
-        currentSearchResult.onlineAircraft.append(mapOnlineAircraft);
+        infoBuilder->aircraftOnlineText(ac, odc->getClientRecordById(ac.getId()), html);
+        currentSearchResult.onlineAircraft.append(map::MapOnlineAircraft(ac));
       }
     }
     atools::gui::util::updateTextEdit(ui->textBrowserClientInfo, html.getHtml(),

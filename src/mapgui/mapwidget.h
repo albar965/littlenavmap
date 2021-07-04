@@ -205,6 +205,21 @@ public:
   void addFullScreenExitButton();
   void removeFullScreenExitButton();
 
+  /* Flown distance from takeoff event. Independent of automatically created logbook entries. */
+  float getTakeoffFlownDistanceNm() const
+  {
+    // Distance is already counted up before takeoff - wait until time is valid
+    return takeoffTimeSim.isValid() ? takeoffLandingDistanceNm : 0.f;
+  }
+
+  /* Time of takeoff detected. Independent of automatically created logbook entries. */
+  QDateTime getTakeoffDateTime() const
+  {
+    return takeoffTimeSim;
+  }
+
+  void resetTakeoffLandingDetection();
+
 signals:
   /* Fuel flow started or stopped */
   void aircraftEngineStarted(const atools::fs::sc::SimConnectUserAircraft& aircraft);
@@ -212,8 +227,7 @@ signals:
 
   /* State isFlying between last and current aircraft has changed */
   void aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft);
-  void aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, float flownDistanceNm,
-                       float averageTasKts);
+  void aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, float flownDistanceNm);
 
   /* Set parking position, departure, destination for flight plan from context menu */
   void routeSetParkingStart(map::MapParking parking);
@@ -430,20 +444,15 @@ private:
   /* Delay display of elevation display to avoid lagging mouse movements */
   QTimer elevationDisplayTimer;
 
-  /* Delay takeoff and landing messages to avoid false recognition of bumpy landings */
+  /* Delay takeoff and landing messages to avoid false recognition of bumpy landings.
+   * Calls MapWidget::takeoffLandingTimeout()  */
   QTimer takeoffLandingTimer, fuelOnOffTimer;
-
-  /* Simulator zulu time timestamp of takeoff event */
-  qint64 takeoffTimeMs = 0L;
 
   /* Flown distance from takeoff event */
   double takeoffLandingDistanceNm = 0.;
 
-  /* Average true airspeed from takeoff event */
-  double takeoffLandingAverageTasKts = 0.;
-
-  /* Last sample from average value calculation */
-  qint64 takeoffLastSampleTimeMs = 0L;
+  /* Time of takeoff or invalid if not detected yet */
+  QDateTime takeoffTimeSim;
 
   JumpBack *jumpBack;
 

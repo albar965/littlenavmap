@@ -83,6 +83,12 @@ struct MapResult
   /* Number of map objects for the given types */
   int size(const map::MapTypes& types = map::ALL) const;
 
+  /* true if contains given types */
+  bool hasTypes(const map::MapTypes& types = map::ALL) const
+  {
+    return size(types) > 0;
+  }
+
   /* Get id and type from the result. Vector of types defines priority. true if something was found.
    * id is set to -1 if nothing was found. */
   bool getIdAndType(int& id, MapTypes& type, const std::initializer_list<MapTypes>& types) const;
@@ -94,10 +100,10 @@ struct MapResult
   QString getIdent(const std::initializer_list<MapTypes>& types) const;
 
   /* Remove the given types only */
-  void clear(const MapTypes& types = map::ALL);
+  MapResult& clear(const MapTypes& types = map::ALL);
 
   /* Remove all except first for the given types only */
-  void clearAllButFirst(const MapTypes& types = map::ALL);
+  MapResult& clearAllButFirst(const MapTypes& types = map::ALL);
 
   /* Give online airspaces/centers priority */
   void moveOnlineAirspacesToFront();

@@ -160,20 +160,17 @@ atools::sql::SqlDatabase *LogdataController::getDatabase() const
 
 void LogdataController::aircraftTakeoff(const atools::fs::sc::SimConnectUserAircraft& aircraft)
 {
-  createTakeoffLanding(aircraft, true /*takeoff*/, 0.f, 0.f);
+  createTakeoffLanding(aircraft, true /*takeoff*/, 0.f);
 }
 
-void LogdataController::aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, float flownDistanceNm,
-                                        float averageTasKts)
+void LogdataController::aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, float flownDistanceNm)
 {
-  createTakeoffLanding(aircraft, false /*takeoff*/, flownDistanceNm, averageTasKts);
+  createTakeoffLanding(aircraft, false /*takeoff*/, flownDistanceNm);
 }
 
 void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff,
-                                             float flownDistanceNm, float averageTasKts)
+                                             float flownDistanceNm)
 {
-  Q_UNUSED(averageTasKts)
-
   if(NavApp::getMainUi()->actionLogdataCreateLogbook->isChecked())
   {
     // Get nearest airport on takeoff/landing and runway

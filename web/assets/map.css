@@ -62,6 +62,7 @@ form:first-of-type, .formparts:first-of-type {
 
 .input-group label {
   padding-left: 5px;        /* padding instead of margin lets area act as hit area */
+  line-height: 12px;
 }
 
 
@@ -69,7 +70,12 @@ form:first-of-type, .formparts:first-of-type {
   vertical-align: middle;
   display: inline-block;
   text-align: center;
-  margin: -7px 0;
+  margin: -13px 0 0;        /* adjusted to prevent vertical scrollbar in FF due to label position */
+  position: relative;
+}
+
+.slider-container label {
+  position: absolute;       /* prevent vertical scrollbar in FF */
 }
 
 .slider-container + button {

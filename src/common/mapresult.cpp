@@ -23,7 +23,7 @@
 
 namespace map {
 
-void MapResult::clear(const MapTypes& types)
+MapResult& MapResult::clear(const MapTypes& types)
 {
   if(types.testFlag(map::AIRPORT))
   {
@@ -87,6 +87,7 @@ void MapResult::clear(const MapTypes& types)
     onlineAircraft.clear();
     onlineAircraftIds.clear();
   }
+  return *this;
 }
 
 template<typename T>
@@ -96,7 +97,7 @@ void MapResult::clearAllButFirst(QList<T>& list)
     list.removeLast();
 }
 
-void MapResult::clearAllButFirst(const MapTypes& types)
+MapResult& MapResult::clearAllButFirst(const MapTypes& types)
 {
   if(types.testFlag(map::AIRPORT))
   {
@@ -157,6 +158,7 @@ void MapResult::clearAllButFirst(const MapTypes& types)
     clearAllButFirst(onlineAircraft);
     onlineAircraftIds.clear();
   }
+  return *this;
 }
 
 void MapResult::moveOnlineAirspacesToFront()
@@ -369,7 +371,7 @@ QString MapResult::getIdent(const std::initializer_list<MapTypes>& types) const
 }
 
 bool MapResult::getIdAndType(int& id, MapTypes& type,
-                                   const std::initializer_list<MapTypes>& types) const
+                             const std::initializer_list<MapTypes>& types) const
 {
   id = -1;
   type = NONE;
@@ -772,7 +774,7 @@ MapResultIndex& MapResultIndex::addRef(const MapResult& resultParam, const MapTy
 }
 
 MapResultIndex& MapResultIndex::sort(const QVector<MapTypes>& types,
-                                                 const MapResultIndex::SortFunction& sortFunc)
+                                     const MapResultIndex::SortFunction& sortFunc)
 {
   if(size() <= 1)
     // Nothing to sort

@@ -348,7 +348,7 @@ private:
   void aircraftTitle(const atools::fs::sc::SimConnectAircraft& aircraft,
                      atools::util::HtmlBuilder& html, bool moreLessSwitch, bool less);
 
-  void dateAndTime(const atools::fs::sc::SimConnectUserAircraft *userAircraft,
+  void dateTimeAndFlown(const atools::fs::sc::SimConnectUserAircraft *userAircraft,
                    atools::util::HtmlBuilder& html) const;
   void addMetarLine(atools::util::HtmlBuilder& html, const QString& header, const map::MapAirport& airport,
                     const QString& metar,
