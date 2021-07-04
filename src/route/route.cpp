@@ -1204,7 +1204,7 @@ void Route::cleanupFlightPlanForProcedures()
   if(!sidLegs.isEmpty())
   {
     // Departure - start at last SID point and look for overlap with route traversing route from end to start
-    toIdx = legIndexForPositions(sidLegs.geometry().reversed(), true /* not reverse */);
+    toIdx = legIndexForPositions(sidLegs.buildGeometry().reversed(), true /* not reverse */);
     fromIdx = 1;
   }
 
@@ -1218,14 +1218,13 @@ void Route::cleanupFlightPlanForProcedures()
   if(!starLegs.isEmpty() || !approachLegs.isEmpty())
   {
     // Arrivals - start at first point and look for overlap with route traversing route from start to end
-    updateIndices();
-    updateAlternateIndicesAndOffsets();
+    updateIndicesAndOffsets();
     toIdx = getDestinationAirportLegIndex() - 1;
 
     if(!starLegs.isEmpty())
-      fromIdx = legIndexForPositions(starLegs.geometry(), true /* reverse */);
+      fromIdx = legIndexForPositions(starLegs.buildGeometry(), true /* reverse */);
     else if(!approachLegs.isEmpty())
-      fromIdx = legIndexForPositions(approachLegs.geometry(), true /* reverse */);
+      fromIdx = legIndexForPositions(approachLegs.buildGeometry(), true /* reverse */);
   }
 
   if(fromIdx > 0 && toIdx > 0)

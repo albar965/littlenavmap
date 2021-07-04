@@ -1435,7 +1435,7 @@ bool RouteController::saveFlightplanLnmInternal()
 
     // Copy loaded procedures back to properties to ensure that only valid ones are saved
     // Additionally remove duplicate waypoint
-    route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */, true /* cleanup route */);
+    route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */, false /* cleanup route */);
 
     // Create a copy which allows to change altitude
     // Copy altitudes to flight plan entries
