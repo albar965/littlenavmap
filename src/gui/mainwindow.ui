@@ -8183,6 +8183,9 @@ Disabled if a navdatabase does not allow it.</string>
    <property name="statusTip">
     <string>Show simulator aircraft position and data on map</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+B</string>
+   </property>
   </action>
   <action name="actionMapAircraftCenter">
    <property name="checkable">
@@ -8227,6 +8230,9 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="statusTip">
     <string>Show simulator aircraft trail on map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+T</string>
    </property>
   </action>
   <action name="actionMapDeleteAircraftTrack">
