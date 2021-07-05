@@ -81,7 +81,7 @@ const static QVector<map::MapTypes> DEFAULT_TYPE_SORT(
 });
 
 MapContextMenu::MapContextMenu(QMainWindow *mainWindowParam, MapWidget *mapWidgetParam)
-  : mapWidget(mapWidgetParam), mainWindow(mainWindowParam), menu(mainWindowParam)
+  : mapWidget(mapWidgetParam), mainWindow(mainWindowParam), mapMenu(mainWindowParam)
 {
   result = new map::MapResult;
   mapBasePos = new map::MapBase(map::NONE, -1, atools::geo::EMPTY_POS);
@@ -127,7 +127,7 @@ void MapContextMenu::clear()
   selectedActionType = mc::NONE;
   dataIndex.clear();
   *mapBasePos = map::MapBase(map::NONE, -1, atools::geo::EMPTY_POS);
-  menu.clear();
+  mapMenu.clear();
 
   // Delete all generated action
   qDeleteAll(actionsAndMenus);
@@ -138,49 +138,49 @@ void MapContextMenu::clear()
 
 void MapContextMenu::buildMainMenu()
 {
-  menu.clear();
+  mapMenu.clear();
 
   // Inherit tool tip status from well know menu
-  menu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
+  mapMenu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
 
-  insertInformationMenu(menu);
-  insertProcedureMenu(menu);
-  insertCustomProcedureMenu(menu);
-  menu.addSeparator();
+  insertInformationMenu(mapMenu);
+  insertProcedureMenu(mapMenu);
+  insertCustomProcedureMenu(mapMenu);
+  mapMenu.addSeparator();
 
-  insertMeasureMenu(menu);
+  insertMeasureMenu(mapMenu);
   ui->actionMapHideDistanceMarker->setText(ui->actionMapHideDistanceMarker->text() + tr("\tCtrl+Click"));
-  menu.addAction(ui->actionMapHideDistanceMarker);
-  menu.addSeparator();
+  mapMenu.addAction(ui->actionMapHideDistanceMarker);
+  mapMenu.addSeparator();
 
   ui->actionMapRangeRings->setText(ui->actionMapRangeRings->text() + tr("\tShift+Click"));
-  menu.addAction(ui->actionMapRangeRings);
-  insertNavaidRangeMenu(menu);
+  mapMenu.addAction(ui->actionMapRangeRings);
+  insertNavaidRangeMenu(mapMenu);
   ui->actionMapHideOneRangeRing->setText(ui->actionMapHideOneRangeRing->text() + tr("\tShift+Click"));
-  menu.addAction(ui->actionMapHideOneRangeRing);
-  menu.addSeparator();
+  mapMenu.addAction(ui->actionMapHideOneRangeRing);
+  mapMenu.addSeparator();
 
-  insertPatternMenu(menu);
-  menu.addAction(ui->actionMapHideTrafficPattern);
-  menu.addSeparator();
+  insertPatternMenu(mapMenu);
+  mapMenu.addAction(ui->actionMapHideTrafficPattern);
+  mapMenu.addSeparator();
 
-  insertHoldMenu(menu);
-  menu.addAction(ui->actionMapHideHold);
-  menu.addSeparator();
+  insertHoldMenu(mapMenu);
+  mapMenu.addAction(ui->actionMapHideHold);
+  mapMenu.addSeparator();
 
-  insertDepartureMenu(menu);
-  insertDestinationMenu(menu);
-  insertAlternateMenu(menu);
-  menu.addSeparator();
+  insertDepartureMenu(mapMenu);
+  insertDestinationMenu(mapMenu);
+  insertAlternateMenu(mapMenu);
+  mapMenu.addSeparator();
 
-  insertAddRouteMenu(menu);
-  insertAppendRouteMenu(menu);
-  insertDeleteRouteWaypointMenu(menu);
-  insertEditRouteUserpointMenu(menu);
-  menu.addSeparator();
+  insertAddRouteMenu(mapMenu);
+  insertAppendRouteMenu(mapMenu);
+  insertDeleteRouteWaypointMenu(mapMenu);
+  insertEditRouteUserpointMenu(mapMenu);
+  mapMenu.addSeparator();
 
-  QMenu *sub = menu.addMenu(QIcon(":/littlenavmap/resources/icons/userdata.svg"), tr("&Userpoints"));
-  sub->setToolTipsVisible(menu.toolTipsVisible());
+  QMenu *sub = mapMenu.addMenu(QIcon(":/littlenavmap/resources/icons/userdata.svg"), tr("&Userpoints"));
+  sub->setToolTipsVisible(mapMenu.toolTipsVisible());
   if(visibleOnMap)
   {
     insertUserpointAddMenu(*sub);
@@ -191,19 +191,19 @@ void MapContextMenu::buildMainMenu()
   else
     // No position - no sub-menu
     sub->setDisabled(true);
-  menu.addSeparator();
+  mapMenu.addSeparator();
 
-  insertLogEntryEdit(menu);
-  menu.addSeparator();
+  insertLogEntryEdit(mapMenu);
+  mapMenu.addSeparator();
 
   if(NavApp::isFullScreen())
   {
     // Add menu to exit full screen
-    menu.addAction(ui->actionShowFullscreenMap); // connected otherwise
-    menu.addSeparator();
+    mapMenu.addAction(ui->actionShowFullscreenMap); // connected otherwise
+    mapMenu.addSeparator();
   }
 
-  sub = menu.addMenu(tr("&More"));
+  sub = mapMenu.addMenu(tr("&More"));
   if(visibleOnMap)
   {
     // More rarely used menu items
@@ -852,24 +852,32 @@ void MapContextMenu::insertAlternateMenu(QMenu& menu)
       disable = base == nullptr;
       if(base != nullptr)
       {
-        bool departure = false, destination = false, alternate = false;
-        procedureFlags(base, &departure, &destination, &alternate);
+        if(NavApp::getRouteConst().getSizeWithoutAlternates() < 1)
+        {
+          disable = true;
+          text.append(tr(" (no destination)"));
+        }
+        else
+        {
+          bool departure = false, destination = false, alternate = false;
+          procedureFlags(base, &departure, &destination, &alternate);
 
-        // Do not allow to add as alternate if already part of plan
-        if(departure)
-        {
-          disable = true;
-          text.append(tr(" (is departure)"));
-        }
-        if(destination)
-        {
-          disable = true;
-          text.append(tr(" (is destination)"));
-        }
-        if(alternate)
-        {
-          disable = true;
-          text.append(tr(" (is alternate)"));
+          // Do not allow to add as alternate if already part of plan
+          if(departure)
+          {
+            disable = true;
+            text.append(tr(" (is departure)"));
+          }
+          if(destination)
+          {
+            disable = true;
+            text.append(tr(" (is destination)"));
+          }
+          if(alternate)
+          {
+            disable = true;
+            text.append(tr(" (is alternate)"));
+          }
         }
       }
     };
@@ -1160,7 +1168,7 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
   buildMainMenu();
 
   // Show the menu ------------------------------------------------
-  selectedAction = menu.exec(menuPos);
+  selectedAction = mapMenu.exec(menuPos);
 
   if(selectedAction != nullptr)
   {

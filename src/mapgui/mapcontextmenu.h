@@ -321,7 +321,7 @@ private:
   Ui::MainWindow *ui;
 
   // Context menu
-  QMenu menu;
+  QMenu mapMenu;
 };
 
 #endif // LNM_MAPCONTEXTMENU_H

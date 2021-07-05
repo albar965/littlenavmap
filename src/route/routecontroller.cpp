@@ -1435,7 +1435,7 @@ bool RouteController::saveFlightplanLnmInternal()
 
     // Copy loaded procedures back to properties to ensure that only valid ones are saved
     // Additionally remove duplicate waypoint
-    route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */, true /* cleanup route */);
+    route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */, false /* cleanup route */);
 
     // Create a copy which allows to change altitude
     // Copy altitudes to flight plan entries
@@ -1977,12 +1977,7 @@ void RouteController::showAtIndex(int index, bool info, bool map, bool doubleCli
       }
 
       if(info)
-      {
-        map::MapResult result;
-        mapQuery->getMapObjectById(result, routeLeg.getMapObjectType(), map::AIRSPACE_SRC_NONE, routeLeg.getId(),
-                                   false /* airport from nav database */);
-        emit showInformation(result);
-      }
+        showInformationInternal(routeLeg);
     }
   }
 }
@@ -2035,8 +2030,7 @@ void RouteController::updateMoveAndDeleteActions()
                                        !containsProc && !containsAlternate && !moveUpTouchesProc && !moveUpTouchesAlt);
 
       ui->actionRouteLegDown->setEnabled(sm->hasSelection() &&
-                                         !sm->isRowSelected(model->rowCount() - 1,
-                                                            QModelIndex()) &&
+                                         !sm->isRowSelected(model->rowCount() - 1, QModelIndex()) &&
                                          !containsProc && !containsAlternate && !moveDownTouchesProc &&
                                          !moveDownTouchesAlt);
     }
@@ -2055,8 +2049,19 @@ void RouteController::showInformationMenu()
   qDebug() << Q_FUNC_INFO;
   QModelIndex index = view->currentIndex();
   if(index.isValid())
+    showInformationInternal(route.value(index.row()));
+}
+
+void RouteController::showInformationInternal(const RouteLeg& routeLeg)
+{
+
+  if(routeLeg.isAnyProcedure())
   {
-    const RouteLeg& routeLeg = route.value(index.row());
+    if(routeLeg.getProcedureLeg().navaids.hasTypes(map::AIRPORT | map::WAYPOINT | map::VOR | map::NDB))
+      emit showInformation(routeLeg.getProcedureLeg().navaids);
+  }
+  else
+  {
     map::MapResult result;
     mapQuery->getMapObjectById(result, routeLeg.getMapObjectType(), map::AIRSPACE_SRC_NONE, routeLeg.getId(),
                                false /* airport from nav database */);
@@ -2236,14 +2241,20 @@ void RouteController::tableContextMenu(const QPoint& pos)
   ui->actionRouteShowApproachesCustom->setEnabled(false);
   ui->actionRouteShowApproaches->setEnabled(false);
   ui->actionRouteEditUserWaypoint->setEnabled(false);
+  ui->actionRouteShowInformation->setEnabled(false);
 
   // Menu above a row
   if(routeLeg != nullptr)
   {
-    ui->actionRouteShowInformation->setEnabled(routeLeg->isValidWaypoint() &&
-                                               (routeLeg->isRoute() || routeLeg->isAlternate()) &&
-                                               routeLeg->getMapObjectType() != map::USERPOINTROUTE &&
-                                               routeLeg->getMapObjectType() != map::INVALID);
+    if(routeLeg->isAnyProcedure())
+    {
+      if(routeLeg->getProcedureLeg().navaids.hasTypes(map::AIRPORT | map::WAYPOINT | map::VOR | map::NDB))
+        ui->actionRouteShowInformation->setEnabled(true);
+    }
+    else
+      ui->actionRouteShowInformation->setEnabled(routeLeg->isValidWaypoint() &&
+                                                 routeLeg->getMapObjectType() != map::USERPOINTROUTE &&
+                                                 routeLeg->getMapObjectType() != map::INVALID);
 
     if(routeLeg->isValidWaypoint())
     {

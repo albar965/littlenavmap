@@ -407,6 +407,8 @@ private:
   void showProceduresMenuCustom();
   void showOnMapMenu();
 
+  void showInformationInternal(const RouteLeg& routeLeg);
+
   /* Enable or disable remarks widget */
   void updateRemarkWidget();
 
