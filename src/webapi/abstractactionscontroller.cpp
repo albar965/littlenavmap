@@ -17,6 +17,9 @@
 
 #include "abstractactionscontroller.h"
 
+#include "navapp.h"
+#include "geo/pos.h"
+
 #include <QDebug>
 
 AbstractActionsController::AbstractActionsController(QObject *parent, bool verboseParam) : QObject(parent), verbose(verboseParam)
@@ -26,6 +29,16 @@ AbstractActionsController::AbstractActionsController(QObject *parent, bool verbo
 AbstractActionsController::~AbstractActionsController(){
     qDebug() << Q_FUNC_INFO;
 }
-void AbstractActionsController::defaultAction(){
+WebApiResponse AbstractActionsController::defaultAction(WebApiRequest request){
     qDebug() << Q_FUNC_INFO;
+
+    WebApiResponse response = WebApiResponse();
+
+    // Example
+    response.body = NavApp::getAirportPos("EDML").toString().toUtf8();
+    response.status = 200;
+    response.headers.insert("Content-Type","text/html");
+
+    return response;
+
 }

@@ -18,10 +18,6 @@
 #include "webapi/webapicontroller.h"
 #include "webapi/actionscontrollerindex.h"
 
-#include "geo/rect.h"
-#include <navapp.h>
-#include "navapp.h"
-
 #include <QDebug>
 #include <QMetaMethod>
 
@@ -66,14 +62,9 @@ WebApiResponse WebApiController::service(WebApiRequest& request)
       QObject* controller = mo->newInstance(Q_ARG(QObject*, parent()),Q_ARG(bool, verbose));
 
       // Invoke action on instance
-      QMetaObject::invokeMethod(controller,actionName.data(),Qt::DirectConnection);
+      QMetaObject::invokeMethod(controller,actionName.data(),Qt::DirectConnection, Q_RETURN_ARG(WebApiResponse,response),Q_ARG(WebApiRequest, request));
 
   }
-
-  // Example
-  response.body = NavApp::getAirportPos("EDDM").toString().toUtf8();
-  response.status = 200;
-  response.headers.insert("Content-Type","text/html");
 
   return response;
 

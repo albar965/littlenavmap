@@ -18,6 +18,9 @@
 #ifndef ABSTRACTACTIONSCONTROLLER_H
 #define ABSTRACTACTIONSCONTROLLER_H
 
+#include "webapirequest.h"
+#include "webapiresponse.h"
+
 #include <QObject>
 
 /**
@@ -33,7 +36,7 @@ public:
     /**
      * @brief example for inheritable and invokable method/action
      */
-    Q_INVOKABLE virtual void defaultAction();
+    Q_INVOKABLE virtual WebApiResponse defaultAction(WebApiRequest request);
 protected:
     bool verbose = false;
 };
