@@ -96,6 +96,9 @@ public:
   bool isFetchAiShip() const;
   bool isFetchAiAircraft() const;
 
+  /* Connects or disconnects depending on state */
+  void connectToggle(bool checked);
+
 signals:
   /* Emitted when new data was received from the server (Little Navconnect), SimConnect or X-Plane.
    * can be aircraft position or weather update */
