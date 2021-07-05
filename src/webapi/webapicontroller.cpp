@@ -16,7 +16,7 @@
 *****************************************************************************/
 
 #include "webapi/webapicontroller.h"
-#include "webapi/airportactionscontroller.h"
+#include "webapi/actionscontrollerindex.h"
 
 #include "geo/rect.h"
 #include <navapp.h>
@@ -34,8 +34,7 @@ WebApiController::WebApiController(QObject *parent, bool verboseParam)
 }
 
 void WebApiController::registerControllers(){
-
-    qRegisterMetaType<AirportActionsController*>("AirportActionsController*");
+    ActionsControllerIndex::registerQMetaTypes();
 }
 
 WebApiController::~WebApiController()

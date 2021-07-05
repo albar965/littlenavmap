@@ -384,6 +384,7 @@ SOURCES += \
   src/web/webmapcontroller.cpp \
   src/web/webtools.cpp \
   src/webapi/abstractactionscontroller.cpp \
+  src/webapi/actionscontrollerindex.cpp \
   src/webapi/airportactionscontroller.cpp \
   src/webapi/webapicontroller.cpp
 
@@ -549,6 +550,7 @@ HEADERS  += \
   src/web/webmapcontroller.h \
   src/web/webtools.h \
   src/webapi/abstractactionscontroller.h \
+  src/webapi/actionscontrollerindex.h \
   src/webapi/airportactionscontroller.h \
   src/webapi/webapicontroller.h \
   src/webapi/webapirequest.h \
