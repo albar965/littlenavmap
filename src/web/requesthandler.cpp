@@ -47,7 +47,7 @@ using namespace stefanfrings;
 
 RequestHandler::RequestHandler(QObject *parent, WebMapController *webMapController,WebApiController *webApiController,
                                HtmlInfoBuilder *htmlInfoBuilderParam, bool verboseParam)
-  : HttpRequestHandler(parent), htmlInfoBuilder(htmlInfoBuilderParam), verbose(verboseParam)
+  : HttpRequestHandler(parent), webApiController(webApiController), htmlInfoBuilder(htmlInfoBuilderParam), verbose(verboseParam)
 {
   if(verbose)
     qDebug() << Q_FUNC_INFO;
@@ -99,7 +99,7 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
     // ===========================================================================
     // Requests for map images only - either with or without session
     handleMapImage(request, response);
-  else if(path.startsWith(QLatin1String("/api")))
+  else if(path.startsWith(webApiController->webApiPathPrefix))
     // ===========================================================================
     // Requests for web api - either with or without session
     handleWebApiRequest(request, response);

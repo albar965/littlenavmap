@@ -103,6 +103,7 @@ private:
   /* Create and prepare a session and set the cookie or return current session */
   stefanfrings::HttpSession getSession(stefanfrings::HttpRequest& request, stefanfrings::HttpResponse& response);
 
+  WebApiController *webApiController;
   HtmlInfoBuilder *htmlInfoBuilder;
 
   bool verbose = false;

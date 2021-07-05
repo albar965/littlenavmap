@@ -36,6 +36,13 @@ public:
 
   WebApiController(const WebApiController& other) = delete;
   WebApiController& operator=(const WebApiController& other) = delete;
+
+  /**
+   * @brief webApiPathPrefix declaring the path suffix which should serve API requests
+   * @example e.g. "/api"
+   */
+  QString webApiPathPrefix;
+
   /**
    * @brief Resolves request path to requested controller and action.
    * Instantiates requested controller dynamically and invokes method/action

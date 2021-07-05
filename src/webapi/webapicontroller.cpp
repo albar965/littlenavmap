@@ -26,6 +26,7 @@ WebApiController::WebApiController(QObject *parent, bool verboseParam)
   : QObject(parent), verbose(verboseParam)
 {
     qDebug() << Q_FUNC_INFO;
+    webApiPathPrefix = "/api";
     registerControllers();
 }
 
