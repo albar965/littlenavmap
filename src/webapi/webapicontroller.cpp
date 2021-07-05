@@ -41,10 +41,6 @@ WebApiController::~WebApiController()
 
 WebApiResponse WebApiController::service(WebApiRequest& request)
 {
-  qDebug() << Q_FUNC_INFO << ":"
-           << request.path << ":"
-           << request.method << ":"
-           << request.body;
 
   // Create response object
   WebApiResponse response;
@@ -53,7 +49,12 @@ WebApiResponse WebApiController::service(WebApiRequest& request)
   QByteArray controllerName = getControllerNameByPath(request.path);
   QByteArray actionName = getActionNameByPath(request.path);
 
-  qDebug() << controllerName << ":" << actionName;
+  qDebug() << Q_FUNC_INFO << ":"
+           << request.method << ":"
+           << request.path << ":"
+           << controllerName << ":"
+           << actionName << ":"
+           << request.body;
 
   // Get controller class id
   int id = QMetaType::type(controllerName+"*");
@@ -65,7 +66,13 @@ WebApiResponse WebApiController::service(WebApiRequest& request)
       QObject* controller = mo->newInstance(Q_ARG(QObject*, parent()),Q_ARG(bool, verbose));
 
       // Invoke action on instance
-      bool actionExecuted = QMetaObject::invokeMethod(controller,actionName.data(),Qt::DirectConnection, Q_RETURN_ARG(WebApiResponse,response),Q_ARG(WebApiRequest, request));
+      bool actionExecuted = QMetaObject::invokeMethod(
+                  controller,
+                  actionName.data(),
+                  Qt::DirectConnection,
+                  Q_RETURN_ARG(WebApiResponse,response),
+                  Q_ARG(WebApiRequest, request)
+                  );
 
       if(!actionExecuted){
           response.status = 400; /* Bad request */
@@ -84,12 +91,16 @@ WebApiResponse WebApiController::service(WebApiRequest& request)
 QByteArray WebApiController::getControllerNameByPath(QByteArray path){
     QList<QByteArray> list = path.split('/');
     if(list.length() > 1){
-        return list[1]+"ActionsController";
+        QByteArray name = list[1]+"ActionsController";
+        /* upper case first letter to enable lowercase controller URL's */
+        name[0] = toupper(name[0]);
+        return name;
     }
 };
 QByteArray WebApiController::getActionNameByPath(QByteArray path){
     QList<QByteArray> list = path.split('/');
     if(list.length() > 2){
-        return list[2]+"Action";
+        QByteArray name = list[2]+"Action";
+        return name;
     }
 };
