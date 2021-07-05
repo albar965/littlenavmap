@@ -511,6 +511,16 @@ bool ConnectClient::isFetchAiAircraft() const
   return dialog->isFetchAiAircraft(dialog->getCurrentSimType());
 }
 
+void ConnectClient::connectToggle(bool checked)
+{
+  qDebug() << Q_FUNC_INFO << checked;
+
+  if(isConnected())
+    disconnectClicked();
+  else
+    connectInternal();
+}
+
 void ConnectClient::requestWeather(const atools::fs::sc::WeatherRequest& weatherRequest)
 {
   if(dataReader->isConnected() && dataReader->canFetchWeather())
