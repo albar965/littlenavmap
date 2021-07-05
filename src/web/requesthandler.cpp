@@ -330,7 +330,10 @@ inline void RequestHandler::handleWebApiRequest(HttpRequest& request, HttpRespon
 {
   // Map API request
   WebApiRequest apiRequest;
-  apiRequest.path = request.getPath();
+
+  /* Remove common webApiPathPrefix from apiRequest path */
+  apiRequest.path = request.getPath().remove(0, webApiController->webApiPathPrefix.length());
+
   apiRequest.method = request.getMethod();
   apiRequest.headers = request.getHeaderMap();
   apiRequest.parameters = request.getParameterMap();

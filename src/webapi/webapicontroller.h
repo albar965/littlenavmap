@@ -59,6 +59,18 @@ private:
    */
   void registerControllers();
   bool verbose = false;
+  /**
+   * @brief extract controller name from path string
+   * @param path
+   * @return the controller class name
+   */
+  QByteArray getControllerNameByPath(QByteArray path);
+  /**
+   * @brief extract action name from path string
+   * @param path
+   * @return the action method name
+   */
+  QByteArray getActionNameByPath(QByteArray path);
 };
 
 #endif // LNM_WebApiController_H

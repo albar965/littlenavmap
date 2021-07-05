@@ -50,8 +50,10 @@ WebApiResponse WebApiController::service(WebApiRequest& request)
   WebApiResponse response;
 
   // Set controller and action by string
-  QByteArray controllerName = "AirportActionsController";
-  QByteArray actionName = "defaultAction";
+  QByteArray controllerName = getControllerNameByPath(request.path);
+  QByteArray actionName = getActionNameByPath(request.path);
+
+  qDebug() << controllerName << ":" << actionName;
 
   // Get controller class id
   int id = QMetaType::type(controllerName+"*");
@@ -63,10 +65,31 @@ WebApiResponse WebApiController::service(WebApiRequest& request)
       QObject* controller = mo->newInstance(Q_ARG(QObject*, parent()),Q_ARG(bool, verbose));
 
       // Invoke action on instance
-      QMetaObject::invokeMethod(controller,actionName.data(),Qt::DirectConnection, Q_RETURN_ARG(WebApiResponse,response),Q_ARG(WebApiRequest, request));
+      bool actionExecuted = QMetaObject::invokeMethod(controller,actionName.data(),Qt::DirectConnection, Q_RETURN_ARG(WebApiResponse,response),Q_ARG(WebApiRequest, request));
 
+      if(!actionExecuted){
+          response.status = 400; /* Bad request */
+          response.body = "Action not found/failed";
+      }
+
+  }else{
+      response.status = 400; /* Bad request */
+      response.body = "Controller not found";
   }
 
   return response;
 
 }
+
+QByteArray WebApiController::getControllerNameByPath(QByteArray path){
+    QList<QByteArray> list = path.split('/');
+    if(list.length() > 1){
+        return list[1]+"ActionsController";
+    }
+};
+QByteArray WebApiController::getActionNameByPath(QByteArray path){
+    QList<QByteArray> list = path.split('/');
+    if(list.length() > 2){
+        return list[2]+"Action";
+    }
+};
