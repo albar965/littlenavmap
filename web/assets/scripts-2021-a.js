@@ -38,8 +38,8 @@ function injectUpdates(origin) {
     /*
      * settings (developer modifiable)
      */
-    var defaultMapQuality = 30;                                                       // no observed difference across 30 to 100
-    var fastRefreshMapQuality = 17;                                                   // below 17 JPEG artifacts on vertical lines are significantly visible: doubled lines. 18 to 21 (something around these) are significantly more artifacted too including an off blue ocean color. space saved compared to default: around 150 KB or 40 % at 1080p; works in conjunction with fastRefreshMapThreshold
+    var defaultMapQuality = 70;                                                       // no observed difference across 30 to 100
+    var fastRefreshMapQuality = 50;                                                   // below 17 JPEG artifacts on vertical lines are significantly visible: doubled lines. 18 to 21 (something around these) are significantly more artifacted too including an off blue ocean color. space saved compared to default: around 150 KB or 40 % at 1080p; works in conjunction with fastRefreshMapThreshold
     var zoomingMapQuality = 3;
     var resizingMapQuality = 3;
 
