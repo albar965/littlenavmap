@@ -71,6 +71,12 @@ private:
    * @return the action method name
    */
   QByteArray getActionNameByPath(QByteArray path);
+
+  /**
+   * @brief add headers common to all responses
+   * @param the response to add headers to
+   */
+  void addCommonResponseHeaders(WebApiResponse& response);
 };
 
 #endif // LNM_WebApiController_H

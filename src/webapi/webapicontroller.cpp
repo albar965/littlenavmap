@@ -56,33 +56,47 @@ WebApiResponse WebApiController::service(WebApiRequest& request)
            << actionName << ":"
            << request.body;
 
-  // Get controller class id
-  int id = QMetaType::type(controllerName+"*");
 
-  if (id != 0) {
+  if(request.method == "OPTIONS"){
 
-      // Create controller instance
-      const QMetaObject* mo = QMetaType::metaObjectForType(id);
-      QObject* controller = mo->newInstance(Q_ARG(QObject*, parent()),Q_ARG(bool, verbose));
-
-      // Invoke action on instance
-      bool actionExecuted = QMetaObject::invokeMethod(
-                  controller,
-                  actionName.data(),
-                  Qt::DirectConnection,
-                  Q_RETURN_ARG(WebApiResponse,response),
-                  Q_ARG(WebApiRequest, request)
-                  );
-
-      if(!actionExecuted){
-          response.status = 400; /* Bad request */
-          response.body = "Action not found/failed";
-      }
+      /* Pass through preflight request */
+      response.status = 200;
 
   }else{
-      response.status = 400; /* Bad request */
-      response.body = "Controller not found";
+
+      /* Process REST controller/action request */
+
+      // Get controller class id
+      int id = QMetaType::type(controllerName+"*");
+
+      if (id != 0) {
+
+          // Create controller instance
+          const QMetaObject* mo = QMetaType::metaObjectForType(id);
+          QObject* controller = mo->newInstance(Q_ARG(QObject*, parent()),Q_ARG(bool, verbose));
+
+          // Invoke action on instance
+          bool actionExecuted = QMetaObject::invokeMethod(
+                      controller,
+                      actionName.data(),
+                      Qt::DirectConnection,
+                      Q_RETURN_ARG(WebApiResponse,response),
+                      Q_ARG(WebApiRequest, request)
+                      );
+
+          if(!actionExecuted){
+              response.status = 400; /* Bad request */
+              response.body = "Action not found/failed";
+          }
+
+      }else{
+          response.status = 400; /* Bad request */
+          response.body = "Controller not found";
+      }
+
   }
+
+  addCommonResponseHeaders(response);
 
   return response;
 
@@ -107,3 +121,12 @@ QByteArray WebApiController::getActionNameByPath(QByteArray path){
     }
     return name;
 };
+
+void WebApiController::addCommonResponseHeaders(WebApiResponse &response){
+
+    /* CORS: Enable cross-origin requests */
+    response.headers.insert("Access-Control-Allow-Origin","*");
+    response.headers.insert("Access-Control-Allow-Methods","GET, PUT, POST, DELETE");
+    response.headers.insert("Access-Control-Allow-Headers","content-type");
+
+}
