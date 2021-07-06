@@ -26,6 +26,10 @@
  */
 class WebApiRequest {
 public:
+    /**
+     * @brief API request path
+     * without WebApiController.webApiPathPrefix
+     */
     QByteArray path;
     QByteArray method;
     QMultiMap<QByteArray, QByteArray> headers;

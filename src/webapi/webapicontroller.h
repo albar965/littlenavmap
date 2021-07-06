@@ -38,7 +38,7 @@ public:
   WebApiController& operator=(const WebApiController& other) = delete;
 
   /**
-   * @brief webApiPathPrefix declaring the path suffix which should serve API requests
+   * @brief webApiPathPrefix declaring the path prefix which should serve API requests
    * @example e.g. "/api"
    */
   QString webApiPathPrefix;
@@ -60,13 +60,13 @@ private:
   void registerControllers();
   bool verbose = false;
   /**
-   * @brief extract controller name from path string
+   * @brief create controller name from path string
    * @param path
    * @return the controller class name
    */
   QByteArray getControllerNameByPath(QByteArray path);
   /**
-   * @brief extract action name from path string
+   * @brief create action name from path string
    * @param path
    * @return the action method name
    */

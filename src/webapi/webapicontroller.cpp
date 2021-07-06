@@ -89,18 +89,20 @@ WebApiResponse WebApiController::service(WebApiRequest& request)
 }
 
 QByteArray WebApiController::getControllerNameByPath(QByteArray path){
+    QByteArray name;
     QList<QByteArray> list = path.split('/');
-    if(list.length() > 1){
-        QByteArray name = list[1]+"ActionsController";
+    if(list.length() > 1 && list[1].length() > 0){
+        name = list[1]+"ActionsController";
         /* upper case first letter to enable lowercase controller URL's */
         name[0] = toupper(name[0]);
-        return name;
     }
+    return name;
 };
 QByteArray WebApiController::getActionNameByPath(QByteArray path){
+    QByteArray name;
     QList<QByteArray> list = path.split('/');
-    if(list.length() > 2){
-        QByteArray name = list[2]+"Action";
-        return name;
+    if(list.length() > 2 && list[2].length() > 0){
+        name = list[2]+"Action";
     }
+    return name;
 };
