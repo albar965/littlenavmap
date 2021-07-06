@@ -45,7 +45,10 @@ WebApiResponse WebApiController::service(WebApiRequest& request)
   // Create response object
   WebApiResponse response;
 
-  // Set controller and action by string
+  // Set default content type
+  response.headers.insert("Content-Type","text/plain");
+
+  // Get controller and action names by string
   QByteArray controllerName = getControllerNameByPath(request.path);
   QByteArray actionName = getActionNameByPath(request.path);
 
@@ -80,7 +83,7 @@ WebApiResponse WebApiController::service(WebApiRequest& request)
                       controller,
                       actionName.data(),
                       Qt::DirectConnection,
-                      Q_RETURN_ARG(WebApiResponse,response),
+                      Q_RETURN_ARG(WebApiResponse,response), // Note: overwriting response
                       Q_ARG(WebApiRequest, request)
                       );
 
