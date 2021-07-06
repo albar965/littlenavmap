@@ -37,6 +37,10 @@ public:
      * @brief example for inheritable and invokable method/action
      */
     Q_INVOKABLE virtual WebApiResponse defaultAction(WebApiRequest request);
+    /**
+     * @brief return a "404 not found" response
+     */
+    Q_INVOKABLE virtual WebApiResponse notFoundAction(WebApiRequest request);
 protected:
     bool verbose = false;
 };

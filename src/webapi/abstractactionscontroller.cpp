@@ -42,3 +42,16 @@ WebApiResponse AbstractActionsController::defaultAction(WebApiRequest request){
     return response;
 
 }
+
+WebApiResponse AbstractActionsController::notFoundAction(WebApiRequest request){
+    qDebug() << Q_FUNC_INFO;
+
+    WebApiResponse response = WebApiResponse();
+
+    response.body = "Not found";
+    response.status = 404;
+    response.headers.insert("Content-Type","text/html");
+
+    return response;
+
+}
