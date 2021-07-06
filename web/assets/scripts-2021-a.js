@@ -39,9 +39,11 @@ function injectUpdates(origin) {
      * settings (developer modifiable)
      */
     var defaultMapQuality = 30;                                                       // no observed difference across 30 to 100
-    var fastRefreshMapQuality = 17;                                                   // below 17 JPEG artifacts on vertical lines are significantly visible: doubled lines. 18 to 21 (something around these) are significantly more artifacted too including an off blue ocean color. space saved compared to default: around 150 KB or 40 % at 1080p
+    var fastRefreshMapQuality = 17;                                                   // below 17 JPEG artifacts on vertical lines are significantly visible: doubled lines. 18 to 21 (something around these) are significantly more artifacted too including an off blue ocean color. space saved compared to default: around 150 KB or 40 % at 1080p; works in conjunction with fastRefreshMapThreshold
     var zoomingMapQuality = 3;
     var resizingMapQuality = 3;
+
+    var fastRefreshMapThreshold = 6;                                                  // time in seconds below which an auto-refreshing map's refresh interval is considered "fast"; works in conjunction with fastRefreshMapQuality
 
     /*
      * settings (code modifiable)
@@ -181,9 +183,36 @@ function injectUpdates(origin) {
     mapElement.onwheel = function(e) {
       mapZoomCore(e.deltaY < 0);
     };
-    mapElement.ongesturechange = function(e) {
-      mapZoomCore(e.scale > 1);
+    var pointers = {};
+    mapElement.onpointerdown = function(e) {
+      pointers[e.pointerId] = [e, e];
     };
+    mapElement.onpointermove = function(e) {
+      pointers[e.pointerId][1] = e;
+      var keys = Object.keys(pointers);
+      if(keys.length > 1) {
+        var key1 = keys[0];
+        var key2 = keys[1];
+        var distStart = Math.hypot(pointers[key1][0].clientX - pointers[key2][0].clientX, pointers[key1][0].clientY - pointers[key2][0].clientY);
+        var distNow = Math.hypot(pointers[key1][1].clientX - pointers[key2][1].clientX, pointers[key1][1].clientY - pointers[key2][1].clientY);
+        if(distNow < .85 * distStart) {
+          mapZoomCore(false);
+          pointers[key1][0] = pointers[key1][1];
+          pointers[key2][0] = pointers[key2][1];
+        } else if(distNow > 1.15 * distStart) {
+          mapZoomCore(true);
+          pointers[key1][0] = pointers[key1][1];
+          pointers[key2][0] = pointers[key2][1];
+        }
+      }
+    };
+    function pointerup(e) {
+      delete pointers[e.pointerId];
+    }
+    mapElement.onpointerup = pointerup;
+    mapElement.onpointercancel = pointerup;
+    mapElement.onpointerout = pointerup;
+    mapElement.onpointerleave = pointerup;
 
     /*
      * Event handling: header options bar scrolling
@@ -240,7 +269,7 @@ function injectUpdates(origin) {
 
       function requester() {
         timeStartLastRequest = performance.now();
-        updateMapImage(mapCommand(), refresher.value < 6 ? fastRefreshMapQuality : defaultMapQuality, false, notifiable);
+        updateMapImage(mapCommand(), refresher.value < fastRefreshMapThreshold ? fastRefreshMapQuality : defaultMapQuality, false, notifiable);
       }
 
       function looper() {
