@@ -80,6 +80,7 @@ This version contains mostly bug fixes TODO.
 * Several updates to the internal webserver / web user interface.
 * X-Plane / *Little Xpconnect*: Now using more datarefs from flightmodel which are not affected by
   failures. #693
+* Updated Qt libraries to 5.12.11.
 
 ===============================================================================
 
