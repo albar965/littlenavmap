@@ -18,6 +18,10 @@
 #include "common/jsoninfobuilder.h"
 #include "common/maptypes.h"
 
+// Use JSON library
+#include "json/nlohmann/json.hpp"
+using JSON = nlohmann::json;
+
 JsonInfoBuilder::JsonInfoBuilder(QObject *parent)
   : AbstractInfoBuilder(parent)
 {
@@ -32,6 +36,10 @@ JsonInfoBuilder::~JsonInfoBuilder()
 QByteArray JsonInfoBuilder::airport(const map::MapAirport& airport, const map::WeatherContext& weatherContext,
                                     const Route *route) const
 {
-    return airport.name.toUtf8();
+    JSON json = {
+        {"airportName",qUtf8Printable(airport.name)}
+    };
+
+    return json.dump().data();
 }
 
