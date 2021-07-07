@@ -22,7 +22,7 @@
 
 #include <QDebug>
 
-AbstractActionsController::AbstractActionsController(QObject *parent, bool verboseParam) : QObject(parent), verbose(verboseParam)
+AbstractActionsController::AbstractActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder) : QObject(parent), verbose(verboseParam), infoBuilder(infoBuilder)
 {
     qDebug() << Q_FUNC_INFO;
 }
@@ -32,12 +32,10 @@ AbstractActionsController::~AbstractActionsController(){
 WebApiResponse AbstractActionsController::defaultAction(WebApiRequest request){
     qDebug() << Q_FUNC_INFO;
 
-    WebApiResponse response = WebApiResponse();
-
+    WebApiResponse response = getResponse();
     // Example
-    response.body = NavApp::getAirportPos("EDML").toString().toUtf8();
+    response.body = "Default action";
     response.status = 200;
-    response.headers.insert("Content-Type","text/html");
 
     return response;
 
@@ -46,12 +44,20 @@ WebApiResponse AbstractActionsController::defaultAction(WebApiRequest request){
 WebApiResponse AbstractActionsController::notFoundAction(WebApiRequest request){
     qDebug() << Q_FUNC_INFO;
 
-    WebApiResponse response = WebApiResponse();
+    WebApiResponse response = this->getResponse();
 
     response.body = "Not found";
     response.status = 404;
-    response.headers.insert("Content-Type","text/html");
 
     return response;
 
+}
+
+WebApiResponse AbstractActionsController::getResponse(){
+
+    WebApiResponse response = WebApiResponse();
+
+    response.headers.insert("Content-Type", infoBuilder->contentTypeHeader);
+
+    return response;
 }

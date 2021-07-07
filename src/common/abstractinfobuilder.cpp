@@ -14,25 +14,22 @@
 * You should have received a copy of the GNU General Public License
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
+#include "abstractinfobuilder.h"
 
-#ifndef AIRPORTACTIONSCONTROLLER_H
-#define AIRPORTACTIONSCONTROLLER_H
-
-#include "webapi/abstractlnmactionscontroller.h"
-
-/**
- * @brief The Airport API Controller class
- */
-class AirportActionsController :
-        public AbstractLnmActionsController
+AbstractInfoBuilder::AbstractInfoBuilder(QObject *parent)
+  : QObject(parent)
 {
-    Q_OBJECT
-public:
-    Q_INVOKABLE AirportActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder);
-    /**
-     * @brief get airport info
-     */
-    Q_INVOKABLE WebApiResponse infoAction(WebApiRequest request);
-};
+  contentTypeHeader = "text/plain";
+}
 
-#endif // AIRPORTACTIONSCONTROLLER_H
+AbstractInfoBuilder::~AbstractInfoBuilder()
+{
+
+}
+
+QByteArray AbstractInfoBuilder::airport(const map::MapAirport& airport, const map::WeatherContext& weatherContext,
+                                  const Route *route) const
+{
+    return "It works";
+}
+

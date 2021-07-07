@@ -224,6 +224,7 @@ message(-----------------------------------)
 SOURCES += \
   src/airspace/airspacecontroller.cpp \
   src/airspace/airspacetoolbarhandler.cpp \
+  src/common/abstractinfobuilder.cpp \
   src/common/aircrafttrack.cpp \
   src/common/airportfiles.cpp \
   src/common/constants.cpp \
@@ -234,6 +235,7 @@ SOURCES += \
   src/common/formatter.cpp \
   src/common/fueltool.cpp \
   src/common/htmlinfobuilder.cpp \
+  src/common/jsoninfobuilder.cpp \
   src/common/jumpback.cpp \
   src/common/mapcolors.cpp \
   src/common/mapflags.cpp \
@@ -384,6 +386,7 @@ SOURCES += \
   src/web/webmapcontroller.cpp \
   src/web/webtools.cpp \
   src/webapi/abstractactionscontroller.cpp \
+  src/webapi/abstractlnmactionscontroller.cpp \
   src/webapi/actionscontrollerindex.cpp \
   src/webapi/airportactionscontroller.cpp \
   src/webapi/webapicontroller.cpp
@@ -391,6 +394,7 @@ SOURCES += \
 HEADERS  += \
   src/airspace/airspacecontroller.h \
   src/airspace/airspacetoolbarhandler.h \
+  src/common/abstractinfobuilder.h \
   src/common/aircrafttrack.h \
   src/common/airportfiles.h \
   src/common/constants.h \
@@ -401,6 +405,7 @@ HEADERS  += \
   src/common/formatter.h \
   src/common/fueltool.h \
   src/common/htmlinfobuilder.h \
+  src/common/jsoninfobuilder.h \
   src/common/jumpback.h \
   src/common/mapcolors.h \
   src/common/mapflags.h \
@@ -550,6 +555,7 @@ HEADERS  += \
   src/web/webmapcontroller.h \
   src/web/webtools.h \
   src/webapi/abstractactionscontroller.h \
+  src/webapi/abstractlnmactionscontroller.h \
   src/webapi/actionscontrollerindex.h \
   src/webapi/airportactionscontroller.h \
   src/webapi/webapicontroller.h \

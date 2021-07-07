@@ -21,6 +21,7 @@
 #include <QObject>
 #include "webapi/webapirequest.h"
 #include "webapi/webapiresponse.h"
+#include "common/abstractinfobuilder.h"
 
 /**
  * @brief The WebApiController class resolving WebApiRequests to WebApiResponses
@@ -58,7 +59,16 @@ private:
    * @brief register available controllers for dynamic invocation
    */
   void registerControllers();
+  /**
+   * @brief register available info builders
+   */
+  void registerInfoBuilders();
   bool verbose = false;
+
+  /**
+   * @brief requested content-type info builder
+   */
+  AbstractInfoBuilder* infoBuilder;
   /**
    * @brief create controller name from path string
    * @param path

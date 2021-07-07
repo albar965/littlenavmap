@@ -18,6 +18,8 @@
 #include "webapi/webapicontroller.h"
 #include "webapi/actionscontrollerindex.h"
 
+#include "common/jsoninfobuilder.h"
+
 #include <QDebug>
 #include <QMetaMethod>
 
@@ -28,10 +30,16 @@ WebApiController::WebApiController(QObject *parent, bool verboseParam)
     qDebug() << Q_FUNC_INFO;
     webApiPathPrefix = "/api";
     registerControllers();
+    registerInfoBuilders();
 }
 
 void WebApiController::registerControllers(){
     ActionsControllerIndex::registerQMetaTypes();
+}
+
+void WebApiController::registerInfoBuilders(){
+    // TODO: Enable different info builders depending on requested content-type
+    infoBuilder = new JsonInfoBuilder(parent());
 }
 
 WebApiController::~WebApiController()
@@ -76,7 +84,11 @@ WebApiResponse WebApiController::service(WebApiRequest& request)
 
           // Create controller instance
           const QMetaObject* mo = QMetaType::metaObjectForType(id);
-          QObject* controller = mo->newInstance(Q_ARG(QObject*, parent()),Q_ARG(bool, verbose));
+          QObject* controller = mo->newInstance(
+                      Q_ARG(QObject*, parent()),
+                      Q_ARG(bool, verbose),
+                      Q_ARG(AbstractInfoBuilder*, infoBuilder)
+                      );
 
           // Invoke action on instance
           bool actionExecuted = QMetaObject::invokeMethod(

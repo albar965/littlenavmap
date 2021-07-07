@@ -15,24 +15,29 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef AIRPORTACTIONSCONTROLLER_H
-#define AIRPORTACTIONSCONTROLLER_H
+#ifndef JSONINFOBUILDER_H
+#define JSONINFOBUILDER_H
 
-#include "webapi/abstractlnmactionscontroller.h"
+#include "common/abstractinfobuilder.h"
 
 /**
- * @brief The Airport API Controller class
+ * Builder for JSON representations of supplied data. All
+ * usable methods must be declared at AbstractInfoBuilder
+ * in order to be callable through its interface.
  */
-class AirportActionsController :
-        public AbstractLnmActionsController
+class JsonInfoBuilder : public AbstractInfoBuilder
 {
-    Q_OBJECT
+  Q_OBJECT
 public:
-    Q_INVOKABLE AirportActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder);
-    /**
-     * @brief get airport info
-     */
-    Q_INVOKABLE WebApiResponse infoAction(WebApiRequest request);
+  JsonInfoBuilder(QObject *parent);
+  virtual ~JsonInfoBuilder();
+  JsonInfoBuilder(const JsonInfoBuilder& other) = delete;
+  JsonInfoBuilder& operator=(const JsonInfoBuilder& other) = delete;
+
+  QByteArray airport(const map::MapAirport& airport, const map::WeatherContext& weatherContext,
+                   const Route *route) const override;
+
+
 };
 
-#endif // AIRPORTACTIONSCONTROLLER_H
+#endif // JSONINFOBUILDER_H

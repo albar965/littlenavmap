@@ -20,6 +20,7 @@
 
 #include "webapirequest.h"
 #include "webapiresponse.h"
+#include "common/abstractinfobuilder.h"
 
 #include <QObject>
 
@@ -31,7 +32,7 @@ class AbstractActionsController :
 {
     Q_OBJECT
 public:
-    AbstractActionsController(QObject *parent, bool verboseParam);
+    AbstractActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder);
     virtual ~AbstractActionsController();
     /**
      * @brief example for inheritable and invokable method/action
@@ -42,7 +43,19 @@ public:
      */
     Q_INVOKABLE virtual WebApiResponse notFoundAction(WebApiRequest request);
 protected:
+    /**
+     * @brief get new response object
+     * @return
+     */
+    WebApiResponse getResponse();
+    /**
+     * @brief verbose
+     */
     bool verbose = false;
+    /**
+     * @brief the response body builder
+     */
+    AbstractInfoBuilder* infoBuilder;
 };
 
 #endif // ABSTRACTACTIONSCONTROLLER_H

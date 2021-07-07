@@ -16,12 +16,37 @@
 *****************************************************************************/
 
 #include "airportactionscontroller.h"
-#include "abstractactionscontroller.h"
+#include "abstractlnmactionscontroller.h"
 
 #include <QDebug>
 
-AirportActionsController::AirportActionsController(QObject *parent, bool verboseParam) :
-    AbstractActionsController(parent, verboseParam)
+AirportActionsController::AirportActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder) :
+    AbstractLnmActionsController(parent, verboseParam, infoBuilder)
 {
     qDebug() << Q_FUNC_INFO;
+}
+
+WebApiResponse AirportActionsController::infoAction(WebApiRequest request){
+    qDebug() << Q_FUNC_INFO << request.parameters.value("ident");
+
+    WebApiResponse response = getResponse();
+
+    map::MapAirport airport = getAirportByIdent(request.parameters.value("ident").toUpper());
+
+    if(airport.id > 0){
+
+        map::WeatherContext weatherContext = getWeatherContext(airport);
+
+        response.body = infoBuilder->airport(airport, weatherContext, nullptr);
+        response.status = 200;
+
+    }else{
+
+        response.body = "Airport not found";
+        response.status = 404;
+
+    }
+
+    return response;
+
 }
