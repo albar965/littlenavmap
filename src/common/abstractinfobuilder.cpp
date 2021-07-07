@@ -27,9 +27,8 @@ AbstractInfoBuilder::~AbstractInfoBuilder()
 
 }
 
-QByteArray AbstractInfoBuilder::airport(const map::MapAirport& airport, const map::WeatherContext& weatherContext,
-                                  const Route *route) const
+QByteArray AbstractInfoBuilder::airport(AirportInfoData airportInfoData) const
 {
-    return "It works";
+    return "not implemented";
 }
 

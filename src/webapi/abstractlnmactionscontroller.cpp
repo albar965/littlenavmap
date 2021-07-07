@@ -18,6 +18,7 @@
 #include "abstractlnmactionscontroller.h"
 #include "navapp.h"
 #include "query/airportquery.h"
+#include "query/infoquery.h"
 #include "gui/mainwindow.h"
 
 AbstractLnmActionsController::AbstractLnmActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder) :
@@ -76,3 +77,11 @@ map::WeatherContext AbstractLnmActionsController::getWeatherContext(map::MapAirp
     getMainWindow()->buildWeatherContext(weatherContext, airport);
     return weatherContext;
 };
+const SqlRecord* AbstractLnmActionsController::getAirportInformation(int id){
+    return getInfoQuery()->getAirportInformation(id);
+}
+const AirportAdminNames AbstractLnmActionsController::getAirportAdminNames(map::MapAirport airport){
+    QString city, state, country;
+    getAirportQuery(AirportQueryType::SIM)->getAirportAdminNamesById(airport.id, city, state, country);
+    return {city, state, country};
+}

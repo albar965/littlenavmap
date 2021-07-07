@@ -15,28 +15,41 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef JSONINFOBUILDER_H
-#define JSONINFOBUILDER_H
+#ifndef INFOBUILDERTYPES_H
+#define INFOBUILDERTYPES_H
 
-#include "common/abstractinfobuilder.h"
+
+#include "sql/sqlrecord.h"
+
+#include <QObject>
+
+namespace map {
+struct MapAirport;
+struct WeatherContext;
+}
+class Route;
+
+using atools::sql::SqlRecord;
 
 /**
- * Builder for JSON representations of supplied data. All
- * usable methods must be declared at AbstractInfoBuilder
- * in order to be callable through its interface.
+ * Types used by AbstractInfoBuilder and derived classes
  */
-class JsonInfoBuilder : public AbstractInfoBuilder
-{
-  Q_OBJECT
-public:
-  JsonInfoBuilder(QObject *parent);
-  virtual ~JsonInfoBuilder();
-  JsonInfoBuilder(const JsonInfoBuilder& other) = delete;
-  JsonInfoBuilder& operator=(const JsonInfoBuilder& other) = delete;
+namespace InfoBuilderTypes {
 
-  QByteArray airport(AirportInfoData airportInfoData) const override;
+    struct AirportAdminNames{
+        const QString city;
+        const QString state;
+        const QString country;
+    };
 
+    struct AirportInfoData{
+        const map::MapAirport& airport;
+        const map::WeatherContext& weatherContext;
+        const Route *route = nullptr;
+        const SqlRecord* airportInformation = nullptr;
+        const AirportAdminNames* airportAdminNames = nullptr;
+    };
 
-};
+}
 
-#endif // JSONINFOBUILDER_H
+#endif // INFOBUILDERTYPES_H

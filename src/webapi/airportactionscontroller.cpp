@@ -35,9 +35,17 @@ WebApiResponse AirportActionsController::infoAction(WebApiRequest request){
 
     if(airport.id > 0){
 
-        map::WeatherContext weatherContext = getWeatherContext(airport);
+        const AirportAdminNames airportAdminNames = getAirportAdminNames(airport);
 
-        response.body = infoBuilder->airport(airport, weatherContext, nullptr);
+        AirportInfoData data = {
+            airport,
+            getWeatherContext(airport),
+            nullptr,
+            getAirportInformation(airport.id),
+            &airportAdminNames
+        };
+
+        response.body = infoBuilder->airport(data);
         response.status = 200;
 
     }else{

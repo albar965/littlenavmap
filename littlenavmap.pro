@@ -405,6 +405,7 @@ HEADERS  += \
   src/common/formatter.h \
   src/common/fueltool.h \
   src/common/htmlinfobuilder.h \
+  src/common/infobuildertypes.h \
   src/common/jsoninfobuilder.h \
   src/common/jumpback.h \
   src/common/mapcolors.h \

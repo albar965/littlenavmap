@@ -19,11 +19,15 @@
 #define ABSTRACTLNMACTIONSCONTROLLER_H
 
 #include "webapi/abstractactionscontroller.h"
+#include "common/infobuildertypes.h"
 #include "common/maptypes.h"
 #include "navapp.h"
+#include "sql/sqlrecord.h"
 #include "fs/util/morsecode.h"
 
 using atools::fs::util::MorseCode;
+using atools::sql::SqlRecord;
+using InfoBuilderTypes::AirportAdminNames;
 
 /**
  * @brief The base class for all Little Navmap API action controllers
@@ -50,6 +54,9 @@ protected:
     // Common LNM logic
     map::MapAirport getAirportByIdent(QByteArray ident);
     map::WeatherContext getWeatherContext(map::MapAirport airport);
+    const SqlRecord* getAirportInformation(int id);
+    const AirportAdminNames getAirportAdminNames(map::MapAirport airport);
+
 private:
     MorseCode* morseCode;
 };

@@ -18,35 +18,13 @@
 #ifndef ABSTRACTINFOBUILDER_H
 #define ABSTRACTINFOBUILDER_H
 
+#include "sql/sqlrecord.h"
+#include "common/unit.h"
+#include "common/infobuildertypes.h"
+
 #include <QObject>
 
-
-namespace map {
-struct MapAirport;
-struct MapVor;
-struct MapNdb;
-struct MapWaypoint;
-struct MapAirway;
-struct MapAirspace;
-struct MapIls;
-struct MapMarker;
-struct MapAirport;
-struct MapParking;
-struct MapHelipad;
-struct MapStart;
-struct MapUserpointRoute;
-struct MapProcedurePoint;
-struct MapProcedureRef;
-struct MapUserpoint;
-struct MapLogbookEntry;
-struct MapBase;
-struct MapResultIndex;
-struct Hold;
-struct TrafficPattern;
-struct RangeMarker;
-struct WeatherContext;
-}
-class Route;
+using InfoBuilderTypes::AirportInfoData;
 
 /**
  * Base class for all info builders
@@ -76,8 +54,7 @@ public:
    * @param route
    * @param weatherContext
    */
-  virtual QByteArray airport(const map::MapAirport& airport, const map::WeatherContext& weatherContext,
-                  const Route *route) const;
+  virtual QByteArray airport(AirportInfoData airportInfoData) const;
 
 };
 

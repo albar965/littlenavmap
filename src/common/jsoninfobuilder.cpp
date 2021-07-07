@@ -33,12 +33,29 @@ JsonInfoBuilder::~JsonInfoBuilder()
 
 }
 
-QByteArray JsonInfoBuilder::airport(const map::MapAirport& airport, const map::WeatherContext& weatherContext,
-                                    const Route *route) const
+QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
 {
     JSON json = {
-        {"airportName",qUtf8Printable(airport.name)}
+        { "ident", qUtf8Printable(airportInfoData.airport.ident) },
+        { "ICAO", qUtf8Printable(airportInfoData.airport.icao) },
+        { "name", qUtf8Printable(airportInfoData.airport.name) },
+        { "region", qUtf8Printable(airportInfoData.airport.region) },
+        { "closed", airportInfoData.airport.closed() },
+        { "addon", airportInfoData.airport.addon() },
+        { "elevation", qUtf8Printable(Unit::altFeet(airportInfoData.airport.getPosition().getAltitude())) },
+        { "magneticDeclination", qUtf8Printable(map::magvarText(airportInfoData.airport.magvar)) },
     };
+
+    if(airportInfoData.airportInformation!=nullptr){
+        json["rating"] = airportInfoData.airportInformation->valueInt("rating");
+        json["IATA"] = qUtf8Printable(airportInfoData.airportInformation->valueStr("iata"));
+    }
+
+    if(airportInfoData.airportAdminNames!=nullptr){
+        json["city"] = qUtf8Printable(airportInfoData.airportAdminNames->city);
+        json["state"] = qUtf8Printable(airportInfoData.airportAdminNames->state);
+        json["country"] = qUtf8Printable(airportInfoData.airportAdminNames->country);
+    }
 
     return json.dump().data();
 }
