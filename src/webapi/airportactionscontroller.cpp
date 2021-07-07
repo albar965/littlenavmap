@@ -36,13 +36,15 @@ WebApiResponse AirportActionsController::infoAction(WebApiRequest request){
     if(airport.id > 0){
 
         const AirportAdminNames airportAdminNames = getAirportAdminNames(airport);
+        const int transitionAltitude = getTransitionAltitude(airport);
 
         AirportInfoData data = {
             airport,
             getWeatherContext(airport),
             nullptr,
             getAirportInformation(airport.id),
-            &airportAdminNames
+            &airportAdminNames,
+            &transitionAltitude
         };
 
         response.body = infoBuilder->airport(data);

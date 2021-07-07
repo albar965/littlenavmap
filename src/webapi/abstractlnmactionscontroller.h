@@ -56,6 +56,7 @@ protected:
     map::WeatherContext getWeatherContext(map::MapAirport airport);
     const SqlRecord* getAirportInformation(int id);
     const AirportAdminNames getAirportAdminNames(map::MapAirport airport);
+    const int getTransitionAltitude(map::MapAirport airport);
 
 private:
     MorseCode* morseCode;

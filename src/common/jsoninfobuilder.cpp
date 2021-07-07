@@ -57,6 +57,10 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
         json["country"] = qUtf8Printable(airportInfoData.airportAdminNames->country);
     }
 
+    if(airportInfoData.transitionAltitude!=nullptr){
+        json["transitionAltitude"] = qUtf8Printable(Unit::altFeet(*airportInfoData.transitionAltitude));
+    }
+
     return json.dump().data();
 }
 

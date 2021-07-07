@@ -19,6 +19,7 @@
 #include "navapp.h"
 #include "query/airportquery.h"
 #include "query/infoquery.h"
+#include "query/mapquery.h"
 #include "gui/mainwindow.h"
 
 AbstractLnmActionsController::AbstractLnmActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder) :
@@ -85,3 +86,13 @@ const AirportAdminNames AbstractLnmActionsController::getAirportAdminNames(map::
     getAirportQuery(AirportQueryType::SIM)->getAirportAdminNamesById(airport.id, city, state, country);
     return {city, state, country};
 }
+
+const int AbstractLnmActionsController::getTransitionAltitude(map::MapAirport airport){
+    // Get transition altitude from nav database
+    map::MapAirport navAirport = airport;
+    getMapQuery()->getAirportNavReplace(navAirport);
+    if(navAirport.isValid() && navAirport.transitionAltitude > 0)
+      return navAirport.transitionAltitude;
+    return -1;
+}
+

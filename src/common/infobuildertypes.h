@@ -48,6 +48,7 @@ namespace InfoBuilderTypes {
         const Route *route = nullptr;
         const SqlRecord* airportInformation = nullptr;
         const AirportAdminNames* airportAdminNames = nullptr;
+        const int* transitionAltitude = nullptr;
     };
 
 }
