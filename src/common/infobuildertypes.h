@@ -36,15 +36,23 @@ using atools::sql::SqlRecord;
  */
 namespace InfoBuilderTypes {
 
+    /**
+     * @brief Data container for airport admin information
+     */
     struct AirportAdminNames{
         const QString city;
         const QString state;
         const QString country;
     };
 
+    /**
+     * @brief Data container for airport information
+     */
     struct AirportInfoData{
+        // required
         const map::MapAirport& airport;
         const map::WeatherContext& weatherContext;
+        // optional
         const Route *route = nullptr;
         const SqlRecord* airportInformation = nullptr;
         const AirportAdminNames* airportAdminNames = nullptr;
