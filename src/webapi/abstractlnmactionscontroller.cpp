@@ -87,7 +87,7 @@ const AirportAdminNames AbstractLnmActionsController::getAirportAdminNames(map::
     return {city, state, country};
 }
 
-const int AbstractLnmActionsController::getTransitionAltitude(map::MapAirport airport){
+int AbstractLnmActionsController::getTransitionAltitude(map::MapAirport airport){
     // Get transition altitude from nav database
     map::MapAirport navAirport = airport;
     getMapQuery()->getAirportNavReplace(navAirport);
