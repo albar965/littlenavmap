@@ -39,6 +39,14 @@ This version contains mostly bug fixes TODO.
 * Now avoiding ICAO region when exporting MSFS flight plans since it is not reliable for airports
   and the sim garbles the flight plan when loading.
 
+### Logbook
+
+* Now saving empty flight plan into logbook entry instead of invalid one missing waypoints. This
+  happens if no flight plan was set while flying. Note that you still might see an exception if you
+  try to save a flight plan from older log entries resulting from flights without a plan.
+* Now ignoring invalid or missing flight plans when saving GPX files from logbook entry. Previously
+  showed an exception `Invalid LNMPLN flight plan file ".". No waypoints found.`.
+
 ### Procedures
 
 * Now correcting final procedure legs where at altitude restriction is wrongly below airport
