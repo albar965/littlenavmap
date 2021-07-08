@@ -20,6 +20,7 @@
 
 #include "atools.h"
 #include "geo/calculations.h"
+#include "fs/util/fsutil.h"
 #include "sql/sqlrecord.h"
 #include "common/formatter.h"
 #include "common/unit.h"
@@ -31,6 +32,7 @@
 
 using formatter::courseTextFromTrue;
 using atools::geo::opposedCourseDeg;
+using atools::fs::util::roundComFrequency;
 
 using InfoBuilderTypes::AirportInfoData;
 
@@ -71,6 +73,15 @@ protected:
    * @return both headings as formatted string
    */
   virtual QString getHeadingsStringByMagVar(float heading, float magvar) const;
+  /**
+   * @brief Get heading and opposed heading corrected by magnetic variation
+   * @param heading
+   * @param magvar
+   * @return both headings as formatted string
+   */
+  virtual QString formatComFrequency(int frequency) const;
+private:
+  QLocale locale;
 };
 
 #endif // ABSTRACTINFOBUILDER_H

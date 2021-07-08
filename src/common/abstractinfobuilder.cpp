@@ -37,3 +37,9 @@ QString AbstractInfoBuilder::getHeadingsStringByMagVar(float heading, float magv
     return courseTextFromTrue(heading, magvar) +", "+ courseTextFromTrue(opposedCourseDeg(heading), magvar);
 
 }
+
+QString AbstractInfoBuilder::formatComFrequency(int frequency) const {
+
+    return locale.toString(roundComFrequency(frequency), 'f', 3) + tr(" MHz");
+
+}

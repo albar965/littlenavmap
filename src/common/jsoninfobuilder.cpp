@@ -39,7 +39,7 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
 
     JSON json = {
         { "ident", qUtf8Printable(data.airport.ident) },
-        { "ICAO", qUtf8Printable(data.airport.icao) },
+        { "icao", qUtf8Printable(data.airport.icao) },
         { "name", qUtf8Printable(data.airport.name) },
         { "region", qUtf8Printable(data.airport.region) },
         { "closed", data.airport.closed() },
@@ -47,7 +47,7 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
         { "elevation", qUtf8Printable(Unit::altFeet(data.airport.getPosition().getAltitude())) },
         { "magneticDeclination", qUtf8Printable(map::magvarText(data.airport.magvar)) },
         { "rating", nullptr },
-        { "IATA", nullptr },
+        { "iata", nullptr },
         { "city", nullptr },
         { "state", nullptr },
         { "country", nullptr },
@@ -57,14 +57,15 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
         { "longestRunwayLength", nullptr },
         { "longestRunwayHeading", nullptr },
         { "longestRunwaySurface", nullptr },
-        { "metar", JSON::array()},
+        { "metar", JSON::object()},
+        { "com", JSON::object()},
     };
 
     /* Null fields populated if available */
 
     if(data.airportInformation!=nullptr){
         json["rating"] = data.airportInformation->valueInt("rating");
-        json["IATA"] = qUtf8Printable(data.airportInformation->valueStr("iata"));
+        json["iata"] = qUtf8Printable(data.airportInformation->valueStr("iata"));
     }
 
     if(data.airportAdminNames!=nullptr){
@@ -90,20 +91,20 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
 
     // Simulator
     if(!data.weatherContext.fsMetar.isEmpty()){
-        json["metar"].push_back({{ "simulator", {
+        json["metar"].push_back({ "simulator", {
                 {"station", qUtf8Printable(data.weatherContext.fsMetar.metarForStation)},
                 {"nearest", qUtf8Printable(data.weatherContext.fsMetar.metarForNearest)},
                 {"interpolated", qUtf8Printable(data.weatherContext.fsMetar.metarForInterpolated)},
             }
-        }});
+        });
     }
 
     // Active Sky
     if(!data.weatherContext.asMetar.isEmpty()){
-        json["metar"].push_back({{ "activesky", {
+        json["metar"].push_back({ "activesky", {
                 {"station", qUtf8Printable(data.weatherContext.asMetar)},
             }
-        }});
+        });
     }
 
     // NOAA
@@ -111,11 +112,11 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
        !data.weatherContext.noaaMetar.metarForStation.isEmpty() ||
        !data.weatherContext.noaaMetar.metarForNearest.isEmpty()
       ){
-        json["metar"].push_back({{ "noaa", {
+        json["metar"].push_back({ "noaa", {
                 {"station", qUtf8Printable(data.weatherContext.noaaMetar.metarForStation)},
                 {"nearest", qUtf8Printable(data.weatherContext.noaaMetar.metarForNearest)},
             }
-        }});
+        });
     }
 
     // VATSIM
@@ -123,11 +124,11 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
        !data.weatherContext.vatsimMetar.metarForStation.isEmpty() ||
        !data.weatherContext.vatsimMetar.metarForNearest.isEmpty()
       ){
-        json["metar"].push_back({{ "vatsim", {
+        json["metar"].push_back({ "vatsim", {
                 {"station", qUtf8Printable(data.weatherContext.vatsimMetar.metarForStation)},
                 {"nearest", qUtf8Printable(data.weatherContext.vatsimMetar.metarForNearest)},
             }
-        }});
+        });
     }
 
     // IVAO
@@ -135,11 +136,29 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
        !data.weatherContext.ivaoMetar.metarForStation.isEmpty() ||
        !data.weatherContext.ivaoMetar.metarForStation.isEmpty()
       ){
-        json["metar"].push_back({{"ivao", {
+        json["metar"].push_back({"ivao", {
                 {"station", qUtf8Printable(data.weatherContext.ivaoMetar.metarForStation)},
                 {"nearest", qUtf8Printable(data.weatherContext.ivaoMetar.metarForNearest)},
             }
-        }});
+        });
+    }
+
+    /* COM */
+
+    if(data.airport.towerFrequency > 0){
+        json["com"].push_back({"Tower:", qUtf8Printable(formatComFrequency(data.airport.towerFrequency))});
+    }
+    if(data.airport.atisFrequency > 0){
+        json["com"].push_back({"ATIS:", qUtf8Printable(formatComFrequency(data.airport.atisFrequency))});
+    }
+    if(data.airport.awosFrequency > 0){
+        json["com"].push_back({"AWOS:", qUtf8Printable(formatComFrequency(data.airport.awosFrequency))});
+    }
+    if(data.airport.asosFrequency > 0){
+        json["com"].push_back({"ASOS:", qUtf8Printable(formatComFrequency(data.airport.asosFrequency))});
+    }
+    if(data.airport.unicomFrequency > 0){
+        json["com"].push_back({"UNICOM:", qUtf8Printable(formatComFrequency(data.airport.unicomFrequency))});
     }
 
     /* Facilities */
