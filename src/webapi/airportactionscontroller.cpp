@@ -35,16 +35,26 @@ WebApiResponse AirportActionsController::infoAction(WebApiRequest request){
 
     if(airport.id > 0){
 
+        const SqlRecord* airportInformation = getAirportInformation(airport.id);
         const AirportAdminNames airportAdminNames = getAirportAdminNames(airport);
         const int transitionAltitude = getTransitionAltitude(airport);
+
+        const QTime sunrise = getSunrise(*airportInformation);
+        const QTime sunset =  getSunset(*airportInformation);
+        const QDateTime activeDateTime = getActiveDateTime();
+        const QString activeDateTimeSource = getActiveDateTimeSource();
 
         AirportInfoData data = {
             airport,
             getWeatherContext(airport),
             nullptr,
-            getAirportInformation(airport.id),
+            airportInformation,
             &airportAdminNames,
-            &transitionAltitude
+            &transitionAltitude,
+            &sunrise,
+            &sunset,
+            &activeDateTime,
+            &activeDateTimeSource
         };
 
         response.body = infoBuilder->airport(data);

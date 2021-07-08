@@ -60,6 +60,10 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
         { "longestRunwayHeading", nullptr },
         { "longestRunwaySurface", nullptr },
         { "metar", JSON::object()},
+        { "sunrise", nullptr},
+        { "sunset", nullptr},
+        { "activeDateTime", nullptr},
+        { "activeDateTimeSource", nullptr},
         { "com", JSON::object()},
     };
 
@@ -111,6 +115,20 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
             json["longestRunwayHeading"] = qUtf8Printable(getHeadingsStringByMagVar(data.airportInformation->valueFloat("longest_runway_heading"),data.airport.magvar));
             json["longestRunwaySurface"] = qUtf8Printable(data.airportInformation->valueStr("longest_runway_surface"));
         }
+    }
+
+    if(data.sunrise!= nullptr){
+        json["sunrise"]=qUtf8Printable(data.sunrise->toString());
+    }
+    if(data.sunset!= nullptr){
+        json["sunset"]=qUtf8Printable(data.sunset->toString());
+    }
+
+    if(data.activeDateTime!=nullptr){
+        json["activeDateTime"]=qUtf8Printable(data.activeDateTime->toString());
+    }
+    if(data.activeDateTimeSource!=nullptr){
+        json["activeDateTimeSource"]=qUtf8Printable(*data.activeDateTimeSource);
     }
 
     /* METAR */

@@ -57,6 +57,10 @@ namespace InfoBuilderTypes {
         const SqlRecord* airportInformation = nullptr;
         const AirportAdminNames* airportAdminNames = nullptr;
         const int* transitionAltitude = nullptr;
+        const QTime* sunrise = nullptr;
+        const QTime* sunset = nullptr;
+        const QDateTime* activeDateTime = nullptr;
+        const QString* activeDateTimeSource = nullptr;
     };
 
 }

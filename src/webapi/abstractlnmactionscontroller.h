@@ -25,9 +25,11 @@
 #include "sql/sqlrecord.h"
 #include "fs/util/morsecode.h"
 
+namespace ageo = atools::geo;
 using atools::fs::util::MorseCode;
 using atools::sql::SqlRecord;
 using InfoBuilderTypes::AirportAdminNames;
+using atools::geo::Pos;
 
 /**
  * @brief The base class for all Little Navmap API action controllers
@@ -57,9 +59,16 @@ protected:
     const SqlRecord* getAirportInformation(int id);
     const AirportAdminNames getAirportAdminNames(map::MapAirport airport);
     int getTransitionAltitude(map::MapAirport airport);
-
+    const QTime getSunset(const SqlRecord& airportInformation);
+    const QTime getSunrise(const SqlRecord& airportInformation);
+    const QTime getSunset(const Pos& pos);
+    const QTime getSunrise(const Pos& pos);
+    const QDateTime getActiveDateTime();
+    const QString getActiveDateTimeSource();
 private:
     MorseCode* morseCode;
+    QTime calculateSunriseSunset(const Pos& pos, float zenith);
+    Pos getPosFromAirportInformation(const SqlRecord& airportInformation);
 };
 
 #endif // ABSTRACTLNMACTIONSCONTROLLER_H

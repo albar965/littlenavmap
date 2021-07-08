@@ -86,7 +86,6 @@ const AirportAdminNames AbstractLnmActionsController::getAirportAdminNames(map::
     getAirportQuery(AirportQueryType::SIM)->getAirportAdminNamesById(airport.id, city, state, country);
     return {city, state, country};
 }
-
 int AbstractLnmActionsController::getTransitionAltitude(map::MapAirport airport){
     // Get transition altitude from nav database
     map::MapAirport navAirport = airport;
@@ -95,4 +94,40 @@ int AbstractLnmActionsController::getTransitionAltitude(map::MapAirport airport)
       return navAirport.transitionAltitude;
     return -1;
 }
+const QTime AbstractLnmActionsController::getSunset(const SqlRecord& airportInformation){
+    return calculateSunriseSunset(getPosFromAirportInformation(airportInformation),ageo::SUNSET_CIVIL);
+};
+const QTime AbstractLnmActionsController::getSunrise(const SqlRecord& airportInformation){
+    return calculateSunriseSunset(getPosFromAirportInformation(airportInformation),ageo::SUNRISE_CIVIL);
+};
+const QTime AbstractLnmActionsController::getSunset(const Pos& pos){
+    return calculateSunriseSunset(pos,ageo::SUNSET_CIVIL);
+};
+const QTime AbstractLnmActionsController::getSunrise(const Pos &pos){
+    return calculateSunriseSunset(pos,ageo::SUNRISE_CIVIL);
+};
+QTime AbstractLnmActionsController::calculateSunriseSunset(const Pos &pos, float zenith){
+    QTime result;
+    QDateTime datetime =
+      getNavApp()->isConnectedAndAircraft() ? getNavApp()->getUserAircraft().getZuluTime() : QDateTime::currentDateTimeUtc();
 
+    if(datetime.isValid())
+    {
+        bool neverRises, neverSets;
+        result = ageo::calculateSunriseSunset(neverRises, neverSets, pos,
+                                                 datetime.date(), zenith);
+    }
+    return result;
+};
+Pos AbstractLnmActionsController::getPosFromAirportInformation(const SqlRecord &airportInformation){
+    Pos pos(airportInformation.valueFloat("lonx"), airportInformation.valueFloat("laty"));
+    return pos;
+}
+
+const QDateTime AbstractLnmActionsController::getActiveDateTime(){
+    return getNavApp()->isConnectedAndAircraft() ? getNavApp()->getUserAircraft().getZuluTime() : QDateTime::currentDateTimeUtc();
+
+};
+const QString AbstractLnmActionsController::getActiveDateTimeSource(){
+    return getNavApp()->isConnectedAndAircraft() ? tr("simulator date") : tr("real date");
+};
