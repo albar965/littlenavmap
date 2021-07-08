@@ -52,10 +52,12 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
         { "facilities", JSON::array()},
         { "runways", JSON::array()},
         { "longestRunwayLength", nullptr },
+        { "longestRunwayHeading", nullptr },
+        { "longestRunwaySurface", nullptr },
         { "metar", JSON::array()},
     };
 
-    /* Fields populated if available */
+    /* Null fields populated if available */
 
     if(airportInfoData.airportInformation!=nullptr){
         json["rating"] = airportInfoData.airportInformation->valueInt("rating");
@@ -74,6 +76,11 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
 
     if(!airportInfoData.airport.noRunways()){
         json["longestRunwayLength"] = qUtf8Printable(Unit::distShortFeet(airportInfoData.airport.longestRunwayLength));
+        if(airportInfoData.airportInformation!=nullptr){
+            json["longestRunwayWidth"] = qUtf8Printable(Unit::distShortFeet(airportInfoData.airportInformation->valueInt("longest_runway_width")));
+            json["longestRunwayHeading"] = qUtf8Printable(getHeadingsStringByMagVar(airportInfoData.airportInformation->valueFloat("longest_runway_heading"),airportInfoData.airport.magvar));
+            json["longestRunwaySurface"] = qUtf8Printable(airportInfoData.airportInformation->valueStr("longest_runway_surface"));
+        }
     }
 
     /* METAR */

@@ -18,13 +18,19 @@
 #ifndef ABSTRACTINFOBUILDER_H
 #define ABSTRACTINFOBUILDER_H
 
+#include "atools.h"
+#include "geo/calculations.h"
 #include "sql/sqlrecord.h"
+#include "common/formatter.h"
 #include "common/unit.h"
 #include "common/infobuildertypes.h"
 #include "common/maptypes.h"
 #include "common/mapflags.h"
 
 #include <QObject>
+
+using formatter::courseTextFromTrue;
+using atools::geo::opposedCourseDeg;
 
 using InfoBuilderTypes::AirportInfoData;
 
@@ -57,7 +63,14 @@ public:
    * @param weatherContext
    */
   virtual QByteArray airport(AirportInfoData airportInfoData) const;
-
+protected:
+  /**
+   * @brief Get heading and opposed heading corrected by magnetic variation
+   * @param heading
+   * @param magvar
+   * @return both headings as formatted string
+   */
+  virtual QString getHeadingsStringByMagVar(float heading, float magvar) const;
 };
 
 #endif // ABSTRACTINFOBUILDER_H

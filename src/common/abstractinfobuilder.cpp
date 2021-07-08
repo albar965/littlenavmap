@@ -32,3 +32,8 @@ QByteArray AbstractInfoBuilder::airport(AirportInfoData airportInfoData) const
     return "not implemented";
 }
 
+QString AbstractInfoBuilder::getHeadingsStringByMagVar(float heading, float magvar) const {
+
+    return courseTextFromTrue(heading, magvar) +", "+ courseTextFromTrue(opposedCourseDeg(heading), magvar);
+
+}
