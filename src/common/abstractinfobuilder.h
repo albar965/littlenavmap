@@ -32,6 +32,7 @@
 
 using formatter::courseTextFromTrue;
 using atools::geo::opposedCourseDeg;
+using atools::geo::Pos;
 using atools::fs::util::roundComFrequency;
 
 using InfoBuilderTypes::AirportInfoData;
@@ -80,6 +81,20 @@ protected:
    * @return both headings as formatted string
    */
   virtual QString formatComFrequency(int frequency) const;
+  /**
+   * @brief get pretty printed coords from sql record
+   * @param rec
+   * @return printable string
+   */
+  virtual QString getCoordinatesString(const atools::sql::SqlRecord *rec) const;
+  /**
+   * @brief get pretty printed coords from Pos
+   * @param rec
+   * @return printable string
+   */
+  virtual QString getCoordinatesString(const Pos& pos) const;
+
+
 private:
   QLocale locale;
 };

@@ -43,3 +43,15 @@ QString AbstractInfoBuilder::formatComFrequency(int frequency) const {
     return locale.toString(roundComFrequency(frequency), 'f', 3) + tr(" MHz");
 
 }
+
+QString AbstractInfoBuilder::getCoordinatesString(const atools::sql::SqlRecord *rec) const
+{
+  if(rec != nullptr && rec->contains("lonx") && rec->contains("laty"))
+    return getCoordinatesString(Pos(rec->valueFloat("lonx"), rec->valueFloat("laty"), rec->valueFloat("altitude", 0.f)));
+}
+
+QString AbstractInfoBuilder::getCoordinatesString(const Pos& pos) const
+{
+  if(pos.isValid())
+    return Unit::coords(pos);
+}
