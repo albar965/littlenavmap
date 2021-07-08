@@ -55,6 +55,7 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
         { "transitionAltitude", nullptr },
         { "facilities", JSON::array()},
         { "runways", JSON::array()},
+        { "parking", JSON::object()},
         { "longestRunwayLength", nullptr },
         { "longestRunwayHeading", nullptr },
         { "longestRunwaySurface", nullptr },
@@ -69,13 +70,28 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
         json["iata"] = qUtf8Printable(data.airportInformation->valueStr("iata"));
         json["position"] = qUtf8Printable(getCoordinatesString(data.airportInformation));
 
-        json["parkingGates"] = data.airportInformation->valueInt("num_parking_gate");
-        json["parkingJetWays"] = data.airportInformation->valueInt("num_jetway");
-        json["parkingGaRamps"] = data.airportInformation->valueInt("num_parking_ga_ramp");
-        json["parkingCargo"] = data.airportInformation->valueInt("num_parking_cargo");
-        json["parkingMilitaryCargo"] = data.airportInformation->valueInt("num_parking_mil_cargo");
-        json["parkingMilitaryCombat"] = data.airportInformation->valueInt("num_parking_mil_combat");
-        json["parkingHelipads"] = data.airportInformation->valueInt("num_helipad");
+        if(data.airportInformation->valueInt("num_parking_gate") > 0){
+            json["parking"].push_back({ "gates", data.airportInformation->valueInt("num_parking_gate") });
+        }
+        if(data.airportInformation->valueInt("num_jetway") > 0){
+            json["parking"].push_back({ "jetWays", data.airportInformation->valueInt("num_jetway") });
+        }
+        if(data.airportInformation->valueInt("num_parking_ga_ramp") > 0){
+            json["parking"].push_back({ "gaRamps", data.airportInformation->valueInt("num_parking_ga_ramp") });
+        }
+        if(data.airportInformation->valueInt("num_parking_cargo") > 0){
+            json["parking"].push_back({ "Cargo", data.airportInformation->valueInt("num_parking_cargo") });
+        }
+        if(data.airportInformation->valueInt("num_parking_mil_cargo") > 0){
+            json["parking"].push_back({ "militaryCargo", data.airportInformation->valueInt("num_parking_mil_cargo") });
+        }
+        if(data.airportInformation->valueInt("num_parking_mil_combat") > 0){
+            json["parking"].push_back({ "militaryCombat", data.airportInformation->valueInt("num_parking_mil_combat") });
+        }
+        if(data.airportInformation->valueInt("num_helipad") > 0){
+            json["parking"].push_back({ "helipads", data.airportInformation->valueInt("num_helipad") });
+        }
+
     }
 
     if(data.airportAdminNames!=nullptr){
