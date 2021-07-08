@@ -73,7 +73,7 @@ map::MapAirport AbstractLnmActionsController::getAirportByIdent(QByteArray ident
     getAirportQuery(AirportQueryType::SIM)->getAirportByIdent(airport,ident);
     return airport;
 };
-map::WeatherContext AbstractLnmActionsController::getWeatherContext(map::MapAirport airport){
+map::WeatherContext AbstractLnmActionsController::getWeatherContext(map::MapAirport& airport){
     map::WeatherContext weatherContext;
     getMainWindow()->buildWeatherContext(weatherContext, airport);
     return weatherContext;
@@ -81,12 +81,12 @@ map::WeatherContext AbstractLnmActionsController::getWeatherContext(map::MapAirp
 const SqlRecord* AbstractLnmActionsController::getAirportInformation(int id){
     return getInfoQuery()->getAirportInformation(id);
 }
-const AirportAdminNames AbstractLnmActionsController::getAirportAdminNames(map::MapAirport airport){
+const AirportAdminNames AbstractLnmActionsController::getAirportAdminNames(map::MapAirport& airport){
     QString city, state, country;
     getAirportQuery(AirportQueryType::SIM)->getAirportAdminNamesById(airport.id, city, state, country);
     return {city, state, country};
 }
-int AbstractLnmActionsController::getTransitionAltitude(map::MapAirport airport){
+int AbstractLnmActionsController::getTransitionAltitude(map::MapAirport& airport){
     // Get transition altitude from nav database
     map::MapAirport navAirport = airport;
     getMapQuery()->getAirportNavReplace(navAirport);

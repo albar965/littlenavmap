@@ -55,10 +55,10 @@ protected:
 
     // Common LNM logic
     map::MapAirport getAirportByIdent(QByteArray ident);
-    map::WeatherContext getWeatherContext(map::MapAirport airport);
+    map::WeatherContext getWeatherContext(map::MapAirport& airport);
     const SqlRecord* getAirportInformation(int id);
-    const AirportAdminNames getAirportAdminNames(map::MapAirport airport);
-    int getTransitionAltitude(map::MapAirport airport);
+    const AirportAdminNames getAirportAdminNames(map::MapAirport& airport);
+    int getTransitionAltitude(map::MapAirport& airport);
     const QTime getSunset(const SqlRecord& airportInformation);
     const QTime getSunrise(const SqlRecord& airportInformation);
     const QTime getSunset(const Pos& pos);

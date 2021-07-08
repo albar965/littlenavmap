@@ -43,7 +43,6 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
         { "name", qUtf8Printable(data.airport.name) },
         { "region", qUtf8Printable(data.airport.region) },
         { "closed", data.airport.closed() },
-        { "addon", data.airport.addon() },
         { "position", nullptr },
         { "elevation", qUtf8Printable(Unit::altFeet(data.airport.getPosition().getAltitude())) },
         { "magneticDeclination", qUtf8Printable(map::magvarText(data.airport.magvar)) },
