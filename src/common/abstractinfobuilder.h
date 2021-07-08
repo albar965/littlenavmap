@@ -21,6 +21,8 @@
 #include "sql/sqlrecord.h"
 #include "common/unit.h"
 #include "common/infobuildertypes.h"
+#include "common/maptypes.h"
+#include "common/mapflags.h"
 
 #include <QObject>
 
