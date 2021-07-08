@@ -66,6 +66,14 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
     if(data.airportInformation!=nullptr){
         json["rating"] = data.airportInformation->valueInt("rating");
         json["iata"] = qUtf8Printable(data.airportInformation->valueStr("iata"));
+
+        json["parkingGates"] = data.airportInformation->valueInt("num_parking_gate");
+        json["parkingJetWays"] = data.airportInformation->valueInt("num_jetway");
+        json["parkingGaRamps"] = data.airportInformation->valueInt("num_parking_ga_ramp");
+        json["parkingCargo"] = data.airportInformation->valueInt("num_parking_cargo");
+        json["parkingMilitaryCargo"] = data.airportInformation->valueInt("num_parking_mil_cargo");
+        json["parkingMilitaryCombat"] = data.airportInformation->valueInt("num_parking_mil_combat");
+        json["parkingHelipads"] = data.airportInformation->valueInt("num_helipad");
     }
 
     if(data.airportAdminNames!=nullptr){
