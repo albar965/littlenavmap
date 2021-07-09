@@ -6,7 +6,8 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 # Version 2.6.13
 
-This version contains mostly bug fixes TODO.
+This version contains bug fixes, small user interface improvements and support for the new
+IVAO interface which allows update rates of 15 seconds for online flying.
 
 ## Important Notes
 

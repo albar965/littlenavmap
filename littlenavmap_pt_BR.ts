@@ -3434,40 +3434,40 @@ horas</translation>
         <translation>Entrada do Logbook para %1 em %2%3 atualizou.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="439"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="444"/>
         <source>%1 logbook %2 updated.</source>
         <translation>%1 logbook %2 atualizou.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="440"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="482"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="521"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="556"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="634"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="445"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="487"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="526"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="561"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="639"/>
         <source>entry</source>
         <translation>entrada</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="440"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="482"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="521"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="556"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="634"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="445"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="487"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="526"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="561"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="639"/>
         <source>entries</source>
         <translation>entradas</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="473"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="478"/>
         <source>Logbook entry added.</source>
         <translation>Entrada no logbook adicionado.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="485"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="490"/>
         <source>Delete %1 logbook %2?</source>
         <translation>Deletar %1 logbook %2?</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="486"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="491"/>
         <source>
 
 This cannot be undone.</source>
@@ -3476,59 +3476,59 @@ This cannot be undone.</source>
 Isto não pode ser desfeito.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="496"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="501"/>
         <source>%1 logbook %2 deleted.</source>
         <translation>%1 logbook %2 deletado.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="512"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="517"/>
         <source>Open X-Plane Logbook File</source>
         <translation>Abrir Arquivo de Logbook do X-Plane</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="513"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="518"/>
         <source>X-Plane Logbook Files %1;;All Files (*)</source>
         <translation>Arquivos de Logbook do X-Plane %1;;All Files (*)</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="520"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="525"/>
         <source>Imported %1 %2 X-Plane logbook.</source>
         <translation>Importou %1 %2 do logbook do X-Plane.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="528"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="533"/>
         <source>*Imported from X-Plane logbook*</source>
         <extracomment>The text &quot;Imported from X-Plane logbook&quot; has to match the one in atools::fs::userdata::LogdataManager::importXplane</extracomment>
         <translation>*Importado do logbook do X-Plane*</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="548"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="553"/>
         <source>Open Logbook CSV File</source>
         <translation>Abrir Arquivo CSV do Logbook</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="549"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="618"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="554"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="623"/>
         <source>CSV Files %1;;All Files (*)</source>
         <translation>Arquivos CSV %1;;Todos os Arquivos (*)</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="555"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="560"/>
         <source>Imported %1 %2 from CSV file.</source>
         <translation>Importou %1 %2 do arquivo CSV.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="584"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="589"/>
         <source> - Logbook Export</source>
         <translation> -  Exportar Logbook</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="586"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="591"/>
         <source>Select export options for logbook</source>
         <translation>Selecione as opções de exportação para logbook</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="589"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="594"/>
         <source>Content of attached file will be added to the exported CSV if selected.
 Note that not all programs will be able to read this.
 Columns will be empty on export if disabled.</source>
@@ -3537,74 +3537,79 @@ Observe que nem todos os programas serão capazes de ler isso.
 As colunas ficarão vazias na exportação se desativadas.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="594"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="599"/>
         <source>&amp;Append to an already present file</source>
         <translation>&amp;Anexar a um arquivo já presente</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="595"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="600"/>
         <source>File header will be ignored if this is enabled.</source>
         <oldsource>File header will be ignore if this is enabled.</oldsource>
         <translation>O cabeçalho do arquivo será ignorado se estiver habilitado.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="596"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="601"/>
         <source>Export &amp;selected entries only</source>
         <translation>Exportar &amp;somente as entradas selecionadas</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="600"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="605"/>
         <source>&amp;Flight plan in LNMPLN format</source>
         <translation>&amp;Plano de voo no formato LNMPLN</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="601"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="606"/>
         <source>&amp;Aircraft performance</source>
         <translation>&amp;Performance de Aeronaves</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="602"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="607"/>
         <source>&amp;GPX file containing flight plan points and trail</source>
         <translation>&amp;Arquivo GPX contendo pontos do plano de voo e trilha</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="598"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="603"/>
         <source>Add a &amp;header to the first line</source>
         <translation>Adicione um &amp;cabeçalho à primeira linha</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="617"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="622"/>
         <source>Export Logbook Entry CSV File</source>
         <translation>Exportar Arquivo CSV da Entrada do Logbook</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="633"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="638"/>
         <source>%1 logbook %2 exported.</source>
         <translation>%1 logbook %2 exportado.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="813"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="818"/>
         <source>Open GPX</source>
         <translation>Abrir GPX</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="814"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="860"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="819"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="897"/>
         <source>GPX Files %1;;All Files (*)</source>
         <translation>Arquivos GPX %1;;Todos os Arquivos (*)</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="833"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="838"/>
         <source>Cannot load file.</source>
         <translation>Não pode carregar o arquivo.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="859"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="872"/>
+        <source>Empty Flightplan</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/logbook/logdatacontroller.cpp" line="896"/>
         <source>Save GPX</source>
         <translation>Salve GPX</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="875"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="912"/>
         <source>Cannot save file.</source>
         <translation>Não é possível salvar o arquivo.</translation>
     </message>
@@ -3614,43 +3619,43 @@ As colunas ficarão vazias na exportação se desativadas.</translation>
         <translation type="vanished">Isso vai converter todos os tipos de userpoints &lt;code&gt;Logbook&lt;/code&gt; em entradas do logbook.&lt;br/&gt;&lt;br/&gt;Isso funcionará melhor se você não modificou o campo &lt;code&gt;Descrição&lt;/code&gt; nos userpoint e se você não inseriu entradas manualmente.&lt;br/&gt;&lt;br/&gt;Observe que nem todos os campos podem ser convertidos automaticamente.&lt;br/&gt;&lt;br/&gt;As entradas de log criadas, podem ser encontradas pesquisando&lt;br/&gt;&lt;code&gt;*Convertido de dados do usuário*&lt;/code&gt;&lt;br/&gt;no campo de descrição.&lt;br/&gt;&lt;br/&gt;Continuar?</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="714"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="719"/>
         <source>*Converted from userdata*</source>
         <extracomment>The text &quot;Converted from userdata&quot; has to match the one in LogdataConverter::convertFromUserdata</extracomment>
         <translation>*Convertido de dados do usuário*</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="663"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="668"/>
         <source>Do not &amp;show this dialog again and run the conversion in the future.</source>
         <translation>Não &amp;mostre este diálogo novamente e execute a conversão no futuro.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="653"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="658"/>
         <source>This will convert all userpoints of type &lt;code&gt;Logbook&lt;/code&gt; to logbook entries.&lt;br/&gt;&lt;br/&gt;This works best if you did not modify the field &lt;code&gt;Description&lt;/code&gt; in the userpoints and if you did not insert entries manually.&lt;br/&gt;&lt;br/&gt;Note that not all fields can be converted automatically.&lt;br/&gt;&lt;br/&gt;The created log entries can be found by searchingfor&lt;br/&gt;&lt;code&gt;*Converted from userdata*&lt;/code&gt;&lt;br/&gt;in the field &amp;quot;Remarks&amp;quot;.&lt;br/&gt;&lt;br/&gt;Continue?</source>
         <translation>Isso vai converter todos os tipos de userpoints &lt;code&gt;Logbook&lt;/code&gt; em entradas do logbook.&lt;br/&gt;&lt;br/&gt;Isso funcionará melhor se você não modificou o campo &lt;code&gt;Descrição&lt;/code&gt; nos userpoint e se você não inseriu entradas manualmente.&lt;br/&gt;&lt;br/&gt;Observe que nem todos os campos podem ser convertidos automaticamente.&lt;br/&gt;&lt;br/&gt;As entradas de log criadas, podem ser encontradas pesquisando&lt;br/&gt;&lt;code&gt;*Convertido de dados do usuário*&lt;/code&gt;&lt;br/&gt;no campo de &amp;quot;Observações&amp;quot;.&lt;br/&gt;&lt;br/&gt;Continuar?</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="676"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="681"/>
         <source>Created %1 log entries.</source>
         <translation>Criada %1 entradas de log.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="683"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="688"/>
         <source>Logbook Conversion</source>
         <translation>Conversão de Logbook</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="687"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="692"/>
         <source>Conversion Errors/Warnings</source>
         <translation>Conversão Erros/Avisos</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="688"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="693"/>
         <source>Some warnings might appear because of terminated flights, repeated langings and/or takeoffs. These can be ignored.</source>
         <translation>Alguns avisos podem aparecer devido a voos terminados, pousos repetidos e / ou decolagens. Estes podem ser ignorados.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="695"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="700"/>
         <source> - Conversion Errors</source>
         <translation> - Erros de Conversão</translation>
     </message>
