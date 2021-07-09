@@ -17,6 +17,7 @@ paths:
       operationId: airportInfoAction
       parameters:
       - name: ident
+        required: true
         in: query
         description: Airport ICAO code
         schema:
@@ -24,5 +25,238 @@ paths:
       responses:
         200:
           description: Airport information
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/AirportInfoResponse'                 
         400:
           description: Airport not found
+          content: 
+            text/plain:
+              schema: 
+                type: string
+                example: "Airport not found" 
+components:
+  schemas:
+    AirportInfoResponse:
+      type: object
+      properties:
+        activeDateTime:
+          description: The active LNM time
+          example: "Fr Jul 9 19:54:59 2021 GMT"
+          type: string
+          format: date-time
+        activeDateTimeSource:
+          description: The active LNM time source
+          example:
+            - "simulator date"
+            - "real date"
+          type: string
+        city:
+          description: The airports city
+          example: "München"
+          type: string
+        closed:
+          description: airport closed
+          type: boolean
+        com: 
+          description: The airports available COM frequencies
+          type: object
+          properties:
+            ATIS:
+              type: string
+              description: Only set if available
+              example: "123,450 MHz"
+            Tower:
+              type: string
+              description: Only set if available
+              example: "123,450 MHz"
+            AWOS:
+              type: string
+              description: Only set if available
+              example: "123,450 MHz"
+            ASOS:
+              type: string
+              description: Only set if available
+              example: "123,450 MHz"
+            UNICOM:
+              type: string
+              description: Only set if available
+              example: "123,450 MHz"
+        country: 
+          description: The airports country
+          type: string
+          example: ""
+        elevation: 
+          description: The airports elevation
+          type: string
+          example: "1.468 ft"
+        facilities:
+          description: Array of airport facilities/features
+          type: array 
+          items:
+            type: string
+            example:
+              - "Aprons"
+              - "Taxiways"
+              - "ILS"
+              - "Avgas"
+              - "Jetfuel"
+        iata: 
+          description: The airports IATA code
+          type: string
+          example: ""
+        icao: 
+          description: The airports ICAO code
+          type: string
+          example: ""
+        ident: 
+          description: The airports ident (ICAO)
+          type: string
+          example: "EDDM"
+        longestRunwayHeading: 
+          description: The airports longest runway heading
+          type: string
+          example: "81°M, 261°M"
+        longestRunwayLength: 
+          description: The airports longest runway length
+          type: string
+          example: "13.106 ft"
+        longestRunwaySurface: 
+          description: The airports longest runway surface
+          type: string
+          example:  "CE"
+        longestRunwayWidth: 
+          description: The airports longest runway width
+          type: string
+          example: "188 ft"
+        magneticDeclination: 
+          description: The airports magnetic variation/declination
+          type: string
+          example: "1,9° East"
+        metar: 
+          description: The airports METAR weather reports
+          type: object
+          properties:
+            simulator: 
+              description: Only set if available
+              type: object
+              properties:
+                nearest: 
+                  type: string
+                  example: "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
+                station: 
+                  type: string
+                  example: "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
+            activesky: 
+              description: Only set if available
+              type: object
+              properties:
+                nearest: 
+                  type: string
+                  example: "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
+                station: 
+                  type: string
+                  example: "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
+            noaa: 
+              description: Only set if available
+              type: object
+              properties:
+                nearest: 
+                  type: string
+                  example: "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
+                station: 
+                  type: string
+                  example: "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
+            vatsim: 
+              description: Only set if available
+              type: object
+              properties:
+                nearest: 
+                  type: string
+                  example: "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
+                station: 
+                  type: string
+                  example: "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
+            ivao: 
+              description: Only set if available
+              type: object
+              properties:
+                nearest: 
+                  type: string
+                  example: "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
+                station: 
+                  type: string
+                  example: "EDDM 091920Z 35005KT 320V020 9999 -SHRA FEW015 SCT025CB 16/14 Q1022 RESHRA NOSIG"
+        name: 
+          description: The airports name
+          type: string
+          example: "München"
+        parking:
+          description: The airports parking capacities
+          type: object
+          properties:
+            gates:
+              type: integer
+              description: Only set if available
+              format: int32
+            jetWays: 
+              type: integer
+              description: Only set if available
+              format: int32
+            gaRamps: 
+              type: integer
+              description: Only set if available
+              format: int32
+            cargo: 
+              type: integer
+              description: Only set if available
+              format: int32
+            militaryCargo: 
+              type: integer
+              description: Only set if available
+              format: int32
+            militaryCombat: 
+              type: integer
+              description: Only set if available
+              format: int32
+            helipads: 
+              type: integer
+              description: Only set if available
+              format: int32
+        position: 
+          description: The airports geographical position
+          type: string
+          example: "48° 21' 13,62\" N 11° 47' 9,91\" E"
+        rating: 
+          description: The airports rating
+          type: integer
+          format: int32
+        region: 
+          description: The airports region
+          type: string
+          example: ""
+        runways:
+          description: Array of airport runway flags
+          type: array
+          items:
+            type: string
+            example: 
+              - "Hard"
+              - "Lighted"
+        state: 
+          description: The airports state/province
+          type: string
+          example: ""
+        sunrise:
+          description: The airports sunrise time
+          type: string
+          example: "02:40:40"
+        sunset:
+          description: The airports sunset time
+          type: string
+          example: "19:54:52"
+        transitionAltitude:
+          description: The airports transition altitude
+          type: string
+          example: "5.000 ft"
