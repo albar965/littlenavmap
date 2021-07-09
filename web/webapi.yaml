@@ -1,0 +1,28 @@
+openapi: 3.0.1
+info:
+  title: Little Navmap Web API
+  description: ''
+  version: 1.0.0
+servers:
+- url: http://localhost:8965/api
+tags:
+- name: Airport
+  description: AirportActionsController
+paths:
+  /airport/info:
+    get:
+      tags:
+      - Airport
+      summary: Get airport information by ICAO code
+      operationId: airportInfoAction
+      parameters:
+      - name: ident
+        in: query
+        description: Airport ICAO code
+        schema:
+          type: string
+      responses:
+        200:
+          description: Airport information
+        400:
+          description: Airport not found
