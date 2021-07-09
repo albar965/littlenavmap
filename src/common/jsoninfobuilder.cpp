@@ -43,9 +43,9 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
         { "name", qUtf8Printable(data.airport.name) },
         { "region", qUtf8Printable(data.airport.region) },
         { "closed", data.airport.closed() },
-        { "position", nullptr },
         { "elevation", qUtf8Printable(Unit::altFeet(data.airport.getPosition().getAltitude())) },
         { "magneticDeclination", qUtf8Printable(map::magvarText(data.airport.magvar)) },
+        { "position", nullptr },
         { "rating", nullptr },
         { "iata", nullptr },
         { "city", nullptr },
@@ -83,7 +83,7 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
             json["parking"].push_back({ "gaRamps", data.airportInformation->valueInt("num_parking_ga_ramp") });
         }
         if(data.airportInformation->valueInt("num_parking_cargo") > 0){
-            json["parking"].push_back({ "Cargo", data.airportInformation->valueInt("num_parking_cargo") });
+            json["parking"].push_back({ "cargo", data.airportInformation->valueInt("num_parking_cargo") });
         }
         if(data.airportInformation->valueInt("num_parking_mil_cargo") > 0){
             json["parking"].push_back({ "militaryCargo", data.airportInformation->valueInt("num_parking_mil_cargo") });
