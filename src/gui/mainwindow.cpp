@@ -1343,7 +1343,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteAdjustAltitude, &QAction::triggered, routeController,
           &RouteController::adjustFlightplanAltitude);
 
-  // Help menu
+  // Help menu ========================================================================
   connect(ui->actionHelpContents, &QAction::triggered, this, &MainWindow::showOnlineHelp);
   connect(ui->actionHelpTutorials, &QAction::triggered, this, &MainWindow::showOnlineTutorials);
   connect(ui->actionHelpContentsOffline, &QAction::triggered, this, &MainWindow::showOfflineHelp);
@@ -1585,8 +1585,10 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionAboutMarble, &QAction::triggered, marbleAboutDialog, &Marble::MarbleAboutDialog::exec);
 
+  // Connect menu ========================================================================
   ConnectClient *connectClient = NavApp::getConnectClient();
   connect(ui->actionConnectSimulator, &QAction::triggered, connectClient, &ConnectClient::connectToServerDialog);
+  connect(ui->actionConnectSimulatorToggle, &QAction::toggled, connectClient, &ConnectClient::connectToggle);
 
   // Deliver first to route controller to update active leg and distances
   connect(connectClient, &ConnectClient::dataPacketReceived, routeController, &RouteController::simDataChanged);
@@ -3686,6 +3688,10 @@ void MainWindow::updateActionStates()
   ui->actionMapShowAircraftAiBoat->setEnabled(NavApp::isConnected() && NavApp::isFetchAiShip());
 #endif
 
+  ui->actionConnectSimulatorToggle->blockSignals(true);
+  ui->actionConnectSimulatorToggle->setChecked(NavApp::isConnected());
+  ui->actionConnectSimulatorToggle->blockSignals(false);
+
   ui->actionMapShowAircraftTrack->setEnabled(true);
   ui->actionMapDeleteAircraftTrack->setEnabled(mapWidget->hasTrackPoints() || profileWidget->hasTrackPoints());
 
@@ -4121,7 +4127,7 @@ void MainWindow::printShortcuts()
             if(!subAction->text().isEmpty() && !subAction->shortcut().isEmpty())
             {
               if(keys.contains(subAction->shortcut()))
-                warnings.append(QString("Duplicate shortcut") + subAction->shortcut().toString());
+                warnings.append(QString("Duplicate shortcut \"%1\"").arg(subAction->shortcut().toString()));
 
               stream << "| "
                      << QString(mainmenu + " -> " + submenu + " -> " +
@@ -4140,7 +4146,7 @@ void MainWindow::printShortcuts()
           if(!mainAction->text().isEmpty() && !mainAction->shortcut().isEmpty())
           {
             if(keys.contains(mainAction->shortcut()))
-              warnings.append(QString("Duplicate shortcut") + mainAction->shortcut().toString());
+              warnings.append(QString("Duplicate shortcut \"%1\"").arg(mainAction->shortcut().toString()));
 
             stream << "| "
                    << QString(mainmenu + " -> " + mainAction->text().remove("&")).leftJustified(c1 - 1)
@@ -4157,7 +4163,7 @@ void MainWindow::printShortcuts()
   qDebug().nospace().noquote() << endl << out;
 
   for(const QString& warning : warnings)
-    qWarning() << Q_FUNC_INFO << warning;
+    qWarning().nospace().noquote() << Q_FUNC_INFO << " " << warning;
 
   qDebug() << "===============================================================================";
 }

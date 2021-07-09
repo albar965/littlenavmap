@@ -29,6 +29,12 @@
   width: 150px;
 }
 
+@media (max-width: 374px) {
+  .toolbar button {
+     width: 125px;
+  }
+}
+
 .toolbar button a {
   text-decoration: none;
   color: inherit;

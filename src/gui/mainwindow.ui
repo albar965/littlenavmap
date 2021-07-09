@@ -207,6 +207,7 @@
      <addaction name="actionDatabaseFiles"/>
     </widget>
     <addaction name="actionConnectSimulator"/>
+    <addaction name="actionConnectSimulatorToggle"/>
     <addaction name="separator"/>
     <addaction name="actionRunWebserver"/>
     <addaction name="actionOpenWebserver"/>
@@ -8183,6 +8184,9 @@ Disabled if a navdatabase does not allow it.</string>
    <property name="statusTip">
     <string>Show simulator aircraft position and data on map</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+B</string>
+   </property>
   </action>
   <action name="actionMapAircraftCenter">
    <property name="checkable">
@@ -8227,6 +8231,9 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="statusTip">
     <string>Show simulator aircraft trail on map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+T</string>
    </property>
   </action>
   <action name="actionMapDeleteAircraftTrack">
@@ -11756,6 +11763,17 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Download tracks for Australian Organised Track Structure</string>
    </property>
   </action>
+  <action name="actionConnectSimulatorToggle">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Toggle Flight Simulator Connection</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+A</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -11941,8 +11959,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalc"/>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>
