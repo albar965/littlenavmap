@@ -29,12 +29,15 @@ AirportActionsController::AirportActionsController(QObject *parent, bool verbose
 WebApiResponse AirportActionsController::infoAction(WebApiRequest request){
     qDebug() << Q_FUNC_INFO << request.parameters.value("ident");
 
+    // Get a new response object
     WebApiResponse response = getResponse();
 
+    // Query item
     map::MapAirport airport = getAirportByIdent(request.parameters.value("ident").toUpper());
 
     if(airport.id > 0){
 
+        // Fetch related data
         const SqlRecord* airportInformation = getAirportInformation(airport.id);
         const AirportAdminNames airportAdminNames = getAirportAdminNames(airport);
         const int transitionAltitude = getTransitionAltitude(airport);
@@ -44,6 +47,7 @@ WebApiResponse AirportActionsController::infoAction(WebApiRequest request){
         const QDateTime activeDateTime = getActiveDateTime();
         const QString activeDateTimeSource = getActiveDateTimeSource();
 
+        // Compose data container
         AirportInfoData data = {
             airport,
             getWeatherContext(airport),
@@ -57,6 +61,7 @@ WebApiResponse AirportActionsController::infoAction(WebApiRequest request){
             &activeDateTimeSource
         };
 
+        // Pass data to builder to assembly the return value
         response.body = infoBuilder->airport(data);
         response.status = 200;
 

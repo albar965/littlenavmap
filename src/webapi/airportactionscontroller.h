@@ -21,7 +21,7 @@
 #include "webapi/abstractlnmactionscontroller.h"
 
 /**
- * @brief The Airport API Controller class
+ * @brief Airport actions controller implementation.
  */
 class AirportActionsController :
         public AbstractLnmActionsController

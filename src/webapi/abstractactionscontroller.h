@@ -25,7 +25,7 @@
 #include <QObject>
 
 /**
- * @brief The base class for all API action controllers
+ * @brief Base class for all invokable API action controllers
  */
 class AbstractActionsController :
         public QObject

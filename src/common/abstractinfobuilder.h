@@ -38,7 +38,8 @@ using atools::fs::util::roundComFrequency;
 using InfoBuilderTypes::AirportInfoData;
 
 /**
- * Base class for all info builders
+ * Generic interface for LNM-specific views.
+ * Base class for info builders
  * creating representations of supplied data.
  */
 class AbstractInfoBuilder : public QObject
@@ -52,18 +53,15 @@ public:
   AbstractInfoBuilder& operator=(const AbstractInfoBuilder& other) = delete;
 
   /**
-   * @brief Content type header this builder is for
+   * @brief Content MIME type header this builder is for
    * @example e.g. "text/plain"
    */
   QByteArray contentTypeHeader;
 
   /**
-   * Creates a description for the provided airport 
-   * and weather context.
+   * Creates a description for the provided airport.
    * 
-   * @param airport
-   * @param route
-   * @param weatherContext
+   * @param airportInfoData
    */
   virtual QByteArray airport(AirportInfoData airportInfoData) const;
 protected:
@@ -75,14 +73,13 @@ protected:
    */
   virtual QString getHeadingsStringByMagVar(float heading, float magvar) const;
   /**
-   * @brief Get heading and opposed heading corrected by magnetic variation
-   * @param heading
-   * @param magvar
-   * @return both headings as formatted string
+   * @brief Pretty print-format frequency
+   * @param frequency
+   * @return
    */
   virtual QString formatComFrequency(int frequency) const;
   /**
-   * @brief get pretty printed coords from sql record
+   * @brief Get pretty printed coords from suitable sql record
    * @param rec
    * @return printable string
    */

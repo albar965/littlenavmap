@@ -32,7 +32,8 @@ class Route;
 using atools::sql::SqlRecord;
 
 /**
- * Types used by AbstractInfoBuilder and derived classes
+ * Generic info builder parameter interfaces.
+ * Types used by AbstractInfoBuilder and derived classes.
  */
 namespace InfoBuilderTypes {
 

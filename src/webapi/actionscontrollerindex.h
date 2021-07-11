@@ -2,7 +2,8 @@
 #define ACTIONSCONTROLLERINDEX_H
 
 /**
- * @brief class providing static QMetaType registration to keep
+ * @brief Available action controller classes registry.
+ * Class providing static QMetaType registration to keep
  * action controller declarations separated from WebApiController.
  * Available action controllers must be reqistered inside ::registerQMetaTypes
  */

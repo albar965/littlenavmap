@@ -53,7 +53,7 @@ protected:
     MainWindow* getMainWindow();
     MorseCode* getMorseCode();
 
-    // Common LNM logic
+    // Common LNM model interface
     map::MapAirport getAirportByIdent(QByteArray ident);
     map::WeatherContext getWeatherContext(map::MapAirport& airport);
     const SqlRecord* getAirportInformation(int id);
