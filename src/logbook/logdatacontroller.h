@@ -38,6 +38,9 @@ class ErrorHandler;
 class HelpHandler;
 }
 namespace fs {
+namespace pln {
+class Flightplan;
+}
 namespace sc {
 class SimConnectUserAircraft;
 }
@@ -181,7 +184,8 @@ signals:
 
 private:
   /* Create a logbook entry on takeoff and update it on landing */
-  void createTakeoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff, float flownDistanceNm);
+  void createTakeoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff,
+                            float flownDistanceNm);
 
   /* Callback function for X-Plane import */
   static void fetchAirportCoordinates(atools::geo::Pos& pos, QString& name, const QString& airportIdent);
@@ -194,6 +198,8 @@ private:
 
   /* Emit signals for changed */
   void logChanged(bool loadAll, bool keepSelection);
+
+  QString buildFilename(const atools::sql::SqlRecord* record, const atools::fs::pln::Flightplan& flightplan, const QString& suffix);
 
   /* Remember last aircraft for fuel calculations */
   const atools::fs::sc::SimConnectUserAircraft *aircraftAtTakeoff = nullptr;

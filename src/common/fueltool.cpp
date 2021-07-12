@@ -40,7 +40,8 @@ FuelTool::FuelTool(bool jetfuelParam, bool fuelAsVolumeParam)
 
 QString FuelTool::fuelWeightVol(opts::UnitFuelAndWeight unitFuelAndWeight, float valueLbsGal) const
 {
-  static const QString STR("%1 %2, %3 %4");
+  // Use locale for numbers
+  static const QString STR("%L1 %2, %L3 %4");
 
   // Source value is always lbs or gallon depending on setting in perf
   // convert according to unitFuelAndWeight or pass through
