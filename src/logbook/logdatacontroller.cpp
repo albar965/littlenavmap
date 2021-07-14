@@ -329,7 +329,12 @@ void LogdataController::recordFlightplanAndPerf(atools::sql::SqlRecord& record)
 {
   atools::fs::pln::Flightplan fp = NavApp::getRoute().
                                    updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN).getFlightplan();
-  record.setValue("flightplan", FlightplanIO().saveLnmGz(fp)); // blob
+
+  if(fp.isEmpty())
+    record.setNull("flightplan"); // no plan
+  else
+    record.setValue("flightplan", FlightplanIO().saveLnmGz(fp)); // blob
+
   record.setValue("aircraft_perf", NavApp::getAircraftPerformance().saveXmlGz()); // blob
 }
 
@@ -789,7 +794,7 @@ void LogdataController::planSaveAs(atools::sql::SqlRecord *record, QWidget *pare
     atools::fs::pln::FlightplanIO().loadLnmGz(flightplan, record->value("flightplan").toByteArray());
 
     // Build filename
-    QString defFilename = flightplan.getFilenamePattern(OptionData::instance().getFlightplanPattern(), ".lnmpln");
+    QString defFilename = buildFilename(record, flightplan, ".lnmpln");
     QString filename = mainWindow->routeSaveFileDialogLnm(defFilename);
     if(!filename.isEmpty())
       atools::fs::pln::FlightplanIO().saveLnm(flightplan, filename);
@@ -843,17 +848,49 @@ void LogdataController::gpxAdd(atools::sql::SqlRecord *record, QWidget *parent)
   }
 }
 
+QString LogdataController::buildFilename(const atools::sql::SqlRecord *record,
+                                         const atools::fs::pln::Flightplan& flightplan, const QString& suffix)
+{
+  if(!flightplan.isEmpty())
+    // Flight plan is valid - extract name from plan object
+    return flightplan.getFilenamePattern(OptionData::instance().getFlightplanPattern(), suffix);
+  else if(record != nullptr)
+  {
+    // No flight plan - extract name from SQL record and values currently set in the GUI
+    const Route& route = NavApp::getRouteConst();
+
+    QString type = route.getFlightplan().getFlightplanType() == atools::fs::pln::IFR ? "IFR" : "VFR";
+    return atools::fs::pln::Flightplan::getFilenamePattern(OptionData::instance().getFlightplanPattern(), type,
+                                                           record->valueStr("departure_name"),
+                                                           record->valueStr("departure_ident"),
+                                                           record->valueStr("destination_name"),
+                                                           record->valueStr("destination_ident"), suffix,
+                                                           atools::roundToInt(route.getCruisingAltitudeFeet()),
+                                                           false /* clean */);
+  }
+
+  return tr("Empty Flightplan") + suffix;
+}
+
 void LogdataController::gpxSaveAs(atools::sql::SqlRecord *record, QWidget *parent)
 {
   qDebug() << Q_FUNC_INFO;
   try
   {
     // Get flight plan for file name building =========
-    QString plan = QString(atools::zip::gzipDecompress(record->value("flightplan").toByteArray()));
     atools::fs::pln::Flightplan flightplan;
-    atools::fs::pln::FlightplanIO().loadLnmStr(flightplan, plan);
+    try
+    {
+      // Older versions of LNM attached empty and invalid flight plans. Do not show an exception to the user here.
+      QString plan = QString(atools::zip::gzipDecompress(record->value("flightplan").toByteArray()));
+      atools::fs::pln::FlightplanIO().loadLnmStr(flightplan, plan);
+    }
+    catch(atools::Exception& e)
+    {
+      qDebug() << Q_FUNC_INFO << "Error reading flight plan" << e.what();
+    }
 
-    QString defFilename = flightplan.getFilenamePattern(OptionData::instance().getFlightplanPattern(), ".gpx");
+    QString defFilename = buildFilename(record, flightplan, ".gpx");
 
     QString filename = dialog->saveFileDialog(
       tr("Save GPX"),

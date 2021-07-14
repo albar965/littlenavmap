@@ -701,13 +701,18 @@ void AircraftPerfController::updateReport()
     HtmlBuilder html(true /* background color */);
 
     // Icon, name and aircraft type =======================================================
-    html.img(QIcon(":/littlenavmap/resources/icons/aircraftperf.svg"), QString(), QString(),
-             QSize(symbolSize, symbolSize));
-    html.nbsp().nbsp();
+    QStringList headerList({perf->getName(), perf->getAircraftType()});
+    headerList.removeAll(QString());
+    QString header = headerList.join(tr(" - "));
 
-    QStringList header({perf->getName(), perf->getAircraftType()});
-    header.removeAll(QString());
-    html.text(header.join(tr(" - ")), atools::util::html::BOLD | atools::util::html::BIG);
+    if(!header.isEmpty())
+    {
+      html.img(QIcon(":/littlenavmap/resources/icons/aircraftperf.svg"), QString(), QString(),
+               QSize(symbolSize, symbolSize));
+      html.nbsp().nbsp();
+
+      html.text(header, atools::util::html::BOLD | atools::util::html::BIG);
+    }
 
     // Display fuel estimates ==========================================================
     const RouteAltitude& altitudeLegs = NavApp::getAltitudeLegs();
@@ -747,7 +752,7 @@ void AircraftPerfController::updateReport()
     // File path  =======================================================
     fuelReportFilepath(html, false /* print */);
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_PERF
     html.hr().pre("Headwind: climb " + Unit::speedKts(altitudeLegs.getClimbHeadWind()) +
                   ", cruise " + Unit::speedKts(altitudeLegs.getCruiseHeadWind()) +
                   ", descent " + Unit::speedKts(altitudeLegs.getDescentHeadWind()) +
@@ -960,44 +965,36 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
 
   FuelTool ft(perf);
 
-  // Warnings and errors =================================================
+  // Warnings and errors paragraph - always shown =================================================
   if(!print)
   {
-    if(valid)
-    {
-      if(NavApp::getRoute().size() == 1)
-        html.p().b(tr("Flight Plan not valid.")).pEnd();
-      else if(!hasLegs)
-        html.p().b(tr("No Flight Plan.")).pEnd();
-
-      QStringList errs;
-      if(perf->getUsableFuel() < 0.1f)
-        errs.append(tr("usable fuel"));
-      if(perf->getReserveFuel() < 0.1f)
-        errs.append(tr("reserve fuel"));
-      if(perf->getClimbFuelFlow() < 0.1f)
-        errs.append(tr("climb fuel flow"));
-      if(perf->getCruiseFuelFlow() < 0.1f)
-        errs.append(tr("cruise fuel flow"));
-      if(perf->getDescentFuelFlow() < 0.1f)
-        errs.append(tr("descent fuel flow"));
-      if(perf->getAlternateFuelFlow() < 0.1f)
-        errs.append(tr("alternate fuel flow"));
-
-      if(!errs.isEmpty())
-        html.p().error((errs.size() == 1 ? tr("Invalid value for %1.") : tr("Invalid values for %1.")).
-                       arg(errs.join(tr(", ")))).pEnd();
-
-      if(hasLegs && perf->getUsableFuel() > 1.f && altLegs.getBlockFuel(*perf) > perf->getUsableFuel())
-        html.p().error(tr("Block fuel exceeds usable of %1.").arg(ft.weightVolLocal(perf->getUsableFuel()))).pEnd();
-
-      if(perf->getUsableFuel() > 1.f && perf->getReserveFuel() > perf->getUsableFuel())
-        html.p().error(tr("Reserve fuel bigger than usable.")).pEnd();
-    }
-
+    QStringList errs;
     if(perf->getAircraftType().isEmpty())
-      html.p().warning(tr("Aircraft type is not set.")).pEnd();
-    else
+      errs.append(tr("aircraft type"));
+    if(perf->getUsableFuel() < 0.1f)
+      errs.append(tr("usable fuel"));
+    if(perf->getReserveFuel() < 0.1f)
+      errs.append(tr("reserve fuel"));
+    if(perf->getClimbFuelFlow() < 0.1f)
+      errs.append(tr("climb fuel flow"));
+    if(perf->getCruiseFuelFlow() < 0.1f)
+      errs.append(tr("cruise fuel flow"));
+    if(perf->getDescentFuelFlow() < 0.1f)
+      errs.append(tr("descent fuel flow"));
+    if(perf->getAlternateFuelFlow() < 0.1f)
+      errs.append(tr("alternate fuel flow"));
+
+    if(!errs.isEmpty())
+      html.p().error((errs.size() == 1 ? tr("Invalid value for %1.") : tr("Invalid values for %1.")).
+                     arg(errs.join(tr(", ")))).pEnd();
+
+    if(hasLegs && perf->getUsableFuel() > 1.f && altLegs.getBlockFuel(*perf) > perf->getUsableFuel())
+      html.p().error(tr("Block fuel exceeds usable of %1.").arg(ft.weightVolLocal(perf->getUsableFuel()))).pEnd();
+
+    if(perf->getUsableFuel() > 1.f && perf->getReserveFuel() > perf->getUsableFuel())
+      html.p().error(tr("Reserve fuel bigger than usable.")).pEnd();
+
+    if(!perf->getAircraftType().isEmpty())
     {
       QString model = lastSimData->getUserAircraft().getAirplaneModel();
       if(!model.isEmpty() && perf->getAircraftType() != model)
@@ -1008,17 +1005,15 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     }
   } // if(!print)
 
-  // Aircraft data =======================================================
+  // Aircraft data table - always shown =======================================================
   atools::util::html::Flags flags = atools::util::html::ALIGN_RIGHT;
   html.p().b(tr("Aircraft")).pEnd();
 
   QString text = tr("Estimated range with reserve:");
   html.table();
-  html.row2(tr("Fuel Type:"), perf->isAvgas() ? tr("Avgas") : tr("Jetfuel"), flags);
+
   if(perf->getUsableFuel() > 1.f)
   {
-    html.row2(tr("Usable Fuel:"), ft.weightVolLocal(perf->getUsableFuel()), flags);
-
     if(perf->getCruiseSpeed() > 1.f)
     {
       if(perf->getCruiseFuelFlow() > 1.f)
@@ -1037,12 +1032,12 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
   else
     html.row2Warning(text, tr("Usable fuel not set"));
 
+  fuelReportRunway(html);
+  html.tableEnd();
+
   if(hasLegs && valid)
   {
-    fuelReportRunway(html);
-    html.tableEnd();
-
-    // Flight plan =================================================
+    // Flight plan table - shown if plan and profile is valid =================================================
     html.p().b(tr("Flight Plan")).pEnd();
     html.table();
 
@@ -1106,15 +1101,28 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
       html.row2(head.arg(windReporter->getSourceText()),
                 windReporter->isWindManual() ? tr("No head- or tailwind") : tr("No wind"), flags);
 
-    // Fuel Plan =======================================================
     html.tableEnd();
+  } // if(hasLegs)
 
-    html.p().b(tr("Fuel Plan")).pEnd();
-    html.table();
+  // Fuel Plan table - always shown =======================================================
+  html.p().b(valid ? tr("Fuel Plan") : tr("Fuel")).pEnd();
+  html.table();
 
-    html.row2(tr("Trip Fuel:"), ft.weightVolLocalOther(altLegs.getTripFuel(), true /* bold */),
+  html.row2(tr("Fuel Type:"), perf->isAvgas() ? tr("Avgas") : tr("Jetfuel"), flags);
+
+  if(perf->getUsableFuel() > 0.f)
+    html.row2(tr("Usable Fuel:"), ft.weightVolLocal(perf->getUsableFuel()), flags);
+
+  float tripFuel = altLegs.getTripFuel();
+  if(tripFuel > 0.f && valid)
+  {
+    html.row2(tr("Trip Fuel:"), ft.weightVolLocalOther(tripFuel, true /* bold */),
               atools::util::html::NO_ENTITIES | flags);
-    float blockFuel = altLegs.getBlockFuel(*perf);
+  }
+
+  float blockFuel = altLegs.getBlockFuel(*perf);
+  if(blockFuel > 0.f && valid)
+  {
     QString percent = perf->getUsableFuel() >
                       1.f ? tr("<br/>%1 % of usable Fuel").arg(100.f / perf->getUsableFuel() * blockFuel, 0, 'f',
                                                                0) : QString();
@@ -1125,10 +1133,12 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
 
     if(altLegs.getAlternateFuel() > 0.f)
       html.row2(tr("Alternate Fuel:"), ft.weightVolLocal(altLegs.getAlternateFuel()), flags);
-  } // if(hasLegs)
+  }
 
   // Fuel information printed always =====================================================
-  html.row2(tr("Reserve Fuel:"), ft.weightVolLocal(perf->getReserveFuel()), flags);
+
+  if(perf->getReserveFuel() > 0.f)
+    html.row2(tr("Reserve Fuel:"), ft.weightVolLocal(perf->getReserveFuel()), flags);
 
   if(perf->getTaxiFuel() > 0.f)
     html.row2(tr("Taxi Fuel:"), ft.weightVolLocal(perf->getTaxiFuel()), flags);
@@ -1145,9 +1155,6 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     else
       html.row2(tr("Contingency Fuel:"), tr("%1 %").arg(perf->getContingencyFuel(), 0, 'f', 0), flags);
   }
-
-  if(!hasLegs)
-    fuelReportRunway(html);
 
   html.tableEnd();
 
