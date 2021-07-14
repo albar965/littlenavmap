@@ -46,7 +46,14 @@ WebApiResponse MapActionsController::imageAction(WebApiRequest request){
         request.parameters.value("bottomlat").toFloat()
     );
 
-    MapPixmap map = getPixmapRect(100,100,rect);
+    MapPixmap map = getPixmapRect(
+        request.parameters.value("width").toInt(),
+        request.parameters.value("height").toInt(),
+        rect
+    );
+
+    QString format = QString(request.parameters.value("format"));
+    int quality = request.parameters.value("quality").toInt();
 
     if(map.isValid())
     {
@@ -56,13 +63,22 @@ WebApiResponse MapActionsController::imageAction(WebApiRequest request){
       QBuffer buffer(&bytes);
       buffer.open(QIODevice::WriteOnly);
 
-      map.pixmap.save(&buffer, "PNG", 80);
+      if(format == QLatin1String("jpg"))
+      {
+          response.headers.replace("Content-Type", "image/jpg");
+          map.pixmap.save(&buffer, "PNG", quality);
+      }
+      else if(format == QLatin1String("png"))
+      {
+          response.headers.replace("Content-Type", "image/png");
+          map.pixmap.save(&buffer, "PNG", quality);
+      }
+      else
+        // Should never happen
+        qWarning() << Q_FUNC_INFO << "invalid format";
 
       response.body = bytes;
     }
-
-    response.headers.replace("Content-Type", "image/png");
-
     return response;
 
 }

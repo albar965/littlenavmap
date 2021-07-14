@@ -24,6 +24,7 @@ paths:
         description: Airport ICAO code
         schema:
           type: string
+          example: eddm
       responses:
         200:
           description: Airport information
@@ -51,28 +52,56 @@ paths:
         description: Top latitude
         schema:
           type: number
-          default: 10
+          example: 10
       - name: bottomlat
         required: true
         in: query
         description: Bottom latitude
         schema:
           type: number
-          default: 15
+          example: 15
       - name: leftlon
         required: true
         in: query
         description: Left longitude
         schema:
           type: number
-          default: 40
+          example: 40
       - name: rightlon
         required: true
         in: query
         description: Right longitude
         schema:
           type: number
-          default: 45
+          example: 45
+      - name: width
+        required: true
+        in: query
+        description: Width in pixels
+        schema:
+          type: number
+          example: 256
+      - name: height
+        required: true
+        in: query
+        description: Height in pixels
+        schema:
+          type: number
+          example: 256
+      - name: quality
+        required: true
+        in: query
+        description: Image quality
+        schema:
+          type: number
+          example: 80
+      - name: format
+        required: true
+        in: query
+        description: Image format
+        schema:
+          type: string
+          enum: [png, jpg]
       responses:
         200:
           description: Resulting map image
