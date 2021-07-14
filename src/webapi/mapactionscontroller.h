@@ -15,13 +15,24 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "actionscontrollerindex.h"
-#include "airportactionscontroller.h"
-#include "mapactionscontroller.h"
+#ifndef MAPACTIONSCONTROLLER_H
+#define MAPACTIONSCONTROLLER_H
 
-void ActionsControllerIndex::registerQMetaTypes()
+#include "webapi/abstractlnmactionscontroller.h"
+
+/**
+ * @brief Map actions controller implementation.
+ */
+class MapActionsController :
+        public AbstractLnmActionsController
 {
-    /* Available action controllers must be registered here */
-    qRegisterMetaType<AirportActionsController*>();
-    qRegisterMetaType<MapActionsController*>();
-}
+    Q_OBJECT
+public:
+    Q_INVOKABLE MapActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder);
+    /**
+     * @brief get map image
+     */
+    Q_INVOKABLE WebApiResponse imageAction(WebApiRequest request);
+};
+
+#endif // MAPACTIONSCONTROLLER_H

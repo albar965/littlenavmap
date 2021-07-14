@@ -8,6 +8,8 @@ servers:
 tags:
 - name: Airport
   description: AirportActionsController
+- name: Map
+  description: MapActionsController
 paths:
   /airport/info:
     get:
@@ -36,6 +38,49 @@ paths:
               schema: 
                 type: string
                 example: "Airport not found" 
+  /map/image:
+    get:
+      tags:
+      - Map
+      summary: Get map image by lat/lon rectangle
+      operationId: mapImageAction
+      parameters:
+      - name: toplat
+        required: true
+        in: query
+        description: Top latitude
+        schema:
+          type: number
+          default: 11.4
+      - name: bottomlat
+        required: true
+        in: query
+        description: Bottom latitude
+        schema:
+          type: number
+          default: 11.5
+      - name: leftlon
+        required: true
+        in: query
+        description: Left longitude
+        schema:
+          type: number
+          default: 44.1
+      - name: rightlon
+        required: true
+        in: query
+        description: Right longitude
+        schema:
+          type: number
+          default: 44.2
+      responses:
+        200:
+          description: Resulting map image
+          content: 
+             image/png:
+              schema:
+                type: string
+                format: binary               
 components:
   schemas:
     AirportInfoResponse:

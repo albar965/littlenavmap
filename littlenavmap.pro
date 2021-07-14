@@ -389,6 +389,7 @@ SOURCES += \
   src/webapi/abstractlnmactionscontroller.cpp \
   src/webapi/actionscontrollerindex.cpp \
   src/webapi/airportactionscontroller.cpp \
+  src/webapi/mapactionscontroller.cpp \
   src/webapi/webapicontroller.cpp
 
 HEADERS  += \
@@ -559,6 +560,7 @@ HEADERS  += \
   src/webapi/abstractlnmactionscontroller.h \
   src/webapi/actionscontrollerindex.h \
   src/webapi/airportactionscontroller.h \
+  src/webapi/mapactionscontroller.h \
   src/webapi/webapicontroller.h \
   src/webapi/webapirequest.h \
   src/webapi/webapiresponse.h

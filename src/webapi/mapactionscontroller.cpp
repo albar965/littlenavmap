@@ -15,13 +15,23 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "actionscontrollerindex.h"
-#include "airportactionscontroller.h"
 #include "mapactionscontroller.h"
+#include "abstractlnmactionscontroller.h"
 
-void ActionsControllerIndex::registerQMetaTypes()
+#include <QDebug>
+
+MapActionsController::MapActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder) :
+    AbstractLnmActionsController(parent, verboseParam, infoBuilder)
 {
-    /* Available action controllers must be registered here */
-    qRegisterMetaType<AirportActionsController*>();
-    qRegisterMetaType<MapActionsController*>();
+    qDebug() << Q_FUNC_INFO;
+}
+
+WebApiResponse MapActionsController::imageAction(WebApiRequest request){
+
+    WebApiResponse response = getResponse();
+
+    response.body = "Not implemented";
+
+    return response;
+
 }
