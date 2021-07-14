@@ -55,6 +55,21 @@ public:
   WebApiResponse service(WebApiRequest& request);
 
 private:
+
+  /**
+   * @brief already instanced controllers keyed
+   * by controller name
+   */
+  QMap<QString,QObject *> controllerInstances;
+
+  /**
+   * @brief return stored action controller instance
+   * or instantiate a new one for the given name
+   * @param controllerName
+   * @return the controller instance
+   */
+  QObject* getControllerInstance(QByteArray controllerName);
+
   /**
    * @brief register available controllers for dynamic invocation
    */

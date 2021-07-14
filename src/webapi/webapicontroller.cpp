@@ -77,18 +77,9 @@ WebApiResponse WebApiController::service(WebApiRequest& request)
 
       /* Process REST controller/action request */
 
-      // Get controller class id
-      int id = QMetaType::type(controllerName+"*");
+      QObject* controller = getControllerInstance(controllerName);
 
-      if (id != 0) {
-
-          // Create controller instance
-          const QMetaObject* mo = QMetaType::metaObjectForType(id);
-          QObject* controller = mo->newInstance(
-                      Q_ARG(QObject*, parent()),
-                      Q_ARG(bool, verbose),
-                      Q_ARG(AbstractInfoBuilder*, infoBuilder)
-                      );
+      if (controller != nullptr) {
 
           // Invoke action on instance
           bool actionExecuted = QMetaObject::invokeMethod(
@@ -144,4 +135,29 @@ void WebApiController::addCommonResponseHeaders(WebApiResponse &response){
     response.headers.insert("Access-Control-Allow-Methods","GET, PUT, POST, DELETE");
     response.headers.insert("Access-Control-Allow-Headers","content-type");
 
+}
+
+QObject* WebApiController::getControllerInstance(QByteArray controllerName){
+
+    // Return stored controller if available
+    if(controllerInstances.contains(controllerName)){
+        return controllerInstances[controllerName];
+    }
+    // Get controller class id
+    int id = QMetaType::type(controllerName+"*");
+    if (id != 0) {
+        // Instantiate
+        const QMetaObject* mo = QMetaType::metaObjectForType(id);
+        QObject* controller = mo->newInstance(
+                    Q_ARG(QObject*, parent()),
+                    Q_ARG(bool, verbose),
+                    Q_ARG(AbstractInfoBuilder*, infoBuilder)
+                    );
+
+        // Store instance
+        controllerInstances.insert(controllerName,controller);
+
+        return controller;
+    }
+    return nullptr;
 }
