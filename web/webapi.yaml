@@ -51,28 +51,28 @@ paths:
         description: Top latitude
         schema:
           type: number
-          default: 11.4
+          default: 10
       - name: bottomlat
         required: true
         in: query
         description: Bottom latitude
         schema:
           type: number
-          default: 11.5
+          default: 15
       - name: leftlon
         required: true
         in: query
         description: Left longitude
         schema:
           type: number
-          default: 44.1
+          default: 40
       - name: rightlon
         required: true
         in: query
         description: Right longitude
         schema:
           type: number
-          default: 44.2
+          default: 45
       responses:
         200:
           description: Resulting map image

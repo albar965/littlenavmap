@@ -18,20 +18,240 @@
 #include "mapactionscontroller.h"
 #include "abstractlnmactionscontroller.h"
 
+#include <navapp.h>
+
+#include "mapgui/mappaintwidget.h"
+#include "mapgui/mapwidget.h"
+#include "navapp.h"
+
 #include <QDebug>
+#include <QBuffer>
+#include <QPixmap>
 
 MapActionsController::MapActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder) :
-    AbstractLnmActionsController(parent, verboseParam, infoBuilder)
+    AbstractLnmActionsController(parent, verboseParam, infoBuilder), parentWidget((QWidget *)parent) // WARNING: Uncertain cast (QWidget *) QObject
 {
     qDebug() << Q_FUNC_INFO;
+    init();
 }
 
 WebApiResponse MapActionsController::imageAction(WebApiRequest request){
 
     WebApiResponse response = getResponse();
 
-    response.body = "Not implemented";
+    atools::geo::Rect rect(
+        request.parameters.value("leftlon").toFloat(),
+        request.parameters.value("toplat").toFloat(),
+        request.parameters.value("rightlon").toFloat(),
+        request.parameters.value("bottomlat").toFloat()
+    );
+
+    MapPixmap map = getPixmapRect(100,100,rect);
+
+    if(map.isValid())
+    {
+      // ===========================================================================
+      // Write pixmap as image
+      QByteArray bytes;
+      QBuffer buffer(&bytes);
+      buffer.open(QIODevice::WriteOnly);
+
+      map.pixmap.save(&buffer, "PNG", 80);
+
+      response.body = bytes;
+    }
+
+    response.headers.replace("Content-Type", "image/png");
 
     return response;
 
+}
+MapActionsController::~MapActionsController()
+{
+  qDebug() << Q_FUNC_INFO;
+  deInit();
+}
+
+void MapActionsController::init()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  deInit();
+
+  // Create a map widget clone with the desired resolution
+  mapPaintWidget = new MapPaintWidget(parentWidget, false /* no real widget - hidden */);
+
+  // Activate painting
+  mapPaintWidget->setActive();
+}
+
+void MapActionsController::deInit()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  delete mapPaintWidget;
+  mapPaintWidget = nullptr;
+}
+
+MapPixmap MapActionsController::getPixmap(int width, int height)
+{
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << width << "x" << height;
+
+  return getPixmapPosDistance(width, height, atools::geo::EMPTY_POS,
+                              static_cast<float>(NavApp::getMapWidget()->distance()), QLatin1String(""));
+}
+
+MapPixmap MapActionsController::getPixmapObject(int width, int height, web::ObjectType type, const QString& ident,
+                                            float distanceKm)
+{
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << width << "x" << height << "type" << type << "ident" << ident << "distanceKm" <<
+      distanceKm;
+
+  MapPixmap mapPixmap;
+  switch(type)
+  {
+    case web::USER_AIRCRAFT: {
+      mapPixmap = getPixmapPosDistance(width, height, NavApp::getUserAircraftPos(), distanceKm, QLatin1String(""), tr("No user aircraft"));
+      break;
+    }
+
+    case web::ROUTE: {
+      mapPixmap = getPixmapRect(width, height, NavApp::getRouteRect(), tr("No flight plan"));
+      break;
+    }
+
+    case web::AIRPORT: {
+      mapPixmap = getPixmapPosDistance(width, height, NavApp::getAirportPos(ident), distanceKm, QLatin1String(""), tr("Airport %1 not found").arg(ident));
+      break;
+    }
+  }
+  return mapPixmap;
+}
+
+MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm,
+                                                 const QString& mapCommand, const QString& errorCase)
+{
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << width << "x" << height << pos << "distanceKm" << distanceKm << "cmd" << mapCommand;
+
+  if(!pos.isValid())
+  {
+    if(errorCase == QLatin1String(""))
+    {
+      // Use current map position
+      pos.setLonX(static_cast<float>(NavApp::getMapWidget()->centerLongitude()));
+      pos.setLatY(static_cast<float>(NavApp::getMapWidget()->centerLatitude()));
+    }
+    else
+    {
+      qWarning() << Q_FUNC_INFO << errorCase;
+      MapPixmap mappixmap;
+      mappixmap.error = errorCase;
+      return mappixmap;
+    }
+  }
+
+  if(mapPaintWidget != nullptr)
+  {
+    // Copy all map settings
+    mapPaintWidget->copySettings(*NavApp::getMapWidget());
+
+    // Do not center world rectangle when resizing map widget
+    mapPaintWidget->setKeepWorldRect(false);
+
+    // Jump to position without zooming for sharp map
+    mapPaintWidget->showPosNotAdjusted(pos, distanceKm);
+
+    if(!mapCommand.isEmpty())
+    {
+      // Move or zoom map by command
+      if(mapCommand == QLatin1String("left"))
+        mapPaintWidget->moveLeft(Marble::Instant);
+      else if(mapCommand == QLatin1String("right"))
+        mapPaintWidget->moveRight(Marble::Instant);
+      else if(mapCommand == QLatin1String("up"))
+        mapPaintWidget->moveUp(Marble::Instant);
+      else if(mapCommand == QLatin1String("down"))
+        mapPaintWidget->moveDown(Marble::Instant);
+      else if(mapCommand == QLatin1String("in"))
+        mapPaintWidget->zoomIn(Marble::Instant);
+      else if(mapCommand == QLatin1String("out"))
+        mapPaintWidget->zoomOut(Marble::Instant);
+      else
+      {
+        qWarning() << Q_FUNC_INFO << "Invalid map command" << mapCommand;
+        return MapPixmap();
+      }
+    }
+
+    // Jump to next sharp level
+    mapPaintWidget->zoomIn(Marble::Instant);
+    mapPaintWidget->zoomOut(Marble::Instant);
+
+    MapPixmap mappixmap;
+
+    // The actual zoom distance
+    mappixmap.correctedDistanceKm = static_cast<float>(mapPaintWidget->distance());
+
+    if(mapCommand == QLatin1String("in") || mapCommand == QLatin1String("out"))
+      // Requested is equal to result when zooming
+      mappixmap.requestedDistanceKm = mappixmap.correctedDistanceKm;
+    else
+      // What was requested
+      mappixmap.requestedDistanceKm = distanceKm;
+
+    // Fill result object
+    mappixmap.pixmap = mapPaintWidget->getPixmap(width, height);
+    mappixmap.pos = mapPaintWidget->getCurrentViewCenterPos();
+
+    return mappixmap;
+  }
+  else
+  {
+    qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
+    return MapPixmap();
+  }
+}
+
+MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo::Rect rect, const QString& errorCase)
+{
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << width << "x" << height << rect;
+
+  if(rect.isValid())
+  {
+    if(mapPaintWidget != nullptr)
+    {
+      // Copy all map settings
+      mapPaintWidget->copySettings(*NavApp::getMapWidget());
+
+      // Do not center world rectangle when resizing
+      mapPaintWidget->setKeepWorldRect(false);
+
+      mapPaintWidget->showRectStreamlined(rect);
+
+      MapPixmap mapPixmap;
+
+      // No distance requested. Therefore requested is equal to actual
+      mapPixmap.correctedDistanceKm = mapPixmap.requestedDistanceKm = static_cast<float>(mapPaintWidget->distance());
+      mapPixmap.pixmap = mapPaintWidget->getPixmap(width, height);
+      mapPixmap.pos = mapPaintWidget->getCurrentViewCenterPos();
+
+      return mapPixmap;
+    }
+    else
+    {
+      qWarning() << Q_FUNC_INFO << "mapPaintWidget is null";
+      return MapPixmap();
+    }
+  }
+  else
+  {
+    qWarning() << Q_FUNC_INFO << errorCase;
+    MapPixmap mapPixmap;
+    mapPixmap.error = errorCase;
+    return mapPixmap;
+  }
 }
