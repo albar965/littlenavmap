@@ -192,6 +192,9 @@ public:
   /* True if query contains column */
   bool hasColumn(const QString& colName) const;
 
+  /* True if database table contains column independent of view */
+  bool hasDatabaseColumn(const QString& colName) const;
+
 private:
   void viewSetModel(QAbstractItemModel *newModel);
 

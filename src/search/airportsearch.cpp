@@ -151,8 +151,12 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("airport_id").hidden()).
   append(Column("distance", tr("Distance\n%dist%")).distanceCol()).
   append(Column("heading", tr("Heading\n°T")).distanceCol()).
-  append(Column("ident", ui->lineEditAirportIcaoSearch, tr("ICAO")).filter().defaultSort().
-         override ().minOverrideLength(3)).
+  append(Column("ident", tr("Ident")).defaultSort()).
+  append(Column("icao", tr("ICAO")).hidden()). // Equal to ident for almost all - still allow column in search
+  append(Column("faa", tr("FAA"))).
+  append(Column("iata", tr("IATA"))).
+  append(Column("local", tr("Local\nCode"))).
+
   append(Column("name", ui->lineEditAirportNameSearch, tr("Name")).filter()).
 
   append(Column("city", ui->lineEditAirportCitySearch, tr("City")).filter()).
@@ -239,6 +243,11 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   iconDelegate = new AirportIconDelegate(columns);
   view->setItemDelegateForColumn(columns->getColumn("ident")->getIndex(), iconDelegate);
 
+  // Assign the callback which builds a part of the where clause for the airport search ======================
+  using namespace std::placeholders;
+  columns->setQueryBuilder(QueryBuilder(std::bind(&AirportSearch::airportQueryBuilderFunc, this, _1),
+                                        ui->lineEditAirportIcaoSearch, {"ident", "icao", "iata", "faa", "local"}));
+
   SearchBaseTable::initViewAndController(NavApp::getDatabaseSim());
 
   // Add model data handler and model format handler as callbacks
@@ -248,6 +257,69 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
 AirportSearch::~AirportSearch()
 {
   delete iconDelegate;
+}
+
+QueryBuilderResult AirportSearch::airportQueryBuilderFunc(QWidget *widget)
+{
+  if(widget != nullptr)
+  {
+    // Widget list is always one line edit as registered in airport search
+    QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(widget);
+    if(lineEdit != nullptr)
+    {
+      QString text = lineEdit->text().simplified();
+
+      // Check text length without placeholders for override
+      QString overrideText(text);
+      overrideText.remove(QChar('*'));
+      if(text.startsWith('-'))
+        overrideText = overrideText.mid(1);
+      bool overrideQuery = overrideText.size() >= 3;
+
+      // Adjust the query string to SQL
+      // Replace "*" with "%" for SQL
+      if(text.contains(QChar('*')))
+        text = text.replace(QChar('*'), QChar('%'));
+      else if(!text.isEmpty())
+        // Default is string starts with text
+        text = text + "%";
+
+      // Exclude if prefixed with "-"
+      bool exclude = false;
+      if(text.startsWith('-'))
+      {
+        text = text.mid(1);
+        exclude = true;
+      }
+
+      if(!text.isEmpty())
+      {
+        QString query;
+
+        if(exclude)
+          // Use exclude on ident column only
+          query = "(ident not like '" + text + "')";
+        else
+        {
+          // Cannot use "arg" to build string since percent confuses QString
+          query = "(ident like '" + text + "'";
+
+          if(controller->hasDatabaseColumn("icao"))
+            query += " or icao like '" + text + "'";
+          if(controller->hasDatabaseColumn("iata"))
+            query += " or iata like '" + text + "'";
+          if(controller->hasDatabaseColumn("faa"))
+            query += " or faa like '" + text + "'";
+          if(controller->hasDatabaseColumn("local"))
+            query += " or local like '" + text + "'";
+          query += ")";
+        }
+
+        return QueryBuilderResult(query, overrideQuery);
+      }
+    }
+  }
+  return QueryBuilderResult();
 }
 
 void AirportSearch::overrideMode(const QStringList& overrideColumnTitles)
@@ -262,8 +334,8 @@ void AirportSearch::overrideMode(const QStringList& overrideColumnTitles)
   else
   {
     ui->labelAirportSearchOverride->show();
-    ui->labelAirportSearchOverride->setText(tr("%1 overriding all other search options.").
-                                            arg(overrideColumnTitles.join(" and ")));
+    ui->labelAirportSearchOverride->setText(tr("%1 overriding other search options.").
+                                            arg(atools::strJoin(overrideColumnTitles, tr(", "), tr(" and "))));
   }
 }
 

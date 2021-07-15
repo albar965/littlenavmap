@@ -321,10 +321,13 @@ void SearchBaseTable::connectSearchWidgets()
   // Connect query builder callback to lambda ======================================
   if(columns->getQueryBuilder().isValid())
   {
-    for(QWidget *widget : columns->getQueryBuilder().getWidgets())
+    QWidget *widget = columns->getQueryBuilder().getWidget();
+
+    if(widget != nullptr)
     {
       QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(widget);
 
+      // Only line edit allowed for now
       if(lineEdit != nullptr)
       {
         connect(lineEdit, &QLineEdit::textChanged, this, [ = ](const QString& text)

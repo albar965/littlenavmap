@@ -21,6 +21,7 @@
 #include "search/column.h"
 #include "search/columnlist.h"
 #include "sql/sqlrecord.h"
+#include "sql/sqldatabase.h"
 
 #include <QTableView>
 #include <QHeaderView>
@@ -130,6 +131,11 @@ void SqlController::refreshView()
 bool SqlController::hasColumn(const QString& colName) const
 {
   return columns->hasColumn(colName);
+}
+
+bool SqlController::hasDatabaseColumn(const QString& colName) const
+{
+  return db->record(columns->getTablename()).contains(colName);
 }
 
 void SqlController::filterByBuilder(const QueryBuilder& builder)

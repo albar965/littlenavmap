@@ -92,7 +92,7 @@ LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   // Assign the callback which builds the where clause for the airport search ======================
   using namespace std::placeholders;
   columns->setQueryBuilder(QueryBuilder(std::bind(&LogdataSearch::airportQueryBuilderFunc, this, _1),
-                                        {ui->lineEditLogdataAirport}, {"departure_ident", "destination_ident"}));
+                                        ui->lineEditLogdataAirport, {"departure_ident", "destination_ident"}));
 
   SearchBaseTable::initViewAndController(NavApp::getDatabaseLogbook());
 
@@ -104,12 +104,12 @@ LogdataSearch::~LogdataSearch()
 {
 }
 
-QString LogdataSearch::airportQueryBuilderFunc(const QVector<QWidget *> widgets)
+QueryBuilderResult LogdataSearch::airportQueryBuilderFunc(QWidget *widget)
 {
-  if(!widgets.isEmpty())
+  if(widget != nullptr)
   {
     // Widget list is always one line edit
-    QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(widgets.first());
+    QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(widget);
     if(lineEdit != nullptr)
     {
       QString text = lineEdit->text().simplified();
@@ -130,11 +130,16 @@ QString LogdataSearch::airportQueryBuilderFunc(const QVector<QWidget *> widgets)
       }
 
       if(!text.isEmpty())
-        return QString("(departure_ident %2like '%1' or destination_ident %2like '%1')").
-               arg(text).arg(exclude ? "not " : QString());
+      {
+        // Cannot use "arg" to build string since percent confuses QString
+        QString query = "(departure_ident " + (exclude ? "not " : QString()) + " like '" + text + "'" +
+                        " or destination_ident " + (exclude ? "not " : QString()) + " like '" + text + "')";
+
+        return QueryBuilderResult(query, false);
+      }
     }
   }
-  return QString();
+  return QueryBuilderResult();
 }
 
 void LogdataSearch::connectSearchSlots()

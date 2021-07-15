@@ -189,7 +189,7 @@ private:
 
   void filterBy(bool exclude, QString whereCol, QVariant whereValue);
   QString buildColumnList(const atools::sql::SqlRecord& tableCols);
-  QString buildWhere(const atools::sql::SqlRecord& tableCols, QVector<const Column *>& overrideColumns);
+  QString buildWhere(const atools::sql::SqlRecord& tableCols, QVector<const Column *>& overridingColumns);
   QString buildWhereValue(const WhereCondition& cond);
   void buildQuery();
   void clearWhereConditions();
@@ -202,7 +202,7 @@ private:
   void buildSqlWhereValue(QString& whereValue) const;
 
   /* Default - all conditions are combined using "and" */
-  const QString WHERE_OPERATOR = "and";
+  const QString WHERE_OPERATOR = " and ";
 
   QString orderByCol /* Order by column name */, orderByOrder /* "asc" or "desc" */;
   int orderByColIndex = 0;

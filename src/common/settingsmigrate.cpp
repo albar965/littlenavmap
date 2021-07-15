@@ -242,6 +242,13 @@ void checkAndMigrateSettings()
         removeAndLog(settings, "SearchPaneOnlineServer/WidgetView_tableViewOnlineServerSearch");
       }
 
+      if(optionsVersion <= Version("2.6.14"))
+      {
+        qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before or equal to 2.6.14";
+        removeAndLog(settings, "SearchPaneAirport/WidgetDistView_tableViewAirportSearch");
+        removeAndLog(settings, "SearchPaneAirport/WidgetView_tableViewAirportSearch");
+      }
+
       // Set program version to options and save ===================
       settings.setValue(lnm::OPTIONS_VERSION, programVersion.getVersionString());
       settings.syncSettings();
