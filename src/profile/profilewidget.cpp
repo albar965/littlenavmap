@@ -1129,7 +1129,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       const RouteLeg& departureLeg = route.getDepartureAirportLeg();
       if(departureLeg.getMapObjectType() == map::AIRPORT)
       {
-        int textW = painter.fontMetrics().width(departureLeg.getIdent());
+        int textW = painter.fontMetrics().width(departureLeg.getDisplayIdent());
         symPainter.drawAirportSymbol(&painter,
                                      departureLeg.getAirport(), left, flightplanY, airportSize, false, false, false);
         symPainter.drawAirportText(&painter, departureLeg.getAirport(), left - textW / 2, flightplanTextY,
@@ -1140,7 +1140,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       const RouteLeg& destinationLeg = route.getDestinationAirportLeg();
       if(destinationLeg.getMapObjectType() == map::AIRPORT)
       {
-        int textW = painter.fontMetrics().width(destinationLeg.getIdent());
+        int textW = painter.fontMetrics().width(destinationLeg.getDisplayIdent());
         symPainter.drawAirportSymbol(&painter, destinationLeg.getAirport(), left + w, flightplanY, airportSize, false,
                                      false, false);
         symPainter.drawAirportText(&painter, destinationLeg.getAirport(), left + w - textW / 2, flightplanTextY,
@@ -1777,7 +1777,7 @@ void ProfileWidget::buildTooltip(int x, bool force)
   if(routeLeg.isAnyProcedure() && proc::procedureLegFrom(routeLeg.getProcedureLegType()))
     fromTo = tr("from");
 
-  QString toWaypoint = atools::elideTextShort(routeLeg.getIdent(), 20);
+  QString toWaypoint = atools::elideTextShort(routeLeg.getDisplayIdent(), 20);
 
   // Create text for tooltip ==========================
   atools::util::HtmlBuilder html;

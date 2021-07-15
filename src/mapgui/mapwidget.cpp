@@ -1600,7 +1600,7 @@ void MapWidget::addMeasurement(const atools::geo::Pos& pos, const map::MapAirpor
   // Build distance line depending on selected airport or navaid (color, magvar, etc.)
   if(airport != nullptr && airport->isValid())
   {
-    dm.text = tr("%1 (%2)").arg(airport->name).arg(airport->ident);
+    dm.text = tr("%1 (%2)").arg(airport->name).arg(airport->displayIdent());
     dm.from = airport->position;
     dm.magvar = airport->magvar;
     dm.color = mapcolors::colorForAirport(*airport);
@@ -3153,7 +3153,7 @@ void MapWidget::addTrafficPattern(const map::MapAirport& airport)
     getTrafficPatterns().append(pattern);
     mainWindow->updateMarkActionStates();
     update();
-    mainWindow->setStatusMessage(tr("Added airport traffic pattern for %1.").arg(airport.ident));
+    mainWindow->setStatusMessage(tr("Added airport traffic pattern for %1.").arg(airport.displayIdent()));
   }
 }
 
@@ -3258,7 +3258,7 @@ void MapWidget::changeHome()
 }
 
 void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, map::MapTypes type,
-                                const QString& ident, const QString& frequency, float range)
+                                const QString& displayIdent, const QString& frequency, float range)
 {
   if(range > 0.f)
   {
@@ -3269,12 +3269,12 @@ void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, map::MapTypes type,
     if(type == map::VOR)
     {
       if(frequency.endsWith('X') || frequency.endsWith('Y'))
-        ring.text = tr("%1 %2").arg(ident).arg(frequency);
+        ring.text = tr("%1 %2").arg(displayIdent).arg(frequency);
       else
-        ring.text = tr("%1 %2").arg(ident).arg(QString::number(frequency.toFloat() / 1000., 'f', 2));
+        ring.text = tr("%1 %2").arg(displayIdent).arg(QString::number(frequency.toFloat() / 1000., 'f', 2));
     }
     else if(type == map::NDB)
-      ring.text = tr("%1 %2").arg(ident).arg(QString::number(frequency.toFloat() / 100., 'f', 2));
+      ring.text = tr("%1 %2").arg(displayIdent).arg(QString::number(frequency.toFloat() / 100., 'f', 2));
 
     ring.ranges.append(range);
     getScreenIndex()->getRangeMarks().append(ring);
@@ -3282,7 +3282,7 @@ void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, map::MapTypes type,
 
     update();
     mainWindow->updateMarkActionStates();
-    mainWindow->setStatusMessage(tr("Added range rings for %1.").arg(ident));
+    mainWindow->setStatusMessage(tr("Added range rings for %1.").arg(displayIdent));
   }
   else
     // No range - fall back to normal rings

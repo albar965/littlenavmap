@@ -329,9 +329,12 @@ struct MapAirport
   QString ident, /* Ident in simulator mostly ICAO */
            icao, /* Real ICAO ident */
            iata, /* IATA ident */
+           faa, /* FAA code */
+           local, /* Local code */
            xpident, /* X-Plane internal unique ident - mostly ICAO */
            name, /* Full name */
            region; /* Two letter region code */
+
   int longestRunwayLength = 0, longestRunwayHeading = 0, transitionAltitude = 0, rating = -1,
       flatten /* X-Plane flatten flag. -1 if not set */;
   map::MapAirportFlags flags = AP_NONE;
@@ -344,10 +347,8 @@ struct MapAirport
   atools::geo::Rect bounding;
   int routeIndex = -1;
 
-  const QString& icaoIdent()
-  {
-    return !icao.isEmpty() ? icao : ident;
-  }
+  /* One of ident, ICAO, IATA or local code. Use only for display purposes and not for queries. */
+  const QString& displayIdent() const;
 
   bool closed() const;
   bool hard() const;
@@ -1120,7 +1121,6 @@ QString parkingNameNumber(const map::MapParking& parking);
 QString startType(const map::MapStart& start);
 
 QString helipadText(const map::MapHelipad& helipad);
-
 
 /* Route index from base type */
 int routeIndex(const map::MapBase *base);

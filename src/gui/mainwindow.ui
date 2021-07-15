@@ -614,16 +614,16 @@
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>Airport ICAO code</string>
+                <string>Airport ICAO, IATA, FAA or local code</string>
                </property>
                <property name="statusTip">
-                <string>Airport ICAO code</string>
+                <string>Airport ICAO, IATA, FAA or local code</string>
                </property>
                <property name="maxLength">
                 <number>8</number>
                </property>
                <property name="placeholderText">
-                <string>ICAO Code</string>
+                <string>Ident</string>
                </property>
                <property name="clearButtonEnabled">
                 <bool>true</bool>
@@ -651,7 +651,7 @@
                 <string>Airport name</string>
                </property>
                <property name="placeholderText">
-                <string>Airport Name</string>
+                <string>Name</string>
                </property>
                <property name="clearButtonEnabled">
                 <bool>true</bool>
@@ -11959,8 +11959,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
-  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

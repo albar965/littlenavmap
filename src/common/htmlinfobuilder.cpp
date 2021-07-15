@@ -130,7 +130,7 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
 
   if(info)
   {
-    html.text(tr("%1 (%2)").arg(airport.name).arg(airport.ident), titleFlags | ahtml::BIG);
+    html.text(tr("%1 (%2)").arg(airport.name).arg(airport.displayIdent()), titleFlags | ahtml::BIG);
     html.nbsp().nbsp();
     if(rating != -1)
       html.text(atools::ratingString(rating, 5)).nbsp().nbsp();
@@ -146,7 +146,7 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
   }
   else
   {
-    html.text(tr("%1 (%2)").arg(airport.name).arg(airport.ident), titleFlags);
+    html.text(tr("%1 (%2)").arg(airport.name).arg(airport.displayIdent()), titleFlags);
     if(rating != -1)
       html.nbsp().nbsp().text(atools::ratingString(rating, 5));
   }
@@ -193,19 +193,23 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     bearingToUserText(airport.position, airport.magvar, html);
 
   // Administrative information ======================
-  if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
-  {
-    if(airport.ident != airport.xpident)
-      html.row2If(tr("X-Plane Ident:"), airport.xpident);
-  }
 
-  if(info)
-  {
-    if(airport.icao != airport.ident)
-      html.row2If(tr("ICAO:"), airport.icao);
-    html.row2If(tr("IATA:"), rec->valueStr("iata", QString()));
-    html.row2If(tr("Region:"), airport.region);
-  }
+  if(info || airport.icao != airport.ident)
+    html.row2If(tr("ICAO:"), airport.icao);
+
+  if(info || airport.faa != airport.ident)
+    html.row2If(tr("FAA:"), airport.faa);
+
+  if(info || airport.iata != airport.ident)
+    html.row2If(tr("IATA:"), airport.iata);
+
+  if(info || airport.local != airport.ident)
+    html.row2If(tr("Local Code:"), airport.local);
+
+  if(info || airport.xpident != airport.ident)
+    html.row2If(tr("X-Plane Ident:"), airport.xpident);
+
+  html.row2If(tr("Region:"), airport.region);
 
   QString city, state, country;
   airportQuerySim->getAirportAdminNamesById(airport.id, city, state, country);
@@ -528,7 +532,7 @@ void HtmlInfoBuilder::nearestText(const MapAirport& airport, HtmlBuilder& html) 
 }
 
 void HtmlInfoBuilder::nearestMapObjectsTextRow(const MapAirport& airport, HtmlBuilder& html,
-                                               const QString& type, const QString& ident, const QString& name,
+                                               const QString& type, const QString& displayIdent, const QString& name,
                                                const QString& freq, const map::MapBase *base, float magVar,
                                                bool frequencyCol, bool airportCol) const
 {
@@ -549,14 +553,14 @@ void HtmlInfoBuilder::nearestMapObjectsTextRow(const MapAirport& airport, HtmlBu
   if(airportCol)
   {
     // Airports have no type and link is on name
-    html.td(ident, ahtml::BOLD);
+    html.td(displayIdent, ahtml::BOLD);
     html.tdF(ahtml::ALIGN_RIGHT).a(name, url, ahtml::LINK_NO_UL).tdEnd();
   }
   else
   {
     // Navaid type
     html.td(type, ahtml::BOLD);
-    html.td(ident, ahtml::BOLD);
+    html.td(displayIdent, ahtml::BOLD);
     html.tdF(ahtml::ALIGN_RIGHT).a(name, url, ahtml::LINK_NO_UL).tdEnd();
   }
 
@@ -611,7 +615,7 @@ bool HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuild
 
         // Omit center airport used as reference
         if(simAp.isValid() && simAp.id != airport.id)
-          nearestMapObjectsTextRow(airport, html, QString(), simAp.ident, simAp.name,
+          nearestMapObjectsTextRow(airport, html, QString(), simAp.displayIdent(), simAp.name,
                                    QString(), &simAp, simAp.magvar, frequencyCol, airportCol);
       }
 
@@ -1684,7 +1688,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   {
     html.row2(tr("Reporting airport: "), tr("%1 (%2), %3, %4").
               arg(reportAirport.name).
-              arg(reportAirport.ident).
+              arg(reportAirport.displayIdent()).
               arg(Unit::altFeet(reportAirport.position.getAltitude())).
               arg(Unit::distMeter(reportAirport.position.distanceMeterTo(airport.position))));
   }
@@ -2395,7 +2399,7 @@ void HtmlInfoBuilder::airportRow(const map::MapAirport& ap, HtmlBuilder& html) c
     if(apSim.isValid())
     {
       HtmlBuilder apHtml = html.cleared();
-      apHtml.a(apSim.ident, QString("lnm://show?airport=%1").arg(apSim.ident), ahtml::LINK_NO_UL);
+      apHtml.a(apSim.displayIdent(), QString("lnm://show?airport=%1").arg(apSim.ident), ahtml::LINK_NO_UL);
       html.row2(tr("Airport:"), apHtml.getHtml(), ahtml::NO_ENTITIES);
     }
   }
@@ -3301,7 +3305,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         const RouteLeg& destLeg = alternate && route.getActiveLeg() != nullptr ?
                                   *route.getActiveLeg() : route.getDestinationAirportLeg();
 
-        headText += tr(" - ") + destLeg.getIdent() +
+        headText += tr(" - ") + destLeg.getDisplayIdent() +
                     (destLeg.getMapObjectTypeName().isEmpty() ? QString() : tr(", ") +
                      destLeg.getMapObjectTypeName());
 
@@ -3432,15 +3436,15 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       QString nextName;
       if(activeLegIdxCorrected != map::INVALID_INDEX_VALUE)
       {
-        if(!routeLegCorrected.getIdent().isEmpty())
-          nextName = routeLegCorrected.getIdent() +
+        if(!routeLegCorrected.getDisplayIdent().isEmpty())
+          nextName = routeLegCorrected.getDisplayIdent() +
                      (routeLegCorrected.getMapObjectTypeName().isEmpty() ? QString() : tr(", ") +
                       routeLegCorrected.getMapObjectTypeName());
       }
 
       // From or to fix depending on leg type
       QString fromTo;
-      if(!routeLegCorrected.getIdent().isEmpty())
+      if(!routeLegCorrected.getDisplayIdent().isEmpty())
       {
         fromTo = tr(" - to ");
         if(routeLegCorrected.isAnyProcedure() && proc::procedureLegFrom(routeLegCorrected.getProcedureLegType()))
@@ -4102,14 +4106,14 @@ void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder&
 
 void HtmlInfoBuilder::addAirportFolder(const MapAirport& airport, HtmlBuilder& html) const
 {
-  QFileInfoList airportFiles = AirportFiles::getAirportFiles(airport.ident);
+  QFileInfoList airportFiles = AirportFiles::getAirportFiles(airport.displayIdent());
 
   if(!airportFiles.isEmpty())
   {
     head(html, tr("Files"));
     html.table();
 
-    for(const QString& dir : AirportFiles::getAirportFilesBase(airport.ident))
+    for(const QString& dir : AirportFiles::getAirportFilesBase(airport.displayIdent()))
       html.row2(tr("Path:"), filepathTextOpen(dir, true), ahtml::NO_ENTITIES | ahtml::SMALL);
 
     int i = 0;
@@ -4123,8 +4127,7 @@ void HtmlInfoBuilder::addAirportFolder(const MapAirport& airport, HtmlBuilder& h
 void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlBuilder& html) const
 {
   // Scenery library entries ============================================
-  const atools::sql::SqlRecordVector *sceneryInfo =
-    infoQuery->getAirportSceneryInformation(airport.ident);
+  const atools::sql::SqlRecordVector *sceneryInfo = infoQuery->getAirportSceneryInformation(airport.ident);
 
   if(sceneryInfo != nullptr)
   {
@@ -4151,21 +4154,17 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
                                   QString("https://gateway.x-plane.com/scenery/page/%1").
                                   arg(airport.xpident), ahtml::LINK_NO_UL).getHtml());
 
-  // Skip X-Plane's obscure long idents
-  if(airport.ident.size() <= 4 && airport.ident.size() >= 3)
-  {
-    // Check if airport is in navdata
-    MapAirport airportNav = mapQuery->getAirportNav(airport);
+  // Check if airport is in navdata
+  MapAirport airportNav = mapQuery->getAirportNav(airport);
 
-    if(airportNav.isValid() && airportNav.navdata)
-    {
-      links.append(html.cleared().a(tr("SkyVector"), QString("https://skyvector.com/airport/%1").
-                                    arg(airportNav.icaoIdent()), ahtml::LINK_NO_UL).getHtml());
-      links.append(html.cleared().a(tr("FlightAware"), QString("https://www.flightaware.com/live/airport/%1").
-                                    arg(airportNav.icaoIdent()), ahtml::LINK_NO_UL).getHtml());
-      links.append(html.cleared().a(tr("OpenNav"), QString("https://opennav.com/airport/%1").
-                                    arg(airportNav.icaoIdent()), ahtml::LINK_NO_UL).getHtml());
-    }
+  if(airportNav.isValid() && airportNav.navdata)
+  {
+    links.append(html.cleared().a(tr("SkyVector"), QString("https://skyvector.com/airport/%1").
+                                  arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
+    links.append(html.cleared().a(tr("FlightAware"), QString("https://www.flightaware.com/live/airport/%1").
+                                  arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
+    links.append(html.cleared().a(tr("OpenNav"), QString("https://opennav.com/airport/%1").
+                                  arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
   }
 
   // Display link table ===============

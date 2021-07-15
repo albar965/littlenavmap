@@ -190,7 +190,8 @@ void AirportQuery::getAirportByIcao(map::MapAirport& airport, const QString& ica
   }
 }
 
-void AirportQuery::getAirportFuzzy(map::MapAirport& airport, QString ident, QString icao, atools::geo::Pos pos)
+void AirportQuery::getAirportFuzzy(map::MapAirport& airport, QString ident, QString icao, QString faa, QString local,
+                                   atools::geo::Pos pos)
 {
   // airportFrom has to be copied to avoid overwriting
   // Try ident first
@@ -199,6 +200,12 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, QString ident, QStr
   // Try ICAO code if given as second attempt
   if(!airport.isValid() && !icao.isEmpty() && icao != ident)
     getAirportByIdent(airport, icao);
+
+  if(!airport.isValid() && !faa.isEmpty() && faa != ident)
+    getAirportByIdent(airport, faa);
+
+  if(!airport.isValid() && !local.isEmpty() && local != ident)
+    getAirportByIdent(airport, local);
 
   if(!airport.isValid() && pos.isValid())
   {
@@ -908,6 +915,10 @@ QStringList AirportQuery::airportColumns(const atools::sql::SqlDatabase *db)
     airportQueryBase.append("icao");
   if(aprec.contains("iata"))
     airportQueryBase.append("iata");
+  if(aprec.contains("faa"))
+    airportQueryBase.append("faa");
+  if(aprec.contains("local"))
+    airportQueryBase.append("local");
   if(aprec.contains("region"))
     airportQueryBase.append("region");
   if(aprec.contains("is_3d"))

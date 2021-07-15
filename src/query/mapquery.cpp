@@ -113,7 +113,8 @@ map::MapAirport MapQuery::getAirportSim(const map::MapAirport& airport)
   if(airport.navdata)
   {
     map::MapAirport retval;
-    NavApp::getAirportQuerySim()->getAirportFuzzy(retval, airport.ident, airport.icao, airport.position);
+    NavApp::getAirportQuerySim()->getAirportFuzzy(retval, airport.ident, airport.icao, airport.faa, airport.local,
+                                                  airport.position);
     return retval;
   }
   return airport;
@@ -124,7 +125,8 @@ map::MapAirport MapQuery::getAirportNav(const map::MapAirport& airport)
   if(!airport.navdata)
   {
     map::MapAirport retval;
-    NavApp::getAirportQueryNav()->getAirportFuzzy(retval, airport.ident, airport.icao, airport.position);
+    NavApp::getAirportQueryNav()->getAirportFuzzy(retval, airport.ident, airport.icao, airport.faa, airport.local,
+                                                  airport.position);
     return retval;
   }
   return airport;
@@ -133,13 +135,15 @@ map::MapAirport MapQuery::getAirportNav(const map::MapAirport& airport)
 void MapQuery::getAirportSimReplace(map::MapAirport& airport)
 {
   if(airport.navdata)
-    NavApp::getAirportQuerySim()->getAirportFuzzy(airport, airport.ident, airport.icao, airport.position);
+    NavApp::getAirportQuerySim()->getAirportFuzzy(airport, airport.ident, airport.icao, airport.faa, airport.local,
+                                                  airport.position);
 }
 
 void MapQuery::getAirportNavReplace(map::MapAirport& airport)
 {
   if(!airport.navdata)
-    NavApp::getAirportQueryNav()->getAirportFuzzy(airport, airport.ident, airport.icao, airport.position);
+    NavApp::getAirportQueryNav()->getAirportFuzzy(airport, airport.ident, airport.icao, airport.faa, airport.local,
+                                                  airport.position);
 }
 
 void MapQuery::getVorForWaypoint(map::MapVor& vor, int waypointId)

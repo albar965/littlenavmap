@@ -624,6 +624,9 @@ public:
   /* Copies departure and destination names and positions from Route to Flightplan */
   void updateDepartureAndDestination();
 
+  /* Get file name pattern based on route values */
+  QString getFilenamePattern(const QString& pattern, const QString& suffix, bool clean = true) const;
+
 private:
   /* Copy flight plan profile altitudes into entries for FMS and other formats
    *  All following functions have to use setCoords instead of setPosition to avoid overwriting*/

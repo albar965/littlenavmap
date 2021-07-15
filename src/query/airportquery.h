@@ -88,7 +88,8 @@ public:
 
   /* Try to get airport by ident, icao or position as a fallback if pos is valid,
    * Need to get ident, icao and pos as copies to avoid overwriting. */
-  void getAirportFuzzy(map::MapAirport& airport, QString ident, QString icao, atools::geo::Pos pos);
+  void getAirportFuzzy(map::MapAirport& airport, QString ident, QString icao, QString faa, QString local,
+                       atools::geo::Pos pos);
 
   atools::geo::Pos getAirportPosByIdent(const QString& ident);
 

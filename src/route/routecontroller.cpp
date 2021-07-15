@@ -2355,7 +2355,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   if(insert)
   {
     ui->actionRouteInsert->setEnabled(true);
-    ui->actionRouteInsert->setText(ui->actionRouteInsert->text().arg(routeLeg->getIdent()));
+    ui->actionRouteInsert->setText(ui->actionRouteInsert->text().arg(routeLeg->getDisplayIdent()));
   }
   else
   {
@@ -2536,7 +2536,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
           if(routeLegSel.getRange() > 0)
             NavApp::getMapWidget()->addNavRangeRing(routeLegSel.getPosition(), type,
-                                                    routeLegSel.getIdent(), routeLegSel.getFrequencyOrChannel(),
+                                                    routeLegSel.getDisplayIdent(), routeLegSel.getFrequencyOrChannel(),
                                                     routeLegSel.getRange());
         }
       }
@@ -3130,7 +3130,7 @@ void RouteController::routeSetParking(const map::MapParking& parking)
   postChange(undoCommand);
   emit routeChanged(true);
 
-  NavApp::setStatusMessage(tr("Departure set to %1 parking %2.").arg(route.getDepartureAirportLeg().getIdent()).
+  NavApp::setStatusMessage(tr("Departure set to %1 parking %2.").arg(route.getDepartureAirportLeg().getDisplayIdent()).
                            arg(map::parkingNameNumber(parking)));
 }
 
@@ -3180,7 +3180,8 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   postChange(undoCommand);
   emit routeChanged(true);
 
-  NavApp::setStatusMessage(tr("Departure set to %1 start position %2.").arg(route.getDepartureAirportLeg().getIdent()).
+  NavApp::setStatusMessage(tr("Departure set to %1 start position %2.").
+                           arg(route.getDepartureAirportLeg().getDisplayIdent()).
                            arg(start.runwayName));
 }
 
@@ -3209,7 +3210,7 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
 
   postChange(undoCommand);
   emit routeChanged(true);
-  NavApp::setStatusMessage(tr("Departure set to %1.").arg(route.getDepartureAirportLeg().getIdent()));
+  NavApp::setStatusMessage(tr("Departure set to %1.").arg(route.getDepartureAirportLeg().getDisplayIdent()));
 }
 
 /* Add departure and add best runway start position */
@@ -3785,7 +3786,7 @@ void RouteController::updateTableModel()
       // Get ident with IAF, FAF or other indication
       identStr = proc::procedureLegFixStr(leg.getProcedureLeg());
     else
-      identStr = leg.getIdent();
+      identStr = leg.getDisplayIdent();
 
     QStandardItem *ident =
       new QStandardItem(iconForLeg(leg, view->verticalHeader()->defaultSectionSize() - 2), identStr);
@@ -4372,7 +4373,7 @@ void RouteController::updateModelHighlights()
           if(leg.getMapObjectType() == map::INVALID)
           {
             item->setForeground(invalidColor);
-            QString err = tr("Waypoint \"%1\" not found.").arg(leg.getIdent());
+            QString err = tr("Waypoint \"%1\" not found.").arg(leg.getDisplayIdent());
             item->setToolTip(err);
             flightplanErrors.append(err);
           }
@@ -4492,7 +4493,9 @@ QString RouteController::buildFlightplanLabel(bool print, bool widget, bool titl
     // Add departure to text ==============================================================
     if(route.hasValidDeparture())
     {
-      departureAirport = tr("%1 (%2)").arg(flightplan.getDepartureName()).arg(flightplan.getDepartureIdent());
+      departureAirport = tr("%1 (%2)").
+                         arg(route.getDepartureAirportLeg().getName()).
+                         arg(route.getDepartureAirportLeg().getDisplayIdent());
 
       if(route.getDepartureAirportLeg().getDepartureParking().isValid())
         departureParking = tr(" %1").arg(map::parkingNameNumber(route.getDepartureAirportLeg().getDepartureParking()));
@@ -4516,7 +4519,9 @@ QString RouteController::buildFlightplanLabel(bool print, bool widget, bool titl
 
     // Add destination to text ==============================================================
     if(route.hasValidDestination())
-      destinationAirport = tr("%1 (%2)").arg(flightplan.getDestinationName()).arg(flightplan.getDestinationIdent());
+      destinationAirport = tr("%1 (%2)").
+                           arg(route.getDestinationAirportLeg().getName()).
+                           arg(route.getDestinationAirportLeg().getDisplayIdent());
     else
       destinationAirport = tr("%1 (%2)").
                            arg(flightplan.at(route.getDestinationAirportLegIndex()).getIdent()).

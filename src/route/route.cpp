@@ -2883,6 +2883,19 @@ QString Route::getProcedureLegText(proc::MapProcedureTypes mapType) const
   return procText;
 }
 
+QString Route::getFilenamePattern(const QString& pattern, const QString& suffix, bool clean) const
+{
+  if(isEmpty())
+    return tr("Empty Flightplan") + suffix;
+
+  QString type = flightplan.getFlightplanTypeStr();
+  QString departName = getDepartureAirportLeg().getName(), departIdent = getDepartureAirportLeg().getDisplayIdent(),
+          destName = getDestinationAirportLeg().getName(), destIdent = getDestinationAirportLeg().getDisplayIdent();
+
+  return Flightplan::getFilenamePattern(pattern, type, departName, departIdent, destName, destIdent, suffix,
+                                        flightplan.getCruisingAltitude(), clean);
+}
+
 QDebug operator<<(QDebug out, const Route& route)
 {
   out << endl << "Route ==================================================================" << endl;
