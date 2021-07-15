@@ -863,11 +863,6 @@ void MapContextMenu::insertAlternateMenu(QMenu& menu)
           procedureFlags(base, &departure, &destination, &alternate);
 
           // Do not allow to add as alternate if already part of plan
-          if(departure)
-          {
-            disable = true;
-            text.append(tr(" (is departure)"));
-          }
           if(destination)
           {
             disable = true;
