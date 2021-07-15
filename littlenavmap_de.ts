@@ -12355,7 +12355,7 @@ Reduzieren Sie Kartendetails im Menü &quot;Ansicht&quot;.</translation>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="653"/>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="691"/>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="735"/>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1164"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1159"/>
         <source> (hidden on map)</source>
         <translation> (auf der Karte verborgen)</translation>
     </message>
@@ -12432,14 +12432,13 @@ Reduzieren Sie Kartendetails im Menü &quot;Ansicht&quot;.</translation>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="808"/>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="832"/>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="874"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="869"/>
         <source> (is destination)</source>
         <translation> (ist Ziel)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="804"/>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="834"/>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="869"/>
         <source> (is departure)</source>
         <translation> (ist Start)</translation>
     </message>
@@ -12469,167 +12468,167 @@ Reduzieren Sie Kartendetails im Menü &quot;Ansicht&quot;.</translation>
         <translation> (kein Ziel)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="879"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="874"/>
         <source> (is alternate)</source>
         <translation> (ist Ausweichplatz)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="886"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="881"/>
         <source>&amp;Add %1 as Alternate</source>
         <translation>&amp;Ausweichflugplatz %1 hinzufügen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="887"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="882"/>
         <source>Add airport as alternate to the flight plan</source>
         <translation>Als Ausweichflugplatz für den Flugplan setzen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="901"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="896"/>
         <source>Add Position to Flight &amp;Plan</source>
         <translation>Position zum Flugplan hinzufügen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="909"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="904"/>
         <source>Add %1 to Flight &amp;Plan</source>
         <translation>%1 zum Flugplan hinzufügen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="910"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="905"/>
         <source>Add airport, navaid or position to nearest flight plan leg</source>
         <translation>Flugplatz, Navigationshilfe oder Kartenposition zum nächsten Flugplanabschnitt hinzufügen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="911"/>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="979"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="906"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="974"/>
         <source>Ctrl+Alt+Click</source>
         <translation>Strg+Alt+Klick</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="924"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="919"/>
         <source>Append Position to &amp;Flight Plan</source>
         <translation>Position an &amp;Flugplan anhängen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="932"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="927"/>
         <source>Append %1 to &amp;Flight Plan</source>
         <translation>%1 an &amp;Flugplan anhängen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="933"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="928"/>
         <source>Append airport, navaid or position to the end of the flight plan</source>
         <translation>Flugplatz, Navigationshilfe oder Kartenposition am Ende des Flugplans hinzufügen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="934"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="929"/>
         <source>Shift+Alt+Click</source>
         <translation>Umschalt+Alt+Klick</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="959"/>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="968"/>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="977"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="954"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="963"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="972"/>
         <source>&amp;Delete %1 from Flight Plan</source>
         <translation>%1 aus Flugplan &amp;löschen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="970"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="965"/>
         <source>&amp;Delete from Flight Plan (is procedure)</source>
         <translation>%1 aus Flugplan &amp;löschen (ist Prozedur)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="978"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="973"/>
         <source>Delete airport, navaid or position from the flight plan</source>
         <translation>Diesen Flugplatz, Navigationshilfe oder Kartenposition aus Flugplan löschen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1006"/>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1017"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1001"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1012"/>
         <source>Edit Flight Plan &amp;Position %1 ...</source>
         <translation>Bearbeite &amp;Flugplanposition %1 ...</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1008"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1003"/>
         <source>Edit Flight Plan &amp;Position Remarks for %1 ...</source>
         <translation>Bearbeite &amp;Anmerkungen für Flugplanposition %1 ...</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1011"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1006"/>
         <source>Edit Flight Plan &amp;Position (is procedure)</source>
         <translation>Bearbeite &amp;Flugplanposition (ist Prozedur)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1018"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1013"/>
         <source>Edit remark, name or coordinate of flight plan position</source>
         <translation>Anmerkung, Name und Koordinaten von benutzerdefinierter Flugplanposition bearbeiten</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1032"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1027"/>
         <source>Add &amp;Userpoint here ...</source>
         <translation>Füge hier &amp;Nutzerpunkt hinzu ...</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1040"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1035"/>
         <source>Add &amp;Userpoint %1 ...</source>
         <translation>Füge &amp;Nutzerpunkt %1 hinzu ...</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1041"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1036"/>
         <source>Add a userpoint at this position</source>
         <translation>Füge Nutzerpunkt an dieser Position hinzu</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1042"/>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1053"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1037"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1048"/>
         <source>Ctrl+Shift+Click</source>
         <translation>Strg+Umschalt+Klick</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1051"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1046"/>
         <source>&amp;Edit Userpoint %1 ...</source>
         <translation>&amp;Bearbeite Nutzerpunkt %1 ...</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1052"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1047"/>
         <source>Edit the userpoint at this position</source>
         <translation>Bearbeite Nutzerpunkt an dieser Position</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1060"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1055"/>
         <source>&amp;Move Userpoint %1</source>
         <translation>&amp;Verschiebe Nutzerpunkt %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1061"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1056"/>
         <source>Move the userpoint to a new position on the map</source>
         <translation>Verschiebe den Nutzerpunkt an eine neue Position auf der Karte</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1069"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1064"/>
         <source>&amp;Delete Userpoint %1</source>
         <translation>&amp;Lösche Nutzerpunkt %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1070"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1065"/>
         <source>Remove the userpoint at this position</source>
         <translation>Entfernt den Nutzerpunkt an dieser Position</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1078"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1073"/>
         <source>Edit &amp;Log Entry %1 ...</source>
         <translation>Logbucheintrag %1 &amp;bearbeiten ...</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1079"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1074"/>
         <source>Edit the logbook entry at this position</source>
         <translation>Bearbeite Logbucheintrag an dieser Position</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1104"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1099"/>
         <source>&amp;Show %1 in Search</source>
         <translation>Zeige %1 in der &amp;Suche</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapcontextmenu.cpp" line="1105"/>
+        <location filename="src/mapgui/mapcontextmenu.cpp" line="1100"/>
         <source>Show the airport, navaid, userpoint or other object in the search window</source>
         <translation>Zeige Flugplatz, Navigationshilfe oder anderes Objekt im Suchfenster</translation>
     </message>
@@ -22569,33 +22568,33 @@ Wollen Sie diese Prozedur wirklich verwenden?</translation>
         <translation type="vanished">Kein Flugplan</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="515"/>
+        <location filename="src/profile/profilewidget.cpp" line="516"/>
         <source> ►</source>
         <translation> ►</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="554"/>
+        <location filename="src/profile/profilewidget.cpp" line="555"/>
         <source>%1 / %2</source>
         <translation>%1 / %2</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="617"/>
+        <location filename="src/profile/profilewidget.cpp" line="618"/>
         <source>%1° ►</source>
         <translation>%1° ►</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="619"/>
+        <location filename="src/profile/profilewidget.cpp" line="620"/>
         <source>%1° / %2 ►</source>
         <translation>%1° / %2 ►</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="669"/>
+        <location filename="src/profile/profilewidget.cpp" line="670"/>
         <source>No Flight Plan.</source>
         <oldsource>No Flight Plan loaded.</oldsource>
         <translation>Kein Flugplan.</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="678"/>
+        <location filename="src/profile/profilewidget.cpp" line="679"/>
         <source>Flight Plan not valid.</source>
         <translation>Flugplan nicht gültig.</translation>
     </message>
@@ -22604,89 +22603,109 @@ Wollen Sie diese Prozedur wirklich verwenden?</translation>
         <translation type="vanished">,</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1176"/>
+        <location filename="src/profile/profilewidget.cpp" line="1177"/>
         <source>TOC</source>
         <translation>TOC</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1198"/>
+        <location filename="src/profile/profilewidget.cpp" line="1199"/>
         <source>TOD</source>
         <translation>TOD</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1265"/>
+        <location filename="src/profile/profilewidget.cpp" line="1266"/>
         <source> ▲</source>
         <translation> ▲</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1267"/>
+        <location filename="src/profile/profilewidget.cpp" line="1268"/>
         <source> ▼</source>
         <translation> ▼</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1769"/>
+        <location filename="src/profile/profilewidget.cpp" line="1770"/>
         <source>to</source>
         <translation>nach</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1778"/>
+        <location filename="src/profile/profilewidget.cpp" line="1779"/>
         <source>from</source>
         <translation>von</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1794"/>
+        <location filename="src/profile/profilewidget.cpp" line="1795"/>
         <source> ► </source>
         <translation> ► </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1796"/>
+        <location filename="src/profile/profilewidget.cpp" line="1797"/>
         <source>, %1, %2 %3</source>
         <translation>, %1, %2 %3</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1801"/>
+        <location filename="src/profile/profilewidget.cpp" line="1802"/>
         <source>Course: </source>
         <translation>Kurs: </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1819"/>
+        <location filename="src/profile/profilewidget.cpp" line="1820"/>
         <source>Heading: </source>
         <translation>Steuerkurs: </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1836"/>
+        <location filename="src/profile/profilewidget.cpp" line="1837"/>
         <source>%1 above</source>
         <translation>%1 über</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1840"/>
+        <location filename="src/profile/profilewidget.cpp" line="1841"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1840"/>
+        <location filename="src/profile/profilewidget.cpp" line="1841"/>
         <source>Ground: </source>
         <translation>Boden: </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1844"/>
+        <location filename="src/profile/profilewidget.cpp" line="1845"/>
         <source>Leg Safe Altitude: </source>
         <translation>Sichere Abschnittshöhe: </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1854"/>
+        <location filename="src/profile/profilewidget.cpp" line="1855"/>
         <source>%1°M, %2</source>
         <translation>%1°M, %2</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1864"/>
+        <location filename="src/profile/profilewidget.cpp" line="1865"/>
         <source>▼</source>
         <translation>▼</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1866"/>
+        <location filename="src/profile/profilewidget.cpp" line="1867"/>
         <source>▲</source>
         <translation>▲</translation>
+    </message>
+    <message>
+        <location filename="src/profile/profilewidget.cpp" line="2000"/>
+        <source>&lt;b&gt;Alternate: %1.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</source>
+        <translation>&lt;b&gt;Ausweichflugplatz: %1.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
+    </message>
+    <message>
+        <location filename="src/profile/profilewidget.cpp" line="2013"/>
+        <source>&lt;b&gt;Destination: %1 (%2). Top of Descent: %3%4.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</source>
+        <translation>&lt;b&gt;Ziel: %1 (%2). Anfang vom Sinkflug: %3%4.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
+    </message>
+    <message>
+        <location filename="src/profile/profilewidget.cpp" line="2017"/>
+        <source>(%1)</source>
+        <translation>(%1)</translation>
+    </message>
+    <message>
+        <location filename="src/profile/profilewidget.cpp" line="2021"/>
+        <source>&lt;b&gt;Destination: %1.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</source>
+        <translation>&lt;b&gt;Ziel: %1.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
     </message>
     <message>
         <source> Ground Elevation </source>
@@ -22705,12 +22724,12 @@ Wollen Sie diese Prozedur wirklich verwenden?</translation>
         <translation type="vanished">, %1Wind %2°M, %3</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1857"/>
+        <location filename="src/profile/profilewidget.cpp" line="1858"/>
         <source>Manual </source>
         <translation>Manuell </translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1857"/>
+        <location filename="src/profile/profilewidget.cpp" line="1858"/>
         <source>%1Wind: </source>
         <translation>%1Wind: </translation>
     </message>
@@ -22723,32 +22742,29 @@ Wollen Sie diese Prozedur wirklich verwenden?</translation>
         <translation type="vanished">►</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1867"/>
+        <location filename="src/profile/profilewidget.cpp" line="1868"/>
         <source>, %1 %2</source>
         <translation>, %1 %2</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="1999"/>
         <source>&lt;b&gt;To Alternate: %1.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</source>
-        <translation>&lt;b&gt;Zum Ausweichflugplatz: %1.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
+        <translation type="vanished">&lt;b&gt;Zum Ausweichflugplatz: %1.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2007"/>
         <source>&lt;b&gt;To Destination: %1, to Top of Descent: %2.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</source>
-        <translation>&lt;b&gt;Zum Ziel: %1, Zum Anfang vom Sinkflug: %2.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
+        <translation type="vanished">&lt;b&gt;Zum Ziel: %1, Zum Anfang vom Sinkflug: %2.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2009"/>
+        <location filename="src/profile/profilewidget.cpp" line="2016"/>
         <source>Passed</source>
         <translation>Vorbei</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2012"/>
         <source>&lt;b&gt;To Destination: %1.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</source>
-        <translation>&lt;b&gt;Zum Ziel: %1.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
+        <translation type="vanished">&lt;b&gt;Zum Ziel: %1.&lt;/b&gt;&amp;nbsp;&amp;nbsp;</translation>
     </message>
     <message>
-        <location filename="src/profile/profilewidget.cpp" line="2179"/>
+        <location filename="src/profile/profilewidget.cpp" line="2188"/>
         <source>Jumped back to aircraft.</source>
         <translation>Zurück zum Flugzeug gesprungen.</translation>
     </message>
