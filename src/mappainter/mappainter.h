@@ -100,6 +100,7 @@ struct PaintContext
   opts2::Flags2 flags2;
   map::MapWeatherSource weatherSource;
   bool visibleWidget;
+  bool paintCopyright = true;
 
   /* Text sizes and line thickness in percent / 100 */
   float textSizeAircraftAi = 1.f;

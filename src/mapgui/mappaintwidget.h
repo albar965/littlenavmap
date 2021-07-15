@@ -308,6 +308,16 @@ public:
     noNavPaint = value;
   }
 
+  bool isPaintCopyright() const
+  {
+    return paintCopyright;
+  }
+
+  void setPaintCopyright(bool value)
+  {
+    paintCopyright = value;
+  }
+
   ApronGeometryCache *getApronGeometryCache();
 
   /* true if real map display widget - false if hidden for online services or other applications */
@@ -462,6 +472,9 @@ protected:
 
   /* Dummy paint cycle without any navigation stuff. Just used to initialize Marble */
   bool noNavPaint = false;
+
+  /* Paint copyright note into image */
+  bool paintCopyright = true;
 
   /* Index of the theme combo box in the toolbar */
   map::MapThemeComboIndex currentThemeIndex = map::INVALID_THEME;

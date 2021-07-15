@@ -248,6 +248,9 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
 
       mapPaintWidget->showRectStreamlined(rect);
 
+      // Disable copyright note
+      mapPaintWidget->setPaintCopyright(false);
+
       MapPixmap mapPixmap;
 
       // No distance requested. Therefore requested is equal to actual

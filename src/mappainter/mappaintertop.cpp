@@ -148,7 +148,7 @@ void MapPainterTop::render()
 void MapPainterTop::paintCopyright()
 {
   QString mapCopyright = NavApp::getMapCopyright();
-  if(!mapCopyright.isEmpty())
+  if(!mapCopyright.isEmpty() && context->paintCopyright)
   {
     Marble::GeoPainter *painter = context->painter;
     atools::util::PainterContextSaver saver(painter);
