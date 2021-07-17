@@ -2014,7 +2014,7 @@ void ProfileWidget::updateLabel()
                            arg(Unit::distNm(distToDestNm)).
                            arg(formatter::formatMinutesHoursLong(fuelTime.timeToDest)).
                            arg(toTod > 0.f ? Unit::distNm(toTod) : tr("Passed")).
-                           arg(toTod > 0.f ? tr("(%1)").
+                           arg(toTod > 0.f ? tr(" (%1)").
                                arg(formatter::formatMinutesHoursLong(fuelTime.timeToTod)) : QString());
         }
         else

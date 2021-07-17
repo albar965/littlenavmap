@@ -22699,8 +22699,9 @@ Wollen Sie diese Prozedur wirklich verwenden?</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="2017"/>
-        <source>(%1)</source>
-        <translation>(%1)</translation>
+        <source> (%1)</source>
+        <oldsource>(%1)</oldsource>
+        <translation> (%1)</translation>
     </message>
     <message>
         <location filename="src/profile/profilewidget.cpp" line="2021"/>
