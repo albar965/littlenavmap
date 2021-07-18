@@ -324,12 +324,11 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(ui->actionRouteVisibleColumns, &QAction::triggered, this, &RouteController::visibleColumnsTriggered);
   connect(ui->pushButtonRouteSettings, &QPushButton::clicked, this, &RouteController::visibleColumnsTriggered);
 
-  connect(this, &RouteController::routeChanged, routeWindow, &RouteCalcWindow::updateWidgets);
+  connect(this, &RouteController::routeChanged, routeWindow, &RouteCalcWindow::routeChanged);
   connect(routeWindow, &RouteCalcWindow::calculateClicked, this, &RouteController::calculateRoute);
   connect(routeWindow, &RouteCalcWindow::calculateDirectClicked, this, &RouteController::calculateDirect);
   connect(routeWindow, &RouteCalcWindow::calculateReverseClicked, this, &RouteController::reverseRoute);
-  connect(routeWindow, &RouteCalcWindow::downloadTrackClicked,
-          NavApp::getTrackController(), &TrackController::startDownload);
+  connect(routeWindow, &RouteCalcWindow::downloadTrackClicked, NavApp::getTrackController(), &TrackController::startDownload);
 
   connect(ui->labelRouteInfo, &QLabel::linkActivated, this, &RouteController::flightplanLabelLinkActivated);
 }
@@ -1510,7 +1509,7 @@ void RouteController::beforeRouteCalc()
 void RouteController::calculateRouteWindowSelection()
 {
   qDebug() << Q_FUNC_INFO;
-  routeWindow->showForSelectionCalculation(selectedRows, canCalcSelection());
+  routeWindow->showForSelectionCalculation();
   routeWindow->setCruisingAltitudeFt(route.getCruisingAltitudeFeet());
   NavApp::showRouteCalc();
 }
@@ -2695,7 +2694,7 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
 
   NavApp::getMainUi()->pushButtonRouteClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
 
-  routeWindow->selectionChanged(selectedRows, canCalcSelection());
+  routeWindow->selectionChanged();
 
   emit routeSelectionChanged(selectedRowSize, model->rowCount());
 

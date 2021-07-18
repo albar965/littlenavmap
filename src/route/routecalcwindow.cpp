@@ -20,6 +20,7 @@
 #include "gui/helphandler.h"
 #include "gui/widgetstate.h"
 #include "common/constants.h"
+#include "route/routecontroller.h"
 #include "common/unit.h"
 #include "navapp.h"
 #include "atools.h"
@@ -90,20 +91,27 @@ void RouteCalcWindow::showForFullCalculation()
   updateWidgets();
 }
 
-void RouteCalcWindow::showForSelectionCalculation(const QList<int>& selectedRows, bool canCalc)
+void RouteCalcWindow::showForSelectionCalculation()
 {
-  canCalculateSelection = canCalc;
-  fromIndex = selectedRows.isEmpty() ? -1 : selectedRows.first();
-  toIndex = selectedRows.isEmpty() ? -1 : selectedRows.last();
+  selectionChanged();
   NavApp::getMainUi()->radioButtonRouteCalcSelection->setChecked(true);
-  updateWidgets();
 }
 
-void RouteCalcWindow::selectionChanged(const QList<int>& selectedRows, bool canCalc)
+void RouteCalcWindow::selectionChanged()
 {
-  canCalculateSelection = canCalc;
-  fromIndex = selectedRows.isEmpty() ? -1 : selectedRows.first();
-  toIndex = selectedRows.isEmpty() ? -1 : selectedRows.last();
+  routeChanged();
+}
+
+void RouteCalcWindow::routeChanged()
+{
+  QList<int> selLegIndexes;
+  NavApp::getRouteController()->getSelectedRouteLegs(selLegIndexes);
+  std::sort(selLegIndexes.begin(), selLegIndexes.end());
+
+  fromIndex = selLegIndexes.isEmpty() ? -1 : selLegIndexes.first();
+  toIndex = selLegIndexes.isEmpty() ? -1 : selLegIndexes.last();
+
+  canCalculateSelection = NavApp::getRouteConst().canCalcSelection(fromIndex, toIndex);
 
   updateWidgets();
 }
