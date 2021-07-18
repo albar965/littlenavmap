@@ -152,7 +152,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("distance", tr("Distance\n%dist%")).distanceCol()).
   append(Column("heading", tr("Heading\n°T")).distanceCol()).
   append(Column("ident", tr("Ident")).defaultSort()).
-  append(Column("icao", tr("ICAO")).hidden()). // Equal to ident for almost all - still allow column in search
+  append(Column("icao", tr("ICAO"))).
   append(Column("faa", tr("FAA"))).
   append(Column("iata", tr("IATA"))).
   append(Column("local", tr("Local\nCode"))).
