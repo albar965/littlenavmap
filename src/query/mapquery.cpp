@@ -90,11 +90,20 @@ MapQuery::~MapQuery()
   delete mapTypesFactory;
 }
 
-bool MapQuery::hasAnyArrivalProcedures(const map::MapAirport& airport)
+bool MapQuery::hasProcedures(const map::MapAirport& airport)
 {
   map::MapAirport airportNav = getAirportNav(airport);
   if(airportNav.isValid())
-    return NavApp::getAirportQueryNav()->hasAnyArrivalProcedures(airportNav.ident);
+    return NavApp::getAirportQueryNav()->hasProcedures(airportNav);
+
+  return false;
+}
+
+bool MapQuery::hasArrivalProcedures(const map::MapAirport& airport)
+{
+  map::MapAirport airportNav = getAirportNav(airport);
+  if(airportNav.isValid())
+    return NavApp::getAirportQueryNav()->hasArrivalProcedures(airportNav);
 
   return false;
 }
@@ -103,7 +112,7 @@ bool MapQuery::hasDepartureProcedures(const map::MapAirport& airport)
 {
   map::MapAirport airportNav = getAirportNav(airport);
   if(airportNav.isValid())
-    return NavApp::getAirportQueryNav()->hasDepartureProcedures(airportNav.ident);
+    return NavApp::getAirportQueryNav()->hasDepartureProcedures(airportNav);
 
   return false;
 }
@@ -113,8 +122,7 @@ map::MapAirport MapQuery::getAirportSim(const map::MapAirport& airport)
   if(airport.navdata)
   {
     map::MapAirport retval;
-    NavApp::getAirportQuerySim()->getAirportFuzzy(retval, airport.ident, airport.icao, airport.faa, airport.local,
-                                                  airport.position);
+    NavApp::getAirportQuerySim()->getAirportFuzzy(retval, airport);
     return retval;
   }
   return airport;
@@ -125,8 +133,7 @@ map::MapAirport MapQuery::getAirportNav(const map::MapAirport& airport)
   if(!airport.navdata)
   {
     map::MapAirport retval;
-    NavApp::getAirportQueryNav()->getAirportFuzzy(retval, airport.ident, airport.icao, airport.faa, airport.local,
-                                                  airport.position);
+    NavApp::getAirportQueryNav()->getAirportFuzzy(retval, airport);
     return retval;
   }
   return airport;
@@ -135,15 +142,13 @@ map::MapAirport MapQuery::getAirportNav(const map::MapAirport& airport)
 void MapQuery::getAirportSimReplace(map::MapAirport& airport)
 {
   if(airport.navdata)
-    NavApp::getAirportQuerySim()->getAirportFuzzy(airport, airport.ident, airport.icao, airport.faa, airport.local,
-                                                  airport.position);
+    NavApp::getAirportQuerySim()->getAirportFuzzy(airport, airport);
 }
 
 void MapQuery::getAirportNavReplace(map::MapAirport& airport)
 {
   if(!airport.navdata)
-    NavApp::getAirportQueryNav()->getAirportFuzzy(airport, airport.ident, airport.icao, airport.faa, airport.local,
-                                                  airport.position);
+    NavApp::getAirportQueryNav()->getAirportFuzzy(airport, airport);
 }
 
 void MapQuery::getVorForWaypoint(map::MapVor& vor, int waypointId)
@@ -275,9 +280,9 @@ map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float dist
 
 void MapQuery::getMapObjectByIdent(map::MapResult& result, map::MapTypes type,
                                    const QString& ident, const QString& region, const QString& airport,
-                                   const Pos& sortByDistancePos, float maxDistance, bool airportFromNavDatabase)
+                                   const Pos& sortByDistancePos, float maxDistanceMeter, bool airportFromNavDatabase)
 {
-  mapObjectByIdentInternal(result, type, ident, region, airport, sortByDistancePos, maxDistance,
+  mapObjectByIdentInternal(result, type, ident, region, airport, sortByDistancePos, maxDistanceMeter,
                            airportFromNavDatabase);
 }
 
@@ -290,32 +295,35 @@ void MapQuery::getMapObjectByIdent(map::MapResult& result, map::MapTypes type, c
 
 void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes type, const QString& ident,
                                         const QString& region, const QString& airport, const Pos& sortByDistancePos,
-                                        float maxDistance, bool airportFromNavDatabase)
+                                        float maxDistanceMeter, bool airportFromNavDatabase)
 {
   if(type & map::AIRPORT)
   {
     map::MapAirport ap;
 
+    // Try ident first =====================
     if(airportFromNavDatabase)
       NavApp::getAirportQueryNav()->getAirportByIdent(ap, ident);
     else
       NavApp::getAirportQuerySim()->getAirportByIdent(ap, ident);
 
-    if(!ap.isValid())
+    if(ap.isValid())
+      result.airports.append(ap);
+    else
     {
-      // Try to query using the real ICAO ident vs. X-Plane artifical ids
+      // Try fuzzy search for nearest by official ids =====================
+      QList<map::MapAirport> airports;
+
+      // Look through all fields (ICAO, IATA, FAA and local) for the given ident
       if(airportFromNavDatabase)
-        NavApp::getAirportQueryNav()->getAirportByIcao(ap, ident);
+        NavApp::getAirportQueryNav()->getAirportsByOfficialIdent(airports, ident);
       else
-        NavApp::getAirportQuerySim()->getAirportByIcao(ap, ident);
+        NavApp::getAirportQuerySim()->getAirportsByOfficialIdent(airports, ident);
+      result.airports.append(airports);
     }
 
-    if(ap.isValid())
-    {
-      result.airports.append(ap);
-      maptools::sortByDistance(result.airports, sortByDistancePos);
-      maptools::removeByDistance(result.airports, sortByDistancePos, maxDistance);
-    }
+    maptools::sortByDistance(result.airports, sortByDistancePos);
+    maptools::removeByDistance(result.airports, sortByDistancePos, maxDistanceMeter);
   }
 
   if(type & map::VOR)
@@ -330,7 +338,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
       result.vors.append(vor);
     }
     maptools::sortByDistance(result.vors, sortByDistancePos);
-    maptools::removeByDistance(result.vors, sortByDistancePos, maxDistance);
+    maptools::removeByDistance(result.vors, sortByDistancePos, maxDistanceMeter);
   }
 
   if(type & map::NDB)
@@ -345,14 +353,14 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
       result.ndbs.append(ndb);
     }
     maptools::sortByDistance(result.ndbs, sortByDistancePos);
-    maptools::removeByDistance(result.ndbs, sortByDistancePos, maxDistance);
+    maptools::removeByDistance(result.ndbs, sortByDistancePos, maxDistanceMeter);
   }
 
   if(type & map::WAYPOINT)
   {
     NavApp::getWaypointTrackQuery()->getWaypointByIdent(result.waypoints, ident, region);
     maptools::sortByDistance(result.waypoints, sortByDistancePos);
-    maptools::removeByDistance(result.waypoints, sortByDistancePos, maxDistance);
+    maptools::removeByDistance(result.waypoints, sortByDistancePos, maxDistanceMeter);
   }
 
   if(type & map::ILS)
@@ -367,7 +375,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
       result.ils.append(ils);
     }
     maptools::sortByDistance(result.ils, sortByDistancePos);
-    maptools::removeByDistance(result.ils, sortByDistancePos, maxDistance);
+    maptools::removeByDistance(result.ils, sortByDistancePos, maxDistanceMeter);
   }
 
   if(type & map::RUNWAYEND)

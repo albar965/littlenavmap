@@ -22,6 +22,7 @@
 #include "navapp.h"
 #include "settings/settings.h"
 #include "query/procedurequery.h"
+#include "query/airportquery.h"
 #include "route/routecontroller.h"
 #include "fs/pln/flightplan.h"
 #include "gui/helphandler.h"
@@ -277,26 +278,37 @@ void RouteStringDialog::readButtonClicked()
   flightplan->clear();
   flightplan->getProperties().clear();
 
-  bool success = routeStringReader->createRouteFromString(
-    ui->plainTextEditRouteString->toPlainText(), options, flightplan, nullptr, &speedKts, &altitudeIncluded);
+  bool success = routeStringReader->createRouteFromString(ui->plainTextEditRouteString->toPlainText(), options,
+                                                          flightplan, nullptr, &speedKts, &altitudeIncluded);
 
   ui->textEditRouteStringErrors->clear();
 
   QGuiApplication::restoreOverrideCursor();
 
-  QString msg;
-
   if(success)
   {
-    QString from = (!flightplan->getDepartureName().isEmpty() &&
-                    flightplan->getDepartureName() != flightplan->getDepartureIdent()) ?
-                   tr("%1 (%2)").arg(flightplan->getDepartureName()).arg(flightplan->getDepartureIdent()) :
-                   tr("%1").arg(flightplan->getDepartureIdent());
+    QString msg, from, to;
+    AirportQuery *airportQuery = NavApp::getAirportQuerySim();
 
-    QString to = (!flightplan->getDestinationName().isEmpty() &&
-                  flightplan->getDestinationName() != flightplan->getDestinationIdent()) ?
-                 tr("%1 (%2)").arg(flightplan->getDestinationName()).arg(flightplan->getDestinationIdent()) :
-                 tr("%1").arg(flightplan->getDestinationIdent());
+    if(!flightplan->getDepartureName().isEmpty() &&
+       flightplan->getDepartureName() != flightplan->getDepartureIdent())
+      // Departure is airport
+      from = tr("%1 (%2)").
+             arg(flightplan->getDepartureName()).
+             arg(airportQuery->getDisplayIdent(flightplan->getDepartureIdent()));
+    else
+      // Departure is waypoint
+      from = tr("%1").arg(flightplan->getDepartureIdent());
+
+    if(!flightplan->getDestinationName().isEmpty() &&
+       flightplan->getDestinationName() != flightplan->getDestinationIdent())
+      // Departure is airport
+      to = tr("%1 (%2)").
+           arg(flightplan->getDestinationName()).
+           arg(airportQuery->getDisplayIdent(flightplan->getDestinationIdent()));
+    else
+      // Departure is waypoint
+      to = tr("%1").arg(flightplan->getDestinationIdent());
 
     msg = tr("Flight plan from <b>%1</b> to <b>%2</b>.<br/>").arg(from).arg(to);
 
@@ -304,7 +316,12 @@ void RouteStringDialog::readButtonClicked()
 
     QStringList idents;
     for(apln::FlightplanEntry& entry : flightplan->getEntries())
-      idents.append(entry.getIdent());
+    {
+      if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
+        idents.append(airportQuery->getDisplayIdent(entry.getIdent()));
+      else
+        idents.append(entry.getIdent());
+    }
 
     if(!idents.isEmpty())
       msg.append(tr("Found %1 %2: <b>%3</b>.<br/>").

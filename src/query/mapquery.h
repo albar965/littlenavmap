@@ -101,7 +101,7 @@ public:
   void getMapObjectByIdent(map::MapResult& result, map::MapTypes type,
                            const QString& ident, const QString& region = QString(), const QString& airport = QString(),
                            const atools::geo::Pos& sortByDistancePos = atools::geo::EMPTY_POS,
-                           float maxDistance = map::INVALID_DISTANCE_VALUE, bool airportFromNavDatabase = false);
+                           float maxDistanceMeter = map::INVALID_DISTANCE_VALUE, bool airportFromNavDatabase = false);
 
   void getMapObjectByIdent(map::MapResult& result, map::MapTypes type,
                            const QString& ident, const QString& region,
@@ -190,7 +190,9 @@ public:
   /* Create and prepare all queries */
   void deInitQueries();
 
-  bool hasAnyArrivalProcedures(const map::MapAirport& airport);
+  /* Check in navdatabase (Navigraph or other) if airport has procedures */
+  bool hasProcedures(const map::MapAirport& airport);
+  bool hasArrivalProcedures(const map::MapAirport& airport);
   bool hasDepartureProcedures(const map::MapAirport& airport);
 
 private:
@@ -200,7 +202,7 @@ private:
   void mapObjectByIdentInternal(map::MapResult& result, map::MapTypes type,
                                 const QString& ident, const QString& region, const QString& airport,
                                 const atools::geo::Pos& sortByDistancePos,
-                                float maxDistance, bool airportFromNavDatabase);
+                                float maxDistanceMeter, bool airportFromNavDatabase);
 
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                               atools::sql::SqlQuery *query,

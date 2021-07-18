@@ -160,6 +160,9 @@ public:
     return first();
   }
 
+  /* Returns an empty leg if the index is not valid */
+  const RouteLeg& getLegAt(int index) const;
+
   /* First leg of departure procedure. 1 if SID used otherwise 0. */
   int getSidLegIndex() const;
   const RouteLeg& getSidLeg() const;
@@ -602,8 +605,12 @@ public:
 
   void clearFlightplanAlternateProperties();
 
-  /* Get ICAO idents of all alternates */
+  /* Get idents of all alternates */
   QStringList getAlternateIdents() const;
+
+  /* Get display idents (ICAO, IATA, FAA or local) of all alternates */
+  QStringList getAlternateDisplayIdents() const;
+
   void updateAlternateProperties();
   QVector<map::MapAirport> getAlternateAirports() const;
 

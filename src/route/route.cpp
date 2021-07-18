@@ -1117,14 +1117,18 @@ void Route::updateAlternateProperties()
 
 QStringList Route::getAlternateIdents() const
 {
-  QStringList alternates;
-  int offset = getAlternateLegsOffset();
-  if(offset != map::INVALID_INDEX_VALUE)
-  {
-    for(int idx = offset; idx < offset + getNumAlternateLegs(); idx++)
-      alternates.append(value(idx).getIdent());
-  }
-  return alternates;
+  QStringList alternateIdents;
+  for(const map::MapAirport& airport : getAlternateAirports())
+    alternateIdents.append(airport.ident);
+  return alternateIdents;
+}
+
+QStringList Route::getAlternateDisplayIdents() const
+{
+  QStringList alternateIdents;
+  for(const map::MapAirport& airport : getAlternateAirports())
+    alternateIdents.append(airport.displayIdent());
+  return alternateIdents;
 }
 
 QVector<map::MapAirport> Route::getAlternateAirports() const
@@ -1859,6 +1863,14 @@ void Route::setDepartureStart(const map::MapStart& departureStart)
     qWarning() << Q_FUNC_INFO << "invalid index" << idx;
 }
 
+const RouteLeg& Route::getLegAt(int index) const
+{
+  if(index >= 0 && index < size())
+    return at(index);
+  else
+    return EMPTY_ROUTELEG;
+}
+
 bool Route::isAirportDeparture(const QString& ident) const
 {
   return !isEmpty() && first().getAirport().isValid() && first().getAirport().ident == ident;
@@ -1872,7 +1884,7 @@ bool Route::isAirportDestination(const QString& ident) const
 
 bool Route::isAirportAlternate(const QString& ident) const
 {
-  return !isEmpty() && getAlternateIdents().contains(ident);
+  return !isEmpty() && (getAlternateIdents().contains(ident) || getAlternateDisplayIdents().contains(ident));
 }
 
 bool Route::isAirportRoundTrip(const QString& ident) const
@@ -1898,7 +1910,7 @@ void Route::getAirportProcedureFlags(const map::MapAirport& airport, int index, 
   if(airport.isValid())
   {
     hasDeparture = NavApp::getMapQuery()->hasDepartureProcedures(airport);
-    hasAnyArrival = NavApp::getMapQuery()->hasAnyArrivalProcedures(airport);
+    hasAnyArrival = NavApp::getMapQuery()->hasArrivalProcedures(airport);
 
     if(index == -1)
     {
@@ -2624,6 +2636,20 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
       plan.setRouteType(atools::fs::pln::LOW_ALTITUDE);
     else
       plan.setRouteType(atools::fs::pln::HIGH_ALTITUDE);
+  }
+
+  if(options.testFlag(rf::XPLANE_REPLACE_AIRPORT_IDENTS))
+  {
+    // Replace X-Plane waypoint idents with official ones for airports
+    // XP does not accept other codes in departure and destination fields
+    route.updateIndicesAndOffsets();
+
+    for(int i = 0; i < entries.size(); i++)
+    {
+      FlightplanEntry& entry = entries[i];
+      if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
+        entry.setIdent(route.getLegAt(i).getAirport().displayIdent());
+    }
   }
 
   if(options.testFlag(rf::ISG_USER_WP_NAMES))

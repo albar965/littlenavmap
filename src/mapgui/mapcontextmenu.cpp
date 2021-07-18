@@ -1260,7 +1260,7 @@ void MapContextMenu::procedureFlags(const map::MapBase *base, bool *departure, b
       *roundtrip = NavApp::getRouteConst().isAirportRoundTrip(airport->ident);
 
     if(arrivalProc != nullptr)
-      *arrivalProc = NavApp::getMapQuery()->hasAnyArrivalProcedures(*airport);
+      *arrivalProc = NavApp::getMapQuery()->hasArrivalProcedures(*airport);
     if(departureProc != nullptr)
       *departureProc = NavApp::getMapQuery()->hasDepartureProcedures(*airport);
   }

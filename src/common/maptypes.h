@@ -331,7 +331,6 @@ struct MapAirport
            iata, /* IATA ident */
            faa, /* FAA code */
            local, /* Local code */
-           xpident, /* X-Plane internal unique ident - mostly ICAO */
            name, /* Full name */
            region; /* Two letter region code */
 
@@ -348,7 +347,7 @@ struct MapAirport
   int routeIndex = -1;
 
   /* One of ident, ICAO, IATA or local code. Use only for display purposes and not for queries. */
-  const QString& displayIdent() const;
+  const QString& displayIdent(bool useIata = true) const;
 
   bool closed() const;
   bool hard() const;

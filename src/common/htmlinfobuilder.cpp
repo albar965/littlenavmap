@@ -192,25 +192,26 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(!print)
     bearingToUserText(airport.position, airport.magvar, html);
 
-  // Administrative information ======================
-
-  if(info || airport.icao != airport.ident)
+  // Idents and codes ======================
+  const QString displayIdent = airport.displayIdent();
+  if(info || airport.icao != displayIdent)
     html.row2If(tr("ICAO:"), airport.icao);
 
-  if(info || airport.faa != airport.ident)
+  if(info || airport.faa != displayIdent)
     html.row2If(tr("FAA:"), airport.faa);
 
-  if(info || airport.iata != airport.ident)
+  if(info || airport.iata != displayIdent)
     html.row2If(tr("IATA:"), airport.iata);
 
-  if(info || airport.local != airport.ident)
+  if(info || airport.local != displayIdent)
     html.row2If(tr("Local Code:"), airport.local);
 
-  if(info || airport.xpident != airport.ident)
-    html.row2If(tr("X-Plane Ident:"), airport.xpident);
+  if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11 && (info || airport.ident != displayIdent))
+    html.row2If(tr("X-Plane Ident:"), airport.ident);
 
   html.row2If(tr("Region:"), airport.region);
 
+  // Administrative information ======================
   QString city, state, country;
   airportQuerySim->getAirportAdminNamesById(airport.id, city, state, country);
   html.row2If(tr("City:"), city);
@@ -294,7 +295,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(airport.flags.testFlag(AP_JETFUEL))
     facilities.append(tr("Jetfuel"));
 
-  if(airportQueryNav->hasProcedures(airport.ident))
+  if(mapQuery->hasProcedures(airport))
     facilities.append(tr("Procedures"));
 
   if(airport.flags.testFlag(AP_ILS))
@@ -4149,10 +4150,11 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
 
   // Links ============================================
   QStringList links;
+  // Use internal id for X-Plane gateway since this includes the long internal idents
   if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
     links.append(html.cleared().a(tr("X-Plane Scenery Gateway"),
                                   QString("https://gateway.x-plane.com/scenery/page/%1").
-                                  arg(airport.xpident), ahtml::LINK_NO_UL).getHtml());
+                                  arg(airport.ident), ahtml::LINK_NO_UL).getHtml());
 
   // Check if airport is in navdata
   MapAirport airportNav = mapQuery->getAirportNav(airport);

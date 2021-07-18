@@ -107,7 +107,7 @@ public:
   QString getIdent() const;
 
   /* Ident, ICAO, IATA or local for airport. Otherwise same as above. */
-  QString getDisplayIdent() const;
+  QString getDisplayIdent(bool useIata = true) const;
 
   /* Comment section from flight plan entry */
   QString getComment() const;
