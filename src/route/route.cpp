@@ -2448,7 +2448,8 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
           int number = 0;
           QString rw, designator;
 
-          if(leg.getProcedureType() & proc::PROCEDURE_SID_ALL)
+          // Keep SID and STAR waypoints but remove transition waypoints
+          if(leg.getProcedureType() & proc::PROCEDURE_SID)
           {
             // Clear procedure flag to keep legs in plan
             entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
@@ -2457,7 +2458,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
             // entry.setAirport(leg.getAirport());
             rw = sid.procedureRunway;
           }
-          else if(leg.getProcedureType() & proc::PROCEDURE_STAR_ALL)
+          else if(leg.getProcedureType() & proc::PROCEDURE_STAR)
           {
             // Clear procedure flag to keep legs in plan
             entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
@@ -2559,7 +2560,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 
         atools::fs::util::runwayNameSplit(appr.procedureRunway, &number, &designator);
         entry.setRunway(QString::number(number), atools::fs::util::runwayDesignatorLong(designator));
-        entry.setApproach(appr.approachType, appr.approachSuffix);
+        entry.setApproach(appr.approachType, appr.approachSuffix, appr.transitionFixIdent);
       }
     }
 
