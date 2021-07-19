@@ -2369,6 +2369,18 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     saveApproachWp = true;
 
   // First remove properties and procedure structures if needed ====================================
+
+  if(msfs)
+  {
+    // Remove transitions - these are not saved
+    route.clearProcedures(proc::PROCEDURE_ANY_TRANSITION);
+    route.clearFlightplanProcedureProperties(proc::PROCEDURE_ANY_TRANSITION);
+
+    // Remove missed but keep transition legs
+    route.clearProcedureLegs(proc::PROCEDURE_MISSED);
+    route.updateIndicesAndOffsets();
+  }
+
   if(saveApproachWp)
   {
     route.clearProcedures(proc::PROCEDURE_ARRIVAL);
@@ -2448,24 +2460,38 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
           int number = 0;
           QString rw, designator;
 
-          // Keep SID and STAR waypoints but remove transition waypoints
+          // Keep SID and STAR waypoints but keep transition waypoints
+#ifdef DEBUG_MSFS_TRANSITION_EXTENSION
           if(leg.getProcedureType() & proc::PROCEDURE_SID)
+#else
+          if(leg.getProcedureType() & proc::PROCEDURE_SID_ALL)
+#endif
           {
-            // Clear procedure flag to keep legs in plan
+            // Clear procedure flag to keep SID and transition legs in plan
             entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
 
-            entry.setSid(sid.approachFixIdent);
-            // entry.setAirport(leg.getAirport());
-            rw = sid.procedureRunway;
+            if(leg.getProcedureType() & proc::PROCEDURE_SID)
+            {
+              // Set entry to SID but not transition
+              entry.setSid(sid.approachFixIdent);
+              rw = sid.procedureRunway;
+            }
           }
+#ifdef DEBUG_MSFS_TRANSITION_EXTENSION
           else if(leg.getProcedureType() & proc::PROCEDURE_STAR)
+#else
+          else if(leg.getProcedureType() & proc::PROCEDURE_STAR_ALL)
+#endif
           {
-            // Clear procedure flag to keep legs in plan
+            // Clear procedure flag to keep STAR and transition legs in plan
             entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
 
-            entry.setStar(star.approachFixIdent);
-            // entry.setAirport(origRoute.getDestinationAirportLeg().getIdent());
-            rw = star.procedureRunway;
+            if(leg.getProcedureType() & proc::PROCEDURE_STAR)
+            {
+              // Set entry to STAR but not transition
+              entry.setStar(star.approachFixIdent);
+              rw = star.procedureRunway;
+            }
           }
 
           if(!rw.isEmpty())
@@ -2516,11 +2542,12 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
             entry.setIdent(leg.getProcedureLeg().fixIdent);
           else
           {
+            QString legText = leg.getProcedureLeg().displayText.join(" ");
             if(msfs)
               // More relaxed than FSX
-              entry.setIdent(atools::fs::util::adjustMsfsUserWpName(leg.getProcedureLeg().displayText.join(" ")));
+              entry.setIdent(atools::fs::util::adjustMsfsUserWpName(legText));
             else
-              entry.setIdent(atools::fs::util::adjustFsxUserWpName(leg.getProcedureLeg().displayText.join(" ")));
+              entry.setIdent(atools::fs::util::adjustFsxUserWpName(legText));
           }
         }
       } // if((saveApproachWp && (leg.getProcedureType() & proc::PROCEDURE_ARRIVAL)) || ...
