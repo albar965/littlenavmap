@@ -20,6 +20,7 @@
 #include "settings/settings.h"
 #include "web/requesthandler.h"
 #include "web/webmapcontroller.h"
+#include "webapi/webapicontroller.h"
 #include "web/webapp.h"
 #include "gui/helphandler.h"
 
@@ -64,6 +65,8 @@ WebController::WebController(QWidget *parent) :
   sslCertFile = listenerSettings.value("sslCertFile").toString();
 
   mapController = new WebMapController(parentWidget, verbose);
+  apiController = new WebApiController(parentWidget, verbose);
+
   htmlInfoBuilder = new HtmlInfoBuilder(parent, true /*info*/, true /*print*/);
   updateSettings();
 }
@@ -75,6 +78,7 @@ WebController::~WebController()
   stopServer();
 
   delete mapController;
+  delete apiController;
   delete htmlInfoBuilder;
 }
 
@@ -104,7 +108,7 @@ void WebController::startServer()
   // Start map
   mapController->init();
 
-  requestHandler = new RequestHandler(this, mapController, htmlInfoBuilder, verbose);
+  requestHandler = new RequestHandler(this, mapController, apiController, htmlInfoBuilder, verbose);
 
   // Set port - always override configuration file
   listenerSettings.insert("port", port);

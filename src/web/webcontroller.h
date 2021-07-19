@@ -30,6 +30,7 @@ class HttpListener;
 
 class RequestHandler;
 class WebMapController;
+class WebApiController;
 class HtmlInfoBuilder;
 class QSettings;
 
@@ -113,6 +114,9 @@ private:
 
   /* Map painter */
   WebMapController *mapController = nullptr;
+
+  /* Web API controller */
+  WebApiController *apiController = nullptr;
 
   /* Handles all HTTP requests using templates or static */
   RequestHandler *requestHandler = nullptr;
