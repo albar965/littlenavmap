@@ -116,6 +116,14 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
           this, &WeatherReporter::weatherDownloadSslErrors);
   connect(ivaoWeather, &WeatherNetDownload::weatherDownloadSslErrors,
           this, &WeatherReporter::weatherDownloadSslErrors);
+
+  // Forward signals from clients for progress
+  connect(noaaWeather, &NoaaWeatherDownloader::weatherDownloadProgress,
+          this, &WeatherReporter::weatherDownloadProgress);
+  connect(vatsimWeather, &WeatherNetDownload::weatherDownloadProgress,
+          this, &WeatherReporter::weatherDownloadProgress);
+  connect(ivaoWeather, &WeatherNetDownload::weatherDownloadProgress,
+          this, &WeatherReporter::weatherDownloadProgress);
 }
 
 WeatherReporter::~WeatherReporter()
@@ -126,6 +134,15 @@ WeatherReporter::~WeatherReporter()
   delete ivaoWeather;
 
   delete xpWeatherReader;
+}
+
+void WeatherReporter::weatherDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QString downloadUrl)
+{
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "bytesReceived" << bytesReceived << "bytesTotal" << bytesTotal
+             << "downloadUrl" << downloadUrl;
+
+  QApplication::processEvents(QEventLoop::WaitForMoreEvents);
 }
 
 void WeatherReporter::noaaWeatherUpdated()
