@@ -168,6 +168,7 @@
     <addaction name="separator"/>
     <addaction name="actionShowFloatingWindows"/>
     <addaction name="actionShowAllowDocking"/>
+    <addaction name="actionShowAllowMoving"/>
     <addaction name="separator"/>
     <addaction name="actionShowStatusbar"/>
     <addaction name="separator"/>
@@ -11774,6 +11775,23 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Ctrl+Shift+A</string>
    </property>
   </action>
+  <action name="actionShowAllowMoving">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Allow Window &amp;moving</string>
+   </property>
+   <property name="toolTip">
+    <string>Allows to move dock windows by clicking into the title bar.</string>
+   </property>
+   <property name="statusTip">
+    <string>Allows to move dock windows by clicking into the title bar.</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -11960,7 +11978,7 @@ Disabled if a navdatabase does not allow it.</string>
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupRouteCalc"/>
-  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
  </buttongroups>
 </ui>

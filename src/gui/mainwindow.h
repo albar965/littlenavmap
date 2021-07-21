@@ -242,8 +242,11 @@ private:
   void connectAllSlots();
   void mainWindowShown();
   void mainWindowShownDelayed();
+
+  /* Dock window functions */
   void raiseFloatingWindows();
   void allowDockingWindows();
+  void allowMovingWindows();
   void stayOnTop();
 
   /* Called by action */
