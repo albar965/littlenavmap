@@ -39,8 +39,11 @@ library changes and a new airport ident search for X-Plane.
 * Added function to disable the moving of dock windows by click and drag on the title bar. Uncheck
   `Allow Window moving` in menu `Window` to avoid accidental movement of dock windows which might
   mess up the window layout. You can still resize the dock windows at the border.
-* Fixed issue in MSFS PLN flight plan export where transition waypoints were exported wrongly with
-  procedure information.
+* Several fixes in MSFS flight plan export. Approach transition waypoints are now removed. Removing
+  airway for STAR entry waypoints. SID and STAR transitions can be used now. Keep in mind that some
+  information will be lost when reloading MSFS PLN files. Several problems with MSFS flight plan
+  import remain.
+* Localizer approaches were not recognized when loading MSFS PLN files into *Little Navmap*. Fixed now.
 * Fixed issue where flight plan calculation window header text was not updated on flight plan
   changes.
 * Showing status bar again which might be hidden after recent updates.
