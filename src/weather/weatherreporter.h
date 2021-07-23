@@ -189,6 +189,9 @@ private:
   void ivaoWeatherUpdated();
   void vatsimWeatherUpdated();
 
+  /* Call process events to minimize program stutters */
+  void weatherDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QString downloadUrl);
+
   /* Reset the error timer in all weather downloaders */
   void resetErrorState();
 

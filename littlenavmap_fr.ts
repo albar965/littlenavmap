@@ -17573,6 +17573,13 @@ Rating</source>
 Pilote</translation>
     </message>
     <message>
+        <location filename="src/search/onlineclientsearch.cpp" line="66"/>
+        <source>Connection
+Time</source>
+        <translation type="unfinished">Durée de
+Connexion</translation>
+    </message>
+    <message>
         <location filename="src/search/onlineclientsearch.cpp" line="200"/>
         <source>Yes</source>
         <translation>Oui</translation>

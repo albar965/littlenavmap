@@ -16191,6 +16191,12 @@ Rating</source>
 评分</translation>
     </message>
     <message>
+        <location filename="src/search/onlineclientsearch.cpp" line="66"/>
+        <source>Connection
+Time</source>
+        <translation>连线时间</translation>
+    </message>
+    <message>
         <location filename="src/search/onlineclientsearch.cpp" line="200"/>
         <source>Yes</source>
         <translation>是的</translation>

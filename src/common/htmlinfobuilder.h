@@ -304,7 +304,7 @@ private:
                              bool airportCol,
                              int maxRows) const;
   void nearestMapObjectsTextRow(const map::MapAirport& airport, atools::util::HtmlBuilder& html, const QString& type,
-                                const QString& ident, const QString& name, const QString& freq,
+                                const QString& displayIdent, const QString& name, const QString& freq,
                                 const map::MapBase *base,
                                 float magVar, bool frequencyCol, bool airportCol) const;
 

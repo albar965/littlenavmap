@@ -41,6 +41,7 @@
 #include "weather/windreporter.h"
 #include "grib/windquery.h"
 #include "options/optiondata.h"
+#include "perf/aircraftperfcontroller.h"
 
 #include <QPainter>
 #include <QTimer>
@@ -1129,7 +1130,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       const RouteLeg& departureLeg = route.getDepartureAirportLeg();
       if(departureLeg.getMapObjectType() == map::AIRPORT)
       {
-        int textW = painter.fontMetrics().width(departureLeg.getIdent());
+        int textW = painter.fontMetrics().width(departureLeg.getDisplayIdent());
         symPainter.drawAirportSymbol(&painter,
                                      departureLeg.getAirport(), left, flightplanY, airportSize, false, false, false);
         symPainter.drawAirportText(&painter, departureLeg.getAirport(), left - textW / 2, flightplanTextY,
@@ -1140,7 +1141,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       const RouteLeg& destinationLeg = route.getDestinationAirportLeg();
       if(destinationLeg.getMapObjectType() == map::AIRPORT)
       {
-        int textW = painter.fontMetrics().width(destinationLeg.getIdent());
+        int textW = painter.fontMetrics().width(destinationLeg.getDisplayIdent());
         symPainter.drawAirportSymbol(&painter, destinationLeg.getAirport(), left + w, flightplanY, airportSize, false,
                                      false, false);
         symPainter.drawAirportText(&painter, destinationLeg.getAirport(), left + w - textW / 2, flightplanTextY,
@@ -1777,7 +1778,7 @@ void ProfileWidget::buildTooltip(int x, bool force)
   if(routeLeg.isAnyProcedure() && proc::procedureLegFrom(routeLeg.getProcedureLegType()))
     fromTo = tr("from");
 
-  QString toWaypoint = atools::elideTextShort(routeLeg.getIdent(), 20);
+  QString toWaypoint = atools::elideTextShort(routeLeg.getDisplayIdent(), 20);
 
   // Create text for tooltip ==========================
   atools::util::HtmlBuilder html;
@@ -1996,20 +1997,28 @@ void ProfileWidget::updateLabel()
 
       if(curRoute.isActiveAlternate())
         // Use distance to alternate instead of destination
-        fixedLabelText = tr("<b>To Alternate: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(nearestLegDistance));
+        fixedLabelText = tr("<b>Alternate: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(nearestLegDistance));
       else
       {
         if(NavApp::getMapWidget()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN_TOC_TOD) &&
            curRoute.getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE)
         {
+          // Fuel and time calculated or estimated
+          FuelTimeResult fuelTime;
+          NavApp::getAircraftPerfController()->calculateFuelAndTimeTo(fuelTime, distToDestNm, nearestLegDistance,
+                                                                      curRoute.getActiveLegIndex());
+
           float toTod = curRoute.getTopOfDescentDistance() - distFromStartNm;
 
-          fixedLabelText = tr("<b>To Destination: %1, to Top of Descent: %2.</b>&nbsp;&nbsp;").
+          fixedLabelText = tr("<b>Destination: %1 (%2). Top of Descent: %3%4.</b>&nbsp;&nbsp;").
                            arg(Unit::distNm(distToDestNm)).
-                           arg(toTod > 0.f ? Unit::distNm(toTod) : tr("Passed"));
+                           arg(formatter::formatMinutesHoursLong(fuelTime.timeToDest)).
+                           arg(toTod > 0.f ? Unit::distNm(toTod) : tr("Passed")).
+                           arg(toTod > 0.f ? tr(" (%1)").
+                               arg(formatter::formatMinutesHoursLong(fuelTime.timeToTod)) : QString());
         }
         else
-          fixedLabelText = tr("<b>To Destination: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(distToDestNm));
+          fixedLabelText = tr("<b>Destination: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(distToDestNm));
       }
     }
     NavApp::getMainUi()->labelProfileInfo->setVisible(true);

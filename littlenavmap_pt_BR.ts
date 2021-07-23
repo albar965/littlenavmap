@@ -17029,6 +17029,13 @@ Rating</oldsource>
 Combinada</translation>
     </message>
     <message>
+        <location filename="src/search/onlineclientsearch.cpp" line="66"/>
+        <source>Connection
+Time</source>
+        <translation>Tempo
+de Conexão</translation>
+    </message>
+    <message>
         <location filename="src/search/onlineclientsearch.cpp" line="48"/>
         <source>Departure</source>
         <translation>Saída</translation>

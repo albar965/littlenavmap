@@ -17407,6 +17407,13 @@ Rating</source>
 Classificazione</translation>
     </message>
     <message>
+        <location filename="src/search/onlineclientsearch.cpp" line="66"/>
+        <source>Connection
+Time</source>
+        <translation>Connessione
+Durata</translation>
+    </message>
+    <message>
         <location filename="src/search/onlineclientsearch.cpp" line="200"/>
         <source>Yes</source>
         <translation>Sì</translation>

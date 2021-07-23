@@ -206,7 +206,8 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
 
     // ====================== Create for airport and assign parking position
     case atools::fs::pln::entry::AIRPORT:
-      mapQuery->getMapObjectByIdent(mapobjectResult, map::AIRPORT, flightplanEntry->getIdent());
+      mapQuery->getMapObjectByIdent(mapobjectResult, map::AIRPORT, flightplanEntry->getIdent(), QString(),
+                                    QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
       if(!mapobjectResult.airports.isEmpty())
       {
         assignAirport(mapobjectResult, flightplanEntry);
@@ -639,6 +640,14 @@ QString RouteLeg::getIdent() const
     return EMPTY_STRING;
 }
 
+QString RouteLeg::getDisplayIdent(bool useIata) const
+{
+  if(airport.isValid())
+    return airport.displayIdent(useIata);
+  else
+    return getIdent();
+}
+
 QString RouteLeg::getComment() const
 {
   return getFlightplanEntry().getComment();
@@ -834,7 +843,7 @@ bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors, bool
     if(invalid && errors != nullptr)
       // General violations message
       errors->prepend(tr("Leg to \"%1\" violates restrictions for airway \"%2\":").
-                      arg(getIdent()).arg(getAirwayName()));
+                      arg(getDisplayIdent()).arg(getAirwayName()));
     return invalid;
   }
   else
@@ -856,7 +865,7 @@ bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors, bool
       invalid = true;
       if(errors != nullptr)
         errors->append(tr("%1 %2 not found for %3.").
-                       arg(track ? tr("Track or airway") : tr("Airway")).arg(name).arg(getIdent()));
+                       arg(track ? tr("Track or airway") : tr("Airway")).arg(name).arg(getDisplayIdent()));
       if(trackError != nullptr)
         *trackError |= track;
     }

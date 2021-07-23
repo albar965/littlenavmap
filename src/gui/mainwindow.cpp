@@ -356,7 +356,10 @@ MainWindow::MainWindow()
     qDebug() << Q_FUNC_INFO << "Reading settings";
     restoreStateMain();
 
+    // Update window states based on actions
     allowDockingWindows();
+    allowMovingWindows();
+
     updateActionStates();
     updateMarkActionStates();
     updateHighlightActionStates();
@@ -1281,6 +1284,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionShowFloatingWindows, &QAction::triggered, this, &MainWindow::raiseFloatingWindows);
   connect(ui->actionWindowStayOnTop, &QAction::toggled, this, &MainWindow::stayOnTop);
   connect(ui->actionShowAllowDocking, &QAction::toggled, this, &MainWindow::allowDockingWindows);
+  connect(ui->actionShowAllowMoving, &QAction::toggled, this, &MainWindow::allowMovingWindows);
   connect(ui->actionShowFullscreenMap, &QAction::toggled, this, &MainWindow::fullScreenMapToggle);
 
   // File menu ============================================================
@@ -2343,8 +2347,7 @@ void MainWindow::routeOpenFileLnmStr(const QString& string)
 bool MainWindow::routeSaveSelection()
 {
   // Have to get snippet to be able to extract new name
-  atools::fs::pln::Flightplan plan = routeController->getFlightplanForSelection();
-  QString routeFile = routeSaveFileDialogLnm(RouteExport::buildDefaultFilename(plan));
+  QString routeFile = routeSaveFileDialogLnm(RouteExport::buildDefaultFilename(NavApp::getRouteConst()));
 
   if(!routeFile.isEmpty())
   {
@@ -3481,7 +3484,7 @@ void MainWindow::mainWindowShownDelayed()
 
   if(migrate::getOptionsVersion().isValid() &&
      migrate::getOptionsVersion() <= atools::util::Version("2.6.6") &&
-     atools::util::Version(QApplication::applicationVersion()) == atools::util::Version("2.6.7"))
+     atools::util::Version(QApplication::applicationVersion()) == atools::util::Version("2.6.15"))
   {
     qDebug() << Q_FUNC_INFO << "Fixing status bar visibility";
     ui->actionShowStatusbar->setChecked(true);
@@ -3557,10 +3560,24 @@ void MainWindow::stayOnTop()
   dockHandler->setStayOnTopMain(ui->actionWindowStayOnTop->isChecked());
 }
 
+void MainWindow::allowMovingWindows()
+{
+  qDebug() << Q_FUNC_INFO;
+  dockHandler->setMovingAllowed(ui->actionShowAllowMoving->isChecked());
+
+  if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
+    // Undockable map widget is not registered in handler
+    dockHandler->setMovingAllowed(ui->dockWidgetMap, ui->actionShowAllowMoving->isChecked());
+}
+
 void MainWindow::allowDockingWindows()
 {
   qDebug() << Q_FUNC_INFO;
   dockHandler->setDockingAllowed(ui->actionShowAllowDocking->isChecked());
+
+  if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
+    // Undockable map widget is not registered in handler
+    dockHandler->setDockingAllowed(ui->actionShowAllowDocking->isChecked());
 }
 
 void MainWindow::raiseFloatingWindows()
@@ -3568,7 +3585,7 @@ void MainWindow::raiseFloatingWindows()
   qDebug() << Q_FUNC_INFO;
   dockHandler->raiseFloatingWindows();
 
-  // Map window is not used by dockHandler
+  // Map window is not registered in dockHandler
   dockHandler->raiseFloatingWindow(ui->dockWidgetMap);
 
   // Avoid having random widget focus
@@ -3887,7 +3904,7 @@ void MainWindow::restoreStateMain()
                        ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
                        ui->actionRouteSaveAirwayWaypoints, ui->actionLogdataCreateLogbook, ui->actionMapShowSunShading,
                        ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude, ui->actionRunWebserver,
-                       ui->actionShowAllowDocking, ui->actionWindowStayOnTop});
+                       ui->actionShowAllowDocking, ui->actionShowAllowMoving, ui->actionWindowStayOnTop});
   widgetState.setBlockSignals(false);
 
   // Load status and allow to send signals
@@ -4083,7 +4100,9 @@ void MainWindow::saveActionStates()
                     ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
                     ui->actionRouteSaveAirwayWaypoints, ui->actionLogdataCreateLogbook, ui->actionRunWebserver,
                     ui->actionSearchLogdataShowDirect, ui->actionSearchLogdataShowRoute,
-                    ui->actionSearchLogdataShowTrack, ui->actionShowAllowDocking, ui->actionWindowStayOnTop});
+                    ui->actionSearchLogdataShowTrack,
+                    ui->actionShowAllowDocking, ui->actionShowAllowMoving, ui->actionWindowStayOnTop});
+
   Settings::instance().syncSettings();
 }
 
@@ -4104,7 +4123,7 @@ void MainWindow::printShortcuts()
   {
     if(mainmenus->menu() != nullptr)
     {
-      QString text = mainmenus->menu()->menuAction()->text().remove("&");
+      QString text = mainmenus->menu()->menuAction()->text().remove(QChar('&'));
 
       stream << endl << ".. _shortcuts-main-" << text.toLower() << ":" << endl << endl;
 
@@ -4116,12 +4135,12 @@ void MainWindow::printShortcuts()
              << "| " << QString("Shortcut").leftJustified(c2 - 1) << "|" << endl;
       stream << "+" << QString("=").repeated(c1) << "+" << QString("=").repeated(c2) << "+" << endl;
 
-      QString mainmenu = mainmenus->text().remove("&");
+      QString mainmenu = mainmenus->text().remove(QChar('&'));
       for(const QAction *mainAction : mainmenus->menu()->actions())
       {
         if(mainAction->menu() != nullptr)
         {
-          QString submenu = mainAction->text().remove("&");
+          QString submenu = mainAction->text().remove(QChar('&'));
           for(const QAction *subAction : mainAction->menu()->actions())
           {
             if(!subAction->text().isEmpty() && !subAction->shortcut().isEmpty())
@@ -4131,7 +4150,7 @@ void MainWindow::printShortcuts()
 
               stream << "| "
                      << QString(mainmenu + " -> " + submenu + " -> " +
-                         subAction->text().remove("&")).leftJustified(c1 - 1)
+                         subAction->text().remove(QChar('&'))).leftJustified(c1 - 1)
                      << "| "
                      << ("``" + subAction->shortcut().toString() + "``").leftJustified(c2 - 1)
                      << "|" << endl;
@@ -4149,7 +4168,7 @@ void MainWindow::printShortcuts()
               warnings.append(QString("Duplicate shortcut \"%1\"").arg(mainAction->shortcut().toString()));
 
             stream << "| "
-                   << QString(mainmenu + " -> " + mainAction->text().remove("&")).leftJustified(c1 - 1)
+                   << QString(mainmenu + " -> " + mainAction->text().remove(QChar('&'))).leftJustified(c1 - 1)
                    << "| "
                    << ("``" + mainAction->shortcut().toString() + "``").leftJustified(c2 - 1)
                    << "|" << endl;

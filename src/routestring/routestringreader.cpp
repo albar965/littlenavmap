@@ -553,6 +553,13 @@ bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, ma
 
   map::MapAirport departure;
   airportQuerySim->getAirportByIdent(departure, ident);
+  if(!departure.isValid())
+  {
+    QList<map::MapAirport> airports = airportQuerySim->getAirportsByOfficialIdent(ident, false /* iata */);
+    if(!airports.isEmpty())
+      departure = airports.first();
+  }
+
   if(departure.isValid())
   {
     // qDebug() << "found" << departure.ident << "id" << departure.id;
@@ -716,16 +723,20 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan,
       }
 
       // Collect alternates ========================
-      QStringList alternateIdents;
+      QStringList alternateIdents, alternateDisplayIdents;
       for(const map::MapAirport& alt : airports)
+      {
         alternateIdents.prepend(alt.ident);
+        alternateDisplayIdents.prepend(airportQuerySim->getDisplayIdent(alt.ident));
+      }
 
       if(!alternateIdents.isEmpty())
       {
         flightplan->getProperties().insert(atools::fs::pln::ALTERNATES, alternateIdents.join("#"));
+
         appendMessage(tr("Found alternate %1 <b>%2</b>.").
-                      arg(alternateIdents.size() == 1 ? tr("airport") : tr("airports")).
-                      arg(alternateIdents.join(tr(", "))));
+                      arg(alternateDisplayIdents.size() == 1 ? tr("airport") : tr("airports")).
+                      arg(alternateDisplayIdents.join(tr(", "))));
       }
     } // if(!airports.isEmpty())
     else
@@ -783,7 +794,16 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan,
 void RouteStringReader::destinationInternal(map::MapAirport& destination, proc::MapProcedureLegs& starLegs,
                                             const QStringList& cleanItems, int index)
 {
-  airportQuerySim->getAirportByIdent(destination, extractAirportIdent(cleanItems.at(index)));
+  QString ident = extractAirportIdent(cleanItems.at(index));
+  airportQuerySim->getAirportByIdent(destination, ident);
+
+  if(!destination.isValid())
+  {
+    QList<map::MapAirport> airports = airportQuerySim->getAirportsByOfficialIdent(ident, false /* iata */);
+    if(!airports.isEmpty())
+      destination = airports.first();
+  }
+
   if(destination.isValid())
   {
     if(cleanItems.size() > 1 && index > 0)

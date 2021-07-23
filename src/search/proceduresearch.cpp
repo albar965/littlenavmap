@@ -937,11 +937,11 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
       {
         if(ref.mapType & proc::PROCEDURE_ARRIVAL_ALL)
           ui->actionInfoApproachAttach->setText(tr("&Use %1 and %2 as Destination").
-                                                arg(currentAirportSim.ident).arg(text));
+                                                arg(currentAirportSim.displayIdent()).arg(text));
 
         else if(ref.mapType & proc::PROCEDURE_DEPARTURE)
           ui->actionInfoApproachAttach->setText(tr("&Use %1 and %2 as Departure").
-                                                arg(currentAirportSim.ident).arg(text));
+                                                arg(currentAirportSim.displayIdent()).arg(text));
       }
     }
   }

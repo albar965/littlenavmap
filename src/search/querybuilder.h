@@ -18,14 +18,39 @@
 #ifndef LNM_QUERYBUILDER_H
 #define LNM_QUERYBUILDER_H
 
-#include <QVector>
 #include <QStringList>
+#include <QVector>
 
 #include <functional>
 
 class QWidget;
 
-typedef std::function<QString(const QVector<QWidget *>& widgets)> QueryBuilderFuncType;
+/*
+ * Result class for query builder callback.
+ */
+struct QueryBuilderResult
+{
+  explicit QueryBuilderResult()
+    : overrideQuery(false)
+  {
+
+  }
+
+  explicit QueryBuilderResult(const QString& w, bool o)
+    : where(w), overrideQuery(o)
+  {
+  }
+
+  bool isEmpty() const
+  {
+    return where.isEmpty();
+  }
+
+  QString where; /* partial where clause */
+  bool overrideQuery; /* true if this result should override all other queries */
+};
+
+typedef std::function<QueryBuilderResult(QWidget *widget)> QueryBuilderFuncType;
 
 /* A callback object which can build a where clause for more than one column in search.
  * Uses a function object which can point to any method, function or lambda.
@@ -39,8 +64,8 @@ public:
    *                        Currently only line edit widgets supported.
    * @param cols Affected/used column names.
    */
-  QueryBuilder(QueryBuilderFuncType funcParam, QVector<QWidget *> widgetsParam, const QStringList& cols)
-    : func(funcParam), widgets(widgetsParam), columns(cols)
+  QueryBuilder(QueryBuilderFuncType funcParam, QWidget *widgetParam, const QStringList& cols)
+    : func(funcParam), widget(widgetParam), columns(cols)
   {
   }
 
@@ -56,19 +81,19 @@ public:
   }
 
   /* Invoke callback to get query string */
-  QString build() const
+  QueryBuilderResult build() const
   {
     if(func)
-      return func(widgets);
+      return func(widget);
     else
-      return QString();
+      return QueryBuilderResult();
   }
 
   /* Get triggering widgets. Normally used in the callback function to extract filter values.
    *  Currently only line edit widgets supported. */
-  const QVector<QWidget *>& getWidgets() const
+  QWidget *getWidget() const
   {
-    return widgets;
+    return widget;
   }
 
   /* Get affected or used column names */
@@ -82,7 +107,7 @@ public:
 
 private:
   QueryBuilderFuncType func;
-  QVector<QWidget *> widgets;
+  QWidget *widget = nullptr;
   QStringList columns;
 };
 

@@ -16805,6 +16805,13 @@ Rating</source>
 Piloto</translation>
     </message>
     <message>
+        <location filename="src/search/onlineclientsearch.cpp" line="66"/>
+        <source>Connection
+Time</source>
+        <translation>Tiempo de
+Conexión</translation>
+    </message>
+    <message>
         <location filename="src/search/onlineclientsearch.cpp" line="200"/>
         <source>Yes</source>
         <translation>Sí</translation>

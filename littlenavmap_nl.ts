@@ -17249,6 +17249,13 @@ Rating</source>
 Beoordeling</translation>
     </message>
     <message>
+        <location filename="src/search/onlineclientsearch.cpp" line="66"/>
+        <source>Connection
+Time</source>
+        <translation>Tijd
+Verbonden</translation>
+    </message>
+    <message>
         <location filename="src/search/onlineclientsearch.cpp" line="200"/>
         <source>Yes</source>
         <translation>Ja</translation>

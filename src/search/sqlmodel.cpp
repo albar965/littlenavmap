@@ -108,11 +108,17 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp)
 
   const Column *colDescr = columns->getColumn(whereCol);
 
-  if(QLineEdit *edit = columns->getColumn(whereCol)->getLineEditWidget())
+  if(queryBuilder.getColumns().contains(whereCol))
+  {
+    // Field matches with one of the query builder columns
+    QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(queryBuilder.getWidget());
+    if(lineEdit != nullptr)
+      lineEdit->setText(whereValueDisp.toString());
+  }
+  else if(QLineEdit *edit = columns->getColumn(whereCol)->getLineEditWidget())
   {
     // Set the search text into the corresponding line edit
     edit->setText((exclude ? "-" : "") + whereValueDisp.toString());
-
   }
   else if(QComboBox *combo = columns->getColumn(whereCol)->getComboBoxWidget())
   {
@@ -387,15 +393,9 @@ QString SqlModel::buildColumnList(const atools::sql::SqlRecord& tableCols)
   QVector<QString> colNames;
   for(const Column *col : columns->getColumns())
   {
-    if(!col->isDistance() && !tableCols.contains(col->getColumnName()))
-    {
-      // Skip not existing columns for backwards compatibility
-      qWarning() << Q_FUNC_INFO << columns->getTablename() + "." + col->getColumnName() << "does not exist";
-      continue;
-    }
-
-    if(col->isDistance())
+    if(col->isDistance() || !tableCols.contains(col->getColumnName()))
       // Add null for special distance columns
+      // Null for columns which do not exist in the database
       colNames.append("null as " + col->getColumnName());
     else
       colNames.append(col->getColumnName());
@@ -504,62 +504,43 @@ void SqlModel::updateTotalCount()
 }
 
 /* Build where statement */
-QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<const Column *>& overrideColumns)
+QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<const Column *>& overridingColumns)
 {
   const static QRegularExpression REQUIRED_COL_MATCH(".*/\\*([A-Za-z0-9_]+)\\*/.*");
+
+  // Used to build SQL later - does not contain query builder columns
+  QHash<QString, WhereCondition> tempWhereConditionMap(whereConditionMap);
+  overrideModeActive = false;
+
+  // SQL where clause
   QString queryWhere;
 
-  QHash<QString, WhereCondition> whereConditions;
-  bool hasNonOverride = false;
-
-  // Check for columns that override all other search options
-  for(const QString& key : whereConditionMap.keys())
+  // Use query builder callback to get the first clause ==================================
+  QueryBuilderResult builderResult = queryBuilder.build();
+  if(!builderResult.isEmpty())
   {
-    const WhereCondition& cond = whereConditionMap.value(key);
+    // Use builder callback SQL as first clause
+    queryWhere += builderResult.where;
 
-    if(cond.col->isOverride())
+    // Check if result overrides due to string length and other conditions exist or bounding query is done
+    if(builderResult.overrideQuery && (!whereConditionMap.isEmpty() || boundingRect.isValid()))
     {
-      if(cond.col->getMinOverrideLength() == -1)
-      {
-        // Length not given - simply check if valid
-        if(cond.valueSql.isValid())
-        {
-          whereConditions.insert(key, cond);
-          overrideColumns.append(cond.col);
-        }
-        else
-          hasNonOverride = true;
-      }
-      else
-      {
-        // Check if minimum length for overriding is satisfied
-        if(cond.valueDisplay.toString().size() >= cond.col->getMinOverrideLength())
-        {
-          whereConditions.insert(key, cond);
-          overrideColumns.append(cond.col);
-        }
-        else
-          hasNonOverride = true;
-      }
+      // Get first overriding column for display
+      overridingColumns.append(columns->getColumn(queryBuilder.getColumns().first()));
+      overrideModeActive = true;
+
+      // No other conditions used if overriding
+      tempWhereConditionMap.clear();
     }
-    else
-      hasNonOverride = true;
   }
 
-  if(!hasNonOverride && !boundingRect.isValid())
-    overrideColumns.clear();
-
-  overrideModeActive = !overrideColumns.isEmpty();
-
-  if(whereConditions.isEmpty())
-    // No overrides found use all columns
-    whereConditions = whereConditionMap;
-
-  int numCond = 0;
-  for(const WhereCondition& cond : whereConditions)
+  // Build SQL from where condition objects ================================================
+  for(const WhereCondition& cond : tempWhereConditionMap)
   {
     // Extract the required column from the comment in the operator and  check if it exists in the table
+    // Currently used in airport search rating/3d query
     QString checkCol = cond.col->getColumnName();
+
     QRegularExpressionMatch match = REQUIRED_COL_MATCH.match(cond.oper);
     if(match.hasMatch())
       checkCol = match.captured(1);
@@ -571,8 +552,8 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
       continue;
     }
 
-    if(numCond++ > 0)
-      queryWhere += " " + WHERE_OPERATOR + " ";
+    if(!queryWhere.isEmpty())
+      queryWhere += WHERE_OPERATOR;
 
     if(cond.col->isIncludesName())
       // Condition includes column name
@@ -582,19 +563,6 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
 
     if(!cond.valueSql.isNull())
       queryWhere += buildWhereValue(cond);
-  }
-
-  // Add where clause from callback ======================
-  if(queryBuilder.isValid())
-  {
-    QString sql = queryBuilder.build();
-    if(!sql.isEmpty())
-    {
-      if(numCond > 0)
-        queryWhere += " " + WHERE_OPERATOR + " ";
-      queryWhere += queryBuilder.build();
-      numCond++;
-    }
   }
 
   if(boundingRect.isValid() && !overrideModeActive)
@@ -620,17 +588,13 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
                  arg(boundingRect.getTopLeft().getLonX()).arg(boundingRect.getBottomRight().getLonX()).
                  arg(boundingRect.getBottomRight().getLatY()).arg(boundingRect.getTopLeft().getLatY());
 
-    if(numCond > 0)
-      queryWhere += " " + WHERE_OPERATOR + " ";
+    if(!queryWhere.isEmpty())
+      queryWhere += WHERE_OPERATOR;
     queryWhere += rectCond;
-    numCond++;
   }
 
-  if(numCond > 0)
-    queryWhere = "(" + queryWhere + ")";
-
-  if(numCond > 0)
-    queryWhere = " where " + queryWhere;
+  if(!queryWhere.isEmpty())
+    queryWhere = "where (" + queryWhere + ")";
 
   return queryWhere;
 }
@@ -643,10 +607,8 @@ QString SqlModel::buildWhereValue(const WhereCondition& cond)
     // Use semicolons for string
     val = " '" + cond.valueSql.toString().replace("'", "''") + "'";
   else if(cond.valueSql.type() == QVariant::Bool ||
-          cond.valueSql.type() == QVariant::Int ||
-          cond.valueSql.type() == QVariant::UInt ||
-          cond.valueSql.type() == QVariant::LongLong ||
-          cond.valueSql.type() == QVariant::ULongLong ||
+          cond.valueSql.type() == QVariant::Int || cond.valueSql.type() == QVariant::UInt ||
+          cond.valueSql.type() == QVariant::LongLong || cond.valueSql.type() == QVariant::ULongLong ||
           cond.valueSql.type() == QVariant::Double)
     val = " " + cond.valueSql.toString();
   return val;

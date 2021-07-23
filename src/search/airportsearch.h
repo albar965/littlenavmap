@@ -25,6 +25,7 @@
 class Column;
 class AirportIconDelegate;
 class QAction;
+class QueryBuilderResult;
 
 namespace atools {
 namespace sql {
@@ -61,6 +62,9 @@ private:
   virtual void restoreViewState(bool distSearchActive) override;
   virtual void updatePushButtons() override;
   QAction *followModeAction() override;
+
+  /* Callback for combined query on ident, icao, faa and local columns. */
+  QueryBuilderResult airportQueryBuilderFunc(QWidget *widget);
 
   void setCallbacks();
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant&,

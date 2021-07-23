@@ -4,7 +4,71 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
-# Version 2.6.13
+# Version 2.6.15
+
+This version contains bug fixes, small user interface improvements, support for MSFS scenery
+library changes and a new airport ident search for X-Plane.
+
+## Important Notes
+
+* All simulators: Reload the scenery library to get the changes. Also update *Little Navmap* on
+  remote/networked computers before copying a new scenery library database. Older *Little Navmap*
+  version will crash with the new databases.
+* MSFS: Avoid the scenery library mode `Do not use Navigraph Database` if you have the Navigraph
+  update for MSFS installed. You will see errors in procedures. Instead directly update the scenery
+  database of *Little Navmap* using the Navigraph FMS Data Manager.
+* The manual is not updated for the webserver / web user interface changes. Scroll by clicking or
+  tapping and zoom by using the mouse wheel or the two-finger pinch gesture.
+* The table column order and width for the search results is reset to default for the search result
+  table in tab `Airports`.
+* The status bar can be hidden in some cases. Show it again by selecting `Window` -> `Show Statusbar`.
+* The window layout might be different after updating in some cases. Reset it to default using
+  `Window` -> `Reset Window Layout to Default` or load a saved window layout.
+
+## Changes from 2.6.14 to 2.6.15
+
+* Adapted MSFS scenery library loader to new scenery file structures in MSFS introduced in version
+  1.18.9. This is needed to avoid missing procedures. #735
+* Changed weather download process to minimize user interface freezes during wind aloft or METAR
+  downloads with slow internet connections. #737
+* Correcting VATSIM weather address which was taken over wrongly from old versions in some cases.
+  The wrong address caused quickly repeating downloads.
+* Now allowing to set departure airport as alternate in the map context menu. The menu item was
+  wrongly disabled before.
+* Added estimated flight time to top of descent and destination to profile header.
+* Added function to disable the moving of dock windows by click and drag on the title bar. Uncheck
+  `Allow Window moving` in menu `Window` to avoid accidental movement of dock windows which might
+  mess up the window layout. You can still resize the dock windows at the border.
+* Several fixes in MSFS flight plan export. Approach transition waypoints are now removed. Removing
+  airway for STAR entry waypoints. SID and STAR transitions can be used now. Keep in mind that some
+  information will be lost when reloading MSFS PLN files. Several problems with MSFS flight plan
+  import remain.
+* Localizer approaches were not recognized when loading MSFS PLN files into *Little Navmap*. Fixed now.
+* Fixed issue where flight plan calculation window header text was not updated on flight plan
+  changes.
+* Showing status bar again which might be hidden after recent updates.
+
+* Added ICAO, FAA, IATA and local airport codes to search result table as well as in information
+  and tooltips. This is only used by X-Plane. Move the columns in the search result table out of the
+  way by clicking and dragging the column header or shrink them to minimum if you're not an X-Plane
+  user. Note that Navigraph additionally provides IATA codes  while FSX, P3D, and MSFS do not provide
+  any additional official codes at all. #706
+* Enabled search for the additional airport codes in ident field in airports tab. This means that
+  *Little Navmap* matches all internal, ICAO, FAA, IATA or local idents to the search input.
+* X-Plane internal idents (`X...`, five or more characters) are now hidden throughout the whole
+  user interface except in information and tooltips if an airport has one or more official idents
+  assigned. The internal ids might show up  occasionally, e.g. in the flight plan table when
+  switching simulators.
+* The flight plan route description now uses and outputs one of the official codes for airports if
+  available.
+* Fixed potential crash in search functions for airport.
+* Resetting table layout for airport search since columns have changed. #707
+* Added columns `faa` and `local` to airport table and removed column `xpident` in database schema.
+  Database minor version updated to 20.
+
+===============================================================================
+
+# Version 2.6.14
 
 This version contains bug fixes, small user interface improvements and support for the new
 IVAO interface which allows update rates of 15 seconds for online flying.
