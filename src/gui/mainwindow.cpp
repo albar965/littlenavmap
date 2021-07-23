@@ -3478,16 +3478,14 @@ void MainWindow::mainWindowShownDelayed()
   // Raise all floating docks and focus map widget
   raiseFloatingWindows();
 
-  ui->actionShowStatusbar->blockSignals(true);
-  ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
-  ui->actionShowStatusbar->blockSignals(false);
-
   if(migrate::getOptionsVersion().isValid() &&
-     migrate::getOptionsVersion() <= atools::util::Version("2.6.6") &&
+     migrate::getOptionsVersion() <= atools::util::Version("2.6.14") &&
      atools::util::Version(QApplication::applicationVersion()) == atools::util::Version("2.6.15"))
   {
     qDebug() << Q_FUNC_INFO << "Fixing status bar visibility";
-    ui->actionShowStatusbar->setChecked(true);
+    ui->actionShowStatusbar->blockSignals(true);
+    ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
+    ui->actionShowStatusbar->blockSignals(false);
     ui->statusBar->setVisible(true);
   }
 
