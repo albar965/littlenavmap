@@ -321,6 +321,8 @@ void SearchBaseTable::connectSearchWidgets()
   // Connect query builder callback to lambda ======================================
   if(columns->getQueryBuilder().isValid())
   {
+    controller->setBuilder(columns->getQueryBuilder());
+
     QWidget *widget = columns->getQueryBuilder().getWidget();
 
     if(widget != nullptr)
@@ -333,7 +335,7 @@ void SearchBaseTable::connectSearchWidgets()
         connect(lineEdit, &QLineEdit::textChanged, this, [ = ](const QString& text)
         {
           Q_UNUSED(text)
-          controller->filterByBuilder(columns->getQueryBuilder());
+          controller->filterByBuilder();
           updateButtonMenu();
           editStartTimer();
         });
