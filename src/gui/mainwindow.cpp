@@ -3483,11 +3483,12 @@ void MainWindow::mainWindowShownDelayed()
      atools::util::Version(QApplication::applicationVersion()) == atools::util::Version("2.6.15"))
   {
     qDebug() << Q_FUNC_INFO << "Fixing status bar visibility";
-    ui->actionShowStatusbar->blockSignals(true);
-    ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
-    ui->actionShowStatusbar->blockSignals(false);
     ui->statusBar->setVisible(true);
   }
+
+  ui->actionShowStatusbar->blockSignals(true);
+  ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
+  ui->actionShowStatusbar->blockSignals(false);
 
   NavApp::setMainWindowVisible();
 }
