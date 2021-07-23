@@ -952,6 +952,8 @@ QStringList AirportQuery::airportColumns(const atools::sql::SqlDatabase *db)
     airportQueryBase.append("local");
   if(aprec.contains("region"))
     airportQueryBase.append("region");
+  if(aprec.contains("flatten"))
+    airportQueryBase.append("flatten");
   if(aprec.contains("is_3d"))
     airportQueryBase.append("is_3d");
   if(aprec.contains("transition_altitude"))

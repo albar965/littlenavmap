@@ -54,6 +54,7 @@ library changes and a new airport ident search for X-Plane.
 * Fixed issue where flight plan calculation window header text was not updated on flight plan
   changes.
 * Showing status bar again which might be hidden after recent updates.
+* Fixed missing display for X-Plane airport flatten attribute.
 
 * Added ICAO, FAA, IATA and local airport codes to search result table as well as in information
   and tooltips. This is only used by X-Plane. Move the columns in the search result table out of the
