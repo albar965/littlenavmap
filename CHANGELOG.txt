@@ -27,6 +27,13 @@ library changes and a new airport ident search for X-Plane.
 
 ## Changes from 2.6.14 to 2.6.15
 
+* Updated English and German manual for airport ident changes in search and information display.
+  * [Ident in Airport Search](https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/SEARCH.html#airport-search-ident)
+  * [Override in Airport Search](https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/SEARCH.html#airport-search-override)
+  * [Ident in Information and Tooltips](https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/INFO.html#airport-ident-info)
+  * [Ident in Flight Plan Route Description](https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/ROUTEDESCR.html#routedescr-airport-ident)
+  * [Allow Window moving](https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/MENUS.html#allow-window-moving)
+
 * Adapted MSFS scenery library loader to new scenery file structures in MSFS introduced in version
   1.18.9. This is needed to avoid missing procedures. #735
 * Changed weather download process to minimize user interface freezes during wind aloft or METAR
