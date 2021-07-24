@@ -2479,8 +2479,8 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 
           if(!rw.isEmpty())
           {
-            atools::fs::util::runwayNameSplit(rw, &number, &designator);
-            entry.setRunway(QString::number(number), atools::fs::util::runwayDesignatorLong(designator));
+            if(atools::fs::util::runwayNameSplit(rw, &number, &designator))
+              entry.setRunway(QString::number(number), atools::fs::util::runwayDesignatorLong(designator));
           }
         }
 
@@ -2575,8 +2575,11 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
         int number = 0;
         QString designator;
 
-        atools::fs::util::runwayNameSplit(appr.procedureRunway, &number, &designator);
-        entry.setRunway(QString::number(number), atools::fs::util::runwayDesignatorLong(designator));
+        if(!appr.procedureRunway.isEmpty())
+        {
+          if(atools::fs::util::runwayNameSplit(appr.procedureRunway, &number, &designator))
+            entry.setRunway(QString::number(number), atools::fs::util::runwayDesignatorLong(designator));
+        }
         entry.setApproach(appr.approachType, appr.approachSuffix, appr.transitionFixIdent);
       }
     }

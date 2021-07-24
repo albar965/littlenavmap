@@ -54,6 +54,8 @@ library changes and a new airport ident search for X-Plane.
   information will be lost when reloading MSFS PLN files. Several problems with MSFS flight plan
   import remain.
 * Localizer approaches were not recognized when loading MSFS PLN files into *Little Navmap*. Fixed now.
+* Corrected export for circling approaches and localizer backcourse approaches in MSFS PLN which
+  can now be loaded.
 * Fixed issue where flight plan calculation window header text was not updated on flight plan
   changes.
 * Showing status bar again which might be hidden after recent updates.
