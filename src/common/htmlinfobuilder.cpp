@@ -2800,7 +2800,8 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
           html.row2(tr("Track valid:"), tr("%1 UTC to<br/>%2 UTC%3").
                     arg(locale.toString(validFrom, QLocale::ShortFormat)).
                     arg(locale.toString(validTo, QLocale::ShortFormat)).
-                    arg(validNow >= validFrom && validNow <= validTo ? tr("<br/><b>Track is now valid.</b>") : QString()),
+                    arg(validNow >= validFrom && validNow <= validTo ?
+                        tr("<br/><b>Track is now valid.</b>") : QString()),
                     ahtml::NO_ENTITIES);
         else
           html.row2(tr("Track valid:"), tr("No validity period"));

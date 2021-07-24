@@ -4894,8 +4894,8 @@ Default is &quot;https://metar.vatsim.net/metar.php?id=ALL&quot;.</string>
                <item row="0" column="1">
                 <widget class="QLineEdit" name="lineEditOptionsWeatherXplanePath">
                  <property name="toolTip">
-                  <string>This file (usually &quot;current_wx_snapshot.txt&quot;) will be used for all simulators if set here.
-If this field is empty, the default Active Sky weather file path will be used which is different for each flight simulator.</string>
+                  <string>The file &quot;METAR.rwx&quot; will be used to get airport weather if X-Plane is selected.
+The default X-Plane weather file in the X-Plane base path will be used if this field is empty.</string>
                  </property>
                  <property name="placeholderText">
                   <string>No &quot;METAR.rwx&quot; selected. Using default file.</string>
@@ -5073,8 +5073,8 @@ Default is &quot;https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.T
                <item row="0" column="1">
                 <widget class="QLineEdit" name="lineEditOptionsWeatherXplaneWind">
                  <property name="toolTip">
-                  <string>This file &quot;global_winds.grib&quot; will be used only if X-Plane is selected.
-The default X-Plane wind file will be used if this field is empty.</string>
+                  <string>This file &quot;global_winds.grib&quot; will be used to get wind aloft data if X-Plane is selected.
+The default X-Plane wind file in the X-Plane base path will be used if this field is empty.</string>
                  </property>
                  <property name="placeholderText">
                   <string>No &quot;global_winds.grib&quot; selected. Using X-Plane base path.</string>

@@ -773,6 +773,7 @@ void MainWindow::setupUi()
   // Weather source sub menu
   actionGroupMapWeatherSource = new QActionGroup(ui->menuMapShowAirportWeatherSource);
   actionGroupMapWeatherSource->setObjectName("actionGroupMapWeatherSource");
+  actionGroupMapWeatherSource->addAction(ui->actionMapShowWeatherDisabled);
   actionGroupMapWeatherSource->addAction(ui->actionMapShowWeatherSimulator);
   actionGroupMapWeatherSource->addAction(ui->actionMapShowWeatherActiveSky);
   actionGroupMapWeatherSource->addAction(ui->actionMapShowWeatherNoaa);
@@ -1510,6 +1511,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionRouteDeleteTracks, &QAction::triggered, trackController, &TrackController::deleteTracks);
 
   // Weather source =======================================================
+  connect(ui->actionMapShowWeatherDisabled, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowWeatherSimulator, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowWeatherActiveSky, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowWeatherNoaa, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -1517,6 +1519,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowWeatherIvao, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 
   // Update map weather source hightlights =======================================================
+  connect(ui->actionMapShowWeatherDisabled, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
   connect(ui->actionMapShowWeatherSimulator, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
   connect(ui->actionMapShowWeatherActiveSky, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
   connect(ui->actionMapShowWeatherNoaa, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
@@ -1524,10 +1527,11 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowWeatherIvao, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
 
   // Update airport index in weather for changed simulator database
-  connect(ui->actionMapShowWeatherSimulator, &QAction::toggled,
-          weatherReporter, &WeatherReporter::updateAirportWeather);
-  connect(ui->actionMapShowWeatherActiveSky, &QAction::toggled,
-          weatherReporter, &WeatherReporter::updateAirportWeather);
+  connect(ui->actionMapShowWeatherDisabled, &QAction::toggled, weatherReporter, &WeatherReporter::updateAirportWeather);
+  connect(ui->actionMapShowWeatherSimulator, &QAction::toggled, weatherReporter,
+          &WeatherReporter::updateAirportWeather);
+  connect(ui->actionMapShowWeatherActiveSky, &QAction::toggled, weatherReporter,
+          &WeatherReporter::updateAirportWeather);
   connect(ui->actionMapShowWeatherNoaa, &QAction::toggled, weatherReporter, &WeatherReporter::updateAirportWeather);
   connect(ui->actionMapShowWeatherVatsim, &QAction::toggled, weatherReporter, &WeatherReporter::updateAirportWeather);
   connect(ui->actionMapShowWeatherIvao, &QAction::toggled, weatherReporter, &WeatherReporter::updateAirportWeather);
@@ -3715,6 +3719,8 @@ void MainWindow::updateActionStates()
   ui->actionRouteCalcDirect->setEnabled(canCalcRoute && NavApp::getRouteConst().hasEntries());
   // ui->actionRouteCalc->setEnabled(canCalcRoute);
   ui->actionRouteReverse->setEnabled(canCalcRoute);
+
+  ui->actionMapShowAirportWeather->setEnabled(NavApp::getAirportWeatherSource() != map::WEATHER_SOURCE_DISABLED);
 
   ui->actionMapShowHome->setEnabled(mapWidget->getHomePos().isValid());
   ui->actionMapShowMark->setEnabled(mapWidget->getSearchMarkPos().isValid());

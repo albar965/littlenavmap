@@ -349,10 +349,9 @@ private:
                      atools::util::HtmlBuilder& html, bool moreLessSwitch, bool less);
 
   void dateTimeAndFlown(const atools::fs::sc::SimConnectUserAircraft *userAircraft,
-                   atools::util::HtmlBuilder& html) const;
+                        atools::util::HtmlBuilder& html) const;
   void addMetarLine(atools::util::HtmlBuilder& html, const QString& header, const map::MapAirport& airport,
-                    const QString& metar,
-                    const QString& station,
+                    const QString& metar, const QString& station,
                     const QDateTime& timestamp, bool fsMetar, bool mapDisplay) const;
 
   void decodedMetar(atools::util::HtmlBuilder& html, const map::MapAirport& airport,

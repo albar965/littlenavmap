@@ -182,7 +182,9 @@ private:
   bool validateActiveSkyFlightplanFile(const QString& path);
   void deleteFsWatcher();
   void createFsWatcher();
+
   void initXplane();
+  void disableXplane();
 
   /* From download finished signals */
   void noaaWeatherUpdated();

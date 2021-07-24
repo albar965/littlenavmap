@@ -43,6 +43,9 @@ library changes and a new airport ident search for X-Plane.
 * Now allowing to set departure airport as alternate in the map context menu. The menu item was
   wrongly disabled before.
 * Added estimated flight time to top of descent and destination to profile header.
+* Menu `Weather` -> `Airport Weather` now allows to disable the weather source which also disables
+  all file accesses. The airport weather menu item and toolbar button will disabled if this is
+  selected.
 * Added function to disable the moving of dock windows by click and drag on the title bar. Uncheck
   `Allow Window moving` in menu `Window` to avoid accidental movement of dock windows which might
   mess up the window layout. You can still resize the dock windows at the border.
