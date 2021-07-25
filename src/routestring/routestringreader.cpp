@@ -295,13 +295,13 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
               QList<map::MapAirway> airways;
               airwayQuery->getAirwaysForWaypoints(airways, lastRef.id, wp.id, item);
               if(!airways.isEmpty())
-                mapObjectRefs->insert(insertPos,
-                                      map::MapObjectRefExt(airways.first().id, map::AIRWAY, airways.first().name));
+                atools::insertInto(*mapObjectRefs, insertPos,
+                                   map::MapObjectRefExt(airways.first().id, map::AIRWAY, airways.first().name));
 
               insertPos = mapObjectRefs->size() - insertOffset;
               // Waypoint
               curRef = map::MapObjectRefExt(wp.id, wp.position, map::WAYPOINT, wp.ident);
-              mapObjectRefs->insert(insertPos, curRef);
+              atools::insertInto(*mapObjectRefs, insertPos, curRef);
             }
           }
           else
@@ -327,7 +327,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
         {
           // Add user defined waypoint with original coordinate string
           curRef = map::MapObjectRefExt(-1, entry.getPosition(), map::USERPOINTROUTE, item);
-          mapObjectRefs->insert(mapObjectRefs->size() - insertOffset, curRef);
+          atools::insertInto(*mapObjectRefs, mapObjectRefs->size() - insertOffset, curRef);
         }
 
         // Use the original string as name but limit it for fs
@@ -353,12 +353,12 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
             QList<map::MapAirway> airways;
             airwayQuery->getAirwaysForWaypoints(airways, lastRef.id, curRef.id, lastParseEntry->airway);
             if(!airways.isEmpty())
-              mapObjectRefs->insert(mapObjectRefs->size() - insertOffset,
-                                    map::MapObjectRefExt(airways.first().id, map::AIRWAY, airways.first().name));
+              atools::insertInto(*mapObjectRefs, mapObjectRefs->size() - insertOffset,
+                                 map::MapObjectRefExt(airways.first().id, map::AIRWAY, airways.first().name));
           }
 
           // Add navaid or airport including original name
-          mapObjectRefs->insert(mapObjectRefs->size() - insertOffset, curRef);
+          atools::insertInto(*mapObjectRefs, mapObjectRefs->size() - insertOffset, curRef);
         }
       }
 
