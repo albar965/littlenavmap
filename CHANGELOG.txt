@@ -13,7 +13,7 @@ library changes and a new airport ident search for X-Plane.
 
 * All simulators: Reload the scenery library to get the changes. Also update *Little Navmap* on
   remote/networked computers before copying a new scenery library database. Older *Little Navmap*
-  version will crash with the new databases.
+  versions will crash with the new databases.
 * MSFS: Avoid the scenery library mode `Do not use Navigraph Database` if you have the Navigraph
   update for MSFS installed. You will see errors in procedures. Instead directly update the scenery
   database of *Little Navmap* using the Navigraph FMS Data Manager.
@@ -34,8 +34,8 @@ library changes and a new airport ident search for X-Plane.
   * [Ident in Flight Plan Route Description](https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/ROUTEDESCR.html#routedescr-airport-ident)
   * [Allow Window moving](https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/MENUS.html#allow-window-moving)
 
-* Adapted MSFS scenery library loader to new scenery file structures in MSFS introduced in version
-  1.18.9. This is needed to avoid missing procedures. #735
+### General
+
 * Changed weather download process to minimize user interface freezes during wind aloft or METAR
   downloads with slow internet connections. #737
 * Correcting VATSIM weather address which was taken over wrongly from old versions in some cases.
@@ -49,6 +49,14 @@ library changes and a new airport ident search for X-Plane.
 * Added function to disable the moving of dock windows by click and drag on the title bar. Uncheck
   `Allow Window moving` in menu `Window` to avoid accidental movement of dock windows which might
   mess up the window layout. You can still resize the dock windows at the border.
+* Fixed issue where flight plan calculation window header text was not updated on flight plan
+  changes.
+* Showing status bar again which might be hidden after recent updates.
+
+### MSFS
+
+* Adapted MSFS scenery library loader to new scenery file structures in MSFS introduced in version
+  1.18.9. This is needed to avoid missing procedures. #735
 * Several fixes in MSFS flight plan export. Approach transition waypoints are now removed. Removing
   airway for STAR entry waypoints. SID and STAR transitions can be used now. Keep in mind that some
   information will be lost when reloading MSFS PLN files. Several problems with MSFS flight plan
@@ -56,10 +64,8 @@ library changes and a new airport ident search for X-Plane.
 * Localizer approaches were not recognized when loading MSFS PLN files into *Little Navmap*. Fixed now.
 * Corrected export for circling approaches and localizer backcourse approaches in MSFS PLN which
   can now be loaded.
-* Fixed issue where flight plan calculation window header text was not updated on flight plan
-  changes.
-* Showing status bar again which might be hidden after recent updates.
-* Fixed missing display for X-Plane airport flatten attribute.
+
+### X-Plane
 
 * Added ICAO, FAA, IATA and local airport codes to search result table as well as in information
   and tooltips. This is only used by X-Plane. Move the columns in the search result table out of the
@@ -74,6 +80,9 @@ library changes and a new airport ident search for X-Plane.
   switching simulators.
 * The flight plan route description now uses and outputs one of the official codes for airports if
   available.
+* Fixed issues with X-Plane flight plan export where airports have an internal ident different from
+  official ICAO and FAA codes.
+* Fixed missing display for X-Plane airport flatten attribute.
 * Fixed potential crash in search functions for airport.
 * Resetting table layout for airport search since columns have changed. #707
 * Added columns `faa` and `local` to airport table and removed column `xpident` in database schema.
