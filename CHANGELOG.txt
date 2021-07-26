@@ -53,6 +53,8 @@ library changes and a new airport ident search for X-Plane.
   changes.
 * Fixed crash when decoding procedures. Example: Sumburgh (EGPB), approach ILS 27, transition D064L
   for P3D scenery.
+* Fixed crash that occured when moving flight plan legs in empty or one leg plan with the keyboard.
+  Now updating context menu items in flight plan table accordingly.
 * Showing status bar again which might be hidden after recent updates.
 
 ### MSFS

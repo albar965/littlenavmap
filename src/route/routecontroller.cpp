@@ -328,7 +328,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(routeWindow, &RouteCalcWindow::calculateClicked, this, &RouteController::calculateRoute);
   connect(routeWindow, &RouteCalcWindow::calculateDirectClicked, this, &RouteController::calculateDirect);
   connect(routeWindow, &RouteCalcWindow::calculateReverseClicked, this, &RouteController::reverseRoute);
-  connect(routeWindow, &RouteCalcWindow::downloadTrackClicked, NavApp::getTrackController(), &TrackController::startDownload);
+  connect(routeWindow, &RouteCalcWindow::downloadTrackClicked,
+          NavApp::getTrackController(), &TrackController::startDownload);
 
   connect(ui->labelRouteInfo, &QLabel::linkActivated, this, &RouteController::flightplanLabelLinkActivated);
 }
@@ -1356,8 +1357,7 @@ bool RouteController::saveFlightplanLnmAs(const QString& filename)
 
 pln::Flightplan RouteController::getFlightplanForSelection() const
 {
-  QList<int> rows;
-  getSelectedRows(rows, false /* reverse */);
+  QList<int> rows = getSelectedRows(false /* reverse */);
 
   Route saveRoute(route);
   saveRoute.removeAllExceptRange(rows.first(), rows.last());
@@ -1371,8 +1371,7 @@ pln::Flightplan RouteController::getFlightplanForSelection() const
 bool RouteController::saveFlightplanLnmAsSelection(const QString& filename)
 {
   // Range must not contains procedures or alternates.
-  QList<int> rows;
-  getSelectedRows(rows, false /* reverse */);
+  QList<int> rows = getSelectedRows(false /* reverse */);
   qDebug() << Q_FUNC_INFO << filename << rows;
   return saveFlightplanLnmSelectionAs(filename, rows.first(), rows.last());
 }
@@ -1983,19 +1982,26 @@ void RouteController::showAtIndex(int index, bool info, bool map, bool doubleCli
 
 void RouteController::updateMoveAndDeleteActions()
 {
-  QItemSelectionModel *sm = view->selectionModel();
+  // Disable all per default
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  ui->actionRouteLegUp->setEnabled(false);
+  ui->actionRouteLegDown->setEnabled(false);
+  ui->actionRouteDeleteLeg->setEnabled(false);
 
-  if(view->selectionModel() == nullptr)
+  // Empty - nothing to move or delete
+  if(model->rowCount() == 0)
     return;
 
-  if(sm->hasSelection() && model->rowCount() > 0)
+  // One or more legs - check for details like procedures or procedure boundary
+  QItemSelectionModel *sm = view->selectionModel();
+  if(sm != nullptr && sm->hasSelection())
   {
     bool containsProc = false, containsAlternate = false, moveDownTouchesProc = false, moveUpTouchesProc = false,
          moveDownTouchesAlt = false, moveUpTouchesAlt = false,
          moveDownLeavesAlt = false, moveUpLeavesAlt = false;
-    QList<int> rows;
     // Ordered from top to bottom
-    getSelectedRows(rows, false);
+    QList<int> rows = getSelectedRows(false);
+
     for(int row : rows)
     {
       containsProc |= route.value(row).isAnyProcedure();
@@ -2010,11 +2016,6 @@ void RouteController::updateMoveAndDeleteActions()
 
     moveUpLeavesAlt = rows.first() > 0 && !route.value(rows.first() - 1).isAlternate();
     moveDownLeavesAlt = rows.last() >= route.size() - 1 || !route.value(rows.last() + 1).isAlternate();
-
-    Ui::MainWindow *ui = NavApp::getMainUi();
-    ui->actionRouteLegUp->setEnabled(false);
-    ui->actionRouteLegDown->setEnabled(false);
-    ui->actionRouteDeleteLeg->setEnabled(false);
 
     if(rows.size() == 1 && containsAlternate)
     {
@@ -2671,7 +2672,7 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
 
   // Get selected rows in ascending order
   selectedRows.clear();
-  getSelectedRows(selectedRows, false);
+  selectedRows = getSelectedRows(false);
 
   updateMoveAndDeleteActions();
   QItemSelectionModel *sm = view->selectionModel();
@@ -2835,6 +2836,9 @@ bool RouteController::doesLnmFilenameMatchRoute()
 /* Called by action */
 void RouteController::moveSelectedLegsDown()
 {
+  if(model->rowCount() <= 1)
+    return;
+
   qDebug() << "Leg down";
   moveSelectedLegsInternal(MOVE_DOWN);
 }
@@ -2842,6 +2846,9 @@ void RouteController::moveSelectedLegsDown()
 /* Called by action */
 void RouteController::moveSelectedLegsUp()
 {
+  if(model->rowCount() <= 1)
+    return;
+
   qDebug() << "Leg up";
   moveSelectedLegsInternal(MOVE_UP);
 }
@@ -2849,8 +2856,7 @@ void RouteController::moveSelectedLegsUp()
 void RouteController::moveSelectedLegsInternal(MoveDirection direction)
 {
   // Get the selected rows. Depending on move direction order can be reversed to ease moving
-  QList<int> rows;
-  getSelectedRows(rows, direction == MOVE_DOWN /* reverse order */);
+  QList<int> rows = getSelectedRows(direction == MOVE_DOWN /* reverse order */);
 
   if(!rows.isEmpty())
   {
@@ -2936,10 +2942,7 @@ void RouteController::routeDelete(int index)
 /* Called by action */
 void RouteController::deleteSelectedLegs()
 {
-  QList<int> rows;
-  // Get selected rows
-  getSelectedRows(rows, true /* reverse */);
-  deleteSelectedLegsInternal(rows);
+  deleteSelectedLegsInternal(getSelectedRows(true /* reverse */));
 }
 
 void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
@@ -3017,8 +3020,13 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
 }
 
 /* Get selected row numbers from the table model */
-void RouteController::getSelectedRows(QList<int>& rows, bool reverse) const
+QList<int> RouteController::getSelectedRows(bool reverse) const
 {
+  QList<int> rows;
+
+  if(model->rowCount() == 0)
+    return rows;
+
   if(view->selectionModel() != nullptr)
   {
     QItemSelection sm = view->selectionModel()->selection();
@@ -3039,6 +3047,7 @@ void RouteController::getSelectedRows(QList<int>& rows, bool reverse) const
 
   // Remove duplicates
   rows.erase(std::unique(rows.begin(), rows.end()), rows.end());
+  return rows;
 }
 
 /* Select all columns of the given rows adding offset to each row index */
