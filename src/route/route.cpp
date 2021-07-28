@@ -2670,16 +2670,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
       FlightplanEntry& entry = entries[i];
       const map::MapAirport& airport = route.getLegAt(i).getAirport();
       if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
-      {
         entry.setIdent(airport.displayIdent());
-
-        // Use display ident for departure and destination since it will be converted to
-        // "DEP" and "DES" keys anyway without procedures
-        if(i == 0 && !route.hasAnySidProcedure())
-          plan.setDepartureIdent(airport.displayIdent());
-        else if(i == entries.size() - 1 && !route.hasAnyArrivalProcedure())
-          plan.setDestinationIdent(airport.displayIdent());
-      }
     }
   }
 
