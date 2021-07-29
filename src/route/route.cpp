@@ -2670,7 +2670,15 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
       FlightplanEntry& entry = entries[i];
       const map::MapAirport& airport = route.getLegAt(i).getAirport();
       if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
+      {
         entry.setIdent(airport.displayIdent());
+
+        // Always use internal ident for departure and destination
+        if(i == 0)
+          plan.setDepartureIdent(airport.ident);
+        else if(i == entries.size() - 1)
+          plan.setDestinationIdent(airport.ident);
+      }
     }
   }
 
