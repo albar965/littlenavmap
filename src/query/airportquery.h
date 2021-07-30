@@ -78,17 +78,26 @@ public:
   void getAirportById(map::MapAirport& airport, int airportId);
   map::MapAirport getAirportById(int airportId);
 
-  /* get airport by ident which also might be the X-Plane internal id */
+  /* Get airport by ident which also might be the X-Plane internal id.
+   * Does not do fuzzy search or by several idents and uses cache. */
   void getAirportByIdent(map::MapAirport& airport, const QString& ident);
   map::MapAirport getAirportByIdent(const QString& ident);
 
+  /* Get airports by ident which also might be the X-Plane internal id.
+   * This considers cut off ids as required in X-Plane plans.
+   * Does not use cache. */
+  void getAirportsByTruncatedIdent(QList<map::MapAirport>& airports, QString ident);
+  QList<map::MapAirport> getAirportsByTruncatedIdent(const QString& ident);
+
   /* get airport by ICAO, IATA, FAA or local id if table airport has columns.
-   * Returns all airports where either id matches given ident. */
+   * Returns all airports where either id matches given ident.
+   * Does not use cache. */
   void getAirportsByOfficialIdent(QList<map::MapAirport>& airports, const QString& ident, bool iata = true);
   QList<map::MapAirport> getAirportsByOfficialIdent(const QString& ident, bool iata = true);
 
   /* Try to get airport by ident, icao or position as a fallback if pos is valid,
-   * Need to get ident, icao and pos as copies to avoid overwriting. */
+   * Need to get ident, icao and pos as copies to avoid overwriting.
+   * Does not use cache. */
   void getAirportFuzzy(map::MapAirport& airport, const map::MapAirport airportCopy);
 
   /* Get display ident (ICAO, IATA, FAA or local) based on internal ident */
@@ -228,7 +237,8 @@ private:
                         *parkingTypeAndNumberQuery = nullptr,
                         *parkingNameQuery = nullptr;
 
-  atools::sql::SqlQuery *airportByIdentQuery = nullptr, *airportByOfficialQuery = nullptr, *airportByPosQuery = nullptr,
+  atools::sql::SqlQuery *airportByIdentQuery = nullptr, *airportsByTruncatedIdentQuery = nullptr,
+                        *airportByOfficialQuery = nullptr, *airportByPosQuery = nullptr,
                         *airportCoordsByIdentQuery = nullptr, *airportByRectAndProcQuery = nullptr,
                         *runwayEndByIdQuery = nullptr, *runwayEndByNameQuery = nullptr, *airportByIdQuery = nullptr,
                         *airportAdminByIdQuery = nullptr, *airportProcByIdQuery = nullptr,

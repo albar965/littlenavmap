@@ -37,8 +37,11 @@ using namespace atools::geo;
 /* Extract parking name and number from FS flight plan */
 const QRegularExpression PARKING_TO_NAME_AND_NUM("([A-Za-z_ ]*)([0-9]+)");
 
-/* If region is not set search within this distance (not the real GC distance) for navaids with the same name */
+/* If region is not set search within this distance (real GC distance) for navaids with the same name */
 const int MAX_WAYPOINT_DISTANCE_METER = 10000.f;
+
+/* Use max distance for airport fuzzy search like truncated X-Plane ids */
+const int MAX_AIRPORT_DISTANCE_METER = 5000.f;
 
 /* Maximum distance to the predecessor waypoint if position is invalid */
 const int MAX_WAYPOINT_DISTANCE_INVALID_METER = 10000000.f;
@@ -207,7 +210,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
     // ====================== Create for airport and assign parking position
     case atools::fs::pln::entry::AIRPORT:
       mapQuery->getMapObjectByIdent(mapobjectResult, map::AIRPORT, flightplanEntry->getIdent(), QString(),
-                                    QString(), flightplanEntry->getPosition(), MAX_WAYPOINT_DISTANCE_METER);
+                                    QString(), flightplanEntry->getPosition(), MAX_AIRPORT_DISTANCE_METER);
       if(!mapobjectResult.airports.isEmpty())
       {
         assignAirport(mapobjectResult, flightplanEntry);

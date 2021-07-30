@@ -299,31 +299,32 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
 {
   if(type & map::AIRPORT)
   {
-    map::MapAirport ap;
+    AirportQuery *airportQuery = airportFromNavDatabase ? NavApp::getAirportQueryNav() : NavApp::getAirportQuerySim();
 
-    // Try ident first =====================
-    if(airportFromNavDatabase)
-      NavApp::getAirportQueryNav()->getAirportByIdent(ap, ident);
-    else
-      NavApp::getAirportQuerySim()->getAirportByIdent(ap, ident);
-
+    // Try exact ident first =====================
+    map::MapAirport ap = airportQuery->getAirportByIdent(ident);
     if(ap.isValid())
       result.airports.append(ap);
-    else
+
+    // Check for truncated X-Plane idents but only in X-Plane database
+    if(ident.size() == 6 && NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
+      airportQuery->getAirportsByTruncatedIdent(result.airports, ident);
+
+    // Remove airports too far away from given distance
+    maptools::removeByDistance(result.airports, sortByDistancePos, maxDistanceMeter);
+
+    if(result.airports.isEmpty())
     {
       // Try fuzzy search for nearest by official ids =====================
       QList<map::MapAirport> airports;
 
       // Look through all fields (ICAO, IATA, FAA and local) for the given ident
-      if(airportFromNavDatabase)
-        NavApp::getAirportQueryNav()->getAirportsByOfficialIdent(airports, ident);
-      else
-        NavApp::getAirportQuerySim()->getAirportsByOfficialIdent(airports, ident);
+      airportQuery->getAirportsByOfficialIdent(airports, ident);
       result.airports.append(airports);
-    }
 
-    maptools::sortByDistance(result.airports, sortByDistancePos);
-    maptools::removeByDistance(result.airports, sortByDistancePos, maxDistanceMeter);
+      maptools::sortByDistance(result.airports, sortByDistancePos);
+      maptools::removeByDistance(result.airports, sortByDistancePos, maxDistanceMeter);
+    }
   }
 
   if(type & map::VOR)
