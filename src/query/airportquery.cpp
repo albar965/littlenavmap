@@ -979,6 +979,16 @@ QStringList AirportQuery::airportOverviewColumns(const atools::sql::SqlDatabase 
     airportQueryBase.append("region");
   if(aprec.contains("is_3d"))
     airportQueryBase.append("is_3d");
+
+  if(aprec.contains("icao"))
+    airportQueryBase.append("icao");
+  if(aprec.contains("iata"))
+    airportQueryBase.append("iata");
+  if(aprec.contains("faa"))
+    airportQueryBase.append("faa");
+  if(aprec.contains("local"))
+    airportQueryBase.append("local");
+
   return airportQueryBase;
 }
 
