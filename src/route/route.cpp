@@ -2662,7 +2662,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   if(options.testFlag(rf::XPLANE_REPLACE_AIRPORT_IDENTS))
   {
     // Replace X-Plane waypoint idents with official ones for airports
-    // XP does not accept other codes in departure and destination fields
+    // XP accepts only internal codes in departure and destination fields
     route.updateIndicesAndOffsets();
 
     for(int i = 0; i < entries.size(); i++)
@@ -2671,13 +2671,55 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
       const map::MapAirport& airport = route.getLegAt(i).getAirport();
       if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
       {
+        // All airport idents will be truncated to six characters on export
+
+        // Use display ident in legs to avoid user confusion
         entry.setIdent(airport.displayIdent());
 
-        // Always use internal ident for departure and destination
-        if(i == 0)
-          plan.setDepartureIdent(airport.ident);
-        else if(i == entries.size() - 1)
-          plan.setDestinationIdent(airport.ident);
+        if(i == 0 || i == entries.size() - 1)
+        {
+          // Determine ident for departure or destination
+
+          // Use DEP/DES keywords for long internal airport idents
+          bool useAirportKeys = airport.ident.size() <= 4;
+
+          // Check official idents - ignore IATA
+          if(!airport.icao.isEmpty())
+            // Ok to use ADEP/ADES keywords if ICAO is present and the same
+            useAirportKeys = airport.icao == airport.ident;
+          else if(!airport.faa.isEmpty())
+            // No ICAO - ok to use ADEP/ADES keywords if FAA is present and the same
+            useAirportKeys = airport.faa == airport.ident;
+          else if(!airport.local.isEmpty())
+            // No ICAO and no FAA - ok to use ADEP/ADES keywords if local code is present and the same
+            useAirportKeys = airport.local == airport.ident;
+
+          // Use display ident for DEP/DES since it does not matter in this configuration
+          QString ident = useAirportKeys ? airport.ident : airport.displayIdent(false /* useIata */);
+
+          if(i == 0)
+          {
+            // Set for start
+            plan.setDepartureIdent(ident);
+
+            // Set properties to use ADEP/ADES or DEP/DES.  Read by FlightplanIO::saveFmsInternal()
+            // Value does not matter - only presence is checked
+            if(useAirportKeys)
+              plan.getProperties().remove(atools::fs::pln::AIRPORT_DEPARTURE_NO_AIRPORT);
+            else
+              plan.getProperties().insert(atools::fs::pln::AIRPORT_DEPARTURE_NO_AIRPORT, QString());
+          }
+          else if(i == entries.size() - 1)
+          {
+            // Set for destination
+            plan.setDestinationIdent(ident);
+
+            if(useAirportKeys)
+              plan.getProperties().remove(atools::fs::pln::AIRPORT_DESTINATION_NO_AIRPORT);
+            else
+              plan.getProperties().insert(atools::fs::pln::AIRPORT_DESTINATION_NO_AIRPORT, QString());
+          }
+        }
       }
     }
   }
