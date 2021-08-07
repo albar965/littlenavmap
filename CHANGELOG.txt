@@ -4,6 +4,46 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 2.6.16
+
+This version fixes mostly flight plan issues with X-Plane.
+
+## Changes from 2.6.15 to 2.6.16
+
+### X-Plane flight plan export and loading #741
+
+* Now falling back to DEP/DES keywords in X-Plane FMS flight plan files. These keywords denote
+  departure or destination as a waypoint or a not identifiable airport opposed to ADEP/ADES. This
+  avoids loading issues in X-Plane FMS and third party tools. Flight plans should be loadable in
+  X-Plane FMS and GPS in any case. The conditions for this case are below:
+   - Airport ident is longer than four characters. Example: White Lake (`XC0004`).
+   - Airport has ICAO and this does not match internal id. Example: Torres with official ICAO id `SSTE`
+     using internal ident of `SBTR`.
+   - Airport has no ICAO but FAA code which does not match the internal id. Example: Red Lion with
+     FAA code `JY73` using internal ident of `N73`.
+   - Airport has neither of above but a local code which does not match internal. Example: Edmonton
+     Cooking Lake having local code of `CEZ3` and internal X-Plane ident `EZ3`.
+* Now truncating all X-Plane airport idents to six characters. Also the ones used in intermediate
+  waypoints.
+* Enabled loading of X-Plane FMS plans with truncated airport ids.
+
+### User interface
+
+* Small corrections to options dialog text, aircraft labels on the map (`TCAS` vs `XPDR`) and airport
+  labels on the map.
+* More tolerance for finding airports when loading flight plans. Trying all available internal and
+  official idents now.
+
+### Web interface
+
+Fixes provided by [u-an-i](https://github.com/u-an-i).
+
+* Fixed JavaScript errors on desktop due to pointermove after generalising touch zoom.
+* Now giving user commands always priority if server does not respond.
+* Adjusted fast map refresh to not produce images too large at for slow connections.
+
+===============================================================================
+
 # Version 2.6.15
 
 This version contains bug fixes, small user interface improvements, support for MSFS scenery
