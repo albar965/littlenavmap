@@ -220,14 +220,13 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   html.row2(tr("Elevation:"), Unit::altFeet(airport.getPosition().getAltitude()));
   html.row2(tr("Magnetic declination:"), map::magvarText(airport.magvar));
 
-  // Get transition altitude from nav database
-  map::MapAirport navAirport = airport;
-  NavApp::getMapQuery()->getAirportNavReplace(navAirport);
-  if(navAirport.isValid() && navAirport.transitionAltitude > 0)
-    html.row2(tr("Transition altitude:"), Unit::altFeet(navAirport.transitionAltitude));
-
   if(info)
   {
+    // Get transition altitude from nav database
+    map::MapAirport navAirport = NavApp::getMapQuery()->getAirportNav(airport);
+    if(navAirport.isValid() && navAirport.transitionAltitude > 0)
+      html.row2(tr("Transition altitude:"), Unit::altFeet(navAirport.transitionAltitude));
+
     // Sunrise and sunset ===========================
     QDateTime datetime =
       NavApp::isConnectedAndAircraft() ? NavApp::getUserAircraft().getZuluTime() : QDateTime::currentDateTimeUtc();
@@ -802,11 +801,12 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
   {
     if(!print)
       airportTitle(airport, html, -1);
-    html.br();
+    html.br().br().b(tr("Elevation: ")).text(Unit::altFeet(airport.getPosition().getAltitude())).br();
 
     const SqlRecordVector *recVector = infoQuery->getRunwayInformation(airport.id);
     if(recVector != nullptr)
     {
+      // Runways =========================================================================
       for(const SqlRecord& rec : *recVector)
       {
         if(!soft && !map::isHardSurface(rec.valueStr("surface")))
@@ -1549,6 +1549,10 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
   {
     if(!print)
       airportTitle(airport, html, -1);
+
+    map::MapAirport navAirport = NavApp::getMapQuery()->getAirportNav(airport);
+    if(navAirport.isValid() && navAirport.transitionAltitude > 0)
+      html.br().br().b(tr("Transition altitude: ")).text(Unit::altFeet(navAirport.transitionAltitude));
 
     optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
 

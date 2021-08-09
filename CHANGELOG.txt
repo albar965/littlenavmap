@@ -33,6 +33,8 @@ This version fixes mostly flight plan issues with X-Plane.
   labels on the map.
 * More tolerance for finding airports when loading flight plans. Trying all available internal and
   official idents now.
+* Added airport elevation to tab `Runways` and airport transition altitude in tab `Weather` in information window.
+
 
 ### Web interface
 
