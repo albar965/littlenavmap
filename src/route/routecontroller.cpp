@@ -114,6 +114,10 @@ enum RouteColumns
 
 }
 
+/* Maximum lines in flight plan and waypoint remarks for printing and HTML export */
+const static int MAX_REMARK_LINES_HTML_AND_PRINT = 1000;
+const static int MAX_REMARK_COLS_HTML_AND_PRINT = 200;
+
 using atools::fs::pln::Flightplan;
 using atools::fs::pln::FlightplanEntry;
 using namespace atools::geo;
@@ -374,18 +378,33 @@ void RouteController::tableCopyClipboard()
   qDebug() << "RouteController::tableCopyClipboard";
 
   const Route& rt = route;
+  const QStandardItemModel *mdl = model;
+
+  // Add lon lat fields to end of column list
+  auto addionalFieldsFunc = [&rt](int index) -> QStringList {
+                              return {QLocale().toString(rt.value(index).getPosition().getLonX(), 'f', 8),
+                                      QLocale().toString(rt.value(index).getPosition().getLatY(), 'f', 8)};
+                            };
+
+  // Use callback to get data to avoid truncated remarks
+  auto dataFunc = [&rt, &mdl](int row, int column) -> QVariant {
+                    if(column == rcol::REMARKS)
+                      // Full remarks
+                      return rt.value(row).getComment();
+                    else
+                      // Formatted view content
+                      return mdl->data(mdl->index(row, column));
+                  };
+
   QString csv;
-  int exported = CsvExporter::selectionAsCsv(view, true /* rows */, true /* header */, csv, {"longitude", "latitude"},
-                                             [&rt](int index) -> QStringList
-  {
-    return {QLocale().toString(rt.value(index).getPosition().getLonX(), 'f', 8),
-            QLocale().toString(rt.value(index).getPosition().getLatY(), 'f', 8)};
-  });
+  int exported = CsvExporter::selectionAsCsv(view, true /* rows */, true /* header */, csv, {"Longitude", "Latitude"},
+                                             addionalFieldsFunc, dataFunc);
 
   if(!csv.isEmpty())
+  {
     QApplication::clipboard()->setText(csv);
-
-  NavApp::setStatusMessage(QString(tr("Copied %1 entries to clipboard.")).arg(exported));
+    NavApp::setStatusMessage(QString(tr("Copied %1 entries as CSV to clipboard.")).arg(exported));
+  }
 }
 
 void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBitArray& selectedCols,
@@ -431,17 +450,24 @@ void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBit
   QHeaderView *header = view->horizontalHeader();
 
   int cellIdx = 0;
-  for(int col = 0; col < model->columnCount(); col++)
+  for(int viewCol = 0; viewCol < model->columnCount(); viewCol++)
   {
-    if(!selectedCols.at(col))
+    // Convert view position to model position - needed to keep order
+    int logicalCol = header->logicalIndex(viewCol);
+
+    if(logicalCol == -1)
+      continue;
+
+    if(!selectedCols.at(logicalCol))
       // Ignore if not selected in the print dialog
       continue;
 
     table->cellAt(0, cellIdx).setFormat(headerFormat);
     cursor.setPosition(table->cellAt(0, cellIdx).firstPosition());
-    QString txt = model->headerData(header->logicalIndex(col), Qt::Horizontal).toString().
-                  replace("-\n", "-").replace("\n", " ");
+
+    QString txt = model->headerData(logicalCol, Qt::Horizontal).toString().replace("-\n", "-").replace("\n", " ");
     cursor.insertText(txt);
+
     cellIdx++;
   }
 
@@ -449,13 +475,17 @@ void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBit
   for(int row = 0; row < model->rowCount(); row++)
   {
     cellIdx = 0;
-    for(int col = 0; col < model->columnCount(); col++)
+    for(int viewCol = 0; viewCol < model->columnCount(); viewCol++)
     {
-      if(!selectedCols.at(col))
+      int logicalCol = header->logicalIndex(viewCol);
+      if(logicalCol == -1)
+        continue;
+
+      if(!selectedCols.at(logicalCol))
         // Ignore if not selected in the print dialog
         continue;
 
-      const QStandardItem *item = model->item(row, header->logicalIndex(col));
+      const QStandardItem *item = model->item(row, logicalCol);
 
       if(item != nullptr)
       {
@@ -470,16 +500,20 @@ void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBit
           textFormat.setForeground(leg.getProcedureLeg().isMissed() ?
                                    mapcolors::routeProcedureMissedTableColor :
                                    mapcolors::routeProcedureTableColor);
-        else if((col == rcol::IDENT && leg.getMapObjectType() == map::INVALID) ||
-                (col == rcol::AIRWAY_OR_LEGTYPE && leg.isRoute() &&
+        else if((logicalCol == rcol::IDENT && leg.getMapObjectType() == map::INVALID) ||
+                (logicalCol == rcol::AIRWAY_OR_LEGTYPE && leg.isRoute() &&
                  leg.isAirwaySetAndInvalid(route.getCruisingAltitudeFeet())))
           textFormat.setForeground(Qt::red);
         else
           textFormat.setForeground(Qt::black);
 
-        if(col == 0)
+        if(logicalCol == rcol::IDENT)
           // Make ident bold
           textFormat.setFontWeight(QFont::Bold);
+
+        if(logicalCol == rcol::REMARKS)
+          // Make remarks small
+          textFormat.setFontPointSize(textFormat.fontPointSize() * 0.8);
 
         table->cellAt(row + 1, cellIdx).setFormat(textFormat);
         cursor.setPosition(table->cellAt(row + 1, cellIdx).firstPosition());
@@ -490,7 +524,11 @@ void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBit
         else
           cursor.setBlockFormat(alignLeft);
 
-        cursor.insertText(item->text());
+        if(logicalCol == rcol::REMARKS)
+          cursor.insertText(atools::elideTextLinesShort(leg.getComment(), MAX_REMARK_LINES_HTML_AND_PRINT,
+                                                        MAX_REMARK_COLS_HTML_AND_PRINT, true, true));
+        else
+          cursor.insertText(item->text());
       }
       cellIdx++;
     }
@@ -506,6 +544,16 @@ void RouteController::flightplanHeaderPrint(atools::util::HtmlBuilder& html, boo
 
   if(!titleOnly)
     html.p(buildFlightplanLabel2(true /* print */), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
+
+  if(!route.getFlightplan().getComment().isEmpty())
+  {
+    html.p().b(tr("Flight Plan Remarks")).pEnd();
+    html.table(1, 2, 0, 0, html.getRowBackColor());
+    html.tr().td().text(atools::elideTextLinesShort(route.getFlightplan().getComment(), MAX_REMARK_LINES_HTML_AND_PRINT,
+                                                    MAX_REMARK_COLS_HTML_AND_PRINT, true, true),
+                        atools::util::html::SMALL).tdEnd().trEnd();
+    html.tableEnd().br();
+  }
 }
 
 QString RouteController::getFlightplanTableAsHtmlDoc(float iconSizePixel) const
@@ -552,6 +600,17 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
   // Header lines
   html.p(buildFlightplanLabel(print), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
   html.p(buildFlightplanLabel2(print), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
+
+  if(print && !route.getFlightplan().getComment().isEmpty())
+  {
+    html.p().b(tr("Flight Plan Remarks")).pEnd();
+    html.table(1, 2, 0, 0, html.getRowBackColor());
+    html.tr().td().text(atools::elideTextLinesShort(route.getFlightplan().getComment(), MAX_REMARK_LINES_HTML_AND_PRINT,
+                                                    MAX_REMARK_COLS_HTML_AND_PRINT, true, true),
+                        atools::util::html::SMALL).tdEnd().trEnd();
+    html.tableEnd().br();
+  }
+
   html.table();
 
   // Table header
@@ -587,9 +646,13 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
     // Rest of columns
     for(int col = 0; col < model->columnCount(); col++)
     {
-      if(view->columnWidth(header->logicalIndex(col)) > minColWidth)
+      int logicalCol = header->logicalIndex(col);
+      if(logicalCol == -1)
+        continue;
+
+      if(view->columnWidth(logicalCol) > minColWidth)
       {
-        QStandardItem *item = model->item(row, header->logicalIndex(col));
+        QStandardItem *item = model->item(row, logicalCol);
 
         if(item != nullptr)
         {
@@ -600,21 +663,29 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
             color = leg.getProcedureLeg().isMissed() ?
                     mapcolors::routeProcedureMissedTableColor :
                     mapcolors::routeProcedureTableColor;
-          else if((col == rcol::IDENT && leg.getMapObjectType() == map::INVALID) ||
-                  (col == rcol::AIRWAY_OR_LEGTYPE && leg.isRoute() &&
+          else if((logicalCol == rcol::IDENT && leg.getMapObjectType() == map::INVALID) ||
+                  (logicalCol == rcol::AIRWAY_OR_LEGTYPE && leg.isRoute() &&
                    leg.isAirwaySetAndInvalid(route.getCruisingAltitudeFeet())))
             color = Qt::red;
 
           atools::util::html::Flags flags = atools::util::html::NONE;
           // Make ident column text bold
-          if(col == rcol::IDENT)
+          if(logicalCol == rcol::IDENT)
             flags |= atools::util::html::BOLD;
+
+          // Remarks in small text
+          if(logicalCol == rcol::REMARKS)
+            flags |= atools::util::html::SMALL;
 
           // Take over alignment from model
           if(item->textAlignment().testFlag(Qt::AlignRight))
             flags |= atools::util::html::ALIGN_RIGHT;
 
-          html.td(item->text().toHtmlEscaped(), flags, color);
+          if(logicalCol == rcol::REMARKS)
+            html.td(atools::elideTextLinesShort(leg.getComment(), MAX_REMARK_LINES_HTML_AND_PRINT,
+                                                MAX_REMARK_COLS_HTML_AND_PRINT, true, true), flags, color);
+          else
+            html.td(item->text(), flags, color);
         }
         else
           html.td(QString());
@@ -4960,18 +5031,11 @@ void RouteController::updateRemarkWidget()
   }
 }
 
-QStringList RouteController::getRouteColumns() const
+QStringList RouteController::getAllRouteColumns() const
 {
   QStringList colums;
-  QHeaderView *header = view->horizontalHeader();
-
-  if(header != nullptr)
-  {
-    // Get column names from header and remove line feeds
-    for(int col = 0; col < model->columnCount(); col++)
-      colums.append(model->headerData(header->logicalIndex(col), Qt::Horizontal).toString().
-                    replace("-\n", "-").replace("\n", " "));
-  }
+  for(int i = rcol::FIRST_COLUMN; i <= rcol::LAST_COLUMN; i++)
+    colums.append(Unit::replacePlaceholders(routeColumns.value(i)).replace("-\n", "-").replace("\n", " "));
 
   return colums;
 }

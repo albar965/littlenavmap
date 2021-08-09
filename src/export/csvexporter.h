@@ -71,7 +71,8 @@ public:
   /* Copies selection in table as CSV. */
   static int selectionAsCsv(QTableView *view, bool header, bool rows, QString& result,
                             const QStringList& additionalHeader = QStringList(),
-                            std::function<QStringList(int)> additionalFields = nullptr);
+                            std::function<QStringList(int)> additionalFields = nullptr,
+                            std::function<QVariant (int, int)> dataCallback = nullptr);
 
   /* Copies full table content as CSV. */
   static int tableAsCsv(QTableView *view, bool header, QString& result,

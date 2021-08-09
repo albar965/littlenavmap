@@ -17,6 +17,7 @@
 
 #include "print/printdialog.h"
 #include "ui_printdialog.h"
+#include "gui/itemviewzoomhandler.h"
 #include "gui/widgetstate.h"
 #include "gui/helphandler.h"
 #include "common/constants.h"
@@ -58,6 +59,9 @@ PrintDialog::PrintDialog(QWidget *parent)
   connect(ui->checkBoxPrintDestinationWeather, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
   connect(ui->checkBoxPrintFlightplan, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
   connect(ui->checkBoxPrintFuel, &QCheckBox::toggled, this, &PrintDialog::updateButtonStates);
+
+  // Use saved font size for table view
+  zoomHandler = new atools::gui::ItemViewZoomHandler(ui->tableWidgetPrintFlightplanCols);
 }
 
 PrintDialog::~PrintDialog()
@@ -65,6 +69,7 @@ PrintDialog::~PrintDialog()
   atools::gui::WidgetState(lnm::ROUTE_PRINT_DIALOG).save(this);
 
   delete ui;
+  delete zoomHandler;
 }
 
 void PrintDialog::updateButtonStates()
@@ -77,7 +82,7 @@ void PrintDialog::updateButtonStates()
   ui->checkBoxPrintDestinationSoftRunways->setEnabled(ui->checkBoxPrintDestinationRunways->isChecked());
 
   ui->spinBoxPrintTextSizeFlightplan->setEnabled(ui->checkBoxPrintFlightplan->isChecked());
-  ui->listWidgetPrintFlightplanCols->setEnabled(ui->checkBoxPrintFlightplan->isChecked());
+  ui->tableWidgetPrintFlightplanCols->setEnabled(ui->checkBoxPrintFlightplan->isChecked());
 
   prt::PrintFlightPlanOpts opts = getPrintOptions();
   bool canPrint = opts & prt::DEPARTURE_ANY || opts & prt::DESTINATION_ANY || opts & prt::FLIGHTPLAN;
@@ -123,20 +128,29 @@ int PrintDialog::getPrintTextSizeFlightplan() const
 
 void PrintDialog::setRouteTableColumns(const QStringList& columns)
 {
-  ui->listWidgetPrintFlightplanCols->clear();
-  ui->listWidgetPrintFlightplanCols->addItems(columns);
+  ui->tableWidgetPrintFlightplanCols->clear();
+  ui->tableWidgetPrintFlightplanCols->setColumnCount(1);
+  ui->tableWidgetPrintFlightplanCols->setRowCount(columns.size());
+
+  int idx = 0;
+  for(const QString& col : columns)
+    ui->tableWidgetPrintFlightplanCols->setItem(idx++, 0, new QTableWidgetItem(col));
 
   // Load selection
-  if(selectedRows.size() == ui->listWidgetPrintFlightplanCols->count())
+  if(selectedRows.size() == ui->tableWidgetPrintFlightplanCols->rowCount())
   {
-    for(int i = 0; i < selectedRows.size(); i++)
-      ui->listWidgetPrintFlightplanCols->item(i)->setSelected(selectedRows.at(i));
+    // Reverse order to keep last selected on top, i.e. scroll to top
+    for(int i = selectedRows.size() - 1; i >= 0; i--)
+    {
+      if(selectedRows.at(i))
+        ui->tableWidgetPrintFlightplanCols->selectRow(i);
+    }
   }
   else
   {
     // Size does not match - set all to selected
-    for(int i = 0; i < ui->listWidgetPrintFlightplanCols->count(); i++)
-      ui->listWidgetPrintFlightplanCols->item(i)->setSelected(true);
+    ui->tableWidgetPrintFlightplanCols->selectAll();
+    ui->tableWidgetPrintFlightplanCols->scrollToTop();
   }
 }
 
@@ -173,9 +187,9 @@ void PrintDialog::saveState()
   });
 
   // Save selection to bitarray
-  selectedRows = QBitArray(ui->listWidgetPrintFlightplanCols->count());
-  for(int i = 0; i < ui->listWidgetPrintFlightplanCols->count(); i++)
-    selectedRows.setBit(i, ui->listWidgetPrintFlightplanCols->item(i)->isSelected());
+  selectedRows = QBitArray(ui->tableWidgetPrintFlightplanCols->rowCount());
+  for(int i = 0; i < ui->tableWidgetPrintFlightplanCols->rowCount(); i++)
+    selectedRows.setBit(i, ui->tableWidgetPrintFlightplanCols->item(i, 0)->isSelected());
   atools::settings::Settings::instance().setValueVar(lnm::ROUTE_PRINT_DIALOG + "Selection", selectedRows);
 }
 

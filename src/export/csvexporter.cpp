@@ -158,7 +158,8 @@ int CsvExporter::exportSelected(bool open)
 
 int CsvExporter::selectionAsCsv(QTableView *view, bool header, bool rows, QString& result,
                                 const QStringList& additionalHeader,
-                                std::function<QStringList(int index)> additionalFields)
+                                std::function<QStringList(int index)> additionalFields,
+                                std::function<QVariant(int row, int col)> dataCallback)
 {
   int exported = 0;
   atools::sql::SqlExport exporter;
@@ -185,8 +186,17 @@ int CsvExporter::selectionAsCsv(QTableView *view, bool header, bool rows, QStrin
         {
           QVariantList vars;
           for(int i = 0; i < model->columnCount(); i++)
+          {
             if(!view->isColumnHidden(i))
-              vars.append(model->data(model->index(row, headerView->logicalIndex(i))));
+            {
+              QModelIndex index = model->index(row, headerView->logicalIndex(i));
+              if(dataCallback)
+                vars.append(dataCallback(index.row(), index.column()));
+              else
+                vars.append(model->data(index));
+            }
+          }
+
           stream << exporter.getResultSetRow(vars) +
           (additionalHeader.isEmpty() || !additionalFields ? QString() : ";" + additionalFields(row).join(";")) << endl;
 
@@ -202,7 +212,10 @@ int CsvExporter::selectionAsCsv(QTableView *view, bool header, bool rows, QStrin
       QModelIndexList indexes = selection->selectedIndexes();
       for(const QModelIndex& index : indexes)
       {
-        resultList.append(model->data(index).toString());
+        if(dataCallback)
+          resultList.append(dataCallback(index.row(), index.column()).toString());
+        else
+          resultList.append(model->data(index).toString());
         exported++;
       }
       result = resultList.join(";");

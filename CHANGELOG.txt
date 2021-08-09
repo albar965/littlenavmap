@@ -6,7 +6,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 # Version 2.6.16
 
-This version fixes mostly flight plan issues with X-Plane.
+This version fixes flight plan issues with X-Plane as well as flight plan export and printing issues with remarks.
 
 ## Changes from 2.6.15 to 2.6.16
 
@@ -27,14 +27,18 @@ This version fixes mostly flight plan issues with X-Plane.
   waypoints.
 * Enabled loading of X-Plane FMS plans with truncated airport ids.
 
-### User interface
+### General
 
 * Small corrections to options dialog text, aircraft labels on the map (`TCAS` vs `XPDR`) and airport
   labels on the map.
 * More tolerance for finding airports when loading flight plans. Trying all available internal and
   official idents now.
 * Added airport elevation to tab `Runways` and airport transition altitude in tab `Weather` in information window.
-
+* Fixed issues with flight plan and waypoint remarks being truncated when saving plan as HTML,
+  printing plan or copying plan as CSV (`Ctrl+C` in table).
+* Added missing flight plan remarks field to HTML export and print.
+* Fixed issue where the wrong flight plan columns were printed or exported to HTML or columns were missing.
+  This happened if the user rearranged the flight plan table columns by moving the headers around.
 
 ### Web interface
 
