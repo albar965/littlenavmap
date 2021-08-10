@@ -212,7 +212,8 @@ void SearchBaseTable::tableCopyClipboard()
     if(controller->hasColumn("lonx") && controller->hasColumn("laty"))
     {
       // Full CSV export including coordinates and full rows
-      exported = CsvExporter::selectionAsCsv(view, true /* header */, true /* rows */, csv, {"longitude", "latitude"},
+      exported = CsvExporter::selectionAsCsv(view, true /* header */, true /* rows */, csv,
+                                             {tr("Longitude"), tr("Latitude")},
                                              [c](int index) -> QStringList
       {
         return {QLocale().toString(c->getRawData(index, "lonx").toFloat(), 'f', 8),

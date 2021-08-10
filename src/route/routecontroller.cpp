@@ -397,7 +397,8 @@ void RouteController::tableCopyClipboard()
                   };
 
   QString csv;
-  int exported = CsvExporter::selectionAsCsv(view, true /* rows */, true /* header */, csv, {"Longitude", "Latitude"},
+  int exported = CsvExporter::selectionAsCsv(view, true /* rows */, true /* header */, csv,
+                                             {tr("Longitude"), tr("Latitude")},
                                              addionalFieldsFunc, dataFunc);
 
   if(!csv.isEmpty())
@@ -465,7 +466,7 @@ void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBit
     table->cellAt(0, cellIdx).setFormat(headerFormat);
     cursor.setPosition(table->cellAt(0, cellIdx).firstPosition());
 
-    QString txt = model->headerData(logicalCol, Qt::Horizontal).toString().replace("-\n", "-").replace("\n", " ");
+    QString txt = model->headerData(logicalCol, Qt::Horizontal).toString().replace("-\n", "").replace("\n", " ");
     cursor.insertText(txt);
 
     cellIdx++;
@@ -617,10 +618,16 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
   QHeaderView *header = view->horizontalHeader();
   html.tr(Qt::lightGray);
   html.th(QString()); // Icon
-  for(int col = 0; col < model->columnCount(); col++)
+  for(int viewCol = 0; viewCol < model->columnCount(); viewCol++)
   {
-    if(view->columnWidth(header->logicalIndex(col)) > minColWidth)
-      html.th(model->headerData(header->logicalIndex(col), Qt::Horizontal).
+    // Convert view position to model position - needed to keep order
+    int logicalCol = header->logicalIndex(viewCol);
+
+    if(logicalCol == -1)
+      continue;
+
+    if(!view->isColumnHidden(logicalCol) && view->columnWidth(logicalCol) > minColWidth)
+      html.th(model->headerData(logicalCol, Qt::Horizontal).
               toString().replace("-\n", "-<br/>").replace("\n", "<br/>"), atools::util::html::NO_ENTITIES);
   }
   html.trEnd();
@@ -644,13 +651,13 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
     }
 
     // Rest of columns
-    for(int col = 0; col < model->columnCount(); col++)
+    for(int viewCol = 0; viewCol < model->columnCount(); viewCol++)
     {
-      int logicalCol = header->logicalIndex(col);
+      int logicalCol = header->logicalIndex(viewCol);
       if(logicalCol == -1)
         continue;
 
-      if(view->columnWidth(logicalCol) > minColWidth)
+      if(!view->isColumnHidden(logicalCol) && view->columnWidth(logicalCol) > minColWidth)
       {
         QStandardItem *item = model->item(row, logicalCol);
 
@@ -4087,6 +4094,9 @@ void RouteController::updateTableModel()
   updateModelHighlights();
   highlightNextWaypoint(route.getActiveLegIndexCorrected());
   updateWindowLabel();
+
+  // Value from ui file is ignored
+  view->horizontalHeader()->setMinimumSectionSize(3);
 }
 
 /* Update travel times in table view model after speed change */
@@ -5035,7 +5045,7 @@ QStringList RouteController::getAllRouteColumns() const
 {
   QStringList colums;
   for(int i = rcol::FIRST_COLUMN; i <= rcol::LAST_COLUMN; i++)
-    colums.append(Unit::replacePlaceholders(routeColumns.value(i)).replace("-\n", "-").replace("\n", " "));
+    colums.append(Unit::replacePlaceholders(routeColumns.value(i)).replace("-\n", "").replace("\n", " "));
 
   return colums;
 }

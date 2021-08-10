@@ -239,9 +239,6 @@ Note that the order of columns is as selected in the flight plan table.</string>
           <property name="showDropIndicator" stdset="0">
            <bool>false</bool>
           </property>
-          <property name="alternatingRowColors">
-           <bool>false</bool>
-          </property>
           <property name="selectionMode">
            <enum>QAbstractItemView::MultiSelection</enum>
           </property>
@@ -253,6 +250,9 @@ Note that the order of columns is as selected in the flight plan table.</string>
           </attribute>
           <attribute name="horizontalHeaderStretchLastSection">
            <bool>true</bool>
+          </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
           </attribute>
          </widget>
         </item>

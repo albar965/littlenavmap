@@ -4394,7 +4394,7 @@ Matches any visited airport.</string>
             <bool>true</bool>
            </property>
            <attribute name="horizontalHeaderMinimumSectionSize">
-            <number>1</number>
+            <number>3</number>
            </attribute>
            <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
             <bool>false</bool>
