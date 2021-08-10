@@ -212,7 +212,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
 
       // Sqlite TEXT as ISO8601 strings (2021-05-16T23:55:00.259+02:00).
       // TEXT as ISO8601 strings ("YYYY-MM-DD HH:MM:SS.SSS")
-      record.setValue("departure_time", atools::convertToIsoWithOffset(QDateTime::currentDateTime())); // varchar(100),
+      record.setValue("departure_time", atools::currentIsoWithOffset()); // varchar(100),
 
       // 2021-05-16T21:50:24.973Z
       record.setValue("departure_time_sim", aircraft.getZuluTime()); // varchar(100),
@@ -263,7 +263,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
 
         // Sqlite TEXT as ISO8601 strings (2021-05-16T23:55:00.259+02:00).
         // TEXT as ISO8601 strings ("YYYY-MM-DD HH:MM:SS.SSS")
-        record.setValue("destination_time", atools::convertToIsoWithOffset(QDateTime::currentDateTime())); // varchar(100),
+        record.setValue("destination_time", atools::currentIsoWithOffset()); // varchar(100),
 
         // 2021-05-16T21:50:24.973Z
         record.setValue("destination_time_sim", aircraft.getZuluTime()); // varchar(100),
