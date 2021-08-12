@@ -732,14 +732,15 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
     ends.sortRunwayEnds();
 
     max = std::min(ends.size(), max);
-    QString rwTxt = ends.getTotalNumber() == 1 ? tr("Runway") : tr("Runways");
 
     if(details)
     {
       // Table header for detailed view
-      head(html, tr("Best %1 for wind").arg(rwTxt.toLower()));
+      head(html, ends.getTotalNumber() == 1 ? tr("Best runway for wind") : tr("Best runways for wind"));
       html.table();
-      html.tr(QColor()).th(rwTxt).th(tr("Surface")).th(tr("Length")).th(tr("Headwind")).th(tr("Crosswind")).trEnd();
+      html.tr(QColor()).th(ends.getTotalNumber() == 1 ? tr("Runway") : tr("Runways")).
+      th(tr("Surface")).th(tr("Length")).th(tr("Headwind")).th(tr("Crosswind"))
+      .trEnd();
     }
 
     // Create runway table for details =====================================
@@ -787,7 +788,8 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
       }
 
       if(!runways.isEmpty())
-        html.br().b(tr(" Prefers %1: ").arg(rwTxt)).text(runways.mid(0, 4).join(tr(", ")));
+        html.br().b((ends.getTotalNumber() == 1 ? tr(" Prefers runway: ") : tr(" Prefers runways: "))).
+        text(runways.mid(0, 4).join(tr(", ")));
     }
   }
   else if(details)
