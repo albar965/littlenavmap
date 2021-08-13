@@ -2899,46 +2899,88 @@ int Route::getAdjustedAltitude(int newAltitude) const
   return newAltitude;
 }
 
-void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ils, map::MapRunwayEnd *runwayEnd) const
+void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd) const
 {
-  QList<map::MapRunwayEnd> runwayEnds;
-  NavApp::getMapQuery()->getRunwayEndByNameFuzzy(runwayEnds, approachLegs.runwayEnd.name,
-                                                 getDestinationAirportLeg().getAirport(),
-                                                 false /* nav data */);
+  QString destIdent = getDestinationAirportLeg().getIdent();
 
-  if(runwayEnd != nullptr && !runwayEnds.isEmpty())
-    *runwayEnd = runwayEnds.first();
-
-  ils.clear();
-  if(approachLegs.runwayEnd.isValid())
+  if(!approachLegs.runwayEnd.name.isEmpty() && approachLegs.runwayEnd.name != "RW")
   {
-    QString destIdent = getDestinationAirportLeg().getIdent();
-    // Get one or more ILS from flight plan leg as is
-    ils = NavApp::getMapQuery()->getIlsByAirportAndRunway(destIdent, approachLegs.runwayEnd.name);
+    // Runway name given ========================
+    QList<map::MapRunwayEnd> runwayEnds;
+    NavApp::getMapQuery()->getRunwayEndByNameFuzzy(runwayEnds, approachLegs.runwayEnd.name,
+                                                   getDestinationAirportLeg().getAirport(),
+                                                   false /* nav data */);
 
-    if(ils.isEmpty())
-    {
-      // ILS does not even match runway - try fuzzy
-      QStringList variants = atools::fs::util::runwayNameVariants(approachLegs.runwayEnd.name);
-      for(const QString& runwayVariant : variants)
-        ils.append(NavApp::getMapQuery()->getIlsByAirportAndRunway(destIdent, runwayVariant));
-    }
+    if(runwayEnd != nullptr && !runwayEnds.isEmpty())
+      *runwayEnd = runwayEnds.first();
 
-    if(ils.size() > 1)
+    ilsVector.clear();
+    if(approachLegs.runwayEnd.isValid())
     {
-      for(const proc::MapProcedureLeg& leg : approachLegs.approachLegs)
+      // Have runway for approach ============================================
+      // Get one or more ILS from flight plan leg as is
+      ilsVector = NavApp::getMapQuery()->getIlsByAirportAndRunway(destIdent, approachLegs.runwayEnd.name);
+
+      if(ilsVector.isEmpty())
       {
-        for(map::MapIls i : ils)
-        {
-          if(leg.recFixIdent == i.ident)
-          {
-            ils.clear();
-            ils.append(i);
-          }
-        }
+        // ILS does not even match runway - try fuzzy to consider renamed runways
+        QStringList variants = atools::fs::util::runwayNameVariants(approachLegs.runwayEnd.name);
+        for(const QString& runwayVariant : variants)
+          ilsVector.append(NavApp::getMapQuery()->getIlsByAirportAndRunway(destIdent, runwayVariant));
       }
+
+      if(ilsVector.size() > 1)
+      {
+        // Found more than one ILS for approach - look for recommended fix reference in approach legs
+        // Iterate backwards to catch the recommended fix closest to the runway
+        for(int i = approachLegs.approachLegs.size() - 1; i >= 0; i--)
+        {
+          const proc::MapProcedureLeg& leg = approachLegs.approachLegs.at(i);
+
+          // Do not look for NDB and waypoints - try VOR (V) and ILS/localizer (L)
+          if(!leg.isMissed() && !leg.recFixIdent.isEmpty() && leg.recFixType != "N" && leg.recFixType != "TW" &&
+             leg.recFixType != "TN" && leg.recFixType != "W")
+          {
+            map::MapIls foundIls;
+            for(const map::MapIls& ils : ilsVector)
+            {
+              if(leg.recFixIdent == ils.ident)
+              {
+                foundIls = ils;
+                break;
+              }
+            }
+
+            if(foundIls.isValid())
+            {
+              // Recommended matches ILS in the list
+              ilsVector.clear();
+              ilsVector.append(foundIls);
+            }
+          }
+        } // for(int i = approachLegs.approachLegs.size() - 1; i >= 0; i--)
+      } // if(ilsVector.size() > 1)
+    } // if(approachLegs.runwayEnd.isValid())
+  } // if(!approachLegs.runwayEnd.name.isEmpty() && approachLegs.runwayEnd.name != "RW")
+
+  if(ilsVector.isEmpty())
+  {
+    // No runway for approach - circling ============================================
+    // Iterate backwards to catch the recommended fix closest to the runway
+    for(int i = approachLegs.approachLegs.size() - 1; i >= 0; i--)
+    {
+      const proc::MapProcedureLeg& leg = approachLegs.approachLegs.at(i);
+
+      // Do not look for NDB and waypoints - try VOR (V) and ILS/localizer (L)
+      if(!leg.isMissed() && !leg.recFixIdent.isEmpty() && leg.recFixType != "N" && leg.recFixType != "TW" &&
+         leg.recFixType != "TN" && leg.recFixType != "W")
+        // Get ILS referenced in the recommended fix
+        ilsVector = NavApp::getMapQuery()->getIlsByAirportAndIdent(destIdent, leg.recFixIdent);
+
+      if(!ilsVector.isEmpty())
+        break;
     }
-  }
+  } // if(ilsVector.isEmpty())
 }
 
 bool Route::isTooFarToFlightPlan() const

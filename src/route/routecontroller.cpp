@@ -3942,8 +3942,8 @@ void RouteController::updateTableModel()
 
     // Get ILS for approach runway if it marks the end of an ILS or localizer approach procedure
     QVector<map::MapIls> ilsByAirportAndRunway;
-    if(route.getApproachLegs().hasIlsGuidance() &&
-       leg.isAnyProcedure() && leg.getProcedureLeg().isApproach() && leg.getRunwayEnd().isValid())
+    if(route.getApproachLegs().hasIlsGuidance() && leg.isAnyProcedure() && leg.getProcedureLeg().isApproach() &&
+       leg.getRunwayEnd().isValid())
       route.getApproachRunwayEndAndIls(ilsByAirportAndRunway);
 
     // VOR/NDB type ===========================
@@ -3977,8 +3977,7 @@ void RouteController::updateTableModel()
     }
     else if(leg.getNdb().isValid())
       itemRow[rcol::FREQ] = new QStandardItem(QLocale().toString(leg.getFrequency() / 100.f, 'f', 1));
-    else if(leg.isAnyProcedure() && !(leg.getProcedureLeg().isMissed()) &&
-            leg.getRunwayEnd().isValid())
+    else if(leg.isAnyProcedure() && !(leg.getProcedureLeg().isMissed()) && leg.getRunwayEnd().isValid())
     {
       // Add ILS frequencies
       QStringList texts;

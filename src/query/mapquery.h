@@ -84,7 +84,12 @@ public:
   /* Always from sim db */
   map::MapIls getIlsById(int id);
 
+  /* Get ILS from sim database based on airport ident and runway name.
+   * Runway name can be zero prefixed or prefixed with "RW". */
   QVector<map::MapIls> getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway);
+
+  /* Get ILS from sim database based on airport ident and ILS ident. Uses exact match. */
+  QVector<map::MapIls> getIlsByAirportAndIdent(const QString& airportIdent, const QString& ilsIdent);
 
   /* Get runway end and try lower and higher numbers if nothing was found - adds a dummy entry with airport
    * position if no runway ends were found */
@@ -244,8 +249,8 @@ private:
   atools::sql::SqlQuery *vorByIdentQuery = nullptr, *ndbByIdentQuery = nullptr, *ilsByIdentQuery = nullptr;
 
   atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr, *vorByWaypointIdQuery = nullptr,
-                        *ndbByWaypointIdQuery = nullptr, *ilsByIdQuery = nullptr, *ilsQuerySimByName = nullptr,
-                        *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr;
+                        *ndbByWaypointIdQuery = nullptr, *ilsByIdQuery = nullptr, *ilsQuerySimByAirportAndRw = nullptr,
+                        *ilsQuerySimByAirportAndIdent = nullptr, *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr;
 };
 
 #endif // LITTLENAVMAP_MAPQUERY_H

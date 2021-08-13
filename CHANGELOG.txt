@@ -42,6 +42,8 @@ This version fixes flight plan issues with X-Plane as well as flight plan export
   labels on the map.
 * More tolerance for finding airports when loading flight plans. Trying all available internal and
   official ids (ICAO, FAA, IATA and local) now.
+* Now also showing ILS frequency for final approach in flight plan table for circling as well as
+  IGS, LDA, LOC and SDF approaches if navaid is present.
 
 ### Web interface
 
