@@ -220,14 +220,13 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   html.row2(tr("Elevation:"), Unit::altFeet(airport.getPosition().getAltitude()));
   html.row2(tr("Magnetic declination:"), map::magvarText(airport.magvar));
 
-  // Get transition altitude from nav database
-  map::MapAirport navAirport = airport;
-  NavApp::getMapQuery()->getAirportNavReplace(navAirport);
-  if(navAirport.isValid() && navAirport.transitionAltitude > 0)
-    html.row2(tr("Transition altitude:"), Unit::altFeet(navAirport.transitionAltitude));
-
   if(info)
   {
+    // Get transition altitude from nav database
+    map::MapAirport navAirport = NavApp::getMapQuery()->getAirportNav(airport);
+    if(navAirport.isValid() && navAirport.transitionAltitude > 0)
+      html.row2(tr("Transition altitude:"), Unit::altFeet(navAirport.transitionAltitude));
+
     // Sunrise and sunset ===========================
     QDateTime datetime =
       NavApp::isConnectedAndAircraft() ? NavApp::getUserAircraft().getZuluTime() : QDateTime::currentDateTimeUtc();
@@ -283,8 +282,11 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     facilities.append(tr("Aprons"));
   if(airport.taxiway())
     facilities.append(tr("Taxiways"));
+
   if(airport.towerObject())
-    facilities.append(tr("Tower Object"));
+    facilities.append(NavApp::getCurrentSimulatorDb() ==
+                      atools::fs::FsPaths::XPLANE11 ? tr("Tower Viewpoint") : tr("Tower Object"));
+
   if(airport.parking())
     facilities.append(tr("Parking"));
 
@@ -730,14 +732,15 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
     ends.sortRunwayEnds();
 
     max = std::min(ends.size(), max);
-    QString rwTxt = ends.getTotalNumber() == 1 ? tr("Runway") : tr("Runways");
 
     if(details)
     {
       // Table header for detailed view
-      head(html, tr("Best %1 for wind").arg(rwTxt.toLower()));
+      head(html, ends.getTotalNumber() == 1 ? tr("Best runway for wind") : tr("Best runways for wind"));
       html.table();
-      html.tr(QColor()).th(rwTxt).th(tr("Surface")).th(tr("Length")).th(tr("Headwind")).th(tr("Crosswind")).trEnd();
+      html.tr(QColor()).th(ends.getTotalNumber() == 1 ? tr("Runway") : tr("Runways")).
+      th(tr("Surface")).th(tr("Length")).th(tr("Headwind")).th(tr("Crosswind"))
+      .trEnd();
     }
 
     // Create runway table for details =====================================
@@ -785,7 +788,8 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
       }
 
       if(!runways.isEmpty())
-        html.br().b(tr(" Prefers %1: ").arg(rwTxt)).text(runways.mid(0, 4).join(tr(", ")));
+        html.br().b((ends.getTotalNumber() == 1 ? tr(" Prefers runway: ") : tr(" Prefers runways: "))).
+        text(runways.mid(0, 4).join(tr(", ")));
     }
   }
   else if(details)
@@ -799,11 +803,12 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
   {
     if(!print)
       airportTitle(airport, html, -1);
-    html.br();
+    html.br().br().b(tr("Elevation: ")).text(Unit::altFeet(airport.getPosition().getAltitude())).br();
 
     const SqlRecordVector *recVector = infoQuery->getRunwayInformation(airport.id);
     if(recVector != nullptr)
     {
+      // Runways =========================================================================
       for(const SqlRecord& rec : *recVector)
       {
         if(!soft && !map::isHardSurface(rec.valueStr("surface")))
@@ -1547,6 +1552,10 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
     if(!print)
       airportTitle(airport, html, -1);
 
+    map::MapAirport navAirport = NavApp::getMapQuery()->getAirportNav(airport);
+    if(navAirport.isValid() && navAirport.transitionAltitude > 0)
+      html.br().br().b(tr("Transition altitude: ")).text(Unit::altFeet(navAirport.transitionAltitude));
+
     optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
 
     if(flags & optsw::WEATHER_INFO_ALL)
@@ -1680,8 +1689,8 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 
   const atools::fs::weather::MetarParser& parsed = metar.getParsedMetar();
 
-  bool hasClouds = !parsed.getClouds().isEmpty() &&
-                   parsed.getClouds().first().getCoverage() != atools::fs::weather::MetarCloud::COVERAGE_CLEAR;
+  QVector<atools::fs::weather::MetarCloud> clouds = parsed.getClouds();
+  bool hasClouds = !clouds.isEmpty() && clouds.first().getCoverage() != atools::fs::weather::MetarCloud::COVERAGE_CLEAR;
 
   html.table();
 
@@ -2789,15 +2798,16 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
       trackMeta = infoQuery->getTrackMetadata(airway.id);
       if(!trackMeta.isEmpty())
       {
-        QDateTime from = trackMeta.valueDateTime("valid_from");
-        QDateTime to = trackMeta.valueDateTime("valid_to");
-        QDateTime now = QDateTime::currentDateTimeUtc();
+        QDateTime validFrom = trackMeta.valueDateTime("valid_from");
+        QDateTime validTo = trackMeta.valueDateTime("valid_to");
+        QDateTime validNow = QDateTime::currentDateTimeUtc();
 
-        if(!from.isNull() && !to.isNull())
+        if(!validFrom.isNull() && !validTo.isNull())
           html.row2(tr("Track valid:"), tr("%1 UTC to<br/>%2 UTC%3").
-                    arg(locale.toString(from, QLocale::ShortFormat)).
-                    arg(locale.toString(to, QLocale::ShortFormat)).
-                    arg(now >= from && now <= to ? tr("<br/><b>Track is now valid.</b>") : QString()),
+                    arg(locale.toString(validFrom, QLocale::ShortFormat)).
+                    arg(locale.toString(validTo, QLocale::ShortFormat)).
+                    arg(validNow >= validFrom && validNow <= validTo ?
+                        tr("<br/><b>Track is now valid.</b>") : QString()),
                     ahtml::NO_ENTITIES);
         else
           html.row2(tr("Track valid:"), tr("No validity period"));
@@ -2860,7 +2870,8 @@ void HtmlInfoBuilder::towerText(const MapAirport& airport, HtmlBuilder& html) co
     head(html, locale.toString(roundComFrequency(airport.towerFrequency), 'f', 3) + tr(" MHz"));
   }
   else
-    head(html, tr("Tower"));
+    head(html, NavApp::getCurrentSimulatorDb() ==
+         atools::fs::FsPaths::XPLANE11 ? tr("Tower Viewpoint") : tr("Tower"));
 }
 
 void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) const

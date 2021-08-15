@@ -2764,6 +2764,9 @@ void MapWidget::weatherSourceToUi(map::MapWeatherSource weatherSource)
   Ui::MainWindow *ui = NavApp::getMainUi();
   switch(weatherSource)
   {
+    case map::WEATHER_SOURCE_DISABLED:
+      ui->actionMapShowWeatherDisabled->setChecked(true);
+      break;
     case map::WEATHER_SOURCE_SIMULATOR:
       ui->actionMapShowWeatherSimulator->setChecked(true);
       break;
@@ -2785,7 +2788,9 @@ void MapWidget::weatherSourceToUi(map::MapWeatherSource weatherSource)
 map::MapWeatherSource MapWidget::weatherSourceFromUi()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  if(ui->actionMapShowWeatherSimulator->isChecked())
+  if(ui->actionMapShowWeatherDisabled->isChecked())
+    return map::WEATHER_SOURCE_DISABLED;
+  else if(ui->actionMapShowWeatherSimulator->isChecked())
     return map::WEATHER_SOURCE_SIMULATOR;
   else if(ui->actionMapShowWeatherActiveSky->isChecked())
     return map::WEATHER_SOURCE_ACTIVE_SKY;

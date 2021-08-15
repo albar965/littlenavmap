@@ -299,31 +299,32 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
 {
   if(type & map::AIRPORT)
   {
-    map::MapAirport ap;
+    AirportQuery *airportQuery = airportFromNavDatabase ? NavApp::getAirportQueryNav() : NavApp::getAirportQuerySim();
 
-    // Try ident first =====================
-    if(airportFromNavDatabase)
-      NavApp::getAirportQueryNav()->getAirportByIdent(ap, ident);
-    else
-      NavApp::getAirportQuerySim()->getAirportByIdent(ap, ident);
-
+    // Try exact ident first =====================
+    map::MapAirport ap = airportQuery->getAirportByIdent(ident);
     if(ap.isValid())
       result.airports.append(ap);
-    else
+
+    // Check for truncated X-Plane idents but only in X-Plane database
+    if(ident.size() == 6 && NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
+      airportQuery->getAirportsByTruncatedIdent(result.airports, ident);
+
+    // Remove airports too far away from given distance
+    maptools::removeByDistance(result.airports, sortByDistancePos, maxDistanceMeter);
+
+    if(result.airports.isEmpty())
     {
       // Try fuzzy search for nearest by official ids =====================
       QList<map::MapAirport> airports;
 
       // Look through all fields (ICAO, IATA, FAA and local) for the given ident
-      if(airportFromNavDatabase)
-        NavApp::getAirportQueryNav()->getAirportsByOfficialIdent(airports, ident);
-      else
-        NavApp::getAirportQuerySim()->getAirportsByOfficialIdent(airports, ident);
+      airportQuery->getAirportsByOfficialIdent(airports, ident);
       result.airports.append(airports);
-    }
 
-    maptools::sortByDistance(result.airports, sortByDistancePos);
-    maptools::removeByDistance(result.airports, sortByDistancePos, maxDistanceMeter);
+      maptools::sortByDistance(result.airports, sortByDistancePos);
+      maptools::removeByDistance(result.airports, sortByDistancePos, maxDistanceMeter);
+    }
   }
 
   if(type & map::VOR)
@@ -510,16 +511,31 @@ QVector<map::MapIls> MapQuery::getIlsByAirportAndRunway(const QString& airportId
   return ils;
 }
 
+QVector<MapIls> MapQuery::getIlsByAirportAndIdent(const QString& airportIdent, const QString& ilsIdent)
+{
+  QVector<map::MapIls> ilsList;
+  ilsQuerySimByAirportAndIdent->bindValue(":apt", airportIdent);
+  ilsQuerySimByAirportAndIdent->bindValue(":ident", ilsIdent);
+  ilsQuerySimByAirportAndIdent->exec();
+  while(ilsQuerySimByAirportAndIdent->next())
+  {
+    map::MapIls ils;
+    mapTypesFactory->fillIls(ilsQuerySimByAirportAndIdent->record(), ils);
+    ilsList.append(ils);
+  }
+  return ilsList;
+}
+
 QVector<map::MapIls> MapQuery::ilsByAirportAndRunway(const QString& airportIdent, const QString& runway)
 {
   QVector<map::MapIls> ilsList;
-  ilsQuerySimByName->bindValue(":apt", airportIdent);
-  ilsQuerySimByName->bindValue(":rwy", runway);
-  ilsQuerySimByName->exec();
-  while(ilsQuerySimByName->next())
+  ilsQuerySimByAirportAndRw->bindValue(":apt", airportIdent);
+  ilsQuerySimByAirportAndRw->bindValue(":rwy", runway);
+  ilsQuerySimByAirportAndRw->exec();
+  while(ilsQuerySimByAirportAndRw->next())
   {
     map::MapIls ils;
-    mapTypesFactory->fillIls(ilsQuerySimByName->record(), ils);
+    mapTypesFactory->fillIls(ilsQuerySimByAirportAndRw->record(), ils);
     ilsList.append(ils);
   }
   return ilsList;
@@ -1115,9 +1131,13 @@ void MapQuery::initQueries()
   ilsByIdQuery = new SqlQuery(dbSim);
   ilsByIdQuery->prepare("select " + ilsQueryBase + " from ils where ils_id = :id");
 
-  ilsQuerySimByName = new SqlQuery(dbSim);
-  ilsQuerySimByName->prepare("select " + ilsQueryBase + " from ils "
-                                                        "where loc_airport_ident = :apt and loc_runway_name = :rwy");
+  ilsQuerySimByAirportAndRw = new SqlQuery(dbSim);
+  ilsQuerySimByAirportAndRw->prepare("select " + ilsQueryBase +
+                                     " from ils where loc_airport_ident = :apt and loc_runway_name = :rwy");
+
+  ilsQuerySimByAirportAndIdent = new SqlQuery(dbSim);
+  ilsQuerySimByAirportAndIdent->prepare("select " + ilsQueryBase +
+                                        " from ils where loc_airport_ident = :apt and ident = :ident");
 
   airportByRectQuery = new SqlQuery(dbSim);
   airportByRectQuery->prepare(
@@ -1222,6 +1242,9 @@ void MapQuery::deInitQueries()
   delete ilsByIdQuery;
   ilsByIdQuery = nullptr;
 
-  delete ilsQuerySimByName;
-  ilsQuerySimByName = nullptr;
+  delete ilsQuerySimByAirportAndRw;
+  ilsQuerySimByAirportAndRw = nullptr;
+
+  delete ilsQuerySimByAirportAndIdent;
+  ilsQuerySimByAirportAndIdent = nullptr;
 }

@@ -45,14 +45,6 @@ public:
   Exporter(const Exporter& other) = delete;
   Exporter& operator=(const Exporter& other) = delete;
 
-  // Disabled unused export functionality since it is not compatible with other classes
-#ifdef ENABLE_BASE_EXPORT
-
-  virtual int exportAll(bool open) = 0;
-  virtual int exportSelected(bool open) = 0;
-
-#endif
-
 protected:
   QWidget *parentWidget = nullptr;
   SqlController *controller = nullptr;

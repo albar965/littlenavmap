@@ -79,7 +79,7 @@ void PrintSupport::printFlightplan()
 
   // Prime weather cache
   fillWeatherCache();
-
+  printDialog->setRouteTableColumns(NavApp::getRouteController()->getAllRouteColumns());
   printDialog->exec();
 }
 
@@ -408,7 +408,7 @@ void PrintSupport::saveState()
 void PrintSupport::restoreState()
 {
   printDialog->restoreState();
-  printDialog->setRouteTableColumns(NavApp::getRouteController()->getRouteColumns());
+  printDialog->setRouteTableColumns(NavApp::getRouteController()->getAllRouteColumns());
 }
 
 void PrintSupport::drawWatermark(const QPoint& pos, QPixmap *pixmap)

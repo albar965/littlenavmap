@@ -216,6 +216,12 @@ void WeatherReporter::createFsWatcher()
   fsWatcherAsFlightplanPath->setFilenameAndStart(asFlightplanPath);
 }
 
+void WeatherReporter::disableXplane()
+{
+  qDebug() << Q_FUNC_INFO;
+  xpWeatherReader->clear();
+}
+
 void WeatherReporter::initXplane()
 {
   if(simType == atools::fs::FsPaths::XPLANE11 && !NavApp::getCurrentSimulatorBasePath().isEmpty())
@@ -231,15 +237,16 @@ void WeatherReporter::initXplane()
         path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "METAR.rwx";
 
       xpWeatherReader->setWeatherFile(path);
+      qDebug() << Q_FUNC_INFO << path;
     }
     else
     {
       qWarning() << Q_FUNC_INFO << "Base path not valid" << base.filePath();
-      xpWeatherReader->clear();
+      disableXplane();
     }
   }
   else
-    xpWeatherReader->clear();
+    disableXplane();
 }
 
 void WeatherReporter::initActiveSkyNext()
@@ -664,6 +671,9 @@ atools::fs::weather::Metar WeatherReporter::getAirportWeather(const QString& air
 {
   switch(source)
   {
+    case map::WEATHER_SOURCE_DISABLED:
+      return atools::fs::weather::Metar();
+
     case map::WEATHER_SOURCE_SIMULATOR:
       if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
         // X-Plane weather file
@@ -733,12 +743,18 @@ void WeatherReporter::resetErrorState()
 
 void WeatherReporter::updateTimeouts()
 {
-  map::MapWeatherSource airportWeatherSource = NavApp::getMapWidget() !=
-                                               nullptr ? NavApp::getAirportWeatherSource() : map::
-                                               WEATHER_SOURCE_SIMULATOR;
+  map::MapWeatherSource airportWeatherSource = NavApp::getMapWidget() != nullptr ?
+                                               NavApp::getAirportWeatherSource() : map::WEATHER_SOURCE_SIMULATOR;
 
   // Disable periodic downloads if feature is not needed
   optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
+
+  if(simType == atools::fs::FsPaths::XPLANE11 &&
+     (flags & optsw::WEATHER_INFO_FS || flags & optsw::WEATHER_TOOLTIP_FS ||
+      airportWeatherSource == map::WEATHER_SOURCE_SIMULATOR))
+    initXplane();
+  else
+    disableXplane();
 
   if(flags & optsw::WEATHER_INFO_NOAA || flags & optsw::WEATHER_TOOLTIP_NOAA ||
      airportWeatherSource == map::WEATHER_SOURCE_NOAA)

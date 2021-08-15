@@ -591,7 +591,7 @@ public:
   void updateLegAltitudes();
 
   /* Get a list of approach ILS (not localizer) and the used runway end. Only for approaches. */
-  void getApproachRunwayEndAndIls(QVector<map::MapIls>& ils, map::MapRunwayEnd *runwayEnd = nullptr) const;
+  void getApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd = nullptr) const;
 
   /* general distance in NM which is either cross track, previous or next waypoint */
   float getDistanceToFlightPlan() const;

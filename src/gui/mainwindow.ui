@@ -481,6 +481,7 @@
      <property name="title">
       <string>&amp;Airport Weather Source</string>
      </property>
+     <addaction name="actionMapShowWeatherDisabled"/>
      <addaction name="actionMapShowWeatherSimulator"/>
      <addaction name="actionMapShowWeatherActiveSky"/>
      <addaction name="actionMapShowWeatherNoaa"/>
@@ -4393,7 +4394,7 @@ Matches any visited airport.</string>
             <bool>true</bool>
            </property>
            <attribute name="horizontalHeaderMinimumSectionSize">
-            <number>1</number>
+            <number>3</number>
            </attribute>
            <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
             <bool>false</bool>
@@ -11792,6 +11793,20 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Allows to move dock windows by clicking into the title bar.</string>
    </property>
   </action>
+  <action name="actionMapShowWeatherDisabled">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Disabled</string>
+   </property>
+   <property name="toolTip">
+    <string>Disable weather source to display weather icons on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Disable weather source to display weather icons on the map</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -11978,7 +11993,7 @@ Disabled if a navdatabase does not allow it.</string>
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupRouteCalc"/>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>

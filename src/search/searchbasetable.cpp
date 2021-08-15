@@ -212,7 +212,8 @@ void SearchBaseTable::tableCopyClipboard()
     if(controller->hasColumn("lonx") && controller->hasColumn("laty"))
     {
       // Full CSV export including coordinates and full rows
-      exported = CsvExporter::selectionAsCsv(view, true /* header */, true /* rows */, csv, {"longitude", "latitude"},
+      exported = CsvExporter::selectionAsCsv(view, true /* header */, true /* rows */, csv,
+                                             {tr("Longitude"), tr("Latitude")},
                                              [c](int index) -> QStringList
       {
         return {QLocale().toString(c->getRawData(index, "lonx").toFloat(), 'f', 8),
@@ -321,6 +322,8 @@ void SearchBaseTable::connectSearchWidgets()
   // Connect query builder callback to lambda ======================================
   if(columns->getQueryBuilder().isValid())
   {
+    controller->setBuilder(columns->getQueryBuilder());
+
     QWidget *widget = columns->getQueryBuilder().getWidget();
 
     if(widget != nullptr)
@@ -333,7 +336,7 @@ void SearchBaseTable::connectSearchWidgets()
         connect(lineEdit, &QLineEdit::textChanged, this, [ = ](const QString& text)
         {
           Q_UNUSED(text)
-          controller->filterByBuilder(columns->getQueryBuilder());
+          controller->filterByBuilder();
           updateButtonMenu();
           editStartTimer();
         });

@@ -26,6 +26,12 @@ class PrintDialog;
 }
 class QAbstractButton;
 
+namespace atools {
+namespace gui {
+class ItemViewZoomHandler;
+}
+}
+
 namespace prt {
 enum PrintFlightPlanOpt
 {
@@ -84,7 +90,9 @@ public:
   int getPrintTextSize() const;
   int getPrintTextSizeFlightplan() const;
 
-  /* Fill column selection widget with texts */
+  /* Fill column selection widget with texts.
+   * All route table columns are used. This is independent if a column is hidden or not.
+   * Uses logical and not view order. */
   void setRouteTableColumns(const QStringList& columns);
 
   /* Bits for selected colums with size equal to number of columns as set above */
@@ -98,6 +106,8 @@ signals:
 private:
   void buttonBoxClicked(QAbstractButton *button);
   void updateButtonStates();
+
+  atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
 
   Ui::PrintDialog *ui;
   QBitArray selectedRows;

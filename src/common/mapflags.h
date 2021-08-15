@@ -371,7 +371,8 @@ enum MapWeatherSource
   WEATHER_SOURCE_ACTIVE_SKY,
   WEATHER_SOURCE_NOAA,
   WEATHER_SOURCE_VATSIM,
-  WEATHER_SOURCE_IVAO
+  WEATHER_SOURCE_IVAO,
+  WEATHER_SOURCE_DISABLED
 };
 
 QString mapWeatherSourceString(map::MapWeatherSource source);

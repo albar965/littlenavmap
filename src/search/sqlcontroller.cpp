@@ -138,11 +138,16 @@ bool SqlController::hasDatabaseColumn(const QString& colName) const
   return db->record(columns->getTablename()).contains(colName);
 }
 
-void SqlController::filterByBuilder(const QueryBuilder& builder)
+void SqlController::setBuilder(const QueryBuilder& builder)
+{
+  model->setQueryBuilder(builder);
+}
+
+void SqlController::filterByBuilder()
 {
   qDebug() << Q_FUNC_INFO;
   view->clearSelection();
-  model->filterByBuilder(builder);
+  model->filterByBuilder();
   searchParamsChanged = true;
 }
 

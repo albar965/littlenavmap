@@ -116,7 +116,7 @@ void removeByDirection(QList<TYPE>& list, const atools::geo::Pos& pos, int lastD
 template<typename TYPE>
 void sortByDistance(QList<TYPE>& list, const atools::geo::Pos& pos)
 {
-  if(list.isEmpty() || !pos.isValid())
+  if(list.size() <= 1 || !pos.isValid())
     return;
 
   std::sort(list.begin(), list.end(),
@@ -129,7 +129,7 @@ void sortByDistance(QList<TYPE>& list, const atools::geo::Pos& pos)
 template<typename TYPE>
 void sortByDistance(QVector<TYPE>& list, const atools::geo::Pos& pos)
 {
-  if(list.isEmpty() || !pos.isValid())
+  if(list.size() <= 1 || !pos.isValid())
     return;
 
   std::sort(list.begin(), list.end(),

@@ -123,7 +123,7 @@ void AirportQuery::getAirportById(map::MapAirport& airport, int airportId)
     airportByIdQuery->bindValue(":id", airportId);
     airportByIdQuery->exec();
     if(airportByIdQuery->next())
-      mapTypesFactory->fillAirport(airportByIdQuery->record(), *ap, true, navdata,
+      mapTypesFactory->fillAirport(airportByIdQuery->record(), *ap, true /* complete */, navdata,
                                    NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
     airportByIdQuery->finish();
 
@@ -152,12 +152,35 @@ void AirportQuery::getAirportByIdent(map::MapAirport& airport, const QString& id
     airportByIdentQuery->bindValue(":ident", ident);
     airportByIdentQuery->exec();
     if(airportByIdentQuery->next())
-      mapTypesFactory->fillAirport(airportByIdentQuery->record(), *ap, true, navdata,
+      mapTypesFactory->fillAirport(airportByIdentQuery->record(), *ap, true /* complete */, navdata,
                                    NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
     airportByIdentQuery->finish();
 
     airport = *ap;
     airportIdentCache.insert(ident, ap);
+  }
+}
+
+QList<MapAirport> AirportQuery::getAirportsByTruncatedIdent(const QString& ident)
+{
+  QList<map::MapAirport> airport;
+  getAirportsByTruncatedIdent(airport, ident);
+  return airport;
+}
+
+void AirportQuery::getAirportsByTruncatedIdent(QList<map::MapAirport>& airports, QString ident)
+{
+  if(!ident.endsWith(QChar('%')))
+    ident.append(QChar('%'));
+
+  airportsByTruncatedIdentQuery->bindValue(":ident", ident);
+  airportsByTruncatedIdentQuery->exec();
+  while(airportsByTruncatedIdentQuery->next())
+  {
+    map::MapAirport ap;
+    mapTypesFactory->fillAirport(airportsByTruncatedIdentQuery->record(), ap, true /* complete */, navdata,
+                                 NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+    airports.append(ap);
   }
 }
 
@@ -185,7 +208,7 @@ void AirportQuery::getAirportsByOfficialIdent(QList<map::MapAirport>& airports, 
     while(airportByOfficialQuery->next())
     {
       map::MapAirport airport;
-      mapTypesFactory->fillAirport(airportByOfficialQuery->record(), airport, true, navdata,
+      mapTypesFactory->fillAirport(airportByOfficialQuery->record(), airport, true /* complete */, navdata,
                                    NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
       airports.append(airport);
     }
@@ -237,7 +260,7 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
       bool xplane = NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11;
       query::fetchObjectsForRect(rect, airportByPosQuery, [ =, &airports](atools::sql::SqlQuery *query) -> void {
         map::MapAirport obj;
-        mapTypesFactory->fillAirport(query->record(), obj, true, navdata, xplane);
+        mapTypesFactory->fillAirport(query->record(), obj, true /* complete */, navdata, xplane);
         airports.append(obj);
       });
     }
@@ -679,7 +702,7 @@ map::MapResultIndex *AirportQuery::nearestAirportsProcInternal(const map::MapAir
     bool xplane = NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11;
     query::fetchObjectsForRect(rect, airportByRectAndProcQuery, [ =, &res](atools::sql::SqlQuery *query) -> void {
       map::MapAirport obj;
-      mapTypesFactory->fillAirport(query->record(), obj, true, navdata, xplane);
+      mapTypesFactory->fillAirport(query->record(), obj, true /* complete */, navdata, xplane);
       if(obj.ident != airport.ident)
         res.airports.append(obj);
     });
@@ -952,6 +975,8 @@ QStringList AirportQuery::airportColumns(const atools::sql::SqlDatabase *db)
     airportQueryBase.append("local");
   if(aprec.contains("region"))
     airportQueryBase.append("region");
+  if(aprec.contains("flatten"))
+    airportQueryBase.append("flatten");
   if(aprec.contains("is_3d"))
     airportQueryBase.append("is_3d");
   if(aprec.contains("transition_altitude"))
@@ -977,6 +1002,16 @@ QStringList AirportQuery::airportOverviewColumns(const atools::sql::SqlDatabase 
     airportQueryBase.append("region");
   if(aprec.contains("is_3d"))
     airportQueryBase.append("is_3d");
+
+  if(aprec.contains("icao"))
+    airportQueryBase.append("icao");
+  if(aprec.contains("iata"))
+    airportQueryBase.append("iata");
+  if(aprec.contains("faa"))
+    airportQueryBase.append("faa");
+  if(aprec.contains("local"))
+    airportQueryBase.append("local");
+
   return airportQueryBase;
 }
 
@@ -1005,15 +1040,19 @@ void AirportQuery::initQueries()
 
   procArrivalByAirportIdQuery = new SqlQuery(db);
   procArrivalByAirportIdQuery->prepare("select 1 from approach  "
-                                          "where airport_id = :id and  "
-                                          "((type = 'GPS' and suffix = 'A') or (suffix <> 'D' or suffix is null)) limit 1");
+                                       "where airport_id = :id and  "
+                                       "((type = 'GPS' and suffix = 'A') or (suffix <> 'D' or suffix is null)) limit 1");
 
   procDepartureByAirportIdQuery = new SqlQuery(db);
   procDepartureByAirportIdQuery->prepare("select 1 from approach "
-                                            "where airport_id = :id and type = 'GPS' and suffix = 'D' limit 1");
+                                         "where airport_id = :id and type = 'GPS' and suffix = 'D' limit 1");
 
   airportByIdentQuery = new SqlQuery(db);
   airportByIdentQuery->prepare("select " + airportQueryBase.join(", ") + " from airport where ident = :ident ");
+
+  airportsByTruncatedIdentQuery = new SqlQuery(db);
+  airportsByTruncatedIdentQuery->prepare("select " + airportQueryBase.join(", ") +
+                                         " from airport where ident like :ident ");
 
   icaoCol = airportQueryBase.contains("icao");
   iataCol = airportQueryBase.contains("iata");
@@ -1190,6 +1229,9 @@ void AirportQuery::deInitQueries()
 
   delete airportByIdentQuery;
   airportByIdentQuery = nullptr;
+
+  delete airportsByTruncatedIdentQuery;
+  airportsByTruncatedIdentQuery = nullptr;
 
   delete airportByOfficialQuery;
   airportByOfficialQuery = nullptr;

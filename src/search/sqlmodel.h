@@ -53,7 +53,7 @@ public:
   virtual ~SqlModel() override;
 
   /* Filter by using query builder callback */
-  void filterByBuilder(const QueryBuilder& builder);
+  void filterByBuilder();
 
   /* Creates an include filer for value at index in the table */
   void filterIncluding(QModelIndex index);
@@ -165,6 +165,11 @@ public:
 
   /* Update model after data change */
   void refreshData();
+
+  void setQueryBuilder(const QueryBuilder& builder)
+  {
+    queryBuilder = builder;
+  }
 
 signals:
   /* Emitted when more data was fetched */

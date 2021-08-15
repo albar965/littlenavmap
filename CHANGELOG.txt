@@ -4,6 +4,57 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 2.6.16
+
+This version fixes flight plan issues with X-Plane as well as flight plan export and printing issues.
+
+## Changes from 2.6.15 to 2.6.16
+
+### X-Plane flight plan export and loading #741
+
+* Now falling back to DEP/DES keywords in X-Plane FMS flight plan files. These keywords denote
+  departure or destination as a waypoint or a not identifiable airport opposed to ADEP/ADES. This
+  avoids loading issues in X-Plane FMS and third party tools. Flight plans should be loadable in
+  X-Plane FMS and GPS in any case. The conditions for this case are below:
+   - Airport ident is longer than four characters. Example: White Lake (`XC0004`).
+   - Airport has ICAO and this does not match internal id. Example: Torres with official ICAO id `SSTE`
+     using internal ident of `SBTR`.
+   - Airport has no ICAO but FAA code which does not match the internal id. Example: Red Lion with
+     FAA code `JY73` using internal ident of `N73`.
+   - Airport has neither of above but a local code which does not match internal. Example: Edmonton
+     Cooking Lake having local code of `CEZ3` and internal X-Plane ident `EZ3`.
+* Now truncating all X-Plane airport idents to six characters. Also the ones used in intermediate
+  waypoints.
+* Enabled loading of X-Plane FMS plans with truncated airport ids.
+
+### General
+
+* Added airport elevation to tab `Runways` and airport transition altitude in tab `Weather` in information window.
+* Fixed issues with flight plan and waypoint remarks being truncated when saving plan as HTML,
+  printing plan or copying plan as CSV (`Ctrl+C` in table).
+* Fixed issues when copying CSV text to clipboard in flight plan table and search result tables (`Ctrl+C` in table).
+  Wrong columns were copied into the CSV text if columns in the table were reordered.
+* Added missing flight plan remarks field to HTML export and print.
+* Table columns which are shrinked to minimum width are now excluded from export to HTML and CSV.
+* Fixed issue where the wrong flight plan columns were printed or exported to HTML or columns were missing.
+  This happened if the user rearranged the flight plan table columns by moving the headers around.
+* Small corrections to options dialog text, aircraft labels on the map (`TCAS` vs `XPDR`) and airport
+  labels on the map.
+* More tolerance for finding airports when loading flight plans. Trying all available internal and
+  official ids (ICAO, FAA, IATA and local) now.
+* Now also showing ILS frequency for final approach in flight plan table for circling as well as
+  IGS, LDA, LOC and SDF approaches if navaid is present.
+
+### Web interface
+
+Fixes provided by [u-an-i](https://github.com/u-an-i).
+
+* Fixed JavaScript errors on desktop due to pointermove after generalising touch zoom.
+* Now giving user commands always priority if server does not respond.
+* Adjusted fast map refresh to not produce images too large at for slow connections.
+
+===============================================================================
+
 # Version 2.6.15
 
 This version contains bug fixes, small user interface improvements, support for MSFS scenery
@@ -13,7 +64,7 @@ library changes and a new airport ident search for X-Plane.
 
 * All simulators: Reload the scenery library to get the changes. Also update *Little Navmap* on
   remote/networked computers before copying a new scenery library database. Older *Little Navmap*
-  version will crash with the new databases.
+  versions will crash with the new databases.
 * MSFS: Avoid the scenery library mode `Do not use Navigraph Database` if you have the Navigraph
   update for MSFS installed. You will see errors in procedures. Instead directly update the scenery
   database of *Little Navmap* using the Navigraph FMS Data Manager.
@@ -27,8 +78,15 @@ library changes and a new airport ident search for X-Plane.
 
 ## Changes from 2.6.14 to 2.6.15
 
-* Adapted MSFS scenery library loader to new scenery file structures in MSFS introduced in version
-  1.18.9. This is needed to avoid missing procedures. #735
+* Updated English and German manual for airport ident changes in search and information display.
+  * [Ident in Airport Search](https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/SEARCH.html#airport-search-ident)
+  * [Override in Airport Search](https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/SEARCH.html#airport-search-override)
+  * [Ident in Information and Tooltips](https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/INFO.html#airport-ident-info)
+  * [Ident in Flight Plan Route Description](https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/ROUTEDESCR.html#routedescr-airport-ident)
+  * [Allow Window moving](https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/MENUS.html#allow-window-moving)
+
+### General
+
 * Changed weather download process to minimize user interface freezes during wind aloft or METAR
   downloads with slow internet connections. #737
 * Correcting VATSIM weather address which was taken over wrongly from old versions in some cases.
@@ -36,17 +94,33 @@ library changes and a new airport ident search for X-Plane.
 * Now allowing to set departure airport as alternate in the map context menu. The menu item was
   wrongly disabled before.
 * Added estimated flight time to top of descent and destination to profile header.
+* Menu `Weather` -> `Airport Weather` now allows to disable the weather source which also disables
+  all file accesses. The airport weather menu item and toolbar button will disabled if this is
+  selected.
 * Added function to disable the moving of dock windows by click and drag on the title bar. Uncheck
   `Allow Window moving` in menu `Window` to avoid accidental movement of dock windows which might
   mess up the window layout. You can still resize the dock windows at the border.
+* Fixed issue where flight plan calculation window header text was not updated on flight plan
+  changes.
+* Fixed crash when decoding procedures. Example: Sumburgh (EGPB), approach ILS 27, transition D064L
+  for P3D scenery.
+* Fixed crash that occured when moving flight plan legs in empty or one leg plan with the keyboard.
+  Now updating context menu items in flight plan table accordingly.
+* Showing status bar again which might be hidden after recent updates.
+
+### MSFS
+
+* Adapted MSFS scenery library loader to new scenery file structures in MSFS introduced in version
+  1.18.9. This is needed to avoid missing procedures. #735
 * Several fixes in MSFS flight plan export. Approach transition waypoints are now removed. Removing
   airway for STAR entry waypoints. SID and STAR transitions can be used now. Keep in mind that some
   information will be lost when reloading MSFS PLN files. Several problems with MSFS flight plan
   import remain.
 * Localizer approaches were not recognized when loading MSFS PLN files into *Little Navmap*. Fixed now.
-* Fixed issue where flight plan calculation window header text was not updated on flight plan
-  changes.
-* Showing status bar again which might be hidden after recent updates.
+* Corrected export for circling approaches and localizer backcourse approaches in MSFS PLN which
+  can now be loaded.
+
+### X-Plane
 
 * Added ICAO, FAA, IATA and local airport codes to search result table as well as in information
   and tooltips. This is only used by X-Plane. Move the columns in the search result table out of the
@@ -61,6 +135,9 @@ library changes and a new airport ident search for X-Plane.
   switching simulators.
 * The flight plan route description now uses and outputs one of the official codes for airports if
   available.
+* Fixed issues with X-Plane flight plan export where airports have an internal ident different from
+  official ICAO and FAA codes.
+* Fixed missing display for X-Plane airport flatten attribute.
 * Fixed potential crash in search functions for airport.
 * Resetting table layout for airport search since columns have changed. #707
 * Added columns `faa` and `local` to airport table and removed column `xpident` in database schema.

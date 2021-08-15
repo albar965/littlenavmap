@@ -891,7 +891,9 @@ struct MapIls
   {
   }
 
-  QString ident, name, region;
+  QString ident, /* IRHF */
+           name, /* ILS-CAT-I */
+           region;
   float magvar, slope, heading, width;
   int frequency /* MHz * 1000 */, range /* nm */;
 
