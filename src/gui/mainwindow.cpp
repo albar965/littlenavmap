@@ -2063,7 +2063,7 @@ void MainWindow::routeResetAll()
                             lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "RESET.html");
 
   choiceDialog.addCheckBox(EMPTY_FLIGHT_PLAN, tr("&Create a new and empty flight plan"), QString(), true);
-  choiceDialog.addCheckBox(DELETE_TRAIL, tr("&Delete aircaft trail"),
+  choiceDialog.addCheckBox(DELETE_TRAIL, tr("&Delete aircraft trail"),
                            tr("Delete simulator aircraft trail from map and elevation profile"), true);
   choiceDialog.addCheckBox(DELETE_ACTIVE_LEG, tr("&Reset active flight plan leg"),
                            tr("Remove the active (magenta) flight plan leg"), true);
