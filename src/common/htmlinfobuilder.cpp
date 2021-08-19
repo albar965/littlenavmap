@@ -3249,13 +3249,13 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   if(!aircraft.isValid())
     return;
 
-  const SimConnectUserAircraft *userAircaft = dynamic_cast<const SimConnectUserAircraft *>(&aircraft);
+  const SimConnectUserAircraft *userAircraft = dynamic_cast<const SimConnectUserAircraft *>(&aircraft);
   AircraftPerfController *perfController = NavApp::getAircraftPerfController();
 
   // Fuel and time calculated or estimated
   FuelTimeResult fuelTime;
 
-  if(info && userAircaft != nullptr)
+  if(info && userAircraft != nullptr)
   {
     aircraftTitle(aircraft, html, moreLessSwitch, less);
     if(!(NavApp::getShownMapFeatures() & map::AIRCRAFT))
@@ -3268,7 +3268,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
   // Flight plan legs =========================================================================
   float distanceToTod = map::INVALID_DISTANCE_VALUE;
-  if(!route.isEmpty() && userAircaft != nullptr && info)
+  if(!route.isEmpty() && userAircraft != nullptr && info)
   {
     // The corrected leg will point to an approach leg if we head to the start of a procedure
     bool corrected = false;
@@ -3306,7 +3306,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
       html.table();
       // Current date and time ========================================
-      dateTimeAndFlown(userAircaft, html);
+      dateTimeAndFlown(userAircraft, html);
       html.tableEnd();
 
       // Route distances ===============================================================
@@ -3335,7 +3335,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
         if(timeToDestAvailable)
         {
-          QDateTime arrival = userAircaft->getZuluTime().addSecs(static_cast<int>(fuelTime.timeToDest * 3600.f));
+          QDateTime arrival = userAircraft->getZuluTime().addSecs(static_cast<int>(fuelTime.timeToDest * 3600.f));
 
           html.row2(destinationText, strJoinVal({
             Unit::distNm(distToDestNm),
@@ -3349,8 +3349,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         if(!less && fuelToDestAvailable)
         {
           // Remaining fuel estimate at destination
-          float remainingFuelLbs = userAircaft->getFuelTotalWeightLbs() - fuelTime.fuelLbsToDest;
-          float remainingFuelGal = userAircaft->getFuelTotalQuantityGallons() - fuelTime.fuelGalToDest;
+          float remainingFuelLbs = userAircraft->getFuelTotalWeightLbs() - fuelTime.fuelLbsToDest;
+          float remainingFuelGal = userAircraft->getFuelTotalQuantityGallons() - fuelTime.fuelGalToDest;
           QString fuelValue = Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal);
 
           QString fuelHdr = tr("Fuel:");
@@ -3373,7 +3373,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             html.row2(fuelHdr, fuelValue, ahtml::NO_ENTITIES);
 
           html.row2(tr("Gross Weight:"),
-                    Unit::weightLbsLocalOther(userAircaft->getAirplaneTotalWeightLbs() - fuelTime.fuelLbsToDest),
+                    Unit::weightLbsLocalOther(userAircraft->getAirplaneTotalWeightLbs() - fuelTime.fuelLbsToDest),
                     ahtml::NO_ENTITIES);
         } // if(!less && fuelAvailable)
         html.tableEnd();
@@ -3400,7 +3400,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             todValues.append(formatter::formatMinutesHoursLong(fuelTime.timeToTod));
             todHeader.append(tr("Time"));
 
-            QDateTime arrival = userAircaft->getZuluTime().addSecs(static_cast<int>(fuelTime.timeToTod * 3600.f));
+            QDateTime arrival = userAircraft->getZuluTime().addSecs(static_cast<int>(fuelTime.timeToTod * 3600.f));
             todValues.append(locale.toString(arrival.time(), QLocale::ShortFormat) +
                              tr(" ") + arrival.timeZoneAbbreviation());
             todHeader.append(tr("Arrival"));
@@ -3410,8 +3410,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           if(!less && fuelTime.isFuelToTodValid())
           {
             // Calculate remaining fuel at TOD
-            float remainingFuelTodLbs = userAircaft->getFuelTotalWeightLbs() - fuelTime.fuelLbsToTod;
-            float remainingFuelTodGal = userAircaft->getFuelTotalQuantityGallons() - fuelTime.fuelGalToTod;
+            float remainingFuelTodLbs = userAircraft->getFuelTotalWeightLbs() - fuelTime.fuelLbsToTod;
+            float remainingFuelTodGal = userAircraft->getFuelTotalQuantityGallons() - fuelTime.fuelGalToTod;
 
             html.row2(tr("Fuel:"), Unit::fuelLbsAndGal(remainingFuelTodLbs, remainingFuelTodGal), ahtml::NO_ENTITIES);
           }
@@ -3547,7 +3547,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             distTimeHeader.append(tr("Time"));
 
             // ETA
-            QDateTime arrivalNext = userAircaft->getZuluTime().addSecs(static_cast<int>(fuelTime.timeToNext * 3600.f));
+            QDateTime arrivalNext = userAircraft->getZuluTime().addSecs(static_cast<int>(fuelTime.timeToNext * 3600.f));
             distTimeStr.append(locale.toString(arrivalNext.time(), QLocale::ShortFormat) + tr(" ") +
                                arrivalNext.timeZoneAbbreviation());
             distTimeHeader.append(tr("Arrival"));
@@ -3575,8 +3575,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             if(!less && fuelTime.isFuelToNextValid())
             {
               // Calculate remaining fuel at next
-              float remainingFuelNextLbs = userAircaft->getFuelTotalWeightLbs() - fuelTime.fuelLbsToNext;
-              float remainingFuelNextGal = userAircaft->getFuelTotalQuantityGallons() - fuelTime.fuelGalToNext;
+              float remainingFuelNextLbs = userAircraft->getFuelTotalWeightLbs() - fuelTime.fuelLbsToNext;
+              float remainingFuelNextGal = userAircraft->getFuelTotalQuantityGallons() - fuelTime.fuelGalToNext;
 
               html.row2(tr("Fuel:"), Unit::fuelLbsAndGal(remainingFuelNextLbs, remainingFuelNextGal),
                         ahtml::NO_ENTITIES);
@@ -3604,15 +3604,15 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             html.row2If(tr("Leg Course:"), courseText(routeLeg.getCourseToMag(), routeLeg.getCourseToTrue(),
                                                       true), ahtml::NO_ENTITIES);
 
-            if(!less && userAircaft != nullptr && userAircaft->isFlying() && courseToWptTrue < INVALID_COURSE_VALUE)
+            if(!less && userAircraft != nullptr && userAircraft->isFlying() && courseToWptTrue < INVALID_COURSE_VALUE)
             {
               // Crab angle is the amount of correction an aircraft must be turned into the wind in order to maintain the desired course.
-              float headingTrue = ageo::windCorrectedHeading(userAircaft->getWindSpeedKts(),
-                                                             userAircaft->getWindDirectionDegT(),
+              float headingTrue = ageo::windCorrectedHeading(userAircraft->getWindSpeedKts(),
+                                                             userAircraft->getWindDirectionDegT(),
                                                              courseToWptTrue,
-                                                             userAircaft->getTrueAirspeedKts());
+                                                             userAircraft->getTrueAirspeedKts());
               if(headingTrue < INVALID_COURSE_VALUE)
-                html.row2(tr("Heading:"), courseTextFromTrue(headingTrue, userAircaft->getMagVarDeg()),
+                html.row2(tr("Heading:"), courseTextFromTrue(headingTrue, userAircraft->getMagVarDeg()),
                           ahtml::NO_ENTITIES);
             }
           }
@@ -3660,22 +3660,22 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       else
         html.b(tr("No Active Flight Plan Leg."));
       html.table();
-      dateTimeAndFlown(userAircaft, html);
+      dateTimeAndFlown(userAircraft, html);
       html.tableEnd();
     }
-  } // if(!route.isEmpty() && userAircaft != nullptr && info)
-  else if(info && userAircaft != nullptr)
+  } // if(!route.isEmpty() && userAircraft != nullptr && info)
+  else if(info && userAircraft != nullptr)
   {
     html.warning(tr("No Flight Plan."));
     html.table();
-    dateTimeAndFlown(userAircaft, html);
+    dateTimeAndFlown(userAircraft, html);
     html.tableEnd();
   }
 
   // Add departure and destination for AI ==================================================
-  if(userAircaft == nullptr && (!aircraft.getFromIdent().isEmpty() || !aircraft.getToIdent().isEmpty()))
+  if(userAircraft == nullptr && (!aircraft.getFromIdent().isEmpty() || !aircraft.getToIdent().isEmpty()))
   {
-    if(info && userAircaft != nullptr)
+    if(info && userAircraft != nullptr)
       head(html, tr("Flight Plan"));
 
     html.table();
@@ -3686,7 +3686,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   }
 
   // Aircraft =========================================================================
-  if(info && userAircaft != nullptr)
+  if(info && userAircraft != nullptr)
     head(html, tr("Aircraft"));
   html.table();
 
@@ -3703,20 +3703,20 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   if(!hdg.isEmpty())
     html.row2(tr("Heading:"), hdg.join(tr(", ")), ahtml::NO_ENTITIES);
 
-  if(userAircaft != nullptr && info)
+  if(userAircraft != nullptr && info)
   {
-    if(userAircaft != nullptr)
-      html.row2(tr("Track:"), courseText(userAircaft->getTrackDegMag(), userAircaft->getTrackDegTrue()),
+    if(userAircraft != nullptr)
+      html.row2(tr("Track:"), courseText(userAircraft->getTrackDegMag(), userAircraft->getTrackDegTrue()),
                 ahtml::NO_ENTITIES);
 
     if(!less)
-      html.row2(tr("Fuel Flow:"), Unit::ffLbsAndGal(userAircaft->getFuelFlowPPH(), userAircaft->getFuelFlowGPH()));
+      html.row2(tr("Fuel Flow:"), Unit::ffLbsAndGal(userAircraft->getFuelFlowPPH(), userAircraft->getFuelFlowGPH()));
 
-    if(userAircaft->getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
+    if(userAircraft->getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
     {
-      if(userAircaft->getFuelFlowPPH() > 1.0f && aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED)
+      if(userAircraft->getFuelFlowPPH() > 1.0f && aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED)
       {
-        float hoursRemaining = userAircaft->getFuelTotalWeightLbs() / userAircaft->getFuelFlowPPH();
+        float hoursRemaining = userAircraft->getFuelTotalWeightLbs() / userAircraft->getFuelFlowPPH();
         float distanceRemaining = hoursRemaining * aircraft.getGroundSpeedKts();
         html.row2(tr("Endurance:"), formatter::formatMinutesHoursLong(hoursRemaining) + tr(", ") +
                   Unit::distNm(distanceRemaining));
@@ -3726,33 +3726,33 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     // Ice ===============================================
     QStringList ice;
 
-    if(userAircaft->getPitotIcePercent() >= 1.f)
-      ice.append(tr("Pitot ") + locale.toString(userAircaft->getPitotIcePercent(), 'f', 0) + tr(" %"));
+    if(userAircraft->getPitotIcePercent() >= 1.f)
+      ice.append(tr("Pitot ") + locale.toString(userAircraft->getPitotIcePercent(), 'f', 0) + tr(" %"));
 
-    if(userAircaft->getStructuralIcePercent() >= 1.f)
-      ice.append(tr("Structure ") + locale.toString(userAircaft->getStructuralIcePercent(), 'f', 0) + tr(" %"));
+    if(userAircraft->getStructuralIcePercent() >= 1.f)
+      ice.append(tr("Structure ") + locale.toString(userAircraft->getStructuralIcePercent(), 'f', 0) + tr(" %"));
 
-    if(userAircaft->getAoaIcePercent() >= 1.f)
-      ice.append(tr("AOA ") + locale.toString(userAircaft->getAoaIcePercent(), 'f', 0) + tr(" %"));
+    if(userAircraft->getAoaIcePercent() >= 1.f)
+      ice.append(tr("AOA ") + locale.toString(userAircraft->getAoaIcePercent(), 'f', 0) + tr(" %"));
 
-    if(userAircaft->getInletIcePercent() >= 1.f)
-      ice.append(tr("Inlet ") + locale.toString(userAircaft->getInletIcePercent(), 'f', 0) + tr(" %"));
+    if(userAircraft->getInletIcePercent() >= 1.f)
+      ice.append(tr("Inlet ") + locale.toString(userAircraft->getInletIcePercent(), 'f', 0) + tr(" %"));
 
-    if(userAircaft->getPropIcePercent() >= 1.f)
-      ice.append(tr("Prop ") + locale.toString(userAircaft->getPropIcePercent(), 'f', 0) + tr(" %"));
+    if(userAircraft->getPropIcePercent() >= 1.f)
+      ice.append(tr("Prop ") + locale.toString(userAircraft->getPropIcePercent(), 'f', 0) + tr(" %"));
 
-    if(userAircaft->getStatIcePercent() >= 1.f)
-      ice.append(tr("Static ") + locale.toString(userAircaft->getStatIcePercent(), 'f', 0) + tr(" %"));
+    if(userAircraft->getStatIcePercent() >= 1.f)
+      ice.append(tr("Static ") + locale.toString(userAircraft->getStatIcePercent(), 'f', 0) + tr(" %"));
 
-    if(userAircaft->getWindowIcePercent() >= 1.f)
-      ice.append(tr("Window ") + locale.toString(userAircaft->getWindowIcePercent(), 'f', 0) + tr(" %"));
+    if(userAircraft->getWindowIcePercent() >= 1.f)
+      ice.append(tr("Window ") + locale.toString(userAircraft->getWindowIcePercent(), 'f', 0) + tr(" %"));
 
-    if(userAircaft->getCarbIcePercent() >= 1.f)
-      ice.append(tr("Carb. ") + locale.toString(userAircaft->getCarbIcePercent(), 'f', 0) + tr(" %"));
+    if(userAircraft->getCarbIcePercent() >= 1.f)
+      ice.append(tr("Carb. ") + locale.toString(userAircraft->getCarbIcePercent(), 'f', 0) + tr(" %"));
 
     if(!ice.isEmpty())
       html.row2Error(tr("Ice:"), ice.join(tr(", ")));
-  } // if(userAircaft != nullptr && info)
+  } // if(userAircraft != nullptr && info)
   html.tableEnd();
 
   // Display more text for information display if not online aircraft
@@ -3774,15 +3774,15 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     if(aircraft.getPosition().getAltitude() < atools::fs::sc::SC_INVALID_FLOAT)
       html.row2(longDisplay ? tr("Actual:") : tr("Altitude:"), Unit::altFeet(aircraft.getPosition().getAltitude()));
 
-    if(!less && userAircaft != nullptr && longDisplay && !aircraft.isAnyBoat())
+    if(!less && userAircraft != nullptr && longDisplay && !aircraft.isAnyBoat())
     {
-      if(userAircaft->getAltitudeAboveGroundFt() < atools::fs::sc::SC_INVALID_FLOAT)
-        html.row2(tr("Above Ground:"), Unit::altFeet(userAircaft->getAltitudeAboveGroundFt()));
-      if(userAircaft->getGroundAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
-        html.row2(tr("Ground Elevation:"), Unit::altFeet(userAircaft->getGroundAltitudeFt()));
+      if(userAircraft->getAltitudeAboveGroundFt() < atools::fs::sc::SC_INVALID_FLOAT)
+        html.row2(tr("Above Ground:"), Unit::altFeet(userAircraft->getAltitudeAboveGroundFt()));
+      if(userAircraft->getGroundAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
+        html.row2(tr("Ground Elevation:"), Unit::altFeet(userAircraft->getGroundAltitudeFt()));
     }
 
-    if(!less && distanceToTod <= 0 && userAircaft != nullptr)
+    if(!less && distanceToTod <= 0 && userAircraft != nullptr)
     {
       // Display vertical path deviation when after TOD
       float vertAlt = route.getAltitudeForDistance(distToDestNm);
@@ -3870,21 +3870,21 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
   }
 
   // Environment =========================================================================
-  if(userAircaft != nullptr && longDisplay)
+  if(userAircraft != nullptr && longDisplay)
   {
     head(html, tr("Environment"));
     html.table();
-    float windSpeed = userAircaft->getWindSpeedKts();
-    float windDir = normalizeCourse(userAircaft->getWindDirectionDegT() - userAircaft->getMagVarDeg());
+    float windSpeed = userAircraft->getWindSpeedKts();
+    float windDir = normalizeCourse(userAircraft->getWindDirectionDegT() - userAircraft->getMagVarDeg());
     if(windSpeed >= 1.f)
-      html.row2(tr("Wind Direction and Speed:"), courseText(windDir, userAircaft->getWindDirectionDegT()) +
+      html.row2(tr("Wind Direction and Speed:"), courseText(windDir, userAircraft->getWindDirectionDegT()) +
                 tr(", ") + Unit::speedKts(windSpeed), ahtml::NO_ENTITIES);
     else
       html.row2(tr("Wind Direction and Speed:"), tr("None"));
 
     // Head/tail and crosswind =================================================
     float headWind = 0.f, crossWind = 0.f;
-    ageo::windForCourse(headWind, crossWind, windSpeed, windDir, userAircaft->getHeadingDegMag());
+    ageo::windForCourse(headWind, crossWind, windSpeed, windDir, userAircraft->getHeadingDegMag());
 
     if(!less)
     {
@@ -3896,7 +3896,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     }
 
     // Total air temperature (TAT) is also called: indicated air temperature (IAT) or ram air temperature (RAT)
-    float tat = userAircaft->getTotalAirTemperatureCelsius();
+    float tat = userAircraft->getTotalAirTemperatureCelsius();
     if(tat < 0.f && tat > -0.5f)
       tat = 0.f;
     html.row2(tr("Total Air Temperature:"), locale.toString(tat, 'f', 0) + tr(" °C, ") +
@@ -3905,19 +3905,19 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     if(!less)
     {
       // Static air temperature (SAT) is also called: outside air temperature (OAT) or true air temperature
-      float sat = userAircaft->getAmbientTemperatureCelsius();
+      float sat = userAircraft->getAmbientTemperatureCelsius();
       if(sat < 0.f && sat > -0.5f)
         sat = 0.f;
       html.row2(tr("Static Air Temperature:"), locale.toString(sat, 'f', 0) + tr(" °C, ") +
                 locale.toString(ageo::degCToDegF(sat), 'f', 0) + tr(" °F"));
 
-      float isaDeviation = sat - ageo::isaTemperature(userAircaft->getPosition().getAltitude());
+      float isaDeviation = sat - ageo::isaTemperature(userAircraft->getPosition().getAltitude());
       if(isaDeviation < 0.f && isaDeviation > -0.5f)
         isaDeviation = 0.f;
       html.row2(tr("ISA Deviation:"), locale.toString(isaDeviation, 'f', 0) + tr(" °C"));
     }
 
-    float slp = userAircaft->getSeaLevelPressureMbar();
+    float slp = userAircraft->getSeaLevelPressureMbar();
     html.row2(tr("Sea Level Pressure:"), locale.toString(slp, 'f', 0) + tr(" hPa, ") +
               locale.toString(ageo::mbarToInHg(slp), 'f', 2) + tr(" inHg"));
 
@@ -3926,18 +3926,18 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       QStringList precip;
       // if(data.getFlags() & atools::fs::sc::IN_CLOUD) // too unreliable
       // precip.append(tr("Cloud"));
-      if(userAircaft->inRain())
+      if(userAircraft->inRain())
         precip.append(tr("Rain"));
-      if(userAircaft->inSnow())
+      if(userAircraft->inSnow())
         precip.append(tr("Snow"));
 
       if(!precip.isEmpty())
         html.row2(tr("Conditions:"), precip.join(tr(", ")));
 
-      if(Unit::distMeterF(userAircaft->getAmbientVisibilityMeter()) > 20.f)
+      if(Unit::distMeterF(userAircraft->getAmbientVisibilityMeter()) > 20.f)
         html.row2(tr("Visibility:"), tr("> 20 ") + Unit::getUnitDistStr());
       else
-        html.row2(tr("Visibility:"), Unit::distMeter(userAircaft->getAmbientVisibilityMeter(), true /*unit*/, 5));
+        html.row2(tr("Visibility:"), Unit::distMeter(userAircraft->getAmbientVisibilityMeter(), true /*unit*/, 5));
     }
 
     html.tableEnd();
