@@ -215,7 +215,7 @@
     </message>
     <message>
         <source>Current flight segment: %1.%2</source>
-        <translation type="obsolete">Aktueller Flugabschnitt %1. {1.%2?}</translation>
+        <translation type="obsolete">Aktueller Flugabschnitt %1.%2</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="886"/>

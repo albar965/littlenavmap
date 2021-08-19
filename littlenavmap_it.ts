@@ -25030,7 +25030,7 @@ Really use it?</source>
         <location filename="src/common/proctypes.cpp" line="247"/>
         <location filename="src/common/proctypes.cpp" line="250"/>
         <source>%1+%2</source>
-        <translation type="unfinished">%1°%2 {1+?}</translation>
+        <translation type="unfinished">%1+%2</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="329"/>
@@ -26970,7 +26970,7 @@ to select departure and destination.</oldsource>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4770"/>
         <source>&lt;h2&gt;%1%2 to %3&lt;/h2&gt;</source>
-        <translation type="unfinished">&lt;h2&gt;%1 to %2&lt;/h2&gt; {2&gt;?} {1%2 ?} {3&lt;?} {2&gt;?}</translation>
+        <translation type="unfinished">&lt;h2&gt;%1%2 to %3&lt;/h2&gt;</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4773"/>
@@ -26980,7 +26980,7 @@ to select departure and destination.</oldsource>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4779"/>
         <source>&lt;b&gt;%1%2&lt;/b&gt; to &lt;b&gt;%3&lt;/b&gt;</source>
-        <translation type="unfinished">&lt;b&gt;%1&lt;/b&gt; a &lt;b&gt;%2&lt;/b&gt; {1%2&lt;?} {3&lt;?}</translation>
+        <translation type="unfinished">&lt;b&gt;%1%2&lt;/b&gt; to &lt;b&gt;%3&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="5032"/>

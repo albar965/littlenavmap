@@ -218,10 +218,6 @@
         <translation type="vanished">Beschrijving Performance Bestand</translation>
     </message>
     <message>
-        <source>Current flight segment: %1.%2</source>
-        <translation type="obsolete">Huidig vluchtsegment: %1. {1.%2?}</translation>
-    </message>
-    <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="886"/>
         <source>Performance File</source>
         <translation>Performance Bestand</translation>
@@ -12838,7 +12834,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1267"/>
         <source>0</source>
-        <translation type="unfinished">0° {0?}</translation>
+        <translation type="unfinished">0</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1272"/>
@@ -12937,12 +12933,12 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2046"/>
         <source>%1 at %2</source>
-        <translation type="unfinished">%1 op %2 {1 ?}</translation>
+        <translation type="unfinished">%1 op %2</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2051"/>
         <source>%1, %2, %3 %4</source>
-        <translation type="unfinished">%1, %2, %3 %4 {1,?} {2,?}</translation>
+        <translation type="unfinished">%1, %2, %3 %4</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2055"/>
@@ -13836,7 +13832,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1234"/>
         <source>%2, %3, %4</source>
-        <translation type="unfinished">%1, %2, %4 {2,?} {3,?}</translation>
+        <translation type="unfinished">%2, %3, %4</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1521"/>
@@ -24622,7 +24618,7 @@ Werkelijk gebruiken?</translation>
         <location filename="src/common/proctypes.cpp" line="247"/>
         <location filename="src/common/proctypes.cpp" line="250"/>
         <source>%1+%2</source>
-        <translation type="unfinished">%1°%2 {1+?}</translation>
+        <translation type="unfinished">%1+%2</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="329"/>
@@ -26123,7 +26119,7 @@ create the flight plan manually.</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4770"/>
         <source>&lt;h2&gt;%1%2 to %3&lt;/h2&gt;</source>
-        <translation type="unfinished">&lt;h2&gt;%1 naar %2&lt;/h2&gt; {2&gt;?} {1%2 ?} {3&lt;?} {2&gt;?}</translation>
+        <translation type="unfinished">&lt;h2&gt;%1%2 to %3&lt;/h2&gt;</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4773"/>
@@ -26133,7 +26129,7 @@ create the flight plan manually.</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4779"/>
         <source>&lt;b&gt;%1%2&lt;/b&gt; to &lt;b&gt;%3&lt;/b&gt;</source>
-        <translation type="unfinished">&lt;b&gt;%1&lt;/b&gt; naar &lt;b&gt;%2&lt;/b&gt; {1%2&lt;?} {3&lt;?}</translation>
+        <translation type="unfinished">&lt;b&gt;%1%2&lt;/b&gt; to &lt;b&gt;%3&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4783"/>

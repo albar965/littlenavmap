@@ -2538,7 +2538,7 @@ Saliendo ahora.</translation>
     <message>
         <location filename="src/common/fueltool.cpp" line="124"/>
         <source> (%2)</source>
-        <translation type="unfinished"> (%1) {2)?}</translation>
+        <translation type="unfinished"> (%2)</translation>
     </message>
     <message>
         <location filename="src/common/fueltool.cpp" line="133"/>
@@ -14164,12 +14164,12 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1234"/>
         <source>%2, %3, %4</source>
-        <translation type="unfinished">%1, %2, %4 {2,?} {3,?}</translation>
+        <translation type="unfinished">%2, %3, %4</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1267"/>
         <source>0</source>
-        <translation type="unfinished">0° {0?}</translation>
+        <translation type="unfinished">0</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1272"/>
@@ -14260,12 +14260,12 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2046"/>
         <source>%1 at %2</source>
-        <translation type="unfinished">%1 a %2 {1 ?}</translation>
+        <translation type="unfinished">%1 a %2</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2051"/>
         <source>%1, %2, %3 %4</source>
-        <translation type="unfinished">%1, %2, %3 %4 {1,?} {2,?}</translation>
+        <translation type="unfinished">%1, %2, %3 %4</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2055"/>
@@ -23166,7 +23166,7 @@ MHz/kHz/Cha.</translation>
         <location filename="src/common/proctypes.cpp" line="247"/>
         <location filename="src/common/proctypes.cpp" line="250"/>
         <source>%1+%2</source>
-        <translation type="unfinished">%1°%2 {1+?}</translation>
+        <translation type="unfinished">%1+%2</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="442"/>
@@ -25799,7 +25799,7 @@ or calculate the flight plan again if your plan uses tracks.</source>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4779"/>
         <source>&lt;b&gt;%1%2&lt;/b&gt; to &lt;b&gt;%3&lt;/b&gt;</source>
-        <translation type="unfinished">&lt;b&gt;%1&lt;/b&gt; a &lt;b&gt;%2&lt;/b&gt; {1%2&lt;?} {3&lt;?}</translation>
+        <translation type="unfinished">&lt;b&gt;%1%2&lt;/b&gt; to &lt;b&gt;%3&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4789"/>
@@ -28415,7 +28415,7 @@ Right-click into the map and select
     <message>
         <location filename="src/common/unit.cpp" line="432"/>
         <source> (%2)</source>
-        <translation type="unfinished"> (%1) {2)?}</translation>
+        <translation type="unfinished"> (%2)</translation>
     </message>
     <message>
         <location filename="src/common/unit.cpp" line="440"/>
