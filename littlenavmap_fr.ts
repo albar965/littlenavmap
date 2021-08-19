@@ -219,7 +219,7 @@
     </message>
     <message>
         <source>Current flight segment: %1.%2</source>
-        <translation type="obsolete">Segment du vol en cours: %1. {1.%2?}</translation>
+        <translation type="obsolete">Segment du vol en cours: %1.%2</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="886"/>
@@ -13123,7 +13123,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1267"/>
         <source>0</source>
-        <translation type="unfinished">0° {0?}</translation>
+        <translation type="unfinished">0</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1272"/>
@@ -13224,12 +13224,12 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2046"/>
         <source>%1 at %2</source>
-        <translation type="unfinished">%1 à %2 {1 ?}</translation>
+        <translation type="unfinished">%1 à %2</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2051"/>
         <source>%1, %2, %3 %4</source>
-        <translation type="unfinished">%1, %2, %3 %4 {1,?} {2,?}</translation>
+        <translation type="unfinished">%1, %2, %3 %4</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2055"/>
@@ -25214,7 +25214,7 @@ Voulez-vous vraiment l&apos;utiliser?</translation>
         <location filename="src/common/proctypes.cpp" line="247"/>
         <location filename="src/common/proctypes.cpp" line="250"/>
         <source>%1+%2</source>
-        <translation type="unfinished">%1°%2 {1+?}</translation>
+        <translation type="unfinished">%1+%2</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="329"/>
@@ -27104,7 +27104,7 @@ ou recalculer le plan de vol si votre plan utilise des pistes.</translation>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4770"/>
         <source>&lt;h2&gt;%1%2 to %3&lt;/h2&gt;</source>
-        <translation type="unfinished">&lt;h2&gt;%1 vers %2&lt;/h2&gt; {2&gt;?} {1%2 ?} {3&lt;?} {2&gt;?}</translation>
+        <translation type="unfinished">&lt;h2&gt;%1%2 vers %3&lt;/h2&gt;</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4773"/>
@@ -27114,7 +27114,7 @@ ou recalculer le plan de vol si votre plan utilise des pistes.</translation>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4779"/>
         <source>&lt;b&gt;%1%2&lt;/b&gt; to &lt;b&gt;%3&lt;/b&gt;</source>
-        <translation type="unfinished">&lt;b&gt;%1&lt;/b&gt; vers &lt;b&gt;%2&lt;/b&gt; {1%2&lt;?} {3&lt;?}</translation>
+        <translation type="unfinished">&lt;b&gt;%1%2&lt;/b&gt; to &lt;b&gt;%3&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4789"/>
@@ -30650,7 +30650,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</oldsource>
         <translation type="obsolete">&lt;!DOCTYPE HTML PUBLIC &quot;-//W3C//DTD HTML 4.0//EN&quot; &quot;http://www.w3.org/TR/REC-html40/strict.dtd&quot;&gt;
 &lt;html&gt;&lt;head&gt;&lt;meta name=&quot;qrichtext&quot; content=&quot;1&quot; /&gt;&lt;style type=&quot;text/css&quot;&gt;
-p, li { blanc-espace : pré-emballage; }
+p, li { white-space : pre-wrap; }
 &lt;/style&gt;&lt;/head&gt;&lt;body style=&quot; font-family:&apos;Ubuntu&apos;; font-size:10pt; font-weight:400; font-style:normal;&quot;&gt;
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>

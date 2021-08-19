@@ -215,7 +215,7 @@
     </message>
     <message>
         <source>Current flight segment: %1.%2</source>
-        <translation type="obsolete">Atual segmento  de voo: %1. {1.%2?}</translation>
+        <translation type="obsolete">Atual segmento  de voo: %1.%2</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="886"/>
@@ -25925,7 +25925,7 @@ ou calcule o plano de voo novamente se o seu plano usar tracks.</translation>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4770"/>
         <source>&lt;h2&gt;%1%2 to %3&lt;/h2&gt;</source>
-        <translation type="unfinished">&lt;h2&gt;%1 para %2&lt;/h2&gt; {2&gt;?} {1%2 ?} {3&lt;?} {2&gt;?}</translation>
+        <translation type="unfinished">&lt;h2&gt;%1%2 to %3&lt;/h2&gt;</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4773"/>
@@ -25935,7 +25935,7 @@ ou calcule o plano de voo novamente se o seu plano usar tracks.</translation>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4779"/>
         <source>&lt;b&gt;%1%2&lt;/b&gt; to &lt;b&gt;%3&lt;/b&gt;</source>
-        <translation type="unfinished">&lt;b&gt;%1&lt;/b&gt; para &lt;b&gt;%2&lt;/b&gt; {1%2&lt;?} {3&lt;?}</translation>
+        <translation type="unfinished">&lt;b&gt;%1%2&lt;/b&gt; to &lt;b&gt;%3&lt;/b&gt;</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="4783"/>
