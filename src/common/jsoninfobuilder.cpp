@@ -254,9 +254,15 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
 
     /* Fields added only if available */
 
-    if(data.airport.xpident.length() > 0 && data.airport.ident != data.airport.xpident)
-        json["x-plane-ident"] = qUtf8Printable(data.airport.xpident);
+  if(!data.airport.icao.isEmpty() && data.airport.ident != data.airport.icao)
+    json["icao"] = qUtf8Printable(data.airport.icao);
+  if(!data.airport.iata.isEmpty() && data.airport.ident != data.airport.iata)
+    json["iata"] = qUtf8Printable(data.airport.iata);
+  if(!data.airport.faa.isEmpty() && data.airport.ident != data.airport.faa)
+    json["faa"] = qUtf8Printable(data.airport.faa);
+  if(!data.airport.local.isEmpty() && data.airport.ident != data.airport.local)
+    json["local"] = qUtf8Printable(data.airport.local);
 
-    return json.dump().data();
+  return json.dump().data();
 }
 
