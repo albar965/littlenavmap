@@ -1395,7 +1395,7 @@ void Route::updateDepartureAndDestination()
       // A start can be a runway or a helipad
       if(departure.getDepartureStart().helipadNumber != -1)
         flightplan.setDepartureParkingType(atools::fs::pln::HELIPAD);
-      else if(departure.getDepartureStart().runwayName.isEmpty())
+      else if(!departure.getDepartureStart().runwayName.isEmpty())
         flightplan.setDepartureParkingType(atools::fs::pln::RUNWAY);
     }
     else
