@@ -3197,13 +3197,15 @@ void RouteController::routeSetParking(const map::MapParking& parking)
   }
 
   // Update the current airport which is new or the same as the one used by the parking spot
-  route.getFlightplan().setDepartureParkingName(map::parkingNameForFlightplan(parking));
-  route.getFlightplan().setDepartureParkingType(atools::fs::pln::PARKING);
-  route.getFlightplan().setDepartureParkingPosition(parking.position,
-                                                    route.getDepartureAirportLeg().getPosition().getAltitude());
   route.setDepartureParking(parking);
-
   route.updateAll();
+
+  // Update flightplan copy
+  pln::Flightplan& flightplan = route.getFlightplan();
+  flightplan.setDepartureParkingName(map::parkingNameForFlightplan(parking));
+  flightplan.setDepartureParkingType(atools::fs::pln::PARKING);
+  flightplan.setDepartureParkingPosition(parking.position, route.getDepartureAirportLeg().getPosition().getAltitude());
+
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
 
@@ -3238,22 +3240,22 @@ void RouteController::routeSetStartPosition(map::MapStart start)
     route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
   }
 
-  // No need to update airport since this is called from dialog only
-
   // Update the current airport which is new or the same as the one used by the parking spot
-  // Use helipad number or runway name
-  route.getFlightplan().setDepartureParkingName(start.runwayName);
-
-  if(route.hasDepartureRunway())
-    route.getFlightplan().setDepartureParkingType(atools::fs::pln::RUNWAY);
-  else if(route.hasDepartureHelipad())
-    route.getFlightplan().setDepartureParkingType(atools::fs::pln::HELIPAD);
-
-  route.getFlightplan().setDepartureParkingPosition(start.position,
-                                                    route.getDepartureAirportLeg().getPosition().getAltitude());
   route.setDepartureStart(start);
-
   route.updateAll();
+
+  pln::Flightplan& flightplan = route.getFlightplan();
+  flightplan.setDepartureParkingName(start.runwayName);
+  if(route.hasDepartureRunway())
+    flightplan.setDepartureParkingType(atools::fs::pln::RUNWAY);
+  else if(route.hasDepartureHelipad())
+    flightplan.setDepartureParkingType(atools::fs::pln::HELIPAD);
+  else
+    flightplan.setDepartureParkingType(atools::fs::pln::AIRPORT);
+
+  flightplan.setDepartureParkingPosition(start.position,
+                                         route.getDepartureAirportLeg().getPosition().getAltitude());
+
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
   route.updateDepartureAndDestination();
