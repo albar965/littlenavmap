@@ -1382,7 +1382,8 @@ void Route::updateDepartureAndDestination()
       // Get position from parking spot
       flightplan.setDepartureParkingName(map::parkingNameForFlightplan(departure.getDepartureParking()));
       flightplan.setDepartureParkingPosition(departure.getDepartureParking().position,
-                                             departure.getPosition().getAltitude());
+                                             departure.getPosition().getAltitude(),
+                                             departure.getDepartureParking().heading);
       flightplan.setDepartureParkingType(atools::fs::pln::PARKING);
     }
     else if(hasDepartureStart())
@@ -1390,7 +1391,8 @@ void Route::updateDepartureAndDestination()
       // Get position from start
       flightplan.setDepartureParkingName(departure.getDepartureStart().runwayName);
       flightplan.setDepartureParkingPosition(departure.getDepartureStart().position,
-                                             departure.getPosition().getAltitude());
+                                             departure.getPosition().getAltitude(),
+                                             departure.getDepartureStart().heading);
 
       // A start can be a runway or a helipad
       if(departure.getDepartureStart().helipadNumber != -1)
@@ -1402,7 +1404,8 @@ void Route::updateDepartureAndDestination()
     {
       // No start position and no parking - use airport/navaid position
       flightplan.setDepartureParkingName(QString());
-      flightplan.setDepartureParkingPosition(departure.getPosition());
+      flightplan.setDepartureParkingPosition(departure.getPosition(),
+                                             atools::fs::pln::INVALID_ALTITUDE, atools::fs::pln::INVALID_HEADING);
       flightplan.setDepartureParkingType(atools::fs::pln::AIRPORT);
     }
 

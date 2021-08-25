@@ -392,7 +392,8 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
     fp->setDepartureName(entries.first().getIdent());
     fp->setDepartureIdent(entries.first().getIdent());
     fp->setDeparturePosition(entries.first().getPosition());
-    fp->setDepartureParkingPosition(entries.first().getPosition());
+    fp->setDepartureParkingPosition(entries.first().getPosition(),
+                                    atools::fs::pln::INVALID_ALTITUDE, atools::fs::pln::INVALID_HEADING);
 
     fp->setDestinationName(entries.last().getIdent());
     fp->setDestinationIdent(entries.last().getIdent());
@@ -567,7 +568,8 @@ bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, ma
     flightplan->setDepartureName(departure.name);
     flightplan->setDepartureIdent(departure.ident);
     flightplan->setDeparturePosition(departure.position);
-    flightplan->setDepartureParkingPosition(departure.position);
+    flightplan->setDepartureParkingPosition(departure.position,
+                                            atools::fs::pln::INVALID_ALTITUDE, atools::fs::pln::INVALID_HEADING);
 
     FlightplanEntry entry;
     entryBuilder->buildFlightplanEntry(departure, entry, false /* alternate */);

@@ -514,7 +514,8 @@ struct MapParking
   QString type, name, nameShort, airlineCodes /* Comma separated list of airline codes */;
   int airportId /* database id airport.airport_id */;
   int number, /* -1 for X-Plane style free names. Otherwise FSX/P3D number */
-      radius, heading;
+      radius;
+  float heading;
   bool jetway;
 };
 
@@ -546,7 +547,8 @@ struct MapStart
   QChar type = '\0' /* R(UNWAY), H(ELIPAD) or W(ATER) */;
   QString runwayName /* not empty if this is a runway start */;
   int airportId /* database id airport.airport_id */;
-  int heading, helipadNumber /* -1 if not a helipad otherwise sequence number as it appeared in the BGL */;
+  int helipadNumber /* -1 if not a helipad otherwise sequence number as it appeared in the BGL */;
+  float heading;
 };
 
 // =====================================================================

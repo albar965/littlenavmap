@@ -1313,7 +1313,9 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
         routePlan.setDepartureIdent(flightplan.getDepartureIdent());
         routePlan.setDeparturePosition(flightplan.getDeparturePosition(),
                                        flightplan.getEntries().first().getPosition().getAltitude());
-        routePlan.setDepartureParkingPosition(flightplan.getDepartureParkingPosition());
+        routePlan.setDepartureParkingPosition(flightplan.getDepartureParkingPosition(),
+                                              flightplan.getDepartureParkingPosition().getAltitude(),
+                                              flightplan.getDepartureParkingHeading());
         routePlan.setDepartureParkingName(flightplan.getDepartureParkingName());
         routePlan.setDepartureParkingType(flightplan.getDepartureParkingType());
 
@@ -1951,7 +1953,8 @@ void RouteController::reverseRoute()
 
   // Overwrite parking position with airport position
   flightplan.setDeparturePosition(entries.first().getPosition());
-  flightplan.setDepartureParkingPosition(entries.first().getPosition());
+  flightplan.setDepartureParkingPosition(entries.first().getPosition(),
+                                         atools::fs::pln::INVALID_ALTITUDE, atools::fs::pln::INVALID_HEADING);
   flightplan.setDepartureParkingName(QString());
   flightplan.setDepartureParkingType(atools::fs::pln::NO_POS);
 
@@ -3204,7 +3207,8 @@ void RouteController::routeSetParking(const map::MapParking& parking)
   pln::Flightplan& flightplan = route.getFlightplan();
   flightplan.setDepartureParkingName(map::parkingNameForFlightplan(parking));
   flightplan.setDepartureParkingType(atools::fs::pln::PARKING);
-  flightplan.setDepartureParkingPosition(parking.position, route.getDepartureAirportLeg().getPosition().getAltitude());
+  flightplan.setDepartureParkingPosition(parking.position, route.getDepartureAirportLeg().getPosition().getAltitude(),
+                                         parking.heading);
 
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
@@ -3254,7 +3258,8 @@ void RouteController::routeSetStartPosition(map::MapStart start)
     flightplan.setDepartureParkingType(atools::fs::pln::AIRPORT);
 
   flightplan.setDepartureParkingPosition(start.position,
-                                         route.getDepartureAirportLeg().getPosition().getAltitude());
+                                         route.getDepartureAirportLeg().getPosition().getAltitude(),
+                                         start.heading);
 
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
