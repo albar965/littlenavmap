@@ -577,7 +577,7 @@ void MapTypesFactory::fillParking(const SqlRecord& record, map::MapParking& park
   parking.jetway = record.valueInt("has_jetway") > 0;
   parking.number = record.valueInt("number");
 
-  parking.heading = static_cast<int>(std::round(record.valueFloat("heading")));
+  parking.heading = record.valueFloat("heading");
   parking.radius = static_cast<int>(std::round(record.valueFloat("radius")));
 
   // Calculate a short text if using X-Plane parking names
@@ -631,7 +631,7 @@ void MapTypesFactory::fillStart(const SqlRecord& record, map::MapStart& start)
   start.runwayName = record.valueStr("runway_name");
   start.helipadNumber = record.isNull("number") ? -1 : record.valueInt("number", -1);
   start.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
-  start.heading = static_cast<int>(std::roundf(record.valueFloat("heading")));
+  start.heading = record.valueFloat("heading");
 }
 
 void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& airspace, map::MapAirspaceSources src)
