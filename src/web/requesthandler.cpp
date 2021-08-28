@@ -123,9 +123,14 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
       if(params.has(QStringLiteral(u"progressrefresh")))
         session.set("progressrefresh", params.asInt(QStringLiteral(u"progressrefresh")));
     }
+    else if(path == QLatin1String("/plugins"))
+    {
+      response.setHeader("Content-Type", "text/plain");
+      response.write(QDir(WebApp::getDocroot() + path).entryList(QDir::Dirs | QDir::NoDotAndDotDot, QDir::Name | QDir::LocaleAware).join("/").toUtf8(), true);
+    }
     else // all other paths
     {
-      if(!path.contains(QStringLiteral(u"..")))
+      if(!path.contains(QStringLiteral(u"..")) && !path.startsWith(QLatin1String("/plugins/")))
       {
 
         // mapcmd are for path /mapimage
