@@ -2,6 +2,18 @@ html, body {
   touch-action: none;
 }
 
+body {
+  font-family: Verdana, Arial, Helvetica, sans-serif;
+}
+
+#header {
+  box-shadow: 0px 0px 18px gray;
+  background: lightgray;
+  border-radius: 25px;
+  margin: 0;
+  margin-bottom: 1em;
+  border: none;
+}
 
 @media (min-width: 1281px) {
   #header {
@@ -13,6 +25,11 @@ html, body {
   #header {
     padding: 0 4px;
   }
+}
+
+#header > div {
+  display: flex;
+  align-items: center;
 }
 
 
@@ -105,7 +122,7 @@ input:not([type=text]), button, label[for] {
 }
 
 input[disabled]:hover {
-  cursor: url(../images/there.cur), auto;
+  cursor: url(/images/there.cur), auto;
 }
 
 
@@ -120,19 +137,19 @@ input[disabled]:hover {
 
 
 [data-shift="up"] {
-  cursor: url(../images/point-up.cur), auto;
+  cursor: url(/images/point-up.cur), auto;
 }
 
 [data-shift="left"] {
-  cursor: url(../images/point-left.cur), auto;
+  cursor: url(/images/point-left.cur), auto;
 }
 
 [data-shift="right"] {
-  cursor: url(../images/point-right.cur), auto;
+  cursor: url(/images/point-right.cur), auto;
 }
 
 [data-shift="down"] {
-  cursor: url(../images/point-down.cur), auto;
+  cursor: url(/images/point-down.cur), auto;
 }
 
 
