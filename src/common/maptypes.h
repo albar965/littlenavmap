@@ -346,7 +346,7 @@ struct MapAirport
   atools::geo::Rect bounding;
   int routeIndex = -1;
 
-  /* One of ident, ICAO, IATA or local code. Use only for display purposes and not for queries. */
+  /* One of ident, ICAO, FAA, IATA or local code. Use only for display purposes and not for queries. */
   const QString& displayIdent(bool useIata = true) const;
 
   bool closed() const;

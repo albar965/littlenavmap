@@ -310,7 +310,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
 
     const QString& airway = leg.getAirwayName();
     // Avoid the short IATA ids since these can overlap with VOR or NDB
-    QString ident = leg.getDisplayIdent(false /* useIata */);
+    QString ident = leg.getDisplayIdent();
 
     if(leg.getMapObjectType() == map::USERPOINTROUTE)
     {
