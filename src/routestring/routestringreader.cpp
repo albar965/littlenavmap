@@ -556,7 +556,7 @@ bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, ma
   airportQuerySim->getAirportByIdent(departure, ident);
   if(!departure.isValid())
   {
-    QList<map::MapAirport> airports = airportQuerySim->getAirportsByOfficialIdent(ident, false /* iata */);
+    QList<map::MapAirport> airports = airportQuerySim->getAirportsByOfficialIdent(ident);
     if(!airports.isEmpty())
       departure = airports.first();
   }
@@ -801,7 +801,7 @@ void RouteStringReader::destinationInternal(map::MapAirport& destination, proc::
 
   if(!destination.isValid())
   {
-    QList<map::MapAirport> airports = airportQuerySim->getAirportsByOfficialIdent(ident, false /* iata */);
+    QList<map::MapAirport> airports = airportQuerySim->getAirportsByOfficialIdent(ident);
     if(!airports.isEmpty())
       destination = airports.first();
   }

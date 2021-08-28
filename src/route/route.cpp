@@ -2698,7 +2698,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
             useAirportKeys = airport.local == airport.ident;
 
           // Use display ident for DEP/DES since it does not matter in this configuration
-          QString ident = useAirportKeys ? airport.ident : airport.displayIdent(false /* useIata */);
+          QString ident = useAirportKeys ? airport.ident : airport.displayIdent();
 
           if(i == 0)
           {

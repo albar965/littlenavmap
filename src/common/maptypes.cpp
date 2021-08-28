@@ -853,15 +853,15 @@ const QString& MapAirport::displayIdent(bool useIata) const
     return icao;
 
   // Avoid short FAA codes identical to IATA three letter codes
-  if(!faa.isEmpty() && faa != iata)
+  if(!faa.isEmpty())
     return faa;
+
+  // Use IATA only if present and ident is artificial long X-Plane string
+  if(useIata && !iata.isEmpty())
+    return iata;
 
   if(!local.isEmpty())
     return local;
-
-  // Use IATA only if present and ident is artificial long X-Plane string
-  if(useIata && !iata.isEmpty() && ident.size() > 4)
-    return iata;
 
   // Otherwise internal id
   return ident;
