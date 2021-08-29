@@ -39,12 +39,15 @@
 
 [data-toolbarsplacement] > :first-child  {
   flex: 1 0;
+  position: relative;
 }
 
 #toolbarsContainer {
   flex: 0 1;
   display: flex;
   flex-wrap: wrap;
+  z-index: 99999;
+  position: relative;
 }
 
 iframe {
@@ -172,4 +175,68 @@ iframe {
 
 .keep-1-lined {
   white-space: nowrap !important;
+}
+
+#buttonPlugins {
+  position: relative;
+}
+
+#selectablePlugins {
+  position: absolute;
+  width: 100%;
+  display: none;
+}
+
+#buttonPlugins:hover #selectablePlugins {
+  display: table;
+}
+
+[data-toolbarsplacement="top"] #selectablePlugins {
+  top: 100%;
+  padding-top: 5px;
+}
+
+[data-toolbarsplacement="right"] #selectablePlugins {
+  right: 100%;
+  top: 0;
+  padding-right: 7px;
+}
+
+[data-toolbarsplacement="bottom"] #selectablePlugins {
+  bottom: 100%;
+  padding-bottom: 5px;
+}
+
+[data-toolbarsplacement="left"] #selectablePlugins {
+  left: 100%;
+  top: 0;
+  padding-left: 6px;
+}
+
+.selectable-plugin {
+  display: flex;
+}
+
+.selectable-plugin input {
+  margin-top: 6px;
+}
+
+[data-toolbarsplacement="top"] #exclusivePlugins {
+  height: calc(100% - 10px);
+  margin: 5px 2.5px;
+}
+
+[data-toolbarsplacement="right"] #exclusivePlugins {
+  width: 100%;
+  margin: 2.5px 5px;
+}
+
+[data-toolbarsplacement="bottom"] #exclusivePlugins {
+  height: calc(100% - 10px);
+  margin: 5px 2.5px;
+}
+
+[data-toolbarsplacement="left"] #exclusivePlugins {
+  width: 100%;
+  margin: 2.5px 5px;
 }

@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>unused plugin title (your plugin folders name is the title visible to the user)</title>
+  </head>
+  <body>
+    <script>
+      var originalTitle;
+
+      function stop() {
+        parent.document.title = originalTitle;
+        alert("stopped");
+      }
+
+      function init(callback, version) {
+        var returned_Value = callback(callback.TYPE_BACKGROUND, stop);
+        try {
+          parent.alert("you shouldn't get me");
+        } catch(e) {}
+        try {
+          top.alert("you shouldn't get me");
+        } catch(e) {}
+        returned_Value.disable_AccessPrevention();
+        originalTitle = parent.document.title;
+        parent.document.title = "background plugin running";
+      }
+    </script>
+  </body>
+</html>

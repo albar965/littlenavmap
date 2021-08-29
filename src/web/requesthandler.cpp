@@ -130,7 +130,7 @@ void RequestHandler::service(HttpRequest& request, HttpResponse& response)
     }
     else // all other paths
     {
-      if(!path.contains(QStringLiteral(u"..")) && !path.startsWith(QLatin1String("/plugins/")))
+      if(!path.contains(QStringLiteral(u"..")))
       {
 
         // mapcmd are for path /mapimage

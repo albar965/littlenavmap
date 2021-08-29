@@ -7,7 +7,7 @@ function setActive(e) {
   while(i.tagName.toLowerCase() !== "button" && i.tagName.toLowerCase() !== "body") {
     i = i.parentElement;
   }
-  if(i.tagName.toLowerCase() === "button") {
+  if(i.tagName.toLowerCase() === "button" && i.dataset.activateable !== "false") {
     e.currentTarget.querySelector(".active").classList.remove("active");
     i.classList.add("active");
   }
