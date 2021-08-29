@@ -9,6 +9,15 @@ function setActive(e) {
   }
   if(i.tagName.toLowerCase() === "button" && i.dataset.activateable !== "false") {
     e.currentTarget.querySelector(".active").classList.remove("active");
+    if(i.id === "buttonMap") {
+      Array.prototype.forEach.call(document.querySelectorAll(".overlaying-content"), function(oc) {
+        oc.style.display = "block";
+      });
+    } else {
+      Array.prototype.forEach.call(document.querySelectorAll(".overlaying-content"), function(oc) {
+        oc.style.display = "none";
+      });
+    }
     i.classList.add("active");
   }
 }

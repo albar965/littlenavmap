@@ -27,6 +27,7 @@ function findPlugins() {
       run: (function(currentlyStartedPlugin) {
         return function() {
           var iframe = document.querySelector('iframe[data-id="' + currentlyStartedPlugin + '"]');
+          iframe.className = "overlaying-content";
           iframe.setAttribute("allowtransparency", "true");   // appears to be unnecessary
           iframe.style.width = "100%";
           iframe.style.height = "calc(100% - 52px)";    // 52px is height of map HTML #header
@@ -61,7 +62,7 @@ function findPlugins() {
             var select = document.createElement("select");
             select.id = "exclusivePlugins";
             var option = document.createElement("option");
-            option.innerText = "map";
+            option.innerText = "no plugin";
             option.value = "theMap";
             select.add(option);
             option = document.createElement("option");
