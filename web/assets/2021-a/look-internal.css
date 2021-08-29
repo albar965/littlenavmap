@@ -211,7 +211,7 @@
   cursor: inherit;
 }
 
-#selectablePlugins option {
+#exclusivePlugins option {
   padding: 5px;
   box-sizing: border-box;
 }
