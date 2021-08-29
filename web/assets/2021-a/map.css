@@ -6,30 +6,33 @@ body {
   font-family: Verdana, Arial, Helvetica, sans-serif;
 }
 
-#header {
+.toolbar {
   box-shadow: 0px 0px 18px gray;
   background: lightgray;
   border-radius: 25px;
-  margin: 0;
-  margin-bottom: 1em;
   border: none;
+  margin: .5em;
+  flex:0 1;
+  user-select: none;
 }
 
 @media (min-width: 1281px) {
-  #header {
+  .toolbar {
     padding: 0 12px;
   }
 }
 
 @media (max-width: 1280px) {
-  #header {
+  .toolbar {
     padding: 0 4px;
   }
 }
 
-#header > div {
+.toolbar > div {
   display: flex;
   align-items: center;
+  white-space: nowrap;
+  overflow: auto;
 }
 
 
@@ -61,60 +64,23 @@ body {
 }
 
 
-form, .formparts {
+form {
   font-size: 13.333px;
-  margin-left: 20px;
-}
-
-form:first-of-type, .formparts:first-of-type {
-  margin-left: 0;
-}
-
-
-.input-group {
-  display: inline-flex;
-  font-size: 12px;
+  display: flex;
   align-items: center;
 }
 
-.input-group label {
-  padding-left: 5px;        /* padding instead of margin lets area act as hit area */
-  line-height: 12px;
+form > * {
+  display: block;
 }
 
-
-.slider-container {
-  vertical-align: middle;
-  display: inline-block;
-  text-align: center;
-  margin: -13px 0 0;        /* adjusted to prevent vertical scrollbar in FF due to label position */
-  position: relative;
-}
-
-.slider-container label {
-  position: absolute;       /* prevent vertical scrollbar in FF */
-}
-
-.slider-container + button {
-  margin-left: 10px;
-}
-
-
-[content]::before {
-  content: attr(content);
-  color: #f50;
-  outline: 1px solid grey;
-}
-
-[content="0"]::before {
-  color: inherit;
-  outline: 0;
-}
-
-
-input[type="radio"] , input[type="checkbox"]{
+input[type="checkbox"] {
   margin: 0px 0 0px 8px;
   vertical-align: -2px;
+}
+
+input[type="text"] {
+  text-align: center;
 }
 
 input:not([type=text]), button, label[for] {
@@ -123,6 +89,18 @@ input:not([type=text]), button, label[for] {
 
 input[disabled]:hover {
   cursor: url(/images/there.cur), auto;
+}
+
+input + label, label + input, input + button, label + button {
+  margin-left: 3px;
+}
+
+button {
+  margin-right: 3px;
+}
+
+.gap {
+  width: 10px;
 }
 
 

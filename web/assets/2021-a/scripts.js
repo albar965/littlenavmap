@@ -243,31 +243,11 @@ function injectUpdates(origin) {
     mapElement.onpointerout = pointerup;
     mapElement.onpointerleave = pointerup;
 
+
     /*
-     * Event handling: header options bar scrolling
+     * scrollable indicators of header options bar which is a toolbar
      */
-    var header = ocd.querySelector("#header");
-    function headerIndicators() {
-      if(header.firstElementChild.scrollWidth > header.firstElementChild.clientWidth) {
-        if(header.firstElementChild.scrollLeft > 0) {
-          header.classList.add("indicator-scrollable-toleft");
-          if(header.firstElementChild.clientWidth + header.firstElementChild.scrollLeft >= header.firstElementChild.scrollWidth - 1) {
-            header.classList.remove("indicator-scrollable-toright");
-          } else {
-            header.classList.add("indicator-scrollable-toright");
-          }
-        } else {
-          header.classList.remove("indicator-scrollable-toleft");
-          header.classList.add("indicator-scrollable-toright");
-        }
-      } else {
-        header.classList.remove("indicator-scrollable-toleft");
-        header.classList.remove("indicator-scrollable-toright");
-      }
-    }
-    ocw.addEventListener("resize", headerIndicators);
-    header.firstElementChild.addEventListener("scroll", headerIndicators);
-    headerIndicators();
+    enableToolbarIndicators(ocd.querySelector("#header"), ocw);
 
 
     /*

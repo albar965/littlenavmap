@@ -1,11 +1,4 @@
 function findPlugins() {
-  function toolbarAPI() {
-    return {
-      createToolbar: function() {
-      }
-    }
-  }
-
   var currentlyStartedPlugin;
   var stopMethods = {};
 
@@ -25,6 +18,11 @@ function findPlugins() {
   function type_unobtrusive() {
     var theToolbarAPI = toolbarAPI();
     delete theToolbarAPI.createToolbar;
+    var descriptor = Object.create(null);
+    descriptor.value = currentlyStartedPlugin;
+    for(var funcname in theToolbarAPI) {
+      Object.defineProperty(theToolbarAPI[funcname], "pluginname", descriptor);
+    }
     return {
       run: (function(currentlyStartedPlugin) {
         return function() {
@@ -41,6 +39,12 @@ function findPlugins() {
     };
   }
   function type_exclusive() {
+    var theToolbarAPI = toolbarAPI();
+    var descriptor = Object.create(null);
+    descriptor.value = "exclusive";
+    for(var funcname in theToolbarAPI) {
+      Object.defineProperty(theToolbarAPI[funcname], "plugintype", descriptor);
+    }
     return {
       run: (function(currentlyStartedPlugin) {
         return function() {
@@ -82,7 +86,7 @@ function findPlugins() {
           select.dispatchEvent(new Event("change"));
         };
       })(currentlyStartedPlugin),
-      toolbarAPI: toolbarAPI()
+      toolbarAPI: theToolbarAPI
     };
   }
   function plugin(type, stop_Method) {
@@ -133,6 +137,9 @@ function findPlugins() {
       try {
         stopMethods[this.value]();
       } catch(e) {}
+      Array.prototype.forEach.call(document.querySelector('iframe[data-id="theMap"]').contentDocument.querySelectorAll('#pluginform [data-source="' + this.value + '"]'), function(toolbarEntry) {
+        toolbarEntry.parentElement.removeChild(toolbarEntry);
+      });
       var iframe = document.querySelector('iframe[data-id="' + this.value + '"]');
       if(iframe.style.display === "block") {
         document.querySelector('iframe[data-id="theMap"]').style.display = "block";
