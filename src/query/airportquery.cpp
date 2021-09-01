@@ -184,23 +184,29 @@ void AirportQuery::getAirportsByTruncatedIdent(QList<map::MapAirport>& airports,
   }
 }
 
-QList<map::MapAirport> AirportQuery::getAirportsByOfficialIdent(const QString& ident, bool iata)
+QList<map::MapAirport> AirportQuery::getAirportsByOfficialIdent(const QString& ident, const atools::geo::Pos *pos,
+                                                                float maxDistanceMeter, bool searchIata,
+                                                                bool searchIdent)
 {
   QList<map::MapAirport> airports;
-  getAirportsByOfficialIdent(airports, ident, iata);
+  getAirportsByOfficialIdent(airports, ident, pos, maxDistanceMeter, searchIata, searchIdent);
   return airports;
 }
 
-void AirportQuery::getAirportsByOfficialIdent(QList<map::MapAirport>& airports, const QString& ident, bool iata)
+void AirportQuery::getAirportsByOfficialIdent(QList<map::MapAirport>& airports, const QString& ident,
+                                              const atools::geo::Pos *pos, float maxDistanceMeter, bool searchIata,
+                                              bool searchIdent)
 {
   if(airportByOfficialQuery != nullptr && !ident.isEmpty())
   {
+    airportByOfficialQuery->bindValue(":ident", searchIdent ? ident : "%");
+
     if(icaoCol)
       airportByOfficialQuery->bindValue(":icao", ident);
     if(faaCol)
       airportByOfficialQuery->bindValue(":faa", ident);
     if(iataCol)
-      airportByOfficialQuery->bindValue(":iata", iata ? ident : "");
+      airportByOfficialQuery->bindValue(":iata", searchIata ? ident : "%");
     if(localCol)
       airportByOfficialQuery->bindValue(":local", ident);
 
@@ -212,6 +218,14 @@ void AirportQuery::getAirportsByOfficialIdent(QList<map::MapAirport>& airports, 
                                    NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
       airports.append(airport);
     }
+  }
+
+  if(pos != nullptr)
+  {
+    maptools::sortByDistance(airports, *pos);
+
+    if(maxDistanceMeter < map::INVALID_DISTANCE_VALUE)
+      maptools::removeByDistance(airports, *pos, maxDistanceMeter);
   }
 }
 
@@ -243,13 +257,16 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
     {
       // Try ICAO first on all fields (ICAO, not IATA, FAA and local)
       if(airportCopy.icao != airportCopy.ident)
-        getAirportsByOfficialIdent(airports, airportCopy.icao, false /* iata */);
+        getAirportsByOfficialIdent(airports, airportCopy.icao, nullptr, map::INVALID_DISTANCE_VALUE,
+                                   false /* iata */, false /* ident */);
 
       // Try IATA next on all fields
-      getAirportsByOfficialIdent(airports, airportCopy.iata, true /* iata */);
+      getAirportsByOfficialIdent(airports, airportCopy.iata, nullptr, map::INVALID_DISTANCE_VALUE,
+                                 true /* iata */, false /* ident */);
 
       // Try FAA next on all fields except IATA
-      getAirportsByOfficialIdent(airports, airportCopy.faa, false /* iata */);
+      getAirportsByOfficialIdent(airports, airportCopy.faa, nullptr, map::INVALID_DISTANCE_VALUE,
+                                 false /* iata */, false /* ident */);
     }
 
     // Fall back to coordinate based search and look for centers withing certain distance
@@ -964,14 +981,15 @@ QStringList AirportQuery::airportColumns(const atools::sql::SqlDatabase *db)
     "left_lonx", "top_laty", "right_lonx", "bottom_laty"
   });
 
+  SqlUtil util(db);
   SqlRecord aprec = db->record("airport");
-  if(aprec.contains("icao"))
+  if(aprec.contains("icao") && util.hasRows("airport", "icao is not null"))
     airportQueryBase.append("icao");
-  if(aprec.contains("iata"))
+  if(aprec.contains("iata") && util.hasRows("airport", "iata is not null"))
     airportQueryBase.append("iata");
-  if(aprec.contains("faa"))
+  if(aprec.contains("faa") && util.hasRows("airport", "faa is not null"))
     airportQueryBase.append("faa");
-  if(aprec.contains("local"))
+  if(aprec.contains("local") && util.hasRows("airport", "local is not null"))
     airportQueryBase.append("local");
   if(aprec.contains("region"))
     airportQueryBase.append("region");
@@ -1063,7 +1081,7 @@ void AirportQuery::initQueries()
   {
     QString sql("select " + airportQueryBase.join(", ") + " from airport where ");
 
-    QStringList idents;
+    QStringList idents(" ident like :ident ");
     if(icaoCol)
       idents += " icao like :icao ";
 

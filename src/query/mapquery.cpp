@@ -316,14 +316,10 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
     if(result.airports.isEmpty())
     {
       // Try fuzzy search for nearest by official ids =====================
-      QList<map::MapAirport> airports;
-
       // Look through all fields (ICAO, IATA, FAA and local) for the given ident
-      airportQuery->getAirportsByOfficialIdent(airports, ident);
+      QList<map::MapAirport> airports =
+        airportQuery->getAirportsByOfficialIdent(ident, &sortByDistancePos, maxDistanceMeter);
       result.airports.append(airports);
-
-      maptools::sortByDistance(result.airports, sortByDistancePos);
-      maptools::removeByDistance(result.airports, sortByDistancePos, maxDistanceMeter);
     }
   }
 

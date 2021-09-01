@@ -376,7 +376,7 @@ private:
 
   /* Insert airport link using ident and/or name */
   QString airportLink(const atools::util::HtmlBuilder& html, const QString& ident,
-                      const QString& name = QString()) const;
+                      const QString& name, const atools::geo::Pos& pos) const;
 
   /* Adds text for preferred runways */
   void bestRunwaysText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,
