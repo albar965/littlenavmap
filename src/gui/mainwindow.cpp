@@ -86,6 +86,7 @@
 #include "common/dirtool.h"
 #include "gui/statusbareventfilter.h"
 #include "gui/clicktooltiphandler.h"
+#include "query/airportquery.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -107,6 +108,8 @@
 #include <QClipboard>
 #include <QProgressDialog>
 #include <QThread>
+#include <QRandomGenerator>
+#include <QChar>
 
 #include "ui_mainwindow.h"
 
@@ -1296,6 +1299,7 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionRouteCenter, &QAction::triggered, this, &MainWindow::routeCenter);
   connect(ui->actionRouteNew, &QAction::triggered, this, &MainWindow::routeNew);
+  connect(ui->actionRouteRandomNew, &QAction::triggered, this, &MainWindow::routeRandomNew);
   connect(ui->actionRouteNewFromString, &QAction::triggered, this, &MainWindow::routeNewFromString);
   connect(ui->actionRouteOpen, &QAction::triggered, this, &MainWindow::routeOpen);
   connect(ui->actionRouteAppend, &QAction::triggered, this, &MainWindow::routeAppend);
@@ -1580,6 +1584,8 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::routeAddAlternate, routeController, &RouteController::routeAddAlternate);
   connect(mapWidget, &MapWidget::routeAdd, routeController, &RouteController::routeAdd);
   connect(mapWidget, &MapWidget::routeReplace, routeController, &RouteController::routeReplace);
+  connect(this, &MainWindow::routeSetDeparture, routeController, &RouteController::routeSetDeparture);
+  connect(this, &MainWindow::routeSetDestination, routeController, &RouteController::routeSetDestination);
 
   // Messages about database query result status
   connect(mapWidget, &MapPaintWidget::resultTruncated, this, &MainWindow::resultTruncated);
@@ -2294,6 +2300,78 @@ void MainWindow::routeNew()
     mapWidget->update();
     showFlightPlan();
     setStatusMessage(tr("Created new empty flight plan."));
+  }
+}
+
+/* Called from menu or toolbar by action */
+void MainWindow::routeRandomNew()
+{
+  if(routeCheckForChanges())
+  {
+    routeController->newFlightplan();
+
+    AirportQuery *airportQuery = NavApp::getAirportQueryNav();
+
+    QList<map::MapAirport> airportsDeparture;
+    QList<map::MapAirport> airportsDestination;
+
+    const int maxAttemptsTotal = 10;
+    const int maxAttemptsDeparture = 20;
+    const int maxAttemptsDestination = 50;
+
+    int currentTotalAttempt = 0;
+
+    do
+    {
+      QString ICAOCodeDeparture;
+
+      int currentAttempt = 0;
+      do
+      {
+        ICAOCodeDeparture = "";
+        ICAOCodeDeparture.append(QChar(65 + QRandomGenerator::global()->bounded(26)));
+        ICAOCodeDeparture.append(QChar(65 + QRandomGenerator::global()->bounded(26)));
+        ICAOCodeDeparture.append(QChar(65 + QRandomGenerator::global()->bounded(26)));
+        ICAOCodeDeparture.append(QChar(65 + QRandomGenerator::global()->bounded(26)));
+        airportsDeparture.clear();
+        airportQuery->getAirportsByOfficialIdent(airportsDeparture, ICAOCodeDeparture);
+      }
+      while(airportsDeparture.count() == 0 && ++currentAttempt < maxAttemptsDeparture);
+
+      if(airportsDeparture.count() > 0)
+      {
+        QString ICAOCodeDestination;
+
+        currentAttempt = 0;
+        do
+        {
+          ICAOCodeDestination = ICAOCodeDeparture.left(2);
+          ICAOCodeDestination.append(QChar(65 + QRandomGenerator::global()->bounded(26)));
+          ICAOCodeDestination.append(QChar(65 + QRandomGenerator::global()->bounded(26)));
+          airportsDestination.clear();
+          airportQuery->getAirportsByOfficialIdent(airportsDestination, ICAOCodeDestination);
+        }
+        while(airportsDestination.count() == 0 && ++currentAttempt < maxAttemptsDestination);
+
+        if(airportsDestination.count() > 0) {
+          emit routeSetDeparture(airportsDeparture[0]);
+          emit routeSetDestination(airportsDestination[0]);
+        }
+      }
+    }
+    while((airportsDeparture.count() == 0 || airportsDestination.count() == 0) && ++currentTotalAttempt < maxAttemptsTotal);
+
+    mapWidget->update();
+    showFlightPlan();
+
+    if(currentTotalAttempt < maxAttemptsTotal)
+    {
+      setStatusMessage(tr("Created new random flight plan."));
+    }
+    else
+    {
+      setStatusMessage(tr("Created new flight plan but failed to find random departure and fitting destination"));
+    }
   }
 }
 

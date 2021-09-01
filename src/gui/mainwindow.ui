@@ -68,6 +68,8 @@
      <addaction name="actionRouteSaveAirwayWaypoints"/>
     </widget>
     <addaction name="actionRouteNew"/>
+    <addaction name="actionRouteRandomNew"/>
+    <addaction name="separator"/>
     <addaction name="actionRouteOpen"/>
     <addaction name="actionRouteAppend"/>
     <addaction name="menuRecentRoutes"/>
@@ -5589,7 +5591,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>42</y>
+              <y>78</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -11805,6 +11807,17 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="statusTip">
     <string>Disable weather source to display weather icons on the map</string>
+   </property>
+  </action>
+  <action name="actionRouteRandomNew">
+   <property name="text">
+    <string>New Random Flight Plan</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a new flightplan having a random departure and a random destination bearing the same first two letters in its ICAO code as the departure</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+G</string>
    </property>
   </action>
  </widget>
