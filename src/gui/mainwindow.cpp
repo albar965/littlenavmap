@@ -2312,59 +2312,60 @@ void MainWindow::routeRandomNew()
 
     AirportQuery *airportQuery = NavApp::getAirportQueryNav();
 
-    QList<map::MapAirport> airportsDeparture;
-    QList<map::MapAirport> airportsDestination;
+    map::MapAirport airportDeparture;
+    map::MapAirport airportDestination;
 
-    const int maxAttemptsTotal = 10;
-    const int maxAttemptsDeparture = 20;
-    const int maxAttemptsDestination = 50;
+    const int maxAttemptsDeparture = 26 * 26;
+    const int maxAttemptsDestination = 26 * 26;
 
-    int currentTotalAttempt = 0;
+    QString ICAOCodeStarts[] = {  // all according to https://de.wikipedia.org/wiki/ICAO-Flugplatzcode 2021-09-01
+      "AG","AN","AY","BG","BI","BK","C","DA","DB","DF","DG","DI","DN","DR","DT","DX","EB","ED","EE","EF","EG","EH","EI","EK","EL","EN","EP","ES","ET","EV","EY","FA","FB","FC","FD","FE","FG","FH","FI","FK","FL","FM","FM","FN","FO","FP","FQ","FS","FT","FV","FW","FX","FY","FZ","GA","GB","GC","GE","GF","GG","GL","GM","GO","GQ","GS","GU","GV","HA","HB","HC","HD","HE","HH","HK","HL","HR","HS","HT","HU","LA","LB","LC","LD","LE","LF","LG","LH","LI","LJ","LK","LL","LM","LN","LO","LP","LQ","LR","LS","LT","LU","LV","LW","LX","LY","LZ","MB","MD","MG","MH","MK","MM","MN","MP","MR","MS","MT","MU","MW","MY","MZ","NC","NF","NG","NI","NL","NS","NT","NV","NW","NZ","OA","OB","OE","OI","OJ","OK","OL","OM","OO","OP","OR","OS","OT","OY","PA","PG","PH","PJ","PK","PL","PM","PT","PW","RC","RJ","RK","RO","RP","SA","SB","SC","SD","SE","SF","SG","SK","SL","SM","SO","SP","SU","SV","SY","TA","TB","TD","TF","TG","TI","TJ","TK","TL","TN","TQ","TR","TT","TU","TV","TX","UA","UB","UC","UD","UE","UG","UH","UI","UK","UL","UM","UN","UO","UR","US","UT","UU","UW","VA","VC","VD","VE","VG","VH","VI","VL","VM","VN","VO","VQ","VR","VT","VV","VY","WA","WB","WI","WM","WP","WR","WS","Y","Z ","ZK","ZM"
+    };
+    int ICAOCodeStartsCount = 234;
 
+    QString ICAOCodeStart = ICAOCodeStarts[QRandomGenerator::global()->bounded(ICAOCodeStartsCount)];
+
+    QString ICAOCodeDeparture;
+
+    int currentAttempt = 0;
     do
     {
-      QString ICAOCodeDeparture;
+      ICAOCodeDeparture = ICAOCodeStart;
+      ICAOCodeDeparture.append(QChar(65 + QRandomGenerator::global()->bounded(26)));
+      ICAOCodeDeparture.append(QChar(65 + QRandomGenerator::global()->bounded(26)));
+      if(ICAOCodeDeparture.length() == 3) {
+        ICAOCodeDeparture.append(QChar(65 + QRandomGenerator::global()->bounded(26)));
+      }
+      airportQuery->getAirportByIdent(airportDeparture, ICAOCodeDeparture);
+    }
+    while(airportDeparture.flags == map::AP_NONE && ++currentAttempt < maxAttemptsDeparture);
 
-      int currentAttempt = 0;
+    if(airportDeparture.flags != map::AP_NONE)
+    {
+      QString ICAOCodeDestination;
+
+      currentAttempt = 0;
       do
       {
-        ICAOCodeDeparture = "";
-        ICAOCodeDeparture.append(QChar(65 + QRandomGenerator::global()->bounded(26)));
-        ICAOCodeDeparture.append(QChar(65 + QRandomGenerator::global()->bounded(26)));
-        ICAOCodeDeparture.append(QChar(65 + QRandomGenerator::global()->bounded(26)));
-        ICAOCodeDeparture.append(QChar(65 + QRandomGenerator::global()->bounded(26)));
-        airportsDeparture.clear();
-        airportQuery->getAirportsByOfficialIdent(airportsDeparture, ICAOCodeDeparture);
+        ICAOCodeDestination = ICAOCodeDeparture.left(2);
+        ICAOCodeDestination.append(QChar(65 + QRandomGenerator::global()->bounded(26)));
+        ICAOCodeDestination.append(QChar(65 + QRandomGenerator::global()->bounded(26)));
+        if(ICAOCodeDestination != ICAOCodeDeparture) {
+          airportQuery->getAirportByIdent(airportDestination, ICAOCodeDestination);
+        }
       }
-      while(airportsDeparture.count() == 0 && ++currentAttempt < maxAttemptsDeparture);
+      while(airportDestination.flags == map::AP_NONE && ++currentAttempt < maxAttemptsDestination);
 
-      if(airportsDeparture.count() > 0)
-      {
-        QString ICAOCodeDestination;
-
-        currentAttempt = 0;
-        do
-        {
-          ICAOCodeDestination = ICAOCodeDeparture.left(2);
-          ICAOCodeDestination.append(QChar(65 + QRandomGenerator::global()->bounded(26)));
-          ICAOCodeDestination.append(QChar(65 + QRandomGenerator::global()->bounded(26)));
-          airportsDestination.clear();
-          airportQuery->getAirportsByOfficialIdent(airportsDestination, ICAOCodeDestination);
-        }
-        while(airportsDestination.count() == 0 && ++currentAttempt < maxAttemptsDestination);
-
-        if(airportsDestination.count() > 0) {
-          emit routeSetDeparture(airportsDeparture[0]);
-          emit routeSetDestination(airportsDestination[0]);
-        }
+      if(airportDestination.flags != map::AP_NONE) {
+        emit routeSetDeparture(airportDeparture);
+        emit routeSetDestination(airportDestination);
       }
     }
-    while((airportsDeparture.count() == 0 || airportsDestination.count() == 0) && ++currentTotalAttempt < maxAttemptsTotal);
 
     mapWidget->update();
     showFlightPlan();
 
-    if(currentTotalAttempt < maxAttemptsTotal)
+    if(airportDestination.flags != map::AP_NONE)
     {
       setStatusMessage(tr("Created new random flight plan."));
     }
