@@ -18,6 +18,7 @@
 #ifndef LITTLENAVMAP_AIRPORTQUERY_H
 #define LITTLENAVMAP_AIRPORTQUERY_H
 
+#include "common/mapflags.h"
 #include <QCache>
 
 namespace Marble {
@@ -89,11 +90,18 @@ public:
   void getAirportsByTruncatedIdent(QList<map::MapAirport>& airports, QString ident);
   QList<map::MapAirport> getAirportsByTruncatedIdent(const QString& ident);
 
-  /* get airport by ICAO, IATA, FAA or local id if table airport has columns.
+  /* Get airport by ICAO, IATA, FAA or local id if table airport has columns.
+   * Does *not* look for ident.
    * Returns all airports where either id matches given ident.
-   * Does not use cache. */
-  void getAirportsByOfficialIdent(QList<map::MapAirport>& airports, const QString& ident, bool iata = true);
-  QList<map::MapAirport> getAirportsByOfficialIdent(const QString& ident, bool iata = true);
+   * Does not use cache.
+   * Airports will be sorted by distance to pos if given and excluded by distance if given too.*/
+  void getAirportsByOfficialIdent(QList<map::MapAirport>& airports, const QString& ident,
+                                  const atools::geo::Pos *pos = nullptr,
+                                  float maxDistanceMeter = map::INVALID_DISTANCE_VALUE, bool searchIata = true,
+                                  bool searchIdent = true);
+  QList<map::MapAirport> getAirportsByOfficialIdent(const QString& ident, const atools::geo::Pos *pos = nullptr,
+                                                    float maxDistanceMeter = map::INVALID_DISTANCE_VALUE,
+                                                    bool searchIata = true, bool searchIdent = true);
 
   /* Try to get airport by ident, icao or position as a fallback if pos is valid,
    * Need to get ident, icao and pos as copies to avoid overwriting.
@@ -226,7 +234,7 @@ private:
   QCache<int, map::MapAirport> airportIdCache, airportFuzzyIdCache;
   QCache<NearestCacheKeyAirport, map::MapResultIndex> nearestAirportCache;
 
-  /* Available ident columns in airport table */
+  /* Available ident columns in airport table. Set to true if column exists and has not null values. */
   bool icaoCol = false, faaCol = false, iataCol = false, localCol = false;
 
   /* Database queries */
