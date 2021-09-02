@@ -43,6 +43,9 @@ enum RouteAdjustOption
 
   ISG_USER_WP_NAMES = 1 << 12, /* Modified user waypoint names for ISG */
 
+  XPLANE_REPLACE_AIRPORT_IDENTS = 1 << 13, /* Replace airport idents in waypoint list only
+                                            * with either ICAO, FAA, IATA or local ones */
+
   /* Export adjust options for most export formats */
   DEFAULT_OPTS = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT,
 
@@ -69,7 +72,8 @@ enum RouteAdjustOption
 
   /* Export adjust options for XP11 and old FMS3 */
   DEFAULT_OPTS_FMS3 = rf::DEFAULT_OPTS_NO_PROC,
-  DEFAULT_OPTS_FMS11 = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | rf::FIX_CIRCLETOLAND,
+  DEFAULT_OPTS_FMS11 = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | rf::FIX_CIRCLETOLAND |
+                       rf::XPLANE_REPLACE_AIRPORT_IDENTS,
 
   /* Garmin GPX */
   DEFAULT_OPTS_GPX = rf::DEFAULT_OPTS | rf::SAVE_AIRWAY_WP | rf::SAVE_SIDSTAR_WP | rf::SAVE_APPROACH_WP

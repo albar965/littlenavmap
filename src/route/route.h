@@ -160,6 +160,9 @@ public:
     return first();
   }
 
+  /* Returns an empty leg if the index is not valid */
+  const RouteLeg& getLegAt(int index) const;
+
   /* First leg of departure procedure. 1 if SID used otherwise 0. */
   int getSidLegIndex() const;
   const RouteLeg& getSidLeg() const;
@@ -588,7 +591,7 @@ public:
   void updateLegAltitudes();
 
   /* Get a list of approach ILS (not localizer) and the used runway end. Only for approaches. */
-  void getApproachRunwayEndAndIls(QVector<map::MapIls>& ils, map::MapRunwayEnd *runwayEnd = nullptr) const;
+  void getApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd = nullptr) const;
 
   /* general distance in NM which is either cross track, previous or next waypoint */
   float getDistanceToFlightPlan() const;
@@ -602,8 +605,12 @@ public:
 
   void clearFlightplanAlternateProperties();
 
-  /* Get ICAO idents of all alternates */
+  /* Get idents of all alternates */
   QStringList getAlternateIdents() const;
+
+  /* Get display idents (ICAO, IATA, FAA or local) of all alternates */
+  QStringList getAlternateDisplayIdents() const;
+
   void updateAlternateProperties();
   QVector<map::MapAirport> getAlternateAirports() const;
 
@@ -623,6 +630,9 @@ public:
 
   /* Copies departure and destination names and positions from Route to Flightplan */
   void updateDepartureAndDestination();
+
+  /* Get file name pattern based on route values */
+  QString getFilenamePattern(const QString& pattern, const QString& suffix, bool clean = true) const;
 
 private:
   /* Copy flight plan profile altitudes into entries for FMS and other formats

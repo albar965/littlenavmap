@@ -260,7 +260,6 @@ SOURCES += \
   src/db/dbtypes.cpp \
   src/export/csvexporter.cpp \
   src/export/exporter.cpp \
-  src/export/htmlexporter.cpp \
   src/gui/choicedialog.cpp \
   src/gui/holddialog.cpp \
   src/gui/mainwindow.cpp \
@@ -431,7 +430,6 @@ HEADERS  += \
   src/db/dbtypes.h \
   src/export/csvexporter.h \
   src/export/exporter.h \
-  src/export/htmlexporter.h \
   src/gui/choicedialog.h \
   src/gui/holddialog.h \
   src/gui/mainwindow.h \

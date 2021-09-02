@@ -43,7 +43,8 @@ function injectUpdates(origin) {
     var zoomingMapQuality = 3;
     var resizingMapQuality = 3;
 
-    var fastRefreshMapThreshold = 6;                                                  // time in seconds below which an auto-refreshing map's refresh interval is considered "fast"; works in conjunction with fastRefreshMapQuality
+    var fastRefreshMapThreshold = 12;                                                 // time in seconds below which an auto-refreshing map's refresh interval is considered "fast"; works in conjunction with fastRefreshMapQuality
+    var mapUpdateTimeoutWaitDuration = 10000;                                         // time in milliseconds to wait for the updated map image to have arrived, after this time a "map image updated" (= notifications are run and image update locks are released) is forced, this is server response time + download time! The main purpose is unlocking the locks on an image update when no image received for a reason like a server outage which if not handled would prevent new images to get requested which the server could handle again if the outage was only temporary.
 
     /*
      * settings (code modifiable)
@@ -72,39 +73,65 @@ function injectUpdates(origin) {
     var mapUpdateCounter = 0;
     var mapImageLoaded = true;
     var forceLock = false;
+    var mapUpdateTimeout = null;
+    var valueMapUpdateCounterMustBeAbove = mapUpdateCounter;            // be able to not run code which should only run once per returned image and which was run for the "forced" update on timeout wait duration end if the image does still return after the timeout wait duration, see mapUpdateTimeoutWaitDuration
 
     mapElement.onload = function() {
+      clearTimeout(mapUpdateTimeout);
       mapImageLoaded = true;
       forceLock = false;
-      while(mapUpdateNotifiables.length) {
+      while(mapUpdateNotifiables.length) {                              // this loop empties the notifiables thus they cannot run a second time and thus do not need to be inside below "if(mapUpdateCounter > valueMapUpdateCounterMustBeAbove)"
         var notifiable = mapUpdateNotifiables.shift();
-        if(notifiable) {
+        if(typeof notifiable === "function") {
           notifiable(mapUpdateCounter);
         }
       }
+      if(mapUpdateCounter > valueMapUpdateCounterMustBeAbove) {}
     };
 
     /**
-     * API: map source update, notifiable = function to take notification
+     * API: map source update
+     * locks and does not transfer new commands while waiting for map image to have been received.
+     * lock can be overridden by force = true which locks again. That lock cannot be overridden unless nolock = true.
+     * Note: upon assigning a new image source, Chrome based browsers "cancel" the old image request. As http (1.x) apparently has no means of doing so, this is likely done on a lower network connection level. The LNM web server, by Chrome developer tools, does not send an image to cancelled requests anymore. The logic here has been built around minimising cancellation of requests and thus minimising time in which no updated image would be shown.
+     * notifiable = function to take notification of this function call returned a new image, will be passed id of current update "cycle"
+     * returns integer id of current update "cycle", will have the negative value of the current update "cycle" if this function call did not request a new image due to locking
      */
-    var updateMapImage_realPixels = function(command, quality, force, notifiable) {
+    // has a copy updateMapImage_cssPixels (see there) which needs parallel treatment
+    var updateMapImage_realPixels = function(command, quality, force, notifiable, nolock) {
       mapUpdateNotifiables.push(notifiable);
       if(mapImageLoaded || force && !forceLock) {
         mapImageLoaded = false;
-        forceLock = force;
+        forceLock = force && !nolock;
         mapElement.src = "/mapimage?format=jpg&quality=" + quality + "&width=" + ~~(mapElement.parentElement.clientWidth * realPixelsPerCSSPixel) + "&height=" + ~~(mapElement.parentElement.clientHeight * realPixelsPerCSSPixel) + "&session&" + command + "=" + Math.random();
+        clearTimeout(mapUpdateTimeout);
+        mapUpdateTimeout = setTimeout((function(mapUpdateCounter) {
+          return function() {
+            mapElement.onload();
+            valueMapUpdateCounterMustBeAbove = mapUpdateCounter + 1;
+          };
+        })(mapUpdateCounter), mapUpdateTimeoutWaitDuration);
+        return ++mapUpdateCounter;
       }
-      return ++mapUpdateCounter;
+      return -mapUpdateCounter;
     };
     // same as updateMapImage_realPixels except width and height are as delivered by JS (= in CSS pixels (which are real when devicePixelRatio == 1))
-    var updateMapImage_cssPixels = function(command, quality, force, notifiable) {
+    var updateMapImage_cssPixels = function(command, quality, force, notifiable, nolock) {
       mapUpdateNotifiables.push(notifiable);
       if(mapImageLoaded || force && !forceLock) {
         mapImageLoaded = false;
-        forceLock = force;
+        forceLock = force && !nolock;
         mapElement.src = "/mapimage?format=jpg&quality=" + quality + "&width=" + ~~mapElement.parentElement.clientWidth + "&height=" + ~~mapElement.parentElement.clientHeight + "&session&" + command + "=" + Math.random();
+        clearTimeout(mapUpdateTimeout);
+        mapUpdateTimeout = setTimeout((function(mapUpdateCounter) {
+          return function() {
+            mapElement.onload();
+            valueMapUpdateCounterMustBeAbove = mapUpdateCounter + 1;
+          };
+        })(mapUpdateCounter), mapUpdateTimeoutWaitDuration);
+        return ++mapUpdateCounter;
       }
-      return ++mapUpdateCounter;
+      return -mapUpdateCounter;
     };
 
     function setMapImageUpdateFunction() {
@@ -113,14 +140,14 @@ function injectUpdates(origin) {
     setMapImageUpdateFunction();
 
     /*
-     * API: get transformed user setting for map zoom in map command format
+     * API: returns user setting for map zoom transformed in map command format, used to be used for explicitly setting zoom level
      */
     function getZoomDistance() {
       return ~~Math.pow(2, centerDistance.value);
     }
 
     /*
-     * returns the map command equalling a reload taking relevant settings into account
+     * API: returns the map command equalling a reload taking into account relevant settings
      */
     function mapCommand() {
       return refreshTypeWAC.checked ? "mapcmd=user&cmd" : "reload";
@@ -134,13 +161,13 @@ function injectUpdates(origin) {
     ocw.sizeMapToContainer = function() {
       ocw.clearTimeout(imageRequestTimeout);
       updateMapImage(mapCommand(), resizingMapQuality);
-      imageRequestTimeout = ocw.setTimeout(function() {       // update after the resizing stopped to have an image for the final size "for certain"
-        updateMapImage(mapCommand(), defaultMapQuality, true);
+      imageRequestTimeout = ocw.setTimeout(function() {       // update after the resizing stopped to have an image for the final quality "for certain"
+        updateMapImage(mapCommand(), defaultMapQuality, true, 0, true);     // do not lock for event handling like a new zoom request to be able to take priority over waiting for the potentially longer loading higher-quality final quality
       }, 200);
     };
 
     /*
-     * Event handling: mousemove over map
+     * Event handling: mousemove over map (parent)
      */
     mapElement.parentElement.onmousemove = function(e) {
       var s = e.currentTarget.clientHeight / e.currentTarget.clientWidth;
@@ -175,9 +202,9 @@ function injectUpdates(origin) {
     var mapWheelZoomTimeout = null;
     var mapZoomCore = function(condition) {
       ocw.clearTimeout(mapWheelZoomTimeout);
-      updateMapImage("mapcmd=" + (condition ? "in" : "out") + "&cmd", zoomingMapQuality);
+      updateMapImage("mapcmd=" + (condition ? "in" : "out") + "&cmd", zoomingMapQuality, true);
       mapWheelZoomTimeout = ocw.setTimeout(function() {
-        updateMapImage("reload", defaultMapQuality, true);
+        updateMapImage("reload", defaultMapQuality, true, 0, true);     // do not lock for event handling like a new zoom request to be able to take priority over waiting for the potentially longer loading higher-quality final quality
       }, 750);
     };
     mapElement.onwheel = function(e) {
@@ -188,21 +215,23 @@ function injectUpdates(origin) {
       pointers[e.pointerId] = [e, e];
     };
     mapElement.onpointermove = function(e) {
-      pointers[e.pointerId][1] = e;
-      var keys = Object.keys(pointers);
-      if(keys.length > 1) {
-        var key1 = keys[0];
-        var key2 = keys[1];
-        var distStart = Math.hypot(pointers[key1][0].clientX - pointers[key2][0].clientX, pointers[key1][0].clientY - pointers[key2][0].clientY);
-        var distNow = Math.hypot(pointers[key1][1].clientX - pointers[key2][1].clientX, pointers[key1][1].clientY - pointers[key2][1].clientY);
-        if(distNow < .85 * distStart) {
-          mapZoomCore(false);
-          pointers[key1][0] = pointers[key1][1];
-          pointers[key2][0] = pointers[key2][1];
-        } else if(distNow > 1.15 * distStart) {
-          mapZoomCore(true);
-          pointers[key1][0] = pointers[key1][1];
-          pointers[key2][0] = pointers[key2][1];
+      if(pointers.hasOwnProperty(e.pointerId)) {
+        pointers[e.pointerId][1] = e;
+        var keys = Object.keys(pointers);
+        if(keys.length > 1) {
+          var key1 = keys[0];
+          var key2 = keys[1];
+          var distStart = Math.hypot(pointers[key1][0].clientX - pointers[key2][0].clientX, pointers[key1][0].clientY - pointers[key2][0].clientY);
+          var distNow = Math.hypot(pointers[key1][1].clientX - pointers[key2][1].clientX, pointers[key1][1].clientY - pointers[key2][1].clientY);
+          if(distNow < .85 * distStart) {
+            mapZoomCore(false);
+            pointers[key1][0] = pointers[key1][1];
+            pointers[key2][0] = pointers[key2][1];
+          } else if(distNow > 1.15 * distStart) {
+            mapZoomCore(true);
+            pointers[key1][0] = pointers[key1][1];
+            pointers[key2][0] = pointers[key2][1];
+          }
         }
       }
     };
@@ -259,7 +288,7 @@ function injectUpdates(origin) {
       var timeStartLastRequest = 0;
       var refreshIn = 0;
 
-      function notifiable(id) {     // ignore if some(one/thing) else interrupted own request and thus time data is not accurate
+      function notifiable(id) {     // ignore id thus don't determine if some(one/thing) else interrupted own request and thus using time data does not produce expected result (resulting inprecision is not sufficiently detrimental to warrant effort)
         var durationTilImageHere = performance.now() - timeStartLastRequest;
         refreshIn = ~~(refresher.value * 1000 - durationTilImageHere);
         if(looping) {
@@ -269,7 +298,7 @@ function injectUpdates(origin) {
 
       function requester() {
         timeStartLastRequest = performance.now();
-        updateMapImage(mapCommand(), refresher.value < fastRefreshMapThreshold ? fastRefreshMapQuality : defaultMapQuality, false, notifiable);
+        updateMapImage(mapCommand(), refresher.value < fastRefreshMapThreshold ? fastRefreshMapQuality : defaultMapQuality, false, notifiable);     // not storing return value because using it to determine if some(one/thing) else interrupted own request is not done
       }
 
       function looper() {

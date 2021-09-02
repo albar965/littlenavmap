@@ -846,6 +846,27 @@ QString parkingNameForFlightplan(const map::MapParking& parking)
     return parkingNameMapUntranslated.value(parking.name).toUpper() + " " + QString::number(parking.number);
 }
 
+const QString& MapAirport::displayIdent(bool useIata) const
+{
+  // ICAO is mostly identical to ident except for small fields
+  if(!icao.isEmpty())
+    return icao;
+
+  // Avoid short FAA codes identical to IATA three letter codes
+  if(!faa.isEmpty())
+    return faa;
+
+  // Use IATA only if present and ident is artificial long X-Plane string
+  if(useIata && !iata.isEmpty())
+    return iata;
+
+  if(!local.isEmpty())
+    return local;
+
+  // Otherwise internal id
+  return ident;
+}
+
 bool MapAirport::closed() const
 {
   return flags.testFlag(AP_CLOSED);
@@ -1440,9 +1461,9 @@ QString airportTextShort(const MapAirport& airport, int elideName)
   if(!airport.isValid())
     return QObject::tr("Airport");
   else if(airport.name.isEmpty())
-    return QObject::tr("%1").arg(airport.ident);
+    return QObject::tr("%1").arg(airport.displayIdent());
   else
-    return QObject::tr("%1 (%2)").arg(atools::elideTextShort(airport.name, elideName)).arg(airport.ident);
+    return QObject::tr("%1 (%2)").arg(atools::elideTextShort(airport.name, elideName)).arg(airport.displayIdent());
 }
 
 QString comTypeName(const QString& type)

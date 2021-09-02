@@ -26,6 +26,7 @@ class QTableView;
 class QAction;
 class QMainWindow;
 class Column;
+class QueryBuilderResult;
 
 namespace atools {
 namespace sql {
@@ -81,7 +82,7 @@ private:
   void addLogEntryTriggered();
 
   /* Callback function which creates a where clause using destination and departure ident. */
-  QString airportQueryBuilderFunc(const QVector<QWidget *> widgets);
+  QueryBuilderResult airportQueryBuilderFunc(QWidget* widget);
 
   /* All layouts, lines and drop down menu items */
   QList<QObject *> logdataSearchWidgets;

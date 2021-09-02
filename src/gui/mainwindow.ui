@@ -168,6 +168,7 @@
     <addaction name="separator"/>
     <addaction name="actionShowFloatingWindows"/>
     <addaction name="actionShowAllowDocking"/>
+    <addaction name="actionShowAllowMoving"/>
     <addaction name="separator"/>
     <addaction name="actionShowStatusbar"/>
     <addaction name="separator"/>
@@ -480,6 +481,7 @@
      <property name="title">
       <string>&amp;Airport Weather Source</string>
      </property>
+     <addaction name="actionMapShowWeatherDisabled"/>
      <addaction name="actionMapShowWeatherSimulator"/>
      <addaction name="actionMapShowWeatherActiveSky"/>
      <addaction name="actionMapShowWeatherNoaa"/>
@@ -614,16 +616,16 @@
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>Airport ICAO code</string>
+                <string>Airport ICAO, IATA, FAA or local code</string>
                </property>
                <property name="statusTip">
-                <string>Airport ICAO code</string>
+                <string>Airport ICAO, IATA, FAA or local code</string>
                </property>
                <property name="maxLength">
                 <number>8</number>
                </property>
                <property name="placeholderText">
-                <string>ICAO Code</string>
+                <string>Ident</string>
                </property>
                <property name="clearButtonEnabled">
                 <bool>true</bool>
@@ -651,7 +653,7 @@
                 <string>Airport name</string>
                </property>
                <property name="placeholderText">
-                <string>Airport Name</string>
+                <string>Name</string>
                </property>
                <property name="clearButtonEnabled">
                 <bool>true</bool>
@@ -4392,7 +4394,7 @@ Matches any visited airport.</string>
             <bool>true</bool>
            </property>
            <attribute name="horizontalHeaderMinimumSectionSize">
-            <number>1</number>
+            <number>3</number>
            </attribute>
            <attribute name="horizontalHeaderShowSortIndicator" stdset="0">
             <bool>false</bool>
@@ -11774,6 +11776,37 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Ctrl+Shift+A</string>
    </property>
   </action>
+  <action name="actionShowAllowMoving">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Allow Window &amp;moving</string>
+   </property>
+   <property name="toolTip">
+    <string>Allows to move dock windows by clicking into the title bar.</string>
+   </property>
+   <property name="statusTip">
+    <string>Allows to move dock windows by clicking into the title bar.</string>
+   </property>
+  </action>
+  <action name="actionMapShowWeatherDisabled">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Disabled</string>
+   </property>
+   <property name="toolTip">
+    <string>Disable weather source to display weather icons on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Disable weather source to display weather icons on the map</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -11959,8 +11992,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
-  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

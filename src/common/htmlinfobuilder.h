@@ -304,7 +304,7 @@ private:
                              bool airportCol,
                              int maxRows) const;
   void nearestMapObjectsTextRow(const map::MapAirport& airport, atools::util::HtmlBuilder& html, const QString& type,
-                                const QString& ident, const QString& name, const QString& freq,
+                                const QString& displayIdent, const QString& name, const QString& freq,
                                 const map::MapBase *base,
                                 float magVar, bool frequencyCol, bool airportCol) const;
 
@@ -349,10 +349,9 @@ private:
                      atools::util::HtmlBuilder& html, bool moreLessSwitch, bool less);
 
   void dateTimeAndFlown(const atools::fs::sc::SimConnectUserAircraft *userAircraft,
-                   atools::util::HtmlBuilder& html) const;
+                        atools::util::HtmlBuilder& html) const;
   void addMetarLine(atools::util::HtmlBuilder& html, const QString& header, const map::MapAirport& airport,
-                    const QString& metar,
-                    const QString& station,
+                    const QString& metar, const QString& station,
                     const QDateTime& timestamp, bool fsMetar, bool mapDisplay) const;
 
   void decodedMetar(atools::util::HtmlBuilder& html, const map::MapAirport& airport,
@@ -377,7 +376,7 @@ private:
 
   /* Insert airport link using ident and/or name */
   QString airportLink(const atools::util::HtmlBuilder& html, const QString& ident,
-                      const QString& name = QString()) const;
+                      const QString& name, const atools::geo::Pos& pos) const;
 
   /* Adds text for preferred runways */
   void bestRunwaysText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,

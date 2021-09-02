@@ -18,6 +18,7 @@
 #ifndef LITTLENAVMAP_AIRPORTQUERY_H
 #define LITTLENAVMAP_AIRPORTQUERY_H
 
+#include "common/mapflags.h"
 #include <QCache>
 
 namespace Marble {
@@ -78,27 +79,48 @@ public:
   void getAirportById(map::MapAirport& airport, int airportId);
   map::MapAirport getAirportById(int airportId);
 
-  /* get airport by ident which also might be the X-Plane internal id */
+  /* Get airport by ident which also might be the X-Plane internal id.
+   * Does not do fuzzy search or by several idents and uses cache. */
   void getAirportByIdent(map::MapAirport& airport, const QString& ident);
   map::MapAirport getAirportByIdent(const QString& ident);
 
-  /* get airport by ICAO id if table airport has column icao */
-  void getAirportByIcao(map::MapAirport& airport, const QString& icao);
-  map::MapAirport getAirportByIcao(const QString& icao);
+  /* Get airports by ident which also might be the X-Plane internal id.
+   * This considers cut off ids as required in X-Plane plans.
+   * Does not use cache. */
+  void getAirportsByTruncatedIdent(QList<map::MapAirport>& airports, QString ident);
+  QList<map::MapAirport> getAirportsByTruncatedIdent(const QString& ident);
+
+  /* Get airport by ICAO, IATA, FAA or local id if table airport has columns.
+   * Does *not* look for ident.
+   * Returns all airports where either id matches given ident.
+   * Does not use cache.
+   * Airports will be sorted by distance to pos if given and excluded by distance if given too.*/
+  void getAirportsByOfficialIdent(QList<map::MapAirport>& airports, const QString& ident,
+                                  const atools::geo::Pos *pos = nullptr,
+                                  float maxDistanceMeter = map::INVALID_DISTANCE_VALUE, bool searchIata = true,
+                                  bool searchIdent = true);
+  QList<map::MapAirport> getAirportsByOfficialIdent(const QString& ident, const atools::geo::Pos *pos = nullptr,
+                                                    float maxDistanceMeter = map::INVALID_DISTANCE_VALUE,
+                                                    bool searchIata = true, bool searchIdent = true);
 
   /* Try to get airport by ident, icao or position as a fallback if pos is valid,
-   * Need to get ident, icao and pos as copies to avoid overwriting. */
-  void getAirportFuzzy(map::MapAirport& airport, QString ident, QString icao, atools::geo::Pos pos);
+   * Need to get ident, icao and pos as copies to avoid overwriting.
+   * Does not use cache. */
+  void getAirportFuzzy(map::MapAirport& airport, const map::MapAirport airportCopy);
+
+  /* Get display ident (ICAO, IATA, FAA or local) based on internal ident */
+  QString getDisplayIdent(const QString& ident);
 
   atools::geo::Pos getAirportPosByIdent(const QString& ident);
 
-  bool hasProcedures(const QString& ident) const;
+  /* true if airport has procedures. Airport must be available in this database (sim or nav). */
+  bool hasProcedures(const map::MapAirport& airport) const;
 
-  /* True if there are STAR or approaches */
-  bool hasAnyArrivalProcedures(const QString& ident) const;
+  /* True if there are STAR or approaches. Airport must be available in this database (sim or nav). */
+  bool hasArrivalProcedures(const map::MapAirport& airport) const;
 
-  /* True if airport has SID */
-  bool hasDepartureProcedures(const QString& ident) const;
+  /* True if airport has SID. Airport must be available in this database (sim or nav). */
+  bool hasDepartureProcedures(const map::MapAirport& airport) const;
 
   /* Get the region for airports where it is missing. This uses an expensive query to get the
    * region from the nearest waypoints. Region is set in MapAirport.
@@ -188,7 +210,7 @@ private:
                                               bool lazy, bool overview);
 
   bool runwayCompare(const map::MapRunway& r1, const map::MapRunway& r2);
-  bool hasQueryByAirportIdent(atools::sql::SqlQuery& query, const QString& ident) const;
+  bool hasQueryByAirportId(atools::sql::SqlQuery& query, int id) const;
   void startByNameAndPos(map::MapStart& start, int airportId, const QString& runwayEndName,
                          const atools::geo::Pos& position);
   void runwayEndByNames(map::MapResult& result, const QString& runwayName, const QString& airportIdent);
@@ -208,9 +230,12 @@ private:
   QCache<int, QList<map::MapStart> > startCache;
   QCache<int, QList<map::MapHelipad> > helipadCache;
 
-  QCache<QString, map::MapAirport> airportIdentCache, airportIcaoCache;
-  QCache<int, map::MapAirport> airportIdCache;
+  QCache<QString, map::MapAirport> airportIdentCache;
+  QCache<int, map::MapAirport> airportIdCache, airportFuzzyIdCache;
   QCache<NearestCacheKeyAirport, map::MapResultIndex> nearestAirportCache;
+
+  /* Available ident columns in airport table. Set to true if column exists and has not null values. */
+  bool icaoCol = false, faaCol = false, iataCol = false, localCol = false;
 
   /* Database queries */
   atools::sql::SqlQuery *runwayOverviewQuery = nullptr, *apronQuery = nullptr,
@@ -220,11 +245,12 @@ private:
                         *parkingTypeAndNumberQuery = nullptr,
                         *parkingNameQuery = nullptr;
 
-  atools::sql::SqlQuery *airportByIdentQuery = nullptr, *airportByIcaoQuery = nullptr, *airportByPosQuery = nullptr,
+  atools::sql::SqlQuery *airportByIdentQuery = nullptr, *airportsByTruncatedIdentQuery = nullptr,
+                        *airportByOfficialQuery = nullptr, *airportByPosQuery = nullptr,
                         *airportCoordsByIdentQuery = nullptr, *airportByRectAndProcQuery = nullptr,
                         *runwayEndByIdQuery = nullptr, *runwayEndByNameQuery = nullptr, *airportByIdQuery = nullptr,
-                        *airportAdminByIdQuery = nullptr, *airportProcByIdentQuery = nullptr,
-                        *procArrivalByAirportIdentQuery = nullptr, *procDepartureByAirportIdentQuery = nullptr;
+                        *airportAdminByIdQuery = nullptr, *airportProcByIdQuery = nullptr,
+                        *procArrivalByAirportIdQuery = nullptr, *procDepartureByAirportIdQuery = nullptr;
 };
 
 #endif // LITTLENAVMAP_AIRPORTQUERY_H

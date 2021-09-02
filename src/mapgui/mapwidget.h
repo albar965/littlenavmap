@@ -167,7 +167,7 @@ public:
   void addRangeRing(const atools::geo::Pos& pos);
 
   /* Add radio navaid range ring. Falls back to normal range rings if range is 0. */
-  void addNavRangeRing(const atools::geo::Pos& pos, map::MapTypes type, const QString& ident,
+  void addNavRangeRing(const atools::geo::Pos& pos, map::MapTypes type, const QString& displayIdent,
                        const QString& frequency, float range);
 
   /* If true stop downloading map data */

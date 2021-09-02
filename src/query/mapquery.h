@@ -84,7 +84,12 @@ public:
   /* Always from sim db */
   map::MapIls getIlsById(int id);
 
+  /* Get ILS from sim database based on airport ident and runway name.
+   * Runway name can be zero prefixed or prefixed with "RW". */
   QVector<map::MapIls> getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway);
+
+  /* Get ILS from sim database based on airport ident and ILS ident. Uses exact match. */
+  QVector<map::MapIls> getIlsByAirportAndIdent(const QString& airportIdent, const QString& ilsIdent);
 
   /* Get runway end and try lower and higher numbers if nothing was found - adds a dummy entry with airport
    * position if no runway ends were found */
@@ -101,7 +106,7 @@ public:
   void getMapObjectByIdent(map::MapResult& result, map::MapTypes type,
                            const QString& ident, const QString& region = QString(), const QString& airport = QString(),
                            const atools::geo::Pos& sortByDistancePos = atools::geo::EMPTY_POS,
-                           float maxDistance = map::INVALID_DISTANCE_VALUE, bool airportFromNavDatabase = false);
+                           float maxDistanceMeter = map::INVALID_DISTANCE_VALUE, bool airportFromNavDatabase = false);
 
   void getMapObjectByIdent(map::MapResult& result, map::MapTypes type,
                            const QString& ident, const QString& region,
@@ -190,7 +195,9 @@ public:
   /* Create and prepare all queries */
   void deInitQueries();
 
-  bool hasAnyArrivalProcedures(const map::MapAirport& airport);
+  /* Check in navdatabase (Navigraph or other) if airport has procedures */
+  bool hasProcedures(const map::MapAirport& airport);
+  bool hasArrivalProcedures(const map::MapAirport& airport);
   bool hasDepartureProcedures(const map::MapAirport& airport);
 
 private:
@@ -200,7 +207,7 @@ private:
   void mapObjectByIdentInternal(map::MapResult& result, map::MapTypes type,
                                 const QString& ident, const QString& region, const QString& airport,
                                 const atools::geo::Pos& sortByDistancePos,
-                                float maxDistance, bool airportFromNavDatabase);
+                                float maxDistanceMeter, bool airportFromNavDatabase);
 
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                               atools::sql::SqlQuery *query,
@@ -242,8 +249,8 @@ private:
   atools::sql::SqlQuery *vorByIdentQuery = nullptr, *ndbByIdentQuery = nullptr, *ilsByIdentQuery = nullptr;
 
   atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr, *vorByWaypointIdQuery = nullptr,
-                        *ndbByWaypointIdQuery = nullptr, *ilsByIdQuery = nullptr, *ilsQuerySimByName = nullptr,
-                        *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr;
+                        *ndbByWaypointIdQuery = nullptr, *ilsByIdQuery = nullptr, *ilsQuerySimByAirportAndRw = nullptr,
+                        *ilsQuerySimByAirportAndIdent = nullptr, *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr;
 };
 
 #endif // LITTLENAVMAP_MAPQUERY_H

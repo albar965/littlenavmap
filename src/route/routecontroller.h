@@ -213,7 +213,8 @@ public:
   /* Get flight plan extracted from table selection */
   atools::fs::pln::Flightplan getFlightplanForSelection() const;
 
-  /* Insert a flight plan table as QTextTable object at the cursor position */
+  /* Insert a flight plan table as QTextTable object at the cursor position.
+   * @param selectedCols Physical/logical and not view order. */
   void flightplanTableAsTextTable(QTextCursor& cursor, const QBitArray& selectedCols, float fontPointSize) const;
 
   /* Get header for print report */
@@ -251,8 +252,8 @@ public:
   void aircraftPerformanceChanged();
   void windUpdated();
 
-  /* Get table columns from the view */
-  QStringList getRouteColumns() const;
+  /* Get all available table columns with linefeeds and units replaced. Fixed order independent of table view. */
+  QStringList getAllRouteColumns() const;
 
   /* Add custom procedure and probably set new destination airport */
   void showProceduresCustom(map::MapAirport airport);
@@ -362,7 +363,7 @@ private:
   void moveSelectedLegsInternal(MoveDirection direction);
   void deleteSelectedLegs();
   void deleteSelectedLegsInternal(const QList<int>& rows);
-  void getSelectedRows(QList<int>& selectedRows, bool reverseRoute) const;
+  QList<int> getSelectedRows(bool reverseRoute) const;
 
   void selectList(const QList<int>& selectedRows, int offset);
   void selectRange(int from, int to);

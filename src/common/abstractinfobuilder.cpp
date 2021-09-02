@@ -29,6 +29,7 @@ AbstractInfoBuilder::~AbstractInfoBuilder()
 
 QByteArray AbstractInfoBuilder::airport(AirportInfoData airportInfoData) const
 {
+  Q_UNUSED(airportInfoData);
     return "not implemented";
 }
 
@@ -48,10 +49,12 @@ QString AbstractInfoBuilder::getCoordinatesString(const atools::sql::SqlRecord *
 {
   if(rec != nullptr && rec->contains("lonx") && rec->contains("laty"))
     return getCoordinatesString(Pos(rec->valueFloat("lonx"), rec->valueFloat("laty"), rec->valueFloat("altitude", 0.f)));
+  return QString();
 }
 
 QString AbstractInfoBuilder::getCoordinatesString(const Pos& pos) const
 {
   if(pos.isValid())
     return Unit::coords(pos);
+  return QString();
 }

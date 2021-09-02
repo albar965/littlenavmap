@@ -1095,9 +1095,9 @@ QStringList SymbolPainter::airportTexts(optsd::DisplayOptionsAirport dispOpts, t
   QStringList texts;
 
   if(flags & textflags::IDENT && flags & textflags::NAME && dispOpts & optsd::ITEM_AIRPORT_NAME)
-    texts.append(atools::elideTextShort(airport.name, maxTextLength) + " (" + airport.ident + ")");
+    texts.append(atools::elideTextShort(airport.name, maxTextLength) + " (" + airport.displayIdent() + ")");
   else if(flags & textflags::IDENT)
-    texts.append(airport.ident);
+    texts.append(airport.displayIdent());
   else if(flags & textflags::NAME)
     texts.append(airport.name);
 

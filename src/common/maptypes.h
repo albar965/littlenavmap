@@ -329,9 +329,11 @@ struct MapAirport
   QString ident, /* Ident in simulator mostly ICAO */
            icao, /* Real ICAO ident */
            iata, /* IATA ident */
-           xpident, /* X-Plane internal unique ident - mostly ICAO */
+           faa, /* FAA code */
+           local, /* Local code */
            name, /* Full name */
            region; /* Two letter region code */
+
   int longestRunwayLength = 0, longestRunwayHeading = 0, transitionAltitude = 0, rating = -1,
       flatten /* X-Plane flatten flag. -1 if not set */;
   map::MapAirportFlags flags = AP_NONE;
@@ -344,10 +346,8 @@ struct MapAirport
   atools::geo::Rect bounding;
   int routeIndex = -1;
 
-  const QString& icaoIdent()
-  {
-    return !icao.isEmpty() ? icao : ident;
-  }
+  /* One of ident, ICAO, FAA, IATA or local code. Use only for display purposes and not for queries. */
+  const QString& displayIdent(bool useIata = true) const;
 
   bool closed() const;
   bool hard() const;
@@ -514,7 +514,8 @@ struct MapParking
   QString type, name, nameShort, airlineCodes /* Comma separated list of airline codes */;
   int airportId /* database id airport.airport_id */;
   int number, /* -1 for X-Plane style free names. Otherwise FSX/P3D number */
-      radius, heading;
+      radius;
+  float heading;
   bool jetway;
 };
 
@@ -546,7 +547,8 @@ struct MapStart
   QChar type = '\0' /* R(UNWAY), H(ELIPAD) or W(ATER) */;
   QString runwayName /* not empty if this is a runway start */;
   int airportId /* database id airport.airport_id */;
-  int heading, helipadNumber /* -1 if not a helipad otherwise sequence number as it appeared in the BGL */;
+  int helipadNumber /* -1 if not a helipad otherwise sequence number as it appeared in the BGL */;
+  float heading;
 };
 
 // =====================================================================
@@ -891,7 +893,9 @@ struct MapIls
   {
   }
 
-  QString ident, name, region;
+  QString ident, /* IRHF */
+           name, /* ILS-CAT-I */
+           region;
   float magvar, slope, heading, width;
   int frequency /* MHz * 1000 */, range /* nm */;
 
@@ -1120,7 +1124,6 @@ QString parkingNameNumber(const map::MapParking& parking);
 QString startType(const map::MapStart& start);
 
 QString helipadText(const map::MapHelipad& helipad);
-
 
 /* Route index from base type */
 int routeIndex(const map::MapBase *base);

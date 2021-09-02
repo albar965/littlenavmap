@@ -147,14 +147,17 @@ void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& 
     ap.ident = record.valueStr("ident");
     ap.icao = record.valueStr("icao", QString());
     ap.iata = record.valueStr("iata", QString());
-    ap.xpident = record.valueStr("xpident", QString());
+    ap.faa = record.valueStr("faa", QString());
+    ap.local = record.valueStr("local", QString());
     ap.name = record.valueStr("name");
     ap.rating = record.valueInt("rating", -1);
     ap.longestRunwayLength = record.valueInt("longest_runway_length");
     ap.longestRunwayHeading = static_cast<int>(std::round(record.valueFloat("longest_runway_heading")));
     ap.magvar = record.valueFloat("mag_var");
     ap.transitionAltitude = record.valueInt("transition_altitude", 0);
-    ap.flatten = record.valueInt("flatten", -1);
+
+    if(record.contains("flatten"))
+      ap.flatten = record.isNull("flatten") ? -1 : record.valueInt("flatten");
 
     ap.bounding = Rect(record.valueFloat("left_lonx"), record.valueFloat("top_laty"),
                        record.valueFloat("right_lonx"), record.valueFloat("bottom_laty"));
@@ -574,7 +577,7 @@ void MapTypesFactory::fillParking(const SqlRecord& record, map::MapParking& park
   parking.jetway = record.valueInt("has_jetway") > 0;
   parking.number = record.valueInt("number");
 
-  parking.heading = static_cast<int>(std::round(record.valueFloat("heading")));
+  parking.heading = record.valueFloat("heading");
   parking.radius = static_cast<int>(std::round(record.valueFloat("radius")));
 
   // Calculate a short text if using X-Plane parking names
@@ -628,7 +631,7 @@ void MapTypesFactory::fillStart(const SqlRecord& record, map::MapStart& start)
   start.runwayName = record.valueStr("runway_name");
   start.helipadNumber = record.isNull("number") ? -1 : record.valueInt("number", -1);
   start.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
-  start.heading = static_cast<int>(std::roundf(record.valueFloat("heading")));
+  start.heading = record.valueFloat("heading");
 }
 
 void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& airspace, map::MapAirspaceSources src)

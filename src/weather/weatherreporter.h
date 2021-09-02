@@ -182,12 +182,17 @@ private:
   bool validateActiveSkyFlightplanFile(const QString& path);
   void deleteFsWatcher();
   void createFsWatcher();
+
   void initXplane();
+  void disableXplane();
 
   /* From download finished signals */
   void noaaWeatherUpdated();
   void ivaoWeatherUpdated();
   void vatsimWeatherUpdated();
+
+  /* Call process events to minimize program stutters */
+  void weatherDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QString downloadUrl);
 
   /* Reset the error timer in all weather downloaders */
   void resetErrorState();

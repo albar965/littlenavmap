@@ -161,6 +161,9 @@ QString mapWeatherSourceString(MapWeatherSource source)
 {
   switch(source)
   {
+    case map::WEATHER_SOURCE_DISABLED:
+      return QObject::tr("Disabled");
+
     case map::WEATHER_SOURCE_SIMULATOR:
       return QObject::tr("Simulator");
 

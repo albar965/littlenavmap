@@ -314,9 +314,13 @@ void LogdataDialog::airportUpdated(QLineEdit *lineEdit, QLabel *label)
   else
   {
     // Try to get airport for ident
-    map::MapAirport airport = NavApp::getAirportQuerySim()->getAirportByIdent(ident.toUpper());
-    if(airport.isValid())
-      label->setText(tr("%1,   elevation %2").arg(airport.name).arg(Unit::altFeet(airport.position.getAltitude())));
+    QList<map::MapAirport> airports = NavApp::getAirportQuerySim()->getAirportsByOfficialIdent(ident.toUpper());
+
+    if(!airports.isEmpty())
+      label->setText(tr("%1,   elevation %2%3").
+                     arg(airports.first().name).
+                     arg(Unit::altFeet(airports.first().position.getAltitude())).
+                     arg(airports.size() > 1 ? tr(" (more found)") : QString()));
     else
       label->setText(atools::util::HtmlBuilder::errorMessage(tr("No airport found.").arg(ident)));
   }
@@ -569,13 +573,15 @@ void LogdataDialog::setAirport(const QString& ident, const QString& prefix, bool
   if(includeIdent)
     record->setValue(prefix + "_ident", ident.toUpper());
 
-  map::MapAirport airport = NavApp::getAirportQuerySim()->getAirportByIdent(ident.toUpper());
-  if(airport.isValid())
+  QList<map::MapAirport> airports = NavApp::getAirportQuerySim()->getAirportsByOfficialIdent(ident.toUpper());
+
+  if(!airports.isEmpty())
   {
-    record->setValue(prefix + "_lonx", airport.position.getLonX());
-    record->setValue(prefix + "_laty", airport.position.getLatY());
-    record->setValue(prefix + "_alt", airport.position.getAltitude());
-    record->setValue(prefix + "_name", airport.name);
+    const map::MapAirport& ap = airports.first();
+    record->setValue(prefix + "_lonx", ap.position.getLonX());
+    record->setValue(prefix + "_laty", ap.position.getLatY());
+    record->setValue(prefix + "_alt", ap.position.getAltitude());
+    record->setValue(prefix + "_name", ap.name);
   }
   else
   {

@@ -173,7 +173,7 @@ void TrafficPatternDialog::fillTrafficPattern(map::TrafficPattern& pattern)
   bool primary = !end.secondary;
   const map::MapAirport& airport = runwaySelection->getAirport();
 
-  pattern.airportIcao = airport.ident;
+  pattern.airportIcao = airport.displayIdent();
   pattern.runwayName = primary ? rw.primaryName : rw.secondaryName;
   pattern.color = color;
   pattern.turnRight = ui->comboBoxTrafficPatternTurnDirection->currentIndex() == 1;

@@ -135,7 +135,7 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId
   append(Column("nav_search_id").hidden()).
   append(Column("distance", tr("Distance\n%dist%")).distanceCol()).
   append(Column("heading", tr("Heading\n°T")).distanceCol()).
-  append(Column("ident", ui->lineEditNavIcaoSearch, tr("ICAO")).filter().defaultSort()).
+  append(Column("ident", ui->lineEditNavIcaoSearch, tr("Ident")).filter().defaultSort()).
 
   append(Column("nav_type", ui->comboBoxNavNavAidSearch, tr("Navaid\nType")).
          indexCondMap(navTypeCondMap).includesName()).
@@ -143,7 +143,7 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId
   append(Column("type", ui->comboBoxNavTypeSearch, tr("Type")).indexCondMap(typeCondMap).includesName()).
   append(Column("name", ui->lineEditNavNameSearch, tr("Name")).filter()).
   append(Column("region", ui->lineEditNavRegionSearch, tr("Region")).filter()).
-  append(Column("airport_ident", ui->lineEditNavAirportIcaoSearch, tr("Airport\nICAO")).filter()).
+  append(Column("airport_ident", ui->lineEditNavAirportIcaoSearch, tr("Airport\nIdent")).filter()).
   append(Column("frequency", tr("Frequency\nkHz/MHz"))).
   append(Column("channel", tr("Channel"))).
   append(Column("range", ui->spinBoxNavMaxRangeSearch, tr("Range\n%dist%")).
@@ -176,23 +176,6 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId
 NavSearch::~NavSearch()
 {
   delete iconDelegate;
-}
-
-void NavSearch::overrideMode(const QStringList& overrideColumnTitles)
-{
-  Ui::MainWindow *ui = NavApp::getMainUi();
-
-  if(overrideColumnTitles.isEmpty())
-  {
-    ui->labelNavSearchOverride->hide();
-    ui->labelNavSearchOverride->clear();
-  }
-  else
-  {
-    ui->labelNavSearchOverride->show();
-    ui->labelNavSearchOverride->setText(tr("%1 overriding all other search options.").
-                                        arg(overrideColumnTitles.join(" and ")));
-  }
 }
 
 void NavSearch::connectSearchSlots()
@@ -244,8 +227,6 @@ void NavSearch::connectSearchSlots()
                                               {ui->lineNavScenerySearch});
     updateButtonMenu();
   });
-
-  connect(controller->getSqlModel(), &SqlModel::overrideMode, this, &NavSearch::overrideMode);
 }
 
 void NavSearch::saveState()

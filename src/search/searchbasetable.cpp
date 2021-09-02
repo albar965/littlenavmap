@@ -212,7 +212,8 @@ void SearchBaseTable::tableCopyClipboard()
     if(controller->hasColumn("lonx") && controller->hasColumn("laty"))
     {
       // Full CSV export including coordinates and full rows
-      exported = CsvExporter::selectionAsCsv(view, true /* header */, true /* rows */, csv, {"longitude", "latitude"},
+      exported = CsvExporter::selectionAsCsv(view, true /* header */, true /* rows */, csv,
+                                             {tr("Longitude"), tr("Latitude")},
                                              [c](int index) -> QStringList
       {
         return {QLocale().toString(c->getRawData(index, "lonx").toFloat(), 'f', 8),
@@ -321,16 +322,21 @@ void SearchBaseTable::connectSearchWidgets()
   // Connect query builder callback to lambda ======================================
   if(columns->getQueryBuilder().isValid())
   {
-    for(QWidget *widget : columns->getQueryBuilder().getWidgets())
+    controller->setBuilder(columns->getQueryBuilder());
+
+    QWidget *widget = columns->getQueryBuilder().getWidget();
+
+    if(widget != nullptr)
     {
       QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(widget);
 
+      // Only line edit allowed for now
       if(lineEdit != nullptr)
       {
         connect(lineEdit, &QLineEdit::textChanged, this, [ = ](const QString& text)
         {
           Q_UNUSED(text)
-          controller->filterByBuilder(columns->getQueryBuilder());
+          controller->filterByBuilder();
           updateButtonMenu();
           editStartTimer();
         });
@@ -948,16 +954,19 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       logRecord = NavApp::getLogdataController()->getLogEntryRecordById(id);
 
       QString name = columnDescriptor->getColumnName();
+      QList<map::MapAirport> airports;
       if(name == "destination_ident" || name == "destination_name")
-      {
-        logAirport = !logEntry.destinationIdent.isEmpty();
-        airportQuery->getAirportByIdent(airport, logEntry.destinationIdent);
-      }
+        airports = airportQuery->getAirportsByOfficialIdent(logEntry.destinationIdent, &logEntry.destinationPos);
       else if(name == "departure_ident" || name == "departure_name")
+        airports = airportQuery->getAirportsByOfficialIdent(logEntry.departureIdent, &logEntry.departurePos);
+
+      if(!airports.isEmpty())
       {
-        logAirport = !logEntry.departureIdent.isEmpty();
-        airportQuery->getAirportByIdent(airport, logEntry.departureIdent);
+        airport = airports.first();
+        logAirport = true;
       }
+      else
+        qWarning() << Q_FUNC_INFO << "No airport found";
     }
   }
   else
