@@ -17,11 +17,21 @@
 
 #include "abstractlnmactionscontroller.h"
 #include "navapp.h"
+#include "common/infobuildertypes.h"
 #include "query/airportquery.h"
 #include "query/infoquery.h"
 #include "query/mapquery.h"
 #include "gui/mainwindow.h"
 #include "geo/calculations.h"
+#include "common/maptypes.h"
+#include "sql/sqlrecord.h"
+#include "fs/util/morsecode.h"
+
+namespace ageo = atools::geo;
+using atools::fs::util::MorseCode;
+using atools::sql::SqlRecord;
+using InfoBuilderTypes::AirportAdminNames;
+using atools::geo::Pos;
 
 AbstractLnmActionsController::AbstractLnmActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder) :
     AbstractActionsController(parent, verboseParam, infoBuilder)

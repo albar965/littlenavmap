@@ -19,13 +19,36 @@
 #define ABSTRACTLNMACTIONSCONTROLLER_H
 
 #include "webapi/abstractactionscontroller.h"
-#include "common/infobuildertypes.h"
-#include "common/maptypes.h"
-#include "navapp.h"
-#include "sql/sqlrecord.h"
-#include "fs/util/morsecode.h"
 
+namespace atools {
+    namespace geo {
+        class Pos;
+    }
+    namespace fs {
+        namespace util {
+            class MorseCode;
+        }
+    }
+    namespace sql {
+        class SqlRecord;
+    }
+}
+namespace InfoBuilderTypes {
+    class AirportAdminNames;
+}
 namespace ageo = atools::geo;
+namespace map {
+    class MapAirport;
+    class WeatherContext;
+}
+
+class NavApp;
+class MapQuery;
+class WaypointTrackQuery;
+class InfoQuery;
+class AirportQuery;
+class MainWindow;
+
 using atools::fs::util::MorseCode;
 using atools::sql::SqlRecord;
 using InfoBuilderTypes::AirportAdminNames;

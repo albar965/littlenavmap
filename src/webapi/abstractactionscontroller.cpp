@@ -19,6 +19,7 @@
 
 #include "navapp.h"
 #include "geo/pos.h"
+#include "common/abstractinfobuilder.h"
 
 #include <QDebug>
 

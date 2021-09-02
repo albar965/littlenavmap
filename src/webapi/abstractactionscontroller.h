@@ -18,9 +18,9 @@
 #ifndef ABSTRACTACTIONSCONTROLLER_H
 #define ABSTRACTACTIONSCONTROLLER_H
 
-#include "webapirequest.h"
-#include "webapiresponse.h"
-#include "common/abstractinfobuilder.h"
+#include "webapi/webapirequest.h"
+#include "webapi/webapiresponse.h"
+class AbstractInfoBuilder;
 
 #include <QObject>
 

@@ -17,6 +17,11 @@
 
 #include "airportactionscontroller.h"
 #include "abstractlnmactionscontroller.h"
+#include "common/maptypes.h"
+#include "common/infobuildertypes.h"
+#include "common/abstractinfobuilder.h"
+
+using InfoBuilderTypes::AirportInfoData;
 
 #include <QDebug>
 
