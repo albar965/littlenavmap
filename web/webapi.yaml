@@ -38,6 +38,14 @@ paths:
                 example: "Airport not found" 
 components:
   schemas:
+    Coordinates:
+      type: object
+      description: Common coordinates type
+      properties:
+        lat:
+          type: number
+        lon:
+          type: number
     AirportInfoResponse:
       type: object
       properties:
@@ -64,33 +72,33 @@ components:
           type: object
           properties:
             ATIS:
-              type: string
-              description: Only set if available
-              example: "123,450 MHz"
+              type: number
+              description: Only set if available. (Format 000,000 MHz)
+              example: "123450"
             Tower:
-              type: string
-              description: Only set if available
-              example: "123,450 MHz"
+              type: number
+              description: Only set if available. (Format 000,000 MHz)
+              example: "123450"
             AWOS:
-              type: string
-              description: Only set if available
-              example: "123,450 MHz"
+              type: number
+              description: Only set if available. (Format 000,000 MHz)
+              example: "123450"
             ASOS:
-              type: string
-              description: Only set if available
-              example: "123,450 MHz"
+              type: number
+              description: Only set if available. (Format 000,000 MHz)
+              example: "123450"
             UNICOM:
-              type: string
-              description: Only set if available
-              example: "123,450 MHz"
+              type: number
+              description: Only set if available. (Format 000,000 MHz)
+              example: "123450"
         country: 
           description: The airports country
           type: string
           example: ""
         elevation: 
-          description: The airports elevation
-          type: string
-          example: "1.468 ft"
+          description: The airports elevation in feet
+          type: number
+          example: "1468"
         facilities:
           description: Array of airport facilities/features
           type: array 
@@ -119,21 +127,21 @@ components:
           type: string
           example: "81°M, 261°M"
         longestRunwayLength: 
-          description: The airports longest runway length
-          type: string
-          example: "13.106 ft"
+          description: The airports longest runway length in metres
+          type: number
+          example: "13106"
         longestRunwaySurface: 
           description: The airports longest runway surface
           type: string
           example:  "CE"
         longestRunwayWidth: 
-          description: The airports longest runway width
-          type: string
-          example: "188 ft"
+          description: The airports longest runway width in metres
+          type: number
+          example: "188"
         magneticDeclination: 
-          description: The airports magnetic variation/declination
-          type: string
-          example: "1,9° East"
+          description: The airports magnetic variation/declination (+/East, -/West)
+          type: number
+          example: "1.9"
         metar: 
           description: The airports METAR weather reports
           type: object
@@ -226,8 +234,7 @@ components:
               format: int32
         position: 
           description: The airports geographical position
-          type: string
-          example: "48° 21' 13,62\" N 11° 47' 9,91\" E"
+          $ref: '#/components/schemas/Coordinates'
         rating: 
           description: The airports rating
           type: integer
@@ -257,6 +264,6 @@ components:
           type: string
           example: "19:54:52"
         transitionAltitude:
-          description: The airports transition altitude
-          type: string
-          example: "5.000 ft"
+          description: The airports transition altitude in feet
+          type: number
+          example: "5000"
