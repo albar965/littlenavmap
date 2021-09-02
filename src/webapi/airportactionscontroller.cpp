@@ -42,7 +42,7 @@ WebApiResponse AirportActionsController::infoAction(WebApiRequest request){
     // Query item
     map::MapAirport airport = getAirportByIdent(request.parameters.value("ident").toUpper());
 
-    if(airport.id > 0){
+    if(airport.isValid()){
 
         // Fetch related data
         const SqlRecord* airportInformation = getAirportInformation(airport.id);
