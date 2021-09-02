@@ -16,6 +16,13 @@
 *****************************************************************************/
 
 #include "common/jsoninfobuilder.h"
+#include "common/infobuildertypes.h"
+
+#include "sql/sqlrecord.h"
+#include "common/unit.h"
+
+using InfoBuilderTypes::AirportInfoData;
+
 
 // Use JSON library
 #include "json/nlohmann/json.hpp"

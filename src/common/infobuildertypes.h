@@ -19,15 +19,16 @@
 #define INFOBUILDERTYPES_H
 
 
-#include "sql/sqlrecord.h"
+#include "common/maptypes.h"
 
 #include <QObject>
 
-namespace map {
-struct MapAirport;
-struct WeatherContext;
-}
 class Route;
+namespace atools {
+    namespace sql {
+        class SqlRecord;
+    }
+}
 
 using atools::sql::SqlRecord;
 

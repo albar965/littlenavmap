@@ -16,6 +16,21 @@
 *****************************************************************************/
 #include "abstractinfobuilder.h"
 
+#include "common/infobuildertypes.h"
+#include "geo/calculations.h"
+#include "fs/util/fsutil.h"
+#include "sql/sqlrecord.h"
+#include "common/formatter.h"
+#include "common/unit.h"
+#include "common/maptypes.h"
+
+using formatter::courseTextFromTrue;
+using atools::geo::opposedCourseDeg;
+using atools::geo::Pos;
+using atools::fs::util::roundComFrequency;
+
+using InfoBuilderTypes::AirportInfoData;
+
 AbstractInfoBuilder::AbstractInfoBuilder(QObject *parent)
   : QObject(parent)
 {

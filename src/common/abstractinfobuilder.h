@@ -18,23 +18,22 @@
 #ifndef ABSTRACTINFOBUILDER_H
 #define ABSTRACTINFOBUILDER_H
 
-#include "atools.h"
-#include "geo/calculations.h"
-#include "fs/util/fsutil.h"
-#include "sql/sqlrecord.h"
-#include "common/formatter.h"
-#include "common/unit.h"
-#include "common/infobuildertypes.h"
-#include "common/maptypes.h"
-#include "common/mapflags.h"
-
 #include <QObject>
+#include <QLocale>
 
-using formatter::courseTextFromTrue;
-using atools::geo::opposedCourseDeg;
+namespace InfoBuilderTypes {
+    class AirportInfoData;
+}
+namespace atools {
+    namespace sql {
+        class SqlRecord;
+    }
+    namespace geo {
+        class Pos;
+    }
+}
+
 using atools::geo::Pos;
-using atools::fs::util::roundComFrequency;
-
 using InfoBuilderTypes::AirportInfoData;
 
 /**

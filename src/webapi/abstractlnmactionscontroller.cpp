@@ -21,6 +21,7 @@
 #include "query/infoquery.h"
 #include "query/mapquery.h"
 #include "gui/mainwindow.h"
+#include "geo/calculations.h"
 
 AbstractLnmActionsController::AbstractLnmActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder) :
     AbstractActionsController(parent, verboseParam, infoBuilder)
