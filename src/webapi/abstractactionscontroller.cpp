@@ -24,13 +24,12 @@
 
 AbstractActionsController::AbstractActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder) : QObject(parent), verbose(verboseParam), infoBuilder(infoBuilder)
 {
-    qDebug() << Q_FUNC_INFO;
+    // qDebug() << Q_FUNC_INFO;
 }
 AbstractActionsController::~AbstractActionsController(){
-    qDebug() << Q_FUNC_INFO;
+    // qDebug() << Q_FUNC_INFO;
 }
 WebApiResponse AbstractActionsController::defaultAction(WebApiRequest request){
-    qDebug() << Q_FUNC_INFO;
 
     WebApiResponse response = getResponse();
     // Example
@@ -42,7 +41,6 @@ WebApiResponse AbstractActionsController::defaultAction(WebApiRequest request){
 }
 
 WebApiResponse AbstractActionsController::notFoundAction(WebApiRequest request){
-    qDebug() << Q_FUNC_INFO;
 
     WebApiResponse response = this->getResponse();
 

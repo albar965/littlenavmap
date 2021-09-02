@@ -25,7 +25,8 @@
 AbstractLnmActionsController::AbstractLnmActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder) :
     AbstractActionsController(parent, verboseParam, infoBuilder)
 {
-    qDebug() << Q_FUNC_INFO;
+    if(verbose)
+        qDebug() << Q_FUNC_INFO;
     morseCode = new MorseCode("&nbsp;", "&nbsp;&nbsp;&nbsp;");
 }
 

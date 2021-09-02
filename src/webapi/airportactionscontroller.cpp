@@ -23,11 +23,13 @@
 AirportActionsController::AirportActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder) :
     AbstractLnmActionsController(parent, verboseParam, infoBuilder)
 {
-    qDebug() << Q_FUNC_INFO;
+    if(verbose)
+        qDebug() << Q_FUNC_INFO;
 }
 
 WebApiResponse AirportActionsController::infoAction(WebApiRequest request){
-    qDebug() << Q_FUNC_INFO << request.parameters.value("ident");
+    if(verbose)
+        qDebug() << Q_FUNC_INFO << request.parameters.value("ident");
 
     // Get a new response object
     WebApiResponse response = getResponse();
