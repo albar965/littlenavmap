@@ -70,6 +70,7 @@ AirportQuery* AbstractLnmActionsController::getAirportQuery(AbstractLnmActionsCo
         return getNavApp()->getAirportQuerySim();
         break;
     }
+    return nullptr;
 }
 
 MainWindow* AbstractLnmActionsController::getMainWindow(){
