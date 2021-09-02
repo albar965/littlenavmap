@@ -89,8 +89,24 @@ protected:
    * @return printable string
    */
   virtual QString getCoordinatesString(const Pos& pos) const;
-
-
+  /**
+   * @brief get pretty printed coords from Pos
+   * @param rec
+   * @return printable string
+   */
+  virtual QString getLocalizedCoordinatesString(const Pos& pos) const;
+  /**
+   * @brief get a map of coordinate data from suitable sql record
+   * @param pos
+   * @return map of coordinate data
+   */
+  virtual QMap<QString,float> getCoordinates(const atools::sql::SqlRecord *rec) const;
+  /**
+   * @brief get a map of coordinate data from Pos
+   * @param pos
+   * @return map of coordinate data
+   */
+  virtual QMap<QString,float> getCoordinates(const Pos& pos) const;
 private:
   QLocale locale;
 };

@@ -20,6 +20,10 @@
 
 #include "common/abstractinfobuilder.h"
 
+// Use JSON library
+#include "json/nlohmann/json.hpp"
+using JSON = nlohmann::json;
+
 /**
  * Builder for JSON representations of supplied data. All
  * usable methods must be declared at AbstractInfoBuilder
@@ -36,7 +40,8 @@ public:
 
   QByteArray airport(AirportInfoData airportInfoData) const override;
 
-
+private:
+  JSON coordinatesToJSON(QMap<QString,float> map) const;
 };
 
 #endif // JSONINFOBUILDER_H

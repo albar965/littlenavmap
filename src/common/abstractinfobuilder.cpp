@@ -70,6 +70,30 @@ QString AbstractInfoBuilder::getCoordinatesString(const atools::sql::SqlRecord *
 QString AbstractInfoBuilder::getCoordinatesString(const Pos& pos) const
 {
   if(pos.isValid())
+    return QString::number(pos.getLatY()) +" "+ QString::number(pos.getLonX());
+  return QString();
+}
+
+QMap<QString,float> AbstractInfoBuilder::getCoordinates(const atools::sql::SqlRecord *rec) const
+{
+  if(rec != nullptr && rec->contains("lonx") && rec->contains("laty"))
+    return getCoordinates(Pos(rec->valueFloat("lonx"), rec->valueFloat("laty"), rec->valueFloat("altitude", 0.f)));
+  return QMap<QString,float>();
+}
+
+QMap<QString,float> AbstractInfoBuilder::getCoordinates(const Pos& pos) const
+{
+  QMap<QString,float> map = QMap<QString,float>();
+  if(pos.isValid()){
+      map.insert("lat",pos.getLatY());
+      map.insert("lon",pos.getLonX());
+  }
+  return map;
+}
+
+QString AbstractInfoBuilder::getLocalizedCoordinatesString(const Pos& pos) const
+{
+  if(pos.isValid())
     return Unit::coords(pos);
   return QString();
 }

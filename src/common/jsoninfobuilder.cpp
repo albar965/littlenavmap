@@ -23,11 +23,6 @@
 
 using InfoBuilderTypes::AirportInfoData;
 
-
-// Use JSON library
-#include "json/nlohmann/json.hpp"
-using JSON = nlohmann::json;
-
 JsonInfoBuilder::JsonInfoBuilder(QObject *parent)
   : AbstractInfoBuilder(parent)
 {
@@ -38,6 +33,15 @@ JsonInfoBuilder::~JsonInfoBuilder()
 {
 
 }
+
+JSON JsonInfoBuilder::coordinatesToJSON(QMap<QString,float> map) const
+{
+    return {
+        {"lat", map["lat"]},
+        {"lon", map["lon"]},
+    };
+}
+
 
 QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
 {
@@ -50,8 +54,8 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
         { "name", qUtf8Printable(data.airport.name) },
         { "region", qUtf8Printable(data.airport.region) },
         { "closed", data.airport.closed() },
-        { "elevation", qUtf8Printable(Unit::altFeet(data.airport.getPosition().getAltitude())) },
-        { "magneticDeclination", qUtf8Printable(map::magvarText(data.airport.magvar)) },
+        { "elevation", data.airport.getPosition().getAltitude() },
+        { "magneticDeclination", data.airport.magvar },
         { "position", nullptr },
         { "rating", nullptr },
         { "iata", nullptr },
@@ -78,7 +82,9 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
     if(data.airportInformation!=nullptr){
         json["rating"] = data.airportInformation->valueInt("rating");
         json["iata"] = qUtf8Printable(data.airportInformation->valueStr("iata"));
-        json["position"] = qUtf8Printable(getCoordinatesString(data.airportInformation));
+
+        // Position
+        json["position"] = coordinatesToJSON(getCoordinates(data.airportInformation));
 
         if(data.airportInformation->valueInt("num_parking_gate") > 0){
             json["parking"].push_back({ "gates", data.airportInformation->valueInt("num_parking_gate") });
@@ -111,13 +117,13 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
     }
 
     if(data.transitionAltitude!=nullptr && *data.transitionAltitude > 0){
-        json["transitionAltitude"] = qUtf8Printable(Unit::altFeet(*data.transitionAltitude));
+        json["transitionAltitude"] = *data.transitionAltitude;
     }
 
     if(!data.airport.noRunways()){
-        json["longestRunwayLength"] = qUtf8Printable(Unit::distShortFeet(data.airport.longestRunwayLength));
+        json["longestRunwayLength"] = data.airport.longestRunwayLength;
         if(data.airportInformation!=nullptr){
-            json["longestRunwayWidth"] = qUtf8Printable(Unit::distShortFeet(data.airportInformation->valueInt("longest_runway_width")));
+            json["longestRunwayWidth"] = data.airportInformation->valueInt("longest_runway_width");
             json["longestRunwayHeading"] = qUtf8Printable(getHeadingsStringByMagVar(data.airportInformation->valueFloat("longest_runway_heading"),data.airport.magvar));
             json["longestRunwaySurface"] = qUtf8Printable(data.airportInformation->valueStr("longest_runway_surface"));
         }
@@ -196,19 +202,19 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
     /* COM */
 
     if(data.airport.towerFrequency > 0){
-        json["com"].push_back({"Tower:", qUtf8Printable(formatComFrequency(data.airport.towerFrequency))});
+        json["com"].push_back({"Tower:", data.airport.towerFrequency});
     }
     if(data.airport.atisFrequency > 0){
-        json["com"].push_back({"ATIS:", qUtf8Printable(formatComFrequency(data.airport.atisFrequency))});
+        json["com"].push_back({"ATIS:", data.airport.atisFrequency});
     }
     if(data.airport.awosFrequency > 0){
-        json["com"].push_back({"AWOS:", qUtf8Printable(formatComFrequency(data.airport.awosFrequency))});
+        json["com"].push_back({"AWOS:", data.airport.awosFrequency});
     }
     if(data.airport.asosFrequency > 0){
-        json["com"].push_back({"ASOS:", qUtf8Printable(formatComFrequency(data.airport.asosFrequency))});
+        json["com"].push_back({"ASOS:", data.airport.asosFrequency});
     }
     if(data.airport.unicomFrequency > 0){
-        json["com"].push_back({"UNICOM:", qUtf8Printable(formatComFrequency(data.airport.unicomFrequency))});
+        json["com"].push_back({"UNICOM:", data.airport.unicomFrequency});
     }
 
     /* Facilities */
