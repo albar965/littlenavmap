@@ -301,7 +301,7 @@ QByteArray JsonInfoBuilder::siminfo(SimConnectInfoData simconnectInfoData) const
            { "indicated_altitude", data.getUserAircraft().getIndicatedAltitudeFt() },
            { "ground_altitude", data.getUserAircraft().getGroundAltitudeFt() },
            { "altitude_above_ground", data.getUserAircraft().getAltitudeAboveGroundFt() },
-           { "heading", data.getUserAircraft().getHeadingDegTrue() },
+           { "heading", data.getUserAircraft().getHeadingDegMag() },
    //        { "closed", data.airport.closed() },
    //        { "elevation", data.airport.getPosition().getAltitude() },
    //        { "magneticDeclination", data.airport.magvar },
