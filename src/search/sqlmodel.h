@@ -85,6 +85,10 @@ public:
   /* Get field data formatted for display as seen in the table view */
   QVariant getFormattedFieldData(const QModelIndex& index) const;
 
+  /* Query the full result set into a vector of pairs with id and optional coordinates.
+   * This does not work when using distance search. */
+  void getFullResultSet(QVector<std::pair<int, atools::geo::Pos> >& result);
+
   Qt::SortOrder getSortOrder() const;
 
   QString getSortColumn() const
@@ -212,7 +216,7 @@ private:
   QString orderByCol /* Order by column name */, orderByOrder /* "asc" or "desc" */;
   int orderByColIndex = 0;
 
-  QString currentSqlQuery, currentSqlCountQuery;
+  QString currentSqlQuery, currentSqlCountQuery, currentSqlFetchQuery;
 
   /* Data callback */
   DataFunctionType dataFunction = nullptr;
