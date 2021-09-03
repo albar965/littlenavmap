@@ -3,6 +3,9 @@
 #include "mapgui/mapwidget.h"
 #include "common/infobuildertypes.h"
 #include "common/abstractinfobuilder.h"
+#include "navapp.h"
+#include "web/webcontroller.h"
+#include "web/webmapcontroller.h"
 
 using InfoBuilderTypes::UiInfoData;
 
@@ -25,7 +28,8 @@ WebApiResponse UiActionsController::infoAction(WebApiRequest request){
     WebApiResponse response = getResponse();
 
     UiInfoData data = {
-        getMainWindow()->getMapWidget()->zoom()
+        getMainWindow()->getMapWidget()->zoom(),
+        getNavApp()->getWebController()->getWebMapController()->getMapPaintWidget()->zoom()
     };
 
     response.body = infoBuilder->uiinfo(data);

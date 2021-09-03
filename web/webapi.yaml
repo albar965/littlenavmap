@@ -347,6 +347,11 @@ components:
       type: object
       description: Common UI info
       properties:
-        zoom:
+        zoom_ui:
+          description: the zoom value of the map inside LNM UI
+          type: number
+          example: 1803
+        zoom_web:
+          description: the zoom value of the map inside LNM Web UI
           type: number
           example: 1803
