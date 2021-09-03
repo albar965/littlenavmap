@@ -314,3 +314,17 @@ QByteArray JsonInfoBuilder::siminfo(SimConnectInfoData simconnectInfoData) const
 }
 
 
+QByteArray JsonInfoBuilder::uiinfo(UiInfoData uiInfoData) const
+{
+
+    UiInfoData data = uiInfoData;
+
+    JSON json;
+
+       json = {
+           { "zoom", data.zoom},
+       };
+
+    return json.dump().data();
+}
+

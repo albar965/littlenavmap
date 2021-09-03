@@ -18,7 +18,7 @@ SimActionsController::SimActionsController(QObject *parent, bool verboseParam, A
 
 WebApiResponse SimActionsController::infoAction(WebApiRequest request){
     if(verbose)
-        qDebug() << Q_FUNC_INFO << request.parameters.value("ident");
+        qDebug() << Q_FUNC_INFO;
 
     // Get a new response object
     WebApiResponse response = getResponse();

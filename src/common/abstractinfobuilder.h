@@ -24,6 +24,7 @@
 namespace InfoBuilderTypes {
     class AirportInfoData;
     class SimConnectInfoData;
+    class UiInfoData;
 }
 namespace atools {
     namespace sql {
@@ -37,6 +38,7 @@ namespace atools {
 using atools::geo::Pos;
 using InfoBuilderTypes::AirportInfoData;
 using InfoBuilderTypes::SimConnectInfoData;
+using InfoBuilderTypes::UiInfoData;
 
 /**
  * Generic interface for LNM-specific views.
@@ -72,6 +74,14 @@ public:
    * @param simConnectInfoData
    */
   virtual QByteArray siminfo(SimConnectInfoData simConnectInfoData) const;
+
+
+  /**
+   * Creates a description for the provided UI data.
+   *
+   * @param uiInfoData
+   */
+  virtual QByteArray uiinfo(UiInfoData uiInfoData) const;
 protected:
   /**
    * @brief Get heading and opposed heading corrected by magnetic variation

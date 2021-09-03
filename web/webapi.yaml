@@ -10,6 +10,8 @@ tags:
   description: AirportActionsController
 - name: Sim
   description: SimActionsController
+- name: UI
+  description: UiActionsController
 paths:
   /airport/info:
     get:
@@ -51,6 +53,19 @@ paths:
             application/json:
               schema: 
                 $ref: '#/components/schemas/SimInfoResponse'
+  /ui/info:
+    get:
+      tags:
+      - UI
+      summary: Get UI information
+      operationId: uiInfoAction
+      responses:
+        200:
+          description: UI information
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/UiInfoResponse'
 components:
   schemas:
     Coordinates:
@@ -328,4 +343,10 @@ components:
           description: "fpm"
           type: number
           example: -4.088292598724365
-        
+    UiInfoResponse:
+      type: object
+      description: Common UI info
+      properties:
+        zoom:
+          type: number
+          example: 1803

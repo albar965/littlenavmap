@@ -74,6 +74,13 @@ namespace InfoBuilderTypes {
         const SimConnectData* data;
     };
 
+    /**
+     * @brief Data container for simconnect data
+     */
+    struct UiInfoData{
+        const int zoom;
+    };
+
 }
 
 #endif // INFOBUILDERTYPES_H
