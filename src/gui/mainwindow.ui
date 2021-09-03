@@ -11811,10 +11811,10 @@ Disabled if a navdatabase does not allow it.</string>
   </action>
   <action name="actionRouteRandomNew">
    <property name="text">
-    <string>New Random Flight Plan</string>
+    <string>New Quick Random Flight Plan</string>
    </property>
    <property name="toolTip">
-    <string>Create a new flightplan having a random departure and a random destination bearing the same first two letters in its ICAO code as the departure</string>
+    <string>Create a new flight plan having a random departure and a random destination bearing the same first two letters in its ICAO code as the departure</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+G</string>
@@ -12006,7 +12006,7 @@ Disabled if a navdatabase does not allow it.</string>
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupRouteCalc"/>
-  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
  </buttongroups>
 </ui>

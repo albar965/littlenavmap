@@ -2367,7 +2367,7 @@ void MainWindow::routeRandomNew()
 
     if(airportDestination.flags != map::AP_NONE)
     {
-      setStatusMessage(tr("Created new random flight plan."));
+      setStatusMessage(tr("Created new quick random flight plan."));
     }
     else
     {
