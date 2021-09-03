@@ -83,7 +83,7 @@ public:
   virtual void postDatabaseLoad() override;
 
   /* Clear all search widgets */
-  void resetSearch();
+  virtual void resetSearch();
 
   /* The center point of the distance search has changed. This will update the search result. */
   void searchMarkChanged(const atools::geo::Pos& mark);

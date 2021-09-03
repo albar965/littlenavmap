@@ -1540,6 +1540,107 @@
             </layout>
            </item>
            <item>
+            <widget class="Line" name="lineAirportFlightplanSearch">
+             <property name="frameShadow">
+              <enum>QFrame::Sunken</enum>
+             </property>
+             <property name="lineWidth">
+              <number>4</number>
+             </property>
+             <property name="midLineWidth">
+              <number>2</number>
+             </property>
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayoutAirportFlightplanSearch">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QPushButton" name="pushButtonAirportFlightplanSearch">
+               <property name="toolTip">
+                <string>Generate a random flight plan from this search result.</string>
+               </property>
+               <property name="statusTip">
+                <string>Generate a random flight plan from this search result.</string>
+               </property>
+               <property name="text">
+                <string>&amp;Random Flight</string>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBoxAirportFlightplanMinSearch">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="toolTip">
+                <string>Minimum direct distance between airports for random flight.</string>
+               </property>
+               <property name="statusTip">
+                <string>Minimum direct distance between airports for random flight.</string>
+               </property>
+               <property name="whatsThis">
+                <string/>
+               </property>
+               <property name="showGroupSeparator" stdset="0">
+                <bool>true</bool>
+               </property>
+               <property name="suffix">
+                <string> %dist% min</string>
+               </property>
+               <property name="maximum">
+                <number>8000</number>
+               </property>
+               <property name="singleStep">
+                <number>100</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBoxAirportFlightplanMaxSearch">
+               <property name="enabled">
+                <bool>true</bool>
+               </property>
+               <property name="toolTip">
+                <string>Maximum direct distance between airports for random flight.</string>
+               </property>
+               <property name="statusTip">
+                <string>Maximum direct distance between airports for random flight.</string>
+               </property>
+               <property name="specialValueText">
+                <string/>
+               </property>
+               <property name="showGroupSeparator" stdset="0">
+                <bool>true</bool>
+               </property>
+               <property name="suffix">
+                <string> %dist% max</string>
+               </property>
+               <property name="minimum">
+                <number>100</number>
+               </property>
+               <property name="maximum">
+                <number>8000</number>
+               </property>
+               <property name="singleStep">
+                <number>100</number>
+               </property>
+               <property name="value">
+                <number>1000</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
             <widget class="Line" name="lineAirportScenerySearch">
              <property name="frameShadow">
               <enum>QFrame::Sunken</enum>
@@ -11805,6 +11906,23 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="statusTip">
     <string>Disable weather source to display weather icons on the map</string>
+   </property>
+  </action>
+  <action name="actionAirportSearchShowFlightplanOptions">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Random Flight</string>
+   </property>
+   <property name="toolTip">
+    <string>Show random flight plan options</string>
+   </property>
+   <property name="statusTip">
+    <string>Show random flight plan options</string>
    </property>
   </action>
  </widget>
