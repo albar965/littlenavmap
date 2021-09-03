@@ -796,8 +796,12 @@ void AirportSearch::randomFlightplanClicked()
       indexDestination = QRandomGenerator::global()->bounded(countResult);
       if(triedIndexDestination.contains(indexDestination))
         continue;
-      lon2 = data[indexDestination].second.getLonX() * degToRad;
-      lat2 = data[indexDestination].second.getLatY() * degToRad;
+      float lonX = data[indexDestination].second.getLonX();
+      float latY = data[indexDestination].second.getLatY();
+      if(lonX == atools::geo::Pos::INVALID_VALUE || latY == atools::geo::Pos::INVALID_VALUE)
+        continue;
+      lon2 = lonX * degToRad;
+      lat2 = latY * degToRad;
     }
     while(R_earth * qAcos(qSin(lat1) * qSin(lat2) + qCos(lat1) * qCos(lat2) * qCos(lon2 - lon1)) > distance);
     // http://www.movable-type.co.uk/scripts/latlong.html Spherical Law of Cosines
