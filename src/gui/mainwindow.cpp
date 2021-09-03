@@ -1580,6 +1580,8 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::routeAddAlternate, routeController, &RouteController::routeAddAlternate);
   connect(mapWidget, &MapWidget::routeAdd, routeController, &RouteController::routeAdd);
   connect(mapWidget, &MapWidget::routeReplace, routeController, &RouteController::routeReplace);
+  connect(this, &MainWindow::routeSetDeparture, routeController, &RouteController::routeSetDeparture);
+  connect(this, &MainWindow::routeSetDestination, routeController, &RouteController::routeSetDestination);
 
   // Messages about database query result status
   connect(mapWidget, &MapPaintWidget::resultTruncated, this, &MainWindow::resultTruncated);
@@ -2294,6 +2296,20 @@ void MainWindow::routeNew()
     mapWidget->update();
     showFlightPlan();
     setStatusMessage(tr("Created new empty flight plan."));
+  }
+}
+
+/* called from AirportSearch (random flight plan generator) */
+void MainWindow::routeNewFromAirports(map::MapAirport departure, map::MapAirport destination)
+{
+  if(routeCheckForChanges())
+  {
+    routeController->newFlightplan();
+    emit routeSetDeparture(departure);
+    emit routeSetDestination(destination);
+    mapWidget->update();
+    showFlightPlan();
+    setStatusMessage(tr("Created new flight plan with departure and destination airport."));
   }
 }
 

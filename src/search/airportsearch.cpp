@@ -36,6 +36,7 @@
 #include "sql/sqlrecord.h"
 #include "settings/settings.h"
 #include "query/airportquery.h"
+#include "gui/mainwindow.h"
 
 #include <QRandomGenerator>
 #include <QtMath>
@@ -759,68 +760,97 @@ void AirportSearch::randomFlightplanClicked()
     // TODO: non-blocking notification: the closer the distance (max - min) is to 0, the longer the random selection might take
     // give estimated search value: ((20500 - (max - min)) / 20500) * 100% of all airports; 20500 is current max of distanceMax
     // TODO: if estimated search value is > 99,5% : ask user if he we wants to let continue ( > 99,5% == < 100 km distance)
+    // currently no interrupt after time or x attempts
 
     // Fetch data from SQL model
     QVector<std::pair<int, atools::geo::Pos> > result;
     controller->getSqlModel()->getFullResultSet(result);
 
-    int countResult = result.size();
+    const int countResult = result.size();
 
     qDebug() << Q_FUNC_INFO << "random flight, count source airports: " << countResult;
 
-    std::pair<int, atools::geo::Pos>* data = result.data();
+    const std::pair<int, atools::geo::Pos>* data = result.data();
 
-    int indexDeparture;
+    const double R_earth = 6371;      // km radius Earth
+    const double degToRad = M_PI / 180;
+    const double distance = distanceMax - distanceMin;
 
-    do
-    {
-      indexDeparture = QRandomGenerator::global()->bounded(countResult);
-    }
-    while(data[indexDeparture].second.getLonX() == atools::geo::Pos::INVALID_VALUE || data[indexDeparture].second.getLatY() == atools::geo::Pos::INVALID_VALUE);
+    QMap<int, bool> triedIndexDeparture;        // acts as a lookup which indices have been tried already; QMap keys are sorted, lookup is very fast
 
-    QMap<int, bool> triedIndexDestination;
-
-    double R_earth = 6371;      // km radius Earth
-    double degToRad = M_PI / 180;
-    double distance = distanceMax - distanceMin;
-
-    double lon1 = data[indexDeparture].second.getLonX() * degToRad;
-    double lat1 = data[indexDeparture].second.getLatY() * degToRad;
-    double lon2, lat2;
-
-    int indexDestination = indexDeparture;
+    bool noSuccess = true;
+    int indexDeparture, indexDestination;
 
     do
     {
-      triedIndexDestination.insert(indexDestination, true);
-      indexDestination = QRandomGenerator::global()->bounded(countResult);
-      if(triedIndexDestination.contains(indexDestination))
+      do
+      {
+tryagain3:
+        indexDeparture = QRandomGenerator::global()->bounded(countResult);
+        if(triedIndexDeparture.contains(indexDeparture))
+          goto tryagain3;  // because "continue" would evaluate the condition in the while which is unnecessary
+      }
+      while(data[indexDeparture].second.getLonX() == atools::geo::Pos::INVALID_VALUE || data[indexDeparture].second.getLatY() == atools::geo::Pos::INVALID_VALUE);
+
+      QMap<int, bool> triedIndexDestination;    // acts as a lookup which indices have been tried already; QMap keys are sorted, lookup is very fast
+
+      double lon1 = data[indexDeparture].second.getLonX() * degToRad;
+      double lat1 = data[indexDeparture].second.getLatY() * degToRad;
+      double lon2, lat2;
+
+      indexDestination = indexDeparture;
+
+      do
+      {
+tryagain2:
+        triedIndexDestination.insert(indexDestination, true);
+        if(triedIndexDestination.count() == countResult)
+          break;
+tryagain:
+        indexDestination = QRandomGenerator::global()->bounded(countResult);
+        if(triedIndexDestination.contains(indexDestination))
+          goto tryagain;  // because "continue" would evaluate the condition in the while for which the lon2,lat2 might be unitialised and the whole calculation is unnecessary
+        float lonX = data[indexDestination].second.getLonX();
+        float latY = data[indexDestination].second.getLatY();
+        if(lonX == atools::geo::Pos::INVALID_VALUE || latY == atools::geo::Pos::INVALID_VALUE)
+          goto tryagain2;  // because "continue" would evaluate the condition in the while for which the lon2,lat2 might be unitialised and the whole calculation is unnecessary
+        lon2 = lonX * degToRad;
+        lat2 = latY * degToRad;
+      }
+      while(R_earth * qAcos(qSin(lat1) * qSin(lat2) + qCos(lat1) * qCos(lat2) * qCos(lon2 - lon1)) > distance);
+      // http://www.movable-type.co.uk/scripts/latlong.html Spherical Law of Cosines
+
+      if(triedIndexDestination.count() < countResult)
+      {
+        noSuccess = false;
         continue;
-      float lonX = data[indexDestination].second.getLonX();
-      float latY = data[indexDestination].second.getLatY();
-      if(lonX == atools::geo::Pos::INVALID_VALUE || latY == atools::geo::Pos::INVALID_VALUE)
-        continue;
-      lon2 = lonX * degToRad;
-      lat2 = latY * degToRad;
+      }
+
+      triedIndexDeparture.insert(indexDeparture, true);
+      if(triedIndexDeparture.count() == countResult)
+        break;
     }
-    while(R_earth * qAcos(qSin(lat1) * qSin(lat2) + qCos(lat1) * qCos(lat2) * qCos(lon2 - lon1)) > distance);
-    // http://www.movable-type.co.uk/scripts/latlong.html Spherical Law of Cosines
+    while(noSuccess);
 
-    qDebug() << Q_FUNC_INFO << "random flight, index departure: " << indexDeparture
-             << ", random flight, index destination: " << indexDestination;
+    if(triedIndexDeparture.count() < countResult)
+    {
+      qDebug() << Q_FUNC_INFO << "random flight, index departure: " << indexDeparture
+               << ", random flight, index destination: " << indexDestination;
 
-    QString stringDeparture = "";    // convert data[indexDeparture].first
-    QString stringDestination = "";    // convert data[indexDestination].first
+      map::MapAirport airportDeparture;
+      map::MapAirport airportDestination;
 
-    map::MapAirport airportDeparture;
-    map::MapAirport airportDestination;
+      AirportQuery *airportQuery = NavApp::getAirportQuerySim();
 
-    AirportQuery *airportQuery = NavApp::getAirportQueryNav();
+      airportQuery->getAirportById(airportDeparture, data[indexDeparture].first);
+      airportQuery->getAirportById(airportDestination, data[indexDestination].first);
 
-    airportQuery->getAirportByIdent(airportDeparture, stringDeparture);
-    airportQuery->getAirportByIdent(airportDestination, stringDestination);
-
-    // call MainWindow "new flightplan" method passing airportDeparture and airportDestination
+      NavApp::getMainWindow()->routeNewFromAirports(airportDeparture, airportDestination);
+    }
+    else
+    {
+      // TODO: inform user: nothing found
+    }
   }
   else
   {

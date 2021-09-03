@@ -208,6 +208,9 @@ public:
   void showUserpointSearch();
   void showRouteCalc();
 
+  /* create a new flightplan from passed airports */
+  void routeNewFromAirports(map::MapAirport departure, map::MapAirport destination);
+
   /* Load a flight plan in LNMPLN format from a string */
   void routeOpenFileLnmStr(const QString& string);
 
@@ -229,6 +232,9 @@ public:
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
+
+  void routeSetDeparture(const map::MapAirport& airport);
+  void routeSetDestination(const map::MapAirport& airport);
 
 private:
   /* Work on the close event that also catches clicking the close button
