@@ -48,6 +48,12 @@ QByteArray AbstractInfoBuilder::airport(AirportInfoData airportInfoData) const
     return "not implemented";
 }
 
+QByteArray AbstractInfoBuilder::siminfo(SimConnectInfoData simConnectInfoData) const
+{
+  Q_UNUSED(simConnectInfoData);
+    return "not implemented";
+}
+
 QString AbstractInfoBuilder::getHeadingsStringByMagVar(float heading, float magvar) const {
 
     return courseTextFromTrue(heading, magvar) +", "+ courseTextFromTrue(opposedCourseDeg(heading), magvar);

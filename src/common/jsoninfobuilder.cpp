@@ -279,3 +279,60 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
   return json.dump().data();
 }
 
+
+QByteArray JsonInfoBuilder::siminfo(SimConnectInfoData simconnectInfoData) const
+{
+
+    SimConnectData data = *simconnectInfoData.data;
+
+    JSON json;
+
+    if(!data.isEmptyReply() && data.isUserAircraftValid()){
+
+        json = {
+           { "active", true},
+           { "simconnect_status", qUtf8Printable(data.getStatusText()) },
+           { "position", coordinatesToJSON(getCoordinates(data.getUserAircraft().getPosition())) },
+           { "indicated_speed", data.getUserAircraft().getIndicatedSpeedKts() },
+           { "true_airspeed", data.getUserAircraft().getTrueAirspeedKts() },
+           { "ground_speed", data.getUserAircraft().getGroundSpeedKts() },
+           { "sea_level_pressure", data.getUserAircraft().getSeaLevelPressureMbar() },
+           { "vertical_speed", data.getUserAircraft().getVerticalSpeedFeetPerMin() },
+           { "indicated_altitude", data.getUserAircraft().getIndicatedAltitudeFt() },
+           { "ground_altitude", data.getUserAircraft().getGroundAltitudeFt() },
+           { "altitude_above_ground", data.getUserAircraft().getAltitudeAboveGroundFt() },
+           { "heading", data.getUserAircraft().getHeadingDegTrue() },
+   //        { "closed", data.airport.closed() },
+   //        { "elevation", data.airport.getPosition().getAltitude() },
+   //        { "magneticDeclination", data.airport.magvar },
+   //        { "position", nullptr },
+   //        { "rating", nullptr },
+   //        { "iata", nullptr },
+   //        { "city", nullptr },
+   //        { "state", nullptr },
+   //        { "country", nullptr },
+   //        { "transitionAltitude", nullptr },
+   //        { "facilities", JSON::array()},
+   //        { "runways", JSON::array()},
+   //        { "parking", JSON::object()},
+   //        { "longestRunwayLength", nullptr },
+   //        { "longestRunwayHeading", nullptr },
+   //        { "longestRunwaySurface", nullptr },
+   //        { "metar", JSON::object()},
+   //        { "sunrise", nullptr},
+   //        { "sunset", nullptr},
+   //        { "activeDateTime", nullptr},
+   //        { "activeDateTimeSource", nullptr},
+   //        { "com", JSON::object()},
+       };
+
+    }else{
+        json = {
+            { "active", false}
+        };
+    }
+
+  return json.dump().data();
+}
+
+

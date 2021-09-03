@@ -8,6 +8,8 @@ servers:
 tags:
 - name: Airport
   description: AirportActionsController
+- name: Sim
+  description: SimActionsController
 paths:
   /airport/info:
     get:
@@ -36,6 +38,19 @@ paths:
               schema: 
                 type: string
                 example: "Airport not found" 
+  /sim/info:
+    get:
+      tags:
+      - Sim
+      summary: Get active simulation information
+      operationId: simInfoAction
+      responses:
+        200:
+          description: Simulation information
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/SimInfoResponse'
 components:
   schemas:
     Coordinates:
@@ -267,3 +282,50 @@ components:
           description: The airports transition altitude in feet
           type: number
           example: "5000"
+    SimInfoResponse:
+      type: object
+      properties:
+        active:
+          type: boolean
+        altitude_above_ground:
+          description: "ft"
+          type: number
+          example: 1737.796875
+        ground_altitude:
+          description: "meters (?)"
+          type: number
+          example: 0.05364101380109787
+        ground_speed:
+          description: "kts"
+          type: number
+          example: 178.37759399414062
+        heading:
+          type: number
+          example: 155.85145568847656
+        indicated_altitude:
+          description: "ft"
+          type: number
+          example: 1799.44482421875
+        indicated_speed:
+          description: "kts"
+          type: number
+          example: 173.4679718017578
+        position:
+          description: The user aircrafts geographical position
+          $ref: '#/components/schemas/Coordinates'
+        sea_level_pressure:
+          description: "Mbar"
+          type: number
+          example: 1020
+        simconnect_status:
+          type: string
+          example: "No error"
+        true_airspeed:
+          description: "kts"
+          type: number
+          example: 178.34288024902344
+        vertical_speed:
+          description: "fpm"
+          type: number
+          example: -4.088292598724365
+        

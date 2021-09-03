@@ -39,6 +39,7 @@ public:
   JsonInfoBuilder& operator=(const JsonInfoBuilder& other) = delete;
 
   QByteArray airport(AirportInfoData airportInfoData) const override;
+  QByteArray siminfo(SimConnectInfoData simConnectInfoData) const override;
 
 private:
   JSON coordinatesToJSON(QMap<QString,float> map) const;

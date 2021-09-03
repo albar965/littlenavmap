@@ -26,12 +26,14 @@
 #include "common/maptypes.h"
 #include "sql/sqlrecord.h"
 #include "fs/util/morsecode.h"
+#include "fs/sc/simconnectdata.h"
 
 namespace ageo = atools::geo;
 using atools::fs::util::MorseCode;
 using atools::sql::SqlRecord;
 using InfoBuilderTypes::AirportAdminNames;
 using atools::geo::Pos;
+using atools::fs::sc::SimConnectData;
 
 AbstractLnmActionsController::AbstractLnmActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder) :
     AbstractActionsController(parent, verboseParam, infoBuilder)
@@ -143,4 +145,8 @@ const QDateTime AbstractLnmActionsController::getActiveDateTime(){
 };
 const QString AbstractLnmActionsController::getActiveDateTimeSource(){
     return getNavApp()->isConnectedAndAircraft() ? tr("simulator date") : tr("real date");
+};
+
+const SimConnectData AbstractLnmActionsController::getSimConnectData(){
+    return getNavApp()->getSimConnectData();
 };

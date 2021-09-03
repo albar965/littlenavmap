@@ -28,6 +28,9 @@ namespace atools {
         namespace util {
             class MorseCode;
         }
+        namespace sc {
+            class SimConnectData;
+        }
     }
     namespace sql {
         class SqlRecord;
@@ -53,6 +56,7 @@ using atools::fs::util::MorseCode;
 using atools::sql::SqlRecord;
 using InfoBuilderTypes::AirportAdminNames;
 using atools::geo::Pos;
+using atools::fs::sc::SimConnectData;
 
 /**
  * @brief The base class for all Little Navmap API action controllers
@@ -88,6 +92,7 @@ protected:
     const QTime getSunrise(const Pos& pos);
     const QDateTime getActiveDateTime();
     const QString getActiveDateTimeSource();
+    const SimConnectData getSimConnectData();
 private:
     MorseCode* morseCode;
     QTime calculateSunriseSunset(const Pos& pos, float zenith);

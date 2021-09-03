@@ -20,6 +20,7 @@
 
 
 #include "common/maptypes.h"
+#include "fs/sc/simconnectdata.h"
 
 #include <QObject>
 
@@ -31,6 +32,7 @@ namespace atools {
 }
 
 using atools::sql::SqlRecord;
+using atools::fs::sc::SimConnectData;
 
 /**
  * Generic info builder parameter interfaces.
@@ -63,6 +65,13 @@ namespace InfoBuilderTypes {
         const QTime* sunset = nullptr;
         const QDateTime* activeDateTime = nullptr;
         const QString* activeDateTimeSource = nullptr;
+    };
+
+    /**
+     * @brief Data container for simconnect data
+     */
+    struct SimConnectInfoData{
+        const SimConnectData* data;
     };
 
 }
