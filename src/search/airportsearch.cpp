@@ -35,6 +35,10 @@
 #include "atools.h"
 #include "sql/sqlrecord.h"
 #include "settings/settings.h"
+#include "query/airportquery.h"
+
+#include <QRandomGenerator>
+#include <QtMath>
 
 /* Default values for minimum and maximum random flight plan distance */
 const static int FLIGHTPLAN_MIN_DISTANCE_DEFAULT = 100;
@@ -744,14 +748,79 @@ void AirportSearch::randomFlightplanClicked()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
+  int distanceMin = ui->spinBoxAirportFlightplanMinSearch->value();
+  int distanceMax = ui->spinBoxAirportFlightplanMaxSearch->value();
+
   // Log minimum and maximum distance from UI
-  qDebug() << Q_FUNC_INFO << "min" << ui->spinBoxAirportFlightplanMinSearch->value()
-           << "max" << ui->spinBoxAirportFlightplanMaxSearch->value();
+  qDebug() << Q_FUNC_INFO << "random flight, distance min: " << distanceMin
+           << ", random flight, distance max: " << distanceMax;
 
-  // Fetch data from SQL model
-  QVector<std::pair<int, atools::geo::Pos> > result;
-  controller->getSqlModel()->getFullResultSet(result);
+  if(distanceMin <= distanceMax) {
+    // TODO: non-blocking notification: the closer the distance (max - min) is to 0, the longer the random selection might take
+    // give estimated search value: ((20500 - (max - min)) / 20500) * 100% of all airports; 20500 is current max of distanceMax
+    // TODO: if estimated search value is > 99,5% : ask user if he we wants to let continue ( > 99,5% == < 100 km distance)
 
-  qDebug() << Q_FUNC_INFO << "found" << result.size();
+    // Fetch data from SQL model
+    QVector<std::pair<int, atools::geo::Pos> > result;
+    controller->getSqlModel()->getFullResultSet(result);
+
+    int countResult = result.size();
+
+    qDebug() << Q_FUNC_INFO << "random flight, count source airports: " << countResult;
+
+    std::pair<int, atools::geo::Pos>* data = result.data();
+
+    int indexDeparture;
+
+    do
+    {
+      indexDeparture = QRandomGenerator::global()->bounded(countResult);
+    }
+    while(data[indexDeparture].second.getLonX() == atools::geo::Pos::INVALID_VALUE || data[indexDeparture].second.getLatY() == atools::geo::Pos::INVALID_VALUE);
+
+    QMap<int, bool> triedIndexDestination;
+
+    double R_earth = 6371;      // km radius Earth
+    double degToRad = M_PI / 180;
+    double distance = distanceMax - distanceMin;
+
+    double lon1 = data[indexDeparture].second.getLonX() * degToRad;
+    double lat1 = data[indexDeparture].second.getLatY() * degToRad;
+    double lon2, lat2;
+
+    int indexDestination = indexDeparture;
+
+    do
+    {
+      triedIndexDestination.insert(indexDestination, true);
+      indexDestination = QRandomGenerator::global()->bounded(countResult);
+      if(triedIndexDestination.contains(indexDestination))
+        continue;
+      lon2 = data[indexDestination].second.getLonX() * degToRad;
+      lat2 = data[indexDestination].second.getLatY() * degToRad;
+    }
+    while(R_earth * qAcos(qSin(lat1) * qSin(lat2) + qCos(lat1) * qCos(lat2) * qCos(lon2 - lon1)) > distance);
+    // http://www.movable-type.co.uk/scripts/latlong.html Spherical Law of Cosines
+
+    qDebug() << Q_FUNC_INFO << "random flight, index departure: " << indexDeparture
+             << ", random flight, index destination: " << indexDestination;
+
+    QString stringDeparture = "";    // convert data[indexDeparture].first
+    QString stringDestination = "";    // convert data[indexDestination].first
+
+    map::MapAirport airportDeparture;
+    map::MapAirport airportDestination;
+
+    AirportQuery *airportQuery = NavApp::getAirportQueryNav();
+
+    airportQuery->getAirportByIdent(airportDeparture, stringDeparture);
+    airportQuery->getAirportByIdent(airportDestination, stringDestination);
+
+    // call MainWindow "new flightplan" method passing airportDeparture and airportDestination
+  }
+  else
+  {
+    // TODO: notify user about error
+  }
 
 }

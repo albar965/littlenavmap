@@ -1565,11 +1565,17 @@
              </property>
              <item>
               <widget class="QPushButton" name="pushButtonAirportFlightplanSearch">
+               <property name="maximumSize">
+                <size>
+                 <width>16777215</width>
+                 <height>21</height>
+                </size>
+               </property>
                <property name="toolTip">
                 <string>Generate a random flight plan from this search result.</string>
                </property>
                <property name="statusTip">
-                <string>Generate a random flight plan from this search result.</string>
+                <string>Generate a flight plan having a random departure and a random destination from this search result within the distance criteria given.</string>
                </property>
                <property name="text">
                 <string>&amp;Random Flight</string>
@@ -1594,13 +1600,13 @@
                 <bool>true</bool>
                </property>
                <property name="suffix">
-                <string> %dist% min</string>
+                <string> %dist% min distance</string>
                </property>
                <property name="maximum">
-                <number>8000</number>
+                <number>20490</number>
                </property>
                <property name="singleStep">
-                <number>100</number>
+                <number>10</number>
                </property>
               </widget>
              </item>
@@ -1622,19 +1628,19 @@
                 <bool>true</bool>
                </property>
                <property name="suffix">
-                <string> %dist% max</string>
+                <string> %dist% max distance</string>
                </property>
                <property name="minimum">
-                <number>100</number>
+                <number>10</number>
                </property>
                <property name="maximum">
-                <number>8000</number>
+                <number>20500</number>
                </property>
                <property name="singleStep">
-                <number>100</number>
+                <number>10</number>
                </property>
                <property name="value">
-                <number>1000</number>
+                <number>20500</number>
                </property>
               </widget>
              </item>
@@ -5690,7 +5696,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>42</y>
+              <y>62</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -12111,7 +12117,7 @@ Disabled if a navdatabase does not allow it.</string>
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupRouteCalc"/>
-  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
  </buttongroups>
 </ui>
