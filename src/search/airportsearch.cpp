@@ -902,14 +902,14 @@ allDeparturesTried:
     else
     {
       QMessageBox msgBox;
-      msgBox.setText("No airports found in the search result satisfying the criteria.");
+      msgBox.setText(tr("No airports found in the search result satisfying the criteria."));
       msgBox.exec();
     }
   }
   else
   {
     QMessageBox msgBox;
-    msgBox.setText("Minimum distance is larger than maximum distance!");
+    msgBox.setText(tr("Minimum distance is larger than maximum distance!"));
     msgBox.exec();
   }
 }
