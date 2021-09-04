@@ -757,7 +757,7 @@ void AirportSearch::randomFlightplanClicked()
   qDebug() << Q_FUNC_INFO << "random flight, distance min: " << distanceMin
            << ", random flight, distance max: " << distanceMax;
 
-  if(distanceMin <= distanceMax) {
+  if(distanceMin < distanceMax) {
     // TODO:
     // non-blocking notification: the closer the distance (max - min) is to 0, the longer the random selection might take
     // give estimated search value: ((20500 - (max - min)) / 20500) * 100% of all airports; 20500 is current max of distanceMax
@@ -909,7 +909,7 @@ allDeparturesTried:
   else
   {
     QMessageBox msgBox;
-    msgBox.setText(tr("Minimum distance is larger than maximum distance!"));
+    msgBox.setText(tr("Minimum distance is not smaller than maximum distance!"));
     msgBox.exec();
   }
 }
