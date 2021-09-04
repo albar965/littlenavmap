@@ -782,7 +782,6 @@ void AirportSearch::randomFlightplanClicked()
 
     const double R_earth = 6371;                                                  // km radius Earth
     const double degToRad = M_PI / 180;
-    const double distance = distanceMax - distanceMin;
 
     QMap<int, bool> triedIndexDeparture;                                          // acts as a lookup which indices have been tried already; QMap keys are sorted, lookup is very fast
 
@@ -837,9 +836,9 @@ void AirportSearch::randomFlightplanClicked()
 
       bool destinationSuccess;
 
-      double lon1 = data[indexDeparture].second.getLonX() * degToRad;
-      double lat1 = data[indexDeparture].second.getLatY() * degToRad;
-      double lon2, lat2;
+      const double lon1 = data[indexDeparture].second.getLonX() * degToRad;
+      const double lat1 = data[indexDeparture].second.getLatY() * degToRad;
+      double dist;
 
       do
       {
@@ -870,11 +869,12 @@ void AirportSearch::randomFlightplanClicked()
           latY = data[indexDestination].second.getLatY();
         }
         while(lonX == atools::geo::Pos::INVALID_VALUE || latY == atools::geo::Pos::INVALID_VALUE);
-        lon2 = lonX * degToRad;
-        lat2 = latY * degToRad;
+        const double lon2 = lonX * degToRad;
+        const double lat2 = latY * degToRad;
+        dist = R_earth * qAcos(qSin(lat1) * qSin(lat2) + qCos(lat1) * qCos(lat2) * qCos(lon2 - lon1));     // http://www.movable-type.co.uk/scripts/latlong.html Spherical Law of Cosines
         destinationSuccess = true;
       }
-      while(R_earth * qAcos(qSin(lat1) * qSin(lat2) + qCos(lat1) * qCos(lat2) * qCos(lon2 - lon1)) > distance);     // http://www.movable-type.co.uk/scripts/latlong.html Spherical Law of Cosines
+      while(dist < distanceMin || dist > distanceMax);
 destinationsEnd:
       if(destinationSuccess)                                                      // the last triedIndexDestination might be taken but it might have passed the last condition
       {
