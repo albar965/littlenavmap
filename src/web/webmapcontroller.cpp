@@ -221,3 +221,7 @@ MapPixmap WebMapController::getPixmapRect(int width, int height, atools::geo::Re
     return mapPixmap;
   }
 }
+
+MapPaintWidget* WebMapController::getMapPaintWidget() const{
+    return mapPaintWidget;
+}
