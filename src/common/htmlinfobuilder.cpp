@@ -1331,7 +1331,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
         // Fill table ==========================================================
         html.table();
 
-        if(!(type& proc::PROCEDURE_SID) && !(type & proc::PROCEDURE_STAR))
+        if(!(type & proc::PROCEDURE_SID) && !(type & proc::PROCEDURE_STAR))
           rowForBool(html, &recApp, "has_gps_overlay", tr("Has GPS Overlay"), false);
 
         addRadionavFixType(html, recApp);
@@ -2194,12 +2194,12 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
     // From/to ================================================================
     html.table();
     html.row2(tr("From:"),
-              airportLink(html, logEntry.departureIdent, logEntry.departureName) +
+              airportLink(html, logEntry.departureIdent, logEntry.departureName, logEntry.departurePos) +
               (logEntry.departureIdent.isEmpty() ? QString() :
                tr(", %1").arg(Unit::altFeet(rec.valueFloat("departure_alt")))),
               ahtml::NO_ENTITIES | ahtml::BOLD);
     html.row2(tr("To:"),
-              airportLink(html, logEntry.destinationIdent, logEntry.destinationName) +
+              airportLink(html, logEntry.destinationIdent, logEntry.destinationName, logEntry.destinationPos) +
               (logEntry.destinationIdent.isEmpty() ? QString() :
                tr(", %1").arg(Unit::altFeet(rec.valueFloat("destination_alt")))),
               ahtml::NO_ENTITIES | ahtml::BOLD);
@@ -3679,8 +3679,10 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       head(html, tr("Flight Plan"));
 
     html.table();
-    html.row2(tr("Departure:"), airportLink(html, aircraft.getFromIdent()), ahtml::NO_ENTITIES);
-    html.row2(tr("Destination:"), airportLink(html, aircraft.getToIdent()), ahtml::NO_ENTITIES);
+    html.row2(tr("Departure:"), airportLink(html, aircraft.getFromIdent(), QString(), atools::geo::EMPTY_POS),
+              ahtml::NO_ENTITIES);
+    html.row2(tr("Destination:"), airportLink(html, aircraft.getToIdent(), QString(), atools::geo::EMPTY_POS),
+              ahtml::NO_ENTITIES);
     html.tableEnd();
     html.br();
   }
@@ -3989,21 +3991,26 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 #endif
 }
 
-QString HtmlInfoBuilder::airportLink(const HtmlBuilder& html, const QString& ident, const QString& name) const
+QString HtmlInfoBuilder::airportLink(const HtmlBuilder& html, const QString& ident, const QString& name,
+                                     const atools::geo::Pos& pos) const
 {
   HtmlBuilder builder = html.cleared();
   if(!ident.isEmpty())
   {
     if(info)
     {
+      QString link = QString("lnm://show?airport=%1").arg(ident);
+      if(pos.isValid())
+        link += QString("&aplonx=%1&aplaty=%2").arg(pos.getLonX()).arg(pos.getLatY());
+
       if(name.isEmpty())
         // Ident only
-        builder.a(ident, QString("lnm://show?airport=%1").arg(ident), ahtml::LINK_NO_UL);
+        builder.a(ident, link, ahtml::LINK_NO_UL);
       else
       {
         // Name and ident
         builder.text(tr("%1 (").arg(name));
-        builder.a(ident, QString("lnm://show?airport=%1").arg(ident), ahtml::LINK_NO_UL);
+        builder.a(ident, link, ahtml::LINK_NO_UL);
         builder.text(tr(")"));
       }
     }

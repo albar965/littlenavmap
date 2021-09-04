@@ -26,6 +26,7 @@ class Column;
 class AirportIconDelegate;
 class QAction;
 class QueryBuilderResult;
+class UnitStringTool;
 
 namespace atools {
 namespace sql {
@@ -55,6 +56,7 @@ public:
   virtual void getSelectedMapObjects(map::MapResult& result) const override;
   virtual void connectSearchSlots() override;
   virtual void postDatabaseLoad() override;
+  virtual void resetSearch() override;
 
 private:
   virtual void updateButtonMenu() override;
@@ -62,6 +64,9 @@ private:
   virtual void restoreViewState(bool distSearchActive) override;
   virtual void updatePushButtons() override;
   QAction *followModeAction() override;
+
+  /* Options dialog has changed some options */
+  virtual void optionsChanged() override;
 
   /* Callback for combined query on ident, icao, faa and local columns. */
   QueryBuilderResult airportQueryBuilderFunc(QWidget *widget);
@@ -71,6 +76,8 @@ private:
                             const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
   QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
   void overrideMode(const QStringList& overrideColumnTitles);
+
+  void randomFlightplanClicked();
 
   static const QSet<QString> NUMBER_COLUMNS;
 
@@ -82,7 +89,7 @@ private:
 
   /* Draw airport icon into ident table column */
   AirportIconDelegate *iconDelegate = nullptr;
-
+  UnitStringTool *unitStringTool;
 };
 
 #endif // LITTLENAVMAP_AIRPORTSEARCH_H

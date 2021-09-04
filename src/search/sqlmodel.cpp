@@ -417,7 +417,9 @@ QString SqlModel::buildColumnList(const atools::sql::SqlRecord& tableCols)
 /* Create SQL query and set it into the model */
 void SqlModel::buildQuery()
 {
-  atools::sql::SqlRecord tableCols = db->record(columns->getTablename());
+  QString tablename = columns->getTablename();
+
+  atools::sql::SqlRecord tableCols = db->record(tablename);
   QString queryCols = buildColumnList(tableCols);
 
   QVector<const Column *> overrideColumns;
@@ -433,7 +435,7 @@ void SqlModel::buildQuery()
     if(!tableCols.contains(orderByCol))
     {
       // Skip not existing columns for backwards compatibility
-      qWarning() << Q_FUNC_INFO << columns->getTablename() + "." + col->getColumnName() << "does not exist";
+      qWarning() << Q_FUNC_INFO << tablename + "." + col->getColumnName() << "does not exist";
     }
     else if(!(col->getSortFuncAsc().isEmpty() && col->getSortFuncDesc().isEmpty()))
     {
@@ -449,17 +451,36 @@ void SqlModel::buildQuery()
       queryOrder += "order by " + orderByCol + " " + orderByOrder;
   }
 
-  currentSqlQuery = "select " + queryCols + " from " + columns->getTablename() +
+  currentSqlQuery = "select " + queryCols + " from " + tablename +
                     " " + queryWhere + " " + queryOrder;
 
-  // Build a query to find the total row count of the result
+  // Build a query to find the total row count of the result ==================
   totalRowCount = 0;
-  currentSqlCountQuery = "select count(1) from " + columns->getTablename() + " " + queryWhere;
+  currentSqlCountQuery = "select count(1) from " + tablename + " " + queryWhere;
+
+  // Build a query to fetch the whole result set in getFullResultSet() ==================
+  if(!boundingRect.isValid())
+  {
+    QStringList colList(columns->getIdColumnName());
+
+    // Add coordinates if available
+    if(columns->hasColumn("lonx") && columns->hasColumn("laty"))
+    {
+      colList.append("lonx");
+      colList.append("laty");
+    }
+
+    currentSqlFetchQuery = "select " + colList.join(", ") + " from " + tablename + " " + queryWhere;
+  }
+  else
+    // No result set for distance searches since the result is not filtered by precise distance
+    currentSqlFetchQuery.clear();
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << currentSqlQuery;
 #endif
 
+  // Emit the columns which probably override other search options
   QStringList overrideColumnTitles;
   if(!overrideColumns.isEmpty())
   {
@@ -706,6 +727,35 @@ QString SqlModel::getColumnName(int col) const
 QVariant SqlModel::getFormattedFieldData(const QModelIndex& index) const
 {
   return data(index);
+}
+
+void SqlModel::getFullResultSet(QVector<std::pair<int, atools::geo::Pos> >& result)
+{
+  if(!currentSqlFetchQuery.isEmpty())
+  {
+    try
+    {
+      // Use current query to fetch data
+      const QString idColumnName = columns->getIdColumnName();
+      SqlQuery stmt(db);
+      stmt.exec(currentSqlFetchQuery);
+      while(stmt.next())
+      {
+        // Use invalid coordinate if columns are not available
+        atools::geo::Pos pos(stmt.valueFloat("lonx", atools::geo::Pos::INVALID_VALUE),
+                             stmt.valueFloat("laty", atools::geo::Pos::INVALID_VALUE));
+        result.append(std::make_pair(stmt.valueInt(idColumnName), pos));
+      }
+    }
+    catch(atools::Exception& e)
+    {
+      ATOOLS_HANDLE_EXCEPTION(e);
+    }
+    catch(...)
+    {
+      ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
+    }
+  }
 }
 
 atools::sql::SqlRecord SqlModel::getSqlRecord() const

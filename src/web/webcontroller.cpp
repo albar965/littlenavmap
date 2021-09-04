@@ -298,3 +298,9 @@ QString WebController::getDefaultDocumentRoot() const
 {
   return QFileInfo(QCoreApplication::applicationDirPath() + QDir::separator() + "web").canonicalFilePath();
 }
+
+
+WebMapController *WebController::getWebMapController() const{
+    return mapController;
+
+}

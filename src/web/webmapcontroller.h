@@ -102,6 +102,8 @@ public:
   /* Zoom to rectangel on map. */
   MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect, const QString& errorCase = tr("Invalid rectangle"));
 
+  /* Get the map paint widget */
+  MapPaintWidget* getMapPaintWidget() const;
 private:
   MapPaintWidget *mapPaintWidget = nullptr;
   QWidget *parentWidget;
