@@ -40,6 +40,7 @@
 
 #include <QRandomGenerator>
 #include <QtMath>
+#include <QMessageBox>
 
 /* Default values for minimum and maximum random flight plan distance */
 const static int FLIGHTPLAN_MIN_DISTANCE_DEFAULT = 100;
@@ -757,10 +758,15 @@ void AirportSearch::randomFlightplanClicked()
            << ", random flight, distance max: " << distanceMax;
 
   if(distanceMin <= distanceMax) {
-    // TODO: non-blocking notification: the closer the distance (max - min) is to 0, the longer the random selection might take
+    // TODO:
+    // non-blocking notification: the closer the distance (max - min) is to 0, the longer the random selection might take
     // give estimated search value: ((20500 - (max - min)) / 20500) * 100% of all airports; 20500 is current max of distanceMax
-    // TODO: if estimated search value is > 99,5% : ask user if he we wants to let continue ( > 99,5% == < 100 km distance)
+    // TODO:
+    // if estimated search value is > 99,5% : ask user if he we wants to let continue ( > 99,5% == < 100 km distance)
+    // NOTE:
     // currently no interrupt after time or x attempts
+    // NOTE:
+    // even searching for 10 km max distance (the lowest possible max distance, potentially taking the most time) from 37000 airports was "instantaneous" (i7-8700K)
 
     // Fetch data from SQL model
     QVector<std::pair<int, atools::geo::Pos> > result;
@@ -770,69 +776,115 @@ void AirportSearch::randomFlightplanClicked()
 
     qDebug() << Q_FUNC_INFO << "random flight, count source airports: " << countResult;
 
+    const int randomLimit = countResult / 10 * 7;                                 // above this limit do not try to find a random value beacuse this will only have few "space" to "pick" from many already picked
+
     const std::pair<int, atools::geo::Pos>* data = result.data();
 
-    const double R_earth = 6371;      // km radius Earth
+    const double R_earth = 6371;                                                  // km radius Earth
     const double degToRad = M_PI / 180;
     const double distance = distanceMax - distanceMin;
 
-    QMap<int, bool> triedIndexDeparture;        // acts as a lookup which indices have been tried already; QMap keys are sorted, lookup is very fast
+    QMap<int, bool> triedIndexDeparture;                                          // acts as a lookup which indices have been tried already; QMap keys are sorted, lookup is very fast
+
+    bool departureSuccess;
 
     bool noSuccess = true;
     int indexDeparture, indexDestination;
 
     do
     {
-      do
+      // split index finding into 2 approaches (if(while) rather than while(if) for performance reason)
+      if(triedIndexDeparture.count() < randomLimit)
       {
-tryagain3:
-        indexDeparture = QRandomGenerator::global()->bounded(countResult);
-        if(triedIndexDeparture.contains(indexDeparture))
-          goto tryagain3;  // because "continue" would evaluate the condition in the while which is unnecessary
+        // random picking
+        // on small result sets, if all are invalid value, we wouldn't switch to the incremented random approach (because the "if" is outside), but being a small result set, this approach might still try every index after some time
+        do
+        {
+          departureSuccess = false;
+          if(triedIndexDeparture.count() == countResult)
+            goto allDeparturesTried;
+          do
+          {
+            indexDeparture = QRandomGenerator::global()->bounded(countResult);
+          }
+          while(triedIndexDeparture.contains(indexDeparture));
+          triedIndexDeparture.insert(indexDeparture, true);
+          departureSuccess = true;
+        }
+        while(data[indexDeparture].second.getLonX() == atools::geo::Pos::INVALID_VALUE || data[indexDeparture].second.getLatY() == atools::geo::Pos::INVALID_VALUE);
       }
-      while(data[indexDeparture].second.getLonX() == atools::geo::Pos::INVALID_VALUE || data[indexDeparture].second.getLatY() == atools::geo::Pos::INVALID_VALUE);
+      else {
+        // random pick, then increment
+        indexDeparture = QRandomGenerator::global()->bounded(countResult);
+        do
+        {
+          departureSuccess = false;
+          if(triedIndexDeparture.count() == countResult)
+            goto allDeparturesTried;
+          while(triedIndexDeparture.contains(indexDeparture))
+          {
+            indexDeparture = (indexDeparture + 1) % countResult;
+          }
+          triedIndexDeparture.insert(indexDeparture, true);
+          departureSuccess = true;
+        }
+        while(data[indexDeparture].second.getLonX() == atools::geo::Pos::INVALID_VALUE || data[indexDeparture].second.getLatY() == atools::geo::Pos::INVALID_VALUE);
+      }
 
-      QMap<int, bool> triedIndexDestination;    // acts as a lookup which indices have been tried already; QMap keys are sorted, lookup is very fast
+      QMap<int, bool> triedIndexDestination;                                      // acts as a lookup which indices have been tried already; QMap keys are sorted, lookup is very fast
+
+      triedIndexDestination.insert(indexDeparture, true);                         // destination shall != departure
+
+      bool destinationSuccess;
 
       double lon1 = data[indexDeparture].second.getLonX() * degToRad;
       double lat1 = data[indexDeparture].second.getLatY() * degToRad;
       double lon2, lat2;
 
-      indexDestination = indexDeparture;
-
       do
       {
-tryagain2:
-        triedIndexDestination.insert(indexDestination, true);
-        if(triedIndexDestination.count() == countResult)
-          break;
-tryagain:
-        indexDestination = QRandomGenerator::global()->bounded(countResult);
-        if(triedIndexDestination.contains(indexDestination))
-          goto tryagain;  // because "continue" would evaluate the condition in the while for which the lon2,lat2 might be unitialised and the whole calculation is unnecessary
-        float lonX = data[indexDestination].second.getLonX();
-        float latY = data[indexDestination].second.getLatY();
-        if(lonX == atools::geo::Pos::INVALID_VALUE || latY == atools::geo::Pos::INVALID_VALUE)
-          goto tryagain2;  // because "continue" would evaluate the condition in the while for which the lon2,lat2 might be unitialised and the whole calculation is unnecessary
+        destinationSuccess = false;
+        float lonX, latY;
+        do
+        {
+          if(triedIndexDestination.count() == countResult)
+            goto destinationsEnd;                                                 // all destinations have been depleted, try a different departure
+          if(triedIndexDestination.count() < randomLimit)                         // the "if" is inside the "while" for the destination because the indices get used up during "picking"
+          {
+            do
+            {
+              indexDestination = QRandomGenerator::global()->bounded(countResult);
+            }
+            while(triedIndexDestination.contains(indexDestination));
+          }
+          else
+          {
+            indexDestination = QRandomGenerator::global()->bounded(countResult);
+            while(triedIndexDestination.contains(indexDestination))
+            {
+              indexDestination = (indexDestination + 1) % countResult;
+            }
+          }
+          triedIndexDestination.insert(indexDestination, true);
+          lonX = data[indexDestination].second.getLonX();
+          latY = data[indexDestination].second.getLatY();
+        }
+        while(lonX == atools::geo::Pos::INVALID_VALUE || latY == atools::geo::Pos::INVALID_VALUE);
         lon2 = lonX * degToRad;
         lat2 = latY * degToRad;
+        destinationSuccess = true;
       }
-      while(R_earth * qAcos(qSin(lat1) * qSin(lat2) + qCos(lat1) * qCos(lat2) * qCos(lon2 - lon1)) > distance);
-      // http://www.movable-type.co.uk/scripts/latlong.html Spherical Law of Cosines
-
-      if(triedIndexDestination.count() < countResult)
+      while(R_earth * qAcos(qSin(lat1) * qSin(lat2) + qCos(lat1) * qCos(lat2) * qCos(lon2 - lon1)) > distance);     // http://www.movable-type.co.uk/scripts/latlong.html Spherical Law of Cosines
+destinationsEnd:
+      if(destinationSuccess)                                                      // the last triedIndexDestination might be taken but it might have passed the last condition
       {
         noSuccess = false;
         continue;
       }
-
-      triedIndexDeparture.insert(indexDeparture, true);
-      if(triedIndexDeparture.count() == countResult)
-        break;
     }
     while(noSuccess);
-
-    if(triedIndexDeparture.count() < countResult)
+allDeparturesTried:
+    if(departureSuccess)                                                          // the last triedIndexDeparture might be taken but it might have passed the last condition, destinationSuccess must be true if this "if" is reached
     {
       qDebug() << Q_FUNC_INFO << "random flight, index departure: " << indexDeparture
                << ", random flight, index destination: " << indexDestination;
@@ -849,12 +901,15 @@ tryagain:
     }
     else
     {
-      // TODO: inform user: nothing found
+      QMessageBox msgBox;
+      msgBox.setText("No airports found in the search result satisfying the criteria.");
+      msgBox.exec();
     }
   }
   else
   {
-    // TODO: notify user about error
+    QMessageBox msgBox;
+    msgBox.setText("Minimum distance is larger than maximum distance!");
+    msgBox.exec();
   }
-
 }

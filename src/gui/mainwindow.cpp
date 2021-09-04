@@ -2309,6 +2309,7 @@ void MainWindow::routeNewFromAirports(map::MapAirport departure, map::MapAirport
     emit routeSetDestination(destination);
     mapWidget->update();
     showFlightPlan();
+    routeCenter();
     setStatusMessage(tr("Created new flight plan with departure and destination airport."));
   }
 }
