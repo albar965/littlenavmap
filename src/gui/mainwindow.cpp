@@ -1584,8 +1584,6 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::routeAddAlternate, routeController, &RouteController::routeAddAlternate);
   connect(mapWidget, &MapWidget::routeAdd, routeController, &RouteController::routeAdd);
   connect(mapWidget, &MapWidget::routeReplace, routeController, &RouteController::routeReplace);
-  connect(this, &MainWindow::routeSetDeparture, routeController, &RouteController::routeSetDeparture);
-  connect(this, &MainWindow::routeSetDestination, routeController, &RouteController::routeSetDestination);
 
   // Messages about database query result status
   connect(mapWidget, &MapPaintWidget::resultTruncated, this, &MainWindow::resultTruncated);
@@ -2357,8 +2355,8 @@ void MainWindow::routeRandomNew()
       while(airportDestination.flags == map::AP_NONE && ++currentAttempt < maxAttemptsDestination);
 
       if(airportDestination.flags != map::AP_NONE) {
-        emit routeSetDeparture(airportDeparture);
-        emit routeSetDestination(airportDestination);
+        routeController->routeSetDeparture(airportDeparture);
+        routeController->routeSetDestination(airportDestination);
       }
     }
 

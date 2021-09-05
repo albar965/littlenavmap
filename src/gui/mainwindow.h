@@ -230,10 +230,6 @@ signals:
   /* Emitted when window is shown the first time */
   void windowShown();
 
-  void routeSetDeparture(const map::MapAirport& airport);
-  void routeSetDestination(const map::MapAirport& airport);
-
-
 private:
   /* Work on the close event that also catches clicking the close button
    * in the window frame */
