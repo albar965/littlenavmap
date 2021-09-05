@@ -789,7 +789,7 @@ void AirportSearch::randomFlightplanClicked()
 {
   QMessageBox timeProgressedMessage;
   timeProgressedMessage.setText(tr("Random picking and criteria comparison was running for (another) 10 seconds."));
-  timeProgressedMessage.setInformativeText("Do you want to let it continue?");
+  timeProgressedMessage.setInformativeText(tr("Do you want to let it continue?"));
   timeProgressedMessage.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
   timeProgressedMessage.setDefaultButton(QMessageBox::Yes);
   timeProgressedMessage.setIcon(QMessageBox::Question);
