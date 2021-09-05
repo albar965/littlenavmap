@@ -366,7 +366,10 @@ void AirportSearch::connectSearchSlots()
   connect(ui->pushButtonAirportSearchClearSelection, &QPushButton::clicked,
           this, &SearchBaseTable::nothingSelectedTriggered);
   connect(ui->pushButtonAirportSearchReset, &QPushButton::clicked, this, &AirportSearch::resetSearch);
+
   connect(ui->pushButtonAirportFlightplanSearch, &QPushButton::clicked, this, &AirportSearch::randomFlightplanClicked);
+  connect(ui->spinBoxAirportFlightplanMinSearch, QOverload<int>::of(&QSpinBox::valueChanged), this, &AirportSearch::randomFlightplanMinDistance);
+  connect(ui->spinBoxAirportFlightplanMaxSearch, QOverload<int>::of(&QSpinBox::valueChanged), this, &AirportSearch::randomFlightplanMaxDistance);
 
   installEventFilterForWidget(ui->lineEditAirportIcaoSearch);
   installEventFilterForWidget(ui->lineEditAirportCitySearch);
@@ -746,8 +749,53 @@ void AirportSearch::resetSearch()
   SearchBaseTable::resetSearch();
 }
 
+void AirportSearch::randomFlightplanMinDistance(int newValue)
+{
+  static int countChange = 0;
+  ++countChange;
+  int referencedChange = countChange;
+  QTimer::singleShot(3000, this, [ = ] () {
+    if(referencedChange == countChange)
+    {
+      Ui::MainWindow *ui = NavApp::getMainUi();
+      int maxValue = ui->spinBoxAirportFlightplanMaxSearch->value() - ui->spinBoxAirportFlightplanMinSearch->singleStep();
+      if(newValue > maxValue)
+      {
+        ui->spinBoxAirportFlightplanMinSearch->setValue(maxValue);
+      }
+    }
+  });
+}
+
+void AirportSearch::randomFlightplanMaxDistance(int newValue)
+{
+  static int countChange = 0;
+  ++countChange;
+  int referencedChange = countChange;
+  QTimer::singleShot(3000, this, [ = ] () {
+    if(referencedChange == countChange)
+    {
+      Ui::MainWindow *ui = NavApp::getMainUi();
+      int minValue = ui->spinBoxAirportFlightplanMinSearch->value() + ui->spinBoxAirportFlightplanMaxSearch->singleStep();
+      if(newValue < minValue)
+      {
+        ui->spinBoxAirportFlightplanMaxSearch->setValue(minValue);
+      }
+    }
+  });
+}
+
 void AirportSearch::randomFlightplanClicked()
 {
+  QMessageBox timeProgressedMessage;
+  timeProgressedMessage.setText(tr("Random picking and criteria comparison was running for (another) 10 seconds."));
+  timeProgressedMessage.setInformativeText("Do you want to let it continue?");
+  timeProgressedMessage.setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+  timeProgressedMessage.setDefaultButton(QMessageBox::Yes);
+  timeProgressedMessage.setIcon(QMessageBox::Question);
+
+  bool randomFlightplanNotAborted = true;
+
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   int distanceMin = ui->spinBoxAirportFlightplanMinSearch->value();
@@ -757,159 +805,148 @@ void AirportSearch::randomFlightplanClicked()
   qDebug() << Q_FUNC_INFO << "random flight, distance min: " << distanceMin
            << ", random flight, distance max: " << distanceMax;
 
-  if(distanceMin < distanceMax) {
-    // TODO:
-    // non-blocking notification: the closer the distance (max - min) is to 0, the longer the random selection might take
-    // give estimated search value: ((20500 - (max - min)) / 20500) * 100% of all airports; 20500 is current max of distanceMax
-    // TODO:
-    // if estimated search value is > 99,5% : ask user if he we wants to let continue ( > 99,5% == < 100 km distance)
-    // NOTE:
-    // currently no interrupt after time or x attempts
-    // NOTE:
-    // even searching for 10 km max distance (the lowest possible max distance, potentially taking the most time) from 37000 airports was "instantaneous" (i7-8700K)
+  // Fetch data from SQL model
+  QVector<std::pair<int, atools::geo::Pos> > result;
+  controller->getSqlModel()->getFullResultSet(result);
 
-    // Fetch data from SQL model
-    QVector<std::pair<int, atools::geo::Pos> > result;
-    controller->getSqlModel()->getFullResultSet(result);
+  const int countResult = result.size();                                        // NOTE: once this value reaches 100000 (one-hundred thousand) or above, consider time checks in departure picking
 
-    const int countResult = result.size();
+  qDebug() << Q_FUNC_INFO << "random flight, count source airports: " << countResult;
 
-    qDebug() << Q_FUNC_INFO << "random flight, count source airports: " << countResult;
+  const int randomLimit = countResult / 10 * 7;                                 // above this limit do not try to find a random value beacuse this will only have few "space" to "pick" from many already picked
 
-    const int randomLimit = countResult / 10 * 7;                                 // above this limit do not try to find a random value beacuse this will only have few "space" to "pick" from many already picked
+  const std::pair<int, atools::geo::Pos>* data = result.data();                 // for faster access (no method call)
 
-    const std::pair<int, atools::geo::Pos>* data = result.data();
+  QMap<int, bool> triedIndexDeparture;                                          // acts as a lookup which indices have been tried already; QMap keys are sorted, lookup is very fast
 
-    const double R_earth = 6371;                                                  // km radius Earth
-    const double degToRad = M_PI / 180;
+  bool departureSuccess;
 
-    QMap<int, bool> triedIndexDeparture;                                          // acts as a lookup which indices have been tried already; QMap keys are sorted, lookup is very fast
+  bool noSuccess = true;
+  int indexDeparture, indexDestination;
 
-    bool departureSuccess;
+  int timestampLastcheck = QDateTime::currentSecsSinceEpoch();
 
-    bool noSuccess = true;
-    int indexDeparture, indexDestination;
+  int loopCounter = 0;
+
+  do
+  {
+    // split index finding into 2 approaches (if(while) rather than while(if) for performance reason)
+    if(triedIndexDeparture.count() < randomLimit)
+    {
+      // random picking
+      // on small result sets, if all are invalid value, we wouldn't switch to the incremented random approach (because the "if" is outside), but being a small result set, this approach might still try every index after some time
+      do
+      {
+        departureSuccess = false;
+        if(triedIndexDeparture.count() == countResult)
+          goto allDeparturesTried;
+        do
+        {
+          indexDeparture = QRandomGenerator::global()->bounded(countResult);
+        }
+        while(triedIndexDeparture.contains(indexDeparture));
+        triedIndexDeparture.insert(indexDeparture, true);
+        departureSuccess = true;
+      }
+      while(!data[indexDeparture].second.isValid());
+    }
+    else {
+      // random pick, then increment
+      indexDeparture = QRandomGenerator::global()->bounded(countResult);
+      do
+      {
+        departureSuccess = false;
+        if(triedIndexDeparture.count() == countResult)
+          goto allDeparturesTried;
+        while(triedIndexDeparture.contains(indexDeparture))
+        {
+          indexDeparture = (indexDeparture + 1) % countResult;
+        }
+        triedIndexDeparture.insert(indexDeparture, true);
+        departureSuccess = true;
+      }
+      while(!data[indexDeparture].second.isValid());
+    }
+
+    QMap<int, bool> triedIndexDestination;                                      // acts as a lookup which indices have been tried already; QMap keys are sorted, lookup is very fast
+
+    triedIndexDestination.insert(indexDeparture, true);                         // destination shall != departure
+
+    double dist;
+
+    bool destinationSuccess;
 
     do
     {
-      // split index finding into 2 approaches (if(while) rather than while(if) for performance reason)
-      if(triedIndexDeparture.count() < randomLimit)
-      {
-        // random picking
-        // on small result sets, if all are invalid value, we wouldn't switch to the incremented random approach (because the "if" is outside), but being a small result set, this approach might still try every index after some time
-        do
+      destinationSuccess = false;
+      if(++loopCounter % 1000 == 0)                                             // overflow is no issue here
+      {                                                                         // destination picking is the main time-taking loop, do time checking only here (as long as max airport count around 37000)
+        if(QDateTime::currentSecsSinceEpoch() >= timestampLastcheck + 10)
         {
-          departureSuccess = false;
-          if(triedIndexDeparture.count() == countResult)
-            goto allDeparturesTried;
-          do
-          {
-            indexDeparture = QRandomGenerator::global()->bounded(countResult);
+          int decision = timeProgressedMessage.exec();
+          if(decision == QMessageBox::No) {
+            randomFlightplanNotAborted = false;
+            goto allDeparturesTried;                                            // allDeparturesTried is the end (as here is no airport left possible as destination)
           }
-          while(triedIndexDeparture.contains(indexDeparture));
-          triedIndexDeparture.insert(indexDeparture, true);
-          departureSuccess = true;
+          timestampLastcheck = QDateTime::currentSecsSinceEpoch();
         }
-        while(data[indexDeparture].second.getLonX() == atools::geo::Pos::INVALID_VALUE || data[indexDeparture].second.getLatY() == atools::geo::Pos::INVALID_VALUE);
       }
-      else {
-        // random pick, then increment
-        indexDeparture = QRandomGenerator::global()->bounded(countResult);
-        do
-        {
-          departureSuccess = false;
-          if(triedIndexDeparture.count() == countResult)
-            goto allDeparturesTried;
-          while(triedIndexDeparture.contains(indexDeparture))
-          {
-            indexDeparture = (indexDeparture + 1) % countResult;
-          }
-          triedIndexDeparture.insert(indexDeparture, true);
-          departureSuccess = true;
-        }
-        while(data[indexDeparture].second.getLonX() == atools::geo::Pos::INVALID_VALUE || data[indexDeparture].second.getLatY() == atools::geo::Pos::INVALID_VALUE);
-      }
-
-      QMap<int, bool> triedIndexDestination;                                      // acts as a lookup which indices have been tried already; QMap keys are sorted, lookup is very fast
-
-      triedIndexDestination.insert(indexDeparture, true);                         // destination shall != departure
-
-      bool destinationSuccess;
-
-      const double lon1 = data[indexDeparture].second.getLonX() * degToRad;
-      const double lat1 = data[indexDeparture].second.getLatY() * degToRad;
-      double dist;
-
       do
       {
-        destinationSuccess = false;
-        float lonX, latY;
-        do
+        if(triedIndexDestination.count() == countResult)
+          goto destinationsEnd;                                                 // all destinations have been depleted, try a different departure
+        if(triedIndexDestination.count() < randomLimit)                         // the "if" is inside the "while" for the destination because the indices get used up during "picking"
         {
-          if(triedIndexDestination.count() == countResult)
-            goto destinationsEnd;                                                 // all destinations have been depleted, try a different departure
-          if(triedIndexDestination.count() < randomLimit)                         // the "if" is inside the "while" for the destination because the indices get used up during "picking"
-          {
-            do
-            {
-              indexDestination = QRandomGenerator::global()->bounded(countResult);
-            }
-            while(triedIndexDestination.contains(indexDestination));
-          }
-          else
+          do
           {
             indexDestination = QRandomGenerator::global()->bounded(countResult);
-            while(triedIndexDestination.contains(indexDestination))
-            {
-              indexDestination = (indexDestination + 1) % countResult;
-            }
           }
-          triedIndexDestination.insert(indexDestination, true);
-          lonX = data[indexDestination].second.getLonX();
-          latY = data[indexDestination].second.getLatY();
+          while(triedIndexDestination.contains(indexDestination));
         }
-        while(lonX == atools::geo::Pos::INVALID_VALUE || latY == atools::geo::Pos::INVALID_VALUE);
-        const double lon2 = lonX * degToRad;
-        const double lat2 = latY * degToRad;
-        dist = R_earth * qAcos(qSin(lat1) * qSin(lat2) + qCos(lat1) * qCos(lat2) * qCos(lon2 - lon1));     // http://www.movable-type.co.uk/scripts/latlong.html Spherical Law of Cosines
-        destinationSuccess = true;
+        else
+        {
+          indexDestination = QRandomGenerator::global()->bounded(countResult);
+          while(triedIndexDestination.contains(indexDestination))
+          {
+            indexDestination = (indexDestination + 1) % countResult;
+          }
+        }
+        triedIndexDestination.insert(indexDestination, true);
+        dist = data[indexDeparture].second.distanceMeterTo(data[indexDestination].second) / 1000;         // distanceMeterTo checks for isValid
       }
-      while(dist < distanceMin || dist > distanceMax);
+      while(dist == atools::geo::Pos::INVALID_VALUE);
+      destinationSuccess = true;
+    }
+    while(dist < distanceMin || dist > distanceMax);
 destinationsEnd:
-      if(destinationSuccess)                                                      // the last triedIndexDestination might be taken but it might have passed the last condition
-      {
-        noSuccess = false;
-        continue;
-      }
+    if(destinationSuccess)                                                      // the last triedIndexDestination might be taken but it might have passed the last condition (thus checking a bool and not the map count being countResult)
+    {
+      noSuccess = false;
+      continue;
     }
-    while(noSuccess);
+  }
+  while(noSuccess);
 allDeparturesTried:
-    if(departureSuccess)                                                          // the last triedIndexDeparture might be taken but it might have passed the last condition, destinationSuccess must be true if this "if" is reached
-    {
-      qDebug() << Q_FUNC_INFO << "random flight, index departure: " << indexDeparture
-               << ", random flight, index destination: " << indexDestination;
+  timeProgressedMessage.hide();
+  if(departureSuccess && randomFlightplanNotAborted)                            // the last triedIndexDeparture might be taken but it might have passed the last condition (thus checking a bool and not the map count being countResult), destinationSuccess must be true if this "if" is reached
+  {
+    qDebug() << Q_FUNC_INFO << "random flight, index departure: " << indexDeparture
+             << ", random flight, index destination: " << indexDestination;
 
-      map::MapAirport airportDeparture;
-      map::MapAirport airportDestination;
+    map::MapAirport airportDeparture;
+    map::MapAirport airportDestination;
 
-      AirportQuery *airportQuery = NavApp::getAirportQuerySim();
+    AirportQuery *airportQuery = NavApp::getAirportQuerySim();
 
-      airportQuery->getAirportById(airportDeparture, data[indexDeparture].first);
-      airportQuery->getAirportById(airportDestination, data[indexDestination].first);
+    airportQuery->getAirportById(airportDeparture, data[indexDeparture].first);
+    airportQuery->getAirportById(airportDestination, data[indexDestination].first);
 
-      NavApp::getMainWindow()->routeNewFromAirports(airportDeparture, airportDestination);
-    }
-    else
-    {
-      QMessageBox msgBox;
-      msgBox.setText(tr("No airports found in the search result satisfying the criteria."));
-      msgBox.exec();
-    }
+    NavApp::getMainWindow()->routeNewFromAirports(airportDeparture, airportDestination);
   }
   else
   {
     QMessageBox msgBox;
-    msgBox.setText(tr("Minimum distance is not smaller than maximum distance!"));
+    msgBox.setText(tr("No airports found in the search result satisfying the criteria."));
     msgBox.exec();
   }
 }

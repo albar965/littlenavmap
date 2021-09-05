@@ -78,6 +78,8 @@ private:
   void overrideMode(const QStringList& overrideColumnTitles);
 
   void randomFlightplanClicked();
+  void randomFlightplanMinDistance(int newValue);
+  void randomFlightplanMaxDistance(int newValue);
 
   static const QSet<QString> NUMBER_COLUMNS;
 
