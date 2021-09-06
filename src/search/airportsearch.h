@@ -61,11 +61,7 @@ public:
 
 public slots:
   void progressing();
-  void progressCancel();
   void dataRandomAirportsReceived(bool isSuccess, int indexDeparture, int indexDestination, QVector<std::pair<int, atools::geo::Pos>>* data);
-
-signals:
-  void cancelRandomAirportsPicking();
 
 private:
   virtual void updateButtonMenu() override;
@@ -102,7 +98,8 @@ private:
   AirportIconDelegate *iconDelegate = nullptr;
   UnitStringTool *unitStringTool;
 
-  QProgressDialog* progress;
+  static int globalInputChangeCounter;
+  QProgressDialog* progress = nullptr;
 };
 
 #endif // LITTLENAVMAP_AIRPORTSEARCH_H

@@ -749,13 +749,13 @@ void AirportSearch::resetSearch()
   SearchBaseTable::resetSearch();
 }
 
+int AirportSearch::globalInputChangeCounter = 0;
+
 void AirportSearch::randomFlightplanMinDistance(int newValue)
 {
-  static int countChange = 0;
-  ++countChange;
-  int referencedChange = countChange;
-  QTimer::singleShot(2000, this, [ = ] () {
-    if(referencedChange == countChange)
+  int referencedChange = ++globalInputChangeCounter;
+  QTimer::singleShot(3000, this, [referencedChange, newValue] () {
+    if(referencedChange == AirportSearch::globalInputChangeCounter)
     {
       Ui::MainWindow *ui = NavApp::getMainUi();
       int maxValue = ui->spinBoxAirportFlightplanMaxSearch->value() - ui->spinBoxAirportFlightplanMinSearch->singleStep();
@@ -769,11 +769,9 @@ void AirportSearch::randomFlightplanMinDistance(int newValue)
 
 void AirportSearch::randomFlightplanMaxDistance(int newValue)
 {
-  static int countChange = 0;
-  ++countChange;
-  int referencedChange = countChange;
-  QTimer::singleShot(2000, this, [ = ] () {
-    if(referencedChange == countChange)
+  int referencedChange = ++globalInputChangeCounter;
+  QTimer::singleShot(3000, this, [referencedChange, newValue] () {
+    if(referencedChange == AirportSearch::globalInputChangeCounter)
     {
       Ui::MainWindow *ui = NavApp::getMainUi();
       int minValue = ui->spinBoxAirportFlightplanMinSearch->value() + ui->spinBoxAirportFlightplanMaxSearch->singleStep();
@@ -787,6 +785,9 @@ void AirportSearch::randomFlightplanMaxDistance(int newValue)
 
 void AirportSearch::randomFlightplanClicked()
 {
+  if(progress != nullptr)                                                       // previous run did not complete yet
+    return;
+
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   int distanceMin = ui->spinBoxAirportFlightplanMinSearch->value();
@@ -806,16 +807,15 @@ void AirportSearch::randomFlightplanClicked()
 
   const int randomLimit = countResult / 10 * 7;                                 // above this limit do not try to find a random value beacuse this will only have few "space" to "pick" from many already picked
 
-  progress = new QProgressDialog(tr("random picking and criteria comparison running..."), tr("Abort running"), 0, countResult);
+  progress = new QProgressDialog(tr("random picking and criteria comparison running..."), tr("Abort running"), 0, 30);      // maximum equals seconds to 100% (per attempted departure)
   progress->setWindowModality(Qt::NonModal);
   progress->setAutoClose(false);
   progress->setValue(progress->minimum());                                      // see https://doc.qt.io/qt-5/qprogressdialog.html#value-prop . Issues with Modal include non-showing of the progress bar.
-  progress->show();
-  connect(progress, &QProgressDialog::canceled, this, &AirportSearch::progressCancel);
 
   RandomDepartureAirportPickingByCriteria::initStatics(countResult, randomLimit, result, distanceMin, distanceMax);
   RandomDepartureAirportPickingByCriteria* departurePicker = new RandomDepartureAirportPickingByCriteria(this);
-  connect(this, &AirportSearch::cancelRandomAirportsPicking, departurePicker, &RandomDepartureAirportPickingByCriteria::cancellationReceived);
+  connect(progress, &QProgressDialog::canceled, departurePicker, &RandomDepartureAirportPickingByCriteria::cancellationReceived);
+  connect(departurePicker, &RandomDepartureAirportPickingByCriteria::progressing, this, &AirportSearch::progressing);
   connect(departurePicker, &RandomDepartureAirportPickingByCriteria::resultReady, this, &AirportSearch::dataRandomAirportsReceived);
   connect(departurePicker, &RandomDepartureAirportPickingByCriteria::finished, departurePicker, &QObject::deleteLater);
   departurePicker->start();
@@ -825,13 +825,8 @@ void AirportSearch::progressing()
 {
   if(progress != nullptr)
   {
-    progress->setValue((progress->value() + 1) % progress->maximum() + 1);      // each emit is every 100 values and thus + 100 should be appropriate but leads to "erroneous" progressbar
+    progress->setValue((progress->value() + 1) % progress->maximum() + 1);
   }
-}
-
-void AirportSearch::progressCancel()
-{
-  emit cancelRandomAirportsPicking();
 }
 
 void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDeparture, int indexDestination, QVector<std::pair<int, atools::geo::Pos>>* data)

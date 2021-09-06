@@ -26,7 +26,6 @@ public:
 
 signals:
   void resultReady(const bool isSuccess, const int indexDeparture, const int indexDestination);
-  void progressing();
 
 private:
   friend class RandomDepartureAirportPickingByCriteria;

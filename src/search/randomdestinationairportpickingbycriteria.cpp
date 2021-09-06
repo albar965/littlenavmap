@@ -35,15 +35,11 @@ void RandomDestinationAirportPickingByCriteria::run()
 
   double dist;
 
-  int loopCounter = 0;
-
   bool destinationSuccess;
 
   do
   {
     destinationSuccess = false;
-    if(++loopCounter % 100 == 0)
-      emit progressing();
     do
     {
       if(triedIndexDestination.count() == countResult || stopExecution)

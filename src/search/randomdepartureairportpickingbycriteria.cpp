@@ -12,7 +12,6 @@ int RandomDepartureAirportPickingByCriteria::distanceMax = 0;
 
 RandomDepartureAirportPickingByCriteria::RandomDepartureAirportPickingByCriteria(QObject *parent) : QThread(parent)
 {
-  this->parent = parent;
   indexDestination = -1;
   noSuccess = true;
 }
@@ -83,14 +82,14 @@ void RandomDepartureAirportPickingByCriteria::run()
     {
       runningDestinationThreads++;
       RandomDestinationAirportPickingByCriteria* destinationPicker = new RandomDestinationAirportPickingByCriteria(indexDeparture);
-      connect(destinationPicker, &RandomDestinationAirportPickingByCriteria::progressing, (AirportSearch*)parent, &AirportSearch::progressing);
       connect(destinationPicker, &RandomDestinationAirportPickingByCriteria::resultReady, this, &RandomDepartureAirportPickingByCriteria::dataReceived);
       connect(destinationPicker, &RandomDestinationAirportPickingByCriteria::finished, destinationPicker, &QObject::deleteLater);
       destinationPicker->start();
     }
 
-    while(noSuccess && (runningDestinationThreads >= QThread::idealThreadCount() || triedIndexDeparture.count() == countResult && runningDestinationThreads != 0))             // if a CPU affinity tool is used on lnm exe, all threads created by lnm might be run on the designated core instead of being evenly distributed (at least with Process Lasso)
+    while(noSuccess && ((runningDestinationThreads >= QThread::idealThreadCount()) || ((triedIndexDeparture.count() == countResult) && (runningDestinationThreads != 0))))             // if a CPU affinity tool is used on lnm exe, all threads created by lnm might be run on the designated core instead of being evenly distributed (at least with Process Lasso)
     {
+      emit progressing();
       sleep(1);
     }
 

@@ -31,12 +31,12 @@ public slots:
 
 signals:
   void resultReady(const bool isSuccess, const int indexDeparture, const int indexDestination, QVector<std::pair<int, atools::geo::Pos>>* data);
+  void progressing();
 
 private:
   bool noSuccess;
   int indexDestination;
   int associatedIndexDeparture;
-  QObject* parent;
   static int countResult;
   static int randomLimit;
   static QVector<std::pair<int, atools::geo::Pos>>* data;
