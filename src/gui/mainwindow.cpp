@@ -2297,6 +2297,21 @@ void MainWindow::routeNew()
   }
 }
 
+/* called from AirportSearch (random flight plan generator) */
+void MainWindow::routeNewFromAirports(map::MapAirport departure, map::MapAirport destination)
+{
+  if(routeCheckForChanges())
+  {
+    routeController->newFlightplan();
+    routeController->routeSetDeparture(departure);
+    routeController->routeSetDestination(destination);
+    mapWidget->update();
+    showFlightPlan();
+    routeCenter();
+    setStatusMessage(tr("Created new flight plan with departure and destination airport."));
+  }
+}
+
 /* Called from menu or toolbar by action */
 void MainWindow::routeOpen()
 {

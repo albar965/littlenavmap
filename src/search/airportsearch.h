@@ -21,6 +21,7 @@
 #include "search/searchbasetable.h"
 
 #include <QObject>
+#include <QProgressDialog>
 
 class Column;
 class AirportIconDelegate;
@@ -58,6 +59,10 @@ public:
   virtual void postDatabaseLoad() override;
   virtual void resetSearch() override;
 
+public slots:
+  void progressing();
+  void dataRandomAirportsReceived(bool isSuccess, int indexDeparture, int indexDestination, QVector<std::pair<int, atools::geo::Pos>>* data);
+
 private:
   virtual void updateButtonMenu() override;
   virtual void saveViewState(bool distSearchActive) override;
@@ -78,6 +83,8 @@ private:
   void overrideMode(const QStringList& overrideColumnTitles);
 
   void randomFlightplanClicked();
+  void randomFlightplanMinDistance(int newValue);
+  void randomFlightplanMaxDistance(int newValue);
 
   static const QSet<QString> NUMBER_COLUMNS;
 
@@ -90,6 +97,9 @@ private:
   /* Draw airport icon into ident table column */
   AirportIconDelegate *iconDelegate = nullptr;
   UnitStringTool *unitStringTool;
+
+  static int globalInputChangeCounter;
+  QProgressDialog* progress = nullptr;
 };
 
 #endif // LITTLENAVMAP_AIRPORTSEARCH_H
