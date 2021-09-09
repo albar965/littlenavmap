@@ -1,0 +1,29 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>unused plugin title (your plugin folders name is the title visible to the user)</title>
+    <style>
+      /* construct the HTML, CSS (inline or linked) validly to your liking with the exception of the initialising JS (as needed to being present but which may reside in its own file) */
+    </style>
+  </head>
+  <body>
+    <script>
+      function init(callback, version) {
+        // you have to provide this init method
+        var returned_Value = callback(callback.TYPE_XXX, stop_Method);
+        // you are requested to call the callback passing the type of your plugin and a stop_Method function
+        // 3 types are available:
+        // callback.TYPE_BACKGROUND :
+        //  your plugin runs in the background of the map without ui setup but with full (parent) DOM access, do as you please, but also please keep the map wholy (iframe without sandbox), the map HTML is intended to not be changed in the forseeable future by the first party; if it does, use the version parameter to help you decide to possibly not run your plugin, the current map HTML version is 1 (JS data type number with value of 1). Get full parent DOM access by calling disable_AccessPrevention on the returned_Value. Provide a stop method which is called when the user disables your plugin and which is wanted to restore the state pre-enablation of your plugin. Note due to web browser limitations you always have full parent and top DOM access but this might change in the future thus already use the mentioned interface.
+        // callback.TYPE_UNOBTRUSIVE :
+        //  your plugin displays above the whole map without interactivity in its display (pointer-events: none, iframe background transparent) but with possibility to add your own toolbar entries to the existing map toolbar using the toolbar API but the create_Toolbar method to create your own toolbars is disabled (reason: no reduction of map screen estate wanted and a toolbar toggle is some clicks more the author of this plugin interface feels not warranted for an "unobtrusive" plugin). You don't have other access means (ie. no top and no parent). The toolbar API is available through returned_Value. Call run on the returned_Value to make your plugin visible. The user has the possibility to disable your plugin at any time through the plugin menu at which point stop_Method() is called. Note due to web browser limitations you always have full parent and top DOM access but this might change in the future thus already don't rely on it.
+        // callback.TYPE_EXCLUSIVE :
+        //  your plugin has its own display instead of the map covering the whole area except the menu for which a menu toggle entry is added, you have the toolbar API at your disposal to create a toolbar using the existing theme but you may create an entire ui yourself; if you use the toolbar API call createToolbar first, otherwise you cannot create toolbar entries because the whole area an exclusive plugin covers includes the map toolbar. The iframe has no access to the parent and no access to top. The toolbar API is available through returned_Value. Call run on the returned_Value to make your plugin visible. The user has the possibility to disable your plugin at any time through the plugin menu at which point stop_Method() is called. Note due to web browser limitations you always have full parent and top DOM access but this might change in the future thus already don't rely on it.
+        // stop_Method is a function called when the user disables your plugin. Except for the TYPE_BACKGROUND it is a courtesy function in which you don't have to perform any ui cleanup.
+        // version is a value of JS data type number which indicates the map HTML version. The initial and current map HTML version is 1 and is intended to not change within the forseeable future.
+        // see assets/2021-a/toolbarAPI.js for the available toolbarAPI
+      }
+    </script>
+  </body>
+</html>
