@@ -356,10 +356,10 @@ components:
           type: number
           example: 1803
         distance_ui:
-          description: the distance value of the map inside LNM UI
+          description: the distance value of the map inside LNM UI in km
           type: number
           example: 6.814605113425086
         distance_web:
-          description: the distance value of the map inside LNM Web UI
+          description: the distance value of the map inside LNM Web UI in km
           type: number
           example: 6.814605113425086
