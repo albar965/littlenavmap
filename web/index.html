@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=no">
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="stylesheet" href="/assets/styles-2021-a-layout-internal.css">
-    <link rel="stylesheet" href="/assets/styles-2021-a-look-internal.css">
+    <link rel="stylesheet" href="/assets/2021-a/layout-internal.css">
+    <link rel="stylesheet" href="/assets/2021-a/look-internal.css">
     <title>
       {applicationName} {applicationVersion} - Webserver
     </title>
@@ -25,7 +25,7 @@
   <body onclick="bodyFunctions()">
     <div id="mainContainer" data-toolbarsplacement="top">
       <div id="contentContainer">
-        <iframe src="map.html" onload="attemptRun.call(this,'injectUpdates')" name="contentiframe" title="original content"></iframe>
+        <iframe src="map.html" onload="attemptRun.call(this,'injectUpdates')" name="contentiframe" title="original content" data-id="theMap"></iframe>
       </div>
       <div id="toolbarsContainer">
         <div id="toolbarOuter" class="toolbar" onclick="setActive(event)">
@@ -74,7 +74,11 @@
         </div>
       </div>
     </div>
-    <script src="/assets/scripts.js"></script>
-    <script src="/assets/scripts-2021-a.js"></script>
+    <script src="/assets/uitoggle.js"></script>
+    <script src="/assets/2021-a/toolbarAPI.js"></script>
+    <script src="/assets/2021-a/scripts.js"></script>
+    <script src="/assets/2021-a/menu.js"></script>
+    <script src="/assets/2021-a/plugins.js"></script>
+    <script src="/assets/2021-a/uncategorisedremainders.js"></script>
   </body>
 </html>

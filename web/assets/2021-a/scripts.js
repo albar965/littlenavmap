@@ -243,31 +243,11 @@ function injectUpdates(origin) {
     mapElement.onpointerout = pointerup;
     mapElement.onpointerleave = pointerup;
 
+
     /*
-     * Event handling: header options bar scrolling
+     * scrollable indicators of header options bar which is a toolbar
      */
-    var header = ocd.querySelector("#header");
-    function headerIndicators() {
-      if(header.firstElementChild.scrollWidth > header.firstElementChild.clientWidth) {
-        if(header.firstElementChild.scrollLeft > 0) {
-          header.classList.add("indicator-scrollable-toleft");
-          if(header.firstElementChild.clientWidth + header.firstElementChild.scrollLeft >= header.firstElementChild.scrollWidth - 1) {
-            header.classList.remove("indicator-scrollable-toright");
-          } else {
-            header.classList.add("indicator-scrollable-toright");
-          }
-        } else {
-          header.classList.remove("indicator-scrollable-toleft");
-          header.classList.add("indicator-scrollable-toright");
-        }
-      } else {
-        header.classList.remove("indicator-scrollable-toleft");
-        header.classList.remove("indicator-scrollable-toright");
-      }
-    }
-    ocw.addEventListener("resize", headerIndicators);
-    header.firstElementChild.addEventListener("scroll", headerIndicators);
-    headerIndicators();
+    enableToolbarIndicators(ocd.querySelector("#header"), ocw);
 
 
     /*
@@ -542,79 +522,4 @@ function injectUpdates(origin) {
     return value === null ? defaultValue : type === "1" ? value === "1" : type === "2" ? parseFloat(value) : value;
   }
 
-}
-
-/*
- * set class of closest parent button of clicked element within children to active
- */
-function setActive(e) {
-  e = e || window.event;
-  var i = e.target;
-  while(i.tagName.toLowerCase() !== "button" && i.tagName.toLowerCase() !== "body") {
-    i = i.parentElement;
-  }
-  if(i.tagName.toLowerCase() === "button") {
-    e.currentTarget.querySelector(".active").classList.remove("active");
-    i.classList.add("active");
-  }
-}
-
-/*
- * toggles display of toolbars options
- */
-function toggleToolbarsOptions(e) {
-  document.querySelector("#toggleOptionsToggle").classList.toggle("shown");
-  (e || window.event).stopPropagation();
-}
-
-/*
- * closes display of toolbars options
- */
-function closeToolbarsOptions() {
-  document.querySelector("#toggleOptionsToggle").classList.remove("shown");
-}
-
-/*
- * sets value of [data-toolbarsplacement] according to origin's value
- */
-function setToolbarPosition(e) {
-  document.querySelector("[data-toolbarsplacement]").setAttribute("data-toolbarsplacement", e.target.value);
-  localStorage.setItem("toolbarsplacement", e.target.value);
-}
-var gotten = localStorage.getItem("toolbarsplacement");
-if(gotten) {
-  var destination = document.querySelector("input[type=radio][name=position][value=" + gotten + "]");
-  destination.checked = true;
-  destination.dispatchEvent(new Event("change", {bubbles: true}));
-}
-
-/*
- * sets theme CSS
- */
-function switchTheme(origin) {
-  var themeCSS = document.querySelector("#themeCSS");
-  if(themeCSS !== null) {
-    themeCSS.parentElement.removeChild(themeCSS);
-  }
-  if(origin.value !== "") {
-    themeCSS = document.createElement("link");
-    themeCSS.href = "/themes/styles-2021-a-look-userdefined-theme-" + origin.value + ".css";
-    themeCSS.rel = "stylesheet";
-    themeCSS.id = "themeCSS";
-    document.head.appendChild(themeCSS);
-  }
-  localStorage.setItem("themeCSS", origin.value);
-}
-gotten = localStorage.getItem("themeCSS");
-if(gotten) {
-  var destination = document.querySelector("select[name=theme]");
-  destination.value = gotten;
-  destination.dispatchEvent(new Event("change"));
-}
-
-/*
- * compilation of functions to run when the body receives a click event (possibly having bubbled)
- */
-function bodyFunctions() {
-  closeToolbarsOptions();
 }

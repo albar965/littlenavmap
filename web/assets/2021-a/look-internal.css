@@ -195,3 +195,23 @@
   font-family: sans-serif;
   font-size: 12px;
 }
+
+#selectablePlugins {
+  text-align: left;
+  font-size: 15px;
+}
+
+.selectable-plugin {
+  background: grey;
+  padding: 5px 10px;
+  cursor: pointer;
+}
+
+.selectable-plugin * {
+  cursor: inherit;
+}
+
+#exclusivePlugins option {
+  padding: 5px;
+  box-sizing: border-box;
+}

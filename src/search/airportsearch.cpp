@@ -35,6 +35,12 @@
 #include "atools.h"
 #include "sql/sqlrecord.h"
 #include "settings/settings.h"
+#include "query/airportquery.h"
+#include "gui/mainwindow.h"
+#include "search/randomdepartureairportpickingbycriteria.h"
+
+#include <QMessageBox>
+#include <QProgressDialog>
 
 /* Default values for minimum and maximum random flight plan distance */
 const static int FLIGHTPLAN_MIN_DISTANCE_DEFAULT = 100;
@@ -360,7 +366,10 @@ void AirportSearch::connectSearchSlots()
   connect(ui->pushButtonAirportSearchClearSelection, &QPushButton::clicked,
           this, &SearchBaseTable::nothingSelectedTriggered);
   connect(ui->pushButtonAirportSearchReset, &QPushButton::clicked, this, &AirportSearch::resetSearch);
+
   connect(ui->pushButtonAirportFlightplanSearch, &QPushButton::clicked, this, &AirportSearch::randomFlightplanClicked);
+  connect(ui->spinBoxAirportFlightplanMinSearch, QOverload<int>::of(&QSpinBox::valueChanged), this, &AirportSearch::randomFlightplanMinDistance);
+  connect(ui->spinBoxAirportFlightplanMaxSearch, QOverload<int>::of(&QSpinBox::valueChanged), this, &AirportSearch::randomFlightplanMaxDistance);
 
   installEventFilterForWidget(ui->lineEditAirportIcaoSearch);
   installEventFilterForWidget(ui->lineEditAirportCitySearch);
@@ -740,18 +749,113 @@ void AirportSearch::resetSearch()
   SearchBaseTable::resetSearch();
 }
 
+int AirportSearch::globalInputChangeCounter = 0;
+
+void AirportSearch::randomFlightplanMinDistance(int newValue)
+{
+  int referencedChange = ++globalInputChangeCounter;
+  QTimer::singleShot(3000, this, [referencedChange, newValue] () {
+    if(referencedChange == AirportSearch::globalInputChangeCounter)
+    {
+      Ui::MainWindow *ui = NavApp::getMainUi();
+      int maxValue = ui->spinBoxAirportFlightplanMaxSearch->value() - ui->spinBoxAirportFlightplanMinSearch->singleStep();
+      if(newValue > maxValue)
+      {
+        ui->spinBoxAirportFlightplanMinSearch->setValue(maxValue);
+      }
+    }
+  });
+}
+
+void AirportSearch::randomFlightplanMaxDistance(int newValue)
+{
+  int referencedChange = ++globalInputChangeCounter;
+  QTimer::singleShot(3000, this, [referencedChange, newValue] () {
+    if(referencedChange == AirportSearch::globalInputChangeCounter)
+    {
+      Ui::MainWindow *ui = NavApp::getMainUi();
+      int minValue = ui->spinBoxAirportFlightplanMinSearch->value() + ui->spinBoxAirportFlightplanMaxSearch->singleStep();
+      if(newValue < minValue)
+      {
+        ui->spinBoxAirportFlightplanMaxSearch->setValue(minValue);
+      }
+    }
+  });
+}
+
 void AirportSearch::randomFlightplanClicked()
 {
+  if(progress != nullptr)                                                       // previous run did not complete yet
+    return;
+
   Ui::MainWindow *ui = NavApp::getMainUi();
 
+  int distanceMin = ui->spinBoxAirportFlightplanMinSearch->value();
+  int distanceMax = ui->spinBoxAirportFlightplanMaxSearch->value();
+
   // Log minimum and maximum distance from UI
-  qDebug() << Q_FUNC_INFO << "min" << ui->spinBoxAirportFlightplanMinSearch->value()
-           << "max" << ui->spinBoxAirportFlightplanMaxSearch->value();
+  qDebug() << Q_FUNC_INFO << "random flight, distance min: " << distanceMin
+           << ", random flight, distance max: " << distanceMax;
 
   // Fetch data from SQL model
-  QVector<std::pair<int, atools::geo::Pos> > result;
-  controller->getSqlModel()->getFullResultSet(result);
+  QVector<std::pair<int, atools::geo::Pos> >* result = new QVector<std::pair<int, atools::geo::Pos>>();           // create new for threads, delete in method receiving result
+  controller->getSqlModel()->getFullResultSet(*result);
 
-  qDebug() << Q_FUNC_INFO << "found" << result.size();
+  const int countResult = result->size();
 
+  qDebug() << Q_FUNC_INFO << "random flight, count source airports: " << countResult;
+
+  const int randomLimit = countResult / 10 * 7;                                 // above this limit do not try to find a random value beacuse this will only have few "space" to "pick" from many already picked
+
+  progress = new QProgressDialog(tr("random picking and criteria comparison running..."), tr("Abort running"), 0, 30);      // maximum equals seconds to 100% (per attempted departure)
+  progress->setWindowModality(Qt::NonModal);
+  progress->setAutoClose(false);
+  progress->setValue(progress->minimum());                                      // see https://doc.qt.io/qt-5/qprogressdialog.html#value-prop . Issues with Modal include non-showing of the progress bar.
+
+  RandomDepartureAirportPickingByCriteria::initStatics(countResult, randomLimit, result, distanceMin, distanceMax);
+  RandomDepartureAirportPickingByCriteria* departurePicker = new RandomDepartureAirportPickingByCriteria(this);
+  connect(progress, &QProgressDialog::canceled, departurePicker, &RandomDepartureAirportPickingByCriteria::cancellationReceived);
+  connect(departurePicker, &RandomDepartureAirportPickingByCriteria::progressing, this, &AirportSearch::progressing);
+  connect(departurePicker, &RandomDepartureAirportPickingByCriteria::resultReady, this, &AirportSearch::dataRandomAirportsReceived);
+  connect(departurePicker, &RandomDepartureAirportPickingByCriteria::finished, departurePicker, &QObject::deleteLater);
+  departurePicker->start();
+}
+
+void AirportSearch::progressing()
+{
+  if(progress != nullptr)
+  {
+    progress->setValue((progress->value() + 1) % progress->maximum() + 1);
+  }
+}
+
+void AirportSearch::dataRandomAirportsReceived(bool isSuccess, int indexDeparture, int indexDestination, QVector<std::pair<int, atools::geo::Pos>>* data)
+{
+  progress->hide();
+  delete progress;
+  progress = nullptr;
+
+  if(isSuccess)
+  {
+    qDebug() << Q_FUNC_INFO << "random flight, index departure: " << indexDeparture
+             << ", random flight, index destination: " << indexDestination;
+
+    map::MapAirport airportDeparture;
+    map::MapAirport airportDestination;
+
+    AirportQuery *airportQuery = NavApp::getAirportQuerySim();
+
+    airportQuery->getAirportById(airportDeparture, data->at(indexDeparture).first);
+    airportQuery->getAirportById(airportDestination, data->at(indexDestination).first);
+
+    NavApp::getMainWindow()->routeNewFromAirports(airportDeparture, airportDestination);
+  }
+  else
+  {
+    QMessageBox msgBox;
+    msgBox.setText(tr("No airports found in the search result satisfying the criteria."));
+    msgBox.exec();
+  }
+
+  delete data;                                                                  // delete data created for threads
 }
