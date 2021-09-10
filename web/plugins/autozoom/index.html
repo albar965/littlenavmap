@@ -7,30 +7,48 @@
   <body>
     <script>
       var originalZoom = -1;
+      var originalCenterAircraft = -1;
+      var originalAutoRefresh = -1;
 
-      var zoomKnots = [0, 22, 55, 80, 110, 155, 200, 300, 400, 500, 750, 1500];   // reason: rest, taxi, takeoff (ga Cessna 172), intermediate, max (ga Icon A5), intermediate, max (ga DA 33), intermediate, cruise (airliner), max (airliner), for Mach >= 1 jets, for Mach >= 1 jets
+      var mapToggle, centerToggle;
+
+      var zoomKnots = [0, 23, 55, 80, 110, 155, 200, 300, 400, 500, 750, 1500];   // reason: rest, taxi (0 - 22), takeoff (ga Cessna 172) (55), intermediate, max (ga Icon A5) (110), intermediate, max (ga DA 33), intermediate, cruise (airliner), max (airliner), for Mach >= 1 jets, for Mach >= 1 jets
       var zoomPowerForKnots = [-4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7];
-      var zoomAltsAbvGrd = [0, 2000, 4000, 8000, 16000, 32000];
+      var zoomAltsAbvGrd = [0, 500, 4000, 9000, 15000, 32000];
       var zoomPowerAddForAltsPerKnot = {
         "0": [0, 0, 0, 0, 0, 0],
-        "22": [0, 0, 1, 1, 1, 1],
+        "23": [0, 0, 1, 1, 1, 1],
         "55": [0, 0, 1, 2, 2, 2],
-        "80": [0, 0, 1, 2, 3, 3],
-        "110": [0, 0, 1, 2, 3, 4],
-        "155": [0, 0, 1, 2, 3, 3],
-        "200": [0, 0, 1, 1, 2, 3],
-        "300": [0, 0, 1, 1, 2, 3],
-        "400": [0, 0, 1, 1, 2, 3],
-        "500": [0, 0, 1, 1, 1, 2],
-        "750": [0, 0, 1, 1, 1, 1],
+        "80": [0, 1, 1, 2, 3, 3],
+        "110": [0, 1, 1, 2, 3, 4],
+        "155": [0, 1, 1, 2, 3, 3],
+        "200": [0, 1, 1, 1, 2, 3],
+        "300": [0, 1, 1, 1, 2, 3],
+        "400": [0, 1, 1, 1, 2, 3],
+        "500": [0, 1, 1, 1, 1, 2],
+        "750": [0, 1, 1, 1, 1, 1],
         "1500": [0, 0, 0, 0, 0, 0]
       };
       var zoomWaitForKnots = [5, 3, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1];    // refresh in seconds
 
       var contentIframe;
       var enabled = true;
+      var firstTime = true;
+      var lastPower = -10;
       var timeout = null;
       var running = true;
+
+      function restoreValuesPerhapsOverridden() {
+        if(!originalCenterAircraft && centerToggle.checked) {
+          centerToggle.click();
+        }
+        if(!originalAutoRefresh && mapToggle.checked) {
+          mapToggle.click();
+        }
+        originalZoom > -1 ? fetch("/mapimage?format=jpg&quality=1&width=1&height=1&distance=" + Math.pow(2, originalZoom) + "&session&cmd=" + Math.random()).then(function() {
+          contentIframe.contentDocument.querySelector('[onclick="refreshMap()"]').click();
+        }) : contentIframe.contentDocument.querySelector('[onclick="refreshMap()"]').click();
+      }
 
       function stop() {
         contentIframe.removeEventListener("load", checkIframeSrc);
@@ -39,13 +57,49 @@
         restoreValuesPerhapsOverridden();
       }
 
-      function checkIframeSrc() {
-        enabled = contentIframe.contentWindow.location.href.endsWith("/map.html");
-        if(enabled) {
-          autozoom();
-        } else {
-          clearTimeout(timeout);
-        }
+      function autozoom() {
+        fetch("/api/sim/info").then(function(response) {
+          if(running && enabled) {
+            return response.json();
+          } else {
+            return Promise.reject();
+          }
+        }).then(function(json) {
+          if(json.active) {
+            var speed = ~~json.ground_speed;
+            var alt = json.altitude_above_ground;
+            var i=0;
+            while(i < zoomKnots.length && speed >= zoomKnots[i]) {
+              i++;
+            }
+            var speedIndex = i - 1;
+            i=0;
+            while(i < zoomAltsAbvGrd.length && alt >= zoomAltsAbvGrd[i]) {
+              i++;
+            }
+            var newPower = zoomPowerForKnots[speedIndex] + zoomPowerAddForAltsPerKnot["" + zoomKnots[speedIndex]][i - 1];
+            if(newPower !== lastPower) {
+              lastPower = newPower;
+              var wasChecked = false;
+              if(mapToggle.checked) {
+                wasChecked = true;
+                mapToggle.checked = false;
+                contentIframe.contentWindow.checkRefresh();   // temporarily disable to prevent our fetch getting cancelled by refresh, but don't give away to user
+              }
+              fetch("/mapimage?format=jpg&quality=1&width=1&height=1&distance=" + Math.pow(2, newPower) + "&session&cmd=" + Math.random()).then(function() {
+                if(wasChecked) {
+                  mapToggle.checked = true;
+                  contentIframe.contentWindow.checkRefresh();
+                }
+                timeout = setTimeout(autozoom, zoomWaitForKnots[speedIndex] * 1000);
+              });
+            } else {
+              timeout = setTimeout(autozoom, zoomWaitForKnots[speedIndex] * 1000);
+            }
+          } else {
+            timeout = setTimeout(autozoom, 10000);
+          }
+        }).catch(function(e){});
       }
 
       function saveValuesToGetOverridden() {
@@ -58,61 +112,48 @@
         }).then(function(json) {
           originalZoom = Math.log(json.zoom_web) / Math.log(2);
         });
+        originalCenterAircraft = centerToggle.checked;
+        originalAutoRefresh = mapToggle.checked;
       }
 
-      function restoreValuesPerhapsOverridden() {
-        originalZoom > -1 ? fetch("/mapimage?format=jpg&quality=1&width=1&height=1&distance=" + Math.pow(2, originalZoom) + "&session&cmd=" + Math.random()) : 0;
-      }
-
-      function autozoom() {
-        fetch("/api/sim/info").then(function(response) {
-          if(response.ok && running && enabled) {
-            return response.json();
-          } else {
-            if(!response.ok) {
-              timeout = setTimeout(autozoom, 10000);
+      function checkIframeSrc() {
+        try {
+          enabled = contentIframe.contentWindow.location.href.endsWith("/map.html");
+        } catch(e) {
+          return;       // could occur if contentIFrame is loading and thus might have no contentWindow.location object yet; our load event will call this function again
+        }
+        if(enabled) {
+          if(firstTime) {
+            firstTime = false;
+            saveValuesToGetOverridden();
+            if(!originalCenterAircraft) {
+              centerToggle.click();
             }
-            return Promise.reject();
+            if(!originalAutoRefresh) {
+              mapToggle.click();
+            }
           }
-        }).then(function(json) {
-          if(json.active) {
-            var speed = json.ground_speed;
-            var alt = json.altitude_above_ground;
-            var i=0;
-            while(i < zoomKnots.length && speed >= zoomKnots[i]) {
-              i++;
-            }
-            var speedIndex = i;
-            var zoomLookup = "" + zoomKnots[i];
-            var zoomPower = zoomPowerForKnots[i - 1];
-            i=0;
-            while(i < zoomAltsAbvGrd.length && alt >= zoomAltsAbvGrd[i]) {
-              i++;
-            }
-            var zoomPowerAdd = zoomPowerAddForAltsPerKnot[zoomLookup][i - 1];
-            fetch("/mapimage?format=jpg&quality=1&width=1&height=1&distance=" + Math.pow(2, zoomPower + zoomPowerAdd) + "&session&cmd=" + Math.random()).then(function() {
-              timeout = setTimeout(autozoom, zoomWaitForKnots[speedIndex - 1] * 1000);
-            });
-          } else {
-            timeout = setTimeout(autozoom, 10000);
-          }
-        }).catch(function(){});
+          autozoom();
+        } else {
+          clearTimeout(timeout);
+        }
       }
 
       function init(callback, version) {
-        if(version !== 1) {
+        var returned_Value = callback(callback.TYPE_BACKGROUND, stop);
+        returned_Value.disable_AccessPrevention();
+
+        if(version !== 1) { // let complete all setup by calling callback first
           if(!confirm("New map version running possibly unsupported.\n\nDo you like to let run this plugin anyway?")) {
             throw "aborted by user";
           }
         }
 
-        var returned_Value = callback(callback.TYPE_BACKGROUND, stop);
-        returned_Value.disable_AccessPrevention();
-
         contentIframe = parent.document.querySelector("iframe[name=contentiframe]");
         contentIframe.addEventListener("load", checkIframeSrc);
 
-        saveValuesToGetOverridden();
+        mapToggle = contentIframe.contentDocument.querySelector("#refreshMapToggle");
+        centerToggle = contentIframe.contentDocument.querySelector("#refreshWithAircraft");
 
         checkIframeSrc();
       }
