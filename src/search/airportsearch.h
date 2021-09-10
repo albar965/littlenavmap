@@ -20,9 +20,6 @@
 
 #include "search/searchbasetable.h"
 
-#include <QObject>
-#include <QProgressDialog>
-
 class Column;
 class AirportIconDelegate;
 class QAction;
@@ -34,6 +31,8 @@ namespace sql {
 class SqlDatabase;
 }
 }
+
+class QProgressDialog;
 
 /*
  * Airport search tab including all search widgets and the result table view.
@@ -61,7 +60,8 @@ public:
 
 public slots:
   void progressing();
-  void dataRandomAirportsReceived(bool isSuccess, int indexDeparture, int indexDestination, QVector<std::pair<int, atools::geo::Pos>>* data);
+  void dataRandomAirportsReceived(bool isSuccess, int indexDeparture, int indexDestination,
+                                  QVector<std::pair<int, atools::geo::Pos> > *data);
 
 private:
   virtual void updateButtonMenu() override;
@@ -82,9 +82,11 @@ private:
   QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
   void overrideMode(const QStringList& overrideColumnTitles);
 
+  /* UI push button clicked */
   void randomFlightplanClicked();
-  void randomFlightplanMinDistance(int newValue);
-  void randomFlightplanMaxDistance(int newValue);
+
+  /* Update min/max values in random flight plan spin boxes */
+  void updateRandomFlightplanDistance();
 
   static const QSet<QString> NUMBER_COLUMNS;
 
@@ -98,8 +100,7 @@ private:
   AirportIconDelegate *iconDelegate = nullptr;
   UnitStringTool *unitStringTool;
 
-  static int globalInputChangeCounter;
-  QProgressDialog* progress = nullptr;
+  QProgressDialog *progress = nullptr;
 };
 
 #endif // LITTLENAVMAP_AIRPORTSEARCH_H

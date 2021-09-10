@@ -16,14 +16,14 @@ RandomDepartureAirportPickingByCriteria::RandomDepartureAirportPickingByCriteria
   noSuccess = true;
 }
 
-void RandomDepartureAirportPickingByCriteria::initStatics(const int &countResult, const int &randomLimit, QVector<std::pair<int, atools::geo::Pos>>* data, const int &distanceMin, const int &distanceMax)
+void RandomDepartureAirportPickingByCriteria::initStatics(int countResult, int randomLimit, QVector<std::pair<int, atools::geo::Pos>>* data, int distanceMinMeter,  int distanceMaxMeter)
 {
   RandomDepartureAirportPickingByCriteria::countResult = countResult;
   RandomDepartureAirportPickingByCriteria::randomLimit = randomLimit;
   RandomDepartureAirportPickingByCriteria::data = data;
-  RandomDepartureAirportPickingByCriteria::distanceMin = distanceMin;
-  RandomDepartureAirportPickingByCriteria::distanceMax = distanceMax;
-  RandomDestinationAirportPickingByCriteria::initStatics(countResult, randomLimit, data->data(), distanceMin, distanceMax);
+  RandomDepartureAirportPickingByCriteria::distanceMin = distanceMinMeter;
+  RandomDepartureAirportPickingByCriteria::distanceMax = distanceMaxMeter;
+  RandomDestinationAirportPickingByCriteria::initStatics(countResult, randomLimit, data->data(), distanceMinMeter, distanceMaxMeter);
 }
 
 void RandomDepartureAirportPickingByCriteria::run()

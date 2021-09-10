@@ -20,7 +20,7 @@ public:
   RandomDestinationAirportPickingByCriteria(int indexDeparture);
 
   // required calling !!
-  static void initStatics(const int &countResult, const int &randomLimit, std::pair<int, atools::geo::Pos>* data, const int &distanceMin, const int &distanceMax);
+  static void initStatics(int countResult, int randomLimit, std::pair<int, atools::geo::Pos>* data, int distanceMinMeter, int distanceMaxMeter);
 
   void run() override;
 

@@ -316,9 +316,6 @@ void SearchBaseTable::updateDistanceSearch()
 
 void SearchBaseTable::connectSearchWidgets()
 {
-  void (QComboBox::*curIndexChangedPtr)(int) = &QComboBox::currentIndexChanged;
-  void (QSpinBox::*valueChangedPtr)(int) = &QSpinBox::valueChanged;
-
   // Connect query builder callback to lambda ======================================
   if(columns->getQueryBuilder().isValid())
   {
@@ -381,7 +378,7 @@ void SearchBaseTable::connectSearchWidgets()
       }
       else
       {
-        connect(col->getComboBoxWidget(), curIndexChangedPtr, this, [ = ](int index)
+        connect(col->getComboBoxWidget(), QOverload<int>::of(&QComboBox::currentIndexChanged), this, [ = ](int index)
         {
           controller->filterByComboBox(col, index, index == 0);
           updateButtonMenu();
@@ -400,7 +397,7 @@ void SearchBaseTable::connectSearchWidgets()
     }
     else if(col->getSpinBoxWidget() != nullptr)
     {
-      connect(col->getSpinBoxWidget(), valueChangedPtr, this, [ = ](int value)
+      connect(col->getSpinBoxWidget(), QOverload<int>::of(&QSpinBox::valueChanged), this, [ = ](int value)
       {
         updateFromSpinBox(value, col);
         updateButtonMenu();
@@ -409,14 +406,14 @@ void SearchBaseTable::connectSearchWidgets()
     }
     else if(col->getMinSpinBoxWidget() != nullptr && col->getMaxSpinBoxWidget() != nullptr)
     {
-      connect(col->getMinSpinBoxWidget(), valueChangedPtr, this, [ = ](int value)
+      connect(col->getMinSpinBoxWidget(), QOverload<int>::of(&QSpinBox::valueChanged), this, [ = ](int value)
       {
         updateFromMinSpinBox(value, col);
         updateButtonMenu();
         editStartTimer();
       });
 
-      connect(col->getMaxSpinBoxWidget(), valueChangedPtr, this, [ = ](int value)
+      connect(col->getMaxSpinBoxWidget(), QOverload<int>::of(&QSpinBox::valueChanged), this, [ = ](int value)
       {
         updateFromMaxSpinBox(value, col);
         updateButtonMenu();
@@ -436,7 +433,7 @@ void SearchBaseTable::connectSearchWidgets()
     // If all distance widgets are present connect them
     connect(distanceCheckBox, &QCheckBox::stateChanged, this, &SearchBaseTable::distanceSearchStateChanged);
 
-    connect(minDistanceWidget, valueChangedPtr, this, [ = ](int value)
+    connect(minDistanceWidget, QOverload<int>::of(&QSpinBox::valueChanged), this, [ = ](int value)
     {
       controller->filterByDistanceUpdate(
         static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
@@ -448,7 +445,7 @@ void SearchBaseTable::connectSearchWidgets()
       editStartTimer();
     });
 
-    connect(maxDistanceWidget, valueChangedPtr, this, [ = ](int value)
+    connect(maxDistanceWidget, QOverload<int>::of(&QSpinBox::valueChanged), this, [ = ](int value)
     {
       controller->filterByDistanceUpdate(
         static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
@@ -459,7 +456,7 @@ void SearchBaseTable::connectSearchWidgets()
       editStartTimer();
     });
 
-    connect(distanceDirWidget, curIndexChangedPtr, this, [ = ](int index)
+    connect(distanceDirWidget, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [ = ](int index)
     {
       controller->filterByDistanceUpdate(static_cast<sqlproxymodel::SearchDirection>(index),
                                          Unit::rev(minDistanceWidget->value(), Unit::distNmF),
@@ -509,7 +506,6 @@ void SearchBaseTable::updateFromMaxSpinBox(int value, const Column *col)
 
   controller->filterByMinMaxSpinBox(col, atools::roundToInt(valMin), atools::roundToInt(valMax));
   col->getMinSpinBoxWidget()->setMaximum(value);
-
 }
 
 void SearchBaseTable::distanceSearchStateChanged(int state)
