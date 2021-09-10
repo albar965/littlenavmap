@@ -208,6 +208,9 @@ public:
   void showUserpointSearch();
   void showRouteCalc();
 
+  /* create a new flightplan from passed airports */
+  void routeNewFromAirports(map::MapAirport departure, map::MapAirport destination);
+
   /* Load a flight plan in LNMPLN format from a string */
   void routeOpenFileLnmStr(const QString& string);
 
