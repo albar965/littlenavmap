@@ -15574,7 +15574,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3591"/>
         <source>Course to waypoint:</source>
-        <translation>Kurs zum Wegpunkt</translation>
+        <translation>Kurs zum Wegpunkt:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3647"/>
@@ -23082,7 +23082,7 @@ Wollen Sie diese Prozedur wirklich verwenden?</translation>
     <message>
         <location filename="src/common/maptypes.cpp" line="84"/>
         <source>Macadam</source>
-        <translation>Schotter</translation>
+        <translation>Makadam</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="85"/>
