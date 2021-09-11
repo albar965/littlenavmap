@@ -710,6 +710,73 @@ QString navTypeNameWaypoint(const QString& type)
   return navTypeNamesWaypoint.value(type);
 }
 
+QString navTypeArincNamesWaypoint(const QString& type)
+{
+  QStringList types;
+
+  QChar c0 = atools::charAt(type, 0).toUpper();
+  if(c0 == 'A')
+    types.append(QObject::tr("ARC center fix waypoint"));
+  else if(c0 == 'C')
+    types.append(QObject::tr("Combined named intersection and RNAV waypoint"));
+  else if(c0 == 'I')
+    types.append(QObject::tr("Unnamed, charted intersection"));
+  else if(c0 == 'M')
+    types.append(QObject::tr("Middle marker as waypoint"));
+  else if(c0 == 'N')
+    types.append(QObject::tr("Terminal NDB navaid as waypoint"));
+  else if(c0 == 'O')
+    types.append(QObject::tr("Outer marker as waypoint"));
+  else if(c0 == 'R')
+    types.append(QObject::tr("Named intersection"));
+  else if(c0 == 'V')
+    types.append(QObject::tr("VFR waypoint"));
+  else if(c0 == 'W')
+    types.append(QObject::tr("RNAV waypoint"));
+
+  QChar c1 = atools::charAt(type, 1).toUpper();
+  if(c1 == 'A')
+    types.append(QObject::tr("Final approach fix"));
+  else if(c1 == 'B')
+    types.append(QObject::tr("Initial approach fix and final approach fix"));
+  else if(c1 == 'C')
+    types.append(QObject::tr("final approach course fix"));
+  else if(c1 == 'D')
+    types.append(QObject::tr("Intermediate approach fix"));
+  else if(c1 == 'I')
+    types.append(QObject::tr("Initial approach fix"));
+  else if(c1 == 'K')
+    types.append(QObject::tr("Final approach course fix at initial approach fix"));
+  else if(c1 == 'L')
+    types.append(QObject::tr("Final approach course fix at intermediate approach fix"));
+  else if(c1 == 'M')
+    types.append(QObject::tr("Missed approach fix"));
+  else if(c1 == 'N')
+    types.append(QObject::tr("Initial approach fix and missed approach fix"));
+  else if(c1 == 'P')
+    types.append(QObject::tr("Unnamed stepdown fix"));
+  else if(c1 == 'S')
+    types.append(QObject::tr("Named stepdown fix"));
+  else if(c1 == 'U')
+    types.append(QObject::tr("FIR/UIR or controlled airspace intersection"));
+
+  QChar c2 = atools::charAt(type, 2).toUpper();
+  if(c2 == 'D')
+    types.append(QObject::tr("SID"));
+  else if(c2 == 'E')
+    types.append(QObject::tr("STAR"));
+  else if(c2 == 'F')
+    types.append(QObject::tr("Approach"));
+  else if(c2 == 'Z')
+    types.append(QObject::tr("Multiple"));
+
+#ifdef DEBUG_INFORMATION
+  types.append(QString("[%1]").arg(type));
+#endif
+
+  return types.join(QObject::tr(", "));
+}
+
 QString navName(const QString& type)
 {
   return navTypeNames.value(type);

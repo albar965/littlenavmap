@@ -624,7 +624,9 @@ struct MapWaypoint
   }
 
   float magvar;
-  QString ident, region, type /* NAMED, UNAMED, etc. *//*, airportIdent*/;
+  QString ident, region,
+          type /* NAMED, UNAMED, etc. */,
+          arincType /* ARINC * 424.18 field type definition 5.42 */;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
 
   bool hasVictorAirways = false, hasJetAirways = false, hasTracks = false;
@@ -1102,6 +1104,7 @@ QString navTypeNameVor(const QString& type);
 QString navTypeNameVorLong(const QString& type);
 QString navTypeNameNdb(const QString& type);
 QString navTypeNameWaypoint(const QString& type);
+QString navTypeArincNamesWaypoint(const QString& type); /* ARINC * 424.18 field type definition 5.42 */
 
 QString ilsText(const map::MapIls& ils);
 QString ilsType(const MapIls& ils);
