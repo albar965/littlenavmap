@@ -30,9 +30,25 @@
   box-sizing: border-box;
 }
 
+.toolbar button:hover {
+  border: 1px solid #ff0;
+}
+
+[data-toolbarsplacement="top"] .toolbar button:hover, [data-toolbarsplacement="bottom"] .toolbar button:hover {
+  margin: 4px 2.5px;   /* works in conjunction with .toolbar button margin and :hover */
+}
+
+[data-toolbarsplacement="right"] .toolbar button:hover, [data-toolbarsplacement="left"] .toolbar button:hover {
+  margin: 1.5px 5px;   /* works in conjunction with .toolbar button margin and :hover */
+}
+
 @media (max-width: 1280px) {
   [data-toolbarsplacement="top"] .toolbar button, [data-toolbarsplacement="bottom"] .toolbar button {
      width: auto;
+  }
+
+  [data-toolbarsplacement="top"] .toolbar button:hover, [data-toolbarsplacement="bottom"] .toolbar button:hover {
+    margin: 4px 1.5px;   /* works in conjunction with .toolbar button margin and :hover */
   }
 }
 
@@ -69,18 +85,6 @@
 .toolbar button a {
   text-decoration: none;
   color: inherit;
-}
-
-.toolbar button:hover {
-  border: 1px solid #ff0;
-}
-
-[data-toolbarsplacement="top"] .toolbar button:hover, [data-toolbarsplacement="bottom"] .toolbar button:hover {
-  margin: 4px 2.5px;   /* works in conjunction with .toolbar button margin and :hover */
-}
-
-[data-toolbarsplacement="right"] .toolbar button:hover, [data-toolbarsplacement="left"] .toolbar button:hover {
-  margin: 1.5px 5px;   /* works in conjunction with .toolbar button margin and :hover */
 }
 
 .active {
