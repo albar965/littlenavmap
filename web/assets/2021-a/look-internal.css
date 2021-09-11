@@ -236,6 +236,10 @@
   border: 1px solid #000;
 }
 
+.selectable-plugin label {
+  padding-left: 12px;
+}
+
 .selectable-plugin * {
   cursor: inherit;
 }

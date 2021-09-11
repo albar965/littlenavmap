@@ -228,7 +228,7 @@ iframe {
 
 .selectable-plugin input {
   margin-top: 7px;
-  margin-right: 12px;
+  margin-right: 0;
 }
 
 [data-toolbarsplacement="top"] #exclusivePlugins {
