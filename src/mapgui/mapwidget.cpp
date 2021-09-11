@@ -1093,7 +1093,8 @@ void MapWidget::wheelEvent(QWheelEvent *event)
   }
 
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << "distance NM" << atools::geo::kmToNm(distance()) << "zoom" << zoom();
+  qDebug() << Q_FUNC_INFO << "distance NM" << atools::geo::kmToNm(distance())
+           << "distance km" << distance() << "zoom" << zoom();
 #endif
 }
 
@@ -2337,10 +2338,14 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
               {
                 centerRectOnMap(rect);
 
-                // Minimum zoom depends on flight altitude
-                float altToZoom = aircraft.getAltitudeAboveGroundFt() > 12000.f ? 1400.f : 2800.f;
-                float minZoomDist = atools::geo::nmToKm(
-                  std::min(std::max(aircraft.getAltitudeAboveGroundFt() / altToZoom, 0.2f), 28.f));
+                // Zoom depends on flight altitude - larger values result in closer zoom
+                float div = aircraft.getAltitudeAboveGroundFt() < 12000.f ? 2800.f : 1000.f;
+
+                // Decrease allowed minimum very close to the ground
+                float minKm = aircraft.getAltitudeAboveGroundFt() < 50 ? 0.5f : 1.0f;
+
+                float minZoomDistKm =
+                  atools::geo::nmToKm(std::min(std::max(aircraft.getAltitudeAboveGroundFt() / div, minKm), 28.f));
 
                 // Zoom out for a maximum of four times until aircraft and waypoint fit into the shrinked rectangle
                 for(int i = 0; i < 4; i++)
@@ -2365,13 +2370,13 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                 }
 
                 // Avoid zooming too close
-                if(distance() < minZoomDist)
+                if(distance() < minZoomDistKm)
                 {
 #ifdef DEBUG_INFORMATION
-                  qDebug() << Q_FUNC_INFO << "distance() < minZoom" << distance() << "<" << minZoomDist;
+                  qDebug() << Q_FUNC_INFO << "distance() < minZoom" << distance() << "<" << minZoomDistKm;
 #endif
                   // Correct zoom for minimum distance
-                  setDistanceToMap(minZoomDist);
+                  setDistanceToMap(minZoomDistKm);
 #ifdef DEBUG_INFORMATION
                   qDebug() << Q_FUNC_INFO << "zoom()" << zoom();
 #endif
@@ -3366,6 +3371,10 @@ void MapWidget::zoomInOut(bool directionIn, bool smooth)
         zoomOut();
     }
   }
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "distance NM" << atools::geo::kmToNm(distance())
+           << "distance km" << distance() << "zoom" << zoom();
+#endif
 }
 
 void MapWidget::removeRangeRing(int index)
