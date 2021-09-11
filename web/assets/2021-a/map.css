@@ -11,8 +11,8 @@ body {
   background: lightgray;
   border-radius: 25px;
   border: none;
-  margin: .5em;
-  flex:0 1;
+  margin: 7px;
+  flex: 0 1;
   user-select: none;
 }
 
@@ -75,7 +75,7 @@ form > * {
 }
 
 input[type="checkbox"] {
-  margin: 0px 0 0px 8px;
+  margin: 0;
   vertical-align: -2px;
 }
 
