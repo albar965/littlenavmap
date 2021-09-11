@@ -5,31 +5,13 @@
     <title>unused plugin title (your plugin folders name is the title visible to the user)</title>
   </head>
   <body>
+    <script src="configurationValues.js"></script>
     <script>
       var originalZoom = -1;
       var originalCenterAircraft = -1;
       var originalAutoRefresh = -1;
 
       var mapToggle, centerToggle;
-
-      var zoomKnots = [0, 23, 55, 80, 110, 155, 200, 300, 400, 500, 750, 1500];   // reason: rest, taxi (0 - 22), takeoff (ga Cessna 172) (55), intermediate, max (ga Icon A5) (110), intermediate, max (ga DA 33), intermediate, cruise (airliner), max (airliner), for Mach >= 1 jets, for Mach >= 1 jets
-      var zoomPowerForKnots = [-4, -3, -2, -1, 0, 1, 2, 3, 4, 5, 6, 7];
-      var zoomAltsAbvGrd = [0, 500, 4000, 9000, 15000, 32000];
-      var zoomPowerAddForAltsPerKnot = {
-        "0": [0, 0, 0, 0, 0, 0],
-        "23": [0, 0, 1, 1, 1, 1],
-        "55": [0, 0, 1, 2, 2, 2],
-        "80": [0, 1, 1, 2, 3, 3],
-        "110": [0, 1, 1, 2, 3, 4],
-        "155": [0, 1, 1, 2, 3, 3],
-        "200": [0, 1, 1, 1, 2, 3],
-        "300": [0, 1, 1, 1, 2, 3],
-        "400": [0, 1, 1, 1, 2, 3],
-        "500": [0, 1, 1, 1, 1, 2],
-        "750": [0, 1, 1, 1, 1, 1],
-        "1500": [0, 0, 0, 0, 0, 0]
-      };
-      var zoomWaitForKnots = [5, 3, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1];    // refresh in seconds
 
       var contentIframe;
       var enabled = true;
@@ -45,9 +27,8 @@
         if(!originalAutoRefresh && mapToggle.checked) {
           mapToggle.click();
         }
-        originalZoom > -1 ? fetch("/mapimage?format=jpg&quality=1&width=1&height=1&distance=" + Math.pow(2, originalZoom) + "&session&cmd=" + Math.random()).then(function() {
-          contentIframe.contentDocument.querySelector('[onclick="refreshMap()"]').click();
-        }) : contentIframe.contentDocument.querySelector('[onclick="refreshMap()"]').click();
+        originalZoom > -1 ? fetch("/mapimage?format=jpg&quality=1&width=1&height=1&distance=" + Math.pow(2, originalZoom) + "&session&cmd=" + Math.random()) : 0;
+        contentIframe.contentDocument.querySelector('[onclick="refreshMap()"]').click();
       }
 
       function stop() {
@@ -99,7 +80,10 @@
           } else {
             timeout = setTimeout(autozoom, 10000);
           }
-        }).catch(function(e){});
+        }).catch(function(e){
+          console.error("Error! Are the configuration values consistent?");
+          console.log(e);
+        });
       }
 
       function saveValuesToGetOverridden() {
@@ -143,9 +127,27 @@
         var returned_Value = callback(callback.TYPE_BACKGROUND, stop);
         returned_Value.disable_AccessPrevention();
 
-        if(version !== 1) { // let complete all setup by calling callback first
+        if(version !== 1) { // let all setup have completed by having called callback first
           if(!confirm("New map version running possibly unsupported.\n\nDo you like to let run this plugin anyway?")) {
             throw "aborted by user";
+          }
+        }
+
+        if(sessionStorage.getItem("autozoomRead") !== "true") {
+          if(confirm(
+            "This plugin attempts to set the zoom level of the map\n" +
+            "according to the level it deems most appropriate for\n" +
+            "the circumstances you are in.\n\n" +
+            "It enables \"auto refresh\" and \"center is Aircraft\" and\n" +
+            "restores the value they are in now when you disable it.\n\n" +
+            "You can change the defining values it operates on inside\n" +
+            "the file \"configurationValues.js\" inside the folder\n" +
+            "\"web\\plugins\\autozoom\" in the folder of Little Navmap.\n\n" +
+            "If you continue, this message is dismissed for this session."
+            )) {
+            sessionStorage.setItem("autozoomRead", "true");
+          } else {
+            throw "cancelled by user";
           }
         }
 
