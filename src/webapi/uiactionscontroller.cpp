@@ -29,7 +29,9 @@ WebApiResponse UiActionsController::infoAction(WebApiRequest request){
 
     UiInfoData data = {
         getMainWindow()->getMapWidget()->zoom(),
-        getNavApp()->getWebController()->getWebMapController()->getMapPaintWidget()->zoom()
+        getNavApp()->getWebController()->getWebMapController()->getMapPaintWidget()->zoom(),
+        getMainWindow()->getMapWidget()->distance(),
+        getNavApp()->getWebController()->getWebMapController()->getMapPaintWidget()->distance()
     };
 
     response.body = infoBuilder->uiinfo(data);

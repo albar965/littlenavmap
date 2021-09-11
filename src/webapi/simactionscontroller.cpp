@@ -30,6 +30,7 @@ WebApiResponse SimActionsController::infoAction(WebApiRequest request){
     };
 
     response.body = infoBuilder->siminfo(data);
+    response.status = 200;
 
     return response;
 
