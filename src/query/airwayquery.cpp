@@ -289,6 +289,9 @@ void AirwayQuery::initQueries()
 
   waypointQueryBase = waypointIdCol + ", ident, region, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty ";
 
+  if(dbNav->record(airwayTable).contains("arinc_type"))
+    waypointQueryBase += ", arinc_type";
+
   deInitQueries();
 
   waypointByIdQuery = new SqlQuery(dbNav);

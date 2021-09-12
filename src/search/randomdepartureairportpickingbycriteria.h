@@ -21,7 +21,7 @@ public:
   RandomDepartureAirportPickingByCriteria(QObject *parent);
 
   // required calling !!
-  static void initStatics(const int &countResult, const int &randomLimit, QVector<std::pair<int, atools::geo::Pos>>* data, const int &distanceMin, const int &distanceMax);
+  static void initStatics(int countResult, int randomLimit, QVector<std::pair<int, atools::geo::Pos>>* data, int distanceMinMeter, int distanceMaxMeter);
 
   void run() override;
 

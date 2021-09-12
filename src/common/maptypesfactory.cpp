@@ -423,6 +423,7 @@ void MapTypesFactory::fillWaypoint(const SqlRecord& record, map::MapWaypoint& wa
   waypoint.ident = record.valueStr("ident");
   waypoint.region = record.valueStr("region");
   waypoint.type = record.valueStr("type");
+  waypoint.arincType = record.valueStr("arinc_type", QString());
   waypoint.magvar = record.valueFloat("mag_var");
   waypoint.hasVictorAirways = record.valueInt("num_victor_airway") > 0;
   waypoint.hasJetAirways = record.valueInt("num_jet_airway") > 0;
@@ -437,6 +438,7 @@ void MapTypesFactory::fillWaypointFromNav(const SqlRecord& record, map::MapWaypo
   waypoint.ident = record.valueStr("ident");
   waypoint.region = record.valueStr("region");
   waypoint.type = record.valueStr("type");
+  waypoint.arincType = record.valueStr("arinc_type", QString());
   waypoint.magvar = record.valueFloat("mag_var");
   waypoint.hasVictorAirways = record.valueInt("waypoint_num_victor_airway") > 0;
   waypoint.hasJetAirways = record.valueInt("waypoint_num_jet_airway") > 0;

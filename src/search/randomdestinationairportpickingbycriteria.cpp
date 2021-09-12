@@ -16,13 +16,13 @@ RandomDestinationAirportPickingByCriteria::RandomDestinationAirportPickingByCrit
   this->indexDeparture = indexDeparture;
 }
 
-void RandomDestinationAirportPickingByCriteria::initStatics(const int &countResult, const int &randomLimit, std::pair<int, atools::geo::Pos>* data, const int &distanceMin, const int &distanceMax)
+void RandomDestinationAirportPickingByCriteria::initStatics(int countResult, int randomLimit, std::pair<int, atools::geo::Pos>* data, int distanceMinMeter, int distanceMaxMeter)
 {
   RandomDestinationAirportPickingByCriteria::countResult = countResult;
   RandomDestinationAirportPickingByCriteria::randomLimit = randomLimit;
   RandomDestinationAirportPickingByCriteria::data = data;
-  RandomDestinationAirportPickingByCriteria::distanceMin = distanceMin;
-  RandomDestinationAirportPickingByCriteria::distanceMax = distanceMax;
+  RandomDestinationAirportPickingByCriteria::distanceMin = distanceMinMeter;
+  RandomDestinationAirportPickingByCriteria::distanceMax = distanceMaxMeter;
   stopExecution = false;
 }
 
@@ -33,7 +33,7 @@ void RandomDestinationAirportPickingByCriteria::run()
   QMap<int, bool> triedIndexDestination;                                        // acts as a lookup which indices have been tried already; QMap keys are sorted, lookup is very fast
   triedIndexDestination.insert(indexDeparture, true);                           // destination shall != departure
 
-  double dist;
+  float distMeter=atools::geo::Pos::INVALID_VALUE;
 
   bool destinationSuccess;
 
@@ -61,12 +61,12 @@ void RandomDestinationAirportPickingByCriteria::run()
         }
       }
       triedIndexDestination.insert(indexDestination, true);
-      dist = data[indexDeparture].second.distanceMeterTo(data[indexDestination].second) / 1000;         // distanceMeterTo checks for isValid
+      distMeter = data[indexDeparture].second.distanceMeterTo(data[indexDestination].second);         // distanceMeterTo checks for isValid
     }
-    while(dist == atools::geo::Pos::INVALID_VALUE);
+    while(distMeter == atools::geo::Pos::INVALID_VALUE);
     destinationSuccess = true;
   }
-  while(dist < distanceMin || dist > distanceMax);
+  while(distMeter < distanceMin || distMeter > distanceMax);
 destinationsEnd:
   if(destinationSuccess)                                                        // the last triedIndexDestination might be taken but it might have passed the last condition (thus checking a bool and not the map count being countResult)
   {

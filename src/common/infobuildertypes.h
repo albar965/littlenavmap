@@ -80,6 +80,8 @@ namespace InfoBuilderTypes {
     struct UiInfoData{
         const int zoomUi;
         const int zoomWeb;
+        const qreal distanceUi;
+        const qreal distanceWeb;
     };
 
 }

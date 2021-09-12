@@ -2452,7 +2452,12 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
 
   if(info)
   {
-    html.row2If(tr("Type:"), map::navTypeNameWaypoint(waypoint.type));
+    if(waypoint.arincType.isEmpty())
+      html.row2If(tr("Type:"), map::navTypeNameWaypoint(waypoint.type));
+    else
+      // Show detailed description instead
+      html.row2If(tr("Type description:"), map::navTypeArincNamesWaypoint(waypoint.arincType));
+
     if(rec != nullptr && rec->contains("airport_id") && !rec->isNull("airport_id"))
       airportRow(airportQueryNav->getAirportById(rec->valueInt("airport_id")), html);
   }
