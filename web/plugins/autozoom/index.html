@@ -94,7 +94,7 @@
             originalZoom = -1;
           }
         }).then(function(json) {
-          originalZoom = Math.log(json.zoom_web) / Math.log(2);
+          originalZoom = Math.log(json.distance_web) / Math.log(2);
         });
         originalCenterAircraft = centerToggle.checked;
         originalAutoRefresh = mapToggle.checked;
