@@ -4172,25 +4172,28 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
   }
 
   // Links ============================================
+
+  // Check if airport is in navdata
   QStringList links;
+  MapAirport airportNav = mapQuery->getAirportNav(airport);
+
+  if(airportNav.isValid() && airportNav.navdata)
+  {
+    links.append(html.cleared().a(tr("FlightAware"), QString("https://www.flightaware.com/live/airport/%1").
+                                  arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
+    links.append(html.cleared().a(tr("OpenNav"), QString("https://opennav.com/airport/%1").
+                                  arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
+    links.append(html.cleared().a(tr("PilotNav"), QString("https://www.pilotnav.com/airport/%1").
+                                  arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
+    links.append(html.cleared().a(tr("SkyVector"), QString("https://skyvector.com/airport/%1").
+                                  arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
+  }
+
   // Use internal id for X-Plane gateway since this includes the long internal idents
   if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
     links.append(html.cleared().a(tr("X-Plane Scenery Gateway"),
                                   QString("https://gateway.x-plane.com/scenery/page/%1").
                                   arg(airport.ident), ahtml::LINK_NO_UL).getHtml());
-
-  // Check if airport is in navdata
-  MapAirport airportNav = mapQuery->getAirportNav(airport);
-
-  if(airportNav.isValid() && airportNav.navdata)
-  {
-    links.append(html.cleared().a(tr("SkyVector"), QString("https://skyvector.com/airport/%1").
-                                  arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
-    links.append(html.cleared().a(tr("FlightAware"), QString("https://www.flightaware.com/live/airport/%1").
-                                  arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
-    links.append(html.cleared().a(tr("OpenNav"), QString("https://opennav.com/airport/%1").
-                                  arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
-  }
 
   // Display link table ===============
   if(!links.isEmpty())
