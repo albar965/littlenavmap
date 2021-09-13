@@ -717,7 +717,6 @@ void MapPaintWidget::setDistanceToMap(double distanceKm, bool allowAdjust)
 {
   distanceKm = std::min(std::max(distanceKm, MINIMUM_DISTANCE_KM / 2.), MAXIMUM_DISTANCE_KM);
 
-  // KM
   setDistance(distanceKm);
 
   if(allowAdjust && avoidBlurredMap)

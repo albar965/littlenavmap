@@ -92,21 +92,24 @@ const static QHash<opts::SimUpdateRate, SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
 const int PLAN_SIM_UPDATE_BOX = 85;
 
 // Get elevation when mouse is still
-const int ALTITUDE_UPDATE_TIMEOUT = 200;
+const int ALTITUDE_UPDATE_TIMEOUT_MS = 200;
 
 // Delay recognition to avoid detection of bumps
-const int LANDING_TIMEOUT = 4000;
-const int TAKEOFF_TIMEOUT = 2000;
-const int FUEL_ON_OFF_TIMEOUT = 1000;
+const int LANDING_TIMEOUT_MS = 4000;
+const int TAKEOFF_TIMEOUT_MS = 2000;
+const int FUEL_ON_OFF_TIMEOUT_MS = 1000;
 
 /* Update rate on tooltip for bearing display */
 const int MAX_SIM_UPDATE_TOOLTIP_MS = 500;
 
-// Disable center waypoint and aircraft if distance to flight plan is larger
+/* Disable center waypoint and aircraft if distance to flight plan is larger */
 const float MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM = 50.f;
 
-// Default zoom distance if start position was not set (usually first start after installation */
-const int DEFAULT_MAP_DISTANCE = 7000;
+/* Default zoom distance if start position was not set (usually first start after installation */
+const double DEFAULT_MAP_DISTANCE_KM = 7000.;
+
+/* Forced zoom distance after touchdown. Applied once. */
+const double DEFAULT_MAP_DISTANCE_TOUCHDOWN_KM = 0.2;
 
 /* If width and height of a bounding rect are smaller than this use show point */
 const float POS_IS_POINT_EPSILON = 0.0001f;
@@ -136,7 +139,7 @@ MapWidget::MapWidget(MainWindow *parent)
   screenSearchDistance = OptionData::instance().getMapClickSensitivity();
   screenSearchDistanceTooltip = OptionData::instance().getMapTooltipSensitivity();
 
-  elevationDisplayTimer.setInterval(ALTITUDE_UPDATE_TIMEOUT);
+  elevationDisplayTimer.setInterval(ALTITUDE_UPDATE_TIMEOUT_MS);
   elevationDisplayTimer.setSingleShot(true);
   connect(&elevationDisplayTimer, &QTimer::timeout, this, &MapWidget::elevationDisplayTimerTimeout);
 
@@ -2025,7 +2028,7 @@ void MapWidget::simDataCalcFuelOnOff(const atools::fs::sc::SimConnectUserAircraf
   {
     // start timer to emit takeoff/landing signal
     if(last.hasFuelFlow() != aircraft.hasFuelFlow())
-      fuelOnOffTimer.start(FUEL_ON_OFF_TIMEOUT);
+      fuelOnOffTimer.start(FUEL_ON_OFF_TIMEOUT_MS);
   }
 }
 
@@ -2067,7 +2070,7 @@ void MapWidget::simDataCalcTakeoffLanding(const atools::fs::sc::SimConnectUserAi
       qDebug() << Q_FUNC_INFO << "last flying != current flying";
 #endif
       // Call MapWidget::takeoffLandingTimeout() later
-      takeoffLandingTimer.start(aircraft.isFlying() ? TAKEOFF_TIMEOUT : LANDING_TIMEOUT);
+      takeoffLandingTimer.start(aircraft.isFlying() ? TAKEOFF_TIMEOUT_MS : LANDING_TIMEOUT_MS);
     }
   }
 }
@@ -2083,6 +2086,7 @@ void MapWidget::takeoffLandingTimeout()
 
     takeoffTimeSim = takeoffLandingLastAircraft.getZuluTime();
     takeoffLandingDistanceNm = 0.;
+    touchdownDetected = false;
 
     emit aircraftTakeoff(aircraft);
   }
@@ -2090,6 +2094,7 @@ void MapWidget::takeoffLandingTimeout()
   {
     // On ground after status has changed
     qDebug() << Q_FUNC_INFO << "Landing detected takeoffLandingDistanceNm" << takeoffLandingDistanceNm;
+    touchdownDetected = true; // Reset in simDataChanged()
     emit aircraftLanding(aircraft, static_cast<float>(takeoffLandingDistanceNm));
   }
 }
@@ -2270,12 +2275,12 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                              widgetRectSmallPlan.contains(aircraftPoint) : // Box for aircraft and waypoint
                              widgetRectSmall.contains(aircraftPoint); // Use defined box in options
 
-      if(!aircraftVisible || // Not visible on world map
-         posHasChanged) // Significant change in position might require zooming or re-centering
+      // Do not update if user is using drag and drop or scrolling around
+      // No updates while jump back is active and user is moving around
+      if(mouseState == mw::NONE && viewContext() == Marble::Still && !jumpBack->isActive())
       {
-        // Do not update if user is using drag and drop or scrolling around
-        // No updates while jump back is active and user is moving around
-        if(mouseState == mw::NONE && viewContext() == Marble::Still && !jumpBack->isActive())
+        if(!aircraftVisible || // Not visible on world map
+           posHasChanged) // Significant change in position might require zooming or re-centering
         {
           if(centerAircraftAndLeg)
           {
@@ -2398,9 +2403,21 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
               centerPosOnMap(aircraft.getPosition());
             }
           }
+        } // if(!aircraftVisible || ...
+
+        // Zoom close after touchdown ===================================================================
+        // Only if user is not mousing around on the map
+        if(touchdownDetected)
+        {
+          qDebug() << Q_FUNC_INFO << "Touchdown detected - zooming close";
+          setDistanceToMap(DEFAULT_MAP_DISTANCE_TOUCHDOWN_KM);
+          touchdownDetected = false;
         }
-      }
-    }
+      } // if(mouseState == mw::NONE && viewContext() == Marble::Still && !jumpBack->isActive())
+    } // if(centerAircraftChecked && !contextMenuActive)
+
+    // if(aircraft.isFlying())
+    // touchdownDetected = false;
 
     if(!updatesEnabled())
       setUpdatesEnabled(true);
@@ -2408,7 +2425,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     if((dataHasChanged || aiVisible) && !contextMenuActive)
       // Not scrolled or zoomed but needs a redraw
       update();
-  }
+  } // if(now - lastSimUpdateMs > deltas.timeDeltaMs)
 }
 
 void MapWidget::mainWindowShown()
@@ -2464,7 +2481,7 @@ void MapWidget::showSavedPosOnStartup()
     {
       qDebug() << "Show 0,0" << currentPos;
       centerPosOnMap(Pos(0.f, 0.f));
-      setDistanceToMap(DEFAULT_MAP_DISTANCE, true /* Allow adjust zoom */);
+      setDistanceToMap(DEFAULT_MAP_DISTANCE_KM, true /* Allow adjust zoom */);
     }
   }
   history.activate();
@@ -2582,6 +2599,7 @@ bool MapWidget::isCenterLegAndAircraftActive()
 void MapWidget::optionsChanged()
 {
   screenSearchDistance = OptionData::instance().getMapClickSensitivity();
+
   screenSearchDistanceTooltip = OptionData::instance().getMapTooltipSensitivity();
   MapPaintWidget::optionsChanged();
 }
@@ -2678,7 +2696,7 @@ void MapWidget::restoreState()
   {
     // Looks like first start after installation
     homePos = Pos(0.f, 0.f);
-    homeDistance = DEFAULT_MAP_DISTANCE;
+    homeDistance = DEFAULT_MAP_DISTANCE_KM;
   }
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_KML)
