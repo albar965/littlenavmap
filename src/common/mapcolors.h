@@ -153,6 +153,7 @@ const QBrush taxiwayClosedBrush = QBrush(QColor(255, 255, 0), Qt::BDiagPattern);
 
 const QColor runwayOutlineColor = QColor(Qt::black);
 const QColor runwayOffsetColor = QColor(Qt::white);
+const QColor runwayOffsetColorDark = QColor(Qt::black);
 const QBrush runwayBlastpadBrush = QBrush(Qt::yellow, Qt::DiagCrossPattern);
 const QBrush runwayOverrunBrush = QBrush(QColor(180, 180, 0), Qt::DiagCrossPattern);
 
