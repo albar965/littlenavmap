@@ -1752,7 +1752,7 @@ void MapPainterRoute::drawStartParking()
       if(route->hasDepartureParking())
       {
         startPos = first.getDepartureParking().position;
-        size = first.getDepartureParking().radius;
+        size = first.getDepartureParking().getRadius();
       }
       else if(route->hasDepartureStart())
         startPos = first.getDepartureStart().position;

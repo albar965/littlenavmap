@@ -514,9 +514,15 @@ struct MapParking
   QString type, name, nameShort, airlineCodes /* Comma separated list of airline codes */;
   int airportId /* database id airport.airport_id */;
   int number, /* -1 for X-Plane style free names. Otherwise FSX/P3D number */
-      radius;
-  float heading;
+      radius; /* Radius in feet or 0 if not available */
+  float heading; /* heading in degrees true or INVALID_HEADING if not available */
   bool jetway;
+
+  int getRadius() const
+  {
+    return radius > 0 ? radius : 100; // Default radius 100 ft
+  }
+
 };
 
 // =====================================================================

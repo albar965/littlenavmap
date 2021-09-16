@@ -579,7 +579,7 @@ void MapTypesFactory::fillParking(const SqlRecord& record, map::MapParking& park
   parking.jetway = record.valueInt("has_jetway") > 0;
   parking.number = record.valueInt("number");
 
-  parking.heading = record.valueFloat("heading");
+  parking.heading = record.isNull("heading") ? map::INVALID_HEADING_VALUE : record.valueFloat("heading");
   parking.radius = static_cast<int>(std::round(record.valueFloat("radius")));
 
   // Calculate a short text if using X-Plane parking names
