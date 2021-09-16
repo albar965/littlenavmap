@@ -583,10 +583,13 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     {
       // Draw runway offset thresholds --------------------------------
       painter->setBackgroundMode(Qt::TransparentMode);
-      painter->setBrush(mapcolors::runwayOffsetColor);
       for(int i = 0; i < runwayCenters.size(); i++)
       {
         const MapRunway& runway = runways->at(i);
+
+        QColor colThreshold = mapcolors::colorForSurface(runway.surface).value() < 220 ?
+                              mapcolors::runwayOffsetColor : mapcolors::runwayOffsetColorDark;
+        painter->setBrush(colThreshold);
 
         if(runway.primaryOffset > 0 || runway.secondaryOffset > 0)
         {
@@ -600,11 +603,11 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
             int offs = scale->getPixelIntForFeet(runway.primaryOffset, runway.heading);
 
             // Draw solid boundary to runway
-            painter->setPen(QPen(mapcolors::runwayOffsetColor, 3, Qt::SolidLine, Qt::FlatCap));
+            painter->setPen(QPen(colThreshold, 3, Qt::SolidLine, Qt::FlatCap));
             painter->drawLine(rect.left(), rect.bottom() - offs, rect.right(), rect.bottom() - offs);
 
             // Draw dashed line
-            painter->setPen(QPen(mapcolors::runwayOffsetColor, 3, Qt::DashLine, Qt::FlatCap));
+            painter->setPen(QPen(colThreshold, 3, Qt::DashLine, Qt::FlatCap));
             painter->drawLine(0, rect.bottom(), 0, rect.bottom() - offs);
           }
 
@@ -613,11 +616,11 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
             int offs = scale->getPixelIntForFeet(runway.secondaryOffset, runway.heading);
 
             // Draw solid boundary to runway
-            painter->setPen(QPen(mapcolors::runwayOffsetColor, 3, Qt::SolidLine, Qt::FlatCap));
+            painter->setPen(QPen(colThreshold, 3, Qt::SolidLine, Qt::FlatCap));
             painter->drawLine(rect.left(), rect.top() + offs, rect.right(), rect.top() + offs);
 
             // Draw dashed line
-            painter->setPen(QPen(mapcolors::runwayOffsetColor, 3, Qt::DashLine, Qt::FlatCap));
+            painter->setPen(QPen(colThreshold, 3, Qt::DashLine, Qt::FlatCap));
             painter->drawLine(0, rect.top(), 0, rect.top() + offs);
           }
           painter->resetTransform();
