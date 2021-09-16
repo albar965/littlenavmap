@@ -307,7 +307,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
       result.airports.append(ap);
 
     // Check for truncated X-Plane idents but only in X-Plane database
-    if(ident.size() == 6 && NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
+    if(ident.size() == 6 && NavApp::isAirportDatabaseXPlane())
       airportQuery->getAirportsByTruncatedIdent(result.airports, ident);
 
     // Remove airports too far away from given distance
@@ -948,11 +948,10 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
           map::MapAirport ap;
           if(overview)
             // Fill only a part of the object
-            mapTypesFactory->fillAirportForOverview(query->record(), ap, navdata,
-                                                    NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+            mapTypesFactory->fillAirportForOverview(query->record(), ap, navdata, NavApp::isAirportDatabaseXPlane());
           else
             mapTypesFactory->fillAirport(query->record(), ap, true /* complete */, navdata,
-                                         NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+                                         NavApp::isAirportDatabaseXPlane());
 
           ids.insert(ap.id);
           airportCache.list.append(ap);
@@ -973,7 +972,7 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
                                                     NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
           else
             mapTypesFactory->fillAirport(airportAddonByRectQuery->record(), ap, true /* complete */, navdata,
-                                         NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+                                         NavApp::isAirportDatabaseXPlane());
           if(!ids.contains(ap.id))
             airportCache.list.append(ap);
         }

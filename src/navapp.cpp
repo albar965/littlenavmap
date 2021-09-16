@@ -571,6 +571,11 @@ atools::fs::FsPaths::SimulatorType NavApp::getCurrentSimulatorDb()
   return getDatabaseManager()->getCurrentSimulator();
 }
 
+bool NavApp::isAirportDatabaseXPlane()
+{
+  return getDatabaseManager()->isAirportDatabaseXPlane();
+}
+
 QString NavApp::getCurrentSimulatorFilesPath()
 {
   return atools::fs::FsPaths::getFilesPath(getCurrentSimulatorDb());

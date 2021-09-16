@@ -230,7 +230,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
         {
           // There is a parking name and this is the departure airport
           bool translateName = false;
-          if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11 || name.endsWith(PARKING_NO_NUMBER))
+          if(NavApp::isAirportDatabaseXPlane() || name.endsWith(PARKING_NO_NUMBER))
           {
             // X-Plane style parking - name only ======
             if(name.endsWith(PARKING_NO_NUMBER))

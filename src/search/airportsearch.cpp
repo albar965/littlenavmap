@@ -604,8 +604,7 @@ void AirportSearch::getSelectedMapObjects(map::MapResult& result) const
         qDebug() << Q_FUNC_INFO << "range" << range << "row" << row << rec;
 #endif
         // Not fully populated
-        factory.fillAirport(rec, ap, false /* complete */, false /* nav */,
-                            NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+        factory.fillAirport(rec, ap, false /* complete */, false /* nav */, NavApp::isAirportDatabaseXPlane());
         result.airports.append(ap);
       }
       else

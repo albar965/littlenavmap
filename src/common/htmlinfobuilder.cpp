@@ -206,7 +206,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(info || airport.local != displayIdent)
     html.row2If(tr("Local Code:"), airport.local);
 
-  if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11 && (info || airport.ident != displayIdent))
+  if(NavApp::isAirportDatabaseXPlane() && (info || airport.ident != displayIdent))
     html.row2If(tr("X-Plane Ident:"), airport.ident);
 
   html.row2If(tr("Region:"), airport.region);
@@ -284,8 +284,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     facilities.append(tr("Taxiways"));
 
   if(airport.towerObject())
-    facilities.append(NavApp::getCurrentSimulatorDb() ==
-                      atools::fs::FsPaths::XPLANE11 ? tr("Tower Viewpoint") : tr("Tower Object"));
+    facilities.append(NavApp::isAirportDatabaseXPlane() ? tr("Tower Viewpoint") : tr("Tower Object"));
 
   if(airport.parking())
     facilities.append(tr("Parking"));
@@ -2870,8 +2869,7 @@ void HtmlInfoBuilder::towerText(const MapAirport& airport, HtmlBuilder& html) co
     head(html, locale.toString(roundComFrequency(airport.towerFrequency), 'f', 3) + tr(" MHz"));
   }
   else
-    head(html, NavApp::getCurrentSimulatorDb() ==
-         atools::fs::FsPaths::XPLANE11 ? tr("Tower Viewpoint") : tr("Tower"));
+    head(html, NavApp::isAirportDatabaseXPlane() ? tr("Tower Viewpoint") : tr("Tower"));
 }
 
 void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) const
@@ -4157,7 +4155,7 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
     for(const SqlRecord& rec : *sceneryInfo)
     {
       QString title = rec.valueStr("title");
-      if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
+      if(NavApp::isAirportDatabaseXPlane())
         title = i == 0 ? tr("X-Plane") : QString();
 
       html.row2(title, filepathTextShow(rec.valueStr("filepath")), ahtml::NO_ENTITIES);
@@ -4185,7 +4183,7 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
   }
 
   // Use internal id for X-Plane gateway since this includes the long internal idents
-  if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
+  if(NavApp::isAirportDatabaseXPlane())
     links.append(html.cleared().a(tr("X-Plane Scenery Gateway"),
                                   QString("https://gateway.x-plane.com/scenery/page/%1").
                                   arg(airport.ident), ahtml::LINK_NO_UL).getHtml());
