@@ -124,7 +124,7 @@ void AirportQuery::getAirportById(map::MapAirport& airport, int airportId)
     airportByIdQuery->exec();
     if(airportByIdQuery->next())
       mapTypesFactory->fillAirport(airportByIdQuery->record(), *ap, true /* complete */, navdata,
-                                   NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+                                   NavApp::isAirportDatabaseXPlane());
     airportByIdQuery->finish();
 
     airport = *ap;
@@ -153,7 +153,7 @@ void AirportQuery::getAirportByIdent(map::MapAirport& airport, const QString& id
     airportByIdentQuery->exec();
     if(airportByIdentQuery->next())
       mapTypesFactory->fillAirport(airportByIdentQuery->record(), *ap, true /* complete */, navdata,
-                                   NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+                                   NavApp::isAirportDatabaseXPlane());
     airportByIdentQuery->finish();
 
     airport = *ap;
@@ -179,7 +179,7 @@ void AirportQuery::getAirportsByTruncatedIdent(QList<map::MapAirport>& airports,
   {
     map::MapAirport ap;
     mapTypesFactory->fillAirport(airportsByTruncatedIdentQuery->record(), ap, true /* complete */, navdata,
-                                 NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+                                 NavApp::isAirportDatabaseXPlane());
     airports.append(ap);
   }
 }
@@ -215,7 +215,7 @@ void AirportQuery::getAirportsByOfficialIdent(QList<map::MapAirport>& airports, 
     {
       map::MapAirport airport;
       mapTypesFactory->fillAirport(airportByOfficialQuery->record(), airport, true /* complete */, navdata,
-                                   NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+                                   NavApp::isAirportDatabaseXPlane());
       airports.append(airport);
     }
   }
@@ -274,10 +274,10 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
     {
       ageo::Rect rect(airportCopy.position, ageo::nmToMeter(10.f));
 
-      bool xplane = NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11;
       query::fetchObjectsForRect(rect, airportByPosQuery, [ =, &airports](atools::sql::SqlQuery *query) -> void {
         map::MapAirport obj;
-        mapTypesFactory->fillAirport(query->record(), obj, true /* complete */, navdata, xplane);
+        mapTypesFactory->fillAirport(query->record(), obj, true /* complete */, navdata,
+                                     NavApp::isAirportDatabaseXPlane());
         airports.append(obj);
       });
     }
@@ -456,7 +456,7 @@ const QList<map::MapApron> *AirportQuery::getAprons(int airportId)
     }
 
     // Revert apron drawing order for X-Plane - draw last in file first
-    if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
+    if(NavApp::isAirportDatabaseXPlane())
       std::reverse(aprons->begin(), aprons->end());
 
     apronCache.insert(airportId, aprons);
@@ -716,10 +716,10 @@ map::MapResultIndex *AirportQuery::nearestAirportsProcInternal(const map::MapAir
     // Create a rectangle that roughly covers the requested region
     ageo::Rect rect(airport.position, ageo::nmToMeter(distanceNm));
 
-    bool xplane = NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11;
     query::fetchObjectsForRect(rect, airportByRectAndProcQuery, [ =, &res](atools::sql::SqlQuery *query) -> void {
       map::MapAirport obj;
-      mapTypesFactory->fillAirport(query->record(), obj, true /* complete */, navdata, xplane);
+      mapTypesFactory->fillAirport(query->record(), obj, true /* complete */, navdata,
+                                   NavApp::isAirportDatabaseXPlane());
       if(obj.ident != airport.ident)
         res.airports.append(obj);
     });

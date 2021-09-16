@@ -163,6 +163,12 @@ public:
     return currentFsType;
   }
 
+  /* Only true if airports come from X-Plane database */
+  bool isAirportDatabaseXPlane() const
+  {
+    return currentFsType == atools::fs::FsPaths::XPLANE11 && navDatabaseStatus != dm::NAVDATABASE_ALL;
+  }
+
   /* Base paths which might also be changed by the user */
   QString getCurrentSimulatorBasePath() const;
   QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type) const;

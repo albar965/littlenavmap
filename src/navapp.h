@@ -169,7 +169,7 @@ public:
   static bool isUserAircraftValid();
 
   static float getTakeoffFlownDistanceNm();
-  static QDateTime getTakeoffDateTime() ;
+  static QDateTime getTakeoffDateTime();
 
   static const atools::fs::sc::SimConnectUserAircraft& getUserAircraft();
   static const atools::fs::sc::SimConnectData& getSimConnectData();
@@ -206,6 +206,7 @@ public:
 
   /* Currently selected simulator database */
   static atools::fs::FsPaths::SimulatorType getCurrentSimulatorDb();
+  static bool isAirportDatabaseXPlane();
   static QString getCurrentSimulatorBasePath();
   static QString getSimulatorBasePath(atools::fs::FsPaths::SimulatorType type);
   static QString getSimulatorBasePathBest(const QVector<atools::fs::FsPaths::SimulatorType>& types);
