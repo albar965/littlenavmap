@@ -641,7 +641,8 @@ void AirportSearch::getSelectedMapObjects(map::MapResult& result) const
         qDebug() << Q_FUNC_INFO << "range" << range << "row" << row << rec;
 #endif
         // Not fully populated
-        factory.fillAirport(rec, ap, false /* complete */, false /* nav */, NavApp::isAirportDatabaseXPlane());
+        factory.fillAirport(rec, ap, false /* complete */, false /* nav */,
+                            NavApp::isAirportDatabaseXPlane(false /* navdata */));
         result.airports.append(ap);
       }
       else
