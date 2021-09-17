@@ -85,7 +85,7 @@
    <item row="7" column="0">
     <widget class="QLabel" name="labelTrafficPatternBaseDistance">
      <property name="text">
-      <string>&amp;Base leg to runway treshold:</string>
+      <string>&amp;Base leg to runway threshold:</string>
      </property>
      <property name="buddy">
       <cstring>doubleSpinBoxTrafficPatternBaseDistance</cstring>

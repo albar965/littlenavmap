@@ -12813,7 +12813,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1190"/>
-        <source>Glideslope Pitch:</source>
+        <source>Glideslope:</source>
         <translation>下滑道角度：</translation>
     </message>
     <message>
@@ -23284,8 +23284,8 @@ Really use it?</source>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="93"/>
-        <source>GNSS</source>
-        <translation>GNSS</translation>
+        <source>GLS</source>
+        <translation>GLS</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="95"/>
@@ -27730,7 +27730,7 @@ Right-click into the map and select
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="88"/>
-        <source>&amp;Base leg to runway treshold:</source>
+        <source>&amp;Base leg to runway threshold:</source>
         <translation>第四边到跑道入口(&amp;B)：</translation>
     </message>
     <message>

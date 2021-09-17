@@ -13757,7 +13757,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1190"/>
-        <source>Glideslope Pitch:</source>
+        <source>Glideslope:</source>
         <translation>Helling Aanvlieglijn:</translation>
     </message>
     <message>
@@ -24570,8 +24570,8 @@ Werkelijk gebruiken?</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="93"/>
-        <source>GNSS</source>
-        <translation>GNSS</translation>
+        <source>GLS</source>
+        <translation>GLS</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="95"/>
@@ -29087,8 +29087,8 @@ Rechtsklik op de kaart en selecteer
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="88"/>
-        <source>&amp;Base leg to runway treshold:</source>
-        <translation>&amp;Base leg naar de runway treshold:</translation>
+        <source>&amp;Base leg to runway threshold:</source>
+        <translation>&amp;Base leg naar de runway threshold:</translation>
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="206"/>
