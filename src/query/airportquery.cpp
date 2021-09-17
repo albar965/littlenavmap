@@ -237,7 +237,10 @@ QString AirportQuery::getDisplayIdent(const QString& ident)
 
 void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirport airportCopy)
 {
-  map::MapAirport *ap = airportIdCache.object(airportCopy.id);
+  if(!airportCopy.isValid())
+    return;
+
+  map::MapAirport *ap = airportFuzzyIdCache.object(airportCopy.id);
   QList<map::MapAirport> airports;
 
   if(ap != nullptr)
@@ -295,7 +298,7 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
     } // else assign empty airport to indicate that is it not available
 
     airport = *ap;
-    airportIdCache.insert(airportCopy.id, ap);
+    airportFuzzyIdCache.insert(airportCopy.id, ap);
 
 #ifdef DEBUG_INFORMATION
     qDebug() << Q_FUNC_INFO << "Found" << *ap << "as replacement for" << airportCopy;
