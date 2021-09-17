@@ -307,7 +307,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
       result.airports.append(ap);
 
     // Check for truncated X-Plane idents but only in X-Plane database
-    if(ident.size() == 6 && NavApp::isAirportDatabaseXPlane())
+    if(ident.size() == 6 && NavApp::isAirportDatabaseXPlane(airportFromNavDatabase))
       airportQuery->getAirportsByTruncatedIdent(result.airports, ident);
 
     // Remove airports too far away from given distance
@@ -948,10 +948,11 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
           map::MapAirport ap;
           if(overview)
             // Fill only a part of the object
-            mapTypesFactory->fillAirportForOverview(query->record(), ap, navdata, NavApp::isAirportDatabaseXPlane());
+            mapTypesFactory->fillAirportForOverview(query->record(), ap, navdata,
+                                                    NavApp::isAirportDatabaseXPlane(navdata));
           else
             mapTypesFactory->fillAirport(query->record(), ap, true /* complete */, navdata,
-                                         NavApp::isAirportDatabaseXPlane());
+                                         NavApp::isAirportDatabaseXPlane(navdata));
 
           ids.insert(ap.id);
           airportCache.list.append(ap);
@@ -969,10 +970,10 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
           if(overview)
             // Fill only a part of the object
             mapTypesFactory->fillAirportForOverview(airportAddonByRectQuery->record(), ap, navdata,
-                                                    NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+                                                    NavApp::isAirportDatabaseXPlane(navdata));
           else
             mapTypesFactory->fillAirport(airportAddonByRectQuery->record(), ap, true /* complete */, navdata,
-                                         NavApp::isAirportDatabaseXPlane());
+                                         NavApp::isAirportDatabaseXPlane(navdata));
           if(!ids.contains(ap.id))
             airportCache.list.append(ap);
         }

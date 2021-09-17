@@ -206,7 +206,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(info || airport.local != displayIdent)
     html.row2If(tr("Local Code:"), airport.local);
 
-  if(NavApp::isAirportDatabaseXPlane() && (info || airport.ident != displayIdent))
+  if(airport.xplane && (info || airport.ident != displayIdent))
     html.row2If(tr("X-Plane Ident:"), airport.ident);
 
   html.row2If(tr("Region:"), airport.region);
@@ -284,7 +284,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     facilities.append(tr("Taxiways"));
 
   if(airport.towerObject())
-    facilities.append(NavApp::isAirportDatabaseXPlane() ? tr("Tower Viewpoint") : tr("Tower Object"));
+    facilities.append(airport.xplane ? tr("Tower Viewpoint") : tr("Tower Object"));
 
   if(airport.parking())
     facilities.append(tr("Parking"));
@@ -499,8 +499,10 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 #ifdef DEBUG_INFORMATION
   MapAirport airportNav = mapQuery->getAirportNav(airport);
 
-  html.small(QString("Database: airport_id = %1 (sim %2, %3)").arg(airport.getId()).
-             arg(airportNav.getId()).arg(airportNav.ident)).br();
+  html.small(QString("Database: airport_id = %1, ident = %2, navdata %3, xp %4)").
+             arg(airport.getId()).arg(airport.ident).arg(airport.navdata).arg(airport.xplane)).br();
+  html.small(QString("Navdatabase: airport_id = %1, ident = %2, navdata %3, xp %4)").
+             arg(airportNav.getId()).arg(airportNav.ident).arg(airportNav.navdata).arg(airportNav.xplane)).br();
 
 #endif
 }
@@ -2869,7 +2871,7 @@ void HtmlInfoBuilder::towerText(const MapAirport& airport, HtmlBuilder& html) co
     head(html, locale.toString(roundComFrequency(airport.towerFrequency), 'f', 3) + tr(" MHz"));
   }
   else
-    head(html, NavApp::isAirportDatabaseXPlane() ? tr("Tower Viewpoint") : tr("Tower"));
+    head(html, airport.xplane ? tr("Tower Viewpoint") : tr("Tower"));
 }
 
 void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) const
@@ -4155,7 +4157,7 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
     for(const SqlRecord& rec : *sceneryInfo)
     {
       QString title = rec.valueStr("title");
-      if(NavApp::isAirportDatabaseXPlane())
+      if(airport.xplane)
         title = i == 0 ? tr("X-Plane") : QString();
 
       html.row2(title, filepathTextShow(rec.valueStr("filepath")), ahtml::NO_ENTITIES);
@@ -4183,7 +4185,7 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
   }
 
   // Use internal id for X-Plane gateway since this includes the long internal idents
-  if(NavApp::isAirportDatabaseXPlane())
+  if(airport.xplane)
     links.append(html.cleared().a(tr("X-Plane Scenery Gateway"),
                                   QString("https://gateway.x-plane.com/scenery/page/%1").
                                   arg(airport.ident), ahtml::LINK_NO_UL).getHtml());

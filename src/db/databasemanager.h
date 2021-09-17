@@ -163,10 +163,15 @@ public:
     return currentFsType;
   }
 
-  /* Only true if airports come from X-Plane database */
-  bool isAirportDatabaseXPlane() const
+  /* Only true if airports come from X-Plane database as default */
+  bool isAirportDatabaseXPlane(bool navdata) const
   {
-    return currentFsType == atools::fs::FsPaths::XPLANE11 && navDatabaseStatus != dm::NAVDATABASE_ALL;
+    if(navdata)
+      // Fetch from navdatabase - X-Plane airport only if navdata is not used
+      return currentFsType == atools::fs::FsPaths::XPLANE11 && navDatabaseStatus == dm::NAVDATABASE_OFF;
+    else
+      // Fetch from sim database - X-Plane airport only if navdata is not used for all
+      return currentFsType == atools::fs::FsPaths::XPLANE11 && navDatabaseStatus != dm::NAVDATABASE_ALL;
   }
 
   /* Base paths which might also be changed by the user */
