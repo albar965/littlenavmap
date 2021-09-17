@@ -13576,7 +13576,7 @@ Applicare comunque il layout della finestra caricato?</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1190"/>
-        <source>Glideslope Pitch:</source>
+        <source>Glideslope:</source>
         <translation>Inclinazione Sentiero Discesa:</translation>
     </message>
     <message>
@@ -24857,8 +24857,8 @@ Really use it?</source>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="93"/>
-        <source>GNSS</source>
-        <translation>GNSS</translation>
+        <source>GLS</source>
+        <translation>GLS</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="95"/>
@@ -29674,7 +29674,7 @@ Fai clic con il tasto destro sulla mappa e seleziona
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="88"/>
-        <source>&amp;Base leg to runway treshold:</source>
+        <source>&amp;Base leg to runway threshold:</source>
         <translation>Segmento &amp;Base alla soglia pista:</translation>
     </message>
     <message>

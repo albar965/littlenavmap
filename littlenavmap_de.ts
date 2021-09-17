@@ -13830,7 +13830,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1190"/>
-        <source>Glideslope Pitch:</source>
+        <source>Glideslope:</source>
         <translation>Gleitpfadwinkel:</translation>
     </message>
     <message>
@@ -24923,8 +24923,8 @@ Wollen Sie diese Prozedur wirklich verwenden?</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="93"/>
-        <source>GNSS</source>
-        <translation>GNSS</translation>
+        <source>GLS</source>
+        <translation>GLS</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="95"/>
@@ -29621,7 +29621,7 @@ Klicken Sie mit der rechten Maustaste in die Karte und wählen Sie
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="88"/>
-        <source>&amp;Base leg to runway treshold:</source>
+        <source>&amp;Base leg to runway threshold:</source>
         <translation>&amp;Endabschnitt:</translation>
     </message>
     <message>

@@ -13564,7 +13564,7 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="1190"/>
-        <source>Glideslope Pitch:</source>
+        <source>Glideslope:</source>
         <translation></translation>
     </message>
     <message>
@@ -23728,8 +23728,8 @@ MHz/kHz/Cha.</source>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="93"/>
-        <source>GNSS</source>
-        <translation></translation>
+        <source>GLS</source>
+        <translation>GLS</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="243"/>
@@ -29160,7 +29160,7 @@ Clique com o botão direito do mouse no mapa e selecione
     </message>
     <message>
         <location filename="src/gui/trafficpatterndialog.ui" line="88"/>
-        <source>&amp;Base leg to runway treshold:</source>
+        <source>&amp;Base leg to runway threshold:</source>
         <translation>&amp;Perna base para o limiar da pista:</translation>
     </message>
     <message>
