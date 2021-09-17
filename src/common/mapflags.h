@@ -63,13 +63,13 @@ enum MapType
   AIRPORT_ADDON = 1 << 4,
   VOR = 1 << 5,
   NDB = 1 << 6,
-  ILS = 1 << 7,
+  ILS = 1 << 7, /* Type also covers GLS approaches */
   MARKER = 1 << 8,
   WAYPOINT = 1 << 9,
   AIRWAY = 1 << 10,
   AIRWAYV = 1 << 11,
   AIRWAYJ = 1 << 12,
-  // 13
+  GLS = 1 << 13, /* GLS approaches or GBAS paths - only display flag */
   AIRCRAFT = 1 << 14, /* Simulator user aircraft */
   AIRCRAFT_AI = 1 << 15, /* AI or multiplayer simulator aircraft */
   AIRCRAFT_AI_SHIP = 1 << 16, /* AI or multiplayer simulator ship */

@@ -891,6 +891,23 @@ struct MapMarker
   int heading;
 };
 
+enum IlsType : char
+{
+  ILS_TYPE_NONE = '\0',
+  LOCALIZER = '0', /* No glideslope */
+  ILS_CAT = 'U', /* Unknown category */
+  ILS_CAT_I = '1',
+  ILS_CAT_II = '2',
+  ILS_CAT_III = '3',
+  IGS = 'I',
+  LDA_GS = 'L',
+  LDA = 'A', /* No glideslope */
+  SDF_GS = 'S',
+  SDF = 'F', /* No glideslope */
+  GLS_GROUND_STATION = 'G',
+  SBAS_GBAS_THRESHOLD = 'T'
+};
+
 // =====================================================================
 /* ILS */
 /* database id ils.ils_id */
@@ -901,9 +918,31 @@ struct MapIls
   {
   }
 
+  int runwayEndId;
+
   QString ident, /* IRHF */
-           name, /* ILS-CAT-I */
-           region;
+          name, /* ILS-CAT-I */
+          region,
+          airportIdent,
+          runwayName,
+          perfIndicator, /* "LP", "LPV", "APV-II" and "GLS" */
+          provider; /* Provider of the SBAS service can be "WAAS", "EGNOS", "MSAS".
+                     * If no provider is specified, or this belongs to a GLS approach, then "GP" */
+
+  map::IlsType type; /* empty unknown
+                      * ILS Localizer only, no glideslope   0
+                      * ILS Localizer/MLS/GLS Unknown cat   U
+                      * ILS Localizer/MLS/GLS Cat I         1
+                      * ILS Localizer/MLS/GLS Cat II        2
+                      * ILS Localizer/MLS/GLS Cat III       3
+                      * IGS Facility                        I
+                      * LDA Facility with glideslope        L
+                      * LDA Facility no glideslope          A
+                      * SDF Facility with glideslope        S
+                      * SDF Facility no glideslope          F
+                      *  G: GLS ground station,
+                      *  T: SBAS/GBAS threshold point*/
+
   float magvar, slope, heading, width;
   int frequency /* MHz * 1000 */, range /* nm */;
 
@@ -912,7 +951,45 @@ struct MapIls
                    pos2, /* Position 2 of the feather end */
                    posmid; /* Middle position of the feather end - depends on type ILS or LOC */
   atools::geo::Rect bounding;
-  bool hasDme;
+  bool hasDme, hasBackcourse, hasGeometry;
+
+  QString freqMHzOrChannelLocale() const;
+  QString freqMHzOrChannel() const;
+
+  bool isAnyGls() const
+  {
+    return type == SBAS_GBAS_THRESHOLD || type == GLS_GROUND_STATION;
+  }
+
+  bool isIls() const
+  {
+    return type == ILS_CAT || type == ILS_CAT_I || type == ILS_CAT_II || type == ILS_CAT_III;
+  }
+
+  bool isLoc() const
+  {
+    return type == LOCALIZER;
+  }
+
+  bool isIgs() const
+  {
+    return type == IGS;
+  }
+
+  bool isLda() const
+  {
+    return type == LDA_GS || type == LDA;
+  }
+
+  bool isSdf() const
+  {
+    return type == SDF_GS || type == SDF;
+  }
+
+  bool hasGlideslope() const
+  {
+    return slope > 0.1f;
+  }
 
   atools::geo::LineString boundary() const;
   atools::geo::Line centerLine() const;
@@ -1112,10 +1189,9 @@ QString navTypeNameNdb(const QString& type);
 QString navTypeNameWaypoint(const QString& type);
 QString navTypeArincNamesWaypoint(const QString& type); /* ARINC * 424.18 field type definition 5.42 */
 
-QString ilsText(const map::MapIls& ils);
-QString ilsType(const MapIls& ils);
+QString ilsText(const map::MapIls& ils); /* No locale use - for map display */
+QString ilsType(const MapIls& ils, bool gs, bool dme, const QString& separator);
 QString ilsTextShort(const MapIls& ils);
-QString ilsTextShort(QString ident, QString name, bool gs, bool dme);
 
 QString edgeLights(const QString& type);
 QString patternDirection(const QString& type);

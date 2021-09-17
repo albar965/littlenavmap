@@ -379,6 +379,7 @@
      <addaction name="actionMapShowNdb"/>
      <addaction name="actionMapShowWp"/>
      <addaction name="actionMapShowIls"/>
+     <addaction name="actionMapShowGls"/>
      <addaction name="separator"/>
      <addaction name="actionMapShowVictorAirways"/>
      <addaction name="actionMapShowJetAirways"/>
@@ -5595,6 +5596,7 @@ relation to shown airport</string>
    <addaction name="actionMapShowNdb"/>
    <addaction name="actionMapShowWp"/>
    <addaction name="actionMapShowIls"/>
+   <addaction name="actionMapShowGls"/>
    <addaction name="actionMapShowVictorAirways"/>
    <addaction name="actionMapShowJetAirways"/>
    <addaction name="actionMapShowTracks"/>
@@ -11937,6 +11939,27 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Show random flight plan options</string>
    </property>
   </action>
+  <action name="actionMapShowGls">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/gls.svg</normaloff>:/littlenavmap/resources/icons/gls.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show &amp;GLS Approach Paths</string>
+   </property>
+   <property name="toolTip">
+    <string>Show GLS approach paths on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show GLS approach paths on map</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12122,8 +12145,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
-  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

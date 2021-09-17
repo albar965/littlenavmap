@@ -58,9 +58,14 @@ extern QColor addonAirportFrameColor;
 extern QColor vorSymbolColor;
 extern QColor ndbSymbolColor;
 extern QColor markerSymbolColor;
+
 extern QColor ilsSymbolColor;
 extern QColor ilsFillColor;
 extern QColor ilsTextColor;
+
+extern QColor glsSymbolColor;
+extern QColor glsFillColor;
+extern QColor glsTextColor;
 extern QColor waypointSymbolColor;
 extern QColor airwayVictorColor;
 extern QColor airwayJetColor;
@@ -100,6 +105,7 @@ extern QColor profileAltRestrictionFill;
 extern QColor profileAltRestrictionOutline;
 extern QPen profileVasiCenterPen;
 extern QPen ilsCenterPen;
+extern QPen glsCenterPen;
 extern QPen profileLandOutlinePen;
 extern QPen profileWaypointLinePen;
 extern QPen profileElevationScalePen;

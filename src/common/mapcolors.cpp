@@ -48,13 +48,16 @@ QColor addonAirportFrameColor(Qt::darkGray);
 QColor vorSymbolColor(Qt::darkBlue);
 QColor ndbSymbolColor(Qt::darkRed);
 QColor markerSymbolColor(Qt::darkMagenta);
-QColor ilsSymbolColor(Qt::darkGreen);
-
-QPen ilsCenterPen(ilsSymbolColor, 1.5, Qt::DashLine);
 
 QColor ilsFillColor("#40008000");
-
 QColor ilsTextColor(0, 30, 0);
+QPen ilsCenterPen(Qt::darkGreen, 1.5, Qt::DashLine);
+QColor ilsSymbolColor(Qt::darkGreen);
+
+QColor glsFillColor("#20808080");
+QColor glsTextColor(20, 20, 20);
+QPen glsCenterPen(Qt::darkGray, 1.5, Qt::DashLine);
+QColor glsSymbolColor(Qt::darkGray);
 
 QColor waypointSymbolColor(200, 0, 200);
 
@@ -62,8 +65,8 @@ QColor airwayVictorColor("#969696"); // 1.
 QColor airwayJetColor("#000080"); // 1.
 QColor airwayBothColor("#646464"); // 1.
 QColor airwayTrackColor("#101010"); // 1.5
-QColor airwayTrackColorEast("#a01010"); // 1.5
-QColor airwayTrackColorWest("#1010a0"); // 1.5
+static QColor airwayTrackColorEast("#a01010"); // 1.5
+static QColor airwayTrackColorWest("#1010a0"); // 1.5
 QColor airwayTextColor(80, 80, 80);
 
 QColor rangeRingColor(Qt::red);
@@ -628,6 +631,12 @@ void syncColors()
   syncColorArgb(colorSettings, "IlsFillColor", ilsFillColor);
   syncColor(colorSettings, "IlsTextColor", ilsTextColor);
   syncPen(colorSettings, "IlsCenterPen", ilsCenterPen);
+
+  syncColor(colorSettings, "GlsGbasColor", glsSymbolColor);
+  syncColorArgb(colorSettings, "GlsGbasFillColor", glsFillColor);
+  syncColor(colorSettings, "GlsTextColor", glsTextColor);
+  syncPen(colorSettings, "GlsCenterPen", glsCenterPen);
+
   syncColor(colorSettings, "WaypointColor", waypointSymbolColor);
   colorSettings.endGroup();
 

@@ -1437,6 +1437,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowNdb, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowWp, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowIls, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowGls, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowVictorAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowJetAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowTracks, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -3907,8 +3908,9 @@ void MainWindow::restoreStateMain()
     // Restore map settings if desired by the user
     widgetState.restore({ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
                          ui->actionMapShowAddonAirports, ui->actionMapShowVor, ui->actionMapShowNdb,
-                         ui->actionMapShowWp, ui->actionMapShowIls, ui->actionMapShowVictorAirways,
-                         ui->actionMapShowJetAirways, ui->actionMapShowTracks, ui->actionShowAirspaces,
+                         ui->actionMapShowWp, ui->actionMapShowIls, ui->actionMapShowGls,
+                         ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks,
+                         ui->actionShowAirspaces,
                          ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft,
                          ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach, ui->actionMapAircraftCenter,
                          ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack,
@@ -4109,7 +4111,8 @@ void MainWindow::saveActionStates()
   atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
   widgetState.save({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowAirports, ui->actionMapShowSoftAirports,
                     ui->actionMapShowEmptyAirports, ui->actionMapShowAddonAirports, ui->actionMapShowVor,
-                    ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls, ui->actionMapShowVictorAirways,
+                    ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
+                    ui->actionMapShowGls, ui->actionMapShowVictorAirways,
                     ui->actionMapShowJetAirways, ui->actionMapShowTracks, ui->actionShowAirspaces,
                     ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft,
                     ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach, ui->actionMapAircraftCenter,

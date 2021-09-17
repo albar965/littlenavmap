@@ -463,11 +463,19 @@ struct MapProcedureLegs
        hasHardError, /* Deny usage since geometry is not valid*/
        circleToLand; /* Runway is not part of procedure and was added internally */
 
-  /* Anything that needs to display an ILS frequency */
-  bool hasIlsGuidance() const
+  /* Short display type name */
+  QString displayApproachType() const
   {
+    // Correct wrong designation of GLS approaches as GNSS for display
+    return approachType == "GNSS" ? "GLS" : approachType;
+  }
+
+  /* Anything that needs to display an ILS frequency or GNSS channel */
+  bool hasFrequencyOrChannel() const
+  {
+    // All: RNAV VORDME GPS ILS VOR NDB LOC NDBDME TCN LOCB GNSS LDA SDF IGS
     return approachType == "ILS" || approachType == "LOC" || approachType == "LOCB" || approachType == "LDA" ||
-           approachType == "IGS" || approachType == "SDF";
+           approachType == "IGS" || approachType == "SDF" || approachType == "GNSS" || approachType == "GLS";
   }
 
   bool isCustom() const

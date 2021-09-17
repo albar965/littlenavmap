@@ -60,7 +60,7 @@ void MapPainterIls::render()
     const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
 
     int x, y;
-    if(context->objectTypes.testFlag(map::ILS))
+    if(context->objectTypes.testFlag(map::ILS) || context->objectTypes.testFlag(map::GLS))
     {
       bool overflow = false;
       const QList<MapIls> *ilsList = mapQuery->getIls(curBox, context->mapLayer, context->lazyUpdate, overflow);
@@ -74,6 +74,12 @@ void MapPainterIls::render()
         {
           if(routeIlsIds.contains(ils.id))
             // Part of flight plan - paint later
+            continue;
+
+          if(ils.isAnyGls() && !context->objectTypes.testFlag(map::GLS))
+            continue;
+
+          if(!ils.isAnyGls() && !context->objectTypes.testFlag(map::ILS))
             continue;
 
           // Need to get the real ILS size on the screen for Mercator projection - otherwise feather may vanish
@@ -112,9 +118,19 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
 {
   atools::util::PainterContextSaver saver(context->painter);
 
+  if(!ils.hasGeometry)
+    return;
+
+  bool isIls = !ils.isAnyGls();
+
+  QColor fillColor = isIls ? mapcolors::ilsFillColor : mapcolors::glsFillColor;
+  QColor symColor = isIls ? mapcolors::ilsSymbolColor : mapcolors::glsSymbolColor;
+  QColor textColor = isIls ? mapcolors::ilsTextColor : mapcolors::glsTextColor;
+  QPen centerPen = isIls ? mapcolors::ilsCenterPen : mapcolors::glsCenterPen;
+
   context->painter->setBackgroundMode(Qt::TransparentMode);
-  context->painter->setBrush(fast ? QBrush(Qt::transparent) : QBrush(mapcolors::ilsFillColor));
-  context->painter->setPen(QPen(mapcolors::ilsSymbolColor, 2, Qt::SolidLine, Qt::FlatCap));
+  context->painter->setBrush(fast ? QBrush(Qt::transparent) : QBrush(fillColor));
+  context->painter->setPen(QPen(symColor, 2, Qt::SolidLine, Qt::FlatCap));
 
   QSize size = scale->getScreeenSizeForRect(ils.bounding);
   bool visible;
@@ -125,7 +141,11 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
   QPoint p1 = wToS(ils.pos1, size, &visible);
   QPoint p2 = wToS(ils.pos2, size, &visible);
 
-  if(ils.slope > 0.1f)
+  if(!isIls)
+  {
+    context->painter->drawPolygon(QPolygonF({origin, p1, p2, origin}));
+  }
+  else if(ils.hasGlideslope())
   {
     context->painter->drawPolygon(QPolygonF({origin, p1, p2, origin}));
     context->painter->drawPolyline(QPolygonF({p1, pmid, p2}));
@@ -135,8 +155,12 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
 
   if(!context->drawFast)
   {
-    context->painter->setPen(QPen(mapcolors::ilsCenterPen));
-    context->painter->drawLine(origin, pmid);
+    context->painter->setPen(centerPen);
+
+    if(isIls)
+      context->painter->drawLine(origin, pmid);
+    else
+      context->painter->drawLine(origin, QLine(p1, p2).center());
 
     // Draw ILS text -----------------------------------
     QString text;
@@ -148,7 +172,7 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
     if(!text.isEmpty())
     {
       context->szFont(context->textSizeNavaid);
-      context->painter->setPen(QPen(mapcolors::ilsTextColor, 0.5f, Qt::SolidLine, Qt::FlatCap));
+      context->painter->setPen(QPen(textColor, 0.5f, Qt::SolidLine, Qt::FlatCap));
       context->painter->translate(origin);
 
       float width = ils.width < map::INVALID_COURSE_VALUE ? ils.width : map::DEFAULT_ILS_WIDTH;

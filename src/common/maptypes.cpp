@@ -1859,59 +1859,61 @@ QDebug operator<<(QDebug out, const WeatherContext& record)
 
 QString ilsText(const MapIls& ils)
 {
-  QString text = ils.ident + " / " +
-                 QString::number(ils.frequency / 1000., 'f', 2) + " / " +
-                 QString::number(atools::geo::normalizeCourse(ils.heading - ils.magvar), 'f', 0) + QObject::tr("°M");
+  QString text = QObject::tr("%1 / %2 / %3 / %4°M").
+                 arg(ilsType(ils, false /* gs */, false /* dme */, QObject::tr(", "))).
+                 arg(ils.ident).
+                 arg(ils.freqMHzOrChannel()).
+                 arg(QString::number(atools::geo::normalizeCourse(ils.heading - ils.magvar), 'f', 0));
 
-  if(ils.slope > 0.1f)
-    text += QObject::tr(" / GS ") + QString::number(ils.slope, 'f', 1) + QObject::tr("°");
+  if(ils.hasGlideslope())
+    text += (ils.isAnyGls() ? QObject::tr(" / GP %1°") : QObject::tr(" / GS %1°")).
+            arg(QString::number(ils.slope, 'f', 1));
   if(ils.hasDme)
     text += QObject::tr(" / DME");
 
   return text;
 }
 
-QString ilsTextShort(const map::MapIls& ils)
-{
-  return ilsTextShort(ils.ident, ils.name, ils.slope > 0.f, ils.hasDme);
-}
-
-QString ilsType(const map::MapIls& ils)
-{
-  QString txt = ils.slope > 0.f ? QObject::tr("ILS, GS") : QObject::tr("LOC");
-  if(ils.hasDme)
-    txt.append(QObject::tr(", DME"));
-  return txt;
-}
-
-QString ilsTextShort(QString ident, QString name, bool gs, bool dme)
+QString ilsType(const map::MapIls& ils, bool gs, bool dme, const QString& separator)
 {
   QString text;
 
-  if(gs)
-  {
-    // Is real ILS with glideslooe
-    if(!name.isEmpty() && !name.startsWith(QObject::tr("ILS")))
-      name.prepend(QObject::tr("ILS "));
-  }
-  else if(!name.startsWith(QObject::tr("LOC")))
-  {
-    // Is localizer only
-    if(!name.isEmpty())
-      name.prepend(QObject::tr("LOC "));
-  }
-
-  if(name.isEmpty())
-    text.append(ident);
+  if(ils.isAnyGls())
+    text = QObject::tr("GLS");
+  else if(ils.isIls())
+    text = QObject::tr("ILS");
+  else if(ils.isLoc())
+    text = QObject::tr("LOC");
+  else if(ils.isIgs())
+    text = QObject::tr("IGS");
+  else if(ils.isLda())
+    text = QObject::tr("LDA");
+  else if(ils.isSdf())
+    text = QObject::tr("SDF");
   else
-    text.append(QObject::tr("%1 (%2)").arg(name).arg(ident));
+    text = ils.name;
 
-  if(gs)
-    text += QObject::tr(", GS ");
-  if(dme)
-    text += QObject::tr(", DME");
+  if(!ils.isAnyGls())
+  {
+    if(gs && ils.hasGlideslope())
+      text += separator + QObject::tr("GS");
+    if(dme && ils.hasDme)
+      text += separator + QObject::tr("DME");
+  }
+  else
+  {
+    if(!ils.perfIndicator.isEmpty())
+      text += separator + ils.perfIndicator;
+    if(!ils.provider.isEmpty())
+      text += separator + ils.provider;
+  }
 
   return text;
+}
+
+QString ilsTextShort(const map::MapIls& ils)
+{
+  return QObject::tr("%1 %2").arg(ilsType(ils, true /* gs */, true /* dme */, QObject::tr(", "))).arg(ils.ident);
 }
 
 float Hold::magCourse() const
@@ -1929,12 +1931,33 @@ atools::geo::Line MapIls::centerLine() const
   return atools::geo::Line(position, posmid);
 }
 
+QString MapIls::freqMHzOrChannel() const
+{
+  if(type == GLS_GROUND_STATION || type == SBAS_GBAS_THRESHOLD)
+    return QObject::tr("%1").arg(frequency);
+  else
+    return QObject::tr("%1").arg(static_cast<float>(frequency / 1000.f), 0, 'f', 2);
+}
+
+QString MapIls::freqMHzOrChannelLocale() const
+{
+  if(type == GLS_GROUND_STATION || type == SBAS_GBAS_THRESHOLD)
+    return QObject::tr("%L1").arg(frequency);
+  else
+    return QObject::tr("%L1").arg(static_cast<float>(frequency / 1000.f), 0, 'f', 2);
+}
+
 atools::geo::LineString MapIls::boundary() const
 {
-  if(slope > 0.f)
-    return atools::geo::LineString({position, pos1, pos2, position});
+  if(hasGeometry)
+  {
+    if(hasGlideslope())
+      return atools::geo::LineString({position, pos1, pos2, position});
+    else
+      return atools::geo::LineString({position, pos1, posmid, pos2, position});
+  }
   else
-    return atools::geo::LineString({position, pos1, posmid, pos2, position});
+    return atools::geo::EMPTY_LINESTRING;
 }
 
 QString airspaceName(const MapAirspace& airspace)

@@ -642,9 +642,9 @@ bool HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuild
 
       const map::MapIls *ils = base->asPtr<map::MapIls>(map::ILS);
       if(ils != nullptr)
-        nearestMapObjectsTextRow(airport, html, map::ilsType(*ils), ils->ident, ils->name,
-                                 QString::number(ils->frequency / 1000., 'f',
-                                                 2), ils, ils->magvar, frequencyCol, airportCol);
+        nearestMapObjectsTextRow(airport, html, map::ilsType(*ils, true /* gs */, true /* dme */, tr(", ")),
+                                 ils->ident, ils->name,
+                                 ils->freqMHzOrChannelLocale(), ils, ils->magvar, frequencyCol, airportCol);
     }
     html.tableEnd();
     return true;
@@ -1061,38 +1061,23 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
   html.tableEnd();
 
   // Show none, one or more ILS
-  const atools::sql::SqlRecordVector *ilsRec =
-    infoQuery->getIlsInformationSimByName(airport.ident, rec->valueStr("name"));
-  if(ilsRec != nullptr)
-  {
-    for(const atools::sql::SqlRecord& irec : *ilsRec)
-      ilsText(&irec, html, false /* approach */, false /* standalone */);
-  }
+  QVector<map::MapIls> ilsVector = mapQuery->getIlsByAirportAndRunway(airport.ident, rec->valueStr("name"));
+  for(const map::MapIls& ils : ilsVector)
+    ilsText(ils, html, false /* approach */, false /* standalone */);
 }
 
-void HtmlInfoBuilder::ilsText(const map::MapIls& ils, HtmlBuilder& html) const
-{
-  atools::sql::SqlRecord ilsRec = infoQuery->getIlsInformationSimById(ils.id);
-  ilsText(&ilsRec, html, false /* approach */, true /* standalone */);
-}
-
-void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder& html, bool approach,
+void HtmlInfoBuilder::ilsText(const map::MapIls& ils, atools::util::HtmlBuilder& html, bool approach,
                               bool standalone) const
 {
   // Add ILS information
-  bool dme = !ilsRec->isNull("dme_altitude");
-  bool gs = !ilsRec->isNull("gs_altitude");
-  float ilsMagvar = ilsRec->valueFloat("mag_var");
-  QString ident = ilsRec->valueStr("ident");
-  QString name = ilsRec->valueStr("name");
 
   // Prefix for procedure information
   QString prefix;
-  QString text = map::ilsTextShort(ident, name, gs, dme);
+  QString text = map::ilsTextShort(ils);
 
-  if(gs)
+  if(ils.hasGlideslope())
     prefix = approach ? tr("ILS ") : QString();
-  else if(!name.startsWith(QObject::tr("LOC")))
+  else if(!ils.name.startsWith(QObject::tr("LOC")))
     prefix = approach ? tr("LOC ") : QString();
 
   // Check if text is to be generated for navaid or procedures tab
@@ -1107,7 +1092,7 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
     {
       // Add map link if not tooltip ==========================================
       html.nbsp().nbsp();
-      html.a(tr("Map"), QString("lnm://show?id=%1&type=%2").arg(ilsRec->valueInt("ils_id")).arg(map::ILS),
+      html.a(tr("Map"), QString("lnm://show?id=%1&type=%2").arg(ils.id).arg(map::ILS),
              ahtml::BOLD | ahtml::LINK_NO_UL);
     }
     html.table();
@@ -1115,7 +1100,7 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
   else
   {
     if(approach)
-      html.row2(prefix + tr(":"), name);
+      html.row2(prefix + tr(":"), ils.name);
     else
     {
       html.br().br().text(text, ahtml::BOLD | ahtml::BIG);
@@ -1126,11 +1111,11 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
   if(standalone)
   {
     // Add bearing/distance to table ==========================
-    bearingToUserText(ageo::Pos(ilsRec->valueFloat("lonx"), ilsRec->valueFloat("laty")), ilsMagvar, html);
+    bearingToUserText(ageo::Pos(ils.position.getLonX(), ils.position.getLatY()), ils.magvar, html);
 
     // ILS information ==================================================
-    QString runway = ilsRec->valueStr("loc_runway_name");
-    QString airportIdent = ilsRec->valueStr("loc_airport_ident");
+    QString runway = ils.runwayName;
+    QString airportIdent = ils.airportIdent;
 
     if(runway.isEmpty())
       html.row2If(tr("Airport:"), airportIdent, ahtml::BOLD);
@@ -1139,33 +1124,43 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
 
     if(info)
     {
-      html.row2If(tr("Region:"), ilsRec->valueStr("region"));
+      html.row2If(tr("Region:"), ils.region);
     }
   }
 
-  html.row2(prefix + tr("Frequency:"),
-            locale.toString(ilsRec->valueFloat("frequency") / 1000., 'f', 2) + tr(" MHz"));
+  if(ils.isAnyGls())
+    html.row2(prefix + tr("Channel:"), ils.freqMHzOrChannelLocale());
+  else
+    html.row2(prefix + tr("Frequency:"), ils.freqMHzOrChannelLocale() + tr(" MHz"));
+
   if(!approach)
   {
-    html.row2(tr("Magnetic declination:"), map::magvarText(ilsMagvar));
-    html.row2(tr("Elevation:"), Unit::altFeet(ilsRec->valueFloat("altitude")));
+    html.row2(tr("Magnetic declination:"), map::magvarText(ils.magvar));
+    html.row2(tr("Elevation:"), Unit::altFeet(ils.position.getAltitude()));
   }
 
   if(!approach)
   {
-    html.row2(tr("Range:"), Unit::distNm(ilsRec->valueFloat("range")));
-    addMorse(html, tr("Morse:"), ilsRec->valueStr("ident"));
-    rowForBool(html, ilsRec, "has_backcourse", tr("Has Backcourse"), false);
+    if(!ils.isAnyGls())
+    {
+      if(ils.range > 0)
+        html.row2(tr("Range:"), Unit::distNm(ils.range));
+
+      addMorse(html, tr("Morse:"), ils.ident);
+      if(ils.hasBackcourse)
+        html.row2(tr("Has Backcourse"), QString());
+    }
   }
 
   // Localizer information ==================================================
-  float hdgTrue = ilsRec->valueFloat("loc_heading");
+  float hdgTrue = ils.heading;
 
-  html.row2(prefix + tr("Localizer Heading:"), courseTextFromTrue(hdgTrue, ilsMagvar), ahtml::NO_ENTITIES);
+  html.row2(prefix + (ils.isAnyGls() ? tr("Heading:") : tr("Localizer Heading:")),
+            courseTextFromTrue(hdgTrue, ils.magvar), ahtml::NO_ENTITIES);
 
   // Check for offset localizer ==================================================
   map::MapRunwayEnd end;
-  int endId = ilsRec->valueInt("loc_runway_end_id", 0);
+  int endId = ils.runwayEndId;
   if(endId > 0)
   {
     // Get assigned runway end =====================
@@ -1174,22 +1169,30 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
     {
       // The maximum angular offset for a LOC is 3° for FAA and 5° for ICAO.
       // Everything else is named either LDA (FAA) or IGS (ICAO).
-      if(ageo::angleAbsDiff(end.heading, atools::geo::normalizeCourse(ilsRec->valueFloat("loc_heading"))) > 2.5f)
+      if(ageo::angleAbsDiff(end.heading, atools::geo::normalizeCourse(ils.heading)) > 2.5f)
       {
         // Get airport for consistent magnetic variation =====================
-        map::MapAirport airport = airportQuerySim->getAirportByIdent(ilsRec->valueStr("loc_airport_ident"));
+        map::MapAirport airport = airportQuerySim->getAirportByIdent(ils.airportIdent);
 
         // Prefer airport variation to have the same runway heading as in the runway information
-        float rwMagvar = airport.isValid() ? airport.magvar : ilsMagvar;
+        float rwMagvar = airport.isValid() ? airport.magvar : ils.magvar;
         html.row2(tr("Offset localizer."));
         html.row2(tr("Runway heading:"), courseTextFromTrue(end.heading, rwMagvar), ahtml::NO_ENTITIES);
       }
     }
   }
 
-  if(gs)
-    html.row2(prefix + tr("Glideslope Pitch:"),
-              locale.toString(ilsRec->valueFloat("gs_pitch"), 'f', 1) + tr("°"));
+  if(ils.hasGlideslope())
+  {
+    html.row2(prefix + (ils.isAnyGls() ? tr("Glidepath:") : tr("Glideslope:")),
+              locale.toString(ils.slope, 'f', 1) + tr("°"));
+  }
+
+  if(info && ils.isAnyGls())
+  {
+    html.row2If(tr("Performance:"), ils.perfIndicator);
+    html.row2If(tr("Provider:"), ils.provider);
+  }
 
   if(!approach)
     html.tableEnd();
@@ -1199,7 +1202,7 @@ void HtmlInfoBuilder::ilsText(const atools::sql::SqlRecord *ilsRec, HtmlBuilder&
     addScenery(nullptr, html, true /* ilsOrCom */);
 
 #ifdef DEBUG_INFORMATION
-  html.small(QString("Database: ils_id = %1").arg(ilsRec->valueInt("ils_id"))).br();
+  html.small(QString("Database: ils_id = %1").arg(ils.id)).br();
   if(end.isValid())
     html.small(QString("Database: runway_end_id = %1").arg(end.id)).br();
 #endif
@@ -1340,12 +1343,11 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
         if(procType == "ILS" || procType == "LOC")
         {
           // Display ILS information ===========================================
-          const atools::sql::SqlRecordVector *ilsRec =
-            infoQuery->getIlsInformationSimByName(airport.ident, runwayIdent);
-          if(ilsRec != nullptr && !ilsRec->isEmpty())
+          QVector<map::MapIls> ilsVector = mapQuery->getIlsByAirportAndRunway(airport.ident, runwayIdent);
+          if(!ilsVector.isEmpty())
           {
-            for(const atools::sql::SqlRecord& irec : *ilsRec)
-              ilsText(&irec, html, true /* approach */, false /* standalone */);
+            for(const map::MapIls& ils : ilsVector)
+              ilsText(ils, html, true /* approach */, false /* standalone */);
           }
           else
             html.row2(tr("ILS data not found"));
@@ -1375,12 +1377,11 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
 
             if(!backcourseEndIdent.isEmpty())
             {
-              const atools::sql::SqlRecordVector *ilsRec =
-                infoQuery->getIlsInformationSimByName(airport.ident, backcourseEndIdent);
-              if(ilsRec != nullptr && !ilsRec->isEmpty())
+              QVector<map::MapIls> ilsVector = mapQuery->getIlsByAirportAndRunway(airport.ident, backcourseEndIdent);
+              if(!ilsVector.isEmpty())
               {
-                for(const atools::sql::SqlRecord& irec : *ilsRec)
-                  ilsText(&irec, html, true /* approach */, false /* standalone */);
+                for(const map::MapIls& ils : ilsVector)
+                  ilsText(ils, html, true /* approach */, false /* standalone */);
               }
               else
                 html.row2(tr("ILS data not found"));

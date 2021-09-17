@@ -3949,7 +3949,7 @@ void RouteController::updateTableModel()
 
     // Get ILS for approach runway if it marks the end of an ILS or localizer approach procedure
     QVector<map::MapIls> ilsByAirportAndRunway;
-    if(route.getApproachLegs().hasIlsGuidance() && leg.isAnyProcedure() && leg.getProcedureLeg().isApproach() &&
+    if(route.getApproachLegs().hasFrequencyOrChannel() && leg.isAnyProcedure() && leg.getProcedureLeg().isApproach() &&
        leg.getRunwayEnd().isValid())
       route.getApproachRunwayEndAndIls(ilsByAirportAndRunway);
 
@@ -3964,12 +3964,7 @@ void RouteController::updateTableModel()
       // Build string for ILS type
       QStringList texts;
       for(const map::MapIls& ils : ilsByAirportAndRunway)
-      {
-        QStringList txt(ils.slope > 0.f ? tr("ILS") : tr("LOC"));
-        if(ils.hasDme)
-          txt.append("DME");
-        texts.append(txt.join("/"));
-      }
+        texts.append(map::ilsType(ils, true /* gs */, true /* dme */, tr("/")));
 
       itemRow[rcol::TYPE] = new QStandardItem(texts.join(","));
     }
@@ -3989,7 +3984,7 @@ void RouteController::updateTableModel()
       // Add ILS frequencies
       QStringList texts;
       for(const map::MapIls& ils : ilsByAirportAndRunway)
-        texts.append(QLocale().toString(ils.frequency / 1000.f, 'f', 2));
+        texts.append(ils.freqMHzOrChannelLocale());
 
       itemRow[rcol::FREQ] = new QStandardItem(texts.join(","));
     }
@@ -4716,7 +4711,7 @@ QString RouteController::buildFlightplanLabel(bool print, bool widget, bool titl
                                 !starLegs.isEmpty()) ? tr("and") : tr("Via"));
 
           // Type and suffix =======================
-          QString type(arrivalLegs.approachType);
+          QString type(arrivalLegs.displayApproachType());
           if(!arrivalLegs.approachSuffix.isEmpty())
             type += tr("-%1").arg(arrivalLegs.approachSuffix);
 

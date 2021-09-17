@@ -180,6 +180,10 @@ public:
    */
   void ndbText(const map::MapNdb& ndb, atools::util::HtmlBuilder& html) const;
 
+  /* HTML description of one ILS */
+  void ilsText(const map::MapIls& ils, atools::util::HtmlBuilder& html, bool approach,
+               bool standalone) const;
+
   /*
    * Creates a HTML description for a waypoint including all attached airways.
    * @param waypoint
@@ -187,9 +191,6 @@ public:
    * @param background Background color for icons
    */
   void waypointText(const map::MapWaypoint& waypoint, atools::util::HtmlBuilder& html) const;
-
-  /* Get information for one ILS */
-  void ilsText(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
 
   /* Description for user defined points */
   bool userpointText(map::MapUserpoint userpoint, atools::util::HtmlBuilder& html) const;
@@ -363,8 +364,6 @@ private:
   bool buildWeatherContext(map::WeatherContext& lastContext, map::WeatherContext& newContext,
                            const map::MapAirport& airport);
   void addRadionavFixType(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord& recApp) const;
-  void ilsText(const atools::sql::SqlRecord *ilsRec, atools::util::HtmlBuilder& html, bool approach,
-               bool standalone) const;
 
   QString filepathTextShow(const QString& filepath, const QString& prefix = QString()) const;
   QString filepathTextOpen(const QFileInfo& filepath, bool showPath) const;

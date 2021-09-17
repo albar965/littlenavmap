@@ -544,9 +544,17 @@ void MapTypesFactory::fillMarker(const SqlRecord& record, map::MapMarker& marker
 void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils)
 {
   ils.id = record.valueInt("ils_id");
+  ils.airportIdent = record.valueStr("loc_airport_ident");
+  ils.runwayEndId = record.valueInt("loc_runway_end_id");
+  ils.runwayName = record.valueStr("loc_runway_name");
   ils.ident = record.valueStr("ident");
   ils.name = record.valueStr("name");
   ils.region = record.valueStr("region", QString());
+
+  ils.type = static_cast<map::IlsType>(atools::strToChar(record.valueStr("type", QString())));
+  ils.perfIndicator = record.valueStr("perf_indicator", QString());
+  ils.provider = record.valueStr("provider", QString());
+
   ils.heading = atools::geo::normalizeCourse(record.valueFloat("loc_heading"));
   ils.width = record.isNull("loc_width") ? INVALID_COURSE_VALUE : record.valueFloat("loc_width");
   ils.magvar = record.valueFloat("mag_var");
@@ -555,12 +563,23 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils)
   ils.frequency = record.valueInt("frequency");
   ils.range = record.valueInt("range");
   ils.hasDme = record.valueInt("dme_range") > 0;
+  ils.hasBackcourse = record.valueInt("has_backcourse") > 0;
 
-  ils.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"),
-                     record.valueFloat("altitude"));
-  ils.pos1 = Pos(record.valueFloat("end1_lonx"), record.valueFloat("end1_laty"));
-  ils.pos2 = Pos(record.valueFloat("end2_lonx"), record.valueFloat("end2_laty"));
-  ils.posmid = Pos(record.valueFloat("end_mid_lonx"), record.valueFloat("end_mid_laty"));
+  if(!record.isNull("lonx") && !record.isNull("laty"))
+  {
+    ils.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
+
+    if(!record.isNull("end1_lonx") && !record.isNull("end1_laty") &&
+       !record.isNull("end2_lonx") && !record.isNull("end2_laty") &&
+       !record.isNull("end_mid_lonx") && !record.isNull("end_mid_laty"))
+    {
+      ils.pos1 = Pos(record.valueFloat("end1_lonx"), record.valueFloat("end1_laty"));
+      ils.pos2 = Pos(record.valueFloat("end2_lonx"), record.valueFloat("end2_laty"));
+      ils.posmid = Pos(record.valueFloat("end_mid_lonx"), record.valueFloat("end_mid_laty"));
+    }
+  }
+
+  ils.hasGeometry = ils.position.isValid() && ils.pos1.isValid() && ils.pos2.isValid() && ils.posmid.isValid();
 
   ils.bounding = Rect(ils.position);
   ils.bounding.extend(ils.pos1);

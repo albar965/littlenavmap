@@ -379,7 +379,7 @@ void MapPaintWidget::setShowMapFeatures(map::MapTypes type, bool show)
   if(type.testFlag(map::AIRSPACE) && show != curShow)
     screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
 
-  if(type.testFlag(map::ILS) && show != curShow)
+  if((type.testFlag(map::ILS) || type.testFlag(map::GLS)) && show != curShow)
     screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
 
   if(type.testFlag(map::MISSED_APPROACH) && show != curShow)
@@ -725,9 +725,9 @@ void MapPaintWidget::setDistanceToMap(double distanceKm, bool allowAdjust)
 
 void MapPaintWidget::showPosNotAdjusted(const atools::geo::Pos& pos, float distanceKm)
 {
-    Pos normPos = pos.normalized();
-    centerOn(normPos.getLonX(), normPos.getLatY());
-    setDistance(std::min(std::max((double)distanceKm, MINIMUM_DISTANCE_KM / 2.), MAXIMUM_DISTANCE_KM));
+  Pos normPos = pos.normalized();
+  centerOn(normPos.getLonX(), normPos.getLatY());
+  setDistance(std::min(std::max((double)distanceKm, MINIMUM_DISTANCE_KM / 2.), MAXIMUM_DISTANCE_KM));
 }
 
 void MapPaintWidget::showPos(const atools::geo::Pos& pos, float distanceKm, bool doubleClick)

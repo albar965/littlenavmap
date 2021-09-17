@@ -53,6 +53,8 @@ QDebug operator<<(QDebug out, const map::MapTypes& type)
       flags.append("NDB");
     if(type.testFlag(ILS))
       flags.append("ILS");
+    if(type.testFlag(GLS))
+      flags.append("GLS");
     if(type.testFlag(MARKER))
       flags.append("MARKER");
     if(type.testFlag(WAYPOINT))

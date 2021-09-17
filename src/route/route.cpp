@@ -437,7 +437,7 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
 
       // Either left current leg or closer to next and on courses
       // Do not track on missed if legs are not displayed
-      if(!(!(shownTypes& map::MISSED_APPROACH) && value(nextLeg).getProcedureLeg().isMissed()))
+      if(!(!(shownTypes & map::MISSED_APPROACH) && value(nextLeg).getProcedureLeg().isMissed()))
       {
         // Go to next leg and increase all values
         activeLegIndex = nextLeg;
@@ -2934,6 +2934,8 @@ void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::Map
 
       if(ilsVector.size() > 1)
       {
+        bool foundInProcedure = false;
+
         // Found more than one ILS for approach - look for recommended fix reference in approach legs
         // Iterate backwards to catch the recommended fix closest to the runway
         for(int i = approachLegs.approachLegs.size() - 1; i >= 0; i--)
@@ -2950,6 +2952,7 @@ void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::Map
               if(leg.recFixIdent == ils.ident)
               {
                 foundIls = ils;
+                foundInProcedure = true;
                 break;
               }
             }
@@ -2962,6 +2965,15 @@ void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::Map
             }
           }
         } // for(int i = approachLegs.approachLegs.size() - 1; i >= 0; i--)
+
+        if(!foundInProcedure)
+        {
+          // Remove all non ILS if there is more than one entry and nothing is referenced from the approach
+          ilsVector.erase(std::remove_if(ilsVector.begin(), ilsVector.end(), [ = ](const map::MapIls& ils) -> bool {
+            return ils.isAnyGls();
+          }), ilsVector.end());
+        }
+
       } // if(ilsVector.size() > 1)
     } // if(approachLegs.runwayEnd.isValid())
   } // if(!approachLegs.runwayEnd.name.isEmpty() && approachLegs.runwayEnd.name != "RW")
@@ -3008,7 +3020,7 @@ QString Route::getProcedureLegText(proc::MapProcedureTypes mapType) const
   {
     procText = QObject::tr("%1 %2 %3%4").
                arg(mapType & proc::PROCEDURE_MISSED ? tr("Missed") : tr("Approach")).
-               arg(approachLegs.approachType).
+               arg(approachLegs.displayApproachType()).
                arg(approachLegs.approachFixIdent).
                arg(approachLegs.approachSuffix.isEmpty() ? QString() : (tr("-") + approachLegs.approachSuffix));
   }

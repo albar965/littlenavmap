@@ -2839,7 +2839,8 @@ void MapWidget::resetSettingActionsToDefault()
   atools::gui::SignalBlocker blocker({ui->actionMapShowAirports, ui->actionMapShowSoftAirports,
                                       ui->actionMapShowEmptyAirports, ui->actionMapShowAddonAirports,
                                       ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
-                                      ui->actionMapShowIls, ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
+                                      ui->actionMapShowIls, ui->actionMapShowGls,
+                                      ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
                                       ui->actionMapShowTracks, ui->actionShowAirspaces, ui->actionMapShowRoute,
                                       ui->actionMapShowTocTod, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
                                       ui->actionMapShowCompassRoseAttach, ui->actionMapAircraftCenter,
@@ -2864,6 +2865,7 @@ void MapWidget::resetSettingActionsToDefault()
   ui->actionMapShowNdb->setChecked(true);
   ui->actionMapShowWp->setChecked(true);
   ui->actionMapShowIls->setChecked(true);
+  ui->actionMapShowGls->setChecked(true);
   ui->actionMapShowVictorAirways->setChecked(false);
   ui->actionMapShowJetAirways->setChecked(false);
   ui->actionMapShowTracks->setChecked(false);
@@ -3062,6 +3064,8 @@ void MapWidget::updateMapObjectsShown()
   // ILS and marker are shown together
   setShowMapFeatures(map::ILS, ui->actionMapShowIls->isChecked());
   setShowMapFeatures(map::MARKER, ui->actionMapShowIls->isChecked());
+
+  setShowMapFeatures(map::GLS, ui->actionMapShowGls->isChecked());
 
   mapVisible->updateVisibleObjectsStatusBar();
 

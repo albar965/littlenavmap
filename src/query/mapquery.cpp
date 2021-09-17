@@ -33,6 +33,7 @@
 #include "settings/settings.h"
 #include "db/databasemanager.h"
 #include "fs/util/fsutil.h"
+#include "sql/sqlutil.h"
 
 using namespace Marble;
 using namespace atools::sql;
@@ -1080,9 +1081,15 @@ void MapQuery::initQueries()
   static const QString ndbQueryBase(
     "ndb_id, ident, name, region, type, name, frequency, range, mag_var, altitude, lonx, laty ");
 
-  static const QString ilsQueryBase(
-    "ils_id, ident, name, region, mag_var, loc_heading, gs_pitch, frequency, range, dme_range, loc_width, "
+  QString ilsQueryBase(
+    "ils_id, ident, name, region, mag_var, loc_heading, has_backcourse, loc_runway_end_id, loc_airport_ident, "
+    "loc_runway_name, gs_pitch, frequency, range, dme_range, loc_width, "
     "end1_lonx, end1_laty, end_mid_lonx, end_mid_laty, end2_lonx, end2_laty, altitude, lonx, laty");
+
+  QString extraIlsCols = SqlUtil(dbSim).buildColumnListIf(
+    "ils", {"type", "perf_indicator", "provider"}).join(", ");
+  if(!extraIlsCols.isEmpty())
+    ilsQueryBase.append(", " + extraIlsCols);
 
   deInitQueries();
 

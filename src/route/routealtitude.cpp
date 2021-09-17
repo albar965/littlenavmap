@@ -1321,7 +1321,7 @@ void RouteAltitude::calculateApproachIlsAndSlopes()
                            [ = ](const map::MapIls& ils) -> bool
   {
     // Needs to have GS, not farther away from runway end than 4NM and not more than 20 degree difference
-    return ils.slope < 0.1f || destRunwayEnd.position.distanceMeterTo(ils.position) > ageo::nmToMeter(4.) ||
+    return !ils.hasGlideslope() || destRunwayEnd.position.distanceMeterTo(ils.position) > ageo::nmToMeter(4.) ||
     ageo::angleAbsDiff(destRunwayEnd.heading, ils.heading) > 20.f;
   });
 

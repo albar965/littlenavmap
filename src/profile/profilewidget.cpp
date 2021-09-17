@@ -341,7 +341,7 @@ void ProfileWidget::updateScreenCoords()
     {
       float alt = leg.elevation.at(i).getAltitude();
       QPoint pt(left + static_cast<int>(leg.distances.at(i) * horizontalScale),
-                TOP + static_cast<int>(h - alt *verticalScale));
+                TOP + static_cast<int>(h - alt * verticalScale));
 
       if(lastPt.isNull() || i == leg.elevation.size() - 1 || (lastPt - pt).manhattanLength() > 2)
       {
@@ -458,8 +458,15 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
       // Draw all ILS
       for(const map::MapIls& ils : ilsVector)
       {
-        painter.setBrush(mapcolors::ilsFillColor);
-        painter.setPen(QPen(mapcolors::ilsSymbolColor, 2, Qt::SolidLine, Qt::FlatCap));
+        bool isIls = !ils.isAnyGls();
+
+        QColor fillColor = isIls ? mapcolors::ilsFillColor : mapcolors::glsFillColor;
+        QColor symColor = isIls ? mapcolors::ilsSymbolColor : mapcolors::glsSymbolColor;
+        QColor textColor = isIls ? mapcolors::ilsTextColor : mapcolors::glsTextColor;
+        QPen centerPen = isIls ? mapcolors::ilsCenterPen : mapcolors::glsCenterPen;
+
+        painter.setBrush(fillColor);
+        painter.setPen(QPen(symColor, 2, Qt::SolidLine, Qt::FlatCap));
         painter.setBackgroundMode(Qt::OpaqueMode);
         painter.setBackground(Qt::transparent);
 
@@ -496,11 +503,11 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
         painter.drawPolyline(QPolygonF({lowerLine.p2(), centerLine.p2(), upperLine.p2()}));
 
         // Dashed center line
-        painter.setPen(mapcolors::ilsCenterPen);
+        painter.setPen(centerPen);
         painter.drawLine(centerLine);
 
         // Calculate text ==================
-        painter.setPen(mapcolors::ilsTextColor);
+        painter.setPen(textColor);
         if(OptionData::instance().getFlags2() & opts2::MAP_NAVAID_TEXT_BACKGROUND)
         {
           painter.setBackground(Qt::white);
