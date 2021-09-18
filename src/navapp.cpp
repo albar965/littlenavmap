@@ -304,27 +304,6 @@ void NavApp::optionsChanged()
   qDebug() << Q_FUNC_INFO;
 }
 
-void NavApp::preDatabaseLoad()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  loadingDatabase = true;
-  infoQuery->deInitQueries();
-  airportQuerySim->deInitQueries();
-  airportQueryNav->deInitQueries();
-  mapQuery->deInitQueries();
-  procedureQuery->deInitQueries();
-  airspaceController->preDatabaseLoad();
-  trackController->preDatabaseLoad();
-  logdataController->preDatabaseLoad();
-
-  delete databaseMetaSim;
-  databaseMetaSim = nullptr;
-
-  delete databaseMetaNav;
-  databaseMetaNav = nullptr;
-}
-
 void NavApp::readMagDecFromDatabase()
 {
   if(hasDataInDatabase())
@@ -362,6 +341,27 @@ void NavApp::setMainWindowVisible()
 {
   qDebug() << Q_FUNC_INFO;
   mainWindowVisible = true;
+}
+
+void NavApp::preDatabaseLoad()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  loadingDatabase = true;
+  infoQuery->deInitQueries();
+  mapQuery->deInitQueries();
+  airportQuerySim->deInitQueries();
+  airportQueryNav->deInitQueries();
+  procedureQuery->deInitQueries();
+  airspaceController->preDatabaseLoad();
+  trackController->preDatabaseLoad();
+  logdataController->preDatabaseLoad();
+
+  delete databaseMetaSim;
+  databaseMetaSim = nullptr;
+
+  delete databaseMetaNav;
+  databaseMetaNav = nullptr;
 }
 
 void NavApp::postDatabaseLoad()
