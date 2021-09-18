@@ -1203,6 +1203,7 @@ void AirportQuery::deInitQueries()
   helipadCache.clear();
   airportIdentCache.clear();
   airportIdCache.clear();
+  airportFuzzyIdCache.clear();
 
   delete runwayOverviewQuery;
   runwayOverviewQuery = nullptr;
