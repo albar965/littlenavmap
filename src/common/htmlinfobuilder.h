@@ -180,9 +180,10 @@ public:
    */
   void ndbText(const map::MapNdb& ndb, atools::util::HtmlBuilder& html) const;
 
-  /* HTML description of one ILS */
-  void ilsText(const map::MapIls& ils, atools::util::HtmlBuilder& html, bool approach,
-               bool standalone) const;
+  /*
+   * Creates a HTML description for ILS.
+   */
+  void ilsTextInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for a waypoint including all attached airways.
@@ -385,6 +386,11 @@ private:
   /* Add morse code row2line */
   void addMorse(atools::util::HtmlBuilder& html, const QString& name, const QString& code) const;
 
+  void ilsTextProcInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
+  void ilsTextRunwayInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
+  void ilsTextInternal(const map::MapIls& ils, atools::util::HtmlBuilder& html, bool procInfo, bool runwayInfo,
+                       bool infoOrTooltip) const;
+
   /* Add wind text for flight plan waypoints */
   void routeWindText(atools::util::HtmlBuilder& html, const Route& route, int index) const;
 
@@ -414,7 +420,6 @@ private:
   atools::fs::util::MorseCode *morse;
   bool info, print;
   QLocale locale;
-
 };
 
 #endif // MAPHTMLINFOBUILDER

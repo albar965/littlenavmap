@@ -1874,12 +1874,14 @@ QString ilsText(const MapIls& ils)
   return text;
 }
 
-QString ilsType(const map::MapIls& ils, bool gs, bool dme, const QString& separator)
+QString ilsTypeShort(const map::MapIls& ils)
 {
   QString text;
 
-  if(ils.isAnyGls())
+  if(ils.isGls())
     text = QObject::tr("GLS");
+  else if(ils.isRnp())
+    text = QObject::tr("RNP");
   else if(ils.isIls())
     text = QObject::tr("ILS");
   else if(ils.isLoc())
@@ -1892,9 +1894,22 @@ QString ilsType(const map::MapIls& ils, bool gs, bool dme, const QString& separa
     text = QObject::tr("SDF");
   else
     text = ils.name;
+  return text;
+}
+
+QString ilsType(const map::MapIls& ils, bool gs, bool dme, const QString& separator)
+{
+  QString text = ilsTypeShort(ils);
 
   if(!ils.isAnyGls())
   {
+    if(ils.type == '1')
+      text += QObject::tr(" CAT I");
+    else if(ils.type == '2')
+      text += QObject::tr(" CAT II");
+    else if(ils.type == '3')
+      text += QObject::tr(" CAT III");
+
     if(gs && ils.hasGlideslope())
       text += separator + QObject::tr("GS");
     if(dme && ils.hasDme)

@@ -296,7 +296,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const Ro
       if(!html.isEmpty())
         html.textBar(TEXT_BAR_LENGTH);
 
-      info.ilsText(ils, html, false /* approach */, true /* standalone */);
+      info.ilsTextInfo(ils, html);
 
       numEntries++;
     }

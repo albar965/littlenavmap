@@ -3948,26 +3948,24 @@ void RouteController::updateTableModel()
     }
 
     // Get ILS for approach runway if it marks the end of an ILS or localizer approach procedure
-    QVector<map::MapIls> ilsByAirportAndRunway;
-    if(route.getApproachLegs().hasFrequencyOrChannel() && leg.isAnyProcedure() && leg.getProcedureLeg().isApproach() &&
-       leg.getRunwayEnd().isValid())
-      route.getApproachRunwayEndAndIls(ilsByAirportAndRunway);
+    QStringList ilsTypeTexts, ilsFreqTexts;
+    if(leg.getProcedureLeg().isApproach() && leg.getRunwayEnd().isValid())
+    {
+      // Build string for ILS type
+      for(const map::MapIls& ils : route.getDestRunwayIlsRecommended())
+      {
+        ilsTypeTexts.append(map::ilsType(ils, true /* gs */, true /* dme */, tr("/")));
+        ilsFreqTexts.append(ils.freqMHzOrChannelLocale());
+      }
+    }
 
     // VOR/NDB type ===========================
     if(leg.getVor().isValid())
       itemRow[rcol::TYPE] = new QStandardItem(map::vorFullShortText(leg.getVor()));
     else if(leg.getNdb().isValid())
       itemRow[rcol::TYPE] = new QStandardItem(map::ndbFullShortText(leg.getNdb()));
-    else if(leg.isAnyProcedure() && !(leg.getProcedureLeg().isMissed()) &&
-            leg.getRunwayEnd().isValid())
-    {
-      // Build string for ILS type
-      QStringList texts;
-      for(const map::MapIls& ils : ilsByAirportAndRunway)
-        texts.append(map::ilsType(ils, true /* gs */, true /* dme */, tr("/")));
-
-      itemRow[rcol::TYPE] = new QStandardItem(texts.join(","));
-    }
+    else if(!ilsTypeTexts.isEmpty())
+      itemRow[rcol::TYPE] = new QStandardItem(ilsTypeTexts.join(","));
 
     // VOR/NDB frequency =====================
     if(leg.getVor().isValid())
@@ -3979,15 +3977,8 @@ void RouteController::updateTableModel()
     }
     else if(leg.getNdb().isValid())
       itemRow[rcol::FREQ] = new QStandardItem(QLocale().toString(leg.getFrequency() / 100.f, 'f', 1));
-    else if(leg.isAnyProcedure() && !(leg.getProcedureLeg().isMissed()) && leg.getRunwayEnd().isValid())
-    {
-      // Add ILS frequencies
-      QStringList texts;
-      for(const map::MapIls& ils : ilsByAirportAndRunway)
-        texts.append(ils.freqMHzOrChannelLocale());
-
-      itemRow[rcol::FREQ] = new QStandardItem(texts.join(","));
-    }
+    else if(!ilsFreqTexts.isEmpty())
+      itemRow[rcol::FREQ] = new QStandardItem(ilsFreqTexts.join(","));
 
     // VOR/NDB range =====================
     if(leg.getRange() > 0 && (leg.getVor().isValid() || leg.getNdb().isValid()))

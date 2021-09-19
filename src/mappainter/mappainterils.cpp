@@ -175,41 +175,40 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
       context->painter->setPen(QPen(textColor, 0.5f, Qt::SolidLine, Qt::FlatCap));
       context->painter->translate(origin);
 
-      float width = ils.width < map::INVALID_COURSE_VALUE ? ils.width : map::DEFAULT_ILS_WIDTH;
+      float defaultWidth = ils.isAnyGls() ? map::DEFAULT_ILS_WIDTH_DEG * 2 : map::DEFAULT_ILS_WIDTH_DEG;
+      float width = ils.width < map::INVALID_COURSE_VALUE ? ils.width : defaultWidth;
+
+      // Position GLS and RNP on the botton and ILS on the top of the feather
+      if(ils.isAnyGls())
+        width = -width;
 
       // Rotate to draw the text upwards so it is readable
-      float rotate;
-      if(ils.heading > 180.f)
-        rotate = ils.heading + 90.f - width / 2.f;
-      else
-        rotate = atools::geo::opposedCourseDeg(ils.heading) + 90.f + width / 2.f;
+      float rotate = ils.heading > 180.f ?
+                     ils.heading + 90.f - width / 2.f :
+                     atools::geo::opposedCourseDeg(ils.heading) + 90.f + width / 2.f;
 
       // get an approximation of the ILS length
       int featherLen = static_cast<int>(std::roundf(scale->getPixelForMeter(nmToMeter(FEATHER_LEN_NM), rotate)));
 
       if(featherLen > MIN_LENGHT_FOR_TEXT)
       {
-        QFontMetrics metrics = context->painter->fontMetrics();
-        int texth = metrics.descent();
-
-        // Cut text to feather length
-        text = metrics.elidedText(text, Qt::ElideRight, featherLen);
-        int textw = metrics.width(text);
-
-        int textpos;
-        if(ils.heading > 180)
-          textpos = (featherLen - textw) / 2;
-        else
-          textpos = -(featherLen + textw) / 2;
-
         if(context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND)
         {
           context->painter->setBackground(Qt::white);
           context->painter->setBackgroundMode(Qt::OpaqueMode);
         }
 
+        QFontMetrics metrics = context->painter->fontMetrics();
+        int texth = ils.isAnyGls() ? metrics.height() : -metrics.descent();
+
+        // Cut text to feather length
+        text = metrics.elidedText(text, Qt::ElideRight, featherLen);
+        int textw = metrics.width(text);
+
+        int textpos = ils.heading > 180 ? (featherLen - textw) / 2 : -(featherLen + textw) / 2;
+
         context->painter->rotate(rotate);
-        context->painter->drawText(textpos, -texth, text);
+        context->painter->drawText(textpos, texth, text);
         context->painter->resetTransform();
       }
     }

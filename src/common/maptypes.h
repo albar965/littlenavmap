@@ -904,8 +904,8 @@ enum IlsType : char
   LDA = 'A', /* No glideslope */
   SDF_GS = 'S',
   SDF = 'F', /* No glideslope */
-  GLS_GROUND_STATION = 'G',
-  SBAS_GBAS_THRESHOLD = 'T'
+  GLS_GROUND_STATION = 'G', /* GLS approach */
+  SBAS_GBAS_THRESHOLD = 'T' /* RNP approach, LPV, etc. and EGNOS, etc. as provider. Name e.g. R25 */
 };
 
 // =====================================================================
@@ -955,6 +955,16 @@ struct MapIls
 
   QString freqMHzOrChannelLocale() const;
   QString freqMHzOrChannel() const;
+
+  bool isGls() const
+  {
+    return type == GLS_GROUND_STATION;
+  }
+
+  bool isRnp() const
+  {
+    return type == SBAS_GBAS_THRESHOLD;
+  }
 
   bool isAnyGls() const
   {
@@ -1191,6 +1201,7 @@ QString navTypeArincNamesWaypoint(const QString& type); /* ARINC * 424.18 field 
 
 QString ilsText(const map::MapIls& ils); /* No locale use - for map display */
 QString ilsType(const MapIls& ils, bool gs, bool dme, const QString& separator);
+QString ilsTypeShort(const map::MapIls& ils);
 QString ilsTextShort(const MapIls& ils);
 
 QString edgeLights(const QString& type);

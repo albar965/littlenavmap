@@ -582,6 +582,12 @@ public:
   /* Get a list of matching ILS which have a slope and are not too far away from runway (in case of CTL) */
   const QVector<map::MapIls>& getDestRunwayIls() const;
 
+  /* As above but filtered out for elevation profile  */
+  const QVector<map::MapIls>& getDestRunwayIlsProfile() const;
+
+  /* Get ILS which are referenced from the recommended fix of the approach procedure */
+  const QVector<map::MapIls>& getDestRunwayIlsRecommended() const;
+
   const RouteAltitudeLeg& getAltitudeLegAt(int i) const;
   bool hasAltitudeLegs() const;
   int getNumAltitudeLegs() const;
@@ -591,7 +597,8 @@ public:
   void updateLegAltitudes();
 
   /* Get a list of approach ILS (not localizer) and the used runway end. Only for approaches. */
-  void getApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd = nullptr) const;
+  void getApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd, bool profile,
+                                  bool recommended) const;
 
   /* general distance in NM which is either cross track, previous or next waypoint */
   float getDistanceToFlightPlan() const;

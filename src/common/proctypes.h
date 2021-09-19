@@ -441,7 +441,7 @@ struct MapProcedureLegs
   MapProcedureRef ref;
   atools::geo::Rect bounding;
 
-  QString approachType, /* GPS ILS LDA LOC LOCB NDB NDBDME RNAV SDF VOR VORDME */
+  QString approachType, /* GNSS (display GLS) GPS IGS ILS LDA LOC LOCB NDB NDBDME RNAV (RNV) SDF TCN VOR VORDME */
           approachSuffix, approachFixIdent /* Approach fix or SID/STAR name */,
           approachArincName, transitionType, transitionFixIdent,
           procedureRunway; /* Runway from the procedure does not have to match the airport runway but is saved */
@@ -473,14 +473,66 @@ struct MapProcedureLegs
   /* Anything that needs to display an ILS frequency or GNSS channel */
   bool hasFrequencyOrChannel() const
   {
+    return hasFrequencyOrChannel(approachType);
+  }
+
+  static bool hasFrequencyOrChannel(const QString& approachType)
+  {
     // All: RNAV VORDME GPS ILS VOR NDB LOC NDBDME TCN LOCB GNSS LDA SDF IGS
+    return hasFrequency(approachType) || hasChannel(approachType);
+  }
+
+  /* All ILS, LOC, LDA, etc. */
+  bool hasFrequency() const
+  {
+    return hasFrequency(approachType);
+  }
+
+  /* RNP and GLS. */
+  bool hasChannel() const
+  {
+    return hasChannel(approachType);
+  }
+
+  static bool hasFrequency(const QString& approachType)
+  {
     return approachType == "ILS" || approachType == "LOC" || approachType == "LOCB" || approachType == "LDA" ||
-           approachType == "IGS" || approachType == "SDF" || approachType == "GNSS" || approachType == "GLS";
+           approachType == "IGS" || approachType == "SDF";
+  }
+
+  static bool hasChannel(const QString& approachType)
+  {
+    return approachType == "GNSS" || approachType == "GLS";
   }
 
   bool isCustom() const
   {
     return approachType == "CUSTOM";
+  }
+
+  bool isRnavGps() const
+  {
+    return approachType == "RNAV" || approachType == "GPS";
+  }
+
+  bool isPrecision() const
+  {
+    return approachType == "ILS" || approachType == "GNSS" /* GLS */;
+  }
+
+  bool isGls() const
+  {
+    return approachType == "GNSS" /* GLS */;
+  }
+
+  bool isIls() const
+  {
+    return approachType == "ILS";
+  }
+
+  bool isNonPrecision() const
+  {
+    return !isPrecision();
   }
 
   void clearApproach();

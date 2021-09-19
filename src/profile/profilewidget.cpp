@@ -446,7 +446,7 @@ void ProfileWidget::showPosAlongFlightplan(int x, bool doubleClick)
 void ProfileWidget::paintIls(QPainter& painter, const Route& route)
 {
   const RouteAltitude& altitudeLegs = route.getAltitudeLegs();
-  const QVector<map::MapIls>& ilsVector = altitudeLegs.getDestRunwayIls();
+  const QVector<map::MapIls>& ilsVector = route.getDestRunwayIlsProfile();
   if(!ilsVector.isEmpty())
   {
     // Get origin

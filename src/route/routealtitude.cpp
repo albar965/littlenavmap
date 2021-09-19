@@ -167,6 +167,7 @@ void RouteAltitude::clearAll()
   legIndexTopOfClimb = map::INVALID_INDEX_VALUE;
   legIndexTopOfDescent = map::INVALID_INDEX_VALUE;
   destRunwayIls.clear();
+  destRunwayIlsProfile.clear();
   destRunwayEnd = map::MapRunwayEnd();
   travelTime = 0.f;
   averageGroundSpeed = 0.f;
@@ -1314,19 +1315,19 @@ void RouteAltitude::calculateArrival()
 void RouteAltitude::calculateApproachIlsAndSlopes()
 {
   // Get ILS and runway from route
-  route->getApproachRunwayEndAndIls(destRunwayIls, &destRunwayEnd);
+  route->getApproachRunwayEndAndIls(destRunwayIls, &destRunwayEnd, false /* profile */, false /* recommended */);
+  route->getApproachRunwayEndAndIls(destRunwayIlsProfile, &destRunwayEnd, true /* profile */, false /* recommended */);
+  route->getApproachRunwayEndAndIls(destRunwayIlsRecommended, &destRunwayEnd, true /* profile */,
+                                    true /* recommended */);
 
-  // Filter out unusable ILS
-  auto it = std::remove_if(destRunwayIls.begin(), destRunwayIls.end(),
-                           [ = ](const map::MapIls& ils) -> bool
+  // Filter out unusable ILS for profile display
+  destRunwayIlsProfile.erase(std::remove_if(destRunwayIlsProfile.begin(), destRunwayIlsProfile.end(),
+                                            [ = ](const map::MapIls& ils) -> bool
   {
     // Needs to have GS, not farther away from runway end than 4NM and not more than 20 degree difference
     return !ils.hasGlideslope() || destRunwayEnd.position.distanceMeterTo(ils.position) > ageo::nmToMeter(4.) ||
     ageo::angleAbsDiff(destRunwayEnd.heading, ils.heading) > 20.f;
-  });
-
-  if(it != destRunwayIls.end())
-    destRunwayIls.erase(it, destRunwayIls.end());
+  }), destRunwayIlsProfile.end());
 }
 
 void RouteAltitude::fillGeometry()

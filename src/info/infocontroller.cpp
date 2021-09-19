@@ -1020,7 +1020,7 @@ bool InfoController::updateNavaidInternal(const map::MapResult& result, bool bea
 
     if(!bearingChanged)
       currentSearchResult.ils.append(ils);
-    infoBuilder->ilsText(ils, html, false /* approach */, true /* standalone */);
+    infoBuilder->ilsTextInfo(ils, html);
     html.br();
     foundNavaid = true;
   }
