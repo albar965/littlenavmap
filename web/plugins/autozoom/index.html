@@ -135,14 +135,14 @@
 
         if(sessionStorage.getItem("autozoomRead") !== "true") {
           if(confirm(
-            "This plugin attempts to set the zoom level of the map\n" +
-            "according to the level it deems most appropriate for\n" +
-            "the circumstances you are in.\n\n" +
+            "This plugin attempts to set the zoom level of the\n" +
+            "map according to the level it deems most appro-\n" +
+            "priate for the circumstances you are in.\n\n" +
             "It enables \"auto refresh\" and \"center is Aircraft\" and\n" +
             "restores the value they are in now when you disable it.\n\n" +
-            "You can change the defining values it operates on inside\n" +
-            "the file \"configurationValues.js\" inside the folder\n" +
-            "\"web\\plugins\\autozoom\" in the folder of Little Navmap.\n\n" +
+            "You can change the defining values it operates on\n" +
+            "inside the file \"configurationValues.js\" inside the\n" +
+            "folder \"web\\plugins\\autozoom\" in the folder of Little Navmap.\n\n" +
             "If you continue, this message is dismissed for this session."
             )) {
             sessionStorage.setItem("autozoomRead", "true");
