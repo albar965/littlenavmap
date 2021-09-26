@@ -240,7 +240,7 @@ public:
   static atools::sql::SqlDatabase *getDatabaseNav();
 
   /* Always navdatabase */
-  static atools::sql::SqlDatabase *getDatabaseMora();
+  static atools::sql::SqlDatabase *getDatabasePermNav();
 
   static atools::fs::userdata::UserdataManager *getUserdataManager();
   static UserdataIcons *getUserdataIcons();

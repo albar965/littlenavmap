@@ -135,7 +135,7 @@ void NavApp::init(MainWindow *mainWindowParam)
   magDecReader = new atools::fs::common::MagDecReader();
   readMagDecFromDatabase();
 
-  moraReader = new atools::fs::common::MoraReader(databaseManager->getDatabaseMora());
+  moraReader = new atools::fs::common::MoraReader(databaseManager->getDatabasePermNav());
   moraReader->readFromTable();
 
   vehicleIcons = new VehicleIcons();
@@ -353,6 +353,7 @@ void NavApp::preDatabaseLoad()
   airportQuerySim->deInitQueries();
   airportQueryNav->deInitQueries();
   procedureQuery->deInitQueries();
+  moraReader->preDatabaseLoad();
   airspaceController->preDatabaseLoad();
   trackController->preDatabaseLoad();
   logdataController->preDatabaseLoad();
@@ -373,13 +374,12 @@ void NavApp::postDatabaseLoad()
 
   readMagDecFromDatabase();
 
-  moraReader->readFromTable(*getDatabaseMora());
-
   airportQuerySim->initQueries();
   airportQueryNav->initQueries();
   mapQuery->initQueries();
   infoQuery->initQueries();
   procedureQuery->initQueries();
+  moraReader->postDatabaseLoad();
   airspaceController->postDatabaseLoad();
   logdataController->postDatabaseLoad();
   trackController->postDatabaseLoad();
@@ -671,9 +671,9 @@ atools::sql::SqlDatabase *NavApp::getDatabaseNav()
   return getDatabaseManager()->getDatabaseNav();
 }
 
-atools::sql::SqlDatabase *NavApp::getDatabaseMora()
+atools::sql::SqlDatabase *NavApp::getDatabasePermNav()
 {
-  return getDatabaseManager()->getDatabaseMora();
+  return getDatabaseManager()->getDatabasePermNav();
 }
 
 atools::fs::userdata::UserdataManager *NavApp::getUserdataManager()

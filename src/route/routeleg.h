@@ -366,7 +366,7 @@ private:
   bool validWaypoint = false, alternate = false, valid = false;
 
   float distanceTo = 0.f,
-        courseTo = 0.f,
+        courseTo = 0.f, /* magnetic */
         magvar = 0.f, /* Either taken from navaid or average across the route */
         magvarPos = 0.f; /* Calculate environment value */
   atools::geo::LineString geometry;
