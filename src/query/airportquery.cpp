@@ -199,14 +199,16 @@ void AirportQuery::getAirportsByOfficialIdent(QList<map::MapAirport>& airports, 
 {
   if(airportByOfficialQuery != nullptr && !ident.isEmpty())
   {
-    airportByOfficialQuery->bindValue(":ident", searchIdent ? ident : "%");
+    // Use impossible value if not searching by ident since query connects with "or"
+    airportByOfficialQuery->bindValue(":ident", searchIdent ? ident : "====");
 
     if(icaoCol)
       airportByOfficialQuery->bindValue(":icao", ident);
     if(faaCol)
       airportByOfficialQuery->bindValue(":faa", ident);
     if(iataCol)
-      airportByOfficialQuery->bindValue(":iata", searchIata ? ident : "%");
+      // Use impossible value if not searching by IATA since query connects with "or"
+      airportByOfficialQuery->bindValue(":iata", searchIata ? ident : "====");
     if(localCol)
       airportByOfficialQuery->bindValue(":local", ident);
 
