@@ -2023,8 +2023,7 @@ void MapWidget::simDataCalcFuelOnOff(const atools::fs::sc::SimConnectUserAircraf
 {
   // Engine start and shutdown events ===================================
   if(last.isValid() && aircraft.isValid() &&
-     !aircraft.isSimPaused() && !aircraft.isSimReplay() &&
-     !last.isSimPaused() && !last.isSimReplay())
+     !aircraft.isSimPaused() && !aircraft.isSimReplay() && !last.isSimPaused() && !last.isSimReplay())
   {
     // start timer to emit takeoff/landing signal
     if(last.hasFuelFlow() != aircraft.hasFuelFlow())
@@ -2040,7 +2039,7 @@ void MapWidget::simDataCalcTakeoffLanding(const atools::fs::sc::SimConnectUserAi
   if(!takeoffLandingLastAircraft.isValid())
     // Set for the first time
     takeoffLandingLastAircraft = aircraft;
-  else if(aircraft.isValid() && !aircraft.isSimReplay() && !takeoffLandingLastAircraft.isSimReplay())
+  else if(aircraft.isValid())
   {
     // Use less accuracy for longer routes
     float epsilon = takeoffLandingDistanceNm > 20. ? Pos::POS_EPSILON_500M : Pos::POS_EPSILON_10M;
@@ -2048,17 +2047,18 @@ void MapWidget::simDataCalcTakeoffLanding(const atools::fs::sc::SimConnectUserAi
     // Check manhattan distance in degree to minimize samples
     if(takeoffLandingLastAircraft.getPosition().distanceSimpleTo(aircraft.getPosition()) > epsilon)
     {
-      takeoffLandingDistanceNm +=
-        atools::geo::meterToNm(takeoffLandingLastAircraft.getPosition().distanceMeterTo(aircraft.getPosition()));
+      // Do not record distance on replay
+      if(!aircraft.isSimReplay() && !takeoffLandingLastAircraft.isSimReplay())
+        takeoffLandingDistanceNm +=
+          atools::geo::meterToNm(takeoffLandingLastAircraft.getPosition().distanceMeterTo(aircraft.getPosition()));
 
       takeoffLandingLastAircraft = aircraft;
     }
   }
 
   // Check for takeoff or landing events ===================================
-  if(last.isValid() && aircraft.isValid() &&
-     !aircraft.isSimPaused() && !aircraft.isSimReplay() &&
-     !last.isSimPaused() && !last.isSimReplay())
+  // Replay is filtered out in the timer slot
+  if(last.isValid() && aircraft.isValid() && !aircraft.isSimPaused() && !last.isSimPaused())
   {
 #ifdef DEBUG_INFORMATION_TAKEOFFLANDING
     qDebug() << Q_FUNC_INFO << "all valid";
@@ -2082,20 +2082,32 @@ void MapWidget::takeoffLandingTimeout()
   if(aircraft.isFlying())
   {
     // In air after  status has changed
-    qDebug() << Q_FUNC_INFO << "Takeoff detected" << aircraft.getZuluTime();
+    qDebug() << Q_FUNC_INFO << "Takeoff detected" << aircraft.getZuluTime() << "replay" << aircraft.isSimReplay();
 
-    takeoffTimeSim = takeoffLandingLastAircraft.getZuluTime();
-    takeoffLandingDistanceNm = 0.;
-    touchdownDetected = false;
+    // Clear for no zoom close
+    touchdownDetectedZoom = false;
 
-    emit aircraftTakeoff(aircraft);
+    // Do not record logbook entries for replay
+    if(!aircraft.isSimReplay() && !takeoffLandingLastAircraft.isSimReplay())
+    {
+      takeoffTimeSim = takeoffLandingLastAircraft.getZuluTime();
+      takeoffLandingDistanceNm = 0.;
+
+      emit aircraftTakeoff(aircraft);
+    }
   }
   else
   {
     // On ground after status has changed
-    qDebug() << Q_FUNC_INFO << "Landing detected takeoffLandingDistanceNm" << takeoffLandingDistanceNm;
-    touchdownDetected = true; // Reset in simDataChanged()
-    emit aircraftLanding(aircraft, static_cast<float>(takeoffLandingDistanceNm));
+    qDebug() << Q_FUNC_INFO << "Landing detected takeoffLandingDistanceNm" << takeoffLandingDistanceNm
+             << "replay" << aircraft.isSimReplay();
+
+    // Set for one zoom close
+    touchdownDetectedZoom = true; // Reset in simDataChanged()
+
+    // Do not record logbook entries for replay
+    if(!aircraft.isSimReplay() && !takeoffLandingLastAircraft.isSimReplay())
+      emit aircraftLanding(aircraft, static_cast<float>(takeoffLandingDistanceNm));
   }
 }
 
@@ -2407,11 +2419,11 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
         // Zoom close after touchdown ===================================================================
         // Only if user is not mousing around on the map
-        if(touchdownDetected)
+        if(touchdownDetectedZoom)
         {
           qDebug() << Q_FUNC_INFO << "Touchdown detected - zooming close";
           setDistanceToMap(DEFAULT_MAP_DISTANCE_TOUCHDOWN_KM);
-          touchdownDetected = false;
+          touchdownDetectedZoom = false;
         }
       } // if(mouseState == mw::NONE && viewContext() == Marble::Still && !jumpBack->isActive())
     } // if(centerAircraftChecked && !contextMenuActive)
@@ -2494,8 +2506,9 @@ void MapWidget::clearHistory()
 
 void MapWidget::showOverlays(bool show, bool showScalebar)
 {
-  for(const QString& name : mapOverlays.keys())
+  for(auto it = mapOverlays.begin(); it != mapOverlays.end(); ++it)
   {
+    QString name = it.key();
     Marble::AbstractFloatItem *overlay = floatItem(name);
     if(overlay != nullptr)
     {
@@ -2528,8 +2541,9 @@ void MapWidget::overlayStateToMenu()
   qDebug() << Q_FUNC_INFO << "ignoreOverlayUpdates" << ignoreOverlayUpdates;
   if(!ignoreOverlayUpdates)
   {
-    for(const QString& name : mapOverlays.keys())
+    for(auto it = mapOverlays.begin(); it != mapOverlays.end(); ++it)
     {
+      QString name = it.key();
       Marble::AbstractFloatItem *overlay = floatItem(name);
       if(overlay != nullptr)
       {
@@ -2547,8 +2561,9 @@ void MapWidget::overlayStateFromMenu()
   qDebug() << Q_FUNC_INFO << "ignoreOverlayUpdates" << ignoreOverlayUpdates;
   if(!ignoreOverlayUpdates)
   {
-    for(const QString& name : mapOverlays.keys())
+    for(auto it = mapOverlays.begin(); it != mapOverlays.end(); ++it)
     {
+      QString name = it.key();
       Marble::AbstractFloatItem *overlay = floatItem(name);
       if(overlay != nullptr)
       {
@@ -2578,9 +2593,9 @@ void MapWidget::connectOverlayMenus()
   for(QAction *action : mapOverlays)
     connect(action, &QAction::toggled, this, &MapWidget::overlayStateFromMenu);
 
-  for(const QString& name : mapOverlays.keys())
+  for(auto it = mapOverlays.begin(); it != mapOverlays.end(); ++it)
   {
-    Marble::AbstractFloatItem *overlay = floatItem(name);
+    Marble::AbstractFloatItem *overlay = floatItem(it.key());
     if(overlay != nullptr)
       connect(overlay, &Marble::AbstractFloatItem::visibilityChanged, this, &MapWidget::overlayStateToMenu);
   }
