@@ -19,17 +19,44 @@
 #define ABSTRACTLNMACTIONSCONTROLLER_H
 
 #include "webapi/abstractactionscontroller.h"
-#include "common/infobuildertypes.h"
-#include "common/maptypes.h"
-#include "navapp.h"
-#include "sql/sqlrecord.h"
-#include "fs/util/morsecode.h"
 
+namespace atools {
+    namespace geo {
+        class Pos;
+    }
+    namespace fs {
+        namespace util {
+            class MorseCode;
+        }
+        namespace sc {
+            class SimConnectData;
+        }
+    }
+    namespace sql {
+        class SqlRecord;
+    }
+}
+namespace InfoBuilderTypes {
+    class AirportAdminNames;
+}
 namespace ageo = atools::geo;
+namespace map {
+    class MapAirport;
+    class WeatherContext;
+}
+
+class NavApp;
+class MapQuery;
+class WaypointTrackQuery;
+class InfoQuery;
+class AirportQuery;
+class MainWindow;
+
 using atools::fs::util::MorseCode;
 using atools::sql::SqlRecord;
 using InfoBuilderTypes::AirportAdminNames;
 using atools::geo::Pos;
+using atools::fs::sc::SimConnectData;
 
 /**
  * @brief The base class for all Little Navmap API action controllers
@@ -65,6 +92,7 @@ protected:
     const QTime getSunrise(const Pos& pos);
     const QDateTime getActiveDateTime();
     const QString getActiveDateTimeSource();
+    const SimConnectData getSimConnectData();
 private:
     MorseCode* morseCode;
     QTime calculateSunriseSunset(const Pos& pos, float zenith);

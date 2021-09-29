@@ -181,13 +181,13 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
 
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_SIM);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_NAV);
-  SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_MORA);
+  SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_PERM_NAV);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_DLG_INFO_TEMP);
   SqlDatabase::addDatabase(DATABASE_TYPE, DATABASE_NAME_TEMP);
 
   databaseSim = new SqlDatabase(DATABASE_NAME_SIM);
   databaseNav = new SqlDatabase(DATABASE_NAME_NAV);
-  databaseMora = new SqlDatabase(DATABASE_NAME_MORA);
+  databasePermNav = new SqlDatabase(DATABASE_NAME_PERM_NAV);
 
   if(mainWindow != nullptr)
   {
@@ -279,7 +279,7 @@ DatabaseManager::~DatabaseManager()
 
   delete databaseSim;
   delete databaseNav;
-  delete databaseMora;
+  delete databasePermNav;
   delete databaseUser;
   delete databaseTrack;
   delete databaseLogbook;
@@ -291,7 +291,7 @@ DatabaseManager::~DatabaseManager()
 
   SqlDatabase::removeDatabase(DATABASE_NAME_SIM);
   SqlDatabase::removeDatabase(DATABASE_NAME_NAV);
-  SqlDatabase::removeDatabase(DATABASE_NAME_MORA);
+  SqlDatabase::removeDatabase(DATABASE_NAME_PERM_NAV);
   SqlDatabase::removeDatabase(DATABASE_NAME_USER);
   SqlDatabase::removeDatabase(DATABASE_NAME_TRACK);
   SqlDatabase::removeDatabase(DATABASE_NAME_LOGBOOK);
@@ -977,7 +977,7 @@ void DatabaseManager::openAllDatabases()
 {
   QString simDbFile = buildDatabaseFileName(currentFsType);
   QString navDbFile = buildDatabaseFileName(FsPaths::NAVIGRAPH);
-  QString moraDbFile = buildDatabaseFileName(FsPaths::NAVIGRAPH);
+  QString permNavDbFile = navDbFile;
 
   // Airspace databases are independent of switch
   QString simAirspaceDbFile = simDbFile;
@@ -991,7 +991,7 @@ void DatabaseManager::openAllDatabases()
 
   openDatabaseFile(databaseSim, simDbFile, true /* readonly */, true /* createSchema */);
   openDatabaseFile(databaseNav, navDbFile, true /* readonly */, true /* createSchema */);
-  openDatabaseFile(databaseMora, moraDbFile, true /* readonly */, true /* createSchema */);
+  openDatabaseFile(databasePermNav, permNavDbFile, true /* readonly */, true /* createSchema */);
 
   openDatabaseFile(databaseSimAirspace, simAirspaceDbFile, true /* readonly */, true /* createSchema */);
   openDatabaseFile(databaseNavAirspace, navAirspaceDbFile, true /* readonly */, true /* createSchema */);
@@ -1094,7 +1094,7 @@ void DatabaseManager::closeAllDatabases()
 {
   closeDatabaseFile(databaseSim);
   closeDatabaseFile(databaseNav);
-  closeDatabaseFile(databaseMora);
+  closeDatabaseFile(databasePermNav);
   closeDatabaseFile(databaseSimAirspace);
   closeDatabaseFile(databaseNavAirspace);
 }
@@ -1129,9 +1129,9 @@ atools::sql::SqlDatabase *DatabaseManager::getDatabaseNav()
   return databaseNav;
 }
 
-atools::sql::SqlDatabase *DatabaseManager::getDatabaseMora()
+atools::sql::SqlDatabase *DatabaseManager::getDatabasePermNav()
 {
-  return databaseMora;
+  return databasePermNav;
 }
 
 atools::sql::SqlDatabase *DatabaseManager::getDatabaseSimAirspace()

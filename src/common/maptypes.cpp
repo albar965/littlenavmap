@@ -710,6 +710,73 @@ QString navTypeNameWaypoint(const QString& type)
   return navTypeNamesWaypoint.value(type);
 }
 
+QString navTypeArincNamesWaypoint(const QString& type)
+{
+  QStringList types;
+
+  QChar c0 = atools::charAt(type, 0).toUpper();
+  if(c0 == 'A')
+    types.append(QObject::tr("ARC center fix waypoint"));
+  else if(c0 == 'C')
+    types.append(QObject::tr("Combined named intersection and RNAV waypoint"));
+  else if(c0 == 'I')
+    types.append(QObject::tr("Unnamed, charted intersection"));
+  else if(c0 == 'M')
+    types.append(QObject::tr("Middle marker as waypoint"));
+  else if(c0 == 'N')
+    types.append(QObject::tr("Terminal NDB navaid as waypoint"));
+  else if(c0 == 'O')
+    types.append(QObject::tr("Outer marker as waypoint"));
+  else if(c0 == 'R')
+    types.append(QObject::tr("Named intersection"));
+  else if(c0 == 'V')
+    types.append(QObject::tr("VFR waypoint"));
+  else if(c0 == 'W')
+    types.append(QObject::tr("RNAV waypoint"));
+
+  QChar c1 = atools::charAt(type, 1).toUpper();
+  if(c1 == 'A')
+    types.append(QObject::tr("Final approach fix"));
+  else if(c1 == 'B')
+    types.append(QObject::tr("Initial approach fix and final approach fix"));
+  else if(c1 == 'C')
+    types.append(QObject::tr("final approach course fix"));
+  else if(c1 == 'D')
+    types.append(QObject::tr("Intermediate approach fix"));
+  else if(c1 == 'I')
+    types.append(QObject::tr("Initial approach fix"));
+  else if(c1 == 'K')
+    types.append(QObject::tr("Final approach course fix at initial approach fix"));
+  else if(c1 == 'L')
+    types.append(QObject::tr("Final approach course fix at intermediate approach fix"));
+  else if(c1 == 'M')
+    types.append(QObject::tr("Missed approach fix"));
+  else if(c1 == 'N')
+    types.append(QObject::tr("Initial approach fix and missed approach fix"));
+  else if(c1 == 'P')
+    types.append(QObject::tr("Unnamed stepdown fix"));
+  else if(c1 == 'S')
+    types.append(QObject::tr("Named stepdown fix"));
+  else if(c1 == 'U')
+    types.append(QObject::tr("FIR/UIR or controlled airspace intersection"));
+
+  QChar c2 = atools::charAt(type, 2).toUpper();
+  if(c2 == 'D')
+    types.append(QObject::tr("SID"));
+  else if(c2 == 'E')
+    types.append(QObject::tr("STAR"));
+  else if(c2 == 'F')
+    types.append(QObject::tr("Approach"));
+  else if(c2 == 'Z')
+    types.append(QObject::tr("Multiple"));
+
+#ifdef DEBUG_INFORMATION
+  types.append(QString("[%1]").arg(type));
+#endif
+
+  return types.join(QObject::tr(", "));
+}
+
 QString navName(const QString& type)
 {
   return navTypeNames.value(type);
@@ -844,6 +911,30 @@ QString parkingNameForFlightplan(const map::MapParking& parking)
   else
     // FSX/P3D type
     return parkingNameMapUntranslated.value(parking.name).toUpper() + " " + QString::number(parking.number);
+}
+
+const QString& MapAirport::displayIdent(bool useIata) const
+{
+  if(xplane)
+  {
+    // ICAO is mostly identical to ident except for small fields
+    if(!icao.isEmpty())
+      return icao;
+
+    // Avoid short FAA codes identical to IATA three letter codes
+    if(!faa.isEmpty())
+      return faa;
+
+    // Use IATA only if present and ident is artificial long X-Plane string
+    if(useIata && !iata.isEmpty())
+      return iata;
+
+    if(!local.isEmpty())
+      return local;
+  }
+
+  // Otherwise internal id
+  return ident;
 }
 
 bool MapAirport::closed() const
@@ -1440,9 +1531,9 @@ QString airportTextShort(const MapAirport& airport, int elideName)
   if(!airport.isValid())
     return QObject::tr("Airport");
   else if(airport.name.isEmpty())
-    return QObject::tr("%1").arg(airport.ident);
+    return QObject::tr("%1").arg(airport.displayIdent());
   else
-    return QObject::tr("%1 (%2)").arg(atools::elideTextShort(airport.name, elideName)).arg(airport.ident);
+    return QObject::tr("%1 (%2)").arg(atools::elideTextShort(airport.name, elideName)).arg(airport.displayIdent());
 }
 
 QString comTypeName(const QString& type)
@@ -1768,59 +1859,76 @@ QDebug operator<<(QDebug out, const WeatherContext& record)
 
 QString ilsText(const MapIls& ils)
 {
-  QString text = ils.ident + " / " +
-                 QString::number(ils.frequency / 1000., 'f', 2) + " / " +
-                 QString::number(atools::geo::normalizeCourse(ils.heading - ils.magvar), 'f', 0) + QObject::tr("°M");
+  QString text = QObject::tr("%1 / %2 / %3 / %4°M").
+                 arg(ilsType(ils, false /* gs */, false /* dme */, QObject::tr(", "))).
+                 arg(ils.ident).
+                 arg(ils.freqMHzOrChannel()).
+                 arg(QString::number(atools::geo::normalizeCourse(ils.heading - ils.magvar), 'f', 0));
 
-  if(ils.slope > 0.1f)
-    text += QObject::tr(" / GS ") + QString::number(ils.slope, 'f', 1) + QObject::tr("°");
+  if(ils.hasGlideslope())
+    text += (ils.isAnyGls() ? QObject::tr(" / GP %1°") : QObject::tr(" / GS %1°")).
+            arg(QString::number(ils.slope, 'f', 1));
   if(ils.hasDme)
     text += QObject::tr(" / DME");
 
   return text;
 }
 
-QString ilsTextShort(const map::MapIls& ils)
-{
-  return ilsTextShort(ils.ident, ils.name, ils.slope > 0.f, ils.hasDme);
-}
-
-QString ilsType(const map::MapIls& ils)
-{
-  QString txt = ils.slope > 0.f ? QObject::tr("ILS, GS") : QObject::tr("LOC");
-  if(ils.hasDme)
-    txt.append(QObject::tr(", DME"));
-  return txt;
-}
-
-QString ilsTextShort(QString ident, QString name, bool gs, bool dme)
+QString ilsTypeShort(const map::MapIls& ils)
 {
   QString text;
 
-  if(gs)
-  {
-    // Is real ILS with glideslooe
-    if(!name.isEmpty() && !name.startsWith(QObject::tr("ILS")))
-      name.prepend(QObject::tr("ILS "));
-  }
-  else if(!name.startsWith(QObject::tr("LOC")))
-  {
-    // Is localizer only
-    if(!name.isEmpty())
-      name.prepend(QObject::tr("LOC "));
-  }
-
-  if(name.isEmpty())
-    text.append(ident);
+  if(ils.isGls())
+    text = QObject::tr("GLS");
+  else if(ils.isRnp())
+    text = QObject::tr("RNP");
+  else if(ils.isIls())
+    text = QObject::tr("ILS");
+  else if(ils.isLoc())
+    text = QObject::tr("LOC");
+  else if(ils.isIgs())
+    text = QObject::tr("IGS");
+  else if(ils.isLda())
+    text = QObject::tr("LDA");
+  else if(ils.isSdf())
+    text = QObject::tr("SDF");
   else
-    text.append(QObject::tr("%1 (%2)").arg(name).arg(ident));
+    text = ils.name;
+  return text;
+}
 
-  if(gs)
-    text += QObject::tr(", GS ");
-  if(dme)
-    text += QObject::tr(", DME");
+QString ilsType(const map::MapIls& ils, bool gs, bool dme, const QString& separator)
+{
+  QString text = ilsTypeShort(ils);
+
+  if(!ils.isAnyGls())
+  {
+    if(ils.type == '1')
+      text += QObject::tr(" CAT I");
+    else if(ils.type == '2')
+      text += QObject::tr(" CAT II");
+    else if(ils.type == '3')
+      text += QObject::tr(" CAT III");
+
+    if(gs && ils.hasGlideslope())
+      text += separator + QObject::tr("GS");
+    if(dme && ils.hasDme)
+      text += separator + QObject::tr("DME");
+  }
+  else
+  {
+    if(!ils.perfIndicator.isEmpty())
+      text += separator + ils.perfIndicator;
+    if(!ils.provider.isEmpty())
+      text += separator + ils.provider;
+  }
 
   return text;
+}
+
+QString ilsTextShort(const map::MapIls& ils)
+{
+  return QObject::tr("%1 %2").arg(ilsType(ils, true /* gs */, true /* dme */, QObject::tr(", "))).arg(ils.ident);
 }
 
 float Hold::magCourse() const
@@ -1838,12 +1946,33 @@ atools::geo::Line MapIls::centerLine() const
   return atools::geo::Line(position, posmid);
 }
 
+QString MapIls::freqMHzOrChannel() const
+{
+  if(type == GLS_GROUND_STATION || type == SBAS_GBAS_THRESHOLD)
+    return QObject::tr("%1").arg(frequency);
+  else
+    return QObject::tr("%1").arg(static_cast<float>(frequency / 1000.f), 0, 'f', 2);
+}
+
+QString MapIls::freqMHzOrChannelLocale() const
+{
+  if(type == GLS_GROUND_STATION || type == SBAS_GBAS_THRESHOLD)
+    return QObject::tr("%L1").arg(frequency);
+  else
+    return QObject::tr("%L1").arg(static_cast<float>(frequency / 1000.f), 0, 'f', 2);
+}
+
 atools::geo::LineString MapIls::boundary() const
 {
-  if(slope > 0.f)
-    return atools::geo::LineString({position, pos1, pos2, position});
+  if(hasGeometry)
+  {
+    if(hasGlideslope())
+      return atools::geo::LineString({position, pos1, pos2, position});
+    else
+      return atools::geo::LineString({position, pos1, posmid, pos2, position});
+  }
   else
-    return atools::geo::LineString({position, pos1, posmid, pos2, position});
+    return atools::geo::EMPTY_LINESTRING;
 }
 
 QString airspaceName(const MapAirspace& airspace)

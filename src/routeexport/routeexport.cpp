@@ -1307,25 +1307,24 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
 
 QString RouteExport::buildDefaultFilename(const QString& suffix, bool normalize)
 {
-  return buildDefaultFilename(NavApp::getRouteConst().getFlightplan(), suffix, normalize);
+  return buildDefaultFilename(NavApp::getRouteConst(), suffix, normalize);
 }
 
 QString RouteExport::buildDefaultFilename(const RouteExportFormat&, const QString& suffix, bool normalize)
 {
-  return buildDefaultFilename(NavApp::getRouteConst().getFlightplan(), suffix, normalize);
+  return buildDefaultFilename(NavApp::getRouteConst(), suffix, normalize);
 }
 
-QString RouteExport::buildDefaultFilename(const atools::fs::pln::Flightplan& plan, const QString& suffix,
-                                          bool normalize)
+QString RouteExport::buildDefaultFilename(const Route& route, const QString& suffix, bool normalize)
 {
-  QString name = plan.getFilenamePattern(OptionData::instance().getFlightplanPattern(), suffix);
+  QString name = route.getFilenamePattern(OptionData::instance().getFlightplanPattern(), suffix);
   return normalize ? atools::normalizeStr(name) : name;
 }
 
 QString RouteExport::buildDefaultFilenameShort(const QString& sep, const QString& suffix)
 {
-  return NavApp::getRouteConst().getFlightplan().getFilenamePattern(
-    atools::fs::pln::pattern::DEPARTIDENT + sep + atools::fs::pln::pattern::DESTIDENT, suffix);
+  return NavApp::getRouteConst().getFilenamePattern(
+    atools::fs::pln::pattern::DEPARTIDENT + sep + atools::fs::pln::pattern::DESTIDENT, suffix, true /* clean */);
 }
 
 bool RouteExport::exportFlighplanAsGfp(const QString& filename, bool saveAsUserWaypoints)

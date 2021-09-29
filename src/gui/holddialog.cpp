@@ -179,7 +179,7 @@ void HoldDialog::fillHold(map::Hold& hold)
 
   if(result->hasAirports())
   {
-    hold.navIdent = result->airports.first().ident;
+    hold.navIdent = result->airports.first().displayIdent();
     hold.position = result->airports.first().position;
     hold.magvar = result->airports.first().magvar;
     hold.navType = map::AIRPORT;

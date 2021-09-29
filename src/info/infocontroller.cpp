@@ -348,9 +348,18 @@ void InfoController::anchorClicked(const QUrl& url)
       else if(query.hasQueryItem("airport"))
       {
         // Airport ident from AI aircraft progress
-        map::MapAirport airport;
-        airportQuery->getAirportByIdent(airport, query.queryItemValue("airport"));
-        emit showRect(airport.bounding, false);
+        atools::geo::Pos pos;
+
+        if(query.hasQueryItem("aplonx") && query.hasQueryItem("aplaty"))
+          pos = atools::geo::Pos(query.queryItemValue("aplonx"), query.queryItemValue("aplaty"));
+
+        QList<map::MapAirport> airports = airportQuery->getAirportsByOfficialIdent(query.queryItemValue("airport"),
+                                                                                   pos.isValid() ? &pos : nullptr);
+
+        if(!airports.isEmpty())
+          emit showRect(airports.first().bounding, false);
+        else
+          qWarning() << Q_FUNC_INFO << "No airport found for" << query.queryItemValue("airport");
       }
       else if(query.hasQueryItem("filepath"))
         // Show path in any OS dependent file manager. Selects the file in Windows Explorer.
@@ -1011,7 +1020,7 @@ bool InfoController::updateNavaidInternal(const map::MapResult& result, bool bea
 
     if(!bearingChanged)
       currentSearchResult.ils.append(ils);
-    infoBuilder->ilsText(ils, html);
+    infoBuilder->ilsTextInfo(ils, html);
     html.br();
     foundNavaid = true;
   }

@@ -106,6 +106,9 @@ public:
   /* Get ident of airport or navaid. Source can be flight plan entry or database. */
   QString getIdent() const;
 
+  /* Ident, ICAO, IATA or local for airport. Otherwise same as above. */
+  QString getDisplayIdent(bool useIata = true) const;
+
   /* Comment section from flight plan entry */
   QString getComment() const;
 
@@ -363,7 +366,7 @@ private:
   bool validWaypoint = false, alternate = false, valid = false;
 
   float distanceTo = 0.f,
-        courseTo = 0.f,
+        courseTo = 0.f, /* magnetic */
         magvar = 0.f, /* Either taken from navaid or average across the route */
         magvarPos = 0.f; /* Calculate environment value */
   atools::geo::LineString geometry;

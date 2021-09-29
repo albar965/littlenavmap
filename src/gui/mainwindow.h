@@ -208,6 +208,9 @@ public:
   void showUserpointSearch();
   void showRouteCalc();
 
+  /* create a new flightplan from passed airports */
+  void routeNewFromAirports(map::MapAirport departure, map::MapAirport destination);
+
   /* Load a flight plan in LNMPLN format from a string */
   void routeOpenFileLnmStr(const QString& string);
 
@@ -242,8 +245,11 @@ private:
   void connectAllSlots();
   void mainWindowShown();
   void mainWindowShownDelayed();
+
+  /* Dock window functions */
   void raiseFloatingWindows();
   void allowDockingWindows();
+  void allowMovingWindows();
   void stayOnTop();
 
   /* Called by action */

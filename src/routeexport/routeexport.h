@@ -213,7 +213,7 @@ public:
   static QString buildDefaultFilename(const QString& suffix = ".lnmpln", bool normalize = false);
   static QString buildDefaultFilename(const RouteExportFormat&, const QString& suffix = ".lnmpln",
                                       bool normalize = false);
-  static QString buildDefaultFilename(const atools::fs::pln::Flightplan& plan, const QString& suffix = ".lnmpln",
+  static QString buildDefaultFilename(const Route& route, const QString& suffix = ".lnmpln",
                                       bool normalize = false);
 
   /* Create a default filename based on departure and destination idents. Suffix includes dot. */

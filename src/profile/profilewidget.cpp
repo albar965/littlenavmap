@@ -41,6 +41,7 @@
 #include "weather/windreporter.h"
 #include "grib/windquery.h"
 #include "options/optiondata.h"
+#include "perf/aircraftperfcontroller.h"
 
 #include <QPainter>
 #include <QTimer>
@@ -340,7 +341,7 @@ void ProfileWidget::updateScreenCoords()
     {
       float alt = leg.elevation.at(i).getAltitude();
       QPoint pt(left + static_cast<int>(leg.distances.at(i) * horizontalScale),
-                TOP + static_cast<int>(h - alt *verticalScale));
+                TOP + static_cast<int>(h - alt * verticalScale));
 
       if(lastPt.isNull() || i == leg.elevation.size() - 1 || (lastPt - pt).manhattanLength() > 2)
       {
@@ -445,7 +446,7 @@ void ProfileWidget::showPosAlongFlightplan(int x, bool doubleClick)
 void ProfileWidget::paintIls(QPainter& painter, const Route& route)
 {
   const RouteAltitude& altitudeLegs = route.getAltitudeLegs();
-  const QVector<map::MapIls>& ilsVector = altitudeLegs.getDestRunwayIls();
+  const QVector<map::MapIls>& ilsVector = route.getDestRunwayIlsProfile();
   if(!ilsVector.isEmpty())
   {
     // Get origin
@@ -457,8 +458,15 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
       // Draw all ILS
       for(const map::MapIls& ils : ilsVector)
       {
-        painter.setBrush(mapcolors::ilsFillColor);
-        painter.setPen(QPen(mapcolors::ilsSymbolColor, 2, Qt::SolidLine, Qt::FlatCap));
+        bool isIls = !ils.isAnyGls();
+
+        QColor fillColor = isIls ? mapcolors::ilsFillColor : mapcolors::glsFillColor;
+        QColor symColor = isIls ? mapcolors::ilsSymbolColor : mapcolors::glsSymbolColor;
+        QColor textColor = isIls ? mapcolors::ilsTextColor : mapcolors::glsTextColor;
+        QPen centerPen = isIls ? mapcolors::ilsCenterPen : mapcolors::glsCenterPen;
+
+        painter.setBrush(fillColor);
+        painter.setPen(QPen(symColor, 2, Qt::SolidLine, Qt::FlatCap));
         painter.setBackgroundMode(Qt::OpaqueMode);
         painter.setBackground(Qt::transparent);
 
@@ -495,11 +503,11 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
         painter.drawPolyline(QPolygonF({lowerLine.p2(), centerLine.p2(), upperLine.p2()}));
 
         // Dashed center line
-        painter.setPen(mapcolors::ilsCenterPen);
+        painter.setPen(centerPen);
         painter.drawLine(centerLine);
 
         // Calculate text ==================
-        painter.setPen(mapcolors::ilsTextColor);
+        painter.setPen(textColor);
         if(OptionData::instance().getFlags2() & opts2::MAP_NAVAID_TEXT_BACKGROUND)
         {
           painter.setBackground(Qt::white);
@@ -1129,7 +1137,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       const RouteLeg& departureLeg = route.getDepartureAirportLeg();
       if(departureLeg.getMapObjectType() == map::AIRPORT)
       {
-        int textW = painter.fontMetrics().width(departureLeg.getIdent());
+        int textW = painter.fontMetrics().width(departureLeg.getDisplayIdent());
         symPainter.drawAirportSymbol(&painter,
                                      departureLeg.getAirport(), left, flightplanY, airportSize, false, false, false);
         symPainter.drawAirportText(&painter, departureLeg.getAirport(), left - textW / 2, flightplanTextY,
@@ -1140,7 +1148,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       const RouteLeg& destinationLeg = route.getDestinationAirportLeg();
       if(destinationLeg.getMapObjectType() == map::AIRPORT)
       {
-        int textW = painter.fontMetrics().width(destinationLeg.getIdent());
+        int textW = painter.fontMetrics().width(destinationLeg.getDisplayIdent());
         symPainter.drawAirportSymbol(&painter, destinationLeg.getAirport(), left + w, flightplanY, airportSize, false,
                                      false, false);
         symPainter.drawAirportText(&painter, destinationLeg.getAirport(), left + w - textW / 2, flightplanTextY,
@@ -1777,7 +1785,7 @@ void ProfileWidget::buildTooltip(int x, bool force)
   if(routeLeg.isAnyProcedure() && proc::procedureLegFrom(routeLeg.getProcedureLegType()))
     fromTo = tr("from");
 
-  QString toWaypoint = atools::elideTextShort(routeLeg.getIdent(), 20);
+  QString toWaypoint = atools::elideTextShort(routeLeg.getDisplayIdent(), 20);
 
   // Create text for tooltip ==========================
   atools::util::HtmlBuilder html;
@@ -1996,20 +2004,28 @@ void ProfileWidget::updateLabel()
 
       if(curRoute.isActiveAlternate())
         // Use distance to alternate instead of destination
-        fixedLabelText = tr("<b>To Alternate: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(nearestLegDistance));
+        fixedLabelText = tr("<b>Alternate: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(nearestLegDistance));
       else
       {
         if(NavApp::getMapWidget()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN_TOC_TOD) &&
            curRoute.getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE)
         {
+          // Fuel and time calculated or estimated
+          FuelTimeResult fuelTime;
+          NavApp::getAircraftPerfController()->calculateFuelAndTimeTo(fuelTime, distToDestNm, nearestLegDistance,
+                                                                      curRoute.getActiveLegIndex());
+
           float toTod = curRoute.getTopOfDescentDistance() - distFromStartNm;
 
-          fixedLabelText = tr("<b>To Destination: %1, to Top of Descent: %2.</b>&nbsp;&nbsp;").
+          fixedLabelText = tr("<b>Destination: %1 (%2). Top of Descent: %3%4.</b>&nbsp;&nbsp;").
                            arg(Unit::distNm(distToDestNm)).
-                           arg(toTod > 0.f ? Unit::distNm(toTod) : tr("Passed"));
+                           arg(formatter::formatMinutesHoursLong(fuelTime.timeToDest)).
+                           arg(toTod > 0.f ? Unit::distNm(toTod) : tr("Passed")).
+                           arg(toTod > 0.f ? tr(" (%1)").
+                               arg(formatter::formatMinutesHoursLong(fuelTime.timeToTod)) : QString());
         }
         else
-          fixedLabelText = tr("<b>To Destination: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(distToDestNm));
+          fixedLabelText = tr("<b>Destination: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(distToDestNm));
       }
     }
     NavApp::getMainUi()->labelProfileInfo->setVisible(true);

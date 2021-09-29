@@ -63,6 +63,7 @@ WindReporter::WindReporter(QObject *parent, atools::fs::FsPaths::SimulatorType t
   connect(windQueryOnline, &atools::grib::WindQuery::windDataUpdated, this, &WindReporter::windDownloadFinished);
   connect(windQueryOnline, &atools::grib::WindQuery::windDownloadFailed, this, &WindReporter::windDownloadFailed);
   connect(windQueryOnline, &atools::grib::WindQuery::windDownloadSslErrors, this, &WindReporter::windDownloadSslErrors);
+  connect(windQueryOnline, &atools::grib::WindQuery::windDownloadProgress, this, &WindReporter::windDownloadProgress);
 
   // Layers from custom settings ==================
   windQueryManual = new atools::grib::WindQuery(parent, verbose);
@@ -183,6 +184,15 @@ void WindReporter::windDownloadFinished()
     NavApp::setStatusMessage(msg, true /* addToLog */);
   }
   emit windUpdated();
+}
+
+void WindReporter::windDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QString downloadUrl)
+{
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << "bytesReceived" << bytesReceived << "bytesTotal" << bytesTotal
+             << "downloadUrl" << downloadUrl;
+
+  QApplication::processEvents(QEventLoop::WaitForMoreEvents);
 }
 
 void WindReporter::windDownloadSslErrors(const QStringList& errors, const QString& downloadUrl)

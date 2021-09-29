@@ -309,7 +309,8 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
       continue;
 
     const QString& airway = leg.getAirwayName();
-    QString ident = leg.getIdent();
+    // Avoid the short IATA ids since these can overlap with VOR or NDB
+    QString ident = leg.getDisplayIdent();
 
     if(leg.getMapObjectType() == map::USERPOINTROUTE)
     {
@@ -421,7 +422,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
   }
 
   if(options & rs::ALTERNATES)
-    retval.append(route.getAlternateIdents());
+    retval.append(route.getAlternateDisplayIdents()); // Do not use internal ids
 
   if(options & rs::FLIGHTLEVEL)
     retval.append(QString("FL%1").arg(static_cast<int>(route.getCruisingAltitudeFeet()) / 100));

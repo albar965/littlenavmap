@@ -1711,11 +1711,11 @@ void MapPainterRoute::drawRouteSymbolText(const QBitArray& visibleStartPoints, c
       switch(type)
       {
         case map::INVALID:
-          paintText(mapcolors::routeInvalidPointColor, x, y, {obj.getIdent()}, true /* draw as route */);
+          paintText(mapcolors::routeInvalidPointColor, x, y, {obj.getDisplayIdent()}, true /* draw as route */);
           break;
         case map::USERPOINTROUTE:
           paintText(mapcolors::routeUserPointColor, x, y,
-                    {atools::elideTextShort(obj.getIdent(), context->mapLayerRoute->getMaxTextLengthAirport())},
+                    {atools::elideTextShort(obj.getDisplayIdent(), context->mapLayerRoute->getMaxTextLengthAirport())},
                     true /* draw as route */);
           break;
         case map::AIRPORT:
@@ -1752,7 +1752,7 @@ void MapPainterRoute::drawStartParking()
       if(route->hasDepartureParking())
       {
         startPos = first.getDepartureParking().position;
-        size = first.getDepartureParking().radius;
+        size = first.getDepartureParking().getRadius();
       }
       else if(route->hasDepartureStart())
         startPos = first.getDepartureStart().position;

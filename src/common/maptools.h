@@ -32,6 +32,60 @@ class CoordinateConverter;
 
 namespace maptools {
 
+/*
+ * Container conversion functions for map::MapBase derived structs and objects
+ */
+
+/* Vector to hash with id as key */
+template<typename TYPE>
+QHash<int, TYPE> toHash(const QVector<TYPE>& list)
+{
+  QHash<int, TYPE> retval;
+  for(const TYPE& t : list)
+    retval.insert(t.id, t);
+
+  return retval;
+}
+
+/* List to hash with id as key */
+template<typename TYPE>
+QHash<int, TYPE> toHash(const QList<TYPE>& list)
+{
+  QHash<int, TYPE> retval;
+  for(const TYPE& t : list)
+    retval.insert(t.id, t);
+
+  return retval;
+}
+
+/* Insert vector in hash with id as key. Duplicates are removed. */
+template<typename TYPE>
+void insert(QHash<int, TYPE>& map, const QVector<TYPE>& list)
+{
+  for(const TYPE& t : list)
+    map.insert(t.id, t);
+}
+
+/* Insert list in hash with id as key. Duplicates are removed. */
+template<typename TYPE>
+void insert(QHash<int, TYPE>& map, const QList<TYPE>& list)
+{
+  for(const TYPE& t : list)
+    map.insert(t.id, t);
+}
+
+/* Copy other map to map removing duplicates */
+template<typename TYPE>
+void insert(QHash<int, TYPE>& map, const QHash<int, TYPE>& other)
+{
+  for(auto it = other.begin(); it != other.end(); ++it)
+    map.insert(it.key(), it.value());
+}
+
+/*
+ * Distance sorting and other functions.
+ */
+
 /* Erase all elements in the list except the closest. Returns distance in meter to the closest */
 template<typename TYPE>
 float removeFarthest(const atools::geo::Pos& pos, QList<TYPE>& list)
@@ -116,7 +170,7 @@ void removeByDirection(QList<TYPE>& list, const atools::geo::Pos& pos, int lastD
 template<typename TYPE>
 void sortByDistance(QList<TYPE>& list, const atools::geo::Pos& pos)
 {
-  if(list.isEmpty() || !pos.isValid())
+  if(list.size() <= 1 || !pos.isValid())
     return;
 
   std::sort(list.begin(), list.end(),
@@ -129,7 +183,7 @@ void sortByDistance(QList<TYPE>& list, const atools::geo::Pos& pos)
 template<typename TYPE>
 void sortByDistance(QVector<TYPE>& list, const atools::geo::Pos& pos)
 {
-  if(list.isEmpty() || !pos.isValid())
+  if(list.size() <= 1 || !pos.isValid())
     return;
 
   std::sort(list.begin(), list.end(),

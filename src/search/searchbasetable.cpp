@@ -212,7 +212,8 @@ void SearchBaseTable::tableCopyClipboard()
     if(controller->hasColumn("lonx") && controller->hasColumn("laty"))
     {
       // Full CSV export including coordinates and full rows
-      exported = CsvExporter::selectionAsCsv(view, true /* header */, true /* rows */, csv, {"longitude", "latitude"},
+      exported = CsvExporter::selectionAsCsv(view, true /* header */, true /* rows */, csv,
+                                             {tr("Longitude"), tr("Latitude")},
                                              [c](int index) -> QStringList
       {
         return {QLocale().toString(c->getRawData(index, "lonx").toFloat(), 'f', 8),
@@ -315,22 +316,24 @@ void SearchBaseTable::updateDistanceSearch()
 
 void SearchBaseTable::connectSearchWidgets()
 {
-  void (QComboBox::*curIndexChangedPtr)(int) = &QComboBox::currentIndexChanged;
-  void (QSpinBox::*valueChangedPtr)(int) = &QSpinBox::valueChanged;
-
   // Connect query builder callback to lambda ======================================
   if(columns->getQueryBuilder().isValid())
   {
-    for(QWidget *widget : columns->getQueryBuilder().getWidgets())
+    controller->setBuilder(columns->getQueryBuilder());
+
+    QWidget *widget = columns->getQueryBuilder().getWidget();
+
+    if(widget != nullptr)
     {
       QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(widget);
 
+      // Only line edit allowed for now
       if(lineEdit != nullptr)
       {
         connect(lineEdit, &QLineEdit::textChanged, this, [ = ](const QString& text)
         {
           Q_UNUSED(text)
-          controller->filterByBuilder(columns->getQueryBuilder());
+          controller->filterByBuilder();
           updateButtonMenu();
           editStartTimer();
         });
@@ -375,7 +378,7 @@ void SearchBaseTable::connectSearchWidgets()
       }
       else
       {
-        connect(col->getComboBoxWidget(), curIndexChangedPtr, this, [ = ](int index)
+        connect(col->getComboBoxWidget(), QOverload<int>::of(&QComboBox::currentIndexChanged), this, [ = ](int index)
         {
           controller->filterByComboBox(col, index, index == 0);
           updateButtonMenu();
@@ -394,7 +397,7 @@ void SearchBaseTable::connectSearchWidgets()
     }
     else if(col->getSpinBoxWidget() != nullptr)
     {
-      connect(col->getSpinBoxWidget(), valueChangedPtr, this, [ = ](int value)
+      connect(col->getSpinBoxWidget(), QOverload<int>::of(&QSpinBox::valueChanged), this, [ = ](int value)
       {
         updateFromSpinBox(value, col);
         updateButtonMenu();
@@ -403,14 +406,14 @@ void SearchBaseTable::connectSearchWidgets()
     }
     else if(col->getMinSpinBoxWidget() != nullptr && col->getMaxSpinBoxWidget() != nullptr)
     {
-      connect(col->getMinSpinBoxWidget(), valueChangedPtr, this, [ = ](int value)
+      connect(col->getMinSpinBoxWidget(), QOverload<int>::of(&QSpinBox::valueChanged), this, [ = ](int value)
       {
         updateFromMinSpinBox(value, col);
         updateButtonMenu();
         editStartTimer();
       });
 
-      connect(col->getMaxSpinBoxWidget(), valueChangedPtr, this, [ = ](int value)
+      connect(col->getMaxSpinBoxWidget(), QOverload<int>::of(&QSpinBox::valueChanged), this, [ = ](int value)
       {
         updateFromMaxSpinBox(value, col);
         updateButtonMenu();
@@ -430,7 +433,7 @@ void SearchBaseTable::connectSearchWidgets()
     // If all distance widgets are present connect them
     connect(distanceCheckBox, &QCheckBox::stateChanged, this, &SearchBaseTable::distanceSearchStateChanged);
 
-    connect(minDistanceWidget, valueChangedPtr, this, [ = ](int value)
+    connect(minDistanceWidget, QOverload<int>::of(&QSpinBox::valueChanged), this, [ = ](int value)
     {
       controller->filterByDistanceUpdate(
         static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
@@ -442,7 +445,7 @@ void SearchBaseTable::connectSearchWidgets()
       editStartTimer();
     });
 
-    connect(maxDistanceWidget, valueChangedPtr, this, [ = ](int value)
+    connect(maxDistanceWidget, QOverload<int>::of(&QSpinBox::valueChanged), this, [ = ](int value)
     {
       controller->filterByDistanceUpdate(
         static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
@@ -453,7 +456,7 @@ void SearchBaseTable::connectSearchWidgets()
       editStartTimer();
     });
 
-    connect(distanceDirWidget, curIndexChangedPtr, this, [ = ](int index)
+    connect(distanceDirWidget, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [ = ](int index)
     {
       controller->filterByDistanceUpdate(static_cast<sqlproxymodel::SearchDirection>(index),
                                          Unit::rev(minDistanceWidget->value(), Unit::distNmF),
@@ -503,7 +506,6 @@ void SearchBaseTable::updateFromMaxSpinBox(int value, const Column *col)
 
   controller->filterByMinMaxSpinBox(col, atools::roundToInt(valMin), atools::roundToInt(valMax));
   col->getMinSpinBoxWidget()->setMaximum(value);
-
 }
 
 void SearchBaseTable::distanceSearchStateChanged(int state)
@@ -948,16 +950,19 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       logRecord = NavApp::getLogdataController()->getLogEntryRecordById(id);
 
       QString name = columnDescriptor->getColumnName();
+      QList<map::MapAirport> airports;
       if(name == "destination_ident" || name == "destination_name")
-      {
-        logAirport = !logEntry.destinationIdent.isEmpty();
-        airportQuery->getAirportByIdent(airport, logEntry.destinationIdent);
-      }
+        airports = airportQuery->getAirportsByOfficialIdent(logEntry.destinationIdent, &logEntry.destinationPos);
       else if(name == "departure_ident" || name == "departure_name")
+        airports = airportQuery->getAirportsByOfficialIdent(logEntry.departureIdent, &logEntry.departurePos);
+
+      if(!airports.isEmpty())
       {
-        logAirport = !logEntry.departureIdent.isEmpty();
-        airportQuery->getAirportByIdent(airport, logEntry.departureIdent);
+        airport = airports.first();
+        logAirport = true;
       }
+      else
+        qWarning() << Q_FUNC_INFO << "No airport found";
     }
   }
   else

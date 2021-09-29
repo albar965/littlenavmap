@@ -16,18 +16,24 @@
 *****************************************************************************/
 
 #include "airportactionscontroller.h"
-#include "abstractlnmactionscontroller.h"
+#include "common/maptypes.h"
+#include "common/infobuildertypes.h"
+#include "common/abstractinfobuilder.h"
+
+using InfoBuilderTypes::AirportInfoData;
 
 #include <QDebug>
 
 AirportActionsController::AirportActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder) :
     AbstractLnmActionsController(parent, verboseParam, infoBuilder)
 {
-    qDebug() << Q_FUNC_INFO;
+    if(verbose)
+        qDebug() << Q_FUNC_INFO;
 }
 
 WebApiResponse AirportActionsController::infoAction(WebApiRequest request){
-    qDebug() << Q_FUNC_INFO << request.parameters.value("ident");
+    if(verbose)
+        qDebug() << Q_FUNC_INFO << request.parameters.value("ident");
 
     // Get a new response object
     WebApiResponse response = getResponse();
@@ -35,7 +41,7 @@ WebApiResponse AirportActionsController::infoAction(WebApiRequest request){
     // Query item
     map::MapAirport airport = getAirportByIdent(request.parameters.value("ident").toUpper());
 
-    if(airport.id > 0){
+    if(airport.isValid()){
 
         // Fetch related data
         const SqlRecord* airportInformation = getAirportInformation(airport.id);

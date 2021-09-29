@@ -19,17 +19,20 @@
 #define INFOBUILDERTYPES_H
 
 
-#include "sql/sqlrecord.h"
+#include "common/maptypes.h"
+#include "fs/sc/simconnectdata.h"
 
 #include <QObject>
 
-namespace map {
-struct MapAirport;
-struct WeatherContext;
-}
 class Route;
+namespace atools {
+    namespace sql {
+        class SqlRecord;
+    }
+}
 
 using atools::sql::SqlRecord;
+using atools::fs::sc::SimConnectData;
 
 /**
  * Generic info builder parameter interfaces.
@@ -62,6 +65,23 @@ namespace InfoBuilderTypes {
         const QTime* sunset = nullptr;
         const QDateTime* activeDateTime = nullptr;
         const QString* activeDateTimeSource = nullptr;
+    };
+
+    /**
+     * @brief Data container for simconnect data
+     */
+    struct SimConnectInfoData{
+        const SimConnectData* data;
+    };
+
+    /**
+     * @brief Data container for ui data
+     */
+    struct UiInfoData{
+        const int zoomUi;
+        const int zoomWeb;
+        const qreal distanceUi;
+        const qreal distanceWeb;
     };
 
 }

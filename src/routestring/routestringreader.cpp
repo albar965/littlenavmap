@@ -295,13 +295,13 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
               QList<map::MapAirway> airways;
               airwayQuery->getAirwaysForWaypoints(airways, lastRef.id, wp.id, item);
               if(!airways.isEmpty())
-                mapObjectRefs->insert(insertPos,
-                                      map::MapObjectRefExt(airways.first().id, map::AIRWAY, airways.first().name));
+                atools::insertInto(*mapObjectRefs, insertPos,
+                                   map::MapObjectRefExt(airways.first().id, map::AIRWAY, airways.first().name));
 
               insertPos = mapObjectRefs->size() - insertOffset;
               // Waypoint
               curRef = map::MapObjectRefExt(wp.id, wp.position, map::WAYPOINT, wp.ident);
-              mapObjectRefs->insert(insertPos, curRef);
+              atools::insertInto(*mapObjectRefs, insertPos, curRef);
             }
           }
           else
@@ -327,7 +327,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
         {
           // Add user defined waypoint with original coordinate string
           curRef = map::MapObjectRefExt(-1, entry.getPosition(), map::USERPOINTROUTE, item);
-          mapObjectRefs->insert(mapObjectRefs->size() - insertOffset, curRef);
+          atools::insertInto(*mapObjectRefs, mapObjectRefs->size() - insertOffset, curRef);
         }
 
         // Use the original string as name but limit it for fs
@@ -353,12 +353,12 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
             QList<map::MapAirway> airways;
             airwayQuery->getAirwaysForWaypoints(airways, lastRef.id, curRef.id, lastParseEntry->airway);
             if(!airways.isEmpty())
-              mapObjectRefs->insert(mapObjectRefs->size() - insertOffset,
-                                    map::MapObjectRefExt(airways.first().id, map::AIRWAY, airways.first().name));
+              atools::insertInto(*mapObjectRefs, mapObjectRefs->size() - insertOffset,
+                                 map::MapObjectRefExt(airways.first().id, map::AIRWAY, airways.first().name));
           }
 
           // Add navaid or airport including original name
-          mapObjectRefs->insert(mapObjectRefs->size() - insertOffset, curRef);
+          atools::insertInto(*mapObjectRefs, mapObjectRefs->size() - insertOffset, curRef);
         }
       }
 
@@ -392,7 +392,8 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
     fp->setDepartureName(entries.first().getIdent());
     fp->setDepartureIdent(entries.first().getIdent());
     fp->setDeparturePosition(entries.first().getPosition());
-    fp->setDepartureParkingPosition(entries.first().getPosition());
+    fp->setDepartureParkingPosition(entries.first().getPosition(),
+                                    atools::fs::pln::INVALID_ALTITUDE, atools::fs::pln::INVALID_HEADING);
 
     fp->setDestinationName(entries.last().getIdent());
     fp->setDestinationIdent(entries.last().getIdent());
@@ -553,6 +554,16 @@ bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, ma
 
   map::MapAirport departure;
   airportQuerySim->getAirportByIdent(departure, ident);
+  if(!departure.isValid())
+  {
+    QList<map::MapAirport> airports = airportQuerySim->getAirportsByOfficialIdent(ident, nullptr,
+                                                                                  map::INVALID_DISTANCE_VALUE,
+                                                                                  true /* iata */,
+                                                                                  false /* ident */);
+    if(!airports.isEmpty())
+      departure = airports.first();
+  }
+
   if(departure.isValid())
   {
     // qDebug() << "found" << departure.ident << "id" << departure.id;
@@ -560,7 +571,8 @@ bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, ma
     flightplan->setDepartureName(departure.name);
     flightplan->setDepartureIdent(departure.ident);
     flightplan->setDeparturePosition(departure.position);
-    flightplan->setDepartureParkingPosition(departure.position);
+    flightplan->setDepartureParkingPosition(departure.position,
+                                            atools::fs::pln::INVALID_ALTITUDE, atools::fs::pln::INVALID_HEADING);
 
     FlightplanEntry entry;
     entryBuilder->buildFlightplanEntry(departure, entry, false /* alternate */);
@@ -716,16 +728,20 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan,
       }
 
       // Collect alternates ========================
-      QStringList alternateIdents;
+      QStringList alternateIdents, alternateDisplayIdents;
       for(const map::MapAirport& alt : airports)
+      {
         alternateIdents.prepend(alt.ident);
+        alternateDisplayIdents.prepend(airportQuerySim->getDisplayIdent(alt.ident));
+      }
 
       if(!alternateIdents.isEmpty())
       {
         flightplan->getProperties().insert(atools::fs::pln::ALTERNATES, alternateIdents.join("#"));
+
         appendMessage(tr("Found alternate %1 <b>%2</b>.").
-                      arg(alternateIdents.size() == 1 ? tr("airport") : tr("airports")).
-                      arg(alternateIdents.join(tr(", "))));
+                      arg(alternateDisplayIdents.size() == 1 ? tr("airport") : tr("airports")).
+                      arg(alternateDisplayIdents.join(tr(", "))));
       }
     } // if(!airports.isEmpty())
     else
@@ -783,7 +799,19 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan,
 void RouteStringReader::destinationInternal(map::MapAirport& destination, proc::MapProcedureLegs& starLegs,
                                             const QStringList& cleanItems, int index)
 {
-  airportQuerySim->getAirportByIdent(destination, extractAirportIdent(cleanItems.at(index)));
+  QString ident = extractAirportIdent(cleanItems.at(index));
+  airportQuerySim->getAirportByIdent(destination, ident);
+
+  if(!destination.isValid())
+  {
+    QList<map::MapAirport> airports = airportQuerySim->getAirportsByOfficialIdent(ident, nullptr,
+                                                                                  map::INVALID_DISTANCE_VALUE,
+                                                                                  true /* iata */,
+                                                                                  false /* ident */);
+    if(!airports.isEmpty())
+      destination = airports.first();
+  }
+
   if(destination.isValid())
   {
     if(cleanItems.size() > 1 && index > 0)

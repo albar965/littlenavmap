@@ -223,14 +223,15 @@
            <string>Select Flight Plan &amp;Columns to Print:</string>
           </property>
           <property name="buddy">
-           <cstring>listWidgetPrintFlightplanCols</cstring>
+           <cstring>tableWidgetPrintFlightplanCols</cstring>
           </property>
          </widget>
         </item>
         <item>
-         <widget class="QListWidget" name="listWidgetPrintFlightplanCols">
+         <widget class="QTableWidget" name="tableWidgetPrintFlightplanCols">
           <property name="toolTip">
-           <string>Select columns from the flight plan table to include in the print</string>
+           <string>Select columns from the flight plan table to include in the printout.
+Note that the order of columns is as selected in the flight plan table.</string>
           </property>
           <property name="editTriggers">
            <set>QAbstractItemView::NoEditTriggers</set>
@@ -238,15 +239,21 @@
           <property name="showDropIndicator" stdset="0">
            <bool>false</bool>
           </property>
-          <property name="alternatingRowColors">
-           <bool>true</bool>
-          </property>
           <property name="selectionMode">
            <enum>QAbstractItemView::MultiSelection</enum>
           </property>
           <property name="selectionBehavior">
            <enum>QAbstractItemView::SelectRows</enum>
           </property>
+          <attribute name="horizontalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
+          <attribute name="horizontalHeaderStretchLastSection">
+           <bool>true</bool>
+          </attribute>
+          <attribute name="verticalHeaderVisible">
+           <bool>false</bool>
+          </attribute>
          </widget>
         </item>
        </layout>
@@ -530,7 +537,7 @@
   <tabstop>spinBoxPrintTextSize</tabstop>
   <tabstop>checkBoxPrintFlightplan</tabstop>
   <tabstop>spinBoxPrintTextSizeFlightplan</tabstop>
-  <tabstop>listWidgetPrintFlightplanCols</tabstop>
+  <tabstop>tableWidgetPrintFlightplanCols</tabstop>
   <tabstop>checkBoxPrintDepartureOverview</tabstop>
   <tabstop>checkBoxPrintDepartureRunways</tabstop>
   <tabstop>checkBoxPrintDepartureSoftRunways</tabstop>

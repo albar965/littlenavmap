@@ -114,6 +114,10 @@ enum RouteColumns
 
 }
 
+/* Maximum lines in flight plan and waypoint remarks for printing and HTML export */
+const static int MAX_REMARK_LINES_HTML_AND_PRINT = 1000;
+const static int MAX_REMARK_COLS_HTML_AND_PRINT = 200;
+
 using atools::fs::pln::Flightplan;
 using atools::fs::pln::FlightplanEntry;
 using namespace atools::geo;
@@ -324,7 +328,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(ui->actionRouteVisibleColumns, &QAction::triggered, this, &RouteController::visibleColumnsTriggered);
   connect(ui->pushButtonRouteSettings, &QPushButton::clicked, this, &RouteController::visibleColumnsTriggered);
 
-  connect(this, &RouteController::routeChanged, routeWindow, &RouteCalcWindow::updateWidgets);
+  connect(this, &RouteController::routeChanged, routeWindow, &RouteCalcWindow::routeChanged);
   connect(routeWindow, &RouteCalcWindow::calculateClicked, this, &RouteController::calculateRoute);
   connect(routeWindow, &RouteCalcWindow::calculateDirectClicked, this, &RouteController::calculateDirect);
   connect(routeWindow, &RouteCalcWindow::calculateReverseClicked, this, &RouteController::reverseRoute);
@@ -374,18 +378,34 @@ void RouteController::tableCopyClipboard()
   qDebug() << "RouteController::tableCopyClipboard";
 
   const Route& rt = route;
+  const QStandardItemModel *mdl = model;
+
+  // Add lon lat fields to end of column list
+  auto addionalFieldsFunc = [&rt](int index) -> QStringList {
+                              return {QLocale().toString(rt.value(index).getPosition().getLonX(), 'f', 8),
+                                      QLocale().toString(rt.value(index).getPosition().getLatY(), 'f', 8)};
+                            };
+
+  // Use callback to get data to avoid truncated remarks
+  auto dataFunc = [&rt, &mdl](int row, int column) -> QVariant {
+                    if(column == rcol::REMARKS)
+                      // Full remarks
+                      return rt.value(row).getComment();
+                    else
+                      // Formatted view content
+                      return mdl->data(mdl->index(row, column));
+                  };
+
   QString csv;
-  int exported = CsvExporter::selectionAsCsv(view, true /* rows */, true /* header */, csv, {"longitude", "latitude"},
-                                             [&rt](int index) -> QStringList
-  {
-    return {QLocale().toString(rt.value(index).getPosition().getLonX(), 'f', 8),
-            QLocale().toString(rt.value(index).getPosition().getLatY(), 'f', 8)};
-  });
+  int exported = CsvExporter::selectionAsCsv(view, true /* rows */, true /* header */, csv,
+                                             {tr("Longitude"), tr("Latitude")},
+                                             addionalFieldsFunc, dataFunc);
 
   if(!csv.isEmpty())
+  {
     QApplication::clipboard()->setText(csv);
-
-  NavApp::setStatusMessage(QString(tr("Copied %1 entries to clipboard.")).arg(exported));
+    NavApp::setStatusMessage(QString(tr("Copied %1 entries as CSV to clipboard.")).arg(exported));
+  }
 }
 
 void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBitArray& selectedCols,
@@ -431,17 +451,24 @@ void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBit
   QHeaderView *header = view->horizontalHeader();
 
   int cellIdx = 0;
-  for(int col = 0; col < model->columnCount(); col++)
+  for(int viewCol = 0; viewCol < model->columnCount(); viewCol++)
   {
-    if(!selectedCols.at(col))
+    // Convert view position to model position - needed to keep order
+    int logicalCol = header->logicalIndex(viewCol);
+
+    if(logicalCol == -1)
+      continue;
+
+    if(!selectedCols.at(logicalCol))
       // Ignore if not selected in the print dialog
       continue;
 
     table->cellAt(0, cellIdx).setFormat(headerFormat);
     cursor.setPosition(table->cellAt(0, cellIdx).firstPosition());
-    QString txt = model->headerData(header->logicalIndex(col), Qt::Horizontal).toString().
-                  replace("-\n", "-").replace("\n", " ");
+
+    QString txt = model->headerData(logicalCol, Qt::Horizontal).toString().replace("-\n", "").replace("\n", " ");
     cursor.insertText(txt);
+
     cellIdx++;
   }
 
@@ -449,13 +476,17 @@ void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBit
   for(int row = 0; row < model->rowCount(); row++)
   {
     cellIdx = 0;
-    for(int col = 0; col < model->columnCount(); col++)
+    for(int viewCol = 0; viewCol < model->columnCount(); viewCol++)
     {
-      if(!selectedCols.at(col))
+      int logicalCol = header->logicalIndex(viewCol);
+      if(logicalCol == -1)
+        continue;
+
+      if(!selectedCols.at(logicalCol))
         // Ignore if not selected in the print dialog
         continue;
 
-      const QStandardItem *item = model->item(row, header->logicalIndex(col));
+      const QStandardItem *item = model->item(row, logicalCol);
 
       if(item != nullptr)
       {
@@ -470,16 +501,20 @@ void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBit
           textFormat.setForeground(leg.getProcedureLeg().isMissed() ?
                                    mapcolors::routeProcedureMissedTableColor :
                                    mapcolors::routeProcedureTableColor);
-        else if((col == rcol::IDENT && leg.getMapObjectType() == map::INVALID) ||
-                (col == rcol::AIRWAY_OR_LEGTYPE && leg.isRoute() &&
+        else if((logicalCol == rcol::IDENT && leg.getMapObjectType() == map::INVALID) ||
+                (logicalCol == rcol::AIRWAY_OR_LEGTYPE && leg.isRoute() &&
                  leg.isAirwaySetAndInvalid(route.getCruisingAltitudeFeet())))
           textFormat.setForeground(Qt::red);
         else
           textFormat.setForeground(Qt::black);
 
-        if(col == 0)
+        if(logicalCol == rcol::IDENT)
           // Make ident bold
           textFormat.setFontWeight(QFont::Bold);
+
+        if(logicalCol == rcol::REMARKS)
+          // Make remarks small
+          textFormat.setFontPointSize(textFormat.fontPointSize() * 0.8);
 
         table->cellAt(row + 1, cellIdx).setFormat(textFormat);
         cursor.setPosition(table->cellAt(row + 1, cellIdx).firstPosition());
@@ -490,7 +525,11 @@ void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBit
         else
           cursor.setBlockFormat(alignLeft);
 
-        cursor.insertText(item->text());
+        if(logicalCol == rcol::REMARKS)
+          cursor.insertText(atools::elideTextLinesShort(leg.getComment(), MAX_REMARK_LINES_HTML_AND_PRINT,
+                                                        MAX_REMARK_COLS_HTML_AND_PRINT, true, true));
+        else
+          cursor.insertText(item->text());
       }
       cellIdx++;
     }
@@ -506,6 +545,16 @@ void RouteController::flightplanHeaderPrint(atools::util::HtmlBuilder& html, boo
 
   if(!titleOnly)
     html.p(buildFlightplanLabel2(true /* print */), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
+
+  if(!route.getFlightplan().getComment().isEmpty())
+  {
+    html.p().b(tr("Flight Plan Remarks")).pEnd();
+    html.table(1, 2, 0, 0, html.getRowBackColor());
+    html.tr().td().text(atools::elideTextLinesShort(route.getFlightplan().getComment(), MAX_REMARK_LINES_HTML_AND_PRINT,
+                                                    MAX_REMARK_COLS_HTML_AND_PRINT, true, true),
+                        atools::util::html::SMALL).tdEnd().trEnd();
+    html.tableEnd().br();
+  }
 }
 
 QString RouteController::getFlightplanTableAsHtmlDoc(float iconSizePixel) const
@@ -552,16 +601,33 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
   // Header lines
   html.p(buildFlightplanLabel(print), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
   html.p(buildFlightplanLabel2(print), atools::util::html::NO_ENTITIES | atools::util::html::BIG);
+
+  if(print && !route.getFlightplan().getComment().isEmpty())
+  {
+    html.p().b(tr("Flight Plan Remarks")).pEnd();
+    html.table(1, 2, 0, 0, html.getRowBackColor());
+    html.tr().td().text(atools::elideTextLinesShort(route.getFlightplan().getComment(), MAX_REMARK_LINES_HTML_AND_PRINT,
+                                                    MAX_REMARK_COLS_HTML_AND_PRINT, true, true),
+                        atools::util::html::SMALL).tdEnd().trEnd();
+    html.tableEnd().br();
+  }
+
   html.table();
 
   // Table header
   QHeaderView *header = view->horizontalHeader();
   html.tr(Qt::lightGray);
   html.th(QString()); // Icon
-  for(int col = 0; col < model->columnCount(); col++)
+  for(int viewCol = 0; viewCol < model->columnCount(); viewCol++)
   {
-    if(view->columnWidth(header->logicalIndex(col)) > minColWidth)
-      html.th(model->headerData(header->logicalIndex(col), Qt::Horizontal).
+    // Convert view position to model position - needed to keep order
+    int logicalCol = header->logicalIndex(viewCol);
+
+    if(logicalCol == -1)
+      continue;
+
+    if(!view->isColumnHidden(logicalCol) && view->columnWidth(logicalCol) > minColWidth)
+      html.th(model->headerData(logicalCol, Qt::Horizontal).
               toString().replace("-\n", "-<br/>").replace("\n", "<br/>"), atools::util::html::NO_ENTITIES);
   }
   html.trEnd();
@@ -585,11 +651,15 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
     }
 
     // Rest of columns
-    for(int col = 0; col < model->columnCount(); col++)
+    for(int viewCol = 0; viewCol < model->columnCount(); viewCol++)
     {
-      if(view->columnWidth(header->logicalIndex(col)) > minColWidth)
+      int logicalCol = header->logicalIndex(viewCol);
+      if(logicalCol == -1)
+        continue;
+
+      if(!view->isColumnHidden(logicalCol) && view->columnWidth(logicalCol) > minColWidth)
       {
-        QStandardItem *item = model->item(row, header->logicalIndex(col));
+        QStandardItem *item = model->item(row, logicalCol);
 
         if(item != nullptr)
         {
@@ -600,21 +670,29 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
             color = leg.getProcedureLeg().isMissed() ?
                     mapcolors::routeProcedureMissedTableColor :
                     mapcolors::routeProcedureTableColor;
-          else if((col == rcol::IDENT && leg.getMapObjectType() == map::INVALID) ||
-                  (col == rcol::AIRWAY_OR_LEGTYPE && leg.isRoute() &&
+          else if((logicalCol == rcol::IDENT && leg.getMapObjectType() == map::INVALID) ||
+                  (logicalCol == rcol::AIRWAY_OR_LEGTYPE && leg.isRoute() &&
                    leg.isAirwaySetAndInvalid(route.getCruisingAltitudeFeet())))
             color = Qt::red;
 
           atools::util::html::Flags flags = atools::util::html::NONE;
           // Make ident column text bold
-          if(col == rcol::IDENT)
+          if(logicalCol == rcol::IDENT)
             flags |= atools::util::html::BOLD;
+
+          // Remarks in small text
+          if(logicalCol == rcol::REMARKS)
+            flags |= atools::util::html::SMALL;
 
           // Take over alignment from model
           if(item->textAlignment().testFlag(Qt::AlignRight))
             flags |= atools::util::html::ALIGN_RIGHT;
 
-          html.td(item->text().toHtmlEscaped(), flags, color);
+          if(logicalCol == rcol::REMARKS)
+            html.td(atools::elideTextLinesShort(leg.getComment(), MAX_REMARK_LINES_HTML_AND_PRINT,
+                                                MAX_REMARK_COLS_HTML_AND_PRINT, true, true), flags, color);
+          else
+            html.td(item->text(), flags, color);
         }
         else
           html.td(QString());
@@ -1235,7 +1313,9 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
         routePlan.setDepartureIdent(flightplan.getDepartureIdent());
         routePlan.setDeparturePosition(flightplan.getDeparturePosition(),
                                        flightplan.getEntries().first().getPosition().getAltitude());
-        routePlan.setDepartureParkingPosition(flightplan.getDepartureParkingPosition());
+        routePlan.setDepartureParkingPosition(flightplan.getDepartureParkingPosition(),
+                                              flightplan.getDepartureParkingPosition().getAltitude(),
+                                              flightplan.getDepartureParkingHeading());
         routePlan.setDepartureParkingName(flightplan.getDepartureParkingName());
         routePlan.setDepartureParkingType(flightplan.getDepartureParkingType());
 
@@ -1357,8 +1437,7 @@ bool RouteController::saveFlightplanLnmAs(const QString& filename)
 
 pln::Flightplan RouteController::getFlightplanForSelection() const
 {
-  QList<int> rows;
-  getSelectedRows(rows, false /* reverse */);
+  QList<int> rows = getSelectedRows(false /* reverse */);
 
   Route saveRoute(route);
   saveRoute.removeAllExceptRange(rows.first(), rows.last());
@@ -1372,8 +1451,7 @@ pln::Flightplan RouteController::getFlightplanForSelection() const
 bool RouteController::saveFlightplanLnmAsSelection(const QString& filename)
 {
   // Range must not contains procedures or alternates.
-  QList<int> rows;
-  getSelectedRows(rows, false /* reverse */);
+  QList<int> rows = getSelectedRows(false /* reverse */);
   qDebug() << Q_FUNC_INFO << filename << rows;
   return saveFlightplanLnmSelectionAs(filename, rows.first(), rows.last());
 }
@@ -1510,7 +1588,7 @@ void RouteController::beforeRouteCalc()
 void RouteController::calculateRouteWindowSelection()
 {
   qDebug() << Q_FUNC_INFO;
-  routeWindow->showForSelectionCalculation(selectedRows, canCalcSelection());
+  routeWindow->showForSelectionCalculation();
   routeWindow->setCruisingAltitudeFt(route.getCruisingAltitudeFeet());
   NavApp::showRouteCalc();
 }
@@ -1875,7 +1953,8 @@ void RouteController::reverseRoute()
 
   // Overwrite parking position with airport position
   flightplan.setDeparturePosition(entries.first().getPosition());
-  flightplan.setDepartureParkingPosition(entries.first().getPosition());
+  flightplan.setDepartureParkingPosition(entries.first().getPosition(),
+                                         atools::fs::pln::INVALID_ALTITUDE, atools::fs::pln::INVALID_HEADING);
   flightplan.setDepartureParkingName(QString());
   flightplan.setDepartureParkingType(atools::fs::pln::NO_POS);
 
@@ -1984,19 +2063,26 @@ void RouteController::showAtIndex(int index, bool info, bool map, bool doubleCli
 
 void RouteController::updateMoveAndDeleteActions()
 {
-  QItemSelectionModel *sm = view->selectionModel();
+  // Disable all per default
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  ui->actionRouteLegUp->setEnabled(false);
+  ui->actionRouteLegDown->setEnabled(false);
+  ui->actionRouteDeleteLeg->setEnabled(false);
 
-  if(view->selectionModel() == nullptr)
+  // Empty - nothing to move or delete
+  if(model->rowCount() == 0)
     return;
 
-  if(sm->hasSelection() && model->rowCount() > 0)
+  // One or more legs - check for details like procedures or procedure boundary
+  QItemSelectionModel *sm = view->selectionModel();
+  if(sm != nullptr && sm->hasSelection())
   {
     bool containsProc = false, containsAlternate = false, moveDownTouchesProc = false, moveUpTouchesProc = false,
          moveDownTouchesAlt = false, moveUpTouchesAlt = false,
          moveDownLeavesAlt = false, moveUpLeavesAlt = false;
-    QList<int> rows;
     // Ordered from top to bottom
-    getSelectedRows(rows, false);
+    QList<int> rows = getSelectedRows(false);
+
     for(int row : rows)
     {
       containsProc |= route.value(row).isAnyProcedure();
@@ -2011,11 +2097,6 @@ void RouteController::updateMoveAndDeleteActions()
 
     moveUpLeavesAlt = rows.first() > 0 && !route.value(rows.first() - 1).isAlternate();
     moveDownLeavesAlt = rows.last() >= route.size() - 1 || !route.value(rows.last() + 1).isAlternate();
-
-    Ui::MainWindow *ui = NavApp::getMainUi();
-    ui->actionRouteLegUp->setEnabled(false);
-    ui->actionRouteLegDown->setEnabled(false);
-    ui->actionRouteDeleteLeg->setEnabled(false);
 
     if(rows.size() == 1 && containsAlternate)
     {
@@ -2355,7 +2436,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   if(insert)
   {
     ui->actionRouteInsert->setEnabled(true);
-    ui->actionRouteInsert->setText(ui->actionRouteInsert->text().arg(routeLeg->getIdent()));
+    ui->actionRouteInsert->setText(ui->actionRouteInsert->text().arg(routeLeg->getDisplayIdent()));
   }
   else
   {
@@ -2536,7 +2617,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
           if(routeLegSel.getRange() > 0)
             NavApp::getMapWidget()->addNavRangeRing(routeLegSel.getPosition(), type,
-                                                    routeLegSel.getIdent(), routeLegSel.getFrequencyOrChannel(),
+                                                    routeLegSel.getDisplayIdent(), routeLegSel.getFrequencyOrChannel(),
                                                     routeLegSel.getRange());
         }
       }
@@ -2672,7 +2753,7 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
 
   // Get selected rows in ascending order
   selectedRows.clear();
-  getSelectedRows(selectedRows, false);
+  selectedRows = getSelectedRows(false);
 
   updateMoveAndDeleteActions();
   QItemSelectionModel *sm = view->selectionModel();
@@ -2695,7 +2776,7 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
 
   NavApp::getMainUi()->pushButtonRouteClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
 
-  routeWindow->selectionChanged(selectedRows, canCalcSelection());
+  routeWindow->selectionChanged();
 
   emit routeSelectionChanged(selectedRowSize, model->rowCount());
 
@@ -2836,6 +2917,9 @@ bool RouteController::doesLnmFilenameMatchRoute()
 /* Called by action */
 void RouteController::moveSelectedLegsDown()
 {
+  if(model->rowCount() <= 1)
+    return;
+
   qDebug() << "Leg down";
   moveSelectedLegsInternal(MOVE_DOWN);
 }
@@ -2843,6 +2927,9 @@ void RouteController::moveSelectedLegsDown()
 /* Called by action */
 void RouteController::moveSelectedLegsUp()
 {
+  if(model->rowCount() <= 1)
+    return;
+
   qDebug() << "Leg up";
   moveSelectedLegsInternal(MOVE_UP);
 }
@@ -2850,8 +2937,7 @@ void RouteController::moveSelectedLegsUp()
 void RouteController::moveSelectedLegsInternal(MoveDirection direction)
 {
   // Get the selected rows. Depending on move direction order can be reversed to ease moving
-  QList<int> rows;
-  getSelectedRows(rows, direction == MOVE_DOWN /* reverse order */);
+  QList<int> rows = getSelectedRows(direction == MOVE_DOWN /* reverse order */);
 
   if(!rows.isEmpty())
   {
@@ -2937,10 +3023,7 @@ void RouteController::routeDelete(int index)
 /* Called by action */
 void RouteController::deleteSelectedLegs()
 {
-  QList<int> rows;
-  // Get selected rows
-  getSelectedRows(rows, true /* reverse */);
-  deleteSelectedLegsInternal(rows);
+  deleteSelectedLegsInternal(getSelectedRows(true /* reverse */));
 }
 
 void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
@@ -3018,8 +3101,13 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
 }
 
 /* Get selected row numbers from the table model */
-void RouteController::getSelectedRows(QList<int>& rows, bool reverse) const
+QList<int> RouteController::getSelectedRows(bool reverse) const
 {
+  QList<int> rows;
+
+  if(model->rowCount() == 0)
+    return rows;
+
   if(view->selectionModel() != nullptr)
   {
     QItemSelection sm = view->selectionModel()->selection();
@@ -3040,6 +3128,7 @@ void RouteController::getSelectedRows(QList<int>& rows, bool reverse) const
 
   // Remove duplicates
   rows.erase(std::unique(rows.begin(), rows.end()), rows.end());
+  return rows;
 }
 
 /* Select all columns of the given rows adding offset to each row index */
@@ -3111,13 +3200,16 @@ void RouteController::routeSetParking(const map::MapParking& parking)
   }
 
   // Update the current airport which is new or the same as the one used by the parking spot
-  route.getFlightplan().setDepartureParkingName(map::parkingNameForFlightplan(parking));
-  route.getFlightplan().setDepartureParkingType(atools::fs::pln::PARKING);
-  route.getFlightplan().setDepartureParkingPosition(parking.position,
-                                                    route.getDepartureAirportLeg().getPosition().getAltitude());
   route.setDepartureParking(parking);
-
   route.updateAll();
+
+  // Update flightplan copy
+  pln::Flightplan& flightplan = route.getFlightplan();
+  flightplan.setDepartureParkingName(map::parkingNameForFlightplan(parking));
+  flightplan.setDepartureParkingType(atools::fs::pln::PARKING);
+  flightplan.setDepartureParkingPosition(parking.position, route.getDepartureAirportLeg().getPosition().getAltitude(),
+                                         parking.heading);
+
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
 
@@ -3130,7 +3222,7 @@ void RouteController::routeSetParking(const map::MapParking& parking)
   postChange(undoCommand);
   emit routeChanged(true);
 
-  NavApp::setStatusMessage(tr("Departure set to %1 parking %2.").arg(route.getDepartureAirportLeg().getIdent()).
+  NavApp::setStatusMessage(tr("Departure set to %1 parking %2.").arg(route.getDepartureAirportLeg().getDisplayIdent()).
                            arg(map::parkingNameNumber(parking)));
 }
 
@@ -3152,22 +3244,23 @@ void RouteController::routeSetStartPosition(map::MapStart start)
     route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
   }
 
-  // No need to update airport since this is called from dialog only
-
   // Update the current airport which is new or the same as the one used by the parking spot
-  // Use helipad number or runway name
-  route.getFlightplan().setDepartureParkingName(start.runwayName);
-
-  if(route.hasDepartureRunway())
-    route.getFlightplan().setDepartureParkingType(atools::fs::pln::RUNWAY);
-  else if(route.hasDepartureHelipad())
-    route.getFlightplan().setDepartureParkingType(atools::fs::pln::HELIPAD);
-
-  route.getFlightplan().setDepartureParkingPosition(start.position,
-                                                    route.getDepartureAirportLeg().getPosition().getAltitude());
   route.setDepartureStart(start);
-
   route.updateAll();
+
+  pln::Flightplan& flightplan = route.getFlightplan();
+  flightplan.setDepartureParkingName(start.runwayName);
+  if(route.hasDepartureRunway())
+    flightplan.setDepartureParkingType(atools::fs::pln::RUNWAY);
+  else if(route.hasDepartureHelipad())
+    flightplan.setDepartureParkingType(atools::fs::pln::HELIPAD);
+  else
+    flightplan.setDepartureParkingType(atools::fs::pln::AIRPORT);
+
+  flightplan.setDepartureParkingPosition(start.position,
+                                         route.getDepartureAirportLeg().getPosition().getAltitude(),
+                                         start.heading);
+
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
   route.updateDepartureAndDestination();
@@ -3180,7 +3273,8 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   postChange(undoCommand);
   emit routeChanged(true);
 
-  NavApp::setStatusMessage(tr("Departure set to %1 start position %2.").arg(route.getDepartureAirportLeg().getIdent()).
+  NavApp::setStatusMessage(tr("Departure set to %1 start position %2.").
+                           arg(route.getDepartureAirportLeg().getDisplayIdent()).
                            arg(start.runwayName));
 }
 
@@ -3209,7 +3303,7 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
 
   postChange(undoCommand);
   emit routeChanged(true);
-  NavApp::setStatusMessage(tr("Departure set to %1.").arg(route.getDepartureAirportLeg().getIdent()));
+  NavApp::setStatusMessage(tr("Departure set to %1.").arg(route.getDepartureAirportLeg().getDisplayIdent()));
 }
 
 /* Add departure and add best runway start position */
@@ -3785,7 +3879,7 @@ void RouteController::updateTableModel()
       // Get ident with IAF, FAF or other indication
       identStr = proc::procedureLegFixStr(leg.getProcedureLeg());
     else
-      identStr = leg.getIdent();
+      identStr = leg.getDisplayIdent();
 
     QStandardItem *ident =
       new QStandardItem(iconForLeg(leg, view->verticalHeader()->defaultSectionSize() - 2), identStr);
@@ -3854,31 +3948,24 @@ void RouteController::updateTableModel()
     }
 
     // Get ILS for approach runway if it marks the end of an ILS or localizer approach procedure
-    QVector<map::MapIls> ilsByAirportAndRunway;
-    if(route.getApproachLegs().hasIlsGuidance() &&
-       leg.isAnyProcedure() && leg.getProcedureLeg().isApproach() && leg.getRunwayEnd().isValid())
-      route.getApproachRunwayEndAndIls(ilsByAirportAndRunway);
+    QStringList ilsTypeTexts, ilsFreqTexts;
+    if(leg.getProcedureLeg().isApproach() && leg.getRunwayEnd().isValid())
+    {
+      // Build string for ILS type
+      for(const map::MapIls& ils : route.getDestRunwayIlsRecommended())
+      {
+        ilsTypeTexts.append(map::ilsType(ils, true /* gs */, true /* dme */, tr("/")));
+        ilsFreqTexts.append(ils.freqMHzOrChannelLocale());
+      }
+    }
 
     // VOR/NDB type ===========================
     if(leg.getVor().isValid())
       itemRow[rcol::TYPE] = new QStandardItem(map::vorFullShortText(leg.getVor()));
     else if(leg.getNdb().isValid())
       itemRow[rcol::TYPE] = new QStandardItem(map::ndbFullShortText(leg.getNdb()));
-    else if(leg.isAnyProcedure() && !(leg.getProcedureLeg().isMissed()) &&
-            leg.getRunwayEnd().isValid())
-    {
-      // Build string for ILS type
-      QStringList texts;
-      for(const map::MapIls& ils : ilsByAirportAndRunway)
-      {
-        QStringList txt(ils.slope > 0.f ? tr("ILS") : tr("LOC"));
-        if(ils.hasDme)
-          txt.append("DME");
-        texts.append(txt.join("/"));
-      }
-
-      itemRow[rcol::TYPE] = new QStandardItem(texts.join(","));
-    }
+    else if(!ilsTypeTexts.isEmpty())
+      itemRow[rcol::TYPE] = new QStandardItem(ilsTypeTexts.join(","));
 
     // VOR/NDB frequency =====================
     if(leg.getVor().isValid())
@@ -3890,16 +3977,8 @@ void RouteController::updateTableModel()
     }
     else if(leg.getNdb().isValid())
       itemRow[rcol::FREQ] = new QStandardItem(QLocale().toString(leg.getFrequency() / 100.f, 'f', 1));
-    else if(leg.isAnyProcedure() && !(leg.getProcedureLeg().isMissed()) &&
-            leg.getRunwayEnd().isValid())
-    {
-      // Add ILS frequencies
-      QStringList texts;
-      for(const map::MapIls& ils : ilsByAirportAndRunway)
-        texts.append(QLocale().toString(ils.frequency / 1000.f, 'f', 2));
-
-      itemRow[rcol::FREQ] = new QStandardItem(texts.join(","));
-    }
+    else if(!ilsFreqTexts.isEmpty())
+      itemRow[rcol::FREQ] = new QStandardItem(ilsFreqTexts.join(","));
 
     // VOR/NDB range =====================
     if(leg.getRange() > 0 && (leg.getVor().isValid() || leg.getNdb().isValid()))
@@ -4007,6 +4086,9 @@ void RouteController::updateTableModel()
   updateModelHighlights();
   highlightNextWaypoint(route.getActiveLegIndexCorrected());
   updateWindowLabel();
+
+  // Value from ui file is ignored
+  view->horizontalHeader()->setMinimumSectionSize(3);
 }
 
 /* Update travel times in table view model after speed change */
@@ -4372,7 +4454,7 @@ void RouteController::updateModelHighlights()
           if(leg.getMapObjectType() == map::INVALID)
           {
             item->setForeground(invalidColor);
-            QString err = tr("Waypoint \"%1\" not found.").arg(leg.getIdent());
+            QString err = tr("Waypoint \"%1\" not found.").arg(leg.getDisplayIdent());
             item->setToolTip(err);
             flightplanErrors.append(err);
           }
@@ -4492,7 +4574,9 @@ QString RouteController::buildFlightplanLabel(bool print, bool widget, bool titl
     // Add departure to text ==============================================================
     if(route.hasValidDeparture())
     {
-      departureAirport = tr("%1 (%2)").arg(flightplan.getDepartureName()).arg(flightplan.getDepartureIdent());
+      departureAirport = tr("%1 (%2)").
+                         arg(route.getDepartureAirportLeg().getName()).
+                         arg(route.getDepartureAirportLeg().getDisplayIdent());
 
       if(route.getDepartureAirportLeg().getDepartureParking().isValid())
         departureParking = tr(" %1").arg(map::parkingNameNumber(route.getDepartureAirportLeg().getDepartureParking()));
@@ -4516,7 +4600,9 @@ QString RouteController::buildFlightplanLabel(bool print, bool widget, bool titl
 
     // Add destination to text ==============================================================
     if(route.hasValidDestination())
-      destinationAirport = tr("%1 (%2)").arg(flightplan.getDestinationName()).arg(flightplan.getDestinationIdent());
+      destinationAirport = tr("%1 (%2)").
+                           arg(route.getDestinationAirportLeg().getName()).
+                           arg(route.getDestinationAirportLeg().getDisplayIdent());
     else
       destinationAirport = tr("%1 (%2)").
                            arg(flightplan.at(route.getDestinationAirportLegIndex()).getIdent()).
@@ -4616,7 +4702,7 @@ QString RouteController::buildFlightplanLabel(bool print, bool widget, bool titl
                                 !starLegs.isEmpty()) ? tr("and") : tr("Via"));
 
           // Type and suffix =======================
-          QString type(arrivalLegs.approachType);
+          QString type(arrivalLegs.displayApproachType());
           if(!arrivalLegs.approachSuffix.isEmpty())
             type += tr("-%1").arg(arrivalLegs.approachSuffix);
 
@@ -4947,18 +5033,11 @@ void RouteController::updateRemarkWidget()
   }
 }
 
-QStringList RouteController::getRouteColumns() const
+QStringList RouteController::getAllRouteColumns() const
 {
   QStringList colums;
-  QHeaderView *header = view->horizontalHeader();
-
-  if(header != nullptr)
-  {
-    // Get column names from header and remove line feeds
-    for(int col = 0; col < model->columnCount(); col++)
-      colums.append(model->headerData(header->logicalIndex(col), Qt::Horizontal).toString().
-                    replace("-\n", "-").replace("\n", " "));
-  }
+  for(int i = rcol::FIRST_COLUMN; i <= rcol::LAST_COLUMN; i++)
+    colums.append(Unit::replacePlaceholders(routeColumns.value(i)).replace("-\n", "").replace("\n", " "));
 
   return colums;
 }

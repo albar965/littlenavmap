@@ -343,7 +343,7 @@ void MapPainterVehicle::appendAtcText(QStringList& texts, const SimConnectAircra
     texts.append(line.join(tr(" / ")));
 
   if(transponderCode && aircraft.isTransponderCodeValid())
-    texts.append(tr("TCAS %1").arg(aircraft.getTransponderCodeStr()));
+    texts.append(tr("XPDR %1").arg(aircraft.getTransponderCodeStr()));
 }
 
 void MapPainterVehicle::appendSpeedText(QStringList& texts, const SimConnectAircraft& aircraft,

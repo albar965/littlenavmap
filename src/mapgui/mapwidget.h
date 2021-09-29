@@ -167,7 +167,7 @@ public:
   void addRangeRing(const atools::geo::Pos& pos);
 
   /* Add radio navaid range ring. Falls back to normal range rings if range is 0. */
-  void addNavRangeRing(const atools::geo::Pos& pos, map::MapTypes type, const QString& ident,
+  void addNavRangeRing(const atools::geo::Pos& pos, map::MapTypes type, const QString& displayIdent,
                        const QString& frequency, float range);
 
   /* If true stop downloading map data */
@@ -388,6 +388,7 @@ private:
   /* Catch tooltip event */
   virtual bool event(QEvent *event) override;
 
+  /* Aircraft and next leg centering set in options and all other conditions are met (flight plan present, etc.) */
   bool isCenterLegAndAircraftActive();
 
   /* Update actions from detail setting */
@@ -450,6 +451,9 @@ private:
 
   /* Flown distance from takeoff event */
   double takeoffLandingDistanceNm = 0.;
+
+  /* Used in simDataChanged() to zoom close to the airport after touchdown */
+  bool touchdownDetectedZoom = false;
 
   /* Time of takeoff or invalid if not detected yet */
   QDateTime takeoffTimeSim;

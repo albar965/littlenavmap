@@ -222,7 +222,7 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
       routeIlsIds.insert(ils.id);
   }
 
-  if(types.testFlag(map::ILS))
+  if(types.testFlag(map::ILS) || types.testFlag(map::GLS))
   {
     // ILS enabled - add from map cache
     bool overflow = false;
@@ -231,6 +231,12 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
     {
       for(const map::MapIls& ils : *ilsListPtr)
       {
+        if(ils.isAnyGls() && !types.testFlag(map::GLS))
+          continue;
+
+        if(!ils.isAnyGls() && !types.testFlag(map::ILS))
+          continue;
+
         if(!routeIlsIds.contains(ils.id))
           ilsVector.append(ils);
       }
@@ -240,6 +246,9 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
   CoordinateConverter conv(mapPaintWidget->viewport());
   for(const map::MapIls& ils : ilsVector)
   {
+    if(!ils.hasGeometry)
+      continue;
+
     Marble::GeoDataLatLonBox ilsbox(ils.bounding.getNorth(), ils.bounding.getSouth(),
                                     ils.bounding.getEast(), ils.bounding.getWest(),
                                     Marble::GeoDataCoordinates::Degree);

@@ -181,15 +181,17 @@ public:
   void ndbText(const map::MapNdb& ndb, atools::util::HtmlBuilder& html) const;
 
   /*
+   * Creates a HTML description for ILS.
+   */
+  void ilsTextInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
+
+  /*
    * Creates a HTML description for a waypoint including all attached airways.
    * @param waypoint
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
   void waypointText(const map::MapWaypoint& waypoint, atools::util::HtmlBuilder& html) const;
-
-  /* Get information for one ILS */
-  void ilsText(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
 
   /* Description for user defined points */
   bool userpointText(map::MapUserpoint userpoint, atools::util::HtmlBuilder& html) const;
@@ -304,7 +306,7 @@ private:
                              bool airportCol,
                              int maxRows) const;
   void nearestMapObjectsTextRow(const map::MapAirport& airport, atools::util::HtmlBuilder& html, const QString& type,
-                                const QString& ident, const QString& name, const QString& freq,
+                                const QString& displayIdent, const QString& name, const QString& freq,
                                 const map::MapBase *base,
                                 float magVar, bool frequencyCol, bool airportCol) const;
 
@@ -349,10 +351,9 @@ private:
                      atools::util::HtmlBuilder& html, bool moreLessSwitch, bool less);
 
   void dateTimeAndFlown(const atools::fs::sc::SimConnectUserAircraft *userAircraft,
-                   atools::util::HtmlBuilder& html) const;
+                        atools::util::HtmlBuilder& html) const;
   void addMetarLine(atools::util::HtmlBuilder& html, const QString& header, const map::MapAirport& airport,
-                    const QString& metar,
-                    const QString& station,
+                    const QString& metar, const QString& station,
                     const QDateTime& timestamp, bool fsMetar, bool mapDisplay) const;
 
   void decodedMetar(atools::util::HtmlBuilder& html, const map::MapAirport& airport,
@@ -364,8 +365,6 @@ private:
   bool buildWeatherContext(map::WeatherContext& lastContext, map::WeatherContext& newContext,
                            const map::MapAirport& airport);
   void addRadionavFixType(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord& recApp) const;
-  void ilsText(const atools::sql::SqlRecord *ilsRec, atools::util::HtmlBuilder& html, bool approach,
-               bool standalone) const;
 
   QString filepathTextShow(const QString& filepath, const QString& prefix = QString()) const;
   QString filepathTextOpen(const QFileInfo& filepath, bool showPath) const;
@@ -377,7 +376,7 @@ private:
 
   /* Insert airport link using ident and/or name */
   QString airportLink(const atools::util::HtmlBuilder& html, const QString& ident,
-                      const QString& name = QString()) const;
+                      const QString& name, const atools::geo::Pos& pos) const;
 
   /* Adds text for preferred runways */
   void bestRunwaysText(const map::MapAirport& airport, atools::util::HtmlBuilder& html,
@@ -386,6 +385,11 @@ private:
 
   /* Add morse code row2line */
   void addMorse(atools::util::HtmlBuilder& html, const QString& name, const QString& code) const;
+
+  void ilsTextProcInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
+  void ilsTextRunwayInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
+  void ilsTextInternal(const map::MapIls& ils, atools::util::HtmlBuilder& html, bool procInfo, bool runwayInfo,
+                       bool infoOrTooltip) const;
 
   /* Add wind text for flight plan waypoints */
   void routeWindText(atools::util::HtmlBuilder& html, const Route& route, int index) const;
@@ -416,7 +420,6 @@ private:
   atools::fs::util::MorseCode *morse;
   bool info, print;
   QLocale locale;
-
 };
 
 #endif // MAPHTMLINFOBUILDER

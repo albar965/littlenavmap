@@ -61,10 +61,13 @@ public:
   void showForFullCalculation();
 
   /* Open and set up the dialog for a flight plan calculation between the selected flight plan legs.*/
-  void showForSelectionCalculation(const QList<int>& selectedRows, bool canCalc);
+  void showForSelectionCalculation();
 
   /* Update dialog contents when flight plan table selection changes */
-  void selectionChanged(const QList<int>& selectedRows, bool canCalc);
+  void selectionChanged();
+
+  /* Update dialog contents when flight plan changes */
+  void routeChanged();
 
   /* Get and set cruise altitude in spin box widget */
   float getCruisingAltitudeFt() const;

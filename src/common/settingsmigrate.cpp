@@ -242,6 +242,14 @@ void checkAndMigrateSettings()
         removeAndLog(settings, "SearchPaneOnlineServer/WidgetView_tableViewOnlineServerSearch");
       }
 
+      if(optionsVersion <= Version("2.6.14"))
+      {
+        qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before or equal to 2.6.14";
+        removeAndLog(settings, "SearchPaneAirport/WidgetDistView_tableViewAirportSearch");
+        removeAndLog(settings, "SearchPaneAirport/WidgetView_tableViewAirportSearch");
+        removeAndLog(settings, "OptionsDialog/Widget_lineEditOptionsWeatherVatsimUrl");
+      }
+
       // Set program version to options and save ===================
       settings.setValue(lnm::OPTIONS_VERSION, programVersion.getVersionString());
       settings.syncSettings();
@@ -252,14 +260,6 @@ void checkAndMigrateSettings()
     qWarning() << Q_FUNC_INFO << "No version information found in settings file. Updating to" << programVersion;
     settings.setValue(lnm::OPTIONS_VERSION, programVersion.getVersionString());
     settings.syncSettings();
-  }
-
-  QString vatsimUrl = settings.valueStr("OptionsDialog/Widget_lineEditOptionsWeatherVatsimUrl");
-  if(vatsimUrl.simplified().compare("http://metar.vatsim.net/metar.php?id=ALL", Qt::CaseInsensitive) == 0)
-  {
-    qInfo() << Q_FUNC_INFO << "Adjusting VATSIM URL from" << vatsimUrl;
-    settings.setValue("OptionsDialog/Widget_lineEditOptionsWeatherVatsimUrl",
-                      QString("https://metar.vatsim.net/metar.php?id=ALL"));
   }
 
   // Always correct map font if missing

@@ -20,6 +20,7 @@
 #include "gui/helphandler.h"
 #include "gui/widgetstate.h"
 #include "common/constants.h"
+#include "route/routecontroller.h"
 #include "common/unit.h"
 #include "navapp.h"
 #include "atools.h"
@@ -90,20 +91,27 @@ void RouteCalcWindow::showForFullCalculation()
   updateWidgets();
 }
 
-void RouteCalcWindow::showForSelectionCalculation(const QList<int>& selectedRows, bool canCalc)
+void RouteCalcWindow::showForSelectionCalculation()
 {
-  canCalculateSelection = canCalc;
-  fromIndex = selectedRows.isEmpty() ? -1 : selectedRows.first();
-  toIndex = selectedRows.isEmpty() ? -1 : selectedRows.last();
+  selectionChanged();
   NavApp::getMainUi()->radioButtonRouteCalcSelection->setChecked(true);
-  updateWidgets();
 }
 
-void RouteCalcWindow::selectionChanged(const QList<int>& selectedRows, bool canCalc)
+void RouteCalcWindow::selectionChanged()
 {
-  canCalculateSelection = canCalc;
-  fromIndex = selectedRows.isEmpty() ? -1 : selectedRows.first();
-  toIndex = selectedRows.isEmpty() ? -1 : selectedRows.last();
+  routeChanged();
+}
+
+void RouteCalcWindow::routeChanged()
+{
+  QList<int> selLegIndexes;
+  NavApp::getRouteController()->getSelectedRouteLegs(selLegIndexes);
+  std::sort(selLegIndexes.begin(), selLegIndexes.end());
+
+  fromIndex = selLegIndexes.isEmpty() ? -1 : selLegIndexes.first();
+  toIndex = selLegIndexes.isEmpty() ? -1 : selLegIndexes.last();
+
+  canCalculateSelection = NavApp::getRouteConst().canCalcSelection(fromIndex, toIndex);
 
   updateWidgets();
 }
@@ -176,7 +184,6 @@ void RouteCalcWindow::updatePreferenceLabel()
 void RouteCalcWindow::updateHeader()
 {
   const Route& route = NavApp::getRouteConst();
-  const atools::fs::pln::Flightplan& flightplan = route.getFlightplan();
   QString departure, destination, title, tooltip, statustip;
   Ui::MainWindow *ui = NavApp::getMainUi();
 
@@ -185,14 +192,10 @@ void RouteCalcWindow::updateHeader()
     // Selection calculation ====================================================
     if(canCalculateSelection)
     {
-      departure = tr("%1 (%2)").
-                  arg(flightplan.getEntries().at(fromIndex).getIdent()).
-                  arg(flightplan.getEntries().at(fromIndex).getWaypointTypeAsFsxString());
-
-      destination = tr("%1 (%2)").
-                    arg(flightplan.getEntries().at(toIndex).getIdent()).
-                    arg(flightplan.getEntries().at(toIndex).getWaypointTypeAsFsxString());
-
+      const RouteLeg& fromLeg = route.getLegAt(fromIndex);
+      const RouteLeg& toLeg = route.getLegAt(toIndex);
+      departure = tr("%1 (%2)").arg(fromLeg.getDisplayIdent()).arg(fromLeg.getMapObjectTypeName());
+      destination = tr("%1 (%2)").arg(toLeg.getDisplayIdent()).arg(toLeg.getMapObjectTypeName());
       title = tr("<b>Calculate flight plan between legs<br/>%1 and %2</b>").arg(departure).arg(destination);
     }
     else
@@ -209,27 +212,23 @@ void RouteCalcWindow::updateHeader()
     // Full flight plan calculation ====================================================
     if(route.canCalcRoute())
     {
+      const RouteLeg& departLeg = route.getDepartureAirportLeg();
+      const RouteLeg& destLeg = route.getDestinationAirportLeg();
       if(route.hasValidDeparture())
-        departure = tr("%1 (%2)").arg(flightplan.getDepartureName()).arg(flightplan.getDepartureIdent());
+        departure = tr("%1 (%2)").arg(departLeg.getName()).arg(departLeg.getDisplayIdent());
       else
-        departure = tr("%1 (%2)").
-                    arg(flightplan.getEntries().first().getIdent()).
-                    arg(flightplan.getEntries().first().getWaypointTypeAsFsxString());
+        departure = tr("%1 (%2)").arg(departLeg.getDisplayIdent()).arg(departLeg.getMapObjectTypeName());
 
       if(route.hasValidDestination())
-        destination = tr("%1 (%2)").arg(flightplan.getDestinationName()).arg(flightplan.getDestinationIdent());
+        destination = tr("%1 (%2)").arg(destLeg.getName()).arg(destLeg.getDisplayIdent());
       else
-        destination = tr("%1 (%2)").
-                      arg(flightplan.getEntries().at(route.getDestinationAirportLegIndex()).getIdent()).
-                      arg(flightplan.getEntries().at(route.getDestinationAirportLegIndex()).getWaypointTypeAsFsxString());
+        destination = tr("%1 (%2)").arg(destLeg.getDisplayIdent()).arg(destLeg.getMapObjectTypeName());
 
       title = tr("<b>Calculate flight plan from<br/>%1 to %2</b>").arg(departure).arg(destination);
-
     }
     else
     {
-      title = HtmlBuilder::errorMessage({tr("Set departure and destination first."),
-                                         tr("Click here for details.")});
+      title = HtmlBuilder::errorMessage({tr("Set departure and destination first."), tr("Click here for details.")});
       tooltip = tr("<p style='white-space:pre'>Use the right-click context menu on the map or the airport search (<code>F4</code>)<br/>"
                    "to select departure and destination first.</p>");
       statustip = tr("Select departure and destination first");

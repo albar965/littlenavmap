@@ -90,7 +90,7 @@ void initTranslateableTexts()
       // Additional types from X-Plane
       {"FMS", QObject::tr("FMS")},
       {"IGS", QObject::tr("IGS")},
-      {"GNSS", QObject::tr("GNSS")},
+      {"GNSS", QObject::tr("GLS")},
       {"TCN", QObject::tr("TACAN")},
       {"CTL", QObject::tr("Circle to Land")},
       {"MLS", QObject::tr("MLS")},

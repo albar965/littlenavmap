@@ -59,7 +59,7 @@ void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& o
   // Get airport from the SQL model
   map::MapAirport ap;
   mapTypesFactory->fillAirport(sqlModel->getSqlRecord(idx.row()), ap, true /* complete */, false /* nav */,
-                               NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11);
+                               NavApp::isAirportDatabaseXPlane(false /* navdata */));
 
   // Create a style copy
   QStyleOptionViewItem opt(option);

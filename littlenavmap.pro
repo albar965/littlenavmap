@@ -260,7 +260,6 @@ SOURCES += \
   src/db/dbtypes.cpp \
   src/export/csvexporter.cpp \
   src/export/exporter.cpp \
-  src/export/htmlexporter.cpp \
   src/gui/choicedialog.cpp \
   src/gui/holddialog.cpp \
   src/gui/mainwindow.cpp \
@@ -365,6 +364,8 @@ SOURCES += \
   src/search/onlineserversearch.cpp \
   src/search/proceduresearch.cpp \
   src/search/querybuilder.cpp \
+  src/search/randomdepartureairportpickingbycriteria.cpp \
+  src/search/randomdestinationairportpickingbycriteria.cpp \
   src/search/searchbasetable.cpp \
   src/search/searchcontroller.cpp \
   src/search/sqlcontroller.cpp \
@@ -390,6 +391,8 @@ SOURCES += \
   src/webapi/actionscontrollerindex.cpp \
   src/webapi/airportactionscontroller.cpp \
   src/webapi/mapactionscontroller.cpp \
+  src/webapi/simactionscontroller.cpp \
+  src/webapi/uiactionscontroller.cpp \
   src/webapi/webapicontroller.cpp
 
 HEADERS  += \
@@ -432,7 +435,6 @@ HEADERS  += \
   src/db/dbtypes.h \
   src/export/csvexporter.h \
   src/export/exporter.h \
-  src/export/htmlexporter.h \
   src/gui/choicedialog.h \
   src/gui/holddialog.h \
   src/gui/mainwindow.h \
@@ -536,6 +538,8 @@ HEADERS  += \
   src/search/onlineserversearch.h \
   src/search/proceduresearch.h \
   src/search/querybuilder.h \
+  src/search/randomdepartureairportpickingbycriteria.h \
+  src/search/randomdestinationairportpickingbycriteria.h \
   src/search/searchbasetable.h \
   src/search/searchcontroller.h \
   src/search/sqlcontroller.h \
@@ -561,6 +565,8 @@ HEADERS  += \
   src/webapi/actionscontrollerindex.h \
   src/webapi/airportactionscontroller.h \
   src/webapi/mapactionscontroller.h \
+  src/webapi/simactionscontroller.h \
+  src/webapi/uiactionscontroller.h \
   src/webapi/webapicontroller.h \
   src/webapi/webapirequest.h \
   src/webapi/webapiresponse.h

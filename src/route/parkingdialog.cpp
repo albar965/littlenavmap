@@ -99,8 +99,7 @@ ParkingDialog::ParkingDialog(QWidget *parent, const map::MapAirport& departureAi
         QStringList text;
 
         text.append(map::parkingNameNumberType(startPos.parking));
-
-        text.append(Unit::distShortFeet(startPos.parking.radius * 2));
+        text.append(Unit::distShortFeet(startPos.parking.getRadius() * 2));
 
         if(startPos.parking.jetway)
           text.append(tr("Has Jetway"));

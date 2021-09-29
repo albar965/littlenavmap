@@ -18,24 +18,27 @@
 #ifndef ABSTRACTINFOBUILDER_H
 #define ABSTRACTINFOBUILDER_H
 
-#include "atools.h"
-#include "geo/calculations.h"
-#include "fs/util/fsutil.h"
-#include "sql/sqlrecord.h"
-#include "common/formatter.h"
-#include "common/unit.h"
-#include "common/infobuildertypes.h"
-#include "common/maptypes.h"
-#include "common/mapflags.h"
-
 #include <QObject>
+#include <QLocale>
 
-using formatter::courseTextFromTrue;
-using atools::geo::opposedCourseDeg;
+namespace InfoBuilderTypes {
+    class AirportInfoData;
+    class SimConnectInfoData;
+    class UiInfoData;
+}
+namespace atools {
+    namespace sql {
+        class SqlRecord;
+    }
+    namespace geo {
+        class Pos;
+    }
+}
+
 using atools::geo::Pos;
-using atools::fs::util::roundComFrequency;
-
 using InfoBuilderTypes::AirportInfoData;
+using InfoBuilderTypes::SimConnectInfoData;
+using InfoBuilderTypes::UiInfoData;
 
 /**
  * Generic interface for LNM-specific views.
@@ -64,6 +67,21 @@ public:
    * @param airportInfoData
    */
   virtual QByteArray airport(AirportInfoData airportInfoData) const;
+
+  /**
+   * Creates a description for the provided simconnect data.
+   *
+   * @param simConnectInfoData
+   */
+  virtual QByteArray siminfo(SimConnectInfoData simConnectInfoData) const;
+
+
+  /**
+   * Creates a description for the provided UI data.
+   *
+   * @param uiInfoData
+   */
+  virtual QByteArray uiinfo(UiInfoData uiInfoData) const;
 protected:
   /**
    * @brief Get heading and opposed heading corrected by magnetic variation
@@ -90,8 +108,24 @@ protected:
    * @return printable string
    */
   virtual QString getCoordinatesString(const Pos& pos) const;
-
-
+  /**
+   * @brief get pretty printed coords from Pos
+   * @param rec
+   * @return printable string
+   */
+  virtual QString getLocalizedCoordinatesString(const Pos& pos) const;
+  /**
+   * @brief get a map of coordinate data from suitable sql record
+   * @param pos
+   * @return map of coordinate data
+   */
+  virtual QMap<QString,float> getCoordinates(const atools::sql::SqlRecord *rec) const;
+  /**
+   * @brief get a map of coordinate data from Pos
+   * @param pos
+   * @return map of coordinate data
+   */
+  virtual QMap<QString,float> getCoordinates(const Pos& pos) const;
 private:
   QLocale locale;
 };

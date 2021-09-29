@@ -188,7 +188,6 @@ void WaypointQuery::initQueries()
 {
   QString table = trackDatabase ? "trackpoint" : "waypoint";
   QString id = trackDatabase ? "trackpoint_id" : "waypoint_id";
-  QString artificial = trackDatabase ? QString() : "artificial";
 
   // Common where clauses
   static const QString whereRect("lonx between :leftx and :rightx and laty between :bottomy and :topy");
@@ -200,6 +199,9 @@ void WaypointQuery::initQueries()
 
   if(atools::sql::SqlUtil(dbNav).hasTableAndColumn("waypoint", "artificial"))
     waypointQueryBase.append(", artificial");
+
+  if(atools::sql::SqlUtil(dbNav).hasTableAndColumn("waypoint", "arinc_type"))
+    waypointQueryBase.append(", arinc_type");
 
   deInitQueries();
 

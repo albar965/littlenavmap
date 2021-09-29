@@ -30,6 +30,7 @@ namespace map {
 
 /* Value for invalid/not found distances */
 Q_DECL_CONSTEXPR static float INVALID_COURSE_VALUE = std::numeric_limits<float>::max();
+Q_DECL_CONSTEXPR static float INVALID_HEADING_VALUE = INVALID_COURSE_VALUE;
 Q_DECL_CONSTEXPR static float INVALID_DISTANCE_VALUE = std::numeric_limits<float>::max();
 Q_DECL_CONSTEXPR static float INVALID_ALTITUDE_VALUE = std::numeric_limits<float>::max();
 Q_DECL_CONSTEXPR static float INVALID_SPEED_VALUE = std::numeric_limits<float>::max();
@@ -40,7 +41,7 @@ Q_DECL_CONSTEXPR static int INVALID_INDEX_VALUE = std::numeric_limits<int>::max(
 
 Q_DECL_CONSTEXPR static float INVALID_MAGVAR = 9999.f;
 
-Q_DECL_CONSTEXPR static float DEFAULT_ILS_WIDTH = 4.f;
+Q_DECL_CONSTEXPR static float DEFAULT_ILS_WIDTH_DEG = 4.f;
 
 /* minimum ground speed for fuel flow calculations and other */
 Q_DECL_CONSTEXPR static float MIN_GROUND_SPEED = 30.f;
@@ -62,13 +63,13 @@ enum MapType
   AIRPORT_ADDON = 1 << 4,
   VOR = 1 << 5,
   NDB = 1 << 6,
-  ILS = 1 << 7,
+  ILS = 1 << 7, /* Type also covers GLS approaches */
   MARKER = 1 << 8,
   WAYPOINT = 1 << 9,
   AIRWAY = 1 << 10,
   AIRWAYV = 1 << 11,
   AIRWAYJ = 1 << 12,
-  // 13
+  GLS = 1 << 13, /* GLS approaches or GBAS paths - only display flag */
   AIRCRAFT = 1 << 14, /* Simulator user aircraft */
   AIRCRAFT_AI = 1 << 15, /* AI or multiplayer simulator aircraft */
   AIRCRAFT_AI_SHIP = 1 << 16, /* AI or multiplayer simulator ship */
@@ -371,7 +372,8 @@ enum MapWeatherSource
   WEATHER_SOURCE_ACTIVE_SKY,
   WEATHER_SOURCE_NOAA,
   WEATHER_SOURCE_VATSIM,
-  WEATHER_SOURCE_IVAO
+  WEATHER_SOURCE_IVAO,
+  WEATHER_SOURCE_DISABLED
 };
 
 QString mapWeatherSourceString(map::MapWeatherSource source);

@@ -1052,7 +1052,7 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
                 rwleg.altRestriction.alt1 = std::min(rwleg.altRestriction.alt1, lastAltRestr.alt1);
             }
 
-            legs.approachLegs.insert(insertPosition, rwleg);
+            atools::insertInto(legs.approachLegs, insertPosition, rwleg);
 
             // Coordinates for missed after CTL legs are already correct since this new leg is missing when the
             // coordinates are calculated
@@ -1106,7 +1106,7 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
           vectorLeg.trueCourse = vectorLeg.intercept =
             vectorLeg.disabled = vectorLeg.malteseCross = false;
 
-        legs.approachLegs.insert(i + 1, vectorLeg);
+        atools::insertInto(legs.approachLegs, i + 1, vectorLeg);
       } // if(nextLeg.type == proc::INITIAL_FIX && ...
     } // for(int i = legs.size() - 2; i >= 0; i--)
   } // if(!legs.isEmpty() && addArtificialLegs)

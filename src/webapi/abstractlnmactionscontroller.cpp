@@ -17,15 +17,29 @@
 
 #include "abstractlnmactionscontroller.h"
 #include "navapp.h"
+#include "common/infobuildertypes.h"
 #include "query/airportquery.h"
 #include "query/infoquery.h"
 #include "query/mapquery.h"
 #include "gui/mainwindow.h"
+#include "geo/calculations.h"
+#include "common/maptypes.h"
+#include "sql/sqlrecord.h"
+#include "fs/util/morsecode.h"
+#include "fs/sc/simconnectdata.h"
+
+namespace ageo = atools::geo;
+using atools::fs::util::MorseCode;
+using atools::sql::SqlRecord;
+using InfoBuilderTypes::AirportAdminNames;
+using atools::geo::Pos;
+using atools::fs::sc::SimConnectData;
 
 AbstractLnmActionsController::AbstractLnmActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder) :
     AbstractActionsController(parent, verboseParam, infoBuilder)
 {
-    qDebug() << Q_FUNC_INFO;
+    if(verbose)
+        qDebug() << Q_FUNC_INFO;
     morseCode = new MorseCode("&nbsp;", "&nbsp;&nbsp;&nbsp;");
 }
 
@@ -58,6 +72,7 @@ AirportQuery* AbstractLnmActionsController::getAirportQuery(AbstractLnmActionsCo
         return getNavApp()->getAirportQuerySim();
         break;
     }
+    return nullptr;
 }
 
 MainWindow* AbstractLnmActionsController::getMainWindow(){
@@ -130,4 +145,8 @@ const QDateTime AbstractLnmActionsController::getActiveDateTime(){
 };
 const QString AbstractLnmActionsController::getActiveDateTimeSource(){
     return getNavApp()->isConnectedAndAircraft() ? tr("simulator date") : tr("real date");
+};
+
+const SimConnectData AbstractLnmActionsController::getSimConnectData(){
+    return getNavApp()->getSimConnectData();
 };

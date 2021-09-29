@@ -251,7 +251,7 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
     if(result.hasAirports())
     {
       const map::MapAirport& ap = result.airports.first();
-      prefill.appendFieldAndValue("ident", ap.ident)
+      prefill.appendFieldAndValue("ident", ap.displayIdent())
       .appendFieldAndValue("name", ap.name)
       .appendFieldAndValue("type", "Airport")
       .appendFieldAndValue("region", ap.region);

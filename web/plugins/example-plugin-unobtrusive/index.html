@@ -1,0 +1,46 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>unused plugin title (your plugin folders name is the title visible to the user)</title>
+    <style>
+      html, body, #display {
+        height: 100%;
+        background: transparent;
+      }
+      body {
+        margin: 0;
+      }
+      #display {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 100px;
+        color: grey;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="display">
+      yeah
+    </div>
+    <script>
+      function stop() {
+        alert("stopped");
+      }
+
+      function init(callback, version) {
+        var returned_Value = callback(callback.TYPE_UNOBTRUSIVE, stop);
+        returned_Value.run();
+        var checkbox = returned_Value.toolbarAPI.createCheckbox({
+          text: "yeha",
+          handlerNames: "click",
+          click: function() {
+            alert(this.value);
+          }
+        });
+        checkbox.style = "outline:5px solid pink";
+      }
+    </script>
+  </body>
+</html>

@@ -61,7 +61,7 @@ public:
   void resetSearch();
 
   /* Filter by using query builder callback */
-  void filterByBuilder(const QueryBuilder& builder);
+  void filterByBuilder();
 
   /* Filter by text at the given index */
   void filterIncluding(const QModelIndex& index);
@@ -191,6 +191,12 @@ public:
 
   /* True if query contains column */
   bool hasColumn(const QString& colName) const;
+
+  /* True if database table contains column independent of view */
+  bool hasDatabaseColumn(const QString& colName) const;
+
+  /* Set query builder for one or more columns */
+  void setBuilder(const QueryBuilder& builder);
 
 private:
   void viewSetModel(QAbstractItemModel *newModel);

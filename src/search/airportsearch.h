@@ -20,17 +20,19 @@
 
 #include "search/searchbasetable.h"
 
-#include <QObject>
-
 class Column;
 class AirportIconDelegate;
 class QAction;
+class QueryBuilderResult;
+class UnitStringTool;
 
 namespace atools {
 namespace sql {
 class SqlDatabase;
 }
 }
+
+class QProgressDialog;
 
 /*
  * Airport search tab including all search widgets and the result table view.
@@ -54,6 +56,12 @@ public:
   virtual void getSelectedMapObjects(map::MapResult& result) const override;
   virtual void connectSearchSlots() override;
   virtual void postDatabaseLoad() override;
+  virtual void resetSearch() override;
+
+public slots:
+  void progressing();
+  void dataRandomAirportsReceived(bool isSuccess, int indexDeparture, int indexDestination,
+                                  QVector<std::pair<int, atools::geo::Pos> > *data);
 
 private:
   virtual void updateButtonMenu() override;
@@ -62,11 +70,23 @@ private:
   virtual void updatePushButtons() override;
   QAction *followModeAction() override;
 
+  /* Options dialog has changed some options */
+  virtual void optionsChanged() override;
+
+  /* Callback for combined query on ident, icao, faa and local columns. */
+  QueryBuilderResult airportQueryBuilderFunc(QWidget *widget);
+
   void setCallbacks();
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant&,
                             const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
   QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
   void overrideMode(const QStringList& overrideColumnTitles);
+
+  /* UI push button clicked */
+  void randomFlightplanClicked();
+
+  /* Update min/max values in random flight plan spin boxes */
+  void updateRandomFlightplanDistance();
 
   static const QSet<QString> NUMBER_COLUMNS;
 
@@ -78,7 +98,9 @@ private:
 
   /* Draw airport icon into ident table column */
   AirportIconDelegate *iconDelegate = nullptr;
+  UnitStringTool *unitStringTool;
 
+  QProgressDialog *progress = nullptr;
 };
 
 #endif // LITTLENAVMAP_AIRPORTSEARCH_H

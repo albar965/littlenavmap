@@ -53,7 +53,7 @@ public:
   virtual ~SqlModel() override;
 
   /* Filter by using query builder callback */
-  void filterByBuilder(const QueryBuilder& builder);
+  void filterByBuilder();
 
   /* Creates an include filer for value at index in the table */
   void filterIncluding(QModelIndex index);
@@ -84,6 +84,10 @@ public:
 
   /* Get field data formatted for display as seen in the table view */
   QVariant getFormattedFieldData(const QModelIndex& index) const;
+
+  /* Query the full result set into a vector of pairs with id and optional coordinates.
+   * This does not work when using distance search. */
+  void getFullResultSet(QVector<std::pair<int, atools::geo::Pos> >& result);
 
   Qt::SortOrder getSortOrder() const;
 
@@ -166,6 +170,11 @@ public:
   /* Update model after data change */
   void refreshData();
 
+  void setQueryBuilder(const QueryBuilder& builder)
+  {
+    queryBuilder = builder;
+  }
+
 signals:
   /* Emitted when more data was fetched */
   void fetchedMore();
@@ -189,7 +198,7 @@ private:
 
   void filterBy(bool exclude, QString whereCol, QVariant whereValue);
   QString buildColumnList(const atools::sql::SqlRecord& tableCols);
-  QString buildWhere(const atools::sql::SqlRecord& tableCols, QVector<const Column *>& overrideColumns);
+  QString buildWhere(const atools::sql::SqlRecord& tableCols, QVector<const Column *>& overridingColumns);
   QString buildWhereValue(const WhereCondition& cond);
   void buildQuery();
   void clearWhereConditions();
@@ -202,12 +211,12 @@ private:
   void buildSqlWhereValue(QString& whereValue) const;
 
   /* Default - all conditions are combined using "and" */
-  const QString WHERE_OPERATOR = "and";
+  const QString WHERE_OPERATOR = " and ";
 
   QString orderByCol /* Order by column name */, orderByOrder /* "asc" or "desc" */;
   int orderByColIndex = 0;
 
-  QString currentSqlQuery, currentSqlCountQuery;
+  QString currentSqlQuery, currentSqlCountQuery, currentSqlFetchQuery;
 
   /* Data callback */
   DataFunctionType dataFunction = nullptr;

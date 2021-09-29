@@ -18,12 +18,9 @@
 #ifndef LITTLENAVMAP_SEARCHBASE_H
 #define LITTLENAVMAP_SEARCHBASE_H
 
-#include "common/maptypes.h"
 #include "common/proctypes.h"
 
 #include "search/abstractsearch.h"
-
-#include <QObject>
 
 class QTableView;
 class SqlController;
@@ -83,7 +80,7 @@ public:
   virtual void postDatabaseLoad() override;
 
   /* Clear all search widgets */
-  void resetSearch();
+  virtual void resetSearch();
 
   /* The center point of the distance search has changed. This will update the search result. */
   void searchMarkChanged(const atools::geo::Pos& mark);

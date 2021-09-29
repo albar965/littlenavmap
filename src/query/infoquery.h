@@ -69,15 +69,6 @@ public:
   const atools::sql::SqlRecordVector *getHelipadInformation(int airportId);
   const atools::sql::SqlRecordVector *getStartInformation(int airportId);
 
-  /* Get record for table ils for an runway end */
-  const atools::sql::SqlRecord *getIlsInformationSim(int runwayEndId);
-  atools::sql::SqlRecord getIlsInformationSimById(int ilsId);
-  atools::sql::SqlRecord getIlsInformationNavById(int ilsId);
-
-  /* Get record for table ils for an runway end */
-  const atools::sql::SqlRecord *getIlsInformationNav(int runwayEndId);
-  const atools::sql::SqlRecordVector *getIlsInformationSimByName(const QString& airportIdent, const QString& runway);
-
   /* Get runway name and all columns from table approach */
   const atools::sql::SqlRecordVector *getApproachInformation(int airportId);
 
@@ -94,15 +85,11 @@ public:
   void deInitQueries();
 
 private:
-  const atools::sql::SqlRecordVector *ilsInformationSimByName(const QString& airportIdent, const QString& runway);
-
   /* Caches */
-  QCache<int, atools::sql::SqlRecord> airportCache, vorCache, ndbCache, runwayEndCache,
-                                      ilsCacheNav, ilsCacheSim;
+  QCache<int, atools::sql::SqlRecord> airportCache, vorCache, ndbCache, runwayEndCache;
 
   QCache<int, atools::sql::SqlRecordVector> comCache, runwayCache, helipadCache, startCache, approachCache,
                                             transitionCache;
-  QCache<std::pair<QString, QString>, atools::sql::SqlRecordVector> ilsCacheSimByName;
 
   QCache<QString, atools::sql::SqlRecordVector> airportSceneryCache;
 
@@ -111,8 +98,7 @@ private:
   /* Prepared database queries */
   atools::sql::SqlQuery *airportQuery = nullptr, *airportSceneryQuery = nullptr, *vorQuery = nullptr,
                         *ndbQuery = nullptr, *comQuery = nullptr, *runwayQuery = nullptr, *runwayEndQuery = nullptr,
-                        *helipadQuery = nullptr, *startQuery = nullptr, *ilsQuerySim = nullptr, *ilsQueryNav = nullptr,
-                        *ilsQuerySimByName = nullptr, *ilsQueryNavById = nullptr, *ilsQuerySimById = nullptr,
+                        *helipadQuery = nullptr, *startQuery = nullptr,
                         *vorIdentRegionQuery = nullptr, *approachQuery = nullptr, *transitionQuery = nullptr;
 
 };

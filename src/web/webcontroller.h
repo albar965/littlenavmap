@@ -105,6 +105,8 @@ public:
     encrypted = value;
   }
 
+  WebMapController *getWebMapController() const;
+
 signals:
   /* Send after server is started or before server is shutdown */
   void webserverStatusChanged(bool running);

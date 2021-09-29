@@ -16,10 +16,12 @@
 *****************************************************************************/
 
 #include "common/jsoninfobuilder.h"
+#include "common/infobuildertypes.h"
 
-// Use JSON library
-#include "json/nlohmann/json.hpp"
-using JSON = nlohmann::json;
+#include "sql/sqlrecord.h"
+#include "common/unit.h"
+
+using InfoBuilderTypes::AirportInfoData;
 
 JsonInfoBuilder::JsonInfoBuilder(QObject *parent)
   : AbstractInfoBuilder(parent)
@@ -32,6 +34,15 @@ JsonInfoBuilder::~JsonInfoBuilder()
 
 }
 
+JSON JsonInfoBuilder::coordinatesToJSON(QMap<QString,float> map) const
+{
+    return {
+        {"lat", map["lat"]},
+        {"lon", map["lon"]},
+    };
+}
+
+
 QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
 {
 
@@ -43,8 +54,8 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
         { "name", qUtf8Printable(data.airport.name) },
         { "region", qUtf8Printable(data.airport.region) },
         { "closed", data.airport.closed() },
-        { "elevation", qUtf8Printable(Unit::altFeet(data.airport.getPosition().getAltitude())) },
-        { "magneticDeclination", qUtf8Printable(map::magvarText(data.airport.magvar)) },
+        { "elevation", data.airport.getPosition().getAltitude() },
+        { "magneticDeclination", data.airport.magvar },
         { "position", nullptr },
         { "rating", nullptr },
         { "iata", nullptr },
@@ -71,7 +82,9 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
     if(data.airportInformation!=nullptr){
         json["rating"] = data.airportInformation->valueInt("rating");
         json["iata"] = qUtf8Printable(data.airportInformation->valueStr("iata"));
-        json["position"] = qUtf8Printable(getCoordinatesString(data.airportInformation));
+
+        // Position
+        json["position"] = coordinatesToJSON(getCoordinates(data.airportInformation));
 
         if(data.airportInformation->valueInt("num_parking_gate") > 0){
             json["parking"].push_back({ "gates", data.airportInformation->valueInt("num_parking_gate") });
@@ -104,13 +117,13 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
     }
 
     if(data.transitionAltitude!=nullptr && *data.transitionAltitude > 0){
-        json["transitionAltitude"] = qUtf8Printable(Unit::altFeet(*data.transitionAltitude));
+        json["transitionAltitude"] = *data.transitionAltitude;
     }
 
     if(!data.airport.noRunways()){
-        json["longestRunwayLength"] = qUtf8Printable(Unit::distShortFeet(data.airport.longestRunwayLength));
+        json["longestRunwayLength"] = data.airport.longestRunwayLength;
         if(data.airportInformation!=nullptr){
-            json["longestRunwayWidth"] = qUtf8Printable(Unit::distShortFeet(data.airportInformation->valueInt("longest_runway_width")));
+            json["longestRunwayWidth"] = data.airportInformation->valueInt("longest_runway_width");
             json["longestRunwayHeading"] = qUtf8Printable(getHeadingsStringByMagVar(data.airportInformation->valueFloat("longest_runway_heading"),data.airport.magvar));
             json["longestRunwaySurface"] = qUtf8Printable(data.airportInformation->valueStr("longest_runway_surface"));
         }
@@ -189,19 +202,19 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
     /* COM */
 
     if(data.airport.towerFrequency > 0){
-        json["com"].push_back({"Tower:", qUtf8Printable(formatComFrequency(data.airport.towerFrequency))});
+        json["com"].push_back({"Tower:", data.airport.towerFrequency});
     }
     if(data.airport.atisFrequency > 0){
-        json["com"].push_back({"ATIS:", qUtf8Printable(formatComFrequency(data.airport.atisFrequency))});
+        json["com"].push_back({"ATIS:", data.airport.atisFrequency});
     }
     if(data.airport.awosFrequency > 0){
-        json["com"].push_back({"AWOS:", qUtf8Printable(formatComFrequency(data.airport.awosFrequency))});
+        json["com"].push_back({"AWOS:", data.airport.awosFrequency});
     }
     if(data.airport.asosFrequency > 0){
-        json["com"].push_back({"ASOS:", qUtf8Printable(formatComFrequency(data.airport.asosFrequency))});
+        json["com"].push_back({"ASOS:", data.airport.asosFrequency});
     }
     if(data.airport.unicomFrequency > 0){
-        json["com"].push_back({"UNICOM:", qUtf8Printable(formatComFrequency(data.airport.unicomFrequency))});
+        json["com"].push_back({"UNICOM:", data.airport.unicomFrequency});
     }
 
     /* Facilities */
@@ -254,8 +267,66 @@ QByteArray JsonInfoBuilder::airport(AirportInfoData airportInfoData) const
 
     /* Fields added only if available */
 
-    if(data.airport.xpident.length() > 0 && data.airport.ident != data.airport.xpident)
-        json["x-plane-ident"] = qUtf8Printable(data.airport.xpident);
+  if(!data.airport.icao.isEmpty() && data.airport.ident != data.airport.icao)
+    json["icao"] = qUtf8Printable(data.airport.icao);
+  if(!data.airport.iata.isEmpty() && data.airport.ident != data.airport.iata)
+    json["iata"] = qUtf8Printable(data.airport.iata);
+  if(!data.airport.faa.isEmpty() && data.airport.ident != data.airport.faa)
+    json["faa"] = qUtf8Printable(data.airport.faa);
+  if(!data.airport.local.isEmpty() && data.airport.ident != data.airport.local)
+    json["local"] = qUtf8Printable(data.airport.local);
+
+  return json.dump().data();
+}
+
+
+QByteArray JsonInfoBuilder::siminfo(SimConnectInfoData simconnectInfoData) const
+{
+
+    SimConnectData data = *simconnectInfoData.data;
+
+    JSON json;
+
+    if(!data.isEmptyReply() && data.isUserAircraftValid()){
+
+        json = {
+           { "active", true},
+           { "simconnect_status", qUtf8Printable(data.getStatusText()) },
+           { "position", coordinatesToJSON(getCoordinates(data.getUserAircraft().getPosition())) },
+           { "indicated_speed", data.getUserAircraft().getIndicatedSpeedKts() },
+           { "true_airspeed", data.getUserAircraft().getTrueAirspeedKts() },
+           { "ground_speed", data.getUserAircraft().getGroundSpeedKts() },
+           { "sea_level_pressure", data.getUserAircraft().getSeaLevelPressureMbar() },
+           { "vertical_speed", data.getUserAircraft().getVerticalSpeedFeetPerMin() },
+           { "indicated_altitude", data.getUserAircraft().getIndicatedAltitudeFt() },
+           { "ground_altitude", data.getUserAircraft().getGroundAltitudeFt() },
+           { "altitude_above_ground", data.getUserAircraft().getAltitudeAboveGroundFt() },
+           { "heading", data.getUserAircraft().getHeadingDegMag() },
+       };
+
+    }else{
+        json = {
+            { "active", false}
+        };
+    }
+
+  return json.dump().data();
+}
+
+
+QByteArray JsonInfoBuilder::uiinfo(UiInfoData uiInfoData) const
+{
+
+    UiInfoData data = uiInfoData;
+
+    JSON json;
+
+       json = {
+           { "zoom_ui", data.zoomUi},
+           { "zoom_web", data.zoomWeb},
+           { "distance_ui", data.distanceUi},
+           { "distance_web", data.distanceWeb},
+       };
 
     return json.dump().data();
 }

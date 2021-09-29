@@ -203,7 +203,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       record.setValue("block_fuel", NavApp::getAltitudeLegs().getBlockFuel(NavApp::getAircraftPerformance())); // integer,
       record.setValue("trip_fuel", NavApp::getAltitudeLegs().getTripFuel()); // integer,
       record.setValue("grossweight", aircraft.getAirplaneTotalWeightLbs()); // integer,
-      record.setValue("departure_ident", airport.ident); // varchar(10),
+      record.setValue("departure_ident", airport.displayIdent()); // varchar(10),
       record.setValue("departure_name", airport.name); // varchar(200),
       record.setValue("departure_runway", runwayEnd.name); // varchar(200),
       record.setValue("departure_lonx", airport.position.getLonX()); // integer,
@@ -212,7 +212,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
 
       // Sqlite TEXT as ISO8601 strings (2021-05-16T23:55:00.259+02:00).
       // TEXT as ISO8601 strings ("YYYY-MM-DD HH:MM:SS.SSS")
-      record.setValue("departure_time", atools::convertToIsoWithOffset(QDateTime::currentDateTime())); // varchar(100),
+      record.setValue("departure_time", atools::currentIsoWithOffset()); // varchar(100),
 
       // 2021-05-16T21:50:24.973Z
       record.setValue("departure_time_sim", aircraft.getZuluTime()); // varchar(100),
@@ -241,7 +241,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
 
       mainWindow->setStatusMessage(tr("Logbook Entry for %1 at %2%3 added.").
                                    arg(departureArrivalText).
-                                   arg(airport.ident).
+                                   arg(airport.displayIdent()).
                                    arg(runwayText), true /* addToLog */);
     }
     else if(logEntryId >= 0)
@@ -254,7 +254,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
         record.setValue("distance_flown", flownDistanceNm); // integer,
         if(aircraftAtTakeoff != nullptr)
           record.setValue("used_fuel", aircraftAtTakeoff->getFuelTotalWeightLbs() - aircraft.getFuelTotalWeightLbs()); // integer,
-        record.setValue("destination_ident", airport.ident); // varchar(10),
+        record.setValue("destination_ident", airport.displayIdent()); // varchar(10),
         record.setValue("destination_name", airport.name); // varchar(200),
         record.setValue("destination_runway", runwayEnd.name); // varchar(200),
         record.setValue("destination_lonx", airport.position.getLonX()); // integer,
@@ -263,7 +263,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
 
         // Sqlite TEXT as ISO8601 strings (2021-05-16T23:55:00.259+02:00).
         // TEXT as ISO8601 strings ("YYYY-MM-DD HH:MM:SS.SSS")
-        record.setValue("destination_time", atools::convertToIsoWithOffset(QDateTime::currentDateTime())); // varchar(100),
+        record.setValue("destination_time", atools::currentIsoWithOffset()); // varchar(100),
 
         // 2021-05-16T21:50:24.973Z
         record.setValue("destination_time_sim", aircraft.getZuluTime()); // varchar(100),
@@ -297,7 +297,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
 
         mainWindow->setStatusMessage(tr("Logbook Entry for %1 at %2%3 updated.").
                                      arg(departureArrivalText).
-                                     arg(airport.ident).
+                                     arg(airport.displayIdent()).
                                      arg(runwayText), true /* addToLog */);
 
         logEntryId = -1;
@@ -853,13 +853,12 @@ QString LogdataController::buildFilename(const atools::sql::SqlRecord *record,
 {
   if(!flightplan.isEmpty())
     // Flight plan is valid - extract name from plan object
-    return flightplan.getFilenamePattern(OptionData::instance().getFlightplanPattern(), suffix);
+    return flightplan.getFilenamePattern(OptionData::instance().getFlightplanPattern(), suffix, false /* clean */);
   else if(record != nullptr)
   {
     // No flight plan - extract name from SQL record and values currently set in the GUI
     const Route& route = NavApp::getRouteConst();
-
-    QString type = route.getFlightplan().getFlightplanType() == atools::fs::pln::IFR ? "IFR" : "VFR";
+    QString type = route.getFlightplan().getFlightplanTypeStr();
     return atools::fs::pln::Flightplan::getFilenamePattern(OptionData::instance().getFlightplanPattern(), type,
                                                            record->valueStr("departure_name"),
                                                            record->valueStr("departure_ident"),

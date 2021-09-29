@@ -583,10 +583,13 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     {
       // Draw runway offset thresholds --------------------------------
       painter->setBackgroundMode(Qt::TransparentMode);
-      painter->setBrush(mapcolors::runwayOffsetColor);
       for(int i = 0; i < runwayCenters.size(); i++)
       {
         const MapRunway& runway = runways->at(i);
+
+        QColor colThreshold = mapcolors::colorForSurface(runway.surface).value() < 220 ?
+                              mapcolors::runwayOffsetColor : mapcolors::runwayOffsetColorDark;
+        painter->setBrush(colThreshold);
 
         if(runway.primaryOffset > 0 || runway.secondaryOffset > 0)
         {
@@ -600,11 +603,11 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
             int offs = scale->getPixelIntForFeet(runway.primaryOffset, runway.heading);
 
             // Draw solid boundary to runway
-            painter->setPen(QPen(mapcolors::runwayOffsetColor, 3, Qt::SolidLine, Qt::FlatCap));
+            painter->setPen(QPen(colThreshold, 3, Qt::SolidLine, Qt::FlatCap));
             painter->drawLine(rect.left(), rect.bottom() - offs, rect.right(), rect.bottom() - offs);
 
             // Draw dashed line
-            painter->setPen(QPen(mapcolors::runwayOffsetColor, 3, Qt::DashLine, Qt::FlatCap));
+            painter->setPen(QPen(colThreshold, 3, Qt::DashLine, Qt::FlatCap));
             painter->drawLine(0, rect.bottom(), 0, rect.bottom() - offs);
           }
 
@@ -613,11 +616,11 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
             int offs = scale->getPixelIntForFeet(runway.secondaryOffset, runway.heading);
 
             // Draw solid boundary to runway
-            painter->setPen(QPen(mapcolors::runwayOffsetColor, 3, Qt::SolidLine, Qt::FlatCap));
+            painter->setPen(QPen(colThreshold, 3, Qt::SolidLine, Qt::FlatCap));
             painter->drawLine(rect.left(), rect.top() + offs, rect.right(), rect.top() + offs);
 
             // Draw dashed line
-            painter->setPen(QPen(mapcolors::runwayOffsetColor, 3, Qt::DashLine, Qt::FlatCap));
+            painter->setPen(QPen(colThreshold, 3, Qt::DashLine, Qt::FlatCap));
             painter->drawLine(0, rect.top(), 0, rect.top() + offs);
           }
           painter->resetTransform();
@@ -642,8 +645,14 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
       if(wToSBuf(parking.position, x, y, margins))
       {
         // Calculate approximate screen width and height
-        int w = scale->getPixelIntForFeet(parking.radius, 90);
-        int h = scale->getPixelIntForFeet(parking.radius, 0);
+
+        int radius = parking.getRadius();
+
+        if(radius == 0)
+          continue;
+
+        int w = scale->getPixelIntForFeet(radius, 90);
+        int h = scale->getPixelIntForFeet(radius, 0);
 
         painter->setPen(QPen(mapcolors::colorOutlineForParkingType(parking.type), 2, Qt::SolidLine, Qt::FlatCap));
         painter->setBrush(mapcolors::colorForParkingType(parking.type));
@@ -655,11 +664,14 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
             // Draw second ring for jetway
             painter->drawEllipse(QPointF(x, y), w * 3. / 4., h * 3. / 4.);
 
-          // Draw heading tick mark
-          painter->translate(QPointF(x, y));
-          painter->rotate(parking.heading);
-          painter->drawLine(QPointF(0, h * 2. / 3.), QPointF(0., h));
-          painter->resetTransform();
+          if(parking.heading < map::INVALID_HEADING_VALUE)
+          {
+            // Draw heading tick mark
+            painter->translate(QPointF(x, y));
+            painter->rotate(parking.heading);
+            painter->drawLine(QPointF(0, h * 2. / 3.), QPointF(0., h));
+            painter->resetTransform();
+          }
         }
       }
     } // for(const MapParking& parking : *parkings)
@@ -714,7 +726,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
     {
       for(const MapParking& parking : *parkings)
       {
-        if(mapLayerEffective->isAirportDiagramDetail2() || parking.radius > 20)
+        if(mapLayerEffective->isAirportDiagramDetail2() || parking.getRadius() > 20)
         {
           float x, y;
           if(wToSBuf(parking.position, x, y, marginsSmall))
@@ -743,7 +755,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
               // Try to use shorter name except for lowest zoom - lowest uses full name
               if(!mapLayerEffective->isAirportDiagramDetail3())
               {
-                float parkingSize = scale->getPixelForFeet(parking.radius);
+                float parkingSize = scale->getPixelForFeet(parking.getRadius());
                 if(painter->fontMetrics().boundingRect(QString(text.size(), '0')).width() > parkingSize * 2.5f)
                 {
                   // Name does not fit in circle

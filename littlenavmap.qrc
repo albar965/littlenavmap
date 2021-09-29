@@ -289,5 +289,6 @@
         <file>resources/icons/userpoint_History.svg</file>
         <file>resources/icons/userpoint_Building.svg</file>
         <file>resources/icons/userpoint_Other.svg</file>
+        <file>resources/icons/gls.svg</file>
     </qresource>
 </RCC>

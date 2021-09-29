@@ -108,7 +108,7 @@ void NavApp::initApplication()
   setApplicationName("Little Navmap");
   setOrganizationName("ABarthel");
   setOrganizationDomain("littlenavmap.org");
-  setApplicationVersion("2.7.0.develop"); // VERSION_NUMBER - Little Navmap
+  setApplicationVersion("2.7.5.develop"); // VERSION_NUMBER - Little Navmap
 }
 
 NavApp *NavApp::navAppInstance()
@@ -135,7 +135,7 @@ void NavApp::init(MainWindow *mainWindowParam)
   magDecReader = new atools::fs::common::MagDecReader();
   readMagDecFromDatabase();
 
-  moraReader = new atools::fs::common::MoraReader(databaseManager->getDatabaseMora());
+  moraReader = new atools::fs::common::MoraReader(databaseManager->getDatabasePermNav());
   moraReader->readFromTable();
 
   vehicleIcons = new VehicleIcons();
@@ -304,27 +304,6 @@ void NavApp::optionsChanged()
   qDebug() << Q_FUNC_INFO;
 }
 
-void NavApp::preDatabaseLoad()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  loadingDatabase = true;
-  infoQuery->deInitQueries();
-  airportQuerySim->deInitQueries();
-  airportQueryNav->deInitQueries();
-  mapQuery->deInitQueries();
-  procedureQuery->deInitQueries();
-  airspaceController->preDatabaseLoad();
-  trackController->preDatabaseLoad();
-  logdataController->preDatabaseLoad();
-
-  delete databaseMetaSim;
-  databaseMetaSim = nullptr;
-
-  delete databaseMetaNav;
-  databaseMetaNav = nullptr;
-}
-
 void NavApp::readMagDecFromDatabase()
 {
   if(hasDataInDatabase())
@@ -364,6 +343,28 @@ void NavApp::setMainWindowVisible()
   mainWindowVisible = true;
 }
 
+void NavApp::preDatabaseLoad()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  loadingDatabase = true;
+  infoQuery->deInitQueries();
+  mapQuery->deInitQueries();
+  airportQuerySim->deInitQueries();
+  airportQueryNav->deInitQueries();
+  procedureQuery->deInitQueries();
+  moraReader->preDatabaseLoad();
+  airspaceController->preDatabaseLoad();
+  trackController->preDatabaseLoad();
+  logdataController->preDatabaseLoad();
+
+  delete databaseMetaSim;
+  databaseMetaSim = nullptr;
+
+  delete databaseMetaNav;
+  databaseMetaNav = nullptr;
+}
+
 void NavApp::postDatabaseLoad()
 {
   qDebug() << Q_FUNC_INFO;
@@ -373,13 +374,12 @@ void NavApp::postDatabaseLoad()
 
   readMagDecFromDatabase();
 
-  moraReader->readFromTable(*getDatabaseMora());
-
   airportQuerySim->initQueries();
   airportQueryNav->initQueries();
   mapQuery->initQueries();
   infoQuery->initQueries();
   procedureQuery->initQueries();
+  moraReader->postDatabaseLoad();
   airspaceController->postDatabaseLoad();
   logdataController->postDatabaseLoad();
   trackController->postDatabaseLoad();
@@ -571,6 +571,11 @@ atools::fs::FsPaths::SimulatorType NavApp::getCurrentSimulatorDb()
   return getDatabaseManager()->getCurrentSimulator();
 }
 
+bool NavApp::isAirportDatabaseXPlane(bool navdata)
+{
+  return getDatabaseManager()->isAirportDatabaseXPlane(navdata);
+}
+
 QString NavApp::getCurrentSimulatorFilesPath()
 {
   return atools::fs::FsPaths::getFilesPath(getCurrentSimulatorDb());
@@ -666,9 +671,9 @@ atools::sql::SqlDatabase *NavApp::getDatabaseNav()
   return getDatabaseManager()->getDatabaseNav();
 }
 
-atools::sql::SqlDatabase *NavApp::getDatabaseMora()
+atools::sql::SqlDatabase *NavApp::getDatabasePermNav()
 {
-  return getDatabaseManager()->getDatabaseMora();
+  return getDatabaseManager()->getDatabasePermNav();
 }
 
 atools::fs::userdata::UserdataManager *NavApp::getUserdataManager()

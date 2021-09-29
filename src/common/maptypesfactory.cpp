@@ -147,14 +147,17 @@ void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& 
     ap.ident = record.valueStr("ident");
     ap.icao = record.valueStr("icao", QString());
     ap.iata = record.valueStr("iata", QString());
-    ap.xpident = record.valueStr("xpident", QString());
+    ap.faa = record.valueStr("faa", QString());
+    ap.local = record.valueStr("local", QString());
     ap.name = record.valueStr("name");
     ap.rating = record.valueInt("rating", -1);
     ap.longestRunwayLength = record.valueInt("longest_runway_length");
     ap.longestRunwayHeading = static_cast<int>(std::round(record.valueFloat("longest_runway_heading")));
     ap.magvar = record.valueFloat("mag_var");
     ap.transitionAltitude = record.valueInt("transition_altitude", 0);
-    ap.flatten = record.valueInt("flatten", -1);
+
+    if(record.contains("flatten"))
+      ap.flatten = record.isNull("flatten") ? -1 : record.valueInt("flatten");
 
     ap.bounding = Rect(record.valueFloat("left_lonx"), record.valueFloat("top_laty"),
                        record.valueFloat("right_lonx"), record.valueFloat("bottom_laty"));
@@ -420,6 +423,7 @@ void MapTypesFactory::fillWaypoint(const SqlRecord& record, map::MapWaypoint& wa
   waypoint.ident = record.valueStr("ident");
   waypoint.region = record.valueStr("region");
   waypoint.type = record.valueStr("type");
+  waypoint.arincType = record.valueStr("arinc_type", QString());
   waypoint.magvar = record.valueFloat("mag_var");
   waypoint.hasVictorAirways = record.valueInt("num_victor_airway") > 0;
   waypoint.hasJetAirways = record.valueInt("num_jet_airway") > 0;
@@ -434,6 +438,7 @@ void MapTypesFactory::fillWaypointFromNav(const SqlRecord& record, map::MapWaypo
   waypoint.ident = record.valueStr("ident");
   waypoint.region = record.valueStr("region");
   waypoint.type = record.valueStr("type");
+  waypoint.arincType = record.valueStr("arinc_type", QString());
   waypoint.magvar = record.valueFloat("mag_var");
   waypoint.hasVictorAirways = record.valueInt("waypoint_num_victor_airway") > 0;
   waypoint.hasJetAirways = record.valueInt("waypoint_num_jet_airway") > 0;
@@ -539,9 +544,17 @@ void MapTypesFactory::fillMarker(const SqlRecord& record, map::MapMarker& marker
 void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils)
 {
   ils.id = record.valueInt("ils_id");
+  ils.airportIdent = record.valueStr("loc_airport_ident");
+  ils.runwayEndId = record.valueInt("loc_runway_end_id");
+  ils.runwayName = record.valueStr("loc_runway_name");
   ils.ident = record.valueStr("ident");
   ils.name = record.valueStr("name");
   ils.region = record.valueStr("region", QString());
+
+  ils.type = static_cast<map::IlsType>(atools::strToChar(record.valueStr("type", QString())));
+  ils.perfIndicator = record.valueStr("perf_indicator", QString());
+  ils.provider = record.valueStr("provider", QString());
+
   ils.heading = atools::geo::normalizeCourse(record.valueFloat("loc_heading"));
   ils.width = record.isNull("loc_width") ? INVALID_COURSE_VALUE : record.valueFloat("loc_width");
   ils.magvar = record.valueFloat("mag_var");
@@ -550,12 +563,23 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils)
   ils.frequency = record.valueInt("frequency");
   ils.range = record.valueInt("range");
   ils.hasDme = record.valueInt("dme_range") > 0;
+  ils.hasBackcourse = record.valueInt("has_backcourse") > 0;
 
-  ils.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"),
-                     record.valueFloat("altitude"));
-  ils.pos1 = Pos(record.valueFloat("end1_lonx"), record.valueFloat("end1_laty"));
-  ils.pos2 = Pos(record.valueFloat("end2_lonx"), record.valueFloat("end2_laty"));
-  ils.posmid = Pos(record.valueFloat("end_mid_lonx"), record.valueFloat("end_mid_laty"));
+  if(!record.isNull("lonx") && !record.isNull("laty"))
+  {
+    ils.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
+
+    if(!record.isNull("end1_lonx") && !record.isNull("end1_laty") &&
+       !record.isNull("end2_lonx") && !record.isNull("end2_laty") &&
+       !record.isNull("end_mid_lonx") && !record.isNull("end_mid_laty"))
+    {
+      ils.pos1 = Pos(record.valueFloat("end1_lonx"), record.valueFloat("end1_laty"));
+      ils.pos2 = Pos(record.valueFloat("end2_lonx"), record.valueFloat("end2_laty"));
+      ils.posmid = Pos(record.valueFloat("end_mid_lonx"), record.valueFloat("end_mid_laty"));
+    }
+  }
+
+  ils.hasGeometry = ils.position.isValid() && ils.pos1.isValid() && ils.pos2.isValid() && ils.posmid.isValid();
 
   ils.bounding = Rect(ils.position);
   ils.bounding.extend(ils.pos1);
@@ -574,7 +598,7 @@ void MapTypesFactory::fillParking(const SqlRecord& record, map::MapParking& park
   parking.jetway = record.valueInt("has_jetway") > 0;
   parking.number = record.valueInt("number");
 
-  parking.heading = static_cast<int>(std::round(record.valueFloat("heading")));
+  parking.heading = record.isNull("heading") ? map::INVALID_HEADING_VALUE : record.valueFloat("heading");
   parking.radius = static_cast<int>(std::round(record.valueFloat("radius")));
 
   // Calculate a short text if using X-Plane parking names
@@ -628,7 +652,7 @@ void MapTypesFactory::fillStart(const SqlRecord& record, map::MapStart& start)
   start.runwayName = record.valueStr("runway_name");
   start.helipadNumber = record.isNull("number") ? -1 : record.valueInt("number", -1);
   start.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
-  start.heading = static_cast<int>(std::roundf(record.valueFloat("heading")));
+  start.heading = record.valueFloat("heading");
 }
 
 void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& airspace, map::MapAirspaceSources src)

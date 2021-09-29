@@ -27,7 +27,9 @@
 WebApiController::WebApiController(QObject *parent, bool verboseParam)
   : QObject(parent), verbose(verboseParam)
 {
-    qDebug() << Q_FUNC_INFO;
+    if(verbose)
+        qDebug() << Q_FUNC_INFO;
+
     webApiPathPrefix = "/api";
     registerControllers();
     registerInfoBuilders();
@@ -44,7 +46,7 @@ void WebApiController::registerInfoBuilders(){
 
 WebApiController::~WebApiController()
 {
-  qDebug() << Q_FUNC_INFO;
+  // qDebug() << Q_FUNC_INFO;
 }
 
 WebApiResponse WebApiController::service(WebApiRequest& request)
@@ -60,12 +62,13 @@ WebApiResponse WebApiController::service(WebApiRequest& request)
   QByteArray controllerName = getControllerNameByPath(request.path);
   QByteArray actionName = getActionNameByPath(request.path);
 
-  qDebug() << Q_FUNC_INFO << ":"
-           << request.method << ":"
-           << request.path << ":"
-           << controllerName << ":"
-           << actionName << ":"
-           << request.body;
+  if(verbose)
+      qDebug() << Q_FUNC_INFO << ":"
+               << request.method << ":"
+               << request.path << ":"
+               << controllerName << ":"
+               << actionName << ":"
+               << request.body;
 
 
   if(request.method == "OPTIONS"){
