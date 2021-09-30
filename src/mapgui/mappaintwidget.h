@@ -80,8 +80,9 @@ public:
 
   /* Show the bounding rectangle on the map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
-  /* streamlined for webmapcontroller from showRect(rect, false) */
-  void showRectStreamlined(const atools::geo::Rect& rect);
+  /* streamlined for webmapcontroller from showRect(rect, false)
+  *  constrainDistance determines whether map distance should be constrained by OptionData values */
+  void showRectStreamlined(const atools::geo::Rect& rect, bool constrainDistance = true);
 
   /* Show user simulator aircraft. state is tool button state */
   void showAircraft(bool centerAircraftChecked);
