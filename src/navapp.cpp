@@ -135,7 +135,7 @@ void NavApp::init(MainWindow *mainWindowParam)
   magDecReader = new atools::fs::common::MagDecReader();
   readMagDecFromDatabase();
 
-  moraReader = new atools::fs::common::MoraReader(databaseManager->getDatabasePermNav());
+  moraReader = new atools::fs::common::MoraReader(databaseManager->getDatabaseNav(), databaseManager->getDatabaseSim());
   moraReader->readFromTable();
 
   vehicleIcons = new VehicleIcons();
@@ -669,11 +669,6 @@ atools::sql::SqlDatabase *NavApp::getDatabaseSim()
 atools::sql::SqlDatabase *NavApp::getDatabaseNav()
 {
   return getDatabaseManager()->getDatabaseNav();
-}
-
-atools::sql::SqlDatabase *NavApp::getDatabasePermNav()
-{
-  return getDatabaseManager()->getDatabasePermNav();
 }
 
 atools::fs::userdata::UserdataManager *NavApp::getUserdataManager()
