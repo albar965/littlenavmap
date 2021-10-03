@@ -551,6 +551,24 @@ MapLayer& MapLayer::ndbSymbolSize(int size)
   return *this;
 }
 
+MapLayer& MapLayer::holding(bool value)
+{
+  layerHolding = value;
+  return *this;
+}
+
+MapLayer& MapLayer::holdingInfo(bool value)
+{
+  layerHoldingInfo = value;
+  return *this;
+}
+
+MapLayer& MapLayer::holdingInfo2(bool value)
+{
+  layerHoldingInfo2 = value;
+  return *this;
+}
+
 MapLayer& MapLayer::markerSymbolSize(int size)
 {
   layerMarkerSymbolSize = size;

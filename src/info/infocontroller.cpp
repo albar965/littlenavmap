@@ -392,6 +392,9 @@ void InfoController::saveState()
   for(const map::MapIls& ils : currentSearchResult.ils)
     refs.append({ils.id, map::ILS});
 
+  for(const map::MapHolding& holding : currentSearchResult.holdings)
+    refs.append({holding.id, map::HOLDING});
+
   for(const map::MapUserpoint& userpoint: currentSearchResult.userpoints)
     refs.append({userpoint.id, map::USERPOINT});
 
@@ -854,10 +857,11 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
 
   }
 
-  // Navaids ================================================================
-  if(result.hasVor() || result.hasNdb() || result.hasWaypoints() || result.hasIls() || result.hasAirways())
+  // Navaids tab ================================================================
+  if(result.hasVor() || result.hasNdb() || result.hasWaypoints() || result.hasIls() || result.hasHoldings() ||
+     result.hasAirways())
     // if any navaids are to be shown clear search result before
-    currentSearchResult.clear(map::NAV_ALL | map::ILS | map::AIRWAY | map::RUNWAYEND);
+    currentSearchResult.clear(map::NAV_ALL | map::ILS | map::AIRWAY | map::RUNWAYEND | map::HOLDING);
 
   if(!result.userpoints.isEmpty())
     // if any userpoints are to be shown clear search result before
@@ -1021,6 +1025,19 @@ bool InfoController::updateNavaidInternal(const map::MapResult& result, bool bea
     if(!bearingChanged)
       currentSearchResult.ils.append(ils);
     infoBuilder->ilsTextInfo(ils, html);
+    html.br();
+    foundNavaid = true;
+  }
+
+  for(const map::MapHolding& holding: result.holdings)
+  {
+#ifdef DEBUG_INFORMATION
+    qDebug() << "Found hold" << holding.name;
+#endif
+
+    if(!bearingChanged)
+      currentSearchResult.holdings.append(holding);
+    infoBuilder->holdingText(holding, html);
     html.br();
     foundNavaid = true;
   }

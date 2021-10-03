@@ -1084,6 +1084,8 @@ void HtmlInfoBuilder::ilsTextInfo(const map::MapIls& ils, atools::util::HtmlBuil
 void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::HtmlBuilder& html, bool procInfo,
                                       bool runwayInfo, bool infoOrTooltip) const
 {
+  Q_UNUSED(runwayInfo)
+
   // Add ILS information
 
   // Prefix for procedure information
@@ -2057,41 +2059,87 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
     html.br();
 }
 
-void HtmlInfoBuilder::holdText(const Hold& hold, HtmlBuilder& html) const
+void HtmlInfoBuilder::holdingText(const MapHolding& holding, HtmlBuilder& html) const
 {
-  html.b(tr("Holding"));
+  html.img(QIcon(":/littlenavmap/resources/icons/hold.svg"), QString(), QString(), symbolSizeTitle);
+  html.nbsp().nbsp();
 
-  QString navType;
-  if(hold.navType == map::AIRPORT)
-    navType = tr("Airport");
-  else if(hold.navType == map::VOR)
-    navType = map::vorType(hold.vorDmeOnly, hold.vorHasDme, hold.vorTacan, hold.vorVortac);
-  else if(hold.navType == map::NDB)
-    navType = tr("NDB");
-  else if(hold.navType == map::WAYPOINT)
-    navType = tr("Waypoint");
+  QString navTypeStr;
+  if(holding.navType == map::AIRPORT)
+    navTypeStr = tr("Airport");
+  else if(holding.navType == map::VOR)
+    navTypeStr = map::vorType(holding.vorDmeOnly, holding.vorHasDme, holding.vorTacan, holding.vorVortac);
+  else if(holding.navType == map::NDB)
+    navTypeStr = tr("NDB");
+  else if(holding.navType == map::WAYPOINT)
+    navTypeStr = tr("Waypoint");
 
-  if(!navType.isEmpty())
+  QString title;
+
+  if(holding.user)
+    title.append(tr("User "));
+
+  if(!navTypeStr.isEmpty())
+  {
     // Hold has a navaid
-    html.brText(tr("%1 %2, %3 at %4").
-                arg(navType).
-                arg(hold.navIdent).
-                arg(courseTextFromTrue(hold.courseTrue, hold.magvar)).
-                arg(Unit::altFeet(hold.position.getAltitude())), ahtml::NO_ENTITIES);
+    title.append(tr("Holding at %1 %2, %3").arg(navTypeStr).arg(holding.navIdent).
+                 arg(courseTextFromTrue(holding.courseTrue, holding.magvar)));
+  }
   else
     // Hold at a position
-    html.brText(tr("%1 at %2").
-                arg(courseTextFromTrue(hold.courseTrue, hold.magvar)).
-                arg(Unit::altFeet(hold.position.getAltitude())), ahtml::NO_ENTITIES);
+    title.append(tr("Holding %1").arg(courseTextFromTrue(holding.courseTrue, holding.magvar)));
 
-  QString minTxt = locale.toString(hold.minutes);
-  html.brText(tr("%1, %2, %3 %4").
-              arg(Unit::distNm(hold.distance())).
-              arg(Unit::speedKts(hold.speedKts)).
-              arg(minTxt).
-              arg(minTxt == "1" ? tr("minute") : tr("minutes")));
+  navaidTitle(html, title, ahtml::NO_ENTITIES);
 
-  html.br();
+  html.table();
+  bearingToUserText(holding.position, holding.magvar, html);
+
+  if(info && !holding.airportIdent.isEmpty())
+    airportRow(airportQuerySim->getAirportByIdent(holding.airportIdent), html);
+
+  if(holding.time > 0.f)
+  {
+    QString minStr = locale.toString(holding.time);
+    html.row2If(tr("Time:"), tr("%1 %2").arg(minStr).
+                arg(atools::almostEqual(holding.time, 1.f) ? tr("Minute") : tr("Minutes")));
+
+    if(info)
+    {
+      float complete = holding.time * 2.f + 2.f;
+      QString completeStr = locale.toString(complete);
+      html.row2If(tr("Total time to complete:"), tr("%1 %2").arg(completeStr).
+                  arg(atools::almostEqual(complete, 1.f) ? tr("Minute") : tr("Minutes")));
+    }
+  }
+
+  bool estimated = false;
+  float dist = holding.distance(&estimated);
+  html.row2If(estimated ? tr("Estimated length:") : tr("Length:"), Unit::distNm(dist));
+
+  if(holding.user)
+  {
+    if(holding.position.getAltitude() > 0.f)
+      html.row2If(tr("Altitude:"), Unit::altFeet(holding.position.getAltitude()));
+    if(holding.speedKts > 0.f)
+      html.row2If(tr("Speed:"), Unit::speedKts(holding.speedKts));
+  }
+  else
+  {
+    if(holding.speedLimit > 0.f)
+      html.row2If(tr("Speed limit:"), Unit::speedKts(holding.speedLimit));
+
+    if(holding.minAltititude > 0.f && holding.maxAltititude > 0.f)
+      html.row2If(tr("Altitude:"), tr("%1 to %2").arg(Unit::altFeet(holding.minAltititude, false /* addUnit */)).
+                  arg(Unit::altFeet(holding.maxAltititude)));
+    else if(holding.minAltititude > 0.f)
+      html.row2If(tr("Min altitude:"), Unit::altFeet(holding.minAltititude));
+    else if(holding.maxAltititude > 0.f)
+      html.row2If(tr("Max altitude:"), Unit::altFeet(holding.maxAltititude));
+  }
+  html.tableEnd();
+
+  if(info)
+    html.br();
 }
 
 void HtmlInfoBuilder::rangeMarkerText(const RangeMarker& marker, atools::util::HtmlBuilder& html) const
@@ -4291,12 +4339,12 @@ void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text) const
     html.b(text);
 }
 
-void HtmlInfoBuilder::navaidTitle(HtmlBuilder& html, const QString& text) const
+void HtmlInfoBuilder::navaidTitle(HtmlBuilder& html, const QString& text, atools::util::html::Flags flags) const
 {
   if(info)
-    html.text(text, ahtml::BOLD | ahtml::BIG);
+    html.text(text, ahtml::BOLD | ahtml::BIG | flags);
   else
-    html.b(text);
+    html.text(text, ahtml::BOLD | flags);
 }
 
 void HtmlInfoBuilder::rowForFloat(HtmlBuilder& html, const SqlRecord *rec, const QString& colName,

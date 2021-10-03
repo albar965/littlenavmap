@@ -136,8 +136,8 @@ public:
   const QList<map::TrafficPattern>& getTrafficPatterns() const;
   QList<map::TrafficPattern>& getTrafficPatterns();
 
-  const QList<map::Hold>& getHolds() const;
-  QList<map::Hold>& getHolds();
+  const QList<map::MapHolding>& getHolds() const;
+  QList<map::MapHolding>& getHolds();
 
   const atools::geo::Pos& getProfileHighlight() const;
 

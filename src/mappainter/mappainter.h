@@ -53,6 +53,7 @@ class Route;
 namespace map {
 struct MapAirport;
 struct MapObjectRef;
+struct MapHolding;
 
 }
 
@@ -346,6 +347,9 @@ protected:
 
   /* Interface method to QPixmapCache*/
   void getPixmap(QPixmap& pixmap, const QString& resource, int size);
+
+  /* Draw enroute as well as user defined holdings */
+  void paintHoldings(const QList<map::MapHolding>& holdings, bool enroute, bool drawFast);
 
   /* Minimum points to use for a circle */
   const int CIRCLE_MIN_POINTS = 16;

@@ -62,6 +62,7 @@ void ProfileLabelWidget::paintEvent(QPaintEvent *)
 
   QPainter painter(this);
   painter.setRenderHint(QPainter::Antialiasing);
+  painter.setRenderHint(QPainter::TextAntialiasing);
 
   // Fill background white
   painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));

@@ -32,7 +32,7 @@ class Pos;
 
 namespace map {
 struct MapResult;
-struct Hold;
+struct MapHolding;
 }
 
 class UnitStringTool;
@@ -55,7 +55,7 @@ public:
   HoldDialog(const HoldDialog& other) = delete;
   HoldDialog& operator=(const HoldDialog& other) = delete;
 
-  void fillHold(map::Hold& hold);
+  void fillHold(map::MapHolding& holding);
 
 private:
   void restoreState();

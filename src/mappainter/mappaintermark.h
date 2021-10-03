@@ -55,7 +55,6 @@ private:
   void paintDistanceMarkers();
 
   void paintTrafficPatterns();
-  void paintHolds();
 
   void paintRouteDrag();
   void paintCompassRose();

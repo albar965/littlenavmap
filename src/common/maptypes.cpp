@@ -1354,7 +1354,7 @@ QDataStream& operator<<(QDataStream& dataStream, const TrafficPattern& obj)
   return dataStream;
 }
 
-QDataStream& operator>>(QDataStream& dataStream, Hold& obj)
+QDataStream& operator>>(QDataStream& dataStream, MapHolding& obj)
 {
   dataStream
   >> obj.navIdent
@@ -1365,15 +1365,19 @@ QDataStream& operator>>(QDataStream& dataStream, Hold& obj)
   >> obj.vorVortac
   >> obj.color
   >> obj.turnLeft
-  >> obj.minutes
+  >> obj.time
   >> obj.speedKts
   >> obj.courseTrue
   >> obj.magvar
   >> obj.position;
+
+  obj.user = true;
+  obj.length = obj.speedLimit = obj.minAltititude = obj.maxAltititude = 0.f;
+  obj.airportIdent.clear();
   return dataStream;
 }
 
-QDataStream& operator<<(QDataStream& dataStream, const Hold& obj)
+QDataStream& operator<<(QDataStream& dataStream, const MapHolding& obj)
 {
   dataStream
     << obj.navIdent
@@ -1384,7 +1388,7 @@ QDataStream& operator<<(QDataStream& dataStream, const Hold& obj)
     << obj.vorVortac
     << obj.color
     << obj.turnLeft
-    << obj.minutes
+    << obj.time
     << obj.speedKts
     << obj.courseTrue
     << obj.magvar
@@ -1409,7 +1413,10 @@ QDataStream& operator<<(QDataStream& dataStream, const MapObjectRef& obj)
 
 QString vorType(const MapVor& vor)
 {
-  return vorType(vor.dmeOnly, vor.hasDme, vor.tacan, vor.vortac);
+  if(vor.isValid())
+    return vorType(vor.dmeOnly, vor.hasDme, vor.tacan, vor.vortac);
+  else
+    return QString();
 }
 
 QString vorType(bool dmeOnly, bool hasDme, bool tacan, bool vortac)
@@ -1931,9 +1938,72 @@ QString ilsTextShort(const map::MapIls& ils)
   return QObject::tr("%1 %2").arg(ilsType(ils, true /* gs */, true /* dme */, QObject::tr(", "))).arg(ils.ident);
 }
 
-float Hold::magCourse() const
+QString holdingTextShort(const map::MapHolding& holding)
+{
+  QString text;
+  if(holding.user)
+    text.append(QObject::tr("User holding at %1").
+                arg(holding.navIdent.isEmpty() ? Unit::coords(holding.position) : holding.navIdent));
+  else
+    text.append(QObject::tr("Holding at %1").
+                arg(holding.navIdent.isEmpty() ? Unit::coords(holding.position) : holding.navIdent));
+
+  if(holding.time > 0.f)
+    text.append(QObject::tr(", %1 min").arg(QLocale().toString(holding.time)));
+
+  if(holding.length > 0.f)
+    text.append(QObject::tr(", %1:").arg(Unit::distNm(holding.length)));
+
+  if(holding.speedKts > 0.f)
+    text.append(QObject::tr(", %1:").arg(Unit::speedKts(holding.speedKts)));
+
+  if(holding.speedLimit > 0.f)
+    text.append(QObject::tr(", max %1").arg(Unit::speedKts(holding.speedLimit)));
+
+  if(holding.minAltititude > 0.f)
+    text.append(QObject::tr(", A%1").arg(Unit::altFeet(holding.minAltititude)));
+
+  return text;
+}
+
+float MapHolding::magCourse() const
 {
   return atools::geo::normalizeCourse(courseTrue - magvar);
+}
+
+float MapHolding::distance(bool *estimated) const
+{
+  bool est = true;
+  float dist = 5.f;
+
+  if(length > 0.f)
+  {
+    est = false;
+    dist = length;
+  }
+  else if(time > 0.f)
+  {
+    if(speedLimit > 0.f)
+    {
+      est = true;
+      dist = speedLimit * time / 60.f;
+    }
+    else if(speedKts > 0.f)
+    {
+      est = false;
+      dist = speedKts * time / 60.f;
+    }
+    else
+    {
+      est = true;
+      dist = 200.f * time / 60.f;
+    }
+  }
+
+  if(estimated != nullptr)
+    *estimated = est;
+
+  return dist;
 }
 
 float TrafficPattern::magCourse() const

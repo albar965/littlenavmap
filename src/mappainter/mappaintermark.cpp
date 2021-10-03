@@ -90,7 +90,7 @@ void MapPainterMark::render()
     paintTrafficPatterns();
 
   if(types & map::MARK_HOLDS)
-    paintHolds();
+    paintHoldings(mapPaintWidget->getHolds(), false /* enroute */, context->drawFast);
 
   if(types & map::MARK_RANGE_RINGS)
     paintRangeRings();
@@ -1212,75 +1212,6 @@ void MapPainterMark::paintDistanceMarkers()
       if(textPlacement.findTextPos(m.from, m.to, distanceMeter, metrics.width(texts.at(0)),
                                    metrics.height() * 2, xt, yt, nullptr))
         symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, textatt::CENTER);
-    }
-  }
-}
-
-void MapPainterMark::paintHolds()
-{
-  atools::util::PainterContextSaver saver(context->painter);
-  GeoPainter *painter = context->painter;
-  const QList<Hold>& holds = mapPaintWidget->getHolds();
-  float lineWidth = context->szF(context->thicknessRangeDistance, 3);
-  context->szFont(context->textSizeRangeDistance);
-  bool detail = context->mapLayer->isApproachText();
-
-  for(const Hold& hold : holds)
-  {
-    bool visible, hidden;
-    QPointF pt = wToS(hold.getPosition(), DEFAULT_WTOS_SIZE, &visible, &hidden);
-    if(hidden)
-      continue;
-
-    if(context->mapLayer->isApproach() && scale->getPixelForNm(hold.distance()) > 10.f)
-    {
-      // Calculcate approximate rectangle
-      float dist = hold.distance();
-      Rect rect(hold.position, atools::geo::nmToMeter(dist) * 2.f);
-
-      if(context->viewportRect.overlaps(rect))
-      {
-        painter->setPen(QPen(hold.color, context->szF(context->thicknessRangeDistance, 3), Qt::SolidLine));
-
-        QString inboundText, outboundText;
-        if(detail)
-        {
-          // Text for inbound leg =======================================
-          inboundText = tr("%1/%2min").
-                        arg(formatter::courseTextFromTrue(hold.courseTrue, hold.magvar,
-                                                          false /* magBold */, false /* trueSmall */,
-                                                          true /* narrow */)).
-                        arg(QString::number(hold.minutes, 'g', 2));
-
-          if(!hold.navIdent.isEmpty())
-            inboundText += tr("/%1").arg(hold.navIdent);
-
-          // Text for outbound leg =======================================
-          outboundText = tr("%1/%2/%3").
-                         arg(formatter::courseTextFromTrue(opposedCourseDeg(hold.courseTrue), hold.magvar,
-                                                           false /* magBold */, false /* trueSmall */,
-                                                           true /* narrow */)).
-                         arg(Unit::speedKts(hold.speedKts, true, true)).
-                         arg(Unit::altFeet(hold.position.getAltitude(), true, true));
-        }
-
-        paintHoldWithText(context->painter, static_cast<float>(pt.x()), static_cast<float>(pt.y()),
-                          hold.courseTrue, dist, 0.f, hold.turnLeft,
-                          inboundText, outboundText, hold.color, QColor(Qt::white),
-                          detail ? QVector<float>({0.80f}) : QVector<float>() /* inbound arrows */,
-                          detail ? QVector<float>({0.80f}) : QVector<float>() /* outbound arrows */);
-      }
-    }
-
-    if(visible)
-    {
-      // Draw triangle at hold fix - independent of zoom factor
-      float radius = lineWidth * 2.5f;
-      painter->setPen(QPen(hold.color, lineWidth));
-      painter->setBrush(Qt::white);
-      painter->drawConvexPolygon(QPolygonF({QPointF(pt.x(), pt.y() - radius),
-                                            QPointF(pt.x() + radius / 1.4, pt.y() + radius / 1.4),
-                                            QPointF(pt.x() - radius / 1.4, pt.y() + radius / 1.4)}));
     }
   }
 }

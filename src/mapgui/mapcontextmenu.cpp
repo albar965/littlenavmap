@@ -74,6 +74,7 @@ const static QVector<map::MapTypes> DEFAULT_TYPE_SORT(
   map::NDB,
   map::WAYPOINT,
   map::USERPOINTROUTE,
+  map::HOLDING,
   map::AIRWAY,
   map::TRACK,
   map::AIRCRAFT_AI_SHIP,
@@ -247,6 +248,9 @@ QString MapContextMenu::mapBaseText(const map::MapBase *base)
       case map::ILS:
         return map::ilsTextShort(*base->asPtr<map::MapIls>());
 
+      case map::HOLDING:
+        return map::holdingTextShort(*base->asPtr<map::MapHolding>());
+
       case map::WAYPOINT:
         return map::waypointText(*base->asPtr<map::MapWaypoint>());
 
@@ -309,6 +313,9 @@ QIcon MapContextMenu::mapBaseIcon(const map::MapBase *base)
 
       case map::ILS:
         return QIcon(":/littlenavmap/resources/icons/ils.svg");
+
+      case map::HOLDING:
+        return QIcon(":/littlenavmap/resources/icons/hold.svg");
 
       case map::WAYPOINT:
         return painter.createWaypointIcon(size);
@@ -496,9 +503,9 @@ void MapContextMenu::insertInformationMenu(QMenu& menu)
   insertMenuOrAction(menu, mc::INFORMATION,
                      MapResultIndex().
                      addRef(*result,
-                            map::AIRPORT | map::VOR | map::NDB | map::ILS | map::WAYPOINT | map::AIRWAY | map::TRACK |
-                            map::USERPOINT | map::AIRSPACE | map::AIRCRAFT | map::AIRCRAFT_AI | map::AIRCRAFT_ONLINE |
-                            map::LOGBOOK).sort(DEFAULT_TYPE_SORT, alphaSort),
+                            map::AIRPORT | map::VOR | map::NDB | map::ILS | map::HOLDING | map::WAYPOINT | map::AIRWAY |
+                            map::TRACK | map::USERPOINT | map::AIRSPACE | map::AIRCRAFT | map::AIRCRAFT_AI |
+                            map::AIRCRAFT_ONLINE | map::LOGBOOK).sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("&Show Information for %1"),
                      tr("Show information for airport or navaid"),
                      tr("Click"),
@@ -735,7 +742,7 @@ void MapContextMenu::insertHoldMenu(QMenu& menu)
         text.append(tr(" (hidden on map)"));
     };
 
-  insertMenuOrAction(menu, mc::HOLD, MapResultIndex().
+  insertMenuOrAction(menu, mc::HOLDING, MapResultIndex().
                      addRef(*result,
                             map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT | map::USERPOINTROUTE).
                      sort(DEFAULT_TYPE_SORT, alphaSort),

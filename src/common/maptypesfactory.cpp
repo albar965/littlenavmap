@@ -586,6 +586,49 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils)
   ils.bounding.extend(ils.pos2);
 }
 
+void MapTypesFactory::fillHolding(const atools::sql::SqlRecord& record, map::MapHolding& holding)
+{
+  holding.id = record.valueInt("holding_id");
+  holding.airportIdent = record.valueStr("airport_ident");
+  // airport_ident varchar(5),           -- ICAO ident
+  holding.navIdent = record.valueStr("nav_ident");
+  // region varchar(2),                  -- ICAO two letter region identifier
+
+  QString navType = record.valueStr("nav_type");
+  if(navType == "W")
+    holding.navType = map::WAYPOINT;
+  else if(navType == "N")
+    holding.navType = map::NDB;
+  else if(navType == "V")
+    holding.navType = map::VOR; // VOR/TACAN/DME
+  else if(navType == "A")
+    holding.navType = map::AIRPORT;
+  else if(navType == "R")
+    holding.navType = map::RUNWAYEND;
+  holding.name = record.valueStr("name");
+
+  holding.vorType = record.valueStr("vor_type");
+  holding.vorTacan = holding.vorType == "TC";
+  holding.vorVortac = holding.vorType.startsWith("VT");
+  holding.vorDmeOnly = record.valueInt("vor_dme_only");
+  holding.vorHasDme = record.valueInt("vor_has_dme");
+
+  holding.magvar = record.valueFloat("mag_var"); // Magnetic variance in degree < 0 for West and > 0 for East
+  holding.courseTrue = record.valueFloat("course");
+  holding.turnLeft = record.valueStr("name") == "L";
+  holding.length = record.valueFloat("leg_length");
+  holding.time = record.valueFloat("leg_time");
+  holding.minAltititude = record.valueFloat("minimum_altitude");
+  holding.maxAltititude = record.valueFloat("maximum_altitude");
+  holding.speedLimit = record.valueFloat("speed_limit");
+  holding.position = Pos(record.valueFloat("lonx"),
+                         record.valueFloat("laty"));
+
+  holding.speedKts = 0.f;
+  holding.user = false;
+
+}
+
 void MapTypesFactory::fillParking(const SqlRecord& record, map::MapParking& parking)
 {
   parking.id = record.valueInt("parking_id");
