@@ -1982,7 +1982,7 @@ Note that some fonts, especially large fonts, can result in display errors on th
                <item row="8" column="1">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplaySymbolSizeNavaid">
                  <property name="toolTip">
-                  <string>For VOR, NDB, waypoints, top of climb and top of descent (also for flight plan).
+                  <string>For VOR, NDB, waypoints, holdings, top of climb and top of descent. Not for flight plan symbols.
 Afftects map and elevation profile.</string>
                  </property>
                  <property name="suffix">
@@ -2008,7 +2008,7 @@ Afftects map and elevation profile.</string>
                <item row="11" column="1">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessAirway">
                  <property name="toolTip">
-                  <string/>
+                  <string>Airway line width</string>
                  </property>
                  <property name="suffix">
                   <string> %</string>
@@ -2125,7 +2125,9 @@ Afftects map and elevation profile.</string>
                <item row="9" column="2">
                 <widget class="QCheckBox" name="checkBoxOptionsMapNavaidText">
                  <property name="toolTip">
-                  <string>Draw white background for navaid labels</string>
+                  <string>Draw white background for navaid labels.
+For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.
+Afftects map.</string>
                  </property>
                  <property name="text">
                   <string>Text &amp;Background</string>
@@ -2176,8 +2178,7 @@ Afftects map and elevation profile.</string>
                <item row="11" column="2">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeAirway">
                  <property name="toolTip">
-                  <string>For VOR, NDB, ILS,waypoints, airways, top of climb and top of descent (also for flight plan).
-Afftects map and elevation profile.</string>
+                  <string>Text size for labels along airway lines</string>
                  </property>
                  <property name="suffix">
                   <string> %</string>
@@ -2219,7 +2220,7 @@ Afftects map and elevation profile.</string>
                <item row="21" column="1">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessFlightplan">
                  <property name="toolTip">
-                  <string/>
+                  <string>Flight plan line width</string>
                  </property>
                  <property name="suffix">
                   <string> %</string>
@@ -2367,7 +2368,7 @@ Enable &quot;Dim passed Legs&quot; to see his color.</string>
                <item row="21" column="2">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeFlightplan">
                  <property name="toolTip">
-                  <string/>
+                  <string>Label size for flight plan navaids as well as labels along flight plan lines</string>
                  </property>
                  <property name="suffix">
                   <string> %</string>
@@ -2448,7 +2449,7 @@ Change color with the &quot;Passed Leg Color&quot;.</string>
                <item row="8" column="2">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeNavaid">
                  <property name="toolTip">
-                  <string>For VOR, NDB, ILS,waypoints, airways, top of climb and top of descent (also for flight plan).
+                  <string>For VOR, NDB, ILS,waypoints, holdings, airways, top of climb and top of descent. Not for flight plan labels.
 Afftects map and elevation profile.</string>
                  </property>
                  <property name="suffix">
@@ -2917,7 +2918,7 @@ Afftects map and elevation profile.</string>
                  <property name="text">
                   <string>&amp;Range rings,
 traffic patterns,
-holdings,
+user holdings,
 distance measurements,
 airway highlights and
 logbook entries:</string>

@@ -860,22 +860,25 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
       }
     }
 
-    if(!fast && largeSize > 0 && !vor.dmeOnly)
+    if(largeSize > 0 && !vor.dmeOnly)
     {
       // Draw compass circle and ticks
       painter->setBrush(Qt::NoBrush);
       painter->setPen(QPen(mapcolors::vorSymbolColor, roseLineWidth, Qt::SolidLine, Qt::SquareCap));
       painter->drawEllipse(QPointF(0., 0.), radiusD * 5., radiusD * 5.);
 
-      for(int i = 0; i < 360; i += 10)
+      if(!fast)
       {
-        if(i == 0)
-          painter->drawLine(QLineF(0., 0., 0., -radiusD * 5.));
-        else if((i % 90) == 0)
-          painter->drawLine(QLineF(0., -radiusD * 4., 0., -radiusD * 5.));
-        else
-          painter->drawLine(QLineF(0., -radiusD * 4.5, 0., -radiusD * 5.));
-        painter->rotate(10.);
+        for(int i = 0; i < 360; i += 10)
+        {
+          if(i == 0)
+            painter->drawLine(QLineF(0., 0., 0., -radiusD * 5.));
+          else if((i % 90) == 0)
+            painter->drawLine(QLineF(0., -radiusD * 4., 0., -radiusD * 5.));
+          else
+            painter->drawLine(QLineF(0., -radiusD * 4.5, 0., -radiusD * 5.));
+          painter->rotate(10.);
+        }
       }
     }
     painter->resetTransform();
@@ -1076,7 +1079,7 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
 
     int transparency = diagram ? 180 : 255;
     // No background for empty airports except if they are part of the route or log
-    if(airport.emptyDraw() && !(flags& textflags::ROUTE_TEXT) && !(flags & textflags::LOG_TEXT))
+    if(airport.emptyDraw() && !(flags & textflags::ROUTE_TEXT) && !(flags & textflags::LOG_TEXT))
       transparency = 0;
 
     if(!flags.testFlag(textflags::ABS_POS))
