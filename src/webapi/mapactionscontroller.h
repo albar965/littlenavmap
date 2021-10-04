@@ -41,6 +41,10 @@ public:
      * @brief get map image
      */
     Q_INVOKABLE WebApiResponse imageAction(WebApiRequest request);
+    /**
+     * @brief get map features
+     */
+    Q_INVOKABLE WebApiResponse featuresAction(WebApiRequest request);
 
     explicit MapActionsController(QWidget *parent, bool verboseParam);
     virtual ~MapActionsController() override;

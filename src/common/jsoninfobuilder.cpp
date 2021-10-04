@@ -331,3 +331,44 @@ QByteArray JsonInfoBuilder::uiinfo(UiInfoData uiInfoData) const
     return json.dump().data();
 }
 
+QByteArray JsonInfoBuilder::features(MapFeaturesData mapFeaturesData) const
+{
+
+    MapFeaturesData data = mapFeaturesData;
+
+    JSON json;
+
+       json = {
+           { "airports", JSON::object() },
+       };
+
+       json["airports"].push_back({ "count", data.airports.count() });
+       json["airports"].push_back({ "result", JSON::array() });
+
+
+
+       for(int i = 0; i < data.airports.count(); ++i){
+
+           map::MapAirport airport =  data.airports[i];
+
+           json["airports"]["result"][i]["ident"] = qUtf8Printable(airport.ident);
+           json["airports"]["result"][i]["name"] = qUtf8Printable(airport.name);
+           json["airports"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(airport.position));
+           json["airports"]["result"][i]["elevation"] =  airport.getPosition().getAltitude();
+
+//           JSON airportJson;
+
+//           airportJson = {
+//               { "ident", qUtf8Printable(airport.ident) },
+//               { "name", qUtf8Printable(airport.name)},
+//               { "position", coordinatesToJSON(getCoordinates(airport.position))},
+//               { "elevation", airport.getPosition().getAltitude() },
+//           };
+
+//           json["airports"]["result"].push_back(airportJson);
+       }
+
+    return json.dump().data();
+
+}
+

@@ -343,6 +343,10 @@ public:
     return screenIndex;
   }
 
+  MapPaintLayer *getMapPaintLayer(){
+      return paintLayer;
+  }
+
   /* Saved bounding box from last zoom or scroll operation. Needed to detect view changes. */
   const Marble::GeoDataLatLonBox& getCurrentViewBoundingBox() const;
 

@@ -17,16 +17,22 @@
 
 #include "mapactionscontroller.h"
 #include "abstractlnmactionscontroller.h"
+#include "common/infobuildertypes.h"
+#include "common/abstractinfobuilder.h"
 
 #include <navapp.h>
 
+#include "query/mapquery.h"
 #include "mapgui/mappaintwidget.h"
+#include "mappainter/mappaintlayer.h"
 #include "mapgui/mapwidget.h"
 #include "navapp.h"
 
 #include <QDebug>
 #include <QBuffer>
 #include <QPixmap>
+
+using InfoBuilderTypes::MapFeaturesData;
 
 MapActionsController::MapActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder) :
     AbstractLnmActionsController(parent, verboseParam, infoBuilder), parentWidget((QWidget *)parent) // WARNING: Uncertain cast (QWidget *) QObject
@@ -82,6 +88,32 @@ WebApiResponse MapActionsController::imageAction(WebApiRequest request){
     return response;
 
 }
+
+WebApiResponse MapActionsController::featuresAction(WebApiRequest request){
+
+    WebApiResponse response = getResponse();
+
+    atools::geo::Rect rect(
+        request.parameters.value("leftlon").toFloat(),
+        request.parameters.value("toplat").toFloat(),
+        request.parameters.value("rightlon").toFloat(),
+        request.parameters.value("bottomlat").toFloat()
+    );
+
+    bool overflow = false;
+
+    const QList<map::MapAirport> airports = *getMapQuery()->getAirportsByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,map::NONE,overflow);
+
+    MapFeaturesData data = {
+        airports
+    };
+
+    response.body = infoBuilder->features(data);
+
+    return response;
+
+}
+
 MapActionsController::~MapActionsController()
 {
   qDebug() << Q_FUNC_INFO;
@@ -246,7 +278,7 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
       // Do not center world rectangle when resizing
       mapPaintWidget->setKeepWorldRect(false);
 
-      mapPaintWidget->showRectStreamlined(rect);
+      mapPaintWidget->showRectStreamlined(rect, false);
 
       // Disable dynamic/live features
       mapPaintWidget->setShowMapFeatures(map::AIRCRAFT_ALL,false);

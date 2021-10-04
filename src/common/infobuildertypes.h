@@ -84,6 +84,13 @@ namespace InfoBuilderTypes {
         const qreal distanceWeb;
     };
 
+    /**
+     * @brief Data container for map features data
+     */
+    struct MapFeaturesData{
+        const QList<map::MapAirport> airports;
+    };
+
 }
 
 #endif // INFOBUILDERTYPES_H

@@ -113,7 +113,49 @@ paths:
              image/png:
               schema:
                 type: string
-                format: binary               
+                format: binary
+  /map/features:
+    get:
+      tags:
+      - Map
+      summary: Get features by lat/lon rectangle
+      operationId: mapFeaturesAction
+      parameters:
+      - name: toplat
+        required: true
+        in: query
+        description: Top latitude
+        schema:
+          type: number
+          example: 10
+      - name: bottomlat
+        required: true
+        in: query
+        description: Bottom latitude
+        schema:
+          type: number
+          example: 15
+      - name: leftlon
+        required: true
+        in: query
+        description: Left longitude
+        schema:
+          type: number
+          example: 40
+      - name: rightlon
+        required: true
+        in: query
+        description: Right longitude
+        schema:
+          type: number
+          example: 45
+      responses:
+        200:
+          description: map feature list
+          content: 
+            application/json:
+              schema: 
+                $ref: '#/components/schemas/MapFeaturesResponse'
   /sim/info:
     get:
       tags:
@@ -437,3 +479,38 @@ components:
           description: the distance value of the map inside LNM Web UI in km
           type: number
           example: 6.814605113425086
+    MapFeaturesResponse:
+      type: object
+      description: List of map features
+      properties:
+        airports:
+          description: the zoom value of the map inside LNM UI
+          type: object
+          properties:
+            count:
+              type: number
+              example: 361
+            result:
+              type: array
+              items: 
+                type: object
+                $ref: '#/components/schemas/MapAirportFeature'
+    MapAirportFeature:
+      type: object
+      description: Single airport list entry
+      properties:
+        elevation:
+          description: the airports elevation in ft
+          type: number
+          example: 1352
+        ident:
+          description: The airports ident (ICAO)
+          type: string
+          example: "LOIH"
+        name:
+          description: The airpotrts name
+          type: string
+          example: "Dornbirn"
+        position:
+          description: The airports geographical position
+          $ref: '#/components/schemas/Coordinates'

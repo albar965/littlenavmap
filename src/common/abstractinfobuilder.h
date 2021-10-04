@@ -25,6 +25,7 @@ namespace InfoBuilderTypes {
     class AirportInfoData;
     class SimConnectInfoData;
     class UiInfoData;
+    class MapFeaturesData;
 }
 namespace atools {
     namespace sql {
@@ -39,6 +40,7 @@ using atools::geo::Pos;
 using InfoBuilderTypes::AirportInfoData;
 using InfoBuilderTypes::SimConnectInfoData;
 using InfoBuilderTypes::UiInfoData;
+using InfoBuilderTypes::MapFeaturesData;
 
 /**
  * Generic interface for LNM-specific views.
@@ -67,6 +69,13 @@ public:
    * @param airportInfoData
    */
   virtual QByteArray airport(AirportInfoData airportInfoData) const;
+
+  /**
+   * Creates a description for the provided airport list.
+   *
+   * @param airportInfoData
+   */
+  virtual QByteArray features(MapFeaturesData mapFeaturesData) const;
 
   /**
    * Creates a description for the provided simconnect data.
