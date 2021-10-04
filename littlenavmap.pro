@@ -850,6 +850,7 @@ win32 {
   deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5Multimedia$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5OpenGL$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5MultimediaWidgets$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5QmlModels$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5Xml$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += $$p($$[QT_INSTALL_BINS]/windeployqt) $$WINDEPLOY_FLAGS $$p($$DEPLOY_BASE/$$TARGET_NAME)
 }
