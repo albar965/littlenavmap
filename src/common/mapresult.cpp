@@ -49,6 +49,12 @@ MapResult& MapResult::clear(const MapTypes& types)
     ndbIds.clear();
   }
 
+  if(types.testFlag(map::HOLDING))
+  {
+    holdings.clear();
+    holdingIds.clear();
+  }
+
   if(types.testFlag(map::AIRWAY))
     airways.clear();
 
@@ -121,6 +127,12 @@ MapResult& MapResult::clearAllButFirst(const MapTypes& types)
   {
     clearAllButFirst(ndbs);
     ndbIds.clear();
+  }
+
+  if(types.testFlag(map::HOLDING))
+  {
+    clearAllButFirst(holdings);
+    holdingIds.clear();
   }
 
   if(types.testFlag(map::AIRWAY))
@@ -312,6 +324,8 @@ const atools::geo::Pos& MapResult::getPosition(const std::initializer_list<MapTy
         return runwayEnds.first().getPosition();
       else if(type == map::ILS)
         return ils.first().getPosition();
+      else if(type == map::HOLDING)
+        return holdings.first().getPosition();
       else if(type == map::AIRSPACE)
         return airspaces.first().getPosition();
       else if(type == map::USERPOINTROUTE)
@@ -351,6 +365,8 @@ QString MapResult::getIdent(const std::initializer_list<MapTypes>& types) const
         return runwayEnds.first().name;
       else if(type == map::ILS)
         return ils.first().ident;
+      else if(type == map::HOLDING)
+        return holdings.first().navIdent;
       else if(type == map::AIRSPACE)
         return airspaces.first().name;
       else if(type == map::USERPOINTROUTE)
@@ -422,6 +438,12 @@ bool MapResult::getIdAndType(int& id, MapTypes& type,
         type = t;
         break;
       }
+      else if(t == map::HOLDING)
+      {
+        id = holdings.first().getId();
+        type = t;
+        break;
+      }
       else if(t == map::AIRSPACE)
       {
         id = airspaces.first().getId();
@@ -487,6 +509,8 @@ MapResult& MapResult::fromMapBase(const MapBase *base)
       runwayEnds.append(base->asObj<map::MapRunwayEnd>());
     else if(base->getType().testFlag(map::ILS))
       ils.append(base->asObj<map::MapIls>());
+    else if(base->getType().testFlag(map::HOLDING))
+      holdings.append(base->asObj<map::MapHolding>());
     else if(base->getType().testFlag(map::AIRSPACE))
       airspaces.append(base->asObj<map::MapAirspace>());
     else if(base->getType().testFlag(map::USERPOINTROUTE))
@@ -515,6 +539,7 @@ int MapResult::size(const MapTypes& types) const
   totalSize += types.testFlag(map::AIRWAY) ? airways.size() : 0;
   totalSize += types.testFlag(map::RUNWAYEND) ? runwayEnds.size() : 0;
   totalSize += types.testFlag(map::ILS) ? ils.size() : 0;
+  totalSize += types.testFlag(map::HOLDING) ? holdings.size() : 0;
   totalSize += types.testFlag(map::AIRSPACE) ? airspaces.size() : 0;
   totalSize += types.testFlag(map::USERPOINTROUTE) ? userpointsRoute.size() : 0;
   totalSize += types.testFlag(map::USERPOINT) ? userpoints.size() : 0;
@@ -685,6 +710,11 @@ MapResultIndex& MapResultIndex::add(const MapResult& resultParam, const MapTypes
     result.ils.append(resultParam.ils);
     addAll(result.ils);
   }
+  if(types.testFlag(HOLDING))
+  {
+    result.holdings.append(resultParam.holdings);
+    addAll(result.holdings);
+  }
   if(types.testFlag(AIRWAY))
   {
     result.airways.append(resultParam.airways);
@@ -751,6 +781,8 @@ MapResultIndex& MapResultIndex::addRef(const MapResult& resultParam, const MapTy
     addAll(resultParam.markers);
   if(types.testFlag(ILS))
     addAll(resultParam.ils);
+  if(types.testFlag(HOLDING))
+    addAll(resultParam.holdings);
   if(types.testFlag(AIRWAY))
     addAll(resultParam.airways);
   if(types.testFlag(AIRSPACE))

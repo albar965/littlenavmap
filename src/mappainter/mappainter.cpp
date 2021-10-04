@@ -26,6 +26,9 @@
 #include "common/maptypes.h"
 #include "mapgui/maplayer.h"
 #include "common/aircrafttrack.h"
+#include "common/formatter.h"
+#include "util/paintercontextsaver.h"
+#include "common/unit.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
@@ -721,4 +724,113 @@ void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size)
   }
   else
     pixmap = *pixmapPtr;
+}
+
+void MapPainter::paintHoldings(const QList<map::MapHolding>& holdings, bool enroute, bool drawFast)
+{
+  if(holdings.isEmpty())
+    return;
+
+  atools::util::PainterContextSaver saver(context->painter);
+  GeoPainter *painter = context->painter;
+
+  bool detail = context->mapLayer->isHoldingInfo();
+  bool detail2 = context->mapLayer->isHoldingInfo2();
+
+  QColor backColor = !enroute || context->flags2 &
+                     opts2::MAP_NAVAID_TEXT_BACKGROUND ? QColor(Qt::white) : QColor(Qt::transparent);
+
+  if(enroute)
+    context->szFont(context->textSizeNavaid);
+  else
+    context->szFont(context->textSizeRangeDistance);
+
+  for(const map::MapHolding& holding : holdings)
+  {
+    bool visible, hidden;
+    QPointF pt = wToS(holding.getPosition(), DEFAULT_WTOS_SIZE, &visible, &hidden);
+    if(hidden)
+      continue;
+
+    QColor color = enroute ? mapcolors::holdingColor : holding.color;
+
+    float dist = holding.distance();
+    float distPixel = scale->getPixelForNm(dist);
+    float lineWidth = enroute ? (detail2 ? 2.5f : 1.5f) : context->szF(context->thicknessRangeDistance, 3);
+
+    if(context->mapLayer->isApproach() && distPixel > 10.f)
+    {
+      // Calculcate approximate rectangle
+      Rect rect(holding.position, atools::geo::nmToMeter(dist) * 2.f);
+
+      if(context->viewportRect.overlaps(rect))
+      {
+        painter->setPen(QPen(color, lineWidth, Qt::SolidLine));
+
+        QStringList inboundText, outboundText;
+        if(detail && !drawFast)
+        {
+          if(detail2)
+          {
+            // Text for inbound leg =======================================
+            inboundText.append(formatter::courseTextFromTrue(holding.courseTrue, holding.magvar,
+                                                             false /* magBold */, false /* trueSmall */,
+                                                             true /* narrow */));
+
+            if(holding.time > 0.f)
+              inboundText.append(tr("%1min").arg(QString::number(holding.time, 'g', 2)));
+            if(holding.length > 0.f)
+              inboundText.append(Unit::distNm(holding.length, true /* addUnit */, 1, true /* narrow */));
+          }
+
+          if(!holding.navIdent.isEmpty())
+            inboundText += holding.navIdent;
+
+          if(detail2)
+          {
+            // Text for outbound leg =======================================
+            outboundText.append(formatter::courseTextFromTrue(opposedCourseDeg(holding.courseTrue), holding.magvar,
+                                                              false /* magBold */, false /* trueSmall */,
+                                                              true /* narrow */));
+
+            if(!enroute)
+            {
+              if(holding.speedKts > 0.f)
+                outboundText.append(Unit::speedKts(holding.speedKts, true /* addUnit */, true /* narrow */));
+              outboundText.append(Unit::altFeet(holding.position.getAltitude(), true /* addUnit */, true /* narrow */));
+            }
+            else
+            {
+              if(holding.speedLimit > 0.f)
+                outboundText.append(Unit::speedKts(holding.speedLimit, true /* addUnit */, true /* narrow */));
+
+              if(holding.minAltititude > 0.f)
+                outboundText.append(tr("A%1").arg(Unit::altFeet(holding.minAltititude, true /* addUnit */,
+                                                                true /* narrow */)));
+              if(holding.maxAltititude > 0.f)
+                outboundText.append(tr("B%2").arg(Unit::altFeet(holding.maxAltititude, true /* addUnit */,
+                                                                true /* narrow */)));
+            }
+          }
+        }
+
+        paintHoldWithText(context->painter, static_cast<float>(pt.x()), static_cast<float>(pt.y()),
+                          holding.courseTrue, dist, 0.f, holding.turnLeft,
+                          inboundText.join(tr("/")), outboundText.join(tr("/")), color, backColor,
+                          detail && !drawFast ? QVector<float>({0.80f}) : QVector<float>() /* inbound arrows */,
+                          detail && !drawFast ? QVector<float>({0.80f}) : QVector<float>() /* outbound arrows */);
+      } // if(context->viewportRect.overlaps(rect))
+    } // if(context->mapLayer->isApproach() && scale->getPixelForNm(hold.distance()) > 10.f)
+
+    if(visible /* && (detail || !enroute)*/)
+    {
+      // Draw triangle at hold fix - independent of zoom factor
+      float radius = lineWidth * 2.5f;
+      painter->setPen(QPen(color, lineWidth));
+      painter->setBrush(backColor);
+      painter->drawConvexPolygon(QPolygonF({QPointF(pt.x(), pt.y() - radius),
+                                            QPointF(pt.x() + radius / 1.4, pt.y() + radius / 1.4),
+                                            QPointF(pt.x() - radius / 1.4, pt.y() + radius / 1.4)}));
+    }
+  } // for(const map::Hold& hold : holds)
 }

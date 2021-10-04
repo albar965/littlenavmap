@@ -69,6 +69,8 @@ static QColor airwayTrackColorEast("#a01010"); // 1.5
 static QColor airwayTrackColorWest("#1010a0"); // 1.5
 QColor airwayTextColor(80, 80, 80);
 
+QColor holdingColor(50, 50, 50);
+
 QColor rangeRingColor(Qt::red);
 QColor rangeRingTextColor(Qt::black);
 QColor distanceColor(Qt::black);
@@ -638,6 +640,7 @@ void syncColors()
   syncPen(colorSettings, "GlsCenterPen", glsCenterPen);
 
   syncColor(colorSettings, "WaypointColor", waypointSymbolColor);
+  syncColor(colorSettings, "HoldingColor", holdingColor);
   colorSettings.endGroup();
 
   colorSettings.beginGroup("Airway");

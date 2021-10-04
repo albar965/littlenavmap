@@ -315,6 +315,8 @@ void MapWidget::handleInfoClick(QPoint point)
     mapSearchResultInfoClick.vorIds.clear();
     mapSearchResultInfoClick.ndbs.clear();
     mapSearchResultInfoClick.ndbIds.clear();
+    mapSearchResultInfoClick.holdings.clear();
+    mapSearchResultInfoClick.holdingIds.clear();
     mapSearchResultInfoClick.waypoints.clear();
     mapSearchResultInfoClick.waypointIds.clear();
     mapSearchResultInfoClick.ils.clear();
@@ -435,10 +437,8 @@ bool MapWidget::event(QEvent *event)
 
         // Load tooltip data into mapSearchResultTooltip
         mapSearchResultTooltip = map::MapResult();
-        getScreenIndexConst()->getAllNearest(helpEvent->pos().x(),
-                                             helpEvent->pos().y(), screenSearchDistanceTooltip,
-                                             mapSearchResultTooltip,
-                                             queryTypes);
+        getScreenIndexConst()->getAllNearest(helpEvent->pos().x(), helpEvent->pos().y(), screenSearchDistanceTooltip,
+                                             mapSearchResultTooltip, queryTypes);
 
         NavApp::getOnlinedataController()->filterOnlineShadowAircraft(mapSearchResultTooltip.onlineAircraft,
                                                                       mapSearchResultTooltip.aiAircraft);
@@ -1023,8 +1023,8 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
       showPos(mapSearchResult.trafficPatterns.first().position, 0.f, true);
     else if(!mapSearchResult.rangeMarkers.isEmpty())
       showPos(mapSearchResult.rangeMarkers.first().position, 0.f, true);
-    else if(!mapSearchResult.holds.isEmpty())
-      showPos(mapSearchResult.holds.first().position, 0.f, true);
+    else if(!mapSearchResult.holdings.isEmpty())
+      showPos(mapSearchResult.holdings.first().position, 0.f, true);
     mainWindow->setStatusMessage(QString(tr("Showing on map.")));
   }
 }
@@ -1781,7 +1781,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           addTrafficPattern(airport);
           break;
 
-        case mc::HOLD:
+        case mc::HOLDING:
           addHold(result, pos);
           break;
 
@@ -2196,6 +2196,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     // Update tooltip if it has bearing/distance fields
     if((mapSearchResultTooltip.hasAirports() || mapSearchResultTooltip.hasVor() || mapSearchResultTooltip.hasNdb() ||
         mapSearchResultTooltip.hasWaypoints() || mapSearchResultTooltip.hasIls() ||
+        mapSearchResultTooltip.hasHoldings() ||
         mapSearchResultTooltip.hasUserpoints()) && NavApp::isConnectedAndAircraft())
       updateTooltip();
   }
@@ -2854,7 +2855,7 @@ void MapWidget::resetSettingActionsToDefault()
   atools::gui::SignalBlocker blocker({ui->actionMapShowAirports, ui->actionMapShowSoftAirports,
                                       ui->actionMapShowEmptyAirports, ui->actionMapShowAddonAirports,
                                       ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
-                                      ui->actionMapShowIls, ui->actionMapShowGls,
+                                      ui->actionMapShowIls, ui->actionMapShowGls, ui->actionMapShowHolding,
                                       ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
                                       ui->actionMapShowTracks, ui->actionShowAirspaces, ui->actionMapShowRoute,
                                       ui->actionMapShowTocTod, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
@@ -2881,6 +2882,7 @@ void MapWidget::resetSettingActionsToDefault()
   ui->actionMapShowWp->setChecked(true);
   ui->actionMapShowIls->setChecked(true);
   ui->actionMapShowGls->setChecked(true);
+  ui->actionMapShowHolding->setChecked(false);
   ui->actionMapShowVictorAirways->setChecked(false);
   ui->actionMapShowJetAirways->setChecked(false);
   ui->actionMapShowTracks->setChecked(false);
@@ -3075,6 +3077,7 @@ void MapWidget::updateMapObjectsShown()
   setShowMapFeatures(map::VOR, ui->actionMapShowVor->isChecked());
   setShowMapFeatures(map::NDB, ui->actionMapShowNdb->isChecked());
   setShowMapFeatures(map::WAYPOINT, ui->actionMapShowWp->isChecked());
+  setShowMapFeatures(map::HOLDING, ui->actionMapShowHolding->isChecked());
 
   // ILS and marker are shown together
   setShowMapFeatures(map::ILS, ui->actionMapShowIls->isChecked());
@@ -3222,10 +3225,10 @@ void MapWidget::addHold(const map::MapResult& result, const atools::geo::Pos& po
   HoldDialog dialog(mainWindow, result, position);
   if(dialog.exec() == QDialog::Accepted)
   {
-    map::Hold hold;
-    dialog.fillHold(hold);
+    map::MapHolding holding;
+    dialog.fillHold(holding);
 
-    getHolds().append(hold);
+    getHolds().append(holding);
 
     mainWindow->updateMarkActionStates();
 

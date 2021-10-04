@@ -80,7 +80,7 @@ enum MenuActionType
   MEASURE, /* GC measmurement line */
   NAVAIDRANGE, /* Show range ring for radio navaid */
   PATTERN, /* Airport traffic pattern */
-  HOLD, /* Holding */
+  HOLDING, /* Holding */
   DEPARTURE, /* Set departure in flight plan */
   DESTINATION, /* Set destination in flight plan */
   ALTERNATE, /* Add alternate airport to flight plan */

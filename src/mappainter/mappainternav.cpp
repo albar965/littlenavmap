@@ -126,6 +126,17 @@ void MapPainterNav::render()
     if(markers != nullptr)
       paintMarkers(markers, context->drawFast);
   }
+
+  // Holding -------------------------------------------------
+  if(context->mapLayer->isHolding() && context->objectTypes.testFlag(map::HOLDING) && !context->isObjectOverflow())
+  {
+    bool overflow = false;
+    const QList<MapHolding> *holds = mapQuery->getHoldings(curBox, context->mapLayer, context->lazyUpdate, overflow);
+    context->setQueryOverflow(overflow);
+
+    if(holds != nullptr)
+      paintHoldings(*holds, true /* enroute */, context->drawFast);
+  }
 }
 
 /* Draw airways and texts */
@@ -317,8 +328,8 @@ void MapPainterNav::paintAirways(const QList<MapAirway> *airways, bool fast)
 
         painter->translate(xt, yt);
         painter->rotate(textBearing > 180.f ? textBearing + 90.f : textBearing - 90.f);
-        painter->drawText(-painter->fontMetrics().width(text) / 2,
-                          painter->fontMetrics().ascent() + linewidthAirway, text);
+        painter->drawText(QPointF(-painter->fontMetrics().width(text) / 2,
+                                  painter->fontMetrics().ascent() + linewidthAirway), text);
         painter->resetTransform();
       }
       i++;

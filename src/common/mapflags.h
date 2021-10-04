@@ -61,7 +61,7 @@ enum MapType
   AIRPORT_SOFT = 1 << 2,
   AIRPORT_EMPTY = 1 << 3,
   AIRPORT_ADDON = 1 << 4,
-  VOR = 1 << 5,
+  VOR = 1 << 5, /* Also: DME, VORDME, VORTAC and TACAN */
   NDB = 1 << 6,
   ILS = 1 << 7, /* Type also covers GLS approaches */
   MARKER = 1 << 8,
@@ -69,20 +69,20 @@ enum MapType
   AIRWAY = 1 << 10,
   AIRWAYV = 1 << 11,
   AIRWAYJ = 1 << 12,
-  GLS = 1 << 13, /* GLS approaches or GBAS paths - only display flag */
+  GLS = 1 << 13, /* GLS approaches or GBAS paths - only display flag TODO MOVE OUT */
   AIRCRAFT = 1 << 14, /* Simulator user aircraft */
   AIRCRAFT_AI = 1 << 15, /* AI or multiplayer simulator aircraft */
   AIRCRAFT_AI_SHIP = 1 << 16, /* AI or multiplayer simulator ship */
-  AIRCRAFT_TRACK = 1 << 17, /* Simulator aircraft track */
+  AIRCRAFT_TRACK = 1 << 17, /* Simulator aircraft track TODO MOVE OUT */
   USERPOINTROUTE = 1 << 18, /* Flight plan user waypoint */
   PARKING = 1 << 19,
   RUNWAYEND = 1 << 20,
   INVALID = 1 << 21, /* Flight plan waypoint not found in database */
   MISSED_APPROACH = 1 << 22, /* Only procedure type that can be hidden */
-  PROCEDURE = 1 << 23, /* General procedure leg */
-  AIRSPACE = 1 << 24, /* General airspace boundary, online or offline */
+  PROCEDURE = 1 << 23, /* General procedure leg TODO MOVE OUT */
+  AIRSPACE = 1 << 24, /* General airspace boundary, online or offline TODO MOVE OUT */
   HELIPAD = 1 << 25, /* Helipads on airports */
-  // 26
+  HOLDING = 1 << 26, /* Enroute holds and user holds. User holds are enabled by MapMarkType below */
   USERPOINT = 1 << 27, /* A user defined waypoint - not used to define if should be drawn or not */
   TRACK = 1 << 28, /* NAT, PACOTS or AUSOTS track */
   AIRCRAFT_ONLINE = 1 << 29, /* Online network client/aircraft */
@@ -146,7 +146,7 @@ enum MapObjectQueryType
   QUERY_NONE = 0,
   QUERY_PROC_POINTS = 1 << 0, /* Procedure points */
   QUERY_PROC_MISSED_POINTS = 1 << 1, /* Missed procedure points */
-  QUERY_HOLDS = 1 << 2, /* Holds */
+  QUERY_HOLDS = 1 << 2, /* Used defined holdings */
   QUERY_PATTERNS = 1 << 3, /* Traffic patterns */
   QUERY_PROCEDURES = 1 << 4, /* Procedures when querying route */
   QUERY_PROCEDURES_MISSED = 1 << 5, /* Missed procedures when querying route */

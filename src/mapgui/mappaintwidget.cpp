@@ -1137,12 +1137,12 @@ QList<map::TrafficPattern>& MapPaintWidget::getTrafficPatterns()
   return screenIndex->getTrafficPatterns();
 }
 
-const QList<map::Hold>& MapPaintWidget::getHolds() const
+const QList<map::MapHolding>& MapPaintWidget::getHolds() const
 {
   return screenIndex->getHolds();
 }
 
-QList<map::Hold>& MapPaintWidget::getHolds()
+QList<map::MapHolding>& MapPaintWidget::getHolds()
 {
   return screenIndex->getHolds();
 }

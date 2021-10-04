@@ -72,6 +72,7 @@ extern QColor airwayJetColor;
 extern QColor airwayBothColor;
 extern QColor airwayTrackColor;
 extern QColor airwayTextColor;
+extern QColor holdingColor;
 extern QColor rangeRingColor;
 extern QColor rangeRingTextColor;
 extern QColor compassRoseColor;
