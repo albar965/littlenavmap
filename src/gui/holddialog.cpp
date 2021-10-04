@@ -166,59 +166,62 @@ void HoldDialog::updateWidgets()
   else if(result->hasWaypoints())
     text = map::waypointText(result->waypoints.first());
   else
-    text = Unit::coords(*position);
+    text = tr("Coordinates %1").arg(Unit::coords(*position));
 
   ui->labelHoldNavaid->setText(tr("<p><b>%1</b></p>").arg(text));
 }
 
-void HoldDialog::fillHold(map::Hold& hold)
+void HoldDialog::fillHold(map::MapHolding& holding)
 {
-  hold.navIdent.clear();
-  hold.position = *position;
-  hold.navType = map::NONE;
+  holding.navIdent.clear();
+  holding.position = *position;
+  holding.navType = map::NONE;
+  holding.user = true;
+  holding.speedLimit = holding.length = holding.minAltititude = holding.maxAltititude = 0.f;
+  holding.airportIdent.clear();
 
   if(result->hasAirports())
   {
-    hold.navIdent = result->airports.first().displayIdent();
-    hold.position = result->airports.first().position;
-    hold.magvar = result->airports.first().magvar;
-    hold.navType = map::AIRPORT;
+    holding.navIdent = result->airports.first().displayIdent();
+    holding.position = result->airports.first().position;
+    holding.magvar = result->airports.first().magvar;
+    holding.navType = map::AIRPORT;
   }
   else if(result->hasVor())
   {
     const map::MapVor& vor = result->vors.first();
-    hold.navIdent = vor.ident;
-    hold.position = vor.position;
-    hold.magvar = vor.magvar;
-    hold.vorDmeOnly = vor.dmeOnly;
-    hold.vorHasDme = vor.hasDme;
-    hold.vorTacan = vor.tacan;
-    hold.vorVortac = vor.vortac;
+    holding.navIdent = vor.ident;
+    holding.position = vor.position;
+    holding.magvar = vor.magvar;
+    holding.vorDmeOnly = vor.dmeOnly;
+    holding.vorHasDme = vor.hasDme;
+    holding.vorTacan = vor.tacan;
+    holding.vorVortac = vor.vortac;
 
-    hold.navType = map::VOR;
+    holding.navType = map::VOR;
   }
   else if(result->hasNdb())
   {
-    hold.navIdent = result->ndbs.first().ident;
-    hold.position = result->ndbs.first().position;
-    hold.magvar = result->ndbs.first().magvar;
-    hold.navType = map::NDB;
+    holding.navIdent = result->ndbs.first().ident;
+    holding.position = result->ndbs.first().position;
+    holding.magvar = result->ndbs.first().magvar;
+    holding.navType = map::NDB;
   }
   else if(result->hasWaypoints())
   {
-    hold.navIdent = result->waypoints.first().ident;
-    hold.position = result->waypoints.first().position;
-    hold.magvar = result->waypoints.first().magvar;
-    hold.navType = map::WAYPOINT;
+    holding.navIdent = result->waypoints.first().ident;
+    holding.position = result->waypoints.first().position;
+    holding.magvar = result->waypoints.first().magvar;
+    holding.navType = map::WAYPOINT;
   }
   else
     // Use calculated declination
-    hold.magvar = NavApp::getMagVar(*position);
+    holding.magvar = NavApp::getMagVar(*position);
 
-  hold.color = color;
-  hold.position.setAltitude(Unit::rev(ui->spinBoxHoldAltitude->value(), Unit::altFeetF));
-  hold.turnLeft = ui->comboBoxHoldTurnDirection->currentIndex() == 1;
-  hold.minutes = static_cast<float>(ui->doubleSpinBoxHoldTime->value());
-  hold.speedKts = Unit::rev(ui->spinBoxHoldSpeed->value(), Unit::speedKtsF);
-  hold.courseTrue = atools::geo::normalizeCourse(ui->spinBoxHoldCourse->value() + hold.magvar);
+  holding.color = color;
+  holding.position.setAltitude(Unit::rev(ui->spinBoxHoldAltitude->value(), Unit::altFeetF));
+  holding.turnLeft = ui->comboBoxHoldTurnDirection->currentIndex() == 1;
+  holding.time = static_cast<float>(ui->doubleSpinBoxHoldTime->value());
+  holding.speedKts = Unit::rev(ui->spinBoxHoldSpeed->value(), Unit::speedKtsF);
+  holding.courseTrue = atools::geo::normalizeCourse(ui->spinBoxHoldCourse->value() + holding.magvar);
 }

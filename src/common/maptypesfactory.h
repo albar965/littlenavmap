@@ -38,6 +38,8 @@ struct MapVor;
 
 struct MapNdb;
 
+struct MapHolding;
+
 struct MapWaypoint;
 
 struct MapAirway;
@@ -89,7 +91,7 @@ public:
   void fillRunwayEnd(const atools::sql::SqlRecord& record, map::MapRunwayEnd& end, bool nav);
 
   void fillVor(const atools::sql::SqlRecord& record, map::MapVor& vor);
-  void fillVorFromNav(const atools::sql::SqlRecord& record, map::MapVor& vor);
+  void fillVorFromNav(const atools::sql::SqlRecord& record, map::MapVor& vor); /* Uses nav_search table flags */
 
   void fillNdb(const atools::sql::SqlRecord& record, map::MapNdb& ndb);
 
@@ -99,6 +101,7 @@ public:
   void fillAirwayOrTrack(const atools::sql::SqlRecord& record, map::MapAirway& airway, bool track);
   void fillMarker(const atools::sql::SqlRecord& record, map::MapMarker& marker);
   void fillIls(const atools::sql::SqlRecord& record, map::MapIls& ils);
+  void fillHolding(const atools::sql::SqlRecord& record, map::MapHolding& holding);
 
   void fillParking(const atools::sql::SqlRecord& record, map::MapParking& parking);
   void fillStart(const atools::sql::SqlRecord& record, map::MapStart& start);

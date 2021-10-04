@@ -48,7 +48,7 @@ struct MapUserpoint;
 struct MapLogbookEntry;
 struct RangeMarker;
 struct DistanceMarker;
-struct Hold;
+struct MapHolding;
 struct TrafficPattern;
 }
 
@@ -184,14 +184,14 @@ public:
   }
 
   /* Airfield traffic patterns. */
-  QList<map::Hold>& getHolds()
+  QList<map::MapHolding>& getHolds()
   {
-    return holds;
+    return holdings;
   }
 
-  const QList<map::Hold>& getHolds() const
+  const QList<map::MapHolding>& getHolds() const
   {
-    return holds;
+    return holdings;
   }
 
   const atools::fs::sc::SimConnectUserAircraft& getUserAircraft() const
@@ -328,7 +328,7 @@ private:
   QList<map::RangeMarker> rangeMarks;
   QList<map::DistanceMarker> distanceMarks;
   QList<map::TrafficPattern> trafficPatterns;
-  QList<map::Hold> holds;
+  QList<map::MapHolding> holdings;
 
   /* Cached screen coordinates for flight plan to ease mouse cursor change. */
   QList<std::pair<int, QLine> > routeLines;

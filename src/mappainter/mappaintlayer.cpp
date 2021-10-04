@@ -226,6 +226,7 @@ void MapPaintLayer::initMapLayerSettings()
          vorSymbolSize(30).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(30).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
+         holding().holdingInfo().holdingInfo2().
          airwayIdent().airwayInfo().airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
          userpoint().userpointInfo().userpointSymbolSize(28).userpointMaxTextLength(30).
@@ -239,6 +240,7 @@ void MapPaintLayer::initMapLayerSettings()
          vorSymbolSize(30).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(30).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
+         holding().holdingInfo().holdingInfo2().
          airwayIdent().airwayInfo().airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
          userpoint().userpointInfo().userpointSymbolSize(28).userpointMaxTextLength(30).
@@ -254,6 +256,7 @@ void MapPaintLayer::initMapLayerSettings()
          vorSymbolSize(28).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(28).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
+         holding().holdingInfo().holdingInfo2().
          airwayIdent().airwayInfo().airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
          userpoint().userpointInfo().userpointSymbolSize(28).userpointMaxTextLength(30).
@@ -269,6 +272,7 @@ void MapPaintLayer::initMapLayerSettings()
          vorSymbolSize(26).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(26).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
+         holding().holdingInfo().holdingInfo2().
          airwayIdent().airwayInfo().airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
          userpoint().userpointInfo().userpointSymbolSize(26).userpointMaxTextLength(20).
@@ -284,6 +288,7 @@ void MapPaintLayer::initMapLayerSettings()
          vorSymbolSize(24).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(24).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
+         holding().holdingInfo().holdingInfo2().
          airwayIdent().airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
          userpoint().userpointInfo().userpointSymbolSize(26).userpointMaxTextLength(20).
@@ -299,6 +304,7 @@ void MapPaintLayer::initMapLayerSettings()
          vorSymbolSize(22).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(22).ndbIdent().ndbInfo().
          ilsIdent().ilsInfo().
+         holding().holdingInfo().holdingInfo2().
          airwayIdent().airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
          userpoint().userpointInfo().userpointSymbolSize(24).userpointMaxTextLength(20).
@@ -313,6 +319,7 @@ void MapPaintLayer::initMapLayerSettings()
          aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
          vorSymbolSize(20).vorIdent().vorInfo().vorLarge().
          ndbSymbolSize(20).ndbIdent().ndbInfo().
+         holding().holdingInfo().
          airwayIdent().airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
          userpoint().userpointInfo().userpointSymbolSize(24).userpointMaxTextLength(10).
@@ -327,6 +334,7 @@ void MapPaintLayer::initMapLayerSettings()
          aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
          vorSymbolSize(20).vorIdent().
          ndbSymbolSize(16).ndbIdent().
+         holding().
          airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
          userpoint().userpointInfo().userpointSymbolSize(24).userpointMaxTextLength(10).
@@ -342,6 +350,7 @@ void MapPaintLayer::initMapLayerSettings()
          aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
          waypoint(false).
          vorSymbolSize(12).ndbSymbolSize(12).
+         holding().
          airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
          userpoint().userpointInfo().userpointSymbolSize(22).userpointMaxTextLength(8).
@@ -358,6 +367,7 @@ void MapPaintLayer::initMapLayerSettings()
          airwayWaypoint().
          trackIdent().trackInfo().trackWaypoint().
          vorSymbolSize(8).ndbSymbolSize(8).waypoint(false).marker(false).
+         holding().
          userpoint().userpointInfo().userpointSymbolSize(16).userpointMaxTextLength(8).
          airportMaxTextLength(16)).
 
@@ -372,6 +382,7 @@ void MapPaintLayer::initMapLayerSettings()
          onlineAircraftText(false).
          trackIdent().trackInfo(false).trackWaypoint().
          vorSymbolSize(6).ndbSymbolSize(4).waypoint(false).marker(false).ils(false).
+         holding().
          trackIdent().trackInfo(false).trackWaypoint().
          airportRouteInfo(false).waypointRouteName(false).
          userpoint().userpointInfo(false).userpointSymbolSize(16).

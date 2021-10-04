@@ -68,9 +68,11 @@ struct MapResult
   QSet<int> onlineAircraftIds; /* Ids used to deduplicate */
 
   atools::geo::Pos windPos;
-  QList<map::Hold> holds;
   QList<map::TrafficPattern> trafficPatterns;
   QList<map::RangeMarker> rangeMarkers;
+
+  QList<map::MapHolding> holdings; /* Either used defined hold or enroute hold */
+  QSet<int> holdingIds; /* Ids used to deduplicate */
 
   QList<proc::MapProcedurePoint> procPoints;
 
@@ -132,6 +134,11 @@ struct MapResult
   bool hasUserpoints() const
   {
     return !userpoints.isEmpty();
+  }
+
+  bool hasHoldings() const
+  {
+    return !holdings.isEmpty();
   }
 
   bool hasUserpointsRoute() const

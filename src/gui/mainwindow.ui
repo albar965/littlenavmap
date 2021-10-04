@@ -380,6 +380,7 @@
      <addaction name="actionMapShowWp"/>
      <addaction name="actionMapShowIls"/>
      <addaction name="actionMapShowGls"/>
+     <addaction name="actionMapShowHolding"/>
      <addaction name="separator"/>
      <addaction name="actionMapShowVictorAirways"/>
      <addaction name="actionMapShowJetAirways"/>
@@ -5597,6 +5598,7 @@ relation to shown airport</string>
    <addaction name="actionMapShowWp"/>
    <addaction name="actionMapShowIls"/>
    <addaction name="actionMapShowGls"/>
+   <addaction name="actionMapShowHolding"/>
    <addaction name="actionMapShowVictorAirways"/>
    <addaction name="actionMapShowJetAirways"/>
    <addaction name="actionMapShowTracks"/>
@@ -11944,7 +11946,7 @@ Disabled if a navdatabase does not allow it.</string>
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -11958,6 +11960,27 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="statusTip">
     <string>Show GLS approach paths on map</string>
+   </property>
+  </action>
+  <action name="actionMapShowHolding">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/hold.svg</normaloff>:/littlenavmap/resources/icons/hold.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show &amp;Holdings</string>
+   </property>
+   <property name="toolTip">
+    <string>Show holdings on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show holdings on map</string>
    </property>
   </action>
  </widget>
@@ -12145,8 +12168,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalc"/>
-  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

@@ -443,7 +443,7 @@ void MapScreenIndex::saveState() const
   s.setValueVar(lnm::MAP_DISTANCEMARKERS, QVariant::fromValue<QList<map::DistanceMarker> >(distanceMarks));
   s.setValueVar(lnm::MAP_RANGEMARKERS, QVariant::fromValue<QList<map::RangeMarker> >(rangeMarks));
   s.setValueVar(lnm::MAP_TRAFFICPATTERNS, QVariant::fromValue<QList<map::TrafficPattern> >(trafficPatterns));
-  s.setValueVar(lnm::MAP_HOLDS, QVariant::fromValue<QList<map::Hold> >(holds));
+  s.setValueVar(lnm::MAP_HOLDINGS, QVariant::fromValue<QList<map::MapHolding> >(holdings));
 }
 
 void MapScreenIndex::restoreState()
@@ -452,7 +452,7 @@ void MapScreenIndex::restoreState()
   distanceMarks = s.valueVar(lnm::MAP_DISTANCEMARKERS).value<QList<map::DistanceMarker> >();
   rangeMarks = s.valueVar(lnm::MAP_RANGEMARKERS).value<QList<map::RangeMarker> >();
   trafficPatterns = s.valueVar(lnm::MAP_TRAFFICPATTERNS).value<QList<map::TrafficPattern> >();
-  holds = s.valueVar(lnm::MAP_HOLDS).value<QList<map::Hold> >();
+  holdings = s.valueVar(lnm::MAP_HOLDINGS).value<QList<map::MapHolding> >();
 }
 
 void MapScreenIndex::changeSearchHighlights(const map::MapResult& newHighlights)
@@ -649,7 +649,8 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
                                     testFlag(optsd::ITEM_AIRPORT_DETAIL_PARKING),
                                     shown &
                                     (map::AIRPORT_ALL_ADDON | map::VOR | map::NDB | map::WAYPOINT | map::MARKER |
-                                     map::AIRWAYJ | map::TRACK | map::AIRWAYV | map::USERPOINT | map::LOGBOOK),
+                                     map::HOLDING | map::AIRWAYJ | map::TRACK | map::AIRWAYV | map::USERPOINT |
+                                     map::LOGBOOK),
                                     xs, ys, maxDistance, result);
 
   // Update all incomplete objects, especially from search
@@ -689,6 +690,7 @@ void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::
   insertSorted(conv, xs, ys, searchHighlights->airports, result.airports, &result.airportIds, maxDistance);
   insertSorted(conv, xs, ys, searchHighlights->vors, result.vors, &result.vorIds, maxDistance);
   insertSorted(conv, xs, ys, searchHighlights->ndbs, result.ndbs, &result.ndbIds, maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights->holdings, result.holdings, &result.holdingIds, maxDistance);
   insertSorted(conv, xs, ys, searchHighlights->waypoints, result.waypoints, &result.waypointIds, maxDistance);
   insertSorted(conv, xs, ys, searchHighlights->userpoints, result.userpoints, &result.userpointIds, maxDistance);
   insertSorted(conv, xs, ys, searchHighlights->airspaces, result.airspaces, nullptr, maxDistance);
@@ -701,7 +703,7 @@ void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::
 
   // Add only if requested and visible on map
   if(types & map::QUERY_HOLDS && NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_HOLDS)
-    insertSorted(conv, xs, ys, holds, result.holds, nullptr, maxDistance);
+    insertSorted(conv, xs, ys, holdings, result.holdings, nullptr, maxDistance);
 
   if(types & map::QUERY_PATTERNS && NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_PATTERNS)
     insertSorted(conv, xs, ys, trafficPatterns, result.trafficPatterns, nullptr, maxDistance);
@@ -755,7 +757,7 @@ int MapScreenIndex::getNearestTrafficPatternIndex(int xs, int ys, int maxDistanc
 int MapScreenIndex::getNearestHoldIndex(int xs, int ys, int maxDistance) const
 {
   if(NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_HOLDS)
-    return getNearestIndex(xs, ys, maxDistance, holds);
+    return getNearestIndex(xs, ys, maxDistance, holdings);
   else
     return -1;
 }

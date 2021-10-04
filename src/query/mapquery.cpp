@@ -29,6 +29,7 @@
 #include "query/airportquery.h"
 #include "query/airwaytrackquery.h"
 #include "query/waypointtrackquery.h"
+#include "sql/sqldatabase.h"
 #include "navapp.h"
 #include "settings/settings.h"
 #include "db/databasemanager.h"
@@ -411,6 +412,12 @@ void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map:
     if(ndb.isValid())
       result.ndbs.append(ndb);
   }
+  else if(type == map::HOLDING)
+  {
+    map::MapHolding holding = getHoldingById(id);
+    if(holding.isValid())
+      result.holdings.append(holding);
+  }
   else if(type == map::WAYPOINT)
   {
     map::MapWaypoint waypoint = NavApp::getWaypointTrackQuery()->getWaypointById(id);
@@ -494,6 +501,20 @@ map::MapIls MapQuery::getIlsById(int id)
     mapTypesFactory->fillIls(ilsByIdQuery->record(), ils);
   ilsByIdQuery->finish();
   return ils;
+}
+
+map::MapHolding MapQuery::getHoldingById(int id)
+{
+  map::MapHolding holding;
+  if(holdingByIdQuery != nullptr)
+  {
+    holdingByIdQuery->bindValue(":id", id);
+    holdingByIdQuery->exec();
+    if(holdingByIdQuery->next())
+      mapTypesFactory->fillHolding(holdingByIdQuery->record(), holding);
+    holdingByIdQuery->finish();
+  }
+  return holding;
 }
 
 QVector<map::MapIls> MapQuery::getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway)
@@ -588,6 +609,17 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
       if(conv.wToS(ndb.position, x, y))
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
           insertSortedByDistance(conv, result.ndbs, &result.ndbIds, xs, ys, ndb);
+    }
+  }
+
+  if(mapLayer->isHolding() && types.testFlag(map::HOLDING))
+  {
+    for(int i = holdingCache.list.size() - 1; i >= 0; i--)
+    {
+      const map::MapHolding& holding = holdingCache.list.at(i);
+      if(conv.wToS(holding.position, x, y))
+        if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
+          insertSortedByDistance(conv, result.holdings, &result.holdingIds, xs, ys, holding);
     }
   }
 
@@ -911,6 +943,39 @@ const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, 
   return &markerCache.list;
 }
 
+const QList<map::MapHolding> *MapQuery::getHoldings(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                                                    bool lazy, bool& overflow)
+{
+  if(holdingByRectQuery != nullptr)
+  {
+
+    holdingCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
+                             [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
+    {
+      return curLayer->hasSameQueryParametersMarker(newLayer);
+    });
+
+    if(holdingCache.list.isEmpty() && !lazy)
+    {
+      for(const GeoDataLatLonBox& r :
+          query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+      {
+        query::bindRect(r, holdingByRectQuery);
+        holdingByRectQuery->exec();
+        while(holdingByRectQuery->next())
+        {
+          map::MapHolding holding;
+          mapTypesFactory->fillHolding(holdingByRectQuery->record(), holding);
+          holdingCache.list.append(holding);
+        }
+      }
+    }
+    overflow = holdingCache.validate(queryMaxRows);
+    return &holdingCache.list;
+  }
+  return nullptr;
+}
+
 const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
   ilsCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
@@ -1113,6 +1178,10 @@ void MapQuery::initQueries()
     "loc_runway_name, gs_pitch, frequency, range, dme_range, loc_width, "
     "end1_lonx, end1_laty, end_mid_lonx, end_mid_laty, end2_lonx, end2_laty, altitude, lonx, laty");
 
+  static const QString holdingQueryBase(
+    "holding_id, airport_ident, nav_ident, nav_type, vor_type, vor_dme_only, vor_has_dme, name, mag_var, "
+    "course, turn_direction, leg_length, leg_time, minimum_altitude, maximum_altitude, speed_limit, lonx, laty");
+
   QString extraIlsCols = SqlUtil(dbSim).buildColumnListIf(
     "ils", {"type", "perf_indicator", "provider"}).join(", ");
   if(!extraIlsCols.isEmpty())
@@ -1160,6 +1229,16 @@ void MapQuery::initQueries()
 
   ilsByIdQuery = new SqlQuery(dbSim);
   ilsByIdQuery->prepare("select " + ilsQueryBase + " from ils where ils_id = :id");
+
+  // Check for holding table in nav (Navigraph) database and then in simulator database (X-Plane only)
+  SqlDatabase *holdingDb = SqlUtil::getDbWithTableAndRows("holding", {dbNav, dbSim});
+  qDebug() << Q_FUNC_INFO << "Holding database" << (holdingDb == nullptr ? "None" : holdingDb->databaseName());
+
+  if(holdingDb != nullptr)
+  {
+    holdingByIdQuery = new SqlQuery(holdingDb);
+    holdingByIdQuery->prepare("select " + holdingQueryBase + " from holding where holding_id = :id");
+  }
 
   ilsQuerySimByAirportAndRw = new SqlQuery(dbSim);
   ilsQuerySimByAirportAndRw->prepare("select " + ilsQueryBase +
@@ -1212,6 +1291,12 @@ void MapQuery::initQueries()
 
   ilsByRectQuery = new SqlQuery(dbSim);
   ilsByRectQuery->prepare("select " + ilsQueryBase + " from ils where " + whereRect + " " + whereLimit);
+
+  if(holdingDb != nullptr)
+  {
+    holdingByRectQuery = new SqlQuery(holdingDb);
+    holdingByRectQuery->prepare("select " + holdingQueryBase + " from holding where " + whereRect + " " + whereLimit);
+  }
 }
 
 void MapQuery::deInitQueries()
@@ -1220,6 +1305,7 @@ void MapQuery::deInitQueries()
   vorCache.clear();
   ndbCache.clear();
   markerCache.clear();
+  holdingCache.clear();
   ilsCache.clear();
   runwayOverwiewCache.clear();
 
@@ -1243,6 +1329,8 @@ void MapQuery::deInitQueries()
   markersByRectQuery = nullptr;
   delete ilsByRectQuery;
   ilsByRectQuery = nullptr;
+  delete holdingByRectQuery;
+  holdingByRectQuery = nullptr;
 
   delete userdataPointByRectQuery;
   userdataPointByRectQuery = nullptr;
@@ -1271,6 +1359,9 @@ void MapQuery::deInitQueries()
 
   delete ilsByIdQuery;
   ilsByIdQuery = nullptr;
+
+  delete holdingByIdQuery;
+  holdingByIdQuery = nullptr;
 
   delete ilsQuerySimByAirportAndRw;
   ilsQuerySimByAirportAndRw = nullptr;

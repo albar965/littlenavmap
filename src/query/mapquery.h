@@ -84,6 +84,9 @@ public:
   /* Always from sim db */
   map::MapIls getIlsById(int id);
 
+  /* From perm nav db, depending on mode */
+  map::MapHolding getHoldingById(int id);
+
   /* Get ILS from sim database based on airport ident and runway name.
    * Runway name can be zero prefixed or prefixed with "RW". */
   QVector<map::MapIls> getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway);
@@ -175,6 +178,10 @@ public:
                                           bool& overflow);
 
   /* Similar to getAirports */
+  const QList<map::MapHolding> *getHoldings(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
+                                      bool& overflow);
+
+  /* Similar to getAirports */
   const QList<map::MapIls> *getIls(Marble::GeoDataLatLonBox rect, const MapLayer *mapLayer, bool lazy, bool& overflow);
 
   /* Get a partially filled runway list for the overview */
@@ -233,6 +240,7 @@ private:
   query::SimpleRectCache<map::MapVor> vorCache;
   query::SimpleRectCache<map::MapNdb> ndbCache;
   query::SimpleRectCache<map::MapMarker> markerCache;
+  query::SimpleRectCache<map::MapHolding> holdingCache;
   query::SimpleRectCache<map::MapIls> ilsCache;
 
   /* ID/object caches */
@@ -247,13 +255,14 @@ private:
                         *airportMediumByRectQuery = nullptr, *airportLargeByRectQuery = nullptr;
 
   atools::sql::SqlQuery *vorsByRectQuery = nullptr, *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr,
-                        *ilsByRectQuery = nullptr, *userdataPointByRectQuery = nullptr;
+                        *ilsByRectQuery = nullptr, *holdingByRectQuery = nullptr, *userdataPointByRectQuery = nullptr;
 
   atools::sql::SqlQuery *vorByIdentQuery = nullptr, *ndbByIdentQuery = nullptr, *ilsByIdentQuery = nullptr;
 
   atools::sql::SqlQuery *vorByIdQuery = nullptr, *ndbByIdQuery = nullptr, *vorByWaypointIdQuery = nullptr,
-                        *ndbByWaypointIdQuery = nullptr, *ilsByIdQuery = nullptr, *ilsQuerySimByAirportAndRw = nullptr,
-                        *ilsQuerySimByAirportAndIdent = nullptr, *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr;
+                        *ndbByWaypointIdQuery = nullptr, *ilsByIdQuery = nullptr, *holdingByIdQuery = nullptr,
+                        *ilsQuerySimByAirportAndRw = nullptr, *ilsQuerySimByAirportAndIdent = nullptr,
+                        *vorNearestQuery = nullptr, *ndbNearestQuery = nullptr;
 };
 
 #endif // LITTLENAVMAP_MAPQUERY_H

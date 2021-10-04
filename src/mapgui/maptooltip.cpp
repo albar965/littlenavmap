@@ -140,7 +140,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const Ro
   }
 
   // Holds ===========================================================================
-  for(const Hold& entry : mapSearchResult.holds)
+  for(const MapHolding& entry : mapSearchResult.holdings)
   {
     if(checkText(html))
       return html.getHtml();
@@ -148,7 +148,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const Ro
     if(!html.isEmpty())
       html.textBar(TEXT_BAR_LENGTH);
 
-    info.holdText(entry, html);
+    info.holdingText(entry, html);
 
     numEntries++;
   }

@@ -147,6 +147,10 @@ public:
   MapLayer& ndbRouteInfo(bool value = true);
   MapLayer& ndbSymbolSize(int size);
 
+  MapLayer& holding(bool value = true);
+  MapLayer& holdingInfo(bool value = true);
+  MapLayer& holdingInfo2(bool value = true);
+
   /* Marker options */
   MapLayer& marker(bool value = true);
   MapLayer& markerInfo(bool value = true);
@@ -370,6 +374,21 @@ public:
   bool isNdbRouteInfo() const
   {
     return layerNdbRouteInfo;
+  }
+
+  bool isHolding() const
+  {
+    return layerHolding;
+  }
+
+  bool isHoldingInfo() const
+  {
+    return layerHoldingInfo;
+  }
+
+  bool isHoldingInfo2() const
+  {
+    return layerHoldingInfo2;
   }
 
   bool isMarker() const
@@ -628,7 +647,8 @@ private:
        layerMarkerInfo = false, layerUserpointInfo = false, layerIls = false, layerIlsIdent = false,
        layerIlsInfo = false, layerAirway = false, layerAirwayWaypoint = false, layerAirwayIdent = false,
        layerAirwayInfo = false, layerTrack = false, layerTrackWaypoint = false, layerTrackIdent = false,
-       layerTrackInfo = false, layerMinimumAltitude = false;
+       layerTrackInfo = false, layerMinimumAltitude = false,
+       layerHolding = false, layerHoldingInfo = false, layerHoldingInfo2 = false;
 
   bool layerAirportRouteInfo = false;
   bool layerVorRouteIdent = false, layerVorRouteInfo = false;

@@ -1099,37 +1099,44 @@ QDataStream& operator<<(QDataStream& dataStream, const map::TrafficPattern& obj)
 
 // =====================================================================
 /* All information for a hold
- * position is hold reference position and altitude */
-struct Hold
+ * position is hold reference position and altitude.
+ * This struct can contain user defined holdings as well as database (enroute) holdings. */
+struct MapHolding
   : public MapBase
 {
-  Hold() : MapBase(map::NONE)
+  MapHolding() : MapBase(map::HOLDING)
   {
   }
 
-  QString navIdent; /* Only for display purposes */
+  QString navIdent, name, vorType; /* Only for display purposes */
   map::MapTypes navType; /* AIRPORT, VOR, NDB or WAYPOINT*/
   bool vorDmeOnly, vorHasDme, vorTacan, vorVortac; /* VOR specific flags */
-  QColor color;
+
+  QString airportIdent;
+
+  QColor color; /* Only for user */
+  bool user; /* true if created by user. otherwise from database */
 
   bool turnLeft; /* Standard is right */
-  float minutes, speedKts; /* Used to calculate segment length - speed in knots */
+  float time, /* leg minutes - custom and database holds */
+        length, /* leg length NM - database holds */
+        speedKts, /* Used to calculate segment length - custom holds */
+        speedLimit, /* Max speed - database holds */
+        minAltititude, maxAltititude; /* 0 if not applicable - database holds */
 
   float courseTrue; /* degree true inbound course to fix */
   float magvar; /* Taken from environment or navaid */
 
   float magCourse() const;
 
-  /* Distance in NM */
-  float distance() const
-  {
-    return speedKts * minutes / 60.f;
-  }
+  /* Distance of straight segment in NM. Either from database or calculated */
+  float distance(bool *estimated = nullptr) const;
 
 };
 
-QDataStream& operator>>(QDataStream& dataStream, map::Hold& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::Hold& obj);
+/* Save only information for user defined holds */
+QDataStream& operator>>(QDataStream& dataStream, map::MapHolding& obj);
+QDataStream& operator<<(QDataStream& dataStream, const map::MapHolding& obj);
 
 // =====================================================================
 /* Range rings marker. Can be converted to QVariant */
@@ -1203,6 +1210,8 @@ QString ilsText(const map::MapIls& ils); /* No locale use - for map display */
 QString ilsType(const MapIls& ils, bool gs, bool dme, const QString& separator);
 QString ilsTypeShort(const map::MapIls& ils);
 QString ilsTextShort(const MapIls& ils);
+
+QString holdingTextShort(const map::MapHolding& holding);
 
 QString edgeLights(const QString& type);
 QString patternDirection(const QString& type);
@@ -1327,7 +1336,7 @@ Q_DECLARE_METATYPE(map::DistanceMarker);
 Q_DECLARE_TYPEINFO(map::TrafficPattern, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::TrafficPattern);
 
-Q_DECLARE_TYPEINFO(map::Hold, Q_MOVABLE_TYPE);
-Q_DECLARE_METATYPE(map::Hold);
+Q_DECLARE_TYPEINFO(map::MapHolding, Q_MOVABLE_TYPE);
+Q_DECLARE_METATYPE(map::MapHolding);
 
 #endif // LITTLENAVMAP_MAPTYPES_H

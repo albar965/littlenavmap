@@ -55,7 +55,7 @@ struct MapUserpoint;
 struct MapLogbookEntry;
 struct MapBase;
 struct MapResultIndex;
-struct Hold;
+struct MapHolding;
 struct TrafficPattern;
 struct RangeMarker;
 }
@@ -279,7 +279,7 @@ public:
   void aircraftOnlineText(const atools::fs::sc::SimConnectAircraft& aircraft, const atools::sql::SqlRecord& onlineRec,
                           atools::util::HtmlBuilder& html);
 
-  void holdText(const map::Hold& hold, atools::util::HtmlBuilder& html) const;
+  void holdingText(const map::MapHolding& holding, atools::util::HtmlBuilder& html) const;
   void trafficPatternText(const map::TrafficPattern& pattern, atools::util::HtmlBuilder& html) const;
   void rangeMarkerText(const map::RangeMarker& marker, atools::util::HtmlBuilder& html) const;
 
@@ -325,7 +325,8 @@ private:
   /* Distance to last flight plan waypoint */
   void distanceToRouteText(const atools::geo::Pos& pos, atools::util::HtmlBuilder& html) const;
 
-  void navaidTitle(atools::util::HtmlBuilder& html, const QString& text) const;
+  void navaidTitle(atools::util::HtmlBuilder& html, const QString& text,
+                   atools::util::html::Flags flags = atools::util::html::NONE) const;
 
   void airportTitle(const map::MapAirport& airport, atools::util::HtmlBuilder& html, int rating) const;
 
