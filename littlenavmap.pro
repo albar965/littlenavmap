@@ -43,7 +43,7 @@
 #
 # OPENSSL_PATH
 # Windows: Base path of WinSSL 1.1.1 installation (https://slproweb.com/products/Win32OpenSSL.html).
-#          Defaults to "../openssl-1.1.1d-win32-mingw" if empty.
+#          Defaults to "../openssl" if empty.
 # Linux:   Not used.
 # macOS:   Not used.
 #
@@ -115,7 +115,7 @@ isEmpty(ATOOLS_LIB_PATH) : ATOOLS_LIB_PATH=$$PWD/../build-atools-$$CONF_TYPE
 isEmpty(MARBLE_INC_PATH) : MARBLE_INC_PATH=$$PWD/../Marble-$$CONF_TYPE/include
 isEmpty(MARBLE_LIB_PATH) : MARBLE_LIB_PATH=$$PWD/../Marble-$$CONF_TYPE/lib
 
-win32: isEmpty(OPENSSL_PATH) : OPENSSL_PATH=$$PWD/../openssl-1.1.1d-win32-mingw
+win32: isEmpty(OPENSSL_PATH) : OPENSSL_PATH=$$PWD/../openssl
 
 # =======================================================================
 # Set compiler flags and paths
@@ -138,7 +138,7 @@ unix:!macx {
 win32 {
   WINDEPLOY_FLAGS = --compiler-runtime
   CONFIG(debug, debug|release) : WINDEPLOY_FLAGS += --debug
-  CONFIG(release, debug|release) : WINDEPLOY_FLAGS += --release
+#  CONFIG(release, debug|release) : WINDEPLOY_FLAGS += --release
 
   DEFINES += _USE_MATH_DEFINES
 
@@ -838,8 +838,8 @@ win32 {
   deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/libstdc*.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/libwinpthread*.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$PWD/etc/SimConnect.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$OPENSSL_PATH\libcrypto-1_1.dll $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$OPENSSL_PATH\libssl-1_1.dll $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$OPENSSL_PATH\libcrypto*.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$OPENSSL_PATH\libssl*.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5DBus$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5Network$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5PrintSupport$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
