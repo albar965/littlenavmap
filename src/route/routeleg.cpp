@@ -50,7 +50,7 @@ const static QString EMPTY_STRING;
 const static atools::fs::pln::FlightplanEntry EMPTY_FLIGHTPLAN_ENTRY;
 
 // Appended to X-Plane free parking names - obsolete
-const static QLatin1Literal PARKING_NO_NUMBER(" NULL");
+const static QLatin1String PARKING_NO_NUMBER(" NULL");
 
 /* Maximum distance for parking spot to saved coordinate */
 const float MAX_PARKING_DIST_METER = 50.f;

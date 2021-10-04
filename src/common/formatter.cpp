@@ -336,8 +336,8 @@ QString courseText(float magCourse, float trueCourse, bool magBold, bool trueSma
   }
 
   // Formatting for magnetic course
-  QLatin1String bold = magBold ? QLatin1Literal("<b>") : QLatin1String();
-  QLatin1String boldEnd = magBold ? QLatin1Literal("</b>") : QLatin1String();
+  QLatin1String bold = magBold ? QLatin1String("<b>") : QLatin1String();
+  QLatin1String boldEnd = magBold ? QLatin1String("</b>") : QLatin1String();
 
   if(atools::almostEqual(magCourse, trueCourse, 1.5f))
   {
@@ -352,8 +352,8 @@ QString courseText(float magCourse, float trueCourse, bool magBold, bool trueSma
     if(!magStr.isEmpty() && !trueStr.isEmpty())
     {
       // Formatting for true course
-      QLatin1String small = trueSmall ? QLatin1Literal("<span style=\"font-size: small;\">") : QLatin1String();
-      QLatin1String smallEnd = trueSmall ? QLatin1Literal("</span>") : QLatin1String();
+      QLatin1String small = trueSmall ? QLatin1String("<span style=\"font-size: small;\">") : QLatin1String();
+      QLatin1String smallEnd = trueSmall ? QLatin1String("</span>") : QLatin1String();
 
       // Values differ and both are valid - display magnetic and true
       return QObject::tr("%1%2°M%3,%4%5%6°T%7").

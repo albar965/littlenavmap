@@ -38,7 +38,7 @@
 #include <QDateTime>
 #include <QLocale>
 
-const QLatin1Literal UserdataDialog::DEFAULT_TYPE("Bookmark");
+const QLatin1String UserdataDialog::DEFAULT_TYPE("Bookmark");
 
 UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, UserdataIcons *userdataIcons) :
   QDialog(parent), editMode(mode), ui(new Ui::UserdataDialog), icons(userdataIcons)

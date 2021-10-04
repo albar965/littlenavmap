@@ -73,7 +73,7 @@ public:
   /* Set data for editing. */
   void setRecord(const atools::sql::SqlRecord& sqlRecord);
 
-  const static QLatin1Literal DEFAULT_TYPE;
+  const static QLatin1String DEFAULT_TYPE;
 
   void saveState();
   void restoreState();

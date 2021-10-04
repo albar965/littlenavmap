@@ -81,7 +81,7 @@ void loadHelpUrls()
   QSettings settings(urlsPath, QSettings::IniFormat);
 
   // [help] - Online help URLs
-  QLatin1Literal base("https://www.littlenavmap.org/manuals/littlenavmap/release/2.2/${LANG}/");
+  QLatin1String base("https://www.littlenavmap.org/manuals/littlenavmap/release/2.2/${LANG}/");
   helpOnlineUrl = settings.value("help/base", base).toString();
   helpOnlineTutorialsUrl = settings.value("help/tutorials", base + "TUTORIALS.html").toString();
   helpOnlineLegendUrl = settings.value("help/legend", base + "LEGEND.html").toString();
