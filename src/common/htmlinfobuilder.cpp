@@ -2061,7 +2061,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
 
 void HtmlInfoBuilder::holdingText(const MapHolding& holding, HtmlBuilder& html) const
 {
-  html.img(QIcon(":/littlenavmap/resources/icons/hold.svg"), QString(), QString(), symbolSizeTitle);
+  html.img(QIcon(":/littlenavmap/resources/icons/enroutehold.svg"), QString(), QString(), symbolSizeTitle);
   html.nbsp().nbsp();
 
   QString navTypeStr;

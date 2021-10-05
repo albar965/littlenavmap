@@ -315,7 +315,7 @@ QIcon MapContextMenu::mapBaseIcon(const map::MapBase *base)
         return QIcon(":/littlenavmap/resources/icons/ils.svg");
 
       case map::HOLDING:
-        return QIcon(":/littlenavmap/resources/icons/hold.svg");
+        return QIcon(":/littlenavmap/resources/icons/enroutehold.svg");
 
       case map::WAYPOINT:
         return painter.createWaypointIcon(size);
@@ -749,7 +749,7 @@ void MapContextMenu::insertHoldMenu(QMenu& menu)
                      tr("Add &Holding at %1 ..."),
                      tr("Show a holding pattern on the map at a position or a navaid"),
                      QString(),
-                     QIcon(":/littlenavmap/resources/icons/hold.svg"),
+                     QIcon(":/littlenavmap/resources/icons/enroutehold.svg"),
                      true /* allowNoMapObject */,
                      callback);
 }

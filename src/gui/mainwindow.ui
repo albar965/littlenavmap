@@ -5706,7 +5706,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>0</y>
+              <y>8</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -11119,7 +11119,7 @@ Disabled if a navdatabase does not allow it.</string>
   <action name="actionMapHold">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/hold.svg</normaloff>:/littlenavmap/resources/icons/hold.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/enroutehold.svg</normaloff>:/littlenavmap/resources/icons/enroutehold.svg</iconset>
    </property>
    <property name="text">
     <string>Add &amp;Holding at %1 ...</string>
@@ -11971,7 +11971,7 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/hold.svg</normaloff>:/littlenavmap/resources/icons/hold.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/enroutehold.svg</normaloff>:/littlenavmap/resources/icons/enroutehold.svg</iconset>
    </property>
    <property name="text">
     <string>Show &amp;Holdings</string>
@@ -12168,8 +12168,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
-  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>
