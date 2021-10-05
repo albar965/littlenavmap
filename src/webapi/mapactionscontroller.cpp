@@ -77,6 +77,10 @@ WebApiResponse MapActionsController::imageAction(WebApiRequest request){
         // Should never happen
         qWarning() << Q_FUNC_INFO << "invalid format";
 
+      // Add copyright/attributions to header
+      response.headers.insert("Image-Attributions", mapPaintWidget->getMapCopyright().toUtf8());
+
+      response.status = 200;
       response.body = bytes;
     }
     return response;
