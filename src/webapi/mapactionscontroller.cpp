@@ -246,7 +246,7 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
       // Do not center world rectangle when resizing
       mapPaintWidget->setKeepWorldRect(false);
 
-      mapPaintWidget->showRectStreamlined(rect);
+      mapPaintWidget->showRectStreamlined(rect, false);
 
       // Disable dynamic/live features
       mapPaintWidget->setShowMapFeatures(map::AIRCRAFT_ALL,false);
