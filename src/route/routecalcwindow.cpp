@@ -30,7 +30,7 @@
 #include "ui_mainwindow.h"
 
 // Factor to put on costs for direct connections. Airways <-> Waypoints
-static const float DIRECT_COST_FACTORS[11] = {10.f, 8.f, 6.f, 4.f, 3.f, 2.f, 1.5f, 1.25f, 1.2f, 1.1f, 1.f};
+static const float DIRECT_COST_FACTORS[11] = {10.f, 8.f, 6.f, 4.f, 3.f, 2.f, 1.6f, 1.4f, 1.3f, 1.2f, 1.f};
 
 using atools::util::HtmlBuilder;
 
