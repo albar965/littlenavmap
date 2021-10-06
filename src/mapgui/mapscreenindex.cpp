@@ -199,6 +199,7 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
     return;
 
   map::MapTypes types = paintLayer->getShownMapObjects();
+  map::MapObjectDisplayTypes displayTypes = paintLayer->getShownMapObjectDisplayTypes();
 
   if(!paintLayer->getMapLayer()->isIls())
     // No ILS at this zoom distance
@@ -222,7 +223,7 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
       routeIlsIds.insert(ils.id);
   }
 
-  if(types.testFlag(map::ILS) || types.testFlag(map::GLS))
+  if(types.testFlag(map::ILS) || displayTypes.testFlag(map::GLS))
   {
     // ILS enabled - add from map cache
     bool overflow = false;
@@ -231,7 +232,7 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
     {
       for(const map::MapIls& ils : *ilsListPtr)
       {
-        if(ils.isAnyGls() && !types.testFlag(map::GLS))
+        if(ils.isAnyGls() && !displayTypes.testFlag(map::GLS))
           continue;
 
         if(!ils.isAnyGls() && !types.testFlag(map::ILS))

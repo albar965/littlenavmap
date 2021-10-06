@@ -379,7 +379,7 @@ void MapPaintWidget::setShowMapFeatures(map::MapTypes type, bool show)
   if(type.testFlag(map::AIRSPACE) && show != curShow)
     screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
 
-  if((type.testFlag(map::ILS) || type.testFlag(map::GLS)) && show != curShow)
+  if(type.testFlag(map::ILS) && show != curShow)
     screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
 
   if(type.testFlag(map::MISSED_APPROACH) && show != curShow)
@@ -395,7 +395,7 @@ void MapPaintWidget::setShowMapFeaturesDisplay(map::MapObjectDisplayTypes type, 
   if(type & map::LOGBOOK_ALL && show != curShow)
     screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
 
-  if(type.testFlag(map::FLIGHTPLAN) && show != curShow)
+  if((type.testFlag(map::FLIGHTPLAN) || type.testFlag(map::GLS)) && show != curShow)
     screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
 }
 

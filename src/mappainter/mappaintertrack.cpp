@@ -37,7 +37,7 @@ MapPainterTrack::~MapPainterTrack()
 
 void MapPainterTrack::render()
 {
-  if(!context->objectTypes.testFlag(map::AIRCRAFT_TRACK))
+  if(!context->objectDisplayTypes.testFlag(map::AIRCRAFT_TRACK))
     // If actions are unchecked return
     return;
 

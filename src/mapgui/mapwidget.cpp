@@ -3030,7 +3030,7 @@ void MapWidget::updateMapObjectsShown()
   setShowMapFeaturesDisplay(map::COMPASS_ROSE, ui->actionMapShowCompassRose->isChecked());
   setShowMapFeaturesDisplay(map::COMPASS_ROSE_ATTACH, ui->actionMapShowCompassRoseAttach->isChecked());
   setShowMapFeatures(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
-  setShowMapFeatures(map::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
+  setShowMapFeaturesDisplay(map::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
   setShowMapFeatures(map::AIRCRAFT_AI, ui->actionMapShowAircraftAi->isChecked());
   setShowMapFeatures(map::AIRCRAFT_AI_SHIP, ui->actionMapShowAircraftAiBoat->isChecked());
 
@@ -3083,7 +3083,7 @@ void MapWidget::updateMapObjectsShown()
   setShowMapFeatures(map::ILS, ui->actionMapShowIls->isChecked());
   setShowMapFeatures(map::MARKER, ui->actionMapShowIls->isChecked());
 
-  setShowMapFeatures(map::GLS, ui->actionMapShowGls->isChecked());
+  setShowMapFeaturesDisplay(map::GLS, ui->actionMapShowGls->isChecked());
 
   mapVisible->updateVisibleObjectsStatusBar();
 

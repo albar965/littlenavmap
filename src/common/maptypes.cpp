@@ -1731,8 +1731,6 @@ QString mapObjectTypeToString(MapTypes type)
       str += "AircraftAi";
     if(type.testFlag(AIRCRAFT_AI_SHIP))
       str += "AircraftAiShip";
-    if(type.testFlag(AIRCRAFT_TRACK))
-      str += "AircraftTrack";
     if(type.testFlag(USERPOINTROUTE))
       str += "Userpointroute";
     if(type.testFlag(PARKING))
