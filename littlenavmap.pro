@@ -42,8 +42,8 @@
 # Example: $HOME/Projekte/build-marble-$$CONF_TYPE/src/lib/marble/libmarblewidget-qt5.25.dylib
 #
 # OPENSSL_PATH
-# Windows: Base path of WinSSL 1.1.1 installation (https://slproweb.com/products/Win32OpenSSL.html).
-#          Defaults to "../openssl" if empty.
+# Windows: Base path of WinSSL 1.1.1 installation which can optionally installed with the Qt Installer.
+#          Defaults to "$$[QT_INSTALL_PREFIX])\..\..\Tools\OpenSSL\Win_x86\bin\" (e.g. "C:\Qt\Tools\OpenSSL\Win_x86\bin\") if empty.
 # Linux:   Not used.
 # macOS:   Not used.
 #
@@ -115,7 +115,9 @@ isEmpty(ATOOLS_LIB_PATH) : ATOOLS_LIB_PATH=$$PWD/../build-atools-$$CONF_TYPE
 isEmpty(MARBLE_INC_PATH) : MARBLE_INC_PATH=$$PWD/../Marble-$$CONF_TYPE/include
 isEmpty(MARBLE_LIB_PATH) : MARBLE_LIB_PATH=$$PWD/../Marble-$$CONF_TYPE/lib
 
-win32: isEmpty(OPENSSL_PATH) : OPENSSL_PATH=$$PWD/../openssl
+# QT_INSTALL_PREFIX: C:/Qt/5.15.2/mingw81_32
+# C:\Qt\Tools\OpenSSL\Win_x86\bin\
+win32: isEmpty(OPENSSL_PATH) : OPENSSL_PATH=$$[QT_INSTALL_PREFIX])\..\..\Tools\OpenSSL\Win_x86\bin\
 
 # =======================================================================
 # Set compiler flags and paths
@@ -145,7 +147,6 @@ win32 {
   CONFIG(debug, debug|release) : LIBS += -L$$MARBLE_LIB_PATH -llibmarblewidget-qt5d
   CONFIG(release, debug|release) : LIBS += -L$$MARBLE_LIB_PATH -llibmarblewidget-qt5
   LIBS += -L$$ATOOLS_LIB_PATH -latools -lz
-  LIBS += -L$$OPENSSL_PATH
 
   !isEmpty(SIMCONNECT_PATH) {
     DEFINES += SIMCONNECT_BUILD
