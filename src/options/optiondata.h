@@ -422,6 +422,7 @@ enum DisplayOptionUserAircraft
   ITEM_USER_AIRCRAFT_TRACK_LINE = 1 << 18,
   ITEM_USER_AIRCRAFT_WIND_POINTER = 1 << 19,
   ITEM_USER_AIRCRAFT_TAS = 1 << 20,
+  ITEM_USER_AIRCRAFT_COORDINATES = 1 << 21
 };
 
 Q_DECLARE_FLAGS(DisplayOptionsUserAircraft, DisplayOptionUserAircraft);
@@ -441,7 +442,8 @@ enum DisplayOptionAiAircraft
   ITEM_AI_AIRCRAFT_CLIMB_SINK = 1 << 28,
   ITEM_AI_AIRCRAFT_HEADING = 1 << 29,
   ITEM_AI_AIRCRAFT_ALTITUDE = 1 << 30,
-  ITEM_AI_AIRCRAFT_TAS = 1 << 31
+  ITEM_AI_AIRCRAFT_TAS = 1 << 31,
+  ITEM_AI_AIRCRAFT_COORDINATES = 1 << 1
 };
 
 Q_DECLARE_FLAGS(DisplayOptionsAiAircraft, DisplayOptionAiAircraft);
