@@ -441,6 +441,21 @@ bool NavApp::isUserAircraftValid()
   return mainWindow->getMapWidget()->getUserAircraft().isFullyValid();
 }
 
+bool NavApp::isMoraAvailable()
+{
+  return moraReader->isDataAvailable();
+}
+
+bool NavApp::isHoldingsAvailable()
+{
+  return mapQuery->hasHoldings();
+}
+
+bool NavApp::isGlsAvailable()
+{
+  return mapQuery->hasGls();
+}
+
 float NavApp::getTakeoffFlownDistanceNm()
 {
   return mainWindow->getMapWidget()->getTakeoffFlownDistanceNm();

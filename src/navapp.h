@@ -168,6 +168,11 @@ public:
   static bool isConnectedAndAircraftFlying();
   static bool isUserAircraftValid();
 
+  /* Check for availability in database */
+  static bool isMoraAvailable();
+  static bool isHoldingsAvailable();
+  static bool isGlsAvailable();
+
   static float getTakeoffFlownDistanceNm();
   static QDateTime getTakeoffDateTime();
 

@@ -1456,7 +1456,9 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   QApplication::processEvents();
   atools::fs::NavDatabaseErrors errors;
 
+  qInfo() << Q_FUNC_INFO << "==========================================================";
   qInfo() << Q_FUNC_INFO << navDatabaseOpts;
+  qInfo() << Q_FUNC_INFO << "==========================================================";
 
   try
   {

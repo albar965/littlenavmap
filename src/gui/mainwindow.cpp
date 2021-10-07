@@ -3645,7 +3645,9 @@ void MainWindow::updateActionStates()
   ui->actionClearKml->setEnabled(!mapWidget->getKmlFiles().isEmpty());
 
   // Enable MORA button depending on available data
-  ui->actionMapShowMinimumAltitude->setEnabled(NavApp::getMoraReader()->isDataAvailable());
+  ui->actionMapShowMinimumAltitude->setEnabled(NavApp::isMoraAvailable());
+  ui->actionMapShowGls->setEnabled(NavApp::isGlsAvailable());
+  ui->actionMapShowHolding->setEnabled(NavApp::isHoldingsAvailable());
 
   bool hasFlightplan = !NavApp::getRouteConst().isFlightplanEmpty();
   bool hasTrack = !NavApp::isAircraftTrackEmpty();

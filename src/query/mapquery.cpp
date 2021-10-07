@@ -1270,6 +1270,10 @@ void MapQuery::initQueries()
     holdingByRectQuery = new SqlQuery(holdingDb);
     holdingByRectQuery->prepare("select " + holdingQueryBase + " from holding where " + whereRect + " " + whereLimit);
   }
+
+  // Check for GLS ground station or GBAS threshold
+  SqlUtil simUtil(dbSim);
+  gls = simUtil.hasTableAndColumn("ils", "type") && simUtil.hasRows("ils", "type in ('G', 'T')");
 }
 
 void MapQuery::deInitQueries()

@@ -84,8 +84,20 @@ public:
   /* Always from sim db */
   map::MapIls getIlsById(int id);
 
+  /* True if table ils contains GLS/RNP approaches - GLS ground stations or GBAS threshold points */
+  bool hasGls() const
+  {
+    return gls;
+  }
+
   /* From perm nav db, depending on mode */
   map::MapHolding getHoldingById(int id);
+
+  /* True if table is present in schema and has one row */
+  bool hasHoldings() const
+  {
+    return holdingByIdQuery != nullptr;
+  }
 
   /* Get ILS from sim database based on airport ident and runway name.
    * Runway name can be zero prefixed or prefixed with "RW". */
@@ -176,7 +188,7 @@ public:
 
   /* Similar to getAirports */
   const QList<map::MapHolding> *getHoldings(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
-                                      bool& overflow);
+                                            bool& overflow);
 
   /* Similar to getAirports */
   const QList<map::MapIls> *getIls(Marble::GeoDataLatLonBox rect, const MapLayer *mapLayer, bool lazy, bool& overflow);
@@ -239,6 +251,8 @@ private:
   query::SimpleRectCache<map::MapMarker> markerCache;
   query::SimpleRectCache<map::MapHolding> holdingCache;
   query::SimpleRectCache<map::MapIls> ilsCache;
+
+  bool gls = false;
 
   /* ID/object caches */
   QCache<int, QList<map::MapRunway> > runwayOverwiewCache;
