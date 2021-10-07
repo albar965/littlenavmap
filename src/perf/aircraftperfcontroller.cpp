@@ -968,6 +968,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
   // Warnings and errors paragraph - always shown =================================================
   if(!print)
   {
+    // Collect unset values ===========================================
     QStringList errs;
     if(perf->getAircraftType().isEmpty())
       errs.append(tr("aircraft type"));
@@ -988,6 +989,34 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
       html.p().error((errs.size() == 1 ? tr("Invalid value for %1.") : tr("Invalid values for %1.")).
                      arg(errs.join(tr(", ")))).pEnd();
 
+    // Collect inconsitencies ===========================================
+    QStringList compareErrs;
+    if(perf->getCruiseFuelFlow() >= 0.1f)
+    {
+      if(perf->getClimbFuelFlow() >= 0.1f && perf->getClimbFuelFlow() < perf->getCruiseFuelFlow())
+        compareErrs.append(tr("Climb fuel flow is smaller than cruise fuel flow."));
+      if(perf->getDescentFuelFlow() >= 0.1f && perf->getDescentFuelFlow() > perf->getCruiseFuelFlow())
+        compareErrs.append(tr("Descent fuel flow is higher than cruise fuel flow."));
+    }
+
+    if(perf->getCruiseSpeed() >= 0.1f)
+    {
+      if(perf->getClimbSpeed() > 0.1f && perf->getClimbSpeed() > perf->getCruiseSpeed())
+        compareErrs.append(tr("Climb speed is higher than cruise speed."));
+      if(perf->getDescentSpeed() > 0.1f && perf->getDescentSpeed() < perf->getCruiseSpeed() * 0.5f)
+        compareErrs.append(tr("Descent speed is much smaller than cruise speed."));
+    }
+
+    if(!compareErrs.isEmpty())
+    {
+      html.p();
+      html.warning(tr("Possible issues found:")).br();
+      for(const QString& err : compareErrs)
+        html.warning(err).br();
+      html.pEnd();
+    }
+
+    // Other issues
     if(hasLegs && perf->getUsableFuel() > 1.f && altLegs.getBlockFuel(*perf) > perf->getUsableFuel())
       html.p().error(tr("Block fuel exceeds usable of %1.").arg(ft.weightVolLocal(perf->getUsableFuel()))).pEnd();
 
