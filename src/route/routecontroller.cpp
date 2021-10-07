@@ -3288,6 +3288,9 @@ void RouteController::routeSetDeparture(map::MapAirport airport)
 {
   qDebug() << Q_FUNC_INFO << airport.id << airport.ident;
 
+  if(!airport.isValid())
+    return;
+
   RouteCommand *undoCommand = preChange(tr("Set Departure"));
   NavApp::showFlightPlan();
 
@@ -3356,6 +3359,9 @@ void RouteController::routeSetDestination(map::MapAirport airport)
 {
   qDebug() << Q_FUNC_INFO << airport.id << airport.ident;
 
+  if(!airport.isValid())
+    return;
+
   RouteCommand *undoCommand = preChange(tr("Set Destination"));
   NavApp::showFlightPlan();
 
@@ -3383,6 +3389,10 @@ void RouteController::routeSetDestination(map::MapAirport airport)
 void RouteController::routeAddAlternate(map::MapAirport airport)
 {
   qDebug() << Q_FUNC_INFO << airport.id << airport.ident;
+
+  if(!airport.isValid())
+    return;
+
   RouteCommand *undoCommand = preChange(tr("Add Alternate"));
   NavApp::showFlightPlan();
 

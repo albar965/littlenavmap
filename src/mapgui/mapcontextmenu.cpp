@@ -99,9 +99,9 @@ MapContextMenu::MapContextMenu(QMainWindow *mainWindowParam, MapWidget *mapWidge
     ui->actionMapRangeRings,
     ui->actionMapTrafficPattern,
     ui->actionRouteAddPos,
-    ui->actionRouteAirportAlternate,
-    ui->actionRouteAirportDest,
-    ui->actionRouteAirportStart,
+    ui->actionMapRouteAirportAlternate,
+    ui->actionMapRouteAirportDest,
+    ui->actionMapRouteAirportStart,
     ui->actionRouteAppendPos
   });
 

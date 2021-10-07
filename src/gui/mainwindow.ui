@@ -8026,7 +8026,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Ctrl+Alt+F</string>
    </property>
   </action>
-  <action name="actionRouteAirportStart">
+  <action name="actionMapRouteAirportStart">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</iconset>
@@ -8041,7 +8041,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Set this as departure for the flight plan</string>
    </property>
   </action>
-  <action name="actionRouteAirportDest">
+  <action name="actionMapRouteAirportDest">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</iconset>
@@ -10796,7 +10796,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Do not download or read wind files</string>
    </property>
   </action>
-  <action name="actionRouteAirportAlternate">
+  <action name="actionMapRouteAirportAlternate">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</iconset>
@@ -11993,6 +11993,105 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Show holdings on map</string>
    </property>
   </action>
+  <action name="actionSearchRouteAirportStart">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Set as &amp;Flight Plan Departure</string>
+   </property>
+   <property name="toolTip">
+    <string>Set this as departure for the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Set this as departure for the flight plan</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+D</string>
+   </property>
+  </action>
+  <action name="actionSearchRouteAirportDest">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Set as Flight Plan &amp;Destination</string>
+   </property>
+   <property name="toolTip">
+    <string>Set this as destination for the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Set this as destination for the flight plan</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+N</string>
+   </property>
+  </action>
+  <action name="actionSearchRouteAirportAlternate">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add as Flight Plan Alternate</string>
+   </property>
+   <property name="toolTip">
+    <string>Add this airport as alternate destination for the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Add this airport as alternate destination for the flight plan</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+A</string>
+   </property>
+  </action>
+  <action name="actionSearchLogRouteAirportStart">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Set %1 as &amp;Flight Plan Departure</string>
+   </property>
+   <property name="toolTip">
+    <string>Set this as departure for the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Set this as departure for the flight plan</string>
+   </property>
+  </action>
+  <action name="actionSearchLogRouteAirportDest">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Set %1 as Flight Plan &amp;Destination</string>
+   </property>
+   <property name="toolTip">
+    <string>Set this as destination for the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Set this as destination for the flight plan</string>
+   </property>
+  </action>
+  <action name="actionSearchLogRouteAirportAlternate">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add %1 as Flight Plan Alternate</string>
+   </property>
+   <property name="toolTip">
+    <string>Add this airport as alternate destination for the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Add this airport as alternate destination for the flight plan</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12178,8 +12277,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
  </buttongroups>
 </ui>
