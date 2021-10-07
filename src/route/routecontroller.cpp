@@ -108,6 +108,8 @@ enum RouteColumns
   WIND,
   WIND_HEAD_TAIL,
   ALTITUDE,
+  LATITUDE,
+  LONGITUDE,
   REMARKS,
   LAST_COLUMN = REMARKS
 };
@@ -151,6 +153,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
                                  QObject::tr("Wind\n°M/%speed%"),
                                  QObject::tr("Head- or Tailwind\n%speed%"),
                                  QObject::tr("Altitude\n%alt%"),
+                                 QObject::tr("Latitude"),
+                                 QObject::tr("Longitude"),
                                  QObject::tr("Remarks")});
 
   routeColumnTooltips = QList<QString>(
@@ -182,6 +186,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
     QObject::tr("Head- or tailwind at waypoint."),
     QObject::tr("Altitude at waypoint\n"
                 "Calculated based on the aircraft performance profile."),
+    QObject::tr("Waypoint latitude in format as selected in options."),
+    QObject::tr("Waypoint longitude in format as selected in options."),
     QObject::tr("Turn instructions, flyover or related navaid for procedure legs.")
   });
 
@@ -387,12 +393,6 @@ void RouteController::tableCopyClipboard()
   const Route& rt = route;
   const QStandardItemModel *mdl = model;
 
-  // Add lon lat fields to end of column list
-  auto addionalFieldsFunc = [&rt](int index) -> QStringList {
-                              return {QLocale().toString(rt.value(index).getPosition().getLonX(), 'f', 8),
-                                      QLocale().toString(rt.value(index).getPosition().getLatY(), 'f', 8)};
-                            };
-
   // Use callback to get data to avoid truncated remarks
   auto dataFunc = [&rt, &mdl](int row, int column) -> QVariant {
                     if(column == rcol::REMARKS)
@@ -405,8 +405,7 @@ void RouteController::tableCopyClipboard()
 
   QString csv;
   int exported = CsvExporter::selectionAsCsv(view, true /* rows */, true /* header */, csv,
-                                             {tr("Longitude"), tr("Latitude")},
-                                             addionalFieldsFunc, dataFunc);
+                                             {}, nullptr, dataFunc);
 
   if(!csv.isEmpty())
   {
@@ -4029,6 +4028,9 @@ void RouteController::updateTableModel()
       }
     }
 
+    itemRow[rcol::LATITUDE] = new QStandardItem(Unit::coordsLatY(leg.getPosition()));
+    itemRow[rcol::LONGITUDE] = new QStandardItem(Unit::coordsLonX(leg.getPosition()));
+
     QString remarks;
     if(leg.isAnyProcedure())
       remarks = proc::procedureLegRemark(leg.getProcedureLeg());
@@ -4067,6 +4069,8 @@ void RouteController::updateTableModel()
     itemRow[rcol::WIND]->setTextAlignment(Qt::AlignRight);
     itemRow[rcol::WIND_HEAD_TAIL]->setTextAlignment(Qt::AlignRight);
     itemRow[rcol::ALTITUDE]->setTextAlignment(Qt::AlignRight);
+    itemRow[rcol::LATITUDE]->setTextAlignment(Qt::AlignRight);
+    itemRow[rcol::LONGITUDE]->setTextAlignment(Qt::AlignRight);
 
     model->appendRow(itemRow);
 
