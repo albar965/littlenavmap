@@ -336,6 +336,13 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
           NavApp::getTrackController(), &TrackController::startDownload);
 
   connect(ui->labelRouteInfo, &QLabel::linkActivated, this, &RouteController::flightplanLabelLinkActivated);
+
+  // UI editor cannot deal with line breaks - set text here
+  ui->textBrowserViewRoute->setPlaceholderText(
+    tr("No flight plan.\n\n"
+       "Right-click the center of an airport symbol on the map and select it as departure/destination from the context menu, "
+       "or use the airport search (press \"F4\") to select departure/destination from the context menu of the search result table."));
+  updatePlaceholderWidget();
 }
 
 RouteController::~RouteController()
@@ -3853,6 +3860,16 @@ QIcon RouteController::iconForLeg(const RouteLeg& leg, int size) const
   return icon;
 }
 
+void RouteController::updatePlaceholderWidget()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  bool showPlaceholder = route.isEmpty();
+  ui->tableViewRoute->setVisible(!showPlaceholder);
+  ui->textBrowserViewRoute->setVisible(showPlaceholder);
+  ui->labelRouteInfo->setVisible(!showPlaceholder);
+}
+
 /* Update table view model completely */
 void RouteController::updateTableModel()
 {
@@ -4086,6 +4103,7 @@ void RouteController::updateTableModel()
   updateModelHighlights();
   highlightNextWaypoint(route.getActiveLegIndexCorrected());
   updateWindowLabel();
+  updatePlaceholderWidget();
 
   // Value from ui file is ignored
   view->horizontalHeader()->setMinimumSectionSize(3);
@@ -4545,23 +4563,16 @@ QString RouteController::getErrorStrings(QStringList& toolTip) const
 /* Update the dock window top level label */
 void RouteController::updateWindowLabel()
 {
-  QString tooltip, statustip;
   QString text =
-    buildFlightplanLabel(false /* print */, true /* widget */, false /* titleOnly */, &tooltip, &statustip) +
+    buildFlightplanLabel(false /* print */, true /* widget */, false /* titleOnly */) +
     "<br/>" +
     buildFlightplanLabel2();
 
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->labelRouteInfo->setText(text);
-  ui->labelRouteInfo->setToolTip(tooltip);
-  ui->labelRouteInfo->setStatusTip(statustip);
-
-  ui->tableViewRoute->setToolTip(tooltip);
-  ui->tableViewRoute->setStatusTip(statustip);
 }
 
-QString RouteController::buildFlightplanLabel(bool print, bool widget, bool titleOnly, QString *tooltip,
-                                              QString *statustip) const
+QString RouteController::buildFlightplanLabel(bool print, bool widget, bool titleOnly) const
 {
   const Flightplan& flightplan = route.getFlightplan();
 
@@ -4770,16 +4781,6 @@ QString RouteController::buildFlightplanLabel(bool print, bool widget, bool titl
     else
       // HTML export
       title = tr("<b>%1%2</b> to <b>%3</b>").arg(departureAirport).arg(departureParking).arg(destinationAirport);
-  }
-  else
-  {
-    title = atools::util::HtmlBuilder::warningMessage(tr("No Flight Plan."));
-    if(tooltip != nullptr)
-      *tooltip = tr("<p style='white-space:pre'>Use the right-click context menu on the map or the airport search (<code>F4</code>)<br/>"
-                    "to select departure and destination.</p>");
-
-    if(statustip != nullptr)
-      *statustip = tr("Select departure and destination in the map or airport search");
   }
 
   if(print)

@@ -99,10 +99,10 @@ InfoController::InfoController(MainWindow *parent)
 
   // Inactive texts, tooltips and placeholders
   waitingForUpdateText = tr("Little Navmap is connected to a "
-                            "simulator or Little Navconnect.\n"
+                            "simulator or Little Navconnect.\n\n"
                             "Prepare your flight and load your aircraft in the simulator to see progress updates.");
 
-  notConnectedText = tr("Not connected to simulator.\n"
+  notConnectedText = tr("Not connected to simulator.\n\n"
                         "Go to the main menu -> \"Tools\" -> \"Flight Simulator Connection\" "
                         "or press \"Ctrl+Shift+C\".\n"
                         "Then choose your simulator and click \"Connect\".\n",

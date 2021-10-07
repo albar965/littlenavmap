@@ -4463,6 +4463,16 @@ Matches any visited airport.</string>
           </layout>
          </item>
          <item>
+          <widget class="QTextBrowser" name="textBrowserViewRoute">
+           <property name="placeholderText">
+            <string>No flight plan.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QTableView" name="tableViewRoute">
            <property name="font">
             <font>
@@ -12168,8 +12178,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>
