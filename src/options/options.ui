@@ -4870,136 +4870,8 @@ Note that this value does not affect flight plan calculation or saving of flight
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="2" column="1">
-                <widget class="QLineEdit" name="lineEditOptionsWeatherAsnPath">
-                 <property name="toolTip">
-                  <string>This file (usually &quot;current_wx_snapshot.txt&quot;) will be used for all simulators if set here.
-If this field is empty, the default Active Sky weather file path will be used which is different for each flight simulator.</string>
-                 </property>
-                 <property name="placeholderText">
-                  <string>No &quot;current_wx_snapshot.txt&quot; selected. Using default path.</string>
-                 </property>
-                 <property name="clearButtonEnabled">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="0">
-                <widget class="QLabel" name="labelOptionsWeatherIvaoUrl">
-                 <property name="text">
-                  <string>&amp;IVAO Weather Download URL:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>lineEditOptionsWeatherIvaoUrl</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="labelOptionsWeatherXplanePath">
-                 <property name="text">
-                  <string>X-&amp;Plane weather file:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>lineEditOptionsWeatherXplanePath</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="1">
-                <widget class="QLineEdit" name="lineEditOptionsWeatherIvaoUrl">
-                 <property name="toolTip">
-                  <string>Download URL for the IVAO weather file.
-Default is &quot;http://wx.ivao.aero/metar.php&quot;.</string>
-                 </property>
-                 <property name="text">
-                  <string notr="true">http://wx.ivao.aero/metar.php</string>
-                 </property>
-                 <property name="cursorPosition">
-                  <number>29</number>
-                 </property>
-                 <property name="placeholderText">
-                  <string>No URL set. IVAO weather reports are disabled.</string>
-                 </property>
-                 <property name="clearButtonEnabled">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="labelOptionsWeatherAsnPath">
-                 <property name="text">
-                  <string>Active Sky weather &amp;File:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>lineEditOptionsWeatherAsnPath</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="1">
-                <widget class="QLineEdit" name="lineEditOptionsWeatherVatsimUrl">
-                 <property name="toolTip">
-                  <string>Complete URL of the VATSIM network weather download service.
-Default is &quot;https://metar.vatsim.net/metar.php?id=ALL&quot;.</string>
-                 </property>
-                 <property name="text">
-                  <string notr="true">https://metar.vatsim.net/metar.php?id=ALL</string>
-                 </property>
-                 <property name="cursorPosition">
-                  <number>41</number>
-                 </property>
-                 <property name="placeholderText">
-                  <string>No URL set. VATSIM weather reports are disabled.</string>
-                 </property>
-                 <property name="clearButtonEnabled">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QLineEdit" name="lineEditOptionsWeatherXplanePath">
-                 <property name="toolTip">
-                  <string>The file &quot;METAR.rwx&quot; will be used to get airport weather if X-Plane is selected.
-The default X-Plane weather file in the X-Plane base path will be used if this field is empty.</string>
-                 </property>
-                 <property name="placeholderText">
-                  <string>No &quot;METAR.rwx&quot; selected. Using default file.</string>
-                 </property>
-                 <property name="clearButtonEnabled">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="2">
-                <widget class="QPushButton" name="pushButtonOptionsWeatherIvaoTest">
-                 <property name="toolTip">
-                  <string>Test the IVAO download URL</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Test</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="2">
-                <widget class="QPushButton" name="pushButtonOptionsWeatherNoaaTest">
-                 <property name="toolTip">
-                  <string>Send a test request to the NOAA weather service.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Test</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="2">
-                <widget class="QPushButton" name="pushButtonOptionsWeatherVatsimTest">
-                 <property name="toolTip">
-                  <string>Send a test request to the VATSIM weather service.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Test</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="2">
-                <widget class="QPushButton" name="pushButtonOptionsWeatherAsnPathSelect">
+               <item row="0" column="2">
+                <widget class="QPushButton" name="pushButtonOptionsWeatherXplanePathSelect">
                  <property name="toolTip">
                   <string>Select the &quot;current_wx_snapshot.txt&quot; file.</string>
                  </property>
@@ -5018,39 +4890,28 @@ The default X-Plane weather file in the X-Plane base path will be used if this f
                  </property>
                 </widget>
                </item>
-               <item row="4" column="1">
-                <widget class="QLineEdit" name="lineEditOptionsWeatherNoaaStationsUrl">
+               <item row="6" column="1">
+                <widget class="QLineEdit" name="lineEditOptionsWeatherIvaoUrl">
                  <property name="toolTip">
-                  <string>Complete URL of the NOAA weather service file.
-&quot;%1&quot; is a placeholder that will be substituted with the current two-digit UTC hour.
-Default is &quot;https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT&quot;</string>
+                  <string>Download URL for the IVAO weather file.
+Default is &quot;http://wx.ivao.aero/metar.php&quot;.</string>
                  </property>
                  <property name="text">
-                  <string notr="true">https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</string>
+                  <string notr="true">https://wx.ivao.aero/metar.php</string>
                  </property>
                  <property name="cursorPosition">
-                  <number>65</number>
+                  <number>30</number>
                  </property>
                  <property name="placeholderText">
-                  <string>No URL set. NOAA weather reports are disabled.</string>
+                  <string>No URL set. IVAO weather reports are disabled.</string>
                  </property>
                  <property name="clearButtonEnabled">
                   <bool>false</bool>
                  </property>
                 </widget>
                </item>
-               <item row="4" column="0">
-                <widget class="QLabel" name="labelOptionsWeatherNoaaUrl">
-                 <property name="text">
-                  <string>&amp;NOAA Weather Service URL:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>lineEditOptionsWeatherNoaaStationsUrl</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="2">
-                <widget class="QPushButton" name="pushButtonOptionsWeatherXplanePathSelect">
+               <item row="2" column="2">
+                <widget class="QPushButton" name="pushButtonOptionsWeatherAsnPathSelect">
                  <property name="toolTip">
                   <string>Select the &quot;current_wx_snapshot.txt&quot; file.</string>
                  </property>
@@ -5084,6 +4945,46 @@ Default is &quot;https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.T
                  </property>
                 </widget>
                </item>
+               <item row="4" column="2">
+                <widget class="QPushButton" name="pushButtonOptionsWeatherNoaaTest">
+                 <property name="toolTip">
+                  <string>Send a test request to the NOAA weather service.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Test</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="2">
+                <widget class="QPushButton" name="pushButtonOptionsWeatherIvaoTest">
+                 <property name="toolTip">
+                  <string>Test the IVAO download URL</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Test</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="1">
+                <widget class="QLineEdit" name="lineEditOptionsWeatherNoaaStationsUrl">
+                 <property name="toolTip">
+                  <string>Complete URL of the NOAA weather service file.
+&quot;%1&quot; is a placeholder that will be substituted with the current two-digit UTC hour.</string>
+                 </property>
+                 <property name="text">
+                  <string notr="true">https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</string>
+                 </property>
+                 <property name="cursorPosition">
+                  <number>65</number>
+                 </property>
+                 <property name="placeholderText">
+                  <string>No URL set. NOAA weather reports are disabled.</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
                <item row="3" column="1" colspan="2">
                 <widget class="QLabel" name="labelOptionsWeatherAsnPathState">
                  <property name="sizePolicy">
@@ -5106,6 +5007,134 @@ Default is &quot;https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.T
                  </property>
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="0">
+                <widget class="QLabel" name="labelOptionsWeatherIvaoUrl">
+                 <property name="text">
+                  <string>&amp;IVAO Weather Download URL:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>lineEditOptionsWeatherIvaoUrl</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="labelOptionsWeatherAsnPath">
+                 <property name="text">
+                  <string>Active Sky weather &amp;File:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>lineEditOptionsWeatherAsnPath</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QLineEdit" name="lineEditOptionsWeatherAsnPath">
+                 <property name="toolTip">
+                  <string>This file (usually &quot;current_wx_snapshot.txt&quot;) will be used for all simulators if set here.
+If this field is empty, the default Active Sky weather file path will be used which is different for each flight simulator.</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>No &quot;current_wx_snapshot.txt&quot; selected. Using default path.</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QLabel" name="labelOptionsWeatherNoaaUrl">
+                 <property name="text">
+                  <string>&amp;NOAA Weather Service URL:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>lineEditOptionsWeatherNoaaStationsUrl</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="0">
+                <widget class="QLabel" name="labelOptionsWeatherXplanePath">
+                 <property name="text">
+                  <string>X-&amp;Plane weather file:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>lineEditOptionsWeatherXplanePath</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QLineEdit" name="lineEditOptionsWeatherXplanePath">
+                 <property name="toolTip">
+                  <string>The file &quot;METAR.rwx&quot; will be used to get airport weather if X-Plane is selected.
+The default X-Plane weather file in the X-Plane base path will be used if this field is empty.</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>No &quot;METAR.rwx&quot; selected. Using default file.</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <widget class="QLineEdit" name="lineEditOptionsWeatherVatsimUrl">
+                 <property name="toolTip">
+                  <string>Complete URL of the VATSIM network weather download service.
+Default is &quot;https://metar.vatsim.net/metar.php?id=ALL&quot;.</string>
+                 </property>
+                 <property name="text">
+                  <string notr="true">https://metar.vatsim.net/metar.php?id=ALL</string>
+                 </property>
+                 <property name="cursorPosition">
+                  <number>41</number>
+                 </property>
+                 <property name="placeholderText">
+                  <string>No URL set. VATSIM weather reports are disabled.</string>
+                 </property>
+                 <property name="clearButtonEnabled">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="2">
+                <widget class="QPushButton" name="pushButtonOptionsWeatherVatsimTest">
+                 <property name="toolTip">
+                  <string>Send a test request to the VATSIM weather service.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Test</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="3">
+                <widget class="QPushButton" name="pushButtonOptionsWeatherNoaaReset">
+                 <property name="toolTip">
+                  <string>Reset the URL back to default</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Reset</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="3">
+                <widget class="QPushButton" name="pushButtonOptionsWeatherVatsimReset">
+                 <property name="toolTip">
+                  <string>Reset the URL back to default</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Reset</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="3">
+                <widget class="QPushButton" name="pushButtonOptionsWeatherIvaoReset">
+                 <property name="toolTip">
+                  <string>Reset the URL back to default</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Reset</string>
                  </property>
                 </widget>
                </item>
@@ -5179,13 +5208,13 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0">
-                <widget class="QLabel" name="labelOptionsWeatherXplaneWind">
+               <item row="2" column="0">
+                <widget class="QLabel" name="labelOptionsWeatherNoaaWindUrl">
                  <property name="text">
-                  <string>&amp;X-Plane Wind File:</string>
+                  <string>NOAA &amp;Wind Service Base URL:</string>
                  </property>
                  <property name="buddy">
-                  <cstring>lineEditOptionsWeatherXplaneWind</cstring>
+                  <cstring>lineEditOptionsWeatherNoaaWindUrl</cstring>
                  </property>
                 </widget>
                </item>
@@ -5199,13 +5228,13 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="labelOptionsWeatherNoaaWindUrl">
+               <item row="0" column="0">
+                <widget class="QLabel" name="labelOptionsWeatherXplaneWind">
                  <property name="text">
-                  <string>NOAA &amp;Wind Service Base URL:</string>
+                  <string>&amp;X-Plane Wind File:</string>
                  </property>
                  <property name="buddy">
-                  <cstring>lineEditOptionsWeatherNoaaWindUrl</cstring>
+                  <cstring>lineEditOptionsWeatherXplaneWind</cstring>
                  </property>
                 </widget>
                </item>
@@ -5231,6 +5260,16 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
                  </property>
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="3">
+                <widget class="QPushButton" name="pushButtonOptionsWeatherNoaaWindReset">
+                 <property name="toolTip">
+                  <string>Send a test request to the NOAA weather service.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Reset</string>
                  </property>
                 </widget>
                </item>

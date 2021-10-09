@@ -26,6 +26,13 @@
 OptionData *OptionData::optionData = nullptr;
 const QVector<float> OptionData::MAP_RANGERINGS_DEFAULT({50.f, 100.f, 200.f, 500.f});
 
+const QString OptionData::WEATHER_NOAA_DEFAULT_URL =
+  "https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT";
+const QString OptionData::WEATHER_VATSIM_DEFAULT_URL = "https://metar.vatsim.net/metar.php?id=ALL";
+const QString OptionData::WEATHER_IVAO_DEFAULT_URL = "https://wx.ivao.aero/metar.php";
+const QString OptionData::WEATHER_NOAA_WIND_BASE_DEFAULT_URL =
+  "https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl";
+
 /* Default values for well known networks */
 
 OptionData::OptionData()
