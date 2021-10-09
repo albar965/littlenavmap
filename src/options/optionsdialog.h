@@ -134,6 +134,12 @@ private:
   void testWeatherVatsimUrlClicked();
   void testWeatherIvaoUrlClicked();
   void testWeatherNoaaWindUrlClicked();
+
+  void resetWeatherNoaaUrlClicked();
+  void resetWeatherVatsimUrlClicked();
+  void resetWeatherIvaoUrlClicked();
+  void resetWeatherNoaaWindUrlClicked();
+
   void updateWidgetUnits();
   void simUpdatesConstantClicked(bool state);
   void flightplanColorClicked();

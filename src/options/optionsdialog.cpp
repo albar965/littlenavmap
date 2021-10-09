@@ -508,6 +508,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->lineEditOptionsWeatherXplaneWind, &QLineEdit::textEdited,
           this, &OptionsDialog::updateXplaneWindStatus);
 
+  connect(ui->pushButtonOptionsWeatherXplaneWindPathSelect, &QPushButton::clicked,
+          this, &OptionsDialog::weatherXplaneWindPathSelectClicked);
+
   // ===========================================================================
   // Weather test buttons
   connect(ui->pushButtonOptionsWeatherNoaaTest, &QPushButton::clicked,
@@ -516,11 +519,19 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
           this, &OptionsDialog::testWeatherVatsimUrlClicked);
   connect(ui->pushButtonOptionsWeatherIvaoTest, &QPushButton::clicked,
           this, &OptionsDialog::testWeatherIvaoUrlClicked);
-
   connect(ui->pushButtonOptionsWeatherNoaaWindTest, &QPushButton::clicked,
           this, &OptionsDialog::testWeatherNoaaWindUrlClicked);
-  connect(ui->pushButtonOptionsWeatherXplaneWindPathSelect, &QPushButton::clicked,
-          this, &OptionsDialog::weatherXplaneWindPathSelectClicked);
+
+  // ===========================================================================
+  // Weather reset buttons
+  connect(ui->pushButtonOptionsWeatherNoaaReset, &QPushButton::clicked,
+          this, &OptionsDialog::resetWeatherNoaaUrlClicked);
+  connect(ui->pushButtonOptionsWeatherVatsimReset, &QPushButton::clicked,
+          this, &OptionsDialog::resetWeatherVatsimUrlClicked);
+  connect(ui->pushButtonOptionsWeatherIvaoReset, &QPushButton::clicked,
+          this, &OptionsDialog::resetWeatherIvaoUrlClicked);
+  connect(ui->pushButtonOptionsWeatherNoaaWindReset, &QPushButton::clicked,
+          this, &OptionsDialog::resetWeatherNoaaWindUrlClicked);
 
   // ===========================================================================
   // Map
@@ -1418,6 +1429,26 @@ void OptionsDialog::testWeatherNoaaWindUrlClicked()
     QMessageBox::information(this, QApplication::applicationName(), tr("Success."));
   else
     atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join("\n")));
+}
+
+void OptionsDialog::resetWeatherNoaaUrlClicked()
+{
+  ui->lineEditOptionsWeatherNoaaStationsUrl->setText(OptionData::WEATHER_NOAA_DEFAULT_URL);
+}
+
+void OptionsDialog::resetWeatherVatsimUrlClicked()
+{
+  ui->lineEditOptionsWeatherVatsimUrl->setText(OptionData::WEATHER_VATSIM_DEFAULT_URL);
+}
+
+void OptionsDialog::resetWeatherIvaoUrlClicked()
+{
+  ui->lineEditOptionsWeatherIvaoUrl->setText(OptionData::WEATHER_IVAO_DEFAULT_URL);
+}
+
+void OptionsDialog::resetWeatherNoaaWindUrlClicked()
+{
+  ui->lineEditOptionsWeatherNoaaWindUrl->setText(OptionData::WEATHER_NOAA_WIND_BASE_DEFAULT_URL);
 }
 
 /* Show directory dialog to add exclude path */

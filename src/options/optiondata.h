@@ -1187,10 +1187,22 @@ private:
   QVector<float> mapRangeRings = MAP_RANGERINGS_DEFAULT;
 
   QString weatherActiveSkyPath, // ui->lineEditOptionsWeatherAsnPath
-          weatherXplanePath, // lineEditOptionsWeatherXplanePath
-          weatherNoaaUrl = "https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT",
-          weatherVatsimUrl = "https://metar.vatsim.net/metar.php?id=ALL",
-          weatherIvaoUrl = "https://wx.ivao.aero/metar.php";
+          weatherXplanePath; // lineEditOptionsWeatherXplanePath
+
+  /* Default weather URLs used in reset */
+  const static QString WEATHER_NOAA_DEFAULT_URL;
+  const static QString WEATHER_VATSIM_DEFAULT_URL;
+  const static QString WEATHER_IVAO_DEFAULT_URL;
+  const static QString WEATHER_NOAA_WIND_BASE_DEFAULT_URL;
+
+  /* Current weather URLs */
+  QString weatherNoaaUrl = WEATHER_NOAA_DEFAULT_URL,
+          weatherVatsimUrl = WEATHER_VATSIM_DEFAULT_URL,
+          weatherIvaoUrl = WEATHER_IVAO_DEFAULT_URL,
+          weatherNoaaWindBaseUrl = WEATHER_NOAA_WIND_BASE_DEFAULT_URL;
+
+  /* X-Plane GRIB file or NOAA GRIB base URL */
+  QString weatherXplaneWind;
 
   QString cacheOfflineElevationPath, cacheUserAirspacePath, cacheUserAirspaceExtensions = "*.txt";
 
@@ -1453,15 +1465,7 @@ private:
   /* true for HTTPS / SSL */
   bool webEncrypted = false;
 
-  /* X-Plane GRIB file or NOAA GRIB base URL */
-  QString weatherXplaneWind, weatherNoaaWindBaseUrl = "https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl";
-
   QString guiFont, mapFont;
-
-  const static QString WEATHER_NOAA_DEFAULT_URL;
-  const static QString WEATHER_VATSIM_DEFAULT_URL;
-  const static QString WEATHER_IVAO_DEFAULT_URL;
-  const static QString WEATHER_NOAA_WIND_BASE_DEFAULT_URL;
 };
 
 #endif // LITTLENAVMAP_OPTIONDATA_H
