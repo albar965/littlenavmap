@@ -257,6 +257,7 @@ void checkAndMigrateSettings()
         removeAndLog(settings, "OptionsDialog/DisplayOptionsAiAircraft_2"); // ITEM_AI_AIRCRAFT_COORDINATES
         removeAndLog(settings, "Route/View_tableViewRoute");
         removeAndLog(settings, "OptionsDialog/Widget_lineEditOptionsWeatherIvaoUrl");
+        removeAndLog(settings, "Map/DetailFactor");
       }
 
       // Set program version to options and save ===================
