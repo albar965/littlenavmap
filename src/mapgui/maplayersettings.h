@@ -38,7 +38,7 @@ public:
 
   static Q_DECL_CONSTEXPR int MAP_DEFAULT_DETAIL_FACTOR = 10;
   static Q_DECL_CONSTEXPR int MAP_MAX_DETAIL_FACTOR = 15;
-  static Q_DECL_CONSTEXPR int MAP_MIN_DETAIL_FACTOR = 5;
+  static Q_DECL_CONSTEXPR int MAP_MIN_DETAIL_FACTOR = 8;
 
   /* Get a layer for current zoom distance and detail factor */
   const MapLayer *getLayer(float distance, int detailFactor = MAP_DEFAULT_DETAIL_FACTOR) const;
