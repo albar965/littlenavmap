@@ -879,27 +879,9 @@ void AircraftPerfController::updateReportCurrent()
 
 void AircraftPerfController::fuelReportFilepath(atools::util::HtmlBuilder& html, bool print)
 {
-  if(!currentFilepath.isEmpty())
-  {
-    if(!print)
-    {
-      html.p().b(tr("Performance File")).pEnd();
-      html.table();
-
-      // Show link inactive if file does not exist
-      HtmlBuilder link(html.cleared());
-      if(QFileInfo::exists(currentFilepath))
-        link.a(currentFilepath, QString("lnm://show?filepath=%1").arg(currentFilepath), atools::util::html::LINK_NO_UL);
-      else
-        link.text(currentFilepath);
-
-      html.row2(QString(), link.getHtml(), atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
-      html.tableEnd();
-    }
-    else
-      // Use a simple layout for printing
-      html.p().b(tr("Performance File:")).nbsp().nbsp().small(currentFilepath).pEnd();
-  }
+  if(!currentFilepath.isEmpty() && print)
+    // Use a simple layout for printing
+    html.p().b(tr("Performance File:")).nbsp().nbsp().small(currentFilepath).pEnd();
 }
 
 bool AircraftPerfController::isPerformanceFile(const QString& file)
