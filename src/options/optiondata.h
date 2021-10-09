@@ -338,6 +338,9 @@ enum Flag2
 
   /* checkBoxOptionsMapAirportAddon */
   MAP_AIRPORT_HIGHLIGHT_ADDON = 1 << 28,
+
+  /* checkBoxOptionsSimZoomOnLanding */
+  ROUTE_ZOOM_LANDING = 1 << 29,
 };
 
 Q_DECLARE_FLAGS(Flags2, Flag2);
@@ -975,9 +978,20 @@ public:
     return aircraftTrackMaxPoints;
   }
 
-  int getSimNoFollowAircraftOnScrollSeconds() const
+  int getSimNoFollowAircraftScrollSeconds() const
   {
-    return simNoFollowAircraftOnScroll;
+    return simNoFollowOnScrollTime;
+  }
+
+  /* In local user units (NM, mi, KM) */
+  float getSimZoomOnLandingDistance() const
+  {
+    return simZoomOnLandingDist;
+  }
+
+  int getSimCleanupTableTime() const
+  {
+    return simCleanupTableTime;
   }
 
   opts::OnlineNetwork getOnlineNetwork() const
@@ -1345,7 +1359,13 @@ private:
   int aircraftTrackMaxPoints = 20000;
 
   // spinBoxSimDoNotFollowOnScrollTime
-  int simNoFollowAircraftOnScroll = 10;
+  int simNoFollowOnScrollTime = 10;
+
+  // doubleSpinBoxOptionsSimZoomOnLanding,
+  float simZoomOnLandingDist = 0.2f;
+
+  // spinBoxOptionsSimCleanupTableTime,
+  int simCleanupTableTime = 10;
 
   // spinBoxOptionsDisplayTextSizeRangeDistance
   int displayTextSizeRangeDistance = 100;

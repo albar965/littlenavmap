@@ -425,9 +425,6 @@ private:
 
   void dockVisibilityChanged(bool visible);
 
-  /* Time for clear selection triggered or scroll active to top */
-  void cleanupTableTimeout();
-
   /* Departure, destination and procedures. */
   QString buildFlightplanLabel(bool print = false, bool widget = false, bool titleOnly = false) const;
 
@@ -469,6 +466,7 @@ private:
   void scrollToActive();
 
   void viewScrolled(int);
+  void sliderPressedOrReleased();
 
   /* Remove all errors from lists */
   void clearAllErrors();
@@ -477,6 +475,15 @@ private:
   void flightplanLabelLinkActivated(const QString& link);
 
   void updatePlaceholderWidget();
+
+  /* Time for clear selection triggered or scroll active to top */
+  void cleanupTableTimeout();
+
+  /* Restart timer when user interacts with the table */
+  void updateCleanupTimer();
+
+  /* true if neither context menu is open nor scroll sliders are pressed down.*/
+  bool canCleanupTable();
 
   /* Selected rows in table. Updated on selection change. */
   QList<int> selectedRows;
@@ -541,7 +548,7 @@ private:
   atools::gui::TabWidgetHandler *tabHandlerRoute = nullptr;
 
   /* Timers for updating altitude delayer, clear selection while flying and moving active to top */
-  QTimer routeAltDelayTimer, cleanupTableTimer;
+  QTimer routeAltDelayTimer, tableCleanupTimer;
 
   // Route table colum headings
   QStringList routeColumns, routeColumnTooltips;

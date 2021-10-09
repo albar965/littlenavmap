@@ -423,11 +423,17 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsMapNavaidText,
      ui->checkBoxOptionsMapFlightplanText,
      ui->checkBoxOptionsMapFlightplanDimPassed,
-     ui->checkBoxOptionsSimDoNotFollowOnScroll,
      ui->checkBoxOptionsSimCenterLeg,
      ui->checkBoxOptionsSimCenterLegTable,
      ui->checkBoxOptionsSimClearSelection,
-     ui->spinBoxSimDoNotFollowOnScrollTime,
+
+     ui->checkBoxOptionsSimDoNotFollowScroll,
+     ui->spinBoxOptionsSimDoNotFollowScrollTime,
+     ui->checkBoxOptionsSimZoomOnLanding,
+     ui->doubleSpinBoxOptionsSimZoomOnLanding,
+     ui->checkBoxOptionsSimCenterLegTable,
+     ui->spinBoxOptionsSimCleanupTableTime,
+     ui->checkBoxOptionsSimClearSelection,
 
      ui->radioButtonOptionsOnlineNone,
      ui->radioButtonOptionsOnlineVatsim,
@@ -606,10 +612,14 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->checkBoxOptionsMapEmptyAirports, &QCheckBox::toggled,
           this, &OptionsDialog::mapEmptyAirportsClicked);
 
-  connect(ui->checkBoxOptionsSimDoNotFollowOnScroll, &QCheckBox::toggled, this,
-          &OptionsDialog::simNoFollowAircraftOnScrollClicked);
+  connect(ui->checkBoxOptionsSimDoNotFollowScroll, &QCheckBox::toggled, this,
+          &OptionsDialog::updateWhileFlyingWidgets);
+  connect(ui->checkBoxOptionsSimZoomOnLanding, &QCheckBox::toggled, this,
+          &OptionsDialog::updateWhileFlyingWidgets);
   connect(ui->checkBoxOptionsSimCenterLegTable, &QCheckBox::toggled, this,
-          &OptionsDialog::simNoFollowAircraftOnScrollClicked);
+          &OptionsDialog::updateWhileFlyingWidgets);
+  connect(ui->checkBoxOptionsSimClearSelection, &QCheckBox::toggled, this,
+          &OptionsDialog::updateWhileFlyingWidgets);
 
   // Online tab =======================================================================
   connect(ui->radioButtonOptionsOnlineNone, &QRadioButton::clicked,
@@ -878,7 +888,8 @@ void OptionsDialog::updateWidgetUnits()
       ui->spinBoxDisplayOnlineFir,
       ui->spinBoxDisplayOnlineObserver,
       ui->spinBoxDisplayOnlineGround,
-      ui->spinBoxDisplayOnlineTower
+      ui->spinBoxDisplayOnlineTower,
+      ui->doubleSpinBoxOptionsSimZoomOnLanding
     });
   }
   else
@@ -966,7 +977,7 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
 
 void OptionsDialog::updateWidgetStates()
 {
-  simNoFollowAircraftOnScrollClicked(false);
+  updateWhileFlyingWidgets(false);
   updateButtonColors();
   updateGuiFontLabel();
   updateMapFontLabel();
@@ -1102,7 +1113,7 @@ void OptionsDialog::restoreState()
   updateWidgetUnits();
   simUpdatesConstantClicked(false);
   mapEmptyAirportsClicked(false);
-  simNoFollowAircraftOnScrollClicked(false);
+  updateWhileFlyingWidgets(false);
   updateButtonColors();
   updateGuiFontLabel();
   updateMapFontLabel();
@@ -1500,13 +1511,12 @@ void OptionsDialog::mapEmptyAirportsClicked(bool state)
   ui->checkBoxOptionsMapEmptyAirports3D->setEnabled(ui->checkBoxOptionsMapEmptyAirports->isChecked());
 }
 
-void OptionsDialog::simNoFollowAircraftOnScrollClicked(bool state)
+void OptionsDialog::updateWhileFlyingWidgets(bool)
 {
-  Q_UNUSED(state)
-  ui->spinBoxSimDoNotFollowOnScrollTime->setEnabled(
-    ui->checkBoxOptionsSimDoNotFollowOnScroll->isChecked() || ui->checkBoxOptionsSimCenterLegTable->isChecked());
-  ui->labelSimDoNotFollowOnScroll->setEnabled(
-    ui->checkBoxOptionsSimDoNotFollowOnScroll->isChecked() || ui->checkBoxOptionsSimCenterLegTable->isChecked());
+  ui->spinBoxOptionsSimDoNotFollowScrollTime->setEnabled(ui->checkBoxOptionsSimDoNotFollowScroll->isChecked());
+  ui->doubleSpinBoxOptionsSimZoomOnLanding->setEnabled(ui->checkBoxOptionsSimZoomOnLanding->isChecked());
+  ui->spinBoxOptionsSimCleanupTableTime->setEnabled(ui->checkBoxOptionsSimCenterLegTable->isChecked() ||
+                                                    ui->checkBoxOptionsSimClearSelection->isChecked());
 }
 
 /* Copy widget states to OptionData object */
@@ -1599,10 +1609,11 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxOptionsMapAiAircraftText, opts2::MAP_AI_TEXT_BACKGROUND);
 
   toFlags2(ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
-  toFlags2(ui->checkBoxOptionsSimDoNotFollowOnScroll, opts2::ROUTE_NO_FOLLOW_ON_MOVE);
+  toFlags2(ui->checkBoxOptionsSimDoNotFollowScroll, opts2::ROUTE_NO_FOLLOW_ON_MOVE);
   toFlags2(ui->checkBoxOptionsSimCenterLeg, opts2::ROUTE_AUTOZOOM);
   toFlags2(ui->checkBoxOptionsSimCenterLegTable, opts2::ROUTE_CENTER_ACTIVE_LEG);
   toFlags2(ui->checkBoxOptionsSimClearSelection, opts2::ROUTE_CLEAR_SELECTION);
+  toFlags2(ui->checkBoxOptionsSimZoomOnLanding, opts2::ROUTE_ZOOM_LANDING);
 
   toFlags2(ui->checkBoxDisplayOnlineNameLookup, opts2::ONLINE_AIRSPACE_BY_NAME);
   toFlags2(ui->checkBoxDisplayOnlineFileLookup, opts2::ONLINE_AIRSPACE_BY_FILE);
@@ -1663,7 +1674,10 @@ void OptionsDialog::widgetsToOptionData()
   else if(ui->radioButtonOptionsMapNavTouchscreen->isChecked())
     data.mapNavigation = opts::MAP_NAV_TOUCHSCREEN;
 
-  data.simNoFollowAircraftOnScroll = ui->spinBoxSimDoNotFollowOnScrollTime->value();
+  data.simNoFollowOnScrollTime = ui->spinBoxOptionsSimDoNotFollowScrollTime->value();
+  data.simZoomOnLandingDist = static_cast<float>(ui->doubleSpinBoxOptionsSimZoomOnLanding->value());
+  data.simCleanupTableTime = ui->spinBoxOptionsSimCleanupTableTime->value();
+
   data.simUpdateBox = ui->spinBoxOptionsSimUpdateBox->value();
   data.aircraftTrackMaxPoints = ui->spinBoxSimMaxTrackPoints->value();
 
@@ -1855,7 +1869,8 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags2(data, ui->checkBoxOptionsMapAiAircraftText, opts2::MAP_AI_TEXT_BACKGROUND);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanText, opts2::MAP_ROUTE_TEXT_BACKGROUND);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
-  fromFlags2(data, ui->checkBoxOptionsSimDoNotFollowOnScroll, opts2::ROUTE_NO_FOLLOW_ON_MOVE);
+  fromFlags2(data, ui->checkBoxOptionsSimDoNotFollowScroll, opts2::ROUTE_NO_FOLLOW_ON_MOVE);
+  fromFlags2(data, ui->checkBoxOptionsSimZoomOnLanding, opts2::ROUTE_ZOOM_LANDING);
   fromFlags2(data, ui->checkBoxOptionsSimCenterLeg, opts2::ROUTE_AUTOZOOM);
   fromFlags2(data, ui->checkBoxOptionsSimCenterLegTable, opts2::ROUTE_CENTER_ACTIVE_LEG);
   fromFlags2(data, ui->checkBoxOptionsSimClearSelection, opts2::ROUTE_CLEAR_SELECTION);
@@ -1926,7 +1941,10 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
       break;
   }
 
-  ui->spinBoxSimDoNotFollowOnScrollTime->setValue(data.simNoFollowAircraftOnScroll);
+  ui->spinBoxOptionsSimDoNotFollowScrollTime->setValue(data.simNoFollowOnScrollTime);
+  ui->doubleSpinBoxOptionsSimZoomOnLanding->setValue(data.simZoomOnLandingDist);
+  ui->spinBoxOptionsSimCleanupTableTime->setValue(data.simCleanupTableTime);
+
   ui->spinBoxOptionsSimUpdateBox->setValue(data.simUpdateBox);
   ui->spinBoxSimMaxTrackPoints->setValue(data.aircraftTrackMaxPoints);
 

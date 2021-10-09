@@ -125,7 +125,7 @@ private:
   void removeDatabaseExcludePathClicked();
   void addDatabaseAddOnExcludePathClicked();
   void removeDatabaseAddOnExcludePathClicked();
-  void simNoFollowAircraftOnScrollClicked(bool state);
+  void updateWhileFlyingWidgets(bool);
 
   void showDiskCacheClicked();
   void updateDatabaseButtonState();

@@ -108,9 +108,6 @@ const float MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM = 50.f;
 /* Default zoom distance if start position was not set (usually first start after installation */
 const double DEFAULT_MAP_DISTANCE_KM = 7000.;
 
-/* Forced zoom distance after touchdown. Applied once. */
-const double DEFAULT_MAP_DISTANCE_TOUCHDOWN_KM = 0.2;
-
 /* If width and height of a bounding rect are smaller than this use show point */
 const float POS_IS_POINT_EPSILON = 0.0001f;
 
@@ -2420,10 +2417,11 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
         // Zoom close after touchdown ===================================================================
         // Only if user is not mousing around on the map
-        if(touchdownDetectedZoom)
+        if(touchdownDetectedZoom && OptionData::instance().getFlags2().testFlag(opts2::ROUTE_ZOOM_LANDING))
         {
-          qDebug() << Q_FUNC_INFO << "Touchdown detected - zooming close";
-          setDistanceToMap(DEFAULT_MAP_DISTANCE_TOUCHDOWN_KM);
+          double distKm = Unit::rev(OptionData::instance().getSimZoomOnLandingDistance(), Unit::distMeterF) / 1000.;
+          qDebug() << Q_FUNC_INFO << "Touchdown detected - zooming close" << distKm << "km";
+          setDistanceToMap(distKm);
           touchdownDetectedZoom = false;
         }
       } // if(mouseState == mw::NONE && viewContext() == Marble::Still && !jumpBack->isActive())

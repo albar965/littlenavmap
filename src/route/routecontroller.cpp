@@ -266,12 +266,17 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   // Clear selection after inactivity
   // Or move active to top after inactivity (no scrolling)
-  connect(&cleanupTableTimer, &QTimer::timeout, this, &RouteController::cleanupTableTimeout);
-  cleanupTableTimer.setInterval(OptionData::instance().getSimNoFollowAircraftOnScrollSeconds() * 1000);
-  cleanupTableTimer.setSingleShot(true);
+  connect(&tableCleanupTimer, &QTimer::timeout, this, &RouteController::cleanupTableTimeout);
+  tableCleanupTimer.setInterval(OptionData::instance().getSimCleanupTableTime() * 1000);
+  tableCleanupTimer.setSingleShot(true);
 
-  // Restart timer when scrolling
+  // Restart timer when scrolling or holding the slider
   connect(view->verticalScrollBar(), &QScrollBar::valueChanged, this, &RouteController::viewScrolled);
+  connect(view->horizontalScrollBar(), &QScrollBar::valueChanged, this, &RouteController::viewScrolled);
+  connect(view->verticalScrollBar(), &QScrollBar::sliderPressed, this, &RouteController::sliderPressedOrReleased);
+  connect(view->horizontalScrollBar(), &QScrollBar::sliderPressed, this, &RouteController::sliderPressedOrReleased);
+  connect(view->verticalScrollBar(), &QScrollBar::sliderReleased, this, &RouteController::sliderPressedOrReleased);
+  connect(view->horizontalScrollBar(), &QScrollBar::sliderReleased, this, &RouteController::sliderPressedOrReleased);
 
   // set up table view
   view->horizontalHeader()->setSectionsMovable(true);
@@ -2643,6 +2648,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
     // Other actions emit signals directly
   }
   contextMenuOpen = false;
+
+  // Restart the timers for clearing the selection or moving the active to top
+  updateCleanupTimer();
 }
 
 /* Activate leg manually from menu */
@@ -2722,15 +2730,36 @@ void RouteController::dockVisibilityChanged(bool visible)
   tableSelectionChanged(QItemSelection(), QItemSelection());
 }
 
+bool RouteController::canCleanupTable()
+{
+  return !contextMenuOpen && !view->horizontalScrollBar()->isSliderDown() && !view->verticalScrollBar()->isSliderDown();
+}
+
 void RouteController::cleanupTableTimeout()
 {
-  if(NavApp::isConnectedAndAircraftFlying() && !contextMenuOpen)
-  {
-    if(hasTableSelection() && OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CLEAR_SELECTION))
-      clearTableSelection();
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
 
-    if(OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG))
-      scrollToActive();
+  if(NavApp::isConnectedAndAircraftFlying())
+  {
+    if(!canCleanupTable())
+      // Cannot clean up now - restart timers
+      updateCleanupTimer();
+    else
+    {
+      opts2::Flags2 flags2 = OptionData::instance().getFlags2();
+      if(hasTableSelection() && flags2.testFlag(opts2::ROUTE_CLEAR_SELECTION))
+      {
+        // Clear selection and move cursor to current row and first column
+        QModelIndex idx = view->model()->index(view->currentIndex().row(), view->horizontalHeader()->logicalIndex(0));
+        view->selectionModel()->setCurrentIndex(idx, QItemSelectionModel::Clear);
+      }
+
+      if(flags2.testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG))
+        // Move active to second row
+        scrollToActive();
+    }
   }
 }
 
@@ -2744,12 +2773,30 @@ bool RouteController::hasTableSelection()
   return view->selectionModel() == nullptr ? false : view->selectionModel()->hasSelection();
 }
 
+void RouteController::updateCleanupTimer()
+{
+  if(NavApp::isConnectedAndAircraftFlying())
+  {
+    opts2::Flags2 flags2 = OptionData::instance().getFlags2();
+    if((hasTableSelection() && flags2.testFlag(opts2::ROUTE_CLEAR_SELECTION)) ||
+       flags2.testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG))
+    {
+#ifdef DEBUG_INFORMATION
+      qDebug() << Q_FUNC_INFO << "tableCleanupTimer.start()";
+#endif
+      tableCleanupTimer.start();
+    }
+  }
+}
+
 void RouteController::viewScrolled(int)
 {
-  if(NavApp::isConnectedAndAircraftFlying() &&
-     ((hasTableSelection() && OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CLEAR_SELECTION)) ||
-      OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG)))
-    cleanupTableTimer.start();
+  updateCleanupTimer();
+}
+
+void RouteController::sliderPressedOrReleased()
+{
+  updateCleanupTimer();
 }
 
 void RouteController::tableSelectionChanged(const QItemSelection& selected, const QItemSelection& deselected)
@@ -2786,10 +2833,7 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
 
   emit routeSelectionChanged(selectedRowSize, model->rowCount());
 
-  if(NavApp::isConnectedAndAircraftFlying() &&
-     ((hasTableSelection() && OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CLEAR_SELECTION)) ||
-      OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG)))
-    cleanupTableTimer.start();
+  updateCleanupTimer();
 
   if(NavApp::getMainUi()->actionRouteFollowSelection->isChecked() && sm->currentIndex().isValid() &&
      sm->isSelected(sm->currentIndex()))
@@ -2856,14 +2900,15 @@ void RouteController::optionsChanged()
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
   routeWindow->optionsChanged();
 
-  int timeout = OptionData::instance().getSimNoFollowAircraftOnScrollSeconds() * 1000;
-  cleanupTableTimer.setInterval(timeout);
+  tableCleanupTimer.setInterval(OptionData::instance().getSimCleanupTableTime() * 1000);
 
   updateTableHeaders();
   updateTableModel();
 
   updateUnits();
   view->update();
+
+  updateCleanupTimer();
 }
 
 void RouteController::tracksChanged()
@@ -4348,10 +4393,13 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
         route.updateActiveLegAndPos(position);
         int activeLegIdx = route.getActiveLegIndexCorrected();
 
-        if(!cleanupTableTimer.isActive() &&
-           ((hasTableSelection() && OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CLEAR_SELECTION)) ||
-            (OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG))))
-          cleanupTableTimer.start();
+        if(!tableCleanupTimer.isActive())
+        {
+          // Timer is not active - set active if any option is set
+          if((hasTableSelection() && OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CLEAR_SELECTION)) ||
+             OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG))
+            tableCleanupTimer.start();
+        }
 
         if(activeLegIdx != previousRouteLeg)
         {
