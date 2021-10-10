@@ -299,7 +299,7 @@ public:
   QVector<float> getAltitudes() const;
 
   /* Average wind direction for route degrees true */
-  float getWindDirection() const
+  float getWindDirectionAverage() const
   {
     return windDirectionAvg;
   }
@@ -314,6 +314,18 @@ public:
   float getHeadWindAverage() const
   {
     return windHeadAvg;
+  }
+
+  /* Average wind direction for route degrees true cruise phase only */
+  float getWindDirectionCruiseAverage() const
+  {
+    return windDirectionCruiseAvg;
+  }
+
+  /* Average wind speed for this route in knots  cruise phase only  */
+  float getWindSpeedCruiseAverage() const
+  {
+    return windSpeedCruiseAvg;
   }
 
   /* true if result of calculation was valid */
@@ -472,7 +484,8 @@ private:
 
   /*  Average wind values for the whole route */
   float windDirectionAvg = 0.f, windSpeedAvg = 0.f, windHeadAvg = 0.f,
-        windHeadClimb = 0.f, windHeadCruise = 0.f, windHeadDescent = 0.f;
+        windDirectionCruiseAvg = 0.f, windSpeedCruiseAvg = 0.f, windHeadCruise = 0.f,
+        windHeadClimb = 0.f, windHeadDescent = 0.f;
 
   /* Wind corrected climb speeds for second iteration. Ground speed. */
   float climbSpeedWindCorrected = 0.f, cruiseSpeedWindCorrected = 0.f, descentSpeedWindCorrected = 0.f;

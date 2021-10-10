@@ -1071,46 +1071,10 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
       html.row2(tr("Mach at cruise:"), QLocale().toString(mach, 'f', 2), flags);
 
     // Wind =======================================================
-    QStringList windText;
-
-    WindReporter *windReporter = NavApp::getWindReporter();
-
-    if(!isWindManual() && windReporter->hasOnlineWindData() && std::abs(altLegs.getWindSpeedAverage()) >= 1.f)
-    {
-      // Display direction and speed if wind is not manually selected and available ====================
-      windText.append(tr("%1°T, %2").
-                      arg(altLegs.getWindDirection(), 0, 'f', 0).
-                      arg(Unit::speedKts(altLegs.getWindSpeedAverage())));
-    }
-
-    QString windType;
-    if(isWindManual() || windReporter->hasOnlineWindData())
-    {
-      // Display manual wind - only head- or tailwind =======================
-      float headWind = altLegs.getHeadWindAverage();
-      if(std::abs(headWind) >= 1.f)
-      {
-        QString windPtr;
-        if(headWind >= 1.f)
-        {
-          windPtr = tr("▼");
-          windType = tr("headwind");
-        }
-        else if(headWind <= -1.f)
-        {
-          windPtr = tr("▲");
-          windType = tr("tailwind");
-        }
-        windText.append(tr("%1 %2 %3").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))).arg(windType));
-      }
-    }
-
-    QString head = tr("Average wind (%1):");
-    if(!windText.isEmpty())
-      html.row2(head.arg(windReporter->getSourceText()), windText.join(tr("\n")), flags);
-    else
-      html.row2(head.arg(windReporter->getSourceText()),
-                windReporter->isWindManual() ? tr("No head- or tailwind") : tr("No wind"), flags);
+    windText(html, tr("Average wind total"), altLegs.getWindSpeedAverage(),
+             altLegs.getWindDirectionAverage(), altLegs.getHeadWindAverage());
+    windText(html, tr("Average wind at cruise"), altLegs.getWindSpeedCruiseAverage(),
+             altLegs.getWindDirectionCruiseAverage(), altLegs.getCruiseHeadWind());
 
     html.tableEnd();
   } // if(hasLegs)
@@ -1210,6 +1174,50 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     html.p().b(tr("Remarks")).pEnd();
     html.table(1).row2(QString(), perf->getDescription()).tableEnd();
   }
+}
+
+void AircraftPerfController::windText(atools::util::HtmlBuilder& html, const QString& label, float windSpeed,
+                                      float windDirection, float headWind) const
+{
+  WindReporter *windReporter = NavApp::getWindReporter();
+
+  QStringList windText;
+  if(isWindManual() || windReporter->hasOnlineWindData())
+  {
+    if(std::abs(windSpeed) >= 1.f)
+      // Display direction and speed if wind is not manually selected and available ====================
+      windText.append(tr("%1°T, %2").
+                      arg(windDirection, 0, 'f', 0).
+                      arg(Unit::speedKts(windSpeed)));
+
+    // Display manual wind - only head- or tailwind =======================
+    if(std::abs(headWind) >= 1.f)
+    {
+      QString windType;
+      QString windPtr;
+      if(headWind >= 1.f)
+      {
+        windPtr = tr("▼");
+        windType = tr("headwind");
+      }
+      else if(headWind <= -1.f)
+      {
+        windPtr = tr("▲");
+        windType = tr("tailwind");
+      }
+      windText.append(tr("%1 %2 %3").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))).arg(windType));
+    }
+  }
+
+  QString head = tr("%1 (%2):");
+  if(!windText.isEmpty())
+    html.row2(head.arg(label).arg(windReporter->getSourceText()),
+              windText.join(tr("\n")), atools::util::html::ALIGN_RIGHT);
+  else
+    html.row2(head.arg(label).arg(windReporter->getSourceText()),
+              windReporter->isWindManual() ?
+              tr("No head- or tailwind") :
+              tr("No wind"), atools::util::html::ALIGN_RIGHT);
 }
 
 void AircraftPerfController::saveState()

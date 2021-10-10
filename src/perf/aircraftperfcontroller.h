@@ -221,6 +221,8 @@ private:
   /* Update * for changed if tab is reopened */
   void updateTabTiltle();
 
+  void windText(atools::util::HtmlBuilder& html, const QString& label, float windSpeed, float windDirection, float headWind) const;
+
   MainWindow *mainWindow;
 
   /* Default font size - can be changed in settings */
