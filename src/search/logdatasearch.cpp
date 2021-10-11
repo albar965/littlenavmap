@@ -348,10 +348,19 @@ void LogdataSearch::getSelectedMapObjects(map::MapResult& result) const
 
         map::MapLogbookEntry entry;
         MapTypesFactory().fillLogbookEntry(rec, entry);
-        airportQuery->getAirportByIdent(entry.destination, entry.destinationIdent);
+
         airportQuery->getAirportByIdent(entry.departure, entry.departureIdent);
-        result.airports.append(entry.destination);
-        result.airports.append(entry.departure);
+        if(!entry.departure.isValid())
+          entry.departure = airportQuery->getAirportByOfficialIdent(entry.departureIdent, &entry.departurePos);
+        if(entry.departure.isValid())
+          result.airports.append(entry.departure);
+
+        airportQuery->getAirportByIdent(entry.destination, entry.destinationIdent);
+        if(!entry.destination.isValid())
+          entry.destination = airportQuery->getAirportByOfficialIdent(entry.destinationIdent, &entry.destinationPos);
+        if(entry.destination.isValid())
+          result.airports.append(entry.destination);
+
         result.logbookEntries.append(entry);
       }
     }
