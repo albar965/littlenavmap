@@ -641,7 +641,7 @@ bool HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuild
                                  QString(), waypoint, waypoint->magvar, frequencyCol, airportCol);
 
       const map::MapIls *ils = base->asPtr<map::MapIls>(map::ILS);
-      if(ils != nullptr)
+      if(ils != nullptr && !ils->isAnyGls())
         nearestMapObjectsTextRow(airport, html, map::ilsType(*ils, true /* gs */, true /* dme */, tr(", ")),
                                  ils->ident, ils->name,
                                  ils->freqMHzOrChannelLocale(), ils, ils->magvar, frequencyCol, airportCol);
