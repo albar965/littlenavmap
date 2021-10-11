@@ -73,18 +73,21 @@ public:
 
   /* streamlined for webmapcontroller from showPosInternal(pos, distanceKm, doubleClick, false) */
   void showPosNotAdjusted(const atools::geo::Pos& pos, float distanceKm);
+
   /* Jump to position on the map using the given zoom distance.
-  *  Keep current zoom if  distanceNm is INVALID_DISTANCE_VALUE.
-  *  Use predefined zoom if distanceNm is 0 */
+   *  Keep current zoom if  distanceNm is INVALID_DISTANCE_VALUE.
+   *  Use predefined zoom if distanceNm is 0 */
   void showPos(const atools::geo::Pos& pos, float distanceKm, bool doubleClick);
 
   /* Show the bounding rectangle on the map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
+
   /* streamlined for webmapcontroller from showRect(rect, false) */
   void showRectStreamlined(const atools::geo::Rect& rect);
 
   /* Show user simulator aircraft. state is tool button state */
   void showAircraft(bool centerAircraftChecked);
+  void showAircraftNow(bool);
 
   /* Update hightlighted objects */
   void changeSearchHighlights(const map::MapResult& newHighlights, bool updateAirspace, bool updateLogEntries);

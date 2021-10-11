@@ -224,6 +224,7 @@
      <string>&amp;Map</string>
     </property>
     <addaction name="actionMapShowHome"/>
+    <addaction name="actionMapAircraftCenterNow"/>
     <addaction name="actionMapShowMark"/>
     <addaction name="actionRouteCenter"/>
     <addaction name="separator"/>
@@ -7955,7 +7956,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Center flight plan on map</string>
    </property>
    <property name="shortcut">
-    <string>Alt+Shift+F</string>
+    <string>Ctrl+PgDown</string>
    </property>
   </action>
   <action name="actionMapShowVictorAirways">
@@ -8327,13 +8328,13 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</iconset>
    </property>
    <property name="text">
-    <string>Center &amp;Aircraft</string>
+    <string>Keep &amp;User Aircraft centered</string>
    </property>
    <property name="toolTip">
-    <string>Center simulator aircraft on map</string>
+    <string>Keep the user aircraft centered on the map</string>
    </property>
    <property name="statusTip">
-    <string>Center simulator aircraft on map</string>
+    <string>Keep the user aircraft centered on the map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+A</string>
@@ -12076,6 +12077,27 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Add this airport as alternate destination for the flight plan</string>
    </property>
   </action>
+  <action name="actionMapAircraftCenterNow">
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/aircraft.svg</normaloff>:/littlenavmap/resources/icons/aircraft.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Goto &amp;User Aircraft</string>
+   </property>
+   <property name="toolTip">
+    <string>Keep the user aircraft centered on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Keep the user aircraft centered on the map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+PgUp</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12261,8 +12283,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
-  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

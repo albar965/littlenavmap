@@ -836,6 +836,14 @@ void MapPaintWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
   }
 }
 
+void MapPaintWidget::showAircraftNow(bool)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  if(screenIndex->getUserAircraft().isFullyValid())
+    showPos(screenIndex->getUserAircraft().getPosition(), 0.f, false /* doubleClick */);
+}
+
 void MapPaintWidget::showAircraft(bool centerAircraftChecked)
 {
   if(verbose)

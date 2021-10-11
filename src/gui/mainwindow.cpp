@@ -1556,6 +1556,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowMark, &QAction::triggered, mapWidget, &MapWidget::showSearchMark);
   connect(ui->actionMapShowHome, &QAction::triggered, mapWidget, &MapWidget::showHome);
   connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapPaintWidget::showAircraft);
+  connect(ui->actionMapAircraftCenterNow, &QAction::triggered, mapWidget, &MapPaintWidget::showAircraftNow);
 
   // Update jump back
   connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapPaintWidget::jumpBackToAircraftCancel);
@@ -3714,11 +3715,13 @@ void MainWindow::updateActionStates()
 #ifdef DEBUG_MOVING_AIRPLANE
   ui->actionMapShowAircraft->setEnabled(true);
   ui->actionMapAircraftCenter->setEnabled(true);
+  ui->actionMapAircraftCenterNow->setEnabled(true);
   ui->actionMapShowAircraftAi->setEnabled(true);
   ui->actionMapShowAircraftAiBoat->setEnabled(true);
 #else
-  ui->actionMapAircraftCenter->setEnabled(NavApp::isConnected());
   ui->actionMapShowAircraft->setEnabled(NavApp::isConnected());
+  ui->actionMapAircraftCenter->setEnabled(NavApp::isConnected());
+  ui->actionMapAircraftCenterNow->setEnabled(NavApp::isConnected());
 
   ui->actionMapShowAircraftAi->setEnabled((NavApp::isConnected() && NavApp::isFetchAiAircraft()) ||
                                           NavApp::getOnlinedataController()->isNetworkActive());
