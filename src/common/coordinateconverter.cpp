@@ -145,6 +145,8 @@ bool CoordinateConverter::wToS(const atools::geo::Line& coords, QLineF& line, co
   if(!coords.isValid())
   {
     line = QLineF();
+    if(isHidden != nullptr)
+      *isHidden = true;
     return false;
   }
 
@@ -168,6 +170,8 @@ bool CoordinateConverter::wToS(const atools::geo::Pos& coords, double& x, double
   if(!coords.isValid())
   {
     x = y = 0.;
+    if(isHidden != nullptr)
+      *isHidden = true;
     return false;
   }
 

@@ -193,6 +193,23 @@ QList<map::MapAirport> AirportQuery::getAirportsByOfficialIdent(const QString& i
   return airports;
 }
 
+void AirportQuery::getAirportByOfficialIdent(map::MapAirport& airport, const QString& ident,
+                                             const atools::geo::Pos *pos, float maxDistanceMeter, bool searchIata,
+                                             bool searchIdent)
+{
+  QList<map::MapAirport> airports;
+  getAirportsByOfficialIdent(airports, ident, pos, maxDistanceMeter, searchIata, searchIdent);
+  airport = airports.isEmpty() ? map::MapAirport() : airports.first();
+}
+
+MapAirport AirportQuery::getAirportByOfficialIdent(const QString& ident, const atools::geo::Pos *pos,
+                                                   float maxDistanceMeter, bool searchIata, bool searchIdent)
+{
+  QList<map::MapAirport> airports;
+  getAirportsByOfficialIdent(airports, ident, pos, maxDistanceMeter, searchIata, searchIdent);
+  return airports.isEmpty() ? map::MapAirport() : airports.first();
+}
+
 void AirportQuery::getAirportsByOfficialIdent(QList<map::MapAirport>& airports, const QString& ident,
                                               const atools::geo::Pos *pos, float maxDistanceMeter, bool searchIata,
                                               bool searchIdent)

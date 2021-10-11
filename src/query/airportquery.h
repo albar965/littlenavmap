@@ -103,6 +103,14 @@ public:
                                                     float maxDistanceMeter = map::INVALID_DISTANCE_VALUE,
                                                     bool searchIata = true, bool searchIdent = true);
 
+  void getAirportByOfficialIdent(map::MapAirport& airport, const QString& ident,
+                                 const atools::geo::Pos *pos = nullptr,
+                                 float maxDistanceMeter = map::INVALID_DISTANCE_VALUE, bool searchIata = true,
+                                 bool searchIdent = true);
+  map::MapAirport getAirportByOfficialIdent(const QString& ident, const atools::geo::Pos *pos = nullptr,
+                                            float maxDistanceMeter = map::INVALID_DISTANCE_VALUE,
+                                            bool searchIata = true, bool searchIdent = true);
+
   /* Try to get airport by ident, icao or position as a fallback if pos is valid,
    * Need to get ident, icao and pos as copies to avoid overwriting.
    * Does not use cache. */
