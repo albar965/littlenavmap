@@ -43,6 +43,8 @@ class AirportQuery;
  *
  * All navaids and procedure are taken from the nav database which might contain data from nav or simulator.
  * All structs of MapAirport are converted to simulator database airports when passed in.
+ *
+ * This class does not contain MapWidget related caches.
  */
 class ProcedureQuery
 {

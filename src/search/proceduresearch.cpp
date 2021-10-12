@@ -269,7 +269,7 @@ void ProcedureSearch::postDatabaseLoad()
 
 void ProcedureSearch::showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter)
 {
-  map::MapAirport navAirport = NavApp::getMapQuery()->getAirportNav(airport);
+  map::MapAirport navAirport = NavApp::getMapQueryGui()->getAirportNav(airport);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->dockWidgetSearch->show();

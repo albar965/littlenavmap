@@ -756,7 +756,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Get TOD position from active route  ======================================================
 
   // Calculate line y positions ======================================================
-  bool showTodToc = NavApp::getMapWidget()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN_TOC_TOD);
+  bool showTodToc = NavApp::getMapWidgetGui()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN_TOC_TOD);
   QVector<QPolygon> altLegs; /* Flight plan waypoint screen coordinates. x = distance and y = altitude */
 
   for(int i = 0; i < altitudeLegs.size(); i++)
@@ -784,7 +784,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     indexes.prepend(i);
   }
 
-  if(NavApp::getMapWidget()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN))
+  if(NavApp::getMapWidgetGui()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN))
   {
     // Draw altitude restriction bars ============================
     painter.setBackground(mapcolors::profileAltRestrictionFill);
@@ -889,7 +889,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
                      std::min(passedRouteLeg + 1, waypointX.size()) : 0;
   }
 
-  if(NavApp::getMapWidget()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN))
+  if(NavApp::getMapWidgetGui()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN))
   {
     // Draw background line ======================================================
     float flightplanOutlineWidth = (optData.getDisplayThicknessFlightplan() / 100.f) * 7;
@@ -1158,7 +1158,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
     if(!route.isFlightplanEmpty())
     {
-      if(NavApp::getMapWidget()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN_TOC_TOD))
+      if(NavApp::getMapWidgetGui()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN_TOC_TOD))
       {
         float tocDist = altitudeLegs.getTopOfClimbDistance();
         float todDist = altitudeLegs.getTopOfDescentDistance();
@@ -2007,7 +2007,7 @@ void ProfileWidget::updateLabel()
         fixedLabelText = tr("<b>Alternate: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(nearestLegDistance));
       else
       {
-        if(NavApp::getMapWidget()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN_TOC_TOD) &&
+        if(NavApp::getMapWidgetGui()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN_TOC_TOD) &&
            curRoute.getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE)
         {
           // Fuel and time calculated or estimated

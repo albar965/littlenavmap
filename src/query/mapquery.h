@@ -140,6 +140,8 @@ public:
    * Get objects near a screen coordinate from the cache which will cover all visible objects.
    * No objects are loaded from the database.
    *
+   * Note that the used cache is related to the used MapPaintWidget.
+   *
    * @param conv Converter to calcualte screen coordinates
    * @param mapLayer current map layer
    * @param airportDiagram get nearest parking and helipads too
@@ -163,6 +165,9 @@ public:
    * Fill objects of the maptypes namespace and maintains a cache.
    * Objects from methods returning a pointer to a list might be deleted from the cache and should be copied
    * if they have to be kept between event loop calls.
+   *
+   * Note that the cache is related to the used MapPaintWidget.
+   *
    * @param rect bounding rectangle for query
    * @param mapLayer used to find source table
    * @param addon Force addon display

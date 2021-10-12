@@ -743,7 +743,7 @@ void WeatherReporter::resetErrorState()
 
 void WeatherReporter::updateTimeouts()
 {
-  map::MapWeatherSource airportWeatherSource = NavApp::getMapWidget() != nullptr ?
+  map::MapWeatherSource airportWeatherSource = NavApp::getMapWidgetGui() != nullptr ?
                                                NavApp::getAirportWeatherSource() : map::WEATHER_SOURCE_SIMULATOR;
 
   // Disable periodic downloads if feature is not needed

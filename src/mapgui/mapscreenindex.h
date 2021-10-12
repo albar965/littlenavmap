@@ -301,9 +301,7 @@ private:
   int getNearestIndex(int xs, int ys, int maxDistance, const QList<TYPE>& typeList) const;
 
   atools::fs::sc::SimConnectData simData, lastSimData;
-  MapPaintWidget *mapPaintWidget;
-  MapQuery *mapQuery;
-  AirwayTrackQuery *airwayQuery;
+  MapPaintWidget *mapWidget;
   AirportQuery *airportQuery;
   MapPaintLayer *paintLayer;
 

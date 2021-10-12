@@ -1145,7 +1145,7 @@ void OptionsDialog::restoreState()
 void OptionsDialog::updateTooltipOption()
 {
   if(OptionData::instance().getFlags2().testFlag(opts2::DISABLE_TOOLTIPS))
-    NavApp::setTooltipsDisabled({NavApp::getMapWidget()});
+    NavApp::setTooltipsDisabled({NavApp::getMapWidgetGui()});
   else
     NavApp::setTooltipsEnabled();
 }
@@ -2407,7 +2407,7 @@ void OptionsDialog::clearMemCachedClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
-  NavApp::getMapWidget()->clearVolatileTileCache();
+  NavApp::getMapWidgetGui()->clearVolatileTileCache();
   NavApp::setStatusMessage(tr("Memory cache cleared."));
 }
 
@@ -2426,7 +2426,7 @@ void OptionsDialog::clearDiskCachedClicked()
   if(result == QMessageBox::Yes)
   {
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-    NavApp::getMapWidget()->model()->clearPersistentTileCache();
+    NavApp::getMapWidgetGui()->model()->clearPersistentTileCache();
     NavApp::setStatusMessage(tr("Disk cache cleared."));
     QGuiApplication::restoreOverrideCursor();
   }

@@ -234,14 +234,14 @@ map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float dist
 
     if(type & map::WAYPOINT)
     {
-      query::fetchObjectsForRect(rect, NavApp::getWaypointTrackQuery()->getWaypointsByRectQueryTrack(),
+      query::fetchObjectsForRect(rect, NavApp::getWaypointTrackQueryGui()->getWaypointsByRectQueryTrack(),
                                  [ =, &res](atools::sql::SqlQuery *query) -> void {
         map::MapWaypoint obj;
         mapTypesFactory->fillWaypoint(query->record(), obj, true /* track database */);
         res.waypoints.append(obj);
       });
 
-      query::fetchObjectsForRect(rect, NavApp::getWaypointTrackQuery()->getWaypointsByRectQuery(),
+      query::fetchObjectsForRect(rect, NavApp::getWaypointTrackQueryGui()->getWaypointsByRectQuery(),
                                  [ =, &res](atools::sql::SqlQuery *query) -> void {
         map::MapWaypoint obj;
         mapTypesFactory->fillWaypoint(query->record(), obj, false /* track database */);
@@ -357,7 +357,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
 
   if(type & map::WAYPOINT)
   {
-    NavApp::getWaypointTrackQuery()->getWaypointByIdent(result.waypoints, ident, region);
+    NavApp::getWaypointTrackQueryGui()->getWaypointByIdent(result.waypoints, ident, region);
     maptools::sortByDistance(result.waypoints, sortByDistancePos);
     maptools::removeByDistance(result.waypoints, sortByDistancePos, maxDistanceMeter);
   }
@@ -386,7 +386,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
   }
 
   if(type & map::AIRWAY)
-    NavApp::getAirwayTrackQuery()->getAirwaysByName(result.airways, ident);
+    NavApp::getAirwayTrackQueryGui()->getAirwaysByName(result.airways, ident);
 }
 
 void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map::MapAirspaceSources src,
@@ -420,7 +420,7 @@ void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map:
   }
   else if(type == map::WAYPOINT)
   {
-    map::MapWaypoint waypoint = NavApp::getWaypointTrackQuery()->getWaypointById(id);
+    map::MapWaypoint waypoint = NavApp::getWaypointTrackQueryGui()->getWaypointById(id);
     if(waypoint.isValid())
       result.waypoints.append(waypoint);
   }
@@ -464,7 +464,7 @@ void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map:
   }
   else if(type == map::AIRWAY)
   {
-    map::MapAirway airway = NavApp::getAirwayTrackQuery()->getAirwayById(id);
+    map::MapAirway airway = NavApp::getAirwayTrackQueryGui()->getAirwayById(id);
     if(airway.isValid())
       result.airways.append(airway);
   }
@@ -639,7 +639,7 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
   if((mapLayer->isAirwayWaypoint() && (types.testFlag(map::AIRWAYV) || types.testFlag(map::AIRWAYJ))) ||
      (mapLayer->isTrackWaypoint() && types.testFlag(map::TRACK)) ||
      (mapLayer->isWaypoint() && types.testFlag(map::WAYPOINT)))
-    NavApp::getWaypointTrackQuery()->getNearestScreenObjects(conv, mapLayer, types, xs, ys, screenDistance, result);
+    NavApp::getWaypointTrackQueryGui()->getNearestScreenObjects(conv, mapLayer, types, xs, ys, screenDistance, result);
 
   if(mapLayer->isMarker() && types.testFlag(map::MARKER))
   {

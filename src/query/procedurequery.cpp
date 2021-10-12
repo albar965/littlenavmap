@@ -51,8 +51,6 @@ namespace ageo = atools::geo;
 ProcedureQuery::ProcedureQuery(atools::sql::SqlDatabase *sqlDbNav)
   : dbNav(sqlDbNav)
 {
-  mapQuery = NavApp::getMapQuery();
-  airportQueryNav = NavApp::getAirportQueryNav();
 }
 
 ProcedureQuery::~ProcedureQuery()
@@ -1892,6 +1890,9 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs) co
 
 void ProcedureQuery::initQueries()
 {
+  mapQuery = NavApp::getMapQueryGui();
+  airportQueryNav = NavApp::getAirportQueryNav();
+
   deInitQueries();
 
   approachLegQuery = new SqlQuery(dbNav);

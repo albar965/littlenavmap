@@ -267,6 +267,8 @@ public:
 
   bool sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2);
 
+  void initQueries();
+
 protected:
   /* All wToSBuf() methods receive a margin parameter. Margins are applied to the screen rectangle for an
    * additional visibility check to avoid objects or texts popping out of view at the screen borders */
@@ -356,14 +358,14 @@ protected:
   /* Maximum points to use for a circle */
   const int CIRCLE_MAX_POINTS = 72;
 
-  PaintContext *context;
-  SymbolPainter *symbolPainter;
-  MapPaintWidget *mapPaintWidget;
-  MapQuery *mapQuery;
-  AirwayTrackQuery *airwayQuery;
-  WaypointTrackQuery *waypointQuery;
-  AirportQuery *airportQuery;
-  MapScale *scale;
+  PaintContext *context = nullptr;
+  SymbolPainter *symbolPainter = nullptr;
+  MapPaintWidget *mapPaintWidget = nullptr;
+  MapQuery *mapQuery = nullptr;
+  AirwayTrackQuery *airwayQuery = nullptr;
+  WaypointTrackQuery *waypointQuery = nullptr;
+  AirportQuery *airportQuery = nullptr;
+  MapScale *scale = nullptr;
 };
 
 #endif // LITTLENAVMAP_MAPPAINTER_H

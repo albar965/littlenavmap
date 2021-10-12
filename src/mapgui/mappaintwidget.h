@@ -34,6 +34,9 @@ class MainWindow;
 class MapPaintLayer;
 class MapScreenIndex;
 class ApronGeometryCache;
+class MapQuery;
+class AirwayTrackQuery;
+class WaypointTrackQuery;
 
 namespace proc {
 struct MapProcedureLeg;
@@ -338,6 +341,24 @@ public:
   /* Saved bounding box from last zoom or scroll operation. Needed to detect view changes. */
   const Marble::GeoDataLatLonBox& getCurrentViewBoundingBox() const;
 
+  /* Get map query with cached objects for this paint widget instance */
+  MapQuery *getMapQuery() const
+  {
+    return mapQuery;
+  }
+
+  AirwayTrackQuery *getAirwayTrackQuery() const
+  {
+    return airwayTrackQuery;
+  }
+
+  WaypointTrackQuery *getWaypointTrackQuery() const
+  {
+    return waypointTrackQuery;
+  }
+
+  void postTrackLoad();
+
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
   void resultTruncated();
@@ -489,6 +510,10 @@ private:
 
   /* Keeps geographical objects as index in screen coordinates */
   MapScreenIndex *screenIndex = nullptr;
+
+  MapQuery *mapQuery = nullptr;
+  AirwayTrackQuery *airwayTrackQuery = nullptr;
+  WaypointTrackQuery *waypointTrackQuery = nullptr;
 
   /* Current zoom value (NOT distance) */
   int currentZoom = -1;

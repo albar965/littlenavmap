@@ -62,7 +62,7 @@ void TimeDialog::buttonBoxClicked(QAbstractButton *button)
 
     // Select user option and update
     NavApp::getMainUi()->actionMapShowSunShadingUserTime->setChecked(true);
-    MapWidget *mapWidget = NavApp::getMapWidget();
+    MapWidget *mapWidget = NavApp::getMapWidgetGui();
     mapWidget->setSunShadingDateTime(getDateTime());
     mapWidget->update();
     mapWidget->updateSunShadingOption();

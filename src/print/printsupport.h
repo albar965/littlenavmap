@@ -28,7 +28,6 @@ class QPainter;
 class QPrintPreviewDialog;
 class QTextDocument;
 class PrintDialog;
-class MapQuery;
 class InfoQuery;
 class QTextCursor;
 
@@ -105,7 +104,6 @@ private:
   QPrinter *printer = nullptr;
   MainWindow *mainWindow;
   PrintDialog *printDialog = nullptr;
-  MapQuery *mapQuery = nullptr;
 
   /* Document that will contain the flight plan print */
   QTextDocument *printDocument = nullptr;

@@ -30,7 +30,6 @@ class AirwayTrackQuery;
 class WaypointTrackQuery;
 class TrackController;
 class AirspaceController;
-class AirspaceQuery;
 class ConnectClient;
 class DatabaseManager;
 class ElevationProvider;
@@ -139,6 +138,7 @@ public:
 
   /* Creates all aggregated objects */
   static void init(MainWindow *mainWindowParam);
+  static void initQueries();
 
   /* Needs map widget first */
   static void initElevationProvider();
@@ -189,7 +189,16 @@ public:
 
   static AirportQuery *getAirportQuerySim();
   static AirportQuery *getAirportQueryNav();
-  static MapQuery *getMapQuery();
+
+  /* Get the map query for the current GUI MapWidget. This means that its cache contents are related to the GUI map.
+   * For other instances of MapPaintWidget use the MapPaintWidget::getMapQuery() */
+  static MapQuery *getMapQueryGui();
+
+  /* Get the track query for the current GUI MapWidget. This means that its cache contents are related to the GUI map. */
+  static AirwayTrackQuery *getAirwayTrackQueryGui();
+
+  /* Get the track query for the current GUI MapWidget. This means that its cache contents are related to the GUI map. */
+  static WaypointTrackQuery *getWaypointTrackQueryGui();
 
   static atools::geo::Pos getAirportPos(const QString& ident);
 
@@ -277,8 +286,8 @@ public:
   /* true if tooltips in menus are visible */
   static bool isMenuToolTipsVisible();
 
-  static MapWidget *getMapWidget();
-  static MapPaintWidget *getMapPaintWidget();
+  static MapWidget *getMapWidgetGui();
+  static MapPaintWidget *getMapPaintWidgetGui();
   static RouteController *getRouteController();
   static atools::gui::TabWidgetHandler *getRouteTabHandler();
   static const InfoController *getInfoController();
@@ -336,8 +345,6 @@ public:
   static TrackController *getTrackController();
   static bool hasTracks();
   static TrackManager *getTrackManager();
-  static AirwayTrackQuery *getAirwayTrackQuery();
-  static WaypointTrackQuery *getWaypointTrackQuery();
 
   static AirspaceController *getAirspaceController();
   static bool hasAnyAirspaces();
@@ -378,7 +385,6 @@ private:
 
   /* Database query helpers and caches */
   static AirportQuery *airportQuerySim, *airportQueryNav;
-  static MapQuery *mapQuery;
   static InfoQuery *infoQuery;
   static ProcedureQuery *procedureQuery;
   static ElevationProvider *elevationProvider;

@@ -44,7 +44,7 @@
 using atools::gui::HelpHandler;
 
 SearchController::SearchController(QMainWindow *parent, QTabWidget *tabWidgetSearchParam)
-  : mapQuery(NavApp::getMapQuery()), mainWindow(parent), tabWidgetSearch(tabWidgetSearchParam)
+  : mapQuery(NavApp::getMapQueryGui()), mainWindow(parent), tabWidgetSearch(tabWidgetSearchParam)
 {
   connect(NavApp::getMainUi()->pushButtonAirportHelpSearch, &QPushButton::clicked,
           this, &SearchController::helpPressed);
@@ -244,7 +244,7 @@ void SearchController::postCreateSearch(AbstractSearch *search)
 
   SearchBaseTable *base = dynamic_cast<SearchBaseTable *>(search);
   if(base != nullptr)
-    NavApp::getMapWidget()->connect(NavApp::getMapWidget(), &MapWidget::searchMarkChanged,
+    NavApp::getMapWidgetGui()->connect(NavApp::getMapWidgetGui(), &MapWidget::searchMarkChanged,
                                     base, &SearchBaseTable::searchMarkChanged);
   allSearchTabs.append(search);
 }

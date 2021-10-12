@@ -55,6 +55,7 @@
 #include "util/htmlbuilder.h"
 #include "weather/windreporter.h"
 #include "route/routealtitude.h"
+#include "mapgui/mappaintwidget.h"
 
 #include <QSize>
 #include <QUrl>
@@ -95,11 +96,9 @@ const int WEATHER_MAX_AGE_HOURS = 6;
 // Maximum distance for bearing display
 const int MAX_DISTANCE_FOR_BEARING_METER = ageo::nmToMeter(500);
 
-HtmlInfoBuilder::HtmlInfoBuilder(QWidget *parent, bool formatInfo, bool formatPrint)
-  : parentWidget(parent), info(formatInfo), print(formatPrint)
+HtmlInfoBuilder::HtmlInfoBuilder(QWidget *parent, MapPaintWidget *mapWidgetParam, bool formatInfo, bool formatPrint)
+  : parentWidget(parent), mapWidget(mapWidgetParam), info(formatInfo), print(formatPrint)
 {
-  mapQuery = NavApp::getMapQuery();
-  waypointQuery = NavApp::getWaypointTrackQuery();
   infoQuery = NavApp::getInfoQuery();
   airportQuerySim = NavApp::getAirportQuerySim();
   airportQueryNav = NavApp::getAirportQueryNav();
@@ -162,6 +161,7 @@ void HtmlInfoBuilder::flightplanWaypointRemarks(HtmlBuilder& html, int index) co
 void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherContext& weatherContext,
                                   HtmlBuilder& html, const Route *route) const
 {
+  MapQuery *mapQuery = mapWidget->getMapQuery();
   const SqlRecord *rec = infoQuery->getAirportInformation(airport.id);
   int rating = -1;
 
@@ -223,7 +223,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(info)
   {
     // Get transition altitude from nav database
-    map::MapAirport navAirport = NavApp::getMapQuery()->getAirportNav(airport);
+    map::MapAirport navAirport = mapQuery->getAirportNav(airport);
     if(navAirport.isValid() && navAirport.transitionAltitude > 0)
       html.row2(tr("Transition altitude:"), Unit::altFeet(navAirport.transitionAltitude));
 
@@ -524,10 +524,11 @@ void HtmlInfoBuilder::nearestText(const MapAirport& airport, HtmlBuilder& html) 
                  arg(Unit::distNm(NEAREST_MAX_DISTANCE_AIRPORT_NM * 4.f))).pEnd();
 
     // Get nearest VOR and NDB ====================================
-    MapResultIndex *nearestNavaids = mapQuery->getNearestNavaids(airport.position,
-                                                                 NEAREST_MAX_DISTANCE_NAVAID_NM,
-                                                                 map::VOR | map::NDB | map::ILS,
-                                                                 3 /* max ILS */, 4.f /* max ILS dist NM */);
+    MapResultIndex *nearestNavaids =
+      mapWidget->getMapQuery()->getNearestNavaids(airport.position, NEAREST_MAX_DISTANCE_NAVAID_NM,
+                                                  map::VOR | map::NDB | map::ILS, 3 /* max ILS */,
+                                                  4.f /* max ILS dist NM */);
+
     if(!nearestMapObjectsText(airport, html, nearestNavaids, tr("Nearest Radio Navaids"), true, false,
                               NEAREST_MAX_NUM_NAVAID))
       html.p().b(tr("No navaids within a radius of %1.").
@@ -615,7 +616,7 @@ bool HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuild
       if(ap != nullptr)
       {
         // Convert navdatabase airport to simulator
-        map::MapAirport simAp = mapQuery->getAirportSim(*ap);
+        map::MapAirport simAp = mapWidget->getMapQuery()->getAirportSim(*ap);
 
         // Omit center airport used as reference
         if(simAp.isValid() && simAp.id != airport.id)
@@ -1061,7 +1062,8 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
   html.tableEnd();
 
   // Show none, one or more ILS
-  QVector<map::MapIls> ilsVector = mapQuery->getIlsByAirportAndRunway(airport.ident, rec->valueStr("name"));
+  QVector<map::MapIls> ilsVector =
+    mapWidget->getMapQuery()->getIlsByAirportAndRunway(airport.ident, rec->valueStr("name"));
   for(const map::MapIls& ils : ilsVector)
     ilsTextRunwayInfo(ils, html);
 }
@@ -1307,6 +1309,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
 {
   if(info && infoQuery != nullptr && airport.isValid())
   {
+    MapQuery *mapQuery = mapWidget->getMapQuery();
     MapAirport navAirport = mapQuery->getAirportNav(airport);
 
     if(!print)
@@ -1514,7 +1517,8 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
 
     map::MapResult result;
 
-    mapQuery->getMapObjectByIdent(result, map::VOR, recApp.valueStr("fix_ident"), recApp.valueStr("fix_region"));
+    mapWidget->getMapQuery()->getMapObjectByIdent(result, map::VOR, recApp.valueStr("fix_ident"),
+                                                  recApp.valueStr("fix_region"));
 
     if(result.hasVor())
     {
@@ -1560,7 +1564,8 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
       html.row2(tr("Fix Type:"), tr("Terminal NDB"));
 
     map::MapResult result;
-    mapQuery->getMapObjectByIdent(result, map::NDB, recApp.valueStr("fix_ident"), recApp.valueStr("fix_region"));
+    mapWidget->getMapQuery()->getMapObjectByIdent(result, map::NDB, recApp.valueStr("fix_ident"),
+                                                  recApp.valueStr("fix_region"));
 
     if(result.hasNdb())
     {
@@ -1591,7 +1596,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
     if(!print)
       airportTitle(airport, html, -1);
 
-    map::MapAirport navAirport = NavApp::getMapQuery()->getAirportNav(airport);
+    map::MapAirport navAirport = mapWidget->getMapQuery()->getAirportNav(airport);
     if(navAirport.isValid() && navAirport.transitionAltitude > 0)
       html.br().br().b(tr("Transition altitude: ")).text(Unit::altFeet(navAirport.transitionAltitude));
 
@@ -2490,7 +2495,7 @@ void HtmlInfoBuilder::airportRow(const map::MapAirport& ap, HtmlBuilder& html) c
 {
   if(ap.isValid())
   {
-    map::MapAirport apSim = mapQuery->getAirportSim(ap);
+    map::MapAirport apSim = mapWidget->getMapQuery()->getAirportSim(ap);
     if(apSim.isValid())
     {
       HtmlBuilder apHtml = html.cleared();
@@ -2505,7 +2510,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   const SqlRecord *rec = nullptr;
 
   if(info && infoQuery != nullptr)
-    rec = waypointQuery->getWaypointInformation(waypoint.id);
+    rec = mapWidget->getWaypointTrackQuery()->getWaypointInformation(waypoint.id);
 
   QIcon icon = SymbolPainter().createWaypointIcon(symbolSizeTitle.height());
   html.img(icon, QString(), QString(), symbolSizeTitle);
@@ -2553,7 +2558,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   html.tableEnd();
 
   QList<MapAirway> airways;
-  NavApp::getAirwayTrackQuery()->getAirwaysForWaypoint(airways, waypoint.id);
+  NavApp::getAirwayTrackQueryGui()->getAirwaysForWaypoint(airways, waypoint.id);
 
   if(!airways.isEmpty())
   {
@@ -2830,6 +2835,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
   else
     html.row2If(tr("Track type:"), map::airwayTrackTypeToString(airway.type));
 
+  WaypointTrackQuery *waypointQuery = mapWidget->getWaypointTrackQuery();
   map::MapWaypoint from = waypointQuery->getWaypointById(airway.fromWaypointId);
   map::MapWaypoint to = waypointQuery->getWaypointById(airway.toWaypointId);
 
@@ -2909,7 +2915,7 @@ void HtmlInfoBuilder::airwayText(const MapAirway& airway, HtmlBuilder& html) con
 
     // Show list of waypoints =================================================================
     QList<map::MapAirwayWaypoint> waypointList;
-    NavApp::getAirwayTrackQuery()->getWaypointListForAirwayName(waypointList, airway.name, airway.fragment);
+    NavApp::getAirwayTrackQueryGui()->getWaypointListForAirwayName(waypointList, airway.name, airway.fragment);
 
     if(!waypointList.isEmpty())
     {
@@ -4259,7 +4265,7 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
 
   // Check if airport is in navdata
   QStringList links;
-  MapAirport airportNav = mapQuery->getAirportNav(airport);
+  MapAirport airportNav = mapWidget->getMapQuery()->getAirportNav(airport);
 
   if(airportNav.isValid() && airportNav.navdata)
   {

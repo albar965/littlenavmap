@@ -127,7 +127,7 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
                                  si::TabSearchId tabWidgetIndex)
   : AbstractSearch(parent, tabWidgetIndex), columns(columnList), view(tableView)
 {
-  mapQuery = NavApp::getMapQuery();
+  mapQuery = NavApp::getMapQueryGui();
   airportQuery = NavApp::getAirportQuerySim();
 
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
@@ -320,15 +320,17 @@ void SearchBaseTable::searchMarkChanged(const atools::geo::Pos& mark)
 
 void SearchBaseTable::updateDistanceSearch()
 {
+  MapWidget *mapWidget = NavApp::getMapWidgetGui();
+
   if(columns->isDistanceCheckBoxChecked() &&
-     NavApp::getMapWidget()->getSearchMarkPos().isValid())
+     mapWidget->getSearchMarkPos().isValid())
   {
     // Currently running distance search - update result
     QSpinBox *minDistanceWidget = columns->getMinDistanceWidget();
     QSpinBox *maxDistanceWidget = columns->getMaxDistanceWidget();
     QComboBox *distanceDirWidget = columns->getDistanceDirectionWidget();
 
-    controller->filterByDistance(NavApp::getMapWidget()->getSearchMarkPos(),
+    controller->filterByDistance(mapWidget->getSearchMarkPos(),
                                  static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
                                  Unit::rev(minDistanceWidget->value(), Unit::distNmF),
                                  Unit::rev(maxDistanceWidget->value(), Unit::distNmF));
@@ -538,8 +540,10 @@ void SearchBaseTable::distanceSearchStateChanged(int state)
 
 void SearchBaseTable::distanceSearchChanged(bool checked, bool changeViewState)
 {
-  if((NavApp::getMapWidget()->getSearchMarkPos().isNull() ||
-      !NavApp::getMapWidget()->getSearchMarkPos().isValid()) && checked)
+  MapWidget *mapWidget = NavApp::getMapWidgetGui();
+
+  if((mapWidget->getSearchMarkPos().isNull() ||
+      !mapWidget->getSearchMarkPos().isValid()) && checked)
   {
     atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_SEARCH_CENTER_NULL,
                                                    tr("The search center is not set.\n"
@@ -556,7 +560,7 @@ void SearchBaseTable::distanceSearchChanged(bool checked, bool changeViewState)
     saveViewState(!checked);
 
   controller->filterByDistance(
-    checked ? NavApp::getMapWidget()->getSearchMarkPos() : atools::geo::Pos(),
+    checked ? mapWidget->getSearchMarkPos() : atools::geo::Pos(),
     static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
     Unit::rev(minDistanceWidget->value(), Unit::distNmF),
     Unit::rev(maxDistanceWidget->value(), Unit::distNmF));
@@ -1379,6 +1383,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 
   if(action != nullptr)
   {
+    MapWidget *mapWidget = NavApp::getMapWidgetGui();
+
     // A menu item was selected
     // Other actions with shortcuts are connected directly to methods/signals
     if(action == ui->actionSearchResetView)
@@ -1396,18 +1402,18 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     else if(action == ui->actionSearchSetMark)
       emit changeSearchMark(position);
     else if(action == ui->actionMapRangeRings)
-      NavApp::getMapWidget()->addRangeRing(position);
+      mapWidget->addRangeRing(position);
     else if(action == ui->actionMapTrafficPattern)
-      NavApp::getMapWidget()->addTrafficPattern(airport);
+      mapWidget->addTrafficPattern(airport);
     else if(action == ui->actionMapHold)
     {
       map::MapResult result;
       if(navType == map::USERPOINT)
-        NavApp::getMapWidget()->addHold(result, position);
+        mapWidget->addHold(result, position);
       else
       {
         mapQuery->getMapObjectById(result, navType, map::AIRSPACE_SRC_NONE, id, false /* airport from nav*/);
-        NavApp::getMapWidget()->addHold(result, atools::geo::EMPTY_POS);
+        mapWidget->addHold(result, atools::geo::EMPTY_POS);
       }
     }
     else if(action == ui->actionMapNavaidRange)
@@ -1429,9 +1435,9 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       else if(navType == map::NDB)
         freqChannelStr = controller->getRawData(index.row(), "frequency").toString();
 
-      NavApp::getMapWidget()->addNavRangeRing(position, navType,
-                                              controller->getRawData(index.row(), "ident").toString(),
-                                              freqChannelStr, controller->getRawData(index.row(), "range").toInt());
+      mapWidget->addNavRangeRing(position, navType,
+                                 controller->getRawData(index.row(), "ident").toString(),
+                                 freqChannelStr, controller->getRawData(index.row(), "range").toInt());
     }
     // else if(action == ui->actionMapHideRangeRings)
     // NavApp::getMapWidget()->clearRangeRingsAndDistanceMarkers(); // Connected directly

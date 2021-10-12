@@ -311,6 +311,8 @@ MainWindow::MainWindow()
       ui->dockWidgetMap->hide();
     }
 
+    // Init a few late objects since these depend on the map widget instance
+    NavApp::initQueries();
     NavApp::initElevationProvider();
 
     // Create elevation profile widget and replace dummy widget in window
@@ -1507,6 +1509,8 @@ void MainWindow::connectAllSlots()
   connect(trackController, &TrackController::postTrackLoad, infoController, &InfoController::tracksChanged);
   connect(trackController, &TrackController::postTrackLoad, this, &MainWindow::updateMapObjectsShown);
   connect(trackController, &TrackController::postTrackLoad, routeController, &RouteController::tracksChanged);
+
+  connect(trackController, &TrackController::postTrackLoad, mapWidget, &MapPaintWidget::postTrackLoad);
 
   connect(ui->actionRouteDownloadTracks, &QAction::toggled, trackController, &TrackController::downloadToggled);
   connect(ui->actionRouteDownloadTracksNow, &QAction::triggered, trackController, &TrackController::startDownload);
@@ -3621,10 +3625,11 @@ void MainWindow::updateOnlineActionStates()
 /* Enable or disable actions */
 void MainWindow::updateMarkActionStates()
 {
-  ui->actionMapHideRangeRings->setEnabled(!NavApp::getMapWidget()->getDistanceMarkers().isEmpty() ||
-                                          !NavApp::getMapWidget()->getRangeRings().isEmpty() ||
-                                          !NavApp::getMapWidget()->getTrafficPatterns().isEmpty() ||
-                                          !NavApp::getMapWidget()->getHolds().isEmpty());
+  MapWidget *mapWidget = NavApp::getMapWidgetGui();
+  ui->actionMapHideRangeRings->setEnabled(!mapWidget->getDistanceMarkers().isEmpty() ||
+                                          !mapWidget->getRangeRings().isEmpty() ||
+                                          !mapWidget->getTrafficPatterns().isEmpty() ||
+                                          !mapWidget->getHolds().isEmpty());
 }
 
 /* Enable or disable actions */
@@ -4299,10 +4304,10 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
   qDebug() << "MainWindow::postDatabaseLoad";
   if(hasDatabaseLoadStatus)
   {
+    mapWidget->postDatabaseLoad(); // Init map widget dependent queries first
     NavApp::postDatabaseLoad();
     searchController->postDatabaseLoad();
     routeController->postDatabaseLoad();
-    mapWidget->postDatabaseLoad();
     profileWidget->postDatabaseLoad();
     infoController->postDatabaseLoad();
     weatherReporter->postDatabaseLoad(type);

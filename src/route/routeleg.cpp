@@ -129,7 +129,7 @@ void RouteLeg::createFromProcedureLegs(int entryIndex, const proc::MapProcedureL
 void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, const Pos& last, float maxDistance)
 {
   map::MapResult mapobjectResult;
-  NavApp::getMapQuery()->getMapObjectByIdent(mapobjectResult, map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT,
+  NavApp::getMapQueryGui()->getMapObjectByIdent(mapobjectResult, map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT,
                                              flightplanEntry->getIdent(), flightplanEntry->getRegion(),
                                              QString(), last, maxDistance);
 
@@ -155,8 +155,8 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
   index = entryIndex;
 
   atools::fs::pln::FlightplanEntry *flightplanEntry = &(*flightplan)[index];
-  MapQuery *mapQuery = NavApp::getMapQuery();
-  AirwayTrackQuery *airwayQuery = NavApp::getAirwayTrackQuery();
+  MapQuery *mapQuery = NavApp::getMapQueryGui();
+  AirwayTrackQuery *airwayQuery = NavApp::getAirwayTrackQueryGui();
   AirportQuery *airportQuery = NavApp::getAirportQuerySim();
 
   QString region = flightplanEntry->getRegion();

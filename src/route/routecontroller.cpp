@@ -129,9 +129,7 @@ namespace pln = atools::fs::pln;
 RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableView)
   : QObject(parentWindow), mainWindow(parentWindow), view(tableView)
 {
-  mapQuery = NavApp::getMapQuery();
   airportQuery = NavApp::getAirportQuerySim();
-  airwayQuery = NavApp::getAirwayTrackQuery();
 
   routeColumns = QList<QString>({QObject::tr("Ident"),
                                  QObject::tr("Region"),
@@ -2155,8 +2153,8 @@ void RouteController::showInformationInternal(const RouteLeg& routeLeg)
   else
   {
     map::MapResult result;
-    mapQuery->getMapObjectById(result, routeLeg.getMapObjectType(), map::AIRSPACE_SRC_NONE, routeLeg.getId(),
-                               false /* airport from nav database */);
+    NavApp::getMapQueryGui()->getMapObjectById(result, routeLeg.getMapObjectType(), map::AIRSPACE_SRC_NONE,
+                                            routeLeg.getId(), false /* airport from nav database */);
     emit showInformation(result);
   }
 }
@@ -2595,19 +2593,19 @@ void RouteController::tableContextMenu(const QPoint& pos)
     else if(action == ui->actionRouteSetMark && routeLeg != nullptr)
       emit changeMark(routeLeg->getPosition());
     else if(action == ui->actionMapRangeRings && routeLeg != nullptr)
-      NavApp::getMapWidget()->addRangeRing(routeLeg->getPosition());
+      NavApp::getMapWidgetGui()->addRangeRing(routeLeg->getPosition());
     else if(action == ui->actionMapTrafficPattern && routeLeg != nullptr)
-      NavApp::getMapWidget()->addTrafficPattern(routeLeg->getAirport());
+      NavApp::getMapWidgetGui()->addTrafficPattern(routeLeg->getAirport());
     else if(action == ui->actionMapHold && routeLeg != nullptr)
     {
       map::MapResult result;
-      mapQuery->getMapObjectById(result, routeLeg->getMapObjectType(), map::AIRSPACE_SRC_NONE, routeLeg->getId(),
-                                 false /* airport from nav*/);
+      NavApp::getMapQueryGui()->getMapObjectById(result, routeLeg->getMapObjectType(), map::AIRSPACE_SRC_NONE,
+                                              routeLeg->getId(), false /* airport from nav*/);
 
       if(!result.isEmpty(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT))
-        NavApp::getMapWidget()->addHold(result, atools::geo::EMPTY_POS);
+        NavApp::getMapWidgetGui()->addHold(result, atools::geo::EMPTY_POS);
       else
-        NavApp::getMapWidget()->addHold(result, routeLeg->getPosition());
+        NavApp::getMapWidgetGui()->addHold(result, routeLeg->getPosition());
     }
     else if(action == ui->actionMapNavaidRange)
     {
@@ -2627,7 +2625,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
           }
 
           if(routeLegSel.getRange() > 0)
-            NavApp::getMapWidget()->addNavRangeRing(routeLegSel.getPosition(), type,
+            NavApp::getMapWidgetGui()->addNavRangeRing(routeLegSel.getPosition(), type,
                                                     routeLegSel.getDisplayIdent(), routeLegSel.getFrequencyOrChannel(),
                                                     routeLegSel.getRange());
         }
@@ -3604,7 +3602,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs, const QStri
   else
   {
     NavApp::getAirportQueryNav()->getAirportById(airportSim, legs.ref.airportId);
-    mapQuery->getAirportSimReplace(airportSim);
+    NavApp::getMapQueryGui()->getAirportSimReplace(airportSim);
   }
 
   if(legs.mapType & proc::PROCEDURE_STAR || legs.mapType & proc::PROCEDURE_ARRIVAL)
@@ -3863,7 +3861,7 @@ int RouteController::calculateInsertIndex(const atools::geo::Pos& pos, int legIn
 void RouteController::updateFlightplanEntryAirway(int airwayId, FlightplanEntry& entry)
 {
   map::MapAirway airway;
-  airwayQuery->getAirwayById(airway, airwayId);
+  NavApp::getAirwayTrackQueryGui()->getAirwayById(airway, airwayId);
   entry.setAirway(airway.name);
   entry.setFlag(atools::fs::pln::entry::TRACK, airway.isTrack());
 }

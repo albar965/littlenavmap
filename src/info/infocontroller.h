@@ -27,7 +27,6 @@
 class MainWindow;
 class MapQuery;
 class AirportQuery;
-class AirspaceQuery;
 class InfoQuery;
 class HtmlInfoBuilder;
 class QTextEdit;

@@ -519,8 +519,6 @@ private:
 
   QMainWindow *mainWindow;
   QTableView *view;
-  MapQuery *mapQuery;
-  AirwayTrackQuery *airwayQuery;
   AirportQuery *airportQuery;
   QStandardItemModel *model;
   QUndoStack *undoStack = nullptr;
