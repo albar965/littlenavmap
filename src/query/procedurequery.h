@@ -219,7 +219,6 @@ private:
   /* maps leg ID to approach/transition ID and index in list */
   QHash<int, std::pair<int, int> > procedureLegIndex, transitionLegIndex;
 
-  MapQuery *mapQuery = nullptr;
   AirportQuery *airportQueryNav = nullptr;
 
   /* Dummy used for custom approaches. */

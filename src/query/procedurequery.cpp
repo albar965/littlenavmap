@@ -60,13 +60,13 @@ ProcedureQuery::~ProcedureQuery()
 
 const proc::MapProcedureLegs *ProcedureQuery::getApproachLegs(map::MapAirport airport, int approachId)
 {
-  mapQuery->getAirportNavReplace(airport);
+  NavApp::getMapQueryGui()->getAirportNavReplace(airport);
   return fetchApproachLegs(airport, approachId);
 }
 
 const proc::MapProcedureLegs *ProcedureQuery::getTransitionLegs(map::MapAirport airport, int transitionId)
 {
-  mapQuery->getAirportNavReplace(airport);
+  NavApp::getMapQueryGui()->getAirportNavReplace(airport);
   return fetchTransitionLegs(airport, approachIdForTransitionId(transitionId), transitionId);
 }
 
@@ -579,21 +579,22 @@ void ProcedureQuery::runwayEndByName(map::MapResult& result, const QString& name
 {
   Q_ASSERT(airport.navdata);
 
-  mapQuery->getRunwayEndByNameFuzzy(result.runwayEnds, name, airport, true /* navdata */);
+  NavApp::getMapQueryGui()->getRunwayEndByNameFuzzy(result.runwayEnds, name, airport, true /* navdata */);
 }
 
 void ProcedureQuery::runwayEndByNameSim(map::MapResult& result, const QString& name,
                                         const map::MapAirport& airport)
 {
   Q_ASSERT(!airport.navdata);
-
-  mapQuery->getRunwayEndByNameFuzzy(result.runwayEnds, name, airport, false /* navdata */);
+  NavApp::getMapQueryGui()->getRunwayEndByNameFuzzy(result.runwayEnds, name, airport, false /* navdata */);
 }
 
 void ProcedureQuery::mapObjectByIdent(map::MapResult& result, map::MapTypes type,
                                       const QString& ident, const QString& region, const QString& airport,
                                       const Pos& sortByDistancePos)
 {
+  MapQuery *mapQuery = NavApp::getMapQueryGui();
+
   mapQuery->getMapObjectByIdent(result, type, ident, region, airport, sortByDistancePos,
                                 nmToMeter(1000.f), true /* airport from nav database */);
   if(result.isEmpty(type))
@@ -1890,7 +1891,6 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs) co
 
 void ProcedureQuery::initQueries()
 {
-  mapQuery = NavApp::getMapQueryGui();
   airportQueryNav = NavApp::getAirportQueryNav();
 
   deInitQueries();
@@ -2088,7 +2088,7 @@ void ProcedureQuery::fillFlightplanProcedureProperties(QHash<QString, QString>& 
 int ProcedureQuery::getSidId(map::MapAirport departure, const QString& sid,
                              const QString& runway, bool strict)
 {
-  mapQuery->getAirportNavReplace(departure);
+  NavApp::getMapQueryGui()->getAirportNavReplace(departure);
 
   int sidApprId = -1;
   // Get a SID id =================================================================
@@ -2107,7 +2107,7 @@ int ProcedureQuery::getSidId(map::MapAirport departure, const QString& sid,
 
 int ProcedureQuery::getSidTransitionId(map::MapAirport departure, const QString& sidTrans, int sidId, bool strict)
 {
-  mapQuery->getAirportNavReplace(departure);
+  NavApp::getMapQueryGui()->getAirportNavReplace(departure);
 
   int sidTransId = -1;
   // Get a SID transition id =================================================================
@@ -2127,7 +2127,7 @@ int ProcedureQuery::getSidTransitionId(map::MapAirport departure, const QString&
 
 int ProcedureQuery::getStarId(map::MapAirport destination, const QString& star, const QString& runway, bool strict)
 {
-  mapQuery->getAirportNavReplace(destination);
+  NavApp::getMapQueryGui()->getAirportNavReplace(destination);
 
   int starId = -1;
   // Get a STAR id =================================================================
@@ -2146,7 +2146,7 @@ int ProcedureQuery::getStarId(map::MapAirport destination, const QString& star, 
 
 int ProcedureQuery::getStarTransitionId(map::MapAirport destination, const QString& starTrans, int starId, bool strict)
 {
-  mapQuery->getAirportNavReplace(destination);
+  NavApp::getMapQueryGui()->getAirportNavReplace(destination);
 
   int starTransId = -1;
   // Get a STAR transition id =================================================================
@@ -2277,7 +2277,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
                                                     QStringList& errors)
 {
   errors.clear();
-
+  MapQuery *mapQuery = NavApp::getMapQueryGui();
   map::MapAirport departureNav = mapQuery->getAirportNav(departure);
   map::MapAirport destinationNav = mapQuery->getAirportNav(destination);
 

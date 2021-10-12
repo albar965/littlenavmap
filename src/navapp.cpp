@@ -185,6 +185,7 @@ void NavApp::initQueries()
   airportQuerySim->initQueries();
   airportQueryNav->initQueries();
   infoQuery->initQueries();
+  procedureQuery->initQueries();
 }
 
 void NavApp::initElevationProvider()
