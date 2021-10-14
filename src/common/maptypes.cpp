@@ -475,46 +475,46 @@ void initTranslateableTexts()
 
 static QHash<QString, QString> parkingNameMapUntranslated(
   {
-    {"INVALID", QLatin1Literal("Invalid")},
-    {"UNKNOWN", QLatin1Literal("Unknown")},
-    {"NONE", QLatin1Literal("No Parking")},
-    {"P", QLatin1Literal("Parking")},
-    {"NP", QLatin1Literal("N Parking")},
-    {"NEP", QLatin1Literal("NE Parking")},
-    {"EP", QLatin1Literal("E Parking")},
-    {"SEP", QLatin1Literal("SE Parking")},
-    {"SP", QLatin1Literal("S Parking")},
-    {"SWP", QLatin1Literal("SW Parking")},
-    {"WP", QLatin1Literal("W Parking")},
-    {"NWP", QLatin1Literal("NW Parking")},
-    {"G", QLatin1Literal("Gate")},
-    {"D", QLatin1Literal("Dock")},
-    {"GA", QLatin1Literal("Gate A")},
-    {"GB", QLatin1Literal("Gate B")},
-    {"GC", QLatin1Literal("Gate C")},
-    {"GD", QLatin1Literal("Gate D")},
-    {"GE", QLatin1Literal("Gate E")},
-    {"GF", QLatin1Literal("Gate F")},
-    {"GG", QLatin1Literal("Gate G")},
-    {"GH", QLatin1Literal("Gate H")},
-    {"GI", QLatin1Literal("Gate I")},
-    {"GJ", QLatin1Literal("Gate J")},
-    {"GK", QLatin1Literal("Gate K")},
-    {"GL", QLatin1Literal("Gate L")},
-    {"GM", QLatin1Literal("Gate M")},
-    {"GN", QLatin1Literal("Gate N")},
-    {"GO", QLatin1Literal("Gate O")},
-    {"GP", QLatin1Literal("Gate P")},
-    {"GQ", QLatin1Literal("Gate Q")},
-    {"GR", QLatin1Literal("Gate R")},
-    {"GS", QLatin1Literal("Gate S")},
-    {"GT", QLatin1Literal("Gate T")},
-    {"GU", QLatin1Literal("Gate U")},
-    {"GV", QLatin1Literal("Gate V")},
-    {"GW", QLatin1Literal("Gate W")},
-    {"GX", QLatin1Literal("Gate X")},
-    {"GY", QLatin1Literal("Gate Y")},
-    {"GZ", QLatin1Literal("Gate Z")}
+    {"INVALID", QLatin1String("Invalid")},
+    {"UNKNOWN", QLatin1String("Unknown")},
+    {"NONE", QLatin1String("No Parking")},
+    {"P", QLatin1String("Parking")},
+    {"NP", QLatin1String("N Parking")},
+    {"NEP", QLatin1String("NE Parking")},
+    {"EP", QLatin1String("E Parking")},
+    {"SEP", QLatin1String("SE Parking")},
+    {"SP", QLatin1String("S Parking")},
+    {"SWP", QLatin1String("SW Parking")},
+    {"WP", QLatin1String("W Parking")},
+    {"NWP", QLatin1String("NW Parking")},
+    {"G", QLatin1String("Gate")},
+    {"D", QLatin1String("Dock")},
+    {"GA", QLatin1String("Gate A")},
+    {"GB", QLatin1String("Gate B")},
+    {"GC", QLatin1String("Gate C")},
+    {"GD", QLatin1String("Gate D")},
+    {"GE", QLatin1String("Gate E")},
+    {"GF", QLatin1String("Gate F")},
+    {"GG", QLatin1String("Gate G")},
+    {"GH", QLatin1String("Gate H")},
+    {"GI", QLatin1String("Gate I")},
+    {"GJ", QLatin1String("Gate J")},
+    {"GK", QLatin1String("Gate K")},
+    {"GL", QLatin1String("Gate L")},
+    {"GM", QLatin1String("Gate M")},
+    {"GN", QLatin1String("Gate N")},
+    {"GO", QLatin1String("Gate O")},
+    {"GP", QLatin1String("Gate P")},
+    {"GQ", QLatin1String("Gate Q")},
+    {"GR", QLatin1String("Gate R")},
+    {"GS", QLatin1String("Gate S")},
+    {"GT", QLatin1String("Gate T")},
+    {"GU", QLatin1String("Gate U")},
+    {"GV", QLatin1String("Gate V")},
+    {"GW", QLatin1String("Gate W")},
+    {"GX", QLatin1String("Gate X")},
+    {"GY", QLatin1String("Gate Y")},
+    {"GZ", QLatin1String("Gate Z")}
   });
 
 /* The higher the better */
@@ -1447,9 +1447,10 @@ QString vorType(bool dmeOnly, bool hasDme, bool tacan, bool vortac)
   }
 }
 
-QString vorText(const MapVor& vor)
+QString vorText(const MapVor& vor, int elideName)
 {
-  return QObject::tr("%1 %2 (%3)").arg(vorType(vor)).arg(atools::capString(vor.name)).arg(vor.ident);
+  return QObject::tr("%1 %2 (%3)").
+         arg(vorType(vor)).arg(atools::elideTextShort(atools::capString(vor.name), elideName)).arg(vor.ident);
 }
 
 QString vorTextShort(const MapVor& vor)
@@ -1457,9 +1458,9 @@ QString vorTextShort(const MapVor& vor)
   return QObject::tr("%1 (%2)").arg(atools::capString(vor.name)).arg(vor.ident);
 }
 
-QString ndbText(const MapNdb& ndb)
+QString ndbText(const MapNdb& ndb, int elideName)
 {
-  return QObject::tr("NDB %1 (%2)").arg(atools::capString(ndb.name)).arg(ndb.ident);
+  return QObject::tr("NDB %1 (%2)").arg(atools::elideTextShort(atools::capString(ndb.name), elideName)).arg(ndb.ident);
 }
 
 QString ndbTextShort(const MapNdb& ndb)
@@ -1472,9 +1473,10 @@ QString waypointText(const MapWaypoint& waypoint)
   return QObject::tr("Waypoint %1").arg(waypoint.ident);
 }
 
-QString userpointText(const MapUserpoint& userpoint)
+QString userpointText(const MapUserpoint& userpoint, int elideName)
 {
-  return QObject::tr("Userpoint %1").arg(userpoint.ident.isEmpty() ? userpoint.name : userpoint.ident);
+  return QObject::tr("Userpoint %1").
+         arg(atools::elideTextShort(userpoint.ident.isEmpty() ? userpoint.name : userpoint.ident, elideName));
 }
 
 QString logEntryText(const MapLogbookEntry& logEntry)
@@ -1731,8 +1733,6 @@ QString mapObjectTypeToString(MapTypes type)
       str += "AircraftAi";
     if(type.testFlag(AIRCRAFT_AI_SHIP))
       str += "AircraftAiShip";
-    if(type.testFlag(AIRCRAFT_TRACK))
-      str += "AircraftTrack";
     if(type.testFlag(USERPOINTROUTE))
       str += "Userpointroute";
     if(type.testFlag(PARKING))

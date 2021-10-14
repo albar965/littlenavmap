@@ -26,7 +26,6 @@ struct MapResult;
 
 }
 
-class MapQuery;
 class WeatherReporter;
 class Route;
 class MainWindow;
@@ -71,7 +70,6 @@ private:
   static Q_DECL_CONSTEXPR int MAX_LINES = 20;
 
   MainWindow *mainWindow = nullptr;
-  MapQuery *mapQuery;
   WeatherReporter *weather;
 };
 

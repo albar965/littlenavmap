@@ -50,12 +50,12 @@ namespace ahtml = atools::util::html;
 InfoController::InfoController(MainWindow *parent)
   : QObject(parent), mainWindow(parent)
 {
-  mapQuery = NavApp::getMapQuery();
+  mapQuery = NavApp::getMapQueryGui();
   airportQuery = NavApp::getAirportQuerySim();
 
   airspaceController = NavApp::getAirspaceController();
 
-  infoBuilder = new HtmlInfoBuilder(mainWindow, true);
+  infoBuilder = new HtmlInfoBuilder(mainWindow, parent->getMapWidget(), true);
 
   // Get base font size for widgets
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -99,10 +99,10 @@ InfoController::InfoController(MainWindow *parent)
 
   // Inactive texts, tooltips and placeholders
   waitingForUpdateText = tr("Little Navmap is connected to a "
-                            "simulator or Little Navconnect.\n"
+                            "simulator or Little Navconnect.\n\n"
                             "Prepare your flight and load your aircraft in the simulator to see progress updates.");
 
-  notConnectedText = tr("Not connected to simulator.\n"
+  notConnectedText = tr("Not connected to simulator.\n\n"
                         "Go to the main menu -> \"Tools\" -> \"Flight Simulator Connection\" "
                         "or press \"Ctrl+Shift+C\".\n"
                         "Then choose your simulator and click \"Connect\".\n",
@@ -236,7 +236,7 @@ void InfoController::anchorClicked(const QUrl& url)
   {
     // Internal link like "show on map"
     QUrlQuery query(url);
-    MapWidget *mapWidget = NavApp::getMapWidget();
+    MapWidget *mapWidget = NavApp::getMapWidgetGui();
     if(url.host() == "do")
     {
       if(query.hasQueryItem("hideairspaces"))
@@ -326,12 +326,12 @@ void InfoController::anchorClicked(const QUrl& url)
         else if(type == map::AIRWAY)
         {
           // Show full airways by id ================================================
-          map::MapAirway airway = NavApp::getAirwayTrackQuery()->getAirwayById(id);
+          map::MapAirway airway = NavApp::getAirwayTrackQueryGui()->getAirwayById(id);
 
           // Get all airway segments and the bounding rectangle
           atools::geo::Rect bounding;
           QList<map::MapAirway> airways;
-          NavApp::getAirwayTrackQuery()->getAirwayFull(airways, bounding, airway.name, airway.fragment);
+          NavApp::getAirwayTrackQueryGui()->getAirwayFull(airways, bounding, airway.name, airway.fragment);
 
           QList<QList<map::MapAirway> > airwayHighlights = mapWidget->getAirwayHighlights();
           airwayHighlights.append(airways);
@@ -1426,7 +1426,7 @@ QStringList InfoController::getAirportTextFull(const QString& ident) const
     mainWindow->buildWeatherContext(weatherContext, airport);
 
     atools::util::HtmlBuilder html(mapcolors::webTableBackgroundColor, mapcolors::webTableAltBackgroundColor);
-    HtmlInfoBuilder builder(mainWindow, true /*info*/, true /*print*/);
+    HtmlInfoBuilder builder(mainWindow, mainWindow->getMapWidget(), true /*info*/, true /*print*/);
     builder.airportText(airport, weatherContext, html, nullptr);
     retval.append(html.getHtml());
 

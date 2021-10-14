@@ -55,7 +55,7 @@ RequestHandler::RequestHandler(QObject *parent, WebMapController *webMapControll
   /* Fetch data through methods asynchronously to separate the call from this thread and run it in the main thread.
    * It has to wait for the main event queue to finish the request but saves a lot of synchronization through mutexes. */
   connect(this, &RequestHandler::getUserAircraft,
-          NavApp::getMapPaintWidget(), &MapPaintWidget::getUserAircraft, Qt::BlockingQueuedConnection);
+          NavApp::getMapPaintWidgetGui(), &MapPaintWidget::getUserAircraft, Qt::BlockingQueuedConnection);
   connect(this, &RequestHandler::getRoute,
           NavApp::getRouteController(),
           static_cast<const Route& (RouteController::*)() const>(&RouteController::getRoute),
@@ -65,7 +65,7 @@ RequestHandler::RequestHandler(QObject *parent, WebMapController *webMapControll
   connect(this, &RequestHandler::getAirportText,
           NavApp::getInfoController(), &InfoController::getAirportTextFull, Qt::BlockingQueuedConnection);
   connect(this, &RequestHandler::getCurrentMapWidgetPos,
-          NavApp::getMapPaintWidget(), &MapPaintWidget::getCurrentViewCenterPos, Qt::BlockingQueuedConnection);
+          NavApp::getMapPaintWidgetGui(), &MapPaintWidget::getCurrentViewCenterPos, Qt::BlockingQueuedConnection);
 
   connect(this, &RequestHandler::getPixmap, webMapController, &WebMapController::getPixmap,
           Qt::BlockingQueuedConnection);

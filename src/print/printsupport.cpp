@@ -42,7 +42,7 @@ using atools::settings::Settings;
 using atools::util::HtmlBuilder;
 
 PrintSupport::PrintSupport(MainWindow *parent)
-  : mainWindow(parent), mapQuery(NavApp::getMapQuery())
+  : mainWindow(parent)
 {
   printDialog = new PrintDialog(mainWindow);
 
@@ -63,13 +63,13 @@ void PrintSupport::printMap()
 
   buildPrinter();
 
-  NavApp::getMapWidget()->showOverlays(false, true /* show scale */);
+  NavApp::getMapWidgetGui()->showOverlays(false, true /* show scale */);
   QPrintPreviewDialog *print = buildPreviewDialog();
   connect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedMap);
   print->exec();
   disconnect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedMap);
 
-  NavApp::getMapWidget()->showOverlays(true, true /* show scale */);
+  NavApp::getMapWidgetGui()->showOverlays(true, true /* show scale */);
   deletePreviewDialog(print);
 }
 
@@ -243,7 +243,7 @@ void PrintSupport::addAirport(QTextCursor& cursor, const map::MapAirport& airpor
   QTextBlockFormat pageBreakBlock;
   pageBreakBlock.setPageBreakPolicy(QTextFormat::PageBreak_AlwaysBefore);
 
-  HtmlInfoBuilder builder(mainWindow, true /*info*/, true /*print*/);
+  HtmlInfoBuilder builder(mainWindow, mainWindow->getMapWidget(), true /*info*/, true /*print*/);
   map::WeatherContext weatherContext;
 
   prt::PrintFlightPlanOpts opts = printDialog->getPrintOptions();
@@ -366,7 +366,7 @@ void PrintSupport::paintRequestedMap(QPrinter *)
 {
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
-  MapWidget *mapWidget = NavApp::getMapWidget();
+  MapWidget *mapWidget = NavApp::getMapWidgetGui();
   QPainter painter;
 
   // Calculate best ratio

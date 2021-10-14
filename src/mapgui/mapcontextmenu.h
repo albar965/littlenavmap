@@ -270,11 +270,6 @@ private:
   /* Sort callback comparator for a locale-aware sorting of menu items*/
   static bool alphaSort(const map::MapBase *base1, const map::MapBase *base2);
 
-  /* Determine various route and procedure related states for the given map object */
-  void procedureFlags(const map::MapBase *base, bool *departure = nullptr, bool *destination = nullptr,
-                      bool *alternate = nullptr, bool *roundtrip = nullptr, bool *arrivalProc = nullptr,
-                      bool *departureProc = nullptr) const;
-
   /* true if route leg can have comment edited */
   bool canEditRouteComment(const map::MapBase *base) const;
 

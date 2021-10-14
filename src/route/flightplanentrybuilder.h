@@ -100,8 +100,6 @@ public:
   }
 
 private:
-  MapQuery *mapQuery = nullptr;
-
   bool vorForWaypoint(const map::MapWaypoint& waypoint, map::MapVor& vor) const;
   bool ndbForWaypoint(const map::MapWaypoint& waypoint, map::MapNdb& ndb) const;
 

@@ -311,6 +311,8 @@ MainWindow::MainWindow()
       ui->dockWidgetMap->hide();
     }
 
+    // Init a few late objects since these depend on the map widget instance
+    NavApp::initQueries();
     NavApp::initElevationProvider();
 
     // Create elevation profile widget and replace dummy widget in window
@@ -1508,6 +1510,8 @@ void MainWindow::connectAllSlots()
   connect(trackController, &TrackController::postTrackLoad, this, &MainWindow::updateMapObjectsShown);
   connect(trackController, &TrackController::postTrackLoad, routeController, &RouteController::tracksChanged);
 
+  connect(trackController, &TrackController::postTrackLoad, mapWidget, &MapPaintWidget::postTrackLoad);
+
   connect(ui->actionRouteDownloadTracks, &QAction::toggled, trackController, &TrackController::downloadToggled);
   connect(ui->actionRouteDownloadTracksNow, &QAction::triggered, trackController, &TrackController::startDownload);
   connect(ui->actionRouteDeleteTracks, &QAction::triggered, trackController, &TrackController::deleteTracks);
@@ -1556,13 +1560,13 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowMark, &QAction::triggered, mapWidget, &MapWidget::showSearchMark);
   connect(ui->actionMapShowHome, &QAction::triggered, mapWidget, &MapWidget::showHome);
   connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapPaintWidget::showAircraft);
+  connect(ui->actionMapAircraftCenterNow, &QAction::triggered, mapWidget, &MapPaintWidget::showAircraftNow);
 
   // Update jump back
   connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapPaintWidget::jumpBackToAircraftCancel);
 
   connect(ui->actionMapBack, &QAction::triggered, mapWidget, &MapWidget::historyBack);
   connect(ui->actionMapNext, &QAction::triggered, mapWidget, &MapWidget::historyNext);
-  connect(ui->actionWorkOffline, &QAction::toggled, mapWidget, &MapWidget::workOffline);
 
   connect(ui->actionMapMoreDetails, &QAction::triggered, mapWidget, &MapWidget::increaseMapDetail);
   connect(ui->actionMapLessDetails, &QAction::triggered, mapWidget, &MapWidget::decreaseMapDetail);
@@ -3621,10 +3625,11 @@ void MainWindow::updateOnlineActionStates()
 /* Enable or disable actions */
 void MainWindow::updateMarkActionStates()
 {
-  ui->actionMapHideRangeRings->setEnabled(!NavApp::getMapWidget()->getDistanceMarkers().isEmpty() ||
-                                          !NavApp::getMapWidget()->getRangeRings().isEmpty() ||
-                                          !NavApp::getMapWidget()->getTrafficPatterns().isEmpty() ||
-                                          !NavApp::getMapWidget()->getHolds().isEmpty());
+  MapWidget *mapWidget = NavApp::getMapWidgetGui();
+  ui->actionMapHideRangeRings->setEnabled(!mapWidget->getDistanceMarkers().isEmpty() ||
+                                          !mapWidget->getRangeRings().isEmpty() ||
+                                          !mapWidget->getTrafficPatterns().isEmpty() ||
+                                          !mapWidget->getHolds().isEmpty());
 }
 
 /* Enable or disable actions */
@@ -3645,7 +3650,9 @@ void MainWindow::updateActionStates()
   ui->actionClearKml->setEnabled(!mapWidget->getKmlFiles().isEmpty());
 
   // Enable MORA button depending on available data
-  ui->actionMapShowMinimumAltitude->setEnabled(NavApp::getMoraReader()->isDataAvailable());
+  ui->actionMapShowMinimumAltitude->setEnabled(NavApp::isMoraAvailable());
+  ui->actionMapShowGls->setEnabled(NavApp::isGlsAvailable());
+  ui->actionMapShowHolding->setEnabled(NavApp::isHoldingsAvailable());
 
   bool hasFlightplan = !NavApp::getRouteConst().isFlightplanEmpty();
   bool hasTrack = !NavApp::isAircraftTrackEmpty();
@@ -3713,11 +3720,13 @@ void MainWindow::updateActionStates()
 #ifdef DEBUG_MOVING_AIRPLANE
   ui->actionMapShowAircraft->setEnabled(true);
   ui->actionMapAircraftCenter->setEnabled(true);
+  ui->actionMapAircraftCenterNow->setEnabled(true);
   ui->actionMapShowAircraftAi->setEnabled(true);
   ui->actionMapShowAircraftAiBoat->setEnabled(true);
 #else
-  ui->actionMapAircraftCenter->setEnabled(NavApp::isConnected());
   ui->actionMapShowAircraft->setEnabled(NavApp::isConnected());
+  ui->actionMapAircraftCenter->setEnabled(NavApp::isConnected());
+  ui->actionMapAircraftCenterNow->setEnabled(NavApp::isConnected());
 
   ui->actionMapShowAircraftAi->setEnabled((NavApp::isConnected() && NavApp::isFetchAiAircraft()) ||
                                           NavApp::getOnlinedataController()->isNetworkActive());
@@ -3930,9 +3939,6 @@ void MainWindow::restoreStateMain()
                        ui->actionShowAllowDocking, ui->actionShowAllowMoving, ui->actionWindowStayOnTop});
   widgetState.setBlockSignals(false);
 
-  // Load status and allow to send signals
-  widgetState.restore(ui->actionWorkOffline);
-
   firstApplicationStart = settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
 
   // Already loaded in constructor early to allow database creations
@@ -4120,7 +4126,7 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack,
                     ui->actionInfoApproachShowMissedAppr, ui->actionMapShowGrid, ui->actionMapShowCities,
                     ui->actionMapShowSunShading, ui->actionMapShowHillshading, ui->actionMapShowAirportWeather,
-                    ui->actionMapShowMinimumAltitude, ui->actionRouteEditMode, ui->actionWorkOffline,
+                    ui->actionMapShowMinimumAltitude, ui->actionRouteEditMode,
                     ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
                     ui->actionRouteSaveAirwayWaypoints, ui->actionLogdataCreateLogbook, ui->actionRunWebserver,
                     ui->actionSearchLogdataShowDirect, ui->actionSearchLogdataShowRoute,
@@ -4298,10 +4304,10 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
   qDebug() << "MainWindow::postDatabaseLoad";
   if(hasDatabaseLoadStatus)
   {
+    mapWidget->postDatabaseLoad(); // Init map widget dependent queries first
     NavApp::postDatabaseLoad();
     searchController->postDatabaseLoad();
     routeController->postDatabaseLoad();
-    mapWidget->postDatabaseLoad();
     profileWidget->postDatabaseLoad();
     infoController->postDatabaseLoad();
     weatherReporter->postDatabaseLoad(type);

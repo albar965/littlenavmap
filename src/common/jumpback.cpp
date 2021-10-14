@@ -73,7 +73,7 @@ void JumpBack::start(const QVariantList& jumpBackValues)
     }
 
     // Restart timer
-    timer.setInterval(OptionData::instance().getSimNoFollowAircraftOnScrollSeconds() * 1000);
+    timer.setInterval(OptionData::instance().getSimNoFollowAircraftScrollSeconds() * 1000);
     timer.start();
   }
 }

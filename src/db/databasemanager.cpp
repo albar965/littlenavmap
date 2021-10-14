@@ -1222,6 +1222,7 @@ bool DatabaseManager::runInternal()
       QStringList errors;
       if(!NavDatabase::isBasePathValid(databaseDialog->getBasePath(), errors, selectedFsType))
       {
+        QString resetPath(tr("<p>Click \"Reset paths\" in the dialog \"Load Scenery Library\" for a possible fix.</p>"));
         if(selectedFsType == atools::fs::FsPaths::MSFS)
         {
           // Check if base path is valid - all simulators ========================================================
@@ -1230,16 +1231,16 @@ bool DatabaseManager::runInternal()
                              "Reason:<br/>"
                              "%2<br/><br/>"
                              "Either the \"OneStore\" or the \"Steam\" paths have to exist.<br/>"
-                             "The path \"Community\" is always needed for add-ons.</p>").
-                          arg(databaseDialog->getBasePath()).arg(errors.join("<br/>")));
+                             "The path \"Community\" is always needed for add-ons.</p>%3").
+                          arg(databaseDialog->getBasePath()).arg(errors.join("<br/>")).arg(resetPath));
         }
         else
         {
           Dialog::warning(databaseDialog,
                           tr("<p style='white-space:pre'>Cannot read base path \"%1\".<br/><br/>"
                              "Reason:<br/>"
-                             "%2</p>").
-                          arg(databaseDialog->getBasePath()).arg(errors.join("<br/>")));
+                             "%2</p>%3").
+                          arg(databaseDialog->getBasePath()).arg(errors.join("<br/>")).arg(resetPath));
         }
         configValid = false;
       }
@@ -1456,7 +1457,9 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   QApplication::processEvents();
   atools::fs::NavDatabaseErrors errors;
 
+  qInfo() << Q_FUNC_INFO << "==========================================================";
   qInfo() << Q_FUNC_INFO << navDatabaseOpts;
+  qInfo() << Q_FUNC_INFO << "==========================================================";
 
   try
   {

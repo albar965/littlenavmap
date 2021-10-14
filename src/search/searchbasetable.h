@@ -128,6 +128,9 @@ public:
   /* Get ids of all selected objects */
   QVector<int> getSelectedIds() const;
 
+  /* Get selected rows in order from bottom to top */
+  QVector<int> getSelectedRows() const;
+
   /* Default handler */
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant&,
                             const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
@@ -189,6 +192,9 @@ protected:
 
   void installEventFilterForWidget(QWidget *widget);
 
+  /* get airport at current position, airport at top of selection or airport on top of the list **/
+  map::MapAirport currentAirport();
+
   /* Table/view controller */
   SqlController *controller = nullptr;
 
@@ -230,6 +236,11 @@ private:
   void fontChanged();
   void showApproaches(bool custom);
   void fetchedMore();
+
+  /* Called by actions on airport search tab */
+  void routeSetDepartureAction();
+  void routeSetDestinationAction();
+  void routeAddAlternateAction();
 
   /* Get selected index or index of first entry in the result table */
   QModelIndex selectedOrFirstIndex();

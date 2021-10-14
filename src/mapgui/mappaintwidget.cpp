@@ -29,6 +29,11 @@
 #include "common/unit.h"
 #include "common/aircrafttrack.h"
 #include "mapgui/aprongeometrycache.h"
+#include "query/mapquery.h"
+#include "query/airwayquery.h"
+#include "query/airwaytrackquery.h"
+#include "query/waypointquery.h"
+#include "query/waypointtrackquery.h"
 
 #include <QPainter>
 #include <QJsonDocument>
@@ -91,11 +96,34 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible)
   // Initialize the X-Plane apron geometry cache
   apronGeometryCache = new ApronGeometryCache();
   apronGeometryCache->setViewportParams(viewport());
+
+  mapQuery = new MapQuery(NavApp::getDatabaseSim(), NavApp::getDatabaseNav(),
+                          NavApp::getDatabaseUser());
+  mapQuery->initQueries();
+
+  // Set up airway queries =====================
+  airwayTrackQuery = new AirwayTrackQuery(new AirwayQuery(NavApp::getDatabaseNav(), false),
+                                          new AirwayQuery(NavApp::getDatabaseTrack(), true));
+  airwayTrackQuery->initQueries();
+
+  // Set up waypoint queries =====================
+  waypointTrackQuery = new WaypointTrackQuery(new WaypointQuery(NavApp::getDatabaseNav(), false),
+                                              new WaypointQuery(NavApp::getDatabaseTrack(), true));
+  waypointTrackQuery->initQueries();
+
+  paintLayer->initQueries();
 }
 
 MapPaintWidget::~MapPaintWidget()
 {
   removeLayer(paintLayer);
+
+  // Have to delete manually since classes can be copied and does not delete in destructor
+  airwayTrackQuery->deleteChildren();
+  delete airwayTrackQuery;
+
+  waypointTrackQuery->deleteChildren();
+  delete waypointTrackQuery;
 
   qDebug() << Q_FUNC_INFO << "delete paintLayer";
   delete paintLayer;
@@ -103,10 +131,18 @@ MapPaintWidget::~MapPaintWidget()
   qDebug() << Q_FUNC_INFO << "delete screenIndex";
   delete screenIndex;
 
+  qDebug() << Q_FUNC_INFO << "delete aircraftTrack";
   delete aircraftTrack;
+
+  qDebug() << Q_FUNC_INFO << "delete aircraftTrackLogbook";
   delete aircraftTrackLogbook;
 
+  qDebug() << Q_FUNC_INFO << "delete apronGeometryCache";
   delete apronGeometryCache;
+
+  qDebug() << Q_FUNC_INFO << "delete mapQuery";
+  delete mapQuery;
+  mapQuery = nullptr;
 }
 
 void MapPaintWidget::copySettings(const MapPaintWidget& other)
@@ -379,7 +415,7 @@ void MapPaintWidget::setShowMapFeatures(map::MapTypes type, bool show)
   if(type.testFlag(map::AIRSPACE) && show != curShow)
     screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
 
-  if((type.testFlag(map::ILS) || type.testFlag(map::GLS)) && show != curShow)
+  if(type.testFlag(map::ILS) && show != curShow)
     screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
 
   if(type.testFlag(map::MISSED_APPROACH) && show != curShow)
@@ -395,7 +431,7 @@ void MapPaintWidget::setShowMapFeaturesDisplay(map::MapObjectDisplayTypes type, 
   if(type & map::LOGBOOK_ALL && show != curShow)
     screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
 
-  if(type.testFlag(map::FLIGHTPLAN) && show != curShow)
+  if((type.testFlag(map::FLIGHTPLAN) || type.testFlag(map::GLS)) && show != curShow)
     screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
 }
 
@@ -482,11 +518,18 @@ void MapPaintWidget::preDatabaseLoad()
   databaseLoadStatus = true;
   apronGeometryCache->clear();
   paintLayer->preDatabaseLoad();
+  mapQuery->deInitQueries();
+  airwayTrackQuery->deInitQueries();
+  waypointTrackQuery->deInitQueries();
 }
 
 void MapPaintWidget::postDatabaseLoad()
 {
   databaseLoadStatus = false;
+  // Reload track into database to catch changed waypoint ids
+  airwayTrackQuery->initQueries();
+  waypointTrackQuery->initQueries();
+  mapQuery->initQueries();
   paintLayer->postDatabaseLoad();
   screenIndex->updateAllGeometry(getCurrentViewBoundingBox());
   update();
@@ -838,6 +881,14 @@ void MapPaintWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
   }
 }
 
+void MapPaintWidget::showAircraftNow(bool)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  if(screenIndex->getUserAircraft().isFullyValid())
+    showPos(screenIndex->getUserAircraft().getPosition(), 0.f, false /* doubleClick */);
+}
+
 void MapPaintWidget::showAircraft(bool centerAircraftChecked)
 {
   if(verbose)
@@ -1073,6 +1124,15 @@ void MapPaintWidget::jumpBackToAircraftCancel()
 const GeoDataLatLonBox& MapPaintWidget::getCurrentViewBoundingBox() const
 {
   return viewport()->viewLatLonAltBox();
+}
+
+void MapPaintWidget::postTrackLoad()
+{
+  waypointTrackQuery->clearCache();
+  airwayTrackQuery->clearCache();
+
+  waypointTrackQuery->initQueries();
+  airwayTrackQuery->initQueries();
 }
 
 void MapPaintWidget::cancelDragAll()

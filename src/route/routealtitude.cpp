@@ -1476,8 +1476,9 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
   travelTime = 0.f;
   unflyableLegs = false;
   averageGroundSpeed = windDirectionAvg = windSpeedAvg =
-    windHeadAvg = windHeadClimb = windHeadCruise = windHeadDescent =
-      climbSpeedWindCorrected = cruiseSpeedWindCorrected = descentSpeedWindCorrected = 0.f;
+    windDirectionCruiseAvg = windSpeedCruiseAvg =
+      windHeadAvg = windHeadClimb = windHeadCruise = windHeadDescent =
+        climbSpeedWindCorrected = cruiseSpeedWindCorrected = descentSpeedWindCorrected = 0.f;
 
   float tocDist = getTopOfClimbDistance();
   float todDist = getTopOfDescentDistance();
@@ -1740,7 +1741,8 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
   }
 
   // Calculate average values for all =====================================
-  float u = 0.f, v = 0.f;
+  float uAverageAll = 0.f, vAverageAll = 0.f;
+  float uAverageCruise = 0.f, vAverageCruise = 0.f;
   for(const RouteAltitudeLeg& leg : *this)
   {
     if(leg.isMissed() || leg.isAlternate())
@@ -1753,26 +1755,36 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
     // Speed ===================
 
     // Wind - sum up U/V components =================
-    u += ageo::windUComponent(leg.climbWindSpeed, leg.climbWindDir) * leg.climbTime +
-         ageo::windUComponent(leg.cruiseWindSpeed, leg.cruiseWindDir) * leg.cruiseTime +
-         ageo::windUComponent(leg.descentWindSpeed, leg.descentWindDir) * leg.descentTime;
+    float uCruise = ageo::windUComponent(leg.cruiseWindSpeed, leg.cruiseWindDir) * leg.cruiseTime;
+    float vCruise = ageo::windVComponent(leg.cruiseWindSpeed, leg.cruiseWindDir) * leg.cruiseTime;
+    uAverageCruise += uCruise;
+    vAverageCruise += vCruise;
 
-    v += ageo::windVComponent(leg.climbWindSpeed, leg.climbWindDir) * leg.climbTime +
-         ageo::windVComponent(leg.cruiseWindSpeed, leg.cruiseWindDir) * leg.cruiseTime +
-         ageo::windVComponent(leg.descentWindSpeed, leg.descentWindDir) * leg.descentTime;
+    uAverageAll += ageo::windUComponent(leg.climbWindSpeed, leg.climbWindDir) * leg.climbTime + uCruise +
+                   ageo::windUComponent(leg.descentWindSpeed, leg.descentWindDir) * leg.descentTime;
+
+    vAverageAll += ageo::windVComponent(leg.climbWindSpeed, leg.climbWindDir) * leg.climbTime + vCruise +
+                   ageo::windVComponent(leg.descentWindSpeed, leg.descentWindDir) * leg.descentTime;
 
     windHeadAvg += leg.climbWindHead * leg.climbTime +
                    leg.cruiseWindHead * leg.cruiseTime +
                    leg.descentWindHead * leg.descentTime;
   }
-  u /= travelTime;
-  v /= travelTime;
+  uAverageAll /= travelTime;
+  vAverageAll /= travelTime;
+  uAverageCruise /= cruiseTime;
+  vAverageCruise /= cruiseTime;
 
   // get back to direction/speed from U/V components
-  windDirectionAvg = ageo::windDirectionFromUV(u, v);
-  windSpeedAvg = ageo::windSpeedFromUV(u, v);
-
+  // Average for whole route ========================================
+  windDirectionAvg = ageo::windDirectionFromUV(uAverageAll, vAverageAll);
+  windSpeedAvg = ageo::windSpeedFromUV(uAverageAll, vAverageAll);
   windHeadAvg /= travelTime;
+
+  // Average for cruise phase only ========================================
+  windDirectionCruiseAvg = ageo::windDirectionFromUV(uAverageCruise, vAverageCruise);
+  windSpeedCruiseAvg = ageo::windSpeedFromUV(uAverageCruise, vAverageCruise);
+
   averageGroundSpeed = getTotalDistance() / travelTime;
 
 #ifdef DEBUG_INFORMATION

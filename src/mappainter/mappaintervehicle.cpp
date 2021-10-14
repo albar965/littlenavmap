@@ -225,6 +225,9 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, int size,
       }
     }
 
+    if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_COORDINATES))
+      texts.append(Unit::coords(aircraft.getPosition()));
+
     int transparency = context->flags2.testFlag(opts2::MAP_AI_TEXT_BACKGROUND) ? 255 : 0;
 
     // Draw text label
@@ -279,6 +282,9 @@ void MapPainterVehicle::paintTextLabelUser(float x, float y, int size,
     else if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE))
       texts.append(tr("%1%2").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())).arg(upDown));
   }
+
+  if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_COORDINATES))
+    texts.append(Unit::coords(aircraft.getPosition()));
 
   int transparency = context->flags2.testFlag(opts2::MAP_USER_TEXT_BACKGROUND) ? 255 : 0;
 

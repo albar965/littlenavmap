@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "maptooltip.h"
+#include "mapgui/maptooltip.h"
 
 #include "common/maptypes.h"
 #include "navapp.h"
@@ -29,6 +29,7 @@
 #include "weather/windreporter.h"
 #include "grib/windquery.h"
 #include "route/routealtitudeleg.h"
+#include "mapgui/mappaintwidget.h"
 
 #include <QPalette>
 #include <QToolTip>
@@ -42,7 +43,7 @@ using atools::fs::sc::SimConnectUserAircraft;
 static const int TEXT_BAR_LENGTH = 15;
 
 MapTooltip::MapTooltip(MainWindow *parentWindow)
-  : mainWindow(parentWindow), mapQuery(NavApp::getMapQuery()), weather(NavApp::getWeatherReporter())
+  : mainWindow(parentWindow), weather(NavApp::getWeatherReporter())
 {
   qDebug() << Q_FUNC_INFO;
 }
@@ -61,7 +62,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const Ro
 #endif
 
   HtmlBuilder html(false);
-  HtmlInfoBuilder info(mainWindow, false);
+  HtmlInfoBuilder info(mainWindow, NavApp::getMapPaintWidgetGui(), false);
   int numEntries = 0;
 
   // Append HTML text for all objects found in order of importance (airports first, etc.)

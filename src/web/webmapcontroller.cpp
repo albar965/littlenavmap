@@ -65,7 +65,7 @@ MapPixmap WebMapController::getPixmap(int width, int height)
     qDebug() << Q_FUNC_INFO << width << "x" << height;
 
   return getPixmapPosDistance(width, height, atools::geo::EMPTY_POS,
-                              static_cast<float>(NavApp::getMapWidget()->distance()), QLatin1String(""));
+                              static_cast<float>(NavApp::getMapWidgetGui()->distance()), QLatin1String(""));
 }
 
 MapPixmap WebMapController::getPixmapObject(int width, int height, web::ObjectType type, const QString& ident,
@@ -107,8 +107,8 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
     if(errorCase == QLatin1String(""))
     {
       // Use current map position
-      pos.setLonX(static_cast<float>(NavApp::getMapWidget()->centerLongitude()));
-      pos.setLatY(static_cast<float>(NavApp::getMapWidget()->centerLatitude()));
+      pos.setLonX(static_cast<float>(NavApp::getMapWidgetGui()->centerLongitude()));
+      pos.setLatY(static_cast<float>(NavApp::getMapWidgetGui()->centerLatitude()));
     }
     else
     {
@@ -122,7 +122,7 @@ MapPixmap WebMapController::getPixmapPosDistance(int width, int height, atools::
   if(mapPaintWidget != nullptr)
   {
     // Copy all map settings
-    mapPaintWidget->copySettings(*NavApp::getMapWidget());
+    mapPaintWidget->copySettings(*NavApp::getMapWidgetGui());
 
     // Do not center world rectangle when resizing map widget
     mapPaintWidget->setKeepWorldRect(false);
@@ -191,7 +191,7 @@ MapPixmap WebMapController::getPixmapRect(int width, int height, atools::geo::Re
     if(mapPaintWidget != nullptr)
     {
       // Copy all map settings
-      mapPaintWidget->copySettings(*NavApp::getMapWidget());
+      mapPaintWidget->copySettings(*NavApp::getMapWidgetGui());
 
       // Do not center world rectangle when resizing
       mapPaintWidget->setKeepWorldRect(false);

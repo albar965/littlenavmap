@@ -60,7 +60,7 @@ void MapPainterIls::render()
     const GeoDataLatLonBox& curBox = context->viewport->viewLatLonAltBox();
 
     int x, y;
-    if(context->objectTypes.testFlag(map::ILS) || context->objectTypes.testFlag(map::GLS))
+    if(context->objectTypes.testFlag(map::ILS) || context->objectDisplayTypes.testFlag(map::GLS))
     {
       bool overflow = false;
       const QList<MapIls> *ilsList = mapQuery->getIls(curBox, context->mapLayer, context->lazyUpdate, overflow);
@@ -76,7 +76,7 @@ void MapPainterIls::render()
             // Part of flight plan - paint later
             continue;
 
-          if(ils.isAnyGls() && !context->objectTypes.testFlag(map::GLS))
+          if(ils.isAnyGls() && !context->objectDisplayTypes.testFlag(map::GLS))
             continue;
 
           if(!ils.isAnyGls() && !context->objectTypes.testFlag(map::ILS))

@@ -282,6 +282,24 @@ QList<map::MapAirspace> MapResult::getOnlineAirspaces() const
   return retval;
 }
 
+QString MapResult::objectText(MapTypes navType, int elideName) const
+{
+  QString navaidStr;
+  if(navType == map::AIRPORT && hasAirports())
+    navaidStr = map::airportTextShort(airports.first(), elideName);
+  else if(navType == map::VOR && hasVor())
+    navaidStr = map::vorText(vors.first(), elideName);
+  else if(navType == map::NDB && hasNdb())
+    navaidStr = map::ndbText(ndbs.first(), elideName);
+  else if(navType == map::WAYPOINT && hasWaypoints())
+    navaidStr = map::waypointText(waypoints.first());
+  else if(navType == map::USERPOINT && hasUserpoints())
+    navaidStr = map::userpointText(userpoints.first(), elideName);
+  else if(navType == map::LOGBOOK && hasLogEntries())
+    navaidStr = map::logEntryText(logbookEntries.first());
+  return navaidStr;
+}
+
 void MapResult::clearNavdataAirspaces()
 {
   QList<map::MapAirspace>::iterator it = std::remove_if(airspaces.begin(), airspaces.end(),

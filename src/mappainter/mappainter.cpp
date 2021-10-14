@@ -118,9 +118,6 @@ MapPainter::MapPainter(MapPaintWidget *parentMapWidget, MapScale *mapScale, Pain
   : CoordinateConverter(parentMapWidget->viewport()), context(paintContext), mapPaintWidget(parentMapWidget),
   scale(mapScale)
 {
-  mapQuery = NavApp::getMapQuery();
-  airwayQuery = NavApp::getAirwayTrackQuery();
-  waypointQuery = NavApp::getWaypointTrackQuery();
   airportQuery = NavApp::getAirportQuerySim();
   symbolPainter = new SymbolPainter();
 }
@@ -712,6 +709,13 @@ bool MapPainter::sortAirportFunction(const PaintAirportType& pap1, const PaintAi
   else
     // Put addon in front
     return ap1->addon() < ap2->addon();
+}
+
+void MapPainter::initQueries()
+{
+  mapQuery = mapPaintWidget->getMapQuery();
+  airwayQuery = mapPaintWidget->getAirwayTrackQuery();
+  waypointQuery = mapPaintWidget->getWaypointTrackQuery();
 }
 
 void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size)

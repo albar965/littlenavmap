@@ -34,33 +34,39 @@ Column::Column(const QString& columnName, QWidget *widget, const QString& column
 
 }
 
-Column& Column::filter(bool b)
+Column& Column::filter(bool value)
 {
-  colCanBeFiltered = b;
+  colCanBeFiltered = value;
   return *this;
 }
 
-Column& Column::noSort(bool b)
+Column& Column::filterByBuilder(bool value)
 {
-  colCanNotBeSorted = b;
+  colCanBeFilteredBuilder = value;
   return *this;
 }
 
-Column& Column::noDefault(bool b)
+Column& Column::noSort(bool value)
 {
-  colIsNoDefaultColumn = b;
+  colCanNotBeSorted = value;
   return *this;
 }
 
-Column& Column::hidden(bool b)
+Column& Column::noDefault(bool value)
 {
-  colIsHiddenColumn = b;
+  colIsNoDefaultColumn = value;
   return *this;
 }
 
-Column& Column::defaultSort(bool b)
+Column& Column::hidden(bool value)
 {
-  colIsDefaultSortColumn = b;
+  colIsHiddenColumn = value;
+  return *this;
+}
+
+Column& Column::defaultSort(bool value)
+{
+  colIsDefaultSortColumn = value;
   return *this;
 }
 

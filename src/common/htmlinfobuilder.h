@@ -32,6 +32,7 @@ class InfoQuery;
 class WeatherReporter;
 class Route;
 class MainWindow;
+class MapPaintWidget;
 
 class QFileInfo;
 
@@ -102,6 +103,8 @@ struct MapProcedurePoint;
 
 /*
  * Builds HTML snippets (no <html> and no <body> tags) for QTextEdits or tooltips.
+ *
+ * This is indepent of the main GUI main map widget.
  */
 class HtmlInfoBuilder
 {
@@ -114,7 +117,7 @@ public:
    * @param formatInfo true if this should generate HTML for QTextEdits or QWebBrowser
    * (i.e. generate alternating background color for tables)
    */
-  HtmlInfoBuilder(QWidget *parent, bool formatInfo, bool formatPrint = false);
+  HtmlInfoBuilder(QWidget *parent, MapPaintWidget *mapWidgetParam, bool formatInfo, bool formatPrint = false);
 
   virtual ~HtmlInfoBuilder();
 
@@ -414,8 +417,8 @@ private:
   QSize symbolSizeVehicle = QSize(28, 28);
 
   QWidget *parentWidget = nullptr;
-  MapQuery *mapQuery;
-  WaypointTrackQuery *waypointQuery;
+  MapPaintWidget *mapWidget = nullptr;
+
   AirportQuery *airportQuerySim, *airportQueryNav;
   InfoQuery *infoQuery;
   atools::fs::util::MorseCode *morse;

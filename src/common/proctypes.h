@@ -24,6 +24,8 @@
 #include <QRegularExpression>
 #include <QString>
 
+class Route;
+
 /*
  * Procedure types for approach, transition, SID and STAR.
  */
@@ -658,6 +660,20 @@ QString altRestrictionTextShort(const proc::MapAltRestriction& altRestriction);
 QString speedRestrictionTextNarrow(const proc::MapSpeedRestriction& speedRestriction);
 QString speedRestrictionText(const proc::MapSpeedRestriction& speedRestriction);
 QString speedRestrictionTextShort(const proc::MapSpeedRestriction& speedRestriction);
+
+/* Determine various route and procedure related states for the given map object.
+ * Queries are omitted if the respective parameters are null */
+void procedureFlags(const Route& route, const map::MapBase *base, bool *departure = nullptr,
+                    bool *destination = nullptr,
+                    bool *alternate = nullptr, bool *roundtrip = nullptr, bool *arrivalProc = nullptr,
+                    bool *departureProc = nullptr);
+
+/* Check if airport can be added as departure, destination or alternate and gives
+ * information if menu items should be disabled.
+ * Returns suffix string for menu items. */
+QString  procedureTextSuffixDeparture(const Route& route, const map::MapAirport& airport, bool& disable);
+QString  procedureTextSuffixDestination(const Route& route, const map::MapAirport& airport, bool& disable);
+QString  procedureTextSuffixAlternate(const Route& route, const map::MapAirport& airport, bool& disable);
 
 } // namespace types
 

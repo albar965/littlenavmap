@@ -157,6 +157,8 @@ public:
     return context.isQueryOverflow();
   }
 
+  void initQueries();
+
 private:
   void initMapLayerSettings();
   void updateLayers();
