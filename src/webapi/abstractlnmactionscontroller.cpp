@@ -51,13 +51,11 @@ NavApp* AbstractLnmActionsController::getNavApp(){
     return NavApp::navAppInstance();
 }
 
-MapQuery* AbstractLnmActionsController::getMapQuery(){
-  // TODO you have to get the map query from the MapPaintWidget instance used for the web UI
+MapQuery* AbstractLnmActionsController::getMapQueryGui(){
     return getNavApp()->getMapQueryGui();
 }
 
-WaypointTrackQuery* AbstractLnmActionsController::getWaypointTrackQuery(){
-  // TODO you have to get the map query from the MapPaintWidget instance used for the web UI
+WaypointTrackQuery* AbstractLnmActionsController::getWaypointTrackQueryGui(){
     return getNavApp()->getWaypointTrackQueryGui();
 }
 
@@ -107,7 +105,7 @@ const AirportAdminNames AbstractLnmActionsController::getAirportAdminNames(map::
 int AbstractLnmActionsController::getTransitionAltitude(map::MapAirport& airport){
     // Get transition altitude from nav database
     map::MapAirport navAirport = airport;
-    getMapQuery()->getAirportNavReplace(navAirport);
+    getMapQueryGui()->getAirportNavReplace(navAirport);
     if(navAirport.isValid() && navAirport.transitionAltitude > 0)
       return navAirport.transitionAltitude;
     return -1;

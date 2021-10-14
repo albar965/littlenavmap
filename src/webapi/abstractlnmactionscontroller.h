@@ -73,8 +73,8 @@ public:
 protected:
     // Main LNM objects
     NavApp* getNavApp();
-    MapQuery* getMapQuery();
-    WaypointTrackQuery* getWaypointTrackQuery();
+    MapQuery* getMapQueryGui();
+    WaypointTrackQuery* getWaypointTrackQueryGui();
     InfoQuery* getInfoQuery();
     AirportQuery* getAirportQuery(AirportQueryType type);
     MainWindow* getMainWindow();

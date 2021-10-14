@@ -158,10 +158,10 @@ public:
   }
 
   void initQueries();
+  void updateLayers();
 
 private:
   void initMapLayerSettings();
-  void updateLayers();
 
   /* Implemented from LayerInterface: We  draw above all but below user tools */
   virtual QStringList renderPosition() const override

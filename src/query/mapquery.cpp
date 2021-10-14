@@ -737,24 +737,29 @@ const QList<map::MapAirport> *MapQuery::getAirportsByRect(const atools::geo::Rec
 
   const GeoDataLatLonBox latLonBox= GeoDataLatLonBox(rect.getNorth(),rect.getSouth(),rect.getEast(), rect.getWest());
 
-  qWarning() << Q_FUNC_INFO << latLonBox.south() << latLonBox.north()<< latLonBox.east()<< latLonBox.west();
   // Get flags for running separate queries for add-on and normal airports
   bool addon = types.testFlag(map::AIRPORT_ADDON);
   bool normal = types & (map::AIRPORT_HARD | map::AIRPORT_SOFT | map::AIRPORT_EMPTY);
 
-//  airportCache.updateCache(latLonBox, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
-//                           [ = ](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
-//  {
-//    return curLayer->hasSameQueryParametersAirport(newLayer) &&
-//    // Invalidate cache if settings differ
-//    airportCacheAddonFlag == addon && airportCacheNormalFlag == normal;
-//  });
-
   airportCacheAddonFlag = addon;
   airportCacheNormalFlag = normal;
 
+  switch(mapLayer->getDataSource())
+  {
+    case layer::ALL:
+      airportByRectQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
+      return fetchAirports(latLonBox, airportByRectQuery, lazy, false /* overview */, addon, normal, overflow);
 
-  return fetchAirports(latLonBox, airportByRectQuery, lazy, false /* overview */, addon, normal, overflow);
+    case layer::MEDIUM:
+      // Airports > 4000 ft
+      return fetchAirports(latLonBox, airportMediumByRectQuery, lazy, true /* overview */, addon, normal, overflow);
+
+    case layer::LARGE:
+      // Airports > 8000 ft
+      return fetchAirports(latLonBox, airportLargeByRectQuery, lazy, true /* overview */, addon, normal, overflow);
+
+  }
+  return nullptr;
 
 }
 

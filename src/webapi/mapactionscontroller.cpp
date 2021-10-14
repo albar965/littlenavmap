@@ -106,7 +106,23 @@ WebApiResponse MapActionsController::featuresAction(WebApiRequest request){
 
     bool overflow = false;
 
-    const QList<map::MapAirport> airports = *getMapQuery()->getAirportsByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,map::NONE,overflow);
+    // Init dummy image request
+    WebApiRequest *imageRequest = new WebApiRequest();
+    imageRequest->parameters = QMap<QByteArray,QByteArray>();
+    imageRequest->parameters.insert("leftlon",request.parameters.value("leftlon")),
+    imageRequest->parameters.insert("toplat",request.parameters.value("toplat")),
+    imageRequest->parameters.insert("rightlon",request.parameters.value("rightlon")),
+    imageRequest->parameters.insert("bottomlat",request.parameters.value("bottomlat")),
+    imageRequest->parameters.insert("width","300");
+    imageRequest->parameters.insert("height","300");
+    imageRequest->parameters.insert("format","jpg");
+    imageRequest->parameters.insert("quality","1");
+
+    // Perform dummy image request
+    imageAction(*imageRequest);
+
+    // Extract results created during dummy image request
+    const QList<map::MapAirport> airports = *mapPaintWidget->getMapQuery()->getAirportsByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,map::NONE,overflow);
 
     MapFeaturesData data = {
         airports
@@ -132,6 +148,8 @@ void MapActionsController::init()
 
   // Create a map widget clone with the desired resolution
   mapPaintWidget = new MapPaintWidget(parentWidget, false /* no real widget - hidden */);
+  // Ensure MapPaintLayer::mapLayer initialisation
+  mapPaintWidget->getMapPaintLayer()->updateLayers();
 
   // Activate painting
   mapPaintWidget->setActive();
