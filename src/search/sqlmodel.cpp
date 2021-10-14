@@ -56,15 +56,15 @@ void SqlModel::filterByBuilder()
   buildQuery();
 }
 
-void SqlModel::filterIncluding(QModelIndex index)
+void SqlModel::filterIncluding(QModelIndex index, bool builder)
 {
-  filterBy(index, false);
+  filterBy(index, false, builder);
   buildQuery();
 }
 
-void SqlModel::filterExcluding(QModelIndex index)
+void SqlModel::filterExcluding(QModelIndex index, bool builder)
 {
-  filterBy(index, true);
+  filterBy(index, true, builder);
   buildQuery();
 }
 
@@ -77,18 +77,18 @@ void SqlModel::filterByBoundingRect(const atools::geo::Rect& boundingRectangle)
 void SqlModel::filterByRecord(const atools::sql::SqlRecord& record)
 {
   for(int i = 0; i < record.count(); i++)
-    filterBy(false /* exclude */, record.fieldName(i), record.value(i));
+    filterBy(false /* exclude */, record.fieldName(i), record.value(i), false);
 }
 
 /* Filter by value at index (context menu in table view) */
-void SqlModel::filterBy(QModelIndex index, bool exclude)
+void SqlModel::filterBy(QModelIndex index, bool exclude, bool builder)
 {
   QString whereCol = getSqlRecord().fieldName(index.column());
-  filterBy(exclude, whereCol, QSqlQueryModel::data(index));
+  filterBy(exclude, whereCol, QSqlQueryModel::data(index), builder);
 }
 
 /* Simple include/exclude filter. Updates the attached search widgets */
-void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp)
+void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp, bool builder)
 {
   // If there is already a filter on the same column remove it
   if(whereConditionMap.contains(whereCol))
@@ -107,7 +107,7 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp)
 
   const Column *colDescr = columns->getColumn(whereCol);
 
-  if(queryBuilder.getColumns().contains(whereCol))
+  if(queryBuilder.getColumns().contains(whereCol) || builder)
   {
     // Field matches with one of the query builder columns
     QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(queryBuilder.getWidget());
@@ -149,7 +149,8 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp)
       checkBox->setCheckState(val ? Qt::Unchecked : Qt::Checked);
     }
   }
-  whereConditionMap.insert(whereCol, {whereOp, whereValueSql, whereValueDisp, colDescr});
+  if(!builder)
+    whereConditionMap.insert(whereCol, {whereOp, whereValueSql, whereValueDisp, colDescr});
 }
 
 /* Changes the whereConditionMap. Removes, replaces or adds where conditions based on input */
@@ -527,10 +528,6 @@ void SqlModel::updateTotalCount()
 QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<const Column *>& overridingColumns)
 {
   const static QRegularExpression REQUIRED_COL_MATCH(".*/\\*([A-Za-z0-9_]+)\\*/.*");
-
-  // Clear all conditions which were created by the builder
-  for(const QString& col : queryBuilder.getColumns())
-    whereConditionMap.remove(col);
 
   // Used to build SQL later - does not contain query builder columns and overrides are removed
   QHash<QString, WhereCondition> tempWhereConditionMap(whereConditionMap);

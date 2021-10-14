@@ -83,6 +83,10 @@ WebApiResponse MapActionsController::imageAction(WebApiRequest request){
         // Should never happen
         qWarning() << Q_FUNC_INFO << "invalid format";
 
+      // Add copyright/attributions to header
+      response.headers.insert("Image-Attributions", mapPaintWidget->getMapCopyright().toUtf8());
+
+      response.status = 200;
       response.body = bytes;
     }
     return response;
@@ -147,7 +151,7 @@ MapPixmap MapActionsController::getPixmap(int width, int height)
     qDebug() << Q_FUNC_INFO << width << "x" << height;
 
   return getPixmapPosDistance(width, height, atools::geo::EMPTY_POS,
-                              static_cast<float>(NavApp::getMapWidget()->distance()), QLatin1String(""));
+                              static_cast<float>(mapPaintWidget->distance()), QLatin1String(""));
 }
 
 MapPixmap MapActionsController::getPixmapObject(int width, int height, web::ObjectType type, const QString& ident,
@@ -189,8 +193,8 @@ MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atoo
     if(errorCase == QLatin1String(""))
     {
       // Use current map position
-      pos.setLonX(static_cast<float>(NavApp::getMapWidget()->centerLongitude()));
-      pos.setLatY(static_cast<float>(NavApp::getMapWidget()->centerLatitude()));
+      pos.setLonX(static_cast<float>(mapPaintWidget->centerLongitude()));
+      pos.setLatY(static_cast<float>(mapPaintWidget->centerLatitude()));
     }
     else
     {
@@ -204,7 +208,7 @@ MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atoo
   if(mapPaintWidget != nullptr)
   {
     // Copy all map settings
-    mapPaintWidget->copySettings(*NavApp::getMapWidget());
+    mapPaintWidget->copySettings(*NavApp::getMapWidgetGui());
 
     // Do not center world rectangle when resizing map widget
     mapPaintWidget->setKeepWorldRect(false);
@@ -273,7 +277,7 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
     if(mapPaintWidget != nullptr)
     {
       // Copy all map settings
-      mapPaintWidget->copySettings(*NavApp::getMapWidget());
+      mapPaintWidget->copySettings(*NavApp::getMapWidgetGui());
 
       // Do not center world rectangle when resizing
       mapPaintWidget->setKeepWorldRect(false);
@@ -282,7 +286,7 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
 
       // Disable dynamic/live features
       mapPaintWidget->setShowMapFeatures(map::AIRCRAFT_ALL,false);
-      mapPaintWidget->setShowMapFeatures(map::AIRCRAFT_TRACK,false);
+      mapPaintWidget->setShowMapFeaturesDisplay(map::AIRCRAFT_TRACK,false);
 
       // Disable copyright note
       mapPaintWidget->setPaintCopyright(false);

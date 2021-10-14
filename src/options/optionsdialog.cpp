@@ -163,6 +163,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   // ui->stackedWidgetOptions->removeWidget(ui->stackedWidgetOptionsCacheFiles);
   // ui->stackedWidgetOptions->removeWidget(ui->stackedWidgetOptionsScenery);
 
+  // Add option pages with text, icon and tooltip ========================================
   /* *INDENT-OFF* */
   QListWidget*list = ui->listWidgetOptionPages;
   list->addItem(pageListItem(list, tr("Startup and Updates"), tr("Select what should be reloaded on startup and change update settings."), ":/littlenavmap/resources/icons/littlenavmap.svg"));
@@ -233,20 +234,22 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Actual Altitude"), tr("Real aircraft altitude prefixed with \"ALT\" on the map"), optsac::ITEM_USER_AIRCRAFT_ALTITUDE, false);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Indicated Altitude"), tr("Indicated aircraft altitude prefixed with \"IND\" on the map"), optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE, true);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Track Line"), tr("Show the aircraft track as a black needle protruding from the aircraft nose."), optsac::ITEM_USER_AIRCRAFT_TRACK_LINE, true);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Coordinates"), tr("Show aircraft coordinates using the format selected on options page \"Units\"."), optsac::ITEM_USER_AIRCRAFT_COORDINATES, false);
 
   QTreeWidgetItem *aiAircraft = addTopItem(root, tr("AI, Multiplayer and Online Client Aircraft"), tr("Select text labels for the AI, multiplayer and online client aircraft."));
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Registration, Number or Callsign"), QString(), optsac::ITEM_AI_AIRCRAFT_REGISTRATION, true);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Type"), QString(), optsac::ITEM_AI_AIRCRAFT_TYPE, true);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Airline"), QString(), optsac::ITEM_AI_AIRCRAFT_AIRLINE, true);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Flight Number"), QString(), optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Flight Number"), QString(), optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER, false);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Transponder Code"), tr("Transponder code prefixed with \"XPDR\" on the map"), optsac::ITEM_AI_AIRCRAFT_TRANSPONDER_CODE);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Indicated Airspeed"), QString(), optsac::ITEM_AI_AIRCRAFT_IAS);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Indicated Airspeed"), QString(), optsac::ITEM_AI_AIRCRAFT_IAS, false);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Ground Speed"), QString(), optsac::ITEM_AI_AIRCRAFT_GS, true);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("True Airspeed"), QString(), optsac::ITEM_AI_AIRCRAFT_TAS);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("True Airspeed"), QString(), optsac::ITEM_AI_AIRCRAFT_TAS, false);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Climb- and Sinkrate"), QString(), optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Heading"), QString(), optsac::ITEM_AI_AIRCRAFT_HEADING);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Altitude"), QString(), optsac::ITEM_AI_AIRCRAFT_ALTITUDE, true);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Departure and Destination"), QString(), optsac::ITEM_AI_AIRCRAFT_DEP_DEST, true);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Coordinates"), tr("Show aircraft coordinates using the format selected on options page \"Units\"."), optsac::ITEM_AI_AIRCRAFT_COORDINATES, false);
 
   QTreeWidgetItem *compassRose = addTopItem(root, tr("Compass Rose"), tr("Select display options for the compass rose."));
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Direction Labels"), tr("Show N, S, E and W labels."), optsd::ROSE_DIR_LABLES, true);
@@ -420,11 +423,17 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsMapNavaidText,
      ui->checkBoxOptionsMapFlightplanText,
      ui->checkBoxOptionsMapFlightplanDimPassed,
-     ui->checkBoxOptionsSimDoNotFollowOnScroll,
      ui->checkBoxOptionsSimCenterLeg,
      ui->checkBoxOptionsSimCenterLegTable,
      ui->checkBoxOptionsSimClearSelection,
-     ui->spinBoxSimDoNotFollowOnScrollTime,
+
+     ui->checkBoxOptionsSimDoNotFollowScroll,
+     ui->spinBoxOptionsSimDoNotFollowScrollTime,
+     ui->checkBoxOptionsSimZoomOnLanding,
+     ui->doubleSpinBoxOptionsSimZoomOnLanding,
+     ui->checkBoxOptionsSimCenterLegTable,
+     ui->spinBoxOptionsSimCleanupTableTime,
+     ui->checkBoxOptionsSimClearSelection,
 
      ui->radioButtonOptionsOnlineNone,
      ui->radioButtonOptionsOnlineVatsim,
@@ -508,6 +517,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->lineEditOptionsWeatherXplaneWind, &QLineEdit::textEdited,
           this, &OptionsDialog::updateXplaneWindStatus);
 
+  connect(ui->pushButtonOptionsWeatherXplaneWindPathSelect, &QPushButton::clicked,
+          this, &OptionsDialog::weatherXplaneWindPathSelectClicked);
+
   // ===========================================================================
   // Weather test buttons
   connect(ui->pushButtonOptionsWeatherNoaaTest, &QPushButton::clicked,
@@ -516,11 +528,19 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
           this, &OptionsDialog::testWeatherVatsimUrlClicked);
   connect(ui->pushButtonOptionsWeatherIvaoTest, &QPushButton::clicked,
           this, &OptionsDialog::testWeatherIvaoUrlClicked);
-
   connect(ui->pushButtonOptionsWeatherNoaaWindTest, &QPushButton::clicked,
           this, &OptionsDialog::testWeatherNoaaWindUrlClicked);
-  connect(ui->pushButtonOptionsWeatherXplaneWindPathSelect, &QPushButton::clicked,
-          this, &OptionsDialog::weatherXplaneWindPathSelectClicked);
+
+  // ===========================================================================
+  // Weather reset buttons
+  connect(ui->pushButtonOptionsWeatherNoaaReset, &QPushButton::clicked,
+          this, &OptionsDialog::resetWeatherNoaaUrlClicked);
+  connect(ui->pushButtonOptionsWeatherVatsimReset, &QPushButton::clicked,
+          this, &OptionsDialog::resetWeatherVatsimUrlClicked);
+  connect(ui->pushButtonOptionsWeatherIvaoReset, &QPushButton::clicked,
+          this, &OptionsDialog::resetWeatherIvaoUrlClicked);
+  connect(ui->pushButtonOptionsWeatherNoaaWindReset, &QPushButton::clicked,
+          this, &OptionsDialog::resetWeatherNoaaWindUrlClicked);
 
   // ===========================================================================
   // Map
@@ -603,10 +623,14 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->checkBoxOptionsMapEmptyAirports, &QCheckBox::toggled,
           this, &OptionsDialog::mapEmptyAirportsClicked);
 
-  connect(ui->checkBoxOptionsSimDoNotFollowOnScroll, &QCheckBox::toggled, this,
-          &OptionsDialog::simNoFollowAircraftOnScrollClicked);
+  connect(ui->checkBoxOptionsSimDoNotFollowScroll, &QCheckBox::toggled, this,
+          &OptionsDialog::updateWhileFlyingWidgets);
+  connect(ui->checkBoxOptionsSimZoomOnLanding, &QCheckBox::toggled, this,
+          &OptionsDialog::updateWhileFlyingWidgets);
   connect(ui->checkBoxOptionsSimCenterLegTable, &QCheckBox::toggled, this,
-          &OptionsDialog::simNoFollowAircraftOnScrollClicked);
+          &OptionsDialog::updateWhileFlyingWidgets);
+  connect(ui->checkBoxOptionsSimClearSelection, &QCheckBox::toggled, this,
+          &OptionsDialog::updateWhileFlyingWidgets);
 
   // Online tab =======================================================================
   connect(ui->radioButtonOptionsOnlineNone, &QRadioButton::clicked,
@@ -875,7 +899,8 @@ void OptionsDialog::updateWidgetUnits()
       ui->spinBoxDisplayOnlineFir,
       ui->spinBoxDisplayOnlineObserver,
       ui->spinBoxDisplayOnlineGround,
-      ui->spinBoxDisplayOnlineTower
+      ui->spinBoxDisplayOnlineTower,
+      ui->doubleSpinBoxOptionsSimZoomOnLanding
     });
   }
   else
@@ -963,7 +988,7 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
 
 void OptionsDialog::updateWidgetStates()
 {
-  simNoFollowAircraftOnScrollClicked(false);
+  updateWhileFlyingWidgets(false);
   updateButtonColors();
   updateGuiFontLabel();
   updateMapFontLabel();
@@ -1099,7 +1124,7 @@ void OptionsDialog::restoreState()
   updateWidgetUnits();
   simUpdatesConstantClicked(false);
   mapEmptyAirportsClicked(false);
-  simNoFollowAircraftOnScrollClicked(false);
+  updateWhileFlyingWidgets(false);
   updateButtonColors();
   updateGuiFontLabel();
   updateMapFontLabel();
@@ -1120,7 +1145,7 @@ void OptionsDialog::restoreState()
 void OptionsDialog::updateTooltipOption()
 {
   if(OptionData::instance().getFlags2().testFlag(opts2::DISABLE_TOOLTIPS))
-    NavApp::setTooltipsDisabled({NavApp::getMapWidget()});
+    NavApp::setTooltipsDisabled({NavApp::getMapWidgetGui()});
   else
     NavApp::setTooltipsEnabled();
 }
@@ -1243,10 +1268,7 @@ template<typename TYPE>
 void OptionsDialog::displayOptDataToWidget(const TYPE& type, const QHash<TYPE, QTreeWidgetItem *>& index) const
 {
   for(const TYPE& dispOpt : index.keys())
-  {
-    index.value(dispOpt)->setCheckState(
-      0, type & dispOpt ? Qt::Checked : Qt::Unchecked);
-  }
+    index.value(dispOpt)->setCheckState(0, type & dispOpt ? Qt::Checked : Qt::Unchecked);
 }
 
 QTreeWidgetItem *OptionsDialog::addTopItem(QTreeWidgetItem *root, const QString& text, const QString& tooltip)
@@ -1402,6 +1424,26 @@ void OptionsDialog::testWeatherNoaaWindUrlClicked()
     atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join("\n")));
 }
 
+void OptionsDialog::resetWeatherNoaaUrlClicked()
+{
+  ui->lineEditOptionsWeatherNoaaStationsUrl->setText(OptionData::WEATHER_NOAA_DEFAULT_URL);
+}
+
+void OptionsDialog::resetWeatherVatsimUrlClicked()
+{
+  ui->lineEditOptionsWeatherVatsimUrl->setText(OptionData::WEATHER_VATSIM_DEFAULT_URL);
+}
+
+void OptionsDialog::resetWeatherIvaoUrlClicked()
+{
+  ui->lineEditOptionsWeatherIvaoUrl->setText(OptionData::WEATHER_IVAO_DEFAULT_URL);
+}
+
+void OptionsDialog::resetWeatherNoaaWindUrlClicked()
+{
+  ui->lineEditOptionsWeatherNoaaWindUrl->setText(OptionData::WEATHER_NOAA_WIND_BASE_DEFAULT_URL);
+}
+
 /* Show directory dialog to add exclude path */
 void OptionsDialog::addDatabaseExcludeDirClicked()
 {
@@ -1500,13 +1542,12 @@ void OptionsDialog::mapEmptyAirportsClicked(bool state)
   ui->checkBoxOptionsMapEmptyAirports3D->setEnabled(ui->checkBoxOptionsMapEmptyAirports->isChecked());
 }
 
-void OptionsDialog::simNoFollowAircraftOnScrollClicked(bool state)
+void OptionsDialog::updateWhileFlyingWidgets(bool)
 {
-  Q_UNUSED(state)
-  ui->spinBoxSimDoNotFollowOnScrollTime->setEnabled(
-    ui->checkBoxOptionsSimDoNotFollowOnScroll->isChecked() || ui->checkBoxOptionsSimCenterLegTable->isChecked());
-  ui->labelSimDoNotFollowOnScroll->setEnabled(
-    ui->checkBoxOptionsSimDoNotFollowOnScroll->isChecked() || ui->checkBoxOptionsSimCenterLegTable->isChecked());
+  ui->spinBoxOptionsSimDoNotFollowScrollTime->setEnabled(ui->checkBoxOptionsSimDoNotFollowScroll->isChecked());
+  ui->doubleSpinBoxOptionsSimZoomOnLanding->setEnabled(ui->checkBoxOptionsSimZoomOnLanding->isChecked());
+  ui->spinBoxOptionsSimCleanupTableTime->setEnabled(ui->checkBoxOptionsSimCenterLegTable->isChecked() ||
+                                                    ui->checkBoxOptionsSimClearSelection->isChecked());
 }
 
 /* Copy widget states to OptionData object */
@@ -1599,10 +1640,11 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxOptionsMapAiAircraftText, opts2::MAP_AI_TEXT_BACKGROUND);
 
   toFlags2(ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
-  toFlags2(ui->checkBoxOptionsSimDoNotFollowOnScroll, opts2::ROUTE_NO_FOLLOW_ON_MOVE);
+  toFlags2(ui->checkBoxOptionsSimDoNotFollowScroll, opts2::ROUTE_NO_FOLLOW_ON_MOVE);
   toFlags2(ui->checkBoxOptionsSimCenterLeg, opts2::ROUTE_AUTOZOOM);
   toFlags2(ui->checkBoxOptionsSimCenterLegTable, opts2::ROUTE_CENTER_ACTIVE_LEG);
   toFlags2(ui->checkBoxOptionsSimClearSelection, opts2::ROUTE_CLEAR_SELECTION);
+  toFlags2(ui->checkBoxOptionsSimZoomOnLanding, opts2::ROUTE_ZOOM_LANDING);
 
   toFlags2(ui->checkBoxDisplayOnlineNameLookup, opts2::ONLINE_AIRSPACE_BY_NAME);
   toFlags2(ui->checkBoxDisplayOnlineFileLookup, opts2::ONLINE_AIRSPACE_BY_FILE);
@@ -1663,7 +1705,10 @@ void OptionsDialog::widgetsToOptionData()
   else if(ui->radioButtonOptionsMapNavTouchscreen->isChecked())
     data.mapNavigation = opts::MAP_NAV_TOUCHSCREEN;
 
-  data.simNoFollowAircraftOnScroll = ui->spinBoxSimDoNotFollowOnScrollTime->value();
+  data.simNoFollowOnScrollTime = ui->spinBoxOptionsSimDoNotFollowScrollTime->value();
+  data.simZoomOnLandingDist = static_cast<float>(ui->doubleSpinBoxOptionsSimZoomOnLanding->value());
+  data.simCleanupTableTime = ui->spinBoxOptionsSimCleanupTableTime->value();
+
   data.simUpdateBox = ui->spinBoxOptionsSimUpdateBox->value();
   data.aircraftTrackMaxPoints = ui->spinBoxSimMaxTrackPoints->value();
 
@@ -1855,7 +1900,8 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags2(data, ui->checkBoxOptionsMapAiAircraftText, opts2::MAP_AI_TEXT_BACKGROUND);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanText, opts2::MAP_ROUTE_TEXT_BACKGROUND);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
-  fromFlags2(data, ui->checkBoxOptionsSimDoNotFollowOnScroll, opts2::ROUTE_NO_FOLLOW_ON_MOVE);
+  fromFlags2(data, ui->checkBoxOptionsSimDoNotFollowScroll, opts2::ROUTE_NO_FOLLOW_ON_MOVE);
+  fromFlags2(data, ui->checkBoxOptionsSimZoomOnLanding, opts2::ROUTE_ZOOM_LANDING);
   fromFlags2(data, ui->checkBoxOptionsSimCenterLeg, opts2::ROUTE_AUTOZOOM);
   fromFlags2(data, ui->checkBoxOptionsSimCenterLegTable, opts2::ROUTE_CENTER_ACTIVE_LEG);
   fromFlags2(data, ui->checkBoxOptionsSimClearSelection, opts2::ROUTE_CLEAR_SELECTION);
@@ -1926,7 +1972,10 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
       break;
   }
 
-  ui->spinBoxSimDoNotFollowOnScrollTime->setValue(data.simNoFollowAircraftOnScroll);
+  ui->spinBoxOptionsSimDoNotFollowScrollTime->setValue(data.simNoFollowOnScrollTime);
+  ui->doubleSpinBoxOptionsSimZoomOnLanding->setValue(data.simZoomOnLandingDist);
+  ui->spinBoxOptionsSimCleanupTableTime->setValue(data.simCleanupTableTime);
+
   ui->spinBoxOptionsSimUpdateBox->setValue(data.simUpdateBox);
   ui->spinBoxSimMaxTrackPoints->setValue(data.aircraftTrackMaxPoints);
 
@@ -2358,7 +2407,7 @@ void OptionsDialog::clearMemCachedClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
-  NavApp::getMapWidget()->clearVolatileTileCache();
+  NavApp::getMapWidgetGui()->clearVolatileTileCache();
   NavApp::setStatusMessage(tr("Memory cache cleared."));
 }
 
@@ -2377,7 +2426,7 @@ void OptionsDialog::clearDiskCachedClicked()
   if(result == QMessageBox::Yes)
   {
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-    NavApp::getMapWidget()->model()->clearPersistentTileCache();
+    NavApp::getMapWidgetGui()->model()->clearPersistentTileCache();
     NavApp::setStatusMessage(tr("Disk cache cleared."));
     QGuiApplication::restoreOverrideCursor();
   }

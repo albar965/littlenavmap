@@ -168,11 +168,11 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("airport_id").hidden()).
   append(Column("distance", tr("Distance\n%dist%")).distanceCol()).
   append(Column("heading", tr("Heading\n°T")).distanceCol()).
-  append(Column("ident", tr("Ident")).defaultSort()).
-  append(Column("icao", tr("ICAO"))).
-  append(Column("faa", tr("FAA"))).
-  append(Column("iata", tr("IATA"))).
-  append(Column("local", tr("Local\nCode"))).
+  append(Column("ident", tr("Ident")).defaultSort().filterByBuilder()).
+  append(Column("icao", tr("ICAO")).filterByBuilder()).
+  append(Column("faa", tr("FAA")).filterByBuilder()).
+  append(Column("iata", tr("IATA")).filterByBuilder()).
+  append(Column("local", tr("Local\nCode")).filterByBuilder()).
 
   append(Column("name", ui->lineEditAirportNameSearch, tr("Name")).filter()).
 

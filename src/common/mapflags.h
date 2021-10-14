@@ -52,7 +52,9 @@ Q_DECL_CONSTEXPR static float MIN_WIND_BARB_ALTITUDE = 4000.f;
 /* Maximum number of objects to query and show on map */
 Q_DECL_CONSTEXPR static int MAX_MAP_OBJECTS = 8000;
 
-/* Type covering all objects that are passed around in the program. Also use to determine what should be drawn. */
+/* Type covering all objects that are passed around in the program.
+ * Partially used to determine what should be drawn.
+ * These types are used in map::MapBase::objType */
 enum MapType
 {
   NONE = 0,
@@ -69,18 +71,18 @@ enum MapType
   AIRWAY = 1 << 10,
   AIRWAYV = 1 << 11,
   AIRWAYJ = 1 << 12,
-  GLS = 1 << 13, /* GLS approaches or GBAS paths - only display flag TODO MOVE OUT */
+  // 1 << 13,
   AIRCRAFT = 1 << 14, /* Simulator user aircraft */
   AIRCRAFT_AI = 1 << 15, /* AI or multiplayer simulator aircraft */
   AIRCRAFT_AI_SHIP = 1 << 16, /* AI or multiplayer simulator ship */
-  AIRCRAFT_TRACK = 1 << 17, /* Simulator aircraft track TODO MOVE OUT */
+  // 1 << 17
   USERPOINTROUTE = 1 << 18, /* Flight plan user waypoint */
   PARKING = 1 << 19,
   RUNWAYEND = 1 << 20,
   INVALID = 1 << 21, /* Flight plan waypoint not found in database */
   MISSED_APPROACH = 1 << 22, /* Only procedure type that can be hidden */
-  PROCEDURE = 1 << 23, /* General procedure leg TODO MOVE OUT */
-  AIRSPACE = 1 << 24, /* General airspace boundary, online or offline TODO MOVE OUT */
+  PROCEDURE = 1 << 23, /* General procedure leg */
+  AIRSPACE = 1 << 24, /* General airspace boundary, online or offline */
   HELIPAD = 1 << 25, /* Helipads on airports */
   HOLDING = 1 << 26, /* Enroute holds and user holds. User holds are enabled by MapMarkType below */
   USERPOINT = 1 << 27, /* A user defined waypoint - not used to define if should be drawn or not */
@@ -112,7 +114,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapTypes);
 
 QDebug operator<<(QDebug out, const map::MapTypes& type);
 
-/* Type that is used only for flags to determine what should be drawn. Not used in other contexts. */
+/* Type that is used only for flags to determine what should be drawn.
+ * Rarely used in other contexts. */
 enum MapObjectDisplayType
 {
   DISPLAY_TYPE_NONE = 0,
@@ -131,6 +134,9 @@ enum MapObjectDisplayType
 
   FLIGHTPLAN = 1 << 9, /* Flight plan */
   FLIGHTPLAN_TOC_TOD = 1 << 10, /* Top of climb and top of descent */
+
+  GLS = 1 << 13, /* GLS approaches or GBAS paths - only display flag. Object is stored with type ILS. */
+  AIRCRAFT_TRACK = 1 << 17, /* Simulator aircraft track. Not an object type. */
 
   LOGBOOK_ALL = LOGBOOK_DIRECT | LOGBOOK_ROUTE | LOGBOOK_TRACK
 };

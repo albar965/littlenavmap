@@ -67,7 +67,7 @@ WebController::WebController(QWidget *parent) :
   mapController = new WebMapController(parentWidget, verbose);
   apiController = new WebApiController(parentWidget, verbose);
 
-  htmlInfoBuilder = new HtmlInfoBuilder(parent, true /*info*/, true /*print*/);
+  htmlInfoBuilder = new HtmlInfoBuilder(parent, mapController->getMapPaintWidget(), true /*info*/, true /*print*/);
   updateSettings();
 }
 

@@ -58,7 +58,9 @@ public:
   Unit(const Unit& other) = delete;
   Unit& operator=(const Unit& other) = delete;
 
-  /* Reverse functions. Convert local unit to known unit */
+  /* Reverse functions. Convert local unit to known unit
+   * Example: Unit::rev(OptionData::instance().getSimZoomOnLandingDistance(), Unit::distMeterF);
+   * Converts the getSimZoomOnLandingDistance in user selected units to meter */
   static inline float rev(float value, std::function<float(float value)> func)
   {
     return value / func(1.f);

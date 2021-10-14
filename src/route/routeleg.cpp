@@ -50,7 +50,7 @@ const static QString EMPTY_STRING;
 const static atools::fs::pln::FlightplanEntry EMPTY_FLIGHTPLAN_ENTRY;
 
 // Appended to X-Plane free parking names - obsolete
-const static QLatin1Literal PARKING_NO_NUMBER(" NULL");
+const static QLatin1String PARKING_NO_NUMBER(" NULL");
 
 /* Maximum distance for parking spot to saved coordinate */
 const float MAX_PARKING_DIST_METER = 50.f;
@@ -129,9 +129,9 @@ void RouteLeg::createFromProcedureLegs(int entryIndex, const proc::MapProcedureL
 void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, const Pos& last, float maxDistance)
 {
   map::MapResult mapobjectResult;
-  NavApp::getMapQuery()->getMapObjectByIdent(mapobjectResult, map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT,
-                                             flightplanEntry->getIdent(), flightplanEntry->getRegion(),
-                                             QString(), last, maxDistance);
+  NavApp::getMapQueryGui()->getMapObjectByIdent(mapobjectResult, map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT,
+                                                flightplanEntry->getIdent(), flightplanEntry->getRegion(),
+                                                QString(), last, maxDistance);
 
   if(mapobjectResult.hasVor())
   {
@@ -155,8 +155,8 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
   index = entryIndex;
 
   atools::fs::pln::FlightplanEntry *flightplanEntry = &(*flightplan)[index];
-  MapQuery *mapQuery = NavApp::getMapQuery();
-  AirwayTrackQuery *airwayQuery = NavApp::getAirwayTrackQuery();
+  MapQuery *mapQuery = NavApp::getMapQueryGui();
+  AirwayTrackQuery *airwayQuery = NavApp::getAirwayTrackQueryGui();
   AirportQuery *airportQuery = NavApp::getAirportQuerySim();
 
   QString region = flightplanEntry->getRegion();
@@ -535,6 +535,42 @@ QString RouteLeg::getMapObjectTypeName() const
     return tr("User");
   else
     return EMPTY_STRING;
+}
+
+QString RouteLeg::getMapObjectTypeNameShort() const
+{
+  if(type == map::INVALID)
+    return tr("Invalid");
+  else if(waypoint.isValid())
+    return tr("Waypoint");
+  else if(vor.isValid())
+    return map::vorType(vor);
+  else if(ndb.isValid())
+    return tr("NDB");
+  else if(airport.isValid())
+    return tr("Airport");
+  else if(ils.isValid())
+    return tr("ILS");
+  else if(runwayEnd.isValid())
+    return tr("Runway");
+  else if(type == map::USERPOINTROUTE)
+    return tr("Userpoint");
+  else
+    return EMPTY_STRING;
+}
+
+QString RouteLeg::getDisplayText(int elideName) const
+{
+  if(getMapObjectType() == map::AIRPORT)
+    return tr("%1 (%2)").arg(atools::elideTextShort(getName(), elideName)).arg(getIdent());
+  else
+  {
+    QStringList texts;
+    texts << getMapObjectTypeNameShort() << atools::elideTextShort(getName(), elideName)
+          << (getIdent().isEmpty() ? QString() : tr("(%1)").arg(getIdent()));
+    texts.removeAll(QString());
+    return texts.join(tr(" "));
+  }
 }
 
 float RouteLeg::getCourseToMag() const

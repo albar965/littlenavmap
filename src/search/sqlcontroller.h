@@ -64,10 +64,10 @@ public:
   void filterByBuilder();
 
   /* Filter by text at the given index */
-  void filterIncluding(const QModelIndex& index);
+  void filterIncluding(const QModelIndex& index, bool builder);
 
   /* Filter excluding by text at the given index */
-  void filterExcluding(const QModelIndex& index);
+  void filterExcluding(const QModelIndex& index, bool builder);
 
   /* Set a filter by text from a line edit */
   void filterByLineEdit(const Column *col, const QString& text);

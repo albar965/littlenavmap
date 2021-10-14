@@ -94,8 +94,6 @@
     <addaction name="menuRecentKml"/>
     <addaction name="actionClearKml"/>
     <addaction name="separator"/>
-    <addaction name="actionWorkOffline"/>
-    <addaction name="separator"/>
     <addaction name="actionSaveMapAsImage"/>
     <addaction name="actionSaveMapAsImageAviTab"/>
     <addaction name="actionMapCopyClipboard"/>
@@ -226,6 +224,7 @@
      <string>&amp;Map</string>
     </property>
     <addaction name="actionMapShowHome"/>
+    <addaction name="actionMapAircraftCenterNow"/>
     <addaction name="actionMapShowMark"/>
     <addaction name="actionRouteCenter"/>
     <addaction name="separator"/>
@@ -4463,6 +4462,16 @@ Matches any visited airport.</string>
           </layout>
          </item>
          <item>
+          <widget class="QTextBrowser" name="textBrowserViewRoute">
+           <property name="placeholderText">
+            <string>No flight plan.</string>
+           </property>
+           <property name="openLinks">
+            <bool>false</bool>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QTableView" name="tableViewRoute">
            <property name="font">
             <font>
@@ -5706,7 +5715,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>0</y>
+              <y>8</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -7947,7 +7956,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Center flight plan on map</string>
    </property>
    <property name="shortcut">
-    <string>Alt+Shift+F</string>
+    <string>Ctrl+PgDown</string>
    </property>
   </action>
   <action name="actionMapShowVictorAirways">
@@ -8016,7 +8025,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Ctrl+Alt+F</string>
    </property>
   </action>
-  <action name="actionRouteAirportStart">
+  <action name="actionMapRouteAirportStart">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</iconset>
@@ -8031,7 +8040,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Set this as departure for the flight plan</string>
    </property>
   </action>
-  <action name="actionRouteAirportDest">
+  <action name="actionMapRouteAirportDest">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</iconset>
@@ -8319,13 +8328,13 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</iconset>
    </property>
    <property name="text">
-    <string>Center &amp;Aircraft</string>
+    <string>Keep &amp;User Aircraft centered</string>
    </property>
    <property name="toolTip">
-    <string>Center simulator aircraft on map</string>
+    <string>Keep the user aircraft centered on the map</string>
    </property>
    <property name="statusTip">
-    <string>Center simulator aircraft on map</string>
+    <string>Keep the user aircraft centered on the map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+A</string>
@@ -8492,20 +8501,6 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Remove all Google Earth KML files from the map</string>
    </property>
   </action>
-  <action name="actionWorkOffline">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Work Offline</string>
-   </property>
-   <property name="toolTip">
-    <string>Work offline and stop loading of map data</string>
-   </property>
-   <property name="statusTip">
-    <string>Work offline and stop loading of map data</string>
-   </property>
-  </action>
   <action name="actionRouteTableCopy">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -8530,7 +8525,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/showonmap.svg</normaloff>:/littlenavmap/resources/icons/showonmap.svg</iconset>
    </property>
    <property name="text">
-    <string>Show on &amp;Map</string>
+    <string>Show %1 on &amp;Map</string>
    </property>
    <property name="toolTip">
     <string>Show the airport or navaid on the map</string>
@@ -8548,7 +8543,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/globals.svg</normaloff>:/littlenavmap/resources/icons/globals.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Information</string>
+    <string>Show &amp;Information for %1</string>
    </property>
    <property name="toolTip">
     <string>Show information about the airport or navaid</string>
@@ -8566,7 +8561,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/globals.svg</normaloff>:/littlenavmap/resources/icons/globals.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Information</string>
+    <string>Show &amp;Information for %1</string>
    </property>
    <property name="toolTip">
     <string>Show information about the selected entry</string>
@@ -8584,7 +8579,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/showonmap.svg</normaloff>:/littlenavmap/resources/icons/showonmap.svg</iconset>
    </property>
    <property name="text">
-    <string>Show on &amp;Map</string>
+    <string>Show %1 on &amp;Map</string>
    </property>
    <property name="toolTip">
     <string>Show the selected entry on the map</string>
@@ -9120,7 +9115,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
    </property>
    <property name="text">
-    <string>Show %1&amp;Procedures</string>
+    <string>Show &amp;Procedures for %1</string>
    </property>
    <property name="toolTip">
     <string>Show procedures for this airport</string>
@@ -9138,7 +9133,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
    </property>
    <property name="text">
-    <string>Show %1&amp;Procedures</string>
+    <string>Show &amp;Procedures for %1</string>
    </property>
    <property name="toolTip">
     <string>Show procedures for this airport</string>
@@ -9156,7 +9151,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/approachcustom.svg</normaloff>:/littlenavmap/resources/icons/approachcustom.svg</iconset>
    </property>
    <property name="text">
-    <string>Create approach</string>
+    <string>Add custom approach for %1</string>
    </property>
    <property name="toolTip">
     <string>Add a custom approach to the flight plan</string>
@@ -9213,7 +9208,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/routeactiveleg.svg</normaloff>:/littlenavmap/resources/icons/routeactiveleg.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Activate Flight Plan Leg</string>
+    <string>&amp;Activate Flight Plan Leg to %1</string>
    </property>
    <property name="toolTip">
     <string>Activate Flight Plan Leg</string>
@@ -10060,7 +10055,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/trafficpattern.svg</normaloff>:/littlenavmap/resources/icons/trafficpattern.svg</iconset>
    </property>
    <property name="text">
-    <string>Add Airport &amp;Traffic Pattern at %1 ...</string>
+    <string>Add &amp;Traffic Pattern at %1 ...</string>
    </property>
    <property name="toolTip">
     <string>Show Airport traffic pattern for a runway at this airport</string>
@@ -10786,7 +10781,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Do not download or read wind files</string>
    </property>
   </action>
-  <action name="actionRouteAirportAlternate">
+  <action name="actionMapRouteAirportAlternate">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</iconset>
@@ -11119,7 +11114,7 @@ Disabled if a navdatabase does not allow it.</string>
   <action name="actionMapHold">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/hold.svg</normaloff>:/littlenavmap/resources/icons/hold.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/enroutehold.svg</normaloff>:/littlenavmap/resources/icons/enroutehold.svg</iconset>
    </property>
    <property name="text">
     <string>Add &amp;Holding at %1 ...</string>
@@ -11437,13 +11432,13 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Ctrl+Alt+Shift+M</string>
    </property>
   </action>
-  <action name="actionSearchShowInformationAirport">
+  <action name="actionSearchLogShowInformationAirport">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/globals.svg</normaloff>:/littlenavmap/resources/icons/globals.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Information for Airport</string>
+    <string>Show &amp;Information for %1</string>
    </property>
    <property name="toolTip">
     <string>Show information about the airport</string>
@@ -11452,13 +11447,13 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Show information about the airport</string>
    </property>
   </action>
-  <action name="actionSearchShowOnMapAirport">
+  <action name="actionSearchLogShowOnMapAirport">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/showonmap.svg</normaloff>:/littlenavmap/resources/icons/showonmap.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Airport on &amp;Map</string>
+    <string>Show %1 on &amp;Map</string>
    </property>
    <property name="toolTip">
     <string>Show the airport on the map</string>
@@ -11971,7 +11966,7 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/hold.svg</normaloff>:/littlenavmap/resources/icons/hold.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/enroutehold.svg</normaloff>:/littlenavmap/resources/icons/enroutehold.svg</iconset>
    </property>
    <property name="text">
     <string>Show &amp;Holdings</string>
@@ -11981,6 +11976,126 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="statusTip">
     <string>Show holdings on map</string>
+   </property>
+  </action>
+  <action name="actionSearchRouteAirportStart">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Set %1 as &amp;Departure</string>
+   </property>
+   <property name="toolTip">
+    <string>Set this as departure for the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Set this as departure for the flight plan</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+D</string>
+   </property>
+  </action>
+  <action name="actionSearchRouteAirportDest">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Set %1 as &amp;Destination</string>
+   </property>
+   <property name="toolTip">
+    <string>Set this as destination for the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Set this as destination for the flight plan</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+N</string>
+   </property>
+  </action>
+  <action name="actionSearchRouteAirportAlternate">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add %1 as Alternate</string>
+   </property>
+   <property name="toolTip">
+    <string>Add this airport as alternate destination for the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Add this airport as alternate destination for the flight plan</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+A</string>
+   </property>
+  </action>
+  <action name="actionSearchLogRouteAirportStart">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Set %1 as &amp;Departure</string>
+   </property>
+   <property name="toolTip">
+    <string>Set this as departure for the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Set this as departure for the flight plan</string>
+   </property>
+  </action>
+  <action name="actionSearchLogRouteAirportDest">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Set %1 as &amp;Destination</string>
+   </property>
+   <property name="toolTip">
+    <string>Set this as destination for the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Set this as destination for the flight plan</string>
+   </property>
+  </action>
+  <action name="actionSearchLogRouteAirportAlternate">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add %1 as Alternate</string>
+   </property>
+   <property name="toolTip">
+    <string>Add this airport as alternate destination for the flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Add this airport as alternate destination for the flight plan</string>
+   </property>
+  </action>
+  <action name="actionMapAircraftCenterNow">
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/aircraft.svg</normaloff>:/littlenavmap/resources/icons/aircraft.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Goto &amp;User Aircraft</string>
+   </property>
+   <property name="toolTip">
+    <string>Keep the user aircraft centered on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Keep the user aircraft centered on the map</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+PgUp</string>
    </property>
   </action>
  </widget>
@@ -12168,8 +12283,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
-  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

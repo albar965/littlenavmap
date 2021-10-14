@@ -1922,8 +1922,8 @@ void Route::getAirportProcedureFlags(const map::MapAirport& airport, int index, 
 
   if(airport.isValid())
   {
-    hasDeparture = NavApp::getMapQuery()->hasDepartureProcedures(airport);
-    hasAnyArrival = NavApp::getMapQuery()->hasArrivalProcedures(airport);
+    hasDeparture = NavApp::getMapQueryGui()->hasDepartureProcedures(airport);
+    hasAnyArrival = NavApp::getMapQueryGui()->hasArrivalProcedures(airport);
 
     if(index == -1)
     {
@@ -2088,7 +2088,7 @@ void Route::validateAirways()
     QString airway = arrivalLeg.getAirwayName();
     if(airway.isEmpty())
       airway = flightplan.getProperties().value(atools::fs::pln::PROCAIRWAY);
-    if(NavApp::getAirwayTrackQuery()->hasAirwayForNameAndWaypoint(airway, routeLeg.getIdent(), arrivalLeg.getIdent()))
+    if(NavApp::getAirwayTrackQueryGui()->hasAirwayForNameAndWaypoint(airway, routeLeg.getIdent(), arrivalLeg.getIdent()))
     {
       // Airway is valid - set into procedure leg and property
       atools::fs::pln::FlightplanEntry *entry = arrivalLeg.getFlightplanEntry();
@@ -2125,7 +2125,7 @@ void Route::validateAirways()
     const RouteLeg& departureLeg = value(startIndexAfterProcedure - 1);
     const RouteLeg& routeLeg = value(startIndexAfterProcedure);
 
-    if(!NavApp::getAirwayTrackQuery()->hasAirwayForNameAndWaypoint(routeLeg.getAirwayName(), departureLeg.getIdent(),
+    if(!NavApp::getAirwayTrackQueryGui()->hasAirwayForNameAndWaypoint(routeLeg.getAirwayName(), departureLeg.getIdent(),
                                                                    routeLeg.getIdent()))
       // Airway not valid for changed waypoints - erase
       flightplan.getEntries()[startIndexAfterProcedure].setAirway(QString());
@@ -2604,7 +2604,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     // Assign airport idents to waypoints where available - for MSFS =======================================
     if(msfs)
     {
-      MapQuery *mapQuery = NavApp::getMapQuery();
+      MapQuery *mapQuery = NavApp::getMapQueryGui();
       bool found = false;
       for(FlightplanEntry& entry : entries)
       {
@@ -2798,7 +2798,7 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
       }
 
       QList<map::MapAirway> airways;
-      NavApp::getAirwayTrackQuery()->getAirwaysByNameAndWaypoint(airways, routeLeg.getAirwayName(), prevLeg.getIdent(),
+      NavApp::getAirwayTrackQueryGui()->getAirwaysByNameAndWaypoint(airways, routeLeg.getAirwayName(), prevLeg.getIdent(),
                                                                  routeLeg.getIdent());
       map::MapAirway airway = airways.value(0);
       routeLeg.setAirway(airway);
@@ -2921,7 +2921,7 @@ void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::Map
   {
     // Runway name given ========================
     QList<map::MapRunwayEnd> runwayEnds;
-    NavApp::getMapQuery()->getRunwayEndByNameFuzzy(runwayEnds, approachLegs.runwayEnd.name,
+    NavApp::getMapQueryGui()->getRunwayEndByNameFuzzy(runwayEnds, approachLegs.runwayEnd.name,
                                                    getDestinationAirportLeg().getAirport(),
                                                    false /* nav data */);
 
@@ -2934,14 +2934,14 @@ void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::Map
       // Have runway for approach ============================================
       // Get one or more ILS from flight plan leg as is
       QHash<int, map::MapIls> ilsMap =
-        maptools::toHash(NavApp::getMapQuery()->getIlsByAirportAndRunway(destIdent, approachLegs.runwayEnd.name));
+        maptools::toHash(NavApp::getMapQueryGui()->getIlsByAirportAndRunway(destIdent, approachLegs.runwayEnd.name));
 
       if(ilsMap.isEmpty())
       {
         // ILS does not even match runway - try fuzzy to consider renamed runways
         QStringList variants = atools::fs::util::runwayNameVariants(approachLegs.runwayEnd.name);
         for(const QString& runwayVariant : variants)
-          maptools::insert(ilsMap, NavApp::getMapQuery()->getIlsByAirportAndRunway(destIdent, runwayVariant));
+          maptools::insert(ilsMap, NavApp::getMapQueryGui()->getIlsByAirportAndRunway(destIdent, runwayVariant));
       }
 
       // Look for recommended fix reference in approach legs independent of approach type
@@ -3024,7 +3024,7 @@ void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::Map
       if(!leg.isMissed() && !leg.recFixIdent.isEmpty() && leg.recFixType != "N" && leg.recFixType != "TW" &&
          leg.recFixType != "TN" && leg.recFixType != "W")
         // Get ILS referenced in the recommended fix
-        ilsVector = NavApp::getMapQuery()->getIlsByAirportAndIdent(destIdent, leg.recFixIdent);
+        ilsVector = NavApp::getMapQueryGui()->getIlsByAirportAndIdent(destIdent, leg.recFixIdent);
 
       if(!ilsVector.isEmpty())
         break;

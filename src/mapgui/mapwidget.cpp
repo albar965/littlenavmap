@@ -108,9 +108,6 @@ const float MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM = 50.f;
 /* Default zoom distance if start position was not set (usually first start after installation */
 const double DEFAULT_MAP_DISTANCE_KM = 7000.;
 
-/* Forced zoom distance after touchdown. Applied once. */
-const double DEFAULT_MAP_DISTANCE_TOUCHDOWN_KM = 0.2;
-
 /* If width and height of a bounding rect are smaller than this use show point */
 const float POS_IS_POINT_EPSILON = 0.0001f;
 
@@ -2420,10 +2417,11 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
         // Zoom close after touchdown ===================================================================
         // Only if user is not mousing around on the map
-        if(touchdownDetectedZoom)
+        if(touchdownDetectedZoom && OptionData::instance().getFlags2().testFlag(opts2::ROUTE_ZOOM_LANDING))
         {
-          qDebug() << Q_FUNC_INFO << "Touchdown detected - zooming close";
-          setDistanceToMap(DEFAULT_MAP_DISTANCE_TOUCHDOWN_KM);
+          double distKm = Unit::rev(OptionData::instance().getSimZoomOnLandingDistance(), Unit::distMeterF) / 1000.;
+          qDebug() << Q_FUNC_INFO << "Touchdown detected - zooming close" << distKm << "km";
+          setDistanceToMap(distKm);
           touchdownDetectedZoom = false;
         }
       } // if(mouseState == mw::NONE && viewContext() == Marble::Still && !jumpBack->isActive())
@@ -3030,7 +3028,7 @@ void MapWidget::updateMapObjectsShown()
   setShowMapFeaturesDisplay(map::COMPASS_ROSE, ui->actionMapShowCompassRose->isChecked());
   setShowMapFeaturesDisplay(map::COMPASS_ROSE_ATTACH, ui->actionMapShowCompassRoseAttach->isChecked());
   setShowMapFeatures(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
-  setShowMapFeatures(map::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
+  setShowMapFeaturesDisplay(map::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
   setShowMapFeatures(map::AIRCRAFT_AI, ui->actionMapShowAircraftAi->isChecked());
   setShowMapFeatures(map::AIRCRAFT_AI_SHIP, ui->actionMapShowAircraftAiBoat->isChecked());
 
@@ -3083,7 +3081,7 @@ void MapWidget::updateMapObjectsShown()
   setShowMapFeatures(map::ILS, ui->actionMapShowIls->isChecked());
   setShowMapFeatures(map::MARKER, ui->actionMapShowIls->isChecked());
 
-  setShowMapFeatures(map::GLS, ui->actionMapShowGls->isChecked());
+  setShowMapFeaturesDisplay(map::GLS, ui->actionMapShowGls->isChecked());
 
   mapVisible->updateVisibleObjectsStatusBar();
 
@@ -3354,31 +3352,6 @@ void MapWidget::addRangeRing(const atools::geo::Pos& pos)
   update();
   mainWindow->updateMarkActionStates();
   mainWindow->setStatusMessage(tr("Added range rings for position."));
-}
-
-void MapWidget::workOffline(bool offline)
-{
-  qDebug() << "Work offline" << offline;
-  model()->setWorkOffline(offline);
-
-  if(NavApp::isMainWindowVisible() && offline)
-  {
-    // User changed option manually after startup - this is not triggerd by restore state
-    atools::gui::Dialog(this).showWarnMsgBox(lnm::ACTIONS_OFFLINE_WARNING,
-                                             tr("<p><b>Note that online map themes like the OpenStreetMap "
-                                                  "cannot be used in offline mode.</b><br/><br/>"
-                                                  "You might see fuzzy or blocky maps.</p>"
-                                                  "<p>Use an offline map theme or disable <code>Work Offline<code/>.</p>"),
-                                             tr("Do not &show this dialog again."));
-  }
-
-  mainWindow->renderStatusUpdateLabel(Marble::RenderStatus::Complete, true /* forceUpdate */);
-
-  if(!offline)
-  {
-    reloadMap();
-    update();
-  }
 }
 
 void MapWidget::zoomInOut(bool directionIn, bool smooth)

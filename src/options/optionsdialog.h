@@ -125,7 +125,7 @@ private:
   void removeDatabaseExcludePathClicked();
   void addDatabaseAddOnExcludePathClicked();
   void removeDatabaseAddOnExcludePathClicked();
-  void simNoFollowAircraftOnScrollClicked(bool state);
+  void updateWhileFlyingWidgets(bool);
 
   void showDiskCacheClicked();
   void updateDatabaseButtonState();
@@ -134,6 +134,12 @@ private:
   void testWeatherVatsimUrlClicked();
   void testWeatherIvaoUrlClicked();
   void testWeatherNoaaWindUrlClicked();
+
+  void resetWeatherNoaaUrlClicked();
+  void resetWeatherVatsimUrlClicked();
+  void resetWeatherIvaoUrlClicked();
+  void resetWeatherNoaaWindUrlClicked();
+
   void updateWidgetUnits();
   void simUpdatesConstantClicked(bool state);
   void flightplanColorClicked();

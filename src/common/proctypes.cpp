@@ -21,10 +21,13 @@
 #include "geo/calculations.h"
 #include "common/unit.h"
 #include "options/optiondata.h"
+#include "route/route.h"
+#include "query/mapquery.h"
 
 #include <QDataStream>
 #include <QHash>
 #include <QObject>
+#include <navapp.h>
 
 namespace proc  {
 
@@ -1065,6 +1068,111 @@ bool procedureLegFrom(ProcedureLegType type)
       // START_OF_PROCEDURE,
       // VECTORS
     });
+}
+
+QString  procedureTextSuffixDeparture(const Route& route, const map::MapAirport& airport, bool& disable)
+{
+  bool departure = false, destination = false, alternate = false;
+  proc::procedureFlags(route, &airport, &departure, &destination, &alternate);
+
+  QString text;
+  if(airport.isValid())
+  {
+    if(departure)
+      text = QObject::tr(" (is departure)");
+    else if(destination)
+      text = QObject::tr(" (is destination)");
+    else if(alternate)
+      text = QObject::tr(" (is alternate)");
+
+    disable = false;
+  }
+  else
+    disable = true;
+  return text;
+}
+
+QString  procedureTextSuffixDestination(const Route& route, const map::MapAirport& airport, bool& disable)
+{
+  bool departure = false, destination = false, alternate = false;
+  proc::procedureFlags(route, &airport, &departure, &destination, &alternate);
+
+  QString text;
+  if(airport.isValid())
+  {
+    if(destination)
+      text = QObject::tr(" (is destination)");
+    else if(departure)
+      text = QObject::tr(" (is departure)");
+    else if(alternate)
+      text = QObject::tr(" (is alternate)");
+    disable = false;
+  }
+  else
+    disable = true;
+  return text;
+}
+
+QString  procedureTextSuffixAlternate(const Route& route, const map::MapAirport& airport, bool& disable)
+{
+  bool departure = false, destination = false, alternate = false;
+  proc::procedureFlags(route, &airport, &departure, &destination, &alternate);
+
+  QString text;
+  if(airport.isValid())
+  {
+    if(destination)
+    {
+      disable = true;
+      text = QObject::tr(" (is destination)");
+    }
+    else if(departure)
+      text = QObject::tr(" (is departure)");
+    else if(alternate)
+    {
+      disable = true;
+      text = QObject::tr(" (is alternate)");
+    }
+  }
+  else
+    disable = true;
+  return text;
+}
+
+void procedureFlags(const Route& route, const map::MapBase *base, bool *departure, bool *destination, bool *alternate,
+                    bool *roundtrip, bool *arrivalProc, bool *departureProc)
+{
+  if(departure != nullptr)
+    *departure = false;
+  if(destination != nullptr)
+    *destination = false;
+  if(alternate != nullptr)
+    *alternate = false;
+  if(roundtrip != nullptr)
+    *roundtrip = false;
+  if(arrivalProc != nullptr)
+    *arrivalProc = false;
+  if(departureProc != nullptr)
+    *departureProc = false;
+
+  if(base != nullptr && base->getType() == map::AIRPORT)
+  {
+    const map::MapAirport *airport = base->asPtr<map::MapAirport>();
+
+    if(departure != nullptr)
+      *departure = route.isAirportDeparture(airport->ident);
+    if(destination != nullptr)
+      *destination = route.isAirportDestination(airport->ident);
+    if(alternate != nullptr)
+      *alternate = route.isAirportAlternate(airport->ident) || route.isAirportDestination(airport->ident);
+    if(roundtrip != nullptr)
+      *roundtrip = route.isAirportRoundTrip(airport->ident);
+
+    if(arrivalProc != nullptr)
+      *arrivalProc = NavApp::getMapQueryGui()->hasArrivalProcedures(*airport);
+    if(departureProc != nullptr)
+      *departureProc = NavApp::getMapQueryGui()->hasDepartureProcedures(*airport);
+  }
 }
 
 } // namespace types

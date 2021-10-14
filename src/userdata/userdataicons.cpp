@@ -25,7 +25,7 @@
 #include <QPixmap>
 #include <QIcon>
 
-const static QLatin1Literal DEFAULT_TYPE("Unknown");
+const static QLatin1String DEFAULT_TYPE("Unknown");
 
 static QHash<QString, QString> typeToTranslatedMap;
 static QHash<QString, QString> translationToTypeMap;
@@ -34,62 +34,62 @@ void UserdataIcons::initTranslateableTexts()
 {
   typeToTranslatedMap = QHash<QString, QString>(
   {
-    {QLatin1Literal("Airport"), tr("Airport", "UserpointType")},
-    {QLatin1Literal("Airstrip"), tr("Airstrip", "UserpointType")},
-    {QLatin1Literal("Bookmark"), tr("Bookmark", "UserpointType")},
-    {QLatin1Literal("Cabin"), tr("Cabin", "UserpointType")},
-    {QLatin1Literal("Closed"), tr("Closed", "UserpointType")},
-    {QLatin1Literal("Error"), tr("Error", "UserpointType")},
-    {QLatin1Literal("Flag"), tr("Flag", "UserpointType")},
-    {QLatin1Literal("Helipad"), tr("Helipad", "UserpointType")},
-    {QLatin1Literal("Location"), tr("Location", "UserpointType")},
-    {QLatin1Literal("Logbook"), tr("Logbook", "UserpointType")},
-    {QLatin1Literal("Marker"), tr("Marker", "UserpointType")},
-    {QLatin1Literal("Mountain"), tr("Mountain", "UserpointType")},
-    {QLatin1Literal("Obstacle"), tr("Obstacle", "UserpointType")},
-    {QLatin1Literal("Pin"), tr("Pin", "UserpointType")},
-    {QLatin1Literal("POI"), tr("POI", "UserpointType")},
-    {QLatin1Literal("Seaport"), tr("Seaport", "UserpointType")},
-    {QLatin1Literal("Unknown"), tr("Unknown", "UserpointType")},
-    {QLatin1Literal("VRP"), tr("VRP", "UserpointType")},
-    {QLatin1Literal("Waypoint"), tr("Waypoint", "UserpointType")},
-    {QLatin1Literal("VOR"), tr("VOR", "UserpointType")},
-    {QLatin1Literal("VORDME"), tr("VORDME", "UserpointType")},
-    {QLatin1Literal("DME"), tr("DME", "UserpointType")},
-    {QLatin1Literal("VORTAC"), tr("VORTAC", "UserpointType")},
-    {QLatin1Literal("TACAN"), tr("TACAN", "UserpointType")},
-    {QLatin1Literal("NDB"), tr("NDB", "UserpointType")},
-    {QLatin1Literal("Lighthouse"), tr("Lighthouse", "UserpointType")}
+    {QLatin1String("Airport"), tr("Airport", "UserpointType")},
+    {QLatin1String("Airstrip"), tr("Airstrip", "UserpointType")},
+    {QLatin1String("Bookmark"), tr("Bookmark", "UserpointType")},
+    {QLatin1String("Cabin"), tr("Cabin", "UserpointType")},
+    {QLatin1String("Closed"), tr("Closed", "UserpointType")},
+    {QLatin1String("Error"), tr("Error", "UserpointType")},
+    {QLatin1String("Flag"), tr("Flag", "UserpointType")},
+    {QLatin1String("Helipad"), tr("Helipad", "UserpointType")},
+    {QLatin1String("Location"), tr("Location", "UserpointType")},
+    {QLatin1String("Logbook"), tr("Logbook", "UserpointType")},
+    {QLatin1String("Marker"), tr("Marker", "UserpointType")},
+    {QLatin1String("Mountain"), tr("Mountain", "UserpointType")},
+    {QLatin1String("Obstacle"), tr("Obstacle", "UserpointType")},
+    {QLatin1String("Pin"), tr("Pin", "UserpointType")},
+    {QLatin1String("POI"), tr("POI", "UserpointType")},
+    {QLatin1String("Seaport"), tr("Seaport", "UserpointType")},
+    {QLatin1String("Unknown"), tr("Unknown", "UserpointType")},
+    {QLatin1String("VRP"), tr("VRP", "UserpointType")},
+    {QLatin1String("Waypoint"), tr("Waypoint", "UserpointType")},
+    {QLatin1String("VOR"), tr("VOR", "UserpointType")},
+    {QLatin1String("VORDME"), tr("VORDME", "UserpointType")},
+    {QLatin1String("DME"), tr("DME", "UserpointType")},
+    {QLatin1String("VORTAC"), tr("VORTAC", "UserpointType")},
+    {QLatin1String("TACAN"), tr("TACAN", "UserpointType")},
+    {QLatin1String("NDB"), tr("NDB", "UserpointType")},
+    {QLatin1String("Lighthouse"), tr("Lighthouse", "UserpointType")}
   });
 
   translationToTypeMap = QHash<QString, QString>(
   {
-    {tr("Airport", "UserpointType"), QLatin1Literal("Airport")},
-    {tr("Airstrip", "UserpointType"), QLatin1Literal("Airstrip")},
-    {tr("Bookmark", "UserpointType"), QLatin1Literal("Bookmark")},
-    {tr("Cabin", "UserpointType"), QLatin1Literal("Cabin")},
-    {tr("Closed", "UserpointType"), QLatin1Literal("Closed")},
-    {tr("Error", "UserpointType"), QLatin1Literal("Error")},
-    {tr("Flag", "UserpointType"), QLatin1Literal("Flag")},
-    {tr("Helipad", "UserpointType"), QLatin1Literal("Helipad")},
-    {tr("Location", "UserpointType"), QLatin1Literal("Location")},
-    {tr("Logbook", "UserpointType"), QLatin1Literal("Logbook")},
-    {tr("Marker", "UserpointType"), QLatin1Literal("Marker")},
-    {tr("Mountain", "UserpointType"), QLatin1Literal("Mountain")},
-    {tr("Obstacle", "UserpointType"), QLatin1Literal("Obstacle")},
-    {tr("Pin", "UserpointType"), QLatin1Literal("Pin")},
-    {tr("POI", "UserpointType"), QLatin1Literal("POI")},
-    {tr("Seaport", "UserpointType"), QLatin1Literal("Seaport")},
-    {tr("Unknown", "UserpointType"), QLatin1Literal("Unknown")},
-    {tr("VRP", "UserpointType"), QLatin1Literal("VRP")},
-    {tr("Waypoint", "UserpointType"), QLatin1Literal("Waypoint")},
-    {tr("VOR", "UserpointType"), QLatin1Literal("VOR")},
-    {tr("VORDME", "UserpointType"), QLatin1Literal("VORDME")},
-    {tr("DME", "UserpointType"), QLatin1Literal("DME")},
-    {tr("VORTAC", "UserpointType"), QLatin1Literal("VORTAC")},
-    {tr("TACAN", "UserpointType"), QLatin1Literal("TACAN")},
-    {tr("NDB", "UserpointType"), QLatin1Literal("NDB")},
-    {tr("Lighthouse", "UserpointType"), QLatin1Literal("Lighthouse")}
+    {tr("Airport", "UserpointType"), QLatin1String("Airport")},
+    {tr("Airstrip", "UserpointType"), QLatin1String("Airstrip")},
+    {tr("Bookmark", "UserpointType"), QLatin1String("Bookmark")},
+    {tr("Cabin", "UserpointType"), QLatin1String("Cabin")},
+    {tr("Closed", "UserpointType"), QLatin1String("Closed")},
+    {tr("Error", "UserpointType"), QLatin1String("Error")},
+    {tr("Flag", "UserpointType"), QLatin1String("Flag")},
+    {tr("Helipad", "UserpointType"), QLatin1String("Helipad")},
+    {tr("Location", "UserpointType"), QLatin1String("Location")},
+    {tr("Logbook", "UserpointType"), QLatin1String("Logbook")},
+    {tr("Marker", "UserpointType"), QLatin1String("Marker")},
+    {tr("Mountain", "UserpointType"), QLatin1String("Mountain")},
+    {tr("Obstacle", "UserpointType"), QLatin1String("Obstacle")},
+    {tr("Pin", "UserpointType"), QLatin1String("Pin")},
+    {tr("POI", "UserpointType"), QLatin1String("POI")},
+    {tr("Seaport", "UserpointType"), QLatin1String("Seaport")},
+    {tr("Unknown", "UserpointType"), QLatin1String("Unknown")},
+    {tr("VRP", "UserpointType"), QLatin1String("VRP")},
+    {tr("Waypoint", "UserpointType"), QLatin1String("Waypoint")},
+    {tr("VOR", "UserpointType"), QLatin1String("VOR")},
+    {tr("VORDME", "UserpointType"), QLatin1String("VORDME")},
+    {tr("DME", "UserpointType"), QLatin1String("DME")},
+    {tr("VORTAC", "UserpointType"), QLatin1String("VORTAC")},
+    {tr("TACAN", "UserpointType"), QLatin1String("TACAN")},
+    {tr("NDB", "UserpointType"), QLatin1String("NDB")},
+    {tr("Lighthouse", "UserpointType"), QLatin1String("Lighthouse")}
   });
 }
 

@@ -52,11 +52,13 @@ NavApp* AbstractLnmActionsController::getNavApp(){
 }
 
 MapQuery* AbstractLnmActionsController::getMapQuery(){
-    return getNavApp()->getMapQuery();
+  // TODO you have to get the map query from the MapPaintWidget instance used for the web UI
+    return getNavApp()->getMapQueryGui();
 }
 
 WaypointTrackQuery* AbstractLnmActionsController::getWaypointTrackQuery(){
-    return getNavApp()->getWaypointTrackQuery();
+  // TODO you have to get the map query from the MapPaintWidget instance used for the web UI
+    return getNavApp()->getWaypointTrackQueryGui();
 }
 
 InfoQuery* AbstractLnmActionsController::getInfoQuery(){
@@ -64,6 +66,7 @@ InfoQuery* AbstractLnmActionsController::getInfoQuery(){
 }
 
 AirportQuery* AbstractLnmActionsController::getAirportQuery(AbstractLnmActionsController::AirportQueryType type){
+  // Airport query and caches are independent of the MapPaintWidget instance
     switch (type) {
     case NAV:
         return getNavApp()->getAirportQueryNav();

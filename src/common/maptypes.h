@@ -282,7 +282,7 @@ struct MapBase
   template<typename TYPE>
   TYPE asObj() const
   {
-    return asObj<TYPE>(objType);
+    return asObj<TYPE>(TYPE().objType);
   }
 
   bool operator==(const map::MapBase& other) const
@@ -1271,19 +1271,19 @@ map::MapAirwayTrackType  airwayTrackTypeFromString(const QString& typeStr);
 map::MapAirwayRouteType  airwayRouteTypeFromString(const QString& typeStr);
 QString comTypeName(const QString& type);
 
-QString airportText(const map::MapAirport& airport, int elideName = 1000);
-QString airportTextShort(const map::MapAirport& airport, int elideName = 1000);
+QString airportText(const map::MapAirport& airport, int elideName = 100);
+QString airportTextShort(const map::MapAirport& airport, int elideName = 100);
 QString vorFullShortText(const map::MapVor& vor);
-QString vorText(const map::MapVor& vor);
+QString vorText(const map::MapVor& vor, int elideName = 100);
 QString vorTextShort(const MapVor& vor);
 QString vorType(const map::MapVor& vor);
 QString vorType(bool dmeOnly, bool hasDme, bool tacan, bool vortac);
 QString ndbFullShortText(const map::MapNdb& ndb);
-QString ndbText(const map::MapNdb& ndb);
+QString ndbText(const map::MapNdb& ndb, int elideName = 100);
 QString ndbTextShort(const MapNdb& ndb);
 QString waypointText(const map::MapWaypoint& waypoint);
 QString userpointRouteText(const map::MapUserpointRoute& userpoint);
-QString userpointText(const MapUserpoint& userpoint);
+QString userpointText(const MapUserpoint& userpoint, int elideName = 100);
 QString logEntryText(const MapLogbookEntry& logEntry);
 QString airwayText(const map::MapAirway& airway);
 

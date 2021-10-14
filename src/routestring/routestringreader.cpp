@@ -80,14 +80,14 @@ struct RouteStringReader::ParseEntry
 RouteStringReader::RouteStringReader(FlightplanEntryBuilder *flightplanEntryBuilder)
   : entryBuilder(flightplanEntryBuilder)
 {
-  mapQuery = NavApp::getMapQuery();
+  mapQuery = NavApp::getMapQueryGui();
   airportQuerySim = NavApp::getAirportQuerySim();
   procQuery = NavApp::getProcedureQuery();
 
   // Create a copy of the delegate which uses the same AirwayQuery objects
   // This allows to disable track reading in the copy (setUseTracks())
-  airwayQuery = new AirwayTrackQuery(*NavApp::getAirwayTrackQuery());
-  waypointQuery = new WaypointTrackQuery(*NavApp::getWaypointTrackQuery());
+  airwayQuery = new AirwayTrackQuery(*NavApp::getAirwayTrackQueryGui());
+  waypointQuery = new WaypointTrackQuery(*NavApp::getWaypointTrackQueryGui());
 }
 
 RouteStringReader::~RouteStringReader()

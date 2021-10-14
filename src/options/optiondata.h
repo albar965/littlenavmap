@@ -338,6 +338,9 @@ enum Flag2
 
   /* checkBoxOptionsMapAirportAddon */
   MAP_AIRPORT_HIGHLIGHT_ADDON = 1 << 28,
+
+  /* checkBoxOptionsSimZoomOnLanding */
+  ROUTE_ZOOM_LANDING = 1 << 29,
 };
 
 Q_DECLARE_FLAGS(Flags2, Flag2);
@@ -422,6 +425,7 @@ enum DisplayOptionUserAircraft
   ITEM_USER_AIRCRAFT_TRACK_LINE = 1 << 18,
   ITEM_USER_AIRCRAFT_WIND_POINTER = 1 << 19,
   ITEM_USER_AIRCRAFT_TAS = 1 << 20,
+  ITEM_USER_AIRCRAFT_COORDINATES = 1 << 21
 };
 
 Q_DECLARE_FLAGS(DisplayOptionsUserAircraft, DisplayOptionUserAircraft);
@@ -441,7 +445,8 @@ enum DisplayOptionAiAircraft
   ITEM_AI_AIRCRAFT_CLIMB_SINK = 1 << 28,
   ITEM_AI_AIRCRAFT_HEADING = 1 << 29,
   ITEM_AI_AIRCRAFT_ALTITUDE = 1 << 30,
-  ITEM_AI_AIRCRAFT_TAS = 1 << 31
+  ITEM_AI_AIRCRAFT_TAS = 1 << 31,
+  ITEM_AI_AIRCRAFT_COORDINATES = 1 << 1
 };
 
 Q_DECLARE_FLAGS(DisplayOptionsAiAircraft, DisplayOptionAiAircraft);
@@ -973,9 +978,20 @@ public:
     return aircraftTrackMaxPoints;
   }
 
-  int getSimNoFollowAircraftOnScrollSeconds() const
+  int getSimNoFollowAircraftScrollSeconds() const
   {
-    return simNoFollowAircraftOnScroll;
+    return simNoFollowOnScrollTime;
+  }
+
+  /* In local user units (NM, mi, KM) */
+  float getSimZoomOnLandingDistance() const
+  {
+    return simZoomOnLandingDist;
+  }
+
+  int getSimCleanupTableTime() const
+  {
+    return simCleanupTableTime;
   }
 
   opts::OnlineNetwork getOnlineNetwork() const
@@ -1187,10 +1203,22 @@ private:
   QVector<float> mapRangeRings = MAP_RANGERINGS_DEFAULT;
 
   QString weatherActiveSkyPath, // ui->lineEditOptionsWeatherAsnPath
-          weatherXplanePath, // lineEditOptionsWeatherXplanePath
-          weatherNoaaUrl = "https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT",
-          weatherVatsimUrl = "https://metar.vatsim.net/metar.php?id=ALL",
-          weatherIvaoUrl = "http://wx.ivao.aero/metar.php";
+          weatherXplanePath; // lineEditOptionsWeatherXplanePath
+
+  /* Default weather URLs used in reset */
+  const static QString WEATHER_NOAA_DEFAULT_URL;
+  const static QString WEATHER_VATSIM_DEFAULT_URL;
+  const static QString WEATHER_IVAO_DEFAULT_URL;
+  const static QString WEATHER_NOAA_WIND_BASE_DEFAULT_URL;
+
+  /* Current weather URLs */
+  QString weatherNoaaUrl = WEATHER_NOAA_DEFAULT_URL,
+          weatherVatsimUrl = WEATHER_VATSIM_DEFAULT_URL,
+          weatherIvaoUrl = WEATHER_IVAO_DEFAULT_URL,
+          weatherNoaaWindBaseUrl = WEATHER_NOAA_WIND_BASE_DEFAULT_URL;
+
+  /* X-Plane GRIB file or NOAA GRIB base URL */
+  QString weatherXplaneWind;
 
   QString cacheOfflineElevationPath, cacheUserAirspacePath, cacheUserAirspaceExtensions = "*.txt";
 
@@ -1343,7 +1371,13 @@ private:
   int aircraftTrackMaxPoints = 20000;
 
   // spinBoxSimDoNotFollowOnScrollTime
-  int simNoFollowAircraftOnScroll = 10;
+  int simNoFollowOnScrollTime = 10;
+
+  // doubleSpinBoxOptionsSimZoomOnLanding,
+  float simZoomOnLandingDist = 0.2f;
+
+  // spinBoxOptionsSimCleanupTableTime,
+  int simCleanupTableTime = 10;
 
   // spinBoxOptionsDisplayTextSizeRangeDistance
   int displayTextSizeRangeDistance = 100;
@@ -1452,9 +1486,6 @@ private:
   int webPort = 8965;
   /* true for HTTPS / SSL */
   bool webEncrypted = false;
-
-  /* X-Plane GRIB file or NOAA GRIB base URL */
-  QString weatherXplaneWind, weatherNoaaWindBaseUrl = "https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl";
 
   QString guiFont, mapFont;
 };

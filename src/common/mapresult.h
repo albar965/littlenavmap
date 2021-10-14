@@ -136,6 +136,11 @@ struct MapResult
     return !userpoints.isEmpty();
   }
 
+  bool hasLogEntries() const
+  {
+    return !logbookEntries.isEmpty();
+  }
+
   bool hasHoldings() const
   {
     return !holdings.isEmpty();
@@ -179,6 +184,8 @@ struct MapResult
   QList<MapAirspace> getSimNavUserAirspaces() const;
 
   QList<MapAirspace> getOnlineAirspaces() const;
+
+  QString objectText(MapTypes navType, int elideName = 1000) const;
 
 private:
   template<typename T>

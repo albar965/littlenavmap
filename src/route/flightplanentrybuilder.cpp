@@ -28,7 +28,6 @@ using atools::fs::pln::FlightplanEntry;
 
 FlightplanEntryBuilder::FlightplanEntryBuilder()
 {
-  mapQuery = NavApp::getMapQuery();
 }
 
 /* Copy airport attributes to flight plan entry */
@@ -44,7 +43,8 @@ void FlightplanEntryBuilder::buildFlightplanEntry(int id, const atools::geo::Pos
                                                   bool resolveWaypoints)
 {
   map::MapResult result;
-  mapQuery->getMapObjectById(result, type, map::AIRSPACE_SRC_NONE, id, false /* airport from nav database */);
+  NavApp::getMapQueryGui()->getMapObjectById(result, type, map::AIRSPACE_SRC_NONE, id,
+                                          false /* airport from nav database */);
   buildFlightplanEntry(userPos, result, entry, resolveWaypoints, map::NONE);
 }
 
@@ -117,7 +117,7 @@ void FlightplanEntryBuilder::entryFromAirport(const map::MapAirport& airport, Fl
 
 bool FlightplanEntryBuilder::vorForWaypoint(const map::MapWaypoint& waypoint, map::MapVor& vor) const
 {
-  mapQuery->getVorForWaypoint(vor, waypoint.id);
+  NavApp::getMapQueryGui()->getVorForWaypoint(vor, waypoint.id);
 
   // Check for invalid references that are caused by the navdata update or disabled navaids at the north pole
   return !vor.ident.isEmpty() && vor.isValid() && !vor.position.isPole() &&
@@ -126,7 +126,7 @@ bool FlightplanEntryBuilder::vorForWaypoint(const map::MapWaypoint& waypoint, ma
 
 bool FlightplanEntryBuilder::ndbForWaypoint(const map::MapWaypoint& waypoint, map::MapNdb& ndb) const
 {
-  mapQuery->getNdbForWaypoint(ndb, waypoint.id);
+  NavApp::getMapQueryGui()->getNdbForWaypoint(ndb, waypoint.id);
 
   // Check for invalid references that are caused by the navdata update or disabled navaids at the north pole
   return !ndb.ident.isEmpty() && ndb.isValid() && !ndb.position.isPole() &&
@@ -155,7 +155,7 @@ void FlightplanEntryBuilder::entryFromWaypoint(const map::MapWaypoint& waypoint,
     // Convert waypoint to underlying NDB for airway routes
 
     // Workaround for source data error - wrongly assigned VOR waypoints that are assigned to NDBs
-    mapQuery->getVorNearest(vor, waypoint.position);
+    NavApp::getMapQueryGui()->getVorNearest(vor, waypoint.position);
     if(!vor.dmeOnly && !vor.ident.isEmpty() && vor.isValid() && !vor.position.isPole() &&
        vor.position.almostEqual(waypoint.position, atools::geo::Pos::POS_EPSILON_10M))
     {

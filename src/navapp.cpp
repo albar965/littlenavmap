@@ -61,7 +61,6 @@
 
 AirportQuery *NavApp::airportQuerySim = nullptr;
 AirportQuery *NavApp::airportQueryNav = nullptr;
-MapQuery *NavApp::mapQuery = nullptr;
 InfoQuery *NavApp::infoQuery = nullptr;
 ProcedureQuery *NavApp::procedureQuery = nullptr;
 
@@ -149,15 +148,10 @@ void NavApp::init(MainWindow *mainWindowParam)
   userdataController->clearTemporary();
 
   onlinedataController = new OnlinedataController(databaseManager->getOnlinedataManager(), mainWindow);
-  onlinedataController->initQueries();
 
   trackController = new TrackController(databaseManager->getTrackManager(), mainWindow);
 
   aircraftPerfController = new AircraftPerfController(mainWindow);
-
-  mapQuery = new MapQuery(databaseManager->getDatabaseSim(), databaseManager->getDatabaseNav(),
-                          databaseManager->getDatabaseUser());
-  mapQuery->initQueries();
 
   airspaceController = new AirspaceController(mainWindow,
                                               databaseManager->getDatabaseSimAirspace(),
@@ -166,18 +160,14 @@ void NavApp::init(MainWindow *mainWindowParam)
                                               databaseManager->getDatabaseOnline());
 
   airportQuerySim = new AirportQuery(databaseManager->getDatabaseSim(), false /* nav */);
-  airportQuerySim->initQueries();
 
   airportQueryNav = new AirportQuery(databaseManager->getDatabaseNav(), true /* nav */);
-  airportQueryNav->initQueries();
 
   infoQuery = new InfoQuery(databaseManager->getDatabaseSim(),
                             databaseManager->getDatabaseNav(),
                             databaseManager->getDatabaseTrack());
-  infoQuery->initQueries();
 
   procedureQuery = new ProcedureQuery(databaseManager->getDatabaseNav());
-  procedureQuery->initQueries();
 
   connectClient = new ConnectClient(mainWindow);
 
@@ -188,8 +178,19 @@ void NavApp::init(MainWindow *mainWindowParam)
   webController = new WebController(mainWindow);
 }
 
+void NavApp::initQueries()
+{
+  qDebug() << Q_FUNC_INFO;
+  onlinedataController->initQueries();
+  airportQuerySim->initQueries();
+  airportQueryNav->initQueries();
+  infoQuery->initQueries();
+  procedureQuery->initQueries();
+}
+
 void NavApp::initElevationProvider()
 {
+  qDebug() << Q_FUNC_INFO;
   elevationProvider = new ElevationProvider(mainWindow, mainWindow->getElevationModel());
 }
 
@@ -252,10 +253,6 @@ void NavApp::deInit()
   qDebug() << Q_FUNC_INFO << "delete airportQueryNav";
   delete airportQueryNav;
   airportQueryNav = nullptr;
-
-  qDebug() << Q_FUNC_INFO << "delete mapQuery";
-  delete mapQuery;
-  mapQuery = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete infoQuery";
   delete infoQuery;
@@ -349,7 +346,6 @@ void NavApp::preDatabaseLoad()
 
   loadingDatabase = true;
   infoQuery->deInitQueries();
-  mapQuery->deInitQueries();
   airportQuerySim->deInitQueries();
   airportQueryNav->deInitQueries();
   procedureQuery->deInitQueries();
@@ -376,7 +372,6 @@ void NavApp::postDatabaseLoad()
 
   airportQuerySim->initQueries();
   airportQueryNav->initQueries();
-  mapQuery->initQueries();
   infoQuery->initQueries();
   procedureQuery->initQueries();
   moraReader->postDatabaseLoad();
@@ -441,6 +436,21 @@ bool NavApp::isUserAircraftValid()
   return mainWindow->getMapWidget()->getUserAircraft().isFullyValid();
 }
 
+bool NavApp::isMoraAvailable()
+{
+  return moraReader->isDataAvailable();
+}
+
+bool NavApp::isHoldingsAvailable()
+{
+  return getMapQueryGui()->hasHoldings();
+}
+
+bool NavApp::isGlsAvailable()
+{
+  return getMapQueryGui()->hasGls();
+}
+
 float NavApp::getTakeoffFlownDistanceNm()
 {
   return mainWindow->getMapWidget()->getTakeoffFlownDistanceNm();
@@ -490,19 +500,19 @@ AirportQuery *NavApp::getAirportQueryNav()
   return airportQueryNav;
 }
 
-MapQuery *NavApp::getMapQuery()
+MapQuery *NavApp::getMapQueryGui()
 {
-  return mapQuery;
+  return getMapPaintWidgetGui()->getMapQuery();
 }
 
-AirwayTrackQuery *NavApp::getAirwayTrackQuery()
+AirwayTrackQuery *NavApp::getAirwayTrackQueryGui()
 {
-  return trackController->getAirwayTrackQuery();
+  return getMapPaintWidgetGui()->getAirwayTrackQuery();
 }
 
-WaypointTrackQuery *NavApp::getWaypointTrackQuery()
+WaypointTrackQuery *NavApp::getWaypointTrackQueryGui()
 {
-  return trackController->getWaypointTrackQuery();
+  return getMapPaintWidgetGui()->getWaypointTrackQuery();
 }
 
 atools::geo::Pos NavApp::getAirportPos(const QString& ident)
@@ -902,12 +912,12 @@ bool NavApp::isMenuToolTipsVisible()
   return getMainUi()->menuFile->toolTipsVisible();
 }
 
-MapWidget *NavApp::getMapWidget()
+MapWidget *NavApp::getMapWidgetGui()
 {
   return mainWindow->getMapWidget();
 }
 
-MapPaintWidget *NavApp::getMapPaintWidget()
+MapPaintWidget *NavApp::getMapPaintWidgetGui()
 {
   return mainWindow->getMapWidget();
 }
@@ -1009,17 +1019,17 @@ const atools::fs::db::DatabaseMeta *NavApp::getDatabaseMetaNav()
 
 const AircraftTrack& NavApp::getAircraftTrack()
 {
-  return getMapWidget()->getAircraftTrack();
+  return getMapWidgetGui()->getAircraftTrack();
 }
 
 const AircraftTrack& NavApp::getAircraftTrackLogbook()
 {
-  return getMapWidget()->getAircraftTrackLogbook();
+  return getMapWidgetGui()->getAircraftTrackLogbook();
 }
 
 void NavApp::deleteAircraftTrackLogbook()
 {
-  return getMapWidget()->deleteAircraftTrackLogbook();
+  return getMapWidgetGui()->deleteAircraftTrackLogbook();
 }
 
 bool NavApp::isAircraftTrackEmpty()

@@ -34,6 +34,9 @@ class MainWindow;
 class MapPaintLayer;
 class MapScreenIndex;
 class ApronGeometryCache;
+class MapQuery;
+class AirwayTrackQuery;
+class WaypointTrackQuery;
 
 namespace proc {
 struct MapProcedureLeg;
@@ -73,9 +76,10 @@ public:
 
   /* streamlined for webmapcontroller from showPosInternal(pos, distanceKm, doubleClick, false) */
   void showPosNotAdjusted(const atools::geo::Pos& pos, float distanceKm);
+
   /* Jump to position on the map using the given zoom distance.
-  *  Keep current zoom if  distanceNm is INVALID_DISTANCE_VALUE.
-  *  Use predefined zoom if distanceNm is 0 */
+   *  Keep current zoom if  distanceNm is INVALID_DISTANCE_VALUE.
+   *  Use predefined zoom if distanceNm is 0 */
   void showPos(const atools::geo::Pos& pos, float distanceKm, bool doubleClick);
 
   /* Show the bounding rectangle on the map */
@@ -86,6 +90,7 @@ public:
 
   /* Show user simulator aircraft. state is tool button state */
   void showAircraft(bool centerAircraftChecked);
+  void showAircraftNow(bool);
 
   /* Update hightlighted objects */
   void changeSearchHighlights(const map::MapResult& newHighlights, bool updateAirspace, bool updateLogEntries);
@@ -350,6 +355,24 @@ public:
   /* Saved bounding box from last zoom or scroll operation. Needed to detect view changes. */
   const Marble::GeoDataLatLonBox& getCurrentViewBoundingBox() const;
 
+  /* Get map query with cached objects for this paint widget instance */
+  MapQuery *getMapQuery() const
+  {
+    return mapQuery;
+  }
+
+  AirwayTrackQuery *getAirwayTrackQuery() const
+  {
+    return airwayTrackQuery;
+  }
+
+  WaypointTrackQuery *getWaypointTrackQuery() const
+  {
+    return waypointTrackQuery;
+  }
+
+  void postTrackLoad();
+
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
   void resultTruncated();
@@ -504,6 +527,10 @@ private:
 
   /* Keeps geographical objects as index in screen coordinates */
   MapScreenIndex *screenIndex = nullptr;
+
+  MapQuery *mapQuery = nullptr;
+  AirwayTrackQuery *airwayTrackQuery = nullptr;
+  WaypointTrackQuery *waypointTrackQuery = nullptr;
 
   /* Current zoom value (NOT distance) */
   int currentZoom = -1;

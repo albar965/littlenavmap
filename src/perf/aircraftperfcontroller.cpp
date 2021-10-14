@@ -879,27 +879,9 @@ void AircraftPerfController::updateReportCurrent()
 
 void AircraftPerfController::fuelReportFilepath(atools::util::HtmlBuilder& html, bool print)
 {
-  if(!currentFilepath.isEmpty())
-  {
-    if(!print)
-    {
-      html.p().b(tr("Performance File")).pEnd();
-      html.table();
-
-      // Show link inactive if file does not exist
-      HtmlBuilder link(html.cleared());
-      if(QFileInfo::exists(currentFilepath))
-        link.a(currentFilepath, QString("lnm://show?filepath=%1").arg(currentFilepath), atools::util::html::LINK_NO_UL);
-      else
-        link.text(currentFilepath);
-
-      html.row2(QString(), link.getHtml(), atools::util::html::NO_ENTITIES | atools::util::html::SMALL);
-      html.tableEnd();
-    }
-    else
-      // Use a simple layout for printing
-      html.p().b(tr("Performance File:")).nbsp().nbsp().small(currentFilepath).pEnd();
-  }
+  if(!currentFilepath.isEmpty() && print)
+    // Use a simple layout for printing
+    html.p().b(tr("Performance File:")).nbsp().nbsp().small(currentFilepath).pEnd();
 }
 
 bool AircraftPerfController::isPerformanceFile(const QString& file)
@@ -968,6 +950,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
   // Warnings and errors paragraph - always shown =================================================
   if(!print)
   {
+    // Collect unset values ===========================================
     QStringList errs;
     if(perf->getAircraftType().isEmpty())
       errs.append(tr("aircraft type"));
@@ -988,6 +971,34 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
       html.p().error((errs.size() == 1 ? tr("Invalid value for %1.") : tr("Invalid values for %1.")).
                      arg(errs.join(tr(", ")))).pEnd();
 
+    // Collect inconsitencies ===========================================
+    QStringList compareErrs;
+    if(perf->getCruiseFuelFlow() >= 0.1f)
+    {
+      if(perf->getClimbFuelFlow() >= 0.1f && perf->getClimbFuelFlow() < perf->getCruiseFuelFlow())
+        compareErrs.append(tr("Climb fuel flow is smaller than cruise fuel flow."));
+      if(perf->getDescentFuelFlow() >= 0.1f && perf->getDescentFuelFlow() > perf->getCruiseFuelFlow())
+        compareErrs.append(tr("Descent fuel flow is higher than cruise fuel flow."));
+    }
+
+    if(perf->getCruiseSpeed() >= 0.1f)
+    {
+      if(perf->getClimbSpeed() > 0.1f && perf->getClimbSpeed() > perf->getCruiseSpeed())
+        compareErrs.append(tr("Climb speed is higher than cruise speed."));
+      if(perf->getDescentSpeed() > 0.1f && perf->getDescentSpeed() < perf->getCruiseSpeed() * 0.5f)
+        compareErrs.append(tr("Descent speed is much smaller than cruise speed."));
+    }
+
+    if(!compareErrs.isEmpty())
+    {
+      html.p();
+      html.warning(tr("Possible issues found:")).br();
+      for(const QString& err : compareErrs)
+        html.warning(err).br();
+      html.pEnd();
+    }
+
+    // Other issues
     if(hasLegs && perf->getUsableFuel() > 1.f && altLegs.getBlockFuel(*perf) > perf->getUsableFuel())
       html.p().error(tr("Block fuel exceeds usable of %1.").arg(ft.weightVolLocal(perf->getUsableFuel()))).pEnd();
 
@@ -1060,46 +1071,10 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
       html.row2(tr("Mach at cruise:"), QLocale().toString(mach, 'f', 2), flags);
 
     // Wind =======================================================
-    QStringList windText;
-
-    WindReporter *windReporter = NavApp::getWindReporter();
-
-    if(!isWindManual() && windReporter->hasOnlineWindData() && std::abs(altLegs.getWindSpeedAverage()) >= 1.f)
-    {
-      // Display direction and speed if wind is not manually selected and available ====================
-      windText.append(tr("%1°T, %2").
-                      arg(altLegs.getWindDirection(), 0, 'f', 0).
-                      arg(Unit::speedKts(altLegs.getWindSpeedAverage())));
-    }
-
-    QString windType;
-    if(isWindManual() || windReporter->hasOnlineWindData())
-    {
-      // Display manual wind - only head- or tailwind =======================
-      float headWind = altLegs.getHeadWindAverage();
-      if(std::abs(headWind) >= 1.f)
-      {
-        QString windPtr;
-        if(headWind >= 1.f)
-        {
-          windPtr = tr("▼");
-          windType = tr("headwind");
-        }
-        else if(headWind <= -1.f)
-        {
-          windPtr = tr("▲");
-          windType = tr("tailwind");
-        }
-        windText.append(tr("%1 %2 %3").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))).arg(windType));
-      }
-    }
-
-    QString head = tr("Average wind (%1):");
-    if(!windText.isEmpty())
-      html.row2(head.arg(windReporter->getSourceText()), windText.join(tr("\n")), flags);
-    else
-      html.row2(head.arg(windReporter->getSourceText()),
-                windReporter->isWindManual() ? tr("No head- or tailwind") : tr("No wind"), flags);
+    windText(html, tr("Average wind total"), altLegs.getWindSpeedAverage(),
+             altLegs.getWindDirectionAverage(), altLegs.getHeadWindAverage());
+    windText(html, tr("Average wind at cruise"), altLegs.getWindSpeedCruiseAverage(),
+             altLegs.getWindDirectionCruiseAverage(), altLegs.getCruiseHeadWind());
 
     html.tableEnd();
   } // if(hasLegs)
@@ -1199,6 +1174,50 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     html.p().b(tr("Remarks")).pEnd();
     html.table(1).row2(QString(), perf->getDescription()).tableEnd();
   }
+}
+
+void AircraftPerfController::windText(atools::util::HtmlBuilder& html, const QString& label, float windSpeed,
+                                      float windDirection, float headWind) const
+{
+  WindReporter *windReporter = NavApp::getWindReporter();
+
+  QStringList windText;
+  if(isWindManual() || windReporter->hasOnlineWindData())
+  {
+    if(std::abs(windSpeed) >= 1.f)
+      // Display direction and speed if wind is not manually selected and available ====================
+      windText.append(tr("%1°T, %2").
+                      arg(windDirection, 0, 'f', 0).
+                      arg(Unit::speedKts(windSpeed)));
+
+    // Display manual wind - only head- or tailwind =======================
+    if(std::abs(headWind) >= 1.f)
+    {
+      QString windType;
+      QString windPtr;
+      if(headWind >= 1.f)
+      {
+        windPtr = tr("▼");
+        windType = tr("headwind");
+      }
+      else if(headWind <= -1.f)
+      {
+        windPtr = tr("▲");
+        windType = tr("tailwind");
+      }
+      windText.append(tr("%1 %2 %3").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))).arg(windType));
+    }
+  }
+
+  QString head = tr("%1 (%2):");
+  if(!windText.isEmpty())
+    html.row2(head.arg(label).arg(windReporter->getSourceText()),
+              windText.join(tr("\n")), atools::util::html::ALIGN_RIGHT);
+  else
+    html.row2(head.arg(label).arg(windReporter->getSourceText()),
+              windReporter->isWindManual() ?
+              tr("No head- or tailwind") :
+              tr("No wind"), atools::util::html::ALIGN_RIGHT);
 }
 
 void AircraftPerfController::saveState()

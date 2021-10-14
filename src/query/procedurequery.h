@@ -43,6 +43,8 @@ class AirportQuery;
  *
  * All navaids and procedure are taken from the nav database which might contain data from nav or simulator.
  * All structs of MapAirport are converted to simulator database airports when passed in.
+ *
+ * This class does not contain MapWidget related caches.
  */
 class ProcedureQuery
 {
@@ -217,7 +219,6 @@ private:
   /* maps leg ID to approach/transition ID and index in list */
   QHash<int, std::pair<int, int> > procedureLegIndex, transitionLegIndex;
 
-  MapQuery *mapQuery = nullptr;
   AirportQuery *airportQueryNav = nullptr;
 
   /* Dummy used for custom approaches. */

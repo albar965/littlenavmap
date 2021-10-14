@@ -176,6 +176,24 @@ map::MapAirspaceFilter MapPaintLayer::getShownAirspacesTypesByLayer() const
   return filter;
 }
 
+void MapPaintLayer::initQueries()
+{
+  mapPainterNav->initQueries();
+  mapPainterIls->initQueries();
+  mapPainterAirport->initQueries();
+  mapPainterAirspace->initQueries();
+  mapPainterMark->initQueries();
+  mapPainterRoute->initQueries();
+  mapPainterAircraft->initQueries();
+  mapPainterTrack->initQueries();
+  mapPainterShip->initQueries();
+  mapPainterUser->initQueries();
+  mapPainterAltitude->initQueries();
+  mapPainterWeather->initQueries();
+  mapPainterWind->initQueries();
+  mapPainterTop->initQueries();
+}
+
 /* Initialize the layer settings that define what is drawn at what zoom distance (text, size, etc.) */
 void MapPaintLayer::initMapLayerSettings()
 {

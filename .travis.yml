@@ -1,7 +1,7 @@
 language: cpp
 os: linux
 compiler: gcc
-dist: xenial
+dist: focal
 
 addons:
   apt:
@@ -9,12 +9,12 @@ addons:
     sources:
       - ubuntu-toolchain-r-test
     packages:
-      - gcc-7
-      - g++-7
+      - gcc-9
+      - g++-9
 
 before_install:
     # Add repository for Qt
-    - sudo apt-add-repository --yes ppa:beineri/opt-qt-5.12.2-xenial
+    - sudo apt-add-repository --yes ppa:beineri/opt-qt-5.15.2-focal
     - sudo apt-get -qq update
 
     # Decrypt auth token for deployment
@@ -22,18 +22,18 @@ before_install:
 
 install:
     # Install needed Qt modules
-    - sudo apt-get --yes install libgl1-mesa-dev qt512base qt512svg qt512script qt512declarative
+    - sudo apt-get --yes install libgl1-mesa-dev qt515base qt515svg qt515script qt515declarative
 
     # Set Qt variables
-    - QTDIR="/opt/qt512"
+    - QTDIR="/opt/qt515"
     - PATH="$QTDIR/bin:$PATH"
-    - source /opt/qt512/bin/qt512-env.sh
+    - source /opt/qt515/bin/qt515-env.sh
 
     # Set used gcc version
-    - sudo ln -s /usr/bin/gcc-7 /usr/local/bin/gcc
-    - sudo ln -s /usr/bin/g++-7 /usr/local/bin/g++
-    - export CC=gcc-7
-    - export CXX=g++-7
+    - sudo ln -s /usr/bin/gcc-9 /usr/local/bin/gcc
+    - sudo ln -s /usr/bin/g++-9 /usr/local/bin/g++
+    - export CC=gcc-9
+    - export CXX=g++-9
 
     # Set environment variables for marble
     - export MARBLE_BASE=/home/travis/Programs/Marble
@@ -59,7 +59,7 @@ install:
 
     # Install patchelf (needed for 'make deploy')
     - cd ../
-    - wget http://nixos.org/releases/patchelf/patchelf-0.10/patchelf-0.10.tar.bz2
+    - wget -q http://nixos.org/releases/patchelf/patchelf-0.10/patchelf-0.10.tar.bz2
     - tar xf patchelf-0.10.tar.bz2
     - cd patchelf-0.10/
     - ./configure --prefix="$HOME/.local"
@@ -76,7 +76,7 @@ before_script:
     - git clone --branch=master https://github.com/albar965/littlexpconnect.git ../littlexpconnect
 
     # Get X-Plane SDK (for deployment)
-    - wget -P '../' "http://developer.x-plane.com/wp-content/plugins/code-sample-generation/sample_templates/XPSDK301.zip"
+    - wget -q -P '../' "http://developer.x-plane.com/wp-content/plugins/code-sample-generation/sample_templates/XPSDK301.zip"
     - unzip ../XPSDK301.zip -d '../XPSDK'
     - mv '../XPSDK/SDK' '../X-Plane SDK'
 
@@ -94,19 +94,19 @@ script:
     # Build atools if auth token for dropbox is not available
     # - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || mkdir ../build-atools-release'
     # - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || cd ../build-atools-release'
-    # - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || qmake ../atools/atools.pro CONFIG+=release'
+    # - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || qmake ../atools/atools.pro CONFIG+=release QMAKE_CXXFLAGS+=-Wno-deprecated-copy QMAKE_CXXFLAGS+=-Wno-deprecated-declarations'
     # - '[ "$TRAVIS_SECURE_ENV_VARS" == "true" ] || make -j2'
 
     # Build atools
     - mkdir ../build-atools-release
     - cd ../build-atools-release
-    - qmake ../atools/atools.pro CONFIG+=release
+    - qmake ../atools/atools.pro CONFIG+=release QMAKE_CXXFLAGS+=-Wno-deprecated-copy QMAKE_CXXFLAGS+=-Wno-deprecated-declarations
     - make -j2
 
     # Build littlenavmap
     - mkdir ../build-littlenavmap-release
     - cd ../build-littlenavmap-release
-    - qmake ../littlenavmap/littlenavmap.pro CONFIG+=release
+    - qmake ../littlenavmap/littlenavmap.pro CONFIG+=release QMAKE_CXXFLAGS+=-Wno-deprecated-copy QMAKE_CXXFLAGS+=-Wno-deprecated-declarations
     - make -j2
 
 after_success:

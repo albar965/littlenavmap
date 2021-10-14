@@ -59,16 +59,6 @@ public:
   /* True if there are tracks in the database */
   bool hasTracks() const;
 
-  AirwayTrackQuery *getAirwayTrackQuery() const
-  {
-    return airwayTrackQuery;
-  }
-
-  WaypointTrackQuery *getWaypointTrackQuery() const
-  {
-    return waypointTrackQuery;
-  }
-
   /* If true: Do not load tracks that are currently not valid. */
   void setDownloadOnlyValid(bool value)
   {
@@ -100,8 +90,6 @@ private:
 
   /* Filled with all types when starting download. Empty when all types finished downloading */
   QVector<atools::track::TrackType> downloadQueue;
-  AirwayTrackQuery *airwayTrackQuery = nullptr;
-  WaypointTrackQuery *waypointTrackQuery = nullptr;
 
   /* Saved raw track data */
   atools::track::TrackVectorType trackVector;

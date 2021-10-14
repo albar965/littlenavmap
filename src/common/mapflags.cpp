@@ -53,8 +53,6 @@ QDebug operator<<(QDebug out, const map::MapTypes& type)
       flags.append("NDB");
     if(type.testFlag(ILS))
       flags.append("ILS");
-    if(type.testFlag(GLS))
-      flags.append("GLS");
     if(type.testFlag(MARKER))
       flags.append("MARKER");
     if(type.testFlag(WAYPOINT))
@@ -71,8 +69,6 @@ QDebug operator<<(QDebug out, const map::MapTypes& type)
       flags.append("AIRCRAFT_AI");
     if(type.testFlag(AIRCRAFT_AI_SHIP))
       flags.append("AIRCRAFT_AI_SHIP");
-    if(type.testFlag(AIRCRAFT_TRACK))
-      flags.append("AIRCRAFT_TRACK");
     if(type.testFlag(USERPOINTROUTE))
       flags.append("USERPOINTROUTE");
     if(type.testFlag(PARKING))

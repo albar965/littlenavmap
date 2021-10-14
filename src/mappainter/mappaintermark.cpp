@@ -577,23 +577,35 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   QSet<int> airportIds;
   for(const MapLogbookEntry *entry : allLogEntries)
   {
-    if(!airportIds.contains(entry->departure.id) && wToSBuf(entry->departure.position, x, y, margins))
+    // Check if already drawn
+    if(!airportIds.contains(entry->departure.id))
     {
-      symbolPainter->drawAirportSymbol(context->painter, entry->departure, x, y, size, false, context->drawFast,
-                                       context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
-      symbolPainter->drawAirportText(context->painter, entry->departure, x, y, context->dispOptsAirport, flags, size,
-                                     context->mapLayer->isAirportDiagram(),
-                                     context->mapLayer->getMaxTextLengthAirport());
+      if(entry->departure.isValid() ?
+         wToSBuf(entry->departure.position, x, y, margins) : // Use valid airport position
+         wToSBuf(entry->departurePos, x, y, margins)) // Use recorded position
+      {
+        symbolPainter->drawAirportSymbol(context->painter, entry->departure, x, y, size, false, context->drawFast,
+                                         context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
+        symbolPainter->drawAirportText(context->painter, entry->departure, x, y, context->dispOptsAirport, flags, size,
+                                       context->mapLayer->isAirportDiagram(),
+                                       context->mapLayer->getMaxTextLengthAirport());
+      }
       airportIds.insert(entry->departure.id);
     }
 
-    if(!airportIds.contains(entry->destination.id) && wToSBuf(entry->destination.position, x, y, margins))
+    if(!airportIds.contains(entry->destination.id))
     {
-      symbolPainter->drawAirportSymbol(context->painter, entry->destination, x, y, size, false, context->drawFast,
-                                       context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
-      symbolPainter->drawAirportText(context->painter, entry->destination, x, y, context->dispOptsAirport, flags, size,
-                                     context->mapLayer->isAirportDiagram(),
-                                     context->mapLayer->getMaxTextLengthAirport());
+      if(entry->destination.isValid() ?
+         wToSBuf(entry->destination.position, x, y, margins) :
+         wToSBuf(entry->destinationPos, x, y, margins))
+      {
+        symbolPainter->drawAirportSymbol(context->painter, entry->destination, x, y, size, false, context->drawFast,
+                                         context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
+        symbolPainter->drawAirportText(context->painter, entry->destination, x, y, context->dispOptsAirport, flags,
+                                       size,
+                                       context->mapLayer->isAirportDiagram(),
+                                       context->mapLayer->getMaxTextLengthAirport());
+      }
       airportIds.insert(entry->destination.id);
     }
   }

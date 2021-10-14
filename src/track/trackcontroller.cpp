@@ -45,16 +45,6 @@ TrackController::TrackController(TrackManager *trackManagerParam, MainWindow *ma
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_TRACK_DEBUG, false).toBool();
   trackManager->setVerbose(verbose);
 
-  // Set up airway queries =====================
-  airwayTrackQuery = new AirwayTrackQuery(new AirwayQuery(NavApp::getDatabaseNav(), false),
-                                          new AirwayQuery(NavApp::getDatabaseTrack(), true));
-  airwayTrackQuery->initQueries();
-
-  // Set up waypoint queries =====================
-  waypointTrackQuery = new WaypointTrackQuery(new WaypointQuery(NavApp::getDatabaseNav(), false),
-                                              new WaypointQuery(NavApp::getDatabaseTrack(), true));
-  waypointTrackQuery->initQueries();
-
   downloader = new TrackDownloader(this, verbose);
 #ifdef DEBUG_TRACK_TEST
   downloader->setUrl(atools::track::NAT, "/tmp/NAT.txt");
@@ -85,25 +75,10 @@ TrackController::TrackController(TrackManager *trackManagerParam, MainWindow *ma
   connect(downloader, &TrackDownloader::trackDownloadFinished, this, &TrackController::trackDownloadFinished);
   connect(downloader, &TrackDownloader::trackDownloadFailed, this, &TrackController::trackDownloadFailed);
   connect(downloader, &TrackDownloader::trackDownloadSslErrors, this, &TrackController::trackDownloadSslErrors);
-
-  connect(this, &TrackController::postTrackLoad, [ = ](void) -> void {
-    waypointTrackQuery->clearCache();
-    airwayTrackQuery->clearCache();
-
-    waypointTrackQuery->initQueries();
-    airwayTrackQuery->initQueries();
-  });
-
 }
 
 TrackController::~TrackController()
 {
-  // Have to delete manually since classes can be copied and does not delete in destructor
-  airwayTrackQuery->deleteChildren();
-  delete airwayTrackQuery;
-
-  waypointTrackQuery->deleteChildren();
-  delete waypointTrackQuery;
 }
 
 void TrackController::restoreState()
@@ -133,16 +108,10 @@ void TrackController::optionsChanged()
 void TrackController::preDatabaseLoad()
 {
   downloader->cancelAllDownloads();
-  airwayTrackQuery->deInitQueries();
-  waypointTrackQuery->deInitQueries();
 }
 
 void TrackController::postDatabaseLoad()
 {
-  // Reload track into database to catch changed waypoint ids
-  airwayTrackQuery->initQueries();
-  waypointTrackQuery->initQueries();
-
   emit preTrackLoad();
   trackManager->loadTracks(trackVector, downloadOnlyValid);
   emit postTrackLoad();
@@ -280,8 +249,9 @@ void TrackController::tracksLoaded()
   {
     QStringList str;
     QString err;
-    for(atools::track::TrackType type : numTracks.keys())
+    for(auto it = numTracks.begin(); it != numTracks.end(); ++it)
     {
+      atools::track::TrackType type = it.key();
       int num = numTracks.value(type);
       str.append(tr("<li>%1: %2 tracks.</li>").
                  arg(atools::track::typeToString(type)).
@@ -305,8 +275,9 @@ void TrackController::tracksLoaded()
   else
   {
     QStringList msg;
-    for(atools::track::TrackType type : numTracks.keys())
+    for(auto it = numTracks.begin(); it != numTracks.end(); ++it)
     {
+      atools::track::TrackType type = it.key();
       int num = numTracks.value(type);
       msg.append(tr("%1: %2 tracks").
                  arg(atools::track::typeToString(type)).
