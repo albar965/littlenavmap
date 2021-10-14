@@ -41,7 +41,7 @@ SqlController::~SqlController()
   viewSetModel(nullptr);
 
   if(proxyModel != nullptr)
-    proxyModel->clear();
+    proxyModel->invalidate();
   delete proxyModel;
   proxyModel = nullptr;
 
@@ -151,17 +151,17 @@ void SqlController::filterByBuilder()
   searchParamsChanged = true;
 }
 
-void SqlController::filterIncluding(const QModelIndex& index)
+void SqlController::filterIncluding(const QModelIndex& index, bool builder)
 {
   view->clearSelection();
-  model->filterIncluding(toSource(index));
+  model->filterIncluding(toSource(index), builder);
   searchParamsChanged = true;
 }
 
-void SqlController::filterExcluding(const QModelIndex& index)
+void SqlController::filterExcluding(const QModelIndex& index, bool builder)
 {
   view->clearSelection();
-  model->filterExcluding(toSource(index));
+  model->filterExcluding(toSource(index), builder);
   searchParamsChanged = true;
 }
 
@@ -304,7 +304,7 @@ void SqlController::filterByDistance(const atools::geo::Pos& center, sqlproxymod
 
     if(proxyModel != nullptr)
     {
-      proxyModel->clear();
+      proxyModel->invalidate();
       delete proxyModel;
       proxyModel = nullptr;
     }

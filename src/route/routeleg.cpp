@@ -130,8 +130,8 @@ void RouteLeg::assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry
 {
   map::MapResult mapobjectResult;
   NavApp::getMapQueryGui()->getMapObjectByIdent(mapobjectResult, map::WAYPOINT | map::VOR | map::NDB | map::AIRPORT,
-                                             flightplanEntry->getIdent(), flightplanEntry->getRegion(),
-                                             QString(), last, maxDistance);
+                                                flightplanEntry->getIdent(), flightplanEntry->getRegion(),
+                                                QString(), last, maxDistance);
 
   if(mapobjectResult.hasVor())
   {
@@ -535,6 +535,42 @@ QString RouteLeg::getMapObjectTypeName() const
     return tr("User");
   else
     return EMPTY_STRING;
+}
+
+QString RouteLeg::getMapObjectTypeNameShort() const
+{
+  if(type == map::INVALID)
+    return tr("Invalid");
+  else if(waypoint.isValid())
+    return tr("Waypoint");
+  else if(vor.isValid())
+    return map::vorType(vor);
+  else if(ndb.isValid())
+    return tr("NDB");
+  else if(airport.isValid())
+    return tr("Airport");
+  else if(ils.isValid())
+    return tr("ILS");
+  else if(runwayEnd.isValid())
+    return tr("Runway");
+  else if(type == map::USERPOINTROUTE)
+    return tr("Userpoint");
+  else
+    return EMPTY_STRING;
+}
+
+QString RouteLeg::getDisplayText(int elideName) const
+{
+  if(getMapObjectType() == map::AIRPORT)
+    return tr("%1 (%2)").arg(atools::elideTextShort(getName(), elideName)).arg(getIdent());
+  else
+  {
+    QStringList texts;
+    texts << getMapObjectTypeNameShort() << atools::elideTextShort(getName(), elideName)
+          << (getIdent().isEmpty() ? QString() : tr("(%1)").arg(getIdent()));
+    texts.removeAll(QString());
+    return texts.join(tr(" "));
+  }
 }
 
 float RouteLeg::getCourseToMag() const

@@ -1447,9 +1447,10 @@ QString vorType(bool dmeOnly, bool hasDme, bool tacan, bool vortac)
   }
 }
 
-QString vorText(const MapVor& vor)
+QString vorText(const MapVor& vor, int elideName)
 {
-  return QObject::tr("%1 %2 (%3)").arg(vorType(vor)).arg(atools::capString(vor.name)).arg(vor.ident);
+  return QObject::tr("%1 %2 (%3)").
+         arg(vorType(vor)).arg(atools::elideTextShort(atools::capString(vor.name), elideName)).arg(vor.ident);
 }
 
 QString vorTextShort(const MapVor& vor)
@@ -1457,9 +1458,9 @@ QString vorTextShort(const MapVor& vor)
   return QObject::tr("%1 (%2)").arg(atools::capString(vor.name)).arg(vor.ident);
 }
 
-QString ndbText(const MapNdb& ndb)
+QString ndbText(const MapNdb& ndb, int elideName)
 {
-  return QObject::tr("NDB %1 (%2)").arg(atools::capString(ndb.name)).arg(ndb.ident);
+  return QObject::tr("NDB %1 (%2)").arg(atools::elideTextShort(atools::capString(ndb.name), elideName)).arg(ndb.ident);
 }
 
 QString ndbTextShort(const MapNdb& ndb)
@@ -1472,9 +1473,10 @@ QString waypointText(const MapWaypoint& waypoint)
   return QObject::tr("Waypoint %1").arg(waypoint.ident);
 }
 
-QString userpointText(const MapUserpoint& userpoint)
+QString userpointText(const MapUserpoint& userpoint, int elideName)
 {
-  return QObject::tr("Userpoint %1").arg(userpoint.ident.isEmpty() ? userpoint.name : userpoint.ident);
+  return QObject::tr("Userpoint %1").
+         arg(atools::elideTextShort(userpoint.ident.isEmpty() ? userpoint.name : userpoint.ident, elideName));
 }
 
 QString logEntryText(const MapLogbookEntry& logEntry)

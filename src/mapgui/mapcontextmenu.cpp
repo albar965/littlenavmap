@@ -23,7 +23,6 @@
 #include "common/vehicleicons.h"
 #include "common/formatter.h"
 #include "query/airportquery.h"
-#include "query/mapquery.h"
 #include "online/onlinedatacontroller.h"
 #include "gui/mainwindow.h"
 #include "gui/actionstatesaver.h"
@@ -522,7 +521,8 @@ void MapContextMenu::insertProcedureMenu(QMenu& menu)
       {
         bool departure = false, destination = false, arrivalProc = false, departureProc = false, roundtrip = false;
         disable = false;
-        procedureFlags(base, &departure, &destination, nullptr, &roundtrip, &arrivalProc, &departureProc);
+        proc::procedureFlags(NavApp::getRouteConst(), base, &departure, &destination, nullptr, &roundtrip,
+                             &arrivalProc, &departureProc);
         if(!arrivalProc && !departureProc)
         {
           // No procedures - disable and add remark
@@ -592,7 +592,7 @@ void MapContextMenu::insertCustomProcedureMenu(QMenu& menu)
         else
         {
           bool departure = false, destination = false;
-          procedureFlags(base, &departure, &destination);
+          proc::procedureFlags(NavApp::getRouteConst(), base, &departure, &destination);
           if(destination)
             // Airport is destination - insert into plan
             text =
@@ -801,8 +801,8 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
           // Clicked on airport
           airport = base->asObj<map::MapAirport>();
 
-        bool departure = false, destination = false;
-        procedureFlags(&airport, &departure, &destination);
+        bool departure = false, destination = false, alternate = false;
+        proc::procedureFlags(NavApp::getRouteConst(), &airport, &departure, &destination, &alternate);
 
         if(departure)
         {
@@ -813,6 +813,8 @@ void MapContextMenu::insertDepartureMenu(QMenu& menu)
         }
         else if(destination)
           text.append(tr(" (is destination)"));
+        else if(alternate)
+          text.append(tr(" (is alternate)"));
       }
     };
 
@@ -832,14 +834,8 @@ void MapContextMenu::insertDestinationMenu(QMenu& menu)
     {
       disable = base == nullptr;
       if(base != nullptr)
-      {
-        bool departure = false, destination = false;
-        procedureFlags(base, &departure, &destination);
-        if(destination)
-          text.append(tr(" (is destination)"));
-        else if(departure)
-          text.append(tr(" (is departure)"));
-      }
+        text.append(proc::procedureTextSuffixDestination(NavApp::getRouteConst(), base->asObj<map::MapAirport>(),
+                                                         disable));
     };
 
   insertMenuOrAction(menu, mc::DESTINATION, MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
@@ -865,22 +861,8 @@ void MapContextMenu::insertAlternateMenu(QMenu& menu)
           text.append(tr(" (no destination)"));
         }
         else
-        {
-          bool departure = false, destination = false, alternate = false;
-          procedureFlags(base, &departure, &destination, &alternate);
-
-          // Do not allow to add as alternate if already part of plan
-          if(destination)
-          {
-            disable = true;
-            text.append(tr(" (is destination)"));
-          }
-          if(alternate)
-          {
-            disable = true;
-            text.append(tr(" (is alternate)"));
-          }
-        }
+          text.append(proc::procedureTextSuffixAlternate(NavApp::getRouteConst(), base->asObj<map::MapAirport>(),
+                                                         disable));
       }
     };
 
@@ -1235,40 +1217,4 @@ QString MapContextMenu::procedureName(const map::MapBase *base) const
     }
   }
   return QString();
-}
-
-void MapContextMenu::procedureFlags(const map::MapBase *base, bool *departure, bool *destination, bool *alternate,
-                                    bool *roundtrip, bool *arrivalProc, bool *departureProc) const
-{
-  if(departure != nullptr)
-    *departure = false;
-  if(destination != nullptr)
-    *destination = false;
-  if(alternate != nullptr)
-    *alternate = false;
-  if(roundtrip != nullptr)
-    *roundtrip = false;
-  if(arrivalProc != nullptr)
-    *arrivalProc = false;
-  if(departureProc != nullptr)
-    *departureProc = false;
-
-  if(base != nullptr && base->getType() == map::AIRPORT)
-  {
-    const map::MapAirport *airport = base->asPtr<map::MapAirport>();
-
-    if(departure != nullptr)
-      *departure = NavApp::getRouteConst().isAirportDeparture(airport->ident);
-    if(destination != nullptr)
-      *destination = NavApp::getRouteConst().isAirportDestination(airport->ident);
-    if(alternate != nullptr)
-      *alternate = NavApp::getRouteConst().isAirportAlternate(airport->ident);
-    if(roundtrip != nullptr)
-      *roundtrip = NavApp::getRouteConst().isAirportRoundTrip(airport->ident);
-
-    if(arrivalProc != nullptr)
-      *arrivalProc = NavApp::getMapQueryGui()->hasArrivalProcedures(*airport);
-    if(departureProc != nullptr)
-      *departureProc = NavApp::getMapQueryGui()->hasDepartureProcedures(*airport);
-  }
 }

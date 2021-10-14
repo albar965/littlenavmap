@@ -2154,7 +2154,7 @@ void RouteController::showInformationInternal(const RouteLeg& routeLeg)
   {
     map::MapResult result;
     NavApp::getMapQueryGui()->getMapObjectById(result, routeLeg.getMapObjectType(), map::AIRSPACE_SRC_NONE,
-                                            routeLeg.getId(), false /* airport from nav database */);
+                                               routeLeg.getId(), false /* airport from nav database */);
     emit showInformation(result);
   }
 }
@@ -2279,6 +2279,8 @@ bool RouteController::canSaveSelection()
 
 void RouteController::tableContextMenu(const QPoint& pos)
 {
+  static const int NAVAID_NAMES_ELIDE = 15;
+
   Ui::MainWindow *ui = NavApp::getMainUi();
   contextMenuOpen = true;
   QPoint menuPos = QCursor::pos();
@@ -2291,22 +2293,20 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   qDebug() << "tableContextMenu";
 
+  QList<QAction *> actions({
+    ui->actionRouteShowInformation, ui->actionRouteShowApproaches, ui->actionRouteShowApproachesCustom,
+    ui->actionRouteShowOnMap, ui->actionRouteActivateLeg, ui->actionRouteFollowSelection, ui->actionRouteLegUp,
+    ui->actionRouteLegDown, ui->actionRouteDeleteLeg, ui->actionRouteEditUserWaypoint, ui->actionRouteInsert,
+    ui->actionRouteTableAppend, ui->actionRouteSaveSelection, ui->actionRouteCalcSelected, ui->actionMapRangeRings,
+    ui->actionMapNavaidRange, ui->actionMapTrafficPattern, ui->actionMapHold, ui->actionRouteTableCopy,
+    ui->actionRouteTableSelectAll, ui->actionRouteTableSelectNothing, ui->actionRouteResetView,
+    ui->actionRouteVisibleColumns, ui->actionRouteSetMark});
+
   // Save text which will be changed below
-  atools::gui::ActionTextSaver saver({ui->actionMapRangeRings, ui->actionMapNavaidRange,
-                                      ui->actionRouteEditUserWaypoint, ui->actionRouteShowApproaches,
-                                      ui->actionRouteShowApproachesCustom, ui->actionRouteDeleteLeg,
-                                      ui->actionRouteInsert, ui->actionMapTrafficPattern, ui->actionMapHold});
+  atools::gui::ActionTextSaver saver(actions);
 
   // Re-enable actions on exit to allow keystrokes
-  atools::gui::ActionStateSaver stateSaver(
-  {
-    ui->actionRouteShowInformation, ui->actionRouteShowApproaches, ui->actionRouteShowApproachesCustom,
-    ui->actionRouteShowOnMap, ui->actionRouteActivateLeg, ui->actionRouteLegUp, ui->actionRouteLegDown,
-    ui->actionRouteDeleteLeg, ui->actionRouteEditUserWaypoint, ui->actionRouteCalcSelected,
-    ui->actionMapRangeRings, ui->actionMapTrafficPattern, ui->actionMapHold, ui->actionMapNavaidRange,
-    ui->actionRouteTableCopy, ui->actionRouteTableSelectNothing, ui->actionRouteTableSelectAll,
-    ui->actionRouteResetView, ui->actionRouteSetMark,
-    ui->actionRouteInsert, ui->actionRouteTableAppend, ui->actionRouteSaveSelection});
+  atools::gui::ActionStateSaver stateSaver(actions);
 
   QModelIndex index = view->indexAt(pos);
   const RouteLeg *routeLeg = nullptr, *prevRouteLeg = nullptr;
@@ -2317,6 +2317,14 @@ void RouteController::tableContextMenu(const QPoint& pos)
     routeLeg = &route.value(row);
     if(index.row() > 0)
       prevRouteLeg = &route.value(row - 1);
+  }
+
+  QString objectText, airportText;
+  if(routeLeg != nullptr)
+  {
+    objectText = routeLeg->getDisplayText(NAVAID_NAMES_ELIDE);
+    if(routeLeg->getMapObjectType() == map::AIRPORT)
+      airportText = objectText;
   }
 
   QMenu menu;
@@ -2381,7 +2389,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
             ui->actionRouteShowApproaches->setText(ui->actionRouteShowApproaches->text().arg(tr("Departure ")));
           }
           else
-            ui->actionRouteShowApproaches->setText(tr("Show procedures (airport has no departure procedure)"));
+            ui->actionRouteShowApproaches->setText(tr("Show procedures (no departure procedure)"));
         }
         else if(airportDestination && !airportRoundTrip)
         {
@@ -2391,7 +2399,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
             ui->actionRouteShowApproaches->setText(ui->actionRouteShowApproaches->text().arg(tr("Arrival ")));
           }
           else
-            ui->actionRouteShowApproaches->setText(tr("Show procedures (airport has no arrival procedure)"));
+            ui->actionRouteShowApproaches->setText(tr("Show procedures (no arrival procedure)"));
         }
         else
         {
@@ -2400,7 +2408,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
         }
       }
       else
-        ui->actionRouteShowApproaches->setText(tr("Show Procedures (airport has no procedure)"));
+        ui->actionRouteShowApproaches->setText(tr("Show Procedures (no procedure)"));
 
       ui->actionRouteShowApproachesCustom->setEnabled(true);
       if(airportDestination)
@@ -2431,7 +2439,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   {
     ui->actionRouteShowInformation->setEnabled(false);
     ui->actionRouteShowApproaches->setEnabled(false);
-    ui->actionRouteShowApproaches->setText(tr("Show procedures"));
+    ui->actionRouteShowApproaches->setText(tr("Show Procedures"));
     ui->actionRouteActivateLeg->setEnabled(false);
     ui->actionRouteShowOnMap->setEnabled(false);
     ui->actionMapRangeRings->setEnabled(false);
@@ -2445,22 +2453,15 @@ void RouteController::tableContextMenu(const QPoint& pos)
   if(insert)
   {
     ui->actionRouteInsert->setEnabled(true);
-    ui->actionRouteInsert->setText(ui->actionRouteInsert->text().arg(routeLeg->getDisplayIdent()));
-  }
-  else
-  {
-    ui->actionRouteInsert->setEnabled(false);
-    ui->actionRouteInsert->setText(tr("Insert Flight Plan before ..."));
+    ui->actionRouteInsert->setText(ui->actionRouteInsert->text().arg(objectText));
   }
 
   if(routeLeg != nullptr && routeLeg->getAirport().isValid() && !routeLeg->getAirport().noRunways())
     ui->actionMapTrafficPattern->setEnabled(true);
   else
     ui->actionMapTrafficPattern->setEnabled(false);
-  ui->actionMapTrafficPattern->setText(tr("Add Airport &Traffic Pattern ..."));
 
   ui->actionMapHold->setEnabled(routeLeg != nullptr);
-  ui->actionMapHold->setText(tr("Add &Holding ..."));
 
   ui->actionRouteCalcSelected->setEnabled(canCalcSelection());
 
@@ -2470,41 +2471,60 @@ void RouteController::tableContextMenu(const QPoint& pos)
     view->selectionModel() == nullptr ? false : view->selectionModel()->hasSelection());
   ui->actionRouteTableSelectAll->setEnabled(!route.isEmpty());
 
-  ui->actionMapNavaidRange->setText(tr("Add &Navaid Range Ring"));
-
   // Edit position ======================================0
 
-  ui->actionRouteEditUserWaypoint->setText(tr("Edit Flight Plan &Position or Remarks ..."));
+  ui->actionRouteEditUserWaypoint->setText(tr("Edit &Position or Remarks ..."));
   if(routeLeg != nullptr)
   {
     if(routeLeg->getMapObjectType() == map::USERPOINTROUTE)
     {
       ui->actionRouteEditUserWaypoint->setEnabled(true);
-      ui->actionRouteEditUserWaypoint->setText(tr("Edit Flight Plan &Position ..."));
+      ui->actionRouteEditUserWaypoint->setText(tr("&Edit %1 ...").arg(objectText));
       ui->actionRouteEditUserWaypoint->setToolTip(tr("Edit name and coordinates of user defined flight plan position"));
       ui->actionRouteEditUserWaypoint->setStatusTip(ui->actionRouteEditUserWaypoint->toolTip());
     }
     else if(route.canEditComment(row))
     {
       ui->actionRouteEditUserWaypoint->setEnabled(true);
-      ui->actionRouteEditUserWaypoint->setText(tr("Edit Flight Plan &Position Remarks ..."));
+      ui->actionRouteEditUserWaypoint->setText(tr("Edit &Remarks for %1 ...").arg(objectText));
       ui->actionRouteEditUserWaypoint->setToolTip(tr("Edit remarks for selected flight plan leg"));
       ui->actionRouteEditUserWaypoint->setStatusTip(ui->actionRouteEditUserWaypoint->toolTip());
     }
   }
 
+  // Get selected VOR and NDB and check if ranges can be shown ====================================
   QList<int> selectedRouteLegIndexes;
   getSelectedRouteLegs(selectedRouteLegIndexes);
+
   // If there are any radio navaids in the selected list enable range menu item
+  int found = 0;
+  QString navaidText;
   for(int idx : selectedRouteLegIndexes)
   {
     const RouteLeg& leg = route.value(idx);
     if((leg.getVor().isValid() && leg.getVor().range > 0) || (leg.getNdb().isValid() && leg.getNdb().range > 0))
     {
-      ui->actionMapNavaidRange->setEnabled(true);
-      break;
+      navaidText = leg.getDisplayText();
+      found++;
     }
   }
+
+  if(found == 0)
+  {
+    ui->actionMapNavaidRange->setEnabled(false);
+    ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(QString()));
+  }
+  else if(found == 1)
+  {
+    ui->actionMapNavaidRange->setEnabled(true);
+    ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(navaidText));
+  }
+  else if(found > 1)
+  {
+    ui->actionMapNavaidRange->setEnabled(true);
+    ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(tr("selected Navaids")));
+  }
+  ui->actionMapRangeRings->setText(tr("Add &Range Rings at %1"));
 
   // Update texts to give user a hint for hidden user features in the disabled menu items =====================
   QString notShown(tr(" (hidden on map)"));
@@ -2515,16 +2535,29 @@ void RouteController::tableContextMenu(const QPoint& pos)
     ui->actionMapRangeRings->setText(ui->actionMapRangeRings->text() + notShown);
     ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text() + notShown);
   }
+
   if(!NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDS))
   {
     ui->actionMapHold->setDisabled(true);
     ui->actionMapHold->setText(ui->actionMapHold->text() + notShown);
   }
+
   if(!NavApp::getMapMarkHandler()->isShown(map::MARK_PATTERNS))
   {
     ui->actionMapTrafficPattern->setDisabled(true);
     ui->actionMapTrafficPattern->setText(ui->actionMapTrafficPattern->text() + notShown);
   }
+
+  // General texts ==============================================================
+  ui->actionRouteShowInformation->setText(ui->actionSearchShowInformation->text().arg(objectText));
+  ui->actionRouteShowOnMap->setText(ui->actionSearchShowOnMap->text().arg(objectText));
+  ui->actionRouteShowApproaches->setText(ui->actionSearchShowApproaches->text().arg(airportText));
+  ui->actionRouteShowApproachesCustom->setText(ui->actionSearchShowApproachesCustom->text().arg(airportText));
+  ui->actionRouteActivateLeg->setText(ui->actionRouteActivateLeg->text().arg(objectText));
+  ui->actionMapRangeRings->setText(ui->actionMapRangeRings->text().arg(objectText));
+
+  ui->actionMapTrafficPattern->setText(ui->actionMapTrafficPattern->text().arg(objectText));
+  ui->actionMapHold->setText(ui->actionMapHold->text().arg(objectText));
 
   // ====================================================================
   menu.addAction(ui->actionRouteShowInformation);
@@ -2600,7 +2633,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     {
       map::MapResult result;
       NavApp::getMapQueryGui()->getMapObjectById(result, routeLeg->getMapObjectType(), map::AIRSPACE_SRC_NONE,
-                                              routeLeg->getId(), false /* airport from nav*/);
+                                                 routeLeg->getId(), false /* airport from nav*/);
 
       if(!result.isEmpty(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT))
         NavApp::getMapWidgetGui()->addHold(result, atools::geo::EMPTY_POS);
@@ -2626,8 +2659,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
           if(routeLegSel.getRange() > 0)
             NavApp::getMapWidgetGui()->addNavRangeRing(routeLegSel.getPosition(), type,
-                                                    routeLegSel.getDisplayIdent(), routeLegSel.getFrequencyOrChannel(),
-                                                    routeLegSel.getRange());
+                                                       routeLegSel.getDisplayIdent(),
+                                                       routeLegSel.getFrequencyOrChannel(),
+                                                       routeLegSel.getRange());
         }
       }
     }
@@ -3434,6 +3468,9 @@ void RouteController::routeAddAlternate(map::MapAirport airport)
   qDebug() << Q_FUNC_INFO << airport.id << airport.ident;
 
   if(!airport.isValid())
+    return;
+
+  if(route.isAirportAlternate(airport.ident) || route.isAirportDestination(airport.ident))
     return;
 
   RouteCommand *undoCommand = preChange(tr("Add Alternate"));

@@ -8525,7 +8525,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/showonmap.svg</normaloff>:/littlenavmap/resources/icons/showonmap.svg</iconset>
    </property>
    <property name="text">
-    <string>Show on &amp;Map</string>
+    <string>Show %1 on &amp;Map</string>
    </property>
    <property name="toolTip">
     <string>Show the airport or navaid on the map</string>
@@ -8543,7 +8543,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/globals.svg</normaloff>:/littlenavmap/resources/icons/globals.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Information</string>
+    <string>Show &amp;Information for %1</string>
    </property>
    <property name="toolTip">
     <string>Show information about the airport or navaid</string>
@@ -8561,7 +8561,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/globals.svg</normaloff>:/littlenavmap/resources/icons/globals.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Information</string>
+    <string>Show &amp;Information for %1</string>
    </property>
    <property name="toolTip">
     <string>Show information about the selected entry</string>
@@ -8579,7 +8579,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/showonmap.svg</normaloff>:/littlenavmap/resources/icons/showonmap.svg</iconset>
    </property>
    <property name="text">
-    <string>Show on &amp;Map</string>
+    <string>Show %1 on &amp;Map</string>
    </property>
    <property name="toolTip">
     <string>Show the selected entry on the map</string>
@@ -9115,7 +9115,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
    </property>
    <property name="text">
-    <string>Show %1&amp;Procedures</string>
+    <string>Show &amp;Procedures for %1</string>
    </property>
    <property name="toolTip">
     <string>Show procedures for this airport</string>
@@ -9133,7 +9133,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/approach.svg</normaloff>:/littlenavmap/resources/icons/approach.svg</iconset>
    </property>
    <property name="text">
-    <string>Show %1&amp;Procedures</string>
+    <string>Show &amp;Procedures for %1</string>
    </property>
    <property name="toolTip">
     <string>Show procedures for this airport</string>
@@ -9151,7 +9151,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/approachcustom.svg</normaloff>:/littlenavmap/resources/icons/approachcustom.svg</iconset>
    </property>
    <property name="text">
-    <string>Create approach</string>
+    <string>Add custom approach for %1</string>
    </property>
    <property name="toolTip">
     <string>Add a custom approach to the flight plan</string>
@@ -9208,7 +9208,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/routeactiveleg.svg</normaloff>:/littlenavmap/resources/icons/routeactiveleg.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Activate Flight Plan Leg</string>
+    <string>&amp;Activate Flight Plan Leg to %1</string>
    </property>
    <property name="toolTip">
     <string>Activate Flight Plan Leg</string>
@@ -10055,7 +10055,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/trafficpattern.svg</normaloff>:/littlenavmap/resources/icons/trafficpattern.svg</iconset>
    </property>
    <property name="text">
-    <string>Add Airport &amp;Traffic Pattern at %1 ...</string>
+    <string>Add &amp;Traffic Pattern at %1 ...</string>
    </property>
    <property name="toolTip">
     <string>Show Airport traffic pattern for a runway at this airport</string>
@@ -11432,13 +11432,13 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Ctrl+Alt+Shift+M</string>
    </property>
   </action>
-  <action name="actionSearchShowInformationAirport">
+  <action name="actionSearchLogShowInformationAirport">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/globals.svg</normaloff>:/littlenavmap/resources/icons/globals.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Information for Airport</string>
+    <string>Show &amp;Information for %1</string>
    </property>
    <property name="toolTip">
     <string>Show information about the airport</string>
@@ -11447,13 +11447,13 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Show information about the airport</string>
    </property>
   </action>
-  <action name="actionSearchShowOnMapAirport">
+  <action name="actionSearchLogShowOnMapAirport">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/showonmap.svg</normaloff>:/littlenavmap/resources/icons/showonmap.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Airport on &amp;Map</string>
+    <string>Show %1 on &amp;Map</string>
    </property>
    <property name="toolTip">
     <string>Show the airport on the map</string>
@@ -11984,7 +11984,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</iconset>
    </property>
    <property name="text">
-    <string>Set as &amp;Flight Plan Departure</string>
+    <string>Set %1 as &amp;Departure</string>
    </property>
    <property name="toolTip">
     <string>Set this as departure for the flight plan</string>
@@ -12002,7 +12002,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</iconset>
    </property>
    <property name="text">
-    <string>Set as Flight Plan &amp;Destination</string>
+    <string>Set %1 as &amp;Destination</string>
    </property>
    <property name="toolTip">
     <string>Set this as destination for the flight plan</string>
@@ -12020,7 +12020,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</iconset>
    </property>
    <property name="text">
-    <string>Add as Flight Plan Alternate</string>
+    <string>Add %1 as Alternate</string>
    </property>
    <property name="toolTip">
     <string>Add this airport as alternate destination for the flight plan</string>
@@ -12038,7 +12038,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</iconset>
    </property>
    <property name="text">
-    <string>Set %1 as &amp;Flight Plan Departure</string>
+    <string>Set %1 as &amp;Departure</string>
    </property>
    <property name="toolTip">
     <string>Set this as departure for the flight plan</string>
@@ -12053,7 +12053,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</iconset>
    </property>
    <property name="text">
-    <string>Set %1 as Flight Plan &amp;Destination</string>
+    <string>Set %1 as &amp;Destination</string>
    </property>
    <property name="toolTip">
     <string>Set this as destination for the flight plan</string>
@@ -12068,7 +12068,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</iconset>
    </property>
    <property name="text">
-    <string>Add %1 as Flight Plan Alternate</string>
+    <string>Add %1 as Alternate</string>
    </property>
    <property name="toolTip">
     <string>Add this airport as alternate destination for the flight plan</string>
@@ -12284,7 +12284,7 @@ Disabled if a navdatabase does not allow it.</string>
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupRouteCalc"/>
-  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
  </buttongroups>
 </ui>

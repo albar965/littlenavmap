@@ -48,23 +48,24 @@ public:
   Column(const QString& columnName, QWidget *widget, const QString& columnDisplayName = QString());
 
   /* Column can be used in filters */
-  Column& filter(bool b = true);
+  Column& filter(bool value = true);
+  Column& filterByBuilder(bool value = true);
 
   /* Column like ident can override other filters */
-  Column& override (bool b = true);
+  Column& override (bool value = true);
   Column& minOverrideLength(int val = -1);
 
   /* Table can not be sorted by this column */
-  Column& noSort(bool b = true);
+  Column& noSort(bool value = true);
 
   /* Column is part of default view */
-  Column& noDefault(bool b = true);
+  Column& noDefault(bool value = true);
 
   /* Column is hidden in view */
-  Column& hidden(bool b = true);
+  Column& hidden(bool value = true);
 
   /* Column is defining sort order in default view */
-  Column& defaultSort(bool b = true);
+  Column& defaultSort(bool value = true);
 
   /* Sort function for column */
   Column& sortFunc(const QString& sortFuncAsc, const QString& sortFuncDesc);
@@ -99,6 +100,11 @@ public:
   bool isFilter() const
   {
     return colCanBeFiltered;
+  }
+
+  bool isFilterByBuilder() const
+  {
+    return colCanBeFilteredBuilder;
   }
 
   bool isNoSort() const
@@ -257,6 +263,7 @@ private:
   std::function<float(float value)> unitConvert = nullptr;
 
   bool colCanBeFiltered = false;
+  bool colCanBeFilteredBuilder = false;
   bool colCanNotBeSorted = false;
   bool colIsNoDefaultColumn = false;
   bool colIsDefaultSortColumn = false;

@@ -56,10 +56,10 @@ public:
   void filterByBuilder();
 
   /* Creates an include filer for value at index in the table */
-  void filterIncluding(QModelIndex index);
+  void filterIncluding(QModelIndex index, bool builder);
 
   /* Creates an exclude filer for value at index in the table */
-  void filterExcluding(QModelIndex index);
+  void filterExcluding(QModelIndex index, bool builder);
 
   /* Clear all filters, sort order and go back to default view */
   void resetView();
@@ -196,13 +196,13 @@ private:
 
   virtual void sort(int column, Qt::SortOrder order) override;
 
-  void filterBy(bool exclude, QString whereCol, QVariant whereValue);
+  void filterBy(bool exclude, QString whereCol, QVariant whereValue, bool builder);
   QString buildColumnList(const atools::sql::SqlRecord& tableCols);
   QString buildWhere(const atools::sql::SqlRecord& tableCols, QVector<const Column *>& overridingColumns);
   QString buildWhereValue(const WhereCondition& cond);
   void buildQuery();
   void clearWhereConditions();
-  void filterBy(QModelIndex index, bool exclude);
+  void filterBy(QModelIndex index, bool exclude, bool builder);
   QString  sortOrderToSql(Qt::SortOrder order);
   QVariant defaultDataHandler(int, int, const Column *, const QVariant&,
                               const QVariant& displayRoleValue, Qt::ItemDataRole role) const;

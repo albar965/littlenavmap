@@ -164,7 +164,14 @@ public:
     return type;
   }
 
+  /* Type like Airport, NDB (MH) or VOR (H) */
   QString getMapObjectTypeName() const;
+
+  /* Type like Airport, NDB or VOR */
+  QString getMapObjectTypeNameShort() const;
+
+  /* Display text usable for menu items */
+  QString getDisplayText(int elideName = 100) const;
 
   /* Get airport or empty airport object if not an airport. Use position.isValid to check for empty */
   const map::MapAirport& getAirport() const
