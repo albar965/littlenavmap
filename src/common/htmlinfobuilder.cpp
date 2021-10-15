@@ -189,11 +189,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     routeWindText(html, *route, airport.routeIndex);
   }
 
-  // Add bearing/distance to table
-  if(!print && !info && airport.routeIndex == -1) // Only tooltip
-    distanceToRouteText(airport.position, html);
-
-  if(!print)
+  if(!print && info)
     bearingToUserText(airport.position, airport.magvar, html);
 
   // Idents and codes ======================
@@ -2734,7 +2730,7 @@ bool HtmlInfoBuilder::bearingToUserText(const ageo::Pos& pos, float magVar, Html
     float distance = pos.distanceMeterTo(userAircraft.getPosition());
     if(distance < MAX_DISTANCE_FOR_BEARING_METER)
     {
-      html.row2(tr("Bearing and distance to user:"),
+      html.row2(tr("Bearing and distance to user aircraft:"),
                 tr("%1, %2").
                 arg(courseTextFromTrue(normalizeCourse(userAircraft.getPosition().angleDegTo(pos)), magVar)).
                 arg(Unit::distMeter(distance)),
