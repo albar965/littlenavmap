@@ -1053,8 +1053,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>560</width>
-             <height>486</height>
+             <width>572</width>
+             <height>508</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_12">
@@ -1094,6 +1094,19 @@ This does not affect the map window which can be changed separately on the optio
                <property name="bottomMargin">
                 <number>2</number>
                </property>
+               <item>
+                <widget class="QCheckBox" name="checkBoxOptionsMapTooltipVerbose">
+                 <property name="toolTip">
+                  <string>Show detailed information about map objects if checked</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Verbose tooltips</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
                <item>
                 <widget class="QCheckBox" name="checkBoxOptionsMapTooltipUserAircraft">
                  <property name="toolTip">
@@ -3882,8 +3895,8 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>580</width>
+             <height>425</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -4285,8 +4298,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>477</width>
+             <height>363</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -4618,8 +4631,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>270</width>
+             <height>302</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -4829,8 +4842,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>416</width>
+             <height>368</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -5307,8 +5320,8 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>327</width>
+             <height>311</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -5604,8 +5617,8 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>450</width>
+             <height>234</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -5791,7 +5804,7 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
+             <width>491</width>
              <height>470</height>
             </rect>
            </property>

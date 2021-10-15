@@ -112,12 +112,13 @@ class HtmlInfoBuilder
 
 public:
   /*
-   * @param mapDbQuery Initialized database query object
-   * @param infoDbQuery Initialized database query object
-   * @param formatInfo true if this should generate HTML for QTextEdits or QWebBrowser
+   * @param infoParam Generate text for information displays. Implies verbose.
+   * @param printParam Print text without links.
+   * @param verboseParam Detailed tooltip text with info set to false
    * (i.e. generate alternating background color for tables)
    */
-  HtmlInfoBuilder(QWidget *parent, MapPaintWidget *mapWidgetParam, bool formatInfo, bool formatPrint = false);
+  HtmlInfoBuilder(QWidget *parent, MapPaintWidget *mapWidgetParam, bool infoParam, bool printParam = false,
+                  bool verboseParam = true);
 
   virtual ~HtmlInfoBuilder();
 
@@ -301,6 +302,9 @@ public:
     symbolSizeTitle = value;
   }
 
+  /* Add bearing and distance to user and last flight plan leg in a table if pos is valid */
+  void bearingAndDistanceTexts(const atools::geo::Pos& pos, float magvar, atools::util::HtmlBuilder& html, bool noBearing);
+
 private:
   void head(atools::util::HtmlBuilder& html, const QString& text) const;
 
@@ -322,11 +326,11 @@ private:
   void addCoordinates(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html) const;
   void addCoordinates(const atools::geo::Pos& pos, atools::util::HtmlBuilder& html) const;
 
-  /* Bearing to simulator aircraft if connected */
-  void bearingToUserText(const atools::geo::Pos& pos, float magVar, atools::util::HtmlBuilder& html) const;
+  /* Bearing to simulator aircraft if connected. Returns true if text was addded. */
+  bool bearingToUserText(const atools::geo::Pos& pos, float magVar, atools::util::HtmlBuilder& html) const;
 
-  /* Distance to last flight plan waypoint */
-  void distanceToRouteText(const atools::geo::Pos& pos, atools::util::HtmlBuilder& html) const;
+  /* Distance to last flight plan waypoint. Returns true if text was addded. */
+  bool distanceToRouteText(const atools::geo::Pos& pos, atools::util::HtmlBuilder& html) const;
 
   void navaidTitle(atools::util::HtmlBuilder& html, const QString& text,
                    atools::util::html::Flags flags = atools::util::html::NONE) const;
@@ -422,7 +426,7 @@ private:
   AirportQuery *airportQuerySim, *airportQueryNav;
   InfoQuery *infoQuery;
   atools::fs::util::MorseCode *morse;
-  bool info, print;
+  bool info, print, verbose;
   QLocale locale;
 };
 

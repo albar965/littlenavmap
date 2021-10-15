@@ -31,6 +31,9 @@ class Route;
 class MainWindow;
 
 namespace atools {
+namespace geo {
+class Pos;
+}
 namespace util {
 class HtmlBuilder;
 }
@@ -61,8 +64,7 @@ public:
    * displayed in airport diagrams.
    * @return HTML code of the tooltip
    */
-  QString buildTooltip(const map::MapResult& mapSearchResult, const Route& route,
-                       bool airportDiagram);
+  QString buildTooltip(const map::MapResult& mapSearchResult, const atools::geo::Pos& pos, const Route& route, bool airportDiagram);
 
 private:
   bool checkText(atools::util::HtmlBuilder& html);
@@ -71,6 +73,7 @@ private:
 
   MainWindow *mainWindow = nullptr;
   WeatherReporter *weather;
+
 };
 
 #endif // LITTLENAVMAP_MAPTOOLTIP_H

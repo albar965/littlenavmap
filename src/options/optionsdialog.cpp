@@ -292,6 +292,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxDisplayOnlineFileLookup,
      ui->checkBoxOptionsMapEmptyAirports,
      ui->checkBoxOptionsMapEmptyAirports3D,
+     ui->checkBoxOptionsMapTooltipVerbose,
      ui->checkBoxOptionsMapTooltipUserAircraft,
      ui->checkBoxOptionsMapTooltipAiAircraft,
      ui->checkBoxOptionsMapTooltipAirport,
@@ -1654,8 +1655,9 @@ void OptionsDialog::widgetsToOptionData()
   data.cacheUserAirspacePath = ui->lineEditCacheUserAirspacePath->text();
   data.cacheUserAirspaceExtensions = ui->lineEditCacheUserAirspaceExtensions->text();
 
-  data.displayTooltipOptions.setFlag(optsd::TOOLTIP_AIRCRAFT_USER,
-                                     ui->checkBoxOptionsMapTooltipUserAircraft->isChecked());
+  data.displayTooltipOptions.setFlag(optsd::TOOLTIP_VERBOSE, ui->checkBoxOptionsMapTooltipVerbose->isChecked());
+
+  data.displayTooltipOptions.setFlag(optsd::TOOLTIP_AIRCRAFT_USER, ui->checkBoxOptionsMapTooltipUserAircraft->isChecked());
   data.displayTooltipOptions.setFlag(optsd::TOOLTIP_AIRCRAFT_AI, ui->checkBoxOptionsMapTooltipAiAircraft->isChecked());
 
   data.displayTooltipOptions.setFlag(optsd::TOOLTIP_AIRPORT, ui->checkBoxOptionsMapTooltipAirport->isChecked());
@@ -1914,6 +1916,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->lineEditCacheUserAirspacePath->setText(data.cacheUserAirspacePath);
   ui->lineEditCacheUserAirspaceExtensions->setText(data.cacheUserAirspaceExtensions);
 
+  ui->checkBoxOptionsMapTooltipVerbose->setChecked(data.displayTooltipOptions.testFlag(optsd::TOOLTIP_VERBOSE));
   ui->checkBoxOptionsMapTooltipUserAircraft->setChecked(data.displayTooltipOptions.testFlag(optsd::TOOLTIP_AIRCRAFT_USER));
   ui->checkBoxOptionsMapTooltipAiAircraft->setChecked(data.displayTooltipOptions.testFlag(optsd::TOOLTIP_AIRCRAFT_AI));
 
