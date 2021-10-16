@@ -507,10 +507,6 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
 {
   const static QRegularExpression REQUIRED_COL_MATCH(".*/\\*([A-Za-z0-9_]+)\\*/.*");
 
-  // Clear all conditions which were created by the builder
-  for(const QString& col : queryBuilder.getColumns())
-    whereConditionMap.remove(col);
-
   // Used to build SQL later - does not contain query builder columns and overrides are removed
   QHash<QString, WhereCondition> tempWhereConditionMap(whereConditionMap);
   overrideModeActive = false;
