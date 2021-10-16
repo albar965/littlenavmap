@@ -3316,31 +3316,6 @@ void MapWidget::addRangeRing(const atools::geo::Pos& pos)
   mainWindow->setStatusMessage(tr("Added range rings for position."));
 }
 
-void MapWidget::workOffline(bool offline)
-{
-  qDebug() << "Work offline" << offline;
-  model()->setWorkOffline(offline);
-
-  if(NavApp::isMainWindowVisible() && offline)
-  {
-    // User changed option manually after startup - this is not triggerd by restore state
-    atools::gui::Dialog(this).showWarnMsgBox(lnm::ACTIONS_OFFLINE_WARNING,
-                                             tr("<p><b>Note that online map themes like the OpenStreetMap "
-                                                  "cannot be used in offline mode.</b><br/><br/>"
-                                                  "You might see fuzzy or blocky maps.</p>"
-                                                  "<p>Use an offline map theme or disable <code>Work Offline<code/>.</p>"),
-                                             tr("Do not &show this dialog again."));
-  }
-
-  mainWindow->renderStatusUpdateLabel(Marble::RenderStatus::Complete, true /* forceUpdate */);
-
-  if(!offline)
-  {
-    reloadMap();
-    update();
-  }
-}
-
 void MapWidget::zoomInOut(bool directionIn, bool smooth)
 {
   // Reset context for full redraw when using drag and drop

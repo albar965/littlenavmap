@@ -94,8 +94,6 @@
     <addaction name="menuRecentKml"/>
     <addaction name="actionClearKml"/>
     <addaction name="separator"/>
-    <addaction name="actionWorkOffline"/>
-    <addaction name="separator"/>
     <addaction name="actionSaveMapAsImage"/>
     <addaction name="actionSaveMapAsImageAviTab"/>
     <addaction name="actionMapCopyClipboard"/>
@@ -8375,20 +8373,6 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Remove all Google Earth KML files from the map</string>
    </property>
   </action>
-  <action name="actionWorkOffline">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Work Offline</string>
-   </property>
-   <property name="toolTip">
-    <string>Work offline and stop loading of map data</string>
-   </property>
-   <property name="statusTip">
-    <string>Work offline and stop loading of map data</string>
-   </property>
-  </action>
   <action name="actionRouteTableCopy">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -11992,8 +11976,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>

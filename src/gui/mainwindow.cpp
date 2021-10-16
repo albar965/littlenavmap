@@ -1560,7 +1560,6 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionMapBack, &QAction::triggered, mapWidget, &MapWidget::historyBack);
   connect(ui->actionMapNext, &QAction::triggered, mapWidget, &MapWidget::historyNext);
-  connect(ui->actionWorkOffline, &QAction::toggled, mapWidget, &MapWidget::workOffline);
 
   connect(ui->actionMapMoreDetails, &QAction::triggered, mapWidget, &MapWidget::increaseMapDetail);
   connect(ui->actionMapLessDetails, &QAction::triggered, mapWidget, &MapWidget::decreaseMapDetail);
@@ -3912,9 +3911,6 @@ void MainWindow::restoreStateMain()
                        ui->actionShowAllowDocking, ui->actionShowAllowMoving, ui->actionWindowStayOnTop});
   widgetState.setBlockSignals(false);
 
-  // Load status and allow to send signals
-  widgetState.restore(ui->actionWorkOffline);
-
   firstApplicationStart = settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
 
   // Already loaded in constructor early to allow database creations
@@ -4101,7 +4097,7 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack,
                     ui->actionInfoApproachShowMissedAppr, ui->actionMapShowGrid, ui->actionMapShowCities,
                     ui->actionMapShowSunShading, ui->actionMapShowHillshading, ui->actionMapShowAirportWeather,
-                    ui->actionMapShowMinimumAltitude, ui->actionRouteEditMode, ui->actionWorkOffline,
+                    ui->actionMapShowMinimumAltitude, ui->actionRouteEditMode,
                     ui->actionRouteSaveSidStarWaypoints, ui->actionRouteSaveApprWaypoints,
                     ui->actionRouteSaveAirwayWaypoints, ui->actionLogdataCreateLogbook, ui->actionRunWebserver,
                     ui->actionSearchLogdataShowDirect, ui->actionSearchLogdataShowRoute,
