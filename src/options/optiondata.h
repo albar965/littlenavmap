@@ -1190,7 +1190,7 @@ private:
           weatherXplanePath, // lineEditOptionsWeatherXplanePath
           weatherNoaaUrl = "https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT",
           weatherVatsimUrl = "https://metar.vatsim.net/metar.php?id=ALL",
-          weatherIvaoUrl = "http://wx.ivao.aero/metar.php";
+          weatherIvaoUrl = "https://wx.ivao.aero/metar.php";
 
   QString cacheOfflineElevationPath, cacheUserAirspacePath, cacheUserAirspaceExtensions = "*.txt";
 

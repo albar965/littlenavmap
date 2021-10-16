@@ -4845,10 +4845,10 @@ If this field is empty, the default Active Sky weather file path will be used wh
                 <widget class="QLineEdit" name="lineEditOptionsWeatherIvaoUrl">
                  <property name="toolTip">
                   <string>Download URL for the IVAO weather file.
-Default is &quot;http://wx.ivao.aero/metar.php&quot;.</string>
+Default is &quot;https://wx.ivao.aero/metar.php&quot;.</string>
                  </property>
                  <property name="text">
-                  <string notr="true">http://wx.ivao.aero/metar.php</string>
+                  <string notr="true">https://wx.ivao.aero/metar.php</string>
                  </property>
                  <property name="cursorPosition">
                   <number>29</number>
