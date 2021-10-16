@@ -94,6 +94,8 @@
     <addaction name="menuRecentKml"/>
     <addaction name="actionClearKml"/>
     <addaction name="separator"/>
+    <addaction name="actionWorkOffline"/>
+    <addaction name="separator"/>
     <addaction name="actionSaveMapAsImage"/>
     <addaction name="actionSaveMapAsImageAviTab"/>
     <addaction name="actionMapCopyClipboard"/>
@@ -377,8 +379,6 @@
      <addaction name="actionMapShowNdb"/>
      <addaction name="actionMapShowWp"/>
      <addaction name="actionMapShowIls"/>
-     <addaction name="actionMapShowGls"/>
-     <addaction name="actionMapShowHolding"/>
      <addaction name="separator"/>
      <addaction name="actionMapShowVictorAirways"/>
      <addaction name="actionMapShowJetAirways"/>
@@ -1535,119 +1535,6 @@
                  <string>West</string>
                 </property>
                </item>
-              </widget>
-             </item>
-            </layout>
-           </item>
-           <item>
-            <widget class="Line" name="lineAirportFlightplanSearch">
-             <property name="frameShadow">
-              <enum>QFrame::Sunken</enum>
-             </property>
-             <property name="lineWidth">
-              <number>4</number>
-             </property>
-             <property name="midLineWidth">
-              <number>2</number>
-             </property>
-             <property name="orientation">
-              <enum>Qt::Horizontal</enum>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <layout class="QHBoxLayout" name="horizontalLayoutAirportFlightplanSearch">
-             <property name="spacing">
-              <number>2</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <item>
-              <widget class="QPushButton" name="pushButtonAirportFlightplanSearch">
-               <property name="sizePolicy">
-                <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
-                 <horstretch>0</horstretch>
-                 <verstretch>0</verstretch>
-                </sizepolicy>
-               </property>
-               <property name="maximumSize">
-                <size>
-                 <width>16777215</width>
-                 <height>23</height>
-                </size>
-               </property>
-               <property name="toolTip">
-                <string>Generate a random flight plan from this search result.</string>
-               </property>
-               <property name="statusTip">
-                <string>Generate a flight plan having a random departure and a random destination from this search result within the distance criteria given.</string>
-               </property>
-               <property name="text">
-                <string>&amp;Random Flight</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSpinBox" name="spinBoxAirportFlightplanMinSearch">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="toolTip">
-                <string>Minimum direct distance between airports for random flight.</string>
-               </property>
-               <property name="statusTip">
-                <string>Minimum direct distance between airports for random flight.</string>
-               </property>
-               <property name="whatsThis">
-                <string/>
-               </property>
-               <property name="showGroupSeparator" stdset="0">
-                <bool>true</bool>
-               </property>
-               <property name="suffix">
-                <string> %dist% min distance</string>
-               </property>
-               <property name="maximum">
-                <number>20490</number>
-               </property>
-               <property name="singleStep">
-                <number>10</number>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QSpinBox" name="spinBoxAirportFlightplanMaxSearch">
-               <property name="enabled">
-                <bool>true</bool>
-               </property>
-               <property name="toolTip">
-                <string>Maximum direct distance between airports for random flight.</string>
-               </property>
-               <property name="statusTip">
-                <string>Maximum direct distance between airports for random flight.</string>
-               </property>
-               <property name="specialValueText">
-                <string/>
-               </property>
-               <property name="showGroupSeparator" stdset="0">
-                <bool>true</bool>
-               </property>
-               <property name="suffix">
-                <string> %dist% max distance</string>
-               </property>
-               <property name="minimum">
-                <number>10</number>
-               </property>
-               <property name="maximum">
-                <number>20500</number>
-               </property>
-               <property name="singleStep">
-                <number>10</number>
-               </property>
-               <property name="value">
-                <number>20500</number>
-               </property>
               </widget>
              </item>
             </layout>
@@ -4461,16 +4348,6 @@ Matches any visited airport.</string>
           </layout>
          </item>
          <item>
-          <widget class="QTextBrowser" name="textBrowserViewRoute">
-           <property name="placeholderText">
-            <string>No flight plan.</string>
-           </property>
-           <property name="openLinks">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QTableView" name="tableViewRoute">
            <property name="font">
             <font>
@@ -5605,8 +5482,6 @@ relation to shown airport</string>
    <addaction name="actionMapShowNdb"/>
    <addaction name="actionMapShowWp"/>
    <addaction name="actionMapShowIls"/>
-   <addaction name="actionMapShowGls"/>
-   <addaction name="actionMapShowHolding"/>
    <addaction name="actionMapShowVictorAirways"/>
    <addaction name="actionMapShowJetAirways"/>
    <addaction name="actionMapShowTracks"/>
@@ -5714,7 +5589,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>8</y>
+              <y>42</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -8024,7 +7899,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Ctrl+Alt+F</string>
    </property>
   </action>
-  <action name="actionMapRouteAirportStart">
+  <action name="actionRouteAirportStart">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</iconset>
@@ -8039,7 +7914,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Set this as departure for the flight plan</string>
    </property>
   </action>
-  <action name="actionMapRouteAirportDest">
+  <action name="actionRouteAirportDest">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</iconset>
@@ -8498,6 +8373,20 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="statusTip">
     <string>Remove all Google Earth KML files from the map</string>
+   </property>
+  </action>
+  <action name="actionWorkOffline">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Work Offline</string>
+   </property>
+   <property name="toolTip">
+    <string>Work offline and stop loading of map data</string>
+   </property>
+   <property name="statusTip">
+    <string>Work offline and stop loading of map data</string>
    </property>
   </action>
   <action name="actionRouteTableCopy">
@@ -10272,13 +10161,13 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/ils.svg</normaloff>:/littlenavmap/resources/icons/ils.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;ILS or GLS/RNP</string>
+    <string>Show &amp;ILS</string>
    </property>
    <property name="toolTip">
-    <string>Show ILS or other vertical guidance aid slope at destination if a procedure is selected</string>
+    <string>Show ILS slope at destination if a procedure is selected</string>
    </property>
    <property name="statusTip">
-    <string>Show ILS or other vertical guidance aid slope at destination if a procedure is selected</string>
+    <string>Show ILS slope at destination if a procedure is selected</string>
    </property>
   </action>
   <action name="actionAircraftPerformanceLoad">
@@ -10780,7 +10669,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Do not download or read wind files</string>
    </property>
   </action>
-  <action name="actionMapRouteAirportAlternate">
+  <action name="actionRouteAirportAlternate">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</iconset>
@@ -11113,7 +11002,7 @@ Disabled if a navdatabase does not allow it.</string>
   <action name="actionMapHold">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/enroutehold.svg</normaloff>:/littlenavmap/resources/icons/enroutehold.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/hold.svg</normaloff>:/littlenavmap/resources/icons/hold.svg</iconset>
    </property>
    <property name="text">
     <string>Add &amp;Holding at %1 ...</string>
@@ -11918,164 +11807,6 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Disable weather source to display weather icons on the map</string>
    </property>
   </action>
-  <action name="actionAirportSearchShowFlightplanOptions">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Random Flight</string>
-   </property>
-   <property name="toolTip">
-    <string>Show random flight plan options</string>
-   </property>
-   <property name="statusTip">
-    <string>Show random flight plan options</string>
-   </property>
-  </action>
-  <action name="actionMapShowGls">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/gls.svg</normaloff>:/littlenavmap/resources/icons/gls.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show &amp;GLS Approach Paths</string>
-   </property>
-   <property name="toolTip">
-    <string>Show GLS approach paths on map</string>
-   </property>
-   <property name="statusTip">
-    <string>Show GLS approach paths on map</string>
-   </property>
-  </action>
-  <action name="actionMapShowHolding">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>false</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/enroutehold.svg</normaloff>:/littlenavmap/resources/icons/enroutehold.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show &amp;Holdings</string>
-   </property>
-   <property name="toolTip">
-    <string>Show holdings on map</string>
-   </property>
-   <property name="statusTip">
-    <string>Show holdings on map</string>
-   </property>
-  </action>
-  <action name="actionSearchRouteAirportStart">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Set as &amp;Flight Plan Departure</string>
-   </property>
-   <property name="toolTip">
-    <string>Set this as departure for the flight plan</string>
-   </property>
-   <property name="statusTip">
-    <string>Set this as departure for the flight plan</string>
-   </property>
-   <property name="shortcut">
-    <string>Alt+Shift+D</string>
-   </property>
-  </action>
-  <action name="actionSearchRouteAirportDest">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Set as Flight Plan &amp;Destination</string>
-   </property>
-   <property name="toolTip">
-    <string>Set this as destination for the flight plan</string>
-   </property>
-   <property name="statusTip">
-    <string>Set this as destination for the flight plan</string>
-   </property>
-   <property name="shortcut">
-    <string>Alt+Shift+N</string>
-   </property>
-  </action>
-  <action name="actionSearchRouteAirportAlternate">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Add as Flight Plan Alternate</string>
-   </property>
-   <property name="toolTip">
-    <string>Add this airport as alternate destination for the flight plan</string>
-   </property>
-   <property name="statusTip">
-    <string>Add this airport as alternate destination for the flight plan</string>
-   </property>
-   <property name="shortcut">
-    <string>Alt+Shift+A</string>
-   </property>
-  </action>
-  <action name="actionSearchLogRouteAirportStart">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</normaloff>:/littlenavmap/resources/icons/airportroutedest.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Set %1 as &amp;Flight Plan Departure</string>
-   </property>
-   <property name="toolTip">
-    <string>Set this as departure for the flight plan</string>
-   </property>
-   <property name="statusTip">
-    <string>Set this as departure for the flight plan</string>
-   </property>
-  </action>
-  <action name="actionSearchLogRouteAirportDest">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</normaloff>:/littlenavmap/resources/icons/airportroutestart.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Set %1 as Flight Plan &amp;Destination</string>
-   </property>
-   <property name="toolTip">
-    <string>Set this as destination for the flight plan</string>
-   </property>
-   <property name="statusTip">
-    <string>Set this as destination for the flight plan</string>
-   </property>
-  </action>
-  <action name="actionSearchLogRouteAirportAlternate">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</normaloff>:/littlenavmap/resources/icons/airportroutealt.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Add %1 as Flight Plan Alternate</string>
-   </property>
-   <property name="toolTip">
-    <string>Add this airport as alternate destination for the flight plan</string>
-   </property>
-   <property name="statusTip">
-    <string>Add this airport as alternate destination for the flight plan</string>
-   </property>
-  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12261,8 +11992,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
-  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

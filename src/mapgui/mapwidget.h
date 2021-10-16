@@ -170,6 +170,9 @@ public:
   void addNavRangeRing(const atools::geo::Pos& pos, map::MapTypes type, const QString& displayIdent,
                        const QString& frequency, float range);
 
+  /* If true stop downloading map data */
+  void workOffline(bool offline);
+
   /* Remove range rings on index, print message and update map */
   void removeRangeRing(int index);
 
