@@ -63,12 +63,12 @@ LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("logbook_id").hidden()).
   append(Column("departure_time", tr("Departure\nReal Time")).defaultSort(true).defaultSortOrder(Qt::DescendingOrder)).
   append(Column("departure_time_sim", tr("Departure\nSim. Time UTC"))).
-  append(Column("departure_ident", ui->lineEditLogdataDeparture, tr("Departure\nICAO")).filter()).
+  append(Column("departure_ident", ui->lineEditLogdataDeparture, tr("Departure\nICAO"))).
   append(Column("departure_name", tr("Departure"))).
   append(Column("departure_runway").hidden()).
   append(Column("destination_time", tr("Destination\nReal Time"))).
   append(Column("destination_time_sim", tr("Destination\nSim. Time UTC"))).
-  append(Column("destination_ident", ui->lineEditLogdataDestination, tr("Destination\nICAO")).filter()).
+  append(Column("destination_ident", ui->lineEditLogdataDestination, tr("Destination\nICAO"))).
   append(Column("destination_name", tr("Destination"))).
   append(Column("destination_runway").hidden()).
   append(Column("aircraft_name", ui->lineEditLogdataAircraftModel, tr("Aircraft\nModel")).filter()).
