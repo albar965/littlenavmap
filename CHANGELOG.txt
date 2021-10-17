@@ -16,6 +16,8 @@ scenery library as well as other fixes and improvements.
 * Fixed crashes when loading scenery library of MSFS SU6 Beta. #799
 * Corrected MSFS airport detection. Now ignoring airport closed flag which removes many
   POI wrongly detected as airports.
+* Reduced warnings for unknown BGL records to avoid flooding the log with messages when
+  reading scenery.
 
 ### Map
 
