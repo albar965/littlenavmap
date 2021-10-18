@@ -253,9 +253,6 @@ void checkAndMigrateSettings()
       if(optionsVersion <= Version("2.6.16"))
       {
         qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before or equal to 2.6.16";
-        removeAndLog(settings, "OptionsDialog/DisplayOptionsuserAircraft_2097152"); // ITEM_USER_AIRCRAFT_COORDINATES
-        removeAndLog(settings, "OptionsDialog/DisplayOptionsAiAircraft_2"); // ITEM_AI_AIRCRAFT_COORDINATES
-        removeAndLog(settings, "Route/View_tableViewRoute");
         removeAndLog(settings, "OptionsDialog/Widget_lineEditOptionsWeatherIvaoUrl");
         removeAndLog(settings, "Map/DetailFactor");
       }
