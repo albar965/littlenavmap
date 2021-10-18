@@ -6,23 +6,23 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 # Version 2.6.17
 
-This version adapts *Little Navmap* to the latest MSFS changes causing crashes when loading the
-scenery library as well as other fixes and improvements.
+This release adapts *Little Navmap* to the latest MSFS changes that cause crashes when loading the
+scenery library, as well as other fixes and improvements that also affect X-Plane.
 
 ## Changes from 2.6.16 to 2.6.17
 
 ### MSFS
 
-* Fixed crashes when loading scenery library of MSFS SU6 Beta. #799
+* Fixed crashes when loading scenery library of MSFS SU6. #799
 * Corrected MSFS airport detection. Now ignoring airport closed flag which removes many
   POI wrongly detected as airports.
-* Reduced warnings for unknown BGL records to avoid flooding the log with messages when
-  reading scenery.
+* Reduced warnings for unknown BGL records to avoid flooding the log with messages and
+  crashing when reading scenery.
 
 ### Map
 
 * Limited minimum detail level to -2 to avoid confusion about missing map features when user
-  selects a too low value. Now resetting details on update to default.
+  selects a too low value. Now resetting details to default on update.
 * Fixed issue where runway offset markings were not visible on unknown runway surfaces like when
   using scenery library mode `Use Navigraph for all Features`.
 * Corrected drawing for logbook entries where departure or destination airport could not be found
@@ -30,7 +30,8 @@ scenery library as well as other fixes and improvements.
 
 ### Options
 
-* Changed IVAO weather URL to use HTTPS. The URL is now reset to the new default on first startup.
+* Changed IVAO weather URL to use HTTPS (secure connection). The URL is now reset to the new
+  default on first startup.
 * Fixed issue where AI and user aircraft tooltip settings were not restored in options.
 
 ### Flight Plan
@@ -39,10 +40,8 @@ scenery library as well as other fixes and improvements.
   cases. Example: `PAYA MDO ODK CDB ELF DUT PADK` where CDB and ELF are too close resulting in
   zig-zag routing.
 * Added heading for departure parking position to LNMPLN flight plan format.
-* Updated flight plan schema file (https://www.littlenavmap.org/schema/lnmpln.xsd) and LNMPLN file
-  format documentation in user manual.
 * Adjusted cost factor for flight plan calculation to avoid direct calculation (no airways at all)
-  on the last two ticks of the slider.
+  on the last two ticks of the slider. Default value for slider after installation is not centered.
 * Fixed issues where departure position type (runway, parking, helipad or airport) was not saved in
   LNMPLN after changing start position to a runway or assigning departure airport. Departure position
   type now set correctly to `runway` after assigning a runway automatically.
@@ -50,10 +49,10 @@ scenery library as well as other fixes and improvements.
 ### Logbook Search
 
 * Fixed broken search for departure and destination airport in logbook.
-* X-Plane: Fixed several issues where an airport using official ids (ICAO, FAA, IATA or local) was
-  not found in logbook context menu, logbook edit dialog and information display for log entries.
 * Disabled not working airport filters in logbook search context menu (`Filter by ...` in context
   menu). These will be enabled again in a later version.
+* X-Plane: Fixed several issues where an airport using official ids (ICAO, FAA, IATA or local) was
+  not found in logbook context menu, logbook edit dialog and information display for log entries.
 
 ### Other and User Interface
 
@@ -68,18 +67,20 @@ scenery library as well as other fixes and improvements.
 * X-Plane: Adjusted display options for official airport codes. IATA is now used before internal
   ident in all cases. Route description now shows IATA code as well if available.
 * Adjustments to flight plan and aircraft centering when getting close to ground while flying.
+  Now avoiding too close zoom.
 * Added Pilot Nav to airport link list.
 * Removed `Work offline` option in file menu since it is of limited use and causes too many
   problems if users check this inadvertently.
 * Fixed bug with wrong airspace assignment for class F and G when reading OpenAir files. #797
-* Better coordinate parsing. Removing separators `|`, `;`, `_` and `:` now.
-* Fixed several typos in user interface.
-* Other small user interface improvements.
+* Better coordinate parsing. Removing separators `|`, `;`, `_` and `:` for latitude and longitude now.
+* Fixed several typos in user interface and more small user interface improvements.
 
 ### Build and Development
 
 * Now using Qt libraries 5.15.2.
 * Changed build to use OpenSSL library provided by the Qt installer on Windows.
+* Updated flight plan schema file (https://www.littlenavmap.org/schema/lnmpln.xsd) and LNMPLN file
+  format documentation in the user manual.
 
 ===============================================================================
 
