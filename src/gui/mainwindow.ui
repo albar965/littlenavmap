@@ -6617,7 +6617,7 @@ unusable airways (e.g. due to altitude restrictions).</string>
               <number>1</number>
              </property>
              <property name="value">
-              <number>0</number>
+              <number>5</number>
              </property>
              <property name="tracking">
               <bool>true</bool>
@@ -12283,8 +12283,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
-  <buttongroup name="buttonGroupRouteCalcType"/>
  </buttongroups>
 </ui>
