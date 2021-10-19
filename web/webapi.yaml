@@ -502,7 +502,7 @@ components:
       description: List of map features
       properties:
         airports:
-          description: the zoom value of the map inside LNM UI
+          description: airports list
           type: object
           properties:
             count:
@@ -513,6 +513,42 @@ components:
               items: 
                 type: object
                 $ref: '#/components/schemas/MapAirportFeature'
+        ndbs:
+          description: NDBs list
+          type: object
+          properties:
+            count:
+              type: number
+              example: 361
+            result:
+              type: array
+              items: 
+                type: object
+                $ref: '#/components/schemas/MapNDBFeature'
+        vors:
+          description: VORs list
+          type: object
+          properties:
+            count:
+              type: number
+              example: 361
+            result:
+              type: array
+              items: 
+                type: object
+                $ref: '#/components/schemas/MapVORFeature'
+        markers:
+          description: markers list
+          type: object
+          properties:
+            count:
+              type: number
+              example: 361
+            result:
+              type: array
+              items: 
+                type: object
+                $ref: '#/components/schemas/MapMarkerFeature'
     MapAirportFeature:
       type: object
       description: Single airport list entry
@@ -529,6 +565,63 @@ components:
           description: The airpotrts name
           type: string
           example: "Dornbirn"
+        position:
+          description: The airports geographical position
+          $ref: '#/components/schemas/Coordinates'
+    MapNDBFeature:
+      type: object
+      description: Single NDB list entry
+      properties:
+        elevation:
+          description: the NDB elevation in ft
+          type: number
+          example: 3.40
+        ident:
+          description: The NDB ident (ICAO)
+          type: string
+          example: "OB"
+        name:
+          description: The NDB name
+          type: string
+          example: "Overberg"
+        position:
+          description: The NDB geographical position
+          $ref: '#/components/schemas/Coordinates'
+    MapVORFeature:
+      type: object
+      description: Single VOR list entry
+      properties:
+        elevation:
+          description: the VOR elevation in ft
+          type: number
+          example: 659
+        ident:
+          description: The VOR ident (ICAO)
+          type: string
+          example: "GRV"
+        name:
+          description: The VOR name
+          type: string
+          example: "George"
+        position:
+          description: The VOR geographical position
+          $ref: '#/components/schemas/Coordinates'
+    MapMarkerFeature:
+      type: object
+      description: Single marker list entry
+      properties:
+        elevation:
+          description: the marker elevation in ft
+          type: number
+          example: 0
+        ident:
+          description: The marker ident (ICAO)
+          type: string
+          example: "AL"
+        type:
+          description: The marker type
+          type: string
+          example: "OUTER"
         position:
           description: The airports geographical position
           $ref: '#/components/schemas/Coordinates'
