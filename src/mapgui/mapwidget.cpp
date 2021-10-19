@@ -478,12 +478,25 @@ void MapWidget::showTooltip(bool update)
   if(databaseLoadStatus)
     return;
 
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "tooltipPos" << tooltipPos;
+#endif
+
   // Try to avoid spurious tooltip events
   if(update && !QToolTip::isVisible())
     return;
 
+  atools::geo::Pos pos;
+  qreal lon, lat;
+  QPoint point = mapFromGlobal(tooltipPos);
+  if(geoCoordinates(point.x(), point.y(), lon, lat))
+  {
+    pos.setLonX(static_cast<float>(lon));
+    pos.setLatY(static_cast<float>(lat));
+  }
+
   // Build a new tooltip HTML for weather changes or aircraft updates
-  QString text = mapTooltip->buildTooltip(mapSearchResultTooltip, NavApp::getRouteConst(),
+  QString text = mapTooltip->buildTooltip(mapSearchResultTooltip, pos, NavApp::getRouteConst(),
                                           paintLayer->getMapLayer()->isAirportDiagram());
 
   if(!text.isEmpty() && !tooltipPos.isNull())
