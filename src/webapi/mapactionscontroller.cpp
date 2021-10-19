@@ -128,8 +128,15 @@ WebApiResponse MapActionsController::featuresAction(WebApiRequest request){
     // Extract results created during dummy image request
     const QList<map::MapAirport> airports = *mapPaintWidget->getMapQuery()->getAirportsByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,map::NONE,overflow);
 
+    const QList<map::MapNdb> ndbs = *mapPaintWidget->getMapQuery()->getNdbsByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,overflow);
+    const QList<map::MapVor> vors = *mapPaintWidget->getMapQuery()->getVorsByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,overflow);
+    const QList<map::MapMarker> markers = *mapPaintWidget->getMapQuery()->getMarkersByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,overflow);
+
     MapFeaturesData data = {
-        airports
+        airports,
+        ndbs,
+        vors,
+        markers
     };
 
     response.body = infoBuilder->features(data);

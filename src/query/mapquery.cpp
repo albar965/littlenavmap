@@ -791,6 +791,14 @@ const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const 
   return &vorCache.list;
 }
 
+const QList<map::MapVor> *MapQuery::getVorsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer,
+                                            bool lazy, bool& overflow)
+{
+  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(),rect.getSouth(),rect.getEast(), rect.getWest());
+  return getVors(latLonBox,mapLayer,lazy,overflow);
+}
+
+
 const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                             bool lazy, bool& overflow)
 {
@@ -817,6 +825,13 @@ const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const 
   }
   overflow = ndbCache.validate(queryMaxRows);
   return &ndbCache.list;
+}
+
+const QList<map::MapNdb> *MapQuery::getNdbsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer,
+                                            bool lazy, bool& overflow)
+{
+  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(),rect.getSouth(),rect.getEast(), rect.getWest());
+  return getNdbs(latLonBox,mapLayer,lazy,overflow);
 }
 
 const QList<map::MapUserpoint> MapQuery::getUserdataPoints(const GeoDataLatLonBox& rect, const QStringList& types,
@@ -946,6 +961,13 @@ const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, 
   }
   overflow = markerCache.validate(queryMaxRows);
   return &markerCache.list;
+}
+
+const QList<map::MapMarker> *MapQuery::getMarkersByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer,
+                                            bool lazy, bool& overflow)
+{
+  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(),rect.getSouth(),rect.getEast(), rect.getWest());
+  return getMarkers(latLonBox,mapLayer,lazy,overflow);
 }
 
 const QList<map::MapHolding> *MapQuery::getHoldings(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,

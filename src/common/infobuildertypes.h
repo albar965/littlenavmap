@@ -89,6 +89,9 @@ namespace InfoBuilderTypes {
      */
     struct MapFeaturesData{
         const QList<map::MapAirport> airports;
+        const QList<map::MapNdb> ndbs;
+        const QList<map::MapVor> vors;
+        const QList<map::MapMarker> markers;
     };
 
 }

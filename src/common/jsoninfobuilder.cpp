@@ -340,10 +340,22 @@ QByteArray JsonInfoBuilder::features(MapFeaturesData mapFeaturesData) const
 
        json = {
            { "airports", JSON::object() },
+           { "ndbs", JSON::object() },
+           { "vors", JSON::object() },
+           { "markers", JSON::object() },
        };
 
        json["airports"].push_back({ "count", data.airports.count() });
        json["airports"].push_back({ "result", JSON::array() });
+
+       json["ndbs"].push_back({ "count", data.ndbs.count() });
+       json["ndbs"].push_back({ "result", JSON::array() });
+
+       json["vors"].push_back({ "count", data.vors.count() });
+       json["vors"].push_back({ "result", JSON::array() });
+
+       json["markers"].push_back({ "count", data.markers.count() });
+       json["markers"].push_back({ "result", JSON::array() });
 
 
 
@@ -366,6 +378,39 @@ QByteArray JsonInfoBuilder::features(MapFeaturesData mapFeaturesData) const
 //           };
 
 //           json["airports"]["result"].push_back(airportJson);
+       }
+
+       for(int i = 0; i < data.ndbs.count(); ++i){
+
+           map::MapNdb ndb =  data.ndbs[i];
+
+           json["ndbs"]["result"][i]["ident"] = qUtf8Printable(ndb.ident);
+           json["ndbs"]["result"][i]["name"] = qUtf8Printable(ndb.name);
+           json["ndbs"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(ndb.position));
+           json["ndbs"]["result"][i]["elevation"] =  ndb.getPosition().getAltitude();
+
+       }
+
+       for(int i = 0; i < data.vors.count(); ++i){
+
+           map::MapVor vor =  data.vors[i];
+
+           json["vors"]["result"][i]["ident"] = qUtf8Printable(vor.ident);
+           json["vors"]["result"][i]["name"] = qUtf8Printable(vor.name);
+           json["vors"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(vor.position));
+           json["vors"]["result"][i]["elevation"] =  vor.getPosition().getAltitude();
+
+       }
+
+       for(int i = 0; i < data.markers.count(); ++i){
+
+           map::MapMarker marker =  data.markers[i];
+
+           json["markers"]["result"][i]["ident"] = qUtf8Printable(marker.ident);
+           json["markers"]["result"][i]["type"] = qUtf8Printable(marker.type);
+           json["markers"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(marker.position));
+           json["markers"]["result"][i]["elevation"] =  marker.getPosition().getAltitude();
+
        }
 
     return json.dump().data();
