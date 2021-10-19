@@ -1277,18 +1277,36 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, Htm
       // Several wind layers report for wind barbs =============================================
       head(html, tr("Wind (%1)").arg(source));
       html.table();
-      html.tr().th(Unit::getUnitAltStr()).th(courseSuffix()).th(Unit::getUnitSpeedStr()).trEnd();
+      html.tr().th(Unit::getUnitAltStr()).th(tr("Direction")).th(Unit::getUnitSpeedStr()).trEnd();
+
+      // Find index for current layer
+      int currentLayerIndex = -1;
+      for(int i = 0; i < windStack.size(); i++)
+      {
+        if(atools::almostEqual(windStack.at(i).pos.getAltitude(), currentAltitude, 10.f))
+        {
+          currentLayerIndex = i;
+          break;
+        }
+      }
 
       // Wind reports are all at the same position
-      for(const atools::grib::WindPos& wind : windStack)
+      for(int i = 0; i < windStack.size(); i++)
       {
+        const atools::grib::WindPos& wind = windStack.at(i);
+
         if(!wind.wind.isValid())
+          continue;
+
+        float alt = wind.pos.getAltitude();
+        bool currentLayer = currentLayerIndex == i;
+
+        if(!verbose && currentLayerIndex != -1 && atools::almostNotEqual(currentLayerIndex, i, 1))
           continue;
 
         Flags flags = ahtml::ALIGN_RIGHT;
 
-        float alt = wind.pos.getAltitude();
-        flags |= atools::almostEqual(alt, currentAltitude, 10.f) ? ahtml::BOLD : ahtml::NONE;
+        flags |= currentLayer ? ahtml::BOLD : ahtml::NONE;
 
         // One table row with three data fields
         QString courseTxt;
@@ -1301,7 +1319,7 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, Htm
         if(wind.wind.isNull())
           speedTxt = tr("0");
         else
-          speedTxt = tr("%1").arg(Unit::speedKtsF(wind.wind.speed), 0, 'f', 0);
+          speedTxt = tr("%L1").arg(Unit::speedKtsF(wind.wind.speed), 0, 'f', 0);
 
         html.tr().
         td(atools::almostEqual(alt, 260.f) ? tr("Ground") : Unit::altFeet(alt, false), flags).
@@ -4379,7 +4397,7 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
                                   arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
     links.append(html.cleared().a(tr("OpenNav"), QString("https://opennav.com/airport/%1").
                                   arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
-    links.append(html.cleared().a(tr("PilotNav"), QString("https://www.pilotnav.com/airport/%1").
+    links.append(html.cleared().a(tr("Pilot Nav"), QString("https://www.pilotnav.com/airport/%1").
                                   arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
     links.append(html.cleared().a(tr("SkyVector"), QString("https://skyvector.com/airport/%1").
                                   arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());

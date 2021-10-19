@@ -44,6 +44,7 @@
 # OPENSSL_PATH
 # Windows: Base path of WinSSL 1.1.1 installation which can optionally installed with the Qt Installer.
 #          Defaults to "$$[QT_INSTALL_PREFIX])\..\..\Tools\OpenSSL\Win_x86\bin\" (e.g. "C:\Qt\Tools\OpenSSL\Win_x86\bin\") if empty.
+#          Note that the Qt OpenSSL requires the vcredist_x86_2010.exe and vcredist_x64_2010.exe installation.
 # Linux:   Not used.
 # macOS:   Not used.
 #
