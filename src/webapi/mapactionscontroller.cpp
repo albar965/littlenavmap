@@ -52,10 +52,13 @@ WebApiResponse MapActionsController::imageAction(WebApiRequest request){
         request.parameters.value("bottomlat").toFloat()
     );
 
+    int detailFactor = request.parameters.value("detailfactor").toInt();
+
     MapPixmap map = getPixmapRect(
         request.parameters.value("width").toInt(),
         request.parameters.value("height").toInt(),
-        rect
+        rect,
+        detailFactor
     );
 
     QString format = QString(request.parameters.value("format"));
@@ -113,6 +116,7 @@ WebApiResponse MapActionsController::featuresAction(WebApiRequest request){
     imageRequest->parameters.insert("toplat",request.parameters.value("toplat")),
     imageRequest->parameters.insert("rightlon",request.parameters.value("rightlon")),
     imageRequest->parameters.insert("bottomlat",request.parameters.value("bottomlat")),
+    imageRequest->parameters.insert("detailfactor",request.parameters.value("detailfactor"));
     imageRequest->parameters.insert("width","300");
     imageRequest->parameters.insert("height","300");
     imageRequest->parameters.insert("format","jpg");
@@ -170,34 +174,6 @@ MapPixmap MapActionsController::getPixmap(int width, int height)
 
   return getPixmapPosDistance(width, height, atools::geo::EMPTY_POS,
                               static_cast<float>(mapPaintWidget->distance()), QLatin1String(""));
-}
-
-MapPixmap MapActionsController::getPixmapObject(int width, int height, web::ObjectType type, const QString& ident,
-                                            float distanceKm)
-{
-  if(verbose)
-    qDebug() << Q_FUNC_INFO << width << "x" << height << "type" << type << "ident" << ident << "distanceKm" <<
-      distanceKm;
-
-  MapPixmap mapPixmap;
-  switch(type)
-  {
-    case web::USER_AIRCRAFT: {
-      mapPixmap = getPixmapPosDistance(width, height, NavApp::getUserAircraftPos(), distanceKm, QLatin1String(""), tr("No user aircraft"));
-      break;
-    }
-
-    case web::ROUTE: {
-      mapPixmap = getPixmapRect(width, height, NavApp::getRouteRect(), tr("No flight plan"));
-      break;
-    }
-
-    case web::AIRPORT: {
-      mapPixmap = getPixmapPosDistance(width, height, NavApp::getAirportPos(ident), distanceKm, QLatin1String(""), tr("Airport %1 not found").arg(ident));
-      break;
-    }
-  }
-  return mapPixmap;
 }
 
 MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm,
@@ -285,7 +261,7 @@ MapPixmap MapActionsController::getPixmapPosDistance(int width, int height, atoo
   }
 }
 
-MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo::Rect rect, const QString& errorCase)
+MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo::Rect rect, int detailFactor, const QString& errorCase)
 {
   if(verbose)
     qDebug() << Q_FUNC_INFO << width << "x" << height << rect;
@@ -305,6 +281,9 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
       // Disable dynamic/live features
       mapPaintWidget->setShowMapFeatures(map::AIRCRAFT_ALL,false);
       mapPaintWidget->setShowMapFeaturesDisplay(map::AIRCRAFT_TRACK,false);
+
+      // Set detail factor
+      mapPaintWidget->getMapPaintLayer()->setDetailFactor(detailFactor);
 
       // Disable copyright note
       mapPaintWidget->setPaintCopyright(false);

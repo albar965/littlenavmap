@@ -20,6 +20,7 @@
 
 #include "webapi/abstractlnmactionscontroller.h"
 #include "web/webmapcontroller.h"
+#include "mapgui/maplayersettings.h"
 
 #include "web/webflags.h"
 
@@ -61,15 +62,12 @@ protected:
     /* Get pixmap with given width and height from current position. */
     MapPixmap getPixmap(int width, int height);
 
-    /* Get pixmap with given width and height for a map object like an airport, the user aircraft or a route. */
-    MapPixmap getPixmapObject(int width, int height, web::ObjectType type, const QString& ident, float distanceKm);
-
     /* Get map at given position and distance. Command can be used to zoom in/out or scroll from the given position:
      * "in", "out", "left", "right", "up" and "down".  */
     MapPixmap getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm, const QString& mapCommand, const QString& errorCase = QLatin1String(""));
 
     /* Zoom to rectangel on map. */
-    MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect, const QString& errorCase = tr("Invalid rectangle"));
+    MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect, int detailFactor = MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR, const QString& errorCase = tr("Invalid rectangle"));
 
     MapPaintWidget *mapPaintWidget = nullptr;
     QWidget *parentWidget;

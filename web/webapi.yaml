@@ -106,6 +106,15 @@ paths:
         schema:
           type: string
           enum: [png, jpg]
+      - name: detailfactor
+        required: true
+        in: query
+        description: Detail factor
+        schema:
+          type: integer
+          minimum: 8
+          maximum: 15
+          example: 10
       responses:
         200:
           description: Resulting map image
@@ -149,6 +158,15 @@ paths:
         schema:
           type: number
           example: 45
+      - name: detailfactor
+        required: true
+        in: query
+        description: Detail factor
+        schema:
+          type: integer
+          minimum: 8
+          maximum: 15
+          example: 10
       responses:
         200:
           description: map feature list
