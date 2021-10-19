@@ -292,6 +292,11 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     leg.speedRestriction.speed = 0.f;
   }
 
+  if(query->hasField("vertical_angle") && !query->isNull("vertical_angle"))
+    leg.verticalAngle = query->valueFloat("vertical_angle");
+  else
+    leg.verticalAngle = map::INVALID_ANGLE_VALUE;
+
   leg.magvar = map::INVALID_MAGVAR;
 
   // Use fix position if present - otherwise use airport position to get nearest fix

@@ -136,7 +136,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
                                  QObject::tr("Name"),
                                  QObject::tr("Procedure"),
                                  QObject::tr("Airway or\nProcedure"),
-                                 QObject::tr("Restriction\n%alt%/%speed%"),
+                                 QObject::tr("Restriction\n%alt%/%speed%/angle"),
                                  QObject::tr("Type"),
                                  QObject::tr("Freq.\nMHz/kHz/Cha."),
                                  QObject::tr("Range\n%dist%"),
@@ -159,12 +159,12 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   {
     QObject::tr("ICAO ident of the navaid or airport."),
     QObject::tr("Two letter region code of a navaid."),
-    QObject::tr("Name of airport or radio navaid."),
+    QObject::tr("Name of airport or  navaid."),
     QObject::tr("Either SID, SID transition, STAR, STAR transition, transition, "
                 "approach or missed plus the name of the procedure."),
     QObject::tr("Contains the airway name for en route legs or procedure instruction."),
-    QObject::tr("Either minimum altitude for en route airway segment, "
-                "procedure altitude restriction or procedure speed limit."),
+    QObject::tr("Minimum and maximum altitude for en route airway segments."
+                "Procedure altitude restriction, speed limit or vertical angle."),
     QObject::tr("Type of a radio navaid. Shows ILS or LOC for\n"
                 "localizer approaches on the last runway leg."),
     QObject::tr("Frequency or channel of a radio navaid.\n"
@@ -3978,12 +3978,13 @@ void RouteController::updateTableModel()
   for(int i = 0; i < route.size(); i++)
   {
     const RouteLeg& leg = route.value(i);
+    const proc::MapProcedureLeg& procedureLeg = leg.getProcedureLeg();
 
     // Ident ===========================================
     QString identStr;
     if(leg.isAnyProcedure())
       // Get ident with IAF, FAF or other indication
-      identStr = proc::procedureLegFixStr(leg.getProcedureLeg());
+      identStr = proc::procedureLegFixStr(procedureLeg);
     else
       identStr = leg.getDisplayIdent();
 
@@ -4030,8 +4031,7 @@ void RouteController::updateTableModel()
 #endif
 
         awname.removeAll(QString());
-        itemRow[rcol::RESTRICTION] =
-          new QStandardItem(map::airwayAltTextShort(airway, false /* addUnit */, false /* narrow */));
+        itemRow[rcol::RESTRICTION] = new QStandardItem(map::airwayAltTextShort(airway, false /* addUnit */, false /* narrow */));
       }
 
       itemRow[rcol::AIRWAY_OR_LEGTYPE] = new QStandardItem(awname.join(tr(" / ")));
@@ -4041,21 +4041,13 @@ void RouteController::updateTableModel()
     {
       // Procedure ========================
       itemRow[rcol::AIRWAY_OR_LEGTYPE] =
-        new QStandardItem(atools::strJoin({leg.getFlightplanEntry().getAirway(),
-                                           proc::procedureLegTypeStr(leg.getProcedureLegType())}, tr(",")));
-
-      QString restrictions;
-      if(leg.getProcedureLegAltRestr().isValid())
-        restrictions.append(proc::altRestrictionTextShort(leg.getProcedureLegAltRestr()));
-      if(leg.getProcedureLeg().speedRestriction.isValid())
-        restrictions.append(tr("/") + proc::speedRestrictionTextShort(leg.getProcedureLeg().speedRestriction));
-
-      itemRow[rcol::RESTRICTION] = new QStandardItem(restrictions);
+        new QStandardItem(atools::strJoin({leg.getFlightplanEntry().getAirway(), proc::procedureLegTypeStr(procedureLeg.type)}, tr(",")));
+      itemRow[rcol::RESTRICTION] = new QStandardItem(proc::restrictionText(procedureLeg));
     }
 
     // Get ILS for approach runway if it marks the end of an ILS or localizer approach procedure
     QStringList ilsTypeTexts, ilsFreqTexts;
-    if(leg.getProcedureLeg().isApproach() && leg.getRunwayEnd().isValid())
+    if(procedureLeg.isApproach() && leg.getRunwayEnd().isValid())
     {
       // Build string for ILS type
       for(const map::MapIls& ils : route.getDestRunwayIlsRecommended())
@@ -4108,7 +4100,7 @@ void RouteController::updateTableModel()
         cumulatedDistance += leg.getDistanceTo();
         itemRow[rcol::DIST] = new QStandardItem(Unit::distNm(leg.getDistanceTo(), false));
 
-        if(!leg.getProcedureLeg().isMissed() && !leg.isAlternate())
+        if(!procedureLeg.isMissed() && !leg.isAlternate())
         {
           float remaining = totalDistance - cumulatedDistance;
           if(remaining < 0.f)
@@ -4123,7 +4115,7 @@ void RouteController::updateTableModel()
 
     QString remarks;
     if(leg.isAnyProcedure())
-      remarks = proc::procedureLegRemark(leg.getProcedureLeg());
+      remarks = proc::procedureLegRemark(procedureLeg);
     else
       remarks = leg.getFlightplanEntry().getComment();
 

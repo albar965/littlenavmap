@@ -323,6 +323,21 @@ QString procedureLegRemarks(proc::ProcedureLegType type)
   return approachLegRemarkStr.value(type);
 }
 
+QString restrictionText(const MapProcedureLeg& procedureLeg)
+{
+  QStringList restrictions;
+  if(procedureLeg.altRestriction.isValid())
+    restrictions.append(proc::altRestrictionTextShort(procedureLeg.altRestriction));
+
+  if(procedureLeg.speedRestriction.isValid())
+    restrictions.append(proc::speedRestrictionTextShort(procedureLeg.speedRestriction));
+
+  if(procedureLeg.verticalAngle < map::INVALID_ANGLE_VALUE)
+    restrictions.append(QObject::tr("%L1°").arg(procedureLeg.verticalAngle, 0, 'g', 3));
+
+  return restrictions.join(QObject::tr("/"));
+}
+
 QString altRestrictionText(const MapAltRestriction& restriction)
 {
   switch(restriction.descriptor)

@@ -641,12 +641,12 @@ void ProfileWidget::calcLeftMargin()
     // Calculate departure altitude text size
     float departAlt = legList->route.getDepartureAirportLeg().getPosition().getAltitude();
     if(departAlt < map::INVALID_ALTITUDE_VALUE / 2.f)
-      left = std::max(metrics.width(Unit::altFeet(departAlt)), left);
+      left = std::max(metrics.horizontalAdvance(Unit::altFeet(departAlt)), left);
 
     // Calculate destination altitude text size
     float destAlt = legList->route.getDestinationAirportLeg().getPosition().getAltitude();
     if(destAlt < map::INVALID_ALTITUDE_VALUE / 2.f)
-      left = std::max(metrics.width(Unit::altFeet(destAlt)), left);
+      left = std::max(metrics.horizontalAdvance(Unit::altFeet(destAlt)), left);
     left += 8;
     left = std::max(left, 30);
   }
@@ -1137,7 +1137,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       const RouteLeg& departureLeg = route.getDepartureAirportLeg();
       if(departureLeg.getMapObjectType() == map::AIRPORT)
       {
-        int textW = painter.fontMetrics().width(departureLeg.getDisplayIdent());
+        int textW = painter.fontMetrics().horizontalAdvance(departureLeg.getDisplayIdent());
         symPainter.drawAirportSymbol(&painter,
                                      departureLeg.getAirport(), left, flightplanY, airportSize, false, false, false);
         symPainter.drawAirportText(&painter, departureLeg.getAirport(), left - textW / 2, flightplanTextY,
@@ -1148,7 +1148,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       const RouteLeg& destinationLeg = route.getDestinationAirportLeg();
       if(destinationLeg.getMapObjectType() == map::AIRPORT)
       {
-        int textW = painter.fontMetrics().width(destinationLeg.getDisplayIdent());
+        int textW = painter.fontMetrics().horizontalAdvance(destinationLeg.getDisplayIdent());
         symPainter.drawAirportSymbol(&painter, destinationLeg.getAirport(), left + w, flightplanY, airportSize, false,
                                      false, false);
         symPainter.drawAirportText(&painter, destinationLeg.getAirport(), left + w - textW / 2, flightplanTextY,
