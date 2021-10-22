@@ -1069,6 +1069,8 @@ void MainWindow::connectAllSlots()
   // Aircraft performance signals =======================================================
   connect(perfController, &AircraftPerfController::aircraftPerformanceChanged,
           routeController, &RouteController::aircraftPerformanceChanged);
+  connect(perfController, &AircraftPerfController::windChanged, routeController, &RouteController::windUpdated);
+  connect(perfController, &AircraftPerfController::windChanged, profileWidget, &ProfileWidget::windUpdated);
   connect(routeController, &RouteController::routeChanged, perfController, &AircraftPerfController::routeChanged);
   connect(routeController, &RouteController::routeAltitudeChanged,
           perfController, &AircraftPerfController::routeAltitudeChanged);

@@ -940,50 +940,39 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
     {
       calculateTrip(perf);
 
-      // Do a second iteration if difference in average climb or descent exceeds 10 knots ============================
-      if(atools::almostNotEqual(climbSpeedWindCorrected, perf.getClimbSpeed(), 10.f) ||
-         atools::almostNotEqual(descentSpeedWindCorrected, perf.getDescentSpeed(), 10.f))
+      // Recalculate more iterations to get more accuracy.
+      // Wind related path changes can get the profile into different wind conditions changing the profile again.
+      for(int i = 0; i < 3; i++)
       {
-        qDebug() << Q_FUNC_INFO << "Second iteration: windHeadClimb" << windHeadClimb
+#ifdef DEBUG_INFORMATION
+        qDebug() << Q_FUNC_INFO << "iteration" << i
+                 << "windHeadClimb" << windHeadClimb
                  << "windHeadCruise" << windHeadCruise
                  << "climbSpeedWindCorrected" << climbSpeedWindCorrected
                  << "descentSpeedWindCorrected" << descentSpeedWindCorrected
                  << "perf.getClimbSpeed()" << perf.getClimbSpeed()
                  << "perf.getDescentSpeed()" << perf.getDescentSpeed();
 
+        qDebug() << Q_FUNC_INFO << "error climb" << climbSpeedWindCorrected - perf.getClimbSpeed();
+        qDebug() << Q_FUNC_INFO << "error descent" << descentSpeedWindCorrected - perf.getDescentSpeed();
+#endif
+
         climbRateWindFtPerNm = perf.getClimbVertSpeed() * 60.f / climbSpeedWindCorrected;
         descentRateWindFtPerNm = perf.getDescentVertSpeed() * 60.f / descentSpeedWindCorrected;
 
-        qDebug() << Q_FUNC_INFO << "climbRateWindFtPerNm" << climbRateWindFtPerNm
+#ifdef DEBUG_INFORMATION
+        qDebug() << Q_FUNC_INFO << "iteration" << i << "climbRateWindFtPerNm" << climbRateWindFtPerNm
                  << "descentRateWindFtPerNm" << descentRateWindFtPerNm;
+#endif
 
         clearAll();
         calculate(altRestrErrors);
         collectErrors(altRestrErrors);
 
         if(validProfile)
-        {
           calculateTrip(perf);
-
-          // Do a third iteration if difference in average climb or descent exceeds 30 knots ============================
-          if(atools::almostNotEqual(climbSpeedWindCorrected, perf.getClimbSpeed(), 30.f) ||
-             atools::almostNotEqual(descentSpeedWindCorrected, perf.getDescentSpeed(), 30.f))
-          {
-            qDebug() << Q_FUNC_INFO << "Third iteration: windHeadClimb" << windHeadClimb
-                     << "windHeadCruise" << windHeadCruise
-                     << "climbSpeedWindCorrected" << climbSpeedWindCorrected
-                     << "descentSpeedWindCorrected" << descentSpeedWindCorrected
-                     << "perf.getClimbSpeed()" << perf.getClimbSpeed()
-                     << "perf.getDescentSpeed()" << perf.getDescentSpeed();
-
-            clearAll();
-            calculate(altRestrErrors);
-            collectErrors(altRestrErrors);
-
-            if(validProfile)
-              calculateTrip(perf);
-          }
-        }
+        else
+          break;
       }
     }
   }

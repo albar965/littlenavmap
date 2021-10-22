@@ -1330,7 +1330,7 @@ void AircraftPerfController::windBoxesChanged()
 void AircraftPerfController::windChangedDelayed()
 {
   qDebug() << Q_FUNC_INFO;
-  emit aircraftPerformanceChanged(perf);
+  emit windChanged();
 }
 
 void AircraftPerfController::noPerfLoaded()
