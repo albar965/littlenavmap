@@ -1429,6 +1429,11 @@ void ProfileWidget::aircraftPerformanceChanged(const atools::fs::perf::AircraftP
   routeChanged(true, false);
 }
 
+void ProfileWidget::windUpdated()
+{
+  routeChanged(true, false);
+}
+
 void ProfileWidget::routeChanged(bool geometryChanged, bool newFlightPlan)
 {
   if(!widgetVisible || databaseLoadStatus)
@@ -1881,9 +1886,6 @@ void ProfileWidget::buildTooltip(int x, bool force)
   bool required = false;
   float verticalAngle = legList->route.getVerticalAngleAtDistance(distanceToGo, &required);
 
-#ifdef DEBUG_INFORMATION_PROFILE
-  html.br().b(required ? "[required angle" : "[angle").text(tr(" %L1 °]").arg(std::abs(verticalAngle), 0, 'g', 6));
-#endif
   if(verticalAngle < -0.1f)
     html.br().b(required ? tr("Required Flight Path Angle: ") : tr("Flight path angle: ")).
     text(tr("%L1 °").arg(std::abs(verticalAngle), 0, 'g', required ? 3 : 2));
@@ -1932,6 +1934,10 @@ void ProfileWidget::buildTooltip(int x, bool force)
       html.text(tr(", %1 %2").arg(windPtr).arg(Unit::speedKts(std::abs(headWind))));
     }
   }
+
+#ifdef DEBUG_INFORMATION
+  html.br().b(required ? "[required angle" : "[angle").text(tr(" %L1 °]").arg(std::abs(verticalAngle), 0, 'g', 6));
+#endif
 
 #ifdef DEBUG_INFORMATION_PROFILE
   using namespace formatter;

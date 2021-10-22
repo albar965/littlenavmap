@@ -1653,6 +1653,7 @@ void MainWindow::connectAllSlots()
 
   // Wind update ===================================================
   connect(windReporter, &WindReporter::windUpdated, routeController, &RouteController::windUpdated);
+  connect(windReporter, &WindReporter::windUpdated, profileWidget, &ProfileWidget::windUpdated);
   connect(windReporter, &WindReporter::windUpdated, perfController, &AircraftPerfController::updateReports);
   connect(windReporter, &WindReporter::windUpdated, this, &MainWindow::updateMapObjectsShown);
   connect(windReporter, &WindReporter::windUpdated, this, &MainWindow::updateActionStates);
