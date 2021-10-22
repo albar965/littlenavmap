@@ -565,7 +565,7 @@ bool AircraftPerfController::isWindManual() const
 
 float AircraftPerfController::cruiseAlt()
 {
-  float alt = NavApp::getAltitudeLegs().getCruiseAltitide();
+  float alt = NavApp::getAltitudeLegs().getCruiseAltitude();
 
   if(atools::almostEqual(alt, 0.f) || alt > map::INVALID_ALTITUDE_VALUE / 2.f)
     alt = NavApp::getRouteCruiseAltFtWidget();
@@ -1065,7 +1065,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     html.row2(tr("Average Ground Speed:"), Unit::speedKts(altLegs.getAverageGroundSpeed()), flags);
     html.row2(tr("True Airspeed at Cruise:"), Unit::speedKts(perf->getCruiseSpeed()), flags);
 
-    float mach = atools::geo::tasToMachFromAlt(altLegs.getCruiseAltitide(),
+    float mach = atools::geo::tasToMachFromAlt(altLegs.getCruiseAltitude(),
                                                static_cast<float>(perf->getCruiseSpeed()));
     if(mach > 0.4f)
       html.row2(tr("Mach at cruise:"), QLocale().toString(mach, 'f', 2), flags);

@@ -655,6 +655,11 @@ float Route::getAltitudeForDistance(float currentDistToDest) const
   return altitude->getAltitudeForDistance(currentDistToDest);
 }
 
+float Route::getVerticalAngleAtDistance(float distanceToDest, bool *required) const
+{
+  return altitude->getVerticalAngleAtDistance(distanceToDest, required);
+}
+
 float Route::getSpeedForDistance(float currentDistToDest) const
 {
   return altitude->getSpeedForDistance(currentDistToDest, NavApp::getAircraftPerformance());
@@ -1731,7 +1736,6 @@ void Route::updateBoundingRect()
       line.append(Marble::GeoDataCoordinates(routeLeg.getPosition().getLonX(),
                                              routeLeg.getPosition().getLatY(), 0., Marble::GeoDataCoordinates::Degree));
 
-
   Marble::GeoDataLatLonBox box = Marble::GeoDataLatLonBox::fromLineString(line);
   boundingRect = atools::geo::Rect(box.west(), box.north(), box.east(), box.south());
   boundingRect.toDeg();
@@ -1775,8 +1779,7 @@ void Route::nearestAllLegIndex(const map::PosCourse& pos, float& crossTrackDista
   }
 }
 
-int Route::getNearestRouteLegResult(const Pos& pos,
-                                    atools::geo::LineDistance& lineDistanceResult, bool ignoreNotEditable) const
+int Route::getNearestRouteLegResult(const Pos& pos, atools::geo::LineDistance& lineDistanceResult, bool ignoreNotEditable) const
 {
   int index = map::INVALID_INDEX_VALUE;
   lineDistanceResult.status = atools::geo::INVALID;
@@ -2126,7 +2129,7 @@ void Route::validateAirways()
     const RouteLeg& routeLeg = value(startIndexAfterProcedure);
 
     if(!NavApp::getAirwayTrackQueryGui()->hasAirwayForNameAndWaypoint(routeLeg.getAirwayName(), departureLeg.getIdent(),
-                                                                   routeLeg.getIdent()))
+                                                                      routeLeg.getIdent()))
       // Airway not valid for changed waypoints - erase
       flightplan.getEntries()[startIndexAfterProcedure].setAirway(QString());
   }
@@ -2799,7 +2802,7 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
 
       QList<map::MapAirway> airways;
       NavApp::getAirwayTrackQueryGui()->getAirwaysByNameAndWaypoint(airways, routeLeg.getAirwayName(), prevLeg.getIdent(),
-                                                                 routeLeg.getIdent());
+                                                                    routeLeg.getIdent());
       map::MapAirway airway = airways.value(0);
       routeLeg.setAirway(airway);
       minAltitude = std::max(airway.minAltitude, minAltitude);
@@ -2922,8 +2925,8 @@ void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::Map
     // Runway name given ========================
     QList<map::MapRunwayEnd> runwayEnds;
     NavApp::getMapQueryGui()->getRunwayEndByNameFuzzy(runwayEnds, approachLegs.runwayEnd.name,
-                                                   getDestinationAirportLeg().getAirport(),
-                                                   false /* nav data */);
+                                                      getDestinationAirportLeg().getAirport(),
+                                                      false /* nav data */);
 
     if(runwayEnd != nullptr && !runwayEnds.isEmpty())
       *runwayEnd = runwayEnds.first();

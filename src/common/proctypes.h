@@ -95,7 +95,8 @@ struct MapAltRestriction
   };
 
   Descriptor descriptor = NONE;
-  float alt1, alt2;
+  float alt1, alt2,
+        verticalAngleAlt = map::INVALID_ALTITUDE_VALUE; /* Forced since calculated from vertical angle */
 
   /* Indicator used to force lowest altitude on final FAF and FACF to avoid arriving above glide slope or VASI */
   bool forceFinal = false;

@@ -475,7 +475,7 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
 
         // Calculate altitude at end of feather
         // tan a = GK / AK; // tan a * AK = GK;
-        float ydiff1 = std::tan(atools::geo::toRadians(ils.slope)) * featherLen;
+        float ydiff1 = atools::geo::tanDeg(ils.slope) * featherLen;
 
         // Calculate screen points for end of feather
         int y2 = altitudeY(altitudeLegs.getDestinationAltitude() + ydiff1);
@@ -541,13 +541,11 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
     // Collect left and right VASI
     QVector<std::pair<float, QString> > vasiList;
 
-    if(runwayEnd.rightVasiPitch > 0.f)
-      vasiList.append(std::make_pair(runwayEnd.rightVasiPitch,
-                                     runwayEnd.rightVasiType == "UNKN" ? QString() : runwayEnd.rightVasiType));
+    if(runwayEnd.hasRightVasi())
+      vasiList.append(std::make_pair(runwayEnd.rightVasiPitch, runwayEnd.rightVasiTypeStr()));
 
-    if(runwayEnd.leftVasiPitch > 0.f)
-      vasiList.append(std::make_pair(runwayEnd.leftVasiPitch,
-                                     runwayEnd.leftVasiType == "UNKN" ? QString() : runwayEnd.leftVasiType));
+    if(runwayEnd.hasLeftVasi())
+      vasiList.append(std::make_pair(runwayEnd.leftVasiPitch, runwayEnd.leftVasiTypeStr()));
 
     if(vasiList.isEmpty())
       return;
@@ -574,7 +572,7 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
 
       // Calculate altitude at end of guide
       // tan a = GK / AK; // tan a * AK = GK;
-      float ydiff1 = std::tan(atools::geo::toRadians(vasi.first)) * featherLen;
+      float ydiff1 = atools::geo::tanDeg(vasi.first) * featherLen;
 
       // Calculate screen points for end of guide
       int yUpper = altitudeY(altitudeLegs.getDestinationAltitude() + ydiff1);
@@ -864,7 +862,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   // Draw ILS or VASI guidance ============================
-  mapcolors::scaleFont(&painter, 0.9f);
+  mapcolors::scaleFont(&painter, 0.95f);
 
   if(NavApp::getMainUi()->actionProfileShowVasi->isChecked())
     paintVasi(painter, route);
@@ -889,19 +887,66 @@ void ProfileWidget::paintEvent(QPaintEvent *)
                      std::min(passedRouteLeg + 1, waypointX.size()) : 0;
   }
 
+  setFont(optData.getMapFont());
+  mapcolors::scaleFont(&painter, optData.getDisplayTextSizeFlightplan() / 100.f, &painter.font());
+
   if(NavApp::getMapWidgetGui()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN))
   {
     // Draw background line ======================================================
     float flightplanOutlineWidth = (optData.getDisplayThicknessFlightplan() / 100.f) * 7;
     float flightplanWidth = (optData.getDisplayThicknessFlightplan() / 100.f) * 4;
-    painter.setPen(QPen(mapcolors::routeOutlineColor, flightplanOutlineWidth, Qt::SolidLine, Qt::RoundCap,
-                        Qt::RoundJoin));
+    painter.setPen(QPen(mapcolors::routeOutlineColor, flightplanOutlineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
     for(int i = passedRouteLeg; i < waypointX.size(); i++)
     {
       const proc::MapProcedureLeg& leg = route.value(i).getProcedureLeg();
       if(i > 0 && !leg.isCircleToLand() && !leg.isStraightIn() && !leg.isVectors() && !leg.isManual())
+      {
+        // Draw line ========================================
         painter.drawPolyline(altLegs.at(i));
-    }
+
+        // Draw flight path angle label for descent ==========================
+        if(altitudeLegs.isValidProfile())
+        {
+          const RouteAltitudeLeg& altLeg = altitudeLegs.value(i);
+          const QPolygonF& geometry = altLeg.getGeometry();
+          QVector<float> angles;
+          bool proc = false;
+          if(altLeg.isVerticalProcAngleValid() && geometry.size() == 2)
+          {
+            // A required vertical angle given by procedure
+            angles.append(altLeg.getVerticalProcAngle());
+            proc = true;
+          }
+          else
+            // Calculated list of angles by aircraft performance
+            angles = altLeg.getVerticalGeoAngles();
+
+          // Highlight procedure given required angles
+          painter.setBackgroundMode(proc ? Qt::OpaqueMode : Qt::TransparentMode);
+          painter.setBackground(proc ? mapcolors::profileAltRestrictionFill : Qt::transparent);
+
+          // Iterate over geometry for this route leg =========================
+          for(int j = 1; j < geometry.size(); j++)
+          {
+            float pathAngle = angles.value(j - 1, map::INVALID_ANGLE_VALUE);
+            if(pathAngle < -0.5f)
+            {
+              QString txt = tr(" %1° ► ").arg(std::abs(pathAngle), 0, 'g', proc ? 3 : 2);
+              int textW = painter.fontMetrics().horizontalAdvance(txt);
+              QLineF line(toScreen(geometry.at(j - 1)), toScreen(geometry.at(j)));
+              if(line.length() > textW)
+              {
+                painter.translate(line.center());
+                painter.rotate(atools::geo::angleFromQt(line.angle()) - 90.); // Rotate for display angle
+                painter.drawText(-textW / 2, atools::roundToInt(painter.fontMetrics().ascent() + flightplanOutlineWidth / 2.f), txt);
+                painter.resetTransform();
+              }
+            }
+          }
+        } // if(altitudeLegs.isValidProfile())
+      } // if(i > 0 && !leg.isCircleToLand() && !leg.isStraightIn() && !leg.isVectors() && !leg.isManual())
+    } // for(int i = passedRouteLeg; i < waypointX.size(); i++)
 
     // Draw passed ======================================================
     painter.setPen(QPen(optData.getFlightplanPassedSegmentColor(), flightplanWidth,
@@ -970,6 +1015,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     int airportSize = atools::roundToInt((optData.getDisplaySymbolSizeAirport() * sizeScaleSymbol / 100.) * 10.);
 
     painter.setBackgroundMode(Qt::TransparentMode);
+    setFont(optData.getMapFont());
     mapcolors::scaleFont(&painter, optData.getDisplayTextSizeFlightplan() / 100.f, &painter.font());
 
     // Draw the most unimportant symbols and texts first - userpoints, invalid and procedure ============================
@@ -1106,7 +1152,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         symPainter.textBox(&painter, texts, color, symPt.x() + 5,
                            std::min(symPt.y() + 14, h), textatt::ROUTE_BG_COLOR, 255);
       }
-    }
+    } // for(int routeIndex : indexes)
 
     // Draw the most important airport symbols on top ============================================
     waypointIndex = waypointX.size();
@@ -1213,7 +1259,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
           }
         }
       }
-    } // if(NavApp::getMapWidget()->getShownMapFeatures() & map::FLIGHTPLAN)
+    } // if(!route.isFlightplanEmpty())
 
     // Departure altitude label =========================================================
     QColor labelColor = mapcolors::profileLabelColor;
@@ -1830,6 +1876,17 @@ void ProfileWidget::buildTooltip(int x, bool force)
       }
     }
   }
+
+  // Vertical angle ===============================================================
+  bool required = false;
+  float verticalAngle = legList->route.getVerticalAngleAtDistance(distanceToGo, &required);
+
+#ifdef DEBUG_INFORMATION_PROFILE
+  html.br().b(required ? "[required angle" : "[angle").text(tr(" %L1 °]").arg(std::abs(verticalAngle), 0, 'g', 6));
+#endif
+  if(verticalAngle < -0.1f)
+    html.br().b(required ? tr("Required Flight Path Angle: ") : tr("Flight path angle: ")).
+    text(tr("%L1 °").arg(std::abs(verticalAngle), 0, 'g', required ? 3 : 2));
 
   // Ground ===============================================================
   QStringList groundText;

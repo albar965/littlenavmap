@@ -163,8 +163,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
     QObject::tr("Either SID, SID transition, STAR, STAR transition, transition, "
                 "approach or missed plus the name of the procedure."),
     QObject::tr("Contains the airway name for en route legs or procedure instruction."),
-    QObject::tr("Minimum and maximum altitude for en route airway segments."
-                "Procedure altitude restriction, speed limit or vertical angle."),
+    QObject::tr("Minimum and maximum altitude for en route airway segments.\n"
+                "Procedure altitude restriction, speed limit or required descent flight path angle."),
     QObject::tr("Type of a radio navaid. Shows ILS or LOC for\n"
                 "localizer approaches on the last runway leg."),
     QObject::tr("Frequency or channel of a radio navaid.\n"

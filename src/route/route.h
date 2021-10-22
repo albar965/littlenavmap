@@ -231,6 +231,9 @@ public:
    *  Not for missed and alternate legs. */
   float getAltitudeForDistance(float currentDistToDest) const;
 
+  /* Get either calculated or required by procedure vertical angle. */
+  float getVerticalAngleAtDistance(float distanceToDest, bool *required = nullptr) const;
+
   /* Same as above for TAS knots from performance profile */
   float getSpeedForDistance(float currentDistToDest) const;
 
@@ -327,16 +330,19 @@ public:
     return hasAnyApproachProcedure() || hasAnySidProcedure() || hasAnyStarProcedure();
   }
 
+  /* Final approach */
   bool hasAnyApproachProcedure() const
   {
     return !approachLegs.isEmpty();
   }
 
+  /* STAR or final approach */
   bool hasAnyArrivalProcedure() const
   {
     return hasAnyApproachProcedure() || hasAnyStarProcedure();
   }
 
+  /* Final approach transition */
   bool hasTransitionProcedure() const
   {
     return !approachLegs.transitionLegs.isEmpty();

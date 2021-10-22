@@ -673,7 +673,7 @@ void ProcedureSearch::updateTreeHeader()
   header->setToolTip(COL_IDENT, tr("ICAO ident of the navaid,"));
 
   header->setText(COL_RESTR, tr("Restriction\n%1/%2/angle").arg(Unit::getUnitAltStr()).arg(Unit::getUnitSpeedStr()));
-  header->setToolTip(COL_RESTR, tr("Altitude restriction, speed limit or vertical angle."));
+  header->setToolTip(COL_RESTR, tr("Altitude restriction, speed limit or\nrequired descent flight path angle."));
 
   header->setText(COL_COURSE, tr("Course\n°M"));
   header->setToolTip(COL_COURSE, tr("Magnetic course to fly."));

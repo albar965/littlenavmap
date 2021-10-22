@@ -30,6 +30,8 @@
 
 #include "sql/sqlquery.h"
 
+#include <QStringBuilder>
+
 using atools::sql::SqlQuery;
 using atools::geo::Pos;
 using atools::geo::Line;
@@ -1460,8 +1462,8 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
         leg.correctedArc = true;
       }
 
-      leg.displayText << leg.recFixIdent + tr("/") + Unit::distNm(leg.rho, true, 20, true) + tr("/") +
-        QLocale().toString(leg.theta, 'f', 0) + tr("°M");
+      leg.displayText << (leg.recFixIdent % tr("/") % Unit::distNm(leg.rho, true, 20, true) + tr("/") %
+                          QLocale().toString(leg.theta, 'f', 0) % tr("°M"));
       leg.remarks << tr("DME %1").arg(Unit::distNm(leg.rho, true, 20, true));
     }
     // ===========================================================
@@ -1669,7 +1671,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
       {
         lastPos = parallel.getPos1();
         curPos = intersect;
-        leg.displayText << leg.recFixIdent + "/" + QLocale().toString(leg.theta, 'f', 0) + tr("°M");
+        leg.displayText << (leg.recFixIdent % "/" % QLocale().toString(leg.theta, 'f', 0) % tr("°M"));
       }
       else
       {
@@ -1686,8 +1688,8 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
 
       curPos = leg.fixPos.endpoint(nmToMeter(leg.distance), leg.legTrueCourse());
 
-      leg.displayText << leg.fixIdent + "/" + Unit::distNm(leg.distance, true, 20, true) + "/" +
-        QLocale().toString(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M"));
+      leg.displayText << (leg.fixIdent % "/" % Unit::distNm(leg.distance, true, 20, true) % "/" %
+                          QLocale().toString(leg.course, 'f', 0) % (leg.trueCourse ? tr("°T") : tr("°M")));
     }
     // ===========================================================
     else if(contains(type, {proc::TRACK_FROM_FIX_TO_DME_DISTANCE, proc::COURSE_TO_DME_DISTANCE,
@@ -1731,8 +1733,8 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
                    << "approachId" << leg.approachId << "transitionId" << leg.transitionId << "legId" << leg.legId;
       }
 
-      leg.displayText << leg.recFixIdent + "/" + Unit::distNm(leg.distance, true, 20, true) + "/" +
-        QLocale().toString(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M"));
+      leg.displayText << (leg.recFixIdent % "/" % Unit::distNm(leg.distance, true, 20, true) % "/" %
+                          QLocale().toString(leg.course, 'f', 0) % (leg.trueCourse ? tr("°T") : tr("°M")));
     }
     // ===========================================================
     else if(contains(type, {proc::FROM_FIX_TO_MANUAL_TERMINATION, proc::HEADING_TO_MANUAL_TERMINATION}))
@@ -2779,17 +2781,32 @@ void ProcedureQuery::processAltRestrictions(proc::MapProcedureLegs& procedure) c
   if(procedure.mapType & proc::PROCEDURE_APPROACH)
   {
     bool force = false;
-    for(MapProcedureLeg& leg : procedure.approachLegs)
+    // Start at end of procedure (runway)
+    for(int i = procedure.approachLegs.size() - 1; i >= 0; i--)
     {
-      force |= (leg.isFinalApproachCourseFix() || leg.isFinalApproachFix()) && !leg.isMissed() &&
-               leg.mapType == proc::PROCEDURE_APPROACH && leg.altRestriction.isValid() &&
-               contains(leg.altRestriction.descriptor, {proc::MapAltRestriction::AT,
-                                                        proc::MapAltRestriction::AT_OR_ABOVE,
-                                                        proc::MapAltRestriction::ILS_AT,
-                                                        proc::MapAltRestriction::ILS_AT_OR_ABOVE});
+      const MapProcedureLeg& prev = procedure.approachLegs.value(i - 1);
+      MapProcedureLeg& leg = procedure.approachLegs[i];
+      if(prev.verticalAngle < -0.1f)
+        // Do not force altitude if previous leg has a required vertical angle
+        // Real altitude is calculated by angle and not by altitude restriction
+        leg.altRestriction.forceFinal = false;
+      else
+      {
+        // Force altitude down to lowest of altitude restriction
+        force |= (leg.isFinalApproachCourseFix() || leg.isFinalApproachFix()) && !leg.isMissed() &&
+                 leg.mapType == proc::PROCEDURE_APPROACH && leg.altRestriction.isValid() &&
+                 contains(leg.altRestriction.descriptor, {proc::MapAltRestriction::AT,
+                                                          proc::MapAltRestriction::AT_OR_ABOVE,
+                                                          proc::MapAltRestriction::ILS_AT,
+                                                          proc::MapAltRestriction::ILS_AT_OR_ABOVE});
 
-      // Force lowest restriction altitude for FAF and FACF
-      leg.altRestriction.forceFinal = force;
+        // Force lowest restriction altitude for FAF and FACF
+        leg.altRestriction.forceFinal = force;
+      }
+
+      if(force)
+        // Stop if there was already a fix - this will prefer FAF before FACF
+        break;
     }
   }
 }

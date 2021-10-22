@@ -49,6 +49,27 @@ public:
   /* Distance from last leg to this one i.e. this leg's length */
   float getDistanceTo() const;
 
+  /* Degree, negative is descent, positive climb and zero horizontal flight.
+   * Returns a list of angles for each segment. Use for display purposes.
+   * Calculated optional paths. */
+  const QVector<float>& getVerticalGeoAngles() const
+  {
+    return angles;
+  }
+
+  /* Degree, negative is descent, positive climb and zero horizontal flight.
+   * This is a required path in a procedure. */
+  float getVerticalProcAngle() const
+  {
+    return isVerticalProcAngleValid() ? verticalAngle : map::INVALID_ANGLE_VALUE;
+  }
+
+  /* Valid range according to ARINC */
+  bool isVerticalProcAngleValid() const
+  {
+    return verticalAngle < -0.9f && verticalAngle > -10.f;
+  }
+
   /* Altitude restriction from procedures if available. Otherwise invalid. */
   const proc::MapAltRestriction& getRestriction() const
   {
@@ -226,7 +247,7 @@ private:
   /* Sets all if leg is a point */
   void setY2(float y);
 
-  /* Length of this leg */
+  /* Length of this leg or INVALID_DISTANCE_VALUE */
   float dx() const;
 
   /* Length is 0 */
@@ -244,8 +265,12 @@ private:
   atools::geo::LineString line, /* Simple line with start, probably TOD, TOC and end */
                           geoLine /* Geometry for complex procedure legs without TOC and TOD or start and end */;
   QString ident, procedureType;
+
   QPolygonF geometry;
+  QVector<float> angles;
+
   proc::MapAltRestriction restriction;
+  float verticalAngle = map::INVALID_ANGLE_VALUE;
   bool procedure = false, missed = false, alternate = false, topOfClimb = false, topOfDescent = false;
 
   /* Fuel and time for all phases for this leg */

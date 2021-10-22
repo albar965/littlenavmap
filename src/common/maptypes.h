@@ -457,6 +457,32 @@ struct MapRunwayEnd
   QString name, leftVasiType, rightVasiType, pattern;
   float heading, /* degree true */
         leftVasiPitch = 0.f, rightVasiPitch = 0.f;
+
+  bool hasAnyVasi() const
+  {
+    return hasLeftVasi() || hasRightVasi();
+  }
+
+  bool hasLeftVasi() const
+  {
+    return leftVasiPitch > 0.f;
+  }
+
+  bool hasRightVasi() const
+  {
+    return rightVasiPitch > 0.f;
+  }
+
+  QString leftVasiTypeStr() const
+  {
+    return leftVasiType == "UNKN" ? QString() : leftVasiType;
+  }
+
+  QString rightVasiTypeStr() const
+  {
+    return rightVasiType == "UNKN" ? QString() : rightVasiType;
+  }
+
   bool secondary;
   bool navdata; /* true if source is third party nav database, false if source is simulator data */
 };
