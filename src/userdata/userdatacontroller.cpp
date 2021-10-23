@@ -774,8 +774,7 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
   };
 
   ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Userpoint Export Options"),
-                            QString(), tr("Select export options"),
-                            lnm::USERDATA_EXPORT_CHOICE_DIALOG, "USERPOINT.html");
+                            tr("Select export options"), lnm::USERDATA_EXPORT_CHOICE_DIALOG, "USERPOINT.html");
 
   if(appendAllowed)
     choiceDialog.addCheckBox(APPEND, tr("&Append to an already present file"),

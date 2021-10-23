@@ -33,8 +33,7 @@
 
 const static char ID_PROPERTY[] = "checkboxid";
 
-ChoiceDialog::ChoiceDialog(QWidget *parent, const QString& title, const QString& description, const QString& header,
-                           const QString& settingsPrefixParam,
+ChoiceDialog::ChoiceDialog(QWidget *parent, const QString& title, const QString& description, const QString& settingsPrefixParam,
                            const QString& helpBaseUrlParam)
   : QDialog(parent), ui(new Ui::ChoiceDialog), helpBaseUrl(helpBaseUrlParam), settingsPrefix(settingsPrefixParam)
 {
@@ -42,7 +41,6 @@ ChoiceDialog::ChoiceDialog(QWidget *parent, const QString& title, const QString&
   setWindowTitle(title);
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
   setWindowModality(Qt::ApplicationModal);
-  ui->groupBoxChoice->setTitle(header);
 
   ui->labelChoiceDescription->setVisible(!description.isEmpty());
   ui->labelChoiceDescription->setText(description);
@@ -64,18 +62,18 @@ ChoiceDialog::~ChoiceDialog()
   delete ui;
 }
 
-void ChoiceDialog::addCheckBoxHidden(int id)
+void ChoiceDialog::addCheckBoxHiddenInt(int id)
 {
-  addCheckBox(id, QString(), QString(), false /* checked*/, true /* disabled */, true /* hidden */);
+  addCheckBoxInt(id, QString(), QString(), false /* checked*/, true /* disabled */, true /* hidden */);
 }
 
-void ChoiceDialog::addCheckBoxDisabled(int id, const QString& text, const QString& tooltip, bool checked)
+void ChoiceDialog::addCheckBoxDisabledInt(int id, const QString& text, const QString& tooltip, bool checked)
 {
-  addCheckBox(id, text, tooltip, checked, true /* disabled */, false /* hidden */);
+  addCheckBoxInt(id, text, tooltip, checked, true /* disabled */, false /* hidden */);
 }
 
-void ChoiceDialog::addCheckBox(int id, const QString& text, const QString& tooltip, bool checked, bool disabled,
-                               bool hidden)
+void ChoiceDialog::addCheckBoxInt(int id, const QString& text, const QString& tooltip, bool checked, bool disabled,
+                                  bool hidden)
 {
   QCheckBox *checkBox = new QCheckBox(text, this);
   checkBox->setToolTip(tooltip);
@@ -88,7 +86,7 @@ void ChoiceDialog::addCheckBox(int id, const QString& text, const QString& toolt
   connect(checkBox, &QCheckBox::toggled, this, &ChoiceDialog::checkBoxToggledInternal);
 
   // Add widget before the button box
-  ui->verticalLayoutGroupBox->insertWidget(-1, checkBox);
+  ui->verticalLayout_4->insertWidget(-1, checkBox);
 }
 
 void ChoiceDialog::addLine()
@@ -97,26 +95,23 @@ void ChoiceDialog::addLine()
   line = new QFrame(this);
   line->setFrameShape(QFrame::HLine);
   line->setFrameShadow(QFrame::Sunken);
-  ui->verticalLayoutGroupBox->insertWidget(-1, line);
+  ui->verticalLayout_4->insertWidget(-1, line);
 }
 
 QVector<std::pair<int, bool> > ChoiceDialog::getCheckState() const
 {
   QVector<std::pair<int, bool> > ids;
-  for(int id : index.keys())
-  {
-    QCheckBox *checkbox = index.value(id);
+  for(QCheckBox *checkbox : index)
     ids.append(std::make_pair(checkbox->property(ID_PROPERTY).toInt(), checkbox->isChecked()));
-  }
   return ids;
 }
 
-bool ChoiceDialog::isChecked(int id) const
+bool ChoiceDialog::isCheckedInt(int id) const
 {
   return index.value(id)->isChecked() && index.value(id)->isEnabled();
 }
 
-QCheckBox *ChoiceDialog::getCheckBox(int id)
+QCheckBox *ChoiceDialog::getCheckBoxInt(int id)
 {
   return index.value(id);
 }

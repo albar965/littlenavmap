@@ -2221,20 +2221,21 @@ void RouteController::visibleColumnsTriggered()
 {
   qDebug() << Q_FUNC_INFO;
 
-  ChoiceDialog dialog(mainWindow, QApplication::applicationName() + tr(" - Flight Plan Table"), QString(),
+  ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Flight Plan Table"),
                       tr("Select columns to show in flight plan table"),
                       lnm::ROUTE_FLIGHTPLAN_COLUMS_DIALOG, "FLIGHTPLAN.html#flight-plan-table-columns");
 
   QHeaderView *header = view->horizontalHeader();
   for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
-    dialog.addCheckBox(col, Unit::replacePlaceholders(routeColumns.at(col)).replace("\n", " "),
-                       routeColumnTooltips.at(col),
-                       !header->isSectionHidden(col));
+    choiceDialog.addCheckBox(col, Unit::replacePlaceholders(routeColumns.at(col)).replace("\n", " "),
+                       routeColumnTooltips.at(col), !header->isSectionHidden(col));
 
-  if(dialog.exec() == QDialog::Accepted)
+  choiceDialog.restoreState();
+
+  if(choiceDialog.exec() == QDialog::Accepted)
   {
     for(int col = rcol::LAST_COLUMN; col >= rcol::FIRST_COLUMN; col--)
-      header->setSectionHidden(col, !dialog.isChecked(col));
+      header->setSectionHidden(col, !choiceDialog.isChecked(col));
 
     updateModelTimeFuelWind();
     updateModelHighlights();

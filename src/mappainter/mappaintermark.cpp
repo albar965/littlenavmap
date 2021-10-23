@@ -47,6 +47,7 @@
 #include <marble/GeoPainter.h>
 
 #include <QPainterPath>
+#include <QStringBuilder>
 
 const float MAX_COMPASS_ROSE_RADIUS_NM = 500.f;
 const float MIN_COMPASS_ROSE_RADIUS_NM = 2.f;
@@ -748,7 +749,7 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
         texts << (airspace.isOnline() ? airspace.name : formatter::capNavString(airspace.name))
               << map::airspaceTypeToString(airspace.type);
         if(!airspace.restrictiveDesignation.isEmpty())
-          texts << (airspace.restrictiveType + "-" + airspace.restrictiveDesignation);
+          texts << (airspace.restrictiveType % "-" % airspace.restrictiveDesignation);
 
         symbolPainter->textBoxF(painter, {texts}, innerPen, x, y, textatt::CENTER);
       }
@@ -1177,26 +1178,26 @@ void MapPainterMark::paintDistanceMarkers()
        initTrueText == initMagText && finalTrueText == finalMagText)
     {
       if(initTrueText == finalTrueText)
-        texts.append(initTrueText + tr("°M/T"));
+        texts.append(initTrueText % tr("°M/T"));
       else
-        texts.append(initTrueText + tr("°M/T ") + arrowLeft + finalTrueText + tr("°M/T"));
+        texts.append(initTrueText % tr("°M/T ") % arrowLeft % finalTrueText % tr("°M/T"));
     }
     else
     {
       if(context->dOptMeasurement(optsd::MEASUREMNENT_MAG))
       {
         if(initMagText == finalMagText)
-          texts.append(initMagText + tr("°M"));
+          texts.append(initMagText % tr("°M"));
         else
-          texts.append(initMagText + tr("°M ") + arrowLeft + finalMagText + tr("°M"));
+          texts.append(initMagText % tr("°M ") % arrowLeft % finalMagText % tr("°M"));
       }
 
       if(context->dOptMeasurement(optsd::MEASUREMNENT_TRUE))
       {
         if(initTrueText == finalTrueText)
-          texts.append(initTrueText + tr("°T"));
+          texts.append(initTrueText % tr("°T"));
         else
-          texts.append(initTrueText + tr("°T ") + arrowLeft + finalTrueText + tr("°T"));
+          texts.append(initTrueText % tr("°T ") % arrowLeft % finalTrueText % tr("°T"));
       }
     }
 
@@ -1204,7 +1205,7 @@ void MapPainterMark::paintDistanceMarkers()
     {
       if(Unit::getUnitDist() == opts::DIST_KM && Unit::getUnitShortDist() == opts::DIST_SHORT_METER &&
          distanceMeter < 6000)
-        texts.append(QLocale(QLocale::C).toString(distanceMeter, 'f', 0) + Unit::getUnitShortDistStr());
+        texts.append(QLocale(QLocale::C).toString(distanceMeter, 'f', 0) % Unit::getUnitShortDistStr());
       else
       {
         texts.append(Unit::distMeter(distanceMeter, true /* addUnit */, 20, true /* narrow */));

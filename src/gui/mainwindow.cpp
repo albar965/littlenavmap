@@ -2067,9 +2067,8 @@ void MainWindow::routeResetAll()
   qDebug() << Q_FUNC_INFO;
 
   // Create a dialog with four checkboxes
-  ChoiceDialog choiceDialog(this, QApplication::applicationName() + tr(" - Reset for new Flight"), QString(),
-                            tr("Select items to reset for a new flight"),
-                            lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "RESET.html");
+  ChoiceDialog choiceDialog(this, QApplication::applicationName() + tr(" - Reset for new Flight"),
+                            tr("Select items to reset for a new flight"), lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "RESET.html");
 
   choiceDialog.addCheckBox(EMPTY_FLIGHT_PLAN, tr("&Create a new and empty flight plan"), QString(), true);
   choiceDialog.addCheckBox(DELETE_TRAIL, tr("&Delete aircraft trail"),

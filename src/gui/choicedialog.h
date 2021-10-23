@@ -28,7 +28,9 @@ class ChoiceDialog;
 class QAbstractButton;
 class QCheckBox;
 
-/* A dialog helper that allows to show the user a list of checkboxes. */
+/*
+ * A configurable dialog that shows the user a list of checkboxes.
+ */
 class ChoiceDialog :
   public QDialog
 {
@@ -37,35 +39,55 @@ class ChoiceDialog :
 public:
   /* settingsPrefixParam is used to save the dialog and checkbox state.
    * helpBaseUrlParam is the base URL of the help system. Help button will be hidden if empty.*/
-  ChoiceDialog(QWidget *parent, const QString& title, const QString& description,
-               const QString& header, const QString& settingsPrefixParam, const QString& helpBaseUrlParam);
+  ChoiceDialog(QWidget *parent, const QString& title, const QString& description, const QString& settingsPrefixParam,
+               const QString& helpBaseUrlParam);
   virtual ~ChoiceDialog() override;
 
   ChoiceDialog(const ChoiceDialog& other) = delete;
   ChoiceDialog& operator=(const ChoiceDialog& other) = delete;
 
   /* Add a checkbox with the given id, text and tooltip */
-  void addCheckBox(int id, const QString& text, const QString& tooltip = QString(), bool checked = false,
-                   bool disabled = false, bool hidden = false);
+  template<typename TYPE>
+  void addCheckBox(TYPE id, const QString& text, const QString& tooltip = QString(), bool checked = false,
+                   bool disabled = false, bool hidden = false)
+  {
+    addCheckBoxInt(static_cast<int>(id), text, tooltip, checked, disabled, hidden);
+  }
+
+  /* Shortcut to add a disabled widget */
+  template<typename TYPE>
+  void addCheckBoxDisabled(TYPE id, const QString& text, const QString& tooltip, bool checked)
+  {
+    addCheckBoxDisabledInt(static_cast<int>(id), text, tooltip, checked);
+  }
+
+  /* Shortcut to add a hidden, disabled and unchecked widget.
+   * Useful if different configurations are saved in the same setting variable. */
+  template<typename TYPE>
+  void addCheckBoxHidden(TYPE id)
+  {
+    addCheckBoxHiddenInt(static_cast<int>(id));
+  }
+
+  /* true if box for id is checked and enabled */
+  template<typename TYPE>
+  bool isChecked(TYPE id) const
+  {
+    return isCheckedInt(static_cast<int>(id));
+  }
+
+  /* Get checkbox for given id */
+  template<typename TYPE>
+  QCheckBox *getCheckBox(TYPE id)
+  {
+    return getCheckBoxInt(static_cast<int>(id));
+  }
 
   /* Add a separator line */
   void addLine();
 
-  /* Shortcut to add a disabled widget */
-  void addCheckBoxDisabled(int id, const QString& text, const QString& tooltip, bool checked);
-
-  /* Shortcut to add a hidden, disabled and unchecked widget.
-   * Useful if different configurations are saved in the same setting variable. */
-  void addCheckBoxHidden(int id);
-
   /* Call after adding all buttons to restore button state */
   void restoreState();
-
-  /* true if box for id is checked and enabled */
-  bool isChecked(int id) const;
-
-  /* Get checkbox for given id */
-  QCheckBox *getCheckBox(int id);
 
 signals:
   /* Emitted when a checkbox is toggled */
@@ -76,6 +98,13 @@ private:
   void buttonBoxClicked(QAbstractButton *button);
   void checkBoxToggledInternal(bool checked);
   void saveState();
+
+  void addCheckBoxInt(int id, const QString& text, const QString& tooltip = QString(), bool checked = false,
+                      bool disabled = false, bool hidden = false);
+  void addCheckBoxDisabledInt(int id, const QString& text, const QString& tooltip, bool checked);
+  void addCheckBoxHiddenInt(int id);
+  bool isCheckedInt(int id) const;
+  QCheckBox *getCheckBoxInt(int id);
 
   Ui::ChoiceDialog *ui;
   QString helpBaseUrl, settingsPrefix;

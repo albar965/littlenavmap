@@ -65,6 +65,15 @@ public:
 private:
   struct DrawText
   {
+    DrawText()
+    {
+    }
+
+    DrawText(const atools::geo::Line& lineParam, bool distanceParam, bool courseParam)
+      : line(lineParam), distance(distanceParam), course(courseParam)
+    {
+    }
+
     /* Line for text placement */
     atools::geo::Line line;
 

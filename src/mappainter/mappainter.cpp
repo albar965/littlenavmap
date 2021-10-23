@@ -35,6 +35,7 @@
 
 #include <QPixmapCache>
 #include <QPainterPath>
+#include <QStringBuilder>
 
 using namespace Marble;
 using namespace atools::geo;
@@ -720,7 +721,7 @@ void MapPainter::initQueries()
 
 void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size)
 {
-  QPixmap *pixmapPtr = QPixmapCache::find(resource + "_" + QString::number(size));
+  QPixmap *pixmapPtr = QPixmapCache::find(resource % "_" % QString::number(size));
   if(pixmapPtr == nullptr)
   {
     pixmap = QIcon(resource).pixmap(QSize(size, size));
@@ -788,7 +789,7 @@ void MapPainter::paintHoldings(const QList<map::MapHolding>& holdings, bool enro
           }
 
           if(!holding.navIdent.isEmpty())
-            inboundText += holding.navIdent;
+            inboundText.append(holding.navIdent);
 
           if(detail2)
           {
