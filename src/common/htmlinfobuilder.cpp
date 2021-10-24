@@ -234,10 +234,15 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
   if(info)
   {
-    // Get transition altitude from nav database
+    // Try transition altitude from nav database
+    float transitionAltitude = 0.f;
     map::MapAirport navAirport = mapQuery->getAirportNav(airport);
     if(navAirport.isValid() && navAirport.transitionAltitude > 0)
-      html.row2(tr("Transition altitude:"), Unit::altFeet(navAirport.transitionAltitude));
+      transitionAltitude = navAirport.transitionAltitude;
+    else if(airport.transitionAltitude > 0)
+      // try from simulator database
+      transitionAltitude = airport.transitionAltitude;
+    html.row2(tr("Transition altitude:"), Unit::altFeet(transitionAltitude));
 
     // Sunrise and sunset ===========================
     QDateTime datetime =
@@ -3330,7 +3335,7 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
     // Decode speed and altitude
     float speed, altitude;
     bool speedOk, altitudeOk;
-    atools::fs::util::extractSpeedAndAltitude( spd % (alt == "VFR" ? QString() : alt), speed, altitude, &speedOk, &altitudeOk);
+    atools::fs::util::extractSpeedAndAltitude(spd % (alt == "VFR" ? QString() : alt), speed, altitude, &speedOk, &altitudeOk);
 
     if(speedOk)
       html.row2If(tr("Cruising Speed"), tr("%1 (%2)").arg(spd).arg(Unit::speedKts(speed)));
