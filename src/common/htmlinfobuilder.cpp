@@ -242,7 +242,9 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     else if(airport.transitionAltitude > 0)
       // try from simulator database
       transitionAltitude = airport.transitionAltitude;
-    html.row2(tr("Transition altitude:"), Unit::altFeet(transitionAltitude));
+
+    if(transitionAltitude > 0)
+      html.row2(tr("Transition altitude:"), Unit::altFeet(transitionAltitude));
 
     // Sunrise and sunset ===========================
     QDateTime datetime =
