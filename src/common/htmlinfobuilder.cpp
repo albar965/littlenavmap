@@ -2270,7 +2270,7 @@ bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
   if(!rec.isEmpty() && userpoint.isValid())
   {
     QIcon icon(NavApp::getUserdataIcons()->getIconPath(userpoint.type));
-    html.img(icon, QString(), QString(), symbolSizeTitle);
+    html.img(icon, QString(), QString(), QSize(0, symbolSizeTitle.height())); // Pass only height over to avoid stretching the image
     html.nbsp().nbsp();
 
     navaidTitle(html, tr("Userpoint%1").arg(userpoint.temp ? tr(" (Temporary)") : QString()));
