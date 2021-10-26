@@ -53,6 +53,31 @@ MapTooltip::~MapTooltip()
   qDebug() << Q_FUNC_INFO;
 }
 
+template<typename TYPE>
+void MapTooltip::buildOneTooltip(atools::util::HtmlBuilder& html, bool& overflow, int& numEntries, const QList<TYPE>& list,
+                                 const HtmlInfoBuilder& info,
+                                 void (HtmlInfoBuilder::*func)(const TYPE&, atools::util::HtmlBuilder&) const) const
+{
+  if(!overflow)
+  {
+    for(const TYPE& type : list)
+    {
+      if(checkText(html))
+      {
+        overflow = true;
+        break;
+      }
+
+      if(!html.isEmpty())
+        html.textBar(TEXT_BAR_LENGTH);
+
+      (info.*func)(type, html);
+
+      numEntries++;
+    }
+  }
+}
+
 QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const atools::geo::Pos& pos, const Route& route,
                                  bool airportDiagram)
 {
@@ -165,110 +190,19 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
     }
   }
 
-  // Holds ===========================================================================
-  if(!overflow)
-  {
-    for(const MapHolding& entry : mapSearchResult.holdings)
-    {
-      if(checkText(html))
-      {
-        overflow = true;
-        break;
-      }
-
-      if(!html.isEmpty())
-        html.textBar(TEXT_BAR_LENGTH);
-
-      info.holdingText(entry, html);
-
-      numEntries++;
-    }
-  }
-
   // Traffic pattern ===========================================================================
-  if(!overflow)
-  {
-    for(const TrafficPattern& entry : mapSearchResult.trafficPatterns)
-    {
-      if(checkText(html))
-      {
-        overflow = true;
-        break;
-      }
-
-      if(!html.isEmpty())
-        html.textBar(TEXT_BAR_LENGTH);
-
-      info.trafficPatternText(entry, html);
-
-      numEntries++;
-    }
-  }
+  buildOneTooltip(html, overflow, numEntries, mapSearchResult.trafficPatterns, info, &HtmlInfoBuilder::trafficPatternText);
 
   // Range rings ===========================================================================
-  if(!overflow)
+  buildOneTooltip(html, overflow, numEntries, mapSearchResult.rangeMarkers, info, &HtmlInfoBuilder::rangeMarkerText);
+
+  if(opts.testFlag(optsd::TOOLTIP_NAVAID))
   {
-    for(const RangeMarker& entry : mapSearchResult.rangeMarkers)
-    {
-      if(checkText(html))
-      {
-        overflow = true;
-        break;
-      }
+    // Logbook entries ===========================================================================
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.logbookEntries, info, &HtmlInfoBuilder::logEntryTextInfo);
 
-      if(!html.isEmpty())
-        html.textBar(TEXT_BAR_LENGTH);
-
-      info.rangeMarkerText(entry, html);
-
-      numEntries++;
-    }
-  }
-
-  // Logbook entries ===========================================================================
-  if(!overflow)
-  {
-    if(opts.testFlag(optsd::TOOLTIP_NAVAID))
-    {
-      for(const MapLogbookEntry& entry : mapSearchResult.logbookEntries)
-      {
-        if(checkText(html))
-        {
-          overflow = true;
-          break;
-        }
-
-        if(!html.isEmpty())
-          html.textBar(TEXT_BAR_LENGTH);
-
-        info.logEntryText(entry, html);
-
-        numEntries++;
-      }
-    }
-  }
-
-  // Userpoints ===========================================================================
-  if(!overflow)
-  {
-    if(opts.testFlag(optsd::TOOLTIP_NAVAID))
-    {
-      for(const MapUserpoint& up : mapSearchResult.userpoints)
-      {
-        if(checkText(html))
-        {
-          overflow = true;
-          break;
-        }
-
-        if(!html.isEmpty())
-          html.textBar(TEXT_BAR_LENGTH);
-
-        info.userpointText(up, html);
-
-        numEntries++;
-      }
-    }
+    // Userpoints ===========================================================================
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.userpoints, info, &HtmlInfoBuilder::userpointTextInfo);
   }
 
   // Airports ===========================================================================
@@ -300,202 +234,31 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
   // Navaids ===========================================================================
   if(opts.testFlag(optsd::TOOLTIP_NAVAID))
   {
-    if(!overflow)
-    {
-      for(const MapVor& vor : mapSearchResult.vors)
-      {
-        if(checkText(html))
-        {
-          overflow = true;
-          break;
-        }
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.vors, info, &HtmlInfoBuilder::vorText);
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.ndbs, info, &HtmlInfoBuilder::ndbText);
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.waypoints, info, &HtmlInfoBuilder::waypointText);
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.markers, info, &HtmlInfoBuilder::markerText);
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.ils, info, &HtmlInfoBuilder::ilsTextInfo);
 
-        if(!html.isEmpty())
-          html.textBar(TEXT_BAR_LENGTH);
+    // Holds ===========================================================================
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.holdings, info, &HtmlInfoBuilder::holdingText);
 
-        info.vorText(vor, html);
-
-        numEntries++;
-      }
-    }
-
-    if(!overflow)
-    {
-      for(const MapNdb& ndb : mapSearchResult.ndbs)
-      {
-        if(checkText(html))
-        {
-          overflow = true;
-          break;
-        }
-
-        if(!html.isEmpty())
-          html.textBar(TEXT_BAR_LENGTH);
-
-        info.ndbText(ndb, html);
-
-        numEntries++;
-      }
-    }
-
-    if(!overflow)
-    {
-      for(const MapWaypoint& wp : mapSearchResult.waypoints)
-      {
-        if(checkText(html))
-        {
-          overflow = true;
-          break;
-        }
-
-        if(!html.isEmpty())
-          html.textBar(TEXT_BAR_LENGTH);
-
-        info.waypointText(wp, html);
-
-        numEntries++;
-      }
-    }
-
-    if(!overflow)
-    {
-      for(const MapMarker& m : mapSearchResult.markers)
-      {
-        if(checkText(html))
-        {
-          overflow = true;
-          break;
-        }
-
-        if(!html.isEmpty())
-          html.textBar(TEXT_BAR_LENGTH);
-
-        info.markerText(m, html);
-
-        numEntries++;
-      }
-    }
-
-    if(!overflow)
-    {
-      for(const MapIls& ils : mapSearchResult.ils)
-      {
-        if(checkText(html))
-        {
-          overflow = true;
-          break;
-        }
-
-        if(!html.isEmpty())
-          html.textBar(TEXT_BAR_LENGTH);
-
-        info.ilsTextInfo(ils, html);
-
-        numEntries++;
-      }
-    }
+    // MSA ===========================================================================
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.airportMsa, info, &HtmlInfoBuilder::airportMsaText);
   }
 
   // Airport stuff ===========================================================================
   if(airportDiagram && opts.testFlag(optsd::TOOLTIP_AIRPORT))
   {
-    if(!overflow)
-    {
-      for(const MapAirport& ap : mapSearchResult.towers)
-      {
-        if(checkText(html))
-        {
-          overflow = true;
-          break;
-        }
-
-        if(!html.isEmpty())
-          html.textBar(TEXT_BAR_LENGTH);
-
-        info.towerText(ap, html);
-
-        numEntries++;
-      }
-    }
-
-    if(!overflow)
-    {
-      for(const MapParking& p : mapSearchResult.parkings)
-      {
-        if(checkText(html))
-        {
-          overflow = true;
-          break;
-        }
-
-        if(!html.isEmpty())
-          html.textBar(TEXT_BAR_LENGTH);
-
-        info.parkingText(p, html);
-
-        numEntries++;
-      }
-    }
-
-    if(!overflow)
-    {
-      for(const MapHelipad& p : mapSearchResult.helipads)
-      {
-        if(checkText(html))
-        {
-          overflow = true;
-          break;
-        }
-
-        if(!html.isEmpty())
-          html.textBar(TEXT_BAR_LENGTH);
-
-        info.helipadText(p, html);
-
-        numEntries++;
-      }
-    }
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.towers, info, &HtmlInfoBuilder::towerText);
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.parkings, info, &HtmlInfoBuilder::parkingText);
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.helipads, info, &HtmlInfoBuilder::helipadText);
   }
 
   if(opts.testFlag(optsd::TOOLTIP_NAVAID))
   {
-    if(!overflow)
-    {
-      for(const MapUserpointRoute& up : mapSearchResult.userpointsRoute)
-      {
-        if(checkText(html))
-        {
-          overflow = true;
-          break;
-        }
-
-        if(!html.isEmpty())
-          html.textBar(TEXT_BAR_LENGTH);
-
-        info.userpointTextRoute(up, html);
-
-        numEntries++;
-      }
-    }
-
-    if(!overflow)
-    {
-      for(const MapAirway& airway : mapSearchResult.airways)
-      {
-        if(checkText(html))
-        {
-          overflow = true;
-          break;
-        }
-
-        if(!html.isEmpty())
-          html.textBar(TEXT_BAR_LENGTH);
-
-        info.airwayText(airway, html);
-
-        numEntries++;
-      }
-    }
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.userpointsRoute, info, &HtmlInfoBuilder::userpointTextRoute);
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.airways, info, &HtmlInfoBuilder::airwayText);
   }
 
   // High altitude winds ===========================================================================
@@ -587,7 +350,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
 }
 
 /* Check if the result HTML has more than the allowed number of lines and add a "more" text */
-bool MapTooltip::checkText(HtmlBuilder& html)
+bool MapTooltip::checkText(HtmlBuilder& html) const
 {
   return html.checklengthTextBar(MAX_LINES, tr("More ..."), TEXT_BAR_LENGTH);
 }

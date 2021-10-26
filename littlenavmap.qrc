@@ -291,5 +291,6 @@
         <file>resources/icons/userpoint_Other.svg</file>
         <file>resources/icons/gls.svg</file>
         <file>resources/icons/enroutehold.svg</file>
+        <file>resources/icons/msa.svg</file>
     </qresource>
 </RCC>

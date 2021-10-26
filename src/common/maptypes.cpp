@@ -1320,56 +1320,24 @@ QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj)
 
 QDataStream& operator>>(QDataStream& dataStream, TrafficPattern& obj)
 {
-  dataStream >> obj.airportIcao
-  >> obj.runwayName
-  >> obj.color
-  >> obj.turnRight
-  >> obj.base45Degree
-  >> obj.showEntryExit
-  >> obj.runwayLength
-  >> obj.downwindDistance
-  >> obj.baseDistance
-  >> obj.courseTrue
-  >> obj.magvar
-  >> obj.position;
+  dataStream >> obj.airportIcao >> obj.runwayName >> obj.color >> obj.turnRight >> obj.base45Degree >> obj.showEntryExit
+  >> obj.runwayLength >> obj.downwindDistance >> obj.baseDistance >> obj.courseTrue >> obj.magvar >> obj.position;
 
   return dataStream;
 }
 
 QDataStream& operator<<(QDataStream& dataStream, const TrafficPattern& obj)
 {
-  dataStream << obj.airportIcao
-             << obj.runwayName
-             << obj.color
-             << obj.turnRight
-             << obj.base45Degree
-             << obj.showEntryExit
-             << obj.runwayLength
-             << obj.downwindDistance
-             << obj.baseDistance
-             << obj.courseTrue
-             << obj.magvar
-             << obj.position;
+  dataStream << obj.airportIcao << obj.runwayName << obj.color << obj.turnRight << obj.base45Degree << obj.showEntryExit
+             << obj.runwayLength << obj.downwindDistance << obj.baseDistance << obj.courseTrue << obj.magvar << obj.position;
 
   return dataStream;
 }
 
 QDataStream& operator>>(QDataStream& dataStream, MapHolding& obj)
 {
-  dataStream
-  >> obj.navIdent
-  >> obj.navType
-  >> obj.vorDmeOnly
-  >> obj.vorHasDme
-  >> obj.vorTacan
-  >> obj.vorVortac
-  >> obj.color
-  >> obj.turnLeft
-  >> obj.time
-  >> obj.speedKts
-  >> obj.courseTrue
-  >> obj.magvar
-  >> obj.position;
+  dataStream >> obj.navIdent >> obj.navType >> obj.vorDmeOnly >> obj.vorHasDme >> obj.vorTacan >> obj.vorVortac
+  >> obj.color >> obj.turnLeft >> obj.time >> obj.speedKts >> obj.courseTrue >> obj.magvar >> obj.position;
 
   obj.user = true;
   obj.length = obj.speedLimit = obj.minAltititude = obj.maxAltititude = 0.f;
@@ -1379,20 +1347,8 @@ QDataStream& operator>>(QDataStream& dataStream, MapHolding& obj)
 
 QDataStream& operator<<(QDataStream& dataStream, const MapHolding& obj)
 {
-  dataStream
-    << obj.navIdent
-    << obj.navType
-    << obj.vorDmeOnly
-    << obj.vorHasDme
-    << obj.vorTacan
-    << obj.vorVortac
-    << obj.color
-    << obj.turnLeft
-    << obj.time
-    << obj.speedKts
-    << obj.courseTrue
-    << obj.magvar
-    << obj.position;
+  dataStream << obj.navIdent << obj.navType << obj.vorDmeOnly << obj.vorHasDme << obj.vorTacan << obj.vorVortac
+             << obj.color << obj.turnLeft << obj.time << obj.speedKts << obj.courseTrue << obj.magvar << obj.position;
 
   return dataStream;
 }
@@ -1444,6 +1400,41 @@ QString vorType(bool dmeOnly, bool hasDme, bool tacan, bool vortac)
       return QObject::tr("VORDME");
     else
       return QObject::tr("VOR");
+  }
+}
+
+QString vorFullShortText(const MapVor& vor)
+{
+  return vorFullShortText(vor.type, vor.dmeOnly, vor.hasDme, vor.tacan, vor.vortac);
+}
+
+QString vorFullShortText(const QString& vorType, bool dmeOnly, bool hasDme, bool tacan, bool vortac)
+{
+  if(tacan)
+    return QObject::tr("TACAN");
+  else if(vorType.isEmpty())
+  {
+    if(vortac)
+      return QObject::tr("VORTAC");
+    else if(dmeOnly)
+      return QObject::tr("DME");
+    else if(hasDme)
+      return QObject::tr("VORDME");
+    else
+      return QObject::tr("VOR");
+  }
+  else
+  {
+    QString type = vorType.startsWith("VT") ? vorType.at(vorType.size() - 1) : vorType.at(0);
+
+    if(vortac)
+      return QObject::tr("VORTAC (%1)").arg(type);
+    else if(dmeOnly)
+      return QObject::tr("DME (%1)").arg(type);
+    else if(hasDme)
+      return QObject::tr("VORDME (%1)").arg(type);
+    else
+      return QObject::tr("VOR (%1)").arg(type);
   }
 }
 
@@ -1545,6 +1536,22 @@ QString airportTextShort(const MapAirport& airport, int elideName)
     return QObject::tr("%1 (%2)").arg(atools::elideTextShort(airport.name, elideName)).arg(airport.displayIdent());
 }
 
+QString airportMsaTextShort(const MapAirportMsa& airportMsa)
+{
+  if(!airportMsa.isValid())
+    return QObject::tr("MSA");
+  else
+    return QObject::tr("%1/%2").arg(airportMsa.airportIdent).arg(airportMsa.navIdent);
+}
+
+QString airportMsaText(const MapAirportMsa& airportMsa)
+{
+  if(!airportMsa.isValid())
+    return QObject::tr("MSA");
+  else
+    return QObject::tr("MSA Sectors at %1/%2").arg(airportMsa.airportIdent).arg(airportMsa.navIdent);
+}
+
 QString comTypeName(const QString& type)
 {
   Q_ASSERT(!comTypeNames.isEmpty());
@@ -1642,36 +1649,6 @@ QString patternDirection(const QString& type)
     return QString();
 }
 
-QString vorFullShortText(const MapVor& vor)
-{
-  if(vor.tacan)
-    return QObject::tr("TACAN");
-  else if(vor.type.isEmpty())
-  {
-    if(vor.vortac)
-      return QObject::tr("VORTAC");
-    else if(vor.dmeOnly)
-      return QObject::tr("DME");
-    else if(vor.hasDme)
-      return QObject::tr("VORDME");
-    else
-      return QObject::tr("VOR");
-  }
-  else
-  {
-    QString type = vor.type.startsWith("VT") ? vor.type.at(vor.type.size() - 1) : vor.type.at(0);
-
-    if(vor.vortac)
-      return QObject::tr("VORTAC (%1)").arg(type);
-    else if(vor.dmeOnly)
-      return QObject::tr("DME (%1)").arg(type);
-    else if(vor.hasDme)
-      return QObject::tr("VORDME (%1)").arg(type);
-    else
-      return QObject::tr("VOR (%1)").arg(type);
-  }
-}
-
 QString ndbFullShortText(const MapNdb& ndb)
 {
   // Compass point vs. compass locator
@@ -1701,6 +1678,8 @@ QString mapObjectTypeToString(MapTypes type)
 
     if(type.testFlag(AIRPORT))
       str += "Airport";
+    if(type.testFlag(AIRPORT_MSA))
+      str += "Airport MSA";
     if(type.testFlag(AIRPORT_HARD))
       str += "AirportHard";
     if(type.testFlag(AIRPORT_SOFT))

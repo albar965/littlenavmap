@@ -74,6 +74,9 @@ struct MapResult
   QList<map::MapHolding> holdings; /* Either used defined hold or enroute hold */
   QSet<int> holdingIds; /* Ids used to deduplicate */
 
+  QList<map::MapAirportMsa> airportMsa;
+  QSet<int> airportMsaIds; /* Ids used to deduplicate */
+
   QList<proc::MapProcedurePoint> procPoints;
 
   /* true if none of the types exists in this result */
@@ -114,6 +117,11 @@ struct MapResult
   bool hasAirports() const
   {
     return !airports.isEmpty();
+  }
+
+  bool hasAirportMsa() const
+  {
+    return !airportMsa.isEmpty();
   }
 
   bool hasAirways() const
@@ -187,9 +195,14 @@ struct MapResult
 
   QString objectText(MapTypes navType, int elideName = 1000) const;
 
+  void removeInvalid();
+
 private:
-  template<typename T>
-  void clearAllButFirst(QList<T>& list);
+  template<typename TYPE>
+  void clearAllButFirst(QList<TYPE>& list);
+
+  template<typename TYPE>
+  void removeInvalid(QList<TYPE>& list, QSet<int> *ids = nullptr);
 
 };
 

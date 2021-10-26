@@ -52,6 +52,7 @@ struct MapMarker;
 struct MapAirspace;
 struct MapAirway;
 struct MapHelipad;
+struct MapAirportMsa;
 }
 
 /*
@@ -65,12 +66,6 @@ class SymbolPainter
   Q_DECLARE_TR_FUNCTIONS(SymbolPainter)
 
 public:
-  /*
-   * @param backgroundColor used for tooltips of table view icons
-   */
-  SymbolPainter();
-  ~SymbolPainter();
-
   /* Create icons for tooltips, table views and more. Size is pixel. */
   QIcon createAirportIcon(const map::MapAirport& airport, int size);
   QIcon createAirportWeatherIcon(const atools::fs::weather::Metar& metar, int size);
@@ -82,6 +77,9 @@ public:
   QIcon createProcedurePointIcon(int size);
   QIcon createAirspaceIcon(const map::MapAirspace& airspace, int size);
   QIcon createHelipadIcon(const map::MapHelipad& helipad, int size);
+
+  /* Scale is not pixel size but a factor related for font size */
+  QIcon createAirportMsaIcon(const map::MapAirportMsa& airportMsa, const QFont& font, float symbolScale, int *actualSize = nullptr);
 
   /* Airport symbol. For airport diagram use a transparent text background */
   void drawAirportSymbol(QPainter *painter, const map::MapAirport& airport, float x, float y, int size,
@@ -99,6 +97,9 @@ public:
 
   /* Wind arrow */
   void drawWindPointer(QPainter *painter, float x, float y, int size, float dir);
+
+  /* Draw large symbol with sectors and labels. MSA circle with bearings and altitude */
+  void drawAirportMsa(QPainter *painter, const map::MapAirportMsa& airportMsa, float x, float y, float symbolScale, bool header);
 
   /* Aircraft track */
   void drawTrackLine(QPainter *painter, float x, float y, int size, float dir);
@@ -128,7 +129,7 @@ public:
 
   void drawHelipadSymbol(QPainter *painter, const map::MapHelipad& helipad, float x, float y, float w, float h, bool fast);
 
-  /* User defined flight plan waypoint */
+  /* User defined flight plan waypoint. Green rect. */
   void drawUserpointSymbol(QPainter *painter, int x, int y, int size, bool routeFill);
 
   /* Circle for approach points which are not navaids */
@@ -176,6 +177,8 @@ private:
   QVector<int> calculateWindBarbs(float& lineLength, float lineWidth, float wind, bool useBarb50) const;
   void drawBarbFeathers(QPainter *painter, const QVector<int>& barbs, float lineLength, float barbLength5,
                         float barbLength10, float barbLength50, float barbStep) const;
+
+  int airportMsaSize(QPainter *painter, const map::MapAirportMsa& airportMsa, float sizeFactor);
 
 };
 

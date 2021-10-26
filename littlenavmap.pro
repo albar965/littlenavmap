@@ -298,6 +298,7 @@ SOURCES += \
   src/mappainter/mappainteraltitude.cpp \
   src/mappainter/mappainterils.cpp \
   src/mappainter/mappaintermark.cpp \
+  src/mappainter/mappaintermsa.cpp \
   src/mappainter/mappainternav.cpp \
   src/mappainter/mappainterroute.cpp \
   src/mappainter/mappaintership.cpp \
@@ -471,6 +472,7 @@ HEADERS  += \
   src/mappainter/mappainteraltitude.h \
   src/mappainter/mappainterils.h \
   src/mappainter/mappaintermark.h \
+  src/mappainter/mappaintermsa.h \
   src/mappainter/mappainternav.h \
   src/mappainter/mappainterroute.h \
   src/mappainter/mappaintership.h \

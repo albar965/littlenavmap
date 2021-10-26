@@ -76,7 +76,7 @@ enum MapType
   AIRCRAFT = 1 << 14, /* Simulator user aircraft */
   AIRCRAFT_AI = 1 << 15, /* AI or multiplayer simulator aircraft */
   AIRCRAFT_AI_SHIP = 1 << 16, /* AI or multiplayer simulator ship */
-  // 1 << 17
+  AIRPORT_MSA = 1 << 17, /* Minimum safe altitude for airports and navaids */
   USERPOINTROUTE = 1 << 18, /* Flight plan user waypoint */
   PARKING = 1 << 19,
   RUNWAYEND = 1 << 20,

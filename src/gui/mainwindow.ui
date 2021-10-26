@@ -379,7 +379,9 @@
      <addaction name="actionMapShowWp"/>
      <addaction name="actionMapShowIls"/>
      <addaction name="actionMapShowGls"/>
+     <addaction name="separator"/>
      <addaction name="actionMapShowHolding"/>
+     <addaction name="actionMapShowAirportMsa"/>
      <addaction name="separator"/>
      <addaction name="actionMapShowVictorAirways"/>
      <addaction name="actionMapShowJetAirways"/>
@@ -5608,6 +5610,7 @@ relation to shown airport</string>
    <addaction name="actionMapShowIls"/>
    <addaction name="actionMapShowGls"/>
    <addaction name="actionMapShowHolding"/>
+   <addaction name="actionMapShowAirportMsa"/>
    <addaction name="actionMapShowVictorAirways"/>
    <addaction name="actionMapShowJetAirways"/>
    <addaction name="actionMapShowTracks"/>
@@ -12098,6 +12101,27 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Ctrl+PgUp</string>
    </property>
   </action>
+  <action name="actionMapShowAirportMsa">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/msa.svg</normaloff>:/littlenavmap/resources/icons/msa.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show &amp;MSA Sectors</string>
+   </property>
+   <property name="toolTip">
+    <string>Show airport MSA sectors on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show holdings on map</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12283,8 +12307,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalc"/>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>

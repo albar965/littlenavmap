@@ -79,6 +79,10 @@ extern QColor compassRoseColor;
 extern QColor compassRoseTextColor;
 extern QColor distanceColor;
 
+extern QColor msaFillColor;
+extern QColor msaTextColor;
+extern QColor msaSymbolColor;
+
 /* Weather icon colors */
 extern QColor weatherBackgoundColor;
 extern QColor weatherWindColor;

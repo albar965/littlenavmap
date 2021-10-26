@@ -598,6 +598,41 @@ struct MapHelipad
 };
 
 // =====================================================================
+/* All information for a airport MSA circle */
+struct MapAirportMsa :
+  public MapBase
+{
+  MapAirportMsa() : MapBase(map::AIRPORT_MSA)
+  {
+  }
+
+  QString airportIdent, navIdent, region, multipleCode, vorType;
+
+  map::MapType navType; /* AIRPORT, VOR, NDB or WAYPOINT*/
+  bool vorDmeOnly, vorHasDme, vorTacan, vorVortac; /* VOR specific flags */
+
+  float radius, /* Radius in NM */
+        magvar; /* Taken from environment or navaid */
+
+  bool user; /* true if created by user. otherwise from database */
+
+  QVector<float> bearings, /* Bearings in true or mag degree - same size as altitudes */
+                 altitudes; /* Altitudes in feet - same size as bearings */
+
+  bool trueBearing; /* true if all bearing values are true - otherwise magnetic */
+  atools::geo::LineString geometry, /* Outer circle/arcs geometry. 180 points for full circle. */
+                          labelPositions, /* Pre-calculated altitude label positions. */
+                          bearingEndPositions; /* Endpoints for bearing lines from center to end point */
+  atools::geo::Rect bounding;
+
+  const QString& getIdent() const
+  {
+    return navIdent;
+  }
+
+};
+
+// =====================================================================
 /* VOR station */
 /* database id vor.vor_id */
 struct MapVor
@@ -628,6 +663,11 @@ struct MapVor
       return channel;
   }
 
+  const QString& getIdent() const
+  {
+    return ident;
+  }
+
 };
 
 // =====================================================================
@@ -644,6 +684,12 @@ struct MapNdb
   float magvar;
   int frequency /* kHz * 100 */, range /* nm */;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
+
+  const QString& getIdent() const
+  {
+    return ident;
+  }
+
 };
 
 // =====================================================================
@@ -663,6 +709,12 @@ struct MapWaypoint
 
   bool hasVictorAirways = false, hasJetAirways = false, hasTracks = false;
   int artificial = 0;
+
+  const QString& getIdent() const
+  {
+    return ident;
+  }
+
 };
 
 /* Waypoint or intersection */
@@ -901,6 +953,11 @@ struct MapAirway
   atools::geo::Rect bounding; /* pre calculated using from and to */
   bool eastCourse, westCourse;
 
+  const QString& getIdent() const
+  {
+    return name;
+  }
+
 };
 
 // =====================================================================
@@ -1027,6 +1084,11 @@ struct MapIls
     return slope > 0.1f;
   }
 
+  const QString& getIdent() const
+  {
+    return ident;
+  }
+
   atools::geo::LineString boundary() const;
   atools::geo::Line centerLine() const;
 
@@ -1135,7 +1197,7 @@ struct MapHolding
   }
 
   QString navIdent, name, vorType; /* Only for display purposes */
-  map::MapTypes navType; /* AIRPORT, VOR, NDB or WAYPOINT*/
+  map::MapType navType; /* AIRPORT, VOR, NDB or WAYPOINT*/
   bool vorDmeOnly, vorHasDme, vorTacan, vorVortac; /* VOR specific flags */
 
   QString airportIdent;
@@ -1157,6 +1219,11 @@ struct MapHolding
 
   /* Distance of straight segment in NM. Either from database or calculated */
   float distance(bool *estimated = nullptr) const;
+
+  const QString& getIdent() const
+  {
+    return navIdent;
+  }
 
 };
 
@@ -1299,15 +1366,23 @@ QString comTypeName(const QString& type);
 
 QString airportText(const map::MapAirport& airport, int elideName = 100);
 QString airportTextShort(const map::MapAirport& airport, int elideName = 100);
+
+QString airportMsaText(const map::MapAirportMsa& airportMsa);
+QString airportMsaTextShort(const map::MapAirportMsa& airportMsa);
+
 QString vorFullShortText(const map::MapVor& vor);
+QString vorFullShortText(const QString& vorType, bool dmeOnly, bool hasDme, bool tacan, bool vortac);
 QString vorText(const map::MapVor& vor, int elideName = 100);
 QString vorTextShort(const MapVor& vor);
 QString vorType(const map::MapVor& vor);
 QString vorType(bool dmeOnly, bool hasDme, bool tacan, bool vortac);
+
 QString ndbFullShortText(const map::MapNdb& ndb);
 QString ndbText(const map::MapNdb& ndb, int elideName = 100);
 QString ndbTextShort(const MapNdb& ndb);
+
 QString waypointText(const map::MapWaypoint& waypoint);
+
 QString userpointRouteText(const map::MapUserpointRoute& userpoint);
 QString userpointText(const MapUserpoint& userpoint, int elideName = 100);
 QString logEntryText(const MapLogbookEntry& logEntry);
@@ -1329,7 +1404,9 @@ void updateUnits();
 } // namespace map
 
 /* Type info */
+Q_DECLARE_TYPEINFO(map::MapBase, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirport, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapAirportMsa, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapRunway, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapRunwayEnd, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapApron, Q_MOVABLE_TYPE);
@@ -1348,6 +1425,7 @@ Q_DECLARE_TYPEINFO(map::MapUserpointRoute, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::PosCourse, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirspace, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapLogbookEntry, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapObjectRefExt, Q_MOVABLE_TYPE);
 
 /* Type info and serializable objects */
 Q_DECLARE_TYPEINFO(map::MapObjectRef, Q_PRIMITIVE_TYPE);

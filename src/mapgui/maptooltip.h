@@ -29,6 +29,7 @@ struct MapResult;
 class WeatherReporter;
 class Route;
 class MainWindow;
+class HtmlInfoBuilder;
 
 namespace atools {
 namespace geo {
@@ -67,7 +68,12 @@ public:
   QString buildTooltip(const map::MapResult& mapSearchResult, const atools::geo::Pos& pos, const Route& route, bool airportDiagram);
 
 private:
-  bool checkText(atools::util::HtmlBuilder& html);
+  bool checkText(atools::util::HtmlBuilder& html) const;
+
+  template<typename TYPE>
+  void buildOneTooltip(atools::util::HtmlBuilder& html, bool& overflow, int& numEntries, const QList<TYPE>& list,
+                       const HtmlInfoBuilder& info,
+                       void (HtmlInfoBuilder::*func)(const TYPE&, atools::util::HtmlBuilder&) const) const;
 
   static Q_DECL_CONSTEXPR int MAX_LINES = 20;
 

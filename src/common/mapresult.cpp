@@ -31,6 +31,12 @@ MapResult& MapResult::clear(const MapTypes& types)
     airportIds.clear();
   }
 
+  if(types.testFlag(map::AIRPORT_MSA))
+  {
+    airportMsa.clear();
+    airportMsaIds.clear();
+  }
+
   if(types.testFlag(map::WAYPOINT))
   {
     waypoints.clear();
@@ -96,11 +102,28 @@ MapResult& MapResult::clear(const MapTypes& types)
   return *this;
 }
 
-template<typename T>
-void MapResult::clearAllButFirst(QList<T>& list)
+template<typename TYPE>
+void MapResult::clearAllButFirst(QList<TYPE>& list)
 {
   while(list.size() > 1)
     list.removeLast();
+}
+
+template<typename TYPE>
+void MapResult::removeInvalid(QList<TYPE>& list, QSet<int> *ids)
+{
+  if(ids != nullptr)
+  {
+    for(const TYPE& type : list)
+    {
+      if(!type.isValid())
+        ids->remove(type.id);
+    }
+  }
+
+  list.erase(std::remove_if(list.begin(), list.end(), [](const TYPE& type) -> bool {
+      return !type.isValid();
+    }), list.end());
 }
 
 MapResult& MapResult::clearAllButFirst(const MapTypes& types)
@@ -109,6 +132,12 @@ MapResult& MapResult::clearAllButFirst(const MapTypes& types)
   {
     clearAllButFirst(airports);
     airportIds.clear();
+  }
+
+  if(types.testFlag(map::AIRPORT_MSA))
+  {
+    clearAllButFirst(airportMsa);
+    airportMsaIds.clear();
   }
 
   if(types.testFlag(map::WAYPOINT))
@@ -287,6 +316,8 @@ QString MapResult::objectText(MapTypes navType, int elideName) const
   QString navaidStr;
   if(navType == map::AIRPORT && hasAirports())
     navaidStr = map::airportTextShort(airports.first(), elideName);
+  if(navType == map::AIRPORT_MSA && hasAirportMsa())
+    navaidStr = map::airportMsaTextShort(airportMsa.first());
   else if(navType == map::VOR && hasVor())
     navaidStr = map::vorText(vors.first(), elideName);
   else if(navType == map::NDB && hasNdb())
@@ -298,6 +329,32 @@ QString MapResult::objectText(MapTypes navType, int elideName) const
   else if(navType == map::LOGBOOK && hasLogEntries())
     navaidStr = map::logEntryText(logbookEntries.first());
   return navaidStr;
+}
+
+void MapResult::removeInvalid()
+{
+  removeInvalid(airports, &airportIds);
+  removeInvalid(runwayEnds);
+  removeInvalid(towers);
+  removeInvalid(parkings);
+  removeInvalid(helipads);
+  removeInvalid(waypoints, &waypointIds);
+  removeInvalid(vors, &waypointIds);
+  removeInvalid(ndbs, &ndbIds);
+  removeInvalid(markers);
+  removeInvalid(ils);
+  removeInvalid(airways);
+  removeInvalid(airspaces);
+  removeInvalid(userpointsRoute);
+  removeInvalid(userpoints, &userpointIds);
+  removeInvalid(logbookEntries);
+  removeInvalid(aiAircraft);
+  removeInvalid(onlineAircraft, &onlineAircraftIds);
+  removeInvalid(trafficPatterns);
+  removeInvalid(rangeMarkers);
+  removeInvalid(holdings, &holdingIds);
+  removeInvalid(airportMsa, &airportMsaIds);
+  removeInvalid(procPoints);
 }
 
 void MapResult::clearNavdataAirspaces()
@@ -330,6 +387,8 @@ const atools::geo::Pos& MapResult::getPosition(const std::initializer_list<MapTy
     {
       if(type == map::AIRPORT)
         return airports.first().getPosition();
+      else if(type == map::AIRPORT_MSA)
+        return airportMsa.first().getPosition();
       else if(type == map::WAYPOINT)
         return waypoints.first().getPosition();
       else if(type == map::VOR)
@@ -371,6 +430,9 @@ QString MapResult::getIdent(const std::initializer_list<MapTypes>& types) const
     {
       if(type == map::AIRPORT)
         return airports.first().ident;
+
+      if(type == map::AIRPORT_MSA)
+        return airportMsa.first().navIdent;
       else if(type == map::WAYPOINT)
         return waypoints.first().ident;
       else if(type == map::VOR)
@@ -417,6 +479,12 @@ bool MapResult::getIdAndType(int& id, MapTypes& type,
       if(t == map::AIRPORT)
       {
         id = airports.first().getId();
+        type = t;
+        break;
+      }
+      else if(t == map::AIRPORT_MSA)
+      {
+        id = airportMsa.first().getId();
         type = t;
         break;
       }
@@ -515,6 +583,8 @@ MapResult& MapResult::fromMapBase(const MapBase *base)
   {
     if(base->getType().testFlag(map::AIRPORT))
       airports.append(base->asObj<map::MapAirport>());
+    else if(base->getType().testFlag(map::AIRPORT_MSA))
+      airportMsa.append(base->asObj<map::MapAirportMsa>());
     else if(base->getType().testFlag(map::WAYPOINT))
       waypoints.append(base->asObj<map::MapWaypoint>());
     else if(base->getType().testFlag(map::VOR))
@@ -551,6 +621,7 @@ int MapResult::size(const MapTypes& types) const
 {
   int totalSize = 0;
   totalSize += types.testFlag(map::AIRPORT) ? airports.size() : 0;
+  totalSize += types.testFlag(map::AIRPORT_MSA) ? airportMsa.size() : 0;
   totalSize += types.testFlag(map::WAYPOINT) ? waypoints.size() : 0;
   totalSize += types.testFlag(map::VOR) ? vors.size() : 0;
   totalSize += types.testFlag(map::NDB) ? ndbs.size() : 0;
@@ -577,6 +648,13 @@ QDebug operator<<(QDebug out, const map::MapResult& record)
     out << "Airport[";
     for(const map::MapAirport& obj :  record.airports)
       out << obj.id << obj.ident << obj.routeIndex << ",";
+    out << "]";
+  }
+  if(!record.airportMsa.isEmpty())
+  {
+    out << "AirportMSA[";
+    for(const map::MapAirportMsa& obj :  record.airportMsa)
+      out << obj.id << obj.airportIdent << obj.navIdent << ",";
     out << "]";
   }
   if(!record.runwayEnds.isEmpty())
@@ -688,6 +766,11 @@ MapResultIndex& MapResultIndex::add(const MapResult& resultParam, const MapTypes
     result.airports.append(resultParam.airports);
     addAll(result.airports);
   }
+  if(types.testFlag(AIRPORT_MSA))
+  {
+    result.airportMsa.append(resultParam.airportMsa);
+    addAll(result.airportMsa);
+  }
   if(types.testFlag(RUNWAYEND))
   {
     result.runwayEnds.append(resultParam.runwayEnds);
@@ -783,6 +866,8 @@ MapResultIndex& MapResultIndex::addRef(const MapResult& resultParam, const MapTy
 {
   if(types.testFlag(AIRPORT))
     addAll(resultParam.airports);
+  if(types.testFlag(AIRPORT_MSA))
+    addAll(resultParam.airportMsa);
   if(types.testFlag(RUNWAYEND))
     addAll(resultParam.runwayEnds);
   if(types.testFlag(PARKING))

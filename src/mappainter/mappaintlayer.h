@@ -36,6 +36,7 @@ class MapWidget;
 class MapLayerSettings;
 class MapScale;
 class MapPainterAirport;
+class MapPainterMsa;
 class MapPainterAirspace;
 class MapPainterNav;
 class MapPainterIls;
@@ -189,6 +190,7 @@ private:
 
   /* All painters */
   MapPainterAirport *mapPainterAirport;
+  MapPainterMsa *mapPainterMsa;
   MapPainterAirspace *mapPainterAirspace;
   MapPainterNav *mapPainterNav;
   MapPainterIls *mapPainterIls;

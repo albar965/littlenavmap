@@ -2206,7 +2206,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     // Update tooltip if it has bearing/distance fields
     if((mapSearchResultTooltip.hasAirports() || mapSearchResultTooltip.hasVor() || mapSearchResultTooltip.hasNdb() ||
         mapSearchResultTooltip.hasWaypoints() || mapSearchResultTooltip.hasIls() ||
-        mapSearchResultTooltip.hasHoldings() ||
+        mapSearchResultTooltip.hasHoldings() || mapSearchResultTooltip.hasAirportMsa() ||
         mapSearchResultTooltip.hasUserpoints()) && NavApp::isConnectedAndAircraft())
       updateTooltip();
   }
@@ -2866,7 +2866,7 @@ void MapWidget::resetSettingActionsToDefault()
   atools::gui::SignalBlocker blocker({ui->actionMapShowAirports, ui->actionMapShowSoftAirports,
                                       ui->actionMapShowEmptyAirports, ui->actionMapShowAddonAirports,
                                       ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
-                                      ui->actionMapShowIls, ui->actionMapShowGls, ui->actionMapShowHolding,
+                                      ui->actionMapShowIls, ui->actionMapShowGls, ui->actionMapShowHolding, ui->actionMapShowAirportMsa,
                                       ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
                                       ui->actionMapShowTracks, ui->actionShowAirspaces, ui->actionMapShowRoute,
                                       ui->actionMapShowTocTod, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
@@ -2894,6 +2894,7 @@ void MapWidget::resetSettingActionsToDefault()
   ui->actionMapShowIls->setChecked(true);
   ui->actionMapShowGls->setChecked(true);
   ui->actionMapShowHolding->setChecked(false);
+  ui->actionMapShowAirportMsa->setChecked(false);
   ui->actionMapShowVictorAirways->setChecked(false);
   ui->actionMapShowJetAirways->setChecked(false);
   ui->actionMapShowTracks->setChecked(false);
@@ -3089,6 +3090,7 @@ void MapWidget::updateMapObjectsShown()
   setShowMapFeatures(map::NDB, ui->actionMapShowNdb->isChecked());
   setShowMapFeatures(map::WAYPOINT, ui->actionMapShowWp->isChecked());
   setShowMapFeatures(map::HOLDING, ui->actionMapShowHolding->isChecked());
+  setShowMapFeatures(map::AIRPORT_MSA, ui->actionMapShowAirportMsa->isChecked());
 
   // ILS and marker are shown together
   setShowMapFeatures(map::ILS, ui->actionMapShowIls->isChecked());

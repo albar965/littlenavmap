@@ -59,6 +59,10 @@ QColor glsTextColor(20, 20, 20);
 QPen glsCenterPen(Qt::darkGray, 1.5, Qt::DashLine);
 QColor glsSymbolColor(Qt::darkGray);
 
+QColor msaFillColor("#d0ffffff");
+QColor msaTextColor(Qt::darkGray);
+QColor msaSymbolColor(Qt::darkGray);
+
 QColor waypointSymbolColor(200, 0, 200);
 
 QColor airwayVictorColor("#969696"); // 1.
@@ -638,6 +642,10 @@ void syncColors()
   syncColorArgb(colorSettings, "GlsGbasFillColor", glsFillColor);
   syncColor(colorSettings, "GlsTextColor", glsTextColor);
   syncPen(colorSettings, "GlsCenterPen", glsCenterPen);
+
+  syncColor(colorSettings, "MsaTextColor", msaTextColor);
+  syncColorArgb(colorSettings, "MsaFillColor", msaFillColor);
+  syncColor(colorSettings, "MsaSymbolColor", msaSymbolColor);
 
   syncColor(colorSettings, "WaypointColor", waypointSymbolColor);
   syncColor(colorSettings, "HoldingColor", holdingColor);

@@ -2144,7 +2144,6 @@ void RouteController::showInformationMenu()
 
 void RouteController::showInformationInternal(const RouteLeg& routeLeg)
 {
-
   if(routeLeg.isAnyProcedure())
   {
     if(routeLeg.getProcedureLeg().navaids.hasTypes(map::AIRPORT | map::WAYPOINT | map::VOR | map::NDB))

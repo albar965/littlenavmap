@@ -1443,6 +1443,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowIls, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowGls, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowHolding, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowAirportMsa, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowVictorAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowJetAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowTracks, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -3655,6 +3656,7 @@ void MainWindow::updateActionStates()
   ui->actionMapShowMinimumAltitude->setEnabled(NavApp::isMoraAvailable());
   ui->actionMapShowGls->setEnabled(NavApp::isGlsAvailable());
   ui->actionMapShowHolding->setEnabled(NavApp::isHoldingsAvailable());
+  ui->actionMapShowAirportMsa->setEnabled(NavApp::isAirportMsaAvailable());
 
   bool hasFlightplan = !NavApp::getRouteConst().isFlightplanEmpty();
   bool hasTrack = !NavApp::isAircraftTrackEmpty();
@@ -3920,7 +3922,8 @@ void MainWindow::restoreStateMain()
     // Restore map settings if desired by the user
     widgetState.restore({ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
                          ui->actionMapShowAddonAirports, ui->actionMapShowVor, ui->actionMapShowNdb,
-                         ui->actionMapShowWp, ui->actionMapShowIls, ui->actionMapShowGls, ui->actionMapShowHolding,
+                         ui->actionMapShowWp, ui->actionMapShowIls, ui->actionMapShowGls,
+                         ui->actionMapShowHolding, ui->actionMapShowAirportMsa,
                          ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks,
                          ui->actionShowAirspaces,
                          ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft,
@@ -4121,7 +4124,7 @@ void MainWindow::saveActionStates()
   widgetState.save({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowAirports, ui->actionMapShowSoftAirports,
                     ui->actionMapShowEmptyAirports, ui->actionMapShowAddonAirports, ui->actionMapShowVor,
                     ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
-                    ui->actionMapShowGls, ui->actionMapShowHolding, ui->actionMapShowVictorAirways,
+                    ui->actionMapShowGls, ui->actionMapShowHolding, ui->actionMapShowAirportMsa, ui->actionMapShowVictorAirways,
                     ui->actionMapShowJetAirways, ui->actionMapShowTracks, ui->actionShowAirspaces,
                     ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft,
                     ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach, ui->actionMapAircraftCenter,

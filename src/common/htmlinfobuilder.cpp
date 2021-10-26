@@ -60,6 +60,7 @@
 #include <QSize>
 #include <QUrl>
 #include <QFileInfo>
+#include <QToolTip>
 
 // Use % to concatenate strings faster than +
 #include <QStringBuilder>
@@ -1727,6 +1728,73 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
   } // if(info)
 }
 
+void HtmlInfoBuilder::airportMsaText(const map::MapAirportMsa& msa, atools::util::HtmlBuilder& html) const
+{
+  html.img(QIcon(":/littlenavmap/resources/icons/msa.svg"), QString(), QString(), symbolSizeTitle);
+  html.nbsp().nbsp();
+
+  QString title;
+  if(msa.navType == map::AIRPORT)
+    title.append(tr("%1 %2").arg(tr("Airport")).arg(msa.navIdent));
+  else
+  {
+    if(!msa.navIdent.isEmpty())
+    {
+      if(msa.navType == map::WAYPOINT)
+        title.append(tr("%1 %2").arg(tr("Waypoint")).arg(msa.navIdent));
+      else if(msa.navType == map::VOR)
+        title.append(tr("%1 %2").arg(map::vorType(msa.vorDmeOnly, msa.vorHasDme, msa.vorTacan, msa.vorVortac)).arg(msa.navIdent));
+      else if(msa.navType == map::NDB)
+        title.append(tr("%1 %2").arg(tr("NDB")).arg(msa.navIdent));
+      else if(msa.navType == map::RUNWAYEND)
+        title.append(tr("%1 %2").arg(tr("Runway")).arg(msa.navIdent));
+    }
+
+    if(!msa.airportIdent.isEmpty())
+      title.append(tr(" (%1 %2)").arg(tr("Airport")).arg(msa.airportIdent));
+  }
+
+  navaidTitle(html, tr("MSA %1at %2").arg(msa.multipleCode % tr(" ")).arg(title));
+
+  if(info)
+  {
+    // Add map link if not tooltip
+    html.nbsp().nbsp();
+    html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").
+           arg(msa.position.getLonX()).arg(msa.position.getLatY()), ahtml::BOLD | ahtml::LINK_NO_UL);
+  }
+  html.table();
+  html.row2(tr("Radius:"), Unit::distNm(msa.radius));
+  html.row2(tr("Bearing and alt. units:"), msa.trueBearing ? tr("°T, ") : tr("°M, ") % Unit::getUnitAltStr());
+  if(info)
+    html.row2(tr("Magnetic declination:"), map::magvarText(msa.magvar));
+  if(msa.altitudes.size() == 0)
+    html.row2(tr("No altitude"));
+  else if(msa.altitudes.size() == 1)
+    html.row2(tr("Minimum altitude:"), Unit::altFeet(msa.altitudes.at(0)));
+  html.tableEnd();
+
+  if(verbose)
+  {
+    if(msa.altitudes.size() > 1)
+    {
+      QFont font;
+      if(info)
+        font = NavApp::getTextBrowserInfoFont();
+      else
+        font = QToolTip::font();
+
+      int actualSize = 0;
+      float sizeFactor = info ? (msa.altitudes.size() > 1 ? 5. : 2.) : (msa.altitudes.size() > 1 ? 4. : 2.);
+      QIcon icon = SymbolPainter().createAirportMsaIcon(msa, QToolTip::font(), sizeFactor, &actualSize);
+      html.p().img(icon, QString(), QString(), QSize(actualSize, actualSize)).pEnd();
+    }
+  }
+
+  if(info)
+    html.br();
+}
+
 void HtmlInfoBuilder::decodedMetars(HtmlBuilder& html, const atools::fs::weather::MetarResult& metar,
                                     const map::MapAirport& airport, const QString& name, bool mapDisplay) const
 {
@@ -2256,6 +2324,11 @@ void HtmlInfoBuilder::trafficPatternText(const TrafficPattern& pattern, atools::
   html.br();
 }
 
+void HtmlInfoBuilder::userpointTextInfo(const MapUserpoint& userpoint, HtmlBuilder& html) const
+{
+  userpointText(userpoint, html);
+}
+
 bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) const
 {
   if(!userpoint.isValid())
@@ -2335,6 +2408,11 @@ bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
     qWarning() << Q_FUNC_INFO << "Empty record";
     return false;
   }
+}
+
+void HtmlInfoBuilder::logEntryTextInfo(const MapLogbookEntry& logEntry, HtmlBuilder& html) const
+{
+  logEntryText(logEntry, html);
 }
 
 bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) const
