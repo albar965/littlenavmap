@@ -2203,6 +2203,8 @@ void HtmlInfoBuilder::holdingText(const MapHolding& holding, HtmlBuilder& html) 
     navTypeStr = tr("NDB");
   else if(holding.navType == map::WAYPOINT)
     navTypeStr = tr("Waypoint");
+  else if(holding.navType == map::USERPOINT)
+    navTypeStr = tr("Userpoint");
 
   QString title;
 

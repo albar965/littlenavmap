@@ -1443,16 +1443,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     else if(action == ui->actionMapTrafficPattern)
       mapWidget->addTrafficPattern(airport);
     else if(action == ui->actionMapHold)
-    {
-      map::MapResult result;
-      if(mapObjType == map::USERPOINT)
-        mapWidget->addHold(result, position);
-      else
-      {
-        mapQuery->getMapObjectById(result, mapObjType, map::AIRSPACE_SRC_NONE, id, false /* airport from nav*/);
-        mapWidget->addHold(result, atools::geo::EMPTY_POS);
-      }
-    }
+      mapWidget->addHold(result, atools::geo::EMPTY_POS);
     else if(action == ui->actionMapNavaidRange)
     {
       QString freqChannelStr;

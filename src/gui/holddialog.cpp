@@ -51,7 +51,7 @@ HoldDialog::HoldDialog(QWidget *parent, const map::MapResult& resultParam, const
   result->clearAllButFirst();
 
   // Remove all except airport, VOR, NDB and waypoints
-  result->clear(~(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT));
+  result->clear(~(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT));
 
   position = new atools::geo::Pos;
   *position = positionParam;
@@ -165,6 +165,8 @@ void HoldDialog::updateWidgets()
     text = map::ndbText(result->ndbs.first());
   else if(result->hasWaypoints())
     text = map::waypointText(result->waypoints.first());
+  else if(result->hasUserpoints())
+    text = map::userpointText(result->userpoints.first());
   else
     text = tr("Coordinates %1").arg(Unit::coords(*position));
 
@@ -213,6 +215,13 @@ void HoldDialog::fillHold(map::MapHolding& holding)
     holding.position = result->waypoints.first().position;
     holding.magvar = result->waypoints.first().magvar;
     holding.navType = map::WAYPOINT;
+  }
+  else if(result->hasUserpoints())
+  {
+    holding.navIdent = result->userpoints.first().ident;
+    holding.position = result->userpoints.first().position;
+    holding.magvar = NavApp::getMagVar(*position);
+    holding.navType = map::USERPOINT;
   }
   else
     // Use calculated declination
