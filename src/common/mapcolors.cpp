@@ -59,9 +59,17 @@ QColor glsTextColor(20, 20, 20);
 QPen glsCenterPen(Qt::darkGray, 1.5, Qt::DashLine);
 QColor glsSymbolColor(Qt::darkGray);
 
-QColor msaFillColor("#d0ffffff");
+QColor msaFillColor("#a0ffffff");
 QColor msaTextColor(Qt::darkGray);
 QColor msaSymbolColor(Qt::darkGray);
+
+QPen msaDiagramLinePen(QColor("#000000"), 2.);
+QColor msaDiagramNumberColor("#70000000");
+QPen msaDiagramLinePenDark(QColor("#808080"), 2.);
+QColor msaDiagramNumberColorDark("#70a0a0a0");
+
+QColor msaDiagramFillColor("#10000000");
+QColor msaDiagramFillColorDark("#10ffffff");
 
 QColor waypointSymbolColor(200, 0, 200);
 
@@ -646,6 +654,13 @@ void syncColors()
   syncColor(colorSettings, "MsaTextColor", msaTextColor);
   syncColorArgb(colorSettings, "MsaFillColor", msaFillColor);
   syncColor(colorSettings, "MsaSymbolColor", msaSymbolColor);
+
+  syncPen(colorSettings, "MsaDiagramLinePen", msaDiagramLinePen);
+  syncColorArgb(colorSettings, "MsaDiagramNumberColor", msaDiagramNumberColor);
+  syncPen(colorSettings, "MsaDiagramLinePenDark", msaDiagramLinePenDark);
+  syncColorArgb(colorSettings, "MsaDiagramNumberColorDark", msaDiagramNumberColorDark);
+  syncColorArgb(colorSettings, "MsaDiagramFillColor", msaDiagramFillColor);
+  syncColorArgb(colorSettings, "MsaDiagramFillColorDark", msaDiagramFillColorDark);
 
   syncColor(colorSettings, "WaypointColor", waypointSymbolColor);
   syncColor(colorSettings, "HoldingColor", holdingColor);

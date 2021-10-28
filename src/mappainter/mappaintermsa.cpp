@@ -86,26 +86,23 @@ void MapPainterMsa::drawMsaSymbol(const map::MapAirportMsa& airportMsa, float x,
 
   Marble::GeoPainter *painter = context->painter;
 
-  if(context->mapLayer->isAirportMsaDetails() && !fast)
-    // Draw the full symbol with all sectors
-    symbolPainter->drawAirportMsa(painter, airportMsa, x, y, context->mapLayer->getAirportMsaSymbolScale(), true /* header */);
-  else
+  int size = 0;
+  float scale = 0.f;
+  if(!context->mapLayer->isAirportMsaDetails())
   {
-    // Draw a simple underlay circle
-    context->painter->setPen(QPen(mapcolors::msaSymbolColor, 2, Qt::SolidLine, Qt::FlatCap));
-    context->painter->setBrush(mapcolors::msaFillColor);
-
-    float size = 10.f;
     if(airportMsa.navType == map::AIRPORT)
-      size = context->szF(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
+      size = context->sz(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
     else if(airportMsa.navType == map::VOR)
-      size = context->szF(context->symbolSizeNavaid, context->mapLayer->getVorSymbolSize());
+      size = context->sz(context->symbolSizeNavaid, context->mapLayer->getVorSymbolSize());
     else if(airportMsa.navType == map::NDB)
-      size = context->szF(context->symbolSizeNavaid, context->mapLayer->getNdbSymbolSize());
+      size = context->sz(context->symbolSizeNavaid, context->mapLayer->getNdbSymbolSize());
     else if(airportMsa.navType == map::WAYPOINT)
-      size = context->szF(context->symbolSizeNavaid, context->mapLayer->getWaypointSymbolSize());
-
-    size = std::max(size, 6.f);
-    painter->drawEllipse(QPointF(x, y), size * 0.7f, size * 0.7f);
+      size = context->sz(context->symbolSizeNavaid, context->mapLayer->getWaypointSymbolSize());
+    size = std::max(size, 6);
   }
+  else
+    scale = context->mapLayer->getAirportMsaSymbolScale();
+
+  // Draw the full symbol with all sectors
+  symbolPainter->drawAirportMsa(painter, airportMsa, x, y, size * 2, scale, true /* header */, true /* transparency */, fast);
 }

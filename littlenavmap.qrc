@@ -292,5 +292,6 @@
         <file>resources/icons/gls.svg</file>
         <file>resources/icons/enroutehold.svg</file>
         <file>resources/icons/msa.svg</file>
+        <file>resources/icons/msaoff.svg</file>
     </qresource>
 </RCC>

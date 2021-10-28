@@ -34,8 +34,7 @@
 #include "common/unit.h"
 #include "exception.h"
 #include "export/csvexporter.h"
-#include "gui/actiontextsaver.h"
-#include "gui/actionstatesaver.h"
+#include "gui/actiontool.h"
 #include "gui/errorhandler.h"
 #include "track/trackcontroller.h"
 #include "gui/itemviewzoomhandler.h"
@@ -122,6 +121,7 @@ const static int MAX_REMARK_COLS_HTML_AND_PRINT = 200;
 
 using atools::fs::pln::Flightplan;
 using atools::fs::pln::FlightplanEntry;
+using atools::gui::ActionTool;
 using namespace atools::geo;
 
 namespace pln = atools::fs::pln;
@@ -2221,13 +2221,13 @@ void RouteController::visibleColumnsTriggered()
   qDebug() << Q_FUNC_INFO;
 
   ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Flight Plan Table"),
-                      tr("Select columns to show in flight plan table"),
-                      lnm::ROUTE_FLIGHTPLAN_COLUMS_DIALOG, "FLIGHTPLAN.html#flight-plan-table-columns");
+                            tr("Select columns to show in flight plan table"),
+                            lnm::ROUTE_FLIGHTPLAN_COLUMS_DIALOG, "FLIGHTPLAN.html#flight-plan-table-columns");
 
   QHeaderView *header = view->horizontalHeader();
   for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
     choiceDialog.addCheckBox(col, Unit::replacePlaceholders(routeColumns.at(col)).replace("\n", " "),
-                       routeColumnTooltips.at(col), !header->isSectionHidden(col));
+                             routeColumnTooltips.at(col), !header->isSectionHidden(col));
 
   choiceDialog.restoreState();
 
@@ -2293,20 +2293,16 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   qDebug() << "tableContextMenu";
 
-  QList<QAction *> actions({
-    ui->actionRouteShowInformation, ui->actionRouteShowApproaches, ui->actionRouteShowApproachesCustom,
-    ui->actionRouteShowOnMap, ui->actionRouteActivateLeg, ui->actionRouteFollowSelection, ui->actionRouteLegUp,
-    ui->actionRouteLegDown, ui->actionRouteDeleteLeg, ui->actionRouteEditUserWaypoint, ui->actionRouteInsert,
-    ui->actionRouteTableAppend, ui->actionRouteSaveSelection, ui->actionRouteCalcSelected, ui->actionMapRangeRings,
-    ui->actionMapNavaidRange, ui->actionMapTrafficPattern, ui->actionMapHold, ui->actionRouteTableCopy,
-    ui->actionRouteTableSelectAll, ui->actionRouteTableSelectNothing, ui->actionRouteResetView,
-    ui->actionRouteVisibleColumns, ui->actionRouteSetMark});
+  QList<QAction *> actions({ui->actionRouteShowInformation, ui->actionRouteShowApproaches, ui->actionRouteShowApproachesCustom,
+                            ui->actionRouteShowOnMap, ui->actionRouteActivateLeg, ui->actionRouteFollowSelection, ui->actionRouteLegUp,
+                            ui->actionRouteLegDown, ui->actionRouteDeleteLeg, ui->actionRouteEditUserWaypoint, ui->actionRouteInsert,
+                            ui->actionRouteTableAppend, ui->actionRouteSaveSelection, ui->actionRouteCalcSelected, ui->actionMapRangeRings,
+                            ui->actionMapNavaidRange, ui->actionMapTrafficPattern, ui->actionMapHold, ui->actionMapAirportMsa,
+                            ui->actionRouteTableCopy, ui->actionRouteTableSelectAll, ui->actionRouteTableSelectNothing,
+                            ui->actionRouteResetView, ui->actionRouteVisibleColumns, ui->actionRouteSetMark});
 
-  // Save text which will be changed below
-  atools::gui::ActionTextSaver saver(actions);
-
-  // Re-enable actions on exit to allow keystrokes
-  atools::gui::ActionStateSaver stateSaver(actions);
+  // Save text which will be changed below - Re-enable actions on exit to allow keystrokes
+  atools::gui::ActionTool actionTool(actions);
 
   QModelIndex index = view->indexAt(pos);
   const RouteLeg *routeLeg = nullptr, *prevRouteLeg = nullptr;
@@ -2334,16 +2330,23 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   ui->actionRouteTableCopy->setEnabled(index.isValid());
 
-  bool insert = false;
+  bool canInsert = false;
 
   ui->actionRouteShowApproachesCustom->setEnabled(false);
   ui->actionRouteShowApproaches->setEnabled(false);
   ui->actionRouteEditUserWaypoint->setEnabled(false);
   ui->actionRouteShowInformation->setEnabled(false);
 
+  // Collect information for selected leg =======================================================================
   // Menu above a row
+  map::MapResult msaResult;
   if(routeLeg != nullptr)
   {
+    if(routeLeg->getVor().isValid() || routeLeg->getNdb().isValid() || routeLeg->getWaypoint().isValid() ||
+       routeLeg->getAirport().isValid())
+      NavApp::getMapQueryGui()->getMapObjectByIdent(msaResult, map::AIRPORT_MSA, routeLeg->getIdent(),
+                                                    routeLeg->getRegion(), QString(), routeLeg->getPosition());
+
     if(routeLeg->isAnyProcedure())
     {
       if(routeLeg->getProcedureLeg().navaids.hasTypes(map::AIRPORT | map::WAYPOINT | map::VOR | map::NDB))
@@ -2358,23 +2361,21 @@ void RouteController::tableContextMenu(const QPoint& pos)
     {
       if(prevRouteLeg == nullptr)
         // allow to insert before first one
-        insert = true;
-      else if(prevRouteLeg->isRoute() && routeLeg->isAnyProcedure() &&
-              routeLeg->getProcedureType() & proc::PROCEDURE_ARRIVAL_ALL)
+        canInsert = true;
+      else if(prevRouteLeg->isRoute() && routeLeg->isAnyProcedure() && routeLeg->getProcedureType() & proc::PROCEDURE_ARRIVAL_ALL)
         // Insert between enroute waypoint and approach or STAR
-        insert = true;
-      else if(routeLeg->isRoute() && prevRouteLeg->isAnyProcedure() &&
-              prevRouteLeg->getProcedureType() & proc::PROCEDURE_DEPARTURE)
+        canInsert = true;
+      else if(routeLeg->isRoute() && prevRouteLeg->isAnyProcedure() && prevRouteLeg->getProcedureType() & proc::PROCEDURE_DEPARTURE)
         // Insert between SID and waypoint
-        insert = true;
+        canInsert = true;
       else
-        insert = routeLeg->isRoute();
+        canInsert = routeLeg->isRoute();
     }
 
+    // Prepare procedure menus ==============================================================================
     if(routeLeg->isValidWaypoint() && routeLeg->getMapObjectType() == map::AIRPORT)
     {
-      bool departureFilter, arrivalFilter, hasDeparture, hasAnyArrival, airportDeparture, airportDestination,
-           airportRoundTrip;
+      bool departureFilter, arrivalFilter, hasDeparture, hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip;
 
       route.getAirportProcedureFlags(routeLeg->getAirport(), row, departureFilter, arrivalFilter, hasDeparture,
                                      hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip);
@@ -2385,8 +2386,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
         {
           if(hasDeparture)
           {
-            ui->actionRouteShowApproaches->setEnabled(true);
-            ui->actionRouteShowApproaches->setText(ui->actionRouteShowApproaches->text().arg(tr("Departure ")));
+            ui->actionRouteShowApproaches->setText(tr("Show Departure Procedures for %1"));
+            ActionTool::setText(ui->actionRouteShowApproaches, true, objectText);
           }
           else
             ui->actionRouteShowApproaches->setText(tr("Show procedures (no departure procedure)"));
@@ -2395,16 +2396,16 @@ void RouteController::tableContextMenu(const QPoint& pos)
         {
           if(hasAnyArrival)
           {
-            ui->actionRouteShowApproaches->setEnabled(true);
-            ui->actionRouteShowApproaches->setText(ui->actionRouteShowApproaches->text().arg(tr("Arrival ")));
+            ui->actionRouteShowApproaches->setText(tr("Show Arrival Procedures for %1"));
+            ActionTool::setText(ui->actionRouteShowApproaches, true, objectText);
           }
           else
             ui->actionRouteShowApproaches->setText(tr("Show procedures (no arrival procedure)"));
         }
         else
         {
-          ui->actionRouteShowApproaches->setEnabled(true);
-          ui->actionRouteShowApproaches->setText(ui->actionRouteShowApproaches->text().arg(tr("all ")));
+          ui->actionRouteShowApproaches->setText(tr("Show Procedures for %1"));
+          ActionTool::setText(ui->actionRouteShowApproaches, true, objectText);
         }
       }
       else
@@ -2412,22 +2413,19 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
       ui->actionRouteShowApproachesCustom->setEnabled(true);
       if(airportDestination)
-        ui->actionRouteShowApproachesCustom->setText(tr("Create &Approach to Airport and insert into Flight Plan"));
+        ui->actionRouteShowApproachesCustom->setText(tr("Create &Approach to %1 and insert into Flight Plan ..."));
       else
-        ui->actionRouteShowApproachesCustom->setText(tr("Create &Approach and use Airport as Destination"));
+        ui->actionRouteShowApproachesCustom->setText(tr("Create &Approach to %1 and use as Destination ..."));
     }
     else
     {
       ui->actionRouteShowApproaches->setText(tr("Show &Procedures"));
-      ui->actionRouteShowApproachesCustom->setText(tr("Create &Approach to Airport"));
+      ui->actionRouteShowApproachesCustom->setText(tr("Create &Approach to Airport ..."));
     }
 
     ui->actionRouteShowOnMap->setEnabled(true);
     ui->actionMapRangeRings->setEnabled(true);
     ui->actionRouteSetMark->setEnabled(true);
-
-    // ui->actionRouteDeleteLeg->setText(route->isAnyProcedure() ?
-    // tr("Delete Procedure") : tr("Delete selected Legs"));
 
 #ifdef DEBUG_MOVING_AIRPLANE
     ui->actionRouteActivateLeg->setEnabled(routeLeg->isValidWaypoint());
@@ -2439,7 +2437,6 @@ void RouteController::tableContextMenu(const QPoint& pos)
   {
     ui->actionRouteShowInformation->setEnabled(false);
     ui->actionRouteShowApproaches->setEnabled(false);
-    ui->actionRouteShowApproaches->setText(tr("Show Procedures"));
     ui->actionRouteActivateLeg->setEnabled(false);
     ui->actionRouteShowOnMap->setEnabled(false);
     ui->actionMapRangeRings->setEnabled(false);
@@ -2450,43 +2447,28 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   ui->actionRouteTableAppend->setEnabled(!route.isEmpty());
 
-  if(insert)
-  {
-    ui->actionRouteInsert->setEnabled(true);
-    ui->actionRouteInsert->setText(ui->actionRouteInsert->text().arg(objectText));
-  }
-
-  if(routeLeg != nullptr && routeLeg->getAirport().isValid() && !routeLeg->getAirport().noRunways())
-    ui->actionMapTrafficPattern->setEnabled(true);
-  else
-    ui->actionMapTrafficPattern->setEnabled(false);
-
-  ui->actionMapHold->setEnabled(routeLeg != nullptr);
+  ui->actionRouteInsert->setEnabled(canInsert);
 
   ui->actionRouteCalcSelected->setEnabled(canCalcSelection());
 
-  ui->actionMapNavaidRange->setEnabled(false);
-
-  ui->actionRouteTableSelectNothing->setEnabled(
-    view->selectionModel() == nullptr ? false : view->selectionModel()->hasSelection());
+  ui->actionRouteTableSelectNothing->setEnabled(view->selectionModel() == nullptr ? false : view->selectionModel()->hasSelection());
   ui->actionRouteTableSelectAll->setEnabled(!route.isEmpty());
 
-  // Edit position ======================================0
-
+  // Edit position ======================================
   ui->actionRouteEditUserWaypoint->setText(tr("Edit &Position or Remarks ..."));
   if(routeLeg != nullptr)
   {
     if(routeLeg->getMapObjectType() == map::USERPOINTROUTE)
     {
       ui->actionRouteEditUserWaypoint->setEnabled(true);
-      ui->actionRouteEditUserWaypoint->setText(tr("&Edit %1 ...").arg(objectText));
+      ui->actionRouteEditUserWaypoint->setText(tr("&Edit %1 ..."));
       ui->actionRouteEditUserWaypoint->setToolTip(tr("Edit name and coordinates of user defined flight plan position"));
       ui->actionRouteEditUserWaypoint->setStatusTip(ui->actionRouteEditUserWaypoint->toolTip());
     }
     else if(route.canEditComment(row))
     {
       ui->actionRouteEditUserWaypoint->setEnabled(true);
-      ui->actionRouteEditUserWaypoint->setText(tr("Edit &Remarks for %1 ...").arg(objectText));
+      ui->actionRouteEditUserWaypoint->setText(tr("Edit &Remarks for %1 ..."));
       ui->actionRouteEditUserWaypoint->setToolTip(tr("Edit remarks for selected flight plan leg"));
       ui->actionRouteEditUserWaypoint->setStatusTip(ui->actionRouteEditUserWaypoint->toolTip());
     }
@@ -2497,7 +2479,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   getSelectedRouteLegs(selectedRouteLegIndexes);
 
   // If there are any radio navaids in the selected list enable range menu item
-  int found = 0;
+  int numRadioNavaids = 0;
   QString navaidText;
   for(int idx : selectedRouteLegIndexes)
   {
@@ -2505,65 +2487,61 @@ void RouteController::tableContextMenu(const QPoint& pos)
     if((leg.getVor().isValid() && leg.getVor().range > 0) || (leg.getNdb().isValid() && leg.getNdb().range > 0))
     {
       navaidText = leg.getDisplayText();
-      found++;
+      numRadioNavaids++;
     }
   }
 
-  if(found == 0)
-  {
-    ui->actionMapNavaidRange->setEnabled(false);
-    ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(QString()));
-  }
-  else if(found == 1)
-  {
-    ui->actionMapNavaidRange->setEnabled(true);
-    ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(navaidText));
-  }
-  else if(found > 1)
-  {
-    ui->actionMapNavaidRange->setEnabled(true);
-    ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text().arg(tr("selected Navaids")));
-  }
-  ui->actionMapRangeRings->setText(tr("Add &Range Rings at %1"));
-
+  // Add marks ==============================================================================
   // Update texts to give user a hint for hidden user features in the disabled menu items =====================
   QString notShown(tr(" (hidden on map)"));
+
   if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE_RINGS))
   {
-    ui->actionMapRangeRings->setDisabled(true);
-    ui->actionMapNavaidRange->setDisabled(true);
-    ui->actionMapRangeRings->setText(ui->actionMapRangeRings->text() + notShown);
-    ui->actionMapNavaidRange->setText(ui->actionMapNavaidRange->text() + notShown);
+    ActionTool::setText(ui->actionMapRangeRings, false, QString(), notShown);
+    ActionTool::setText(ui->actionMapNavaidRange, false, QString(), notShown);
+  }
+  else
+  {
+    ActionTool::setText(ui->actionMapRangeRings, routeLeg != nullptr, objectText);
+
+    if(numRadioNavaids == 0)
+      ui->actionMapNavaidRange->setEnabled(false);
+    else if(numRadioNavaids == 1)
+      ActionTool::setText(ui->actionMapNavaidRange, routeLeg != nullptr, navaidText);
+    else if(numRadioNavaids > 1)
+      ActionTool::setText(ui->actionMapNavaidRange, routeLeg != nullptr, tr("selected Navaids"));
   }
 
   if(!NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDS))
-  {
-    ui->actionMapHold->setDisabled(true);
-    ui->actionMapHold->setText(ui->actionMapHold->text() + notShown);
-  }
+    ActionTool::setText(ui->actionMapHold, false, QString(), notShown);
+  else
+    ActionTool::setText(ui->actionMapHold, routeLeg != nullptr, objectText);
+
+  ui->actionMapAirportMsa->setEnabled(msaResult.hasAirportMsa());
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_AIRPORT_MSA))
+    ActionTool::setText(ui->actionMapAirportMsa, false, QString(), notShown);
 
   if(!NavApp::getMapMarkHandler()->isShown(map::MARK_PATTERNS))
+    ActionTool::setText(ui->actionMapTrafficPattern, false, QString(), notShown);
+  else
   {
-    ui->actionMapTrafficPattern->setDisabled(true);
-    ui->actionMapTrafficPattern->setText(ui->actionMapTrafficPattern->text() + notShown);
+    if(routeLeg != nullptr && routeLeg->getAirport().isValid())
+      ActionTool::setText(ui->actionMapTrafficPattern, !routeLeg->getAirport().noRunways(), objectText, tr(" (no runway)"));
+    else
+      ActionTool::setText(ui->actionMapTrafficPattern, false);
   }
 
-  // General texts ==============================================================
-  ui->actionRouteShowInformation->setText(ui->actionSearchShowInformation->text().arg(objectText));
-  ui->actionRouteShowOnMap->setText(ui->actionSearchShowOnMap->text().arg(objectText));
-  ui->actionRouteShowApproaches->setText(ui->actionSearchShowApproaches->text().arg(airportText));
-  ui->actionRouteShowApproachesCustom->setText(ui->actionSearchShowApproachesCustom->text().arg(airportText));
-  ui->actionRouteActivateLeg->setText(ui->actionRouteActivateLeg->text().arg(objectText));
-  ui->actionMapRangeRings->setText(ui->actionMapRangeRings->text().arg(objectText));
+  // build menu ====================================================================
 
-  ui->actionMapTrafficPattern->setText(ui->actionMapTrafficPattern->text().arg(objectText));
-  ui->actionMapHold->setText(ui->actionMapHold->text().arg(objectText));
+  // Replace any left over placeholders in action text
+  actionTool.finishTexts(objectText);
 
-  // ====================================================================
   menu.addAction(ui->actionRouteShowInformation);
   menu.addAction(ui->actionRouteShowApproaches);
   menu.addAction(ui->actionRouteShowApproachesCustom);
   menu.addAction(ui->actionRouteShowOnMap);
+  menu.addSeparator();
+
   menu.addAction(ui->actionRouteActivateLeg);
   menu.addSeparator();
 
@@ -2589,6 +2567,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addSeparator();
   menu.addAction(ui->actionMapTrafficPattern);
   menu.addAction(ui->actionMapHold);
+  menu.addAction(ui->actionMapAirportMsa);
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteTableCopy);
@@ -2602,6 +2581,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   menu.addAction(ui->actionRouteSetMark);
 
+  // Execute menu =========================================================================================
   QAction *action = menu.exec(menuPos);
   if(action != nullptr)
     qDebug() << Q_FUNC_INFO << "selected" << action->text();
@@ -2671,6 +2651,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
     // editUserWaypointName(index.row());
     // else if(action == ui->actionRouteTableAppend) // Done by signal from action
     // emit routeAppend();
+    else if(action == ui->actionMapAirportMsa)
+      emit addAirportMsa(msaResult.airportMsa.value(0));
     else if(action == ui->actionRouteInsert)
       emit routeInsert(row);
     else if(action == ui->actionRouteActivateLeg)

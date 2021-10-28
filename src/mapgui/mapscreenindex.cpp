@@ -445,6 +445,7 @@ void MapScreenIndex::saveState() const
   s.setValueVar(lnm::MAP_RANGEMARKERS, QVariant::fromValue<QList<map::RangeMarker> >(rangeMarks));
   s.setValueVar(lnm::MAP_TRAFFICPATTERNS, QVariant::fromValue<QList<map::TrafficPattern> >(trafficPatterns));
   s.setValueVar(lnm::MAP_HOLDINGS, QVariant::fromValue<QList<map::MapHolding> >(holdings));
+  s.setValueVar(lnm::MAP_AIRPORT_MSA, QVariant::fromValue<QList<map::MapAirportMsa> >(airportMsa));
 }
 
 void MapScreenIndex::restoreState()
@@ -454,6 +455,7 @@ void MapScreenIndex::restoreState()
   rangeMarks = s.valueVar(lnm::MAP_RANGEMARKERS).value<QList<map::RangeMarker> >();
   trafficPatterns = s.valueVar(lnm::MAP_TRAFFICPATTERNS).value<QList<map::TrafficPattern> >();
   holdings = s.valueVar(lnm::MAP_HOLDINGS).value<QList<map::MapHolding> >();
+  airportMsa = s.valueVar(lnm::MAP_AIRPORT_MSA).value<QList<map::MapAirportMsa> >();
 }
 
 void MapScreenIndex::changeSearchHighlights(const map::MapResult& newHighlights)
@@ -706,6 +708,9 @@ void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::
   if(types & map::QUERY_HOLDS && NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_HOLDS)
     insertSorted(conv, xs, ys, holdings, result.holdings, nullptr, maxDistance);
 
+  if(types & map::QUERY_MSA && NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_AIRPORT_MSA)
+    insertSorted(conv, xs, ys, airportMsa, result.airportMsa, &result.airportMsaIds, maxDistance);
+
   if(types & map::QUERY_PATTERNS && NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_PATTERNS)
     insertSorted(conv, xs, ys, trafficPatterns, result.trafficPatterns, nullptr, maxDistance);
 
@@ -759,6 +764,14 @@ int MapScreenIndex::getNearestHoldIndex(int xs, int ys, int maxDistance) const
 {
   if(NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_HOLDS)
     return getNearestIndex(xs, ys, maxDistance, holdings);
+  else
+    return -1;
+}
+
+int MapScreenIndex::getNearestAirportMsaIndex(int xs, int ys, int maxDistance) const
+{
+  if(NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_AIRPORT_MSA)
+    return getNearestIndex(xs, ys, maxDistance, airportMsa);
   else
     return -1;
 }

@@ -203,6 +203,12 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
 
     // Userpoints ===========================================================================
     buildOneTooltip(html, overflow, numEntries, mapSearchResult.userpoints, info, &HtmlInfoBuilder::userpointTextInfo);
+
+    // User Holds ===========================================================================
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.getHoldings(true /* user */), info, &HtmlInfoBuilder::holdingText);
+
+    // MSA diagrams ===========================================================================
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.getAirportMsa(true /* user */), info, &HtmlInfoBuilder::airportMsaText);
   }
 
   // Airports ===========================================================================
@@ -240,11 +246,11 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
     buildOneTooltip(html, overflow, numEntries, mapSearchResult.markers, info, &HtmlInfoBuilder::markerText);
     buildOneTooltip(html, overflow, numEntries, mapSearchResult.ils, info, &HtmlInfoBuilder::ilsTextInfo);
 
-    // Holds ===========================================================================
-    buildOneTooltip(html, overflow, numEntries, mapSearchResult.holdings, info, &HtmlInfoBuilder::holdingText);
+    // Database Holds ===========================================================================
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.getHoldings(false /* user */), info, &HtmlInfoBuilder::holdingText);
 
-    // MSA ===========================================================================
-    buildOneTooltip(html, overflow, numEntries, mapSearchResult.airportMsa, info, &HtmlInfoBuilder::airportMsaText);
+    // Database MSA ===========================================================================
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.getAirportMsa(false /* user */), info, &HtmlInfoBuilder::airportMsaText);
   }
 
   // Airport stuff ===========================================================================

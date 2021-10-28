@@ -1100,6 +1100,7 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::routeAltitudeChanged, profileWidget, &ProfileWidget::routeAltitudeChanged);
   connect(routeController, &RouteController::routeChanged, this, &MainWindow::updateActionStates);
   connect(routeController, &RouteController::routeInsert, this, &MainWindow::routeInsert);
+  connect(routeController, &RouteController::addAirportMsa, mapWidget, &MapWidget::addAirportMsa);
 
   connect(routeController, &RouteController::routeChanged, NavApp::updateErrorLabels);
   connect(routeController, &RouteController::routeChanged, NavApp::updateWindowTitle);
@@ -1120,6 +1121,7 @@ void MainWindow::connectAllSlots()
   connect(airportSearch, &SearchBaseTable::routeAddAlternate, routeController, &RouteController::routeAddAlternate);
   connect(airportSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
   connect(airportSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+  connect(airportSearch, &SearchBaseTable::addAirportMsa, mapWidget, &MapWidget::addAirportMsa);
 
   // Nav search ===================================================================================
   NavSearch *navSearch = searchController->getNavSearch();
@@ -1128,6 +1130,7 @@ void MainWindow::connectAllSlots()
   connect(navSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(navSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
   connect(navSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
+  connect(navSearch, &SearchBaseTable::addAirportMsa, mapWidget, &MapWidget::addAirportMsa);
 
   // Userdata search ===================================================================================
   UserdataSearch *userSearch = searchController->getUserdataSearch();
@@ -2080,8 +2083,9 @@ void MainWindow::routeResetAll()
                            tr("Restarts the background aircraft performance collection"), true);
   choiceDialog.addCheckBox(RESTART_LOGBOOK, tr("Reset flight detection in &logbook"),
                            tr("Reset the logbook to detect takeoff and landing for new logbook entries"), true);
-  choiceDialog.addCheckBox(REMOVE_MARKS, tr("&Remove all Ranges, Measurements, Patterns and Holdings"),
-                           tr("Remove all range rings, measurements, traffic patterns and holdings from map"), false);
+  choiceDialog.addCheckBox(REMOVE_MARKS, tr("&Remove all Ranges, Measurements, Patterns, Holdings and MSA Diagrams"),
+                           tr("Remove all range rings, measurements, traffic patterns, holdings and "
+                              "airport MSA diagrams from the map"), false);
 
   choiceDialog.restoreState();
 

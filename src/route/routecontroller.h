@@ -317,6 +317,8 @@ signals:
   /* Emitted by context menu */
   void routeInsert(int beforeRow);
 
+  void addAirportMsa(map::MapAirportMsa airportMsa);
+
 private:
   friend class RouteCommand;
 

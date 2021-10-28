@@ -26,7 +26,8 @@ namespace map {
 struct MapResult
 {
   /* Create from base class. Inspects type and adds one object to this */
-  MapResult& fromMapBase(const map::MapBase *base);
+  MapResult& addFromMapBase(const map::MapBase *base);
+  static MapResult createFromMapBase(const map::MapBase *base);
 
   QList<MapAirport> airports;
   QSet<int> airportIds; /* Ids used to deduplicate when merging highlights and nearest */
@@ -104,6 +105,9 @@ struct MapResult
   /* As above for ident */
   QString getIdent(const std::initializer_list<MapTypes>& types) const;
 
+  /* As above for region */
+  QString getRegion(const std::initializer_list<MapTypes>& types) const;
+
   /* Remove the given types only */
   MapResult& clear(const MapTypes& types = map::ALL);
 
@@ -179,6 +183,11 @@ struct MapResult
     return !airspaces.isEmpty();
   }
 
+  bool hasOnlineAircraft() const
+  {
+    return !onlineAircraft.isEmpty();
+  }
+
   /* Special methods for the online and navdata airspaces which are stored mixed */
   bool hasSimNavUserAirspaces() const;
   bool hasOnlineAirspaces() const;
@@ -188,6 +197,9 @@ struct MapResult
   const MapAirspace *firstOnlineAirspace() const;
   int numSimNavUserAirspaces() const;
   int numOnlineAirspaces() const;
+
+  QList<MapHolding> getHoldings(bool user) const;
+  QList<MapAirportMsa> getAirportMsa(bool user) const;
 
   QList<MapAirspace> getSimNavUserAirspaces() const;
 

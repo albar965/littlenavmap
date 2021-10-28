@@ -1772,6 +1772,9 @@ void HtmlInfoBuilder::airportMsaText(const map::MapAirportMsa& msa, atools::util
     html.row2(tr("No altitude"));
   else if(msa.altitudes.size() == 1)
     html.row2(tr("Minimum altitude:"), Unit::altFeet(msa.altitudes.at(0)));
+
+  if(msa.user)
+    html.row2(tr("Diagram added by user"), QString());
   html.tableEnd();
 
   if(verbose)

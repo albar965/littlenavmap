@@ -1205,6 +1205,16 @@ QList<map::MapHolding>& MapPaintWidget::getHolds()
   return screenIndex->getHolds();
 }
 
+const QList<map::MapAirportMsa>& MapPaintWidget::getAirportMsa() const
+{
+  return screenIndex->getAirportMsa();
+}
+
+QList<map::MapAirportMsa>& MapPaintWidget::getAirportMsa()
+{
+  return screenIndex->getAirportMsa();
+}
+
 const atools::fs::sc::SimConnectUserAircraft& MapPaintWidget::getUserAircraft() const
 {
   return screenIndex->getUserAircraft();

@@ -289,6 +289,28 @@ int MapResult::numOnlineAirspaces() const
   return num;
 }
 
+QList<MapHolding> MapResult::getHoldings(bool user) const
+{
+  QList<map::MapHolding> retval;
+  for(const map::MapHolding& obj : holdings)
+  {
+    if(obj.user == user)
+      retval.append(obj);
+  }
+  return retval;
+}
+
+QList<MapAirportMsa> MapResult::getAirportMsa(bool user) const
+{
+  QList<map::MapAirportMsa> retval;
+  for(const map::MapAirportMsa& obj : airportMsa)
+  {
+    if(obj.user == user)
+      retval.append(obj);
+  }
+  return retval;
+}
+
 QList<map::MapAirspace> MapResult::getSimNavUserAirspaces() const
 {
   QList<map::MapAirspace> retval;
@@ -316,7 +338,7 @@ QString MapResult::objectText(MapTypes navType, int elideName) const
   QString navaidStr;
   if(navType == map::AIRPORT && hasAirports())
     navaidStr = map::airportTextShort(airports.first(), elideName);
-  if(navType == map::AIRPORT_MSA && hasAirportMsa())
+  else if(navType == map::AIRPORT_MSA && hasAirportMsa())
     navaidStr = map::airportMsaTextShort(airportMsa.first());
   else if(navType == map::VOR && hasVor())
     navaidStr = map::vorText(vors.first(), elideName);
@@ -328,6 +350,10 @@ QString MapResult::objectText(MapTypes navType, int elideName) const
     navaidStr = map::userpointText(userpoints.first(), elideName);
   else if(navType == map::LOGBOOK && hasLogEntries())
     navaidStr = map::logEntryText(logbookEntries.first());
+  else if(navType == map::AIRCRAFT_ONLINE && hasOnlineAircraft())
+    navaidStr = onlineAircraft.first().getIdent();
+  else if(navType == map::AIRSPACE && hasOnlineAirspaces())
+    navaidStr = getOnlineAirspaces().constFirst().getIdent();
   return navaidStr;
 }
 
@@ -430,8 +456,7 @@ QString MapResult::getIdent(const std::initializer_list<MapTypes>& types) const
     {
       if(type == map::AIRPORT)
         return airports.first().ident;
-
-      if(type == map::AIRPORT_MSA)
+      else if(type == map::AIRPORT_MSA)
         return airportMsa.first().navIdent;
       else if(type == map::WAYPOINT)
         return waypoints.first().ident;
@@ -461,6 +486,33 @@ QString MapResult::getIdent(const std::initializer_list<MapTypes>& types) const
         return aiAircraft.first().getAircraft().getAirplaneRegistration();
       else if(type == map::AIRCRAFT_ONLINE)
         return onlineAircraft.first().getAircraft().getAirplaneRegistration();
+    }
+  }
+  return QString();
+}
+
+QString MapResult::getRegion(const std::initializer_list<MapTypes>& types) const
+{
+  for(const MapTypes& type : types)
+  {
+    if(!isEmpty(type))
+    {
+      if(type == map::AIRPORT)
+        return airports.first().region;
+      else if(type == map::AIRPORT_MSA)
+        return airportMsa.first().region;
+      else if(type == map::WAYPOINT)
+        return waypoints.first().region;
+      else if(type == map::VOR)
+        return vors.first().region;
+      else if(type == map::NDB)
+        return ndbs.first().region;
+      else if(type == map::ILS)
+        return ils.first().region;
+      else if(type == map::USERPOINTROUTE)
+        return userpointsRoute.first().region;
+      else if(type == map::USERPOINT)
+        return userpoints.first().region;
     }
   }
   return QString();
@@ -577,7 +629,7 @@ bool MapResult::getIdAndType(int& id, MapTypes& type,
   return id != -1;
 }
 
-MapResult& MapResult::fromMapBase(const MapBase *base)
+MapResult& MapResult::addFromMapBase(const MapBase *base)
 {
   if(base != nullptr)
   {
@@ -615,6 +667,11 @@ MapResult& MapResult::fromMapBase(const MapBase *base)
       onlineAircraft.append(base->asObj<map::MapOnlineAircraft>());
   }
   return *this;
+}
+
+MapResult MapResult::createFromMapBase(const MapBase *base)
+{
+  return MapResult().addFromMapBase(base);
 }
 
 int MapResult::size(const MapTypes& types) const

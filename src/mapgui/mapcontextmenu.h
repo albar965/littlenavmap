@@ -81,6 +81,7 @@ enum MenuActionType
   NAVAIDRANGE, /* Show range ring for radio navaid */
   PATTERN, /* Airport traffic pattern */
   HOLDING, /* Holding */
+  AIRPORT_MSA, /* Airport MSA sector diagram */
   DEPARTURE, /* Set departure in flight plan */
   DESTINATION, /* Set destination in flight plan */
   ALTERNATE, /* Add alternate airport to flight plan */
@@ -167,6 +168,12 @@ public:
     return holdIndex;
   }
 
+  /* Index of selected/nearest airport MSA diagram or -1 if none */
+  int getAirportMsaIndex() const
+  {
+    return airportMsaIndex;
+  }
+
   /* Index of selected/nearest range rings or -1 if none */
   int getRangeMarkerIndex() const
   {
@@ -206,6 +213,8 @@ private:
 
   // ui->actionMapHideTrafficPattern
   void insertHoldMenu(QMenu& menu);
+
+  void insertAirportMsaMenu(QMenu& menu);
 
   // ui->actionMapHideHold
 
@@ -301,7 +310,7 @@ private:
   bool visibleOnMap = false;
 
   // Nearest indexes
-  int distMarkerIndex = -1, trafficPatternIndex = -1, holdIndex = -1, rangeMarkerIndex = -1, selectedRouteIndex = -1;
+  int distMarkerIndex = -1, trafficPatternIndex = -1, holdIndex = -1, rangeMarkerIndex = -1, selectedRouteIndex = -1, airportMsaIndex = -1;
 
   MapWidget *mapWidget;
   QMainWindow *mainWindow;

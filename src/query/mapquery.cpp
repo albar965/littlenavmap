@@ -1341,7 +1341,7 @@ void MapQuery::initQueries()
 
     airportMsaByIdentQuery = new SqlQuery(msaDb);
     airportMsaByIdentQuery->prepare("select " + msaQueryBase + " from airport_msa " +
-                                    "where airport_ident like :airportident and nav_ident like :navident and nav_type like :navtype");
+                                    "where airport_ident like :airportident and nav_ident like :navident and region like :region");
 
     airportMsaByIdQuery = new SqlQuery(msaDb);
     airportMsaByIdQuery->prepare("select " + msaQueryBase + " from airport_msa where airport_msa_id = :id");

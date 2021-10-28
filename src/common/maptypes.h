@@ -632,6 +632,10 @@ struct MapAirportMsa :
 
 };
 
+/* Save only information for user defined holds */
+QDataStream& operator>>(QDataStream& dataStream, map::MapAirportMsa& obj);
+QDataStream& operator<<(QDataStream& dataStream, const map::MapAirportMsa& obj);
+
 // =====================================================================
 /* VOR station */
 /* database id vor.vor_id */
@@ -825,6 +829,11 @@ struct MapOnlineAircraft
   const atools::fs::sc::SimConnectAircraft& getAircraft() const
   {
     return aircraft;
+  }
+
+  const QString& getIdent() const
+  {
+    return aircraft.getAirplaneRegistration();
   }
 
 private:
@@ -1154,6 +1163,11 @@ struct MapAirspace
     return src & map::AIRSPACE_SRC_USER;
   }
 
+  const QString& getIdent() const
+  {
+    return name;
+  }
+
   atools::geo::Rect bounding;
 };
 
@@ -1406,7 +1420,6 @@ void updateUnits();
 /* Type info */
 Q_DECLARE_TYPEINFO(map::MapBase, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirport, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapAirportMsa, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapRunway, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapRunwayEnd, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapApron, Q_MOVABLE_TYPE);
@@ -1442,5 +1455,8 @@ Q_DECLARE_METATYPE(map::TrafficPattern);
 
 Q_DECLARE_TYPEINFO(map::MapHolding, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::MapHolding);
+
+Q_DECLARE_TYPEINFO(map::MapAirportMsa, Q_MOVABLE_TYPE);
+Q_DECLARE_METATYPE(map::MapAirportMsa);
 
 #endif // LITTLENAVMAP_MAPTYPES_H

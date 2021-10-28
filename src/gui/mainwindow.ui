@@ -12122,6 +12122,36 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Show holdings on map</string>
    </property>
   </action>
+  <action name="actionMapAirportMsa">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/msa.svg</normaloff>:/littlenavmap/resources/icons/msa.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Add &amp;MSA Diagram at %1</string>
+   </property>
+   <property name="toolTip">
+    <string>Display airport MSA sector diagram</string>
+   </property>
+   <property name="statusTip">
+    <string>Display holding at this position or navaid</string>
+   </property>
+  </action>
+  <action name="actionMapHideAirportMsa">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/msaoff.svg</normaloff>:/littlenavmap/resources/icons/msaoff.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Remove Airport MSA</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove this airport MSA sector diagram</string>
+   </property>
+   <property name="statusTip">
+    <string>Remove this holding</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12307,8 +12337,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
-  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>

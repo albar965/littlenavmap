@@ -56,8 +56,7 @@ void MapPainterNav::render()
 
   // Airways -------------------------------------------------
   bool drawAirway = context->mapLayer->isAirway() &&
-                    (context->objectTypes.testFlag(map::AIRWAYJ) ||
-                     context->objectTypes.testFlag(map::AIRWAYV));
+                    (context->objectTypes.testFlag(map::AIRWAYJ) || context->objectTypes.testFlag(map::AIRWAYV));
 
   context->szFont(context->textSizeAirway);
 
@@ -136,7 +135,7 @@ void MapPainterNav::render()
     context->setQueryOverflow(overflow);
 
     if(holds != nullptr)
-      paintHoldings(*holds, true /* enroute */, context->drawFast);
+      paintHoldings(*holds, false /* user */, context->drawFast);
   }
 }
 

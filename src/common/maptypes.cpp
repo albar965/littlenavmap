@@ -1353,6 +1353,27 @@ QDataStream& operator<<(QDataStream& dataStream, const MapHolding& obj)
   return dataStream;
 }
 
+QDataStream& operator>>(QDataStream& dataStream, map::MapAirportMsa& obj)
+{
+  dataStream >> obj.airportIdent >> obj.navIdent >> obj.region >> obj.multipleCode >> obj.vorType;
+  dataStream >> obj.navType >> obj.vorDmeOnly >> obj.vorHasDme >> obj.vorTacan >> obj.vorVortac;
+  dataStream >> obj.radius >> obj.magvar;
+  dataStream >> obj.bearings >> obj.altitudes >> obj.trueBearing
+  >> obj.geometry >> obj.labelPositions >> obj.bearingEndPositions >> obj.bounding >> obj.position;
+  obj.user = true;
+  return dataStream;
+}
+
+QDataStream& operator<<(QDataStream& dataStream, const map::MapAirportMsa& obj)
+{
+  dataStream << obj.airportIdent << obj.navIdent << obj.region << obj.multipleCode << obj.vorType;
+  dataStream << obj.navType << obj.vorDmeOnly << obj.vorHasDme << obj.vorTacan << obj.vorVortac;
+  dataStream << obj.radius << obj.magvar;
+  dataStream << obj.bearings << obj.altitudes << obj.trueBearing
+             << obj.geometry << obj.labelPositions << obj.bearingEndPositions << obj.bounding << obj.position;
+  return dataStream;
+}
+
 QDataStream& operator>>(QDataStream& dataStream, MapObjectRef& obj)
 {
   quint32 type;
@@ -1466,8 +1487,10 @@ QString waypointText(const MapWaypoint& waypoint)
 
 QString userpointText(const MapUserpoint& userpoint, int elideName)
 {
-  return QObject::tr("Userpoint %1").
-         arg(atools::elideTextShort(userpoint.ident.isEmpty() ? userpoint.name : userpoint.ident, elideName));
+  if(userpoint.ident.isEmpty() && userpoint.name.isEmpty())
+    return QObject::tr("Userpoint %1").arg(atools::elideTextShort(userpoint.type, elideName));
+  else
+    return QObject::tr("Userpoint %1").arg(atools::elideTextShort(userpoint.ident.isEmpty() ? userpoint.name : userpoint.ident, elideName));
 }
 
 QString logEntryText(const MapLogbookEntry& logEntry)
@@ -1540,16 +1563,20 @@ QString airportMsaTextShort(const MapAirportMsa& airportMsa)
 {
   if(!airportMsa.isValid())
     return QObject::tr("MSA");
+  else if(airportMsa.airportIdent == airportMsa.navIdent)
+    return QObject::tr("%1").arg(airportMsa.airportIdent);
   else
-    return QObject::tr("%1/%2").arg(airportMsa.airportIdent).arg(airportMsa.navIdent);
+    return QObject::tr("%1 (%2)").arg(airportMsa.airportIdent).arg(airportMsa.navIdent);
 }
 
 QString airportMsaText(const MapAirportMsa& airportMsa)
 {
   if(!airportMsa.isValid())
     return QObject::tr("MSA");
+  else if(airportMsa.airportIdent == airportMsa.navIdent)
+    return QObject::tr("MSA at %1").arg(airportMsa.airportIdent);
   else
-    return QObject::tr("MSA Sectors at %1/%2").arg(airportMsa.airportIdent).arg(airportMsa.navIdent);
+    return QObject::tr("MSA at %1 (%2)").arg(airportMsa.airportIdent).arg(airportMsa.navIdent);
 }
 
 QString comTypeName(const QString& type)

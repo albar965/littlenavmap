@@ -79,9 +79,18 @@ extern QColor compassRoseColor;
 extern QColor compassRoseTextColor;
 extern QColor distanceColor;
 
+/* MSA symbol */
 extern QColor msaFillColor;
 extern QColor msaTextColor;
 extern QColor msaSymbolColor;
+
+/* MSA large diagram */
+extern QPen msaDiagramLinePen;
+extern QColor msaDiagramNumberColor;
+extern QPen msaDiagramLinePenDark;
+extern QColor msaDiagramNumberColorDark;
+extern QColor msaDiagramFillColor;
+extern QColor msaDiagramFillColorDark;
 
 /* Weather icon colors */
 extern QColor weatherBackgoundColor;

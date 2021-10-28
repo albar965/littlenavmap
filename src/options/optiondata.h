@@ -1108,6 +1108,16 @@ public:
     return displayTextSizeMora;
   }
 
+  int getDisplayTransparencyAirportMsa() const
+  {
+    return displayTransparencyAirportMsa;
+  }
+
+  int getDisplayTextSizeAirportMsa() const
+  {
+    return displayTextSizeAirportMsa;
+  }
+
   int getMapNavTouchArea() const
   {
     return mapNavTouchArea;
@@ -1415,6 +1425,12 @@ private:
 
   // spinBoxOptionsDisplayTransparencyMora
   int displayTextSizeMora = 100;
+
+  // spinBoxOptionsDisplayTransparencyAirportMsa
+  int displayTransparencyAirportMsa = 50;
+
+  // spinBoxOptionsDisplayTextSizeAirportMsa
+  int displayTextSizeAirportMsa = 100;
 
   // spinBoxOptionsMapNavTouchscreenArea
   int mapNavTouchArea = 10;
