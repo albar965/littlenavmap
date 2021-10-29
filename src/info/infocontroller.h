@@ -145,6 +145,11 @@ private:
   void visibilityChangedAircraft(bool visible);
   void visibilityChangedInfo(bool visible);
 
+  template<typename TYPE>
+  void buildOneNavaid(atools::util::HtmlBuilder& html, bool& bearingChanged, bool& foundNavaid, const QList<TYPE>& list,
+                      QList<TYPE>& currentList, const HtmlInfoBuilder * info,
+                      void (HtmlInfoBuilder::*func)(const TYPE&, atools::util::HtmlBuilder&) const) const;
+
   QString waitingForUpdateText, notConnectedText;
 
   bool databaseLoadStatus = false;

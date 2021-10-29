@@ -29,37 +29,22 @@ class SqlRecord;
 
 namespace map {
 struct MapAirport;
-
 struct MapRunway;
-
 struct MapRunwayEnd;
-
 struct MapVor;
-
 struct MapNdb;
-
 struct MapHolding;
-
 struct MapWaypoint;
-
 struct MapAirway;
-
 struct MapIls;
-
 struct MapParking;
-
 struct MapAirspace;
-
 struct MapStart;
-
 struct MapHelipad;
-
 struct MapMarker;
-
 struct MapUserpoint;
-
 struct MapLogbookEntry;
-
+struct MapAirportMsa;
 }
 
 /*
@@ -102,6 +87,7 @@ public:
   void fillMarker(const atools::sql::SqlRecord& record, map::MapMarker& marker);
   void fillIls(const atools::sql::SqlRecord& record, map::MapIls& ils);
   void fillHolding(const atools::sql::SqlRecord& record, map::MapHolding& holding);
+  void fillAirportMsa(const atools::sql::SqlRecord& record, map::MapAirportMsa& airportMsa);
 
   void fillParking(const atools::sql::SqlRecord& record, map::MapParking& parking);
   void fillStart(const atools::sql::SqlRecord& record, map::MapStart& start);
@@ -122,6 +108,8 @@ private:
   map::MapAirportFlags airportFlag(const atools::sql::SqlRecord& record, const QString& field,
                                    map::MapAirportFlags airportFlag);
   map::MapAirportFlags fillAirportFlags(const atools::sql::SqlRecord& record, bool overview);
+
+  map::MapType strToType(const QString& navType);
 
 };
 

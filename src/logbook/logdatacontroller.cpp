@@ -587,9 +587,7 @@ void LogdataController::exportCsv()
 
     // Build a choice dialog with several checkboxes =========================
     ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Logbook Export"),
-                              QString(),
-                              tr("Select export options for logbook"),
-                              lnm::LOGDATA_EXPORT_CSV, "LOGBOOK.html#import-and-export");
+                              tr("Select export options for logbook"), lnm::LOGDATA_EXPORT_CSV, "LOGBOOK.html#import-and-export");
 
     QString attachmentToolTip = tr("Content of attached file will be added to the exported CSV if selected.\n"
                                    "Note that not all programs will be able to read this.\n"

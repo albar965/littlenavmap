@@ -84,6 +84,9 @@ public:
   /* Always from sim db */
   map::MapIls getIlsById(int id);
 
+  /* Either nav or sim db */
+  map::MapAirportMsa getAirportMsaById(int id);
+
   /* True if table ils contains GLS/RNP approaches - GLS ground stations or GBAS threshold points */
   bool hasGls() const
   {
@@ -97,6 +100,12 @@ public:
   bool hasHoldings() const
   {
     return holdingByIdQuery != nullptr;
+  }
+
+  /* True if table is present in schema and has one row */
+  bool hasAirportMsa() const
+  {
+    return airportMsaByIdQuery != nullptr;
   }
 
   /* Get ILS from sim database based on airport ident and runway name.
@@ -180,20 +189,19 @@ public:
                                             map::MapTypes types, bool& overflow);
 
   /* Similar to getAirports */
-  const QList<map::MapVor> *getVors(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
-                                    bool& overflow);
+  const QList<map::MapVor> *getVors(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow);
 
   /* Similar to getAirports */
-  const QList<map::MapNdb> *getNdbs(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
-                                    bool& overflow);
+  const QList<map::MapNdb> *getNdbs(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow);
 
   /* Similar to getAirports */
-  const QList<map::MapMarker> *getMarkers(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
-                                          bool& overflow);
+  const QList<map::MapMarker> *getMarkers(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow);
 
   /* Similar to getAirports */
-  const QList<map::MapHolding> *getHoldings(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
-                                            bool& overflow);
+  const QList<map::MapHolding> *getHoldings(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow);
+
+  /* As above */
+  const QList<map::MapAirportMsa> *getAirportMsa(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow);
 
   /* Similar to getAirports */
   const QList<map::MapIls> *getIls(Marble::GeoDataLatLonBox rect, const MapLayer *mapLayer, bool lazy, bool& overflow);
@@ -203,8 +211,7 @@ public:
 
   /* Similar to getAirports but no caching since user points can change */
   const QList<map::MapUserpoint> getUserdataPoints(const Marble::GeoDataLatLonBox& rect, const QStringList& types,
-                                                   const QStringList& typesAll,
-                                                   bool unknownType, float distance);
+                                                   const QStringList& typesAll, bool unknownType, float distance);
 
   /* Get related airport for navaids from current nav database.
    * found is true if navaid search was successful and max distance to pos is not exceeded. */
@@ -256,6 +263,7 @@ private:
   query::SimpleRectCache<map::MapMarker> markerCache;
   query::SimpleRectCache<map::MapHolding> holdingCache;
   query::SimpleRectCache<map::MapIls> ilsCache;
+  query::SimpleRectCache<map::MapAirportMsa> airportMsaCache;
 
   bool gls = false;
 
@@ -268,7 +276,8 @@ private:
   /* Database queries */
   atools::sql::SqlQuery *runwayOverviewQuery = nullptr,
                         *airportByRectQuery = nullptr, *airportAddonByRectQuery = nullptr,
-                        *airportMediumByRectQuery = nullptr, *airportLargeByRectQuery = nullptr;
+                        *airportMediumByRectQuery = nullptr, *airportLargeByRectQuery = nullptr,
+                        *airportMsaByRectQuery = nullptr, *airportMsaByIdentQuery = nullptr, *airportMsaByIdQuery = nullptr;
 
   atools::sql::SqlQuery *vorsByRectQuery = nullptr, *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr,
                         *ilsByRectQuery = nullptr, *holdingByRectQuery = nullptr, *userdataPointByRectQuery = nullptr;

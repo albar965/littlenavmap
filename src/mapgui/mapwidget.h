@@ -151,6 +151,12 @@ public:
   /* Remove hold at index and update the map */
   void removeHold(int index);
 
+  /* Adds MSA diagram at position */
+  void addAirportMsa(map::MapAirportMsa airportMsa);
+
+  /* Remove airport MSA diagram at index and update the map */
+  void removeAirportMsa(int index);
+
   /* Jump to the search center mark using default zoom */
   void showSearchMark();
 

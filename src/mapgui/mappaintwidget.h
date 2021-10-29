@@ -145,6 +145,9 @@ public:
   const QList<map::MapHolding>& getHolds() const;
   QList<map::MapHolding>& getHolds();
 
+  const QList<map::MapAirportMsa>& getAirportMsa() const;
+  QList<map::MapAirportMsa>& getAirportMsa();
+
   const atools::geo::Pos& getProfileHighlight() const;
 
   void clearSearchHighlights();

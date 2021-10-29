@@ -1069,6 +1069,8 @@ void MainWindow::connectAllSlots()
   // Aircraft performance signals =======================================================
   connect(perfController, &AircraftPerfController::aircraftPerformanceChanged,
           routeController, &RouteController::aircraftPerformanceChanged);
+  connect(perfController, &AircraftPerfController::windChanged, routeController, &RouteController::windUpdated);
+  connect(perfController, &AircraftPerfController::windChanged, profileWidget, &ProfileWidget::windUpdated);
   connect(routeController, &RouteController::routeChanged, perfController, &AircraftPerfController::routeChanged);
   connect(routeController, &RouteController::routeAltitudeChanged,
           perfController, &AircraftPerfController::routeAltitudeChanged);
@@ -1098,6 +1100,7 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::routeAltitudeChanged, profileWidget, &ProfileWidget::routeAltitudeChanged);
   connect(routeController, &RouteController::routeChanged, this, &MainWindow::updateActionStates);
   connect(routeController, &RouteController::routeInsert, this, &MainWindow::routeInsert);
+  connect(routeController, &RouteController::addAirportMsa, mapWidget, &MapWidget::addAirportMsa);
 
   connect(routeController, &RouteController::routeChanged, NavApp::updateErrorLabels);
   connect(routeController, &RouteController::routeChanged, NavApp::updateWindowTitle);
@@ -1118,6 +1121,7 @@ void MainWindow::connectAllSlots()
   connect(airportSearch, &SearchBaseTable::routeAddAlternate, routeController, &RouteController::routeAddAlternate);
   connect(airportSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
   connect(airportSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+  connect(airportSearch, &SearchBaseTable::addAirportMsa, mapWidget, &MapWidget::addAirportMsa);
 
   // Nav search ===================================================================================
   NavSearch *navSearch = searchController->getNavSearch();
@@ -1126,6 +1130,7 @@ void MainWindow::connectAllSlots()
   connect(navSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(navSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
   connect(navSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
+  connect(navSearch, &SearchBaseTable::addAirportMsa, mapWidget, &MapWidget::addAirportMsa);
 
   // Userdata search ===================================================================================
   UserdataSearch *userSearch = searchController->getUserdataSearch();
@@ -1441,6 +1446,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowIls, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowGls, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowHolding, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowAirportMsa, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowVictorAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowJetAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowTracks, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -1653,6 +1659,7 @@ void MainWindow::connectAllSlots()
 
   // Wind update ===================================================
   connect(windReporter, &WindReporter::windUpdated, routeController, &RouteController::windUpdated);
+  connect(windReporter, &WindReporter::windUpdated, profileWidget, &ProfileWidget::windUpdated);
   connect(windReporter, &WindReporter::windUpdated, perfController, &AircraftPerfController::updateReports);
   connect(windReporter, &WindReporter::windUpdated, this, &MainWindow::updateMapObjectsShown);
   connect(windReporter, &WindReporter::windUpdated, this, &MainWindow::updateActionStates);
@@ -2064,9 +2071,8 @@ void MainWindow::routeResetAll()
   qDebug() << Q_FUNC_INFO;
 
   // Create a dialog with four checkboxes
-  ChoiceDialog choiceDialog(this, QApplication::applicationName() + tr(" - Reset for new Flight"), QString(),
-                            tr("Select items to reset for a new flight"),
-                            lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "RESET.html");
+  ChoiceDialog choiceDialog(this, QApplication::applicationName() + tr(" - Reset for new Flight"),
+                            tr("Select items to reset for a new flight"), lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "RESET.html");
 
   choiceDialog.addCheckBox(EMPTY_FLIGHT_PLAN, tr("&Create a new and empty flight plan"), QString(), true);
   choiceDialog.addCheckBox(DELETE_TRAIL, tr("&Delete aircraft trail"),
@@ -2077,8 +2083,9 @@ void MainWindow::routeResetAll()
                            tr("Restarts the background aircraft performance collection"), true);
   choiceDialog.addCheckBox(RESTART_LOGBOOK, tr("Reset flight detection in &logbook"),
                            tr("Reset the logbook to detect takeoff and landing for new logbook entries"), true);
-  choiceDialog.addCheckBox(REMOVE_MARKS, tr("&Remove all Ranges, Measurements, Patterns and Holdings"),
-                           tr("Remove all range rings, measurements, traffic patterns and holdings from map"), false);
+  choiceDialog.addCheckBox(REMOVE_MARKS, tr("&Remove all Ranges, Measurements, Patterns, Holdings and MSA Diagrams"),
+                           tr("Remove all range rings, measurements, traffic patterns, holdings and "
+                              "airport MSA diagrams from the map"), false);
 
   choiceDialog.restoreState();
 
@@ -3653,6 +3660,7 @@ void MainWindow::updateActionStates()
   ui->actionMapShowMinimumAltitude->setEnabled(NavApp::isMoraAvailable());
   ui->actionMapShowGls->setEnabled(NavApp::isGlsAvailable());
   ui->actionMapShowHolding->setEnabled(NavApp::isHoldingsAvailable());
+  ui->actionMapShowAirportMsa->setEnabled(NavApp::isAirportMsaAvailable());
 
   bool hasFlightplan = !NavApp::getRouteConst().isFlightplanEmpty();
   bool hasTrack = !NavApp::isAircraftTrackEmpty();
@@ -3918,7 +3926,8 @@ void MainWindow::restoreStateMain()
     // Restore map settings if desired by the user
     widgetState.restore({ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
                          ui->actionMapShowAddonAirports, ui->actionMapShowVor, ui->actionMapShowNdb,
-                         ui->actionMapShowWp, ui->actionMapShowIls, ui->actionMapShowGls, ui->actionMapShowHolding,
+                         ui->actionMapShowWp, ui->actionMapShowIls, ui->actionMapShowGls,
+                         ui->actionMapShowHolding, ui->actionMapShowAirportMsa,
                          ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks,
                          ui->actionShowAirspaces,
                          ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft,
@@ -4119,7 +4128,7 @@ void MainWindow::saveActionStates()
   widgetState.save({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowAirports, ui->actionMapShowSoftAirports,
                     ui->actionMapShowEmptyAirports, ui->actionMapShowAddonAirports, ui->actionMapShowVor,
                     ui->actionMapShowNdb, ui->actionMapShowWp, ui->actionMapShowIls,
-                    ui->actionMapShowGls, ui->actionMapShowHolding, ui->actionMapShowVictorAirways,
+                    ui->actionMapShowGls, ui->actionMapShowHolding, ui->actionMapShowAirportMsa, ui->actionMapShowVictorAirways,
                     ui->actionMapShowJetAirways, ui->actionMapShowTracks, ui->actionShowAirspaces,
                     ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft,
                     ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach, ui->actionMapAircraftCenter,

@@ -34,6 +34,7 @@
 
 #include <QBitArray>
 #include <QPainterPath>
+#include <QStringBuilder>
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
@@ -97,13 +98,13 @@ QString MapPainterRoute::buildLegText(float dist, float courseGcMag, float cours
 
   if(magGc && trueGc && courseGcMagStr == courseGcTrueStr)
     // True and mag course are equal - combine
-    texts.append(courseGcMagStr + tr("°M/T"));
+    texts.append(courseGcMagStr % tr("°M/T"));
   else
   {
     if(magGc)
-      texts.append(courseGcMagStr + tr("°M"));
+      texts.append(courseGcMagStr % tr("°M"));
     if(trueGc)
-      texts.append(courseGcTrueStr + tr("°T"));
+      texts.append(courseGcTrueStr % tr("°T"));
   }
 
   return texts.join(tr(" / "));
@@ -702,7 +703,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
 
       if(drawTextLines != nullptr)
         // Disable all drawing
-        (*drawTextLines)[index] = {leg.line, false, false};
+        (*drawTextLines)[index] = DrawText(leg.line, false, false);
     }
     return;
   }
@@ -737,7 +738,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
 
       if(drawTextLines != nullptr)
         // Can draw a label along the line
-        (*drawTextLines)[index] = {leg.line, showDistance, true};
+        (*drawTextLines)[index] = DrawText(leg.line, showDistance, true);
     }
 
     lastLines.append(line);
@@ -773,10 +774,10 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
         if(drawTextLines != nullptr)
         {
           if(leg.interceptPos.isValid())
-            (*drawTextLines)[index] = {Line(leg.interceptPos, leg.line.getPos2()), false, true};
+            (*drawTextLines)[index] = DrawText(Line(leg.interceptPos, leg.line.getPos2()), false, true);
           else
             // Can draw a label along the line with course but not distance
-            (*drawTextLines)[index] = {leg.line, false, true};
+            (*drawTextLines)[index] = DrawText(leg.line, false, true);
         }
       }
       else
@@ -794,9 +795,9 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
         {
           // Can draw a label along the line with course but not distance
           if(leg.interceptPos.isValid())
-            (*drawTextLines)[index] = {Line(leg.interceptPos, leg.line.getPos2()), true, true};
+            (*drawTextLines)[index] = DrawText(Line(leg.interceptPos, leg.line.getPos2()), true, true);
           else
-            (*drawTextLines)[index] = {Line(p1, p2), showDistance, true};
+            (*drawTextLines)[index] = DrawText(Line(p1, p2), showDistance, true);
         }
       }
     }
@@ -816,7 +817,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
 
         if(drawTextLines != nullptr)
           // Can draw a label along the line
-          (*drawTextLines)[index] = {Line(leg.interceptPos, leg.line.getPos2()), showDistance, true};
+          (*drawTextLines)[index] = DrawText(Line(leg.interceptPos, leg.line.getPos2()), showDistance, true);
       }
       else
       {
@@ -835,7 +836,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
 
         if(drawTextLines != nullptr)
           // Can draw a label along the line
-          (*drawTextLines)[index] = {leg.line, showDistance, true};
+          (*drawTextLines)[index] = DrawText(leg.line, showDistance, true);
       }
     }
   }
@@ -856,7 +857,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
 
     if(drawTextLines != nullptr)
       // Can draw a label along the line
-      (*drawTextLines)[index] = {leg.line, showDistance, true};
+      (*drawTextLines)[index] = DrawText(leg.line, showDistance, true);
   }
   // ===========================================================
   else if(contains(leg.type, {proc::HOLD_TO_ALTITUDE,
@@ -869,24 +870,24 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
 
     if(!noText)
     {
-      holdText = QString::number(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M"));
+      holdText = QString::number(leg.course, 'f', 0) % (leg.trueCourse ? tr("°T") : tr("°M"));
 
       if(trueCourse < 180.f)
-        holdText = holdText + tr(" ►");
+        holdText = holdText % tr(" ►");
       else
-        holdText = tr("◄ ") + holdText;
+        holdText = tr("◄ ") % holdText;
 
       if(leg.time > 0.f)
-        holdText2 += QString::number(leg.time, 'g', 2) + tr("min");
+        holdText2.append(QString::number(leg.time, 'g', 2) % tr("min"));
       else if(leg.distance > 0.f)
         holdText2 = Unit::distNm(leg.distance, true /*addUnit*/, 20, true /*narrow*/);
       else
         holdText2 = tr("1min");
 
       if(trueCourse < 180.f)
-        holdText2 = tr("◄ ") + holdText2;
+        holdText2 = tr("◄ ") % holdText2;
       else
-        holdText2 = holdText2 + tr(" ►");
+        holdText2 = holdText2 % tr(" ►");
     }
 
     if(draw)
@@ -904,11 +905,11 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
     float trueCourse = leg.legTrueCourse();
     if(!noText)
     {
-      text = QString::number(leg.course, 'f', 0) + (leg.trueCourse ? tr("°T") : tr("°M")) + tr("/1min");
+      text = QString::number(leg.course, 'f', 0) % (leg.trueCourse ? tr("°T") : tr("°M")) % tr("/1min");
       if(trueCourse < 180.f)
-        text = text + tr(" ►");
+        text = text % tr(" ►");
       else
-        text = tr("◄ ") + text;
+        text = tr("◄ ") % text;
     }
 
     float px, py;
@@ -928,7 +929,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
 
     if(drawTextLines != nullptr && !hidden)
       // Can draw a label along the line
-      (*drawTextLines)[index] = {Line(leg.line.getPos1(), leg.procedureTurnPos), showDistance, true};
+      (*drawTextLines)[index] = DrawText(Line(leg.line.getPos1(), leg.procedureTurnPos), showDistance, true);
   }
 }
 
@@ -1234,7 +1235,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     // All legs with a calculated end point
     if(wToSBuf(leg.line.getPos1(), x, y, margins))
     {
-      texts.append("RW" + legs.runwayEnd.name);
+      texts.append("RW" % legs.runwayEnd.name);
 
       proc::MapAltRestriction altRestriction;
       altRestriction.descriptor = proc::MapAltRestriction::AT;
@@ -1780,10 +1781,10 @@ void MapPainterRoute::drawStartParking()
 
 void MapPainterRoute::drawWindBarbAtWaypoint(float windSpeed, float windDir, float x, float y)
 {
-  if(!context->route->hasAltitudeLegs() || !context->route->hasValidProfile())
-    return;
-
-  int size = context->sz(context->symbolSizeAirport, context->mapLayerRoute->getWindBarbsSymbolSize());
-  symbolPainter->drawWindBarbs(context->painter, windSpeed, 0.f /* gust */, windDir, x - 5, y - 5, size,
-                               true /* barbs */, true /* alt wind */, true /* route */, context->drawFast);
+  if(context->route->hasAltitudeLegs() && context->route->hasValidProfile())
+  {
+    int size = context->sz(context->symbolSizeAirport, context->mapLayerRoute->getWindBarbsSymbolSize());
+    symbolPainter->drawWindBarbs(context->painter, windSpeed, 0.f /* gust */, windDir, x - 5, y - 5, size,
+                                 true /* barbs */, true /* alt wind */, true /* route */, context->drawFast);
+  }
 }

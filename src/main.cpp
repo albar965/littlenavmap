@@ -91,6 +91,9 @@ int main(int argc, char *argv[])
   qRegisterMetaTypeStreamOperators<map::MapHolding>();
   qRegisterMetaTypeStreamOperators<QList<map::MapHolding> >();
 
+  qRegisterMetaTypeStreamOperators<map::MapAirportMsa>();
+  qRegisterMetaTypeStreamOperators<QList<map::MapAirportMsa> >();
+
   qRegisterMetaTypeStreamOperators<map::RangeMarker>();
   qRegisterMetaTypeStreamOperators<QList<map::RangeMarker> >();
 

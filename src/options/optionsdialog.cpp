@@ -404,6 +404,10 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
      ui->spinBoxOptionsDisplayTextSizeMora,
      ui->spinBoxOptionsDisplayTransparencyMora,
+
+     ui->spinBoxOptionsDisplayTextSizeAirportMsa,
+     ui->spinBoxOptionsDisplayTransparencyAirportMsa,
+
      ui->spinBoxOptionsMapNavTouchArea,
 
      ui->comboBoxOptionsStartupUpdateChannels,
@@ -1754,6 +1758,10 @@ void OptionsDialog::widgetsToOptionData()
 
   data.displayTransparencyMora = ui->spinBoxOptionsDisplayTransparencyMora->value();
   data.displayTextSizeMora = ui->spinBoxOptionsDisplayTextSizeMora->value();
+
+  data.displayTransparencyAirportMsa = ui->spinBoxOptionsDisplayTransparencyAirportMsa->value();
+  data.displayTextSizeAirportMsa = ui->spinBoxOptionsDisplayTextSizeAirportMsa->value();
+
   data.mapNavTouchArea = ui->spinBoxOptionsMapNavTouchArea->value();
 
   data.displayTextSizeRangeDistance = ui->spinBoxOptionsDisplayTextSizeRangeDistance->value();
@@ -2023,6 +2031,10 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
 
   ui->spinBoxOptionsDisplayTransparencyMora->setValue(data.displayTransparencyMora);
   ui->spinBoxOptionsDisplayTextSizeMora->setValue(data.displayTextSizeMora);
+
+  ui->spinBoxOptionsDisplayTransparencyAirportMsa->setValue(data.displayTransparencyAirportMsa);
+  ui->spinBoxOptionsDisplayTextSizeAirportMsa->setValue(data.displayTextSizeAirportMsa);
+
   ui->spinBoxOptionsMapNavTouchArea->setValue(data.mapNavTouchArea);
 
   ui->spinBoxOptionsDisplayTextSizeRangeDistance->setValue(data.displayTextSizeRangeDistance);

@@ -446,6 +446,11 @@ bool NavApp::isHoldingsAvailable()
   return getMapQueryGui()->hasHoldings();
 }
 
+bool NavApp::isAirportMsaAvailable()
+{
+  return getMapQueryGui()->hasAirportMsa();
+}
+
 bool NavApp::isGlsAvailable()
 {
   return getMapQueryGui()->hasGls();
@@ -945,6 +950,11 @@ atools::gui::TabWidgetHandler *NavApp::getRouteTabHandler()
 const InfoController *NavApp::getInfoController()
 {
   return mainWindow->getInfoController();
+}
+
+QFont NavApp::getTextBrowserInfoFont()
+{
+  return getMainUi()->textBrowserAirportInfo->font();
 }
 
 QString NavApp::getMapCopyright()

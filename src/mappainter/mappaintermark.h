@@ -54,6 +54,9 @@ private:
   void paintRangeRings();
   void paintDistanceMarkers();
 
+  /* Draw big airport MSA sectors */
+  void paintAirportMsa();
+
   void paintTrafficPatterns();
 
   void paintRouteDrag();

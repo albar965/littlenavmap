@@ -174,6 +174,8 @@ signals:
   void loadRouteFile(const QString& filepath);
   void loadPerfFile(const QString& filepath);
 
+  void addAirportMsa(map::MapAirportMsa airportMsa);
+
 protected:
   /* Update the hamburger menu button. Add * for change and check/uncheck actions */
   virtual void updateButtonMenu() = 0;

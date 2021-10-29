@@ -22,6 +22,7 @@
 #include "geo/calculations.h"
 #include "common/maptypes.h"
 #include "io/binaryutil.h"
+#include "fs/common/binarymsageometry.h"
 
 using namespace atools::geo;
 using atools::sql::SqlRecord;
@@ -586,6 +587,22 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils)
   ils.bounding.extend(ils.pos2);
 }
 
+map::MapType MapTypesFactory::strToType(const QString& navType)
+{
+  if(navType == "W")
+    return map::WAYPOINT;
+  else if(navType == "N")
+    return map::NDB;
+  else if(navType == "V")
+    return map::VOR; // VOR/TACAN/DME
+  else if(navType == "A")
+    return map::AIRPORT;
+  else if(navType == "R")
+    return map::RUNWAYEND;
+
+  return map::NONE;
+}
+
 void MapTypesFactory::fillHolding(const atools::sql::SqlRecord& record, map::MapHolding& holding)
 {
   holding.id = record.valueInt("holding_id");
@@ -594,17 +611,7 @@ void MapTypesFactory::fillHolding(const atools::sql::SqlRecord& record, map::Map
   holding.navIdent = record.valueStr("nav_ident");
   // region varchar(2),                  -- ICAO two letter region identifier
 
-  QString navType = record.valueStr("nav_type");
-  if(navType == "W")
-    holding.navType = map::WAYPOINT;
-  else if(navType == "N")
-    holding.navType = map::NDB;
-  else if(navType == "V")
-    holding.navType = map::VOR; // VOR/TACAN/DME
-  else if(navType == "A")
-    holding.navType = map::AIRPORT;
-  else if(navType == "R")
-    holding.navType = map::RUNWAYEND;
+  holding.navType = strToType(record.valueStr("nav_type"));
   holding.name = record.valueStr("name");
 
   holding.vorType = record.valueStr("vor_type");
@@ -621,12 +628,43 @@ void MapTypesFactory::fillHolding(const atools::sql::SqlRecord& record, map::Map
   holding.minAltititude = record.valueFloat("minimum_altitude");
   holding.maxAltititude = record.valueFloat("maximum_altitude");
   holding.speedLimit = record.valueFloat("speed_limit");
-  holding.position = Pos(record.valueFloat("lonx"),
-                         record.valueFloat("laty"));
+  holding.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
 
   holding.speedKts = 0.f;
   holding.user = false;
+}
 
+void MapTypesFactory::fillAirportMsa(const atools::sql::SqlRecord& record, map::MapAirportMsa& airportMsa)
+{
+  // left_lonx, top_laty, right_lonx, bottom_laty, radius, lonx, laty, geometry
+  airportMsa.id = record.valueInt("airport_msa_id");
+  airportMsa.airportIdent = record.valueStr("airport_ident");
+  airportMsa.navIdent = record.valueStr("nav_ident");
+  airportMsa.region = record.valueStr("region");
+  airportMsa.multipleCode = record.valueStr("multiple_code");
+
+  airportMsa.vorType = record.valueStr("vor_type");
+  airportMsa.vorTacan = airportMsa.vorType == "TC";
+  airportMsa.vorVortac = airportMsa.vorType.startsWith("VT");
+  airportMsa.vorDmeOnly = record.valueInt("vor_dme_only") > 0;
+  airportMsa.vorHasDme = record.valueInt("vor_has_dme") > 0;
+
+  airportMsa.radius = record.valueFloat("radius");
+  airportMsa.trueBearing = record.valueInt("true_bearing") > 0;
+  airportMsa.magvar = record.valueFloat("mag_var");
+  airportMsa.navType = strToType(record.valueStr("nav_type"));
+  airportMsa.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
+
+  atools::fs::common::BinaryMsaGeometry geo(record.valueBytes("geometry"));
+  airportMsa.bearings = geo.getBearings();
+  airportMsa.altitudes = geo.getAltitudes();
+  airportMsa.geometry = geo.getGeometry();
+  airportMsa.labelPositions = geo.getLabelPositions();
+  airportMsa.bearingEndPositions = geo.getBearingEndPositions();
+
+  airportMsa.bounding = Rect(record.valueFloat("left_lonx"), record.valueFloat("top_laty"),
+                             record.valueFloat("right_lonx"), record.valueFloat("bottom_laty"));
+  airportMsa.user = false;
 }
 
 void MapTypesFactory::fillParking(const SqlRecord& record, map::MapParking& parking)

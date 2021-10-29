@@ -136,6 +136,7 @@ const QLatin1String MAP_DETAILFACTOR("Map/DetailFactor");
 const QLatin1String MAP_DISTANCEMARKERS("Map/DistanceMarkers");
 const QLatin1String MAP_TRAFFICPATTERNS("Map/TrafficPatterns");
 const QLatin1String MAP_HOLDINGS("Map/Holdings");
+const QLatin1String MAP_AIRPORT_MSA("Map/AirportMsa");
 const QLatin1String MAP_AIRSPACES("Map/AirspaceFilter");
 const QLatin1String MAP_USERDATA("Map/Userdata");
 const QLatin1String MAP_USERDATA_UNKNOWN("Map/UserdataUnknown");

@@ -323,30 +323,50 @@ QString procedureLegRemarks(proc::ProcedureLegType type)
   return approachLegRemarkStr.value(type);
 }
 
+QString restrictionText(const MapProcedureLeg& procedureLeg)
+{
+  QStringList restrictions;
+  if(procedureLeg.altRestriction.isValid())
+    restrictions.append(proc::altRestrictionTextShort(procedureLeg.altRestriction));
+
+  if(procedureLeg.speedRestriction.isValid())
+    restrictions.append(proc::speedRestrictionTextShort(procedureLeg.speedRestriction));
+
+  if(procedureLeg.verticalAngle < -0.1f)
+    restrictions.append(QObject::tr("%L1°").arg(std::abs(procedureLeg.verticalAngle), 0, 'g', 3));
+
+  return restrictions.join(QObject::tr("/"));
+}
+
 QString altRestrictionText(const MapAltRestriction& restriction)
 {
-  switch(restriction.descriptor)
+  if(restriction.verticalAngleAlt < map::INVALID_ALTITUDE_VALUE)
+    return QObject::tr("At %1 (path)").arg(Unit::altFeet(restriction.verticalAngleAlt));
+  else
   {
-    case proc::MapAltRestriction::ILS_AT:
-    case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
-      return QObject::tr("ILS GS %1").arg(Unit::altFeet(restriction.alt1));
+    switch(restriction.descriptor)
+    {
+      case proc::MapAltRestriction::ILS_AT:
+      case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
+        return QObject::tr("ILS GS %1").arg(Unit::altFeet(restriction.alt1));
 
-    case proc::MapAltRestriction::NONE:
-      return QString();
+      case proc::MapAltRestriction::NONE:
+        return QString();
 
-    case proc::MapAltRestriction::AT:
-      return QObject::tr("At %1").arg(Unit::altFeet(restriction.alt1));
+      case proc::MapAltRestriction::AT:
+        return QObject::tr("At %1").arg(Unit::altFeet(restriction.alt1));
 
-    case proc::MapAltRestriction::AT_OR_ABOVE:
-      return QObject::tr("At or above %1").arg(Unit::altFeet(restriction.alt1));
+      case proc::MapAltRestriction::AT_OR_ABOVE:
+        return QObject::tr("At or above %1").arg(Unit::altFeet(restriction.alt1));
 
-    case proc::MapAltRestriction::AT_OR_BELOW:
-      return QObject::tr("At or below %1").arg(Unit::altFeet(restriction.alt1));
+      case proc::MapAltRestriction::AT_OR_BELOW:
+        return QObject::tr("At or below %1").arg(Unit::altFeet(restriction.alt1));
 
-    case proc::MapAltRestriction::BETWEEN:
-      return QObject::tr("At or above %1 and at or below %2").
-             arg(Unit::altFeet(restriction.alt2)).
-             arg(Unit::altFeet(restriction.alt1));
+      case proc::MapAltRestriction::BETWEEN:
+        return QObject::tr("At or above %1 and at or below %2").
+               arg(Unit::altFeet(restriction.alt2)).
+               arg(Unit::altFeet(restriction.alt1));
+    }
   }
   return QString();
 }

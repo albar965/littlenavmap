@@ -15,39 +15,32 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LITTLENAVMAP_MAPPAINTERILS_H
-#define LITTLENAVMAP_MAPPAINTERILS_H
+#ifndef LITTLENAVMAP_MAPPAINTERMSA_H
+#define LITTLENAVMAP_MAPPAINTERMSA_H
 
 #include "mappainter/mappainter.h"
 
-class SymbolPainter;
-
 namespace map {
-struct MapIls;
-
+struct MapAirportMsa;
 }
 
 /*
- * Draws the ILS feathers and text.
+ * Draws the airport MSA backdrop circles and details sector diagram.
  */
-class MapPainterIls :
+class MapPainterMsa :
   public MapPainter
 {
   Q_DECLARE_TR_FUNCTIONS(MapPainter)
 
 public:
-  MapPainterIls(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
-  virtual ~MapPainterIls() override;
+  MapPainterMsa(MapPaintWidget *mapPaintWidget, MapScale *mapScale, PaintContext *paintContext);
+  virtual ~MapPainterMsa() override;
 
   virtual void render() override;
 
 private:
-  /* Fixed value that is used when writing the database. See atools::fs::db::IlsWriter */
-  static Q_DECL_CONSTEXPR int FEATHER_LEN_NM = 9;
-  static Q_DECL_CONSTEXPR int MIN_LENGHT_FOR_TEXT = 40;
-
-  void drawIlsSymbol(const map::MapIls& ils, bool fast);
+  void drawMsaSymbol(const map::MapAirportMsa& airportMsa, float x, float y, bool fast);
 
 };
 
-#endif // LITTLENAVMAP_MAPPAINTERILS_H
+#endif // LITTLENAVMAP_MAPPAINTERMSA_H

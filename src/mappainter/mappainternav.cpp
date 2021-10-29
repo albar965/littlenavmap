@@ -29,6 +29,7 @@
 #include "query/waypointtrackquery.h"
 
 #include <QElapsedTimer>
+#include <QStringBuilder>
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoPainter.h>
@@ -55,8 +56,7 @@ void MapPainterNav::render()
 
   // Airways -------------------------------------------------
   bool drawAirway = context->mapLayer->isAirway() &&
-                    (context->objectTypes.testFlag(map::AIRWAYJ) ||
-                     context->objectTypes.testFlag(map::AIRWAYV));
+                    (context->objectTypes.testFlag(map::AIRWAYJ) || context->objectTypes.testFlag(map::AIRWAYV));
 
   context->szFont(context->textSizeAirway);
 
@@ -135,7 +135,7 @@ void MapPainterNav::render()
     context->setQueryOverflow(overflow);
 
     if(holds != nullptr)
-      paintHoldings(*holds, true /* enroute */, context->drawFast);
+      paintHoldings(*holds, false /* user */, context->drawFast);
   }
 }
 
@@ -230,21 +230,21 @@ void MapPainterNav::paintAirways(const QList<MapAirway> *airways, bool fast)
         // Build text index
         QString text;
         if(ident)
-          text += airway.name;
+          text.append(airway.name);
 
         if(info)
         {
-          text += QString(tr(" / "));
+          text.append(tr(" / "));
 
           if(isTrack)
-            text += map::airwayTrackTypeToString(airway.type);
+            text.append(map::airwayTrackTypeToString(airway.type));
           else
-            text += map::airwayTrackTypeToShortString(airway.type);
+            text.append(map::airwayTrackTypeToShortString(airway.type));
 
           QString altTxt = map::airwayAltTextShort(airway);
 
           if(!altTxt.isEmpty())
-            text += QString(tr(" / ")) + altTxt;
+            text.append(tr(" / ") % altTxt);
         }
 
         if(!text.isEmpty())
@@ -253,7 +253,7 @@ void MapPainterNav::paintAirways(const QList<MapAirway> *airways, bool fast)
           QString toCoordStr = airway.to.toString(3, false /*altitude*/);
 
           // Create string key for index by using the coordinates
-          QString lineTextKey = firstCoordStr + "|" + toCoordStr;
+          QString lineTextKey = firstCoordStr % "|" % toCoordStr;
 
           bool reversed = false;
 
@@ -262,7 +262,7 @@ void MapPainterNav::paintAirways(const QList<MapAirway> *airways, bool fast)
           if(index == -1)
           {
             // Try with reversed coordinates
-            index = lines.value(toCoordStr + "|" + firstCoordStr, -1);
+            index = lines.value(toCoordStr % "|" % firstCoordStr, -1);
             reversed = index != -1;
           }
 

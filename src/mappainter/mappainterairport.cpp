@@ -35,6 +35,7 @@
 #include "navapp.h"
 
 #include <QElapsedTimer>
+#include <QStringBuilder>
 
 #include <marble/GeoPainter.h>
 #include <marble/ViewportParams.h>
@@ -741,7 +742,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
             {
               // FSX/P3D style names =========
               if(mapLayerEffective->isAirportDiagramDetail3())
-                text = map::parkingName(parking.name) + " " + QLocale().toString(parking.number);
+                text = map::parkingName(parking.name) % " " % QLocale().toString(parking.number);
               else
                 text = QLocale().toString(parking.number);
             }
@@ -825,12 +826,12 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
 
         if(runway.width > 8)
           // Skip dummy lines where the runway is done by photo scenery or similar
-          text += tr(" x ") + QString::number(Unit::distShortFeetF(runway.width), 'f', 0);
-        text += " " + Unit::getUnitShortDistStr();
+          text.append(tr(" x ") % QString::number(Unit::distShortFeetF(runway.width), 'f', 0));
+        text.append(" " % Unit::getUnitShortDistStr());
 
         // Add light indicator
         if(!runway.edgeLight.isEmpty())
-          text += tr(" / L");
+          text.append(tr(" / L"));
 
         if(!runway.surface.isEmpty() && runway.surface != "TR" && runway.surface != "UNKNOWN" &&
            runway.surface != "INVALID")
@@ -838,7 +839,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
           // Draw only if valid
           QString surface = map::surfaceName(runway.surface);
           if(!surface.isEmpty())
-            text += tr(" / ") + surface;
+            text.append(tr(" / ") % surface);
         }
 
         int textWidth = rwMetrics.width(text);
@@ -883,23 +884,19 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
         {
           // This case is rare (eg. LTAI) - probably primary in the wrong place
           rotate = runway.heading + 90.f;
-          textPrim = tr("► ") +
-                     formatter::courseTextFromTrue(opposedCourseDeg(runway.heading), airport.magvar,
-                                                   false /* magBold */, false /* trueSmall */, true /* narrow */);
+          textPrim = tr("► ") % formatter::courseTextFromTrue(opposedCourseDeg(runway.heading), airport.magvar,
+                                                              false /* magBold */, false /* trueSmall */, true /* narrow */);
 
           textSec = formatter::courseTextFromTrue(runway.heading, airport.magvar,
-                                                  false /* magBold */, false /* trueSmall */, true /* narrow */) +
-                    tr(" ◄");
+                                                  false /* magBold */, false /* trueSmall */, true /* narrow */) % tr(" ◄");
         }
         else
         {
           rotate = runway.heading - 90.f;
-          textPrim = tr("► ") +
-                     formatter::courseTextFromTrue(runway.heading, airport.magvar,
-                                                   false /* magBold */, false /* trueSmall */, true /* narrow */);
+          textPrim = tr("► ") % formatter::courseTextFromTrue(runway.heading, airport.magvar,
+                                                              false /* magBold */, false /* trueSmall */, true /* narrow */);
           textSec = formatter::courseTextFromTrue(opposedCourseDeg(runway.heading), airport.magvar,
-                                                  false /* magBold */, false /* trueSmall */, true /* narrow */) +
-                    tr(" ◄");
+                                                  false /* magBold */, false /* trueSmall */, true /* narrow */) % tr(" ◄");
         }
 
         QRect textRectPrim = rwHdgMetrics.boundingRect(textPrim);

@@ -76,7 +76,7 @@ private:
 
   /* Actions for toolbar button and menu */
   QAction *actionAll = nullptr, *actionNone = nullptr, *actionRangeRings = nullptr, *actionMeasurementLines = nullptr,
-          *actionHolds = nullptr, *actionPatterns = nullptr;
+          *actionHolds = nullptr, *actionAirportMsa = nullptr, * actionPatterns = nullptr;
 
   /* Toolbutton getting all actions for dropdown menu */
   QToolButton *toolButton = nullptr;

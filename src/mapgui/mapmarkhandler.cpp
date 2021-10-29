@@ -68,6 +68,8 @@ QString MapMarkHandler::getMarkTypesText() const
     types.append(tr("Holdings"));
   if(markTypes & map::MARK_PATTERNS)
     types.append(tr("Traffic Patterns"));
+  if(markTypes & map::MARK_AIRPORT_MSA)
+    types.append(tr("Airport MSA"));
   return types.join(tr((", ")));
 }
 
@@ -124,6 +126,8 @@ void MapMarkHandler::addToolbarButton()
                              tr("Show or hide traffic patterns"), map::MARK_PATTERNS);
   actionHolds = addButton(":/littlenavmap/resources/icons/enroutehold.svg", tr("&Holdings"),
                           tr("Show or hide holdings"), map::MARK_HOLDS);
+  actionAirportMsa = addButton(":/littlenavmap/resources/icons/msa.svg", tr("&MSA Diagrams"),
+                               tr("Show or hide airport MSA sectors"), map::MARK_AIRPORT_MSA);
 }
 
 QAction *MapMarkHandler::addButton(const QString& icon, const QString& text, const QString& tooltip,
@@ -171,6 +175,7 @@ void MapMarkHandler::flagsToActions()
   actionRangeRings->setChecked(markTypes & map::MARK_RANGE_RINGS);
   actionMeasurementLines->setChecked(markTypes & map::MARK_MEASUREMENT);
   actionHolds->setChecked(markTypes & map::MARK_HOLDS);
+  actionAirportMsa->setChecked(markTypes & map::MARK_AIRPORT_MSA);
   actionPatterns->setChecked(markTypes & map::MARK_PATTERNS);
   toolButton->setChecked(markTypes & map::MARK_ALL);
 }
@@ -184,6 +189,8 @@ void MapMarkHandler::actionsToFlags()
     markTypes |= map::MARK_MEASUREMENT;
   if(actionHolds->isChecked())
     markTypes |= map::MARK_HOLDS;
+  if(actionAirportMsa->isChecked())
+    markTypes |= map::MARK_AIRPORT_MSA;
   if(actionPatterns->isChecked())
     markTypes |= map::MARK_PATTERNS;
 }
