@@ -26,7 +26,8 @@ namespace map {
 struct MapResult
 {
   /* Create from base class. Inspects type and adds one object to this */
-  MapResult& fromMapBase(const map::MapBase *base);
+  MapResult& addFromMapBase(const map::MapBase *base);
+  static MapResult createFromMapBase(const map::MapBase *base);
 
   QList<MapAirport> airports;
   QSet<int> airportIds; /* Ids used to deduplicate when merging highlights and nearest */
@@ -74,6 +75,9 @@ struct MapResult
   QList<map::MapHolding> holdings; /* Either used defined hold or enroute hold */
   QSet<int> holdingIds; /* Ids used to deduplicate */
 
+  QList<map::MapAirportMsa> airportMsa;
+  QSet<int> airportMsaIds; /* Ids used to deduplicate */
+
   QList<proc::MapProcedurePoint> procPoints;
 
   /* true if none of the types exists in this result */
@@ -101,6 +105,9 @@ struct MapResult
   /* As above for ident */
   QString getIdent(const std::initializer_list<MapTypes>& types) const;
 
+  /* As above for region */
+  QString getRegion(const std::initializer_list<MapTypes>& types) const;
+
   /* Remove the given types only */
   MapResult& clear(const MapTypes& types = map::ALL);
 
@@ -114,6 +121,11 @@ struct MapResult
   bool hasAirports() const
   {
     return !airports.isEmpty();
+  }
+
+  bool hasAirportMsa() const
+  {
+    return !airportMsa.isEmpty();
   }
 
   bool hasAirways() const
@@ -171,6 +183,11 @@ struct MapResult
     return !airspaces.isEmpty();
   }
 
+  bool hasOnlineAircraft() const
+  {
+    return !onlineAircraft.isEmpty();
+  }
+
   /* Special methods for the online and navdata airspaces which are stored mixed */
   bool hasSimNavUserAirspaces() const;
   bool hasOnlineAirspaces() const;
@@ -181,15 +198,23 @@ struct MapResult
   int numSimNavUserAirspaces() const;
   int numOnlineAirspaces() const;
 
+  QList<MapHolding> getHoldings(bool user) const;
+  QList<MapAirportMsa> getAirportMsa(bool user) const;
+
   QList<MapAirspace> getSimNavUserAirspaces() const;
 
   QList<MapAirspace> getOnlineAirspaces() const;
 
   QString objectText(MapTypes navType, int elideName = 1000) const;
 
+  void removeInvalid();
+
 private:
-  template<typename T>
-  void clearAllButFirst(QList<T>& list);
+  template<typename TYPE>
+  void clearAllButFirst(QList<TYPE>& list);
+
+  template<typename TYPE>
+  void removeInvalid(QList<TYPE>& list, QSet<int> *ids = nullptr);
 
 };
 

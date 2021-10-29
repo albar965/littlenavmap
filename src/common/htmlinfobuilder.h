@@ -38,6 +38,7 @@ class QFileInfo;
 
 namespace map {
 struct MapAirport;
+struct MapAirportMsa;
 struct MapVor;
 struct MapNdb;
 struct MapWaypoint;
@@ -174,6 +175,14 @@ public:
    * @param html Result containing HTML snippet
    * @param background Background color for icons
    */
+  void airportMsaText(const map::MapAirportMsa& msa, atools::util::HtmlBuilder& html) const;
+
+  /*
+   * Creates a HTML description for a VOR station.
+   * @param vor
+   * @param html Result containing HTML snippet
+   * @param background Background color for icons
+   */
   void vorText(const map::MapVor& vor, atools::util::HtmlBuilder& html) const;
 
   /*
@@ -199,9 +208,11 @@ public:
 
   /* Description for user defined points */
   bool userpointText(map::MapUserpoint userpoint, atools::util::HtmlBuilder& html) const;
+  void userpointTextInfo(const map::MapUserpoint& userpoint, atools::util::HtmlBuilder& html) const;
 
   /* Description for logbook entries */
   bool logEntryText(map::MapLogbookEntry logEntry, atools::util::HtmlBuilder& html) const;
+  void logEntryTextInfo(const map::MapLogbookEntry& logEntry, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description of an airway. For info this includes all waypoints.

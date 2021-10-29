@@ -60,8 +60,7 @@ void MapPainterAltitude::render()
       atools::util::PainterContextSaver paintContextSaver(context->painter);
 
       // Use width and style from pen but override transparency
-      QColor gridCol =
-        context->darkMap ? mapcolors::minimumAltitudeGridPenDark.color() : mapcolors::minimumAltitudeGridPen.color();
+      QColor gridCol = context->darkMap ? mapcolors::minimumAltitudeGridPenDark.color() : mapcolors::minimumAltitudeGridPen.color();
       gridCol.setAlphaF(1. - context->transparencyMora);
       QPen pen = context->darkMap ? mapcolors::minimumAltitudeGridPenDark : mapcolors::minimumAltitudeGridPen;
       pen.setColor(gridCol);
@@ -116,8 +115,7 @@ void MapPainterAltitude::render()
                 // Calculate rectangle screen width
                 bool visibleDummy;
                 QPointF leftPt = wToSF(GeoDataCoordinates(lonx, laty - .5, 0, DEG), DEFAULT_WTOS_SIZE, &visibleDummy);
-                QPointF rightPt =
-                  wToSF(GeoDataCoordinates(lonx + 1., laty - .5, 0, DEG), DEFAULT_WTOS_SIZE, &visibleDummy);
+                QPointF rightPt = wToSF(GeoDataCoordinates(lonx + 1., laty - .5, 0, DEG), DEFAULT_WTOS_SIZE, &visibleDummy);
 
                 minWidth = std::min(static_cast<float>(QLineF(leftPt, rightPt).length()), minWidth);
 
@@ -137,8 +135,7 @@ void MapPainterAltitude::render()
         minWidth = std::min(minWidth * 0.6f, 150.f);
 
         // Do not use transparency but override from options
-        QColor textCol =
-          context->darkMap ? mapcolors::minimumAltitudeNumberColorDark : mapcolors::minimumAltitudeNumberColor;
+        QColor textCol = context->darkMap ? mapcolors::minimumAltitudeNumberColorDark : mapcolors::minimumAltitudeNumberColor;
         textCol.setAlphaF(1. - context->transparencyMora);
         context->painter->setPen(textCol);
 

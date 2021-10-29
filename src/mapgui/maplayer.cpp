@@ -84,6 +84,16 @@ bool MapLayer::hasSameQueryParametersIls(const MapLayer *other) const
   return layerIls == other->layerIls;
 }
 
+bool MapLayer::hasSameQueryParametersHolding(const MapLayer *other) const
+{
+  return layerHolding == other->layerHolding;
+}
+
+bool MapLayer::hasSameQueryParametersAirportMsa(const MapLayer *other) const
+{
+  return layerAirportMsa == other->layerAirportMsa;
+}
+
 MapLayer& MapLayer::airport(bool value)
 {
   layerAirport = value;
@@ -506,6 +516,24 @@ MapLayer& MapLayer::aiAircraftSize(int value)
 MapLayer& MapLayer::airportWeatherDetails(bool value)
 {
   layerAirportWeatherDetails = value;
+  return *this;
+}
+
+MapLayer& MapLayer::airportMsa(bool value)
+{
+  layerAirportMsa = value;
+  return *this;
+}
+
+MapLayer& MapLayer::airportMsaDetails(bool value)
+{
+  layerAirportMsaDetails = value;
+  return *this;
+}
+
+MapLayer& MapLayer::airportMsaSymbolScale(float scale)
+{
+  layerAirportMsaSymbolScale = scale;
   return *this;
 }
 

@@ -68,6 +68,7 @@ public:
   ProfileWidget& operator=(const ProfileWidget& other) = delete;
 
   /* If geometry has changed the elevation calculation is started after a short delay */
+  void windUpdated();
   void routeChanged(bool geometryChanged, bool newFlightPlan);
   void routeAltitudeChanged(int altitudeFeet);
 

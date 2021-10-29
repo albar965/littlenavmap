@@ -136,6 +136,9 @@ public:
    *  Not for missed and alternate legs. */
   float getAltitudeForDistance(float distanceToDest) const;
 
+  /* Get either calculated or required by procedure vertical angle. Negative value is descent. */
+  float getVerticalAngleAtDistance(float distanceToDest, bool *required) const;
+
   /* Same as above for TAS knots from performance profile */
   float getSpeedForDistance(float distanceToDest, const atools::fs::perf::AircraftPerf& perf) const;
 
@@ -286,9 +289,9 @@ public:
   }
 
   /* Cruising altitude in feet */
-  float getCruiseAltitide() const
+  float getCruiseAltitude() const
   {
-    return cruiseAltitide;
+    return cruiseAltitude;
   }
 
   /* True if result is not valid and error messages exist */
@@ -452,6 +455,9 @@ private:
   /* Get ILS (for ILS and LOC approaches) and VASI pitch if approach is available */
   void calculateApproachIlsAndSlopes();
 
+  /* calculate all vertical angles */
+  void calculateGeoAngles();
+
   /* Flatten altitude legs to avoid bends and flats when climbing/descending */
   void simplyfyRouteAltitudes();
   void simplifyRouteAltitude(int index, bool departure);
@@ -504,7 +510,7 @@ private:
 
   /* From aircraft performance */
   /* Climb and descent are corrected for tail/head wind for second iteration in significant wind */
-  float climbRateWindFtPerNm = 333.f, descentRateWindFtPerNm = 333.f, cruiseAltitide = 0.f;
+  float climbRateWindFtPerNm = 333.f, descentRateWindFtPerNm = 333.f, cruiseAltitude = 0.f;
 
   /* Set by calculate */
   /* Contains a list of messages if the calculation result violates altitude restrictions

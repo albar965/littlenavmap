@@ -25,6 +25,7 @@
 #include "mapgui/mapwidget.h"
 #include "mapgui/maplayersettings.h"
 #include "mappainter/mappainteraircraft.h"
+#include "mappainter/mappaintermsa.h"
 #include "mappainter/mappaintertrack.h"
 #include "mappainter/mappaintership.h"
 #include "mappainter/mappainterairport.h"
@@ -61,6 +62,7 @@ MapPaintLayer::MapPaintLayer(MapPaintWidget *widget)
   mapPainterNav = new MapPainterNav(mapWidget, mapScale, &context);
   mapPainterIls = new MapPainterIls(mapWidget, mapScale, &context);
   mapPainterAirport = new MapPainterAirport(mapWidget, mapScale, &context);
+  mapPainterMsa = new MapPainterMsa(mapWidget, mapScale, &context);
   mapPainterAirspace = new MapPainterAirspace(mapWidget, mapScale, &context);
   mapPainterMark = new MapPainterMark(mapWidget, mapScale, &context);
   mapPainterRoute = new MapPainterRoute(mapWidget, mapScale, &context);
@@ -83,6 +85,7 @@ MapPaintLayer::~MapPaintLayer()
   delete mapPainterNav;
   delete mapPainterIls;
   delete mapPainterAirport;
+  delete mapPainterMsa;
   delete mapPainterAirspace;
   delete mapPainterMark;
   delete mapPainterRoute;
@@ -180,6 +183,7 @@ void MapPaintLayer::initQueries()
 {
   mapPainterNav->initQueries();
   mapPainterIls->initQueries();
+  mapPainterMsa->initQueries();
   mapPainterAirport->initQueries();
   mapPainterAirspace->initQueries();
   mapPainterMark->initQueries();
@@ -239,6 +243,7 @@ void MapPaintLayer::initMapLayerSettings()
   append(defLayer.clone(0.2f).airportDiagramRunway().airportDiagram().
          airportDiagramDetail().airportDiagramDetail2().airportDiagramDetail3().
          airportSymbolSize(20).airportInfo().
+         airportMsa().airportMsaDetails().airportMsaSymbolScale(8.f).
          windBarbsSymbolSize(22).
          waypointSymbolSize(14).waypointName().
          vorSymbolSize(30).vorIdent().vorInfo().vorLarge().
@@ -253,6 +258,7 @@ void MapPaintLayer::initMapLayerSettings()
 
   append(defLayer.clone(0.3f).airportDiagramRunway().airportDiagram().airportDiagramDetail().airportDiagramDetail2().
          airportSymbolSize(20).airportInfo().
+         airportMsa().airportMsaDetails().airportMsaSymbolScale(7.f).
          windBarbsSymbolSize(20).
          waypointSymbolSize(14).waypointName().
          vorSymbolSize(30).vorIdent().vorInfo().vorLarge().
@@ -268,6 +274,7 @@ void MapPaintLayer::initMapLayerSettings()
   // airport diagram, large VOR, NDB, ILS, waypoint, airway, marker
   append(defLayer.clone(1.f).airportDiagramRunway().airportDiagram().airportDiagramDetail().
          airportSymbolSize(20).airportInfo().
+         airportMsa().airportMsaDetails().airportMsaSymbolScale(6.f).
          windBarbsSymbolSize(20).
          aiAircraftGroundText(false).
          waypointSymbolSize(14).waypointName().
@@ -284,6 +291,7 @@ void MapPaintLayer::initMapLayerSettings()
   // airport diagram, large VOR, NDB, ILS, waypoint, airway, marker
   append(defLayer.clone(5.f).airportDiagramRunway().airportDiagram().
          airportSymbolSize(20).airportInfo().
+         airportMsa().airportMsaDetails().airportMsaSymbolScale(5.f).
          waypointSymbolSize(10).waypointName().
          windBarbsSymbolSize(18).
          aiAircraftGroundText(false).
@@ -300,6 +308,7 @@ void MapPaintLayer::initMapLayerSettings()
   // airport, large VOR, NDB, ILS, waypoint, airway, marker
   append(defLayer.clone(10.f).airportDiagramRunway().
          airportSymbolSize(18).airportInfo().
+         airportMsa().airportMsaDetails().airportMsaSymbolScale(4.f).
          waypointSymbolSize(8).waypointName().
          windBarbsSymbolSize(16).
          aiAircraftGroundText(false).
@@ -316,6 +325,7 @@ void MapPaintLayer::initMapLayerSettings()
   // airport, large VOR, NDB, ILS, waypoint, airway, marker
   append(defLayer.clone(25.f).airportDiagramRunway().
          airportSymbolSize(18).airportInfo().
+         airportMsa().
          waypointSymbolSize(8).waypointName().
          windBarbsSymbolSize(16).
          aiAircraftGroundText(false).
@@ -332,6 +342,7 @@ void MapPaintLayer::initMapLayerSettings()
   // airport, large VOR, NDB, ILS, airway
   append(defLayer.clone(50.f).
          airportSymbolSize(16).airportInfo().
+         airportMsa().
          waypointSymbolSize(6).
          windBarbsSymbolSize(16).
          aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
@@ -347,6 +358,7 @@ void MapPaintLayer::initMapLayerSettings()
   // airport, VOR, NDB, ILS, airway
   append(defLayer.clone(100.f).
          airportSymbolSize(16).
+         airportMsa().
          waypointSymbolSize(3).
          windBarbsSymbolSize(14).
          aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
@@ -364,6 +376,7 @@ void MapPaintLayer::initMapLayerSettings()
          airportSymbolSize(12).minRunwayLength(2500).
          airportOverviewRunway(false).airportName(false).
          windBarbsSymbolSize(14).
+         airportMsa().
          approachText(false).
          aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
          waypoint(false).
@@ -379,6 +392,7 @@ void MapPaintLayer::initMapLayerSettings()
   append(defLayer.clone(200.f).airportSymbolSize(12).minRunwayLength(layer::MAX_MEDIUM_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
          windBarbsSymbolSize(14).
+         airportMsa().
          approachText(false).
          aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
          onlineAircraftText(false).
@@ -393,6 +407,7 @@ void MapPaintLayer::initMapLayerSettings()
   append(defLayer.clone(300.f).airportSymbolSize(10).minRunwayLength(layer::MAX_MEDIUM_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
          windBarbsSymbolSize(12).
+         airportMsa().
          approachText(false).
          aiAircraftGround(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
@@ -590,6 +605,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.textSizeCompassRose = od.getDisplayTextSizeCompassRose() / 100.f;
       context.textSizeMora = od.getDisplayTextSizeMora() / 100.f;
       context.transparencyMora = od.getDisplayTransparencyMora() / 100.f;
+      context.textSizeAirportMsa = od.getDisplayTextSizeAirportMsa() / 100.f;
+      context.transparencyAirportMsa = od.getDisplayTransparencyAirportMsa() / 100.f;
       context.textSizeRangeDistance = od.getDisplayTextSizeRangeDistance() / 100.f;
       context.thicknessFlightplan = od.getDisplayThicknessFlightplan() / 100.f;
       context.thicknessTrail = od.getDisplayThicknessTrail() / 100.f;
@@ -693,12 +710,11 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
         if(!context.isObjectOverflow())
           mapPainterAirspace->render();
 
+        if(!context.isObjectOverflow())
+          mapPainterIls->render();
+
         if(context.mapLayer->isAirportDiagram())
         {
-          // Put ILS below and navaids on top of airport diagram
-          if(!context.isObjectOverflow())
-            mapPainterIls->render();
-
           if(!context.isObjectOverflow())
             mapPainterAirport->render();
 
@@ -707,9 +723,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
         }
         else
         {
-          // Airports on top of all
           if(!context.isObjectOverflow())
-            mapPainterIls->render();
+            mapPainterMsa->render();
 
           if(!context.isObjectOverflow())
             mapPainterNav->render();
@@ -730,6 +745,9 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
 
       if(!context.isObjectOverflow())
         mapPainterWeather->render();
+
+      if(context.mapLayer->isAirportDiagram() && !context.isObjectOverflow())
+        mapPainterMsa->render();
 
       if(!context.isObjectOverflow())
         mapPainterTrack->render();

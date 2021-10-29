@@ -74,6 +74,7 @@ const static QVector<map::MapTypes> DEFAULT_TYPE_SORT(
   map::WAYPOINT,
   map::USERPOINTROUTE,
   map::HOLDING,
+  map::AIRPORT_MSA,
   map::AIRWAY,
   map::TRACK,
   map::AIRCRAFT_AI_SHIP,
@@ -94,6 +95,7 @@ MapContextMenu::MapContextMenu(QMainWindow *mainWindowParam, MapWidget *mapWidge
     ui->actionMapHideDistanceMarker,
     ui->actionMapHideOneRangeRing,
     ui->actionMapHold,
+    ui->actionMapAirportMsa,
     ui->actionMapNavaidRange,
     ui->actionMapRangeRings,
     ui->actionMapTrafficPattern,
@@ -136,6 +138,11 @@ void MapContextMenu::clear()
   result->clear();
 }
 
+const atools::geo::Pos& MapContextMenu::getPos() const
+{
+  return mapBasePos->position;
+}
+
 void MapContextMenu::buildMainMenu()
 {
   mapMenu.clear();
@@ -166,6 +173,10 @@ void MapContextMenu::buildMainMenu()
 
   insertHoldMenu(mapMenu);
   mapMenu.addAction(ui->actionMapHideHold);
+  mapMenu.addSeparator();
+
+  insertAirportMsaMenu(mapMenu);
+  mapMenu.addAction(ui->actionMapHideAirportMsa);
   mapMenu.addSeparator();
 
   insertDepartureMenu(mapMenu);
@@ -238,6 +249,9 @@ QString MapContextMenu::mapBaseText(const map::MapBase *base)
       case map::AIRPORT:
         return map::airportText(*base->asPtr<map::MapAirport>(), TEXT_ELIDE_AIRPORT_NAME);
 
+      case map::AIRPORT_MSA:
+        return map::airportMsaText(*base->asPtr<map::MapAirportMsa>());
+
       case map::VOR:
         return map::vorText(*base->asPtr<map::MapVor>());
 
@@ -303,6 +317,9 @@ QIcon MapContextMenu::mapBaseIcon(const map::MapBase *base)
     {
       case map::AIRPORT:
         return painter.createAirportIcon(*base->asPtr<map::MapAirport>(), size);
+
+      case map::AIRPORT_MSA:
+        return QIcon(":/littlenavmap/resources/icons/msa.svg");
 
       case map::VOR:
         return painter.createVorIcon(*base->asPtr<map::MapVor>(), size);
@@ -502,7 +519,7 @@ void MapContextMenu::insertInformationMenu(QMenu& menu)
   insertMenuOrAction(menu, mc::INFORMATION,
                      MapResultIndex().
                      addRef(*result,
-                            map::AIRPORT | map::VOR | map::NDB | map::ILS | map::HOLDING | map::WAYPOINT | map::AIRWAY |
+                            map::AIRPORT | map::VOR | map::NDB | map::ILS | map::HOLDING | map::AIRPORT_MSA | map::WAYPOINT | map::AIRWAY |
                             map::TRACK | map::USERPOINT | map::AIRSPACE | map::AIRCRAFT | map::AIRCRAFT_AI |
                             map::AIRCRAFT_ONLINE | map::LOGBOOK).sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("&Show Information for %1"),
@@ -743,14 +760,35 @@ void MapContextMenu::insertHoldMenu(QMenu& menu)
     };
 
   insertMenuOrAction(menu, mc::HOLDING, MapResultIndex().
-                     addRef(*result,
-                            map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT | map::USERPOINTROUTE).
+                     addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT | map::USERPOINTROUTE).
                      sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("Add &Holding at %1 ..."),
                      tr("Show a holding pattern on the map at a position or a navaid"),
                      QString(),
                      QIcon(":/littlenavmap/resources/icons/enroutehold.svg"),
                      true /* allowNoMapObject */,
+                     callback);
+}
+
+void MapContextMenu::insertAirportMsaMenu(QMenu& menu)
+{
+  ActionCallback callback =
+    [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void
+    {
+      disable = !visibleOnMap || !NavApp::getMapMarkHandler()->isShown(map::MARK_AIRPORT_MSA) || base == nullptr;
+
+      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_AIRPORT_MSA))
+        // Hidden - add remark and disable
+        text.append(tr(" (hidden on map)"));
+    };
+
+  insertMenuOrAction(menu, mc::AIRPORT_MSA, MapResultIndex().addRef(*result, map::AIRPORT_MSA).
+                     sort(DEFAULT_TYPE_SORT, alphaSort),
+                     tr("Add &MSA Diagram at %1"),
+                     tr("Show an airport MSA sector diagram on the map at a position or a navaid"),
+                     QString(),
+                     QIcon(":/littlenavmap/resources/icons/msa.svg"),
+                     false /* allowNoMapObject */,
                      callback);
 }
 
@@ -1115,6 +1153,7 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
       rangeMarkerIndex = screenIndex->getNearestRangeMarkIndex(point.x(), point.y(), screenSearchDist);
       trafficPatternIndex = screenIndex->getNearestTrafficPatternIndex(point.x(), point.y(), screenSearchDist);
       holdIndex = screenIndex->getNearestHoldIndex(point.x(), point.y(), screenSearchDist);
+      airportMsaIndex = screenIndex->getNearestAirportMsaIndex(point.x(), point.y(), screenSearchDist);
     }
   }
 
@@ -1143,6 +1182,7 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
   ui->actionMapHideDistanceMarker->setEnabled(visibleOnMap && distMarkerIndex != -1);
   ui->actionMapHideTrafficPattern->setEnabled(visibleOnMap && trafficPatternIndex != -1);
   ui->actionMapHideHold->setEnabled(visibleOnMap && holdIndex != -1);
+  ui->actionMapHideAirportMsa->setEnabled(visibleOnMap && airportMsaIndex != -1);
 
   if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE_RINGS))
     ui->actionMapRangeRings->setText(ui->actionMapRangeRings->text() + tr(" (hidden on map)"));
@@ -1176,11 +1216,6 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
     qDebug() << Q_FUNC_INFO << "null";
 
   return false;
-}
-
-const atools::geo::Pos& MapContextMenu::getPos() const
-{
-  return mapBasePos->position;
 }
 
 bool MapContextMenu::canEditRouteComment(const map::MapBase *base) const

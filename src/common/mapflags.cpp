@@ -39,6 +39,8 @@ QDebug operator<<(QDebug out, const map::MapTypes& type)
   {
     if(type.testFlag(AIRPORT))
       flags.append("AIRPORT");
+    if(type.testFlag(AIRPORT_MSA))
+      flags.append("AIRPORT_MSA");
     if(type.testFlag(AIRPORT_HARD))
       flags.append("AIRPORT_HARD");
     if(type.testFlag(AIRPORT_SOFT))

@@ -95,7 +95,8 @@ struct MapAltRestriction
   };
 
   Descriptor descriptor = NONE;
-  float alt1, alt2;
+  float alt1, alt2,
+        verticalAngleAlt = map::INVALID_ALTITUDE_VALUE; /* Forced since calculated from vertical angle */
 
   /* Indicator used to force lowest altitude on final FAF and FACF to avoid arriving above glide slope or VASI */
   bool forceFinal = false;
@@ -302,7 +303,8 @@ struct MapProcedureLeg
         time /* Only for holds in minutes */,
         theta /* magnetic course to recommended navaid */,
         rho /* distance to recommended navaid in NM */,
-        magvar /* from navaid or airport */;
+        magvar /* from navaid or airport */,
+        verticalAngle = map::INVALID_ANGLE_VALUE /* degrees or INVALID_ANGLE_VALUE if not available */;
 
   bool missed = false, flyover = false, trueCourse = false,
        intercept = false, /* Leg was modified by a previous intercept */
@@ -626,6 +628,9 @@ QString procedureLegTypeShortStr(ProcedureLegType type);
 QString procedureLegTypeFullStr(ProcedureLegType type);
 QString procedureLegRemarks(proc::ProcedureLegType);
 QString altRestrictionText(const MapAltRestriction& restriction);
+
+/* Slash separated list of all restrictions, altitude, speed and angle */
+QString restrictionText(const MapProcedureLeg& procedureLeg);
 
 /* true if leg has fix at the start */
 bool procedureLegFixAtStart(proc::ProcedureLegType type);

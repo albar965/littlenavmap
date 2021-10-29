@@ -69,6 +69,8 @@ public:
   bool hasSameQueryParametersWind(const MapLayer *other) const;
   bool hasSameQueryParametersMarker(const MapLayer *other) const;
   bool hasSameQueryParametersIls(const MapLayer *other) const;
+  bool hasSameQueryParametersHolding(const MapLayer *other) const;
+  bool hasSameQueryParametersAirportMsa(const MapLayer *other) const;
 
   /* Show airports */
   MapLayer& airport(bool value = true);
@@ -117,6 +119,11 @@ public:
   /* Show weather indicator */
   MapLayer& airportWeather(bool value = true);
   MapLayer& airportWeatherDetails(bool = true);
+
+  /* Indicator for MSA */
+  MapLayer& airportMsa(bool value = true);
+  MapLayer& airportMsaDetails(bool = true);
+  MapLayer& airportMsaSymbolScale(float scale);
 
   /* Waypoint options */
   MapLayer& waypoint(bool value = true);
@@ -597,6 +604,21 @@ public:
     return layerAirportWeatherDetails;
   }
 
+  bool isAirportMsa() const
+  {
+    return layerAirportMsa;
+  }
+
+  bool isAirportMsaDetails() const
+  {
+    return layerAirportMsaDetails;
+  }
+
+  int getAirportMsaSymbolScale() const
+  {
+    return layerAirportMsaSymbolScale;
+  }
+
   /* minimum off route altitude */
   bool isMinimumAltitude() const
   {
@@ -637,10 +659,14 @@ private:
 
   bool layerAirportWeather = false, layerAirportWeatherDetails = false;
 
+  bool layerAirportMsa = false, layerAirportMsaDetails = false;
+
   int layerAirportSymbolSize = 3, layerMinRunwayLength = 0;
 
   bool layerWindBarbs = false;
   int layerWindBarbsSymbolSize = 6;
+
+  float layerAirportMsaSymbolScale = 6.f;
 
   bool layerWaypoint = false, layerWaypointName = false, layerVor = false, layerVorIdent = false, layerVorInfo = false,
        layerVorLarge = false, layerNdb = false, layerNdbIdent = false, layerNdbInfo = false, layerMarker = false,

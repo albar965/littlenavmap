@@ -93,9 +93,6 @@ void MapPainterAirspace::render()
 
         // qDebug() << airspace.getId() << airspace.name;
 
-        Marble::GeoDataLinearRing linearRing;
-        linearRing.setTessellate(true);
-
         const QPen airpacePen = mapcolors::penForAirspace(*airspace);
         QPen pen = airpacePen;
 
@@ -111,12 +108,7 @@ void MapPainterAirspace::render()
         const LineString *lines = controller->getAirspaceGeometry(airspace->combinedId());
 
         if(lines != nullptr)
-        {
-          for(const Pos& pos : *lines)
-            linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));
-
-          painter->drawPolygon(linearRing);
-        }
+          drawPolygon(painter, *lines);
 
         if(airspace->isOnline())
         {

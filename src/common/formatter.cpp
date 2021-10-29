@@ -99,22 +99,6 @@ QString formatMinutesHoursDaysLong(double time)
   return retval;
 }
 
-QString formatFloatUnit(float value, const QString& unit, int precision)
-{
-  if(unit.isEmpty())
-    return QString(QObject::tr("%L1")).arg(QLocale().toString(value, 'f', precision));
-  else
-    return QString(QObject::tr("%L1 %2")).arg(QLocale().toString(value, 'f', precision)).arg(unit);
-}
-
-QString formatDoubleUnit(double value, const QString& unit, int precision)
-{
-  if(unit.isEmpty())
-    return QString(QObject::tr("%L1")).arg(QLocale().toString(value, 'f', precision));
-  else
-    return QString(QObject::tr("%L1 %2")).arg(QLocale().toString(value, 'f', precision)).arg(unit);
-}
-
 QString formatDate(int timeT)
 {
   QDateTime dateTime;

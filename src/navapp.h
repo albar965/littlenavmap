@@ -171,6 +171,7 @@ public:
   /* Check for availability in database */
   static bool isMoraAvailable();
   static bool isHoldingsAvailable();
+  static bool isAirportMsaAvailable();
   static bool isGlsAvailable();
 
   static float getTakeoffFlownDistanceNm();
@@ -291,6 +292,7 @@ public:
   static RouteController *getRouteController();
   static atools::gui::TabWidgetHandler *getRouteTabHandler();
   static const InfoController *getInfoController();
+  static QFont getTextBrowserInfoFont();
   static QString getMapCopyright();
 
   static DatabaseManager *getDatabaseManager();

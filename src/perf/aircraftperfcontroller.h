@@ -159,6 +159,7 @@ public:
 signals:
   /* Sent if performance or wind has changed */
   void aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf *perf);
+  void windChanged();
 
 private:
   /* Create a new performance sheet and opens the edit dialog after asking to save currently unchanged */

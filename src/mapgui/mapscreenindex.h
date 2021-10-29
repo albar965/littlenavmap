@@ -49,6 +49,7 @@ struct MapLogbookEntry;
 struct RangeMarker;
 struct DistanceMarker;
 struct MapHolding;
+struct MapAirportMsa;
 struct TrafficPattern;
 }
 
@@ -100,6 +101,7 @@ public:
   int getNearestRangeMarkIndex(int xs, int ys, int maxDistance) const;
   int getNearestTrafficPatternIndex(int xs, int ys, int maxDistance) const;
   int getNearestHoldIndex(int xs, int ys, int maxDistance) const;
+  int getNearestAirportMsaIndex(int xs, int ys, int maxDistance) const;
 
   /* Get index of nearest flight plan leg or -1 if nothing was found nearby or cursor is not along a leg. */
   int getNearestRouteLegIndex(int xs, int ys, int maxDistance) const;
@@ -192,6 +194,17 @@ public:
   const QList<map::MapHolding>& getHolds() const
   {
     return holdings;
+  }
+
+  /* Airfield traffic patterns. */
+  QList<map::MapAirportMsa>& getAirportMsa()
+  {
+    return airportMsa;
+  }
+
+  const QList<map::MapAirportMsa>& getAirportMsa() const
+  {
+    return airportMsa;
   }
 
   const atools::fs::sc::SimConnectUserAircraft& getUserAircraft() const
@@ -327,6 +340,7 @@ private:
   QList<map::DistanceMarker> distanceMarks;
   QList<map::TrafficPattern> trafficPatterns;
   QList<map::MapHolding> holdings;
+  QList<map::MapAirportMsa> airportMsa;
 
   /* Cached screen coordinates for flight plan to ease mouse cursor change. */
   QList<std::pair<int, QLine> > routeLines;

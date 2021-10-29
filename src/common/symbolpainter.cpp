@@ -43,15 +43,6 @@ const QVector<QLine> AIRCRAFTLINES({QLine(0, -20, 0, 16), // Body
                                     QLine(-10, 18, 0, 14), QLine(0, 14, 10, 18) // Horizontal stabilizer
                                    });
 
-SymbolPainter::SymbolPainter()
-{
-}
-
-SymbolPainter::~SymbolPainter()
-{
-
-}
-
 QIcon SymbolPainter::createAirportIcon(const map::MapAirport& airport, int size)
 {
   QPixmap pixmap(size, size);
@@ -72,6 +63,32 @@ QIcon SymbolPainter::createAirportWeatherIcon(const atools::fs::weather::Metar& 
 
   SymbolPainter().drawAirportWeather(&painter, metar, size / 2, size / 2, size * 7 / 10,
                                      false /*windPointer*/, false /*windBarbs*/, false /*fast*/);
+  return QIcon(pixmap);
+}
+
+QIcon SymbolPainter::createAirportMsaIcon(const map::MapAirportMsa& airportMsa, const QFont& font, float symbolScale, int *actualSize)
+{
+  // Create a temporary pixmap to get the font size
+  int size = 100;
+  QPixmap pixmapTemp(size, size);
+  QPainter painterTemp(&pixmapTemp);
+  prepareForIcon(painterTemp);
+  painterTemp.setFont(font);
+
+  // Get pixel size based on scale
+  size = airportMsaSize(&painterTemp, airportMsa, symbolScale, true);
+
+  // Prepare final drawing canvas
+  QPixmap pixmap(size, size);
+  pixmap.fill(QColor(Qt::transparent));
+  QPainter painter(&pixmap);
+  prepareForIcon(painter);
+
+  if(actualSize != nullptr)
+    *actualSize = size;
+
+  SymbolPainter().drawAirportMsa(&painter, airportMsa, size / 2, size / 2, 0, symbolScale,
+                                 false /* header */, false /* transparency */, false /* fast */);
   return QIcon(pixmap);
 }
 
@@ -624,6 +641,118 @@ void SymbolPainter::drawWindPointer(QPainter *painter, float x, float y, int siz
   painter->rotate(atools::geo::normalizeCourse(dir + 180.f));
   painter->drawPixmap(-size / 2, -size / 2, *windPointerFromCache(size));
   painter->resetTransform();
+}
+
+int SymbolPainter::airportMsaSize(QPainter *painter, const map::MapAirportMsa& airportMsa, float sizeFactor, bool drawDetails)
+{
+  return painter->fontMetrics().horizontalAdvance("0000") *
+         atools::roundToInt(airportMsa.altitudes.size() > 1 || !drawDetails ? sizeFactor : sizeFactor / 2.f);
+}
+
+void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& airportMsa, float x, float y, int size, float symbolScale,
+                                   bool header, bool transparency, bool fast)
+{
+  atools::util::PainterContextSaver saver(painter);
+
+  // Opaque fill
+  QColor opaqueFillColor = mapcolors::msaFillColor;
+  opaqueFillColor.setAlpha(255);
+
+  painter->setPen(QPen(mapcolors::msaSymbolColor, 2, Qt::SolidLine, Qt::FlatCap));
+  painter->setBackground(transparency ? mapcolors::msaFillColor : opaqueFillColor);
+  painter->setBrush(transparency ? mapcolors::msaFillColor : opaqueFillColor);
+  painter->setBackgroundMode(Qt::OpaqueMode);
+
+  bool drawDetails = symbolScale > 0.f;
+
+  if(size <= 0)
+    size = airportMsaSize(painter, airportMsa, symbolScale, drawDetails);
+
+  int radius = size / 2;
+
+  // Outer circle with semi-transparent fill
+  painter->drawEllipse(QPointF(x, y), radius - 2, radius - 2);
+
+  if(!fast)
+  {
+    painter->setBackground(opaqueFillColor);
+
+    if(header && drawDetails)
+    {
+      // Draw a header label =============================================
+      QString heading = tr("MSA %1 %2 (%3, %4)").
+                        arg(airportMsa.navIdent).
+                        arg(Unit::distNm(airportMsa.radius, true, true)).
+                        arg(airportMsa.trueBearing ? tr("°T") : tr("°M")).
+                        arg(Unit::getUnitAltStr());
+
+      QRectF bounding = painter->fontMetrics().boundingRect(heading);
+      QPointF pt(x - bounding.size().width() / 2., y - radius);
+      painter->drawText(pt, heading);
+
+      bounding.translate(pt); // Move rect to origin
+      painter->setBrush(Qt::transparent);
+      painter->drawRect(bounding);
+      painter->setBrush(opaqueFillColor);
+    }
+
+    // Draw bearing lines and bearing degree labels ======================================
+    float magvar = airportMsa.trueBearing ? 0.f : airportMsa.magvar;
+    if(airportMsa.altitudes.size() > 1)
+    {
+      for(int i = 0; i < airportMsa.bearings.size(); i++)
+      {
+        float bearing = airportMsa.bearings.at(i);
+        QString text = tr("%1°").arg(atools::geo::normalizeCourse(bearing));
+
+        // Convert from bearing to angle
+        bearing = atools::geo::normalizeCourse(bearing + 180.f + magvar);
+
+        // Line from center to top
+        QLineF line(x, y, x, y - radius + 2);
+        line.setAngle(atools::geo::angleToQt(bearing));
+
+        // Draw sector line
+        painter->drawLine(line);
+
+        if(drawDetails)
+        {
+          // Move origin to label position and draw text
+          QSizeF txtsize = painter->fontMetrics().boundingRect(text).size();
+          painter->translate(line.center());
+          painter->rotate(bearing < 180.f ? bearing - 90.f : bearing + 90.f); // Keep text upwards
+          painter->drawText(QPointF(-txtsize.width() / 2., txtsize.height() / 3.), text);
+          painter->resetTransform();
+        }
+      }
+    }
+
+    // Draw altitude lables =====================================================================
+    if(drawDetails)
+    {
+      for(int i = 0; i < airportMsa.bearings.size(); i++)
+      {
+        float bearing = atools::geo::normalizeCourse(airportMsa.bearings.at(i) + 180.f + magvar);
+        float bearingTo = atools::geo::normalizeCourse(atools::atRoll(airportMsa.bearings, i + 1) + 180.f + magvar);
+
+        // Line from origin to top defining label position - circles with one sector use a label closer to the center
+        QLineF line(x, y, x, y - radius * (airportMsa.altitudes.size() > 1 ? 0.70 : 0.4));
+
+        if(airportMsa.altitudes.size() > 1)
+          // Rotate for sector bearing
+          line.setAngle(atools::geo::angleToQt(bearing + atools::geo::angleAbsDiff(bearing, bearingTo) / 2.f));
+
+        QString text = Unit::altFeet(airportMsa.altitudes.at(i), false /* addUnit */, true /* narrow */);
+        QSizeF txtsize = painter->fontMetrics().boundingRect(text).size();
+        painter->drawText(QPointF(line.p2().x() - txtsize.width() / 2., line.p2().y() + txtsize.height() / 2.), text);
+      }
+
+      // Draw small center circle
+      painter->setBackground(opaqueFillColor);
+      painter->setBrush(opaqueFillColor);
+      painter->drawEllipse(QPointF(x, y), 4., 4.);
+    }
+  }
 }
 
 void SymbolPainter::drawTrackLine(QPainter *painter, float x, float y, int size, float dir)

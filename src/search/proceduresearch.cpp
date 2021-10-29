@@ -426,7 +426,7 @@ void ProcedureSearch::updateFilterBoxes()
         runways.insert(atools::fs::util::runwayBestFit(recApp.valueStr("runway_name"), runwayNames));
 
       // Sort list of runways
-      QList<QString> runwaylist = runways.toList();
+      QList<QString> runwaylist = runways.values();
       std::sort(runwaylist.begin(), runwaylist.end());
 
       for(const QString& rw : runwaylist)
@@ -491,7 +491,7 @@ void ProcedureSearch::fillApproachTreeWidget()
         // Resolve parallel runway assignments
         QString allRunwayText = tr("All");
         QStringList sidStarArincNames, sidStarRunways;
-        if((type& proc::PROCEDURE_SID) || (type & proc::PROCEDURE_STAR))
+        if((type & proc::PROCEDURE_SID) || (type & proc::PROCEDURE_STAR))
         {
           // arinc_name - added with database minor version 8
           QString arincName = recApp.valueStr("arinc_name", QString());
@@ -553,7 +553,7 @@ void ProcedureSearch::fillApproachTreeWidget()
           recApp.setValue("sid_star_runways", sidStarRunways);
 
           recApp.appendField("sid_star_arinc_name", QVariant::String);
-          if(((type& proc::PROCEDURE_SID) || (type & proc::PROCEDURE_STAR)) && rwname.isEmpty())
+          if(((type & proc::PROCEDURE_SID) || (type & proc::PROCEDURE_STAR)) && rwname.isEmpty())
             recApp.setValue("sid_star_arinc_name", sidStarArincNames.join("/"));
 
           sorted.append(recApp);
@@ -667,11 +667,22 @@ void ProcedureSearch::updateTreeHeader()
   QTreeWidgetItem *header = new QTreeWidgetItem();
 
   header->setText(COL_DESCRIPTION, tr("Description"));
+  header->setToolTip(COL_DESCRIPTION, tr("Procedure instruction."));
+
   header->setText(COL_IDENT, tr("Ident"));
-  header->setText(COL_RESTR, tr("Restriction\n%1/%2").arg(Unit::getUnitAltStr()).arg(Unit::getUnitSpeedStr()));
+  header->setToolTip(COL_IDENT, tr("ICAO ident of the navaid,"));
+
+  header->setText(COL_RESTR, tr("Restriction\n%1/%2/angle").arg(Unit::getUnitAltStr()).arg(Unit::getUnitSpeedStr()));
+  header->setToolTip(COL_RESTR, tr("Altitude restriction, speed limit or\nrequired descent flight path angle."));
+
   header->setText(COL_COURSE, tr("Course\n°M"));
+  header->setToolTip(COL_COURSE, tr("Magnetic course to fly."));
+
   header->setText(COL_DISTANCE, tr("Dist./Time\n%1/min").arg(Unit::getUnitDistStr()));
+  header->setToolTip(COL_DISTANCE, tr("Distance to fly in %1 or flying time in minutes.").arg(Unit::getUnitDistStr()));
+
   header->setText(COL_REMARKS, tr("Remarks"));
+  header->setToolTip(COL_REMARKS, tr("Turn instructions, flyover or related navaid for procedure legs."));
 
   for(int col = COL_DESCRIPTION; col <= COL_REMARKS; col++)
     header->setTextAlignment(col, Qt::AlignCenter);
@@ -1004,10 +1015,10 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
     const QTreeWidgetItem *root = treeWidget->invisibleRootItem();
     for(int i = 0; i < root->childCount(); ++i)
     {
-      QTreeWidgetItem *item = root->child(i);
-      item->setExpanded(true);
-      for(int j = 0; j < item->childCount(); ++j)
-        item->child(j)->setExpanded(true);
+      QTreeWidgetItem *itm = root->child(i);
+      itm->setExpanded(true);
+      for(int j = 0; j < itm->childCount(); ++j)
+        itm->child(j)->setExpanded(true);
     }
 
     if(errors)
@@ -1357,21 +1368,13 @@ QTreeWidgetItem *ProcedureSearch::buildLegItem(const MapProcedureLeg& leg)
   texts << proc::procedureLegTypeStr(leg.type);
   texts << proc::procedureLegFixStr(leg);
 
-  QString restrictions;
-  if(leg.altRestriction.isValid())
-    restrictions.append(proc::altRestrictionTextShort(leg.altRestriction));
-  if(leg.speedRestriction.isValid())
-    restrictions.append("/" + proc::speedRestrictionTextShort(leg.speedRestriction));
+  texts << proc::restrictionText(leg) << proc::procedureLegCourse(leg) << proc::procedureLegDistance(leg);
 
   QString remarkStr = proc::procedureLegRemark(leg);
-
 #ifdef DEBUG_INFORMATION
   remarkStr += QString(" | leg_id = %1 approach_id = %2 transition_id = %3 nav_id = %4").
                arg(leg.legId).arg(leg.approachId).arg(leg.transitionId).arg(leg.navId);
 #endif
-
-  texts << restrictions << proc::procedureLegCourse(leg) << proc::procedureLegDistance(leg);
-
   texts << remarkStr;
 
   QTreeWidgetItem *item = new QTreeWidgetItem(texts, itemIndex.size() - 1);

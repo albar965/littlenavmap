@@ -31,10 +31,12 @@
 #include "common/unit.h"
 
 #include <marble/GeoDataLineString.h>
+#include <marble/GeoDataLinearRing.h>
 #include <marble/GeoPainter.h>
 
 #include <QPixmapCache>
 #include <QPainterPath>
+#include <QStringBuilder>
 
 using namespace Marble;
 using namespace atools::geo;
@@ -304,6 +306,17 @@ void MapPainter::drawCross(Marble::GeoPainter *painter, int x, int y, int size)
 {
   painter->drawLine(x, y - size, x, y + size);
   painter->drawLine(x - size, y, x + size, y);
+}
+
+void MapPainter::drawPolygon(Marble::GeoPainter *painter, const atools::geo::LineString& linestring)
+{
+  Marble::GeoDataLinearRing linearRing;
+  linearRing.setTessellate(true);
+
+  for(const Pos& pos : linestring)
+    linearRing.append(Marble::GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG));
+
+  painter->drawPolygon(linearRing);
 }
 
 void MapPainter::drawLineString(Marble::GeoPainter *painter, const atools::geo::LineString& linestring)
@@ -633,8 +646,7 @@ QPolygonF MapPainter::buildArrow(float size, bool downwards)
   }
 }
 
-void MapPainter::paintArrowAlongLine(QPainter *painter, const atools::geo::Line& line, const QPolygonF& arrow,
-                                     float pos, float minLengthPx)
+void MapPainter::paintArrowAlongLine(QPainter *painter, const atools::geo::Line& line, const QPolygonF& arrow, float pos, float minLengthPx)
 {
   bool visible, hidden;
   QPointF pt = wToSF(line.interpolate(pos), DEFAULT_WTOS_SIZE, &visible, &hidden);
@@ -720,7 +732,7 @@ void MapPainter::initQueries()
 
 void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size)
 {
-  QPixmap *pixmapPtr = QPixmapCache::find(resource + "_" + QString::number(size));
+  QPixmap *pixmapPtr = QPixmapCache::find(resource % "_" % QString::number(size));
   if(pixmapPtr == nullptr)
   {
     pixmap = QIcon(resource).pixmap(QSize(size, size));
@@ -730,7 +742,7 @@ void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size)
     pixmap = *pixmapPtr;
 }
 
-void MapPainter::paintHoldings(const QList<map::MapHolding>& holdings, bool enroute, bool drawFast)
+void MapPainter::paintHoldings(const QList<map::MapHolding>& holdings, bool user, bool drawFast)
 {
   if(holdings.isEmpty())
     return;
@@ -741,13 +753,12 @@ void MapPainter::paintHoldings(const QList<map::MapHolding>& holdings, bool enro
   bool detail = context->mapLayer->isHoldingInfo();
   bool detail2 = context->mapLayer->isHoldingInfo2();
 
-  QColor backColor = !enroute || context->flags2 &
-                     opts2::MAP_NAVAID_TEXT_BACKGROUND ? QColor(Qt::white) : QColor(Qt::transparent);
+  QColor backColor = user || context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND ? QColor(Qt::white) : QColor(Qt::transparent);
 
-  if(enroute)
-    context->szFont(context->textSizeNavaid);
-  else
+  if(user)
     context->szFont(context->textSizeRangeDistance);
+  else
+    context->szFont(context->textSizeNavaid);
 
   for(const map::MapHolding& holding : holdings)
   {
@@ -756,11 +767,11 @@ void MapPainter::paintHoldings(const QList<map::MapHolding>& holdings, bool enro
     if(hidden)
       continue;
 
-    QColor color = enroute ? mapcolors::holdingColor : holding.color;
+    QColor color = user ? holding.color : mapcolors::holdingColor;
 
     float dist = holding.distance();
     float distPixel = scale->getPixelForNm(dist);
-    float lineWidth = enroute ? (detail2 ? 2.5f : 1.5f) : context->szF(context->thicknessRangeDistance, 3);
+    float lineWidth = user ? context->szF(context->thicknessRangeDistance, 3) : (detail2 ? 2.5f : 1.5f);
 
     if(context->mapLayer->isApproach() && distPixel > 10.f)
     {
@@ -788,7 +799,7 @@ void MapPainter::paintHoldings(const QList<map::MapHolding>& holdings, bool enro
           }
 
           if(!holding.navIdent.isEmpty())
-            inboundText += holding.navIdent;
+            inboundText.append(holding.navIdent);
 
           if(detail2)
           {
@@ -797,7 +808,7 @@ void MapPainter::paintHoldings(const QList<map::MapHolding>& holdings, bool enro
                                                               false /* magBold */, false /* trueSmall */,
                                                               true /* narrow */));
 
-            if(!enroute)
+            if(user)
             {
               if(holding.speedKts > 0.f)
                 outboundText.append(Unit::speedKts(holding.speedKts, true /* addUnit */, true /* narrow */));

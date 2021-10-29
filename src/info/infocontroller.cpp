@@ -380,6 +380,9 @@ void InfoController::saveState()
   for(const map::MapAirport& airport  : currentSearchResult.airports)
     refs.append({airport.id, map::AIRPORT});
 
+  for(const map::MapAirportMsa& msa  : currentSearchResult.airportMsa)
+    refs.append({msa.id, map::AIRPORT_MSA});
+
   for(const map::MapVor& vor : currentSearchResult.vors)
     refs.append({vor.id, map::VOR});
 
@@ -461,8 +464,10 @@ void InfoController::restoreState()
       res.airspaces.append(NavApp::getAirspaceController()->getAirspaceById(id));
     }
 
-    showInformationInternal(res, false /* show windows */, false /* scroll to top */,
-                            true /* forceUpdate */);
+    // Remove wrong objects
+    res.removeInvalid();
+
+    showInformationInternal(res, false /* show windows */, false /* scroll to top */, true /* forceUpdate */);
 
     Ui::MainWindow *ui = NavApp::getMainUi();
     atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).restore(ui->tabWidgetLegend);
@@ -597,8 +602,7 @@ void InfoController::onlineClientAndAtcUpdated()
 
 /* Show information in all tabs but do not show dock
  *  @return true if information was updated */
-void InfoController::showInformationInternal(map::MapResult result, bool showWindows, bool scrollToTop,
-                                             bool forceUpdate)
+void InfoController::showInformationInternal(map::MapResult result, bool showWindows, bool scrollToTop, bool forceUpdate)
 {
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "result" << result;
@@ -729,23 +733,19 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
       // Update parts that have now weather or bearing depenedency =====================
       html.clear();
       infoBuilder->runwayText(airport, html);
-      atools::gui::util::updateTextEdit(ui->textBrowserRunwayInfo, html.getHtml(),
-                                        scrollToTop, !scrollToTop /* keep selection */);
+      atools::gui::util::updateTextEdit(ui->textBrowserRunwayInfo, html.getHtml(), scrollToTop, !scrollToTop /* keep selection */);
 
       html.clear();
       infoBuilder->comText(airport, html);
-      atools::gui::util::updateTextEdit(ui->textBrowserComInfo, html.getHtml(),
-                                        scrollToTop, !scrollToTop /* keep selection */);
+      atools::gui::util::updateTextEdit(ui->textBrowserComInfo, html.getHtml(), scrollToTop, !scrollToTop /* keep selection */);
 
       html.clear();
       infoBuilder->procedureText(airport, html);
-      atools::gui::util::updateTextEdit(ui->textBrowserApproachInfo, html.getHtml(),
-                                        scrollToTop, !scrollToTop /* keep selection */);
+      atools::gui::util::updateTextEdit(ui->textBrowserApproachInfo, html.getHtml(), scrollToTop, !scrollToTop /* keep selection */);
 
       html.clear();
       infoBuilder->nearestText(airport, html);
-      atools::gui::util::updateTextEdit(ui->textBrowserNearestInfo, html.getHtml(),
-                                        scrollToTop, !scrollToTop /* keep selection */);
+      atools::gui::util::updateTextEdit(ui->textBrowserNearestInfo, html.getHtml(), scrollToTop, !scrollToTop /* keep selection */);
     }
 
     foundAirport = true;
@@ -858,10 +858,10 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
   }
 
   // Navaids tab ================================================================
-  if(result.hasVor() || result.hasNdb() || result.hasWaypoints() || result.hasIls() || result.hasHoldings() ||
+  if(result.hasVor() || result.hasNdb() || result.hasWaypoints() || result.hasIls() || result.hasHoldings() || result.hasAirportMsa() ||
      result.hasAirways())
     // if any navaids are to be shown clear search result before
-    currentSearchResult.clear(map::NAV_ALL | map::ILS | map::AIRWAY | map::RUNWAYEND | map::HOLDING);
+    currentSearchResult.clear(map::NAV_ALL | map::ILS | map::AIRWAY | map::RUNWAYEND | map::HOLDING | map::AIRPORT_MSA);
 
   if(!result.userpoints.isEmpty())
     // if any userpoints are to be shown clear search result before
@@ -960,8 +960,26 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
   }
 }
 
-bool InfoController::updateNavaidInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop,
-                                          bool forceUpdate)
+template<typename TYPE>
+void InfoController::buildOneNavaid(atools::util::HtmlBuilder& html, bool& bearingChanged, bool& foundNavaid, const QList<TYPE>& list,
+                                    QList<TYPE>& currentList, const HtmlInfoBuilder *info,
+                                    void (HtmlInfoBuilder::*func)(const TYPE&, atools::util::HtmlBuilder&) const) const
+{
+  for(const TYPE& type : list)
+  {
+#ifdef DEBUG_INFORMATION
+    qDebug() << "Found" << type.getIdent();
+#endif
+
+    if(!bearingChanged)
+      currentList.append(type);
+    (info->*func)(type, html);
+    html.br();
+    foundNavaid = true;
+  }
+}
+
+bool InfoController::updateNavaidInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop, bool forceUpdate)
 {
   HtmlBuilder html(true);
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -977,83 +995,26 @@ bool InfoController::updateNavaidInternal(const map::MapResult& result, bool bea
   html.b().a(tr("Remove Airway and Track Highlights"), QString("lnm://do?hideairways"),
              ahtml::LINK_NO_UL).bEnd().tdEnd().trEnd().tableEnd();
 
-  for(const map::MapVor& vor : result.vors)
-  {
-#ifdef DEBUG_INFORMATION
-    qDebug() << "Found vor" << vor.ident;
-#endif
+  buildOneNavaid(html, bearingChanged, foundNavaid, result.vors, currentSearchResult.vors,
+                 infoBuilder, &HtmlInfoBuilder::vorText);
 
-    if(!bearingChanged)
-      currentSearchResult.vors.append(vor);
-    infoBuilder->vorText(vor, html);
-    html.br();
-    foundNavaid = true;
-  }
+  buildOneNavaid(html, bearingChanged, foundNavaid, result.ndbs, currentSearchResult.ndbs,
+                 infoBuilder, &HtmlInfoBuilder::ndbText);
 
-  for(const map::MapNdb& ndb : result.ndbs)
-  {
-#ifdef DEBUG_INFORMATION
-    qDebug() << "Found ndb" << ndb.ident;
-#endif
+  buildOneNavaid(html, bearingChanged, foundNavaid, result.waypoints, currentSearchResult.waypoints,
+                 infoBuilder, &HtmlInfoBuilder::waypointText);
 
-    if(!bearingChanged)
-      currentSearchResult.ndbs.append(ndb);
-    infoBuilder->ndbText(ndb, html);
-    html.br();
-    foundNavaid = true;
-  }
+  buildOneNavaid(html, bearingChanged, foundNavaid, result.ils, currentSearchResult.ils,
+                 infoBuilder, &HtmlInfoBuilder::ilsTextInfo);
 
-  for(const map::MapWaypoint& waypoint : result.waypoints)
-  {
-#ifdef DEBUG_INFORMATION
-    qDebug() << "Found waypoint" << waypoint.ident;
-#endif
+  buildOneNavaid(html, bearingChanged, foundNavaid, result.holdings, currentSearchResult.holdings,
+                 infoBuilder, &HtmlInfoBuilder::holdingText);
 
-    if(!bearingChanged)
-      currentSearchResult.waypoints.append(waypoint);
-    infoBuilder->waypointText(waypoint, html);
-    html.br();
-    foundNavaid = true;
-  }
+  buildOneNavaid(html, bearingChanged, foundNavaid, result.airportMsa, currentSearchResult.airportMsa,
+                 infoBuilder, &HtmlInfoBuilder::airportMsaText);
 
-  for(const map::MapIls& ils: result.ils)
-  {
-#ifdef DEBUG_INFORMATION
-    qDebug() << "Found ils" << ils.ident;
-#endif
-
-    if(!bearingChanged)
-      currentSearchResult.ils.append(ils);
-    infoBuilder->ilsTextInfo(ils, html);
-    html.br();
-    foundNavaid = true;
-  }
-
-  for(const map::MapHolding& holding: result.holdings)
-  {
-#ifdef DEBUG_INFORMATION
-    qDebug() << "Found hold" << holding.name;
-#endif
-
-    if(!bearingChanged)
-      currentSearchResult.holdings.append(holding);
-    infoBuilder->holdingText(holding, html);
-    html.br();
-    foundNavaid = true;
-  }
-
-  for(const map::MapAirway& airway : result.airways)
-  {
-#ifdef DEBUG_INFORMATION
-    qDebug() << "Found airway" << airway.name;
-#endif
-
-    if(!bearingChanged)
-      currentSearchResult.airways.append(airway);
-    infoBuilder->airwayText(airway, html);
-    html.br();
-    foundNavaid = true;
-  }
+  buildOneNavaid(html, bearingChanged, foundNavaid, result.airways, currentSearchResult.airways,
+                 infoBuilder, &HtmlInfoBuilder::airwayText);
 
   if(!foundNavaid)
     html.clear();

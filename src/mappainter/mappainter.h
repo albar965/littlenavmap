@@ -54,7 +54,7 @@ namespace map {
 struct MapAirport;
 struct MapObjectRef;
 struct MapHolding;
-
+struct MapAirportMsa;
 }
 
 /* Struct that is passed to all painters */
@@ -125,6 +125,8 @@ struct PaintContext
   float thicknessCompassRose = 1.f;
   float textSizeMora = 1.f;
   float transparencyMora = 1.f;
+  float textSizeAirportMsa = 1.f;
+  float transparencyAirportMsa = 1.f;
 
   int objectCount = 0;
   bool queryOverflow = false;
@@ -273,35 +275,31 @@ public:
 protected:
   /* All wToSBuf() methods receive a margin parameter. Margins are applied to the screen rectangle for an
    * additional visibility check to avoid objects or texts popping out of view at the screen borders */
-  bool wToSBuf(const atools::geo::Pos& coords, int& x, int& y, QSize size, const QMargins& margins,
-               bool *hidden = nullptr) const;
+  bool wToSBuf(const atools::geo::Pos& coords, int& x, int& y, QSize size, const QMargins& margins, bool *hidden = nullptr) const;
 
-  bool wToSBuf(const atools::geo::Pos& coords, int& x, int& y, const QMargins& margins,
-               bool *hidden = nullptr) const
+  bool wToSBuf(const atools::geo::Pos& coords, int& x, int& y, const QMargins& margins, bool *hidden = nullptr) const
   {
     return wToSBuf(coords, x, y, DEFAULT_WTOS_SIZE, margins, hidden);
   }
 
-  bool wToSBuf(const atools::geo::Pos& coords, float& x, float& y, QSize size, const QMargins& margins,
-               bool *hidden = nullptr) const;
+  bool wToSBuf(const atools::geo::Pos& coords, float& x, float& y, QSize size, const QMargins& margins, bool *hidden = nullptr) const;
 
-  bool wToSBuf(const atools::geo::Pos& coords, float& x, float& y, const QMargins& margins,
-               bool *hidden = nullptr) const
+  bool wToSBuf(const atools::geo::Pos& coords, float& x, float& y, const QMargins& margins, bool *hidden = nullptr) const
   {
     return wToSBuf(coords, x, y, DEFAULT_WTOS_SIZE, margins, hidden);
   }
 
   /* Draw a circle and return text placement hints (xtext and ytext). Number of points used
    * for the circle depends on the zoom distance */
-  void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos,
-                   float radiusNm, bool fast, int& xtext, int& ytext);
+  void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast, int& xtext, int& ytext);
 
   void drawLineString(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
   void drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line);
 
+  void drawPolygon(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
+
   /* Draw simple text with current settings. Corners are the text corners pointing to the position */
-  void drawText(Marble::GeoPainter *painter, const atools::geo::Pos& pos, const QString& text, bool topCorner,
-                bool leftCorner);
+  void drawText(Marble::GeoPainter *painter, const atools::geo::Pos& pos, const QString& text, bool topCorner, bool leftCorner);
 
   /* Drawing functions for simple geometry */
   void drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos& center, int radius);
@@ -352,7 +350,7 @@ protected:
   void getPixmap(QPixmap& pixmap, const QString& resource, int size);
 
   /* Draw enroute as well as user defined holdings */
-  void paintHoldings(const QList<map::MapHolding>& holdings, bool enroute, bool drawFast);
+  void paintHoldings(const QList<map::MapHolding>& holdings, bool user, bool drawFast);
 
   /* Minimum points to use for a circle */
   const int CIRCLE_MIN_POINTS = 16;

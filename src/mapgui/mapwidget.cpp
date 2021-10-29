@@ -426,7 +426,7 @@ bool MapWidget::event(QEvent *event)
       const QHelpEvent *helpEvent = dynamic_cast<const QHelpEvent *>(event);
       if(helpEvent != nullptr)
       {
-        map::MapObjectQueryTypes queryTypes = map::QUERY_PROC_POINTS | map::QUERY_HOLDS | map::QUERY_PATTERNS |
+        map::MapObjectQueryTypes queryTypes = map::QUERY_PROC_POINTS | map::QUERY_HOLDS | map::QUERY_PATTERNS | map::QUERY_MSA |
                                               map::QUERY_RANGEMARKER;
 
         if(getShownMapFeatures().testFlag(map::MISSED_APPROACH))
@@ -1536,32 +1536,28 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
 
         // Make distance a bit larger to prefer points
         if(routeEditMode &&
-           getScreenIndexConst()->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
-                                                            screenSearchDistance * 4 / 3,
-                                                            true /* editableOnly */) != -1 &&
-           route.size() > 1)
+           getScreenIndexConst()->getNearestRoutePointIndex(event->pos().x(), event->pos().y(), screenSearchDistance * 4 / 3,
+                                                            true /* editableOnly */) != -1 && route.size() > 1)
           // Change cursor at one route point
           cursorShape = Qt::SizeAllCursor;
         else if(routeEditMode &&
-                getScreenIndexConst()->getNearestRouteLegIndex(event->pos().x(), event->pos().y(),
-                                                               screenSearchDistance) != -1 &&
+                getScreenIndexConst()->getNearestRouteLegIndex(event->pos().x(), event->pos().y(), screenSearchDistance) != -1 &&
                 route.size() > 1)
           // Change cursor above a route line
           cursorShape = Qt::CrossCursor;
-        else if(getScreenIndexConst()->getNearestDistanceMarkIndex(event->pos().x(), event->pos().y(),
-                                                                   screenSearchDistance) != -1)
+        else if(getScreenIndexConst()->getNearestDistanceMarkIndex(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
           // Change cursor at the end of an marker
           cursorShape = Qt::CrossCursor;
-        else if(getScreenIndexConst()->getNearestTrafficPatternIndex(event->pos().x(), event->pos().y(),
-                                                                     screenSearchDistance) != -1)
+        else if(getScreenIndexConst()->getNearestTrafficPatternIndex(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
           // Change cursor at the active position
           cursorShape = Qt::PointingHandCursor;
-        else if(getScreenIndexConst()->getNearestHoldIndex(event->pos().x(), event->pos().y(),
-                                                           screenSearchDistance) != -1)
+        else if(getScreenIndexConst()->getNearestHoldIndex(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
           // Change cursor at the active position
           cursorShape = Qt::PointingHandCursor;
-        else if(getScreenIndexConst()->getNearestRangeMarkIndex(event->pos().x(), event->pos().y(),
-                                                                screenSearchDistance) != -1)
+        else if(getScreenIndexConst()->getNearestAirportMsaIndex(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
+          // Change cursor at the active position
+          cursorShape = Qt::PointingHandCursor;
+        else if(getScreenIndexConst()->getNearestRangeMarkIndex(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
           // Change cursor at the end of an marker
           cursorShape = Qt::PointingHandCursor;
 
@@ -1664,10 +1660,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   using atools::fs::sc::SimConnectAircraft;
   using atools::fs::sc::SimConnectUserAircraft;
 
-  qDebug() << Q_FUNC_INFO
-           << "state" << mouseState
-           << "modifiers" << event->modifiers()
-           << "reason" << event->reason()
+  qDebug() << Q_FUNC_INFO << "state" << mouseState << "modifiers" << event->modifiers() << "reason" << event->reason()
            << "pos" << event->pos();
 
   if(mouseState != mw::NONE)
@@ -1740,6 +1733,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       removeTrafficPatterm(contextMenu.getTrafficPatternIndex());
     else if(action == ui->actionMapHideHold)
       removeHold(contextMenu.getHoldIndex());
+    else if(action == ui->actionMapHideAirportMsa)
+      removeAirportMsa(contextMenu.getAirportMsaIndex());
     else if(action == ui->actionMapSetHome)
       changeHome();
     else
@@ -1756,7 +1751,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
       // Create a result object as it is needed for some methods
       map::MapResult result;
-      result.fromMapBase(base);
+      result.addFromMapBase(base);
 
       switch(contextMenu.getSelectedActionType())
       {
@@ -1793,6 +1788,10 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
         case mc::HOLDING:
           addHold(result, pos);
+          break;
+
+        case mc::AIRPORT_MSA:
+          addAirportMsa(result.airportMsa.value(0));
           break;
 
         case mc::DEPARTURE:
@@ -2206,7 +2205,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     // Update tooltip if it has bearing/distance fields
     if((mapSearchResultTooltip.hasAirports() || mapSearchResultTooltip.hasVor() || mapSearchResultTooltip.hasNdb() ||
         mapSearchResultTooltip.hasWaypoints() || mapSearchResultTooltip.hasIls() ||
-        mapSearchResultTooltip.hasHoldings() ||
+        mapSearchResultTooltip.hasHoldings() || mapSearchResultTooltip.hasAirportMsa() ||
         mapSearchResultTooltip.hasUserpoints()) && NavApp::isConnectedAndAircraft())
       updateTooltip();
   }
@@ -2866,7 +2865,7 @@ void MapWidget::resetSettingActionsToDefault()
   atools::gui::SignalBlocker blocker({ui->actionMapShowAirports, ui->actionMapShowSoftAirports,
                                       ui->actionMapShowEmptyAirports, ui->actionMapShowAddonAirports,
                                       ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
-                                      ui->actionMapShowIls, ui->actionMapShowGls, ui->actionMapShowHolding,
+                                      ui->actionMapShowIls, ui->actionMapShowGls, ui->actionMapShowHolding, ui->actionMapShowAirportMsa,
                                       ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
                                       ui->actionMapShowTracks, ui->actionShowAirspaces, ui->actionMapShowRoute,
                                       ui->actionMapShowTocTod, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
@@ -2894,6 +2893,7 @@ void MapWidget::resetSettingActionsToDefault()
   ui->actionMapShowIls->setChecked(true);
   ui->actionMapShowGls->setChecked(true);
   ui->actionMapShowHolding->setChecked(false);
+  ui->actionMapShowAirportMsa->setChecked(false);
   ui->actionMapShowVictorAirways->setChecked(false);
   ui->actionMapShowJetAirways->setChecked(false);
   ui->actionMapShowTracks->setChecked(false);
@@ -3089,6 +3089,7 @@ void MapWidget::updateMapObjectsShown()
   setShowMapFeatures(map::NDB, ui->actionMapShowNdb->isChecked());
   setShowMapFeatures(map::WAYPOINT, ui->actionMapShowWp->isChecked());
   setShowMapFeatures(map::HOLDING, ui->actionMapShowHolding->isChecked());
+  setShowMapFeatures(map::AIRPORT_MSA, ui->actionMapShowAirportMsa->isChecked());
 
   // ILS and marker are shown together
   setShowMapFeatures(map::ILS, ui->actionMapShowIls->isChecked());
@@ -3256,6 +3257,31 @@ void MapWidget::removeHold(int index)
   mainWindow->updateMarkActionStates();
   update();
   mainWindow->setStatusMessage(QString(tr("Holding removed from map.")));
+}
+
+void MapWidget::addAirportMsa(map::MapAirportMsa airportMsa)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  if(airportMsa.isValid())
+  {
+    airportMsa.user = true;
+    getAirportMsa().append(airportMsa);
+    mainWindow->updateMarkActionStates();
+
+    update();
+    mainWindow->setStatusMessage(tr("Added MSA diagram."));
+  }
+}
+
+void MapWidget::removeAirportMsa(int index)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  getScreenIndex()->getAirportMsa().removeAt(index);
+  mainWindow->updateMarkActionStates();
+  update();
+  mainWindow->setStatusMessage(QString(tr("Airport MSA removed from map.")));
 }
 
 void MapWidget::resetSettingsToDefault()
@@ -3472,6 +3498,7 @@ void MapWidget::clearRangeRingsAndDistanceMarkers()
   getScreenIndex()->getDistanceMarks().clear();
   getScreenIndex()->getTrafficPatterns().clear();
   getScreenIndex()->getHolds().clear();
+  getScreenIndex()->getAirportMsa().clear();
   currentDistanceMarkerIndex = -1;
 
   update();

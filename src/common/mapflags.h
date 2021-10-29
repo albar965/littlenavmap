@@ -31,6 +31,7 @@ namespace map {
 /* Value for invalid/not found distances */
 Q_DECL_CONSTEXPR static float INVALID_COURSE_VALUE = std::numeric_limits<float>::max();
 Q_DECL_CONSTEXPR static float INVALID_HEADING_VALUE = INVALID_COURSE_VALUE;
+Q_DECL_CONSTEXPR static float INVALID_ANGLE_VALUE = INVALID_COURSE_VALUE;
 Q_DECL_CONSTEXPR static float INVALID_DISTANCE_VALUE = std::numeric_limits<float>::max();
 Q_DECL_CONSTEXPR static float INVALID_ALTITUDE_VALUE = std::numeric_limits<float>::max();
 Q_DECL_CONSTEXPR static float INVALID_SPEED_VALUE = std::numeric_limits<float>::max();
@@ -75,7 +76,7 @@ enum MapType
   AIRCRAFT = 1 << 14, /* Simulator user aircraft */
   AIRCRAFT_AI = 1 << 15, /* AI or multiplayer simulator aircraft */
   AIRCRAFT_AI_SHIP = 1 << 16, /* AI or multiplayer simulator ship */
-  // 1 << 17
+  AIRPORT_MSA = 1 << 17, /* Minimum safe altitude for airports and navaids */
   USERPOINTROUTE = 1 << 18, /* Flight plan user waypoint */
   PARKING = 1 << 19,
   RUNWAYEND = 1 << 20,
@@ -152,11 +153,12 @@ enum MapObjectQueryType
   QUERY_NONE = 0,
   QUERY_PROC_POINTS = 1 << 0, /* Procedure points */
   QUERY_PROC_MISSED_POINTS = 1 << 1, /* Missed procedure points */
-  QUERY_HOLDS = 1 << 2, /* Used defined holdings */
+  QUERY_HOLDS = 1 << 2, /* User defined holdings */
   QUERY_PATTERNS = 1 << 3, /* Traffic patterns */
   QUERY_PROCEDURES = 1 << 4, /* Procedures when querying route */
   QUERY_PROCEDURES_MISSED = 1 << 5, /* Missed procedures when querying route */
-  QUERY_RANGEMARKER = 1 << 6 /* Range rings */
+  QUERY_RANGEMARKER = 1 << 6, /* Range rings */
+  QUERY_MSA = 1 << 7 /* Airport MSA sectors */
 };
 
 Q_DECLARE_FLAGS(MapObjectQueryTypes, MapObjectQueryType);
@@ -303,7 +305,8 @@ enum MapMarkType
   MARK_MEASUREMENT = 1 << 1, /* All measurement lines */
   MARK_HOLDS = 1 << 2, /* Holdings */
   MARK_PATTERNS = 1 << 3, /* Traffic patterns */
-  MARK_ALL = MARK_RANGE_RINGS | MARK_MEASUREMENT | MARK_HOLDS | MARK_PATTERNS
+  MARK_AIRPORT_MSA = 1 << 4, /* Airport MSA */
+  MARK_ALL = MARK_RANGE_RINGS | MARK_MEASUREMENT | MARK_HOLDS | MARK_PATTERNS | MARK_AIRPORT_MSA
 };
 
 Q_DECLARE_FLAGS(MapMarkTypes, MapMarkType);
