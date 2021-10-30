@@ -1765,7 +1765,10 @@ void HtmlInfoBuilder::airportMsaText(const map::MapAirportMsa& msa, atools::util
   }
   html.table();
   html.row2(tr("Radius:"), Unit::distNm(msa.radius));
-  html.row2(tr("Bearing and alt. units:"), msa.trueBearing ? tr("°T, ") : tr("°M, ") % Unit::getUnitAltStr());
+
+  if(verbose)
+    html.row2(tr("Bearing and alt. units:"), msa.trueBearing ? tr("°T, ") : tr("°M, ") % Unit::getUnitAltStr());
+
   if(info)
     html.row2(tr("Magnetic declination:"), map::magvarText(msa.magvar));
   if(msa.altitudes.size() == 0)
