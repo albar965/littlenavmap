@@ -297,7 +297,7 @@ inline bool operator==(const map::MapAirspaceId& id1, const map::MapAirspaceId& 
 }
 
 /* ================================================================================== */
-/* Visible user features. */
+/* Visible user features. Saved, therefore do not change order. */
 enum MapMarkType
 {
   MARK_NONE = 0,
