@@ -1721,6 +1721,7 @@ void MainWindow::actionShortcutAirportSearchTriggered()
   dockHandler->activateWindow(ui->dockWidgetSearch);
   searchController->setCurrentSearchTabId(si::SEARCH_AIRPORT);
   ui->lineEditAirportIcaoSearch->setFocus();
+  ui->lineEditAirportIcaoSearch->selectAll();
 }
 
 void MainWindow::actionShortcutNavaidSearchTriggered()
@@ -1729,6 +1730,7 @@ void MainWindow::actionShortcutNavaidSearchTriggered()
   dockHandler->activateWindow(ui->dockWidgetSearch);
   searchController->setCurrentSearchTabId(si::SEARCH_NAV);
   ui->lineEditNavIcaoSearch->setFocus();
+  ui->lineEditNavIcaoSearch->selectAll();
 }
 
 void MainWindow::actionShortcutUserpointSearchTriggered()
@@ -1737,6 +1739,7 @@ void MainWindow::actionShortcutUserpointSearchTriggered()
   dockHandler->activateWindow(ui->dockWidgetSearch);
   searchController->setCurrentSearchTabId(si::SEARCH_USER);
   ui->lineEditUserdataIdent->setFocus();
+  ui->lineEditUserdataIdent->selectAll();
 }
 
 void MainWindow::actionShortcutLogbookSearchTriggered()
@@ -1745,6 +1748,7 @@ void MainWindow::actionShortcutLogbookSearchTriggered()
   dockHandler->activateWindow(ui->dockWidgetSearch);
   searchController->setCurrentSearchTabId(si::SEARCH_LOG);
   ui->lineEditLogdataAirport->setFocus();
+  ui->lineEditLogdataAirport->selectAll();
 }
 
 void MainWindow::actionShortcutFlightPlanTriggered()
