@@ -71,6 +71,7 @@
 #include "geo/calculations.h"
 #include "routing/routenetworkloader.h"
 #include "fs/util/fsutil.h"
+#include "gui/tools.h"
 
 #include <QClipboard>
 #include <QFile>
@@ -2292,6 +2293,22 @@ void RouteController::tableContextMenu(const QPoint& pos)
   atools::gui::ActionTool actionTool(actions);
 
   QModelIndex index = view->indexAt(pos);
+
+  if(!index.isValid() && model->rowCount() > 0)
+  {
+    // Fall back to selction and get first field there
+    QList<int> selectedRows = atools::gui::selectedRows(view->selectionModel(), false /* reverse */);
+    if(!selectedRows.isEmpty())
+      index = model->index(selectedRows.first(), 0);
+    else
+      // Get current position
+      index = view->currentIndex();
+
+    if(!index.isValid() && model->rowCount() > 0)
+      // Simply get first entry in case of no selection and no current position
+      index = model->index(0, 0);
+  }
+
   const RouteLeg *routeLeg = nullptr, *prevRouteLeg = nullptr;
   int row = -1;
   if(index.isValid())
@@ -3177,32 +3194,7 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
 /* Get selected row numbers from the table model */
 QList<int> RouteController::getSelectedRows(bool reverse) const
 {
-  QList<int> rows;
-
-  if(model->rowCount() == 0)
-    return rows;
-
-  if(view->selectionModel() != nullptr)
-  {
-    QItemSelection sm = view->selectionModel()->selection();
-    for(const QItemSelectionRange& rng : sm)
-    {
-      for(int row = rng.top(); row <= rng.bottom(); row++)
-        rows.append(row);
-    }
-  }
-
-  if(!rows.isEmpty())
-  {
-    // Remove from bottom to top - otherwise model creates a mess
-    std::sort(rows.begin(), rows.end());
-    if(reverse)
-      std::reverse(rows.begin(), rows.end());
-  }
-
-  // Remove duplicates
-  rows.erase(std::unique(rows.begin(), rows.end()), rows.end());
-  return rows;
+  return atools::gui::selectedRows(view->selectionModel(), reverse);
 }
 
 /* Select all columns of the given rows adding offset to each row index */

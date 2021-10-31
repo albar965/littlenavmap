@@ -22,6 +22,7 @@
 #include "search/columnlist.h"
 #include "sql/sqlrecord.h"
 #include "sql/sqldatabase.h"
+#include "gui/tools.h"
 
 #include <QTableView>
 #include <QHeaderView>
@@ -361,6 +362,11 @@ const QItemSelection SqlController::getSelection() const
     return QItemSelection();
 }
 
+QList<int> SqlController::getSelectedRows(bool reverse) const
+{
+  return atools::gui::selectedRows(view->selectionModel(), reverse /* reverse */);
+}
+
 int SqlController::getVisibleRowCount() const
 {
   if(proxyModel != nullptr)
@@ -381,6 +387,11 @@ int SqlController::getTotalRowCount() const
     return model->getTotalRowCount();
   else
     return 0;
+}
+
+QModelIndex SqlController::getCurrentIndex() const
+{
+  return view->currentIndex();
 }
 
 bool SqlController::isColumnVisibleInView(int physicalIndex) const
@@ -444,6 +455,11 @@ QString SqlController::getCurrentSqlQuery() const
 QModelIndex SqlController::getModelIndexAt(const QPoint& pos) const
 {
   return view->indexAt(pos);
+}
+
+QModelIndex SqlController::getModelIndexFor(int row, int column) const
+{
+  return model->index(row, column);
 }
 
 QString SqlController::getFieldDataAt(const QModelIndex& index) const

@@ -79,9 +79,11 @@ public:
   void filterByMinMaxSpinBox(const Column *col, int minValue, int maxValue);
 
   const QItemSelection getSelection() const;
+  QList<int> getSelectedRows(bool reverse) const;
 
   /* Get model index for the given cursor position */
   QModelIndex getModelIndexAt(const QPoint& pos) const;
+  QModelIndex getModelIndexFor(int row, int column) const;
 
   /* Get data at given model index */
   QString getFieldDataAt(const QModelIndex& index) const;
@@ -97,6 +99,9 @@ public:
 
   /* Total number of rows returned by the last query */
   int getTotalRowCount() const;
+
+  /* Current active row. Not neccessarily selected */
+  QModelIndex getCurrentIndex() const;
 
   /* Get the SQL query that was used to populate the table */
   QString getCurrentSqlQuery() const;

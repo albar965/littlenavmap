@@ -946,8 +946,27 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 
   bool columnCanFilter = false, columnCanFilterBuilder = false;
   atools::geo::Pos position;
+
+  // Get index from current, selection or cursor position ====================================================
+  // Get field at cursor position
   QModelIndex index = controller->getModelIndexAt(pos);
 
+  if(!index.isValid())
+  {
+    // Fall back to selction and get first field there
+    QList<int> selectedRows = controller->getSelectedRows(false /* reverse */);
+    if(!selectedRows.isEmpty())
+      index = controller->getModelIndexFor(selectedRows.first(), 0);
+    else
+      // Get current position
+      index = controller->getCurrentIndex();
+
+    if(!index.isValid() && controller->getTotalRowCount() > 0)
+      // Simply get first entry in case of no selection and no current position
+      index = controller->getModelIndexFor(0, 0);
+  }
+
+  // Get objects at index ========================================================
   map::MapTypes mapObjType = map::NONE;
 
   // Airport in airport search also used for airport below cursor in logbook
@@ -1150,8 +1169,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionSearchTableCopy->setEnabled(index.isValid());
   ui->actionSearchTableSelectAll->setEnabled(controller->getTotalRowCount() > 0);
   ui->actionSearchTableSelectNothing->setEnabled(
-    controller->getTotalRowCount() > 0 &&
-    (view->selectionModel() == nullptr ? false : view->selectionModel()->hasSelection()));
+    controller->getTotalRowCount() > 0 && (view->selectionModel() == nullptr ? false : view->selectionModel()->hasSelection()));
 
   // Add marks ==============================================================================
   // Update texts to give user a hint for hidden user features in the disabled menu items =====================
