@@ -177,7 +177,8 @@ private:
   QString garminGtnUserWptPath();
 
   /* Currently in actions selected types */
-  QStringList selectedTypes;
+  QStringList selectedTypes,
+              allLastFoundTypes; /* All types found when saving last time */
   bool selectedUnknownType = false;
 
   atools::fs::userdata::UserdataManager *manager;

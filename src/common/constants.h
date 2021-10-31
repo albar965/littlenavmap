@@ -139,6 +139,7 @@ const QLatin1String MAP_HOLDINGS("Map/Holdings");
 const QLatin1String MAP_AIRPORT_MSA("Map/AirportMsa");
 const QLatin1String MAP_AIRSPACES("Map/AirspaceFilter");
 const QLatin1String MAP_USERDATA("Map/Userdata");
+const QLatin1String MAP_USERDATA_ALL("Map/UserdataAll");
 const QLatin1String MAP_USERDATA_UNKNOWN("Map/UserdataUnknown");
 const QLatin1String MAP_WIND_LEVEL("Map/WindLevel");
 const QLatin1String MAP_WIND_LEVEL_ROUTE("Map/WindLevelRoute");
