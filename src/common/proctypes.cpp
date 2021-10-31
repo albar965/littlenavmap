@@ -99,7 +99,8 @@ void initTranslateableTexts()
       {"MLS", QObject::tr("MLS")},
 
       /* User defined approach procedure */
-      {"CUSTOM", QObject::tr("Custom")}
+      {"CUSTOM", QObject::tr("Approach")},
+      {"CUSTOMDEPART", QObject::tr("Departure")}
     });
 
   approachLegTypeToStr = QHash<ProcedureLegType, QString>(
@@ -132,40 +133,52 @@ void initTranslateableTexts()
       {CIRCLE_TO_LAND, QObject::tr("Circle to land")},
       {STRAIGHT_IN, QObject::tr("Straight in")},
       {START_OF_PROCEDURE, QObject::tr("Start of procedure")},
-      {VECTORS, QObject::tr("Vectors")}
+      {VECTORS, QObject::tr("Vectors")},
+
+      {CUSTOM_APP_START, QObject::tr("Start of final")},
+      {CUSTOM_APP_RUNWAY, QObject::tr("Final leg")},
+
+      {CUSTOM_DEP_END, QObject::tr("Departure leg")},
+      {CUSTOM_DEP_RUNWAY, QObject::tr("Proceed to runway")},
     });
 
   approachLegRemarkStr = QHash<ProcedureLegType, QString>(
     {
-      {ARC_TO_FIX, QObject::tr("")},
-      {COURSE_TO_ALTITUDE, QObject::tr("")},
-      {COURSE_TO_DME_DISTANCE, QObject::tr("")},
-      {COURSE_TO_FIX, QObject::tr("")},
-      {COURSE_TO_INTERCEPT, QObject::tr("")},
-      {COURSE_TO_RADIAL_TERMINATION, QObject::tr("")},
-      {DIRECT_TO_FIX, QObject::tr("")},
-      {FIX_TO_ALTITUDE, QObject::tr("")},
-      {TRACK_FROM_FIX_FROM_DISTANCE, QObject::tr("")},
-      {TRACK_FROM_FIX_TO_DME_DISTANCE, QObject::tr("")},
-      {FROM_FIX_TO_MANUAL_TERMINATION, QObject::tr("")},
+      {ARC_TO_FIX, QString()},
+      {COURSE_TO_ALTITUDE, QString()},
+      {COURSE_TO_DME_DISTANCE, QString()},
+      {COURSE_TO_FIX, QString()},
+      {COURSE_TO_INTERCEPT, QString()},
+      {COURSE_TO_RADIAL_TERMINATION, QString()},
+      {DIRECT_TO_FIX, QString()},
+      {FIX_TO_ALTITUDE, QString()},
+      {TRACK_FROM_FIX_FROM_DISTANCE, QString()},
+      {TRACK_FROM_FIX_TO_DME_DISTANCE, QString()},
+      {FROM_FIX_TO_MANUAL_TERMINATION, QString()},
       {HOLD_TO_ALTITUDE, QObject::tr("Mandatory hold")},
       {HOLD_TO_FIX, QObject::tr("Single circuit")},
       {HOLD_TO_MANUAL_TERMINATION, QObject::tr("Mandatory hold")},
-      {INITIAL_FIX, QObject::tr("")},
-      {PROCEDURE_TURN, QObject::tr("")},
-      {CONSTANT_RADIUS_ARC, QObject::tr("")},
-      {TRACK_TO_FIX, QObject::tr("")},
-      {HEADING_TO_ALTITUDE_TERMINATION, QObject::tr("")},
-      {HEADING_TO_DME_DISTANCE_TERMINATION, QObject::tr("")},
-      {HEADING_TO_INTERCEPT, QObject::tr("")},
-      {HEADING_TO_MANUAL_TERMINATION, QObject::tr("")},
-      {HEADING_TO_RADIAL_TERMINATION, QObject::tr("")},
+      {INITIAL_FIX, QString()},
+      {PROCEDURE_TURN, QString()},
+      {CONSTANT_RADIUS_ARC, QString()},
+      {TRACK_TO_FIX, QString()},
+      {HEADING_TO_ALTITUDE_TERMINATION, QString()},
+      {HEADING_TO_DME_DISTANCE_TERMINATION, QString()},
+      {HEADING_TO_INTERCEPT, QString()},
+      {HEADING_TO_MANUAL_TERMINATION, QString()},
+      {HEADING_TO_RADIAL_TERMINATION, QString()},
 
-      {DIRECT_TO_RUNWAY, QObject::tr("")},
-      {CIRCLE_TO_LAND, QObject::tr("")},
-      {STRAIGHT_IN, QObject::tr("")},
-      {START_OF_PROCEDURE, QObject::tr("")},
-      {VECTORS, QObject::tr("")}
+      {DIRECT_TO_RUNWAY, QString()},
+      {CIRCLE_TO_LAND, QString()},
+      {STRAIGHT_IN, QString()},
+      {START_OF_PROCEDURE, QString()},
+      {VECTORS, QString()},
+
+      {CUSTOM_APP_START, QString()},
+      {CUSTOM_APP_RUNWAY, QString()},
+
+      {CUSTOM_DEP_END, QString()},
+      {CUSTOM_DEP_RUNWAY, QString()},
     });
 }
 
@@ -199,7 +212,13 @@ const static QHash<QString, ProcedureLegType> approachLegTypeToEnum(
     {"CX", CIRCLE_TO_LAND},
     {"TX", STRAIGHT_IN},
     {"SX", START_OF_PROCEDURE},
-    {"VX", VECTORS}
+    {"VX", VECTORS},
+
+    {"CFX", CUSTOM_APP_START},
+    {"CRX", CUSTOM_APP_RUNWAY},
+
+    {"CDX", CUSTOM_DEP_END},
+    {"CDR", CUSTOM_DEP_RUNWAY}
   });
 
 const static QHash<ProcedureLegType, QString> approachLegTypeToShortStr(
@@ -232,7 +251,13 @@ const static QHash<ProcedureLegType, QString> approachLegTypeToShortStr(
     {CIRCLE_TO_LAND, "CX"},
     {STRAIGHT_IN, "TX"},
     {START_OF_PROCEDURE, "SX"},
-    {VECTORS, "VX"}
+    {VECTORS, "VX"},
+
+    {CUSTOM_APP_START, "CFX"},
+    {CUSTOM_APP_RUNWAY, "CRX"},
+
+    {CUSTOM_DEP_END, "CDX"},
+    {CUSTOM_DEP_RUNWAY, "CDR"}
   });
 
 QString procedureFixType(const QString& type)
@@ -641,16 +666,6 @@ bool MapProcedureLeg::isHold() const
   return atools::contains(type, {proc::HOLD_TO_ALTITUDE, proc::HOLD_TO_FIX, proc::HOLD_TO_MANUAL_TERMINATION});
 }
 
-bool MapProcedureLeg::isProcedureTurn() const
-{
-  return type == proc::PROCEDURE_TURN;
-}
-
-bool MapProcedureLeg::isInitialFix() const
-{
-  return type == proc::INITIAL_FIX;
-}
-
 bool MapProcedureLeg::isCircular() const
 {
   return atools::contains(type, {proc::ARC_TO_FIX, proc::CONSTANT_RADIUS_ARC});
@@ -658,10 +673,8 @@ bool MapProcedureLeg::isCircular() const
 
 bool MapProcedureLeg::noDistanceDisplay() const
 {
-  return atools::contains(type,
-                          {proc::COURSE_TO_ALTITUDE, proc::FIX_TO_ALTITUDE,
-                           proc::HEADING_TO_ALTITUDE_TERMINATION
-                           /*proc::FROM_FIX_TO_MANUAL_TERMINATION, proc::HEADING_TO_MANUAL_TERMINATION*/});
+  return atools::contains(type, {proc::COURSE_TO_ALTITUDE, proc::FIX_TO_ALTITUDE, proc::HEADING_TO_ALTITUDE_TERMINATION
+                                 /*proc::FROM_FIX_TO_MANUAL_TERMINATION, proc::HEADING_TO_MANUAL_TERMINATION*/});
 }
 
 proc::LegSpecialType specialType(const QString& arincDescrCode)
@@ -840,7 +853,7 @@ QString procedureLegRemDistance(const MapProcedureLeg& leg, float& remainingDist
 
   if(!leg.missed)
   {
-    if(leg.calculatedDistance > 0.f && leg.type != proc::INITIAL_FIX && leg.type != proc::START_OF_PROCEDURE)
+    if(leg.calculatedDistance > 0.f && leg.isInitialFix() && leg.type != proc::START_OF_PROCEDURE)
       remainingDistance -= leg.calculatedDistance;
 
     if(remainingDistance < 0.f)
@@ -989,6 +1002,10 @@ bool procedureLegFixAtStart(ProcedureLegType type)
       // HEADING_TO_INTERCEPT,
       // HEADING_TO_MANUAL_TERMINATION,
       // HEADING_TO_RADIAL_TERMINATION,
+      CUSTOM_APP_START, /* Start: INITIAL_FIX */
+      // CUSTOM_APP_RUNWAY, /* End: COURSE_TO_FIX */
+      // CUSTOM_DEP_END, /* End: COURSE_TO_FIX */
+      // CUSTOM_DEP_RUNWAY /* Start: DIRECT_TO_RUNWAY */,
     });
 }
 
@@ -1018,6 +1035,10 @@ bool procedureLegFixAtEnd(ProcedureLegType type)
       // HEADING_TO_INTERCEPT,
       // HEADING_TO_MANUAL_TERMINATION,
       // HEADING_TO_RADIAL_TERMINATION,
+      CUSTOM_APP_START, /* Start: INITIAL_FIX */
+      CUSTOM_APP_RUNWAY, /* End: COURSE_TO_FIX */
+      CUSTOM_DEP_END, /* End: COURSE_TO_FIX */
+      // CUSTOM_DEP_RUNWAY /* Start: DIRECT_TO_RUNWAY */,
     });
 }
 
@@ -1053,6 +1074,10 @@ bool procedureLegDrawIdent(ProcedureLegType type)
       // STRAIGHT_IN,
       START_OF_PROCEDURE,
       // VECTORS
+      CUSTOM_APP_START, /* Start: INITIAL_FIX */
+      CUSTOM_APP_RUNWAY, /* End: COURSE_TO_FIX */
+      CUSTOM_DEP_END, /* End: COURSE_TO_FIX */
+      CUSTOM_DEP_RUNWAY /* Start: DIRECT_TO_RUNWAY */,
     });
 }
 
@@ -1087,6 +1112,10 @@ bool procedureLegFrom(ProcedureLegType type)
       // STRAIGHT_IN,
       // START_OF_PROCEDURE,
       // VECTORS
+      // CUSTOM_APP_START, /* Start: INITIAL_FIX */
+      // CUSTOM_APP_RUNWAY, /* End: COURSE_TO_FIX */
+      // CUSTOM_DEP_END, /* End: COURSE_TO_FIX */
+      // CUSTOM_DEP_RUNWAY /* Start: DIRECT_TO_RUNWAY */,
     });
 }
 

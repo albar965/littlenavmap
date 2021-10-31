@@ -156,7 +156,8 @@ signals:
 
   /* Show approaches in context menu selected */
   void showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter);
-  void showProceduresCustom(const map::MapAirport& airport);
+  void showCustomApproach(const map::MapAirport& airport, const QString& suffix);
+  void showCustomDeparture(const map::MapAirport& airport, const QString& suffix);
 
   /* Set airport as flight plan departure (from context menu) */
   void routeSetDeparture(const map::MapAirport& airport);
@@ -226,6 +227,7 @@ private:
   void showInformationTriggered();
   void showApproachesTriggered();
   void showApproachesCustomTriggered();
+  void showDeparturesCustomTriggered();
   void showOnMapTriggered();
   void contextMenu(const QPoint& pos);
   void dockVisibilityChanged(bool);
@@ -236,7 +238,7 @@ private:
   void updateFromMaxSpinBox(int value, const Column *col);
   void showRow(int row, bool showInfo);
   void fontChanged();
-  void showApproaches(bool custom);
+  void showApproaches(bool customApproach, bool customDeparture);
   void fetchedMore();
 
   /* Called by actions on airport search tab */

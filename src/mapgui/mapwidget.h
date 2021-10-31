@@ -265,7 +265,8 @@ signals:
 
   /* Show approaches from context menu */
   void showProcedures(map::MapAirport airport, bool departureFilter, bool arrivalFilter);
-  void showProceduresCustom(map::MapAirport airport);
+  void showCustomApproach(map::MapAirport airport, const QString& suffix);
+  void showCustomDeparture(map::MapAirport airport, const QString& suffix);
 
   /* Emitted when the user presses the on-screen button */
   void exitFullScreenPressed();

@@ -41,7 +41,7 @@ class CustomProcedureDialog :
   Q_OBJECT
 
 public:
-  explicit CustomProcedureDialog(QWidget *parent, const map::MapAirport& mapAirport);
+  explicit CustomProcedureDialog(QWidget *parent, const map::MapAirport& mapAirport, bool departureParam, const QString& dialogHeader);
   virtual ~CustomProcedureDialog() override;
 
   CustomProcedureDialog(const CustomProcedureDialog& other) = delete;
@@ -51,7 +51,10 @@ public:
   void getSelected(map::MapRunway& runway, map::MapRunwayEnd& end) const;
 
   /* Distance to runway threshold in NM */
-  float getEntryDistance() const;
+  float getLegDistance() const;
+
+  /* Offset to runway heading in degree. Positive is CW and negative is CCW. */
+  float getLegOffsetAngle() const;
 
   /* Altitude at entry point above airport elevation in feet */
   float getEntryAltitude() const;
@@ -68,7 +71,7 @@ private:
   RunwaySelection *runwaySelection = nullptr;
 
   UnitStringTool *units = nullptr;
-
+  bool departure = false;
 };
 
 #endif // LNM_CUSTOMPROCEDUREDIALOG_H

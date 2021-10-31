@@ -195,6 +195,9 @@ public:
 
   map::MapRunwayEnd getRunwayEndById(int id);
 
+  /* Get other runway end for given one */
+  map::MapRunwayEnd getOpposedRunwayEnd(int airportId, const map::MapRunwayEnd& runwayEnd);
+
   /* Close all query objects thus disconnecting from the database */
   void initQueries();
 

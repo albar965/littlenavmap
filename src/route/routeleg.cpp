@@ -420,7 +420,7 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
           (prevLeg->getProcedureLeg().isStar() && procedureLeg.isAnyArrival()) // from STAR aproach or transition
           ) && // Direct connection between procedures
 
-         (atools::contains(procedureLeg.type, {proc::INITIAL_FIX, proc::START_OF_PROCEDURE}) ||
+         (atools::contains(procedureLeg.type, {proc::INITIAL_FIX, proc::CUSTOM_APP_START, proc::START_OF_PROCEDURE}) ||
           procedureLeg.line.isPoint()) // Beginning of procedure
          )
       {
@@ -833,11 +833,8 @@ const LineString& RouteLeg::getGeometry() const
 bool RouteLeg::isApproachPoint() const
 {
   return isAnyProcedure() &&
-         !atools::contains(procedureLeg.type,
-                           {proc::HOLD_TO_ALTITUDE, proc::HOLD_TO_FIX,
-                            proc::HOLD_TO_MANUAL_TERMINATION}) &&
-         (procedureLeg.geometry.isPoint() || procedureLeg.type == proc::INITIAL_FIX ||
-          procedureLeg.type == proc::START_OF_PROCEDURE);
+         !atools::contains(procedureLeg.type, {proc::HOLD_TO_ALTITUDE, proc::HOLD_TO_FIX, proc::HOLD_TO_MANUAL_TERMINATION}) &&
+         (procedureLeg.geometry.isPoint() || procedureLeg.isInitialFix() || procedureLeg.type == proc::START_OF_PROCEDURE);
 }
 
 bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors, bool *trackError) const

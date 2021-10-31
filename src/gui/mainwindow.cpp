@@ -996,6 +996,7 @@ void MainWindow::clearProcedureCache()
 
 void MainWindow::connectAllSlots()
 {
+
   // Get "show in browser"  click
   connect(ui->textBrowserLegendNavInfo, &QTextBrowser::anchorClicked, this,
           &MainWindow::legendAnchorClicked);
@@ -1106,6 +1107,17 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::routeChanged, NavApp::updateWindowTitle);
   connect(routeController, &RouteController::routeAltitudeChanged, NavApp::updateErrorLabels);
 
+// Add departure and dest runway actions separately to windows since their shortcuts overlap with context menu shortcuts
+  QList<QAction *> actions({ui->actionShowDepartureCustom, ui->actionShowApproachCustom});
+  mapWidget->addActions(actions);
+  ui->dockWidgetInformation->addActions(actions);
+  ui->dockWidgetAircraft->addActions(actions);
+  ui->dockWidgetProfile->addActions(actions);
+  ui->actionShowDepartureCustom->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionShowApproachCustom->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  connect(ui->actionShowDepartureCustom, &QAction::triggered, routeController, &RouteController::showCustomDepartureMainMenu);
+  connect(ui->actionShowApproachCustom, &QAction::triggered, routeController, &RouteController::showCustomApproachMainMenu);
+
   // Airport search ===================================================================================
   AirportSearch *airportSearch = searchController->getAirportSearch();
   connect(airportSearch, &SearchBaseTable::showRect, mapWidget, &MapPaintWidget::showRect);
@@ -1114,8 +1126,8 @@ void MainWindow::connectAllSlots()
   connect(airportSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(airportSearch, &SearchBaseTable::showProcedures,
           searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
-  connect(airportSearch, &SearchBaseTable::showProceduresCustom,
-          routeController, &RouteController::showProceduresCustom);
+  connect(airportSearch, &SearchBaseTable::showCustomApproach, routeController, &RouteController::showCustomApproach);
+  connect(airportSearch, &SearchBaseTable::showCustomDeparture, routeController, &RouteController::showCustomDeparture);
   connect(airportSearch, &SearchBaseTable::routeSetDeparture, routeController, &RouteController::routeSetDeparture);
   connect(airportSearch, &SearchBaseTable::routeSetDestination, routeController, &RouteController::routeSetDestination);
   connect(airportSearch, &SearchBaseTable::routeAddAlternate, routeController, &RouteController::routeAddAlternate);
@@ -1156,19 +1168,14 @@ void MainWindow::connectAllSlots()
 
   // Import ================
   connect(ui->actionUserdataImportCSV, &QAction::triggered, userdataController, &UserdataController::importCsv);
-  connect(ui->actionUserdataImportGarminGTN, &QAction::triggered, userdataController,
-          &UserdataController::importGarmin);
-  connect(ui->actionUserdataImportUserfixDat, &QAction::triggered, userdataController,
-          &UserdataController::importXplaneUserFixDat);
+  connect(ui->actionUserdataImportGarminGTN, &QAction::triggered, userdataController, &UserdataController::importGarmin);
+  connect(ui->actionUserdataImportUserfixDat, &QAction::triggered, userdataController, &UserdataController::importXplaneUserFixDat);
 
   // Export ================
   connect(ui->actionUserdataExportCSV, &QAction::triggered, userdataController, &UserdataController::exportCsv);
-  connect(ui->actionUserdataExportGarminGTN, &QAction::triggered, userdataController,
-          &UserdataController::exportGarmin);
-  connect(ui->actionUserdataExportUserfixDat, &QAction::triggered, userdataController,
-          &UserdataController::exportXplaneUserFixDat);
-  connect(ui->actionUserdataExportXmlBgl, &QAction::triggered, userdataController,
-          &UserdataController::exportBglXml);
+  connect(ui->actionUserdataExportGarminGTN, &QAction::triggered, userdataController, &UserdataController::exportGarmin);
+  connect(ui->actionUserdataExportUserfixDat, &QAction::triggered, userdataController, &UserdataController::exportXplaneUserFixDat);
+  connect(ui->actionUserdataExportXmlBgl, &QAction::triggered, userdataController, &UserdataController::exportBglXml);
 
   connect(userdataController, &UserdataController::userdataChanged, infoController,
           &InfoController::updateAllInformation);
@@ -1228,12 +1235,9 @@ void MainWindow::connectAllSlots()
           this, &MainWindow::updateOnlineActionStates);
 
   // Update search
-  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
-          clientSearch, &OnlineClientSearch::refreshData);
-  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
-          centerSearch, &OnlineCenterSearch::refreshData);
-  connect(onlinedataController, &OnlinedataController::onlineServersUpdated,
-          serverSearch, &OnlineServerSearch::refreshData);
+  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated, clientSearch, &OnlineClientSearch::refreshData);
+  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated, centerSearch, &OnlineCenterSearch::refreshData);
+  connect(onlinedataController, &OnlinedataController::onlineServersUpdated, serverSearch, &OnlineServerSearch::refreshData);
 
   // Clear cache and update map widget
   connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
@@ -1263,8 +1267,7 @@ void MainWindow::connectAllSlots()
   connect(procedureSearch, &ProcedureSearch::procedureSelected, this, &MainWindow::procedureSelected);
   connect(procedureSearch, &ProcedureSearch::showRect, mapWidget, &MapPaintWidget::showRect);
   connect(procedureSearch, &ProcedureSearch::showPos, mapWidget, &MapPaintWidget::showPos);
-  connect(procedureSearch, &ProcedureSearch::routeInsertProcedure, routeController,
-          &RouteController::routeAddProcedure);
+  connect(procedureSearch, &ProcedureSearch::routeInsertProcedure, routeController, &RouteController::routeAddProcedure);
   connect(procedureSearch, &ProcedureSearch::showInformation, infoController, &InfoController::showInformation);
 
   connect(ui->actionResetLayout, &QAction::triggered, this, &MainWindow::resetWindowLayout);
@@ -1279,8 +1282,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionShowStatusbar, &QAction::toggled, ui->statusBar, &QStatusBar::setVisible);
 
   // Scenery library menu ============================================================
-  connect(ui->actionLoadAirspaces, &QAction::triggered,
-          NavApp::getAirspaceController(), &AirspaceController::loadAirspaces);
+  connect(ui->actionLoadAirspaces, &QAction::triggered, NavApp::getAirspaceController(), &AirspaceController::loadAirspaces);
   connect(ui->actionReloadScenery, &QAction::triggered, NavApp::getDatabaseManager(), &DatabaseManager::run);
   connect(ui->actionDatabaseFiles, &QAction::triggered, this, &MainWindow::showDatabaseFiles);
 
@@ -1344,16 +1346,12 @@ void MainWindow::connectAllSlots()
   connect(ui->actionClearKml, &QAction::triggered, this, &MainWindow::kmlClear);
   connect(kmlFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::kmlOpenRecent);
 
-  // Flight plan calculation
+  // Flight plan calculation ========================================================================
   connect(ui->actionRouteCalcDirect, &QAction::triggered, routeController, &RouteController::calculateDirect);
-
   connect(ui->actionRouteCalc, &QAction::triggered, routeController, &RouteController::calculateRouteWindowFull);
   connect(ui->actionRouteReverse, &QAction::triggered, routeController, &RouteController::reverseRoute);
-
   connect(ui->actionRouteCopyString, &QAction::triggered, routeController, &RouteController::routeStringToClipboard);
-
-  connect(ui->actionRouteAdjustAltitude, &QAction::triggered, routeController,
-          &RouteController::adjustFlightplanAltitude);
+  connect(ui->actionRouteAdjustAltitude, &QAction::triggered, routeController, &RouteController::adjustFlightplanAltitude);
 
   // Help menu ========================================================================
   connect(ui->actionHelpContents, &QAction::triggered, this, &MainWindow::showOnlineHelp);
@@ -1375,29 +1373,21 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapPaintWidget::renderStateChanged, this, &MainWindow::renderStatusChanged);
   connect(mapWidget, &MapPaintWidget::updateActionStates, this, &MainWindow::updateActionStates);
   connect(mapWidget, &MapWidget::showInformation, infoController, &InfoController::showInformation);
-  connect(mapWidget, &MapWidget::showProcedures,
-          searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
-  connect(mapWidget, &MapWidget::showProceduresCustom, routeController, &RouteController::showProceduresCustom);
-  connect(mapWidget, &MapPaintWidget::shownMapFeaturesChanged,
-          routeController, &RouteController::shownMapFeaturesChanged);
-  connect(mapWidget, &MapWidget::addUserpointFromMap,
-          NavApp::getUserdataController(), &UserdataController::addUserpointFromMap);
-  connect(mapWidget, &MapWidget::editUserpointFromMap,
-          NavApp::getUserdataController(), &UserdataController::editUserpointFromMap);
-  connect(mapWidget, &MapWidget::deleteUserpointFromMap,
-          NavApp::getUserdataController(), &UserdataController::deleteUserpointFromMap);
-  connect(mapWidget, &MapWidget::moveUserpointFromMap,
-          NavApp::getUserdataController(), &UserdataController::moveUserpointFromMap);
+  connect(mapWidget, &MapWidget::showProcedures, searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
+  connect(mapWidget, &MapWidget::showCustomApproach, routeController, &RouteController::showCustomApproach);
+  connect(mapWidget, &MapWidget::showCustomDeparture, routeController, &RouteController::showCustomDeparture);
+  connect(mapWidget, &MapPaintWidget::shownMapFeaturesChanged, routeController, &RouteController::shownMapFeaturesChanged);
+  connect(mapWidget, &MapWidget::addUserpointFromMap, NavApp::getUserdataController(), &UserdataController::addUserpointFromMap);
+  connect(mapWidget, &MapWidget::editUserpointFromMap, NavApp::getUserdataController(), &UserdataController::editUserpointFromMap);
+  connect(mapWidget, &MapWidget::deleteUserpointFromMap, NavApp::getUserdataController(), &UserdataController::deleteUserpointFromMap);
+  connect(mapWidget, &MapWidget::moveUserpointFromMap, NavApp::getUserdataController(), &UserdataController::moveUserpointFromMap);
 
-  connect(mapWidget, &MapWidget::editLogEntryFromMap,
-          NavApp::getLogdataController(), &LogdataController::editLogEntryFromMap);
-  connect(mapWidget, &MapWidget::exitFullScreenPressed,
-          this, &MainWindow::exitFullScreenPressed);
+  connect(mapWidget, &MapWidget::editLogEntryFromMap, NavApp::getLogdataController(), &LogdataController::editLogEntryFromMap);
+  connect(mapWidget, &MapWidget::exitFullScreenPressed, this, &MainWindow::exitFullScreenPressed);
 
   // Connect toolbar combo boxes
-  void (QComboBox::*indexChangedPtr)(int) = &QComboBox::currentIndexChanged;
-  connect(mapProjectionComboBox, indexChangedPtr, this, &MainWindow::changeMapProjection);
-  connect(mapThemeComboBox, indexChangedPtr, this, &MainWindow::changeMapTheme);
+  connect(mapProjectionComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::changeMapProjection);
+  connect(mapThemeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::changeMapTheme);
 
   // Let projection menus update combo boxes
   connect(ui->actionMapProjectionMercator, &QAction::triggered, this, [ = ](bool checked)
@@ -1455,12 +1445,9 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapHideRangeRings, &QAction::triggered, this, &MainWindow::clearRangeRingsAndDistanceMarkers);
 
   // Logbook view options ============================================
-  connect(ui->actionSearchLogdataShowDirect, &QAction::toggled,
-          logdataController, &LogdataController::displayOptionsChanged);
-  connect(ui->actionSearchLogdataShowRoute, &QAction::toggled,
-          logdataController, &LogdataController::displayOptionsChanged);
-  connect(ui->actionSearchLogdataShowTrack, &QAction::toggled,
-          logdataController, &LogdataController::displayOptionsChanged);
+  connect(ui->actionSearchLogdataShowDirect, &QAction::toggled, logdataController, &LogdataController::displayOptionsChanged);
+  connect(ui->actionSearchLogdataShowRoute, &QAction::toggled, logdataController, &LogdataController::displayOptionsChanged);
+  connect(ui->actionSearchLogdataShowTrack, &QAction::toggled, logdataController, &LogdataController::displayOptionsChanged);
 
   connect(ui->actionSearchLogdataShowDirect, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionSearchLogdataShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -1489,8 +1476,7 @@ void MainWindow::connectAllSlots()
 
   // Airspace sources ======
   AirspaceController *airspaceController = NavApp::getAirspaceController();
-  connect(airspaceController, &AirspaceController::updateAirspaceSources,
-          this, &MainWindow::updateMapObjectsShown);
+  connect(airspaceController, &AirspaceController::updateAirspaceSources, this, &MainWindow::updateMapObjectsShown);
   connect(airspaceController, &AirspaceController::updateAirspaceSources,
           NavApp::getAirspaceController(), &AirspaceController::updateButtonsAndActions);
   connect(airspaceController, &AirspaceController::updateAirspaceSources, this, &MainWindow::updateAirspaceSources);
@@ -1673,8 +1659,7 @@ void MainWindow::connectAllSlots()
   // Webserver
   connect(ui->actionRunWebserver, &QAction::toggled, this, &MainWindow::toggleWebserver);
   connect(ui->actionOpenWebserver, &QAction::triggered, this, &MainWindow::openWebserver);
-  connect(NavApp::getWebController(), &WebController::webserverStatusChanged,
-          this, &MainWindow::webserverStatusChanged);
+  connect(NavApp::getWebController(), &WebController::webserverStatusChanged, this, &MainWindow::webserverStatusChanged);
 
   // Shortcut menu
   connect(ui->actionShortcutMap, &QAction::triggered,
@@ -3662,7 +3647,8 @@ void MainWindow::updateActionStates()
   ui->actionMapShowHolding->setEnabled(NavApp::isHoldingsAvailable());
   ui->actionMapShowAirportMsa->setEnabled(NavApp::isAirportMsaAvailable());
 
-  bool hasFlightplan = !NavApp::getRouteConst().isFlightplanEmpty();
+  const Route& route = NavApp::getRouteConst();
+  bool hasFlightplan = !route.isFlightplanEmpty();
   bool hasTrack = !NavApp::isAircraftTrackEmpty();
   ui->actionRouteAppend->setEnabled(hasFlightplan);
   ui->actionRouteSave->setEnabled(hasFlightplan /* && routeController->hasChanged()*/);
@@ -3681,7 +3667,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteShowSkyVector->setEnabled(hasFlightplan);
 
   ui->actionRouteCenter->setEnabled(hasFlightplan);
-  ui->actionRouteSelectParking->setEnabled(NavApp::getRouteConst().hasValidDeparture());
+  ui->actionRouteSelectParking->setEnabled(route.hasValidDeparture());
   ui->actionMapShowRoute->setEnabled(hasFlightplan);
   ui->actionMapShowTocTod->setEnabled(hasFlightplan && ui->actionMapShowRoute->isChecked());
   ui->actionInfoApproachShowMissedAppr->setEnabled(hasFlightplan && ui->actionMapShowRoute->isChecked());
@@ -3749,7 +3735,7 @@ void MainWindow::updateActionStates()
   ui->actionMapShowAircraftTrack->setEnabled(true);
   ui->actionMapDeleteAircraftTrack->setEnabled(mapWidget->hasTrackPoints() || profileWidget->hasTrackPoints());
 
-  bool canCalcRoute = NavApp::getRouteConst().canCalcRoute();
+  bool canCalcRoute = route.canCalcRoute();
   ui->actionRouteCalcDirect->setEnabled(canCalcRoute && NavApp::getRouteConst().hasEntries());
   // ui->actionRouteCalc->setEnabled(canCalcRoute);
   ui->actionRouteReverse->setEnabled(canCalcRoute);
@@ -3758,6 +3744,9 @@ void MainWindow::updateActionStates()
 
   ui->actionMapShowHome->setEnabled(mapWidget->getHomePos().isValid());
   ui->actionMapShowMark->setEnabled(mapWidget->getSearchMarkPos().isValid());
+
+  ui->actionShowApproachCustom->setEnabled(route.hasValidDestinationAndRunways());
+  ui->actionShowDepartureCustom->setEnabled(route.hasValidDepartureAndRunways());
 }
 
 void MainWindow::resetAllSettings()

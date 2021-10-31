@@ -76,7 +76,8 @@ enum MenuActionType
   NONE, /* Nothing selected - default value */
   INFORMATION, /* Show Information */
   PROCEDURE, /* Show airport procedures */
-  CUSTOMPROCEDURE, /* Create custom procedure */
+  CUSTOMAPPROACH, /* Create custom procedure */
+  CUSTOMDEPARTURE, /* Create custom procedure */
   MEASURE, /* GC measmurement line */
   NAVAIDRANGE, /* Show range ring for radio navaid */
   PATTERN, /* Airport traffic pattern */
@@ -195,7 +196,8 @@ private:
   // ----
   void insertInformationMenu(QMenu& menu);
   void insertProcedureMenu(QMenu& menu);
-  void insertCustomProcedureMenu(QMenu& menu);
+  void insertCustomApproachMenu(QMenu& menu);
+  void insertCustomDepartureMenu(QMenu& menu);
 
   // ----
   void insertMeasureMenu(QMenu& menu);

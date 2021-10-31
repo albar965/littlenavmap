@@ -388,10 +388,10 @@ QString ProcedureSearch::approachAndTransitionText(const QTreeWidgetItem *item)
         if(appr != nullptr)
           procs.append(tr("%1 %2").arg(appr->text(COL_DESCRIPTION)).arg(appr->text(COL_IDENT)));
       }
-      procs.append(tr("%1 %2").arg(item->text(COL_DESCRIPTION)).arg(item->text(COL_IDENT)));
+      procs.append(tr(" %1 %2").arg(item->text(COL_DESCRIPTION)).arg(item->text(COL_IDENT)));
     }
   }
-  return procs;
+  return procs.simplified();
 }
 
 void ProcedureSearch::clearRunwayFilter()
@@ -981,9 +981,6 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   menu.addAction(ui->actionInfoApproachShow);
   menu.addSeparator();
 
-  menu.addAction(ui->actionSearchProcedureFollowSelection);
-  menu.addSeparator();
-
   QVector<QAction *> runwayActions;
   if(procData.sidStarRunways.isEmpty())
     menu.addAction(ui->actionInfoApproachAttach);
@@ -992,12 +989,14 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
 
   ui->actionInfoApproachExpandAll->setEnabled(!itemIndex.isEmpty());
   ui->actionInfoApproachCollapseAll->setEnabled(!itemIndex.isEmpty());
-
   menu.addSeparator();
+
   menu.addAction(ui->actionSearchProcedureInformation);
   menu.addAction(ui->actionSearchProcedureShowOnMap);
   menu.addAction(ui->actionSearchProcedureShowInSearch);
+  menu.addSeparator();
 
+  menu.addAction(ui->actionSearchProcedureFollowSelection);
   menu.addSeparator();
   menu.addAction(ui->actionInfoApproachExpandAll);
   menu.addAction(ui->actionInfoApproachCollapseAll);

@@ -1377,7 +1377,7 @@ void ProfileWidget::textsAndColorForLeg(QStringList& texts, QColor& color, bool&
   else if(type == map::INVALID)
     ident = leg.getIdent();
   else if(type == map::PROCEDURE && !leg.getProcedureLeg().fixIdent.isEmpty())
-    // Custom approach
+    // Custom approach or departure
     ident = leg.getIdent();
 
   if(!leg.isAnyProcedure() ||

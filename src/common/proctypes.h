@@ -166,7 +166,15 @@ enum ProcedureLegType
   STRAIGHT_IN, /* Artifical last segment inserted from MAP to runway */
   START_OF_PROCEDURE, /* Artifical first point if procedures do not start with an initial fix
                        *  or with a track, heading or course to fix having length 0 */
-  VECTORS /* Fills a gap between manual segments and an initial fix */
+  VECTORS, /* Fills a gap between manual segments and an initial fix */
+
+  /* Custom approach */
+  CUSTOM_APP_START, /* Start: INITIAL_FIX */
+  CUSTOM_APP_RUNWAY, /* End: COURSE_TO_FIX */
+
+  /* Custom departure */
+  CUSTOM_DEP_END, /* End: COURSE_TO_FIX */
+  CUSTOM_DEP_RUNWAY /* Start: DIRECT_TO_RUNWAY */,
 };
 
 QDebug operator<<(QDebug out, const proc::ProcedureLegType& type);
@@ -410,10 +418,18 @@ struct MapProcedureLeg
   bool isFinalEndpointFix() const;
 
   bool isHold() const;
-  bool isProcedureTurn() const;
+
+  bool isProcedureTurn() const
+  {
+    return type == proc::PROCEDURE_TURN;
+  }
+
   bool isCircular() const;
 
-  bool isInitialFix() const;
+  bool isInitialFix() const
+  {
+    return type == proc::INITIAL_FIX || type == proc::CUSTOM_APP_START;
+  }
 
   /* Do not display distance e.g. for course to altitude */
   bool noDistanceDisplay() const;
@@ -460,7 +476,7 @@ struct MapProcedureLegs
 
   /* Parameters only for custom approaches.
    * Altitude in feet above airport elevation and distance to runway threshold in NM */
-  float approachCustomAltitude = 0.f, approachCustomDistance = 0.f;
+  float customAltitude = 0.f, customDistance = 0.f, customOffset = 0.f;
 
   bool gpsOverlay,
        hasError, /* Unusable due to missing navaid */
@@ -509,9 +525,14 @@ struct MapProcedureLegs
     return approachType == "GNSS" || approachType == "GLS";
   }
 
-  bool isCustom() const
+  bool isCustomApproach() const
   {
     return approachType == "CUSTOM";
+  }
+
+  bool isCustomDeparture() const
+  {
+    return approachType == "CUSTOMDEPART";
   }
 
   bool isRnavGps() const

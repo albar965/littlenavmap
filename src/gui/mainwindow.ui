@@ -253,6 +253,9 @@
     <addaction name="actionShortcutAircraftPerformance"/>
     <addaction name="separator"/>
     <addaction name="actionRouteSelectParking"/>
+    <addaction name="actionShowDepartureCustom"/>
+    <addaction name="actionShowApproachCustom"/>
+    <addaction name="separator"/>
     <addaction name="actionRouteEditMode"/>
     <addaction name="separator"/>
     <addaction name="actionRouteNewFromString"/>
@@ -5643,6 +5646,9 @@ relation to shown airport</string>
     <bool>true</bool>
    </attribute>
    <addaction name="actionRouteSelectParking"/>
+   <addaction name="actionShowDepartureCustom"/>
+   <addaction name="actionShowApproachCustom"/>
+   <addaction name="separator"/>
    <addaction name="actionRouteEditMode"/>
    <addaction name="separator"/>
    <addaction name="actionRouteNewFromString"/>
@@ -8181,7 +8187,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/parkingstartset.svg</normaloff>:/littlenavmap/resources/icons/parkingstartset.svg</iconset>
    </property>
    <property name="text">
-    <string>Select a &amp;Start Position for Departure ...</string>
+    <string>Select a &amp;Start Position ...</string>
    </property>
    <property name="toolTip">
     <string>Select start position for flight plan departure</string>
@@ -9148,46 +9154,46 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Ctrl+Shift+R</string>
    </property>
   </action>
-  <action name="actionRouteShowApproachesCustom">
+  <action name="actionRouteShowApproachCustom">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/approachcustom.svg</normaloff>:/littlenavmap/resources/icons/approachcustom.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/runwaydest.svg</normaloff>:/littlenavmap/resources/icons/runwaydest.svg</iconset>
    </property>
    <property name="text">
-    <string>Add custom approach for %1</string>
+    <string>Select Approach &amp;Runway for %1 ...</string>
    </property>
    <property name="toolTip">
-    <string>Add a custom approach to the flight plan</string>
+    <string>Select approach runway for airport</string>
    </property>
    <property name="statusTip">
     <string>Add a custom approach to the flight plan</string>
    </property>
    <property name="shortcut">
-    <string>Alt+Shift+R</string>
+    <string>Alt+Shift+U</string>
    </property>
   </action>
-  <action name="actionSearchShowApproachesCustom">
+  <action name="actionSearchShowApproachCustom">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/approachcustom.svg</normaloff>:/littlenavmap/resources/icons/approachcustom.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/runwaydest.svg</normaloff>:/littlenavmap/resources/icons/runwaydest.svg</iconset>
    </property>
    <property name="text">
-    <string>Add custom approach for %1</string>
+    <string>Select Approach &amp;Runway for %1 ...</string>
    </property>
    <property name="toolTip">
-    <string>Add a custom approach to the flight plan</string>
+    <string>Select approach runway for airport</string>
    </property>
    <property name="statusTip">
     <string>Add a custom approach to the flight plan</string>
    </property>
    <property name="shortcut">
-    <string>Alt+Shift+R</string>
+    <string>Alt+Shift+U</string>
    </property>
   </action>
   <action name="actionInfoApproachAttach">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/routeadd.svg</normaloff>:/littlenavmap/resources/icons/routeadd.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/approachselect.svg</normaloff>:/littlenavmap/resources/icons/approachselect.svg</iconset>
    </property>
    <property name="text">
     <string>Insert %1 into Flight Plan</string>
@@ -12152,6 +12158,78 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Remove this holding</string>
    </property>
   </action>
+  <action name="actionRouteShowDepartureCustom">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/runwaydepart.svg</normaloff>:/littlenavmap/resources/icons/runwaydepart.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Select &amp;Departure Runway for %1 ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Select departure runway for airport</string>
+   </property>
+   <property name="statusTip">
+    <string>Add a custom approach to the flight plan</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+R</string>
+   </property>
+  </action>
+  <action name="actionSearchShowDepartureCustom">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/runwaydepart.svg</normaloff>:/littlenavmap/resources/icons/runwaydepart.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Select &amp;Departure Runway for %1 ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Select departure runway for airport</string>
+   </property>
+   <property name="statusTip">
+    <string>Add a custom approach to the flight plan</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+R</string>
+   </property>
+  </action>
+  <action name="actionShowApproachCustom">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/runwaydest.svg</normaloff>:/littlenavmap/resources/icons/runwaydest.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Select Destination &amp;Runway ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Select runway for destination airport in flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Select runway for destination airport in flight plan</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+U</string>
+   </property>
+  </action>
+  <action name="actionShowDepartureCustom">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/runwaydepart.svg</normaloff>:/littlenavmap/resources/icons/runwaydepart.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Select &amp;Departure Runway ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Select runway for departure airport in flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Select runway for departure airport in flight plan</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+R</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12337,8 +12415,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalc"/>
-  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

@@ -293,5 +293,7 @@
         <file>resources/icons/enroutehold.svg</file>
         <file>resources/icons/msa.svg</file>
         <file>resources/icons/msaoff.svg</file>
+        <file>resources/icons/runwaydest.svg</file>
+        <file>resources/icons/runwaydepart.svg</file>
     </qresource>
 </RCC>

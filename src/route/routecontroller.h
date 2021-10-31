@@ -256,7 +256,12 @@ public:
   QStringList getAllRouteColumns() const;
 
   /* Add custom procedure and probably set new destination airport */
-  void showProceduresCustom(map::MapAirport airport);
+  void showCustomApproach(map::MapAirport airport, QString dialogHeader);
+  void showCustomDeparture(map::MapAirport airport, QString dialogHeader);
+
+  /* Add custom proc for departure or destination airport. Called from main menu. */
+  void showCustomApproachMainMenu();
+  void showCustomDepartureMainMenu();
 
   /* Name of currently loaded flight plan file */
   const QString& getRouteFilepath() const
@@ -407,7 +412,13 @@ private:
 
   void showInformationMenu();
   void showProceduresMenu();
-  void showProceduresMenuCustom();
+
+  /* From context menu */
+  void showCustomApproachRouteMenu();
+
+  /* From context menu */
+  void showCustomDepartureRouteMenu();
+
   void showOnMapMenu();
 
   void showInformationInternal(const RouteLeg& routeLeg);

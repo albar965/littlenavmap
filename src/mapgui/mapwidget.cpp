@@ -1766,8 +1766,12 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           emit showProcedures(airport, departureFilter, arrivalFilter);
           break;
 
-        case mc::CUSTOMPROCEDURE:
-          emit showProceduresCustom(airport);
+        case mc::CUSTOMAPPROACH:
+          emit showCustomApproach(airport, QString());
+          break;
+
+        case mc::CUSTOMDEPARTURE:
+          emit showCustomDeparture(airport, QString());
           break;
 
         case mc::MEASURE:

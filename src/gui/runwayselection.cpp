@@ -52,9 +52,11 @@ void RunwaySelection::restoreState()
 
   if(selection != nullptr)
   {
-    // Select first row
     selection->clearSelection();
-    selection->select(runwayTable->model()->index(0, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
+
+    if(!runways.isEmpty())
+      // Select first row
+      selection->select(runwayTable->model()->index(0, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
   }
 }
 
@@ -100,28 +102,46 @@ void RunwaySelection::fillRunwayList()
   if(rw != nullptr)
     runways = *rw;
 
-  // Sort by lenght and heading
-  std::sort(runways.begin(), runways.end(), [](const map::MapRunway& rw1, const map::MapRunway& rw2) -> bool {
-    if(rw1.length == rw2.length)
-      return rw1.heading < rw2.heading;
-    else
-      return rw1.length > rw2.length;
-  });
+  runwayTable->clear();
+  runwayTable->setDisabled(runways.isEmpty());
 
-  // Set table size
-  runwayTable->setRowCount(runways.size() * 2);
-  runwayTable->setColumnCount(5);
-
-  // Index in runway table
-  int index = 0;
-  for(const map::MapRunway& runway : runways)
+  if(runways.isEmpty())
   {
-    // Primary end
-    addItem(runway, index, true);
+    runwayTable->setSelectionMode(QAbstractItemView::NoSelection);
+    runwayTable->clearSelection();
 
-    // Secondary end
-    addItem(runway, index, false);
-    index++;
+    runwayTable->setRowCount(1);
+    runwayTable->setColumnCount(1);
+    runwayTable->setItem(0, 0, new QTableWidgetItem(tr("Airport has no runway.")));
+  }
+  else
+  {
+    runwayTable->setSelectionMode(QAbstractItemView::SingleSelection);
+
+    // Sort by length and heading
+    std::sort(runways.begin(), runways.end(), [](const map::MapRunway& rw1, const map::MapRunway& rw2) -> bool {
+      return rw1.length == rw2.length ? rw1.heading<rw2.heading : rw1.length> rw2.length;
+    });
+
+    // Set table size
+    runwayTable->setRowCount(runways.size() * 2);
+    runwayTable->setColumnCount(5);
+
+    runwayTable->setHorizontalHeaderLabels({tr(" Number "), tr(" Length and Width "), tr(" Heading "), tr(" Surface "),
+                                            tr(" Attributes ")});
+
+    // Index in runway table
+    int index = 0;
+    for(const map::MapRunway& runway : runways)
+    {
+      // Primary end
+      addItem(runway, index, true);
+
+      // Secondary end
+      addItem(runway, index, false);
+      index++;
+    }
+    runwayTable->resizeColumnsToContents();
   }
 }
 

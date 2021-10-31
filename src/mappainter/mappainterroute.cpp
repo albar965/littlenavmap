@@ -66,11 +66,9 @@ void MapPainterRoute::render()
   // Draw the approach preview if any selected in the search tab
   proc::MapProcedureLeg lastLegPoint;
   if(context->mapLayerRoute->isApproach())
-    paintProcedure(lastLegPoint, mapPaintWidget->getProcedureHighlight(), 0, mapcolors::routeProcedurePreviewColor,
-                   true /* preview */);
+    paintProcedure(lastLegPoint, mapPaintWidget->getProcedureHighlight(), 0, mapcolors::routeProcedurePreviewColor, true /* preview */);
 
-  if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN) &&
-     context->objectDisplayTypes.testFlag(map::FLIGHTPLAN_TOC_TOD) &&
+  if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN) && context->objectDisplayTypes.testFlag(map::FLIGHTPLAN_TOC_TOD) &&
      context->mapLayerRoute->isRouteTextAndDetail())
     paintTopOfDescentAndClimb();
 }
@@ -746,6 +744,8 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
   // ===========================================================
   else if(contains(leg.type, {proc::COURSE_TO_ALTITUDE,
                               proc::COURSE_TO_FIX,
+                              proc::CUSTOM_APP_RUNWAY,
+                              proc::CUSTOM_DEP_END,
                               proc::DIRECT_TO_FIX,
                               proc::VECTORS,
                               proc::FIX_TO_ALTITUDE,
@@ -848,6 +848,7 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
                               proc::HEADING_TO_DME_DISTANCE_TERMINATION,
                               proc::TRACK_FROM_FIX_TO_DME_DISTANCE,
                               proc::DIRECT_TO_RUNWAY,
+                              proc::CUSTOM_DEP_RUNWAY,
                               proc::CIRCLE_TO_LAND,
                               proc::STRAIGHT_IN}))
   {
@@ -1293,7 +1294,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     if(wToSBuf(leg.line.getPos1(), x, y, margins))
       paintProcedurePoint(x, y, false);
   }
-  else if(leg.type == proc::COURSE_TO_FIX)
+  else if(leg.type == proc::COURSE_TO_FIX || leg.type == proc::CUSTOM_APP_RUNWAY || leg.type == proc::CUSTOM_DEP_END)
   {
     if(index == 0)
     {

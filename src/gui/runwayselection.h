@@ -71,6 +71,11 @@ public:
     showPattern = value;
   }
 
+  bool hasRunways() const
+  {
+    return !runways.isEmpty();
+  }
+
 signals:
   /* Selection in the table has changed. */
   void itemSelectionChanged();

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>497</width>
-    <height>401</height>
+    <width>460</width>
+    <height>400</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -274,7 +274,7 @@
       <bool>false</bool>
      </property>
      <attribute name="horizontalHeaderVisible">
-      <bool>false</bool>
+      <bool>true</bool>
      </attribute>
      <attribute name="horizontalHeaderMinimumSectionSize">
       <number>20</number>

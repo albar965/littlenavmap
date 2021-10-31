@@ -292,7 +292,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   ui->actionRouteDeleteLeg->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteShowInformation->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteShowApproaches->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-  ui->actionRouteShowApproachesCustom->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionRouteShowApproachCustom->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionRouteShowDepartureCustom->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteShowOnMap->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteTableSelectNothing->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteTableSelectAll->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -305,7 +306,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   // Add action/shortcuts to table view
   view->addActions({ui->actionRouteLegDown, ui->actionRouteLegUp, ui->actionRouteDeleteLeg,
                     ui->actionRouteTableCopy, ui->actionRouteShowInformation,
-                    ui->actionRouteShowApproaches, ui->actionRouteShowApproachesCustom,
+                    ui->actionRouteShowApproaches, ui->actionRouteShowApproachCustom, ui->actionRouteShowDepartureCustom,
                     ui->actionRouteShowOnMap, ui->actionRouteTableSelectNothing, ui->actionRouteTableSelectAll,
                     ui->actionRouteActivateLeg, ui->actionRouteResetView, ui->actionRouteSetMark,
                     ui->actionRouteEditUserWaypoint});
@@ -325,7 +326,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   connect(ui->actionRouteShowInformation, &QAction::triggered, this, &RouteController::showInformationMenu);
   connect(ui->actionRouteShowApproaches, &QAction::triggered, this, &RouteController::showProceduresMenu);
-  connect(ui->actionRouteShowApproachesCustom, &QAction::triggered, this, &RouteController::showProceduresMenuCustom);
+  connect(ui->actionRouteShowApproachCustom, &QAction::triggered, this, &RouteController::showCustomApproachRouteMenu);
+  connect(ui->actionRouteShowDepartureCustom, &QAction::triggered, this, &RouteController::showCustomDepartureRouteMenu);
   connect(ui->actionRouteShowOnMap, &QAction::triggered, this, &RouteController::showOnMapMenu);
 
   connect(ui->dockWidgetRoute, &QDockWidget::visibilityChanged, this, &RouteController::dockVisibilityChanged);
@@ -1535,8 +1537,7 @@ bool RouteController::saveFlightplanLnmInternal()
     fileDestinationIdent = flightplan.getDestinationIdent();
 
     // Set cruise altitude in feet instead of local units
-    flightplan.setCruisingAltitude(
-      atools::roundToInt(Unit::rev(static_cast<float>(flightplan.getCruisingAltitude()), Unit::altFeetF)));
+    flightplan.setCruisingAltitude(atools::roundToInt(Unit::rev(static_cast<float>(flightplan.getCruisingAltitude()), Unit::altFeetF)));
 
     // Add performance file type and name ===============
     assignFlightplanPerfProperties(flightplan);
@@ -2179,21 +2180,6 @@ void RouteController::showProceduresMenu()
 }
 
 /* From context menu */
-void RouteController::showProceduresMenuCustom()
-{
-  if(!hasTableSelection())
-    return;
-
-  QModelIndex index = view->currentIndex();
-  if(index.isValid())
-  {
-    const RouteLeg& routeLeg = route.value(index.row());
-    if(routeLeg.isValidWaypoint() && routeLeg.getMapObjectType() == map::AIRPORT)
-      showProceduresCustom(routeLeg.getAirport());
-  }
-}
-
-/* From context menu */
 void RouteController::showOnMapMenu()
 {
   if(!hasTableSelection())
@@ -2293,13 +2279,14 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   qDebug() << "tableContextMenu";
 
-  QList<QAction *> actions({ui->actionRouteShowInformation, ui->actionRouteShowApproaches, ui->actionRouteShowApproachesCustom,
-                            ui->actionRouteShowOnMap, ui->actionRouteActivateLeg, ui->actionRouteFollowSelection, ui->actionRouteLegUp,
-                            ui->actionRouteLegDown, ui->actionRouteDeleteLeg, ui->actionRouteEditUserWaypoint, ui->actionRouteInsert,
-                            ui->actionRouteTableAppend, ui->actionRouteSaveSelection, ui->actionRouteCalcSelected, ui->actionMapRangeRings,
-                            ui->actionMapNavaidRange, ui->actionMapTrafficPattern, ui->actionMapHold, ui->actionMapAirportMsa,
-                            ui->actionRouteTableCopy, ui->actionRouteTableSelectAll, ui->actionRouteTableSelectNothing,
-                            ui->actionRouteResetView, ui->actionRouteVisibleColumns, ui->actionRouteSetMark});
+  QList<QAction *> actions({ui->actionRouteShowInformation, ui->actionRouteShowApproaches, ui->actionRouteShowApproachCustom,
+                            ui->actionRouteShowDepartureCustom, ui->actionRouteShowOnMap, ui->actionRouteActivateLeg,
+                            ui->actionRouteFollowSelection, ui->actionRouteLegUp, ui->actionRouteLegDown, ui->actionRouteDeleteLeg,
+                            ui->actionRouteEditUserWaypoint, ui->actionRouteInsert, ui->actionRouteTableAppend,
+                            ui->actionRouteSaveSelection, ui->actionRouteCalcSelected, ui->actionMapRangeRings, ui->actionMapNavaidRange,
+                            ui->actionMapTrafficPattern, ui->actionMapHold, ui->actionMapAirportMsa, ui->actionRouteTableCopy,
+                            ui->actionRouteTableSelectAll, ui->actionRouteTableSelectNothing, ui->actionRouteResetView,
+                            ui->actionRouteVisibleColumns, ui->actionRouteSetMark});
 
   // Save text which will be changed below - Re-enable actions on exit to allow keystrokes
   atools::gui::ActionTool actionTool(actions);
@@ -2332,7 +2319,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   bool canInsert = false;
 
-  ui->actionRouteShowApproachesCustom->setEnabled(false);
+  ui->actionRouteShowApproachCustom->setEnabled(false);
+  ui->actionRouteShowDepartureCustom->setEnabled(false);
   ui->actionRouteShowApproaches->setEnabled(false);
   ui->actionRouteEditUserWaypoint->setEnabled(false);
   ui->actionRouteShowInformation->setEnabled(false);
@@ -2386,7 +2374,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
         {
           if(hasDeparture)
           {
-            ui->actionRouteShowApproaches->setText(tr("Show Departure Procedures for %1"));
+            ui->actionRouteShowApproaches->setText(tr("Show Departure &Procedures for %1"));
             ActionTool::setText(ui->actionRouteShowApproaches, true, objectText);
           }
           else
@@ -2396,11 +2384,11 @@ void RouteController::tableContextMenu(const QPoint& pos)
         {
           if(hasAnyArrival)
           {
-            ui->actionRouteShowApproaches->setText(tr("Show Arrival Procedures for %1"));
+            ui->actionRouteShowApproaches->setText(tr("Show Arrival &Procedures for %1"));
             ActionTool::setText(ui->actionRouteShowApproaches, true, objectText);
           }
           else
-            ui->actionRouteShowApproaches->setText(tr("Show procedures (no arrival procedure)"));
+            ui->actionRouteShowApproaches->setText(tr("Show &Procedures (no arrival procedure)"));
         }
         else
         {
@@ -2411,16 +2399,34 @@ void RouteController::tableContextMenu(const QPoint& pos)
       else
         ui->actionRouteShowApproaches->setText(tr("Show Procedures (no procedure)"));
 
-      ui->actionRouteShowApproachesCustom->setEnabled(true);
+      ui->actionRouteShowApproachCustom->setEnabled(true);
       if(airportDestination)
-        ui->actionRouteShowApproachesCustom->setText(tr("Create &Approach to %1 and insert into Flight Plan ..."));
+        ui->actionRouteShowApproachCustom->setText(tr("Select Destination &Runway for %1 ..."));
       else
-        ui->actionRouteShowApproachesCustom->setText(tr("Create &Approach to %1 and use as Destination ..."));
+        ui->actionRouteShowApproachCustom->setText(tr("Select &Runway and use %1 as Destination ..."));
+
+      ui->actionRouteShowDepartureCustom->setEnabled(true);
+      if(airportDeparture)
+        ui->actionRouteShowDepartureCustom->setText(tr("Select &Departure Runway for %1 ..."));
+      else
+        ui->actionRouteShowDepartureCustom->setText(tr("Select Runway and use %1 as &Departure ..."));
     }
     else
     {
       ui->actionRouteShowApproaches->setText(tr("Show &Procedures"));
-      ui->actionRouteShowApproachesCustom->setText(tr("Create &Approach to Airport ..."));
+      ui->actionRouteShowApproachCustom->setText(tr("Select Destination &Runway for %1 ..."));
+      ui->actionRouteShowDepartureCustom->setText(tr("Select &Departure Runway for %1 ..."));
+    }
+
+    if(routeLeg->getAirport().noRunways())
+    {
+      ActionTool::setText(ui->actionRouteShowApproachCustom, false, QString(), tr(" (no runway)"));
+      ActionTool::setText(ui->actionRouteShowDepartureCustom, false, QString(), tr(" (no runway)"));
+    }
+    else
+    {
+      ActionTool::setText(ui->actionRouteShowApproachCustom, true, objectText);
+      ActionTool::setText(ui->actionRouteShowDepartureCustom, true, objectText);
     }
 
     ui->actionRouteShowOnMap->setEnabled(true);
@@ -2537,15 +2543,15 @@ void RouteController::tableContextMenu(const QPoint& pos)
   actionTool.finishTexts(objectText);
 
   menu.addAction(ui->actionRouteShowInformation);
-  menu.addAction(ui->actionRouteShowApproaches);
-  menu.addAction(ui->actionRouteShowApproachesCustom);
   menu.addAction(ui->actionRouteShowOnMap);
   menu.addSeparator();
 
-  menu.addAction(ui->actionRouteActivateLeg);
+  menu.addAction(ui->actionRouteShowApproaches);
+  menu.addAction(ui->actionRouteShowDepartureCustom);
+  menu.addAction(ui->actionRouteShowApproachCustom);
   menu.addSeparator();
 
-  menu.addAction(ui->actionRouteFollowSelection);
+  menu.addAction(ui->actionRouteActivateLeg);
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteLegUp);
@@ -2568,6 +2574,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addAction(ui->actionMapTrafficPattern);
   menu.addAction(ui->actionMapHold);
   menu.addAction(ui->actionMapAirportMsa);
+  menu.addSeparator();
+
+  menu.addAction(ui->actionRouteFollowSelection);
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteTableCopy);
@@ -3538,11 +3547,63 @@ void RouteController::routeSetDestinationInternal(const map::MapAirport& airport
   updateStartPositionBestRunway(false /* force */, false /* undo */);
 }
 
-void RouteController::showProceduresCustom(map::MapAirport airport)
+void RouteController::showCustomApproachMainMenu()
 {
+  // Called from main menu for current destination
+  if(route.hasValidDestinationAndRunways())
+    showCustomApproach(route.getDestinationAirportLeg().getAirport(), tr("Select runway for destination:"));
+}
+
+void RouteController::showCustomDepartureMainMenu()
+{
+  // Called from main menu for current departure
+  if(route.hasValidDepartureAndRunways())
+    showCustomDeparture(route.getDepartureAirportLeg().getAirport(), tr("Select runway for departure:"));
+}
+
+void RouteController::showCustomApproachRouteMenu()
+{
+  // Flight plan table context menu
+  if(!hasTableSelection())
+    return;
+
+  QModelIndex index = view->currentIndex();
+  if(index.isValid())
+    showCustomApproach(route.value(index.row()).getAirport(), QString());
+}
+
+void RouteController::showCustomDepartureRouteMenu()
+{
+  // Flight plan table context menu
+  if(!hasTableSelection())
+    return;
+
+  QModelIndex index = view->currentIndex();
+  if(index.isValid())
+    showCustomDeparture(route.value(index.row()).getAirport(), QString());
+}
+
+void RouteController::showCustomApproach(map::MapAirport airport, QString dialogHeader)
+{
+  // Also called from search menu
   qDebug() << Q_FUNC_INFO << airport.id << airport.ident;
 
-  CustomProcedureDialog dialog(mainWindow, airport);
+  if(!airport.isValid() || airport.noRunways())
+    return;
+
+  if(dialogHeader.isEmpty())
+  {
+    // No header given. Build one based on airport relation to route (is destination, etc.)
+    bool destination;
+    proc::procedureFlags(route, &airport, nullptr, &destination);
+    if(destination)
+      dialogHeader = tr("Select runway for destination:");
+    else
+      dialogHeader = tr("Select runway and use airport as destination:");
+  }
+
+  // Show runway selection dialog to user
+  CustomProcedureDialog dialog(mainWindow, airport, false /* departureParam */, dialogHeader);
   int result = dialog.exec();
 
   if(result == QDialog::Accepted)
@@ -3553,8 +3614,45 @@ void RouteController::showProceduresCustom(map::MapAirport airport)
     qDebug() << Q_FUNC_INFO << runway.primaryName << runway.secondaryName << end.id << end.name;
 
     proc::MapProcedureLegs procedure;
-    NavApp::getProcedureQuery()->createCustomApproach(procedure, airport, end,
-                                                      dialog.getEntryDistance(), dialog.getEntryAltitude());
+    NavApp::getProcedureQuery()->createCustomApproach(procedure, airport, end, dialog.getLegDistance(),
+                                                      dialog.getEntryAltitude(), dialog.getLegOffsetAngle());
+    routeAddProcedure(procedure, QString());
+  }
+}
+
+void RouteController::showCustomDeparture(map::MapAirport airport, QString dialogHeader)
+{
+  // Also called from search menu
+  qDebug() << Q_FUNC_INFO << airport.id << airport.ident;
+
+  if(!airport.isValid() || airport.noRunways())
+    return;
+
+  if(dialogHeader.isEmpty())
+  {
+    // No header given. Build one based on airport relation to route (is departure, etc.)
+    bool departure;
+    proc::procedureFlags(route, &airport, &departure);
+    if(departure)
+      dialogHeader = tr("Select runway for departure:");
+    else
+      dialogHeader = tr("Select runway and use airport as departure:");
+  }
+
+  // Show runway selection dialog to user
+  CustomProcedureDialog dialog(mainWindow, airport, true /* departureParam */, dialogHeader);
+  int result = dialog.exec();
+
+  if(result == QDialog::Accepted)
+  {
+    map::MapRunway runway;
+    map::MapRunwayEnd end;
+    dialog.getSelected(runway, end);
+
+    qDebug() << Q_FUNC_INFO << runway.primaryName << runway.secondaryName << end.id << end.name;
+
+    proc::MapProcedureLegs procedure;
+    NavApp::getProcedureQuery()->createCustomDeparture(procedure, airport, end, dialog.getLegDistance());
     routeAddProcedure(procedure, QString());
   }
 }
@@ -3614,12 +3712,13 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs, const QStri
   // Inserting new ones does not produce errors - only loading
   procedureErrors.clear();
 
-  // Airport id in legs is from nav database - convert to simulator database
   map::MapAirport airportSim;
-  if(legs.isCustom())
+  if(legs.isCustomApproach() || legs.isCustomDeparture())
+    // Custom procedures are always from sim database
     NavApp::getAirportQuerySim()->getAirportById(airportSim, legs.ref.airportId);
   else
   {
+    // Airport id in legs is from nav database - convert to simulator database
     NavApp::getAirportQueryNav()->getAirportById(airportSim, legs.ref.airportId);
     NavApp::getMapQueryGui()->getAirportSimReplace(airportSim);
   }
@@ -3898,8 +3997,7 @@ void RouteController::assignFlightplanPerfProperties(Flightplan& flightplan) con
 
   flightplan.getProperties().insert(atools::fs::pln::AIRCRAFT_PERF_NAME, perf.getName());
   flightplan.getProperties().insert(atools::fs::pln::AIRCRAFT_PERF_TYPE, perf.getAircraftType());
-  flightplan.getProperties().insert(atools::fs::pln::AIRCRAFT_PERF_FILE,
-                                    NavApp::getAircraftPerfController()->getCurrentFilepath());
+  flightplan.getProperties().insert(atools::fs::pln::AIRCRAFT_PERF_FILE, NavApp::getAircraftPerfController()->getCurrentFilepath());
 }
 
 void RouteController::updateFlightplanFromWidgets(Flightplan& flightplan)
@@ -3970,8 +4068,7 @@ void RouteController::updateTableModel()
     else
       identStr = leg.getDisplayIdent();
 
-    QStandardItem *ident =
-      new QStandardItem(iconForLeg(leg, view->verticalHeader()->defaultSectionSize() - 2), identStr);
+    QStandardItem *ident = new QStandardItem(iconForLeg(leg, view->verticalHeader()->defaultSectionSize() - 2), identStr);
     QFont f = ident->font();
     f.setBold(true);
     ident->setFont(f);
@@ -4711,17 +4808,22 @@ QString RouteController::buildFlightplanLabel(bool print, bool widget, bool titl
           }
           else
           {
-            boldTextFlag << false << true << false;
+            boldTextFlag << false << true;
             procedureText.append(tr("Depart runway"));
             procedureText.append(departureLegs.runwayEnd.name);
-            procedureText.append(tr("via SID"));
+
+            if(!departureLegs.isCustomDeparture())
+            {
+              boldTextFlag << false;
+              procedureText.append(tr("via SID"));
+            }
           }
 
-          QString sid(departureLegs.approachFixIdent);
-          if(!departureLegs.transitionFixIdent.isEmpty())
-            sid += "." + departureLegs.transitionFixIdent;
-          boldTextFlag << true;
-          procedureText.append(sid);
+          if(!departureLegs.isCustomDeparture())
+          {
+            boldTextFlag << true;
+            procedureText.append(departureLegs.approachFixIdent);
+          }
 
           if(arrivalLegs.mapType & proc::PROCEDURE_ARRIVAL_ALL || starLegs.mapType & proc::PROCEDURE_ARRIVAL_ALL)
           {
@@ -4730,7 +4832,7 @@ QString RouteController::buildFlightplanLabel(bool print, bool widget, bool titl
           }
         }
 
-        // Add arrival procedures procedure to text
+        // Add arrival  procedure to text
         // STAR
         if(!starLegs.isEmpty())
         {
@@ -4753,6 +4855,7 @@ QString RouteController::buildFlightplanLabel(bool print, bool widget, bool titl
 
           if(!(arrivalLegs.mapType & proc::PROCEDURE_APPROACH))
           {
+            // No approach. Direct from STAR to runway.
             boldTextFlag << false << true;
             procedureText.append(tr("at runway"));
             procedureText.append(starLegs.procedureRunway);
@@ -4779,42 +4882,53 @@ QString RouteController::buildFlightplanLabel(bool print, bool widget, bool titl
 
         if(arrivalLegs.mapType & proc::PROCEDURE_APPROACH)
         {
-          boldTextFlag << false;
-          procedureText.append((arrivalLegs.mapType & proc::PROCEDURE_TRANSITION ||
-                                !starLegs.isEmpty()) ? tr("and") : tr("Via"));
-
-          // Type and suffix =======================
-          QString type(arrivalLegs.displayApproachType());
-          if(!arrivalLegs.approachSuffix.isEmpty())
-            type += tr("-%1").arg(arrivalLegs.approachSuffix);
-
-          boldTextFlag << true;
-          procedureText.append(type);
-
-          boldTextFlag << true;
-          procedureText.append(arrivalLegs.approachFixIdent);
-
-          if(!arrivalLegs.approachArincName.isEmpty())
+          if(!arrivalLegs.isCustomApproach())
           {
+            boldTextFlag << false;
+            procedureText.append((arrivalLegs.mapType & proc::PROCEDURE_TRANSITION || !starLegs.isEmpty()) ? tr("and") : tr("Via"));
+
+            // Type and suffix =======================
+            QString type(arrivalLegs.displayApproachType());
+            if(!arrivalLegs.approachSuffix.isEmpty())
+              type += tr("-%1").arg(arrivalLegs.approachSuffix);
+
             boldTextFlag << true;
-            procedureText.append(tr("(%1)").arg(arrivalLegs.approachArincName));
-          }
+            procedureText.append(type);
 
-          // Runway =======================
-          if(arrivalLegs.runwayEnd.isValid() && !arrivalLegs.runwayEnd.name.isEmpty())
-          {
-            // Add runway for approach
-            boldTextFlag << false << true << false;
-            procedureText.append(procedureText.isEmpty() ? tr("To runway") : tr("to runway"));
-            procedureText.append(arrivalLegs.runwayEnd.name);
-            procedureText.append(tr("."));
+            boldTextFlag << true;
+            procedureText.append(arrivalLegs.approachFixIdent);
+
+            if(!arrivalLegs.approachArincName.isEmpty())
+            {
+              boldTextFlag << true;
+              procedureText.append(tr("(%1)").arg(arrivalLegs.approachArincName));
+            }
+
+            // Runway =======================
+            if(arrivalLegs.runwayEnd.isValid() && !arrivalLegs.runwayEnd.name.isEmpty())
+            {
+              // Add runway for approach
+              boldTextFlag << false << true << false;
+              procedureText.append(procedureText.isEmpty() ? tr("To runway") : tr("to runway"));
+              procedureText.append(arrivalLegs.runwayEnd.name);
+              procedureText.append(tr("."));
+            }
+            else
+            {
+              // Add runway text
+              boldTextFlag << false;
+              procedureText.append(procedureText.isEmpty() ? tr("To runway.") : tr("to runway."));
+            }
           }
           else
           {
-            // Add runway text
-            boldTextFlag << false;
-            procedureText.append(procedureText.isEmpty() ? tr("To runway.") : tr("to runway."));
+            // Add runway for custom approach
+            boldTextFlag << false << true << false;
+            procedureText.append(tr("Arrive at runway"));
+            procedureText.append(arrivalLegs.runwayEnd.name);
+            procedureText.append(tr("."));
           }
+
           approachRunway = arrivalLegs.runwayEnd.name;
         }
 
@@ -4822,9 +4936,8 @@ QString RouteController::buildFlightplanLabel(bool print, bool widget, bool titl
            !atools::fs::util::runwayEqual(approachRunway, starRunway))
         {
           boldTextFlag << true;
-          procedureText.append(
-            atools::util::HtmlBuilder::errorMessage(tr("Runway mismatch: STAR \"%1\" ≠ Approach \"%2\".").
-                                                    arg(starRunway).arg(approachRunway)));
+          procedureText.append(atools::util::HtmlBuilder::errorMessage(tr("Runway mismatch: STAR \"%1\" ≠ Approach \"%2\".").
+                                                                       arg(starRunway).arg(approachRunway)));
         }
 
         for(int i = 0; i < procedureText.size(); i++)

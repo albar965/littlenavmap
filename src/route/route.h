@@ -288,9 +288,11 @@ public:
 
   /* @return true if departure is an airport */
   bool hasValidDeparture() const;
+  bool hasValidDepartureAndRunways() const;
 
   /* @return true if destination is an airport */
   bool hasValidDestination() const;
+  bool hasValidDestinationAndRunways() const;
 
   /* @return true if departure start position is a helipad */
   bool hasDepartureHelipad() const;
@@ -328,6 +330,16 @@ public:
   bool hasAnyProcedure() const
   {
     return hasAnyApproachProcedure() || hasAnySidProcedure() || hasAnyStarProcedure();
+  }
+
+  bool isCustomApproach() const
+  {
+    return approachLegs.isCustomApproach();
+  }
+
+  bool isCustomDeparture() const
+  {
+    return sidLegs.isCustomDeparture();
   }
 
   /* Final approach */
