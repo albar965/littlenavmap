@@ -932,7 +932,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
             float pathAngle = angles.value(j - 1, map::INVALID_ANGLE_VALUE);
             if(pathAngle < -0.5f)
             {
-              QString txt = tr(" %1° ► ").arg(std::abs(pathAngle), 0, 'g', proc ? 3 : 2);
+              QString txt = tr(" %1° ► ").arg(pathAngle, 0, 'g', proc ? 3 : 2);
               int textW = painter.fontMetrics().horizontalAdvance(txt);
               QLineF line(toScreen(geometry.at(j - 1)), toScreen(geometry.at(j)));
               if(line.length() > textW)
@@ -1886,9 +1886,9 @@ void ProfileWidget::buildTooltip(int x, bool force)
   bool required = false;
   float verticalAngle = legList->route.getVerticalAngleAtDistance(distanceToGo, &required);
 
-  if(verticalAngle < -0.1f)
+  if(verticalAngle < -0.5f)
     html.br().b(required ? tr("Required Flight Path Angle: ") : tr("Flight path angle: ")).
-    text(tr("%L1 °").arg(std::abs(verticalAngle), 0, 'g', required ? 3 : 2));
+    text(tr("%L1 °").arg(verticalAngle, 0, 'g', required ? 3 : 2));
 
   // Ground ===============================================================
   QStringList groundText;

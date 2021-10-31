@@ -358,7 +358,7 @@ QString restrictionText(const MapProcedureLeg& procedureLeg)
     restrictions.append(proc::speedRestrictionTextShort(procedureLeg.speedRestriction));
 
   if(procedureLeg.verticalAngle < -0.1f)
-    restrictions.append(QObject::tr("%L1°").arg(std::abs(procedureLeg.verticalAngle), 0, 'g', 3));
+    restrictions.append(QObject::tr("%L1°").arg(procedureLeg.verticalAngle, 0, 'g', 3));
 
   return restrictions.join(QObject::tr("/"));
 }
