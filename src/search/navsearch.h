@@ -30,6 +30,7 @@ class QAction;
 class QMainWindow;
 class Column;
 class NavIconDelegate;
+class QueryBuilderResult;
 
 namespace atools {
 namespace sql {
@@ -71,6 +72,8 @@ private:
   QVariant modelDataHandler(int colIndex, int rowIndex, const Column *col, const QVariant&,
                             const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
   QString formatModelData(const Column *col, const QVariant& displayRoleValue) const;
+
+  QueryBuilderResult navQueryBuilderFunc(QWidget *widget);
 
   /* All layouts, lines and drop down menu items */
   QList<QObject *> navSearchWidgets;

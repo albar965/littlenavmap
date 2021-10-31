@@ -627,9 +627,6 @@
                <property name="statusTip">
                 <string>Airport ICAO, IATA, FAA or local code</string>
                </property>
-               <property name="maxLength">
-                <number>8</number>
-               </property>
                <property name="placeholderText">
                 <string>Ident</string>
                </property>
@@ -1856,9 +1853,6 @@
                <property name="statusTip">
                 <string>Navaid ICAO ident</string>
                </property>
-               <property name="maxLength">
-                <number>6</number>
-               </property>
                <property name="placeholderText">
                 <string>Ident</string>
                </property>
@@ -1903,9 +1897,6 @@
                <property name="statusTip">
                 <string>Navaid two-letter code for region</string>
                </property>
-               <property name="maxLength">
-                <number>5</number>
-               </property>
                <property name="placeholderText">
                 <string>Region</string>
                </property>
@@ -1927,9 +1918,6 @@
                </property>
                <property name="statusTip">
                 <string>Navaid airport ICAO code</string>
-               </property>
-               <property name="maxLength">
-                <number>8</number>
                </property>
                <property name="placeholderText">
                 <string>Airport ICAO Code</string>
@@ -2726,9 +2714,6 @@
              <property name="statusTip">
               <string>Short ident of the userpoint</string>
              </property>
-             <property name="maxLength">
-              <number>8</number>
-             </property>
              <property name="placeholderText">
               <string>Ident</string>
              </property>
@@ -3134,9 +3119,6 @@ Matches any visited airport.</string>
              <property name="statusTip">
               <string>Departure or destination airport ICAO code. </string>
              </property>
-             <property name="maxLength">
-              <number>8</number>
-             </property>
              <property name="placeholderText">
               <string>Airport ICAO</string>
              </property>
@@ -3351,9 +3333,6 @@ Matches any visited airport.</string>
                </property>
                <property name="statusTip">
                 <string>Departure airport ICAO code</string>
-               </property>
-               <property name="maxLength">
-                <number>8</number>
                </property>
                <property name="placeholderText">
                 <string>Departure ICAO</string>
@@ -5724,7 +5703,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>8</y>
+              <y>0</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -12416,7 +12395,7 @@ Disabled if a navdatabase does not allow it.</string>
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
-  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
  </buttongroups>
 </ui>

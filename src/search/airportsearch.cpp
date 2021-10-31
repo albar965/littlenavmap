@@ -41,6 +41,7 @@
 
 #include <QMessageBox>
 #include <QProgressDialog>
+#include <QStringBuilder>
 
 /* Default values for minimum and maximum random flight plan distance */
 const static float FLIGHTPLAN_MIN_DISTANCE_DEFAULT_NM = 0.f;
@@ -285,56 +286,66 @@ QueryBuilderResult AirportSearch::airportQueryBuilderFunc(QWidget *widget)
     QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(widget);
     if(lineEdit != nullptr)
     {
-      QString text = lineEdit->text().simplified();
+      QStringList textList = lineEdit->text().simplified().split(" "), queryList;
+      bool overrideQuery = false;
 
-      // Check text length without placeholders for override
-      QString overrideText(text);
-      overrideText.remove(QChar('*'));
-      if(text.startsWith('-'))
-        overrideText = overrideText.mid(1);
-      bool overrideQuery = overrideText.size() >= 3;
-
-      // Adjust the query string to SQL
-      // Replace "*" with "%" for SQL
-      if(text.contains(QChar('*')))
-        text = text.replace(QChar('*'), QChar('%'));
-      else if(!text.isEmpty())
-        // Default is string starts with text
-        text = text + "%";
-
-      // Exclude if prefixed with "-"
-      bool exclude = false;
-      if(text.startsWith('-'))
+      for(QString text : textList)
       {
-        text = text.mid(1);
-        exclude = true;
-      }
+        text = text.simplified();
 
-      if(!text.isEmpty())
-      {
-        QString query;
+        // Check text length without placeholders for override
+        QString overrideText(text);
+        overrideText.remove(QChar('*'));
+        if(text.startsWith('-'))
+          overrideText = overrideText.mid(1);
+        overrideQuery |= overrideText.size() >= 3;
 
-        if(exclude)
-          // Use exclude on ident column only
-          query = "(ident not like '" + text + "')";
-        else
+        // Adjust the query string to SQL
+        // Replace "*" with "%" for SQL
+        if(text.contains(QChar('*')))
+          text = text.replace(QChar('*'), QChar('%'));
+        else if(!text.isEmpty())
+          // Default is string starts with text
+          text = text % "%";
+
+        // Exclude if prefixed with "-"
+        bool exclude = false;
+        if(text.startsWith('-'))
         {
-          // Cannot use "arg" to build string since percent confuses QString
-          query = "(ident like '" + text + "'";
-
-          if(controller->hasDatabaseColumn("icao"))
-            query += " or icao like '" + text + "'";
-          if(controller->hasDatabaseColumn("iata"))
-            query += " or iata like '" + text + "'";
-          if(controller->hasDatabaseColumn("faa"))
-            query += " or faa like '" + text + "'";
-          if(controller->hasDatabaseColumn("local"))
-            query += " or local like '" + text + "'";
-          query += ")";
+          text = text.mid(1);
+          exclude = true;
         }
 
-        return QueryBuilderResult(query, overrideQuery);
-      }
+        if(!text.isEmpty())
+        {
+          QString query;
+
+          if(exclude)
+            // Use exclude on ident column only
+            query = "(ident not like '" % text % "')";
+          else
+          {
+            // Cannot use "arg" to build string since percent confuses QString
+            query = "(ident like '" % text % "'";
+
+            if(controller->hasDatabaseColumn("icao"))
+              query += " or icao like '" % text % "'";
+            if(controller->hasDatabaseColumn("iata"))
+              query += " or iata like '" % text % "'";
+            if(controller->hasDatabaseColumn("faa"))
+              query += " or faa like '" % text % "'";
+            if(controller->hasDatabaseColumn("local"))
+              query += " or local like '" % text % "'";
+            query += ")";
+          }
+
+          if(!query.isEmpty())
+            queryList.append(query);
+        } // if(!text.isEmpty())
+      } // for(const QString& text : textList)
+
+      if(!queryList.isEmpty())
+        return QueryBuilderResult("(" % queryList.join(" or ") % ")", overrideQuery);
     }
   }
   return QueryBuilderResult();

@@ -35,6 +35,8 @@
 #include "sql/sqlrecord.h"
 #include "settings/settings.h"
 
+#include <QStringBuilder>
+
 NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("nav_search", "nav_search_id"), tabWidgetIndex)
 {
@@ -135,7 +137,7 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId
   append(Column("nav_search_id").hidden()).
   append(Column("distance", tr("Distance\n%dist%")).distanceCol()).
   append(Column("heading", tr("Heading\n°T")).distanceCol()).
-  append(Column("ident", ui->lineEditNavIcaoSearch, tr("Ident")).filter().defaultSort()).
+  append(Column("ident", tr("Ident")).filter().defaultSort().filterByBuilder()).
 
   append(Column("nav_type", ui->comboBoxNavNavAidSearch, tr("Navaid\nType")).
          indexCondMap(navTypeCondMap).includesName()).
@@ -166,6 +168,10 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId
   // Add icon delegate for the ident column
   iconDelegate = new NavIconDelegate(columns);
   view->setItemDelegateForColumn(columns->getColumn("ident")->getIndex(), iconDelegate);
+
+  // Assign the callback which builds a part of the where clause for the airport search ======================
+  using namespace std::placeholders;
+  columns->setQueryBuilder(QueryBuilder(std::bind(&NavSearch::navQueryBuilderFunc, this, _1), ui->lineEditNavIcaoSearch, {"ident"}));
 
   SearchBaseTable::initViewAndController(NavApp::getDatabaseNav());
 
@@ -227,6 +233,67 @@ void NavSearch::connectSearchSlots()
                                               {ui->lineNavScenerySearch});
     updateButtonMenu();
   });
+}
+
+QueryBuilderResult NavSearch::navQueryBuilderFunc(QWidget *widget)
+{
+  if(widget != nullptr)
+  {
+    // Widget list is always one line edit as registered in airport search
+    QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(widget);
+    if(lineEdit != nullptr)
+    {
+      QStringList textList = lineEdit->text().simplified().split(" "), queryList;
+      bool overrideQuery = false;
+
+      for(QString text : textList)
+      {
+        text = text.simplified();
+
+        // Check text length without placeholders for override
+        QString overrideText(text);
+        overrideText.remove(QChar('*'));
+        if(text.startsWith('-'))
+          overrideText = overrideText.mid(1);
+        overrideQuery |= overrideText.size() >= 3;
+
+        // Adjust the query string to SQL
+        // Replace "*" with "%" for SQL
+        if(text.contains(QChar('*')))
+          text = text.replace(QChar('*'), QChar('%'));
+        else if(!text.isEmpty())
+          // Default is string starts with text
+          text = text % "%";
+
+        // Exclude if prefixed with "-"
+        bool exclude = false;
+        if(text.startsWith('-'))
+        {
+          text = text.mid(1);
+          exclude = true;
+        }
+
+        if(!text.isEmpty())
+        {
+          QString query;
+
+          if(exclude)
+            // Use exclude on ident column only
+            query = "(ident not like '" % text % "')";
+          else
+            // Cannot use "arg" to build string since percent confuses QString
+            query = "(ident like '" % text % "')";
+
+          if(!query.isEmpty())
+            queryList.append(query);
+        } // if(!text.isEmpty())
+      } // for(const QString& text : textList)
+
+      if(!queryList.isEmpty())
+        return QueryBuilderResult("(" % queryList.join(" or ") % ")", overrideQuery);
+    }
+  }
+  return QueryBuilderResult();
 }
 
 void NavSearch::saveState()
