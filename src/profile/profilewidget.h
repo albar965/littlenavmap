@@ -228,7 +228,7 @@ private:
   float aircraftAlt(const atools::fs::sc::SimConnectUserAircraft& aircraft);
 
   /* Get text and text color for a leg. procSymbol is true if only the generic procedure waypoint should be drawn */
-  void textsAndColorForLeg(QStringList& texts, QColor& color, bool& procSymbol, const RouteLeg& leg);
+  void textsAndColorForLeg(QStringList& texts, QColor& color, bool& procSymbol, const RouteLeg& leg, bool procedureDisplayText);
 
   /* Scale levels to test for display */
   static Q_DECL_CONSTEXPR int NUM_SCALE_STEPS = 5;

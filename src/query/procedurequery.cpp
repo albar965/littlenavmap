@@ -1579,11 +1579,8 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
       } // if(std::abs(result.distance) > nmToMeter(1.f))
 
       if(leg.interceptPos.isValid())
-      {
         // Add intercept for display
-        leg.displayText << tr("Intercept");
-        leg.displayText << tr("Course to Fix");
-      }
+        leg.displayText << tr("Intercept") << tr("Course to Fix");
 
       curPos = leg.fixPos;
     }

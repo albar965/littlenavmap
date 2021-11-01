@@ -97,13 +97,13 @@ public:
   /* Start from distance but values do not decrease if aircraft is leaving route.
    *  Ignores active and looks for all legs.
    *
-   * UNRELIABLE AND DOES NOT CONSIDER HEADING, ALTERNATES MISSED APPROACH LEGS.*/
+   * Ignores missed approach legs.*/
   float getDistanceFromStart(const atools::geo::Pos& pos) const;
 
   /* Ignores approach objects if ignoreNotEditable is true.
    *  Checks course if not INVALID_COURSE_VALUE */
   int getNearestRouteLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult,
-                               bool ignoreNotEditable) const;
+                               bool ignoreNotEditable, bool ignoreMissed) const;
 
   /* First route leg after departure procedure or 0 for departure airport */
   int getStartIndexAfterProcedure() const;

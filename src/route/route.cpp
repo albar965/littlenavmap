@@ -593,7 +593,7 @@ float Route::getProjectionDistance() const
 float Route::getDistanceFromStart(const Pos& pos) const
 {
   atools::geo::LineDistance result;
-  int legIndex = getNearestRouteLegResult(pos, result, false /* ignoreNotEditable */);
+  int legIndex = getNearestRouteLegResult(pos, result, false /* ignoreNotEditable */, true /* ignoreMissed */);
 
 #ifdef DEBUG_INFORMATION_ROUTE
   qDebug() << Q_FUNC_INFO << "leg" << leg << "result" << result;
@@ -1786,7 +1786,8 @@ void Route::nearestAllLegIndex(const map::PosCourse& pos, float& crossTrackDista
   }
 }
 
-int Route::getNearestRouteLegResult(const Pos& pos, atools::geo::LineDistance& lineDistanceResult, bool ignoreNotEditable) const
+int Route::getNearestRouteLegResult(const Pos& pos, atools::geo::LineDistance& lineDistanceResult, bool ignoreNotEditable,
+                                    bool ignoreMissed) const
 {
   int index = map::INVALID_INDEX_VALUE;
   lineDistanceResult.status = atools::geo::INVALID;
@@ -1803,6 +1804,8 @@ int Route::getNearestRouteLegResult(const Pos& pos, atools::geo::LineDistance& l
   for(int i = 1; i < size(); i++)
   {
     if(ignoreNotEditable && !canEditLeg(i))
+      continue;
+    if(ignoreMissed && value(i).isAnyProcedure() && value(i).getProcedureLeg().isMissed())
       continue;
 
     pos.distanceMeterToLine(getPrevPositionAt(i), getPositionAt(i), result);

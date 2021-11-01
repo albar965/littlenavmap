@@ -3932,7 +3932,7 @@ int RouteController::calculateInsertIndex(const atools::geo::Pos& pos, int legIn
     {
       // No leg index given - search for nearest available route leg
       atools::geo::LineDistance result;
-      int nearestlegIndex = route.getNearestRouteLegResult(pos, result, true /* ignoreNotEditable */);
+      int nearestlegIndex = route.getNearestRouteLegResult(pos, result, true /* ignoreNotEditable */, true /* ignoreMissed */);
 
       switch(result.status)
       {

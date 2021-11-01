@@ -1041,6 +1041,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     for(int routeIndex : indexes)
     {
       const RouteLeg& leg = route.value(routeIndex);
+      const proc::MapProcedureLeg& procedureLeg = leg.getProcedureLeg();
 
       waypointIndex--;
       if(altLegs.at(waypointIndex).isEmpty())
@@ -1049,7 +1050,21 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       QColor color;
       QStringList texts;
       bool procSymbol = false;
-      textsAndColorForLeg(texts, color, procSymbol, leg);
+      // Do not get display text for intercept texts if any since these will be drawn separately
+      textsAndColorForLeg(texts, color, procSymbol, leg, !(leg.isAnyProcedure() && procedureLeg.interceptPos.isValid()));
+
+      // Check for an intercept position which can be drawn separately within the leg
+      if(routeIndex >= activeRouteLeg - 1 && leg.isAnyProcedure() && procedureLeg.interceptPos.isValid())
+      {
+        float distanceFromStart = route.getDistanceFromStart(procedureLeg.interceptPos);
+        int interceptX = distanceX(distanceFromStart);
+        int interceptY = altitudeY(route.getAltitudeForDistance(route.getTotalDistance() - distanceFromStart));
+
+        // Draw symbol and label for intercept position
+        symPainter.drawProcedureSymbol(&painter, interceptX, interceptY, waypointSize, true);
+        symPainter.textBox(&painter, procedureLeg.displayText, color, interceptX + 5, std::min(interceptY + 14, h),
+                           textatt::ROUTE_BG_COLOR, 255);
+      }
 
       // Symbols ========================================================
       QPoint symPt(altLegs.at(waypointIndex).last());
@@ -1078,11 +1093,10 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         // Procedure symbols ========================================================
         if(leg.isAnyProcedure())
           symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6,
-                                           leg.getProcedureLeg().flyover, leg.getProcedureLeg().malteseCross);
+                                           procedureLeg.flyover, procedureLeg.malteseCross);
 
         // Labels ========================
-        symPainter.textBox(&painter, texts, color, symPt.x() + 5,
-                           std::min(symPt.y() + 14, h), textatt::ROUTE_BG_COLOR, 255);
+        symPainter.textBox(&painter, texts, color, symPt.x() + 5, std::min(symPt.y() + 14, h), textatt::ROUTE_BG_COLOR, 255);
       }
     }
 
@@ -1091,6 +1105,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     for(int routeIndex : indexes)
     {
       const RouteLeg& leg = route.value(routeIndex);
+      const proc::MapProcedureLeg& procedureLeg = leg.getProcedureLeg();
 
       waypointIndex--;
       if(altLegs.at(waypointIndex).isEmpty())
@@ -1099,7 +1114,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       QColor color;
       QStringList texts;
       bool procSymbol = false;
-      textsAndColorForLeg(texts, color, procSymbol, leg);
+      textsAndColorForLeg(texts, color, procSymbol, leg, !(leg.isAnyProcedure() && procedureLeg.interceptPos.isValid()));
 
       // Symbols ========================================================
       QPoint symPt(altLegs.at(waypointIndex).last());
@@ -1122,11 +1137,9 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       {
         // Procedure symbols ========================================================
         if(leg.isAnyProcedure())
-          symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6,
-                                           leg.getProcedureLeg().flyover, leg.getProcedureLeg().malteseCross);
+          symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6, procedureLeg.flyover, procedureLeg.malteseCross);
 
-        symPainter.textBox(&painter, texts, color, symPt.x() + 5,
-                           std::min(symPt.y() + 14, h), textatt::ROUTE_BG_COLOR, 255);
+        symPainter.textBox(&painter, texts, color, symPt.x() + 5, std::min(symPt.y() + 14, h), textatt::ROUTE_BG_COLOR, 255);
       }
     }
 
@@ -1135,6 +1148,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     for(int routeIndex : indexes)
     {
       const RouteLeg& leg = route.value(routeIndex);
+      const proc::MapProcedureLeg& procedureLeg = leg.getProcedureLeg();
+
       waypointIndex--;
       if(altLegs.at(waypointIndex).isEmpty())
         continue;
@@ -1142,7 +1157,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       QColor color;
       QStringList texts;
       bool procSymbol = false;
-      textsAndColorForLeg(texts, color, procSymbol, leg);
+      textsAndColorForLeg(texts, color, procSymbol, leg, !(leg.isAnyProcedure() && procedureLeg.interceptPos.isValid()));
 
       // Symbols ========================================================
       QPoint symPt(altLegs.at(waypointIndex).last());
@@ -1165,10 +1180,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       {
         // Procedure symbols ========================================================
         if(leg.isAnyProcedure())
-          symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6,
-                                           leg.getProcedureLeg().flyover, leg.getProcedureLeg().malteseCross);
-        symPainter.textBox(&painter, texts, color, symPt.x() + 5,
-                           std::min(symPt.y() + 14, h), textatt::ROUTE_BG_COLOR, 255);
+          symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6, procedureLeg.flyover, procedureLeg.malteseCross);
+        symPainter.textBox(&painter, texts, color, symPt.x() + 5, std::min(symPt.y() + 14, h), textatt::ROUTE_BG_COLOR, 255);
       }
     } // for(int routeIndex : indexes)
 
@@ -1202,8 +1215,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       if(departureLeg.getMapObjectType() == map::AIRPORT)
       {
         int textW = painter.fontMetrics().horizontalAdvance(departureLeg.getDisplayIdent());
-        symPainter.drawAirportSymbol(&painter,
-                                     departureLeg.getAirport(), left, flightplanY, airportSize, false, false, false);
+        symPainter.drawAirportSymbol(&painter, departureLeg.getAirport(), left, flightplanY, airportSize, false, false, false);
         symPainter.drawAirportText(&painter, departureLeg.getAirport(), left - textW / 2, flightplanTextY,
                                    optsd::AIRPORT_NONE, TEXTFLAGS, 10, false, 16);
       }
@@ -1213,8 +1225,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       if(destinationLeg.getMapObjectType() == map::AIRPORT)
       {
         int textW = painter.fontMetrics().horizontalAdvance(destinationLeg.getDisplayIdent());
-        symPainter.drawAirportSymbol(&painter, destinationLeg.getAirport(), left + w, flightplanY, airportSize, false,
-                                     false, false);
+        symPainter.drawAirportSymbol(&painter, destinationLeg.getAirport(), left + w, flightplanY, airportSize, false, false, false);
         symPainter.drawAirportText(&painter, destinationLeg.getAirport(), left + w - textW / 2, flightplanTextY,
                                    optsd::AIRPORT_NONE, TEXTFLAGS, 10, false, 16);
       }
@@ -1366,7 +1377,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   scrollArea->updateLabelWidget();
 }
 
-void ProfileWidget::textsAndColorForLeg(QStringList& texts, QColor& color, bool& procSymbol, const RouteLeg& leg)
+void ProfileWidget::textsAndColorForLeg(QStringList& texts, QColor& color, bool& procSymbol, const RouteLeg& leg, bool procedureDisplayText)
 {
   map::MapTypes type = leg.getMapObjectType();
   QString ident;
@@ -1412,7 +1423,7 @@ void ProfileWidget::textsAndColorForLeg(QStringList& texts, QColor& color, bool&
   else
     procSymbol = false;
 
-  if(leg.getProcedureLegType() != proc::START_OF_PROCEDURE)
+  if(leg.getProcedureLegType() != proc::START_OF_PROCEDURE && procedureDisplayText)
     texts.append(leg.getProcedureLeg().displayText);
   texts.removeAll(QString());
   texts = atools::elideTextShort(texts, 15);
@@ -1905,7 +1916,7 @@ void ProfileWidget::buildTooltip(int x, bool force)
       float tas = legList->route.getSpeedForDistance(distanceToGo);
       if(tas < map::INVALID_SPEED_VALUE)
       {
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_PROFILE
         html.brText(QString("[TAS %1 kts, %2°T %3 kts]").
                     arg(tas, 0, 'f', 0).arg(wind.dir, 0, 'f', 0).arg(wind.speed, 0, 'f', 0));
 #endif
