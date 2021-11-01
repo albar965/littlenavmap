@@ -248,6 +248,8 @@ public:
   static bool hasRouteTypeInDatabase();
   static bool hasDataInDatabase();
 
+  static void logDatabaseMeta();
+
   /* Simulator scenery data */
   static atools::sql::SqlDatabase *getDatabaseSim();
 

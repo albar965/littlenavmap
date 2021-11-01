@@ -676,6 +676,21 @@ bool NavApp::hasDataInDatabase()
   return databaseMetaSim != nullptr ? databaseMetaSim->hasData() : false;
 }
 
+void NavApp::logDatabaseMeta()
+{
+  qDebug() << Q_FUNC_INFO << "databaseMetaNav";
+  if(databaseMetaNav != nullptr)
+    databaseMetaNav->log();
+  else
+    qDebug() << Q_FUNC_INFO << "databaseMetaNav == nullptr";
+
+  qDebug() << Q_FUNC_INFO << "databaseMetaSim";
+  if(databaseMetaSim != nullptr)
+    databaseMetaSim->log();
+  else
+    qDebug() << Q_FUNC_INFO << "databaseMetaSim == nullptr";
+}
+
 atools::sql::SqlDatabase *NavApp::getDatabaseSim()
 {
   return getDatabaseManager()->getDatabaseSim();

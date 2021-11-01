@@ -1107,7 +1107,7 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::routeChanged, NavApp::updateWindowTitle);
   connect(routeController, &RouteController::routeAltitudeChanged, NavApp::updateErrorLabels);
 
-// Add departure and dest runway actions separately to windows since their shortcuts overlap with context menu shortcuts
+  // Add departure and dest runway actions separately to windows since their shortcuts overlap with context menu shortcuts
   QList<QAction *> actions({ui->actionShowDepartureCustom, ui->actionShowApproachCustom});
   mapWidget->addActions(actions);
   ui->dockWidgetInformation->addActions(actions);
@@ -3409,6 +3409,8 @@ void MainWindow::mainWindowShown()
     databaseManager->run();
   }
 
+  NavApp::logDatabaseMeta();
+
   // If enabled connect to simulator without showing dialog
   NavApp::getConnectClient()->tryConnectOnStartup();
 
@@ -4279,7 +4281,8 @@ void MainWindow::showEvent(QShowEvent *event)
 /* Call other other classes to close queries and clear caches */
 void MainWindow::preDatabaseLoad()
 {
-  qDebug() << "MainWindow::preDatabaseLoad";
+  qDebug() << Q_FUNC_INFO;
+
   if(!hasDatabaseLoadStatus)
   {
     hasDatabaseLoadStatus = true;
@@ -4303,7 +4306,8 @@ void MainWindow::preDatabaseLoad()
 /* Call other other classes to reopen queries */
 void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 {
-  qDebug() << "MainWindow::postDatabaseLoad";
+  qDebug() << Q_FUNC_INFO;
+
   if(hasDatabaseLoadStatus)
   {
     mapWidget->postDatabaseLoad(); // Init map widget dependent queries first
@@ -4331,6 +4335,8 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
   updateActionStates();
 
   NavApp::getAirspaceController()->updateButtonsAndActions();
+
+  NavApp::logDatabaseMeta();
 }
 
 /* Update the current weather context for the information window. Returns true if any
