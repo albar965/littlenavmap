@@ -77,6 +77,7 @@ using atools::geo::LineString;
 /* Route leg storing all elevation points */
 struct ElevationLeg
 {
+  QString ident;
   atools::geo::LineString elevation, /* Ground elevation (Pos.altitude) and position */
                           geometry; /* Route geometry. Normally only start and endpoint.
                                      * More complex for procedures. */
@@ -329,10 +330,21 @@ void ProfileWidget::updateScreenCoords()
   // First point
   landPolygon.append(QPoint(left, h + TOP));
 
+#ifdef DEBUG_INFORMATION_PROFILE
+  qDebug() << Q_FUNC_INFO << "==========================================================================";
+#endif
+
+  int num = 0;
   for(const ElevationLeg& leg : legList->elevationLegs)
   {
     if(leg.distances.isEmpty() || leg.elevation.isEmpty())
       continue;
+
+#ifdef DEBUG_INFORMATION_PROFILE
+    qDebug() << Q_FUNC_INFO << num << leg.ident << "leg.distances" << leg.distances;
+    qDebug() << Q_FUNC_INFO << num << leg.ident << "leg.geometry" << leg.geometry;
+    qDebug() << Q_FUNC_INFO << num << leg.ident << "leg.elevation" << leg.elevation;
+#endif
 
     waypointX.append(left + static_cast<int>(leg.distances.first() * horizontalScale));
 
@@ -349,10 +361,16 @@ void ProfileWidget::updateScreenCoords()
         lastPt = pt;
       }
     }
+    num++;
   }
 
   // Destination point
   waypointX.append(left + w);
+
+#ifdef DEBUG_INFORMATION_PROFILE
+  qDebug() << Q_FUNC_INFO << "waypointX" << waypointX;
+  qDebug() << Q_FUNC_INFO << "==========================================================================";
+#endif
 
   // Last point closing polygon
   landPolygon.append(QPoint(left + w, h + TOP));
@@ -1503,8 +1521,7 @@ void ProfileWidget::updateThreadFinished()
 
 /* Get elevation points between the two points. This returns also correct results if the antimeridian is crossed
  * @return true if not aborted */
-bool ProfileWidget::fetchRouteElevations(atools::geo::LineString& elevations,
-                                         const atools::geo::LineString& geometry) const
+bool ProfileWidget::fetchRouteElevations(atools::geo::LineString& elevations, const atools::geo::LineString& geometry) const
 {
   ElevationProvider *elevationProvider = NavApp::getElevationProvider();
   for(int i = 0; i < geometry.size() - 1; i++)
@@ -1512,10 +1529,8 @@ bool ProfileWidget::fetchRouteElevations(atools::geo::LineString& elevations,
     // Create a line string from the two points and split it at the date line if crossing
     GeoDataLineString coords;
     coords.setTessellate(true);
-    coords << GeoDataCoordinates(geometry.at(i).getLonX(), geometry.at(i).getLatY(),
-                                 0., GeoDataCoordinates::Degree)
-           << GeoDataCoordinates(geometry.at(i + 1).getLonX(), geometry.at(i + 1).getLatY(),
-                          0., GeoDataCoordinates::Degree);
+    coords << GeoDataCoordinates(geometry.at(i).getLonX(), geometry.at(i).getLatY(), 0., GeoDataCoordinates::Degree)
+           << GeoDataCoordinates(geometry.at(i + 1).getLonX(), geometry.at(i + 1).getLatY(), 0., GeoDataCoordinates::Degree);
 
     QVector<Marble::GeoDataLineString *> coordsCorrected = coords.toDateLineCorrected();
     for(const Marble::GeoDataLineString *ls : coordsCorrected)
@@ -1575,7 +1590,7 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
     return ElevationLegList();
 
   // Total calculated distance across all legs
-  double totalDistanceMeter = 0.;
+  double totalDistanceNm = 0.;
 
   // Loop over all route legs - first is departure airport point
   for(int i = 1; i <= legs.route.getDestinationLegIndex(); i++)
@@ -1589,6 +1604,7 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
       break;
 
     ElevationLeg leg;
+    leg.ident = altLeg.getIdent();
 
     // Used to adapt distances of all legs to total distance due to inaccuracies
     double scale = 1.;
@@ -1607,9 +1623,14 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
       if(!fetchRouteElevations(elevations, geometry))
         return ElevationLegList();
 
+      // elevations.removeDuplicates();
+#ifdef DEBUG_INFORMATION_PROFILE
+      qDebug() << Q_FUNC_INFO << "elevations" << elevations << atools::geo::meterToNm(elevations.lengthMeter());
+      qDebug() << Q_FUNC_INFO << "geometry" << geometry << atools::geo::meterToNm(geometry.lengthMeter());
+#endif
       leg.geometry = geometry;
 
-      double distMeter = totalDistanceMeter;
+      double distNm = totalDistanceNm;
       // Loop over all elevation points for the current leg
       Pos lastPos;
       for(int j = 0; j < elevations.size(); j++)
@@ -1629,31 +1650,34 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
 
         if(j > 0)
           // Update total distance
-          distMeter += lastPos.distanceMeterToDouble(coord);
+          distNm += meterToNm(lastPos.distanceMeterToDouble(coord));
 
         // Coordinate with elevation
         leg.elevation.append(coord);
 
         // Distance to elevation point from departure
-        leg.distances.append(distMeter);
+        leg.distances.append(distNm);
 
         legs.totalNumPoints++;
         lastPos = coord;
       }
 
-      totalDistanceMeter += nmToMeter(altLeg.getDistanceTo());
+      // float distanceTo = atools::geo::meterToNm(geometry.lengthMeter());
+      float distanceTo = altLeg.getDistanceTo();
+      totalDistanceNm += distanceTo;
 
-      if(!leg.distances.isEmpty() && atools::almostNotEqual(leg.distances.last(), totalDistanceMeter))
+      double lastDist = leg.distances.last();
+      if(!leg.distances.isEmpty() && atools::almostNotEqual(lastDist, totalDistanceNm))
         // Accumulated distance is different from route total distance - adjust
         // This can happen with the online elevation provider which does not return all points exactly on the leg
-        scale = totalDistanceMeter / leg.distances.last();
+        scale = totalDistanceNm / leg.distances.last();
     }
     else
     {
       // Skip long segment
-      leg.distances.append(totalDistanceMeter);
-      totalDistanceMeter += altLeg.getGeoLineString().lengthMeter();
-      leg.distances.append(totalDistanceMeter);
+      leg.distances.append(totalDistanceNm);
+      totalDistanceNm += atools::geo::meterToNm(altLeg.getGeoLineString().lengthMeter());
+      leg.distances.append(totalDistanceNm);
       leg.elevation = altLeg.getGeoLineString();
       leg.elevation.setAltitude(0.f);
       leg.geometry = altLeg.getGeoLineString();
@@ -1661,12 +1685,12 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
 
     // Convert distances to NM and apply correction
     for(int j = 0; j < leg.distances.size(); j++)
-      leg.distances[j] = meterToNm(leg.distances.at(j) * scale);
+      leg.distances[j] = leg.distances.at(j) * scale;
 
     legs.elevationLegs.append(leg);
   }
 
-  legs.totalDistance = static_cast<float>(meterToNm(totalDistanceMeter));
+  legs.totalDistance = static_cast<float>(totalDistanceNm);
   return legs;
 }
 
@@ -1709,6 +1733,12 @@ void ProfileWidget::calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& 
   if(x > waypointX.last())
     x = waypointX.last();
 
+#ifdef DEBUG_INFORMATION_PROFILE
+  qDebug() << Q_FUNC_INFO << waypointX;
+#endif
+
+  // Returns an iterator pointing to the first element in the range [first, last) that
+  // is not less than (i.e. greater or equal to) value, or last if no such element is found.
   QVector<int>::iterator it = std::lower_bound(waypointX.begin(), waypointX.end(), x);
   if(it != waypointX.end())
   {
@@ -1832,6 +1862,11 @@ void ProfileWidget::buildTooltip(int x, bool force)
   float distance, distanceToGo, groundElevation, maxElev;
   calculateDistancesAndPos(x, lastTooltipPos, index, distance, distanceToGo, groundElevation, maxElev);
 
+#ifdef DEBUG_INFORMATION_PROFILE
+  qDebug() << Q_FUNC_INFO << "x" << x << "lastTooltipPos" << lastTooltipPos << "index" << index << "distance" << distance
+           << "distanceToGo" << distanceToGo << "groundElevation" << groundElevation << "maxElev" << maxElev;
+#endif
+
   const RouteLeg& routeLeg = legList->route.value(index + 1);
   if(routeLeg.isAnyProcedure() && proc::procedureLegFrom(routeLeg.getProcedureLegType()))
     fromTo = tr("from");
@@ -1851,6 +1886,9 @@ void ProfileWidget::buildTooltip(int x, bool force)
 
   html.p(atools::util::html::NOBR_WHITESPACE);
   html.b(Unit::distNm(distance, false) + tr(" ► ") + Unit::distNm(distanceToGo));
+#ifdef DEBUG_INFORMATION_PROFILE
+  html.br().b("[" + QString::number(distance) + tr(" ► ") + QString::number(distanceToGo) + "]");
+#endif
   if(altitude < map::INVALID_ALTITUDE_VALUE)
     html.b(tr(", %1, %2 %3").arg(Unit::altFeet(altitude)).arg(fromTo).arg(toWaypoint));
 
