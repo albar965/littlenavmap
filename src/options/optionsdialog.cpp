@@ -314,6 +314,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsStartupLoadRoute,
      ui->checkBoxOptionsStartupLoadPerf,
      ui->checkBoxOptionsStartupLoadLayout,
+     ui->checkBoxOptionsStartupShowSplash,
      ui->checkBoxOptionsStartupLoadTrail,
      ui->checkBoxOptionsStartupLoadSearch,
      ui->checkBoxOptionsStartupLoadInfoContent,
@@ -1597,6 +1598,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags(ui->checkBoxOptionsStartupLoadRoute, opts::STARTUP_LOAD_ROUTE);
   toFlags(ui->checkBoxOptionsStartupLoadPerf, opts::STARTUP_LOAD_PERF);
   toFlags(ui->checkBoxOptionsStartupLoadLayout, opts::STARTUP_LOAD_LAYOUT);
+  toFlags(ui->checkBoxOptionsStartupShowSplash, opts::STARTUP_SHOW_SPLASH);
   toFlags(ui->checkBoxOptionsStartupLoadSearch, opts::STARTUP_LOAD_SEARCH);
   toFlags(ui->checkBoxOptionsStartupLoadInfoContent, opts::STARTUP_LOAD_INFO);
   toFlags(ui->radioButtonOptionsStartupShowHome, opts::STARTUP_SHOW_HOME);
@@ -1862,6 +1864,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags(data, ui->checkBoxOptionsStartupLoadRoute, opts::STARTUP_LOAD_ROUTE);
   fromFlags(data, ui->checkBoxOptionsStartupLoadPerf, opts::STARTUP_LOAD_PERF);
   fromFlags(data, ui->checkBoxOptionsStartupLoadLayout, opts::STARTUP_LOAD_LAYOUT);
+  fromFlags(data, ui->checkBoxOptionsStartupShowSplash, opts::STARTUP_SHOW_SPLASH);
   fromFlags(data, ui->checkBoxOptionsStartupLoadTrail, opts::STARTUP_LOAD_TRAIL);
   fromFlags(data, ui->checkBoxOptionsStartupLoadInfoContent, opts::STARTUP_LOAD_INFO);
   fromFlags(data, ui->checkBoxOptionsStartupLoadSearch, opts::STARTUP_LOAD_SEARCH);

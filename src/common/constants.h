@@ -269,6 +269,7 @@ const QLatin1String OPTIONS_DIALOG_GUI_STYLE_INDEX("OptionsDialog/GuiStyleIndex"
 const QLatin1String OPTIONS_DIALOG_WARN_STYLE("OptionsDialog/StyleWarning");
 const QLatin1String OPTIONS_DIALOG_WEB_DOCROOT_DLG("OptionsDialog/WebDocroot");
 const QLatin1String OPTIONS_DIALOG_RANGE_DISTANCES("OptionsDialog/RangeDistances");
+const QLatin1String OPTIONS_DIALOG_SHOW_SPLASH("OptionsDialog/Widget_checkBoxOptionsStartupShowSplash");
 
 /* Other options that are only accessible in the configuration file */
 const QLatin1String OPTIONS_DIALOG_LANGUAGE("OptionsDialog/Language");
