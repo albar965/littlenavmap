@@ -214,7 +214,7 @@ void AirportQuery::getAirportsByOfficialIdent(QList<map::MapAirport>& airports, 
                                               const atools::geo::Pos *pos, float maxDistanceMeter, bool searchIata,
                                               bool searchIdent)
 {
-  if(airportByOfficialQuery != nullptr && !ident.isEmpty())
+  if(!ident.isEmpty())
   {
     // Use impossible value if not searching by ident since query connects with "or"
     airportByOfficialQuery->bindValue(":ident", searchIdent ? ident : "====");
@@ -1099,26 +1099,23 @@ void AirportQuery::initQueries()
   faaCol = airportQueryBase.contains("faa");
   localCol = airportQueryBase.contains("local");
 
-  if(icaoCol || iataCol || faaCol || localCol)
-  {
-    QString sql("select " + airportQueryBase.join(", ") + " from airport where ");
+  QString sql("select " + airportQueryBase.join(", ") + " from airport where ");
 
-    QStringList idents(" ident like :ident ");
-    if(icaoCol)
-      idents += " icao like :icao ";
+  QStringList idents(" ident like :ident ");
+  if(icaoCol)
+    idents += " icao like :icao ";
 
-    if(iataCol)
-      idents += " iata like :iata ";
+  if(iataCol)
+    idents += " iata like :iata ";
 
-    if(faaCol)
-      idents += " faa like :faa ";
+  if(faaCol)
+    idents += " faa like :faa ";
 
-    if(localCol)
-      idents += " local like :local ";
+  if(localCol)
+    idents += " local like :local ";
 
-    airportByOfficialQuery = new SqlQuery(db);
-    airportByOfficialQuery->prepare(sql + idents.join(" or "));
-  }
+  airportByOfficialQuery = new SqlQuery(db);
+  airportByOfficialQuery->prepare(sql + idents.join(" or "));
 
   airportByPosQuery = new SqlQuery(db);
   airportByPosQuery->prepare("select " + airportQueryBase.join(", ") +
