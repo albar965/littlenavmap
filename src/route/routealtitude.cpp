@@ -51,17 +51,16 @@ int RouteAltitude::indexForDistance(float distanceToDest) const
 
   float distFromStart = route->getTotalDistance() - distanceToDest;
 
-  // Search through all legs to find one that overlaps with distanceToDest
-  QVector<RouteAltitudeLeg>::const_iterator it =
-    std::lower_bound(begin(), end(), distFromStart,
-                     [](const RouteAltitudeLeg& l1, float dist) -> bool
+  for(int index = 0; index < size(); index++)
   {
-    // binary predicate which returns ​true if the first argument is less than (i.e. is ordered before) the second.
-    return l1.getDistanceFromStart() < dist;
-  });
+    const RouteAltitudeLeg& leg = at(index);
 
-  if(it != end())
-    return static_cast<int>(std::distance(begin(), it));
+    if(leg.isMissed() || leg.isAlternate())
+      break;
+
+    if(distFromStart < leg.getDistanceFromStart())
+      return index;
+  }
 
   return map::INVALID_INDEX_VALUE;
 }
