@@ -962,7 +962,7 @@ QString NavApp::getMapCopyright()
   return mainWindow->getMapWidget()->getMapCopyright();
 }
 
-const QString& NavApp::getRouteFilepath()
+const QString& NavApp::getCurrentRouteFilepath()
 {
   return mainWindow->getRouteController()->getRouteFilepath();
 }

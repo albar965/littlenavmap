@@ -10970,7 +10970,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/fileopen.svg</normaloff>:/littlenavmap/resources/icons/fileopen.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Open Flight Plan %1</string>
+    <string>&amp;Open Flight Plan from %1</string>
    </property>
    <property name="toolTip">
     <string>Open flight plan from logbook entry</string>
@@ -10985,7 +10985,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/aircraftperfload.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfload.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Open Aircraft Performance %1</string>
+    <string>&amp;Open Aircraft Performance from %1</string>
    </property>
    <property name="toolTip">
     <string>Open aircraft performance file from logbook entry</string>
@@ -12395,7 +12395,7 @@ Disabled if a navdatabase does not allow it.</string>
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
-  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

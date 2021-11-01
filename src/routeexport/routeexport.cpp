@@ -87,7 +87,7 @@ void RouteExport::postDatabaseLoad()
 void RouteExport::exportType(RouteExportFormat format)
 {
   // Export only selected type with file dialog - triggered from multiexport dialog
-  if(format.copyForManualSaveFileDialog(NavApp::getRouteFilepath()).callExport())
+  if(format.copyForManualSaveFileDialog(NavApp::getCurrentRouteFilepath()).callExport())
     mainWindow->setStatusMessage(tr("Exported flight plan."));
 }
 
@@ -131,7 +131,7 @@ void RouteExport::routeMultiExport()
       for(const RouteExportFormat& fmt : exportFormatMap->getSelected())
       {
         if(fmt.isSelected() && fmt.isPathValid())
-          numExported += fmt.copyForMultiSave(NavApp::getRouteFilepath()).callExport();
+          numExported += fmt.copyForMultiSave(NavApp::getCurrentRouteFilepath()).callExport();
       }
       if(numExported == 0)
         mainWindow->setStatusMessage(tr("No flight plan exported."));
@@ -239,12 +239,12 @@ void RouteExport::rotateFile(const QString& filename)
 
 bool RouteExport::routeExportPlnMan()
 {
-  return routeExportPln(exportFormatMap->getForManualSave(rexp::PLN, NavApp::getRouteFilepath()));
+  return routeExportPln(exportFormatMap->getForManualSave(rexp::PLN, NavApp::getCurrentRouteFilepath()));
 }
 
 bool RouteExport::routeExportPlnMsfsMan()
 {
-  return routeExportPln(exportFormatMap->getForManualSave(rexp::PLNMSFS, NavApp::getRouteFilepath()));
+  return routeExportPln(exportFormatMap->getForManualSave(rexp::PLNMSFS, NavApp::getCurrentRouteFilepath()));
 }
 
 bool RouteExport::routeExportLnm(const RouteExportFormat& format)
@@ -448,7 +448,7 @@ bool RouteExport::routeExportInternalFlp(const RouteExportFormat& format, bool c
 
 bool RouteExport::routeExportFlightgearMan()
 {
-  return routeExportFlightgear(exportFormatMap->getForManualSave(rexp::FLIGHTGEAR, NavApp::getRouteFilepath()));
+  return routeExportFlightgear(exportFormatMap->getForManualSave(rexp::FLIGHTGEAR, NavApp::getCurrentRouteFilepath()));
 }
 
 bool RouteExport::routeExportFlightgear(const RouteExportFormat& format)
@@ -1130,7 +1130,7 @@ bool RouteExport::routeExportDialog(RouteExportData& exportData, re::RouteExport
 
 bool RouteExport::routeExportGpxMan()
 {
-  return routeExportGpx(exportFormatMap->getForManualSave(rexp::GPX, NavApp::getRouteFilepath()));
+  return routeExportGpx(exportFormatMap->getForManualSave(rexp::GPX, NavApp::getCurrentRouteFilepath()));
 }
 
 bool RouteExport::routeExportGpx(const RouteExportFormat& format)
@@ -1157,7 +1157,7 @@ bool RouteExport::routeExportGpx(const RouteExportFormat& format)
 
 bool RouteExport::routeExportHtmlMan()
 {
-  return routeExportHtml(exportFormatMap->getForManualSave(rexp::HTML, NavApp::getRouteFilepath()));
+  return routeExportHtml(exportFormatMap->getForManualSave(rexp::HTML, NavApp::getCurrentRouteFilepath()));
 }
 
 bool RouteExport::routeExportHtml(const RouteExportFormat& format)

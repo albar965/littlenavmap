@@ -292,6 +292,16 @@ void AircraftPerfController::calculateFuelAndTimeTo(FuelTimeResult& result, floa
                                                    ac.getGroundSpeedKts(), activeLeg);
 }
 
+float AircraftPerfController::getBlockFuel() const
+{
+  return NavApp::getAltitudeLegs().getBlockFuel(*perf);
+}
+
+float AircraftPerfController::getTripFuel() const
+{
+  return NavApp::getAltitudeLegs().getTripFuel();
+}
+
 void AircraftPerfController::mergeCollected()
 {
   qDebug() << Q_FUNC_INFO;

@@ -210,6 +210,11 @@ void Route::getRunwayNames(QString& departure, QString& arrival) const
     arrival.clear();
 }
 
+const QString& Route::getSidRunwayName() const
+{
+  return sidLegs.runwayEnd.name;
+}
+
 const QString& Route::getStarRunwayName() const
 {
   return starLegs.runwayEnd.name;

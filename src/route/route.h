@@ -377,6 +377,7 @@ public:
   void getRunwayNames(QString& departure, QString& arrival) const;
   void getArrivalNames(QString& arrivalArincName, QString& arrivalTransition) const;
 
+  const QString& getSidRunwayName() const;
   const QString& getStarRunwayName() const;
   const QString& getApproachRunwayName() const;
 

@@ -156,6 +156,9 @@ public:
   /* Calculates values based on performance profile if valid - otherwise estimated by aircraft fuel flow and speed */
   void calculateFuelAndTimeTo(FuelTimeResult& result, float distanceToDest, float distanceToNext, int activeLeg) const;
 
+  float getBlockFuel() const;
+  float getTripFuel() const;
+
 signals:
   /* Sent if performance or wind has changed */
   void aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf *perf);
