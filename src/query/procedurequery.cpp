@@ -1328,17 +1328,15 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) 
     {
       if(leg.interceptPos.isValid())
       {
-        leg.calculatedDistance = meterToNm(leg.line.getPos1().distanceMeterTo(leg.interceptPos) +
-                                           leg.interceptPos.distanceMeterTo(leg.line.getPos2()));
-        leg.calculatedTrueCourse = normalizeCourse(leg.interceptPos.angleDegTo(leg.line.getPos2()));
         leg.geometry << leg.line.getPos1() << leg.interceptPos << leg.line.getPos2();
+        leg.calculatedDistance = meterToNm(leg.geometry.lengthMeter());
+        leg.calculatedTrueCourse = normalizeCourse(leg.interceptPos.angleDegTo(leg.line.getPos2()));
       }
       else
       {
-        leg.calculatedDistance = meterToNm(leg.line.lengthMeter());
-        leg.calculatedTrueCourse = normalizeCourse(leg.line.angleDeg());
-
         leg.geometry << prevLeg->line.getPos2() << leg.line.getPos1() << leg.line.getPos2();
+        leg.calculatedDistance = meterToNm(leg.geometry.lengthMeter());
+        leg.calculatedTrueCourse = normalizeCourse(leg.line.angleDeg());
       }
     }
     // ===========================================================
