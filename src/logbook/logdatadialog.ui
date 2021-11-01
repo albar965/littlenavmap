@@ -203,7 +203,7 @@
              </size>
             </property>
             <property name="text">
-             <string>Airport:</string>
+             <string>&amp;Airport:</string>
             </property>
             <property name="buddy">
              <cstring>lineEditDeparture</cstring>
@@ -377,7 +377,7 @@
              </size>
             </property>
             <property name="text">
-             <string>Airport:</string>
+             <string>&amp;Airport:</string>
             </property>
             <property name="buddy">
              <cstring>lineEditDestination</cstring>
