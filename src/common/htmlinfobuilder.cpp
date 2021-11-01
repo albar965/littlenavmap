@@ -4190,7 +4190,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       if(vertAngle < map::INVALID_ANGLE_VALUE)
         html.row2(required ? tr("Required Angle and Speed:") : tr("Angle and Speed:"),
                   tr("%L1°, %L2").arg(vertAngle, 0, 'g', required ? 3 : 2).
-                  arg(Unit::speedVertFpm(ageo::descentSpeedForPathAngle(userAircraft->getGroundSpeedKts(), vertAngle)) %
+                  arg(Unit::speedVertFpm(-ageo::descentSpeedForPathAngle(userAircraft->getGroundSpeedKts(), vertAngle)) %
                       tr(" <b>▼</b>")), ahtml::NO_ENTITIES);
       html.tableEnd();
     }
