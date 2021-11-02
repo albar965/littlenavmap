@@ -2532,27 +2532,27 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
       html.tableEnd();
 
       // Departure =======================================================
-      html.p(tr("Departure (%1)").
-             arg(logEntry.departureIdent.isEmpty() ? tr("-") : logEntry.departureIdent), ahtml::BOLD);
+      html.p(tr("Departure (%1)").arg(logEntry.departureIdent.isEmpty() ? tr("-") : logEntry.departureIdent), ahtml::BOLD);
       html.table();
 
-      QDateTime departTime = rec.valueDateTime("departure_time");
-      if(departTime.isValid())
-      {
-        QString departTimeZone = departTime.timeZoneAbbreviation();
-        html.row2If(tr("Runway:"), rec.valueStr("departure_runway"));
-        html.row2If(tr("Real time:"),
-                    tr("%1 %2").arg(locale.toString(departTime, QLocale::ShortFormat)).arg(departTimeZone));
-      }
+      html.row2If(tr("Runway:"), rec.valueStr("departure_runway"));
     }
 
     if(verbose)
     {
+      QDateTime departTime = rec.valueDateTime("departure_time");
+      if(departTime.isValid())
+      {
+        QString departTimeZone = departTime.timeZoneAbbreviation();
+        html.row2If(info ? tr("Real time:") : tr("Departure real time:"),
+                    tr("%1 %2").arg(locale.toString(departTime, QLocale::ShortFormat)).arg(departTimeZone));
+      }
+
       QDateTime departTimeSim = rec.valueDateTime("departure_time_sim");
       if(departTimeSim.isValid())
       {
         QString departTimeZoneSim = departTimeSim.timeZoneAbbreviation();
-        html.row2If(info ? tr("Simulator time:") : tr("Departure time:"),
+        html.row2If(info ? tr("Simulator time:") : tr("Departure simulator time:"),
                     tr("%1 %2").arg(locale.toString(departTimeSim, QLocale::ShortFormat)).arg(departTimeZoneSim));
       }
     }
@@ -2561,14 +2561,11 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
     {
       if(grossWeight > 0.f)
         html.row2(tr("Gross Weight:"), Unit::weightLbs(grossWeight), ahtml::NO_ENTITIES);
-      addCoordinates(Pos(rec.valueFloat("departure_lonx"),
-                         rec.valueFloat("departure_laty"),
-                         rec.valueFloat("departure_alt", 0.f)), html);
+      addCoordinates(Pos(rec.valueFloat("departure_lonx"), rec.valueFloat("departure_laty"), rec.valueFloat("departure_alt", 0.f)), html);
       html.tableEnd();
 
       // Destination =======================================================
-      html.p(tr("Destination (%1)").
-             arg(logEntry.destinationIdent.isEmpty() ? tr("-") : logEntry.destinationIdent), ahtml::BOLD);
+      html.p(tr("Destination (%1)").arg(logEntry.destinationIdent.isEmpty() ? tr("-") : logEntry.destinationIdent), ahtml::BOLD);
       html.table();
 
       html.row2If(tr("Runway:"), rec.valueStr("destination_runway"));
@@ -2576,23 +2573,20 @@ bool HtmlInfoBuilder::logEntryText(MapLogbookEntry logEntry, HtmlBuilder& html) 
       if(destTime.isValid())
       {
         QString destTimeZone = destTime.timeZoneAbbreviation();
-        html.row2If(tr("Real time:"),
-                    tr("%1 %2").arg(locale.toString(destTime, QLocale::ShortFormat)).arg(destTimeZone));
+        html.row2If(tr("Real time:"), tr("%1 %2").arg(locale.toString(destTime, QLocale::ShortFormat)).arg(destTimeZone));
       }
 
       QDateTime destTimeSim = rec.valueDateTime("destination_time_sim");
       if(destTimeSim.isValid())
       {
         QString destTimeZoneSim = destTimeSim.timeZoneAbbreviation();
-        html.row2If(tr("Simulator time:"),
-                    tr("%1 %2").arg(locale.toString(destTimeSim, QLocale::ShortFormat)).arg(destTimeZoneSim));
+        html.row2If(tr("Simulator time:"), tr("%1 %2").arg(locale.toString(destTimeSim, QLocale::ShortFormat)).arg(destTimeZoneSim));
       }
 
       if(grossWeight > 0.f)
         html.row2(tr("Gross Weight:"), Unit::weightLbs(grossWeight - usedFuel), ahtml::NO_ENTITIES);
 
-      addCoordinates(Pos(rec.valueFloat("destination_lonx"),
-                         rec.valueFloat("destination_laty"),
+      addCoordinates(Pos(rec.valueFloat("destination_lonx"), rec.valueFloat("destination_laty"),
                          rec.valueFloat("destination_alt", 0.f)), html);
       html.tableEnd();
 

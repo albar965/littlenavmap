@@ -477,21 +477,25 @@ void LogdataController::prefillLogEntry(atools::sql::SqlRecord& rec)
   route.getRunwayNames(departRw, destRw);
   if(route.hasValidDeparture())
   {
-    rec.setValue("departure_ident", route.getDepartureAirportLeg().getIdent());
-    rec.setValue("departure_name", route.getDepartureAirportLeg().getName());
+    const RouteLeg& departureAirportLeg = route.getDepartureAirportLeg();
+    rec.setValue("departure_ident", departureAirportLeg.getIdent());
+    rec.setValue("departure_name", departureAirportLeg.getName());
     rec.setValue("departure_runway", departRw);
-    rec.setValue("departure_lonx", route.getDepartureAirportLeg().getPosition().getLonX());
-    rec.setValue("departure_laty", route.getDepartureAirportLeg().getPosition().getLatY());
+    rec.setValue("departure_lonx", departureAirportLeg.getPosition().getLonX());
+    rec.setValue("departure_laty", departureAirportLeg.getPosition().getLatY());
+    rec.setValue("departure_alt", departureAirportLeg.getAltitude()); // integer,
   }
 
   // Destination information =============================================
   if(route.hasValidDestination())
   {
-    rec.setValue("destination_ident", route.getDestinationAirportLeg().getIdent());
-    rec.setValue("destination_name", route.getDestinationAirportLeg().getName());
+    const RouteLeg& destinationAirportLeg = route.getDestinationAirportLeg();
+    rec.setValue("destination_ident", destinationAirportLeg.getIdent());
+    rec.setValue("destination_name", destinationAirportLeg.getName());
     rec.setValue("destination_runway", destRw);
-    rec.setValue("destination_lonx", route.getDestinationAirportLeg().getPosition().getLonX());
-    rec.setValue("destination_laty", route.getDestinationAirportLeg().getPosition().getLatY());
+    rec.setValue("destination_lonx", destinationAirportLeg.getPosition().getLonX());
+    rec.setValue("destination_laty", destinationAirportLeg.getPosition().getLatY());
+    rec.setValue("destination_alt", destinationAirportLeg.getAltitude()); // integer,
   }
 
   // File attachements =============================================
