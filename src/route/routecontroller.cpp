@@ -67,7 +67,7 @@
 #include "perf/aircraftperfcontroller.h"
 #include "fs/sc/simconnectdata.h"
 #include "gui/tabwidgethandler.h"
-#include "gui/choicedialog.h"
+#include "gui/treedialog.h"
 #include "geo/calculations.h"
 #include "routing/routenetworkloader.h"
 #include "fs/util/fsutil.h"
@@ -132,62 +132,68 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 {
   airportQuery = NavApp::getAirportQuerySim();
 
-  routeColumns = QList<QString>({QObject::tr("Ident"),
-                                 QObject::tr("Region"),
-                                 QObject::tr("Name"),
-                                 QObject::tr("Procedure"),
-                                 QObject::tr("Airway or\nProcedure"),
-                                 QObject::tr("Restriction\n%alt%/%speed%/angle"),
-                                 QObject::tr("Type"),
-                                 QObject::tr("Freq.\nMHz/kHz/Cha."),
-                                 QObject::tr("Range\n%dist%"),
-                                 QObject::tr("Course\n°M"),
-                                 QObject::tr("Course\n°T"),
-                                 QObject::tr("Distance\n%dist%"),
-                                 QObject::tr("Remaining\n%dist%"),
-                                 QObject::tr("Leg Time\nhh:mm"),
-                                 QObject::tr("ETA\nhh:mm"),
-                                 QObject::tr("Fuel Rem.\n%weight%"),
-                                 QObject::tr("Fuel Rem.\n%volume%"),
-                                 QObject::tr("Wind\n°M/%speed%"),
-                                 QObject::tr("Head- or Tailwind\n%speed%"),
-                                 QObject::tr("Altitude\n%alt%"),
-                                 QObject::tr("Latitude"),
-                                 QObject::tr("Longitude"),
-                                 QObject::tr("Remarks")});
+  routeColumns = QList<QString>({
+    tr("Ident"),
+    tr("Region"),
+    tr("Name"),
+    tr("Procedure"),
+    tr("Airway or\nProcedure"),
+    tr("Restriction\n%alt%/%speed%/angle"),
+    tr("Type"),
+    tr("Freq.\nMHz/kHz/Cha."),
+    tr("Range\n%dist%"),
+    tr("Course\n°M"),
+    tr("Course\n°T"),
+    tr("Distance\n%dist%"),
+    tr("Remaining\n%dist%"),
+    tr("Leg Time\nhh:mm"),
+    tr("ETA\nhh:mm"),
+    tr("Fuel Rem.\n%weight%"),
+    tr("Fuel Rem.\n%volume%"),
+    tr("Wind\n°M/%speed%"),
+    tr("Head- or Tailwind\n%speed%"),
+    tr("Altitude\n%alt%"),
+    tr("Latitude"),
+    tr("Longitude"),
+    tr("Remarks")});
 
-  routeColumnTooltips = QList<QString>(
-  {
-    QObject::tr("ICAO ident of the navaid or airport."),
-    QObject::tr("Two letter region code of a navaid."),
-    QObject::tr("Name of airport or  navaid."),
-    QObject::tr("Either SID, SID transition, STAR, STAR transition, transition, "
-                "approach or missed plus the name of the procedure."),
-    QObject::tr("Contains the airway name for en route legs or procedure instruction."),
-    QObject::tr("Minimum and maximum altitude for en route airway segments.\n"
-                "Procedure altitude restriction, speed limit or required descent flight path angle."),
-    QObject::tr("Type of a radio navaid. Shows ILS or LOC for\n"
-                "localizer approaches on the last runway leg."),
-    QObject::tr("Frequency or channel of a radio navaid.\n"
-                "Also shows ILS or localizer frequency for corresponding approaches on the last runway leg."),
-    QObject::tr("Range of a radio navaid if available."),
-    QObject::tr("Magnetic start course of the great circle route connecting the two waypoints of the leg."),
-    QObject::tr("True start course of the great circle route connecting the two waypoints of the leg."),
-    QObject::tr("Distance of the flight plan leg."),
-    QObject::tr("Remaining distance to destination airport or procedure end point."),
-    QObject::tr("Flying time for this leg.\nCalculated based on the selected aircraft performance profile."),
-    QObject::tr("Estimated time of arrival.\nCalculated based on the selected aircraft performance profile."),
-    QObject::tr("Fuel weight remaining at waypoint, once for volume and once for weight.\n"
-                "Calculated based on the aircraft performance profile."),
-    QObject::tr("Fuel volume remaining at waypoint, once for volume and once for weight.\n"
-                "Calculated based on the aircraft performance profile."),
-    QObject::tr("Wind direction and speed at waypoint."),
-    QObject::tr("Head- or tailwind at waypoint."),
-    QObject::tr("Altitude at waypoint\n"
-                "Calculated based on the aircraft performance profile."),
-    QObject::tr("Waypoint latitude in format as selected in options."),
-    QObject::tr("Waypoint longitude in format as selected in options."),
-    QObject::tr("Turn instructions, flyover or related navaid for procedure legs.")
+  routeColumnDescription = QList<QString>({
+    tr("ICAO ident of the navaid or airport."),
+    tr("Two letter region code of a navaid."),
+    tr("Name of airport or  navaid."),
+    tr("Either SID, SID transition, STAR, STAR transition, transition,\n"
+       "approach or missed plus the name of the procedure."),
+    tr("Contains the airway name for en route legs or procedure instruction."),
+    tr("Minimum and maximum altitude for en route airway segments.\n"
+       "Procedure altitude restriction, speed limit or\n"
+       "required descent flight path angle."),
+    tr("Type of a radio navaid. Shows ILS or LOC for\n"
+       "localizer approaches on the last runway leg."),
+    tr("Frequency or channel of a radio navaid.\n"
+       "Also shows ILS or localizer frequency for corresponding approaches\n"
+       "on the last runway leg."),
+    tr("Range of a radio navaid if available."),
+    tr("Magnetic start course of the great circle route\n"
+       "connecting the two waypoints of the leg."),
+    tr("True start course of the great circle route connecting\n"
+       "the two waypoints of the leg."),
+    tr("Distance of the flight plan leg."),
+    tr("Remaining distance to destination airport or procedure end point."),
+    tr("Flying time for this leg.\n"
+       "Calculated based on the selected aircraft performance profile."),
+    tr("Estimated time of arrival.\n"
+       "Calculated based on the selected aircraft performance profile."),
+    tr("Fuel weight remaining at waypoint, once for volume and once for weight.\n"
+       "Calculated based on the aircraft performance profile."),
+    tr("Fuel volume remaining at waypoint, once for volume and once for weight.\n"
+       "Calculated based on the aircraft performance profile."),
+    tr("Wind direction and speed at waypoint."),
+    tr("Head- or tailwind at waypoint."),
+    tr("Altitude at waypoint\n"
+       "Calculated based on the aircraft performance profile."),
+    tr("Waypoint latitude in format as selected in options."),
+    tr("Waypoint longitude in format as selected in options."),
+    tr("Turn instructions, flyover or related navaid for procedure legs.")
   });
 
   flightplanIO = new atools::fs::pln::FlightplanIO();
@@ -2207,21 +2213,33 @@ void RouteController::visibleColumnsTriggered()
 {
   qDebug() << Q_FUNC_INFO;
 
-  ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Flight Plan Table"),
-                            tr("Select columns to show in flight plan table"),
-                            lnm::ROUTE_FLIGHTPLAN_COLUMS_DIALOG, "FLIGHTPLAN.html#flight-plan-table-columns");
+  atools::gui::TreeDialog treeDialog(mainWindow, QApplication::applicationName() + tr(" - Flight Plan Table"),
+                                     tr("Select columns to show in flight plan table"),
+                                     lnm::ROUTE_FLIGHTPLAN_COLUMS_DIALOG, "FLIGHTPLAN.html#flight-plan-table-columns",
+                                     false /* showExplandCollapse */);
 
+  treeDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
+  treeDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
+  treeDialog.setHeader({tr("Column Name"), tr("Description")});
+
+  // Add column names and description texts to tree
+  QTreeWidgetItem *rootItem = treeDialog.getRootItem();
   QHeaderView *header = view->horizontalHeader();
   for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
-    choiceDialog.addCheckBox(col, Unit::replacePlaceholders(routeColumns.at(col)).replace("\n", " "),
-                             routeColumnTooltips.at(col), !header->isSectionHidden(col));
-
-  choiceDialog.restoreState();
-
-  if(choiceDialog.exec() == QDialog::Accepted)
   {
+    QString textCol1 = Unit::replacePlaceholders(routeColumns.at(col)).replace("\n", " ");
+    QString textCol2 = routeColumnDescription.at(col);
+    treeDialog.addItem(rootItem, col, {textCol1, textCol2}, QString(), !header->isSectionHidden(col));
+  }
+  treeDialog.restoreState(false /* restoreCheckState */);
+
+  if(treeDialog.exec() == QDialog::Accepted)
+  {
+    treeDialog.saveState(false /* saveCheckState */);
+
+    // Hiddend sections are saved with the view
     for(int col = rcol::LAST_COLUMN; col >= rcol::FIRST_COLUMN; col--)
-      header->setSectionHidden(col, !choiceDialog.isChecked(col));
+      header->setSectionHidden(col, !treeDialog.isItemChecked(col));
 
     updateModelTimeFuelWind();
     updateModelHighlights();
@@ -2297,9 +2315,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
   if(!index.isValid() && model->rowCount() > 0)
   {
     // Fall back to selction and get first field there
-    QList<int> selectedRows = atools::gui::selectedRows(view->selectionModel(), false /* reverse */);
-    if(!selectedRows.isEmpty())
-      index = model->index(selectedRows.first(), 0);
+    QList<int> rows = atools::gui::selectedRows(view->selectionModel(), false /* reverse */);
+    if(!rows.isEmpty())
+      index = model->index(rows.first(), 0);
     else
       // Get current position
       index = view->currentIndex();
@@ -4255,7 +4273,7 @@ void RouteController::updateTableModel()
 
   // Update header tooltips
   for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
-    model->horizontalHeaderItem(col)->setToolTip(routeColumnTooltips.at(col));
+    model->horizontalHeaderItem(col)->setToolTip(routeColumnDescription.at(col));
 
   updateModelHighlights();
   highlightNextWaypoint(route.getActiveLegIndexCorrected());

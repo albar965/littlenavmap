@@ -562,7 +562,7 @@ private:
   QTimer routeAltDelayTimer, tableCleanupTimer;
 
   // Route table colum headings
-  QStringList routeColumns, routeColumnTooltips;
+  QStringList routeColumns, routeColumnDescription;
   UnitStringTool *units = nullptr;
 
   // Errors collected when parsing route for model

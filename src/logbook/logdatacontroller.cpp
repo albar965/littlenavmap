@@ -652,8 +652,11 @@ void LogdataController::exportCsv()
     };
 
     // Build a choice dialog with several checkboxes =========================
-    ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Logbook Export"),
-                              tr("Select export options for logbook"), lnm::LOGDATA_EXPORT_CSV, "LOGBOOK.html#import-and-export");
+    atools::gui::ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Logbook Export"),
+                                           tr("Select export options for logbook"), lnm::LOGDATA_EXPORT_CSV,
+                                           "LOGBOOK.html#import-and-export");
+    choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
+    choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
 
     QString attachmentToolTip = tr("Content of attached file will be added to the exported CSV if selected.\n"
                                    "Note that not all programs will be able to read this.\n"
@@ -670,12 +673,13 @@ void LogdataController::exportCsv()
     choiceDialog.addCheckBox(EXPORTPERF, tr("&Aircraft performance"), attachmentToolTip, false);
     choiceDialog.addCheckBox(EXPORTGPX, tr(
                                "&GPX file containing flight plan points and trail"), attachmentToolTip, false);
+    choiceDialog.addSpacer();
     choiceDialog.restoreState();
 
     // Disable/enable header depending on append option
     choiceDialog.getCheckBox(HEADER)->setDisabled(choiceDialog.isChecked(APPEND));
-    ChoiceDialog *dlgPtr = &choiceDialog;
-    connect(&choiceDialog, &ChoiceDialog::checkBoxToggled, this, [dlgPtr](int id, bool checked) {
+    atools::gui::ChoiceDialog *dlgPtr = &choiceDialog;
+    connect(&choiceDialog, &atools::gui::ChoiceDialog::checkBoxToggled, this, [dlgPtr](int id, bool checked) {
       if(id == APPEND)
         dlgPtr->getCheckBox(HEADER)->setDisabled(checked);
     });

@@ -353,7 +353,7 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
         if(perf.isSpeedValid())
           result.timeToDest = activeLeg.getTimeFromDistToDestination(distFromDeparture);
 
-        // Calculate time and fuel to TOD ===================================================
+        // Calculate time and fuel to top of descent ===================================================
         int todIdx = getTopOfDescentLegIndex();
         float todDistanceFromDeparture = getTopOfDescentDistance();
 
@@ -384,7 +384,40 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
 
           if(perf.isSpeedValid())
             result.timeToTod = result.timeToDest - todLeg.getTimeFromDistToDestination(todDistanceFromDeparture);
-        }
+        } // if(todDistanceFromDeparture >= 0.f && todDistanceFromDeparture ...
+
+        // Calculate time and fuel to top of climb  ===================================================
+        int tocIdx = getTopOfClimbLegIndex();
+        float tocDistanceFromDeparture = getTopOfClimbDistance();
+
+        if(tocDistanceFromDeparture >= 0.f && tocDistanceFromDeparture < map::INVALID_DISTANCE_VALUE &&
+           tocIdx != map::INVALID_INDEX_VALUE)
+        {
+          const RouteAltitudeLeg& tocLeg = value(tocIdx);
+
+          if(perf.isFuelFlowValid())
+          {
+            // Calculate fuel and time from TOC to destination
+            float fuelTocToDist = tocLeg.getFuelFromDistToDestination(tocDistanceFromDeparture);
+
+            // Calculate fuel and time from aircraft to TOC
+            float fuelToToc = fuelToDest - fuelTocToDist;
+
+            if(perf.useFuelAsVolume())
+            {
+              result.fuelLbsToToc = atools::geo::fromGalToLbs(perf.isJetFuel(), fuelToToc);
+              result.fuelGalToToc = fuelToToc;
+            }
+            else
+            {
+              result.fuelLbsToToc = fuelToToc;
+              result.fuelGalToToc = atools::geo::fromLbsToGal(perf.isJetFuel(), fuelToToc);
+            }
+          }
+
+          if(perf.isSpeedValid())
+            result.timeToToc = result.timeToDest - tocLeg.getTimeFromDistToDestination(tocDistanceFromDeparture);
+        } // if(tocDistanceFromDeparture >= 0.f && tocDistanceFromDeparture ...
       } // if(distanceToDest > 0.f && distanceToDest < map::INVALID_DISTANCE_VALUE)
     } // if(!alternate)
 

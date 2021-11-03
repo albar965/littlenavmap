@@ -792,8 +792,10 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
     SELECTED, APPEND, HEADER
   };
 
-  ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Userpoint Export Options"),
-                            tr("Select export options"), lnm::USERDATA_EXPORT_CHOICE_DIALOG, "USERPOINT.html");
+  atools::gui::ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Userpoint Export Options"),
+                                         tr("Select export options for userpoints"), lnm::USERDATA_EXPORT_CHOICE_DIALOG, "USERPOINT.html");
+  choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
+  choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
 
   if(appendAllowed)
     choiceDialog.addCheckBox(APPEND, tr("&Append to an already present file"),
@@ -810,11 +812,13 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
   else
     choiceDialog.addCheckBoxHidden(HEADER);
 
+  choiceDialog.addSpacer();
+
   choiceDialog.restoreState();
 
   choiceDialog.getCheckBox(HEADER)->setDisabled(choiceDialog.isChecked(APPEND));
-  ChoiceDialog *dlgPtr = &choiceDialog;
-  connect(&choiceDialog, &ChoiceDialog::checkBoxToggled, this, [dlgPtr](int id, bool checked) {
+  atools::gui::ChoiceDialog *dlgPtr = &choiceDialog;
+  connect(&choiceDialog, &atools::gui::ChoiceDialog::checkBoxToggled, this, [dlgPtr](int id, bool checked) {
     if(id == APPEND)
       dlgPtr->getCheckBox(HEADER)->setDisabled(checked);
   });

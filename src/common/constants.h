@@ -126,12 +126,15 @@ const QLatin1String INFOWINDOW_WIDGET("InfoWindow/Widget");
 const QLatin1String INFOWINDOW_WIDGET_TABS("InfoWindow/WidgetTabs");
 const QLatin1String INFOWINDOW_WIDGET_AIRPORT_TABS("InfoWindow/WidgetAirportTabs");
 const QLatin1String INFOWINDOW_WIDGET_AIRCRAFT_TABS("InfoWindow/WidgetAircraftTabs");
-const QLatin1String INFOWINDOW_MORE_LESS_PROGRESS("InfoWindow/MoreLessProgress");
+const QLatin1String INFOWINDOW_PROGRESS_FIELD_DIALOG("InfoWindow/ProgressFieldDialog");
+const QLatin1String INFOWINDOW_PROGRESS_FIELDS("InfoWindow/ProgressFields");
+
 const QLatin1String MAINWINDOW_FIRSTAPPLICATIONSTART("MainWindow/FirstApplicationStart");
 const QLatin1String MAINWINDOW_WIDGET("MainWindow/Widget");
 const QLatin1String MAINWINDOW_WIDGET_DOCKHANDLER("MainWindow/WidgetDockHandler");
 const QLatin1String MAINWINDOW_PRINT_SIZE("MainWindow/PrintPreviewSize");
 const QLatin1String MAINWINDOW_PLACE_ROUTE_CALC("MainWindow/PlaceRouteCalc");
+
 const QLatin1String MAP_DETAILFACTOR("Map/DetailFactor");
 const QLatin1String MAP_DISTANCEMARKERS("Map/DistanceMarkers");
 const QLatin1String MAP_TRAFFICPATTERNS("Map/TrafficPatterns");

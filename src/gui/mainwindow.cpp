@@ -2060,8 +2060,10 @@ void MainWindow::routeResetAll()
   qDebug() << Q_FUNC_INFO;
 
   // Create a dialog with four checkboxes
-  ChoiceDialog choiceDialog(this, QApplication::applicationName() + tr(" - Reset for new Flight"),
-                            tr("Select items to reset for a new flight"), lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "RESET.html");
+  atools::gui::ChoiceDialog choiceDialog(this, QApplication::applicationName() + tr(" - Reset for new Flight"),
+                                         tr("Select items to reset for a new flight"), lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "RESET.html");
+  choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
+  choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
 
   choiceDialog.addCheckBox(EMPTY_FLIGHT_PLAN, tr("&Create a new and empty flight plan"), QString(), true);
   choiceDialog.addCheckBox(DELETE_TRAIL, tr("&Delete aircraft trail"),
@@ -2075,6 +2077,7 @@ void MainWindow::routeResetAll()
   choiceDialog.addCheckBox(REMOVE_MARKS, tr("&Remove all Ranges, Measurements, Patterns, Holdings and MSA Diagrams"),
                            tr("Remove all range rings, measurements, traffic patterns, holdings and "
                               "airport MSA diagrams from the map"), false);
+  choiceDialog.addSpacer();
 
   choiceDialog.restoreState();
 

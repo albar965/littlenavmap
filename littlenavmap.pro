@@ -262,7 +262,6 @@ SOURCES += \
   src/db/dbtypes.cpp \
   src/export/csvexporter.cpp \
   src/export/exporter.cpp \
-  src/gui/choicedialog.cpp \
   src/gui/holddialog.cpp \
   src/gui/mainwindow.cpp \
   src/gui/runwayselection.cpp \
@@ -272,6 +271,7 @@ SOURCES += \
   src/gui/timedialog.cpp \
   src/gui/trafficpatterndialog.cpp \
   src/gui/updatedialog.cpp \
+  src/info/aircraftprogressconfig.cpp \
   src/info/infocontroller.cpp \
   src/logbook/logdatacontroller.cpp \
   src/logbook/logdataconverter.cpp \
@@ -411,6 +411,7 @@ HEADERS  += \
   src/common/formatter.h \
   src/common/fueltool.h \
   src/common/htmlinfobuilder.h \
+  src/common/htmlinfobuilderflags.h \
   src/common/infobuildertypes.h \
   src/common/jsoninfobuilder.h \
   src/common/jumpback.h \
@@ -437,7 +438,6 @@ HEADERS  += \
   src/db/dbtypes.h \
   src/export/csvexporter.h \
   src/export/exporter.h \
-  src/gui/choicedialog.h \
   src/gui/holddialog.h \
   src/gui/mainwindow.h \
   src/gui/runwayselection.h \
@@ -447,6 +447,7 @@ HEADERS  += \
   src/gui/timedialog.h \
   src/gui/trafficpatterndialog.h \
   src/gui/updatedialog.h \
+  src/info/aircraftprogressconfig.h \
   src/info/infocontroller.h \
   src/logbook/logdatacontroller.h \
   src/logbook/logdataconverter.h \
@@ -577,7 +578,6 @@ FORMS += \
   src/connect/connectdialog.ui \
   src/db/databasedialog.ui \
   src/db/databaseprogressdialog.ui \
-  src/gui/choicedialog.ui \
   src/gui/holddialog.ui \
   src/gui/mainwindow.ui \
   src/gui/textdialog.ui \

@@ -284,9 +284,7 @@ public:
    * @param html
    * @param html Result containing HTML snippet
    */
-  void aircraftProgressText(const atools::fs::sc::SimConnectAircraft& data,
-                            atools::util::HtmlBuilder& html,
-                            const Route& route, bool moreLessSwitch, bool less);
+  void aircraftProgressText(const atools::fs::sc::SimConnectAircraft& data, atools::util::HtmlBuilder& html, const Route& route);
 
   /*
    * Create HTML for online aircraft also showing position.
@@ -367,7 +365,7 @@ private:
                     const QString& colName, const QString& msg, const QString& val) const;
 
   void aircraftTitle(const atools::fs::sc::SimConnectAircraft& aircraft,
-                     atools::util::HtmlBuilder& html, bool moreLessSwitch, bool less);
+                     atools::util::HtmlBuilder& html);
 
   void dateTimeAndFlown(const atools::fs::sc::SimConnectUserAircraft *userAircraft,
                         atools::util::HtmlBuilder& html) const;
@@ -421,6 +419,8 @@ private:
   /* Join values and header with default values */
   QString strJoinVal(const QStringList& list) const;
   QString strJoinHdr(const QStringList& list) const;
+
+  QString highlightText(const QString& text) const;
 
   /* Airport, navaid and userpoint icon size */
   QSize symbolSize = QSize(18, 18);

@@ -112,8 +112,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
           html.textBar(TEXT_BAR_LENGTH);
 
         info.aircraftText(mapSearchResult.userAircraft.getAircraft(), html);
-        info.aircraftProgressText(mapSearchResult.userAircraft.getAircraft(), html, route,
-                                  false /* show more/less switch */, false /* true if less info mode */);
+        info.aircraftProgressText(mapSearchResult.userAircraft.getAircraft(), html, route);
         userAircraftPrinted = true;
         numEntries++;
       }
@@ -137,8 +136,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
           html.textBar(TEXT_BAR_LENGTH);
 
         info.aircraftText(aircraft.getAircraft(), html);
-        info.aircraftProgressText(aircraft.getAircraft(), html, Route(),
-                                  false /* show more/less switch */, false /* true if less info mode */);
+        info.aircraftProgressText(aircraft.getAircraft(), html, Route());
 
         numEntries++;
       }
@@ -159,8 +157,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
           html.textBar(TEXT_BAR_LENGTH);
 
         info.aircraftText(aircraft.getAircraft(), html);
-        info.aircraftProgressText(aircraft.getAircraft(), html, Route(),
-                                  false /* show more/less switch */, false /* true if less info mode */);
+        info.aircraftProgressText(aircraft.getAircraft(), html, Route());
 
         numEntries++;
       }

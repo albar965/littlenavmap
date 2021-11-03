@@ -52,6 +52,11 @@ struct FuelTimeResult
     fuelGalToDest = map::INVALID_VOLUME_VALUE,
     timeToDest = map::INVALID_TIME_VALUE,
 
+  /* To top of climb */
+    fuelLbsToToc = map::INVALID_WEIGHT_VALUE,
+    fuelGalToToc = map::INVALID_VOLUME_VALUE,
+    timeToToc = map::INVALID_TIME_VALUE,
+
   /* To top of descent */
     fuelLbsToTod = map::INVALID_WEIGHT_VALUE,
     fuelGalToTod = map::INVALID_VOLUME_VALUE,
@@ -69,6 +74,11 @@ struct FuelTimeResult
     return timeToDest < map::INVALID_TIME_VALUE;
   }
 
+  bool isTimeToTocValid() const
+  {
+    return timeToToc < map::INVALID_TIME_VALUE;
+  }
+
   bool isTimeToTodValid() const
   {
     return timeToTod < map::INVALID_TIME_VALUE;
@@ -82,6 +92,11 @@ struct FuelTimeResult
   bool isFuelToDestValid() const
   {
     return fuelLbsToDest < map::INVALID_WEIGHT_VALUE && fuelGalToDest < map::INVALID_VOLUME_VALUE;
+  }
+
+  bool isFuelToTocValid() const
+  {
+    return fuelLbsToToc < map::INVALID_WEIGHT_VALUE && fuelGalToToc < map::INVALID_VOLUME_VALUE;
   }
 
   bool isFuelToTodValid() const
