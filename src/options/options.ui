@@ -202,8 +202,7 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
                <item row="4" column="0">
                 <widget class="QCheckBox" name="checkBoxOptionsStartupShowSplash">
                  <property name="toolTip">
-                  <string>Loads the window layout from the last opened window layout file on startup.
-This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
+                  <string>Show the startup image screen if enabled</string>
                  </property>
                  <property name="text">
                   <string>&amp;Show splash screen</string>
@@ -418,8 +417,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>522</width>
+             <height>335</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -640,8 +639,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>466</height>
+             <width>430</width>
+             <height>456</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1067,7 +1066,7 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>572</width>
+             <width>560</width>
              <height>508</height>
             </rect>
            </property>
@@ -2741,8 +2740,8 @@ Afftects map and elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>407</width>
-             <height>317</height>
+             <width>411</width>
+             <height>376</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -2883,7 +2882,7 @@ logbook entries:</string>
                   <bool>false</bool>
                  </property>
                  <property name="alternatingRowColors">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                  <property name="headerHidden">
                   <bool>true</bool>
@@ -6273,8 +6272,8 @@ Currently only OpenAir is supported (*.txt). </string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>586</width>
-             <height>483</height>
+             <width>191</width>
+             <height>543</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">

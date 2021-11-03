@@ -6859,7 +6859,7 @@ Disabled if a navdatabase does not allow it.</string>
         <item>
          <widget class="QLabel" name="labelRouteCalcCruiseAltitude">
           <property name="text">
-           <string>&amp;Cruise Altitude:</string>
+           <string>&amp;Cruise altitude for calculation:</string>
           </property>
           <property name="buddy">
            <cstring>spinBoxRouteCalcCruiseAltitude</cstring>
@@ -12394,8 +12394,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>
