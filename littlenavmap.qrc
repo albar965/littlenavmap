@@ -295,5 +295,6 @@
         <file>resources/icons/msaoff.svg</file>
         <file>resources/icons/runwaydest.svg</file>
         <file>resources/icons/runwaydepart.svg</file>
+        <file>resources/icons/mapdisplaylabels.svg</file>
     </qresource>
 </RCC>

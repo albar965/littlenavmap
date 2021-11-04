@@ -151,11 +151,11 @@ private:
   void eastWestRuleClicked();
 
   // Add items to the tree widget and to the  displayOptItemIndex
-  QTreeWidgetItem *addTopItem(QTreeWidgetItem *root, const QString& text, const QString& tooltip);
+  QTreeWidgetItem *addTopItem(const QString& text, const QString& description);
 
   template<typename TYPE>
   QTreeWidgetItem *addItem(QTreeWidgetItem *root, QHash<TYPE, QTreeWidgetItem *>& index,
-                           const QString& text, const QString& tooltip, TYPE type, bool checked = false) const;
+                           const QString& text, const QString& description, TYPE type, bool checked = false) const;
 
   template<typename TYPE>
   void restoreOptionItemStates(const QHash<TYPE, QTreeWidgetItem *>& index, const QString& optionPrefix) const;
