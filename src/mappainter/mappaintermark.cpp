@@ -213,6 +213,10 @@ void MapPainterMark::paintHighlights()
   for(const QList<MapAirway>& airwayFull : mapPaintWidget->getAirwayHighlights())
     paintAirwayTextList(airwayFull);
 
+  const OptionData& od = OptionData::instance();
+  bool transparent = od.getFlags2().testFlag(opts2::MAP_HIGHLIGHT_TRANSPARENT);
+  float alpha = transparent ? (1.f - context->transparencyHighlight) : 1.f;
+
   // Selected logbook entries ------------------------------------------
   paintLogEntries(highlightResultsSearch.logbookEntries);
 
@@ -220,20 +224,18 @@ void MapPainterMark::paintHighlights()
   // Draw all highlight rings for positions collected above =============
   GeoPainter *painter = context->painter;
   if(context->mapLayer->isAirport())
-    size = context->sz(context->symbolSizeAirport,
-                       std::max(size, context->mapLayer->getAirportSymbolSize()));
+    size = context->sz(context->symbolSizeAirport, std::max(size, context->mapLayer->getAirportSymbolSize()));
 
-  QPen outerPen(mapcolors::highlightBackColor, size / 3. + 2., Qt::SolidLine, Qt::FlatCap);
-  QPen innerPen(mapcolors::highlightColor, size / 3., Qt::SolidLine, Qt::FlatCap);
-
-  painter->setBrush(Qt::NoBrush);
-  painter->setPen(QPen(QBrush(mapcolors::highlightColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));
+  const QPen outerPen(mapcolors::highlightBackColor, size / 3. + 2., Qt::SolidLine, Qt::FlatCap);
+  const QPen innerPen(mapcolors::adjustAlphaF(mapcolors::highlightColor, alpha), transparent ? 1. : size / 3., Qt::SolidLine, Qt::FlatCap);
+  painter->setBrush(transparent ? QBrush(mapcolors::adjustAlphaF(mapcolors::highlightColor, alpha)) : QBrush(Qt::NoBrush));
+  painter->setPen(innerPen);
   for(const Pos& pos : positions)
   {
     int x, y;
     if(wToS(pos, x, y))
     {
-      if(!context->drawFast)
+      if(!context->drawFast && !transparent)
       {
         // Draw black background for outline
         painter->setPen(outerPen);
@@ -244,8 +246,11 @@ void MapPainterMark::paintHighlights()
     }
   }
 
-  // Draw highlights from the approach selection =====================================================
+  // Draw highlights from the approach fix selection =====================================================
   const proc::MapProcedureLeg& leg = mapPaintWidget->getProcedureLegHighlights();
+  const QColor outerColorProc(mapcolors::highlightBackColor);
+  const QColor innerColorProc(mapcolors::adjustAlphaF(mapcolors::highlightApproachColor, alpha));
+  painter->setBrush(transparent ? QBrush(mapcolors::adjustAlphaF(mapcolors::highlightApproachColor, alpha)) : QBrush(Qt::NoBrush));
 
   if(leg.recFixPos.isValid())
   {
@@ -255,12 +260,12 @@ void MapPainterMark::paintHighlights()
     if(wToS(leg.recFixPos, x, y))
     {
       // Draw recommended fix with a thin small circle
-      if(!context->drawFast)
+      if(!context->drawFast && !transparent)
       {
-        painter->setPen(QPen(mapcolors::highlightBackColor, size / 5 + 2));
+        painter->setPen(QPen(outerColorProc, size / 5 + 2));
         painter->drawEllipse(QPoint(x, y), ellipseSize, ellipseSize);
-        painter->setPen(QPen(mapcolors::highlightApproachColor, size / 5));
       }
+      painter->setPen(QPen(innerColorProc, transparent ? 0 : size / 5));
       painter->drawEllipse(QPoint(x, y), ellipseSize, ellipseSize);
     }
   }
@@ -276,12 +281,12 @@ void MapPainterMark::paintHighlights()
         ellipseSize /= 2;
 
       // Draw start point of the leg using a smaller circle
-      if(!context->drawFast)
+      if(!context->drawFast && !transparent)
       {
-        painter->setPen(QPen(mapcolors::highlightBackColor, size / 3 + 2));
+        painter->setPen(QPen(outerColorProc, size / 3 + 2));
         painter->drawEllipse(QPoint(x, y), ellipseSize, ellipseSize);
-        painter->setPen(QPen(mapcolors::highlightApproachColor, size / 3));
       }
+      painter->setPen(QPen(innerColorProc, transparent ? 0 : size / 3));
       painter->drawEllipse(QPoint(x, y), ellipseSize, ellipseSize);
     }
 
@@ -291,12 +296,12 @@ void MapPainterMark::paintHighlights()
       if(wToS(leg.line.getPos2(), x, y))
       {
         // Draw end point of the leg using a larger circle
-        if(!context->drawFast)
+        if(!context->drawFast && !transparent)
         {
-          painter->setPen(QPen(mapcolors::highlightBackColor, size / 3 + 2));
+          painter->setPen(QPen(outerColorProc, size / 3 + 2));
           painter->drawEllipse(QPoint(x, y), ellipseSize, ellipseSize);
-          painter->setPen(QPen(mapcolors::highlightApproachColor, size / 3));
         }
+        painter->setPen(QPen(innerColorProc, transparent ? 0 : size / 3));
         painter->drawEllipse(QPoint(x, y), ellipseSize, ellipseSize);
       }
     }
@@ -306,12 +311,12 @@ void MapPainterMark::paintHighlights()
       if(wToS(leg.procedureTurnPos, x, y))
       {
         // Draw turn position of the procedure turn
-        if(!context->drawFast)
+        if(!context->drawFast && !transparent)
         {
-          painter->setPen(QPen(mapcolors::highlightBackColor, size / 3 + 2));
+          painter->setPen(QPen(outerColorProc, size / 3 + 2));
           painter->drawEllipse(QPoint(x, y), ellipseSize, ellipseSize);
-          painter->setPen(QPen(mapcolors::highlightApproachColor, size / 3));
         }
+        painter->setPen(QPen(innerColorProc, transparent ? 0 : size / 3));
         painter->drawEllipse(QPoint(x, y), ellipseSize, ellipseSize);
       }
     }
@@ -329,39 +334,43 @@ void MapPainterMark::paintHighlights()
     positions.append(routeLeg.getPosition());
   }
 
-  painter->setBrush(Qt::NoBrush);
-  painter->setPen(QPen(QBrush(mapcolors::routeHighlightColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));
+  const QPen outerPenRoute(mapcolors::routeHighlightBackColor, size / 3. + 2., Qt::SolidLine, Qt::FlatCap);
+  const QPen innerPenRoute(mapcolors::adjustAlphaF(mapcolors::routeHighlightColor, alpha), transparent ? 1. : size / 3.,
+                           Qt::SolidLine, Qt::FlatCap);
+  painter->setBrush(transparent ? QBrush(mapcolors::adjustAlphaF(mapcolors::routeHighlightColor, alpha)) : QBrush(Qt::NoBrush));
+  painter->setPen(innerPenRoute);
   for(const Pos& pos : positions)
   {
     int x, y;
     if(wToS(pos, x, y))
     {
-      if(!context->drawFast)
+      if(!context->drawFast && !transparent)
       {
-        painter->setPen(QPen(QBrush(mapcolors::routeHighlightBackColor), size / 3 + 2, Qt::SolidLine,
-                             Qt::FlatCap));
+        painter->setPen(outerPenRoute);
         painter->drawEllipse(QPoint(x, y), size, size);
-        painter->setPen(QPen(QBrush(mapcolors::routeHighlightColor), size / 3, Qt::SolidLine, Qt::FlatCap));
+        painter->setPen(innerPenRoute);
       }
       painter->drawEllipse(QPoint(x, y), size, size);
     }
   }
 
-  // Draw hightlight from the elevation profile view =====================================================
-  painter->setBrush(Qt::NoBrush);
-  painter->setPen(QPen(QBrush(mapcolors::profileHighlightColorFast), size / 3, Qt::SolidLine, Qt::FlatCap));
+  // Draw highlight from the elevation profile view =====================================================
+  const QPen outerPenProfile(mapcolors::profileHighlightBackColor, size / 3. + 2., Qt::SolidLine, Qt::FlatCap);
+  const QPen innerPenProfile(mapcolors::adjustAlphaF(mapcolors::profileHighlightColor, alpha), transparent ? 1. : size / 3.,
+                             Qt::SolidLine, Qt::FlatCap);
+  painter->setBrush(transparent ? QBrush(mapcolors::adjustAlphaF(mapcolors::profileHighlightColor, alpha)) : QBrush(Qt::NoBrush));
   const Pos& pos = mapPaintWidget->getProfileHighlight();
+  painter->setPen(innerPenProfile);
   if(pos.isValid())
   {
     int x, y;
     if(wToS(pos, x, y))
     {
-      if(!context->drawFast)
+      if(!context->drawFast && !transparent)
       {
-        painter->setPen(QPen(QBrush(mapcolors::profileHighlightBackColor), size / 3 + 2, Qt::SolidLine,
-                             Qt::FlatCap));
+        painter->setPen(outerPenProfile);
         painter->drawEllipse(QPoint(x, y), size, size);
-        painter->setPen(QPen(QBrush(mapcolors::profileHighlightColor), size / 3, Qt::SolidLine, Qt::FlatCap));
+        painter->setPen(innerPenProfile);
       }
       painter->drawEllipse(QPoint(x, y), size, size);
     }
@@ -372,7 +381,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
 {
   GeoPainter *painter = context->painter;
   painter->setBackgroundMode(Qt::TransparentMode);
-  painter->setBackground(mapcolors::routeOutlineColor);
+  painter->setBackground(Qt::black);
   painter->setBrush(Qt::NoBrush);
   context->szFont(context->textSizeFlightplan);
 
@@ -431,10 +440,14 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   {
     float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
     float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
+    bool transparent = context->flags2.testFlag(opts2::MAP_ROUTE_TRANSPARENT);
+    float alpha = transparent ? (1.f - context->transparencyFlightplan) : 1.f;
+    float lineWidth = transparent ? outerlinewidth : innerlinewidth;
     float symbolSize = context->sz(context->thicknessFlightplan, 10);
+    QColor routeLogEntryColor = mapcolors::adjustAlphaF(mapcolors::routeLogEntryColor, alpha);
+    QColor routeLogEntryOutlineColor = mapcolors::adjustAlphaF(mapcolors::routeLogEntryOutlineColor, alpha);
 
-    painter->setPen(QPen(mapcolors::routeLogEntryOutlineColor, outerlinewidth, Qt::SolidLine, Qt::RoundCap,
-                         Qt::RoundJoin));
+    painter->setPen(QPen(routeLogEntryOutlineColor, outerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
     // Draw outline for all selected entries ===============
     for(const atools::geo::LineString& geo: visibleRouteGeometries)
@@ -445,8 +458,8 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
 
     // Draw line for all selected entries ===============
     // Use a lighter pen for the flight plan legs ======================================
-    QPen routePen(mapcolors::routeLogEntryColor, innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    routePen.setColor(mapcolors::routeLogEntryColor.lighter(130));
+    QPen routePen(routeLogEntryColor, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    routePen.setColor(routeLogEntryColor.lighter(130));
     painter->setPen(routePen);
 
     for(int i = 0; i < visibleRouteGeometries.size(); i++)
@@ -467,15 +480,14 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
             symbolPainter->drawLogbookPreviewSymbol(context->painter, x, y, symbolSize);
 
             if(context->mapLayer->isWaypointRouteName() && names.size() == geo.size())
-              symbolPainter->textBoxF(context->painter, {names.at(j)}, mapcolors::routeLogEntryOutlineColor,
+              symbolPainter->textBoxF(context->painter, {names.at(j)}, routeLogEntryOutlineColor,
                                       x + symbolSize / 2 + 2, y, textatt::LOG_BG_COLOR);
           }
         }
       }
     }
 
-    painter->setPen(QPen(mapcolors::routeLogEntryOutlineColor, (outerlinewidth - innerlinewidth) / 2.,
-                         Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter->setPen(QPen(routeLogEntryOutlineColor, (outerlinewidth - lineWidth) / 2., Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     painter->setBrush(Qt::white);
     QPolygonF arrow = buildArrow(outerlinewidth);
     for(int i = 0; i < visibleRouteGeometries.size(); i++)
@@ -960,6 +972,7 @@ void MapPainterMark::paintCompassRose()
   if(context->objectDisplayTypes & map::COMPASS_ROSE && mapPaintWidget->distance() < MIN_VIEW_DISTANCE_COMPASS_ROSE_KM)
   {
     atools::util::PainterContextSaver saver(context->painter);
+    const OptionData& od = OptionData::instance();
 
     Marble::GeoPainter *painter = context->painter;
     const atools::fs::sc::SimConnectUserAircraft& aircraft = mapPaintWidget->getUserAircraft();
@@ -1190,7 +1203,7 @@ void MapPainterMark::paintCompassRose()
             // Draw small line to show course to next waypoint ========================
             Pos endPt = pos.endpoint(radiusMeter, courseToWptTrue);
             Line crsLine(pos.interpolate(endPt, radiusMeter, 0.92f), endPt);
-            painter->setPen(QPen(mapcolors::routeOutlineColor, context->sz(context->thicknessFlightplan, 7),
+            painter->setPen(QPen(od.getFlightplanOutlineColor(), context->sz(context->thicknessFlightplan, 7),
                                  Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
             drawLineStraight(painter, crsLine);
 

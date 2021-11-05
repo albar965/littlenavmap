@@ -126,17 +126,14 @@ QPen profileSafeAltLegLinePen(QColor(255, 100, 0), 3, Qt::SolidLine, Qt::FlatCap
 /* Objects highlighted because of selection in search */
 QColor highlightBackColor(Qt::black);
 QColor highlightColor(Qt::yellow);
-QColor highlightColorFast(Qt::darkYellow);
 
 /* Objects highlighted because of selection in route table */
 QColor routeHighlightBackColor(Qt::black);
 QColor routeHighlightColor(Qt::green);
-QColor routeHighlightColorFast(Qt::darkGreen);
 
 /* Objects highlighted because of selection in route profile */
 QColor profileHighlightBackColor(Qt::black);
 QColor profileHighlightColor(Qt::cyan);
-QColor profileHighlightColorFast(Qt::darkCyan);
 
 /* Map print colors */
 QColor mapPrintRowColor(250, 250, 250);
@@ -692,13 +689,10 @@ void syncColors()
   colorSettings.beginGroup("Highlight");
   syncColor(colorSettings, "HighlightBackColor", highlightBackColor);
   syncColor(colorSettings, "HighlightColor", highlightColor);
-  syncColor(colorSettings, "HighlightColorFast", highlightColorFast);
   syncColor(colorSettings, "RouteHighlightBackColor", routeHighlightBackColor);
   syncColor(colorSettings, "RouteHighlightColor", routeHighlightColor);
-  syncColor(colorSettings, "RouteHighlightColorFast", routeHighlightColorFast);
   syncColor(colorSettings, "ProfileHighlightBackColor", profileHighlightBackColor);
   syncColor(colorSettings, "ProfileHighlightColor", profileHighlightColor);
-  syncColor(colorSettings, "ProfileHighlightColorFast", profileHighlightColorFast);
   colorSettings.endGroup();
 
   colorSettings.beginGroup("Print");
@@ -742,9 +736,11 @@ void syncColors()
 
   // Sync airspace colors ============================================
   colorSettings.beginGroup("Airspace");
-  for(const QString& name : airspaceConfigNames.keys())
+
+  for(auto it = airspaceConfigNames.begin(); it != airspaceConfigNames.end(); ++it)
   {
-    map::MapAirspaceTypes type = airspaceConfigNames.value(name);
+    const QString& name = it.key();
+    map::MapAirspaceTypes type = it.value();
     syncPen(colorSettings, name + "Pen", airspacePens[type]);
     syncColorArgb(colorSettings, name + "FillColor", airspaceFillColors[type]);
   }
@@ -760,7 +756,6 @@ void adjustPenForCircleToLand(QPainter *painter)
   QPen pen = painter->pen();
   pen.setStyle(Qt::DotLine);
   pen.setCapStyle(Qt::FlatCap);
-  // pen.setWidthF(pen.widthF() * 0.80);
   painter->setPen(pen);
 }
 
@@ -770,7 +765,6 @@ void adjustPenForVectors(QPainter *painter)
   QPen pen = painter->pen();
   pen.setStyle(Qt::DashLine);
   pen.setCapStyle(Qt::FlatCap);
-  // pen.setWidthF(pen.widthF() * 0.80);
   painter->setPen(pen);
 }
 
@@ -782,7 +776,6 @@ void adjustPenForManual(QPainter *painter)
   // where the entries 1, 3, 5... are the dashes and 2, 4, 6... are the spaces.
   pen.setDashPattern({1., 3.});
   pen.setCapStyle(Qt::FlatCap);
-  // pen.setWidthF(pen.widthF() * 0.80);
   painter->setPen(pen);
 }
 
@@ -793,7 +786,7 @@ void adjustPenForAlternate(QPainter *painter)
   pen.setStyle(Qt::DotLine);
   pen.setCapStyle(Qt::FlatCap);
   painter->setPen(pen);
-  painter->setBackground(Qt::white);
+  painter->setBackground(adjustAlphaF(Qt::white, static_cast<double>(painter->pen().color().alphaF())));
   painter->setBackgroundMode(Qt::OpaqueMode);
 }
 
@@ -831,6 +824,20 @@ void darkenPainterRect(QPainter& painter)
     QColor col = QColor::fromRgb(0, 0, 0, 255 - (255 * dim / 100));
     painter.fillRect(QRect(0, 0, painter.device()->width(), painter.device()->height()), col);
   }
+}
+
+QPen adjustAlphaF(QPen pen, float alpha)
+{
+  QColor color = pen.color();
+  color.setAlphaF(static_cast<double>(alpha));
+  pen.setColor(color);
+  return pen;
+}
+
+QColor adjustAlphaF(QColor color, float alpha)
+{
+  color.setAlphaF(static_cast<double>(alpha));
+  return color;
 }
 
 } // namespace mapcolors

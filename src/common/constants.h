@@ -257,6 +257,7 @@ const QLatin1String OPTIONS_DIALOG_DB_FILE_DLG("OptionsDialog/DatabaseFilesDialo
 const QLatin1String OPTIONS_DIALOG_DB_EXCLUDE("OptionsDialog/DatabaseExclude");
 const QLatin1String OPTIONS_DIALOG_DB_ADDON_EXCLUDE("OptionsDialog/DatabaseAddonExclude");
 const QLatin1String OPTIONS_DIALOG_FLIGHTPLAN_COLOR("OptionsDialog/FlightplanColor");
+const QLatin1String OPTIONS_DIALOG_FLIGHTPLAN_OUTLINE_COLOR("OptionsDialog/FlightplanOutlineColor");
 const QLatin1String OPTIONS_DIALOG_FLIGHTPLAN_PROCEDURE_COLOR("OptionsDialog/FlightplanProcedureColor");
 const QLatin1String OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR("OptionsDialog/FlightplanActiveColor");
 const QLatin1String OPTIONS_DIALOG_FLIGHTPLAN_PASSED_COLOR("OptionsDialog/FlightplanPassedColor");

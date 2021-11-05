@@ -677,7 +677,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   const Route& route = legList->route;
 
   const RouteAltitude& altitudeLegs = route.getAltitudeLegs();
-  const OptionData& optData = OptionData::instance();
+  const OptionData& opt = OptionData::instance();
 
   // Keep margin to left, right and top
   int w = rect().width() - left * 2, h = rect().height() - TOP;
@@ -688,7 +688,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Nothing to show label =========================
   if(route.isEmpty())
   {
-    setFont(optData.getGuiFont());
+    setFont(opt.getGuiFont());
     painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
     symPainter.textBox(&painter, {tr("No Flight Plan.")}, QColor(255, 80, 0),
                        left + w / 2, TOP + h / 2, textatt::BOLD | textatt::CENTER, 0);
@@ -697,7 +697,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
   else if(!hasValidRouteForDisplay())
   {
-    setFont(optData.getGuiFont());
+    setFont(opt.getGuiFont());
     painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
     symPainter.textBox(&painter, {tr("Flight Plan not valid.")}, QColor(255, 80, 0),
                        left + w / 2, TOP + h / 2, textatt::BOLD | textatt::CENTER, 0);
@@ -726,7 +726,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     return;
   }
 
-  setFont(optData.getMapFont());
+  setFont(opt.getMapFont());
 
   // Fill background sky blue ====================================================
   painter.setRenderHint(QPainter::Antialiasing);
@@ -893,27 +893,25 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   bool activeValid = curRoute.isActiveValid();
 
   // Active normally start at 1 - this will consider all legs as not passed
-  int activeRouteLeg =
-    activeValid ? atools::minmax(0, waypointX.size() - 1, curRoute.getActiveLegIndex()) : 0;
-  int passedRouteLeg = optData.getFlags2() & opts2::MAP_ROUTE_DIM_PASSED ? activeRouteLeg : 0;
+  int activeRouteLeg = activeValid ? atools::minmax(0, waypointX.size() - 1, curRoute.getActiveLegIndex()) : 0;
+  int passedRouteLeg = opt.getFlags2() & opts2::MAP_ROUTE_DIM_PASSED ? activeRouteLeg : 0;
 
   if(curRoute.isActiveAlternate())
   {
     // Disable active leg and show all legs as passed if an alternate is enabled
     activeRouteLeg = 0;
-    passedRouteLeg = optData.getFlags2() & opts2::MAP_ROUTE_DIM_PASSED ?
-                     std::min(passedRouteLeg + 1, waypointX.size()) : 0;
+    passedRouteLeg = opt.getFlags2() & opts2::MAP_ROUTE_DIM_PASSED ? std::min(passedRouteLeg + 1, waypointX.size()) : 0;
   }
 
-  setFont(optData.getMapFont());
-  mapcolors::scaleFont(&painter, optData.getDisplayTextSizeFlightplan() / 100.f, &painter.font());
+  setFont(opt.getMapFont());
+  mapcolors::scaleFont(&painter, opt.getDisplayTextSizeFlightplanProfile() / 100.f, &painter.font());
 
   if(NavApp::getMapWidgetGui()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN))
   {
     // Draw background line ======================================================
-    float flightplanOutlineWidth = (optData.getDisplayThicknessFlightplan() / 100.f) * 7;
-    float flightplanWidth = (optData.getDisplayThicknessFlightplan() / 100.f) * 4;
-    painter.setPen(QPen(mapcolors::routeOutlineColor, flightplanOutlineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    float flightplanOutlineWidth = (opt.getDisplayThicknessFlightplanProfile() / 100.f) * 7;
+    float flightplanWidth = (opt.getDisplayThicknessFlightplanProfile() / 100.f) * 4;
+    painter.setPen(QPen(Qt::black, flightplanOutlineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
     for(int i = passedRouteLeg; i < waypointX.size(); i++)
     {
@@ -967,8 +965,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     } // for(int i = passedRouteLeg; i < waypointX.size(); i++)
 
     // Draw passed ======================================================
-    painter.setPen(QPen(optData.getFlightplanPassedSegmentColor(), flightplanWidth,
-                        Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    painter.setPen(QPen(opt.getFlightplanPassedSegmentColor(), flightplanWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
     if(passedRouteLeg < map::INVALID_INDEX_VALUE)
     {
       for(int i = 1; i < passedRouteLeg; i++)
@@ -978,10 +975,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       qWarning() << Q_FUNC_INFO;
 
     // Draw ahead ======================================================
-    QPen flightplanPen(optData.getFlightplanColor(), flightplanWidth,
-                       Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    QPen procedurePen(optData.getFlightplanProcedureColor(), flightplanWidth,
-                      Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen flightplanPen(opt.getFlightplanColor(), flightplanWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    QPen procedurePen(opt.getFlightplanProcedureColor(), flightplanWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
     painter.setBackgroundMode(Qt::OpaqueMode);
     painter.setBackground(Qt::white);
@@ -1009,8 +1004,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     if(activeRouteLeg > 0 && activeRouteLeg < route.size())
     {
       // Draw active  ======================================================
-      painter.setPen(QPen(optData.getFlightplanActiveSegmentColor(), flightplanWidth,
-                          Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      painter.setPen(QPen(opt.getFlightplanActiveSegmentColor(), flightplanWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
       const proc::MapProcedureLeg& actProcLeg = route.value(activeRouteLeg).getProcedureLeg();
       if(actProcLeg.isCircleToLand() || actProcLeg.isStraightIn())
@@ -1028,13 +1022,13 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
     // Calculate symbol sizes
     float sizeScaleSymbol = 1.f;
-    int waypointSize = atools::roundToInt((optData.getDisplaySymbolSizeNavaid() * sizeScaleSymbol / 100.) * 8.);
-    int navaidSize = atools::roundToInt((optData.getDisplaySymbolSizeNavaid() * sizeScaleSymbol / 100.) * 12.);
-    int airportSize = atools::roundToInt((optData.getDisplaySymbolSizeAirport() * sizeScaleSymbol / 100.) * 10.);
+    int waypointSize = atools::roundToInt((opt.getDisplayTextSizeFlightplanProfile() * sizeScaleSymbol / 100.) * 8.);
+    int navaidSize = atools::roundToInt((opt.getDisplayTextSizeFlightplanProfile() * sizeScaleSymbol / 100.) * 12.);
+    int airportSize = atools::roundToInt((opt.getDisplayTextSizeFlightplanProfile() * sizeScaleSymbol / 100.) * 10.);
 
     painter.setBackgroundMode(Qt::TransparentMode);
-    setFont(optData.getMapFont());
-    mapcolors::scaleFont(&painter, optData.getDisplayTextSizeFlightplan() / 100.f, &painter.font());
+    setFont(opt.getMapFont());
+    mapcolors::scaleFont(&painter, opt.getDisplayTextSizeFlightplanProfile() / 100.f, &painter.font());
 
     // Draw the most unimportant symbols and texts first - userpoints, invalid and procedure ============================
     int waypointIndex = waypointX.size();
@@ -1237,8 +1231,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       {
         float tocDist = altitudeLegs.getTopOfClimbDistance();
         float todDist = altitudeLegs.getTopOfDescentDistance();
-        float width = optData.getDisplaySymbolSizeNavaid() * sizeScaleSymbol / 100.f * 3.f;
-        int radius = atools::roundToInt(optData.getDisplaySymbolSizeNavaid() * sizeScaleSymbol / 100. * 6.);
+        float width = opt.getDisplayTextSizeFlightplanProfile() * sizeScaleSymbol / 100.f * 3.f;
+        int radius = atools::roundToInt(opt.getDisplayTextSizeFlightplanProfile() * sizeScaleSymbol / 100. * 6.);
 
         painter.setBackgroundMode(Qt::TransparentMode);
         painter.setPen(QPen(Qt::black, width, Qt::SolidLine, Qt::FlatCap));
@@ -1311,7 +1305,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Draw user aircraft track =========================================================
   if(!aircraftTrackPoints.isEmpty() && showAircraftTrack)
   {
-    painter.setPen(mapcolors::aircraftTrailPen(optData.getDisplayThicknessTrail() / 100.f * 2.f));
+    painter.setPen(mapcolors::aircraftTrailPen(opt.getDisplayThicknessFlightplanProfile() / 100.f * 2.f));
     painter.drawPolyline(toScreen(aircraftTrackPoints));
   }
 
@@ -1324,7 +1318,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     float acy = altitudeY(aircraftAlt(simData.getUserAircraftConst()));
 
     // Draw aircraft symbol
-    int acsize = atools::roundToInt(optData.getDisplaySymbolSizeAircraftUser() / 100. * 32.);
+    int acsize = atools::roundToInt(opt.getDisplayTextSizeFlightplanProfile() / 100. * 40.);
     painter.translate(acx, acy);
     painter.rotate(90);
     painter.scale(0.75, 1.);
@@ -1340,7 +1334,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     painter.resetTransform();
 
     // Draw aircraft label
-    mapcolors::scaleFont(&painter, optData.getDisplayTextSizeAircraftUser() / 100.f, &painter.font());
+    mapcolors::scaleFont(&painter, opt.getDisplayTextSizeFlightplanProfile() / 100.f, &painter.font());
 
     int vspeed = atools::roundToInt(simData.getUserAircraftConst().getVerticalSpeedFeetPerMin());
     QString upDown;

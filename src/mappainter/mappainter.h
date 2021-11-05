@@ -105,8 +105,10 @@ struct PaintContext
   /* Text sizes and line thickness in percent / 100 */
   float textSizeAircraftAi = 1.f;
   float symbolSizeNavaid = 1.f;
+  float symbolSizeUserpoint = 1.f;
   float thicknessFlightplan = 1.f;
   float textSizeNavaid = 1.f;
+  float textSizeUserpoint = 1.f;
   float textSizeAirway = 1.f;
   float thicknessAirway = 1.f;
   float textSizeCompassRose = 1.f;
@@ -126,6 +128,8 @@ struct PaintContext
   float transparencyMora = 1.f;
   float textSizeAirportMsa = 1.f;
   float transparencyAirportMsa = 1.f;
+  float transparencyFlightplan = 1.f;
+  float transparencyHighlight = 1.f;
 
   int objectCount = 0;
   bool queryOverflow = false;

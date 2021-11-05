@@ -129,17 +129,14 @@ extern QPen profileSafeAltLegLinePen;
 /* Objects highlighted because of selection in search */
 extern QColor highlightBackColor;
 extern QColor highlightColor;
-extern QColor highlightColorFast;
 
 /* Objects highlighted because of selection in route table */
 extern QColor routeHighlightBackColor;
 extern QColor routeHighlightColor;
-extern QColor routeHighlightColorFast;
 
 /* Objects highlighted because of selection in route profile */
 extern QColor profileHighlightBackColor;
 extern QColor profileHighlightColor;
-extern QColor profileHighlightColorFast;
 
 /* Map print colors */
 extern QColor mapPrintRowColor;
@@ -215,16 +212,11 @@ const QColor highlightApproachColorFast = QColor(0, 0, 150);
 const QColor mapDragColor = QColor(Qt::darkYellow);
 
 /* Flight plan line colors */
-const QColor routeOutlineColor = QColor(Qt::black);
-const QColor routeAlternateOutlineColor = QColor(Qt::darkGray);
-
-const QColor routeProcedureOutlineColor = QColor(Qt::black);
-
 const QColor routeLogEntryColor = QColor(50, 100, 255);
 const QColor routeLogEntryOutlineColor = QColor(Qt::black);
 
-const QColor routeProcedurePreviewColor = QColor(0, 180, 255);
-const QColor routeProcedurePreviewMissedColor = QColor(0, 180, 255);
+const QColor routeProcedurePreviewColor = QColor(0, 120, 230);
+const QColor routeProcedurePreviewMissedColor = QColor(0, 120, 230);
 
 /* Text along route and approach segments */
 const QColor routeTextColor = QColor(0, 0, 0);
@@ -287,6 +279,10 @@ void adjustPenForCircleToLand(QPainter *painter);
 void adjustPenForVectors(QPainter *painter);
 void adjustPenForAlternate(QPainter *painter);
 void adjustPenForManual(QPainter *painter);
+
+/* Value 0.0 (transparent) to 1.0 (opaque) */
+QColor adjustAlphaF(QColor color, float alpha);
+QPen adjustAlphaF(QPen pen, float alpha);
 
 /* Scale current font in painter. Uses defaultFont as a base otherwise current font in painter. */
 void scaleFont(QPainter *painter, float scale, const QFont *defaultFont = nullptr);

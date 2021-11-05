@@ -228,8 +228,9 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
 {
   const Route *route = context->route;
   Marble::GeoPainter *painter = context->painter;
+  const OptionData& od = OptionData::instance();
   painter->setBackgroundMode(Qt::TransparentMode);
-  painter->setBackground(mapcolors::routeOutlineColor);
+  painter->setBackground(od.getFlightplanOutlineColor());
   painter->setBrush(Qt::NoBrush);
 
   // Draw route lines ==========================================================================
@@ -253,14 +254,15 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
       lines.first() = Line();
       routeTexts.first().clear();
     }
+    bool transparent = context->flags2.testFlag(opts2::MAP_ROUTE_TRANSPARENT);
+    float alpha = transparent ? (1.f - context->transparencyFlightplan) : 1.f;
+    float lineWidth = transparent ? outerlinewidth : innerlinewidth;
 
-    const OptionData& od = OptionData::instance();
-    QPen routePen(od.getFlightplanColor(), innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    QPen routeOutlinePen(mapcolors::routeOutlineColor, outerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-    QPen routeAlternateOutlinePen(mapcolors::routeAlternateOutlineColor, outerlinewidth, Qt::SolidLine, Qt::RoundCap,
-                                  Qt::RoundJoin);
-    QPen routePassedPen(od.getFlightplanPassedSegmentColor(), innerlinewidth, Qt::SolidLine, Qt::RoundCap,
-                        Qt::RoundJoin);
+    const QPen routePen(mapcolors::adjustAlphaF(od.getFlightplanColor(), alpha), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    const QPen routeOutlinePen(od.getFlightplanOutlineColor(), outerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    const QPen routeAlternateOutlinePen(od.getFlightplanOutlineColor(), outerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+    const QPen routePassedPen(mapcolors::adjustAlphaF(od.getFlightplanPassedSegmentColor(), alpha), lineWidth,
+                              Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     int alternateOffset = route->getAlternateLegsOffset();
 
     if(passedRouteLeg < map::INVALID_INDEX_VALUE)
@@ -270,17 +272,20 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
       for(int i = 0; i < passedRouteLeg; i++)
         drawLine(painter, lines.at(i));
 
-      painter->setPen(routeAlternateOutlinePen);
-      if(alternateOffset != map::INVALID_INDEX_VALUE)
+      if(!transparent)
       {
-        for(int idx = alternateOffset; idx < alternateOffset + route->getNumAlternateLegs(); idx++)
-          drawLine(painter, lines.at(idx - 1));
-      }
+        if(alternateOffset != map::INVALID_INDEX_VALUE)
+        {
+          painter->setPen(routeAlternateOutlinePen);
+          for(int idx = alternateOffset; idx < alternateOffset + route->getNumAlternateLegs(); idx++)
+            drawLine(painter, lines.at(idx - 1));
+        }
 
-      // Draw background for legs ahead
-      painter->setPen(routeOutlinePen);
-      for(int i = passedRouteLeg; i < route->getDestinationAirportLegIndex(); i++)
-        drawLine(painter, lines.at(i));
+        // Draw background for legs ahead
+        painter->setPen(routeOutlinePen);
+        for(int i = passedRouteLeg; i < route->getDestinationAirportLegIndex(); i++)
+          drawLine(painter, lines.at(i));
+      }
 
       // Draw center line for legs ahead
       painter->setPen(routePen);
@@ -301,10 +306,13 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
       int activeRouteLeg = route->getActiveLegIndex();
 
       // Draw active leg on top of all others to keep it visible ===========================
-      painter->setPen(routeOutlinePen);
-      drawLine(painter, lines.at(activeRouteLeg - 1));
+      if(!transparent)
+      {
+        painter->setPen(routeOutlinePen);
+        drawLine(painter, lines.at(activeRouteLeg - 1));
+      }
 
-      painter->setPen(QPen(OptionData::instance().getFlightplanActiveSegmentColor(), innerlinewidth,
+      painter->setPen(QPen(mapcolors::adjustAlphaF(OptionData::instance().getFlightplanActiveSegmentColor(), alpha), lineWidth,
                            Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
       drawLine(painter, lines.at(activeRouteLeg - 1));
@@ -389,7 +397,7 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
     QMargins margins(50, 10, 10, 10);
 
     // Draw the top of climb circle and text ======================
-    if(!(OptionData::instance().getFlags2() & opts2::MAP_ROUTE_DIM_PASSED) ||
+    if(!(context->flags2.testFlag(opts2::MAP_ROUTE_DIM_PASSED)) ||
        activeLegIndex == map::INVALID_INDEX_VALUE || route->getTopOfClimbLegIndex() > activeLegIndex - 1)
     {
       Pos pos = route->getTopOfClimbPos();
@@ -412,7 +420,7 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
     }
 
     // Draw the top of descent circle and text ======================
-    if(!(OptionData::instance().getFlags2() & opts2::MAP_ROUTE_DIM_PASSED) ||
+    if(!(context->flags2.testFlag(opts2::MAP_ROUTE_DIM_PASSED)) ||
        activeLegIndex == map::INVALID_INDEX_VALUE || route->getTopOfDescentLegIndex() > activeLegIndex - 1)
     {
       Pos pos = route->getTopOfDescentPos();
@@ -437,9 +445,8 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
 }
 
 /* Draw approaches and transitions selected in the tree view */
-void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint,
-                                     const proc::MapProcedureLegs& legs, int legsRouteOffset, const QColor& color,
-                                     bool preview)
+void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const proc::MapProcedureLegs& legs, int legsRouteOffset,
+                                     const QColor& color, bool preview)
 {
   if(legs.isEmpty() || !legs.bounding.overlaps(context->viewportRect))
     return;
@@ -447,9 +454,17 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint,
   QPainter *painter = context->painter;
   atools::util::PainterContextSaver saver(context->painter);
   const Route *route = context->route;
+  const OptionData& od = OptionData::instance();
+
+  float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
+  float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
+  bool transparent = context->flags2.testFlag(opts2::MAP_ROUTE_TRANSPARENT);
+
+  float lineWidth = transparent ? outerlinewidth : innerlinewidth;
+  float alpha = transparent ? (1.f - context->transparencyFlightplan) : 1.f;
 
   context->painter->setBackgroundMode(Qt::OpaqueMode);
-  context->painter->setBackground(Qt::white);
+  context->painter->setBackground(mapcolors::adjustAlphaF(Qt::white, alpha));
   context->painter->setBrush(Qt::NoBrush);
 
   // Get active approach leg
@@ -458,33 +473,35 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint,
   int passedProcLeg = context->flags2 & opts2::MAP_ROUTE_DIM_PASSED ? activeProcLeg : 0;
 
   // Draw black background ========================================
-  float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
-  float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
 
   // Keep a stack of last painted geometry since some functions need access back into the history
   QVector<QLineF> lastLines({QLineF()});
   QVector<QLineF> lastActiveLines({QLineF()});
 
-  painter->setPen(QPen(mapcolors::routeProcedureOutlineColor, outerlinewidth,
-                       Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-  for(int i = 0; i < legs.size(); i++)
+  if(!transparent)
   {
-    // Do not draw background for passed legs but calculate lastLine
-    bool draw = (i >= passedProcLeg) || !activeValid || preview;
-    if(legs.at(i).isCircleToLand() || legs.at(i).isStraightIn() || legs.at(i).isVectors() || legs.at(i).isManual())
-      // Do not draw outline for circle-to-land approach legs
-      draw = false;
+    painter->setPen(QPen(od.getFlightplanOutlineColor(), outerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+    for(int i = 0; i < legs.size(); i++)
+    {
+      // Do not draw background for passed legs but calculate lastLine
+      bool draw = (i >= passedProcLeg) || !activeValid || preview;
+      if(legs.at(i).isCircleToLand() || legs.at(i).isStraightIn() || legs.at(i).isVectors() || legs.at(i).isManual())
+        // Do not draw outline for circle-to-land approach legs
+        draw = false;
 
-    paintProcedureSegment(legs, i, lastLines, nullptr, true /* no text */, preview, draw);
+      paintProcedureSegment(legs, i, lastLines, nullptr, true /* no text */, preview, draw);
+    }
   }
 
-  QPen missedPen(color, innerlinewidth, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
-  QPen apprPen(color, innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+  const QPen missedPen(mapcolors::adjustAlphaF(color, alpha), lineWidth, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
+  const QPen apprPen(mapcolors::adjustAlphaF(color, alpha), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-  const OptionData& od = OptionData::instance();
-  QPen missedActivePen(od.getFlightplanActiveSegmentColor(), innerlinewidth, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
-  QPen apprActivePen(od.getFlightplanActiveSegmentColor(), innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
-  QPen routePassedPen(od.getFlightplanPassedSegmentColor(), innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+  const QPen missedActivePen(mapcolors::adjustAlphaF(od.getFlightplanActiveSegmentColor(), alpha), lineWidth,
+                             Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
+  const QPen apprActivePen(mapcolors::adjustAlphaF(od.getFlightplanActiveSegmentColor(), alpha), lineWidth,
+                           Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+  const QPen routePassedPen(mapcolors::adjustAlphaF(od.getFlightplanPassedSegmentColor(), alpha), lineWidth,
+                            Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
   lastLines.clear();
   lastLines.append(QLineF());
@@ -551,8 +568,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint,
     else if(legs.at(activeProcLeg).isManual())
       mapcolors::adjustPenForManual(painter);
 
-    paintProcedureSegment(legs, activeProcLeg, lastActiveLines, &lastActiveDrawTextLines, noText, preview,
-                          true /* draw */);
+    paintProcedureSegment(legs, activeProcLeg, lastActiveLines, &lastActiveDrawTextLines, noText, preview, true /* draw */);
   }
 
   // Draw text along lines only on low zoom factors ========
@@ -1768,11 +1784,9 @@ void MapPainterRoute::drawStartParking()
           int w = std::max(10, scale->getPixelIntForFeet(size, 90));
           int h = std::max(10, scale->getPixelIntForFeet(size, 0));
 
-          context->painter->setPen(QPen(mapcolors::routeOutlineColor, 9,
-                                        Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+          context->painter->setPen(QPen(Qt::black, 9, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
           context->painter->drawEllipse(QPointF(x, y), w, h);
-          context->painter->setPen(QPen(OptionData::instance().getFlightplanColor(), 5,
-                                        Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+          context->painter->setPen(QPen(OptionData::instance().getFlightplanColor(), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
           context->painter->drawEllipse(QPointF(x, y), w, h);
         }
       }

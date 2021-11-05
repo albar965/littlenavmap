@@ -118,6 +118,8 @@ private:
   void updateActiveSkyPathStatus();
   void updateXplanePathStatus();
   void updateXplaneWindStatus();
+  void updateFlightPlanColorWidgets();
+  void updateHighlightWidgets();
 
   void addDatabaseExcludeDirClicked();
   void addDatabaseExcludeFileClicked();
@@ -142,10 +144,13 @@ private:
 
   void updateWidgetUnits();
   void simUpdatesConstantClicked(bool state);
+
   void flightplanColorClicked();
+  void flightplanOutlineColorClicked();
   void flightplanActiveColorClicked();
   void flightplanPassedColorClicked();
   void flightplanProcedureColorClicked();
+
   void trailColorClicked();
   void onlineDisplayRangeClicked();
   void eastWestRuleClicked();
@@ -233,7 +238,7 @@ private:
   QString rangeFloatToString(const QVector<float>& ranges) const;
 
   QString guiLanguage, guiFont, mapFont;
-  QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
+  QColor flightplanColor, flightplanOutlineColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
 
   Ui::Options *ui;
   QMainWindow *mainWindow;

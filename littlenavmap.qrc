@@ -296,5 +296,6 @@
         <file>resources/icons/runwaydest.svg</file>
         <file>resources/icons/runwaydepart.svg</file>
         <file>resources/icons/mapdisplaylabels.svg</file>
+        <file>resources/icons/mapdisplayflightplan.svg</file>
     </qresource>
 </RCC>

@@ -305,8 +305,8 @@ enum Flag2
   /* checkBoxDisplayOnlineFilenameLookup */
   ONLINE_AIRSPACE_BY_FILE = 1 << 15,
 
-  /* checkBoxOptionsGuiProposeFilename */
-  // PROPOSE_FILENAME = 1 << 16,
+  /* checkBoxOptionsMapHighlightTransparent */
+  MAP_HIGHLIGHT_TRANSPARENT = 1 << 16,
 
   /* checkBoxOptionsGuiRaiseWindows */
   RAISE_WINDOWS = 1 << 17,
@@ -329,7 +329,8 @@ enum Flag2
   /* ui->checkBoxOptionsMapAirwayText */
   MAP_AIRWAY_TEXT_BACKGROUND = 1 << 23,
 
-  // MAP_AIRPORT_RUNWAYS = 1 << 24,
+  /* checkBoxOptionsMapUserpointText */
+  MAP_USERPOINT_TEXT_BACKGROUND = 1 << 24,
 
   /* checkBoxOptionsGuiTooltips */
   DISABLE_TOOLTIPS = 1 << 25,
@@ -345,6 +346,9 @@ enum Flag2
 
   /* checkBoxOptionsSimZoomOnLanding */
   ROUTE_ZOOM_LANDING = 1 << 29,
+
+  /* checkBoxOptionsMapFlightplanTransparent */
+  MAP_ROUTE_TRANSPARENT = 1 << 30,
 };
 
 Q_DECLARE_FLAGS(Flags2, Flag2);
@@ -878,6 +882,11 @@ public:
     return flightplanColor;
   }
 
+  const QColor& getFlightplanOutlineColor() const
+  {
+    return flightplanOutlineColor;
+  }
+
   const QColor& getFlightplanProcedureColor() const
   {
     return flightplanProcedureColor;
@@ -1180,6 +1189,36 @@ public:
     return displayOptionsAiAircraft;
   }
 
+  int getDisplayTransparencyFlightplan() const
+  {
+    return displayTransparencyFlightplan;
+  }
+
+  int getDisplayThicknessFlightplanProfile() const
+  {
+    return displayThicknessFlightplanProfile;
+  }
+
+  int getDisplayTextSizeFlightplanProfile() const
+  {
+    return displayTextSizeFlightplanProfile;
+  }
+
+  int getDisplayTextSizeUserpoint() const
+  {
+    return displayTextSizeUserpoint;
+  }
+
+  int getDisplaySymbolSizeUserpoint() const
+  {
+    return displaySymbolSizeUserpoint;
+  }
+
+  int getDisplayMapHighlightTransparent() const
+  {
+    return displayMapHighlightTransparent;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -1333,6 +1372,9 @@ private:
   // spinBoxOptionsDisplayThicknessFlightplan
   int displayThicknessFlightplan = 100;
 
+  // spinBoxOptionsDisplayThicknessFlightplanProfile
+  int displayThicknessFlightplanProfile = 100;
+
   // spinBoxOptionsDisplaySymbolSizeAirport
   int displaySymbolSizeAirport = 100;
 
@@ -1348,8 +1390,14 @@ private:
   // spinBoxOptionsDisplayTextSizeNavaid
   int displayTextSizeNavaid = 100;
 
+  // spinBoxOptionsDisplayTextSizeUserpoint
+  int displayTextSizeUserpoint = 100;
+
   // spinBoxOptionsDisplaySymbolSizeNavaid
   int displaySymbolSizeNavaid = 100;
+
+  // spinBoxOptionsDisplaySymbolSizeUserpoint
+  int displaySymbolSizeUserpoint = 100;
 
   // spinBoxOptionsDisplayTextSizeAirway
   int displayTextSizeAirway = 100;
@@ -1359,6 +1407,12 @@ private:
 
   // spinBoxOptionsDisplayTextSizeFlightplan
   int displayTextSizeFlightplan = 100;
+
+  // spinBoxOptionsDisplayTextSizeFlightplanProfile
+  int displayTextSizeFlightplanProfile = 100;
+
+  // spinBoxOptionsDisplayTransparencyFlightplan
+  int displayTransparencyFlightplan = 50;
 
   // spinBoxOptionsDisplayTextSizeAircraftUser
   int displayTextSizeAircraftUser = 100;
@@ -1399,6 +1453,9 @@ private:
   // spinBoxOptionsDisplayTextSizeCompassRose
   int displayTextSizeCompassRose = 100;
 
+  // spinBoxOptionsMapHighlightTransparent
+  int displayMapHighlightTransparent = 100;
+
   // spinBoxDisplayOnlineClearance
   int displayOnlineClearance = -1;
 
@@ -1438,9 +1495,8 @@ private:
   // spinBoxOptionsMapNavTouchscreenArea
   int mapNavTouchArea = 10;
 
-  QColor flightplanColor = QColor(Qt::yellow), flightplanProcedureColor = QColor(255, 150, 0),
-         flightplanActiveColor = QColor(Qt::magenta), flightplanPassedColor = QColor(Qt::gray),
-         trailColor = QColor(Qt::black);
+  QColor flightplanColor = QColor(Qt::yellow), flightplanOutlineColor = QColor(Qt::black), flightplanProcedureColor = QColor(255, 150, 0),
+         flightplanActiveColor = QColor(Qt::magenta), flightplanPassedColor = QColor(Qt::gray), trailColor = QColor(Qt::black);
 
   // comboBoxOptionsDisplayTrailType
   opts::DisplayTrailType displayTrailType = opts::DASHED;
