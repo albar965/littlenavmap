@@ -84,13 +84,12 @@ public:
 
   /*
    * Finds all objects near the screen coordinates with maximal distance of maxDistance to xs/ys.
-   * Gets airways, visible map objects like airports, navaids and lightlighted objects.
+   * Gets airways, visible map objects like airports, navaids and highlighted objects.
    * @param result Result ordered by distance to xs/ys
    * @param xs/ys Screen coordinates.
    * @param maxDistance maximum distance to xs/ys
    */
-  void getAllNearest(int xs, int ys, int maxDistance, map::MapResult& result,
-                     map::MapObjectQueryTypes types) const;
+  void getAllNearest(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const;
 
   /* Get nearest distance measurement line index (only the endpoint)
    * or -1 if nothing was found near the cursor position. Index points into the list of getDistanceMarks */

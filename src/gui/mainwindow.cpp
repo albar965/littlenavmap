@@ -1516,7 +1516,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowWeatherVatsim, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowWeatherIvao, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
 
-  // Update map weather source hightlights =======================================================
+  // Update map weather source highlights =======================================================
   connect(ui->actionMapShowWeatherDisabled, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
   connect(ui->actionMapShowWeatherSimulator, &QAction::toggled, infoController, &InfoController::updateAirportWeather);
   connect(ui->actionMapShowWeatherActiveSky, &QAction::toggled, infoController, &InfoController::updateAirportWeather);

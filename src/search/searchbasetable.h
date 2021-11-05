@@ -94,7 +94,7 @@ public:
   /* GUI style has changed */
   virtual void styleChanged() override;
 
-  /* Causes a selectionChanged signal to be emitted so map hightlights and status label can be updated */
+  /* Causes a selectionChanged signal to be emitted so map highlights and status label can be updated */
   virtual void updateTableSelection(bool noFollow) override;
 
   /* Has to be called by the derived classes. Connects double click, context menu and some other actions */

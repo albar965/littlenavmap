@@ -92,12 +92,12 @@ public:
   void showAircraft(bool centerAircraftChecked);
   void showAircraftNow(bool);
 
-  /* Update hightlighted objects */
+  /* Update highlighted objects */
   void changeSearchHighlights(const map::MapResult& newHighlights, bool updateAirspace, bool updateLogEntries);
   void changeRouteHighlights(const QList<int>& routeHighlight);
   void changeProcedureLegHighlights(const proc::MapProcedureLeg *leg);
 
-  /* Hightlight a point along the route while mouse over in the profile window */
+  /* Highlight a point along the route while mouse over in the profile window */
   void changeProfileHighlight(const atools::geo::Pos& pos);
 
   void changeApproachHighlight(const proc::MapProcedureLegs& approach);

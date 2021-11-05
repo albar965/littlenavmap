@@ -94,7 +94,7 @@ void MapPainterTop::render()
     }
   }
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_APPROACH_PAINT
   {
     const proc::MapProcedureLeg& leg = mapPaintWidget->getProcedureLegHighlights();
     atools::util::PainterContextSaver saver(context->painter);

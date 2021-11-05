@@ -302,7 +302,7 @@ signals:
   /* Change distance search center */
   void changeMark(const atools::geo::Pos& pos);
 
-  /* Selection in table view has changed. Update hightlights on map */
+  /* Selection in table view has changed. Update highlights on map */
   void routeSelectionChanged(int selected, int total);
 
   /* Route has changed */

@@ -2778,7 +2778,7 @@ void RouteController::shownMapFeaturesChanged(map::MapTypes types)
   route.setShownMapFeatures(types);
 }
 
-/* Hide or show map hightlights if dock visibility changes */
+/* Hide or show map highlights if dock visibility changes */
 void RouteController::dockVisibilityChanged(bool visible)
 {
   Q_UNUSED(visible)
