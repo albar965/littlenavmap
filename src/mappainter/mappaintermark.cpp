@@ -526,14 +526,14 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     QPen directPen(mapcolors::routeLogEntryColor, innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen directOutlinePen(mapcolors::routeLogEntryOutlineColor, outerlinewidth, Qt::SolidLine, Qt::RoundCap,
                           Qt::RoundJoin);
-    int size = context->sz(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
+    float size = context->szF(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
 
     QVector<LineString> geo;
     for(const MapLogbookEntry *entry : visibleLogEntries)
       geo.append(entry->lineString());
 
     // Outline
-    int circleSize = size;
+    float circleSize = size;
     painter->setPen(directOutlinePen);
     for(const LineString& line : geo)
     {

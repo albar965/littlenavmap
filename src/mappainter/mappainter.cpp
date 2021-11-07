@@ -283,9 +283,9 @@ void MapPainter::drawLine(QPainter *painter, const QLineF& line)
   }
 }
 
-void MapPainter::drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos& center, int radius)
+void MapPainter::drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos& center, float radius)
 {
-  QPoint pt = wToS(center);
+  QPointF pt = wToSF(center);
   if(!pt.isNull())
     painter->drawEllipse(pt, radius, radius);
 }
