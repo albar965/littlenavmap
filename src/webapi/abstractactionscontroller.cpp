@@ -31,7 +31,7 @@ AbstractActionsController::~AbstractActionsController(){
     // qDebug() << Q_FUNC_INFO;
 }
 WebApiResponse AbstractActionsController::defaultAction(WebApiRequest request){
-
+Q_UNUSED(request)
     WebApiResponse response = getResponse();
     // Example
     response.body = "Default action";
@@ -42,6 +42,7 @@ WebApiResponse AbstractActionsController::defaultAction(WebApiRequest request){
 }
 
 WebApiResponse AbstractActionsController::notFoundAction(WebApiRequest request){
+Q_UNUSED(request)
 
     WebApiResponse response = this->getResponse();
 
