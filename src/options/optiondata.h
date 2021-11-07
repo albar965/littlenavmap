@@ -546,7 +546,8 @@ enum DisplayTooltipOption
   TOOLTIP_WIND = 1 << 4,
   TOOLTIP_AIRCRAFT_AI = 1 << 5,
   TOOLTIP_AIRCRAFT_USER = 1 << 6,
-  TOOLTIP_VERBOSE = 1 << 7
+  TOOLTIP_VERBOSE = 1 << 7,
+  TOOLTIP_MARKS = 1 << 8
 };
 
 Q_DECLARE_FLAGS(DisplayTooltipOptions, DisplayTooltipOption);

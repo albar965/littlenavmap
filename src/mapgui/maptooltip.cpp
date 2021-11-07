@@ -187,29 +187,32 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
     }
   }
 
-  // User features / marks
+  // User features / marks ===================================================================
 
-  // Traffic pattern ===========================================================================
-  buildOneTooltip(html, overflow, numEntries, mapSearchResult.patternMarks, info, &HtmlInfoBuilder::patternMarkerText);
+  if(opts.testFlag(optsd::TOOLTIP_MARKS))
+  {
+    // Traffic pattern
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.patternMarks, info, &HtmlInfoBuilder::patternMarkerText);
 
-  // Range rings ===========================================================================
-  buildOneTooltip(html, overflow, numEntries, mapSearchResult.rangeMarks, info, &HtmlInfoBuilder::rangeMarkerText);
+    // Range rings
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.rangeMarks, info, &HtmlInfoBuilder::rangeMarkerText);
 
-  // User Holds ===========================================================================
-  buildOneTooltip(html, overflow, numEntries, mapSearchResult.holdingMarks, info, &HtmlInfoBuilder::holdingMarkerText);
+    // User Holds
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.holdingMarks, info, &HtmlInfoBuilder::holdingMarkerText);
 
-  // MSA diagrams ===========================================================================
-  buildOneTooltip(html, overflow, numEntries, mapSearchResult.msaMarks, info, &HtmlInfoBuilder::msaMarkerText);
+    // MSA diagrams
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.msaMarks, info, &HtmlInfoBuilder::msaMarkerText);
 
-  // MSA diagrams ===========================================================================
-  buildOneTooltip(html, overflow, numEntries, mapSearchResult.distanceMarks, info, &HtmlInfoBuilder::distanceMarkerText);
+    // MSA diagrams
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.distanceMarks, info, &HtmlInfoBuilder::distanceMarkerText);
+  }
 
   if(opts.testFlag(optsd::TOOLTIP_NAVAID))
   {
-    // Logbook entries ===========================================================================
+    // Logbook entries
     buildOneTooltip(html, overflow, numEntries, mapSearchResult.logbookEntries, info, &HtmlInfoBuilder::logEntryTextInfo);
 
-    // Userpoints ===========================================================================
+    // Userpoints
     buildOneTooltip(html, overflow, numEntries, mapSearchResult.userpoints, info, &HtmlInfoBuilder::userpointTextInfo);
   }
 

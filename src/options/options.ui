@@ -1025,7 +1025,7 @@ This does not affect the map window which can be changed separately on the optio
              <x>0</x>
              <y>0</y>
              <width>578</width>
-             <height>530</height>
+             <height>554</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_12">
@@ -1064,6 +1064,13 @@ This does not affect the map window which can be changed separately on the optio
                 </widget>
                </item>
                <item>
+                <widget class="Line" name="line_8">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
                 <widget class="QCheckBox" name="checkBoxOptionsMapTooltipUserAircraft">
                  <property name="toolTip">
                   <string>Show tooltips for the user aircraft when hovering the cursor over the map</string>
@@ -1086,13 +1093,6 @@ This does not affect the map window which can be changed separately on the optio
                  </property>
                  <property name="checked">
                   <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item>
-                <widget class="Line" name="line_8">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -1143,6 +1143,19 @@ userpoints and logbook entries when hovering the cursor over the map</string>
                  </property>
                  <property name="text">
                   <string>High altitude &amp;wind barbs</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="checkBoxOptionsMapTooltipUser">
+                 <property name="toolTip">
+                  <string>Show tooltip on user features like range rings, measurement lines, airport MSA, user holdings or traffic patterns.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;User Features</string>
                  </property>
                  <property name="checked">
                   <bool>true</bool>
@@ -1221,11 +1234,14 @@ userpoints and logbook entries when hovering the cursor over the map</string>
                </item>
                <item>
                 <layout class="QHBoxLayout" name="horizontalLayout_3">
+                 <property name="spacing">
+                  <number>2</number>
+                 </property>
                  <property name="leftMargin">
                   <number>22</number>
                  </property>
                  <property name="topMargin">
-                  <number>0</number>
+                  <number>1</number>
                  </property>
                  <item>
                   <widget class="QCheckBox" name="checkBoxOptionsMapClickAirportProcs">
@@ -1483,8 +1499,8 @@ Use &quot;Window&quot; -&gt; &quot;Reset Window Layout&quot; in the main menu to
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>594</width>
-             <height>518</height>
+             <width>609</width>
+             <height>312</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_13">
@@ -1803,8 +1819,8 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>566</width>
-             <height>532</height>
+             <width>471</width>
+             <height>497</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -2513,8 +2529,8 @@ Afftects map and elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>566</width>
-             <height>532</height>
+             <width>422</width>
+             <height>326</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -2900,8 +2916,8 @@ Not used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>566</width>
-             <height>532</height>
+             <width>482</width>
+             <height>426</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -3542,8 +3558,8 @@ logbook entries:</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>566</width>
-             <height>532</height>
+             <width>339</width>
+             <height>366</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -3995,8 +4011,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>566</width>
-             <height>532</height>
+             <width>571</width>
+             <height>366</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -4312,7 +4328,7 @@ Also affects labels at holds and traffic patterns.</string>
              <x>0</x>
              <y>0</y>
              <width>594</width>
-             <height>518</height>
+             <height>459</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -4699,8 +4715,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>566</width>
-             <height>532</height>
+             <width>491</width>
+             <height>393</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -5017,8 +5033,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>566</width>
-             <height>532</height>
+             <width>284</width>
+             <height>324</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -5213,8 +5229,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>566</width>
-             <height>532</height>
+             <width>430</width>
+             <height>390</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -5676,8 +5692,8 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>566</width>
-             <height>532</height>
+             <width>341</width>
+             <height>333</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -5958,8 +5974,8 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>566</width>
-             <height>532</height>
+             <width>450</width>
+             <height>234</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -6145,8 +6161,8 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>566</width>
-             <height>532</height>
+             <width>505</width>
+             <height>496</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
