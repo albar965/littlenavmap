@@ -77,14 +77,14 @@ void SqlModel::filterByBoundingRect(const atools::geo::Rect& boundingRectangle)
 void SqlModel::filterByRecord(const atools::sql::SqlRecord& record)
 {
   for(int i = 0; i < record.count(); i++)
-    filterBy(false /* exclude */, record.fieldName(i), record.value(i), false);
+    filterBy(false /* exclude */, record.fieldName(i), record.value(i), queryBuilder.getColumns().contains(record.fieldName(i)));
+  buildQuery();
 }
 
 /* Filter by value at index (context menu in table view) */
 void SqlModel::filterBy(QModelIndex index, bool exclude, bool builder)
 {
-  QString whereCol = getSqlRecord().fieldName(index.column());
-  filterBy(exclude, whereCol, QSqlQueryModel::data(index), builder);
+  filterBy(exclude, getSqlRecord().fieldName(index.column()), QSqlQueryModel::data(index), builder);
 }
 
 /* Simple include/exclude filter. Updates the attached search widgets */
