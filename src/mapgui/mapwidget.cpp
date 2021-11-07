@@ -55,6 +55,7 @@
 #include <QContextMenuEvent>
 #include <QToolTip>
 #include <QClipboard>
+#include <QStringBuilder>
 
 #include <marble/AbstractFloatItem.h>
 #include <marble/MarbleWidgetInputHandler.h>
@@ -3141,13 +3142,13 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
     emit showInSearch(map::USERPOINT, rec, true /* select */);
   }
   else if(base->objType == map::AIRPORT)
-    emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident", base->asObj<map::MapAirport>().ident),
-                      true /* select */);
+    emit showInSearch(map::AIRPORT, SqlRecord().
+                      appendFieldAndValue("ident", QString("\"" % base->asObj<map::MapAirport>().ident % "\"")), true /* select */);
   else if(base->objType == map::VOR)
   {
     map::MapVor vor = base->asObj<map::MapVor>();
     SqlRecord rec;
-    rec.appendFieldAndValue("ident", vor.ident);
+    rec.appendFieldAndValue("ident", QString("\"" % vor.ident % "\""));
     rec.appendFieldAndValue("name", vor.name);
     rec.appendFieldAndValue("region", vor.region);
 
@@ -3157,7 +3158,7 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
   {
     map::MapNdb ndb = base->asObj<map::MapNdb>();
     SqlRecord rec;
-    rec.appendFieldAndValue("ident", ndb.ident);
+    rec.appendFieldAndValue("ident", QString("\"" % ndb.ident % "\""));
     rec.appendFieldAndValue("name", ndb.name);
     rec.appendFieldAndValue("region", ndb.region);
 
@@ -3167,7 +3168,7 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
   {
     map::MapWaypoint waypoint = base->asObj<map::MapWaypoint>();
     SqlRecord rec;
-    rec.appendFieldAndValue("ident", waypoint.ident);
+    rec.appendFieldAndValue("ident", QString("\"" % waypoint.ident % "\""));
     rec.appendFieldAndValue("name", QString());
     rec.appendFieldAndValue("region", waypoint.region);
 
@@ -3194,15 +3195,12 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
                       true /* select */);
   }
   else if(base->objType == map::AIRCRAFT_ONLINE)
-    emit showInSearch(map::AIRCRAFT_ONLINE,
-                      SqlRecord().appendFieldAndValue("callsign",
-                                                      base->asObj<map::MapOnlineAircraft>().
-                                                      getAircraft().getAirplaneRegistration()),
+    emit showInSearch(map::AIRCRAFT_ONLINE, SqlRecord().appendFieldAndValue("callsign",
+                                                                            base->asObj<map::MapOnlineAircraft>().
+                                                                            getAircraft().getAirplaneRegistration()),
                       true /* select */);
   else if(base->objType == map::AIRSPACE)
-    emit showInSearch(map::AIRSPACE,
-                      SqlRecord().appendFieldAndValue("callsign",
-                                                      base->asObj<map::MapAirspace>().name), true /* select */);
+    emit showInSearch(map::AIRSPACE, SqlRecord().appendFieldAndValue("callsign", base->asObj<map::MapAirspace>().name), true /* select */);
 }
 
 void MapWidget::addPatternMark(const map::MapAirport& airport)

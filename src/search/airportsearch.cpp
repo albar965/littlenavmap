@@ -293,27 +293,32 @@ QueryBuilderResult AirportSearch::airportQueryBuilderFunc(QWidget *widget)
       {
         text = text.simplified();
 
-        // Check text length without placeholders for override
-        QString overrideText(text);
-        overrideText.remove(QChar('*'));
-        if(text.startsWith('-'))
-          overrideText = overrideText.mid(1);
-        overrideQuery |= overrideText.size() >= 3;
-
-        // Adjust the query string to SQL
-        // Replace "*" with "%" for SQL
-        if(text.contains(QChar('*')))
-          text = text.replace(QChar('*'), QChar('%'));
-        else if(!text.isEmpty())
-          // Default is string starts with text
-          text = text % "%";
-
-        // Exclude if prefixed with "-"
         bool exclude = false;
-        if(text.startsWith('-'))
+        if(text.startsWith('"') && text.endsWith('"'))
+          text = text.chopped(1).mid(1);
+        else
         {
-          text = text.mid(1);
-          exclude = true;
+          // Check text length without placeholders for override
+          QString overrideText(text);
+          overrideText.remove(QChar('*'));
+          if(text.startsWith('-'))
+            overrideText = overrideText.mid(1);
+          overrideQuery |= overrideText.size() >= 3;
+
+          // Adjust the query string to SQL
+          // Replace "*" with "%" for SQL
+          if(text.contains(QChar('*')))
+            text = text.replace(QChar('*'), QChar('%'));
+          else if(!text.isEmpty())
+            // Default is string starts with text
+            text = text % "%";
+
+          // Exclude if prefixed with "-"
+          if(text.startsWith('-'))
+          {
+            text = text.mid(1);
+            exclude = true;
+          }
         }
 
         if(!text.isEmpty())
