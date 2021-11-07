@@ -353,7 +353,9 @@ protected:
   void getPixmap(QPixmap& pixmap, const QString& resource, int size);
 
   /* Draw enroute as well as user defined holdings */
-  void paintHoldings(const QList<map::MapHolding>& holdings, bool user, bool drawFast);
+  void paintHoldingMarks(const QList<map::MapHolding>& holdings, bool user, bool drawFast);
+
+  void paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa,  bool user, bool drawFast);
 
   /* Minimum points to use for a circle */
   const int CIRCLE_MIN_POINTS = 16;

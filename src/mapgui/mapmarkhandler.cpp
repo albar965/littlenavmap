@@ -37,18 +37,21 @@ MapMarkHandler::~MapMarkHandler()
 void MapMarkHandler::saveState()
 {
   actionsToFlags();
-  atools::settings::Settings::instance().setValue(lnm::MAP_MARK_DISPLAY, static_cast<int>(markTypes));
+  atools::settings::Settings::instance().setValueVar(lnm::MAP_MARK_DISPLAY, markTypes.asFlagType());
 }
 
 void MapMarkHandler::restoreState()
 {
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
-    markTypes = static_cast<map::MapMarkTypes>(atools::settings::Settings::instance().
-                                               valueInt(lnm::MAP_MARK_DISPLAY, static_cast<int>(map::MARK_ALL)));
+  {
+
+    QVariant defaultValue = static_cast<atools::util::FlagType>(map::MARK_ALL);
+    markTypes = atools::settings::Settings::instance().valueVar(lnm::MAP_MARK_DISPLAY, defaultValue).value<atools::util::FlagType>();
+  }
   flagsToActions();
 }
 
-void MapMarkHandler::showMarkTypes(map::MapMarkTypes types)
+void MapMarkHandler::showMarkTypes(map::MapTypes types)
 {
   markTypes |= types;
   flagsToActions();
@@ -57,18 +60,18 @@ void MapMarkHandler::showMarkTypes(map::MapMarkTypes types)
 QString MapMarkHandler::getMarkTypesText() const
 {
   QStringList types;
-  if(markTypes == map::MARK_NONE)
+  if(markTypes == map::NONE)
     return tr("None");
 
-  if(markTypes & map::MARK_RANGE_RINGS)
+  if(markTypes & map::MARK_RANGE)
     types.append(tr("Range Rings"));
-  if(markTypes & map::MARK_MEASUREMENT)
+  if(markTypes & map::MARK_DISTANCE)
     types.append(tr("Measurement Lines"));
-  if(markTypes & map::MARK_HOLDS)
+  if(markTypes & map::MARK_HOLDING)
     types.append(tr("Holdings"));
   if(markTypes & map::MARK_PATTERNS)
     types.append(tr("Traffic Patterns"));
-  if(markTypes & map::MARK_AIRPORT_MSA)
+  if(markTypes & map::MARK_MSA)
     types.append(tr("Airport MSA"));
   return types.join(tr((", ")));
 }
@@ -119,19 +122,18 @@ void MapMarkHandler::addToolbarButton()
   buttonMenu->addSeparator();
 
   actionRangeRings = addButton(":/littlenavmap/resources/icons/rangerings.svg", tr("&Range Rings"),
-                               tr("Show or hide range rings"), map::MARK_RANGE_RINGS);
+                               tr("Show or hide range rings"), map::MARK_RANGE);
   actionMeasurementLines = addButton(":/littlenavmap/resources/icons/distancemeasure.svg", tr("&Measurement Lines"),
-                                     tr("Show or hide measurement lines"), map::MARK_MEASUREMENT);
+                                     tr("Show or hide measurement lines"), map::MARK_DISTANCE);
   actionPatterns = addButton(":/littlenavmap/resources/icons/trafficpattern.svg", tr("&Traffic Patterns"),
                              tr("Show or hide traffic patterns"), map::MARK_PATTERNS);
   actionHolds = addButton(":/littlenavmap/resources/icons/enroutehold.svg", tr("&Holdings"),
-                          tr("Show or hide holdings"), map::MARK_HOLDS);
+                          tr("Show or hide holdings"), map::MARK_HOLDING);
   actionAirportMsa = addButton(":/littlenavmap/resources/icons/msa.svg", tr("&MSA Diagrams"),
-                               tr("Show or hide airport MSA sectors"), map::MARK_AIRPORT_MSA);
+                               tr("Show or hide airport MSA sectors"), map::MARK_MSA);
 }
 
-QAction *MapMarkHandler::addButton(const QString& icon, const QString& text, const QString& tooltip,
-                                   map::MapMarkTypes type)
+QAction *MapMarkHandler::addButton(const QString& icon, const QString& text, const QString& tooltip, map::MapTypes type)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
@@ -158,7 +160,7 @@ void MapMarkHandler::actionAllTriggered()
 
 void MapMarkHandler::actionNoneTriggered()
 {
-  markTypes = map::MARK_NONE;
+  markTypes = map::NONE;
   flagsToActions();
   emit updateMarkTypes(markTypes);
 }
@@ -172,25 +174,25 @@ void MapMarkHandler::toolbarActionTriggered()
 
 void MapMarkHandler::flagsToActions()
 {
-  actionRangeRings->setChecked(markTypes & map::MARK_RANGE_RINGS);
-  actionMeasurementLines->setChecked(markTypes & map::MARK_MEASUREMENT);
-  actionHolds->setChecked(markTypes & map::MARK_HOLDS);
-  actionAirportMsa->setChecked(markTypes & map::MARK_AIRPORT_MSA);
+  actionRangeRings->setChecked(markTypes & map::MARK_RANGE);
+  actionMeasurementLines->setChecked(markTypes & map::MARK_DISTANCE);
+  actionHolds->setChecked(markTypes & map::MARK_HOLDING);
+  actionAirportMsa->setChecked(markTypes & map::MARK_MSA);
   actionPatterns->setChecked(markTypes & map::MARK_PATTERNS);
   toolButton->setChecked(markTypes & map::MARK_ALL);
 }
 
 void MapMarkHandler::actionsToFlags()
 {
-  markTypes = map::MARK_NONE;
+  markTypes = map::NONE;
   if(actionRangeRings->isChecked())
-    markTypes |= map::MARK_RANGE_RINGS;
+    markTypes |= map::MARK_RANGE;
   if(actionMeasurementLines->isChecked())
-    markTypes |= map::MARK_MEASUREMENT;
+    markTypes |= map::MARK_DISTANCE;
   if(actionHolds->isChecked())
-    markTypes |= map::MARK_HOLDS;
+    markTypes |= map::MARK_HOLDING;
   if(actionAirportMsa->isChecked())
-    markTypes |= map::MARK_AIRPORT_MSA;
+    markTypes |= map::MARK_MSA;
   if(actionPatterns->isChecked())
     markTypes |= map::MARK_PATTERNS;
 }

@@ -314,7 +314,7 @@ void InfoController::anchorClicked(const QUrl& url)
       else if(query.hasQueryItem("id") && query.hasQueryItem("type"))
       {
         // Zoom to an map object =========================================
-        map::MapTypes type(query.queryItemValue("type").toInt());
+        map::MapTypes type(query.queryItemValue("type").toULongLong());
         int id = query.queryItemValue("id").toInt();
 
         if(type == map::AIRPORT)
@@ -469,7 +469,7 @@ void InfoController::restoreState()
     QString refsStr = atools::settings::Settings::instance().valueStr(lnm::INFOWINDOW_CURRENTMAPOBJECTS);
     QStringList refsStrList = refsStr.split(";", QString::SkipEmptyParts);
     for(int i = 0; i < refsStrList.size(); i += 2)
-      mapQuery->getMapObjectById(res, map::MapTypes(refsStrList.value(i + 1).toInt()), map::AIRSPACE_SRC_NONE,
+      mapQuery->getMapObjectById(res, map::MapTypes(refsStrList.value(i + 1).toULongLong()), map::AIRSPACE_SRC_NONE,
                                  refsStrList.value(i).toInt(), false /* airport from nav database */);
 
     // Airspaces =================================

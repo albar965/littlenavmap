@@ -631,7 +631,6 @@ void MapTypesFactory::fillHolding(const atools::sql::SqlRecord& record, map::Map
   holding.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
 
   holding.speedKts = 0.f;
-  holding.user = false;
 }
 
 void MapTypesFactory::fillAirportMsa(const atools::sql::SqlRecord& record, map::MapAirportMsa& airportMsa)
@@ -664,7 +663,6 @@ void MapTypesFactory::fillAirportMsa(const atools::sql::SqlRecord& record, map::
 
   airportMsa.bounding = Rect(record.valueFloat("left_lonx"), record.valueFloat("top_laty"),
                              record.valueFloat("right_lonx"), record.valueFloat("bottom_laty"));
-  airportMsa.user = false;
 }
 
 void MapTypesFactory::fillParking(const SqlRecord& record, map::MapParking& parking)

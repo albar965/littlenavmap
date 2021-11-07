@@ -29,6 +29,7 @@
 #include "common/formatter.h"
 #include "util/paintercontextsaver.h"
 #include "common/unit.h"
+#include "common/textplacement.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoDataLinearRing.h>
@@ -742,7 +743,117 @@ void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size)
     pixmap = *pixmapPtr;
 }
 
-void MapPainter::paintHoldings(const QList<map::MapHolding>& holdings, bool user, bool drawFast)
+void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool user, bool drawFast)
+{
+  Q_UNUSED(user)
+
+  if(airportMsa.isEmpty())
+    return;
+
+  atools::util::PainterContextSaver saver(context->painter);
+  GeoPainter *painter = context->painter;
+
+  for(const map::MapAirportMsa& msa:airportMsa)
+  {
+    float x, y;
+    bool msaVisible = wToS(msa.position, x, y, scale->getScreeenSizeForRect(msa.bounding));
+
+    if(!msaVisible)
+      // Check bounding rect for visibility
+      msaVisible = msa.bounding.overlaps(context->viewportRect);
+
+    if(msaVisible)
+    {
+      if(context->objCount())
+        return;
+
+      // Use width and style from pen but override transparency
+      QColor gridCol = context->darkMap ? mapcolors::msaDiagramLinePenDark.color() : mapcolors::msaDiagramLinePen.color();
+      gridCol.setAlphaF(1. - context->transparencyAirportMsa);
+      QPen pen = context->darkMap ? mapcolors::msaDiagramLinePenDark : mapcolors::msaDiagramLinePen;
+      pen.setColor(gridCol);
+      context->painter->setPen(pen);
+
+      // Fill color for circle
+      painter->setBrush(context->darkMap ? mapcolors::msaDiagramFillColorDark : mapcolors::msaDiagramFillColor);
+      drawPolygon(painter, msa.geometry);
+
+      TextPlacement textPlacement(painter, this, QRect());
+      QVector<atools::geo::Line> lines;
+      QStringList texts;
+
+      if(!drawFast)
+      {
+        // Skip lines if restriction is full circle
+        if(msa.altitudes.size() > 1)
+        {
+          // Draw sector bearing lines and collect geometry and texts for placement =========================
+          for(int i = 0; i < msa.bearingEndPositions.size(); i++)
+          {
+            texts.append(tr("%1%2").arg(atools::geo::normalizeCourse(msa.bearings.value(i))).arg(msa.trueBearing ? tr("°T") : tr("°M")));
+
+            atools::geo::Line line(msa.bearingEndPositions.value(i), msa.position);
+            lines.append(line);
+            drawLine(painter, line);
+          }
+        }
+
+        // Do not use transparency but override from options
+        QColor textCol = context->darkMap ? mapcolors::msaDiagramNumberColorDark : mapcolors::msaDiagramNumberColor;
+        textCol.setAlphaF(1. - context->transparencyAirportMsa);
+        context->painter->setPen(textCol);
+
+        // Calculate font size from radius
+        float fontSize = scale->getPixelForNm(msa.radius) / 8.f * context->textSizeAirportMsa;
+
+        if(msa.altitudes.size() == 1)
+          // Larger font for full circle restriction
+          fontSize *= 2.f;
+
+        QFont font = context->painter->font();
+        font.setPixelSize(atools::roundToInt(fontSize));
+        context->painter->setFont(font);
+
+        // Draw altitude labels ===================================================================
+        for(int i = 0; i < msa.altitudes.size(); i++)
+        {
+          const atools::geo::Pos& labelPos = msa.labelPositions.value(i);
+
+          float xp, yp;
+          bool visible = wToS(labelPos, xp, yp, scale->getScreeenSizeForRect(msa.bounding));
+
+          if(visible)
+          {
+            QString text = Unit::altFeet(msa.altitudes.at(i), true /* addUnit */, true /* narrow */);
+            QSizeF txtsize = painter->fontMetrics().boundingRect(text).size();
+            painter->drawText(QPointF(xp - txtsize.width() / 2., yp + txtsize.height() / 2.), text);
+          }
+        }
+      }
+
+      {
+        atools::util::PainterContextSaver saverCenter(painter);
+
+        painter->setFont(context->defaultFont);
+        context->szFont(context->textSizeAirportMsa);
+
+        painter->setPen(context->darkMap ? mapcolors::msaDiagramLinePenDark : mapcolors::msaDiagramLinePen);
+        painter->setBrush(Qt::white);
+        painter->setBackground(Qt::white);
+        painter->setBackgroundMode(Qt::OpaqueMode);
+
+        // Draw bearing labels ==========================================================================
+        textPlacement.calculateTextAlongLines(lines, texts);
+        textPlacement.drawTextAlongLines();
+
+        // Draw small center circle ===================================================================
+        drawCircle(painter, msa.position, 4);
+      }
+    }
+  }
+}
+
+void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool user, bool drawFast)
 {
   if(holdings.isEmpty())
     return;

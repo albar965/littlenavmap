@@ -89,7 +89,7 @@ struct MapObjectRef
   }
 
   MapObjectRef(int idParam, map::MapTypes typeParam)
-    : id(idParam), objType(static_cast<map::MapType>(typeParam.operator unsigned int()))
+    : id(idParam), objType(typeParam.asEnum())
   {
   }
 
@@ -298,7 +298,7 @@ struct MapBase
   /* Set type using QFlags wrapper */
   void setType(map::MapTypes type)
   {
-    objType = static_cast<map::MapType>(type.operator unsigned int());
+    objType = type.asEnum();
   }
 
   /* Get type using QFlags wrapper */
@@ -596,45 +596,6 @@ struct MapHelipad
   int startId, airportId, length, width, heading, start;
   bool closed, transparent;
 };
-
-// =====================================================================
-/* All information for a airport MSA circle */
-struct MapAirportMsa :
-  public MapBase
-{
-  MapAirportMsa() : MapBase(map::AIRPORT_MSA)
-  {
-  }
-
-  QString airportIdent, navIdent, region, multipleCode, vorType;
-
-  map::MapType navType; /* AIRPORT, VOR, NDB or WAYPOINT*/
-  bool vorDmeOnly, vorHasDme, vorTacan, vorVortac; /* VOR specific flags */
-
-  float radius, /* Radius in NM */
-        magvar; /* Taken from environment or navaid */
-
-  bool user; /* true if created by user. otherwise from database */
-
-  QVector<float> bearings, /* Bearings in true or mag degree - same size as altitudes */
-                 altitudes; /* Altitudes in feet - same size as bearings */
-
-  bool trueBearing; /* true if all bearing values are true - otherwise magnetic */
-  atools::geo::LineString geometry, /* Outer circle/arcs geometry. 180 points for full circle. */
-                          labelPositions, /* Pre-calculated altitude label positions. */
-                          bearingEndPositions; /* Endpoints for bearing lines from center to end point */
-  atools::geo::Rect bounding;
-
-  const QString& getIdent() const
-  {
-    return navIdent;
-  }
-
-};
-
-/* Save only information for user defined holds */
-QDataStream& operator>>(QDataStream& dataStream, map::MapAirportMsa& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::MapAirportMsa& obj);
 
 // =====================================================================
 /* VOR station */
@@ -1172,32 +1133,37 @@ struct MapAirspace
 };
 
 // =====================================================================
-/* All information for complete traffic pattern structure */
-/* Threshold position (end of final) and runway altitude MSL */
-struct TrafficPattern
-  : public MapBase
+/* All information for a airport MSA circle */
+struct MapAirportMsa :
+  public MapBase
 {
-  TrafficPattern() : MapBase(map::NONE)
+  MapAirportMsa() : MapBase(map::AIRPORT_MSA)
   {
   }
 
-  QString airportIcao, runwayName;
-  QColor color;
-  bool turnRight,
-       base45Degree /* calculate base turn from 45 deg after threshold */,
-       showEntryExit /* Entry and exit indicators */;
-  int runwayLength; /* ft Does not include displaced threshold */
+  QString airportIdent, navIdent, region, multipleCode, vorType;
 
-  float downwindDistance, baseDistance; /* NM */
-  float courseTrue; /* degree true final course*/
-  float magvar;
+  map::MapType navType; /* AIRPORT, VOR, NDB or WAYPOINT*/
+  bool vorDmeOnly, vorHasDme, vorTacan, vorVortac; /* VOR specific flags */
 
-  float magCourse() const;
+  float radius, /* Radius in NM */
+        magvar; /* Taken from environment or navaid */
+
+  QVector<float> bearings, /* Bearings in true or mag degree - same size as altitudes */
+                 altitudes; /* Altitudes in feet - same size as bearings */
+
+  bool trueBearing; /* true if all bearing values are true - otherwise magnetic */
+  atools::geo::LineString geometry, /* Outer circle/arcs geometry. 180 points for full circle. */
+                          labelPositions, /* Pre-calculated altitude label positions. */
+                          bearingEndPositions; /* Endpoints for bearing lines from center to end point */
+  atools::geo::Rect bounding;
+
+  const QString& getIdent() const
+  {
+    return navIdent;
+  }
 
 };
-
-QDataStream& operator>>(QDataStream& dataStream, map::TrafficPattern& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::TrafficPattern& obj);
 
 // =====================================================================
 /* All information for a hold
@@ -1216,9 +1182,6 @@ struct MapHolding
 
   QString airportIdent;
 
-  QColor color; /* Only for user */
-  bool user; /* true if created by user. otherwise from database */
-
   bool turnLeft; /* Standard is right */
   float time, /* leg minutes - custom and database holds */
         length, /* leg length NM - database holds */
@@ -1228,6 +1191,8 @@ struct MapHolding
 
   float courseTrue; /* degree true inbound course to fix */
   float magvar; /* Taken from environment or navaid */
+
+  QColor color; /* Only for user but keep this here to ease painting */
 
   float magCourse() const;
 
@@ -1241,22 +1206,85 @@ struct MapHolding
 
 };
 
+// =====================================================================
+// Types below are user features
+// =====================================================================
+
+// =====================================================================
+/* All information for complete traffic pattern structure */
+/* Threshold position (end of final) and runway altitude MSL */
+struct PatternMarker
+  : public MapBase
+{
+  PatternMarker() : MapBase(map::MARK_PATTERNS)
+  {
+  }
+
+  QString airportIcao, runwayName;
+  QColor color;
+  bool turnRight,
+       base45Degree /* calculate base turn from 45 deg after threshold */,
+       showEntryExit /* Entry and exit indicators */;
+  int runwayLength; /* ft Does not include displaced threshold */
+
+  float downwindDistance, baseDistance; /* NM */
+  float courseTrue; /* degree true final course*/
+  float magvar;
+
+  float magCourse() const;
+
+};
+
+QDataStream& operator>>(QDataStream& dataStream, map::PatternMarker& obj);
+QDataStream& operator<<(QDataStream& dataStream, const map::PatternMarker& obj);
+
+// =====================================================================
+/* Range rings marker. Can be converted to QVariant and uses its own type distinct from holdings. */
+struct HoldingMarker
+  : public MapBase
+{
+  HoldingMarker() : MapBase(map::MARK_HOLDING)
+  {
+  }
+
+  /* Aggregate the database holding structure */
+  map::MapHolding holding;
+};
+
 /* Save only information for user defined holds */
-QDataStream& operator>>(QDataStream& dataStream, map::MapHolding& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::MapHolding& obj);
+QDataStream& operator>>(QDataStream& dataStream, map::HoldingMarker& obj);
+QDataStream& operator<<(QDataStream& dataStream, const map::HoldingMarker& obj);
+
+// =====================================================================
+/* Range rings marker. Can be converted to QVariant and uses its own type distinct from database MSA. */
+struct MsaMarker
+  : public MapBase
+{
+  MsaMarker() : MapBase(map::MARK_MSA)
+  {
+  }
+
+  /*   Aggregate the database MSA structure */
+  map::MapAirportMsa msa;
+};
+
+/* Save only information for user defined holds */
+QDataStream& operator>>(QDataStream& dataStream, map::MsaMarker& obj);
+QDataStream& operator<<(QDataStream& dataStream, const map::MsaMarker& obj);
 
 // =====================================================================
 /* Range rings marker. Can be converted to QVariant */
 struct RangeMarker
   : public MapBase
 {
-  RangeMarker() : MapBase(map::NONE)
+  RangeMarker() : MapBase(map::MARK_RANGE)
   {
   }
 
   QString text; /* Text to display like VOR name and frequency */
   QVector<float> ranges; /* Range ring list (nm) */
-  MapTypes type; /* VOR, NDB, AIRPORT, etc. */
+  MapType navType; /* VOR, NDB, AIRPORT, etc. */
+  QColor color;
 };
 
 QDataStream& operator>>(QDataStream& dataStream, map::RangeMarker& obj);
@@ -1265,7 +1293,12 @@ QDataStream& operator<<(QDataStream& dataStream, const map::RangeMarker& obj);
 // =====================================================================
 /* Distance measurement line. Can be converted to QVariant */
 struct DistanceMarker
+  : public MapBase
 {
+  DistanceMarker() : MapBase(map::MARK_DISTANCE)
+  {
+  }
+
   QString text; /* Text to display like VOR name and frequency */
   QColor color; /* Line color depends on origin (airport or navaid type */
   atools::geo::Pos from, to;
@@ -1296,8 +1329,7 @@ struct WeatherContext
 
   bool isEmpty() const
   {
-    return fsMetar.isEmpty() && asMetar.isEmpty() && noaaMetar.isEmpty() && vatsimMetar.isEmpty() &&
-           ivaoMetar.isEmpty();
+    return fsMetar.isEmpty() && asMetar.isEmpty() && noaaMetar.isEmpty() && vatsimMetar.isEmpty() && ivaoMetar.isEmpty();
   }
 
 };
@@ -1318,7 +1350,7 @@ QString ilsType(const MapIls& ils, bool gs, bool dme, const QString& separator);
 QString ilsTypeShort(const map::MapIls& ils);
 QString ilsTextShort(const MapIls& ils);
 
-QString holdingTextShort(const map::MapHolding& holding);
+QString holdingTextShort(const map::MapHolding& holding, bool user);
 
 QString edgeLights(const QString& type);
 QString patternDirection(const QString& type);
@@ -1381,7 +1413,7 @@ QString comTypeName(const QString& type);
 QString airportText(const map::MapAirport& airport, int elideName = 100);
 QString airportTextShort(const map::MapAirport& airport, int elideName = 100);
 
-QString airportMsaText(const map::MapAirportMsa& airportMsa);
+QString airportMsaText(const map::MapAirportMsa& airportMsa, bool user);
 QString airportMsaTextShort(const map::MapAirportMsa& airportMsa);
 
 QString vorFullShortText(const map::MapVor& vor);
@@ -1402,6 +1434,13 @@ QString userpointText(const MapUserpoint& userpoint, int elideName = 100);
 QString logEntryText(const MapLogbookEntry& logEntry);
 QString airwayText(const map::MapAirway& airway);
 
+// Map marker / user features ==============================================================
+QString rangeMarkText(const map::RangeMarker& obj);
+QString distanceMarkText(const map::DistanceMarker& obj);
+QString holdingMarkText(const map::HoldingMarker& obj);
+QString patternMarkText(const map::PatternMarker& obj);
+QString msaMarkText(const map::MsaMarker& obj);
+
 /* Altitude text for airways */
 QString airwayAltText(const MapAirway& airway);
 
@@ -1410,10 +1449,19 @@ QString airwayAltTextShort(const MapAirway& airway, bool addUnit = true, bool na
 
 QString magvarText(float magvar, bool shortText = false);
 
+/* Gets text for menu item */
+QString mapBaseText(const map::MapBase *base, int elideAirportName);
+
+/* Get corresponding icon for map object. Can be dynamically generated or resource depending on map object type */
+QIcon mapBaseIcon(const map::MapBase *base, int size);
+
 /* Get a number for surface quality to get the best runway. Higher numbers are better surface. */
 int surfaceQuality(const QString& surface);
 
 void updateUnits();
+
+/* Assign artificial ids to measurement and range rings which allow to identify them */
+int getNextUserFeatureId();
 
 } // namespace map
 
@@ -1439,6 +1487,8 @@ Q_DECLARE_TYPEINFO(map::PosCourse, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirspace, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapLogbookEntry, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapObjectRefExt, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapHolding, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapAirportMsa, Q_MOVABLE_TYPE);
 
 /* Type info and serializable objects */
 Q_DECLARE_TYPEINFO(map::MapObjectRef, Q_PRIMITIVE_TYPE);
@@ -1450,13 +1500,13 @@ Q_DECLARE_METATYPE(map::RangeMarker);
 Q_DECLARE_TYPEINFO(map::DistanceMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::DistanceMarker);
 
-Q_DECLARE_TYPEINFO(map::TrafficPattern, Q_MOVABLE_TYPE);
-Q_DECLARE_METATYPE(map::TrafficPattern);
+Q_DECLARE_TYPEINFO(map::PatternMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_METATYPE(map::PatternMarker);
 
-Q_DECLARE_TYPEINFO(map::MapHolding, Q_MOVABLE_TYPE);
-Q_DECLARE_METATYPE(map::MapHolding);
+Q_DECLARE_TYPEINFO(map::HoldingMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_METATYPE(map::HoldingMarker);
 
-Q_DECLARE_TYPEINFO(map::MapAirportMsa, Q_MOVABLE_TYPE);
-Q_DECLARE_METATYPE(map::MapAirportMsa);
+Q_DECLARE_TYPEINFO(map::MsaMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_METATYPE(map::MsaMarker);
 
 #endif // LITTLENAVMAP_MAPTYPES_H

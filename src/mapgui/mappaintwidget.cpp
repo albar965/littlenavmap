@@ -1175,44 +1175,47 @@ const QList<int>& MapPaintWidget::getRouteHighlights() const
   return screenIndex->getRouteHighlights();
 }
 
-const QList<map::RangeMarker>& MapPaintWidget::getRangeRings() const
+const QHash<int, map::RangeMarker>& MapPaintWidget::getRangeMarks() const
 {
   return screenIndex->getRangeMarks();
 }
 
-const QList<map::DistanceMarker>& MapPaintWidget::getDistanceMarkers() const
+const QHash<int, map::DistanceMarker>& MapPaintWidget::getDistanceMarks() const
 {
   return screenIndex->getDistanceMarks();
 }
 
-const QList<map::TrafficPattern>& MapPaintWidget::getTrafficPatterns() const
+const QHash<int, map::PatternMarker>& MapPaintWidget::getPatternsMarks() const
 {
-  return screenIndex->getTrafficPatterns();
+  return screenIndex->getPatternMarks();
 }
 
-QList<map::TrafficPattern>& MapPaintWidget::getTrafficPatterns()
+const QHash<int, map::HoldingMarker>& MapPaintWidget::getHoldingMarks() const
 {
-  return screenIndex->getTrafficPatterns();
+  return screenIndex->getHoldingMarks();
 }
 
-const QList<map::MapHolding>& MapPaintWidget::getHolds() const
+const QHash<int, map::MsaMarker>& MapPaintWidget::getMsaMarks() const
 {
-  return screenIndex->getHolds();
+  return screenIndex->getMsaMarks();
 }
 
-QList<map::MapHolding>& MapPaintWidget::getHolds()
+QList<map::MapHolding> MapPaintWidget::getHoldingMarksFiltered() const
 {
-  return screenIndex->getHolds();
+  QList<map::MapHolding> retval;
+  const QHash<int, map::HoldingMarker>& marks = screenIndex->getHoldingMarks();
+  for(auto it = marks.begin(); it != marks.end(); ++it)
+    retval.append(it.value().holding);
+  return retval;
 }
 
-const QList<map::MapAirportMsa>& MapPaintWidget::getAirportMsa() const
+QList<map::MapAirportMsa> MapPaintWidget::getMsaMarksFiltered() const
 {
-  return screenIndex->getAirportMsa();
-}
-
-QList<map::MapAirportMsa>& MapPaintWidget::getAirportMsa()
-{
-  return screenIndex->getAirportMsa();
+  QList<map::MapAirportMsa> retval;
+  const QHash<int, map::MsaMarker>& marks = screenIndex->getMsaMarks();
+  for(auto it = marks.begin(); it != marks.end(); ++it)
+    retval.append(it.value().msa);
+  return retval;
 }
 
 const atools::fs::sc::SimConnectUserAircraft& MapPaintWidget::getUserAircraft() const

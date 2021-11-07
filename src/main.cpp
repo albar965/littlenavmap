@@ -85,14 +85,14 @@ int main(int argc, char *argv[])
   qRegisterMetaTypeStreamOperators<map::DistanceMarker>();
   qRegisterMetaTypeStreamOperators<QList<map::DistanceMarker> >();
 
-  qRegisterMetaTypeStreamOperators<map::TrafficPattern>();
-  qRegisterMetaTypeStreamOperators<QList<map::TrafficPattern> >();
+  qRegisterMetaTypeStreamOperators<map::PatternMarker>();
+  qRegisterMetaTypeStreamOperators<QList<map::PatternMarker> >();
 
-  qRegisterMetaTypeStreamOperators<map::MapHolding>();
-  qRegisterMetaTypeStreamOperators<QList<map::MapHolding> >();
+  qRegisterMetaTypeStreamOperators<map::HoldingMarker>();
+  qRegisterMetaTypeStreamOperators<QList<map::HoldingMarker> >();
 
-  qRegisterMetaTypeStreamOperators<map::MapAirportMsa>();
-  qRegisterMetaTypeStreamOperators<QList<map::MapAirportMsa> >();
+  qRegisterMetaTypeStreamOperators<map::MsaMarker>();
+  qRegisterMetaTypeStreamOperators<QList<map::MsaMarker> >();
 
   qRegisterMetaTypeStreamOperators<map::RangeMarker>();
   qRegisterMetaTypeStreamOperators<QList<map::RangeMarker> >();
@@ -105,6 +105,7 @@ int main(int argc, char *argv[])
 
   qRegisterMetaTypeStreamOperators<map::MapAirspaceFilter>();
   qRegisterMetaTypeStreamOperators<map::MapObjectRef>();
+  qRegisterMetaTypeStreamOperators<map::MapTypes>();
 
   // Register types and load process environment
   atools::fs::FsPaths::intitialize();

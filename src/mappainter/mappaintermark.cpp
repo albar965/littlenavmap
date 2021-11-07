@@ -71,7 +71,7 @@ void MapPainterMark::render()
 {
   atools::util::PainterContextSaver saver(context->painter);
 
-  map::MapMarkTypes types = NavApp::getMapMarkHandler()->getMarkTypes();
+  map::MapTypes types = NavApp::getMapMarkHandler()->getMarkTypes();
 
 #ifdef DEBUG_INFORMATION
   {
@@ -88,19 +88,19 @@ void MapPainterMark::render()
   paintHome();
 
   if(types & map::MARK_PATTERNS)
-    paintTrafficPatterns();
+    paintPatternMarks();
 
-  if(types & map::MARK_HOLDS)
-    paintHoldings(mapPaintWidget->getHolds(), true /* user */, context->drawFast);
+  if(types & map::MARK_HOLDING)
+    paintHoldingMarks(mapPaintWidget->getHoldingMarksFiltered(), true /* user */, context->drawFast);
 
-  if(types & map::MARK_AIRPORT_MSA)
-    paintAirportMsa();
+  if(types & map::MARK_MSA)
+    paintMsaMarks(mapPaintWidget->getMsaMarksFiltered(), true /* user */, context->drawFast);
 
-  if(types & map::MARK_RANGE_RINGS)
-    paintRangeRings();
+  if(types & map::MARK_RANGE)
+    paintRangeMarks();
 
-  if(types & map::MARK_MEASUREMENT)
-    paintDistanceMarkers();
+  if(types & map::MARK_DISTANCE)
+    paintDistanceMarks();
 
   paintCompassRose();
 
@@ -772,123 +772,11 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
   }
 }
 
-void MapPainterMark::paintAirportMsa()
-{
-  const QList<map::MapAirportMsa>& airportMsaList = mapPaintWidget->getAirportMsa();
-
-  bool drawFast = context->drawFast;
-
-  if(airportMsaList.isEmpty())
-    return;
-
-  atools::util::PainterContextSaver saver(context->painter);
-  GeoPainter *painter = context->painter;
-
-  for(const map::MapAirportMsa& msa:airportMsaList)
-  {
-    float x, y;
-    bool msaVisible = wToS(msa.position, x, y, scale->getScreeenSizeForRect(msa.bounding));
-
-    if(!msaVisible)
-      // Check bounding rect for visibility
-      msaVisible = msa.bounding.overlaps(context->viewportRect);
-
-    if(msaVisible)
-    {
-      if(context->objCount())
-        return;
-
-      // Use width and style from pen but override transparency
-      QColor gridCol = context->darkMap ? mapcolors::msaDiagramLinePenDark.color() : mapcolors::msaDiagramLinePen.color();
-      gridCol.setAlphaF(1. - context->transparencyAirportMsa);
-      QPen pen = context->darkMap ? mapcolors::msaDiagramLinePenDark : mapcolors::msaDiagramLinePen;
-      pen.setColor(gridCol);
-      context->painter->setPen(pen);
-
-      // Fill color for circle
-      painter->setBrush(context->darkMap ? mapcolors::msaDiagramFillColorDark : mapcolors::msaDiagramFillColor);
-      drawPolygon(painter, msa.geometry);
-
-      TextPlacement textPlacement(painter, this, QRect());
-      QVector<atools::geo::Line> lines;
-      QStringList texts;
-
-      if(!drawFast)
-      {
-        // Skip lines if restriction is full circle
-        if(msa.altitudes.size() > 1)
-        {
-          // Draw sector bearing lines and collect geometry and texts for placement =========================
-          for(int i = 0; i < msa.bearingEndPositions.size(); i++)
-          {
-            texts.append(tr("%1%2").arg(atools::geo::normalizeCourse(msa.bearings.value(i))).arg(msa.trueBearing ? tr("°T") : tr("°M")));
-
-            atools::geo::Line line(msa.bearingEndPositions.value(i), msa.position);
-            lines.append(line);
-            drawLine(painter, line);
-          }
-        }
-
-        // Do not use transparency but override from options
-        QColor textCol = context->darkMap ? mapcolors::msaDiagramNumberColorDark : mapcolors::msaDiagramNumberColor;
-        textCol.setAlphaF(1. - context->transparencyAirportMsa);
-        context->painter->setPen(textCol);
-
-        // Calculate font size from radius
-        float fontSize = scale->getPixelForNm(msa.radius) / 8.f * context->textSizeAirportMsa;
-
-        if(msa.altitudes.size() == 1)
-          // Larger font for full circle restriction
-          fontSize *= 2.f;
-
-        QFont font = context->painter->font();
-        font.setPixelSize(atools::roundToInt(fontSize));
-        context->painter->setFont(font);
-
-        // Draw altitude labels ===================================================================
-        for(int i = 0; i < msa.altitudes.size(); i++)
-        {
-          const atools::geo::Pos& labelPos = msa.labelPositions.value(i);
-
-          float xp, yp;
-          bool visible = wToS(labelPos, xp, yp, scale->getScreeenSizeForRect(msa.bounding));
-
-          if(visible)
-          {
-            QString text = Unit::altFeet(msa.altitudes.at(i), true /* addUnit */, true /* narrow */);
-            QSizeF txtsize = painter->fontMetrics().boundingRect(text).size();
-            painter->drawText(QPointF(xp - txtsize.width() / 2., yp + txtsize.height() / 2.), text);
-          }
-        }
-      }
-
-      {
-        atools::util::PainterContextSaver saverCenter(painter);
-
-        painter->setFont(context->defaultFont);
-        context->szFont(context->textSizeAirportMsa);
-
-        painter->setPen(context->darkMap ? mapcolors::msaDiagramLinePenDark : mapcolors::msaDiagramLinePen);
-        painter->setBrush(Qt::white);
-        painter->setBackground(Qt::white);
-        painter->setBackgroundMode(Qt::OpaqueMode);
-
-        // Draw bearing labels ==========================================================================
-        textPlacement.calculateTextAlongLines(lines, texts);
-        textPlacement.drawTextAlongLines();
-
-        // Draw small center circle ===================================================================
-        drawCircle(painter, msa.position, 4);
-      }
-    }
-  }
-}
-
 /* Draw all rang rings. This includes the red rings and the radio navaid ranges. */
-void MapPainterMark::paintRangeRings()
+void MapPainterMark::paintRangeMarks()
 {
   atools::util::PainterContextSaver saver(context->painter);
-  const QList<map::RangeMarker>& rangeRings = mapPaintWidget->getRangeRings();
+  const QList<map::RangeMarker>& rangeRings = mapPaintWidget->getRangeMarks().values();
   GeoPainter *painter = context->painter;
 
   painter->setBrush(Qt::NoBrush);
@@ -910,20 +798,7 @@ void MapPainterMark::paintRangeRings()
       {
         // Ring is visible - the rest of the visibility check is done in paintCircle
 
-        // Select color according to source
-        QColor color = mapcolors::rangeRingColor, textColor = mapcolors::rangeRingTextColor;
-        if(rings.type == map::VOR)
-        {
-          color = mapcolors::vorSymbolColor;
-          textColor = mapcolors::vorSymbolColor;
-        }
-        else if(rings.type == map::NDB)
-        {
-          color = mapcolors::ndbSymbolColor;
-          textColor = mapcolors::ndbSymbolColor;
-        }
-
-        painter->setPen(QPen(QBrush(color), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+        painter->setPen(QPen(QBrush(rings.color), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
 
         bool centerVisible;
         QPointF center = wToSF(rings.position, DEFAULT_WTOS_SIZE, &centerVisible);
@@ -942,7 +817,7 @@ void MapPainterMark::paintRangeRings()
           if(xt != -1 && yt != -1)
           {
             // paintCircle found a text position - draw text
-            painter->setPen(textColor);
+            painter->setPen(mapcolors::rangeRingTextColor);
 
             QStringList texts;
 
@@ -958,7 +833,7 @@ void MapPainterMark::paintRangeRings()
             yt += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
             symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, textatt::CENTER);
 
-            painter->setPen(QPen(QBrush(color), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+            painter->setPen(QPen(QBrush(rings.color), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
           }
         }
       }
@@ -1236,14 +1111,14 @@ void MapPainterMark::paintCompassRose()
 }
 
 /* Draw great circle line distance measurement lines */
-void MapPainterMark::paintDistanceMarkers()
+void MapPainterMark::paintDistanceMarks()
 {
   atools::util::PainterContextSaver saver(context->painter);
   GeoPainter *painter = context->painter;
   context->szFont(context->textSizeRangeDistance);
   QFontMetrics metrics = painter->fontMetrics();
 
-  const QList<map::DistanceMarker>& distanceMarkers = mapPaintWidget->getDistanceMarkers();
+  const QList<map::DistanceMarker>& distanceMarkers = mapPaintWidget->getDistanceMarks().values();
   float lineWidth = context->szF(context->thicknessRangeDistance, 3);
   TextPlacement textPlacement(context->painter, this, QRect());
 
@@ -1293,8 +1168,7 @@ void MapPainterMark::paintDistanceMarkers()
     QString initTrueText = QString::number(initTrue, 'f', precision);
     QString finalTrueText = QString::number(finalTrue, 'f', precision);
     QString initMagText = QString::number(normalizeCourse(initTrue - m.magvar), 'f', precision);
-    QString finalMagText = QString::number(normalizeCourse(finalTrue -
-                                                           NavApp::getMagVar(m.to, m.magvar)), 'f', precision);
+    QString finalMagText = QString::number(normalizeCourse(finalTrue - NavApp::getMagVar(m.to, m.magvar)), 'f', precision);
 
 #ifdef DEBUG_ALTERNATE_ARROW
     QString arrowLeft = ">> ";
@@ -1357,11 +1231,11 @@ void MapPainterMark::paintDistanceMarkers()
   }
 }
 
-void MapPainterMark::paintTrafficPatterns()
+void MapPainterMark::paintPatternMarks()
 {
   atools::util::PainterContextSaver saver(context->painter);
   GeoPainter *painter = context->painter;
-  const QList<TrafficPattern>& patterns = mapPaintWidget->getTrafficPatterns();
+  const QList<PatternMarker>& patterns = mapPaintWidget->getPatternsMarks().values();
   float lineWidth = context->szF(context->thicknessRangeDistance, 3);
   context->szFont(context->textSizeRangeDistance);
 
@@ -1372,7 +1246,7 @@ void MapPainterMark::paintTrafficPatterns()
 
   QPolygonF arrow = buildArrow(lineWidth * 2.3f);
 
-  for(const TrafficPattern& pattern : patterns)
+  for(const PatternMarker& pattern : patterns)
   {
     bool visibleOrigin, hiddenOrigin;
     QPointF originPoint = wToS(pattern.getPosition(), DEFAULT_WTOS_SIZE, &visibleOrigin, &hiddenOrigin);

@@ -95,7 +95,8 @@ enum MenuActionType
   USERPOINTMOVE, /* Move userpoint on map (in sub-menu) */
   USERPOINTDELETE, /* Remove userpoint (in sub-menu) */
   LOGENTRYEDIT, /* Edit logbook entry on preview */
-  SHOWINSEARCH /* Show objects in search window with filter and selection */
+  SHOWINSEARCH, /* Show objects in search window with filter and selection */
+  REMOVEUSER /* Remove traffic pattern, hold, etc. */
 };
 
 }
@@ -136,6 +137,9 @@ public:
     return selectedBase;
   }
 
+  /* Get the map object id which was selected or -1 */
+  int getSelectedId() const;
+
   /* Get selected action type like "Show information" */
   mc::MenuActionType getSelectedActionType() const
   {
@@ -150,36 +154,6 @@ public:
 
   /* Global click position */
   const atools::geo::Pos& getPos() const;
-
-  /* Index of selected/nearest distance marker or -1 if none */
-  int getDistMarkerIndex() const
-  {
-    return distMarkerIndex;
-  }
-
-  /* Index of selected/nearest traffic pattern or -1 if none */
-  int getTrafficPatternIndex() const
-  {
-    return trafficPatternIndex;
-  }
-
-  /* Index of selected/nearest hold or -1 if none */
-  int getHoldIndex() const
-  {
-    return holdIndex;
-  }
-
-  /* Index of selected/nearest airport MSA diagram or -1 if none */
-  int getAirportMsaIndex() const
-  {
-    return airportMsaIndex;
-  }
-
-  /* Index of selected/nearest range rings or -1 if none */
-  int getRangeMarkerIndex() const
-  {
-    return rangeMarkerIndex;
-  }
 
   /* Index of selected/nearest route leg or -1 if none */
   int getSelectedRouteIndex() const
@@ -198,6 +172,7 @@ private:
   void insertProcedureMenu(QMenu& menu);
   void insertCustomApproachMenu(QMenu& menu);
   void insertCustomDepartureMenu(QMenu& menu);
+  void insertRemoveMarkMenu(QMenu& menu);
 
   // ----
   void insertMeasureMenu(QMenu& menu);
@@ -272,12 +247,6 @@ private:
                         const QString& key, const QIcon& icon, const map::MapBase *base, bool submenu,
                         bool allowNoMapObject, const ActionCallback& callback);
 
-  /* Get corresponding icon for map object. Can be dynamically generated or resource depending on map object type */
-  QIcon mapBaseIcon(const map::MapBase *base);
-
-  /* Gets text for menu item */
-  static QString mapBaseText(const map::MapBase *base);
-
   /* Sort callback comparator for a locale-aware sorting of menu items*/
   static bool alphaSort(const map::MapBase *base1, const map::MapBase *base2);
 
@@ -312,7 +281,7 @@ private:
   bool visibleOnMap = false;
 
   // Nearest indexes
-  int distMarkerIndex = -1, trafficPatternIndex = -1, holdIndex = -1, rangeMarkerIndex = -1, selectedRouteIndex = -1, airportMsaIndex = -1;
+  int selectedRouteIndex = -1;
 
   MapWidget *mapWidget;
   QMainWindow *mainWindow;

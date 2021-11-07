@@ -164,7 +164,7 @@ void TrafficPatternDialog::updateWidgets()
   ui->doubleSpinBoxTrafficPatternBaseDistance->setEnabled(!ui->checkBoxTrafficPattern45Degree->isChecked());
 }
 
-void TrafficPatternDialog::fillTrafficPattern(map::TrafficPattern& pattern)
+void TrafficPatternDialog::fillTrafficPattern(map::PatternMarker& pattern)
 {
   map::MapRunway rw;
   map::MapRunwayEnd end;
@@ -173,6 +173,8 @@ void TrafficPatternDialog::fillTrafficPattern(map::TrafficPattern& pattern)
   bool primary = !end.secondary;
   const map::MapAirport& airport = runwaySelection->getAirport();
 
+  // Assign an artifical id to the hold to allow internal identification
+  pattern.id = map::getNextUserFeatureId();
   pattern.airportIcao = airport.displayIdent();
   pattern.runwayName = primary ? rw.primaryName : rw.secondaryName;
   pattern.color = color;

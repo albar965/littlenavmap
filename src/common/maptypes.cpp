@@ -21,10 +21,15 @@
 #include "geo/calculations.h"
 #include "common/unit.h"
 #include "navapp.h"
+#include "common/symbolpainter.h"
 #include "common/formatter.h"
 #include "fs/util/fsutil.h"
+#include "userdata/userdataicons.h"
+#include "common/vehicleicons.h"
+#include "common/mapcolors.h"
 
 #include <QDataStream>
+#include <QIcon>
 #include <QRegularExpression>
 
 namespace map {
@@ -1292,41 +1297,40 @@ MapAirwayRouteType airwayRouteTypeFromString(const QString& typeStr)
 
 QDataStream& operator>>(QDataStream& dataStream, map::RangeMarker& obj)
 {
-  qint32 types;
-  dataStream >> obj.text >> obj.ranges >> obj.position >> types;
-  obj.type = static_cast<map::MapTypes>(types);
+  dataStream >> obj.text >> obj.ranges >> obj.position >> obj.color;
+  obj.objType = map::MARK_RANGE;
   return dataStream;
 }
 
 QDataStream& operator<<(QDataStream& dataStream, const map::RangeMarker& obj)
 {
-  dataStream << obj.text << obj.ranges << obj.position << static_cast<qint32>(obj.type);
+  dataStream << obj.text << obj.ranges << obj.position << obj.color;
   return dataStream;
 }
 
 QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj)
 {
-  bool dummy = true; // Value was removed
-  dataStream >> obj.text >> obj.color >> obj.from >> obj.to >> obj.magvar >> dummy >> dummy;
+  dataStream >> obj.text >> obj.color >> obj.from >> obj.to >> obj.magvar;
+  obj.objType = map::MARK_DISTANCE;
+  obj.position = obj.to;
   return dataStream;
 }
 
 QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj)
 {
-  bool dummy = false; // Value was removed
-  dataStream << obj.text << obj.color << obj.from << obj.to << obj.magvar << dummy << dummy;
+  dataStream << obj.text << obj.color << obj.from << obj.to << obj.magvar;
   return dataStream;
 }
 
-QDataStream& operator>>(QDataStream& dataStream, TrafficPattern& obj)
+QDataStream& operator>>(QDataStream& dataStream, PatternMarker& obj)
 {
   dataStream >> obj.airportIcao >> obj.runwayName >> obj.color >> obj.turnRight >> obj.base45Degree >> obj.showEntryExit
   >> obj.runwayLength >> obj.downwindDistance >> obj.baseDistance >> obj.courseTrue >> obj.magvar >> obj.position;
-
+  obj.objType = map::MARK_PATTERNS;
   return dataStream;
 }
 
-QDataStream& operator<<(QDataStream& dataStream, const TrafficPattern& obj)
+QDataStream& operator<<(QDataStream& dataStream, const PatternMarker& obj)
 {
   dataStream << obj.airportIcao << obj.runwayName << obj.color << obj.turnRight << obj.base45Degree << obj.showEntryExit
              << obj.runwayLength << obj.downwindDistance << obj.baseDistance << obj.courseTrue << obj.magvar << obj.position;
@@ -1334,57 +1338,60 @@ QDataStream& operator<<(QDataStream& dataStream, const TrafficPattern& obj)
   return dataStream;
 }
 
-QDataStream& operator>>(QDataStream& dataStream, MapHolding& obj)
+QDataStream& operator>>(QDataStream& dataStream, HoldingMarker& obj)
 {
-  dataStream >> obj.navIdent >> obj.navType >> obj.vorDmeOnly >> obj.vorHasDme >> obj.vorTacan >> obj.vorVortac
-  >> obj.color >> obj.turnLeft >> obj.time >> obj.speedKts >> obj.courseTrue >> obj.magvar >> obj.position;
+  dataStream >> obj.holding.navIdent >> obj.holding.navType >> obj.holding.vorDmeOnly >> obj.holding.vorHasDme
+  >> obj.holding.vorTacan >> obj.holding.vorVortac >> obj.holding.color >> obj.holding.turnLeft >> obj.holding.time
+  >> obj.holding.speedKts >> obj.holding.courseTrue >> obj.holding.magvar >> obj.holding.position;
 
-  obj.user = true;
-  obj.length = obj.speedLimit = obj.minAltititude = obj.maxAltititude = 0.f;
-  obj.airportIdent.clear();
+  obj.holding.length = obj.holding.speedLimit = obj.holding.minAltititude = obj.holding.maxAltititude = 0.f;
+  obj.holding.airportIdent.clear();
+
+  obj.position = obj.holding.position;
+  obj.objType = map::MARK_HOLDING;
   return dataStream;
 }
 
-QDataStream& operator<<(QDataStream& dataStream, const MapHolding& obj)
+QDataStream& operator<<(QDataStream& dataStream, const HoldingMarker& obj)
 {
-  dataStream << obj.navIdent << obj.navType << obj.vorDmeOnly << obj.vorHasDme << obj.vorTacan << obj.vorVortac
-             << obj.color << obj.turnLeft << obj.time << obj.speedKts << obj.courseTrue << obj.magvar << obj.position;
-
+  dataStream << obj.holding.navIdent << obj.holding.navType << obj.holding.vorDmeOnly << obj.holding.vorHasDme
+             << obj.holding.vorTacan << obj.holding.vorVortac << obj.holding.color << obj.holding.turnLeft
+             << obj.holding.time << obj.holding.speedKts << obj.holding.courseTrue << obj.holding.magvar << obj.holding.position;
   return dataStream;
 }
 
-QDataStream& operator>>(QDataStream& dataStream, map::MapAirportMsa& obj)
+QDataStream& operator>>(QDataStream& dataStream, map::MsaMarker& obj)
 {
-  dataStream >> obj.airportIdent >> obj.navIdent >> obj.region >> obj.multipleCode >> obj.vorType;
-  dataStream >> obj.navType >> obj.vorDmeOnly >> obj.vorHasDme >> obj.vorTacan >> obj.vorVortac;
-  dataStream >> obj.radius >> obj.magvar;
-  dataStream >> obj.bearings >> obj.altitudes >> obj.trueBearing
-  >> obj.geometry >> obj.labelPositions >> obj.bearingEndPositions >> obj.bounding >> obj.position;
-  obj.user = true;
+  dataStream >> obj.msa.airportIdent >> obj.msa.navIdent >> obj.msa.region >> obj.msa.multipleCode >> obj.msa.vorType;
+  dataStream >> obj.msa.navType >> obj.msa.vorDmeOnly >> obj.msa.vorHasDme >> obj.msa.vorTacan >> obj.msa.vorVortac;
+  dataStream >> obj.msa.radius >> obj.msa.magvar;
+  dataStream >> obj.msa.bearings >> obj.msa.altitudes >> obj.msa.trueBearing
+  >> obj.msa.geometry >> obj.msa.labelPositions >> obj.msa.bearingEndPositions >> obj.msa.bounding >> obj.msa.position;
+
+  obj.position = obj.msa.position;
+  obj.objType = map::MARK_MSA;
   return dataStream;
 }
 
-QDataStream& operator<<(QDataStream& dataStream, const map::MapAirportMsa& obj)
+QDataStream& operator<<(QDataStream& dataStream, const map::MsaMarker& obj)
 {
-  dataStream << obj.airportIdent << obj.navIdent << obj.region << obj.multipleCode << obj.vorType;
-  dataStream << obj.navType << obj.vorDmeOnly << obj.vorHasDme << obj.vorTacan << obj.vorVortac;
-  dataStream << obj.radius << obj.magvar;
-  dataStream << obj.bearings << obj.altitudes << obj.trueBearing
-             << obj.geometry << obj.labelPositions << obj.bearingEndPositions << obj.bounding << obj.position;
+  dataStream << obj.msa.airportIdent << obj.msa.navIdent << obj.msa.region << obj.msa.multipleCode << obj.msa.vorType;
+  dataStream << obj.msa.navType << obj.msa.vorDmeOnly << obj.msa.vorHasDme << obj.msa.vorTacan << obj.msa.vorVortac;
+  dataStream << obj.msa.radius << obj.msa.magvar;
+  dataStream << obj.msa.bearings << obj.msa.altitudes << obj.msa.trueBearing
+             << obj.msa.geometry << obj.msa.labelPositions << obj.msa.bearingEndPositions << obj.msa.bounding << obj.msa.position;
   return dataStream;
 }
 
 QDataStream& operator>>(QDataStream& dataStream, MapObjectRef& obj)
 {
-  quint32 type;
-  dataStream >> obj.id >> type;
-  obj.objType = static_cast<map::MapType>(type);
+  dataStream >> obj.id >> obj.objType;
   return dataStream;
 }
 
 QDataStream& operator<<(QDataStream& dataStream, const MapObjectRef& obj)
 {
-  dataStream << obj.id << static_cast<quint32>(obj.objType);
+  dataStream << obj.id << obj.objType;
   return dataStream;
 }
 
@@ -1498,6 +1505,49 @@ QString logEntryText(const MapLogbookEntry& logEntry)
   return QObject::tr("Logbook Entry %1 to %2").arg(logEntry.departureIdent).arg(logEntry.destinationIdent);
 }
 
+QString rangeMarkText(const RangeMarker& obj)
+{
+  if(obj.text.isEmpty())
+    return QObject::tr("Range Rings");
+  else
+    return QObject::tr("Range Rings %1").arg(obj.text);
+}
+
+QString distanceMarkText(const DistanceMarker& obj)
+{
+  if(obj.text.isEmpty())
+    return QObject::tr("Measurement %1").arg(Unit::distMeter(obj.from.distanceMeterTo(obj.to)));
+  else
+    return QObject::tr("Measurement %1 %2").arg(obj.text).arg(Unit::distMeter(obj.from.distanceMeterTo(obj.to)));
+}
+
+QString holdingMarkText(const HoldingMarker& obj)
+{
+  if(obj.holding.navIdent.isEmpty())
+    return QObject::tr("User Holding %1 %2").
+           arg(obj.holding.turnLeft ? QObject::tr("L") : QObject::tr("R")).
+           arg(Unit::altFeet(obj.holding.position.getAltitude()));
+  else
+    return QObject::tr("User Holding %1 %2 %3").
+           arg(obj.holding.navIdent).
+           arg(obj.holding.turnLeft ? QObject::tr("L") : QObject::tr("R")).
+           arg(Unit::altFeet(obj.holding.position.getAltitude()));
+}
+
+QString patternMarkText(const PatternMarker& obj)
+{
+  if(obj.airportIcao.isEmpty())
+    return QObject::tr("Traffic Pattern %1 RW %2").arg(obj.turnRight ? QObject::tr("R") : QObject::tr("L")).arg(obj.runwayName);
+  else
+    return QObject::tr("Traffic Pattern %1 %2 RW %3").
+           arg(obj.airportIcao).arg(obj.turnRight ? QObject::tr("R") : QObject::tr("L")).arg(obj.runwayName);
+}
+
+QString msaMarkText(const MsaMarker& obj)
+{
+  return airportMsaText(obj.msa, true);
+}
+
 QString userpointRouteText(const MapUserpointRoute& userpoint)
 {
   return QObject::tr("Position %1").arg(userpoint.ident);
@@ -1569,14 +1619,15 @@ QString airportMsaTextShort(const MapAirportMsa& airportMsa)
     return QObject::tr("%1 (%2)").arg(airportMsa.airportIdent).arg(airportMsa.navIdent);
 }
 
-QString airportMsaText(const MapAirportMsa& airportMsa)
+QString airportMsaText(const MapAirportMsa& airportMsa, bool user)
 {
+  QString type = user ? QObject::tr("User MSA") : QObject::tr("MSA");
   if(!airportMsa.isValid())
-    return QObject::tr("MSA");
+    return type;
   else if(airportMsa.airportIdent == airportMsa.navIdent)
-    return QObject::tr("MSA at %1").arg(airportMsa.airportIdent);
+    return QObject::tr("%1 at %2").arg(type).arg(airportMsa.airportIdent);
   else
-    return QObject::tr("MSA at %1 (%2)").arg(airportMsa.airportIdent).arg(airportMsa.navIdent);
+    return QObject::tr("%1 at %2 (%3)").arg(type).arg(airportMsa.airportIdent).arg(airportMsa.navIdent);
 }
 
 QString comTypeName(const QString& type)
@@ -1944,10 +1995,10 @@ QString ilsTextShort(const map::MapIls& ils)
   return QObject::tr("%1 %2").arg(ilsType(ils, true /* gs */, true /* dme */, QObject::tr(", "))).arg(ils.ident);
 }
 
-QString holdingTextShort(const map::MapHolding& holding)
+QString holdingTextShort(const map::MapHolding& holding, bool user)
 {
   QString text;
-  if(holding.user)
+  if(user)
     text.append(QObject::tr("User holding at %1").
                 arg(holding.navIdent.isEmpty() ? Unit::coords(holding.position) : holding.navIdent));
   else
@@ -2012,7 +2063,7 @@ float MapHolding::distance(bool *estimated) const
   return dist;
 }
 
-float TrafficPattern::magCourse() const
+float PatternMarker::magCourse() const
 {
   return atools::geo::normalizeCourse(courseTrue - magvar);
 }
@@ -2166,6 +2217,175 @@ map::MapAirspaceSources airspaceSource(const map::MapBase *base)
       return base->asPtr<map::MapAirspace>()->src;
   }
   return map::MapAirspaceSource::AIRSPACE_SRC_NONE;
+}
+
+int getNextUserFeatureId()
+{
+  static int currentUserFeatureId = 1;
+  return currentUserFeatureId++;
+
+}
+
+QString mapBaseText(const map::MapBase *base, int elideAirportName)
+{
+  if(base != nullptr)
+  {
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch"
+    switch(base->getTypeEnum())
+#pragma GCC diagnostic pop
+    {
+      case map::AIRPORT:
+        return map::airportText(*base->asPtr<map::MapAirport>(), elideAirportName);
+
+      case map::AIRPORT_MSA:
+        return map::airportMsaText(*base->asPtr<map::MapAirportMsa>(), false);
+
+      case map::VOR:
+        return map::vorText(*base->asPtr<map::MapVor>());
+
+      case map::NDB:
+        return map::ndbText(*base->asPtr<map::MapNdb>());
+
+      case map::ILS:
+        return map::ilsTextShort(*base->asPtr<map::MapIls>());
+
+      case map::HOLDING:
+        return map::holdingTextShort(*base->asPtr<map::MapHolding>(), false);
+
+      case map::WAYPOINT:
+        return map::waypointText(*base->asPtr<map::MapWaypoint>());
+
+      case map::AIRWAY:
+        return map::airwayText(*base->asPtr<map::MapAirway>());
+
+      case map::AIRCRAFT:
+        return map::aircraftTextShort(base->asPtr<map::MapUserAircraft>()->getAircraft());
+
+      case map::AIRCRAFT_AI:
+        return map::aircraftTextShort(base->asPtr<map::MapAiAircraft>()->getAircraft());
+
+      case map::AIRCRAFT_ONLINE:
+        return map::aircraftTextShort(base->asPtr<map::MapOnlineAircraft>()->getAircraft());
+
+      case map::USERPOINTROUTE:
+        return base->asPtr<map::MapUserpointRoute>()->ident;
+
+      case map::AIRSPACE:
+        return map::airspaceText(*base->asPtr<map::MapAirspace>());
+
+      case map::PARKING:
+        return map::parkingText(*base->asPtr<map::MapParking>());
+
+      case map::HELIPAD:
+        return map::helipadText(*base->asPtr<map::MapHelipad>());
+
+      case map::USERPOINT:
+        return map::userpointText(*base->asPtr<map::MapUserpoint>());
+
+      case map::LOGBOOK:
+        return map::logEntryText(*base->asPtr<map::MapLogbookEntry>());
+
+      case map::MARK_RANGE:
+        return map::rangeMarkText(*base->asPtr<map::RangeMarker>());
+
+      case map::MARK_DISTANCE:
+        return map::distanceMarkText(*base->asPtr<map::DistanceMarker>());
+
+      case map::MARK_HOLDING:
+        return map::holdingMarkText(*base->asPtr<map::HoldingMarker>());
+
+      case map::MARK_PATTERNS:
+        return map::patternMarkText(*base->asPtr<map::PatternMarker>());
+
+      case map::MARK_MSA:
+        return map::msaMarkText(*base->asPtr<map::MsaMarker>());
+    }
+  }
+  return QString();
+}
+
+QIcon mapBaseIcon(const map::MapBase *base, int size)
+{
+  if(base != nullptr)
+  {
+    // Get size for icons
+    SymbolPainter painter;
+    VehicleIcons *vehicleIcons = NavApp::getVehicleIcons();
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch"
+    switch(base->getTypeEnum())
+#pragma GCC diagnostic pop
+    {
+      case map::AIRPORT:
+        return painter.createAirportIcon(*base->asPtr<map::MapAirport>(), size);
+
+      case map::AIRPORT_MSA:
+        return QIcon(":/littlenavmap/resources/icons/msa.svg");
+
+      case map::VOR:
+        return painter.createVorIcon(*base->asPtr<map::MapVor>(), size);
+
+      case map::NDB:
+        return painter.createNdbIcon(size);
+
+      case map::ILS:
+        return QIcon(":/littlenavmap/resources/icons/ils.svg");
+
+      case map::HOLDING:
+        return QIcon(":/littlenavmap/resources/icons/enroutehold.svg");
+
+      case map::WAYPOINT:
+        return painter.createWaypointIcon(size);
+
+      case map::AIRWAY:
+        return painter.createAirwayIcon(*base->asPtr<map::MapAirway>(), size);
+
+      case map::AIRCRAFT:
+        return vehicleIcons->iconFromCache(base->asPtr<map::MapUserAircraft>()->getAircraft(), size, 45 /* rotate */);
+
+      case map::AIRCRAFT_AI:
+        return vehicleIcons->iconFromCache(base->asPtr<map::MapAiAircraft>()->getAircraft(), size, 45 /* rotate */);
+
+      case map::AIRCRAFT_ONLINE:
+        return vehicleIcons->iconFromCache(base->asPtr<map::MapOnlineAircraft>()->getAircraft(), size, 45 /* rotate */);
+
+      case map::USERPOINTROUTE:
+        return painter.createUserpointIcon(size);
+
+      case map::AIRSPACE:
+        return painter.createAirspaceIcon(*base->asPtr<map::MapAirspace>(), size);
+
+      case map::PARKING:
+        return mapcolors::iconForParkingType(base->asPtr<map::MapParking>()->type);
+
+      case map::HELIPAD:
+        return painter.createHelipadIcon(*base->asPtr<map::MapHelipad>(), size);
+
+      case map::USERPOINT:
+        return QIcon(NavApp::getUserdataIcons()->getIconPath(base->asPtr<map::MapUserpoint>()->type));
+
+      case map::LOGBOOK:
+        return QIcon(":/littlenavmap/resources/icons/logbook.svg");
+
+      case map::MARK_RANGE:
+        return QIcon(":/littlenavmap/resources/icons/rangerings.svg");
+
+      case map::MARK_DISTANCE:
+        return QIcon(":/littlenavmap/resources/icons/distancemeasure.svg");
+
+      case map::MARK_HOLDING:
+        return QIcon(":/littlenavmap/resources/icons/hold.svg");
+
+      case map::MARK_PATTERNS:
+        return QIcon(":/littlenavmap/resources/icons/trafficpattern.svg");
+
+      case map::MARK_MSA:
+        return QIcon(":/littlenavmap/resources/icons/msa.svg");
+    }
+  }
+  return QIcon();
 }
 
 } // namespace types

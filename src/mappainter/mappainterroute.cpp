@@ -1656,6 +1656,8 @@ void MapPainterRoute::drawSymbols(const QBitArray& visibleStartPoints, const QLi
       int y = atools::roundToInt(pt.y());
       const RouteLeg& obj = context->route->value(i);
       map::MapTypes type = obj.getMapObjectType();
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch"
       switch(type)
       {
         case map::INVALID:
@@ -1678,6 +1680,7 @@ void MapPainterRoute::drawSymbols(const QBitArray& visibleStartPoints, const QLi
           paintWaypoint(QColor(), x, y, preview);
           break;
       }
+#pragma GCC diagnostic pop
     }
     i++;
   }
@@ -1726,6 +1729,9 @@ void MapPainterRoute::drawRouteSymbolText(const QBitArray& visibleStartPoints, c
       float y = static_cast<float>(pt.y());
       const RouteLeg& obj = context->route->value(i);
       map::MapTypes type = obj.getMapObjectType();
+
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch-enum"
       switch(type)
       {
         case map::INVALID:
@@ -1748,7 +1754,11 @@ void MapPainterRoute::drawRouteSymbolText(const QBitArray& visibleStartPoints, c
         case map::WAYPOINT:
           paintWaypointText(x, y, obj.getWaypoint(), true /* draw as route */);
           break;
+
+        default:
+          break;
       }
+#pragma GCC diagnostic pop
     }
     i++;
   }

@@ -187,11 +187,22 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
     }
   }
 
+  // User features / marks
+
   // Traffic pattern ===========================================================================
-  buildOneTooltip(html, overflow, numEntries, mapSearchResult.trafficPatterns, info, &HtmlInfoBuilder::trafficPatternText);
+  buildOneTooltip(html, overflow, numEntries, mapSearchResult.patternMarks, info, &HtmlInfoBuilder::patternMarkerText);
 
   // Range rings ===========================================================================
-  buildOneTooltip(html, overflow, numEntries, mapSearchResult.rangeMarkers, info, &HtmlInfoBuilder::rangeMarkerText);
+  buildOneTooltip(html, overflow, numEntries, mapSearchResult.rangeMarks, info, &HtmlInfoBuilder::rangeMarkerText);
+
+  // User Holds ===========================================================================
+  buildOneTooltip(html, overflow, numEntries, mapSearchResult.holdingMarks, info, &HtmlInfoBuilder::holdingMarkerText);
+
+  // MSA diagrams ===========================================================================
+  buildOneTooltip(html, overflow, numEntries, mapSearchResult.msaMarks, info, &HtmlInfoBuilder::msaMarkerText);
+
+  // MSA diagrams ===========================================================================
+  buildOneTooltip(html, overflow, numEntries, mapSearchResult.distanceMarks, info, &HtmlInfoBuilder::distanceMarkerText);
 
   if(opts.testFlag(optsd::TOOLTIP_NAVAID))
   {
@@ -200,12 +211,6 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
 
     // Userpoints ===========================================================================
     buildOneTooltip(html, overflow, numEntries, mapSearchResult.userpoints, info, &HtmlInfoBuilder::userpointTextInfo);
-
-    // User Holds ===========================================================================
-    buildOneTooltip(html, overflow, numEntries, mapSearchResult.getHoldings(true /* user */), info, &HtmlInfoBuilder::holdingText);
-
-    // MSA diagrams ===========================================================================
-    buildOneTooltip(html, overflow, numEntries, mapSearchResult.getAirportMsa(true /* user */), info, &HtmlInfoBuilder::airportMsaText);
   }
 
   // Airports ===========================================================================
@@ -244,10 +249,10 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
     buildOneTooltip(html, overflow, numEntries, mapSearchResult.ils, info, &HtmlInfoBuilder::ilsTextInfo);
 
     // Database Holds ===========================================================================
-    buildOneTooltip(html, overflow, numEntries, mapSearchResult.getHoldings(false /* user */), info, &HtmlInfoBuilder::holdingText);
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.holdings, info, &HtmlInfoBuilder::holdingText);
 
     // Database MSA ===========================================================================
-    buildOneTooltip(html, overflow, numEntries, mapSearchResult.getAirportMsa(false /* user */), info, &HtmlInfoBuilder::airportMsaText);
+    buildOneTooltip(html, overflow, numEntries, mapSearchResult.airportMsa, info, &HtmlInfoBuilder::airportMsaText);
   }
 
   // Airport stuff ===========================================================================

@@ -58,8 +58,11 @@ struct MapLogbookEntry;
 struct MapBase;
 struct MapResultIndex;
 struct MapHolding;
-struct TrafficPattern;
+struct PatternMarker;
 struct RangeMarker;
+struct HoldingMarker;
+struct MsaMarker;
+struct DistanceMarker;
 }
 
 namespace atools {
@@ -169,13 +172,9 @@ public:
   void weatherText(const map::WeatherContext& context, const map::MapAirport& airport,
                    atools::util::HtmlBuilder& html) const;
 
-  /*
-   * Creates a HTML description for a VOR station.
-   * @param vor
-   * @param html Result containing HTML snippet
-   * @param background Background color for icons
-   */
+  /* Database nav features */
   void airportMsaText(const map::MapAirportMsa& msa, atools::util::HtmlBuilder& html) const;
+  void holdingText(const map::MapHolding& holding, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for a VOR station.
@@ -292,9 +291,12 @@ public:
   void aircraftOnlineText(const atools::fs::sc::SimConnectAircraft& aircraft, const atools::sql::SqlRecord& onlineRec,
                           atools::util::HtmlBuilder& html);
 
-  void holdingText(const map::MapHolding& holding, atools::util::HtmlBuilder& html) const;
-  void trafficPatternText(const map::TrafficPattern& pattern, atools::util::HtmlBuilder& html) const;
+  /* User features / marks */
+  void msaMarkerText(const map::MsaMarker& msa, atools::util::HtmlBuilder& html) const;
+  void holdingMarkerText(const map::HoldingMarker& holding, atools::util::HtmlBuilder& html) const;
+  void patternMarkerText(const map::PatternMarker& pattern, atools::util::HtmlBuilder& html) const;
   void rangeMarkerText(const map::RangeMarker& marker, atools::util::HtmlBuilder& html) const;
+  void distanceMarkerText(const map::DistanceMarker& marker, atools::util::HtmlBuilder& html) const;
 
   void setSymbolSize(const QSize& value)
   {
@@ -345,6 +347,9 @@ private:
                    atools::util::html::Flags flags = atools::util::html::NONE) const;
 
   void airportTitle(const map::MapAirport& airport, atools::util::HtmlBuilder& html, int rating) const;
+
+  void airportMsaTextInternal(const map::MapAirportMsa& msa, atools::util::HtmlBuilder& html, bool user) const;
+  void holdingTextInternal(const map::MapHolding& holding, atools::util::HtmlBuilder& html, bool user) const;
 
   void rowForInt(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
                  const QString& msg, const QString& val) const;
@@ -405,8 +410,7 @@ private:
 
   void ilsTextProcInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
   void ilsTextRunwayInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
-  void ilsTextInternal(const map::MapIls& ils, atools::util::HtmlBuilder& html, bool procInfo, bool runwayInfo,
-                       bool infoOrTooltip) const;
+  void ilsTextInternal(const map::MapIls& ils, atools::util::HtmlBuilder& html, bool procInfo, bool runwayInfo, bool infoOrTooltip) const;
 
   /* Add wind text for flight plan waypoints */
   void routeWindText(atools::util::HtmlBuilder& html, const Route& route, int index) const;

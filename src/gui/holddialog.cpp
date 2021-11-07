@@ -173,12 +173,18 @@ void HoldDialog::updateWidgets()
   ui->labelHoldNavaid->setText(tr("<p><b>%1</b></p>").arg(text));
 }
 
-void HoldDialog::fillHold(map::MapHolding& holding)
+void HoldDialog::fillHold(map::HoldingMarker& holdingMarker)
 {
+  map::MapHolding& holding = holdingMarker.holding;
+
+  // Assign an artifical id to the hold to allow internal identification
+  holdingMarker.id = map::getNextUserFeatureId();
+  holding.color = color;
+
+  holding.id = -1;
   holding.navIdent.clear();
   holding.position = *position;
   holding.navType = map::NONE;
-  holding.user = true;
   holding.speedLimit = holding.length = holding.minAltititude = holding.maxAltititude = 0.f;
   holding.airportIdent.clear();
 
@@ -227,10 +233,11 @@ void HoldDialog::fillHold(map::MapHolding& holding)
     // Use calculated declination
     holding.magvar = NavApp::getMagVar(*position);
 
-  holding.color = color;
   holding.position.setAltitude(Unit::rev(ui->spinBoxHoldAltitude->value(), Unit::altFeetF));
   holding.turnLeft = ui->comboBoxHoldTurnDirection->currentIndex() == 1;
   holding.time = static_cast<float>(ui->doubleSpinBoxHoldTime->value());
   holding.speedKts = Unit::rev(ui->spinBoxHoldSpeed->value(), Unit::speedKtsF);
   holding.courseTrue = atools::geo::normalizeCourse(ui->spinBoxHoldCourse->value() + holding.magvar);
+
+  holdingMarker.position = holding.position;
 }

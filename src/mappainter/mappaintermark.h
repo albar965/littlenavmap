@@ -51,13 +51,10 @@ private:
   void paintMark();
   void paintHome();
   void paintHighlights();
-  void paintRangeRings();
-  void paintDistanceMarkers();
+  void paintRangeMarks();
+  void paintDistanceMarks();
 
-  /* Draw big airport MSA sectors */
-  void paintAirportMsa();
-
-  void paintTrafficPatterns();
+  void paintPatternMarks();
 
   void paintRouteDrag();
   void paintCompassRose();

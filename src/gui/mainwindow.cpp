@@ -1101,7 +1101,7 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::routeAltitudeChanged, profileWidget, &ProfileWidget::routeAltitudeChanged);
   connect(routeController, &RouteController::routeChanged, this, &MainWindow::updateActionStates);
   connect(routeController, &RouteController::routeInsert, this, &MainWindow::routeInsert);
-  connect(routeController, &RouteController::addAirportMsa, mapWidget, &MapWidget::addAirportMsa);
+  connect(routeController, &RouteController::addAirportMsa, mapWidget, &MapWidget::addMsaMark);
 
   connect(routeController, &RouteController::routeChanged, NavApp::updateErrorLabels);
   connect(routeController, &RouteController::routeChanged, NavApp::updateWindowTitle);
@@ -1133,7 +1133,7 @@ void MainWindow::connectAllSlots()
   connect(airportSearch, &SearchBaseTable::routeAddAlternate, routeController, &RouteController::routeAddAlternate);
   connect(airportSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
   connect(airportSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
-  connect(airportSearch, &SearchBaseTable::addAirportMsa, mapWidget, &MapWidget::addAirportMsa);
+  connect(airportSearch, &SearchBaseTable::addAirportMsa, mapWidget, &MapWidget::addMsaMark);
 
   // Nav search ===================================================================================
   NavSearch *navSearch = searchController->getNavSearch();
@@ -1142,7 +1142,7 @@ void MainWindow::connectAllSlots()
   connect(navSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
   connect(navSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
   connect(navSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
-  connect(navSearch, &SearchBaseTable::addAirportMsa, mapWidget, &MapWidget::addAirportMsa);
+  connect(navSearch, &SearchBaseTable::addAirportMsa, mapWidget, &MapWidget::addMsaMark);
 
   // Userdata search ===================================================================================
   UserdataSearch *userSearch = searchController->getUserdataSearch();
@@ -2582,10 +2582,10 @@ void MainWindow::clearRangeRingsAndDistanceMarkers(bool quiet)
                                     QMessageBox::No, QMessageBox::Yes);
 
     if(result == QMessageBox::Yes)
-      mapWidget->clearRangeRingsAndDistanceMarkers();
+      mapWidget->clearAllMarkers();
   }
   else
-    mapWidget->clearRangeRingsAndDistanceMarkers();
+    mapWidget->clearAllMarkers();
 }
 
 /* Called from menu or toolbar by action. Remove all KML from map */
@@ -3626,11 +3626,11 @@ void MainWindow::updateOnlineActionStates()
 /* Enable or disable actions */
 void MainWindow::updateMarkActionStates()
 {
-  MapWidget *mapWidget = NavApp::getMapWidgetGui();
-  ui->actionMapHideRangeRings->setEnabled(!mapWidget->getDistanceMarkers().isEmpty() ||
-                                          !mapWidget->getRangeRings().isEmpty() ||
-                                          !mapWidget->getTrafficPatterns().isEmpty() ||
-                                          !mapWidget->getHolds().isEmpty());
+  ui->actionMapHideRangeRings->setEnabled(!mapWidget->getDistanceMarks().isEmpty() ||
+                                          !mapWidget->getRangeMarks().isEmpty() ||
+                                          !mapWidget->getPatternsMarks().isEmpty() ||
+                                          !mapWidget->getMsaMarks().isEmpty() ||
+                                          !mapWidget->getHoldingMarks().isEmpty());
 }
 
 /* Enable or disable actions */

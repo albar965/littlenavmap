@@ -270,7 +270,7 @@ public:
   /* SID, STAR or approach */
   bool isAnyProcedure() const
   {
-    return type & map::PROCEDURE;
+    return type.testFlag(map::PROCEDURE);
   }
 
   /* User defined waypoint */

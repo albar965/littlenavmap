@@ -136,10 +136,6 @@ const QLatin1String MAINWINDOW_PRINT_SIZE("MainWindow/PrintPreviewSize");
 const QLatin1String MAINWINDOW_PLACE_ROUTE_CALC("MainWindow/PlaceRouteCalc");
 
 const QLatin1String MAP_DETAILFACTOR("Map/DetailFactor");
-const QLatin1String MAP_DISTANCEMARKERS("Map/DistanceMarkers");
-const QLatin1String MAP_TRAFFICPATTERNS("Map/TrafficPatterns");
-const QLatin1String MAP_HOLDINGS("Map/Holdings");
-const QLatin1String MAP_AIRPORT_MSA("Map/AirportMsa");
 const QLatin1String MAP_AIRSPACES("Map/AirspaceFilter");
 const QLatin1String MAP_USERDATA("Map/Userdata");
 const QLatin1String MAP_USERDATA_ALL("Map/UserdataAll");
@@ -153,12 +149,17 @@ const QLatin1String MAP_HOMELONX("Map/HomeLonX");
 const QLatin1String MAP_KMLFILES("Map/KmlFiles");
 const QLatin1String MAP_MARKLATY("Map/MarkLatY");
 const QLatin1String MAP_MARKLONX("Map/MarkLonX");
-const QLatin1String MAP_RANGEMARKERS("Map/RangeMarkers");
+const QLatin1String MAP_RANGEMARKERS("Map/RangeMarkers28");
 const QLatin1String MAP_OVERLAY_VISIBLE("Map/OverlayVisible");
 const QLatin1String MAP_WEATHER_SOURCE("Map/WeatherSource");
 const QLatin1String MAP_SUN_SHADING_TIME_OPTION("Map/SunShadingTimeOption");
 const QLatin1String MAP_SUN_SHADING_TIME("Map/SunShadingTime");
-const QLatin1String MAP_MARK_DISPLAY("Map/MarkDisplay");
+
+const QLatin1String MAP_DISTANCEMARKERS("Map/DistanceMarkers28");
+const QLatin1String MAP_TRAFFICPATTERNS("Map/TrafficPatterns28");
+const QLatin1String MAP_HOLDINGS("Map/Holdings28");
+const QLatin1String MAP_AIRPORT_MSA("Map/AirportMsa28");
+const QLatin1String MAP_MARK_DISPLAY("Map/MarkDisplay28");
 
 const QLatin1String LAYOUT_RECENT("WindowLayout/FilenamesRecent");
 

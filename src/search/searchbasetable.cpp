@@ -1178,7 +1178,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionMapRangeRings->setEnabled(index.isValid() && position.isValid());
   ui->actionSearchSetMark->setEnabled(index.isValid() && position.isValid());
 
-  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE_RINGS))
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE))
   {
     ActionTool::setText(ui->actionMapRangeRings, false, QString(), notShown);
     ActionTool::setText(ui->actionMapNavaidRange, false, QString(), notShown);
@@ -1187,14 +1187,14 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     ActionTool::setText(ui->actionMapRangeRings, result.hasTypes(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT),
                         navaidRangeText);
 
-  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDS))
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDING))
     ActionTool::setText(ui->actionMapHold, false, QString(), notShown);
   else
     ActionTool::setText(ui->actionMapHold, result.hasTypes(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT),
                         objectText);
 
   ui->actionMapAirportMsa->setEnabled(msaResult.hasAirportMsa());
-  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_AIRPORT_MSA))
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_MSA))
     ActionTool::setText(ui->actionMapAirportMsa, false, QString(), notShown);
 
   if(!NavApp::getMapMarkHandler()->isShown(map::MARK_PATTERNS))
@@ -1477,9 +1477,9 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     else if(action == ui->actionSearchSetMark)
       emit changeSearchMark(position);
     else if(action == ui->actionMapRangeRings)
-      mapWidget->addRangeRing(position);
+      mapWidget->addRangeMark(position);
     else if(action == ui->actionMapTrafficPattern)
-      mapWidget->addTrafficPattern(airport);
+      mapWidget->addPatternMark(airport);
     else if(action == ui->actionMapHold)
       mapWidget->addHold(result, atools::geo::EMPTY_POS);
     else if(action == ui->actionMapNavaidRange)
@@ -1501,7 +1501,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       else if(mapObjType == map::NDB)
         freqChannelStr = controller->getRawData(index.row(), "frequency").toString();
 
-      mapWidget->addNavRangeRing(position, mapObjType,
+      mapWidget->addNavRangeMark(position, mapObjType,
                                  controller->getRawData(index.row(), "ident").toString(),
                                  freqChannelStr, controller->getRawData(index.row(), "range").toInt());
     }

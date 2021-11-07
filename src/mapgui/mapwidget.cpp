@@ -426,8 +426,8 @@ bool MapWidget::event(QEvent *event)
       const QHelpEvent *helpEvent = dynamic_cast<const QHelpEvent *>(event);
       if(helpEvent != nullptr)
       {
-        map::MapObjectQueryTypes queryTypes = map::QUERY_PROC_POINTS | map::QUERY_HOLDS | map::QUERY_PATTERNS | map::QUERY_MSA |
-                                              map::QUERY_RANGEMARKER;
+        map::MapObjectQueryTypes queryTypes = map::QUERY_PROC_POINTS | map::QUERY_MARK_HOLDINGS | map::QUERY_MARK_PATTERNS |
+                                              map::QUERY_MARK_MSA | map::QUERY_MARK_DISTANCE | map::QUERY_MARK_RANGE;
 
         if(getShownMapFeatures().testFlag(map::MISSED_APPROACH))
           queryTypes |= map::QUERY_PROC_MISSED_POINTS;
@@ -585,12 +585,11 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
     // Range rings =======================================================================
     if(event->modifiers() == Qt::ShiftModifier)
     {
-      NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_RANGE_RINGS);
-      int index = getScreenIndexConst()->getNearestRangeMarkIndex(event->pos().x(), event->pos().y(),
-                                                                  screenSearchDistance);
-      if(index != -1)
+      NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_RANGE);
+      int id = getScreenIndexConst()->getNearestRangeMarkId(event->pos().x(), event->pos().y(), screenSearchDistance);
+      if(id != -1)
         // Remove any ring for Shift+Click into center
-        removeRangeRing(index);
+        removeRangeMark(id);
       else
       {
         // Add rings for Shift+Click
@@ -598,17 +597,17 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
         {
           // Add VOR range
           const map::MapVor& vor = result.vors.first();
-          addNavRangeRing(vor.position, map::VOR, vor.ident, vor.getFrequencyOrChannel(), vor.range);
+          addNavRangeMark(vor.position, map::VOR, vor.ident, vor.getFrequencyOrChannel(), vor.range);
         }
         else if(result.hasNdb())
         {
           // Add NDB range
           const map::MapNdb& ndb = result.ndbs.first();
-          addNavRangeRing(ndb.position, map::NDB, ndb.ident, QString::number(ndb.frequency), ndb.range);
+          addNavRangeMark(ndb.position, map::NDB, ndb.ident, QString::number(ndb.frequency), ndb.range);
         }
         else
           // Add range rings per configuration
-          addRangeRing(pos);
+          addRangeMark(pos);
       }
       return true;
     }
@@ -666,12 +665,11 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
     // Measurement =======================================================================
     else if(event->modifiers() == Qt::ControlModifier || event->modifiers() == Qt::AltModifier)
     {
-      NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_MEASUREMENT);
-      int index = getScreenIndexConst()->getNearestDistanceMarkIndex(event->pos().x(), event->pos().y(),
-                                                                     screenSearchDistance);
-      if(index != -1)
+      NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_DISTANCE);
+      int id = getScreenIndexConst()->getNearestDistanceMarkId(event->pos().x(), event->pos().y(), screenSearchDistance);
+      if(id != -1)
         // Remove any measurement line for Ctrl+Click or Alt+Click into center
-        removeDistanceMarker(index);
+        removeDistanceMark(id);
       else
         // Add measurement line for Ctrl+Click or Alt+Click into center
         addMeasurement(pos, result);
@@ -793,7 +791,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
         bool visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
         if(visible)
           // Update distance measurement line
-          getScreenIndex()->getDistanceMarks()[currentDistanceMarkerIndex].to = Pos(lon, lat);
+          getScreenIndex()->updateDistanceMarkerTo(currentDistanceMarkerId, Pos(lon, lat));
       }
       else if(mouseState & mw::DRAG_POST_CANCEL)
         cancelDragDistance();
@@ -838,13 +836,12 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
   else if(event->button() == Qt::LeftButton && !mouseMove)
   {
     // Start all dragging if left button was clicked and mouse was not moved ==========================
-    currentDistanceMarkerIndex = getScreenIndexConst()->getNearestDistanceMarkIndex(event->pos().x(), event->pos().y(),
-                                                                                    screenSearchDistance);
-    if(currentDistanceMarkerIndex != -1)
+    currentDistanceMarkerId = getScreenIndexConst()->getNearestDistanceMarkId(event->pos().x(), event->pos().y(), screenSearchDistance);
+    if(currentDistanceMarkerId != -1)
     {
       // Found an end - create a backup and start dragging
       mouseState = mw::DRAG_CHANGE_DISTANCE;
-      distanceMarkerBackup = getScreenIndexConst()->getDistanceMarks().at(currentDistanceMarkerIndex);
+      distanceMarkerBackup = getScreenIndexConst()->getDistanceMarks().value(currentDistanceMarkerId);
       setContextMenuPolicy(Qt::PreventContextMenu);
     }
     else
@@ -993,7 +990,7 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   }
   else
     getScreenIndexConst()->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, mapSearchResult,
-                                         map::QUERY_HOLDS | map::QUERY_PATTERNS | map::QUERY_RANGEMARKER);
+                                         map::QUERY_MARK_HOLDINGS | map::QUERY_MARK_PATTERNS | map::QUERY_MARK_RANGE);
 
   if(mapSearchResult.userAircraft.isValid())
   {
@@ -1029,10 +1026,10 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
       showPos(mapSearchResult.userpointsRoute.first().position, 0.f, true);
     else if(!mapSearchResult.userpoints.isEmpty())
       showPos(mapSearchResult.userpoints.first().position, 0.f, true);
-    else if(!mapSearchResult.trafficPatterns.isEmpty())
-      showPos(mapSearchResult.trafficPatterns.first().position, 0.f, true);
-    else if(!mapSearchResult.rangeMarkers.isEmpty())
-      showPos(mapSearchResult.rangeMarkers.first().position, 0.f, true);
+    else if(!mapSearchResult.patternMarks.isEmpty())
+      showPos(mapSearchResult.patternMarks.first().position, 0.f, true);
+    else if(!mapSearchResult.rangeMarks.isEmpty())
+      showPos(mapSearchResult.rangeMarks.first().position, 0.f, true);
     else if(!mapSearchResult.holdings.isEmpty())
       showPos(mapSearchResult.holdings.first().position, 0.f, true);
     mainWindow->setStatusMessage(QString(tr("Showing on map.")));
@@ -1438,26 +1435,24 @@ void MapWidget::cancelDragDistance()
 
   if(mouseState & mw::DRAG_DISTANCE)
     // Remove new one
-    getScreenIndex()->getDistanceMarks().removeAt(currentDistanceMarkerIndex);
+    getScreenIndex()->removeDistanceMark(currentDistanceMarkerId);
   else if(mouseState & mw::DRAG_CHANGE_DISTANCE)
     // Replace modified one with backup
-    getScreenIndex()->getDistanceMarks()[currentDistanceMarkerIndex] = distanceMarkerBackup;
-  currentDistanceMarkerIndex = -1;
+    getScreenIndex()->updateDistanceMarker(currentDistanceMarkerId, distanceMarkerBackup);
+  currentDistanceMarkerId = -1;
 }
 
 void MapWidget::startUserpointDrag(const map::MapUserpoint& userpoint, const QPoint& point)
 {
   if(userpoint.isValid())
   {
-    userpointDragPixmap = *NavApp::getUserdataIcons()->
-                          getIconPixmap(userpoint.type, paintLayer->getMapLayer()->getUserPointSymbolSize());
+    userpointDragPixmap = *NavApp::getUserdataIcons()->getIconPixmap(userpoint.type, paintLayer->getMapLayer()->getUserPointSymbolSize());
     userpointDragCur = point;
     userpointDrag = userpoint;
     // Start mouse dragging and disable context menu so we can catch the right button click as cancel
     mouseState = mw::DRAG_USER_POINT;
     setContextMenuPolicy(Qt::PreventContextMenu);
   }
-
 }
 
 void MapWidget::mouseMoveEvent(QMouseEvent *event)
@@ -1488,7 +1483,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     // Changing or adding distance measurement line ==========================================
     // Position is valid update the distance mark continuously
     if(visible && !getScreenIndexConst()->getDistanceMarks().isEmpty())
-      getScreenIndex()->getDistanceMarks()[currentDistanceMarkerIndex].to = Pos(lon, lat);
+      getScreenIndex()->updateDistanceMarkerTo(currentDistanceMarkerId, Pos(lon, lat));
 
   }
   else if(mouseState & mw::DRAG_ROUTE_LEG || mouseState & mw::DRAG_ROUTE_POINT)
@@ -1545,19 +1540,19 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
                 route.size() > 1)
           // Change cursor above a route line
           cursorShape = Qt::CrossCursor;
-        else if(getScreenIndexConst()->getNearestDistanceMarkIndex(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
+        else if(getScreenIndexConst()->getNearestDistanceMarkId(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
           // Change cursor at the end of an marker
           cursorShape = Qt::CrossCursor;
-        else if(getScreenIndexConst()->getNearestTrafficPatternIndex(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
+        else if(getScreenIndexConst()->getNearestTrafficPatternId(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
           // Change cursor at the active position
           cursorShape = Qt::PointingHandCursor;
-        else if(getScreenIndexConst()->getNearestHoldIndex(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
+        else if(getScreenIndexConst()->getNearestHoldId(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
           // Change cursor at the active position
           cursorShape = Qt::PointingHandCursor;
-        else if(getScreenIndexConst()->getNearestAirportMsaIndex(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
+        else if(getScreenIndexConst()->getNearestAirportMsaId(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
           // Change cursor at the active position
           cursorShape = Qt::PointingHandCursor;
-        else if(getScreenIndexConst()->getNearestRangeMarkIndex(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
+        else if(getScreenIndexConst()->getNearestRangeMarkId(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
           // Change cursor at the end of an marker
           cursorShape = Qt::PointingHandCursor;
 
@@ -1605,7 +1600,8 @@ void MapWidget::addMeasurement(const atools::geo::Pos& pos, const map::MapAirpor
 {
   // Distance line
   map::DistanceMarker dm;
-  dm.to = pos;
+  dm.id = map::getNextUserFeatureId();
+  dm.position = dm.to = pos;
 
   // Build distance line depending on selected airport or navaid (color, magvar, etc.)
   if(airport != nullptr && airport->isValid())
@@ -1646,12 +1642,12 @@ void MapWidget::addMeasurement(const atools::geo::Pos& pos, const map::MapAirpor
     dm.color = mapcolors::distanceColor;
   }
 
-  getScreenIndex()->getDistanceMarks().append(dm);
+  getScreenIndex()->addDistanceMark(dm);
 
   // Start mouse dragging and disable context menu so we can catch the right button click as cancel
   mouseState = mw::DRAG_DISTANCE;
   setContextMenuPolicy(Qt::PreventContextMenu);
-  currentDistanceMarkerIndex = getScreenIndexConst()->getDistanceMarks().size() - 1;
+  currentDistanceMarkerId = dm.id;
 }
 
 void MapWidget::contextMenuEvent(QContextMenuEvent *event)
@@ -1717,7 +1713,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     // Look at fixed pre-defined actions wich are shared ============================================
     Ui::MainWindow *ui = NavApp::getMainUi();
     if(action == ui->actionMapRangeRings)
-      addRangeRing(pos);
+      addRangeMark(pos);
     else if(action == ui->actionMapSetMark)
       changeSearchMark(pos);
     else if(action == ui->actionMapCopyCoordinates)
@@ -1725,16 +1721,6 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       QGuiApplication::clipboard()->setText(Unit::coords(pos));
       mainWindow->setStatusMessage(QString(tr("Coordinates copied to clipboard.")));
     }
-    else if(action == ui->actionMapHideOneRangeRing)
-      removeRangeRing(contextMenu.getRangeMarkerIndex());
-    else if(action == ui->actionMapHideDistanceMarker)
-      removeDistanceMarker(contextMenu.getDistMarkerIndex());
-    else if(action == ui->actionMapHideTrafficPattern)
-      removeTrafficPatterm(contextMenu.getTrafficPatternIndex());
-    else if(action == ui->actionMapHideHold)
-      removeHold(contextMenu.getHoldIndex());
-    else if(action == ui->actionMapHideAirportMsa)
-      removeAirportMsa(contextMenu.getAirportMsaIndex());
     else if(action == ui->actionMapSetHome)
       changeHome();
     else
@@ -1747,7 +1733,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
                                     base->asObj<map::MapUserpoint>(map::USERPOINT) : map::MapUserpoint();
 
       int id = base != nullptr ? base->id : -1;
-      map::MapTypes type = base != nullptr ? base->objType : map::NONE;
+      map::MapType type = base != nullptr ? base->objType : map::NONE;
 
       // Create a result object as it is needed for some methods
       map::MapResult result;
@@ -1781,13 +1767,13 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
         case mc::NAVAIDRANGE:
           // Navaid range rings
           if(vor.isValid())
-            addNavRangeRing(vor.position, map::VOR, vor.ident, vor.getFrequencyOrChannel(), vor.range);
+            addNavRangeMark(vor.position, map::VOR, vor.ident, vor.getFrequencyOrChannel(), vor.range);
           else if(ndb.isValid())
-            addNavRangeRing(ndb.position, map::NDB, ndb.ident, QString::number(ndb.frequency), ndb.range);
+            addNavRangeMark(ndb.position, map::NDB, ndb.ident, QString::number(ndb.frequency), ndb.range);
           break;
 
         case mc::PATTERN:
-          addTrafficPattern(airport);
+          addPatternMark(airport);
           break;
 
         case mc::HOLDING:
@@ -1795,7 +1781,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           break;
 
         case mc::AIRPORT_MSA:
-          addAirportMsa(result.airportMsa.value(0));
+          addMsaMark(result.airportMsa.value(0));
           break;
 
         case mc::DEPARTURE:
@@ -1856,6 +1842,19 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
         case mc::SHOWINSEARCH:
           showResultInSearch(base);
+          break;
+
+        case mc::REMOVEUSER:
+          if(type == map::MARK_RANGE)
+            removeRangeMark(contextMenu.getSelectedId());
+          else if(type == map::MARK_DISTANCE)
+            removeDistanceMark(contextMenu.getSelectedId());
+          else if(type == map::MARK_HOLDING)
+            removeHoldMark(contextMenu.getSelectedId());
+          else if(type == map::MARK_PATTERNS)
+            removePatternMark(contextMenu.getSelectedId());
+          else if(type == map::MARK_MSA)
+            removeMsaMark(contextMenu.getSelectedId());
           break;
       }
     }
@@ -2025,7 +2024,7 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapTypes& type, const map
     // Get id and type from selected action
     QVariantList data = action->data().toList();
     id = data.first().toInt();
-    type = map::MapTypes(data.at(1).toInt());
+    type = data.at(1).value<map::MapTypes>();
     return true;
   }
   return false;
@@ -3206,7 +3205,7 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
                                                       base->asObj<map::MapAirspace>().name), true /* select */);
 }
 
-void MapWidget::addTrafficPattern(const map::MapAirport& airport)
+void MapWidget::addPatternMark(const map::MapAirport& airport)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -3214,20 +3213,20 @@ void MapWidget::addTrafficPattern(const map::MapAirport& airport)
   int retval = dialog.exec();
   if(retval == QDialog::Accepted)
   {
-    map::TrafficPattern pattern;
+    map::PatternMarker pattern;
     dialog.fillTrafficPattern(pattern);
-    getTrafficPatterns().append(pattern);
+    getScreenIndex()->addPatternMark(pattern);
     mainWindow->updateMarkActionStates();
     update();
     mainWindow->setStatusMessage(tr("Added airport traffic pattern for %1.").arg(airport.displayIdent()));
   }
 }
 
-void MapWidget::removeTrafficPatterm(int index)
+void MapWidget::removePatternMark(int id)
 {
   qDebug() << Q_FUNC_INFO;
 
-  getScreenIndex()->getTrafficPatterns().removeAt(index);
+  getScreenIndex()->removePatternMark(id);
   mainWindow->updateMarkActionStates();
   update();
   mainWindow->setStatusMessage(QString(tr("Traffic pattern removed from map.")));
@@ -3241,10 +3240,10 @@ void MapWidget::addHold(const map::MapResult& result, const atools::geo::Pos& po
   HoldDialog dialog(mainWindow, result, position);
   if(dialog.exec() == QDialog::Accepted)
   {
-    map::MapHolding holding;
+    map::HoldingMarker holding;
     dialog.fillHold(holding);
 
-    getHolds().append(holding);
+    getScreenIndex()->addHoldingMark(holding);
 
     mainWindow->updateMarkActionStates();
 
@@ -3253,24 +3252,27 @@ void MapWidget::addHold(const map::MapResult& result, const atools::geo::Pos& po
   }
 }
 
-void MapWidget::removeHold(int index)
+void MapWidget::removeHoldMark(int id)
 {
   qDebug() << Q_FUNC_INFO;
 
-  getScreenIndex()->getHolds().removeAt(index);
+  getScreenIndex()->removeHoldingMark(id);
   mainWindow->updateMarkActionStates();
   update();
   mainWindow->setStatusMessage(QString(tr("Holding removed from map.")));
 }
 
-void MapWidget::addAirportMsa(map::MapAirportMsa airportMsa)
+void MapWidget::addMsaMark(map::MapAirportMsa airportMsa)
 {
   qDebug() << Q_FUNC_INFO;
 
   if(airportMsa.isValid())
   {
-    airportMsa.user = true;
-    getAirportMsa().append(airportMsa);
+    map::MsaMarker msa;
+    msa.id = map::getNextUserFeatureId();
+    msa.msa = airportMsa;
+    msa.position = msa.msa.position;
+    getScreenIndex()->addMsaMark(msa);
     mainWindow->updateMarkActionStates();
 
     update();
@@ -3278,11 +3280,11 @@ void MapWidget::addAirportMsa(map::MapAirportMsa airportMsa)
   }
 }
 
-void MapWidget::removeAirportMsa(int index)
+void MapWidget::removeMsaMark(int id)
 {
   qDebug() << Q_FUNC_INFO;
 
-  getScreenIndex()->getAirportMsa().removeAt(index);
+  getScreenIndex()->removeMsaMark(id);
   mainWindow->updateMarkActionStates();
   update();
   mainWindow->setStatusMessage(QString(tr("Airport MSA removed from map.")));
@@ -3348,28 +3350,36 @@ void MapWidget::changeHome()
   mainWindow->setStatusMessage(QString(tr("Changed home position.")));
 }
 
-void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, map::MapTypes type,
+void MapWidget::addNavRangeMark(const atools::geo::Pos& pos, map::MapTypes type,
                                 const QString& displayIdent, const QString& frequency, float range)
 {
   if(range > 0.f)
   {
-    map::RangeMarker ring;
-    ring.type = type;
-    ring.position = pos;
+    map::RangeMarker marker;
+    marker.id = map::getNextUserFeatureId();
+    marker.navType = type;
+    marker.position = pos;
 
     if(type == map::VOR)
     {
       if(frequency.endsWith('X') || frequency.endsWith('Y'))
-        ring.text = tr("%1 %2").arg(displayIdent).arg(frequency);
+        marker.text = tr("%1 %2").arg(displayIdent).arg(frequency);
       else
-        ring.text = tr("%1 %2").arg(displayIdent).arg(QString::number(frequency.toFloat() / 1000., 'f', 2));
+        marker.text = tr("%1 %2").arg(displayIdent).arg(QString::number(frequency.toFloat() / 1000., 'f', 2));
     }
     else if(type == map::NDB)
-      ring.text = tr("%1 %2").arg(displayIdent).arg(QString::number(frequency.toFloat() / 100., 'f', 2));
+      marker.text = tr("%1 %2").arg(displayIdent).arg(QString::number(frequency.toFloat() / 100., 'f', 2));
 
-    ring.ranges.append(range);
-    getScreenIndex()->getRangeMarks().append(ring);
-    qDebug() << "navaid range" << ring.position;
+    if(marker.navType == map::VOR)
+      marker.color = mapcolors::vorSymbolColor;
+    else if(marker.navType == map::NDB)
+      marker.color = mapcolors::ndbSymbolColor;
+    else
+      marker.color = mapcolors::rangeRingColor;
+
+    marker.ranges.append(range);
+    getScreenIndex()->addRangeMark(marker);
+    qDebug() << "navaid range" << marker.position;
 
     update();
     mainWindow->updateMarkActionStates();
@@ -3377,21 +3387,23 @@ void MapWidget::addNavRangeRing(const atools::geo::Pos& pos, map::MapTypes type,
   }
   else
     // No range - fall back to normal rings
-    addRangeRing(pos);
+    addRangeMark(pos);
 }
 
-void MapWidget::addRangeRing(const atools::geo::Pos& pos)
+void MapWidget::addRangeMark(const atools::geo::Pos& pos)
 {
-  map::RangeMarker rings;
-  rings.type = map::NONE;
-  rings.position = pos;
+  map::RangeMarker marker;
+  marker.id = map::getNextUserFeatureId();
+  marker.navType = map::NONE;
+  marker.position = pos;
+  marker.color = mapcolors::rangeRingColor;
 
   for(float dist : OptionData::instance().getMapRangeRings())
-    rings.ranges.append(Unit::rev(dist, Unit::distNmF));
+    marker.ranges.append(Unit::rev(dist, Unit::distNmF));
 
-  getScreenIndex()->getRangeMarks().append(rings);
+  getScreenIndex()->addRangeMark(marker);
 
-  qDebug() << "range rings" << rings.position;
+  qDebug() << "range rings" << marker.position;
   update();
   mainWindow->updateMarkActionStates();
   mainWindow->setStatusMessage(tr("Added range rings for position."));
@@ -3433,17 +3445,17 @@ void MapWidget::zoomInOut(bool directionIn, bool smooth)
 #endif
 }
 
-void MapWidget::removeRangeRing(int index)
+void MapWidget::removeRangeMark(int id)
 {
-  getScreenIndex()->getRangeMarks().removeAt(index);
+  getScreenIndex()->removeRangeMark(id);
   mainWindow->updateMarkActionStates();
   update();
   mainWindow->setStatusMessage(QString(tr("Range ring removed from map.")));
 }
 
-void MapWidget::removeDistanceMarker(int index)
+void MapWidget::removeDistanceMark(int id)
 {
-  getScreenIndex()->getDistanceMarks().removeAt(index);
+  getScreenIndex()->removeDistanceMark(id);
   mainWindow->updateMarkActionStates();
   update();
   mainWindow->setStatusMessage(QString(tr("Measurement line removed from map.")));
@@ -3494,16 +3506,11 @@ void MapWidget::decreaseMapDetail()
   }
 }
 
-void MapWidget::clearRangeRingsAndDistanceMarkers()
+void MapWidget::clearAllMarkers()
 {
-  qDebug() << "range rings hide";
-
-  getScreenIndex()->getRangeMarks().clear();
-  getScreenIndex()->getDistanceMarks().clear();
-  getScreenIndex()->getTrafficPatterns().clear();
-  getScreenIndex()->getHolds().clear();
-  getScreenIndex()->getAirportMsa().clear();
-  currentDistanceMarkerIndex = -1;
+  qDebug() << Q_FUNC_INFO;
+  getScreenIndex()->clearAllMarkers();
+  currentDistanceMarkerId = -1;
 
   update();
   mainWindow->updateMarkActionStates();

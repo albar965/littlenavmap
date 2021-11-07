@@ -1731,6 +1731,16 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
 
 void HtmlInfoBuilder::airportMsaText(const map::MapAirportMsa& msa, atools::util::HtmlBuilder& html) const
 {
+  airportMsaTextInternal(msa, html, false /* user */);
+}
+
+void HtmlInfoBuilder::msaMarkerText(const map::MsaMarker& msa, atools::util::HtmlBuilder& html) const
+{
+  airportMsaTextInternal(msa.msa, html, true  /* user */);
+}
+
+void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atools::util::HtmlBuilder& html, bool user) const
+{
   html.img(QIcon(":/littlenavmap/resources/icons/msa.svg"), QString(), QString(), symbolSizeTitle);
   html.nbsp().nbsp();
 
@@ -1777,7 +1787,7 @@ void HtmlInfoBuilder::airportMsaText(const map::MapAirportMsa& msa, atools::util
   else if(msa.altitudes.size() == 1)
     html.row2(tr("Minimum altitude:"), Unit::altFeet(msa.altitudes.at(0)));
 
-  if(msa.user)
+  if(user)
     html.row2(tr("Diagram added by user"), QString());
   html.tableEnd();
 
@@ -2195,6 +2205,16 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
 
 void HtmlInfoBuilder::holdingText(const MapHolding& holding, HtmlBuilder& html) const
 {
+  holdingTextInternal(holding, html, false /* user */);
+}
+
+void HtmlInfoBuilder::holdingMarkerText(const HoldingMarker& holding, HtmlBuilder& html) const
+{
+  holdingTextInternal(holding.holding, html, true /* user */);
+}
+
+void HtmlInfoBuilder::holdingTextInternal(const MapHolding& holding, HtmlBuilder& html, bool user) const
+{
   html.img(QIcon(":/littlenavmap/resources/icons/enroutehold.svg"), QString(), QString(), symbolSizeTitle);
   html.nbsp().nbsp();
 
@@ -2212,7 +2232,7 @@ void HtmlInfoBuilder::holdingText(const MapHolding& holding, HtmlBuilder& html) 
 
   QString title;
 
-  if(holding.user)
+  if(user)
     title.append(tr("User "));
 
   if(!navTypeStr.isEmpty())
@@ -2255,7 +2275,7 @@ void HtmlInfoBuilder::holdingText(const MapHolding& holding, HtmlBuilder& html) 
   float dist = holding.distance(&estimated);
   html.row2If(estimated ? tr("Estimated length:") : tr("Length:"), Unit::distNm(dist));
 
-  if(holding.user)
+  if(user)
   {
     if(holding.position.getAltitude() > 0.f)
       html.row2If(tr("Altitude:"), Unit::altFeet(holding.position.getAltitude()));
@@ -2283,23 +2303,44 @@ void HtmlInfoBuilder::holdingText(const MapHolding& holding, HtmlBuilder& html) 
 
 void HtmlInfoBuilder::rangeMarkerText(const RangeMarker& marker, atools::util::HtmlBuilder& html) const
 {
-  html.b(marker.ranges.size() > 1 ? tr("Range Rings") : tr("Range Ring"));
-  if(!marker.text.isEmpty())
-    html.brText(marker.text);
+  html.img(QIcon(":/littlenavmap/resources/icons/rangerings.svg"), QString(), QString(), symbolSizeTitle);
+  html.nbsp().nbsp();
 
-  if(marker.ranges.isEmpty() || (marker.ranges.size() == 1 && atools::almostEqual(marker.ranges.first(), 0.f)))
-    html.brText(tr("No distance"));
-  else
-  {
-    QStringList distStr;
-    for(float dist : marker.ranges)
-      distStr.append(Unit::distNm(dist, false));
+  navaidTitle(html, marker.ranges.size() > 1 ? tr("Range Rings") : tr("Range Ring"));
 
-    html.brText((marker.ranges.size() > 1 ? tr("Distances: %1 %2") : tr("Distance: %1 %2")).
-                arg(distStr.join(tr(", "))).arg(Unit::getUnitDistStr()));
-  }
+  html.table();
+  html.row2If(tr("Label:"), marker.text);
 
-  html.br();
+  QStringList distStr;
+  for(float dist : marker.ranges)
+    distStr.append(Unit::distNm(dist, false));
+
+  html.row2If(marker.ranges.size() > 1 ? tr("Distances:") : tr("Distance"),
+              tr("%1 %2").arg(distStr.join(tr(", "))).arg(Unit::getUnitDistStr()));
+
+  html.tableEnd();
+}
+
+void HtmlInfoBuilder::distanceMarkerText(const DistanceMarker& marker, atools::util::HtmlBuilder& html) const
+{
+  html.img(QIcon(":/littlenavmap/resources/icons/distancemeasure.svg"), QString(), QString(), symbolSizeTitle);
+  html.nbsp().nbsp();
+
+  navaidTitle(html, tr("Distance Measurement"));
+
+  Marble::GeoDataCoordinates from(marker.from.getLonX(), marker.from.getLatY(), 0, Marble::GeoDataCoordinates::Degree);
+  Marble::GeoDataCoordinates to(marker.to.getLonX(), marker.to.getLatY(), 0, Marble::GeoDataCoordinates::Degree);
+
+  float initTrue =
+    static_cast<float>(normalizeCourse(from.bearing(to, Marble::GeoDataCoordinates::Degree, Marble::GeoDataCoordinates::InitialBearing)));
+  float finalTrue =
+    static_cast<float>(normalizeCourse(from.bearing(to, Marble::GeoDataCoordinates::Degree, Marble::GeoDataCoordinates::FinalBearing)));
+
+  html.table();
+  html.row2If(tr("Label:"), marker.text);
+  html.row2If(tr("Initial Course:"), tr("%L1°M, %L2°T").arg(initTrue - marker.magvar, 0, 'f', 0).arg(initTrue, 0, 'f', 0));
+  html.row2If(tr("Final Course:"), tr("%L1°M, %L2°T").arg(finalTrue - marker.magvar, 0, 'f', 0).arg(finalTrue, 0, 'f', 0));
+  html.tableEnd();
 }
 
 void HtmlInfoBuilder::bearingAndDistanceTexts(const atools::geo::Pos& pos, float magvar, atools::util::HtmlBuilder& html, bool noBearing)
@@ -2321,16 +2362,21 @@ void HtmlInfoBuilder::bearingAndDistanceTexts(const atools::geo::Pos& pos, float
   }
 }
 
-void HtmlInfoBuilder::trafficPatternText(const TrafficPattern& pattern, atools::util::HtmlBuilder& html) const
+void HtmlInfoBuilder::patternMarkerText(const PatternMarker& pattern, atools::util::HtmlBuilder& html) const
 {
-  html.b(tr("Traffic Pattern"));
-  html.brText(tr("Airport %1, runway %2").arg(pattern.airportIcao).arg(pattern.runwayName));
-  html.brText(tr("Heading at final %1").arg(courseTextFromTrue(pattern.courseTrue, pattern.magvar)),
-              ahtml::NO_ENTITIES);
-  html.brText(tr("Pattern altitude %1").arg(Unit::altFeet(pattern.position.getAltitude(),
-                                                          true /* addUnit */, false /* narrow */,
-                                                          10.f /* round to */)));
-  html.br();
+  html.img(QIcon(":/littlenavmap/resources/icons/trafficpattern.svg"), QString(), QString(), symbolSizeTitle);
+  html.nbsp().nbsp();
+
+  navaidTitle(html, tr("Traffic Pattern"), ahtml::NO_ENTITIES);
+
+  html.table();
+  html.row2If(tr("Airport:"), pattern.airportIcao);
+  html.row2If(tr("Runway:"), pattern.runwayName);
+  html.row2If(tr("Turn:"), pattern.turnRight ? tr("Right") : tr("Left"));
+  html.row2(tr("Heading at final:"), courseTextFromTrue(pattern.courseTrue, pattern.magvar), ahtml::NO_ENTITIES);
+  html.row2(tr("Pattern altitude:"),
+            Unit::altFeet(pattern.position.getAltitude(), true /* addUnit */, false /* narrow */, 10.f /* round to */));
+  html.tableEnd();
 }
 
 void HtmlInfoBuilder::userpointTextInfo(const MapUserpoint& userpoint, HtmlBuilder& html) const

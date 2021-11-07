@@ -16,25 +16,18 @@
 *****************************************************************************/
 
 #include "mapgui/mapcontextmenu.h"
+
 #include "mapgui/mapmarkhandler.h"
 #include "mapgui/mapscreenindex.h"
 #include "mapgui/mapwidget.h"
-#include "common/mapcolors.h"
-#include "common/vehicleicons.h"
-#include "common/formatter.h"
 #include "query/airportquery.h"
 #include "online/onlinedatacontroller.h"
-#include "gui/mainwindow.h"
 #include "gui/actionstatesaver.h"
 #include "gui/actiontextsaver.h"
-#include "geo/pos.h"
 #include "options/optiondata.h"
 #include "route/route.h"
 #include "navapp.h"
-#include "common/unit.h"
 #include "atools.h"
-#include "common/symbolpainter.h"
-#include "userdata/userdataicons.h"
 #include "common/unit.h"
 
 #include <ui_mainwindow.h>
@@ -60,6 +53,11 @@ struct MapContextMenu::MenuData
 // Default sort order for disambiguation sub-menus
 const static QVector<map::MapTypes> DEFAULT_TYPE_SORT(
 {
+  map::MARK_RANGE,
+  map::MARK_DISTANCE,
+  map::MARK_PATTERNS,
+  map::MARK_HOLDING,
+  map::MARK_MSA,
   map::AIRCRAFT,
   map::AIRCRAFT_ONLINE,
   map::AIRCRAFT_AI,
@@ -92,8 +90,6 @@ MapContextMenu::MapContextMenu(QMainWindow *mainWindowParam, MapWidget *mapWidge
   {
     // Save state since widgets are shared with others
     ui->actionMapCopyCoordinates,
-    ui->actionMapHideDistanceMarker,
-    ui->actionMapHideOneRangeRing,
     ui->actionMapHold,
     ui->actionMapAirportMsa,
     ui->actionMapNavaidRange,
@@ -138,6 +134,11 @@ void MapContextMenu::clear()
   result->clear();
 }
 
+int MapContextMenu::getSelectedId() const
+{
+  return selectedBase != nullptr ? selectedBase->id : -1;
+}
+
 const atools::geo::Pos& MapContextMenu::getPos() const
 {
   return mapBasePos->position;
@@ -170,27 +171,15 @@ void MapContextMenu::buildMainMenu()
   mapMenu.addSeparator();
 
   insertMeasureMenu(mapMenu);
-  ui->actionMapHideDistanceMarker->setText(ui->actionMapHideDistanceMarker->text() + tr("\tCtrl+Click"));
-  mapMenu.addAction(ui->actionMapHideDistanceMarker);
-  mapMenu.addSeparator();
-
   ui->actionMapRangeRings->setText(ui->actionMapRangeRings->text() + tr("\tShift+Click"));
   mapMenu.addAction(ui->actionMapRangeRings);
   insertNavaidRangeMenu(mapMenu);
-  ui->actionMapHideOneRangeRing->setText(ui->actionMapHideOneRangeRing->text() + tr("\tShift+Click"));
-  mapMenu.addAction(ui->actionMapHideOneRangeRing);
-  mapMenu.addSeparator();
-
   insertPatternMenu(mapMenu);
-  mapMenu.addAction(ui->actionMapHideTrafficPattern);
-  mapMenu.addSeparator();
-
   insertHoldMenu(mapMenu);
-  mapMenu.addAction(ui->actionMapHideHold);
+  insertAirportMsaMenu(mapMenu);
   mapMenu.addSeparator();
 
-  insertAirportMsaMenu(mapMenu);
-  mapMenu.addAction(ui->actionMapHideAirportMsa);
+  insertRemoveMarkMenu(mapMenu);
   mapMenu.addSeparator();
 
   QMenu *sub = mapMenu.addMenu(QIcon(":/littlenavmap/resources/icons/userdata.svg"), tr("&Userpoints"));
@@ -236,141 +225,8 @@ void MapContextMenu::buildMainMenu()
 bool MapContextMenu::alphaSort(const map::MapBase *base1, const map::MapBase *base2)
 {
   // Remove & before sorting
-  return QString::localeAwareCompare(mapBaseText(base1).replace('&', QString()),
-                                     mapBaseText(base2).replace('&', QString())) < 0;
-}
-
-QString MapContextMenu::mapBaseText(const map::MapBase *base)
-{
-  if(base != nullptr)
-  {
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wswitch"
-    switch(base->getTypeEnum())
-#pragma GCC diagnostic pop
-    {
-      case map::AIRPORT:
-        return map::airportText(*base->asPtr<map::MapAirport>(), TEXT_ELIDE_AIRPORT_NAME);
-
-      case map::AIRPORT_MSA:
-        return map::airportMsaText(*base->asPtr<map::MapAirportMsa>());
-
-      case map::VOR:
-        return map::vorText(*base->asPtr<map::MapVor>());
-
-      case map::NDB:
-        return map::ndbText(*base->asPtr<map::MapNdb>());
-
-      case map::ILS:
-        return map::ilsTextShort(*base->asPtr<map::MapIls>());
-
-      case map::HOLDING:
-        return map::holdingTextShort(*base->asPtr<map::MapHolding>());
-
-      case map::WAYPOINT:
-        return map::waypointText(*base->asPtr<map::MapWaypoint>());
-
-      case map::AIRWAY:
-        return map::airwayText(*base->asPtr<map::MapAirway>());
-
-      case map::AIRCRAFT:
-        return map::aircraftTextShort(base->asPtr<map::MapUserAircraft>()->getAircraft());
-
-      case map::AIRCRAFT_AI:
-        return map::aircraftTextShort(base->asPtr<map::MapAiAircraft>()->getAircraft());
-
-      case map::AIRCRAFT_ONLINE:
-        return map::aircraftTextShort(base->asPtr<map::MapOnlineAircraft>()->getAircraft());
-
-      case map::USERPOINTROUTE:
-        return base->asPtr<map::MapUserpointRoute>()->ident;
-
-      case map::AIRSPACE:
-        return map::airspaceText(*base->asPtr<map::MapAirspace>());
-
-      case map::PARKING:
-        return map::parkingText(*base->asPtr<map::MapParking>());
-
-      case map::HELIPAD:
-        return map::helipadText(*base->asPtr<map::MapHelipad>());
-
-      case map::USERPOINT:
-        return map::userpointText(*base->asPtr<map::MapUserpoint>());
-
-      case map::LOGBOOK:
-        return map::logEntryText(*base->asPtr<map::MapLogbookEntry>());
-    }
-  }
-  return QString();
-}
-
-QIcon MapContextMenu::mapBaseIcon(const map::MapBase *base)
-{
-  if(base != nullptr)
-  {
-    // Get size for icons
-    int size = QFontMetrics(QApplication::font()).height();
-    SymbolPainter painter;
-    VehicleIcons *vehicleIcons = NavApp::getVehicleIcons();
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wswitch"
-    switch(base->getTypeEnum())
-#pragma GCC diagnostic pop
-    {
-      case map::AIRPORT:
-        return painter.createAirportIcon(*base->asPtr<map::MapAirport>(), size);
-
-      case map::AIRPORT_MSA:
-        return QIcon(":/littlenavmap/resources/icons/msa.svg");
-
-      case map::VOR:
-        return painter.createVorIcon(*base->asPtr<map::MapVor>(), size);
-
-      case map::NDB:
-        return painter.createNdbIcon(size);
-
-      case map::ILS:
-        return QIcon(":/littlenavmap/resources/icons/ils.svg");
-
-      case map::HOLDING:
-        return QIcon(":/littlenavmap/resources/icons/enroutehold.svg");
-
-      case map::WAYPOINT:
-        return painter.createWaypointIcon(size);
-
-      case map::AIRWAY:
-        return painter.createAirwayIcon(*base->asPtr<map::MapAirway>(), size);
-
-      case map::AIRCRAFT:
-        return vehicleIcons->iconFromCache(base->asPtr<map::MapUserAircraft>()->getAircraft(), size, 45 /* rotate */);
-
-      case map::AIRCRAFT_AI:
-        return vehicleIcons->iconFromCache(base->asPtr<map::MapAiAircraft>()->getAircraft(), size, 45 /* rotate */);
-
-      case map::AIRCRAFT_ONLINE:
-        return vehicleIcons->iconFromCache(base->asPtr<map::MapOnlineAircraft>()->getAircraft(), size, 45 /* rotate */);
-
-      case map::USERPOINTROUTE:
-        return painter.createUserpointIcon(size);
-
-      case map::AIRSPACE:
-        return painter.createAirspaceIcon(*base->asPtr<map::MapAirspace>(), size);
-
-      case map::PARKING:
-        return mapcolors::iconForParkingType(base->asPtr<map::MapParking>()->type);
-
-      case map::HELIPAD:
-        return painter.createHelipadIcon(*base->asPtr<map::MapHelipad>(), size);
-
-      case map::USERPOINT:
-        return QIcon(NavApp::getUserdataIcons()->getIconPath(base->asPtr<map::MapUserpoint>()->type));
-
-      case map::LOGBOOK:
-        return QIcon(":/littlenavmap/resources/icons/logbook.svg");
-    }
-  }
-  return QIcon();
+  return QString::localeAwareCompare(mapBaseText(base1, TEXT_ELIDE_AIRPORT_NAME).replace('&', QString()),
+                                     mapBaseText(base2, TEXT_ELIDE_AIRPORT_NAME).replace('&', QString())) < 0;
 }
 
 QAction *MapContextMenu::insertAction(QMenu& menu, mc::MenuActionType actionType, const QString& text,
@@ -404,12 +260,12 @@ QAction *MapContextMenu::insertAction(QMenu& menu, mc::MenuActionType actionType
     // Has underlying map object(s) ==========================================
     if(actionText.contains("%1"))
       // Replace %1 with map object text
-      actionText = actionText.arg(atools::elideTextShortMiddle(mapBaseText(base), TEXT_ELIDE));
+      actionText = actionText.arg(atools::elideTextShortMiddle(mapBaseText(base, TEXT_ELIDE_AIRPORT_NAME), TEXT_ELIDE));
 
     QIcon actionIcon;
     if(callbackIcon.isNull())
       // Use icon from function call or generate one
-      actionIcon = icon.isNull() ? mapBaseIcon(base) : icon;
+      actionIcon = icon.isNull() ? mapBaseIcon(base, QFontMetrics(QApplication::font()).height()) : icon;
     else
       // Use icon from callback if it provided one
       actionIcon = callbackIcon;
@@ -683,12 +539,12 @@ void MapContextMenu::insertMeasureMenu(QMenu& menu)
   ActionCallback callback =
     [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void
     {
-      disable = !visibleOnMap || !NavApp::getMapMarkHandler()->isShown(map::MARK_MEASUREMENT);
+      disable = !visibleOnMap || !NavApp::getMapMarkHandler()->isShown(map::MARK_DISTANCE);
       if(base == nullptr)
         // Any position
         text = text.arg(tr("here"));
 
-      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_MEASUREMENT))
+      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_DISTANCE))
         // Hidden - add remark and disable
         text.append(tr(" (hidden on map)"));
     };
@@ -705,8 +561,8 @@ void MapContextMenu::insertNavaidRangeMenu(QMenu& menu)
   ActionCallback callback =
     [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void
     {
-      disable = base == nullptr || !NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE_RINGS);
-      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE_RINGS))
+      disable = base == nullptr || !NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE);
+      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE))
         // Hidden - add remark and disable
         text.append(tr(" (hidden on map)"));
       else if(base != nullptr)
@@ -777,10 +633,10 @@ void MapContextMenu::insertHoldMenu(QMenu& menu)
   ActionCallback callback =
     [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void
     {
-      disable = !visibleOnMap || !NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDS);
+      disable = !visibleOnMap || !NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDING);
       if(base == nullptr)
         text = tr("Add &Holding here ...");
-      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDS))
+      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDING))
         // Hidden - add remark and disable
         text.append(tr(" (hidden on map)"));
     };
@@ -797,9 +653,9 @@ void MapContextMenu::insertAirportMsaMenu(QMenu& menu)
   ActionCallback callback =
     [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void
     {
-      disable = !visibleOnMap || !NavApp::getMapMarkHandler()->isShown(map::MARK_AIRPORT_MSA) || base == nullptr;
+      disable = !visibleOnMap || !NavApp::getMapMarkHandler()->isShown(map::MARK_MSA) || base == nullptr;
 
-      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_AIRPORT_MSA))
+      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_MSA))
         // Hidden - add remark and disable
         text.append(tr(" (hidden on map)"));
     };
@@ -885,8 +741,7 @@ void MapContextMenu::insertDestinationMenu(QMenu& menu)
     {
       disable = base == nullptr;
       if(base != nullptr)
-        text.append(proc::procedureTextSuffixDestination(NavApp::getRouteConst(), base->asObj<map::MapAirport>(),
-                                                         disable));
+        text.append(proc::procedureTextSuffixDestination(NavApp::getRouteConst(), base->asObj<map::MapAirport>(), disable));
     };
 
   insertMenuOrAction(menu, mc::DESTINATION, MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
@@ -908,8 +763,7 @@ void MapContextMenu::insertAlternateMenu(QMenu& menu)
           text.append(tr(" (no destination)"));
         }
         else
-          text.append(proc::procedureTextSuffixAlternate(NavApp::getRouteConst(), base->asObj<map::MapAirport>(),
-                                                         disable));
+          text.append(proc::procedureTextSuffixAlternate(NavApp::getRouteConst(), base->asObj<map::MapAirport>(), disable));
       }
     };
 
@@ -1054,6 +908,40 @@ void MapContextMenu::insertUserpointAddMenu(QMenu& menu)
                      callback);
 }
 
+void MapContextMenu::insertRemoveMarkMenu(QMenu& menu)
+{
+  ActionCallback callback =
+    [ = ](const map::MapBase *base, QString& text, QIcon& icon, bool& disable, bool submenu) -> void
+    {
+      bool shown = base != nullptr && NavApp::getMapMarkHandler()->isShown(base->objType);
+      disable = !visibleOnMap || !shown || base == nullptr;
+
+      if(disable)
+        text = tr("&Remove User Feature");
+      else if(!submenu)
+        text = tr("&Remove %1");
+
+      if(base != nullptr)
+      {
+        if(base->objType == map::MARK_RANGE)
+          icon = QIcon(":/littlenavmap/resources/icons/rangeringoff.svg");
+        else if(base->objType == map::MARK_DISTANCE)
+          icon = QIcon(":/littlenavmap/resources/icons/distancemeasureoff.svg");
+        else if(base->objType == map::MARK_HOLDING)
+          icon = QIcon(":/littlenavmap/resources/icons/holdoff.svg");
+        else if(base->objType == map::MARK_PATTERNS)
+          icon = QIcon(":/littlenavmap/resources/icons/trafficpatternoff.svg");
+        else if(base->objType == map::MARK_MSA)
+          icon = QIcon(":/littlenavmap/resources/icons/msaoff.svg");
+      }
+    };
+
+  insertMenuOrAction(menu, mc::REMOVEUSER, MapResultIndex().addRef(*result, map::MARK_ALL).sort(DEFAULT_TYPE_SORT, alphaSort),
+                     tr("&Remove User Feature %1"), tr("Remove User Feature"),
+                     QString(), QIcon(":/littlenavmap/resources/icons/marksoff.svg"), false /* allowNoMapObject */,
+                     callback);
+}
+
 void MapContextMenu::insertUserpointEditMenu(QMenu& menu)
 {
   insertMenuOrAction(menu, mc::USERPOINTEDIT, MapResultIndex().addRef(*result, map::USERPOINT).sort(alphaSort),
@@ -1123,19 +1011,12 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
     visibleOnMap = mapWidget->geoCoordinates(point.x(), point.y(), lon, lat);
 
     if(visibleOnMap)
-    {
       // Cursor is not off-globe
       mapBasePos->position = atools::geo::Pos(lon, lat);
-      distMarkerIndex = screenIndex->getNearestDistanceMarkIndex(point.x(), point.y(), screenSearchDist);
-      rangeMarkerIndex = screenIndex->getNearestRangeMarkIndex(point.x(), point.y(), screenSearchDist);
-      trafficPatternIndex = screenIndex->getNearestTrafficPatternIndex(point.x(), point.y(), screenSearchDist);
-      holdIndex = screenIndex->getNearestHoldIndex(point.x(), point.y(), screenSearchDist);
-      airportMsaIndex = screenIndex->getNearestAirportMsaIndex(point.x(), point.y(), screenSearchDist);
-    }
   }
 
   // Get objects near position =============================================================
-  screenIndex->getAllNearest(point.x(), point.y(), screenSearchDist, *result, map::QUERY_NONE);
+  screenIndex->getAllNearest(point.x(), point.y(), screenSearchDist, *result, map::QUERY_MARK);
 
   // Remove online aircraft from onlineAircraft which also have a simulator shadow in simAircraft
   // Menus should only show the online part
@@ -1152,16 +1033,9 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
     ui->actionMapCopyCoordinates->setText(ui->actionMapCopyCoordinates->text().arg(Unit::coords(mapBasePos->position)));
 
   // Enable or disable map marks ===========================
-  ui->actionMapRangeRings->setEnabled(visibleOnMap && NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE_RINGS));
+  ui->actionMapRangeRings->setEnabled(visibleOnMap && NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE));
 
-  // Hide marks
-  ui->actionMapHideOneRangeRing->setEnabled(visibleOnMap && rangeMarkerIndex != -1);
-  ui->actionMapHideDistanceMarker->setEnabled(visibleOnMap && distMarkerIndex != -1);
-  ui->actionMapHideTrafficPattern->setEnabled(visibleOnMap && trafficPatternIndex != -1);
-  ui->actionMapHideHold->setEnabled(visibleOnMap && holdIndex != -1);
-  ui->actionMapHideAirportMsa->setEnabled(visibleOnMap && airportMsaIndex != -1);
-
-  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE_RINGS))
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE))
     ui->actionMapRangeRings->setText(ui->actionMapRangeRings->text() + tr(" (hidden on map)"));
 
   // Build the menu =============================================================

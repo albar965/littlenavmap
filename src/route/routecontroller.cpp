@@ -2536,7 +2536,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   // Update texts to give user a hint for hidden user features in the disabled menu items =====================
   QString notShown(tr(" (hidden on map)"));
 
-  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE_RINGS))
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE))
   {
     ActionTool::setText(ui->actionMapRangeRings, false, QString(), notShown);
     ActionTool::setText(ui->actionMapNavaidRange, false, QString(), notShown);
@@ -2553,13 +2553,13 @@ void RouteController::tableContextMenu(const QPoint& pos)
       ActionTool::setText(ui->actionMapNavaidRange, routeLeg != nullptr, tr("selected Navaids"));
   }
 
-  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDS))
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDING))
     ActionTool::setText(ui->actionMapHold, false, QString(), notShown);
   else
     ActionTool::setText(ui->actionMapHold, routeLeg != nullptr, objectText);
 
   ui->actionMapAirportMsa->setEnabled(msaResult.hasAirportMsa());
-  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_AIRPORT_MSA))
+  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_MSA))
     ActionTool::setText(ui->actionMapAirportMsa, false, QString(), notShown);
 
   if(!NavApp::getMapMarkHandler()->isShown(map::MARK_PATTERNS))
@@ -2650,9 +2650,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
     else if(action == ui->actionRouteSetMark && routeLeg != nullptr)
       emit changeMark(routeLeg->getPosition());
     else if(action == ui->actionMapRangeRings && routeLeg != nullptr)
-      NavApp::getMapWidgetGui()->addRangeRing(routeLeg->getPosition());
+      NavApp::getMapWidgetGui()->addRangeMark(routeLeg->getPosition());
     else if(action == ui->actionMapTrafficPattern && routeLeg != nullptr)
-      NavApp::getMapWidgetGui()->addTrafficPattern(routeLeg->getAirport());
+      NavApp::getMapWidgetGui()->addPatternMark(routeLeg->getAirport());
     else if(action == ui->actionMapHold && routeLeg != nullptr)
     {
       map::MapResult result;
@@ -2682,7 +2682,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
           }
 
           if(routeLegSel.getRange() > 0)
-            NavApp::getMapWidgetGui()->addNavRangeRing(routeLegSel.getPosition(), type,
+            NavApp::getMapWidgetGui()->addNavRangeMark(routeLegSel.getPosition(), type,
                                                        routeLegSel.getDisplayIdent(),
                                                        routeLegSel.getFrequencyOrChannel(),
                                                        routeLegSel.getRange());

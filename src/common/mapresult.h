@@ -22,7 +22,9 @@
 
 namespace map {
 // =====================================================================
-/* Mixed search result for e.g. queries on a bounding rectangle for map display or for all get nearest methods */
+/*
+ * Mixed search result for e.g. queries on a bounding rectangle for map display or for all get nearest methods.
+ * Contains aggregated lists for all possible objects. */
 struct MapResult
 {
   /* Create from base class. Inspects type and adds one object to this */
@@ -69,10 +71,13 @@ struct MapResult
   QSet<int> onlineAircraftIds; /* Ids used to deduplicate */
 
   atools::geo::Pos windPos;
-  QList<map::TrafficPattern> trafficPatterns;
-  QList<map::RangeMarker> rangeMarkers;
+  QList<map::PatternMarker> patternMarks;
+  QList<map::RangeMarker> rangeMarks;
+  QList<map::DistanceMarker> distanceMarks;
+  QList<map::HoldingMarker> holdingMarks;
+  QList<map::MsaMarker> msaMarks;
 
-  QList<map::MapHolding> holdings; /* Either used defined hold or enroute hold */
+  QList<map::MapHolding> holdings;
   QSet<int> holdingIds; /* Ids used to deduplicate */
 
   QList<map::MapAirportMsa> airportMsa;
@@ -198,14 +203,11 @@ struct MapResult
   int numSimNavUserAirspaces() const;
   int numOnlineAirspaces() const;
 
-  QList<MapHolding> getHoldings(bool user) const;
-  QList<MapAirportMsa> getAirportMsa(bool user) const;
-
   QList<MapAirspace> getSimNavUserAirspaces() const;
 
   QList<MapAirspace> getOnlineAirspaces() const;
 
-  QString objectText(MapTypes navType, int elideName = 1000) const;
+  QString objectText(MapTypes type, int elideName = 1000) const;
 
   void removeInvalid();
 

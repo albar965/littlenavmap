@@ -18,6 +18,8 @@
 #ifndef LITTLENAVMAP_MAPFLAGS_H
 #define LITTLENAVMAP_MAPFLAGS_H
 
+#include "util/flags.h"
+
 #include <QVector>
 #include <QObject>
 
@@ -53,45 +55,57 @@ Q_DECL_CONSTEXPR static float MIN_WIND_BARB_ALTITUDE = 4000.f;
 /* Maximum number of objects to query and show on map */
 Q_DECL_CONSTEXPR static int MAX_MAP_OBJECTS = 8000;
 
-/* Type covering all objects that are passed around in the program.
+/* 64 bit Type covering all objects that are passed around in the program.
  * Partially used to determine what should be drawn.
- * These types are used in map::MapBase::objType */
-enum MapType
+ * These types are used in map::MapBase::objType.
+ * Can be serialized to QVariant.
+ * This state is not saved but filled by the saved state of the various actions. */
+/* *INDENT-OFF* */
+enum MapType : unsigned long long
 {
-  NONE = 0,
-  AIRPORT = 1 << 0,
-  AIRPORT_HARD = 1 << 1,
-  AIRPORT_SOFT = 1 << 2,
-  AIRPORT_EMPTY = 1 << 3,
-  AIRPORT_ADDON = 1 << 4,
-  VOR = 1 << 5, /* Also: DME, VORDME, VORTAC and TACAN */
-  NDB = 1 << 6,
-  ILS = 1 << 7, /* Type also covers GLS approaches */
-  MARKER = 1 << 8,
-  WAYPOINT = 1 << 9,
-  AIRWAY = 1 << 10,
-  AIRWAYV = 1 << 11,
-  AIRWAYJ = 1 << 12,
-  // 1 << 13,
-  AIRCRAFT = 1 << 14, /* Simulator user aircraft */
-  AIRCRAFT_AI = 1 << 15, /* AI or multiplayer simulator aircraft */
+  NONE =             0,
+  AIRPORT =          1 << 0,
+  AIRPORT_HARD =     1 << 1,
+  AIRPORT_SOFT =     1 << 2,
+  AIRPORT_EMPTY =    1 << 3,
+  AIRPORT_ADDON =    1 << 4,
+  VOR =              1 << 5, /* Also: DME, VORDME, VORTAC and TACAN */
+  NDB =              1 << 6,
+  ILS =              1 << 7, /* Type also covers GLS approaches */
+  MARKER =           1 << 8,
+  WAYPOINT =         1 << 9,
+  AIRWAY =           1 << 10,
+  AIRWAYV =          1 << 11,
+  AIRWAYJ =          1 << 12,
+  USER_FEATURE =     1 << 13,
+  AIRCRAFT =         1 << 14, /* Simulator user aircraft */
+  AIRCRAFT_AI =      1 << 15, /* AI or multiplayer simulator aircraft */
   AIRCRAFT_AI_SHIP = 1 << 16, /* AI or multiplayer simulator ship */
-  AIRPORT_MSA = 1 << 17, /* Minimum safe altitude for airports and navaids */
-  USERPOINTROUTE = 1 << 18, /* Flight plan user waypoint */
-  PARKING = 1 << 19,
-  RUNWAYEND = 1 << 20,
-  INVALID = 1 << 21, /* Flight plan waypoint not found in database */
-  MISSED_APPROACH = 1 << 22, /* Only procedure type that can be hidden */
-  PROCEDURE = 1 << 23, /* General procedure leg */
-  AIRSPACE = 1 << 24, /* General airspace boundary, online or offline */
-  HELIPAD = 1 << 25, /* Helipads on airports */
-  HOLDING = 1 << 26, /* Enroute holds and user holds. User holds are enabled by MapMarkType below */
-  USERPOINT = 1 << 27, /* A user defined waypoint - not used to define if should be drawn or not */
-  TRACK = 1 << 28, /* NAT, PACOTS or AUSOTS track */
-  AIRCRAFT_ONLINE = 1 << 29, /* Online network client/aircraft */
+  AIRPORT_MSA =      1 << 17, /* Minimum safe altitude for airports and navaids */
+  USERPOINTROUTE =   1 << 18, /* Flight plan user waypoint */
+  PARKING =          1 << 19,
+  RUNWAYEND =        1 << 20,
+  INVALID =          1 << 21, /* Flight plan waypoint not found in database */
+  MISSED_APPROACH =  1 << 22, /* Only procedure type that can be hidden */
+  PROCEDURE =        1 << 23, /* General procedure leg */
+  AIRSPACE =         1 << 24, /* General airspace boundary, online or offline */
+  HELIPAD =          1 << 25, /* Helipads on airports */
+  HOLDING =          1 << 26, /* Enroute holds and user holds. User holds are enabled by MapMarkType below */
+  USERPOINT =        1 << 27, /* A user defined waypoint - not used to define if should be drawn or not */
+  TRACK =            1 << 28, /* NAT, PACOTS or AUSOTS track */
+  AIRCRAFT_ONLINE =  1 << 29, /* Online network client/aircraft */
+  LOGBOOK =          1 << 30, /* Logbook entry */
 
-  LOGBOOK = 1 << 30, /* Logbook entry */
-  // LAST = 1 << 31,
+  /* Need to use constant expressions for long values above 32 bit */
+
+  /* Mark state is saved in the MapMarkHandler */
+  MARK_RANGE =       0x0000'0000'8000'0000, /* 1 << 31 All range rings */
+  MARK_DISTANCE =    0x0000'0001'0000'0000, /* All measurement lines */
+  MARK_HOLDING =     0x0000'0002'0000'0000, /* Holdings */
+  MARK_PATTERNS =    0x0000'0004'0000'0000, /* Traffic patterns */
+  MARK_MSA =         0x0000'0008'0000'0000, /* Airport MSA */
+
+  MARK_ALL = MARK_RANGE | MARK_DISTANCE | MARK_HOLDING | MARK_PATTERNS | MARK_MSA,
 
   /* All online, AI and multiplayer aircraft */
   AIRCRAFT_ALL = AIRCRAFT | AIRCRAFT_AI | AIRCRAFT_AI_SHIP | AIRCRAFT_ONLINE,
@@ -109,9 +123,10 @@ enum MapType
 
   ALL = 0xffffffff
 };
+/* *INDENT-ON* */
 
-Q_DECLARE_FLAGS(MapTypes, MapType);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapTypes);
+ATOOLS_DECLARE_FLAGS(MapTypes, MapType);
+ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapTypes);
 
 QDebug operator<<(QDebug out, const map::MapTypes& type);
 
@@ -153,12 +168,19 @@ enum MapObjectQueryType
   QUERY_NONE = 0,
   QUERY_PROC_POINTS = 1 << 0, /* Procedure points */
   QUERY_PROC_MISSED_POINTS = 1 << 1, /* Missed procedure points */
-  QUERY_HOLDS = 1 << 2, /* User defined holdings */
-  QUERY_PATTERNS = 1 << 3, /* Traffic patterns */
+  QUERY_MARK_HOLDINGS = 1 << 2, /* User defined holdings */
+  QUERY_MARK_PATTERNS = 1 << 3, /* Traffic patterns */
   QUERY_PROCEDURES = 1 << 4, /* Procedures when querying route */
   QUERY_PROCEDURES_MISSED = 1 << 5, /* Missed procedures when querying route */
-  QUERY_RANGEMARKER = 1 << 6, /* Range rings */
-  QUERY_MSA = 1 << 7 /* Airport MSA sectors */
+  QUERY_MARK_RANGE = 1 << 6, /* Range rings */
+  QUERY_MARK_MSA = 1 << 7, /* Airport MSA sectors */
+  QUERY_MARK_DISTANCE = 1 << 8, /* Measurement lines */
+
+  /* All user creatable/placeable features */
+  QUERY_MARK = QUERY_MARK_DISTANCE | QUERY_MARK_HOLDINGS | QUERY_MARK_PATTERNS | QUERY_MARK_RANGE | QUERY_MARK_MSA,
+
+  QUERY_ALL = QUERY_PROC_POINTS | QUERY_PROC_MISSED_POINTS | QUERY_MARK_HOLDINGS | QUERY_MARK_PATTERNS | QUERY_PROCEDURES |
+              QUERY_MARK_RANGE | QUERY_MARK_MSA
 };
 
 Q_DECLARE_FLAGS(MapObjectQueryTypes, MapObjectQueryType);
@@ -297,22 +319,6 @@ inline bool operator==(const map::MapAirspaceId& id1, const map::MapAirspaceId& 
 }
 
 /* ================================================================================== */
-/* Visible user features. Saved, therefore do not change order. */
-enum MapMarkType
-{
-  MARK_NONE = 0,
-  MARK_RANGE_RINGS = 1 << 0, /* All range rings */
-  MARK_MEASUREMENT = 1 << 1, /* All measurement lines */
-  MARK_HOLDS = 1 << 2, /* Holdings */
-  MARK_PATTERNS = 1 << 3, /* Traffic patterns */
-  MARK_AIRPORT_MSA = 1 << 4, /* Airport MSA */
-  MARK_ALL = MARK_RANGE_RINGS | MARK_MEASUREMENT | MARK_HOLDS | MARK_PATTERNS | MARK_AIRPORT_MSA
-};
-
-Q_DECLARE_FLAGS(MapMarkTypes, MapMarkType);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapMarkTypes);
-
-/* ================================================================================== */
 /* Airport flags coverting most airport attributes and facilities. */
 enum MapAirportFlag
 {
@@ -436,5 +442,8 @@ Q_DECLARE_METATYPE(map::MapAirspaceFilter);
 
 Q_DECLARE_TYPEINFO(map::MapAirspaceId, Q_PRIMITIVE_TYPE);
 Q_DECLARE_METATYPE(map::MapAirspaceId);
+
+Q_DECLARE_TYPEINFO(map::MapTypes, Q_PRIMITIVE_TYPE);
+Q_DECLARE_METATYPE(map::MapTypes);
 
 #endif // LITTLENAVMAP_MAPFLAGS_H

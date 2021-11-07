@@ -50,7 +50,9 @@ struct RangeMarker;
 struct DistanceMarker;
 struct MapHolding;
 struct MapAirportMsa;
-struct TrafficPattern;
+struct PatternMarker;
+struct HoldingMarker;
+struct MsaMarker;
 }
 
 namespace Marble {
@@ -91,16 +93,13 @@ public:
    */
   void getAllNearest(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const;
 
-  /* Get nearest distance measurement line index (only the endpoint)
+  /* Get nearest map features (only the endpoint)
    * or -1 if nothing was found near the cursor position. Index points into the list of getDistanceMarks */
-  int getNearestDistanceMarkIndex(int xs, int ys, int maxDistance) const;
-
-  /* Get nearest range rings index (only the centerpoint)
-   * or -1 if nothing was found near the cursor position. Index points into the list of getRangeMarks */
-  int getNearestRangeMarkIndex(int xs, int ys, int maxDistance) const;
-  int getNearestTrafficPatternIndex(int xs, int ys, int maxDistance) const;
-  int getNearestHoldIndex(int xs, int ys, int maxDistance) const;
-  int getNearestAirportMsaIndex(int xs, int ys, int maxDistance) const;
+  int getNearestDistanceMarkId(int xs, int ys, int maxDistance) const;
+  int getNearestRangeMarkId(int xs, int ys, int maxDistance) const;
+  int getNearestTrafficPatternId(int xs, int ys, int maxDistance) const;
+  int getNearestHoldId(int xs, int ys, int maxDistance) const;
+  int getNearestAirportMsaId(int xs, int ys, int maxDistance) const;
 
   /* Get index of nearest flight plan leg or -1 if nothing was found nearby or cursor is not along a leg. */
   int getNearestRouteLegIndex(int xs, int ys, int maxDistance) const;
@@ -152,60 +151,56 @@ public:
   }
 
   /* Get range rings */
-  QList<map::RangeMarker>& getRangeMarks()
-  {
-    return rangeMarks;
-  }
-
-  const QList<map::RangeMarker>& getRangeMarks() const
+  const QHash<int, map::RangeMarker>& getRangeMarks() const
   {
     return rangeMarks;
   }
 
   /* Get distance measurement lines */
-  QList<map::DistanceMarker>& getDistanceMarks()
-  {
-    return distanceMarks;
-  }
-
-  const QList<map::DistanceMarker>& getDistanceMarks() const
+  const QHash<int, map::DistanceMarker>& getDistanceMarks() const
   {
     return distanceMarks;
   }
 
   /* Airfield traffic patterns. */
-  QList<map::TrafficPattern>& getTrafficPatterns()
+  const QHash<int, map::PatternMarker>& getPatternMarks() const
   {
-    return trafficPatterns;
+    return patternMarks;
   }
 
-  const QList<map::TrafficPattern>& getTrafficPatterns() const
+  /* Holdings. */
+  const QHash<int, map::HoldingMarker>& getHoldingMarks() const
   {
-    return trafficPatterns;
+    return holdingMarks;
   }
 
-  /* Airfield traffic patterns. */
-  QList<map::MapHolding>& getHolds()
+  /* Airport MSA. */
+  const QHash<int, map::MsaMarker>& getMsaMarks() const
   {
-    return holdings;
+    return msaMarks;
   }
 
-  const QList<map::MapHolding>& getHolds() const
-  {
-    return holdings;
-  }
+  /* Add user features. Id has to be set before. */
+  void addRangeMark(const map::RangeMarker& obj);
+  void addPatternMark(const map::PatternMarker& obj);
+  void addDistanceMark(const map::DistanceMarker& obj);
+  void addHoldingMark(const map::HoldingMarker& obj);
+  void addMsaMark(const map::MsaMarker& obj);
 
-  /* Airfield traffic patterns. */
-  QList<map::MapAirportMsa>& getAirportMsa()
-  {
-    return airportMsa;
-  }
+  /* Remove user features by generated id */
+  void removeRangeMark(int id);
+  void removePatternMark(int id);
+  void removeDistanceMark(int id);
+  void removeHoldingMark(int id);
+  void removeMsaMark(int id);
 
-  const QList<map::MapAirportMsa>& getAirportMsa() const
-  {
-    return airportMsa;
-  }
+  void clearAllMarkers();
 
+  /* Update measurement lines */
+  void updateDistanceMarkerTo(int id, const atools::geo::Pos& pos);
+  void updateDistanceMarker(int id, const map::DistanceMarker& marker);
+
+  // ====================
   const atools::fs::sc::SimConnectUserAircraft& getUserAircraft() const
   {
     return simData.getUserAircraftConst();
@@ -310,7 +305,7 @@ private:
                            bool lineDistanceOnly) const;
 
   template<typename TYPE>
-  int getNearestIndex(int xs, int ys, int maxDistance, const QList<TYPE>& typeList) const;
+  int getNearestId(int xs, int ys, int maxDistance, const QHash<int, TYPE>& typeList) const;
 
   atools::fs::sc::SimConnectData simData, lastSimData;
   MapPaintWidget *mapWidget;
@@ -335,11 +330,11 @@ private:
   QList<int> routeHighlights;
 
   /* Objects that will be saved */
-  QList<map::RangeMarker> rangeMarks;
-  QList<map::DistanceMarker> distanceMarks;
-  QList<map::TrafficPattern> trafficPatterns;
-  QList<map::MapHolding> holdings;
-  QList<map::MapAirportMsa> airportMsa;
+  QHash<int, map::RangeMarker> rangeMarks;
+  QHash<int, map::DistanceMarker> distanceMarks;
+  QHash<int, map::PatternMarker> patternMarks;
+  QHash<int, map::HoldingMarker> holdingMarks;
+  QHash<int, map::MsaMarker> msaMarks;
 
   /* Cached screen coordinates for flight plan to ease mouse cursor change. */
   QList<std::pair<int, QLine> > routeLines;

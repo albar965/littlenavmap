@@ -140,22 +140,22 @@ public:
   virtual void updateMapObjectsShown() override;
 
   /* Opens a dialog for configuration of a traffic pattern display object */
-  void addTrafficPattern(const map::MapAirport& airport);
+  void addPatternMark(const map::MapAirport& airport);
 
   /* Remove pattern at index and update the map */
-  void removeTrafficPatterm(int index);
+  void removePatternMark(int id);
 
   /* Opens a dialog for configuration and adds a hold */
   void addHold(const map::MapResult& result, const atools::geo::Pos& position);
 
   /* Remove hold at index and update the map */
-  void removeHold(int index);
+  void removeHoldMark(int id);
 
   /* Adds MSA diagram at position */
-  void addAirportMsa(map::MapAirportMsa airportMsa);
+  void addMsaMark(map::MapAirportMsa airportMsa);
 
   /* Remove airport MSA diagram at index and update the map */
-  void removeAirportMsa(int index);
+  void removeMsaMark(int id);
 
   /* Jump to the search center mark using default zoom */
   void showSearchMark();
@@ -170,17 +170,17 @@ public:
   void changeHome();
 
   /* Add general (red) range ring */
-  void addRangeRing(const atools::geo::Pos& pos);
+  void addRangeMark(const atools::geo::Pos& pos);
 
   /* Add radio navaid range ring. Falls back to normal range rings if range is 0. */
-  void addNavRangeRing(const atools::geo::Pos& pos, map::MapTypes type, const QString& displayIdent,
+  void addNavRangeMark(const atools::geo::Pos& pos, map::MapTypes type, const QString& displayIdent,
                        const QString& frequency, float range);
 
   /* Remove range rings on index, print message and update map */
-  void removeRangeRing(int index);
+  void removeRangeMark(int id);
 
   /* Remove measurement line on index, print message and update map */
-  void removeDistanceMarker(int index);
+  void removeDistanceMark(int id);
 
   void setMapDetail(int factor);
 
@@ -193,7 +193,7 @@ public:
   void defaultMapDetail();
 
   /* Removes all range rings and distance measurement lines */
-  void clearRangeRingsAndDistanceMarkers();
+  void clearAllMarkers();
 
   /* Delete the current aircraft track. Will not stop collecting new track points */
   void deleteAircraftTrack();
@@ -483,7 +483,7 @@ private:
   QHash<QString, QAction *> mapOverlays;
 
   /* Distance marker that is changed using drag and drop */
-  int currentDistanceMarkerIndex = -1;
+  int currentDistanceMarkerId = -1;
 
   QPushButton *pushButtonExitFullscreen = nullptr;
 

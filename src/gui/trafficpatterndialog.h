@@ -26,7 +26,7 @@ class TrafficPatternDialog;
 
 namespace map {
 struct MapAirport;
-struct TrafficPattern;
+struct PatternMarker;
 }
 
 class QAbstractButton;
@@ -50,7 +50,7 @@ public:
   TrafficPatternDialog(const TrafficPatternDialog& other) = delete;
   TrafficPatternDialog& operator=(const TrafficPatternDialog& other) = delete;
 
-  void fillTrafficPattern(map::TrafficPattern& pattern);
+  void fillTrafficPattern(map::PatternMarker& pattern);
 
 private:
   void restoreState();
