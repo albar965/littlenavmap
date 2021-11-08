@@ -163,6 +163,7 @@ NavSearch::NavSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId
   append(Column("laty").hidden())
   ;
 
+  // No override mode used here
   ui->labelNavSearchOverride->hide();
 
   // Add icon delegate for the ident column
@@ -255,13 +256,6 @@ QueryBuilderResult NavSearch::navQueryBuilderFunc(QWidget *widget)
           text = text.chopped(1).mid(1);
         else
         {
-          // Check text length without placeholders for override
-          QString overrideText(text);
-          overrideText.remove(QChar('*'));
-          if(text.startsWith('-'))
-            overrideText = overrideText.mid(1);
-          overrideQuery |= overrideText.size() >= 3;
-
           // Adjust the query string to SQL
           // Replace "*" with "%" for SQL
           if(text.contains(QChar('*')))

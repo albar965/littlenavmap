@@ -3121,11 +3121,11 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
   {
     map::MapLogbookEntry logEntry = base->asObj<map::MapLogbookEntry>();
     emit showInSearch(map::LOGBOOK, SqlRecord().
-                      appendFieldAndValue("departure_ident", logEntry.departureIdent).
-                      appendFieldAndValue("destination_ident", logEntry.destinationIdent).
-                      appendFieldAndValue("simulator", logEntry.simulator).
-                      appendFieldAndValue("aircraft_type", logEntry.aircraftType).
-                      appendFieldAndValue("aircraft_registration", logEntry.aircraftRegistration),
+                      appendFieldAndValueIf("departure_ident", logEntry.departureIdent).
+                      appendFieldAndValueIf("destination_ident", logEntry.destinationIdent).
+                      appendFieldAndValueIf("simulator", logEntry.simulator).
+                      appendFieldAndValueIf("aircraft_type", logEntry.aircraftType).
+                      appendFieldAndValueIf("aircraft_registration", logEntry.aircraftRegistration),
                       true /* select */);
   }
   else if(base->objType == map::USERPOINT)
@@ -3134,10 +3134,10 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
 
     SqlRecord rec;
     rec.appendFieldAndValue("ident", userpoint.ident);
-    rec.appendFieldAndValue("region", userpoint.region);
-    rec.appendFieldAndValue("name", userpoint.name);
-    rec.appendFieldAndValue("type", userpoint.type);
-    rec.appendFieldAndValue("tags", userpoint.tags);
+    rec.appendFieldAndValueIf("region", userpoint.region);
+    rec.appendFieldAndValueIf("name", userpoint.name);
+    rec.appendFieldAndValueIf("type", userpoint.type);
+    rec.appendFieldAndValueIf("tags", userpoint.tags);
 
     emit showInSearch(map::USERPOINT, rec, true /* select */);
   }
@@ -3149,8 +3149,8 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
     map::MapVor vor = base->asObj<map::MapVor>();
     SqlRecord rec;
     rec.appendFieldAndValue("ident", QString("\"" % vor.ident % "\""));
-    rec.appendFieldAndValue("name", vor.name);
-    rec.appendFieldAndValue("region", vor.region);
+    rec.appendFieldAndValueIf("name", vor.name);
+    rec.appendFieldAndValueIf("region", vor.region);
 
     emit showInSearch(map::VOR, rec, true /* select */);
   }
@@ -3159,8 +3159,8 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
     map::MapNdb ndb = base->asObj<map::MapNdb>();
     SqlRecord rec;
     rec.appendFieldAndValue("ident", QString("\"" % ndb.ident % "\""));
-    rec.appendFieldAndValue("name", ndb.name);
-    rec.appendFieldAndValue("region", ndb.region);
+    rec.appendFieldAndValueIf("name", ndb.name);
+    rec.appendFieldAndValueIf("region", ndb.region);
 
     emit showInSearch(map::NDB, rec, true /* select */);
   }
@@ -3169,8 +3169,8 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
     map::MapWaypoint waypoint = base->asObj<map::MapWaypoint>();
     SqlRecord rec;
     rec.appendFieldAndValue("ident", QString("\"" % waypoint.ident % "\""));
-    rec.appendFieldAndValue("name", QString());
-    rec.appendFieldAndValue("region", waypoint.region);
+    rec.appendFieldAndValueIf("name", QString());
+    rec.appendFieldAndValueIf("region", waypoint.region);
 
     emit showInSearch(map::WAYPOINT, rec, true /* select */);
   }
