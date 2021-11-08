@@ -3212,7 +3212,7 @@ void MapWidget::addPatternMark(const map::MapAirport& airport)
   if(retval == QDialog::Accepted)
   {
     map::PatternMarker pattern;
-    dialog.fillTrafficPattern(pattern);
+    dialog.fillPatternMarker(pattern);
     getScreenIndex()->addPatternMark(pattern);
     mainWindow->updateMarkActionStates();
     update();

@@ -58,11 +58,7 @@ TrafficPatternDialog::TrafficPatternDialog(QWidget *parent, const map::MapAirpor
 
   // Saves original texts and restores them on deletion
   units = new UnitStringTool();
-  units->init({
-    ui->doubleSpinBoxTrafficPatternBaseDistance,
-    ui->doubleSpinBoxDownwindDistance,
-    ui->spinBoxTrafficPatternAltitude
-  });
+  units->init({ui->doubleSpinBoxTrafficPatternBaseDistance, ui->doubleSpinBoxDownwindDistance, ui->spinBoxTrafficPatternAltitude});
 
   restoreState();
 }
@@ -85,8 +81,7 @@ void TrafficPatternDialog::buttonBoxClicked(QAbstractButton *button)
     QDialog::accept();
   }
   else if(button == ui->buttonBoxTrafficPattern->button(QDialogButtonBox::Help))
-    atools::gui::HelpHandler::openHelpUrlWeb(
-      parentWidget(), lnm::helpOnlineUrl + "TRAFFICPATTERN.html", lnm::helpLanguageOnline());
+    atools::gui::HelpHandler::openHelpUrlWeb(parentWidget(), lnm::helpOnlineUrl + "TRAFFICPATTERN.html", lnm::helpLanguageOnline());
   else if(button == ui->buttonBoxTrafficPattern->button(QDialogButtonBox::Cancel))
     QDialog::reject();
 }
@@ -164,7 +159,7 @@ void TrafficPatternDialog::updateWidgets()
   ui->doubleSpinBoxTrafficPatternBaseDistance->setEnabled(!ui->checkBoxTrafficPattern45Degree->isChecked());
 }
 
-void TrafficPatternDialog::fillTrafficPattern(map::PatternMarker& pattern)
+void TrafficPatternDialog::fillPatternMarker(map::PatternMarker& pattern)
 {
   map::MapRunway rw;
   map::MapRunwayEnd end;

@@ -50,7 +50,7 @@ public:
   TrafficPatternDialog(const TrafficPatternDialog& other) = delete;
   TrafficPatternDialog& operator=(const TrafficPatternDialog& other) = delete;
 
-  void fillTrafficPattern(map::PatternMarker& pattern);
+  void fillPatternMarker(map::PatternMarker& pattern);
 
 private:
   void restoreState();
