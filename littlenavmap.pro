@@ -270,6 +270,7 @@ SOURCES += \
   src/gui/textdialog.cpp \
   src/gui/timedialog.cpp \
   src/gui/trafficpatterndialog.cpp \
+  src/gui/rangemarkerdialog.cpp \
   src/gui/updatedialog.cpp \
   src/info/aircraftprogressconfig.cpp \
   src/info/infocontroller.cpp \
@@ -446,6 +447,7 @@ HEADERS  += \
   src/gui/textdialog.h \
   src/gui/timedialog.h \
   src/gui/trafficpatterndialog.h \
+  src/gui/rangemarkerdialog.h \
   src/gui/updatedialog.h \
   src/info/aircraftprogressconfig.h \
   src/info/infocontroller.h \
@@ -583,6 +585,7 @@ FORMS += \
   src/gui/textdialog.ui \
   src/gui/timedialog.ui \
   src/gui/trafficpatterndialog.ui \
+  src/gui/rangemarkerdialog.ui \
   src/gui/updatedialog.ui \
   src/logbook/logdatadialog.ui \
   src/logbook/logstatisticsdialog.ui \

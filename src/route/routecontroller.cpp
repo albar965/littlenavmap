@@ -2650,7 +2650,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     else if(action == ui->actionRouteSetMark && routeLeg != nullptr)
       emit changeMark(routeLeg->getPosition());
     else if(action == ui->actionMapRangeRings && routeLeg != nullptr)
-      NavApp::getMapWidgetGui()->addRangeMark(routeLeg->getPosition());
+      NavApp::getMapWidgetGui()->addRangeMark(routeLeg->getPosition(), true /* showDialog */);
     else if(action == ui->actionMapTrafficPattern && routeLeg != nullptr)
       NavApp::getMapWidgetGui()->addPatternMark(routeLeg->getAirport());
     else if(action == ui->actionMapHold && routeLeg != nullptr)

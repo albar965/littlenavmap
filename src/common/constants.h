@@ -163,6 +163,10 @@ const QLatin1String MAP_MARK_DISPLAY("Map/MarkDisplay28");
 
 const QLatin1String LAYOUT_RECENT("WindowLayout/FilenamesRecent");
 
+const QLatin1String RANGE_MARKER_DIALOG("Map/RangeMarkerDialog");
+const QLatin1String RANGE_MARKER_DIALOG_COLOR("Map/RangeMarkerDialogColor");
+const QLatin1String RANGE_MARKER_DIALOG_RADII("Map/RangeMarkerDialogRadii");
+
 const QLatin1String NAVCONNECT_REMOTEHOSTS("NavConnect/RemoteHosts");
 const QLatin1String NAVCONNECT_REMOTE("NavConnect/Remote");
 const QLatin1String ROUTE_FILENAME("Route/Filename");
@@ -273,7 +277,6 @@ const QLatin1String OPTIONS_DIALOG_DISPLAY_OPTIONS_NAVAID("OptionsDialog/Display
 const QLatin1String OPTIONS_DIALOG_GUI_STYLE_INDEX("OptionsDialog/GuiStyleIndex");
 const QLatin1String OPTIONS_DIALOG_WARN_STYLE("OptionsDialog/StyleWarning");
 const QLatin1String OPTIONS_DIALOG_WEB_DOCROOT_DLG("OptionsDialog/WebDocroot");
-const QLatin1String OPTIONS_DIALOG_RANGE_DISTANCES("OptionsDialog/RangeDistances");
 const QLatin1String OPTIONS_DIALOG_SHOW_SPLASH("OptionsDialog/Widget_checkBoxOptionsStartupShowSplash");
 
 /* Other options that are only accessible in the configuration file */

@@ -1477,7 +1477,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     else if(action == ui->actionSearchSetMark)
       emit changeSearchMark(position);
     else if(action == ui->actionMapRangeRings)
-      mapWidget->addRangeMark(position);
+      mapWidget->addRangeMark(position, true /* showDialog */);
     else if(action == ui->actionMapTrafficPattern)
       mapWidget->addPatternMark(airport);
     else if(action == ui->actionMapHold)

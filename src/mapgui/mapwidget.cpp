@@ -31,6 +31,7 @@
 #include "fs/sc/simconnectdata.h"
 #include "gui/dialog.h"
 #include "gui/holddialog.h"
+#include "gui/rangemarkerdialog.h"
 #include "gui/mainwindow.h"
 #include "gui/signalblocker.h"
 #include "gui/trafficpatterndialog.h"
@@ -608,7 +609,7 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
         }
         else
           // Add range rings per configuration
-          addRangeMark(pos);
+          addRangeMark(pos, false /* showDialog */);
       }
       return true;
     }
@@ -1714,7 +1715,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
     // Look at fixed pre-defined actions wich are shared ============================================
     Ui::MainWindow *ui = NavApp::getMainUi();
     if(action == ui->actionMapRangeRings)
-      addRangeMark(pos);
+      addRangeMark(pos, true /* showDialog */);
     else if(action == ui->actionMapSetMark)
       changeSearchMark(pos);
     else if(action == ui->actionMapCopyCoordinates)
@@ -3385,26 +3386,37 @@ void MapWidget::addNavRangeMark(const atools::geo::Pos& pos, map::MapTypes type,
   }
   else
     // No range - fall back to normal rings
-    addRangeMark(pos);
+    addRangeMark(pos, false /* showDialog */);
 }
 
-void MapWidget::addRangeMark(const atools::geo::Pos& pos)
+void MapWidget::addRangeMark(const atools::geo::Pos& pos, bool showDialog)
 {
+  // Create dialog which also loads the defaults from settings
+  RangeMarkerDialog dialog(mainWindow, pos);
+  bool dialogOpened = false;
+
+  // Open dialog only if requested or if set in dialog
+  if(showDialog || !dialog.isNoShowShiftClickEnabled())
+  {
+    if(dialog.exec() != QDialog::Accepted)
+      return;
+
+    dialogOpened = true;
+  }
+
+  // Fill the marker object
   map::RangeMarker marker;
-  marker.id = map::getNextUserFeatureId();
-  marker.navType = map::NONE;
-  marker.position = pos;
-  marker.color = mapcolors::rangeRingColor;
+  dialog.fillRangeMarker(marker, dialogOpened);
 
-  for(float dist : OptionData::instance().getMapRangeRings())
-    marker.ranges.append(Unit::rev(dist, Unit::distNmF));
+  if(marker.isValid() && !marker.ranges.isEmpty())
+  {
+    getScreenIndex()->addRangeMark(marker);
 
-  getScreenIndex()->addRangeMark(marker);
-
-  qDebug() << "range rings" << marker.position;
-  update();
-  mainWindow->updateMarkActionStates();
-  mainWindow->setStatusMessage(tr("Added range rings for position."));
+    qDebug() << "range rings" << marker.position;
+    update();
+    mainWindow->updateMarkActionStates();
+    mainWindow->setStatusMessage(tr("Added range rings for position."));
+  }
 }
 
 void MapWidget::zoomInOut(bool directionIn, bool smooth)

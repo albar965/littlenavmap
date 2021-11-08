@@ -1039,10 +1039,9 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     {
       if(perf->getCruiseFuelFlow() > 1.f)
       {
-        float enduranceHours = (perf->getUsableFuel() - perf->getReserveFuel()) / perf->getCruiseFuelFlow();
-        html.row2(text, tr("%1, %2").
-                  arg(Unit::distNm(enduranceHours * perf->getCruiseSpeed())).
-                  arg(formatter::formatMinutesHoursLong(enduranceHours)), flags);
+        float enduranceHours, enduranceNm;
+        getEndurance(enduranceHours, enduranceNm);
+        html.row2(text, tr("%1, %2").arg(Unit::distNm(enduranceNm)).arg(formatter::formatMinutesHoursLong(enduranceHours)), flags);
       }
       else
         html.row2Warning(text, tr("Cruise fuel flow not set"));
@@ -1184,6 +1183,20 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
   {
     html.p().b(tr("Remarks")).pEnd();
     html.table(1).row2(QString(), perf->getDescription()).tableEnd();
+  }
+}
+
+void AircraftPerfController::getEndurance(float& enduranceHours, float& enduranceNm)
+{
+  if(perf->getUsableFuel() > 1.f && perf->getCruiseSpeed() > 1.f && perf->getCruiseFuelFlow() > 1.f)
+  {
+    enduranceHours = (perf->getUsableFuel() - perf->getReserveFuel()) / perf->getCruiseFuelFlow();
+    enduranceNm = enduranceHours * perf->getCruiseSpeed();
+  }
+  else
+  {
+    enduranceHours = map::INVALID_TIME_VALUE;
+    enduranceNm = map::INVALID_DISTANCE_VALUE;
   }
 }
 

@@ -1022,7 +1022,7 @@ This does not affect the map window which can be changed separately on the optio
           <widget class="QWidget" name="scrollAreaWidgetContents_2">
            <property name="geometry">
             <rect>
-             <x>0</x>
+             <x>-12</x>
              <y>0</y>
              <width>578</width>
              <height>554</height>
@@ -1309,6 +1309,22 @@ userpoints and logbook entries when clicking on the map</string>
                <property name="spacing">
                 <number>2</number>
                </property>
+               <item row="4" column="0" colspan="2">
+                <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports3D">
+                 <property name="toolTip">
+                  <string>All X-Plane airports which are not 3D and not add-on
+will be displayed underneath all other airports, use a gray symbol and
+provide a toolbar button for disabling them if this checkbox is enabled
+together with &quot;Treat empty airports special&quot;.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Consider all X-Plane airports not being 3D empty</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
                <item row="2" column="0" colspan="2">
                 <widget class="Line" name="line_11">
                  <property name="orientation">
@@ -1316,22 +1332,36 @@ userpoints and logbook entries when clicking on the map</string>
                  </property>
                 </widget>
                </item>
-               <item row="9" column="0" colspan="2">
-                <widget class="QLabel" name="labelOptionsMapRangeRings">
+               <item row="0" column="0" colspan="2">
+                <widget class="QCheckBox" name="checkBoxOptionsMapUndock">
                  <property name="toolTip">
-                  <string/>
+                  <string>Allows to undock and put the map window into a floating state.
+This can cause several unwanted effects when arranging dock windows.
+Uncheck this if you do experience strange effects when resizing dock windows.
+Restart the program after changing this option. You might also need to reset the window layout.</string>
                  </property>
                  <property name="text">
-                  <string extracomment="Adjust numbers to you local number format">&amp;Range ring radii for red range rings (maximum of 10 values from 0.01 to 4,000 %dist%):</string>
+                  <string>Allow to &amp;undock  the map window</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0" colspan="2">
+                <widget class="QLabel" name="label_5">
+                 <property name="text">
+                  <string>&lt;b&gt;A restart is required after changing the map window docking option.&lt;/b&gt;&lt;br/&gt;
+Use &quot;Window&quot; -&gt; &quot;Reset Window Layout&quot; in the main menu to clean up the layout after a restart if necessary.</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
                  </property>
+                 <property name="margin">
+                  <number>5</number>
+                 </property>
                  <property name="textInteractionFlags">
                   <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                 <property name="buddy">
-                  <cstring>lineEditOptionsMapRangeRings</cstring>
                  </property>
                 </widget>
                </item>
@@ -1362,16 +1392,6 @@ userpoints and logbook entries when clicking on the map</string>
                  </item>
                 </widget>
                </item>
-               <item row="6" column="0" colspan="2">
-                <widget class="QLabel" name="labelOptionsMapScrollDetails">
-                 <property name="text">
-                  <string>Details while scrolling (click and drag, zoom in and out):</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
                <item row="8" column="0" colspan="2">
                 <widget class="Line" name="line_13">
                  <property name="orientation">
@@ -1379,34 +1399,10 @@ userpoints and logbook entries when clicking on the map</string>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0" colspan="2">
-                <widget class="QCheckBox" name="checkBoxOptionsMapUndock">
-                 <property name="toolTip">
-                  <string>Allows to undock and put the map window into a floating state.
-This can cause several unwanted effects when arranging dock windows.
-Uncheck this if you do experience strange effects when resizing dock windows.
-Restart the program after changing this option. You might also need to reset the window layout.</string>
-                 </property>
-                 <property name="text">
-                  <string>Allow to &amp;undock  the map window</string>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="10" column="0">
-                <widget class="QLineEdit" name="lineEditOptionsMapRangeRings">
-                 <property name="toolTip">
-                  <string>Space separated list of range ring radii.
-A range ring will be added for each radius value which can be between 0.01 and 4000 %dist%.
-Falls back to 50, 100, 200 and 500 %dist% if empty or not valid.</string>
-                 </property>
-                 <property name="text">
-                  <string notr="true">50 100 200 500</string>
-                 </property>
-                 <property name="cursorPosition">
-                  <number>14</number>
+               <item row="5" column="0" colspan="2">
+                <widget class="Line" name="line_6">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -1425,43 +1421,13 @@ provide a toolbar button for disabling them if this checkbox is enabled.</string
                  </property>
                 </widget>
                </item>
-               <item row="4" column="0" colspan="2">
-                <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports3D">
-                 <property name="toolTip">
-                  <string>All X-Plane airports which are not 3D and not add-on
-will be displayed underneath all other airports, use a gray symbol and
-provide a toolbar button for disabling them if this checkbox is enabled
-together with &quot;Treat empty airports special&quot;.</string>
-                 </property>
+               <item row="6" column="0">
+                <widget class="QLabel" name="labelOptionsMapScrollDetails">
                  <property name="text">
-                  <string>&amp;Consider all X-Plane airports not being 3D empty</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="0" colspan="2">
-                <widget class="Line" name="line_6">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0" colspan="2">
-                <widget class="QLabel" name="label_5">
-                 <property name="text">
-                  <string>&lt;b&gt;A restart is required after changing the map window docking option.&lt;/b&gt;&lt;br/&gt;
-Use &quot;Window&quot; -&gt; &quot;Reset Window Layout&quot; in the main menu to clean up the layout after a restart if necessary.</string>
+                  <string>Details while scrolling (click and drag, zoom in and out):</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
-                 </property>
-                 <property name="margin">
-                  <number>5</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
                  </property>
                 </widget>
                </item>
@@ -6791,7 +6757,6 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>checkBoxOptionsMapEmptyAirports</tabstop>
   <tabstop>checkBoxOptionsMapEmptyAirports3D</tabstop>
   <tabstop>comboBoxMapScrollDetails</tabstop>
-  <tabstop>lineEditOptionsMapRangeRings</tabstop>
   <tabstop>checkBoxOptionsMapTooltipUserAircraft</tabstop>
   <tabstop>checkBoxOptionsMapTooltipAiAircraft</tabstop>
   <tabstop>checkBoxOptionsMapTooltipAirport</tabstop>

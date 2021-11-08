@@ -648,12 +648,6 @@ public:
     return unitFuelWeight;
   }
 
-  /* Vector of (red) range ring distances in nautical miles */
-  const QVector<float>& getMapRangeRings() const
-  {
-    return mapRangeRings;
-  }
-
   /* ASN path that overrides the default */
   const QString& getWeatherActiveSkyPath() const
   {
@@ -1251,10 +1245,6 @@ private:
                          opts2::MAP_EMPTY_AIRPORTS_3D | opts2::HIGH_DPI_DISPLAY_SUPPORT |
                          opts2::ROUTE_CENTER_ACTIVE_LEG | opts2::ROUTE_CENTER_ACTIVE_LEG |
                          opts2::ROUTE_AUTOZOOM | opts2::ROUTE_NO_FOLLOW_ON_MOVE;
-
-  // ui->lineEditOptionsMapRangeRings
-  const static QVector<float> MAP_RANGERINGS_DEFAULT;
-  QVector<float> mapRangeRings = MAP_RANGERINGS_DEFAULT;
 
   QString weatherActiveSkyPath, // ui->lineEditOptionsWeatherAsnPath
           weatherXplanePath; // lineEditOptionsWeatherXplanePath

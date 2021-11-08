@@ -159,6 +159,9 @@ public:
   float getBlockFuel() const;
   float getTripFuel() const;
 
+  /* Current aircraft endurance with full fuel load */
+  void getEndurance(float& enduranceHours, float& enduranceNm);
+
 signals:
   /* Sent if performance or wind has changed */
   void aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf *perf);

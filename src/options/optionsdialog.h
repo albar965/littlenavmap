@@ -244,9 +244,6 @@ private:
   QMainWindow *mainWindow;
   QList<QObject *> widgets;
 
-  // Validates the space separated list of ring sizes
-  RangeRingValidator *rangeRingValidator;
-
   // Maps options flags to items in the tree widget
   QHash<optsac::DisplayOptionsUserAircraft, QTreeWidgetItem *> displayOptItemIndexUser;
   QHash<optsac::DisplayOptionsAiAircraft, QTreeWidgetItem *> displayOptItemIndexAi;

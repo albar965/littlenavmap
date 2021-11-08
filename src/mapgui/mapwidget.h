@@ -170,7 +170,7 @@ public:
   void changeHome();
 
   /* Add general (red) range ring */
-  void addRangeMark(const atools::geo::Pos& pos);
+  void addRangeMark(const atools::geo::Pos& pos, bool showDialog);
 
   /* Add radio navaid range ring. Falls back to normal range rings if range is 0. */
   void addNavRangeMark(const atools::geo::Pos& pos, map::MapTypes type, const QString& displayIdent,

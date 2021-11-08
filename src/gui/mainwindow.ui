@@ -7773,7 +7773,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/rangerings.svg</normaloff>:/littlenavmap/resources/icons/rangerings.svg</iconset>
    </property>
    <property name="text">
-    <string>Add Range &amp;Rings</string>
+    <string>Add Range &amp;Rings ...</string>
    </property>
    <property name="toolTip">
     <string>Add range rings at this position to map</string>
@@ -12395,7 +12395,7 @@ Disabled if a navdatabase does not allow it.</string>
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupRouteCalcType"/>
-  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>
