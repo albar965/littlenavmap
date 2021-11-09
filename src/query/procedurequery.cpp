@@ -1386,8 +1386,7 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) 
         segmentLength = 3.5f;
 
       leg.holdLine.setPos2(leg.line.getPos1());
-      leg.holdLine.setPos1(leg.line.getPos1().endpoint(nmToMeter(segmentLength),
-                                                       opposedCourseDeg(leg.calculatedTrueCourse)));
+      leg.holdLine.setPos1(leg.line.getPos1().endpoint(nmToMeter(segmentLength), opposedCourseDeg(leg.calculatedTrueCourse)));
     }
     else if(contains(type, {proc::TRACK_FROM_FIX_TO_DME_DISTANCE, proc::COURSE_TO_DME_DISTANCE,
                             proc::HEADING_TO_DME_DISTANCE_TERMINATION,
@@ -1585,10 +1584,9 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
       curPos = leg.fixPos;
     }
     // ===========================================================
-    else if(leg.isInitialFix() || contains(type, {proc::DIRECT_TO_FIX, proc::START_OF_PROCEDURE,
-                                                  proc::TRACK_TO_FIX, proc::CONSTANT_RADIUS_ARC, proc::VECTORS,
-                                                  proc::DIRECT_TO_RUNWAY, proc::CUSTOM_DEP_RUNWAY, proc::CIRCLE_TO_LAND,
-                                                  proc::STRAIGHT_IN}))
+    else if(leg.isInitialFix() || contains(type, {proc::DIRECT_TO_FIX, proc::START_OF_PROCEDURE, proc::TRACK_TO_FIX,
+                                                  proc::CONSTANT_RADIUS_ARC, proc::VECTORS, proc::DIRECT_TO_RUNWAY, proc::CUSTOM_DEP_RUNWAY,
+                                                  proc::CIRCLE_TO_LAND, proc::STRAIGHT_IN}))
     {
       curPos = leg.fixPos;
     }
@@ -1647,8 +1645,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
       for(int j = 0; j < 5; j++)
       {
         parallel = crsLine.parallel(parallelDist).extended(ext, ext);
-        intersect = Pos::intersectingRadials(parallel.getPos1(), parallel.angleDeg(),
-                                             leg.recFixPos, leg.theta + leg.magvar);
+        intersect = Pos::intersectingRadials(parallel.getPos1(), parallel.angleDeg(), leg.recFixPos, leg.theta + leg.magvar);
 
         // Need maximum of 200 NM and minimum of 1.5 NM distance to the navaid from the intersection point
         if(intersect.isValid() && intersect.distanceMeterTo(leg.recFixPos) < nmToMeter(200.f) &&

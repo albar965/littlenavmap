@@ -825,7 +825,7 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
     }
   }
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ROUTE_ALT_SIMPLIFY
   qDebug() << Q_FUNC_INFO
            << leftAlt->ident
            << leftAlt->procedureType
@@ -869,7 +869,7 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
     // 0 = left, 1 = right
     QPointF mid = line.pointAt(t);
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ROUTE_ALT_SIMPLIFY
     qDebug() << Q_FUNC_INFO << "old" << midAlt->y2() << "new" << mid.y();
 #endif
 
@@ -880,7 +880,7 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
     if(leftSkippedAlt != nullptr)
       newAlt = adjustAltitudeForRestriction(newAlt, leftSkippedAlt->restriction);
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ROUTE_ALT_SIMPLIFY
     qDebug() << Q_FUNC_INFO << "after adjust" << newAlt;
 #endif
 
@@ -1064,7 +1064,7 @@ void RouteAltitude::calculate(QStringList& altRestErrors)
     }
   }
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
   qDebug() << Q_FUNC_INFO << "Before cleanup ==================================";
   qDebug() << Q_FUNC_INFO << *this;
 #endif
@@ -1099,7 +1099,7 @@ void RouteAltitude::calculate(QStringList& altRestErrors)
   // Set coordinates into legs
   fillGeometry();
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
   qDebug() << Q_FUNC_INFO << "Finished ==================================";
   qDebug() << Q_FUNC_INFO << *this;
 #endif
@@ -1695,7 +1695,7 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
 
       float climbHeadWind = 0.f, cruiseHeadWind = 0.f, descentHeadWind = 0.f;
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
       qDebug() << Q_FUNC_INFO << "=========== leg #" << i
                << "wind: climb" << climbWind << "cruise" << cruiseWind << "descent" << descentWind;
 #endif
@@ -1888,7 +1888,7 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
 
   averageGroundSpeed = getTotalDistance() / travelTime;
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
   qDebug() << "================================================================================================";
   qDebug() << Q_FUNC_INFO << *this;
 #endif

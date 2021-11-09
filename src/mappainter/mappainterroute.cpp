@@ -1078,8 +1078,7 @@ QLineF MapPainterRoute::paintProcedureTurn(QVector<QLineF>& lastLines, QLineF li
   double angleToLastRev = line.angleTo(lastLine);
 
   // Calculate the angle difference between last and current line
-  double diff =
-    angleAbsDiff(normalizeCourse(angleFromQt(lastLine.angle())), normalizeCourse(angleFromQt(line.angle())));
+  double diff = angleAbsDiff(normalizeCourse(angleFromQt(lastLine.angle())), normalizeCourse(angleFromQt(line.angle())));
 
   // Use a bigger extension (modify course more) if the course is a 180 (e.g. 90 and returning to 270)
   float extension = atools::almostEqual(diff, 0., 1.) || atools::almostEqual(diff, 180., 1.) ? 1.f : 0.5f;
@@ -1088,8 +1087,7 @@ QLineF MapPainterRoute::paintProcedureTurn(QVector<QLineF>& lastLines, QLineF li
   QLineF arc(line.p1(), QPointF(line.x2(), line.y2() /* + 100.*/));
   arc.setLength(scale->getPixelForNm(extension));
   if(leg.turnDirection == "R")
-    arc.setAngle(angleToQt(angleFromQt(QLineF(lastLine.p2(),
-                                              lastLine.p1()).angle()) + angleToLastRev / 2.) + 180.f);
+    arc.setAngle(angleToQt(angleFromQt(QLineF(lastLine.p2(), lastLine.p1()).angle()) + angleToLastRev / 2.) + 180.f);
   else
     arc.setAngle(angleToQt(angleFromQt(QLineF(lastLine.p2(), lastLine.p1()).angle()) + angleToLastRev / 2.));
 
@@ -1150,9 +1148,6 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 
   {
     QColor col(255, 0, 0, 50);
-
-    if(leg.fixIdent == "CI29" && leg.type == proc::COURSE_TO_FIX)
-      col = QColor(0, 255, 0, 50);
 
     bool hiddenDummy;
     QSize size = scale->getScreeenSizeForRect(legs.bounding);

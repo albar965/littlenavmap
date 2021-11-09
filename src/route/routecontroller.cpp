@@ -984,7 +984,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 {
   qDebug() << Q_FUNC_INFO << filename;
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ROUTE
   qDebug() << flightplan;
 #endif
 

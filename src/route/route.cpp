@@ -1695,6 +1695,9 @@ void Route::updateDistancesAndCourse()
     }
     last = &leg;
   }
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "totalDistance" << totalDistance;
+#endif
 }
 
 void Route::updateMagvar()

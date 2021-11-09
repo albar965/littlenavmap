@@ -1736,7 +1736,7 @@ void HtmlInfoBuilder::airportMsaText(const map::MapAirportMsa& msa, atools::util
 
 void HtmlInfoBuilder::msaMarkerText(const map::MsaMarker& msa, atools::util::HtmlBuilder& html) const
 {
-  airportMsaTextInternal(msa.msa, html, true  /* user */);
+  airportMsaTextInternal(msa.msa, html, true /* user */);
 }
 
 void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atools::util::HtmlBuilder& html, bool user) const
@@ -3675,12 +3675,10 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       {
         // Add name and type to header text
         QString headText = alternate ? tr("Alternate") : tr("Destination");
-        const RouteLeg& destLeg = alternate && route.getActiveLeg() != nullptr ?
-                                  *route.getActiveLeg() : route.getDestinationAirportLeg();
+        const RouteLeg& destLeg = alternate && route.getActiveLeg() != nullptr ? *route.getActiveLeg() : route.getDestinationAirportLeg();
 
-        headText += tr(" - ") % destLeg.getDisplayIdent() %
-                    (destLeg.getMapObjectTypeName().isEmpty() ? QString() : tr(", ") %
-                     destLeg.getMapObjectTypeName());
+        headText += tr(" - ") % destLeg.getDisplayIdent() % (destLeg.getMapObjectTypeName().isEmpty() ? QString() : tr(", ") %
+                                                             destLeg.getMapObjectTypeName());
 
         html.mark();
         head(html, headText);
