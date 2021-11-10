@@ -72,7 +72,7 @@ private:
 
   void flagsToActions();
   void actionsToFlags();
-  QAction *addButton(const QString& icon, const QString& text, const QString& tooltip, map::MapTypes type);
+  QAction *addButton(const QString& icon, const QString& text, const QString& tooltip);
 
   /* Actions for toolbar button and menu */
   QAction *actionAll = nullptr, *actionNone = nullptr, *actionRangeRings = nullptr, *actionMeasurementLines = nullptr,

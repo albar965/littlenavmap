@@ -121,26 +121,22 @@ void MapMarkHandler::addToolbarButton()
   ui->menuViewUserFeatures->addSeparator();
   buttonMenu->addSeparator();
 
-  actionRangeRings = addButton(":/littlenavmap/resources/icons/rangerings.svg", tr("&Range Rings"),
-                               tr("Show or hide range rings"), map::MARK_RANGE);
+  actionRangeRings = addButton(":/littlenavmap/resources/icons/rangerings.svg", tr("&Range Rings"), tr("Show or hide range rings"));
   actionMeasurementLines = addButton(":/littlenavmap/resources/icons/distancemeasure.svg", tr("&Measurement Lines"),
-                                     tr("Show or hide measurement lines"), map::MARK_DISTANCE);
+                                     tr("Show or hide measurement lines"));
   actionPatterns = addButton(":/littlenavmap/resources/icons/trafficpattern.svg", tr("&Traffic Patterns"),
-                             tr("Show or hide traffic patterns"), map::MARK_PATTERNS);
-  actionHolds = addButton(":/littlenavmap/resources/icons/enroutehold.svg", tr("&Holdings"),
-                          tr("Show or hide holdings"), map::MARK_HOLDING);
-  actionAirportMsa = addButton(":/littlenavmap/resources/icons/msa.svg", tr("&MSA Diagrams"),
-                               tr("Show or hide airport MSA sectors"), map::MARK_MSA);
+                             tr("Show or hide traffic patterns"));
+  actionHolds = addButton(":/littlenavmap/resources/icons/enroutehold.svg", tr("&Holdings"), tr("Show or hide holdings"));
+  actionAirportMsa = addButton(":/littlenavmap/resources/icons/msa.svg", tr("&MSA Diagrams"), tr("Show or hide airport MSA sectors"));
 }
 
-QAction *MapMarkHandler::addButton(const QString& icon, const QString& text, const QString& tooltip, map::MapTypes type)
+QAction *MapMarkHandler::addButton(const QString& icon, const QString& text, const QString& tooltip)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   QAction *action = new QAction(QIcon(icon), text, toolButton->menu());
   action->setToolTip(tooltip);
   action->setStatusTip(tooltip);
-  action->setData(static_cast<int>(type));
   action->setCheckable(true);
 
   toolButton->menu()->addAction(action);
@@ -174,11 +170,11 @@ void MapMarkHandler::toolbarActionTriggered()
 
 void MapMarkHandler::flagsToActions()
 {
-  actionRangeRings->setChecked(markTypes & map::MARK_RANGE);
-  actionMeasurementLines->setChecked(markTypes & map::MARK_DISTANCE);
-  actionHolds->setChecked(markTypes & map::MARK_HOLDING);
-  actionAirportMsa->setChecked(markTypes & map::MARK_MSA);
-  actionPatterns->setChecked(markTypes & map::MARK_PATTERNS);
+  actionRangeRings->setChecked(markTypes.testFlag(map::MARK_RANGE));
+  actionMeasurementLines->setChecked(markTypes.testFlag(map::MARK_DISTANCE));
+  actionHolds->setChecked(markTypes.testFlag(map::MARK_HOLDING));
+  actionAirportMsa->setChecked(markTypes.testFlag(map::MARK_MSA));
+  actionPatterns->setChecked(markTypes.testFlag(map::MARK_PATTERNS));
   toolButton->setChecked(markTypes & map::MARK_ALL);
 }
 
