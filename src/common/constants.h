@@ -201,6 +201,8 @@ const QLatin1String SEARCHTAB_LOGDATA_VIEW_WIDGET("SearchPaneLogdata/WidgetView"
 const QLatin1String IMAGE_EXPORT_DIALOG("Map/ImageExportDialog");
 const QLatin1String IMAGE_EXPORT_AVITAB_DIALOG("Map/ImageExportDialogAviTab");
 
+const QLatin1String MAP_COORDINATE_DIALOG("Map/CoordinateDialog");
+
 const QLatin1String RESET_FOR_NEW_FLIGHT_DIALOG("Route/ResetAllDialog");
 const QLatin1String ROUTE_FLIGHTPLAN_COLUMS_DIALOG("Route/FlightPlanTableColumns");
 

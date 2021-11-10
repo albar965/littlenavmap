@@ -36,6 +36,7 @@
 #include "gui/signalblocker.h"
 #include "gui/trafficpatterndialog.h"
 #include "gui/widgetstate.h"
+#include "gui/coordinatedialog.h"
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapcontextmenu.h"
 #include "mapgui/maplayersettings.h"
@@ -1717,6 +1718,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       addRangeMark(pos, true /* showDialog */);
     else if(action == ui->actionMapSetMark)
       changeSearchMark(pos);
+    else if(action == ui->actionMapJumpCoordinates)
+      jumpCoordinatesPos(pos);
     else if(action == ui->actionMapCopyCoordinates)
     {
       QGuiApplication::clipboard()->setText(Unit::coords(pos));
@@ -3324,6 +3327,23 @@ void MapWidget::showHome()
     jumpBackToAircraftStart(true /* saveDistance */);
     centerPosOnMap(homePos);
     mainWindow->setStatusMessage(tr("Showing home position."));
+  }
+}
+
+void MapWidget::jumpCoordinates()
+{
+  // Use map center for initialization
+  jumpCoordinatesPos(atools::geo::Pos(centerLongitude(), centerLatitude()));
+}
+
+void MapWidget::jumpCoordinatesPos(const atools::geo::Pos& pos)
+{
+  qDebug() << Q_FUNC_INFO;
+  CoordinateDialog dialog(this, pos);
+  if(dialog.exec() == QDialog::Accepted)
+  {
+    showPos(dialog.getPosition(), dialog.getZoomDistanceKm(), false /* doubleClick */);
+    mainWindow->setStatusMessage(tr("Showing coordinates."));
   }
 }
 

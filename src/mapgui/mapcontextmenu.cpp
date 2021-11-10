@@ -210,6 +210,7 @@ void MapContextMenu::buildMainMenu()
   if(visibleOnMap)
   {
     // More rarely used menu items
+    sub->addAction(ui->actionMapJumpCoordinates);
     insertShowInSearchMenu(*sub);
     sub->addSeparator();
 

@@ -166,6 +166,12 @@ public:
   /* Change the search center mark to given position */
   void changeSearchMark(const atools::geo::Pos& pos);
 
+  /* Show jump to coordinates dialog called from main menu */
+  void jumpCoordinates();
+
+  /* Show jump to coordinates dialog called from context menu */
+  void jumpCoordinatesPos(const atools::geo::Pos& pos);
+
   /* Save current position and zoom distance as home */
   void changeHome();
 

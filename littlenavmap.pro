@@ -263,6 +263,7 @@ SOURCES += \
   src/export/csvexporter.cpp \
   src/export/exporter.cpp \
   src/gui/holddialog.cpp \
+  src/gui/coordinatedialog.cpp \
   src/gui/mainwindow.cpp \
   src/gui/runwayselection.cpp \
   src/gui/statusbareventfilter.cpp \
@@ -440,6 +441,7 @@ HEADERS  += \
   src/export/csvexporter.h \
   src/export/exporter.h \
   src/gui/holddialog.h \
+  src/gui/coordinatedialog.h \
   src/gui/mainwindow.h \
   src/gui/runwayselection.h \
   src/gui/statusbareventfilter.h \
@@ -581,6 +583,7 @@ FORMS += \
   src/db/databasedialog.ui \
   src/db/databaseprogressdialog.ui \
   src/gui/holddialog.ui \
+  src/gui/coordinatedialog.ui \
   src/gui/mainwindow.ui \
   src/gui/textdialog.ui \
   src/gui/timedialog.ui \

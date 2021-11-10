@@ -770,7 +770,7 @@ void MapPaintWidget::showPosNotAdjusted(const atools::geo::Pos& pos, float dista
 {
   Pos normPos = pos.normalized();
   centerOn(normPos.getLonX(), normPos.getLatY());
-  setDistance(std::min(std::max((double)distanceKm, MINIMUM_DISTANCE_KM / 2.), MAXIMUM_DISTANCE_KM));
+  setDistance(std::min(std::max(static_cast<double>(distanceKm), MINIMUM_DISTANCE_KM / 2.), MAXIMUM_DISTANCE_KM));
 }
 
 void MapPaintWidget::showPos(const atools::geo::Pos& pos, float distanceKm, bool doubleClick)
@@ -795,7 +795,7 @@ void MapPaintWidget::showPosInternal(const atools::geo::Pos& pos, float distance
   showAircraft(false);
   jumpBackToAircraftStart(true /* saveDistance */);
 
-  if(distanceKm == 0.f)
+  if(atools::almostEqual(distanceKm, 0.f))
     // Use distance depending on double click
     distanceKm = atools::geo::nmToKm(Unit::rev(doubleClick ?
                                                OptionData::instance().getMapZoomShowClick() :

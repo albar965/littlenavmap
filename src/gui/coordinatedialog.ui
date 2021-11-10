@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CoordinateDialog</class>
+ <widget class="QDialog" name="CoordinateDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>427</width>
+    <height>150</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Little Navmap - Jump to Coordinate</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="spacing">
+    <number>2</number>
+   </property>
+   <item row="3" column="0">
+    <widget class="QLabel" name="labelMapCoordinateZoom">
+     <property name="text">
+      <string>&amp;Zoom distance:</string>
+     </property>
+     <property name="buddy">
+      <cstring>doubleSpinBoxMapCoordinateZoom</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QLabel" name="labelMapCoordinateLatLon">
+     <property name="text">
+      <string>&amp;Latitude and Longitude:</string>
+     </property>
+     <property name="buddy">
+      <cstring>lineEditMapCoordinateLatLon</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
+    <widget class="QLineEdit" name="lineEditMapCoordinateLatLon">
+     <property name="toolTip">
+      <string>Recognized coordinate formats:
+- Degrees, minutes and seconds : N49° 26' 41.57&quot; E9° 12' 5.49&quot; or 49° 26' 41.57&quot; N 9° 12' 5.49&quot; E
+- Degrees and minutes: N54* 16.82' W008* 35.95', N 52 33.58 E 13 17.26 or 49° 26.69' N 9° 12.09' E
+- Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9.2015°
+- Degrees with sign: 49.4449 9.2015. Negative is west or south. Order for latitude and longitude depends on option settings.
+Degree, minute and second signs can be omitted for above formats.
+Latitude has to be first and N/S and E/W designators are required.
+A space is only needed to separate latitude and longitude or degrees/minutes/seconds if no signs used.
+Other formats:
+- Degrees and minutes: N44124W122451, N14544W017479 or S31240E136502
+- Degrees only 46N078W
+- Degrees and minutes 4620N07805W
+- Degrees, minutes and seconds 481200N0112842E (SkyVector)
+- Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
+- NAT type 5020N
+Formats above have to be given exactly as shown in the examples.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="2">
+    <widget class="QLabel" name="labelMapCoordinateCoordStatus">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="margin">
+      <number>5</number>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="3">
+    <widget class="QDialogButtonBox" name="buttonBoxMapCoordinate">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="3" column="2">
+    <widget class="QDoubleSpinBox" name="doubleSpinBoxMapCoordinateZoom">
+     <property name="suffix">
+      <string> %dist%</string>
+     </property>
+     <property name="minimum">
+      <double>0.010000000000000</double>
+     </property>
+     <property name="maximum">
+      <double>1000.000000000000000</double>
+     </property>
+     <property name="value">
+      <double>1.000000000000000</double>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>lineEditMapCoordinateLatLon</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+</ui>
