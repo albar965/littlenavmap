@@ -791,6 +791,71 @@ This does not affect the map window which can be changed separately on the optio
              </widget>
             </item>
             <item>
+             <widget class="QGroupBox" name="groupBox_32">
+              <property name="title">
+               <string>Toolbars</string>
+              </property>
+              <layout class="QHBoxLayout" name="horizontalLayout_5">
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <item>
+                <widget class="QCheckBox" name="checkBoxOptionsGuiToolbarSize">
+                 <property name="toolTip">
+                  <string>Allows to change the size of the toolbar icons from system default if checked.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Override Icon size for toolbars:</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QSpinBox" name="spinBoxOptionsGuiToolbarSize">
+                 <property name="sizePolicy">
+                  <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+                   <horstretch>0</horstretch>
+                   <verstretch>0</verstretch>
+                  </sizepolicy>
+                 </property>
+                 <property name="readOnly">
+                  <bool>false</bool>
+                 </property>
+                 <property name="suffix">
+                  <string> Pixel</string>
+                 </property>
+                 <property name="minimum">
+                  <number>8</number>
+                 </property>
+                 <property name="maximum">
+                  <number>64</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>2</number>
+                 </property>
+                 <property name="value">
+                  <number>24</number>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
              <widget class="QGroupBox" name="groupBox_8">
               <property name="title">
                <string>Text Size</string>
@@ -1024,8 +1089,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>532</height>
+             <width>578</width>
+             <height>510</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_12">

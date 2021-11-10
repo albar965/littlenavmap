@@ -493,7 +493,7 @@ private:
 
   /* Show database dialog after cleanup of obsolete databases if true */
   bool databasesErased = false;
-
+  QSize defaultToolbarIconSize;
   QString aboutMessage, layoutWarnText;
   QTimer clockTimer, renderStatusTimer;
   Marble::RenderStatus lastRenderStatus = Marble::Incomplete;

@@ -213,6 +213,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsGuiOverrideLocale,
      ui->checkBoxOptionsGuiHighDpi,
      ui->checkBoxOptionsGuiTooltips,
+     ui->checkBoxOptionsGuiToolbarSize,
      // ui->comboBoxOptionsGuiLanguage, saved directly
 
      ui->checkBoxDisplayOnlineNameLookup,
@@ -300,6 +301,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->spinBoxOptionsGuiSearchText,
      ui->spinBoxOptionsGuiSimInfoText,
      ui->spinBoxOptionsGuiThemeMapDimming,
+     ui->spinBoxOptionsGuiToolbarSize,
      ui->spinBoxOptionsMapClickRect,
      ui->spinBoxOptionsMapTooltipRect,
      ui->doubleSpinBoxOptionsMapZoomShowMap,
@@ -426,6 +428,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
           this, &OptionsDialog::languageChanged);
   connect(ui->pushButtonOptionsGuiSelectFont, &QPushButton::clicked, this, &OptionsDialog::selectGuiFontClicked);
   connect(ui->pushButtonOptionsGuiResetFont, &QPushButton::clicked, this, &OptionsDialog::resetGuiFontClicked);
+  connect(ui->checkBoxOptionsGuiToolbarSize, &QPushButton::clicked, this, &OptionsDialog::toolbarSizeClicked);
 
   // ===========================================================================
   // Weather widgets - ASN
@@ -594,6 +597,7 @@ void OptionsDialog::open()
   updateLinks();
   updateFlightPlanColorWidgets();
   updateHighlightWidgets();
+  toolbarSizeClicked();
 
   QDialog::open();
 }
@@ -887,6 +891,7 @@ void OptionsDialog::updateWidgetStates()
   updateWidgetUnits();
   updateFlightPlanColorWidgets();
   updateHighlightWidgets();
+  toolbarSizeClicked();
 }
 
 void OptionsDialog::saveState()
@@ -1008,6 +1013,7 @@ void OptionsDialog::restoreState()
   updateWebServerStatus();
   updateWebDocrootStatus();
   updateFlightplanExample();
+  toolbarSizeClicked();
 
   if(ui->listWidgetOptionPages->selectedItems().isEmpty())
     ui->listWidgetOptionPages->selectionModel()->select(ui->listWidgetOptionPages->model()->index(0, 0),
@@ -1522,6 +1528,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxOptionsMapUndock, opts2::MAP_ALLOW_UNDOCK);
   toFlags2(ui->checkBoxOptionsGuiHighDpi, opts2::HIGH_DPI_DISPLAY_SUPPORT);
   toFlags2(ui->checkBoxOptionsGuiTooltips, opts2::DISABLE_TOOLTIPS);
+  toFlags2(ui->checkBoxOptionsGuiToolbarSize, opts2::OVERRIDE_TOOLBAR_SIZE);
 
   toFlags(ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
   toFlags(ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
@@ -1620,6 +1627,7 @@ void OptionsDialog::widgetsToOptionData()
   data.guiRouteTableTextSize = ui->spinBoxOptionsGuiRouteText->value();
   data.guiSearchTableTextSize = ui->spinBoxOptionsGuiSearchText->value();
   data.guiInfoSimSize = ui->spinBoxOptionsGuiSimInfoText->value();
+  data.guiToolbarSize = ui->spinBoxOptionsGuiToolbarSize->value();
 
   data.guiStyleMapDimming = ui->spinBoxOptionsGuiThemeMapDimming->value();
 
@@ -1802,6 +1810,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags2(data, ui->checkBoxOptionsMapUndock, opts2::MAP_ALLOW_UNDOCK);
   fromFlags2(data, ui->checkBoxOptionsGuiHighDpi, opts2::HIGH_DPI_DISPLAY_SUPPORT);
   fromFlags2(data, ui->checkBoxOptionsGuiTooltips, opts2::DISABLE_TOOLTIPS);
+  fromFlags2(data, ui->checkBoxOptionsGuiToolbarSize, opts2::OVERRIDE_TOOLBAR_SIZE);
 
   fromFlags(data, ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
   fromFlags(data, ui->radioButtonCacheUseOnlineElevation, opts::CACHE_USE_ONLINE_ELEVATION);
@@ -1908,6 +1917,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsGuiRouteText->setValue(data.guiRouteTableTextSize);
   ui->spinBoxOptionsGuiSearchText->setValue(data.guiSearchTableTextSize);
   ui->spinBoxOptionsGuiSimInfoText->setValue(data.guiInfoSimSize);
+  ui->spinBoxOptionsGuiToolbarSize->setValue(data.guiToolbarSize);
   ui->spinBoxOptionsGuiThemeMapDimming->setValue(data.guiStyleMapDimming);
   ui->spinBoxOptionsMapClickRect->setValue(data.mapClickSensitivity);
   ui->spinBoxOptionsMapTooltipRect->setValue(data.mapTooltipSensitivity);
@@ -2563,6 +2573,11 @@ void OptionsDialog::updateMapFontLabel()
     font = QGuiApplication::font();
 
   atools::gui::fontDescription(font, ui->labelOptionsDisplayFont);
+}
+
+void OptionsDialog::toolbarSizeClicked()
+{
+  ui->spinBoxOptionsGuiToolbarSize->setEnabled(ui->checkBoxOptionsGuiToolbarSize->isChecked());
 }
 
 void OptionsDialog::updateGuiFontLabel()

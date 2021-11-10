@@ -19,9 +19,8 @@
 #define LITTLENAVMAP_OPTIONDATA_H
 
 #include <QColor>
-#include <QFlags>
-#include <QVector>
 
+class QSize;
 class QFont;
 
 namespace opts {
@@ -285,7 +284,8 @@ enum Flag2
   /* ui->checkBoxOptionsSimCenterLeg */
   ROUTE_AUTOZOOM = 1 << 8,
 
-  // MAP_AIRPORT_DIAGRAM = 1 << 9,
+  /* checkBoxOptionsGuiToolbarSize */
+  OVERRIDE_TOOLBAR_SIZE = 1 << 9,
 
   /* ui->checkBoxOptionsSimCenterLegTable */
   ROUTE_CENTER_ACTIVE_LEG = 1 << 10,
@@ -1219,6 +1219,8 @@ public:
     return simUpdateBoxCenterLegZoom;
   }
 
+  QSize getGuiToolbarSize() const;
+
 private:
   friend class OptionsDialog;
 
@@ -1314,6 +1316,9 @@ private:
 
   // ui->spinBoxOptionsGuiSearchText
   int guiSearchTableTextSize = 100;
+
+  // ui->spinBoxOptionsGuiToolbarSize
+  int guiToolbarSize = 24;
 
   // ui->spinBoxOptionsGuiThemeMapDimming
   int guiStyleMapDimming = 50;

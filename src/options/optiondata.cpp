@@ -22,6 +22,7 @@
 #include <QDebug>
 #include <QFont>
 #include <QFontDatabase>
+#include <QSize>
 
 OptionData *OptionData::optionData = nullptr;
 
@@ -142,6 +143,11 @@ QFont OptionData::getGuiFont() const
   else
     font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
   return font;
+}
+
+QSize OptionData::getGuiToolbarSize() const
+{
+  return QSize(guiToolbarSize, guiToolbarSize);
 }
 
 const OptionData& OptionData::instance()

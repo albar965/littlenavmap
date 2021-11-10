@@ -225,6 +225,7 @@ private:
   void selectMapFontClicked();
   void resetMapFontClicked();
   void buildFontDialog();
+  void toolbarSizeClicked();
 
   void flightplanPatterShortClicked();
   void flightplanPatterLongClicked();

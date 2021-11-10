@@ -196,6 +196,7 @@ MainWindow::MainWindow()
     ui->labelProfileInfo->hide();
 
     setAcceptDrops(true);
+    defaultToolbarIconSize = iconSize();
 
     // Show tooltips also for inactive windows (e.g. if a floating window is active)
     setAttribute(Qt::WA_AlwaysShowToolTips);
@@ -3824,6 +3825,9 @@ void MainWindow::restoreStateMain()
 
   Settings& settings = Settings::instance();
 
+  if(OptionData::instance().getFlags2().testFlag(opts2::OVERRIDE_TOOLBAR_SIZE))
+    setIconSize(OptionData::instance().getGuiToolbarSize());
+
   if(settings.contains(lnm::MAINWINDOW_WIDGET_DOCKHANDLER))
   {
     dockHandler->restoreState(settings.valueVar(lnm::MAINWINDOW_WIDGET_DOCKHANDLER).toByteArray());
@@ -3961,6 +3965,11 @@ void MainWindow::restoreStateMain()
 
 void MainWindow::optionsChanged()
 {
+  if(OptionData::instance().getFlags2().testFlag(opts2::OVERRIDE_TOOLBAR_SIZE))
+    setIconSize(OptionData::instance().getGuiToolbarSize());
+  else
+    setIconSize(defaultToolbarIconSize);
+
   dockHandler->setAutoRaiseDockWindows(OptionData::instance().getFlags2().testFlag(opts2::RAISE_DOCK_WINDOWS));
   dockHandler->setAutoRaiseMainWindow(OptionData::instance().getFlags2().testFlag(opts2::RAISE_MAIN_WINDOW));
 }
