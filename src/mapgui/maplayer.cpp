@@ -118,6 +118,12 @@ MapLayer& MapLayer::approachText(bool value)
   return *this;
 }
 
+MapLayer& MapLayer::approachTextDetail(bool value)
+{
+  layerApproachTextDetail = value;
+  return *this;
+}
+
 MapLayer& MapLayer::routeTextAndDetail(bool value)
 {
   layerRouteTextAndDetail = value;

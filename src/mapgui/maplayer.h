@@ -78,6 +78,7 @@ public:
   MapLayer& approach(bool value = true);
   MapLayer& approachDetail(bool value = true);
   MapLayer& approachText(bool value = true);
+  MapLayer& approachTextDetail(bool value = true);
 
   MapLayer& routeTextAndDetail(bool value = true);
 
@@ -236,6 +237,11 @@ public:
   bool isApproachText() const
   {
     return layerApproachText;
+  }
+
+  bool isApproachTextDetails() const
+  {
+    return layerApproachTextDetail;
   }
 
   bool isAirportOverviewRunway() const
@@ -655,7 +661,8 @@ private:
        layerAirportDiagramRunway = false, layerAirportDiagramDetail = false, layerAirportDiagramDetail2 = false,
        layerAirportDiagramDetail3 = false, layerAirportSoft = false, layerAirportNoRating = false,
        layerAirportIdent = false, layerAirportName = false, layerAirportInfo = false, layerApproach = false,
-       layerApproachDetail = false, layerApproachText = false, layerRouteTextAndDetail = false, layerUserpoint = false;
+       layerApproachDetail = false, layerApproachText = false, layerApproachTextDetail = false, layerRouteTextAndDetail = false,
+       layerUserpoint = false;
 
   bool layerAirportWeather = false, layerAirportWeatherDetails = false;
 

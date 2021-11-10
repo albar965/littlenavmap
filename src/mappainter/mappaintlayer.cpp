@@ -212,7 +212,7 @@ void MapPaintLayer::initMapLayerSettings()
 
   // Create a default layer with all features enabled
   // Features are switched off step by step when adding new (higher) layers
-  MapLayer defLayer = MapLayer(0).airport().approach().approachText().approachDetail().airportName().airportIdent().
+  MapLayer defLayer = MapLayer(0).airport().approach().approachText().approachTextDetail().approachDetail().airportName().airportIdent().
                       airportSoft().airportNoRating().airportOverviewRunway().airportSource(layer::ALL).
 
                       airportWeather().airportWeatherDetails().
@@ -327,6 +327,7 @@ void MapPaintLayer::initMapLayerSettings()
   append(defLayer.clone(25.f).airportDiagramRunway().
          airportSymbolSize(18).airportInfo().
          airportMsa().
+         approachTextDetail(false).
          waypointSymbolSize(8).waypointName().
          windBarbsSymbolSize(16).
          aiAircraftGroundText(false).
@@ -344,6 +345,7 @@ void MapPaintLayer::initMapLayerSettings()
   append(defLayer.clone(50.f).
          airportSymbolSize(16).airportInfo().
          airportMsa().
+         approachTextDetail(false).
          waypointSymbolSize(6).
          windBarbsSymbolSize(16).
          aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
@@ -360,6 +362,7 @@ void MapPaintLayer::initMapLayerSettings()
   append(defLayer.clone(100.f).
          airportSymbolSize(16).
          airportMsa().
+         approachTextDetail(false).
          waypointSymbolSize(3).
          windBarbsSymbolSize(14).
          aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
@@ -378,7 +381,7 @@ void MapPaintLayer::initMapLayerSettings()
          airportOverviewRunway(false).airportName(false).
          windBarbsSymbolSize(14).
          airportMsa().
-         approachText(false).
+         approachText(false).approachTextDetail(false).
          aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
          waypoint(false).
          vorSymbolSize(12).ndbSymbolSize(12).
@@ -394,7 +397,7 @@ void MapPaintLayer::initMapLayerSettings()
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
          windBarbsSymbolSize(14).
          airportMsa().
-         approachText(false).
+         approachText(false).approachTextDetail(false).
          aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
          onlineAircraftText(false).
          airwayWaypoint().
@@ -409,7 +412,7 @@ void MapPaintLayer::initMapLayerSettings()
          airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
          windBarbsSymbolSize(12).
          airportMsa().
-         approachText(false).
+         approachText(false).approachTextDetail(false).
          aiAircraftGround(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
          aiAircraftSize(26).
@@ -426,7 +429,7 @@ void MapPaintLayer::initMapLayerSettings()
   append(defLayer.clone(750.f).airportSymbolSize(8).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
          windBarbsSymbolSize(12).
-         approachText(false).
+         approachText(false).approachTextDetail(false).
          aiAircraftGround(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
          aiAircraftSize(24).
@@ -442,7 +445,7 @@ void MapPaintLayer::initMapLayerSettings()
   append(defLayer.clone(1200.f).airportSymbolSize(6).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
          windBarbsSymbolSize(10).
-         approachText(false).approachDetail(false).
+         approachText(false).approachDetail(false).approachTextDetail(false).
          aiAircraftGround(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
          aiAircraftSize(20).
@@ -463,7 +466,7 @@ void MapPaintLayer::initMapLayerSettings()
          airportWeather(false).airportWeatherDetails(false).
          windBarbsSymbolSize(6).
          minimumAltitude(false).
-         approachText(false).approachDetail(false).
+         approachText(false).approachDetail(false).approachTextDetail(false).
          aiAircraftGround(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
          aiAircraftSize(10).
@@ -482,7 +485,7 @@ void MapPaintLayer::initMapLayerSettings()
          airportWeather(false).airportWeatherDetails(false).
          windBarbs(false).
          minimumAltitude(false).
-         approach(false).approachText(false).approachDetail(false).
+         approach(false).approachText(false).approachDetail(false).approachTextDetail(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
          aiAircraftSize(10).
@@ -503,7 +506,7 @@ void MapPaintLayer::initMapLayerSettings()
          windBarbs(false).
          minimumAltitude(false).
          routeTextAndDetail(false).
-         approach(false).approachText(false).approachDetail(false).
+         approach(false).approachText(false).approachDetail(false).approachTextDetail(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
          onlineAircraft(false).onlineAircraftText(false).

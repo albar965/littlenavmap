@@ -1157,6 +1157,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 {
   const proc::MapProcedureLeg& leg = legs.at(index);
   bool drawText = context->mapLayerRoute->isApproachText() && drawTextFlag;
+  bool drawTextDetails = (context->mapLayerRoute->isApproachTextDetails() || legs.mapType & proc::PROCEDURE_SID_STAR_ALL) && drawTextFlag;
 
   // Debugging code for drawing ================================================
 #ifdef DEBUG_APPROACH_PAINT
@@ -1264,12 +1265,16 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     {
       texts.append("RW" % legs.runwayEnd.name);
 
-      proc::MapAltRestriction altRestriction;
-      altRestriction.descriptor = proc::MapAltRestriction::AT;
-      altRestriction.alt1 = legs.runwayEnd.getPosition().getAltitude();
-      altRestriction.alt2 = 0.f;
+      if(drawTextDetails)
+      {
+        proc::MapAltRestriction altRestriction;
+        altRestriction.descriptor = proc::MapAltRestriction::AT;
+        altRestriction.alt1 = legs.runwayEnd.getPosition().getAltitude();
+        altRestriction.alt2 = 0.f;
 
-      texts.append(proc::altRestrictionTextNarrow(altRestriction));
+        texts.append(proc::altRestrictionTextNarrow(altRestriction));
+      }
+
       if(drawText)
         paintProcedureUnderlay(leg, x, y, defaultOverflySize);
       paintProcedurePoint(x, y, false);
@@ -1304,9 +1309,12 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     // All legs with a calculated end point
     if(wToSBuf(leg.line.getPos2(), x, y, margins))
     {
-      texts.append(leg.displayText);
-      texts.append(proc::altRestrictionTextNarrow(altRestr));
-      texts.append(proc::speedRestrictionTextNarrow(speedRestr));
+      if(drawTextDetails)
+      {
+        texts.append(leg.displayText);
+        texts.append(proc::altRestrictionTextNarrow(altRestr));
+        texts.append(proc::speedRestrictionTextNarrow(speedRestr));
+      }
       if(drawText)
         paintProcedureUnderlay(leg, x, y, defaultOverflySize);
       paintProcedurePoint(x, y, false);
@@ -1336,7 +1344,8 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
       if(wToSBuf(leg.interceptPos, x, y, margins))
       {
         // Draw intercept comment - no altitude restriction and no underlay there
-        texts.append(leg.displayText);
+        if(drawTextDetails)
+          texts.append(leg.displayText);
 
         paintProcedurePoint(x, y, false);
         if(drawText)
@@ -1345,17 +1354,23 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 
       // Clear text from "intercept" and add restrictions
       texts.clear();
-      texts.append(proc::altRestrictionTextNarrow(altRestr));
-      texts.append(proc::speedRestrictionTextNarrow(speedRestr));
+      if(drawTextDetails)
+      {
+        texts.append(proc::altRestrictionTextNarrow(altRestr));
+        texts.append(proc::speedRestrictionTextNarrow(speedRestr));
+      }
     }
     else
     {
       if(lastInTransition)
         return;
 
-      texts.append(leg.displayText);
-      texts.append(proc::altRestrictionTextNarrow(altRestr));
-      texts.append(proc::speedRestrictionTextNarrow(speedRestr));
+      if(drawTextDetails)
+      {
+        texts.append(leg.displayText);
+        texts.append(proc::altRestrictionTextNarrow(altRestr));
+        texts.append(proc::speedRestrictionTextNarrow(speedRestr));
+      }
     }
   }
   else
@@ -1363,13 +1378,16 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     if(lastInTransition)
       return;
 
-    texts.append(leg.displayText);
-    texts.append(proc::altRestrictionTextNarrow(altRestr));
-    texts.append(proc::speedRestrictionTextNarrow(speedRestr));
+    if(drawTextDetails)
+    {
+      texts.append(leg.displayText);
+      texts.append(proc::altRestrictionTextNarrow(altRestr));
+      texts.append(proc::speedRestrictionTextNarrow(speedRestr));
+    }
   }
 
   // Merge restrictions between overlapping fixes across different procedures
-  if(lastLegPoint.isValid() && lastLegPoint.fixPos.almostEqual(leg.fixPos) &&
+  if(drawTextDetails && lastLegPoint.isValid() && lastLegPoint.fixPos.almostEqual(leg.fixPos) &&
      lastLegPoint.fixIdent == leg.fixIdent && lastLegPoint.fixRegion == leg.fixRegion &&
      // Do not merge text from legs which are labeled at calculated end position
      !contains(lastLegPoint.type, {proc::COURSE_TO_ALTITUDE,
@@ -1399,7 +1417,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   {
     const proc::MapProcedureLeg& nextLeg = legs.at(index - 1);
 
-    if(nextLeg.isTransition() && leg.isApproach() && nextLeg.fixPos.almostEqual(leg.fixPos) &&
+    if(drawTextDetails && nextLeg.isTransition() && leg.isApproach() && nextLeg.fixPos.almostEqual(leg.fixPos) &&
        nextLeg.fixIdent == leg.fixIdent && nextLeg.fixRegion == leg.fixRegion)
     {
       // Merge restriction texts from last transition and this approach leg
@@ -1800,13 +1818,24 @@ void MapPainterRoute::drawStartParking()
         float x, y;
         if(wToSBuf(startPos, x, y, QMargins(20, 20, 20, 20)))
         {
+
           // At least 10 pixel size - unaffected by scaling
           int w = std::max(10, scale->getPixelIntForFeet(size, 90));
           int h = std::max(10, scale->getPixelIntForFeet(size, 0));
 
-          context->painter->setPen(QPen(Qt::black, 9, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-          context->painter->drawEllipse(QPointF(x, y), w, h);
-          context->painter->setPen(QPen(OptionData::instance().getFlightplanColor(), 5, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+          bool transparent = context->flags2.testFlag(opts2::MAP_HIGHLIGHT_TRANSPARENT);
+          if(!transparent)
+          {
+            context->painter->setPen(QPen(Qt::black, 9, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+            context->painter->drawEllipse(QPointF(x, y), w, h);
+          }
+
+          float alpha = transparent ? (1.f - context->transparencyHighlight) : 1.f;
+          context->painter->setPen(QPen(mapcolors::adjustAlphaF(OptionData::instance().getFlightplanColor(), alpha),
+                                        transparent ? 1.f : 5.f, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+          context->painter->setBrush(transparent ?
+                                     QBrush(mapcolors::adjustAlphaF(OptionData::instance().getFlightplanColor(), alpha)) :
+                                     QBrush(Qt::NoBrush));
           context->painter->drawEllipse(QPointF(x, y), w, h);
         }
       }
