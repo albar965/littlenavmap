@@ -495,7 +495,7 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
     if(routeIndex >= size())
       routeIndex = size() - 1;
 
-    float distToCurrent = 0.f;
+    double distToCurrent = 0.;
 
     bool activeIsMissed = activeLeg.getProcedureLeg().isMissed();
     bool activeIsAlternate = activeLeg.isAlternate();
@@ -519,62 +519,71 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
 #endif
 
     if(nextLegDistance != nullptr)
-      *nextLegDistance = distToCurrent;
+      *nextLegDistance = static_cast<float>(distToCurrent);
 
     // Sum up all distances along the legs
     // Ignore missed approach legs until the active is a missedd approach leg
-    float fromStart = 0.f;
+    double fromStart = 0.;
     for(int i = 0; i <= routeIndex; i++)
     {
-      if(!value(i).getProcedureLeg().isMissed() || activeIsMissed ||
-         !value(i).isAlternate() || activeIsAlternate)
+      if(!value(i).getProcedureLeg().isMissed() || activeIsMissed || !value(i).isAlternate() || activeIsAlternate)
         fromStart += value(i).getDistanceTo();
       else
         break;
     }
-    float fromStartLegs = fromStart;
+
+    double fromStartLegs = fromStart;
     fromStart -= distToCurrent;
     fromStart = std::abs(fromStart);
 
     if(distFromStart != nullptr)
-      *distFromStart = std::max(fromStart, 0.f);
+      *distFromStart = atools::minmax(0.f, totalDistance, static_cast<float>(fromStart));
 
     if(projectionDistance != nullptr)
-      *projectionDistance = projectedDistance(activeLegResult, fromStartLegs, activeLegIndex);
+      *projectionDistance = projectedDistance(activeLegResult, static_cast<float>(fromStartLegs), activeLegIndex);
 
     if(distToDest != nullptr)
     {
+      double toDest = 0.;
       if(getSizeWithoutAlternates() == 1)
-        *distToDest = meterToNm(activePos.pos.distanceMeterTo(first().getPosition()));
+        // Single airport in plan only - calculate direct distance to
+        toDest = meterToNm(activePos.pos.distanceMeterTo(first().getPosition()));
       else
       {
         if(activeIsMissed)
         {
           // Summarize remaining missed leg distance if on missed
-          *distToDest = 0.f;
           for(int i = routeIndex + 1; i < size(); i++)
           {
             if(value(i).getProcedureLeg().isMissed())
-              *distToDest += value(i).getDistanceTo();
+              toDest += value(i).getDistanceTo();
           }
-          *distToDest += distToCurrent;
-          *distToDest = std::abs(*distToDest);
+          toDest += distToCurrent;
         }
         else if(activeIsAlternate)
         {
           // Summarize remaining leg distance to alternate if on alternate
-          *distToDest = 0.f;
           for(int i = routeIndex + 1; i < size(); i++)
           {
             if(value(i).isAlternate())
-              *distToDest += value(i).getDistanceTo();
+              toDest += value(i).getDistanceTo();
           }
-          *distToDest += distToCurrent;
-          *distToDest = std::abs(*distToDest);
+          toDest += distToCurrent;
         }
         else
-          *distToDest = std::max(totalDistance - fromStart, 0.f);
+        {
+          int destLegIdx = getDestinationLegIndex();
+          for(int i = routeIndex; i <= destLegIdx; i++)
+          {
+            if(!value(i).getProcedureLeg().isMissed() || activeIsMissed || !value(i).isAlternate() || activeIsAlternate)
+              toDest += value(i).getDistanceTo();
+            else
+              break;
+          }
+          toDest = toDest - value(routeIndex).getDistanceTo() + distToCurrent;
+        }
       }
+      *distToDest = atools::minmax(0.f, totalDistance, static_cast<float>(toDest));
     }
 
     return true;
