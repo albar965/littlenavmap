@@ -4173,8 +4173,8 @@ void RouteController::updateTableModel()
 
     // Course =====================
     bool afterArrivalAirport = route.isAirportAfterArrival(i);
-    if(row > 0 && !afterArrivalAirport && leg.getDistanceTo() < map::INVALID_DISTANCE_VALUE &&
-       leg.getDistanceTo() > 0.f)
+    if(row > 0 && !afterArrivalAirport && leg.getDistanceTo() < map::INVALID_DISTANCE_VALUE && leg.getDistanceTo() > 0.f &&
+       !leg.noCourseDisplay())
     {
       if(leg.getCourseToMag() < map::INVALID_COURSE_VALUE)
         itemRow[rcol::COURSE] = new QStandardItem(QLocale().toString(leg.getCourseToMag(), 'f', 0));
@@ -4182,9 +4182,10 @@ void RouteController::updateTableModel()
         itemRow[rcol::COURSETRUE] = new QStandardItem(QLocale().toString(leg.getCourseToTrue(), 'f', 0));
     }
 
+    // Distance =====================
     if(!afterArrivalAirport)
     {
-      if(leg.getDistanceTo() < map::INVALID_DISTANCE_VALUE) // Distance =====================
+      if(leg.getDistanceTo() < map::INVALID_DISTANCE_VALUE /*&& !leg.noDistanceDisplay()*/)
       {
         cumulatedDistance += leg.getDistanceTo();
         itemRow[rcol::DIST] = new QStandardItem(Unit::distNm(leg.getDistanceTo(), false));

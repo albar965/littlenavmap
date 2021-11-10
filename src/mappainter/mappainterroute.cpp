@@ -75,7 +75,17 @@ void MapPainterRoute::render()
 
 QString MapPainterRoute::buildLegText(const RouteLeg& leg)
 {
-  return buildLegText(leg.getDistanceTo(), leg.getCourseToMag(), leg.getCourseToTrue());
+  float distanceTo = leg.getDistanceTo();
+  float courseToMag = leg.getCourseToMag();
+  float courseToTrue = leg.getCourseToTrue();
+
+  if(leg.noCourseDisplay())
+    courseToMag = courseToTrue = map::INVALID_COURSE_VALUE;
+
+  if(leg.noDistanceDisplay())
+    distanceTo = map::INVALID_DISTANCE_VALUE;
+
+  return buildLegText(distanceTo, courseToMag, courseToTrue);
 }
 
 QString MapPainterRoute::buildLegText(float dist, float courseGcMag, float courseGcTrue)
@@ -85,11 +95,11 @@ QString MapPainterRoute::buildLegText(float dist, float courseGcMag, float cours
 
   QStringList texts;
 
-  if(context->dOptRoute(optsd::ROUTE_DISTANCE) && dist < map::INVALID_DISTANCE_VALUE / 2.f)
+  if(context->dOptRoute(optsd::ROUTE_DISTANCE) && dist < map::INVALID_DISTANCE_VALUE)
     texts.append(Unit::distNm(dist, true /*addUnit*/, 20, true /*narrow*/));
 
-  bool magGc = context->dOptRoute(optsd::ROUTE_MAG_COURSE_GC) && courseGcMag < map::INVALID_COURSE_VALUE / 2.f;
-  bool trueGc = context->dOptRoute(optsd::ROUTE_TRUE_COURSE_GC) && courseGcTrue < map::INVALID_COURSE_VALUE / 2.f;
+  bool magGc = context->dOptRoute(optsd::ROUTE_MAG_COURSE_GC) && courseGcMag < map::INVALID_COURSE_VALUE;
+  bool trueGc = context->dOptRoute(optsd::ROUTE_TRUE_COURSE_GC) && courseGcTrue < map::INVALID_COURSE_VALUE;
 
   QString courseGcMagStr = QString::number(ageo::normalizeCourse(courseGcMag), 'f', 0);
   QString courseGcTrueStr = QString::number(ageo::normalizeCourse(courseGcTrue), 'f', 0);
@@ -611,6 +621,11 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
             if(context->dOptRoute(optsd::ROUTE_MAG_COURSE_GC))
               courseTrue = leg.calculatedTrueCourse;
           }
+
+          if(leg.noCourseDisplay())
+            courseMag = courseTrue = map::INVALID_COURSE_VALUE;
+          if(leg.noDistanceDisplay())
+            dist = map::INVALID_DISTANCE_VALUE;
 
           approachTexts.append(buildLegText(dist, courseMag, courseTrue));
           lines.append(leg.line);

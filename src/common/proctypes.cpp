@@ -702,7 +702,7 @@ proc::LegSpecialType specialType(const QString& arincDescrCode)
 
 bool MapProcedureLeg::noCourseDisplay() const
 {
-  return type == /*proctypes::INITIAL_FIX ||*/ isCircular();
+  return isCircular() || type == proc::DIRECT_TO_FIX;
 }
 
 bool MapProcedureLeg::noIdentDisplay() const
