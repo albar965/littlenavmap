@@ -614,8 +614,7 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
       return true;
     }
     // Edit route =======================================================================
-    else if(event->modifiers() == (Qt::AltModifier | Qt::ControlModifier) ||
-            event->modifiers() == (Qt::AltModifier | Qt::ShiftModifier))
+    else if(event->modifiers() == (Qt::AltModifier | Qt::ControlModifier) || event->modifiers() == (Qt::AltModifier | Qt::ShiftModifier))
     {
       // First check for not editable points if these are procedures which can be removed ======================
       int routeIndex = getScreenIndexConst()->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
@@ -1950,9 +1949,8 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapTypes& type, const map
 
   for(const map::MapAirport& obj : result.airports)
   {
-    QAction *action = new QAction(symbolPainter.createAirportIcon(obj, ICON_SIZE),
-                                  menuText.arg(map::airportText(obj, 20)), this);
-    action->setData(QVariantList({obj.id, map::AIRPORT}));
+    QAction *action = new QAction(symbolPainter.createAirportIcon(obj, ICON_SIZE), menuText.arg(map::airportText(obj, 20)), this);
+    action->setData(QVariant::fromValue(map::MapObjectRef(obj.id, map::AIRPORT)));
     menu.addAction(action);
   }
 
@@ -1963,23 +1961,20 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapTypes& type, const map
 
   for(const map::MapVor& obj : result.vors)
   {
-    QAction *action = new QAction(symbolPainter.createVorIcon(obj, ICON_SIZE),
-                                  menuText.arg(map::vorText(obj)), this);
-    action->setData(QVariantList({obj.id, map::VOR}));
+    QAction *action = new QAction(symbolPainter.createVorIcon(obj, ICON_SIZE), menuText.arg(map::vorText(obj)), this);
+    action->setData(QVariant::fromValue(map::MapObjectRef(obj.id, map::VOR)));
     menu.addAction(action);
   }
   for(const map::MapNdb& obj : result.ndbs)
   {
-    QAction *action = new QAction(symbolPainter.createNdbIcon(ICON_SIZE),
-                                  menuText.arg(map::ndbText(obj)), this);
-    action->setData(QVariantList({obj.id, map::NDB}));
+    QAction *action = new QAction(symbolPainter.createNdbIcon(ICON_SIZE), menuText.arg(map::ndbText(obj)), this);
+    action->setData(QVariant::fromValue(map::MapObjectRef(obj.id, map::NDB)));
     menu.addAction(action);
   }
   for(const map::MapWaypoint& obj : result.waypoints)
   {
-    QAction *action = new QAction(symbolPainter.createWaypointIcon(ICON_SIZE),
-                                  menuText.arg(map::waypointText(obj)), this);
-    action->setData(QVariantList({obj.id, map::WAYPOINT}));
+    QAction *action = new QAction(symbolPainter.createWaypointIcon(ICON_SIZE), menuText.arg(map::waypointText(obj)), this);
+    action->setData(QVariant::fromValue(map::MapObjectRef(obj.id, map::WAYPOINT)));
     menu.addAction(action);
   }
 
@@ -1996,9 +1991,8 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapTypes& type, const map
     }
     else
     {
-      action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE),
-                           menuText.arg(map::userpointText(obj)), this);
-      action->setData(QVariantList({obj.id, map::USERPOINT}));
+      action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE), menuText.arg(map::userpointText(obj)), this);
+      action->setData(QVariant::fromValue(map::MapObjectRef(obj.id, map::USERPOINT)));
       menu.addAction(action);
     }
     numUserpoints++;
@@ -2007,16 +2001,14 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapTypes& type, const map
   // Always present - userpoint
   menu.addSeparator();
   {
-    QAction *action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE),
-                                  menuText.arg(tr("Position")), this);
-    action->setData(QVariantList({-1, map::USERPOINTROUTE}));
+    QAction *action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE), menuText.arg(tr("Position")), this);
+    action->setData(QVariant::fromValue(map::MapObjectRef(-1, map::USERPOINTROUTE)));
     menu.addAction(action);
   }
 
   // Always present - cancel
   menu.addSeparator();
-  menu.addAction(new QAction(QIcon(":/littlenavmap/resources/icons/cancel.svg"),
-                             tr("Cancel"), this));
+  menu.addAction(new QAction(QIcon(":/littlenavmap/resources/icons/cancel.svg"), tr("Cancel"), this));
 
   // Execute the menu
   QAction *action = menu.exec(QCursor::pos());
@@ -2024,9 +2016,9 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapTypes& type, const map
   if(action != nullptr && !action->data().isNull())
   {
     // Get id and type from selected action
-    QVariantList data = action->data().toList();
-    id = data.first().toInt();
-    type = data.at(1).value<map::MapTypes>();
+    map::MapObjectRef data = action->data().value<map::MapObjectRef>();
+    id = data.id;
+    type = data.objType;
     return true;
   }
   return false;

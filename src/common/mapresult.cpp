@@ -575,113 +575,53 @@ bool MapResult::getIdAndType(int& id, MapTypes& type, const std::initializer_lis
     if(!isEmpty(t))
     {
       if(t == map::AIRPORT)
-      {
         id = airports.first().getId();
-        break;
-      }
       else if(t == map::AIRPORT_MSA)
-      {
         id = airportMsa.first().getId();
-        break;
-      }
       else if(t == map::WAYPOINT)
-      {
         id = waypoints.first().getId();
-        break;
-      }
       else if(t == map::VOR)
-      {
         id = vors.first().getId();
-        break;
-      }
       else if(t == map::NDB)
-      {
         id = ndbs.first().getId();
-        break;
-      }
       else if(t == map::AIRWAY)
-      {
         id = airways.first().getId();
-        break;
-      }
       else if(t == map::RUNWAYEND)
-      {
         id = runwayEnds.first().getId();
-        break;
-      }
       else if(t == map::ILS)
-      {
         id = ils.first().getId();
-        break;
-      }
       else if(t == map::HOLDING)
-      {
         id = holdings.first().getId();
-        break;
-      }
       else if(t == map::AIRSPACE)
-      {
         id = airspaces.first().getId();
-        break;
-      }
       else if(t == map::USERPOINTROUTE)
-      {
         id = userpointsRoute.first().getId();
-        break;
-      }
       else if(t == map::USERPOINT)
-      {
         id = userpoints.first().getId();
-        break;
-      }
       else if(t == map::LOGBOOK)
-      {
         id = logbookEntries.first().getId();
-        break;
-      }
       else if(t == map::AIRCRAFT)
-      {
         id = userAircraft.getId();
-        break;
-      }
       else if(t == map::AIRCRAFT_AI)
-      {
         id = aiAircraft.first().getId();
-        break;
-      }
       else if(t == map::AIRCRAFT_ONLINE)
-      {
         id = onlineAircraft.first().getId();
-        break;
-      }
       else if(t == map::MARK_RANGE)
-      {
         id = rangeMarks.first().getId();
-        break;
-      }
       else if(t == map::MARK_DISTANCE)
-      {
         id = distanceMarks.first().getId();
-        break;
-      }
       else if(t == map::MARK_HOLDING)
-      {
         id = holdingMarks.first().getId();
-        break;
-      }
       else if(t == map::MARK_PATTERNS)
-      {
         id = patternMarks.first().getId();
-        break;
-      }
       else if(t == map::MARK_MSA)
-      {
         id = msaMarks.first().getId();
-        break;
-      }
 
       if(id != -1)
+      {
         type = t;
+        break;
+      }
     }
   }
   return id != -1;
