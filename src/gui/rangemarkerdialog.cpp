@@ -113,6 +113,12 @@ RangeMarkerDialog::RangeMarkerDialog(QWidget *parent, const atools::geo::Pos& po
   // Default is OK
   ui->buttonBoxRangeMarker->button(QDialogButtonBox::Ok)->setDefault(true);
 
+  // Change label depending on order
+  if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
+    ui->labelRangeMarkerLatLon->setText("&Longitude and Latitude:");
+  else
+    ui->labelRangeMarkerLatLon->setText("&Latitude and Longitude:");
+
   connect(ui->buttonBoxRangeMarker, &QDialogButtonBox::clicked, this, &RangeMarkerDialog::buttonBoxClicked);
   connect(ui->pushButtonRangeMarkerColor, &QPushButton::clicked, this, &RangeMarkerDialog::colorButtonClicked);
   connect(ui->lineEditRangeMarkerLatLon, &QLineEdit::textChanged, this, &RangeMarkerDialog::coordinatesEdited);
