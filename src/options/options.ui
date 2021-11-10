@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>860</width>
+    <width>902</width>
     <height>600</height>
    </rect>
   </property>
@@ -61,7 +61,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>566</width>
+             <width>595</width>
              <height>532</height>
             </rect>
            </property>
@@ -402,7 +402,7 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>566</width>
+             <width>595</width>
              <height>532</height>
             </rect>
            </property>
@@ -609,7 +609,7 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>566</width>
+             <width>595</width>
              <height>532</height>
             </rect>
            </property>
@@ -1022,10 +1022,10 @@ This does not affect the map window which can be changed separately on the optio
           <widget class="QWidget" name="scrollAreaWidgetContents_2">
            <property name="geometry">
             <rect>
-             <x>-12</x>
+             <x>0</x>
              <y>0</y>
-             <width>578</width>
-             <height>554</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_12">
@@ -4294,7 +4294,7 @@ Also affects labels at holds and traffic patterns.</string>
              <x>0</x>
              <y>0</y>
              <width>594</width>
-             <height>459</height>
+             <height>491</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -4367,7 +4367,18 @@ Also affects labels at holds and traffic patterns.</string>
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="2" column="0">
+               <item row="3" column="0" colspan="2">
+                <widget class="QCheckBox" name="checkBoxOptionsSimUpdatesConstant">
+                 <property name="toolTip">
+                  <string>Map will follow the aircraft constantly when checked.
+This is also used for &quot;Center map on aircraft and next flight plan waypoint&quot;.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Do not use box mode for following the aircraft. Move the map constantly.</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="0">
                 <widget class="QLabel" name="labelOptionsSimUpdateBox">
                  <property name="text">
                   <string>&amp;Simulator aircraft scroll box size (percent of map window size):</string>
@@ -4377,7 +4388,30 @@ Also affects labels at holds and traffic patterns.</string>
                  </property>
                 </widget>
                </item>
-               <item row="2" column="1">
+               <item row="0" column="0" colspan="2">
+                <widget class="QCheckBox" name="checkBoxOptionsSimCenterLeg">
+                 <property name="toolTip">
+                  <string>Keeps the aircraft and the next flight plan waypoint visible on the map instead of simply centering the aircraft</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Center map on aircraft and next flight plan waypoint</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="labelOptionsSimCenterLegZoom">
+                 <property name="text">
+                  <string>Zoom &amp;distance:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsSimUpdateBox</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="1">
                 <widget class="QSpinBox" name="spinBoxOptionsSimUpdateBox">
                  <property name="toolTip">
                   <string>Defines a box in percent of the map size. 
@@ -4402,27 +4436,33 @@ Ignored when &quot;Center map on aircraft and next flight plan waypoint&quot; is
                  </property>
                 </widget>
                </item>
-               <item row="1" column="0" colspan="2">
-                <widget class="QCheckBox" name="checkBoxOptionsSimUpdatesConstant">
+               <item row="1" column="1">
+                <widget class="QSpinBox" name="spinBoxOptionsSimCenterLegZoom">
                  <property name="toolTip">
-                  <string>Map will follow the aircraft constantly when checked.
-This is also used for &quot;Center map on aircraft and next flight plan waypoint&quot;.</string>
+                  <string>Adjust zoom distance when flying with &quot;Center map on aircraft and next flight plan waypoint&quot; checked.
+Smaller values zoom closer.</string>
                  </property>
-                 <property name="text">
-                  <string>&amp;Do not use box mode for following the aircraft. Move the map constantly.</string>
+                 <property name="suffix">
+                  <string> %</string>
+                 </property>
+                 <property name="minimum">
+                  <number>50</number>
+                 </property>
+                 <property name="maximum">
+                  <number>200</number>
+                 </property>
+                 <property name="singleStep">
+                  <number>5</number>
+                 </property>
+                 <property name="value">
+                  <number>100</number>
                  </property>
                 </widget>
                </item>
-               <item row="0" column="0" colspan="2">
-                <widget class="QCheckBox" name="checkBoxOptionsSimCenterLeg">
-                 <property name="toolTip">
-                  <string>Keeps the aircraft and the next flight plan waypoint visible on the map instead of simply centering the aircraft</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Center map on aircraft and next flight plan waypoint</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
+               <item row="2" column="0" colspan="2">
+                <widget class="Line" name="line">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
                  </property>
                 </widget>
                </item>
@@ -6496,7 +6536,7 @@ Currently only OpenAir is supported (*.txt). </string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>566</width>
+             <width>595</width>
              <height>532</height>
             </rect>
            </property>

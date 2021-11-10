@@ -157,6 +157,7 @@ void TrafficPatternDialog::updateRunwayLabel()
 void TrafficPatternDialog::updateWidgets()
 {
   ui->doubleSpinBoxTrafficPatternBaseDistance->setEnabled(!ui->checkBoxTrafficPattern45Degree->isChecked());
+  ui->labelTrafficPatternBaseDistance->setEnabled(!ui->checkBoxTrafficPattern45Degree->isChecked());
 }
 
 void TrafficPatternDialog::fillPatternMarker(map::PatternMarker& pattern)

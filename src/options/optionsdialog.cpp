@@ -279,6 +279,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
      ui->checkBoxOptionsSimUpdatesConstant,
      ui->spinBoxOptionsSimUpdateBox,
+     ui->spinBoxOptionsSimCenterLegZoom,
      ui->spinBoxSimMaxTrackPoints,
      ui->radioButtonOptionsStartupShowHome,
      ui->radioButtonOptionsStartupShowLast,
@@ -494,7 +495,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->pushButtonOptionsCacheClearDisk, &QPushButton::clicked, this, &OptionsDialog::clearDiskCachedClicked);
   connect(ui->pushButtonOptionsCacheShow, &QPushButton::clicked, this, &OptionsDialog::showDiskCacheClicked);
 
-  connect(ui->checkBoxOptionsSimUpdatesConstant, &QCheckBox::toggled, this, &OptionsDialog::simUpdatesConstantClicked);
+  connect(ui->checkBoxOptionsSimUpdatesConstant, &QCheckBox::toggled, this, &OptionsDialog::updateWhileFlyingWidgets);
 
   // ===========================================================================
   // Map settings
@@ -531,6 +532,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->checkBoxOptionsSimZoomOnLanding, &QCheckBox::toggled, this, &OptionsDialog::updateWhileFlyingWidgets);
   connect(ui->checkBoxOptionsSimCenterLegTable, &QCheckBox::toggled, this, &OptionsDialog::updateWhileFlyingWidgets);
   connect(ui->checkBoxOptionsSimClearSelection, &QCheckBox::toggled, this, &OptionsDialog::updateWhileFlyingWidgets);
+  connect(ui->checkBoxOptionsSimCenterLeg, &QCheckBox::toggled, this, &OptionsDialog::updateWhileFlyingWidgets);
 
   // Online tab =======================================================================
   connect(ui->radioButtonOptionsOnlineNone, &QRadioButton::clicked, this, &OptionsDialog::updateOnlineWidgetStatus);
@@ -876,7 +878,6 @@ void OptionsDialog::updateWidgetStates()
   onlineDisplayRangeClicked();
   eastWestRuleClicked();
   mapEmptyAirportsClicked(false);
-  simUpdatesConstantClicked(false);
   updateCacheElevationStates();
   updateCacheUserAirspaceStates();
   updateDatabaseButtonState();
@@ -996,7 +997,6 @@ void OptionsDialog::restoreState()
 
   widgetsToOptionData();
   updateWidgetUnits();
-  simUpdatesConstantClicked(false);
   mapEmptyAirportsClicked(false);
   updateWhileFlyingWidgets(false);
   updateButtonColors();
@@ -1425,13 +1425,6 @@ void OptionsDialog::updateDatabaseButtonState()
     ui->listWidgetOptionsDatabaseAddon->currentRow() != -1);
 }
 
-void OptionsDialog::simUpdatesConstantClicked(bool state)
-{
-  Q_UNUSED(state)
-  ui->spinBoxOptionsSimUpdateBox->setDisabled(ui->checkBoxOptionsSimUpdatesConstant->isChecked());
-  ui->labelOptionsSimUpdateBox->setDisabled(ui->checkBoxOptionsSimUpdatesConstant->isChecked());
-}
-
 void OptionsDialog::mapEmptyAirportsClicked(bool state)
 {
   Q_UNUSED(state)
@@ -1440,6 +1433,12 @@ void OptionsDialog::mapEmptyAirportsClicked(bool state)
 
 void OptionsDialog::updateWhileFlyingWidgets(bool)
 {
+  ui->spinBoxOptionsSimUpdateBox->setDisabled(ui->checkBoxOptionsSimUpdatesConstant->isChecked());
+  ui->labelOptionsSimUpdateBox->setDisabled(ui->checkBoxOptionsSimUpdatesConstant->isChecked());
+
+  ui->spinBoxOptionsSimCenterLegZoom->setEnabled(ui->checkBoxOptionsSimCenterLeg->isChecked());
+  ui->labelOptionsSimCenterLegZoom->setEnabled(ui->checkBoxOptionsSimCenterLeg->isChecked());
+
   ui->spinBoxOptionsSimDoNotFollowScrollTime->setEnabled(ui->checkBoxOptionsSimDoNotFollowScroll->isChecked());
   ui->doubleSpinBoxOptionsSimZoomOnLanding->setEnabled(ui->checkBoxOptionsSimZoomOnLanding->isChecked());
   ui->spinBoxOptionsSimCleanupTableTime->setEnabled(ui->checkBoxOptionsSimCenterLegTable->isChecked() ||
@@ -1611,6 +1610,7 @@ void OptionsDialog::widgetsToOptionData()
   data.simCleanupTableTime = ui->spinBoxOptionsSimCleanupTableTime->value();
 
   data.simUpdateBox = ui->spinBoxOptionsSimUpdateBox->value();
+  data.simUpdateBoxCenterLegZoom = ui->spinBoxOptionsSimCenterLegZoom->value();
   data.aircraftTrackMaxPoints = ui->spinBoxSimMaxTrackPoints->value();
 
   data.cacheSizeDisk = ui->spinBoxOptionsCacheDiskSize->value();
@@ -1899,6 +1899,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->doubleSpinBoxOptionsSimZoomOnLanding->setValue(data.simZoomOnLandingDist);
   ui->spinBoxOptionsSimCleanupTableTime->setValue(data.simCleanupTableTime);
   ui->spinBoxOptionsSimUpdateBox->setValue(data.simUpdateBox);
+  ui->spinBoxOptionsSimCenterLegZoom->setValue(data.simUpdateBoxCenterLegZoom);
   ui->spinBoxSimMaxTrackPoints->setValue(data.aircraftTrackMaxPoints);
   ui->spinBoxOptionsCacheDiskSize->setValue(data.cacheSizeDisk);
   ui->spinBoxOptionsCacheMemorySize->setValue(data.cacheSizeMemory);

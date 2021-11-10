@@ -1214,6 +1214,11 @@ public:
     return displayMapHighlightTransparent;
   }
 
+  int getSimUpdateBoxCenterLegZoom() const
+  {
+    return simUpdateBoxCenterLegZoom;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -1285,6 +1290,9 @@ private:
 
   // ui->spinBoxOptionsMapSimUpdateBox
   int simUpdateBox = 50;
+
+  // ui->spinBoxOptionsSimCenterLegZoom
+  int simUpdateBoxCenterLegZoom = 100;
 
   // ui->spinBoxOptionsCacheDiskSize
   int cacheSizeDisk = 2000;

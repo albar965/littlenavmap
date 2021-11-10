@@ -2365,11 +2365,15 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                 // Zoom depends on flight altitude - larger values result in closer zoom
                 float div = aircraft.getAltitudeAboveGroundFt() < 12000.f ? 2800.f : 1000.f;
 
+                // Smaller values mean zoom closer.
+                float zoomFactor = od.getSimUpdateBoxCenterLegZoom() / 100.f;
+
+                div /= zoomFactor;
+
                 // Decrease allowed minimum very close to the ground
                 float minKm = aircraft.getAltitudeAboveGroundFt() < 50 ? 0.5f : 1.0f;
 
-                float minZoomDistKm =
-                  atools::geo::nmToKm(std::min(std::max(aircraft.getAltitudeAboveGroundFt() / div, minKm), 28.f));
+                float minZoomDistKm = atools::geo::nmToKm(std::min(std::max(aircraft.getAltitudeAboveGroundFt() / div, minKm), 28.f));
 
                 // Zoom out for a maximum of four times until aircraft and waypoint fit into the shrinked rectangle
                 for(int i = 0; i < 4; i++)

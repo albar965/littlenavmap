@@ -143,7 +143,6 @@ private:
   void resetWeatherNoaaWindUrlClicked();
 
   void updateWidgetUnits();
-  void simUpdatesConstantClicked(bool state);
 
   void flightplanColorClicked();
   void flightplanOutlineColorClicked();

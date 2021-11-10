@@ -158,7 +158,7 @@ Falls back to 50, 100, 200 and 500 %dist% if empty or not valid.</string>
       <string>Places a range ring with the set radii and color when shift-clicking into the map without showing this dialog.</string>
      </property>
      <property name="text">
-      <string>Do not show this dialog when using &quot;Shift+Click&quot; in the map
+      <string>&amp;Do not show this dialog when using &quot;Shift+Click&quot; in the map
 and use range ring radii as above.</string>
      </property>
      <property name="checked">
