@@ -360,6 +360,9 @@ public:
     return showOtherFuel;
   }
 
+  /* Remove trailing zeroes if the number has a decimal point */
+  static QString adjustNum(QString num);
+
 private:
   /* Singleton */
   Unit();
