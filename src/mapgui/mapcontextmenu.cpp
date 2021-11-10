@@ -593,15 +593,15 @@ void MapContextMenu::insertPatternMenu(QMenu& menu)
   ActionCallback callback =
     [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void
     {
-      if(base != nullptr && base->objType == map::AIRPORT)
+      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_PATTERNS))
       {
-        if(!NavApp::getMapMarkHandler()->isShown(map::MARK_PATTERNS))
-        {
-          // Hidden - add remark and disable
-          text.append(tr(" (hidden on map)"));
-          disable = true;
-        }
-        else
+        // Hidden - add remark and disable
+        text.append(tr(" (hidden on map)"));
+        disable = true;
+      }
+      else
+      {
+        if(base != nullptr && base->objType == map::AIRPORT)
         {
           const map::MapAirport *airport = base->asPtr<map::MapAirport>();
           if(airport->noRunways())
@@ -611,16 +611,15 @@ void MapContextMenu::insertPatternMenu(QMenu& menu)
           }
           else
             disable = false;
+
+          // Do our own text substitution for the airport to use shorter name
+          if(text.contains("%1"))
+            text = text.arg(map::airportTextShort(*base->asPtr<map::MapAirport>(), TEXT_ELIDE_AIRPORT_NAME));
         }
-
-        // Do our own text substitution for the airport to use shorter name
-        if(text.contains("%1"))
-          text = text.arg(map::airportTextShort(*base->asPtr<map::MapAirport>(), TEXT_ELIDE_AIRPORT_NAME));
+        else
+          // No object or not an airport
+          disable = true;
       }
-      else
-        // No object or not an airport
-        disable = true;
-
     };
 
   insertMenuOrAction(menu, mc::PATTERN, MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
