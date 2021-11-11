@@ -1040,7 +1040,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
       if(perf->getCruiseFuelFlow() > 1.f)
       {
         float enduranceHours, enduranceNm;
-        getEndurance(enduranceHours, enduranceNm);
+        getEnduranceFull(enduranceHours, enduranceNm);
         html.row2(text, tr("%1, %2").arg(Unit::distNm(enduranceNm)).arg(formatter::formatMinutesHoursLong(enduranceHours)), flags);
       }
       else
@@ -1186,12 +1186,31 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
   }
 }
 
-void AircraftPerfController::getEndurance(float& enduranceHours, float& enduranceNm)
+void AircraftPerfController::getEnduranceFull(float& enduranceHours, float& enduranceNm)
 {
   if(perf->getUsableFuel() > 1.f && perf->getCruiseSpeed() > 1.f && perf->getCruiseFuelFlow() > 1.f)
   {
-    enduranceHours = (perf->getUsableFuel() - perf->getReserveFuel()) / perf->getCruiseFuelFlow();
+    float realFuelFlow = perf->getCruiseFuelFlow() * perf->getContingencyFuelFactor();
+    enduranceHours = (perf->getUsableFuel() - perf->getReserveFuel()) / realFuelFlow;
     enduranceNm = enduranceHours * perf->getCruiseSpeed();
+  }
+  else
+  {
+    enduranceHours = map::INVALID_TIME_VALUE;
+    enduranceNm = map::INVALID_DISTANCE_VALUE;
+  }
+}
+
+void AircraftPerfController::getEnduranceCurrent(float& enduranceHours, float& enduranceNm)
+{
+  const atools::fs::sc::SimConnectUserAircraft& userAircraft = lastSimData->getUserAircraftConst();
+
+  if(userAircraft.isValid() && userAircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT &&
+     userAircraft.getFuelFlowPPH() > 1.0f && userAircraft.getGroundSpeedKts() > map::MIN_GROUND_SPEED)
+  {
+    float realFuelFlow = userAircraft.getFuelFlowPPH() * perf->getContingencyFuelFactor();
+    enduranceHours = (userAircraft.getFuelTotalWeightLbs() - perf->getReserveFuelLbs()) / realFuelFlow;
+    enduranceNm = enduranceHours * userAircraft.getGroundSpeedKts();
   }
   else
   {

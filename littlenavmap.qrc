@@ -298,5 +298,6 @@
         <file>resources/icons/mapdisplaylabels.svg</file>
         <file>resources/icons/mapdisplayflightplan.svg</file>
         <file>resources/icons/marksoff.svg</file>
+        <file>resources/icons/endurance.svg</file>
     </qresource>
 </RCC>

@@ -160,7 +160,10 @@ public:
   float getTripFuel() const;
 
   /* Current aircraft endurance with full fuel load */
-  void getEndurance(float& enduranceHours, float& enduranceNm);
+  void getEnduranceFull(float& enduranceHours, float& enduranceNm);
+
+  /* Current aircraft endurance based on current fuel flow */
+  void getEnduranceCurrent(float& enduranceHours, float& enduranceNm);
 
 signals:
   /* Sent if performance or wind has changed */

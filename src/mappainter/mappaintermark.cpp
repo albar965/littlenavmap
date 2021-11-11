@@ -21,6 +21,7 @@
 #include "navapp.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/maplayer.h"
+#include "perf/aircraftperfcontroller.h"
 #include "common/mapcolors.h"
 #include "common/formatter.h"
 #include "geo/calculations.h"
@@ -103,9 +104,8 @@ void MapPainterMark::render()
     paintDistanceMarks();
 
   paintCompassRose();
-
+  paintEndurance();
   paintHighlights();
-
   paintRouteDrag();
   paintUserpointDrag();
 
@@ -119,7 +119,6 @@ void MapPainterMark::render()
 #endif
 }
 
-/* Draw black yellow cross for search distance marker */
 void MapPainterMark::paintMark()
 {
   GeoPainter *painter = context->painter;
@@ -135,7 +134,6 @@ void MapPainterMark::paintMark()
   }
 }
 
-/* Paint the center of the home position */
 void MapPainterMark::paintHome()
 {
   GeoPainter *painter = context->painter;
@@ -154,7 +152,6 @@ void MapPainterMark::paintHome()
   }
 }
 
-/* Draw rings around objects that are selected on the search or flight plan tables */
 void MapPainterMark::paintHighlights()
 {
   bool transparent = context->flags2.testFlag(opts2::MAP_HIGHLIGHT_TRANSPARENT);
@@ -781,7 +778,6 @@ void MapPainterMark::paintAirspace(const map::MapAirspace& airspace)
   }
 }
 
-/* Draw all rang rings. This includes the red rings and the radio navaid ranges. */
 void MapPainterMark::paintRangeMarks()
 {
   atools::util::PainterContextSaver saver(context->painter);
@@ -850,7 +846,44 @@ void MapPainterMark::paintRangeMarks()
   }
 }
 
-/* Draw a compass rose for the user aircraft with tick marks. */
+void MapPainterMark::paintEndurance()
+{
+  if(context->objectDisplayTypes & map::AIRCRAFT_ENDURANCE)
+  {
+    Pos pos = mapPaintWidget->getUserAircraft().getPosition();
+    if(pos.isValid())
+    {
+      // Get endurance
+      float enduranceHours, enduranceNm;
+      NavApp::getAircraftPerfController()->getEnduranceCurrent(enduranceHours, enduranceNm);
+      if(enduranceNm < map::INVALID_DISTANCE_VALUE)
+      {
+        Marble::GeoPainter *painter = context->painter;
+        atools::util::PainterContextSaver saver(painter);
+
+        float lineWidth = context->szF(context->thicknessRangeDistance, 2.f);
+        painter->setPen(QPen(Qt::black, lineWidth, Qt::DotLine, Qt::FlatCap, Qt::MiterJoin));
+        painter->setBrush(Qt::NoBrush);
+        context->szFont(context->textSizeRangeDistance);
+
+        // Draw circle and get a text placement position
+        int xt, yt;
+        paintCircle(painter, pos, enduranceNm, context->drawFast, xt, yt);
+
+        if(xt != -1 && yt != -1)
+        {
+          // paintCircle found a text position - draw text
+          painter->setPen(mapcolors::rangeRingTextColor);
+
+          yt += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
+          symbolPainter->textBox(painter, {Unit::distNm(enduranceNm, true, 5, true), formatter::formatMinutesHoursLong(enduranceHours)},
+                                 painter->pen(), xt, yt, textatt::CENTER);
+        }
+      }
+    }
+  }
+}
+
 void MapPainterMark::paintCompassRose()
 {
   if(context->objectDisplayTypes & map::COMPASS_ROSE && mapPaintWidget->distance() < MIN_VIEW_DISTANCE_COMPASS_ROSE_KM)
@@ -1119,7 +1152,6 @@ void MapPainterMark::paintCompassRose()
   }
 }
 
-/* Draw great circle line distance measurement lines */
 void MapPainterMark::paintDistanceMarks()
 {
   atools::util::PainterContextSaver saver(context->painter);

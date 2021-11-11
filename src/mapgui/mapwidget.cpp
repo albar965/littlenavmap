@@ -2866,19 +2866,16 @@ void MapWidget::resetSettingActionsToDefault()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  atools::gui::SignalBlocker blocker({ui->actionMapShowAirports, ui->actionMapShowSoftAirports,
-                                      ui->actionMapShowEmptyAirports, ui->actionMapShowAddonAirports,
-                                      ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
+  atools::gui::SignalBlocker blocker({ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
+                                      ui->actionMapShowAddonAirports, ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
                                       ui->actionMapShowIls, ui->actionMapShowGls, ui->actionMapShowHolding, ui->actionMapShowAirportMsa,
-                                      ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways,
-                                      ui->actionMapShowTracks, ui->actionShowAirspaces, ui->actionMapShowRoute,
-                                      ui->actionMapShowTocTod, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
-                                      ui->actionMapShowCompassRoseAttach, ui->actionMapAircraftCenter,
-                                      ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
-                                      ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
-                                      ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
-                                      ui->actionMapShowMinimumAltitude, ui->actionMapShowAirportWeather,
-                                      ui->actionMapShowSunShading});
+                                      ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks,
+                                      ui->actionShowAirspaces, ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft,
+                                      ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach, ui->actionMapShowEndurance,
+                                      ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
+                                      ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr, ui->actionMapShowGrid,
+                                      ui->actionMapShowCities, ui->actionMapShowHillshading, ui->actionMapShowMinimumAltitude,
+                                      ui->actionMapShowAirportWeather, ui->actionMapShowSunShading});
 
   // Menu map =====================================
   ui->actionMapAircraftCenter->setChecked(true);
@@ -2913,6 +2910,7 @@ void MapWidget::resetSettingActionsToDefault()
   ui->actionMapShowAircraftTrack->setChecked(true);
   ui->actionMapShowCompassRose->setChecked(false);
   ui->actionMapShowCompassRoseAttach->setChecked(true);
+  ui->actionMapShowEndurance->setChecked(false);
 
   // -----------------
   ui->actionMapShowAircraftAi->setChecked(true);
@@ -3044,6 +3042,7 @@ void MapWidget::updateMapObjectsShown()
 
   setShowMapFeaturesDisplay(map::COMPASS_ROSE, ui->actionMapShowCompassRose->isChecked());
   setShowMapFeaturesDisplay(map::COMPASS_ROSE_ATTACH, ui->actionMapShowCompassRoseAttach->isChecked());
+  setShowMapFeaturesDisplay(map::AIRCRAFT_ENDURANCE, ui->actionMapShowEndurance->isChecked());
   setShowMapFeatures(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
   setShowMapFeaturesDisplay(map::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
   setShowMapFeatures(map::AIRCRAFT_AI, ui->actionMapShowAircraftAi->isChecked());

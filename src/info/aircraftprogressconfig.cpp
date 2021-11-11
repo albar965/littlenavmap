@@ -117,7 +117,7 @@ void AircraftProgressConfig::progressConfiguration()
   treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_FUEL_FLOW,    tr("Fuel Flow"), tr("Current fuel flow for all engines."), QString());
   treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_FUEL,         tr("Fuel"), tr("Current fuel amount on board."), QString());
   treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_GROSS_WEIGHT, tr("Gross Weight"), tr("Current aircraft gross weight."), QString());
-  treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_ENDURANCE,    tr("Endurance"), tr("Estimated endurance given current fuel flow and speed not considering reserves."), QString());
+  treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_ENDURANCE,    tr("Endurance"), tr("Estimated endurance based on current fuel flow and groundspeed considering reserves and contingency."), QString());
   treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_ICE,          tr("Ice"), tr("Aircraft icing, if any."), QString());
 
   // Altitude ==========================================================================================================

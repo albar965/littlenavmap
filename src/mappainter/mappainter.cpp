@@ -141,8 +141,7 @@ bool MapPainter::wToSBuf(const Pos& coords, int& x, int& y, QSize size, const QM
   return visible;
 }
 
-bool MapPainter::wToSBuf(const Pos& coords, float& x, float& y, QSize size, const QMargins& margins,
-                         bool *hidden) const
+bool MapPainter::wToSBuf(const Pos& coords, float& x, float& y, QSize size, const QMargins& margins, bool *hidden) const
 {
   bool hid = false;
   bool visible = wToS(coords, x, y, size, &hid);
@@ -157,8 +156,7 @@ bool MapPainter::wToSBuf(const Pos& coords, float& x, float& y, QSize size, cons
   return visible;
 }
 
-void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast,
-                             int& xtext, int& ytext)
+void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, int& xtext, int& ytext)
 {
   QRect vpRect(painter->viewport());
 

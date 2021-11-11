@@ -420,6 +420,7 @@
     <addaction name="separator"/>
     <addaction name="actionMapShowAircraft"/>
     <addaction name="actionMapShowAircraftTrack"/>
+    <addaction name="actionMapShowEndurance"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowCompassRose"/>
     <addaction name="actionMapShowCompassRoseAttach"/>
@@ -9449,7 +9450,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/compassrose.svg</normaloff>:/littlenavmap/resources/icons/compassrose.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Compass Rose</string>
+    <string>Show &amp;Compass Rose</string>
    </property>
    <property name="toolTip">
     <string>Show compass rose around user aircraft</string>
@@ -12243,6 +12244,30 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Set center mark for distance search</string>
    </property>
   </action>
+  <action name="actionMapShowEndurance">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/endurance.svg</normaloff>:/littlenavmap/resources/icons/endurance.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Aircraft &amp;Endurance</string>
+   </property>
+   <property name="toolTip">
+    <string>Show a range ring for the aircraft endurance based on current fuel flow and amount</string>
+   </property>
+   <property name="statusTip">
+    <string>Show aircraft endurance based on current fuel flow and amount</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+G</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12428,8 +12453,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

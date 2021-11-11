@@ -4115,17 +4115,12 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.id(pid::AIRCRAFT_GROSS_WEIGHT).row2(tr("Gross Weight:"),
                                              Unit::weightLbsLocalOther(userAircraft->getAirplaneTotalWeightLbs()), ahtml::NO_ENTITIES);
 
-    if(userAircraft->getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
-    {
-      if(userAircraft->getFuelFlowPPH() > 1.0f && aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED)
-      {
-        float hoursRemaining = userAircraft->getFuelTotalWeightLbs() / userAircraft->getFuelFlowPPH();
-        float distanceRemaining = hoursRemaining * aircraft.getGroundSpeedKts();
-        html.id(pid::AIRCRAFT_ENDURANCE).row2(tr("Endurance:"),
-                                              formatter::formatMinutesHoursLong(hoursRemaining) % tr(", ") %
-                                              Unit::distNm(distanceRemaining));
-      }
-    }
+    float hoursRemaining, distanceRemaining;
+    perfController->getEnduranceCurrent(hoursRemaining, distanceRemaining);
+
+    if(hoursRemaining < map::INVALID_TIME_VALUE && distanceRemaining < map::INVALID_DISTANCE_VALUE)
+      html.id(pid::AIRCRAFT_ENDURANCE).row2(tr("Endurance:"),
+                                            formatter::formatMinutesHoursLong(hoursRemaining) % tr(", ") % Unit::distNm(distanceRemaining));
 
     // Ice ===============================================
     QStringList ice;

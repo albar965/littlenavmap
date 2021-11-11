@@ -141,7 +141,7 @@ RangeMarkerDialog::RangeMarkerDialog(QWidget *parent, const atools::geo::Pos& po
 
   // Aircraft endurance label
   float enduranceHours, enduranceNm;
-  NavApp::getAircraftPerfController()->getEndurance(enduranceHours, enduranceNm);
+  NavApp::getAircraftPerfController()->getEnduranceFull(enduranceHours, enduranceNm);
 
   if(enduranceNm < map::INVALID_DISTANCE_VALUE)
     ui->labelRangeMarkerAircraft->setText(tr("Estimated range with reserve: %1").arg(Unit::distNm(enduranceNm)));
@@ -255,7 +255,7 @@ void RangeMarkerDialog::fillRangeMarker(map::RangeMarker& marker, bool dialogOpe
   else
   {
     float enduranceHours, enduranceNm;
-    NavApp::getAircraftPerfController()->getEndurance(enduranceHours, enduranceNm);
+    NavApp::getAircraftPerfController()->getEnduranceFull(enduranceHours, enduranceNm);
 
     // Do not create anything if range is not valid
     if(enduranceNm < map::INVALID_DISTANCE_VALUE)

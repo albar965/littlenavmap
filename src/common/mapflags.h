@@ -131,7 +131,7 @@ ATOOLS_DECLARE_OPERATORS_FOR_FLAGS(map::MapTypes);
 QDebug operator<<(QDebug out, const map::MapTypes& type);
 
 /* Type that is used only for flags to determine what should be drawn.
- * Rarely used in other contexts. */
+ * Rarely used in other contexts and not as types in map::MapBase. */
 enum MapObjectDisplayType
 {
   DISPLAY_TYPE_NONE = 0,
@@ -153,6 +153,8 @@ enum MapObjectDisplayType
 
   GLS = 1 << 13, /* GLS approaches or GBAS paths - only display flag. Object is stored with type ILS. */
   AIRCRAFT_TRACK = 1 << 17, /* Simulator aircraft track. Not an object type. */
+
+  AIRCRAFT_ENDURANCE = 1 << 18, /* Range ring for current aircraft endurance. */
 
   LOGBOOK_ALL = LOGBOOK_DIRECT | LOGBOOK_ROUTE | LOGBOOK_TRACK
 };
