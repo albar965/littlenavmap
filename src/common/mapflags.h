@@ -136,7 +136,7 @@ enum MapObjectDisplayType
 {
   DISPLAY_TYPE_NONE = 0,
   AIRPORT_WEATHER = 1 << 0, /* Airport weather icons */
-  MINIMUM_ALTITUDE = 1 << 1, /* MORA (minimum off route altitude) */
+  MORA = 1 << 1, /* MORA (minimum off route altitude) */
 
   WIND_BARBS = 1 << 2, /* Wind barbs grid */
   WIND_BARBS_ROUTE = 1 << 3, /* Wind barbs at flight plan waypoints */

@@ -115,7 +115,7 @@ QDebug operator<<(QDebug out, const map::MapObjectDisplayTypes& type)
       flags.append("DISPLAY_TYPE_NONE");
     if(type.testFlag(AIRPORT_WEATHER))
       flags.append("AIRPORT_WEATHER");
-    if(type.testFlag(MINIMUM_ALTITUDE))
+    if(type.testFlag(MORA))
       flags.append("MINIMUM_ALTITUDE");
     if(type.testFlag(WIND_BARBS))
       flags.append("WIND_BARBS");

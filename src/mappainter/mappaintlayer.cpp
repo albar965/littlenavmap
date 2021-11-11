@@ -221,7 +221,7 @@ void MapPaintLayer::initMapLayerSettings()
 
                       routeTextAndDetail().
 
-                      minimumAltitude().
+                      mora().
 
                       vor().ndb().waypoint().marker().ils().airway().track().
 
@@ -465,7 +465,7 @@ void MapPaintLayer::initMapLayerSettings()
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
          airportWeather(false).airportWeatherDetails(false).
          windBarbsSymbolSize(6).
-         minimumAltitude(false).
+         mora(false).
          approachText(false).approachDetail(false).approachTextDetail(false).
          aiAircraftGround(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
@@ -484,7 +484,7 @@ void MapPaintLayer::initMapLayerSettings()
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
          airportWeather(false).airportWeatherDetails(false).
          windBarbs(false).
-         minimumAltitude(false).
+         mora(false).
          approach(false).approachText(false).approachDetail(false).approachTextDetail(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
          aiAircraftGroundText(false).aiAircraftText(false).
@@ -504,7 +504,7 @@ void MapPaintLayer::initMapLayerSettings()
          airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
          airportWeather(false).airportWeatherDetails(false).
          windBarbs(false).
-         minimumAltitude(false).
+         mora(false).
          routeTextAndDetail(false).
          approach(false).approachText(false).approachDetail(false).approachTextDetail(false).
          aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).

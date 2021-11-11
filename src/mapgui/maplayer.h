@@ -204,7 +204,7 @@ public:
   MapLayer& onlineAircraftText(bool value = true);
 
   /* minimum off route altitude */
-  MapLayer& minimumAltitude(bool value = true);
+  MapLayer& mora(bool value = true);
 
   MapLayer& windBarbs(bool value = true);
 
@@ -626,9 +626,9 @@ public:
   }
 
   /* minimum off route altitude */
-  bool isMinimumAltitude() const
+  bool isMora() const
   {
-    return layerMinimumAltitude;
+    return layerMora;
   }
 
   bool isRouteTextAndDetail() const
@@ -680,7 +680,7 @@ private:
        layerMarkerInfo = false, layerUserpointInfo = false, layerIls = false, layerIlsIdent = false,
        layerIlsInfo = false, layerAirway = false, layerAirwayWaypoint = false, layerAirwayIdent = false,
        layerAirwayInfo = false, layerTrack = false, layerTrackWaypoint = false, layerTrackIdent = false,
-       layerTrackInfo = false, layerMinimumAltitude = false,
+       layerTrackInfo = false, layerMora = false,
        layerHolding = false, layerHoldingInfo = false, layerHoldingInfo2 = false;
 
   bool layerAirportRouteInfo = false;

@@ -57,12 +57,9 @@ void MapMarkHandler::showMarkTypes(map::MapTypes types)
   flagsToActions();
 }
 
-QString MapMarkHandler::getMarkTypesText() const
+QStringList MapMarkHandler::getMarkTypesText() const
 {
   QStringList types;
-  if(markTypes == map::NONE)
-    return tr("None");
-
   if(markTypes & map::MARK_RANGE)
     types.append(tr("Range Rings"));
   if(markTypes & map::MARK_DISTANCE)
@@ -73,7 +70,7 @@ QString MapMarkHandler::getMarkTypesText() const
     types.append(tr("Traffic Patterns"));
   if(markTypes & map::MARK_MSA)
     types.append(tr("Airport MSA"));
-  return types.join(tr((", ")));
+  return types;
 }
 
 void MapMarkHandler::resetSettingsToDefault()

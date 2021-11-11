@@ -49,10 +49,10 @@ void MapPainterAltitude::render()
 {
   using atools::fs::common::MoraReader;
 
-  if(!context->objectDisplayTypes.testFlag(map::MINIMUM_ALTITUDE))
+  if(!context->objectDisplayTypes.testFlag(map::MORA))
     return;
 
-  if(context->mapLayer->isMinimumAltitude())
+  if(context->mapLayer->isMora())
   {
     MoraReader *moraReader = NavApp::getMoraReader();
     if(moraReader->isDataAvailable())

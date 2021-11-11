@@ -483,9 +483,9 @@ MapLayer& MapLayer::onlineAircraftText(bool value)
   return *this;
 }
 
-MapLayer& MapLayer::minimumAltitude(bool value)
+MapLayer& MapLayer::mora(bool value)
 {
-  layerMinimumAltitude = value;
+  layerMora = value;
   return *this;
 }
 

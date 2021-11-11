@@ -57,7 +57,7 @@ public:
 
   void showMarkTypes(map::MapTypes types);
 
-  QString getMarkTypesText() const;
+  QStringList getMarkTypesText() const;
 
   void resetSettingsToDefault();
 
