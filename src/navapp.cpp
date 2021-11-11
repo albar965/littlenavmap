@@ -636,16 +636,6 @@ bool NavApp::isNavdataAll()
   return databaseManager->getNavDatabaseStatus() == dm::NAVDATABASE_ALL;
 }
 
-bool NavApp::isNavdataMixed()
-{
-  return databaseManager->getNavDatabaseStatus() == dm::NAVDATABASE_MIXED;
-}
-
-bool NavApp::isNavdataOff()
-{
-  return databaseManager->getNavDatabaseStatus() == dm::NAVDATABASE_OFF;
-}
-
 OptionsDialog *NavApp::getOptionsDialog()
 {
   return mainWindow->getOptionsDialog();

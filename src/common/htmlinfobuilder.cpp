@@ -2896,8 +2896,7 @@ bool HtmlInfoBuilder::bearingToUserText(const ageo::Pos& pos, float magVar, Html
   return false;
 }
 
-void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sql::SqlRecord& onlineRec,
-                                   HtmlBuilder& html) const
+void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sql::SqlRecord& onlineRec, HtmlBuilder& html) const
 {
   QIcon icon = SymbolPainter().createAirspaceIcon(airspace, symbolSizeTitle.height());
   html.img(icon, QString(), QString(), symbolSizeTitle);
@@ -2919,11 +2918,6 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     if(!info)
       name = atools::elideTextShort(name, 40);
 
-    if((NavApp::isNavdataAll() || NavApp::isNavdataMixed()) && !airspace.multipleCode.trimmed().isEmpty() &&
-       !airspace.isOnline())
-      // Add multiple code as suffix to indicate overlapping duplicates
-      suffix = tr(" (%1)").arg(airspace.multipleCode);
-
     navaidTitle(html, ((info && !airspace.isOnline()) ? tr("Airspace: ") : QString()) % name % suffix);
   }
 
@@ -2931,11 +2925,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
   {
     // Add map link if not tooltip
     html.nbsp().nbsp();
-    html.a(tr("Map"),
-           QString("lnm://show?id=%1&type=%2&source=%3").
-           arg(airspace.id).
-           arg(map::AIRSPACE).
-           arg(airspace.src),
+    html.a(tr("Map"), QString("lnm://show?id=%1&type=%2&source=%3").arg(airspace.id).arg(map::AIRSPACE).arg(airspace.src),
            ahtml::BOLD | ahtml::LINK_NO_UL);
   }
 
@@ -2947,7 +2937,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     if(!remark.isEmpty())
       header.append(remark);
 
-    if((NavApp::isNavdataAll() || NavApp::isNavdataMixed()) && airspace.timeCode != 'U' && !airspace.isOnline())
+    if(airspace.src == map::AIRSPACE_SRC_NAV && airspace.timeCode != 'U' && !airspace.isOnline())
     {
       // Add comment about active times if navdata airspace
       QString msg;
@@ -3000,8 +2990,8 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     html.row2(tr("Max altitude:"), maxAlt);
   }
 
+  html.row2If(tr("Multiple code:"), airspace.multipleCode);
   html.row2If(tr("COM:"), formatter::capNavString(airspace.comName));
-
   html.row2If(tr("COM Type:"), map::comTypeName(airspace.comType));
   if(!airspace.comFrequencies.isEmpty())
   {

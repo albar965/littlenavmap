@@ -758,7 +758,7 @@ void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& ai
 
   // Use default values for online network ATC centers
   airspace.comName = record.valueStr("com_name", QString());
-  airspace.multipleCode = record.valueStr("multiple_code", QString());
+  airspace.multipleCode = record.valueStr("multiple_code", QString()).trimmed();
   airspace.restrictiveDesignation = record.valueStr("restrictive_designation", QString());
   airspace.restrictiveType = record.valueStr("restrictive_type", QString());
   airspace.timeCode = record.valueStr("time_code", QString());
