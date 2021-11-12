@@ -30,6 +30,7 @@
 #include <QDebug>
 #include <QMainWindow>
 #include <QWindow>
+#include <QStringBuilder>
 
 using atools::settings::Settings;
 
@@ -39,12 +40,9 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
 
   // Override goofy fusion tab close buttons on Windows and macOS
 #if defined(Q_OS_WIN32) || defined(Q_OS_MACOS)
-
   QString fusionStyleSheet(
-    QLatin1Literal("QTabBar::close-button "
-                   "{ image: url(:/littlenavmap/resources/icons/tab_close_button.png); }") +
-    QLatin1Literal("QTabBar::close-button:hover "
-                   "{ image: url(:/littlenavmap/resources/icons/tab_close_button_hover.png); }"));
+    "QTabBar::close-button { image: url(:/littlenavmap/resources/icons/tab_close_button.png); } "
+    "QTabBar::close-button:hover { image: url(:/littlenavmap/resources/icons/tab_close_button_hover.png); }");
 #else
   QString fusionStyleSheet;
 #endif
@@ -74,36 +72,36 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
 
   // Add stylesheet for better checkbox radio button and toolbutton visibility
   QString nightStyleSheet(
-    // Checkbox images ====================
-    QLatin1Literal("QCheckBox::indicator:checked "
-                   "{ image: url(:/littlenavmap/resources/icons/checkbox_dark_checked.png); }") +
-    QLatin1Literal("QCheckBox::indicator:checked:!enabled "
-                   "{ image: url(:/littlenavmap/resources/icons/checkbox_dark_checked_disabled.png); }") +
+    // Menu item separator ===============
+    QString("QMenu::separator { background-color: %1; }").arg(darkPalette.color(QPalette::Light).name()) %
 
-    QLatin1Literal("QCheckBox::indicator:unchecked "
-                   "{ image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked.png); }") +
-    QLatin1Literal("QCheckBox::indicator:unchecked:!enabled "
-                   "{ image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked_disabled.png); }") +
+    // Toolbutton checked background ===============
+    QString("QToolButton:checked { background-color: %1; }").arg(darkPalette.color(QPalette::Light).name()) %
+
+    // Thicker frame for selected menu items with icons
+    "QMenu::icon:checked:enabled { border: 2px solid lightgray; border-radius: 5px; }" %
+    "QMenu::icon:checked:disabled { border: 2px solid dimgray; border-radius: 5px; }" %
+    QString("QMenu::item:selected { border-color: lightgray; background: %1; }").arg(darkPalette.color(QPalette::Highlight).name()) %
+
+    // Checkbox images ====================
+    "QCheckBox::indicator:checked { image: url(:/littlenavmap/resources/icons/checkbox_dark_checked.png); }" %
+    "QCheckBox::indicator:checked:!enabled { image: url(:/littlenavmap/resources/icons/checkbox_dark_checked_disabled.png); }" %
+
+    "QCheckBox::indicator:unchecked { image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked.png); }" %
+    "QCheckBox::indicator:unchecked:!enabled { image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked_disabled.png); }" %
 
     // Radio button images ====================
-    QLatin1Literal("QRadioButton::indicator:checked "
-                   "{ image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked.png); }") +
-    QLatin1Literal("QRadioButton::indicator:checked:!enabled "
-                   "{ image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked_disabled.png); }") +
+    "QRadioButton::indicator:checked { image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked.png); }" %
+    "QRadioButton::indicator:checked:!enabled { image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked_disabled.png); }" %
 
-    QLatin1Literal("QRadioButton::indicator:unchecked "
-                   "{ image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked.png); }") +
-    QLatin1Literal("QRadioButton::indicator:unchecked:!enabled "
-                   "{ image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked_disabled.png); }") +
+    "QRadioButton::indicator:unchecked { image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked.png); }" %
+    "QRadioButton::indicator:unchecked:!enabled { image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked_disabled.png); }" %
 
-    // Night mode shows bright tab bars with this change in macOS
 #if !defined(Q_OS_MACOS)
-    QLatin1Literal("QTabBar::close-button "
-                   "{ image: url(:/littlenavmap/resources/icons/tab_close_button_night.png); }") +
-    QLatin1Literal("QTabBar::close-button:hover "
-                   "{ image: url(:/littlenavmap/resources/icons/tab_close_button_hover_night.png); }") +
+    // Night mode shows bright tab bars with this change in macOS
+    "QTabBar::close-button { image: url(:/littlenavmap/resources/icons/tab_close_button_night.png); }" %
+    "QTabBar::close-button:hover { image: url(:/littlenavmap/resources/icons/tab_close_button_hover_night.png); }"
 #endif
-    QString("QToolButton:checked { background-color: %1;}").arg(darkPalette.color(QPalette::Window).lighter(600).name())
     );
 
   // Store dark palette settings a in a separate ini file
