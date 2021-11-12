@@ -2116,6 +2116,11 @@ void ProfileWidget::restoreState()
     loadAircraftTrack();
 }
 
+void ProfileWidget::restoreSplitter()
+{
+  scrollArea->restoreSplitter();
+}
+
 void ProfileWidget::preRouteCalc()
 {
   updateTimer->stop();

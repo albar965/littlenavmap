@@ -1058,6 +1058,25 @@ void OptionsDialog::restoreState()
   ui->radioButtonOptionsOnlineVatsim->setVisible(!od.onlineVatsimStatusUrl.isEmpty());
 
   atools::gui::WidgetState state(lnm::OPTIONS_DIALOG_WIDGET, false /*save visibility*/, true /*block signals*/);
+  if(!state.contains(ui->splitterOptions))
+  {
+    // First start - splitter not saved yet
+
+    // Get list widget max width by looking at all items
+    int maxWidth = 0;
+    for(int i = 0; i < ui->listWidgetOptionPages->count(); i++)
+    {
+      QListWidgetItem *item = ui->listWidgetOptionPages->item(i);
+      maxWidth = std::max(QFontMetrics(item->font()).width(item->text()), maxWidth);
+    }
+
+    // Adjust splitter size to a reasonable value by setting maximum for the widget on the left
+    ui->listWidgetOptionPages->setMaximumWidth(maxWidth * 4 / 3);
+
+    // Save splitter size - user can resize freely after next start
+    state.save(ui->splitterOptions);
+  }
+
   state.restore(this);
   state.restore(widgets);
 
