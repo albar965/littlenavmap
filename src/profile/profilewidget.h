@@ -109,6 +109,8 @@ public:
 
   void saveState();
   void restoreState();
+  /* Bring splitter to a resonable size after first start */
+  void restoreSplitter();
 
   void preRouteCalc();
 

@@ -3519,6 +3519,9 @@ void MainWindow::mainWindowShownDelayed()
   ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
   ui->actionShowStatusbar->blockSignals(false);
 
+// Attempt to restore splitter after first start
+  profileWidget->restoreSplitter();
+
   NavApp::setMainWindowVisible();
 }
 
