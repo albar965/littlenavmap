@@ -31,6 +31,7 @@
 #include <QDataStream>
 #include <QIcon>
 #include <QRegularExpression>
+#include <QStringBuilder>
 
 namespace map {
 
@@ -849,7 +850,7 @@ QString parkingText(const MapParking& parking)
 
   retval.append(map::parkingName(parking.name));
 
-  retval.append(parking.number != -1 ? " " + QLocale().toString(parking.number) : QString());
+  retval.append(parking.number != -1 ? " " % QLocale().toString(parking.number) : QString());
   return atools::strJoin(retval, QObject::tr(" "));
 }
 
@@ -875,7 +876,7 @@ QString parkingNameNumberType(const map::MapParking& parking)
   QStringList name;
 
   if(parking.number != -1)
-    name.append(map::parkingName(parking.name) + " " + QLocale().toString(parking.number));
+    name.append(map::parkingName(parking.name) % " " % QLocale().toString(parking.number));
   else
     name.append(map::parkingName(parking.name));
 
@@ -889,7 +890,7 @@ QString parkingNameNumber(const MapParking& parking)
   QStringList name;
 
   if(parking.number != -1)
-    name.append(map::parkingName(parking.name) + " " + QLocale().toString(parking.number));
+    name.append(map::parkingName(parking.name) % " " % QLocale().toString(parking.number));
   else
     name.append(map::parkingName(parking.name));
 
@@ -915,7 +916,7 @@ QString parkingNameForFlightplan(const map::MapParking& parking)
     return parking.name;
   else
     // FSX/P3D type
-    return parkingNameMapUntranslated.value(parking.name).toUpper() + " " + QString::number(parking.number);
+    return parkingNameMapUntranslated.value(parking.name).toUpper() % " " % QString::number(parking.number);
 }
 
 const QString& MapAirport::displayIdent(bool useIata) const
@@ -1566,15 +1567,15 @@ QString airwayAltText(const MapAirway& airway)
     if(airway.maxAltitude > 0 && airway.maxAltitude < 60000)
       altTxt = Unit::altFeet(airway.minAltitude);
     else
-      altTxt = QObject::tr("Min ") + Unit::altFeet(airway.minAltitude);
+      altTxt = QObject::tr("Min ") % Unit::altFeet(airway.minAltitude);
   }
 
   if(airway.maxAltitude > 0 && airway.maxAltitude < 60000)
   {
     if(airway.minAltitude > 0)
-      altTxt += QObject::tr(" to ") + Unit::altFeet(airway.maxAltitude);
+      altTxt += QObject::tr(" to ") % Unit::altFeet(airway.maxAltitude);
     else
-      altTxt += QObject::tr("Max ") + Unit::altFeet(airway.maxAltitude);
+      altTxt += QObject::tr("Max ") % Unit::altFeet(airway.maxAltitude);
   }
   return altTxt;
 }
@@ -1646,7 +1647,7 @@ QString magvarText(float magvar, bool shortText)
     QString pt = QLocale().decimalPoint();
     if(num.endsWith(pt))
       num.chop(1);
-    if(num.endsWith(pt + "0"))
+    if(num.endsWith(pt % "0"))
       num.chop(2);
 
     if(magvar < -0.04f)
@@ -1975,16 +1976,16 @@ QString ilsType(const map::MapIls& ils, bool gs, bool dme, const QString& separa
       text += QObject::tr(" CAT III");
 
     if(gs && ils.hasGlideslope())
-      text += separator + QObject::tr("GS");
+      text += separator % QObject::tr("GS");
     if(dme && ils.hasDme)
-      text += separator + QObject::tr("DME");
+      text += separator % QObject::tr("DME");
   }
   else
   {
     if(!ils.perfIndicator.isEmpty())
-      text += separator + ils.perfIndicator;
+      text += separator % ils.perfIndicator;
     if(!ils.provider.isEmpty())
-      text += separator + ils.provider;
+      text += separator % ils.provider;
   }
 
   return text;
@@ -2386,6 +2387,62 @@ QIcon mapBaseIcon(const map::MapBase *base, int size)
     }
   }
   return QIcon();
+}
+
+QStringList aircraftIcing(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool narrow)
+{
+  QStringList text;
+  if(aircraft.getPitotIcePercent() >= 1.f)
+    text.append((narrow ? QObject::tr("Pitot %L1") : QObject::tr("Pitot %L1")).arg(aircraft.getPitotIcePercent(), 0, 'f', 0));
+
+  if(aircraft.getStructuralIcePercent() >= 1.f)
+    text.append((narrow ? QObject::tr("Strct %L1") : QObject::tr("Structure %L1")).arg(aircraft.getStructuralIcePercent(), 0, 'f', 0));
+
+  if(aircraft.getAoaIcePercent() >= 1.f)
+    text.append((narrow ? QObject::tr("AOA %L1") : QObject::tr("AOA %L1")).arg(aircraft.getAoaIcePercent(), 0, 'f', 0));
+
+  if(aircraft.getInletIcePercent() >= 1.f)
+    text.append((narrow ? QObject::tr("Inlt %L1") : QObject::tr("Inlet %L1")).arg(aircraft.getInletIcePercent(), 0, 'f', 0));
+
+  if(aircraft.getPropIcePercent() >= 1.f)
+    text.append((narrow ? QObject::tr("Prp %L1") : QObject::tr("Prop %L1")).arg(aircraft.getPropIcePercent(), 0, 'f', 0));
+
+  if(aircraft.getStatIcePercent() >= 1.f)
+    text.append((narrow ? QObject::tr("Stc %L1") : QObject::tr("Static %L1")).arg(aircraft.getStatIcePercent(), 0, 'f', 0));
+
+  if(aircraft.getWindowIcePercent() >= 1.f)
+    text.append((narrow ? QObject::tr("Win %L1") : QObject::tr("Window %L1")).arg(aircraft.getWindowIcePercent(), 0, 'f', 0));
+
+  if(aircraft.getCarbIcePercent() >= 1.f)
+    text.append((narrow ? QObject::tr("Crb %L1") : QObject::tr("Carb. %L1")).arg(aircraft.getCarbIcePercent(), 0, 'f', 0));
+
+  if(narrow)
+  {
+    // Combine two entries into one line
+    QStringList text2;
+    for(int i = 0; i < text.size(); i++)
+    {
+      if((i % 2) == 0)
+        text2.append(text.at(i));
+      else
+        text2.last().append(QObject::tr(", ") % text.at(i));
+    }
+    return text2;
+  }
+  else
+    return text;
+}
+
+bool aircraftHasIcing(const atools::fs::sc::SimConnectUserAircraft& aircraft)
+{
+  return aircraft.getPitotIcePercent() >= 1.f ||
+         aircraft.getStructuralIcePercent() >= 1.f ||
+         aircraft.getAoaIcePercent() >= 1.f ||
+         aircraft.getInletIcePercent() >= 1.f ||
+         aircraft.getPropIcePercent() >= 1.f ||
+         aircraft.getStatIcePercent() >= 1.f ||
+         aircraft.getWindowIcePercent() >= 1.f ||
+         aircraft.getCarbIcePercent() >= 1.f;
 }
 
 } // namespace types

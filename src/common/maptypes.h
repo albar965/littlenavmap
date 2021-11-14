@@ -1397,7 +1397,14 @@ QString airspaceText(const map::MapAirspace& airspace);
 QString aircraftTypeString(const atools::fs::sc::SimConnectAircraft& aircraft); /* Helicopter, etc. */
 QString aircraftTextShort(const atools::fs::sc::SimConnectAircraft& aircraft);
 QString aircraftType(const atools::fs::sc::SimConnectAircraft& aircraft);
+
 bool isAircraftShadow(const map::MapBase *base);
+
+/* String describing all icing. narrow combines lines for map display and uses short texts. */
+QStringList aircraftIcing(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool narrow);
+
+/* true if any ice value is above one percent */
+bool aircraftHasIcing(const atools::fs::sc::SimConnectUserAircraft& aircraft);
 
 map::MapAirspaceTypes airspaceTypeFromDatabase(const QString& type);
 const QString& airspaceTypeToDatabase(map::MapAirspaceTypes type);

@@ -118,8 +118,7 @@ void MapPainterVehicle::paintUserAircraft(const SimConnectUserAircraft& userAirc
      userAircraft.getTrackDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
   {
     // Get projection corrected rotation angle
-    float rotate = scale->getScreenRotation(userAircraft.getTrackDegTrue(),
-                                            userAircraft.getPosition(), context->zoomDistanceMeter);
+    float rotate = scale->getScreenRotation(userAircraft.getTrackDegTrue(), userAircraft.getPosition(), context->zoomDistanceMeter);
 
     if(rotate < map::INVALID_COURSE_VALUE)
       symbolPainter->drawTrackLine(context->painter, x, y, size * 2, rotate);
@@ -236,8 +235,7 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, int size,
   }
 }
 
-void MapPainterVehicle::paintTextLabelUser(float x, float y, int size,
-                                           const SimConnectUserAircraft& aircraft)
+void MapPainterVehicle::paintTextLabelUser(float x, float y, int size, const SimConnectUserAircraft& aircraft)
 {
   QStringList texts;
 
@@ -288,8 +286,19 @@ void MapPainterVehicle::paintTextLabelUser(float x, float y, int size,
 
   int transparency = context->flags2.testFlag(opts2::MAP_USER_TEXT_BACKGROUND) ? 255 : 0;
 
+  if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ICE))
+  {
+    QStringList ice = map::aircraftIcing(aircraft, true /* narrow */);
+    if(!ice.isEmpty())
+    {
+      ice.prepend(tr("ICE %"));
+      symbolPainter->textBoxF(context->painter, ice, mapcolors::aircraftUserLabelColor, x - size * 3 / 4, y,
+                              textatt::ERROR_COLOR | textatt::RIGHT, 255, mapcolors::aircraftUserLabelColorBg);
+    }
+  }
+
   // Draw text label
-  symbolPainter->textBoxF(context->painter, texts, mapcolors::aircraftUserLabelColor, x + size / 2.f, y + size / 2.f,
+  symbolPainter->textBoxF(context->painter, texts, mapcolors::aircraftUserLabelColor, x + size * 3 / 4, y,
                           textatt::NONE, transparency, mapcolors::aircraftUserLabelColorBg);
 }
 

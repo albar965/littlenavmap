@@ -4120,34 +4120,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     }
 
     // Ice ===============================================
-    QStringList ice;
-
-    if(userAircraft->getPitotIcePercent() >= 1.f)
-      ice.append(tr("Pitot ") % locale.toString(userAircraft->getPitotIcePercent(), 'f', 0) % tr(" %"));
-
-    if(userAircraft->getStructuralIcePercent() >= 1.f)
-      ice.append(tr("Structure ") % locale.toString(userAircraft->getStructuralIcePercent(), 'f', 0) % tr(" %"));
-
-    if(userAircraft->getAoaIcePercent() >= 1.f)
-      ice.append(tr("AOA ") % locale.toString(userAircraft->getAoaIcePercent(), 'f', 0) % tr(" %"));
-
-    if(userAircraft->getInletIcePercent() >= 1.f)
-      ice.append(tr("Inlet ") % locale.toString(userAircraft->getInletIcePercent(), 'f', 0) % tr(" %"));
-
-    if(userAircraft->getPropIcePercent() >= 1.f)
-      ice.append(tr("Prop ") % locale.toString(userAircraft->getPropIcePercent(), 'f', 0) % tr(" %"));
-
-    if(userAircraft->getStatIcePercent() >= 1.f)
-      ice.append(tr("Static ") % locale.toString(userAircraft->getStatIcePercent(), 'f', 0) % tr(" %"));
-
-    if(userAircraft->getWindowIcePercent() >= 1.f)
-      ice.append(tr("Window ") % locale.toString(userAircraft->getWindowIcePercent(), 'f', 0) % tr(" %"));
-
-    if(userAircraft->getCarbIcePercent() >= 1.f)
-      ice.append(tr("Carb. ") % locale.toString(userAircraft->getCarbIcePercent(), 'f', 0) % tr(" %"));
-
+    QStringList ice = map::aircraftIcing(*userAircraft, false /* narrow */);
     if(!ice.isEmpty())
-      html.id(pid::AIRCRAFT_ICE).row2Error(tr("Ice:"), ice.join(tr(", ")));
+      html.id(pid::AIRCRAFT_ICE).row2Error(tr("Ice:"), atools::strJoin(ice, tr(", "), tr(", "),  tr(" %")));
   } // if(userAircraft != nullptr && info)
   html.tableEndIf();
 
