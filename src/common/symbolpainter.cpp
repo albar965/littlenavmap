@@ -1273,9 +1273,8 @@ void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const Q
   textBoxF(painter, texts, textPen, x, y, atts, transparency, backgroundColor);
 }
 
-void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const QPen& textPen,
-                             float x, float y, textatt::TextAttributes atts, int transparency,
-                             const QColor& backgroundColor)
+void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, QPen textPen, float x, float y, textatt::TextAttributes atts,
+                             int transparency, const QColor& backgroundColor)
 {
   if(texts.isEmpty())
     return;
@@ -1291,6 +1290,19 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
       backColor = mapcolors::logTextBoxColor;
     else
       backColor = mapcolors::textBoxColor;
+  }
+
+  if(atts.testFlag(textatt::WARNING_COLOR))
+  {
+    backColor = Qt::white;
+    textPen.setColor(Qt::red);
+    transparency = 255;
+  }
+  if(atts.testFlag(textatt::ERROR_COLOR))
+  {
+    backColor = Qt::red;
+    textPen.setColor(Qt::white);
+    transparency = 255;
   }
 
   if(transparency != 255)

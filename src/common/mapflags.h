@@ -432,7 +432,9 @@ enum TextAttribute
   LEFT = 0x0040,
   CENTER = 0x0080,
   ROUTE_BG_COLOR = 0x0100, /* Use light yellow background for route objects */
-  LOG_BG_COLOR = 0x0200 /* Use light blue text background for log */
+  LOG_BG_COLOR = 0x0200, /* Use light blue text background for log */
+  WARNING_COLOR = 0x0400, /* Orange warning text */
+  ERROR_COLOR = 0x0800 /* White on red error text */
 };
 
 Q_DECLARE_FLAGS(TextAttributes, TextAttribute);

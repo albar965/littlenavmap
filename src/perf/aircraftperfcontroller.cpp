@@ -23,6 +23,7 @@
 #include "common/constants.h"
 #include "settings/settings.h"
 #include "gui/widgetutil.h"
+#include "util/average.h"
 #include "navapp.h"
 #include "common/fueltool.h"
 #include "route/route.h"
@@ -60,6 +61,9 @@ AircraftPerfController::AircraftPerfController(MainWindow *parent)
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   perf = new AircraftPerf();
+
+  // Calculate fuel flow average over ten seconds
+  fuelFlowGroundspeedAverage = new atools::util::MovingAverageTime(10000);
 
   lastSimData = new atools::fs::sc::SimConnectData();
   // Remember original font for resizing in options
@@ -103,6 +107,7 @@ AircraftPerfController::~AircraftPerfController()
   delete perfHandler;
   delete perf;
   delete lastSimData;
+  delete fuelFlowGroundspeedAverage;
 }
 
 void AircraftPerfController::create()
@@ -1201,16 +1206,25 @@ void AircraftPerfController::getEnduranceFull(float& enduranceHours, float& endu
   }
 }
 
-void AircraftPerfController::getEnduranceCurrent(float& enduranceHours, float& enduranceNm)
+void AircraftPerfController::getEnduranceCurrent(float& enduranceHours, float& enduranceNm, bool average)
 {
   const atools::fs::sc::SimConnectUserAircraft& userAircraft = lastSimData->getUserAircraftConst();
 
   if(userAircraft.isValid() && userAircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT &&
      userAircraft.getFuelFlowPPH() > 1.0f && userAircraft.getGroundSpeedKts() > map::MIN_GROUND_SPEED)
   {
-    float realFuelFlow = userAircraft.getFuelFlowPPH() * perf->getContingencyFuelFactor();
-    enduranceHours = (userAircraft.getFuelTotalWeightLbs() - perf->getReserveFuelLbs()) / realFuelFlow;
-    enduranceNm = enduranceHours * userAircraft.getGroundSpeedKts();
+    float fuelFlowPph = 0.f, groundspeedKts = 0.f;
+    if(average)
+      fuelFlowGroundspeedAverage->getAverages(fuelFlowPph, groundspeedKts);
+    else
+    {
+      fuelFlowPph = userAircraft.getFuelFlowPPH();
+      groundspeedKts = userAircraft.getGroundSpeedKts();
+    }
+
+    float realFuelFlow = fuelFlowPph * perf->getContingencyFuelFactor();
+    enduranceHours = std::max((userAircraft.getFuelTotalWeightLbs() - perf->getReserveFuelLbs()) / realFuelFlow, 0.f);
+    enduranceNm = enduranceHours * groundspeedKts;
   }
   else
   {
@@ -1343,6 +1357,16 @@ void AircraftPerfController::simDataChanged(const atools::fs::sc::SimConnectData
 
   // Pass to handler for averaging
   perfHandler->simDataChanged(simulatorData);
+
+  if(simulatorData.isUserAircraftValid())
+  {
+    const atools::fs::sc::SimConnectUserAircraft& userAircraft = simulatorData.getUserAircraftConst();
+
+    if(userAircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT &&
+       userAircraft.getFuelFlowPPH() > 1.0f && userAircraft.getGroundSpeedKts() > map::MIN_GROUND_SPEED)
+      fuelFlowGroundspeedAverage->addSamples(userAircraft.getFuelFlowPPH(), userAircraft.getGroundSpeedKts(),
+                                             userAircraft.getZuluTime().toMSecsSinceEpoch());
+  }
 
   // Update report every second
   qint64 currentSampleTime = QDateTime::currentMSecsSinceEpoch();

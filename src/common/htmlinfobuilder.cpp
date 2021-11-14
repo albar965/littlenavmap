@@ -3703,23 +3703,24 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           float remainingFuelGal = userAircraft->getFuelTotalQuantityGallons() - fuelTime.fuelGalToDest;
           QString fuelValue = Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal);
 
-          QString fuelHdr = tr("Fuel:");
           if(!fuelTime.estimatedFuel && !fuelTime.estimatedTime)
           {
             // Display warnings for fuel at destination only if fuel was calculated from a valid performance and profile
-            if(remainingFuelLbs < 0.f || remainingFuelGal < 0.f)
-              html.id(pid::DEST_FUEL).row2Error(fuelHdr, Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal, false, false));
+            if(remainingFuelLbs <= 0.1f || remainingFuelGal <= 0.1f)
+              html.id(pid::DEST_FUEL).row2Error(tr("Fuel (insufficient):"),
+                                                Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal, false, false));
             else if(remainingFuelLbs < perfController->getFuelReserveAtDestinationLbs() ||
                     remainingFuelGal < perfController->getFuelReserveAtDestinationGal())
               // Required reserves at destination
-              html.id(pid::DEST_FUEL).row2Warning(fuelHdr, Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal, false, false));
+              html.id(pid::DEST_FUEL).row2Warning(tr("Fuel (low):"),
+                                                  Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal, false, false));
             else
               // No warning - display plain values
-              html.id(pid::DEST_FUEL).row2(fuelHdr, fuelValue, ahtml::NO_ENTITIES);
+              html.id(pid::DEST_FUEL).row2(tr("Fuel:"), fuelValue, ahtml::NO_ENTITIES);
           }
           else
             // No warnings for estimated fuel
-            html.id(pid::DEST_FUEL).row2(fuelHdr, fuelValue, ahtml::NO_ENTITIES);
+            html.id(pid::DEST_FUEL).row2(tr("Fuel (estimated):"), fuelValue, ahtml::NO_ENTITIES);
 
           html.id(pid::DEST_GROSS_WEIGHT).row2(tr("Gross Weight:"), Unit::weightLbsLocalOther(
                                                  userAircraft->getAirplaneTotalWeightLbs() - fuelTime.fuelLbsToDest),
@@ -3993,10 +3994,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             if(userAircraft != nullptr && userAircraft->isFlying() && courseToWptTrue < INVALID_COURSE_VALUE)
             {
               // Crab angle is the amount of correction an aircraft must be turned into the wind in order to maintain the desired course.
-              float headingTrue = ageo::windCorrectedHeading(userAircraft->getWindSpeedKts(),
-                                                             userAircraft->getWindDirectionDegT(),
-                                                             courseToWptTrue,
-                                                             userAircraft->getTrueAirspeedKts());
+              float headingTrue = ageo::windCorrectedHeading(userAircraft->getWindSpeedKts(), userAircraft->getWindDirectionDegT(),
+                                                             courseToWptTrue, userAircraft->getTrueAirspeedKts());
               if(headingTrue < INVALID_COURSE_VALUE)
                 html.id(pid::NEXT_HEADING).row2(tr("Heading:"), courseTextFromTrue(headingTrue, userAircraft->getMagVarDeg()),
                                                 ahtml::NO_ENTITIES);
@@ -4106,11 +4105,19 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
                                              Unit::weightLbsLocalOther(userAircraft->getAirplaneTotalWeightLbs()), ahtml::NO_ENTITIES);
 
     float hoursRemaining, distanceRemaining;
-    perfController->getEnduranceCurrent(hoursRemaining, distanceRemaining);
+    perfController->getEnduranceCurrent(hoursRemaining, distanceRemaining, false /* average */);
 
     if(hoursRemaining < map::INVALID_TIME_VALUE && distanceRemaining < map::INVALID_DISTANCE_VALUE)
-      html.id(pid::AIRCRAFT_ENDURANCE).row2(tr("Endurance:"),
-                                            formatter::formatMinutesHoursLong(hoursRemaining) % tr(", ") % Unit::distNm(distanceRemaining));
+    {
+      QString text = formatter::formatMinutesHoursLong(hoursRemaining) % tr(", ") % Unit::distNm(distanceRemaining);
+
+      if(hoursRemaining < 0.5)
+        html.id(pid::AIRCRAFT_ENDURANCE).row2Error(tr("Endurance (critical):"), text);
+      else if(hoursRemaining < 0.75)
+        html.id(pid::AIRCRAFT_ENDURANCE).row2Warning(tr("Endurance (low):"), text);
+      else
+        html.id(pid::AIRCRAFT_ENDURANCE).row2(tr("Endurance:"), text);
+    }
 
     // Ice ===============================================
     QStringList ice;

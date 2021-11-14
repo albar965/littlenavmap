@@ -24,6 +24,7 @@
 
 namespace atools {
 namespace util {
+class MovingAverageTime;
 class HtmlBuilder;
 }
 
@@ -162,8 +163,8 @@ public:
   /* Current aircraft endurance with full fuel load */
   void getEnduranceFull(float& enduranceHours, float& enduranceNm);
 
-  /* Current aircraft endurance based on current fuel flow */
-  void getEnduranceCurrent(float& enduranceHours, float& enduranceNm);
+  /* Current aircraft endurance based on current fuel flow. This is the rolling average over ten seconds or current value. */
+  void getEnduranceCurrent(float& enduranceHours, float& enduranceNm, bool average);
 
 signals:
   /* Sent if performance or wind has changed */
@@ -257,6 +258,9 @@ private:
   /* Timer to delay wind updates */
   QTimer windChangeTimer;
   atools::fs::sc::SimConnectData *lastSimData;
+
+  /* For a smooth endurance calculation - first value is fuel flow in PPH and second is groundspeed in KTS */
+  atools::util::MovingAverageTime *fuelFlowGroundspeedAverage;
 };
 
 #endif // LNM_AIRCRAFTPERFCONTROLLER_H

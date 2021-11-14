@@ -855,29 +855,42 @@ void MapPainterMark::paintEndurance()
     {
       // Get endurance
       float enduranceHours, enduranceNm;
-      NavApp::getAircraftPerfController()->getEnduranceCurrent(enduranceHours, enduranceNm);
+      NavApp::getAircraftPerfController()->getEnduranceCurrent(enduranceHours, enduranceNm, true /* average */);
       if(enduranceNm < map::INVALID_DISTANCE_VALUE)
       {
         Marble::GeoPainter *painter = context->painter;
         atools::util::PainterContextSaver saver(painter);
+        int xt = -1, yt = -1;
+        bool visibleCenter = false;
+        if(enduranceNm > 0.f)
+        {
+          float lineWidth = context->szF(context->thicknessRangeDistance, 2.f);
+          painter->setPen(QPen(Qt::black, lineWidth, Qt::DotLine, Qt::FlatCap, Qt::MiterJoin));
+          painter->setBrush(Qt::NoBrush);
+          context->szFont(context->textSizeRangeDistance);
 
-        float lineWidth = context->szF(context->thicknessRangeDistance, 2.f);
-        painter->setPen(QPen(Qt::black, lineWidth, Qt::DotLine, Qt::FlatCap, Qt::MiterJoin));
-        painter->setBrush(Qt::NoBrush);
-        context->szFont(context->textSizeRangeDistance);
+          // Draw circle and get a text placement position
+          paintCircle(painter, pos, enduranceNm, context->drawFast, xt, yt);
+          visibleCenter = true;
+        }
+        else
+          visibleCenter = wToS(pos, xt, yt);
 
-        // Draw circle and get a text placement position
-        int xt, yt;
-        paintCircle(painter, pos, enduranceNm, context->drawFast, xt, yt);
-
-        if(xt != -1 && yt != -1)
+        if(visibleCenter && xt != -1 && yt != -1)
         {
           // paintCircle found a text position - draw text
           painter->setPen(mapcolors::rangeRingTextColor);
 
+          textatt::TextAttributes atts = textatt::CENTER;
+
+          if(enduranceHours < 0.5f)
+            atts |= textatt::ERROR_COLOR;
+          else if(enduranceHours < 0.75f)
+            atts |= textatt::WARNING_COLOR;
+
           yt += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
           symbolPainter->textBox(painter, {Unit::distNm(enduranceNm, true, 5, true), formatter::formatMinutesHoursLong(enduranceHours)},
-                                 painter->pen(), xt, yt, textatt::CENTER);
+                                 painter->pen(), xt, yt, atts);
         }
       }
     }

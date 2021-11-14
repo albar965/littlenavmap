@@ -151,7 +151,7 @@ public:
   void textBox(QPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
                textatt::TextAttributes atts = textatt::NONE,
                int transparency = 255, const QColor& backgroundColor = QColor());
-  void textBoxF(QPainter *painter, const QStringList& texts, const QPen& textPen, float x, float y,
+  void textBoxF(QPainter *painter, const QStringList& texts, QPen textPen, float x, float y,
                 textatt::TextAttributes atts = textatt::NONE,
                 int transparency = 255, const QColor& backgroundColor = QColor());
 

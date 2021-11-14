@@ -158,6 +158,9 @@ bool MapPainter::wToSBuf(const Pos& coords, float& x, float& y, QSize size, cons
 
 void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, int& xtext, int& ytext)
 {
+  if(radiusNm > atools::geo::EARTH_CIRCUMFERENCE_METER / 4.f)
+    return;
+
   QRect vpRect(painter->viewport());
 
   // Calculate the number of points to use depending on screen resolution
