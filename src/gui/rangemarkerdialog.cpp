@@ -19,6 +19,7 @@
 
 #include "common/constants.h"
 #include "gui/widgetutil.h"
+#include "geo/calculations.h"
 #include "gui/widgetstate.h"
 #include "settings/settings.h"
 #include "gui/helphandler.h"
@@ -41,7 +42,8 @@ using atools::geo::Pos;
 
 // Also adjust text in options dialog if changing these numbers
 const float MIN_RANGE_RING_SIZE = 0.01f;
-const float MAX_RANGE_RING_SIZE = 4000.f;
+const float MAX_RANGE_RING_SIZE_METER = atools::geo::EARTH_CIRCUMFERENCE_METER / 4.f;
+
 const int MAX_RANGE_RINGS = 10;
 const QVector<float> RangeMarkerDialog::MAP_RANGERINGS_DEFAULT({50.f, 100.f, 200.f, 500.f});
 
@@ -79,7 +81,7 @@ QValidator::State RangeRingValidator::validate(QString& input, int&) const
     {
       bool ok;
       float num = QLocale().toFloat(val, &ok);
-      if(!ok || num > MAX_RANGE_RING_SIZE)
+      if(!ok || num > atools::roundToPrecision(Unit::distMeterF(MAX_RANGE_RING_SIZE_METER), 2))
         // No number or radius too large - keep user from adding more characters
         state = Invalid;
 
@@ -131,7 +133,7 @@ RangeMarkerDialog::RangeMarkerDialog(QWidget *parent, const atools::geo::Pos& po
   ui->labelRangeMarkerRadii->setText(ui->labelRangeMarkerRadii->text().
                                      arg(MAX_RANGE_RINGS).
                                      arg(Unit::distNmF(MIN_RANGE_RING_SIZE), 0, 'f', 2).
-                                     arg(Unit::distNm(MAX_RANGE_RING_SIZE, false)));
+                                     arg(atools::roundToPrecision(Unit::distMeterF(MAX_RANGE_RING_SIZE_METER), 2)));
 
   rangeRingValidator = new RangeRingValidator;
   ui->lineEditRangeMarkerRadii->setValidator(rangeRingValidator);
@@ -277,7 +279,7 @@ QString RangeMarkerDialog::rangeFloatToString(const QVector<float>& ranges) cons
   QStringList txt;
   for(float value : ranges)
   {
-    if(value >= MIN_RANGE_RING_SIZE && value <= MAX_RANGE_RING_SIZE)
+    if(value >= MIN_RANGE_RING_SIZE && value <= atools::roundToPrecision(Unit::distMeterF(MAX_RANGE_RING_SIZE_METER), 2))
       txt.append(locale.toString(value, 'g', 6));
   }
 
@@ -297,7 +299,7 @@ QVector<float> RangeMarkerDialog::rangeStringToFloat(const QString& rangeStr) co
     {
       bool ok;
       float num = QLocale().toFloat(val, &ok);
-      if(ok && num >= MIN_RANGE_RING_SIZE && num <= MAX_RANGE_RING_SIZE)
+      if(ok && num >= MIN_RANGE_RING_SIZE && num <= atools::roundToPrecision(Unit::distMeterF(MAX_RANGE_RING_SIZE_METER), 2))
         retval.append(num);
     }
   }

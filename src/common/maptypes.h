@@ -1282,7 +1282,7 @@ struct RangeMarker
   }
 
   QString text; /* Text to display like VOR name and frequency */
-  QVector<float> ranges; /* Range ring list (nm) */
+  QVector<float> ranges; /* Range ring list (NM) */
   MapType navType; /* VOR, NDB, AIRPORT, etc. */
   QColor color;
 };
