@@ -2096,6 +2096,11 @@ int ProcedureQuery::getSidId(map::MapAirport departure, const QString& sid,
     approachIdByNameQuery->bindValue(":apident", departure.ident);
 
     sidApprId = findApproachId(departure, approachIdByNameQuery, "D", runway, strict);
+
+    if(sidApprId == -1)
+      // Try again without runway
+      sidApprId = findApproachId(departure, approachIdByNameQuery, "D", QString(), strict);
+
     if(sidApprId == -1)
       qWarning() << "Loading of SID" << sid << "failed";
   }
@@ -2135,6 +2140,11 @@ int ProcedureQuery::getStarId(map::MapAirport destination, const QString& star, 
     approachIdByNameQuery->bindValue(":apident", destination.ident);
 
     starId = findApproachId(destination, approachIdByNameQuery, "A", runway, strict);
+
+    if(starId == -1)
+      // Try again without runway
+      starId = findApproachId(destination, approachIdByNameQuery, "A", QString(), strict);
+
     if(starId == -1)
       qWarning() << "Loading of STAR" << star << "failed";
   }
