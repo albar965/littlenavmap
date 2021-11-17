@@ -261,7 +261,7 @@ void RangeMarkerDialog::fillRangeMarker(map::RangeMarker& marker, bool dialogOpe
 
     // Do not create anything if range is not valid
     if(enduranceNm < map::INVALID_DISTANCE_VALUE)
-      marker.ranges.append(enduranceNm);
+      marker.ranges.append(std::round(enduranceNm));
   }
 }
 

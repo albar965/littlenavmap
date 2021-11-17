@@ -95,8 +95,8 @@ void AircraftProgressConfig::progressConfiguration()
   // Next ==========================================================================================================
   QTreeWidgetItem *nextItem = treeDialog.addTopItem1(tr("Next waypoint"));
   treeDialog.addItem2(nextItem, pid::NEXT_LEG_TYPE,         tr("Leg Type"), tr("Type of a procedure leg describing the flying path."), QString());
-  treeDialog.addItem2(nextItem, pid::NEXT_INSTRUCTIONS,     tr("Instructions"), tr("Procedure instructions showing how to fly, like\n"
-                                                                                   "turn direction or required overfly."), QString());
+  treeDialog.addItem2(nextItem, pid::NEXT_INSTRUCTIONS,     tr("Instructions"), tr("Procedure instructions showing how to fly,\n"
+                                                                                   "like turn direction or required overfly."), QString());
   treeDialog.addItem2(nextItem, pid::NEXT_RELATED,          tr("Related Navaid"), tr("A related navaid for a procedure fix describing\n"
                                                                                      "the fix position relative to the navaid."), QString());
   treeDialog.addItem2(nextItem, pid::NEXT_RESTRICTION,      tr("Restriction"), tr("Altitude, speed or vertical angle restriction."), QString());
@@ -117,15 +117,16 @@ void AircraftProgressConfig::progressConfiguration()
   treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_FUEL_FLOW,    tr("Fuel Flow"), tr("Current fuel flow for all engines."), QString());
   treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_FUEL,         tr("Fuel"), tr("Current fuel amount on board."), QString());
   treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_GROSS_WEIGHT, tr("Gross Weight"), tr("Current aircraft gross weight."), QString());
-  treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_ENDURANCE,    tr("Endurance"), tr("Estimated endurance based on current fuel flow and groundspeed considering reserves and contingency."), QString());
+  treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_ENDURANCE,    tr("Endurance"), tr("Estimated endurance based on current fuel flow and groundspeed\n"
+                                                                                    "considering reserves and contingency. Only shown if airborne."), QString());
   treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_ICE,          tr("Ice"), tr("Aircraft icing, if any."), QString());
 
   // Altitude ==========================================================================================================
   QTreeWidgetItem *altitudeItem = treeDialog.addTopItem1(tr("Altitude"));
   treeDialog.addItem2(altitudeItem, pid::ALT_INDICATED,        tr("Indicated"), tr("Indicated altitude considering aircraft barometer setting."), QString());
   treeDialog.addItem2(altitudeItem, pid::ALT_ACTUAL,           tr("Actual"), tr("Actual altitude."), QString());
-  treeDialog.addItem2(altitudeItem, pid::ALT_ABOVE_GROUND,     tr("Above Ground"), tr("Altitude above ground."), QString());
-  treeDialog.addItem2(altitudeItem, pid::ALT_GROUND_ELEVATION, tr("Ground Elevation"), tr("Ground elevation above normal."), QString());
+  treeDialog.addItem2(altitudeItem, pid::ALT_ABOVE_GROUND,     tr("Above Ground"), tr("Altitude above ground as reported by simulator."), QString());
+  treeDialog.addItem2(altitudeItem, pid::ALT_GROUND_ELEVATION, tr("Ground Elevation"), tr("Ground elevation above normal as reported by simulator."), QString());
 
   // Speed ==========================================================================================================
   QTreeWidgetItem *speedItem = treeDialog.addTopItem1(tr("Speed"));

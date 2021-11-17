@@ -4104,25 +4104,34 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.id(pid::AIRCRAFT_GROSS_WEIGHT).row2(tr("Gross Weight:"),
                                              Unit::weightLbsLocalOther(userAircraft->getAirplaneTotalWeightLbs()), ahtml::NO_ENTITIES);
 
-    float hoursRemaining, distanceRemaining;
-    perfController->getEnduranceCurrent(hoursRemaining, distanceRemaining, false /* average */);
-
-    if(hoursRemaining < map::INVALID_TIME_VALUE && distanceRemaining < map::INVALID_DISTANCE_VALUE)
+    if(userAircraft->isFlying())
     {
-      QString text = formatter::formatMinutesHoursLong(hoursRemaining) % tr(", ") % Unit::distNm(distanceRemaining);
+      float hoursRemaining, distanceRemaining;
+      perfController->getEnduranceCurrent(hoursRemaining, distanceRemaining, false /* average */);
 
-      if(hoursRemaining < 0.5)
-        html.id(pid::AIRCRAFT_ENDURANCE).row2Error(tr("Endurance (critical):"), text);
-      else if(hoursRemaining < 0.75)
-        html.id(pid::AIRCRAFT_ENDURANCE).row2Warning(tr("Endurance (low):"), text);
-      else
-        html.id(pid::AIRCRAFT_ENDURANCE).row2(tr("Endurance:"), text);
+      if(hoursRemaining < map::INVALID_TIME_VALUE && distanceRemaining < map::INVALID_DISTANCE_VALUE)
+      {
+        QString text = formatter::formatMinutesHoursLong(hoursRemaining) % tr(", ") % Unit::distNm(distanceRemaining);
+
+        // Show error colors only for free flight
+        if(route.size() <= 1 || route.getActiveLegIndexCorrected() == map::INVALID_INDEX_VALUE)
+        {
+          if(hoursRemaining < 0.5)
+            html.id(pid::AIRCRAFT_ENDURANCE).row2Error(tr("Endurance (critical):"), text);
+          else if(hoursRemaining < 0.75)
+            html.id(pid::AIRCRAFT_ENDURANCE).row2Warning(tr("Endurance (low):"), text);
+          else
+            html.id(pid::AIRCRAFT_ENDURANCE).row2(tr("Endurance:"), text);
+        }
+        else
+          html.id(pid::AIRCRAFT_ENDURANCE).row2(tr("Endurance:"), text);
+      }
     }
 
     // Ice ===============================================
     QStringList ice = map::aircraftIcing(*userAircraft, false /* narrow */);
     if(!ice.isEmpty())
-      html.id(pid::AIRCRAFT_ICE).row2Error(tr("Ice:"), atools::strJoin(ice, tr(", "), tr(", "),  tr(" %")));
+      html.id(pid::AIRCRAFT_ICE).row2Error(tr("Ice:"), atools::strJoin(ice, tr(", "), tr(", "), tr(" %")));
   } // if(userAircraft != nullptr && info)
   html.tableEndIf();
 

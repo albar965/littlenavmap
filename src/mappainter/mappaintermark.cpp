@@ -845,7 +845,7 @@ void MapPainterMark::paintRangeMarks()
 
 void MapPainterMark::paintEndurance()
 {
-  if(context->objectDisplayTypes & map::AIRCRAFT_ENDURANCE)
+  if(context->objectDisplayTypes & map::AIRCRAFT_ENDURANCE && mapPaintWidget->getUserAircraft().isFlying())
   {
     Pos pos = mapPaintWidget->getUserAircraft().getPosition();
     if(pos.isValid())
@@ -880,10 +880,15 @@ void MapPainterMark::paintEndurance()
 
           textatt::TextAttributes atts = textatt::CENTER;
 
-          if(enduranceHours < 0.5f)
-            atts |= textatt::ERROR_COLOR;
-          else if(enduranceHours < 0.75f)
-            atts |= textatt::WARNING_COLOR;
+          const Route& route = NavApp::getRouteConst();
+          if(route.size() <= 1 || route.getActiveLegIndexCorrected() == map::INVALID_INDEX_VALUE)
+          {
+            // Show error colors only for free flight
+            if(enduranceHours < 0.5f)
+              atts |= textatt::ERROR_COLOR;
+            else if(enduranceHours < 0.75f)
+              atts |= textatt::WARNING_COLOR;
+          }
 
           yt += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
           symbolPainter->textBox(painter, {Unit::distNm(enduranceNm, true, 5, true), formatter::formatMinutesHoursLong(enduranceHours)},
