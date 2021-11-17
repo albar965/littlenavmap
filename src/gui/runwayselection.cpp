@@ -21,6 +21,7 @@
 #include "common/unit.h"
 #include "query/airportquery.h"
 #include "geo/calculations.h"
+#include "query/mapquery.h"
 #include "gui/itemviewzoomhandler.h"
 
 #include "atools.h"
@@ -149,13 +150,22 @@ void RunwaySelection::addItem(const map::MapRunway& rw, int index, bool primary)
 {
   // Collect attributes
   QStringList atts;
+
   if(rw.isLighted())
     atts.append(tr("Lighted"));
 
   if(primary && rw.primaryClosed)
     atts.append(tr("Closed"));
+
   if(!primary && rw.secondaryClosed)
     atts.append(tr("Closed"));
+
+  // Add ILS and similar approach aids
+  QVector<map::MapIls> ils = NavApp::getMapQueryGui()->getIlsByAirportAndRunway(airport.ident, primary ? rw.primaryName : rw.secondaryName);
+  for(map::MapIls i : ils)
+    atts.append(map::ilsTypeShort(i));
+  atts.removeDuplicates();
+
   if(showPattern && rw.patternAlt > 100.f)
     atts.append(tr("Pattern at %1").arg(Unit::altFeet(rw.patternAlt)));
 
