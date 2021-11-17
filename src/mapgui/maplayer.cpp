@@ -33,8 +33,7 @@ MapLayer MapLayer::clone(float maximumRange) const
 
 bool MapLayer::hasSameQueryParametersAirport(const MapLayer *other) const
 {
-  // Either the source query changes or minimum runway length which need a new query
-  return src == other->src && layerMinRunwayLength == other->layerMinRunwayLength;
+  return layerMinRunwayLength == other->layerMinRunwayLength;
 }
 
 bool MapLayer::hasSameQueryParametersAirspace(const MapLayer *other) const
@@ -127,12 +126,6 @@ MapLayer& MapLayer::approachTextDetail(bool value)
 MapLayer& MapLayer::routeTextAndDetail(bool value)
 {
   layerRouteTextAndDetail = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airportSource(layer::AirportSource source)
-{
-  src = source;
   return *this;
 }
 

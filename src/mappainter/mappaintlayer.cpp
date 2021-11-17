@@ -76,7 +76,7 @@ MapPaintLayer::MapPaintLayer(MapPaintWidget *widget)
   mapPainterTop = new MapPainterTop(mapWidget, mapScale, &context);
 
   // Default for visible object types
-  objectTypes = map::MapTypes(map::AIRPORT) | map::MapTypes(map::VOR) | map::MapTypes(map::NDB) | map::MapTypes(map::AP_ILS) |
+  objectTypes = map::MapTypes(map::AIRPORT_ALL_AND_ADDON) | map::MapTypes(map::VOR) | map::MapTypes(map::NDB) | map::MapTypes(map::AP_ILS) |
                 map::MapTypes(map::MARKER) | map::MapTypes(map::WAYPOINT);
   objectDisplayTypes = map::DISPLAY_TYPE_NONE;
 }
@@ -125,7 +125,13 @@ void MapPaintLayer::postDatabaseLoad()
   databaseLoadStatus = false;
 }
 
-void MapPaintLayer::setShowMapObjects(map::MapTypes type, bool show)
+void MapPaintLayer::setShowMapObjects(map::MapTypes type, map::MapTypes mask)
+{
+  objectTypes &= ~mask;
+  objectTypes |= type;
+}
+
+void MapPaintLayer::setShowMapObject(map::MapTypes type, bool show)
 {
   if(show)
     objectTypes |= type;
@@ -133,7 +139,7 @@ void MapPaintLayer::setShowMapObjects(map::MapTypes type, bool show)
     objectTypes &= ~type;
 }
 
-void MapPaintLayer::setShowMapObjectsDisplay(map::MapObjectDisplayTypes type, bool show)
+void MapPaintLayer::setShowMapObjectDisplay(map::MapObjectDisplayTypes type, bool show)
 {
   if(show)
     objectDisplayTypes |= type;
@@ -213,7 +219,7 @@ void MapPaintLayer::initMapLayerSettings()
   // Create a default layer with all features enabled
   // Features are switched off step by step when adding new (higher) layers
   MapLayer defLayer = MapLayer(0).airport().approach().approachText().approachTextDetail().approachDetail().airportName().airportIdent().
-                      airportSoft().airportNoRating().airportOverviewRunway().airportSource(layer::ALL).
+                      airportSoft().airportNoRating().airportOverviewRunway().
 
                       airportWeather().airportWeatherDetails().
 
@@ -394,7 +400,7 @@ void MapPaintLayer::initMapLayerSettings()
 
   // airport > 4000, VOR
   append(defLayer.clone(200.f).airportSymbolSize(12).minRunwayLength(layer::MAX_MEDIUM_RUNWAY_FT).
-         airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
+         airportOverviewRunway(false).airportName(false).
          windBarbsSymbolSize(14).
          airportMsa().
          approachText(false).approachTextDetail(false).
@@ -409,7 +415,7 @@ void MapPaintLayer::initMapLayerSettings()
 
   // airport > 4000
   append(defLayer.clone(300.f).airportSymbolSize(10).minRunwayLength(layer::MAX_MEDIUM_RUNWAY_FT).
-         airportOverviewRunway(false).airportName(false).airportSource(layer::MEDIUM).
+         airportOverviewRunway(false).airportName(false).
          windBarbsSymbolSize(12).
          airportMsa().
          approachText(false).approachTextDetail(false).
@@ -427,7 +433,7 @@ void MapPaintLayer::initMapLayerSettings()
 
   // airport > 8000
   append(defLayer.clone(750.f).airportSymbolSize(8).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
-         airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
+         airportOverviewRunway(false).airportName(false).
          windBarbsSymbolSize(12).
          approachText(false).approachTextDetail(false).
          aiAircraftGround(false).aiShipLarge(false).aiShipSmall(false).
@@ -443,7 +449,7 @@ void MapPaintLayer::initMapLayerSettings()
 
   // airport > 8000
   append(defLayer.clone(1200.f).airportSymbolSize(6).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
-         airportOverviewRunway(false).airportName(false).airportSource(layer::LARGE).
+         airportOverviewRunway(false).airportName(false).
          windBarbsSymbolSize(10).
          approachText(false).approachDetail(false).approachTextDetail(false).
          aiAircraftGround(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
@@ -462,7 +468,7 @@ void MapPaintLayer::initMapLayerSettings()
   // airport > 8000
   append(defLayer.clone(2400.f).airportSymbolSize(4).
          minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
-         airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
+         airportOverviewRunway(false).airportName(false).airportIdent(false).
          airportWeather(false).airportWeatherDetails(false).
          windBarbsSymbolSize(6).
          mora(false).
@@ -481,7 +487,7 @@ void MapPaintLayer::initMapLayerSettings()
 
   append(defLayer.clone(layer::DISTANCE_CUT_OFF_LIMIT).
          airportSymbolSize(3).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
-         airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
+         airportOverviewRunway(false).airportName(false).airportIdent(false).
          airportWeather(false).airportWeatherDetails(false).
          windBarbs(false).
          mora(false).
@@ -501,7 +507,7 @@ void MapPaintLayer::initMapLayerSettings()
   // Make sure that there is always a layer
   append(defLayer.clone(100000.f).
          airportSymbolSize(3).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
-         airportOverviewRunway(false).airportName(false).airportIdent(false).airportSource(layer::LARGE).
+         airportOverviewRunway(false).airportName(false).airportIdent(false).
          airportWeather(false).airportWeatherDetails(false).
          windBarbs(false).
          mora(false).
@@ -578,6 +584,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.userPointTypeUnknown = NavApp::getUserdataController()->isSelectedUnknownType();
       context.zoomDistanceMeter = static_cast<float>(mapWidget->distance() * 1000.);
       context.darkMap = mapWidget->isDarkMap();
+
+      context.mimimumRunwayLengthFt = minimumRunwayLenghtFt;
 
       // Copy default font
       context.defaultFont = painter->font();

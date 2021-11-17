@@ -41,6 +41,7 @@
 #include "mapgui/mapcontextmenu.h"
 #include "mapgui/maplayersettings.h"
 #include "mapgui/mapmarkhandler.h"
+#include "mapgui/mapairporthandler.h"
 #include "mapgui/mapscreenindex.h"
 #include "mapgui/maptooltip.h"
 #include "mapgui/mapvisible.h"
@@ -1884,7 +1885,7 @@ void MapWidget::updateRoute(QPoint newPoint, int leg, int point, bool fromClickA
   }
 
   // Count number of all objects
-  int totalSize = result.size(map::AIRPORT_ALL_ADDON | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT);
+  int totalSize = result.size(map::AIRPORT_ALL_AND_ADDON | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT);
 
   int id = -1;
   map::MapTypes type = map::NONE;
@@ -2866,8 +2867,7 @@ void MapWidget::resetSettingActionsToDefault()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  atools::gui::SignalBlocker blocker({ui->actionMapShowAirports, ui->actionMapShowSoftAirports, ui->actionMapShowEmptyAirports,
-                                      ui->actionMapShowAddonAirports, ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
+  atools::gui::SignalBlocker blocker({ui->actionMapShowAirports, ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
                                       ui->actionMapShowIls, ui->actionMapShowGls, ui->actionMapShowHolding, ui->actionMapShowAirportMsa,
                                       ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks,
                                       ui->actionShowAirspaces, ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft,
@@ -2881,11 +2881,8 @@ void MapWidget::resetSettingActionsToDefault()
   ui->actionMapAircraftCenter->setChecked(true);
 
   // Menu view =====================================
-  // Submenu airports
+  // Button airports
   ui->actionMapShowAirports->setChecked(true);
-  ui->actionMapShowSoftAirports->setChecked(true);
-  ui->actionMapShowEmptyAirports->setChecked(true);
-  ui->actionMapShowAddonAirports->setChecked(true);
 
   // Submenu navaids
   ui->actionMapShowVor->setChecked(true);
@@ -3017,10 +3014,8 @@ void MapWidget::updateMapObjectsShown()
   paintLayer->setWeatherSource(weatherSourceFromUi());
 
   // Other map features ====================================================
-  setShowMapPois(
-    ui->actionMapShowCities->isChecked() &&
-    (currentThemeIndex == map::SIMPLE || currentThemeIndex == map::PLAIN ||
-     currentThemeIndex == map::ATLAS));
+  setShowMapPois(ui->actionMapShowCities->isChecked() &&
+                 (currentThemeIndex == map::SIMPLE || currentThemeIndex == map::PLAIN || currentThemeIndex == map::ATLAS));
   setShowGrid(ui->actionMapShowGrid->isChecked());
 
   // Need to keep track of hillshading separately since Marble has not getter
@@ -3029,76 +3024,54 @@ void MapWidget::updateMapObjectsShown()
                  currentThemeIndex == map::CARTOLIGHT || currentThemeIndex >= map::CUSTOM);
   setPropertyValue("hillshading", hillshading);
 
-  setShowMapFeatures(map::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
-  setShowMapFeatures(map::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
-  setShowMapFeatures(map::TRACK, ui->actionMapShowTracks->isChecked() && NavApp::hasTracks());
+  map::MapTypes oldTypes = getShownMapFeatures();
+  map::MapObjectDisplayTypes oldDisplayTypes = getShownMapFeaturesDisplay();
 
-  setShowMapFeatures(map::AIRSPACE, getShownAirspaces().flags & map::AIRSPACE_ALL &&
-                     ui->actionShowAirspaces->isChecked());
+  setShowMapObject(map::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
+  setShowMapObject(map::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
+  setShowMapObject(map::TRACK, ui->actionMapShowTracks->isChecked() && NavApp::hasTracks());
 
-  setShowMapFeaturesDisplay(map::FLIGHTPLAN, ui->actionMapShowRoute->isChecked());
-  setShowMapFeaturesDisplay(map::FLIGHTPLAN_TOC_TOD, ui->actionMapShowTocTod->isChecked());
-  setShowMapFeatures(map::MISSED_APPROACH, ui->actionInfoApproachShowMissedAppr->isChecked());
+  setShowMapObject(map::AIRSPACE, getShownAirspaces().flags & map::AIRSPACE_ALL && ui->actionShowAirspaces->isChecked());
 
-  setShowMapFeaturesDisplay(map::COMPASS_ROSE, ui->actionMapShowCompassRose->isChecked());
-  setShowMapFeaturesDisplay(map::COMPASS_ROSE_ATTACH, ui->actionMapShowCompassRoseAttach->isChecked());
-  setShowMapFeaturesDisplay(map::AIRCRAFT_ENDURANCE, ui->actionMapShowEndurance->isChecked());
-  setShowMapFeatures(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
-  setShowMapFeaturesDisplay(map::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
-  setShowMapFeatures(map::AIRCRAFT_AI, ui->actionMapShowAircraftAi->isChecked());
-  setShowMapFeatures(map::AIRCRAFT_AI_SHIP, ui->actionMapShowAircraftAiBoat->isChecked());
+  setShowMapObjectDisplay(map::FLIGHTPLAN, ui->actionMapShowRoute->isChecked());
+  setShowMapObjectDisplay(map::FLIGHTPLAN_TOC_TOD, ui->actionMapShowTocTod->isChecked());
+  setShowMapObject(map::MISSED_APPROACH, ui->actionInfoApproachShowMissedAppr->isChecked());
 
-  setShowMapFeatures(map::AIRPORT_HARD, ui->actionMapShowAirports->isChecked());
-  setShowMapFeatures(map::AIRPORT_SOFT, ui->actionMapShowSoftAirports->isChecked());
+  setShowMapObjectDisplay(map::COMPASS_ROSE, ui->actionMapShowCompassRose->isChecked());
+  setShowMapObjectDisplay(map::COMPASS_ROSE_ATTACH, ui->actionMapShowCompassRoseAttach->isChecked());
+  setShowMapObjectDisplay(map::AIRCRAFT_ENDURANCE, ui->actionMapShowEndurance->isChecked());
+  setShowMapObject(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
+  setShowMapObjectDisplay(map::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
+  setShowMapObject(map::AIRCRAFT_AI, ui->actionMapShowAircraftAi->isChecked());
+  setShowMapObject(map::AIRCRAFT_AI_SHIP, ui->actionMapShowAircraftAiBoat->isChecked());
 
   // Display types which are not used in structs
-  setShowMapFeaturesDisplay(map::AIRPORT_WEATHER, ui->actionMapShowAirportWeather->isChecked());
-  setShowMapFeaturesDisplay(map::MORA, ui->actionMapShowMinimumAltitude->isChecked());
-  setShowMapFeaturesDisplay(map::WIND_BARBS, NavApp::getWindReporter()->isWindShown());
-  setShowMapFeaturesDisplay(map::WIND_BARBS_ROUTE, NavApp::getWindReporter()->isRouteWindShown());
+  setShowMapObjectDisplay(map::AIRPORT_WEATHER, ui->actionMapShowAirportWeather->isChecked());
+  setShowMapObjectDisplay(map::MORA, ui->actionMapShowMinimumAltitude->isChecked());
+  setShowMapObjectDisplay(map::WIND_BARBS, NavApp::getWindReporter()->isWindShown());
+  setShowMapObjectDisplay(map::WIND_BARBS_ROUTE, NavApp::getWindReporter()->isRouteWindShown());
 
-  setShowMapFeaturesDisplay(map::LOGBOOK_DIRECT, NavApp::getLogdataController()->isDirectPreviewShown());
-  setShowMapFeaturesDisplay(map::LOGBOOK_ROUTE, NavApp::getLogdataController()->isRoutePreviewShown());
-  setShowMapFeaturesDisplay(map::LOGBOOK_TRACK, NavApp::getLogdataController()->isTrackPreviewShown());
+  setShowMapObjectDisplay(map::LOGBOOK_DIRECT, NavApp::getLogdataController()->isDirectPreviewShown());
+  setShowMapObjectDisplay(map::LOGBOOK_ROUTE, NavApp::getLogdataController()->isRoutePreviewShown());
+  setShowMapObjectDisplay(map::LOGBOOK_TRACK, NavApp::getLogdataController()->isTrackPreviewShown());
 
-  // Force addon airport independent of other settings or not
-  setShowMapFeatures(map::AIRPORT_ADDON, ui->actionMapShowAddonAirports->isChecked());
-
-  if(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS)
-  {
-    // Treat empty airports special
-    setShowMapFeatures(map::AIRPORT_EMPTY, ui->actionMapShowEmptyAirports->isChecked());
-
-    // Set the general airport flag if any airport is selected
-    setShowMapFeatures(map::AIRPORT,
-                       ui->actionMapShowAirports->isChecked() ||
-                       ui->actionMapShowSoftAirports->isChecked() ||
-                       ui->actionMapShowEmptyAirports->isChecked() ||
-                       ui->actionMapShowAddonAirports->isChecked());
-  }
-  else
-  {
-    // Treat empty airports as all others
-    setShowMapFeatures(map::AIRPORT_EMPTY, true);
-
-    // Set the general airport flag if any airport is selected
-    setShowMapFeatures(map::AIRPORT,
-                       ui->actionMapShowAirports->isChecked() ||
-                       ui->actionMapShowSoftAirports->isChecked() ||
-                       ui->actionMapShowAddonAirports->isChecked());
-  }
-
-  setShowMapFeatures(map::VOR, ui->actionMapShowVor->isChecked());
-  setShowMapFeatures(map::NDB, ui->actionMapShowNdb->isChecked());
-  setShowMapFeatures(map::WAYPOINT, ui->actionMapShowWp->isChecked());
-  setShowMapFeatures(map::HOLDING, ui->actionMapShowHolding->isChecked());
-  setShowMapFeatures(map::AIRPORT_MSA, ui->actionMapShowAirportMsa->isChecked());
+  setShowMapObject(map::VOR, ui->actionMapShowVor->isChecked());
+  setShowMapObject(map::NDB, ui->actionMapShowNdb->isChecked());
+  setShowMapObject(map::WAYPOINT, ui->actionMapShowWp->isChecked());
+  setShowMapObject(map::HOLDING, ui->actionMapShowHolding->isChecked());
+  setShowMapObject(map::AIRPORT_MSA, ui->actionMapShowAirportMsa->isChecked());
 
   // ILS and marker are shown together
-  setShowMapFeatures(map::ILS, ui->actionMapShowIls->isChecked());
-  setShowMapFeatures(map::MARKER, ui->actionMapShowIls->isChecked());
+  setShowMapObject(map::ILS, ui->actionMapShowIls->isChecked());
+  setShowMapObject(map::MARKER, ui->actionMapShowIls->isChecked());
 
-  setShowMapFeaturesDisplay(map::GLS, ui->actionMapShowGls->isChecked());
+  setShowMapObjectDisplay(map::GLS, ui->actionMapShowGls->isChecked());
+
+  setShowMapObjects(NavApp::getMapMarkHandler()->getMarkTypes(), map::MARK_ALL);
+  setShowMapObjects(NavApp::getMapAirportHandler()->getAirportTypes(), map::AIRPORT_ALL_AND_ADDON);
+  paintLayer->setShowMinimumRunwayFt(NavApp::getMapAirportHandler()->getMinimumRunwayFt());
+
+  updateGeometryIndex(oldTypes, oldDisplayTypes);
 
   mapVisible->updateVisibleObjectsStatusBar();
 

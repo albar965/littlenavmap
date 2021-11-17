@@ -276,7 +276,6 @@ private:
   /* Database queries */
   atools::sql::SqlQuery *runwayOverviewQuery = nullptr,
                         *airportByRectQuery = nullptr, *airportAddonByRectQuery = nullptr,
-                        *airportMediumByRectQuery = nullptr, *airportLargeByRectQuery = nullptr,
                         *airportMsaByRectQuery = nullptr, *airportMsaByIdentQuery = nullptr, *airportMsaByIdQuery = nullptr;
 
   atools::sql::SqlQuery *vorsByRectQuery = nullptr, *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr,

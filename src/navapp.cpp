@@ -34,6 +34,7 @@
 #include "gui/stylehandler.h"
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapmarkhandler.h"
+#include "mapgui/mapairporthandler.h"
 #include "mapgui/mapwidget.h"
 #include "online/onlinedatacontroller.h"
 #include "perf/aircraftperfcontroller.h"
@@ -77,6 +78,7 @@ atools::fs::common::MoraReader *NavApp::moraReader = nullptr;
 UpdateHandler *NavApp::updateHandler = nullptr;
 UserdataController *NavApp::userdataController = nullptr;
 MapMarkHandler *NavApp::mapMarkHandler = nullptr;
+MapAirportHandler *NavApp::mapAirportHandler = nullptr;
 LogdataController *NavApp::logdataController = nullptr;
 OnlinedataController *NavApp::onlinedataController = nullptr;
 TrackController *NavApp::trackController = nullptr;
@@ -126,7 +128,9 @@ void NavApp::init(MainWindow *mainWindowParam)
 
   userdataController = new UserdataController(databaseManager->getUserdataManager(), mainWindow);
   logdataController = new LogdataController(databaseManager->getLogdataManager(), mainWindow);
+
   mapMarkHandler = new MapMarkHandler(mainWindow);
+  mapAirportHandler = new MapAirportHandler(mainWindow);
 
   databaseMetaSim = new atools::fs::db::DatabaseMeta(getDatabaseSim());
   databaseMetaNav = new atools::fs::db::DatabaseMeta(getDatabaseNav());
@@ -213,6 +217,10 @@ void NavApp::deInit()
   qDebug() << Q_FUNC_INFO << "delete mapMarkHandler";
   delete mapMarkHandler;
   mapMarkHandler = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete mapAirportHandler";
+  delete mapAirportHandler;
+  mapAirportHandler = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete logdataController";
   delete logdataController;
@@ -734,6 +742,11 @@ UserdataController *NavApp::getUserdataController()
 MapMarkHandler *NavApp::getMapMarkHandler()
 {
   return mapMarkHandler;
+}
+
+MapAirportHandler *NavApp::getMapAirportHandler()
+{
+  return mapAirportHandler;
 }
 
 void NavApp::showFlightPlan()

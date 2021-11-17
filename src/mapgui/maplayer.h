@@ -21,13 +21,6 @@
 #include <QDebug>
 
 namespace layer {
-/* Defines which table to use for airport queries */
-enum AirportSource
-{
-  ALL, /* use airport table as source */
-  MEDIUM, /* use airport_medium table as source */
-  LARGE /* use airport_large table as source */
-};
 
 /* Do not show anything at all above this zoom distance */
 constexpr float DISTANCE_CUT_OFF_LIMIT = 4000.f;
@@ -81,9 +74,6 @@ public:
   MapLayer& approachTextDetail(bool value = true);
 
   MapLayer& routeTextAndDetail(bool value = true);
-
-  /* Define source table for airports */
-  MapLayer& airportSource(layer::AirportSource source);
 
   /* Show airport runway overview symbol for airports with runways > 8000 ft */
   MapLayer& airportOverviewRunway(bool value = true);
@@ -307,11 +297,6 @@ public:
   bool isAirportRouteInfo() const
   {
     return layerAirportRouteInfo;
-  }
-
-  layer::AirportSource getDataSource() const
-  {
-    return src;
   }
 
   int getMinRunwayLength() const
@@ -656,7 +641,6 @@ private:
 
   float maxRange = -1.;
 
-  layer::AirportSource src;
   bool layerAirport = false, layerAirportOverviewRunway = false, layerAirportDiagram = false,
        layerAirportDiagramRunway = false, layerAirportDiagramDetail = false, layerAirportDiagramDetail2 = false,
        layerAirportDiagramDetail3 = false, layerAirportSoft = false, layerAirportNoRating = false,

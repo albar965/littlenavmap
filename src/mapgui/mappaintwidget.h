@@ -37,6 +37,7 @@ class ApronGeometryCache;
 class MapQuery;
 class AirwayTrackQuery;
 class WaypointTrackQuery;
+class MapLayer;
 
 namespace proc {
 struct MapProcedureLeg;
@@ -194,8 +195,9 @@ public:
   QDateTime getSunShadingDateTime() const;
 
   /* Define which airport or navaid types are shown on the map. Updates screen index on demand. */
-  void setShowMapFeatures(map::MapTypes type, bool show);
-  void setShowMapFeaturesDisplay(map::MapObjectDisplayTypes type, bool show);
+  void setShowMapObject(map::MapTypes type, bool show);
+  void setShowMapObjects(map::MapTypes type, map::MapTypes mask);
+  void setShowMapObjectDisplay(map::MapObjectDisplayTypes type, bool show);
   void setShowMapAirspaces(map::MapAirspaceFilter types);
 
   map::MapTypes getShownMapFeatures() const;
@@ -438,6 +440,8 @@ protected:
   virtual bool checkPos(const atools::geo::Pos&);
 
   virtual void resizeEvent(QResizeEvent *event) override;
+
+  void updateGeometryIndex(map::MapTypes oldTypes, map::MapObjectDisplayTypes oldDisplayTypes);
 
   /* Caches complex X-Plane apron geometry as objects in screen coordinates for faster painting. */
   ApronGeometryCache *apronGeometryCache;

@@ -384,7 +384,7 @@ struct MapAirport
    * @param objectTypes Map display configuration flags
    * @return true if this airport is visible on map
    */
-  bool isVisible(map::MapTypes objectTypes) const;
+  bool isVisible(map::MapTypes types, int minRunwayFt) const;
 
 };
 

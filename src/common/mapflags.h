@@ -64,11 +64,11 @@ Q_DECL_CONSTEXPR static int MAX_MAP_OBJECTS = 8000;
 enum MapType : unsigned long long
 {
   NONE =             0,
-  AIRPORT =          1 << 0,
-  AIRPORT_HARD =     1 << 1,
-  AIRPORT_SOFT =     1 << 2,
-  AIRPORT_EMPTY =    1 << 3,
-  AIRPORT_ADDON =    1 << 4,
+  AIRPORT =          1 << 0, /* Master switch for airport display */
+  // 1 << 1, Unused
+  // 1 << 2,
+  // 1 << 3,
+  // 1 << 4,
   VOR =              1 << 5, /* Also: DME, VORDME, VORTAC and TACAN */
   NDB =              1 << 6,
   ILS =              1 << 7, /* Type also covers GLS approaches */
@@ -98,30 +98,46 @@ enum MapType : unsigned long long
 
   /* Need to use constant expressions for long values above 32 bit */
 
-  /* Mark state is saved in the MapMarkHandler */
-  MARK_RANGE =       0x0000'0000'8000'0000, /* 1 << 31 All range rings */
-  MARK_DISTANCE =    0x0000'0001'0000'0000, /* All measurement lines */
-  MARK_HOLDING =     0x0000'0002'0000'0000, /* Holdings */
-  MARK_PATTERNS =    0x0000'0004'0000'0000, /* Traffic patterns */
-  MARK_MSA =         0x0000'0008'0000'0000, /* Airport MSA */
+  /* Mark state is saved in the MapMarkHandler ================================ */
+  MARK_RANGE =           0x0000'0000'8000'0000, /* 1 << 31 All range rings */
+  MARK_DISTANCE =        0x0000'0001'0000'0000, /* All measurement lines */
+  MARK_HOLDING =         0x0000'0002'0000'0000, /* Holdings */
+  MARK_PATTERNS =        0x0000'0004'0000'0000, /* Traffic patterns */
+  MARK_MSA =             0x0000'0008'0000'0000, /* Airport MSA */
 
+  /* All marks */
   MARK_ALL = MARK_RANGE | MARK_DISTANCE | MARK_HOLDING | MARK_PATTERNS | MARK_MSA,
 
-  /* All online, AI and multiplayer aircraft */
+  /* Airport display flags ================================  */
+  AIRPORT_HARD =         0x0000'0010'0000'0000, /* Display flag for airports having at least one hard runway */
+  AIRPORT_SOFT =         0x0000'0020'0000'0000, /* Display flag for airports having only soft runways */
+  AIRPORT_WATER =        0x0000'0040'0000'0000, /* Display flag for water only airports */
+  AIRPORT_HELIPAD =      0x0000'0080'0000'0000, /* Display flag for helipad only airports */
+  AIRPORT_EMPTY =        0x0000'0100'0000'0000, /* Filter flag for empty airports */
+  AIRPORT_ADDON =        0x0000'0200'0000'0000, /* Force addon airport display at all times */
+  AIRPORT_UNLIGHTED =    0x0000'0400'0000'0000, /* Filter flag. Show airports having no lighting */
+  AIRPORT_NO_PROCS =     0x0000'0800'0000'0000, /* Filter flag. Show airports without approach procedure */
+
+  /* Pure visibiliy flags. Nothing is shown if not at least one of these is set */
+  AIRPORT_ALL_VISIBLE = AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_WATER | AIRPORT_HELIPAD,
+
+  /* Visible and filter flags */
+  AIRPORT_ALL = AIRPORT_ALL_VISIBLE | AIRPORT | AIRPORT_EMPTY |  AIRPORT_UNLIGHTED | AIRPORT_NO_PROCS,
+  AIRPORT_ALL_AND_ADDON = AIRPORT_ALL | AIRPORT_ADDON,
+
+  /* All online, AI and multiplayer aircraft ========================================= */
   AIRCRAFT_ALL = AIRCRAFT | AIRCRAFT_AI | AIRCRAFT_AI_SHIP | AIRCRAFT_ONLINE,
 
+  /* All airways ==================================== */
   AIRWAY_ALL = AIRWAY | AIRWAYV | AIRWAYJ,
 
-  AIRPORT_ALL = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY,
-  AIRPORT_ALL_ADDON = AIRPORT | AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_EMPTY | AIRPORT_ADDON,
-
-  /* All navaids */
+  /* All navaids ======================================== */
   NAV_ALL = VOR | NDB | WAYPOINT,
 
   /* All objects that have a magvar assigned */
   NAV_MAGVAR = AIRPORT | VOR | NDB | WAYPOINT,
 
-  ALL = 0xffffffff
+  ALL = 0xffff'ffff'ffff'ffff
 };
 /* *INDENT-ON* */
 

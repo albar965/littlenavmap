@@ -352,11 +352,6 @@
      <property name="title">
       <string>&amp;Airports</string>
      </property>
-     <addaction name="actionMapShowAddonAirports"/>
-     <addaction name="actionMapShowAirports"/>
-     <addaction name="actionMapShowSoftAirports"/>
-     <addaction name="separator"/>
-     <addaction name="actionMapShowEmptyAirports"/>
     </widget>
     <widget class="QMenu" name="menuViewUserpoints">
      <property name="title">
@@ -5584,10 +5579,7 @@ relation to shown airport</string>
    <addaction name="actionMapDefaultDetails"/>
    <addaction name="actionMapLessDetails"/>
    <addaction name="separator"/>
-   <addaction name="actionMapShowAddonAirports"/>
    <addaction name="actionMapShowAirports"/>
-   <addaction name="actionMapShowSoftAirports"/>
-   <addaction name="separator"/>
    <addaction name="actionMapShowVor"/>
    <addaction name="actionMapShowNdb"/>
    <addaction name="actionMapShowWp"/>
@@ -7622,13 +7614,13 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/airport.svg</normaloff>:/littlenavmap/resources/icons/airport.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Airports with &amp;hard Runways</string>
+    <string>Show &amp;Airports</string>
    </property>
    <property name="toolTip">
-    <string>Show airports with hard runways on map</string>
+    <string>Show airports on the map</string>
    </property>
    <property name="statusTip">
-    <string>Show airports with hard runways on map</string>
+    <string>Show airports on the map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+H</string>
@@ -7815,54 +7807,6 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+H</string>
-   </property>
-  </action>
-  <action name="actionMapShowSoftAirports">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airportsoft.svg</normaloff>:/littlenavmap/resources/icons/airportsoft.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show Airports with &amp;soft Runways</string>
-   </property>
-   <property name="toolTip">
-    <string>Show airports with soft or water runways on map</string>
-   </property>
-   <property name="statusTip">
-    <string>Show airports with soft or water runways on map</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Alt+S</string>
-   </property>
-  </action>
-  <action name="actionMapShowEmptyAirports">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airportempty.svg</normaloff>:/littlenavmap/resources/icons/airportempty.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show &amp;empty Airports</string>
-   </property>
-   <property name="toolTip">
-    <string>Show empty airports on map</string>
-   </property>
-   <property name="statusTip">
-    <string>Show empty airports on map</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Alt+E</string>
    </property>
   </action>
   <action name="actionMapHideOneRangeRing">
@@ -8217,30 +8161,6 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="menuRole">
     <enum>QAction::ApplicationSpecificRole</enum>
-   </property>
-  </action>
-  <action name="actionMapShowAddonAirports">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airportaddon.svg</normaloff>:/littlenavmap/resources/icons/airportaddon.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Force &amp;Show Add-on Airports</string>
-   </property>
-   <property name="toolTip">
-    <string>Force map to show add-on airports</string>
-   </property>
-   <property name="statusTip">
-    <string>Force map to show add-on airports</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Alt+O</string>
    </property>
   </action>
   <action name="actionMapShowGrid">
@@ -12454,7 +12374,7 @@ Disabled if a navdatabase does not allow it.</string>
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupRouteCalcType"/>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>

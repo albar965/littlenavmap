@@ -160,6 +160,8 @@ const QLatin1String MAP_TRAFFICPATTERNS("Map/TrafficPatterns28");
 const QLatin1String MAP_HOLDINGS("Map/Holdings28");
 const QLatin1String MAP_AIRPORT_MSA("Map/AirportMsa28");
 const QLatin1String MAP_MARK_DISPLAY("Map/MarkDisplay28");
+const QLatin1String MAP_AIRPORT("Map/Airports");
+const QLatin1String MAP_AIRPORT_RUNWAY_LENGTH("Map/AirportsRunwayLength");
 
 const QLatin1String LAYOUT_RECENT("WindowLayout/FilenamesRecent");
 
@@ -222,7 +224,7 @@ const QLatin1String AIRSPACE_CONTROLLER_WIDGETS("AirspaceController/Widget");
 
 /* General settings in the configuration file not covered by any GUI elements */
 const QLatin1String SETTINGS_INFOQUERY("Settings/InfoQuery");
-const QLatin1String SETTINGS_MAPQUERY("Settings/MapQuery");
+const QLatin1String SETTINGS_MAPQUERY("Settings/MapQuery28");
 const QLatin1String SETTINGS_DATABASE("Settings/Database");
 
 const QLatin1String APPROACHTREE_WIDGET("ApproachTree/Widget");

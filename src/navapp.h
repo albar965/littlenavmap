@@ -60,6 +60,7 @@ class WeatherReporter;
 class WebController;
 class WindReporter;
 class MapMarkHandler;
+class MapAirportHandler;
 class TrackManager;
 
 namespace atools {
@@ -374,6 +375,7 @@ public:
   static WebController *getWebController();
 
   static MapMarkHandler *getMapMarkHandler();
+  static MapAirportHandler *getMapAirportHandler();
 
   static void showFlightPlan();
   static void showRouteCalc();
@@ -400,6 +402,7 @@ private:
   static atools::fs::common::MoraReader *moraReader;
   static UserdataController *userdataController;
   static MapMarkHandler *mapMarkHandler;
+  static MapAirportHandler *mapAirportHandler;
   static LogdataController *logdataController;
   static OnlinedataController *onlinedataController;
   static TrackController *trackController;

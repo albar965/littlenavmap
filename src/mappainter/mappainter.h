@@ -101,6 +101,7 @@ struct PaintContext
   opts2::Flags2 flags2;
   map::MapWeatherSource weatherSource;
   bool visibleWidget;
+  int mimimumRunwayLengthFt = -1;
 
   /* Text sizes and line thickness in percent / 100 */
   float textSizeAircraftAi = 1.f;
@@ -355,7 +356,7 @@ protected:
   /* Draw enroute as well as user defined holdings */
   void paintHoldingMarks(const QList<map::MapHolding>& holdings, bool user, bool drawFast);
 
-  void paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa,  bool user, bool drawFast);
+  void paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool user, bool drawFast);
 
   /* Minimum points to use for a circle */
   const int CIRCLE_MIN_POINTS = 16;

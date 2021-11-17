@@ -760,7 +760,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
   // Get objects from cache - already present objects will be skipped
   // Airway included to fetch waypoints
   map::MapTypes mapTypes = shown &
-                           (map::AIRPORT_ALL_ADDON | map::AIRPORT_MSA | map::VOR | map::NDB | map::WAYPOINT | map::MARKER | map::HOLDING |
+                           (map::AIRPORT_ALL_AND_ADDON | map::AIRPORT_MSA | map::VOR | map::NDB | map::WAYPOINT | map::MARKER | map::HOLDING |
                             map::AIRWAYJ | map::TRACK | map::AIRWAYV | map::USERPOINT | map::LOGBOOK);
 
   mapWidget->getMapQuery()->getNearestScreenObjects(conv, mapLayer, mapLayer->isAirportDiagram() &&

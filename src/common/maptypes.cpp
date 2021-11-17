@@ -1092,18 +1092,34 @@ bool MapAirport::noRunways() const
   return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) && !flags.testFlag(AP_WATER);
 }
 
-bool MapAirport::isVisible(map::MapTypes objectTypes) const
+bool MapAirport::isVisible(map::MapTypes types, int minRunwayFt) const
 {
-  if(addon() && objectTypes.testFlag(map::AIRPORT_ADDON))
+  if(addon() && types.testFlag(map::AIRPORT_ADDON))
+    // Show addon in any case if flag is set
     return true;
 
-  if(emptyDraw() && !objectTypes.testFlag(map::AIRPORT_EMPTY))
+  if(minRunwayFt > 0 && longestRunwayLength < minRunwayFt)
     return false;
 
-  if(hard() && !objectTypes.testFlag(map::AIRPORT_HARD))
+  if(emptyDraw() && !types.testFlag(map::AIRPORT_EMPTY))
     return false;
 
-  if((softOnly() || waterOnly() || noRunways()) && !objectTypes.testFlag(map::AIRPORT_SOFT))
+  if(hard() && !types.testFlag(map::AIRPORT_HARD))
+    return false;
+
+  if(softOnly() && !types.testFlag(map::AIRPORT_SOFT))
+    return false;
+
+  if(waterOnly() && !types.testFlag(map::AIRPORT_WATER))
+    return false;
+
+  if(helipadOnly() && !types.testFlag(map::AIRPORT_HELIPAD))
+    return false;
+
+  if(!lighted() && !types.testFlag(map::AIRPORT_UNLIGHTED))
+    return false;
+
+  if(!procedure() && !types.testFlag(map::AIRPORT_NO_PROCS))
     return false;
 
   return true;

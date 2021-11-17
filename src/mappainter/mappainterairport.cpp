@@ -76,15 +76,13 @@ void MapPainterAirport::render()
 
   // Get airports from cache/database for the bounding rectangle and add them to the map
   const GeoDataLatLonAltBox& curBox = context->viewport->viewLatLonAltBox();
-  bool addon = context->objectTypes.testFlag(map::AIRPORT_ADDON);
 
   bool overflow = false;
   const QList<MapAirport> *airportCache = nullptr;
 
   // Get airports from map display cache if enabled in toolbar/menu and layer
   if(context->objectTypes.testFlag(map::AIRPORT) && context->mapLayer->isAirport())
-    airportCache =
-      mapQuery->getAirports(curBox, context->mapLayer, context->lazyUpdate, context->objectTypes, overflow);
+    airportCache = mapQuery->getAirports(curBox, context->mapLayer, context->lazyUpdate, context->objectTypes, overflow);
   context->setQueryOverflow(overflow);
 
   // Collect departure, destination and alternate airports from flight plan for potential diagram painting ================
@@ -117,6 +115,8 @@ void MapPainterAirport::render()
     }
   }
 
+  int minRunwayLength = std::max(context->mimimumRunwayLengthFt, context->mapLayer->getMinRunwayLength());
+
   // Use margins for text placed on the right side of the object to avoid disappearing at the left screen border
   QMargins margins(100, 10, 10, 10);
 
@@ -124,13 +124,12 @@ void MapPainterAirport::render()
   QVector<PaintAirportType> visibleAirports;
   for(const MapAirport& airport : airports)
   {
-    // Avoid drawing too many airports during animation when zooming out
-    if(airport.longestRunwayLength >= context->mapLayer->getMinRunwayLength() || (addon && airport.addon()))
+    // Either part of the route or enabled in the actions/menus/toolbar
+    if(airport.isVisible(context->objectTypes, minRunwayLength) || context->routeProcIdMap.contains(airport.getRef()))
     {
       float x, y;
       bool hidden;
-      bool visibleOnMap = wToSBuf(airport.position, x, y,
-                                  scale->getScreeenSizeForRect(airport.bounding), margins, &hidden);
+      bool visibleOnMap = wToSBuf(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), margins, &hidden);
 
       if(!hidden)
       {
@@ -138,11 +137,7 @@ void MapPainterAirport::render()
           // Check bounding rect for visibility if relevant - not for point symbols
           visibleOnMap = airport.bounding.overlaps(context->viewportRect);
 
-        // Either part of the route or enabled in the actions/menus/toolbar
-        bool drawAirport = airport.isVisible(context->objectTypes) || (addon && airport.addon()) ||
-                           context->routeProcIdMap.contains(airport.getRef());
-
-        if(visibleOnMap && drawAirport)
+        if(visibleOnMap)
           visibleAirports.append(PaintAirportType(airport, x, y));
       }
     }

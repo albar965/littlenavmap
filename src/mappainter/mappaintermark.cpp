@@ -39,7 +39,6 @@
 #include "route/routecontroller.h"
 #include "util/paintercontextsaver.h"
 #include "common/textplacement.h"
-#include "mapgui/mapmarkhandler.h"
 #include "fs/userdata/logdatamanager.h"
 #include "mapgui/mapscreenindex.h"
 
@@ -72,8 +71,6 @@ void MapPainterMark::render()
 {
   atools::util::PainterContextSaver saver(context->painter);
 
-  map::MapTypes types = NavApp::getMapMarkHandler()->getMarkTypes();
-
 #ifdef DEBUG_INFORMATION
   {
     atools::util::PainterContextSaver dbgsaver(context->painter);
@@ -88,19 +85,19 @@ void MapPainterMark::render()
   paintMark();
   paintHome();
 
-  if(types & map::MARK_PATTERNS)
+  if(context->objectTypes.testFlag(map::MARK_PATTERNS))
     paintPatternMarks();
 
-  if(types & map::MARK_HOLDING)
+  if(context->objectTypes.testFlag(map::MARK_HOLDING))
     paintHoldingMarks(mapPaintWidget->getHoldingMarksFiltered(), true /* user */, context->drawFast);
 
-  if(types & map::MARK_MSA)
+  if(context->objectTypes.testFlag(map::MARK_MSA))
     paintMsaMarks(mapPaintWidget->getMsaMarksFiltered(), true /* user */, context->drawFast);
 
-  if(types & map::MARK_RANGE)
+  if(context->objectTypes.testFlag(map::MARK_RANGE))
     paintRangeMarks();
 
-  if(types & map::MARK_DISTANCE)
+  if(context->objectTypes.testFlag(map::MARK_DISTANCE))
     paintDistanceMarks();
 
   paintCompassRose();

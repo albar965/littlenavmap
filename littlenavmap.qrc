@@ -299,5 +299,10 @@
         <file>resources/icons/mapdisplayflightplan.svg</file>
         <file>resources/icons/marksoff.svg</file>
         <file>resources/icons/endurance.svg</file>
+        <file>resources/icons/airportwater.svg</file>
+        <file>resources/icons/airporthelipad.svg</file>
+        <file>resources/icons/airportmenu.svg</file>
+        <file>resources/icons/airportlight.svg</file>
+        <file>resources/icons/airportproc.svg</file>
     </qresource>
 </RCC>

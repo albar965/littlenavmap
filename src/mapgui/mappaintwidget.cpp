@@ -402,37 +402,45 @@ void MapPaintWidget::setShowMapPois(bool show)
   setShowTerrain(show);
 }
 
-void MapPaintWidget::setShowMapFeatures(map::MapTypes type, bool show)
+void MapPaintWidget::updateGeometryIndex(map::MapTypes oldTypes, map::MapObjectDisplayTypes oldDisplayTypes)
 {
-  bool curShow = (paintLayer->getShownMapObjects() & type) == type;
-  paintLayer->setShowMapObjects(type, show);
-
   // Update screen coordinate caches if display options have changed
+  map::MapTypes types = getShownMapFeatures();
+  map::MapObjectDisplayTypes displayTypes = getShownMapFeaturesDisplay();
 
-  if((type.testFlag(map::AIRWAY_ALL) && show != curShow) || type.testFlag(map::TRACK) /* Update tracks always */)
+  if(((types& map::AIRWAY_ALL) != (oldTypes & map::AIRWAY_ALL)) || types.testFlag(map::TRACK) || oldTypes.testFlag(map::TRACK))
     screenIndex->updateAirwayScreenGeometry(getCurrentViewBoundingBox());
 
-  if(type.testFlag(map::AIRSPACE) && show != curShow)
+  if(types.testFlag(map::AIRSPACE) != oldTypes.testFlag(map::AIRSPACE))
     screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
 
-  if(type.testFlag(map::ILS) && show != curShow)
+  if((types.testFlag(map::ILS) != oldTypes.testFlag(map::ILS)) ||
+     (displayTypes.testFlag(map::GLS) != oldDisplayTypes.testFlag(map::GLS)) ||
+     (displayTypes.testFlag(map::FLIGHTPLAN) != oldDisplayTypes.testFlag(map::FLIGHTPLAN)))
     screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
 
-  if(type.testFlag(map::MISSED_APPROACH) && show != curShow)
+  if(types.testFlag(map::MISSED_APPROACH) != oldTypes.testFlag(map::MISSED_APPROACH) ||
+     (displayTypes.testFlag(map::FLIGHTPLAN) != oldDisplayTypes.testFlag(map::FLIGHTPLAN)))
     screenIndex->updateRouteScreenGeometry(getCurrentViewBoundingBox());
-}
-
-void MapPaintWidget::setShowMapFeaturesDisplay(map::MapObjectDisplayTypes type, bool show)
-{
-  bool curShow = (paintLayer->getShownMapObjectDisplayTypes() & type) == type;
-  paintLayer->setShowMapObjectsDisplay(type, show);
 
   // Update screen coordinate cache if display options have changed
-  if(type & map::LOGBOOK_ALL && show != curShow)
+  if((displayTypes& map::LOGBOOK_ALL) != (oldDisplayTypes & map::LOGBOOK_ALL))
     screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
+}
 
-  if((type.testFlag(map::FLIGHTPLAN) || type.testFlag(map::GLS)) && show != curShow)
-    screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
+void MapPaintWidget::setShowMapObjects(map::MapTypes type, map::MapTypes mask)
+{
+  paintLayer->setShowMapObjects(type, mask);
+}
+
+void MapPaintWidget::setShowMapObject(map::MapTypes type, bool show)
+{
+  paintLayer->setShowMapObject(type, show);
+}
+
+void MapPaintWidget::setShowMapObjectDisplay(map::MapObjectDisplayTypes type, bool show)
+{
+  paintLayer->setShowMapObjectDisplay(type, show);
 }
 
 void MapPaintWidget::setShowMapAirspaces(map::MapAirspaceFilter types)

@@ -44,7 +44,6 @@ void MapMarkHandler::restoreState()
 {
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
   {
-
     QVariant defaultValue = static_cast<atools::util::FlagType>(map::MARK_ALL);
     markTypes = atools::settings::Settings::instance().valueVar(lnm::MAP_MARK_DISPLAY, defaultValue).value<atools::util::FlagType>();
   }

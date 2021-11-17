@@ -79,8 +79,7 @@ AirportQuery::AirportQuery(atools::sql::SqlDatabase *sqlDb, bool nav)
   startCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "StartCache", 1000).toInt());
   helipadCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "HelipadCache", 1000).toInt());
   airportIdCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirportIdCache", 1000).toInt());
-  airportFuzzyIdCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirportFuzzyIdCache",
-                                                           1000).toInt());
+  airportFuzzyIdCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirportFuzzyIdCache", 1000).toInt());
   airportIdentCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirportIdentCache", 1000).toInt());
 }
 
