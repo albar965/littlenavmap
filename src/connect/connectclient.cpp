@@ -620,8 +620,7 @@ void ConnectClient::connectInternal()
 
 bool ConnectClient::isConnectedActive() const
 {
-  return (socket != nullptr && socket->isOpen() && socketConnected) ||
-         (dataReader != nullptr && dataReader->isConnected());
+  return (socket != nullptr && socket->isOpen() && socketConnected) || (dataReader != nullptr && dataReader->isConnected());
 }
 
 bool ConnectClient::isConnected() const
