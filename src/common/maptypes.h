@@ -483,6 +483,8 @@ struct MapRunwayEnd
     return rightVasiType == "UNKN" ? QString() : rightVasiType;
   }
 
+  QStringList uniqueVasiTypeStr() const;
+
   bool secondary;
   bool navdata; /* true if source is third party nav database, false if source is simulator data */
 };

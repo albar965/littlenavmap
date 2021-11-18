@@ -345,6 +345,7 @@ SOURCES += \
   src/route/routecontroller.cpp \
   src/route/routeextractor.cpp \
   src/route/routeflags.cpp \
+  src/route/routelabel.cpp \
   src/route/routeleg.cpp \
   src/route/userwaypointdialog.cpp \
   src/routeexport/routeexport.cpp \
@@ -523,6 +524,7 @@ HEADERS  += \
   src/route/routecontroller.h \
   src/route/routeextractor.h \
   src/route/routeflags.h \
+  src/route/routelabel.h \
   src/route/routeleg.h \
   src/route/userwaypointdialog.h \
   src/routeexport/routeexport.h \

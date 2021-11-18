@@ -61,6 +61,7 @@ class AirwayTrackQuery;
 class UnitStringTool;
 class QTextCursor;
 class RouteCalcWindow;
+class RouteLabel;
 
 /*
  * All flight plan related tasks like saving, loading, modification, calculation and table
@@ -356,8 +357,6 @@ private:
 
   void routeSetStartPosition(map::MapStart start);
 
-  void updateWindowLabel();
-
   void doubleClick(const QModelIndex& index);
   void showAtIndex(int index, bool info, bool map, bool doubleClick);
 
@@ -437,12 +436,6 @@ private:
   void helpClicked();
 
   void dockVisibilityChanged(bool visible);
-
-  /* Departure, destination and procedures. */
-  QString buildFlightplanLabel(bool print = false, bool widget = false, bool titleOnly = false) const;
-
-  /* Distance and time. */
-  QString buildFlightplanLabel2(bool print = false) const;
 
   void updateTableHeaders();
   void highlightNextWaypoint(int activeLegIdx);
@@ -537,6 +530,9 @@ private:
   QUndoStack *undoStack = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;
   atools::fs::pln::FlightplanIO *flightplanIO = nullptr;
+
+  /* Takes care of the top label */
+  RouteLabel *routeLabel = nullptr;
 
   /* Route calculation dock window controller */
   RouteCalcWindow *routeWindow = nullptr;

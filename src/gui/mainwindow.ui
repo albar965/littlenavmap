@@ -4374,10 +4374,10 @@ Matches any visited airport.</string>
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Hide or show columns in flight plan table</string>
+              <string>Select header lines and flight plan table columns to show</string>
              </property>
              <property name="statusTip">
-              <string>Hide or show columns in flight plan table</string>
+              <string>Select header lines and flight plan table columns to show</string>
              </property>
              <property name="text">
               <string/>
@@ -12373,8 +12373,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcType"/>
-  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
  </buttongroups>
 </ui>

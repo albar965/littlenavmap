@@ -55,7 +55,7 @@ const static QVector<pid::ProgressConfId> DEFAULTIDS({
 void AircraftProgressConfig::progressConfiguration()
 {
   atools::gui::TreeDialog treeDialog(parent, QApplication::applicationName() + tr(" - Aircraft Progress Configuration"),
-                                     tr("Select the fields to show in the aircraft progress tab."
+                                     tr("Select the fields to show in the aircraft progress tab.\n"
                                         "Note that some fields are only shown if certain conditions apply."),
                                      lnm::INFOWINDOW_PROGRESS_FIELD_DIALOG, "INFO.html#progress-field-configuration",
                                      true /* showExplandCollapse */);
@@ -161,7 +161,7 @@ void AircraftProgressConfig::progressConfiguration()
   treeDialog.addItem2(rootItem, pid::POS_COORDINATES, tr("Coordinates"), tr("Aircraft coordinates."), QString());
   /* *INDENT-ON* */
 
-  treeDialog.restoreState(false /* restoreCheckState */);
+  treeDialog.restoreState(false /* restoreCheckState */, true /* restoreExpandState */);
 
   // Check all items from enabled
   treeDialog.setAllChecked(false);
@@ -170,7 +170,7 @@ void AircraftProgressConfig::progressConfiguration()
 
   if(treeDialog.exec() == QDialog::Accepted)
   {
-    treeDialog.saveState(false /* saveCheckState */);
+    treeDialog.saveState(false /* saveCheckState */, true /* saveExpandState */);
 
     enabledIds.clear();
     for(pid::ProgressConfId id : ALLIDS)

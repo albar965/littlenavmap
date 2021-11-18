@@ -411,6 +411,21 @@ map::MapRunwayEnd AirportQuery::getOpposedRunwayEnd(int airportId, const map::Ma
   return map::MapRunwayEnd();
 }
 
+map::MapRunway AirportQuery::getRunwayByEndId(int airportId, int runwayEndId)
+{
+  const QList<map::MapRunway> *runways = getRunways(airportId);
+
+  if(runways != nullptr)
+  {
+    for(const map::MapRunway& runway : *runways)
+    {
+      if(runway.primaryEndId == runwayEndId || runway.secondaryEndId == runwayEndId)
+        return runway;
+    }
+  }
+  return map::MapRunway();
+}
+
 void AirportQuery::getRunwayEndByNames(map::MapResult& result, const QString& runwayName,
                                        const QString& airportIdent)
 {

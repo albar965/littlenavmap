@@ -2461,4 +2461,12 @@ bool aircraftHasIcing(const atools::fs::sc::SimConnectUserAircraft& aircraft)
          aircraft.getCarbIcePercent() >= 1.f;
 }
 
+QStringList MapRunwayEnd::uniqueVasiTypeStr() const
+{
+  QStringList vasi({leftVasiTypeStr(), rightVasiTypeStr()});
+  vasi.removeAll(QString());
+  vasi.removeDuplicates();
+  return vasi;
+}
+
 } // namespace types
