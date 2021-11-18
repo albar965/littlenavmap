@@ -1621,7 +1621,7 @@ QString airportTextShort(const MapAirport& airport, int elideName)
   if(!airport.isValid())
     return QObject::tr("Airport");
   else if(airport.name.isEmpty())
-    return QObject::tr("%1").arg(airport.displayIdent());
+    return airport.displayIdent();
   else
     return QObject::tr("%1 (%2)").arg(atools::elideTextShort(airport.name, elideName)).arg(airport.displayIdent());
 }
@@ -1631,7 +1631,7 @@ QString airportMsaTextShort(const MapAirportMsa& airportMsa)
   if(!airportMsa.isValid())
     return QObject::tr("MSA");
   else if(airportMsa.airportIdent == airportMsa.navIdent)
-    return QObject::tr("%1").arg(airportMsa.airportIdent);
+    return airportMsa.airportIdent;
   else
     return QObject::tr("%1 (%2)").arg(airportMsa.airportIdent).arg(airportMsa.navIdent);
 }

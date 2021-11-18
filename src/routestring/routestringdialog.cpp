@@ -298,7 +298,7 @@ void RouteStringDialog::readButtonClicked()
              arg(airportQuery->getDisplayIdent(flightplan->getDepartureIdent()));
     else
       // Departure is waypoint
-      from = tr("%1").arg(flightplan->getDepartureIdent());
+      from = flightplan->getDepartureIdent();
 
     if(!flightplan->getDestinationName().isEmpty() &&
        flightplan->getDestinationName() != flightplan->getDestinationIdent())
@@ -308,7 +308,7 @@ void RouteStringDialog::readButtonClicked()
            arg(airportQuery->getDisplayIdent(flightplan->getDestinationIdent()));
     else
       // Departure is waypoint
-      to = tr("%1").arg(flightplan->getDestinationIdent());
+      to = flightplan->getDestinationIdent();
 
     msg = tr("Flight plan from <b>%1</b> to <b>%2</b>.<br/>").arg(from).arg(to);
 

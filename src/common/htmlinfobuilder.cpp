@@ -438,7 +438,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
                 Unit::distShortFeet(rec->valueInt("longest_runway_width")));
 
       float hdg = rec->valueFloat("longest_runway_heading");
-      html.row2(tr("Heading:"), courseTextFromTrue(hdg, airport.magvar) + tr(", ") +
+      html.row2(tr("Heading:"), courseTextFromTrue(hdg, airport.magvar) % tr(", ") %
                 courseTextFromTrue(opposedCourseDeg(hdg), airport.magvar), ahtml::NO_ENTITIES);
       html.row2If(tr("Surface:"), map::surfaceName(rec->valueStr("longest_runway_surface")));
     }
@@ -453,16 +453,15 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
       head(html, tr("COM Frequencies"));
     html.table();
     if(airport.towerFrequency > 0)
-      html.row2(tr("Tower:"),
-                locale.toString(roundComFrequency(airport.towerFrequency), 'f', 3) + tr(" MHz"));
+      html.row2(tr("Tower:"), locale.toString(roundComFrequency(airport.towerFrequency), 'f', 3) % tr(" MHz"));
     if(airport.atisFrequency > 0)
-      html.row2(tr("ATIS:"), locale.toString(roundComFrequency(airport.atisFrequency), 'f', 3) + tr(" MHz"));
+      html.row2(tr("ATIS:"), locale.toString(roundComFrequency(airport.atisFrequency), 'f', 3) % tr(" MHz"));
     if(airport.awosFrequency > 0)
-      html.row2(tr("AWOS:"), locale.toString(roundComFrequency(airport.awosFrequency), 'f', 3) + tr(" MHz"));
+      html.row2(tr("AWOS:"), locale.toString(roundComFrequency(airport.awosFrequency), 'f', 3) % tr(" MHz"));
     if(airport.asosFrequency > 0)
-      html.row2(tr("ASOS:"), locale.toString(roundComFrequency(airport.asosFrequency), 'f', 3) + tr(" MHz"));
+      html.row2(tr("ASOS:"), locale.toString(roundComFrequency(airport.asosFrequency), 'f', 3) % tr(" MHz"));
     if(airport.unicomFrequency > 0)
-      html.row2(tr("UNICOM:"), locale.toString(roundComFrequency(airport.unicomFrequency), 'f', 3) + tr(" MHz"));
+      html.row2(tr("UNICOM:"), locale.toString(roundComFrequency(airport.unicomFrequency), 'f', 3) % tr(" MHz"));
     html.tableEnd();
   }
 
@@ -696,9 +695,9 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) cons
         html.tr(QColor());
         html.td(map::comTypeName(rec.valueStr("type")));
         // Round frequencies to nearest valid value to workaround for a compiler rounding bug
-        html.td(locale.toString(roundComFrequency(rec.valueInt("frequency")), 'f', 3) + tr(" MHz")
+        html.td(locale.toString(roundComFrequency(rec.valueInt("frequency")), 'f', 3) % tr(" MHz")
 #ifdef DEBUG_INFORMATION
-                + " [" + QString::number(rec.valueInt("frequency")) + "]"
+                % " [" % QString::number(rec.valueInt("frequency")) % "]"
 #endif
                 );
         if(rec.valueStr("type") != tr("ATIS"))
@@ -844,18 +843,17 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
         bool closedPrim = recPrim->valueBool("has_closed_markings");
         bool closedSec = recSec->valueBool("has_closed_markings");
 
-        html.br().text(tr("Runway ") + recPrim->valueStr("name") + ", " + recSec->valueStr("name"),
+        html.br().text(tr("Runway ") % recPrim->valueStr("name") % ", " % recSec->valueStr("name"),
                        ((closedPrim && closedSec) ? ahtml::STRIKEOUT : ahtml::NONE)
                        | ahtml::UNDERLINE | ahtml::BIG | ahtml::BOLD);
         html.table();
 
-        html.row2(tr("Size:"), Unit::distShortFeet(rec.valueFloat("length"), false) +
-                  tr(" x ") +
+        html.row2(tr("Size:"), Unit::distShortFeet(rec.valueFloat("length"), false) %
+                  tr(" x ") %
                   Unit::distShortFeet(rec.valueFloat("width")));
 
         html.row2If(tr("Surface:"), strJoinVal({map::surfaceName(rec.valueStr("surface")),
-                                                map::smoothnessName(rec.value("smoothness",
-                                                                              QVariant(QVariant::Double)))}));
+                                                map::smoothnessName(rec.value("smoothness", QVariant(QVariant::Double)))}));
 
         if(rec.valueFloat("pattern_altitude") > 0)
           html.row2(tr("Pattern Altitude:"), Unit::altFeet(rec.valueFloat("pattern_altitude")));
@@ -950,7 +948,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
           bool closed = heliRec.valueBool("is_closed");
           bool hasStart = !heliRec.isNull("start_number");
 
-          QString num = hasStart ? " " + heliRec.valueStr("runway_name") : tr(" (No Start Position)");
+          QString num = hasStart ? " " % heliRec.valueStr("runway_name") : tr(" (No Start Position)");
 
           html.h3(tr("Helipad%1").arg(num),
                   (closed ? ahtml::STRIKEOUT : ahtml::NONE)
@@ -967,10 +965,10 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
             html.text(tr("Is Closed"));
           html.table();
 
-          html.row2(tr("Size:"), Unit::distShortFeet(heliRec.valueFloat("width"), false) +
-                    tr(" x ") +
+          html.row2(tr("Size:"), Unit::distShortFeet(heliRec.valueFloat("width"), false) %
+                    tr(" x ") %
                     Unit::distShortFeet(heliRec.valueFloat("length")));
-          html.row2If(tr("Surface:"), map::surfaceName(heliRec.valueStr("surface")) +
+          html.row2If(tr("Surface:"), map::surfaceName(heliRec.valueStr("surface")) %
                       (heliRec.valueBool("is_transparent") ? tr(" (Transparent)") : QString()));
           html.row2If(tr("Type:"), atools::capString(heliRec.valueStr("type")));
           html.row2(tr("Heading:"), courseTextFromTrue(heliRec.valueFloat("heading"), airport.magvar),
@@ -1117,7 +1115,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
   // Add ILS information
 
   // Prefix for procedure information
-  QString prefix = procInfo ? map::ilsTypeShort(ils) + tr(" ") : QString();
+  QString prefix = procInfo ? map::ilsTypeShort(ils) % tr(" ") : QString();
   QString text = map::ilsTextShort(ils);
 
   // Check if text is to be generated for navaid or procedures tab
@@ -1142,7 +1140,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
   else
   {
     if(procInfo)
-      html.row2(prefix + tr("Type: "), map::ilsType(ils, true /* gs */, true /* dme */, tr(", ")));
+      html.row2(prefix % tr("Type: "), map::ilsType(ils, true /* gs */, true /* dme */, tr(", ")));
     else
     {
       html.br().br().text(text, ahtml::BOLD | ahtml::BIG);
@@ -1169,9 +1167,9 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
   }
 
   if(ils.isAnyGls())
-    html.row2(prefix + tr("Channel:"), ils.freqMHzOrChannelLocale());
+    html.row2(prefix % tr("Channel:"), ils.freqMHzOrChannelLocale());
   else
-    html.row2(prefix + tr("Frequency:"), ils.freqMHzOrChannelLocale() + tr(" MHz"));
+    html.row2(prefix % tr("Frequency:"), ils.freqMHzOrChannelLocale() % tr(" MHz"));
 
   if(!procInfo && verbose)
   {
@@ -1192,7 +1190,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
   // Localizer information ==================================================
   float hdgTrue = ils.heading;
 
-  html.row2(prefix + (ils.isAnyGls() ? tr("Heading:") : tr("Localizer Heading:")),
+  html.row2(prefix % (ils.isAnyGls() ? tr("Heading:") : tr("Localizer Heading:")),
             courseTextFromTrue(hdgTrue, ils.magvar), ahtml::NO_ENTITIES);
 
   // Check for offset localizer ==================================================
@@ -1224,8 +1222,8 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
 
   if(ils.hasGlideslope())
   {
-    html.row2(prefix + (ils.isAnyGls() ? tr("Glidepath:") : tr("Glideslope:")),
-              locale.toString(ils.slope, 'f', 1) + tr("°"));
+    html.row2(prefix % (ils.isAnyGls() ? tr("Glidepath:") : tr("Glideslope:")),
+              locale.toString(ils.slope, 'f', 1) % tr("°"));
   }
 
   if(info && ils.isAnyGls())
@@ -1256,11 +1254,11 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
 
 void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) const
 {
-  QString num = helipad.start != -1 ? (" " + helipad.runwayName) : QString();
+  QString num = helipad.start != -1 ? (" " % helipad.runwayName) : QString();
 
   head(html, tr("Helipad%1:").arg(num));
-  html.brText(tr("Surface: ") + map::surfaceName(helipad.surface));
-  html.brText(tr("Type: ") + atools::capString(helipad.type));
+  html.brText(tr("Surface: ") % map::surfaceName(helipad.surface));
+  html.brText(tr("Type: ") % atools::capString(helipad.type));
   html.brText(Unit::distShortFeet(std::max(helipad.width, helipad.length)));
   if(helipad.closed)
     html.brText(tr("Is Closed"));
@@ -1379,7 +1377,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
         QString runwayTxt = runwayIdent;
 
         if(!runwayTxt.isEmpty())
-          runwayTxt = tr(" - Runway ") + runwayTxt;
+          runwayTxt = tr(" - Runway ") % runwayTxt;
 
         QString fix = recApp.valueStr("fix_ident");
         QString header;
@@ -1495,13 +1493,13 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
           for(const SqlRecord& recTrans : *recTransVector)
           {
             if(!(type & proc::PROCEDURE_SID))
-              html.br().text(tr("Transition ") + recTrans.valueStr("fix_ident"), ahtml::BOLD | ahtml::BIG);
+              html.br().text(tr("Transition ") % recTrans.valueStr("fix_ident"), ahtml::BOLD | ahtml::BIG);
 
             html.table();
 
             if(!recTrans.isNull("dme_ident"))
             {
-              html.row2(tr("DME Ident and Region:"), recTrans.valueStr("dme_ident") + tr(", ") +
+              html.row2(tr("DME Ident and Region:"), recTrans.valueStr("dme_ident") % tr(", ") %
                         recTrans.valueStr("dme_region"));
 
               // rowForFloat(html, &recTrans, "dme_radial", tr("DME Radial:"), tr("%1"), 0);
@@ -1518,7 +1516,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
                 html.row2(tr("DME Type:"), map::navTypeNameVorLong(vorReg.valueStr("type")));
                 if(vorReg.valueInt("frequency") > 0)
                   html.row2(tr("DME Frequency:"),
-                            locale.toString(vorReg.valueInt("frequency") / 1000., 'f', 2) + tr(" MHz"));
+                            locale.toString(vorReg.valueInt("frequency") / 1000., 'f', 2) % tr(" MHz"));
 
                 if(!vorReg.valueStr("channel").isEmpty())
                   html.row2(tr("DME Channel:"), vorReg.valueStr("channel"));
@@ -1576,7 +1574,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
       else if(vor.vortac)
       {
         html.row2If(tr("VORTAC Type:"), map::navTypeNameVorLong(vor.type));
-        html.row2(tr("VORTAC Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) + tr(" MHz"));
+        html.row2(tr("VORTAC Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) % tr(" MHz"));
         if(!vor.channel.isEmpty())
           html.row2(tr("VORTAC Channel:"), vor.channel);
         if(vor.range > 0)
@@ -1586,7 +1584,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
       else
       {
         html.row2If(tr("VOR Type:"), map::navTypeNameVorLong(vor.type));
-        html.row2(tr("VOR Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) + tr(" MHz"));
+        html.row2(tr("VOR Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) % tr(" MHz"));
         if(vor.range > 0)
           html.row2(tr("VOR Range:"), Unit::distNm(vor.range));
         addMorse(html, tr("VOR Morse:"), vor.ident);
@@ -1613,7 +1611,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
       const MapNdb& ndb = result.ndbs.first();
 
       html.row2If(tr("NDB Type:"), map::navTypeNameNdb(ndb.type));
-      html.row2(tr("NDB Frequency:"), locale.toString(ndb.frequency / 100., 'f', 2) + tr(" kHz"));
+      html.row2(tr("NDB Frequency:"), locale.toString(ndb.frequency / 100., 'f', 2) % tr(" kHz"));
 
       if(ndb.range > 0)
         html.row2(tr("NDB Range:"), Unit::distNm(ndb.range));
@@ -1703,11 +1701,11 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
       if(!context.asMetar.isEmpty())
       {
         if(context.isAsDeparture && context.isAsDestination)
-          html.p(context.asType + tr(" - Departure and Destination"), WEATHER_TITLE_FLAGS);
+          html.p(context.asType % tr(" - Departure and Destination"), WEATHER_TITLE_FLAGS);
         else if(context.isAsDeparture)
-          html.p(context.asType + tr(" - Departure"), WEATHER_TITLE_FLAGS);
+          html.p(context.asType % tr(" - Departure"), WEATHER_TITLE_FLAGS);
         else if(context.isAsDestination)
-          html.p(context.asType + tr(" - Destination"), WEATHER_TITLE_FLAGS);
+          html.p(context.asType % tr(" - Destination"), WEATHER_TITLE_FLAGS);
         else
           html.p(context.asType, WEATHER_TITLE_FLAGS);
 
@@ -1887,8 +1885,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
       flags |= ahtml::BOLD;
       color = Qt::red;
     }
-    html.row2(tr("Time: "), locale.toString(time, QLocale::ShortFormat) + " " + time.timeZoneAbbreviation(),
-              flags, color);
+    html.row2(tr("Time: "), locale.toString(time, QLocale::ShortFormat) % " " % time.timeZoneAbbreviation(), flags, color);
   }
 
   if(!parsed.getReportTypeString().isEmpty())
@@ -1912,12 +1909,12 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 
     if(parsed.getWindDir() >= 0)
       // Wind direction given
-      windDir = courseTextFromTrue(parsed.getWindDir(), airport.magvar, false) + tr(", ");
+      windDir = courseTextFromTrue(parsed.getWindDir(), airport.magvar, false) % tr(", ");
 
     if(parsed.getWindRangeFrom() != -1 && parsed.getWindRangeTo() != -1)
       // Wind direction range given (additionally to dir in some cases)
-      windVar = tr(", variable ") + courseTextFromTrue(parsed.getWindRangeFrom(), airport.magvar) +
-                tr(" to ") + courseTextFromTrue(parsed.getWindRangeTo(), airport.magvar);
+      windVar = tr(", variable ") % courseTextFromTrue(parsed.getWindRangeFrom(), airport.magvar) %
+                tr(" to ") % courseTextFromTrue(parsed.getWindRangeTo(), airport.magvar);
     else if(parsed.getWindDir() == -1)
       windDir = tr("Variable, ");
 
@@ -1927,10 +1924,10 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
       if(windSpeedKts < INVALID_METAR_VALUE)
         windSpeedStr = Unit::speedKts(windSpeedKts);
 
-      html.row2(tr("Wind:"), windDir + windSpeedStr + windVar, ahtml::NO_ENTITIES);
+      html.row2(tr("Wind:"), windDir % windSpeedStr % windVar, ahtml::NO_ENTITIES);
     }
     else
-      html.row2(tr("Wind:"), windDir + tr("Speed not valid") + windVar, ahtml::NO_ENTITIES);
+      html.row2(tr("Wind:"), windDir % tr("Speed not valid") % windVar, ahtml::NO_ENTITIES);
 
     hasWind = true;
   }
@@ -1944,19 +1941,19 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   // Temperature  =============================================================
   float temp = parsed.getTemperatureC();
   if(temp < INVALID_METAR_VALUE)
-    html.row2(tr("Temperature:"), locale.toString(atools::roundToInt(temp)) + tr("°C, ") +
-              locale.toString(atools::roundToInt(ageo::degCToDegF(temp))) + tr("°F"));
+    html.row2(tr("Temperature:"), locale.toString(atools::roundToInt(temp)) % tr("°C, ") %
+              locale.toString(atools::roundToInt(ageo::degCToDegF(temp))) % tr("°F"));
 
   temp = parsed.getDewpointDegC();
   if(temp < INVALID_METAR_VALUE)
-    html.row2(tr("Dewpoint:"), locale.toString(atools::roundToInt(temp)) + tr("°C, ") +
-              locale.toString(atools::roundToInt(ageo::degCToDegF(temp))) + tr("°F"));
+    html.row2(tr("Dewpoint:"), locale.toString(atools::roundToInt(temp)) % tr("°C, ") %
+              locale.toString(atools::roundToInt(ageo::degCToDegF(temp))) % tr("°F"));
 
   // Pressure  =============================================================
   float slp = parsed.getPressureMbar();
   if(slp < INVALID_METAR_VALUE)
-    html.row2(tr("Pressure:"), locale.toString(slp, 'f', 0) + tr(" hPa, ") +
-              locale.toString(ageo::mbarToInHg(slp), 'f', 2) + tr(" inHg"));
+    html.row2(tr("Pressure:"), locale.toString(slp, 'f', 0) % tr(" hPa, ") %
+              locale.toString(ageo::mbarToInHg(slp), 'f', 2) % tr(" inHg"));
 
   // Visibility =============================================================
   const atools::fs::weather::MetarVisibility& minVis = parsed.getMinVisibility();
@@ -2057,7 +2054,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   html.nbsp().nbsp();
 
   QString type = map::vorType(vor);
-  navaidTitle(html, type + ": " + capString(vor.name) + " (" + vor.ident + ")");
+  navaidTitle(html, type % ": " % capString(vor.name) % " (" % vor.ident % ")");
 
   if(info)
   {
@@ -2096,7 +2093,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
     html.row2If(tr("Region:"), vor.region);
 
   if(!vor.tacan)
-    html.row2(tr("Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) + tr(" MHz"));
+    html.row2(tr("Frequency:"), locale.toString(vor.frequency / 1000., 'f', 2) % tr(" MHz"));
 
   if(vor.vortac && !vor.channel.isEmpty())
     html.row2(tr("Channel:"), vor.channel);
@@ -2144,7 +2141,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
   html.img(icon, QString(), QString(), symbolSizeTitle);
   html.nbsp().nbsp();
 
-  navaidTitle(html, tr("NDB: ") + capString(ndb.name) + " (" + ndb.ident + ")");
+  navaidTitle(html, tr("NDB: ") % capString(ndb.name) % " (" % ndb.ident % ")");
 
   if(info)
   {
@@ -2174,7 +2171,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
     html.row2If(tr("Region:"), ndb.region);
   }
 
-  html.row2(tr("Frequency:"), locale.toString(ndb.frequency / 100., 'f', 1) + tr(" kHz"));
+  html.row2(tr("Frequency:"), locale.toString(ndb.frequency / 100., 'f', 1) % tr(" kHz"));
   if(info)
     html.row2(tr("Magnetic declination:"), map::magvarText(ndb.magvar));
 
@@ -3327,7 +3324,7 @@ void HtmlInfoBuilder::procedurePointText(const proc::MapProcedurePoint& procPoin
                 arg(Unit::distNm(procPoint.rho /*, true, 20, true*/)).
                 arg(courseTextFromMag(procPoint.theta, procPoint.magvar)), ahtml::NO_ENTITIES);
     else
-      html.row2(tr("Related Navaid:"), tr("%1").arg(procPoint.recFixIdent));
+      html.row2(tr("Related Navaid:"), procPoint.recFixIdent);
   }
 
   html.tableEnd();
@@ -3897,7 +3894,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
                                             arg(Unit::distNm(procLeg.rho /*, true, 20, true*/)).
                                             arg(courseTextFromMag(procLeg.theta, procLeg.magvar)), ahtml::NO_ENTITIES);
           else
-            html.id(pid::NEXT_RELATED).row2(tr("Related Navaid:"), tr("%1").arg(procLeg.recFixIdent));
+            html.id(pid::NEXT_RELATED).row2(tr("Related Navaid:"), procLeg.recFixIdent);
         }
 
         // Altitude restrictions for procedure legs ==============================================
@@ -4177,23 +4174,32 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       html.table();
       if(longDisplay && !aircraft.isAnyBoat() && aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
       {
-        if(Unit::getUnitSpeed() == opts::SPEED_KTS)
-        {
-          // Use int value to compare and display to avoid confusing warning display for 250 on rounding errors
-          int indicatedSpeedKts = static_cast<int>(aircraft.getIndicatedSpeedKts());
-          if(aircraft.getIndicatedAltitudeFt() < 10000.f && indicatedSpeedKts > 250)
-            html.id(pid::SPEED_INDICATED).row2Warning(tr("Indicated:"), Unit::speedKts(indicatedSpeedKts));
-          else
-            html.id(pid::SPEED_INDICATED).row2(tr("Indicated:"),
-                                               highlightText(Unit::speedKts(indicatedSpeedKts)), ahtml::NO_ENTITIES);
-        }
+        QString warn(tr("Indicated (speed limit):")), normal(tr("Indicated:"));
+
+        if(aircraft.getIndicatedAltitudeFt() < 10000.f && aircraft.getIndicatedSpeedKts() > 260.f)
+          // Exceeding speed limit
+          html.id(pid::SPEED_INDICATED).row2Error(warn, Unit::speedKts(aircraft.getIndicatedSpeedKts()), ahtml::BIG);
         else
         {
-          if(aircraft.getIndicatedAltitudeFt() < 10000.f && aircraft.getIndicatedSpeedKts() > 251.f)
-            html.id(pid::SPEED_INDICATED).row2Warning(tr("Indicated:"), Unit::speedKts(aircraft.getIndicatedSpeedKts()));
+          if(Unit::getUnitSpeed() == opts::SPEED_KTS)
+          {
+            // Use int value to compare and display to avoid confusing warning display for 250 on rounding errors
+            int indicatedSpeedKts = static_cast<int>(aircraft.getIndicatedSpeedKts());
+            if(aircraft.getIndicatedAltitudeFt() < 10000.f && indicatedSpeedKts > 250)
+              // Exceeding speed limit slightly
+              html.id(pid::SPEED_INDICATED).row2Warning(warn, Unit::speedKts(indicatedSpeedKts), ahtml::BIG);
+            else
+              html.id(pid::SPEED_INDICATED).row2(normal, highlightText(Unit::speedKts(indicatedSpeedKts)), ahtml::NO_ENTITIES);
+          }
           else
-            html.id(pid::SPEED_INDICATED).row2(tr("Indicated:"),
-                                               highlightText(Unit::speedKts(aircraft.getIndicatedSpeedKts())), ahtml::NO_ENTITIES);
+          {
+            if(aircraft.getIndicatedAltitudeFt() < 10000.f && aircraft.getIndicatedSpeedKts() > 251.f)
+              // Exceeding speed limit slightly
+              html.id(pid::SPEED_INDICATED).row2Warning(warn, Unit::speedKts(aircraft.getIndicatedSpeedKts()), ahtml::BIG);
+            else
+              html.id(pid::SPEED_INDICATED).row2(normal, highlightText(Unit::speedKts(
+                                                                         aircraft.getIndicatedSpeedKts())), ahtml::NO_ENTITIES);
+          }
         }
       }
 
@@ -4228,7 +4234,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             vspeed = 0.f;
 
           html.id(pid::SPEED_VERTICAL).row2(longDisplay ? tr("Vertical:") : tr("Vertical Speed:"),
-                                            Unit::speedVertFpm(vspeed) + upDown, ahtml::NO_ENTITIES);
+                                            Unit::speedVertFpm(vspeed) % upDown, ahtml::NO_ENTITIES);
         }
       }
       html.tableEndIf();
