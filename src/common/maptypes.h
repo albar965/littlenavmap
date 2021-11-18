@@ -399,12 +399,12 @@ struct MapRunway
   }
 
   QString surface, shoulder, primaryName, secondaryName, edgeLight;
-  int length /* ft */, primaryEndId, secondaryEndId;
+  float length /* ft */, primaryEndId, secondaryEndId;
   float heading, patternAlt,
         smoothness /* 0 (smooth) to 1 (very rough). Default is 0.25. X-Plane only. -1.f if not set */;
-  int width,
-      primaryOffset, secondaryOffset, /* part of the runway length */
-      primaryBlastPad, secondaryBlastPad, primaryOverrun, secondaryOverrun; /* not part of the runway length all in ft */
+  float width,
+        primaryOffset, secondaryOffset, /* part of the runway length */
+        primaryBlastPad, secondaryBlastPad, primaryOverrun, secondaryOverrun; /* not part of the runway length all in ft */
   atools::geo::Pos primaryPosition, secondaryPosition;
 
   /* Used by AirportQuery::getRunways */

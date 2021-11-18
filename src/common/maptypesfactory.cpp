@@ -85,27 +85,27 @@ void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapR
     runway.primaryName = record.valueStr("primary_name");
     runway.secondaryName = record.valueStr("secondary_name");
     runway.edgeLight = record.valueStr("edge_light");
-    runway.width = record.valueInt("width");
-    runway.primaryOffset = record.valueInt("primary_offset_threshold");
-    runway.secondaryOffset = record.valueInt("secondary_offset_threshold");
-    runway.primaryBlastPad = record.valueInt("primary_blast_pad");
-    runway.secondaryBlastPad = record.valueInt("secondary_blast_pad");
-    runway.primaryOverrun = record.valueInt("primary_overrun");
-    runway.secondaryOverrun = record.valueInt("secondary_overrun");
+    runway.width = record.valueFloat("width");
+    runway.primaryOffset = record.valueFloat("primary_offset_threshold");
+    runway.secondaryOffset = record.valueFloat("secondary_offset_threshold");
+    runway.primaryBlastPad = record.valueFloat("primary_blast_pad");
+    runway.secondaryBlastPad = record.valueFloat("secondary_blast_pad");
+    runway.primaryOverrun = record.valueFloat("primary_overrun");
+    runway.secondaryOverrun = record.valueFloat("secondary_overrun");
     runway.primaryClosed = record.valueBool("primary_closed_markings");
     runway.secondaryClosed = record.valueBool("secondary_closed_markings");
   }
   else
   {
-    runway.width = 0;
-    runway.primaryOffset = 0;
-    runway.secondaryOffset = 0;
-    runway.primaryBlastPad = 0;
-    runway.secondaryBlastPad = 0;
-    runway.primaryOverrun = 0;
-    runway.secondaryOverrun = 0;
-    runway.primaryClosed = 0;
-    runway.secondaryClosed = 0;
+    runway.width = 0.f;
+    runway.primaryOffset = 0.f;
+    runway.secondaryOffset = 0.f;
+    runway.primaryBlastPad = 0.f;
+    runway.secondaryBlastPad = 0.f;
+    runway.primaryOverrun = 0.f;
+    runway.secondaryOverrun = 0.f;
+    runway.primaryClosed = false;
+    runway.secondaryClosed = false;
   }
 
   runway.primaryEndId = record.valueInt("primary_end_id", -1);
@@ -115,7 +115,7 @@ void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapR
   runway.airportId = record.valueInt("airport_id", -1);
 
   runway.smoothness = record.valueFloat("smoothness", -1.f);
-  runway.length = record.valueInt("length");
+  runway.length = record.valueFloat("length");
   runway.heading = record.valueFloat("heading");
   runway.patternAlt = record.valueFloat("pattern_altitude", 0.f);
   runway.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));

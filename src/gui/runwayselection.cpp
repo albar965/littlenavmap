@@ -121,7 +121,7 @@ void RunwaySelection::fillRunwayList()
 
     // Sort by length and heading
     std::sort(runways.begin(), runways.end(), [](const map::MapRunway& rw1, const map::MapRunway& rw2) -> bool {
-      return rw1.length == rw2.length ? rw1.heading<rw2.heading : rw1.length> rw2.length;
+      return atools::almostEqual(rw1.length, rw2.length) ? rw1.heading<rw2.heading : rw1.length> rw2.length;
     });
 
     // Set table size
@@ -129,7 +129,7 @@ void RunwaySelection::fillRunwayList()
     runwayTable->setColumnCount(5);
 
     runwayTable->setHorizontalHeaderLabels({tr(" Number "), tr(" Length and Width "), tr(" Heading "), tr(" Surface "),
-                                            tr(" Attributes ")});
+                                            tr(" Facilities ")});
 
     // Index in runway table
     int index = 0;
@@ -187,8 +187,7 @@ void RunwaySelection::addItem(const map::MapRunway& rw, int index, bool primary)
   runwayTable->setItem(row, col++, item);
 
   // Dimensions
-  item = new QTableWidgetItem(tr("%1 x %2").arg(Unit::distShortFeet(rw.length, false)).
-                              arg(Unit::distShortFeet(rw.width)));
+  item = new QTableWidgetItem(tr("%1 x %2").arg(Unit::distShortFeet(rw.length, false)).arg(Unit::distShortFeet(rw.width)));
   item->setTextAlignment(Qt::AlignRight);
   runwayTable->setItem(row, col++, item);
 

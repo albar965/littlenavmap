@@ -41,7 +41,7 @@
 #include <marble/ViewportParams.h>
 
 /* Minimum width for runway diagram */
-static const int RUNWAY_MIN_WIDTH_FT = 4;
+static const float RUNWAY_MIN_WIDTH_FT = 4.f;
 static const int RUNWAY_OVERVIEW_WIDTH_PIX = 6;
 
 /* All sizes in pixel */
@@ -587,16 +587,16 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
                               mapcolors::runwayOffsetColor : mapcolors::runwayOffsetColorDark;
         painter->setBrush(colThreshold);
 
-        if(runway.primaryOffset > 0 || runway.secondaryOffset > 0)
+        if(runway.primaryOffset > 0.f || runway.secondaryOffset > 0.f)
         {
           const QRect& rect = runwayRects.at(i);
 
           painter->translate(runwayCenters.at(i));
           painter->rotate(runway.heading);
 
-          if(runway.primaryOffset > 0)
+          if(runway.primaryOffset > 0.f)
           {
-            int offs = scale->getPixelIntForFeet(runway.primaryOffset, runway.heading);
+            int offs = scale->getPixelIntForFeet(atools::roundToInt(runway.primaryOffset), runway.heading);
 
             // Draw solid boundary to runway
             painter->setPen(QPen(colThreshold, 3, Qt::SolidLine, Qt::FlatCap));
@@ -609,7 +609,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
 
           if(runway.secondaryOffset > 0)
           {
-            int offs = scale->getPixelIntForFeet(runway.secondaryOffset, runway.heading);
+            int offs = scale->getPixelIntForFeet(atools::roundToInt(runway.secondaryOffset), runway.heading);
 
             // Draw solid boundary to runway
             painter->setPen(QPen(colThreshold, 3, Qt::SolidLine, Qt::FlatCap));
@@ -819,7 +819,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
 
         QString text = QString::number(Unit::distShortFeetF(runway.length), 'f', 0);
 
-        if(runway.width > 8)
+        if(runway.width > 8.f)
           // Skip dummy lines where the runway is done by photo scenery or similar
           text.append(tr(" x ") % QString::number(Unit::distShortFeetF(runway.width), 'f', 0));
         text.append(" " % Unit::getUnitShortDistStr());
@@ -1083,9 +1083,8 @@ void MapPainterAirport::runwayCoords(const QList<map::MapRunway> *runways, QList
     int length = atools::geo::simpleDistance(xr1, yr1, xr2, yr2);
 
     // Get an approximation of the runway width on the screen minimum six feet
-    int width = overview ?
-                RUNWAY_OVERVIEW_WIDTH_PIX :
-                scale->getPixelIntForFeet(std::max(r.width, RUNWAY_MIN_WIDTH_FT), r.heading + 90.f);
+    int width = overview ? RUNWAY_OVERVIEW_WIDTH_PIX :
+                scale->getPixelIntForFeet(atools::roundToInt(std::max(r.width, RUNWAY_MIN_WIDTH_FT)), r.heading + 90.f);
 
     int backgroundSize = scale->getPixelIntForMeter(AIRPORT_DIAGRAM_BACKGROUND_METER);
 

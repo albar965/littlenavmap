@@ -2889,7 +2889,7 @@ void MapWidget::resetSettingActionsToDefault()
   ui->actionMapShowNdb->setChecked(true);
   ui->actionMapShowWp->setChecked(true);
   ui->actionMapShowIls->setChecked(true);
-  ui->actionMapShowGls->setChecked(true);
+  ui->actionMapShowGls->setChecked(false);
   ui->actionMapShowHolding->setChecked(false);
   ui->actionMapShowAirportMsa->setChecked(false);
   ui->actionMapShowVictorAirways->setChecked(false);
