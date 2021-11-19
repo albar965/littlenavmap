@@ -154,6 +154,8 @@ private:
                       QList<TYPE>& currentList, const HtmlInfoBuilder * info,
                       void (HtmlInfoBuilder::*func)(const TYPE&, atools::util::HtmlBuilder&) const) const;
 
+  void showProgressContextMenu(const QPoint& point);
+
   QString waitingForUpdateText, notConnectedText;
 
   bool databaseLoadStatus = false;
@@ -175,8 +177,7 @@ private:
 
   AircraftProgressConfig *aircraftProgressConfig;
 
-  atools::gui::TabWidgetHandler *tabHandlerInfo = nullptr, *tabHandlerAirportInfo = nullptr,
-                                *tabHandlerAircraft = nullptr;
+  atools::gui::TabWidgetHandler *tabHandlerInfo = nullptr, *tabHandlerAirportInfo = nullptr, *tabHandlerAircraft = nullptr;
 };
 
 #endif // LITTLENAVMAP_INFOCONTROLLER_H

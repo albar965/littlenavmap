@@ -345,7 +345,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(ui->pushButtonRouteClearSelection, &QPushButton::clicked, this, &RouteController::clearTableSelection);
   connect(ui->pushButtonRouteHelp, &QPushButton::clicked, this, &RouteController::helpClicked);
   connect(ui->actionRouteActivateLeg, &QAction::triggered, this, &RouteController::activateLegTriggered);
-  connect(ui->actionRouteVisibleColumns, &QAction::triggered, this, &RouteController::visibleColumnsTriggered);
+  connect(ui->actionRouteDisplayOptions, &QAction::triggered, this, &RouteController::visibleColumnsTriggered);
   connect(ui->pushButtonRouteSettings, &QPushButton::clicked, this, &RouteController::visibleColumnsTriggered);
 
   connect(this, &RouteController::routeChanged, routeWindow, &RouteCalcWindow::routeChanged);
@@ -2324,7 +2324,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
                             ui->actionRouteSaveSelection, ui->actionRouteCalcSelected, ui->actionMapRangeRings, ui->actionMapNavaidRange,
                             ui->actionMapTrafficPattern, ui->actionMapHold, ui->actionMapAirportMsa, ui->actionRouteTableCopy,
                             ui->actionRouteTableSelectAll, ui->actionRouteTableSelectNothing, ui->actionRouteResetView,
-                            ui->actionRouteVisibleColumns, ui->actionRouteSetMark});
+                            ui->actionRouteDisplayOptions, ui->actionRouteSetMark});
 
   // Save text which will be changed below - Re-enable actions on exit to allow keystrokes
   atools::gui::ActionTool actionTool(actions);
@@ -2639,7 +2639,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteResetView);
-  menu.addAction(ui->actionRouteVisibleColumns);
+  menu.addAction(ui->actionRouteDisplayOptions);
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteSetMark);

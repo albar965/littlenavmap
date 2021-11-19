@@ -11115,19 +11115,19 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Return</string>
    </property>
   </action>
-  <action name="actionRouteVisibleColumns">
+  <action name="actionRouteDisplayOptions">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/settingsroute.svg</normaloff>:/littlenavmap/resources/icons/settingsroute.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Select visible Columns ...</string>
+    <string>&amp;Display Options ...</string>
    </property>
    <property name="toolTip">
-    <string>Hide or show columns in flight plan table</string>
+    <string>Select visible columns and header lines for flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Hide or show columns in flight plan table</string>
+    <string>Select visible columns and header lines for flight plan</string>
    </property>
   </action>
   <action name="actionRouteSaveAsXIvap">
@@ -12186,6 +12186,21 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+G</string>
+   </property>
+  </action>
+  <action name="actionInfoDisplayOptions">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/settingsroute.svg</normaloff>:/littlenavmap/resources/icons/settingsroute.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Display Options ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Select the fields to show in the aircraft progress tab</string>
+   </property>
+   <property name="statusTip">
+    <string>Select the fields to show in the aircraft progress tab.</string>
    </property>
   </action>
  </widget>

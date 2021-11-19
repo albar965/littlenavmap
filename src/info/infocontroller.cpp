@@ -113,7 +113,9 @@ InfoController::InfoController(MainWindow *parent)
 
   // ==================================================================================
   // Create a configuration push button and place it into the aircraft progress info text browser
-  QPushButton *button = new QPushButton(QIcon(":/littlenavmap/resources/icons/settingsroute.svg"), QString());
+  QPushButton *button = new QPushButton(QIcon(":/littlenavmap/resources/icons/settingsroute.svg"),
+                                        QString(), ui->textBrowserAircraftProgressInfo->viewport());
+  button->setToolTip(tr("Select the fields to show in the aircraft progress tab."));
   button->setSizePolicy(QSizePolicy(QSizePolicy::Fixed, QSizePolicy::Fixed));
 
   // Create a layout to position the button automatically
@@ -123,6 +125,11 @@ InfoController::InfoController(MainWindow *parent)
   layout->addWidget(button, 0, Qt::AlignRight); // Add button to the right
   layout->addSpacerItem(new QSpacerItem(10, 10, QSizePolicy::Minimum, QSizePolicy::Expanding)); // Move button up with spacer
   connect(button, &QPushButton::clicked, this, &InfoController::progressConfigurationClicked);
+
+  // Create context menu connections for progress text browser ===========================
+  ui->textBrowserAircraftProgressInfo->setContextMenuPolicy(Qt::CustomContextMenu);
+  connect(ui->textBrowserAircraftProgressInfo, &QTextBrowser::customContextMenuRequested, this, &InfoController::showProgressContextMenu);
+  connect(ui->actionInfoDisplayOptions, &QAction::triggered, this, &InfoController::progressConfigurationClicked);
 
   // ==================================================================================
   // Create connections for "Map" links in text browsers
@@ -159,6 +166,16 @@ InfoController::~InfoController()
   delete tabHandlerAirportInfo;
   delete tabHandlerAircraft;
   delete infoBuilder;
+}
+
+void InfoController::showProgressContextMenu(const QPoint& point)
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  QMenu *menu = ui->textBrowserAircraftProgressInfo->createStandardContextMenu();
+  menu->addAction(ui->actionInfoDisplayOptions);
+  menu->exec(ui->textBrowserAircraftProgressInfo->mapToGlobal(point));
+  delete menu;
 }
 
 void InfoController::visibilityChangedAircraft(bool visible)
