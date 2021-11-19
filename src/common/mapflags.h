@@ -369,6 +369,15 @@ enum MapAirportFlag
 Q_DECLARE_FLAGS(MapAirportFlags, MapAirportFlag);
 Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirportFlags);
 
+/* X-Plane airport type. Matches values in apt.dat */
+enum MapAirportType
+{
+  AP_TYPE_NONE = -1,
+  AP_TYPE_LAND = 1,
+  AP_TYPE_SEAPLANE = 16,
+  AP_TYPE_HELIPORT = 17,
+};
+
 /* Index values of the map theme combo box */
 enum MapThemeComboIndex
 {

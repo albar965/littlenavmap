@@ -358,7 +358,7 @@ private:
                   const QString& msg, bool expected = false) const;
 
   void runwayEndText(atools::util::HtmlBuilder& html, const map::MapAirport& airport, const atools::sql::SqlRecord *rec,
-                     float hdgPrimTrue, float length) const;
+                     float hdgPrimTrue, float length, bool secondary) const;
 
   void rowForStr(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
                  const QString& msg, const QString& val) const;

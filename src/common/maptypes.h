@@ -335,7 +335,10 @@ struct MapAirport
            region; /* Two letter region code */
 
   int longestRunwayLength = 0, longestRunwayHeading = 0, transitionAltitude = 0, rating = -1,
-      flatten /* X-Plane flatten flag. -1 if not set */;
+      flatten; /* X-Plane flatten flag. -1 if not set */
+
+  map::MapAirportType type; /* 1 Land airport, 16 Seaplane base, 17 Heliport. X-Plane only. -1 if not set. */
+
   map::MapAirportFlags flags = AP_NONE;
   float magvar = 0; /* Magnetic variance - positive is east, negative is west */
   bool navdata, /* true if source is third party nav database, false if source is simulator data */

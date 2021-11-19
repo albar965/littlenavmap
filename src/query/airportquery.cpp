@@ -1052,6 +1052,8 @@ QStringList AirportQuery::airportColumns(const atools::sql::SqlDatabase *db)
     airportQueryBase.append("is_3d");
   if(aprec.contains("transition_altitude"))
     airportQueryBase.append("transition_altitude");
+  if(aprec.contains("type"))
+    airportQueryBase.append("type");
   return airportQueryBase;
 }
 
@@ -1068,7 +1070,7 @@ QStringList AirportQuery::airportOverviewColumns(const atools::sql::SqlDatabase 
     "lonx", "laty", "left_lonx", "top_laty", "right_lonx", "bottom_laty "
   });
 
-  SqlRecord aprec = db->record("airport_medium");
+  SqlRecord aprec = db->record("airport");
   if(aprec.contains("region"))
     airportQueryBase.append("region");
   if(aprec.contains("is_3d"))

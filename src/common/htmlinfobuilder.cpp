@@ -289,6 +289,29 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   html.table();
   QStringList facilities;
 
+  if(airport.xplane)
+  {
+    QString type;
+    switch(airport.type)
+    {
+      case map::AP_TYPE_LAND:
+        type = tr("Land airport");
+        break;
+
+      case map::AP_TYPE_SEAPLANE:
+        type = tr("Seaplane base");
+        break;
+
+      case map::AP_TYPE_HELIPORT:
+        type = tr("Heliport");
+        break;
+
+      case map::AP_TYPE_NONE:
+        break;
+    }
+    facilities.append(tr("X-Plane %1").arg(type));
+  }
+
   if(airport.closed())
     facilities.append(tr("Closed"));
 
@@ -915,11 +938,11 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
           if(print)
             html.table().tr().td();
 
-          runwayEndText(html, airport, recPrim, rec.valueFloat("heading"), rec.valueFloat("length"));
+          runwayEndText(html, airport, recPrim, rec.valueFloat("heading"), rec.valueFloat("length"), false /* secondary */);
           if(print)
             html.tdEnd().td();
 
-          runwayEndText(html, airport, recSec, opposedCourseDeg(rec.valueFloat("heading")), rec.valueFloat("length"));
+          runwayEndText(html, airport, recSec, opposedCourseDeg(rec.valueFloat("heading")), rec.valueFloat("length"), true /* secondary */);
 
           if(print)
             html.tdEnd().trEnd().tableEnd();
@@ -1021,7 +1044,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
 }
 
 void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport, const SqlRecord *rec,
-                                    float hdgPrimTrue, float length) const
+                                    float hdgPrimTrue, float length, bool secondary) const
 {
   bool closed = rec->valueBool("has_closed_markings");
 
@@ -1083,6 +1106,10 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
     lights.append(tr("Touchdown"));
   if(!lights.isEmpty())
     html.row2(tr("Runway End Lights:"), lights.join(tr(", ")));
+
+#ifdef DEBUG_INFORMATION
+  html.row2("[secondary]", secondary);
+#endif
   html.tableEnd();
 
   // Show none, one or more ILS
