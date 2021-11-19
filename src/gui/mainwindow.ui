@@ -352,6 +352,8 @@
      <property name="title">
       <string>&amp;Airports</string>
      </property>
+     <addaction name="actionMapShowAirports"/>
+     <addaction name="separator"/>
     </widget>
     <widget class="QMenu" name="menuViewUserpoints">
      <property name="title">
@@ -12388,8 +12390,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>

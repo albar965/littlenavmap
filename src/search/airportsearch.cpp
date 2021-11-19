@@ -183,14 +183,12 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
 
   append(Column("rating", ui->comboBoxAirportRatingSearch, tr("Rating")).includesName().indexCondMap(ratingCondMap)).
 
-  append(Column("altitude", tr("Elevation\n%alt%")).
-         convertFunc(Unit::altFeetF)).
+  append(Column("altitude", tr("Elevation\n%alt%")).convertFunc(Unit::altFeetF)).
   append(Column("mag_var", tr("Mag.\nDecl.°"))).
   append(Column("has_avgas", ui->checkBoxAirportAvgasSearch, tr("Avgas")).hidden()).
   append(Column("has_jetfuel", ui->checkBoxAirportJetASearch, tr("Jetfuel")).hidden()).
 
-  append(Column("tower_frequency", ui->checkBoxAirportTowerSearch, tr("Tower\nMHz")).
-         conditions("is not null", "is null")).
+  append(Column("tower_frequency", ui->checkBoxAirportTowerSearch, tr("Tower\nMHz")).conditions("is not null", "is null")).
 
   append(Column("atis_frequency", tr("ATIS\nMHz")).hidden()).
   append(Column("awos_frequency", tr("AWOS\nMHz")).hidden()).
@@ -202,25 +200,18 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("is_addon", ui->checkBoxAirportAddonSearch, tr("Add-on")).hidden()).
   append(Column("is_3d", tr("3D")).hidden()).
 
-  append(Column("num_runway_soft", ui->comboBoxAirportSurfaceSearch, tr("Soft\nRunways")).
-         includesName().indexCondMap(rwSurface).hidden()).
+  append(Column("num_runway_soft", ui->comboBoxAirportSurfaceSearch, tr("Soft\nRunways")).includesName().indexCondMap(rwSurface).hidden()).
 
   append(Column("num_runway_hard", tr("Hard\nRunways")).hidden()).
   append(Column("num_runway_water", tr("Water\nRunways")).hidden()).
-  append(Column("num_runway_light", ui->checkBoxAirportLightSearch,
-                tr("Lighted\nRunways")).conditions("> 0", "== 0").hidden())
+  append(Column("num_runway_light", ui->checkBoxAirportLightSearch, tr("Lighted\nRunways")).conditions("> 0", "== 0").hidden())
   .
-  append(Column("num_runway_end_ils", ui->checkBoxAirportIlsSearch, tr("ILS")).
-         conditions("> 0", "== 0").hidden()).
-  append(Column("num_approach", ui->checkBoxAirportApprSearch, tr("Procedures")).
-         conditions("> 0", "== 0").hidden()).
+  append(Column("num_runway_end_ils", ui->checkBoxAirportIlsSearch, tr("ILS")).conditions("> 0", "== 0").hidden()).
+  append(Column("num_approach", ui->checkBoxAirportApprSearch, tr("Procedures")).conditions("> 0", "== 0").hidden()).
 
-  append(Column("largest_parking_ramp", ui->comboBoxAirportRampSearch, tr("Largest\nRamp")).
-         includesName().indexCondMap(rampCondMap)).
-  append(Column("largest_parking_gate", ui->comboBoxAirportGateSearch, tr("Largest\nGate")).
-         indexCondMap(gateCondMap)).
-  append(Column("num_helipad", ui->comboBoxAirportHelipadSearch, tr("Helipads")).
-         includesName().indexCondMap(helipadCondMap).hidden()).
+  append(Column("largest_parking_ramp", ui->comboBoxAirportRampSearch, tr("Largest\nRamp")).includesName().indexCondMap(rampCondMap)).
+  append(Column("largest_parking_gate", ui->comboBoxAirportGateSearch, tr("Largest\nGate")).indexCondMap(gateCondMap)).
+  append(Column("num_helipad", ui->comboBoxAirportHelipadSearch, tr("Helipads")).includesName().indexCondMap(helipadCondMap).hidden()).
 
   append(Column("num_parking_gate", tr("Gates")).hidden()).
   append(Column("num_parking_ga_ramp", tr("Ramps\nGA")).hidden()).
@@ -228,8 +219,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("num_parking_mil_cargo", tr("Ramps\nMil Cargo")).hidden()).
   append(Column("num_parking_mil_combat", tr("Ramps\nMil Combat")).hidden()).
 
-  append(Column("longest_runway_length", tr("Longest\nRunway Length %distshort%")).
-         convertFunc(Unit::distShortFeetF)).
+  append(Column("longest_runway_length", tr("Longest\nRunway Length %distshort%")).convertFunc(Unit::distShortFeetF)).
   append(Column("longest_runway_width", tr("Longest\nRunway Width ft")).hidden()).
   append(Column("longest_runway_surface", tr("Longest\nRunway Surface")).hidden()).
   append(Column("longest_runway_heading").hidden()).

@@ -320,8 +320,8 @@ void MapAirportHandler::addToolbarButton()
                          tr("Show airports with at least one hard surface runway"), QKeySequence(tr("Ctrl+Alt+J")));
   actionSoft = addAction(":/littlenavmap/resources/icons/airportsoft.svg", tr("&Soft surface"),
                          tr("Show airports with soft runway surfaces only"), QKeySequence(tr("Ctrl+Alt+S")));
-  actionWater = addAction(":/littlenavmap/resources/icons/airportwater.svg", tr("&Water"),
-                          tr("Show airports with water runways only"), QKeySequence(tr("Ctrl+Alt+U")));
+  actionWater = addAction(":/littlenavmap/resources/icons/airportwater.svg", tr("&Seaplane Bases"),
+                          tr("Show airports having only water runways"), QKeySequence(tr("Ctrl+Alt+U")));
   actionHelipad = addAction(":/littlenavmap/resources/icons/airporthelipad.svg", tr("&Heliports"),
                             tr("Show airports having only helipads"), QKeySequence(tr("Ctrl+Alt+X")));
   actionEmpty = addAction(":/littlenavmap/resources/icons/airportempty.svg", tr("&Empty"),
