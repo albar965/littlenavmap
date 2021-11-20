@@ -31,6 +31,7 @@
 #include "atools.h"
 #include "geo/pos.h"
 #include "perf/aircraftperfcontroller.h"
+#include "fs/perf/aircraftperf.h"
 
 #include "ui_rangemarkerdialog.h"
 
@@ -145,10 +146,17 @@ RangeMarkerDialog::RangeMarkerDialog(QWidget *parent, const atools::geo::Pos& po
   float enduranceHours, enduranceNm;
   NavApp::getAircraftPerfController()->getEnduranceFull(enduranceHours, enduranceNm);
 
+  const atools::fs::perf::AircraftPerf& perf = NavApp::getAircraftPerfController()->getAircraftPerformance();
+
+  QStringList headerList({perf.getName(), perf.getAircraftType()});
+  QString header = atools::strJoin(headerList, tr(" - "), tr(" - "), tr(".\n"));
+  if(!header.isEmpty())
+    header.prepend(tr("Aircraft Performance: "));
+
   if(enduranceNm < map::INVALID_DISTANCE_VALUE)
-    ui->labelRangeMarkerAircraft->setText(tr("Estimated range with reserve: %1").arg(Unit::distNm(enduranceNm)));
+    ui->labelRangeMarkerAircraft->setText(tr("%1Estimated range with reserve: %2").arg(header).arg(Unit::distNm(enduranceNm)));
   else
-    ui->labelRangeMarkerAircraft->setText(tr("Estimated range not valid."));
+    ui->labelRangeMarkerAircraft->setText(tr("%1Estimated range not valid.").arg(header));
 
   restoreState();
 
@@ -258,6 +266,13 @@ void RangeMarkerDialog::fillRangeMarker(map::RangeMarker& marker, bool dialogOpe
   {
     float enduranceHours, enduranceNm;
     NavApp::getAircraftPerfController()->getEnduranceFull(enduranceHours, enduranceNm);
+
+    const atools::fs::perf::AircraftPerf& perf = NavApp::getAircraftPerfController()->getAircraftPerformance();
+
+    if(!perf.getName().isEmpty())
+      marker.text.append(atools::elideTextShort(perf.getName(), 20));
+    else if(!perf.getAircraftType().isEmpty())
+      marker.text.append(perf.getAircraftType());
 
     // Do not create anything if range is not valid
     if(enduranceNm < map::INVALID_DISTANCE_VALUE)
