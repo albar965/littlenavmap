@@ -41,7 +41,7 @@ public:
   static Q_DECL_CONSTEXPR int MAP_MIN_DETAIL_FACTOR = 8;
 
   /* Get a layer for current zoom distance and detail factor */
-  const MapLayer *getLayer(float distance, int detailFactor = MAP_DEFAULT_DETAIL_FACTOR) const;
+  const MapLayer *getLayer(float distanceKm, int detailFactor = MAP_DEFAULT_DETAIL_FACTOR) const;
 
 private:
   friend QDebug operator<<(QDebug out, const MapLayerSettings& record);

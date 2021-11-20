@@ -822,8 +822,7 @@ const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const 
 }
 
 const QList<map::MapUserpoint> MapQuery::getUserdataPoints(const GeoDataLatLonBox& rect, const QStringList& types,
-                                                           const QStringList& typesAll, bool unknownType,
-                                                           float distance)
+                                                           const QStringList& typesAll, bool unknownType, float distanceNm)
 {
   // No caching here since points can change and the dataset is usually small
   QList<MapUserpoint> retval;
@@ -834,11 +833,10 @@ const QList<map::MapUserpoint> MapQuery::getUserdataPoints(const GeoDataLatLonBo
   {
     bool allTypesSelected = types == typesAll;
 
-    for(const GeoDataLatLonBox& r :
-        query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+    for(const GeoDataLatLonBox& r : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
       query::bindRect(r, userdataPointByRectQuery);
-      userdataPointByRectQuery->bindValue(":dist", distance);
+      userdataPointByRectQuery->bindValue(":dist", distanceNm);
 
       QStringList queryTypes;
       if(unknownType || (allTypesSelected && unknownType))

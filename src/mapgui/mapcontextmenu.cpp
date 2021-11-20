@@ -1004,7 +1004,7 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
   // ===================================================================================
   // Build menu - add actions
 
-  if(!point.isNull())
+  if(!point.isNull() && !mapWidget->noRender())
   {
     qreal lon, lat;
     // Cursor can be outside of map region

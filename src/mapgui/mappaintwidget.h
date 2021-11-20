@@ -361,6 +361,10 @@ public:
 
   void postTrackLoad();
 
+  /* No drawing at all and not map interactions except moving and zooming if true.
+   * Limit depends on projection. */
+  bool noRender() const;
+
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
   void resultTruncated();

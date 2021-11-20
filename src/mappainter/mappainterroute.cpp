@@ -90,7 +90,7 @@ QString MapPainterRoute::buildLegText(const RouteLeg& leg)
 
 QString MapPainterRoute::buildLegText(float dist, float courseGcMag, float courseGcTrue)
 {
-  if(context->distance > layer::DISTANCE_CUT_OFF_LIMIT)
+  if(context->distanceKm > layer::DISTANCE_CUT_OFF_LIMIT_KM)
     return QString();
 
   QStringList texts;
@@ -191,7 +191,7 @@ void MapPainterRoute::paintRoute()
   if(context->mapLayerEffective->isApproach())
   {
     proc::MapProcedureLeg lastLegPoint;
-    if(context->distance < layer::DISTANCE_CUT_OFF_LIMIT)
+    if(context->distanceKm < layer::DISTANCE_CUT_OFF_LIMIT_KM)
     {
       const QColor& flightplanProcedureColor = OptionData::instance().getFlightplanProcedureColor();
       if(route->hasAnyApproachProcedure())

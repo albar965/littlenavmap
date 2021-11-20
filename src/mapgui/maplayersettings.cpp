@@ -36,12 +36,12 @@ void MapLayerSettings::finishAppend()
   std::sort(layers.begin(), layers.end());
 }
 
-const MapLayer *MapLayerSettings::getLayer(float distance, int detailFactor) const
+const MapLayer *MapLayerSettings::getLayer(float distanceKm, int detailFactor) const
 {
   using namespace std::placeholders;
 
   // Get the layer with the next lowest zoom distance
-  QList<MapLayer>::const_iterator it = std::lower_bound(layers.begin(), layers.end(), distance,
+  QList<MapLayer>::const_iterator it = std::lower_bound(layers.begin(), layers.end(), distanceKm,
                                                         std::bind(&MapLayerSettings::compare, this, _1, _2));
 
   // Adjust iterator for detail level changes

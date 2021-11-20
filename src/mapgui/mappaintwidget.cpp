@@ -233,6 +233,11 @@ bool MapPaintWidget::isDarkMap() const
   return currentThemeIndex == map::CARTODARK;
 }
 
+bool MapPaintWidget::noRender() const
+{
+  return paintLayer->noRender();
+}
+
 void MapPaintWidget::setThemeInternal(const QString& theme)
 {
   // Ignore any overlay state signals the widget sends while switching theme

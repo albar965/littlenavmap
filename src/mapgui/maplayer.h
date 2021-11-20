@@ -22,8 +22,11 @@
 
 namespace layer {
 
-/* Do not show anything at all above this zoom distance */
-constexpr float DISTANCE_CUT_OFF_LIMIT = 4000.f;
+/* Do not show anything above this zoom distance except user features */
+constexpr float DISTANCE_CUT_OFF_LIMIT_KM = 4000.f;
+
+/* Stop all drawing, tooltips and interaction above this limit */
+constexpr float NO_DRAW_LIMIT_KM = 8000.f;
 
 /* Ships considered large above this model radius in feet */
 constexpr int LARGE_SHIP_SIZE = 150;
@@ -45,12 +48,12 @@ public:
   /*
    * @param maximumRange create a layer for the maximum zoom distance
    */
-  MapLayer(float maximumRange);
+  MapLayer(float maximumRangeKm);
 
   /*
    * create a clone of this layer with the maximum zoom distance
    */
-  MapLayer clone(float maximumRange) const;
+  MapLayer clone(float maximumRangeKm) const;
 
   /* @return true if a query for this layer will give the same result set */
   bool hasSameQueryParametersAirport(const MapLayer *other) const;
@@ -639,7 +642,7 @@ public:
 private:
   friend QDebug operator<<(QDebug out, const MapLayer& record);
 
-  float maxRange = -1.;
+  float maxRange = -1.; /* KM */
 
   bool layerAirport = false, layerAirportOverviewRunway = false, layerAirportDiagram = false,
        layerAirportDiagramRunway = false, layerAirportDiagramDetail = false, layerAirportDiagramDetail2 = false,

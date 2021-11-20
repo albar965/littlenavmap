@@ -80,7 +80,8 @@ struct PaintContext
 
   opts::MapScrollDetail mapScrollDetail; /* Option that indicates the detail level when drawFast is true */
   QFont defaultFont /* Default widget font */;
-  float distance; /* Zoom distance in NM */
+  float distanceNm; /* Zoom distance in NM */
+  float distanceKm; /* Zoom distance in KM as in map widget */
   QStringList userPointTypes, /* In menu selected types */
               userPointTypesAll; /* All available tyes */
   bool userPointTypeUnknown; /* Show unknown types */

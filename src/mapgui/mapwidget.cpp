@@ -112,6 +112,8 @@ const float MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM = 50.f;
 /* Default zoom distance if start position was not set (usually first start after installation */
 const double DEFAULT_MAP_DISTANCE_KM = 7000.;
 
+const double MAP_ZOOM_OUT_LIMIT_KM = 10000.;
+
 /* If width and height of a bounding rect are smaller than this use show point */
 const float POS_IS_POINT_EPSILON = 0.0001f;
 
@@ -479,7 +481,7 @@ void MapWidget::updateTooltip()
 
 void MapWidget::showTooltip(bool update)
 {
-  if(databaseLoadStatus)
+  if(databaseLoadStatus || noRender())
     return;
 
 #ifdef DEBUG_INFORMATION
@@ -500,8 +502,10 @@ void MapWidget::showTooltip(bool update)
   }
 
   // Build a new tooltip HTML for weather changes or aircraft updates
-  QString text = mapTooltip->buildTooltip(mapSearchResultTooltip, pos, NavApp::getRouteConst(),
-                                          paintLayer->getMapLayer()->isAirportDiagram());
+  QString text;
+
+  if(paintLayer->getMapLayer() != nullptr)
+    text = mapTooltip->buildTooltip(mapSearchResultTooltip, pos, NavApp::getRouteConst(), paintLayer->getMapLayer()->isAirportDiagram());
 
   if(!text.isEmpty() && !tooltipPos.isNull())
     QToolTip::showText(tooltipPos, text /*, nullptr, QRect(), 3600 * 1000*/);
@@ -571,7 +575,7 @@ void MapWidget::keyPressEvent(QKeyEvent *event)
 
 bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
 {
-  if(mouseState != mw::NONE || event->type() != QEvent::MouseButtonRelease)
+  if(mouseState != mw::NONE || event->type() != QEvent::MouseButtonRelease || noRender())
     // Not if dragging or for button release
     return false;
 
@@ -920,7 +924,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
         }
       }
 
-      if(mouseState == mw::NONE)
+      if(mouseState == mw::NONE && !noRender())
       {
         if(cursor().shape() != Qt::ArrowCursor)
           setCursor(Qt::ArrowCursor);
@@ -980,6 +984,9 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
 
   // Avoid repaints
   resetPaintForDragTimer.stop();
+
+  if(noRender())
+    return;
 
   map::MapResult mapSearchResult;
 
@@ -1447,7 +1454,7 @@ void MapWidget::cancelDragDistance()
 
 void MapWidget::startUserpointDrag(const map::MapUserpoint& userpoint, const QPoint& point)
 {
-  if(userpoint.isValid())
+  if(userpoint.isValid() && paintLayer->getMapLayer() != nullptr)
   {
     userpointDragPixmap = *NavApp::getUserdataIcons()->getIconPixmap(userpoint.type, paintLayer->getMapLayer()->getUserPointSymbolSize());
     userpointDragCur = point;
@@ -1503,7 +1510,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
       // Update current point
       userpointDragCur = QPoint(event->pos().x(), event->pos().y());
   }
-  else if(mouseState == mw::NONE)
+  else if(mouseState == mw::NONE && !noRender())
   {
     // No drag mode - just mouse movement - change cursor =================================
 
@@ -3409,6 +3416,9 @@ void MapWidget::addRangeMark(const atools::geo::Pos& pos, bool showDialog)
 
 void MapWidget::zoomInOut(bool directionIn, bool smooth)
 {
+  if(!directionIn && distance() > MAP_ZOOM_OUT_LIMIT_KM)
+    return;
+
   // Reset context for full redraw when using drag and drop
   resetPaintForDrag();
 

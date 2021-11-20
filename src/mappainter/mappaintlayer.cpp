@@ -160,6 +160,9 @@ void MapPaintLayer::setDetailFactor(int factor)
 
 map::MapAirspaceFilter MapPaintLayer::getShownAirspacesTypesByLayer() const
 {
+  if(mapLayer == nullptr)
+    return map::MapAirspaceFilter({map::AIRSPACE_NONE, map::AIRSPACE_FLAG_NONE});
+
   // Mask out all types that are not visible in the current layer
   map::MapAirspaceFilter filter = airspaceTypes;
   if(!mapLayer->isAirspaceIcao())
@@ -485,7 +488,7 @@ void MapPaintLayer::initMapLayerSettings()
          userpoint().userpointInfo(false).userpointSymbolSize(12).
          airportMaxTextLength(16)).
 
-  append(defLayer.clone(layer::DISTANCE_CUT_OFF_LIMIT).
+  append(defLayer.clone(layer::DISTANCE_CUT_OFF_LIMIT_KM).
          airportSymbolSize(3).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
          airportOverviewRunway(false).airportName(false).airportIdent(false).
          airportWeather(false).airportWeatherDetails(false).
@@ -531,15 +534,33 @@ void MapPaintLayer::initMapLayerSettings()
 /* Update the stored layer pointers after zoom distance has changed */
 void MapPaintLayer::updateLayers()
 {
-  float dist = static_cast<float>(mapWidget->distance());
-  // Get the uncorrected effective layer - route painting is independent of declutter
-  mapLayerEffective = layers->getLayer(dist);
-  mapLayer = layers->getLayer(dist, detailFactor);
-  mapLayerRoute = layers->getLayer(dist, detailFactor + 1);
+  if(noRender())
+    mapLayerEffective = mapLayer = mapLayerRoute = nullptr;
+  else
+  {
+    float distKm = static_cast<float>(mapWidget->distance());
+    // Get the uncorrected effective layer - route painting is independent of declutter
+    mapLayerEffective = layers->getLayer(distKm);
+    mapLayer = layers->getLayer(distKm, detailFactor);
+    mapLayerRoute = layers->getLayer(distKm, detailFactor + 1);
+  }
 }
 
-bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const QString& renderPos,
-                           GeoSceneLayer *layer)
+bool MapPaintLayer::noRender() const
+{
+  const ViewportParams *viewport = mapWidget->viewport();
+
+  if(viewport->projection() == Marble::Mercator)
+    // Do not draw if Mercator wraps around whole planet
+    return viewport->viewLatLonAltBox().width(GeoDataCoordinates::Degree) >= 350.;
+  else if(viewport->projection() == Marble::Spherical)
+    // Limit drawing to maximum zoom distance
+    return mapWidget->distance() > layer::NO_DRAW_LIMIT_KM;
+
+  return false;
+}
+
+bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const QString& renderPos, GeoSceneLayer *layer)
 {
   Q_UNUSED(renderPos)
   Q_UNUSED(layer)
@@ -554,9 +575,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
     opts::MapScrollDetail mapScrollDetail = OptionData::instance().getMapScrollDetail();
 
     // Check if no painting wanted during scroll
-    if(!(mapScrollDetail == opts::NONE && mapWidget->viewContext() == Marble::Animation) && // Performance settings
-       !(viewport->projection() == Marble::Mercator && // Do not draw if Mercator wraps around whole planet
-         viewport->viewLatLonAltBox().width(GeoDataCoordinates::Degree) >= 359.))
+    if(!(mapScrollDetail == opts::NONE && mapWidget->viewContext() == Marble::Animation) && !noRender())
     {
 #ifdef DEBUG_INFORMATION_PAINT
       qDebug() << Q_FUNC_INFO << "layer" << *mapLayer;
@@ -577,7 +596,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
                          false : mapWidget->viewContext() == Marble::Animation;
       context.lazyUpdate = mapScrollDetail == opts::FULL ? false : mapWidget->viewContext() == Marble::Animation;
       context.mapScrollDetail = mapScrollDetail;
-      context.distance = atools::geo::meterToNm(static_cast<float>(mapWidget->distance() * 1000.));
+      context.distanceKm = static_cast<float>(mapWidget->distance());
+      context.distanceNm = atools::geo::meterToNm(context.distanceKm * 1000.f);
 
       context.userPointTypes = NavApp::getUserdataController()->getSelectedTypes();
       context.userPointTypesAll = NavApp::getUserdataController()->getAllTypes();
@@ -720,7 +740,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       // Ship below other navaids and airports
       mapPainterShip->render();
 
-      if(mapWidget->distance() < layer::DISTANCE_CUT_OFF_LIMIT)
+      if(mapWidget->distance() < layer::DISTANCE_CUT_OFF_LIMIT_KM)
       {
         if(!context.isObjectOverflow())
           mapPainterAirspace->render();

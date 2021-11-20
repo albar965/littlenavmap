@@ -171,6 +171,10 @@ public:
     minimumRunwayLenghtFt = value;
   }
 
+  /* No drawing at all and not map interactions except moving and zooming if true.
+   * Limit depends on projection. */
+  bool noRender() const;
+
 private:
   void initMapLayerSettings();
   void updateLayers();

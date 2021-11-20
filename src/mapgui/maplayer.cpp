@@ -19,15 +19,15 @@
 
 #include "maplayer.h"
 
-MapLayer::MapLayer(float maximumRange)
+MapLayer::MapLayer(float maximumRangeKm)
 {
-  maxRange = maximumRange;
+  maxRange = maximumRangeKm;
 }
 
-MapLayer MapLayer::clone(float maximumRange) const
+MapLayer MapLayer::clone(float maximumRangeKm) const
 {
   MapLayer retval = *this;
-  retval.maxRange = maximumRange;
+  retval.maxRange = maximumRangeKm;
   return retval;
 }
 

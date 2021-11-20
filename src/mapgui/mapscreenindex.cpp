@@ -198,7 +198,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox
     return;
 
   // Do not put into index if nothing is drawn
-  if(mapWidget->distance() >= layer::DISTANCE_CUT_OFF_LIMIT)
+  if(mapWidget->distance() >= layer::DISTANCE_CUT_OFF_LIMIT_KM)
     return;
 
   // Get geometry from visible airspaces
@@ -220,7 +220,7 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
     return;
 
   // Do not put into index if nothing is drawn
-  if(mapWidget->distance() >= layer::DISTANCE_CUT_OFF_LIMIT)
+  if(mapWidget->distance() >= layer::DISTANCE_CUT_OFF_LIMIT_KM)
     return;
 
   const MapScale *scale = paintLayer->getMapScale();
@@ -652,12 +652,12 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& c
 void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const
 {
   using maptools::insertSortedByDistance;
-
-  CoordinateConverter conv(mapWidget->viewport());
   const MapLayer *mapLayer = paintLayer->getMapLayer();
 
   if(mapLayer == nullptr)
     return;
+
+  CoordinateConverter conv(mapWidget->viewport());
 
   map::MapTypes shown = paintLayer->getShownMapObjects();
   map::MapObjectDisplayTypes shownDisplay = paintLayer->getShownMapObjectDisplayTypes();
@@ -760,7 +760,8 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
   // Get objects from cache - already present objects will be skipped
   // Airway included to fetch waypoints
   map::MapTypes mapTypes = shown &
-                           (map::AIRPORT_ALL_AND_ADDON | map::AIRPORT_MSA | map::VOR | map::NDB | map::WAYPOINT | map::MARKER | map::HOLDING |
+                           (map::AIRPORT_ALL_AND_ADDON | map::AIRPORT_MSA | map::VOR | map::NDB | map::WAYPOINT | map::MARKER |
+                            map::HOLDING |
                             map::AIRWAYJ | map::TRACK | map::AIRWAYV | map::USERPOINT | map::LOGBOOK);
 
   mapWidget->getMapQuery()->getNearestScreenObjects(conv, mapLayer, mapLayer->isAirportDiagram() &&

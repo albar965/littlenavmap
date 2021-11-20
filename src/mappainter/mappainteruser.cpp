@@ -58,7 +58,7 @@ void MapPainterUser::render()
 
   // Always call paint to fill cache
   paintUserpoints(mapQuery->getUserdataPoints(curBox, context->userPointTypes, context->userPointTypesAll,
-                                              context->userPointTypeUnknown, context->distance), context->drawFast);
+                                              context->userPointTypeUnknown, context->distanceNm), context->drawFast);
 }
 
 void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool drawFast)

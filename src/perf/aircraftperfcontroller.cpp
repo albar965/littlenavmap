@@ -722,8 +722,7 @@ void AircraftPerfController::updateReport()
 
     if(!header.isEmpty())
     {
-      html.img(QIcon(":/littlenavmap/resources/icons/aircraftperf.svg"), QString(), QString(),
-               QSize(symbolSize, symbolSize));
+      html.img(QIcon(":/littlenavmap/resources/icons/aircraftperf.svg"), QString(), QString(), QSize(symbolSize, symbolSize));
       html.nbsp().nbsp();
 
       html.text(header, atools::util::html::BOLD | atools::util::html::BIG);
