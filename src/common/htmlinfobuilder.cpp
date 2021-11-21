@@ -2367,17 +2367,18 @@ void HtmlInfoBuilder::distanceMarkerText(const DistanceMarker& marker, atools::u
   html.tableEnd();
 }
 
-void HtmlInfoBuilder::bearingAndDistanceTexts(const atools::geo::Pos& pos, float magvar, atools::util::HtmlBuilder& html, bool noBearing)
+void HtmlInfoBuilder::bearingAndDistanceTexts(const atools::geo::Pos& pos, float magvar, atools::util::HtmlBuilder& html, bool bearing,
+                                              bool distance)
 {
   if(pos.isValid())
   {
     bool added = false;
     atools::util::HtmlBuilder temp = html.cleared();
     temp.table();
-    if(!print && !info) // Only tooltip
+    if(!print && !info && distance) // Only tooltip and not for flight plan positions
       added |= distanceToRouteText(pos, temp);
 
-    if(!print && !noBearing) // Tooltip and info
+    if(!print && bearing) // Bearing only in tooltip
       added |= bearingToUserText(pos, magvar, temp);
     temp.tableEnd();
 

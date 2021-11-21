@@ -314,7 +314,7 @@ public:
   }
 
   /* Add bearing and distance to user and last flight plan leg in a table if pos is valid */
-  void bearingAndDistanceTexts(const atools::geo::Pos& pos, float magvar, atools::util::HtmlBuilder& html, bool noBearing);
+  void bearingAndDistanceTexts(const atools::geo::Pos& pos, float magvar, atools::util::HtmlBuilder& html, bool bearing, bool distance);
 
 private:
   void head(atools::util::HtmlBuilder& html, const QString& text) const;
