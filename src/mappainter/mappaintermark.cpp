@@ -1043,7 +1043,7 @@ void MapPainterMark::paintCompassRose()
     context->szFont(context->textSizeCompassRose * 1.4f);
     painter->setPen(mapcolors::compassRoseTextColor);
 
-    if(context->dOptRose(optsd::ROSE_DIR_LABLES))
+    if(context->dOptRose(optsd::ROSE_DIR_LABELS))
     {
       for(int i = 0; i < 360 / 5; i++)
       {
@@ -1079,7 +1079,7 @@ void MapPainterMark::paintCompassRose()
       context->szFont(context->textSizeCompassRose * 0.8f);
       for(int i = 0; i < 360 / 5; i++)
       {
-        if((i % (15 / 5)) == 0 && (!context->dOptRose(optsd::ROSE_DIR_LABLES) || !((i % (90 / 5)) == 0)))
+        if((i % (15 / 5)) == 0 && (!context->dOptRose(optsd::ROSE_DIR_LABELS) || !((i % (90 / 5)) == 0)))
         {
           // All 15 deg but not at 90 deg boundaries
           symbolPainter->textBoxF(painter, {QString::number(i * 5)}, painter->pen(),

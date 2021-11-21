@@ -521,7 +521,7 @@ enum DisplayOptionRose
   ROSE_TRACK_LABEL = 1 << 5,
   ROSE_CRAB_ANGLE = 1 << 6,
   ROSE_NEXT_WAYPOINT = 1 << 7,
-  ROSE_DIR_LABLES = 1 << 8
+  ROSE_DIR_LABELS = 1 << 8
 };
 
 Q_DECLARE_FLAGS(DisplayOptionsRose, DisplayOptionRose);
@@ -1525,7 +1525,7 @@ private:
   optsd::DisplayOptionsRose displayOptionsRose =
     optsd::ROSE_RANGE_RINGS | optsd::ROSE_DEGREE_MARKS | optsd::ROSE_DEGREE_LABELS | optsd::ROSE_HEADING_LINE |
     optsd::ROSE_TRACK_LINE | optsd::ROSE_TRACK_LABEL | optsd::ROSE_CRAB_ANGLE | optsd::ROSE_NEXT_WAYPOINT |
-    optsd::ROSE_DIR_LABLES;
+    optsd::ROSE_DIR_LABELS;
 
   optsd::DisplayOptionsMeasurement displayOptionsMeasurement = optsd::MEASUREMNENT_MAG | optsd::MEASUREMNENT_TRUE |
                                                                optsd::MEASUREMNENT_DIST | optsd::MEASUREMNENT_LABEL;
