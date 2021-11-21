@@ -99,7 +99,8 @@ public:
   void drawWindPointer(QPainter *painter, float x, float y, int size, float dir);
 
   /* Draw large symbol with sectors and labels. MSA circle with bearings and altitude */
-  void drawAirportMsa(QPainter *painter, const map::MapAirportMsa& airportMsa, float x, float y, int size, float symbolScale, bool header, bool transparency, bool fast);
+  void drawAirportMsa(QPainter *painter, const map::MapAirportMsa& airportMsa, float x, float y, int size, float symbolScale, bool header,
+                      bool transparency, bool fast);
 
   /* Aircraft track */
   void drawTrackLine(QPainter *painter, float x, float y, int size, float dir);

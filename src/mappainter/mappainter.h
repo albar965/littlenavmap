@@ -357,6 +357,7 @@ protected:
   /* Draw enroute as well as user defined holdings */
   void paintHoldingMarks(const QList<map::MapHolding>& holdings, bool user, bool drawFast);
 
+  /* Draw large semi-transparent MSA enabled by user */
   void paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool user, bool drawFast);
 
   /* Minimum points to use for a circle */

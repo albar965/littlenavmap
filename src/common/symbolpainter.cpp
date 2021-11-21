@@ -708,6 +708,11 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
         // Convert from bearing to angle
         bearing = atools::geo::normalizeCourse(bearing + 180.f + magvar);
 
+        if(bearing < 180.f)
+          text.prepend(tr("◄"));
+        else
+          text.append(tr("►"));
+
         // Line from center to top
         QLineF line(x, y, x, y - radius + 2);
         line.setAngle(atools::geo::angleToQt(bearing));
@@ -727,7 +732,7 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
       }
     }
 
-    // Draw altitude lables =====================================================================
+    // Draw altitude labels =====================================================================
     if(drawDetails)
     {
       for(int i = 0; i < airportMsa.bearings.size(); i++)
@@ -740,7 +745,7 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
 
         if(airportMsa.altitudes.size() > 1)
           // Rotate for sector bearing
-          line.setAngle(atools::geo::angleToQt(bearing + atools::geo::angleAbsDiff(bearing, bearingTo) / 2.f));
+          line.setAngle(atools::geo::angleToQt(bearing + atools::geo::angleAbsDiff2(bearing, bearingTo) / 2.f));
 
         QString text = Unit::altFeet(airportMsa.altitudes.at(i), false /* addUnit */, true /* narrow */);
         QSizeF txtsize = painter->fontMetrics().boundingRect(text).size();
