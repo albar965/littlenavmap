@@ -77,8 +77,7 @@ signals:
 private:
   /* Action from toolbar toggled */
   void toolbarActionTriggered();
-  void actionAllTriggered();
-  void actionNoneTriggered();
+  void actionResetTriggered();
 
   /* Set actions (blocking signals) */
   void flagsToActions();
@@ -93,7 +92,7 @@ private:
   void updateToolbutton();
 
   /* Actions for toolbar button and menu */
-  QAction *actionAll = nullptr, *actionNone = nullptr,
+  QAction *actionReset = nullptr,
           *actionHard = nullptr, *actionSoft = nullptr, *actionEmpty = nullptr, *actionAddon = nullptr, *actionUnlighted = nullptr,
           *actionNoProcedures = nullptr, *actionWater = nullptr, *actionHelipad = nullptr;
 

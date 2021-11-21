@@ -298,19 +298,12 @@ void MapAirportHandler::addToolbarButton()
   ui->toolbarMapOptions->insertSeparator(ui->actionMapShowVor);
 
   // Create and add actions to toolbar and menu =================================
-  actionAll = new QAction(tr("&All"), buttonMenu);
-  actionAll->setToolTip(tr("Show all airport types"));
-  actionAll->setStatusTip(actionAll->toolTip());
-  buttonMenu->addAction(actionAll);
-  ui->menuViewAirport->addAction(actionAll);
-  connect(actionAll, &QAction::triggered, this, &MapAirportHandler::actionAllTriggered);
-
-  actionNone = new QAction(tr("&None"), buttonMenu);
-  actionNone->setToolTip(tr("Hide all airport types"));
-  actionNone->setStatusTip(actionNone->toolTip());
-  buttonMenu->addAction(actionNone);
-  ui->menuViewAirport->addAction(actionNone);
-  connect(actionNone, &QAction::triggered, this, &MapAirportHandler::actionNoneTriggered);
+  actionReset = new QAction(tr("&Reset airport display options"), buttonMenu);
+  actionReset->setToolTip(tr("Reset to default and show all airport types"));
+  actionReset->setStatusTip(actionReset->toolTip());
+  buttonMenu->addAction(actionReset);
+  ui->menuViewAirport->addAction(actionReset);
+  connect(actionReset, &QAction::triggered, this, &MapAirportHandler::actionResetTriggered);
 
   ui->menuViewAirport->addSeparator();
   buttonMenu->addSeparator();
@@ -365,7 +358,7 @@ QAction *MapAirportHandler::addAction(const QString& icon, const QString& text, 
   return action;
 }
 
-void MapAirportHandler::actionAllTriggered()
+void MapAirportHandler::actionResetTriggered()
 {
   // Save and restore master airport flag
   bool airportFlag = airportTypes.testFlag(map::AIRPORT);
@@ -375,18 +368,6 @@ void MapAirportHandler::actionAllTriggered()
   flagsToActions();
   sliderActionRunwayLength->reset();
   runwaySliderValueChanged();
-  updateToolbutton();
-  emit updateAirportTypes();
-}
-
-void MapAirportHandler::actionNoneTriggered()
-{
-  // Save and restore master airport flag
-  bool airportFlag = airportTypes.testFlag(map::AIRPORT);
-  airportTypes = map::NONE;
-  airportTypes.setFlag(map::AIRPORT, airportFlag);
-
-  flagsToActions();
   updateToolbutton();
   emit updateAirportTypes();
 }
