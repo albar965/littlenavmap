@@ -1195,7 +1195,9 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
                                     optsd::DisplayOptionsAirport dispOpts, textflags::TextFlags flags, int size,
                                     bool diagram, int maxTextLength)
 {
+  // Get layer and options dependent texts
   QStringList texts = airportTexts(dispOpts, flags, airport, maxTextLength);
+
   if(!texts.isEmpty())
   {
     textatt::TextAttributes atts = textatt::NONE;
@@ -1231,6 +1233,7 @@ QStringList SymbolPainter::airportTexts(optsd::DisplayOptionsAirport dispOpts, t
 {
   QStringList texts;
 
+  // Build ident/name combination - flags are layer dependent
   if(flags & textflags::IDENT && flags & textflags::NAME && dispOpts & optsd::ITEM_AIRPORT_NAME)
     texts.append(atools::elideTextShort(airport.name, maxTextLength) + " (" + airport.displayIdent() + ")");
   else if(flags & textflags::IDENT)

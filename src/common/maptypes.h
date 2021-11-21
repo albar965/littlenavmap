@@ -29,6 +29,7 @@
 #include <QString>
 
 class OptionData;
+class MapLayer;
 
 namespace proc {
 
@@ -376,9 +377,15 @@ struct MapAirport
   bool closedRunways() const;
   bool procedure() const;
 
+  /* For map layer configuration soft, water, helipad and closed */
+  bool minor() const;
+
   /* Check if airport should be drawn empty */
   bool emptyDraw() const;
-  bool emptyDraw(const OptionData& od) const;
+  bool emptyDraw(bool emptyFlag, bool empty3dFlag) const;
+
+  /* Drawing order. Lower number are drawn first i.e. below all others  */
+  int paintPriority(bool forceAddonFlag, bool emptyOptsFlag, bool empty3dOptsFlag) const;
 
   /* Check if airport has any scenery elements */
   bool empty() const;
@@ -387,7 +394,7 @@ struct MapAirport
    * @param objectTypes Map display configuration flags
    * @return true if this airport is visible on map
    */
-  bool isVisible(map::MapTypes types, int minRunwayFt) const;
+  bool isVisible(map::MapTypes types, int minRunwayFt, const MapLayer *layer) const;
 
 };
 

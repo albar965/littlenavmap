@@ -365,6 +365,9 @@ public:
    * Limit depends on projection. */
   bool noRender() const;
 
+  /* Print all layers to debug channel */
+  void dumpMapLayers() const;
+
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
   void resultTruncated();

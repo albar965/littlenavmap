@@ -33,6 +33,9 @@ public:
   /* Add a map layer. Call finishAppend when done. */
   MapLayerSettings& append(const MapLayer& layer);
 
+  /* Take the last added layer and create a clone with a new zoom distance */
+  MapLayer cloneLast(float maximumRangeKm) const;
+
   /* Call when done appending layers. Sorts all layers by zoom distance. */
   void finishAppend();
 

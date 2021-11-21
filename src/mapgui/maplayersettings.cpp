@@ -31,6 +31,14 @@ MapLayerSettings& MapLayerSettings::append(const MapLayer& layer)
   return *this;
 }
 
+MapLayer MapLayerSettings::cloneLast(float maximumRangeKm) const
+{
+  if(layers.isEmpty())
+    return MapLayer(maximumRangeKm);
+  else
+    return layers.last().clone(maximumRangeKm);
+}
+
 void MapLayerSettings::finishAppend()
 {
   std::sort(layers.begin(), layers.end());
@@ -69,7 +77,15 @@ QDebug operator<<(QDebug out, const MapLayerSettings& record)
 {
   QDebugStateSaver saver(out);
 
-  out.nospace().noquote() << "LayerSettings[" << record.layers << "]";
+  out.nospace().noquote() << "LayerSettings[" << endl;
+
+  for(const MapLayer& layer : record.layers)
+  {
+    out << "------------------------------" << endl;
+    out << layer << endl;
+  }
+
+  out << "]";
 
   return out;
 }

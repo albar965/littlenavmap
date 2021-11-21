@@ -104,7 +104,7 @@ struct PaintContext
   bool visibleWidget;
   int mimimumRunwayLengthFt = -1;
 
-  /* Text sizes and line thickness in percent / 100 */
+  /* Text sizes and line thickness in percent / 100 as set in options dialog */
   float textSizeAircraftAi = 1.f;
   float symbolSizeNavaid = 1.f;
   float symbolSizeUserpoint = 1.f;
@@ -227,8 +227,9 @@ struct PaintContext
   /* Calculate and set font based on scale */
   void szFont(float scale) const;
 
-  /* Calculate label text flags for route waypoints */
+  /* Calculate label text flags for route waypoints depending on layer settings */
   textflags::TextFlags airportTextFlags() const;
+  textflags::TextFlags airportTextFlagsMinor() const;
   textflags::TextFlags airportTextFlagsRoute(bool drawAsRoute, bool drawAsLog) const;
 
 };

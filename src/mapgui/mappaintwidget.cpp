@@ -433,6 +433,11 @@ void MapPaintWidget::updateGeometryIndex(map::MapTypes oldTypes, map::MapObjectD
     screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
 }
 
+void MapPaintWidget::dumpMapLayers() const
+{
+  paintLayer->dumpMapLayers();
+}
+
 void MapPaintWidget::setShowMapObjects(map::MapTypes type, map::MapTypes mask)
 {
   paintLayer->setShowMapObjects(type, mask);

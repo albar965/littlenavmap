@@ -175,6 +175,8 @@ public:
    * Limit depends on projection. */
   bool noRender() const;
 
+  void dumpMapLayers() const;
+
 private:
   void initMapLayerSettings();
   void updateLayers();

@@ -165,9 +165,45 @@ MapLayer& MapLayer::airportDiagramDetail3(bool value)
   return *this;
 }
 
-MapLayer& MapLayer::airportSoft(bool value)
+MapLayer& MapLayer::airportMinor(bool value)
 {
-  layerAirportSoft = value;
+  layerAirportMinor = value;
+  return *this;
+}
+
+MapLayer& MapLayer::airportMinorSymbolSize(int size)
+{
+  layerAirportMinorSymbolSize = size;
+  return *this;
+}
+
+MapLayer& MapLayer::airportMinorFontScale(float scale)
+{
+  layerAirportMinorFontScale = scale;
+  return *this;
+}
+
+MapLayer& MapLayer::airportMinorIdent(bool value)
+{
+  layerAirportMinorIdent = value;
+  return *this;
+}
+
+MapLayer& MapLayer::airportMinorName(bool value)
+{
+  layerAirportMinorName = value;
+  return *this;
+}
+
+MapLayer& MapLayer::airportMinorMaxTextLength(int size)
+{
+  maximumTextLengthAirportMinor = size;
+  return *this;
+}
+
+MapLayer& MapLayer::airportMinorInfo(bool value)
+{
+  layerAirportMinorInfo = value;
   return *this;
 }
 
@@ -180,6 +216,12 @@ MapLayer& MapLayer::airportNoRating(bool value)
 MapLayer& MapLayer::airportSymbolSize(int size)
 {
   layerAirportSymbolSize = size;
+  return *this;
+}
+
+MapLayer& MapLayer::airportFontScale(float scale)
+{
+  layerAirportFontScale = scale;
   return *this;
 }
 
@@ -606,7 +648,120 @@ QDebug operator<<(QDebug out, const MapLayer& record)
 {
   QDebugStateSaver saver(out);
 
-  out.nospace().noquote() << "MapLayer[" << record.maxRange << "]";
+  out.nospace().noquote()
+    << "MapLayer["
+    << " minRunwayLength " << record.layerMinRunwayLength
+    << " maxRange " << record.maxRange << endl;
+
+  out << " aiAircraftGround " << record.layerAiAircraftGround
+      << " aiAircraftGroundText " << record.layerAiAircraftGroundText
+      << " aiAircraftLarge " << record.layerAiAircraftLarge
+      << " aiAircraftSize " << record.layerAiAircraftSize
+      << " aiAircraftSmall " << record.layerAiAircraftSmall
+      << " aiAircraftText " << record.layerAiAircraftText << endl;
+
+  out << " aiShipLarge " << record.layerAiShipLarge
+      << " aiShipSmall " << record.layerAiShipSmall << endl;
+
+  out << " airport " << record.layerAirport
+      << " airportDiagram " << record.layerAirportDiagram
+      << " airportDiagramDetail " << record.layerAirportDiagramDetail
+      << " airportDiagramDetail2 " << record.layerAirportDiagramDetail2
+      << " airportDiagramDetail3 " << record.layerAirportDiagramDetail3
+      << " airportDiagramRunway " << record.layerAirportDiagramRunway
+      << " airportIdent " << record.layerAirportIdent
+      << " airportInfo " << record.layerAirportInfo
+      << " airportMsa " << record.layerAirportMsa
+      << " airportMsaDetails " << record.layerAirportMsaDetails
+      << " airportMsaSymbolScale " << record.layerAirportMsaSymbolScale
+      << " airportName " << record.layerAirportName
+      << " airportNoRating " << record.layerAirportNoRating
+      << " airportOverviewRunway " << record.layerAirportOverviewRunway
+      << " airportRouteInfo " << record.layerAirportRouteInfo
+      << " airportSoft " << record.layerAirportMinor
+      << " airportSoftIdent " << record.layerAirportMinorIdent
+      << " airportSoftInfo " << record.layerAirportMinorInfo
+      << " airportSoftName " << record.layerAirportMinorName
+      << " airportSoftSymbolSize " << record.layerAirportMinorSymbolSize
+      << " airportSymbolSize " << record.layerAirportSymbolSize << endl;
+
+  out << " airportWeather " << record.layerAirportWeather
+      << " airportWeatherDetails " << record.layerAirportWeatherDetails << endl;
+
+  out << " airspaceCenter " << record.layerAirspaceCenter
+      << " airspaceFg " << record.layerAirspaceFg
+      << " airspaceFirUir " << record.layerAirspaceFirUir
+      << " airspaceIcao " << record.layerAirspaceIcao
+      << " airspaceOther " << record.layerAirspaceOther
+      << " airspaceRestricted " << record.layerAirspaceRestricted
+      << " airspaceSpecial " << record.layerAirspaceSpecial << endl;
+
+  out << " airway " << record.layerAirway
+      << " airwayIdent " << record.layerAirwayIdent
+      << " airwayInfo " << record.layerAirwayInfo
+      << " airwayWaypoint " << record.layerAirwayWaypoint << endl;
+
+  out << " approach " << record.layerApproach
+      << " approachDetail " << record.layerApproachDetail
+      << " approachText " << record.layerApproachText
+      << " approachTextDetail " << record.layerApproachTextDetail << endl;
+
+  out << " holding " << record.layerHolding
+      << " holdingInfo " << record.layerHoldingInfo
+      << " holdingInfo2 " << record.layerHoldingInfo2 << endl;
+
+  out << " ils " << record.layerIls
+      << " ilsIdent " << record.layerIlsIdent
+      << " ilsInfo " << record.layerIlsInfo << endl;
+
+  out << " marker " << record.layerMarker
+      << " markerInfo " << record.layerMarkerInfo
+      << " markerSymbolSize " << record.layerMarkerSymbolSize << endl;
+
+  out << " mora " << record.layerMora << endl;
+
+  out << " ndb " << record.layerNdb
+      << " ndbIdent " << record.layerNdbIdent
+      << " ndbInfo " << record.layerNdbInfo
+      << " ndbRouteIdent " << record.layerNdbRouteIdent
+      << " ndbRouteInfo " << record.layerNdbRouteInfo
+      << " ndbSymbolSize " << record.layerNdbSymbolSize << endl;
+
+  out << " onlineAircraft " << record.layerOnlineAircraft
+      << " onlineAircraftText " << record.layerOnlineAircraftText << endl;
+
+  out << " routeTextAndDetail " << record.layerRouteTextAndDetail << endl;
+
+  out << " track " << record.layerTrack
+      << " trackIdent " << record.layerTrackIdent
+      << " trackInfo " << record.layerTrackInfo
+      << " trackWaypoint " << record.layerTrackWaypoint << endl;
+
+  out << " userpoint " << record.layerUserpoint
+      << " userpointInfo " << record.layerUserpointInfo
+      << " userpointSymbolSize " << record.layerUserpointSymbolSize << endl;
+
+  out << " vor " << record.layerVor
+      << " vorIdent " << record.layerVorIdent
+      << " vorInfo " << record.layerVorInfo
+      << " vorLarge " << record.layerVorLarge
+      << " vorRouteIdent " << record.layerVorRouteIdent
+      << " vorRouteInfo " << record.layerVorRouteInfo
+      << " vorSymbolSize " << record.layerVorSymbolSize << endl;
+
+  out << " waypoint " << record.layerWaypoint
+      << " waypointName " << record.layerWaypointName
+      << " waypointRouteName " << record.layerWaypointRouteName
+      << " waypointSymbolSize " << record.layerWaypointSymbolSize << endl;
+
+  out << " windBarbs " << record.layerWindBarbs
+      << " windBarbsSymbolSize " << record.layerWindBarbsSymbolSize << endl;
+
+  out << " maximumTextLengthAirport " << record.maximumTextLengthAirport
+      << " maximumTextLengthAirportSoft " << record.maximumTextLengthAirportMinor
+      << " maximumTextLengthUserpoint " << record.maximumTextLengthUserpoint << endl;
+
+  out << "]";
 
   return out;
 }

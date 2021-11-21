@@ -82,14 +82,35 @@ textflags::TextFlags PaintContext::airportTextFlags() const
   textflags::TextFlags textflags = textflags::NONE;
 
   if(mapLayer->isAirportInfo())
-    textflags = textflags::IDENT | textflags::NAME | textflags::INFO;
+    textflags = textflags::INFO;
 
   if(mapLayer->isAirportIdent())
     textflags |= textflags::IDENT;
-  else if(mapLayer->isAirportName())
+
+  if(mapLayer->isAirportName())
     textflags |= textflags::NAME;
 
-  if(!(flags2 & opts2::MAP_AIRPORT_TEXT_BACKGROUND))
+  if(!flags2.testFlag(opts2::MAP_AIRPORT_TEXT_BACKGROUND))
+    textflags |= textflags::NO_BACKGROUND;
+
+  return textflags;
+}
+
+textflags::TextFlags PaintContext::airportTextFlagsMinor() const
+{
+  // Build and draw airport text
+  textflags::TextFlags textflags = textflags::NONE;
+
+  if(mapLayer->isAirportMinorInfo())
+    textflags = textflags::INFO;
+
+  if(mapLayer->isAirportMinorIdent())
+    textflags |= textflags::IDENT;
+
+  if(mapLayer->isAirportMinorName())
+    textflags |= textflags::NAME;
+
+  if(!flags2.testFlag(opts2::MAP_AIRPORT_TEXT_BACKGROUND))
     textflags |= textflags::NO_BACKGROUND;
 
   return textflags;
@@ -684,45 +705,20 @@ void MapPainter::paintArrowAlongLine(QPainter *painter, const QLineF& line, cons
 
 bool MapPainter::sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2)
 {
-  const OptionData& od = OptionData::instance();
-
   // returns ​true if the first argument is less than (i.e. is ordered before) the second.
   // ">" puts true behind
-  const map::MapAirport *ap1 = pap1.airport, *ap2 = pap2.airport;
-  bool addon = context->objectTypes.testFlag(map::AIRPORT_ADDON);
+  const OptionData& od = OptionData::instance();
+  bool addonFlag = context->objectTypes.testFlag(map::AIRPORT_ADDON);
+  bool empty3dFlag = od.getFlags2().testFlag(opts2::MAP_EMPTY_AIRPORTS_3D);
+  bool emptyFlag = od.getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS);
+  int priority1 = pap1.airport->paintPriority(addonFlag, emptyFlag, empty3dFlag);
+  int priority2 = pap2.airport->paintPriority(addonFlag, emptyFlag, empty3dFlag);
 
-  if(!addon || ap1->addon() == ap2->addon()) // no force addon or both are equal - look at more attributes
-  {
-    if(ap1->emptyDraw(od) == ap2->emptyDraw(od)) // Draw empty on bottom
-    {
-      if(ap1->waterOnly() == ap2->waterOnly()) // Then water
-      {
-        if(ap1->helipadOnly() == ap2->helipadOnly()) // Then heliports
-        {
-          if(ap1->softOnly() == ap2->softOnly()) // Soft airports
-          {
-            if(ap1->longestRunwayLength == ap2->longestRunwayLength)
-              // Use id to get a fixed order and avoid flickering
-              return ap1->id < ap2->id;
-            else
-              return ap1->longestRunwayLength < ap2->longestRunwayLength;
-            // Larger value to end of list - drawn on top
-          }
-          else
-            return ap1->softOnly() > ap2->softOnly(); // Larger value to top of list - drawn below all
-        }
-        else
-          return ap1->helipadOnly() > ap2->helipadOnly();
-      }
-      else
-        return ap1->waterOnly() > ap2->waterOnly();
-    }
-    else
-      return ap1->emptyDraw(od) > ap2->emptyDraw(od);
-  }
+  if(priority1 == priority2)
+    return pap1.airport->id < pap2.airport->id;
   else
-    // Put addon in front
-    return ap1->addon() < ap2->addon();
+    // Smaller priority: Draw first below all other. Higher priority: Draw last on top of other
+    return priority1 < priority2;
 }
 
 void MapPainter::initQueries()

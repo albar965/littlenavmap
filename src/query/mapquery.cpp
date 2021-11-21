@@ -611,7 +611,7 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
     {
       const MapAirport& airport = airportCache.list.at(i);
 
-      if(airport.isVisible(types, minRunwayLength))
+      if(airport.isVisible(types, minRunwayLength, mapLayer))
       {
         if(conv.wToS(airport.position, x, y))
           if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
@@ -620,8 +620,7 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
         if(airportDiagram)
         {
           // Include tower for airport diagrams
-          if(conv.wToS(airport.towerCoords, x, y) &&
-             atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
+          if(conv.wToS(airport.towerCoords, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
             insertSortedByTowerDistance(conv, result.towers, xs, ys, airport);
         }
       }

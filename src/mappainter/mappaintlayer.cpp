@@ -221,314 +221,223 @@ void MapPaintLayer::initMapLayerSettings()
 
   // Create a default layer with all features enabled
   // Features are switched off step by step when adding new (higher) layers
-  MapLayer defLayer = MapLayer(0).airport().approach().approachText().approachTextDetail().approachDetail().airportName().airportIdent().
-                      airportSoft().airportNoRating().airportOverviewRunway().
+  MapLayer defLayer = MapLayer(0);
 
-                      airportWeather().airportWeatherDetails().
-
-                      windBarbs().
-
-                      routeTextAndDetail().
-
-                      mora().
-
-                      vor().ndb().waypoint().marker().ils().airway().track().
-
-                      userpoint().userpointInfo().
-
-                      aiAircraftGround().aiAircraftLarge().aiAircraftSmall().aiShipLarge().aiShipSmall().
-                      aiAircraftGroundText().aiAircraftText().
-
-                      onlineAircraft().onlineAircraftText().
-
-                      airspaceCenter().airspaceFg().airspaceFirUir().airspaceOther().airspaceRestricted().
-                      airspaceSpecial().airspaceIcao().
-
-                      vorRouteIdent().vorRouteInfo().ndbRouteIdent().ndbRouteInfo().waypointRouteName().
-                      airportRouteInfo();
+  // airportSoft true airportSoftIdent true airportSoftInfo true airportSoftName true
+  // airportSoftSymbolSize 3 maximumTextLengthAirportSoft 16
 
   // Lowest layer including everything (airport diagram and details)
   // airport diagram, large VOR, NDB, ILS, waypoint, airway, marker
   layers->
-  append(defLayer.clone(0.2f).airportDiagramRunway().airportDiagram().
-         airportDiagramDetail().airportDiagramDetail2().airportDiagramDetail3().
-         airportSymbolSize(20).airportInfo().
-         airportMsa().airportMsaDetails().airportMsaSymbolScale(8.f).
-         windBarbsSymbolSize(22).
-         waypointSymbolSize(14).waypointName().
-         vorSymbolSize(30).vorIdent().vorInfo().vorLarge().
-         ndbSymbolSize(30).ndbIdent().ndbInfo().
-         ilsIdent().ilsInfo().
-         holding().holdingInfo().holdingInfo2().
-         airwayIdent().airwayInfo().airwayWaypoint().
-         trackIdent().trackInfo().trackWaypoint().
-         userpoint().userpointInfo().userpointSymbolSize(28).userpointMaxTextLength(30).
-         markerSymbolSize(24).markerInfo().
-         airportMaxTextLength(30)).
+  append(defLayer.clone(0.2f).
+         airportFontScale(1.f).
+         airportMaxTextLength(30).
+         airportMsaSymbolScale(8.f).
+         airportMinorFontScale(1.f).
+         airportMinorMaxTextLength(30).
+         airportMinorSymbolSize(20).
+         airportSymbolSize(20).
+         markerSymbolSize(24).
+         ndbSymbolSize(30).
+         userpointMaxTextLength(30).
+         userpointSymbolSize(28).
+         vorSymbolSize(30).
+         waypointSymbolSize(14).
+         windBarbsSymbolSize(22)).
 
-  append(defLayer.clone(0.3f).airportDiagramRunway().airportDiagram().airportDiagramDetail().airportDiagramDetail2().
-         airportSymbolSize(20).airportInfo().
-         airportMsa().airportMsaDetails().airportMsaSymbolScale(7.f).
-         windBarbsSymbolSize(20).
-         waypointSymbolSize(14).waypointName().
-         vorSymbolSize(30).vorIdent().vorInfo().vorLarge().
-         ndbSymbolSize(30).ndbIdent().ndbInfo().
-         ilsIdent().ilsInfo().
-         holding().holdingInfo().holdingInfo2().
-         airwayIdent().airwayInfo().airwayWaypoint().
-         trackIdent().trackInfo().trackWaypoint().
-         userpoint().userpointInfo().userpointSymbolSize(28).userpointMaxTextLength(30).
-         markerSymbolSize(24).markerInfo().
-         airportMaxTextLength(30)).
+  // Less airport diagram details
+  append(layers->cloneLast(0.3f).
+         airportDiagramDetail3(false).
+         airportMsaSymbolScale(7.f).
+         windBarbsSymbolSize(20)).
 
   // airport diagram, large VOR, NDB, ILS, waypoint, airway, marker
-  append(defLayer.clone(1.f).airportDiagramRunway().airportDiagram().airportDiagramDetail().
-         airportSymbolSize(20).airportInfo().
-         airportMsa().airportMsaDetails().airportMsaSymbolScale(6.f).
-         windBarbsSymbolSize(20).
+  append(layers->cloneLast(1.f).
          aiAircraftGroundText(false).
-         waypointSymbolSize(14).waypointName().
-         vorSymbolSize(28).vorIdent().vorInfo().vorLarge().
-         ndbSymbolSize(28).ndbIdent().ndbInfo().
-         ilsIdent().ilsInfo().
-         holding().holdingInfo().holdingInfo2().
-         airwayIdent().airwayInfo().airwayWaypoint().
-         trackIdent().trackInfo().trackWaypoint().
-         userpoint().userpointInfo().userpointSymbolSize(28).userpointMaxTextLength(30).
-         markerSymbolSize(24).markerInfo().
-         airportMaxTextLength(30)).
+         airportDiagramDetail2(false).
+         airportMsaSymbolScale(6.f).
+         ndbSymbolSize(28).
+         vorSymbolSize(28)).
 
   // airport diagram, large VOR, NDB, ILS, waypoint, airway, marker
-  append(defLayer.clone(5.f).airportDiagramRunway().airportDiagram().
-         airportSymbolSize(20).airportInfo().
-         airportMsa().airportMsaDetails().airportMsaSymbolScale(5.f).
-         waypointSymbolSize(10).waypointName().
-         windBarbsSymbolSize(18).
-         aiAircraftGroundText(false).
-         vorSymbolSize(26).vorIdent().vorInfo().vorLarge().
-         ndbSymbolSize(26).ndbIdent().ndbInfo().
-         ilsIdent().ilsInfo().
-         holding().holdingInfo().holdingInfo2().
-         airwayIdent().airwayInfo().airwayWaypoint().
-         trackIdent().trackInfo().trackWaypoint().
-         userpoint().userpointInfo().userpointSymbolSize(26).userpointMaxTextLength(20).
-         markerSymbolSize(24).markerInfo().
-         airportMaxTextLength(30)).
+  append(layers->cloneLast(5.f).
+         airportDiagramDetail(false).
+         airportMsaSymbolScale(5.f).
+         ndbSymbolSize(26).
+         userpointMaxTextLength(20).
+         userpointSymbolSize(26).
+         vorSymbolSize(26).
+         waypointSymbolSize(10).
+         windBarbsSymbolSize(18)).
 
   // airport, large VOR, NDB, ILS, waypoint, airway, marker
-  append(defLayer.clone(10.f).airportDiagramRunway().
-         airportSymbolSize(18).airportInfo().
-         airportMsa().airportMsaDetails().airportMsaSymbolScale(4.f).
-         waypointSymbolSize(8).waypointName().
-         windBarbsSymbolSize(16).
-         aiAircraftGroundText(false).
-         vorSymbolSize(24).vorIdent().vorInfo().vorLarge().
-         ndbSymbolSize(24).ndbIdent().ndbInfo().
-         ilsIdent().ilsInfo().
-         holding().holdingInfo().holdingInfo2().
-         airwayIdent().airwayWaypoint().
-         trackIdent().trackInfo().trackWaypoint().
-         userpoint().userpointInfo().userpointSymbolSize(26).userpointMaxTextLength(20).
-         markerSymbolSize(24).
-         airportMaxTextLength(20)).
+  append(layers->cloneLast(10.f).
+         airportDiagram(false).
+         airportMaxTextLength(20).
+         airportMsaSymbolScale(4.f).
+         airportMinorMaxTextLength(15).
+         airportMinorSymbolSize(18).
+         airportSymbolSize(18).
+         airwayInfo(false).
+         markerInfo(false).
+         ndbSymbolSize(24).
+         vorSymbolSize(24).
+         waypointSymbolSize(8).
+         windBarbsSymbolSize(16)).
 
   // airport, large VOR, NDB, ILS, waypoint, airway, marker
-  append(defLayer.clone(25.f).airportDiagramRunway().
-         airportSymbolSize(18).airportInfo().
-         airportMsa().
+  append(layers->cloneLast(25.f).
+         airportMsaDetails(false).
          approachTextDetail(false).
-         waypointSymbolSize(8).waypointName().
-         windBarbsSymbolSize(16).
-         aiAircraftGroundText(false).
-         vorSymbolSize(22).vorIdent().vorInfo().vorLarge().
-         ndbSymbolSize(22).ndbIdent().ndbInfo().
-         ilsIdent().ilsInfo().
-         holding().holdingInfo().holdingInfo2().
-         airwayIdent().airwayWaypoint().
-         trackIdent().trackInfo().trackWaypoint().
-         userpoint().userpointInfo().userpointSymbolSize(24).userpointMaxTextLength(20).
-         markerSymbolSize(24).
-         airportMaxTextLength(20)).
+         ndbSymbolSize(22).
+         userpointSymbolSize(24).
+         vorSymbolSize(22)).
 
-  // airport, large VOR, NDB, ILS, airway
-  append(defLayer.clone(50.f).
-         airportSymbolSize(16).airportInfo().
-         airportMsa().
-         approachTextDetail(false).
-         waypointSymbolSize(6).
-         windBarbsSymbolSize(16).
-         aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
-         vorSymbolSize(20).vorIdent().vorInfo().vorLarge().
-         ndbSymbolSize(20).ndbIdent().ndbInfo().
-         holding().holdingInfo().
-         airwayIdent().airwayWaypoint().
-         trackIdent().trackInfo().trackWaypoint().
-         userpoint().userpointInfo().userpointSymbolSize(24).userpointMaxTextLength(10).
-         marker(false).
-         airportMaxTextLength(16)).
-
-  // airport, VOR, NDB, ILS, airway
-  append(defLayer.clone(100.f).
+  // airport, large VOR, NDB, ILS, airway, waypoints, ILS
+  append(layers->cloneLast(50.f).
+         aiAircraftText(false).
+         aiShipSmall(false).
+         airportDiagramRunway(false).
+         airportMaxTextLength(10).
+         airportMinorFontScale(0.9f).
+         airportMinorInfo(false).
+         airportMinorMaxTextLength(8).
+         airportMinorSymbolSize(16).
          airportSymbolSize(16).
-         airportMsa().
-         approachTextDetail(false).
+         holdingInfo2(false).
+         ilsIdent(false).
+         ilsInfo(false).
+         marker(false).
+         ndbSymbolSize(20).
+         userpointMaxTextLength(10).
+         vorSymbolSize(20).
+         waypointName(false).
+         waypointSymbolSize(6)).
+
+  // airport, VOR, NDB, ILS, airway, waypoints, ILS
+  append(layers->cloneLast(100.f).
+         aiAircraftGround(false).
+         airportInfo(false).
+         airportMinorFontScale(0.8f).
+         airportMinorName(false).
+         airportMinorSymbolSize(12).
+         airportSymbolSize(14).
+         airwayIdent(false).
+         holdingInfo(false).
+         ndbInfo(false).
+         ndbSymbolSize(16).
+         vorInfo(false).
+         vorLarge(false).
          waypointSymbolSize(3).
-         windBarbsSymbolSize(14).
-         aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
-         vorSymbolSize(20).vorIdent().
-         ndbSymbolSize(16).ndbIdent().
-         holding().
-         airwayWaypoint().
-         trackIdent().trackInfo().trackWaypoint().
-         userpoint().userpointInfo().userpointSymbolSize(24).userpointMaxTextLength(10).
-         marker(false).
-         airportMaxTextLength(16)).
+         windBarbsSymbolSize(14)).
 
-  // airport, VOR, NDB, airway
-  append(defLayer.clone(150.f).
-         airportSymbolSize(12).minRunwayLength(2500).
-         airportOverviewRunway(false).airportName(false).
-         windBarbsSymbolSize(14).
-         airportMsa().
-         approachText(false).approachTextDetail(false).
-         aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
-         waypoint(false).
-         vorSymbolSize(12).ndbSymbolSize(12).
-         holding().
-         airwayWaypoint().
-         trackIdent().trackInfo().trackWaypoint().
-         userpoint().userpointInfo().userpointSymbolSize(22).userpointMaxTextLength(8).
-         marker(false).
-         airportMaxTextLength(16)).
+  // airport, VOR, NDB, airway, waypoints ILS
+  append(layers->cloneLast(150.f).
+         airportName(false).
+         airportOverviewRunway(false).
+         airportMinorSymbolSize(10).
+         airportSymbolSize(12).
+         approachText(false).
+         ndbIdent(false).
+         ndbSymbolSize(12).
+         userpointMaxTextLength(8).
+         userpointSymbolSize(22).
+         vorIdent(false).
+         vorSymbolSize(12).
+         waypoint(false)).
 
-  // airport > 4000, VOR
-  append(defLayer.clone(200.f).airportSymbolSize(12).minRunwayLength(layer::MAX_MEDIUM_RUNWAY_FT).
-         airportOverviewRunway(false).airportName(false).
-         windBarbsSymbolSize(14).
-         airportMsa().
-         approachText(false).approachTextDetail(false).
-         aiAircraftGround(false).aiShipSmall(false).aiAircraftGroundText(false).aiAircraftText(false).
+  // airport > 2000, VOR, NDB, ILS, airways
+  append(layers->cloneLast(250.f).
+         airportMinorIdent(false).
+         airportMinorSymbolSize(8).
+         airportSymbolSize(10).
+         minRunwayLength(2000).
+         ndbSymbolSize(8).
          onlineAircraftText(false).
-         airwayWaypoint().
-         trackIdent().trackInfo().trackWaypoint().
-         vorSymbolSize(8).ndbSymbolSize(8).waypoint(false).marker(false).
-         holding().
-         userpoint().userpointInfo().userpointSymbolSize(16).userpointMaxTextLength(8).
-         airportMaxTextLength(16)).
+         userpointSymbolSize(16).
+         vorSymbolSize(8)).
 
-  // airport > 4000
-  append(defLayer.clone(300.f).airportSymbolSize(10).minRunwayLength(layer::MAX_MEDIUM_RUNWAY_FT).
-         airportOverviewRunway(false).airportName(false).
-         windBarbsSymbolSize(12).
-         airportMsa().
-         approachText(false).approachTextDetail(false).
-         aiAircraftGround(false).aiShipSmall(false).
-         aiAircraftGroundText(false).aiAircraftText(false).
+  // airport > 4000, VOR, NDB, airways
+  append(layers->cloneLast(450.f).
          aiAircraftSize(26).
-         onlineAircraftText(false).
-         trackIdent().trackInfo(false).trackWaypoint().
-         vorSymbolSize(6).ndbSymbolSize(4).waypoint(false).marker(false).ils(false).
-         holding().
-         trackIdent().trackInfo(false).trackWaypoint().
-         airportRouteInfo(false).waypointRouteName(false).
-         userpoint().userpointInfo(false).userpointSymbolSize(16).
-         airportMaxTextLength(16)).
+         airportRouteInfo(false).
+         airportMinor(false).
+         airwayWaypoint(false).
+         ils(false).
+         minRunwayLength(4000).
+         ndbSymbolSize(4).
+         trackInfo(false).
+         userpointInfo(false).
+         vorSymbolSize(6).
+         waypointRouteName(false).
+         windBarbsSymbolSize(12)).
 
-  // airport > 8000
-  append(defLayer.clone(750.f).airportSymbolSize(8).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
-         airportOverviewRunway(false).airportName(false).
-         windBarbsSymbolSize(12).
-         approachText(false).approachTextDetail(false).
-         aiAircraftGround(false).aiShipLarge(false).aiShipSmall(false).
-         aiAircraftGroundText(false).aiAircraftText(false).
+  // airport > 6000, VOR
+  append(layers->cloneLast(750.f).
          aiAircraftSize(24).
-         onlineAircraftText(false).
-         airspaceOther(false).airspaceRestricted(false).airspaceSpecial(false).
-         vorSymbolSize(3).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
-         trackIdent().trackInfo(false).trackWaypoint().
-         airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false).
-         userpoint().userpointInfo(false).userpointSymbolSize(12).
-         airportMaxTextLength(16)).
+         aiShipLarge(false).
+         airportFontScale(0.9f).
+         airportMsa(false).
+         airportSymbolSize(8).
+         airspaceOther(false).
+         airspaceRestricted(false).
+         airspaceSpecial(false).
+         airway(false).
+         holding(false).
+         minRunwayLength(6000).
+         ndb(false).
+         ndbRouteInfo(false).
+         userpointSymbolSize(12).
+         vorRouteInfo(false).
+         vorSymbolSize(3)).
 
   // airport > 8000
-  append(defLayer.clone(1200.f).airportSymbolSize(6).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
-         airportOverviewRunway(false).airportName(false).
-         windBarbsSymbolSize(10).
-         approachText(false).approachDetail(false).approachTextDetail(false).
-         aiAircraftGround(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
-         aiAircraftGroundText(false).aiAircraftText(false).
+  append(layers->cloneLast(1200.f).
          aiAircraftSize(20).
-         onlineAircraftText(false).
-         airspaceFg(false).airspaceOther(false).airspaceRestricted(false).airspaceSpecial(false).
+         aiAircraftSmall(false).
+         airportFontScale(0.8f).
+         airportSymbolSize(6).
+         airspaceFg(false).
          airspaceIcao(false).
-         vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
-         trackIdent().trackInfo(false).trackWaypoint(false).
-         airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false).
-         userpoint().userpointInfo(false).userpointSymbolSize(12).
-         airportMaxTextLength(16)).
+         approachDetail(false).
+         minRunwayLength(8000).
+         trackWaypoint(false).
+         vor(false).
+         windBarbsSymbolSize(10)).
 
-  // Display only points for airports until the cutoff limit
   // airport > 8000
-  append(defLayer.clone(2400.f).airportSymbolSize(4).
-         minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
-         airportOverviewRunway(false).airportName(false).airportIdent(false).
-         airportWeather(false).airportWeatherDetails(false).
-         windBarbsSymbolSize(6).
-         mora(false).
-         approachText(false).approachDetail(false).approachTextDetail(false).
-         aiAircraftGround(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
-         aiAircraftGroundText(false).aiAircraftText(false).
+  append(layers->cloneLast(2400.f).
          aiAircraftSize(10).
-         onlineAircraftText(false).
-         airspaceCenter(false).airspaceFg(false).airspaceOther(false).
-         airspaceRestricted(false).airspaceSpecial(false).airspaceIcao(false).
-         vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
-         trackIdent().trackInfo(false).trackWaypoint(false).
-         airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false).
-         userpoint().userpointInfo(false).userpointSymbolSize(12).
-         airportMaxTextLength(16)).
+         airportIdent(false).
+         airportSymbolSize(4).
+         airportWeather(false).
+         airportWeatherDetails(false).
+         airspaceCenter(false).
+         mora(false).
+         ndbRouteIdent(false).
+         vorRouteIdent(false).
+         windBarbsSymbolSize(6)).
 
-  append(defLayer.clone(layer::DISTANCE_CUT_OFF_LIMIT_KM).
-         airportSymbolSize(3).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
-         airportOverviewRunway(false).airportName(false).airportIdent(false).
-         airportWeather(false).airportWeatherDetails(false).
-         windBarbs(false).
-         mora(false).
-         approach(false).approachText(false).approachDetail(false).approachTextDetail(false).
-         aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
-         aiAircraftGroundText(false).aiAircraftText(false).
-         aiAircraftSize(10).
-         onlineAircraftText(false).
-         airspaceCenter(false).airspaceFirUir(false).airspaceFg(false).airspaceOther(false).
-         airspaceRestricted(false).airspaceSpecial(false).airspaceIcao(false).
-         vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).
-         trackIdent().trackInfo(false).trackWaypoint(false).
-         airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false).
-         userpoint().userpointInfo(false).userpointSymbolSize(12).
-         airportMaxTextLength(16)).
+  // Cut off limit 4000 km - only airport dots
+  append(layers->cloneLast(layer::DISTANCE_CUT_OFF_LIMIT_KM).
+         aiAircraftLarge(false).
+         airportSymbolSize(3).
+         approach(false).
+         windBarbs(false)).
 
   // Make sure that there is always a layer
-  append(defLayer.clone(100000.f).
-         airportSymbolSize(3).minRunwayLength(layer::MAX_LARGE_RUNWAY_FT).
-         airportOverviewRunway(false).airportName(false).airportIdent(false).
-         airportWeather(false).airportWeatherDetails(false).
-         windBarbs(false).
-         mora(false).
+  append(layers->cloneLast(100000.f).
+         airport(false).
+         airportNoRating(false).
+         airspaceFirUir(false).
+         onlineAircraft(false).
          routeTextAndDetail(false).
-         approach(false).approachText(false).approachDetail(false).approachTextDetail(false).
-         aiAircraftGround(false).aiAircraftLarge(false).aiAircraftSmall(false).aiShipLarge(false).aiShipSmall(false).
-         aiAircraftGroundText(false).aiAircraftText(false).
-         onlineAircraft(false).onlineAircraftText(false).
-         airspaceCenter(false).airspaceFirUir(false).airspaceFg(false).airspaceOther(false).
-         airspaceRestricted(false).airspaceSpecial(false).airspaceIcao(false).
-         airport(false).vor(false).ndb(false).waypoint(false).marker(false).ils(false).airway(false).track(false).
-         airportRouteInfo(false).vorRouteInfo(false).ndbRouteInfo(false).waypointRouteName(false).
-         userpoint(false).userpointInfo(false).userpointSymbolSize(12).
-         airportMaxTextLength(16));
+         track(false).
+         trackIdent(false).
+         userpoint(false));
 
   // Sort layers
   layers->finishAppend();
-  qDebug() << *layers;
 }
 
 /* Update the stored layer pointers after zoom distance has changed */
@@ -558,6 +467,11 @@ bool MapPaintLayer::noRender() const
     return mapWidget->distance() > layer::NO_DRAW_LIMIT_KM;
 
   return false;
+}
+
+void MapPaintLayer::dumpMapLayers() const
+{
+  qDebug() << Q_FUNC_INFO << *layers;
 }
 
 bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const QString& renderPos, GeoSceneLayer *layer)

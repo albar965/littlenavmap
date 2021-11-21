@@ -434,6 +434,9 @@ MainWindow::MainWindow()
   QAction *debugAction6 = new QAction("DEBUG - Open perf in editor", ui->menuHelp);
   this->addAction(debugAction6);
 
+  QAction *debugAction7 = new QAction("DEBUG - Dump map layers", ui->menuHelp);
+  this->addAction(debugAction7);
+
   ui->menuHelp->addSeparator();
   ui->menuHelp->addAction(debugAction1);
   ui->menuHelp->addAction(debugAction2);
@@ -441,6 +444,7 @@ MainWindow::MainWindow()
   ui->menuHelp->addAction(debugAction4);
   ui->menuHelp->addAction(debugAction5);
   ui->menuHelp->addAction(debugAction6);
+  ui->menuHelp->addAction(debugAction7);
 
   connect(debugAction1, &QAction::triggered, this, &MainWindow::debugActionTriggered1);
   connect(debugAction2, &QAction::triggered, this, &MainWindow::debugActionTriggered2);
@@ -448,6 +452,7 @@ MainWindow::MainWindow()
   connect(debugAction4, &QAction::triggered, this, &MainWindow::debugActionTriggered4);
   connect(debugAction5, &QAction::triggered, this, &MainWindow::debugActionTriggered5);
   connect(debugAction6, &QAction::triggered, this, &MainWindow::debugActionTriggered6);
+  connect(debugAction7, &QAction::triggered, this, &MainWindow::debugActionTriggered7);
 
 #endif
 
@@ -581,6 +586,11 @@ void MainWindow::debugActionTriggered5()
 void MainWindow::debugActionTriggered6()
 {
   helpHandler->openFile(NavApp::getAircraftPerfController()->getCurrentFilepath());
+}
+
+void MainWindow::debugActionTriggered7()
+{
+  mapWidget->dumpMapLayers();
 }
 
 #endif

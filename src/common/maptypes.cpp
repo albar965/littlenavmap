@@ -27,6 +27,7 @@
 #include "userdata/userdataicons.h"
 #include "common/vehicleicons.h"
 #include "common/mapcolors.h"
+#include "mapgui/maplayer.h"
 
 #include <QDataStream>
 #include <QIcon>
@@ -998,23 +999,50 @@ bool MapAirport::emptyDraw() const
   if(NavApp::isNavdataAll())
     return false;
 
-  return emptyDraw(OptionData::instance());
+  const OptionData& od = OptionData::instance();
+  bool empty3dFlag = od.getFlags2().testFlag(opts2::MAP_EMPTY_AIRPORTS_3D);
+  bool emptyFlag = od.getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS);
+
+  return emptyDraw(emptyFlag, empty3dFlag);
 }
 
-bool MapAirport::emptyDraw(const OptionData& od) const
+bool MapAirport::emptyDraw(bool emptyFlag, bool empty3dFlag) const
 {
   if(NavApp::isNavdataAll())
     return false;
 
-  if(od.getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS))
+  if(emptyFlag)
   {
-    if(od.getFlags2() & opts2::MAP_EMPTY_AIRPORTS_3D && xplane)
+    if(empty3dFlag && xplane)
       return !is3d() && !addon() && !waterOnly();
     else
       return empty() && !waterOnly();
   }
   else
     return false;
+}
+
+int MapAirport::paintPriority(bool forceAddonFlag, bool emptyOptsFlag, bool empty3dOptsFlag) const
+{
+  if(forceAddonFlag && addon())
+    // Force add on to top of all if configured. Has to be > longest runway length
+    return 40000;
+
+  if(emptyDraw(emptyOptsFlag, empty3dOptsFlag))
+    // Put featureless airports on bottom if configured
+    return 0;
+
+  if(waterOnly())
+    return 1;
+
+  if(helipadOnly())
+    return 2;
+
+  if(softOnly())
+    return 3;
+
+  // Define higher airports with hard runways by runway length
+  return longestRunwayLength;
 }
 
 bool MapAirport::empty() const
@@ -1061,6 +1089,11 @@ bool MapAirport::softOnly() const
   return !flags.testFlag(AP_HARD) && flags.testFlag(AP_SOFT);
 }
 
+bool MapAirport::minor() const
+{
+  return softOnly() || helipadOnly() || waterOnly() || closed();
+}
+
 bool MapAirport::water() const
 {
   return flags.testFlag(AP_WATER);
@@ -1092,7 +1125,7 @@ bool MapAirport::noRunways() const
   return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) && !flags.testFlag(AP_WATER);
 }
 
-bool MapAirport::isVisible(map::MapTypes types, int minRunwayFt) const
+bool MapAirport::isVisible(map::MapTypes types, int minRunwayFt, const MapLayer *layer) const
 {
   if(addon() && types.testFlag(map::AIRPORT_ADDON))
     // Show addon in any case if flag is set
@@ -1107,7 +1140,12 @@ bool MapAirport::isVisible(map::MapTypes types, int minRunwayFt) const
   if(hard() && !types.testFlag(map::AIRPORT_HARD))
     return false;
 
+  // Check user settings in types
   if(softOnly() && !types.testFlag(map::AIRPORT_SOFT))
+    return false;
+
+  // Check layer
+  if(minor() && !layer->isAirportMinor())
     return false;
 
   if(waterOnly() && !types.testFlag(map::AIRPORT_WATER))

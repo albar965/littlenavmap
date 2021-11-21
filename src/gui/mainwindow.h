@@ -412,6 +412,7 @@ private:
   void debugActionTriggered4();
   void debugActionTriggered5();
   void debugActionTriggered6();
+  void debugActionTriggered7();
 
 #endif
 

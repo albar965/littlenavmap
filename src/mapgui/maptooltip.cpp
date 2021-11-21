@@ -270,7 +270,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
         info.airportText(airport, currentWeatherContext, html, &route);
 
         if(airport.routeIndex >= 0)
-          distance = false;
+          distance = false; // do not show distance to last leg
 
         numEntries++;
       }
