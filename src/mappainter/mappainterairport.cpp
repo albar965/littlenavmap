@@ -468,7 +468,8 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
 
       QVector<MapTaxiPath> pathsToLabel;
       QList<MapTaxiPath> paths;
-      for(QString taxiname : map.keys())
+
+      for(const QString& taxiname : map.uniqueKeys())
       {
         paths = map.values(taxiname);
         pathsToLabel.clear();

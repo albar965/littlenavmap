@@ -786,7 +786,7 @@ void adjustPenForAlternate(QPainter *painter)
   pen.setStyle(Qt::DotLine);
   pen.setCapStyle(Qt::FlatCap);
   painter->setPen(pen);
-  painter->setBackground(adjustAlphaF(Qt::white, static_cast<double>(painter->pen().color().alphaF())));
+  painter->setBackground(adjustAlphaF(Qt::white, static_cast<float>(painter->pen().color().alphaF())));
   painter->setBackgroundMode(Qt::OpaqueMode);
 }
 
