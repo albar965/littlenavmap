@@ -50,7 +50,6 @@ public:
   MapLayer cloneLast(float maximumRangeKm) const;
 
   /* Call when done appending layers. Sorts all layers by zoom distance. */
-  void startAppend();
   void finishAppend();
 
   /* Get a layer for current zoom distance and detail factor */

@@ -51,9 +51,6 @@ void MapLayerSettings::connectMapSettingsUpdated(QWidget *mapWidget)
 MapLayerSettings& MapLayerSettings::append(const MapLayer& layer)
 {
   layers.append(layer);
-#ifdef DEBUG_PRINT_LAYERS
-  qInfo().noquote().nospace() << "    </Layer>" << endl;
-#endif
   return *this;
 }
 
@@ -65,18 +62,8 @@ MapLayer MapLayerSettings::cloneLast(float maximumRangeKm) const
     return layers.last().clone(maximumRangeKm);
 }
 
-void MapLayerSettings::startAppend()
-{
-#ifdef DEBUG_PRINT_LAYERS
-  qInfo().noquote().nospace() << "  <Layers>" << endl;
-#endif
-}
-
 void MapLayerSettings::finishAppend()
 {
-#ifdef DEBUG_PRINT_LAYERS
-  qInfo().noquote().nospace() << "  </Layers>" << endl;
-#endif
   std::sort(layers.begin(), layers.end());
 }
 
@@ -149,7 +136,6 @@ void MapLayerSettings::loadXmlInternal(atools::util::XmlStream& xmlStream)
   xmlStream.readUntilElement("LittleNavmap");
   xmlStream.readUntilElement("MapLayerSettings");
 
-  startAppend();
   MapLayer defLayer = MapLayer(0);
 
   while(xmlStream.readNextStartElement())
