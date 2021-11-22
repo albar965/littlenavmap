@@ -92,13 +92,13 @@ void MapVisible::updateVisibleObjectsStatusBar()
             apShort.append(tr("H"));
           }
 
-          if(shown.testFlag(map::AIRPORT_SOFT))
+          if(shown.testFlag(map::AIRPORT_SOFT) && layer->isAirportMinor())
           {
             runways.append(tr("soft (S)"));
             apShort.append(tr("S"));
           }
 
-          if(shown.testFlag(map::AIRPORT_WATER))
+          if(shown.testFlag(map::AIRPORT_WATER) && layer->isAirportMinor())
           {
             runways.append(tr("water (W)"));
             apShort.append(tr("W"));
@@ -121,7 +121,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
           apShort.append(tr("E"));
         }
 
-        if(shown.testFlag(map::AIRPORT_HELIPAD))
+        if(shown.testFlag(map::AIRPORT_HELIPAD) && layer->isAirportMinor())
         {
           features.append(tr("heliports (O)"));
           apShort.append(tr("O"));
