@@ -21,14 +21,27 @@
 #include "mapgui/maplayer.h"
 
 #include <QList>
+#include <QCoreApplication>
+
+namespace atools {
+namespace  util {
+class XmlStream;
+class FileSystemWatcher;
+}
+}
 
 /*
- * A list of map layers that defines what is painted at what zoom distance
+ * A list of map layers that defines what is painted at what zoom distance.
+ * The configuration is loaded from a XML file.
  */
 class MapLayerSettings
+  : public QObject
 {
+  Q_OBJECT
+
 public:
   MapLayerSettings();
+  virtual ~MapLayerSettings() override;
 
   /* Add a map layer. Call finishAppend when done. */
   MapLayerSettings& append(const MapLayer& layer);
@@ -37,21 +50,37 @@ public:
   MapLayer cloneLast(float maximumRangeKm) const;
 
   /* Call when done appending layers. Sorts all layers by zoom distance. */
+  void startAppend();
   void finishAppend();
+
+  /* Get a layer for current zoom distance and detail factor */
+  const MapLayer *getLayer(float distanceKm, int detailFactor = MAP_DEFAULT_DETAIL_FACTOR) const;
+
+  /* Load from mapsettings.xml in resources or overloaded file in settings folder. */
+  void loadFromFile();
+
+  /* Connect a widget which is updated on file change */
+  void connectMapSettingsUpdated(QWidget *mapWidget);
 
   static Q_DECL_CONSTEXPR int MAP_DEFAULT_DETAIL_FACTOR = 10;
   static Q_DECL_CONSTEXPR int MAP_MAX_DETAIL_FACTOR = 15;
   static Q_DECL_CONSTEXPR int MAP_MIN_DETAIL_FACTOR = 8;
 
-  /* Get a layer for current zoom distance and detail factor */
-  const MapLayer *getLayer(float distanceKm, int detailFactor = MAP_DEFAULT_DETAIL_FACTOR) const;
+signals:
+  /* Sent if overloading configuration file changes */
+  void mapSettingsChanged();
 
 private:
   friend QDebug operator<<(QDebug out, const MapLayerSettings& record);
 
+  void loadXmlInternal(atools::util::XmlStream& xmlStream);
   bool compare(const MapLayer& layer, float distance) const;
+  void reloadFromFile();
+  void reloadFromUpdate(const QString&);
 
   QList<MapLayer> layers;
+  atools::util::FileSystemWatcher *fileWatcher = nullptr;
+  QString filename;
 };
 
 #endif // LITTLENAVMAP_MAPLAYERSETTINGS_H

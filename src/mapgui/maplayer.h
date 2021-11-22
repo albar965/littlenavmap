@@ -20,6 +20,12 @@
 
 #include <QDebug>
 
+namespace atools {
+namespace  util {
+class XmlStream;
+}
+}
+
 namespace layer {
 
 /* Do not show anything above this zoom distance except user features */
@@ -672,6 +678,9 @@ public:
   {
     return layerAirportFontScale;
   }
+
+  /* Load layer data from stream which is already positioned inside a layer element */
+  void loadFromXml(atools::util::XmlStream& xmlStream);
 
 private:
   friend QDebug operator<<(QDebug out, const MapLayer& record);

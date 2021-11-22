@@ -369,6 +369,9 @@ const QLatin1String NETWORKS_CONFIG(":/littlenavmap/resources/config/networks.cf
 /* Configuration for online networks */
 const QLatin1String URLS_CONFIG(":/littlenavmap/resources/config/urls.cfg");
 
+/* Map display configuration */
+const QLatin1String MAP_LAYER_CONFIG(":/littlenavmap/resources/config/maplayers.xml");
+
 /* Main window state for first startup. Generated in MainWindow::writeSettings() */
 extern const QSize DEFAULT_MAINWINDOW_SIZE;
 

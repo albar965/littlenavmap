@@ -211,21 +211,22 @@ void MapPaintLayer::initQueries()
 /* Initialize the layer settings that define what is drawn at what zoom distance (text, size, etc.) */
 void MapPaintLayer::initMapLayerSettings()
 {
-  // TODO move to configuration file
   if(layers != nullptr)
     delete layers;
 
-  // =====================================================================================
-  // Create a list of map layers that define content for each zoom distance
+  // Load a list of map layers that define content for each zoom distance
+  // File can be overloaded in the settings folder
+  // Map widget is updated if the file changes
   layers = new MapLayerSettings();
+  layers->connectMapSettingsUpdated(mapWidget);
+  layers->loadFromFile();
 
+#ifdef DEBUG_LAYER_SETTINGS_LEGACY
   // Create a default layer with all features enabled
   // Features are switched off step by step when adding new (higher) layers
   MapLayer defLayer = MapLayer(0);
 
-  // airportSoft true airportSoftIdent true airportSoftInfo true airportSoftName true
-  // airportSoftSymbolSize 3 maximumTextLengthAirportSoft 16
-
+  layers->startAppend();
   // Lowest layer including everything (airport diagram and details)
   // airport diagram, large VOR, NDB, ILS, waypoint, airway, marker
   layers->
@@ -438,6 +439,7 @@ void MapPaintLayer::initMapLayerSettings()
 
   // Sort layers
   layers->finishAppend();
+#endif
 }
 
 /* Update the stored layer pointers after zoom distance has changed */
