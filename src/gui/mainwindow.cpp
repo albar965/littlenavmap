@@ -2235,7 +2235,10 @@ bool MainWindow::routeCheckForChanges()
 
   QMessageBox msgBox(this);
   msgBox.setWindowTitle(QApplication::applicationName());
-  msgBox.setText(tr("Flight Plan has been changed."));
+  msgBox.setText(routeController->getRoute().isEmpty() ?
+                 tr("Flight Plan has been changed.\n"
+                    "There are changes which can be restored by using undo.") :
+                 tr("Flight Plan has been changed."));
   msgBox.setInformativeText(tr("Save changes?"));
   msgBox.setStandardButtons(QMessageBox::Save | QMessageBox::No | QMessageBox::Cancel);
 
