@@ -350,7 +350,7 @@ private:
                             const atools::fs::sc::SimConnectUserAircraft& last);
 
   /* Center aircraft again after scrolling or zooming */
-  void jumpBackToAircraftTimeout(const QVariantList& values);
+  void jumpBackToAircraftTimeout(const atools::geo::Pos& pos);
 
   /* Needed filter to avoid and/or disable some Marble pecularities */
   bool eventFilter(QObject *obj, QEvent *evt) override;
@@ -468,6 +468,7 @@ private:
   /* Time of takeoff or invalid if not detected yet */
   QDateTime takeoffTimeSim;
 
+  /* Saves jump back position and altitude in km */
   JumpBack *jumpBack;
 
   /* Sum up mouse wheel or trackpad movement before zooming */

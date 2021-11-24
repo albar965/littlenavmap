@@ -300,6 +300,8 @@ const QLatin1String OPTIONS_DOCKHANDLER_DEBUG("Options/DockHandlerDebug");
 const QLatin1String OPTIONS_WHAZZUP_PARSER_DEBUG("Options/WhazzupParserDebug");
 const QLatin1String OPTIONS_DATAREADER_DEBUG("Options/DataReaderDebug");
 const QLatin1String OPTIONS_WEATHER_DEBUG("Options/WeatherDebug");
+const QLatin1String OPTIONS_MAP_JUMP_BACK_DEBUG("Options/MapJumpBackDebug");
+const QLatin1String OPTIONS_PROFILE_JUMP_BACK_DEBUG("Options/ProfileJumpBackDebug");
 const QLatin1String OPTIONS_MAP_LAYER_DEBUG("Options/MapLayerDebug");
 const QLatin1String OPTIONS_ONLINE_NETWORK_DEBUG("Options/OnlineNetworkDebug");
 const QLatin1String OPTIONS_TRACK_DEBUG("Options/TrackDebug");

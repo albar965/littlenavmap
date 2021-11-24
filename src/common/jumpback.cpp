@@ -20,17 +20,23 @@
 #include <navapp.h>
 #include "options/optiondata.h"
 
-JumpBack::JumpBack(QObject *parent) : QObject(parent)
+JumpBack::JumpBack(QObject *parent, bool verboseLogging)
+  : QObject(parent), verbose(verboseLogging)
 {
+  parentName = parent->metaObject()->className();
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << parentName << position;
+
   timer.setSingleShot(true);
   connect(&timer, &QTimer::timeout, this, &JumpBack::timeout);
-
 }
 
 JumpBack::~JumpBack()
 {
-  timer.stop();
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << parentName << position;
 
+  timer.stop();
 }
 
 bool JumpBack::isActive() const
@@ -40,35 +46,25 @@ bool JumpBack::isActive() const
 
 void JumpBack::start()
 {
-  start(QVariantList());
+  start(atools::geo::EMPTY_POS);
 }
 
 void JumpBack::restart()
 {
-  start(values);
+  start(position);
 }
 
-void JumpBack::updateValues(const QVariantList& jumpBackValues)
+void JumpBack::start(const atools::geo::Pos& pos)
 {
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << parent()->metaObject()->className() << jumpBackValues;
-#endif
-  values = jumpBackValues;
-}
-
-void JumpBack::start(const QVariantList& jumpBackValues)
-{
-  if(NavApp::isConnectedAndAircraft() &&
-     OptionData::instance().getFlags2() & opts2::ROUTE_NO_FOLLOW_ON_MOVE)
+  if(NavApp::isConnectedAndAircraft() && OptionData::instance().getFlags2().testFlag(opts2::ROUTE_NO_FOLLOW_ON_MOVE))
   {
-#ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO << parent()->metaObject()->className() << jumpBackValues;
-#endif
+    if(verbose)
+      qDebug() << Q_FUNC_INFO << parentName << pos;
 
     if(!active)
     {
       // Do not update position if already active
-      values = jumpBackValues;
+      position = pos;
       active = true;
     }
 
@@ -80,9 +76,8 @@ void JumpBack::start(const QVariantList& jumpBackValues)
 
 void JumpBack::cancel()
 {
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << parent()->metaObject()->className() << values;
-#endif
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << parentName << position;
 
   timer.stop();
   active = false;
@@ -90,9 +85,8 @@ void JumpBack::cancel()
 
 void JumpBack::timeout()
 {
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << parent()->metaObject()->className() << values;
-#endif
+  if(verbose)
+    qDebug() << Q_FUNC_INFO << parentName << position;
 
-  emit jumpBack(values);
+  emit jumpBack(position);
 }

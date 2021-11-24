@@ -32,6 +32,7 @@
 #include "common/unit.h"
 #include "common/formatter.h"
 #include "settings/settings.h"
+#include "common/constants.h"
 #include "mapgui/mapwidget.h"
 #include "options/optiondata.h"
 #include "common/elevationprovider.h"
@@ -115,7 +116,8 @@ ProfileWidget::ProfileWidget(QWidget *parent)
   scrollArea->setProfileLeftOffset(left);
   scrollArea->setProfileTopOffset(TOP);
 
-  jumpBack = new JumpBack(this);
+  jumpBack = new JumpBack(this, atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_PROFILE_JUMP_BACK_DEBUG,
+                                                                                        false).toBool());
   connect(jumpBack, &JumpBack::jumpBack, this, &ProfileWidget::jumpBackToAircraftTimeout);
 
   connect(scrollArea, &ProfileScrollArea::showPosAlongFlightplan, this, &ProfileWidget::showPosAlongFlightplan);

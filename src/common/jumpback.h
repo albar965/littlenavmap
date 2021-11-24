@@ -35,7 +35,7 @@ class JumpBack :
   Q_OBJECT
 
 public:
-  explicit JumpBack(QObject *parent);
+  explicit JumpBack(QObject *parent, bool verboseLogging);
   virtual ~JumpBack() override;
 
   /* Stop timer and cancel any jumping back */
@@ -44,30 +44,35 @@ public:
   /* Currently waiting since user changed position manually */
   bool isActive() const;
 
-  /* Start timer providing coordindates or zoom distances optionally.**/
+  /* Start timer providing coordindates or zoom distances optionally.
+   * Zoom distance can be stored in pos altitiude. */
   void start();
-  void start(const QVariantList& jumpBackValues);
+  void start(const atools::geo::Pos& pos);
 
   /* Start timer and do not reset values */
   void restart();
 
-  void updateValues(const QVariantList& jumpBackValues);
-
-  const QVariantList& getValues() const
+  const atools::geo::Pos& getPosition() const
   {
-    return values;
+    return position;
+  }
+
+  atools::geo::Pos& getPositionRef()
+  {
+    return position;
   }
 
 signals:
   /* Timer triggered. Go back to aircraft centering. */
-  void jumpBack(const QVariantList& values);
+  void jumpBack(const atools::geo::Pos& pos);
 
 private:
   void timeout();
 
   QTimer timer;
-  QVariantList values;
-  bool active = false;
+  atools::geo::Pos position;
+  QString parentName;
+  bool active = false, verbose = false;
 };
 
 #endif // LNM_COMMON_JUMPBACK_H
