@@ -92,6 +92,24 @@ const static QHash<opts::SimUpdateRate, SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
   }
 });
 
+// Maps minimum zoom in NM by altitude above ground in ft
+// Use odd numbers to avoid jumping at typical flown altitude levels
+static const QVector<std::pair<float, float> > ALT_TO_MIN_ZOOM_NM_FT =
+{
+  {55.f, 0.2f}, // 0.2 NM for flying below 55 ft AGL
+  {550.f, 0.5f},
+  {1250.f, 0.75f},
+  {2250.f, 1.f},
+  {3250.f, 2.f},
+  {4250.f, 3.f},
+  {5250.f, 4.f},
+  {7750.f, 5.f},
+  {10250.f, 6.f},
+  {12250.f, 7.f},
+  {14250.f, 8.f},
+  {1000000.f, 10.f} // Use this for all above
+};
+
 // Keep aircraft and next waypoint centered within this margins
 const int PLAN_SIM_UPDATE_BOX = 85;
 
@@ -2340,23 +2358,23 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
               // Postpone screen updates
               setUpdatesEnabled(false);
 
-              atools::geo::Rect rect(nextWpPos);
-              rect.extend(aircraft.getPosition());
+              atools::geo::Rect aircraftWpRect(nextWpPos);
+              aircraftWpRect.extend(aircraft.getPosition());
 
-              if(std::abs(rect.getWidthDegree()) > 170.f || std::abs(rect.getHeightDegree()) > 170.f)
-                rect = atools::geo::Rect(nextWpPos);
+              if(std::abs(aircraftWpRect.getWidthDegree()) > 170.f || std::abs(aircraftWpRect.getHeightDegree()) > 170.f)
+                aircraftWpRect = atools::geo::Rect(nextWpPos);
 
-              if(!rect.isPoint(POS_IS_POINT_EPSILON))
+              if(!aircraftWpRect.isPoint(POS_IS_POINT_EPSILON))
               {
                 // Not a point but probably a flat rectangle
 
-                if(std::abs(rect.getWidthDegree()) <= POS_IS_POINT_EPSILON * 2.f)
+                if(std::abs(aircraftWpRect.getWidthDegree()) <= POS_IS_POINT_EPSILON * 2.f)
                   // Expand E/W direction
-                  rect.inflate(POS_IS_POINT_EPSILON, 0.f);
+                  aircraftWpRect.inflate(POS_IS_POINT_EPSILON, 0.f);
 
-                if(std::abs(rect.getHeightDegree()) <= POS_IS_POINT_EPSILON * 2.f)
+                if(std::abs(aircraftWpRect.getHeightDegree()) <= POS_IS_POINT_EPSILON * 2.f)
                   // Expand N/S direction
-                  rect.inflate(0.f, POS_IS_POINT_EPSILON);
+                  aircraftWpRect.inflate(0.f, POS_IS_POINT_EPSILON);
               }
 
 #ifdef DEBUG_INFORMATION_SIMUPDATE
@@ -2369,23 +2387,29 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
               qDebug() << "rect" << rect;
 #endif
 
-              if(!rect.isPoint(POS_IS_POINT_EPSILON))
+              if(!aircraftWpRect.isPoint(POS_IS_POINT_EPSILON))
               {
-                centerRectOnMap(rect);
-
-                // Zoom depends on flight altitude - larger values result in closer zoom
-                float div = aircraft.getAltitudeAboveGroundFt() < 12000.f ? 2800.f : 1000.f;
+#ifndef DEBUG_PRETEND_ZOOM
+                // Center on map for now ================================================
+                centerRectOnMap(aircraftWpRect);
+#endif
 
                 // Smaller values mean zoom closer.
-                float zoomFactor = od.getSimUpdateBoxCenterLegZoom() / 100.f;
+                float factor = od.getSimUpdateBoxCenterLegZoom() / 100.f;
 
-                div /= zoomFactor;
+                // Get zoom distance from table
+                auto zoomDist = std::lower_bound(ALT_TO_MIN_ZOOM_NM_FT.begin(), ALT_TO_MIN_ZOOM_NM_FT.end(),
+                                                 aircraft.getAltitudeAboveGroundFt() * factor,
+                                                 [](const std::pair<float, float>& pair, float value)->bool {
+                  return pair.first < value;
+                });
 
-                // Decrease allowed minimum very close to the ground
-                float minKm = aircraft.getAltitudeAboveGroundFt() < 50 ? 0.5f : 1.0f;
+                float minZoomDistKm = atools::geo::nmToKm(zoomDist->second);
 
-                float minZoomDistKm = atools::geo::nmToKm(std::min(std::max(aircraft.getAltitudeAboveGroundFt() / div, minKm), 28.f));
-
+#ifdef DEBUG_PRETEND_ZOOM
+                qDebug() << Q_FUNC_INFO << "minZoomDistKm" << minZoomDistKm << "NM" << lower->second;
+#endif
+                // ================================================
                 // Zoom out for a maximum of four times until aircraft and waypoint fit into the shrinked rectangle
                 for(int i = 0; i < 4; i++)
                 {
@@ -2393,36 +2417,55 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                   qDebug() << Q_FUNC_INFO << "adjustement iteration" << i;
 #endif
 
-                  aircraftPoint = conv.wToS(
-                    aircraft.getPosition(), CoordinateConverter::DEFAULT_WTOS_SIZE, &aircraftVisible);
+                  // Check if aircraft and next waypoint fit onto the map =======================
+                  aircraftPoint = conv.wToS(aircraft.getPosition(), CoordinateConverter::DEFAULT_WTOS_SIZE, &aircraftVisible);
                   nextWpPoint = conv.wToS(nextWpPos, CoordinateConverter::DEFAULT_WTOS_SIZE, &nextWpPosVisible);
+                  aircraftVisible = aircraftVisible && widgetRectSmallPlan.contains(aircraftPoint);
+                  nextWpPosVisible = nextWpPosVisible && widgetRectSmallPlan.contains(nextWpPoint);
 
-                  aircraftVisible = widgetRectSmallPlan.contains(aircraftPoint);
-                  nextWpPosVisible = widgetRectSmallPlan.contains(nextWpPoint);
-
+#ifndef DEBUG_PRETEND_ZOOM
                   if(!aircraftVisible || !nextWpPosVisible)
                     // Either point is not visible - zoom out
                     zoomOut(Marble::Instant);
                   else
-                    // Both are visible - done
-                    break;
+#endif
+                  // Both are visible - done
+                  break;
                 }
 
-                // Avoid zooming too close
-                if(distance() < minZoomDistKm)
-                {
+                // ================================================
+                // Avoid zooming too close - have to recalculate values again due to zoomOut above
+                aircraftPoint = conv.wToS(aircraft.getPosition(), CoordinateConverter::DEFAULT_WTOS_SIZE, &aircraftVisible);
+                nextWpPoint = conv.wToS(nextWpPos, CoordinateConverter::DEFAULT_WTOS_SIZE, &nextWpPosVisible);
+                aircraftVisible = aircraftVisible && widgetRectSmallPlan.contains(aircraftPoint);
+                nextWpPosVisible = nextWpPosVisible && widgetRectSmallPlan.contains(nextWpPoint);
+
+                // Get distance in pixel on screen
+                double aircraftWpScreenDistPixel = QLineF(aircraftPoint, nextWpPoint).length();
+
+                // Do not zoom out if distance is larger than 1/5 of the screen size
+                double minSizePixelScreenRect = QLineF(rect().topLeft(), rect().bottomRight()).length() / 5;
 #ifdef DEBUG_INFORMATION
-                  qDebug() << Q_FUNC_INFO << "distance() < minZoom" << distance() << "<" << minZoomDistKm;
+                qDebug() << Q_FUNC_INFO
+                         << "distance()" << distance() << "minZoomDistKm" << minZoomDistKm
+                         << "aircraftWpScreenDistPixel" << aircraftWpScreenDistPixel
+                         << "minSizePixelScreenRect" << minSizePixelScreenRect;
 #endif
+                if(distance() < minZoomDistKm && aircraftWpScreenDistPixel > minSizePixelScreenRect)
+                {
                   // Correct zoom for minimum distance
+#ifndef DEBUG_PRETEND_ZOOM
                   setDistanceToMap(minZoomDistKm);
+#endif
 #ifdef DEBUG_INFORMATION
-                  qDebug() << Q_FUNC_INFO << "zoom()" << zoom();
+                  qDebug() << Q_FUNC_INFO << "after setDistanceToMap: distance()" << distance();
 #endif
                 }
               }
-              else if(rect.isValid())
+#ifndef DEBUG_PRETEND_ZOOM
+              else if(aircraftWpRect.isValid())
                 centerPosOnMap(aircraft.getPosition());
+#endif
             } // if(!aircraftVisible || !nextWpPosVisible || updateAlways || zoomToRect)
           } // if(centerAircraftAndLeg)
           else
