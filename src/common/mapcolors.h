@@ -128,15 +128,12 @@ extern QPen profileSafeAltLegLinePen;
 
 /* Objects highlighted because of selection in search */
 extern QColor highlightBackColor;
-extern QColor highlightColor;
 
 /* Objects highlighted because of selection in route table */
 extern QColor routeHighlightBackColor;
-extern QColor routeHighlightColor;
 
 /* Objects highlighted because of selection in route profile */
 extern QColor profileHighlightBackColor;
-extern QColor profileHighlightColor;
 
 /* Map print colors */
 extern QColor mapPrintRowColor;

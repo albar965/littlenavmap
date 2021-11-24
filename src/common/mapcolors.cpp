@@ -125,15 +125,12 @@ QPen profileSafeAltLegLinePen(QColor(255, 100, 0), 3, Qt::SolidLine, Qt::FlatCap
 
 /* Objects highlighted because of selection in search */
 QColor highlightBackColor(Qt::black);
-QColor highlightColor(Qt::yellow);
 
 /* Objects highlighted because of selection in route table */
 QColor routeHighlightBackColor(Qt::black);
-QColor routeHighlightColor(Qt::green);
 
 /* Objects highlighted because of selection in route profile */
 QColor profileHighlightBackColor(Qt::black);
-QColor profileHighlightColor(Qt::cyan);
 
 /* Map print colors */
 QColor mapPrintRowColor(250, 250, 250);
@@ -688,11 +685,8 @@ void syncColors()
 
   colorSettings.beginGroup("Highlight");
   syncColor(colorSettings, "HighlightBackColor", highlightBackColor);
-  syncColor(colorSettings, "HighlightColor", highlightColor);
   syncColor(colorSettings, "RouteHighlightBackColor", routeHighlightBackColor);
-  syncColor(colorSettings, "RouteHighlightColor", routeHighlightColor);
   syncColor(colorSettings, "ProfileHighlightBackColor", profileHighlightBackColor);
-  syncColor(colorSettings, "ProfileHighlightColor", profileHighlightColor);
   colorSettings.endGroup();
 
   colorSettings.beginGroup("Print");

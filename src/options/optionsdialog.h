@@ -150,6 +150,10 @@ private:
   void flightplanPassedColorClicked();
   void flightplanProcedureColorClicked();
 
+  void mapHighlightFlightplanColorClicked();
+  void mapHighlightSearchColorClicked();
+  void mapHighlightProfileColorClicked();
+
   void trailColorClicked();
   void onlineDisplayRangeClicked();
   void eastWestRuleClicked();
@@ -231,6 +235,7 @@ private:
   void flightplanPatterLongClicked();
   void updateFlightplanExample();
   void updateLinks();
+  void colorButtonClicked(QColor& color);
 
   /* Converts range ring string to vector of floats. Falls back to 100 units single ring if nothing is valid.
    * Uses current locale to convert numbers and check min and max. */
@@ -239,6 +244,7 @@ private:
 
   QString guiLanguage, guiFont, mapFont;
   QColor flightplanColor, flightplanOutlineColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
+  QColor highlightFlightplanColor, highlightSearchColor, highlightProfileColor;
 
   Ui::Options *ui;
   QMainWindow *mainWindow;

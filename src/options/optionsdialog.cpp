@@ -511,6 +511,11 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->pushButtonOptionsDisplayTrailColor, &QPushButton::clicked, this, &OptionsDialog::trailColorClicked);
   connect(ui->pushButtonOptionsDisplayFlightplanPassedColor, &QPushButton::clicked, this, &OptionsDialog::flightplanPassedColorClicked);
 
+  connect(ui->pushButtonOptionsMapHighlightFlightPlanColor, &QPushButton::clicked, this,
+          &OptionsDialog::mapHighlightFlightplanColorClicked);
+  connect(ui->pushButtonOptionsMapHighlightSearchColor, &QPushButton::clicked, this, &OptionsDialog::mapHighlightSearchColorClicked);
+  connect(ui->pushButtonOptionsMapHighlightProfileColor, &QPushButton::clicked, this, &OptionsDialog::mapHighlightProfileColorClicked);
+
   connect(ui->checkBoxOptionsMapFlightplanDimPassed, &QCheckBox::toggled, this, &OptionsDialog::updateFlightPlanColorWidgets);
   connect(ui->checkBoxOptionsMapFlightplanTransparent, &QCheckBox::toggled, this, &OptionsDialog::updateFlightPlanColorWidgets);
 
@@ -934,6 +939,9 @@ void OptionsDialog::saveState()
   settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR, flightplanActiveColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_PASSED_COLOR, flightplanPassedColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, trailColor);
+  settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_HIGHLIGHT_COLOR, highlightFlightplanColor);
+  settings.setValueVar(lnm::OPTIONS_DIALOG_SEARCH_HIGHLIGHT_COLOR, highlightSearchColor);
+  settings.setValueVar(lnm::OPTIONS_DIALOG_PROFILE_HIGHLIGHT_COLOR, highlightProfileColor);
 
   settings.syncSettings();
 }
@@ -1014,6 +1022,9 @@ void OptionsDialog::restoreState()
   flightplanActiveColor = settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR, QColor(Qt::magenta)).value<QColor>();
   flightplanPassedColor = settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_PASSED_COLOR, QColor(Qt::gray)).value<QColor>();
   trailColor = settings.valueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, QColor(Qt::black)).value<QColor>();
+  highlightFlightplanColor = settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_HIGHLIGHT_COLOR, QColor(Qt::green)).value<QColor>();
+  highlightSearchColor = settings.valueVar(lnm::OPTIONS_DIALOG_SEARCH_HIGHLIGHT_COLOR, QColor(Qt::yellow)).value<QColor>();
+  highlightProfileColor = settings.valueVar(lnm::OPTIONS_DIALOG_PROFILE_HIGHLIGHT_COLOR, QColor(Qt::cyan)).value<QColor>();
 
   guiLanguage = settings.valueStr(lnm::OPTIONS_DIALOG_LANGUAGE, QLocale().name());
   guiFont = settings.valueStr(lnm::OPTIONS_DIALOG_FONT, QString());
@@ -1123,6 +1134,9 @@ void OptionsDialog::updateButtonColors()
   atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanActiveColor, flightplanActiveColor);
   atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanPassedColor, flightplanPassedColor);
   atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayTrailColor, trailColor);
+  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsMapHighlightFlightPlanColor, highlightFlightplanColor);
+  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsMapHighlightSearchColor, highlightSearchColor);
+  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsMapHighlightProfileColor, highlightProfileColor);
 }
 
 template<typename TYPE>
@@ -1194,58 +1208,62 @@ void OptionsDialog::checkUpdateClicked()
   qDebug() << Q_FUNC_INFO;
 
   // Trigger async check and get a dialog even if nothing was found
-  NavApp::checkForUpdates(ui->comboBoxOptionsStartupUpdateChannels->currentIndex(),
-                          true /* manually triggered */, false /* forceDebug */);
+  NavApp::checkForUpdates(ui->comboBoxOptionsStartupUpdateChannels->currentIndex(), true /* manually triggered */, false /* forceDebug */);
+}
+
+void OptionsDialog::colorButtonClicked(QColor& color)
+{
+  QColor col = QColorDialog::getColor(color, mainWindow);
+  if(col.isValid())
+  {
+    color = col;
+    updateButtonColors();
+  }
 }
 
 void OptionsDialog::flightplanProcedureColorClicked()
 {
-  QColor col = QColorDialog::getColor(flightplanProcedureColor, mainWindow);
-  if(col.isValid())
-  {
-    flightplanProcedureColor = col;
-    updateButtonColors();
-  }
+  colorButtonClicked(flightplanProcedureColor);
 }
 
 void OptionsDialog::flightplanColorClicked()
 {
-  QColor col = QColorDialog::getColor(flightplanColor, mainWindow);
-  if(col.isValid())
-  {
-    flightplanColor = col;
-    updateButtonColors();
-  }
+  colorButtonClicked(flightplanColor);
 }
 
 void OptionsDialog::flightplanOutlineColorClicked()
 {
-  QColor col = QColorDialog::getColor(flightplanOutlineColor, mainWindow);
-  if(col.isValid())
-  {
-    flightplanOutlineColor = col;
-    updateButtonColors();
-  }
+  colorButtonClicked(flightplanOutlineColor);
 }
 
 void OptionsDialog::flightplanActiveColorClicked()
 {
-  QColor col = QColorDialog::getColor(flightplanActiveColor, mainWindow);
-  if(col.isValid())
-  {
-    flightplanActiveColor = col;
-    updateButtonColors();
-  }
+  colorButtonClicked(flightplanActiveColor);
 }
 
 void OptionsDialog::flightplanPassedColorClicked()
 {
-  QColor col = QColorDialog::getColor(flightplanPassedColor, mainWindow);
-  if(col.isValid())
-  {
-    flightplanPassedColor = col;
-    updateButtonColors();
-  }
+  colorButtonClicked(flightplanPassedColor);
+}
+
+void OptionsDialog::mapHighlightFlightplanColorClicked()
+{
+  colorButtonClicked(highlightFlightplanColor);
+}
+
+void OptionsDialog::mapHighlightSearchColorClicked()
+{
+  colorButtonClicked(highlightSearchColor);
+}
+
+void OptionsDialog::mapHighlightProfileColorClicked()
+{
+  colorButtonClicked(highlightProfileColor);
+}
+
+void OptionsDialog::trailColorClicked()
+{
+  colorButtonClicked(trailColor);
 }
 
 void OptionsDialog::updateHighlightWidgets()
@@ -1259,16 +1277,6 @@ void OptionsDialog::updateFlightPlanColorWidgets()
   ui->pushButtonOptionsDisplayFlightplanOutlineColor->setDisabled(ui->checkBoxOptionsMapFlightplanTransparent->isChecked());
   ui->spinBoxOptionsDisplayTransparencyFlightplan->setEnabled(ui->checkBoxOptionsMapFlightplanTransparent->isChecked());
   updateButtonColors();
-}
-
-void OptionsDialog::trailColorClicked()
-{
-  QColor col = QColorDialog::getColor(trailColor, mainWindow);
-  if(col.isValid())
-  {
-    trailColor = col;
-    updateButtonColors();
-  }
 }
 
 /* Test NOAA weather URL and show a dialog with the result */
@@ -1484,6 +1492,10 @@ void OptionsDialog::widgetsToOptionData()
   data.flightplanProcedureColor = flightplanProcedureColor;
   data.flightplanActiveColor = flightplanActiveColor;
   data.flightplanPassedColor = flightplanPassedColor;
+  data.highlightFlightplanColor = highlightFlightplanColor;
+  data.highlightSearchColor = highlightSearchColor;
+  data.highlightProfileColor = highlightProfileColor;
+
   data.trailColor = trailColor;
 
   data.displayOptionsUserAircraft = optsac::ITEM_USER_AIRCRAFT_NONE;
@@ -1778,6 +1790,9 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   flightplanActiveColor = data.flightplanActiveColor;
   flightplanPassedColor = data.flightplanPassedColor;
   trailColor = data.trailColor;
+  highlightFlightplanColor = data.highlightFlightplanColor;
+  highlightSearchColor = data.highlightSearchColor;
+  highlightProfileColor = data.highlightProfileColor;
 
   // Copy values from the tree widget
   displayOptDataToWidget(data.displayOptionsUserAircraft, displayOptItemIndexUser);

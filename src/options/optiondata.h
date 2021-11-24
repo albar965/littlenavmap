@@ -1222,6 +1222,21 @@ public:
 
   QSize getGuiToolbarSize() const;
 
+  const QColor& getHighlightFlightplanColor() const
+  {
+    return highlightFlightplanColor;
+  }
+
+  const QColor& getHighlightSearchColor() const
+  {
+    return highlightSearchColor;
+  }
+
+  const QColor& getHighlightProfileColor() const
+  {
+    return highlightProfileColor;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -1502,6 +1517,8 @@ private:
 
   QColor flightplanColor = QColor(Qt::yellow), flightplanOutlineColor = QColor(Qt::black), flightplanProcedureColor = QColor(255, 150, 0),
          flightplanActiveColor = QColor(Qt::magenta), flightplanPassedColor = QColor(Qt::gray), trailColor = QColor(Qt::black);
+
+  QColor highlightFlightplanColor = QColor(Qt::green), highlightSearchColor = QColor(Qt::yellow), highlightProfileColor = QColor(Qt::cyan);
 
   // comboBoxOptionsDisplayTrailType
   opts::DisplayTrailType displayTrailType = opts::DASHED;

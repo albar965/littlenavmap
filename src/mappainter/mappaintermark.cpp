@@ -223,10 +223,10 @@ void MapPainterMark::paintHighlights()
   if(transparent)
     radius *= 0.75f;
 
+  QColor highlightColor = OptionData::instance().getHighlightSearchColor();
   const QPen outerPen(mapcolors::highlightBackColor, radius / 3. + 2., Qt::SolidLine, Qt::FlatCap);
-  const QPen innerPen(mapcolors::adjustAlphaF(mapcolors::highlightColor, alpha), transparent ? 1. : radius / 3., Qt::SolidLine,
-                      Qt::FlatCap);
-  painter->setBrush(transparent ? QBrush(mapcolors::adjustAlphaF(mapcolors::highlightColor, alpha)) : QBrush(Qt::NoBrush));
+  const QPen innerPen(mapcolors::adjustAlphaF(highlightColor, alpha), transparent ? 1. : radius / 3., Qt::SolidLine, Qt::FlatCap);
+  painter->setBrush(transparent ? QBrush(mapcolors::adjustAlphaF(highlightColor, alpha)) : QBrush(Qt::NoBrush));
   painter->setPen(innerPen);
   for(const Pos& pos : positions)
   {
@@ -337,10 +337,10 @@ void MapPainterMark::paintHighlights()
     positions.append(routeLeg.getPosition());
   }
 
+  QColor routeHighlightColor = OptionData::instance().getHighlightFlightplanColor();
   const QPen outerPenRoute(mapcolors::routeHighlightBackColor, radius / 3. + 2., Qt::SolidLine, Qt::FlatCap);
-  const QPen innerPenRoute(mapcolors::adjustAlphaF(mapcolors::routeHighlightColor, alpha), transparent ? 1. : radius / 3.,
-                           Qt::SolidLine, Qt::FlatCap);
-  painter->setBrush(transparent ? QBrush(mapcolors::adjustAlphaF(mapcolors::routeHighlightColor, alpha)) : QBrush(Qt::NoBrush));
+  const QPen innerPenRoute(mapcolors::adjustAlphaF(routeHighlightColor, alpha), transparent ? 1. : radius / 3., Qt::SolidLine, Qt::FlatCap);
+  painter->setBrush(transparent ? QBrush(mapcolors::adjustAlphaF(routeHighlightColor, alpha)) : QBrush(Qt::NoBrush));
   painter->setPen(innerPenRoute);
   for(const Pos& pos : positions)
   {
@@ -358,10 +358,11 @@ void MapPainterMark::paintHighlights()
   }
 
   // Draw highlight from the elevation profile view =====================================================
+  QColor profileHighlightColor = OptionData::instance().getHighlightProfileColor();
   const QPen outerPenProfile(mapcolors::profileHighlightBackColor, radius / 3. + 2., Qt::SolidLine, Qt::FlatCap);
-  const QPen innerPenProfile(mapcolors::adjustAlphaF(mapcolors::profileHighlightColor, alpha), transparent ? 1. : radius / 3.,
-                             Qt::SolidLine, Qt::FlatCap);
-  painter->setBrush(transparent ? QBrush(mapcolors::adjustAlphaF(mapcolors::profileHighlightColor, alpha)) : QBrush(Qt::NoBrush));
+  const QPen innerPenProfile(mapcolors::adjustAlphaF(profileHighlightColor, alpha), transparent ? 1. : radius / 3., Qt::SolidLine,
+                             Qt::FlatCap);
+  painter->setBrush(transparent ? QBrush(mapcolors::adjustAlphaF(profileHighlightColor, alpha)) : QBrush(Qt::NoBrush));
   const Pos& pos = mapPaintWidget->getProfileHighlight();
   painter->setPen(innerPenProfile);
   if(pos.isValid())
