@@ -1,18 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <LittleNavmap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.littlenavmap.org/schema/lnmmaplayers.xsd">
-  <!-- ================================================================================================ -->
-  <!-- Units: MaximumRangeKm is kilometers.                                                             -->
-  <!-- Sizes are screen pixel and scales are values between 0.0 and 1.0.                                -->
-  <!-- Booleans are yes/no or true/false.                                                               -->
-  <!-- ================================================================================================ -->
+  <!-- ===========================================================================================
+  Units: MaximumRangeKm is the zoom distance in kilometers.
+  Sizes like "AirportSymbolSize" are screen pixel.
+  Scales like "AirportFontScale" are values that are multiplied with the stock/default object or font size.
+  Booleans values like "AirportIdent" are yes/no or true/false.
+
+  You can put a copy of this file into the Little Navmap settings folder
+  ("C:\Users\YOURUSERNAME\AppData\Roaming\ABarthel\" on Windows) to override the stock settings.
+  Little Navmap will watch the file, reload it and redraw the map when it is changed.
+
+  Using wrong settings in this file can crash or freeze the program.
+  ================================================================================================ -->
   <MapLayerSettings>
     <Layers>
-<!-- -->
-      <!-- ================================================================================================ -->
-      <!-- First default layer. This defines the base for all other layers which are derived from this one. -->
-      <!-- All features in the default layer are enabled and derived layers disable these features.         -->
-      <!-- ================================================================================================ -->
+      <!-- ===========================================================================================
+      This is the first default layer which defines the base for all other layers.
+      All features in the default layer are enabled and derived layers disable these features step by step.
+      ================================================================================================ -->
       <Layer Base="true">
+        <!-- AI aircraft and ship ================= -->
         <AiAircraftGround>true</AiAircraftGround>
         <AiAircraftGroundText>true</AiAircraftGroundText>
         <AiAircraftLarge>true</AiAircraftLarge>
@@ -21,6 +28,8 @@
         <AiAircraftText>true</AiAircraftText>
         <AiShipLarge>true</AiShipLarge>
         <AiShipSmall>true</AiShipSmall>
+
+        <!-- Airport ================= -->
         <Airport>true</Airport>
         <AirportDiagram>true</AirportDiagram>
         <AirportDiagramDetail>true</AirportDiagramDetail>
@@ -44,8 +53,12 @@
         <AirportOverviewRunway>true</AirportOverviewRunway>
         <AirportRouteInfo>true</AirportRouteInfo>
         <AirportSymbolSize>3</AirportSymbolSize>
+
+        <!-- Airport weather icons ================= -->
         <AirportWeather>true</AirportWeather>
         <AirportWeatherDetails>true</AirportWeatherDetails>
+
+        <!-- Airspaces ================= -->
         <AirspaceCenter>true</AirspaceCenter>
         <AirspaceFg>true</AirspaceFg>
         <AirspaceFirUir>true</AirspaceFirUir>
@@ -53,45 +66,72 @@
         <AirspaceOther>true</AirspaceOther>
         <AirspaceRestricted>true</AirspaceRestricted>
         <AirspaceSpecial>true</AirspaceSpecial>
+
+        <!-- Airways ================= -->
         <Airway>true</Airway>
         <AirwayIdent>true</AirwayIdent>
         <AirwayInfo>true</AirwayInfo>
         <AirwayWaypoint>true</AirwayWaypoint>
+
+        <!-- Procedures (SID, STAR and approaches) ================= -->
         <Approach>true</Approach>
         <ApproachDetail>true</ApproachDetail>
         <ApproachText>true</ApproachText>
         <ApproachTextDetail>true</ApproachTextDetail>
+
+        <!-- Enroute holdings ================= -->
         <Holding>true</Holding>
         <HoldingInfo>true</HoldingInfo>
         <HoldingInfo2>true</HoldingInfo2>
+
+        <!-- ILS feathers ================= -->
         <Ils>true</Ils>
         <IlsIdent>true</IlsIdent>
         <IlsInfo>true</IlsInfo>
+
+        <!-- Markers ================= -->
         <Marker>true</Marker>
         <MarkerInfo>true</MarkerInfo>
         <MarkerSymbolSize>8</MarkerSymbolSize>
-        <MaxRange>0</MaxRange>
+
+        <!-- Maximum text length before using elide ... ================= -->
         <MaximumTextLengthAirport>16</MaximumTextLengthAirport>
         <MaximumTextLengthAirportMinor>16</MaximumTextLengthAirportMinor>
         <MaximumTextLengthUserpoint>10</MaximumTextLengthUserpoint>
+
+        <!-- Minimum airport runway length -->
         <MinRunwayLength>0</MinRunwayLength>
+
+        <!-- Show MORA grid ================= -->
         <Mora>true</Mora>
         <Ndb>true</Ndb>
+
+        <!-- NDB ================= -->
         <NdbIdent>true</NdbIdent>
         <NdbInfo>true</NdbInfo>
         <NdbRouteIdent>true</NdbRouteIdent>
         <NdbRouteInfo>true</NdbRouteInfo>
         <NdbSymbolSize>4</NdbSymbolSize>
+
+        <!-- Online aircraft ================= -->
         <OnlineAircraft>true</OnlineAircraft>
         <OnlineAircraftText>true</OnlineAircraftText>
+
+        <!-- Flight plan details ================= -->
         <RouteTextAndDetail>true</RouteTextAndDetail>
+
+        <!-- Oceaninc tracks ================= -->
         <Track>true</Track>
         <TrackIdent>true</TrackIdent>
         <TrackInfo>true</TrackInfo>
         <TrackWaypoint>true</TrackWaypoint>
+
+        <!-- Userpoints ================= -->
         <Userpoint>true</Userpoint>
         <UserpointInfo>true</UserpointInfo>
         <UserpointSymbolSize>12</UserpointSymbolSize>
+
+        <!-- VOR ================= -->
         <Vor>true</Vor>
         <VorIdent>true</VorIdent>
         <VorInfo>true</VorInfo>
@@ -99,20 +139,22 @@
         <VorRouteIdent>true</VorRouteIdent>
         <VorRouteInfo>true</VorRouteInfo>
         <VorSymbolSize>3</VorSymbolSize>
+
+        <!-- Waypoints ================= -->
         <Waypoint>true</Waypoint>
         <WaypointName>true</WaypointName>
         <WaypointRouteName>true</WaypointRouteName>
         <WaypointSymbolSize>3</WaypointSymbolSize>
+
+        <!-- Wind barbs ================= -->
         <WindBarbs>true</WindBarbs>
         <WindBarbsSymbolSize>6</WindBarbsSymbolSize>
       </Layer>
-
-      <!-- =================================================================================== -->
-      <!-- Layer configurations. The first one is  derived from first default layer above.     -->
-      <!-- Following layers are derived from their predecessor, i.e. 0.3 derives from 0.2.     -->
-      <!-- These change sizes, scales and disable (but not enable) features                    -->
-      <!-- Small range value means closer zoom and large range if far out zoom distance        -->
-      <!-- =================================================================================== -->
+      <!-- ==============================================================================
+      Layer configurations. This first one is derived from default layer above.
+      This means it receives all settings from default and modifies only a few selected ones.
+      A small "MaximumRangeKm" value means closer zoom and vice versa.
+      =================================================================================== -->
       <Layer MaximumRangeKm="0.2">
         <AirportFontScale>1</AirportFontScale>
         <MaximumTextLengthAirport>30</MaximumTextLengthAirport>
@@ -129,7 +171,10 @@
         <WaypointSymbolSize>14</WaypointSymbolSize>
         <WindBarbsSymbolSize>22</WindBarbsSymbolSize>
       </Layer>
-      <!-- =================================================================================== -->
+      <!-- ==============================================================================
+      Following layers are derived from their respective predecessor, i.e. "0.3" derives from "0.2".
+      These change sizes, scales and disable (but not enable) features.
+      =================================================================================== -->
       <Layer MaximumRangeKm="0.3">
         <AirportDiagramDetail3>false</AirportDiagramDetail3>
         <AirportMsaSymbolScale>7</AirportMsaSymbolScale>
@@ -311,7 +356,7 @@
         <WindBarbs>false</WindBarbs>
       </Layer>
       <!-- =================================================================================== -->
-      <!-- Use very large range to have always a layer available -->
+      <!-- Use very large range to always have a layer available with all drawing disabled. -->
       <Layer MaximumRangeKm="100000">
         <Airport>false</Airport>
         <AirportNoRating>false</AirportNoRating>
