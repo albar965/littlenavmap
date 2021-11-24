@@ -655,8 +655,7 @@ void OptionsDialog::checkOfficialOnlineUrls()
     if(!url.isEmpty() && !url.isLocalFile())
     {
       QString host = url.host().toLower();
-      if(host.endsWith("ivao.aero") || host.endsWith("vatsim.net") || host.endsWith("littlenavmap.org") ||
-         host.endsWith("pilotedge.net"))
+      if(host.endsWith("ivao.aero") || host.endsWith("vatsim.net") || host.endsWith("littlenavmap.org") || host.endsWith("pilotedge.net"))
       {
         qWarning() << Q_FUNC_INFO << "Update of" << ui->spinBoxOptionsOnlineUpdate->value()
                    << "s for url" << url << "host" << host;

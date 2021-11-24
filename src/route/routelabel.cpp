@@ -282,7 +282,7 @@ void RouteLabel::buildHeaderDepartArrival(atools::util::HtmlBuilder& html, bool 
         if(!arrivalLegs.approachSuffix.isEmpty())
           type += tr("-%1").arg(arrivalLegs.approachSuffix);
 
-        arrHtml.b(type);
+        arrHtml.b(type).nbsp();
         arrHtml.b(arrivalLegs.approachFixIdent);
 
         if(!arrivalLegs.approachArincName.isEmpty())

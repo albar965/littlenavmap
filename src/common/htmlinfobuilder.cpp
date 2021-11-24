@@ -3831,8 +3831,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           }
         } // if(distanceToToc > 0 && distanceToToc < map::INVALID_DISTANCE_VALUE)
 
-        if(route.getTopOfDescentFromDestination() < map::INVALID_DISTANCE_VALUE)
-          html.id(pid::TOC_TO_DESTINATION).row2(tr("To Destination:"), Unit::distNm(route.getTopOfDescentFromDestination()));
+        if(route.getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE)
+          html.id(pid::TOC_FROM_DESTINATION).row2(tr("From Departure:"), Unit::distNm(route.getTopOfClimbDistance()));
 
         html.tableEndIf();
       } // if(route.getSizeWithoutAlternates() > 1 && !alternate) // No TOC display when flying an alternate leg

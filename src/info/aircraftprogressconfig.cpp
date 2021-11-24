@@ -33,7 +33,7 @@ AircraftProgressConfig::AircraftProgressConfig(QWidget *parentWidget)
 const static QVector<pid::ProgressConfId> ALLIDS({
   pid::DATE_TIME, pid::LOCAL_TIME, pid::DATE_TIME_REAL, pid::LOCAL_TIME_REAL, pid::FLOWN, pid::DEST_DIST_TIME_ARR, pid::DEST_FUEL,
   pid::DEST_GROSS_WEIGHT, pid::TOD_DIST_TIME_ARR, pid::TOD_FUEL, pid::TOD_TO_DESTINATION, pid::TOC_DIST_TIME_ARR, pid::TOC_FUEL,
-  pid::TOC_TO_DESTINATION, pid::NEXT_LEG_TYPE, pid::NEXT_INSTRUCTIONS, pid::NEXT_RELATED, pid::NEXT_RESTRICTION, pid::NEXT_DIST_TIME_ARR,
+  pid::TOC_FROM_DESTINATION, pid::NEXT_LEG_TYPE, pid::NEXT_INSTRUCTIONS, pid::NEXT_RELATED, pid::NEXT_RESTRICTION, pid::NEXT_DIST_TIME_ARR,
   pid::NEXT_ALTITUDE, pid::NEXT_FUEL, pid::NEXT_COURSE_TO_WP, pid::NEXT_LEG_COURSE, pid::NEXT_HEADING, pid::NEXT_CROSS_TRACK_DIST,
   pid::NEXT_REMARKS, pid::AIRCRAFT_HEADING, pid::AIRCRAFT_TRACK, pid::AIRCRAFT_FUEL_FLOW, pid::AIRCRAFT_ENDURANCE, pid::AIRCRAFT_FUEL,
   pid::AIRCRAFT_GROSS_WEIGHT, pid::AIRCRAFT_ICE, pid::ALT_INDICATED, pid::ALT_ACTUAL, pid::ALT_ABOVE_GROUND, pid::ALT_GROUND_ELEVATION,
@@ -84,7 +84,7 @@ void AircraftProgressConfig::progressConfiguration()
   QTreeWidgetItem *tocItem = treeDialog.addTopItem1(tr("Top of climb"));
   treeDialog.addItem2(tocItem, pid::TOC_DIST_TIME_ARR,  tr("Distance, Time and Arrival"), tr("Distance to, time to and arrival time in UTC at the top of climb."), QString());
   treeDialog.addItem2(tocItem, pid::TOC_FUEL,           tr("Fuel"), tr("Estimated fuel at top of climb."), QString());
-  treeDialog.addItem2(tocItem, pid::TOC_TO_DESTINATION, tr("To Destination"), tr("Distance to top of climb from departure."), QString());
+  treeDialog.addItem2(tocItem, pid::TOC_FROM_DESTINATION, tr("From Departure"), tr("Distance from departure to top of climb."), QString());
 
   // TOD ==========================================================================================================
   QTreeWidgetItem *todItem = treeDialog.addTopItem1(tr("Top of descent"));

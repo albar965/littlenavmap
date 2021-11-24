@@ -1986,7 +1986,7 @@ void MainWindow::distanceChanged()
   QString text = distStr + " " + Unit::getUnitDistStr();
 
 #ifdef DEBUG_INFORMATION
-  text += QString("[%1km][%2z]").arg(mapWidget->distance(), 0, 'f', 0).arg(mapWidget->zoom());
+  text += QString("[%1km][%2z]").arg(mapWidget->distance(), 0, 'f', 2).arg(mapWidget->zoom());
 #endif
 
   mapDistanceLabel->setText(text);

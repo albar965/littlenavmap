@@ -45,7 +45,7 @@ enum ProgressConfId
   // "Top of climb" =================================
   TOC_DIST_TIME_ARR,
   TOC_FUEL,
-  TOC_TO_DESTINATION,
+  TOC_FROM_DESTINATION,
 
   // "Next waypoint" =================================
   NEXT_LEG_TYPE,

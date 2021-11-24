@@ -903,9 +903,23 @@ void MapPainterMark::paintEndurance()
               atts |= textatt::WARNING_COLOR;
           }
 
+          QStringList texts;
+          const atools::fs::sc::SimConnectUserAircraft& aircraft = mapPaintWidget->getUserAircraft();
+          if(!aircraft.getAirplaneRegistration().isEmpty())
+            texts.append(atools::elideTextShort(aircraft.getAirplaneRegistration(), 15));
+          else if(!aircraft.getAirplaneTitle().isEmpty())
+            texts.append(atools::elideTextShort(aircraft.getAirplaneTitle(), 15));
+
+          if(!aircraft.getAirplaneModel().isEmpty())
+            texts.append(aircraft.getAirplaneModel());
+
+          texts.append(Unit::distNm(enduranceNm, true, 5, true));
+
+          if(enduranceHours < map::INVALID_TIME_VALUE)
+            texts.append(formatter::formatMinutesHoursLong(enduranceHours));
+
           yt += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
-          symbolPainter->textBox(painter, {Unit::distNm(enduranceNm, true, 5, true), formatter::formatMinutesHoursLong(enduranceHours)},
-                                 painter->pen(), xt, yt, atts);
+          symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, atts);
         }
       }
     }
