@@ -228,6 +228,7 @@ private:
   MapLayerSettings *layers = nullptr;
   MapPaintWidget *mapWidget = nullptr;
   const MapLayer *mapLayer = nullptr, *mapLayerRoute = nullptr, *mapLayerEffective = nullptr;
+  bool verbose = false;
 
 };
 

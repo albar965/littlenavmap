@@ -17,31 +17,33 @@
 
 #include "mappainter/mappaintlayer.h"
 
-#include "navapp.h"
-#include "mappainter/mappainterweather.h"
-#include "mappainter/mappainterwind.h"
-#include "connect/connectclient.h"
+#include "common/constants.h"
 #include "common/mapcolors.h"
-#include "mapgui/mapwidget.h"
+#include "connect/connectclient.h"
+#include "geo/calculations.h"
 #include "mapgui/maplayersettings.h"
+#include "mapgui/mapscale.h"
+#include "mapgui/mapwidget.h"
 #include "mappainter/mappainteraircraft.h"
-#include "mappainter/mappaintermsa.h"
-#include "mappainter/mappaintertrack.h"
-#include "mappainter/mappaintership.h"
 #include "mappainter/mappainterairport.h"
 #include "mappainter/mappainterairspace.h"
+#include "mappainter/mappainteraltitude.h"
 #include "mappainter/mappainterils.h"
 #include "mappainter/mappaintermark.h"
+#include "mappainter/mappaintermsa.h"
 #include "mappainter/mappainternav.h"
 #include "mappainter/mappainterroute.h"
-#include "mappainter/mappainteruser.h"
-#include "mappainter/mappainteraltitude.h"
+#include "mappainter/mappaintership.h"
 #include "mappainter/mappaintertop.h"
-#include "mapgui/mapscale.h"
-#include "userdata/userdatacontroller.h"
-#include "route/route.h"
-#include "geo/calculations.h"
+#include "mappainter/mappaintertrack.h"
+#include "mappainter/mappainteruser.h"
+#include "mappainter/mappainterweather.h"
+#include "mappainter/mappainterwind.h"
+#include "navapp.h"
 #include "options/optiondata.h"
+#include "route/route.h"
+#include "settings/settings.h"
+#include "userdata/userdatacontroller.h"
 
 #include <QElapsedTimer>
 
@@ -53,6 +55,8 @@ using namespace atools::geo;
 MapPaintLayer::MapPaintLayer(MapPaintWidget *widget)
   : mapWidget(widget)
 {
+  verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_MAP_LAYER_DEBUG, false).toBool();
+
   // Create the layer configuration
   initMapLayerSettings();
 
@@ -217,7 +221,7 @@ void MapPaintLayer::initMapLayerSettings()
   // Load a list of map layers that define content for each zoom distance
   // File can be overloaded in the settings folder
   // Map widget is updated if the file changes
-  layers = new MapLayerSettings();
+  layers = new MapLayerSettings(verbose);
   layers->connectMapSettingsUpdated(mapWidget);
   layers->loadFromFile();
 }

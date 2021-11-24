@@ -40,7 +40,7 @@ class MapLayerSettings
   Q_OBJECT
 
 public:
-  MapLayerSettings();
+  MapLayerSettings(bool verbose);
   virtual ~MapLayerSettings() override;
 
   /* Add a map layer. Call finishAppend when done. */

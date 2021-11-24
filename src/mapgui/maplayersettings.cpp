@@ -30,9 +30,9 @@
 #include <QWidget>
 #include <QXmlStreamReader>
 
-MapLayerSettings::MapLayerSettings()
+MapLayerSettings::MapLayerSettings(bool verbose)
 {
-  fileWatcher = new atools::util::FileSystemWatcher(this, true);
+  fileWatcher = new atools::util::FileSystemWatcher(this, verbose);
   fileWatcher->setMinFileSize(100);
   connect(fileWatcher, &atools::util::FileSystemWatcher::fileUpdated, this, &MapLayerSettings::reloadFromUpdate);
 }
@@ -125,7 +125,8 @@ void MapLayerSettings::loadFromFile()
 
   reloadFromFile();
 
-  fileWatcher->setFilenameAndStart(filename);
+  if(!filename.startsWith(":/"))
+    fileWatcher->setFilenameAndStart(filename);
 }
 
 void MapLayerSettings::loadXmlInternal(atools::util::XmlStream& xmlStream)
