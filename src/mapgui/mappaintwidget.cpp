@@ -49,7 +49,7 @@
 const float POS_IS_POINT_EPSILON = 0.0001f;
 
 // KM
-const static double MINIMUM_DISTANCE_KM = 0.1;
+const static double MINIMUM_DISTANCE_KM = 0.05;
 const static double MAXIMUM_DISTANCE_KM = 6000.;
 const static int MAXIMUM_ZOOM = 1120;
 
@@ -734,8 +734,7 @@ void MapPaintWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAd
     // Rect is a point or otherwise malformed
     centerPosOnMap(rect.getCenter());
 
-    if(std::abs(rect.getWidthDegree()) < 180.f &&
-       std::abs(rect.getHeightDegree()) < 180.f)
+    if(std::abs(rect.getWidthDegree()) < 180.f && std::abs(rect.getHeightDegree()) < 180.f)
       setDistanceToMap(MINIMUM_DISTANCE_KM, allowAdjust);
     else
       setDistanceToMap(MAXIMUM_DISTANCE_KM, allowAdjust);
@@ -776,9 +775,7 @@ void MapPaintWidget::centerPosOnMap(const atools::geo::Pos& pos)
 
 void MapPaintWidget::setDistanceToMap(double distanceKm, bool allowAdjust)
 {
-  distanceKm = std::min(std::max(distanceKm, MINIMUM_DISTANCE_KM / 2.), MAXIMUM_DISTANCE_KM);
-
-  setDistance(distanceKm);
+  setDistance(atools::minmax(MINIMUM_DISTANCE_KM, MAXIMUM_DISTANCE_KM, distanceKm));
 
   if(allowAdjust && avoidBlurredMap)
     adjustMapDistance();
@@ -788,7 +785,7 @@ void MapPaintWidget::showPosNotAdjusted(const atools::geo::Pos& pos, float dista
 {
   Pos normPos = pos.normalized();
   centerOn(normPos.getLonX(), normPos.getLatY());
-  setDistance(std::min(std::max(static_cast<double>(distanceKm), MINIMUM_DISTANCE_KM / 2.), MAXIMUM_DISTANCE_KM));
+  setDistance(atools::minmax(MINIMUM_DISTANCE_KM, MAXIMUM_DISTANCE_KM, static_cast<double>(distanceKm)));
 }
 
 void MapPaintWidget::showPos(const atools::geo::Pos& pos, float distanceKm, bool doubleClick)

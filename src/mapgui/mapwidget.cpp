@@ -92,11 +92,14 @@ const static QHash<opts::SimUpdateRate, SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
   }
 });
 
+// Do not zoom closer automatically
+static float MIN_AUTO_ZOOM = 0.2f;
+
 // Maps minimum zoom in NM by altitude above ground in ft
 // Use odd numbers to avoid jumping at typical flown altitude levels
 static const QVector<std::pair<float, float> > ALT_TO_MIN_ZOOM_NM_FT =
 {
-  {55.f, 0.2f}, // 0.2 NM for flying below 55 ft AGL
+  {55.f, MIN_AUTO_ZOOM}, // 0.2 NM for flying below 55 ft AGL
   {550.f, 0.5f},
   {1250.f, 0.75f},
   {2250.f, 1.f},
@@ -2384,21 +2387,6 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                 centerRectOnMap(aircraftWpRect);
 #endif
 
-                // Smaller values mean zoom closer.
-                float factor = od.getSimUpdateBoxCenterLegZoom() / 100.f;
-
-                // Get zoom distance from table
-                auto zoomDist = std::lower_bound(ALT_TO_MIN_ZOOM_NM_FT.begin(), ALT_TO_MIN_ZOOM_NM_FT.end(),
-                                                 aircraft.getAltitudeAboveGroundFt() * factor,
-                                                 [](const std::pair<float, float>& pair, float value)->bool {
-                  return pair.first < value;
-                });
-
-                float minZoomDistKm = atools::geo::nmToKm(zoomDist->second);
-
-#ifdef DEBUG_PRETEND_ZOOM
-                qDebug() << Q_FUNC_INFO << "minZoomDistKm" << minZoomDistKm << "NM" << lower->second;
-#endif
                 // ================================================
                 // Zoom out for a maximum of four times until aircraft and waypoint fit into the shrinked rectangle
                 for(int i = 0; i < 4; i++)
@@ -2435,12 +2423,24 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 
                 // Do not zoom out if distance is larger than 1/5 of the screen size
                 double minSizePixelScreenRect = QLineF(rect().topLeft(), rect().bottomRight()).length() / 5;
+
+                // Get zoom distance from table
+                auto zoomDist = std::lower_bound(ALT_TO_MIN_ZOOM_NM_FT.begin(), ALT_TO_MIN_ZOOM_NM_FT.end(),
+                                                 aircraft.getAltitudeAboveGroundFt(),
+                                                 [](const std::pair<float, float>& pair, float value)->bool {
+                  return pair.first < value;
+                });
+
+                // Smaller values mean zoom closer.
+                float factor = od.getSimUpdateBoxCenterLegZoom() / 100.f;
+                float minZoomDistKm = atools::geo::nmToKm(std::max(zoomDist->second * factor, MIN_AUTO_ZOOM));
+
 #ifdef DEBUG_INFORMATION
-                qDebug() << Q_FUNC_INFO
-                         << "distance()" << distance() << "minZoomDistKm" << minZoomDistKm
+                qDebug() << Q_FUNC_INFO << "distance()" << distance() << "minZoomDistKm" << minZoomDistKm
                          << "aircraftWpScreenDistPixel" << aircraftWpScreenDistPixel
                          << "minSizePixelScreenRect" << minSizePixelScreenRect;
 #endif
+
                 if(distance() < minZoomDistKm && aircraftWpScreenDistPixel > minSizePixelScreenRect)
                 {
                   // Correct zoom for minimum distance
