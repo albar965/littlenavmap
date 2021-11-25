@@ -19,6 +19,7 @@
 #define LNM_MAPAIRPORTHANDLER_H
 
 #include "common/mapflags.h"
+#include "options/optiondata.h"
 
 #include <QObject>
 #include <QWidgetAction>
@@ -92,9 +93,8 @@ private:
   void updateToolbutton();
 
   /* Actions for toolbar button and menu */
-  QAction *actionReset = nullptr,
-          *actionHard = nullptr, *actionSoft = nullptr, *actionEmpty = nullptr, *actionAddon = nullptr, *actionUnlighted = nullptr,
-          *actionNoProcedures = nullptr, *actionWater = nullptr, *actionHelipad = nullptr;
+  QAction *actionReset = nullptr, *actionHard = nullptr, *actionSoft = nullptr, *actionEmpty = nullptr, *actionAddon = nullptr,
+          *actionUnlighted = nullptr, *actionNoProcedures = nullptr, *actionWater = nullptr, *actionHelipad = nullptr;
 
   /* Widget wrapper allowing to put an arbitrary widget into a menu */
   internal::SliderAction *sliderActionRunwayLength = nullptr;
@@ -148,6 +148,7 @@ protected:
   /* List of created/registered slider widgets */
   QVector<QSlider *> sliders;
   int sliderValue = 0;
+  opts::UnitShortDist sliderDistUnit = opts::DIST_SHORT_FT;
 };
 }
 

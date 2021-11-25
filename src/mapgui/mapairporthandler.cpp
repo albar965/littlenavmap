@@ -61,13 +61,32 @@ void SliderAction::restoreState()
 {
   sliderValue = atools::settings::Settings::instance().valueInt(lnm::MAP_AIRPORT_RUNWAY_LENGTH, minValue());
   setValue(sliderValue);
+  sliderDistUnit = Unit::getUnitShortDist();
 }
 
 void SliderAction::optionsChanged()
 {
   // Set all sliders to new range for given unit and reset to unlimited
   // Block signals to avoid recursion
-  sliderValue = minValue();
+
+  if(Unit::getUnitShortDist() != sliderDistUnit)
+  {
+    // Units have changed
+    switch(sliderDistUnit)
+    {
+      case opts::DIST_SHORT_FT:
+        // Old was ft. Convert to new local unit.
+        sliderValue = atools::roundToInt(Unit::distShortFeetF(sliderValue));
+        break;
+      case opts::DIST_SHORT_METER:
+        // Old was meter. Convert to new local unit.
+        sliderValue = atools::roundToInt(Unit::distShortMeterF(sliderValue));
+        break;
+    }
+    sliderDistUnit = Unit::getUnitShortDist();
+    sliderValue = atools::minmax(minValue(), maxValue(), sliderValue);
+  }
+
   for(QSlider *slider : sliders)
   {
     slider->blockSignals(true);
@@ -122,8 +141,7 @@ void SliderAction::sliderValueChanged(int value)
 
 int SliderAction::minValue() const
 {
-  opts::UnitShortDist unitShortDist = Unit::getUnitShortDist();
-  switch(unitShortDist)
+  switch(sliderDistUnit)
   {
     case opts::DIST_SHORT_FT:
       return MIN_SLIDER_ALL_FT;
@@ -136,8 +154,7 @@ int SliderAction::minValue() const
 
 int SliderAction::maxValue() const
 {
-  opts::UnitShortDist unitShortDist = Unit::getUnitShortDist();
-  switch(unitShortDist)
+  switch(sliderDistUnit)
   {
     case opts::DIST_SHORT_FT:
       return MAX_SLIDER_FT;
@@ -243,6 +260,7 @@ void MapAirportHandler::restoreState()
     sliderActionRunwayLength->restoreState();
   }
   actionEmpty->setEnabled(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS);
+
   runwaySliderValueChanged();
   flagsToActions();
   updateToolbutton();
@@ -268,7 +286,6 @@ void MapAirportHandler::optionsChanged()
 {
   actionEmpty->setEnabled(OptionData::instance().getFlags() & opts::MAP_EMPTY_AIRPORTS);
   sliderActionRunwayLength->optionsChanged();
-  sliderActionRunwayLength->reset();
   runwaySliderValueChanged();
 }
 
