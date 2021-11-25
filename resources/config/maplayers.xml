@@ -157,15 +157,15 @@
       =================================================================================== -->
       <Layer MaximumRangeKm="0.2">
         <AirportFontScale>1</AirportFontScale>
-        <MaximumTextLengthAirport>30</MaximumTextLengthAirport>
-        <AirportMsaSymbolScale>8</AirportMsaSymbolScale>
         <AirportMinorFontScale>1</AirportMinorFontScale>
-        <MaximumTextLengthAirportMinor>30</MaximumTextLengthAirportMinor>
         <AirportMinorSymbolSize>20</AirportMinorSymbolSize>
+        <AirportMsaSymbolScale>8</AirportMsaSymbolScale>
         <AirportSymbolSize>20</AirportSymbolSize>
         <MarkerSymbolSize>24</MarkerSymbolSize>
-        <NdbSymbolSize>30</NdbSymbolSize>
+        <MaximumTextLengthAirport>30</MaximumTextLengthAirport>
+        <MaximumTextLengthAirportMinor>30</MaximumTextLengthAirportMinor>
         <MaximumTextLengthUserpoint>30</MaximumTextLengthUserpoint>
+        <NdbSymbolSize>30</NdbSymbolSize>
         <UserpointSymbolSize>28</UserpointSymbolSize>
         <VorSymbolSize>30</VorSymbolSize>
         <WaypointSymbolSize>14</WaypointSymbolSize>
@@ -192,8 +192,8 @@
       <Layer MaximumRangeKm="5">
         <AirportDiagramDetail>false</AirportDiagramDetail>
         <AirportMsaSymbolScale>5</AirportMsaSymbolScale>
-        <NdbSymbolSize>26</NdbSymbolSize>
         <MaximumTextLengthUserpoint>20</MaximumTextLengthUserpoint>
+        <NdbSymbolSize>26</NdbSymbolSize>
         <UserpointSymbolSize>26</UserpointSymbolSize>
         <VorSymbolSize>26</VorSymbolSize>
         <WaypointSymbolSize>10</WaypointSymbolSize>
@@ -202,13 +202,13 @@
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="10">
         <AirportDiagram>false</AirportDiagram>
-        <MaximumTextLengthAirport>20</MaximumTextLengthAirport>
-        <AirportMsaSymbolScale>4</AirportMsaSymbolScale>
-        <MaximumTextLengthAirportMinor>15</MaximumTextLengthAirportMinor>
         <AirportMinorSymbolSize>18</AirportMinorSymbolSize>
+        <AirportMsaSymbolScale>4</AirportMsaSymbolScale>
         <AirportSymbolSize>18</AirportSymbolSize>
         <AirwayInfo>false</AirwayInfo>
         <MarkerInfo>false</MarkerInfo>
+        <MaximumTextLengthAirport>20</MaximumTextLengthAirport>
+        <MaximumTextLengthAirportMinor>15</MaximumTextLengthAirportMinor>
         <NdbSymbolSize>24</NdbSymbolSize>
         <VorSymbolSize>24</VorSymbolSize>
         <WaypointSymbolSize>8</WaypointSymbolSize>
@@ -227,18 +227,18 @@
         <AiAircraftText>false</AiAircraftText>
         <AiShipSmall>false</AiShipSmall>
         <AirportDiagramRunway>false</AirportDiagramRunway>
-        <MaximumTextLengthAirport>10</MaximumTextLengthAirport>
         <AirportMinorFontScale>0.9</AirportMinorFontScale>
         <AirportMinorInfo>false</AirportMinorInfo>
-        <MaximumTextLengthAirportMinor>8</MaximumTextLengthAirportMinor>
         <AirportMinorSymbolSize>16</AirportMinorSymbolSize>
         <AirportSymbolSize>16</AirportSymbolSize>
         <HoldingInfo2>false</HoldingInfo2>
         <IlsIdent>false</IlsIdent>
         <IlsInfo>false</IlsInfo>
         <Marker>false</Marker>
-        <NdbSymbolSize>20</NdbSymbolSize>
+        <MaximumTextLengthAirport>10</MaximumTextLengthAirport>
+        <MaximumTextLengthAirportMinor>8</MaximumTextLengthAirportMinor>
         <MaximumTextLengthUserpoint>10</MaximumTextLengthUserpoint>
+        <NdbSymbolSize>20</NdbSymbolSize>
         <VorSymbolSize>20</VorSymbolSize>
         <WaypointName>false</WaypointName>
         <WaypointSymbolSize>6</WaypointSymbolSize>
@@ -262,14 +262,14 @@
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="150">
+        <AirportMinorSymbolSize>10</AirportMinorSymbolSize>
         <AirportName>false</AirportName>
         <AirportOverviewRunway>false</AirportOverviewRunway>
-        <AirportMinorSymbolSize>10</AirportMinorSymbolSize>
-        <AirportSymbolSize>12</AirportSymbolSize>
+        <AirportSymbolSize>8</AirportSymbolSize>
         <ApproachText>false</ApproachText>
+        <MaximumTextLengthUserpoint>8</MaximumTextLengthUserpoint>
         <NdbIdent>false</NdbIdent>
         <NdbSymbolSize>12</NdbSymbolSize>
-        <MaximumTextLengthUserpoint>8</MaximumTextLengthUserpoint>
         <UserpointSymbolSize>22</UserpointSymbolSize>
         <VorIdent>false</VorIdent>
         <VorSymbolSize>12</VorSymbolSize>
@@ -289,8 +289,8 @@
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="450">
         <AiAircraftSize>26</AiAircraftSize>
-        <AirportRouteInfo>false</AirportRouteInfo>
         <AirportMinor>false</AirportMinor>
+        <AirportRouteInfo>false</AirportRouteInfo>
         <AirwayWaypoint>false</AirwayWaypoint>
         <Ils>false</Ils>
         <MinRunwayLength>4000</MinRunwayLength>
