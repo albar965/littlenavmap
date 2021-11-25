@@ -77,7 +77,8 @@ void AircraftProgressConfig::progressConfiguration()
   // Destination ==========================================================================================================
   QTreeWidgetItem *destItem = treeDialog.addTopItem1(tr("Destination"));
   treeDialog.addItem2(destItem, pid::DEST_DIST_TIME_ARR, tr("Distance, Time and Arrival"), tr("Distance to, time to and arrival time in UTC at destination."), QString());
-  treeDialog.addItem2(destItem, pid::DEST_FUEL,          tr("Fuel"), tr("Estimated fuel at destination."), QString());
+  treeDialog.addItem2(destItem, pid::DEST_FUEL,          tr("Fuel"), tr("Estimated fuel at destination.\n"
+                                                                        "Shows orange warning if below reserve and red error text if insufficient."), QString());
   treeDialog.addItem2(destItem, pid::DEST_GROSS_WEIGHT,  tr("Gross Weight"), tr("Estimated aircraft gross weight at destination."), QString());
 
   // TOC ==========================================================================================================
@@ -118,7 +119,9 @@ void AircraftProgressConfig::progressConfiguration()
   treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_FUEL,         tr("Fuel"), tr("Current fuel amount on board."), QString());
   treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_GROSS_WEIGHT, tr("Gross Weight"), tr("Current aircraft gross weight."), QString());
   treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_ENDURANCE,    tr("Endurance"), tr("Estimated endurance based on current fuel flow and groundspeed\n"
-                                                                                    "considering reserves and contingency. Only shown if airborne."), QString());
+                                                                                    "considering reserves and contingency. Only shown if airborne.\n"
+                                                                                    "Shows orange warning if below reserve and red error text if insufficient\n"
+                                                                                    "when no flightplan is used."), QString());
   treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_ICE,          tr("Ice"), tr("Aircraft icing, if any."), QString());
 
   // Altitude ==========================================================================================================
@@ -130,7 +133,8 @@ void AircraftProgressConfig::progressConfiguration()
 
   // Speed ==========================================================================================================
   QTreeWidgetItem *speedItem = treeDialog.addTopItem1(tr("Speed"));
-  treeDialog.addItem2(speedItem, pid::SPEED_INDICATED, tr("Indicated"), tr("Aircraft indicated airspeed."), QString());
+  treeDialog.addItem2(speedItem, pid::SPEED_INDICATED, tr("Indicated"), tr("Aircraft indicated airspeed.\n"
+                                                                           "Shows orange and red if faster than 250 kts below %L1 ft.").arg(250).arg(10000), QString());
   treeDialog.addItem2(speedItem, pid::SPEED_GROUND,    tr("Ground"), tr("Aircraft groundspeed."), QString());
   treeDialog.addItem2(speedItem, pid::SPEED_TRUE,      tr("True Airspeed"), tr("Aircraft true airspeed."), QString());
   treeDialog.addItem2(speedItem, pid::SPEED_MACH,      tr("Mach"), tr("Aircraft mach number."), QString());

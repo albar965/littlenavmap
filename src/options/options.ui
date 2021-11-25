@@ -3653,8 +3653,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>339</width>
-             <height>366</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -4106,8 +4106,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>571</width>
-             <height>366</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -4422,8 +4422,8 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>594</width>
-             <height>491</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -4646,7 +4646,7 @@ See notes in the manual for details of this setting and how to move around in th
                   <number>2</number>
                  </property>
                  <property name="minimum">
-                  <double>0.020000000000000</double>
+                  <double>0.060000000000000</double>
                  </property>
                  <property name="maximum">
                   <double>50.000000000000000</double>
@@ -6665,8 +6665,8 @@ Currently only OpenAir is supported (*.txt). </string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>532</height>
+             <width>205</width>
+             <height>557</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
