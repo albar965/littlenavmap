@@ -859,7 +859,8 @@ void MapPainterMark::paintRangeMarks()
 
 void MapPainterMark::paintEndurance()
 {
-  if(context->objectDisplayTypes & map::AIRCRAFT_ENDURANCE && mapPaintWidget->getUserAircraft().isFlying())
+  const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
+  if(context->objectDisplayTypes & map::AIRCRAFT_ENDURANCE && userAircraft.isFlying())
   {
     Pos pos = mapPaintWidget->getUserAircraft().getPosition();
     if(pos.isValid())
@@ -871,9 +872,10 @@ void MapPainterMark::paintEndurance()
       {
         Marble::GeoPainter *painter = context->painter;
         atools::util::PainterContextSaver saver(painter);
+        bool labelAtCenter;
         int xt = -1, yt = -1;
         bool visibleCenter = false;
-        if(enduranceNm > 0.f)
+        if(enduranceNm > 1.f)
         {
           float lineWidth = context->szF(context->thicknessRangeDistance, 2.f);
           painter->setPen(QPen(Qt::black, lineWidth, Qt::DotLine, Qt::FlatCap, Qt::MiterJoin));
@@ -883,9 +885,13 @@ void MapPainterMark::paintEndurance()
           // Draw circle and get a text placement position
           paintCircle(painter, pos, enduranceNm, context->drawFast, xt, yt);
           visibleCenter = true;
+          labelAtCenter = false;
         }
         else
+        {
           visibleCenter = wToS(pos, xt, yt);
+          labelAtCenter = true;
+        }
 
         if(visibleCenter && xt != -1 && yt != -1)
         {
@@ -903,23 +909,32 @@ void MapPainterMark::paintEndurance()
             else if(enduranceHours < 0.75f)
               atts |= textatt::WARNING_COLOR;
           }
+          else if(enduranceHours < 0.1f)
+            // Show error color even with flight plan if fuel gets really low
+            atts |= textatt::ERROR_COLOR;
 
           QStringList texts;
-          const atools::fs::sc::SimConnectUserAircraft& aircraft = mapPaintWidget->getUserAircraft();
-          if(!aircraft.getAirplaneRegistration().isEmpty())
-            texts.append(atools::elideTextShort(aircraft.getAirplaneRegistration(), 15));
-          else if(!aircraft.getAirplaneTitle().isEmpty())
-            texts.append(atools::elideTextShort(aircraft.getAirplaneTitle(), 15));
+          if(!userAircraft.getAirplaneRegistration().isEmpty())
+            texts.append(atools::elideTextShort(userAircraft.getAirplaneRegistration(), 15));
+          else if(!userAircraft.getAirplaneTitle().isEmpty())
+            texts.append(atools::elideTextShort(userAircraft.getAirplaneTitle(), 15));
 
-          if(!aircraft.getAirplaneModel().isEmpty())
-            texts.append(aircraft.getAirplaneModel());
+          if(!userAircraft.getAirplaneModel().isEmpty())
+            texts.append(userAircraft.getAirplaneModel());
 
           texts.append(Unit::distNm(enduranceNm, true, 5, true));
 
           if(enduranceHours < map::INVALID_TIME_VALUE)
             texts.append(formatter::formatMinutesHoursLong(enduranceHours));
 
-          yt += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
+          if(labelAtCenter)
+          {
+            int size = std::max(context->sz(context->symbolSizeAircraftUser, 32), scale->getPixelIntForFeet(userAircraft.getModelSize()));
+            yt -= size * 2;
+          }
+          else
+            yt += painter->fontMetrics().height() / 2 - painter->fontMetrics().descent();
+
           symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, atts);
         }
       }

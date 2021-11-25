@@ -1364,7 +1364,7 @@ void AircraftPerfController::simDataChanged(const atools::fs::sc::SimConnectData
     if(userAircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT &&
        userAircraft.getFuelFlowPPH() > 1.0f && userAircraft.getGroundSpeedKts() > map::MIN_GROUND_SPEED)
       fuelFlowGroundspeedAverage->addSamples(userAircraft.getFuelFlowPPH(), userAircraft.getGroundSpeedKts(),
-                                             userAircraft.getZuluTime().toMSecsSinceEpoch());
+                                             QDateTime::currentMSecsSinceEpoch());
   }
 
   // Update report every second

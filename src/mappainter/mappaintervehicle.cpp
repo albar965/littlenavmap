@@ -74,17 +74,13 @@ void MapPainterVehicle::paintAiVehicle(const SimConnectAircraft& vehicle, bool f
         context->painter->translate(x, y);
         context->painter->rotate(rotate);
 
-        int modelSize = vehicle.getWingSpan() > 0 ? vehicle.getWingSpan() : vehicle.getModelRadiusCorrected() * 2;
-
         int minSize;
         if(vehicle.isUser())
           minSize = 32;
         else
-          minSize = vehicle.isAnyBoat() ?
-                    context->mapLayer->getAiAircraftSize() - 4 :
-                    context->mapLayer->getAiAircraftSize();
+          minSize = vehicle.isAnyBoat() ? context->mapLayer->getAiAircraftSize() - 4 : context->mapLayer->getAiAircraftSize();
 
-        int size = std::max(context->sz(context->symbolSizeAircraftAi, minSize), scale->getPixelIntForFeet(modelSize));
+        int size = std::max(context->sz(context->symbolSizeAircraftAi, minSize), scale->getPixelIntForFeet(vehicle.getModelSize()));
         int offset = -(size / 2);
 
         // Draw symbol
@@ -105,16 +101,11 @@ void MapPainterVehicle::paintAiVehicle(const SimConnectAircraft& vehicle, bool f
 
 void MapPainterVehicle::paintUserAircraft(const SimConnectUserAircraft& userAircraft, float x, float y)
 {
-  int modelSize = userAircraft.getWingSpan();
-  if(modelSize == 0)
-    modelSize = userAircraft.getModelRadiusCorrected() * 2;
-
-  int size = std::max(context->sz(context->symbolSizeAircraftUser, 32), scale->getPixelIntForFeet(modelSize));
+  int size = std::max(context->sz(context->symbolSizeAircraftUser, 32), scale->getPixelIntForFeet(userAircraft.getModelSize()));
   context->szFont(context->textSizeAircraftUser);
   int offset = -(size / 2);
 
-  if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_TRACK_LINE) &&
-     userAircraft.getGroundSpeedKts() > 30 &&
+  if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_TRACK_LINE) && userAircraft.getGroundSpeedKts() > 30 &&
      userAircraft.getTrackDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
   {
     // Get projection corrected rotation angle
@@ -167,8 +158,7 @@ void MapPainterVehicle::paintAircraftTrack()
   }
 }
 
-void MapPainterVehicle::paintTextLabelAi(float x, float y, int size,
-                                         const SimConnectAircraft& aircraft, bool forceLabel)
+void MapPainterVehicle::paintTextLabelAi(float x, float y, int size, const SimConnectAircraft& aircraft, bool forceLabel)
 {
   QStringList texts;
 
@@ -205,8 +195,7 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, int size,
         if(aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
           heading = aircraft.getHeadingDegMag();
         else if(aircraft.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
-          heading = atools::geo::normalizeCourse(aircraft.getHeadingDegTrue() -
-                                                 NavApp::getMagVar(aircraft.getPosition()));
+          heading = atools::geo::normalizeCourse(aircraft.getHeadingDegTrue() - NavApp::getMagVar(aircraft.getPosition()));
 
         if(heading < atools::fs::sc::SC_INVALID_FLOAT)
           texts.append(tr("HDG %3°M").arg(QString::number(heading, 'f', 0)));
