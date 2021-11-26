@@ -4959,17 +4959,16 @@ void RouteController::remarksTextChanged()
 
 void RouteController::updateRemarkWidget()
 {
+  QPlainTextEdit *edit = NavApp::getMainUi()->plainTextEditRouteRemarks;
   if(route.isEmpty())
   {
-    NavApp::getMainUi()->plainTextEditRouteRemarks->setDisabled(true);
-    NavApp::getMainUi()->plainTextEditRouteRemarks->setPlaceholderText(tr("No flight plan.") +
-                                                                       tr("\n\n") +
-                                                                       tr("Remarks for the flight plan."));
+    edit->setReadOnly(true);
+    edit->setPlaceholderText(tr("No flight plan.\n\nRemarks for the flight plan."));
   }
   else
   {
-    NavApp::getMainUi()->plainTextEditRouteRemarks->setDisabled(false);
-    NavApp::getMainUi()->plainTextEditRouteRemarks->setPlaceholderText(tr("Remarks for the flight plan."));
+    edit->setReadOnly(false);
+    edit->setPlaceholderText(tr("Remarks for the flight plan."));
   }
 }
 
