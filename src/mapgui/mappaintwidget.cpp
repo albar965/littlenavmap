@@ -256,6 +256,7 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
       case map::STAMENTERRAIN:
       case map::OPENSTREETMAP:
       case map::OPENTOPOMAP:
+      case map::HUMANITARIAN:
       case map::CARTODARK:
       case map::CARTOLIGHT:
       case map::CUSTOM:
@@ -505,10 +506,14 @@ QString MapPaintWidget::getMapCopyright() const
 {
   static const QString OSM("© OpenStreetMap contributors");
   static const QString OTM("© OpenStreetMap / OpenTopoMap contributors");
+  static const QString HUMANITARIAN("© OpenStreetMap contributors / Tiles © HOT");
   static const QString NONE;
 
   switch(currentThemeIndex)
   {
+    case map::HUMANITARIAN:
+      return HUMANITARIAN;
+
     case map::OPENTOPOMAP:
       return OTM;
 

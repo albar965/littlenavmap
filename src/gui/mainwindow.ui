@@ -343,6 +343,7 @@
      <addaction name="actionMapThemeStamenTerrain"/>
      <addaction name="actionMapThemeCartoLight"/>
      <addaction name="actionMapThemeCartoDark"/>
+     <addaction name="actionMapThemeHumanitarian"/>
      <addaction name="separator"/>
      <addaction name="actionMapThemeSimple"/>
      <addaction name="actionMapThemePlain"/>
@@ -8622,6 +8623,23 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Ctrl+Alt+2</string>
    </property>
   </action>
+  <action name="actionMapThemeHumanitarian">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Humanitarian</string>
+   </property>
+   <property name="toolTip">
+    <string>Humanitarian online map theme</string>
+   </property>
+   <property name="statusTip">
+    <string>Humanitarian online map theme</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+6</string>
+   </property>
+  </action>
   <action name="actionMapThemePlain">
    <property name="checkable">
     <bool>true</bool>
@@ -8636,7 +8654,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Plain offline map theme</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Alt+7</string>
+    <string>Ctrl+Alt+8</string>
    </property>
   </action>
   <action name="actionMapThemeAtlas">
@@ -8653,7 +8671,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Atlas offline map theme</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Alt+8</string>
+    <string>Ctrl+Alt+9</string>
    </property>
   </action>
   <action name="actionMapThemeSimple">
@@ -8670,7 +8688,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Simple offline map theme</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Alt+6</string>
+    <string>Ctrl+Alt+7</string>
    </property>
   </action>
   <action name="actionHelpMapLegend">
@@ -12390,8 +12408,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalc"/>
-  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

@@ -2986,6 +2986,7 @@ void MapWidget::updateThemeUi(int index)
     {
       case map::STAMENTERRAIN:
       case map::OPENTOPOMAP:
+      case map::HUMANITARIAN:
         ui->actionMapShowCities->setEnabled(false);
         ui->actionMapShowHillshading->setEnabled(false);
         ui->actionMapShowSunShading->setEnabled(true);

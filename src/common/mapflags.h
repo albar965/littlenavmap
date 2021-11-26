@@ -386,16 +386,22 @@ enum MapThemeComboIndex
   STAMENTERRAIN,
   CARTOLIGHT,
   CARTODARK,
-  SIMPLE,
+  HUMANITARIAN,
+  SIMPLE, // political
   PLAIN,
-  ATLAS,
+  ATLAS, // srtm
   CUSTOM, /* Custom maps count from this index up */
   INVALID_THEME = -1
 };
 
 /* All known map theme names =========================================== */
-static const QStringList STOCK_MAP_THEMES({"clouds", "hillshading", "openstreetmap", "opentopomap", "plain",
-                                           "political", "srtm", "srtm2", "stamenterrain", "cartodark", "cartolight"});
+static const QStringList STOCK_MAP_THEMES({
+    // Slippy maps - online maps
+    "openstreetmap", "opentopomap", "stamenterrain", "cartolight", "cartodark", "humanitarian",
+    // Included offline maps
+    "political", "plain", "srtm",
+    // Other background services
+    "hillshading", "srtm2"});
 
 /* Sun shading sub menu actions.
  * Values are saved in settings do not change */
