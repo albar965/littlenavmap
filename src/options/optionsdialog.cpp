@@ -17,27 +17,29 @@
 
 #include "options/optionsdialog.h"
 
-#include "navapp.h"
+#include "atools.h"
 #include "common/constants.h"
 #include "common/elevationprovider.h"
 #include "common/unit.h"
-#include "atools.h"
+#include "common/unitstringtool.h"
+#include "fs/pln/flightplan.h"
+#include "grib/gribreader.h"
+#include "gui/dialog.h"
+#include "gui/griddelegate.h"
+#include "gui/helphandler.h"
+#include "gui/itemviewzoomhandler.h"
 #include "gui/tools.h"
+#include "gui/translator.h"
+#include "gui/widgetstate.h"
+#include "gui/widgetutil.h"
+#include "mapgui/mapwidget.h"
+#include "navapp.h"
+#include "settings/settings.h"
 #include "ui_options.h"
+#include "util/htmlbuilder.h"
+#include "util/updatecheck.h"
 #include "weather/weatherreporter.h"
 #include "web/webcontroller.h"
-#include "gui/widgetstate.h"
-#include "gui/dialog.h"
-#include "gui/widgetutil.h"
-#include "settings/settings.h"
-#include "mapgui/mapwidget.h"
-#include "gui/helphandler.h"
-#include "grib/gribreader.h"
-#include "util/updatecheck.h"
-#include "util/htmlbuilder.h"
-#include "common/unitstringtool.h"
-#include "gui/translator.h"
-#include "fs/pln/flightplan.h"
 
 #include <QFileInfo>
 #include <QMessageBox>
@@ -83,6 +85,10 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->splitterOptions->handle(1)->setToolTip(tr("Resize options list."));
     ui->splitterOptions->handle(1)->setStatusTip(ui->splitterOptions->handle(1)->toolTip());
   }
+
+  zoomHandler = new atools::gui::ItemViewZoomHandler(ui->treeWidgetOptionsDisplayTextOptions);
+  gridDelegate = new atools::gui::GridDelegate(ui->treeWidgetOptionsDisplayTextOptions);
+  ui->treeWidgetOptionsDisplayTextOptions->setItemDelegate(gridDelegate);
 
   // Add option pages with text, icon and tooltip ========================================
   /* *INDENT-OFF* */
@@ -579,9 +585,18 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 /* called at program end */
 OptionsDialog::~OptionsDialog()
 {
+  ui->treeWidgetOptionsDisplayTextOptions->setItemDelegate(nullptr);
+  delete gridDelegate;
+  delete zoomHandler;
+
   delete units;
   delete ui;
   delete fontDialog;
+}
+
+void OptionsDialog::styleChanged()
+{
+  gridDelegate->styleChanged();
 }
 
 void OptionsDialog::open()
@@ -604,6 +619,7 @@ void OptionsDialog::open()
   updateFlightPlanColorWidgets();
   updateHighlightWidgets();
   toolbarSizeClicked();
+  styleChanged();
 
   QDialog::open();
 }
@@ -1189,6 +1205,10 @@ QTreeWidgetItem *OptionsDialog::addTopItem(const QString& text, const QString& d
 {
   QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidgetOptionsDisplayTextOptions->invisibleRootItem(), {text, description});
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsAutoTristate | Qt::ItemIsEnabled);
+
+  QFont font = item->font(0);
+  font.setBold(true);
+  item->setFont(0, font);
   return item;
 }
 

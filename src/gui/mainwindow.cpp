@@ -1073,6 +1073,7 @@ void MainWindow::connectAllSlots()
           NavApp::getInfoController(), &InfoController::styleChanged);
 
   AircraftPerfController *perfController = NavApp::getAircraftPerfController();
+  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, optionsDialog, &OptionsDialog::styleChanged);
 
   // WindReporter ===================================================================================
   // Wind has to be calculated first - receive routeChanged signal first

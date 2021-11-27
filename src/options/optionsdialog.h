@@ -40,6 +40,12 @@ class QListWidgetItem;
 class QListWidget;
 class QFontDialog;
 
+namespace atools {
+namespace gui {
+class GridDelegate;
+class ItemViewZoomHandler;
+}
+}
 /* Takes care about loading, changing and saving of global options.
  * All default options are defined in the widgets in the options.ui file.
  * OptionData will be populated by the OptionsDialog which loads widget data from the settings
@@ -81,6 +87,8 @@ public:
 
   /* Enable or disable tooltips changed */
   void updateTooltipOption();
+
+  void styleChanged();
 
 signals:
   /* Emitted whenever OK or Apply is pressed on the dialog window */
@@ -263,6 +271,8 @@ private:
 
   QFontDialog *fontDialog = nullptr;
 
+  atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
+  atools::gui::GridDelegate *gridDelegate = nullptr;
 };
 
 #endif // LITTLENAVMAP_OPTIONSDIALOG_H
