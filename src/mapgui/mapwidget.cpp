@@ -3046,23 +3046,18 @@ void MapWidget::updateMapObjectsShown()
   Ui::MainWindow *ui = mainWindow->getUi();
 
   // Sun shading ====================================================
-  setShowMapSunShading(ui->actionMapShowSunShading->isChecked() &&
-                       currentThemeIndex != map::SIMPLE && currentThemeIndex != map::PLAIN
-                       && currentThemeIndex != map::ATLAS);
+  setShowMapSunShading(ui->actionMapShowSunShading->isEnabled() && ui->actionMapShowSunShading->isChecked());
   paintLayer->setSunShading(sunShadingFromUi());
 
   // Weather source ====================================================
   paintLayer->setWeatherSource(weatherSourceFromUi());
 
   // Other map features ====================================================
-  setShowMapPois(ui->actionMapShowCities->isChecked() &&
-                 (currentThemeIndex == map::SIMPLE || currentThemeIndex == map::PLAIN || currentThemeIndex == map::ATLAS));
+  setShowMapPois(ui->actionMapShowCities->isEnabled() && ui->actionMapShowCities->isChecked());
   setShowGrid(ui->actionMapShowGrid->isChecked());
 
-  // Need to keep track of hillshading separately since Marble has not getter
-  hillshading = ui->actionMapShowHillshading->isChecked() &&
-                (currentThemeIndex == map::OPENSTREETMAP || currentThemeIndex == map::CARTODARK ||
-                 currentThemeIndex == map::CARTOLIGHT || currentThemeIndex >= map::CUSTOM);
+  // Need to keep track of hillshading separately since Marble has no getter
+  hillshading = ui->actionMapShowHillshading->isEnabled() && ui->actionMapShowHillshading->isChecked();
   setPropertyValue("hillshading", hillshading);
 
   map::MapTypes oldTypes = getShownMapFeatures();
