@@ -199,7 +199,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
   {
     if(opts.testFlag(optsd::TOOLTIP_NAVAID))
     {
-      for(const proc::MapProcedurePoint& ap : mapSearchResult.procPoints)
+      for(const map::MapProcedurePoint& pt : mapSearchResult.procPoints)
       {
         if(checkText(html))
         {
@@ -210,7 +210,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
         if(!html.isEmpty())
           html.textBar(TEXT_BAR_LENGTH);
 
-        info.procedurePointText(ap, html, &route);
+        info.procedurePointText(pt, html, &route);
 
         distance = false; // do not show distance to last leg
 

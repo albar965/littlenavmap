@@ -3732,8 +3732,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           {
             // Display warnings for fuel at destination only if fuel was calculated from a valid performance and profile
             if(remainingFuelLbs <= 0.1f || remainingFuelGal <= 0.1f)
-              html.id(pid::DEST_FUEL).row2Error(tr("Fuel (insufficient):"),
-                                                Unit::fuelLbsAndGalLocalOther(remainingFuelLbs, remainingFuelGal, false, false));
+              html.id(pid::DEST_FUEL).row2Error(tr("Fuel:"), tr("Insufficient"));
             else if(remainingFuelLbs < perfController->getFuelReserveAtDestinationLbs() ||
                     remainingFuelGal < perfController->getFuelReserveAtDestinationGal())
               // Required reserves at destination

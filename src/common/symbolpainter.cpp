@@ -30,6 +30,7 @@
 
 #include <QPainter>
 #include <QApplication>
+#include <QStringBuilder>
 #include <marble/GeoPainter.h>
 
 using namespace Marble;
@@ -1233,28 +1234,20 @@ QStringList SymbolPainter::airportTexts(optsd::DisplayOptionsAirport dispOpts, t
 {
   QStringList texts;
 
-  // Build ident/name combination - flags are layer dependent
-  if(flags & textflags::IDENT && flags & textflags::NAME && dispOpts & optsd::ITEM_AIRPORT_NAME)
-    texts.append(atools::elideTextShort(airport.name, maxTextLength) + " (" + airport.displayIdent() + ")");
-  else if(flags & textflags::IDENT)
-    texts.append(airport.displayIdent());
-  else if(flags & textflags::NAME)
-    texts.append(airport.name);
-
   if(flags & textflags::INFO)
   {
     if(airport.towerFrequency != 0 && dispOpts & optsd::ITEM_AIRPORT_TOWER)
-      texts.append(tr("CT ") + QString::number(roundComFrequency(airport.towerFrequency), 'f', 3));
+      texts.append(tr("CT ") % QString::number(roundComFrequency(airport.towerFrequency), 'f', 3));
 
     QString autoWeather;
     if(dispOpts & optsd::ITEM_AIRPORT_ATIS)
     {
       if(airport.atisFrequency > 0)
-        autoWeather = tr("ATIS ") + QString::number(roundComFrequency(airport.atisFrequency), 'f', 3);
+        autoWeather = tr("ATIS ") % QString::number(roundComFrequency(airport.atisFrequency), 'f', 3);
       else if(airport.awosFrequency > 0)
-        autoWeather = tr("AWOS ") + QString::number(roundComFrequency(airport.awosFrequency), 'f', 3);
+        autoWeather = tr("AWOS ") % QString::number(roundComFrequency(airport.awosFrequency), 'f', 3);
       else if(airport.asosFrequency > 0)
-        autoWeather = tr("ASOS ") + QString::number(roundComFrequency(airport.asosFrequency), 'f', 3);
+        autoWeather = tr("ASOS ") % QString::number(roundComFrequency(airport.asosFrequency), 'f', 3);
     }
 
     if(!autoWeather.isEmpty())
@@ -1263,15 +1256,26 @@ QStringList SymbolPainter::airportTexts(optsd::DisplayOptionsAirport dispOpts, t
     // bool elevUnit = Unit::getUnitAltStr() != Unit::getUnitShortDistStr();
     if(dispOpts & optsd::ITEM_AIRPORT_RUNWAY)
       if(airport.longestRunwayLength != 0 || airport.getPosition().getAltitude() != 0.f)
-        texts.append(Unit::altFeet(airport.getPosition().getAltitude(),
-                                   true /*addUnit*/, true /*narrow*/) + " " +
-                     (airport.flags.testFlag(map::AP_LIGHT) ? "L " : "- ") +
-                     Unit::distShortFeet(airport.longestRunwayLength,
-                                         true /*addUnit*/, true /*narrow*/) + " "
-                     // + (airport.unicomFrequency == 0 ? QString() :
-                     // QString::number(airport.unicomFrequency / 1000., 'f', 3))
-                     );
+        texts.append(Unit::altFeet(airport.getPosition().getAltitude(), true /*addUnit*/, true /*narrow*/) % " " %
+                     (airport.flags.testFlag(map::AP_LIGHT) ? "L " : "- ") %
+                     Unit::distShortFeet(airport.longestRunwayLength, true /*addUnit*/, true /*narrow*/) % " ");
   }
+
+  // Build ident/name combination - flags are layer dependent
+  if(flags & textflags::IDENT && flags & textflags::NAME && dispOpts & optsd::ITEM_AIRPORT_NAME)
+  {
+    if(texts.isEmpty())
+    {
+      texts.prepend(atools::elideTextShort(airport.name, maxTextLength));
+      texts.prepend(airport.displayIdent());
+    }
+    else
+      texts.prepend(atools::elideTextShort(airport.name, maxTextLength) % " (" % airport.displayIdent() % ")");
+  }
+  else if(flags & textflags::IDENT)
+    texts.prepend(airport.displayIdent());
+  else if(flags & textflags::NAME)
+    texts.prepend(airport.name);
   return texts;
 }
 
