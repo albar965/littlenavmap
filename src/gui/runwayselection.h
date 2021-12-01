@@ -18,9 +18,13 @@
 #ifndef LNM_RUNWAYSELECTION_H
 #define LNM_RUNWAYSELECTION_H
 
-#include "common/maptypes.h"
-
 #include <QObject>
+
+namespace map {
+struct MapRunway;
+struct MapRunwayEnd;
+struct MapAirport;
+}
 
 class QLabel;
 class QTableWidget;
@@ -30,6 +34,8 @@ namespace gui {
 class ItemViewZoomHandler;
 }
 }
+
+struct RunwayIdxEntry;
 
 /*
  * Provides methods to fill a table widget with runway information from an airport and to select a runway.
@@ -41,7 +47,7 @@ class RunwaySelection :
 
 public:
   /* The table should allow only single row selection */
-  explicit RunwaySelection(QObject *parent, const map::MapAirport& mapAirport, QTableWidget *runwayTableParam);
+  explicit RunwaySelection(QObject *parent, const map::MapAirport& mapAirport, QTableWidget *runwayTableWidgetParam);
   virtual ~RunwaySelection() override;
 
   RunwaySelection(const RunwaySelection& other) = delete;
@@ -59,11 +65,10 @@ public:
   /* Get currently selected runway and runway end */
   void getCurrentSelected(map::MapRunway& runway, map::MapRunwayEnd& end) const;
 
+  QString getCurrentSelectedName() const;
+
   /* Get airport as passed in into the constructor */
-  const map::MapAirport& getAirport() const
-  {
-    return airport;
-  }
+  const map::MapAirport& getAirport() const;
 
   /* Set to true to show pattern altitude in the list. Otherwise omitted */
   void setShowPattern(bool value)
@@ -76,6 +81,12 @@ public:
     return !runways.isEmpty();
   }
 
+  /* Set a list of runways to use as filter. Can uase RW prefix or not. All are shown if empty. No wildcards. */
+  void setRunwayNameFilter(const QStringList& value)
+  {
+    runwayNameFilter = value;
+  }
+
 signals:
   /* Selection in the table has changed. */
   void itemSelectionChanged();
@@ -86,15 +97,19 @@ signals:
 private:
   void fillAirportLabel();
   void fillRunwayList();
-  void addItem(const map::MapRunway& rw, int index, bool primary);
+  void addItem(const RunwayIdxEntry& entry, int index);
 
-  /* List of runways. Index is attached to table item in the first column */
-  QList<map::MapRunway> runways;
-  map::MapAirport airport;
+  /* Apply exact match runway filter. Prefix RW can be used */
+  bool includeRunway(const QString& runwayName);
+
+  /* List of runways (once per end) and runway ends. Index is attached to table item in the first column */
+  QList<RunwayIdxEntry> runways;
+  map::MapAirport *airport = nullptr;
   bool showPattern = false;
 
+  QStringList runwayNameFilter;
   QLabel *airportLabel = nullptr;
-  QTableWidget *runwayTable = nullptr;
+  QTableWidget *runwayTableWidget = nullptr;
   atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
 };
 

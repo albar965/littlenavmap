@@ -17,20 +17,20 @@
 
 #include "route/customproceduredialog.h"
 
-#include "common/unitstringtool.h"
 #include "common/constants.h"
-#include "geo/calculations.h"
+#include "common/maptypes.h"
 #include "common/unit.h"
-#include "gui/runwayselection.h"
-
-#include "ui_customproceduredialog.h"
-
+#include "common/unitstringtool.h"
+#include "geo/calculations.h"
 #include "gui/helphandler.h"
+#include "gui/runwayselection.h"
 #include "gui/widgetstate.h"
 #include "settings/settings.h"
+#include "ui_customproceduredialog.h"
 
 #include <QPushButton>
 #include <QStringBuilder>
+
 
 CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirport& mapAirport, bool departureParam,
                                              const QString& dialogHeader) :

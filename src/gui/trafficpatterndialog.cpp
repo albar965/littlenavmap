@@ -17,20 +17,22 @@
 
 #include "gui/trafficpatterndialog.h"
 
-#include "common/constants.h"
-#include "gui/runwayselection.h"
-#include "geo/calculations.h"
-#include "gui/widgetutil.h"
-#include "gui/widgetstate.h"
-#include "settings/settings.h"
-#include "gui/helphandler.h"
-#include "common/unitstringtool.h"
-#include "common/unit.h"
 #include "atools.h"
+#include "common/constants.h"
+#include "common/maptypes.h"
+#include "common/unit.h"
+#include "common/unitstringtool.h"
+#include "geo/calculations.h"
+#include "gui/helphandler.h"
+#include "gui/runwayselection.h"
+#include "gui/widgetstate.h"
+#include "gui/widgetutil.h"
+#include "settings/settings.h"
 
 #include "ui_trafficpatterndialog.h"
 
 #include <QColorDialog>
+
 
 using atools::geo::Pos;
 

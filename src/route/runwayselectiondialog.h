@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LNM_CUSTOMPROCEDUREDIALOG_H
-#define LNM_CUSTOMPROCEDUREDIALOG_H
+#ifndef LNM_RUNWAY_SELECTION_DIALOG_H
+#define LNM_RUNWAY_SELECTION_DIALOG_H
 
 #include <QDialog>
 
@@ -27,41 +27,31 @@ struct MapRunwayEnd;
 }
 
 namespace Ui {
-class CustomProcedureDialog;
+class RunwaySelectionDialog;
 }
 
 class RunwaySelection;
 class QAbstractButton;
-class UnitStringTool;
 
 /*
- * Shows airport and runway information and allows to configure a custom approach procedure for a selected runway.
+ * Shows airport and runway information and allows to select a runway to be assigned to a multi runway SID or STAR.
  *
- * Reads state on intiantiation and saves it on destruction
+ * Reads state on intiantiation and saves it on destruction.
  */
-class CustomProcedureDialog :
+class RunwaySelectionDialog :
   public QDialog
 {
   Q_OBJECT
 
 public:
-  explicit CustomProcedureDialog(QWidget *parent, const map::MapAirport& mapAirport, bool departureParam, const QString& dialogHeader);
-  virtual ~CustomProcedureDialog() override;
+  explicit RunwaySelectionDialog(QWidget *parent, const map::MapAirport& mapAirport, const QStringList& runwayNames, const QString& header);
+  virtual ~RunwaySelectionDialog() override;
 
-  CustomProcedureDialog(const CustomProcedureDialog& other) = delete;
-  CustomProcedureDialog& operator=(const CustomProcedureDialog& other) = delete;
+  RunwaySelectionDialog(const RunwaySelectionDialog& other) = delete;
+  RunwaySelectionDialog& operator=(const RunwaySelectionDialog& other) = delete;
 
-  /* Selected runway and end or invalid if none */
-  void getSelected(map::MapRunway& runway, map::MapRunwayEnd& end) const;
-
-  /* Distance to runway threshold in NM */
-  float getLegDistance() const;
-
-  /* Offset to runway heading in degree. Positive is CW and negative is CCW. */
-  float getLegOffsetAngle() const;
-
-  /* Altitude at entry point above airport elevation in feet */
-  float getEntryAltitude() const;
+  /* Selected runway name or empty if none */
+  QString getSelectedName() const;
 
 private:
   void restoreState();
@@ -71,11 +61,8 @@ private:
   void updateWidgets();
   void doubleClicked();
 
-  Ui::CustomProcedureDialog *ui;
+  Ui::RunwaySelectionDialog *ui;
   RunwaySelection *runwaySelection = nullptr;
-
-  UnitStringTool *units = nullptr;
-  bool departure = false;
 };
 
-#endif // LNM_CUSTOMPROCEDUREDIALOG_H
+#endif // LNM_RUNWAY_SELECTION_DIALOG_H

@@ -194,6 +194,7 @@ const QLatin1String ROUTE_EXPORT_FORMATS("RouteExport/RouteExportFormats");
 const QLatin1String HOLD_DIALOG_COLOR("Route/HoldDialogColor");
 const QLatin1String CUSTOM_APPROACH_DIALOG("Route/CustomApproachDialog");
 const QLatin1String CUSTOM_DEPARTURE_DIALOG("Route/CustomDepartureDialog");
+const QLatin1String RUNWAY_SELECTION_DIALOG("Route/RunwaySelectionDialog");
 const QLatin1String ROUTE_CALC_DIALOG("Route/RouteCalcDialog");
 const QLatin1String SEARCHTAB_AIRPORT_WIDGET("SearchPaneAirport/Widget");
 const QLatin1String SEARCHTAB_WIDGET_TABS("SearchPaneAirport/WidgetTabs");

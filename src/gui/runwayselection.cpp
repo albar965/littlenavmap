@@ -22,6 +22,7 @@
 #include "query/airportquery.h"
 #include "geo/calculations.h"
 #include "query/mapquery.h"
+#include "fs/util/fsutil.h"
 #include "gui/itemviewzoomhandler.h"
 
 #include "atools.h"
@@ -29,19 +30,48 @@
 #include <QLabel>
 #include <QTableWidget>
 
-RunwaySelection::RunwaySelection(QObject *parent, const map::MapAirport& mapAirport, QTableWidget *runwayTableParam)
-  : QObject(parent), airport(mapAirport), runwayTable(runwayTableParam)
+struct RunwayIdxEntry
 {
-  connect(runwayTable, &QTableWidget::itemSelectionChanged, this, &RunwaySelection::itemSelectionChanged);
-  connect(runwayTable, &QTableWidget::doubleClicked, this, &RunwaySelection::doubleClicked);
+  RunwayIdxEntry(map::MapRunway runwayParam, map::MapRunwayEnd endParam)
+    : runway(runwayParam), end(endParam)
+  {
+  }
+
+  RunwayIdxEntry()
+  {
+  }
+
+  bool isPrimary() const
+  {
+    return end.id == runway.primaryEndId;
+  }
+
+  bool isSecondary() const
+  {
+    return end.id == runway.secondaryEndId;
+  }
+
+  map::MapRunway runway;
+  map::MapRunwayEnd end;
+};
+
+RunwaySelection::RunwaySelection(QObject *parent, const map::MapAirport& mapAirport, QTableWidget *runwayTableWidgetParam)
+  : QObject(parent), runwayTableWidget(runwayTableWidgetParam)
+{
+  airport = new map::MapAirport;
+  *airport = mapAirport;
+
+  connect(runwayTableWidget, &QTableWidget::itemSelectionChanged, this, &RunwaySelection::itemSelectionChanged);
+  connect(runwayTableWidget, &QTableWidget::doubleClicked, this, &RunwaySelection::doubleClicked);
 
   // Resize widget to get rid of the too large default margins
-  zoomHandler = new atools::gui::ItemViewZoomHandler(runwayTable);
+  zoomHandler = new atools::gui::ItemViewZoomHandler(runwayTableWidget);
 }
 
 RunwaySelection::~RunwaySelection()
 {
   delete zoomHandler;
+  delete airport;
 }
 
 void RunwaySelection::restoreState()
@@ -49,7 +79,7 @@ void RunwaySelection::restoreState()
   fillRunwayList();
   fillAirportLabel();
 
-  QItemSelectionModel *selection = runwayTable->selectionModel();
+  QItemSelectionModel *selection = runwayTableWidget->selectionModel();
 
   if(selection != nullptr)
   {
@@ -57,150 +87,182 @@ void RunwaySelection::restoreState()
 
     if(!runways.isEmpty())
       // Select first row
-      selection->select(runwayTable->model()->index(0, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
+      selection->select(runwayTableWidget->model()->index(0, 0), QItemSelectionModel::Select | QItemSelectionModel::Rows);
   }
+}
+
+QString RunwaySelection::getCurrentSelectedName() const
+{
+  map::MapRunway runway;
+  map::MapRunwayEnd end;
+  getCurrentSelected(runway, end);
+  return end.name;
 }
 
 void RunwaySelection::getCurrentSelected(map::MapRunway& runway, map::MapRunwayEnd& end) const
 {
-  QItemSelectionModel *selection = runwayTable->selectionModel();
+  QItemSelectionModel *selection = runwayTableWidget->selectionModel();
 
   if(selection != nullptr)
   {
     QModelIndexList rows = selection->selectedRows();
     if(!rows.isEmpty())
     {
-      QTableWidgetItem *item = runwayTable->item(rows.first().row(), 0);
+      QTableWidgetItem *item = runwayTableWidget->item(rows.first().row(), 0);
       if(item != nullptr)
       {
         // Get index and primary from user role data
-        QVariantList data = item->data(Qt::UserRole).toList();
-        int rwIndex = data.at(0).toInt();
-        bool primary = data.at(1).toBool();
+        int rwIndex = item->data(Qt::UserRole).toInt();
 
         // Get runway
-        runway = runways.at(rwIndex);
+        runway = runways.at(rwIndex).runway;
 
         // Get runway end
-        end = NavApp::getAirportQuerySim()->getRunwayEndById(primary ? runway.primaryEndId : runway.secondaryEndId);
+        end = runways.at(rwIndex).end;
       }
     }
   }
+}
+
+const map::MapAirport& RunwaySelection::getAirport() const
+{
+  return *airport;
 }
 
 void RunwaySelection::fillAirportLabel()
 {
   if(airportLabel != nullptr)
     airportLabel->setText(tr("<b>%1, elevation %2</b>").
-                          arg(map::airportTextShort(airport)).
-                          arg(Unit::altFeet(airport.position.getAltitude())));
+                          arg(map::airportTextShort(*airport)).
+                          arg(Unit::altFeet(airport->position.getAltitude())));
 }
 
 void RunwaySelection::fillRunwayList()
 {
-  // Get all runways from airport
-  const QList<map::MapRunway> *rw = NavApp::getAirportQuerySim()->getRunways(airport.id);
-  if(rw != nullptr)
-    runways = *rw;
+  AirportQuery *airportQuerySim = NavApp::getAirportQuerySim();
 
-  runwayTable->clear();
-  runwayTable->setDisabled(runways.isEmpty());
+  // Get all runways from airport ==================================
+  const QList<map::MapRunway> *rw = airportQuerySim->getRunways(airport->id);
+  if(rw != nullptr)
+  {
+    // Append each runway twice with primary and secondary ends and apply filter ==========
+    for(const map::MapRunway& r : *rw)
+    {
+      map::MapRunwayEnd prim = airportQuerySim->getRunwayEndById(r.primaryEndId);
+      if(includeRunway(prim.name))
+        runways.append(RunwayIdxEntry(r, prim));
+
+      map::MapRunwayEnd sec = airportQuerySim->getRunwayEndById(r.secondaryEndId);
+      if(includeRunway(sec.name))
+        runways.append(RunwayIdxEntry(r, sec));
+    }
+
+    // Sort by length and heading ===================
+    std::sort(runways.begin(), runways.end(), [](const RunwayIdxEntry& rw1, const RunwayIdxEntry& rw2) -> bool {
+      return atools::almostEqual(rw1.runway.length, rw2.runway.length) ?
+      rw1.end.heading<rw2.end.heading : rw1.runway.length> rw2.runway.length;
+    });
+  }
+
+  runwayTableWidget->clear();
+  runwayTableWidget->setDisabled(runways.isEmpty());
 
   if(runways.isEmpty())
   {
-    runwayTable->setSelectionMode(QAbstractItemView::NoSelection);
-    runwayTable->clearSelection();
+    runwayTableWidget->setSelectionMode(QAbstractItemView::NoSelection);
+    runwayTableWidget->clearSelection();
 
-    runwayTable->setRowCount(1);
-    runwayTable->setColumnCount(1);
-    runwayTable->setItem(0, 0, new QTableWidgetItem(tr("Airport has no runway.")));
+    runwayTableWidget->setRowCount(1);
+    runwayTableWidget->setColumnCount(1);
+    runwayTableWidget->setItem(0, 0, new QTableWidgetItem(tr("Airport has no runway.")));
   }
   else
   {
-    runwayTable->setSelectionMode(QAbstractItemView::SingleSelection);
-
-    // Sort by length and heading
-    std::sort(runways.begin(), runways.end(), [](const map::MapRunway& rw1, const map::MapRunway& rw2) -> bool {
-      return atools::almostEqual(rw1.length, rw2.length) ? rw1.heading<rw2.heading : rw1.length> rw2.length;
-    });
+    runwayTableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 
     // Set table size
-    runwayTable->setRowCount(runways.size() * 2);
-    runwayTable->setColumnCount(5);
+    runwayTableWidget->setRowCount(runways.size());
+    runwayTableWidget->setColumnCount(5);
 
-    runwayTable->setHorizontalHeaderLabels({tr(" Number "), tr(" Length and Width "), tr(" Heading "), tr(" Surface "),
-                                            tr(" Facilities ")});
+    runwayTableWidget->setHorizontalHeaderLabels({tr(" Number "), tr(" Length and Width "), tr(" Heading "), tr(" Surface "),
+                                                  tr(" Facilities ")});
 
     // Index in runway table
     int index = 0;
-    for(const map::MapRunway& runway : runways)
-    {
-      // Primary end
-      addItem(runway, index, true);
+    for(const RunwayIdxEntry& runway : runways)
+      addItem(runway, index++);
 
-      // Secondary end
-      addItem(runway, index, false);
-      index++;
-    }
-    runwayTable->resizeColumnsToContents();
+    runwayTableWidget->resizeColumnsToContents();
   }
 }
 
-void RunwaySelection::addItem(const map::MapRunway& rw, int index, bool primary)
+void RunwaySelection::addItem(const RunwayIdxEntry& entry, int index)
 {
   // Collect attributes
   QStringList atts;
 
-  if(rw.isLighted())
+  if(entry.runway.isLighted())
     atts.append(tr("Lighted"));
 
-  if(primary && rw.primaryClosed)
+  if(entry.isPrimary() && entry.runway.primaryClosed)
     atts.append(tr("Closed"));
 
-  if(!primary && rw.secondaryClosed)
+  if(entry.isSecondary() && entry.runway.secondaryClosed)
     atts.append(tr("Closed"));
 
   // Add ILS and similar approach aids
-  QVector<map::MapIls> ils = NavApp::getMapQueryGui()->getIlsByAirportAndRunway(airport.ident, primary ? rw.primaryName : rw.secondaryName);
-  for(map::MapIls i : ils)
+  for(map::MapIls i : NavApp::getMapQueryGui()->getIlsByAirportAndRunway(airport->ident, entry.end.name))
     atts.append(map::ilsTypeShort(i));
   atts.removeDuplicates();
 
-  if(showPattern && rw.patternAlt > 100.f)
-    atts.append(tr("Pattern at %1").arg(Unit::altFeet(rw.patternAlt)));
+  if(showPattern && entry.runway.patternAlt > 100.f)
+    atts.append(tr("Pattern at %1").arg(Unit::altFeet(entry.runway.patternAlt)));
 
-  float heading = atools::geo::normalizeCourse((primary ? rw.heading : atools::geo::opposedCourseDeg(
-                                                  rw.heading)) - airport.magvar);
-
-  // Row index in table
-  int row = index * 2 + !primary;
+  float heading = atools::geo::normalizeCourse(entry.end.heading - airport->magvar);
 
   // Column index in table
   int col = 0;
 
   // First item with index data attached
-  QTableWidgetItem *item = new QTableWidgetItem(primary ? rw.primaryName : rw.secondaryName);
-  item->setData(Qt::UserRole, QVariantList({index, primary}));
+  QTableWidgetItem *item = new QTableWidgetItem(entry.end.name);
+  item->setData(Qt::UserRole, QVariant(index));
   QFont font = item->font();
   font.setBold(true);
   item->setFont(font);
-  runwayTable->setItem(row, col++, item);
+  runwayTableWidget->setItem(index, col++, item);
 
   // Dimensions
-  item = new QTableWidgetItem(tr("%1 x %2").arg(Unit::distShortFeet(rw.length, false)).arg(Unit::distShortFeet(rw.width)));
+  item = new QTableWidgetItem(tr("%1 x %2").
+                              arg(Unit::distShortFeet(entry.runway.length, false)).arg(Unit::distShortFeet(entry.runway.width)));
   item->setTextAlignment(Qt::AlignRight);
-  runwayTable->setItem(row, col++, item);
+  runwayTableWidget->setItem(index, col++, item);
 
   // Heading
   item = new QTableWidgetItem(tr("%1°M").arg(QLocale().toString(heading, 'f', 0)));
   item->setTextAlignment(Qt::AlignRight);
-  runwayTable->setItem(row, col++, item);
+  runwayTableWidget->setItem(index, col++, item);
 
   // Surface
-  item = new QTableWidgetItem(map::surfaceName(rw.surface));
-  runwayTable->setItem(row, col++, item);
+  item = new QTableWidgetItem(map::surfaceName(entry.runway.surface));
+  runwayTableWidget->setItem(index, col++, item);
 
   // Attributes
   item = new QTableWidgetItem(atts.join(", "));
-  runwayTable->setItem(row, col++, item);
+  runwayTableWidget->setItem(index, col++, item);
+}
+
+bool RunwaySelection::includeRunway(const QString& runwayName)
+{
+  if(runwayNameFilter.isEmpty())
+    // Include always
+    return true;
+  else
+  {
+    for(const QString& filter : runwayNameFilter)
+    {
+      if(atools::fs::util::runwayEqual(runwayName, filter))
+        return true;
+    }
+  }
+  return false;
 }
