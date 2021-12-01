@@ -93,15 +93,16 @@ const static QHash<opts::SimUpdateRate, SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
 });
 
 // Do not zoom closer automatically
-static float MIN_AUTO_ZOOM = 0.2f;
+static float MIN_AUTO_ZOOM_NM = 0.2f;
 
 // Maps minimum zoom in NM by altitude above ground in ft
 // Use odd numbers to avoid jumping at typical flown altitude levels
-static const QVector<std::pair<float, float> > ALT_TO_MIN_ZOOM_NM_FT =
+static const QVector<std::pair<float, float> > ALT_TO_MIN_ZOOM_FT_NM =
 {
-  {55.f, MIN_AUTO_ZOOM}, // 0.2 NM for flying below 55 ft AGL
-  {550.f, 0.5f},
-  {1250.f, 0.75f},
+  {100.f, MIN_AUTO_ZOOM_NM}, // 0.2 NM for flying below 55 ft AGL
+  {200.f, 0.2f},
+  {550.f, 0.4f},
+  {1250.f, 0.6f},
   {2250.f, 1.f},
   {3250.f, 2.f},
   {4250.f, 3.f},
@@ -134,9 +135,6 @@ const float MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM = 50.f;
 const double DEFAULT_MAP_DISTANCE_KM = 7000.;
 
 const double MAP_ZOOM_OUT_LIMIT_KM = 10000.;
-
-/* If width and height of a bounding rect are smaller than this use show point */
-const float POS_IS_POINT_EPSILON = 0.0001f;
 
 using atools::geo::Pos;
 
@@ -2310,8 +2308,16 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       nextWpPosVisible = widgetRectSmallPlan.contains(nextWpPoint);
     }
 
+    // Use the touchdown rect also for minimum zoom if enabled
+    float touchdownZoomRectKm = MIN_ZOOM_RECT_DIAMETER_KM;
+    if(od.getFlags2().testFlag(opts2::ROUTE_ZOOM_LANDING))
+      touchdownZoomRectKm = Unit::rev(od.getSimZoomOnLandingDistance(), Unit::distMeterF) / 1000.f;
+
     if(centerAircraftChecked && !contextMenuActive) // centering required by button but not while menu is open
     {
+      // Postpone screen updates
+      setUpdatesEnabled(false);
+
       bool aircraftVisible = centerAircraftAndLeg ?
                              widgetRectSmallPlan.contains(aircraftPoint) : // Box for aircraft and waypoint
                              widgetRectSmall.contains(aircraftPoint); // Use defined box in options
@@ -2337,7 +2343,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
             bool zoomToRect = now - lastCenterAcAndWp > timeToWpUpdateMs;
 
 #ifdef DEBUG_INFORMATION_SIMUPDATE
-            qDebug() << Q_FUNC_INFO;
+            qDebug() << Q_FUNC_INFO << "==========";
             qDebug() << "curPosVisible" << aircraftVisible;
             qDebug() << "nextWpPosVisible" << nextWpPosVisible;
             qDebug() << "updateAlways" << updateAlways;
@@ -2348,61 +2354,78 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
               // Wait 15 seconds after every update
               lastCenterAcAndWp = now;
 
-              // Postpone screen updates
-              setUpdatesEnabled(false);
-
               atools::geo::Rect aircraftWpRect(nextWpPos);
               aircraftWpRect.extend(aircraft.getPosition());
+
+              // if(std::abs(aircraftWpRect.getWidthDegree()) < 0.0005)
+              // qDebug() << Q_FUNC_INFO;
 
               if(std::abs(aircraftWpRect.getWidthDegree()) > 170.f || std::abs(aircraftWpRect.getHeightDegree()) > 170.f)
                 aircraftWpRect = atools::geo::Rect(nextWpPos);
 
-              if(!aircraftWpRect.isPoint(POS_IS_POINT_EPSILON))
+              if(!aircraftWpRect.isPoint(POS_IS_POINT_EPSILON_DEG))
               {
                 // Not a point but probably a flat rectangle
 
-                if(std::abs(aircraftWpRect.getWidthDegree()) <= POS_IS_POINT_EPSILON * 2.f)
+                if(std::abs(aircraftWpRect.getWidthDegree()) <= POS_IS_POINT_EPSILON_DEG * 2.f)
                   // Expand E/W direction
-                  aircraftWpRect.inflate(POS_IS_POINT_EPSILON, 0.f);
+                  aircraftWpRect.inflate(POS_IS_POINT_EPSILON_DEG, 0.f);
 
-                if(std::abs(aircraftWpRect.getHeightDegree()) <= POS_IS_POINT_EPSILON * 2.f)
+                if(std::abs(aircraftWpRect.getHeightDegree()) <= POS_IS_POINT_EPSILON_DEG * 2.f)
                   // Expand N/S direction
-                  aircraftWpRect.inflate(0.f, POS_IS_POINT_EPSILON);
+                  aircraftWpRect.inflate(0.f, POS_IS_POINT_EPSILON_DEG);
               }
 
 #ifdef DEBUG_INFORMATION_SIMUPDATE
-              qDebug() << Q_FUNC_INFO;
-              qDebug() << "curPoint" << aircraftPoint;
+              qDebug() << Q_FUNC_INFO << "+++++++++++++++++++";
+              qDebug() << "aircraftPoint" << aircraftPoint;
               qDebug() << "nextWpPoint" << nextWpPoint;
-              qDebug() << "rect()" << this->rect();
+              qDebug() << "this->rect()" << this->rect();
               qDebug() << "widgetRectSmall" << widgetRectSmall;
-              qDebug() << "ac.getPosition()" << aircraft.getPosition();
-              qDebug() << "rect" << rect;
+              qDebug() << "aircraft.getPosition()" << aircraft.getPosition();
+              qDebug() << "aircraftWpRect" << aircraftWpRect;
+              qDebug() << "aircraftWpRect.getWidthDegree()" << aircraftWpRect.getWidthDegree();
+              qDebug() << "aircraftWpRect.getHeightDegree()" << aircraftWpRect.getHeightDegree();
 #endif
 
-              if(!aircraftWpRect.isPoint(POS_IS_POINT_EPSILON))
+              if(!aircraftWpRect.isPoint(POS_IS_POINT_EPSILON_DEG))
               {
+                // Get zoom distance from table
+                auto zoomDist = std::lower_bound(ALT_TO_MIN_ZOOM_FT_NM.begin(), ALT_TO_MIN_ZOOM_FT_NM.end(),
+                                                 aircraft.getAltitudeAboveGroundFt(),
+                                                 [](const std::pair<float, float>& pair, float value)->bool {
+                  return pair.first < value;
+                });
+
+                // Smaller values mean zoom closer.
+                float factor = od.getSimUpdateBoxCenterLegZoom() / 100.f;
+                float minZoomDistKm = atools::geo::nmToKm(std::max(zoomDist->second * factor, MIN_AUTO_ZOOM_NM));
+
 #ifndef DEBUG_PRETEND_ZOOM
                 // Center on map for now ================================================
                 centerRectOnMap(aircraftWpRect);
 #endif
 
+#ifdef DEBUG_INFORMATION_SIMUPDATE
+                qDebug() << Q_FUNC_INFO << "distance()" << distance();
+#endif
                 // ================================================
                 // Zoom out for a maximum of four times until aircraft and waypoint fit into the shrinked rectangle
                 for(int i = 0; i < 4; i++)
                 {
-#ifdef DEBUG_INFORMATION
-                  qDebug() << Q_FUNC_INFO << "adjustement iteration" << i;
-#endif
-
                   // Check if aircraft and next waypoint fit onto the map =======================
                   aircraftPoint = conv.wToS(aircraft.getPosition(), CoordinateConverter::DEFAULT_WTOS_SIZE, &aircraftVisible);
                   nextWpPoint = conv.wToS(nextWpPos, CoordinateConverter::DEFAULT_WTOS_SIZE, &nextWpPosVisible);
                   aircraftVisible = aircraftVisible && widgetRectSmallPlan.contains(aircraftPoint);
                   nextWpPosVisible = nextWpPosVisible && widgetRectSmallPlan.contains(nextWpPoint);
 
+#ifdef DEBUG_INFORMATION
+                  qDebug() << Q_FUNC_INFO << "adjustement iteration" << i
+                           << "aircraftVisible" << aircraftVisible << "nextWpPosVisible" << nextWpPosVisible;
+#endif
+
 #ifndef DEBUG_PRETEND_ZOOM
-                  if(!aircraftVisible || !nextWpPosVisible)
+                  if(!aircraftVisible || !nextWpPosVisible || distance() < minZoomDistKm)
                     // Either point is not visible - zoom out
                     zoomOut(Marble::Instant);
                   else
@@ -2410,6 +2433,10 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                   // Both are visible - done
                   break;
                 }
+
+#ifdef DEBUG_INFORMATION_SIMUPDATE
+                qDebug() << Q_FUNC_INFO << "distance()" << distance();
+#endif
 
                 // ================================================
                 // Avoid zooming too close - have to recalculate values again due to zoomOut above
@@ -2424,19 +2451,9 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                 // Do not zoom out if distance is larger than 1/5 of the screen size
                 double minSizePixelScreenRect = QLineF(rect().topLeft(), rect().bottomRight()).length() / 5;
 
-                // Get zoom distance from table
-                auto zoomDist = std::lower_bound(ALT_TO_MIN_ZOOM_NM_FT.begin(), ALT_TO_MIN_ZOOM_NM_FT.end(),
-                                                 aircraft.getAltitudeAboveGroundFt(),
-                                                 [](const std::pair<float, float>& pair, float value)->bool {
-                  return pair.first < value;
-                });
-
-                // Smaller values mean zoom closer.
-                float factor = od.getSimUpdateBoxCenterLegZoom() / 100.f;
-                float minZoomDistKm = atools::geo::nmToKm(std::max(zoomDist->second * factor, MIN_AUTO_ZOOM));
-
 #ifdef DEBUG_INFORMATION
                 qDebug() << Q_FUNC_INFO << "distance()" << distance() << "minZoomDistKm" << minZoomDistKm
+                         << "zoomDist->first" << zoomDist->first << "zoomDist->second" << zoomDist->second
                          << "aircraftWpScreenDistPixel" << aircraftWpScreenDistPixel
                          << "minSizePixelScreenRect" << minSizePixelScreenRect;
 #endif
@@ -2451,10 +2468,18 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                   qDebug() << Q_FUNC_INFO << "after setDistanceToMap: distance()" << distance();
 #endif
                 }
-              }
+#ifdef DEBUG_INFORMATION_SIMUPDATE
+                qDebug() << Q_FUNC_INFO << "distance()" << distance();
+#endif
+              } // if(!aircraftWpRect.isPoint(POS_IS_POINT_EPSILON))
 #ifndef DEBUG_PRETEND_ZOOM
               else if(aircraftWpRect.isValid())
+              {
+#ifdef DEBUG_INFORMATION
+                qDebug() << Q_FUNC_INFO << "aircraftWpRect too small" << aircraftWpRect;
+#endif
                 centerPosOnMap(aircraft.getPosition());
+              }
 #endif
             } // if(!aircraftVisible || !nextWpPosVisible || updateAlways || zoomToRect)
           } // if(centerAircraftAndLeg)
@@ -2463,22 +2488,18 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
             // Center aircraft only ===================================================================
             if(!widgetRectSmall.contains(aircraftPoint) || // Aircraft out of user defined box or ...
                updateAlways) // ... update always
-            {
-              setUpdatesEnabled(false);
-
               // Center aircraft only
               centerPosOnMap(aircraft.getPosition());
-            }
           }
         } // if(!aircraftVisible || ...
 
         // Zoom close after touchdown ===================================================================
         // Only if user is not mousing around on the map
-        if(touchdownDetectedZoom && OptionData::instance().getFlags2().testFlag(opts2::ROUTE_ZOOM_LANDING))
+        if(touchdownDetectedZoom && od.getFlags2().testFlag(opts2::ROUTE_ZOOM_LANDING))
         {
-          double distKm = Unit::rev(OptionData::instance().getSimZoomOnLandingDistance(), Unit::distMeterF) / 1000.;
-          qDebug() << Q_FUNC_INFO << "Touchdown detected - zooming close" << distKm << "km";
-          setDistanceToMap(distKm);
+          qDebug() << Q_FUNC_INFO << "Touchdown detected - zooming close" << touchdownZoomRectKm << "km";
+          centerPosOnMap(aircraft.getPosition());
+          setDistanceToMap(touchdownZoomRectKm);
           touchdownDetectedZoom = false;
         }
       } // if(mouseState == mw::NONE && viewContext() == Marble::Still && !jumpBack->isActive())
@@ -2487,12 +2508,12 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     // if(aircraft.isFlying())
     // touchdownDetected = false;
 
-    if(!updatesEnabled())
-      setUpdatesEnabled(true);
-
     if((dataHasChanged || aiVisible) && !contextMenuActive)
       // Not scrolled or zoomed but needs a redraw
       update();
+
+    if(!updatesEnabled())
+      setUpdatesEnabled(true);
   } // if(now - lastSimUpdateMs > deltas.timeDeltaMs)
 }
 

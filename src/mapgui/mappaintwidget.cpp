@@ -45,9 +45,6 @@
 #include <marble/MarbleModel.h>
 #include <marble/AbstractFloatItem.h>
 
-/* If width and height of a bounding rect are smaller than this: Use show point */
-const float POS_IS_POINT_EPSILON = 0.0001f;
-
 // KM
 const static double MINIMUM_DISTANCE_KM = 0.05;
 const static double MAXIMUM_DISTANCE_KM = 6000.;
@@ -687,11 +684,11 @@ void MapPaintWidget::centerRectOnMap(const Marble::GeoDataLatLonBox& rect, bool 
 
 void MapPaintWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAdjust)
 {
-  if(!rect.isPoint(POS_IS_POINT_EPSILON) &&
+  if(!rect.isPoint(POS_IS_POINT_EPSILON_DEG) &&
      std::abs(rect.getWidthDegree()) < 180.f &&
      std::abs(rect.getHeightDegree()) < 180.f &&
-     std::abs(rect.getWidthDegree()) > POS_IS_POINT_EPSILON &&
-     std::abs(rect.getHeightDegree()) > POS_IS_POINT_EPSILON)
+     std::abs(rect.getWidthDegree()) > POS_IS_POINT_EPSILON_DEG &&
+     std::abs(rect.getHeightDegree()) > POS_IS_POINT_EPSILON_DEG)
   {
     // Make rectangle slightly bigger to avoid waypoints hiding at the window corners
     Rect scaled(rect);
@@ -875,15 +872,15 @@ void MapPaintWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
     return;
   }
 
-  if(rect.isPoint(POS_IS_POINT_EPSILON))
+  if(rect.isPoint(POS_IS_POINT_EPSILON_DEG))
     showPos(rect.getTopLeft(), 0.f, doubleClick);
   else
   {
-    if(atools::almostEqual(w, 0.f, POS_IS_POINT_EPSILON))
+    if(atools::almostEqual(w, 0.f, POS_IS_POINT_EPSILON_DEG))
       // Workaround for marble not being able to center certain lines
       // Turn rect into a square
       centerRectOnMap(Rect(rect.getWest() - h / 2, rect.getNorth(), rect.getEast() + h / 2, rect.getSouth()));
-    else if(atools::almostEqual(h, 0.f, POS_IS_POINT_EPSILON))
+    else if(atools::almostEqual(h, 0.f, POS_IS_POINT_EPSILON_DEG))
       // Turn rect into a square
       centerRectOnMap(Rect(rect.getWest(), rect.getNorth() + w / 2, rect.getEast(), rect.getSouth() - w / 2));
     else
