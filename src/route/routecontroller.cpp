@@ -2226,15 +2226,16 @@ void RouteController::visibleColumnsTriggered()
   treeDialog.setHeader({tr("Column Name"), tr("Description")});
 
   // Add header options to tree ========================================
-  QTreeWidgetItem *headerItem = treeDialog.addTopItem1(tr("Flight plan table header"));
+  QTreeWidgetItem *headerItem = treeDialog.addTopItem1(tr("Flight Plan Table Header"));
   treeDialog.addItem2(headerItem, rcol::HEADER_AIRPORT, tr("Airports"),
                       tr("Departure and destination airports with links."), QString(), routeLabel->getHeaderAirports());
-  treeDialog.addItem2(headerItem, rcol::HEADER_DEPART_DEST, tr("Departure and arrival"),
+  treeDialog.addItem2(headerItem, rcol::HEADER_DEPART_DEST, tr("Departure and Arrival"),
                       tr("SID, STAR and approach procedure information."), QString(), routeLabel->getHeaderDepartDest());
   treeDialog.addItem2(headerItem, rcol::HEADER_RUNWAY, tr("Runways"),
                       tr("Departure runway heading and length.\n"
-                         "Approach runway heading, effective landing distance and facilities."), QString(), routeLabel->getHeaderRunway());
-  treeDialog.addItem2(headerItem, rcol::HEADER_DIST_TIME, tr("Distance and time"),
+                         "Approach runway heading, available distance for landing, elevation and facilities."),
+                      QString(), routeLabel->getHeaderRunway());
+  treeDialog.addItem2(headerItem, rcol::HEADER_DIST_TIME, tr("Distance and Time"),
                       tr("Flight plan total distance and time."), QString(), routeLabel->getHeaderDistTime());
 
   // Add column names and description texts to tree ====================

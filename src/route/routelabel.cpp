@@ -376,11 +376,15 @@ void RouteLabel::buildHeaderRunway(atools::util::HtmlBuilder& html)
           if(runway.isValid())
           {
             html.b(tr("Land")).text(tr(" at ")).b(end.name).text(tr(", "));
-            html.text(formatter::courseTextFromTrue(end.heading, destLeg.getMagvar()), ahtml::NO_ENTITIES);
-            html.text(tr(", "));
-            html.text(Unit::distShortFeet(runway.length - (end.secondary ? runway.secondaryOffset : runway.primaryOffset)));
+
+            QStringList rwAtts;
+            rwAtts.append(formatter::courseTextFromTrue(end.heading, destLeg.getMagvar()));
+            rwAtts.append(Unit::distShortFeet(runway.length - (end.secondary ? runway.secondaryOffset : runway.primaryOffset)));
+            rwAtts.append(Unit::altFeet(destLeg.getAltitude()) % tr(" elev."));
             if(end.hasAnyVasi())
-              html.text(tr(", ")).text(end.uniqueVasiTypeStr().join(QObject::tr("/")));
+              rwAtts.append(end.uniqueVasiTypeStr().join(QObject::tr("/")));
+
+            html.text(rwAtts.join(tr(", ")), ahtml::NO_ENTITIES);
             html.text(tr(". "));
           }
         }

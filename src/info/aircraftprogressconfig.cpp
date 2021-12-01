@@ -82,19 +82,19 @@ void AircraftProgressConfig::progressConfiguration()
   treeDialog.addItem2(destItem, pid::DEST_GROSS_WEIGHT,  tr("Gross Weight"), tr("Estimated aircraft gross weight at destination."), QString());
 
   // TOC ==========================================================================================================
-  QTreeWidgetItem *tocItem = treeDialog.addTopItem1(tr("Top of climb"));
+  QTreeWidgetItem *tocItem = treeDialog.addTopItem1(tr("Top of Climb"));
   treeDialog.addItem2(tocItem, pid::TOC_DIST_TIME_ARR,  tr("Distance, Time and Arrival"), tr("Distance to, time to and arrival time in UTC at the top of climb."), QString());
   treeDialog.addItem2(tocItem, pid::TOC_FUEL,           tr("Fuel"), tr("Estimated fuel at top of climb."), QString());
   treeDialog.addItem2(tocItem, pid::TOC_FROM_DESTINATION, tr("From Departure"), tr("Distance from departure to top of climb."), QString());
 
   // TOD ==========================================================================================================
-  QTreeWidgetItem *todItem = treeDialog.addTopItem1(tr("Top of descent"));
+  QTreeWidgetItem *todItem = treeDialog.addTopItem1(tr("Top of Descent"));
   treeDialog.addItem2(todItem, pid::TOD_DIST_TIME_ARR,  tr("Distance, Time and Arrival"), tr("Distance to, time to and arrival time in UTC at the top of descent."), QString());
   treeDialog.addItem2(todItem, pid::TOD_FUEL,           tr("Fuel"), tr("Estimated fuel at top of descent."), QString());
   treeDialog.addItem2(todItem, pid::TOD_TO_DESTINATION, tr("To Destination"), tr("Distance from top of descent to destination."), QString());
 
   // Next ==========================================================================================================
-  QTreeWidgetItem *nextItem = treeDialog.addTopItem1(tr("Next waypoint"));
+  QTreeWidgetItem *nextItem = treeDialog.addTopItem1(tr("Next Waypoint"));
   treeDialog.addItem2(nextItem, pid::NEXT_LEG_TYPE,         tr("Leg Type"), tr("Type of a procedure leg describing the flying path."), QString());
   treeDialog.addItem2(nextItem, pid::NEXT_INSTRUCTIONS,     tr("Instructions"), tr("Procedure instructions showing how to fly,\n"
                                                                                    "like turn direction or required overfly."), QString());

@@ -1060,7 +1060,7 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
   if(threshold > 1.f)
   {
     html.row2(tr("Offset Threshold:"), Unit::distShortFeet(threshold));
-    html.row2(tr("Effective Landing Distance:"), Unit::distShortFeet(length - threshold));
+    html.row2(tr("Available Distance for Landing:"), Unit::distShortFeet(length - threshold));
   }
 
   float blastpad = rec->valueFloat("blast_pad");
@@ -3851,7 +3851,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
         // Top of climb  ===============================================================
         html.mark();
-        head(html, tr("Top of climb%1").arg(distanceToToc < 0.f ? tr(" (passed)") : QString()));
+        head(html, tr("Top of Climb%1").arg(distanceToToc < 0.f ? tr(" (passed)") : QString()));
         html.table();
 
         if(!(distanceToToc < map::INVALID_DISTANCE_VALUE))
