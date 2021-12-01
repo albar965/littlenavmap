@@ -285,8 +285,14 @@ private:
   void resetMapObjectsShown();
 
   void searchSelectionChanged(const SearchBaseTable *source, int selected, int visible, int total);
+
+  /* Selection in approach view has changed */
   void procedureLegSelected(const proc::MapProcedureRef& ref);
-  void procedureSelected(const proc::MapProcedureRef& ref);
+
+  /* Selection in approach view has changed */
+  void procedureSelected(const proc::MapProcedureRef& ref); /* Single selection */
+  void proceduresSelected(const QVector<proc::MapProcedureRef>& refs); /* Multi preview for all procedures */
+  void proceduresSelectedInternal(const QVector<proc::MapProcedureRef>& refs, bool previewAll);
 
   void routeSelectionChanged(int selected, int total);
 

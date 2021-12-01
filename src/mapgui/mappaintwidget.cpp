@@ -825,18 +825,18 @@ void MapPaintWidget::showPosInternal(const atools::geo::Pos& pos, float distance
 
 void MapPaintWidget::showRectStreamlined(const atools::geo::Rect& rect)
 {
-  if(rect.isPoint(POS_IS_POINT_EPSILON))
+  if(rect.isPoint(POS_IS_POINT_EPSILON_DEG))
     showPosNotAdjusted(rect.getTopLeft(), 0.f);
   else
   {
     float w = std::abs(rect.getWidthDegree());
     float h = std::abs(rect.getHeightDegree());
 
-    if(atools::almostEqual(w, 0.f, POS_IS_POINT_EPSILON))
+    if(atools::almostEqual(w, 0.f, POS_IS_POINT_EPSILON_DEG))
       // Workaround for marble not being able to center certain lines
       // Turn rect into a square
       centerRectOnMap(Rect(rect.getWest() - h / 2, rect.getNorth(), rect.getEast() + h / 2, rect.getSouth()));
-    else if(atools::almostEqual(h, 0.f, POS_IS_POINT_EPSILON))
+    else if(atools::almostEqual(h, 0.f, POS_IS_POINT_EPSILON_DEG))
       // Turn rect into a square
       centerRectOnMap(Rect(rect.getWest(), rect.getNorth() + w / 2, rect.getEast(), rect.getSouth() - w / 2));
     else
@@ -1042,9 +1042,26 @@ const QList<QList<map::MapAirway> >& MapPaintWidget::getAirwayHighlights() const
   return screenIndex->getAirwayHighlights();
 }
 
-const proc::MapProcedureLeg& MapPaintWidget::getProcedureLegHighlights() const
+const proc::MapProcedureLeg& MapPaintWidget::getProcedureLegHighlight() const
 {
-  return screenIndex->getApproachLegHighlights();
+  return screenIndex->getProcedureLegHighlight();
+}
+
+const QVector<proc::MapProcedureLegs>& MapPaintWidget::getProcedureHighlights() const
+{
+  return screenIndex->getProcedureHighlights();
+}
+
+void MapPaintWidget::changeProcedureHighlights(const QVector<proc::MapProcedureLegs>& procedures)
+{
+#ifdef DEBUG_INFORMATION_PROC_HIGHLIGHT
+  qDebug() << Q_FUNC_INFO << procedures;
+#endif
+
+  cancelDragAll();
+  screenIndex->setProcedureHighlights(procedures);
+  screenIndex->updateRouteScreenGeometry(getCurrentViewBoundingBox());
+  update();
 }
 
 const proc::MapProcedureLegs& MapPaintWidget::getProcedureHighlight() const
@@ -1052,15 +1069,21 @@ const proc::MapProcedureLegs& MapPaintWidget::getProcedureHighlight() const
   return screenIndex->getProcedureHighlight();
 }
 
-void MapPaintWidget::changeApproachHighlight(const proc::MapProcedureLegs& approach)
+void MapPaintWidget::changeProcedureHighlight(const proc::MapProcedureLegs& procedure)
 {
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << approach;
+#ifdef DEBUG_INFORMATION_PROC_HIGHLIGHT
+  qDebug() << Q_FUNC_INFO << procedure;
 #endif
 
   cancelDragAll();
-  screenIndex->getProcedureHighlight() = approach;
+  screenIndex->setProcedureHighlight(procedure);
   screenIndex->updateRouteScreenGeometry(getCurrentViewBoundingBox());
+  update();
+}
+
+void MapPaintWidget::changeProcedureLegHighlight(const proc::MapProcedureLeg& procedureLeg)
+{
+  screenIndex->setProcedureLegHighlight(procedureLeg);
   update();
 }
 
@@ -1093,12 +1116,6 @@ void MapPaintWidget::changeSearchHighlights(const map::MapResult& newHighlights,
     screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
   if(updateAirspace)
     screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
-  update();
-}
-
-void MapPaintWidget::changeProcedureLegHighlights(const proc::MapProcedureLeg *leg)
-{
-  screenIndex->setApproachLegHighlights(leg);
   update();
 }
 

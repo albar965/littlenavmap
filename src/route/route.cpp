@@ -940,13 +940,39 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
 
       if(leg.isAnyProcedure() && types.testFlag(map::QUERY_PROC_POINTS))
       {
-        if(leg.getProcedureLeg().isMissed())
+        const proc::MapProcedureLeg& procLeg = leg.getProcedureLeg();
+
+        // Select owning procedure legs struct
+        const proc::MapProcedureLegs *procLegs = nullptr;
+        if(procLeg.isAnyDeparture())
+          procLegs = &sidLegs;
+        else if(procLeg.isAnyStar())
+          procLegs = &starLegs;
+        else if(procLeg.isAnyApproach())
+          procLegs = &approachLegs;
+
+        if(procLegs != nullptr)
         {
-          if(types.testFlag(map::QUERY_PROC_MISSED_POINTS))
-            mapobjects.procPoints.append(proc::MapProcedurePoint(leg.getProcedureLeg(), false /* preview */));
+          int procIndex = procLegs->indexForLeg(procLeg);
+
+          if(procIndex != -1)
+          {
+            if(leg.getProcedureLeg().isMissed())
+            {
+              // Add missed legs only if requested by query flags
+              if(types.testFlag(map::QUERY_PROC_MISSED_POINTS))
+                mapobjects.procPoints.append(map::MapProcedurePoint(*procLegs, procIndex, i,
+                                                                    false /* previewParam */, false /* previewParamAll */));
+            }
+            else
+              mapobjects.procPoints.append(map::MapProcedurePoint(*procLegs, procIndex, i,
+                                                                  false /* previewParam */, false /* previewParamAll */));
+          }
+          else
+            qWarning() << Q_FUNC_INFO << "no legs for index found";
         }
         else
-          mapobjects.procPoints.append(proc::MapProcedurePoint(leg.getProcedureLeg(), false /* preview */));
+          qWarning() << Q_FUNC_INFO << "no legs found";
       }
     }
   }
@@ -2428,8 +2454,8 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 
   if(saveApproachWp)
   {
-    route.clearProcedures(proc::PROCEDURE_ARRIVAL);
-    route.clearFlightplanProcedureProperties(proc::PROCEDURE_ARRIVAL);
+    route.clearProcedures(proc::PROCEDURE_APPROACH_ALL_MISSED);
+    route.clearFlightplanProcedureProperties(proc::PROCEDURE_APPROACH_ALL_MISSED);
 
     // Remove missed legs
     route.clearProcedureLegs(proc::PROCEDURE_MISSED);
@@ -3094,33 +3120,23 @@ float Route::getDistanceToFlightPlan() const
     return map::INVALID_DISTANCE_VALUE;
 }
 
-QString Route::getProcedureLegText(proc::MapProcedureTypes mapType) const
+QString Route::getProcedureLegText(proc::MapProcedureTypes mapType, bool includeRunway, bool missedAsApproach) const
 {
-  QString procText;
-  if(isCustomApproach() && mapType & proc::PROCEDURE_APPROACH)
-    procText = tr("Approach");
-  else if(isCustomDeparture() && mapType & proc::PROCEDURE_SID)
-    procText = tr("Departure");
-  else if(mapType & proc::PROCEDURE_APPROACH || mapType & proc::PROCEDURE_MISSED)
-  {
-    procText = tr("%1 %2 %3%4").
-               arg(mapType & proc::PROCEDURE_MISSED ? tr("Missed") : tr("Approach")).
-               arg(approachLegs.displayApproachType()).
-               arg(approachLegs.approachFixIdent).
-               arg(approachLegs.approachSuffix.isEmpty() ? QString() : (tr("-") + approachLegs.approachSuffix));
-  }
-  else if(mapType & proc::PROCEDURE_TRANSITION)
-    procText = tr("Transition %1").arg(approachLegs.transitionFixIdent);
-  else if(mapType & proc::PROCEDURE_STAR)
-    procText = tr("STAR %1").arg(starLegs.approachFixIdent);
-  else if(mapType & proc::PROCEDURE_SID)
-    procText = tr("SID %1").arg(sidLegs.approachFixIdent);
-  else if(mapType & proc::PROCEDURE_SID_TRANSITION)
-    procText = tr("SID Transition %1").arg(sidLegs.transitionFixIdent);
-  else if(mapType & proc::PROCEDURE_STAR_TRANSITION)
-    procText = tr("STAR Transition %1").arg(starLegs.transitionFixIdent);
+  const proc::MapProcedureLegs *procLegs = nullptr;
 
-  return procText;
+  if(mapType & proc::PROCEDURE_SID_ALL)
+    procLegs = &sidLegs;
+  else if(mapType & proc::PROCEDURE_STAR_ALL)
+    procLegs = &starLegs;
+  else if(mapType & proc::PROCEDURE_APPROACH_ALL_MISSED)
+    procLegs = &approachLegs;
+
+  if(procLegs != nullptr)
+    return proc::procedureLegsText(*procLegs, mapType, false /* narrow */, includeRunway, missedAsApproach);
+  else
+    qWarning() << Q_FUNC_INFO << "no legs found";
+
+  return QString();
 }
 
 QString Route::getFilenamePattern(const QString& pattern, const QString& suffix, bool clean) const
@@ -3138,6 +3154,7 @@ QString Route::getFilenamePattern(const QString& pattern, const QString& suffix,
 
 QDebug operator<<(QDebug out, const Route& route)
 {
+  QDebugStateSaver saver(out);
   out << endl << "Route ==================================================================" << endl;
   out << route.getFlightplan().getProperties() << endl << endl;
   for(int i = 0; i < route.size(); ++i)

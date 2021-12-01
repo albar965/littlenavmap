@@ -34,20 +34,18 @@ namespace proc {
 /* Initialize all text that are translateable after loading the translation files */
 void initTranslateableTexts();
 
+// =====================================================================
 /* Type covering all objects that are passed around in the program. Also use to determine what should be drawn. */
 enum MapProcedureType
 {
   PROCEDURE_NONE = 0,
-  PROCEDURE_APPROACH = 1 << 0,
+  PROCEDURE_APPROACH = 1 << 0, /* Also custom */
   PROCEDURE_MISSED = 1 << 1,
   PROCEDURE_TRANSITION = 1 << 2,
-  PROCEDURE_SID = 1 << 3,
+  PROCEDURE_SID = 1 << 3, /* Also custom */
   PROCEDURE_SID_TRANSITION = 1 << 4,
   PROCEDURE_STAR = 1 << 5,
   PROCEDURE_STAR_TRANSITION = 1 << 6,
-
-  /* Approach and transition */
-  PROCEDURE_ARRIVAL = PROCEDURE_TRANSITION | PROCEDURE_APPROACH | PROCEDURE_MISSED,
 
   /* SID, STAR and respective transitions */
   PROCEDURE_STAR_ALL = PROCEDURE_STAR | PROCEDURE_STAR_TRANSITION,
@@ -56,11 +54,14 @@ enum MapProcedureType
   /* Approach and transition but no missed */
   PROCEDURE_APPROACH_ALL = PROCEDURE_APPROACH | PROCEDURE_TRANSITION,
 
+  /* Approach, transition and missed */
+  PROCEDURE_APPROACH_ALL_MISSED = PROCEDURE_TRANSITION | PROCEDURE_APPROACH | PROCEDURE_MISSED,
+
   /* All SID, STAR and respective transitions */
   PROCEDURE_SID_STAR_ALL = PROCEDURE_STAR_ALL | PROCEDURE_SID_ALL,
 
   /* All leading towards destination */
-  PROCEDURE_ARRIVAL_ALL = PROCEDURE_ARRIVAL | PROCEDURE_STAR_ALL,
+  PROCEDURE_ARRIVAL_ALL = PROCEDURE_APPROACH_ALL_MISSED | PROCEDURE_STAR_ALL,
 
   /* All from departure */
   PROCEDURE_DEPARTURE = PROCEDURE_SID_ALL,
@@ -80,6 +81,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(proc::MapProcedureTypes);
 
 QDebug operator<<(QDebug out, const proc::MapProcedureTypes& type);
 
+// =====================================================================
 /* Altitude restriction for approaches or transitions */
 struct MapAltRestriction
 {
@@ -113,6 +115,8 @@ struct MapAltRestriction
 
 };
 
+// =====================================================================
+/* Procedure speed restriction */
 struct MapSpeedRestriction
 {
   enum Descriptor
@@ -133,6 +137,8 @@ struct MapSpeedRestriction
 
 };
 
+// =====================================================================
+/* ARINC leg types */
 enum ProcedureLegType
 {
   INVALID_LEG_TYPE,
@@ -179,8 +185,8 @@ enum ProcedureLegType
 
 QDebug operator<<(QDebug out, const proc::ProcedureLegType& type);
 
-struct MapProcedureLeg;
-
+// =====================================================================
+/* Special leg types */
 enum LegSpecialType
 {
   NONE,
@@ -194,44 +200,32 @@ enum LegSpecialType
   FEP /* Final endpoint fix - only needed to ignore altitude restriction */
 };
 
-/* Reduced procedure leg type for map index, tooltips and similar */
-struct MapProcedurePoint
-  : public map::MapBase
-{
-  MapProcedurePoint()
-    : MapBase(map::NONE)
-  {
-  }
-
-  MapProcedurePoint(const MapProcedureLeg& leg, bool previewParam);
-
-  float calculatedDistance, calculatedTrueCourse, time, theta, rho, magvar;
-
-  QString fixType, fixIdent, recFixType, recFixIdent, turnDirection,
-          arincDescrCode /* 5.17 */;
-
-  proc::MapProcedureTypes mapType = PROCEDURE_NONE;
-
-  QStringList displayText, remarks;
-  MapAltRestriction altRestriction;
-  MapSpeedRestriction speedRestriction;
-
-  proc::ProcedureLegType type;
-
-  bool missed, flyover, preview;
-};
-
+// =====================================================================
+/* Reference object containing all ids for procedures, transitions and legs
+ * Hashable and compareable */
 struct MapProcedureRef
 {
-  MapProcedureRef(int airport, int runwayEnd, int approach, int transition, int leg, proc::MapProcedureTypes type)
-    : airportId(airport), runwayEndId(runwayEnd), approachId(approach), transitionId(transition), legId(leg),
-    mapType(type)
+  MapProcedureRef(int airportIdParam, int runwayEndIdParam, int approachIdParam, int transitionIdParam, int legIdParam,
+                  proc::MapProcedureTypes type)
+    : airportId(airportIdParam), runwayEndId(runwayEndIdParam), approachId(approachIdParam), transitionId(transitionIdParam),
+    legId(legIdParam), mapType(type)
   {
   }
 
   MapProcedureRef()
     : airportId(-1), runwayEndId(-1), approachId(-1), transitionId(-1), legId(-1), mapType(PROCEDURE_NONE)
   {
+  }
+
+  bool operator==(const proc::MapProcedureRef& other) const
+  {
+    return airportId == other.airportId && approachId == other.approachId && runwayEndId == other.runwayEndId &&
+           transitionId == other.transitionId && legId == other.legId && mapType == other.mapType;
+  }
+
+  bool operator!=(const proc::MapProcedureRef& other) const
+  {
+    return !operator==(other);
   }
 
   int airportId /* always from navdatabase - only simdatabase if this is a custom approach */,
@@ -276,6 +270,16 @@ struct MapProcedureRef
 
 };
 
+QDebug operator<<(QDebug out, const proc::MapProcedureRef& ref);
+
+inline uint qHash(const proc::MapProcedureRef& ref)
+{
+  return static_cast<unsigned int>(ref.airportId) ^ static_cast<unsigned int>(ref.approachId) ^ static_cast<unsigned int>(ref.runwayEndId) ^
+         static_cast<unsigned int>(ref.transitionId) ^ static_cast<unsigned int>(ref.legId) ^ qHash(ref.mapType);
+}
+
+// =====================================================================
+/* Procedure leg */
 struct MapProcedureLeg
 {
   QString fixType, fixIdent, fixRegion,
@@ -302,7 +306,7 @@ struct MapProcedureLeg
   proc::ProcedureLegType type = INVALID_LEG_TYPE; /* Type of this leg */
   proc::MapProcedureTypes mapType = PROCEDURE_NONE; /* Type of the procedure this leg belongs to */
 
-  int approachId = -1, transitionId = -1, legId = -1, navId = -1, recNavId = -1;
+  int airportId = -1, approachId = -1, transitionId = -1, legId = -1, navId = -1, recNavId = -1;
 
   float course, /* magnetic from ARINC */
         distance /* Distance from source in NM */,
@@ -338,6 +342,11 @@ struct MapProcedureLeg
 
   float legTrueCourse() const;
 
+  bool isAnyApproach() const
+  {
+    return isApproach() || isTransition() || isMissed();
+  }
+
   bool isApproach() const
   {
     return mapType & proc::PROCEDURE_APPROACH;
@@ -345,7 +354,7 @@ struct MapProcedureLeg
 
   bool isArrival() const
   {
-    return mapType & proc::PROCEDURE_ARRIVAL;
+    return mapType & proc::PROCEDURE_APPROACH_ALL_MISSED;
   }
 
   bool isAnyArrival() const
@@ -356,6 +365,11 @@ struct MapProcedureLeg
   bool isAnyDeparture() const
   {
     return mapType & proc::PROCEDURE_DEPARTURE;
+  }
+
+  bool isAnyTransition() const
+  {
+    return isTransition() || isSidTransition() || isStarTransition();
   }
 
   bool isTransition() const
@@ -444,20 +458,16 @@ struct MapProcedureLeg
 
 QDebug operator<<(QDebug out, const proc::MapProcedureLeg& leg);
 
-/* True if e.g. "RW10B" for a SID or STAR which means that 10L, 10C and 10R can be used. */
-bool hasSidStarParallelRunways(const QString& approachArincName);
-
-/* True if "ALL" for a SID or STAR. Means SID/STAR can be used for all runways of an airport. */
-bool hasSidStarAllRunways(const QString& approachArincName);
-
-/* All legs for a arrival or departure including STAR, transition and approach in order or
- * legs for SID only.
- * SID contains all in approach and legs transition fields.
- * STAR contins all in approach fields */
+// =====================================================================
+/* All legs for a arrival or departure including SID, STAR, transition and approach.
+ * Approach (also partially synonym for procedure). Flying order in transitionLegs and then approachLegs.
+ * SID contains all legs in approach and transition fields. Flying order in approachLegs and then transitionLegs.
+ * STAR contains all legs in approach and transition fields. Flying order in transitionLegs and then approachLegs */
 struct MapProcedureLegs
 {
   QVector<MapProcedureLeg> transitionLegs, approachLegs;
 
+  /* Reference with all database ids */
   MapProcedureRef ref;
   atools::geo::Rect bounding;
 
@@ -470,17 +480,19 @@ struct MapProcedureLegs
   map::MapRunwayEnd runwayEnd;
   proc::MapProcedureTypes mapType = PROCEDURE_NONE;
 
-  float approachDistance = 0.f,
-        transitionDistance = 0.f,
-        missedDistance = 0.f;
+  /* Accumulated distances */
+  float approachDistance = 0.f, transitionDistance = 0.f, missedDistance = 0.f;
+
+  /* Assigned color for multi preview or default color for normal preview. */
+  QColor previewColor;
 
   /* Parameters only for custom approaches.
    * Altitude in feet above airport elevation and distance to runway threshold in NM */
   float customAltitude = 0.f, customDistance = 0.f, customOffset = 0.f;
 
   bool gpsOverlay,
-       hasError, /* Unusable due to missing navaid */
-       hasHardError, /* Deny usage since geometry is not valid*/
+       hasError, /* Probably unusable due to missing navaid */
+       hasHardError, /* Deny usage since geometry is not valid */
        circleToLand; /* Runway is not part of procedure and was added internally */
 
   /* Short display type name */
@@ -523,6 +535,11 @@ struct MapProcedureLegs
   static bool hasChannel(const QString& approachType)
   {
     return approachType == "GNSS" || approachType == "GLS";
+  }
+
+  bool isAnyCustom() const
+  {
+    return isCustomApproach() || isCustomDeparture();
   }
 
   bool isCustomApproach() const
@@ -569,6 +586,9 @@ struct MapProcedureLegs
     return size() == 0;
   }
 
+  /* Get index number for given leg. Index related for all legs (approach and transition) */
+  int indexForLeg(const MapProcedureLeg& leg) const;
+
   int size() const
   {
     return transitionLegs.size() + approachLegs.size();
@@ -580,15 +600,11 @@ struct MapProcedureLegs
     return hasSidOrStarAllRunways() || hasSidOrStarParallelRunways();
   }
 
-  bool hasSidOrStarParallelRunways() const
-  {
-    return proc::hasSidStarParallelRunways(approachArincName);
-  }
+  /* If it has arinc names like ""RW10B" */
+  bool hasSidOrStarParallelRunways() const;
 
-  bool hasSidOrStarAllRunways() const
-  {
-    return proc::hasSidStarAllRunways(approachArincName);
-  }
+  /* If it has arinc names like "ALL" */
+  bool hasSidOrStarAllRunways() const;
 
   /* first in list is transition and then approach  or STAR only.
    *  Order is reversed for departure - first approach and then transition */
@@ -633,8 +649,18 @@ private:
 
 QDebug operator<<(QDebug out, const MapProcedureLegs& legs);
 
+// =====================================================================
+/* Functions */
+
+/* Text describing procedure name and type. procType of related leg determines if
+ * certain types like missed or transition are shown */
+QString procedureLegsText(const proc::MapProcedureLegs& legs, proc::MapProcedureTypes procType, bool narrow, bool includeRunway,
+                          bool missedAsApproach);
 QString procedureTypeText(proc::MapProcedureTypes mapType);
 QString procedureTypeText(const proc::MapProcedureLeg& leg);
+
+/* Finds first and last fix name. Can be waypoint, VOR, NDB, airport or runway but not special like manual */
+QStringList procedureTextFirstAndLastFix(const proc::MapProcedureLegs& legs, proc::MapProcedureTypes mapType);
 
 /* VOR, NDB, etc. */
 QString procedureFixType(const QString& type);

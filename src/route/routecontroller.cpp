@@ -17,58 +17,59 @@
 
 #include "routecontroller.h"
 
-#include "routestring/routestringwriter.h"
-#include "routestring/routestringreader.h"
-#include "routestring/routestringdialog.h"
-#include "navapp.h"
 #include "atools.h"
-#include "options/optiondata.h"
-#include "gui/helphandler.h"
-#include "query/procedurequery.h"
 #include "common/constants.h"
-#include "common/tabindexes.h"
 #include "common/formatter.h"
-#include "fs/perf/aircraftperf.h"
+#include "common/mapcolors.h"
+#include "common/symbolpainter.h"
+#include "common/tabindexes.h"
 #include "common/unit.h"
+#include "common/unit.h"
+#include "common/unitstringtool.h"
 #include "exception.h"
 #include "export/csvexporter.h"
+#include "fs/perf/aircraftperf.h"
+#include "fs/pln/flightplanio.h"
+#include "fs/sc/simconnectdata.h"
+#include "fs/util/fsutil.h"
+#include "geo/calculations.h"
 #include "gui/actiontool.h"
+#include "gui/dialog.h"
 #include "gui/errorhandler.h"
-#include "track/trackcontroller.h"
+#include "gui/helphandler.h"
 #include "gui/itemviewzoomhandler.h"
+#include "gui/tabwidgethandler.h"
+#include "gui/tools.h"
+#include "gui/treedialog.h"
 #include "gui/widgetstate.h"
-#include "query/mapquery.h"
-#include "query/airwaytrackquery.h"
-#include "query/airportquery.h"
+#include "mapgui/mapmarkhandler.h"
 #include "mapgui/mapwidget.h"
+#include "navapp.h"
+#include "options/optiondata.h"
 #include "parkingdialog.h"
+#include "perf/aircraftperfcontroller.h"
+#include "query/airportquery.h"
+#include "query/airwaytrackquery.h"
+#include "query/mapquery.h"
+#include "query/procedurequery.h"
+#include "route/customproceduredialog.h"
+#include "route/flightplanentrybuilder.h"
+#include "route/routealtitude.h"
+#include "route/routecalcwindow.h"
+#include "route/routelabel.h"
+#include "route/runwayselectiondialog.h"
+#include "route/userwaypointdialog.h"
+#include "routeextractor.h"
+#include "routestring/routestringdialog.h"
+#include "routestring/routestringreader.h"
+#include "routestring/routestringwriter.h"
 #include "routing/routefinder.h"
 #include "routing/routenetwork.h"
-#include "route/customproceduredialog.h"
-#include "settings/settings.h"
-#include "routeextractor.h"
-#include "route/routelabel.h"
-#include "ui_mainwindow.h"
-#include "gui/dialog.h"
-#include "route/routealtitude.h"
-#include "route/userwaypointdialog.h"
-#include "route/flightplanentrybuilder.h"
-#include "fs/pln/flightplanio.h"
-#include "util/htmlbuilder.h"
-#include "mapgui/mapmarkhandler.h"
-#include "common/symbolpainter.h"
-#include "common/mapcolors.h"
-#include "common/unit.h"
-#include "route/routecalcwindow.h"
-#include "common/unitstringtool.h"
-#include "perf/aircraftperfcontroller.h"
-#include "fs/sc/simconnectdata.h"
-#include "gui/tabwidgethandler.h"
-#include "gui/treedialog.h"
-#include "geo/calculations.h"
 #include "routing/routenetworkloader.h"
-#include "fs/util/fsutil.h"
-#include "gui/tools.h"
+#include "settings/settings.h"
+#include "track/trackcontroller.h"
+#include "ui_mainwindow.h"
+#include "util/htmlbuilder.h"
 
 #include <QClipboard>
 #include <QFile>
@@ -3645,7 +3646,7 @@ void RouteController::showCustomApproach(map::MapAirport airport, QString dialog
     proc::MapProcedureLegs procedure;
     NavApp::getProcedureQuery()->createCustomApproach(procedure, airport, end, dialog.getLegDistance(),
                                                       dialog.getEntryAltitude(), dialog.getLegOffsetAngle());
-    routeAddProcedure(procedure, QString());
+    routeAddProcedure(procedure);
   }
 }
 
@@ -3682,7 +3683,7 @@ void RouteController::showCustomDeparture(map::MapAirport airport, QString dialo
 
     proc::MapProcedureLegs procedure;
     NavApp::getProcedureQuery()->createCustomDeparture(procedure, airport, end, dialog.getLegDistance());
-    routeAddProcedure(procedure, QString());
+    routeAddProcedure(procedure);
   }
 }
 
@@ -3718,7 +3719,7 @@ void RouteController::updateRouteTabChangedStatus()
   }
 }
 
-void RouteController::routeAddProcedure(proc::MapProcedureLegs legs, const QString& sidStarRunway)
+void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
 {
   qDebug() << Q_FUNC_INFO
            << legs.approachType << legs.approachFixIdent << legs.approachSuffix << legs.approachArincName
@@ -3730,19 +3731,10 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs, const QStri
     return;
   }
 
-  RouteCommand *undoCommand = nullptr;
-
-  // if(route.getFlightplan().canSaveProcedures())
-  undoCommand = preChange(tr("Add Procedure"));
-
-  if(route.isEmpty())
-    NavApp::showFlightPlan();
-
-  // Inserting new ones does not produce errors - only loading
-  procedureErrors.clear();
-
   map::MapAirport airportSim;
-  if(legs.isCustomApproach() || legs.isCustomDeparture())
+  QString sidStarRunway;
+
+  if(legs.isAnyCustom())
     // Custom procedures are always from sim database
     NavApp::getAirportQuerySim()->getAirportById(airportSim, legs.ref.airportId);
   else
@@ -3750,9 +3742,41 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs, const QStri
     // Airport id in legs is from nav database - convert to simulator database
     NavApp::getAirportQueryNav()->getAirportById(airportSim, legs.ref.airportId);
     NavApp::getMapQueryGui()->getAirportSimReplace(airportSim);
+
+    if(legs.mapType & proc::PROCEDURE_SID_STAR_ALL)
+    {
+      // Get runways for all or parallel runway procedures ===============================
+      QStringList sidStarRunways;
+      atools::fs::util::sidStarMultiRunways(airportQuery->getRunwayNames(airportSim.id), legs.approachArincName, tr("All"),
+                                            &sidStarRunways);
+
+      if(!sidStarRunways.isEmpty())
+      {
+        // Show dialog allowing the user to select a runway
+        QString text = proc::procedureLegsText(legs, proc::PROCEDURE_NONE,
+                                               false /* narrow */, true /* includeRunway*/, false /* missedAsApproach*/);
+        RunwaySelectionDialog runwaySelectionDialog(mainWindow, airportSim, sidStarRunways, text);
+        if(runwaySelectionDialog.exec() == QDialog::Accepted)
+          sidStarRunway = runwaySelectionDialog.getSelectedName();
+        else
+          // Cancel out
+          return;
+      }
+    }
   }
 
-  if(legs.mapType & proc::PROCEDURE_STAR || legs.mapType & proc::PROCEDURE_ARRIVAL)
+  // Raise window if requested
+  if(route.isEmpty())
+    NavApp::showFlightPlan();
+
+  RouteCommand *undoCommand = nullptr;
+  // if(route.getFlightplan().canSaveProcedures())
+  undoCommand = preChange(tr("Add Procedure"));
+
+  // Inserting new ones does not produce errors - only loading
+  procedureErrors.clear();
+
+  if(legs.mapType & proc::PROCEDURE_STAR || legs.mapType & proc::PROCEDURE_APPROACH_ALL_MISSED)
   {
     if(route.isEmpty() || route.getDestinationAirportLeg().getMapObjectType() != map::AIRPORT ||
        route.getDestinationAirportLeg().getId() != airportSim.id)
@@ -3768,7 +3792,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs, const QStri
       NavApp::getProcedureQuery()->insertSidStarRunway(legs, sidStarRunway);
       route.setStarProcedureLegs(legs);
     }
-    if(legs.mapType & proc::PROCEDURE_ARRIVAL)
+    if(legs.mapType & proc::PROCEDURE_APPROACH_ALL_MISSED)
       route.setArrivalProcedureLegs(legs);
 
     route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */, true /* cleanup route */);
@@ -4116,7 +4140,8 @@ void RouteController::updateTableModel()
     else if(leg.isAlternate())
       itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Alternate"));
     else
-      itemRow[rcol::PROCEDURE] = new QStandardItem(route.getProcedureLegText(leg.getProcedureType()));
+      itemRow[rcol::PROCEDURE] =
+        new QStandardItem(route.getProcedureLegText(leg.getProcedureType(), false /* includeRunway */, false /* missedAsApproach */));
 
     // Airway or leg type and restriction ===========================================
     if(leg.isRoute())
@@ -4657,8 +4682,7 @@ void RouteController::updateModelHighlights()
         else if(leg.isAnyProcedure())
         {
           if(leg.getProcedureLeg().isMissed())
-            item->setForeground(
-              night ? mapcolors::routeProcedureMissedTableColorDark : mapcolors::routeProcedureMissedTableColor);
+            item->setForeground(night ? mapcolors::routeProcedureMissedTableColorDark : mapcolors::routeProcedureMissedTableColor);
           else
             item->setForeground(night ? mapcolors::routeProcedureTableColorDark : mapcolors::routeProcedureTableColor);
         }
@@ -4765,8 +4789,20 @@ void RouteController::flightplanLabelLinkActivated(const QString& link)
   QUrl url(link);
   if(url.scheme() == "lnm")
   {
+    optsd::DisplayClickOptions opts = OptionData::instance().getDisplayClickOptions();
+
     if(url.host() == "showdeparture")
+    {
       showAtIndex(route.getDepartureAirportLegIndex(), true /* info */, true /* map */, false /* doubleClick */);
+
+      // Show departure procedures in search dialog if requested by user
+      if(opts.testFlag(optsd::CLICK_AIRPORT_PROC))
+      {
+        bool departureFilter, arrivalFilter;
+        route.getAirportProcedureFlags(route.getDepartureAirportLeg().getAirport(), -1, departureFilter, arrivalFilter);
+        emit showProcedures(route.getDepartureAirportLeg().getAirport(), departureFilter, arrivalFilter);
+      }
+    }
     else if(url.host() == "showdepartureparking")
     {
       const RouteLeg& departureAirportLeg = route.getDepartureAirportLeg();
@@ -4777,7 +4813,17 @@ void RouteController::flightplanLabelLinkActivated(const QString& link)
       showAtIndex(route.getDepartureAirportLegIndex(), true /* info */, false /* map */, false /* doubleClick */);
     }
     else if(url.host() == "showdestination")
+    {
       showAtIndex(route.getDestinationAirportLegIndex(), true /* info */, true /* map */, false /* doubleClick */);
+
+      // Show arrival procedures in search dialog if requested by user
+      if(opts.testFlag(optsd::CLICK_AIRPORT_PROC))
+      {
+        bool departureFilter, arrivalFilter;
+        route.getAirportProcedureFlags(route.getDestinationAirportLeg().getAirport(), -1, departureFilter, arrivalFilter);
+        emit showProcedures(route.getDestinationAirportLeg().getAirport(), departureFilter, arrivalFilter);
+      }
+    }
   }
 }
 
@@ -4911,7 +4957,7 @@ proc::MapProcedureTypes RouteController::affectedProcedures(const QList<int>& in
 
       if(leg.isApproach() || leg.isMissed())
         // Delete transition and approach
-        types |= proc::PROCEDURE_ARRIVAL;
+        types |= proc::PROCEDURE_APPROACH_ALL_MISSED;
     }
   }
 

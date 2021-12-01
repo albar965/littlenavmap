@@ -2547,17 +2547,22 @@
              </item>
              <item>
               <property name="text">
-               <string>Departure Procedures</string>
+               <string>Departure (SID)</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Arrival Procedures</string>
+               <string>Arrival (STAR)</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Only Approaches and Transitions</string>
+               <string>Arrival and Approach</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Approaches and Transitions</string>
               </property>
              </item>
             </widget>
@@ -2572,6 +2577,22 @@
             </widget>
            </item>
            <item>
+            <widget class="QLineEdit" name="lineEditProcedureSearchIdentFilter">
+             <property name="toolTip">
+              <string>Filter procedures by idents beginning with text</string>
+             </property>
+             <property name="statusTip">
+              <string>Filter procedures by idents beginning with text</string>
+             </property>
+             <property name="placeholderText">
+              <string>Ident</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
             <spacer name="horizontalSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -2583,6 +2604,56 @@
               </size>
              </property>
             </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonProcedureShowAll">
+             <property name="toolTip">
+              <string>Preview all listed procedures on the map</string>
+             </property>
+             <property name="statusTip">
+              <string>Preview all listed procedures on the map</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/approachall.svg</normaloff>:/littlenavmap/resources/icons/approachall.svg</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonProcedureSearchReset">
+             <property name="toolTip">
+              <string>Clear all search filters</string>
+             </property>
+             <property name="statusTip">
+              <string>Clear all search filters</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/clear.svg</normaloff>:/littlenavmap/resources/icons/clear.svg</iconset>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QPushButton" name="pushButtonProcedureSearchClearSelection">
@@ -12223,6 +12294,24 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Select the fields to show in the aircraft progress tab.</string>
    </property>
   </action>
+  <action name="actionSearchProcedureShowAll">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/approachall.svg</normaloff>:/littlenavmap/resources/icons/approachall.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Preview all Procedures</string>
+   </property>
+   <property name="toolTip">
+    <string>Preview all listed procedures on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Preview all listed procedures on the map</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12408,8 +12497,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
-  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>

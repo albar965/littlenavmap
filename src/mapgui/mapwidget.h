@@ -277,6 +277,9 @@ signals:
   /* Emitted when the user presses the on-screen button */
   void exitFullScreenPressed();
 
+  /* Add the complete procedure to the route */
+  void routeInsertProcedure(const proc::MapProcedureLegs& legs);
+
 private:
   /* For touchscreen mode. Grid of 3x3 rectangles numbered from lef to right and top to bottom */
   enum TouchArea

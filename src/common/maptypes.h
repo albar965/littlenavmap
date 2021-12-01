@@ -33,7 +33,8 @@ class MapLayer;
 
 namespace proc {
 
-struct MapProcedurePoint;
+struct MapProcedureLeg;
+struct MapProcedureLegs;
 
 }
 /*
@@ -313,9 +314,32 @@ struct MapBase
     return objType;
   }
 
+protected:
+  /* Hide destructor to avoid inadvertent deletion of base */
+  ~MapBase()
+  {
+  }
+
 };
 
 QDebug operator<<(QDebug out, const map::MapBase& obj);
+
+// =====================================================================
+/* Simple position wrapper allowing to keep map base destructor protected */
+struct MapPos
+  : public MapBase
+{
+  MapPos() :
+    MapBase(map::NONE)
+  {
+  }
+
+  MapPos(const atools::geo::Pos& pos) :
+    MapBase(map::NONE, -1, pos)
+  {
+  }
+
+};
 
 // =====================================================================
 /* Airport type not including runways (have to queried separately) */
@@ -1220,6 +1244,45 @@ struct MapHolding
 };
 
 // =====================================================================
+/* Wrapping a procedure leg including the whole procedure structure for map index, tooltips and similar */
+struct MapProcedurePoint
+  : public map::MapBase
+{
+  MapProcedurePoint();
+
+  /*
+   * @param legsParam Full procedure
+   * @param legIndexParam Active leg of the procedure. Index is related to procedure legs.
+   * @param routeIndexParam Leg index in flight plan, if. Otherwise -1. Related to flight plan legs.
+   * @param previewParam Built from preview by single selection in procedure search.
+   * @param previewAllParam Built from preview by multi procedure preview.
+   */
+  explicit MapProcedurePoint(const proc::MapProcedureLegs& legsParam, int legIndexParam, int routeIndexParam, bool previewParam,
+                             bool previewAllParam);
+  ~MapProcedurePoint();
+
+  MapProcedurePoint(const MapProcedurePoint& other);
+
+  MapProcedurePoint& operator=(const MapProcedurePoint& other);
+
+  /* Id consisting of airportId, approachId and transitionId. transitionId is only added if leg is part of a transition.
+   * Does not contain leg id. */
+  std::tuple<int, int, int> compoundId() const;
+
+  /* Use pointer to avoid recursive includes */
+  proc::MapProcedureLegs *legs = nullptr;
+
+  /* Get referenced leg */
+  const proc::MapProcedureLeg& getLeg() const;
+
+  /* Approach fix ident or SID/STAR name */
+  const QString& getIdent()const;
+
+  int legIndex = -1, routeIndex = -1;
+  bool preview = false, previewAll = false;
+};
+
+// =====================================================================
 // Types below are user features
 // =====================================================================
 
@@ -1454,6 +1517,11 @@ QString userpointText(const MapUserpoint& userpoint, int elideName = 100);
 QString logEntryText(const MapLogbookEntry& logEntry);
 QString airwayText(const map::MapAirway& airway);
 
+/* Text like "Transition to KER runway 26". Text details (missed, approach and transition)
+ * are determined by the referenced leg */
+QString procedurePointText(const MapProcedurePoint& procPoint);
+QString procedurePointTextShort(const MapProcedurePoint& procPoint);
+
 // Map marker / user features ==============================================================
 QString rangeMarkText(const map::RangeMarker& obj);
 QString distanceMarkText(const map::DistanceMarker& obj);
@@ -1486,29 +1554,30 @@ int getNextUserFeatureId();
 } // namespace map
 
 /* Type info */
-Q_DECLARE_TYPEINFO(map::MapBase, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirport, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapAirportMsa, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapAirspace, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapAirway, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapAirwayWaypoint, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapApron, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapBase, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapHelipad, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapHolding, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapIls, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapLogbookEntry, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapNdb, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapObjectRefExt, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapParking, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapProcedurePoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapRunway, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapRunwayEnd, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapApron, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapTaxiPath, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapParking, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapStart, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapHelipad, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapVor, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapNdb, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapWaypoint, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapAirwayWaypoint, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapAirway, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapMarker, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapIls, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapTaxiPath, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapUserpointRoute, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapVor, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapWaypoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::PosCourse, Q_PRIMITIVE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapAirspace, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapLogbookEntry, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapObjectRefExt, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapHolding, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapAirportMsa, Q_MOVABLE_TYPE);
 
 /* Type info and serializable objects */
 Q_DECLARE_TYPEINFO(map::MapObjectRef, Q_PRIMITIVE_TYPE);

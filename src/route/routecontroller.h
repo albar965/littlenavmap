@@ -167,7 +167,7 @@ public:
   void routeAdd(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex);
 
   /* Add an approach and/or a transition */
-  void routeAddProcedure(proc::MapProcedureLegs legs, const QString& sidStarRunway);
+  void routeAddProcedure(proc::MapProcedureLegs legs);
 
   /* Same as above but replaces waypoint at legIndex */
   void routeReplace(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex);

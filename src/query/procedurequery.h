@@ -66,6 +66,9 @@ public:
   const proc::MapProcedureLeg *getApproachLeg(const map::MapAirport& airport, int approachId, int legId);
   const proc::MapProcedureLeg *getTransitionLeg(const map::MapAirport& airport, int legId);
 
+  /* Get either procedure or procedurer with transition */
+  const proc::MapProcedureLegs *getProcedureLegs(const map::MapAirport& airport, int approachId, int transitionId);
+
   /* Get all legs of an approach */
   const proc::MapProcedureLegs *getApproachLegs(map::MapAirport airport, int approachId);
 

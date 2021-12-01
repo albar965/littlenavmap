@@ -393,16 +393,18 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
 
       if(context.mapLayerRoute->isApproach())
       {
-        const proc::MapProcedureLegs& procs = mapWidget->getProcedureHighlight();
-        for(int i = 0; i < procs.size(); i++)
+        for(const proc::MapProcedureLegs& procedure : mapWidget->getProcedureHighlights())
         {
-          const map::MapResult& navaids = procs.at(i).navaids;
-          if(navaids.hasWaypoints())
-            context.routeProcIdMap.insert({navaids.waypoints.first().id, map::WAYPOINT});
-          if(navaids.hasVor())
-            context.routeProcIdMap.insert({navaids.vors.first().id, map::VOR});
-          if(navaids.hasNdb())
-            context.routeProcIdMap.insert({navaids.ndbs.first().id, map::NDB});
+          for(int i = 0; i < procedure.size(); i++)
+          {
+            const map::MapResult& navaids = procedure.at(i).navaids;
+            if(navaids.hasWaypoints())
+              context.routeProcIdMap.insert({navaids.waypoints.first().id, map::WAYPOINT});
+            if(navaids.hasVor())
+              context.routeProcIdMap.insert({navaids.vors.first().id, map::VOR});
+            if(navaids.hasNdb())
+              context.routeProcIdMap.insert({navaids.ndbs.first().id, map::NDB});
+          }
         }
       }
 

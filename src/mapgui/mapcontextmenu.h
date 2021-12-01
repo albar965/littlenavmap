@@ -49,6 +49,7 @@ class SimConnectUserAircraft;
 
 namespace map {
 struct MapBase;
+struct MapPos;
 struct MapAirport;
 struct MapVor;
 struct MapNdb;
@@ -65,6 +66,8 @@ struct MapResult;
 struct MapResultIndex;
 }
 
+class Route;
+
 namespace mc {
 
 /*
@@ -76,6 +79,7 @@ enum MenuActionType
   NONE, /* Nothing selected - default value */
   INFORMATION, /* Show Information */
   PROCEDURE, /* Show airport procedures */
+  PROCEDUREADD, /* Add airport procedures into plan */
   CUSTOMAPPROACH, /* Create custom procedure */
   CUSTOMDEPARTURE, /* Create custom procedure */
   MEASURE, /* GC measmurement line */
@@ -110,7 +114,7 @@ class MapContextMenu
   Q_DECLARE_TR_FUNCTIONS(MapContextMenu)
 
 public:
-  explicit MapContextMenu(QMainWindow *mainWindowParam, MapWidget *mapWidgetParam);
+  explicit MapContextMenu(QMainWindow *mainWindowParam, MapWidget *mapWidgetParam, const Route& routeParam);
   ~MapContextMenu();
 
   /* Do not allow copying */
@@ -170,6 +174,7 @@ private:
   // ----
   void insertInformationMenu(QMenu& menu);
   void insertProcedureMenu(QMenu& menu);
+  void insertProcedureAddMenu(QMenu& menu);
   void insertCustomApproachMenu(QMenu& menu);
   void insertCustomDepartureMenu(QMenu& menu);
   void insertRemoveMarkMenu(QMenu& menu);
@@ -258,6 +263,7 @@ private:
 
   /* Name of underlying procedure or empty if route leg */
   QString procedureName(const map::MapBase *base) const;
+  bool isProcedure(const map::MapBase *base) const;
 
   // Selections
   QAction *selectedAction = nullptr;
@@ -285,9 +291,10 @@ private:
 
   MapWidget *mapWidget;
   QMainWindow *mainWindow;
+  const Route& route;
 
   // Keep global click position in a map base which allows to referece it by map base pointer
-  map::MapBase *mapBasePos;
+  map::MapPos *mapBasePos;
 
   // Keep state and text for some pre-defined action
   atools::gui::ActionTextSaver *textSaver;

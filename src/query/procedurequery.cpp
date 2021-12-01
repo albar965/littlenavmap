@@ -141,6 +141,14 @@ const proc::MapProcedureLeg *ProcedureQuery::getTransitionLeg(const map::MapAirp
   return nullptr;
 }
 
+const MapProcedureLegs *ProcedureQuery::getProcedureLegs(const map::MapAirport& airport, int approachId, int transitionId)
+{
+  if(transitionId > 0)
+    return getTransitionLegs(airport, transitionId);
+  else
+    return getApproachLegs(airport, approachId);
+}
+
 proc::MapProcedureLeg ProcedureQuery::buildApproachLegEntry(const map::MapAirport& airport)
 {
   MapProcedureLeg leg;
@@ -682,7 +690,9 @@ proc::MapProcedureLegs *ProcedureQuery::fetchApproachLegs(const map::MapAirport&
   else
 #endif
   {
+#ifdef DEBUG_INFORMATION
     qDebug() << "buildApproachEntries" << airport.ident << "approachId" << approachId;
+#endif
 
     MapProcedureLegs *legs = buildApproachLegs(airport, approachId);
     postProcessLegs(airport, *legs, true /*addArtificialLegs*/);
@@ -706,8 +716,10 @@ proc::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const map::MapAirpor
   else
 #endif
   {
+#ifdef DEBUG_INFORMATION
     qDebug() << "buildApproachEntries" << airport.ident << "approachId" << approachId
              << "transitionId" << transitionId;
+#endif
 
     transitionLegQuery->bindValue(":id", transitionId);
     transitionLegQuery->exec();
@@ -716,10 +728,12 @@ proc::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const map::MapAirpor
     legs->ref.airportId = airport.id;
     legs->ref.approachId = approachId;
     legs->ref.transitionId = transitionId;
+    legs->ref.mapType = legs->mapType;
 
     while(transitionLegQuery->next())
     {
       legs->transitionLegs.append(buildTransitionLegEntry(airport));
+      legs->transitionLegs.last().airportId = airport.id;
       legs->transitionLegs.last().approachId = approachId;
       legs->transitionLegs.last().transitionId = transitionId;
     }
@@ -768,6 +782,7 @@ proc::MapProcedureLegs *ProcedureQuery::buildApproachLegs(const map::MapAirport&
   legs->ref.airportId = airport.id;
   legs->ref.approachId = approachId;
   legs->ref.transitionId = -1;
+  legs->ref.mapType = legs->mapType;
 
   // Populated when processing artifical legs
   legs->circleToLand = false;
@@ -776,6 +791,7 @@ proc::MapProcedureLegs *ProcedureQuery::buildApproachLegs(const map::MapAirport&
   while(approachLegQuery->next())
   {
     legs->approachLegs.append(buildApproachLegEntry(airport));
+    legs->approachLegs.last().airportId = airport.id;
     legs->approachLegs.last().approachId = approachId;
   }
 
@@ -813,7 +829,9 @@ proc::MapProcedureLegs *ProcedureQuery::buildApproachLegs(const map::MapAirport&
   if(!runwayFound)
   {
     // Nothing found in the database - search by name fuzzy or add a dummy entry if nothing was found by name
+#ifdef DEBUG_INFORMATION
     qWarning() << "Runway end for approach" << approachId << "not found";
+#endif
     map::MapResult result;
     runwayEndByName(result, legs->procedureRunway, airport);
 
@@ -1025,7 +1043,7 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
 
     // ====================================================================================
     // Add circle to land or straight in leg
-    if(legs.mapType & proc::PROCEDURE_ARRIVAL)
+    if(legs.mapType & proc::PROCEDURE_APPROACH_ALL_MISSED)
     {
       for(int i = 0; i < legs.size() - 1; i++)
       {
@@ -1091,9 +1109,9 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
       {
         qDebug() << Q_FUNC_INFO << prevLeg;
         proc::MapProcedureLeg vectorLeg;
+        vectorLeg.airportId = legs.ref.airportId;
         vectorLeg.approachId = legs.ref.approachId;
         vectorLeg.transitionId = legs.ref.transitionId;
-        vectorLeg.approachId = legs.ref.approachId;
         vectorLeg.navId = nextLeg.navId;
 
         vectorLeg.mapType = legs.mapType;
@@ -1228,7 +1246,7 @@ void ProcedureQuery::processLegsFixRestrictions(const map::MapAirport& airport, 
 
 void ProcedureQuery::processLegsFafAndFacf(proc::MapProcedureLegs& legs) const
 {
-  if(legs.mapType & proc::PROCEDURE_ARRIVAL)
+  if(legs.mapType & proc::PROCEDURE_APPROACH_ALL_MISSED)
   {
     int fafIndex = map::INVALID_INDEX_VALUE, facfIndex = map::INVALID_INDEX_VALUE;
 
@@ -1414,7 +1432,7 @@ void ProcedureQuery::processLegsDistanceAndCourse(proc::MapProcedureLegs& legs) 
     if(leg.calculatedTrueCourse >= map::INVALID_COURSE_VALUE / 2)
       leg.calculatedTrueCourse = map::INVALID_COURSE_VALUE;
 
-    if(leg.isTransition() || leg.isSidTransition() || leg.isStarTransition())
+    if(leg.isAnyTransition())
       legs.transitionDistance += leg.calculatedDistance;
 
     if(leg.isApproach() || leg.isStar() || leg.isSid())
@@ -2193,6 +2211,7 @@ void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, con
   procedure.ref.runwayEndId = runwayEndSim.id;
   procedure.ref.airportId = airportSim.id;
   procedure.ref.approachId = CUSTOM_APPROACH_ID;
+  procedure.ref.mapType = proc::PROCEDURE_APPROACH;
   procedure.approachFixIdent = airportSim.ident + runwayEndSim.name;
   procedure.approachType = "CUSTOM";
   procedure.runwayEnd = runwayEndSim;
@@ -2259,6 +2278,7 @@ void ProcedureQuery::createCustomDeparture(proc::MapProcedureLegs& procedure, co
   procedure.ref.runwayEndId = runwayEndSim.id;
   procedure.ref.airportId = airportSim.id;
   procedure.ref.approachId = CUSTOM_DEPARTURE_ID;
+  procedure.ref.mapType = proc::PROCEDURE_SID;
   procedure.approachFixIdent = airportSim.ident + runwayEndSim.name;
   procedure.approachType = "CUSTOMDEPART";
   procedure.runwayEnd = runwayEndSim;
@@ -2715,11 +2735,11 @@ bool ProcedureQuery::doesRunwayMatch(const QString& runway, const QString& runwa
 bool ProcedureQuery::doesSidStarRunwayMatch(const QString& runway, const QString& arincName,
                                             const QStringList& airportRunways) const
 {
-  if(proc::hasSidStarAllRunways(arincName))
+  if(atools::fs::util::hasSidStarAllRunways(arincName))
     // SID or STAR for all runways - otherwise arinc name will not match anyway
     return true;
 
-  if(proc::hasSidStarParallelRunways(arincName))
+  if(atools::fs::util::hasSidStarParallelRunways(arincName))
   {
     // Check which runways are assigned from values like "RW12B"
     QString rwBaseName = arincName.mid(2, 2);
@@ -2738,7 +2758,7 @@ bool ProcedureQuery::doesSidStarRunwayMatch(const QString& runway, const QString
 
 QString ProcedureQuery::anyMatchingRunwayForSidStar(const QString& arincName, const QStringList& airportRunways) const
 {
-  if(proc::hasSidStarParallelRunways(arincName))
+  if(atools::fs::util::hasSidStarParallelRunways(arincName))
   {
     // Check which runways are assigned from values like "RW12B"
     QString rwBaseName = arincName.mid(2, 2);
@@ -2970,17 +2990,17 @@ void ProcedureQuery::assignType(proc::MapProcedureLegs& procedure) const
         leg.mapType = proc::PROCEDURE_TRANSITION;
     }
   }
+  procedure.ref.mapType = procedure.mapType;
 }
 
 /* Create proceed to runway entry based on information in given leg and the runway end information
  *  in the given legs */
-proc::MapProcedureLeg ProcedureQuery::createRunwayLeg(const proc::MapProcedureLeg& leg,
-                                                      const proc::MapProcedureLegs& legs) const
+proc::MapProcedureLeg ProcedureQuery::createRunwayLeg(const proc::MapProcedureLeg& leg, const proc::MapProcedureLegs& legs) const
 {
   proc::MapProcedureLeg rwleg;
+  rwleg.airportId = legs.ref.airportId;
   rwleg.approachId = legs.ref.approachId;
   rwleg.transitionId = legs.ref.transitionId;
-  rwleg.approachId = legs.ref.approachId;
   rwleg.navId = leg.navId;
 
   // Use a generated id base on the previous leg id
@@ -3010,9 +3030,9 @@ proc::MapProcedureLeg ProcedureQuery::createStartLeg(const proc::MapProcedureLeg
                                                      const QStringList& displayText) const
 {
   proc::MapProcedureLeg sleg;
+  sleg.airportId = legs.ref.airportId;
   sleg.approachId = legs.ref.approachId;
   sleg.transitionId = legs.ref.transitionId;
-  sleg.approachId = legs.ref.approachId;
 
   // Use a generated id base on the previous leg id
   sleg.legId = START_LEG_ID_BASE + leg.legId;

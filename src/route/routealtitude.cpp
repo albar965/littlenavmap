@@ -1922,6 +1922,7 @@ QDebug operator<<(QDebug out, const FuelTimeResult& obj)
 
 QDebug operator<<(QDebug out, const RouteAltitude& obj)
 {
+  QDebugStateSaver saver(out);
   out << "TOC dist" << obj.getTopOfClimbDistance()
       << "index" << obj.getTopOfClimbLegIndex()
       << "TOD dist" << obj.getTopOfDescentDistance()

@@ -202,8 +202,14 @@ const QPen aircraftFillPen = QPen(Qt::yellow, 4, Qt::SolidLine, Qt::RoundCap);
 const QPen aircraftGroundBackPen = QPen(Qt::darkGray, 7, Qt::SolidLine, Qt::RoundCap);
 const QPen aircraftGroundFillPen = QPen(Qt::yellow, 4, Qt::SolidLine, Qt::RoundCap);
 
-const QColor highlightApproachColor = QColor(150, 150, 255);
-const QColor highlightApproachColorFast = QColor(0, 0, 150);
+/* Procedure preview line colors */
+const QColor highlightProcedureColor = QColor(80, 80, 255);
+
+/* Use rotating colors for procedure multi preview */
+const QVector<QColor> highlightProcedureColorTable(
+  {QColor(Qt::black), QColor(Qt::red), QColor(Qt::green), QColor(Qt::blue), QColor(Qt::cyan), QColor(Qt::magenta),
+   QColor(Qt::yellow), QColor(Qt::darkRed), QColor(Qt::darkGreen), QColor(Qt::darkBlue), QColor(Qt::darkCyan), QColor(Qt::darkMagenta),
+   QColor(Qt::darkYellow) /*, QColor(Qt::white)*/, QColor(Qt::darkGray), QColor(Qt::gray) /*, QColor(Qt::lightGray)*/});
 
 /* Flight plan or userpoint cross line colors */
 const QColor mapDragColor = QColor(Qt::darkYellow);
@@ -212,6 +218,7 @@ const QColor mapDragColor = QColor(Qt::darkYellow);
 const QColor routeLogEntryColor = QColor(50, 100, 255);
 const QColor routeLogEntryOutlineColor = QColor(Qt::black);
 
+/* Procedure preview default */
 const QColor routeProcedurePreviewColor = QColor(0, 120, 230);
 const QColor routeProcedurePreviewMissedColor = QColor(0, 120, 230);
 

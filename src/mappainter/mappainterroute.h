@@ -88,7 +88,7 @@ private:
   void paintNdb(float x, float y, bool preview);
   void paintWaypoint(const QColor& col, float x, float y, bool preview);
   void paintProcedure(proc::MapProcedureLeg& lastLegPoint,
-                      const proc::MapProcedureLegs& legs, int legsRouteOffset, const QColor& color, bool preview);
+                      const proc::MapProcedureLegs& legs, int legsRouteOffset, const QColor& color, bool preview, bool previewAll);
   void paintWaypointText(float x, float y, const map::MapWaypoint& obj, bool drawAsRoute,
                          const QStringList *additionalText = nullptr);
   void paintNdbText(float x, float y, const map::MapNdb& obj, bool drawAsRoute,
@@ -102,7 +102,7 @@ private:
   void paintProcedurePoint(float x, float y, bool preview);
 
   void paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint,
-                           const proc::MapProcedureLegs& legs, int index, bool preview,
+                           const proc::MapProcedureLegs& legs, int index, bool preview, bool previewAll,
                            bool drawTextFlag);
 
   void drawSymbols(const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints, bool preview);
@@ -111,7 +111,7 @@ private:
 
   void paintProcedureSegment(const proc::MapProcedureLegs& legs,
                              int index, QVector<QLineF>& lastLines, QVector<DrawText> *drawTextLines, bool noText,
-                             bool preview, bool draw);
+                             bool preview, bool previewAll, bool draw);
 
   void paintTopOfDescentAndClimb();
 

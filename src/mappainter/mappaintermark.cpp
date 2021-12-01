@@ -245,57 +245,44 @@ void MapPainterMark::paintHighlights()
   }
 
   // Draw highlights from the approach fix selection =====================================================
-  const proc::MapProcedureLeg& leg = mapPaintWidget->getProcedureLegHighlights();
   const QColor outerColorProc(mapcolors::highlightBackColor);
-  const QColor innerColorProc(mapcolors::adjustAlphaF(mapcolors::highlightApproachColor, alpha));
-  painter->setBrush(transparent ? QBrush(mapcolors::adjustAlphaF(mapcolors::highlightApproachColor, alpha)) : QBrush(Qt::NoBrush));
+  const QColor innerColorProc(mapcolors::adjustAlphaF(mapcolors::highlightProcedureColor, alpha));
+  painter->setBrush(transparent ? QBrush(mapcolors::adjustAlphaF(mapcolors::highlightProcedureColor, alpha)) : QBrush(Qt::NoBrush));
 
-  // Recommended fixes =========================
-  if(leg.recFixPos.isValid())
+  const proc::MapProcedureLeg& leg = mapPaintWidget->getProcedureLegHighlight();
+  if(leg.isValid())
   {
-    float ellipseSize = radius / 2.f;
-
-    float x, y;
-    if(wToS(leg.recFixPos, x, y))
+    // Recommended fixes =========================
+    if(leg.recFixPos.isValid())
     {
-      // Draw recommended fix with a thin small circle
-      if(!context->drawFast && !transparent)
+      float ellipseSize = radius / 2.f;
+
+      float x, y;
+      if(wToS(leg.recFixPos, x, y))
       {
-        painter->setPen(QPen(outerColorProc, radius / 5 + 2));
+        // Draw recommended fix with a thin small circle
+        if(!context->drawFast && !transparent)
+        {
+          painter->setPen(QPen(outerColorProc, radius / 5 + 2));
+          painter->drawEllipse(QPointF(x, y), ellipseSize, ellipseSize);
+        }
+        painter->setPen(QPen(innerColorProc, transparent ? 0 : radius / 5));
         painter->drawEllipse(QPointF(x, y), ellipseSize, ellipseSize);
       }
-      painter->setPen(QPen(innerColorProc, transparent ? 0 : radius / 5));
-      painter->drawEllipse(QPointF(x, y), ellipseSize, ellipseSize);
-    }
-  }
-
-  // Procedure fixes =========================
-  if(leg.line.isValid())
-  {
-    float ellipseSize = radius;
-
-    float x, y;
-    if(wToS(leg.line.getPos1(), x, y))
-    {
-      if(!leg.line.isPoint() || leg.procedureTurnPos.isValid())
-        ellipseSize /= 2;
-
-      // Draw start point of the leg using a smaller circle
-      if(!context->drawFast && !transparent)
-      {
-        painter->setPen(QPen(outerColorProc, radius / 3 + 2));
-        painter->drawEllipse(QPointF(x, y), ellipseSize, ellipseSize);
-      }
-      painter->setPen(QPen(innerColorProc, transparent ? 0 : radius / 3));
-      painter->drawEllipse(QPointF(x, y), ellipseSize, ellipseSize);
     }
 
-    ellipseSize = radius;
-    if(!leg.line.isPoint())
+    // Procedure fixes =========================
+    if(leg.line.isValid())
     {
-      if(wToS(leg.line.getPos2(), x, y))
+      float ellipseSize = radius;
+
+      float x, y;
+      if(wToS(leg.line.getPos1(), x, y))
       {
-        // Draw end point of the leg using a larger circle
+        if(!leg.line.isPoint() || leg.procedureTurnPos.isValid())
+          ellipseSize /= 2;
+
+        // Draw start point of the leg using a smaller circle
         if(!context->drawFast && !transparent)
         {
           painter->setPen(QPen(outerColorProc, radius / 3 + 2));
@@ -304,20 +291,36 @@ void MapPainterMark::paintHighlights()
         painter->setPen(QPen(innerColorProc, transparent ? 0 : radius / 3));
         painter->drawEllipse(QPointF(x, y), ellipseSize, ellipseSize);
       }
-    }
 
-    if(leg.procedureTurnPos.isValid())
-    {
-      if(wToS(leg.procedureTurnPos, x, y))
+      ellipseSize = radius;
+      if(!leg.line.isPoint())
       {
-        // Draw turn position of the procedure turn
-        if(!context->drawFast && !transparent)
+        if(wToS(leg.line.getPos2(), x, y))
         {
-          painter->setPen(QPen(outerColorProc, radius / 3 + 2));
+          // Draw end point of the leg using a larger circle
+          if(!context->drawFast && !transparent)
+          {
+            painter->setPen(QPen(outerColorProc, radius / 3 + 2));
+            painter->drawEllipse(QPointF(x, y), ellipseSize, ellipseSize);
+          }
+          painter->setPen(QPen(innerColorProc, transparent ? 0 : radius / 3));
           painter->drawEllipse(QPointF(x, y), ellipseSize, ellipseSize);
         }
-        painter->setPen(QPen(innerColorProc, transparent ? 0 : radius / 3));
-        painter->drawEllipse(QPointF(x, y), ellipseSize, ellipseSize);
+      }
+
+      if(leg.procedureTurnPos.isValid())
+      {
+        if(wToS(leg.procedureTurnPos, x, y))
+        {
+          // Draw turn position of the procedure turn
+          if(!context->drawFast && !transparent)
+          {
+            painter->setPen(QPen(outerColorProc, radius / 3 + 2));
+            painter->drawEllipse(QPointF(x, y), ellipseSize, ellipseSize);
+          }
+          painter->setPen(QPen(innerColorProc, transparent ? 0 : radius / 3));
+          painter->drawEllipse(QPointF(x, y), ellipseSize, ellipseSize);
+        }
       }
     }
   }

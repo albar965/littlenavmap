@@ -80,7 +80,7 @@ public:
 
   void copy(const MapScreenIndex& other);
 
-  /* Do not allow copying */
+  /* Do not allow implicit copying */
   MapScreenIndex(MapScreenIndex const&) = delete;
   MapScreenIndex& operator=(MapScreenIndex const&) = delete;
 
@@ -143,12 +143,32 @@ public:
     return *searchHighlights;
   }
 
-  void setApproachLegHighlights(const proc::MapProcedureLeg *leg);
-
-  const proc::MapProcedureLeg& getApproachLegHighlights() const
+  /* Multiple procedures and legs preview from search */
+  const QVector<proc::MapProcedureLegs>& getProcedureHighlights() const
   {
-    return *approachLegHighlights;
+    return procedureHighlights;
   }
+
+  void setProcedureHighlights(const QVector<proc::MapProcedureLegs>& value)
+  {
+    procedureHighlights = value;
+  }
+
+  /* Single procedure from search selection */
+  const proc::MapProcedureLegs& getProcedureHighlight() const
+  {
+    return *procedureHighlight;
+  }
+
+  void setProcedureHighlight(const proc::MapProcedureLegs& newHighlight);
+
+  /* Single selected leg in the procedure search tree */
+  const proc::MapProcedureLeg& getProcedureLegHighlight() const
+  {
+    return *procedureLegHighlight;
+  }
+
+  void setProcedureLegHighlight(const proc::MapProcedureLeg& newLegHighlight);
 
   /* Get range rings */
   const QHash<int, map::RangeMarker>& getRangeMarks() const
@@ -236,16 +256,6 @@ public:
     lastSimData = data;
   }
 
-  const proc::MapProcedureLegs& getProcedureHighlight() const
-  {
-    return *approachHighlight;
-  }
-
-  proc::MapProcedureLegs& getProcedureHighlight()
-  {
-    return *approachHighlight;
-  }
-
   void setProfileHighlight(const atools::geo::Pos& value)
   {
     profileHighlight = value;
@@ -288,21 +298,18 @@ private:
 
   void getNearestIls(int xs, int ys, int maxDistance, map::MapResult& result) const;
   void getNearestAirspaces(int xs, int ys, map::MapResult& result) const;
-  void getNearestHighlights(int xs, int ys, int maxDistance, map::MapResult& result,
-                            map::MapObjectQueryTypes types) const;
-  void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapResult& result,
-                                     map::MapObjectQueryTypes types) const;
-  void updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceId>& ids,
-                                            map::MapAirspaceSources source,
+  void getNearestHighlights(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const;
+  void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const;
+  void nearestProcedureHighlightsInternal(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types,
+                                          const QVector<proc::MapProcedureLegs>& procedureLegs, bool previewAll) const;
+  void updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceId>& ids, map::MapAirspaceSources source,
                                             const Marble::GeoDataLatLonBox& curBox, bool highlights);
   void updateAirwayScreenGeometryInternal(QSet<int>& ids, const Marble::GeoDataLatLonBox& curBox, bool highlight);
 
   void updateLineScreenGeometry(QList<std::pair<int, QLine> >& index, int id, const atools::geo::Line& line,
-                                const Marble::GeoDataLatLonBox& curBox,
-                                const CoordinateConverter& conv);
+                                const Marble::GeoDataLatLonBox& curBox, const CoordinateConverter& conv);
 
-  QSet<int> nearestLineIds(const QList<std::pair<int, QLine> >& lineList, int xs, int ys, int maxDistance,
-                           bool lineDistanceOnly) const;
+  QSet<int> nearestLineIds(const QList<std::pair<int, QLine> >& lineList, int xs, int ys, int maxDistance, bool lineDistanceOnly) const;
 
   template<typename TYPE>
   int getNearestId(int xs, int ys, int maxDistance, const QHash<int, TYPE>& typeList) const;
@@ -314,8 +321,14 @@ private:
 
   /* All highlights from search windows - also online airspaces */
   map::MapResult *searchHighlights;
-  proc::MapProcedureLeg *approachLegHighlights;
-  proc::MapProcedureLegs *approachHighlight;
+
+  /* One procedure highlight from selection */
+  proc::MapProcedureLeg *procedureLegHighlight = nullptr;
+  /* More than one leg from multi preview */
+  proc::MapProcedureLegs *procedureHighlight = nullptr;
+
+  /* Highlights or leg fix and related fix */
+  QVector<proc::MapProcedureLegs> procedureHighlights;
 
   /* All airspace highlights from information window */
   QList<map::MapAirspace> airspaceHighlights;

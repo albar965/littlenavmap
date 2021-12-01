@@ -76,6 +76,7 @@ public:
   QIcon createUserpointIcon(int size);
   QIcon createProcedurePointIcon(int size);
   QIcon createAirspaceIcon(const map::MapAirspace& airspace, int size);
+  QIcon createProcedurePreviewIcon(const QColor& color, int size);
   QIcon createHelipadIcon(const map::MapHelipad& helipad, int size);
 
   /* Scale is not pixel size but a factor related for font size */

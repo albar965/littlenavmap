@@ -83,7 +83,7 @@ struct MapResult
   QList<map::MapAirportMsa> airportMsa;
   QSet<int> airportMsaIds; /* Ids used to deduplicate */
 
-  QList<proc::MapProcedurePoint> procPoints;
+  QList<map::MapProcedurePoint> procPoints;
 
   /* true if none of the types exists in this result */
   bool isEmpty(const map::MapTypes& types = map::ALL) const
@@ -156,6 +156,11 @@ struct MapResult
   bool hasLogEntries() const
   {
     return !logbookEntries.isEmpty();
+  }
+
+  bool hasProcedurePoints() const
+  {
+    return !procPoints.isEmpty();
   }
 
   bool hasHoldings() const

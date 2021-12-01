@@ -21,6 +21,7 @@
 #include "geo/calculations.h"
 #include "common/unit.h"
 #include "navapp.h"
+#include "proctypes.h"
 #include "common/symbolpainter.h"
 #include "common/formatter.h"
 #include "fs/util/fsutil.h"
@@ -1809,64 +1810,88 @@ QString mapObjectTypeToString(MapTypes type)
   {
     QStringList str;
 
-    if(type.testFlag(AIRPORT))
-      str += "Airport";
-    if(type.testFlag(AIRPORT_MSA))
-      str += "Airport MSA";
-    if(type.testFlag(AIRPORT_HARD))
-      str += "AirportHard";
-    if(type.testFlag(AIRPORT_SOFT))
-      str += "AirportSoft";
-    if(type.testFlag(AIRPORT_EMPTY))
-      str += "AirportEmpty";
-    if(type.testFlag(AIRPORT_ADDON))
-      str += "AirportAddon";
-    if(type.testFlag(VOR))
-      str += "VOR";
-    if(type.testFlag(NDB))
-      str += "NDB";
-    if(type.testFlag(ILS))
-      str += "ILS";
-    if(type.testFlag(MARKER))
-      str += "Marker";
-    if(type.testFlag(WAYPOINT))
-      str += "Waypoint";
-    if(type.testFlag(AIRWAY))
-      str += "Airway";
-    if(type.testFlag(AIRWAYV))
-      str += "Airwayv";
-    if(type.testFlag(AIRWAYJ))
-      str += "Airwayj";
-    if(type.testFlag(TRACK))
-      str += "Track";
-    if(type.testFlag(AIRCRAFT))
-      str += "Aircraft";
-    if(type.testFlag(AIRCRAFT_AI))
-      str += "AircraftAi";
-    if(type.testFlag(AIRCRAFT_AI_SHIP))
-      str += "AircraftAiShip";
-    if(type.testFlag(USERPOINTROUTE))
-      str += "Userpointroute";
-    if(type.testFlag(PARKING))
-      str += "Parking";
-    if(type.testFlag(RUNWAYEND))
-      str += "Runwayend";
-    if(type.testFlag(INVALID))
-      str += "Invalid";
-    if(type.testFlag(MISSED_APPROACH))
-      str += "Missed_approach";
-    if(type.testFlag(PROCEDURE))
-      str += "Procedure";
-    if(type.testFlag(AIRSPACE))
-      str += "Airspace";
-    if(type.testFlag(HELIPAD))
-      str += "Helipad";
-    if(type.testFlag(USERPOINT))
-      str += "Userpoint";
-    if(type.testFlag(AIRCRAFT_ONLINE))
-      str += "AircraftOnline";
-    if(type.testFlag(LOGBOOK))
-      str += "Logbook";
+    if(type.testFlag(map::AIRCRAFT))
+      str.append("AIRCRAFT");
+    if(type.testFlag(map::AIRCRAFT_AI))
+      str.append("AIRCRAFT_AI");
+    if(type.testFlag(map::AIRCRAFT_AI_SHIP))
+      str.append("AIRCRAFT_AI_SHIP");
+    if(type.testFlag(map::AIRCRAFT_ONLINE))
+      str.append("AIRCRAFT_ONLINE");
+    if(type.testFlag(map::AIRPORT))
+      str.append("AIRPORT");
+    if(type.testFlag(map::AIRPORT_ADDON))
+      str.append("AIRPORT_ADDON");
+    if(type.testFlag(map::AIRPORT_EMPTY))
+      str.append("AIRPORT_EMPTY");
+    if(type.testFlag(map::AIRPORT_HARD))
+      str.append("AIRPORT_HARD");
+    if(type.testFlag(map::AIRPORT_HELIPAD))
+      str.append("AIRPORT_HELIPAD");
+    if(type.testFlag(map::AIRPORT_MSA))
+      str.append("AIRPORT_MSA");
+    if(type.testFlag(map::AIRPORT_NO_PROCS))
+      str.append("AIRPORT_NO_PROCS");
+    if(type.testFlag(map::AIRPORT_SOFT))
+      str.append("AIRPORT_SOFT");
+    if(type.testFlag(map::AIRPORT_UNLIGHTED))
+      str.append("AIRPORT_UNLIGHTED");
+    if(type.testFlag(map::AIRPORT_WATER))
+      str.append("AIRPORT_WATER");
+    if(type.testFlag(map::AIRSPACE))
+      str.append("AIRSPACE");
+    if(type.testFlag(map::AIRWAY))
+      str.append("AIRWAY");
+    if(type.testFlag(map::AIRWAYJ))
+      str.append("AIRWAYJ");
+    if(type.testFlag(map::AIRWAYV))
+      str.append("AIRWAYV");
+    if(type.testFlag(map::HELIPAD))
+      str.append("HELIPAD");
+    if(type.testFlag(map::HOLDING))
+      str.append("HOLDING");
+    if(type.testFlag(map::ILS))
+      str.append("ILS");
+    if(type.testFlag(map::INVALID))
+      str.append("INVALID");
+    if(type.testFlag(map::LOGBOOK))
+      str.append("LOGBOOK");
+    if(type.testFlag(map::MARKER))
+      str.append("MARKER");
+    if(type.testFlag(map::MARK_DISTANCE))
+      str.append("MARK_DISTANCE");
+    if(type.testFlag(map::MARK_HOLDING))
+      str.append("MARK_HOLDING");
+    if(type.testFlag(map::MARK_MSA))
+      str.append("MARK_MSA");
+    if(type.testFlag(map::MARK_PATTERNS))
+      str.append("MARK_PATTERNS");
+    if(type.testFlag(map::MARK_RANGE))
+      str.append("MARK_RANGE");
+    if(type.testFlag(map::MISSED_APPROACH))
+      str.append("MISSED_APPROACH");
+    if(type.testFlag(map::NDB))
+      str.append("NDB");
+    if(type.testFlag(map::PARKING))
+      str.append("PARKING");
+    if(type.testFlag(map::PROCEDURE))
+      str.append("PROCEDURE");
+    if(type.testFlag(map::PROCEDURE_POINT))
+      str.append("PROCEDURE_POINT");
+    if(type.testFlag(map::RUNWAYEND))
+      str.append("RUNWAYEND");
+    if(type.testFlag(map::TRACK))
+      str.append("TRACK");
+    if(type.testFlag(map::USERPOINT))
+      str.append("USERPOINT");
+    if(type.testFlag(map::USERPOINTROUTE))
+      str.append("USERPOINTROUTE");
+    if(type.testFlag(map::USER_FEATURE))
+      str.append("USER_FEATURE");
+    if(type.testFlag(map::VOR))
+      str.append("VOR");
+    if(type.testFlag(map::WAYPOINT))
+      str.append("WAYPOINT");
 
     return str.join(",");
   }
@@ -2244,6 +2269,8 @@ int routeIndex(const map::MapBase *base)
       return base->asPtr<map::MapWaypoint>()->routeIndex;
     else if(type == map::USERPOINTROUTE)
       return base->asPtr<map::MapUserpointRoute>()->routeIndex;
+    else if(type == map::PROCEDURE_POINT)
+      return base->asPtr<map::MapProcedurePoint>()->routeIndex;
   }
   return -1;
 }
@@ -2341,6 +2368,9 @@ QString mapBaseText(const map::MapBase *base, int elideAirportName)
       case map::LOGBOOK:
         return map::logEntryText(*base->asPtr<map::MapLogbookEntry>());
 
+      case map::PROCEDURE_POINT:
+        return map::procedurePointTextShort(*base->asPtr<map::MapProcedurePoint>());
+
       case map::MARK_RANGE:
         return map::rangeMarkText(*base->asPtr<map::RangeMarker>());
 
@@ -2424,6 +2454,9 @@ QIcon mapBaseIcon(const map::MapBase *base, int size)
       case map::LOGBOOK:
         return QIcon(":/littlenavmap/resources/icons/logbook.svg");
 
+      case map::PROCEDURE_POINT:
+        return QIcon(":/littlenavmap/resources/icons/approach.svg");
+
       case map::MARK_RANGE:
         return QIcon(":/littlenavmap/resources/icons/rangerings.svg");
 
@@ -2505,6 +2538,78 @@ QStringList MapRunwayEnd::uniqueVasiTypeStr() const
   vasi.removeAll(QString());
   vasi.removeDuplicates();
   return vasi;
+}
+
+MapProcedurePoint::MapProcedurePoint()
+  : MapBase(map::PROCEDURE_POINT)
+{
+  legs = new proc::MapProcedureLegs();
+}
+
+MapProcedurePoint::MapProcedurePoint(const proc::MapProcedureLegs& legsParam, int legIndexParam, int routeIndexParam, bool previewParam,
+                                     bool previewAllParam)
+  : map::MapBase(map::PROCEDURE_POINT)
+{
+  legs = new proc::MapProcedureLegs();
+  *legs = legsParam;
+
+  legIndex = legIndexParam;
+  position = getLeg().line.getPos1();
+  id = getLeg().legId;
+
+  preview = previewParam;
+  previewAll = previewAllParam;
+  routeIndex = routeIndexParam;
+}
+
+MapProcedurePoint::~MapProcedurePoint()
+{
+  delete legs;
+}
+
+MapProcedurePoint::MapProcedurePoint(const MapProcedurePoint& other)
+  : map::MapBase(other.objType)
+{
+  legs = new proc::MapProcedureLegs();
+  this->operator=(other);
+}
+
+MapProcedurePoint& MapProcedurePoint::operator=(const MapProcedurePoint& other)
+{
+  MapBase::operator=(other);
+  *legs = *other.legs;
+  legIndex = other.legIndex;
+  routeIndex = other.routeIndex;
+  preview = other.preview;
+  previewAll = other.previewAll;
+  return *this;
+}
+
+std::tuple<int, int, int> MapProcedurePoint::compoundId() const
+{
+  return std::make_tuple(legs->ref.airportId, legs->ref.approachId, getLeg().isAnyTransition() ? legs->ref.transitionId : -1);
+}
+
+const proc::MapProcedureLeg& MapProcedurePoint::getLeg() const
+{
+  return legs->at(legIndex);
+}
+
+const QString& MapProcedurePoint::getIdent() const
+{
+  return legs->approachFixIdent;
+}
+
+QString procedurePointText(const MapProcedurePoint& procPoint)
+{
+  return proc::procedureLegsText(*procPoint.legs, procPoint.getLeg().mapType,
+                                 false /* narrow */, true /* includeRunway*/, false /* missedAsApproach*/);
+}
+
+QString procedurePointTextShort(const MapProcedurePoint& procPoint)
+{
+  return proc::procedureLegsText(*procPoint.legs, procPoint.getLeg().mapType,
+                                 true /* narrow */, true /* includeRunway*/, false /* missedAsApproach*/);
 }
 
 } // namespace types

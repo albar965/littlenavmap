@@ -81,7 +81,7 @@ enum MapType : unsigned long long
   AIRCRAFT =         1 << 14, /* Simulator user aircraft */
   AIRCRAFT_AI =      1 << 15, /* AI or multiplayer simulator aircraft */
   AIRCRAFT_AI_SHIP = 1 << 16, /* AI or multiplayer simulator ship */
-  AIRPORT_MSA =      1 << 17, /* Minimum safe altitude for airports and navaids */
+  AIRPORT_MSA =      1 << 17, /* Minimum safe altitude for airports and navaids - small icon */
   USERPOINTROUTE =   1 << 18, /* Flight plan user waypoint */
   PARKING =          1 << 19,
   RUNWAYEND =        1 << 20,
@@ -103,7 +103,7 @@ enum MapType : unsigned long long
   MARK_DISTANCE =        0x0000'0001'0000'0000, /* All measurement lines */
   MARK_HOLDING =         0x0000'0002'0000'0000, /* Holdings */
   MARK_PATTERNS =        0x0000'0004'0000'0000, /* Traffic patterns */
-  MARK_MSA =             0x0000'0008'0000'0000, /* Airport MSA */
+  MARK_MSA =             0x0000'0008'0000'0000, /* Airport MSA placed/highlighted by user */
 
   /* All marks */
   MARK_ALL = MARK_RANGE | MARK_DISTANCE | MARK_HOLDING | MARK_PATTERNS | MARK_MSA,
@@ -118,6 +118,10 @@ enum MapType : unsigned long long
   AIRPORT_UNLIGHTED =    0x0000'0400'0000'0000, /* Filter flag. Show airports having no lighting */
   AIRPORT_NO_PROCS =     0x0000'0800'0000'0000, /* Filter flag. Show airports without approach procedure */
 
+  /* Procedure flags ================================  */
+  PROCEDURE_POINT =      0x0000'1000'0000'0000, /* Type flag for map base and context menu */
+
+  /* =============================================================================================== */
   /* Pure visibiliy flags. Nothing is shown if not at least one of these is set */
   AIRPORT_ALL_VISIBLE = AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_WATER | AIRPORT_HELIPAD,
 
@@ -188,17 +192,18 @@ enum MapObjectQueryType
   QUERY_PROC_MISSED_POINTS = 1 << 1, /* Missed procedure points */
   QUERY_MARK_HOLDINGS = 1 << 2, /* User defined holdings */
   QUERY_MARK_PATTERNS = 1 << 3, /* Traffic patterns */
-  QUERY_PROCEDURES = 1 << 4, /* Procedures when querying route */
-  QUERY_PROCEDURES_MISSED = 1 << 5, /* Missed procedures when querying route */
+  QUERY_PROCEDURES = 1 << 4, /* Procedure navaids when querying route */
+  QUERY_PROCEDURES_MISSED = 1 << 5, /* Missed procedure navaids when querying route */
   QUERY_MARK_RANGE = 1 << 6, /* Range rings */
   QUERY_MARK_MSA = 1 << 7, /* Airport MSA sectors */
   QUERY_MARK_DISTANCE = 1 << 8, /* Measurement lines */
+  QUERY_PREVIEW_PROC_POINTS = 1 << 9, /* Points from procedure preview */
 
   /* All user creatable/placeable features */
   QUERY_MARK = QUERY_MARK_DISTANCE | QUERY_MARK_HOLDINGS | QUERY_MARK_PATTERNS | QUERY_MARK_RANGE | QUERY_MARK_MSA,
 
   QUERY_ALL = QUERY_PROC_POINTS | QUERY_PROC_MISSED_POINTS | QUERY_MARK_HOLDINGS | QUERY_MARK_PATTERNS | QUERY_PROCEDURES |
-              QUERY_MARK_RANGE | QUERY_MARK_MSA
+              QUERY_MARK_RANGE | QUERY_MARK_MSA | QUERY_PREVIEW_PROC_POINTS
 };
 
 Q_DECLARE_FLAGS(MapObjectQueryTypes, MapObjectQueryType);

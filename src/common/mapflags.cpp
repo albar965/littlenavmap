@@ -39,16 +39,6 @@ QDebug operator<<(QDebug out, const map::MapTypes& type)
   {
     if(type.testFlag(AIRPORT))
       flags.append("AIRPORT");
-    if(type.testFlag(AIRPORT_MSA))
-      flags.append("AIRPORT_MSA");
-    if(type.testFlag(AIRPORT_HARD))
-      flags.append("AIRPORT_HARD");
-    if(type.testFlag(AIRPORT_SOFT))
-      flags.append("AIRPORT_SOFT");
-    if(type.testFlag(AIRPORT_EMPTY))
-      flags.append("AIRPORT_EMPTY");
-    if(type.testFlag(AIRPORT_ADDON))
-      flags.append("AIRPORT_ADDON");
     if(type.testFlag(VOR))
       flags.append("VOR");
     if(type.testFlag(NDB))
@@ -65,12 +55,16 @@ QDebug operator<<(QDebug out, const map::MapTypes& type)
       flags.append("AIRWAYV");
     if(type.testFlag(AIRWAYJ))
       flags.append("AIRWAYJ");
+    if(type.testFlag(USER_FEATURE))
+      flags.append("USER_FEATURE");
     if(type.testFlag(AIRCRAFT))
       flags.append("AIRCRAFT");
     if(type.testFlag(AIRCRAFT_AI))
       flags.append("AIRCRAFT_AI");
     if(type.testFlag(AIRCRAFT_AI_SHIP))
       flags.append("AIRCRAFT_AI_SHIP");
+    if(type.testFlag(AIRPORT_MSA))
+      flags.append("AIRPORT_MSA");
     if(type.testFlag(USERPOINTROUTE))
       flags.append("USERPOINTROUTE");
     if(type.testFlag(PARKING))
@@ -87,6 +81,8 @@ QDebug operator<<(QDebug out, const map::MapTypes& type)
       flags.append("AIRSPACE");
     if(type.testFlag(HELIPAD))
       flags.append("HELIPAD");
+    if(type.testFlag(HOLDING))
+      flags.append("HOLDING");
     if(type.testFlag(USERPOINT))
       flags.append("USERPOINT");
     if(type.testFlag(TRACK))
@@ -95,6 +91,32 @@ QDebug operator<<(QDebug out, const map::MapTypes& type)
       flags.append("AIRCRAFT_ONLINE");
     if(type.testFlag(LOGBOOK))
       flags.append("LOGBOOK");
+    if(type.testFlag(MARK_RANGE))
+      flags.append("MARK_RANGE");
+    if(type.testFlag(MARK_DISTANCE))
+      flags.append("MARK_DISTANCE");
+    if(type.testFlag(MARK_HOLDING))
+      flags.append("MARK_HOLDING");
+    if(type.testFlag(MARK_PATTERNS))
+      flags.append("MARK_PATTERNS");
+    if(type.testFlag(MARK_MSA))
+      flags.append("MARK_MSA");
+    if(type.testFlag(AIRPORT_HARD))
+      flags.append("AIRPORT_HARD");
+    if(type.testFlag(AIRPORT_SOFT))
+      flags.append("AIRPORT_SOFT");
+    if(type.testFlag(AIRPORT_WATER))
+      flags.append("AIRPORT_WATER");
+    if(type.testFlag(AIRPORT_HELIPAD))
+      flags.append("AIRPORT_HELIPAD");
+    if(type.testFlag(AIRPORT_EMPTY))
+      flags.append("AIRPORT_EMPTY");
+    if(type.testFlag(AIRPORT_ADDON))
+      flags.append("AIRPORT_ADDON");
+    if(type.testFlag(AIRPORT_UNLIGHTED))
+      flags.append("AIRPORT_UNLIGHTED");
+    if(type.testFlag(AIRPORT_NO_PROCS))
+      flags.append("AIRPORT_NO_PROCS");
   }
 
   out.nospace().noquote() << flags.join("|");

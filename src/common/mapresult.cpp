@@ -89,6 +89,9 @@ MapResult& MapResult::clear(const MapTypes& types)
   if(types.testFlag(map::LOGBOOK))
     logbookEntries.clear();
 
+  if(types.testFlag(map::PROCEDURE_POINT))
+    procPoints.clear();
+
   if(types.testFlag(map::AIRCRAFT_AI))
     aiAircraft.clear();
 
@@ -205,6 +208,9 @@ MapResult& MapResult::clearAllButFirst(const MapTypes& types)
 
   if(types.testFlag(map::LOGBOOK))
     clearAllButFirst(logbookEntries);
+
+  if(types.testFlag(map::PROCEDURE_POINT))
+    clearAllButFirst(procPoints);
 
   if(types.testFlag(map::AIRCRAFT_AI))
     clearAllButFirst(aiAircraft);
@@ -363,6 +369,8 @@ QString MapResult::objectText(MapTypes type, int elideName) const
     str = map::userpointText(userpoints.first(), elideName);
   else if(type == map::LOGBOOK && hasLogEntries())
     str = map::logEntryText(logbookEntries.first());
+  else if(type == map::PROCEDURE_POINT && hasProcedurePoints())
+    str = map::procedurePointTextShort(procPoints.first());
   else if(type == map::AIRCRAFT_ONLINE && hasOnlineAircraft())
     str = onlineAircraft.first().getIdent();
   else if(type == map::AIRSPACE && hasOnlineAirspaces())
@@ -463,6 +471,8 @@ const atools::geo::Pos& MapResult::getPosition(const std::initializer_list<MapTy
         return userpoints.first().getPosition();
       else if(type == map::LOGBOOK)
         return logbookEntries.first().getPosition();
+      else if(type == map::PROCEDURE_POINT)
+        return procPoints.first().getPosition();
       else if(type == map::AIRCRAFT)
         return userAircraft.getPosition();
       else if(type == map::AIRCRAFT_AI)
@@ -517,6 +527,8 @@ QString MapResult::getIdent(const std::initializer_list<MapTypes>& types) const
         return userpoints.first().ident;
       else if(type == map::LOGBOOK)
         return logbookEntries.first().departureIdent;
+      else if(type == map::PROCEDURE_POINT)
+        return procPoints.first().getIdent();
       else if(type == map::AIRCRAFT)
         return userAircraft.getAircraft().getAirplaneRegistration();
       else if(type == map::AIRCRAFT_AI)
@@ -600,6 +612,8 @@ bool MapResult::getIdAndType(int& id, MapTypes& type, const std::initializer_lis
         id = userpoints.first().getId();
       else if(t == map::LOGBOOK)
         id = logbookEntries.first().getId();
+      else if(t == map::PROCEDURE_POINT)
+        id = procPoints.first().getId();
       else if(t == map::AIRCRAFT)
         id = userAircraft.getId();
       else if(t == map::AIRCRAFT_AI)
@@ -657,6 +671,8 @@ MapResult& MapResult::addFromMapBase(const MapBase *base)
       userpoints.append(base->asObj<map::MapUserpoint>());
     else if(base->getType().testFlag(map::LOGBOOK))
       logbookEntries.append(base->asObj<map::MapLogbookEntry>());
+    else if(base->getType().testFlag(map::PROCEDURE_POINT))
+      procPoints.append(base->asObj<map::MapProcedurePoint>());
     else if(base->getType().testFlag(map::AIRCRAFT))
       userAircraft = base->asObj<map::MapUserAircraft>();
     else if(base->getType().testFlag(map::AIRCRAFT_AI))
@@ -698,6 +714,7 @@ int MapResult::size(const MapTypes& types) const
   totalSize += types.testFlag(map::USERPOINTROUTE) ? userpointsRoute.size() : 0;
   totalSize += types.testFlag(map::USERPOINT) ? userpoints.size() : 0;
   totalSize += types.testFlag(map::LOGBOOK) ? logbookEntries.size() : 0;
+  totalSize += types.testFlag(map::PROCEDURE_POINT) ? procPoints.size() : 0;
   totalSize += types.testFlag(map::AIRCRAFT) ? userAircraft.isValid() : 0;
   totalSize += types.testFlag(map::AIRCRAFT_AI) ? aiAircraft.size() : 0;
   totalSize += types.testFlag(map::AIRCRAFT_ONLINE) ? onlineAircraft.size() : 0;
@@ -912,6 +929,11 @@ MapResultIndex& MapResultIndex::add(const MapResult& resultParam, const MapTypes
     result.logbookEntries.append(resultParam.logbookEntries);
     addAll(result.logbookEntries);
   }
+  if(types.testFlag(PROCEDURE_POINT))
+  {
+    result.procPoints.append(resultParam.procPoints);
+    addAll(result.procPoints);
+  }
 
   // Aircraft ===========
   if(types.testFlag(AIRCRAFT))
@@ -995,6 +1017,8 @@ MapResultIndex& MapResultIndex::addRef(const MapResult& resultParam, const MapTy
     addAll(resultParam.userpoints);
   if(types.testFlag(LOGBOOK))
     addAll(resultParam.logbookEntries);
+  if(types.testFlag(PROCEDURE_POINT))
+    addAll(resultParam.procPoints);
 
   // Aircraft ===========
   if(types.testFlag(AIRCRAFT) && resultParam.userAircraft.isValid())

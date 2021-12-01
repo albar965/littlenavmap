@@ -96,12 +96,14 @@ public:
   /* Update highlighted objects */
   void changeSearchHighlights(const map::MapResult& newHighlights, bool updateAirspace, bool updateLogEntries);
   void changeRouteHighlights(const QList<int>& routeHighlight);
-  void changeProcedureLegHighlights(const proc::MapProcedureLeg *leg);
 
   /* Highlight a point along the route while mouse over in the profile window */
   void changeProfileHighlight(const atools::geo::Pos& pos);
 
-  void changeApproachHighlight(const proc::MapProcedureLegs& approach);
+  /* Update procedure highlights, update screen index and redraw map */
+  void changeProcedureHighlight(const proc::MapProcedureLegs& procedure);
+  void changeProcedureHighlights(const QVector<proc::MapProcedureLegs>& procedures);
+  void changeProcedureLegHighlight(const proc::MapProcedureLeg& procedureLeg);
 
   /* Update route screen coordinate index */
   void routeChanged(bool geometryChanged);
@@ -131,8 +133,11 @@ public:
 
   /* Getters used by the painters */
   const map::MapResult& getSearchHighlights() const;
-  const proc::MapProcedureLeg& getProcedureLegHighlights() const;
+
+  /* Procedure preview. Delegates to map screen index. */
   const proc::MapProcedureLegs& getProcedureHighlight() const;
+  const QVector<proc::MapProcedureLegs>& getProcedureHighlights() const;
+  const proc::MapProcedureLeg& getProcedureLegHighlight() const;
 
   const QList<int>& getRouteHighlights() const;
 

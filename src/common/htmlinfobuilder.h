@@ -265,8 +265,7 @@ public:
    */
   void userpointTextRoute(const map::MapUserpointRoute& userpoint, atools::util::HtmlBuilder& html) const;
 
-  void procedurePointText(const proc::MapProcedurePoint& procPoint, atools::util::HtmlBuilder& html,
-                          const Route *route) const;
+  void procedurePointText(const map::MapProcedurePoint& procPoint, atools::util::HtmlBuilder& html, const Route *route) const;
 
   /*
    * Creates an overview HTML description for any AI or user aircraft in the simulator.
@@ -441,7 +440,11 @@ private:
   AirportQuery *airportQuerySim, *airportQueryNav;
   InfoQuery *infoQuery;
   atools::fs::util::MorseCode *morse;
-  bool info, print, verbose;
+
+  bool info, /* Shown in information panel - otherwise tooltip */
+       print, /* Printing */
+       verbose /* Verbose tooltip option in settings set */;
+
   QLocale locale;
 };
 

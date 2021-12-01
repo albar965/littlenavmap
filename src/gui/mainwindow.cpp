@@ -1059,20 +1059,17 @@ void MainWindow::connectAllSlots()
 
   // Style handler ===================================================================
   // Save complete state due to crashes in Qt
-  connect(NavApp::getStyleHandler(), &StyleHandler::preStyleChange, this, &MainWindow::saveStateNow);
+  AircraftPerfController *perfController = NavApp::getAircraftPerfController();
 
+  connect(NavApp::getStyleHandler(), &StyleHandler::preStyleChange, this, &MainWindow::saveStateNow);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, mapcolors::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, infoController, &InfoController::optionsChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, routeController, &RouteController::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, searchController, &SearchController::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, mapWidget, &MapPaintWidget::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, profileWidget, &ProfileWidget::styleChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged,
-          NavApp::getAircraftPerfController(), &AircraftPerfController::optionsChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged,
-          NavApp::getInfoController(), &InfoController::styleChanged);
-
-  AircraftPerfController *perfController = NavApp::getAircraftPerfController();
+  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, perfController, &AircraftPerfController::optionsChanged);
+  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, NavApp::getInfoController(), &InfoController::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, optionsDialog, &OptionsDialog::styleChanged);
 
   // WindReporter ===================================================================================
@@ -1083,13 +1080,12 @@ void MainWindow::connectAllSlots()
           windReporter, &WindReporter::updateToolButtonState);
 
   // Aircraft performance signals =======================================================
-  connect(perfController, &AircraftPerfController::aircraftPerformanceChanged,
-          routeController, &RouteController::aircraftPerformanceChanged);
+  connect(perfController, &AircraftPerfController::aircraftPerformanceChanged, routeController,
+          &RouteController::aircraftPerformanceChanged);
   connect(perfController, &AircraftPerfController::windChanged, routeController, &RouteController::windUpdated);
   connect(perfController, &AircraftPerfController::windChanged, profileWidget, &ProfileWidget::windUpdated);
   connect(routeController, &RouteController::routeChanged, perfController, &AircraftPerfController::routeChanged);
-  connect(routeController, &RouteController::routeAltitudeChanged,
-          perfController, &AircraftPerfController::routeAltitudeChanged);
+  connect(routeController, &RouteController::routeAltitudeChanged, perfController, &AircraftPerfController::routeAltitudeChanged);
 
   // Route export signals =======================================================
   connect(routeExport, &RouteExport::optionsUpdated, this, &MainWindow::updateActionStates);
@@ -1282,8 +1278,9 @@ void MainWindow::connectAllSlots()
 
   // Approach controller ===================================================================
   ProcedureSearch *procedureSearch = searchController->getProcedureSearch();
-  connect(procedureSearch, &ProcedureSearch::procedureLegSelected, this, &MainWindow::procedureLegSelected);
   connect(procedureSearch, &ProcedureSearch::procedureSelected, this, &MainWindow::procedureSelected);
+  connect(procedureSearch, &ProcedureSearch::proceduresSelected, this, &MainWindow::proceduresSelected);
+  connect(procedureSearch, &ProcedureSearch::procedureLegSelected, this, &MainWindow::procedureLegSelected);
   connect(procedureSearch, &ProcedureSearch::showRect, mapWidget, &MapPaintWidget::showRect);
   connect(procedureSearch, &ProcedureSearch::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(procedureSearch, &ProcedureSearch::routeInsertProcedure, routeController, &RouteController::routeAddProcedure);
@@ -1403,6 +1400,8 @@ void MainWindow::connectAllSlots()
 
   connect(mapWidget, &MapWidget::editLogEntryFromMap, NavApp::getLogdataController(), &LogdataController::editLogEntryFromMap);
   connect(mapWidget, &MapWidget::exitFullScreenPressed, this, &MainWindow::exitFullScreenPressed);
+
+  connect(mapWidget, &MapWidget::routeInsertProcedure, routeController, &RouteController::routeAddProcedure);
 
   // Connect toolbar combo boxes
   connect(mapProjectionComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::changeMapProjection);
@@ -3033,82 +3032,131 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
   updateHighlightActionStates();
 }
 
-/* Selection in approach view has changed */
 void MainWindow::procedureSelected(const proc::MapProcedureRef& ref)
 {
-  // qDebug() << Q_FUNC_INFO << "approachId" << ref.approachId
-  // << "transitionId" << ref.transitionId
-  // << "legId" << ref.legId;
+  proceduresSelectedInternal({ref}, false /* previewAll */);
+}
 
-  map::MapAirport airport = NavApp::getAirportQueryNav()->getAirportById(ref.airportId);
+void MainWindow::proceduresSelected(const QVector<proc::MapProcedureRef>& refs)
+{
+  proceduresSelectedInternal(refs, true /* previewAll */);
+}
 
-  if(ref.isEmpty())
-    mapWidget->changeApproachHighlight(proc::MapProcedureLegs());
-  else
+void MainWindow::proceduresSelectedInternal(const QVector<proc::MapProcedureRef>& refs, bool previewAll)
+{
+  QVector<proc::MapProcedureLegs> procedures;
+  ProcedureQuery *procedureQuery = NavApp::getProcedureQuery();
+
+  if(previewAll)
+    // Loading might take longer for some airports
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+
+  for(const proc::MapProcedureRef& ref: refs)
   {
-    if(ref.hasApproachAndTransitionIds())
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << "approachId" << ref.approachId << "transitionId" << ref.transitionId << "legId" << ref.legId;
+#endif
+
+    map::MapAirport airport = NavApp::getAirportQueryNav()->getAirportById(ref.airportId);
+
+    if(refs.isEmpty())
     {
-      // Load transition including approach
-      const proc::MapProcedureLegs *legs = NavApp::getProcedureQuery()->getTransitionLegs(airport, ref.transitionId);
-      if(legs != nullptr)
-        mapWidget->changeApproachHighlight(*legs);
+      if(previewAll)
+        // Mulit preview for all procedures of an airport
+        mapWidget->changeProcedureHighlights(QVector<proc::MapProcedureLegs>());
       else
-        qWarning() << "Transition not found" << ref.transitionId;
+        // Single procedure selection by user
+        mapWidget->changeProcedureHighlight(proc::MapProcedureLegs());
     }
-    else if(ref.hasApproachOnlyIds())
+    else
     {
-      proc::MapProcedureRef curRef = mapWidget->getProcedureHighlight().ref;
-      if(ref.airportId == curRef.airportId && ref.approachId == curRef.approachId &&
-         !ref.hasTransitionId() && curRef.hasTransitionId() && ref.isLeg())
+      if(ref.hasApproachAndTransitionIds())
       {
-        // Approach leg selected - keep preview of current transition
-        proc::MapProcedureRef r = ref;
-        r.transitionId = curRef.transitionId;
-        const proc::MapProcedureLegs *legs = NavApp::getProcedureQuery()->getTransitionLegs(airport, r.transitionId);
+        // Load transition including approach
+        const proc::MapProcedureLegs *legs = procedureQuery->getTransitionLegs(airport, ref.transitionId);
         if(legs != nullptr)
-          mapWidget->changeApproachHighlight(*legs);
+          procedures.append(*legs);
         else
-          qWarning() << "Transition not found" << r.transitionId;
+          qWarning() << "Transition not found" << ref.transitionId;
       }
-      else
+      else if(ref.hasApproachOnlyIds())
       {
-        const proc::MapProcedureLegs *legs = NavApp::getProcedureQuery()->getApproachLegs(airport, ref.approachId);
-        if(legs != nullptr)
-          mapWidget->changeApproachHighlight(*legs);
+        proc::MapProcedureRef curRef;
+        if(!previewAll)
+          // Only one procedure in preview - try to keep transition if user moved selection to approach leg
+          curRef = mapWidget->getProcedureHighlight().ref;
+
+        if(ref.airportId == curRef.airportId && ref.approachId == curRef.approachId &&
+           !ref.hasTransitionId() && curRef.hasTransitionId() && ref.isLeg())
+        {
+          // Approach leg selected - keep preview of current transition
+          proc::MapProcedureRef r = ref;
+          r.transitionId = curRef.transitionId;
+          const proc::MapProcedureLegs *legs = procedureQuery->getTransitionLegs(airport, r.transitionId);
+          if(legs != nullptr)
+            procedures.append(*legs);
+          else
+            qWarning() << "Transition not found" << r.transitionId;
+        }
         else
-          qWarning() << "Approach not found" << ref.transitionId;
+        {
+          const proc::MapProcedureLegs *legs = procedureQuery->getApproachLegs(airport, ref.approachId);
+          if(legs != nullptr)
+            procedures.append(*legs);
+          else
+            qWarning() << "Approach not found" << ref.approachId;
+        }
       }
     }
   }
+
+  if(!procedures.isEmpty())
+  {
+    if(!previewAll)
+      // Use  default color
+      procedures[0].previewColor = mapcolors::highlightProcedureColor;
+    else
+    {
+      // Use color palette for multi preview
+      for(int i = 0; i < procedures.size(); i++)
+        procedures[i].previewColor = mapcolors::highlightProcedureColorTable[i % mapcolors::highlightProcedureColorTable.size()];
+    }
+  }
+
+  if(previewAll)
+    mapWidget->changeProcedureHighlights(procedures);
+  else
+    mapWidget->changeProcedureHighlight(procedures.value(0));
+
+  if(previewAll)
+    QGuiApplication::restoreOverrideCursor();
+
   updateHighlightActionStates();
 }
 
-/* Selection in approach view has changed */
 void MainWindow::procedureLegSelected(const proc::MapProcedureRef& ref)
 {
-  // qDebug() << Q_FUNC_INFO << "approachId" << ref.approachId
-  // << "transitionId" << ref.transitionId
-  // << "legId" << ref.legId;
+  ProcedureQuery *procedureQuery = NavApp::getProcedureQuery();
+  const proc::MapProcedureLeg *leg = nullptr;
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "approachId" << ref.approachId << "transitionId" << ref.transitionId << "legId" << ref.legId;
+#endif
 
   if(ref.legId != -1)
   {
-    const proc::MapProcedureLeg *leg;
-
     map::MapAirport airport = NavApp::getAirportQueryNav()->getAirportById(ref.airportId);
     if(ref.transitionId != -1)
-      leg = NavApp::getProcedureQuery()->getTransitionLeg(airport, ref.legId);
+      leg = procedureQuery->getTransitionLeg(airport, ref.legId);
     else
-      leg = NavApp::getProcedureQuery()->getApproachLeg(airport, ref.approachId, ref.legId);
-
-    if(leg != nullptr)
-    {
-      // qDebug() << *leg;
-
-      mapWidget->changeProcedureLegHighlights(leg);
-    }
+      leg = procedureQuery->getApproachLeg(airport, ref.approachId, ref.legId);
   }
+
+  if(leg != nullptr)
+    mapWidget->changeProcedureLegHighlight(*leg);
   else
-    mapWidget->changeProcedureLegHighlights(nullptr);
+    mapWidget->changeProcedureLegHighlight(proc::MapProcedureLeg());
+
   updateHighlightActionStates();
 }
 

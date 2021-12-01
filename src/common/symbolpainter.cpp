@@ -176,6 +176,20 @@ QIcon SymbolPainter::createAirspaceIcon(const map::MapAirspace& airspace, int si
   return QIcon(pixmap);
 }
 
+QIcon SymbolPainter::createProcedurePreviewIcon(const QColor& color, int size)
+{
+  QPixmap pixmap(size, size);
+  pixmap.fill(QColor(Qt::transparent));
+  QPainter painter(&pixmap);
+  prepareForIcon(painter);
+
+  painter.setBackgroundMode(Qt::OpaqueMode);
+  painter.setPen(color);
+  painter.setBrush(color);
+  painter.drawEllipse(4, 4, size - 8, size - 8);
+  return QIcon(pixmap);
+}
+
 QIcon SymbolPainter::createHelipadIcon(const MapHelipad& helipad, int size)
 {
   QPixmap pixmap(size, size);

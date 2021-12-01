@@ -3294,69 +3294,121 @@ void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, Htm
   }
 }
 
-void HtmlInfoBuilder::procedurePointText(const proc::MapProcedurePoint& procPoint, HtmlBuilder& html,
-                                         const Route *route) const
+void HtmlInfoBuilder::procedurePointText(const map::MapProcedurePoint& procPoint, HtmlBuilder& html, const Route *route) const
 {
-  QString header = procPoint.preview ? proc::procedureTypeText(procPoint.mapType) : route->getProcedureLegText(
-    procPoint.mapType);
+  QString header;
+  const proc::MapProcedureLegs *legs = procPoint.legs;
+  const proc::MapProcedureLeg& leg = procPoint.getLeg();
 
-  head(html, header);
+  if(!procPoint.preview && route != nullptr)
+    // Part of the route
+    header = route->getProcedureLegText(leg.mapType, true /* includeRunway */, false /* missedAsApproach */);
+  else
+    header = map::procedurePointText(procPoint);
 
-  QStringList atts;
+  QIcon icon;
 
-  if(procPoint.flyover)
-    atts += tr("Fly over");
+  if(legs->isAnyCustom())
+  {
+    if(legs->isCustomDeparture())
+      icon = QIcon(":/littlenavmap/resources/icons/runwaydepart.svg");
+    else
+      icon = QIcon(":/littlenavmap/resources/icons/runwaydest.svg");
+  }
+  else
+  {
+    if(leg.mapType.testFlag(proc::PROCEDURE_MISSED))
+      icon = QIcon(":/littlenavmap/resources/icons/missed.svg");
+    else
+      icon = QIcon(":/littlenavmap/resources/icons/approach.svg");
+  }
+
+  html.img(icon, QString(), QString(), symbolSizeTitle);
+  html.nbsp().nbsp();
+
+  if(procPoint.legs->previewColor.isValid() && procPoint.previewAll)
+  {
+    QIcon procIcon = SymbolPainter().createProcedurePreviewIcon(procPoint.legs->previewColor, symbolSizeTitle.height());
+    html.img(procIcon, QString(), QString(), symbolSizeTitle);
+    html.nbsp().nbsp();
+  }
+
+  navaidTitle(html, header);
 
   html.table();
 
-  // Add IAF, MAP, ...
-  QString typeStr = proc::proceduresLegSecialTypeLongStr(proc::specialType(procPoint.arincDescrCode));
-  if(!typeStr.isEmpty())
-    html.row2(typeStr);
+  if(!info && procPoint.routeIndex >= 0)
+    html.row2(tr("Flight Plan Position:"), locale.toString(procPoint.routeIndex + 1));
 
-  html.row2(tr("Leg Type:"), proc::procedureLegTypeStr(procPoint.type));
-  html.row2(tr("Fix:"), procPoint.fixIdent);
+  if(!legs->isAnyCustom() && (procPoint.preview || procPoint.previewAll))
+    html.row2(tr("First and last Fix:"), atools::strJoin(procedureTextFirstAndLastFix(*legs, leg.mapType), tr(", "), tr(" and ")));
 
-  if(!atts.isEmpty())
-    html.row2(atts.join(", "));
-
-  if(!procPoint.remarks.isEmpty())
-    html.row2(procPoint.remarks.join(", "));
-
-  if(procPoint.altRestriction.isValid())
-    html.row2(tr("Altitude Restriction:"), proc::altRestrictionText(procPoint.altRestriction));
-
-  if(procPoint.speedRestriction.isValid())
-    html.row2(tr("Speed Restriction:"), proc::speedRestrictionText(procPoint.speedRestriction));
-
-  if(procPoint.calculatedDistance > 0.f)
-    html.row2(tr("Distance:"), Unit::distNm(procPoint.calculatedDistance /*, true, 20, true*/));
-  if(procPoint.time > 0.f)
-    html.row2(tr("Time:"), locale.toString(procPoint.time, 'f', 0) % tr(" min"));
-  if(procPoint.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
-    html.row2(tr("Course:"), courseTextFromTrue(procPoint.calculatedTrueCourse, procPoint.magvar), ahtml::NO_ENTITIES);
-
-  if(!procPoint.turnDirection.isEmpty())
+  if(!procPoint.previewAll)
   {
-    if(procPoint.turnDirection == "L")
-      html.row2(tr("Turn:"), tr("Left"));
-    else if(procPoint.turnDirection == "R")
-      html.row2(tr("Turn:"), tr("Right"));
-    else if(procPoint.turnDirection == "B")
-      html.row2(tr("Turn:"), tr("Left or right"));
-  }
+    // Add IAF, MAP, ...
+    QString typeStr, type = proc::proceduresLegSecialTypeLongStr(proc::specialType(leg.arincDescrCode));
 
-  if(!procPoint.recFixIdent.isEmpty())
-  {
-    if(procPoint.rho > 0.f)
-      html.row2(tr("Related Navaid:"),
-                tr("%1 / %2 / %3").arg(procPoint.recFixIdent).
-                arg(Unit::distNm(procPoint.rho /*, true, 20, true*/)).
-                arg(courseTextFromMag(procPoint.theta, procPoint.magvar)), ahtml::NO_ENTITIES);
+    if(type.isEmpty())
+      typeStr = tr("Fix:");
     else
-      html.row2(tr("Related Navaid:"), procPoint.recFixIdent);
-  }
+      typeStr = tr("%1:").arg(type);
 
+    if(!legs->isCustomDeparture())
+    {
+      html.row2(typeStr, leg.fixIdent);
+
+      if(verbose)
+      {
+        if(!legs->isAnyCustom())
+          html.row2(tr("Leg Type:"), proc::procedureLegTypeStr(leg.type));
+
+        if(leg.calculatedDistance > 0.f)
+          html.row2(tr("Distance:"), Unit::distNm(leg.calculatedDistance /*, true, 20, true*/));
+
+        if(leg.time > 0.f)
+          html.row2(tr("Time:"), locale.toString(leg.time, 'f', 0) % tr(" min"));
+
+        if(leg.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
+          html.row2(tr("Course:"), courseTextFromTrue(leg.calculatedTrueCourse, leg.magvar), ahtml::NO_ENTITIES);
+
+        if(leg.flyover)
+          html.row2(tr("Fly over"));
+
+        if(!leg.remarks.isEmpty())
+          html.row2(leg.remarks.join(", "));
+      }
+
+      if(leg.altRestriction.isValid())
+        html.row2(tr("Altitude Restriction:"), proc::altRestrictionText(leg.altRestriction));
+
+      if(leg.speedRestriction.isValid())
+        html.row2(tr("Speed Restriction:"), proc::speedRestrictionText(leg.speedRestriction));
+    }
+
+    if(!leg.turnDirection.isEmpty())
+    {
+      if(leg.turnDirection == "L")
+        html.row2(tr("Turn:"), tr("Left"));
+      else if(leg.turnDirection == "R")
+        html.row2(tr("Turn:"), tr("Right"));
+      else if(leg.turnDirection == "B")
+        html.row2(tr("Turn:"), tr("Left or right"));
+    }
+
+    if(verbose)
+    {
+      if(!leg.recFixIdent.isEmpty())
+      {
+        if(leg.rho > 0.f)
+          html.row2(tr("Related Navaid:"),
+                    tr("%1 / %2 / %3").arg(leg.recFixIdent).
+                    arg(Unit::distNm(leg.rho /*, true, 20, true*/)).
+                    arg(courseTextFromMag(leg.theta, leg.magvar)), ahtml::NO_ENTITIES);
+        else
+          html.row2(tr("Related Navaid:"), leg.recFixIdent);
+      }
+    }
+  }
   html.tableEnd();
 }
 

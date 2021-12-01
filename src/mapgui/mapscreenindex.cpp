@@ -65,15 +65,15 @@ MapScreenIndex::MapScreenIndex(MapPaintWidget *mapPaintWidgetParam, MapPaintLaye
   airportQuery = NavApp::getAirportQuerySim();
 
   searchHighlights = new map::MapResult;
-  approachLegHighlights = new proc::MapProcedureLeg;
-  approachHighlight = new proc::MapProcedureLegs;
+  procedureHighlight = new proc::MapProcedureLegs;
+  procedureLegHighlight = new proc::MapProcedureLeg;
 }
 
 MapScreenIndex::~MapScreenIndex()
 {
   delete searchHighlights;
-  delete approachLegHighlights;
-  delete approachHighlight;
+  delete procedureLegHighlight;
+  delete procedureHighlight;
 }
 
 void MapScreenIndex::copy(const MapScreenIndex& other)
@@ -81,8 +81,9 @@ void MapScreenIndex::copy(const MapScreenIndex& other)
   simData = other.simData;
   lastSimData = other.lastSimData;
   *searchHighlights = *other.searchHighlights;
-  *approachLegHighlights = *other.approachLegHighlights;
-  *approachHighlight = *other.approachHighlight;
+  *procedureLegHighlight = *other.procedureLegHighlight;
+  *procedureHighlight = *other.procedureHighlight;
+  procedureHighlights = other.procedureHighlights;
   airspaceHighlights = other.airspaceHighlights;
   airwayHighlights = other.airwayHighlights;
   profileHighlight = other.profileHighlight;
@@ -478,12 +479,14 @@ void MapScreenIndex::changeSearchHighlights(const map::MapResult& newHighlights)
   *searchHighlights = newHighlights;
 }
 
-void MapScreenIndex::setApproachLegHighlights(const proc::MapProcedureLeg *leg)
+void MapScreenIndex::setProcedureHighlight(const proc::MapProcedureLegs& newHighlight)
 {
-  if(leg != nullptr)
-    *approachLegHighlights = *leg;
-  else
-    *approachLegHighlights = proc::MapProcedureLeg();
+  *procedureHighlight = newHighlight;
+}
+
+void MapScreenIndex::setProcedureLegHighlight(const proc::MapProcedureLeg& newLegHighlight)
+{
+  *procedureLegHighlight = newLegHighlight;
 }
 
 void MapScreenIndex::addRangeMark(const map::RangeMarker& obj)
@@ -749,10 +752,11 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
 
     // Get copies from flight plan if visible
     NavApp::getRouteConst().getNearest(conv, xs, ys, maxDistance, result, queryTypes);
-
-    // Get points of procedure preview
-    getNearestProcedureHighlights(xs, ys, maxDistance, result, types);
   }
+
+  // Get points of procedure preview
+  if(types.testFlag(map::QUERY_PREVIEW_PROC_POINTS))
+    getNearestProcedureHighlights(xs, ys, maxDistance, result, types);
 
   // Get copies from highlightMapObjects and marks (user features)
   getNearestHighlights(xs, ys, maxDistance, result, types);
@@ -761,8 +765,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
   // Airway included to fetch waypoints
   map::MapTypes mapTypes = shown &
                            (map::AIRPORT_ALL_AND_ADDON | map::AIRPORT_MSA | map::VOR | map::NDB | map::WAYPOINT | map::MARKER |
-                            map::HOLDING |
-                            map::AIRWAYJ | map::TRACK | map::AIRWAYV | map::USERPOINT | map::LOGBOOK);
+                            map::HOLDING | map::AIRWAYJ | map::TRACK | map::AIRWAYV | map::USERPOINT | map::LOGBOOK);
 
   mapWidget->getMapQuery()->getNearestScreenObjects(conv, mapLayer, mapLayer->isAirportDiagram() &&
                                                     OptionData::instance().getDisplayOptionsAirport().
@@ -836,32 +839,56 @@ void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::
 void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapResult& result,
                                                    map::MapObjectQueryTypes types) const
 {
+  nearestProcedureHighlightsInternal(xs, ys, maxDistance, result, types, procedureHighlights, true /* previewAll  */);
+  nearestProcedureHighlightsInternal(xs, ys, maxDistance, result, types, {*procedureHighlight}, false /* previewAll  */);
+}
+
+void MapScreenIndex::nearestProcedureHighlightsInternal(int xs, int ys, int maxDistance, map::MapResult& result,
+                                                        map::MapObjectQueryTypes types,
+                                                        const QVector<proc::MapProcedureLegs>& procedureLegs, bool previewAll) const
+{
   CoordinateConverter conv(mapWidget->viewport());
   int x, y;
 
   using maptools::insertSorted;
 
-  for(int i = 0; i < approachHighlight->size(); i++)
+  QSet<proc::MapProcedureRef> ids;
+
+  for(const proc::MapProcedureLegs& legs : procedureLegs)
   {
-    const proc::MapProcedureLeg& leg = approachHighlight->at(i);
-
-    insertSorted(conv, xs, ys, leg.navaids.airports, result.airports, &result.airportIds, maxDistance);
-    insertSorted(conv, xs, ys, leg.navaids.vors, result.vors, &result.vorIds, maxDistance);
-    insertSorted(conv, xs, ys, leg.navaids.ndbs, result.ndbs, &result.ndbIds, maxDistance);
-    insertSorted(conv, xs, ys, leg.navaids.waypoints, result.waypoints, &result.waypointIds, maxDistance);
-    insertSorted(conv, xs, ys, leg.navaids.userpoints, result.userpoints, &result.userpointIds, maxDistance);
-    insertSorted(conv, xs, ys, leg.navaids.airspaces, result.airspaces, nullptr, maxDistance);
-    insertSorted(conv, xs, ys, leg.navaids.airways, result.airways, nullptr, maxDistance);
-    insertSorted(conv, xs, ys, leg.navaids.ils, result.ils, nullptr, maxDistance);
-    insertSorted(conv, xs, ys, leg.navaids.runwayEnds, result.runwayEnds, nullptr, maxDistance);
-
-    if(types.testFlag(map::QUERY_PROC_POINTS))
+    for(int i = 0; i < legs.size(); i++)
     {
-      // No need to filter missed since this is always shown on highlight
-      if(conv.wToS(leg.line.getPos2(), x, y))
+      const proc::MapProcedureLeg& leg = legs.at(i);
+
+      if(previewAll && leg.isMissed())
+        // Multi preview does not include missed
+        continue;
+
+      proc::MapProcedureRef ref(0 /* airportId */, 0 /* runwayEndId */, leg.approachId, leg.transitionId, leg.legId, leg.mapType);
+      if(ids.contains(ref))
+        continue;
+      else
+        ids.insert(ref);
+
+      // Add navaids from procedure
+      insertSorted(conv, xs, ys, leg.navaids.airports, result.airports, &result.airportIds, maxDistance);
+      insertSorted(conv, xs, ys, leg.navaids.vors, result.vors, &result.vorIds, maxDistance);
+      insertSorted(conv, xs, ys, leg.navaids.ndbs, result.ndbs, &result.ndbIds, maxDistance);
+      insertSorted(conv, xs, ys, leg.navaids.waypoints, result.waypoints, &result.waypointIds, maxDistance);
+      insertSorted(conv, xs, ys, leg.navaids.userpoints, result.userpoints, &result.userpointIds, maxDistance);
+      insertSorted(conv, xs, ys, leg.navaids.airspaces, result.airspaces, nullptr, maxDistance);
+      insertSorted(conv, xs, ys, leg.navaids.airways, result.airways, nullptr, maxDistance);
+      insertSorted(conv, xs, ys, leg.navaids.ils, result.ils, nullptr, maxDistance);
+      insertSorted(conv, xs, ys, leg.navaids.runwayEnds, result.runwayEnds, nullptr, maxDistance);
+
+      if(types.testFlag(map::QUERY_PROC_POINTS) || types.testFlag(map::QUERY_PREVIEW_PROC_POINTS))
       {
-        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-          result.procPoints.append(proc::MapProcedurePoint(leg, true /* preview */));
+        // No need to filter missed since this is always shown on highlight
+        if(conv.wToS(leg.line.getPos2(), x, y))
+        {
+          if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+            result.procPoints.append(map::MapProcedurePoint(legs, i, -1 /* routeIndex */, true /* preview */, previewAll));
+        }
       }
     }
   }

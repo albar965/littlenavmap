@@ -50,6 +50,8 @@
 #include "online/onlinedatacontroller.h"
 #include "route/routecontroller.h"
 #include "route/routealtitude.h"
+#include "query/procedurequery.h"
+#include "query/airportquery.h"
 #include "settings/settings.h"
 #include "ui_mainwindow.h"
 #include "userdata/userdataicons.h"
@@ -350,12 +352,10 @@ void MapWidget::handleInfoClick(QPoint point)
   if(!opts.testFlag(optsd::CLICK_AIRSPACE))
     mapSearchResultInfoClick.airspaces.clear();
 
-  if(opts.testFlag(optsd::CLICK_AIRPORT) && opts.testFlag(optsd::CLICK_AIRPORT_PROC) &&
-     mapSearchResultInfoClick.hasAirports())
+  if(opts.testFlag(optsd::CLICK_AIRPORT) && opts.testFlag(optsd::CLICK_AIRPORT_PROC) && mapSearchResultInfoClick.hasAirports())
   {
     bool departureFilter, arrivalFilter;
-    NavApp::getRouteConst().getAirportProcedureFlags(
-      mapSearchResultInfoClick.airports.first(), -1, departureFilter, arrivalFilter);
+    NavApp::getRouteConst().getAirportProcedureFlags(mapSearchResultInfoClick.airports.first(), -1, departureFilter, arrivalFilter);
 
     emit showProcedures(mapSearchResultInfoClick.airports.first(), departureFilter, arrivalFilter);
   }
@@ -462,8 +462,10 @@ bool MapWidget::event(QEvent *event)
       const QHelpEvent *helpEvent = dynamic_cast<const QHelpEvent *>(event);
       if(helpEvent != nullptr)
       {
+        // Get map objects for tooltip ===========================================================================
         map::MapObjectQueryTypes queryTypes = map::QUERY_PROC_POINTS | map::QUERY_MARK_HOLDINGS | map::QUERY_MARK_PATTERNS |
-                                              map::QUERY_MARK_MSA | map::QUERY_MARK_DISTANCE | map::QUERY_MARK_RANGE;
+                                              map::QUERY_MARK_MSA | map::QUERY_MARK_DISTANCE | map::QUERY_MARK_RANGE |
+                                              map::QUERY_PREVIEW_PROC_POINTS;
 
         if(getShownMapFeatures().testFlag(map::MISSED_APPROACH))
           queryTypes |= map::QUERY_PROC_MISSED_POINTS;
@@ -617,8 +619,7 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
 
     // Look for navaids or airports nearby click
     map::MapResult result;
-    getScreenIndexConst()->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, result,
-                                         map::QUERY_NONE);
+    getScreenIndexConst()->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, result, map::QUERY_NONE);
 
     // Range rings =======================================================================
     if(event->modifiers() == Qt::ShiftModifier)
@@ -1707,7 +1708,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
   // ==================================================================================================
   // Build a context menu with sub-menus depending on objects at the clicked position
-  MapContextMenu contextMenu(mainWindow, this);
+  MapContextMenu contextMenu(mainWindow, this, NavApp::getRouteConst());
 
   // ==================================================================================================
   // Open menu
@@ -1746,15 +1747,39 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       changeHome();
     else
     {
-      // No pre-defined action - only type available
-      map::MapVor vor = base != nullptr ? base->asObj<map::MapVor>(map::VOR) : map::MapVor();
-      map::MapNdb ndb = base != nullptr ? base->asObj<map::MapNdb>(map::NDB) : map::MapNdb();
-      map::MapWaypoint waypoint = base != nullptr ? base->asObj<map::MapWaypoint>(map::WAYPOINT) : map::MapWaypoint();
-      map::MapUserpoint userpoint = base != nullptr ?
-                                    base->asObj<map::MapUserpoint>(map::USERPOINT) : map::MapUserpoint();
+      // No pre-defined action - only type available ============================
+      int id = -1;
+      map::MapType type = map::NONE;
+      map::MapVor vor;
+      map::MapNdb ndb;
+      map::MapWaypoint waypoint;
+      map::MapUserpoint userpoint;
+      const proc::MapProcedureLegs *legs = nullptr;
 
-      int id = base != nullptr ? base->id : -1;
-      map::MapType type = base != nullptr ? base->objType : map::NONE;
+      if(base != nullptr)
+      {
+        id = base->id;
+        type = base->objType;
+        vor = base->asObj<map::MapVor>(map::VOR);
+        ndb = base->asObj<map::MapNdb>(map::NDB);
+        waypoint = base->asObj<map::MapWaypoint>(map::WAYPOINT);
+        userpoint = base->asObj<map::MapUserpoint>(map::USERPOINT);
+
+        const map::MapProcedurePoint *procpoint = base->asPtr<map::MapProcedurePoint>(map::PROCEDURE_POINT);
+        if(procpoint != nullptr)
+        {
+          const proc::MapProcedureLeg& leg = procpoint->getLeg();
+          if(leg.isAnyTransition())
+            // Can use legs including transition
+            legs = procpoint->legs;
+          else
+          {
+            // Load the approach without transition
+            map::MapAirport procAp = NavApp::getAirportQueryNav()->getAirportById(procpoint->legs->ref.airportId);
+            legs = NavApp::getProcedureQuery()->getApproachLegs(procAp, procpoint->legs->ref.approachId);
+          }
+        }
+      }
 
       // Create a result object as it is needed for some methods
       map::MapResult result;
@@ -1771,6 +1796,11 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
         case mc::PROCEDURE:
           emit showProcedures(airport, departureFilter, arrivalFilter);
+          break;
+
+        case mc::PROCEDUREADD:
+          if(legs != nullptr)
+            emit routeInsertProcedure(*legs);
           break;
 
         case mc::CUSTOMAPPROACH:

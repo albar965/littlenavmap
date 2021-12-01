@@ -305,5 +305,6 @@
         <file>resources/icons/windpointer.svg</file>
         <file>resources/icons/zoomin.svg</file>
         <file>resources/icons/zoomout.svg</file>
+        <file>resources/icons/approachall.svg</file>
     </qresource>
 </RCC>
