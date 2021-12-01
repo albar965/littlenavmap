@@ -402,8 +402,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>532</height>
+             <width>536</width>
+             <height>361</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -609,8 +609,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>532</height>
+             <width>437</width>
+             <height>546</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1077,6 +1077,337 @@ This does not affect the map window which can be changed separately on the optio
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="stackedWidgetOptionsUnits">
+       <layout class="QGridLayout" name="gridLayout_11">
+        <property name="leftMargin">
+         <number>9</number>
+        </property>
+        <property name="topMargin">
+         <number>9</number>
+        </property>
+        <property name="rightMargin">
+         <number>9</number>
+        </property>
+        <property name="bottomMargin">
+         <number>9</number>
+        </property>
+        <property name="spacing">
+         <number>6</number>
+        </property>
+        <item row="0" column="0">
+         <widget class="QScrollArea" name="scrollArea_8">
+          <property name="widgetResizable">
+           <bool>true</bool>
+          </property>
+          <widget class="QWidget" name="scrollAreaWidgetContents_10">
+           <property name="geometry">
+            <rect>
+             <x>0</x>
+             <y>0</y>
+             <width>571</width>
+             <height>366</height>
+            </rect>
+           </property>
+           <layout class="QGridLayout" name="gridLayout_36">
+            <item row="0" column="0">
+             <widget class="QGroupBox" name="groupBox_21">
+              <property name="title">
+               <string>Units</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_40">
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <property name="horizontalSpacing">
+                <number>2</number>
+               </property>
+               <item row="0" column="0">
+                <widget class="QLabel" name="labelOptionsUnitDistance">
+                 <property name="text">
+                  <string>&amp;Distance:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsUnitDistance</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="0" column="1">
+                <widget class="QComboBox" name="comboBoxOptionsUnitDistance">
+                 <item>
+                  <property name="text">
+                   <string>Nautical Miles (nm)</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Kilometers (km)</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Statute Miles (mi)</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="labelOptionsUnitShortDistance">
+                 <property name="text">
+                  <string>&amp;Short Distance:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsUnitShortDistance</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="1">
+                <widget class="QComboBox" name="comboBoxOptionsUnitShortDistance">
+                 <item>
+                  <property name="text">
+                   <string>Feet (ft)</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Meter (m)</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="2" column="0">
+                <widget class="QLabel" name="labelOptionsUnitAlt">
+                 <property name="text">
+                  <string>&amp;Altitude and elevation:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsUnitAlt</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QComboBox" name="comboBoxOptionsUnitAlt">
+                 <item>
+                  <property name="text">
+                   <string>Feet (ft)</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Meter (m)</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="3" column="0">
+                <widget class="QLabel" name="labelOptionsUnitSpeed">
+                 <property name="text">
+                  <string>&amp;Speed:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsUnitSpeed</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QComboBox" name="comboBoxOptionsUnitSpeed">
+                 <item>
+                  <property name="text">
+                   <string>Knots (kts)</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Kilometer per Hour (km/h)</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Statute Miles per Hour (mph)</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="4" column="0">
+                <widget class="QLabel" name="labelOptionsUnitVertSpeed">
+                 <property name="text">
+                  <string>&amp;Vertical Speed:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsUnitVertSpeed</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="4" column="1">
+                <widget class="QComboBox" name="comboBoxOptionsUnitVertSpeed">
+                 <item>
+                  <property name="text">
+                   <string>Feet per Minute (fpm)</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Meter per Second (m/s)</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="5" column="0">
+                <widget class="QLabel" name="labelOptionsUnitFuel">
+                 <property name="text">
+                  <string>&amp;Fuel and Weight:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsUnitFuelWeight</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="5" column="1">
+                <widget class="QComboBox" name="comboBoxOptionsUnitFuelWeight">
+                 <item>
+                  <property name="text">
+                   <string>US Gallon / Pound (gal / lbs)</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Liter / Kilogram (l, kg)</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="5" column="2">
+                <widget class="QCheckBox" name="checkBoxOptionsUnitFuelOther">
+                 <property name="toolTip">
+                  <string>Shows values for other fuel units (lbs/gal or kg/liter) as small text in
+information displays and tooltips besides selected units.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Show other fuel units too</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="0">
+                <widget class="QLabel" name="labelOptionsUnitCoords">
+                 <property name="text">
+                  <string>&amp;Coordinates:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsUnitCoords</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="6" column="1">
+                <widget class="QComboBox" name="comboBoxOptionsUnitCoords">
+                 <property name="toolTip">
+                  <string>The formats latitude/longitude and longitude/latitude with sign
+also define the order when reading coordinates in the user interface if enabled.</string>
+                 </property>
+                 <item>
+                  <property name="text">
+                   <string>Degree, Minutes, Seconds</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Decimal Degree</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Degree, Decimal Minutes</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Latitude and Longitude with sign</string>
+                  </property>
+                 </item>
+                 <item>
+                  <property name="text">
+                   <string>Longitude and Latitude with sign</string>
+                  </property>
+                 </item>
+                </widget>
+               </item>
+               <item row="7" column="0" colspan="3">
+                <widget class="QLabel" name="label_2">
+                 <property name="font">
+                  <font>
+                   <weight>50</weight>
+                   <bold>false</bold>
+                  </font>
+                 </property>
+                 <property name="text">
+                  <string>&lt;b&gt;A restart is recommended after changing units&lt;/b&gt;</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>5</number>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
+               <item row="8" column="0" colspan="3">
+                <widget class="Line" name="line_18">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item row="9" column="0" colspan="3">
+                <widget class="QCheckBox" name="checkBoxOptionsUnitTrueCourse">
+                 <property name="toolTip">
+                  <string>Shows true course or heading values as small text besides magnetic course
+in information displays and tooltips .
+Only magnetic course is shown if both values are equal.
+Also affects labels at holds and traffic patterns.</string>
+                 </property>
+                 <property name="text">
+                  <string>Show &amp;true course and heading besides magnetic course in information displays</string>
+                 </property>
+                 <property name="checked">
+                  <bool>false</bool>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <spacer name="verticalSpacer_9">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+           </layout>
+          </widget>
+         </widget>
+        </item>
+       </layout>
+      </widget>
       <widget class="QWidget" name="stackedWidgetOptionsMapGeneral">
        <layout class="QGridLayout" name="gridLayout_21">
         <item row="0" column="0">
@@ -1089,8 +1420,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>532</height>
+             <width>578</width>
+             <height>510</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_12">
@@ -1543,8 +1874,8 @@ userpoints and logbook entries when clicking on the map</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>532</height>
+             <width>609</width>
+             <height>312</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_13">
@@ -1863,8 +2194,8 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>532</height>
+             <width>471</width>
+             <height>497</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -2573,8 +2904,8 @@ Afftects map and elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>532</height>
+             <width>422</width>
+             <height>326</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -2960,8 +3291,8 @@ Not used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>532</height>
+             <width>534</width>
+             <height>504</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -4075,337 +4406,6 @@ airspace filename has to match the callsign of the online center.</string>
                </item>
               </layout>
              </widget>
-            </item>
-           </layout>
-          </widget>
-         </widget>
-        </item>
-       </layout>
-      </widget>
-      <widget class="QWidget" name="stackedWidgetOptionsUnits">
-       <layout class="QGridLayout" name="gridLayout_11">
-        <property name="leftMargin">
-         <number>9</number>
-        </property>
-        <property name="topMargin">
-         <number>9</number>
-        </property>
-        <property name="rightMargin">
-         <number>9</number>
-        </property>
-        <property name="bottomMargin">
-         <number>9</number>
-        </property>
-        <property name="spacing">
-         <number>6</number>
-        </property>
-        <item row="0" column="0">
-         <widget class="QScrollArea" name="scrollArea_8">
-          <property name="widgetResizable">
-           <bool>true</bool>
-          </property>
-          <widget class="QWidget" name="scrollAreaWidgetContents_10">
-           <property name="geometry">
-            <rect>
-             <x>0</x>
-             <y>0</y>
-             <width>571</width>
-             <height>366</height>
-            </rect>
-           </property>
-           <layout class="QGridLayout" name="gridLayout_36">
-            <item row="0" column="0">
-             <widget class="QGroupBox" name="groupBox_21">
-              <property name="title">
-               <string>Units</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_40">
-               <property name="leftMargin">
-                <number>2</number>
-               </property>
-               <property name="topMargin">
-                <number>2</number>
-               </property>
-               <property name="rightMargin">
-                <number>2</number>
-               </property>
-               <property name="bottomMargin">
-                <number>2</number>
-               </property>
-               <property name="horizontalSpacing">
-                <number>2</number>
-               </property>
-               <item row="0" column="0">
-                <widget class="QLabel" name="labelOptionsUnitDistance">
-                 <property name="text">
-                  <string>&amp;Distance:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>comboBoxOptionsUnitDistance</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QComboBox" name="comboBoxOptionsUnitDistance">
-                 <item>
-                  <property name="text">
-                   <string>Nautical Miles (nm)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Kilometers (km)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Statute Miles (mi)</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="1" column="0">
-                <widget class="QLabel" name="labelOptionsUnitShortDistance">
-                 <property name="text">
-                  <string>&amp;Short Distance:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>comboBoxOptionsUnitShortDistance</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1">
-                <widget class="QComboBox" name="comboBoxOptionsUnitShortDistance">
-                 <item>
-                  <property name="text">
-                   <string>Feet (ft)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Meter (m)</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="labelOptionsUnitAlt">
-                 <property name="text">
-                  <string>&amp;Altitude and elevation:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>comboBoxOptionsUnitAlt</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1">
-                <widget class="QComboBox" name="comboBoxOptionsUnitAlt">
-                 <item>
-                  <property name="text">
-                   <string>Feet (ft)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Meter (m)</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="3" column="0">
-                <widget class="QLabel" name="labelOptionsUnitSpeed">
-                 <property name="text">
-                  <string>&amp;Speed:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>comboBoxOptionsUnitSpeed</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="1">
-                <widget class="QComboBox" name="comboBoxOptionsUnitSpeed">
-                 <item>
-                  <property name="text">
-                   <string>Knots (kts)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Kilometer per Hour (km/h)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Statute Miles per Hour (mph)</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="4" column="0">
-                <widget class="QLabel" name="labelOptionsUnitVertSpeed">
-                 <property name="text">
-                  <string>&amp;Vertical Speed:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>comboBoxOptionsUnitVertSpeed</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="4" column="1">
-                <widget class="QComboBox" name="comboBoxOptionsUnitVertSpeed">
-                 <item>
-                  <property name="text">
-                   <string>Feet per Minute (fpm)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Meter per Second (m/s)</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="5" column="0">
-                <widget class="QLabel" name="labelOptionsUnitFuel">
-                 <property name="text">
-                  <string>&amp;Fuel and Weight:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>comboBoxOptionsUnitFuelWeight</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="5" column="1">
-                <widget class="QComboBox" name="comboBoxOptionsUnitFuelWeight">
-                 <item>
-                  <property name="text">
-                   <string>US Gallon / Pound (gal / lbs)</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Liter / Kilogram (l, kg)</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="5" column="2">
-                <widget class="QCheckBox" name="checkBoxOptionsUnitFuelOther">
-                 <property name="toolTip">
-                  <string>Shows values for other fuel units (lbs/gal or kg/liter) as small text in
-information displays and tooltips besides selected units.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Show other fuel units too</string>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="0">
-                <widget class="QLabel" name="labelOptionsUnitCoords">
-                 <property name="text">
-                  <string>&amp;Coordinates:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>comboBoxOptionsUnitCoords</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="6" column="1">
-                <widget class="QComboBox" name="comboBoxOptionsUnitCoords">
-                 <property name="toolTip">
-                  <string>The formats latitude/longitude and longitude/latitude with sign
-also define the order when reading coordinates in the user interface if enabled.</string>
-                 </property>
-                 <item>
-                  <property name="text">
-                   <string>Degree, Minutes, Seconds</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Decimal Degree</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Degree, Decimal Minutes</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Latitude and Longitude with sign</string>
-                  </property>
-                 </item>
-                 <item>
-                  <property name="text">
-                   <string>Longitude and Latitude with sign</string>
-                  </property>
-                 </item>
-                </widget>
-               </item>
-               <item row="7" column="0" colspan="3">
-                <widget class="QLabel" name="label_2">
-                 <property name="font">
-                  <font>
-                   <weight>50</weight>
-                   <bold>false</bold>
-                  </font>
-                 </property>
-                 <property name="text">
-                  <string>&lt;b&gt;A restart is recommended after changing units&lt;/b&gt;</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="margin">
-                  <number>5</number>
-                 </property>
-                 <property name="textInteractionFlags">
-                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-                 </property>
-                </widget>
-               </item>
-               <item row="8" column="0" colspan="3">
-                <widget class="Line" name="line_18">
-                 <property name="orientation">
-                  <enum>Qt::Horizontal</enum>
-                 </property>
-                </widget>
-               </item>
-               <item row="9" column="0" colspan="3">
-                <widget class="QCheckBox" name="checkBoxOptionsUnitTrueCourse">
-                 <property name="toolTip">
-                  <string>Shows true course or heading values as small text besides magnetic course
-in information displays and tooltips .
-Only magnetic course is shown if both values are equal.
-Also affects labels at holds and traffic patterns.</string>
-                 </property>
-                 <property name="text">
-                  <string>Show &amp;true course and heading besides magnetic course in information displays</string>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item row="1" column="0">
-             <spacer name="verticalSpacer_9">
-              <property name="orientation">
-               <enum>Qt::Vertical</enum>
-              </property>
-              <property name="sizeHint" stdset="0">
-               <size>
-                <width>20</width>
-                <height>40</height>
-               </size>
-              </property>
-             </spacer>
             </item>
            </layout>
           </widget>
@@ -6668,8 +6668,8 @@ Currently only OpenAir is supported (*.txt). </string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>532</height>
+             <width>205</width>
+             <height>557</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
