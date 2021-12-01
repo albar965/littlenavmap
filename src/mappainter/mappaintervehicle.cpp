@@ -32,6 +32,8 @@
 
 #include <marble/GeoPainter.h>
 
+#include <QStringBuilder>
+
 using namespace Marble;
 using namespace atools::geo;
 using namespace map;
@@ -250,24 +252,21 @@ void MapPainterVehicle::paintTextLabelUser(float x, float y, int size, const Sim
     appendClimbSinkText(texts, aircraft);
 
   if(!aircraft.isOnGround() && (context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ALTITUDE) ||
-                                context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE)))
+                                context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE) ||
+                                context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ALT_ABOVE_GROUND)))
   {
-    QString upDown;
-    if(!context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_CLIMB_SINK))
-      climbSinkPointer(upDown, aircraft);
+    QStringList altText;
+    if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE))
+      altText.append(tr("IND %1").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())));
 
-    if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ALTITUDE) &&
-       context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE))
-    {
-      texts.append(tr("ALT %1, IND %2%3").
-                   arg(Unit::altFeet(aircraft.getPosition().getAltitude())).
-                   arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())).
-                   arg(upDown));
-    }
-    else if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ALTITUDE))
-      texts.append(tr("%1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
-    else if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE))
-      texts.append(tr("%1%2").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())).arg(upDown));
+    if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ALTITUDE))
+      altText.append(tr("ALT %1").arg(Unit::altFeet(aircraft.getPosition().getAltitude())));
+
+    if(!aircraft.isOnGround() && context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ALT_ABOVE_GROUND))
+      altText.append(tr("AGL %1").arg(Unit::altFeet(aircraft.getAltitudeAboveGroundFt())));
+
+    if(!altText.isEmpty())
+      texts.append(altText.join(tr(", ")));
   }
 
   if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_COORDINATES))
@@ -313,7 +312,7 @@ void MapPainterVehicle::appendClimbSinkText(QStringList& texts, const SimConnect
     if(vspeed < 10.f && vspeed > -10.f)
       vspeed = 0.f;
 
-    texts.append(Unit::speedVertFpm(vspeed) + upDown);
+    texts.append(Unit::speedVertFpm(vspeed) % upDown);
   }
 }
 
