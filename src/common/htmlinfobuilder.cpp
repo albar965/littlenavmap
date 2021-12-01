@@ -215,9 +215,10 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
     if(airport.xplane && (info || airport.ident != displayIdent))
       html.row2If(tr("X-Plane Ident:"), airport.ident);
-
-    html.row2If(tr("Region:"), airport.region);
   }
+
+  if(info)
+    html.row2If(tr("Region:"), airport.region);
 
   // Administrative information ======================
   QString city, state, country;
@@ -1189,7 +1190,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
     else
       html.row2If(tr("Airport and runway:"), tr("%1, %2").arg(airportIdent).arg(runway), ahtml::BOLD);
 
-    if(verbose)
+    if(info)
       html.row2If(tr("Region:"), ils.region);
   }
 
@@ -2116,7 +2117,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
       airportRow(airportQueryNav->getAirportById(rec->valueInt("airport_id")), html);
 
   }
-  if(verbose)
+  if(info)
     html.row2If(tr("Region:"), vor.region);
 
   if(!vor.tacan)
@@ -2195,8 +2196,11 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
 
     if(rec != nullptr && !rec->isNull("airport_id"))
       airportRow(airportQueryNav->getAirportById(rec->valueInt("airport_id")), html);
-    html.row2If(tr("Region:"), ndb.region);
+
   }
+
+  if(info)
+    html.row2If(tr("Region:"), ndb.region);
 
   html.row2(tr("Frequency:"), locale.toString(ndb.frequency / 100., 'f', 1) % tr(" kHz"));
   if(info)
@@ -2444,7 +2448,7 @@ bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
     // Be cautious with user defined data and adapt it for HTML display
     html.row2If(tr("Type:"), userpoint.type, ahtml::REPLACE_CRLF);
     html.row2If(tr("Ident:"), userpoint.ident, ahtml::REPLACE_CRLF);
-    if(verbose)
+    if(info)
       html.row2If(tr("Region:"), userpoint.region, ahtml::REPLACE_CRLF);
     html.row2If(tr("Name:"), userpoint.name, ahtml::REPLACE_CRLF);
 
@@ -2793,11 +2797,9 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   else
     html.row2If(tr("Type:"), map::navTypeNameWaypoint(waypoint.type));
 
-  if(verbose)
-    html.row2If(tr("Region:"), waypoint.region);
-
   if(info)
   {
+    html.row2If(tr("Region:"), waypoint.region);
     html.row2(tr("Magnetic declination:"), map::magvarText(waypoint.magvar));
     addCoordinates(rec, html);
   }
