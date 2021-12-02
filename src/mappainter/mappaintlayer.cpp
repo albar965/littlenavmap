@@ -390,6 +390,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
 
       // ====================================
       // Get navaids from procedure highlight to avoid duplicate drawing
+      // These will be drawn in the procedure preview or flight plan instead of the navaid painter
 
       if(context.mapLayerRoute->isApproach())
       {
@@ -405,6 +406,18 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
             if(navaids.hasNdb())
               context.routeProcIdMap.insert({navaids.ndbs.first().id, map::NDB});
           }
+        }
+
+        const proc::MapProcedureLegs& procedure = mapWidget->getProcedureHighlight();
+        for(int i = 0; i < procedure.size(); i++)
+        {
+          const map::MapResult& navaids = procedure.at(i).navaids;
+          if(navaids.hasWaypoints())
+            context.routeProcIdMap.insert({navaids.waypoints.first().id, map::WAYPOINT});
+          if(navaids.hasVor())
+            context.routeProcIdMap.insert({navaids.vors.first().id, map::VOR});
+          if(navaids.hasNdb())
+            context.routeProcIdMap.insert({navaids.ndbs.first().id, map::NDB});
         }
       }
 

@@ -59,6 +59,9 @@ MapPainterRoute::~MapPainterRoute()
 
 void MapPainterRoute::render()
 {
+  // Clear before collecting duplicates
+  routeProcIdMap.clear();
+
   // Draw route including procedures =====================================
   if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN))
     paintRoute();
@@ -1483,34 +1486,61 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   {
     if(drawUnderlay)
       paintProcedureUnderlay(leg, x, y, symbolSize);
-    paintWaypoint(QColor(), x, y, false);
+
+    const map::MapWaypoint& wp = navaids.waypoints.first();
+    if(!routeProcIdMap.contains(wp.getRef()))
+    {
+      routeProcIdMap.insert(wp.getRef());
+
+      paintWaypoint(QColor(), x, y, false);
+    }
     if(drawText)
-      paintWaypointText(x, y, navaids.waypoints.first(), true /* draw as route */, &texts);
+      paintWaypointText(x, y, wp, true /* draw as route */, &texts);
   }
   else if(!navaids.vors.isEmpty() && wToSBuf(navaids.vors.first().position, x, y, margins))
   {
-    symbolSize = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSize());
     if(drawUnderlay)
       paintProcedureUnderlay(leg, x, y, symbolSize);
-    paintVor(x, y, navaids.vors.first(), false);
+
+    const map::MapVor& vor = navaids.vors.first();
+    if(!routeProcIdMap.contains(vor.getRef()))
+    {
+      routeProcIdMap.insert(vor.getRef());
+
+      symbolSize = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSize());
+      paintVor(x, y, vor, false);
+    }
     if(drawText)
-      paintVorText(x, y, navaids.vors.first(), true /* draw as route */, &texts);
+      paintVorText(x, y, vor, true /* draw as route */, &texts);
   }
   else if(!navaids.ndbs.isEmpty() && wToSBuf(navaids.ndbs.first().position, x, y, margins))
   {
     symbolSize = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getNdbSymbolSize());
     if(drawUnderlay)
       paintProcedureUnderlay(leg, x, y, symbolSize);
-    paintNdb(x, y, false);
+
+    const map::MapNdb& ndb = navaids.ndbs.first();
+    if(!routeProcIdMap.contains(ndb.getRef()))
+    {
+      routeProcIdMap.insert(ndb.getRef());
+
+      paintNdb(x, y, false);
+    }
     if(drawText)
-      paintNdbText(x, y, navaids.ndbs.first(), true /* draw as route */, &texts);
+      paintNdbText(x, y, ndb, true /* draw as route */, &texts);
   }
   else if(!navaids.ils.isEmpty() && wToSBuf(navaids.ils.first().position, x, y, margins))
   {
-    texts.append(leg.fixIdent);
-    if(drawUnderlay)
-      paintProcedureUnderlay(leg, x, y, symbolSize);
-    paintProcedurePoint(x, y, false);
+    const map::MapIls& ils = navaids.ils.first();
+    if(!routeProcIdMap.contains(ils.getRef()))
+    {
+      routeProcIdMap.insert(ils.getRef());
+
+      texts.append(leg.fixIdent);
+      if(drawUnderlay)
+        paintProcedureUnderlay(leg, x, y, symbolSize);
+      paintProcedurePoint(x, y, false);
+    }
     if(drawText)
       paintText(mapcolors::routeProcedurePointColor, x, y, texts, true /* draw as route */);
   }
@@ -1541,7 +1571,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 
   // Draw wind barbs for SID and STAR (not approaches) =======================================
   const Route *route = context->route;
-  if(!preview && (leg.isSid() || leg.isStar()))
+  if(!preview && !previewAll && (leg.isSid() || leg.isStar()))
   {
     if(context->objectDisplayTypes.testFlag(map::WIND_BARBS_ROUTE) &&
        (NavApp::getWindReporter()->hasOnlineWindData() || NavApp::getWindReporter()->isWindManual()))

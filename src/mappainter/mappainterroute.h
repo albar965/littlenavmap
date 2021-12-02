@@ -130,6 +130,8 @@ private:
   QString buildLegText(const RouteLeg& leg);
   QString buildLegText(float dist, float courseGcMag, float courseGcTrue);
 
+  /* Avoid drawing duplicate navaids from flight plan and preview */
+  QSet<map::MapObjectRef> routeProcIdMap;
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERROUTE_H
