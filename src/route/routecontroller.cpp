@@ -739,17 +739,18 @@ void RouteController::routeStringToClipboard() const
 void RouteController::aircraftPerformanceChanged()
 {
   qDebug() << Q_FUNC_INFO;
-  if(!route.isEmpty())
-  {
-    // Get type, speed and cruise altitude from widgets
-    updateTableHeaders(); // Update lbs/gal for fuel
-    updateFlightplanFromWidgets();
-    route.updateLegAltitudes();
 
-    updateModelTimeFuelWind();
-    updateModelHighlights();
-    highlightNextWaypoint(route.getActiveLegIndexCorrected());
-  }
+  // Get type, speed and cruise altitude from widgets
+  updateTableHeaders();   // Update lbs/gal for fuel
+  updateFlightplanFromWidgets();
+
+  // Needs to be called with empty route as well to update the error messages
+  route.updateLegAltitudes();
+
+  updateModelTimeFuelWind();
+  updateModelHighlights();
+  highlightNextWaypoint(route.getActiveLegIndexCorrected());
+
   routeLabel->updateWindowLabel();
 
   // Emit also for empty route to catch performance changes
@@ -4754,8 +4755,9 @@ bool RouteController::hasErrors() const
   return !flightplanErrors.isEmpty() || !procedureErrors.isEmpty() || !alternateErrors.isEmpty();
 }
 
-QString RouteController::getErrorStrings(QStringList& toolTip) const
+QStringList RouteController::getErrorStrings() const
 {
+  QStringList toolTip;
   if(hasErrors())
   {
     if(!flightplanErrors.isEmpty())
@@ -4773,13 +4775,15 @@ QString RouteController::getErrorStrings(QStringList& toolTip) const
 
     if(trackErrors)
       toolTip.append(tr("Download oceanic tracks in menu \"Flight Plan\"\n"
-                        "or calculate the flight plan again if your plan uses tracks.",
+                        "or calculate the flight plan again if the flight plan uses tracks.",
                         "Keep in sync with menu names"));
-
-    return tr("Errors in flight plan.");
   }
-  else
-    return QString();
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << toolTip;
+#endif
+
+  return toolTip;
 }
 
 void RouteController::flightplanLabelLinkActivated(const QString& link)

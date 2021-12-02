@@ -220,7 +220,7 @@ void TrackController::trackDownloadFailed(const QString& error, int errorCode, Q
     atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_FAIL,
                                                    tr("<p>Download of %1 track information from<br/>\"%2\"<br/>"
                                                       "failed.</p><p>Error: %3 (%4)</p>"
-                                                      "<p>Check your track settings or disable track downloads.</p>"
+                                                      "<p>Check track settings or disable track downloads.</p>"
                                                         "<p>Suppressing further messages during this session.</p>").
                                                    arg(typeStr).
                                                    arg(downloadUrl).arg(error).arg(errorCode),

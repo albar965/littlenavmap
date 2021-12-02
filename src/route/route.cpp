@@ -1764,15 +1764,13 @@ void Route::updateMagvar()
 
 void Route::updateLegAltitudes()
 {
-  if(isEmpty())
-    return;
-
   // Uses default values if invalid values or collecting data
-  altitude->setSimplify(atools::settings::Settings::instance().
-                        getAndStoreValue(lnm::OPTIONS_PROFILE_SIMPLYFY, true).toBool());
+  altitude->setSimplify(atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_PROFILE_SIMPLYFY, true).toBool());
 
   // Need to update the wind data for manual wind setting
   NavApp::getWindReporter()->updateManualRouteWinds();
+
+  // Calculate also with empty route to allow updating of error messages
   altitude->calculateAll(NavApp::getAircraftPerformance(), getCruisingAltitudeFeet());
 }
 

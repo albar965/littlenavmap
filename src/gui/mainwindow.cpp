@@ -108,6 +108,7 @@
 #include <QClipboard>
 #include <QProgressDialog>
 #include <QThread>
+#include <QStringBuilder>
 
 #include "ui_mainwindow.h"
 
@@ -1003,7 +1004,6 @@ void MainWindow::setupUi()
 
   // Show error messages in tooltip on click ========================================
   ui->labelRouteError->installEventFilter(new atools::gui::ClickToolTipHandler(ui->labelRouteError));
-  ui->labelProfileError->installEventFilter(new atools::gui::ClickToolTipHandler(ui->labelProfileError));
 }
 
 void MainWindow::clearProcedureCache()
@@ -1647,6 +1647,10 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::connectedToSimulator, profileWidget, &ProfileWidget::connectedToSimulator);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, profileWidget,
           &ProfileWidget::disconnectedFromSimulator);
+
+  connect(connectClient, &ConnectClient::connectedToSimulator, NavApp::updateErrorLabels);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, NavApp::updateErrorLabels);
+
   connect(connectClient, &ConnectClient::aiFetchOptionsChanged, this, &MainWindow::updateActionStates);
 
   connect(mapWidget, &MapPaintWidget::aircraftTrackPruned, profileWidget, &ProfileWidget::aircraftTrackPruned);
@@ -4635,36 +4639,53 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 void MainWindow::updateErrorLabels()
 {
   using atools::util::HtmlBuilder;
+  const static int ELIDE_TEXT = 120;
 
-  const RouteAltitude& altitudeLegs = NavApp::getAltitudeLegs();
+  // Collect errors from all controllers =================================
+  QStringList toolTipText;
 
-  QStringList toolTipTxtRoute, toolTipTxtProfile, errRoute, errProfile;
-  QString hintText = tr("Click here for details.");
-
-  // Do not show error for single waypoint plans since it is obvious that there is no profile
-  if(NavApp::getRoute().getSizeWithoutAlternates() >= 2 && altitudeLegs.hasErrors())
-    errProfile.append(altitudeLegs.getErrorStrings(toolTipTxtProfile));
-
+  // Flight plan ============
   if(routeController->hasErrors())
-    errRoute.append(routeController->getErrorStrings(toolTipTxtRoute));
+  {
+    toolTipText.append(tr("<b>Problems on tab \"Flight Plan\":</b>", "Synchronize name with tab name"));
+    for(const QString& str : routeController->getErrorStrings())
+      toolTipText.append(atools::elideTextShort(tr("- %1").arg(str), ELIDE_TEXT));
+  }
 
-  errRoute.append(errProfile);
-  toolTipTxtRoute.append(toolTipTxtProfile);
+  // Elevation profile ============
+  if(NavApp::getAltitudeLegs().hasErrors())
+  {
+    toolTipText.append(tr("<b>Problems when calculating profile for window \"Flight Plan Elevation Profile\"</b>:",
+                          "Synchronize name with window name"));
+    for(const QString& str : NavApp::getAltitudeLegs().getErrorStrings())
+      toolTipText.append(atools::elideTextShort(tr("- %1").arg(str), ELIDE_TEXT));
+  }
 
-  if(!errRoute.isEmpty())
-    errRoute.append(hintText);
-  if(!errProfile.isEmpty())
-    errProfile.append(hintText);
+  // Aircraft performance ============
+  if(NavApp::getAircraftPerfController()->hasErrors())
+  {
+    toolTipText.append(tr("<b>Problems on tab \"Fuel Report\":</b>", "Synchronize name with tab name"));
+    for(const QString& str : NavApp::getAircraftPerfController()->getErrorStrings())
+      toolTipText.append(atools::elideTextShort(tr("- %1").arg(str), ELIDE_TEXT));
+  }
 
-  ui->labelRouteError->setVisible(!errRoute.isEmpty());
-  ui->labelRouteError->setText(HtmlBuilder::errorMessage(errRoute.join(tr(" "))));
-  ui->labelRouteError->setToolTip(toolTipTxtRoute.join("\n"));
-  ui->labelRouteError->setStatusTip(tr("Error reading flight plan."));
+  // Build tooltip message ====================================
+  if(!toolTipText.isEmpty())
+  {
+    ui->labelRouteError->setVisible(true);
+    ui->labelRouteError->setText(HtmlBuilder::errorMessage(tr("Found problems. Click here for details.")));
 
-  ui->labelProfileError->setVisible(!errProfile.isEmpty());
-  ui->labelProfileError->setText(HtmlBuilder::errorMessage(errProfile.join(tr(" "))));
-  ui->labelProfileError->setToolTip(toolTipTxtProfile.join("\n"));
-  ui->labelProfileError->setStatusTip(tr("Error calculating profile."));
+    // Disallow text wrapping
+    ui->labelRouteError->setToolTip("<p style=\"white-space:pre\">" % toolTipText.join("<br/>") % "</p>");
+    ui->labelRouteError->setStatusTip(tr("Found problems."));
+  }
+  else
+  {
+    ui->labelRouteError->setVisible(false);
+    ui->labelRouteError->setText(QString());
+    ui->labelRouteError->setToolTip(QString());
+    ui->labelRouteError->setStatusTip(QString());
+  }
 }
 
 map::MapThemeComboIndex MainWindow::getMapThemeIndex() const

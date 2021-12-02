@@ -110,8 +110,6 @@ ProfileWidget::ProfileWidget(QWidget *parent)
 
   legList = new ElevationLegList;
 
-  ui->labelProfileError->setVisible(false);
-
   scrollArea = new ProfileScrollArea(this, ui->scrollAreaProfile);
   scrollArea->setProfileLeftOffset(left);
   scrollArea->setProfileTopOffset(TOP);
@@ -692,8 +690,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   {
     setFont(opt.getGuiFont());
     painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
-    symPainter.textBox(&painter, {tr("No Flight Plan.")}, QColor(255, 80, 0),
-                       left + w / 2, TOP + h / 2, textatt::BOLD | textatt::CENTER, 0);
+    symPainter.textBox(&painter, {tr("No Flight Plan.")}, QApplication::palette().color(QPalette::PlaceholderText),
+                       4, painter.fontMetrics().ascent(), textatt::LEFT, 0);
     scrollArea->updateLabelWidget();
     return;
   }
@@ -702,7 +700,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     setFont(opt.getGuiFont());
     painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
     symPainter.textBox(&painter, {tr("Flight Plan not valid.")}, QColor(255, 80, 0),
-                       left + w / 2, TOP + h / 2, textatt::BOLD | textatt::CENTER, 0);
+                       4, painter.fontMetrics().ascent(), textatt::LEFT, 0);
     scrollArea->updateLabelWidget();
     return;
   }

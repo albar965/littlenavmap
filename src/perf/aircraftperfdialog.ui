@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>490</width>
+    <width>531</width>
     <height>732</height>
    </rect>
   </property>
@@ -27,24 +27,6 @@
        <item>
         <layout class="QGridLayout" name="gridLayout_7">
          <item row="4" column="0">
-          <widget class="QLabel" name="labelRunwayType">
-           <property name="text">
-            <string>Required runway &amp;type:</string>
-           </property>
-           <property name="buddy">
-            <cstring>comboBoxRunwayType</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="lineEditName">
-           <property name="toolTip">
-            <string>Name of aircraft.
-This is for informational purposes only.</string>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0">
           <widget class="QLabel" name="labelRunwayLength">
            <property name="text">
             <string>&amp;Required runway:</string>
@@ -54,7 +36,7 @@ This is for informational purposes only.</string>
            </property>
           </widget>
          </item>
-         <item row="3" column="1">
+         <item row="4" column="1">
           <widget class="QSpinBox" name="spinBoxRunwayLength">
            <property name="toolTip">
             <string>Minimum required runway length for takeoff or landing.
@@ -69,16 +51,6 @@ This is for informational purposes only.</string>
            </property>
            <property name="singleStep">
             <number>100</number>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="labelName">
-           <property name="text">
-            <string>&amp;Aircraft model:</string>
-           </property>
-           <property name="buddy">
-            <cstring>lineEditName</cstring>
            </property>
           </widget>
          </item>
@@ -98,6 +70,41 @@ This is for informational purposes only.</string>
            </property>
           </widget>
          </item>
+         <item row="3" column="0" colspan="2">
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="labelName">
+           <property name="text">
+            <string>&amp;Aircraft model:</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEditName</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="labelRunwayType">
+           <property name="text">
+            <string>Required runway &amp;type:</string>
+           </property>
+           <property name="buddy">
+            <cstring>comboBoxRunwayType</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLineEdit" name="lineEditName">
+           <property name="toolTip">
+            <string>Name of aircraft.
+This is for informational purposes only.</string>
+           </property>
+          </widget>
+         </item>
          <item row="1" column="1">
           <widget class="QLineEdit" name="lineEditType">
            <property name="toolTip">
@@ -106,7 +113,7 @@ The fuel report will show a warning if this does not match the simulator aircraf
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="5" column="1">
           <widget class="QComboBox" name="comboBoxRunwayType">
            <property name="toolTip">
             <string>This is for informational purposes only.</string>
@@ -133,10 +140,21 @@ The fuel report will show a warning if this does not match the simulator aircraf
            </item>
           </widget>
          </item>
-         <item row="2" column="0" colspan="2">
-          <widget class="Line" name="line">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
+         <item row="2" column="1">
+          <widget class="QLabel" name="labelTypeLink">
+           <property name="toolTip">
+            <string>Opens the official ICAO database in the web browser to look up aircraft type designators.</string>
+           </property>
+           <property name="text">
+            <string>&lt;a style=&quot;text-decoration:none;&quot; href=&quot;https://www.icao.int/publications/DOC8643/Pages/Search.aspx&quot;&gt;&lt;b&gt;Click here to look up official ICAO aircraft codes.&lt;/b&gt;&lt;/a&gt;
+
+</string>
+           </property>
+           <property name="openExternalLinks">
+            <bool>true</bool>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
            </property>
           </widget>
          </item>

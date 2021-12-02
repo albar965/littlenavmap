@@ -349,7 +349,7 @@ void ConnectClient::handleError(atools::fs::sc::SimConnectStatus status, const Q
     case atools::fs::sc::INVALID_MAGIC_NUMBER:
     case atools::fs::sc::VERSION_MISMATCH:
       hint = tr("Update <i>%1</i> to the latest version.<br/>"
-                "Your installed version of <i>%1</i><br/>"
+                "The installed version of <i>%1</i><br/>"
                 "is not compatible with this version of <i>Little Navmap</i>.<br/><br/>"
                 "Install the latest version of <i>%1</i>.").arg(program);
       errorState = true;

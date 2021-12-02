@@ -291,7 +291,7 @@ public:
 
   /* Get error messages from route parsing */
   bool hasErrors() const;
-  QString getErrorStrings(QStringList& toolTip) const;
+  QStringList getErrorStrings() const;
 
 signals:
   /* Show airport on map */

@@ -250,15 +250,13 @@ bool RouteAltitude::hasErrors() const
                                 getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE);
 }
 
-QString RouteAltitude::getErrorStrings(QStringList& toolTip) const
+QStringList RouteAltitude::getErrorStrings() const
 {
-  if(!errors.isEmpty())
-  {
-    toolTip.append(errors);
-    return tr("Cannot calculate elevation profile.");
-  }
-  else
-    return QString();
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << errors;
+#endif
+
+  return errors;
 }
 
 QVector<float> RouteAltitude::getAltitudes() const
@@ -300,6 +298,10 @@ QVector<float> RouteAltitude::getAltitudes() const
         retval.append(route->getCruisingAltitudeFeet());
     }
   }
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << retval;
+#endif
 
   return retval;
 }
@@ -903,14 +905,13 @@ void RouteAltitude::collectErrors(const QStringList& altRestrErrors)
 {
   if(!altRestrErrors.isEmpty())
   {
-    errors.append(tr("Check the cruise altitude and procedures."));
+    errors.append(tr("Check the cruise altitude and procedures of the flight plan."));
     errors.append(altRestrErrors);
   }
-  else if(!(getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE &&
-            getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE))
+  else if(!(getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE && getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE))
     errors.append(tr("Cannot calculate top of climb or top of descent.\n"
                      "The flight plan is either too short or the cruise altitude is too high.\n"
-                     "Also check the climb and descent speeds in the aircraft performance data."));
+                     "Also check the climb and descent speeds in the aircraft performance."));
 }
 
 void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, float cruiseAltitudeFt)
@@ -930,40 +931,51 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
 
   errors.clear();
   clearAll();
-
   bool invalid = false;
-  if(route->getTotalDistance() < 0.5f)
-  {
-    errors.append(tr("Flight plan is too short."));
-    qWarning() << Q_FUNC_INFO << "Flight plan too short";
-    invalid = true;
-  }
 
-  if(cruiseAltitude < 100.f)
-  {
-    errors.append(tr("Cruise altitude is too low."));
-    qWarning() << Q_FUNC_INFO << "Cruise altitude is too low";
+  // Collect basic issues ================================================
+  if(route->isEmpty())
     invalid = true;
-  }
+  else if(route->getSizeWithoutAlternates() == 1)
+    invalid = true;
 
-  const RouteLeg destinationLeg = route->getDestinationAirportLeg();
-  if(!destinationLeg.isValidWaypoint() || destinationLeg.getMapObjectType() != map::AIRPORT)
+  // Check again if there is a plan ===============================================
+  if(!invalid)
   {
-    errors.append(tr("Destination is not valid. Must be an airport."));
-    qWarning() << Q_FUNC_INFO << "Destination is not valid or neither airport nor runway";
-    invalid = true;
-  }
+    if(route->getTotalDistance() < 0.5f)
+    {
+      errors.append(tr("Flight plan is too short."));
+      qWarning() << Q_FUNC_INFO << "Flight plan too short";
+      invalid = true;
+    }
 
-  const RouteLeg departureLeg = route->getDepartureAirportLeg();
-  if(!departureLeg.isValidWaypoint() || departureLeg.getMapObjectType() != map::AIRPORT)
-  {
-    errors.append(tr("Departure is not valid. Must be an airport."));
-    qWarning() << Q_FUNC_INFO << "Departure is not valid or neither airport nor runway";
-    invalid = true;
+    if(cruiseAltitude < 100.f)
+    {
+      errors.append(tr("Cruise altitude is too low."));
+      qWarning() << Q_FUNC_INFO << "Cruise altitude is too low";
+      invalid = true;
+    }
+
+    const RouteLeg destinationLeg = route->getDestinationAirportLeg();
+    if(!destinationLeg.isValidWaypoint() || destinationLeg.getMapObjectType() != map::AIRPORT)
+    {
+      errors.append(tr("Destination is not valid. Must be an airport."));
+      qWarning() << Q_FUNC_INFO << "Destination is not valid or neither airport nor runway";
+      invalid = true;
+    }
+
+    const RouteLeg departureLeg = route->getDepartureAirportLeg();
+    if(!departureLeg.isValidWaypoint() || departureLeg.getMapObjectType() != map::AIRPORT)
+    {
+      errors.append(tr("Departure is not valid. Must be an airport."));
+      qWarning() << Q_FUNC_INFO << "Departure is not valid or neither airport nor runway";
+      invalid = true;
+    }
   }
 
   if(!invalid)
   {
+    // Flight plan is valid so far s===============================================
     QStringList altRestrErrors;
     calculate(altRestrErrors);
     collectErrors(altRestrErrors);
@@ -1007,7 +1019,7 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
           break;
       }
     }
-  }
+  } // if(!invalid)
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
@@ -1024,9 +1036,6 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
   qDebug() << "climbRateWindFtPerNm" << climbRateWindFtPerNm << "descentRateWindFtPerNm" << descentRateWindFtPerNm
            << "cruiseAltitide" << cruiseAltitude;
 #endif
-
-  if(!errors.isEmpty())
-    qWarning() << "errors" << errors;
   qDebug() << Q_FUNC_INFO;
 }
 

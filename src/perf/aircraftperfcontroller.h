@@ -141,7 +141,7 @@ public:
   bool isDescentValid() const;
 
   /* Called from print support to get a HTML report */
-  void fuelReport(atools::util::HtmlBuilder& html, bool print = false);
+  void fuelReport(atools::util::HtmlBuilder& html, bool print, bool visible);
   void fuelReportFilepath(atools::util::HtmlBuilder& html, bool print);
 
   /* Detect format by reading the first few lines */
@@ -165,6 +165,10 @@ public:
 
   /* Current aircraft endurance based on current fuel flow. This is the rolling average over ten seconds or current value. */
   void getEnduranceCurrent(float& enduranceHours, float& enduranceNm, bool average);
+
+  /* Get collected major errors */
+  bool hasErrors() const;
+  QStringList getErrorStrings() const;
 
 signals:
   /* Sent if performance or wind has changed */
@@ -261,6 +265,8 @@ private:
 
   /* For a smooth endurance calculation - first value is fuel flow in PPH and second is groundspeed in KTS */
   atools::util::MovingAverageTime *fuelFlowGroundspeedAverage;
+
+  QStringList errorTooltips;
 };
 
 #endif // LNM_AIRCRAFTPERFCONTROLLER_H
