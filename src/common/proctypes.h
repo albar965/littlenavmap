@@ -427,6 +427,23 @@ struct MapProcedureLeg
     return type == HEADING_TO_MANUAL_TERMINATION || type == FROM_FIX_TO_MANUAL_TERMINATION;
   }
 
+  bool isAnyCustom() const
+  {
+    return isCustomDeparture() || isCustomApproach();
+  }
+
+  bool isCustomDeparture() const
+  {
+    return type == CUSTOM_DEP_END || type == CUSTOM_DEP_RUNWAY;
+
+  }
+
+  bool isCustomApproach() const
+  {
+    return type == CUSTOM_APP_START || type == CUSTOM_APP_RUNWAY;
+
+  }
+
   bool isFinalApproachFix() const;
   bool isFinalApproachCourseFix() const;
   bool isFinalEndpointFix() const;

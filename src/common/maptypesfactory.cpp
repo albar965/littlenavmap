@@ -117,16 +117,18 @@ void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapR
   runway.length = record.valueFloat("length");
   runway.heading = record.valueFloat("heading");
   runway.patternAlt = record.valueFloat("pattern_altitude", 0.f);
-  runway.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
-  runway.primaryPosition = Pos(record.valueFloat("primary_lonx"), record.valueFloat("primary_laty"));
-  runway.secondaryPosition = Pos(record.valueFloat("secondary_lonx"), record.valueFloat("secondary_laty"));
+
+  float altitude = record.valueFloat("altitude", 0.f);
+  runway.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), altitude);
+  runway.primaryPosition = Pos(record.valueFloat("primary_lonx"), record.valueFloat("primary_laty"), altitude);
+  runway.secondaryPosition = Pos(record.valueFloat("secondary_lonx"), record.valueFloat("secondary_laty"), altitude);
 }
 
 void MapTypesFactory::fillRunwayEnd(const atools::sql::SqlRecord& record, MapRunwayEnd& end, bool nav)
 {
   end.navdata = nav;
   end.name = record.valueStr("name");
-  end.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
+  end.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude", 0.f));
   end.secondary = record.valueStr("end_type") == "S";
   end.heading = record.valueFloat("heading");
   end.id = record.valueInt("runway_end_id");

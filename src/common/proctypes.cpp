@@ -350,7 +350,7 @@ QString procedureLegRemarks(proc::ProcedureLegType type)
 QString restrictionText(const MapProcedureLeg& procedureLeg)
 {
   QStringList restrictions;
-  if(procedureLeg.altRestriction.isValid())
+  if(procedureLeg.altRestriction.isValid() && !procedureLeg.isCustomDeparture())
     restrictions.append(proc::altRestrictionTextShort(procedureLeg.altRestriction));
 
   if(procedureLeg.speedRestriction.isValid())

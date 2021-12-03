@@ -840,8 +840,7 @@ void AirportQuery::getBestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map:
   }
 }
 
-void AirportQuery::getRunways(QVector<map::MapRunway>& runways, const ageo::Rect& rect,
-                              const ageo::Pos& pos)
+void AirportQuery::getRunways(QVector<map::MapRunway>& runways, const ageo::Rect& rect, const ageo::Pos& pos)
 {
   SqlQuery query(db);
   query.prepare("select * from runway where lonx between :leftx and :rightx and laty between :bottomy and :topy");
@@ -1165,13 +1164,13 @@ void AirportQuery::initQueries()
   runwayEndByIdQuery = new SqlQuery(db);
   runwayEndByIdQuery->prepare("select runway_end_id, end_type, name, heading, left_vasi_pitch, right_vasi_pitch, is_pattern, "
                               "left_vasi_type, right_vasi_type, "
-                              "lonx, laty from runway_end where runway_end_id = :id");
+                              "altitude, lonx, laty from runway_end where runway_end_id = :id");
 
   runwayEndByNameQuery = new SqlQuery(db);
   runwayEndByNameQuery->prepare(
     "select e.runway_end_id, e.end_type, "
     "e.left_vasi_pitch, e.right_vasi_pitch, e.left_vasi_type, e.right_vasi_type, is_pattern, "
-    "e.name, e.heading, e.lonx, e.laty "
+    "e.name, e.heading, e.altitude, e.lonx, e.laty "
     "from runway r join runway_end e on (r.primary_end_id = e.runway_end_id or r.secondary_end_id = e.runway_end_id) "
     "join airport a on r.airport_id = a.airport_id "
     "where e.name = :name and a.ident = :airport");

@@ -344,6 +344,7 @@ struct MapPos
 // =====================================================================
 /* Airport type not including runways (have to queried separately) */
 /* Database id airport.airport_id */
+/* Position contains runway altitude in feet */
 struct MapAirport
   : public MapBase
 {
@@ -424,7 +425,8 @@ struct MapAirport
 
 // =====================================================================
 /* Airport runway. All dimensions are feet */
-/* Datbase id is runway.runway_id */
+/* Database id is runway.runway_id */
+/* Position contains runway altitude in feet */
 struct MapRunway
   : public MapBase
 {
@@ -482,6 +484,7 @@ struct MapRunway
 // =====================================================================
 /* Airport runway end. All dimensions are feet */
 /* Database id is runway_end.runway_end_id */
+/* Position contains runway altitude in feet */
 struct MapRunwayEnd
   : public MapBase
 {
