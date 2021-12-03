@@ -4636,38 +4636,43 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 
 #endif
 
+void MainWindow::makeErrorLabel(QString& toolTipText, QStringList errors, const QString& header)
+{
+  if(!errors.isEmpty())
+  {
+    if(errors.size() > 5)
+    {
+      errors = errors.mid(0, 5);
+      errors.append(tr("More ..."));
+    }
+
+    toolTipText.append(header);
+    toolTipText.append("<ul>");
+    for(const QString& str : errors)
+      toolTipText.append("<li>" % str % "</li>");
+    toolTipText.append("</ul>");
+  }
+}
+
 void MainWindow::updateErrorLabels()
 {
   using atools::util::HtmlBuilder;
-  const static int ELIDE_TEXT = 120;
 
   // Collect errors from all controllers =================================
-  QStringList toolTipText;
+  QString toolTipText;
 
   // Flight plan ============
-  if(routeController->hasErrors())
-  {
-    toolTipText.append(tr("<b>Problems on tab \"Flight Plan\":</b>", "Synchronize name with tab name"));
-    for(const QString& str : routeController->getErrorStrings())
-      toolTipText.append(atools::elideTextShort(tr("- %1").arg(str), ELIDE_TEXT));
-  }
+  makeErrorLabel(toolTipText, routeController->getErrorStrings(),
+                 tr("<nobr><b>Problems on tab \"Flight Plan\":</b></nobr>", "Synchronize name with tab name"));
 
   // Elevation profile ============
-  if(NavApp::getAltitudeLegs().hasErrors())
-  {
-    toolTipText.append(tr("<b>Problems when calculating profile for window \"Flight Plan Elevation Profile\"</b>:",
-                          "Synchronize name with window name"));
-    for(const QString& str : NavApp::getAltitudeLegs().getErrorStrings())
-      toolTipText.append(atools::elideTextShort(tr("- %1").arg(str), ELIDE_TEXT));
-  }
+  makeErrorLabel(toolTipText, NavApp::getAltitudeLegs().getErrorStrings(),
+                 tr("<nobr><b>Problems when calculating profile for window \"Flight Plan Elevation Profile\":</b></nobr>",
+                    "Synchronize name with window name"));
 
   // Aircraft performance ============
-  if(NavApp::getAircraftPerfController()->hasErrors())
-  {
-    toolTipText.append(tr("<b>Problems on tab \"Fuel Report\":</b>", "Synchronize name with tab name"));
-    for(const QString& str : NavApp::getAircraftPerfController()->getErrorStrings())
-      toolTipText.append(atools::elideTextShort(tr("- %1").arg(str), ELIDE_TEXT));
-  }
+  makeErrorLabel(toolTipText, NavApp::getAircraftPerfController()->getErrorStrings(),
+                 tr("<nobr><b>Problems on tab \"Fuel Report\":</b></nobr>", "Synchronize name with tab name"));
 
   // Build tooltip message ====================================
   if(!toolTipText.isEmpty())
@@ -4676,7 +4681,7 @@ void MainWindow::updateErrorLabels()
     ui->labelRouteError->setText(HtmlBuilder::errorMessage(tr("Found problems. Click here for details.")));
 
     // Disallow text wrapping
-    ui->labelRouteError->setToolTip("<p style=\"white-space:pre\">" % toolTipText.join("<br/>") % "</p>");
+    ui->labelRouteError->setToolTip(toolTipText);
     ui->labelRouteError->setStatusTip(tr("Found problems."));
   }
   else

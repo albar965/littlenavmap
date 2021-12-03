@@ -909,8 +909,8 @@ void RouteAltitude::collectErrors(const QStringList& altRestrErrors)
     errors.append(altRestrErrors);
   }
   else if(!(getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE && getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE))
-    errors.append(tr("Cannot calculate top of climb or top of descent.\n"
-                     "The flight plan is either too short or the cruise altitude is too high.\n"
+    errors.append(tr("Cannot calculate top of climb or top of descent. "
+                     "The flight plan is either too short or the cruise altitude is too high. "
                      "Also check the climb and descent speeds in the aircraft performance."));
 }
 
@@ -1055,20 +1055,25 @@ void RouteAltitude::calculate(QStringList& altRestErrors)
   if(calcTopOfDescent)
     calculateArrival();
 
-  // Check for violations because of too low cruise
-  for(int i = 0; i < size(); i++)
+  // Check for violations because of too low cruise but only if TOD and TOC calculation succeeded
+  if(getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE && getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE)
   {
-    const RouteAltitudeLeg& leg = value(i);
-
-    if(!leg.isMissed() && !leg.isAlternate())
+    for(int i = 0; i < size(); i++)
     {
-      QString errorMessage;
-      bool err = violatesAltitudeRestriction(errorMessage, i);
+      const RouteAltitudeLeg& leg = value(i);
 
-      if(err)
+      if(!leg.isMissed() && !leg.isAlternate())
       {
-        qWarning() << Q_FUNC_INFO << "violating messge" << errorMessage << "leg" << leg;
-        altRestErrors.append(errorMessage);
+        QString errorMessage;
+        bool err = violatesAltitudeRestriction(errorMessage, i);
+
+        if(err)
+        {
+#ifdef DEBUG_INFORMATION
+          qWarning() << Q_FUNC_INFO << "violating messge" << errorMessage << "leg" << leg;
+#endif
+          altRestErrors.append(errorMessage);
+        }
       }
     }
   }
