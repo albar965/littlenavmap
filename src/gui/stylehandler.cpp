@@ -77,6 +77,7 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
 
     // Toolbutton checked background ===============
     QString("QToolButton:checked { background-color: %1; }").arg(darkPalette.color(QPalette::Light).name()) %
+    QString("QPushButton:checked { background-color: %1; }").arg(darkPalette.color(QPalette::Light).name()) %
 
     // Thicker frame for selected menu items with icons
     "QMenu::icon:checked:enabled { border: 2px solid lightgray; border-radius: 5px; }" %
