@@ -2797,6 +2797,24 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   else
     html.row2If(tr("Type:"), map::navTypeNameWaypoint(waypoint.type));
 
+  if(verbose)
+  {
+    const static QRegularExpression WP_NAME_RADIAL_DME("D([0-9]{3})([A-Z])");
+
+    QRegularExpressionMatch match = WP_NAME_RADIAL_DME.match(waypoint.ident);
+    if(match.hasMatch())
+    {
+      // D stands for DME arc waypoint. Aaa is the radial that the fix is on from the reference VOR. B will be a letter corresponding
+      // to the distance from the reference VOR. For example, G is the seventh letter of the alphabet so D234G would be a point
+      // on the 234° radial 7 nm from the reference VOR. DME arcs greater than 26 nm will have waypoints where the first two characters
+      // are the first two letters of the DME identifier. The next three characters will be the radial that the arc waypoint is on.
+      float radial = match.captured(1).toFloat();
+      char dist = atools::latin1CharAt(match.captured(2), 0);
+      html.row2If(tr("Radial and dist. to related:"),
+                  strJoinVal({courseText(radial, map::INVALID_COURSE_VALUE), Unit::distNm(static_cast<float>(dist - 'A') + 1.f)}));
+    }
+  }
+
   if(info)
   {
     html.row2If(tr("Region:"), waypoint.region);
