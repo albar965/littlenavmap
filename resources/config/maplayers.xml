@@ -104,9 +104,9 @@
 
         <!-- Show MORA grid ================= -->
         <Mora>true</Mora>
-        <Ndb>true</Ndb>
 
         <!-- NDB ================= -->
+        <Ndb>true</Ndb>
         <NdbIdent>true</NdbIdent>
         <NdbInfo>true</NdbInfo>
         <NdbRouteIdent>true</NdbRouteIdent>
@@ -217,7 +217,6 @@
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="25">
         <AirportMsaDetails>false</AirportMsaDetails>
-        <ApproachTextDetail>false</ApproachTextDetail>
         <NdbSymbolSize>22</NdbSymbolSize>
         <UserpointSymbolSize>24</UserpointSymbolSize>
         <VorSymbolSize>22</VorSymbolSize>
@@ -231,6 +230,7 @@
         <AirportMinorInfo>false</AirportMinorInfo>
         <AirportMinorSymbolSize>16</AirportMinorSymbolSize>
         <AirportSymbolSize>16</AirportSymbolSize>
+        <ApproachTextDetail>false</ApproachTextDetail>
         <HoldingInfo2>false</HoldingInfo2>
         <IlsIdent>false</IlsIdent>
         <IlsInfo>false</IlsInfo>
@@ -239,7 +239,7 @@
         <MaximumTextLengthAirportMinor>8</MaximumTextLengthAirportMinor>
         <MaximumTextLengthUserpoint>10</MaximumTextLengthUserpoint>
         <NdbSymbolSize>20</NdbSymbolSize>
-        <VorSymbolSize>20</VorSymbolSize>
+        <VorSymbolSize>18</VorSymbolSize>
         <WaypointName>false</WaypointName>
         <WaypointSymbolSize>6</WaypointSymbolSize>
       </Layer>
@@ -256,7 +256,7 @@
         <NdbInfo>false</NdbInfo>
         <NdbSymbolSize>16</NdbSymbolSize>
         <VorInfo>false</VorInfo>
-        <VorLarge>false</VorLarge>
+        <VorSymbolSize>16</VorSymbolSize>
         <WaypointSymbolSize>3</WaypointSymbolSize>
         <WindBarbsSymbolSize>14</WindBarbsSymbolSize>
       </Layer>
@@ -273,6 +273,7 @@
         <UserpointSymbolSize>22</UserpointSymbolSize>
         <VorIdent>false</VorIdent>
         <VorSymbolSize>12</VorSymbolSize>
+        <VorLarge>false</VorLarge>
         <Waypoint>false</Waypoint>
       </Layer>
       <!-- =================================================================================== -->
