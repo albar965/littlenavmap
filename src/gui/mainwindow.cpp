@@ -2379,8 +2379,10 @@ void MainWindow::routeOpenFileLnmStr(const QString& string)
 
 bool MainWindow::routeSaveSelection()
 {
-  // Have to get snippet to be able to extract new name
-  QString routeFile = routeSaveFileDialogLnm(RouteExport::buildDefaultFilename(NavApp::getRouteConst()));
+  // Have to get a simple copy of the plan to be able to extract new name
+  const Route routeForSelection = routeController->getRouteForSelection();
+
+  QString routeFile = routeSaveFileDialogLnm(routeForSelection.buildDefaultFilename(".lnmpln"));
 
   if(!routeFile.isEmpty())
   {
@@ -2399,10 +2401,9 @@ bool MainWindow::routeSaveSelection()
 /* Called from menu or toolbar by action - append flight plan to current one */
 void MainWindow::routeAppend()
 {
-  QString routeFile = dialog->openFileDialog(
-    tr("Append Flight Plan"),
-    tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
-    "Route/LnmPln", atools::documentsDir());
+  QString routeFile = dialog->openFileDialog(tr("Append Flight Plan"),
+                                             tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_FLIGHTPLAN_LOAD),
+                                             "Route/LnmPln", atools::documentsDir());
 
   if(!routeFile.isEmpty())
   {
@@ -2483,7 +2484,7 @@ void MainWindow::routeSaveLnmExported(const QString& filename)
 bool MainWindow::routeSaveLnm()
 {
   // Show a simple warning for the rare case that altitude is null ===============
-  if(atools::almostEqual(NavApp::getRoute().getCruisingAltitudeFeet(), 0.f, 10.f))
+  if(atools::almostEqual(NavApp::getRouteConst().getCruisingAltitudeFeet(), 0.f, 10.f))
     atools::gui::Dialog(this).showInfoMsgBox(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING,
                                              tr("Flight plan cruise altitude is zero.\n"
                                                 "A simulator might not be able to load the flight plan."),
@@ -2543,7 +2544,7 @@ QString MainWindow::routeSaveFileDialogLnm(const QString& filename)
     tr("Save Flight Plan as LNMPLN Format"),
     tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNMPLN),
     "lnmpln", "Route/LnmPln", atools::documentsDir(),
-    filename.isEmpty() ? RouteExport::buildDefaultFilename() : filename,
+    filename.isEmpty() ? NavApp::getRouteConst().buildDefaultFilename(".lnmpln") : filename,
     false /* confirm overwrite */);
 }
 
@@ -2569,10 +2570,8 @@ bool MainWindow::openInSkyVector()
 {
   // https://skyvector.com/?fpl=%20EDDH%20AMLU7C%20AMLUH%20M852%20POVEL%20GALMA%20UM736%20DOSEL%20DETSA%20NIKMA%20T369%20RITEB%20RITE4B%20LIRF
 
-  QString route =
-    RouteStringWriter().createStringForRoute(NavApp::getRoute(),
-                                             NavApp::getRouteCruiseSpeedKts(),
-                                             rs::START_AND_DEST | rs::SKYVECTOR_COORDS);
+  QString route = RouteStringWriter().createStringForRoute(NavApp::getRouteConst(), NavApp::getRouteCruiseSpeedKts(),
+                                                           rs::START_AND_DEST | rs::SKYVECTOR_COORDS);
 
   HelpHandler::openUrlWeb(this, "https://skyvector.com/?fpl=" + route);
   return true;
@@ -2584,8 +2583,7 @@ void MainWindow::clearRangeRingsAndDistanceMarkers(bool quiet)
   {
     int result = atools::gui::Dialog(this).
                  showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_MARKS,
-                                    tr(
-                                      "Delete all range rings, measurement lines, traffic patterns and holds from map?"),
+                                    tr("Delete all range rings, measurement lines, traffic patterns and holds from map?"),
                                     tr("Do not &show this dialog again."),
                                     QMessageBox::Yes | QMessageBox::No,
                                     QMessageBox::No, QMessageBox::Yes);
@@ -2872,7 +2870,7 @@ void MainWindow::mapSaveImageAviTab()
         if(routeController->getRoute().isEmpty())
           defaultFileName = tr("LittleNavmap_%1.png").arg(QDateTime::currentDateTime().toString("yyyyMMddHHmm"));
         else
-          defaultFileName = routeExport->buildDefaultFilenameShort("_", ".jpg");
+          defaultFileName = NavApp::getRouteConst().buildDefaultFilenameShort("_", ".jpg");
 
         int filterIndex = -1;
 

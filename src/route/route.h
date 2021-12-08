@@ -661,7 +661,11 @@ public:
   void updateDepartureAndDestination();
 
   /* Get file name pattern based on route values */
-  QString getFilenamePattern(const QString& pattern, const QString& suffix, bool clean = true) const;
+  QString buildDefaultFilename(const QString& suffix, bool clean = true) const;
+  QString buildDefaultFilenameShort(const QString& separator, const QString& suffix) const;
+
+  /* Uses pattern from options if empty */
+  QString buildDefaultFilename(QString pattern, QString suffix, bool clean = true) const;
 
 private:
   /* Copy flight plan profile altitudes into entries for FMS and other formats

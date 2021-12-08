@@ -741,7 +741,7 @@ void RouteController::aircraftPerformanceChanged()
   qDebug() << Q_FUNC_INFO;
 
   // Get type, speed and cruise altitude from widgets
-  updateTableHeaders();   // Update lbs/gal for fuel
+  updateTableHeaders(); // Update lbs/gal for fuel
   updateFlightplanFromWidgets();
 
   // Needs to be called with empty route as well to update the error messages
@@ -1456,17 +1456,14 @@ bool RouteController::saveFlightplanLnmAs(const QString& filename)
   return saveFlightplanLnmInternal();
 }
 
-pln::Flightplan RouteController::getFlightplanForSelection() const
+Route RouteController::getRouteForSelection() const
 {
   QList<int> rows = getSelectedRows(false /* reverse */);
-
   Route saveRoute(route);
   saveRoute.removeAllExceptRange(rows.first(), rows.last());
   saveRoute.updateIndicesAndOffsets();
-
-  Flightplan saveplan = saveRoute.getFlightplan();
-  saveplan.adjustDepartureAndDestination(true /* force */); // Fill departure and destination fields
-  return saveplan;
+  saveRoute.getFlightplan().adjustDepartureAndDestination(true /* force */); // Fill departure and destination fields
+  return saveRoute;
 }
 
 bool RouteController::saveFlightplanLnmAsSelection(const QString& filename)
@@ -1499,8 +1496,7 @@ bool RouteController::saveFlightplanLnmSelectionAs(const QString& filename, int 
     saveRoute.removeProcedureLegs();
 
     // Get plan without alternates and all altitude values erased
-    Flightplan saveplan =
-      saveRoute.zeroedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN_SAVE_SELECTED).getFlightplan();
+    Flightplan saveplan = saveRoute.zeroedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN_SAVE_SELECTED).getFlightplan();
     saveplan.adjustDepartureAndDestination(true /* force */);
 
     // Remove original comment

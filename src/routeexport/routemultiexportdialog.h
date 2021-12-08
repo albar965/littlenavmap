@@ -38,6 +38,8 @@ class QAbstractButton;
 class QStandardItem;
 class QStandardItemModel;
 class QCheckBox;
+class QItemSelection;
+class QStandardItem;
 class TableSortProxyModel;
 class RouteExportFormatMap;
 class RouteExportFormat;
@@ -77,6 +79,9 @@ signals:
   /* Save now button list is clicked */
   void saveNowButtonClicked(const RouteExportFormat& format);
 
+  /* Export all selected in button box clicked */
+  void saveSelectedButtonClicked();
+
 private:
   void buttonBoxClicked(QAbstractButton *button);
 
@@ -87,6 +92,10 @@ private:
   /* Reset path back to default in list clicked */
   void resetPathClicked();
   void resetPath(rexp::RouteExportFormatType type, int row);
+
+  /* Reset from action */
+  void actionResetExportPatternTriggered();
+  void resetPattern(rexp::RouteExportFormatType type, int row);
 
   /* Save now in list clicked */
   void saveNowClicked();
@@ -106,13 +115,36 @@ private:
   /* Update table - clear and fill again */
   void updateModel();
 
+  /* Update bottom label */
+  void updateLabel();
+
+  /* Enable or disable actions depending on selection */
+  void updateActions();
+
+  void selectionChanged(const QItemSelection&, const QItemSelection&);
+
   /* Checkbox toggled */
   void selectForExportToggled();
   void selectForExport(rexp::RouteExportFormatType type, bool checked);
 
-  void tableContextMenu(const QPoint& pos);
+  void tableContextMenu(const QPoint&);
 
+  /* Called from context menu method */
   void resetPathsAndSelection();
+
+  /* Called by connected actions */
+  void actionEditPathTriggered();
+  void actionEditPatternTriggered();
+  void actionExportFileNowTriggered();
+  void actionResetExportPathTriggered();
+  void actionSelectExportPathTriggered();
+  void actionSelectTriggered();
+
+  /* Get elements, indexes and row for current selection or -1 if nothing selected */
+  QModelIndex selectedIndex();
+  int selectedRow();
+  QStandardItem *selectedItem(int col);
+  rexp::RouteExportFormatType selectedType();
 
   /* Item model for unsorted entries */
   QStandardItemModel *itemModel = nullptr;
@@ -123,8 +155,8 @@ private:
   /* Used to fix excessive default margins in table */
   atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
 
-  RouteExportFormatMap *formatMap = nullptr, /* Map that will be modified in the dialog */
-                       *formatMapOrig = nullptr; /* Map backup that will be used to restore in case of cancel */
+  RouteExportFormatMap *formatMapDialog = nullptr, /* Map that will be modified in the dialog */
+                       *formatMapSystem = nullptr; /* Map backup that will be used to restore in case of cancel */
 
   /* Keep index for checkbox in field */
   QMap<rexp::RouteExportFormatType, QCheckBox *> selectCheckBoxIndex;
@@ -139,7 +171,6 @@ private:
   ExportOptions exportOptions = FILEDIALOG;
 
   Ui::RouteMultiExportDialog *ui;
-
 };
 
 #endif // LNM_ROUTEEXPORTALLDIALOG_H

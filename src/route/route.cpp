@@ -37,6 +37,7 @@
 
 #include <QBitArray>
 #include <QRegularExpression>
+#include <QStringBuilder>
 
 #include <marble/GeoDataLineString.h>
 
@@ -3070,16 +3071,16 @@ void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::Map
         {
           // Keep other navaids (RNP - ILS are filtered out already)
           maptools::insert(ilsMap, ilsMapRecommended); // Merge and deduplicate
-          ilsVector = ilsMap.values().toVector();
+          ilsVector = QVector<map::MapIls>::fromList(ilsMap.values());
         }
         else
-          ilsVector = ilsMapRecommended.values().toVector();
+          ilsVector = QVector<map::MapIls>::fromList(ilsMapRecommended.values());
       }
       else
       {
         // Return more than the recommended for map and profile display purposes
         maptools::insert(ilsMap, ilsMapRecommended); // Merge and deduplicate
-        ilsVector = ilsMap.values().toVector();
+        ilsVector = QVector<map::MapIls>::fromList(ilsMap.values());
       }
     } // if(approachLegs.runwayEnd.isValid())
   } // if(!approachLegs.runwayEnd.name.isEmpty() && approachLegs.runwayEnd.name != "RW")
@@ -3137,7 +3138,12 @@ QString Route::getProcedureLegText(proc::MapProcedureTypes mapType, bool include
   return QString();
 }
 
-QString Route::getFilenamePattern(const QString& pattern, const QString& suffix, bool clean) const
+QString Route::buildDefaultFilename(const QString& suffix, bool clean) const
+{
+  return buildDefaultFilename(QString(), suffix, clean);
+}
+
+QString Route::buildDefaultFilename(QString pattern, QString suffix, bool clean) const
 {
   if(isEmpty())
     return tr("Empty Flightplan") + suffix;
@@ -3146,8 +3152,27 @@ QString Route::getFilenamePattern(const QString& pattern, const QString& suffix,
   QString departName = getDepartureAirportLeg().getName(), departIdent = getDepartureAirportLeg().getDisplayIdent(),
           destName = getDestinationAirportLeg().getName(), destIdent = getDestinationAirportLeg().getDisplayIdent();
 
+  if(pattern.isEmpty())
+    // Use pattern from options if not given
+    pattern = OptionData::instance().getFlightplanPattern();
+
+  if(pattern.endsWith(suffix, Qt::CaseInsensitive))
+    // Clear suffix if this is already a part of the filename
+    suffix.clear();
+
   return Flightplan::getFilenamePattern(pattern, type, departName, departIdent, destName, destIdent, suffix,
                                         flightplan.getCruisingAltitude(), clean);
+}
+
+QString Route::buildDefaultFilenameShort(const QString& separator, const QString& suffix) const
+{
+  if(isEmpty())
+    return tr("EMPTY") + suffix;
+
+  QString departIdent = getDepartureAirportLeg().getDisplayIdent(), destIdent = getDestinationAirportLeg().getDisplayIdent();
+
+  return Flightplan::getFilenamePattern(atools::fs::pln::pattern::DEPARTIDENT % separator % atools::fs::pln::pattern::DESTIDENT,
+                                        QString(), QString(), departIdent, QString(), destIdent, suffix, 0, false);
 }
 
 QDebug operator<<(QDebug out, const Route& route)

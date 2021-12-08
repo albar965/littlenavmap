@@ -402,8 +402,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>536</width>
-             <height>361</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -609,8 +609,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>437</width>
-             <height>546</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1104,8 +1104,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>571</width>
-             <height>366</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -1420,8 +1420,8 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>578</width>
-             <height>510</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_12">
@@ -1874,8 +1874,8 @@ userpoints and logbook entries when clicking on the map</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>609</width>
-             <height>312</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_13">
@@ -2194,8 +2194,8 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>471</width>
-             <height>497</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -2904,8 +2904,8 @@ Afftects map and elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>422</width>
-             <height>326</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -3291,8 +3291,8 @@ Not used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>534</width>
-             <height>504</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -3987,8 +3987,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>339</width>
-             <height>366</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -4425,8 +4425,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>594</width>
-             <height>491</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -4853,8 +4853,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>491</width>
-             <height>393</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -4961,8 +4961,9 @@ Example: &quot;IFR Frankfurt Am Main (EDDF) to Fiumicino (LIRF).lnmpln&quot;</st
                <item row="4" column="0">
                 <widget class="QLineEdit" name="lineEditOptionsRouteFilename">
                  <property name="toolTip">
-                  <string extracomment="Do not translate the keywords">Applies to new filenames when saving LNMPLN, FSX, Prepar3D, FlightGear or MSFS flight plans.
-The file suffix like &quot;.lnmpln&quot;, &quot;.pln&quot; or &quot;.fgfp&quot; is appended automatically.
+                  <string extracomment="Do not translate the keywords">Applies to new filenames when saving LNMPLN flight plans.
+File patterns for other flight plan files are defined in the multi export options dialog.
+The file suffix &quot;.lnmpln&quot; is appended automatically.
 
 PLANTYPE: IFR or VFR
 DEPARTIDENT: Departure airport ICAO code
@@ -5030,10 +5031,10 @@ Example: &quot;EDDF LIRF.lnmpln&quot;</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="0">
+               <item row="3" column="0" colspan="3">
                 <widget class="QLabel" name="label_9">
                  <property name="text">
-                  <string>&amp;Pattern for default flight plan names:</string>
+                  <string>&amp;Pattern for default flight plan file names used when saving LNMPLN:</string>
                  </property>
                  <property name="buddy">
                   <cstring>lineEditOptionsRouteFilename</cstring>
@@ -5171,8 +5172,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>284</width>
-             <height>324</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -5367,8 +5368,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>430</width>
-             <height>390</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -5830,8 +5831,8 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>341</width>
-             <height>333</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -6112,8 +6113,8 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>450</width>
-             <height>234</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -6299,8 +6300,8 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>505</width>
-             <height>496</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -6668,8 +6669,8 @@ Currently only OpenAir is supported (*.txt). </string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>205</width>
-             <height>557</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">

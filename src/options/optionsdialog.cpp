@@ -51,6 +51,7 @@
 #include <QSettings>
 #include <QFontDialog>
 #include <QFontDatabase>
+#include <QStringBuilder>
 
 #include <marble/MarbleModel.h>
 #include <marble/MarbleDirs.h>
@@ -2591,27 +2592,20 @@ void OptionsDialog::updateFlightplanExample()
 {
   if(!ui->lineEditOptionsRouteFilename->text().isEmpty())
   {
-    QString example = atools::fs::pln::Flightplan::getFilenamePattern(ui->lineEditOptionsRouteFilename->text(),
-                                                                      "IFR", "Frankfurt Am Main", "EDDF",
-                                                                      "Fiumicino", "LIRF", ".lnmpln", 30000, false);
+    QString errorMsg;
+    QString example = atools::fs::pln::Flightplan::getFilenamePatternExample(ui->lineEditOptionsRouteFilename->text(), ".lnmpln",
+                                                                             true /* html */, &errorMsg);
 
-    QString text = tr("Example: \"%1\"").arg(atools::cleanFilename(example, atools::MAX_FILENAME_CHARS));
+    QString text = tr("Example: \"%1\"").arg(example);
 
-    // Check if the cleaned filename differs from user input
-    if(example != atools::cleanFilename(example, atools::MAX_FILENAME_CHARS))
-      text.append(tr("<br/>") +
-                  atools::util::HtmlBuilder::errorMessage({tr("Pattern contains invalid characters, "
-                                                              "double spaces or is longer than %1 characters.").
-                                                           arg(atools::MAX_FILENAME_CHARS),
-                                                           tr("Not allowed are:  "
-                                                              "\\  /  :  \'  *  &amp;  &gt;  &lt;  ?  $  |")}));
+    if(!errorMsg.isEmpty())
+      text.append(tr("<br/>") % atools::util::HtmlBuilder::errorMessage(errorMsg));
 
     ui->labelOptionsRouteFilenameExample->setText(text);
   }
   else
     ui->labelOptionsRouteFilenameExample->setText(
-      atools::util::HtmlBuilder::warningMessage(tr("Pattern is empty. Using default \"%1\".").
-                                                arg(atools::fs::pln::pattern::SHORT)));
+      atools::util::HtmlBuilder::warningMessage(tr("Pattern is empty. Using default \"%1\".").arg(atools::fs::pln::pattern::SHORT)));
 }
 
 void OptionsDialog::updateMapFontLabel()

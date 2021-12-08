@@ -212,7 +212,7 @@ public:
   QString getFlightplanTableAsHtmlDoc(float iconSizePixel) const;
 
   /* Get flight plan extracted from table selection */
-  atools::fs::pln::Flightplan getFlightplanForSelection() const;
+  Route getRouteForSelection() const;
 
   /* Insert a flight plan table as QTextTable object at the cursor position.
    * @param selectedCols Physical/logical and not view order. */
