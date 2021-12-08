@@ -665,9 +665,9 @@ unix:!macx {
   copydata.commands += mkdir -p $$OUT_PWD/translations &&
   copydata.commands += cp -avfu $$PWD/*.qm $$OUT_PWD/translations &&
   copydata.commands += cp -avfu $$ATOOLS_INC_PATH/../*.qm $$OUT_PWD/translations &&
-  copydata.commands += cp -avfu $$PWD/help $$OUT_PWD &&
-  copydata.commands += cp -avfu $$PWD/web $$OUT_PWD &&
-  copydata.commands += cp -avfu $$PWD/customize $$OUT_PWD &&
+  copydata.commands += cp -avfu --no-clobber $$PWD/help $$OUT_PWD &&
+  copydata.commands += cp -avfu --no-clobber $$PWD/web $$OUT_PWD &&
+  copydata.commands += cp -avfu --no-clobber $$PWD/customize $$OUT_PWD &&
   copydata.commands += cp -avfu $$PWD/marble/data $$OUT_PWD &&
   copydata.commands += cp -vf $$PWD/desktop/littlenavmap*.sh $$OUT_PWD &&
   copydata.commands += chmod -v a+x $$OUT_PWD/littlenavmap*.sh
