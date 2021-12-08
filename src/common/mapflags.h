@@ -125,6 +125,9 @@ enum MapType : unsigned long long
   /* Pure visibiliy flags. Nothing is shown if not at least one of these is set */
   AIRPORT_ALL_VISIBLE = AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_WATER | AIRPORT_HELIPAD,
 
+  /* All available filters in drop down button */
+  AIRPORT_FILTER_ALL = AIRPORT_ALL_VISIBLE | AIRPORT_EMPTY |  AIRPORT_UNLIGHTED | AIRPORT_NO_PROCS|AIRPORT_ADDON,
+
   /* Visible and filter flags */
   AIRPORT_ALL = AIRPORT_ALL_VISIBLE | AIRPORT | AIRPORT_EMPTY |  AIRPORT_UNLIGHTED | AIRPORT_NO_PROCS,
   AIRPORT_ALL_AND_ADDON = AIRPORT_ALL | AIRPORT_ADDON,

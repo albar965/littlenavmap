@@ -301,7 +301,8 @@ void MapAirportHandler::addToolbarButton()
   // Create and add toolbar button =====================================
   toolButton->setIcon(QIcon(":/littlenavmap/resources/icons/airportmenu.svg"));
   toolButton->setPopupMode(QToolButton::InstantPopup);
-  toolButton->setToolTip(tr("Select airport types to show"));
+  toolButton->setToolTip(tr("Select airport types to show.\n"
+                            "Button is shown in pressed state if any filter is selected."));
   toolButton->setStatusTip(toolButton->toolTip());
   toolButton->setCheckable(true);
 
@@ -459,7 +460,7 @@ void MapAirportHandler::runwaySliderReleased()
 
 void MapAirportHandler::updateToolbutton()
 {
-  toolButton->setChecked(airportTypes & (map::MapTypes(map::AIRPORT_ALL_AND_ADDON) & ~map::MapTypes(map::AIRPORT)));
+  toolButton->setChecked(getMinimumRunwayFt() > 0 || !(airportTypes.testFlag(map::MapTypes(map::AIRPORT_FILTER_ALL))));
 }
 
 void MapAirportHandler::updateRunwayLabel()
