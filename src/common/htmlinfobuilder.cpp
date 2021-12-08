@@ -3630,28 +3630,30 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
     float maxGrossWeight = userAircraft.getAirplaneMaxGrossWeightLbs();
     float grossWeight = userAircraft.getAirplaneTotalWeightLbs();
 
-    html.row2(tr("Max Gross Weight:"), Unit::weightLbsLocalOther(maxGrossWeight), ahtml::NO_ENTITIES);
+    html.row2(tr("Max Gross Weight:"), Unit::weightLbsLocalOther(maxGrossWeight), ahtml::NO_ENTITIES | ahtml::BOLD);
 
     if(grossWeight > maxGrossWeight)
       html.row2Error(tr("Gross Weight:"), Unit::weightLbsLocalOther(grossWeight, false, false));
     else
-      html.row2(tr("Gross Weight:"), Unit::weightLbsLocalOther(grossWeight, true /* bold */), ahtml::NO_ENTITIES);
+    {
+      QString weight = HtmlBuilder::textStr(Unit::weightLbsLocalOther(grossWeight, true /* bold */), ahtml::NO_ENTITIES| ahtml::BOLD);
+      QString percent = tr("<br/>%1 % of max gross weight").arg(100.f / maxGrossWeight * grossWeight, 0, 'f', 0);
+
+      html.row2(tr("Gross Weight:"), weight % percent, ahtml::NO_ENTITIES);
+    }
 
     html.row2(QString());
     html.row2(tr("Empty Weight:"), Unit::weightLbsLocalOther(userAircraft.getAirplaneEmptyWeightLbs()),
               ahtml::NO_ENTITIES);
     html.row2(tr("Zero Fuel Weight:"), Unit::weightLbsLocalOther(userAircraft.getAirplaneTotalWeightLbs() -
-                                                                 userAircraft.getFuelTotalWeightLbs()),
-              ahtml::NO_ENTITIES);
+                                                                 userAircraft.getFuelTotalWeightLbs()), ahtml::NO_ENTITIES);
 
     html.row2(tr("Total Payload:"), Unit::weightLbsLocalOther(userAircraft.getAirplaneTotalWeightLbs() -
                                                               userAircraft.getAirplaneEmptyWeightLbs() -
-                                                              userAircraft.getFuelTotalWeightLbs()),
-              ahtml::NO_ENTITIES);
+                                                              userAircraft.getFuelTotalWeightLbs()), ahtml::NO_ENTITIES);
 
     html.row2(tr("Fuel:"), Unit::fuelLbsAndGalLocalOther(userAircraft.getFuelTotalWeightLbs(),
-                                                         userAircraft.getFuelTotalQuantityGallons(), true /* bold */),
-              ahtml::NO_ENTITIES);
+                                                         userAircraft.getFuelTotalQuantityGallons(), true /* bold */), ahtml::NO_ENTITIES);
     html.tableEnd().row2AlignRight(false);
   }
 }
