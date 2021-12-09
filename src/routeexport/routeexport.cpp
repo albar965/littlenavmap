@@ -514,7 +514,7 @@ bool RouteExport::routeExportRxpGtnMulti(const RouteExportFormat& format)
     // Location depends on trainer version - this is all above 6.41
 #ifdef Q_OS_WIN32
     QString gtnPath(QProcessEnvironment::systemEnvironment().value("GTNSIMDATA"));
-    path = gtnPath.isEmpty() ? "C:\\ProgramData\\Garmin\\Trainers\\Databases\\FPLN" : gtnPath % "\\Databases\\FPLN";
+    path = gtnPath.isEmpty() ? QString("C:\\ProgramData\\Garmin\\Trainers\\Databases\\FPLN") : gtnPath % "\\Databases\\FPLN";
 #elif DEBUG_INFORMATION
     path = atools::buildPath({atools::documentsDir(), "Garmin", "Trainers", "GTN", "FPLN"});
 #else
