@@ -95,21 +95,19 @@ public:
    * Returns all airports where either id matches given ident.
    * Does not use cache.
    * Airports will be sorted by distance to pos if given and excluded by distance if given too.*/
-  void getAirportsByOfficialIdent(QList<map::MapAirport>& airports, const QString& ident,
-                                  const atools::geo::Pos *pos = nullptr,
-                                  float maxDistanceMeter = map::INVALID_DISTANCE_VALUE, bool searchIata = true,
-                                  bool searchIdent = true);
+  void getAirportsByOfficialIdent(QList<map::MapAirport>& airports, const QString& ident, const atools::geo::Pos *pos = nullptr,
+                                  float maxDistanceMeter = map::INVALID_DISTANCE_VALUE, map::AirportQueryFlags flags = map::AP_QUERY_ALL);
+
   QList<map::MapAirport> getAirportsByOfficialIdent(const QString& ident, const atools::geo::Pos *pos = nullptr,
                                                     float maxDistanceMeter = map::INVALID_DISTANCE_VALUE,
-                                                    bool searchIata = true, bool searchIdent = true);
+                                                    map::AirportQueryFlags flags = map::AP_QUERY_ALL);
 
-  void getAirportByOfficialIdent(map::MapAirport& airport, const QString& ident,
-                                 const atools::geo::Pos *pos = nullptr,
-                                 float maxDistanceMeter = map::INVALID_DISTANCE_VALUE, bool searchIata = true,
-                                 bool searchIdent = true);
+  void getAirportByOfficialIdent(map::MapAirport& airport, const QString& ident, const atools::geo::Pos *pos = nullptr,
+                                 float maxDistanceMeter = map::INVALID_DISTANCE_VALUE, map::AirportQueryFlags flags = map::AP_QUERY_ALL);
+
   map::MapAirport getAirportByOfficialIdent(const QString& ident, const atools::geo::Pos *pos = nullptr,
                                             float maxDistanceMeter = map::INVALID_DISTANCE_VALUE,
-                                            bool searchIata = true, bool searchIdent = true);
+                                            map::AirportQueryFlags flags = map::AP_QUERY_ALL);
 
   /* Try to get airport by ident, icao or position as a fallback if pos is valid,
    * Need to get ident, icao and pos as copies to avoid overwriting.

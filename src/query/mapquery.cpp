@@ -280,24 +280,22 @@ map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float dist
   return result;
 }
 
-void MapQuery::getMapObjectByIdent(map::MapResult& result, map::MapTypes type,
-                                   const QString& ident, const QString& region, const QString& airport,
-                                   const Pos& sortByDistancePos, float maxDistanceMeter, bool airportFromNavDatabase)
+void MapQuery::getMapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident, const QString& region,
+                                   const QString& airport, const Pos& sortByDistancePos, float maxDistanceMeter,
+                                   bool airportFromNavDatabase, map::AirportQueryFlags flags)
 {
-  mapObjectByIdentInternal(result, type, ident, region, airport, sortByDistancePos, maxDistanceMeter,
-                           airportFromNavDatabase);
+  mapObjectByIdentInternal(result, type, ident, region, airport, sortByDistancePos, maxDistanceMeter, airportFromNavDatabase, flags);
 }
 
 void MapQuery::getMapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident,
-                                   const QString& region, const QString& airport, bool airportFromNavDatabase)
+                                   const QString& region, const QString& airport, bool airportFromNavDatabase, map::AirportQueryFlags flags)
 {
-  mapObjectByIdentInternal(result, type, ident, region, airport, EMPTY_POS, map::INVALID_DISTANCE_VALUE,
-                           airportFromNavDatabase);
+  mapObjectByIdentInternal(result, type, ident, region, airport, EMPTY_POS, map::INVALID_DISTANCE_VALUE, airportFromNavDatabase, flags);
 }
 
 void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes type, const QString& ident,
                                         const QString& region, const QString& airport, const Pos& sortByDistancePos,
-                                        float maxDistanceMeter, bool airportFromNavDatabase)
+                                        float maxDistanceMeter, bool airportFromNavDatabase, map::AirportQueryFlags flags)
 {
   if(type & map::AIRPORT)
   {
@@ -319,8 +317,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
     {
       // Try fuzzy search for nearest by official ids =====================
       // Look through all fields (ICAO, IATA, FAA and local) for the given ident
-      QList<MapAirport> airports =
-        airportQuery->getAirportsByOfficialIdent(ident, &sortByDistancePos, maxDistanceMeter);
+      QList<MapAirport> airports = airportQuery->getAirportsByOfficialIdent(ident, &sortByDistancePos, maxDistanceMeter, flags);
       result.airports.append(airports);
     }
   }

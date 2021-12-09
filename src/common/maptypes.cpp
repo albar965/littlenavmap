@@ -921,6 +921,15 @@ QString parkingNameForFlightplan(const map::MapParking& parking)
     return parkingNameMapUntranslated.value(parking.name).toUpper() % " " % QString::number(parking.number);
 }
 
+const QString& MapAirport::displayIdentIcao() const
+{
+  if(xplane&&!icao.isEmpty())
+      return icao;
+
+  // Otherwise internal id
+  return ident;
+}
+
 const QString& MapAirport::displayIdent(bool useIata) const
 {
   if(xplane)
@@ -929,11 +938,10 @@ const QString& MapAirport::displayIdent(bool useIata) const
     if(!icao.isEmpty())
       return icao;
 
-    // Avoid short FAA codes identical to IATA three letter codes
     if(!faa.isEmpty())
       return faa;
 
-    // Use IATA only if present and ident is artificial long X-Plane string
+    // Use IATA only if present
     if(useIata && !iata.isEmpty())
       return iata;
 

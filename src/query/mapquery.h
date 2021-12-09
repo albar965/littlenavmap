@@ -127,14 +127,13 @@ public:
    * @param ident ICAO ident
    * @param region two letter ICAO region code
    */
-  void getMapObjectByIdent(map::MapResult& result, map::MapTypes type,
-                           const QString& ident, const QString& region = QString(), const QString& airport = QString(),
-                           const atools::geo::Pos& sortByDistancePos = atools::geo::EMPTY_POS,
-                           float maxDistanceMeter = map::INVALID_DISTANCE_VALUE, bool airportFromNavDatabase = false);
+  void getMapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident, const QString& region = QString(),
+                           const QString& airport = QString(), const atools::geo::Pos& sortByDistancePos = atools::geo::EMPTY_POS,
+                           float maxDistanceMeter = map::INVALID_DISTANCE_VALUE, bool airportFromNavDatabase = false,
+                           map::AirportQueryFlags flags = map::AP_QUERY_ALL);
 
-  void getMapObjectByIdent(map::MapResult& result, map::MapTypes type,
-                           const QString& ident, const QString& region,
-                           const QString& airport, bool airportFromNavDatabase);
+  void getMapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident, const QString& region,
+                           const QString& airport, bool airportFromNavDatabase, map::AirportQueryFlags flags = map::AP_QUERY_ALL);
 
   /*
    * Get a map object by type and id
@@ -238,7 +237,7 @@ private:
   void mapObjectByIdentInternal(map::MapResult& result, map::MapTypes type,
                                 const QString& ident, const QString& region, const QString& airport,
                                 const atools::geo::Pos& sortByDistancePos,
-                                float maxDistanceMeter, bool airportFromNavDatabase);
+                                float maxDistanceMeter, bool airportFromNavDatabase, map::AirportQueryFlags flags);
 
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                               atools::sql::SqlQuery *query,

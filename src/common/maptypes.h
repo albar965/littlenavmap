@@ -378,6 +378,9 @@ struct MapAirport
   /* One of ident, ICAO, FAA, IATA or local code. Use only for display purposes and not for queries. */
   const QString& displayIdent(bool useIata = true) const;
 
+  /* One of ident or ICAO */
+  const QString& displayIdentIcao() const;
+
   bool closed() const;
   bool hard() const;
   bool soft() const;

@@ -184,49 +184,50 @@ void AirportQuery::getAirportsByTruncatedIdent(QList<map::MapAirport>& airports,
 }
 
 QList<map::MapAirport> AirportQuery::getAirportsByOfficialIdent(const QString& ident, const atools::geo::Pos *pos,
-                                                                float maxDistanceMeter, bool searchIata,
-                                                                bool searchIdent)
+                                                                float maxDistanceMeter, map::AirportQueryFlags flags)
 {
   QList<map::MapAirport> airports;
-  getAirportsByOfficialIdent(airports, ident, pos, maxDistanceMeter, searchIata, searchIdent);
+  getAirportsByOfficialIdent(airports, ident, pos, maxDistanceMeter, flags);
   return airports;
 }
 
-void AirportQuery::getAirportByOfficialIdent(map::MapAirport& airport, const QString& ident,
-                                             const atools::geo::Pos *pos, float maxDistanceMeter, bool searchIata,
-                                             bool searchIdent)
+void AirportQuery::getAirportByOfficialIdent(map::MapAirport& airport, const QString& ident, const atools::geo::Pos *pos,
+                                             float maxDistanceMeter, map::AirportQueryFlags flags)
 {
   QList<map::MapAirport> airports;
-  getAirportsByOfficialIdent(airports, ident, pos, maxDistanceMeter, searchIata, searchIdent);
+  getAirportsByOfficialIdent(airports, ident, pos, maxDistanceMeter, flags);
   airport = airports.isEmpty() ? map::MapAirport() : airports.first();
 }
 
-MapAirport AirportQuery::getAirportByOfficialIdent(const QString& ident, const atools::geo::Pos *pos,
-                                                   float maxDistanceMeter, bool searchIata, bool searchIdent)
+MapAirport AirportQuery::getAirportByOfficialIdent(const QString& ident, const atools::geo::Pos *pos, float maxDistanceMeter,
+                                                   map::AirportQueryFlags flags)
 {
   QList<map::MapAirport> airports;
-  getAirportsByOfficialIdent(airports, ident, pos, maxDistanceMeter, searchIata, searchIdent);
+  getAirportsByOfficialIdent(airports, ident, pos, maxDistanceMeter, flags);
   return airports.isEmpty() ? map::MapAirport() : airports.first();
 }
 
 void AirportQuery::getAirportsByOfficialIdent(QList<map::MapAirport>& airports, const QString& ident,
-                                              const atools::geo::Pos *pos, float maxDistanceMeter, bool searchIata,
-                                              bool searchIdent)
+                                              const atools::geo::Pos *pos, float maxDistanceMeter, map::AirportQueryFlags flags)
 {
+  // Use impossible value if not searching by ident since query connects with "or"
+  const static QLatin1String INVALID_ID("====");
+
   if(!ident.isEmpty())
   {
-    // Use impossible value if not searching by ident since query connects with "or"
-    airportByOfficialQuery->bindValue(":ident", searchIdent ? ident : "====");
+    airportByOfficialQuery->bindValue(":ident", flags.testFlag(map::AP_QUERY_IDENT) ? ident : INVALID_ID);
 
     if(icaoCol)
-      airportByOfficialQuery->bindValue(":icao", ident);
+      airportByOfficialQuery->bindValue(":icao", flags.testFlag(map::AP_QUERY_ICAO) ? ident : INVALID_ID);
+
     if(faaCol)
-      airportByOfficialQuery->bindValue(":faa", ident);
+      airportByOfficialQuery->bindValue(":faa", flags.testFlag(map::AP_QUERY_FAA) ? ident : INVALID_ID);
+
     if(iataCol)
-      // Use impossible value if not searching by IATA since query connects with "or"
-      airportByOfficialQuery->bindValue(":iata", searchIata ? ident : "====");
+      airportByOfficialQuery->bindValue(":iata", flags.testFlag(map::AP_QUERY_IATA) ? ident : INVALID_ID);
+
     if(localCol)
-      airportByOfficialQuery->bindValue(":local", ident);
+      airportByOfficialQuery->bindValue(":local", flags.testFlag(map::AP_QUERY_LOCAL) ? ident : INVALID_ID);
 
     airportByOfficialQuery->exec();
     while(airportByOfficialQuery->next())
@@ -279,15 +280,15 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
       // Try ICAO first on all fields (ICAO, not IATA, FAA and local)
       if(airportCopy.icao != airportCopy.ident)
         getAirportsByOfficialIdent(airports, airportCopy.icao, nullptr, map::INVALID_DISTANCE_VALUE,
-                                   false /* iata */, false /* ident */);
+                                   map::AP_QUERY_ICAO | map::AP_QUERY_FAA | map::AP_QUERY_LOCAL);
 
       // Try IATA next on all fields
       getAirportsByOfficialIdent(airports, airportCopy.iata, nullptr, map::INVALID_DISTANCE_VALUE,
-                                 true /* iata */, false /* ident */);
+                                 map::AP_QUERY_ICAO | map::AP_QUERY_IATA | map::AP_QUERY_FAA | map::AP_QUERY_LOCAL);
 
       // Try FAA next on all fields except IATA
       getAirportsByOfficialIdent(airports, airportCopy.faa, nullptr, map::INVALID_DISTANCE_VALUE,
-                                 false /* iata */, false /* ident */);
+                                 map::AP_QUERY_ICAO | map::AP_QUERY_FAA | map::AP_QUERY_LOCAL);
     }
 
     // Fall back to coordinate based search and look for centers withing certain distance

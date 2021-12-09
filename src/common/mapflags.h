@@ -213,6 +213,26 @@ Q_DECLARE_FLAGS(MapObjectQueryTypes, MapObjectQueryType);
 Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectQueryTypes);
 
 /* ================================================================================== */
+/* Ident queries for airport defines which ident columns should be used in the lookup */
+enum AirportQueryFlag
+{
+  AP_QUERY_NONE = 0,
+  AP_QUERY_IDENT = 1 << 0,
+  AP_QUERY_ICAO = 1 << 1,
+  AP_QUERY_IATA = 1 << 2,
+  AP_QUERY_FAA = 1 << 3,
+  AP_QUERY_LOCAL = 1 << 4,
+
+  AP_QUERY_ALL = AP_QUERY_IDENT | AP_QUERY_ICAO | AP_QUERY_IATA | AP_QUERY_FAA | AP_QUERY_LOCAL,
+
+  /* All but ident */
+  AP_QUERY_OFFICIAL = AP_QUERY_ICAO | AP_QUERY_IATA | AP_QUERY_FAA | AP_QUERY_LOCAL
+};
+
+Q_DECLARE_FLAGS(AirportQueryFlags, AirportQueryFlag);
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::AirportQueryFlags);
+
+/* ================================================================================== */
 /* Covers all airspace types */
 enum MapAirspaceType
 {
