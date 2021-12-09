@@ -478,7 +478,7 @@ bool RouteExport::routeExportRxpGnsMulti(const RouteExportFormat& format)
 
 #ifdef Q_OS_WIN32
     QString gnsPath(QProcessEnvironment::systemEnvironment().value("GNSAPPDATA"));
-    path = gnsPath.isEmpty() ? "C:\\ProgramData\\Garmin\\GNS Trainer Data\\GNS\\FPL" : gnsPath % "\\FPL";
+    path = gnsPath.isEmpty() ? QString("C:\\ProgramData\\Garmin\\GNS Trainer Data\\GNS\\FPL") : gnsPath % "\\FPL";
 #elif DEBUG_INFORMATION
     path = atools::buildPath({atools::documentsDir(), "Garmin", "GNS Trainer Data", "GNS", "FPL"});
 #else

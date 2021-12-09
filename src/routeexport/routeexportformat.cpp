@@ -367,7 +367,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   QString gns;
 #ifdef Q_OS_WIN32
   QString gnsPath(QProcessEnvironment::systemEnvironment().value("GNSAPPDATA"));
-  gns = gnsPath.isEmpty() ? "C:\\ProgramData\\Garmin\\GNS Trainer Data\\GNS\\FPL" : gnsPath + "\\FPL";
+  gns = gnsPath.isEmpty() ? QString("C:\\ProgramData\\Garmin\\GNS Trainer Data\\GNS\\FPL") : gnsPath % "\\FPL";
 #elif DEBUG_INFORMATION
   gns = atools::buildPath({documents, "Garmin", "GNS Trainer Data", "GNS", "FPL"});
 #else
@@ -379,7 +379,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   // Location depends on trainer version - this is all above 6.41
 #ifdef Q_OS_WIN32
   QString gtnPath(QProcessEnvironment::systemEnvironment().value("GTNSIMDATA"));
-  gtn = gtnPath.isEmpty() ? "C:\\ProgramData\\Garmin\\Trainers\\Databases\\FPLN" : gtnPath + "\\Databases\\FPLN";
+  gtn = gtnPath.isEmpty() ? QString("C:\\ProgramData\\Garmin\\Trainers\\Databases\\FPLN") : gtnPath % "\\Databases\\FPLN";
 #elif DEBUG_INFORMATION
   gtn = atools::buildPath({documents, "Garmin", "Trainers", "GTN", "FPLN"});
 #else
@@ -410,39 +410,39 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[FMS3        ].DP(xpFilesPath);
   (*this)[FMS11       ].DP(xpFilesPath);
   (*this)[FLP         ].DP(documents);
-  (*this)[FLPCRJ      ].DP(documents + SEP + "Aerosoft" + SEP + "Digital Aviation CRJ" + SEP + "FlightPlans");
+  (*this)[FLPCRJ      ].DP(documents % SEP % "Aerosoft" % SEP % "Digital Aviation CRJ" % SEP % "FlightPlans");
   (*this)[FLPCRJMSFS  ].DP(documents);
   (*this)[FLIGHTGEAR  ].DP(documents);
-  (*this)[GFP         ].DP(fsxP3dBasePath + SEP + "F1TGTN" + SEP + "FPL");
-  (*this)[GFPUWP      ].DP(fsxP3dBasePath + SEP + "F1TGTN" + SEP + "FPL");
-  (*this)[TXT         ].DP(xpBasePath + SEP + "Aircraft");
-  (*this)[TXTJAR      ].DP(xpBasePath + SEP + "Aircraft");
-  (*this)[RTE         ].DP(fsxP3dBasePath + SEP + "PMDG" + SEP + "FLIGHTPLANS");
+  (*this)[GFP         ].DP(fsxP3dBasePath % SEP % "F1TGTN" % SEP % "FPL");
+  (*this)[GFPUWP      ].DP(fsxP3dBasePath % SEP % "F1TGTN" % SEP % "FPL");
+  (*this)[TXT         ].DP(xpBasePath % SEP % "Aircraft");
+  (*this)[TXTJAR      ].DP(xpBasePath % SEP % "Aircraft");
+  (*this)[RTE         ].DP(fsxP3dBasePath % SEP % "PMDG" % SEP % "FLIGHTPLANS");
   (*this)[GPX         ].DP(documents);
   (*this)[HTML        ].DP(documents);
-  (*this)[FPR         ].DP(fsxP3dBasePath + SEP + "SimObjects" + SEP + "Airplanes" + SEP + "mjc8q400" + SEP + "nav" + SEP + "routes");
-  (*this)[FPL         ].DP(xpBasePath + SEP + "Aircraft" + SEP + "X-Aviation" + SEP + "IXEG 737 Classic" + SEP + "coroutes");
-  (*this)[CORTEIN     ].DP(xpBasePath + SEP + "Aircraft");
+  (*this)[FPR         ].DP(fsxP3dBasePath % SEP % "SimObjects" % SEP % "Airplanes" % SEP % "mjc8q400" % SEP % "nav" % SEP % "routes");
+  (*this)[FPL         ].DP(xpBasePath % SEP % "Aircraft" % SEP % "X-Aviation" % SEP % "IXEG 737 Classic" % SEP % "coroutes");
+  (*this)[CORTEIN     ].DP(xpBasePath % SEP % "Aircraft");
   (*this)[RXPGNS      ].DP(gns);
   (*this)[RXPGNSUWP   ].DP(gns);
   (*this)[RXPGTN      ].DP(gtn);
   (*this)[RXPGTNUWP   ].DP(gtn);
-  (*this)[FLTPLAN     ].DP(fsxP3dBasePath + SEP + "iFly" + SEP + "737NG" + SEP + "navdata" + SEP + "FLTPLAN");
-  (*this)[XFMC        ].DP(xpFilesPath + SEP + "Resources" + SEP + "plugins" + SEP + "XFMC" + SEP + "FlightPlans");
+  (*this)[FLTPLAN     ].DP(fsxP3dBasePath % SEP % "iFly" % SEP % "737NG" % SEP % "navdata" % SEP % "FLTPLAN");
+  (*this)[XFMC        ].DP(xpFilesPath % SEP % "Resources" % SEP % "plugins" % SEP % "XFMC" % SEP % "FlightPlans");
   (*this)[UFMC        ].DP(documents);
   (*this)[PROSIM      ].DP(documents);
-  (*this)[BBS         ].DP(fsxP3dBasePath + SEP + "Blackbox Simulation" + SEP + "Company Routes");
+  (*this)[BBS         ].DP(fsxP3dBasePath % SEP % "Blackbox Simulation" % SEP % "Company Routes");
   (*this)[VFP         ].DP(documents);
   (*this)[IVAP        ].DP(documents);
   (*this)[XIVAP       ].DP(documents);
   (*this)[FEELTHEREFPL].DP(fsxP3dBasePath);
-  (*this)[LEVELDRTE   ].DP(fsxP3dBasePath + SEP + "Level-D Simulations" + SEP + "navdata" + SEP + "Flightplans");
+  (*this)[LEVELDRTE   ].DP(fsxP3dBasePath % SEP % "Level-D Simulations" % SEP % "navdata" % SEP % "Flightplans");
   (*this)[EFBR        ].DP(documents);
   (*this)[QWRTE       ].DP(fsxP3dBasePath);
   (*this)[MDR         ].DP(fsxP3dBasePath);
-  (*this)[TFDI        ].DP(fsxP3dBasePath + SEP + "SimObjects" + SEP + "Airplanes" + SEP + "TFDi_Design_717" + SEP + "Documents" + SEP + "Company Routes");
-  (*this)[PLNISG      ].DP(fsxP3dBasePath + SEP + "ISG" + SEP + "FlightPlans"); // C:\Program Files\Lockheed Martin\Prepar3D v4\ISG\FlightPlans
-  (*this)[PMS50       ].DP(msfsBasePath + SEP + "Community" + SEP + "pms50-gtn750-premium" + SEP + "fpl" + SEP + "gtn750");
+  (*this)[TFDI        ].DP(fsxP3dBasePath % SEP % "SimObjects" % SEP % "Airplanes" % SEP % "TFDi_Design_717" % SEP % "Documents" % SEP % "Company Routes");
+  (*this)[PLNISG      ].DP(fsxP3dBasePath % SEP % "ISG" % SEP % "FlightPlans"); // C:\Program Files\Lockheed Martin\Prepar3D v4\ISG\FlightPlans
+  (*this)[PMS50       ].DP(msfsBasePath % SEP % "Community" % SEP % "pms50-gtn750-premium" % SEP % "fpl" % SEP % "gtn750");
   /* *INDENT-ON* */
 #undef DP
 
@@ -513,9 +513,9 @@ void RouteExportFormat::setPath(const QString& value)
 QString RouteExportFormat::getFilter() const
 {
   if(isAppendToFile() || isReplaceFile())
-    return "(" + pattern + ")";
+    return "(" % pattern % ")";
   else
-    return "(*." + pattern.section('.', -1, -1) + ")";
+    return "(*." % pattern.section('.', -1, -1) % ")";
 }
 
 QString RouteExportFormat::getFormat() const
