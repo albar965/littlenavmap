@@ -121,7 +121,12 @@ function findPlugins() {
       this.contentWindow.parent = this.contentWindow.top;
       this.contentWindow.init(plugin, MAP_VERSION);
     } catch(e) {
-      alert("Plugin " + this.dataset.id + " failed to initialise.");
+      switch(e) {
+        case "aborted by user":
+        case "cancelled by user":
+                                  break;
+        default: alert("Plugin " + this.dataset.id + " failed to initialise.");
+      }
       document.querySelector('input[value="' + this.dataset.id + '"]').click();
     }
   }

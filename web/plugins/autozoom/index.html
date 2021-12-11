@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>unused plugin title (your plugin folders name is the title visible to the user)</title>
+  </head>
+  <body>
+    <script src="configurationValues.js"></script>
+    <script>
+      var originalZoom = -1;
+      var originalCenterAircraft = -1;
+      var originalAutoRefresh = -1;
+
+      var mapToggle, centerToggle;
+
+      var contentIframe;
+      var enabled = true;
+      var firstTime = true;
+      var lastPower = -10;
+      var timeout = null;
+      var running = true;
+
+      function restoreValuesPerhapsOverridden() {
+        if(!originalCenterAircraft && centerToggle.checked) {
+          centerToggle.click();
+        }
+        if(!originalAutoRefresh && mapToggle.checked) {
+          mapToggle.click();
+        }
+        originalZoom > -1 ? fetch("/mapimage?format=jpg&quality=1&width=1&height=1&distance=" + Math.pow(2, originalZoom) + "&session&cmd=" + Math.random()) : 0;
+        contentIframe.contentDocument.querySelector('[onclick="refreshMap()"]').click();
+      }
+
+      function stop() {
+        contentIframe.removeEventListener("load", checkIframeSrc);
+        clearTimeout(timeout);
+        running = false;
+        restoreValuesPerhapsOverridden();
+      }
+
+      function autozoom() {
+        fetch("/api/sim/info").then(function(response) {
+          if(running && enabled) {
+            return response.json();
+          } else {
+            return Promise.reject();
+          }
+        }).then(function(json) {
+          if(json.active) {
+            var speed = ~~json.ground_speed;
+            var alt = json.altitude_above_ground;
+            var i=0;
+            while(i < zoomKnots.length && speed >= zoomKnots[i]) {
+              i++;
+            }
+            var speedIndex = i - 1;
+            i=0;
+            while(i < zoomAltsAbvGrd.length && alt >= zoomAltsAbvGrd[i]) {
+              i++;
+            }
+            var newPower = zoomPowerForKnots[speedIndex] + zoomPowerAddForAltsPerKnot["" + zoomKnots[speedIndex]][i - 1];
+            if(newPower !== lastPower) {
+              lastPower = newPower;
+              var wasChecked = false;
+              if(mapToggle.checked) {
+                wasChecked = true;
+                mapToggle.checked = false;
+                contentIframe.contentWindow.checkRefresh();   // temporarily disable to prevent our fetch getting cancelled by refresh, but don't give away to user
+              }
+              fetch("/mapimage?format=jpg&quality=1&width=1&height=1&distance=" + Math.pow(2, newPower) + "&session&cmd=" + Math.random()).then(function() {
+                if(wasChecked) {
+                  mapToggle.checked = true;
+                  contentIframe.contentWindow.checkRefresh();
+                }
+                timeout = setTimeout(autozoom, zoomWaitForKnots[speedIndex] * 1000);
+              });
+            } else {
+              timeout = setTimeout(autozoom, zoomWaitForKnots[speedIndex] * 1000);
+            }
+          } else {
+            timeout = setTimeout(autozoom, 10000);
+          }
+        }).catch(function(e){
+          console.error("Error! Are the configuration values consistent?");
+          console.log(e);
+        });
+      }
+
+      function saveValuesToGetOverridden() {
+        fetch("/api/ui/info").then(function(response) {
+          if(response.ok) {
+            return response.json();
+          } else {
+            originalZoom = -1;
+          }
+        }).then(function(json) {
+          originalZoom = Math.log(json.distance_web) / Math.log(2);
+        });
+        originalCenterAircraft = centerToggle.checked;
+        originalAutoRefresh = mapToggle.checked;
+      }
+
+      function checkIframeSrc() {
+        try {
+          enabled = contentIframe.contentWindow.location.href.endsWith("/map.html");
+        } catch(e) {
+          return;       // could occur if contentIFrame is loading and thus might have no contentWindow.location object yet; our load event will call this function again
+        }
+        if(enabled) {
+          if(firstTime) {
+            firstTime = false;
+            saveValuesToGetOverridden();
+            if(!originalCenterAircraft) {
+              centerToggle.click();
+            }
+            if(!originalAutoRefresh) {
+              mapToggle.click();
+            }
+          }
+          autozoom();
+        } else {
+          clearTimeout(timeout);
+        }
+      }
+
+      function init(callback, version) {
+        var returned_Value = callback(callback.TYPE_BACKGROUND, stop);
+        returned_Value.disable_AccessPrevention();
+
+        if(version !== 1) { // let all setup have completed by having called callback first
+          if(!confirm("New map version running possibly unsupported.\n\nDo you like to let run this plugin anyway?")) {
+            throw "aborted by user";
+          }
+        }
+
+        if(sessionStorage.getItem("autozoomRead") !== "true") {
+          if(confirm(
+            "This plugin attempts to set the zoom level of the\n" +
+            "map according to the level it deems most appro-\n" +
+            "priate for the circumstances you are in.\n\n" +
+            "It enables \"auto refresh\" and \"center is Aircraft\" and\n" +
+            "restores the value they are in now when you disable it.\n\n" +
+            "You can change the defining values it operates on\n" +
+            "inside the file \"configurationValues.js\" inside the\n" +
+            "folder \"web\\plugins\\autozoom\" in the folder of Little Navmap.\n\n" +
+            "If you continue, this message is dismissed for this session."
+            )) {
+            sessionStorage.setItem("autozoomRead", "true");
+          } else {
+            throw "cancelled by user";
+          }
+        }
+
+        contentIframe = parent.document.querySelector("iframe[name=contentiframe]");
+        contentIframe.addEventListener("load", checkIframeSrc);
+
+        mapToggle = contentIframe.contentDocument.querySelector("#refreshMapToggle");
+        centerToggle = contentIframe.contentDocument.querySelector("#refreshWithAircraft");
+
+        checkIframeSrc();
+      }
+    </script>
+  </body>
+</html>
