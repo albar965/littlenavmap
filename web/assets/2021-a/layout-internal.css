@@ -179,10 +179,12 @@ iframe {
 
 #buttonPlugins {
   position: relative;
+  z-index: 2;
 }
 
 #selectablePlugins {
   position: absolute;
+  left: -1px;
   width: 100%;
   display: none;
 }
@@ -197,9 +199,10 @@ iframe {
 }
 
 [data-toolbarsplacement="right"] #selectablePlugins {
-  right: 100%;
-  top: 0;
-  padding-right: 7px;
+  right: calc(100% - 97px);
+  left: auto;
+  top: -3px;
+  padding-right: 107px;
 }
 
 [data-toolbarsplacement="bottom"] #selectablePlugins {
@@ -208,17 +211,24 @@ iframe {
 }
 
 [data-toolbarsplacement="left"] #selectablePlugins {
-  left: 100%;
-  top: 0;
-  padding-left: 6px;
+  left: calc(100% - 97px);
+  top: -3px;
+  padding-left: 107px;
 }
 
 .selectable-plugin {
   display: flex;
+  margin-top: 2px;
+}
+
+[data-toolbarsplacement="bottom"] .selectable-plugin {
+  margin-top: 0;
+  margin-bottom: 2px;
 }
 
 .selectable-plugin input {
-  margin-top: 6px;
+  margin-top: 7px;
+  margin-right: 0;
 }
 
 [data-toolbarsplacement="top"] #exclusivePlugins {
