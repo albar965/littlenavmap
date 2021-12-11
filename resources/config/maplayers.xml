@@ -119,6 +119,7 @@
 
         <!-- Flight plan details ================= -->
         <RouteTextAndDetail>true</RouteTextAndDetail>
+        <RouteFontScale>1</RouteFontScale>
 
         <!-- Oceaninc tracks ================= -->
         <Track>true</Track>
@@ -156,8 +157,6 @@
       A small "MaximumRangeKm" value means closer zoom and vice versa.
       =================================================================================== -->
       <Layer MaximumRangeKm="0.2">
-        <AirportFontScale>1</AirportFontScale>
-        <AirportMinorFontScale>1</AirportMinorFontScale>
         <AirportMinorSymbolSize>20</AirportMinorSymbolSize>
         <AirportMsaSymbolScale>8</AirportMsaSymbolScale>
         <AirportSymbolSize>20</AirportSymbolSize>
@@ -265,25 +264,27 @@
         <AirportMinorSymbolSize>10</AirportMinorSymbolSize>
         <AirportName>false</AirportName>
         <AirportOverviewRunway>false</AirportOverviewRunway>
-        <AirportSymbolSize>8</AirportSymbolSize>
+        <AirportSymbolSize>10</AirportSymbolSize>
         <ApproachText>false</ApproachText>
         <MaximumTextLengthUserpoint>8</MaximumTextLengthUserpoint>
         <NdbIdent>false</NdbIdent>
         <NdbSymbolSize>12</NdbSymbolSize>
         <UserpointSymbolSize>22</UserpointSymbolSize>
         <VorIdent>false</VorIdent>
-        <VorSymbolSize>12</VorSymbolSize>
         <VorLarge>false</VorLarge>
+        <VorSymbolSize>12</VorSymbolSize>
         <Waypoint>false</Waypoint>
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="250">
+        <AirportFontScale>0.9</AirportFontScale>
         <AirportMinorIdent>false</AirportMinorIdent>
         <AirportMinorSymbolSize>8</AirportMinorSymbolSize>
-        <AirportSymbolSize>10</AirportSymbolSize>
+        <AirportSymbolSize>8</AirportSymbolSize>
         <MinRunwayLength>2000</MinRunwayLength>
         <NdbSymbolSize>8</NdbSymbolSize>
         <OnlineAircraftText>false</OnlineAircraftText>
+        <RouteFontScale>0.9</RouteFontScale>
         <UserpointSymbolSize>16</UserpointSymbolSize>
         <VorSymbolSize>8</VorSymbolSize>
       </Layer>
@@ -306,7 +307,6 @@
       <Layer MaximumRangeKm="750">
         <AiAircraftSize>24</AiAircraftSize>
         <AiShipLarge>false</AiShipLarge>
-        <AirportFontScale>0.9</AirportFontScale>
         <AirportMsa>false</AirportMsa>
         <AirportSymbolSize>8</AirportSymbolSize>
         <AirspaceOther>false</AirspaceOther>
@@ -331,6 +331,7 @@
         <AirspaceIcao>false</AirspaceIcao>
         <ApproachDetail>false</ApproachDetail>
         <MinRunwayLength>8000</MinRunwayLength>
+        <RouteFontScale>0.8</RouteFontScale>
         <TrackWaypoint>false</TrackWaypoint>
         <Vor>false</Vor>
         <WindBarbsSymbolSize>10</WindBarbsSymbolSize>

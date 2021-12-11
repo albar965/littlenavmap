@@ -342,7 +342,7 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
       drawLine(painter, lines.at(activeRouteLeg - 1));
     }
   }
-  context->szFont(context->textSizeFlightplan);
+  context->szFont(context->textSizeFlightplan * context->mapLayerRoute->getRouteFontScale());
 
   // Collect coordinates for text placement and lines first ============================
   LineString positions;
@@ -409,7 +409,7 @@ void MapPainterRoute::paintTopOfDescentAndClimb()
 
     context->painter->setPen(QPen(Qt::black, width, Qt::SolidLine, Qt::FlatCap));
     context->painter->setBrush(Qt::transparent);
-    context->szFont(context->textSizeFlightplan);
+    context->szFont(context->textSizeFlightplan * context->mapLayerRoute->getRouteFontScale());
 
     int transparency = 255;
     if(!(context->flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
@@ -538,7 +538,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
 
   // Draw segments and collect text placement information in drawTextLines ========================================
   // Need to set font since it is used by drawHold
-  context->szFont(context->textSizeFlightplan * 1.1f);
+  context->szFont(context->textSizeFlightplan * 1.1f * context->mapLayerRoute->getRouteFontScale());
 
   // Paint legs ====================================================
   bool noText = context->drawFast;
@@ -658,7 +658,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
       painter->setBackground(previewAll ? QColor(Qt::transparent) : mapcolors::routeTextBackgroundColor);
       if(previewAll)
         // Make the font larger for better arrow visibility in multi preview
-        context->szFont(context->textSizeFlightplan * 1.5f);
+        context->szFont(context->textSizeFlightplan * 1.5f * context->mapLayerRoute->getRouteFontScale());
 
       QVector<Line> textLines;
       LineString positions;
@@ -681,7 +681,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
       textPlacement.drawTextAlongLines();
     }
 
-    context->szFont(context->textSizeFlightplan);
+    context->szFont(context->textSizeFlightplan * context->mapLayerRoute->getRouteFontScale());
   }
 
   // Texts and navaid icons ====================================================
@@ -1733,8 +1733,8 @@ void MapPainterRoute::paintUserpoint(int x, int y, bool preview)
 }
 
 /* Draw text with light yellow background for flight plan */
-void MapPainterRoute::paintText(const QColor& color, float x, float y,
-                                const QStringList& texts, bool drawAsRoute, textatt::TextAttributes atts)
+void MapPainterRoute::paintText(const QColor& color, float x, float y, const QStringList& texts, bool drawAsRoute,
+                                textatt::TextAttributes atts)
 {
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
 
