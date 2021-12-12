@@ -296,8 +296,11 @@ protected:
   }
 
   /* Draw a circle and return text placement hints (xtext and ytext). Number of points used
-   * for the circle depends on the zoom distance */
-  void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast, int& xtext, int& ytext);
+   * for the circle depends on the zoom distance. Optimized for large circles. */
+  void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast, QPoint *textPos);
+
+  void paintArc(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, float angleDegStart, float angleDegEnd,
+                bool fast);
 
   void drawLineString(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
   void drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line);

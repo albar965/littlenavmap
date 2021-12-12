@@ -113,8 +113,7 @@ bool CoordinateConverter::isVisible(const atools::geo::Pos& coords, const QSize&
   return visible && !hidden;
 }
 
-bool CoordinateConverter::wToS(const atools::geo::Pos& coords, int& x, int& y, const QSize& size,
-                               bool *isHidden) const
+bool CoordinateConverter::wToS(const atools::geo::Pos& coords, int& x, int& y, const QSize& size, bool *isHidden) const
 {
   qreal xr, yr;
   bool hidden;
@@ -126,8 +125,7 @@ bool CoordinateConverter::wToS(const atools::geo::Pos& coords, int& x, int& y, c
   return visible && !hidden;
 }
 
-bool CoordinateConverter::wToS(const atools::geo::Pos& coords, float& x, float& y, const QSize& size,
-                               bool *isHidden) const
+bool CoordinateConverter::wToS(const atools::geo::Pos& coords, float& x, float& y, const QSize& size, bool *isHidden) const
 {
   qreal xr, yr;
   bool hidden;
@@ -139,8 +137,7 @@ bool CoordinateConverter::wToS(const atools::geo::Pos& coords, float& x, float& 
   return visible && !hidden;
 }
 
-bool CoordinateConverter::wToS(const atools::geo::Line& coords, QLineF& line, const QSize& size,
-                               bool *isHidden) const
+bool CoordinateConverter::wToS(const atools::geo::Line& coords, QLineF& line, const QSize& size, bool *isHidden) const
 {
   if(!coords.isValid())
   {
@@ -164,8 +161,7 @@ bool CoordinateConverter::wToS(const atools::geo::Line& coords, QLineF& line, co
   return (visible1 || visible2) && (!hidden1 || !hidden2);
 }
 
-bool CoordinateConverter::wToS(const atools::geo::Pos& coords, double& x, double& y, const QSize& size,
-                               bool *isHidden) const
+bool CoordinateConverter::wToS(const atools::geo::Pos& coords, double& x, double& y, const QSize& size, bool *isHidden) const
 {
   if(!coords.isValid())
   {
@@ -182,14 +178,12 @@ bool CoordinateConverter::wToS(const atools::geo::Pos& coords, double& x, double
   return visible && !hidden;
 }
 
-bool CoordinateConverter::wToS(const Marble::GeoDataCoordinates& coords, double& x, double& y,
-                               const QSize& size, bool *isHidden) const
+bool CoordinateConverter::wToS(const Marble::GeoDataCoordinates& coords, double& x, double& y, const QSize& size, bool *isHidden) const
 {
   return wToSInternal(coords, x, y, size, isHidden);
 }
 
-bool CoordinateConverter::wToS(const Marble::GeoDataCoordinates& coords, int& x, int& y, const QSize& size,
-                               bool *isHidden) const
+bool CoordinateConverter::wToS(const Marble::GeoDataCoordinates& coords, int& x, int& y, const QSize& size, bool *isHidden) const
 {
   qreal xr, yr;
   bool hidden;
@@ -201,8 +195,7 @@ bool CoordinateConverter::wToS(const Marble::GeoDataCoordinates& coords, int& x,
   return visible && !hidden;
 }
 
-QPointF CoordinateConverter::wToSF(const atools::geo::Pos& coords, const QSize& size, bool *visible,
-                                   bool *isHidden) const
+QPointF CoordinateConverter::wToSF(const atools::geo::Pos& coords, const QSize& size, bool *visible, bool *isHidden) const
 {
   double xr, yr;
   bool isVisible = wToS(coords, xr, yr, size, isHidden);
@@ -221,8 +214,7 @@ QPointF CoordinateConverter::wToSF(const atools::geo::Pos& coords, const QSize& 
   }
 }
 
-QPoint CoordinateConverter::wToS(const atools::geo::Pos& coords, const QSize& size, bool *visible,
-                                 bool *isHidden) const
+QPoint CoordinateConverter::wToS(const atools::geo::Pos& coords, const QSize& size, bool *visible, bool *isHidden) const
 {
   int xr, yr;
   bool isVisible = wToS(coords, xr, yr, size, isHidden);
@@ -241,8 +233,7 @@ QPoint CoordinateConverter::wToS(const atools::geo::Pos& coords, const QSize& si
   }
 }
 
-QPoint CoordinateConverter::wToS(const Marble::GeoDataCoordinates& coords, const QSize& size, bool *visible,
-                                 bool *isHidden) const
+QPoint CoordinateConverter::wToS(const Marble::GeoDataCoordinates& coords, const QSize& size, bool *visible, bool *isHidden) const
 {
   int xr, yr;
   bool isVisible = wToS(coords, xr, yr, size, isHidden);
@@ -261,8 +252,7 @@ QPoint CoordinateConverter::wToS(const Marble::GeoDataCoordinates& coords, const
   }
 }
 
-QPointF CoordinateConverter::wToSF(const GeoDataCoordinates& coords, const QSize& size, bool *visible,
-                                   bool *isHidden) const
+QPointF CoordinateConverter::wToSF(const GeoDataCoordinates& coords, const QSize& size, bool *visible, bool *isHidden) const
 {
   double xr, yr;
   bool isVisible = wToS(coords, xr, yr, size, isHidden);
@@ -361,8 +351,8 @@ Pos CoordinateConverter::sToW(const QPointF& point) const
   return sToW(atools::roundToInt(point.x()), atools::roundToInt(point.y()));
 }
 
-bool CoordinateConverter::wToSInternal(const Marble::GeoDataCoordinates& coords, double& x, double& y,
-                                       const QSize& size, bool *isHidden) const
+bool CoordinateConverter::wToSInternal(const Marble::GeoDataCoordinates& coords, double& x, double& y, const QSize& size,
+                                       bool *isHidden) const
 {
   bool hidden;
   int numPoints;

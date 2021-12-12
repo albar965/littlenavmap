@@ -306,5 +306,7 @@
         <file>resources/icons/zoomin.svg</file>
         <file>resources/icons/zoomout.svg</file>
         <file>resources/icons/approachall.svg</file>
+        <file>resources/icons/altrange.svg</file>
+        <file>resources/icons/verticaltrack.svg</file>
     </qresource>
 </RCC>

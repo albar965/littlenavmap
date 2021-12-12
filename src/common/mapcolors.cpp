@@ -132,6 +132,9 @@ QColor routeHighlightBackColor(Qt::black);
 /* Objects highlighted because of selection in route profile */
 QColor profileHighlightBackColor(Qt::black);
 
+QPen markEndurancePen(Qt::black, 2, Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
+QPen markSelectedAltitudeRangePen(Qt::darkGreen, 3, Qt::SolidLine, Qt::FlatCap);
+
 /* Map print colors */
 QColor mapPrintRowColor(250, 250, 250);
 QColor mapPrintRowColorAlt(240, 240, 240);
@@ -680,6 +683,8 @@ void syncColors()
   syncPen(colorSettings, "SearchCenterFillPen", searchCenterFillPen);
   syncPen(colorSettings, "TouchMarkBackPen", touchMarkBackPen);
   syncPen(colorSettings, "TouchMarkFillPen", touchMarkFillPen);
+  syncPen(colorSettings, "EndurancePen", markEndurancePen);
+  syncPen(colorSettings, "SelectedAltitudeRangePen", markSelectedAltitudeRangePen);
   syncColorArgb(colorSettings, "TouchRegionFillColor", touchRegionFillColor);
   colorSettings.endGroup();
 
@@ -832,6 +837,12 @@ QColor adjustAlphaF(QColor color, float alpha)
 {
   color.setAlphaF(static_cast<double>(alpha));
   return color;
+}
+
+QPen adjustWidth(QPen pen, float width)
+{
+  pen.setWidthF(width);
+  return pen;
 }
 
 } // namespace mapcolors

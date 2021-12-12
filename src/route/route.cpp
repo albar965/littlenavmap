@@ -3133,9 +3133,7 @@ QString Route::getProcedureLegText(proc::MapProcedureTypes mapType, bool include
   if(procLegs != nullptr)
     return proc::procedureLegsText(*procLegs, mapType, false /* narrow */, includeRunway, missedAsApproach);
   else
-    qWarning() << Q_FUNC_INFO << "no legs found";
-
-  return QString();
+    return QString();
 }
 
 QString Route::buildDefaultFilename(const QString& suffix, bool clean) const

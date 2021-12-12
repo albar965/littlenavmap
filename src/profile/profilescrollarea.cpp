@@ -688,7 +688,8 @@ void ProfileScrollArea::saveState()
   atools::gui::WidgetState(lnm::PROFILE_WINDOW_OPTIONS).save({ui->splitterProfile, ui->actionProfileCenterAircraft, ui->actionProfileFollow,
                                                               ui->actionProfileShowLabels, ui->actionProfileShowScrollbars,
                                                               ui->actionProfileShowTooltip, ui->actionProfileShowZoom,
-                                                              ui->actionProfileShowIls, ui->actionProfileShowVasi});
+                                                              ui->actionProfileShowIls, ui->actionProfileShowVasi,
+                                                              ui->actionProfileShowVerticalTrack});
 }
 
 void ProfileScrollArea::restoreState()
@@ -699,7 +700,7 @@ void ProfileScrollArea::restoreState()
                                                                  ui->actionProfileFollow, ui->actionProfileShowLabels,
                                                                  ui->actionProfileShowScrollbars, ui->actionProfileShowTooltip,
                                                                  ui->actionProfileShowZoom, ui->actionProfileShowIls,
-                                                                 ui->actionProfileShowVasi});
+                                                                 ui->actionProfileShowVasi, ui->actionProfileShowVerticalTrack});
   ui->splitterProfile->setHandleWidth(6);
 }
 

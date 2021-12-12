@@ -177,12 +177,10 @@ bool MapPainter::wToSBuf(const Pos& coords, float& x, float& y, QSize size, cons
   return visible;
 }
 
-void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, int& xtext, int& ytext)
+void MapPainter::paintArc(GeoPainter *painter, const Pos& centerPos, float radiusNm, float angleDegStart, float angleDegEnd, bool fast)
 {
   if(radiusNm > atools::geo::EARTH_CIRCUMFERENCE_METER / 4.f)
     return;
-
-  QRect vpRect(painter->viewport());
 
   // Calculate the number of points to use depending on screen resolution
   int pixel = scale->getPixelIntForMeter(nmToMeter(radiusNm));
@@ -192,8 +190,74 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
 
   int step = 360 / numPoints;
   int x1, y1, x2 = -1, y2 = -1;
-  xtext = -1;
-  ytext = -1;
+
+  // Use north endpoint of radius as start position
+  Pos startPoint = centerPos.endpoint(radiusMeter, angleDegStart);
+  Pos p1 = startPoint;
+  bool hidden1 = true, hidden2 = true;
+  wToS(p1, x1, y1, DEFAULT_WTOS_SIZE, &hidden1);
+
+  bool ringVisible = false, lastVisible = false;
+  LineString ellipse;
+  for(float angle = angleDegStart; angle <= angleDegEnd; angle += step)
+  {
+    // Line segment from p1 to p2
+    Pos p2 = centerPos.endpoint(radiusMeter, angle);
+
+    wToS(p2, x2, y2, DEFAULT_WTOS_SIZE, &hidden2);
+
+    QRect rect(QPoint(x1, y1), QPoint(x2, y2));
+    rect = rect.normalized();
+    // Avoid points or flat rectangles (lines)
+    rect.adjust(-1, -1, 1, 1);
+
+    // Current line is visible (most likely)
+    bool nowVisible = rect.intersects(painter->viewport());
+
+    if(lastVisible || nowVisible)
+      // Last line or this one are visible add coords
+      ellipse.append(p1);
+
+    if(lastVisible && !nowVisible)
+    {
+      // Not visible anymore draw previous line segment
+      drawLineString(painter, ellipse);
+      ellipse.clear();
+    }
+
+    if(lastVisible || nowVisible)
+      // At least one segment of the arc is visible
+      ringVisible = true;
+
+    x1 = x2;
+    y1 = y2;
+    hidden1 = hidden2;
+    p1 = p2;
+    lastVisible = nowVisible;
+  }
+
+  if(ringVisible && !ellipse.isEmpty())
+  {
+    ellipse.append(centerPos.endpoint(radiusMeter, angleDegEnd));
+    drawLineString(painter, ellipse);
+  }
+}
+
+void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos)
+{
+  if(radiusNm > atools::geo::EARTH_CIRCUMFERENCE_METER / 4.f)
+    return;
+
+  // Calculate the number of points to use depending on screen resolution
+  int pixel = scale->getPixelIntForMeter(nmToMeter(radiusNm));
+  int numPoints = std::min(std::max(pixel / (fast ? 20 : 2), CIRCLE_MIN_POINTS), CIRCLE_MAX_POINTS);
+
+  float radiusMeter = nmToMeter(radiusNm);
+
+  int step = 360 / numPoints;
+  int x1, y1, x2 = -1, y2 = -1;
+  if(textPos != nullptr)
+    *textPos = QPoint(0, 0);
 
   QVector<int> xtexts;
   QVector<int> ytexts;
@@ -220,7 +284,7 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
     rect.adjust(-1, -1, 1, 1);
 
     // Current line is visible (most likely)
-    bool nowVisible = rect.intersects(vpRect);
+    bool nowVisible = rect.intersects(painter->viewport());
 
     if(lastVisible || nowVisible)
       // Last line or this one are visible add coords
@@ -238,13 +302,16 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
       // At least one segment of the ring is visible
       ringVisible = true;
 
-      if((visible1 || visible2) && !hidden1 && !hidden2)
+      if(textPos != nullptr)
       {
-        if(visible1 && visible2)
+        if((visible1 || visible2) && !hidden1 && !hidden2)
         {
-          // Remember visible positions for the text (center of the line segment)
-          xtexts.append((x1 + x2) / 2);
-          ytexts.append((y1 + y2) / 2);
+          if(visible1 && visible2)
+          {
+            // Remember visible positions for the text (center of the line segment)
+            xtexts.append((x1 + x2) / 2);
+            ytexts.append((y1 + y2) / 2);
+          }
         }
       }
     }
@@ -265,16 +332,13 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
       drawLineString(painter, ellipse);
     }
 
-    if(!xtexts.isEmpty() && !ytexts.isEmpty())
+    if(textPos != nullptr)
     {
-      // Take the position at one third of the visible text points to avoid half hidden texts
-      xtext = xtexts.at(xtexts.size() / 3);
-      ytext = ytexts.at(ytexts.size() / 3);
-    }
-    else
-    {
-      xtext = -1;
-      ytext = -1;
+      if(!xtexts.isEmpty() && !ytexts.isEmpty())
+        // Take the position at one third of the visible text points to avoid half hidden texts
+        *textPos = QPoint(xtexts.at(xtexts.size() / 3), ytexts.at(ytexts.size() / 3));
+      else
+        *textPos = QPoint(0, 0);
     }
   }
 }
@@ -652,21 +716,11 @@ void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y,
 QPolygonF MapPainter::buildArrow(float size, bool downwards)
 {
   if(downwards)
-  {
     // Pointing downwards
-    return QPolygonF({QPointF(0., size),
-                      QPointF(size, -size),
-                      QPointF(0., -size / 2.),
-                      QPointF(-size, -size)});
-  }
+    return QPolygonF({QPointF(0., size), QPointF(size, -size), QPointF(0., -size / 2.), QPointF(-size, -size)});
   else
-  {
     // Point up
-    return QPolygonF({QPointF(0., -size),
-                      QPointF(size, size),
-                      QPointF(0., size / 2.),
-                      QPointF(-size, size)});
-  }
+    return QPolygonF({QPointF(0., -size), QPointF(size, size), QPointF(0., size / 2.), QPointF(-size, size)});
 }
 
 void MapPainter::paintArrowAlongLine(QPainter *painter, const atools::geo::Line& line, const QPolygonF& arrow, float pos, float minLengthPx)

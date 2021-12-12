@@ -461,6 +461,35 @@ void ProfileWidget::showPosAlongFlightplan(int x, bool doubleClick)
     emit showPos(calculatePos(x), 0.f, doubleClick);
 }
 
+void ProfileWidget::paintVerticalPath(QPainter& painter, const Route& route)
+{
+  static const float LINE_LENGTH_NM = 20.f;
+
+  float aircraftAltitude = aircraftAlt(simData.getUserAircraftConst());
+  int acx = distanceX(aircraftDistanceFromStart);
+  int acy = altitudeY(aircraftAltitude);
+
+  if(acx < map::INVALID_INDEX_VALUE && acy < map::INVALID_INDEX_VALUE && aircraftDistanceFromStart < route.getTotalDistance())
+  {
+    float lineLen = std::min(LINE_LENGTH_NM, route.getTotalDistance() - aircraftDistanceFromStart);
+
+    painter.setBrush(Qt::NoBrush);
+    painter.setPen(mapcolors::adjustWidth(mapcolors::markSelectedAltitudeRangePen,
+                                          (OptionData::instance().getDisplayThicknessFlightplanProfile() / 100.f) * 2.f));
+    painter.setBackgroundMode(Qt::OpaqueMode);
+    painter.setBackground(Qt::transparent);
+
+    float verticalSpeedFeetPerMin = simData.getUserAircraftConst().getVerticalSpeedFeetPerMin();
+    float groundSpeedFeetPerMin = atools::geo::nmToFeet(simData.getUserAircraftConst().getGroundSpeedKts()) / 60.f;
+
+    float travelTimeForLineMin = atools::geo::nmToFeet(lineLen) / groundSpeedFeetPerMin;
+    float feetForLine = travelTimeForLineMin * verticalSpeedFeetPerMin;
+
+    painter.drawLine(toScreen(QPointF(aircraftDistanceFromStart, aircraftAltitude)),
+                     toScreen(QPointF(aircraftDistanceFromStart + lineLen, aircraftAltitude + feetForLine)));
+  }
+}
+
 void ProfileWidget::paintIls(QPainter& painter, const Route& route)
 {
   const RouteAltitude& altitudeLegs = route.getAltitudeLegs();
@@ -705,8 +734,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     return;
   }
 
-  if(legList->route.size() != route.size() ||
-     atools::almostNotEqual(legList->route.getTotalDistance(), route.getTotalDistance()))
+  if(legList->route.size() != route.size() || atools::almostNotEqual(legList->route.getTotalDistance(), route.getTotalDistance()))
     // Do not draw if route is updated to avoid invalid indexes
     return;
 
@@ -1314,6 +1342,10 @@ void ProfileWidget::paintEvent(QPaintEvent *)
      aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE && !curRoute.isActiveMissed() &&
      !curRoute.isActiveAlternate())
   {
+    // Draw path line ===================
+    if(NavApp::getMainUi()->actionProfileShowVerticalTrack->isChecked())
+      paintVerticalPath(painter, route);
+
     float acx = distanceX(aircraftDistanceFromStart);
     float acy = altitudeY(aircraftAlt(simData.getUserAircraftConst()));
 
@@ -1321,7 +1353,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     int acsize = atools::roundToInt(opt.getDisplayTextSizeFlightplanProfile() / 100. * 40.);
     painter.translate(acx, acy);
     painter.rotate(90);
-    painter.scale(0.75, 1.);
+    painter.scale(0.6, 1.);
     painter.shear(0.0, 0.5);
 
     // Turn aircraft if distance shrinks
@@ -2063,6 +2095,7 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   menu.addAction(ui->actionProfileShowVasi);
   menu.addAction(ui->actionProfileShowIls);
   menu.addAction(ui->actionMapShowTocTod);
+  menu.addAction(ui->actionProfileShowVerticalTrack);
   menu.addSeparator();
   menu.addAction(ui->actionProfileFollow);
   menu.addSeparator();
@@ -2081,8 +2114,8 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   }
   else if(action == ui->actionProfileCenterAircraft || action == ui->actionProfileFollow)
     scrollArea->update();
-  else if(action == ui->actionProfileShowIls || action == ui->actionProfileShowVasi ||
-          action == ui->actionMapShowTocTod)
+  else if(action == ui->actionProfileShowIls || action == ui->actionProfileShowVasi || action == ui->actionMapShowTocTod ||
+          action == ui->actionProfileShowVerticalTrack)
     update();
   else if(action == ui->actionProfileDeleteAircraftTrack)
     deleteAircraftTrack();

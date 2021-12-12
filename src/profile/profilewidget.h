@@ -109,6 +109,7 @@ public:
 
   void saveState();
   void restoreState();
+
   /* Bring splitter to a resonable size after first start */
   void restoreSplitter();
 
@@ -213,6 +214,9 @@ private:
   void paintIls(QPainter& painter, const Route& route);
   void paintVasi(QPainter& painter, const Route& route);
 
+  /* Draw a vertical track/path line extending from user aircraft */
+  void paintVerticalPath(QPainter& painter, const Route& route);
+
   void jumpBackToAircraftStart();
   void jumpBackToAircraftTimeout();
 
@@ -257,8 +261,9 @@ private:
   /* Track x = distance from start in NM and y = altitude in feet */
   QPolygonF aircraftTrackPoints;
 
-  float aircraftDistanceFromStart;
+  float aircraftDistanceFromStart; /* NM */
   float lastAircraftDistanceFromStart;
+
   bool movingBackwards = false;
   ElevationLegList *legList;
 

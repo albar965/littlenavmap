@@ -2963,10 +2963,10 @@ void MapWidget::resetSettingActionsToDefault()
                                       ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks,
                                       ui->actionShowAirspaces, ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft,
                                       ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach, ui->actionMapShowEndurance,
-                                      ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
-                                      ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr, ui->actionMapShowGrid,
-                                      ui->actionMapShowCities, ui->actionMapShowHillshading, ui->actionMapShowMinimumAltitude,
-                                      ui->actionMapShowAirportWeather, ui->actionMapShowSunShading});
+                                      ui->actionMapShowSelectedAltRange, ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi,
+                                      ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
+                                      ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
+                                      ui->actionMapShowMinimumAltitude, ui->actionMapShowAirportWeather, ui->actionMapShowSunShading});
 
   // Menu map =====================================
   ui->actionMapAircraftCenter->setChecked(true);
@@ -2998,6 +2998,7 @@ void MapWidget::resetSettingActionsToDefault()
   ui->actionMapShowAircraftTrack->setChecked(true);
   ui->actionMapShowCompassRose->setChecked(false);
   ui->actionMapShowCompassRoseAttach->setChecked(true);
+  ui->actionMapShowSelectedAltRange->setChecked(false);
   ui->actionMapShowEndurance->setChecked(false);
 
   // -----------------
@@ -3127,6 +3128,7 @@ void MapWidget::updateMapObjectsShown()
   setShowMapObjectDisplay(map::COMPASS_ROSE, ui->actionMapShowCompassRose->isChecked());
   setShowMapObjectDisplay(map::COMPASS_ROSE_ATTACH, ui->actionMapShowCompassRoseAttach->isChecked());
   setShowMapObjectDisplay(map::AIRCRAFT_ENDURANCE, ui->actionMapShowEndurance->isChecked());
+  setShowMapObjectDisplay(map::AIRCRAFT_SELECTED_ALT_RANGE, ui->actionMapShowSelectedAltRange->isChecked());
   setShowMapObject(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
   setShowMapObjectDisplay(map::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
   setShowMapObject(map::AIRCRAFT_AI, ui->actionMapShowAircraftAi->isChecked());
@@ -3639,13 +3641,13 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
 
   if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier))
   {
+    const Route& route = NavApp::getRouteConst();
     if(QPoint(lastPoint - event->pos()).manhattanLength() > 4)
     {
       qreal lon, lat;
       geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
       Pos pos(lon, lat);
 
-      const Route& route = NavApp::getRouteConst();
       float projectionDistance = route.getProjectionDistance();
 
       if(!(projectionDistance < map::INVALID_DISTANCE_VALUE))
@@ -3720,7 +3722,8 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
         alt = route.getCruisingAltitudeFeet();
 
       pos.setAltitude(alt);
-      SimConnectData data = SimConnectData::buildDebugForPosition(pos, lastPos, ground, vertSpeed, tas, fuelflow, totalFuel, ice);
+      SimConnectData data = SimConnectData::buildDebugForPosition(pos, lastPos, ground, vertSpeed, tas, fuelflow, totalFuel, ice,
+                                                                  route.getCruisingAltitudeFeet());
       data.setPacketId(packetId++);
 
       emit NavApp::getConnectClient()->dataPacketReceived(data);

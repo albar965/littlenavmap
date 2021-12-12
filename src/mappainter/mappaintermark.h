@@ -72,6 +72,9 @@ private:
   /* Draw a dotted line around aircraft to indicate endurance */
   void paintEndurance();
 
+  /* Draw a "green banana" where aircraft reaches autopilot altitude */
+  void paintSelectedAltitudeRange();
+
   /* Draw drag operations in progress */
   void paintUserpointDrag();
   void paintRouteDrag();

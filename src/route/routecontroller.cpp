@@ -4137,7 +4137,7 @@ void RouteController::updateTableModel()
       itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Destination"));
     else if(leg.isAlternate())
       itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Alternate"));
-    else
+    else if(leg.isAnyProcedure())
       itemRow[rcol::PROCEDURE] =
         new QStandardItem(route.getProcedureLegText(leg.getProcedureType(), false /* includeRunway */, false /* missedAsApproach */));
 

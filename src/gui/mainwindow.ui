@@ -418,6 +418,7 @@
     <addaction name="separator"/>
     <addaction name="actionMapShowAircraft"/>
     <addaction name="actionMapShowAircraftTrack"/>
+    <addaction name="actionMapShowSelectedAltRange"/>
     <addaction name="actionMapShowEndurance"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowCompassRose"/>
@@ -12299,6 +12300,51 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Preview all listed procedures on the map</string>
    </property>
   </action>
+  <action name="actionMapShowSelectedAltRange">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/altrange.svg</normaloff>:/littlenavmap/resources/icons/altrange.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Selected &amp;Altitude Range</string>
+   </property>
+   <property name="toolTip">
+    <string>Show range for selected autopilot altitude</string>
+   </property>
+   <property name="statusTip">
+    <string>Show range for selected autopilot altitude</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+K</string>
+   </property>
+  </action>
+  <action name="actionProfileShowVerticalTrack">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/verticaltrack.svg</normaloff>:/littlenavmap/resources/icons/verticaltrack.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show &amp;Vertical Track</string>
+   </property>
+   <property name="toolTip">
+    <string>Show vertical track line</string>
+   </property>
+   <property name="statusTip">
+    <string>Show vertical track line</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12485,7 +12531,7 @@ Disabled if a navdatabase does not allow it.</string>
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
-  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
  </buttongroups>
 </ui>
