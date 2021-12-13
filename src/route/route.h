@@ -601,14 +601,31 @@ public:
     return *altitude;
   }
 
-  /* Get a list of matching ILS which have a slope and are not too far away from runway (in case of CTL) */
-  const QVector<map::MapIls>& getDestRunwayIls() const;
+  /* Get ILS which are referenced from the recommended fix of the approach procedure for display in the flight plan table. */
+  const QVector<map::MapIls>& getDestRunwayIlsFlightPlanTable() const
+  {
+    return destRunwayIlsFlightPlanTable;
+  }
 
-  /* As above but filtered out for elevation profile  */
-  const QVector<map::MapIls>& getDestRunwayIlsProfile() const;
+  /* Get a list of matching ILS/LOC which are not too far away from runway (in case of CTL) */
+  const QVector<map::MapIls>& getDestRunwayIlsMap() const
+  {
+    return destRunwayIlsMap;
+  }
 
-  /* Get ILS which are referenced from the recommended fix of the approach procedure */
-  const QVector<map::MapIls>& getDestRunwayIlsRecommended() const;
+  /* As above but filtered out for elevation profile only having slope  */
+  const QVector<map::MapIls>& getDestRunwayIlsProfile() const
+  {
+    return destRunwayIlsProfile;
+  }
+
+  const map::MapRunwayEnd& getDestRunwayEnd() const
+  {
+    return destRunwayEnd;
+  }
+
+  /* Get ILS (for ILS and LOC approaches) and VASI pitch if approach is available */
+  void updateApproachIls();
 
   const RouteAltitudeLeg& getAltitudeLegAt(int i) const;
   bool hasAltitudeLegs() const;
@@ -617,10 +634,6 @@ public:
 
   /* Calculate route leg altitudes that are needed for the elevation profile */
   void updateLegAltitudes();
-
-  /* Get a list of approach ILS (not localizer) and the used runway end. Only for approaches. */
-  void getApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd, bool profile,
-                                  bool recommended) const;
 
   /* general distance in NM which is either cross track, previous or next waypoint */
   float getDistanceToFlightPlan() const;
@@ -671,6 +684,10 @@ public:
   QString buildDefaultFilename(QString pattern, QString suffix, bool clean = true) const;
 
 private:
+  /* Get a list of approach ILS (not localizer) and the used runway end. Only for approaches. */
+  void updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd,
+                                     bool recommended, bool map, bool profile) const;
+
   /* Copy flight plan profile altitudes into entries for FMS and other formats
    *  All following functions have to use setCoords instead of setPosition to avoid overwriting*/
   void assignAltitudes();
@@ -742,6 +759,20 @@ private:
       approachLegsOffset = map::INVALID_INDEX_VALUE, /* First approach leg */
       alternateLegsOffset = map::INVALID_INDEX_VALUE; /* First alternate airport*/
   int numAlternateLegs = 0;
+
+  QVector<map::MapIls>
+  /* Get a list of matching ILS which have a slope and are not too far away from runway (in case of CTL).
+   * These ones can be used for map display. */
+  destRunwayIlsMap,
+
+  /* Get a list of matching ILS which have a slope and are not too far away from runway (in case of CTL).
+   * These ones can be used for elevation profile display. */
+    destRunwayIlsProfile,
+  /* Get ILS which are referenced from the recommended fix of the approach procedure */
+    destRunwayIlsFlightPlanTable;
+
+  /* Get runway end at destination if any. Used to get the VASI information */
+  map::MapRunwayEnd destRunwayEnd;
 
   RouteAltitude *altitude = nullptr;
 };

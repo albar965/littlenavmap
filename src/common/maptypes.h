@@ -1431,6 +1431,7 @@ QString ilsText(const map::MapIls& ils); /* No locale use - for map display */
 QString ilsType(const MapIls& ils, bool gs, bool dme, const QString& separator);
 QString ilsTypeShort(const map::MapIls& ils);
 QString ilsTextShort(const MapIls& ils);
+const QIcon& ilsIcon(const MapIls& ils);
 
 QString holdingTextShort(const map::MapHolding& holding, bool user);
 

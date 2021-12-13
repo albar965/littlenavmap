@@ -197,9 +197,6 @@ void RouteAltitude::clearAll()
   distanceTopOfDescent = map::INVALID_DISTANCE_VALUE;
   legIndexTopOfClimb = map::INVALID_INDEX_VALUE;
   legIndexTopOfDescent = map::INVALID_INDEX_VALUE;
-  destRunwayIls.clear();
-  destRunwayIlsProfile.clear();
-  destRunwayEnd = map::MapRunwayEnd();
   travelTime = 0.f;
   averageGroundSpeed = 0.f;
   unflyableLegs = false;
@@ -1107,9 +1104,6 @@ void RouteAltitude::calculate(QStringList& altRestErrors)
   // Fill vertical angles
   calculateGeoAngles();
 
-  // Fetch ILS and VASI at destination
-  calculateApproachIlsAndSlopes();
-
   // Set coordinates into legs
   fillGeometry();
 
@@ -1425,24 +1419,6 @@ void RouteAltitude::calculateGeoAngles()
         leg.angles.append(0.f);
     }
   }
-}
-
-void RouteAltitude::calculateApproachIlsAndSlopes()
-{
-  // Get ILS and runway from route
-  route->getApproachRunwayEndAndIls(destRunwayIls, &destRunwayEnd, false /* profile */, false /* recommended */);
-  route->getApproachRunwayEndAndIls(destRunwayIlsProfile, &destRunwayEnd, true /* profile */, false /* recommended */);
-  route->getApproachRunwayEndAndIls(destRunwayIlsRecommended, &destRunwayEnd, true /* profile */,
-                                    true /* recommended */);
-
-  // Filter out unusable ILS for profile display
-  destRunwayIlsProfile.erase(std::remove_if(destRunwayIlsProfile.begin(), destRunwayIlsProfile.end(),
-                                            [ = ](const map::MapIls& ils) -> bool
-  {
-    // Needs to have GS, not farther away from runway end than 4NM and not more than 20 degree difference
-    return !ils.hasGlideslope() || destRunwayEnd.position.distanceMeterTo(ils.position) > ageo::nmToMeter(4.) ||
-    ageo::angleAbsDiff(destRunwayEnd.heading, ils.heading) > 20.f;
-  }), destRunwayIlsProfile.end());
 }
 
 void RouteAltitude::fillGeometry()

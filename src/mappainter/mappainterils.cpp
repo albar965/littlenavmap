@@ -52,7 +52,7 @@ void MapPainterIls::render()
     QSet<int> routeIlsIds;
     if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN))
     {
-      routeIls = context->route->getDestRunwayIls();
+      routeIls = context->route->getDestRunwayIlsMap();
       for(const map::MapIls& ils : routeIls)
         routeIlsIds.insert(ils.id);
     }

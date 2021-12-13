@@ -4174,8 +4174,8 @@ void RouteController::updateTableModel()
     QStringList ilsTypeTexts, ilsFreqTexts;
     if(procedureLeg.isApproach() && leg.getRunwayEnd().isValid())
     {
-      // Build string for ILS type
-      for(const map::MapIls& ils : route.getDestRunwayIlsRecommended())
+      // Build string for ILS type - use recommended ILS which can also apply to non ILS approaches
+      for(const map::MapIls& ils : route.getDestRunwayIlsFlightPlanTable())
       {
         ilsTypeTexts.append(map::ilsType(ils, true /* gs */, true /* dme */, tr("/")));
         ilsFreqTexts.append(ils.freqMHzOrChannelLocale());

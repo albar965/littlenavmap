@@ -1149,9 +1149,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
   // Check if text is to be generated for navaid or procedures tab
   if(infoOrTooltip)
   {
-    html.img(ils.isAnyGls() ?
-             QIcon(":/littlenavmap/resources/icons/gls.svg") :
-             QIcon(":/littlenavmap/resources/icons/ils.svg"), QString(), QString(), symbolSizeTitle);
+    html.img(map::ilsIcon(ils), QString(), QString(), symbolSizeTitle);
     html.nbsp().nbsp();
 
     navaidTitle(html, text);
@@ -3636,7 +3634,7 @@ void HtmlInfoBuilder::aircraftTextWeightAndFuel(const atools::fs::sc::SimConnect
       html.row2Error(tr("Gross Weight:"), Unit::weightLbsLocalOther(grossWeight, false, false));
     else
     {
-      QString weight = HtmlBuilder::textStr(Unit::weightLbsLocalOther(grossWeight, true /* bold */), ahtml::NO_ENTITIES| ahtml::BOLD);
+      QString weight = HtmlBuilder::textStr(Unit::weightLbsLocalOther(grossWeight, true /* bold */), ahtml::NO_ENTITIES | ahtml::BOLD);
       QString percent = tr("<br/>%1 % of max gross weight").arg(100.f / maxGrossWeight * grossWeight, 0, 'f', 0);
 
       html.row2(tr("Gross Weight:"), weight % percent, ahtml::NO_ENTITIES);

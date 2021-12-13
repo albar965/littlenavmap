@@ -233,7 +233,7 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
   if(paintLayer->getShownMapObjectDisplayTypes().testFlag(map::FLIGHTPLAN))
   {
     // Get ILS from flight plan which are also painted in the profile - only if plan is shown
-    ilsVector = NavApp::getRouteConst().getDestRunwayIls();
+    ilsVector = NavApp::getRouteConst().getDestRunwayIlsMap();
     for(const map::MapIls& ils : ilsVector)
       routeIlsIds.insert(ils.id);
   }

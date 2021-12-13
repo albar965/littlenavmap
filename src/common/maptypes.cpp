@@ -923,8 +923,8 @@ QString parkingNameForFlightplan(const map::MapParking& parking)
 
 const QString& MapAirport::displayIdentIcao() const
 {
-  if(xplane&&!icao.isEmpty())
-      return icao;
+  if(xplane && !icao.isEmpty())
+    return icao;
 
   // Otherwise internal id
   return ident;
@@ -2424,7 +2424,7 @@ QIcon mapBaseIcon(const map::MapBase *base, int size)
         return painter.createNdbIcon(size);
 
       case map::ILS:
-        return QIcon(":/littlenavmap/resources/icons/ils.svg");
+        return map::ilsIcon(base->asObj<map::MapIls>());
 
       case map::HOLDING:
         return QIcon(":/littlenavmap/resources/icons/enroutehold.svg");
@@ -2618,6 +2618,20 @@ QString procedurePointTextShort(const MapProcedurePoint& procPoint)
 {
   return proc::procedureLegsText(*procPoint.legs, procPoint.getLeg().mapType,
                                  true /* narrow */, true /* includeRunway*/, false /* missedAsApproach*/);
+}
+
+const QIcon& ilsIcon(const MapIls& ils)
+{
+  const static QIcon GLS(":/littlenavmap/resources/icons/gls.svg");
+  const static QIcon ILS(":/littlenavmap/resources/icons/ils.svg");
+  const static QIcon LOC(":/littlenavmap/resources/icons/loc.svg");
+
+  if(ils.isAnyGls())
+    return GLS;
+  else if(ils.hasGlideslope())
+    return ILS;
+  else
+    return LOC;
 }
 
 } // namespace types

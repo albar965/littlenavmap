@@ -137,6 +137,11 @@ void Route::copy(const Route& other)
   activeLegIndex = other.activeLegIndex;
   activeLegResult = other.activeLegResult;
 
+  destRunwayIlsMap = other.destRunwayIlsMap;
+  destRunwayIlsProfile = other.destRunwayIlsProfile;
+  destRunwayIlsFlightPlanTable = other.destRunwayIlsFlightPlanTable;
+  destRunwayEnd = other.destRunwayEnd;
+
   // Update flightplan pointers to this instance
   for(RouteLeg& routeLeg : *this)
     routeLeg.setFlightplan(&flightplan);
@@ -156,6 +161,10 @@ void Route::clearAll()
   clear();
 
   altitude->clearAll();
+  destRunwayIlsMap.clear();
+  destRunwayIlsProfile.clear();
+  destRunwayEnd = map::MapRunwayEnd();
+
   totalDistance = 0.f;
 }
 
@@ -759,19 +768,160 @@ Pos Route::getPositionAtDistance(float distFromStartNm) const
   return retval;
 }
 
-const QVector<map::MapIls>& Route::getDestRunwayIls() const
+void Route::updateApproachIls()
 {
-  return altitude->getDestRunwayIls();
+  // Get recommended for flight plan table
+  destRunwayEnd = map::MapRunwayEnd();
+  destRunwayIlsFlightPlanTable.clear();
+  updateApproachRunwayEndAndIls(destRunwayIlsFlightPlanTable, &destRunwayEnd, true, false, false);
+
+  // Get ILS and runway from route for map
+  destRunwayIlsMap.clear();
+  updateApproachRunwayEndAndIls(destRunwayIlsMap, &destRunwayEnd, false, true, false);
+
+  // ILS for profile
+  destRunwayIlsProfile.clear();
+  updateApproachRunwayEndAndIls(destRunwayIlsProfile, &destRunwayEnd, false, false, true);
 }
 
-const QVector<map::MapIls>& Route::getDestRunwayIlsProfile() const
+void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd, bool recommended, bool map,
+                                          bool profile) const
 {
-  return altitude->getDestRunwayIlsProfile();
-}
+  QString destAirportIdent = getDestinationAirportLeg().getIdent();
+  MapQuery *mapQuery = NavApp::getMapQueryGui();
 
-const QVector<map::MapIls>& Route::getDestRunwayIlsRecommended() const
-{
-  return altitude->getDestRunwayIlsRecommended();
+  if(!approachLegs.runwayEnd.name.isEmpty() && approachLegs.runwayEnd.name != "RW")
+  {
+    // Runway name given in approach procedure ========================
+    QList<map::MapRunwayEnd> runwayEnds;
+    mapQuery->getRunwayEndByNameFuzzy(runwayEnds, approachLegs.runwayEnd.name, getDestinationAirportLeg().getAirport(),
+                                      false /* nav data */);
+
+    if(runwayEnd != nullptr && !runwayEnds.isEmpty())
+      *runwayEnd = runwayEnds.first();
+
+    if(approachLegs.runwayEnd.isValid())
+    {
+      // Have runway database object for approach ============================================
+
+      // Get one or more ILS from flight plan leg as is
+      QHash<int, map::MapIls> ilsMapAll =
+        maptools::toHash(mapQuery->getIlsByAirportAndRunway(destAirportIdent, approachLegs.runwayEnd.name));
+
+      if(ilsMapAll.isEmpty())
+      {
+        // ILS does not even match runway - try fuzzy to consider renamed runways
+        QStringList variants = atools::fs::util::runwayNameVariants(approachLegs.runwayEnd.name);
+        for(const QString& runwayVariant : variants)
+          maptools::insert(ilsMapAll, mapQuery->getIlsByAirportAndRunway(destAirportIdent, runwayVariant));
+      }
+
+      // =========================================================================
+      // Look for recommended fix reference in approach legs independent of approach type
+      // Iterate backwards to catch the recommended fix closest to the runway
+      QHash<int, map::MapIls> ilsMapRecommended;
+      for(int i = approachLegs.approachLegs.size() - 1; i >= 0; i--)
+      {
+        const proc::MapProcedureLeg& leg = approachLegs.approachLegs.at(i);
+
+        // Do not look for NDB and waypoints - try VOR (V) and ILS/localizer (L)
+        if(!leg.isMissed() && !leg.recFixIdent.isEmpty() && leg.recFixType != "N" && leg.recFixType != "TW" &&
+           leg.recFixType != "TN" && leg.recFixType != "W")
+        {
+          map::MapIls foundIls;
+          for(const map::MapIls& ils : ilsMapAll)
+          {
+            if(leg.recFixIdent == ils.ident)
+            {
+              // Recommended matches ILS in the list
+              ilsMapRecommended.insert(ils.id, ils);
+              break;
+            }
+          }
+        }
+      } // for(int i = approachLegs.approachLegs.size() - 1; i >= 0; i--)
+
+      // Remove all approach aids which do not fit into the approach by type ============================================
+      auto it = ilsMapAll.begin();
+      while(it != ilsMapAll.end())
+      {
+        if(it->isIls() && approachLegs.isNonPrecision())
+        {
+          it = ilsMapAll.erase(it); // Remove ILS from non precision approaches
+          continue;
+        }
+
+        if((it->isRnp() && approachLegs.isNonPrecision() && profile) || // Show glidepath for all non precision approaches in profile only
+           (it->isRnp() && approachLegs.isRnavGps()) || // Show glidepath always for RNAV and GPS
+           (it->isGls() && approachLegs.isGls()) || // Show GLS for all GLS approaches
+           (!it->isAnyGls() && approachLegs.hasFrequency())) // Show ILS, LOC, etc for all ILS, LOC, LDA, etc. approaches
+        {
+          ++it; // Keep ILS
+          continue;
+        }
+
+        it = ilsMapAll.erase(it);
+      }
+
+      // ===================================================================================
+      // Fill vector
+      if(approachLegs.isRnavGps())
+      {
+        // Keep other navaids (RNP - ILS are filtered out already)
+        maptools::insert(ilsMapAll, ilsMapRecommended); // Merge and deduplicate
+
+        // Check if there is a RNP navaid matching the approach ==========
+        auto found = std::find_if(ilsMapAll.begin(), ilsMapAll.end(), [ = ](const map::MapIls& ils) {
+          return ils.ident == approachLegs.approachArincName;
+        });
+
+        // Keep only the matching RNP navaid if one matches
+        if(found != ilsMapAll.end())
+        {
+          map::MapIls ils = *found; // Create copy before clearing list
+          ilsMapAll.clear();
+          ilsMapAll.insert(ils.id, ils); // Keep only the matching one
+        }
+
+        ilsVector = QVector<map::MapIls>::fromList(ilsMapAll.values());
+      }
+      else
+        ilsVector = QVector<map::MapIls>::fromList(ilsMapRecommended.values());
+    } // if(approachLegs.runwayEnd.isValid())
+  } // if(!approachLegs.runwayEnd.name.isEmpty() && approachLegs.runwayEnd.name != "RW")
+
+  // No runway for approach found - circling - collect recommended independent of runway ============================================
+  if(ilsVector.isEmpty())
+  {
+    // Get all frequencies for recommended and for map only for ILS, LOC, etc. approach
+    if(recommended || (map && approachLegs.hasFrequency()))
+    {
+      // Iterate backwards to catch the recommended fix closest to the runway
+      for(int i = approachLegs.approachLegs.size() - 1; i >= 0; i--)
+      {
+        const proc::MapProcedureLeg& leg = approachLegs.approachLegs.at(i);
+
+        // Do not look for NDB and waypoints - try VOR (V) and ILS/localizer (L)
+        if(!leg.isMissed() && !leg.recFixIdent.isEmpty() && leg.recFixType != "N" && leg.recFixType != "TW" &&
+           leg.recFixType != "TN" && leg.recFixType != "W")
+          // Get ILS referenced in the recommended fix
+          ilsVector = mapQuery->getIlsByAirportAndIdent(destAirportIdent, leg.recFixIdent);
+
+        if(!ilsVector.isEmpty())
+          break;
+      }
+    }
+  } // if(ilsVector.isEmpty())
+
+  // Filter out unusable ILS for profile display ========================================================
+  if(profile)
+  {
+    ilsVector.erase(std::remove_if(ilsVector.begin(), ilsVector.end(), [ = ](const map::MapIls& ils) -> bool {
+      // Needs to have GS, not farther away from runway end than 4NM and not more than 20 degree difference
+      return !ils.hasGlideslope() || destRunwayEnd.position.distanceMeterTo(ils.position) > atools::geo::nmToMeter(4.) ||
+      atools::geo::angleAbsDiff(destRunwayEnd.heading, ils.heading) > 20.f;
+    }), ilsVector.end());
+  }
 }
 
 const RouteAltitudeLeg& Route::getAltitudeLegAt(int i) const
@@ -1500,6 +1650,7 @@ void Route::updateAll()
   updateBoundingRect();
   updateWaypointNames();
   updateDepartureAndDestination();
+  updateApproachIls();
 }
 
 void Route::updateWaypointNames()
@@ -2993,130 +3144,9 @@ int Route::getAdjustedAltitude(int newAltitude) const
   return newAltitude;
 }
 
-void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd,
-                                       bool profile, bool recommended) const
-{
-  QString destIdent = getDestinationAirportLeg().getIdent();
-
-  if(!approachLegs.runwayEnd.name.isEmpty() && approachLegs.runwayEnd.name != "RW")
-  {
-    // Runway name given ========================
-    QList<map::MapRunwayEnd> runwayEnds;
-    NavApp::getMapQueryGui()->getRunwayEndByNameFuzzy(runwayEnds, approachLegs.runwayEnd.name,
-                                                      getDestinationAirportLeg().getAirport(),
-                                                      false /* nav data */);
-
-    if(runwayEnd != nullptr && !runwayEnds.isEmpty())
-      *runwayEnd = runwayEnds.first();
-
-    ilsVector.clear();
-    if(approachLegs.runwayEnd.isValid())
-    {
-      // Have runway for approach ============================================
-      // Get one or more ILS from flight plan leg as is
-      QHash<int, map::MapIls> ilsMap =
-        maptools::toHash(NavApp::getMapQueryGui()->getIlsByAirportAndRunway(destIdent, approachLegs.runwayEnd.name));
-
-      if(ilsMap.isEmpty())
-      {
-        // ILS does not even match runway - try fuzzy to consider renamed runways
-        QStringList variants = atools::fs::util::runwayNameVariants(approachLegs.runwayEnd.name);
-        for(const QString& runwayVariant : variants)
-          maptools::insert(ilsMap, NavApp::getMapQueryGui()->getIlsByAirportAndRunway(destIdent, runwayVariant));
-      }
-
-      // Look for recommended fix reference in approach legs independent of approach type
-      // Iterate backwards to catch the recommended fix closest to the runway
-      QHash<int, map::MapIls> ilsMapRecommended;
-      for(int i = approachLegs.approachLegs.size() - 1; i >= 0; i--)
-      {
-        const proc::MapProcedureLeg& leg = approachLegs.approachLegs.at(i);
-
-        // Do not look for NDB and waypoints - try VOR (V) and ILS/localizer (L)
-        if(!leg.isMissed() && !leg.recFixIdent.isEmpty() && leg.recFixType != "N" && leg.recFixType != "TW" &&
-           leg.recFixType != "TN" && leg.recFixType != "W")
-        {
-          map::MapIls foundIls;
-          for(const map::MapIls& ils : ilsMap)
-          {
-            if(leg.recFixIdent == ils.ident)
-            {
-              // Recommended matches ILS in the list
-              ilsMapRecommended.insert(ils.id, ils);
-              break;
-            }
-          }
-        }
-      } // for(int i = approachLegs.approachLegs.size() - 1; i >= 0; i--)
-
-      // Remove all approach aids which do not fit into the approach ============================================
-      auto it = ilsMap.begin();
-      while(it != ilsMap.end())
-      {
-        if(it->isIls() && approachLegs.isNonPrecision())
-        {
-          it = ilsMap.erase(it); // Remove ILS from non precision approaches
-          continue;
-        }
-
-        if((it->isRnp() && approachLegs.isNonPrecision() && profile) || // Show glidepath for all non precision approaches in profile only
-           (it->isRnp() && approachLegs.isRnavGps()) || // Show glidepath always for RNAV and GPS
-           (it->isGls() && approachLegs.isGls()) || // Show GLS for all GLS approaches
-           (!it->isAnyGls() && approachLegs.hasFrequency())) // Show ILS, LOC, etc for all ILS, LOC, LDA, etc. approaches
-        {
-          ++it; // Keep ILS
-          continue;
-        }
-
-        it = ilsMap.erase(it);
-      }
-
-      if(recommended)
-      {
-        // Return only navaids which are referenced in the recommended fix of the approach
-        // Used to show frequencies in the flight plan table
-        if(approachLegs.isRnavGps())
-        {
-          // Keep other navaids (RNP - ILS are filtered out already)
-          maptools::insert(ilsMap, ilsMapRecommended); // Merge and deduplicate
-          ilsVector = QVector<map::MapIls>::fromList(ilsMap.values());
-        }
-        else
-          ilsVector = QVector<map::MapIls>::fromList(ilsMapRecommended.values());
-      }
-      else
-      {
-        // Return more than the recommended for map and profile display purposes
-        maptools::insert(ilsMap, ilsMapRecommended); // Merge and deduplicate
-        ilsVector = QVector<map::MapIls>::fromList(ilsMap.values());
-      }
-    } // if(approachLegs.runwayEnd.isValid())
-  } // if(!approachLegs.runwayEnd.name.isEmpty() && approachLegs.runwayEnd.name != "RW")
-
-  if(ilsVector.isEmpty())
-  {
-    // No runway for approach - circling ============================================
-    // Iterate backwards to catch the recommended fix closest to the runway
-    for(int i = approachLegs.approachLegs.size() - 1; i >= 0; i--)
-    {
-      const proc::MapProcedureLeg& leg = approachLegs.approachLegs.at(i);
-
-      // Do not look for NDB and waypoints - try VOR (V) and ILS/localizer (L)
-      if(!leg.isMissed() && !leg.recFixIdent.isEmpty() && leg.recFixType != "N" && leg.recFixType != "TW" &&
-         leg.recFixType != "TN" && leg.recFixType != "W")
-        // Get ILS referenced in the recommended fix
-        ilsVector = NavApp::getMapQueryGui()->getIlsByAirportAndIdent(destIdent, leg.recFixIdent);
-
-      if(!ilsVector.isEmpty())
-        break;
-    }
-  } // if(ilsVector.isEmpty())
-}
-
 bool Route::isTooFarToFlightPlan() const
 {
-  return getDistanceToFlightPlan() < map::INVALID_DISTANCE_VALUE &&
-         getDistanceToFlightPlan() > MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM;
+  return getDistanceToFlightPlan() < map::INVALID_DISTANCE_VALUE && getDistanceToFlightPlan() > MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM;
 }
 
 float Route::getDistanceToFlightPlan() const

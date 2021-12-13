@@ -492,10 +492,11 @@ void ProfileWidget::paintVerticalPath(QPainter& painter, const Route& route)
 
 void ProfileWidget::paintIls(QPainter& painter, const Route& route)
 {
-  const RouteAltitude& altitudeLegs = route.getAltitudeLegs();
   const QVector<map::MapIls>& ilsVector = route.getDestRunwayIlsProfile();
   if(!ilsVector.isEmpty())
   {
+    const RouteAltitude& altitudeLegs = route.getAltitudeLegs();
+
     // Get origin
     int x = distanceX(altitudeLegs.getDestinationDistance());
     int y = altitudeY(altitudeLegs.getDestinationAltitude());
@@ -577,7 +578,7 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
 void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
 {
   const RouteAltitude& altitudeLegs = route.getAltitudeLegs();
-  const map::MapRunwayEnd& runwayEnd = altitudeLegs.getDestRunwayEnd();
+  const map::MapRunwayEnd& runwayEnd = route.getDestRunwayEnd();
 
   if(runwayEnd.isValid())
   {

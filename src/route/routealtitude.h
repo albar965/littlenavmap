@@ -229,32 +229,6 @@ public:
     return QVector::isEmpty();
   }
 
-  /* Get a list of matching ILS which have a slope and are not too far away from runway (in case of CTL).
-   * These ones can be used for map display. */
-  const QVector<map::MapIls>& getDestRunwayIls() const
-  {
-    return destRunwayIls;
-  }
-
-  /* Get a list of matching ILS which have a slope and are not too far away from runway (in case of CTL).
-   * These ones can be used for elevation profile display. */
-  const QVector<map::MapIls>& getDestRunwayIlsProfile() const
-  {
-    return destRunwayIlsProfile;
-  }
-
-  /* Get ILS which are referenced from the recommended fix of the approach procedure */
-  const QVector<map::MapIls>& getDestRunwayIlsRecommended() const
-  {
-    return destRunwayIlsRecommended;
-  }
-
-  /* Get runway end at destination if any. Used to get the VASI information */
-  const map::MapRunwayEnd& getDestRunwayEnd() const
-  {
-    return destRunwayEnd;
-  }
-
   /* Leg index containing the TOC */
   int getTopOfClimbLegIndex() const
   {
@@ -467,9 +441,6 @@ private:
   /* Calculate altitude and TOC for SID  or no procedures */
   void calculateDeparture();
 
-  /* Get ILS (for ILS and LOC approaches) and VASI pitch if approach is available */
-  void calculateApproachIlsAndSlopes();
-
   /* calculate all vertical angles */
   void calculateGeoAngles();
 
@@ -531,9 +502,6 @@ private:
   /* Contains a list of messages if the calculation result violates altitude restrictions
    * which can happen if the cruise altitude is too low */
   QStringList errors;
-
-  QVector<map::MapIls> destRunwayIls, destRunwayIlsProfile, destRunwayIlsRecommended;
-  map::MapRunwayEnd destRunwayEnd;
 };
 
 QDebug operator<<(QDebug out, const RouteAltitude& obj);
