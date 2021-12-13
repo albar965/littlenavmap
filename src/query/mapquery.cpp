@@ -824,7 +824,7 @@ const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const 
 const QList<map::MapVor> *MapQuery::getVorsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer,
                                             bool lazy, bool& overflow)
 {
-  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(),rect.getSouth(),rect.getEast(), rect.getWest());
+  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(),rect.getSouth(),rect.getEast(), rect.getWest(), GeoDataCoordinates::Degree);
   return getVors(latLonBox,mapLayer,lazy,overflow);
 }
 
@@ -860,7 +860,7 @@ const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const 
 const QList<map::MapNdb> *MapQuery::getNdbsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer,
                                             bool lazy, bool& overflow)
 {
-  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(),rect.getSouth(),rect.getEast(), rect.getWest());
+  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(),rect.getSouth(),rect.getEast(), rect.getWest(), GeoDataCoordinates::Degree);
   return getNdbs(latLonBox,mapLayer,lazy,overflow);
 }
 
@@ -994,7 +994,7 @@ const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, 
 const QList<map::MapMarker> *MapQuery::getMarkersByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer,
                                             bool lazy, bool& overflow)
 {
-  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(),rect.getSouth(),rect.getEast(), rect.getWest());
+  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(),rect.getSouth(),rect.getEast(), rect.getWest(), GeoDataCoordinates::Degree);
   return getMarkers(latLonBox,mapLayer,lazy,overflow);
 }
 
