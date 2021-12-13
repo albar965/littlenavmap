@@ -30,6 +30,7 @@
 
 #include <QPainter>
 #include <QApplication>
+#include <QStringBuilder>
 #include <marble/GeoPainter.h>
 
 using namespace Marble;
@@ -172,6 +173,20 @@ QIcon SymbolPainter::createAirspaceIcon(const map::MapAirspace& airspace, int si
   painter.setPen(mapcolors::penForAirspace(airspace));
   painter.setBrush(mapcolors::colorForAirspaceFill(airspace));
   painter.drawEllipse(2, 2, size - 4, size - 4);
+  return QIcon(pixmap);
+}
+
+QIcon SymbolPainter::createProcedurePreviewIcon(const QColor& color, int size)
+{
+  QPixmap pixmap(size, size);
+  pixmap.fill(QColor(Qt::transparent));
+  QPainter painter(&pixmap);
+  prepareForIcon(painter);
+
+  painter.setBackgroundMode(Qt::OpaqueMode);
+  painter.setPen(color);
+  painter.setBrush(color);
+  painter.drawEllipse(4, 4, size - 8, size - 8);
   return QIcon(pixmap);
 }
 
@@ -708,6 +723,11 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
         // Convert from bearing to angle
         bearing = atools::geo::normalizeCourse(bearing + 180.f + magvar);
 
+        if(bearing < 180.f)
+          text.prepend(tr("◄"));
+        else
+          text.append(tr("►"));
+
         // Line from center to top
         QLineF line(x, y, x, y - radius + 2);
         line.setAngle(atools::geo::angleToQt(bearing));
@@ -727,7 +747,7 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
       }
     }
 
-    // Draw altitude lables =====================================================================
+    // Draw altitude labels =====================================================================
     if(drawDetails)
     {
       for(int i = 0; i < airportMsa.bearings.size(); i++)
@@ -740,7 +760,7 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
 
         if(airportMsa.altitudes.size() > 1)
           // Rotate for sector bearing
-          line.setAngle(atools::geo::angleToQt(bearing + atools::geo::angleAbsDiff(bearing, bearingTo) / 2.f));
+          line.setAngle(atools::geo::angleToQt(bearing + atools::geo::angleAbsDiff2(bearing, bearingTo) / 2.f));
 
         QString text = Unit::altFeet(airportMsa.altitudes.at(i), false /* addUnit */, true /* narrow */);
         QSizeF txtsize = painter->fontMetrics().boundingRect(text).size();
@@ -1190,7 +1210,9 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
                                     optsd::DisplayOptionsAirport dispOpts, textflags::TextFlags flags, int size,
                                     bool diagram, int maxTextLength)
 {
+  // Get layer and options dependent texts
   QStringList texts = airportTexts(dispOpts, flags, airport, maxTextLength);
+
   if(!texts.isEmpty())
   {
     textatt::TextAttributes atts = textatt::NONE;
@@ -1226,27 +1248,20 @@ QStringList SymbolPainter::airportTexts(optsd::DisplayOptionsAirport dispOpts, t
 {
   QStringList texts;
 
-  if(flags & textflags::IDENT && flags & textflags::NAME && dispOpts & optsd::ITEM_AIRPORT_NAME)
-    texts.append(atools::elideTextShort(airport.name, maxTextLength) + " (" + airport.displayIdent() + ")");
-  else if(flags & textflags::IDENT)
-    texts.append(airport.displayIdent());
-  else if(flags & textflags::NAME)
-    texts.append(airport.name);
-
   if(flags & textflags::INFO)
   {
     if(airport.towerFrequency != 0 && dispOpts & optsd::ITEM_AIRPORT_TOWER)
-      texts.append(tr("CT ") + QString::number(roundComFrequency(airport.towerFrequency), 'f', 3));
+      texts.append(tr("CT ") % QString::number(roundComFrequency(airport.towerFrequency), 'f', 3));
 
     QString autoWeather;
     if(dispOpts & optsd::ITEM_AIRPORT_ATIS)
     {
       if(airport.atisFrequency > 0)
-        autoWeather = tr("ATIS ") + QString::number(roundComFrequency(airport.atisFrequency), 'f', 3);
+        autoWeather = tr("ATIS ") % QString::number(roundComFrequency(airport.atisFrequency), 'f', 3);
       else if(airport.awosFrequency > 0)
-        autoWeather = tr("AWOS ") + QString::number(roundComFrequency(airport.awosFrequency), 'f', 3);
+        autoWeather = tr("AWOS ") % QString::number(roundComFrequency(airport.awosFrequency), 'f', 3);
       else if(airport.asosFrequency > 0)
-        autoWeather = tr("ASOS ") + QString::number(roundComFrequency(airport.asosFrequency), 'f', 3);
+        autoWeather = tr("ASOS ") % QString::number(roundComFrequency(airport.asosFrequency), 'f', 3);
     }
 
     if(!autoWeather.isEmpty())
@@ -1255,15 +1270,26 @@ QStringList SymbolPainter::airportTexts(optsd::DisplayOptionsAirport dispOpts, t
     // bool elevUnit = Unit::getUnitAltStr() != Unit::getUnitShortDistStr();
     if(dispOpts & optsd::ITEM_AIRPORT_RUNWAY)
       if(airport.longestRunwayLength != 0 || airport.getPosition().getAltitude() != 0.f)
-        texts.append(Unit::altFeet(airport.getPosition().getAltitude(),
-                                   true /*addUnit*/, true /*narrow*/) + " " +
-                     (airport.flags.testFlag(map::AP_LIGHT) ? "L " : "- ") +
-                     Unit::distShortFeet(airport.longestRunwayLength,
-                                         true /*addUnit*/, true /*narrow*/) + " "
-                     // + (airport.unicomFrequency == 0 ? QString() :
-                     // QString::number(airport.unicomFrequency / 1000., 'f', 3))
-                     );
+        texts.append(Unit::altFeet(airport.getPosition().getAltitude(), true /*addUnit*/, true /*narrow*/) % " " %
+                     (airport.flags.testFlag(map::AP_LIGHT) ? "L " : "- ") %
+                     Unit::distShortFeet(airport.longestRunwayLength, true /*addUnit*/, true /*narrow*/) % " ");
   }
+
+  // Build ident/name combination - flags are layer dependent
+  if(flags & textflags::IDENT && flags & textflags::NAME && dispOpts & optsd::ITEM_AIRPORT_NAME)
+  {
+    if(texts.isEmpty())
+    {
+      texts.prepend(atools::elideTextShort(airport.name, maxTextLength));
+      texts.prepend(airport.displayIdent());
+    }
+    else
+      texts.prepend(atools::elideTextShort(airport.name, maxTextLength) % " (" % airport.displayIdent() % ")");
+  }
+  else if(flags & textflags::IDENT)
+    texts.prepend(airport.displayIdent());
+  else if(flags & textflags::NAME)
+    texts.prepend(airport.name);
   return texts;
 }
 
@@ -1273,9 +1299,8 @@ void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const Q
   textBoxF(painter, texts, textPen, x, y, atts, transparency, backgroundColor);
 }
 
-void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const QPen& textPen,
-                             float x, float y, textatt::TextAttributes atts, int transparency,
-                             const QColor& backgroundColor)
+void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, QPen textPen, float x, float y, textatt::TextAttributes atts,
+                             int transparency, const QColor& backgroundColor)
 {
   if(texts.isEmpty())
     return;
@@ -1291,6 +1316,19 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, const 
       backColor = mapcolors::logTextBoxColor;
     else
       backColor = mapcolors::textBoxColor;
+  }
+
+  if(atts.testFlag(textatt::WARNING_COLOR))
+  {
+    backColor = Qt::white;
+    textPen.setColor(Qt::red);
+    transparency = 255;
+  }
+  if(atts.testFlag(textatt::ERROR_COLOR))
+  {
+    backColor = Qt::red;
+    textPen.setColor(Qt::white);
+    transparency = 255;
   }
 
   if(transparency != 255)

@@ -66,6 +66,9 @@ public:
   const proc::MapProcedureLeg *getApproachLeg(const map::MapAirport& airport, int approachId, int legId);
   const proc::MapProcedureLeg *getTransitionLeg(const map::MapAirport& airport, int legId);
 
+  /* Get either procedure or procedurer with transition */
+  const proc::MapProcedureLegs *getProcedureLegs(const map::MapAirport& airport, int approachId, int transitionId);
+
   /* Get all legs of an approach */
   const proc::MapProcedureLegs *getApproachLegs(map::MapAirport airport, int approachId);
 
@@ -106,7 +109,9 @@ public:
 
   /* Creates a user defined VFR approach procedure */
   void createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airportSim,
-                            const map::MapRunwayEnd& runwayEndSim, float distance, float altitude);
+                            const map::MapRunwayEnd& runwayEndSim, float distance, float altitude, float offsetAngle);
+  void createCustomDeparture(proc::MapProcedureLegs& procedure, const map::MapAirport& airportSim,
+                             const map::MapRunwayEnd& runwayEndSim, float distance);
 
   /* Flush the cache to update units */
   void clearCache();
@@ -133,7 +138,9 @@ private:
   void buildLegEntry(atools::sql::SqlQuery *query, proc::MapProcedureLeg& leg, const map::MapAirport& airport);
 
   void createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airport, const QString& runwayEnd,
-                            float distance, float altitude);
+                            float distance, float altitude, float offsetAngle);
+  void createCustomDeparture(proc::MapProcedureLegs& procedure, const map::MapAirport& airport, const QString& runwayEnd,
+                             float distance);
 
   /* See comments in postProcessLegs about the steps below */
   void postProcessLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs, bool addArtificialLegs) const;
@@ -223,6 +230,7 @@ private:
 
   /* Dummy used for custom approaches. */
   Q_DECL_CONSTEXPR static int CUSTOM_APPROACH_ID = 1000000000;
+  Q_DECL_CONSTEXPR static int CUSTOM_DEPARTURE_ID = 1000000001;
 
   /* Use this value as an id base for the artifical vector legs. */
   Q_DECL_CONSTEXPR static int VECTOR_LEG_ID_BASE = 1250000000;

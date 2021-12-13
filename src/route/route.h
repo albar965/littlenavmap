@@ -97,13 +97,13 @@ public:
   /* Start from distance but values do not decrease if aircraft is leaving route.
    *  Ignores active and looks for all legs.
    *
-   * UNRELIABLE AND DOES NOT CONSIDER HEADING, ALTERNATES MISSED APPROACH LEGS.*/
+   * Ignores missed approach legs.*/
   float getDistanceFromStart(const atools::geo::Pos& pos) const;
 
   /* Ignores approach objects if ignoreNotEditable is true.
    *  Checks course if not INVALID_COURSE_VALUE */
   int getNearestRouteLegResult(const atools::geo::Pos& pos, atools::geo::LineDistance& lineDistanceResult,
-                               bool ignoreNotEditable) const;
+                               bool ignoreNotEditable, bool ignoreMissed) const;
 
   /* First route leg after departure procedure or 0 for departure airport */
   int getStartIndexAfterProcedure() const;
@@ -288,9 +288,11 @@ public:
 
   /* @return true if departure is an airport */
   bool hasValidDeparture() const;
+  bool hasValidDepartureAndRunways() const;
 
   /* @return true if destination is an airport */
   bool hasValidDestination() const;
+  bool hasValidDestinationAndRunways() const;
 
   /* @return true if departure start position is a helipad */
   bool hasDepartureHelipad() const;
@@ -330,6 +332,16 @@ public:
     return hasAnyApproachProcedure() || hasAnySidProcedure() || hasAnyStarProcedure();
   }
 
+  bool isCustomApproach() const
+  {
+    return approachLegs.isCustomApproach();
+  }
+
+  bool isCustomDeparture() const
+  {
+    return sidLegs.isCustomDeparture();
+  }
+
   /* Final approach */
   bool hasAnyApproachProcedure() const
   {
@@ -365,6 +377,7 @@ public:
   void getRunwayNames(QString& departure, QString& arrival) const;
   void getArrivalNames(QString& arrivalArincName, QString& arrivalTransition) const;
 
+  const QString& getSidRunwayName() const;
   const QString& getStarRunwayName() const;
   const QString& getApproachRunwayName() const;
 
@@ -610,8 +623,11 @@ public:
   float getDistanceToFlightPlan() const;
   bool isTooFarToFlightPlan() const;
 
-  /* SID RAMY6, Approach ILS 12, etc. */
-  QString getProcedureLegText(proc::MapProcedureTypes mapType) const;
+  /* SID RAMY6, Approach ILS 12, etc.
+   * @param includeRunway Include runway information.
+   * @param missedAsApproach Show "Approach" for missed legs instead of "Missed".
+   */
+  QString getProcedureLegText(proc::MapProcedureTypes mapType, bool includeRunway, bool missedAsApproach) const;
 
   /* Assign index and pointer to flight plan for all objects and also update all procedure and alternate offsets */
   void updateIndicesAndOffsets();
@@ -645,7 +661,11 @@ public:
   void updateDepartureAndDestination();
 
   /* Get file name pattern based on route values */
-  QString getFilenamePattern(const QString& pattern, const QString& suffix, bool clean = true) const;
+  QString buildDefaultFilename(const QString& suffix, bool clean = true) const;
+  QString buildDefaultFilenameShort(const QString& separator, const QString& suffix) const;
+
+  /* Uses pattern from options if empty */
+  QString buildDefaultFilename(QString pattern, QString suffix, bool clean = true) const;
 
 private:
   /* Copy flight plan profile altitudes into entries for FMS and other formats

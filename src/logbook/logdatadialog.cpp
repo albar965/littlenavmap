@@ -242,9 +242,15 @@ void LogdataDialog::resetClicked()
   {
     // Clear all
     clearWidgets();
+    clearAttached();
   }
   else if(editMode == ld::EDIT_MULTIPLE || editMode == ld::EDIT_ONE)
     recordToDialog();
+
+  updateWidgets();
+  fuelUnitsChanged();
+  perfFileUpdated();
+  flightplanFileUpdated();
 }
 
 void LogdataDialog::fuelUnitsChanged()
@@ -460,12 +466,6 @@ void LogdataDialog::recordToDialog()
   ui->lineEditFlightSimulator->setText(record->valueStr("simulator")); // varchar(2048) collate nocase
   ui->lineEditRouteString->setText(record->valueStr("route_string")); // varchar(2048) collate nocase
 
-  if(ui->lineEditFlightSimulator->text().isEmpty() && editMode == ld::ADD)
-    ui->lineEditFlightSimulator->setText(NavApp::getCurrentSimulatorName());
-
-  if(ui->lineEditRouteString->text().isEmpty() && editMode == ld::ADD)
-    ui->lineEditRouteString->setText(NavApp::getRouteString());
-
   // Date and time ========================================================
   valueDateTime(ui->dateTimeEditDepartureDateTimeReal, "departure_time");
   valueDateTime(ui->dateTimeEditDepartureDateTimeSim, "departure_time_sim");
@@ -590,6 +590,13 @@ void LogdataDialog::setAirport(const QString& ident, const QString& prefix, bool
     record->setNull(prefix + "_alt");
     record->setNull(prefix + "_name");
   }
+}
+
+void LogdataDialog::clearAttached()
+{
+  record->setNull("flightplan");
+  record->setNull("aircraft_perf");
+  record->setNull("aircraft_trail");
 }
 
 void LogdataDialog::clearWidgets()

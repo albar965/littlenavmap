@@ -99,8 +99,7 @@ enum RouteExportFormatType : quint16
 enum RouteExportFormatFlag : quint16
 {
   NONE = 0,
-  FILEAPP = 1 << 0, /* Append to file instead of saving to folder.
-                     * path and default path contain filename instead of directory if this is the case. */
+  FILEAPP = 1 << 0, /* Append to file instead of saving to folder. */
   SELECTED = 1 << 1, /* Selected for multiexport in dialog. Saved to configuration. */
 
   MANUAL = 1 << 2, /* Format is cloned and selected for manual export from file menu. Temporary flag. */
@@ -111,7 +110,8 @@ enum RouteExportFormatFlag : quint16
   AIRPORTS = 1 << 5, /* Valid departure and destination airports are needed */
   CYCLE = 1 << 6, /* Format needs a valid AIRAC cycle */
   GARMIN_AS_WAYPOINTS = 1 << 7, /* Format to export Garmin as waypoints. */
-  FILEREP = 1 << 8, /* Fixed filename. Select folder or file and program creates or overwrites file on export. */
+
+  FILEREP = 1 << 8, /* Select folder or file and program creates or overwrites file on export. */
 
   SAVED_FLAGS = SELECTED /* Saved to configuration. */
 };

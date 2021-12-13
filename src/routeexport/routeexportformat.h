@@ -36,9 +36,10 @@ class RouteExportFormat
 
 public:
   /* See field documentation for a description for parameters */
-  RouteExportFormat(rexp::RouteExportFormatType typeParam, rexp::RouteExportFormatFlags flagsParam,
-                    const QString& formatParam, const QString& categoryParam, const QString& commentParam)
-    : type(typeParam), format(formatParam), category(categoryParam), comment(commentParam), flags(flagsParam)
+  RouteExportFormat(rexp::RouteExportFormatType typeParam, rexp::RouteExportFormatFlags flagsParam, const QString& defaultPatternParam,
+                    const QString& categoryParam, const QString& commentParam)
+    : type(typeParam), category(categoryParam), comment(commentParam), pattern(defaultPatternParam), defaultPattern(defaultPatternParam),
+    flags(flagsParam)
   {
   }
 
@@ -65,14 +66,14 @@ public:
     return type;
   }
 
-  /* Get file extension or filename if isFile is true */
-  const QString& getFormat() const
-  {
-    return format;
-  }
-
   /* Get a filter string for the file dialog. Usually "(*.format)". */
   QString getFilter() const;
+
+  /* Get file extension from pattern including separating dot. */
+  QString getSuffix() const;
+
+  /* Get file extension from pattern excluding dot upper case. */
+  QString getFormat() const;
 
   /* Comment is all before first linefeed */
   QString getComment() const
@@ -98,10 +99,22 @@ public:
     return defaultPath;
   }
 
-  /* Get assigned path. Directory or file if isFile is true*/
+  /* Get assigned path. Always directory. */
   const QString& getPath() const
   {
     return path;
+  }
+
+  /* Get default file pattern and extension or filename if isFile is true */
+  const QString& getDefaultPattern() const
+  {
+    return defaultPattern;
+  }
+
+  /* Get file pattern and extension or filename if isFile is true */
+  const QString& getPattern() const
+  {
+    return pattern;
   }
 
   rexp::RouteExportFormatFlags getFlags() const
@@ -109,6 +122,7 @@ public:
     return flags;
   }
 
+  /* True if checkbox is selected for export */
   bool isSelected() const
   {
     return flags.testFlag(rexp::SELECTED);
@@ -143,36 +157,36 @@ public:
   }
 
   /* Assign data from an incomplete format object which was loaded from settings. */
-  void copyLoadedData(RouteExportFormat& other) const;
+  void copyLoadedDataTo(RouteExportFormat& other) const;
 
   /* Create a clone with manual flag to indicate call from menu items */
-  RouteExportFormat copyForManualSave(const QString& curFilepath) const
+  RouteExportFormat copyForManualSave() const
   {
     RouteExportFormat other(*this);
     other.flags.setFlag(rexp::MANUAL);
-    other.currentFilepath = curFilepath;
     return other;
   }
 
   /* Create a clone with filename to allow reuse of user chosen name */
-  RouteExportFormat copyForMultiSave(const QString& curFilepath) const
+  RouteExportFormat copyForMultiSave() const
   {
     RouteExportFormat other(*this);
-    other.currentFilepath = curFilepath;
     return other;
   }
 
   /* Create a clone with force file dialog flag to indicate call from multi export dialog. */
-  RouteExportFormat copyForManualSaveFileDialog(const QString& curFilepath) const
+  RouteExportFormat copyForManualSaveFileDialog() const
   {
     RouteExportFormat other(*this);
     other.flags.setFlag(rexp::FILEDIALOG);
-    other.currentFilepath = curFilepath;
     return other;
   }
 
   /* true if directoy or file exists */
   bool isPathValid(QString *errorMessage = nullptr) const;
+
+  /* true if valid - means pattern is not empty and does not contain invalid characters */
+  bool isPatternValid(QString *errorMessage = nullptr) const;
 
   /* Function or method which saves the file */
   void setExportCallback(const std::function<bool(const RouteExportFormat&)>& value)
@@ -189,6 +203,11 @@ public:
   /* Actual path or filename for export */
   void setPath(const QString& value);
 
+  void setPattern(const QString& value)
+  {
+    pattern = value;
+  }
+
   void setFlag(rexp::RouteExportFormatFlag flag, bool on)
   {
     flags.setFlag(flag, on);
@@ -197,27 +216,25 @@ public:
   /* Update error state and message for missing folders and others */
   void updatePathError();
 
-  /* Current filename set to avoid using the default pattern. Empty for default pattern.
-   *  Only used for manual save. */
-  const QString& getCurrentFilepath() const
-  {
-    return currentFilepath;
-  }
-
 private:
   friend QDataStream& operator>>(QDataStream& dataStream, RouteExportFormat& obj);
   friend QDataStream& operator<<(QDataStream& dataStream, const RouteExportFormat& obj);
 
-  rexp::RouteExportFormatType type;
+  rexp::RouteExportFormatType type = rexp::NO_TYPE;
 
-  QString format, category, comment, defaultPath, path, pathError;
+  QString category, comment,
+          path, /* Export directory */
+          pathError; /* filled by updatePathError() */
+
+  QString pattern, /* Pattern as set by user and loaded from configuration */
+          defaultPattern; /* Default as set in init() */
 
   /* Callback function for export */
   std::function<bool(const RouteExportFormat&)> func;
   rexp::RouteExportFormatFlags flags = rexp::NONE;
 
-  /* Current filename set to avoid using the default pattern. Empty for default pattern. Temporary. */
-  QString currentFilepath;
+  /* Default as set in init() */
+  QString defaultPath;
 };
 
 Q_DECLARE_METATYPE(RouteExportFormat);
@@ -248,16 +265,18 @@ public:
 
   /* Clear user selected path and use default again */
   void clearPath(rexp::RouteExportFormatType type);
-
   void updatePath(rexp::RouteExportFormatType type, const QString& path);
+
+  void clearPattern(rexp::RouteExportFormatType type);
+  void updatePattern(rexp::RouteExportFormatType type, const QString& filePattern);
 
   /* Enable or disable for multiexport */
   void setSelected(rexp::RouteExportFormatType type, bool selected);
 
   /* Get a clone with flag indicating manually saving */
-  RouteExportFormat getForManualSave(rexp::RouteExportFormatType type, const QString& curFilepath = QString()) const
+  RouteExportFormat getForManualSave(rexp::RouteExportFormatType type) const
   {
-    return value(type).copyForManualSave(curFilepath);
+    return value(type).copyForManualSave();
   }
 
   /* Update all callbacks */
@@ -271,19 +290,31 @@ public:
 
   /* Constants to detect correct file format and version */
   static Q_DECL_CONSTEXPR quint32 FILE_MAGIC_NUMBER = 0x34ABF37C;
-  static Q_DECL_CONSTEXPR quint16 FILE_VERSION = 1;
+  static Q_DECL_CONSTEXPR quint16 FILE_VERSION_MIN = 1;
+  static Q_DECL_CONSTEXPR quint16 FILE_VERSION_CURRENT = 2; /* First version introducing file change with pattern */
 
   /* Needed to avoid exceptions when loading since QSettings reads the bytes even when only
    * iterating over other keys */
   static bool exceptionOnReadError;
 
+  /* Get loaded file version */
+  static quint16 getVersion()
+  {
+    return version;
+  }
+
 private:
+  friend QDataStream& operator>>(QDataStream& dataStream, RouteExportFormatMap& obj);
+
   /* Initialize format map */
   void init();
 
   /* Same as insert but prints a warning for duplicate enum values */
+  void insertFmt(const RouteExportFormat& fmt);
   void insertFmt(rexp::RouteExportFormatType type, const RouteExportFormat& fmt);
 
+  /* Needed in RouteExportFormat stream operators to read different formats */
+  static quint16 version;
 };
 
 Q_DECLARE_METATYPE(RouteExportFormatMap);

@@ -31,6 +31,7 @@ class InfoQuery;
 class HtmlInfoBuilder;
 class QTextEdit;
 class AirspaceController;
+class AircraftProgressConfig;
 
 namespace atools {
 namespace gui {
@@ -145,10 +146,15 @@ private:
   void visibilityChangedAircraft(bool visible);
   void visibilityChangedInfo(bool visible);
 
+  /* Push button in progress clicked */
+  void progressConfigurationClicked();
+
   template<typename TYPE>
   void buildOneNavaid(atools::util::HtmlBuilder& html, bool& bearingChanged, bool& foundNavaid, const QList<TYPE>& list,
                       QList<TYPE>& currentList, const HtmlInfoBuilder * info,
                       void (HtmlInfoBuilder::*func)(const TYPE&, atools::util::HtmlBuilder&) const) const;
+
+  void showProgressContextMenu(const QPoint& point);
 
   QString waitingForUpdateText, notConnectedText;
 
@@ -169,8 +175,9 @@ private:
   float simInfoFontPtSize = 10.f, infoFontPtSize = 10.f;
   bool lessAircraftProgress = false;
 
-  atools::gui::TabWidgetHandler *tabHandlerInfo = nullptr, *tabHandlerAirportInfo = nullptr,
-                                *tabHandlerAircraft = nullptr;
+  AircraftProgressConfig *aircraftProgressConfig;
+
+  atools::gui::TabWidgetHandler *tabHandlerInfo = nullptr, *tabHandlerAirportInfo = nullptr, *tabHandlerAircraft = nullptr;
 };
 
 #endif // LITTLENAVMAP_INFOCONTROLLER_H

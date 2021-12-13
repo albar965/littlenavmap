@@ -127,8 +127,9 @@ private:
 
   /* Get nearest waypoint for given position probably removing ones which are too far away. Changes given result.
    * Also checks airways and connections if lastResult is given. */
-  void filterWaypoints(map::MapResult& result, atools::geo::Pos& lastPos, const map::MapResult *lastResult,
-                       float maxDistance);
+  void filterWaypoints(map::MapResult& result, atools::geo::Pos& lastPos, const atools::geo::Pos& destPos, const map::MapResult *lastResult,
+                       const QString& item, float maxDistance);
+
   void filterAirways(QList<ParseEntry>& resultList, int i);
   QStringList cleanItemList(const QStringList& items, float *speedKnots, float *altFeet);
   void removeEmptyResults(QList<ParseEntry>& resultList);

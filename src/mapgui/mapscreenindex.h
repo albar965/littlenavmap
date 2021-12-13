@@ -50,7 +50,9 @@ struct RangeMarker;
 struct DistanceMarker;
 struct MapHolding;
 struct MapAirportMsa;
-struct TrafficPattern;
+struct PatternMarker;
+struct HoldingMarker;
+struct MsaMarker;
 }
 
 namespace Marble {
@@ -78,30 +80,26 @@ public:
 
   void copy(const MapScreenIndex& other);
 
-  /* Do not allow copying */
+  /* Do not allow implicit copying */
   MapScreenIndex(MapScreenIndex const&) = delete;
   MapScreenIndex& operator=(MapScreenIndex const&) = delete;
 
   /*
    * Finds all objects near the screen coordinates with maximal distance of maxDistance to xs/ys.
-   * Gets airways, visible map objects like airports, navaids and lightlighted objects.
+   * Gets airways, visible map objects like airports, navaids and highlighted objects.
    * @param result Result ordered by distance to xs/ys
    * @param xs/ys Screen coordinates.
    * @param maxDistance maximum distance to xs/ys
    */
-  void getAllNearest(int xs, int ys, int maxDistance, map::MapResult& result,
-                     map::MapObjectQueryTypes types) const;
+  void getAllNearest(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const;
 
-  /* Get nearest distance measurement line index (only the endpoint)
+  /* Get nearest map features (only the endpoint)
    * or -1 if nothing was found near the cursor position. Index points into the list of getDistanceMarks */
-  int getNearestDistanceMarkIndex(int xs, int ys, int maxDistance) const;
-
-  /* Get nearest range rings index (only the centerpoint)
-   * or -1 if nothing was found near the cursor position. Index points into the list of getRangeMarks */
-  int getNearestRangeMarkIndex(int xs, int ys, int maxDistance) const;
-  int getNearestTrafficPatternIndex(int xs, int ys, int maxDistance) const;
-  int getNearestHoldIndex(int xs, int ys, int maxDistance) const;
-  int getNearestAirportMsaIndex(int xs, int ys, int maxDistance) const;
+  int getNearestDistanceMarkId(int xs, int ys, int maxDistance) const;
+  int getNearestRangeMarkId(int xs, int ys, int maxDistance) const;
+  int getNearestTrafficPatternId(int xs, int ys, int maxDistance) const;
+  int getNearestHoldId(int xs, int ys, int maxDistance) const;
+  int getNearestAirportMsaId(int xs, int ys, int maxDistance) const;
 
   /* Get index of nearest flight plan leg or -1 if nothing was found nearby or cursor is not along a leg. */
   int getNearestRouteLegIndex(int xs, int ys, int maxDistance) const;
@@ -145,68 +143,84 @@ public:
     return *searchHighlights;
   }
 
-  void setApproachLegHighlights(const proc::MapProcedureLeg *leg);
-
-  const proc::MapProcedureLeg& getApproachLegHighlights() const
+  /* Multiple procedures and legs preview from search */
+  const QVector<proc::MapProcedureLegs>& getProcedureHighlights() const
   {
-    return *approachLegHighlights;
+    return procedureHighlights;
   }
+
+  void setProcedureHighlights(const QVector<proc::MapProcedureLegs>& value)
+  {
+    procedureHighlights = value;
+  }
+
+  /* Single procedure from search selection */
+  const proc::MapProcedureLegs& getProcedureHighlight() const
+  {
+    return *procedureHighlight;
+  }
+
+  void setProcedureHighlight(const proc::MapProcedureLegs& newHighlight);
+
+  /* Single selected leg in the procedure search tree */
+  const proc::MapProcedureLeg& getProcedureLegHighlight() const
+  {
+    return *procedureLegHighlight;
+  }
+
+  void setProcedureLegHighlight(const proc::MapProcedureLeg& newLegHighlight);
 
   /* Get range rings */
-  QList<map::RangeMarker>& getRangeMarks()
-  {
-    return rangeMarks;
-  }
-
-  const QList<map::RangeMarker>& getRangeMarks() const
+  const QHash<int, map::RangeMarker>& getRangeMarks() const
   {
     return rangeMarks;
   }
 
   /* Get distance measurement lines */
-  QList<map::DistanceMarker>& getDistanceMarks()
-  {
-    return distanceMarks;
-  }
-
-  const QList<map::DistanceMarker>& getDistanceMarks() const
+  const QHash<int, map::DistanceMarker>& getDistanceMarks() const
   {
     return distanceMarks;
   }
 
   /* Airfield traffic patterns. */
-  QList<map::TrafficPattern>& getTrafficPatterns()
+  const QHash<int, map::PatternMarker>& getPatternMarks() const
   {
-    return trafficPatterns;
+    return patternMarks;
   }
 
-  const QList<map::TrafficPattern>& getTrafficPatterns() const
+  /* Holdings. */
+  const QHash<int, map::HoldingMarker>& getHoldingMarks() const
   {
-    return trafficPatterns;
+    return holdingMarks;
   }
 
-  /* Airfield traffic patterns. */
-  QList<map::MapHolding>& getHolds()
+  /* Airport MSA. */
+  const QHash<int, map::MsaMarker>& getMsaMarks() const
   {
-    return holdings;
+    return msaMarks;
   }
 
-  const QList<map::MapHolding>& getHolds() const
-  {
-    return holdings;
-  }
+  /* Add user features. Id has to be set before. */
+  void addRangeMark(const map::RangeMarker& obj);
+  void addPatternMark(const map::PatternMarker& obj);
+  void addDistanceMark(const map::DistanceMarker& obj);
+  void addHoldingMark(const map::HoldingMarker& obj);
+  void addMsaMark(const map::MsaMarker& obj);
 
-  /* Airfield traffic patterns. */
-  QList<map::MapAirportMsa>& getAirportMsa()
-  {
-    return airportMsa;
-  }
+  /* Remove user features by generated id */
+  void removeRangeMark(int id);
+  void removePatternMark(int id);
+  void removeDistanceMark(int id);
+  void removeHoldingMark(int id);
+  void removeMsaMark(int id);
 
-  const QList<map::MapAirportMsa>& getAirportMsa() const
-  {
-    return airportMsa;
-  }
+  void clearAllMarkers();
 
+  /* Update measurement lines */
+  void updateDistanceMarkerTo(int id, const atools::geo::Pos& pos);
+  void updateDistanceMarker(int id, const map::DistanceMarker& marker);
+
+  // ====================
   const atools::fs::sc::SimConnectUserAircraft& getUserAircraft() const
   {
     return simData.getUserAircraftConst();
@@ -240,16 +254,6 @@ public:
   void updateLastSimData(const atools::fs::sc::SimConnectData& data)
   {
     lastSimData = data;
-  }
-
-  const proc::MapProcedureLegs& getProcedureHighlight() const
-  {
-    return *approachHighlight;
-  }
-
-  proc::MapProcedureLegs& getProcedureHighlight()
-  {
-    return *approachHighlight;
   }
 
   void setProfileHighlight(const atools::geo::Pos& value)
@@ -294,24 +298,21 @@ private:
 
   void getNearestIls(int xs, int ys, int maxDistance, map::MapResult& result) const;
   void getNearestAirspaces(int xs, int ys, map::MapResult& result) const;
-  void getNearestHighlights(int xs, int ys, int maxDistance, map::MapResult& result,
-                            map::MapObjectQueryTypes types) const;
-  void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapResult& result,
-                                     map::MapObjectQueryTypes types) const;
-  void updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceId>& ids,
-                                            map::MapAirspaceSources source,
+  void getNearestHighlights(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const;
+  void getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const;
+  void nearestProcedureHighlightsInternal(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types,
+                                          const QVector<proc::MapProcedureLegs>& procedureLegs, bool previewAll) const;
+  void updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceId>& ids, map::MapAirspaceSources source,
                                             const Marble::GeoDataLatLonBox& curBox, bool highlights);
   void updateAirwayScreenGeometryInternal(QSet<int>& ids, const Marble::GeoDataLatLonBox& curBox, bool highlight);
 
   void updateLineScreenGeometry(QList<std::pair<int, QLine> >& index, int id, const atools::geo::Line& line,
-                                const Marble::GeoDataLatLonBox& curBox,
-                                const CoordinateConverter& conv);
+                                const Marble::GeoDataLatLonBox& curBox, const CoordinateConverter& conv);
 
-  QSet<int> nearestLineIds(const QList<std::pair<int, QLine> >& lineList, int xs, int ys, int maxDistance,
-                           bool lineDistanceOnly) const;
+  QSet<int> nearestLineIds(const QList<std::pair<int, QLine> >& lineList, int xs, int ys, int maxDistance, bool lineDistanceOnly) const;
 
   template<typename TYPE>
-  int getNearestIndex(int xs, int ys, int maxDistance, const QList<TYPE>& typeList) const;
+  int getNearestId(int xs, int ys, int maxDistance, const QHash<int, TYPE>& typeList) const;
 
   atools::fs::sc::SimConnectData simData, lastSimData;
   MapPaintWidget *mapWidget;
@@ -320,8 +321,14 @@ private:
 
   /* All highlights from search windows - also online airspaces */
   map::MapResult *searchHighlights;
-  proc::MapProcedureLeg *approachLegHighlights;
-  proc::MapProcedureLegs *approachHighlight;
+
+  /* One procedure highlight from selection */
+  proc::MapProcedureLeg *procedureLegHighlight = nullptr;
+  /* More than one leg from multi preview */
+  proc::MapProcedureLegs *procedureHighlight = nullptr;
+
+  /* Highlights or leg fix and related fix */
+  QVector<proc::MapProcedureLegs> procedureHighlights;
 
   /* All airspace highlights from information window */
   QList<map::MapAirspace> airspaceHighlights;
@@ -336,11 +343,11 @@ private:
   QList<int> routeHighlights;
 
   /* Objects that will be saved */
-  QList<map::RangeMarker> rangeMarks;
-  QList<map::DistanceMarker> distanceMarks;
-  QList<map::TrafficPattern> trafficPatterns;
-  QList<map::MapHolding> holdings;
-  QList<map::MapAirportMsa> airportMsa;
+  QHash<int, map::RangeMarker> rangeMarks;
+  QHash<int, map::DistanceMarker> distanceMarks;
+  QHash<int, map::PatternMarker> patternMarks;
+  QHash<int, map::HoldingMarker> holdingMarks;
+  QHash<int, map::MsaMarker> msaMarks;
 
   /* Cached screen coordinates for flight plan to ease mouse cursor change. */
   QList<std::pair<int, QLine> > routeLines;

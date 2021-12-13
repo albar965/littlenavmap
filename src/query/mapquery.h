@@ -127,14 +127,13 @@ public:
    * @param ident ICAO ident
    * @param region two letter ICAO region code
    */
-  void getMapObjectByIdent(map::MapResult& result, map::MapTypes type,
-                           const QString& ident, const QString& region = QString(), const QString& airport = QString(),
-                           const atools::geo::Pos& sortByDistancePos = atools::geo::EMPTY_POS,
-                           float maxDistanceMeter = map::INVALID_DISTANCE_VALUE, bool airportFromNavDatabase = false);
+  void getMapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident, const QString& region = QString(),
+                           const QString& airport = QString(), const atools::geo::Pos& sortByDistancePos = atools::geo::EMPTY_POS,
+                           float maxDistanceMeter = map::INVALID_DISTANCE_VALUE, bool airportFromNavDatabase = false,
+                           map::AirportQueryFlags flags = map::AP_QUERY_ALL);
 
-  void getMapObjectByIdent(map::MapResult& result, map::MapTypes type,
-                           const QString& ident, const QString& region,
-                           const QString& airport, bool airportFromNavDatabase);
+  void getMapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident, const QString& region,
+                           const QString& airport, bool airportFromNavDatabase, map::AirportQueryFlags flags = map::AP_QUERY_ALL);
 
   /*
    * Get a map object by type and id
@@ -211,7 +210,7 @@ public:
 
   /* Similar to getAirports but no caching since user points can change */
   const QList<map::MapUserpoint> getUserdataPoints(const Marble::GeoDataLatLonBox& rect, const QStringList& types,
-                                                   const QStringList& typesAll, bool unknownType, float distance);
+                                                   const QStringList& typesAll, bool unknownType, float distanceNm);
 
   /* Get related airport for navaids from current nav database.
    * found is true if navaid search was successful and max distance to pos is not exceeded. */
@@ -238,7 +237,7 @@ private:
   void mapObjectByIdentInternal(map::MapResult& result, map::MapTypes type,
                                 const QString& ident, const QString& region, const QString& airport,
                                 const atools::geo::Pos& sortByDistancePos,
-                                float maxDistanceMeter, bool airportFromNavDatabase);
+                                float maxDistanceMeter, bool airportFromNavDatabase, map::AirportQueryFlags flags);
 
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                               atools::sql::SqlQuery *query,
@@ -276,7 +275,6 @@ private:
   /* Database queries */
   atools::sql::SqlQuery *runwayOverviewQuery = nullptr,
                         *airportByRectQuery = nullptr, *airportAddonByRectQuery = nullptr,
-                        *airportMediumByRectQuery = nullptr, *airportLargeByRectQuery = nullptr,
                         *airportMsaByRectQuery = nullptr, *airportMsaByIdentQuery = nullptr, *airportMsaByIdQuery = nullptr;
 
   atools::sql::SqlQuery *vorsByRectQuery = nullptr, *ndbsByRectQuery = nullptr, *markersByRectQuery = nullptr,

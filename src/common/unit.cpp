@@ -21,6 +21,8 @@
 
 #include "geo/pos.h"
 
+#include <QStringBuilder>
+
 const static QString COORDS_DEC_FORMAT_LONX("%L1° %L2");
 const static QString COORDS_DEC_FORMAT_LATY("%L1° %L2");
 const static QString COORDS_DMS_FORMAT_LONX("%L1° %L2' %L3\" %L4");
@@ -298,11 +300,10 @@ QString Unit::speedVertFpm(float value, bool addUnit)
   switch(unitVertSpeed)
   {
     case opts::VERT_SPEED_FPM:
-      return locale->toString(value, 'f', 0) + (addUnit ? " " + unitVertSpeedStr : QString());
+      return locale->toString(value, 'f', 0) % (addUnit ? " " % unitVertSpeedStr : QString());
 
     case opts::VERT_SPEED_MS:
-      return locale->toString(atools::geo::feetToMeter(value) / 60.f, 'f', 1) +
-             (addUnit ? " " + unitVertSpeedStr : QString());
+      return locale->toString(atools::geo::feetToMeter(value) / 60.f, 'f', 1) % (addUnit ? " " % unitVertSpeedStr : QString());
   }
   return QString();
 }
@@ -428,7 +429,7 @@ float Unit::weightKgF(float value)
 QString Unit::localOtherText(bool localBold, bool otherSmall)
 {
   if(showOtherFuel)
-    return (localBold ? tr("<b>%1</b>") : tr("%1")) +
+    return (localBold ? tr("<b>%1</b>") : tr("%1")) %
            (otherSmall ? tr(" <span style=\"font-size: small;\">(%2)</span>") : tr(" (%2)"));
   else
     return localBold ? tr("<b>%1</b>") : tr("%1");
@@ -437,7 +438,7 @@ QString Unit::localOtherText(bool localBold, bool otherSmall)
 QString Unit::localOtherText2(bool localBold, bool otherSmall)
 {
   if(showOtherFuel)
-    return (localBold ? tr("<b>%1, %2</b>") : tr("%1, %2")) +
+    return (localBold ? tr("<b>%1, %2</b>") : tr("%1, %2")) %
            (otherSmall ? tr(" <span style=\"font-size: small;\">(%3, %4)</span>") : tr(" (%3, %4)"));
   else
     return localBold ? tr("<b>%1, %2</b>") : tr("%1, %2");
@@ -607,6 +608,22 @@ float Unit::ffKgLiterF(float value, bool fuelAsVolume)
   return fuelAsVolume ? ffLiterF(value) : ffKgF(value);
 }
 
+QString Unit::adjustNum(QString num)
+{
+  if(!num.isEmpty())
+  {
+    if(num.contains(locale->decimalPoint()))
+    {
+      while(num.back() == locale->zeroDigit())
+        num.chop(1);
+    }
+
+    if(num.back() == locale->decimalPoint())
+      num.chop(1);
+  }
+  return num;
+}
+
 QString Unit::coords(const atools::geo::Pos& pos)
 {
   return coords(pos, unitCoords);
@@ -618,9 +635,9 @@ QString Unit::coords(const atools::geo::Pos& pos, opts::UnitCoords coordUnit)
     return QObject::tr("Invalid");
 
   if(coordUnit == opts::COORDS_LATY_LONX)
-    return tr("%1 %2").arg(QLocale().toString(pos.getLatY(), 'f', 5)).arg(QLocale().toString(pos.getLonX(), 'f', 5));
+    return tr("%1 %2").arg(adjustNum(locale->toString(pos.getLatY(), 'f', 5))).arg(adjustNum(locale->toString(pos.getLonX(), 'f', 5)));
   else if(coordUnit == opts::COORDS_LONX_LATY)
-    return tr("%1 %2").arg(QLocale().toString(pos.getLonX(), 'f', 5)).arg(QLocale().toString(pos.getLatY(), 'f', 5));
+    return tr("%1 %2").arg(adjustNum(locale->toString(pos.getLonX(), 'f', 5))).arg(adjustNum(locale->toString(pos.getLatY(), 'f', 5)));
   else
     return tr("%1 %2").arg(coordsLatY(pos, coordUnit)).arg(coordsLonX(pos, coordUnit));
 }
@@ -703,23 +720,22 @@ QString Unit::u(const QString& num, const QString& un, bool addUnit, bool narrow
 {
   if(narrow)
   {
-    // Get rid of the trailing dot zero
+    // Get rid of the trailing dot zeroes
     QString nm(num);
     if(nm.endsWith(QString(locale->decimalPoint()) + "0"))
       nm.chop(2);
-
-    return nm + (addUnit ? un : QString());
+    return nm % (addUnit ? un : QString());
   }
   else
-    return num + (addUnit ? " " + un : QString());
+    return num % (addUnit ? " " % un : QString());
 }
 
 QString Unit::u(float num, const QString& un, bool addUnit, bool narrow)
 {
   if(narrow)
-    return clocale->toString(num, 'f', 0) + (addUnit ? QString() + un : QString());
+    return clocale->toString(num, 'f', 0) % (addUnit ? QString() % un : QString());
   else
-    return locale->toString(num, 'f', 0) + (addUnit ? " " + un : QString());
+    return locale->toString(num, 'f', 0) % (addUnit ? " " % un : QString());
 }
 
 void Unit::optionsChanged()

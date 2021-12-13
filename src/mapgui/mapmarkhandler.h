@@ -45,25 +45,25 @@ public:
   void saveState();
   void restoreState();
 
-  map::MapMarkTypes getMarkTypes() const
+  map::MapTypes getMarkTypes() const
   {
     return markTypes;
   }
 
-  bool isShown(map::MapMarkTypes type) const
+  bool isShown(map::MapTypes type) const
   {
     return markTypes & type;
   }
 
-  void showMarkTypes(map::MapMarkTypes types);
+  void showMarkTypes(map::MapTypes types);
 
-  QString getMarkTypesText() const;
+  QStringList getMarkTypesText() const;
 
   void resetSettingsToDefault();
 
 signals:
   /* Redraw map */
-  void updateMarkTypes(map::MapMarkTypes types);
+  void updateMarkTypes(map::MapTypes types);
 
 private:
   void toolbarActionTriggered();
@@ -72,17 +72,15 @@ private:
 
   void flagsToActions();
   void actionsToFlags();
-  QAction *addButton(const QString& icon, const QString& text, const QString& tooltip, map::MapMarkTypes type);
+  QAction *addButton(const QString& icon, const QString& text, const QString& tooltip);
 
   /* Actions for toolbar button and menu */
   QAction *actionAll = nullptr, *actionNone = nullptr, *actionRangeRings = nullptr, *actionMeasurementLines = nullptr,
-          *actionHolds = nullptr, *actionAirportMsa = nullptr, * actionPatterns = nullptr;
+          *actionHolds = nullptr, *actionAirportMsa = nullptr, *actionPatterns = nullptr;
 
   /* Toolbutton getting all actions for dropdown menu */
   QToolButton *toolButton = nullptr;
-
-  /* Default is to show all */
-  map::MapMarkTypes markTypes = map::MARK_ALL;
+  map::MapTypes markTypes = map::MARK_ALL;
 };
 
 #endif // LNM_MAPMARKHANDLER_H

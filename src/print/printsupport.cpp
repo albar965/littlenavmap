@@ -191,7 +191,7 @@ void PrintSupport::createFlightplanDocuments()
     if(!newPage)
       // Add a line to separate if page breaks are off
       html.hr();
-    NavApp::getAircraftPerfController()->fuelReport(html, true /* print */);
+    NavApp::getAircraftPerfController()->fuelReport(html, true /* print */, true /* visible */);
     NavApp::getAircraftPerfController()->fuelReportFilepath(html, true /* print */);
     cursor.insertHtml(html.getHtml());
     if(newPage)

@@ -1,0 +1,256 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>RangeMarkerDialog</class>
+ <widget class="QDialog" name="RangeMarkerDialog">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>469</width>
+    <height>361</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Little Navmap - Add Range Rings</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <item row="8" column="1">
+    <widget class="QPushButton" name="pushButtonRangeMarkerColor">
+     <property name="toolTip">
+      <string>Color for the range rings.</string>
+     </property>
+     <property name="text">
+      <string>&amp;Line Color</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QRadioButton" name="radioButtonRangeMarkerAircraft">
+     <property name="toolTip">
+      <string>Places a ring showing the estimated aircraft range with  full fuel load also considering reserve.
+Calculated based on usable fuel, speed and fuel flow for the cruise phase and reserve fuel.
+The range ring is static and does not change with aircraft performance and fuel load.</string>
+     </property>
+     <property name="text">
+      <string>&amp;Aircraft range:</string>
+     </property>
+     <attribute name="buttonGroup">
+      <string notr="true">buttonGroupRangeMarker</string>
+     </attribute>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="Line" name="line_2">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0">
+    <widget class="QLabel" name="labelRangeMarkerLabel">
+     <property name="text">
+      <string>L&amp;abel:</string>
+     </property>
+     <property name="buddy">
+      <cstring>lineEditRangeMarkerLabel</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <widget class="QLineEdit" name="lineEditRangeMarkerLabel">
+     <property name="toolTip">
+      <string>Attaches a text to the range ring distance labels.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="1">
+    <widget class="QLabel" name="labelRangeMarkerAircraft">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="0">
+    <widget class="QLabel" name="labelRangeMarkerLatLon">
+     <property name="text">
+      <string>&amp;Latitude and Longitude:</string>
+     </property>
+     <property name="buddy">
+      <cstring>lineEditRangeMarkerLatLon</cstring>
+     </property>
+    </widget>
+   </item>
+   <item row="9" column="1">
+    <widget class="QLineEdit" name="lineEditRangeMarkerLatLon">
+     <property name="toolTip">
+      <string>Recognized coordinate formats:
+- Degrees, minutes and seconds : N49° 26' 41.57&quot; E9° 12' 5.49&quot; or 49° 26' 41.57&quot; N 9° 12' 5.49&quot; E
+- Degrees and minutes: N54* 16.82' W008* 35.95', N 52 33.58 E 13 17.26 or 49° 26.69' N 9° 12.09' E
+- Degrees only: 49.4449° N 9.2015° E or N 49.4449° E 9.2015°
+- Degrees with sign: 49.4449 9.2015. Negative is west or south. Order for latitude and longitude depends on option settings.
+Degree, minute and second signs can be omitted for above formats.
+Latitude has to be first and N/S and E/W designators are required.
+A space is only needed to separate latitude and longitude or degrees/minutes/seconds if no signs used.
+Other formats:
+- Degrees and minutes: N44124W122451, N14544W017479 or S31240E136502
+- Degrees only 46N078W
+- Degrees and minutes 4620N07805W
+- Degrees, minutes and seconds 481200N0112842E (SkyVector)
+- Degrees and minutes in pair &quot;N6500 W08000&quot; or &quot;N6500/W08000&quot;
+- NAT type 5020N
+Formats above have to be given exactly as shown in the examples.</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0" rowspan="2">
+    <widget class="QRadioButton" name="radioButtonRangeMarkerRadii">
+     <property name="toolTip">
+      <string>Places static range rings on the map.</string>
+     </property>
+     <property name="text">
+      <string>&amp;Range ring radii:</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+     <attribute name="buttonGroup">
+      <string notr="true">buttonGroupRangeMarker</string>
+     </attribute>
+    </widget>
+   </item>
+   <item row="2" column="1">
+    <widget class="QLineEdit" name="lineEditRangeMarkerRadii">
+     <property name="toolTip">
+      <string>Space separated list of range ring radii.
+A range ring will be added for each radius value which can be between 0.01 and 4000 %dist%.
+Falls back to 50, 100, 200 and 500 %dist% if empty or not valid.</string>
+     </property>
+     <property name="text">
+      <string notr="true">50 100 200 500</string>
+     </property>
+     <property name="cursorPosition">
+      <number>14</number>
+     </property>
+    </widget>
+   </item>
+   <item row="15" column="0" colspan="2">
+    <widget class="QCheckBox" name="checkBoxRangeMarkerDoNotShow">
+     <property name="toolTip">
+      <string>Places a range ring with the set radii and color when shift-clicking into the map without showing this dialog.</string>
+     </property>
+     <property name="text">
+      <string>&amp;Do not show this dialog when using &quot;Shift+Click&quot; in the map
+and use range ring radii as above.</string>
+     </property>
+     <property name="checked">
+      <bool>false</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0" colspan="2">
+    <widget class="QLabel" name="labelRangeMarkerHeader">
+     <property name="frameShape">
+      <enum>QFrame::Box</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Sunken</enum>
+     </property>
+     <property name="text">
+      <string/>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="margin">
+      <number>5</number>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="17" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBoxRangeMarker">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Close|QDialogButtonBox::Help|QDialogButtonBox::Ok|QDialogButtonBox::Reset</set>
+     </property>
+    </widget>
+   </item>
+   <item row="13" column="1">
+    <spacer name="verticalSpacer">
+     <property name="orientation">
+      <enum>Qt::Vertical</enum>
+     </property>
+     <property name="sizeHint" stdset="0">
+      <size>
+       <width>20</width>
+       <height>40</height>
+      </size>
+     </property>
+    </spacer>
+   </item>
+   <item row="12" column="0" colspan="2">
+    <widget class="Line" name="line_3">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+    </widget>
+   </item>
+   <item row="11" column="1">
+    <widget class="QLabel" name="labelRangeMarkerCoordStatus">
+     <property name="text">
+      <string/>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="margin">
+      <number>5</number>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="0" colspan="2">
+    <widget class="QLabel" name="labelRangeMarkerRadii">
+     <property name="text">
+      <string>Maximum of %L1 values from %L2 to %L3 %dist%.</string>
+     </property>
+     <property name="alignment">
+      <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+     <property name="margin">
+      <number>5</number>
+     </property>
+     <property name="textInteractionFlags">
+      <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+     </property>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <tabstops>
+  <tabstop>radioButtonRangeMarkerRadii</tabstop>
+  <tabstop>lineEditRangeMarkerRadii</tabstop>
+  <tabstop>radioButtonRangeMarkerAircraft</tabstop>
+  <tabstop>lineEditRangeMarkerLabel</tabstop>
+  <tabstop>pushButtonRangeMarkerColor</tabstop>
+  <tabstop>lineEditRangeMarkerLatLon</tabstop>
+  <tabstop>checkBoxRangeMarkerDoNotShow</tabstop>
+ </tabstops>
+ <resources/>
+ <connections/>
+ <buttongroups>
+  <buttongroup name="buttonGroupRangeMarker"/>
+ </buttongroups>
+</ui>

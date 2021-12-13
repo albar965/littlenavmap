@@ -54,6 +54,12 @@ UserWaypointDialog::UserWaypointDialog(QWidget *parent, const atools::fs::pln::F
   ui->labelRouteUserWaypointHeader->setHidden(!waypointEdit);
   ui->labelRouteUserWaypointHeader2->setHidden(true /*!waypointEdit*/);
 
+  // Change label depending on order
+  if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
+    ui->labelRouteUserWaypointLatLon->setText("&Longitude and Latitude:");
+  else
+    ui->labelRouteUserWaypointLatLon->setText("&Latitude and Longitude:");
+
   if(waypointEdit)
   {
     setWindowTitle(QApplication::applicationName() + tr(" - Edit Flight Plan Position Remarks"));

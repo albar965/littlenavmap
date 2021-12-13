@@ -188,6 +188,7 @@ public:
 
   /* Update red messages at bottom of route dock window and profile dock window if altitude calculation has errors*/
   void updateErrorLabels();
+  void makeErrorLabel(QString& toolTipText, QStringList errors, const QString& header);
 
   map::MapThemeComboIndex getMapThemeIndex() const;
 
@@ -285,8 +286,14 @@ private:
   void resetMapObjectsShown();
 
   void searchSelectionChanged(const SearchBaseTable *source, int selected, int visible, int total);
+
+  /* Selection in approach view has changed */
   void procedureLegSelected(const proc::MapProcedureRef& ref);
-  void procedureSelected(const proc::MapProcedureRef& ref);
+
+  /* Selection in approach view has changed */
+  void procedureSelected(const proc::MapProcedureRef& ref); /* Single selection */
+  void proceduresSelected(const QVector<proc::MapProcedureRef>& refs); /* Multi preview for all procedures */
+  void proceduresSelectedInternal(const QVector<proc::MapProcedureRef>& refs, bool previewAll);
 
   void routeSelectionChanged(int selected, int total);
 
@@ -412,6 +419,7 @@ private:
   void debugActionTriggered4();
   void debugActionTriggered5();
   void debugActionTriggered6();
+  void debugActionTriggered7();
 
 #endif
 
@@ -493,7 +501,7 @@ private:
 
   /* Show database dialog after cleanup of obsolete databases if true */
   bool databasesErased = false;
-
+  QSize defaultToolbarIconSize;
   QString aboutMessage, layoutWarnText;
   QTimer clockTimer, renderStatusTimer;
   Marble::RenderStatus lastRenderStatus = Marble::Incomplete;

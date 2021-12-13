@@ -24,6 +24,7 @@
 
 namespace atools {
 namespace util {
+class MovingAverageTime;
 class HtmlBuilder;
 }
 
@@ -140,7 +141,7 @@ public:
   bool isDescentValid() const;
 
   /* Called from print support to get a HTML report */
-  void fuelReport(atools::util::HtmlBuilder& html, bool print = false);
+  void fuelReport(atools::util::HtmlBuilder& html, bool print, bool visible);
   void fuelReportFilepath(atools::util::HtmlBuilder& html, bool print);
 
   /* Detect format by reading the first few lines */
@@ -155,6 +156,19 @@ public:
 
   /* Calculates values based on performance profile if valid - otherwise estimated by aircraft fuel flow and speed */
   void calculateFuelAndTimeTo(FuelTimeResult& result, float distanceToDest, float distanceToNext, int activeLeg) const;
+
+  float getBlockFuel() const;
+  float getTripFuel() const;
+
+  /* Current aircraft endurance with full fuel load */
+  void getEnduranceFull(float& enduranceHours, float& enduranceNm);
+
+  /* Current aircraft endurance based on current fuel flow. This is the rolling average over ten seconds or current value. */
+  void getEnduranceCurrent(float& enduranceHours, float& enduranceNm, bool average);
+
+  /* Get collected major errors */
+  bool hasErrors() const;
+  QStringList getErrorStrings() const;
 
 signals:
   /* Sent if performance or wind has changed */
@@ -248,6 +262,11 @@ private:
   /* Timer to delay wind updates */
   QTimer windChangeTimer;
   atools::fs::sc::SimConnectData *lastSimData;
+
+  /* For a smooth endurance calculation - first value is fuel flow in PPH and second is groundspeed in KTS */
+  atools::util::MovingAverageTime *fuelFlowGroundspeedAverage;
+
+  QStringList errorTooltips;
 };
 
 #endif // LNM_AIRCRAFTPERFCONTROLLER_H

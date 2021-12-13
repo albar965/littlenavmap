@@ -17,201 +17,83 @@
 
 #include "mapgui/maplayer.h"
 
-#include "maplayer.h"
+#include "util/xmlstream.h"
+#include "mapgui/maplayer.h"
 
-MapLayer::MapLayer(float maximumRange)
+#include <QXmlStreamReader>
+
+MapLayer::MapLayer(float maximumRangeKm)
 {
-  maxRange = maximumRange;
+  maxRange = maximumRangeKm;
 }
 
-MapLayer MapLayer::clone(float maximumRange) const
+MapLayer MapLayer::clone(float maximumRangeKm) const
 {
   MapLayer retval = *this;
-  retval.maxRange = maximumRange;
+  retval.maxRange = maximumRangeKm;
   return retval;
 }
 
 bool MapLayer::hasSameQueryParametersAirport(const MapLayer *other) const
 {
-  // Either the source query changes or minimum runway length which need a new query
-  return src == other->src && layerMinRunwayLength == other->layerMinRunwayLength;
+  return minRunwayLength == other->minRunwayLength;
 }
 
 bool MapLayer::hasSameQueryParametersAirspace(const MapLayer *other) const
 {
   // Or any airspace parameter which needs a new query
-  return layerAirspaceCenter == other->layerAirspaceCenter &&
-         layerAirspaceIcao == other->layerAirspaceIcao &&
-         layerAirspaceFg == other->layerAirspaceFg &&
-         layerAirspaceFirUir == other->layerAirspaceFirUir &&
-         layerAirspaceRestricted == other->layerAirspaceRestricted &&
-         layerAirspaceSpecial == other->layerAirspaceSpecial &&
-         layerAirspaceOther == other->layerAirspaceOther;
+  return airspaceCenter == other->airspaceCenter &&
+         airspaceIcao == other->airspaceIcao &&
+         airspaceFg == other->airspaceFg &&
+         airspaceFirUir == other->airspaceFirUir &&
+         airspaceRestricted == other->airspaceRestricted &&
+         airspaceSpecial == other->airspaceSpecial &&
+         airspaceOther == other->airspaceOther;
 }
 
 bool MapLayer::hasSameQueryParametersAirwayTrack(const MapLayer *other) const
 {
-  return layerAirway == other->layerAirway && layerTrack == other->layerTrack;
+  return airway == other->airway && track == other->track;
 }
 
 bool MapLayer::hasSameQueryParametersVor(const MapLayer *other) const
 {
-  return layerVor == other->layerVor;
+  return vor == other->vor;
 }
 
 bool MapLayer::hasSameQueryParametersNdb(const MapLayer *other) const
 {
-  return layerNdb == other->layerNdb;
+  return ndb == other->ndb;
 }
 
 bool MapLayer::hasSameQueryParametersWaypoint(const MapLayer *other) const
 {
-  return layerWaypoint == other->layerWaypoint;
+  return waypoint == other->waypoint;
 }
 
 bool MapLayer::hasSameQueryParametersWind(const MapLayer *other) const
 {
-  return layerWindBarbs == other->layerWindBarbs;
+  return windBarbs == other->windBarbs;
 }
 
 bool MapLayer::hasSameQueryParametersMarker(const MapLayer *other) const
 {
-  return layerMarker == other->layerMarker;
+  return marker == other->marker;
 }
 
 bool MapLayer::hasSameQueryParametersIls(const MapLayer *other) const
 {
-  return layerIls == other->layerIls;
+  return ils == other->ils;
 }
 
 bool MapLayer::hasSameQueryParametersHolding(const MapLayer *other) const
 {
-  return layerHolding == other->layerHolding;
+  return holding == other->holding;
 }
 
 bool MapLayer::hasSameQueryParametersAirportMsa(const MapLayer *other) const
 {
-  return layerAirportMsa == other->layerAirportMsa;
-}
-
-MapLayer& MapLayer::airport(bool value)
-{
-  layerAirport = value;
-  return *this;
-}
-
-MapLayer& MapLayer::approach(bool value)
-{
-  layerApproach = value;
-  return *this;
-}
-
-MapLayer& MapLayer::approachDetail(bool value)
-{
-  layerApproachDetail = value;
-  return *this;
-}
-
-MapLayer& MapLayer::approachText(bool value)
-{
-  layerApproachText = value;
-  return *this;
-}
-
-MapLayer& MapLayer::routeTextAndDetail(bool value)
-{
-  layerRouteTextAndDetail = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airportSource(layer::AirportSource source)
-{
-  src = source;
-  return *this;
-}
-
-MapLayer& MapLayer::airportOverviewRunway(bool value)
-{
-  layerAirportOverviewRunway = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airportDiagram(bool value)
-{
-  layerAirportDiagram = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airportDiagramRunway(bool value)
-{
-  layerAirportDiagramRunway = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airportDiagramDetail(bool value)
-{
-  layerAirportDiagramDetail = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airportDiagramDetail2(bool value)
-{
-  layerAirportDiagramDetail2 = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airportDiagramDetail3(bool value)
-{
-  layerAirportDiagramDetail3 = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airportSoft(bool value)
-{
-  layerAirportSoft = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airportNoRating(bool value)
-{
-  layerAirportNoRating = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airportSymbolSize(int size)
-{
-  layerAirportSymbolSize = size;
-  return *this;
-}
-
-MapLayer& MapLayer::airportIdent(bool value)
-{
-  layerAirportIdent = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airportName(bool value)
-{
-  layerAirportName = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airportInfo(bool value)
-{
-  layerAirportInfo = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airportRouteInfo(bool value)
-{
-  layerAirportRouteInfo = value;
-  return *this;
-}
-
-MapLayer& MapLayer::minRunwayLength(int length)
-{
-  layerMinRunwayLength = length;
-  return *this;
+  return airportMsa == other->airportMsa;
 }
 
 bool MapLayer::operator<(const MapLayer& other) const
@@ -219,395 +101,302 @@ bool MapLayer::operator<(const MapLayer& other) const
   return maxRange < other.maxRange;
 }
 
-MapLayer& MapLayer::waypoint(bool value)
+void MapLayer::loadFromXml(atools::util::XmlStream& xmlStream)
 {
-  layerWaypoint = value;
-  return *this;
-}
+  QXmlStreamReader& reader = xmlStream.getReader();
 
-MapLayer& MapLayer::waypointName(bool value)
-{
-  layerWaypointName = value;
-  return *this;
-}
-
-MapLayer& MapLayer::waypointRouteName(bool value)
-{
-  layerWaypointRouteName = value;
-  return *this;
-}
-
-MapLayer& MapLayer::vor(bool value)
-{
-  layerVor = value;
-  return *this;
-}
-
-MapLayer& MapLayer::vorIdent(bool value)
-{
-  layerVorIdent = value;
-  return *this;
-}
-
-MapLayer& MapLayer::vorInfo(bool value)
-{
-  layerVorInfo = value;
-  return *this;
-}
-
-MapLayer& MapLayer::vorRouteIdent(bool value)
-{
-  layerVorRouteIdent = value;
-  return *this;
-}
-
-MapLayer& MapLayer::vorRouteInfo(bool value)
-{
-  layerVorRouteInfo = value;
-  return *this;
-}
-
-MapLayer& MapLayer::vorLarge(bool value)
-{
-  layerVorLarge = value;
-  return *this;
-}
-
-MapLayer& MapLayer::ndb(bool value)
-{
-  layerNdb = value;
-  return *this;
-}
-
-MapLayer& MapLayer::ndbIdent(bool value)
-{
-  layerNdbIdent = value;
-  return *this;
-}
-
-MapLayer& MapLayer::ndbInfo(bool value)
-{
-  layerNdbInfo = value;
-  return *this;
-}
-
-MapLayer& MapLayer::ndbRouteIdent(bool value)
-{
-  layerNdbRouteIdent = value;
-  return *this;
-}
-
-MapLayer& MapLayer::ndbRouteInfo(bool value)
-{
-  layerNdbRouteInfo = value;
-  return *this;
-}
-
-MapLayer& MapLayer::marker(bool value)
-{
-  layerMarker = value;
-  return *this;
-}
-
-MapLayer& MapLayer::markerInfo(bool value)
-{
-  layerMarkerInfo = value;
-  return *this;
-}
-
-MapLayer& MapLayer::ils(bool value)
-{
-  layerIls = value;
-  return *this;
-}
-
-MapLayer& MapLayer::ilsIdent(bool value)
-{
-  layerIlsIdent = value;
-  return *this;
-}
-
-MapLayer& MapLayer::ilsInfo(bool value)
-{
-  layerIlsInfo = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airway(bool value)
-{
-  layerAirway = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airwayWaypoint(bool value)
-{
-  layerAirwayWaypoint = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airwayIdent(bool value)
-{
-  layerAirwayIdent = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airwayInfo(bool value)
-{
-  layerAirwayInfo = value;
-  return *this;
-}
-
-MapLayer& MapLayer::track(bool value)
-{
-  layerTrack = value;
-  return *this;
-}
-
-MapLayer& MapLayer::trackWaypoint(bool value)
-{
-  layerTrackWaypoint = value;
-  return *this;
-}
-
-MapLayer& MapLayer::trackIdent(bool value)
-{
-  layerTrackIdent = value;
-  return *this;
-}
-
-MapLayer& MapLayer::trackInfo(bool value)
-{
-  layerTrackInfo = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airspaceCenter(bool value)
-{
-  layerAirspaceCenter = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airspaceIcao(bool value)
-{
-  layerAirspaceIcao = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airspaceFg(bool value)
-{
-  layerAirspaceFg = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airspaceFirUir(bool value)
-{
-  layerAirspaceFirUir = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airspaceRestricted(bool value)
-{
-  layerAirspaceRestricted = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airspaceSpecial(bool value)
-{
-  layerAirspaceSpecial = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airspaceOther(bool value)
-{
-  layerAirspaceOther = value;
-  return *this;
-}
-
-MapLayer& MapLayer::aiAircraftLarge(bool value)
-{
-  layerAiAircraftLarge = value;
-  return *this;
-}
-
-MapLayer& MapLayer::aiAircraftGround(bool value)
-{
-  layerAiAircraftGround = value;
-  return *this;
-}
-
-MapLayer& MapLayer::aiAircraftSmall(bool value)
-{
-  layerAiAircraftSmall = value;
-  return *this;
-}
-
-MapLayer& MapLayer::aiShipLarge(bool value)
-{
-  layerAiShipLarge = value;
-  return *this;
-}
-
-MapLayer& MapLayer::aiShipSmall(bool value)
-{
-  layerAiShipSmall = value;
-  return *this;
-}
-
-MapLayer& MapLayer::aiAircraftGroundText(bool value)
-{
-  layerAiAircraftGroundText = value;
-  return *this;
-}
-
-MapLayer& MapLayer::aiAircraftText(bool value)
-{
-  layerAiAircraftText = value;
-  return *this;
-}
-
-MapLayer& MapLayer::onlineAircraft(bool value)
-{
-  layerOnlineAircraft = value;
-  return *this;
-}
-
-MapLayer& MapLayer::onlineAircraftText(bool value)
-{
-  layerOnlineAircraftText = value;
-  return *this;
-}
-
-MapLayer& MapLayer::minimumAltitude(bool value)
-{
-  layerMinimumAltitude = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airportMaxTextLength(int size)
-{
-  maximumTextLengthAirport = size;
-  return *this;
-}
-
-MapLayer& MapLayer::airportWeather(bool value)
-{
-  layerAirportWeather = value;
-  return *this;
-}
-
-MapLayer& MapLayer::windBarbs(bool value)
-{
-  layerWindBarbs = value;
-  return *this;
-}
-
-MapLayer& MapLayer::windBarbsSymbolSize(int size)
-{
-  layerWindBarbsSymbolSize = size;
-  return *this;
-}
-
-MapLayer& MapLayer::aiAircraftSize(int value)
-{
-  layerAiAircraftSize = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airportWeatherDetails(bool value)
-{
-  layerAirportWeatherDetails = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airportMsa(bool value)
-{
-  layerAirportMsa = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airportMsaDetails(bool value)
-{
-  layerAirportMsaDetails = value;
-  return *this;
-}
-
-MapLayer& MapLayer::airportMsaSymbolScale(float scale)
-{
-  layerAirportMsaSymbolScale = scale;
-  return *this;
-}
-
-MapLayer& MapLayer::waypointSymbolSize(int size)
-{
-  layerWaypointSymbolSize = size;
-  return *this;
-}
-
-MapLayer& MapLayer::userpoint(bool value)
-{
-  layerUserpoint = value;
-  return *this;
-}
-
-MapLayer& MapLayer::userpointInfo(bool value)
-{
-  layerUserpointInfo = value;
-  return *this;
-}
-
-MapLayer& MapLayer::userpointSymbolSize(int size)
-{
-  layerUserpointSymbolSize = size;
-  return *this;
-}
-
-MapLayer& MapLayer::userpointMaxTextLength(int length)
-{
-  maximumTextLengthUserpoint = length;
-  return *this;
-}
-
-MapLayer& MapLayer::vorSymbolSize(int size)
-{
-  layerVorSymbolSize = size;
-  return *this;
-}
-
-MapLayer& MapLayer::ndbSymbolSize(int size)
-{
-  layerNdbSymbolSize = size;
-  return *this;
-}
-
-MapLayer& MapLayer::holding(bool value)
-{
-  layerHolding = value;
-  return *this;
-}
-
-MapLayer& MapLayer::holdingInfo(bool value)
-{
-  layerHoldingInfo = value;
-  return *this;
-}
-
-MapLayer& MapLayer::holdingInfo2(bool value)
-{
-  layerHoldingInfo2 = value;
-  return *this;
-}
-
-MapLayer& MapLayer::markerSymbolSize(int size)
-{
-  layerMarkerSymbolSize = size;
-  return *this;
+  while(xmlStream.readNextStartElement())
+  {
+    if(reader.name() == "MinRunwayLength")
+      minRunwayLength = xmlStream.readElementTextInt();
+    else if(reader.name() == "MaxRange")
+      maxRange = xmlStream.readElementTextInt();
+    else if(reader.name() == "AiAircraftGround")
+      aiAircraftGround = xmlStream.readElementTextBool();
+    else if(reader.name() == "AiAircraftGroundText")
+      aiAircraftGroundText = xmlStream.readElementTextBool();
+    else if(reader.name() == "AiAircraftLarge")
+      aiAircraftLarge = xmlStream.readElementTextBool();
+    else if(reader.name() == "AiAircraftSize")
+      aiAircraftSize = xmlStream.readElementTextInt();
+    else if(reader.name() == "AiAircraftSmall")
+      aiAircraftSmall = xmlStream.readElementTextBool();
+    else if(reader.name() == "AiAircraftText")
+      aiAircraftText = xmlStream.readElementTextBool();
+    else if(reader.name() == "AiShipLarge")
+      aiShipLarge = xmlStream.readElementTextBool();
+    else if(reader.name() == "AiShipSmall")
+      aiShipSmall = xmlStream.readElementTextBool();
+    else if(reader.name() == "Airport")
+      airport = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirportDiagram")
+      airportDiagram = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirportDiagramDetail")
+      airportDiagramDetail = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirportDiagramDetail2")
+      airportDiagramDetail2 = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirportDiagramDetail3")
+      airportDiagramDetail3 = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirportDiagramRunway")
+      airportDiagramRunway = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirportIdent")
+      airportIdent = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirportInfo")
+      airportInfo = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirportMsa")
+      airportMsa = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirportMsaDetails")
+      airportMsaDetails = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirportMsaSymbolScale")
+      airportMsaSymbolScale = xmlStream.readElementTextFloat();
+    else if(reader.name() == "AirportName")
+      airportName = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirportNoRating")
+      airportNoRating = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirportOverviewRunway")
+      airportOverviewRunway = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirportRouteInfo")
+      airportRouteInfo = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirportMinor")
+      airportMinor = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirportMinorIdent")
+      airportMinorIdent = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirportMinorInfo")
+      airportMinorInfo = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirportMinorName")
+      airportMinorName = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirportMinorSymbolSize")
+      airportMinorSymbolSize = xmlStream.readElementTextInt();
+    else if(reader.name() == "AirportSymbolSize")
+      airportSymbolSize = xmlStream.readElementTextInt();
+    else if(reader.name() == "AirportWeather")
+      airportWeather = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirportWeatherDetails")
+      airportWeatherDetails = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirspaceCenter")
+      airspaceCenter = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirspaceFg")
+      airspaceFg = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirspaceFirUir")
+      airspaceFirUir = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirspaceIcao")
+      airspaceIcao = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirspaceOther")
+      airspaceOther = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirspaceRestricted")
+      airspaceRestricted = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirspaceSpecial")
+      airspaceSpecial = xmlStream.readElementTextBool();
+    else if(reader.name() == "Airway")
+      airway = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirwayIdent")
+      airwayIdent = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirwayInfo")
+      airwayInfo = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirwayWaypoint")
+      airwayWaypoint = xmlStream.readElementTextBool();
+    else if(reader.name() == "Approach")
+      approach = xmlStream.readElementTextBool();
+    else if(reader.name() == "ApproachDetail")
+      approachDetail = xmlStream.readElementTextBool();
+    else if(reader.name() == "ApproachText")
+      approachText = xmlStream.readElementTextBool();
+    else if(reader.name() == "ApproachTextDetail")
+      approachTextDetail = xmlStream.readElementTextBool();
+    else if(reader.name() == "Holding")
+      holding = xmlStream.readElementTextBool();
+    else if(reader.name() == "HoldingInfo")
+      holdingInfo = xmlStream.readElementTextBool();
+    else if(reader.name() == "HoldingInfo2")
+      holdingInfo2 = xmlStream.readElementTextBool();
+    else if(reader.name() == "Ils")
+      ils = xmlStream.readElementTextBool();
+    else if(reader.name() == "IlsIdent")
+      ilsIdent = xmlStream.readElementTextBool();
+    else if(reader.name() == "IlsInfo")
+      ilsInfo = xmlStream.readElementTextBool();
+    else if(reader.name() == "Marker")
+      marker = xmlStream.readElementTextBool();
+    else if(reader.name() == "MarkerInfo")
+      markerInfo = xmlStream.readElementTextBool();
+    else if(reader.name() == "MarkerSymbolSize")
+      markerSymbolSize = xmlStream.readElementTextInt();
+    else if(reader.name() == "Mora")
+      mora = xmlStream.readElementTextBool();
+    else if(reader.name() == "Ndb")
+      ndb = xmlStream.readElementTextBool();
+    else if(reader.name() == "NdbIdent")
+      ndbIdent = xmlStream.readElementTextBool();
+    else if(reader.name() == "NdbInfo")
+      ndbInfo = xmlStream.readElementTextBool();
+    else if(reader.name() == "NdbRouteIdent")
+      ndbRouteIdent = xmlStream.readElementTextBool();
+    else if(reader.name() == "NdbRouteInfo")
+      ndbRouteInfo = xmlStream.readElementTextBool();
+    else if(reader.name() == "NdbSymbolSize")
+      ndbSymbolSize = xmlStream.readElementTextInt();
+    else if(reader.name() == "OnlineAircraft")
+      onlineAircraft = xmlStream.readElementTextBool();
+    else if(reader.name() == "OnlineAircraftText")
+      onlineAircraftText = xmlStream.readElementTextBool();
+    else if(reader.name() == "RouteTextAndDetail")
+      routeTextAndDetail = xmlStream.readElementTextBool();
+    else if(reader.name() == "Track")
+      track = xmlStream.readElementTextBool();
+    else if(reader.name() == "TrackIdent")
+      trackIdent = xmlStream.readElementTextBool();
+    else if(reader.name() == "TrackInfo")
+      trackInfo = xmlStream.readElementTextBool();
+    else if(reader.name() == "TrackWaypoint")
+      trackWaypoint = xmlStream.readElementTextBool();
+    else if(reader.name() == "Userpoint")
+      userpoint = xmlStream.readElementTextBool();
+    else if(reader.name() == "UserpointInfo")
+      userpointInfo = xmlStream.readElementTextBool();
+    else if(reader.name() == "UserpointSymbolSize")
+      userpointSymbolSize = xmlStream.readElementTextInt();
+    else if(reader.name() == "Vor")
+      vor = xmlStream.readElementTextBool();
+    else if(reader.name() == "VorIdent")
+      vorIdent = xmlStream.readElementTextBool();
+    else if(reader.name() == "VorInfo")
+      vorInfo = xmlStream.readElementTextBool();
+    else if(reader.name() == "VorLarge")
+      vorLarge = xmlStream.readElementTextBool();
+    else if(reader.name() == "VorRouteIdent")
+      vorRouteIdent = xmlStream.readElementTextBool();
+    else if(reader.name() == "VorRouteInfo")
+      vorRouteInfo = xmlStream.readElementTextBool();
+    else if(reader.name() == "VorSymbolSize")
+      vorSymbolSize = xmlStream.readElementTextInt();
+    else if(reader.name() == "Waypoint")
+      waypoint = xmlStream.readElementTextBool();
+    else if(reader.name() == "WaypointName")
+      waypointName = xmlStream.readElementTextBool();
+    else if(reader.name() == "WaypointRouteName")
+      waypointRouteName = xmlStream.readElementTextBool();
+    else if(reader.name() == "WaypointSymbolSize")
+      waypointSymbolSize = xmlStream.readElementTextInt();
+    else if(reader.name() == "WindBarbs")
+      windBarbs = xmlStream.readElementTextBool();
+    else if(reader.name() == "WindBarbsSymbolSize")
+      windBarbsSymbolSize = xmlStream.readElementTextInt();
+    else if(reader.name() == "MaximumTextLengthAirport")
+      maximumTextLengthAirport = xmlStream.readElementTextInt();
+    else if(reader.name() == "MaximumTextLengthAirportMinor")
+      maximumTextLengthAirportMinor = xmlStream.readElementTextInt();
+    else if(reader.name() == "MaximumTextLengthUserpoint")
+      maximumTextLengthUserpoint = xmlStream.readElementTextInt();
+    else if(reader.name() == "AirportFontScale")
+      airportFontScale = xmlStream.readElementTextFloat();
+    else if(reader.name() == "AirportMinorFontScale")
+      airportMinorFontScale = xmlStream.readElementTextFloat();
+    else if(reader.name() == "RouteFontScale")
+      routeFontScale = xmlStream.readElementTextFloat();
+    else
+      xmlStream.skipCurrentElement(true /* warn */);
+  }
 }
 
 QDebug operator<<(QDebug out, const MapLayer& record)
 {
   QDebugStateSaver saver(out);
 
-  out.nospace().noquote() << "MapLayer[" << record.maxRange << "]";
+  out.nospace().noquote();
+  out << "<Layer>" << endl;
+  out << "<AiAircraftGround>" << record.aiAircraftGround << "</AiAircraftGround>" << endl;
+  out << "<AiAircraftGroundText>" << record.aiAircraftGroundText << "</AiAircraftGroundText>" << endl;
+  out << "<AiAircraftLarge>" << record.aiAircraftLarge << "</AiAircraftLarge>" << endl;
+  out << "<AiAircraftSize>" << record.aiAircraftSize << "</AiAircraftSize>" << endl;
+  out << "<AiAircraftSmall>" << record.aiAircraftSmall << "</AiAircraftSmall>" << endl;
+  out << "<AiAircraftText>" << record.aiAircraftText << "</AiAircraftText>" << endl;
+  out << "<AiShipLarge>" << record.aiShipLarge << "</AiShipLarge>" << endl;
+  out << "<AiShipSmall>" << record.aiShipSmall << "</AiShipSmall>" << endl;
+  out << "<Airport>" << record.airport << "</Airport>" << endl;
+  out << "<AirportDiagram>" << record.airportDiagram << "</AirportDiagram>" << endl;
+  out << "<AirportDiagramDetail>" << record.airportDiagramDetail << "</AirportDiagramDetail>" << endl;
+  out << "<AirportDiagramDetail2>" << record.airportDiagramDetail2 << "</AirportDiagramDetail2>" << endl;
+  out << "<AirportDiagramDetail3>" << record.airportDiagramDetail3 << "</AirportDiagramDetail3>" << endl;
+  out << "<AirportDiagramRunway>" << record.airportDiagramRunway << "</AirportDiagramRunway>" << endl;
+  out << "<AirportFontScale>" << record.airportFontScale << "</AirportFontScale>" << endl;
+  out << "<AirportIdent>" << record.airportIdent << "</AirportIdent>" << endl;
+  out << "<AirportInfo>" << record.airportInfo << "</AirportInfo>" << endl;
+  out << "<AirportMinor>" << record.airportMinor << "</AirportMinor>" << endl;
+  out << "<AirportMinorFontScale>" << record.airportMinorFontScale << "</AirportMinorFontScale>" << endl;
+  out << "<AirportMinorIdent>" << record.airportMinorIdent << "</AirportMinorIdent>" << endl;
+  out << "<AirportMinorInfo>" << record.airportMinorInfo << "</AirportMinorInfo>" << endl;
+  out << "<AirportMinorName>" << record.airportMinorName << "</AirportMinorName>" << endl;
+  out << "<AirportMinorSymbolSize>" << record.airportMinorSymbolSize << "</AirportMinorSymbolSize>" << endl;
+  out << "<AirportMsa>" << record.airportMsa << "</AirportMsa>" << endl;
+  out << "<AirportMsaDetails>" << record.airportMsaDetails << "</AirportMsaDetails>" << endl;
+  out << "<AirportMsaSymbolScale>" << record.airportMsaSymbolScale << "</AirportMsaSymbolScale>" << endl;
+  out << "<AirportName>" << record.airportName << "</AirportName>" << endl;
+  out << "<AirportNoRating>" << record.airportNoRating << "</AirportNoRating>" << endl;
+  out << "<AirportOverviewRunway>" << record.airportOverviewRunway << "</AirportOverviewRunway>" << endl;
+  out << "<AirportRouteInfo>" << record.airportRouteInfo << "</AirportRouteInfo>" << endl;
+  out << "<AirportSymbolSize>" << record.airportSymbolSize << "</AirportSymbolSize>" << endl;
+  out << "<AirportWeather>" << record.airportWeather << "</AirportWeather>" << endl;
+  out << "<AirportWeatherDetails>" << record.airportWeatherDetails << "</AirportWeatherDetails>" << endl;
+  out << "<AirspaceCenter>" << record.airspaceCenter << "</AirspaceCenter>" << endl;
+  out << "<AirspaceFg>" << record.airspaceFg << "</AirspaceFg>" << endl;
+  out << "<AirspaceFirUir>" << record.airspaceFirUir << "</AirspaceFirUir>" << endl;
+  out << "<AirspaceIcao>" << record.airspaceIcao << "</AirspaceIcao>" << endl;
+  out << "<AirspaceOther>" << record.airspaceOther << "</AirspaceOther>" << endl;
+  out << "<AirspaceRestricted>" << record.airspaceRestricted << "</AirspaceRestricted>" << endl;
+  out << "<AirspaceSpecial>" << record.airspaceSpecial << "</AirspaceSpecial>" << endl;
+  out << "<Airway>" << record.airway << "</Airway>" << endl;
+  out << "<AirwayIdent>" << record.airwayIdent << "</AirwayIdent>" << endl;
+  out << "<AirwayInfo>" << record.airwayInfo << "</AirwayInfo>" << endl;
+  out << "<AirwayWaypoint>" << record.airwayWaypoint << "</AirwayWaypoint>" << endl;
+  out << "<Approach>" << record.approach << "</Approach>" << endl;
+  out << "<ApproachDetail>" << record.approachDetail << "</ApproachDetail>" << endl;
+  out << "<ApproachText>" << record.approachText << "</ApproachText>" << endl;
+  out << "<ApproachTextDetail>" << record.approachTextDetail << "</ApproachTextDetail>" << endl;
+  out << "<Holding>" << record.holding << "</Holding>" << endl;
+  out << "<HoldingInfo>" << record.holdingInfo << "</HoldingInfo>" << endl;
+  out << "<HoldingInfo2>" << record.holdingInfo2 << "</HoldingInfo2>" << endl;
+  out << "<Ils>" << record.ils << "</Ils>" << endl;
+  out << "<IlsIdent>" << record.ilsIdent << "</IlsIdent>" << endl;
+  out << "<IlsInfo>" << record.ilsInfo << "</IlsInfo>" << endl;
+  out << "<Marker>" << record.marker << "</Marker>" << endl;
+  out << "<MarkerInfo>" << record.markerInfo << "</MarkerInfo>" << endl;
+  out << "<MarkerSymbolSize>" << record.markerSymbolSize << "</MarkerSymbolSize>" << endl;
+  out << "<MaxRange>" << record.maxRange << "</MaxRange>" << endl;
+  out << "<MaximumTextLengthAirport>" << record.maximumTextLengthAirport << "</MaximumTextLengthAirport>" << endl;
+  out << "<MaximumTextLengthAirportMinor>" << record.maximumTextLengthAirportMinor << "</MaximumTextLengthAirportMinor>" << endl;
+  out << "<MaximumTextLengthUserpoint>" << record.maximumTextLengthUserpoint << "</MaximumTextLengthUserpoint>" << endl;
+  out << "<MinRunwayLength>" << record.minRunwayLength << "</MinRunwayLength>" << endl;
+  out << "<Mora>" << record.mora << "</Mora>" << endl;
+  out << "<Ndb>" << record.ndb << "</Ndb>" << endl;
+  out << "<NdbIdent>" << record.ndbIdent << "</NdbIdent>" << endl;
+  out << "<NdbInfo>" << record.ndbInfo << "</NdbInfo>" << endl;
+  out << "<NdbRouteIdent>" << record.ndbRouteIdent << "</NdbRouteIdent>" << endl;
+  out << "<NdbRouteInfo>" << record.ndbRouteInfo << "</NdbRouteInfo>" << endl;
+  out << "<NdbSymbolSize>" << record.ndbSymbolSize << "</NdbSymbolSize>" << endl;
+  out << "<OnlineAircraft>" << record.onlineAircraft << "</OnlineAircraft>" << endl;
+  out << "<OnlineAircraftText>" << record.onlineAircraftText << "</OnlineAircraftText>" << endl;
+  out << "<RouteTextAndDetail>" << record.routeTextAndDetail << "</RouteTextAndDetail>" << endl;
+  out << "<Track>" << record.track << "</Track>" << endl;
+  out << "<TrackIdent>" << record.trackIdent << "</TrackIdent>" << endl;
+  out << "<TrackInfo>" << record.trackInfo << "</TrackInfo>" << endl;
+  out << "<TrackWaypoint>" << record.trackWaypoint << "</TrackWaypoint>" << endl;
+  out << "<Userpoint>" << record.userpoint << "</Userpoint>" << endl;
+  out << "<UserpointInfo>" << record.userpointInfo << "</UserpointInfo>" << endl;
+  out << "<UserpointSymbolSize>" << record.userpointSymbolSize << "</UserpointSymbolSize>" << endl;
+  out << "<Vor>" << record.vor << "</Vor>" << endl;
+  out << "<VorIdent>" << record.vorIdent << "</VorIdent>" << endl;
+  out << "<VorInfo>" << record.vorInfo << "</VorInfo>" << endl;
+  out << "<VorLarge>" << record.vorLarge << "</VorLarge>" << endl;
+  out << "<VorRouteIdent>" << record.vorRouteIdent << "</VorRouteIdent>" << endl;
+  out << "<VorRouteInfo>" << record.vorRouteInfo << "</VorRouteInfo>" << endl;
+  out << "<VorSymbolSize>" << record.vorSymbolSize << "</VorSymbolSize>" << endl;
+  out << "<Waypoint>" << record.waypoint << "</Waypoint>" << endl;
+  out << "<WaypointName>" << record.waypointName << "</WaypointName>" << endl;
+  out << "<WaypointRouteName>" << record.waypointRouteName << "</WaypointRouteName>" << endl;
+  out << "<WaypointSymbolSize>" << record.waypointSymbolSize << "</WaypointSymbolSize>" << endl;
+  out << "<WindBarbs>" << record.windBarbs << "</WindBarbs>" << endl;
+  out << "<WindBarbsSymbolSize>" << record.windBarbsSymbolSize << "</WindBarbsSymbolSize>" << endl;
+  out << "</Layer>" << endl;
 
   return out;
 }

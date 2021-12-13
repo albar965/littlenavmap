@@ -150,7 +150,7 @@ void UnitStringTool::update(WidgetData& widgetData, bool save, bool fuelAsVolume
     b->setText(Unit::replacePlaceholders(widgetData.texts.first(), fuelAsVolume, unit));
   }
   else
-    qWarning() << "Found unsupported widet type in save" << widget->metaObject()->className();
+    qWarning() << "Found unsupported widget type in save" << widget->metaObject()->className();
 
   updateBase(widgetData, save, fuelAsVolume, unit);
 }

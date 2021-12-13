@@ -60,6 +60,7 @@ class WeatherReporter;
 class WebController;
 class WindReporter;
 class MapMarkHandler;
+class MapAirportHandler;
 class TrackManager;
 
 namespace atools {
@@ -232,8 +233,6 @@ public:
 
   /* Selected navdatabase in menu */
   static bool isNavdataAll();
-  static bool isNavdataMixed();
-  static bool isNavdataOff();
 
   static OptionsDialog *getOptionsDialog();
 
@@ -247,6 +246,8 @@ public:
   static bool hasSidStarInDatabase();
   static bool hasRouteTypeInDatabase();
   static bool hasDataInDatabase();
+
+  static void logDatabaseMeta();
 
   /* Simulator scenery data */
   static atools::sql::SqlDatabase *getDatabaseSim();
@@ -368,12 +369,13 @@ public:
   static map::MapWeatherSource getMapWeatherSource();
   static bool isMapWeatherShown();
 
-  static const QString& getRouteFilepath();
+  static const QString& getCurrentRouteFilepath();
   static const QString& getCurrentAircraftPerfFilepath();
 
   static WebController *getWebController();
 
   static MapMarkHandler *getMapMarkHandler();
+  static MapAirportHandler *getMapAirportHandler();
 
   static void showFlightPlan();
   static void showRouteCalc();
@@ -400,6 +402,7 @@ private:
   static atools::fs::common::MoraReader *moraReader;
   static UserdataController *userdataController;
   static MapMarkHandler *mapMarkHandler;
+  static MapAirportHandler *mapAirportHandler;
   static LogdataController *logdataController;
   static OnlinedataController *onlinedataController;
   static TrackController *trackController;

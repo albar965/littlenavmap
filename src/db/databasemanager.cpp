@@ -471,7 +471,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
         result = atools::gui::Dialog(mainWindow).showQuestionMsgBox(
           lnm::ACTIONS_SHOW_OVERWRITE_DATABASE,
           tr("Your current navdata is older than the navdata included in the Little Navmap download archive.<br/><br/>"
-             "Overwrite your current navdata file with the new one?"
+             "Overwrite the current navdata file with the new one?"
              "<hr/>Current file to overwrite:<br/><br/>"
              "<i>%1<br/><br/>"
              "%2, cycle %3, compiled on %4</i>"

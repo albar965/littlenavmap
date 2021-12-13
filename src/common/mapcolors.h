@@ -128,18 +128,16 @@ extern QPen profileSafeAltLegLinePen;
 
 /* Objects highlighted because of selection in search */
 extern QColor highlightBackColor;
-extern QColor highlightColor;
-extern QColor highlightColorFast;
 
 /* Objects highlighted because of selection in route table */
 extern QColor routeHighlightBackColor;
-extern QColor routeHighlightColor;
-extern QColor routeHighlightColorFast;
 
 /* Objects highlighted because of selection in route profile */
 extern QColor profileHighlightBackColor;
-extern QColor profileHighlightColor;
-extern QColor profileHighlightColorFast;
+
+/* Endurance and "green banana" */
+extern QPen markEndurancePen;
+extern QPen markSelectedAltitudeRangePen;
 
 /* Map print colors */
 extern QColor mapPrintRowColor;
@@ -208,23 +206,25 @@ const QPen aircraftFillPen = QPen(Qt::yellow, 4, Qt::SolidLine, Qt::RoundCap);
 const QPen aircraftGroundBackPen = QPen(Qt::darkGray, 7, Qt::SolidLine, Qt::RoundCap);
 const QPen aircraftGroundFillPen = QPen(Qt::yellow, 4, Qt::SolidLine, Qt::RoundCap);
 
-const QColor highlightApproachColor = QColor(150, 150, 255);
-const QColor highlightApproachColorFast = QColor(0, 0, 150);
+/* Procedure preview line colors */
+const QColor highlightProcedureColor = QColor(80, 80, 255);
+
+/* Use rotating colors for procedure multi preview */
+const QVector<QColor> highlightProcedureColorTable(
+  {QColor(Qt::black), QColor(Qt::red), QColor(Qt::green), QColor(Qt::blue), QColor(Qt::cyan), QColor(Qt::magenta),
+   QColor(Qt::yellow), QColor(Qt::darkRed), QColor(Qt::darkGreen), QColor(Qt::darkBlue), QColor(Qt::darkCyan), QColor(Qt::darkMagenta),
+   QColor(Qt::darkYellow) /*, QColor(Qt::white)*/, QColor(Qt::darkGray), QColor(Qt::gray) /*, QColor(Qt::lightGray)*/});
 
 /* Flight plan or userpoint cross line colors */
 const QColor mapDragColor = QColor(Qt::darkYellow);
 
 /* Flight plan line colors */
-const QColor routeOutlineColor = QColor(Qt::black);
-const QColor routeAlternateOutlineColor = QColor(Qt::darkGray);
-
-const QColor routeProcedureOutlineColor = QColor(Qt::black);
-
 const QColor routeLogEntryColor = QColor(50, 100, 255);
 const QColor routeLogEntryOutlineColor = QColor(Qt::black);
 
-const QColor routeProcedurePreviewColor = QColor(0, 180, 255);
-const QColor routeProcedurePreviewMissedColor = QColor(0, 180, 255);
+/* Procedure preview default */
+const QColor routeProcedurePreviewColor = QColor(0, 120, 230);
+const QColor routeProcedurePreviewMissedColor = QColor(0, 120, 230);
 
 /* Text along route and approach segments */
 const QColor routeTextColor = QColor(0, 0, 0);
@@ -287,6 +287,12 @@ void adjustPenForCircleToLand(QPainter *painter);
 void adjustPenForVectors(QPainter *painter);
 void adjustPenForAlternate(QPainter *painter);
 void adjustPenForManual(QPainter *painter);
+
+/* Value 0.0 (transparent) to 1.0 (opaque) */
+QColor adjustAlphaF(QColor color, float alpha);
+QPen adjustAlphaF(QPen pen, float alpha);
+
+QPen adjustWidth(QPen pen, float width);
 
 /* Scale current font in painter. Uses defaultFont as a base otherwise current font in painter. */
 void scaleFont(QPainter *painter, float scale, const QFont *defaultFont = nullptr);

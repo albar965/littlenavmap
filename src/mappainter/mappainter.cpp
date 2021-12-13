@@ -29,6 +29,7 @@
 #include "common/formatter.h"
 #include "util/paintercontextsaver.h"
 #include "common/unit.h"
+#include "common/textplacement.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoDataLinearRing.h>
@@ -81,14 +82,35 @@ textflags::TextFlags PaintContext::airportTextFlags() const
   textflags::TextFlags textflags = textflags::NONE;
 
   if(mapLayer->isAirportInfo())
-    textflags = textflags::IDENT | textflags::NAME | textflags::INFO;
+    textflags = textflags::INFO;
 
   if(mapLayer->isAirportIdent())
     textflags |= textflags::IDENT;
-  else if(mapLayer->isAirportName())
+
+  if(mapLayer->isAirportName())
     textflags |= textflags::NAME;
 
-  if(!(flags2 & opts2::MAP_AIRPORT_TEXT_BACKGROUND))
+  if(!flags2.testFlag(opts2::MAP_AIRPORT_TEXT_BACKGROUND))
+    textflags |= textflags::NO_BACKGROUND;
+
+  return textflags;
+}
+
+textflags::TextFlags PaintContext::airportTextFlagsMinor() const
+{
+  // Build and draw airport text
+  textflags::TextFlags textflags = textflags::NONE;
+
+  if(mapLayer->isAirportMinorInfo())
+    textflags = textflags::INFO;
+
+  if(mapLayer->isAirportMinorIdent())
+    textflags |= textflags::IDENT;
+
+  if(mapLayer->isAirportMinorName())
+    textflags |= textflags::NAME;
+
+  if(!flags2.testFlag(opts2::MAP_AIRPORT_TEXT_BACKGROUND))
     textflags |= textflags::NO_BACKGROUND;
 
   return textflags;
@@ -140,8 +162,7 @@ bool MapPainter::wToSBuf(const Pos& coords, int& x, int& y, QSize size, const QM
   return visible;
 }
 
-bool MapPainter::wToSBuf(const Pos& coords, float& x, float& y, QSize size, const QMargins& margins,
-                         bool *hidden) const
+bool MapPainter::wToSBuf(const Pos& coords, float& x, float& y, QSize size, const QMargins& margins, bool *hidden) const
 {
   bool hid = false;
   bool visible = wToS(coords, x, y, size, &hid);
@@ -156,10 +177,10 @@ bool MapPainter::wToSBuf(const Pos& coords, float& x, float& y, QSize size, cons
   return visible;
 }
 
-void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast,
-                             int& xtext, int& ytext)
+void MapPainter::paintArc(GeoPainter *painter, const Pos& centerPos, float radiusNm, float angleDegStart, float angleDegEnd, bool fast)
 {
-  QRect vpRect(painter->viewport());
+  if(radiusNm > atools::geo::EARTH_CIRCUMFERENCE_METER / 4.f)
+    return;
 
   // Calculate the number of points to use depending on screen resolution
   int pixel = scale->getPixelIntForMeter(nmToMeter(radiusNm));
@@ -169,8 +190,74 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
 
   int step = 360 / numPoints;
   int x1, y1, x2 = -1, y2 = -1;
-  xtext = -1;
-  ytext = -1;
+
+  // Use north endpoint of radius as start position
+  Pos startPoint = centerPos.endpoint(radiusMeter, angleDegStart);
+  Pos p1 = startPoint;
+  bool hidden1 = true, hidden2 = true;
+  wToS(p1, x1, y1, DEFAULT_WTOS_SIZE, &hidden1);
+
+  bool ringVisible = false, lastVisible = false;
+  LineString ellipse;
+  for(float angle = angleDegStart; angle <= angleDegEnd; angle += step)
+  {
+    // Line segment from p1 to p2
+    Pos p2 = centerPos.endpoint(radiusMeter, angle);
+
+    wToS(p2, x2, y2, DEFAULT_WTOS_SIZE, &hidden2);
+
+    QRect rect(QPoint(x1, y1), QPoint(x2, y2));
+    rect = rect.normalized();
+    // Avoid points or flat rectangles (lines)
+    rect.adjust(-1, -1, 1, 1);
+
+    // Current line is visible (most likely)
+    bool nowVisible = rect.intersects(painter->viewport());
+
+    if(lastVisible || nowVisible)
+      // Last line or this one are visible add coords
+      ellipse.append(p1);
+
+    if(lastVisible && !nowVisible)
+    {
+      // Not visible anymore draw previous line segment
+      drawLineString(painter, ellipse);
+      ellipse.clear();
+    }
+
+    if(lastVisible || nowVisible)
+      // At least one segment of the arc is visible
+      ringVisible = true;
+
+    x1 = x2;
+    y1 = y2;
+    hidden1 = hidden2;
+    p1 = p2;
+    lastVisible = nowVisible;
+  }
+
+  if(ringVisible && !ellipse.isEmpty())
+  {
+    ellipse.append(centerPos.endpoint(radiusMeter, angleDegEnd));
+    drawLineString(painter, ellipse);
+  }
+}
+
+void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos)
+{
+  if(radiusNm > atools::geo::EARTH_CIRCUMFERENCE_METER / 4.f)
+    return;
+
+  // Calculate the number of points to use depending on screen resolution
+  int pixel = scale->getPixelIntForMeter(nmToMeter(radiusNm));
+  int numPoints = std::min(std::max(pixel / (fast ? 20 : 2), CIRCLE_MIN_POINTS), CIRCLE_MAX_POINTS);
+
+  float radiusMeter = nmToMeter(radiusNm);
+
+  int step = 360 / numPoints;
+  int x1, y1, x2 = -1, y2 = -1;
+  if(textPos != nullptr)
+    *textPos = QPoint(0, 0);
 
   QVector<int> xtexts;
   QVector<int> ytexts;
@@ -197,7 +284,7 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
     rect.adjust(-1, -1, 1, 1);
 
     // Current line is visible (most likely)
-    bool nowVisible = rect.intersects(vpRect);
+    bool nowVisible = rect.intersects(painter->viewport());
 
     if(lastVisible || nowVisible)
       // Last line or this one are visible add coords
@@ -215,13 +302,16 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
       // At least one segment of the ring is visible
       ringVisible = true;
 
-      if((visible1 || visible2) && !hidden1 && !hidden2)
+      if(textPos != nullptr)
       {
-        if(visible1 && visible2)
+        if((visible1 || visible2) && !hidden1 && !hidden2)
         {
-          // Remember visible positions for the text (center of the line segment)
-          xtexts.append((x1 + x2) / 2);
-          ytexts.append((y1 + y2) / 2);
+          if(visible1 && visible2)
+          {
+            // Remember visible positions for the text (center of the line segment)
+            xtexts.append((x1 + x2) / 2);
+            ytexts.append((y1 + y2) / 2);
+          }
         }
       }
     }
@@ -242,16 +332,13 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
       drawLineString(painter, ellipse);
     }
 
-    if(!xtexts.isEmpty() && !ytexts.isEmpty())
+    if(textPos != nullptr)
     {
-      // Take the position at one third of the visible text points to avoid half hidden texts
-      xtext = xtexts.at(xtexts.size() / 3);
-      ytext = ytexts.at(ytexts.size() / 3);
-    }
-    else
-    {
-      xtext = -1;
-      ytext = -1;
+      if(!xtexts.isEmpty() && !ytexts.isEmpty())
+        // Take the position at one third of the visible text points to avoid half hidden texts
+        *textPos = QPoint(xtexts.at(xtexts.size() / 3), ytexts.at(ytexts.size() / 3));
+      else
+        *textPos = QPoint(0, 0);
     }
   }
 }
@@ -282,9 +369,9 @@ void MapPainter::drawLine(QPainter *painter, const QLineF& line)
   }
 }
 
-void MapPainter::drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos& center, int radius)
+void MapPainter::drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos& center, float radius)
 {
-  QPoint pt = wToS(center);
+  QPointF pt = wToSF(center);
   if(!pt.isNull())
     painter->drawEllipse(pt, radius, radius);
 }
@@ -629,21 +716,11 @@ void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y,
 QPolygonF MapPainter::buildArrow(float size, bool downwards)
 {
   if(downwards)
-  {
     // Pointing downwards
-    return QPolygonF({QPointF(0., size),
-                      QPointF(size, -size),
-                      QPointF(0., -size / 2.),
-                      QPointF(-size, -size)});
-  }
+    return QPolygonF({QPointF(0., size), QPointF(size, -size), QPointF(0., -size / 2.), QPointF(-size, -size)});
   else
-  {
     // Point up
-    return QPolygonF({QPointF(0., -size),
-                      QPointF(size, size),
-                      QPointF(0., size / 2.),
-                      QPointF(-size, size)});
-  }
+    return QPolygonF({QPointF(0., -size), QPointF(size, size), QPointF(0., size / 2.), QPointF(-size, size)});
 }
 
 void MapPainter::paintArrowAlongLine(QPainter *painter, const atools::geo::Line& line, const QPolygonF& arrow, float pos, float minLengthPx)
@@ -682,45 +759,20 @@ void MapPainter::paintArrowAlongLine(QPainter *painter, const QLineF& line, cons
 
 bool MapPainter::sortAirportFunction(const PaintAirportType& pap1, const PaintAirportType& pap2)
 {
-  const OptionData& od = OptionData::instance();
-
   // returns ​true if the first argument is less than (i.e. is ordered before) the second.
   // ">" puts true behind
-  const map::MapAirport *ap1 = pap1.airport, *ap2 = pap2.airport;
-  bool addon = context->objectTypes.testFlag(map::AIRPORT_ADDON);
+  const OptionData& od = OptionData::instance();
+  bool addonFlag = context->objectTypes.testFlag(map::AIRPORT_ADDON);
+  bool empty3dFlag = od.getFlags2().testFlag(opts2::MAP_EMPTY_AIRPORTS_3D);
+  bool emptyFlag = od.getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS);
+  int priority1 = pap1.airport->paintPriority(addonFlag, emptyFlag, empty3dFlag);
+  int priority2 = pap2.airport->paintPriority(addonFlag, emptyFlag, empty3dFlag);
 
-  if(!addon || ap1->addon() == ap2->addon()) // no force addon or both are equal - look at more attributes
-  {
-    if(ap1->emptyDraw(od) == ap2->emptyDraw(od)) // Draw empty on bottom
-    {
-      if(ap1->waterOnly() == ap2->waterOnly()) // Then water
-      {
-        if(ap1->helipadOnly() == ap2->helipadOnly()) // Then heliports
-        {
-          if(ap1->softOnly() == ap2->softOnly()) // Soft airports
-          {
-            if(ap1->longestRunwayLength == ap2->longestRunwayLength)
-              // Use id to get a fixed order and avoid flickering
-              return ap1->id < ap2->id;
-            else
-              return ap1->longestRunwayLength < ap2->longestRunwayLength;
-            // Larger value to end of list - drawn on top
-          }
-          else
-            return ap1->softOnly() > ap2->softOnly(); // Larger value to top of list - drawn below all
-        }
-        else
-          return ap1->helipadOnly() > ap2->helipadOnly();
-      }
-      else
-        return ap1->waterOnly() > ap2->waterOnly();
-    }
-    else
-      return ap1->emptyDraw(od) > ap2->emptyDraw(od);
-  }
+  if(priority1 == priority2)
+    return pap1.airport->id < pap2.airport->id;
   else
-    // Put addon in front
-    return ap1->addon() < ap2->addon();
+    // Smaller priority: Draw first below all other. Higher priority: Draw last on top of other
+    return priority1 < priority2;
 }
 
 void MapPainter::initQueries()
@@ -742,7 +794,117 @@ void MapPainter::getPixmap(QPixmap& pixmap, const QString& resource, int size)
     pixmap = *pixmapPtr;
 }
 
-void MapPainter::paintHoldings(const QList<map::MapHolding>& holdings, bool user, bool drawFast)
+void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool user, bool drawFast)
+{
+  Q_UNUSED(user)
+
+  if(airportMsa.isEmpty())
+    return;
+
+  atools::util::PainterContextSaver saver(context->painter);
+  GeoPainter *painter = context->painter;
+
+  for(const map::MapAirportMsa& msa:airportMsa)
+  {
+    float x, y;
+    bool msaVisible = wToS(msa.position, x, y, scale->getScreeenSizeForRect(msa.bounding));
+
+    if(!msaVisible)
+      // Check bounding rect for visibility
+      msaVisible = msa.bounding.overlaps(context->viewportRect);
+
+    if(msaVisible)
+    {
+      if(context->objCount())
+        return;
+
+      // Use width and style from pen but override transparency
+      QColor gridCol = context->darkMap ? mapcolors::msaDiagramLinePenDark.color() : mapcolors::msaDiagramLinePen.color();
+      gridCol.setAlphaF(1. - context->transparencyAirportMsa);
+      QPen pen = context->darkMap ? mapcolors::msaDiagramLinePenDark : mapcolors::msaDiagramLinePen;
+      pen.setColor(gridCol);
+      context->painter->setPen(pen);
+
+      // Fill color for circle
+      painter->setBrush(context->darkMap ? mapcolors::msaDiagramFillColorDark : mapcolors::msaDiagramFillColor);
+      drawPolygon(painter, msa.geometry);
+
+      TextPlacement textPlacement(painter, this, QRect());
+      QVector<atools::geo::Line> lines;
+      QStringList texts;
+
+      if(!drawFast)
+      {
+        // Skip lines if restriction is full circle
+        if(msa.altitudes.size() > 1)
+        {
+          // Draw sector bearing lines and collect geometry and texts for placement =========================
+          for(int i = 0; i < msa.bearingEndPositions.size(); i++)
+          {
+            texts.append(tr("%1%2").arg(atools::geo::normalizeCourse(msa.bearings.value(i))).arg(msa.trueBearing ? tr("°T") : tr("°M")));
+
+            atools::geo::Line line(msa.bearingEndPositions.value(i), msa.position);
+            lines.append(line);
+            drawLine(painter, line);
+          }
+        }
+
+        // Do not use transparency but override from options
+        QColor textCol = context->darkMap ? mapcolors::msaDiagramNumberColorDark : mapcolors::msaDiagramNumberColor;
+        textCol.setAlphaF(1. - context->transparencyAirportMsa);
+        context->painter->setPen(textCol);
+
+        // Calculate font size from radius
+        float fontSize = scale->getPixelForNm(msa.radius) / 8.f * context->textSizeAirportMsa;
+
+        if(msa.altitudes.size() == 1)
+          // Larger font for full circle restriction
+          fontSize *= 2.f;
+
+        QFont font = context->painter->font();
+        font.setPixelSize(atools::roundToInt(fontSize));
+        context->painter->setFont(font);
+
+        // Draw altitude labels ===================================================================
+        for(int i = 0; i < msa.altitudes.size(); i++)
+        {
+          const atools::geo::Pos& labelPos = msa.labelPositions.value(i);
+
+          float xp, yp;
+          bool visible = wToS(labelPos, xp, yp, scale->getScreeenSizeForRect(msa.bounding));
+
+          if(visible)
+          {
+            QString text = Unit::altFeet(msa.altitudes.at(i), true /* addUnit */, true /* narrow */);
+            QSizeF txtsize = painter->fontMetrics().boundingRect(text).size();
+            painter->drawText(QPointF(xp - txtsize.width() / 2., yp + txtsize.height() / 2.), text);
+          }
+        }
+      }
+
+      {
+        atools::util::PainterContextSaver saverCenter(painter);
+
+        painter->setFont(context->defaultFont);
+        context->szFont(context->textSizeAirportMsa);
+
+        painter->setPen(context->darkMap ? mapcolors::msaDiagramLinePenDark : mapcolors::msaDiagramLinePen);
+        painter->setBrush(Qt::white);
+        painter->setBackground(Qt::white);
+        painter->setBackgroundMode(Qt::OpaqueMode);
+
+        // Draw bearing labels ==========================================================================
+        textPlacement.calculateTextAlongLines(lines, texts);
+        textPlacement.drawTextAlongLines();
+
+        // Draw small center circle ===================================================================
+        drawCircle(painter, msa.position, 4);
+      }
+    }
+  }
+}
+
+void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool user, bool drawFast)
 {
   if(holdings.isEmpty())
     return;

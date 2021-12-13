@@ -177,56 +177,61 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
         alt = 0;
       }
 
-      QSet<int> ids;
-
-      // qDebug() << rect.toString(GeoDataCoordinates::Degree);
-
-      // Get the airspace objects without geometry
-      for(const GeoDataLatLonBox& r :
-          query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+      if(query != nullptr)
       {
-        // qDebug() << r.toString(GeoDataCoordinates::Degree);
+        QSet<int> ids;
 
-        for(const QString& typeStr : typeStrings)
+        // qDebug() << rect.toString(GeoDataCoordinates::Degree);
+
+        // Get the airspace objects without geometry
+        for(const GeoDataLatLonBox& r :
+            query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
         {
-          query::bindRect(r, query);
-          query->bindValue(":type", typeStr);
+          // qDebug() << r.toString(GeoDataCoordinates::Degree);
 
-          if(alt > 0)
-            query->bindValue(":alt", alt);
-
-          // qDebug() << "==================== query" << endl << query->getFullQueryString();
-
-          query->exec();
-          while(query->next())
+          for(const QString& typeStr : typeStrings)
           {
-            // Avoid double airspaces which can happen if they cross the date boundary
-            if(ids.contains(query->valueInt("boundary_id")))
-              continue;
+            query::bindRect(r, query);
+            query->bindValue(":type", typeStr);
 
-            if(hasFirUir)
+            if(alt > 0)
+              query->bindValue(":alt", alt);
+
+            // qDebug() << "==================== query" << endl << query->getFullQueryString();
+
+            query->exec();
+            while(query->next())
             {
-              // Database has new FIR/UIR types - filter out the old deprecated centers
-              QString name = query->valueStr("name");
-              if(name.contains("(FIR)") || name.contains("(UIR)") || name.contains("(FIR/UIR)"))
+              // Avoid double airspaces which can happen if they cross the date boundary
+              if(ids.contains(query->valueInt("boundary_id")))
                 continue;
+
+              if(hasFirUir)
+              {
+                // Database has new FIR/UIR types - filter out the old deprecated centers
+                QString name = query->valueStr("name");
+                if(name.contains("(FIR)") || name.contains("(UIR)") || name.contains("(FIR/UIR)"))
+                  continue;
+              }
+
+              map::MapAirspace airspace;
+              mapTypesFactory->fillAirspace(query->record(), airspace, source);
+              airspaceCache.list.append(airspace);
+
+              ids.insert(airspace.id);
             }
-
-            map::MapAirspace airspace;
-            mapTypesFactory->fillAirspace(query->record(), airspace, source);
-            airspaceCache.list.append(airspace);
-
-            ids.insert(airspace.id);
           }
         }
-      }
 
-      // Sort by importance
-      std::sort(airspaceCache.list.begin(), airspaceCache.list.end(),
-                [](const map::MapAirspace& airspace1, const map::MapAirspace& airspace2) -> bool
-      {
-        return map::airspaceDrawingOrder(airspace1.type) < map::airspaceDrawingOrder(airspace2.type);
-      });
+        // Sort by importance
+        std::sort(airspaceCache.list.begin(), airspaceCache.list.end(),
+                  [](const map::MapAirspace& airspace1, const map::MapAirspace& airspace2) -> bool
+        {
+          return map::airspaceDrawingOrder(airspace1.type) < map::airspaceDrawingOrder(airspace2.type);
+        });
+      }
+      else
+        qWarning() << Q_FUNC_INFO << "query is null";
     }
   }
   overflow = airspaceCache.validate(queryMaxRows);

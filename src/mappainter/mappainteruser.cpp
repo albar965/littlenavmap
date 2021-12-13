@@ -54,16 +54,16 @@ void MapPainterUser::render()
 
   atools::util::PainterContextSaver saver(context->painter);
 
-  context->szFont(context->textSizeNavaid);
+  context->szFont(context->textSizeUserpoint);
 
   // Always call paint to fill cache
   paintUserpoints(mapQuery->getUserdataPoints(curBox, context->userPointTypes, context->userPointTypesAll,
-                                              context->userPointTypeUnknown, context->distance), context->drawFast);
+                                              context->userPointTypeUnknown, context->distanceNm), context->drawFast);
 }
 
 void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool drawFast)
 {
-  bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
+  bool fill = context->flags2 & opts2::MAP_USERPOINT_TEXT_BACKGROUND;
   UserdataIcons *icons = NavApp::getUserdataIcons();
 
   // Use margins for text placed on the right side of the object to avoid disappearing at the left screen border
@@ -81,16 +81,15 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
       if(icons->hasType(userpoint.type) || context->userPointTypeUnknown)
       {
 
-        float size = context->sz(context->symbolSizeNavaid, context->mapLayer->getUserPointSymbolSize());
+        float size = context->sz(context->symbolSizeUserpoint, context->mapLayer->getUserPointSymbolSize());
         if(userpoint.type == "Logbook")
         {
           x += size / 2.f;
           y += size / 2.f;
         }
 
-        if(x < INVALID_INDEX_VALUE / 2 && y < INVALID_INDEX_VALUE / 2)
-          context->painter->drawPixmap(QPointF(x - size / 2.f, y - size / 2.f),
-                                       *icons->getIconPixmap(userpoint.type, atools::roundToInt(size)));
+        context->painter->drawPixmap(QPointF(x - size / 2.f, y - size / 2.f),
+                                     *icons->getIconPixmap(userpoint.type, atools::roundToInt(size)));
 
         if(context->mapLayer->isUserpointInfo() && !drawFast)
         {
@@ -99,13 +98,11 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
           // Avoid showing same text twice
           QStringList texts;
           texts.append(atools::elideTextShort(userpoint.ident, maxTextLength));
-          QString name = userpoint.name != userpoint.ident ?
-                         atools::elideTextShort(userpoint.name, maxTextLength) : QString();
+          QString name = userpoint.name != userpoint.ident ? atools::elideTextShort(userpoint.name, maxTextLength) : QString();
           if(!name.isEmpty())
             texts.append(name);
 
-          symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black),
-                                  x + size / 2, y, textatt::LEFT, fill ? 255 : 0);
+          symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), x + size / 2, y, textatt::LEFT, fill ? 255 : 0);
         }
       }
     }

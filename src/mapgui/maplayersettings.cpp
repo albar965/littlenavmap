@@ -17,12 +17,35 @@
 
 #include "mapgui/maplayersettings.h"
 
+#include "common/constants.h"
+#include "exception.h"
+#include "settings/settings.h"
+#include "util/filesystemwatcher.h"
+#include "util/xmlstream.h"
+
 #include <algorithm>
 #include <functional>
 
-MapLayerSettings::MapLayerSettings()
-{
+#include <QFileInfo>
+#include <QWidget>
+#include <QXmlStreamReader>
 
+MapLayerSettings::MapLayerSettings(bool verbose)
+{
+  fileWatcher = new atools::util::FileSystemWatcher(this, verbose);
+  fileWatcher->setMinFileSize(100);
+  connect(fileWatcher, &atools::util::FileSystemWatcher::fileUpdated, this, &MapLayerSettings::reloadFromUpdate);
+}
+
+MapLayerSettings::~MapLayerSettings()
+{
+  delete fileWatcher;
+}
+
+void MapLayerSettings::connectMapSettingsUpdated(QWidget *mapWidget)
+{
+  // Update widget on file change
+  connect(this, &MapLayerSettings::mapSettingsChanged, mapWidget, QOverload<>::of(&QWidget::update));
 }
 
 MapLayerSettings& MapLayerSettings::append(const MapLayer& layer)
@@ -31,17 +54,25 @@ MapLayerSettings& MapLayerSettings::append(const MapLayer& layer)
   return *this;
 }
 
+MapLayer MapLayerSettings::cloneLast(float maximumRangeKm) const
+{
+  if(layers.isEmpty())
+    return MapLayer(maximumRangeKm);
+  else
+    return layers.last().clone(maximumRangeKm);
+}
+
 void MapLayerSettings::finishAppend()
 {
   std::sort(layers.begin(), layers.end());
 }
 
-const MapLayer *MapLayerSettings::getLayer(float distance, int detailFactor) const
+const MapLayer *MapLayerSettings::getLayer(float distanceKm, int detailFactor) const
 {
   using namespace std::placeholders;
 
   // Get the layer with the next lowest zoom distance
-  QList<MapLayer>::const_iterator it = std::lower_bound(layers.begin(), layers.end(), distance,
+  QList<MapLayer>::const_iterator it = std::lower_bound(layers.begin(), layers.end(), distanceKm,
                                                         std::bind(&MapLayerSettings::compare, this, _1, _2));
 
   // Adjust iterator for detail level changes
@@ -59,6 +90,91 @@ const MapLayer *MapLayerSettings::getLayer(float distance, int detailFactor) con
   return &(*it);
 }
 
+void MapLayerSettings::reloadFromUpdate(const QString&)
+{
+  // Reload from file update
+  reloadFromFile();
+
+  // Update map widget
+  emit mapSettingsChanged();
+}
+
+void MapLayerSettings::reloadFromFile()
+{
+  qDebug() << Q_FUNC_INFO << filename;
+
+  QFile xmlFile(filename);
+
+  if(xmlFile.open(QIODevice::ReadOnly))
+  {
+    atools::util::XmlStream xmlStream(&xmlFile, filename);
+    loadXmlInternal(xmlStream);
+    xmlFile.close();
+  }
+  else
+    throw atools::Exception(tr("Cannot open file \"%1\". Reason: %2").arg(filename).arg(xmlFile.errorString()));
+}
+
+void MapLayerSettings::loadFromFile()
+{
+  filename = atools::settings::Settings::instance().getOverloadedPath(lnm::MAP_LAYER_CONFIG);
+
+  QFileInfo fi(filename);
+  if(!fi.exists() || !fi.isReadable())
+    throw atools::Exception(tr("Cannot open layer settings file \"%1\" for reading.").arg(filename));
+
+  reloadFromFile();
+
+  if(!filename.startsWith(":/"))
+    fileWatcher->setFilenameAndStart(filename);
+}
+
+void MapLayerSettings::loadXmlInternal(atools::util::XmlStream& xmlStream)
+{
+  QXmlStreamReader& reader = xmlStream.getReader();
+
+  layers.clear();
+  xmlStream.readUntilElement("LittleNavmap");
+  xmlStream.readUntilElement("MapLayerSettings");
+
+  MapLayer defLayer = MapLayer(0);
+
+  while(xmlStream.readNextStartElement())
+  {
+    // Read data from header =========================================
+    if(reader.name() == "Layers")
+    {
+      while(xmlStream.readNextStartElement())
+      {
+        if(reader.name() == "Layer")
+        {
+          if(xmlStream.readAttributeBool("Base"))
+          {
+            // Base layer is default for first entry
+            MapLayer layer(0);
+            layer.loadFromXml(xmlStream);
+            defLayer = layer;
+          }
+          else
+          {
+            float range = xmlStream.readAttributeFloat("MaximumRangeKm");
+
+            // First is based on default and then each is based on its predecessor
+            MapLayer layer = layers.isEmpty() ? defLayer.clone(range) : cloneLast(range);
+            layer.loadFromXml(xmlStream);
+            layers.append(layer);
+          }
+        }
+        else
+          xmlStream.skipCurrentElement(true /* warn */);
+      }
+    }
+    else
+      xmlStream.skipCurrentElement(true /* warn */);
+  }
+  finishAppend();
+}
+
 bool MapLayerSettings::compare(const MapLayer& layer, float distance) const
 {
   // The value returned indicates whether the first argument is considered to go before the second.
@@ -69,7 +185,18 @@ QDebug operator<<(QDebug out, const MapLayerSettings& record)
 {
   QDebugStateSaver saver(out);
 
-  out.nospace().noquote() << "LayerSettings[" << record.layers << "]";
+  out.nospace().noquote() << "LayerSettings[" << endl;
+
+  out << "DEFAULT ------------------------------" << endl;
+  out << MapLayer(0) << endl;
+
+  for(const MapLayer& layer : record.layers)
+  {
+    out << "------------------------------" << endl;
+    out << layer << endl;
+  }
+
+  out << "]";
 
   return out;
 }

@@ -72,8 +72,10 @@ private:
 
   template<typename TYPE>
   void buildOneTooltip(atools::util::HtmlBuilder& html, bool& overflow, int& numEntries, const QList<TYPE>& list,
-                       const HtmlInfoBuilder& info,
-                       void (HtmlInfoBuilder::*func)(const TYPE&, atools::util::HtmlBuilder&) const) const;
+                       const HtmlInfoBuilder& info, void (HtmlInfoBuilder::*func)(const TYPE&, atools::util::HtmlBuilder&) const) const;
+  template<typename TYPE>
+  void buildOneTooltipRt(atools::util::HtmlBuilder& html, bool& overflow, bool& distance, int& numEntries, const QList<TYPE>& list,
+                         const HtmlInfoBuilder& info, void (HtmlInfoBuilder::*func)(const TYPE&, atools::util::HtmlBuilder&) const) const;
 
   static Q_DECL_CONSTEXPR int MAX_LINES = 20;
 

@@ -45,21 +45,35 @@ using map::MapAirway;
 using Marble::GeoDataLineString;
 using Marble::GeoDataCoordinates;
 
+template<typename TYPE>
+void assignIdAndInsert(const QString& settingsName, QHash<int, TYPE>& hash)
+{
+  atools::settings::Settings& s = atools::settings::Settings::instance();
+
+  for(auto obj :s.valueVar(settingsName).value<QList<TYPE> >())
+  {
+    obj.id = map::getNextUserFeatureId();
+    hash.insert(obj.id, obj);
+  }
+}
+
+// ==============================================================================
+
 MapScreenIndex::MapScreenIndex(MapPaintWidget *mapPaintWidgetParam, MapPaintLayer *mapPaintLayer)
   : mapWidget(mapPaintWidgetParam), paintLayer(mapPaintLayer)
 {
   airportQuery = NavApp::getAirportQuerySim();
 
   searchHighlights = new map::MapResult;
-  approachLegHighlights = new proc::MapProcedureLeg;
-  approachHighlight = new proc::MapProcedureLegs;
+  procedureHighlight = new proc::MapProcedureLegs;
+  procedureLegHighlight = new proc::MapProcedureLeg;
 }
 
 MapScreenIndex::~MapScreenIndex()
 {
   delete searchHighlights;
-  delete approachLegHighlights;
-  delete approachHighlight;
+  delete procedureLegHighlight;
+  delete procedureHighlight;
 }
 
 void MapScreenIndex::copy(const MapScreenIndex& other)
@@ -67,15 +81,18 @@ void MapScreenIndex::copy(const MapScreenIndex& other)
   simData = other.simData;
   lastSimData = other.lastSimData;
   *searchHighlights = *other.searchHighlights;
-  *approachLegHighlights = *other.approachLegHighlights;
-  *approachHighlight = *other.approachHighlight;
+  *procedureLegHighlight = *other.procedureLegHighlight;
+  *procedureHighlight = *other.procedureHighlight;
+  procedureHighlights = other.procedureHighlights;
   airspaceHighlights = other.airspaceHighlights;
   airwayHighlights = other.airwayHighlights;
   profileHighlight = other.profileHighlight;
   routeHighlights = other.routeHighlights;
   rangeMarks = other.rangeMarks;
   distanceMarks = other.distanceMarks;
-  trafficPatterns = other.trafficPatterns;
+  patternMarks = other.patternMarks;
+  holdingMarks = other.holdingMarks;
+  msaMarks = other.msaMarks;
   routeLines = other.routeLines;
   airwayLines = other.airwayLines;
   logEntryLines = other.logEntryLines;
@@ -182,7 +199,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox
     return;
 
   // Do not put into index if nothing is drawn
-  if(mapWidget->distance() >= layer::DISTANCE_CUT_OFF_LIMIT)
+  if(mapWidget->distance() >= layer::DISTANCE_CUT_OFF_LIMIT_KM)
     return;
 
   // Get geometry from visible airspaces
@@ -204,7 +221,7 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
     return;
 
   // Do not put into index if nothing is drawn
-  if(mapWidget->distance() >= layer::DISTANCE_CUT_OFF_LIMIT)
+  if(mapWidget->distance() >= layer::DISTANCE_CUT_OFF_LIMIT_KM)
     return;
 
   const MapScale *scale = paintLayer->getMapScale();
@@ -422,14 +439,14 @@ void MapScreenIndex::updateLineScreenGeometry(QList<std::pair<int, QLine> >& ind
         {
           for(int k = 0; k < p.size() - 1; k++)
           {
-            QLine line(p.at(k).toPoint(), p.at(k + 1).toPoint());
-            QRect rect(line.p1(), line.p2());
+            QLine l(p.at(k).toPoint(), p.at(k + 1).toPoint());
+            QRect rect(l.p1(), l.p2());
             rect = rect.normalized();
             // Avoid points or flat rectangles (lines)
             rect.adjust(-1, -1, 1, 1);
 
             if(mapGeo.intersects(rect))
-              index.append(std::make_pair(id, line));
+              index.append(std::make_pair(id, l));
           }
         }
       }
@@ -441,21 +458,20 @@ void MapScreenIndex::updateLineScreenGeometry(QList<std::pair<int, QLine> >& ind
 void MapScreenIndex::saveState() const
 {
   atools::settings::Settings& s = atools::settings::Settings::instance();
-  s.setValueVar(lnm::MAP_DISTANCEMARKERS, QVariant::fromValue<QList<map::DistanceMarker> >(distanceMarks));
-  s.setValueVar(lnm::MAP_RANGEMARKERS, QVariant::fromValue<QList<map::RangeMarker> >(rangeMarks));
-  s.setValueVar(lnm::MAP_TRAFFICPATTERNS, QVariant::fromValue<QList<map::TrafficPattern> >(trafficPatterns));
-  s.setValueVar(lnm::MAP_HOLDINGS, QVariant::fromValue<QList<map::MapHolding> >(holdings));
-  s.setValueVar(lnm::MAP_AIRPORT_MSA, QVariant::fromValue<QList<map::MapAirportMsa> >(airportMsa));
+  s.setValueVar(lnm::MAP_DISTANCEMARKERS, QVariant::fromValue<QList<map::DistanceMarker> >(distanceMarks.values()));
+  s.setValueVar(lnm::MAP_RANGEMARKERS, QVariant::fromValue<QList<map::RangeMarker> >(rangeMarks.values()));
+  s.setValueVar(lnm::MAP_TRAFFICPATTERNS, QVariant::fromValue<QList<map::PatternMarker> >(patternMarks.values()));
+  s.setValueVar(lnm::MAP_HOLDINGS, QVariant::fromValue<QList<map::HoldingMarker> >(holdingMarks.values()));
+  s.setValueVar(lnm::MAP_AIRPORT_MSA, QVariant::fromValue<QList<map::MsaMarker> >(msaMarks.values()));
 }
 
 void MapScreenIndex::restoreState()
 {
-  atools::settings::Settings& s = atools::settings::Settings::instance();
-  distanceMarks = s.valueVar(lnm::MAP_DISTANCEMARKERS).value<QList<map::DistanceMarker> >();
-  rangeMarks = s.valueVar(lnm::MAP_RANGEMARKERS).value<QList<map::RangeMarker> >();
-  trafficPatterns = s.valueVar(lnm::MAP_TRAFFICPATTERNS).value<QList<map::TrafficPattern> >();
-  holdings = s.valueVar(lnm::MAP_HOLDINGS).value<QList<map::MapHolding> >();
-  airportMsa = s.valueVar(lnm::MAP_AIRPORT_MSA).value<QList<map::MapAirportMsa> >();
+  assignIdAndInsert<map::DistanceMarker>(lnm::MAP_DISTANCEMARKERS, distanceMarks);
+  assignIdAndInsert<map::RangeMarker>(lnm::MAP_RANGEMARKERS, rangeMarks);
+  assignIdAndInsert<map::PatternMarker>(lnm::MAP_TRAFFICPATTERNS, patternMarks);
+  assignIdAndInsert<map::HoldingMarker>(lnm::MAP_HOLDINGS, holdingMarks);
+  assignIdAndInsert<map::MsaMarker>(lnm::MAP_AIRPORT_MSA, msaMarks);
 }
 
 void MapScreenIndex::changeSearchHighlights(const map::MapResult& newHighlights)
@@ -463,12 +479,114 @@ void MapScreenIndex::changeSearchHighlights(const map::MapResult& newHighlights)
   *searchHighlights = newHighlights;
 }
 
-void MapScreenIndex::setApproachLegHighlights(const proc::MapProcedureLeg *leg)
+void MapScreenIndex::setProcedureHighlight(const proc::MapProcedureLegs& newHighlight)
 {
-  if(leg != nullptr)
-    *approachLegHighlights = *leg;
-  else
-    *approachLegHighlights = proc::MapProcedureLeg();
+  *procedureHighlight = newHighlight;
+}
+
+void MapScreenIndex::setProcedureLegHighlight(const proc::MapProcedureLeg& newLegHighlight)
+{
+  *procedureLegHighlight = newLegHighlight;
+}
+
+void MapScreenIndex::addRangeMark(const map::RangeMarker& obj)
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << obj.id;
+#endif
+  rangeMarks.insert(obj.id, obj);
+}
+
+void MapScreenIndex::addPatternMark(const map::PatternMarker& obj)
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << obj.id;
+#endif
+  patternMarks.insert(obj.id, obj);
+}
+
+void MapScreenIndex::addDistanceMark(const map::DistanceMarker& obj)
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << obj.id;
+#endif
+  distanceMarks.insert(obj.id, obj);
+}
+
+void MapScreenIndex::addHoldingMark(const map::HoldingMarker& obj)
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << obj.id;
+#endif
+  holdingMarks.insert(obj.id, obj);
+}
+
+void MapScreenIndex::addMsaMark(const map::MsaMarker& obj)
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << obj.id;
+#endif
+  msaMarks.insert(obj.id, obj);
+}
+
+void MapScreenIndex::removeRangeMark(int id)
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << id;
+#endif
+  rangeMarks.remove(id);
+}
+
+void MapScreenIndex::removePatternMark(int id)
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << id;
+#endif
+  patternMarks.remove(id);
+}
+
+void MapScreenIndex::removeDistanceMark(int id)
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << id;
+#endif
+  distanceMarks.remove(id);
+}
+
+void MapScreenIndex::removeHoldingMark(int id)
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << id;
+#endif
+  holdingMarks.remove(id);
+}
+
+void MapScreenIndex::removeMsaMark(int id)
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << id;
+#endif
+  msaMarks.remove(id);
+}
+
+void MapScreenIndex::clearAllMarkers()
+{
+  rangeMarks.clear();
+  distanceMarks.clear();
+  patternMarks.clear();
+  holdingMarks.clear();
+  msaMarks.clear();
+}
+
+void MapScreenIndex::updateDistanceMarkerTo(int id, const atools::geo::Pos& pos)
+{
+  distanceMarks[id].to = distanceMarks[id].position = pos;
+}
+
+void MapScreenIndex::updateDistanceMarker(int id, const map::DistanceMarker& marker)
+{
+  distanceMarks[id] = marker;
+  distanceMarks[id].id = id;
 }
 
 void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& curBox)
@@ -534,16 +652,15 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& c
   }
 }
 
-void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResult& result,
-                                   map::MapObjectQueryTypes types) const
+void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const
 {
   using maptools::insertSortedByDistance;
-
-  CoordinateConverter conv(mapWidget->viewport());
   const MapLayer *mapLayer = paintLayer->getMapLayer();
 
   if(mapLayer == nullptr)
     return;
+
+  CoordinateConverter conv(mapWidget->viewport());
 
   map::MapTypes shown = paintLayer->getShownMapObjects();
   map::MapObjectDisplayTypes shownDisplay = paintLayer->getShownMapObjectDisplayTypes();
@@ -599,8 +716,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
               // Add online network shadow aircraft from simulator to online list
               atools::fs::sc::SimConnectAircraft shadow;
               if(NavApp::getOnlinedataController()->getShadowAircraft(shadow, obj))
-                insertSortedByDistance(conv, result.onlineAircraft, &result.onlineAircraftIds, xs, ys,
-                                       map::MapOnlineAircraft(shadow));
+                insertSortedByDistance(conv, result.onlineAircraft, &result.onlineAircraftIds, xs, ys, map::MapOnlineAircraft(shadow));
 
               insertSortedByDistance(conv, result.aiAircraft, nullptr, xs, ys, map::MapAiAircraft(obj));
             }
@@ -616,13 +732,12 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
       {
         if(obj.isValid() && conv.wToS(obj.getPosition(), x, y))
           if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-            insertSortedByDistance(conv, result.onlineAircraft, &result.onlineAircraftIds, xs, ys,
-                                   map::MapOnlineAircraft(obj));
+            insertSortedByDistance(conv, result.onlineAircraft, &result.onlineAircraftIds, xs, ys, map::MapOnlineAircraft(obj));
       }
     }
   }
 
-  // Airways use a screen coordinate buffer
+  // Features with geometry using a screen coordinate buffer
   getNearestLogEntries(xs, ys, maxDistance, result);
   getNearestAirways(xs, ys, maxDistance, result);
   getNearestAirspaces(xs, ys, result);
@@ -637,19 +752,20 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
 
     // Get copies from flight plan if visible
     NavApp::getRouteConst().getNearest(conv, xs, ys, maxDistance, result, queryTypes);
-
-    // Get points of procedure preview
-    getNearestProcedureHighlights(xs, ys, maxDistance, result, types);
   }
 
-  // Get copies from highlightMapObjects
+  // Get points of procedure preview
+  if(types.testFlag(map::QUERY_PREVIEW_PROC_POINTS))
+    getNearestProcedureHighlights(xs, ys, maxDistance, result, types);
+
+  // Get copies from highlightMapObjects and marks (user features)
   getNearestHighlights(xs, ys, maxDistance, result, types);
 
   // Get objects from cache - already present objects will be skipped
   // Airway included to fetch waypoints
   map::MapTypes mapTypes = shown &
-                           (map::AIRPORT_ALL_ADDON | map::AIRPORT_MSA | map::VOR | map::NDB | map::WAYPOINT | map::MARKER | map::HOLDING |
-                            map::AIRWAYJ | map::TRACK | map::AIRWAYV | map::USERPOINT | map::LOGBOOK);
+                           (map::AIRPORT_ALL_AND_ADDON | map::AIRPORT_MSA | map::VOR | map::NDB | map::WAYPOINT | map::MARKER |
+                            map::HOLDING | map::AIRWAYJ | map::TRACK | map::AIRWAYV | map::USERPOINT | map::LOGBOOK);
 
   mapWidget->getMapQuery()->getNearestScreenObjects(conv, mapLayer, mapLayer->isAirportDiagram() &&
                                                     OptionData::instance().getDisplayOptionsAirport().
@@ -685,11 +801,11 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
   }
 }
 
-void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::MapResult& result,
-                                          map::MapObjectQueryTypes types) const
+void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const
 {
   using maptools::insertSorted;
   CoordinateConverter conv(mapWidget->viewport());
+
   insertSorted(conv, xs, ys, searchHighlights->airports, result.airports, &result.airportIds, maxDistance);
   insertSorted(conv, xs, ys, searchHighlights->vors, result.vors, &result.vorIds, maxDistance);
   insertSorted(conv, xs, ys, searchHighlights->ndbs, result.ndbs, &result.ndbIds, maxDistance);
@@ -700,110 +816,133 @@ void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::
   insertSorted(conv, xs, ys, searchHighlights->airways, result.airways, nullptr, maxDistance);
   insertSorted(conv, xs, ys, searchHighlights->ils, result.ils, nullptr, maxDistance);
   insertSorted(conv, xs, ys, searchHighlights->aiAircraft, result.aiAircraft, nullptr, maxDistance);
-  insertSorted(conv, xs, ys, searchHighlights->onlineAircraft, result.onlineAircraft, &result.onlineAircraftIds,
-               maxDistance);
+  insertSorted(conv, xs, ys, searchHighlights->onlineAircraft, result.onlineAircraft, &result.onlineAircraftIds, maxDistance);
   insertSorted(conv, xs, ys, searchHighlights->runwayEnds, result.runwayEnds, nullptr, maxDistance);
 
   // Add only if requested and visible on map
-  if(types & map::QUERY_HOLDS && NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_HOLDS)
-    insertSorted(conv, xs, ys, holdings, result.holdings, nullptr, maxDistance);
+  if(types & map::QUERY_MARK_HOLDINGS && NavApp::getMapMarkHandler()->getMarkTypes().testFlag(map::MARK_HOLDING))
+    insertSorted(conv, xs, ys, holdingMarks.values(), result.holdingMarks, nullptr, maxDistance);
 
-  if(types & map::QUERY_MSA && NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_AIRPORT_MSA)
-    insertSorted(conv, xs, ys, airportMsa, result.airportMsa, &result.airportMsaIds, maxDistance);
+  if(types & map::QUERY_MARK_MSA && NavApp::getMapMarkHandler()->getMarkTypes().testFlag(map::MARK_MSA))
+    insertSorted(conv, xs, ys, msaMarks.values(), result.msaMarks, &result.airportMsaIds, maxDistance);
 
-  if(types & map::QUERY_PATTERNS && NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_PATTERNS)
-    insertSorted(conv, xs, ys, trafficPatterns, result.trafficPatterns, nullptr, maxDistance);
+  if(types & map::QUERY_MARK_PATTERNS && NavApp::getMapMarkHandler()->getMarkTypes().testFlag(map::MARK_PATTERNS))
+    insertSorted(conv, xs, ys, patternMarks.values(), result.patternMarks, nullptr, maxDistance);
 
-  if(types & map::QUERY_RANGEMARKER && NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_RANGE_RINGS)
-    insertSorted(conv, xs, ys, rangeMarks, result.rangeMarkers, nullptr, maxDistance);
+  if(types & map::QUERY_MARK_RANGE && NavApp::getMapMarkHandler()->getMarkTypes().testFlag(map::MARK_RANGE))
+    insertSorted(conv, xs, ys, rangeMarks.values(), result.rangeMarks, nullptr, maxDistance);
+
+  if(types & map::QUERY_MARK_DISTANCE && NavApp::getMapMarkHandler()->getMarkTypes().testFlag(map::MARK_DISTANCE))
+    insertSorted(conv, xs, ys, distanceMarks.values(), result.distanceMarks, nullptr, maxDistance);
 }
 
 void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapResult& result,
                                                    map::MapObjectQueryTypes types) const
+{
+  nearestProcedureHighlightsInternal(xs, ys, maxDistance, result, types, procedureHighlights, true /* previewAll  */);
+  nearestProcedureHighlightsInternal(xs, ys, maxDistance, result, types, {*procedureHighlight}, false /* previewAll  */);
+}
+
+void MapScreenIndex::nearestProcedureHighlightsInternal(int xs, int ys, int maxDistance, map::MapResult& result,
+                                                        map::MapObjectQueryTypes types,
+                                                        const QVector<proc::MapProcedureLegs>& procedureLegs, bool previewAll) const
 {
   CoordinateConverter conv(mapWidget->viewport());
   int x, y;
 
   using maptools::insertSorted;
 
-  for(int i = 0; i < approachHighlight->size(); i++)
+  QSet<proc::MapProcedureRef> ids;
+
+  for(const proc::MapProcedureLegs& legs : procedureLegs)
   {
-    const proc::MapProcedureLeg& leg = approachHighlight->at(i);
-
-    insertSorted(conv, xs, ys, leg.navaids.airports, result.airports, &result.airportIds, maxDistance);
-    insertSorted(conv, xs, ys, leg.navaids.vors, result.vors, &result.vorIds, maxDistance);
-    insertSorted(conv, xs, ys, leg.navaids.ndbs, result.ndbs, &result.ndbIds, maxDistance);
-    insertSorted(conv, xs, ys, leg.navaids.waypoints, result.waypoints, &result.waypointIds, maxDistance);
-    insertSorted(conv, xs, ys, leg.navaids.userpoints, result.userpoints, &result.userpointIds, maxDistance);
-    insertSorted(conv, xs, ys, leg.navaids.airspaces, result.airspaces, nullptr, maxDistance);
-    insertSorted(conv, xs, ys, leg.navaids.airways, result.airways, nullptr, maxDistance);
-    insertSorted(conv, xs, ys, leg.navaids.ils, result.ils, nullptr, maxDistance);
-    insertSorted(conv, xs, ys, leg.navaids.runwayEnds, result.runwayEnds, nullptr, maxDistance);
-
-    if(types.testFlag(map::QUERY_PROC_POINTS))
+    for(int i = 0; i < legs.size(); i++)
     {
-      // No need to filter missed since this is always shown on highlight
-      if(conv.wToS(leg.line.getPos2(), x, y))
+      const proc::MapProcedureLeg& leg = legs.at(i);
+
+      if(previewAll && leg.isMissed())
+        // Multi preview does not include missed
+        continue;
+
+      proc::MapProcedureRef ref(0 /* airportId */, 0 /* runwayEndId */, leg.approachId, leg.transitionId, leg.legId, leg.mapType);
+      if(ids.contains(ref))
+        continue;
+      else
+        ids.insert(ref);
+
+      // Add navaids from procedure
+      insertSorted(conv, xs, ys, leg.navaids.airports, result.airports, &result.airportIds, maxDistance);
+      insertSorted(conv, xs, ys, leg.navaids.vors, result.vors, &result.vorIds, maxDistance);
+      insertSorted(conv, xs, ys, leg.navaids.ndbs, result.ndbs, &result.ndbIds, maxDistance);
+      insertSorted(conv, xs, ys, leg.navaids.waypoints, result.waypoints, &result.waypointIds, maxDistance);
+      insertSorted(conv, xs, ys, leg.navaids.userpoints, result.userpoints, &result.userpointIds, maxDistance);
+      insertSorted(conv, xs, ys, leg.navaids.airspaces, result.airspaces, nullptr, maxDistance);
+      insertSorted(conv, xs, ys, leg.navaids.airways, result.airways, nullptr, maxDistance);
+      insertSorted(conv, xs, ys, leg.navaids.ils, result.ils, nullptr, maxDistance);
+      insertSorted(conv, xs, ys, leg.navaids.runwayEnds, result.runwayEnds, nullptr, maxDistance);
+
+      if(types.testFlag(map::QUERY_PROC_POINTS) || types.testFlag(map::QUERY_PREVIEW_PROC_POINTS))
       {
-        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-          result.procPoints.append(proc::MapProcedurePoint(leg, true /* preview */));
+        // No need to filter missed since this is always shown on highlight
+        if(conv.wToS(leg.line.getPos2(), x, y))
+        {
+          if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+            result.procPoints.append(map::MapProcedurePoint(legs, i, -1 /* routeIndex */, true /* preview */, previewAll));
+        }
       }
     }
   }
 }
 
-int MapScreenIndex::getNearestTrafficPatternIndex(int xs, int ys, int maxDistance) const
+int MapScreenIndex::getNearestTrafficPatternId(int xs, int ys, int maxDistance) const
 {
   if(NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_PATTERNS)
-    return getNearestIndex(xs, ys, maxDistance, trafficPatterns);
+    return getNearestId(xs, ys, maxDistance, patternMarks);
   else
     return -1;
 }
 
-int MapScreenIndex::getNearestHoldIndex(int xs, int ys, int maxDistance) const
+int MapScreenIndex::getNearestHoldId(int xs, int ys, int maxDistance) const
 {
-  if(NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_HOLDS)
-    return getNearestIndex(xs, ys, maxDistance, holdings);
+  if(NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_HOLDING)
+    return getNearestId(xs, ys, maxDistance, holdingMarks);
   else
     return -1;
 }
 
-int MapScreenIndex::getNearestAirportMsaIndex(int xs, int ys, int maxDistance) const
+int MapScreenIndex::getNearestAirportMsaId(int xs, int ys, int maxDistance) const
 {
-  if(NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_AIRPORT_MSA)
-    return getNearestIndex(xs, ys, maxDistance, airportMsa);
+  if(NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_MSA)
+    return getNearestId(xs, ys, maxDistance, msaMarks);
   else
     return -1;
 }
 
-int MapScreenIndex::getNearestRangeMarkIndex(int xs, int ys, int maxDistance) const
+int MapScreenIndex::getNearestRangeMarkId(int xs, int ys, int maxDistance) const
 {
-  if(NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_RANGE_RINGS)
-    return getNearestIndex(xs, ys, maxDistance, rangeMarks);
+  if(NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_RANGE)
+    return getNearestId(xs, ys, maxDistance, rangeMarks);
   else
     return -1;
 }
 
-int MapScreenIndex::getNearestDistanceMarkIndex(int xs, int ys, int maxDistance) const
+int MapScreenIndex::getNearestDistanceMarkId(int xs, int ys, int maxDistance) const
 {
-  if(NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_MEASUREMENT)
-    return getNearestIndex(xs, ys, maxDistance, distanceMarks);
+  if(NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_DISTANCE)
+    return getNearestId(xs, ys, maxDistance, distanceMarks);
   else
     return -1;
 }
 
 template<typename TYPE>
-int MapScreenIndex::getNearestIndex(int xs, int ys, int maxDistance, const QList<TYPE>& typeList) const
+int MapScreenIndex::getNearestId(int xs, int ys, int maxDistance, const QHash<int, TYPE>& typeList) const
 {
   CoordinateConverter conv(mapWidget->viewport());
-  int index = 0;
   int x, y;
   for(const TYPE& type : typeList)
   {
     if(conv.wToS(type.getPosition(), x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < maxDistance)
-      return index;
-
-    index++;
+      return type.id;
   }
   return -1;
 }

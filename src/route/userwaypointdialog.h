@@ -20,8 +20,6 @@
 
 #include <QDialog>
 
-class QRegularExpressionValidator;
-
 namespace Ui {
 class UserWaypointDialog;
 }

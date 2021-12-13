@@ -85,9 +85,10 @@ public:
   }
 
   /* Set the flags for map objects on or off depending on value show. Does not repaint */
-  void setShowMapObjects(map::MapTypes type, bool show);
-  void setShowMapObjectsDisplay(map::MapObjectDisplayTypes type, bool show);
+  void setShowMapObject(map::MapTypes type, bool show);
+  void setShowMapObjectDisplay(map::MapObjectDisplayTypes type, bool show);
   void setShowAirspaces(map::MapAirspaceFilter types);
+  void setShowMapObjects(map::MapTypes type, map::MapTypes mask);
 
   /* Changes the detail factor (range 5-15 default is 10 */
   void setDetailFactor(int factor);
@@ -160,6 +161,22 @@ public:
 
   void initQueries();
 
+  int getShownMinimumRunwayFt() const
+  {
+    return minimumRunwayLenghtFt;
+  }
+
+  void setShowMinimumRunwayFt(int value)
+  {
+    minimumRunwayLenghtFt = value;
+  }
+
+  /* No drawing at all and not map interactions except moving and zooming if true.
+   * Limit depends on projection. */
+  bool noRender() const;
+
+  void dumpMapLayers() const;
+
 private:
   void initMapLayerSettings();
   void updateLayers();
@@ -180,6 +197,8 @@ private:
   map::MapAirspaceFilter airspaceTypes;
   map::MapWeatherSource weatherSource = map::WEATHER_SOURCE_SIMULATOR;
   map::MapSunShading sunShading = map::SUN_SHADING_SIMULATOR_TIME;
+
+  int minimumRunwayLenghtFt = 0;
 
   /* Default detail factor. Range is from 5 to 15 */
   int detailFactor = 10;
@@ -209,6 +228,7 @@ private:
   MapLayerSettings *layers = nullptr;
   MapPaintWidget *mapWidget = nullptr;
   const MapLayer *mapLayer = nullptr, *mapLayerRoute = nullptr, *mapLayerEffective = nullptr;
+  bool verbose = false;
 
 };
 

@@ -1,0 +1,374 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LittleNavmap xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://www.littlenavmap.org/schema/lnmmaplayers.xsd">
+  <!-- ===========================================================================================
+  Units: MaximumRangeKm is the zoom distance in kilometers.
+  Sizes like "AirportSymbolSize" are screen pixel.
+  Scales like "AirportFontScale" are values that are multiplied with the stock/default object or font size.
+  Booleans values like "AirportIdent" are yes/no or true/false.
+
+  You can put a copy of this file into the Little Navmap settings folder
+  ("C:\Users\YOURUSERNAME\AppData\Roaming\ABarthel\" on Windows) to override the stock settings.
+  Little Navmap will watch the file, reload it and redraw the map when it is changed.
+
+  Using wrong settings in this file can crash or freeze the program.
+  ================================================================================================ -->
+  <MapLayerSettings>
+    <Layers>
+      <!-- ===========================================================================================
+      This is the first default layer which defines the base for all other layers.
+      All features in the default layer are enabled and derived layers disable these features step by step.
+      ================================================================================================ -->
+      <Layer Base="true">
+        <!-- AI aircraft and ship ================= -->
+        <AiAircraftGround>true</AiAircraftGround>
+        <AiAircraftGroundText>true</AiAircraftGroundText>
+        <AiAircraftLarge>true</AiAircraftLarge>
+        <AiAircraftSize>32</AiAircraftSize>
+        <AiAircraftSmall>true</AiAircraftSmall>
+        <AiAircraftText>true</AiAircraftText>
+        <AiShipLarge>true</AiShipLarge>
+        <AiShipSmall>true</AiShipSmall>
+
+        <!-- Airport ================= -->
+        <Airport>true</Airport>
+        <AirportDiagram>true</AirportDiagram>
+        <AirportDiagramDetail>true</AirportDiagramDetail>
+        <AirportDiagramDetail2>true</AirportDiagramDetail2>
+        <AirportDiagramDetail3>true</AirportDiagramDetail3>
+        <AirportDiagramRunway>true</AirportDiagramRunway>
+        <AirportFontScale>1</AirportFontScale>
+        <AirportIdent>true</AirportIdent>
+        <AirportInfo>true</AirportInfo>
+        <AirportMinor>true</AirportMinor>
+        <AirportMinorFontScale>1</AirportMinorFontScale>
+        <AirportMinorIdent>true</AirportMinorIdent>
+        <AirportMinorInfo>true</AirportMinorInfo>
+        <AirportMinorName>true</AirportMinorName>
+        <AirportMinorSymbolSize>3</AirportMinorSymbolSize>
+        <AirportMsa>true</AirportMsa>
+        <AirportMsaDetails>true</AirportMsaDetails>
+        <AirportMsaSymbolScale>6</AirportMsaSymbolScale>
+        <AirportName>true</AirportName>
+        <AirportNoRating>true</AirportNoRating>
+        <AirportOverviewRunway>true</AirportOverviewRunway>
+        <AirportRouteInfo>true</AirportRouteInfo>
+        <AirportSymbolSize>3</AirportSymbolSize>
+
+        <!-- Airport weather icons ================= -->
+        <AirportWeather>true</AirportWeather>
+        <AirportWeatherDetails>true</AirportWeatherDetails>
+
+        <!-- Airspaces ================= -->
+        <AirspaceCenter>true</AirspaceCenter>
+        <AirspaceFg>true</AirspaceFg>
+        <AirspaceFirUir>true</AirspaceFirUir>
+        <AirspaceIcao>true</AirspaceIcao>
+        <AirspaceOther>true</AirspaceOther>
+        <AirspaceRestricted>true</AirspaceRestricted>
+        <AirspaceSpecial>true</AirspaceSpecial>
+
+        <!-- Airways ================= -->
+        <Airway>true</Airway>
+        <AirwayIdent>true</AirwayIdent>
+        <AirwayInfo>true</AirwayInfo>
+        <AirwayWaypoint>true</AirwayWaypoint>
+
+        <!-- Procedures (SID, STAR and approaches) ================= -->
+        <Approach>true</Approach>
+        <ApproachDetail>true</ApproachDetail>
+        <ApproachText>true</ApproachText>
+        <ApproachTextDetail>true</ApproachTextDetail>
+
+        <!-- Enroute holdings ================= -->
+        <Holding>true</Holding>
+        <HoldingInfo>true</HoldingInfo>
+        <HoldingInfo2>true</HoldingInfo2>
+
+        <!-- ILS feathers ================= -->
+        <Ils>true</Ils>
+        <IlsIdent>true</IlsIdent>
+        <IlsInfo>true</IlsInfo>
+
+        <!-- Markers ================= -->
+        <Marker>true</Marker>
+        <MarkerInfo>true</MarkerInfo>
+        <MarkerSymbolSize>8</MarkerSymbolSize>
+
+        <!-- Maximum text length before using elide ... ================= -->
+        <MaximumTextLengthAirport>16</MaximumTextLengthAirport>
+        <MaximumTextLengthAirportMinor>16</MaximumTextLengthAirportMinor>
+        <MaximumTextLengthUserpoint>10</MaximumTextLengthUserpoint>
+
+        <!-- Minimum airport runway length -->
+        <MinRunwayLength>0</MinRunwayLength>
+
+        <!-- Show MORA grid ================= -->
+        <Mora>true</Mora>
+
+        <!-- NDB ================= -->
+        <Ndb>true</Ndb>
+        <NdbIdent>true</NdbIdent>
+        <NdbInfo>true</NdbInfo>
+        <NdbRouteIdent>true</NdbRouteIdent>
+        <NdbRouteInfo>true</NdbRouteInfo>
+        <NdbSymbolSize>4</NdbSymbolSize>
+
+        <!-- Online aircraft ================= -->
+        <OnlineAircraft>true</OnlineAircraft>
+        <OnlineAircraftText>true</OnlineAircraftText>
+
+        <!-- Flight plan details ================= -->
+        <RouteTextAndDetail>true</RouteTextAndDetail>
+        <RouteFontScale>1</RouteFontScale>
+
+        <!-- Oceaninc tracks ================= -->
+        <Track>true</Track>
+        <TrackIdent>true</TrackIdent>
+        <TrackInfo>true</TrackInfo>
+        <TrackWaypoint>true</TrackWaypoint>
+
+        <!-- Userpoints ================= -->
+        <Userpoint>true</Userpoint>
+        <UserpointInfo>true</UserpointInfo>
+        <UserpointSymbolSize>12</UserpointSymbolSize>
+
+        <!-- VOR ================= -->
+        <Vor>true</Vor>
+        <VorIdent>true</VorIdent>
+        <VorInfo>true</VorInfo>
+        <VorLarge>true</VorLarge>
+        <VorRouteIdent>true</VorRouteIdent>
+        <VorRouteInfo>true</VorRouteInfo>
+        <VorSymbolSize>3</VorSymbolSize>
+
+        <!-- Waypoints ================= -->
+        <Waypoint>true</Waypoint>
+        <WaypointName>true</WaypointName>
+        <WaypointRouteName>true</WaypointRouteName>
+        <WaypointSymbolSize>3</WaypointSymbolSize>
+
+        <!-- Wind barbs ================= -->
+        <WindBarbs>true</WindBarbs>
+        <WindBarbsSymbolSize>6</WindBarbsSymbolSize>
+      </Layer>
+      <!-- ==============================================================================
+      Layer configurations. This first one is derived from default layer above.
+      This means it receives all settings from default and modifies only a few selected ones.
+      A small "MaximumRangeKm" value means closer zoom and vice versa.
+      =================================================================================== -->
+      <Layer MaximumRangeKm="0.2">
+        <AirportMinorSymbolSize>20</AirportMinorSymbolSize>
+        <AirportMsaSymbolScale>8</AirportMsaSymbolScale>
+        <AirportSymbolSize>20</AirportSymbolSize>
+        <MarkerSymbolSize>24</MarkerSymbolSize>
+        <MaximumTextLengthAirport>30</MaximumTextLengthAirport>
+        <MaximumTextLengthAirportMinor>30</MaximumTextLengthAirportMinor>
+        <MaximumTextLengthUserpoint>30</MaximumTextLengthUserpoint>
+        <NdbSymbolSize>30</NdbSymbolSize>
+        <UserpointSymbolSize>28</UserpointSymbolSize>
+        <VorSymbolSize>30</VorSymbolSize>
+        <WaypointSymbolSize>14</WaypointSymbolSize>
+        <WindBarbsSymbolSize>22</WindBarbsSymbolSize>
+      </Layer>
+      <!-- ==============================================================================
+      Following layers are derived from their respective predecessor, i.e. "0.3" derives from "0.2".
+      These change sizes, scales and disable (but not enable) features.
+      =================================================================================== -->
+      <Layer MaximumRangeKm="0.3">
+        <AirportDiagramDetail3>false</AirportDiagramDetail3>
+        <AirportMsaSymbolScale>7</AirportMsaSymbolScale>
+        <WindBarbsSymbolSize>20</WindBarbsSymbolSize>
+      </Layer>
+      <!-- =================================================================================== -->
+      <Layer MaximumRangeKm="1">
+        <AiAircraftGroundText>false</AiAircraftGroundText>
+        <AirportDiagramDetail2>false</AirportDiagramDetail2>
+        <AirportMsaSymbolScale>6</AirportMsaSymbolScale>
+        <NdbSymbolSize>28</NdbSymbolSize>
+        <VorSymbolSize>28</VorSymbolSize>
+      </Layer>
+      <!-- =================================================================================== -->
+      <Layer MaximumRangeKm="5">
+        <AirportDiagramDetail>false</AirportDiagramDetail>
+        <AirportMsaSymbolScale>5</AirportMsaSymbolScale>
+        <MaximumTextLengthUserpoint>20</MaximumTextLengthUserpoint>
+        <NdbSymbolSize>26</NdbSymbolSize>
+        <UserpointSymbolSize>26</UserpointSymbolSize>
+        <VorSymbolSize>26</VorSymbolSize>
+        <WaypointSymbolSize>10</WaypointSymbolSize>
+        <WindBarbsSymbolSize>18</WindBarbsSymbolSize>
+      </Layer>
+      <!-- =================================================================================== -->
+      <Layer MaximumRangeKm="10">
+        <AirportDiagram>false</AirportDiagram>
+        <AirportMinorSymbolSize>18</AirportMinorSymbolSize>
+        <AirportMsaSymbolScale>4</AirportMsaSymbolScale>
+        <AirportSymbolSize>18</AirportSymbolSize>
+        <AirwayInfo>false</AirwayInfo>
+        <MarkerInfo>false</MarkerInfo>
+        <MaximumTextLengthAirport>20</MaximumTextLengthAirport>
+        <MaximumTextLengthAirportMinor>15</MaximumTextLengthAirportMinor>
+        <NdbSymbolSize>24</NdbSymbolSize>
+        <VorSymbolSize>24</VorSymbolSize>
+        <WaypointSymbolSize>8</WaypointSymbolSize>
+        <WindBarbsSymbolSize>16</WindBarbsSymbolSize>
+      </Layer>
+      <!-- =================================================================================== -->
+      <Layer MaximumRangeKm="25">
+        <AirportMsaDetails>false</AirportMsaDetails>
+        <NdbSymbolSize>22</NdbSymbolSize>
+        <UserpointSymbolSize>24</UserpointSymbolSize>
+        <VorSymbolSize>22</VorSymbolSize>
+      </Layer>
+      <!-- =================================================================================== -->
+      <Layer MaximumRangeKm="50">
+        <AiAircraftText>false</AiAircraftText>
+        <AiShipSmall>false</AiShipSmall>
+        <AirportDiagramRunway>false</AirportDiagramRunway>
+        <AirportMinorFontScale>0.9</AirportMinorFontScale>
+        <AirportMinorInfo>false</AirportMinorInfo>
+        <AirportMinorSymbolSize>16</AirportMinorSymbolSize>
+        <AirportSymbolSize>16</AirportSymbolSize>
+        <ApproachTextDetail>false</ApproachTextDetail>
+        <HoldingInfo2>false</HoldingInfo2>
+        <IlsIdent>false</IlsIdent>
+        <IlsInfo>false</IlsInfo>
+        <Marker>false</Marker>
+        <MaximumTextLengthAirport>10</MaximumTextLengthAirport>
+        <MaximumTextLengthAirportMinor>8</MaximumTextLengthAirportMinor>
+        <MaximumTextLengthUserpoint>10</MaximumTextLengthUserpoint>
+        <NdbSymbolSize>20</NdbSymbolSize>
+        <VorSymbolSize>18</VorSymbolSize>
+        <WaypointName>false</WaypointName>
+        <WaypointSymbolSize>6</WaypointSymbolSize>
+      </Layer>
+      <!-- =================================================================================== -->
+      <Layer MaximumRangeKm="100">
+        <AiAircraftGround>false</AiAircraftGround>
+        <AirportInfo>false</AirportInfo>
+        <AirportMinorFontScale>0.8</AirportMinorFontScale>
+        <AirportMinorName>false</AirportMinorName>
+        <AirportMinorSymbolSize>12</AirportMinorSymbolSize>
+        <AirportSymbolSize>14</AirportSymbolSize>
+        <AirwayIdent>false</AirwayIdent>
+        <HoldingInfo>false</HoldingInfo>
+        <NdbInfo>false</NdbInfo>
+        <NdbSymbolSize>16</NdbSymbolSize>
+        <VorInfo>false</VorInfo>
+        <VorSymbolSize>16</VorSymbolSize>
+        <WaypointSymbolSize>3</WaypointSymbolSize>
+        <WindBarbsSymbolSize>14</WindBarbsSymbolSize>
+      </Layer>
+      <!-- =================================================================================== -->
+      <Layer MaximumRangeKm="150">
+        <AirportMinorSymbolSize>10</AirportMinorSymbolSize>
+        <AirportName>false</AirportName>
+        <AirportOverviewRunway>false</AirportOverviewRunway>
+        <AirportSymbolSize>10</AirportSymbolSize>
+        <ApproachText>false</ApproachText>
+        <MaximumTextLengthUserpoint>8</MaximumTextLengthUserpoint>
+        <NdbIdent>false</NdbIdent>
+        <NdbSymbolSize>12</NdbSymbolSize>
+        <UserpointSymbolSize>22</UserpointSymbolSize>
+        <VorIdent>false</VorIdent>
+        <VorLarge>false</VorLarge>
+        <VorSymbolSize>12</VorSymbolSize>
+        <Waypoint>false</Waypoint>
+      </Layer>
+      <!-- =================================================================================== -->
+      <Layer MaximumRangeKm="250">
+        <AirportFontScale>0.9</AirportFontScale>
+        <AirportMinorIdent>false</AirportMinorIdent>
+        <AirportMinorSymbolSize>8</AirportMinorSymbolSize>
+        <AirportSymbolSize>8</AirportSymbolSize>
+        <MinRunwayLength>2000</MinRunwayLength>
+        <NdbSymbolSize>8</NdbSymbolSize>
+        <OnlineAircraftText>false</OnlineAircraftText>
+        <RouteFontScale>0.9</RouteFontScale>
+        <UserpointSymbolSize>16</UserpointSymbolSize>
+        <VorSymbolSize>8</VorSymbolSize>
+      </Layer>
+      <!-- =================================================================================== -->
+      <Layer MaximumRangeKm="400">
+        <AiAircraftSize>26</AiAircraftSize>
+        <AirportMinor>false</AirportMinor>
+        <AirportRouteInfo>false</AirportRouteInfo>
+        <AirwayWaypoint>false</AirwayWaypoint>
+        <Ils>false</Ils>
+        <MinRunwayLength>4000</MinRunwayLength>
+        <NdbSymbolSize>4</NdbSymbolSize>
+        <TrackInfo>false</TrackInfo>
+        <UserpointInfo>false</UserpointInfo>
+        <VorSymbolSize>6</VorSymbolSize>
+        <WaypointRouteName>false</WaypointRouteName>
+        <WindBarbsSymbolSize>12</WindBarbsSymbolSize>
+      </Layer>
+      <!-- =================================================================================== -->
+      <Layer MaximumRangeKm="750">
+        <AiAircraftSize>24</AiAircraftSize>
+        <AiShipLarge>false</AiShipLarge>
+        <AirportMsa>false</AirportMsa>
+        <AirportSymbolSize>8</AirportSymbolSize>
+        <AirspaceOther>false</AirspaceOther>
+        <AirspaceRestricted>false</AirspaceRestricted>
+        <AirspaceSpecial>false</AirspaceSpecial>
+        <Airway>false</Airway>
+        <Holding>false</Holding>
+        <MinRunwayLength>6000</MinRunwayLength>
+        <Ndb>false</Ndb>
+        <NdbRouteInfo>false</NdbRouteInfo>
+        <UserpointSymbolSize>12</UserpointSymbolSize>
+        <VorRouteInfo>false</VorRouteInfo>
+        <VorSymbolSize>3</VorSymbolSize>
+      </Layer>
+      <!-- =================================================================================== -->
+      <Layer MaximumRangeKm="1200">
+        <AiAircraftSize>20</AiAircraftSize>
+        <AiAircraftSmall>false</AiAircraftSmall>
+        <AirportFontScale>0.8</AirportFontScale>
+        <AirportSymbolSize>6</AirportSymbolSize>
+        <AirspaceFg>false</AirspaceFg>
+        <AirspaceIcao>false</AirspaceIcao>
+        <ApproachDetail>false</ApproachDetail>
+        <MinRunwayLength>8000</MinRunwayLength>
+        <RouteFontScale>0.8</RouteFontScale>
+        <TrackWaypoint>false</TrackWaypoint>
+        <Vor>false</Vor>
+        <WindBarbsSymbolSize>10</WindBarbsSymbolSize>
+      </Layer>
+      <!-- =================================================================================== -->
+      <Layer MaximumRangeKm="2400">
+        <AiAircraftSize>10</AiAircraftSize>
+        <AirportIdent>false</AirportIdent>
+        <AirportSymbolSize>4</AirportSymbolSize>
+        <AirportWeather>false</AirportWeather>
+        <AirportWeatherDetails>false</AirportWeatherDetails>
+        <AirspaceCenter>false</AirspaceCenter>
+        <Mora>false</Mora>
+        <NdbRouteIdent>false</NdbRouteIdent>
+        <VorRouteIdent>false</VorRouteIdent>
+        <WindBarbsSymbolSize>6</WindBarbsSymbolSize>
+      </Layer>
+      <!-- =================================================================================== -->
+      <!-- Distance cutoff limit. -->
+      <Layer MaximumRangeKm="4000">
+        <AiAircraftLarge>false</AiAircraftLarge>
+        <AirportSymbolSize>3</AirportSymbolSize>
+        <Approach>false</Approach>
+        <WindBarbs>false</WindBarbs>
+      </Layer>
+      <!-- =================================================================================== -->
+      <!-- Use very large range to always have a layer available with all drawing disabled. -->
+      <Layer MaximumRangeKm="100000">
+        <Airport>false</Airport>
+        <AirportNoRating>false</AirportNoRating>
+        <AirspaceFirUir>false</AirspaceFirUir>
+        <OnlineAircraft>false</OnlineAircraft>
+        <RouteTextAndDetail>false</RouteTextAndDetail>
+        <Track>false</Track>
+        <TrackIdent>false</TrackIdent>
+        <Userpoint>false</Userpoint>
+      </Layer>
+    </Layers>
+  </MapLayerSettings>
+</LittleNavmap>

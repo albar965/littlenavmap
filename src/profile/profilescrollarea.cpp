@@ -598,7 +598,7 @@ void ProfileScrollArea::scaleViewAll()
 
 void ProfileScrollArea::scaleView(QScrollBar *scrollBar)
 {
-  QSize size(horizScaleFactor * scrollArea->viewport()->width(), vertScaleFactor *scrollArea->viewport()->height());
+  QSize size(horizScaleFactor * scrollArea->viewport()->width(), vertScaleFactor * scrollArea->viewport()->height());
 
   // Do not update the last scroll position values by vertScrollBarChanged or horizScrollBarChanged
   noLastScrollPosUpdate = true;
@@ -685,35 +685,43 @@ void ProfileScrollArea::saveState()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  atools::gui::WidgetState(lnm::PROFILE_WINDOW_OPTIONS).save({
-    ui->splitterProfile,
-    ui->actionProfileCenterAircraft,
-    ui->actionProfileFollow,
-    ui->actionProfileShowLabels,
-    ui->actionProfileShowScrollbars,
-    ui->actionProfileShowTooltip,
-    ui->actionProfileShowZoom,
-    ui->actionProfileShowIls,
-    ui->actionProfileShowVasi
-  });
+  atools::gui::WidgetState(lnm::PROFILE_WINDOW_OPTIONS).save({ui->splitterProfile, ui->actionProfileCenterAircraft, ui->actionProfileFollow,
+                                                              ui->actionProfileShowLabels, ui->actionProfileShowScrollbars,
+                                                              ui->actionProfileShowTooltip, ui->actionProfileShowZoom,
+                                                              ui->actionProfileShowIls, ui->actionProfileShowVasi,
+                                                              ui->actionProfileShowVerticalTrack});
 }
 
 void ProfileScrollArea::restoreState()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  atools::gui::WidgetState(lnm::PROFILE_WINDOW_OPTIONS).restore({
-    ui->splitterProfile,
-    ui->actionProfileCenterAircraft,
-    ui->actionProfileFollow,
-    ui->actionProfileShowLabels,
-    ui->actionProfileShowScrollbars,
-    ui->actionProfileShowTooltip,
-    ui->actionProfileShowZoom,
-    ui->actionProfileShowIls,
-    ui->actionProfileShowVasi
-  });
+  atools::gui::WidgetState(lnm::PROFILE_WINDOW_OPTIONS).restore({ui->splitterProfile, ui->actionProfileCenterAircraft,
+                                                                 ui->actionProfileFollow, ui->actionProfileShowLabels,
+                                                                 ui->actionProfileShowScrollbars, ui->actionProfileShowTooltip,
+                                                                 ui->actionProfileShowZoom, ui->actionProfileShowIls,
+                                                                 ui->actionProfileShowVasi, ui->actionProfileShowVerticalTrack});
   ui->splitterProfile->setHandleWidth(6);
+}
+
+void ProfileScrollArea::restoreSplitter()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  atools::gui::WidgetState state(lnm::PROFILE_WINDOW_OPTIONS);
+  if(!state.contains(ui->splitterProfile))
+  {
+    // First start - splitter not saved yet
+
+    // Adjust splitter size to a reasonable value by setting size for the widget on the right
+    QList<int> sizes = ui->splitterProfile->sizes();
+
+    if(sizes.size() >= 2)
+      sizes[1] = 20; // Use minimum - will stick to widget size hints for minimum
+    ui->splitterProfile->setSizes(sizes);
+
+    // Save splitter size - user can resize freely after next start
+    state.save(ui->splitterProfile);
+  }
 }
 
 bool ProfileScrollArea::centerAircraft(const QPoint& screenPoint, float verticalSpeed)

@@ -270,7 +270,7 @@ public:
   /* SID, STAR or approach */
   bool isAnyProcedure() const
   {
-    return type & map::PROCEDURE;
+    return type.testFlag(map::PROCEDURE);
   }
 
   /* User defined waypoint */
@@ -311,6 +311,24 @@ public:
   proc::MapProcedureTypes getProcedureType() const
   {
     return procedureLeg.mapType;
+  }
+
+  /* Do not display distance e.g. for course to altitude */
+  bool noDistanceDisplay() const
+  {
+    return procedureLeg.isValid() && procedureLeg.noDistanceDisplay();
+  }
+
+  /* No course display for e.g. arc legs */
+  bool noCourseDisplay() const
+  {
+    return procedureLeg.isValid() && procedureLeg.noCourseDisplay();
+  }
+
+  /* No ident at end of manual legs */
+  bool noIdentDisplay() const
+  {
+    return procedureLeg.isValid() && procedureLeg.noIdentDisplay();
   }
 
   const atools::geo::LineString& getGeometry() const;

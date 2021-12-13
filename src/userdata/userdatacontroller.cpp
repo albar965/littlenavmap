@@ -200,29 +200,48 @@ void UserdataController::typesToActions()
 void UserdataController::saveState()
 {
   atools::settings::Settings::instance().setValue(lnm::MAP_USERDATA, selectedTypes);
+  atools::settings::Settings::instance().setValue(lnm::MAP_USERDATA_ALL, allLastFoundTypes);
   atools::settings::Settings::instance().setValue(lnm::MAP_USERDATA_UNKNOWN, selectedUnknownType);
 }
 
 void UserdataController::restoreState()
 {
+  const QStringList allTypes = getAllTypes();
+
+  // Get the list of icons found the last time which allows to identify new types and enable them per default
+  allLastFoundTypes = atools::settings::Settings::instance().valueStrList(lnm::MAP_USERDATA_ALL);
+  if(allLastFoundTypes.isEmpty())
+    allLastFoundTypes = allTypes;
+
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
   {
     atools::settings::Settings& settings = atools::settings::Settings::instance();
 
-    // Enable all as default
-    QStringList list = settings.valueStrList(lnm::MAP_USERDATA, getAllTypes());
+    // Get list of enabled. Enable all as default
+    QStringList list = settings.valueStrList(lnm::MAP_USERDATA, allTypes);
     selectedUnknownType = settings.valueBool(lnm::MAP_USERDATA_UNKNOWN, true);
 
-    // Remove all types from the restored list which were not found in the list of registered types
-    const QStringList& availableTypes = icons->getAllTypes();
+    // Remove all types from the restored list of enabled which were not found in the new list of registered types
+    // in case some were removed
     for(const QString& type : list)
     {
-      if(availableTypes.contains(type))
+      if(allTypes.contains(type))
         selectedTypes.append(type);
     }
+
+    // Now check for types that are new and not included in the last saved list and enable them
+    for(const QString& type : allTypes)
+    {
+      if(!allLastFoundTypes.contains(type))
+        selectedTypes.append(type);
+    }
+
+    allLastFoundTypes = allTypes;
   }
   else
+    // Enable all
     resetSettingsToDefault();
+
   typesToActions();
 }
 
@@ -773,8 +792,10 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
     SELECTED, APPEND, HEADER
   };
 
-  ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Userpoint Export Options"),
-                            tr("Select export options"), lnm::USERDATA_EXPORT_CHOICE_DIALOG, "USERPOINT.html");
+  atools::gui::ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Userpoint Export Options"),
+                                         tr("Select export options for userpoints"), lnm::USERDATA_EXPORT_CHOICE_DIALOG, "USERPOINT.html");
+  choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
+  choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
 
   if(appendAllowed)
     choiceDialog.addCheckBox(APPEND, tr("&Append to an already present file"),
@@ -791,11 +812,13 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
   else
     choiceDialog.addCheckBoxHidden(HEADER);
 
+  choiceDialog.addSpacer();
+
   choiceDialog.restoreState();
 
   choiceDialog.getCheckBox(HEADER)->setDisabled(choiceDialog.isChecked(APPEND));
-  ChoiceDialog *dlgPtr = &choiceDialog;
-  connect(&choiceDialog, &ChoiceDialog::checkBoxToggled, this, [dlgPtr](int id, bool checked) {
+  atools::gui::ChoiceDialog *dlgPtr = &choiceDialog;
+  connect(&choiceDialog, &atools::gui::ChoiceDialog::checkBoxToggled, this, [dlgPtr](int id, bool checked) {
     if(id == APPEND)
       dlgPtr->getCheckBox(HEADER)->setDisabled(checked);
   });

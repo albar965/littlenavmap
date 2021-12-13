@@ -22,9 +22,9 @@
 #include <QDebug>
 #include <QFont>
 #include <QFontDatabase>
+#include <QSize>
 
 OptionData *OptionData::optionData = nullptr;
-const QVector<float> OptionData::MAP_RANGERINGS_DEFAULT({50.f, 100.f, 200.f, 500.f});
 
 const QString OptionData::WEATHER_NOAA_DEFAULT_URL =
   "https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT";
@@ -143,6 +143,11 @@ QFont OptionData::getGuiFont() const
   else
     font = QFontDatabase::systemFont(QFontDatabase::GeneralFont);
   return font;
+}
+
+QSize OptionData::getGuiToolbarSize() const
+{
+  return QSize(guiToolbarSize, guiToolbarSize);
 }
 
 const OptionData& OptionData::instance()

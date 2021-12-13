@@ -81,11 +81,6 @@ public:
   virtual void preDatabaseLoad() override;
   virtual void postDatabaseLoad() override;
 
-  /* No op overrides */
-  virtual void getSelectedMapObjects(map::MapResult&) const override;
-  virtual void connectSearchSlots() override;
-  virtual void updateUnits() override;
-
   /* Overrides with implementation */
   virtual void updateTableSelection(bool noFollow) override;
   virtual void clearSelection() override;
@@ -93,15 +88,16 @@ public:
 
 signals:
   /* Show approaches and highlight circles on the map */
-  void procedureSelected(proc::MapProcedureRef);
-  void procedureLegSelected(proc::MapProcedureRef);
+  void procedureSelected(const proc::MapProcedureRef& refs);
+  void proceduresSelected(const QVector<proc::MapProcedureRef>& refs);
+  void procedureLegSelected(const proc::MapProcedureRef& refs);
 
   /* Zoom to approaches/transitions or waypoints */
   void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
 
   /* Add the complete procedure to the route */
-  void routeInsertProcedure(const proc::MapProcedureLegs& legs, const QString& sidStarRunway);
+  void routeInsertProcedure(const proc::MapProcedureLegs& legs);
 
   /* Show information info window on navaid on double click */
   void showInformation(map::MapResult result);
@@ -112,17 +108,12 @@ signals:
 private:
   friend class TreeEventFilter;
 
-  struct ProcData
-  {
-    proc::MapProcedureRef procedureRef;
-    QStringList sidStarRunways; // Only filled for all or parallel runway assignments in SID and STAR
-  };
-
   /* comboBoxProcedureSearchFilter index */
   enum FilterIndex
   {
     FILTER_ALL_PROCEDURES,
-    FILTER_DEPARTURE_PROCEDURES,
+    FILTER_SID_PROCEDURES,
+    FILTER_STAR_PROCEDURES,
     FILTER_ARRIVAL_PROCEDURES,
     FILTER_APPROACH_AND_TRANSITIONS
   };
@@ -133,6 +124,11 @@ private:
     FILTER_NO_RUNWAYS /* Only if empty runways exist */
     /* Runways follow */
   };
+
+  /* No op overrides */
+  virtual void getSelectedMapObjects(map::MapResult&) const override;
+  virtual void connectSearchSlots() override;
+  virtual void updateUnits() override;
 
   virtual void tabDeactivated() override;
 
@@ -149,7 +145,7 @@ private:
   void showInformationSelected();
   void showOnMapSelected();
   void approachAttachSelected();
-  void attachApproach(QString runway);
+  void attachApproach();
   void showApproachTriggered();
 
   // Save and restore expanded and selected item state
@@ -157,10 +153,8 @@ private:
   void restoreTreeViewState(const QBitArray& state, bool blockSignals);
 
   /* Build full approach or transition items for the tree view */
-  QTreeWidgetItem *buildApproachItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp,
-                                     proc::MapProcedureTypes maptype);
-  QTreeWidgetItem *buildTransitionItem(QTreeWidgetItem *apprItem, const atools::sql::SqlRecord& recTrans,
-                                       bool sidOrStar);
+  QTreeWidgetItem *buildApproachItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp, proc::MapProcedureTypes maptype);
+  QTreeWidgetItem *buildTransitionItem(QTreeWidgetItem *apprItem, const atools::sql::SqlRecord& recTrans, bool sidOrStar);
 
   /* Build an leg for the selected/table or tree view */
   QTreeWidgetItem *buildLegItem(const proc::MapProcedureLeg& leg);
@@ -185,8 +179,12 @@ private:
   void createFonts();
 
   void updateHeaderLabel();
+  void updateWidgets();
+  void updateFilter();
+
   void filterIndexChanged(int index);
   void filterIndexRunwayChanged(int);
+  void filterIdentChanged(const QString&);
   void clearRunwayFilter();
   void updateFilterBoxes();
   void resetSearch();
@@ -196,17 +194,17 @@ private:
   static proc::MapProcedureTypes buildTypeFromApproachRec(const atools::sql::SqlRecord& recApp);
   static bool procedureSortFunc(const atools::sql::SqlRecord& rec1, const atools::sql::SqlRecord& rec2);
 
-  QVector<QAction *> buildRunwaySubmenu(QMenu& menu, const ProcData& procData, bool submenu);
-
   void fetchSingleTransitionId(proc::MapProcedureRef& ref);
   QString approachAndTransitionText(const QTreeWidgetItem *item);
-  void clearSelectionTriggered();
 
-  const proc::MapProcedureLegs *fetchProcData(ProcData& procData, proc::MapProcedureRef& ref, QTreeWidgetItem *item);
+  void clearSelectionClicked();
+  void showAllToggled(bool checked);
+
+  const proc::MapProcedureLegs *fetchProcData(proc::MapProcedureRef& ref, QTreeWidgetItem *item);
   void airportLabelLinkActivated(const QString& link);
 
   // item's types are the indexes into this array with approach, transition and leg ids
-  QVector<ProcData> itemIndex;
+  QVector<proc::MapProcedureRef> itemIndex;
 
   // Item type is the index into this array
   // Approach or transition legs are already loaded in tree if bit is set

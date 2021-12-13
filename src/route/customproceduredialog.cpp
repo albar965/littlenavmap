@@ -17,22 +17,24 @@
 
 #include "route/customproceduredialog.h"
 
-#include "common/unitstringtool.h"
 #include "common/constants.h"
-#include "geo/calculations.h"
+#include "common/maptypes.h"
 #include "common/unit.h"
-#include "gui/runwayselection.h"
-
-#include "ui_customproceduredialog.h"
-
+#include "common/unitstringtool.h"
+#include "geo/calculations.h"
 #include "gui/helphandler.h"
+#include "gui/runwayselection.h"
 #include "gui/widgetstate.h"
 #include "settings/settings.h"
+#include "ui_customproceduredialog.h"
 
 #include <QPushButton>
+#include <QStringBuilder>
 
-CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirport& mapAirport) :
-  QDialog(parent), ui(new Ui::CustomProcedureDialog)
+
+CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirport& mapAirport, bool departureParam,
+                                             const QString& dialogHeader) :
+  QDialog(parent), ui(new Ui::CustomProcedureDialog), departure(departureParam)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
   setWindowModality(Qt::ApplicationModal);
@@ -43,14 +45,41 @@ CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirp
   runwaySelection->setAirportLabel(ui->labelCustomProcAirport);
 
   connect(runwaySelection, &RunwaySelection::doubleClicked, this, &CustomProcedureDialog::doubleClicked);
+  connect(runwaySelection, &RunwaySelection::itemSelectionChanged, this, &CustomProcedureDialog::updateWidgets);
 
+  connect(ui->spinBoxCustomProcAlt, QOverload<int>::of(&QSpinBox::valueChanged), this, &CustomProcedureDialog::updateWidgets);
+  connect(ui->spinBoxCustomProcAngle, QOverload<int>::of(&QSpinBox::valueChanged), this, &CustomProcedureDialog::updateWidgets);
   connect(ui->buttonBoxCustomProc, &QDialogButtonBox::clicked, this, &CustomProcedureDialog::buttonBoxClicked);
-  connect(ui->spinBoxCustomProcAlt, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-          this, &CustomProcedureDialog::updateWidgets);
-  connect(ui->doubleSpinBoxCustomProcDist, static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
-          this, &CustomProcedureDialog::updateWidgets);
+  connect(ui->doubleSpinBoxCustomProcDist, QOverload<double>::of(&QDoubleSpinBox::valueChanged), this,
+          &CustomProcedureDialog::updateWidgets);
 
   restoreState();
+
+  setWindowTitle(QApplication::applicationName() % tr(" - Select Runway"));
+  ui->labelCustomProcRunway->setText(dialogHeader);
+
+  // Show or hide widgets not relevant for departure
+  ui->labelCustomProcSlope->setHidden(departure);
+
+  // Altitude
+  ui->labelCustomProcRunwayAlt->setHidden(departure);
+  ui->spinBoxCustomProcAlt->setHidden(departure);
+
+  // Angle
+  ui->spinBoxCustomProcAngle->setHidden(departure);
+  ui->labelCustomProcRunwayAngle->setHidden(departure);
+  ui->labelCustomProcAngle->setHidden(departure);
+
+  if(departure)
+  {
+    ui->labelCustomProcRunwayDist->setText(("&Length of the exended runway center line:"));
+    ui->doubleSpinBoxCustomProcDist->setToolTip(("Distance from the takeoff position at the runway end to the end of the departure."));
+  }
+  else
+  {
+    ui->labelCustomProcRunwayDist->setText(("&Start of final to runway threshold:"));
+    ui->doubleSpinBoxCustomProcDist->setToolTip(("Distance from the start of the final leg to the runway threshold."));
+  }
 
   // Saves original texts and restores them on deletion
   units = new UnitStringTool();
@@ -59,7 +88,7 @@ CustomProcedureDialog::CustomProcedureDialog(QWidget *parent, const map::MapAirp
 
 CustomProcedureDialog::~CustomProcedureDialog()
 {
-  atools::gui::WidgetState(lnm::CUSTOM_PROCEDURE_DIALOG).save(this);
+  atools::gui::WidgetState(departure ? lnm::CUSTOM_DEPARTURE_DIALOG : lnm::CUSTOM_APPROACH_DIALOG).save(this);
 
   delete runwaySelection;
   delete units;
@@ -74,25 +103,20 @@ void CustomProcedureDialog::doubleClicked()
 
 void CustomProcedureDialog::restoreState()
 {
-  atools::gui::WidgetState widgetState(lnm::CUSTOM_PROCEDURE_DIALOG, false);
-  widgetState.restore({
-    this,
-    ui->doubleSpinBoxCustomProcDist,
-    ui->spinBoxCustomProcAlt
-  });
+  atools::gui::WidgetState widgetState(departure ? lnm::CUSTOM_DEPARTURE_DIALOG : lnm::CUSTOM_APPROACH_DIALOG, false);
+  // Angle not saved on purpose
+  widgetState.restore({this, ui->doubleSpinBoxCustomProcDist, ui->spinBoxCustomProcAlt});
 
   runwaySelection->restoreState();
   updateWidgets();
+
+  ui->tableWidgetCustomProcRunway->setFocus();
 }
 
 void CustomProcedureDialog::saveState()
 {
-  atools::gui::WidgetState widgetState(lnm::CUSTOM_PROCEDURE_DIALOG, false);
-  widgetState.save({
-    this,
-    ui->doubleSpinBoxCustomProcDist,
-    ui->spinBoxCustomProcAlt
-  });
+  atools::gui::WidgetState widgetState(departure ? lnm::CUSTOM_DEPARTURE_DIALOG : lnm::CUSTOM_APPROACH_DIALOG, false);
+  widgetState.save({this, ui->doubleSpinBoxCustomProcDist, ui->spinBoxCustomProcAlt});
 }
 
 void CustomProcedureDialog::getSelected(map::MapRunway& runway, map::MapRunwayEnd& end) const
@@ -100,9 +124,14 @@ void CustomProcedureDialog::getSelected(map::MapRunway& runway, map::MapRunwayEn
   runwaySelection->getCurrentSelected(runway, end);
 }
 
-float CustomProcedureDialog::getEntryDistance() const
+float CustomProcedureDialog::getLegDistance() const
 {
   return Unit::rev(static_cast<float>(ui->doubleSpinBoxCustomProcDist->value()), Unit::distNmF);
+}
+
+float CustomProcedureDialog::getLegOffsetAngle() const
+{
+  return static_cast<float>(ui->spinBoxCustomProcAngle->value());
 }
 
 float CustomProcedureDialog::getEntryAltitude() const
@@ -127,8 +156,36 @@ void CustomProcedureDialog::buttonBoxClicked(QAbstractButton *button)
 
 void CustomProcedureDialog::updateWidgets()
 {
-  float height = atools::geo::feetToMeter(getEntryAltitude());
-  float dist = atools::geo::nmToMeter(getEntryDistance());
-  ui->labelCustomProcSlope->setText(tr("Approach slope %1°").
-                                    arg(QLocale().toString(atools::geo::toDegree(std::atan2(height, dist)), 'f', 1)));
+  if(!departure)
+  {
+    // Update labels only for destination
+
+    // Slope =======================
+    float height = atools::geo::feetToMeter(getEntryAltitude());
+    float dist = atools::geo::nmToMeter(getLegDistance());
+    ui->labelCustomProcSlope->setText(tr("Approach slope %1°").
+                                      arg(QLocale().toString(atools::geo::toDegree(std::atan2(height, dist)), 'f', 1)));
+
+    // Heading =======================
+    map::MapRunway runway;
+    map::MapRunwayEnd end;
+    runwaySelection->getCurrentSelected(runway, end);
+
+    if(runway.isValid() && end.isValid())
+    {
+      float angle = end.heading - runwaySelection->getAirport().magvar + getLegOffsetAngle();
+      ui->labelCustomProcAngle->setText(tr("Final course to runway %1 %2 is %3°M").
+                                        arg(end.name).arg(atools::almostEqual(getLegOffsetAngle(), 0.f) ? QString() : tr("with offset ")).
+                                        arg(QLocale().toString(angle, 'f', 0)));
+    }
+    else
+      ui->labelCustomProcAngle->clear();
+  }
+  else
+  {
+    ui->labelCustomProcSlope->clear();
+    ui->labelCustomProcAngle->clear();
+  }
+
+  ui->buttonBoxCustomProc->button(QDialogButtonBox::Ok)->setEnabled(runwaySelection->hasRunways());
 }

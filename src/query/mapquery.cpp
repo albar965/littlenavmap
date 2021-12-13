@@ -22,6 +22,7 @@
 #include "common/maptools.h"
 #include "common/proctypes.h"
 #include "mapgui/maplayer.h"
+#include "mapgui/mapairporthandler.h"
 #include "online/onlinedatacontroller.h"
 #include "airspace/airspacecontroller.h"
 #include "logbook/logdatacontroller.h"
@@ -51,8 +52,8 @@ using map::MapUserpoint;
 using map::MapAirportMsa;
 using map::MapHolding;
 
-static double queryRectInflationFactor = 0.2;
-static double queryRectInflationIncrement = 0.1;
+static double queryRectInflationFactor = 0.5;
+static double queryRectInflationIncrement = 0.5;
 int MapQuery::queryMaxRows = map::MAX_MAP_OBJECTS;
 
 // Queries only used for export ================================================
@@ -79,12 +80,9 @@ MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb, SqlDatabase *sqlDbNav, SqlDa
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
-  runwayOverwiewCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "RunwayOverwiewCache",
-                                                           1000).toInt());
-  queryRectInflationFactor = settings.getAndStoreValue(
-    lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.3).toDouble();
-  queryRectInflationIncrement = settings.getAndStoreValue(
-    lnm::SETTINGS_MAPQUERY + "QueryRectInflationIncrement", 0.1).toDouble();
+  runwayOverwiewCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "RunwayOverwiewCache", 1000).toInt());
+  queryRectInflationFactor = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.5).toDouble();
+  queryRectInflationIncrement = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "QueryRectInflationIncrement", 0.5).toDouble();
   queryMaxRows = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "MapQueryRowLimit", map::MAX_MAP_OBJECTS).toInt();
 }
 
@@ -282,24 +280,22 @@ map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float dist
   return result;
 }
 
-void MapQuery::getMapObjectByIdent(map::MapResult& result, map::MapTypes type,
-                                   const QString& ident, const QString& region, const QString& airport,
-                                   const Pos& sortByDistancePos, float maxDistanceMeter, bool airportFromNavDatabase)
+void MapQuery::getMapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident, const QString& region,
+                                   const QString& airport, const Pos& sortByDistancePos, float maxDistanceMeter,
+                                   bool airportFromNavDatabase, map::AirportQueryFlags flags)
 {
-  mapObjectByIdentInternal(result, type, ident, region, airport, sortByDistancePos, maxDistanceMeter,
-                           airportFromNavDatabase);
+  mapObjectByIdentInternal(result, type, ident, region, airport, sortByDistancePos, maxDistanceMeter, airportFromNavDatabase, flags);
 }
 
 void MapQuery::getMapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident,
-                                   const QString& region, const QString& airport, bool airportFromNavDatabase)
+                                   const QString& region, const QString& airport, bool airportFromNavDatabase, map::AirportQueryFlags flags)
 {
-  mapObjectByIdentInternal(result, type, ident, region, airport, EMPTY_POS, map::INVALID_DISTANCE_VALUE,
-                           airportFromNavDatabase);
+  mapObjectByIdentInternal(result, type, ident, region, airport, EMPTY_POS, map::INVALID_DISTANCE_VALUE, airportFromNavDatabase, flags);
 }
 
 void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes type, const QString& ident,
                                         const QString& region, const QString& airport, const Pos& sortByDistancePos,
-                                        float maxDistanceMeter, bool airportFromNavDatabase)
+                                        float maxDistanceMeter, bool airportFromNavDatabase, map::AirportQueryFlags flags)
 {
   if(type & map::AIRPORT)
   {
@@ -321,8 +317,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
     {
       // Try fuzzy search for nearest by official ids =====================
       // Look through all fields (ICAO, IATA, FAA and local) for the given ident
-      QList<MapAirport> airports =
-        airportQuery->getAirportsByOfficialIdent(ident, &sortByDistancePos, maxDistanceMeter);
+      QList<MapAirport> airports = airportQuery->getAirportsByOfficialIdent(ident, &sortByDistancePos, maxDistanceMeter, flags);
       result.airports.append(airports);
     }
   }
@@ -604,6 +599,8 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
   using maptools::insertSortedByDistance;
   using maptools::insertSortedByTowerDistance;
 
+  int minRunwayLength = std::max(NavApp::getMapAirportHandler()->getMinimumRunwayFt(), mapLayer->getMinRunwayLength());
+
   int x, y;
   if(mapLayer->isAirport() && types.testFlag(map::AIRPORT))
   {
@@ -611,7 +608,7 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
     {
       const MapAirport& airport = airportCache.list.at(i);
 
-      if(airport.isVisible(types))
+      if(airport.isVisible(types, minRunwayLength, mapLayer))
       {
         if(conv.wToS(airport.position, x, y))
           if((atools::geo::manhattanDistance(x, y, xs, ys)) < screenDistance)
@@ -620,8 +617,7 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
         if(airportDiagram)
         {
           // Include tower for airport diagrams
-          if(conv.wToS(airport.towerCoords, x, y) &&
-             atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
+          if(conv.wToS(airport.towerCoords, x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < screenDistance)
             insertSortedByTowerDistance(conv, result.towers, xs, ys, airport);
         }
       }
@@ -743,13 +739,12 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
   }
 }
 
-const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect,
-                                                    const MapLayer *mapLayer, bool lazy, map::MapTypes types,
-                                                    bool& overflow)
+const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
+                                                    map::MapTypes types, bool& overflow)
 {
   // Get flags for running separate queries for add-on and normal airports
   bool addon = types.testFlag(map::AIRPORT_ADDON);
-  bool normal = types & (map::AIRPORT_HARD | map::AIRPORT_SOFT | map::AIRPORT_EMPTY);
+  bool normal = types & map::AIRPORT_ALL;
 
   airportCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                            [ = ](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -762,22 +757,8 @@ const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonB
   airportCacheAddonFlag = addon;
   airportCacheNormalFlag = normal;
 
-  switch(mapLayer->getDataSource())
-  {
-    case layer::ALL:
-      airportByRectQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
-      return fetchAirports(rect, airportByRectQuery, lazy, false /* overview */, addon, normal, overflow);
-
-    case layer::MEDIUM:
-      // Airports > 4000 ft
-      return fetchAirports(rect, airportMediumByRectQuery, lazy, true /* overview */, addon, normal, overflow);
-
-    case layer::LARGE:
-      // Airports > 8000 ft
-      return fetchAirports(rect, airportLargeByRectQuery, lazy, true /* overview */, addon, normal, overflow);
-
-  }
-  return nullptr;
+  airportByRectQuery->bindValue(":minlength", mapLayer->getMinRunwayLength());
+  return fetchAirports(rect, airportByRectQuery, lazy, false /* overview */, addon, normal, overflow);
 }
 
 const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
@@ -837,8 +818,7 @@ const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const 
 }
 
 const QList<map::MapUserpoint> MapQuery::getUserdataPoints(const GeoDataLatLonBox& rect, const QStringList& types,
-                                                           const QStringList& typesAll, bool unknownType,
-                                                           float distance)
+                                                           const QStringList& typesAll, bool unknownType, float distanceNm)
 {
   // No caching here since points can change and the dataset is usually small
   QList<MapUserpoint> retval;
@@ -849,11 +829,10 @@ const QList<map::MapUserpoint> MapQuery::getUserdataPoints(const GeoDataLatLonBo
   {
     bool allTypesSelected = types == typesAll;
 
-    for(const GeoDataLatLonBox& r :
-        query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+    for(const GeoDataLatLonBox& r : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
       query::bindRect(r, userdataPointByRectQuery);
-      userdataPointByRectQuery->bindValue(":dist", distance);
+      userdataPointByRectQuery->bindValue(":dist", distanceNm);
 
       QStringList queryTypes;
       if(unknownType || (allTypesSelected && unknownType))
@@ -1079,6 +1058,7 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
   if(airportCache.list.isEmpty() && !lazy)
   {
     bool navdata = NavApp::getDatabaseManager()->getNavDatabaseStatus() == dm::NAVDATABASE_ALL;
+
     for(const GeoDataLatLonBox& r :
         query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
@@ -1314,14 +1294,6 @@ void MapQuery::initQueries()
   airportAddonByRectQuery->prepare(
     "select " + airportQueryBase.join(", ") + " from airport where " + whereRect + " and is_addon = 1 " + whereLimit);
 
-  airportMediumByRectQuery = new SqlQuery(dbSim);
-  airportMediumByRectQuery->prepare(
-    "select " + airportQueryBaseOverview.join(", ") + " from airport_medium where " + whereRect + " " + whereLimit);
-
-  airportLargeByRectQuery = new SqlQuery(dbSim);
-  airportLargeByRectQuery->prepare(
-    "select " + airportQueryBaseOverview.join(", ") + " from airport_large where " + whereRect + " " + whereLimit);
-
   // Runways > 4000 feet for simplyfied runway overview
   runwayOverviewQuery = new SqlQuery(dbSim);
   runwayOverviewQuery->prepare(
@@ -1387,10 +1359,6 @@ void MapQuery::deInitQueries()
   airportByRectQuery = nullptr;
   delete airportAddonByRectQuery;
   airportAddonByRectQuery = nullptr;
-  delete airportMediumByRectQuery;
-  airportMediumByRectQuery = nullptr;
-  delete airportLargeByRectQuery;
-  airportLargeByRectQuery = nullptr;
 
   delete runwayOverviewQuery;
   runwayOverviewQuery = nullptr;

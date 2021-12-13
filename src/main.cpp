@@ -85,14 +85,14 @@ int main(int argc, char *argv[])
   qRegisterMetaTypeStreamOperators<map::DistanceMarker>();
   qRegisterMetaTypeStreamOperators<QList<map::DistanceMarker> >();
 
-  qRegisterMetaTypeStreamOperators<map::TrafficPattern>();
-  qRegisterMetaTypeStreamOperators<QList<map::TrafficPattern> >();
+  qRegisterMetaTypeStreamOperators<map::PatternMarker>();
+  qRegisterMetaTypeStreamOperators<QList<map::PatternMarker> >();
 
-  qRegisterMetaTypeStreamOperators<map::MapHolding>();
-  qRegisterMetaTypeStreamOperators<QList<map::MapHolding> >();
+  qRegisterMetaTypeStreamOperators<map::HoldingMarker>();
+  qRegisterMetaTypeStreamOperators<QList<map::HoldingMarker> >();
 
-  qRegisterMetaTypeStreamOperators<map::MapAirportMsa>();
-  qRegisterMetaTypeStreamOperators<QList<map::MapAirportMsa> >();
+  qRegisterMetaTypeStreamOperators<map::MsaMarker>();
+  qRegisterMetaTypeStreamOperators<QList<map::MsaMarker> >();
 
   qRegisterMetaTypeStreamOperators<map::RangeMarker>();
   qRegisterMetaTypeStreamOperators<QList<map::RangeMarker> >();
@@ -105,6 +105,7 @@ int main(int argc, char *argv[])
 
   qRegisterMetaTypeStreamOperators<map::MapAirspaceFilter>();
   qRegisterMetaTypeStreamOperators<map::MapObjectRef>();
+  qRegisterMetaTypeStreamOperators<map::MapTypes>();
 
   // Register types and load process environment
   atools::fs::FsPaths::intitialize();
@@ -166,11 +167,6 @@ int main(int argc, char *argv[])
   int retval = 0;
   NavApp app(argc, argv);
 
-#ifndef DEBUG_DISABLE_SPLASH
-  // Start splash screen
-  NavApp::initSplashScreen();
-#endif
-
   DatabaseManager *dbManager = nullptr;
 
 #if defined(Q_OS_WIN32)
@@ -198,6 +194,10 @@ int main(int argc, char *argv[])
 
     if(parser.isSet(settingsDirOpt) && !parser.value(settingsDirOpt).isEmpty())
       Settings::setOverrideOrganisation(parser.value(settingsDirOpt));
+
+    // Start splash screen
+    if(atools::settings::Settings::instance().valueBool(lnm::OPTIONS_DIALOG_SHOW_SPLASH, true))
+      NavApp::initSplashScreen();
 
     // Initialize logging and force logfiles into the system or user temp directory
     // This will prefix all log files with orgranization and application name and append ".log"

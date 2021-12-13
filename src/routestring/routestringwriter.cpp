@@ -286,8 +286,8 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
   if(route.getSizeWithoutAlternates() == 0)
     return retval;
 
-  bool hasSid = ((options& rs::SID_STAR) && !sid.isEmpty()) || (options & rs::SID_STAR_GENERIC);
-  bool hasStar = ((options& rs::SID_STAR) && !star.isEmpty()) || (options & rs::SID_STAR_GENERIC);
+  bool hasSid = ((options & rs::SID_STAR) && !sid.isEmpty()) || (options & rs::SID_STAR_GENERIC);
+  bool hasStar = ((options & rs::SID_STAR) && !star.isEmpty()) || (options & rs::SID_STAR_GENERIC);
   bool gfpCoords = options.testFlag(rs::GFP_COORDS);
   bool userWpt = options.testFlag(rs::USR_WPT);
   bool firstDct = true;
@@ -309,7 +309,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
       continue;
 
     const QString& airway = leg.getAirwayName();
-    // Avoid the short IATA ids since these can overlap with VOR or NDB
+    // Internal ident or ICAO
     QString ident = leg.getDisplayIdent();
 
     if(leg.getMapObjectType() == map::USERPOINTROUTE)
@@ -331,9 +331,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
         if(userWpt && lastIndex > 0)
           retval.append(coords::toGfpFormat(lastPos));
         else
-          retval.append(lastId +
-                        (gfpCoords &&
-                         lastType != map::USERPOINTROUTE ? "," + coords::toGfpFormat(lastPos) : QString()));
+          retval.append(lastId + (gfpCoords && lastType != map::USERPOINTROUTE ? "," + coords::toGfpFormat(lastPos) : QString()));
 
         if(lastIndex == 0 && options & rs::RUNWAY && !depRwy.isEmpty())
           // Add runway after departure
@@ -356,9 +354,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
         if(userWpt && lastIndex > 0)
           retval.append(coords::toGfpFormat(lastPos));
         else
-          retval.append(lastId +
-                        (gfpCoords &&
-                         lastType != map::USERPOINTROUTE ? "," + coords::toGfpFormat(lastPos) : QString()));
+          retval.append(lastId + (gfpCoords && lastType != map::USERPOINTROUTE ? "," + coords::toGfpFormat(lastPos) : QString()));
 
         retval.append(airway);
       }
@@ -390,18 +386,21 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
 
   QString transSeparator = options & rs::SID_STAR_SPACE ? " " : ".";
 
-  // Add SID
-  if((options& rs::SID_STAR) && !sid.isEmpty())
-    retval.insert(insertPosition, sid + (sidTrans.isEmpty() ? QString() : transSeparator + sidTrans));
-  else if(options & rs::SID_STAR_GENERIC)
-    retval.insert(insertPosition, "SID");
+  if(!route.getSidLegs().isCustomDeparture()) // Do not add custom departure as SID
+  {
+    // Add SID
+    if((options & rs::SID_STAR) && !sid.isEmpty())
+      retval.insert(insertPosition, sid + (sidTrans.isEmpty() ? QString() : transSeparator + sidTrans));
+    else if(options & rs::SID_STAR_GENERIC)
+      retval.insert(insertPosition, "SID");
+  }
 
   // Add speed and altitude
   if(!retval.isEmpty() && options & rs::ALT_AND_SPEED)
     retval.insert(insertPosition, atools::fs::util::createSpeedAndAltitude(speed, route.getCruisingAltitudeFeet()));
 
   // Add STAR
-  if((options& rs::SID_STAR) && !star.isEmpty())
+  if((options & rs::SID_STAR) && !star.isEmpty())
     retval.append(star + (starTrans.isEmpty() ? QString() : transSeparator + starTrans));
   else if(options & rs::SID_STAR_GENERIC)
     retval.append("STAR");
@@ -414,15 +413,18 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
   if(options & rs::START_AND_DEST)
     retval.append(lastId + (gfpCoords ? "," + coords::toGfpFormat(lastPos) : QString()));
 
-  if(options & rs::APPROACH && !arrivalName.isEmpty())
+  if(!route.getApproachLegs().isCustomApproach()) // Do not add custom approach
   {
-    retval.append(arrivalName);
-    if(!arrivalTransition.isEmpty())
-      retval.append(arrivalTransition);
+    if(options & rs::APPROACH && !arrivalName.isEmpty())
+    {
+      retval.append(arrivalName);
+      if(!arrivalTransition.isEmpty())
+        retval.append(arrivalTransition);
+    }
   }
 
   if(options & rs::ALTERNATES)
-    retval.append(route.getAlternateDisplayIdents()); // Do not use internal ids
+    retval.append(route.getAlternateDisplayIdents()); // Internal ident or ICAO
 
   if(options & rs::FLIGHTLEVEL)
     retval.append(QString("FL%1").arg(static_cast<int>(route.getCruisingAltitudeFeet()) / 100));

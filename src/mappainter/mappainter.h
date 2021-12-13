@@ -80,7 +80,8 @@ struct PaintContext
 
   opts::MapScrollDetail mapScrollDetail; /* Option that indicates the detail level when drawFast is true */
   QFont defaultFont /* Default widget font */;
-  float distance; /* Zoom distance in NM */
+  float distanceNm; /* Zoom distance in NM */
+  float distanceKm; /* Zoom distance in KM as in map widget */
   QStringList userPointTypes, /* In menu selected types */
               userPointTypesAll; /* All available tyes */
   bool userPointTypeUnknown; /* Show unknown types */
@@ -102,12 +103,15 @@ struct PaintContext
   map::MapWeatherSource weatherSource;
   bool visibleWidget;
   bool paintCopyright = true;
+  int mimimumRunwayLengthFt = -1;
 
-  /* Text sizes and line thickness in percent / 100 */
+  /* Text sizes and line thickness in percent / 100 as set in options dialog */
   float textSizeAircraftAi = 1.f;
   float symbolSizeNavaid = 1.f;
+  float symbolSizeUserpoint = 1.f;
   float thicknessFlightplan = 1.f;
   float textSizeNavaid = 1.f;
+  float textSizeUserpoint = 1.f;
   float textSizeAirway = 1.f;
   float thicknessAirway = 1.f;
   float textSizeCompassRose = 1.f;
@@ -127,6 +131,8 @@ struct PaintContext
   float transparencyMora = 1.f;
   float textSizeAirportMsa = 1.f;
   float transparencyAirportMsa = 1.f;
+  float transparencyFlightplan = 1.f;
+  float transparencyHighlight = 1.f;
 
   int objectCount = 0;
   bool queryOverflow = false;
@@ -222,8 +228,9 @@ struct PaintContext
   /* Calculate and set font based on scale */
   void szFont(float scale) const;
 
-  /* Calculate label text flags for route waypoints */
+  /* Calculate label text flags for route waypoints depending on layer settings */
   textflags::TextFlags airportTextFlags() const;
+  textflags::TextFlags airportTextFlagsMinor() const;
   textflags::TextFlags airportTextFlagsRoute(bool drawAsRoute, bool drawAsLog) const;
 
 };
@@ -290,8 +297,11 @@ protected:
   }
 
   /* Draw a circle and return text placement hints (xtext and ytext). Number of points used
-   * for the circle depends on the zoom distance */
-  void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast, int& xtext, int& ytext);
+   * for the circle depends on the zoom distance. Optimized for large circles. */
+  void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast, QPoint *textPos);
+
+  void paintArc(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, float angleDegStart, float angleDegEnd,
+                bool fast);
 
   void drawLineString(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
   void drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line);
@@ -302,7 +312,7 @@ protected:
   void drawText(Marble::GeoPainter *painter, const atools::geo::Pos& pos, const QString& text, bool topCorner, bool leftCorner);
 
   /* Drawing functions for simple geometry */
-  void drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos& center, int radius);
+  void drawCircle(Marble::GeoPainter *painter, const atools::geo::Pos& center, float radius);
   void drawCross(Marble::GeoPainter *painter, int x, int y, int size);
 
   /* No GC and no rhumb */
@@ -350,7 +360,10 @@ protected:
   void getPixmap(QPixmap& pixmap, const QString& resource, int size);
 
   /* Draw enroute as well as user defined holdings */
-  void paintHoldings(const QList<map::MapHolding>& holdings, bool user, bool drawFast);
+  void paintHoldingMarks(const QList<map::MapHolding>& holdings, bool user, bool drawFast);
+
+  /* Draw large semi-transparent MSA enabled by user */
+  void paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool user, bool drawFast);
 
   /* Minimum points to use for a circle */
   const int CIRCLE_MIN_POINTS = 16;

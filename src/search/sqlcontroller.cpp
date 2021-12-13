@@ -22,6 +22,7 @@
 #include "search/columnlist.h"
 #include "sql/sqlrecord.h"
 #include "sql/sqldatabase.h"
+#include "gui/tools.h"
 
 #include <QTableView>
 #include <QHeaderView>
@@ -145,7 +146,9 @@ void SqlController::setBuilder(const QueryBuilder& builder)
 
 void SqlController::filterByBuilder()
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
+#endif
   view->clearSelection();
   model->filterByBuilder();
   searchParamsChanged = true;
@@ -153,6 +156,9 @@ void SqlController::filterByBuilder()
 
 void SqlController::filterIncluding(const QModelIndex& index, bool builder)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
   view->clearSelection();
   model->filterIncluding(toSource(index), builder);
   searchParamsChanged = true;
@@ -160,6 +166,9 @@ void SqlController::filterIncluding(const QModelIndex& index, bool builder)
 
 void SqlController::filterExcluding(const QModelIndex& index, bool builder)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
   view->clearSelection();
   model->filterExcluding(toSource(index), builder);
   searchParamsChanged = true;
@@ -180,6 +189,9 @@ atools::geo::Pos SqlController::getGeoPos(const QModelIndex& index, const QStrin
 
 void SqlController::filterByLineEdit(const Column *col, const QString& text)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
   view->clearSelection();
   model->filter(col, text);
   searchParamsChanged = true;
@@ -187,6 +199,9 @@ void SqlController::filterByLineEdit(const Column *col, const QString& text)
 
 void SqlController::filterBySpinBox(const Column *col, int value)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
   view->clearSelection();
   if(col->getSpinBoxWidget()->value() == col->getSpinBoxWidget()->minimum())
     // Send a null variant if spin box is at minimum value
@@ -198,6 +213,9 @@ void SqlController::filterBySpinBox(const Column *col, int value)
 
 void SqlController::filterByRecord(const atools::sql::SqlRecord& record)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
   view->clearSelection();
   model->filterByRecord(record);
   searchParamsChanged = true;
@@ -205,6 +223,9 @@ void SqlController::filterByRecord(const atools::sql::SqlRecord& record)
 
 void SqlController::filterByMinMaxSpinBox(const Column *col, int minValue, int maxValue)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
   view->clearSelection();
   QVariant minVal(minValue), maxVal(maxValue);
   if(col->getMinSpinBoxWidget()->value() == col->getMinSpinBoxWidget()->minimum())
@@ -221,6 +242,9 @@ void SqlController::filterByMinMaxSpinBox(const Column *col, int minValue, int m
 
 void SqlController::filterByCheckbox(const Column *col, int state, bool triState)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
   view->clearSelection();
   if(triState)
   {
@@ -246,6 +270,9 @@ void SqlController::filterByCheckbox(const Column *col, int state, bool triState
 
 void SqlController::filterByComboBox(const Column *col, int value, bool noFilter)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
   view->clearSelection();
   if(noFilter)
     // Index 0 for combo box means here: no filter, so remove it and send null variant
@@ -258,6 +285,9 @@ void SqlController::filterByComboBox(const Column *col, int value, bool noFilter
 void SqlController::filterByDistance(const atools::geo::Pos& center, sqlproxymodel::SearchDirection dir,
                                      float minDistance, float maxDistance)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
   if(center.isValid())
   {
     // Start or update distance search
@@ -316,9 +346,11 @@ void SqlController::filterByDistance(const atools::geo::Pos& center, sqlproxymod
   searchParamsChanged = true;
 }
 
-void SqlController::filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, float minDistance,
-                                           float maxDistance)
+void SqlController::filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, float minDistance, float maxDistance)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
   if(proxyModel != nullptr)
   {
     view->clearSelection();
@@ -361,6 +393,11 @@ const QItemSelection SqlController::getSelection() const
     return QItemSelection();
 }
 
+QList<int> SqlController::getSelectedRows(bool reverse) const
+{
+  return atools::gui::selectedRows(view->selectionModel(), reverse /* reverse */);
+}
+
 int SqlController::getVisibleRowCount() const
 {
   if(proxyModel != nullptr)
@@ -381,6 +418,11 @@ int SqlController::getTotalRowCount() const
     return model->getTotalRowCount();
   else
     return 0;
+}
+
+QModelIndex SqlController::getCurrentIndex() const
+{
+  return view->currentIndex();
 }
 
 bool SqlController::isColumnVisibleInView(int physicalIndex) const
@@ -444,6 +486,11 @@ QString SqlController::getCurrentSqlQuery() const
 QModelIndex SqlController::getModelIndexAt(const QPoint& pos) const
 {
   return view->indexAt(pos);
+}
+
+QModelIndex SqlController::getModelIndexFor(int row, int column) const
+{
+  return model->index(row, column);
 }
 
 QString SqlController::getFieldDataAt(const QModelIndex& index) const

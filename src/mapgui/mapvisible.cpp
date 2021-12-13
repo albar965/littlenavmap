@@ -20,15 +20,20 @@
 #include "mapgui/maplayer.h"
 #include "mappainter/mappaintlayer.h"
 #include "airspace/airspacecontroller.h"
+#include "fs/common/morareader.h"
 #include "navapp.h"
+#include "atools.h"
+#include "query/mapquery.h"
 #include "util/htmlbuilder.h"
 #include "gui/mainwindow.h"
 #include "weather/windreporter.h"
 #include "mapgui/mapmarkhandler.h"
+#include "mapgui/mapairporthandler.h"
 #include "common/maptypes.h"
 #include "userdata/userdatacontroller.h"
+#include "common/unit.h"
 
-#include <common/unit.h>
+#include <QStringBuilder>
 
 MapVisible::MapVisible(MapPaintLayer *paintLayerParam)
   : paintLayer(paintLayerParam)
@@ -51,7 +56,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
       tr("<p style='white-space:pre'>The currently selected scenery database for the simulator is empty.<br/>Go to: "
            "Main menu -&gt; \"Scenery Library\" -&gt; \"Load Scenery Library\" "
            "or press <code>Ctrl+Shift+L</code>.<br/>"
-           "Then choose your simulator and press \"Load\".</p>",
+           "Then choose the simulator and press \"Load\".</p>",
          "Keep instructions in sync with translated menus and shortcuts"));
   }
   else
@@ -63,162 +68,166 @@ void MapVisible::updateVisibleObjectsStatusBar()
       map::MapTypes shown = paintLayer->getShownMapObjects();
       map::MapObjectDisplayTypes shownDispTypes = paintLayer->getShownMapObjectDisplayTypes();
 
-      QStringList airportLabel;
+      QStringList airportShortLabel;
       atools::util::HtmlBuilder tooltip(false);
       tooltip.b(tr("Currently shown on map:"));
       tooltip.table();
 
       // Collect airport information ==========================================================
-      if(layer->isAirport() && ((shown& map::AIRPORT_HARD) || (shown& map::AIRPORT_SOFT) ||
-                                (shown & map::AIRPORT_ADDON)))
+      if(layer->isAirport() && shown & map::AIRPORT_ALL_VISIBLE && shown.testFlag(map::AIRPORT))
       {
-        QString runway, runwayShort;
-        QString apShort, apTooltip, apTooltipAddon;
-        bool showAddon = shown & map::AIRPORT_ADDON;
-        bool showEmpty = shown & map::AIRPORT_EMPTY;
-        bool showStock = (shown& map::AIRPORT_HARD) || (shown & map::AIRPORT_SOFT);
-        bool showHard = shown & map::AIRPORT_HARD;
-        bool showAny = showStock | showAddon;
+        tooltip.tr().td();
 
-        // Prepare runway texts
-        if(!(shown& map::AIRPORT_HARD) && (shown & map::AIRPORT_SOFT))
-        {
-          runway = tr(" soft runways (S)");
-          runwayShort = tr(",S");
-        }
-        else if((shown& map::AIRPORT_HARD) && !(shown & map::AIRPORT_SOFT))
-        {
-          runway = tr(" hard runways (H)");
-          runwayShort = tr(",H");
-        }
-        else if((shown& map::AIRPORT_HARD) && (shown & map::AIRPORT_SOFT))
-        {
-          runway = tr(" all runway types (H,S)");
-          runwayShort = tr(",H,S");
-        }
-        else if(!(shown& map::AIRPORT_HARD) && !(shown & map::AIRPORT_SOFT))
-        {
-          runway.clear();
-          runwayShort.clear();
-        }
+        QStringList apShort;
 
-        // Prepare short airport indicator
-        if(showAddon)
-          apShort = showEmpty ? tr("AP,A,E") : tr("AP,A");
-        else if(showStock)
-          apShort = showEmpty ? tr("AP,E") : tr("AP");
+        tooltip.b(tr("Airports (AP): "));
+        apShort.append(tr("AP"));
 
-        // Build the rest of the strings
-        if(layer->getDataSource() == layer::ALL)
+        if(shown.testFlag(map::AIRPORT_HARD) || shown.testFlag(map::AIRPORT_SOFT) || shown.testFlag(map::AIRPORT_WATER))
         {
-          if(layer->getMinRunwayLength() > 0)
+          QStringList runways;
+          if(shown.testFlag(map::AIRPORT_HARD))
           {
-            if(showAny)
-              apShort.append(">").append(QLocale().toString(layer->getMinRunwayLength() / 100)).append(runwayShort);
-
-            if(showStock)
-              apTooltip = tr("Airports (AP) with runway length > %1 and%2").
-                          arg(Unit::distShortFeet(layer->getMinRunwayLength())).
-                          arg(runway);
-
-            if(showAddon)
-              apTooltipAddon = tr("Add-on airports");
+            runways.append(tr("hard (H)"));
+            apShort.append(tr("H"));
           }
-          else
+
+          if(shown.testFlag(map::AIRPORT_SOFT) && layer->isAirportMinor())
           {
-            if(showStock)
-            {
-              apShort.append(runwayShort);
-              apTooltip = tr("Airports (AP) with%1").arg(runway);
-            }
-            if(showAddon)
-              apTooltipAddon = tr("Add-on airports (A)");
+            runways.append(tr("soft (S)"));
+            apShort.append(tr("S"));
           }
+
+          if(shown.testFlag(map::AIRPORT_WATER) && layer->isAirportMinor())
+          {
+            runways.append(tr("water (W)"));
+            apShort.append(tr("W"));
+          }
+          if(!runways.isEmpty())
+            tooltip.text(tr("With ") % atools::strJoin(runways, tr(", "), tr(" and "), tr(" runways."))).br();
         }
-        else if(layer->getDataSource() == layer::MEDIUM)
+
+        int minRunwayLength = std::max(NavApp::getMapAirportHandler()->getMinimumRunwayFt(), layer->getMinRunwayLength());
+        if(minRunwayLength > 0)
         {
-          if(showAny)
-            apShort.append(tr(">%1%2").arg(Unit::distShortFeet(layer::MAX_MEDIUM_RUNWAY_FT / 100, false)).
-                           arg(runwayShort));
-
-          if(showStock)
-            apTooltip = tr("Airports (AP) with runway length > %1 and%2").
-                        arg(Unit::distShortFeet(layer::MAX_MEDIUM_RUNWAY_FT)).
-                        arg(runway);
-
-          if(showAddon)
-            apTooltipAddon.append(tr("Add-on airports (A) with runway length > %1").
-                                  arg(Unit::distShortFeet(layer::MAX_MEDIUM_RUNWAY_FT)));
+          apShort.append(">" % QLocale().toString(minRunwayLength / 100));
+          tooltip.text(tr("Having runway length > %1.").arg(Unit::distShortFeet(minRunwayLength))).br();
         }
-        else if(layer->getDataSource() == layer::LARGE)
+
+        QStringList features;
+        if(shown.testFlag(map::AIRPORT_EMPTY))
         {
-          if(showAddon || showHard)
-            apShort.append(tr(">%1,H").arg(Unit::distShortFeet(layer::MAX_LARGE_RUNWAY_FT / 100, false)));
-          else
-            apShort.clear();
-
-          if(showStock && showHard)
-            apTooltip = tr("Airports (AP) with runway length > %1 and hard runways (H)").
-                        arg(Unit::distShortFeet(layer::MAX_LARGE_RUNWAY_FT));
-
-          if(showAddon)
-            apTooltipAddon.append(tr("Add-on airports (A) with runway length > %1").
-                                  arg(Unit::distShortFeet(layer::MAX_LARGE_RUNWAY_FT)));
+          features.append(tr("empty with zero rating (E)"));
+          apShort.append(tr("E"));
         }
 
-        airportLabel.append(apShort);
+        if(shown.testFlag(map::AIRPORT_HELIPAD) && layer->isAirportMinor())
+        {
+          features.append(tr("heliports (O)"));
+          apShort.append(tr("O"));
+        }
 
-        if(!apTooltip.isEmpty())
-          tooltip.tr().td(apTooltip).trEnd();
+        if(shown.testFlag(map::AIRPORT_UNLIGHTED))
+          features.append(tr("unlighted"));
+        else
+        {
+          features.append(tr("only lighted (L)"));
+          apShort.append(tr("L"));
+        }
 
-        if(!apTooltipAddon.isEmpty())
-          tooltip.tr().td(apTooltipAddon).trEnd();
+        if(shown.testFlag(map::AIRPORT_NO_PROCS))
+          features.append(tr("without approach procedure"));
+        else
+        {
+          features.append(tr("only with approach procedure (P)"));
+          apShort.append(tr("P"));
+        }
 
-        if(showEmpty)
-          tooltip.tr().td(tr("Empty airports (E) with zero rating")).trEnd();
+        if(shown.testFlag(map::AIRPORT_ADDON))
+        {
+          features.append(tr("add-on display forced (A)"));
+          apShort.append(tr("A"));
+        }
+        if(!features.isEmpty())
+          tooltip.text(tr("Showing ") % atools::strJoin(features, tr(", "), tr(" and "), tr(".")));
+        tooltip.tdEnd().trEnd();
+
+        airportShortLabel.append(apShort);
       }
+      else
+        tooltip.tr().td(tr("No airports")).trEnd();
 
       QStringList navaidLabel, navaidsTooltip;
       // Collect navaid information ==========================================================
-      if(layer->isVor() && shown & map::VOR)
+      if(layer->isVor() && shown.testFlag(map::VOR))
       {
         navaidLabel.append(tr("V"));
         navaidsTooltip.append(tr("VOR (V)"));
       }
-      if(layer->isNdb() && shown & map::NDB)
+
+      if(layer->isNdb() && shown.testFlag(map::NDB))
       {
         navaidLabel.append(tr("N"));
         navaidsTooltip.append(tr("NDB (N)"));
       }
-      if(layer->isIls() && shown & map::ILS)
-      {
-        navaidLabel.append(tr("I"));
-        navaidsTooltip.append(tr("ILS (I)"));
-      }
-      if(layer->isWaypoint() && shown & map::WAYPOINT)
+
+      if(layer->isWaypoint() && shown.testFlag(map::WAYPOINT))
       {
         navaidLabel.append(tr("W"));
         navaidsTooltip.append(tr("Waypoints (W)"));
       }
-      if(layer->isAirway() && shown & map::AIRWAYJ)
+
+      if(layer->isIls() && shown.testFlag(map::ILS))
       {
-        navaidLabel.append(tr("JA"));
-        navaidsTooltip.append(tr("Jet Airways (JA)"));
+        navaidLabel.append(tr("I"));
+        navaidsTooltip.append(tr("ILS (I)"));
       }
-      if(layer->isTrack() && shown & map::TRACK)
+
+      if(layer->isIls() && shownDispTypes.testFlag(map::GLS) && NavApp::getMapQueryGui()->hasGls())
       {
-        navaidLabel.append(tr("T"));
-        navaidsTooltip.append(tr("Tracks (T)"));
+        navaidLabel.append(tr("G"));
+        navaidsTooltip.append(tr("GLS (G)"));
       }
-      if(layer->isAirway() && shown & map::AIRWAYV)
+
+      if(layer->isAirway() && shown.testFlag(map::AIRWAYV))
       {
         navaidLabel.append(tr("VA"));
         navaidsTooltip.append(tr("Victor Airways (VA)"));
       }
 
+      if(layer->isAirway() && shown.testFlag(map::AIRWAYJ))
+      {
+        navaidLabel.append(tr("JA"));
+        navaidsTooltip.append(tr("Jet Airways (JA)"));
+      }
+
+      if(layer->isTrack() && shown.testFlag(map::TRACK))
+      {
+        navaidLabel.append(tr("T"));
+        navaidsTooltip.append(tr("Tracks (T)"));
+      }
+
+      if(layer->isHolding() && shown.testFlag(map::HOLDING))
+      {
+        navaidLabel.append(tr("H"));
+        navaidsTooltip.append(tr("Holdings (H)"));
+      }
+
+      if(layer->isAirportMsa() && shown.testFlag(map::AIRPORT_MSA))
+      {
+        navaidLabel.append(tr("MSA"));
+        navaidsTooltip.append(tr("Airport MSA (MSA)"));
+      }
+
+      if(layer->isMora() && shownDispTypes.testFlag(map::MORA) && NavApp::getMoraReader()->isDataAvailable())
+      {
+        navaidLabel.append(tr("MORA"));
+        navaidsTooltip.append(tr("MORA Grid (MORA)"));
+      }
+
       QStringList airspacesTooltip, airspaceGroupLabel, airspaceGroupTooltip, airspaceSrcTooltip;
       map::MapAirspaceSources airspaceSources = NavApp::getAirspaceController()->getAirspaceSources();
-      if(shown & map::AIRSPACE && airspaceSources & map::AIRSPACE_SRC_ALL)
+      if(shown.testFlag(map::AIRSPACE) && airspaceSources & map::AIRSPACE_SRC_ALL)
       {
         map::MapAirspaceFilter airspaceFilter = paintLayer->getShownAirspacesTypesByLayer();
         // Collect airspace information ==========================================================
@@ -275,7 +284,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
         tooltip.tr().td(tr("No navaids")).trEnd();
 
       QString asText, asGroupText, asSrcText;
-      if(shown & map::AIRSPACE)
+      if(shown.testFlag(map::AIRSPACE))
       {
         asText = tr("Airspaces: ");
         asGroupText = tr("Airspace Groups: ");
@@ -297,7 +306,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
       if(NavApp::isConnected())
       {
         // AI vehicles
-        if(shown & map::AIRCRAFT_AI && layer->isAiAircraftLarge())
+        if(shown.testFlag(map::AIRCRAFT_AI) && layer->isAiAircraftLarge())
         {
           QString ac;
           if(!layer->isAiAircraftSmall())
@@ -319,7 +328,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
           ai.append(ac);
         }
 
-        if(shown & map::AIRCRAFT_AI_SHIP && layer->isAiShipLarge())
+        if(shown.testFlag(map::AIRCRAFT_AI_SHIP) && layer->isAiShipLarge())
         {
           if(!layer->isAiShipSmall())
           {
@@ -333,7 +342,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
           }
         }
       }
-      if(shown & map::AIRCRAFT_AI && NavApp::isOnlineNetworkActive())
+      if(shown.testFlag(map::AIRCRAFT_AI) && NavApp::isOnlineNetworkActive())
         ai.append(tr("%1 Clients / Aircraft").arg(NavApp::getOnlineNetworkTranslated()));
 
       if(!ai.isEmpty())
@@ -358,13 +367,22 @@ void MapVisible::updateVisibleObjectsStatusBar()
       else
         tooltip.tr().td(tr("No wind shown")).trEnd();
 
-      tooltip.tr().td().b(tr("User features: ")).text(NavApp::getMapMarkHandler()->getMarkTypesText()).tdEnd().trEnd();
+      if(layer->isUserpoint())
+      {
+        QStringList types = NavApp::getUserdataController()->getSelectedTypes();
+        if(!types.isEmpty())
+          tooltip.tr().td().b(tr("Userpoints: ")).text(atools::elideTextShort(types.join(tr(", ")), 160)).tdEnd().trEnd();
+      }
+
+      QStringList markTypes = NavApp::getMapMarkHandler()->getMarkTypesText();
+      if(!markTypes.isEmpty())
+        tooltip.tr().td().b(tr("User features: ")).text(markTypes.join(tr(", "))).tdEnd().trEnd();
 
       tooltip.tableEnd();
 
       QStringList label;
-      if(!airportLabel.isEmpty())
-        label.append(airportLabel.join(tr(",")));
+      if(!airportShortLabel.isEmpty())
+        label.append(airportShortLabel.join(tr(",")));
       if(!navaidLabel.isEmpty())
         label.append(navaidLabel.join(tr(",")));
       if(!airspaceGroupLabel.isEmpty())
@@ -373,7 +391,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
         label.append(aiLabel.join(tr(",")));
 
       // Update the statusbar label text and tooltip of the label
-      NavApp::getMainWindow()->setMapObjectsShownMessageText(label.join(" / "), tooltip.getHtml());
+      NavApp::getMainWindow()->setMapObjectsShownMessageText(atools::elideTextShort(label.join(" / "), 40), tooltip.getHtml());
     }
   }
 }

@@ -14,7 +14,6 @@
         <form id="refreshform" onsubmit="checkRefresh();return false" name="refreshform">
           <input type="checkbox" onclick="checkRefresh()" id="refreshMapToggle">
           <label for="refreshMapToggle">auto<br>refresh</label>
-          <span class="gap"></span>
           <input type="number" value="1" step="1" min="1" onchange="delayRefresh()" id="refreshDelay" style="width:40px;text-align:right" disabled>
           <label>s delay</label>
           <button type="button" onclick="refreshMap()">Now</button>
@@ -32,6 +31,7 @@
           <button type="button" onclick="submitMapAirportCmd()">center Airport</button>
         </form>
         <form id="optionsform">
+          <span class="gap"></span>
           <input type="checkbox" value="true" name="preventstandby" onclick="preventStandby(this)" id="preventstandby">
           <label for="preventstandby">prevent<br>device standby</label>
           <!--span class="formparts" id="retinaOption">

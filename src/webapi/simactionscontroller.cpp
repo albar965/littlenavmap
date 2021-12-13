@@ -17,6 +17,7 @@ SimActionsController::SimActionsController(QObject *parent, bool verboseParam, A
 
 
 WebApiResponse SimActionsController::infoAction(WebApiRequest request){
+Q_UNUSED(request)
     if(verbose)
         qDebug() << Q_FUNC_INFO;
 

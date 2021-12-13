@@ -40,6 +40,12 @@ class QListWidgetItem;
 class QListWidget;
 class QFontDialog;
 
+namespace atools {
+namespace gui {
+class GridDelegate;
+class ItemViewZoomHandler;
+}
+}
 /* Takes care about loading, changing and saving of global options.
  * All default options are defined in the widgets in the options.ui file.
  * OptionData will be populated by the OptionsDialog which loads widget data from the settings
@@ -82,6 +88,8 @@ public:
   /* Enable or disable tooltips changed */
   void updateTooltipOption();
 
+  void styleChanged();
+
 signals:
   /* Emitted whenever OK or Apply is pressed on the dialog window */
   void optionsChanged();
@@ -118,6 +126,8 @@ private:
   void updateActiveSkyPathStatus();
   void updateXplanePathStatus();
   void updateXplaneWindStatus();
+  void updateFlightPlanColorWidgets();
+  void updateHighlightWidgets();
 
   void addDatabaseExcludeDirClicked();
   void addDatabaseExcludeFileClicked();
@@ -141,21 +151,27 @@ private:
   void resetWeatherNoaaWindUrlClicked();
 
   void updateWidgetUnits();
-  void simUpdatesConstantClicked(bool state);
+
   void flightplanColorClicked();
+  void flightplanOutlineColorClicked();
   void flightplanActiveColorClicked();
   void flightplanPassedColorClicked();
   void flightplanProcedureColorClicked();
+
+  void mapHighlightFlightplanColorClicked();
+  void mapHighlightSearchColorClicked();
+  void mapHighlightProfileColorClicked();
+
   void trailColorClicked();
   void onlineDisplayRangeClicked();
   void eastWestRuleClicked();
 
   // Add items to the tree widget and to the  displayOptItemIndex
-  QTreeWidgetItem *addTopItem(QTreeWidgetItem *root, const QString& text, const QString& tooltip);
+  QTreeWidgetItem *addTopItem(const QString& text, const QString& description);
 
   template<typename TYPE>
   QTreeWidgetItem *addItem(QTreeWidgetItem *root, QHash<TYPE, QTreeWidgetItem *>& index,
-                           const QString& text, const QString& tooltip, TYPE type, bool checked = false) const;
+                           const QString& text, const QString& description, TYPE type, bool checked = false) const;
 
   template<typename TYPE>
   void restoreOptionItemStates(const QHash<TYPE, QTreeWidgetItem *>& index, const QString& optionPrefix) const;
@@ -221,11 +237,13 @@ private:
   void selectMapFontClicked();
   void resetMapFontClicked();
   void buildFontDialog();
+  void toolbarSizeClicked();
 
   void flightplanPatterShortClicked();
   void flightplanPatterLongClicked();
   void updateFlightplanExample();
   void updateLinks();
+  void colorButtonClicked(QColor& color);
 
   /* Converts range ring string to vector of floats. Falls back to 100 units single ring if nothing is valid.
    * Uses current locale to convert numbers and check min and max. */
@@ -233,14 +251,12 @@ private:
   QString rangeFloatToString(const QVector<float>& ranges) const;
 
   QString guiLanguage, guiFont, mapFont;
-  QColor flightplanColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
+  QColor flightplanColor, flightplanOutlineColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
+  QColor highlightFlightplanColor, highlightSearchColor, highlightProfileColor;
 
   Ui::Options *ui;
   QMainWindow *mainWindow;
   QList<QObject *> widgets;
-
-  // Validates the space separated list of ring sizes
-  RangeRingValidator *rangeRingValidator;
 
   // Maps options flags to items in the tree widget
   QHash<optsac::DisplayOptionsUserAircraft, QTreeWidgetItem *> displayOptItemIndexUser;
@@ -255,6 +271,8 @@ private:
 
   QFontDialog *fontDialog = nullptr;
 
+  atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
+  atools::gui::GridDelegate *gridDelegate = nullptr;
 };
 
 #endif // LITTLENAVMAP_OPTIONSDIALOG_H

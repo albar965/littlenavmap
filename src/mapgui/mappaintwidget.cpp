@@ -45,11 +45,8 @@
 #include <marble/MarbleModel.h>
 #include <marble/AbstractFloatItem.h>
 
-/* If width and height of a bounding rect are smaller than this: Use show point */
-const float POS_IS_POINT_EPSILON = 0.0001f;
-
 // KM
-const static double MINIMUM_DISTANCE_KM = 0.1;
+const static double MINIMUM_DISTANCE_KM = 0.05;
 const static double MAXIMUM_DISTANCE_KM = 6000.;
 const static int MAXIMUM_ZOOM = 1120;
 
@@ -233,6 +230,11 @@ bool MapPaintWidget::isDarkMap() const
   return currentThemeIndex == map::CARTODARK;
 }
 
+bool MapPaintWidget::noRender() const
+{
+  return paintLayer->noRender();
+}
+
 void MapPaintWidget::setThemeInternal(const QString& theme)
 {
   // Ignore any overlay state signals the widget sends while switching theme
@@ -251,6 +253,7 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
       case map::STAMENTERRAIN:
       case map::OPENSTREETMAP:
       case map::OPENTOPOMAP:
+      case map::HUMANITARIAN:
       case map::CARTODARK:
       case map::CARTOLIGHT:
       case map::CUSTOM:
@@ -402,37 +405,50 @@ void MapPaintWidget::setShowMapPois(bool show)
   setShowTerrain(show);
 }
 
-void MapPaintWidget::setShowMapFeatures(map::MapTypes type, bool show)
+void MapPaintWidget::updateGeometryIndex(map::MapTypes oldTypes, map::MapObjectDisplayTypes oldDisplayTypes)
 {
-  bool curShow = (paintLayer->getShownMapObjects() & type) == type;
-  paintLayer->setShowMapObjects(type, show);
-
   // Update screen coordinate caches if display options have changed
+  map::MapTypes types = getShownMapFeatures();
+  map::MapObjectDisplayTypes displayTypes = getShownMapFeaturesDisplay();
 
-  if((type.testFlag(map::AIRWAY_ALL) && show != curShow) || type.testFlag(map::TRACK) /* Update tracks always */)
+  if(((types& map::AIRWAY_ALL) != (oldTypes & map::AIRWAY_ALL)) || types.testFlag(map::TRACK) || oldTypes.testFlag(map::TRACK))
     screenIndex->updateAirwayScreenGeometry(getCurrentViewBoundingBox());
 
-  if(type.testFlag(map::AIRSPACE) && show != curShow)
+  if(types.testFlag(map::AIRSPACE) != oldTypes.testFlag(map::AIRSPACE))
     screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
 
-  if(type.testFlag(map::ILS) && show != curShow)
+  if((types.testFlag(map::ILS) != oldTypes.testFlag(map::ILS)) ||
+     (displayTypes.testFlag(map::GLS) != oldDisplayTypes.testFlag(map::GLS)) ||
+     (displayTypes.testFlag(map::FLIGHTPLAN) != oldDisplayTypes.testFlag(map::FLIGHTPLAN)))
     screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
 
-  if(type.testFlag(map::MISSED_APPROACH) && show != curShow)
+  if(types.testFlag(map::MISSED_APPROACH) != oldTypes.testFlag(map::MISSED_APPROACH) ||
+     (displayTypes.testFlag(map::FLIGHTPLAN) != oldDisplayTypes.testFlag(map::FLIGHTPLAN)))
     screenIndex->updateRouteScreenGeometry(getCurrentViewBoundingBox());
-}
-
-void MapPaintWidget::setShowMapFeaturesDisplay(map::MapObjectDisplayTypes type, bool show)
-{
-  bool curShow = (paintLayer->getShownMapObjectDisplayTypes() & type) == type;
-  paintLayer->setShowMapObjectsDisplay(type, show);
 
   // Update screen coordinate cache if display options have changed
-  if(type & map::LOGBOOK_ALL && show != curShow)
+  if((displayTypes& map::LOGBOOK_ALL) != (oldDisplayTypes & map::LOGBOOK_ALL))
     screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
+}
 
-  if((type.testFlag(map::FLIGHTPLAN) || type.testFlag(map::GLS)) && show != curShow)
-    screenIndex->updateIlsScreenGeometry(getCurrentViewBoundingBox());
+void MapPaintWidget::dumpMapLayers() const
+{
+  paintLayer->dumpMapLayers();
+}
+
+void MapPaintWidget::setShowMapObjects(map::MapTypes type, map::MapTypes mask)
+{
+  paintLayer->setShowMapObjects(type, mask);
+}
+
+void MapPaintWidget::setShowMapObject(map::MapTypes type, bool show)
+{
+  paintLayer->setShowMapObject(type, show);
+}
+
+void MapPaintWidget::setShowMapObjectDisplay(map::MapObjectDisplayTypes type, bool show)
+{
+  paintLayer->setShowMapObjectDisplay(type, show);
 }
 
 void MapPaintWidget::setShowMapAirspaces(map::MapAirspaceFilter types)
@@ -487,10 +503,14 @@ QString MapPaintWidget::getMapCopyright() const
 {
   static const QString OSM("© OpenStreetMap contributors");
   static const QString OTM("© OpenStreetMap / OpenTopoMap contributors");
+  static const QString HUMANITARIAN("© OpenStreetMap contributors / Tiles © HOT");
   static const QString NONE;
 
   switch(currentThemeIndex)
   {
+    case map::HUMANITARIAN:
+      return HUMANITARIAN;
+
     case map::OPENTOPOMAP:
       return OTM;
 
@@ -664,11 +684,11 @@ void MapPaintWidget::centerRectOnMap(const Marble::GeoDataLatLonBox& rect, bool 
 
 void MapPaintWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAdjust)
 {
-  if(!rect.isPoint(POS_IS_POINT_EPSILON) &&
+  if(!rect.isPoint(POS_IS_POINT_EPSILON_DEG) &&
      std::abs(rect.getWidthDegree()) < 180.f &&
      std::abs(rect.getHeightDegree()) < 180.f &&
-     std::abs(rect.getWidthDegree()) > POS_IS_POINT_EPSILON &&
-     std::abs(rect.getHeightDegree()) > POS_IS_POINT_EPSILON)
+     std::abs(rect.getWidthDegree()) > POS_IS_POINT_EPSILON_DEG &&
+     std::abs(rect.getHeightDegree()) > POS_IS_POINT_EPSILON_DEG)
   {
     // Make rectangle slightly bigger to avoid waypoints hiding at the window corners
     Rect scaled(rect);
@@ -716,8 +736,7 @@ void MapPaintWidget::centerRectOnMap(const atools::geo::Rect& rect, bool allowAd
     // Rect is a point or otherwise malformed
     centerPosOnMap(rect.getCenter());
 
-    if(std::abs(rect.getWidthDegree()) < 180.f &&
-       std::abs(rect.getHeightDegree()) < 180.f)
+    if(std::abs(rect.getWidthDegree()) < 180.f && std::abs(rect.getHeightDegree()) < 180.f)
       setDistanceToMap(MINIMUM_DISTANCE_KM, allowAdjust);
     else
       setDistanceToMap(MAXIMUM_DISTANCE_KM, allowAdjust);
@@ -758,9 +777,7 @@ void MapPaintWidget::centerPosOnMap(const atools::geo::Pos& pos)
 
 void MapPaintWidget::setDistanceToMap(double distanceKm, bool allowAdjust)
 {
-  distanceKm = std::min(std::max(distanceKm, MINIMUM_DISTANCE_KM / 2.), MAXIMUM_DISTANCE_KM);
-
-  setDistance(distanceKm);
+  setDistance(atools::minmax(MINIMUM_DISTANCE_KM, MAXIMUM_DISTANCE_KM, distanceKm));
 
   if(allowAdjust && avoidBlurredMap)
     adjustMapDistance();
@@ -770,7 +787,7 @@ void MapPaintWidget::showPosNotAdjusted(const atools::geo::Pos& pos, float dista
 {
   Pos normPos = pos.normalized();
   centerOn(normPos.getLonX(), normPos.getLatY());
-  setDistance(std::min(std::max((double)distanceKm, MINIMUM_DISTANCE_KM / 2.), MAXIMUM_DISTANCE_KM));
+  setDistance(atools::minmax(MINIMUM_DISTANCE_KM, MAXIMUM_DISTANCE_KM, static_cast<double>(distanceKm)));
 }
 
 void MapPaintWidget::showPos(const atools::geo::Pos& pos, float distanceKm, bool doubleClick)
@@ -795,7 +812,7 @@ void MapPaintWidget::showPosInternal(const atools::geo::Pos& pos, float distance
   showAircraft(false);
   jumpBackToAircraftStart(true /* saveDistance */);
 
-  if(distanceKm == 0.f)
+  if(atools::almostEqual(distanceKm, 0.f))
     // Use distance depending on double click
     distanceKm = atools::geo::nmToKm(Unit::rev(doubleClick ?
                                                OptionData::instance().getMapZoomShowClick() :
@@ -808,18 +825,18 @@ void MapPaintWidget::showPosInternal(const atools::geo::Pos& pos, float distance
 
 void MapPaintWidget::showRectStreamlined(const atools::geo::Rect& rect, bool constrainDistance)
 {
-  if(rect.isPoint(POS_IS_POINT_EPSILON))
+  if(rect.isPoint(POS_IS_POINT_EPSILON_DEG))
     showPosNotAdjusted(rect.getTopLeft(), 0.f);
   else
   {
     float w = std::abs(rect.getWidthDegree());
     float h = std::abs(rect.getHeightDegree());
 
-    if(atools::almostEqual(w, 0.f, POS_IS_POINT_EPSILON))
+    if(atools::almostEqual(w, 0.f, POS_IS_POINT_EPSILON_DEG))
       // Workaround for marble not being able to center certain lines
       // Turn rect into a square
       centerRectOnMap(Rect(rect.getWest() - h / 2, rect.getNorth(), rect.getEast() + h / 2, rect.getSouth()));
-    else if(atools::almostEqual(h, 0.f, POS_IS_POINT_EPSILON))
+    else if(atools::almostEqual(h, 0.f, POS_IS_POINT_EPSILON_DEG))
       // Turn rect into a square
       centerRectOnMap(Rect(rect.getWest(), rect.getNorth() + w / 2, rect.getEast(), rect.getSouth() - w / 2));
     else
@@ -857,15 +874,15 @@ void MapPaintWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
     return;
   }
 
-  if(rect.isPoint(POS_IS_POINT_EPSILON))
+  if(rect.isPoint(POS_IS_POINT_EPSILON_DEG))
     showPos(rect.getTopLeft(), 0.f, doubleClick);
   else
   {
-    if(atools::almostEqual(w, 0.f, POS_IS_POINT_EPSILON))
+    if(atools::almostEqual(w, 0.f, POS_IS_POINT_EPSILON_DEG))
       // Workaround for marble not being able to center certain lines
       // Turn rect into a square
       centerRectOnMap(Rect(rect.getWest() - h / 2, rect.getNorth(), rect.getEast() + h / 2, rect.getSouth()));
-    else if(atools::almostEqual(h, 0.f, POS_IS_POINT_EPSILON))
+    else if(atools::almostEqual(h, 0.f, POS_IS_POINT_EPSILON_DEG))
       // Turn rect into a square
       centerRectOnMap(Rect(rect.getWest(), rect.getNorth() + w / 2, rect.getEast(), rect.getSouth() - w / 2));
     else
@@ -1027,9 +1044,26 @@ const QList<QList<map::MapAirway> >& MapPaintWidget::getAirwayHighlights() const
   return screenIndex->getAirwayHighlights();
 }
 
-const proc::MapProcedureLeg& MapPaintWidget::getProcedureLegHighlights() const
+const proc::MapProcedureLeg& MapPaintWidget::getProcedureLegHighlight() const
 {
-  return screenIndex->getApproachLegHighlights();
+  return screenIndex->getProcedureLegHighlight();
+}
+
+const QVector<proc::MapProcedureLegs>& MapPaintWidget::getProcedureHighlights() const
+{
+  return screenIndex->getProcedureHighlights();
+}
+
+void MapPaintWidget::changeProcedureHighlights(const QVector<proc::MapProcedureLegs>& procedures)
+{
+#ifdef DEBUG_INFORMATION_PROC_HIGHLIGHT
+  qDebug() << Q_FUNC_INFO << procedures;
+#endif
+
+  cancelDragAll();
+  screenIndex->setProcedureHighlights(procedures);
+  screenIndex->updateRouteScreenGeometry(getCurrentViewBoundingBox());
+  update();
 }
 
 const proc::MapProcedureLegs& MapPaintWidget::getProcedureHighlight() const
@@ -1037,15 +1071,21 @@ const proc::MapProcedureLegs& MapPaintWidget::getProcedureHighlight() const
   return screenIndex->getProcedureHighlight();
 }
 
-void MapPaintWidget::changeApproachHighlight(const proc::MapProcedureLegs& approach)
+void MapPaintWidget::changeProcedureHighlight(const proc::MapProcedureLegs& procedure)
 {
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << approach;
+#ifdef DEBUG_INFORMATION_PROC_HIGHLIGHT
+  qDebug() << Q_FUNC_INFO << procedure;
 #endif
 
   cancelDragAll();
-  screenIndex->getProcedureHighlight() = approach;
+  screenIndex->setProcedureHighlight(procedure);
   screenIndex->updateRouteScreenGeometry(getCurrentViewBoundingBox());
+  update();
+}
+
+void MapPaintWidget::changeProcedureLegHighlight(const proc::MapProcedureLeg& procedureLeg)
+{
+  screenIndex->setProcedureLegHighlight(procedureLeg);
   update();
 }
 
@@ -1078,12 +1118,6 @@ void MapPaintWidget::changeSearchHighlights(const map::MapResult& newHighlights,
     screenIndex->updateLogEntryScreenGeometry(getCurrentViewBoundingBox());
   if(updateAirspace)
     screenIndex->updateAirspaceScreenGeometry(getCurrentViewBoundingBox());
-  update();
-}
-
-void MapPaintWidget::changeProcedureLegHighlights(const proc::MapProcedureLeg *leg)
-{
-  screenIndex->setApproachLegHighlights(leg);
   update();
 }
 
@@ -1177,44 +1211,47 @@ const QList<int>& MapPaintWidget::getRouteHighlights() const
   return screenIndex->getRouteHighlights();
 }
 
-const QList<map::RangeMarker>& MapPaintWidget::getRangeRings() const
+const QHash<int, map::RangeMarker>& MapPaintWidget::getRangeMarks() const
 {
   return screenIndex->getRangeMarks();
 }
 
-const QList<map::DistanceMarker>& MapPaintWidget::getDistanceMarkers() const
+const QHash<int, map::DistanceMarker>& MapPaintWidget::getDistanceMarks() const
 {
   return screenIndex->getDistanceMarks();
 }
 
-const QList<map::TrafficPattern>& MapPaintWidget::getTrafficPatterns() const
+const QHash<int, map::PatternMarker>& MapPaintWidget::getPatternsMarks() const
 {
-  return screenIndex->getTrafficPatterns();
+  return screenIndex->getPatternMarks();
 }
 
-QList<map::TrafficPattern>& MapPaintWidget::getTrafficPatterns()
+const QHash<int, map::HoldingMarker>& MapPaintWidget::getHoldingMarks() const
 {
-  return screenIndex->getTrafficPatterns();
+  return screenIndex->getHoldingMarks();
 }
 
-const QList<map::MapHolding>& MapPaintWidget::getHolds() const
+const QHash<int, map::MsaMarker>& MapPaintWidget::getMsaMarks() const
 {
-  return screenIndex->getHolds();
+  return screenIndex->getMsaMarks();
 }
 
-QList<map::MapHolding>& MapPaintWidget::getHolds()
+QList<map::MapHolding> MapPaintWidget::getHoldingMarksFiltered() const
 {
-  return screenIndex->getHolds();
+  QList<map::MapHolding> retval;
+  const QHash<int, map::HoldingMarker>& marks = screenIndex->getHoldingMarks();
+  for(auto it = marks.begin(); it != marks.end(); ++it)
+    retval.append(it.value().holding);
+  return retval;
 }
 
-const QList<map::MapAirportMsa>& MapPaintWidget::getAirportMsa() const
+QList<map::MapAirportMsa> MapPaintWidget::getMsaMarksFiltered() const
 {
-  return screenIndex->getAirportMsa();
-}
-
-QList<map::MapAirportMsa>& MapPaintWidget::getAirportMsa()
-{
-  return screenIndex->getAirportMsa();
+  QList<map::MapAirportMsa> retval;
+  const QHash<int, map::MsaMarker>& marks = screenIndex->getMsaMarks();
+  for(auto it = marks.begin(); it != marks.end(); ++it)
+    retval.append(it.value().msa);
+  return retval;
 }
 
 const atools::fs::sc::SimConnectUserAircraft& MapPaintWidget::getUserAircraft() const

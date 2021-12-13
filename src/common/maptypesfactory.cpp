@@ -56,8 +56,7 @@ void MapTypesFactory::fillAirport(const SqlRecord& record, map::MapAirport& airp
     airport.asosFrequency = record.valueInt("asos_frequency");
     airport.unicomFrequency = record.valueInt("unicom_frequency");
 
-    airport.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"),
-                           record.valueFloat("altitude"));
+    airport.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
 
     airport.region = record.valueStr("region", QString());
   }
@@ -85,27 +84,27 @@ void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapR
     runway.primaryName = record.valueStr("primary_name");
     runway.secondaryName = record.valueStr("secondary_name");
     runway.edgeLight = record.valueStr("edge_light");
-    runway.width = record.valueInt("width");
-    runway.primaryOffset = record.valueInt("primary_offset_threshold");
-    runway.secondaryOffset = record.valueInt("secondary_offset_threshold");
-    runway.primaryBlastPad = record.valueInt("primary_blast_pad");
-    runway.secondaryBlastPad = record.valueInt("secondary_blast_pad");
-    runway.primaryOverrun = record.valueInt("primary_overrun");
-    runway.secondaryOverrun = record.valueInt("secondary_overrun");
+    runway.width = record.valueFloat("width");
+    runway.primaryOffset = record.valueFloat("primary_offset_threshold");
+    runway.secondaryOffset = record.valueFloat("secondary_offset_threshold");
+    runway.primaryBlastPad = record.valueFloat("primary_blast_pad");
+    runway.secondaryBlastPad = record.valueFloat("secondary_blast_pad");
+    runway.primaryOverrun = record.valueFloat("primary_overrun");
+    runway.secondaryOverrun = record.valueFloat("secondary_overrun");
     runway.primaryClosed = record.valueBool("primary_closed_markings");
     runway.secondaryClosed = record.valueBool("secondary_closed_markings");
   }
   else
   {
-    runway.width = 0;
-    runway.primaryOffset = 0;
-    runway.secondaryOffset = 0;
-    runway.primaryBlastPad = 0;
-    runway.secondaryBlastPad = 0;
-    runway.primaryOverrun = 0;
-    runway.secondaryOverrun = 0;
-    runway.primaryClosed = 0;
-    runway.secondaryClosed = 0;
+    runway.width = 0.f;
+    runway.primaryOffset = 0.f;
+    runway.secondaryOffset = 0.f;
+    runway.primaryBlastPad = 0.f;
+    runway.secondaryBlastPad = 0.f;
+    runway.primaryOverrun = 0.f;
+    runway.secondaryOverrun = 0.f;
+    runway.primaryClosed = false;
+    runway.secondaryClosed = false;
   }
 
   runway.primaryEndId = record.valueInt("primary_end_id", -1);
@@ -115,19 +114,21 @@ void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapR
   runway.airportId = record.valueInt("airport_id", -1);
 
   runway.smoothness = record.valueFloat("smoothness", -1.f);
-  runway.length = record.valueInt("length");
+  runway.length = record.valueFloat("length");
   runway.heading = record.valueFloat("heading");
   runway.patternAlt = record.valueFloat("pattern_altitude", 0.f);
-  runway.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
-  runway.primaryPosition = Pos(record.valueFloat("primary_lonx"), record.valueFloat("primary_laty"));
-  runway.secondaryPosition = Pos(record.valueFloat("secondary_lonx"), record.valueFloat("secondary_laty"));
+
+  float altitude = record.valueFloat("altitude", 0.f);
+  runway.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), altitude);
+  runway.primaryPosition = Pos(record.valueFloat("primary_lonx"), record.valueFloat("primary_laty"), altitude);
+  runway.secondaryPosition = Pos(record.valueFloat("secondary_lonx"), record.valueFloat("secondary_laty"), altitude);
 }
 
 void MapTypesFactory::fillRunwayEnd(const atools::sql::SqlRecord& record, MapRunwayEnd& end, bool nav)
 {
   end.navdata = nav;
   end.name = record.valueStr("name");
-  end.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
+  end.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude", 0.f));
   end.secondary = record.valueStr("end_type") == "S";
   end.heading = record.valueFloat("heading");
   end.id = record.valueInt("runway_end_id");
@@ -152,6 +153,7 @@ void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& 
     ap.local = record.valueStr("local", QString());
     ap.name = record.valueStr("name");
     ap.rating = record.valueInt("rating", -1);
+    ap.type = static_cast<map::MapAirportType>(record.valueInt("type", map::AP_TYPE_NONE));
     ap.longestRunwayLength = record.valueInt("longest_runway_length");
     ap.longestRunwayHeading = static_cast<int>(std::round(record.valueFloat("longest_runway_heading")));
     ap.magvar = record.valueFloat("mag_var");
@@ -631,7 +633,6 @@ void MapTypesFactory::fillHolding(const atools::sql::SqlRecord& record, map::Map
   holding.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
 
   holding.speedKts = 0.f;
-  holding.user = false;
 }
 
 void MapTypesFactory::fillAirportMsa(const atools::sql::SqlRecord& record, map::MapAirportMsa& airportMsa)
@@ -664,7 +665,6 @@ void MapTypesFactory::fillAirportMsa(const atools::sql::SqlRecord& record, map::
 
   airportMsa.bounding = Rect(record.valueFloat("left_lonx"), record.valueFloat("top_laty"),
                              record.valueFloat("right_lonx"), record.valueFloat("bottom_laty"));
-  airportMsa.user = false;
 }
 
 void MapTypesFactory::fillParking(const SqlRecord& record, map::MapParking& parking)
@@ -760,7 +760,7 @@ void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& ai
 
   // Use default values for online network ATC centers
   airspace.comName = record.valueStr("com_name", QString());
-  airspace.multipleCode = record.valueStr("multiple_code", QString());
+  airspace.multipleCode = record.valueStr("multiple_code", QString()).trimmed();
   airspace.restrictiveDesignation = record.valueStr("restrictive_designation", QString());
   airspace.restrictiveType = record.valueStr("restrictive_type", QString());
   airspace.timeCode = record.valueStr("time_code", QString());

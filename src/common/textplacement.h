@@ -125,6 +125,18 @@ public:
     colors = value;
   }
 
+  /* Show direction arrow even if text is empty */
+  void setArrowForEmpty(bool value)
+  {
+    arrowForEmpty = value;
+  }
+
+  /* Place text on top of line. Otherwise above. */
+  void setTextOnLineCenter(bool value)
+  {
+    textOnLineCenter = value;
+  }
+
 private:
   QList<QPointF> textCoords;
   QList<float> textBearing;
@@ -141,7 +153,7 @@ private:
   /* Minimum pixel length for a line to get a text label */
   static Q_DECL_CONSTEXPR int MIN_LENGTH_FOR_TEXT = 80;
 
-  bool fast = false, textOnTopOfLine = true;
+  bool fast = false, textOnTopOfLine = true, textOnLineCenter = false, arrowForEmpty = false;
   QPainter *painter = nullptr;
   CoordinateConverter *converter = nullptr;
   QString arrowRight, arrowLeft;

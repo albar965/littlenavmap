@@ -58,8 +58,11 @@ struct MapLogbookEntry;
 struct MapBase;
 struct MapResultIndex;
 struct MapHolding;
-struct TrafficPattern;
+struct PatternMarker;
 struct RangeMarker;
+struct HoldingMarker;
+struct MsaMarker;
+struct DistanceMarker;
 }
 
 namespace atools {
@@ -169,13 +172,9 @@ public:
   void weatherText(const map::WeatherContext& context, const map::MapAirport& airport,
                    atools::util::HtmlBuilder& html) const;
 
-  /*
-   * Creates a HTML description for a VOR station.
-   * @param vor
-   * @param html Result containing HTML snippet
-   * @param background Background color for icons
-   */
+  /* Database nav features */
   void airportMsaText(const map::MapAirportMsa& msa, atools::util::HtmlBuilder& html) const;
+  void holdingText(const map::MapHolding& holding, atools::util::HtmlBuilder& html) const;
 
   /*
    * Creates a HTML description for a VOR station.
@@ -266,8 +265,7 @@ public:
    */
   void userpointTextRoute(const map::MapUserpointRoute& userpoint, atools::util::HtmlBuilder& html) const;
 
-  void procedurePointText(const proc::MapProcedurePoint& procPoint, atools::util::HtmlBuilder& html,
-                          const Route *route) const;
+  void procedurePointText(const map::MapProcedurePoint& procPoint, atools::util::HtmlBuilder& html, const Route *route) const;
 
   /*
    * Creates an overview HTML description for any AI or user aircraft in the simulator.
@@ -284,9 +282,7 @@ public:
    * @param html
    * @param html Result containing HTML snippet
    */
-  void aircraftProgressText(const atools::fs::sc::SimConnectAircraft& data,
-                            atools::util::HtmlBuilder& html,
-                            const Route& route, bool moreLessSwitch, bool less);
+  void aircraftProgressText(const atools::fs::sc::SimConnectAircraft& data, atools::util::HtmlBuilder& html, const Route& route);
 
   /*
    * Create HTML for online aircraft also showing position.
@@ -294,9 +290,12 @@ public:
   void aircraftOnlineText(const atools::fs::sc::SimConnectAircraft& aircraft, const atools::sql::SqlRecord& onlineRec,
                           atools::util::HtmlBuilder& html);
 
-  void holdingText(const map::MapHolding& holding, atools::util::HtmlBuilder& html) const;
-  void trafficPatternText(const map::TrafficPattern& pattern, atools::util::HtmlBuilder& html) const;
+  /* User features / marks */
+  void msaMarkerText(const map::MsaMarker& msa, atools::util::HtmlBuilder& html) const;
+  void holdingMarkerText(const map::HoldingMarker& holding, atools::util::HtmlBuilder& html) const;
+  void patternMarkerText(const map::PatternMarker& pattern, atools::util::HtmlBuilder& html) const;
   void rangeMarkerText(const map::RangeMarker& marker, atools::util::HtmlBuilder& html) const;
+  void distanceMarkerText(const map::DistanceMarker& marker, atools::util::HtmlBuilder& html) const;
 
   void setSymbolSize(const QSize& value)
   {
@@ -314,7 +313,7 @@ public:
   }
 
   /* Add bearing and distance to user and last flight plan leg in a table if pos is valid */
-  void bearingAndDistanceTexts(const atools::geo::Pos& pos, float magvar, atools::util::HtmlBuilder& html, bool noBearing);
+  void bearingAndDistanceTexts(const atools::geo::Pos& pos, float magvar, atools::util::HtmlBuilder& html, bool bearing, bool distance);
 
 private:
   void head(atools::util::HtmlBuilder& html, const QString& text) const;
@@ -348,6 +347,9 @@ private:
 
   void airportTitle(const map::MapAirport& airport, atools::util::HtmlBuilder& html, int rating) const;
 
+  void airportMsaTextInternal(const map::MapAirportMsa& msa, atools::util::HtmlBuilder& html, bool user) const;
+  void holdingTextInternal(const map::MapHolding& holding, atools::util::HtmlBuilder& html, bool user) const;
+
   void rowForInt(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
                  const QString& msg, const QString& val) const;
 
@@ -355,7 +357,7 @@ private:
                   const QString& msg, bool expected = false) const;
 
   void runwayEndText(atools::util::HtmlBuilder& html, const map::MapAirport& airport, const atools::sql::SqlRecord *rec,
-                     float hdgPrimTrue, float length) const;
+                     float hdgPrimTrue, float length, bool secondary) const;
 
   void rowForStr(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord *rec, const QString& colName,
                  const QString& msg, const QString& val) const;
@@ -367,7 +369,7 @@ private:
                     const QString& colName, const QString& msg, const QString& val) const;
 
   void aircraftTitle(const atools::fs::sc::SimConnectAircraft& aircraft,
-                     atools::util::HtmlBuilder& html, bool moreLessSwitch, bool less);
+                     atools::util::HtmlBuilder& html);
 
   void dateTimeAndFlown(const atools::fs::sc::SimConnectUserAircraft *userAircraft,
                         atools::util::HtmlBuilder& html) const;
@@ -407,8 +409,7 @@ private:
 
   void ilsTextProcInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
   void ilsTextRunwayInfo(const map::MapIls& ils, atools::util::HtmlBuilder& html) const;
-  void ilsTextInternal(const map::MapIls& ils, atools::util::HtmlBuilder& html, bool procInfo, bool runwayInfo,
-                       bool infoOrTooltip) const;
+  void ilsTextInternal(const map::MapIls& ils, atools::util::HtmlBuilder& html, bool procInfo, bool runwayInfo, bool infoOrTooltip) const;
 
   /* Add wind text for flight plan waypoints */
   void routeWindText(atools::util::HtmlBuilder& html, const Route& route, int index) const;
@@ -421,6 +422,8 @@ private:
   /* Join values and header with default values */
   QString strJoinVal(const QStringList& list) const;
   QString strJoinHdr(const QStringList& list) const;
+
+  QString highlightText(const QString& text) const;
 
   /* Airport, navaid and userpoint icon size */
   QSize symbolSize = QSize(18, 18);
@@ -437,7 +440,11 @@ private:
   AirportQuery *airportQuerySim, *airportQueryNav;
   InfoQuery *infoQuery;
   atools::fs::util::MorseCode *morse;
-  bool info, print, verbose;
+
+  bool info, /* Shown in information panel - otherwise tooltip */
+       print, /* Printing */
+       verbose /* Verbose tooltip option in settings set */;
+
   QLocale locale;
 };
 

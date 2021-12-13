@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>900</width>
-    <height>400</height>
+    <height>430</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -22,20 +22,7 @@
      <property name="verticalSpacing">
       <number>6</number>
      </property>
-     <item row="2" column="2">
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item row="2" column="1">
+     <item row="3" column="1">
       <widget class="QComboBox" name="comboBoxRouteExportOptions">
        <property name="toolTip">
         <string/>
@@ -45,7 +32,7 @@
        </property>
        <item>
         <property name="text">
-         <string>Show file dialog for every exported format</string>
+         <string>Show file dialog for each exported format</string>
         </property>
        </item>
        <item>
@@ -60,7 +47,7 @@
        </item>
       </widget>
      </item>
-     <item row="2" column="0">
+     <item row="3" column="0">
       <widget class="QLabel" name="labelRouteExportOptions">
        <property name="text">
         <string>&amp;Export options:</string>
@@ -70,7 +57,7 @@
        </property>
       </widget>
      </item>
-     <item row="1" column="0" colspan="3">
+     <item row="2" column="0" colspan="3">
       <widget class="Line" name="line">
        <property name="orientation">
         <enum>Qt::Horizontal</enum>
@@ -123,6 +110,35 @@
        </attribute>
       </widget>
      </item>
+     <item row="3" column="2">
+      <spacer name="horizontalSpacer">
+       <property name="orientation">
+        <enum>Qt::Horizontal</enum>
+       </property>
+       <property name="sizeHint" stdset="0">
+        <size>
+         <width>40</width>
+         <height>20</height>
+        </size>
+       </property>
+      </spacer>
+     </item>
+     <item row="1" column="0" colspan="3">
+      <widget class="QLabel" name="labelRouteExportPath">
+       <property name="text">
+        <string>Click on a row in the table above to see the resulting file name and path.</string>
+       </property>
+       <property name="wordWrap">
+        <bool>true</bool>
+       </property>
+       <property name="margin">
+        <number>4</number>
+       </property>
+       <property name="textInteractionFlags">
+        <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+       </property>
+      </widget>
+     </item>
     </layout>
    </item>
    <item>
@@ -131,7 +147,7 @@
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Help|QDialogButtonBox::Ok|QDialogButtonBox::SaveAll</set>
      </property>
     </widget>
    </item>
@@ -144,12 +160,11 @@
    <property name="text">
     <string>&amp;Select Export Path ...</string>
    </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
   </action>
   <action name="actionResetExportPath">
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/reset.svg</normaloff>:/littlenavmap/resources/icons/reset.svg</iconset>
-   </property>
    <property name="text">
     <string>&amp;Reset Export Path</string>
    </property>
@@ -161,6 +176,9 @@
    </property>
    <property name="text">
     <string>&amp;Export Flight Plan Now ...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
    </property>
   </action>
   <action name="actionResetView">
@@ -192,6 +210,9 @@
    <property name="text">
     <string>&amp;Edit Path</string>
    </property>
+   <property name="shortcut">
+    <string>F3</string>
+   </property>
   </action>
   <action name="actionDefaultTextSize">
    <property name="text">
@@ -203,7 +224,10 @@
   </action>
   <action name="actionResetPathsAndSelection">
    <property name="text">
-    <string>Reset &amp;Paths and Selection</string>
+    <string>Reset &amp;Path, Filename Patterns and Selection States</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset export paths, filename patterns and selected for export</string>
    </property>
   </action>
   <action name="actionSelect">
@@ -215,6 +239,25 @@
    </property>
    <property name="toolTip">
     <string>Select for multi export</string>
+   </property>
+   <property name="shortcut">
+    <string>Space</string>
+   </property>
+  </action>
+  <action name="actionEditPattern">
+   <property name="text">
+    <string>&amp;Edit Filename Pattern</string>
+   </property>
+   <property name="shortcut">
+    <string>F2</string>
+   </property>
+  </action>
+  <action name="actionResetFilePattern">
+   <property name="text">
+    <string>&amp;Reset Filename Pattern</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset export filename pattern to default</string>
    </property>
   </action>
  </widget>

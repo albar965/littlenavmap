@@ -76,6 +76,7 @@ public:
   QIcon createUserpointIcon(int size);
   QIcon createProcedurePointIcon(int size);
   QIcon createAirspaceIcon(const map::MapAirspace& airspace, int size);
+  QIcon createProcedurePreviewIcon(const QColor& color, int size);
   QIcon createHelipadIcon(const map::MapHelipad& helipad, int size);
 
   /* Scale is not pixel size but a factor related for font size */
@@ -99,7 +100,8 @@ public:
   void drawWindPointer(QPainter *painter, float x, float y, int size, float dir);
 
   /* Draw large symbol with sectors and labels. MSA circle with bearings and altitude */
-  void drawAirportMsa(QPainter *painter, const map::MapAirportMsa& airportMsa, float x, float y, int size, float symbolScale, bool header, bool transparency, bool fast);
+  void drawAirportMsa(QPainter *painter, const map::MapAirportMsa& airportMsa, float x, float y, int size, float symbolScale, bool header,
+                      bool transparency, bool fast);
 
   /* Aircraft track */
   void drawTrackLine(QPainter *painter, float x, float y, int size, float dir);
@@ -151,7 +153,7 @@ public:
   void textBox(QPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,
                textatt::TextAttributes atts = textatt::NONE,
                int transparency = 255, const QColor& backgroundColor = QColor());
-  void textBoxF(QPainter *painter, const QStringList& texts, const QPen& textPen, float x, float y,
+  void textBoxF(QPainter *painter, const QStringList& texts, QPen textPen, float x, float y,
                 textatt::TextAttributes atts = textatt::NONE,
                 int transparency = 255, const QColor& backgroundColor = QColor());
 

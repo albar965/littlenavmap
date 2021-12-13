@@ -49,6 +49,7 @@ class SimConnectUserAircraft;
 
 namespace map {
 struct MapBase;
+struct MapPos;
 struct MapAirport;
 struct MapVor;
 struct MapNdb;
@@ -65,6 +66,8 @@ struct MapResult;
 struct MapResultIndex;
 }
 
+class Route;
+
 namespace mc {
 
 /*
@@ -76,7 +79,9 @@ enum MenuActionType
   NONE, /* Nothing selected - default value */
   INFORMATION, /* Show Information */
   PROCEDURE, /* Show airport procedures */
-  CUSTOMPROCEDURE, /* Create custom procedure */
+  PROCEDUREADD, /* Add airport procedures into plan */
+  CUSTOMAPPROACH, /* Create custom procedure */
+  CUSTOMDEPARTURE, /* Create custom procedure */
   MEASURE, /* GC measmurement line */
   NAVAIDRANGE, /* Show range ring for radio navaid */
   PATTERN, /* Airport traffic pattern */
@@ -94,7 +99,8 @@ enum MenuActionType
   USERPOINTMOVE, /* Move userpoint on map (in sub-menu) */
   USERPOINTDELETE, /* Remove userpoint (in sub-menu) */
   LOGENTRYEDIT, /* Edit logbook entry on preview */
-  SHOWINSEARCH /* Show objects in search window with filter and selection */
+  SHOWINSEARCH, /* Show objects in search window with filter and selection */
+  REMOVEUSER /* Remove traffic pattern, hold, etc. */
 };
 
 }
@@ -108,7 +114,7 @@ class MapContextMenu
   Q_DECLARE_TR_FUNCTIONS(MapContextMenu)
 
 public:
-  explicit MapContextMenu(QMainWindow *mainWindowParam, MapWidget *mapWidgetParam);
+  explicit MapContextMenu(QMainWindow *mainWindowParam, MapWidget *mapWidgetParam, const Route& routeParam);
   ~MapContextMenu();
 
   /* Do not allow copying */
@@ -135,6 +141,9 @@ public:
     return selectedBase;
   }
 
+  /* Get the map object id which was selected or -1 */
+  int getSelectedId() const;
+
   /* Get selected action type like "Show information" */
   mc::MenuActionType getSelectedActionType() const
   {
@@ -149,36 +158,6 @@ public:
 
   /* Global click position */
   const atools::geo::Pos& getPos() const;
-
-  /* Index of selected/nearest distance marker or -1 if none */
-  int getDistMarkerIndex() const
-  {
-    return distMarkerIndex;
-  }
-
-  /* Index of selected/nearest traffic pattern or -1 if none */
-  int getTrafficPatternIndex() const
-  {
-    return trafficPatternIndex;
-  }
-
-  /* Index of selected/nearest hold or -1 if none */
-  int getHoldIndex() const
-  {
-    return holdIndex;
-  }
-
-  /* Index of selected/nearest airport MSA diagram or -1 if none */
-  int getAirportMsaIndex() const
-  {
-    return airportMsaIndex;
-  }
-
-  /* Index of selected/nearest range rings or -1 if none */
-  int getRangeMarkerIndex() const
-  {
-    return rangeMarkerIndex;
-  }
 
   /* Index of selected/nearest route leg or -1 if none */
   int getSelectedRouteIndex() const
@@ -195,7 +174,10 @@ private:
   // ----
   void insertInformationMenu(QMenu& menu);
   void insertProcedureMenu(QMenu& menu);
-  void insertCustomProcedureMenu(QMenu& menu);
+  void insertProcedureAddMenu(QMenu& menu);
+  void insertCustomApproachMenu(QMenu& menu);
+  void insertCustomDepartureMenu(QMenu& menu);
+  void insertRemoveMarkMenu(QMenu& menu);
 
   // ----
   void insertMeasureMenu(QMenu& menu);
@@ -270,12 +252,6 @@ private:
                         const QString& key, const QIcon& icon, const map::MapBase *base, bool submenu,
                         bool allowNoMapObject, const ActionCallback& callback);
 
-  /* Get corresponding icon for map object. Can be dynamically generated or resource depending on map object type */
-  QIcon mapBaseIcon(const map::MapBase *base);
-
-  /* Gets text for menu item */
-  static QString mapBaseText(const map::MapBase *base);
-
   /* Sort callback comparator for a locale-aware sorting of menu items*/
   static bool alphaSort(const map::MapBase *base1, const map::MapBase *base2);
 
@@ -287,6 +263,7 @@ private:
 
   /* Name of underlying procedure or empty if route leg */
   QString procedureName(const map::MapBase *base) const;
+  bool isProcedure(const map::MapBase *base) const;
 
   // Selections
   QAction *selectedAction = nullptr;
@@ -310,13 +287,14 @@ private:
   bool visibleOnMap = false;
 
   // Nearest indexes
-  int distMarkerIndex = -1, trafficPatternIndex = -1, holdIndex = -1, rangeMarkerIndex = -1, selectedRouteIndex = -1, airportMsaIndex = -1;
+  int selectedRouteIndex = -1;
 
   MapWidget *mapWidget;
   QMainWindow *mainWindow;
+  const Route& route;
 
   // Keep global click position in a map base which allows to referece it by map base pointer
-  map::MapBase *mapBasePos;
+  map::MapPos *mapBasePos;
 
   // Keep state and text for some pre-defined action
   atools::gui::ActionTextSaver *textSaver;
