@@ -371,6 +371,8 @@ public:
 
   static const QString& getCurrentRouteFilepath();
   static const QString& getCurrentAircraftPerfFilepath();
+  static const QString& getCurrentAircraftPerfName();
+  static const QString& getCurrentAircraftPerfAircraftType();
 
   static WebController *getWebController();
 

@@ -4613,6 +4613,25 @@ Matches any visited airport.</string>
           <number>2</number>
          </property>
          <item>
+          <widget class="QLabel" name="labelRouteRemarksHeader">
+           <property name="toolTip">
+            <string>Shows aircraft performance and navigation data used when creating the flight plan.</string>
+           </property>
+           <property name="statusTip">
+            <string>Shows aircraft performance and navigation data used when creating the flight plan.</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="wordWrap">
+            <bool>true</bool>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPlainTextEdit" name="plainTextEditRouteRemarks">
            <property name="toolTip">
             <string/>
@@ -12530,8 +12549,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>

@@ -72,6 +72,9 @@ public:
   /* Update navdata properties in flightplan properties for export and save */
   void updateRouteCycleMetadata();
 
+  /* Insert properties for aircraft performance */
+  void updateAircraftPerfMetadata();
+
   /* Update positions, distances and try to select next leg*/
   void updateActiveLegAndPos(const map::PosCourse& pos);
   void updateActiveLegAndPos(bool force, bool flying);

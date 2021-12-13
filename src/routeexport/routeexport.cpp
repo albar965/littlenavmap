@@ -1184,7 +1184,7 @@ bool RouteExport::routeValidateMulti(const RouteExportFormat& format)
  *  @return true if route can be saved anyway */
 bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool multi)
 {
-  NavApp::updateRouteCycleMetadata();
+  // NavApp::updateRouteCycleMetadata();
 
   bool validateParking = false, validateDepartAndDest = false, validateCycle = false;
   for(const RouteExportFormat& fmt : formats)

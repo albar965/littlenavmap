@@ -25,6 +25,7 @@
 #include "connect/connectclient.h"
 #include "db/databasemanager.h"
 #include "exception.h"
+#include "fs/perf/aircraftperf.h"
 #include "fs/common/magdecreader.h"
 #include "fs/common/morareader.h"
 #include "fs/db/databasemeta.h"
@@ -988,6 +989,16 @@ const QString& NavApp::getCurrentRouteFilepath()
 const QString& NavApp::getCurrentAircraftPerfFilepath()
 {
   return aircraftPerfController->getCurrentFilepath();
+}
+
+const QString& NavApp::getCurrentAircraftPerfName()
+{
+  return aircraftPerfController->getAircraftPerformance().getName();
+}
+
+const QString& NavApp::getCurrentAircraftPerfAircraftType()
+{
+  return aircraftPerfController->getAircraftPerformance().getAircraftType();
 }
 
 WebController *NavApp::getWebController()

@@ -401,9 +401,6 @@ private:
   void updateFlightplanFromWidgets(atools::fs::pln::Flightplan& flightplan);
   void updateFlightplanFromWidgets();
 
-  /* Insert properties for aircraft performance */
-  void assignFlightplanPerfProperties(atools::fs::pln::Flightplan& flightplan) const;
-
   /* Used by undo/redo */
   void changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan);
 
@@ -424,6 +421,9 @@ private:
 
   /* Enable or disable remarks widget */
   void updateRemarkWidget();
+
+  /* Update header label with sim information */
+  void updateRemarkHeader();
 
   /* Remarks changed */
   void remarksTextChanged();

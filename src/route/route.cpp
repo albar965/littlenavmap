@@ -83,9 +83,17 @@ Route& Route::operator=(const Route& other)
   return *this;
 }
 
+void Route::updateAircraftPerfMetadata()
+{
+  QHash<QString, QString>& properties = flightplan.getProperties();
+  properties.insert(atools::fs::pln::AIRCRAFT_PERF_NAME, NavApp::getCurrentAircraftPerfName());
+  properties.insert(atools::fs::pln::AIRCRAFT_PERF_TYPE, NavApp::getCurrentAircraftPerfAircraftType());
+  properties.insert(atools::fs::pln::AIRCRAFT_PERF_FILE, NavApp::getCurrentAircraftPerfFilepath());
+}
+
 void Route::updateRouteCycleMetadata()
 {
-  QHash<QString, QString>& properties = getFlightplan().getProperties();
+  QHash<QString, QString>& properties = flightplan.getProperties();
   // Add metadata for navdata reference =========================
   properties.insert(atools::fs::pln::SIMDATA, NavApp::getDatabaseMetaSim()->getDataSource());
   properties.insert(atools::fs::pln::SIMDATACYCLE, NavApp::getDatabaseAiracCycleSim());

@@ -259,13 +259,14 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   ui->menuRoute->insertSeparator(ui->actionRouteSelectParking);
 
   // Top widgets ================================================================================
-  connect(ui->spinBoxRouteAlt, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged), this, &RouteController::routeAltChanged);
-  connect(ui->comboBoxRouteType, static_cast<void (QComboBox::*)(int)>(&QComboBox::activated), this, &RouteController::routeTypeChanged);
+  connect(ui->spinBoxRouteAlt, QOverload<int>::of(&QSpinBox::valueChanged), this, &RouteController::routeAltChanged);
+  connect(ui->comboBoxRouteType, QOverload<int>::of(&QComboBox::activated), this, &RouteController::routeTypeChanged);
 
   // View ================================================================================
   connect(view, &QTableView::doubleClicked, this, &RouteController::doubleClick);
   connect(view, &QTableView::customContextMenuRequested, this, &RouteController::tableContextMenu);
   connect(this, &RouteController::routeChanged, this, &RouteController::updateRemarkWidget);
+  connect(this, &RouteController::routeChanged, this, &RouteController::updateRemarkHeader);
   connect(ui->plainTextEditRouteRemarks, &QPlainTextEdit::textChanged, this, &RouteController::remarksTextChanged);
 
   // Update route altitude and elevation profile with a delay ====================
@@ -974,6 +975,7 @@ void RouteController::newFlightplan()
   route.updateAll();
   route.updateLegAltitudes();
   route.updateRouteCycleMetadata();
+  route.updateAircraftPerfMetadata();
 
   updateTableModel();
   updateMoveAndDeleteActions();
@@ -1063,7 +1065,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   if(format == atools::fs::pln::MSFS_PLN)
     flightplan.setDepartureParkingName(atools::fs::util::runwayNamePrefixZero(flightplan.getDepartureParkingName()));
 
-  assignFlightplanPerfProperties(flightplan);
+  // assignFlightplanPerfProperties(flightplan);
   route.setFlightplan(flightplan);
 
   route.createRouteLegsFromFlightplan();
@@ -1082,7 +1084,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   fileCruiseAlt = route.getCruisingAltitudeFeet();
 
   route.updateLegAltitudes();
-  route.updateRouteCycleMetadata();
+  // route.updateRouteCycleMetadata();
 
   // Get number from user waypoint from user defined waypoint in fs flight plan
   entryBuilder->setCurUserpointNumber(route.getNextUserWaypointNumber());
@@ -1446,6 +1448,7 @@ void RouteController::saveFlightplanLnmExported(const QString& filename)
   undoIndexClean = undoIndex;
   undoStack->setClean();
 
+  updateRemarkHeader();
   NavApp::updateWindowTitle();
 }
 
@@ -1503,7 +1506,7 @@ bool RouteController::saveFlightplanLnmSelectionAs(const QString& filename, int 
     saveplan.setComment(QString());
 
     // Add performance file type and name ===============
-    assignFlightplanPerfProperties(saveplan);
+    saveRoute.updateAircraftPerfMetadata();
 
     // Save LNMPLN - Will throw an exception if something goes wrong
     flightplanIO->saveLnm(saveplan, filename);
@@ -1546,7 +1549,7 @@ bool RouteController::saveFlightplanLnmInternal()
     flightplan.setCruisingAltitude(atools::roundToInt(Unit::rev(static_cast<float>(flightplan.getCruisingAltitude()), Unit::altFeetF)));
 
     // Add performance file type and name ===============
-    assignFlightplanPerfProperties(flightplan);
+    route.updateAircraftPerfMetadata();
 
     // Save LNMPLN - Will throw an exception if something goes wrong
     flightplanIO->saveLnm(flightplan, routeFilename);
@@ -1557,6 +1560,7 @@ bool RouteController::saveFlightplanLnmInternal()
     // Set clean undo state index since QUndoStack only returns weird values
     undoIndexClean = undoIndex;
     undoStack->setClean();
+    updateRemarkHeader();
     NavApp::updateWindowTitle();
     qDebug() << "saveFlightplan undoIndex" << undoIndex << "undoIndexClean" << undoIndexClean;
   }
@@ -2037,7 +2041,7 @@ void RouteController::postDatabaseLoad()
 
   NavApp::updateErrorLabels();
   routeAltChangedDelayed();
-  route.updateRouteCycleMetadata();
+  // route.updateRouteCycleMetadata();
 
   routeWindow->postDatabaseLoad();
 
@@ -4038,17 +4042,8 @@ void RouteController::updateFlightplanEntryAirway(int airwayId, FlightplanEntry&
 /* Copy type and cruise altitude from widgets to flight plan */
 void RouteController::updateFlightplanFromWidgets()
 {
-  assignFlightplanPerfProperties(route.getFlightplan());
+  // assignFlightplanPerfProperties(route.getFlightplan());
   updateFlightplanFromWidgets(route.getFlightplan());
-}
-
-void RouteController::assignFlightplanPerfProperties(Flightplan& flightplan) const
-{
-  const atools::fs::perf::AircraftPerf perf = NavApp::getAircraftPerfController()->getAircraftPerformance();
-
-  flightplan.getProperties().insert(atools::fs::pln::AIRCRAFT_PERF_NAME, perf.getName());
-  flightplan.getProperties().insert(atools::fs::pln::AIRCRAFT_PERF_TYPE, perf.getAircraftType());
-  flightplan.getProperties().insert(atools::fs::pln::AIRCRAFT_PERF_FILE, NavApp::getAircraftPerfController()->getCurrentFilepath());
 }
 
 void RouteController::updateFlightplanFromWidgets(Flightplan& flightplan)
@@ -5002,6 +4997,59 @@ void RouteController::remarksTextChanged()
     // Update title and tab with "*" for changed
     NavApp::updateWindowTitle();
   }
+}
+
+void RouteController::updateRemarkHeader()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  if(!route.isEmpty())
+  {
+    // <SimData Cycle="2109">XP11<k/SimData>
+    // <NavData Cycle="2109">XP11</NavData>
+    // <AircraftPerformance>
+    // <FilePath>JustFlight BAe 146 100.lnmperf</FilePath>
+    // <Type>B461</Type>
+    // <Name>JustFlight BAe 146 100</Name>
+    // </AircraftPerformance>
+
+    const QHash<QString, QString>& props = route.getFlightplan().getProperties();
+
+    atools::util::HtmlBuilder html;
+
+    // Aircraft peformance name and type =============================================================
+    QString perf = atools::strJoin({props.value(atools::fs::pln::AIRCRAFT_PERF_NAME),
+                                    props.value(atools::fs::pln::AIRCRAFT_PERF_TYPE)}, tr(", "), tr(", "));
+    if(!perf.isEmpty())
+      html.b(tr("Aircraft Performance: ")).text(perf);
+
+    // Scenery data and cycle =============================================================
+    QStringList data;
+    QString navdata = props.value(atools::fs::pln::NAVDATA);
+    QString simdata = props.value(atools::fs::pln::SIMDATA);
+    QString simcycle = props.value(atools::fs::pln::SIMDATACYCLE);
+    QString navcycle = props.value(atools::fs::pln::NAVDATACYCLE);
+
+    if(!simdata.isEmpty())
+      data.append(tr("%1%2").arg(simdata).arg(simcycle.isEmpty() ? QString() : tr(" cycle %1").arg(simcycle)));
+
+    if(!navdata.isEmpty() && (navdata != simdata || simcycle != navcycle))
+      data.append(tr("%1%2").arg(navdata).arg(navcycle.isEmpty() ? QString() : tr(" cycle %1").arg(navcycle)));
+
+    if(!data.isEmpty())
+    {
+      if(!perf.isEmpty())
+        html.br();
+      html.b(tr("Scenery data: ")).text(data.join(tr(", ")));
+    }
+
+    ui->labelRouteRemarksHeader->setVisible(!html.isEmpty());
+    if(!html.isEmpty())
+      ui->labelRouteRemarksHeader->setText(html.getHtml());
+  }
+  else
+    // No plan - hide widget
+    ui->labelRouteRemarksHeader->setVisible(false);
 }
 
 void RouteController::updateRemarkWidget()
