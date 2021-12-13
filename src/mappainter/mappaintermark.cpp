@@ -880,7 +880,7 @@ void MapPainterMark::paintSelectedAltitudeRange()
 
         Marble::GeoPainter *painter = context->painter;
         atools::util::PainterContextSaver saver(painter);
-        if(rangeDistanceNm > 0.5f)
+        if(rangeDistanceNm > 0.5f && rangeDistanceNm < 1000.f)
         {
           float lineWidth = context->szF(context->thicknessRangeDistance, mapcolors::markSelectedAltitudeRangePen.width());
           painter->setPen(mapcolors::adjustWidth(mapcolors::markSelectedAltitudeRangePen, lineWidth));

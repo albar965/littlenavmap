@@ -379,15 +379,15 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
       visibleStartPoints.clearBit(i);
   }
 
-  // Draw airport and navaid symbols
-  drawSymbols(visibleStartPoints, textPlacement.getStartPoints(), false /* preview */);
-
   for(int i = 0; i < route->size(); i++)
   {
     // Do not draw text for passed waypoints
     if(i + 1 < passedRouteLeg)
       visibleStartPoints.clearBit(i);
   }
+
+  // Draw airport and navaid symbols
+  drawSymbols(visibleStartPoints, textPlacement.getStartPoints(), false /* preview */);
 
   // Draw symbol text
   drawRouteSymbolText(visibleStartPoints, textPlacement.getStartPoints());
