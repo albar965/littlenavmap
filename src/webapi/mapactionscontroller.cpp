@@ -253,8 +253,8 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
       mapPaintWidget->showRectStreamlined(rect, false);
 
       // Disable dynamic/live features
-      mapPaintWidget->setShowMapFeatures(map::AIRCRAFT_ALL,false);
-      mapPaintWidget->setShowMapFeaturesDisplay(map::AIRCRAFT_TRACK,false);
+      mapPaintWidget->setShowMapObject(map::AIRCRAFT_ALL,false);
+      mapPaintWidget->setShowMapObjectDisplay(map::AIRCRAFT_TRACK,false);
 
       // Disable copyright note
       mapPaintWidget->setPaintCopyright(false);
