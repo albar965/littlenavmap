@@ -113,33 +113,22 @@ AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::
 
   // Update vertical speed descent rule
   vertSpeedChanged();
+  aircraftTypeEdited();
   updateRange();
 
   // Fuel by volume or weight changed
-  connect(ui->comboBoxFuelUnit, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-          this, &AircraftPerfDialog::fuelUnitChanged);
+  connect(ui->comboBoxFuelUnit, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &AircraftPerfDialog::fuelUnitChanged);
 
   // Update descent rule
-  connect(ui->doubleSpinBoxDescentVertSpeed,
-          static_cast<void (QDoubleSpinBox::*)(double)>(&QDoubleSpinBox::valueChanged),
+  connect(ui->doubleSpinBoxDescentVertSpeed, QOverload<double>::of(&QDoubleSpinBox::valueChanged),
           this, &AircraftPerfDialog::vertSpeedChanged);
-  connect(ui->spinBoxDescentSpeed,
-          static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-          this, &AircraftPerfDialog::vertSpeedChanged);
+  connect(ui->spinBoxDescentSpeed, QOverload<int>::of(&QSpinBox::valueChanged), this, &AircraftPerfDialog::vertSpeedChanged);
+  connect(ui->spinBoxUsableFuel, QOverload<int>::of(&QSpinBox::valueChanged), this, &AircraftPerfDialog::updateRange);
+  connect(ui->spinBoxCruiseSpeed, QOverload<int>::of(&QSpinBox::valueChanged), this, &AircraftPerfDialog::updateRange);
+  connect(ui->spinBoxCruiseFuelFlow, QOverload<int>::of(&QSpinBox::valueChanged), this, &AircraftPerfDialog::updateRange);
+  connect(ui->spinBoxReserveFuel, QOverload<int>::of(&QSpinBox::valueChanged), this, &AircraftPerfDialog::updateRange);
 
-  connect(ui->spinBoxUsableFuel,
-          static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-          this, &AircraftPerfDialog::updateRange);
-  connect(ui->spinBoxCruiseSpeed,
-          static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-          this, &AircraftPerfDialog::updateRange);
-  connect(ui->spinBoxCruiseFuelFlow,
-          static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-          this, &AircraftPerfDialog::updateRange);
-  connect(ui->spinBoxReserveFuel,
-          static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
-          this, &AircraftPerfDialog::updateRange);
-
+  connect(ui->lineEditType, &QLineEdit::textEdited, this, &AircraftPerfDialog::aircraftTypeEdited);
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &AircraftPerfDialog::buttonBoxClicked);
 }
 
@@ -205,6 +194,24 @@ void AircraftPerfDialog::buttonBoxClicked(QAbstractButton *button)
                                              lnm::helpLanguageOnline());
   else if(button == ui->buttonBox->button(QDialogButtonBox::Cancel))
     QDialog::reject();
+}
+
+void AircraftPerfDialog::aircraftTypeEdited()
+{
+  if(!atools::fs::perf::AircraftPerf::isAircraftTypeValid(ui->lineEditType->text()))
+  {
+    ui->labelTypeStatus->show();
+    ui->labelTypeStatus->setText(atools::util::HtmlBuilder::errorMessage(tr("Aircraft type seems to be invalid. "
+                                                                            "Use official ICAO codes like \"B738\", \"BE9L\" or \"C172\".")));
+  }
+  else if(ui->lineEditType->text().isEmpty())
+  {
+    ui->labelTypeStatus->show();
+    ui->labelTypeStatus->setText(atools::util::HtmlBuilder::errorMessage(tr("Aircraft type is empty. "
+                                                                            "Use official ICAO codes like \"B738\", \"BE9L\" or \"C172\".")));
+  }
+  else
+    ui->labelTypeStatus->hide();
 }
 
 void AircraftPerfDialog::updateRange()
@@ -290,6 +297,12 @@ void AircraftPerfDialog::fromPerfToDialog(const atools::fs::perf::AircraftPerf *
   // Get pass through or conversion function for fuel units
   auto fuelFuncToDlg = fuelUnitsToDialogFunc(fuelUnit);
 
+  if(ui->comboBoxSimulator->findText(aircraftPerf->getSimulator()) == -1)
+    // Invalid or empty value
+    ui->comboBoxSimulator->setCurrentIndex(0);
+  else
+    ui->comboBoxSimulator->setCurrentText(aircraftPerf->getSimulator());
+
   ui->lineEditName->setText(aircraftPerf->getName());
   ui->lineEditType->setText(aircraftPerf->getAircraftType());
   ui->plainTextEditDescription->setPlainText(aircraftPerf->getDescription());
@@ -324,6 +337,12 @@ void AircraftPerfDialog::fromDialogToPerf(atools::fs::perf::AircraftPerf *aircra
 
   // Get pass through or conversion function for fuel units
   auto fuelFunc = fuelUnitsFromDialogFunc(fuelUnit);
+
+  if(ui->comboBoxSimulator->currentIndex() == 0)
+    // First index is always "all"
+    aircraftPerf->setSimulator(QString());
+  else
+    aircraftPerf->setSimulator(ui->comboBoxSimulator->currentText());
 
   aircraftPerf->setName(ui->lineEditName->text());
   aircraftPerf->setAircraftType(ui->lineEditType->text());

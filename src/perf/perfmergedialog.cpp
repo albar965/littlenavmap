@@ -183,6 +183,7 @@ void PerfMergeDialog::process()
   // change flag is reset by proc method if values differ
   changed = false;
 
+  to.setSimulator(procStr(ui->comboBoxSimulator, from->getSimulator(), to.getSimulator()));
   to.setName(procStr(ui->comboBoxName, from->getName(), to.getName()));
   to.setAircraftType(procStr(ui->comboBoxType, from->getAircraftType(), to.getAircraftType()));
 
@@ -235,13 +236,14 @@ void PerfMergeDialog::updateWidgetValues()
                                arg(err));
 
   // Update labels with current values from and to =============================================
+  ui->labelSimulatorValue->setText(from->getSimulator());
+  ui->labelSimulatorValue2->setText(to.getSimulator());
   ui->labelNameValue->setText(from->getName());
   ui->labelNameValue2->setText(to.getName());
   ui->labelTypeValue->setText(from->getAircraftType());
   ui->labelTypeValue2->setText(to.getAircraftType());
 
-  ui->labelClimbFuelFlowValue->setText(Unit::ffLbsAndGal(from->getClimbFuelFlowLbs(),
-                                                         from->getClimbFuelFlowGal()));
+  ui->labelClimbFuelFlowValue->setText(Unit::ffLbsAndGal(from->getClimbFuelFlowLbs(), from->getClimbFuelFlowGal()));
   ui->labelClimbFuelFlowValue2->setText(Unit::ffLbsAndGal(to.getClimbFuelFlowLbs(), to.getClimbFuelFlowGal()));
 
   ui->labelClimbSpeedValue->setText(Unit::speedKts(from->getClimbSpeed()));
@@ -250,15 +252,13 @@ void PerfMergeDialog::updateWidgetValues()
   ui->labelClimbVertSpeedValue->setText(Unit::speedVertFpm(from->getClimbVertSpeed()));
   ui->labelClimbVertSpeedValue2->setText(Unit::speedVertFpm(to.getClimbVertSpeed()));
 
-  ui->labelCruiseFuelFlowValue->setText(Unit::ffLbsAndGal(from->getCruiseFuelFlowLbs(),
-                                                          from->getCruiseFuelFlowGal()));
+  ui->labelCruiseFuelFlowValue->setText(Unit::ffLbsAndGal(from->getCruiseFuelFlowLbs(), from->getCruiseFuelFlowGal()));
   ui->labelCruiseFuelFlowValue2->setText(Unit::ffLbsAndGal(to.getCruiseFuelFlowLbs(), to.getCruiseFuelFlowGal()));
 
   ui->labelCruiseSpeedValue->setText(Unit::speedKts(from->getCruiseSpeed()));
   ui->labelCruiseSpeedValue2->setText(Unit::speedKts(to.getCruiseSpeed()));
 
-  ui->labelDescentFuelFlowValue->setText(Unit::ffLbsAndGal(from->getDescentFuelFlowLbs(),
-                                                           from->getDescentFuelFlowGal()));
+  ui->labelDescentFuelFlowValue->setText(Unit::ffLbsAndGal(from->getDescentFuelFlowLbs(), from->getDescentFuelFlowGal()));
   ui->labelDescentFuelFlowValue2->setText(Unit::ffLbsAndGal(to.getDescentFuelFlowLbs(), to.getDescentFuelFlowGal()));
 
   ui->labelDescentSpeedValue->setText(Unit::speedKts(from->getDescentSpeed()));
@@ -272,16 +272,13 @@ void PerfMergeDialog::updateWidgetValues()
 
   if(showAllWidgets)
   {
-    ui->labelAlternateFuelFlowValue->setText(Unit::ffLbsAndGal(from->getAlternateFuelFlowLbs(),
-                                                               from->getAlternateFuelFlowGal()));
-    ui->labelAlternateFuelFlowValue2->setText(Unit::ffLbsAndGal(to.getAlternateFuelFlowLbs(),
-                                                                to.getAlternateFuelFlowGal()));
+    ui->labelAlternateFuelFlowValue->setText(Unit::ffLbsAndGal(from->getAlternateFuelFlowLbs(), from->getAlternateFuelFlowGal()));
+    ui->labelAlternateFuelFlowValue2->setText(Unit::ffLbsAndGal(to.getAlternateFuelFlowLbs(), to.getAlternateFuelFlowGal()));
 
     ui->labelAlternateSpeedValue->setText(Unit::speedKts(from->getAlternateSpeed()));
     ui->labelAlternateSpeedValue2->setText(Unit::speedKts(to.getAlternateSpeed()));
 
-    ui->labelContingencyFuelValue->setText(QLocale().toString(from->getContingencyFuel(), 'f',
-                                                              0) + tr(" percent"));
+    ui->labelContingencyFuelValue->setText(QLocale().toString(from->getContingencyFuel(), 'f', 0) + tr(" percent"));
     ui->labelContingencyFuelValue2->setText(QLocale().toString(to.getContingencyFuel(), 'f', 0) + tr(" percent"));
 
     ui->labelExtraFuelValue->setText(Unit::fuelLbsAndGal(from->getExtraFuelLbs(), from->getExtraFuelGal()));

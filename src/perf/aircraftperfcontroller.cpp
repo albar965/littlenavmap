@@ -119,7 +119,7 @@ void AircraftPerfController::create()
   mainWindow->showAircraftPerformance();
 
   AircraftPerf editPerf;
-  editPerf.resetToDefault();
+  editPerf.resetToDefault(NavApp::getCurrentSimulatorShortName());
   if(editInternal(editPerf, tr("Create")))
   {
     if(checkForChanges())
@@ -722,7 +722,7 @@ void AircraftPerfController::updateReport()
     // Write HTML report ================================================================
 
     // Icon, name and aircraft type =======================================================
-    QStringList headerList({perf->getName(), perf->getAircraftType()});
+    QStringList headerList({perf->getName(), perf->getAircraftType(), perf->getSimulator()});
     headerList.removeAll(QString());
     QString header = headerList.join(tr(" - "));
 
@@ -830,7 +830,7 @@ void AircraftPerfController::updateReportCurrent()
              QSize(symbolSize, symbolSize));
     html.nbsp().nbsp();
 
-    QStringList header({curPerfLbs.getName(), curPerfLbs.getAircraftType()});
+    QStringList header({curPerfLbs.getName(), curPerfLbs.getAircraftType(), curPerfLbs.getSimulator()});
     header.removeAll(QString());
 
     if(!header.isEmpty())
@@ -1390,7 +1390,7 @@ void AircraftPerfController::simDataChanged(const atools::fs::sc::SimConnectData
   *lastSimData = simulatorData;
 
   // Pass to handler for averaging
-  perfHandler->simDataChanged(simulatorData);
+  perfHandler->simDataChanged(simulatorData, NavApp::getCurrentSimulatorShortName());
 
   if(simulatorData.isUserAircraftValid())
   {
@@ -1436,7 +1436,7 @@ void AircraftPerfController::windChangedDelayed()
 void AircraftPerfController::noPerfLoaded()
 {
   // Invalidate performance file after an error - state "none loaded"
-  perf->resetToDefault();
+  perf->resetToDefault(QString());
   changed = false;
   currentFilepath.clear();
 }
