@@ -19,9 +19,8 @@
 #define LITTLENAVMAP_OPTIONDATA_H
 
 #include <QColor>
-#include <QFlags>
-#include <QVector>
 
+class QSize;
 class QFont;
 
 namespace opts {
@@ -110,6 +109,10 @@ enum Flag
   /* Reload window layout on startup.
    * ui->checkBoxOptionsStartupLoadLayout */
   STARTUP_LOAD_LAYOUT = 1 << 25,
+
+  /* Reload window layout on startup.
+   * ui->checkBoxOptionsStartupShowSplash */
+  STARTUP_SHOW_SPLASH = 1 << 26,
 
 };
 
@@ -281,7 +284,8 @@ enum Flag2
   /* ui->checkBoxOptionsSimCenterLeg */
   ROUTE_AUTOZOOM = 1 << 8,
 
-  // MAP_AIRPORT_DIAGRAM = 1 << 9,
+  /* checkBoxOptionsGuiToolbarSize */
+  OVERRIDE_TOOLBAR_SIZE = 1 << 9,
 
   /* ui->checkBoxOptionsSimCenterLegTable */
   ROUTE_CENTER_ACTIVE_LEG = 1 << 10,
@@ -301,8 +305,8 @@ enum Flag2
   /* checkBoxDisplayOnlineFilenameLookup */
   ONLINE_AIRSPACE_BY_FILE = 1 << 15,
 
-  /* checkBoxOptionsGuiProposeFilename */
-  // PROPOSE_FILENAME = 1 << 16,
+  /* checkBoxOptionsMapHighlightTransparent */
+  MAP_HIGHLIGHT_TRANSPARENT = 1 << 16,
 
   /* checkBoxOptionsGuiRaiseWindows */
   RAISE_WINDOWS = 1 << 17,
@@ -325,7 +329,8 @@ enum Flag2
   /* ui->checkBoxOptionsMapAirwayText */
   MAP_AIRWAY_TEXT_BACKGROUND = 1 << 23,
 
-  // MAP_AIRPORT_RUNWAYS = 1 << 24,
+  /* checkBoxOptionsMapUserpointText */
+  MAP_USERPOINT_TEXT_BACKGROUND = 1 << 24,
 
   /* checkBoxOptionsGuiTooltips */
   DISABLE_TOOLTIPS = 1 << 25,
@@ -341,6 +346,9 @@ enum Flag2
 
   /* checkBoxOptionsSimZoomOnLanding */
   ROUTE_ZOOM_LANDING = 1 << 29,
+
+  /* checkBoxOptionsMapFlightplanTransparent */
+  MAP_ROUTE_TRANSPARENT = 1 << 30,
 };
 
 Q_DECLARE_FLAGS(Flags2, Flag2);
@@ -420,12 +428,14 @@ enum DisplayOptionUserAircraft
   ITEM_USER_AIRCRAFT_CLIMB_SINK = 1 << 14,
   ITEM_USER_AIRCRAFT_HEADING = 1 << 15,
   ITEM_USER_AIRCRAFT_ALTITUDE = 1 << 16,
-  ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE = 1 << 7, // First
+  ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE = 1 << 7,
   ITEM_USER_AIRCRAFT_WIND = 1 << 17,
   ITEM_USER_AIRCRAFT_TRACK_LINE = 1 << 18,
   ITEM_USER_AIRCRAFT_WIND_POINTER = 1 << 19,
   ITEM_USER_AIRCRAFT_TAS = 1 << 20,
-  ITEM_USER_AIRCRAFT_COORDINATES = 1 << 21
+  ITEM_USER_AIRCRAFT_COORDINATES = 1 << 22,
+  ITEM_USER_AIRCRAFT_ICE = 1 << 23,
+  ITEM_USER_AIRCRAFT_ALT_ABOVE_GROUND = 1 << 24
 };
 
 Q_DECLARE_FLAGS(DisplayOptionsUserAircraft, DisplayOptionUserAircraft);
@@ -512,7 +522,7 @@ enum DisplayOptionRose
   ROSE_TRACK_LABEL = 1 << 5,
   ROSE_CRAB_ANGLE = 1 << 6,
   ROSE_NEXT_WAYPOINT = 1 << 7,
-  ROSE_DIR_LABLES = 1 << 8
+  ROSE_DIR_LABELS = 1 << 8
 };
 
 Q_DECLARE_FLAGS(DisplayOptionsRose, DisplayOptionRose);
@@ -538,7 +548,8 @@ enum DisplayTooltipOption
   TOOLTIP_WIND = 1 << 4,
   TOOLTIP_AIRCRAFT_AI = 1 << 5,
   TOOLTIP_AIRCRAFT_USER = 1 << 6,
-  TOOLTIP_VERBOSE = 1 << 7
+  TOOLTIP_VERBOSE = 1 << 7,
+  TOOLTIP_MARKS = 1 << 8
 };
 
 Q_DECLARE_FLAGS(DisplayTooltipOptions, DisplayTooltipOption);
@@ -637,12 +648,6 @@ public:
   opts::UnitFuelAndWeight getUnitFuelAndWeight() const
   {
     return unitFuelWeight;
-  }
-
-  /* Vector of (red) range ring distances in nautical miles */
-  const QVector<float>& getMapRangeRings() const
-  {
-    return mapRangeRings;
   }
 
   /* ASN path that overrides the default */
@@ -872,6 +877,11 @@ public:
   const QColor& getFlightplanColor() const
   {
     return flightplanColor;
+  }
+
+  const QColor& getFlightplanOutlineColor() const
+  {
+    return flightplanOutlineColor;
   }
 
   const QColor& getFlightplanProcedureColor() const
@@ -1176,6 +1186,58 @@ public:
     return displayOptionsAiAircraft;
   }
 
+  int getDisplayTransparencyFlightplan() const
+  {
+    return displayTransparencyFlightplan;
+  }
+
+  int getDisplayThicknessFlightplanProfile() const
+  {
+    return displayThicknessFlightplanProfile;
+  }
+
+  int getDisplayTextSizeFlightplanProfile() const
+  {
+    return displayTextSizeFlightplanProfile;
+  }
+
+  int getDisplayTextSizeUserpoint() const
+  {
+    return displayTextSizeUserpoint;
+  }
+
+  int getDisplaySymbolSizeUserpoint() const
+  {
+    return displaySymbolSizeUserpoint;
+  }
+
+  int getDisplayMapHighlightTransparent() const
+  {
+    return displayMapHighlightTransparent;
+  }
+
+  int getSimUpdateBoxCenterLegZoom() const
+  {
+    return simUpdateBoxCenterLegZoom;
+  }
+
+  QSize getGuiToolbarSize() const;
+
+  const QColor& getHighlightFlightplanColor() const
+  {
+    return highlightFlightplanColor;
+  }
+
+  const QColor& getHighlightSearchColor() const
+  {
+    return highlightSearchColor;
+  }
+
+  const QColor& getHighlightProfileColor() const
+  {
+    return highlightProfileColor;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -1186,11 +1248,10 @@ private:
   static OptionData *optionData;
 
   // Defines the defaults used for reset
-  opts::Flags flags = opts::STARTUP_LOAD_KML | opts::STARTUP_LOAD_MAP_SETTINGS | opts::STARTUP_LOAD_ROUTE |
-                      opts::STARTUP_SHOW_LAST | opts::GUI_CENTER_KML | opts::GUI_CENTER_ROUTE |
-                      opts::MAP_EMPTY_AIRPORTS | opts::ROUTE_ALTITUDE_RULE |
-                      opts::CACHE_USE_ONLINE_ELEVATION |
-                      opts::STARTUP_LOAD_INFO | opts::STARTUP_LOAD_SEARCH | opts::STARTUP_LOAD_TRAIL;
+  opts::Flags flags = opts::STARTUP_LOAD_KML | opts::STARTUP_LOAD_MAP_SETTINGS | opts::STARTUP_LOAD_ROUTE | opts::STARTUP_SHOW_LAST |
+                      opts::GUI_CENTER_KML | opts::GUI_CENTER_ROUTE | opts::MAP_EMPTY_AIRPORTS | opts::ROUTE_ALTITUDE_RULE |
+                      opts::CACHE_USE_ONLINE_ELEVATION | opts::STARTUP_LOAD_INFO | opts::STARTUP_LOAD_SEARCH | opts::STARTUP_LOAD_TRAIL |
+                      opts::STARTUP_SHOW_SPLASH;
 
   // Defines the defaults used for reset
   optsw::FlagsWeather flagsWeather =
@@ -1208,10 +1269,6 @@ private:
                          opts2::MAP_EMPTY_AIRPORTS_3D | opts2::HIGH_DPI_DISPLAY_SUPPORT |
                          opts2::ROUTE_CENTER_ACTIVE_LEG | opts2::ROUTE_CENTER_ACTIVE_LEG |
                          opts2::ROUTE_AUTOZOOM | opts2::ROUTE_NO_FOLLOW_ON_MOVE;
-
-  // ui->lineEditOptionsMapRangeRings
-  const static QVector<float> MAP_RANGERINGS_DEFAULT;
-  QVector<float> mapRangeRings = MAP_RANGERINGS_DEFAULT;
 
   QString weatherActiveSkyPath, // ui->lineEditOptionsWeatherAsnPath
           weatherXplanePath; // lineEditOptionsWeatherXplanePath
@@ -1253,6 +1310,9 @@ private:
   // ui->spinBoxOptionsMapSimUpdateBox
   int simUpdateBox = 50;
 
+  // ui->spinBoxOptionsSimCenterLegZoom
+  int simUpdateBoxCenterLegZoom = 100;
+
   // ui->spinBoxOptionsCacheDiskSize
   int cacheSizeDisk = 2000;
 
@@ -1273,6 +1333,9 @@ private:
 
   // ui->spinBoxOptionsGuiSearchText
   int guiSearchTableTextSize = 100;
+
+  // ui->spinBoxOptionsGuiToolbarSize
+  int guiToolbarSize = 24;
 
   // ui->spinBoxOptionsGuiThemeMapDimming
   int guiStyleMapDimming = 50;
@@ -1330,6 +1393,9 @@ private:
   // spinBoxOptionsDisplayThicknessFlightplan
   int displayThicknessFlightplan = 100;
 
+  // spinBoxOptionsDisplayThicknessFlightplanProfile
+  int displayThicknessFlightplanProfile = 100;
+
   // spinBoxOptionsDisplaySymbolSizeAirport
   int displaySymbolSizeAirport = 100;
 
@@ -1345,8 +1411,14 @@ private:
   // spinBoxOptionsDisplayTextSizeNavaid
   int displayTextSizeNavaid = 100;
 
+  // spinBoxOptionsDisplayTextSizeUserpoint
+  int displayTextSizeUserpoint = 100;
+
   // spinBoxOptionsDisplaySymbolSizeNavaid
   int displaySymbolSizeNavaid = 100;
+
+  // spinBoxOptionsDisplaySymbolSizeUserpoint
+  int displaySymbolSizeUserpoint = 100;
 
   // spinBoxOptionsDisplayTextSizeAirway
   int displayTextSizeAirway = 100;
@@ -1356,6 +1428,12 @@ private:
 
   // spinBoxOptionsDisplayTextSizeFlightplan
   int displayTextSizeFlightplan = 100;
+
+  // spinBoxOptionsDisplayTextSizeFlightplanProfile
+  int displayTextSizeFlightplanProfile = 100;
+
+  // spinBoxOptionsDisplayTransparencyFlightplan
+  int displayTransparencyFlightplan = 50;
 
   // spinBoxOptionsDisplayTextSizeAircraftUser
   int displayTextSizeAircraftUser = 100;
@@ -1396,6 +1474,9 @@ private:
   // spinBoxOptionsDisplayTextSizeCompassRose
   int displayTextSizeCompassRose = 100;
 
+  // spinBoxOptionsMapHighlightTransparent
+  int displayMapHighlightTransparent = 100;
+
   // spinBoxDisplayOnlineClearance
   int displayOnlineClearance = -1;
 
@@ -1435,9 +1516,10 @@ private:
   // spinBoxOptionsMapNavTouchscreenArea
   int mapNavTouchArea = 10;
 
-  QColor flightplanColor = QColor(Qt::yellow), flightplanProcedureColor = QColor(255, 150, 0),
-         flightplanActiveColor = QColor(Qt::magenta), flightplanPassedColor = QColor(Qt::gray),
-         trailColor = QColor(Qt::black);
+  QColor flightplanColor = QColor(Qt::yellow), flightplanOutlineColor = QColor(Qt::black), flightplanProcedureColor = QColor(255, 150, 0),
+         flightplanActiveColor = QColor(Qt::magenta), flightplanPassedColor = QColor(Qt::gray), trailColor = QColor(Qt::black);
+
+  QColor highlightFlightplanColor = QColor(Qt::green), highlightSearchColor = QColor(Qt::yellow), highlightProfileColor = QColor(Qt::cyan);
 
   // comboBoxOptionsDisplayTrailType
   opts::DisplayTrailType displayTrailType = opts::DASHED;
@@ -1461,7 +1543,7 @@ private:
   optsd::DisplayOptionsRose displayOptionsRose =
     optsd::ROSE_RANGE_RINGS | optsd::ROSE_DEGREE_MARKS | optsd::ROSE_DEGREE_LABELS | optsd::ROSE_HEADING_LINE |
     optsd::ROSE_TRACK_LINE | optsd::ROSE_TRACK_LABEL | optsd::ROSE_CRAB_ANGLE | optsd::ROSE_NEXT_WAYPOINT |
-    optsd::ROSE_DIR_LABLES;
+    optsd::ROSE_DIR_LABELS;
 
   optsd::DisplayOptionsMeasurement displayOptionsMeasurement = optsd::MEASUREMNENT_MAG | optsd::MEASUREMNENT_TRUE |
                                                                optsd::MEASUREMNENT_DIST | optsd::MEASUREMNENT_LABEL;

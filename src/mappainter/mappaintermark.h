@@ -48,23 +48,45 @@ public:
   virtual void render() override;
 
 private:
+  /* Draw black yellow cross for search distance marker */
   void paintMark();
+
+  /* Paint the center of the home position */
   void paintHome();
+
+  /* Draw rings around objects that are selected on the search or flight plan tables */
   void paintHighlights();
-  void paintRangeRings();
-  void paintDistanceMarkers();
 
-  /* Draw big airport MSA sectors */
-  void paintAirportMsa();
+  /* Draw all rang rings. This includes the red rings and the radio navaid ranges. */
+  void paintRangeMarks();
 
-  void paintTrafficPatterns();
+  /* Draw great circle line distance measurement lines */
+  void paintDistanceMarks();
 
-  void paintRouteDrag();
+  /* Traffic patterns */
+  void paintPatternMarks();
+
+  /* Draw a compass rose for the user aircraft with tick marks. */
   void paintCompassRose();
+
+  /* Draw a dotted line around aircraft to indicate endurance */
+  void paintEndurance();
+
+  /* Draw a "green banana" where aircraft reaches autopilot altitude */
+  void paintSelectedAltitudeRange();
+
+  /* Draw drag operations in progress */
   void paintUserpointDrag();
+  void paintRouteDrag();
+
+  /* Draw hightlighted airspaces */
   void paintAirspace(const map::MapAirspace& airspace);
+
+  /* Draw highligthted airways */
   void paintAirwayList(const QList<map::MapAirway>& airwayList);
   void paintAirwayTextList(const QList<map::MapAirway>& airwayList);
+
+  /* Logbook highlights */
   void paintLogEntries(const QList<map::MapLogbookEntry>& entries);
 
 };

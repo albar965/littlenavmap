@@ -31,6 +31,7 @@
 #include "common/unit.h"
 
 #include <QRegularExpression>
+#include <QStringBuilder>
 
 using namespace atools::geo;
 
@@ -420,7 +421,7 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
           (prevLeg->getProcedureLeg().isStar() && procedureLeg.isAnyArrival()) // from STAR aproach or transition
           ) && // Direct connection between procedures
 
-         (atools::contains(procedureLeg.type, {proc::INITIAL_FIX, proc::START_OF_PROCEDURE}) ||
+         (atools::contains(procedureLeg.type, {proc::INITIAL_FIX, proc::CUSTOM_APP_START, proc::START_OF_PROCEDURE}) ||
           procedureLeg.line.isPoint()) // Beginning of procedure
          )
       {
@@ -833,11 +834,8 @@ const LineString& RouteLeg::getGeometry() const
 bool RouteLeg::isApproachPoint() const
 {
   return isAnyProcedure() &&
-         !atools::contains(procedureLeg.type,
-                           {proc::HOLD_TO_ALTITUDE, proc::HOLD_TO_FIX,
-                            proc::HOLD_TO_MANUAL_TERMINATION}) &&
-         (procedureLeg.geometry.isPoint() || procedureLeg.type == proc::INITIAL_FIX ||
-          procedureLeg.type == proc::START_OF_PROCEDURE);
+         !atools::contains(procedureLeg.type, {proc::HOLD_TO_ALTITUDE, proc::HOLD_TO_FIX, proc::HOLD_TO_MANUAL_TERMINATION}) &&
+         (procedureLeg.geometry.isPoint() || procedureLeg.isInitialFix() || procedureLeg.type == proc::START_OF_PROCEDURE);
 }
 
 bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors, bool *trackError) const
@@ -845,6 +843,8 @@ bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors, bool
   bool invalid = true;
   if(airway.isValid())
   {
+    QString legText = tr("Leg to \"%1\" violates restriction for airway \"%2\":").arg(getDisplayIdent()).arg(getAirwayName());
+
     // Set and valid - check direction
     if(airway.direction == map::DIR_BOTH)
       // Always valid in both directions
@@ -857,7 +857,7 @@ bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors, bool
       invalid = getId() == airway.toWaypointId;
 
     if(errors != nullptr && invalid)
-      errors->append(tr("Wrong direction in one-way segment."));
+      errors->append(legText % tr("Wrong direction in one-way segment."));
 
     if(altitudeFt < map::INVALID_ALTITUDE_VALUE)
     {
@@ -866,7 +866,7 @@ bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors, bool
       {
         invalid = true;
         if(errors != nullptr)
-          errors->append(tr("Cruise altitude %1 is below minimum altitude of %2.").
+          errors->append(legText % tr("Cruise altitude %1 is below minimum altitude of %2.").
                          arg(Unit::altFeet(altitudeFt)).arg(Unit::altFeet(airway.minAltitude)));
       }
 
@@ -874,15 +874,11 @@ bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors, bool
       {
         invalid = true;
         if(errors != nullptr)
-          errors->append(tr("Cruise altitude %1 is above maximum altitude of %2.").
+          errors->append(legText % tr("Cruise altitude %1 is above maximum altitude of %2.").
                          arg(Unit::altFeet(altitudeFt)).arg(Unit::altFeet(airway.maxAltitude)));
       }
     }
 
-    if(invalid && errors != nullptr)
-      // General violations message
-      errors->prepend(tr("Leg to \"%1\" violates restrictions for airway \"%2\":").
-                      arg(getDisplayIdent()).arg(getAirwayName()));
     return invalid;
   }
   else
@@ -903,8 +899,7 @@ bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors, bool
 
       invalid = true;
       if(errors != nullptr)
-        errors->append(tr("%1 %2 not found for %3.").
-                       arg(track ? tr("Track or airway") : tr("Airway")).arg(name).arg(getDisplayIdent()));
+        errors->append(tr("%1 %2 not found for %3.").arg(track ? tr("Track or airway") : tr("Airway")).arg(name).arg(getDisplayIdent()));
       if(trackError != nullptr)
         *trackError |= track;
     }

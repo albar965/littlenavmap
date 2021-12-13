@@ -37,6 +37,7 @@
 
 #include <QBitArray>
 #include <QRegularExpression>
+#include <QStringBuilder>
 
 #include <marble/GeoDataLineString.h>
 
@@ -53,6 +54,7 @@ using atools::fs::pln::Flightplan;
 // Disable leg activation if distance is larger
 const float MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM = 40.f;
 
+// Invalid leg as default value
 const static RouteLeg EMPTY_ROUTELEG;
 
 const static QRegularExpression USER_WP_ID("^WP([0-9]+)$");
@@ -209,6 +211,11 @@ void Route::getRunwayNames(QString& departure, QString& arrival) const
     arrival.clear();
 }
 
+const QString& Route::getSidRunwayName() const
+{
+  return sidLegs.runwayEnd.name;
+}
+
 const QString& Route::getStarRunwayName() const
 {
   return starLegs.runwayEnd.name;
@@ -322,17 +329,15 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
     // Catch the case of initial fixes or others that are points instead of lines and try the next legs
     if(!value(activeLegIndex).getProcedureLeg().isHold())
     {
-      while(atools::contains(value(nextLeg).getProcedureLegType(),
-                             {proc::INITIAL_FIX, proc::START_OF_PROCEDURE}) &&
-            getPrevPositionAt(nextLeg) == getPositionAt(nextLeg) &&
-            nextLeg < size() - 2)
+      while(atools::contains(value(nextLeg).getProcedureLegType(), {proc::INITIAL_FIX, proc::CUSTOM_APP_START, proc::START_OF_PROCEDURE}) &&
+            getPrevPositionAt(nextLeg) == getPositionAt(nextLeg) && nextLeg < size() - 2)
         nextLeg++;
     }
     else
     {
       // Jump all initial fixes for holds since the next line can probably not overlap
       while(atools::contains(value(nextLeg).getProcedureLegType(),
-                             {proc::INITIAL_FIX, proc::START_OF_PROCEDURE}) && nextLeg < size() - 2)
+                             {proc::INITIAL_FIX, proc::CUSTOM_APP_START, proc::START_OF_PROCEDURE}) && nextLeg < size() - 2)
         nextLeg++;
     }
     Pos pos1 = getPrevPositionAt(nextLeg);
@@ -495,7 +500,7 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
     if(routeIndex >= size())
       routeIndex = size() - 1;
 
-    float distToCurrent = 0.f;
+    double distToCurrent = 0.;
 
     bool activeIsMissed = activeLeg.getProcedureLeg().isMissed();
     bool activeIsAlternate = activeLeg.isAlternate();
@@ -519,62 +524,71 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
 #endif
 
     if(nextLegDistance != nullptr)
-      *nextLegDistance = distToCurrent;
+      *nextLegDistance = static_cast<float>(distToCurrent);
 
     // Sum up all distances along the legs
     // Ignore missed approach legs until the active is a missedd approach leg
-    float fromStart = 0.f;
+    double fromStart = 0.;
     for(int i = 0; i <= routeIndex; i++)
     {
-      if(!value(i).getProcedureLeg().isMissed() || activeIsMissed ||
-         !value(i).isAlternate() || activeIsAlternate)
+      if(!value(i).getProcedureLeg().isMissed() || activeIsMissed || !value(i).isAlternate() || activeIsAlternate)
         fromStart += value(i).getDistanceTo();
       else
         break;
     }
-    float fromStartLegs = fromStart;
+
+    double fromStartLegs = fromStart;
     fromStart -= distToCurrent;
     fromStart = std::abs(fromStart);
 
     if(distFromStart != nullptr)
-      *distFromStart = std::max(fromStart, 0.f);
+      *distFromStart = atools::minmax(0.f, totalDistance, static_cast<float>(fromStart));
 
     if(projectionDistance != nullptr)
-      *projectionDistance = projectedDistance(activeLegResult, fromStartLegs, activeLegIndex);
+      *projectionDistance = projectedDistance(activeLegResult, static_cast<float>(fromStartLegs), activeLegIndex);
 
     if(distToDest != nullptr)
     {
+      double toDest = 0.;
       if(getSizeWithoutAlternates() == 1)
-        *distToDest = meterToNm(activePos.pos.distanceMeterTo(first().getPosition()));
+        // Single airport in plan only - calculate direct distance to
+        toDest = meterToNm(activePos.pos.distanceMeterTo(first().getPosition()));
       else
       {
         if(activeIsMissed)
         {
           // Summarize remaining missed leg distance if on missed
-          *distToDest = 0.f;
           for(int i = routeIndex + 1; i < size(); i++)
           {
             if(value(i).getProcedureLeg().isMissed())
-              *distToDest += value(i).getDistanceTo();
+              toDest += value(i).getDistanceTo();
           }
-          *distToDest += distToCurrent;
-          *distToDest = std::abs(*distToDest);
+          toDest += distToCurrent;
         }
         else if(activeIsAlternate)
         {
           // Summarize remaining leg distance to alternate if on alternate
-          *distToDest = 0.f;
           for(int i = routeIndex + 1; i < size(); i++)
           {
             if(value(i).isAlternate())
-              *distToDest += value(i).getDistanceTo();
+              toDest += value(i).getDistanceTo();
           }
-          *distToDest += distToCurrent;
-          *distToDest = std::abs(*distToDest);
+          toDest += distToCurrent;
         }
         else
-          *distToDest = std::max(totalDistance - fromStart, 0.f);
+        {
+          int destLegIdx = getDestinationLegIndex();
+          for(int i = routeIndex; i <= destLegIdx; i++)
+          {
+            if(!value(i).getProcedureLeg().isMissed() || activeIsMissed || !value(i).isAlternate() || activeIsAlternate)
+              toDest += value(i).getDistanceTo();
+            else
+              break;
+          }
+          toDest = toDest - value(routeIndex).getDistanceTo() + distToCurrent;
+        }
       }
+      *distToDest = atools::minmax(0.f, totalDistance, static_cast<float>(toDest));
     }
 
     return true;
@@ -594,7 +608,7 @@ float Route::getProjectionDistance() const
 float Route::getDistanceFromStart(const Pos& pos) const
 {
   atools::geo::LineDistance result;
-  int legIndex = getNearestRouteLegResult(pos, result, false /* ignoreNotEditable */);
+  int legIndex = getNearestRouteLegResult(pos, result, false /* ignoreNotEditable */, true /* ignoreMissed */);
 
 #ifdef DEBUG_INFORMATION_ROUTE
   qDebug() << Q_FUNC_INFO << "leg" << leg << "result" << result;
@@ -927,13 +941,39 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
 
       if(leg.isAnyProcedure() && types.testFlag(map::QUERY_PROC_POINTS))
       {
-        if(leg.getProcedureLeg().isMissed())
+        const proc::MapProcedureLeg& procLeg = leg.getProcedureLeg();
+
+        // Select owning procedure legs struct
+        const proc::MapProcedureLegs *procLegs = nullptr;
+        if(procLeg.isAnyDeparture())
+          procLegs = &sidLegs;
+        else if(procLeg.isAnyStar())
+          procLegs = &starLegs;
+        else if(procLeg.isAnyApproach())
+          procLegs = &approachLegs;
+
+        if(procLegs != nullptr)
         {
-          if(types.testFlag(map::QUERY_PROC_MISSED_POINTS))
-            mapobjects.procPoints.append(proc::MapProcedurePoint(leg.getProcedureLeg(), false /* preview */));
+          int procIndex = procLegs->indexForLeg(procLeg);
+
+          if(procIndex != -1)
+          {
+            if(leg.getProcedureLeg().isMissed())
+            {
+              // Add missed legs only if requested by query flags
+              if(types.testFlag(map::QUERY_PROC_MISSED_POINTS))
+                mapobjects.procPoints.append(map::MapProcedurePoint(*procLegs, procIndex, i,
+                                                                    false /* previewParam */, false /* previewParamAll */));
+            }
+            else
+              mapobjects.procPoints.append(map::MapProcedurePoint(*procLegs, procIndex, i,
+                                                                  false /* previewParam */, false /* previewParamAll */));
+          }
+          else
+            qWarning() << Q_FUNC_INFO << "no legs for index found";
         }
         else
-          mapobjects.procPoints.append(proc::MapProcedurePoint(leg.getProcedureLeg(), false /* preview */));
+          qWarning() << Q_FUNC_INFO << "no legs found";
       }
     }
   }
@@ -1007,16 +1047,24 @@ bool Route::hasUserWaypoints() const
 
 bool Route::hasValidDeparture() const
 {
-  return !getFlightplan().isEmpty() &&
-         getFlightplan().getEntries().first().getWaypointType() == atools::fs::pln::entry::AIRPORT &&
-         first().isValid();
+  return getDepartureAirportLeg().getAirport().isValid();
 }
 
 bool Route::hasValidDestination() const
 {
-  int destIdx = getDestinationAirportLegIndex();
-  return destIdx != map::INVALID_INDEX_VALUE &&
-         flightplan.getEntries().at(destIdx).getWaypointType() == atools::fs::pln::entry::AIRPORT;
+  return getDestinationAirportLeg().getAirport().isValid();
+}
+
+bool Route::hasValidDepartureAndRunways() const
+{
+  const RouteLeg& leg = getDepartureAirportLeg();
+  return leg.getAirport().isValid() && !leg.getAirport().noRunways();
+}
+
+bool Route::hasValidDestinationAndRunways() const
+{
+  const RouteLeg& leg = getDestinationAirportLeg();
+  return leg.getAirport().isValid() && !leg.getAirport().noRunways();
 }
 
 bool Route::hasEntries() const
@@ -1683,6 +1731,9 @@ void Route::updateDistancesAndCourse()
     }
     last = &leg;
   }
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "totalDistance" << totalDistance;
+#endif
 }
 
 void Route::updateMagvar()
@@ -1714,15 +1765,13 @@ void Route::updateMagvar()
 
 void Route::updateLegAltitudes()
 {
-  if(isEmpty())
-    return;
-
   // Uses default values if invalid values or collecting data
-  altitude->setSimplify(atools::settings::Settings::instance().
-                        getAndStoreValue(lnm::OPTIONS_PROFILE_SIMPLYFY, true).toBool());
+  altitude->setSimplify(atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_PROFILE_SIMPLYFY, true).toBool());
 
   // Need to update the wind data for manual wind setting
   NavApp::getWindReporter()->updateManualRouteWinds();
+
+  // Calculate also with empty route to allow updating of error messages
   altitude->calculateAll(NavApp::getAircraftPerformance(), getCruisingAltitudeFeet());
 }
 
@@ -1779,7 +1828,8 @@ void Route::nearestAllLegIndex(const map::PosCourse& pos, float& crossTrackDista
   }
 }
 
-int Route::getNearestRouteLegResult(const Pos& pos, atools::geo::LineDistance& lineDistanceResult, bool ignoreNotEditable) const
+int Route::getNearestRouteLegResult(const Pos& pos, atools::geo::LineDistance& lineDistanceResult, bool ignoreNotEditable,
+                                    bool ignoreMissed) const
 {
   int index = map::INVALID_INDEX_VALUE;
   lineDistanceResult.status = atools::geo::INVALID;
@@ -1796,6 +1846,8 @@ int Route::getNearestRouteLegResult(const Pos& pos, atools::geo::LineDistance& l
   for(int i = 1; i < size(); i++)
   {
     if(ignoreNotEditable && !canEditLeg(i))
+      continue;
+    if(ignoreMissed && value(i).isAnyProcedure() && value(i).getProcedureLeg().isMissed())
       continue;
 
     pos.distanceMeterToLine(getPrevPositionAt(i), getPositionAt(i), result);
@@ -2293,7 +2345,8 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "options" << options;
 #endif
-  bool saveApproachWp = options.testFlag(rf::SAVE_APPROACH_WP), saveSidStarWp = options.testFlag(rf::SAVE_SIDSTAR_WP),
+  bool saveApproachWp = options.testFlag(rf::SAVE_APPROACH_WP),
+       saveSidWp = options.testFlag(rf::SAVE_SIDSTAR_WP), saveStarWp = options.testFlag(rf::SAVE_SIDSTAR_WP),
        replaceCustomWp = options.testFlag(rf::REPLACE_CUSTOM_WP), msfs = options.testFlag(rf::SAVE_MSFS);
 
   // Create copy which allows to modify the plan ==============
@@ -2378,11 +2431,15 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   }
 
   // Remember value since type is cleared later
-  bool customApproach = route.getApproachLegs().isCustom();
+  bool customApproach = route.getApproachLegs().isCustomApproach();
 
   // Replace custom approach with user defined waypoints ==============
   if(customApproach && replaceCustomWp)
     saveApproachWp = true;
+
+  bool customDeparture = route.getSidLegs().isCustomDeparture();
+  if(customDeparture && replaceCustomWp)
+    saveSidWp = true;
 
   // First remove properties and procedure structures if needed ====================================
 
@@ -2396,16 +2453,25 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 
   if(saveApproachWp)
   {
-    route.clearProcedures(proc::PROCEDURE_ARRIVAL);
-    route.clearFlightplanProcedureProperties(proc::PROCEDURE_ARRIVAL);
+    route.clearProcedures(proc::PROCEDURE_APPROACH_ALL_MISSED);
+    route.clearFlightplanProcedureProperties(proc::PROCEDURE_APPROACH_ALL_MISSED);
+
+    // Remove missed legs
     route.clearProcedureLegs(proc::PROCEDURE_MISSED);
     route.updateIndicesAndOffsets();
   }
 
-  if(saveSidStarWp)
+  if(saveSidWp)
   {
-    route.clearProcedures(proc::PROCEDURE_SID_STAR_ALL);
-    route.clearFlightplanProcedureProperties(proc::PROCEDURE_SID_STAR_ALL);
+    route.clearProcedures(proc::PROCEDURE_SID_ALL);
+    route.clearFlightplanProcedureProperties(proc::PROCEDURE_SID_ALL);
+    route.updateIndicesAndOffsets();
+  }
+
+  if(saveStarWp)
+  {
+    route.clearProcedures(proc::PROCEDURE_STAR_ALL);
+    route.clearFlightplanProcedureProperties(proc::PROCEDURE_STAR_ALL);
     route.updateIndicesAndOffsets();
   }
 
@@ -2436,7 +2502,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     plan.getProperties().remove(atools::fs::pln::PROCAIRWAY);
   }
 
-  if(saveApproachWp || saveSidStarWp || msfs)
+  if(saveApproachWp || saveSidWp || saveStarWp || msfs)
   {
     const proc::MapProcedureLegs& sid = route.getSidLegs();
     const proc::MapProcedureLegs& star = route.getStarLegs();
@@ -2447,13 +2513,16 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     {
       FlightplanEntry& entry = entries[i];
       const RouteLeg& leg = route.value(i);
-      bool appr = leg.getProcedureType() & proc::PROCEDURE_APPROACH_ALL;
-      bool sidStar = leg.getProcedureType() & proc::PROCEDURE_SID_STAR_ALL;
+      bool isAppr = leg.getProcedureType() & proc::PROCEDURE_APPROACH_ALL;
+      bool isSid = leg.getProcedureType() & proc::PROCEDURE_SID_ALL;
+      bool isStar = leg.getProcedureType() & proc::PROCEDURE_STAR_ALL;
+
+      bool legMatches = (saveApproachWp && isAppr) || (saveSidWp && isSid) || (saveStarWp && isStar);
 
       if( // Save approach or SID/STAR waypoints and this leg is part of a procedure
-        (saveApproachWp && appr) || (saveSidStarWp && sidStar) ||
+        legMatches ||
         // MSFS - save SID/STAR legs and this leg is one
-        (msfs && sidStar))
+        (msfs && (isSid || isStar)))
       {
         entry.setFlag(atools::fs::pln::entry::TRACK, false);
 
@@ -2464,7 +2533,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
         entry.setRegion(QString());
         entry.setAirway(QString());
 
-        if(!msfs || (saveSidStarWp && sidStar) || (saveApproachWp && appr))
+        if(!msfs || legMatches)
           // Clear procedure flag to keep legs in plan
           entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
         else
@@ -2536,8 +2605,9 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
           // Make a user defined waypoint from manual, altitude or other points
           entry.setWaypointType(atools::fs::pln::entry::USER);
 
-          if((replaceCustomWp || saveApproachWp) &&
-             customApproach && leg.getProcedureType() & proc::PROCEDURE_APPROACH)
+          if((replaceCustomWp || saveApproachWp) && customApproach && leg.getProcedureType() & proc::PROCEDURE_APPROACH)
+            entry.setIdent(leg.getProcedureLeg().fixIdent);
+          else if((replaceCustomWp || saveSidWp) && customDeparture && leg.getProcedureType() & proc::PROCEDURE_SID)
             entry.setIdent(leg.getProcedureLeg().fixIdent);
           else
           {
@@ -3001,16 +3071,16 @@ void Route::getApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::Map
         {
           // Keep other navaids (RNP - ILS are filtered out already)
           maptools::insert(ilsMap, ilsMapRecommended); // Merge and deduplicate
-          ilsVector = ilsMap.values().toVector();
+          ilsVector = QVector<map::MapIls>::fromList(ilsMap.values());
         }
         else
-          ilsVector = ilsMapRecommended.values().toVector();
+          ilsVector = QVector<map::MapIls>::fromList(ilsMapRecommended.values());
       }
       else
       {
         // Return more than the recommended for map and profile display purposes
         maptools::insert(ilsMap, ilsMapRecommended); // Merge and deduplicate
-        ilsVector = ilsMap.values().toVector();
+        ilsVector = QVector<map::MapIls>::fromList(ilsMap.values());
       }
     } // if(approachLegs.runwayEnd.isValid())
   } // if(!approachLegs.runwayEnd.name.isEmpty() && approachLegs.runwayEnd.name != "RW")
@@ -3049,33 +3119,29 @@ float Route::getDistanceToFlightPlan() const
     return map::INVALID_DISTANCE_VALUE;
 }
 
-QString Route::getProcedureLegText(proc::MapProcedureTypes mapType) const
+QString Route::getProcedureLegText(proc::MapProcedureTypes mapType, bool includeRunway, bool missedAsApproach) const
 {
-  QString procText;
+  const proc::MapProcedureLegs *procLegs = nullptr;
 
-  if(mapType & proc::PROCEDURE_APPROACH || mapType & proc::PROCEDURE_MISSED)
-  {
-    procText = QObject::tr("%1 %2 %3%4").
-               arg(mapType & proc::PROCEDURE_MISSED ? tr("Missed") : tr("Approach")).
-               arg(approachLegs.displayApproachType()).
-               arg(approachLegs.approachFixIdent).
-               arg(approachLegs.approachSuffix.isEmpty() ? QString() : (tr("-") + approachLegs.approachSuffix));
-  }
-  else if(mapType & proc::PROCEDURE_TRANSITION)
-    procText = QObject::tr("Transition %1").arg(approachLegs.transitionFixIdent);
-  else if(mapType & proc::PROCEDURE_STAR)
-    procText = QObject::tr("STAR %1").arg(starLegs.approachFixIdent);
-  else if(mapType & proc::PROCEDURE_SID)
-    procText = QObject::tr("SID %1").arg(sidLegs.approachFixIdent);
-  else if(mapType & proc::PROCEDURE_SID_TRANSITION)
-    procText = QObject::tr("SID Transition %1").arg(sidLegs.transitionFixIdent);
-  else if(mapType & proc::PROCEDURE_STAR_TRANSITION)
-    procText = QObject::tr("STAR Transition %1").arg(starLegs.transitionFixIdent);
+  if(mapType & proc::PROCEDURE_SID_ALL)
+    procLegs = &sidLegs;
+  else if(mapType & proc::PROCEDURE_STAR_ALL)
+    procLegs = &starLegs;
+  else if(mapType & proc::PROCEDURE_APPROACH_ALL_MISSED)
+    procLegs = &approachLegs;
 
-  return procText;
+  if(procLegs != nullptr)
+    return proc::procedureLegsText(*procLegs, mapType, false /* narrow */, includeRunway, missedAsApproach);
+  else
+    return QString();
 }
 
-QString Route::getFilenamePattern(const QString& pattern, const QString& suffix, bool clean) const
+QString Route::buildDefaultFilename(const QString& suffix, bool clean) const
+{
+  return buildDefaultFilename(QString(), suffix, clean);
+}
+
+QString Route::buildDefaultFilename(QString pattern, QString suffix, bool clean) const
 {
   if(isEmpty())
     return tr("Empty Flightplan") + suffix;
@@ -3084,12 +3150,32 @@ QString Route::getFilenamePattern(const QString& pattern, const QString& suffix,
   QString departName = getDepartureAirportLeg().getName(), departIdent = getDepartureAirportLeg().getDisplayIdent(),
           destName = getDestinationAirportLeg().getName(), destIdent = getDestinationAirportLeg().getDisplayIdent();
 
+  if(pattern.isEmpty())
+    // Use pattern from options if not given
+    pattern = OptionData::instance().getFlightplanPattern();
+
+  if(pattern.endsWith(suffix, Qt::CaseInsensitive))
+    // Clear suffix if this is already a part of the filename
+    suffix.clear();
+
   return Flightplan::getFilenamePattern(pattern, type, departName, departIdent, destName, destIdent, suffix,
                                         flightplan.getCruisingAltitude(), clean);
 }
 
+QString Route::buildDefaultFilenameShort(const QString& separator, const QString& suffix) const
+{
+  if(isEmpty())
+    return tr("EMPTY") + suffix;
+
+  QString departIdent = getDepartureAirportLeg().getDisplayIdent(), destIdent = getDestinationAirportLeg().getDisplayIdent();
+
+  return Flightplan::getFilenamePattern(atools::fs::pln::pattern::DEPARTIDENT % separator % atools::fs::pln::pattern::DESTIDENT,
+                                        QString(), QString(), departIdent, QString(), destIdent, suffix, 0, false);
+}
+
 QDebug operator<<(QDebug out, const Route& route)
 {
+  QDebugStateSaver saver(out);
   out << endl << "Route ==================================================================" << endl;
   out << route.getFlightplan().getProperties() << endl << endl;
   for(int i = 0; i < route.size(); ++i)

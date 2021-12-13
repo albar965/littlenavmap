@@ -262,8 +262,8 @@ SOURCES += \
   src/db/dbtypes.cpp \
   src/export/csvexporter.cpp \
   src/export/exporter.cpp \
-  src/gui/choicedialog.cpp \
   src/gui/holddialog.cpp \
+  src/gui/coordinatedialog.cpp \
   src/gui/mainwindow.cpp \
   src/gui/runwayselection.cpp \
   src/gui/statusbareventfilter.cpp \
@@ -271,7 +271,9 @@ SOURCES += \
   src/gui/textdialog.cpp \
   src/gui/timedialog.cpp \
   src/gui/trafficpatterndialog.cpp \
+  src/gui/rangemarkerdialog.cpp \
   src/gui/updatedialog.cpp \
+  src/info/aircraftprogressconfig.cpp \
   src/info/infocontroller.cpp \
   src/logbook/logdatacontroller.cpp \
   src/logbook/logdataconverter.cpp \
@@ -280,6 +282,7 @@ SOURCES += \
   src/main.cpp \
   src/mapgui/aprongeometrycache.cpp \
   src/mapgui/imageexportdialog.cpp \
+  src/mapgui/mapairporthandler.cpp \
   src/mapgui/mapcontextmenu.cpp \
   src/mapgui/mapfunctions.cpp \
   src/mapgui/maplayer.cpp \
@@ -342,7 +345,9 @@ SOURCES += \
   src/route/routecontroller.cpp \
   src/route/routeextractor.cpp \
   src/route/routeflags.cpp \
+  src/route/routelabel.cpp \
   src/route/routeleg.cpp \
+  src/route/runwayselectiondialog.cpp \
   src/route/userwaypointdialog.cpp \
   src/routeexport/routeexport.cpp \
   src/routeexport/routeexportdata.cpp \
@@ -412,6 +417,7 @@ HEADERS  += \
   src/common/formatter.h \
   src/common/fueltool.h \
   src/common/htmlinfobuilder.h \
+  src/common/htmlinfobuilderflags.h \
   src/common/infobuildertypes.h \
   src/common/jsoninfobuilder.h \
   src/common/jumpback.h \
@@ -438,8 +444,8 @@ HEADERS  += \
   src/db/dbtypes.h \
   src/export/csvexporter.h \
   src/export/exporter.h \
-  src/gui/choicedialog.h \
   src/gui/holddialog.h \
+  src/gui/coordinatedialog.h \
   src/gui/mainwindow.h \
   src/gui/runwayselection.h \
   src/gui/statusbareventfilter.h \
@@ -447,7 +453,9 @@ HEADERS  += \
   src/gui/textdialog.h \
   src/gui/timedialog.h \
   src/gui/trafficpatterndialog.h \
+  src/gui/rangemarkerdialog.h \
   src/gui/updatedialog.h \
+  src/info/aircraftprogressconfig.h \
   src/info/infocontroller.h \
   src/logbook/logdatacontroller.h \
   src/logbook/logdataconverter.h \
@@ -455,6 +463,7 @@ HEADERS  += \
   src/logbook/logstatisticsdialog.h \
   src/mapgui/aprongeometrycache.h \
   src/mapgui/imageexportdialog.h \
+  src/mapgui/mapairporthandler.h \
   src/mapgui/mapcontextmenu.h \
   src/mapgui/mapfunctions.h \
   src/mapgui/maplayer.h \
@@ -517,7 +526,9 @@ HEADERS  += \
   src/route/routecontroller.h \
   src/route/routeextractor.h \
   src/route/routeflags.h \
+  src/route/routelabel.h \
   src/route/routeleg.h \
+  src/route/runwayselectiondialog.h \
   src/route/userwaypointdialog.h \
   src/routeexport/routeexport.h \
   src/routeexport/routeexportdata.h \
@@ -579,12 +590,13 @@ FORMS += \
   src/connect/connectdialog.ui \
   src/db/databasedialog.ui \
   src/db/databaseprogressdialog.ui \
-  src/gui/choicedialog.ui \
   src/gui/holddialog.ui \
+  src/gui/coordinatedialog.ui \
   src/gui/mainwindow.ui \
   src/gui/textdialog.ui \
   src/gui/timedialog.ui \
   src/gui/trafficpatterndialog.ui \
+  src/gui/rangemarkerdialog.ui \
   src/gui/updatedialog.ui \
   src/logbook/logdatadialog.ui \
   src/logbook/logstatisticsdialog.ui \
@@ -595,6 +607,7 @@ FORMS += \
   src/print/printdialog.ui \
   src/route/customproceduredialog.ui \
   src/route/parkingdialog.ui \
+  src/route/runwayselectiondialog.ui \
   src/route/userwaypointdialog.ui \
   src/routeexport/routeexportdialog.ui \
   src/routeexport/routemultiexportdialog.ui \

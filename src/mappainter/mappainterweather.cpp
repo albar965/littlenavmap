@@ -45,8 +45,7 @@ MapPainterWeather::~MapPainterWeather()
 
 void MapPainterWeather::render()
 {
-  bool drawWeather = context->objectDisplayTypes.testFlag(map::AIRPORT_WEATHER) &&
-                     context->mapLayer->isAirportWeather();
+  bool drawWeather = context->objectDisplayTypes.testFlag(map::AIRPORT_WEATHER) && context->mapLayer->isAirportWeather();
 
   if(!drawWeather)
     return;
@@ -87,6 +86,7 @@ void MapPainterWeather::render()
       if(!hidden && visibleOnMap)
         visibleAirportWeather.append(PaintAirportType(airport, x, y));
     }
+
     if(context->route->getDestinationAirportLeg().getAirport().isValid())
     {
       const MapAirport& airport = context->route->getDestinationAirportLeg().getAirport();
@@ -94,6 +94,7 @@ void MapPainterWeather::render()
       if(!hidden && visibleOnMap)
         visibleAirportWeather.append(PaintAirportType(airport, x, y));
     }
+
     QVector<MapAirport> alternates = context->route->getAlternateAirports();
     for(const map::MapAirport& airport :alternates)
     {
@@ -105,7 +106,8 @@ void MapPainterWeather::render()
 
   // ================================
   // Limit weather display to the 10 most important/biggest airports if connected via network or SimConnect
-  if(NavApp::isConnectedNetwork() || NavApp::isSimConnect())
+  if((NavApp::isConnectedNetwork() || NavApp::isSimConnect()) && NavApp::isConnectedActive() &&
+     context->weatherSource == map::WEATHER_SOURCE_SIMULATOR)
   {
     visibleAirportWeather.erase(std::remove_if(visibleAirportWeather.begin(), visibleAirportWeather.end(),
                                                [](const PaintAirportType& ap) -> bool
@@ -122,19 +124,16 @@ void MapPainterWeather::render()
 
   // Sort by airport display order
   using namespace std::placeholders;
-  std::sort(visibleAirportWeather.begin(), visibleAirportWeather.end(),
-            std::bind(&MapPainter::sortAirportFunction, this, _1, _2));
+  std::sort(visibleAirportWeather.begin(), visibleAirportWeather.end(), std::bind(&MapPainter::sortAirportFunction, this, _1, _2));
 
   WeatherReporter *reporter = NavApp::getWeatherReporter();
   for(const PaintAirportType& airportWeather: visibleAirportWeather)
   {
     atools::fs::weather::Metar metar =
-      reporter->getAirportWeather(airportWeather.airport->ident,
-                                  airportWeather.airport->position, context->weatherSource);
+      reporter->getAirportWeather(airportWeather.airport->ident, airportWeather.airport->position, context->weatherSource);
 
     if(metar.isValid())
-      drawAirportWeather(metar, static_cast<float>(airportWeather.point.x()),
-                         static_cast<float>(airportWeather.point.y()));
+      drawAirportWeather(metar, static_cast<float>(airportWeather.point.x()), static_cast<float>(airportWeather.point.y()));
   }
 }
 

@@ -153,6 +153,8 @@ private:
 
   void updateAttachementWidgets();
 
+  void clearAttached();
+
   /* Remember fuel unit to detect changes in widget */
   bool volumeCurrent = false;
 

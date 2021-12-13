@@ -32,6 +32,8 @@
 
 #include <marble/GeoPainter.h>
 
+#include <QStringBuilder>
+
 using namespace Marble;
 using namespace atools::geo;
 using namespace map;
@@ -74,17 +76,13 @@ void MapPainterVehicle::paintAiVehicle(const SimConnectAircraft& vehicle, bool f
         context->painter->translate(x, y);
         context->painter->rotate(rotate);
 
-        int modelSize = vehicle.getWingSpan() > 0 ? vehicle.getWingSpan() : vehicle.getModelRadiusCorrected() * 2;
-
         int minSize;
         if(vehicle.isUser())
           minSize = 32;
         else
-          minSize = vehicle.isAnyBoat() ?
-                    context->mapLayer->getAiAircraftSize() - 4 :
-                    context->mapLayer->getAiAircraftSize();
+          minSize = vehicle.isAnyBoat() ? context->mapLayer->getAiAircraftSize() - 4 : context->mapLayer->getAiAircraftSize();
 
-        int size = std::max(context->sz(context->symbolSizeAircraftAi, minSize), scale->getPixelIntForFeet(modelSize));
+        int size = std::max(context->sz(context->symbolSizeAircraftAi, minSize), scale->getPixelIntForFeet(vehicle.getModelSize()));
         int offset = -(size / 2);
 
         // Draw symbol
@@ -105,21 +103,15 @@ void MapPainterVehicle::paintAiVehicle(const SimConnectAircraft& vehicle, bool f
 
 void MapPainterVehicle::paintUserAircraft(const SimConnectUserAircraft& userAircraft, float x, float y)
 {
-  int modelSize = userAircraft.getWingSpan();
-  if(modelSize == 0)
-    modelSize = userAircraft.getModelRadiusCorrected() * 2;
-
-  int size = std::max(context->sz(context->symbolSizeAircraftUser, 32), scale->getPixelIntForFeet(modelSize));
+  int size = std::max(context->sz(context->symbolSizeAircraftUser, 32), scale->getPixelIntForFeet(userAircraft.getModelSize()));
   context->szFont(context->textSizeAircraftUser);
   int offset = -(size / 2);
 
-  if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_TRACK_LINE) &&
-     userAircraft.getGroundSpeedKts() > 30 &&
+  if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_TRACK_LINE) && userAircraft.getGroundSpeedKts() > 30 &&
      userAircraft.getTrackDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
   {
     // Get projection corrected rotation angle
-    float rotate = scale->getScreenRotation(userAircraft.getTrackDegTrue(),
-                                            userAircraft.getPosition(), context->zoomDistanceMeter);
+    float rotate = scale->getScreenRotation(userAircraft.getTrackDegTrue(), userAircraft.getPosition(), context->zoomDistanceMeter);
 
     if(rotate < map::INVALID_COURSE_VALUE)
       symbolPainter->drawTrackLine(context->painter, x, y, size * 2, rotate);
@@ -168,8 +160,7 @@ void MapPainterVehicle::paintAircraftTrack()
   }
 }
 
-void MapPainterVehicle::paintTextLabelAi(float x, float y, int size,
-                                         const SimConnectAircraft& aircraft, bool forceLabel)
+void MapPainterVehicle::paintTextLabelAi(float x, float y, int size, const SimConnectAircraft& aircraft, bool forceLabel)
 {
   QStringList texts;
 
@@ -206,8 +197,7 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, int size,
         if(aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
           heading = aircraft.getHeadingDegMag();
         else if(aircraft.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
-          heading = atools::geo::normalizeCourse(aircraft.getHeadingDegTrue() -
-                                                 NavApp::getMagVar(aircraft.getPosition()));
+          heading = atools::geo::normalizeCourse(aircraft.getHeadingDegTrue() - NavApp::getMagVar(aircraft.getPosition()));
 
         if(heading < atools::fs::sc::SC_INVALID_FLOAT)
           texts.append(tr("HDG %3°M").arg(QString::number(heading, 'f', 0)));
@@ -236,8 +226,7 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, int size,
   }
 }
 
-void MapPainterVehicle::paintTextLabelUser(float x, float y, int size,
-                                           const SimConnectUserAircraft& aircraft)
+void MapPainterVehicle::paintTextLabelUser(float x, float y, int size, const SimConnectUserAircraft& aircraft)
 {
   QStringList texts;
 
@@ -263,24 +252,21 @@ void MapPainterVehicle::paintTextLabelUser(float x, float y, int size,
     appendClimbSinkText(texts, aircraft);
 
   if(!aircraft.isOnGround() && (context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ALTITUDE) ||
-                                context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE)))
+                                context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE) ||
+                                context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ALT_ABOVE_GROUND)))
   {
-    QString upDown;
-    if(!context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_CLIMB_SINK))
-      climbSinkPointer(upDown, aircraft);
+    QStringList altText;
+    if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE))
+      altText.append(tr("IND %1").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())));
 
-    if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ALTITUDE) &&
-       context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE))
-    {
-      texts.append(tr("ALT %1, IND %2%3").
-                   arg(Unit::altFeet(aircraft.getPosition().getAltitude())).
-                   arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())).
-                   arg(upDown));
-    }
-    else if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ALTITUDE))
-      texts.append(tr("%1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
-    else if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE))
-      texts.append(tr("%1%2").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())).arg(upDown));
+    if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ALTITUDE))
+      altText.append(tr("ALT %1").arg(Unit::altFeet(aircraft.getPosition().getAltitude())));
+
+    if(!aircraft.isOnGround() && context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ALT_ABOVE_GROUND))
+      altText.append(tr("AGL %1").arg(Unit::altFeet(aircraft.getAltitudeAboveGroundFt())));
+
+    if(!altText.isEmpty())
+      texts.append(altText.join(tr(", ")));
   }
 
   if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_COORDINATES))
@@ -288,8 +274,19 @@ void MapPainterVehicle::paintTextLabelUser(float x, float y, int size,
 
   int transparency = context->flags2.testFlag(opts2::MAP_USER_TEXT_BACKGROUND) ? 255 : 0;
 
+  if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ICE))
+  {
+    QStringList ice = map::aircraftIcing(aircraft, true /* narrow */);
+    if(!ice.isEmpty())
+    {
+      ice.prepend(tr("ICE %"));
+      symbolPainter->textBoxF(context->painter, ice, mapcolors::aircraftUserLabelColor, x - size * 3 / 4, y,
+                              textatt::ERROR_COLOR | textatt::RIGHT, 255, mapcolors::aircraftUserLabelColorBg);
+    }
+  }
+
   // Draw text label
-  symbolPainter->textBoxF(context->painter, texts, mapcolors::aircraftUserLabelColor, x + size / 2.f, y + size / 2.f,
+  symbolPainter->textBoxF(context->painter, texts, mapcolors::aircraftUserLabelColor, x + size * 3 / 4, y,
                           textatt::NONE, transparency, mapcolors::aircraftUserLabelColorBg);
 }
 
@@ -315,7 +312,7 @@ void MapPainterVehicle::appendClimbSinkText(QStringList& texts, const SimConnect
     if(vspeed < 10.f && vspeed > -10.f)
       vspeed = 0.f;
 
-    texts.append(Unit::speedVertFpm(vspeed) + upDown);
+    texts.append(Unit::speedVertFpm(vspeed) % upDown);
   }
 }
 

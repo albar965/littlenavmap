@@ -17,20 +17,22 @@
 
 #include "gui/trafficpatterndialog.h"
 
-#include "common/constants.h"
-#include "gui/runwayselection.h"
-#include "geo/calculations.h"
-#include "gui/widgetutil.h"
-#include "gui/widgetstate.h"
-#include "settings/settings.h"
-#include "gui/helphandler.h"
-#include "common/unitstringtool.h"
-#include "common/unit.h"
 #include "atools.h"
+#include "common/constants.h"
+#include "common/maptypes.h"
+#include "common/unit.h"
+#include "common/unitstringtool.h"
+#include "geo/calculations.h"
+#include "gui/helphandler.h"
+#include "gui/runwayselection.h"
+#include "gui/widgetstate.h"
+#include "gui/widgetutil.h"
+#include "settings/settings.h"
 
 #include "ui_trafficpatterndialog.h"
 
 #include <QColorDialog>
+
 
 using atools::geo::Pos;
 
@@ -58,11 +60,7 @@ TrafficPatternDialog::TrafficPatternDialog(QWidget *parent, const map::MapAirpor
 
   // Saves original texts and restores them on deletion
   units = new UnitStringTool();
-  units->init({
-    ui->doubleSpinBoxTrafficPatternBaseDistance,
-    ui->doubleSpinBoxDownwindDistance,
-    ui->spinBoxTrafficPatternAltitude
-  });
+  units->init({ui->doubleSpinBoxTrafficPatternBaseDistance, ui->doubleSpinBoxDownwindDistance, ui->spinBoxTrafficPatternAltitude});
 
   restoreState();
 }
@@ -85,8 +83,7 @@ void TrafficPatternDialog::buttonBoxClicked(QAbstractButton *button)
     QDialog::accept();
   }
   else if(button == ui->buttonBoxTrafficPattern->button(QDialogButtonBox::Help))
-    atools::gui::HelpHandler::openHelpUrlWeb(
-      parentWidget(), lnm::helpOnlineUrl + "TRAFFICPATTERN.html", lnm::helpLanguageOnline());
+    atools::gui::HelpHandler::openHelpUrlWeb(parentWidget(), lnm::helpOnlineUrl + "TRAFFICPATTERN.html", lnm::helpLanguageOnline());
   else if(button == ui->buttonBoxTrafficPattern->button(QDialogButtonBox::Cancel))
     QDialog::reject();
 }
@@ -162,9 +159,10 @@ void TrafficPatternDialog::updateRunwayLabel()
 void TrafficPatternDialog::updateWidgets()
 {
   ui->doubleSpinBoxTrafficPatternBaseDistance->setEnabled(!ui->checkBoxTrafficPattern45Degree->isChecked());
+  ui->labelTrafficPatternBaseDistance->setEnabled(!ui->checkBoxTrafficPattern45Degree->isChecked());
 }
 
-void TrafficPatternDialog::fillTrafficPattern(map::TrafficPattern& pattern)
+void TrafficPatternDialog::fillPatternMarker(map::PatternMarker& pattern)
 {
   map::MapRunway rw;
   map::MapRunwayEnd end;
@@ -173,6 +171,8 @@ void TrafficPatternDialog::fillTrafficPattern(map::TrafficPattern& pattern)
   bool primary = !end.secondary;
   const map::MapAirport& airport = runwaySelection->getAirport();
 
+  // Assign an artifical id to the hold to allow internal identification
+  pattern.id = map::getNextUserFeatureId();
   pattern.airportIcao = airport.displayIdent();
   pattern.runwayName = primary ? rw.primaryName : rw.secondaryName;
   pattern.color = color;
@@ -185,11 +185,10 @@ void TrafficPatternDialog::fillTrafficPattern(map::TrafficPattern& pattern)
 
   pattern.courseTrue = primary ? rw.heading : atools::geo::opposedCourseDeg(rw.heading);
   pattern.magvar = airport.magvar;
-  pattern.runwayLength = rw.length - (primary ? rw.primaryOffset : rw.secondaryOffset);
+  pattern.runwayLength = atools::roundToInt(rw.length - (primary ? rw.primaryOffset : rw.secondaryOffset));
 
   float heading = primary ? atools::geo::opposedCourseDeg(rw.heading) : rw.heading;
-  Pos pos = rw.position.endpoint(
-    atools::geo::feetToMeter(rw.length / 2 - (primary ? rw.primaryOffset : rw.secondaryOffset)), heading);
+  Pos pos = rw.position.endpoint(atools::geo::feetToMeter(rw.length / 2.f - (primary ? rw.primaryOffset : rw.secondaryOffset)), heading);
 
   float altFeet = Unit::rev(static_cast<float>(ui->spinBoxTrafficPatternAltitude->value()), Unit::altFeetF);
   qDebug() << Q_FUNC_INFO << "altitude" << ui->spinBoxTrafficPatternAltitude->value()

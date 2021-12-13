@@ -39,6 +39,7 @@ using atools::fs::pln::FlightplanEntry;
 using map::MapResult;
 using atools::geo::Pos;
 namespace coords = atools::fs::util;
+namespace ageo = atools::geo;
 namespace plnentry = atools::fs::pln::entry;
 
 // Maximum distance to previous waypoint - everything above will be sorted out
@@ -59,9 +60,7 @@ const static QRegularExpression AIRPORT_TIME_RUNWAY("^([A-Z0-9]{3,4})(\\d{4})?(/
 
 const static QRegularExpression SID_STAR_TRANS("^([A-Z0-9]{1,7})(\\.([A-Z0-9]{1,6}))?$");
 
-const static map::MapTypes ROUTE_TYPES_AND_AIRWAY(map::AIRPORT | map::WAYPOINT |
-                                                  map::VOR | map::NDB | map::USERPOINTROUTE |
-                                                  map::AIRWAY);
+const static map::MapTypes ROUTE_TYPES_AND_AIRWAY(map::AIRPORT | map::WAYPOINT | map::VOR | map::NDB | map::USERPOINTROUTE | map::AIRWAY);
 
 const static map::MapTypes ROUTE_TYPES(map::AIRPORT | map::WAYPOINT | map::VOR | map::NDB | map::USERPOINTROUTE);
 
@@ -97,8 +96,7 @@ RouteStringReader::~RouteStringReader()
 }
 
 bool RouteStringReader::createRouteFromString(const QString& routeString, rs::RouteStringOptions options,
-                                              atools::fs::pln::Flightplan *flightplan,
-                                              map::MapObjectRefExtVector *mapObjectRefs,
+                                              atools::fs::pln::Flightplan *flightplan, map::MapObjectRefExtVector *mapObjectRefs,
                                               float *speedKts, bool *altIncluded)
 {
   qDebug() << Q_FUNC_INFO;
@@ -191,7 +189,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   }
 
   // Do not get any navaids that are too far away
-  float maxDistance = atools::geo::nmToMeter(std::max(MAX_WAYPOINT_DISTANCE_NM, fp->getDistanceNm() * 2.0f));
+  float maxDistance = ageo::nmToMeter(std::max(MAX_WAYPOINT_DISTANCE_NM, fp->getDistanceNm() * 2.0f));
 
   if(!lastPos.isValid())
   {
@@ -217,7 +215,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
     const MapResult *lastResult = resultList.isEmpty() ? nullptr : &resultList.last().result;
 
     // Sort lists by distance and remove all which are too far away and update last pos
-    filterWaypoints(result, lastPos, lastResult, maxDistance);
+    filterWaypoints(result, lastPos, fp->getDestinationPosition(), lastResult, item, maxDistance);
 
     if(!result.isEmpty(ROUTE_TYPES_AND_AIRWAY))
       resultList.append({item, QString(), result});
@@ -450,9 +448,9 @@ void RouteStringReader::resultWithClosest(map::MapResult& resultWithClosest, con
   {
     map::MapTypes type;
     int index;
-    atools::geo::Pos pos;
+    ageo::Pos pos;
 
-    const atools::geo::Pos& getPosition() const
+    const ageo::Pos& getPosition() const
     {
       return pos;
     }
@@ -556,10 +554,9 @@ bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, ma
   airportQuerySim->getAirportByIdent(departure, ident);
   if(!departure.isValid())
   {
-    QList<map::MapAirport> airports = airportQuerySim->getAirportsByOfficialIdent(ident, nullptr,
-                                                                                  map::INVALID_DISTANCE_VALUE,
-                                                                                  true /* iata */,
-                                                                                  false /* ident */);
+    // Try again with official codes but not ident
+    QList<map::MapAirport> airports = airportQuerySim->getAirportsByOfficialIdent(ident, nullptr, map::INVALID_DISTANCE_VALUE,
+                                                                                  map::AP_QUERY_OFFICIAL);
     if(!airports.isEmpty())
       departure = airports.first();
   }
@@ -684,7 +681,7 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan,
 
       if(ap.isValid() &&
          (airports.isEmpty() ||
-          airports.first().position.distanceMeterTo(ap.position) < atools::geo::nmToMeter(MAX_ALTERNATE_DISTANCE_NM)))
+          airports.first().position.distanceMeterTo(ap.position) < ageo::nmToMeter(MAX_ALTERNATE_DISTANCE_NM)))
       {
         // Found a valid airport, add and continue with previous one
         stars.append(star);
@@ -804,10 +801,9 @@ void RouteStringReader::destinationInternal(map::MapAirport& destination, proc::
 
   if(!destination.isValid())
   {
-    QList<map::MapAirport> airports = airportQuerySim->getAirportsByOfficialIdent(ident, nullptr,
-                                                                                  map::INVALID_DISTANCE_VALUE,
-                                                                                  true /* iata */,
-                                                                                  false /* ident */);
+    // Try again official codes but not ident
+    QList<map::MapAirport> airports = airportQuerySim->getAirportsByOfficialIdent(ident, nullptr, map::INVALID_DISTANCE_VALUE,
+                                                                                  map::AP_QUERY_OFFICIAL);
     if(!airports.isEmpty())
       destination = airports.first();
   }
@@ -956,8 +952,7 @@ void RouteStringReader::findIndexesInAirway(const QList<map::MapAirwayWaypoint>&
 }
 
 /* Always excludes the first waypoint */
-void RouteStringReader::extractWaypoints(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints,
-                                         int startIndex, int endIndex,
+void RouteStringReader::extractWaypoints(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints, int startIndex, int endIndex,
                                          QList<map::MapWaypoint>& airwayWaypoints)
 {
   if(startIndex < endIndex)
@@ -979,9 +974,8 @@ void RouteStringReader::extractWaypoints(const QList<map::MapAirwayWaypoint>& al
   }
 }
 
-void RouteStringReader::filterWaypoints(MapResult& result, atools::geo::Pos& lastPos,
-                                        const MapResult *lastResult,
-                                        float maxDistance)
+void RouteStringReader::filterWaypoints(MapResult& result, atools::geo::Pos& lastPos, const atools::geo::Pos& destPos,
+                                        const MapResult *lastResult, const QString& item, float maxDistance)
 {
   if(lastPos.isValid())
   {
@@ -1000,6 +994,10 @@ void RouteStringReader::filterWaypoints(MapResult& result, atools::geo::Pos& las
     maptools::sortByDistance(result.userpointsRoute, lastPos);
     maptools::removeByDistance(result.userpointsRoute, lastPos, maxDistance);
   }
+
+  // Avoid airports by IATA or FAA codes if VOR and NDB are also present
+  if(item.length() == 3 && (result.hasVor() || result.hasNdb()))
+    result.airports.clear();
 
   if(!result.userpointsRoute.isEmpty())
     // User points have preference since they can be clearly identified
@@ -1044,57 +1042,59 @@ void RouteStringReader::filterWaypoints(MapResult& result, atools::geo::Pos& las
     // Get the nearest position only if there is no match with an airway
     if(updateNearestPos && lastPos.isValid())
     {
-      struct ObjectDist
+      struct Dist
       {
+        Dist(const ageo::Pos& posParam, const ageo::Pos& lastPosParam, const ageo::Pos& destPosParam,
+             map::MapTypes typeParam)
+          : pos(posParam), type(typeParam)
+        {
+          // From last point to this one
+          distMeter = lastPosParam.distanceMeterTo(posParam);
+
+          if(destPosParam.isValid())
+            // From this point to destination
+            distMeter += posParam.distanceMeterTo(destPosParam);
+        }
+
         float distMeter;
         Pos pos;
         map::MapTypes type;
       };
 
-      // Find something whatever is nearest and use that for the last position
-      QVector<ObjectDist> dists;
-      if(result.hasAirports())
-        dists.append({
-          result.airports.first().position.distanceMeterTo(lastPos),
-          result.airports.first().position,
-          map::AIRPORT
-        });
-      if(result.hasWaypoints())
-        dists.append({
-          result.waypoints.first().position.distanceMeterTo(lastPos),
-          result.waypoints.first().position,
-          map::WAYPOINT
-        });
-      if(result.hasVor())
-        dists.append({
-          result.vors.first().position.distanceMeterTo(lastPos),
-          result.vors.first().position,
-          map::VOR
-        });
-      if(result.hasNdb())
-        dists.append({
-          result.ndbs.first().position.distanceMeterTo(lastPos),
-          result.ndbs.first().position,
-          map::NDB
-        });
+      ageo::Pos pos;
+      map::MapTypes type;
 
-      // Sort by distance
+      // Find something whatever is nearest and use that for the last position
+      QVector<Dist> dists;
+      if(result.hasAirports())
+        dists.append(Dist(result.airports.first().position, lastPos, destPos, map::AIRPORT));
+
+      if(result.hasWaypoints())
+        dists.append(Dist(result.waypoints.first().position, lastPos, destPos, map::WAYPOINT));
+
+      if(result.hasVor())
+        dists.append(Dist(result.vors.first().position, lastPos, destPos, map::VOR));
+
+      if(result.hasNdb())
+        dists.append(Dist(result.ndbs.first().position, lastPos, destPos, map::NDB));
+
+      // Sort by distance from last plus distance to destination similar to A*
       if(dists.size() > 1)
-        std::sort(dists.begin(), dists.end(), [](const ObjectDist& p1, const ObjectDist& p2) -> bool {
+        std::sort(dists.begin(), dists.end(), [](const Dist& p1, const Dist& p2) -> bool {
           return p1.distMeter < p2.distMeter;
         });
 
       if(!dists.isEmpty())
       {
-        // Check for special case where a NDB and a VOR or waypoint with the same name are nearby.
-        // Prefer VOR or waypoint in this case.
         if(dists.size() >= 2)
         {
-          const ObjectDist& first = dists.first();
-          const ObjectDist& second = dists.at(1);
-          if(first.type == map::NDB &&
-             (second.type == map::VOR || second.type == map::WAYPOINT) &&
-             first.pos.distanceMeterTo(second.pos) < atools::geo::nmToMeter(MAX_CLOSE_NAVAIDS_DISTANCE_NM))
+          const Dist& first = dists.first();
+          const Dist& second = dists.at(1);
+
+          // Check for special case where a NDB and a VOR or waypoint with the same name are nearby.
+          // Prefer VOR or waypoint in this case.
+          if(first.type == map::NDB && (second.type == map::VOR || second.type == map::WAYPOINT) &&
+             first.pos.distanceMeterTo(second.pos) < ageo::nmToMeter(MAX_CLOSE_NAVAIDS_DISTANCE_NM))
           {
             dists.removeFirst();
 
@@ -1102,6 +1102,7 @@ void RouteStringReader::filterWaypoints(MapResult& result, atools::geo::Pos& las
               result.ndbs.removeFirst();
           }
         }
+
         // Use position of nearest to last
         lastPos = dists.first().pos;
       }
@@ -1234,14 +1235,13 @@ void RouteStringReader::findWaypoints(MapResult& result, const QString& item, bo
   if(item.length() > 5)
     // User coordinates for sure
     searchCoords = true;
-  else
-  {
-    mapQuery->getMapObjectByIdent(result, ROUTE_TYPES_AND_AIRWAY, item);
 
-    if(item.length() == 5 && result.waypoints.isEmpty())
-      // Nothing found - try NAT waypoint (a few of these are also in the database)
-      searchCoords = true;
-  }
+  mapQuery->getMapObjectByIdent(result, ROUTE_TYPES_AND_AIRWAY, item, QString(), QString(), false /* airportFromNavdatabase */,
+                                map::AP_QUERY_ALL);
+
+  if(item.length() == 5 && result.waypoints.isEmpty())
+    // Nothing found - try NAT waypoint (a few of these are also in the database)
+    searchCoords = true;
 
   if(searchCoords)
   {

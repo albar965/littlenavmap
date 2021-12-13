@@ -422,8 +422,7 @@ inline void RequestHandler::handleHtmlFileRequest(HttpRequest& request, HttpResp
       {
         Route route = emit getRoute();
         html.clear();
-        htmlInfoBuilder->aircraftProgressText(userAircraft, html, route,
-                                              false /* show more/less switch */, false /* less */);
+        htmlInfoBuilder->aircraftProgressText(userAircraft, html, route);
         t.setVariable(QStringLiteral(u"aircraftProgressText"), html.getHtml());
       }
 

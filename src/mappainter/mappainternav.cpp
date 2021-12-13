@@ -135,7 +135,7 @@ void MapPainterNav::render()
     context->setQueryOverflow(overflow);
 
     if(holds != nullptr)
-      paintHoldings(*holds, false /* user */, context->drawFast);
+      paintHoldingMarks(*holds, false /* user */, context->drawFast);
   }
 }
 

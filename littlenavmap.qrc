@@ -1,6 +1,9 @@
 <RCC>
     <qresource prefix="/littlenavmap">
         <file>resources/config/logging.cfg</file>
+        <file>resources/config/mainwindow_state_dock.bin</file>
+        <file>resources/config/mainwindow_state_nodock.bin</file>
+        <file>resources/config/maplayers.xml</file>
         <file>resources/config/navdatareader.cfg</file>
         <file>resources/config/networks.cfg</file>
         <file>resources/config/ssl/lnm.cert</file>
@@ -56,10 +59,15 @@
         <file>resources/icons/airport.svg</file>
         <file>resources/icons/airportaddon.svg</file>
         <file>resources/icons/airportempty.svg</file>
+        <file>resources/icons/airporthelipad.svg</file>
+        <file>resources/icons/airportlight.svg</file>
+        <file>resources/icons/airportmenu.svg</file>
+        <file>resources/icons/airportproc.svg</file>
         <file>resources/icons/airportroutealt.svg</file>
         <file>resources/icons/airportroutedest.svg</file>
         <file>resources/icons/airportroutestart.svg</file>
         <file>resources/icons/airportsoft.svg</file>
+        <file>resources/icons/airportwater.svg</file>
         <file>resources/icons/airspace.svg</file>
         <file>resources/icons/airspacealt.svg</file>
         <file>resources/icons/airspacecopy.svg</file>
@@ -73,6 +81,7 @@
         <file>resources/icons/airspacespec.svg</file>
         <file>resources/icons/airwayjet.svg</file>
         <file>resources/icons/airwaytrack.svg</file>
+        <file>resources/icons/airwaytrackdown.svg</file>
         <file>resources/icons/airwayvictor.svg</file>
         <file>resources/icons/application-exit.svg</file>
         <file>resources/icons/approach.svg</file>
@@ -93,7 +102,9 @@
         <file>resources/icons/centermark.svg</file>
         <file>resources/icons/centerroute.svg</file>
         <file>resources/icons/checkbox_dark_checked.png</file>
+        <file>resources/icons/checkbox_dark_checked_disabled.png</file>
         <file>resources/icons/checkbox_dark_unchecked.png</file>
+        <file>resources/icons/checkbox_dark_unchecked_disabled.png</file>
         <file>resources/icons/checkmark.svg</file>
         <file>resources/icons/cities.svg</file>
         <file>resources/icons/clear.svg</file>
@@ -101,6 +112,7 @@
         <file>resources/icons/cleartable.svg</file>
         <file>resources/icons/compassrose.svg</file>
         <file>resources/icons/compassroseattach.svg</file>
+        <file>resources/icons/coordinate.svg</file>
         <file>resources/icons/copy.svg</file>
         <file>resources/icons/database.svg</file>
         <file>resources/icons/databaseairspace.svg</file>
@@ -110,6 +122,8 @@
         <file>resources/icons/distancemeasure.svg</file>
         <file>resources/icons/distancemeasureoff.svg</file>
         <file>resources/icons/distancemeasurerhumb.svg</file>
+        <file>resources/icons/endurance.svg</file>
+        <file>resources/icons/enroutehold.svg</file>
         <file>resources/icons/fileappend.svg</file>
         <file>resources/icons/fileinsert.svg</file>
         <file>resources/icons/filenew.svg</file>
@@ -120,7 +134,9 @@
         <file>resources/icons/filesaveas.svg</file>
         <file>resources/icons/filter-add.svg</file>
         <file>resources/icons/filter-remove.svg</file>
+        <file>resources/icons/fullscreen.svg</file>
         <file>resources/icons/globals.svg</file>
+        <file>resources/icons/gls.svg</file>
         <file>resources/icons/group-by.svg</file>
         <file>resources/icons/help.svg</file>
         <file>resources/icons/hillshading.svg</file>
@@ -136,6 +152,7 @@
         <file>resources/icons/littlenavmap.ico</file>
         <file>resources/icons/littlenavmap.svg</file>
         <file>resources/icons/load-all.svg</file>
+        <file>resources/icons/lock.svg</file>
         <file>resources/icons/logbook.svg</file>
         <file>resources/icons/logdata_add.svg</file>
         <file>resources/icons/logdata_delete.svg</file>
@@ -143,6 +160,8 @@
         <file>resources/icons/map.svg</file>
         <file>resources/icons/mapdisplay.svg</file>
         <file>resources/icons/mapdisplay2.svg</file>
+        <file>resources/icons/mapdisplayflightplan.svg</file>
+        <file>resources/icons/mapdisplaylabels.svg</file>
         <file>resources/icons/mapgrid.svg</file>
         <file>resources/icons/mapnavigation.svg</file>
         <file>resources/icons/mapsaveasimage.svg</file>
@@ -150,10 +169,13 @@
         <file>resources/icons/mapshadow.svg</file>
         <file>resources/icons/marble.svg</file>
         <file>resources/icons/mark.svg</file>
+        <file>resources/icons/marksoff.svg</file>
         <file>resources/icons/menubutton.svg</file>
         <file>resources/icons/minaltitude.svg</file>
         <file>resources/icons/missed.svg</file>
         <file>resources/icons/moredetails.svg</file>
+        <file>resources/icons/msa.svg</file>
+        <file>resources/icons/msaoff.svg</file>
         <file>resources/icons/navrange.svg</file>
         <file>resources/icons/ndb.svg</file>
         <file>resources/icons/network.svg</file>
@@ -174,7 +196,9 @@
         <file>resources/icons/profiledock.svg</file>
         <file>resources/icons/qticon.png</file>
         <file>resources/icons/radiobutton_dark_checked.png</file>
+        <file>resources/icons/radiobutton_dark_checked_disabled.png</file>
         <file>resources/icons/radiobutton_dark_unchecked.png</file>
+        <file>resources/icons/radiobutton_dark_unchecked_disabled.png</file>
         <file>resources/icons/rangeringoff.svg</file>
         <file>resources/icons/rangerings.svg</file>
         <file>resources/icons/rangeringsoff.svg</file>
@@ -202,11 +226,14 @@
         <file>resources/icons/routestring.svg</file>
         <file>resources/icons/routetoctod.svg</file>
         <file>resources/icons/routetrack.svg</file>
+        <file>resources/icons/runwaydepart.svg</file>
+        <file>resources/icons/runwaydest.svg</file>
         <file>resources/icons/saveasfg.svg</file>
         <file>resources/icons/saveasfms.svg</file>
         <file>resources/icons/search.svg</file>
         <file>resources/icons/searchdock.svg</file>
         <file>resources/icons/settings.svg</file>
+        <file>resources/icons/settingsroute.svg</file>
         <file>resources/icons/showonmap.svg</file>
         <file>resources/icons/splash.png</file>
         <file>resources/icons/splitterhandhoriz.png</file>
@@ -225,6 +252,8 @@
         <file>resources/icons/trafficpatternoff.svg</file>
         <file>resources/icons/undo.svg</file>
         <file>resources/icons/units.svg</file>
+        <file>resources/icons/unlock.svg</file>
+        <file>resources/icons/userdata.svg</file>
         <file>resources/icons/userdata_add.svg</file>
         <file>resources/icons/userdata_delete.svg</file>
         <file>resources/icons/userdata_edit.svg</file>
@@ -233,12 +262,15 @@
         <file>resources/icons/userpoint_Airport.svg</file>
         <file>resources/icons/userpoint_Airstrip.svg</file>
         <file>resources/icons/userpoint_Bookmark.svg</file>
+        <file>resources/icons/userpoint_Building.svg</file>
         <file>resources/icons/userpoint_Cabin.svg</file>
         <file>resources/icons/userpoint_Closed.svg</file>
         <file>resources/icons/userpoint_DME.svg</file>
         <file>resources/icons/userpoint_Error.svg</file>
         <file>resources/icons/userpoint_Flag.svg</file>
         <file>resources/icons/userpoint_Helipad.svg</file>
+        <file>resources/icons/userpoint_History.svg</file>
+        <file>resources/icons/userpoint_Landform.svg</file>
         <file>resources/icons/userpoint_Lighthouse.svg</file>
         <file>resources/icons/userpoint_Location.svg</file>
         <file>resources/icons/userpoint_Logbook.svg</file>
@@ -246,15 +278,19 @@
         <file>resources/icons/userpoint_Mountain.svg</file>
         <file>resources/icons/userpoint_NDB.svg</file>
         <file>resources/icons/userpoint_Obstacle.svg</file>
+        <file>resources/icons/userpoint_Other.svg</file>
         <file>resources/icons/userpoint_POI.svg</file>
+        <file>resources/icons/userpoint_Park.svg</file>
         <file>resources/icons/userpoint_Pin.svg</file>
         <file>resources/icons/userpoint_Seaport.svg</file>
+        <file>resources/icons/userpoint_Settlement.svg</file>
         <file>resources/icons/userpoint_TACAN.svg</file>
         <file>resources/icons/userpoint_Unknown.svg</file>
         <file>resources/icons/userpoint_VOR.svg</file>
         <file>resources/icons/userpoint_VORDME.svg</file>
         <file>resources/icons/userpoint_VORTAC.svg</file>
         <file>resources/icons/userpoint_VRP.svg</file>
+        <file>resources/icons/userpoint_Water.svg</file>
         <file>resources/icons/userpoint_Waypoint.svg</file>
         <file>resources/icons/viewexpand.svg</file>
         <file>resources/icons/viewhoriz.svg</file>
@@ -269,29 +305,8 @@
         <file>resources/icons/windpointer.svg</file>
         <file>resources/icons/zoomin.svg</file>
         <file>resources/icons/zoomout.svg</file>
-        <file>resources/config/mainwindow_state_dock.bin</file>
-        <file>resources/config/mainwindow_state_nodock.bin</file>
-        <file>resources/icons/fullscreen.svg</file>
-        <file>resources/icons/userdata.svg</file>
-        <file>resources/icons/coordinate.svg</file>
-        <file>resources/icons/settingsroute.svg</file>
-        <file>resources/icons/airwaytrackdown.svg</file>
-        <file>resources/icons/radiobutton_dark_unchecked_disabled.png</file>
-        <file>resources/icons/radiobutton_dark_checked_disabled.png</file>
-        <file>resources/icons/checkbox_dark_unchecked_disabled.png</file>
-        <file>resources/icons/checkbox_dark_checked_disabled.png</file>
-        <file>resources/icons/lock.svg</file>
-        <file>resources/icons/unlock.svg</file>
-        <file>resources/icons/userpoint_Water.svg</file>
-        <file>resources/icons/userpoint_Settlement.svg</file>
-        <file>resources/icons/userpoint_Park.svg</file>
-        <file>resources/icons/userpoint_Landform.svg</file>
-        <file>resources/icons/userpoint_History.svg</file>
-        <file>resources/icons/userpoint_Building.svg</file>
-        <file>resources/icons/userpoint_Other.svg</file>
-        <file>resources/icons/gls.svg</file>
-        <file>resources/icons/enroutehold.svg</file>
-        <file>resources/icons/msa.svg</file>
-        <file>resources/icons/msaoff.svg</file>
+        <file>resources/icons/approachall.svg</file>
+        <file>resources/icons/altrange.svg</file>
+        <file>resources/icons/verticaltrack.svg</file>
     </qresource>
 </RCC>

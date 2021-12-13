@@ -110,6 +110,9 @@ public:
   void saveState();
   void restoreState();
 
+  /* Bring splitter to a resonable size after first start */
+  void restoreSplitter();
+
   void preRouteCalc();
 
   void mainWindowShown();
@@ -211,6 +214,9 @@ private:
   void paintIls(QPainter& painter, const Route& route);
   void paintVasi(QPainter& painter, const Route& route);
 
+  /* Draw a vertical track/path line extending from user aircraft */
+  void paintVerticalPath(QPainter& painter, const Route& route);
+
   void jumpBackToAircraftStart();
   void jumpBackToAircraftTimeout();
 
@@ -228,7 +234,7 @@ private:
   float aircraftAlt(const atools::fs::sc::SimConnectUserAircraft& aircraft);
 
   /* Get text and text color for a leg. procSymbol is true if only the generic procedure waypoint should be drawn */
-  void textsAndColorForLeg(QStringList& texts, QColor& color, bool& procSymbol, const RouteLeg& leg);
+  void textsAndColorForLeg(QStringList& texts, QColor& color, bool& procSymbol, const RouteLeg& leg, bool procedureDisplayText);
 
   /* Scale levels to test for display */
   static Q_DECL_CONSTEXPR int NUM_SCALE_STEPS = 5;
@@ -255,8 +261,9 @@ private:
   /* Track x = distance from start in NM and y = altitude in feet */
   QPolygonF aircraftTrackPoints;
 
-  float aircraftDistanceFromStart;
+  float aircraftDistanceFromStart; /* NM */
   float lastAircraftDistanceFromStart;
+
   bool movingBackwards = false;
   ElevationLegList *legList;
 

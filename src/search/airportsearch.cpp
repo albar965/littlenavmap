@@ -41,6 +41,7 @@
 
 #include <QMessageBox>
 #include <QProgressDialog>
+#include <QStringBuilder>
 
 /* Default values for minimum and maximum random flight plan distance */
 const static float FLIGHTPLAN_MIN_DISTANCE_DEFAULT_NM = 0.f;
@@ -182,14 +183,12 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
 
   append(Column("rating", ui->comboBoxAirportRatingSearch, tr("Rating")).includesName().indexCondMap(ratingCondMap)).
 
-  append(Column("altitude", tr("Elevation\n%alt%")).
-         convertFunc(Unit::altFeetF)).
+  append(Column("altitude", tr("Elevation\n%alt%")).convertFunc(Unit::altFeetF)).
   append(Column("mag_var", tr("Mag.\nDecl.°"))).
   append(Column("has_avgas", ui->checkBoxAirportAvgasSearch, tr("Avgas")).hidden()).
   append(Column("has_jetfuel", ui->checkBoxAirportJetASearch, tr("Jetfuel")).hidden()).
 
-  append(Column("tower_frequency", ui->checkBoxAirportTowerSearch, tr("Tower\nMHz")).
-         conditions("is not null", "is null")).
+  append(Column("tower_frequency", ui->checkBoxAirportTowerSearch, tr("Tower\nMHz")).conditions("is not null", "is null")).
 
   append(Column("atis_frequency", tr("ATIS\nMHz")).hidden()).
   append(Column("awos_frequency", tr("AWOS\nMHz")).hidden()).
@@ -201,25 +200,18 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("is_addon", ui->checkBoxAirportAddonSearch, tr("Add-on")).hidden()).
   append(Column("is_3d", tr("3D")).hidden()).
 
-  append(Column("num_runway_soft", ui->comboBoxAirportSurfaceSearch, tr("Soft\nRunways")).
-         includesName().indexCondMap(rwSurface).hidden()).
+  append(Column("num_runway_soft", ui->comboBoxAirportSurfaceSearch, tr("Soft\nRunways")).includesName().indexCondMap(rwSurface).hidden()).
 
   append(Column("num_runway_hard", tr("Hard\nRunways")).hidden()).
   append(Column("num_runway_water", tr("Water\nRunways")).hidden()).
-  append(Column("num_runway_light", ui->checkBoxAirportLightSearch,
-                tr("Lighted\nRunways")).conditions("> 0", "== 0").hidden())
+  append(Column("num_runway_light", ui->checkBoxAirportLightSearch, tr("Lighted\nRunways")).conditions("> 0", "== 0").hidden())
   .
-  append(Column("num_runway_end_ils", ui->checkBoxAirportIlsSearch, tr("ILS")).
-         conditions("> 0", "== 0").hidden()).
-  append(Column("num_approach", ui->checkBoxAirportApprSearch, tr("Procedures")).
-         conditions("> 0", "== 0").hidden()).
+  append(Column("num_runway_end_ils", ui->checkBoxAirportIlsSearch, tr("ILS")).conditions("> 0", "== 0").hidden()).
+  append(Column("num_approach", ui->checkBoxAirportApprSearch, tr("Procedures")).conditions("> 0", "== 0").hidden()).
 
-  append(Column("largest_parking_ramp", ui->comboBoxAirportRampSearch, tr("Largest\nRamp")).
-         includesName().indexCondMap(rampCondMap)).
-  append(Column("largest_parking_gate", ui->comboBoxAirportGateSearch, tr("Largest\nGate")).
-         indexCondMap(gateCondMap)).
-  append(Column("num_helipad", ui->comboBoxAirportHelipadSearch, tr("Helipads")).
-         includesName().indexCondMap(helipadCondMap).hidden()).
+  append(Column("largest_parking_ramp", ui->comboBoxAirportRampSearch, tr("Largest\nRamp")).includesName().indexCondMap(rampCondMap)).
+  append(Column("largest_parking_gate", ui->comboBoxAirportGateSearch, tr("Largest\nGate")).indexCondMap(gateCondMap)).
+  append(Column("num_helipad", ui->comboBoxAirportHelipadSearch, tr("Helipads")).includesName().indexCondMap(helipadCondMap).hidden()).
 
   append(Column("num_parking_gate", tr("Gates")).hidden()).
   append(Column("num_parking_ga_ramp", tr("Ramps\nGA")).hidden()).
@@ -227,8 +219,7 @@ AirportSearch::AirportSearch(QMainWindow *parent, QTableView *tableView, si::Tab
   append(Column("num_parking_mil_cargo", tr("Ramps\nMil Cargo")).hidden()).
   append(Column("num_parking_mil_combat", tr("Ramps\nMil Combat")).hidden()).
 
-  append(Column("longest_runway_length", tr("Longest\nRunway Length %distshort%")).
-         convertFunc(Unit::distShortFeetF)).
+  append(Column("longest_runway_length", tr("Longest\nRunway Length %distshort%")).convertFunc(Unit::distShortFeetF)).
   append(Column("longest_runway_width", tr("Longest\nRunway Width ft")).hidden()).
   append(Column("longest_runway_surface", tr("Longest\nRunway Surface")).hidden()).
   append(Column("longest_runway_heading").hidden()).
@@ -285,56 +276,71 @@ QueryBuilderResult AirportSearch::airportQueryBuilderFunc(QWidget *widget)
     QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(widget);
     if(lineEdit != nullptr)
     {
-      QString text = lineEdit->text().simplified();
+      QStringList textList = lineEdit->text().simplified().split(" "), queryList;
+      bool overrideQuery = false;
 
-      // Check text length without placeholders for override
-      QString overrideText(text);
-      overrideText.remove(QChar('*'));
-      if(text.startsWith('-'))
-        overrideText = overrideText.mid(1);
-      bool overrideQuery = overrideText.size() >= 3;
-
-      // Adjust the query string to SQL
-      // Replace "*" with "%" for SQL
-      if(text.contains(QChar('*')))
-        text = text.replace(QChar('*'), QChar('%'));
-      else if(!text.isEmpty())
-        // Default is string starts with text
-        text = text + "%";
-
-      // Exclude if prefixed with "-"
-      bool exclude = false;
-      if(text.startsWith('-'))
+      for(QString text : textList)
       {
-        text = text.mid(1);
-        exclude = true;
-      }
+        text = text.simplified();
 
-      if(!text.isEmpty())
-      {
-        QString query;
-
-        if(exclude)
-          // Use exclude on ident column only
-          query = "(ident not like '" + text + "')";
+        bool exclude = false;
+        if(text.startsWith('"') && text.endsWith('"'))
+          text = text.chopped(1).mid(1);
         else
         {
-          // Cannot use "arg" to build string since percent confuses QString
-          query = "(ident like '" + text + "'";
+          // Check text length without placeholders for override
+          QString overrideText(text);
+          overrideText.remove(QChar('*'));
+          if(text.startsWith('-'))
+            overrideText = overrideText.mid(1);
+          overrideQuery |= overrideText.size() >= 3;
 
-          if(controller->hasDatabaseColumn("icao"))
-            query += " or icao like '" + text + "'";
-          if(controller->hasDatabaseColumn("iata"))
-            query += " or iata like '" + text + "'";
-          if(controller->hasDatabaseColumn("faa"))
-            query += " or faa like '" + text + "'";
-          if(controller->hasDatabaseColumn("local"))
-            query += " or local like '" + text + "'";
-          query += ")";
+          // Adjust the query string to SQL
+          // Replace "*" with "%" for SQL
+          if(text.contains(QChar('*')))
+            text = text.replace(QChar('*'), QChar('%'));
+          else if(!text.isEmpty())
+            // Default is string starts with text
+            text = text % "%";
+
+          // Exclude if prefixed with "-"
+          if(text.startsWith('-'))
+          {
+            text = text.mid(1);
+            exclude = true;
+          }
         }
 
-        return QueryBuilderResult(query, overrideQuery);
-      }
+        if(!text.isEmpty())
+        {
+          QString query;
+
+          if(exclude)
+            // Use exclude on ident column only
+            query = "(ident not like '" % text % "')";
+          else
+          {
+            // Cannot use "arg" to build string since percent confuses QString
+            query = "(ident like '" % text % "'";
+
+            if(controller->hasDatabaseColumn("icao"))
+              query += " or icao like '" % text % "'";
+            if(controller->hasDatabaseColumn("iata"))
+              query += " or iata like '" % text % "'";
+            if(controller->hasDatabaseColumn("faa"))
+              query += " or faa like '" % text % "'";
+            if(controller->hasDatabaseColumn("local"))
+              query += " or local like '" % text % "'";
+            query += ")";
+          }
+
+          if(!query.isEmpty())
+            queryList.append(query);
+        } // if(!text.isEmpty())
+      } // for(const QString& text : textList)
+
+      if(!queryList.isEmpty())
+        return QueryBuilderResult("(" % queryList.join(" or ") % ")", overrideQuery);
     }
   }
   return QueryBuilderResult();

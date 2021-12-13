@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Little Navmap - Holding</string>
+   <string>Little Navmap - Add Holding</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="6" column="0" colspan="2">

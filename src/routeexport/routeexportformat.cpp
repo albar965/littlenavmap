@@ -17,20 +17,24 @@
 
 #include "routeexport/routeexportformat.h"
 
-#include "routeexport/routeexport.h"
-#include "common/constants.h"
 #include "atools.h"
-#include "settings/settings.h"
-#include "navapp.h"
+#include "common/constants.h"
+#include "fs/pln/flightplan.h"
 #include "gui/errorhandler.h"
+#include "navapp.h"
+#include "routeexport/routeexport.h"
+#include "settings/settings.h"
 
 #include <QDataStream>
 #include <QDir>
 #include <QProcessEnvironment>
+#include <QStringBuilder>
 #include <exception.h>
 
 using atools::settings::Settings;
 using atools::fs::FsPaths;
+
+quint16 RouteExportFormatMap::version = 0;
 
 // Simply log warnings instead of throwing exceptions on read errors
 bool RouteExportFormatMap::exceptionOnReadError = false;
@@ -54,6 +58,16 @@ void RouteExportFormatMap::clearPath(rexp::RouteExportFormatType type)
 void RouteExportFormatMap::updatePath(rexp::RouteExportFormatType type, const QString& path)
 {
   (*this)[type].setPath(QDir::toNativeSeparators(path));
+}
+
+void RouteExportFormatMap::clearPattern(rexp::RouteExportFormatType type)
+{
+  (*this)[type].setPattern((*this)[type].getDefaultPattern());
+}
+
+void RouteExportFormatMap::updatePattern(rexp::RouteExportFormatType type, const QString& filePattern)
+{
+  (*this)[type].setPattern(filePattern);
 }
 
 void RouteExportFormatMap::setSelected(rexp::RouteExportFormatType type, bool selected)
@@ -105,9 +119,32 @@ void RouteExportFormatMap::restoreState()
       RouteExportFormat& stockFmt = (*this)[loadedFmt.getType()];
 
       if(contains(loadedFmt.getType()))
-        loadedFmt.copyLoadedData(stockFmt);
+        loadedFmt.copyLoadedDataTo(stockFmt);
       else
         qWarning() << Q_FUNC_INFO << "Type not found in internal list" << loadedFmt.getTypeAsInt();
+
+      if(RouteExportFormatMap::getVersion() < RouteExportFormatMap::FILE_VERSION_CURRENT)
+      {
+        qDebug() << Q_FUNC_INFO << "Migrating previous settings" << stockFmt.getComment();
+
+        // Copy default pattern if updated from previous version
+        stockFmt.setPattern(stockFmt.getDefaultPattern());
+
+        // Adjust file based paths from previous version
+        if(stockFmt.getPath().endsWith("corte.in", Qt::CaseInsensitive))
+        {
+          qDebug() << Q_FUNC_INFO << stockFmt.getPath();
+          stockFmt.setPattern("corte.in"); // Filename
+          stockFmt.setPath(QFileInfo(stockFmt.getPath()).path()); // Directory
+        }
+
+        if(stockFmt.getPath().endsWith("companyroutes.xml", Qt::CaseInsensitive))
+        {
+          qDebug() << Q_FUNC_INFO << stockFmt.getPath();
+          stockFmt.setPattern("companyroutes.xml");
+          stockFmt.setPath(QFileInfo(stockFmt.getPath()).path());
+        }
+      }
 
       stockFmt.updatePathError();
     }
@@ -194,68 +231,90 @@ void RouteExportFormatMap::initCallbacks(RouteExport *routeExport)
 void RouteExportFormatMap::init()
 {
   using namespace rexp;
+  namespace ap = atools::fs::pln::pattern;
 
-  QString rxptooltip = tr("\nExport navaids and airports as user defined waypoints avoid locked waypoints due to different AIRAC cycles.\n"
-                          "This saves all waypoints as user defined waypoints when exporting flight plans.\n"
-                          "Note that is not possible to export procedures if this is enabled.");
+  // All text after the first linefeed is used as tooltip
+  const QString rxptooltip = tr("\nExport navaids and airports as user defined waypoints to avoid locked waypoints due to different AIRAC cycles.\n"
+                                "This saves all waypoints as user defined waypoints when exporting flight plans.\n"
+                                "Note that is not possible to export procedures if this is enabled.");
 
-#define RF RouteExportFormat
-#define INS insertFmt
+  const QString gpxTooltip = tr("\nExported with aircraft track and flight plan.");
+
+  const QString lnmTooltip = tr("\nUse this format to save and backup your plans since it covers all features like remarks and more.\n"
+                                "Note that using this option is the same as using \"Save\" or \"Save as\" in the main menu \"File\".");
+
+  const QString mainMenu = tr("\nThe given filename pattern is also used when exporting flight plans from the main menu \"File\".");
+
+  // Short "DEPARTIDENT DESTIDENT"
+  // Long "PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)"
+
+  // Default format as set in options dialog
+  const QString DF(ap::PLANTYPE % " " % ap::DEPARTNAME % " (" % ap::DEPARTIDENT % ") to " % ap::DESTNAME % " (" % ap::DESTIDENT % ").");
+
+  // Departure ident and destination ident without dot
+  const QString S(ap::DEPARTIDENT % ap::DESTIDENT);
+
+  // Departure ident and destination ident plus dot
+  const QString S0(ap::DEPARTIDENT % ap::DESTIDENT % ".");
+
+  // Departure ident and destination ident separated by dash plus dot
+  const QString SD(ap::DEPARTIDENT % "-" % ap::DESTIDENT % ".");
+
+  // Departure ident and destination ident separated by underline plus dot
+  const QString SU(ap::DEPARTIDENT % "_" % ap::DESTIDENT % ".");
+
+#define FMT(type, flags, format, cat, comment) insertFmt(RouteExportFormat(type, flags, format, cat, comment))
 
   /* *INDENT-OFF* */
-  //  type            (type          flags             format                 category          comment all after \n also used as tooltip
-  INS(LNMPLN,       RF(LNMPLN,       NONE,             tr("lnmpln"),          tr("Little Navmap"), tr("Little Navmap native flight plan format\n"
-                                                                                                      "Use this format to save and backup your plans since it covers "
-                                                                                                      "all features like remarks and more.\n"
-                                                                                                      "Note that using this option is the same as using "
-                                                                                                      "\"Save\" or \"Save as\" in the file menu.")                   ));
-  INS(PLN,          RF(PLN,          AIRPORTS|PARKING, tr("pln"),             tr("Simulator"), tr("FSX and Prepar3D")                                                ));
-  INS(PLNMSFS,      RF(PLNMSFS,      AIRPORTS|PARKING, tr("pln"),             tr("Simulator"), tr("Microsoft Flight Simulator 2020")                                 ));
-  INS(PLNANNOTATED, RF(PLNANNOTATED, AIRPORTS|PARKING, tr("pln"),             tr("Simulator"), tr("FSX and Prepar3D annotated\nOnly for old Little Navmap versions.")));
-  INS(FMS3,         RF(FMS3,         AIRPORTS,         tr("fms"),             tr("Simulator"), tr("X-Plane FMS 3\nOld limited format.")                              ));
-  INS(FMS11,        RF(FMS11,        AIRPORTS|CYCLE,   tr("fms"),             tr("Simulator"), tr("X-Plane FMS 11")                                                  ));
-  INS(FLP,          RF(FLP,          AIRPORTS,         tr("flp"),             tr("Aircraft"),  tr("Aerosoft Airbus and others")                                      ));
-  INS(FLPCRJ,       RF(FLPCRJ,       AIRPORTS,         tr("flp"),             tr("Aircraft"),  tr("Aerosoft CRJ")                                                    ));
-  INS(FLPCRJMSFS,   RF(FLPCRJMSFS,   AIRPORTS,         tr("flp"),             tr("Aircraft"),  tr("Aerosoft CRJ for MSFS")                                           ));
-  INS(FLIGHTGEAR,   RF(FLIGHTGEAR,   AIRPORTS,         tr("fgfp"),            tr("Simulator"), tr("FlightGear")                                                      ));
-  INS(GFP,          RF(GFP,          AIRPORTS,         tr("gfp"),             tr("Garmin"),    tr("Flight1 Garmin GTN 650/750")                                      ));
-  INS(GFPUWP,       RF(GFPUWP,       AIRPORTS|GARMIN_AS_WAYPOINTS, tr("gfp"), tr("Garmin"),    tr("Flight1 Garmin GTN 650/750 with user defined waypoints") +
-                                                                                               rxptooltip                                                            ));
-  INS(TXT,          RF(TXT,          AIRPORTS,         tr("txt"),             tr("Aircraft"),  tr("Rotate MD-80 and others")                                         ));
-  INS(TXTJAR,       RF(TXTJAR,       AIRPORTS,         tr("txt"),             tr("Aircraft"),  tr("JARDesign aircraft")                                              ));
-  INS(RTE,          RF(RTE,          AIRPORTS,         tr("rte"),             tr("Aircraft"),  tr("PMDG aircraft")                                                   ));
-  INS(GPX,          RF(GPX,          NONE,             tr("gpx"),             tr("Other"),     tr("Garmin exchange format for Google Earth and others\n"
-                                                                                                  "Exported with aircraft track and flight plan.")                   ));
-  INS(HTML,         RF(HTML,         NONE,             tr("html"),            tr("Other"),     tr("HTML flight plan web page")                                       ));
-  INS(FPR,          RF(FPR,          AIRPORTS,         tr("fpr"),             tr("Aircraft"),  tr("Majestic Dash MJC8 Q400")                                         ));
-  INS(FPL,          RF(FPL,          AIRPORTS,         tr("fpl"),             tr("Aircraft"),  tr("IXEG Boeing 737")                                                 ));
-  INS(CORTEIN,      RF(CORTEIN,      FILEAPP|AIRPORTS, tr("corte.in"),        tr("Aircraft"),  tr("Flight Factor Airbus")                                            ));
-  INS(RXPGNS,       RF(RXPGNS,       AIRPORTS,         tr("fpl"),             tr("Garmin"),    tr("Reality XP GNS 530W/430W V2")                                     ));
-  INS(RXPGNSUWP,    RF(RXPGNSUWP,    AIRPORTS|GARMIN_AS_WAYPOINTS, tr("fpl"), tr("Garmin"),    tr("Reality XP GNS 530W/430W V2 with user defined waypoints") +
-                                                                                               rxptooltip                                                            ));
-  INS(RXPGTN,       RF(RXPGTN,       AIRPORTS,         tr("gfp"),             tr("Garmin"),    tr("Reality XP GTN 750/650 Touch")                                    ));
-  INS(RXPGTNUWP,    RF(RXPGTNUWP,    AIRPORTS|GARMIN_AS_WAYPOINTS, tr("gfp"), tr("Garmin"),    tr("Reality XP GTN 750/650 Touch with user defined waypoints") +
-                                                                                               rxptooltip                                                            ));
-  INS(FLTPLAN,      RF(FLTPLAN,      AIRPORTS,         tr("fltplan"),         tr("Aircraft"),  tr("iFly")                                                            ));
-  INS(XFMC,         RF(XFMC,         AIRPORTS,         tr("fpl"),             tr("FMC"),       tr("X-FMC")                                                           ));
-  INS(UFMC,         RF(UFMC,         AIRPORTS,         tr("ufmc"),            tr("FMC"),       tr("UFMC")                                                            ));
-  INS(PROSIM,       RF(PROSIM,       FILEAPP|AIRPORTS, tr("companyroutes.xml"), tr("Simulator"), tr("ProSim")                                                        ));
-  INS(BBS,          RF(BBS,          AIRPORTS,         tr("pln"),             tr("Aircraft"),  tr("BlackBox Simulations Airbus")                                     ));
-  INS(VFP,          RF(VFP,          AIRPORTS,         tr("vfp"),             tr("Online"),    tr("VATSIM vPilot or SWIFT")                                          ));
-  INS(IVAP,         RF(IVAP,         AIRPORTS,         tr("fpl"),             tr("Online"),    tr("IvAp for IVAO")                                                   ));
-  INS(XIVAP,        RF(XIVAP,        AIRPORTS,         tr("fpl"),             tr("Online"),    tr("X-IVAP for IVAO")                                                 ));
-  INS(FEELTHEREFPL, RF(FEELTHEREFPL, AIRPORTS,         tr("fpl"),             tr("Aircraft"),  tr("FeelThere or Wilco")                                              ));
-  INS(LEVELDRTE,    RF(LEVELDRTE,    AIRPORTS,         tr("rte"),             tr("Aircraft"),  tr("Level-D")                                                         ));
-  INS(EFBR,         RF(EFBR,         AIRPORTS,         tr("efbr"),            tr("Other"),     tr("AivlaSoft EFB")                                                   ));
-  INS(QWRTE,        RF(QWRTE,        AIRPORTS,         tr("rte"),             tr("Aircraft"),  tr("QualityWings")                                                    ));
-  INS(MDR,          RF(MDR,          AIRPORTS,         tr("mdr"),             tr("Aircraft"),  tr("Leonardo Maddog X")                                               ));
-  INS(TFDI,         RF(TFDI,         AIRPORTS,         tr("xml"),             tr("Aircraft"),  tr("TFDi Design 717")                                                 ));
-  INS(PLNISG,       RF(PLNISG,       AIRPORTS,         tr("pln"),             tr("FMS"),       tr("ISG Integrated Simavionics gauges")                               ));
-  INS(PMS50,        RF(PMS50,        FILEREP|AIRPORTS, tr("fpl.pln"),         tr("Garmin"),    tr("PMS50 GTN750")                                                    ));
+  //   type           flags            format              category             comment all after \n also used as tooltip
+  FMT(LNMPLN,       NONE,             DF % tr("lnmpln"),  tr("Little Navmap"), tr("Little Navmap native flight plan format") % lnmTooltip        );
+  FMT(PLN,          AIRPORTS|PARKING, DF % tr("pln"),     tr("Simulator"), tr("FSX and Prepar3D") % mainMenu                                     );
+  FMT(PLNMSFS,      AIRPORTS|PARKING, DF % tr("pln"),     tr("Simulator"), tr("Microsoft Flight Simulator 2020") % mainMenu                      );
+  FMT(PLNANNOTATED, AIRPORTS|PARKING, DF % tr("pln"),     tr("Simulator"), tr("FSX and Prepar3D annotated\nOnly for old Little Navmap versions."));
+  FMT(FMS3,         AIRPORTS,         SD % tr("fms"),     tr("Simulator"), tr("X-Plane FMS 3\nOld limited format.")                              );
+  FMT(FMS11,        AIRPORTS|CYCLE,   SD % tr("fms"),     tr("Simulator"), tr("X-Plane FMS 11") % mainMenu                                       );
+  FMT(FLP,          AIRPORTS,         S0 % tr("flp"),     tr("Aircraft"),  tr("Aerosoft Airbus and others")                                      );
+  FMT(FLPCRJ,       AIRPORTS,         S %  tr("01.flp"),  tr("Aircraft"),  tr("Aerosoft CRJ")                                                    );
+  FMT(FLPCRJMSFS,   AIRPORTS,         S %  tr("01.flp"),  tr("Aircraft"),  tr("Aerosoft CRJ for MSFS")                                           );
+  FMT(FLIGHTGEAR,   AIRPORTS,         DF % tr("fgfp"),    tr("Simulator"), tr("FlightGear") % mainMenu                                           );
+  FMT(GFP,          AIRPORTS,         SD % tr("gfp"),     tr("Garmin"),    tr("Flight1 Garmin GTN 650/750")                                      );
+  FMT(GFPUWP,       AIRPORTS|GARMIN_AS_WAYPOINTS, SD % tr("gfp"), tr("Garmin"), tr("Flight1 Garmin GTN 650/750 with user defined waypoints") % rxptooltip);
+  FMT(TXT,          AIRPORTS,         S0 % tr("txt"),     tr("Aircraft"),  tr("Rotate MD-80 and others")                                         );
+  FMT(TXTJAR,       AIRPORTS,         S0 % tr("txt"),     tr("Aircraft"),  tr("JARDesign aircraft")                                              );
+  FMT(RTE,          AIRPORTS,         S0 % tr("rte"),     tr("Aircraft"),  tr("PMDG aircraft")                                                   );
+  FMT(GPX,          NONE,             DF % tr("gpx"),     tr("Other"),     tr("Garmin exchange format for Google Earth and others") % gpxTooltip % mainMenu );
+  FMT(HTML,         NONE,             DF % tr("html"),    tr("Other"),     tr("HTML flight plan web page") % mainMenu                            );
+  FMT(FPR,          AIRPORTS,         S0 % tr("fpr"),     tr("Aircraft"),  tr("Majestic Dash MJC8 Q400")                                         );
+  FMT(FPL,          AIRPORTS,         S0 % tr("fpl"),     tr("Aircraft"),  tr("IXEG Boeing 737")                                                 );
+  FMT(CORTEIN,      AIRPORTS|FILEAPP, tr("corte.in"),     tr("Aircraft"),  tr("Flight Factor Airbus")                                            );
+  FMT(RXPGNS,       AIRPORTS,         S0 % tr("fpl"),     tr("Garmin"),    tr("Reality XP GNS 530W/430W V2")                                     );
+  FMT(RXPGNSUWP,    AIRPORTS|GARMIN_AS_WAYPOINTS, S0 % tr("fpl"), tr("Garmin"), tr("Reality XP GNS 530W/430W V2 with user defined waypoints") % rxptooltip);
+  FMT(RXPGTN,       AIRPORTS,         SU % tr("gfp"),     tr("Garmin"),    tr("Reality XP GTN 750/650 Touch")                                    );
+  FMT(RXPGTNUWP,    AIRPORTS|GARMIN_AS_WAYPOINTS, SU % tr("gfp"), tr("Garmin"), tr("Reality XP GTN 750/650 Touch with user defined waypoints") % rxptooltip);
+  FMT(FLTPLAN,      AIRPORTS,         S0 % tr("fltplan"), tr("Aircraft"),  tr("iFly")                                                            );
+  FMT(XFMC,         AIRPORTS,         S0 % tr("fpl"),     tr("FMC"),       tr("X-FMC")                                                           );
+  FMT(UFMC,         AIRPORTS,         S0 % tr("ufmc"),    tr("FMC"),       tr("UFMC")                                                            );
+  FMT(PROSIM,       AIRPORTS|FILEAPP, tr("companyroutes.xml"), tr("Simulator"), tr("ProSim")                                                     );
+  FMT(BBS,          AIRPORTS,         S0 % tr("pln"),     tr("Aircraft"),  tr("BlackBox Simulations Airbus")                                     );
+  FMT(VFP,          AIRPORTS,         S0 % tr("vfp"),     tr("Online"),    tr("VATSIM vPilot or SWIFT") % mainMenu                               );
+  FMT(IVAP,         AIRPORTS,         S0 % tr("fpl"),     tr("Online"),    tr("IvAp for IVAO") % mainMenu                                        );
+  FMT(XIVAP,        AIRPORTS,         S0 % tr("fpl"),     tr("Online"),    tr("X-IVAP for IVAO") % mainMenu                                      );
+  FMT(FEELTHEREFPL, AIRPORTS,         SU % tr("fpl"),     tr("Aircraft"),  tr("FeelThere or Wilco")                                              );
+  FMT(LEVELDRTE,    AIRPORTS,         SU % tr("rte"),     tr("Aircraft"),  tr("Level-D")                                                         );
+  FMT(EFBR,         AIRPORTS,         SU % tr("efbr"),    tr("Other"),     tr("AivlaSoft EFB")                                                   );
+  FMT(QWRTE,        AIRPORTS,         S0 % tr("rte"),     tr("Aircraft"),  tr("QualityWings")                                                    );
+  FMT(MDR,          AIRPORTS,         S0 % tr("mdr"),     tr("Aircraft"),  tr("Leonardo Maddog X")                                               );
+  FMT(TFDI,         AIRPORTS,         S0 % tr("xml"),     tr("Aircraft"),  tr("TFDi Design 717")                                                 );
+  FMT(PLNISG,       AIRPORTS,         S0 % tr("pln"),     tr("FMS"),       tr("ISG Integrated Simavionics gauges")                               );
+  FMT(PMS50,        FILEREP|AIRPORTS, tr("fpl.pln"),      tr("Garmin"),    tr("PMS50 GTN750")                                                    );
   /* *INDENT-ON* */
 
-#undef RF
-#undef INS
+#undef FMT
+}
+
+void RouteExportFormatMap::insertFmt(const RouteExportFormat& fmt)
+{
+  insertFmt(fmt.getType(), fmt);
 }
 
 void RouteExportFormatMap::insertFmt(rexp::RouteExportFormatType type, const RouteExportFormat& fmt)
@@ -308,7 +367,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   QString gns;
 #ifdef Q_OS_WIN32
   QString gnsPath(QProcessEnvironment::systemEnvironment().value("GNSAPPDATA"));
-  gns = gnsPath.isEmpty() ? "C:\\ProgramData\\Garmin\\GNS Trainer Data\\GNS\\FPL" : gnsPath + "\\FPL";
+  gns = gnsPath.isEmpty() ? QString("C:\\ProgramData\\Garmin\\GNS Trainer Data\\GNS\\FPL") : gnsPath % "\\FPL";
 #elif DEBUG_INFORMATION
   gns = atools::buildPath({documents, "Garmin", "GNS Trainer Data", "GNS", "FPL"});
 #else
@@ -320,12 +379,20 @@ void RouteExportFormatMap::updateDefaultPaths()
   // Location depends on trainer version - this is all above 6.41
 #ifdef Q_OS_WIN32
   QString gtnPath(QProcessEnvironment::systemEnvironment().value("GTNSIMDATA"));
-  gtn = gtnPath.isEmpty() ? "C:\\ProgramData\\Garmin\\Trainers\\Databases\\FPLN" : gtnPath + "\\Databases\\FPLN";
+  gtn = gtnPath.isEmpty() ? QString("C:\\ProgramData\\Garmin\\Trainers\\Databases\\FPLN") : gtnPath % "\\Databases\\FPLN";
 #elif DEBUG_INFORMATION
   gtn = atools::buildPath({documents, "Garmin", "Trainers", "GTN", "FPLN"});
 #else
   gtn = documents;
 #endif
+
+  // Normalize path endings
+  if(xpBasePath.endsWith('\\') || xpBasePath.endsWith('/'))
+    xpBasePath.chop(1);
+  if(fsxP3dBasePath.endsWith('\\') || fsxP3dBasePath.endsWith('/'))
+    fsxP3dBasePath.chop(1);
+  if(msfsBasePath.endsWith('\\') || msfsBasePath.endsWith('/'))
+    msfsBasePath.chop(1);
 
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   QString lnmplnFiles = settings.valueStr("Route/LnmPlnFileDialogDir", documents);
@@ -343,39 +410,39 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[FMS3        ].DP(xpFilesPath);
   (*this)[FMS11       ].DP(xpFilesPath);
   (*this)[FLP         ].DP(documents);
-  (*this)[FLPCRJ      ].DP(documents + SEP + "Aerosoft" + SEP + "Digital Aviation CRJ" + SEP + "FlightPlans");
+  (*this)[FLPCRJ      ].DP(documents % SEP % "Aerosoft" % SEP % "Digital Aviation CRJ" % SEP % "FlightPlans");
   (*this)[FLPCRJMSFS  ].DP(documents);
   (*this)[FLIGHTGEAR  ].DP(documents);
-  (*this)[GFP         ].DP(fsxP3dBasePath + SEP + "F1TGTN" + SEP + "FPL");
-  (*this)[GFPUWP      ].DP(fsxP3dBasePath + SEP + "F1TGTN" + SEP + "FPL");
-  (*this)[TXT         ].DP(xpBasePath + SEP + "Aircraft");
-  (*this)[TXTJAR      ].DP(xpBasePath + SEP + "Aircraft");
-  (*this)[RTE         ].DP(fsxP3dBasePath + SEP + "PMDG" + SEP + "FLIGHTPLANS");
+  (*this)[GFP         ].DP(fsxP3dBasePath % SEP % "F1TGTN" % SEP % "FPL");
+  (*this)[GFPUWP      ].DP(fsxP3dBasePath % SEP % "F1TGTN" % SEP % "FPL");
+  (*this)[TXT         ].DP(xpBasePath % SEP % "Aircraft");
+  (*this)[TXTJAR      ].DP(xpBasePath % SEP % "Aircraft");
+  (*this)[RTE         ].DP(fsxP3dBasePath % SEP % "PMDG" % SEP % "FLIGHTPLANS");
   (*this)[GPX         ].DP(documents);
   (*this)[HTML        ].DP(documents);
-  (*this)[FPR         ].DP(fsxP3dBasePath + SEP + "SimObjects" + SEP + "Airplanes" + SEP + "mjc8q400" + SEP + "nav" + SEP + "routes");
-  (*this)[FPL         ].DP(xpBasePath + SEP + "Aircraft" + SEP + "X-Aviation" + SEP + "IXEG 737 Classic" + SEP + "coroutes");
-  (*this)[CORTEIN     ].DP(xpBasePath + SEP + "Aircraft" + SEP + "corte.in");
+  (*this)[FPR         ].DP(fsxP3dBasePath % SEP % "SimObjects" % SEP % "Airplanes" % SEP % "mjc8q400" % SEP % "nav" % SEP % "routes");
+  (*this)[FPL         ].DP(xpBasePath % SEP % "Aircraft" % SEP % "X-Aviation" % SEP % "IXEG 737 Classic" % SEP % "coroutes");
+  (*this)[CORTEIN     ].DP(xpBasePath % SEP % "Aircraft");
   (*this)[RXPGNS      ].DP(gns);
   (*this)[RXPGNSUWP   ].DP(gns);
   (*this)[RXPGTN      ].DP(gtn);
   (*this)[RXPGTNUWP   ].DP(gtn);
-  (*this)[FLTPLAN     ].DP(fsxP3dBasePath + SEP + "iFly" + SEP + "737NG" + SEP + "navdata" + SEP + "FLTPLAN");
-  (*this)[XFMC        ].DP(xpFilesPath + SEP + "Resources" + SEP + "plugins" + SEP + "XFMC" + SEP + "FlightPlans");
+  (*this)[FLTPLAN     ].DP(fsxP3dBasePath % SEP % "iFly" % SEP % "737NG" % SEP % "navdata" % SEP % "FLTPLAN");
+  (*this)[XFMC        ].DP(xpFilesPath % SEP % "Resources" % SEP % "plugins" % SEP % "XFMC" % SEP % "FlightPlans");
   (*this)[UFMC        ].DP(documents);
-  (*this)[PROSIM      ].DP(documents + SEP + "companyroutes.xml");
-  (*this)[BBS         ].DP(fsxP3dBasePath + SEP + "Blackbox Simulation" + SEP + "Company Routes");
+  (*this)[PROSIM      ].DP(documents);
+  (*this)[BBS         ].DP(fsxP3dBasePath % SEP % "Blackbox Simulation" % SEP % "Company Routes");
   (*this)[VFP         ].DP(documents);
   (*this)[IVAP        ].DP(documents);
   (*this)[XIVAP       ].DP(documents);
   (*this)[FEELTHEREFPL].DP(fsxP3dBasePath);
-  (*this)[LEVELDRTE   ].DP(fsxP3dBasePath + SEP + "Level-D Simulations" + SEP + "navdata" + SEP + "Flightplans");
+  (*this)[LEVELDRTE   ].DP(fsxP3dBasePath % SEP % "Level-D Simulations" % SEP % "navdata" % SEP % "Flightplans");
   (*this)[EFBR        ].DP(documents);
   (*this)[QWRTE       ].DP(fsxP3dBasePath);
   (*this)[MDR         ].DP(fsxP3dBasePath);
-  (*this)[TFDI        ].DP(fsxP3dBasePath + SEP + "SimObjects" + SEP + "Airplanes" + SEP + "TFDi_Design_717" + SEP + "Documents" + SEP + "Company Routes");
-  (*this)[PLNISG      ].DP(fsxP3dBasePath + SEP + "ISG" + SEP + "FlightPlans"); // C:\Program Files\Lockheed Martin\Prepar3D v4\ISG\FlightPlans
-  (*this)[PMS50       ].DP(msfsBasePath + SEP + "Community" + SEP + "pms50-gtn750-premium" + SEP + "fpl" + SEP + "gtn750");
+  (*this)[TFDI        ].DP(fsxP3dBasePath % SEP % "SimObjects" % SEP % "Airplanes" % SEP % "TFDi_Design_717" % SEP % "Documents" % SEP % "Company Routes");
+  (*this)[PLNISG      ].DP(fsxP3dBasePath % SEP % "ISG" % SEP % "FlightPlans"); // C:\Program Files\Lockheed Martin\Prepar3D v4\ISG\FlightPlans
+  (*this)[PMS50       ].DP(msfsBasePath % SEP % "Community" % SEP % "pms50-gtn750-premium" % SEP % "fpl" % SEP % "gtn750");
   /* *INDENT-ON* */
 #undef DP
 
@@ -385,6 +452,21 @@ void RouteExportFormatMap::updateDefaultPaths()
     if(format.getPath().isEmpty())
       format.setPath(format.getDefaultPath());
   }
+}
+
+bool RouteExportFormat::isPatternValid(QString *errorMessage) const
+{
+  QString errors;
+
+  if(!pattern.isEmpty())
+    atools::fs::pln::Flightplan::getFilenamePatternExample(pattern, QString(), false /* html */, &errors);
+  else
+    errors.append(tr("Pattern is empty."));
+
+  if(errorMessage != nullptr)
+    *errorMessage = errors;
+
+  return errors.isEmpty();
 }
 
 bool RouteExportFormat::isPathValid(QString *errorMessage) const
@@ -397,27 +479,28 @@ bool RouteExportFormat::isPathValid(QString *errorMessage) const
 void RouteExportFormat::updatePathError()
 {
   pathError.clear();
-  if(QFile::exists(path))
+
+  if(isAppendToFile())
   {
-    if(isAppendToFile())
-    {
-      // Export target is a file ===========
-      if(!QFileInfo(path).isFile())
-        pathError = tr("Expected file but given path is a directory");
-    }
-    else
-    {
-      // Export target is a folder ===========
-      if(!QFileInfo(path).isDir())
-        pathError = tr("Expected directory but given path is a file");
-    }
+    QFileInfo file(path % QDir::separator() % pattern);
+
+    if(!file.exists())
+      pathError = tr("File \"%1\" does not exist.").
+                  arg(atools::elideTextShortLeft(QDir::toNativeSeparators(file.absoluteFilePath()), 100));
+    else if(!file.isFile())
+      pathError = tr("Expected file but \"%1\" is a directory.").
+                  arg(atools::elideTextShortLeft(QDir::toNativeSeparators(file.absoluteFilePath()), 100));
   }
   else
   {
-    if(isAppendToFile())
-      pathError = tr("File does not exist");
-    else
-      pathError = tr("Directory does not exist");
+    QFileInfo dir(path);
+
+    if(!dir.exists())
+      pathError = tr("Directory \"%1\" does not exist").
+                  arg(atools::elideTextShortLeft(QDir::toNativeSeparators(dir.absoluteFilePath()), 100));
+    else if(!dir.isDir())
+      pathError = tr("Expected directory but \"%1\" is a file.").
+                  arg(atools::elideTextShortLeft(QDir::toNativeSeparators(dir.absoluteFilePath()), 100));
   }
 }
 
@@ -430,14 +513,31 @@ void RouteExportFormat::setPath(const QString& value)
 QString RouteExportFormat::getFilter() const
 {
   if(isAppendToFile() || isReplaceFile())
-    return "(" + format + ")";
+    return "(" % pattern % ")";
   else
-    return "(*." + format + ")";
+    return "(*." % pattern.section('.', -1, -1) % ")";
 }
 
-void RouteExportFormat::copyLoadedData(RouteExportFormat& other) const
+QString RouteExportFormat::getFormat() const
+{
+  if(isAppendToFile() || isReplaceFile())
+    return pattern;
+  else
+    return pattern.section('.', -1, -1).toUpper();
+}
+
+QString RouteExportFormat::getSuffix() const
+{
+  if(isAppendToFile() || isReplaceFile())
+    return pattern;
+  else
+    return pattern.section('.', -1, -1, QString::SectionIncludeLeadingSep);
+}
+
+void RouteExportFormat::copyLoadedDataTo(RouteExportFormat& other) const
 {
   other.path = QDir::toNativeSeparators(path);
+  other.pattern = pattern;
   other.flags.setFlag(rexp::SELECTED, flags.testFlag(rexp::SELECTED));
 }
 
@@ -452,6 +552,11 @@ QDataStream& operator>>(QDataStream& dataStream, RouteExportFormat& obj)
   obj.flags |= rexp::RouteExportFormatFlags(flagsInt);
 
   dataStream >> obj.path;
+
+  if(RouteExportFormatMap::getVersion() >= RouteExportFormatMap::FILE_VERSION_CURRENT)
+    // Load pattern in new version
+    dataStream >> obj.pattern;
+
   return dataStream;
 }
 
@@ -459,15 +564,15 @@ QDataStream& operator<<(QDataStream& dataStream, const RouteExportFormat& obj)
 {
   dataStream << static_cast<quint16>(obj.type)
              << static_cast<quint16>(obj.flags & rexp::SAVED_FLAGS)
-             << obj.path;
+             << obj.path << obj.pattern;
+
   return dataStream;
 }
 
 QDataStream& operator>>(QDataStream& dataStream, RouteExportFormatMap& obj)
 {
   quint32 magicNumber;
-  quint16 version;
-  dataStream >> magicNumber >> version;
+  dataStream >> magicNumber >> RouteExportFormatMap::version;
 
   if(magicNumber != RouteExportFormatMap::FILE_MAGIC_NUMBER)
   {
@@ -475,18 +580,18 @@ QDataStream& operator>>(QDataStream& dataStream, RouteExportFormatMap& obj)
       throw atools::Exception(QObject::tr("Error reading multiexport configuration: Invalid magic number. "
                                           "Not a multiexport configuration."));
     else
-      qWarning() << Q_FUNC_INFO << "Invalid magic number" << magicNumber
-                 << "expected" << RouteExportFormatMap::FILE_MAGIC_NUMBER;
+      qWarning() << Q_FUNC_INFO << "Invalid magic number" << magicNumber << "expected" << RouteExportFormatMap::FILE_MAGIC_NUMBER;
   }
 
-  if(version != RouteExportFormatMap::FILE_VERSION)
+  if(RouteExportFormatMap::version < RouteExportFormatMap::FILE_VERSION_MIN ||
+     RouteExportFormatMap::version > RouteExportFormatMap::FILE_VERSION_CURRENT)
   {
     if(RouteExportFormatMap::exceptionOnReadError)
       throw atools::Exception(QObject::tr("Error reading multiexport configuration: Invalid version. "
                                           "Incompatible multiexport configuration."));
     else
-      qWarning() << Q_FUNC_INFO << "Invalid version number" << version
-                 << "expected" << RouteExportFormatMap::FILE_VERSION;
+      qWarning() << Q_FUNC_INFO << "Invalid version number" << RouteExportFormatMap::version
+                 << "expected" << RouteExportFormatMap::FILE_VERSION_MIN << "to" << RouteExportFormatMap::FILE_VERSION_CURRENT;
   }
 
   quint16 size;
@@ -498,12 +603,13 @@ QDataStream& operator>>(QDataStream& dataStream, RouteExportFormatMap& obj)
     dataStream >> fmt;
     obj.insert(fmt.getType(), fmt);
   }
+
   return dataStream;
 }
 
 QDataStream& operator<<(QDataStream& dataStream, const RouteExportFormatMap& obj)
 {
-  dataStream << RouteExportFormatMap::FILE_MAGIC_NUMBER << RouteExportFormatMap::FILE_VERSION;
+  dataStream << RouteExportFormatMap::FILE_MAGIC_NUMBER << RouteExportFormatMap::FILE_VERSION_CURRENT;
 
   dataStream << static_cast<quint16>(obj.size());
   for(const RouteExportFormat& fmt : obj)

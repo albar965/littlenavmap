@@ -37,6 +37,7 @@ class ApronGeometryCache;
 class MapQuery;
 class AirwayTrackQuery;
 class WaypointTrackQuery;
+class MapLayer;
 
 namespace proc {
 struct MapProcedureLeg;
@@ -92,15 +93,17 @@ public:
   void showAircraft(bool centerAircraftChecked);
   void showAircraftNow(bool);
 
-  /* Update hightlighted objects */
+  /* Update highlighted objects */
   void changeSearchHighlights(const map::MapResult& newHighlights, bool updateAirspace, bool updateLogEntries);
   void changeRouteHighlights(const QList<int>& routeHighlight);
-  void changeProcedureLegHighlights(const proc::MapProcedureLeg *leg);
 
-  /* Hightlight a point along the route while mouse over in the profile window */
+  /* Highlight a point along the route while mouse over in the profile window */
   void changeProfileHighlight(const atools::geo::Pos& pos);
 
-  void changeApproachHighlight(const proc::MapProcedureLegs& approach);
+  /* Update procedure highlights, update screen index and redraw map */
+  void changeProcedureHighlight(const proc::MapProcedureLegs& procedure);
+  void changeProcedureHighlights(const QVector<proc::MapProcedureLegs>& procedures);
+  void changeProcedureLegHighlight(const proc::MapProcedureLeg& procedureLeg);
 
   /* Update route screen coordinate index */
   void routeChanged(bool geometryChanged);
@@ -130,23 +133,23 @@ public:
 
   /* Getters used by the painters */
   const map::MapResult& getSearchHighlights() const;
-  const proc::MapProcedureLeg& getProcedureLegHighlights() const;
+
+  /* Procedure preview. Delegates to map screen index. */
   const proc::MapProcedureLegs& getProcedureHighlight() const;
+  const QVector<proc::MapProcedureLegs>& getProcedureHighlights() const;
+  const proc::MapProcedureLeg& getProcedureLegHighlight() const;
 
   const QList<int>& getRouteHighlights() const;
 
-  const QList<map::RangeMarker>& getRangeRings() const;
+  const QHash<int, map::RangeMarker>& getRangeMarks() const;
+  const QHash<int, map::DistanceMarker>& getDistanceMarks() const;
+  const QHash<int, map::PatternMarker>& getPatternsMarks() const;
+  const QHash<int, map::HoldingMarker>& getHoldingMarks() const;
+  const QHash<int, map::MsaMarker>& getMsaMarks() const;
 
-  const QList<map::DistanceMarker>& getDistanceMarkers() const;
-
-  const QList<map::TrafficPattern>& getTrafficPatterns() const;
-  QList<map::TrafficPattern>& getTrafficPatterns();
-
-  const QList<map::MapHolding>& getHolds() const;
-  QList<map::MapHolding>& getHolds();
-
-  const QList<map::MapAirportMsa>& getAirportMsa() const;
-  QList<map::MapAirportMsa>& getAirportMsa();
+  /* Get pointers to the wrapped map objects from holdings and MSA. */
+  QList<map::MapHolding> getHoldingMarksFiltered() const;
+  QList<map::MapAirportMsa> getMsaMarksFiltered() const;
 
   const atools::geo::Pos& getProfileHighlight() const;
 
@@ -197,8 +200,9 @@ public:
   QDateTime getSunShadingDateTime() const;
 
   /* Define which airport or navaid types are shown on the map. Updates screen index on demand. */
-  void setShowMapFeatures(map::MapTypes type, bool show);
-  void setShowMapFeaturesDisplay(map::MapObjectDisplayTypes type, bool show);
+  void setShowMapObject(map::MapTypes type, bool show);
+  void setShowMapObjects(map::MapTypes type, map::MapTypes mask);
+  void setShowMapObjectDisplay(map::MapObjectDisplayTypes type, bool show);
   void setShowMapAirspaces(map::MapAirspaceFilter types);
 
   map::MapTypes getShownMapFeatures() const;
@@ -376,6 +380,13 @@ public:
 
   void postTrackLoad();
 
+  /* No drawing at all and not map interactions except moving and zooming if true.
+   * Limit depends on projection. */
+  bool noRender() const;
+
+  /* Print all layers to debug channel */
+  void dumpMapLayers() const;
+
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
   void resultTruncated();
@@ -455,6 +466,12 @@ protected:
   virtual bool checkPos(const atools::geo::Pos&);
 
   virtual void resizeEvent(QResizeEvent *event) override;
+
+  void updateGeometryIndex(map::MapTypes oldTypes, map::MapObjectDisplayTypes oldDisplayTypes);
+
+  /* If width and height of a bounding rect are smaller than this: Use show point */
+  static constexpr float POS_IS_POINT_EPSILON_DEG = 0.0001f;
+  static constexpr float MIN_ZOOM_RECT_DIAMETER_KM = 0.04f;
 
   /* Caches complex X-Plane apron geometry as objects in screen coordinates for faster painting. */
   ApronGeometryCache *apronGeometryCache;

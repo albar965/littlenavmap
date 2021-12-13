@@ -128,7 +128,7 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
 void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing, const QPointF& textCoord,
                                          int textLineLength, bool bothVisible)
 {
-  if(!text.isEmpty())
+  if(!text.isEmpty() || arrowForEmpty)
   {
     QString newText(text);
     // Cut text right or left depending on direction
@@ -157,17 +157,22 @@ void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing, con
     if(bothVisible)
       newText = metrics.elidedText(newText, elide, textLineLength);
 
-    float yoffset;
-    if(textOnTopOfLine || bearing >= 180.)
-      // Keep all texts north
-      yoffset = static_cast<float>(-metrics.descent()) - lineWidth / 2.f - 2.f;
+    double yoffset = 0.;
+    if(textOnLineCenter)
+      yoffset = -metrics.descent() + metrics.height() / 2.;
     else
-      yoffset = static_cast<float>(metrics.ascent()) + lineWidth / 2.f + 2.f;
+    {
+      if(textOnTopOfLine || bearing >= 180.)
+        // Keep all texts north
+        yoffset = -metrics.descent() - lineWidth / 2. - 2.;
+      else
+        yoffset = metrics.ascent() + lineWidth / 2. + 2.;
+    }
 
     painter->translate(textCoord.x(), textCoord.y());
     painter->rotate(rotate);
 
-    QPointF textPos(-metrics.width(newText) / 2.f, yoffset);
+    QPointF textPos(-metrics.width(newText) / 2., yoffset);
     painter->drawText(textPos, newText);
     painter->resetTransform();
   }

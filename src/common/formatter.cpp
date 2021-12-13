@@ -45,8 +45,7 @@ QString formatMinutesHours(double time)
     hours++;
     minutes = 0;
   }
-  return QString(QObject::tr("%1:%2")).arg(QLocale().toString(hours)).
-         arg(minutes, 2, 10, QChar('0'));
+  return QString(QObject::tr("%1:%2")).arg(QLocale().toString(hours)). arg(minutes, 2, 10, QChar('0'));
 }
 
 QString formatMinutesHoursLong(double time)
@@ -59,8 +58,7 @@ QString formatMinutesHoursLong(double time)
     minutes = 0;
   }
 
-  return QString(QObject::tr("%1 h %2 m")).arg(QLocale().toString(hours)).
-         arg(minutes, 2, 10, QChar('0'));
+  return QString(QObject::tr("%1 h %2 m")).arg(QLocale().toString(hours)). arg(minutes, 2, 10, QChar('0'));
 }
 
 QString formatMinutesHoursDays(double time)

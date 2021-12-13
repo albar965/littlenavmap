@@ -61,6 +61,7 @@ class AirwayTrackQuery;
 class UnitStringTool;
 class QTextCursor;
 class RouteCalcWindow;
+class RouteLabel;
 
 /*
  * All flight plan related tasks like saving, loading, modification, calculation and table
@@ -166,7 +167,7 @@ public:
   void routeAdd(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex);
 
   /* Add an approach and/or a transition */
-  void routeAddProcedure(proc::MapProcedureLegs legs, const QString& sidStarRunway);
+  void routeAddProcedure(proc::MapProcedureLegs legs);
 
   /* Same as above but replaces waypoint at legIndex */
   void routeReplace(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex);
@@ -211,7 +212,7 @@ public:
   QString getFlightplanTableAsHtmlDoc(float iconSizePixel) const;
 
   /* Get flight plan extracted from table selection */
-  atools::fs::pln::Flightplan getFlightplanForSelection() const;
+  Route getRouteForSelection() const;
 
   /* Insert a flight plan table as QTextTable object at the cursor position.
    * @param selectedCols Physical/logical and not view order. */
@@ -256,7 +257,12 @@ public:
   QStringList getAllRouteColumns() const;
 
   /* Add custom procedure and probably set new destination airport */
-  void showProceduresCustom(map::MapAirport airport);
+  void showCustomApproach(map::MapAirport airport, QString dialogHeader);
+  void showCustomDeparture(map::MapAirport airport, QString dialogHeader);
+
+  /* Add custom proc for departure or destination airport. Called from main menu. */
+  void showCustomApproachMainMenu();
+  void showCustomDepartureMainMenu();
 
   /* Name of currently loaded flight plan file */
   const QString& getRouteFilepath() const
@@ -285,7 +291,7 @@ public:
 
   /* Get error messages from route parsing */
   bool hasErrors() const;
-  QString getErrorStrings(QStringList& toolTip) const;
+  QStringList getErrorStrings() const;
 
 signals:
   /* Show airport on map */
@@ -297,7 +303,7 @@ signals:
   /* Change distance search center */
   void changeMark(const atools::geo::Pos& pos);
 
-  /* Selection in table view has changed. Update hightlights on map */
+  /* Selection in table view has changed. Update highlights on map */
   void routeSelectionChanged(int selected, int total);
 
   /* Route has changed */
@@ -350,8 +356,6 @@ private:
   void postChange(RouteCommand *undoCommand);
 
   void routeSetStartPosition(map::MapStart start);
-
-  void updateWindowLabel();
 
   void doubleClick(const QModelIndex& index);
   void showAtIndex(int index, bool info, bool map, bool doubleClick);
@@ -407,7 +411,13 @@ private:
 
   void showInformationMenu();
   void showProceduresMenu();
-  void showProceduresMenuCustom();
+
+  /* From context menu */
+  void showCustomApproachRouteMenu();
+
+  /* From context menu */
+  void showCustomDepartureRouteMenu();
+
   void showOnMapMenu();
 
   void showInformationInternal(const RouteLeg& routeLeg);
@@ -426,12 +436,6 @@ private:
   void helpClicked();
 
   void dockVisibilityChanged(bool visible);
-
-  /* Departure, destination and procedures. */
-  QString buildFlightplanLabel(bool print = false, bool widget = false, bool titleOnly = false) const;
-
-  /* Distance and time. */
-  QString buildFlightplanLabel2(bool print = false) const;
 
   void updateTableHeaders();
   void highlightNextWaypoint(int activeLegIdx);
@@ -527,6 +531,9 @@ private:
   FlightplanEntryBuilder *entryBuilder = nullptr;
   atools::fs::pln::FlightplanIO *flightplanIO = nullptr;
 
+  /* Takes care of the top label */
+  RouteLabel *routeLabel = nullptr;
+
   /* Route calculation dock window controller */
   RouteCalcWindow *routeWindow = nullptr;
 
@@ -551,7 +558,7 @@ private:
   QTimer routeAltDelayTimer, tableCleanupTimer;
 
   // Route table colum headings
-  QStringList routeColumns, routeColumnTooltips;
+  QStringList routeColumns, routeColumnDescription;
   UnitStringTool *units = nullptr;
 
   // Errors collected when parsing route for model

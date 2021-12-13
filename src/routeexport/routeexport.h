@@ -209,16 +209,6 @@ public:
   /* Validates only if this is a manual save */
   bool routeValidateMulti(const RouteExportFormat& format);
 
-  /* Build filename according to pattern set in options. */
-  static QString buildDefaultFilename(const QString& suffix = ".lnmpln", bool normalize = false);
-  static QString buildDefaultFilename(const RouteExportFormat&, const QString& suffix = ".lnmpln",
-                                      bool normalize = false);
-  static QString buildDefaultFilename(const Route& route, const QString& suffix = ".lnmpln",
-                                      bool normalize = false);
-
-  /* Create a default filename based on departure and destination idents. Suffix includes dot. */
-  static QString buildDefaultFilenameShort(const QString& sep, const QString& suffix);
-
   /* Return a copy of the route that has procedures replaced with waypoints depending on selected options in the menu.
    *  Also sets altitude into FlightplanEntry position. */
   static Route buildAdjustedRoute(const Route& route, rf::RouteAdjustOptions options);
@@ -241,6 +231,10 @@ signals:
   void  optionsUpdated();
 
 private:
+  /* Build filename according to pattern set in options. Uses pattern including file suffix from format.
+   * Special characters are removed if normalize is true */
+  QString buildDefaultFilename(const RouteExportFormat& format, bool normalize = false);
+
   /* Saves all FSX/P3D PLN based formats */
   bool routeExportInternalPln(const RouteExportFormat& format);
 
@@ -290,6 +284,7 @@ private:
   /* Called by all export functions that are used only in multiexport.
    * Uses all paths, descriptions, etc. from given RouteExportFormat. */
   QString exportFileMulti(const RouteExportFormat& format, const QString& filename);
+  QString exportFileMulti(const RouteExportFormat& format);
 
   /* Called by all export functions that are used in multiexport and manual export.
    * Saves file dialog location and state. */

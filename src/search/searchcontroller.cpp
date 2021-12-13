@@ -294,6 +294,8 @@ void SearchController::showInSearch(map::MapTypes type, const atools::sql::SqlRe
   ui->dockWidgetSearch->raise();
   ui->dockWidgetSearch->show();
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wswitch"
   switch(type)
   {
     case map::AIRPORT:
@@ -360,6 +362,7 @@ void SearchController::showInSearch(map::MapTypes type, const atools::sql::SqlRe
       qWarning() << "showInSearch invalid type" << type;
       break;
   }
+#pragma GCC diagnostic pop
 }
 
 void SearchController::setCurrentSearchTabId(si::TabSearchId tabId)

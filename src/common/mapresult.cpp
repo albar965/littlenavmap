@@ -20,6 +20,7 @@
 #include "common/proctypes.h"
 #include "geo/calculations.h"
 #include "options/optiondata.h"
+#include "common/maptools.h"
 
 namespace map {
 
@@ -88,6 +89,9 @@ MapResult& MapResult::clear(const MapTypes& types)
   if(types.testFlag(map::LOGBOOK))
     logbookEntries.clear();
 
+  if(types.testFlag(map::PROCEDURE_POINT))
+    procPoints.clear();
+
   if(types.testFlag(map::AIRCRAFT_AI))
     aiAircraft.clear();
 
@@ -99,6 +103,23 @@ MapResult& MapResult::clear(const MapTypes& types)
     onlineAircraft.clear();
     onlineAircraftIds.clear();
   }
+
+  // Marks
+  if(types.testFlag(MARK_RANGE))
+    rangeMarks.clear();
+
+  if(types.testFlag(MARK_DISTANCE))
+    distanceMarks.clear();
+
+  if(types.testFlag(MARK_HOLDING))
+    holdingMarks.clear();
+
+  if(types.testFlag(MARK_PATTERNS))
+    patternMarks.clear();
+
+  if(types.testFlag(MARK_MSA))
+    msaMarks.clear();
+
   return *this;
 }
 
@@ -188,6 +209,9 @@ MapResult& MapResult::clearAllButFirst(const MapTypes& types)
   if(types.testFlag(map::LOGBOOK))
     clearAllButFirst(logbookEntries);
 
+  if(types.testFlag(map::PROCEDURE_POINT))
+    clearAllButFirst(procPoints);
+
   if(types.testFlag(map::AIRCRAFT_AI))
     clearAllButFirst(aiAircraft);
 
@@ -199,6 +223,23 @@ MapResult& MapResult::clearAllButFirst(const MapTypes& types)
     clearAllButFirst(onlineAircraft);
     onlineAircraftIds.clear();
   }
+
+  // Marks
+  if(types.testFlag(MARK_RANGE))
+    clearAllButFirst(rangeMarks);
+
+  if(types.testFlag(MARK_DISTANCE))
+    clearAllButFirst(distanceMarks);
+
+  if(types.testFlag(MARK_HOLDING))
+    clearAllButFirst(holdingMarks);
+
+  if(types.testFlag(MARK_PATTERNS))
+    clearAllButFirst(patternMarks);
+
+  if(types.testFlag(MARK_MSA))
+    clearAllButFirst(msaMarks);
+
   return *this;
 }
 
@@ -289,28 +330,6 @@ int MapResult::numOnlineAirspaces() const
   return num;
 }
 
-QList<MapHolding> MapResult::getHoldings(bool user) const
-{
-  QList<map::MapHolding> retval;
-  for(const map::MapHolding& obj : holdings)
-  {
-    if(obj.user == user)
-      retval.append(obj);
-  }
-  return retval;
-}
-
-QList<MapAirportMsa> MapResult::getAirportMsa(bool user) const
-{
-  QList<map::MapAirportMsa> retval;
-  for(const map::MapAirportMsa& obj : airportMsa)
-  {
-    if(obj.user == user)
-      retval.append(obj);
-  }
-  return retval;
-}
-
 QList<map::MapAirspace> MapResult::getSimNavUserAirspaces() const
 {
   QList<map::MapAirspace> retval;
@@ -333,28 +352,40 @@ QList<map::MapAirspace> MapResult::getOnlineAirspaces() const
   return retval;
 }
 
-QString MapResult::objectText(MapTypes navType, int elideName) const
+QString MapResult::objectText(MapTypes type, int elideName) const
 {
-  QString navaidStr;
-  if(navType == map::AIRPORT && hasAirports())
-    navaidStr = map::airportTextShort(airports.first(), elideName);
-  else if(navType == map::AIRPORT_MSA && hasAirportMsa())
-    navaidStr = map::airportMsaTextShort(airportMsa.first());
-  else if(navType == map::VOR && hasVor())
-    navaidStr = map::vorText(vors.first(), elideName);
-  else if(navType == map::NDB && hasNdb())
-    navaidStr = map::ndbText(ndbs.first(), elideName);
-  else if(navType == map::WAYPOINT && hasWaypoints())
-    navaidStr = map::waypointText(waypoints.first());
-  else if(navType == map::USERPOINT && hasUserpoints())
-    navaidStr = map::userpointText(userpoints.first(), elideName);
-  else if(navType == map::LOGBOOK && hasLogEntries())
-    navaidStr = map::logEntryText(logbookEntries.first());
-  else if(navType == map::AIRCRAFT_ONLINE && hasOnlineAircraft())
-    navaidStr = onlineAircraft.first().getIdent();
-  else if(navType == map::AIRSPACE && hasOnlineAirspaces())
-    navaidStr = getOnlineAirspaces().constFirst().getIdent();
-  return navaidStr;
+  QString str;
+  if(type == map::AIRPORT && hasAirports())
+    str = map::airportTextShort(airports.first(), elideName);
+  else if(type == map::AIRPORT_MSA && hasAirportMsa())
+    str = map::airportMsaTextShort(airportMsa.first());
+  else if(type == map::VOR && hasVor())
+    str = map::vorText(vors.first(), elideName);
+  else if(type == map::NDB && hasNdb())
+    str = map::ndbText(ndbs.first(), elideName);
+  else if(type == map::WAYPOINT && hasWaypoints())
+    str = map::waypointText(waypoints.first());
+  else if(type == map::USERPOINT && hasUserpoints())
+    str = map::userpointText(userpoints.first(), elideName);
+  else if(type == map::LOGBOOK && hasLogEntries())
+    str = map::logEntryText(logbookEntries.first());
+  else if(type == map::PROCEDURE_POINT && hasProcedurePoints())
+    str = map::procedurePointTextShort(procPoints.first());
+  else if(type == map::AIRCRAFT_ONLINE && hasOnlineAircraft())
+    str = onlineAircraft.first().getIdent();
+  else if(type == map::AIRSPACE && hasOnlineAirspaces())
+    str = getOnlineAirspaces().constFirst().getIdent();
+  else if(type == MARK_RANGE)
+    str = map::rangeMarkText(rangeMarks.first());
+  else if(type == MARK_DISTANCE)
+    str = map::distanceMarkText(distanceMarks.first());
+  else if(type == MARK_HOLDING)
+    str = map::holdingMarkText(holdingMarks.first());
+  else if(type == MARK_PATTERNS)
+    str = map::patternMarkText(patternMarks.first());
+  else if(type == MARK_MSA)
+    str = map::msaMarkText(msaMarks.first());
+  return str;
 }
 
 void MapResult::removeInvalid()
@@ -376,11 +407,14 @@ void MapResult::removeInvalid()
   removeInvalid(logbookEntries);
   removeInvalid(aiAircraft);
   removeInvalid(onlineAircraft, &onlineAircraftIds);
-  removeInvalid(trafficPatterns);
-  removeInvalid(rangeMarkers);
+  removeInvalid(patternMarks);
+  removeInvalid(rangeMarks);
+  removeInvalid(distanceMarks);
   removeInvalid(holdings, &holdingIds);
   removeInvalid(airportMsa, &airportMsaIds);
   removeInvalid(procPoints);
+  removeInvalid(holdingMarks);
+  removeInvalid(msaMarks);
 }
 
 void MapResult::clearNavdataAirspaces()
@@ -437,12 +471,25 @@ const atools::geo::Pos& MapResult::getPosition(const std::initializer_list<MapTy
         return userpoints.first().getPosition();
       else if(type == map::LOGBOOK)
         return logbookEntries.first().getPosition();
+      else if(type == map::PROCEDURE_POINT)
+        return procPoints.first().getPosition();
       else if(type == map::AIRCRAFT)
         return userAircraft.getPosition();
       else if(type == map::AIRCRAFT_AI)
         return aiAircraft.first().getPosition();
       else if(type == map::AIRCRAFT_ONLINE)
         return onlineAircraft.first().getPosition();
+      else if(type == MARK_RANGE)
+        return rangeMarks.first().getPosition();
+      else if(type == MARK_DISTANCE)
+        return distanceMarks.first().getPosition();
+      else if(type == MARK_HOLDING)
+        return holdingMarks.first().getPosition();
+      else if(type == MARK_PATTERNS)
+        return patternMarks.first().getPosition();
+      else if(type == MARK_MSA)
+        return msaMarks.first().getPosition();
+
     }
   }
   return atools::geo::EMPTY_POS;
@@ -480,12 +527,24 @@ QString MapResult::getIdent(const std::initializer_list<MapTypes>& types) const
         return userpoints.first().ident;
       else if(type == map::LOGBOOK)
         return logbookEntries.first().departureIdent;
+      else if(type == map::PROCEDURE_POINT)
+        return procPoints.first().getIdent();
       else if(type == map::AIRCRAFT)
         return userAircraft.getAircraft().getAirplaneRegistration();
       else if(type == map::AIRCRAFT_AI)
         return aiAircraft.first().getAircraft().getAirplaneRegistration();
       else if(type == map::AIRCRAFT_ONLINE)
         return onlineAircraft.first().getAircraft().getAirplaneRegistration();
+      else if(type == MARK_RANGE)
+        return rangeMarks.first().text;
+      else if(type == MARK_DISTANCE)
+        return distanceMarks.first().text;
+      else if(type == MARK_HOLDING)
+        return holdingMarks.first().holding.navIdent;
+      else if(type == MARK_PATTERNS)
+        return patternMarks.first().airportIcao;
+      else if(type == MARK_MSA)
+        return msaMarks.first().msa.navIdent;
     }
   }
   return QString();
@@ -518,8 +577,7 @@ QString MapResult::getRegion(const std::initializer_list<MapTypes>& types) const
   return QString();
 }
 
-bool MapResult::getIdAndType(int& id, MapTypes& type,
-                             const std::initializer_list<MapTypes>& types) const
+bool MapResult::getIdAndType(int& id, MapTypes& type, const std::initializer_list<MapTypes>& types) const
 {
   id = -1;
   type = NONE;
@@ -529,98 +587,52 @@ bool MapResult::getIdAndType(int& id, MapTypes& type,
     if(!isEmpty(t))
     {
       if(t == map::AIRPORT)
-      {
         id = airports.first().getId();
-        type = t;
-        break;
-      }
       else if(t == map::AIRPORT_MSA)
-      {
         id = airportMsa.first().getId();
-        type = t;
-        break;
-      }
       else if(t == map::WAYPOINT)
-      {
         id = waypoints.first().getId();
-        type = t;
-        break;
-      }
       else if(t == map::VOR)
-      {
         id = vors.first().getId();
-        type = t;
-        break;
-      }
       else if(t == map::NDB)
-      {
         id = ndbs.first().getId();
-        type = t;
-        break;
-      }
       else if(t == map::AIRWAY)
-      {
         id = airways.first().getId();
-        type = t;
-        break;
-      }
       else if(t == map::RUNWAYEND)
-      {
         id = runwayEnds.first().getId();
-        type = t;
-        break;
-      }
       else if(t == map::ILS)
-      {
         id = ils.first().getId();
-        type = t;
-        break;
-      }
       else if(t == map::HOLDING)
-      {
         id = holdings.first().getId();
-        type = t;
-        break;
-      }
       else if(t == map::AIRSPACE)
-      {
         id = airspaces.first().getId();
-        type = t;
-        break;
-      }
       else if(t == map::USERPOINTROUTE)
-      {
         id = userpointsRoute.first().getId();
-        type = t;
-        break;
-      }
       else if(t == map::USERPOINT)
-      {
         id = userpoints.first().getId();
-        type = t;
-        break;
-      }
       else if(t == map::LOGBOOK)
-      {
         id = logbookEntries.first().getId();
-        type = t;
-        break;
-      }
+      else if(t == map::PROCEDURE_POINT)
+        id = procPoints.first().getId();
       else if(t == map::AIRCRAFT)
-      {
         id = userAircraft.getId();
-        type = t;
-        break;
-      }
       else if(t == map::AIRCRAFT_AI)
-      {
         id = aiAircraft.first().getId();
-        type = t;
-        break;
-      }
       else if(t == map::AIRCRAFT_ONLINE)
-      {
         id = onlineAircraft.first().getId();
+      else if(t == map::MARK_RANGE)
+        id = rangeMarks.first().getId();
+      else if(t == map::MARK_DISTANCE)
+        id = distanceMarks.first().getId();
+      else if(t == map::MARK_HOLDING)
+        id = holdingMarks.first().getId();
+      else if(t == map::MARK_PATTERNS)
+        id = patternMarks.first().getId();
+      else if(t == map::MARK_MSA)
+        id = msaMarks.first().getId();
+
+      if(id != -1)
+      {
         type = t;
         break;
       }
@@ -659,12 +671,24 @@ MapResult& MapResult::addFromMapBase(const MapBase *base)
       userpoints.append(base->asObj<map::MapUserpoint>());
     else if(base->getType().testFlag(map::LOGBOOK))
       logbookEntries.append(base->asObj<map::MapLogbookEntry>());
+    else if(base->getType().testFlag(map::PROCEDURE_POINT))
+      procPoints.append(base->asObj<map::MapProcedurePoint>());
     else if(base->getType().testFlag(map::AIRCRAFT))
       userAircraft = base->asObj<map::MapUserAircraft>();
     else if(base->getType().testFlag(map::AIRCRAFT_AI))
       aiAircraft.append(base->asObj<map::MapAiAircraft>());
     else if(base->getType().testFlag(map::AIRCRAFT_ONLINE))
       onlineAircraft.append(base->asObj<map::MapOnlineAircraft>());
+    else if(base->getType().testFlag(map::MARK_RANGE))
+      rangeMarks.append(base->asObj<map::RangeMarker>());
+    else if(base->getType().testFlag(map::MARK_DISTANCE))
+      distanceMarks.append(base->asObj<map::DistanceMarker>());
+    else if(base->getType().testFlag(map::MARK_HOLDING))
+      holdingMarks.append(base->asObj<map::HoldingMarker>());
+    else if(base->getType().testFlag(map::MARK_PATTERNS))
+      patternMarks.append(base->asObj<map::PatternMarker>());
+    else if(base->getType().testFlag(map::MARK_MSA))
+      msaMarks.append(base->asObj<map::MsaMarker>());
   }
   return *this;
 }
@@ -690,9 +714,16 @@ int MapResult::size(const MapTypes& types) const
   totalSize += types.testFlag(map::USERPOINTROUTE) ? userpointsRoute.size() : 0;
   totalSize += types.testFlag(map::USERPOINT) ? userpoints.size() : 0;
   totalSize += types.testFlag(map::LOGBOOK) ? logbookEntries.size() : 0;
+  totalSize += types.testFlag(map::PROCEDURE_POINT) ? procPoints.size() : 0;
   totalSize += types.testFlag(map::AIRCRAFT) ? userAircraft.isValid() : 0;
   totalSize += types.testFlag(map::AIRCRAFT_AI) ? aiAircraft.size() : 0;
   totalSize += types.testFlag(map::AIRCRAFT_ONLINE) ? onlineAircraft.size() : 0;
+  totalSize += types.testFlag(map::MARK_RANGE) ? rangeMarks.size() : 0;
+  totalSize += types.testFlag(map::MARK_DISTANCE) ? distanceMarks.size() : 0;
+  totalSize += types.testFlag(map::MARK_HOLDING) ? holdingMarks.size() : 0;
+  totalSize += types.testFlag(map::MARK_PATTERNS) ? patternMarks.size() : 0;
+  totalSize += types.testFlag(map::MARK_MSA) ? msaMarks.size() : 0;
+
   return totalSize;
 }
 
@@ -898,6 +929,11 @@ MapResultIndex& MapResultIndex::add(const MapResult& resultParam, const MapTypes
     result.logbookEntries.append(resultParam.logbookEntries);
     addAll(result.logbookEntries);
   }
+  if(types.testFlag(PROCEDURE_POINT))
+  {
+    result.procPoints.append(resultParam.procPoints);
+    addAll(result.procPoints);
+  }
 
   // Aircraft ===========
   if(types.testFlag(AIRCRAFT))
@@ -916,6 +952,34 @@ MapResultIndex& MapResultIndex::add(const MapResult& resultParam, const MapTypes
     result.onlineAircraft.append(resultParam.onlineAircraft);
     addAll(result.onlineAircraft);
   }
+
+  // Markers ========================
+  if(types.testFlag(MARK_RANGE))
+  {
+    result.rangeMarks.append(resultParam.rangeMarks);
+    addAll(result.rangeMarks);
+  }
+  if(types.testFlag(MARK_DISTANCE))
+  {
+    result.distanceMarks.append(resultParam.distanceMarks);
+    addAll(result.distanceMarks);
+  }
+  if(types.testFlag(MARK_HOLDING))
+  {
+    result.holdingMarks.append(resultParam.holdingMarks);
+    addAll(result.holdingMarks);
+  }
+  if(types.testFlag(MARK_PATTERNS))
+  {
+    result.patternMarks.append(resultParam.patternMarks);
+    addAll(result.patternMarks);
+  }
+  if(types.testFlag(MARK_MSA))
+  {
+    result.msaMarks.append(resultParam.msaMarks);
+    addAll(result.msaMarks);
+  }
+
   return *this;
 }
 
@@ -953,6 +1017,8 @@ MapResultIndex& MapResultIndex::addRef(const MapResult& resultParam, const MapTy
     addAll(resultParam.userpoints);
   if(types.testFlag(LOGBOOK))
     addAll(resultParam.logbookEntries);
+  if(types.testFlag(PROCEDURE_POINT))
+    addAll(resultParam.procPoints);
 
   // Aircraft ===========
   if(types.testFlag(AIRCRAFT) && resultParam.userAircraft.isValid())
@@ -962,11 +1028,22 @@ MapResultIndex& MapResultIndex::addRef(const MapResult& resultParam, const MapTy
     addAll(resultParam.aiAircraft);
   if(types.testFlag(AIRCRAFT_ONLINE))
     addAll(resultParam.onlineAircraft);
+
+  if(types.testFlag(MARK_RANGE))
+    addAll(resultParam.rangeMarks);
+  if(types.testFlag(MARK_DISTANCE))
+    addAll(resultParam.distanceMarks);
+  if(types.testFlag(MARK_HOLDING))
+    addAll(resultParam.holdingMarks);
+  if(types.testFlag(MARK_PATTERNS))
+    addAll(resultParam.patternMarks);
+  if(types.testFlag(MARK_MSA))
+    addAll(resultParam.msaMarks);
+
   return *this;
 }
 
-MapResultIndex& MapResultIndex::sort(const QVector<MapTypes>& types,
-                                     const MapResultIndex::SortFunction& sortFunc)
+MapResultIndex& MapResultIndex::sort(const QVector<MapTypes>& types, const MapResultIndex::SortFunction& sortFunc)
 {
   if(size() <= 1)
     // Nothing to sort

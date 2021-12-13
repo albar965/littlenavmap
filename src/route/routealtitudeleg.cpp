@@ -215,6 +215,7 @@ float RouteAltitudeLeg::dx() const
 
 QDebug operator<<(QDebug out, const RouteAltitudeLeg& obj)
 {
+  QDebugStateSaver saver(out);
   out << obj.ident
       << obj.line
       << "TOC" << obj.topOfClimb

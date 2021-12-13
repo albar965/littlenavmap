@@ -114,7 +114,7 @@ void checkAndMigrateSettings()
            noaaUrl.toLower() == "http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.txt")
         {
           qInfo() << Q_FUNC_INFO << "Changing NOAA URL to HTTPS";
-          // NOTE: Need to cast to QString to avoid using the overloaded boolean method
+          // Need to cast to QString to avoid using the overloaded boolean method
           settings.setValue("OptionsDialog/Widget_lineEditOptionsWeatherNoaaUrl",
                             QString("https://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT"));
           settings.syncSettings();
@@ -258,6 +258,11 @@ void checkAndMigrateSettings()
         removeAndLog(settings, "Route/View_tableViewRoute");
         removeAndLog(settings, "OptionsDialog/Widget_lineEditOptionsWeatherIvaoUrl");
         removeAndLog(settings, "Map/DetailFactor");
+      }
+
+      if(optionsVersion <= Version("2.6.17"))
+      {
+        removeAndLog(settings, "Map/MarkDisplay"); // MAP_MARK_DISPLAY
       }
 
       // Set program version to options and save ===================

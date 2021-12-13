@@ -51,7 +51,7 @@ public:
   virtual void render() override;
 
 private:
-  void drawAirportSymbol(const map::MapAirport& ap, float x, float y);
+  void drawAirportSymbol(const map::MapAirport& ap, float x, float y, int size);
 
   // void drawWindPointer(const maptypes::MapAirport& ap, int x, int y);
 

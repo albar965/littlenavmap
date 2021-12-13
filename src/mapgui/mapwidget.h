@@ -140,22 +140,22 @@ public:
   virtual void updateMapObjectsShown() override;
 
   /* Opens a dialog for configuration of a traffic pattern display object */
-  void addTrafficPattern(const map::MapAirport& airport);
+  void addPatternMark(const map::MapAirport& airport);
 
   /* Remove pattern at index and update the map */
-  void removeTrafficPatterm(int index);
+  void removePatternMark(int id);
 
   /* Opens a dialog for configuration and adds a hold */
   void addHold(const map::MapResult& result, const atools::geo::Pos& position);
 
   /* Remove hold at index and update the map */
-  void removeHold(int index);
+  void removeHoldMark(int id);
 
   /* Adds MSA diagram at position */
-  void addAirportMsa(map::MapAirportMsa airportMsa);
+  void addMsaMark(map::MapAirportMsa airportMsa);
 
   /* Remove airport MSA diagram at index and update the map */
-  void removeAirportMsa(int index);
+  void removeMsaMark(int id);
 
   /* Jump to the search center mark using default zoom */
   void showSearchMark();
@@ -166,21 +166,27 @@ public:
   /* Change the search center mark to given position */
   void changeSearchMark(const atools::geo::Pos& pos);
 
+  /* Show jump to coordinates dialog called from main menu */
+  void jumpCoordinates();
+
+  /* Show jump to coordinates dialog called from context menu */
+  void jumpCoordinatesPos(const atools::geo::Pos& pos);
+
   /* Save current position and zoom distance as home */
   void changeHome();
 
   /* Add general (red) range ring */
-  void addRangeRing(const atools::geo::Pos& pos);
+  void addRangeMark(const atools::geo::Pos& pos, bool showDialog);
 
   /* Add radio navaid range ring. Falls back to normal range rings if range is 0. */
-  void addNavRangeRing(const atools::geo::Pos& pos, map::MapTypes type, const QString& displayIdent,
+  void addNavRangeMark(const atools::geo::Pos& pos, map::MapTypes type, const QString& displayIdent,
                        const QString& frequency, float range);
 
   /* Remove range rings on index, print message and update map */
-  void removeRangeRing(int index);
+  void removeRangeMark(int id);
 
   /* Remove measurement line on index, print message and update map */
-  void removeDistanceMarker(int index);
+  void removeDistanceMark(int id);
 
   void setMapDetail(int factor);
 
@@ -193,7 +199,7 @@ public:
   void defaultMapDetail();
 
   /* Removes all range rings and distance measurement lines */
-  void clearRangeRingsAndDistanceMarkers();
+  void clearAllMarkers();
 
   /* Delete the current aircraft track. Will not stop collecting new track points */
   void deleteAircraftTrack();
@@ -265,10 +271,14 @@ signals:
 
   /* Show approaches from context menu */
   void showProcedures(map::MapAirport airport, bool departureFilter, bool arrivalFilter);
-  void showProceduresCustom(map::MapAirport airport);
+  void showCustomApproach(map::MapAirport airport, const QString& suffix);
+  void showCustomDeparture(map::MapAirport airport, const QString& suffix);
 
   /* Emitted when the user presses the on-screen button */
   void exitFullScreenPressed();
+
+  /* Add the complete procedure to the route */
+  void routeInsertProcedure(const proc::MapProcedureLegs& legs);
 
 private:
   /* For touchscreen mode. Grid of 3x3 rectangles numbered from lef to right and top to bottom */
@@ -343,7 +353,7 @@ private:
                             const atools::fs::sc::SimConnectUserAircraft& last);
 
   /* Center aircraft again after scrolling or zooming */
-  void jumpBackToAircraftTimeout(const QVariantList& values);
+  void jumpBackToAircraftTimeout(const atools::geo::Pos& pos);
 
   /* Needed filter to avoid and/or disable some Marble pecularities */
   bool eventFilter(QObject *obj, QEvent *evt) override;
@@ -461,6 +471,7 @@ private:
   /* Time of takeoff or invalid if not detected yet */
   QDateTime takeoffTimeSim;
 
+  /* Saves jump back position and altitude in km */
   JumpBack *jumpBack;
 
   /* Sum up mouse wheel or trackpad movement before zooming */
@@ -482,7 +493,7 @@ private:
   QHash<QString, QAction *> mapOverlays;
 
   /* Distance marker that is changed using drag and drop */
-  int currentDistanceMarkerIndex = -1;
+  int currentDistanceMarkerId = -1;
 
   QPushButton *pushButtonExitFullscreen = nullptr;
 

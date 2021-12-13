@@ -29,10 +29,12 @@
 #include <QString>
 
 class OptionData;
+class MapLayer;
 
 namespace proc {
 
-struct MapProcedurePoint;
+struct MapProcedureLeg;
+struct MapProcedureLegs;
 
 }
 /*
@@ -89,7 +91,7 @@ struct MapObjectRef
   }
 
   MapObjectRef(int idParam, map::MapTypes typeParam)
-    : id(idParam), objType(static_cast<map::MapType>(typeParam.operator unsigned int()))
+    : id(idParam), objType(typeParam.asEnum())
   {
   }
 
@@ -298,7 +300,7 @@ struct MapBase
   /* Set type using QFlags wrapper */
   void setType(map::MapTypes type)
   {
-    objType = static_cast<map::MapType>(type.operator unsigned int());
+    objType = type.asEnum();
   }
 
   /* Get type using QFlags wrapper */
@@ -312,13 +314,37 @@ struct MapBase
     return objType;
   }
 
+protected:
+  /* Hide destructor to avoid inadvertent deletion of base */
+  ~MapBase()
+  {
+  }
+
 };
 
 QDebug operator<<(QDebug out, const map::MapBase& obj);
 
 // =====================================================================
+/* Simple position wrapper allowing to keep map base destructor protected */
+struct MapPos
+  : public MapBase
+{
+  MapPos() :
+    MapBase(map::NONE)
+  {
+  }
+
+  MapPos(const atools::geo::Pos& pos) :
+    MapBase(map::NONE, -1, pos)
+  {
+  }
+
+};
+
+// =====================================================================
 /* Airport type not including runways (have to queried separately) */
 /* Database id airport.airport_id */
+/* Position contains runway altitude in feet */
 struct MapAirport
   : public MapBase
 {
@@ -335,7 +361,10 @@ struct MapAirport
            region; /* Two letter region code */
 
   int longestRunwayLength = 0, longestRunwayHeading = 0, transitionAltitude = 0, rating = -1,
-      flatten /* X-Plane flatten flag. -1 if not set */;
+      flatten; /* X-Plane flatten flag. -1 if not set */
+
+  map::MapAirportType type; /* 1 Land airport, 16 Seaplane base, 17 Heliport. X-Plane only. -1 if not set. */
+
   map::MapAirportFlags flags = AP_NONE;
   float magvar = 0; /* Magnetic variance - positive is east, negative is west */
   bool navdata, /* true if source is third party nav database, false if source is simulator data */
@@ -348,6 +377,9 @@ struct MapAirport
 
   /* One of ident, ICAO, FAA, IATA or local code. Use only for display purposes and not for queries. */
   const QString& displayIdent(bool useIata = true) const;
+
+  /* One of ident or ICAO */
+  const QString& displayIdentIcao() const;
 
   bool closed() const;
   bool hard() const;
@@ -373,9 +405,15 @@ struct MapAirport
   bool closedRunways() const;
   bool procedure() const;
 
+  /* For map layer configuration soft, water, helipad and closed */
+  bool minor() const;
+
   /* Check if airport should be drawn empty */
   bool emptyDraw() const;
-  bool emptyDraw(const OptionData& od) const;
+  bool emptyDraw(bool emptyFlag, bool empty3dFlag) const;
+
+  /* Drawing order. Lower number are drawn first i.e. below all others  */
+  int paintPriority(bool forceAddonFlag, bool emptyOptsFlag, bool empty3dOptsFlag) const;
 
   /* Check if airport has any scenery elements */
   bool empty() const;
@@ -384,13 +422,14 @@ struct MapAirport
    * @param objectTypes Map display configuration flags
    * @return true if this airport is visible on map
    */
-  bool isVisible(map::MapTypes objectTypes) const;
+  bool isVisible(map::MapTypes types, int minRunwayFt, const MapLayer *layer) const;
 
 };
 
 // =====================================================================
 /* Airport runway. All dimensions are feet */
-/* Datbase id is runway.runway_id */
+/* Database id is runway.runway_id */
+/* Position contains runway altitude in feet */
 struct MapRunway
   : public MapBase
 {
@@ -399,12 +438,13 @@ struct MapRunway
   }
 
   QString surface, shoulder, primaryName, secondaryName, edgeLight;
-  int length /* ft */, primaryEndId, secondaryEndId;
+  float length /* ft */;
+  int primaryEndId, secondaryEndId;
   float heading, patternAlt,
         smoothness /* 0 (smooth) to 1 (very rough). Default is 0.25. X-Plane only. -1.f if not set */;
-  int width,
-      primaryOffset, secondaryOffset, /* part of the runway length */
-      primaryBlastPad, secondaryBlastPad, primaryOverrun, secondaryOverrun; /* not part of the runway length all in ft */
+  float width,
+        primaryOffset, secondaryOffset, /* part of the runway length */
+        primaryBlastPad, secondaryBlastPad, primaryOverrun, secondaryOverrun; /* not part of the runway length all in ft */
   atools::geo::Pos primaryPosition, secondaryPosition;
 
   /* Used by AirportQuery::getRunways */
@@ -447,6 +487,7 @@ struct MapRunway
 // =====================================================================
 /* Airport runway end. All dimensions are feet */
 /* Database id is runway_end.runway_end_id */
+/* Position contains runway altitude in feet */
 struct MapRunwayEnd
   : public MapBase
 {
@@ -482,6 +523,8 @@ struct MapRunwayEnd
   {
     return rightVasiType == "UNKN" ? QString() : rightVasiType;
   }
+
+  QStringList uniqueVasiTypeStr() const;
 
   bool secondary;
   bool navdata; /* true if source is third party nav database, false if source is simulator data */
@@ -596,45 +639,6 @@ struct MapHelipad
   int startId, airportId, length, width, heading, start;
   bool closed, transparent;
 };
-
-// =====================================================================
-/* All information for a airport MSA circle */
-struct MapAirportMsa :
-  public MapBase
-{
-  MapAirportMsa() : MapBase(map::AIRPORT_MSA)
-  {
-  }
-
-  QString airportIdent, navIdent, region, multipleCode, vorType;
-
-  map::MapType navType; /* AIRPORT, VOR, NDB or WAYPOINT*/
-  bool vorDmeOnly, vorHasDme, vorTacan, vorVortac; /* VOR specific flags */
-
-  float radius, /* Radius in NM */
-        magvar; /* Taken from environment or navaid */
-
-  bool user; /* true if created by user. otherwise from database */
-
-  QVector<float> bearings, /* Bearings in true or mag degree - same size as altitudes */
-                 altitudes; /* Altitudes in feet - same size as bearings */
-
-  bool trueBearing; /* true if all bearing values are true - otherwise magnetic */
-  atools::geo::LineString geometry, /* Outer circle/arcs geometry. 180 points for full circle. */
-                          labelPositions, /* Pre-calculated altitude label positions. */
-                          bearingEndPositions; /* Endpoints for bearing lines from center to end point */
-  atools::geo::Rect bounding;
-
-  const QString& getIdent() const
-  {
-    return navIdent;
-  }
-
-};
-
-/* Save only information for user defined holds */
-QDataStream& operator>>(QDataStream& dataStream, map::MapAirportMsa& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::MapAirportMsa& obj);
 
 // =====================================================================
 /* VOR station */
@@ -1172,32 +1176,37 @@ struct MapAirspace
 };
 
 // =====================================================================
-/* All information for complete traffic pattern structure */
-/* Threshold position (end of final) and runway altitude MSL */
-struct TrafficPattern
-  : public MapBase
+/* All information for a airport MSA circle */
+struct MapAirportMsa :
+  public MapBase
 {
-  TrafficPattern() : MapBase(map::NONE)
+  MapAirportMsa() : MapBase(map::AIRPORT_MSA)
   {
   }
 
-  QString airportIcao, runwayName;
-  QColor color;
-  bool turnRight,
-       base45Degree /* calculate base turn from 45 deg after threshold */,
-       showEntryExit /* Entry and exit indicators */;
-  int runwayLength; /* ft Does not include displaced threshold */
+  QString airportIdent, navIdent, region, multipleCode, vorType;
 
-  float downwindDistance, baseDistance; /* NM */
-  float courseTrue; /* degree true final course*/
-  float magvar;
+  map::MapType navType; /* AIRPORT, VOR, NDB or WAYPOINT*/
+  bool vorDmeOnly, vorHasDme, vorTacan, vorVortac; /* VOR specific flags */
 
-  float magCourse() const;
+  float radius, /* Radius in NM */
+        magvar; /* Taken from environment or navaid */
+
+  QVector<float> bearings, /* Bearings in true or mag degree - same size as altitudes */
+                 altitudes; /* Altitudes in feet - same size as bearings */
+
+  bool trueBearing; /* true if all bearing values are true - otherwise magnetic */
+  atools::geo::LineString geometry, /* Outer circle/arcs geometry. 180 points for full circle. */
+                          labelPositions, /* Pre-calculated altitude label positions. */
+                          bearingEndPositions; /* Endpoints for bearing lines from center to end point */
+  atools::geo::Rect bounding;
+
+  const QString& getIdent() const
+  {
+    return navIdent;
+  }
 
 };
-
-QDataStream& operator>>(QDataStream& dataStream, map::TrafficPattern& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::TrafficPattern& obj);
 
 // =====================================================================
 /* All information for a hold
@@ -1216,9 +1225,6 @@ struct MapHolding
 
   QString airportIdent;
 
-  QColor color; /* Only for user */
-  bool user; /* true if created by user. otherwise from database */
-
   bool turnLeft; /* Standard is right */
   float time, /* leg minutes - custom and database holds */
         length, /* leg length NM - database holds */
@@ -1228,6 +1234,8 @@ struct MapHolding
 
   float courseTrue; /* degree true inbound course to fix */
   float magvar; /* Taken from environment or navaid */
+
+  QColor color; /* Only for user but keep this here to ease painting */
 
   float magCourse() const;
 
@@ -1241,22 +1249,124 @@ struct MapHolding
 
 };
 
+// =====================================================================
+/* Wrapping a procedure leg including the whole procedure structure for map index, tooltips and similar */
+struct MapProcedurePoint
+  : public map::MapBase
+{
+  MapProcedurePoint();
+
+  /*
+   * @param legsParam Full procedure
+   * @param legIndexParam Active leg of the procedure. Index is related to procedure legs.
+   * @param routeIndexParam Leg index in flight plan, if. Otherwise -1. Related to flight plan legs.
+   * @param previewParam Built from preview by single selection in procedure search.
+   * @param previewAllParam Built from preview by multi procedure preview.
+   */
+  explicit MapProcedurePoint(const proc::MapProcedureLegs& legsParam, int legIndexParam, int routeIndexParam, bool previewParam,
+                             bool previewAllParam);
+  ~MapProcedurePoint();
+
+  MapProcedurePoint(const MapProcedurePoint& other);
+
+  MapProcedurePoint& operator=(const MapProcedurePoint& other);
+
+  /* Id consisting of airportId, approachId and transitionId. transitionId is only added if leg is part of a transition.
+   * Does not contain leg id. */
+  std::tuple<int, int, int> compoundId() const;
+
+  /* Use pointer to avoid recursive includes */
+  proc::MapProcedureLegs *legs = nullptr;
+
+  /* Get referenced leg */
+  const proc::MapProcedureLeg& getLeg() const;
+
+  /* Approach fix ident or SID/STAR name */
+  const QString& getIdent()const;
+
+  int legIndex = -1, routeIndex = -1;
+  bool preview = false, previewAll = false;
+};
+
+// =====================================================================
+// Types below are user features
+// =====================================================================
+
+// =====================================================================
+/* All information for complete traffic pattern structure */
+/* Threshold position (end of final) and runway altitude MSL */
+struct PatternMarker
+  : public MapBase
+{
+  PatternMarker() : MapBase(map::MARK_PATTERNS)
+  {
+  }
+
+  QString airportIcao, runwayName;
+  QColor color;
+  bool turnRight,
+       base45Degree /* calculate base turn from 45 deg after threshold */,
+       showEntryExit /* Entry and exit indicators */;
+  int runwayLength; /* ft Does not include displaced threshold */
+
+  float downwindDistance, baseDistance; /* NM */
+  float courseTrue; /* degree true final course*/
+  float magvar;
+
+  float magCourse() const;
+
+};
+
+QDataStream& operator>>(QDataStream& dataStream, map::PatternMarker& obj);
+QDataStream& operator<<(QDataStream& dataStream, const map::PatternMarker& obj);
+
+// =====================================================================
+/* Range rings marker. Can be converted to QVariant and uses its own type distinct from holdings. */
+struct HoldingMarker
+  : public MapBase
+{
+  HoldingMarker() : MapBase(map::MARK_HOLDING)
+  {
+  }
+
+  /* Aggregate the database holding structure */
+  map::MapHolding holding;
+};
+
 /* Save only information for user defined holds */
-QDataStream& operator>>(QDataStream& dataStream, map::MapHolding& obj);
-QDataStream& operator<<(QDataStream& dataStream, const map::MapHolding& obj);
+QDataStream& operator>>(QDataStream& dataStream, map::HoldingMarker& obj);
+QDataStream& operator<<(QDataStream& dataStream, const map::HoldingMarker& obj);
+
+// =====================================================================
+/* Range rings marker. Can be converted to QVariant and uses its own type distinct from database MSA. */
+struct MsaMarker
+  : public MapBase
+{
+  MsaMarker() : MapBase(map::MARK_MSA)
+  {
+  }
+
+  /*   Aggregate the database MSA structure */
+  map::MapAirportMsa msa;
+};
+
+/* Save only information for user defined holds */
+QDataStream& operator>>(QDataStream& dataStream, map::MsaMarker& obj);
+QDataStream& operator<<(QDataStream& dataStream, const map::MsaMarker& obj);
 
 // =====================================================================
 /* Range rings marker. Can be converted to QVariant */
 struct RangeMarker
   : public MapBase
 {
-  RangeMarker() : MapBase(map::NONE)
+  RangeMarker() : MapBase(map::MARK_RANGE)
   {
   }
 
   QString text; /* Text to display like VOR name and frequency */
-  QVector<float> ranges; /* Range ring list (nm) */
-  MapTypes type; /* VOR, NDB, AIRPORT, etc. */
+  QVector<float> ranges; /* Range ring list (NM) */
+  MapType navType; /* VOR, NDB, AIRPORT, etc. */
+  QColor color;
 };
 
 QDataStream& operator>>(QDataStream& dataStream, map::RangeMarker& obj);
@@ -1265,7 +1375,12 @@ QDataStream& operator<<(QDataStream& dataStream, const map::RangeMarker& obj);
 // =====================================================================
 /* Distance measurement line. Can be converted to QVariant */
 struct DistanceMarker
+  : public MapBase
 {
+  DistanceMarker() : MapBase(map::MARK_DISTANCE)
+  {
+  }
+
   QString text; /* Text to display like VOR name and frequency */
   QColor color; /* Line color depends on origin (airport or navaid type */
   atools::geo::Pos from, to;
@@ -1296,8 +1411,7 @@ struct WeatherContext
 
   bool isEmpty() const
   {
-    return fsMetar.isEmpty() && asMetar.isEmpty() && noaaMetar.isEmpty() && vatsimMetar.isEmpty() &&
-           ivaoMetar.isEmpty();
+    return fsMetar.isEmpty() && asMetar.isEmpty() && noaaMetar.isEmpty() && vatsimMetar.isEmpty() && ivaoMetar.isEmpty();
   }
 
 };
@@ -1318,7 +1432,7 @@ QString ilsType(const MapIls& ils, bool gs, bool dme, const QString& separator);
 QString ilsTypeShort(const map::MapIls& ils);
 QString ilsTextShort(const MapIls& ils);
 
-QString holdingTextShort(const map::MapHolding& holding);
+QString holdingTextShort(const map::MapHolding& holding, bool user);
 
 QString edgeLights(const QString& type);
 QString patternDirection(const QString& type);
@@ -1365,7 +1479,14 @@ QString airspaceText(const map::MapAirspace& airspace);
 QString aircraftTypeString(const atools::fs::sc::SimConnectAircraft& aircraft); /* Helicopter, etc. */
 QString aircraftTextShort(const atools::fs::sc::SimConnectAircraft& aircraft);
 QString aircraftType(const atools::fs::sc::SimConnectAircraft& aircraft);
+
 bool isAircraftShadow(const map::MapBase *base);
+
+/* String describing all icing. narrow combines lines for map display and uses short texts. */
+QStringList aircraftIcing(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool narrow);
+
+/* true if any ice value is above one percent */
+bool aircraftHasIcing(const atools::fs::sc::SimConnectUserAircraft& aircraft);
 
 map::MapAirspaceTypes airspaceTypeFromDatabase(const QString& type);
 const QString& airspaceTypeToDatabase(map::MapAirspaceTypes type);
@@ -1381,7 +1502,7 @@ QString comTypeName(const QString& type);
 QString airportText(const map::MapAirport& airport, int elideName = 100);
 QString airportTextShort(const map::MapAirport& airport, int elideName = 100);
 
-QString airportMsaText(const map::MapAirportMsa& airportMsa);
+QString airportMsaText(const map::MapAirportMsa& airportMsa, bool user);
 QString airportMsaTextShort(const map::MapAirportMsa& airportMsa);
 
 QString vorFullShortText(const map::MapVor& vor);
@@ -1402,6 +1523,18 @@ QString userpointText(const MapUserpoint& userpoint, int elideName = 100);
 QString logEntryText(const MapLogbookEntry& logEntry);
 QString airwayText(const map::MapAirway& airway);
 
+/* Text like "Transition to KER runway 26". Text details (missed, approach and transition)
+ * are determined by the referenced leg */
+QString procedurePointText(const MapProcedurePoint& procPoint);
+QString procedurePointTextShort(const MapProcedurePoint& procPoint);
+
+// Map marker / user features ==============================================================
+QString rangeMarkText(const map::RangeMarker& obj);
+QString distanceMarkText(const map::DistanceMarker& obj);
+QString holdingMarkText(const map::HoldingMarker& obj);
+QString patternMarkText(const map::PatternMarker& obj);
+QString msaMarkText(const map::MsaMarker& obj);
+
 /* Altitude text for airways */
 QString airwayAltText(const MapAirway& airway);
 
@@ -1410,35 +1543,47 @@ QString airwayAltTextShort(const MapAirway& airway, bool addUnit = true, bool na
 
 QString magvarText(float magvar, bool shortText = false);
 
+/* Gets text for menu item */
+QString mapBaseText(const map::MapBase *base, int elideAirportName);
+
+/* Get corresponding icon for map object. Can be dynamically generated or resource depending on map object type */
+QIcon mapBaseIcon(const map::MapBase *base, int size);
+
 /* Get a number for surface quality to get the best runway. Higher numbers are better surface. */
 int surfaceQuality(const QString& surface);
 
 void updateUnits();
 
+/* Assign artificial ids to measurement and range rings which allow to identify them */
+int getNextUserFeatureId();
+
 } // namespace map
 
 /* Type info */
-Q_DECLARE_TYPEINFO(map::MapBase, Q_PRIMITIVE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapAirport, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapAirportMsa, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapAirspace, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapAirway, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapAirwayWaypoint, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapApron, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapBase, Q_PRIMITIVE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapHelipad, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapHolding, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapIls, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapLogbookEntry, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapNdb, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapObjectRefExt, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapParking, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapProcedurePoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapRunway, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapRunwayEnd, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapApron, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapTaxiPath, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapParking, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapStart, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapHelipad, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapVor, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapNdb, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapWaypoint, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapAirwayWaypoint, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapAirway, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapMarker, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapIls, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapTaxiPath, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::MapUserpointRoute, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapVor, Q_MOVABLE_TYPE);
+Q_DECLARE_TYPEINFO(map::MapWaypoint, Q_MOVABLE_TYPE);
 Q_DECLARE_TYPEINFO(map::PosCourse, Q_PRIMITIVE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapAirspace, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapLogbookEntry, Q_MOVABLE_TYPE);
-Q_DECLARE_TYPEINFO(map::MapObjectRefExt, Q_MOVABLE_TYPE);
 
 /* Type info and serializable objects */
 Q_DECLARE_TYPEINFO(map::MapObjectRef, Q_PRIMITIVE_TYPE);
@@ -1450,13 +1595,13 @@ Q_DECLARE_METATYPE(map::RangeMarker);
 Q_DECLARE_TYPEINFO(map::DistanceMarker, Q_MOVABLE_TYPE);
 Q_DECLARE_METATYPE(map::DistanceMarker);
 
-Q_DECLARE_TYPEINFO(map::TrafficPattern, Q_MOVABLE_TYPE);
-Q_DECLARE_METATYPE(map::TrafficPattern);
+Q_DECLARE_TYPEINFO(map::PatternMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_METATYPE(map::PatternMarker);
 
-Q_DECLARE_TYPEINFO(map::MapHolding, Q_MOVABLE_TYPE);
-Q_DECLARE_METATYPE(map::MapHolding);
+Q_DECLARE_TYPEINFO(map::HoldingMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_METATYPE(map::HoldingMarker);
 
-Q_DECLARE_TYPEINFO(map::MapAirportMsa, Q_MOVABLE_TYPE);
-Q_DECLARE_METATYPE(map::MapAirportMsa);
+Q_DECLARE_TYPEINFO(map::MsaMarker, Q_MOVABLE_TYPE);
+Q_DECLARE_METATYPE(map::MsaMarker);
 
 #endif // LITTLENAVMAP_MAPTYPES_H

@@ -187,6 +187,9 @@ private:
   void createTakeoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff,
                             float flownDistanceNm);
 
+  /* Prefill record for add dialog with values from current program state */
+  void prefillLogEntry(atools::sql::SqlRecord& rec);
+
   /* Callback function for X-Plane import */
   static void fetchAirportCoordinates(atools::geo::Pos& pos, QString& name, const QString& airportIdent);
 
@@ -199,7 +202,11 @@ private:
   /* Emit signals for changed */
   void logChanged(bool loadAll, bool keepSelection);
 
-  QString buildFilename(const atools::sql::SqlRecord* record, const atools::fs::pln::Flightplan& flightplan, const QString& suffix);
+  void planAttachLnmpln(atools::sql::SqlRecord *record, const QString& filename, QWidget *parent);
+  void perfAttachLnmperf(atools::sql::SqlRecord *record, const QString& filename, QWidget *parent);
+  void gpxAttach(atools::sql::SqlRecord *record, QWidget *parent, bool currentTrack);
+
+  QString buildFilename(const atools::sql::SqlRecord *record, const atools::fs::pln::Flightplan& flightplan, const QString& suffix);
 
   /* Remember last aircraft for fuel calculations */
   const atools::fs::sc::SimConnectUserAircraft *aircraftAtTakeoff = nullptr;

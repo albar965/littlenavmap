@@ -227,6 +227,7 @@
     <addaction name="actionMapAircraftCenterNow"/>
     <addaction name="actionMapShowMark"/>
     <addaction name="actionRouteCenter"/>
+    <addaction name="actionMapJumpCoordinatesMain"/>
     <addaction name="separator"/>
     <addaction name="actionMapClearAllHighlights"/>
     <addaction name="actionMapHideRangeRings"/>
@@ -253,6 +254,9 @@
     <addaction name="actionShortcutAircraftPerformance"/>
     <addaction name="separator"/>
     <addaction name="actionRouteSelectParking"/>
+    <addaction name="actionShowDepartureCustom"/>
+    <addaction name="actionShowApproachCustom"/>
+    <addaction name="separator"/>
     <addaction name="actionRouteEditMode"/>
     <addaction name="separator"/>
     <addaction name="actionRouteNewFromString"/>
@@ -339,6 +343,7 @@
      <addaction name="actionMapThemeStamenTerrain"/>
      <addaction name="actionMapThemeCartoLight"/>
      <addaction name="actionMapThemeCartoDark"/>
+     <addaction name="actionMapThemeHumanitarian"/>
      <addaction name="separator"/>
      <addaction name="actionMapThemeSimple"/>
      <addaction name="actionMapThemePlain"/>
@@ -348,11 +353,8 @@
      <property name="title">
       <string>&amp;Airports</string>
      </property>
-     <addaction name="actionMapShowAddonAirports"/>
      <addaction name="actionMapShowAirports"/>
-     <addaction name="actionMapShowSoftAirports"/>
      <addaction name="separator"/>
-     <addaction name="actionMapShowEmptyAirports"/>
     </widget>
     <widget class="QMenu" name="menuViewUserpoints">
      <property name="title">
@@ -416,6 +418,8 @@
     <addaction name="separator"/>
     <addaction name="actionMapShowAircraft"/>
     <addaction name="actionMapShowAircraftTrack"/>
+    <addaction name="actionMapShowSelectedAltRange"/>
+    <addaction name="actionMapShowEndurance"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowCompassRose"/>
     <addaction name="actionMapShowCompassRoseAttach"/>
@@ -623,9 +627,6 @@
                </property>
                <property name="statusTip">
                 <string>Airport ICAO, IATA, FAA or local code</string>
-               </property>
-               <property name="maxLength">
-                <number>8</number>
                </property>
                <property name="placeholderText">
                 <string>Ident</string>
@@ -1853,9 +1854,6 @@
                <property name="statusTip">
                 <string>Navaid ICAO ident</string>
                </property>
-               <property name="maxLength">
-                <number>6</number>
-               </property>
                <property name="placeholderText">
                 <string>Ident</string>
                </property>
@@ -1900,9 +1898,6 @@
                <property name="statusTip">
                 <string>Navaid two-letter code for region</string>
                </property>
-               <property name="maxLength">
-                <number>5</number>
-               </property>
                <property name="placeholderText">
                 <string>Region</string>
                </property>
@@ -1924,9 +1919,6 @@
                </property>
                <property name="statusTip">
                 <string>Navaid airport ICAO code</string>
-               </property>
-               <property name="maxLength">
-                <number>8</number>
                </property>
                <property name="placeholderText">
                 <string>Airport ICAO Code</string>
@@ -2556,17 +2548,22 @@
              </item>
              <item>
               <property name="text">
-               <string>Departure Procedures</string>
+               <string>Departure (SID)</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Arrival Procedures</string>
+               <string>Arrival (STAR)</string>
               </property>
              </item>
              <item>
               <property name="text">
-               <string>Only Approaches and Transitions</string>
+               <string>Arrival and Approach</string>
+              </property>
+             </item>
+             <item>
+              <property name="text">
+               <string>Approaches and Transitions</string>
               </property>
              </item>
             </widget>
@@ -2581,6 +2578,22 @@
             </widget>
            </item>
            <item>
+            <widget class="QLineEdit" name="lineEditProcedureSearchIdentFilter">
+             <property name="toolTip">
+              <string>Filter procedures by idents beginning with text</string>
+             </property>
+             <property name="statusTip">
+              <string>Filter procedures by idents beginning with text</string>
+             </property>
+             <property name="placeholderText">
+              <string>Ident</string>
+             </property>
+             <property name="clearButtonEnabled">
+              <bool>true</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
             <spacer name="horizontalSpacer">
              <property name="orientation">
               <enum>Qt::Horizontal</enum>
@@ -2592,6 +2605,56 @@
               </size>
              </property>
             </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonProcedureShowAll">
+             <property name="toolTip">
+              <string>Preview all listed procedures on the map</string>
+             </property>
+             <property name="statusTip">
+              <string>Preview all listed procedures on the map</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/approachall.svg</normaloff>:/littlenavmap/resources/icons/approachall.svg</iconset>
+             </property>
+             <property name="checkable">
+              <bool>true</bool>
+             </property>
+             <property name="checked">
+              <bool>false</bool>
+             </property>
+             <property name="flat">
+              <bool>false</bool>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="Line" name="line_2">
+             <property name="orientation">
+              <enum>Qt::Vertical</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonProcedureSearchReset">
+             <property name="toolTip">
+              <string>Clear all search filters</string>
+             </property>
+             <property name="statusTip">
+              <string>Clear all search filters</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/clear.svg</normaloff>:/littlenavmap/resources/icons/clear.svg</iconset>
+             </property>
+            </widget>
            </item>
            <item>
             <widget class="QPushButton" name="pushButtonProcedureSearchClearSelection">
@@ -2722,9 +2785,6 @@
              </property>
              <property name="statusTip">
               <string>Short ident of the userpoint</string>
-             </property>
-             <property name="maxLength">
-              <number>8</number>
              </property>
              <property name="placeholderText">
               <string>Ident</string>
@@ -3131,9 +3191,6 @@ Matches any visited airport.</string>
              <property name="statusTip">
               <string>Departure or destination airport ICAO code. </string>
              </property>
-             <property name="maxLength">
-              <number>8</number>
-             </property>
              <property name="placeholderText">
               <string>Airport ICAO</string>
              </property>
@@ -3348,9 +3405,6 @@ Matches any visited airport.</string>
                </property>
                <property name="statusTip">
                 <string>Departure airport ICAO code</string>
-               </property>
-               <property name="maxLength">
-                <number>8</number>
                </property>
                <property name="placeholderText">
                 <string>Departure ICAO</string>
@@ -4395,10 +4449,10 @@ Matches any visited airport.</string>
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Hide or show columns in flight plan table</string>
+              <string>Select header lines and flight plan table columns to show</string>
              </property>
              <property name="statusTip">
-              <string>Hide or show columns in flight plan table</string>
+              <string>Select header lines and flight plan table columns to show</string>
              </property>
              <property name="text">
               <string/>
@@ -5600,10 +5654,7 @@ relation to shown airport</string>
    <addaction name="actionMapDefaultDetails"/>
    <addaction name="actionMapLessDetails"/>
    <addaction name="separator"/>
-   <addaction name="actionMapShowAddonAirports"/>
    <addaction name="actionMapShowAirports"/>
-   <addaction name="actionMapShowSoftAirports"/>
-   <addaction name="separator"/>
    <addaction name="actionMapShowVor"/>
    <addaction name="actionMapShowNdb"/>
    <addaction name="actionMapShowWp"/>
@@ -5643,6 +5694,9 @@ relation to shown airport</string>
     <bool>true</bool>
    </attribute>
    <addaction name="actionRouteSelectParking"/>
+   <addaction name="actionShowDepartureCustom"/>
+   <addaction name="actionShowApproachCustom"/>
+   <addaction name="separator"/>
    <addaction name="actionRouteEditMode"/>
    <addaction name="separator"/>
    <addaction name="actionRouteNewFromString"/>
@@ -5772,19 +5826,6 @@ relation to shown airport</string>
            </property>
            <property name="textInteractionFlags">
             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="0" colspan="2">
-          <widget class="QLabel" name="labelProfileError">
-           <property name="text">
-            <string/>
-           </property>
-           <property name="wordWrap">
-            <bool>true</bool>
-           </property>
-           <property name="textInteractionFlags">
-            <set>Qt::TextSelectableByMouse</set>
            </property>
           </widget>
          </item>
@@ -6874,7 +6915,7 @@ Disabled if a navdatabase does not allow it.</string>
         <item>
          <widget class="QLabel" name="labelRouteCalcCruiseAltitude">
           <property name="text">
-           <string>&amp;Cruise Altitude:</string>
+           <string>&amp;Cruise altitude for calculation:</string>
           </property>
           <property name="buddy">
            <cstring>spinBoxRouteCalcCruiseAltitude</cstring>
@@ -7635,13 +7676,13 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/airport.svg</normaloff>:/littlenavmap/resources/icons/airport.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Airports with &amp;hard Runways</string>
+    <string>Show &amp;Airports</string>
    </property>
    <property name="toolTip">
-    <string>Show airports with hard runways on map</string>
+    <string>Show airports on the map</string>
    </property>
    <property name="statusTip">
-    <string>Show airports with hard runways on map</string>
+    <string>Show airports on the map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+H</string>
@@ -7788,7 +7829,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/rangerings.svg</normaloff>:/littlenavmap/resources/icons/rangerings.svg</iconset>
    </property>
    <property name="text">
-    <string>Add Range &amp;Rings</string>
+    <string>Add Range &amp;Rings ...</string>
    </property>
    <property name="toolTip">
     <string>Add range rings at this position to map</string>
@@ -7828,54 +7869,6 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+H</string>
-   </property>
-  </action>
-  <action name="actionMapShowSoftAirports">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airportsoft.svg</normaloff>:/littlenavmap/resources/icons/airportsoft.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show Airports with &amp;soft Runways</string>
-   </property>
-   <property name="toolTip">
-    <string>Show airports with soft or water runways on map</string>
-   </property>
-   <property name="statusTip">
-    <string>Show airports with soft or water runways on map</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Alt+S</string>
-   </property>
-  </action>
-  <action name="actionMapShowEmptyAirports">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airportempty.svg</normaloff>:/littlenavmap/resources/icons/airportempty.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show &amp;empty Airports</string>
-   </property>
-   <property name="toolTip">
-    <string>Show empty airports on map</string>
-   </property>
-   <property name="statusTip">
-    <string>Show empty airports on map</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Alt+E</string>
    </property>
   </action>
   <action name="actionMapHideOneRangeRing">
@@ -8181,7 +8174,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/parkingstartset.svg</normaloff>:/littlenavmap/resources/icons/parkingstartset.svg</iconset>
    </property>
    <property name="text">
-    <string>Select a &amp;Start Position for Departure ...</string>
+    <string>Select a &amp;Start Position ...</string>
    </property>
    <property name="toolTip">
     <string>Select start position for flight plan departure</string>
@@ -8230,30 +8223,6 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="menuRole">
     <enum>QAction::ApplicationSpecificRole</enum>
-   </property>
-  </action>
-  <action name="actionMapShowAddonAirports">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/airportaddon.svg</normaloff>:/littlenavmap/resources/icons/airportaddon.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Force &amp;Show Add-on Airports</string>
-   </property>
-   <property name="toolTip">
-    <string>Force map to show add-on airports</string>
-   </property>
-   <property name="statusTip">
-    <string>Force map to show add-on airports</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Alt+O</string>
    </property>
   </action>
   <action name="actionMapShowGrid">
@@ -8713,6 +8682,23 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Ctrl+Alt+2</string>
    </property>
   </action>
+  <action name="actionMapThemeHumanitarian">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Humanitarian</string>
+   </property>
+   <property name="toolTip">
+    <string>Humanitarian online map theme</string>
+   </property>
+   <property name="statusTip">
+    <string>Humanitarian online map theme</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+6</string>
+   </property>
+  </action>
   <action name="actionMapThemePlain">
    <property name="checkable">
     <bool>true</bool>
@@ -8727,7 +8713,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Plain offline map theme</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Alt+7</string>
+    <string>Ctrl+Alt+8</string>
    </property>
   </action>
   <action name="actionMapThemeAtlas">
@@ -8744,7 +8730,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Atlas offline map theme</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Alt+8</string>
+    <string>Ctrl+Alt+9</string>
    </property>
   </action>
   <action name="actionMapThemeSimple">
@@ -8761,7 +8747,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Simple offline map theme</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Alt+6</string>
+    <string>Ctrl+Alt+7</string>
    </property>
   </action>
   <action name="actionHelpMapLegend">
@@ -9148,46 +9134,46 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Ctrl+Shift+R</string>
    </property>
   </action>
-  <action name="actionRouteShowApproachesCustom">
+  <action name="actionRouteShowApproachCustom">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/approachcustom.svg</normaloff>:/littlenavmap/resources/icons/approachcustom.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/runwaydest.svg</normaloff>:/littlenavmap/resources/icons/runwaydest.svg</iconset>
    </property>
    <property name="text">
-    <string>Add custom approach for %1</string>
+    <string>Select Approach &amp;Runway for %1 ...</string>
    </property>
    <property name="toolTip">
-    <string>Add a custom approach to the flight plan</string>
+    <string>Select approach runway for airport</string>
    </property>
    <property name="statusTip">
     <string>Add a custom approach to the flight plan</string>
    </property>
    <property name="shortcut">
-    <string>Alt+Shift+R</string>
+    <string>Alt+Shift+U</string>
    </property>
   </action>
-  <action name="actionSearchShowApproachesCustom">
+  <action name="actionSearchShowApproachCustom">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/approachcustom.svg</normaloff>:/littlenavmap/resources/icons/approachcustom.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/runwaydest.svg</normaloff>:/littlenavmap/resources/icons/runwaydest.svg</iconset>
    </property>
    <property name="text">
-    <string>Add custom approach for %1</string>
+    <string>Select Approach &amp;Runway for %1 ...</string>
    </property>
    <property name="toolTip">
-    <string>Add a custom approach to the flight plan</string>
+    <string>Select approach runway for airport</string>
    </property>
    <property name="statusTip">
     <string>Add a custom approach to the flight plan</string>
    </property>
    <property name="shortcut">
-    <string>Alt+Shift+R</string>
+    <string>Alt+Shift+U</string>
    </property>
   </action>
   <action name="actionInfoApproachAttach">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/routeadd.svg</normaloff>:/littlenavmap/resources/icons/routeadd.svg</iconset>
+     <normaloff>:/littlenavmap/resources/icons/approachselect.svg</normaloff>:/littlenavmap/resources/icons/approachselect.svg</iconset>
    </property>
    <property name="text">
     <string>Insert %1 into Flight Plan</string>
@@ -9463,7 +9449,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/compassrose.svg</normaloff>:/littlenavmap/resources/icons/compassrose.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Compass Rose</string>
+    <string>Show &amp;Compass Rose</string>
    </property>
    <property name="toolTip">
     <string>Show compass rose around user aircraft</string>
@@ -10985,7 +10971,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/fileopen.svg</normaloff>:/littlenavmap/resources/icons/fileopen.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Open Flight Plan %1</string>
+    <string>&amp;Open Flight Plan from %1</string>
    </property>
    <property name="toolTip">
     <string>Open flight plan from logbook entry</string>
@@ -11000,7 +10986,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/aircraftperfload.svg</normaloff>:/littlenavmap/resources/icons/aircraftperfload.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Open Aircraft Performance %1</string>
+    <string>&amp;Open Aircraft Performance from %1</string>
    </property>
    <property name="toolTip">
     <string>Open aircraft performance file from logbook entry</string>
@@ -11208,19 +11194,19 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Return</string>
    </property>
   </action>
-  <action name="actionRouteVisibleColumns">
+  <action name="actionRouteDisplayOptions">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/settingsroute.svg</normaloff>:/littlenavmap/resources/icons/settingsroute.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Select visible Columns ...</string>
+    <string>&amp;Display Options ...</string>
    </property>
    <property name="toolTip">
-    <string>Hide or show columns in flight plan table</string>
+    <string>Select visible columns and header lines for flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Hide or show columns in flight plan table</string>
+    <string>Select visible columns and header lines for flight plan</string>
    </property>
   </action>
   <action name="actionRouteSaveAsXIvap">
@@ -12152,6 +12138,213 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Remove this holding</string>
    </property>
   </action>
+  <action name="actionRouteShowDepartureCustom">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/runwaydepart.svg</normaloff>:/littlenavmap/resources/icons/runwaydepart.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Select &amp;Departure Runway for %1 ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Select departure runway for airport</string>
+   </property>
+   <property name="statusTip">
+    <string>Add a custom approach to the flight plan</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+R</string>
+   </property>
+  </action>
+  <action name="actionSearchShowDepartureCustom">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/runwaydepart.svg</normaloff>:/littlenavmap/resources/icons/runwaydepart.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Select &amp;Departure Runway for %1 ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Select departure runway for airport</string>
+   </property>
+   <property name="statusTip">
+    <string>Add a custom approach to the flight plan</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+R</string>
+   </property>
+  </action>
+  <action name="actionShowApproachCustom">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/runwaydest.svg</normaloff>:/littlenavmap/resources/icons/runwaydest.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Select Destination &amp;Runway ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Select runway for destination airport in flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Select runway for destination airport in flight plan</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+U</string>
+   </property>
+  </action>
+  <action name="actionShowDepartureCustom">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/runwaydepart.svg</normaloff>:/littlenavmap/resources/icons/runwaydepart.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Select &amp;Departure Runway ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Select runway for departure airport in flight plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Select runway for departure airport in flight plan</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+R</string>
+   </property>
+  </action>
+  <action name="actionMapJumpCoordinatesMain">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/zoomin.svg</normaloff>:/littlenavmap/resources/icons/zoomin.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Jump to Coordinates ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Jump to coordinates and zoom distance on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Set center mark for distance search</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Shift+Home</string>
+   </property>
+  </action>
+  <action name="actionMapJumpCoordinates">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/zoomin.svg</normaloff>:/littlenavmap/resources/icons/zoomin.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Jump to Coordinates ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Jump to coordinates and zoom distance on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Set center mark for distance search</string>
+   </property>
+  </action>
+  <action name="actionMapShowEndurance">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/endurance.svg</normaloff>:/littlenavmap/resources/icons/endurance.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Aircraft &amp;Endurance</string>
+   </property>
+   <property name="toolTip">
+    <string>Show a range ring for the aircraft endurance based on current fuel flow and amount</string>
+   </property>
+   <property name="statusTip">
+    <string>Show aircraft endurance based on current fuel flow and amount</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+G</string>
+   </property>
+  </action>
+  <action name="actionInfoDisplayOptions">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/settingsroute.svg</normaloff>:/littlenavmap/resources/icons/settingsroute.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Display Options ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Select the fields to show in the aircraft progress tab</string>
+   </property>
+   <property name="statusTip">
+    <string>Select the fields to show in the aircraft progress tab.</string>
+   </property>
+  </action>
+  <action name="actionSearchProcedureShowAll">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/approachall.svg</normaloff>:/littlenavmap/resources/icons/approachall.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Preview all Procedures</string>
+   </property>
+   <property name="toolTip">
+    <string>Preview all listed procedures on the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Preview all listed procedures on the map</string>
+   </property>
+  </action>
+  <action name="actionMapShowSelectedAltRange">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>false</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/altrange.svg</normaloff>:/littlenavmap/resources/icons/altrange.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show Selected &amp;Altitude Range</string>
+   </property>
+   <property name="toolTip">
+    <string>Show range for selected autopilot altitude</string>
+   </property>
+   <property name="statusTip">
+    <string>Show range for selected autopilot altitude</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+K</string>
+   </property>
+  </action>
+  <action name="actionProfileShowVerticalTrack">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/verticaltrack.svg</normaloff>:/littlenavmap/resources/icons/verticaltrack.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show &amp;Vertical Track</string>
+   </property>
+   <property name="toolTip">
+    <string>Show vertical track line</string>
+   </property>
+   <property name="statusTip">
+    <string>Show vertical track line</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12337,8 +12530,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>

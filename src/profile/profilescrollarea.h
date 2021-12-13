@@ -112,6 +112,9 @@ public:
   void hideTooltip();
   bool isTooltipVisible() const;
 
+  /* Bring splitter to a resonable size after first start */
+  void restoreSplitter();
+
 signals:
   /* Show flight plan waypoint or user position on map. x is widget position. */
   void showPosAlongFlightplan(int x, bool doubleClick);

@@ -51,17 +51,16 @@ int RouteAltitude::indexForDistance(float distanceToDest) const
 
   float distFromStart = route->getTotalDistance() - distanceToDest;
 
-  // Search through all legs to find one that overlaps with distanceToDest
-  QVector<RouteAltitudeLeg>::const_iterator it =
-    std::lower_bound(begin(), end(), distFromStart,
-                     [](const RouteAltitudeLeg& l1, float dist) -> bool
+  for(int index = 0; index < size(); index++)
   {
-    // binary predicate which returns ​true if the first argument is less than (i.e. is ordered before) the second.
-    return l1.getDistanceFromStart() < dist;
-  });
+    const RouteAltitudeLeg& leg = at(index);
 
-  if(it != end())
-    return static_cast<int>(std::distance(begin(), it));
+    if(leg.isMissed() || leg.isAlternate())
+      break;
+
+    if(distFromStart < leg.getDistanceFromStart())
+      return index;
+  }
 
   return map::INVALID_INDEX_VALUE;
 }
@@ -251,15 +250,13 @@ bool RouteAltitude::hasErrors() const
                                 getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE);
 }
 
-QString RouteAltitude::getErrorStrings(QStringList& toolTip) const
+QStringList RouteAltitude::getErrorStrings() const
 {
-  if(!errors.isEmpty())
-  {
-    toolTip.append(errors);
-    return tr("Cannot calculate elevation profile.");
-  }
-  else
-    return QString();
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << errors;
+#endif
+
+  return errors;
 }
 
 QVector<float> RouteAltitude::getAltitudes() const
@@ -301,6 +298,10 @@ QVector<float> RouteAltitude::getAltitudes() const
         retval.append(route->getCruisingAltitudeFeet());
     }
   }
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << retval;
+#endif
 
   return retval;
 }
@@ -354,7 +355,7 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
         if(perf.isSpeedValid())
           result.timeToDest = activeLeg.getTimeFromDistToDestination(distFromDeparture);
 
-        // Calculate time and fuel to TOD ===================================================
+        // Calculate time and fuel to top of descent ===================================================
         int todIdx = getTopOfDescentLegIndex();
         float todDistanceFromDeparture = getTopOfDescentDistance();
 
@@ -385,7 +386,40 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
 
           if(perf.isSpeedValid())
             result.timeToTod = result.timeToDest - todLeg.getTimeFromDistToDestination(todDistanceFromDeparture);
-        }
+        } // if(todDistanceFromDeparture >= 0.f && todDistanceFromDeparture ...
+
+        // Calculate time and fuel to top of climb  ===================================================
+        int tocIdx = getTopOfClimbLegIndex();
+        float tocDistanceFromDeparture = getTopOfClimbDistance();
+
+        if(tocDistanceFromDeparture >= 0.f && tocDistanceFromDeparture < map::INVALID_DISTANCE_VALUE &&
+           tocIdx != map::INVALID_INDEX_VALUE)
+        {
+          const RouteAltitudeLeg& tocLeg = value(tocIdx);
+
+          if(perf.isFuelFlowValid())
+          {
+            // Calculate fuel and time from TOC to destination
+            float fuelTocToDist = tocLeg.getFuelFromDistToDestination(tocDistanceFromDeparture);
+
+            // Calculate fuel and time from aircraft to TOC
+            float fuelToToc = fuelToDest - fuelTocToDist;
+
+            if(perf.useFuelAsVolume())
+            {
+              result.fuelLbsToToc = atools::geo::fromGalToLbs(perf.isJetFuel(), fuelToToc);
+              result.fuelGalToToc = fuelToToc;
+            }
+            else
+            {
+              result.fuelLbsToToc = fuelToToc;
+              result.fuelGalToToc = atools::geo::fromLbsToGal(perf.isJetFuel(), fuelToToc);
+            }
+          }
+
+          if(perf.isSpeedValid())
+            result.timeToToc = result.timeToDest - tocLeg.getTimeFromDistToDestination(tocDistanceFromDeparture);
+        } // if(tocDistanceFromDeparture >= 0.f && tocDistanceFromDeparture ...
       } // if(distanceToDest > 0.f && distanceToDest < map::INVALID_DISTANCE_VALUE)
     } // if(!alternate)
 
@@ -793,7 +827,7 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
     }
   }
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ROUTE_ALT_SIMPLIFY
   qDebug() << Q_FUNC_INFO
            << leftAlt->ident
            << leftAlt->procedureType
@@ -837,7 +871,7 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
     // 0 = left, 1 = right
     QPointF mid = line.pointAt(t);
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ROUTE_ALT_SIMPLIFY
     qDebug() << Q_FUNC_INFO << "old" << midAlt->y2() << "new" << mid.y();
 #endif
 
@@ -848,7 +882,7 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
     if(leftSkippedAlt != nullptr)
       newAlt = adjustAltitudeForRestriction(newAlt, leftSkippedAlt->restriction);
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ROUTE_ALT_SIMPLIFY
     qDebug() << Q_FUNC_INFO << "after adjust" << newAlt;
 #endif
 
@@ -871,14 +905,13 @@ void RouteAltitude::collectErrors(const QStringList& altRestrErrors)
 {
   if(!altRestrErrors.isEmpty())
   {
-    errors.append(tr("Check the cruise altitude and procedures."));
+    errors.append(tr("Check the cruise altitude and procedures of the flight plan."));
     errors.append(altRestrErrors);
   }
-  else if(!(getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE &&
-            getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE))
-    errors.append(tr("Cannot calculate top of climb or top of descent.\n"
-                     "The flight plan is either too short or the cruise altitude is too high.\n"
-                     "Also check the climb and descent speeds in the aircraft performance data."));
+  else if(!(getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE && getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE))
+    errors.append(tr("Cannot calculate top of climb or top of descent. "
+                     "The flight plan is either too short or the cruise altitude is too high. "
+                     "Also check the climb and descent speeds in the aircraft performance."));
 }
 
 void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, float cruiseAltitudeFt)
@@ -898,40 +931,51 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
 
   errors.clear();
   clearAll();
-
   bool invalid = false;
-  if(route->getTotalDistance() < 0.5f)
-  {
-    errors.append(tr("Flight plan is too short."));
-    qWarning() << Q_FUNC_INFO << "Flight plan too short";
-    invalid = true;
-  }
 
-  if(cruiseAltitude < 100.f)
-  {
-    errors.append(tr("Cruise altitude is too low."));
-    qWarning() << Q_FUNC_INFO << "Cruise altitude is too low";
+  // Collect basic issues ================================================
+  if(route->isEmpty())
     invalid = true;
-  }
+  else if(route->getSizeWithoutAlternates() == 1)
+    invalid = true;
 
-  const RouteLeg destinationLeg = route->getDestinationAirportLeg();
-  if(!destinationLeg.isValidWaypoint() || destinationLeg.getMapObjectType() != map::AIRPORT)
+  // Check again if there is a plan ===============================================
+  if(!invalid)
   {
-    errors.append(tr("Destination is not valid. Must be an airport."));
-    qWarning() << Q_FUNC_INFO << "Destination is not valid or neither airport nor runway";
-    invalid = true;
-  }
+    if(route->getTotalDistance() < 0.5f)
+    {
+      errors.append(tr("Flight plan is too short."));
+      qWarning() << Q_FUNC_INFO << "Flight plan too short";
+      invalid = true;
+    }
 
-  const RouteLeg departureLeg = route->getDepartureAirportLeg();
-  if(!departureLeg.isValidWaypoint() || departureLeg.getMapObjectType() != map::AIRPORT)
-  {
-    errors.append(tr("Departure is not valid. Must be an airport."));
-    qWarning() << Q_FUNC_INFO << "Departure is not valid or neither airport nor runway";
-    invalid = true;
+    if(cruiseAltitude < 100.f)
+    {
+      errors.append(tr("Cruise altitude is too low."));
+      qWarning() << Q_FUNC_INFO << "Cruise altitude is too low";
+      invalid = true;
+    }
+
+    const RouteLeg destinationLeg = route->getDestinationAirportLeg();
+    if(!destinationLeg.isValidWaypoint() || destinationLeg.getMapObjectType() != map::AIRPORT)
+    {
+      errors.append(tr("Destination is not valid. Must be an airport."));
+      qWarning() << Q_FUNC_INFO << "Destination is not valid or neither airport nor runway";
+      invalid = true;
+    }
+
+    const RouteLeg departureLeg = route->getDepartureAirportLeg();
+    if(!departureLeg.isValidWaypoint() || departureLeg.getMapObjectType() != map::AIRPORT)
+    {
+      errors.append(tr("Departure is not valid. Must be an airport."));
+      qWarning() << Q_FUNC_INFO << "Departure is not valid or neither airport nor runway";
+      invalid = true;
+    }
   }
 
   if(!invalid)
   {
+    // Flight plan is valid so far s===============================================
     QStringList altRestrErrors;
     calculate(altRestrErrors);
     collectErrors(altRestrErrors);
@@ -975,7 +1019,7 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
           break;
       }
     }
-  }
+  } // if(!invalid)
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
@@ -992,9 +1036,6 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
   qDebug() << "climbRateWindFtPerNm" << climbRateWindFtPerNm << "descentRateWindFtPerNm" << descentRateWindFtPerNm
            << "cruiseAltitide" << cruiseAltitude;
 #endif
-
-  if(!errors.isEmpty())
-    qWarning() << "errors" << errors;
   qDebug() << Q_FUNC_INFO;
 }
 
@@ -1014,25 +1055,30 @@ void RouteAltitude::calculate(QStringList& altRestErrors)
   if(calcTopOfDescent)
     calculateArrival();
 
-  // Check for violations because of too low cruise
-  for(int i = 0; i < size(); i++)
+  // Check for violations because of too low cruise but only if TOD and TOC calculation succeeded
+  if(getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE && getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE)
   {
-    const RouteAltitudeLeg& leg = value(i);
-
-    if(!leg.isMissed() && !leg.isAlternate())
+    for(int i = 0; i < size(); i++)
     {
-      QString errorMessage;
-      bool err = violatesAltitudeRestriction(errorMessage, i);
+      const RouteAltitudeLeg& leg = value(i);
 
-      if(err)
+      if(!leg.isMissed() && !leg.isAlternate())
       {
-        qWarning() << Q_FUNC_INFO << "violating messge" << errorMessage << "leg" << leg;
-        altRestErrors.append(errorMessage);
+        QString errorMessage;
+        bool err = violatesAltitudeRestriction(errorMessage, i);
+
+        if(err)
+        {
+#ifdef DEBUG_INFORMATION
+          qWarning() << Q_FUNC_INFO << "violating messge" << errorMessage << "leg" << leg;
+#endif
+          altRestErrors.append(errorMessage);
+        }
       }
     }
   }
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
   qDebug() << Q_FUNC_INFO << "Before cleanup ==================================";
   qDebug() << Q_FUNC_INFO << *this;
 #endif
@@ -1067,7 +1113,7 @@ void RouteAltitude::calculate(QStringList& altRestErrors)
   // Set coordinates into legs
   fillGeometry();
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
   qDebug() << Q_FUNC_INFO << "Finished ==================================";
   qDebug() << Q_FUNC_INFO << *this;
 #endif
@@ -1663,7 +1709,7 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
 
       float climbHeadWind = 0.f, cruiseHeadWind = 0.f, descentHeadWind = 0.f;
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
       qDebug() << Q_FUNC_INFO << "=========== leg #" << i
                << "wind: climb" << climbWind << "cruise" << cruiseWind << "descent" << descentWind;
 #endif
@@ -1856,7 +1902,7 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
 
   averageGroundSpeed = getTotalDistance() / travelTime;
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
   qDebug() << "================================================================================================";
   qDebug() << Q_FUNC_INFO << *this;
 #endif
@@ -1890,6 +1936,7 @@ QDebug operator<<(QDebug out, const FuelTimeResult& obj)
 
 QDebug operator<<(QDebug out, const RouteAltitude& obj)
 {
+  QDebugStateSaver saver(out);
   out << "TOC dist" << obj.getTopOfClimbDistance()
       << "index" << obj.getTopOfClimbLegIndex()
       << "TOD dist" << obj.getTopOfDescentDistance()

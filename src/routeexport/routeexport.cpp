@@ -42,6 +42,7 @@
 #include <QDir>
 #include <QProcessEnvironment>
 #include <QXmlStreamReader>
+#include <QStringBuilder>
 
 using atools::fs::pln::FlightplanIO;
 
@@ -55,6 +56,9 @@ RouteExport::RouteExport(MainWindow *parent)
 
   // Save now button in list
   connect(exportAllDialog, &RouteMultiExportDialog::saveNowButtonClicked, this, &RouteExport::exportType);
+
+  // Export all selected in button bar
+  connect(exportAllDialog, &RouteMultiExportDialog::saveSelectedButtonClicked, this, &RouteExport::routeMultiExport);
 }
 
 RouteExport::~RouteExport()
@@ -87,7 +91,7 @@ void RouteExport::postDatabaseLoad()
 void RouteExport::exportType(RouteExportFormat format)
 {
   // Export only selected type with file dialog - triggered from multiexport dialog
-  if(format.copyForManualSaveFileDialog(NavApp::getRouteFilepath()).callExport())
+  if(format.copyForManualSaveFileDialog().callExport())
     mainWindow->setStatusMessage(tr("Exported flight plan."));
 }
 
@@ -106,7 +110,7 @@ void RouteExport::routeMultiExport()
   QStringList errorFormats;
   for(const RouteExportFormat& fmt : exportFormatMap->getSelected())
   {
-    if(fmt.isSelected() && !fmt.isPathValid())
+    if(fmt.isSelected() && (!fmt.isPathValid() || !fmt.isPatternValid()))
       errorFormats.append(fmt.getComment());
   }
 
@@ -114,11 +118,11 @@ void RouteExport::routeMultiExport()
   {
     // One or more paths are not valid - do not export
     QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                         tr("<p>The following export formats have an invalid path:</p>"
+                         tr("<p>The following export formats have an invalid path or filename pattern:</p>"
                               "<ul><li>%1</li></ul>"
                                 "<p>Export stopped.</p>"
                                   "<p>Go to: Main menu -&gt; &quot;File&quot; -&gt; &quot;Multiexport Flight Plan Options&quot; or "
-                                    "press Ctrl+Alt+Shift+M and correct the path highlighted in red.</p>").
+                                    "press Ctrl+Alt+Shift+M and correct the fields highlighted in red.</p>").
                          arg(errorFormats.join("</li><li>")));
   }
   else
@@ -130,8 +134,8 @@ void RouteExport::routeMultiExport()
       int numExported = 0;
       for(const RouteExportFormat& fmt : exportFormatMap->getSelected())
       {
-        if(fmt.isSelected() && fmt.isPathValid())
-          numExported += fmt.copyForMultiSave(NavApp::getRouteFilepath()).callExport();
+        if(fmt.isSelected() && fmt.isPathValid() && fmt.isPatternValid())
+          numExported += fmt.copyForMultiSave().callExport();
       }
       if(numExported == 0)
         mainWindow->setStatusMessage(tr("No flight plan exported."));
@@ -168,9 +172,8 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
   if(format.isManual())
     // Called from menu actions ======================================
     routeFile = dialog->saveFileDialog(tr("Export for %1").arg(format.getComment()),
-                                       tr("%1 Files %2;;All Files (*)").
-                                       arg(format.getFormat().toUpper()).arg(format.getFilter()),
-                                       format.getFormat(), settingsPrefix, path, filename, dontComfirmOverwrite);
+                                       tr("%1 Files %2;;All Files (*)").arg(format.getFormat()).arg(format.getFilter()),
+                                       format.getSuffix(), settingsPrefix, path, filename, dontComfirmOverwrite);
   else
   {
     // Called from multiexport action or multiexport dialog ======================================
@@ -181,12 +184,7 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
     }
 
     // Build filename
-    QString name;
-    if(format.isAppendToFile())
-      name = format.getPath();
-    else
-      name = format.getPath() + QDir::separator() + filename;
-
+    QString name = format.getPath() % QDir::separator() % filename;
     RouteMultiExportDialog::ExportOptions opts = exportAllDialog->getExportOptions();
 
     // Force open of file dialog since this was called from multiexport dialog
@@ -198,12 +196,8 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
       // Show file dialog for all formats selected
       case RouteMultiExportDialog::FILEDIALOG:
         routeFile = dialog->saveFileDialog(
-          tr("Export for %1").arg(format.getComment()),
-          tr("%1 Files %2;;All Files (*)").
-          arg(format.getFormat().toUpper()).arg(format.getFilter()),
-          format.getFormat(),
-          QString() /* settingsPrefix */,
-          format.getPath(), filename, dontComfirmOverwrite);
+          tr("Export for %1").arg(format.getComment()), tr("%1 Files %2;;All Files (*)").arg(format.getFormat()).arg(format.getFilter()),
+          format.getSuffix(), QString() /* settingsPrefix */, format.getPath(), filename, dontComfirmOverwrite);
         break;
 
       case RouteMultiExportDialog::RENAME_EXISTING:
@@ -226,6 +220,11 @@ QString RouteExport::exportFileMulti(const RouteExportFormat& format, const QStr
   return exportFile(format, QString() /* settingsPrefix */, QString() /* path */, filename, format.isAppendToFile());
 }
 
+QString RouteExport::exportFileMulti(const RouteExportFormat& format)
+{
+  return exportFile(format, QString() /* settingsPrefix */, QString() /* path */, buildDefaultFilename(format), format.isAppendToFile());
+}
+
 void RouteExport::rotateFile(const QString& filename)
 {
   if(!QFile::exists(filename))
@@ -233,18 +232,18 @@ void RouteExport::rotateFile(const QString& filename)
   else
   {
     QString separator = QFileInfo(filename).completeBaseName().contains(" ") ? " " : "_";
-    atools::io::FileRoller(4, "${base}" + separator + "${num}.${ext}").rollFile(filename);
+    atools::io::FileRoller(4, "${base}" % separator % "${num}.${ext}").rollFile(filename);
   }
 }
 
 bool RouteExport::routeExportPlnMan()
 {
-  return routeExportPln(exportFormatMap->getForManualSave(rexp::PLN, NavApp::getRouteFilepath()));
+  return routeExportPln(exportFormatMap->getForManualSave(rexp::PLN));
 }
 
 bool RouteExport::routeExportPlnMsfsMan()
 {
-  return routeExportPln(exportFormatMap->getForManualSave(rexp::PLNMSFS, NavApp::getRouteFilepath()));
+  return routeExportPln(exportFormatMap->getForManualSave(rexp::PLNMSFS));
 }
 
 bool RouteExport::routeExportLnm(const RouteExportFormat& format)
@@ -254,8 +253,7 @@ bool RouteExport::routeExportLnm(const RouteExportFormat& format)
   if(routeValidateMulti(format))
   {
     QString routeFile = exportFile(format, "Route/LnmPln",
-                                   NavApp::getCurrentSimulatorFilesPath(), buildDefaultFilename(format),
-                                   false /* dontComfirmOverwrite */);
+                                   NavApp::getCurrentSimulatorFilesPath(), buildDefaultFilename(format), false /* dontComfirmOverwrite */);
 
     if(!routeFile.isEmpty())
     {
@@ -293,12 +291,11 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
   {
     // Use always same settings prefix for MSFS independent of scenery library selection
     // Other simulators share same PLN settings prefix also independent of scenery library
-    QString shortName = format.getType() == rexp::PLNMSFS ?
-                        atools::fs::FsPaths::typeToShortName(atools::fs::FsPaths::MSFS) : "Pln";
+    QString shortName = format.getType() == rexp::PLNMSFS ? atools::fs::FsPaths::typeToShortName(atools::fs::FsPaths::MSFS) : "Pln";
 
-    QString routeFile = exportFile(format, "Route/Pln" + shortName,
+    QString routeFile = exportFile(format, "Route/Pln" % shortName,
                                    NavApp::getCurrentSimulatorFilesPath(),
-                                   buildDefaultFilename(format, ".pln", format.getType() == rexp::PLNMSFS),
+                                   buildDefaultFilename(format, format.getType() == rexp::PLNMSFS),
                                    false /* dontComfirmOverwrite */);
 
     if(!routeFile.isEmpty())
@@ -308,18 +305,15 @@ bool RouteExport::routeExportInternalPln(const RouteExportFormat& format)
       switch(format.getType())
       {
         case rexp::PLNANNOTATED:
-          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC,
-                                   std::bind(&FlightplanIO::savePlnAnnotated, flightplanIO, _1, _2));
+          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC, std::bind(&FlightplanIO::savePlnAnnotated, flightplanIO, _1, _2));
           break;
 
         case rexp::PLN:
-          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC,
-                                   std::bind(&FlightplanIO::savePln, flightplanIO, _1, _2));
+          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC, std::bind(&FlightplanIO::savePln, flightplanIO, _1, _2));
           break;
 
         case rexp::PLNMSFS:
-          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_MSFS,
-                                   std::bind(&FlightplanIO::savePlnMsfs, flightplanIO, _1, _2));
+          result = exportFlighplan(routeFile, rf::DEFAULT_OPTS_MSFS, std::bind(&FlightplanIO::savePlnMsfs, flightplanIO, _1, _2));
           break;
 
         case rexp::PLNISG:
@@ -349,7 +343,7 @@ bool RouteExport::routeExportFms3Multi(const RouteExportFormat& format)
 
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("-", ".fms"));
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
@@ -382,7 +376,7 @@ bool RouteExport::routeExportFms11(const RouteExportFormat& format)
     else
       xpBasePath = atools::buildPathNoCase({xpBasePath, "Output", "FMS plans"});
 
-    QString routeFile = exportFile(format, "Route/Fms11", xpBasePath, buildDefaultFilenameShort("-", ".fms"),
+    QString routeFile = exportFile(format, "Route/Fms11", xpBasePath, buildDefaultFilename(format),
                                    false /* dontComfirmOverwrite */);
 
     if(!routeFile.isEmpty())
@@ -418,7 +412,7 @@ bool RouteExport::routeExportInternalFlp(const RouteExportFormat& format, bool c
     QString suffix = msfs || crj ? ".flp" : "01.flp";
 
     // <Documents>/Aerosoft/Airbus/Flightplans.
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), suffix));
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
@@ -448,7 +442,7 @@ bool RouteExport::routeExportInternalFlp(const RouteExportFormat& format, bool c
 
 bool RouteExport::routeExportFlightgearMan()
 {
-  return routeExportFlightgear(exportFormatMap->getForManualSave(rexp::FLIGHTGEAR, NavApp::getRouteFilepath()));
+  return routeExportFlightgear(exportFormatMap->getForManualSave(rexp::FLIGHTGEAR));
 }
 
 bool RouteExport::routeExportFlightgear(const RouteExportFormat& format)
@@ -456,8 +450,7 @@ bool RouteExport::routeExportFlightgear(const RouteExportFormat& format)
   qDebug() << Q_FUNC_INFO;
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFile(format, "Route/FlightGear", atools::documentsDir(),
-                                   buildDefaultFilename(format, ".fgfp"),
+    QString routeFile = exportFile(format, "Route/FlightGear", atools::documentsDir(), buildDefaultFilename(format),
                                    false /* dontComfirmOverwrite */);
 
     if(!routeFile.isEmpty())
@@ -485,7 +478,7 @@ bool RouteExport::routeExportRxpGnsMulti(const RouteExportFormat& format)
 
 #ifdef Q_OS_WIN32
     QString gnsPath(QProcessEnvironment::systemEnvironment().value("GNSAPPDATA"));
-    path = gnsPath.isEmpty() ? "C:\\ProgramData\\Garmin\\GNS Trainer Data\\GNS\\FPL" : gnsPath + "\\FPL";
+    path = gnsPath.isEmpty() ? QString("C:\\ProgramData\\Garmin\\GNS Trainer Data\\GNS\\FPL") : gnsPath % "\\FPL";
 #elif DEBUG_INFORMATION
     path = atools::buildPath({atools::documentsDir(), "Garmin", "GNS Trainer Data", "GNS", "FPL"});
 #else
@@ -495,7 +488,7 @@ bool RouteExport::routeExportRxpGnsMulti(const RouteExportFormat& format)
     bool mkdir = QDir(path).mkpath(path);
     qInfo() << "mkdir" << path << "result" << mkdir;
 
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("", ".fpl"));
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsRxpGns(routeFile, format.getFlags().testFlag(rexp::GARMIN_AS_WAYPOINTS)))
@@ -521,7 +514,7 @@ bool RouteExport::routeExportRxpGtnMulti(const RouteExportFormat& format)
     // Location depends on trainer version - this is all above 6.41
 #ifdef Q_OS_WIN32
     QString gtnPath(QProcessEnvironment::systemEnvironment().value("GTNSIMDATA"));
-    path = gtnPath.isEmpty() ? "C:\\ProgramData\\Garmin\\Trainers\\Databases\\FPLN" : gtnPath + "\\Databases\\FPLN";
+    path = gtnPath.isEmpty() ? QString("C:\\ProgramData\\Garmin\\Trainers\\Databases\\FPLN") : gtnPath % "\\Databases\\FPLN";
 #elif DEBUG_INFORMATION
     path = atools::buildPath({atools::documentsDir(), "Garmin", "Trainers", "GTN", "FPLN"});
 #else
@@ -531,7 +524,7 @@ bool RouteExport::routeExportRxpGtnMulti(const RouteExportFormat& format)
     bool mkdir = QDir(path).mkpath(path);
     qInfo() << "mkdir" << path << "result" << mkdir;
 
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("_", ".gfp"));
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsRxpGtn(routeFile, format.getFlags().testFlag(rexp::GARMIN_AS_WAYPOINTS)))
@@ -552,7 +545,7 @@ bool RouteExport::routeExportGfpMulti(const RouteExportFormat& format)
   // <FSX/P3D>/F1GTN/FPL.
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("-", ".gfp"));
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsGfp(routeFile, format.getFlags().testFlag(rexp::GARMIN_AS_WAYPOINTS)))
@@ -572,7 +565,7 @@ bool RouteExport::routeExportTxtMulti(const RouteExportFormat& format)
 
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".txt"));
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsTxt(routeFile))
@@ -591,7 +584,7 @@ bool RouteExport::routeExportRteMulti(const RouteExportFormat& format)
 
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".rte"));
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
@@ -613,7 +606,7 @@ bool RouteExport::routeExportFprMulti(const RouteExportFormat& format)
 
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".fpr"));
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
@@ -634,7 +627,7 @@ bool RouteExport::routeExportFplMulti(const RouteExportFormat& format)
   // \X-Plane 11\Aircraft\X-Aviation\IXEG 737 Classic\coroutes
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".fpl"));
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       // Same format as txt
@@ -654,7 +647,7 @@ bool RouteExport::routeExportCorteInMulti(const RouteExportFormat& format)
 
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, "corte.in");
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsCorteIn(routeFile))
@@ -676,12 +669,11 @@ bool RouteExport::routeExportFltplanMulti(const RouteExportFormat& format)
 
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".fltplan"));
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
-      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC,
-                         std::bind(&FlightplanIO::saveFltplan, flightplanIO, _1, _2)))
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC, std::bind(&FlightplanIO::saveFltplan, flightplanIO, _1, _2)))
       {
         formatExportedCallback(format, routeFile);
         return true;
@@ -701,7 +693,7 @@ bool RouteExport::routeExportXFmcMulti(const RouteExportFormat& format)
 
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".fpl"));
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsTxt(routeFile))
@@ -720,7 +712,7 @@ bool RouteExport::routeExportUFmcMulti(const RouteExportFormat& format)
   // EDDHLIRF.ufmc
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".ufmc"));
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsUFmc(routeFile))
@@ -740,7 +732,7 @@ bool RouteExport::routeExportProSimMulti(const RouteExportFormat& format)
 
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, "companyroutes.xml");
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       if(exportFlighplanAsProSim(routeFile))
@@ -762,12 +754,11 @@ bool RouteExport::routeExportBbsMulti(const RouteExportFormat& format)
 
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".pln"));
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
-      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC,
-                         std::bind(&FlightplanIO::saveBbsPln, flightplanIO, _1, _2)))
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC, std::bind(&FlightplanIO::saveBbsPln, flightplanIO, _1, _2)))
       {
         formatExportedCallback(format, routeFile);
         return true;
@@ -782,7 +773,7 @@ bool RouteExport::routeExportFeelthereFplMulti(const RouteExportFormat& format)
   qDebug() << Q_FUNC_INFO;
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("_", ".fpl"));
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       int groundSpeed = atools::roundToInt(NavApp::getAltitudeLegs().getAverageGroundSpeed());
@@ -806,12 +797,11 @@ bool RouteExport::routeExportLeveldRteMulti(const RouteExportFormat& format)
   qDebug() << Q_FUNC_INFO;
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("_", ".rte"));
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
-      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC,
-                         std::bind(&FlightplanIO::saveLeveldRte, flightplanIO, _1, _2)))
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC, std::bind(&FlightplanIO::saveLeveldRte, flightplanIO, _1, _2)))
       {
         formatExportedCallback(format, routeFile);
         return true;
@@ -826,7 +816,7 @@ bool RouteExport::routeExportEfbrMulti(const RouteExportFormat& format)
   qDebug() << Q_FUNC_INFO;
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort("_", ".efbr"));
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       QString route = RouteStringWriter().createStringForRoute(NavApp::getRouteConst(), 0.f, rs::NONE);
@@ -848,12 +838,11 @@ bool RouteExport::routeExportQwRteMulti(const RouteExportFormat& format)
   qDebug() << Q_FUNC_INFO;
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".rte"));
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
-      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC,
-                         std::bind(&FlightplanIO::saveQwRte, flightplanIO, _1, _2)))
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_NO_PROC, std::bind(&FlightplanIO::saveQwRte, flightplanIO, _1, _2)))
       {
         formatExportedCallback(format, routeFile);
         return true;
@@ -868,7 +857,7 @@ bool RouteExport::routeExportMdrMulti(const RouteExportFormat& format)
   qDebug() << Q_FUNC_INFO;
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".mdr"));
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       using namespace std::placeholders;
@@ -889,7 +878,7 @@ bool RouteExport::routeExportTfdiMulti(const RouteExportFormat& format)
   qDebug() << Q_FUNC_INFO;
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".xml"));
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       try
@@ -920,7 +909,7 @@ bool RouteExport::routeExportPms50Multi(const RouteExportFormat& format)
   qDebug() << Q_FUNC_INFO;
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, "fpl.pln");
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       try
@@ -951,7 +940,7 @@ bool RouteExport::routeExportIsgMulti(const RouteExportFormat& format)
   qDebug() << Q_FUNC_INFO;
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFileMulti(format, buildDefaultFilenameShort(QString(), ".pln"));
+    QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
       try
@@ -995,11 +984,10 @@ bool RouteExport::routeExportVfpInternal(const RouteExportFormat& format, const 
     RouteExportData exportData = createRouteExportData(re::VFP);
     if(routeExportDialog(exportData, re::VFP))
     {
-      QString defaultFilename = buildDefaultFilenameShort(QString(), ".vfp");
+      QString defaultFilename = buildDefaultFilename(format);
       QString routeFile;
       if(format.isManual())
-        routeFile = exportFile(format, settingsSuffix, atools::documentsDir(),
-                               defaultFilename, false /* dontComfirmOverwrite */);
+        routeFile = exportFile(format, settingsSuffix, atools::documentsDir(), defaultFilename, false /* dontComfirmOverwrite */);
       else
         routeFile = exportFileMulti(format, defaultFilename);
 
@@ -1046,11 +1034,10 @@ bool RouteExport::routeExportIvapInternal(re::RouteExportType type, const RouteE
     RouteExportData exportData = createRouteExportData(type);
     if(routeExportDialog(exportData, type))
     {
-      QString defaultFilename = buildDefaultFilenameShort(QString(), ".fpl");
+      QString defaultFilename = buildDefaultFilename(format);
       QString routeFile;
       if(format.isManual())
-        routeFile = exportFile(format, settingsSuffix, atools::documentsDir(),
-                               defaultFilename, false /* dontComfirmOverwrite */);
+        routeFile = exportFile(format, settingsSuffix, atools::documentsDir(), defaultFilename, false /* dontComfirmOverwrite */);
       else
         routeFile = exportFileMulti(format, defaultFilename);
 
@@ -1130,15 +1117,14 @@ bool RouteExport::routeExportDialog(RouteExportData& exportData, re::RouteExport
 
 bool RouteExport::routeExportGpxMan()
 {
-  return routeExportGpx(exportFormatMap->getForManualSave(rexp::GPX, NavApp::getRouteFilepath()));
+  return routeExportGpx(exportFormatMap->getForManualSave(rexp::GPX));
 }
 
 bool RouteExport::routeExportGpx(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
-  QString routeFile = exportFile(format, "Route/Gpx", atools::documentsDir(),
-                                 buildDefaultFilename(format, ".gpx"),
+  QString routeFile = exportFile(format, "Route/Gpx", atools::documentsDir(), buildDefaultFilename(format),
                                  false /* dontComfirmOverwrite */);
 
   if(!routeFile.isEmpty())
@@ -1157,15 +1143,14 @@ bool RouteExport::routeExportGpx(const RouteExportFormat& format)
 
 bool RouteExport::routeExportHtmlMan()
 {
-  return routeExportHtml(exportFormatMap->getForManualSave(rexp::HTML, NavApp::getRouteFilepath()));
+  return routeExportHtml(exportFormatMap->getForManualSave(rexp::HTML));
 }
 
 bool RouteExport::routeExportHtml(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
 
-  QString routeFile = exportFile(format, "Route/Html", atools::documentsDir(),
-                                 buildDefaultFilename(format, ".html"),
+  QString routeFile = exportFile(format, "Route/Html", atools::documentsDir(), buildDefaultFilename(format),
                                  false /* dontComfirmOverwrite */);
 
   if(!routeFile.isEmpty())
@@ -1303,28 +1288,6 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
   }
 
   return save;
-}
-
-QString RouteExport::buildDefaultFilename(const QString& suffix, bool normalize)
-{
-  return buildDefaultFilename(NavApp::getRouteConst(), suffix, normalize);
-}
-
-QString RouteExport::buildDefaultFilename(const RouteExportFormat&, const QString& suffix, bool normalize)
-{
-  return buildDefaultFilename(NavApp::getRouteConst(), suffix, normalize);
-}
-
-QString RouteExport::buildDefaultFilename(const Route& route, const QString& suffix, bool normalize)
-{
-  QString name = route.getFilenamePattern(OptionData::instance().getFlightplanPattern(), suffix);
-  return normalize ? atools::normalizeStr(name) : name;
-}
-
-QString RouteExport::buildDefaultFilenameShort(const QString& sep, const QString& suffix)
-{
-  return NavApp::getRouteConst().getFilenamePattern(
-    atools::fs::pln::pattern::DEPARTIDENT + sep + atools::fs::pln::pattern::DESTIDENT, suffix, true /* clean */);
 }
 
 bool RouteExport::exportFlighplanAsGfp(const QString& filename, bool saveAsUserWaypoints)
@@ -1717,11 +1680,11 @@ bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
   }
   else
   {
-    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While reading corte.in file:"));
+    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While reading file \"%1\":").arg(filename));
     return false;
   }
 
-  QString name = flightplan.getDepartureIdent() + flightplan.getDestinationIdent();
+  QString name = flightplan.getDepartureIdent() % flightplan.getDestinationIdent();
 
   // Find a unique name between all loaded
   int i = 1;
@@ -1749,7 +1712,7 @@ bool RouteExport::exportFlighplanAsCorteIn(const QString& filename)
   }
   else
   {
-    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving to corte.in file:"));
+    atools::gui::ErrorHandler(mainWindow).handleIOError(file, tr("While saving to file \"%1\":").arg(filename));
     return false;
   }
 }
@@ -1779,7 +1742,7 @@ bool RouteExport::exportFlighplanAsProSim(const QString& filename)
       while(!reader.atEnd())
       {
         if(reader.error() != QXmlStreamReader::NoError)
-          throw atools::Exception("Error reading \"" + filename + "\": " + reader.errorString());
+          throw atools::Exception("Error reading \"" % filename % "\": " % reader.errorString());
 
         QXmlStreamReader::TokenType token = reader.readNext();
 
@@ -1801,7 +1764,7 @@ bool RouteExport::exportFlighplanAsProSim(const QString& filename)
   }
 
   // Create maximum of two backup files
-  QString backupFile = filename + "_lnm_backup";
+  QString backupFile = filename % "_lnm_backup";
   atools::io::FileRoller roller(1);
   roller.rollFile(backupFile);
 
@@ -1810,9 +1773,11 @@ bool RouteExport::exportFlighplanAsProSim(const QString& filename)
   qDebug() << Q_FUNC_INFO << "Copied" << filename << "to" << backupFile << result;
 
   // Create route string
-  QString route =
-    RouteStringWriter().createStringForRoute(buildAdjustedRoute(rf::DEFAULT_OPTS), 0.f, rs::START_AND_DEST);
-  QString name = buildDefaultFilenameShort(QString(), QString());
+  QString route = RouteStringWriter().createStringForRoute(buildAdjustedRoute(rf::DEFAULT_OPTS), 0.f, rs::START_AND_DEST);
+
+  // Create route name inside file
+  QString name = NavApp::getRouteConst().buildDefaultFilename(atools::fs::pln::pattern::DEPARTIDENT % atools::fs::pln::pattern::DESTIDENT,
+                                                              QString());
 
   // Find a unique name between all loaded
   QString newname = name;
@@ -1875,6 +1840,13 @@ bool RouteExport::exportFlightplanAsGpx(const QString& filename)
     return false;
   }
   return true;
+}
+
+QString RouteExport::buildDefaultFilename(const RouteExportFormat& format, bool normalize)
+{
+  // No suffix since pattern includes it
+  QString name = NavApp::getRouteConst().buildDefaultFilename(format.getPattern(), QString(), true /* clean */);
+  return normalize ? atools::normalizeStr(name) : name;
 }
 
 Route RouteExport::buildAdjustedRoute(rf::RouteAdjustOptions options)
