@@ -1039,7 +1039,9 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     // Other issues
     if(hasLegs && perf->getUsableFuel() > 1.f && altLegs.getBlockFuel(*perf) > perf->getUsableFuel())
     {
-      QString msg(tr("Block fuel exceeds usable of %1.").arg(ft.weightVolLocal(perf->getUsableFuel())));
+      QString msg(tr("Block fuel of %1 exceeds usable of %2.").
+                  arg(ft.weightVolLocal(altLegs.getBlockFuel(*perf))).
+                  arg(ft.weightVolLocal(perf->getUsableFuel())));
       errorTooltips.append(msg);
 
       if(visible)
@@ -1048,7 +1050,9 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
 
     if(perf->getUsableFuel() > 1.f && perf->getReserveFuel() > perf->getUsableFuel())
     {
-      QString msg(tr("Reserve fuel exceeds usable."));
+      QString msg(tr("Reserve fuel of %1 exceeds usable of %2.").
+                  arg(ft.weightVolLocal(perf->getReserveFuel())).
+                  arg(ft.weightVolLocal(perf->getUsableFuel())));
       errorTooltips.append(msg);
 
       if(visible)
