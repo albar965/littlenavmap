@@ -363,6 +363,7 @@ QByteArray JsonInfoBuilder::features(MapFeaturesData mapFeaturesData) const
 
            map::MapAirport airport =  data.airports[i];
 
+           json["airports"]["result"][i]["id"] = airport.id;
            json["airports"]["result"][i]["ident"] = qUtf8Printable(airport.ident);
            json["airports"]["result"][i]["name"] = qUtf8Printable(airport.name);
            json["airports"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(airport.position));
@@ -384,6 +385,7 @@ QByteArray JsonInfoBuilder::features(MapFeaturesData mapFeaturesData) const
 
            map::MapNdb ndb =  data.ndbs[i];
 
+           json["ndbs"]["result"][i]["id"] = ndb.id;
            json["ndbs"]["result"][i]["ident"] = qUtf8Printable(ndb.ident);
            json["ndbs"]["result"][i]["name"] = qUtf8Printable(ndb.name);
            json["ndbs"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(ndb.position));
@@ -395,6 +397,7 @@ QByteArray JsonInfoBuilder::features(MapFeaturesData mapFeaturesData) const
 
            map::MapVor vor =  data.vors[i];
 
+           json["vors"]["result"][i]["id"] = vor.id;
            json["vors"]["result"][i]["ident"] = qUtf8Printable(vor.ident);
            json["vors"]["result"][i]["name"] = qUtf8Printable(vor.name);
            json["vors"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(vor.position));
@@ -406,6 +409,7 @@ QByteArray JsonInfoBuilder::features(MapFeaturesData mapFeaturesData) const
 
            map::MapMarker marker =  data.markers[i];
 
+           json["markers"]["result"][i]["id"] = marker.id;
            json["markers"]["result"][i]["ident"] = qUtf8Printable(marker.ident);
            json["markers"]["result"][i]["type"] = qUtf8Printable(marker.type);
            json["markers"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(marker.position));

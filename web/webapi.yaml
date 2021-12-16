@@ -549,9 +549,19 @@ components:
               items: 
                 type: object
                 $ref: '#/components/schemas/MapMarkerFeature'
+    MapObject:
+      type: object
+      description: Identifiable map object
+      properties:
+        id:
+          description: The record id
+          type: number
+          example: 1
     MapAirportFeature:
       type: object
       description: Single airport list entry
+      allOf:
+        - $ref: '#/components/schemas/MapObject'
       properties:
         elevation:
           description: the airports elevation in ft
@@ -571,6 +581,8 @@ components:
     MapNDBFeature:
       type: object
       description: Single NDB list entry
+      allOf:
+        - $ref: '#/components/schemas/MapObject'
       properties:
         elevation:
           description: the NDB elevation in ft
@@ -590,6 +602,8 @@ components:
     MapVORFeature:
       type: object
       description: Single VOR list entry
+      allOf:
+        - $ref: '#/components/schemas/MapObject'
       properties:
         elevation:
           description: the VOR elevation in ft
@@ -609,6 +623,8 @@ components:
     MapMarkerFeature:
       type: object
       description: Single marker list entry
+      allOf:
+        - $ref: '#/components/schemas/MapObject'
       properties:
         elevation:
           description: the marker elevation in ft
