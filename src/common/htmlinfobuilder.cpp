@@ -4258,6 +4258,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         html.id(pid::ALT_ABOVE_GROUND).row2(tr("Above Ground:"), Unit::altFeet(userAircraft->getAltitudeAboveGroundFt()));
       if(userAircraft->getGroundAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
         html.id(pid::ALT_GROUND_ELEVATION).row2(tr("Ground Elevation:"), Unit::altFeet(userAircraft->getGroundAltitudeFt()));
+      if(userAircraft->getAltitudeAutopilotFt() < atools::fs::sc::SC_INVALID_FLOAT)
+        html.id(pid::ALT_AUTOPILOT_ALT).row2(tr("Autopilot Selected:"), Unit::altFeet(userAircraft->getAltitudeAutopilotFt()));
     }
     html.tableEndIf();
 

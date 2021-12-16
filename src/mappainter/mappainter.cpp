@@ -199,10 +199,13 @@ void MapPainter::paintArc(GeoPainter *painter, const Pos& centerPos, float radiu
 
   bool ringVisible = false, lastVisible = false;
   LineString ellipse;
+  if(angleDegEnd < angleDegStart)
+    angleDegEnd += 360.f;
+
   for(float angle = angleDegStart; angle <= angleDegEnd; angle += step)
   {
     // Line segment from p1 to p2
-    Pos p2 = centerPos.endpoint(radiusMeter, angle);
+    Pos p2 = centerPos.endpoint(radiusMeter, atools::geo::normalizeCourse(angle));
 
     wToS(p2, x2, y2, DEFAULT_WTOS_SIZE, &hidden2);
 
