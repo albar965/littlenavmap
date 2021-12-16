@@ -411,66 +411,75 @@ void MapPainter::drawPolygon(Marble::GeoPainter *painter, const atools::geo::Lin
 
 void MapPainter::drawLineString(Marble::GeoPainter *painter, const atools::geo::LineString& linestring)
 {
-  GeoDataLineString ls;
-  ls.setTessellate(true);
-  for(int i = 1; i < linestring.size(); i++)
+  if(linestring.size() < 2)
+    return;
+
+  const float LATY_CORRECTION = 0.00001f;
+  LineString splitLines = linestring.splitAtAntiMeridian();
+  splitLines.removeDuplicates();
+
+  // Avoid the straight line Marble draws wrongly for equal latitudes - needed to force GC path
+  for(int i = 0; i < splitLines.size() - 1; i++)
   {
-    if(linestring.at(i - 1).almostEqual(linestring.at(i)))
-      // Do not draw  duplicates
-      continue;
+    Pos& p1(splitLines[i]);
+    Pos& p2(splitLines[i + 1]);
 
-    // Avoid the straight line Marble draws for equal latitudes - needed to force GC path
-    qreal correction = 0.;
-    if(atools::almostEqual(linestring.at(i - 1).getLatY(), linestring.at(i).getLatY()))
-      correction = 0.000001;
-
-    ls << GeoDataCoordinates(linestring.at(i - 1).getLonX(), linestring.at(i - 1).getLatY() - correction, 0, DEG)
-       << GeoDataCoordinates(linestring.at(i).getLonX(), linestring.at(i).getLatY() + correction, 0, DEG);
+    if(atools::almostEqual(p1.getLatY(), p2.getLatY()))
+    {
+      // Move latitude a bit up and down if equal
+      p1.setLatY(p1.getLatY() + LATY_CORRECTION);
+      p2.setLatY(p2.getLatY() - LATY_CORRECTION);
+    }
   }
 
-  QVector<GeoDataLineString *> dateLineCorrected = ls.toDateLineCorrected();
-  for(GeoDataLineString *corrected : dateLineCorrected)
-    painter->drawPolyline(*corrected);
-  qDeleteAll(dateLineCorrected);
+  // Build Marble geometry object
+  if(!splitLines.isEmpty())
+  {
+    GeoDataLineString geoLineStr;
+    geoLineStr.setTessellate(true);
+
+    for(int i = 0; i < splitLines.size() - 1; i++)
+    {
+      Line line(splitLines.at(i), splitLines.at(i + 1));
+
+      // Split long lines to work around the buggy visibility check in Marble resulting in disappearing line segments
+      // Do a quick check using Manhattan distance in degree
+      LineString ls;
+      if(line.lengthSimple() > 30.f)
+        line.interpolatePoints(line.lengthMeter(), 20, ls);
+      else if(line.lengthSimple() > 5.f)
+        line.interpolatePoints(line.lengthMeter(), 5, ls);
+      else
+        ls.append(line.getPos1());
+
+      // Append split points or single point
+      for(const Pos& pos : ls)
+        geoLineStr << GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG);
+    }
+
+    // Add last point
+    geoLineStr << GeoDataCoordinates(splitLines.last().getLonX(), splitLines.last().getLatY(), 0, DEG);
+
+    painter->drawPolyline(geoLineStr);
+  }
 }
 
-void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line)
+void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool noRecurse)
 {
   if(line.isValid() && !line.isPoint())
   {
-    // Split long lines to work around the buggy visibility check in Marble
-    // Do a quick check using Manhattan distance in degree
-    if(line.lengthSimple() > 30.f)
+    if(line.crossesAntiMeridian())
     {
-      LineString linestring;
-      line.interpolatePoints(line.lengthMeter(), 20, linestring);
-      linestring.append(line.getPos2());
-      drawLineString(painter, linestring);
-    }
-    else if(line.lengthSimple() > 5.f)
-    {
-      LineString linestring;
-      line.interpolatePoints(line.lengthMeter(), 5, linestring);
-      linestring.append(line.getPos2());
-      drawLineString(painter, linestring);
+      // Avoid endless recursion because hitting anti-meridian again because of inaccuracies
+      if(!noRecurse)
+      {
+        for(const Line& split : line.splitAtAntiMeridian())
+          // Call self again
+          drawLine(painter, split, true /* noRecurse */);
+      }
     }
     else
-    {
-      // Avoid the straight line Marble draws for equal latitudes - needed to force GC path
-      qreal correction = 0.;
-      if(atools::almostEqual(line.getPos1().getLatY(), line.getPos2().getLatY()))
-        correction = 0.000001;
-
-      GeoDataLineString ls;
-      ls.setTessellate(true);
-      ls << GeoDataCoordinates(line.getPos1().getLonX(), line.getPos1().getLatY() - correction, 0, DEG)
-         << GeoDataCoordinates(line.getPos2().getLonX(), line.getPos2().getLatY() + correction, 0, DEG);
-
-      QVector<GeoDataLineString *> dateLineCorrected = ls.toDateLineCorrected();
-      for(GeoDataLineString *corrected : dateLineCorrected)
-        painter->drawPolyline(*corrected);
-      qDeleteAll(dateLineCorrected);
-    }
+      drawLineString(painter, LineString(line.getPos1(), line.getPos2()));
   }
 }
 
