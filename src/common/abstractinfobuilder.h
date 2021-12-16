@@ -71,11 +71,18 @@ public:
   virtual QByteArray airport(AirportInfoData airportInfoData) const;
 
   /**
-   * Creates a description for the provided airport list.
+   * Creates a description for the provided feature list.
    *
    * @param airportInfoData
    */
   virtual QByteArray features(MapFeaturesData mapFeaturesData) const;
+
+  /**
+   * Creates a description for the provided map object.
+   *
+   * @param airportInfoData
+   */
+  virtual QByteArray feature(MapFeaturesData mapFeaturesData) const;
 
   /**
    * Creates a description for the provided simconnect data.

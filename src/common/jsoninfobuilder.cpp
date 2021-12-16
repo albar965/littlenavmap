@@ -363,7 +363,8 @@ QByteArray JsonInfoBuilder::features(MapFeaturesData mapFeaturesData) const
 
            map::MapAirport airport =  data.airports[i];
 
-           json["airports"]["result"][i]["id"] = airport.id;
+           json["airports"]["result"][i]["object_id"] = airport.id;
+           json["airports"]["result"][i]["type_id"] = map::AIRPORT;
            json["airports"]["result"][i]["ident"] = qUtf8Printable(airport.ident);
            json["airports"]["result"][i]["name"] = qUtf8Printable(airport.name);
            json["airports"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(airport.position));
@@ -385,7 +386,8 @@ QByteArray JsonInfoBuilder::features(MapFeaturesData mapFeaturesData) const
 
            map::MapNdb ndb =  data.ndbs[i];
 
-           json["ndbs"]["result"][i]["id"] = ndb.id;
+           json["ndbs"]["result"][i]["object_id"] = ndb.id;
+           json["ndbs"]["result"][i]["type_id"] = map::NDB;
            json["ndbs"]["result"][i]["ident"] = qUtf8Printable(ndb.ident);
            json["ndbs"]["result"][i]["name"] = qUtf8Printable(ndb.name);
            json["ndbs"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(ndb.position));
@@ -397,7 +399,8 @@ QByteArray JsonInfoBuilder::features(MapFeaturesData mapFeaturesData) const
 
            map::MapVor vor =  data.vors[i];
 
-           json["vors"]["result"][i]["id"] = vor.id;
+           json["vors"]["result"][i]["object_id"] = vor.id;
+           json["vors"]["result"][i]["type_id"] = map::VOR;
            json["vors"]["result"][i]["ident"] = qUtf8Printable(vor.ident);
            json["vors"]["result"][i]["name"] = qUtf8Printable(vor.name);
            json["vors"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(vor.position));
@@ -409,7 +412,102 @@ QByteArray JsonInfoBuilder::features(MapFeaturesData mapFeaturesData) const
 
            map::MapMarker marker =  data.markers[i];
 
-           json["markers"]["result"][i]["id"] = marker.id;
+           json["markers"]["result"][i]["object_id"] = marker.id;
+           json["markers"]["result"][i]["type_id"] = map::MARKER;
+           json["markers"]["result"][i]["ident"] = qUtf8Printable(marker.ident);
+           json["markers"]["result"][i]["type"] = qUtf8Printable(marker.type);
+           json["markers"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(marker.position));
+           json["markers"]["result"][i]["elevation"] =  marker.getPosition().getAltitude();
+
+       }
+
+    return json.dump().data();
+
+}
+
+QByteArray JsonInfoBuilder::feature(MapFeaturesData mapFeaturesData) const
+{
+
+    MapFeaturesData data = mapFeaturesData;
+
+    JSON json;
+
+       json = {
+           { "airports", JSON::object() },
+           { "ndbs", JSON::object() },
+           { "vors", JSON::object() },
+           { "markers", JSON::object() },
+       };
+
+       json["airports"].push_back({ "count", data.airports.count() });
+       json["airports"].push_back({ "result", JSON::array() });
+
+       json["ndbs"].push_back({ "count", data.ndbs.count() });
+       json["ndbs"].push_back({ "result", JSON::array() });
+
+       json["vors"].push_back({ "count", data.vors.count() });
+       json["vors"].push_back({ "result", JSON::array() });
+
+       json["markers"].push_back({ "count", data.markers.count() });
+       json["markers"].push_back({ "result", JSON::array() });
+
+
+
+       for(int i = 0; i < data.airports.count(); ++i){
+
+           map::MapAirport airport =  data.airports[i];
+
+           json["airports"]["result"][i]["object_id"] = airport.id;
+           json["airports"]["result"][i]["type_id"] = map::AIRPORT;
+           json["airports"]["result"][i]["ident"] = qUtf8Printable(airport.ident);
+           json["airports"]["result"][i]["name"] = qUtf8Printable(airport.name);
+           json["airports"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(airport.position));
+           json["airports"]["result"][i]["elevation"] =  airport.getPosition().getAltitude();
+
+//           JSON airportJson;
+
+//           airportJson = {
+//               { "ident", qUtf8Printable(airport.ident) },
+//               { "name", qUtf8Printable(airport.name)},
+//               { "position", coordinatesToJSON(getCoordinates(airport.position))},
+//               { "elevation", airport.getPosition().getAltitude() },
+//           };
+
+//           json["airports"]["result"].push_back(airportJson);
+       }
+
+       for(int i = 0; i < data.ndbs.count(); ++i){
+
+           map::MapNdb ndb =  data.ndbs[i];
+
+           json["ndbs"]["result"][i]["object_id"] = ndb.id;
+           json["ndbs"]["result"][i]["type_id"] = map::NDB;
+           json["ndbs"]["result"][i]["ident"] = qUtf8Printable(ndb.ident);
+           json["ndbs"]["result"][i]["name"] = qUtf8Printable(ndb.name);
+           json["ndbs"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(ndb.position));
+           json["ndbs"]["result"][i]["elevation"] =  ndb.getPosition().getAltitude();
+
+       }
+
+       for(int i = 0; i < data.vors.count(); ++i){
+
+           map::MapVor vor =  data.vors[i];
+
+           json["vors"]["result"][i]["object_id"] = vor.id;
+           json["vors"]["result"][i]["type_id"] = map::VOR;
+           json["vors"]["result"][i]["ident"] = qUtf8Printable(vor.ident);
+           json["vors"]["result"][i]["name"] = qUtf8Printable(vor.name);
+           json["vors"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(vor.position));
+           json["vors"]["result"][i]["elevation"] =  vor.getPosition().getAltitude();
+
+       }
+
+       for(int i = 0; i < data.markers.count(); ++i){
+
+           map::MapMarker marker =  data.markers[i];
+
+           json["markers"]["result"][i]["object_id"] = marker.id;
+           json["markers"]["result"][i]["type_id"] = map::MARKER;
            json["markers"]["result"][i]["ident"] = qUtf8Printable(marker.ident);
            json["markers"]["result"][i]["type"] = qUtf8Printable(marker.type);
            json["markers"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(marker.position));

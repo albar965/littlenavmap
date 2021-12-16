@@ -145,6 +145,30 @@ WebApiResponse MapActionsController::featuresAction(WebApiRequest request){
 
 }
 
+WebApiResponse MapActionsController::featureAction(WebApiRequest request){
+
+    WebApiResponse response = getResponse();
+
+    int object_id = request.parameters.value("object_id").toInt();
+    int type_id = request.parameters.value("type_id").toInt();
+
+    map::MapResult result;
+
+    mapPaintWidget->getMapQuery()->getMapObjectById(result,type_id,map::AIRSPACE_SRC_NONE,object_id,false);
+
+    MapFeaturesData data = {
+        result.airports,
+        result.ndbs,
+        result.vors,
+        result.markers
+    };
+
+    response.body = infoBuilder->feature(data);
+
+    return response;
+
+}
+
 MapActionsController::~MapActionsController()
 {
   qDebug() << Q_FUNC_INFO;

@@ -42,6 +42,7 @@ public:
   QByteArray siminfo(SimConnectInfoData simConnectInfoData) const override;
   QByteArray uiinfo(UiInfoData uiInfoData) const override;
   QByteArray features(MapFeaturesData mapFeaturesData) const override;
+  QByteArray feature(MapFeaturesData mapFeaturesData) const override;
 
 private:
   JSON coordinatesToJSON(QMap<QString,float> map) const;

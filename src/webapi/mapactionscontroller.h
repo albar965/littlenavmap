@@ -39,13 +39,17 @@ class MapActionsController :
 public:
     Q_INVOKABLE MapActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder);
     /**
-     * @brief get map image
+     * @brief get map image by rect
      */
     Q_INVOKABLE WebApiResponse imageAction(WebApiRequest request);
     /**
-     * @brief get map features
+     * @brief get map features by rect
      */
     Q_INVOKABLE WebApiResponse featuresAction(WebApiRequest request);
+    /**
+     * @brief get map feature by id
+     */
+    Q_INVOKABLE WebApiResponse featureAction(WebApiRequest request);
 
     explicit MapActionsController(QWidget *parent, bool verboseParam);
     virtual ~MapActionsController() override;
