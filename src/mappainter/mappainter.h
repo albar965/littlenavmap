@@ -293,7 +293,7 @@ protected:
                    float radiusNm, bool fast, int& xtext, int& ytext);
 
   void drawLineString(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
-  void drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line);
+  void drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool noRecurse = false);
 
   /* Draw simple text with current settings. Corners are the text corners pointing to the position */
   void drawText(Marble::GeoPainter *painter, const atools::geo::Pos& pos, const QString& text, bool topCorner,
