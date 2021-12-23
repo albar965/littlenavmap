@@ -688,26 +688,28 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   for(int i = legs.size() - 1; i >= 0; i--)
   {
     // No text labels for passed points
-    bool drawText = i + 1 >= passedProcLeg || !activeValid || preview;
+    bool drawPoint = i + 1 >= passedProcLeg || !activeValid || preview;
+
     if(!context->mapLayerRoute->isApproachText())
-      drawText = false;
+      drawPoint = false;
 
     if(previewAll)
     {
       // Only endpoint labels for SID in preview
       if(legs.mapType & proc::PROCEDURE_SID_ALL && i < legs.size() - 1)
-        drawText = false;
+        drawPoint = false;
 
       // Only start- and endpoint labels for STAR in preview
       if(legs.mapType & proc::PROCEDURE_STAR_ALL && (i > 0 && i < legs.size() - 1))
-        drawText = false;
+        drawPoint = false;
 
       // Only startpoint labels for approaches and transitions in preview
       if(legs.mapType & proc::PROCEDURE_APPROACH_ALL && i > 0)
-        drawText = false;
+        drawPoint = false;
     }
 
-    paintProcedurePoint(lastLegPoint, legs, i, preview, previewAll, drawText);
+    if(drawPoint)
+      paintProcedurePoint(lastLegPoint, legs, i, preview, previewAll, drawPoint);
   }
 }
 
