@@ -124,10 +124,8 @@ UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, Use
 
   // Connect button box
   connect(ui->buttonBoxUserdata, &QDialogButtonBox::accepted, this, &UserdataDialog::acceptClicked);
-  connect(ui->buttonBoxUserdata->button(QDialogButtonBox::Help), &QPushButton::clicked,
-          this, &UserdataDialog::helpClicked);
-  connect(ui->buttonBoxUserdata->button(QDialogButtonBox::Reset), &QPushButton::clicked,
-          this, &UserdataDialog::resetClicked);
+  connect(ui->buttonBoxUserdata->button(QDialogButtonBox::Help), &QPushButton::clicked, this, &UserdataDialog::helpClicked);
+  connect(ui->buttonBoxUserdata->button(QDialogButtonBox::Reset), &QPushButton::clicked, this, &UserdataDialog::resetClicked);
   connect(ui->buttonBoxUserdata, &QDialogButtonBox::rejected, this, &QDialog::reject);
 
   atools::gui::WidgetState(lnm::TRAFFIC_PATTERN_DIALOG).restore(this);
@@ -161,11 +159,9 @@ void UserdataDialog::coordsEdited(const QString& text)
 void UserdataDialog::helpClicked()
 {
   if(editMode == ud::ADD)
-    atools::gui::HelpHandler::openHelpUrlWeb(
-      this, lnm::helpOnlineUrl + "USERPOINT.html#userpoints-dialog-add", lnm::helpLanguageOnline());
+    atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "USERPOINT.html#userpoints-dialog-add", lnm::helpLanguageOnline());
   else
-    atools::gui::HelpHandler::openHelpUrlWeb(
-      this, lnm::helpOnlineUrl + "USERPOINT.html#userpoints-dialog-edit", lnm::helpLanguageOnline());
+    atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "USERPOINT.html#userpoints-dialog-edit", lnm::helpLanguageOnline());
 }
 
 void UserdataDialog::resetClicked()
@@ -250,6 +246,7 @@ void UserdataDialog::updateWidgets()
       ui->checkBoxUserdataAltitude->isChecked() |
       ui->checkBoxUserdataDescription->isChecked() |
       ui->checkBoxUserdataRegion->isChecked() |
+      ui->checkBoxUserdataIdent->isChecked() |
       ui->checkBoxUserdataName->isChecked() |
       ui->checkBoxUserdataTags->isChecked() |
       ui->checkBoxUserdataType->isChecked() |
@@ -308,8 +305,7 @@ void UserdataDialog::recordToDialog()
   ui->spinBoxUserdataAltitude->setValue(atools::roundToInt(Unit::altFeetF(record->valueInt("altitude"))));
 
   if(!record->isNull("lonx") && !record->isNull("laty"))
-    ui->lineEditUserdataLatLon->setText(Unit::coords(atools::geo::Pos(record->valueFloat("lonx"),
-                                                                      record->valueFloat("laty"))));
+    ui->lineEditUserdataLatLon->setText(Unit::coords(atools::geo::Pos(record->valueFloat("lonx"), record->valueFloat("laty"))));
   coordsEdited(QString());
 }
 
