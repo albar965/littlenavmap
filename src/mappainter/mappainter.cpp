@@ -251,6 +251,53 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
   if(radiusNm > atools::geo::EARTH_CIRCUMFERENCE_METER / 4.f)
     return;
 
+  if(radiusNm < 1.f || atools::geo::meterToNm(context->zoomDistanceMeter) < 5.f)
+    // Use different method to draw circles with small radius to avoid distortion because of rounding errors
+    // This one ignores spherical shape and projection at low zoom distances
+    paintCircleSmallInternal(painter, centerPos, radiusNm, fast, textPos);
+  else
+    // Draw large circles with correct shape in projection
+    paintCircleLargeInternal(painter, centerPos, radiusNm, fast, textPos);
+}
+
+void MapPainter::paintCircleSmallInternal(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos)
+{
+  Q_UNUSED(fast)
+
+  // Get pixel size for line from center to north
+  int pixel = scale->getPixelIntForMeter(nmToMeter(radiusNm), 0.f);
+
+  bool visible, hidden;
+  QPoint pt = wToS(centerPos, QSize(pixel * 3, pixel * 3), &visible, &hidden);
+
+  if(!hidden)
+  {
+    // Rectangle for the circle
+    QRect rect(pt.x() - pixel, pt.y() - pixel, pixel * 2, pixel * 2);
+
+    if(context->screenRect.intersects(rect))
+    {
+      // Draw simple circle
+      painter->drawEllipse(pt, pixel, pixel);
+      if(textPos != nullptr)
+      {
+        // Check each circle octant for a visible text position
+        for(int angle = 0; angle <= 360; angle += 45)
+        {
+          // Create a line and rotate P2 clockwise
+          QLineF line(pt.x(), pt.y(), pt.x(), pt.y() - pixel);
+          line.setAngle(atools::geo::angleToQt(angle));
+
+          if(context->screenRect.contains(atools::roundToInt(line.p2().x()), atools::roundToInt(line.p2().y())))
+            *textPos = line.p2().toPoint();
+        }
+      }
+    }
+  }
+}
+
+void MapPainter::paintCircleLargeInternal(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos)
+{
   // Calculate the number of points to use depending on screen resolution
   int pixel = scale->getPixelIntForMeter(nmToMeter(radiusNm));
   int numPoints = std::min(std::max(pixel / (fast ? 20 : 2), CIRCLE_MIN_POINTS), CIRCLE_MAX_POINTS);

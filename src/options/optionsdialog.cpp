@@ -197,6 +197,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Track Label"), tr("Show track label for user aircraft."), optsd::ROSE_TRACK_LABEL, true);
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Heading Indicator"), tr("Show the heading for the user aircraft as a small magenta circle."), optsd::ROSE_CRAB_ANGLE, true);
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Course to Next Waypoint"), tr("Show the course to next waypoint for the user aircraft as a small magenta line."), optsd::ROSE_NEXT_WAYPOINT, true);
+  addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("True Heading"), tr("Show the whole circle and tick marks using true heading."), optsd::ROSE_TRUE_HEADING);
 
   QTreeWidgetItem *measurement = addTopItem(tr("Measurement Lines"), tr("Select display options measurement lines."));
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Distance"), tr("Great circle distance for measurement line."), optsd::MEASUREMNENT_DIST, true);
@@ -1206,7 +1207,7 @@ void OptionsDialog::displayOptDataToWidget(const TYPE& type, const QHash<TYPE, Q
 QTreeWidgetItem *OptionsDialog::addTopItem(const QString& text, const QString& description)
 {
   QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidgetOptionsDisplayTextOptions->invisibleRootItem(), {text, description});
-  item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsAutoTristate | Qt::ItemIsEnabled);
+  item->setFlags(Qt::ItemIsSelectable /*| Qt::ItemIsUserCheckable*/ /*| Qt::ItemIsAutoTristate*/ | Qt::ItemIsEnabled);
 
   QFont font = item->font(0);
   font.setBold(true);

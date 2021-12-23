@@ -522,7 +522,8 @@ enum DisplayOptionRose
   ROSE_TRACK_LABEL = 1 << 5,
   ROSE_CRAB_ANGLE = 1 << 6,
   ROSE_NEXT_WAYPOINT = 1 << 7,
-  ROSE_DIR_LABELS = 1 << 8
+  ROSE_DIR_LABELS = 1 << 8,
+  ROSE_TRUE_HEADING = 1 << 9
 };
 
 Q_DECLARE_FLAGS(DisplayOptionsRose, DisplayOptionRose);

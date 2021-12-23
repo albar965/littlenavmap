@@ -50,7 +50,7 @@
 #include <QStringBuilder>
 
 const float MAX_COMPASS_ROSE_RADIUS_NM = 500.f;
-const float MIN_COMPASS_ROSE_RADIUS_NM = 2.f;
+const float MIN_COMPASS_ROSE_RADIUS_NM = 0.2f;
 const double MIN_VIEW_DISTANCE_COMPASS_ROSE_KM = 6400.;
 
 using namespace Marble;
@@ -800,7 +800,6 @@ void MapPainterMark::paintRangeMarks()
   const QList<map::RangeMarker>& rangeRings = mapPaintWidget->getRangeMarks().values();
   GeoPainter *painter = context->painter;
 
-  painter->setBrush(Qt::NoBrush);
   context->szFont(context->textSizeRangeDistance);
 
   float lineWidth = context->szF(context->thicknessRangeDistance, 3);
@@ -828,6 +827,8 @@ void MapPainterMark::paintRangeMarks()
           painter->setBrush(Qt::white);
           painter->drawEllipse(center, 4., 4.);
         }
+
+        painter->setBrush(Qt::NoBrush);
 
         // Draw all rings
         for(float radius : rings.ranges)
@@ -1018,20 +1019,22 @@ void MapPainterMark::paintCompassRose()
     float lineWidth = context->szF(context->thicknessCompassRose, 2);
     QPen rosePen(QBrush(mapcolors::compassRoseColor), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
     QPen rosePenSmall(QBrush(mapcolors::compassRoseColor), lineWidth / 4.f, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin);
-    QPen headingLinePen(QBrush(mapcolors::compassRoseColor), lineWidth, Qt::DotLine, Qt::RoundCap,
-                        Qt::MiterJoin);
+    QPen headingLinePen(QBrush(mapcolors::compassRoseColor), lineWidth, Qt::DotLine, Qt::RoundCap, Qt::MiterJoin);
     painter->setPen(rosePen);
 
-    // Draw outer big circle
+    // Draw outer big circle ==================================================
     paintCircle(context->painter, pos, ageo::meterToNm(radiusMeter), context->drawFast, nullptr);
 
-    // Draw small center circle if no aircraft
+    // Draw small center circle if no aircraft ===================================
     QPointF centerPoint = wToSF(pos);
     if(!centerPoint.isNull() && !hasAircraft)
       painter->drawEllipse(centerPoint, 5, 5);
 
     // Collect points for tick marks and labels
-    float magVar = hasAircraft ? aircraft.getMagVarDeg() : NavApp::getMagVar(pos);
+    float magVar = 0.f;
+    if(!context->dOptRose(optsd::ROSE_TRUE_HEADING))
+      magVar = hasAircraft ? aircraft.getMagVarDeg() : NavApp::getMagVar(pos);
+
     QVector<ageo::Pos> endpoints;
     QVector<QPointF> endpointsScreen;
     for(float angle = 0.f; angle < 360.f; angle += 5)
@@ -1061,23 +1064,22 @@ void MapPainterMark::paintCompassRose()
       }
     }
 
-    painter->setBrush(QBrush(Qt::white));
     // Calculate and draw triangle for true north ======================================================
+    painter->setBrush(QBrush(Qt::white));
     ageo::Pos trueNorth = pos.endpoint(radiusMeter, 0);
     QPointF trueNorthPoint = wToSF(trueNorth);
 
     if(!trueNorthPoint.isNull())
-      painter->drawPolygon(QPolygonF({trueNorthPoint, trueNorthPoint - QPointF(10, 20),
-                                      trueNorthPoint - QPointF(-10, 20)}));
+      painter->drawPolygon(QPolygonF({trueNorthPoint, trueNorthPoint - QPointF(10, 20), trueNorthPoint - QPointF(-10, 20)}));
 
     // Aircraft track and heading line ======================================================
     // Convert to selected display unit
-    float radiusUnit = Unit::distNmF(radiusNm);
-    float stepsizeUnit = atools::calculateSteps(radiusUnit, 6.f);
+    float stepsizeUnit = atools::calculateSteps(Unit::distNmF(radiusNm), 6.5f);
     float stepsizeNm = Unit::rev(stepsizeUnit, Unit::distNmF);
     painter->setPen(rosePenSmall);
 
     // Draw distance circles =======================================================
+    painter->setBrush(Qt::NoBrush);
     if(context->dOptRose(optsd::ROSE_RANGE_RINGS))
     {
       for(float i = 1.f; i * stepsizeNm < radiusNm; i++)
@@ -1171,8 +1173,11 @@ void MapPainterMark::paintCompassRose()
       {
         QPointF s = wToSF(pos.endpoint(ageo::nmToMeter(i * stepsizeNm), trackTrue));
         if(!s.isNull())
-          symbolPainter->textBoxF(painter, {Unit::distNm(i * stepsizeNm, true, 20, true)}, painter->pen(),
-                                  static_cast<float>(s.x()), static_cast<float>(s.y()), textatt::CENTER);
+        {
+          float dist = i * stepsizeNm;
+          QString text = tr("%1%2").arg(QLocale(QLocale::C).toString(Unit::distNmF(dist), 'g', 6)).arg(Unit::getUnitDistStr());
+          symbolPainter->textBoxF(painter, {text}, painter->pen(), static_cast<float>(s.x()), static_cast<float>(s.y()), textatt::CENTER);
+        }
       }
     }
 
@@ -1235,8 +1240,13 @@ void MapPainterMark::paintCompassRose()
         {
           painter->setPen(mapcolors::compassRoseTextColor);
           context->szFont(context->textSizeCompassRose);
-          QString text =
-            tr("%1°M").arg(QString::number(atools::roundToInt(aircraft.getTrackDegMag())));
+
+          QString text;
+          if(context->dOptRose(optsd::ROSE_TRUE_HEADING))
+            text = tr("%1°T").arg(QString::number(atools::roundToInt(aircraft.getTrackDegTrue())));
+          else
+            text = tr("%1°M").arg(QString::number(atools::roundToInt(aircraft.getTrackDegMag())));
+
           symbolPainter->textBoxF(painter, {text, tr("TRK")}, painter->pen(),
                                   static_cast<float>(trueTrackTextPoint.x()),
                                   static_cast<float>(trueTrackTextPoint.y()),

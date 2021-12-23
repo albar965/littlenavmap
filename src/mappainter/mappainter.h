@@ -364,6 +364,12 @@ protected:
   /* Draw large semi-transparent MSA enabled by user */
   void paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool user, bool drawFast);
 
+  /* Draw small flat circle for small radii or close zoom distances */
+  void paintCircleSmallInternal(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast, QPoint *textPos);
+
+  /* Draw a large spherical correct projected circle */
+  void paintCircleLargeInternal(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast, QPoint *textPos);
+
   /* Minimum points to use for a circle */
   const int CIRCLE_MIN_POINTS = 16;
   /* Maximum points to use for a circle */
