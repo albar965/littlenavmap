@@ -878,16 +878,9 @@ void DatabaseManager::switchSimFromMainMenu()
 void DatabaseManager::openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name,
                                             const QString& displayName, bool backup)
 {
-  QString databaseName = databaseDirectory +
-                         QDir::separator() +
-                         lnm::DATABASE_PREFIX +
-                         name +
-                         lnm::DATABASE_SUFFIX;
+  QString databaseName = databaseDirectory + QDir::separator() + lnm::DATABASE_PREFIX + name + lnm::DATABASE_SUFFIX;
 
-  QString databaseNameBackup = databaseDirectory +
-                               QDir::separator() +
-                               QFileInfo(databaseName).baseName() +
-                               "_backup" +
+  QString databaseNameBackup = databaseDirectory + QDir::separator() + QFileInfo(databaseName).baseName() + "_backup" +
                                lnm::DATABASE_SUFFIX;
 
   try
@@ -897,9 +890,7 @@ void DatabaseManager::openWriteableDatabase(atools::sql::SqlDatabase *database, 
       // Roll copies
       // .../ABarthel/little_navmap_db/little_navmap_userdata_backup.sqlite
       // .../ABarthel/little_navmap_db/little_navmap_userdata_backup.sqlite.1
-      // .../ABarthel/little_navmap_db/little_navmap_userdata_backup.sqlite.2
-      // .../ABarthel/little_navmap_db/little_navmap_userdata_backup.sqlite.3
-      atools::io::FileRoller roller(3);
+      atools::io::FileRoller roller(1);
       roller.rollFile(databaseNameBackup);
 
       // Copy database before opening

@@ -1175,9 +1175,7 @@ void MainWindow::connectAllSlots()
 
   // User data ===================================================================================
   UserdataController *userdataController = NavApp::getUserdataController();
-  connect(ui->actionUserdataClearDatabase, &QAction::triggered, userdataController, &UserdataController::clearDatabase);
-
-  // Import ================
+ // Import ================
   connect(ui->actionUserdataImportCSV, &QAction::triggered, userdataController, &UserdataController::importCsv);
   connect(ui->actionUserdataImportGarminGTN, &QAction::triggered, userdataController, &UserdataController::importGarmin);
   connect(ui->actionUserdataImportUserfixDat, &QAction::triggered, userdataController, &UserdataController::importXplaneUserFixDat);
@@ -1188,8 +1186,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionUserdataExportUserfixDat, &QAction::triggered, userdataController, &UserdataController::exportXplaneUserFixDat);
   connect(ui->actionUserdataExportXmlBgl, &QAction::triggered, userdataController, &UserdataController::exportBglXml);
 
-  connect(userdataController, &UserdataController::userdataChanged, infoController,
-          &InfoController::updateAllInformation);
+  connect(userdataController, &UserdataController::userdataChanged, infoController, &InfoController::updateAllInformation);
   connect(userdataController, &UserdataController::userdataChanged, this, &MainWindow::updateMapObjectsShown);
   connect(userdataController, &UserdataController::refreshUserdataSearch, userSearch, &UserdataSearch::refreshData);
 

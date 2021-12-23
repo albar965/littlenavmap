@@ -79,12 +79,9 @@ AircraftPerfController::AircraftPerfController(MainWindow *parent)
                                                     ui->menuAircraftPerformanceRecent,
                                                     ui->actionAircraftPerformanceClearMenu);
 
-  connect(fileHistory, &atools::gui::FileHistoryHandler::fileSelected,
-          this, &AircraftPerfController::loadFile);
-  connect(ui->textBrowserAircraftPerformanceReport, &QTextBrowser::anchorClicked,
-          this, &AircraftPerfController::anchorClicked);
-  connect(ui->textBrowserAircraftPerformanceCurrent, &QTextBrowser::anchorClicked,
-          this, &AircraftPerfController::anchorClicked);
+  connect(fileHistory, &atools::gui::FileHistoryHandler::fileSelected, this, &AircraftPerfController::loadFile);
+  connect(ui->textBrowserAircraftPerformanceReport, &QTextBrowser::anchorClicked, this, &AircraftPerfController::anchorClicked);
+  connect(ui->textBrowserAircraftPerformanceCurrent, &QTextBrowser::anchorClicked, this, &AircraftPerfController::anchorClicked);
 
   // Pass wind change with a delay to avoid lagging mouse wheel
   connect(&windChangeTimer, &QTimer::timeout, this, &AircraftPerfController::windChangedDelayed);

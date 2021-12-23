@@ -65,7 +65,7 @@ enum TreeColumnIndex
 
 using atools::sql::SqlRecord;
 
-using atools::sql::SqlRecordVector;
+using atools::sql::SqlRecordList;
 using proc::MapProcedureLeg;
 using proc::MapProcedureLegs;
 using proc::MapProcedureRef;
@@ -449,7 +449,7 @@ void ProcedureSearch::updateFilterBoxes()
     QStringList runwayNames = airportQueryNav->getRunwayNames(currentAirportNav.id);
 
     // Add a tree of transitions and approaches
-    const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(currentAirportNav.id);
+    const SqlRecordList *recAppVector = infoQuery->getApproachInformation(currentAirportNav.id);
 
     if(recAppVector != nullptr) // Deduplicate runways
     {
@@ -487,14 +487,14 @@ void ProcedureSearch::fillApproachTreeWidget()
   if(currentAirportNav.isValid())
   {
     // Add a tree of transitions and approaches
-    const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(currentAirportNav.id);
+    const SqlRecordList *recAppVector = infoQuery->getApproachInformation(currentAirportNav.id);
 
     if(recAppVector != nullptr)
     {
       QStringList runwayNames = airportQueryNav->getRunwayNames(currentAirportNav.id);
       Ui::MainWindow *ui = NavApp::getMainUi();
       QTreeWidgetItem *root = treeWidget->invisibleRootItem();
-      SqlRecordVector sorted;
+      SqlRecordList sorted;
 
       // Collect all procedures from the database
       for(SqlRecord recApp : *recAppVector)
@@ -584,7 +584,7 @@ void ProcedureSearch::fillApproachTreeWidget()
 
         int apprId = recApp.valueInt("approach_id");
         itemIndex.append(MapProcedureRef(currentAirportNav.id, runwayEndId, apprId, -1, -1, type));
-        const SqlRecordVector *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
+        const SqlRecordList *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
 
         QTreeWidgetItem *apprItem = buildApproachItem(root, recApp, type);
 

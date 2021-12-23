@@ -40,6 +40,7 @@
 #include "geo/calculations.h"
 #include "grib/windquery.h"
 #include "logbook/logdatacontroller.h"
+#include "sql/sqltypes.h"
 #include "navapp.h"
 #include "options/optiondata.h"
 #include "perf/aircraftperfcontroller.h"
@@ -68,7 +69,7 @@
 
 using namespace map;
 using atools::sql::SqlRecord;
-using atools::sql::SqlRecordVector;
+using atools::sql::SqlRecordList;
 using atools::geo::normalizeCourse;
 using atools::geo::opposedCourseDeg;
 using atools::capString;
@@ -706,7 +707,7 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) cons
     if(!print)
       airportTitle(airport, html, -1);
 
-    const SqlRecordVector *recVector = infoQuery->getComInformation(airport.id);
+    const SqlRecordList *recVector = infoQuery->getComInformation(airport.id);
     if(recVector != nullptr)
     {
       html.table();
@@ -754,7 +755,7 @@ void HtmlInfoBuilder::bestRunwaysText(const MapAirport& airport, HtmlBuilder& ht
   // Need wind direction and speed - otherwise all runways are good =======================
   if(windDirectionDeg != -1 && windSpeedKts < atools::fs::weather::INVALID_METAR_VALUE)
   {
-    const SqlRecordVector *recVector = infoQuery->getRunwayInformation(airport.id);
+    const SqlRecordList *recVector = infoQuery->getRunwayInformation(airport.id);
     if(recVector != nullptr)
     {
 
@@ -853,7 +854,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
       airportTitle(airport, html, -1);
     html.br().br().b(tr("Elevation: ")).text(Unit::altFeet(airport.getPosition().getAltitude())).br();
 
-    const SqlRecordVector *recVector = infoQuery->getRunwayInformation(airport.id);
+    const SqlRecordList *recVector = infoQuery->getRunwayInformation(airport.id);
     if(recVector != nullptr)
     {
       // Runways =========================================================================
@@ -964,7 +965,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
     if(details)
     {
       // Helipads ==============================================================
-      const SqlRecordVector *heliVector = infoQuery->getHelipadInformation(airport.id);
+      const SqlRecordList *heliVector = infoQuery->getHelipadInformation(airport.id);
       if(heliVector != nullptr)
       {
         for(const SqlRecord& heliRec : *heliVector)
@@ -1007,7 +1008,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
         html.p(tr("Airport has no helipad."));
 
       // Start positions ==============================================================
-      const SqlRecordVector *startVector = infoQuery->getStartInformation(airport.id);
+      const SqlRecordList *startVector = infoQuery->getStartInformation(airport.id);
 
       if(startVector != nullptr && !startVector->isEmpty())
       {
@@ -1378,7 +1379,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
     if(!print)
       airportTitle(airport, html, -1);
 
-    const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(navAirport.id);
+    const SqlRecordList *recAppVector = infoQuery->getApproachInformation(navAirport.id);
     if(recAppVector != nullptr)
     {
       QStringList runwayNames = airportQueryNav->getRunwayNames(navAirport.id);
@@ -1512,7 +1513,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
           html.small(QString("Database: approach_id = %1").arg(recApp.valueInt("approach_id"))).br();
 #endif
 
-        const SqlRecordVector *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
+        const SqlRecordList *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
         if(recTransVector != nullptr)
         {
           // Transitions for this approach
@@ -4621,7 +4622,7 @@ void HtmlInfoBuilder::addAirportFolder(const MapAirport& airport, HtmlBuilder& h
 void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlBuilder& html) const
 {
   // Scenery library entries ============================================
-  const atools::sql::SqlRecordVector *sceneryInfo = infoQuery->getAirportSceneryInformation(airport.ident);
+  const atools::sql::SqlRecordList *sceneryInfo = infoQuery->getAirportSceneryInformation(airport.ident);
 
   if(sceneryInfo != nullptr)
   {

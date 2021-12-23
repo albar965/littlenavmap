@@ -99,7 +99,7 @@ void AirwayQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& wa
   airwayWaypointsQuery->exec();
 
   // Collect records first
-  SqlRecordVector records;
+  SqlRecordList records;
   while(airwayWaypointsQuery->next())
     records.append(airwayWaypointsQuery->record());
 

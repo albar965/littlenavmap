@@ -19,8 +19,7 @@
 #define ATOOLS_TRACKMANAGER_H
 
 #include "track/tracktypes.h"
-#include "fs/userdata/datamanagerbase.h"
-#include "common/mapflags.h"
+#include "sql/datamanagerbase.h"
 
 namespace map {
 struct MapObjectRefExt;
@@ -36,7 +35,7 @@ typedef QVector<map::MapObjectRefExt> MapObjectRefExtVector;
  * Base class wraps the track database.
  */
 class TrackManager
-  : public atools::fs::userdata::DataManagerBase
+  : public atools::sql::DataManagerBase
 {
   Q_DECLARE_TR_FUNCTIONS(TrackManager)
 

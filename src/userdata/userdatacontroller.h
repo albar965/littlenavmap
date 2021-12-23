@@ -99,9 +99,6 @@ public:
   /* Export waypoints into a XML file for BGL compilation */
   void exportBglXml();
 
-  /* Remove all data but keep the schema to avoid locks */
-  void  clearDatabase();
-
   /* Show search tab and raise window */
   void  showSearch();
 
@@ -175,6 +172,9 @@ private:
 
   /* Get default Garmin GTN export path */
   QString garminGtnUserWptPath();
+
+  void undoTriggered();
+  void redoTriggered();
 
   /* Currently in actions selected types */
   QStringList selectedTypes,

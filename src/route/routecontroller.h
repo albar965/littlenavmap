@@ -531,6 +531,8 @@ private:
   FlightplanEntryBuilder *entryBuilder = nullptr;
   atools::fs::pln::FlightplanIO *flightplanIO = nullptr;
 
+  QAction *undoAction = nullptr, *redoAction = nullptr;
+
   /* Takes care of the top label */
   RouteLabel *routeLabel = nullptr;
 

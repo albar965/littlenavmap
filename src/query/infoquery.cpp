@@ -27,7 +27,7 @@
 using atools::sql::SqlQuery;
 using atools::sql::SqlDatabase;
 using atools::sql::SqlRecord;
-using atools::sql::SqlRecordVector;
+using atools::sql::SqlRecordList;
 
 InfoQuery::InfoQuery(SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbTrack)
   : dbSim(sqlDb), dbNav(sqlDbNav), dbTrack(sqlDbTrack)
@@ -58,46 +58,46 @@ const SqlRecord *InfoQuery::getAirportInformation(int airportId)
   return query::cachedRecord(airportCache, airportQuery, airportId);
 }
 
-const atools::sql::SqlRecordVector *InfoQuery::getAirportSceneryInformation(const QString& ident)
+const atools::sql::SqlRecordList *InfoQuery::getAirportSceneryInformation(const QString& ident)
 {
   airportSceneryQuery->bindValue(":id", ident);
-  return query::cachedRecordVector(airportSceneryCache, airportSceneryQuery, ident);
+  return query::cachedRecordList(airportSceneryCache, airportSceneryQuery, ident);
 }
 
-const SqlRecordVector *InfoQuery::getComInformation(int airportId)
+const SqlRecordList *InfoQuery::getComInformation(int airportId)
 {
   comQuery->bindValue(":id", airportId);
-  return query::cachedRecordVector(comCache, comQuery, airportId);
+  return query::cachedRecordList(comCache, comQuery, airportId);
 }
 
-const SqlRecordVector *InfoQuery::getApproachInformation(int airportId)
+const SqlRecordList *InfoQuery::getApproachInformation(int airportId)
 {
   approachQuery->bindValue(":id", airportId);
-  return query::cachedRecordVector(approachCache, approachQuery, airportId);
+  return query::cachedRecordList(approachCache, approachQuery, airportId);
 }
 
-const SqlRecordVector *InfoQuery::getTransitionInformation(int approachId)
+const SqlRecordList *InfoQuery::getTransitionInformation(int approachId)
 {
   transitionQuery->bindValue(":id", approachId);
-  return query::cachedRecordVector(transitionCache, transitionQuery, approachId);
+  return query::cachedRecordList(transitionCache, transitionQuery, approachId);
 }
 
-const SqlRecordVector *InfoQuery::getRunwayInformation(int airportId)
+const SqlRecordList *InfoQuery::getRunwayInformation(int airportId)
 {
   runwayQuery->bindValue(":id", airportId);
-  return query::cachedRecordVector(runwayCache, runwayQuery, airportId);
+  return query::cachedRecordList(runwayCache, runwayQuery, airportId);
 }
 
-const SqlRecordVector *InfoQuery::getHelipadInformation(int airportId)
+const SqlRecordList *InfoQuery::getHelipadInformation(int airportId)
 {
   helipadQuery->bindValue(":id", airportId);
-  return query::cachedRecordVector(helipadCache, helipadQuery, airportId);
+  return query::cachedRecordList(helipadCache, helipadQuery, airportId);
 }
 
-const SqlRecordVector *InfoQuery::getStartInformation(int airportId)
+const SqlRecordList *InfoQuery::getStartInformation(int airportId)
 {
   startQuery->bindValue(":id", airportId);
-  return query::cachedRecordVector(startCache, startQuery, airportId);
+  return query::cachedRecordList(startCache, startQuery, airportId);
 }
 
 const atools::sql::SqlRecord *InfoQuery::getRunwayEndInformation(int runwayEndId)

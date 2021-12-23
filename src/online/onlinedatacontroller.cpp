@@ -632,7 +632,7 @@ bool OnlinedataController::getShadowAircraft(atools::fs::sc::SimConnectAircraft&
 {
   if(isShadowAircraft(simAircraft))
   {
-    atools::sql::SqlRecordVector clients = manager->getClientRecordsByCallsign(simAircraft.getAirplaneRegistration());
+    atools::sql::SqlRecordList clients = manager->getClientRecordsByCallsign(simAircraft.getAirplaneRegistration());
 
     if(!clients.isEmpty())
     {

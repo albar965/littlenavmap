@@ -66,6 +66,15 @@ LogdataController::LogdataController(atools::fs::userdata::LogdataManager *logda
   statsDialog = new LogStatisticsDialog(mainWindow, this);
 
   connect(this, &LogdataController::logDataChanged, statsDialog, &LogStatisticsDialog::logDataChanged);
+  connect(this, &LogdataController::logDataChanged, manager, &atools::sql::DataManagerBase::updateUndoRedoActions);
+
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  connect(ui->actionSearchLogdataUndo, &QAction::triggered, this, &LogdataController::undoTriggered);
+  connect(ui->actionSearchLogdataRedo, &QAction::triggered, this, &LogdataController::redoTriggered);
+
+  manager->setMaximumUndoSteps(50);
+  manager->setTextSuffix(tr(" Logbook Entry"), tr(" Logbook Entries"));
+  manager->setActions(ui->actionSearchLogdataUndo, ui->actionSearchLogdataRedo);
 }
 
 LogdataController::~LogdataController()
@@ -73,6 +82,34 @@ LogdataController::~LogdataController()
   delete statsDialog;
   delete aircraftAtTakeoff;
   delete dialog;
+}
+
+void LogdataController::undoTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  if(manager->canUndo())
+  {
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    manager->undo();
+    QGuiApplication::restoreOverrideCursor();
+
+    emit refreshLogSearch(false, false);
+    emit logDataChanged();
+  }
+}
+
+void LogdataController::redoTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  if(manager->canRedo())
+  {
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    manager->redo();
+    QGuiApplication::restoreOverrideCursor();
+
+    emit refreshLogSearch(false, false);
+    emit logDataChanged();
+  }
 }
 
 void LogdataController::showSearch()
@@ -92,6 +129,7 @@ void LogdataController::saveState()
 void LogdataController::restoreState()
 {
   // logEntryId = atools::settings::Settings::instance().valueInt(lnm::LOGDATA_ENTRY_ID);
+  manager->updateUndoRedoActions();
 }
 
 void LogdataController::optionsChanged()
@@ -234,7 +272,8 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
 
       // Add to database and remember created id
       SqlTransaction transaction(manager->getDatabase());
-      manager->insertByRecord(record, &logEntryId);
+      manager->insertOneRecord(record);
+      logEntryId = manager->getCurrentId();
       transaction.commit();
 
       logChanged(false /* load all */, true /* keep selection */);
@@ -290,7 +329,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
           record.setValue("is_jetfuel", jetfuel); // integer,
 
         SqlTransaction transaction(manager->getDatabase());
-        manager->updateByRecord(record, {logEntryId});
+        manager->updateRecords(record, {logEntryId});
         transaction.commit();
 
         logChanged(false /* load all */, false /* keep selection */);
@@ -319,6 +358,8 @@ void LogdataController::logChanged(bool loadAll, bool keepSelection)
 {
   // Clear cache and update map screen index
   manager->clearGeometryCache();
+  manager->updateUndoRedoActions();
+
   emit logDataChanged();
 
   // Reload search
@@ -436,7 +477,7 @@ void LogdataController::editLogEntries(const QVector<int>& ids)
     {
       // Change modified columns for all given ids
       SqlTransaction transaction(manager->getDatabase());
-      manager->updateByRecord(dlg.getRecord(), ids);
+      manager->updateRecords(dlg.getRecord(), ids);
       transaction.commit();
 
       logChanged(false /* load all */, true /* keep selection */);
@@ -536,7 +577,7 @@ void LogdataController::addLogEntry()
 
     // Add to database
     SqlTransaction transaction(manager->getDatabase());
-    manager->insertByRecord(dlg.getRecord());
+    manager->insertOneRecord(dlg.getRecord());
     transaction.commit();
 
     logChanged(false /* load all */, false /* keep selection */);
@@ -551,21 +592,13 @@ void LogdataController::deleteLogEntries(const QVector<int>& ids)
   qDebug() << Q_FUNC_INFO;
 
   QString txt = ids.size() == 1 ? tr("entry") : tr("entries");
-  int retval =
-    QMessageBox::question(mainWindow, QApplication::applicationName(),
-                          tr("Delete %1 logbook %2?").arg(ids.size()).arg(txt) +
-                          tr("\n\nThis cannot be undone."), QMessageBox::No | QMessageBox::Yes, QMessageBox::No);
+  SqlTransaction transaction(manager->getDatabase());
+  manager->deleteRows(ids);
+  transaction.commit();
 
-  if(retval == QMessageBox::Yes)
-  {
-    SqlTransaction transaction(manager->getDatabase());
-    manager->removeRows(ids);
-    transaction.commit();
+  logChanged(false /* load all */, false /* keep selection */);
 
-    logChanged(false /* load all */, false /* keep selection */);
-
-    mainWindow->setStatusMessage(tr("%1 logbook %2 deleted.").arg(ids.size()).arg(txt));
-  }
+  mainWindow->setStatusMessage(tr("%1 logbook %2 deleted.").arg(ids.size()).arg(txt));
 }
 
 void LogdataController::importXplane()

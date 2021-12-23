@@ -298,6 +298,9 @@
     </property>
     <addaction name="actionShortcutUserpointSearch"/>
     <addaction name="separator"/>
+    <addaction name="actionSearchUserpointUndo"/>
+    <addaction name="actionSearchUserpointRedo"/>
+    <addaction name="separator"/>
     <addaction name="actionUserdataImportCSV"/>
     <addaction name="actionUserdataImportUserfixDat"/>
     <addaction name="actionUserdataImportGarminGTN"/>
@@ -307,7 +310,6 @@
     <addaction name="actionUserdataExportGarminGTN"/>
     <addaction name="actionUserdataExportXmlBgl"/>
     <addaction name="separator"/>
-    <addaction name="actionUserdataClearDatabase"/>
    </widget>
    <widget class="QMenu" name="menuMapView">
     <property name="title">
@@ -469,6 +471,9 @@
      <string>&amp;Logbook</string>
     </property>
     <addaction name="actionShortcutLogbookSearch"/>
+    <addaction name="separator"/>
+    <addaction name="actionSearchLogdataUndo"/>
+    <addaction name="actionSearchLogdataRedo"/>
     <addaction name="separator"/>
     <addaction name="actionLogdataShowStatistics"/>
     <addaction name="separator"/>
@@ -9644,17 +9649,6 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Export Userpoints to XML File for FSX/P3D BGL Compiler</string>
    </property>
   </action>
-  <action name="actionUserdataClearDatabase">
-   <property name="text">
-    <string>Clear database</string>
-   </property>
-   <property name="toolTip">
-    <string>Clear Userpoint Database</string>
-   </property>
-   <property name="statusTip">
-    <string>Clear Userpoint Database</string>
-   </property>
-  </action>
   <action name="actionUserdataEdit">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -12362,6 +12356,78 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="statusTip">
     <string>Show vertical track line</string>
+   </property>
+  </action>
+  <action name="actionSearchUserpointUndo">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/undo.svg</normaloff>:/littlenavmap/resources/icons/undo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Undo Userpoint</string>
+   </property>
+   <property name="toolTip">
+    <string>Undo last change</string>
+   </property>
+   <property name="statusTip">
+    <string>Undo last change</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionSearchUserpointRedo">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/redo.svg</normaloff>:/littlenavmap/resources/icons/redo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Redo Userpoint</string>
+   </property>
+   <property name="toolTip">
+    <string>Redo last change</string>
+   </property>
+   <property name="statusTip">
+    <string>Redo last change</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
+   </property>
+  </action>
+  <action name="actionSearchLogdataUndo">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/undo.svg</normaloff>:/littlenavmap/resources/icons/undo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Undo Logbook Entry</string>
+   </property>
+   <property name="toolTip">
+    <string>Undo last change</string>
+   </property>
+   <property name="statusTip">
+    <string>Undo last change</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Z</string>
+   </property>
+  </action>
+  <action name="actionSearchLogdataRedo">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/redo.svg</normaloff>:/littlenavmap/resources/icons/redo.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Redo Logbook Entry</string>
+   </property>
+   <property name="toolTip">
+    <string>Redo last change</string>
+   </property>
+   <property name="statusTip">
+    <string>Redo last change</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
    </property>
   </action>
  </widget>

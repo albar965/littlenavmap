@@ -52,6 +52,16 @@ UserdataController::UserdataController(atools::fs::userdata::UserdataManager *us
   icons = new UserdataIcons();
   icons->loadIcons();
   lastAddedRecord = new SqlRecord();
+
+  connect(this, &UserdataController::userdataChanged, manager, &atools::sql::DataManagerBase::updateUndoRedoActions);
+
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  connect(ui->actionSearchUserpointUndo, &QAction::triggered, this, &UserdataController::undoTriggered);
+  connect(ui->actionSearchUserpointRedo, &QAction::triggered, this, &UserdataController::redoTriggered);
+
+  manager->setMaximumUndoSteps(50);
+  manager->setTextSuffix(tr(" Userpoint"), tr(" Userpoints"));
+  manager->setActions(ui->actionSearchUserpointUndo, ui->actionSearchUserpointRedo);
 }
 
 UserdataController::~UserdataController()
@@ -59,6 +69,34 @@ UserdataController::~UserdataController()
   delete dialog;
   delete icons;
   delete lastAddedRecord;
+}
+
+void UserdataController::undoTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  if(manager->canUndo())
+  {
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    manager->undo();
+    QGuiApplication::restoreOverrideCursor();
+
+    emit refreshUserdataSearch(false, false);
+    emit userdataChanged();
+  }
+}
+
+void UserdataController::redoTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  if(manager->canRedo())
+  {
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    manager->redo();
+    QGuiApplication::restoreOverrideCursor();
+
+    emit refreshUserdataSearch(false, false);
+    emit userdataChanged();
+  }
 }
 
 void UserdataController::showSearch()
@@ -242,6 +280,7 @@ void UserdataController::restoreState()
     // Enable all
     resetSettingsToDefault();
 
+  manager->updateUndoRedoActions();
   typesToActions();
 }
 
@@ -352,7 +391,7 @@ void UserdataController::moveUserpointFromMap(const map::MapUserpoint& userpoint
   SqlTransaction transaction(manager->getDatabase());
 
   // Change coordinate columns for id
-  manager->updateByRecord(rec, {userpoint.id});
+  manager->updateRecords(rec, {userpoint.id});
   transaction.commit();
 
   // No need to update search
@@ -363,6 +402,7 @@ void UserdataController::moveUserpointFromMap(const map::MapUserpoint& userpoint
 void UserdataController::clearTemporary()
 {
   manager->clearTemporary();
+  manager->updateUndoRedoActions();
 }
 
 map::MapUserpoint UserdataController::getUserpointById(int id)
@@ -438,7 +478,7 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
 
     // Add to database
     SqlTransaction transaction(manager->getDatabase());
-    manager->insertByRecord(*lastAddedRecord);
+    manager->insertOneRecord(*lastAddedRecord);
     transaction.commit();
     emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
     emit userdataChanged();
@@ -463,7 +503,7 @@ void UserdataController::editUserpoints(const QVector<int>& ids)
     {
       // Change modified columns for all given ids
       SqlTransaction transaction(manager->getDatabase());
-      manager->updateByRecord(dlg.getRecord(), ids);
+      manager->updateRecords(dlg.getRecord(), ids);
       transaction.commit();
 
       emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
@@ -480,21 +520,13 @@ void UserdataController::deleteUserpoints(const QVector<int>& ids)
 {
   qDebug() << Q_FUNC_INFO;
 
-  int retval =
-    QMessageBox::question(mainWindow, QApplication::applicationName(),
-                          (ids.size() == 1 ? tr("Delete userpoint?") : tr("Delete %1 userpoints?").arg(ids.size())) +
-                          tr("\n\nThis cannot be undone."), QMessageBox::No | QMessageBox::Yes, QMessageBox::No);
+  SqlTransaction transaction(manager->getDatabase());
+  manager->deleteRows(ids);
+  transaction.commit();
 
-  if(retval == QMessageBox::Yes)
-  {
-    SqlTransaction transaction(manager->getDatabase());
-    manager->removeRows(ids);
-    transaction.commit();
-
-    emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
-    emit userdataChanged();
-    mainWindow->setStatusMessage(tr("%n userpoint(s) deleted.", "", ids.size()));
-  }
+  emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
+  emit userdataChanged();
+  mainWindow->setStatusMessage(tr("%n userpoint(s) deleted.", "", ids.size()));
 }
 
 void UserdataController::importCsv()
@@ -518,6 +550,7 @@ void UserdataController::importCsv()
     {
       mainWindow->showUserpointSearch();
       mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
+      manager->updateUndoRedoActions();
       emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
     }
   }
@@ -547,6 +580,7 @@ void UserdataController::importXplaneUserFixDat()
       int numImported = manager->importXplane(file);
       mainWindow->showUserpointSearch();
       mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
+      manager->updateUndoRedoActions();
       emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
     }
   }
@@ -575,6 +609,7 @@ void UserdataController::importGarmin()
       int numImported = manager->importGarmin(file);
       mainWindow->showUserpointSearch();
       mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
+      manager->updateUndoRedoActions();
       emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
     }
   }
@@ -729,27 +764,6 @@ void UserdataController::exportBglXml()
   catch(...)
   {
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
-  }
-}
-
-void UserdataController::clearDatabase()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  QMessageBox::StandardButton retval =
-    QMessageBox::question(mainWindow, QApplication::applicationName(),
-                          tr("Really delete all userpoints?\n\n"
-                             "A backup will be created in\n"
-                             "\"%1\"\n"
-                             "before deleting.")
-                          .arg(atools::settings::Settings::instance().getPath()),
-                          QMessageBox::No | QMessageBox::Yes, QMessageBox::No);
-
-  if(retval == QMessageBox::Yes)
-  {
-    manager->backupTableToCsv();
-    manager->clearData();
-    emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
   }
 }
 

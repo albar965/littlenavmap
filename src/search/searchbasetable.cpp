@@ -16,29 +16,30 @@
 *****************************************************************************/
 
 #include "search/searchbasetable.h"
-#include "gui/itemviewzoomhandler.h"
-#include "navapp.h"
-#include "common/constants.h"
-#include "search/sqlcontroller.h"
-#include "logbook/logdatacontroller.h"
-#include "search/column.h"
-#include "search/searchcontroller.h"
-#include "ui_mainwindow.h"
-#include "common/mapcolors.h"
-#include "search/columnlist.h"
-#include "mapgui/mapwidget.h"
-#include "route/route.h"
+
 #include "atools.h"
-#include "gui/actiontool.h"
-#include "export/csvexporter.h"
-#include "query/mapquery.h"
-#include "query/airportquery.h"
-#include "options/optiondata.h"
+#include "common/constants.h"
+#include "common/mapcolors.h"
 #include "common/unit.h"
-#include "sql/sqlrecord.h"
-#include "gui/dialog.h"
+#include "export/csvexporter.h"
 #include "geo/calculations.h"
+#include "gui/actiontool.h"
+#include "gui/dialog.h"
+#include "gui/itemviewzoomhandler.h"
+#include "logbook/logdatacontroller.h"
 #include "mapgui/mapmarkhandler.h"
+#include "mapgui/mapwidget.h"
+#include "navapp.h"
+#include "options/optiondata.h"
+#include "query/airportquery.h"
+#include "query/mapquery.h"
+#include "route/route.h"
+#include "search/column.h"
+#include "search/columnlist.h"
+#include "search/searchcontroller.h"
+#include "search/sqlcontroller.h"
+#include "sql/sqlrecord.h"
+#include "ui_mainwindow.h"
 
 #include <QTimer>
 #include <QClipboard>
@@ -150,12 +151,25 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
   ui->actionSearchShowOnMap->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionSearchTableSelectNothing->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
+  // TODO move to respective derived classes
   if(tabIndex == si::SEARCH_AIRPORT)
   {
     // Add departure/destination/alternate actions for airport search tab
     ui->actionSearchRouteAirportStart->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     ui->actionSearchRouteAirportDest->setShortcutContext(Qt::WidgetWithChildrenShortcut);
     ui->actionSearchRouteAirportAlternate->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  }
+
+  if(tabIndex == si::SEARCH_USER)
+  {
+    ui->actionSearchUserpointUndo->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    ui->actionSearchUserpointRedo->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  }
+
+  if(tabIndex == si::SEARCH_LOG)
+  {
+    ui->actionSearchLogdataUndo->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+    ui->actionSearchLogdataRedo->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   }
 
   // Need extra action connected to catch the default Ctrl-C in the table view
@@ -167,13 +181,18 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
   tableView->addActions({ui->actionSearchTableCopy, ui->actionSearchTableSelectNothing});
 
   // Add actions to this tab
-  ui->tabWidgetSearch->widget(tabWidgetIndex)->addActions({ui->actionSearchShowInformation, ui->actionSearchShowApproaches,
-                                                           ui->actionSearchShowApproachCustom, ui->actionSearchShowDepartureCustom,
-                                                           ui->actionSearchShowOnMap});
+  QWidget *currentTab = ui->tabWidgetSearch->widget(tabWidgetIndex);
+  currentTab->addActions({ui->actionSearchShowInformation, ui->actionSearchShowApproaches, ui->actionSearchShowApproachCustom,
+                          ui->actionSearchShowDepartureCustom, ui->actionSearchShowOnMap});
 
   if(tabIndex == si::SEARCH_AIRPORT)
-    ui->tabWidgetSearch->widget(tabWidgetIndex)->addActions({ui->actionSearchRouteAirportStart, ui->actionSearchRouteAirportDest,
-                                                             ui->actionSearchRouteAirportAlternate});
+    currentTab->addActions({ui->actionSearchRouteAirportStart, ui->actionSearchRouteAirportDest, ui->actionSearchRouteAirportAlternate});
+
+  if(tabIndex == si::SEARCH_USER)
+    currentTab->addActions({ui->actionSearchUserpointUndo, ui->actionSearchUserpointRedo});
+
+  if(tabIndex == si::SEARCH_LOG)
+    currentTab->addActions({ui->actionSearchLogdataUndo, ui->actionSearchLogdataRedo});
 
   // Update single shot timer
   updateTimer = new QTimer(this);
@@ -191,8 +210,7 @@ SearchBaseTable::SearchBaseTable(QMainWindow *parent, QTableView *tableView, Col
     // Connecti airport search actions directly since they can be called by shortcuts
     connect(ui->actionSearchRouteAirportStart, &QAction::triggered, this, &SearchBaseTable::routeSetDepartureAction);
     connect(ui->actionSearchRouteAirportDest, &QAction::triggered, this, &SearchBaseTable::routeSetDestinationAction);
-    connect(ui->actionSearchRouteAirportAlternate, &QAction::triggered, this,
-            &SearchBaseTable::routeAddAlternateAction);
+    connect(ui->actionSearchRouteAirportAlternate, &QAction::triggered, this, &SearchBaseTable::routeAddAlternateAction);
   }
 
   // Load text size from options
@@ -1232,6 +1250,20 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   {
     menu.addAction(ui->actionSearchShowInformation);
     menu.addAction(ui->actionSearchShowOnMap);
+    menu.addSeparator();
+  }
+
+  if(tabIndex == si::SEARCH_USER)
+  {
+    menu.addAction(ui->actionSearchUserpointUndo);
+    menu.addAction(ui->actionSearchUserpointRedo);
+    menu.addSeparator();
+  }
+
+  if(tabIndex == si::SEARCH_LOG)
+  {
+    menu.addAction(ui->actionSearchLogdataUndo);
+    menu.addAction(ui->actionSearchLogdataRedo);
     menu.addSeparator();
   }
 

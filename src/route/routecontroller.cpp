@@ -241,11 +241,11 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   undoStack = new QUndoStack(mainWindow);
   undoStack->setUndoLimit(ROUTE_UNDO_LIMIT);
 
-  QAction *undoAction = undoStack->createUndoAction(mainWindow, tr("&Undo Flight Plan"));
+  undoAction = undoStack->createUndoAction(mainWindow, tr("&Undo Flight Plan"));
   undoAction->setIcon(QIcon(":/littlenavmap/resources/icons/undo.svg"));
   undoAction->setShortcut(QKeySequence("Ctrl+Z"));
 
-  QAction *redoAction = undoStack->createRedoAction(mainWindow, tr("&Redo Flight Plan"));
+  redoAction = undoStack->createRedoAction(mainWindow, tr("&Redo Flight Plan"));
   redoAction->setIcon(QIcon(":/littlenavmap/resources/icons/redo.svg"));
   redoAction->setShortcut(QKeySequence("Ctrl+Y"));
 
@@ -254,6 +254,24 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   ui->toolBarRoute->insertAction(ui->actionRouteSelectParking, undoAction);
   ui->toolBarRoute->insertAction(ui->actionRouteSelectParking, redoAction);
+
+  // Need to add the undo/redo actions to all widgets and tabs but userpoint and logbook search to avoid collision
+  // with other undo actions
+  ui->dockWidgetRoute->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  ui->dockWidgetRouteCalc->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  ui->dockWidgetInformation->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  ui->dockWidgetAircraft->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  ui->dockWidgetProfile->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  ui->dockWidgetMap->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  ui->tabAirportSearch->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  ui->tabProcedureSearch->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  ui->tabNavIdSearch->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  ui->tabOnlineCenterSearch->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  ui->tabOnlineClientSearch->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  ui->tabOnlineServerSearch->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+
+  undoAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  redoAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
   ui->menuRoute->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
   ui->menuRoute->insertSeparator(ui->actionRouteSelectParking);
@@ -2609,6 +2627,10 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteActivateLeg);
+  menu.addSeparator();
+
+  menu.addAction(undoAction);
+  menu.addAction(redoAction);
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteLegUp);
