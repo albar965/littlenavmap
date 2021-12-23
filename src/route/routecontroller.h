@@ -293,6 +293,9 @@ public:
   bool hasErrors() const;
   QStringList getErrorStrings() const;
 
+  /* Update header label with sim information */
+  void updateRemarkHeader();
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -421,9 +424,6 @@ private:
 
   /* Enable or disable remarks widget */
   void updateRemarkWidget();
-
-  /* Update header label with sim information */
-  void updateRemarkHeader();
 
   /* Remarks changed */
   void remarksTextChanged();

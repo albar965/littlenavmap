@@ -2985,6 +2985,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   }
 
   route.updateRouteCycleMetadata();
+  route.updateAircraftPerfMetadata();
 
   return route;
 }

@@ -252,13 +252,12 @@ bool RouteExport::routeExportLnm(const RouteExportFormat& format)
 
   if(routeValidateMulti(format))
   {
-    QString routeFile = exportFile(format, "Route/LnmPln",
-                                   NavApp::getCurrentSimulatorFilesPath(), buildDefaultFilename(format), false /* dontComfirmOverwrite */);
+    QString routeFile = exportFile(format, "Route/LnmPln", NavApp::getCurrentSimulatorFilesPath(), buildDefaultFilename(format),
+                                   false /* dontComfirmOverwrite */);
 
     if(!routeFile.isEmpty())
     {
-      using namespace std::placeholders;
-      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_LNMPLN, std::bind(&FlightplanIO::saveLnm, flightplanIO, _1, _2)))
+      if(NavApp::getRouteController()->saveFlightplanLnmAs(routeFile))
       {
         formatExportedCallback(format, routeFile);
         return true;
