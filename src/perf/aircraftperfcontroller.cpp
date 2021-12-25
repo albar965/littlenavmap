@@ -1490,7 +1490,8 @@ bool AircraftPerfController::hasErrors() const
 QStringList AircraftPerfController::getErrorStrings() const
 {
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << errorTooltips;
+  if(!errorTooltips.isEmpty())
+    qDebug() << Q_FUNC_INFO << errorTooltips;
 #endif
 
   return errorTooltips;

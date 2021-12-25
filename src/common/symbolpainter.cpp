@@ -915,7 +915,8 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
   if(size > 4)
   {
     float lineWidth = std::max(size / 16.f, 1.5f);
-    float roseLineWidth = std::max(size / 36.f, 1.1f);
+    float roseLineWidth = std::max(size / 20.f, 0.8f);
+
     painter->setPen(QPen(mapcolors::vorSymbolColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
 
     painter->translate(x, y);

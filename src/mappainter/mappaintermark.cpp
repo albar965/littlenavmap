@@ -942,7 +942,7 @@ void MapPainterMark::paintEndurance()
           textatt::TextAttributes atts = textatt::CENTER;
 
           const Route& route = NavApp::getRouteConst();
-          if(route.size() <= 1 || route.getActiveLegIndexCorrected() == map::INVALID_INDEX_VALUE)
+          if(route.getSizeWithoutAlternates() <= 1 || route.getActiveLegIndexCorrected() == map::INVALID_INDEX_VALUE)
           {
             // Show error colors only for free flight
             if(enduranceHours < 0.5f)

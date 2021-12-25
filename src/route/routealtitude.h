@@ -461,15 +461,13 @@ private:
   float windCorrectedGroundSpeed(atools::grib::Wind& wind, float course, float speed);
 
   /* NM from start */
-  float distanceTopOfClimb = map::INVALID_DISTANCE_VALUE,
-        distanceTopOfDescent = map::INVALID_DISTANCE_VALUE;
+  float distanceTopOfClimb = map::INVALID_DISTANCE_VALUE, distanceTopOfDescent = map::INVALID_DISTANCE_VALUE;
 
   /* Fuel and performance calculation results */
   float travelTime = 0.f, averageGroundSpeed = 0.f;
 
   /* Accumulated time and fuel for each phase */
-  float climbFuel = 0.f, cruiseFuel = 0.f, descentFuel = 0.f,
-        climbTime = 0.f, cruiseTime = 0.f, descentTime = 0.f;
+  float climbFuel = 0.f, cruiseFuel = 0.f, descentFuel = 0.f, climbTime = 0.f, cruiseTime = 0.f, descentTime = 0.f;
 
   float tripFuel = 0.f, alternateFuel = 0.f;
   bool unflyableLegs = false;
@@ -483,8 +481,7 @@ private:
   float climbSpeedWindCorrected = 0.f, cruiseSpeedWindCorrected = 0.f, descentSpeedWindCorrected = 0.f;
 
   /* index in altitude legs */
-  int legIndexTopOfClimb = map::INVALID_INDEX_VALUE,
-      legIndexTopOfDescent = map::INVALID_INDEX_VALUE;
+  int legIndexTopOfClimb = map::INVALID_INDEX_VALUE, legIndexTopOfDescent = map::INVALID_INDEX_VALUE;
 
   const Route *route = nullptr;
 

@@ -274,8 +274,7 @@ void Route::updateActiveLegAndPos(bool force, bool flying)
 }
 
 /* Compare crosstrack distance fuzzy */
-bool Route::isSmaller(const atools::geo::LineDistance& dist1, const atools::geo::LineDistance& dist2,
-                      float epsilon)
+bool Route::isSmaller(const atools::geo::LineDistance& dist1, const atools::geo::LineDistance& dist2, float epsilon)
 {
   return std::abs(dist1.distance) < std::abs(dist2.distance) + epsilon;
 }
@@ -314,12 +313,12 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
     if(activeLegIndex == 0)
       // Reset from point route ====================================
       activeLegIndex = 1;
+
     const RouteLeg& actLeg = value(activeLegIndex);
     if(actLeg.getGeometry().size() > 2 && actLeg.isAnyProcedure())
       actLeg.getGeometry().distanceMeterToLineString(activePos.pos, activeLegResult);
     else
-      activePos.pos.distanceMeterToLine(getPrevPositionAt(activeLegIndex), getPositionAt(activeLegIndex),
-                                        activeLegResult);
+      activePos.pos.distanceMeterToLine(getPrevPositionAt(activeLegIndex), getPositionAt(activeLegIndex), activeLegResult);
   }
 
   if(isTooFarToFlightPlan())
@@ -361,7 +360,7 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
     Pos pos2 = getPositionAt(nextLeg);
 
     // Calculate course difference
-    float legCrs = normalizeCourse(pos1.angleDegTo(pos2));
+    float legCrs = pos1.angleDegTo(pos2);
     courseDiff = atools::mod(pos.course - legCrs + 360.f, 360.f);
     if(courseDiff > 180.f)
       courseDiff = 360.f - courseDiff;
@@ -770,18 +769,21 @@ Pos Route::getPositionAtDistance(float distFromStartNm) const
 
 void Route::updateApproachIls()
 {
+  if(isEmpty())
+    return;
+
   // Get recommended for flight plan table
   destRunwayEnd = map::MapRunwayEnd();
   destRunwayIlsFlightPlanTable.clear();
-  updateApproachRunwayEndAndIls(destRunwayIlsFlightPlanTable, &destRunwayEnd, true, false, false);
+  updateApproachRunwayEndAndIls(destRunwayIlsFlightPlanTable, &destRunwayEnd, true /* recommended */, false /* map */, false);
 
   // Get ILS and runway from route for map
   destRunwayIlsMap.clear();
-  updateApproachRunwayEndAndIls(destRunwayIlsMap, &destRunwayEnd, false, true, false);
+  updateApproachRunwayEndAndIls(destRunwayIlsMap, &destRunwayEnd, false /* recommended */, true /* map */, false);
 
   // ILS for profile
   destRunwayIlsProfile.clear();
-  updateApproachRunwayEndAndIls(destRunwayIlsProfile, &destRunwayEnd, false, false, true);
+  updateApproachRunwayEndAndIls(destRunwayIlsProfile, &destRunwayEnd, false /* recommended */, false /* map */, true);
 }
 
 void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd, bool recommended, bool map,

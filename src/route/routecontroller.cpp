@@ -4579,7 +4579,7 @@ void RouteController::simDataChanged(const atools::fs::sc::SimConnectData& simul
         if(activeLegIdx != previousRouteLeg)
         {
           // Use corrected indexes to highlight initial fix
-          qDebug() << "new route leg" << previousRouteLeg << activeLegIdx;
+          qDebug() << Q_FUNC_INFO << "new route leg" << previousRouteLeg << activeLegIdx;
           highlightNextWaypoint(activeLegIdx);
           NavApp::updateAllMaps();
         }
@@ -4640,8 +4640,7 @@ void RouteController::highlightNextWaypoint(int activeLegIdx)
     // Add magenta brush for all columns in active row ======================
     if(activeLegIndex >= 0 && activeLegIndex < route.size())
     {
-      QColor color = NavApp::isCurrentGuiStyleNight() ?
-                     mapcolors::nextWaypointColorDark : mapcolors::nextWaypointColor;
+      QColor color = NavApp::isCurrentGuiStyleNight() ? mapcolors::nextWaypointColorDark : mapcolors::nextWaypointColor;
 
       for(int col = 0; col < model->columnCount(); col++)
       {
@@ -4793,7 +4792,8 @@ QStringList RouteController::getErrorStrings() const
   }
 
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << toolTip;
+  if(!toolTip.isEmpty())
+    qDebug() << Q_FUNC_INFO << toolTip;
 #endif
 
   return toolTip;

@@ -250,7 +250,8 @@ bool RouteAltitude::hasErrors() const
 QStringList RouteAltitude::getErrorStrings() const
 {
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << errors;
+  if(!errors.isEmpty())
+    qDebug() << Q_FUNC_INFO << errors;
 #endif
 
   return errors;

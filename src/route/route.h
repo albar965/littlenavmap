@@ -749,7 +749,7 @@ private:
 
   atools::fs::pln::Flightplan flightplan;
   proc::MapProcedureLegs approachLegs, starLegs, sidLegs;
-  map::MapTypes shownTypes;
+  map::MapTypes shownTypes = map::NONE;
 
   int activeLegIndex = map::INVALID_INDEX_VALUE;
   atools::geo::LineDistance activeLegResult;

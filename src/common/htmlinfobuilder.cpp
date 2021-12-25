@@ -3665,7 +3665,7 @@ void HtmlInfoBuilder::dateTimeAndFlown(const SimConnectUserAircraft *userAircraf
 
   html.id(pid::LOCAL_TIME_REAL).row2(tr("Real Local Time:"),
                                      locale.toString(QDateTime::currentDateTime(), QLocale::ShortFormat) % tr(" ") %
-                                     userAircraft->getLocalTime().timeZoneAbbreviation());
+                                     QDateTime::currentDateTime().timeZoneAbbreviation());
 
   html.id(pid::DATE_TIME).row2(tr("Simulator Date and Time:"),
                                locale.toString(userAircraft->getZuluTime(), QLocale::ShortFormat) % tr(" ") %
@@ -3740,7 +3740,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       perfController->calculateFuelAndTimeTo(fuelTime, distToDestNm, nearestLegDistance, activeLegIdx);
 
       // Print warning messages ===================================================================
-      if(route.size() < 2)
+      if(route.getSizeWithoutAlternates() < 2)
         // Single point plan
         html.warning(tr("Flight plan not valid. Fuel and time estimated."));
       else
@@ -4211,7 +4211,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         QString text = formatter::formatMinutesHoursLong(hoursRemaining) % tr(", ") % Unit::distNm(distanceRemaining);
 
         // Show error colors only for free flight
-        if(route.size() <= 1 || route.getActiveLegIndexCorrected() == map::INVALID_INDEX_VALUE)
+        if(route.getSizeWithoutAlternates() <= 1 || route.getActiveLegIndexCorrected() == map::INVALID_INDEX_VALUE)
         {
           if(hoursRemaining < 0.5)
             html.id(pid::AIRCRAFT_ENDURANCE).row2Error(tr("Endurance (critical):"), text);

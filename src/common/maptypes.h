@@ -526,8 +526,8 @@ struct MapRunwayEnd
 
   QStringList uniqueVasiTypeStr() const;
 
-  bool secondary;
-  bool navdata; /* true if source is third party nav database, false if source is simulator data */
+  bool secondary = false;
+  bool navdata = false; /* true if source is third party nav database, false if source is simulator data */
 };
 
 // =====================================================================
@@ -581,11 +581,11 @@ struct MapParking
   }
 
   QString type, name, nameShort, airlineCodes /* Comma separated list of airline codes */;
-  int airportId /* database id airport.airport_id */;
-  int number, /* -1 for X-Plane style free names. Otherwise FSX/P3D number */
-      radius; /* Radius in feet or 0 if not available */
-  float heading; /* heading in degrees true or INVALID_HEADING if not available */
-  bool jetway;
+  int airportId = 0 /* database id airport.airport_id */;
+  int number = 0, /* -1 for X-Plane style free names. Otherwise FSX/P3D number */
+      radius = 0; /* Radius in feet or 0 if not available */
+  float heading = 0.f; /* heading in degrees true or INVALID_HEADING if not available */
+  bool jetway = false;
 
   int getRadius() const
   {
@@ -621,9 +621,9 @@ struct MapStart
 
   QChar type = '\0' /* R(UNWAY), H(ELIPAD) or W(ATER) */;
   QString runwayName /* not empty if this is a runway start */;
-  int airportId /* database id airport.airport_id */;
+  int airportId = 0 /* database id airport.airport_id */;
   int helipadNumber /* -1 if not a helipad otherwise sequence number as it appeared in the BGL */;
-  float heading;
+  float heading = 0.f;
 };
 
 // =====================================================================
@@ -1384,7 +1384,7 @@ struct DistanceMarker
   QString text; /* Text to display like VOR name and frequency */
   QColor color; /* Line color depends on origin (airport or navaid type */
   atools::geo::Pos from, to;
-  float magvar;
+  float magvar = 0.f;
 
   bool isValid() const
   {
