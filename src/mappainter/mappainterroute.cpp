@@ -687,29 +687,31 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   // Texts and navaid icons ====================================================
   for(int i = legs.size() - 1; i >= 0; i--)
   {
-    // No text labels for passed points
-    bool drawPoint = i + 1 >= passedProcLeg || !activeValid || preview;
+    // No text labels for passed points but always for preview
+    bool drawText = i + 1 >= passedProcLeg || !activeValid || preview;
+
+    bool drawPoint = i + 1 >= passedProcLeg || !activeValid || preview || previewAll;
 
     if(!context->mapLayerRoute->isApproachText())
-      drawPoint = false;
+      drawText = false;
 
     if(previewAll)
     {
       // Only endpoint labels for SID in preview
       if(legs.mapType & proc::PROCEDURE_SID_ALL && i < legs.size() - 1)
-        drawPoint = false;
+        drawText = false;
 
       // Only start- and endpoint labels for STAR in preview
       if(legs.mapType & proc::PROCEDURE_STAR_ALL && (i > 0 && i < legs.size() - 1))
-        drawPoint = false;
+        drawText = false;
 
       // Only startpoint labels for approaches and transitions in preview
       if(legs.mapType & proc::PROCEDURE_APPROACH_ALL && i > 0)
-        drawPoint = false;
+        drawText = false;
     }
 
     if(drawPoint)
-      paintProcedurePoint(lastLegPoint, legs, i, preview, previewAll, drawPoint);
+      paintProcedurePoint(lastLegPoint, legs, i, preview, previewAll, drawText);
   }
 }
 
