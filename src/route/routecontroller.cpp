@@ -936,7 +936,7 @@ void RouteController::restoreState()
           fileDepartureIdent.clear();
           fileDestinationIdent.clear();
           fileIfrVfr = pln::VFR;
-          fileCruiseAlt = 0.f;
+          fileCruiseAltFt = 0.f;
           route.clear();
         }
       }
@@ -946,7 +946,7 @@ void RouteController::restoreState()
         fileDepartureIdent.clear();
         fileDestinationIdent.clear();
         fileIfrVfr = pln::VFR;
-        fileCruiseAlt = 0.f;
+        fileCruiseAltFt = 0.f;
         route.clear();
       }
     }
@@ -1040,8 +1040,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 
     if(!ok)
     {
-      atools::gui::Dialog::warning(mainWindow,
-                                   tr("Loading of FLP flight plan failed:<br/><br/>") + rs.getMessages().join("<br/>"));
+      atools::gui::Dialog::warning(mainWindow, tr("Loading of FLP flight plan failed:<br/><br/>") + rs.getMessages().join("<br/>"));
       return;
 
     }
@@ -1099,7 +1098,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   fileDepartureIdent = route.getFlightplan().getDepartureIdent();
   fileDestinationIdent = route.getFlightplan().getDestinationIdent();
   fileIfrVfr = route.getFlightplan().getFlightplanType();
-  fileCruiseAlt = route.getCruisingAltitudeFeet();
+  fileCruiseAltFt = route.getCruisingAltitudeFeet();
 
   route.updateLegAltitudes();
   // route.updateRouteCycleMetadata();
@@ -1201,7 +1200,7 @@ void RouteController::loadProceduresFromFlightplan(bool clearOldProcedurePropert
                                                               route.getDepartureAirportLeg().getAirport(),
                                                               route.getDestinationAirportLeg().getAirport(),
                                                               arrival, star, departure, errors);
-
+  errors.removeDuplicates();
   procedureErrors = errors;
 
   // SID/STAR with multiple runways are already assigned
@@ -1457,7 +1456,7 @@ void RouteController::saveFlightplanLnmExported(const QString& filename)
   fileDepartureIdent = route.getFlightplan().getDepartureIdent();
   fileDestinationIdent = route.getFlightplan().getDestinationIdent();
   fileIfrVfr = route.getFlightplan().getFlightplanType();
-  fileCruiseAlt = route.getCruisingAltitudeFeet();
+  fileCruiseAltFt = route.getCruisingAltitudeFeet();
 
   // Set format to original route since it is saved as LNM now
   route.getFlightplan().setLnmFormat(true);
@@ -1546,31 +1545,74 @@ bool RouteController::saveFlightplanLnmInternal()
 {
   try
   {
-    // Update AIRAC cycle
+    // Remember to send out signal
+    bool routeHasChanged = false;
+
+    // Update AIRAC cycle on original route ===============
     route.updateRouteCycleMetadata();
 
-    // Copy loaded procedures back to properties to ensure that only valid ones are saved
-    // Additionally remove duplicate waypoint
-    route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */, false /* cleanup route */);
+    // Add performance file type and name on original route  ===============
+    route.updateAircraftPerfMetadata();
+
+    // Check if any procedures were not loaded from the database ============================
+    proc::MapProcedureTypes missingProcedures = route.getMissingProcedures();
+    if(missingProcedures != proc::PROCEDURE_NONE)
+    {
+      qDebug() << Q_FUNC_INFO << "missingProcedures" << missingProcedures;
+
+      // Ask before saving file
+      int result = atools::gui::Dialog(mainWindow).
+                   showQuestionMsgBox(lnm::ACTIONS_SHOW_SAVE_LNMPLN_WARNING,
+                                      tr("<p>One or more procedures in the flight plan are not valid.</p>"
+                                           "<ul><li>%1</li></ul>"
+                                             "<p>These will be dropped when saving.</p>"
+                                               "<p>Save flight plan now and drop invalid procedures?</p>").
+                                      arg(procedureErrors.join(tr("</li><li>"))),
+                                      tr("Do not &show this dialog again and save without warning."),
+                                      QMessageBox::Cancel | QMessageBox::Save, QMessageBox::Cancel, QMessageBox::Save);
+
+      if(result == QMessageBox::Cancel)
+        return false;
+      else if(result == QMessageBox::Help)
+      {
+        atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "FLIGHTPLANSAVE.html", lnm::helpLanguageOnline());
+        return false;
+      }
+
+      // Remove all missing procedures and flight plan legs as well as properties in plan
+      route.removeProcedureLegs(missingProcedures);
+
+      // Reload from database also to update the error message
+      loadProceduresFromFlightplan(true /* Clear procedure properties */);
+
+      // Copy loaded procedures back to properties to ensure that only valid ones are saved
+      // Additionally remove duplicate waypoints
+      route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */, true /* cleanup route */);
+
+      // Have to rebuild all after modification above
+      route.updateAll();
+      route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
+      route.updateLegAltitudes();
+      route.updateDepartureAndDestination();
+
+      routeHasChanged = true;
+    }
 
     // Create a copy which allows to change altitude
     // Copy altitudes to flight plan entries
-    Flightplan flightplan = route.updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN).getFlightplan();
+    Flightplan flightplanCopy = route.updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN).getFlightplan();
 
     // Remember type, departure and destination for filename checking (save/saveAs)
-    fileIfrVfr = flightplan.getFlightplanType();
-    fileCruiseAlt = route.getCruisingAltitudeFeet();
-    fileDepartureIdent = flightplan.getDepartureIdent();
-    fileDestinationIdent = flightplan.getDestinationIdent();
+    fileIfrVfr = flightplanCopy.getFlightplanType();
+    fileCruiseAltFt = route.getCruisingAltitudeFeet();
+    fileDepartureIdent = flightplanCopy.getDepartureIdent();
+    fileDestinationIdent = flightplanCopy.getDestinationIdent();
 
-    // Set cruise altitude in feet instead of local units
-    flightplan.setCruisingAltitude(atools::roundToInt(Unit::rev(static_cast<float>(flightplan.getCruisingAltitude()), Unit::altFeetF)));
-
-    // Add performance file type and name ===============
-    route.updateAircraftPerfMetadata();
+    // Set cruise altitude on plan copy in feet instead of local units
+    flightplanCopy.setCruisingAltitude(atools::roundToInt(route.getCruisingAltitudeFeet()));
 
     // Save LNMPLN - Will throw an exception if something goes wrong
-    flightplanIO->saveLnm(flightplan, routeFilename);
+    flightplanIO->saveLnm(flightplanCopy, routeFilename);
 
     // Set format to original route since it is saved as LNM now
     route.getFlightplan().setLnmFormat(true);
@@ -1580,6 +1622,10 @@ bool RouteController::saveFlightplanLnmInternal()
     undoStack->setClean();
     updateRemarkHeader();
     NavApp::updateWindowTitle();
+
+    if(routeHasChanged)
+      emit routeChanged(false, false);
+
     qDebug() << "saveFlightplan undoIndex" << undoIndex << "undoIndexClean" << undoIndexClean;
   }
   catch(atools::Exception& e)
@@ -3054,7 +3100,7 @@ bool RouteController::doesLnmFilenameMatchRoute()
       ok &= fileIfrVfr == route.getFlightplan().getFlightplanType();
 
     if(pattern.contains(atools::fs::pln::pattern::CRUISEALT))
-      ok &= atools::almostEqual(fileCruiseAlt, route.getCruisingAltitudeFeet(), 10.f);
+      ok &= atools::almostEqual(fileCruiseAltFt, route.getCruisingAltitudeFeet(), 10.f);
 
     if(pattern.contains(atools::fs::pln::pattern::DEPARTIDENT))
       ok &= fileDepartureIdent == route.getFlightplan().getDepartureIdent();
@@ -4776,9 +4822,12 @@ QStringList RouteController::getErrorStrings() const
       toolTip.append(flightplanErrors);
 
     if(!procedureErrors.isEmpty())
+    {
       toolTip.append(tr("Cannot load %1: %2").
                      arg(procedureErrors.size() > 1 ? tr("procedures") : tr("procedure")).
                      arg(procedureErrors.join(tr(", "))));
+      toolTip.append(tr("Save and reload flight plan or select new procedures to fix this."));
+    }
 
     if(!alternateErrors.isEmpty())
       toolTip.append(tr("Cannot load %1: %2").
@@ -4853,7 +4902,7 @@ void RouteController::clearRoute()
   fileDepartureIdent.clear();
   fileDestinationIdent.clear();
   fileIfrVfr = pln::VFR;
-  fileCruiseAlt = 0.f;
+  fileCruiseAltFt = 0.f;
   undoStack->clear();
   undoIndex = 0;
   undoIndexClean = 0;

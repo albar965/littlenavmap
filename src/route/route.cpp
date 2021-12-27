@@ -1458,8 +1458,7 @@ void Route::cleanupFlightPlanForProcedures()
     removeLegs(fromIdx, toIdx);
 }
 
-void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clearOldProcedureProperties,
-                                bool cleanupRoute)
+void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clearOldProcedureProperties, bool cleanupRoute)
 {
   // Change STAR to connect manual legs to the arrival/approach or airport
   // This can only be done with a copy of the procedures in the route
@@ -1534,6 +1533,11 @@ void Route::updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clear
 
   ProcedureQuery::fillFlightplanProcedureProperties(flightplan.getProperties(), approachLegs, starLegs, sidLegs);
   updateIndicesAndOffsets();
+}
+
+proc::MapProcedureTypes Route::getMissingProcedures()
+{
+  return ProcedureQuery::getMissingProcedures(flightplan.getProperties(), approachLegs, starLegs, sidLegs);
 }
 
 void Route::removeLegs(int from, int to)

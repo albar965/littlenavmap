@@ -81,9 +81,8 @@ public:
   /* Resolves all procedures based on given properties and loads them from the database.
    * Procedures are partially resolved in a fuzzy way. */
   void getLegsForFlightplanProperties(const QHash<QString, QString> properties,
-                                      const map::MapAirport& departure,
-                                      const map::MapAirport& destination,
-                                      proc::MapProcedureLegs& arrivalLegs, proc::MapProcedureLegs& starLegs,
+                                      const map::MapAirport& departure, const map::MapAirport& destination,
+                                      proc::MapProcedureLegs& approachLegs, proc::MapProcedureLegs& starLegs,
                                       proc::MapProcedureLegs& sidLegs, QStringList& errors);
 
   /* Get dot-separated SID/STAR and the respective transition from the properties */
@@ -92,9 +91,15 @@ public:
 
   /* Populate the property list for given procedures */
   static void fillFlightplanProcedureProperties(QHash<QString, QString>& properties,
-                                                const proc::MapProcedureLegs& arrivalLegs,
+                                                const proc::MapProcedureLegs& approachLegs,
                                                 const proc::MapProcedureLegs& starLegs,
                                                 const proc::MapProcedureLegs& sidLegs);
+
+  /* Check if structs are filled according to properties. If a struct is empty return flag for missing (not resolved) procedure */
+  static proc::MapProcedureTypes getMissingProcedures(QHash<QString, QString>& properties,
+                                                      const proc::MapProcedureLegs& approachLegs,
+                                                      const proc::MapProcedureLegs& starLegs,
+                                                      const proc::MapProcedureLegs& sidLegs);
 
   /* Removes properties from the given map based on given types */
   static void clearFlightplanProcedureProperties(QHash<QString, QString>& properties,
@@ -129,7 +134,7 @@ public:
 
   /* Stitch manual legs between either STAR and airport or STAR and approach together.
    * This will modify the procedures.*/
-  void postProcessLegsForRoute(proc::MapProcedureLegs& starLegs, const proc::MapProcedureLegs& arrivalLegs,
+  void postProcessLegsForRoute(proc::MapProcedureLegs& starLegs, const proc::MapProcedureLegs& approachLegs,
                                const map::MapAirport& airport);
 
 private:

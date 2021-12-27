@@ -266,8 +266,7 @@ public:
   }
 
   /* Get nearest flight plan leg to given screen position xs/ys. */
-  void getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
-                  map::MapResult& mapobjects,
+  void getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance, map::MapResult& mapobjects,
                   map::MapObjectQueryTypes types) const;
 
   void eraseAirway(int row);
@@ -506,43 +505,43 @@ public:
 
   int getSizeWithoutAlternates() const;
 
-  bool isEmpty() const // OK
+  bool isEmpty() const
   {
     return QList::isEmpty();
   }
 
-  void append(const RouteLeg& leg) // OK
+  void append(const RouteLeg& leg)
   {
     QList::append(leg);
   }
 
-  void prepend(const RouteLeg& leg) // OK
+  void prepend(const RouteLeg& leg)
   {
     QList::prepend(leg);
   }
 
-  void insert(int before, const RouteLeg& leg) // OK
+  void insert(int before, const RouteLeg& leg)
   {
     QList::insert(before, leg);
   }
 
-  void replace(int i, const RouteLeg& leg) // OK
+  void replace(int i, const RouteLeg& leg)
   {
     QList::replace(i, leg);
   }
 
-  void move(int from, int to) // OK
+  void move(int from, int to)
   {
     QList::move(from, to);
   }
 
-  void removeAt(int i) // OK
+  void removeAt(int i)
   {
     QList::removeAt(i);
   }
 
   /* Removes the shadowed flight plan entry too */
-  void removeAllAt(int i) // OK
+  void removeAllAt(int i)
   {
     QList::removeAt(i);
     flightplan.getEntries().removeAt(i);
@@ -552,7 +551,7 @@ public:
   void removeAllExceptRange(int from, int to);
 
   /* Removes only route legs and does not touch the flight plan copy */
-  void clear() // OK
+  void clear()
   {
     QList::clear();
   }
@@ -682,6 +681,10 @@ public:
 
   /* Uses pattern from options if empty */
   QString buildDefaultFilename(QString pattern, QString suffix, bool clean = true) const;
+
+  /* Get all missing (i.e. not loaded) procedures where property values are present
+   * but procedure structs are not loaded/resolved */
+  proc::MapProcedureTypes getMissingProcedures();
 
 private:
   /* Get a list of approach ILS (not localizer) and the used runway end. Only for approaches. */

@@ -516,7 +516,7 @@ private:
   QString routeFilename, fileDepartureIdent, fileDestinationIdent;
 
   /* Same as above for cruise altitude */
-  float fileCruiseAlt;
+  float fileCruiseAltFt;
 
   /* Current loaded or saved format since the plans in the undo stack have different values */
   atools::fs::pln::FlightplanType fileIfrVfr;

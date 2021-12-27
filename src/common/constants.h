@@ -104,6 +104,7 @@ const QLatin1String ACTIONS_SHOW_SSL_WARNING_WEATHER("Actions/SslWarningWeather"
 const QLatin1String ACTIONS_SHOW_NAVDATA_WARNING("Actions/ShowNavdataWarning");
 const QLatin1String ACTIONS_SHOW_CRUISE_ZERO_WARNING("Actions/ShowCruiseZeroWarning");
 
+const QLatin1String ACTIONS_SHOW_SAVE_LNMPLN_WARNING("Actions/ShowSaveLnmplnWarning");
 const QLatin1String ACTIONS_SHOW_SAVE_WARNING("Actions/ShowSaveWarning");
 const QLatin1String ACTIONS_SHOW_ZOOM_WARNING("Actions/ShowZoomsWarning");
 const QLatin1String ACTIONS_OFFLINE_WARNING("Actions/OfflineWarning");

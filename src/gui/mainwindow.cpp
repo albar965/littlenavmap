@@ -2503,7 +2503,7 @@ bool MainWindow::routeSaveLnm()
       dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_SAVE_WARNING,
                                  tr("<p>You cannot save this file directly.<br/>"
                                     "Use the export function instead.</p>"
-                                    "<p>Save using the new LNMPLN format now?</p>"),
+                                    "<p>Save using the LNMPLN format now?</p>"),
                                  tr("Do not &show this dialog again and save as LNMPLN."),
                                  buttonList, QMessageBox::Cancel, QMessageBox::Save);
 
@@ -2511,8 +2511,7 @@ bool MainWindow::routeSaveLnm()
       return false;
     else if(result == QMessageBox::Help)
     {
-      atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "FLIGHTPLANFMT.html",
-                                               lnm::helpLanguageOnline());
+      atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "FLIGHTPLANFMT.html", lnm::helpLanguageOnline());
       return false;
     }
   }
@@ -2540,10 +2539,8 @@ QString MainWindow::routeSaveFileDialogLnm(const QString& filename)
 {
   return dialog->saveFileDialog(
     tr("Save Flight Plan as LNMPLN Format"),
-    tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNMPLN),
-    "lnmpln", "Route/LnmPln", atools::documentsDir(),
-    filename.isEmpty() ? NavApp::getRouteConst().buildDefaultFilename(".lnmpln") : filename,
-    false /* confirm overwrite */);
+    tr("Flight Plan Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_LNMPLN), "lnmpln", "Route/LnmPln", atools::documentsDir(),
+    filename.isEmpty() ? NavApp::getRouteConst().buildDefaultFilename(".lnmpln") : filename, false /* confirm overwrite */);
 }
 
 bool MainWindow::routeSaveAsLnm()
@@ -3246,6 +3243,7 @@ void MainWindow::resetMessages()
   settings.setValue(lnm::OPTIONS_DIALOG_WARN_STYLE, true);
   settings.setValue(lnm::ACTIONS_SHOW_LOAD_FMS_ALT_WARN, true);
   settings.setValue(lnm::ACTIONS_SHOW_SAVE_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOW_SAVE_LNMPLN_WARNING, true);
   settings.setValue(lnm::ACTIONS_SHOW_ZOOM_WARNING, true);
   settings.setValue(lnm::ACTIONS_OFFLINE_WARNING, true);
   settings.setValue(lnm::ACTIONS_SHOW_UPDATE_FAILED, true);
@@ -4674,11 +4672,11 @@ void MainWindow::updateErrorLabels()
   if(!toolTipText.isEmpty())
   {
     ui->labelRouteError->setVisible(true);
-    ui->labelRouteError->setText(HtmlBuilder::errorMessage(tr("Found problems. Click here for details.")));
+    ui->labelRouteError->setText(HtmlBuilder::errorMessage(tr("Found problems in flight plan. Click here for details.")));
 
     // Disallow text wrapping
     ui->labelRouteError->setToolTip(toolTipText);
-    ui->labelRouteError->setStatusTip(tr("Found problems."));
+    ui->labelRouteError->setStatusTip(tr("Found problems in flight plan."));
   }
   else
   {
