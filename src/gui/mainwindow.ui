@@ -10653,13 +10653,13 @@ Disabled if a navdatabase does not allow it.</string>
   </action>
   <action name="actionRouteSaveAsVfp">
    <property name="text">
-    <string>Export Flight Plan for &amp;vPilot or SWIFT ...</string>
+    <string>Export Flight Plan for &amp;vPilot, xPilot or SWIFT ...</string>
    </property>
    <property name="toolTip">
-    <string>Save flight plan as VFP file for VATSIM vPilot or SWIFT</string>
+    <string>Save flight plan as VFP file for VATSIM vPilot, xPilot or SWIFT</string>
    </property>
    <property name="statusTip">
-    <string>Save flight plan as VFP file for VATSIM vPilot or SWIFT</string>
+    <string>Save flight plan as VFP file for VATSIM vPilot, xPilot or SWIFT</string>
    </property>
   </action>
   <action name="actionRouteSaveAsIvap">

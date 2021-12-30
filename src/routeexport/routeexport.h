@@ -101,7 +101,7 @@ public:
   bool routeExportFlightgearMan(); /* Called by action */
   bool routeExportFlightgear(const RouteExportFormat& format);
 
-  /* vPilot VATSIM */
+  /* vPilot/xPilot VATSIM */
   bool routeExportVfpMan(); /* Called by action */
   bool routeExportVfp(const RouteExportFormat& format);
 

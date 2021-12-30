@@ -296,7 +296,7 @@ void RouteExportFormatMap::init()
   FMT(UFMC,         AIRPORTS,         S0 % tr("ufmc"),    tr("FMC"),       tr("UFMC")                                                            );
   FMT(PROSIM,       AIRPORTS|FILEAPP, tr("companyroutes.xml"), tr("Simulator"), tr("ProSim")                                                     );
   FMT(BBS,          AIRPORTS,         S0 % tr("pln"),     tr("Aircraft"),  tr("BlackBox Simulations Airbus")                                     );
-  FMT(VFP,          AIRPORTS,         S0 % tr("vfp"),     tr("Online"),    tr("VATSIM vPilot or SWIFT") % mainMenu                               );
+  FMT(VFP,          AIRPORTS,         S0 % tr("vfp"),     tr("Online"),    tr("VATSIM vPilot, xPilot or SWIFT") % mainMenu                       );
   FMT(IVAP,         AIRPORTS,         S0 % tr("fpl"),     tr("Online"),    tr("IvAp for IVAO") % mainMenu                                        );
   FMT(XIVAP,        AIRPORTS,         S0 % tr("fpl"),     tr("Online"),    tr("X-IVAP for IVAO") % mainMenu                                      );
   FMT(FEELTHEREFPL, AIRPORTS,         SU % tr("fpl"),     tr("Aircraft"),  tr("FeelThere or Wilco")                                              );

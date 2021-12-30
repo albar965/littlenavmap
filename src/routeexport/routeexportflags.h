@@ -59,7 +59,7 @@ enum RouteExportFormatType : quint16
   PMS50 = 39, /* Garmin PMS50 GTN750  */
 
   /* Online ================ */
-  VFP = 9, /* vPilot VATSIM */
+  VFP = 9, /* vPilot or xPilot VATSIM */
   IVAP = 10, /* IVAP for IVAO */
   XIVAP = 11, /* X-IVAP for IVAO */
 
