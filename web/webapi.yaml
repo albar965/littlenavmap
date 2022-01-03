@@ -577,6 +577,18 @@ components:
               items: 
                 type: object
                 $ref: '#/components/schemas/MapMarkerFeature'
+        waypoints:
+          description: markers list
+          type: object
+          properties:
+            count:
+              type: number
+              example: 361
+            result:
+              type: array
+              items: 
+                type: object
+                $ref: '#/components/schemas/MapWaypointFeature'
     MapObject:
       type: object
       description: Identifiable map object
@@ -655,6 +667,27 @@ components:
     MapMarkerFeature:
       type: object
       description: Single marker list entry
+      allOf:
+        - $ref: '#/components/schemas/MapObject'
+      properties:
+        elevation:
+          description: the marker elevation in ft
+          type: number
+          example: 0
+        ident:
+          description: The marker ident (ICAO)
+          type: string
+          example: "AL"
+        type:
+          description: The marker type
+          type: string
+          example: "OUTER"
+        position:
+          description: The airports geographical position
+          $ref: '#/components/schemas/Coordinates'
+    MapWaypointFeature:
+      type: object
+      description: Single waypoint list entry
       allOf:
         - $ref: '#/components/schemas/MapObject'
       properties:

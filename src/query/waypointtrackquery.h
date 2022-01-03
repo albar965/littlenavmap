@@ -79,6 +79,10 @@ public:
   void getWaypointsRect(QVector<map::MapWaypoint>& waypoints, const atools::geo::Pos& pos, float distanceNm);
   void getWaypointRectNearest(map::MapWaypoint& waypoint, const atools::geo::Pos& pos, float distanceNm);
 
+  /* Wrapper for getWaypoints usage by atools Rect */
+  const QList<map::MapWaypoint> getWaypointsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer,
+                                              bool lazy, bool& overflow);
+
   /* Similar to getAirports */
   void getWaypoints(QList<map::MapWaypoint>& waypoints, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                     bool lazy, bool& overflow);

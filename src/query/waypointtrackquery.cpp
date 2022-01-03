@@ -117,6 +117,15 @@ void WaypointTrackQuery::getWaypoints(QList<map::MapWaypoint>& waypoints, const 
   }
 }
 
+const QList<map::MapWaypoint> WaypointTrackQuery::getWaypointsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer,
+                                            bool lazy, bool& overflow)
+{
+  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(),rect.getSouth(),rect.getEast(), rect.getWest(), GeoDataCoordinates::Degree);
+  QList<map::MapWaypoint> waypoints = QList<map::MapWaypoint>();
+  getWaypoints(waypoints,latLonBox,mapLayer,lazy,overflow);
+  return waypoints;
+}
+
 const SqlRecord *WaypointTrackQuery::getWaypointInformation(int waypointId)
 {
   const SqlRecord *rec = waypointQuery->getWaypointInformation(waypointId);

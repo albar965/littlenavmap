@@ -343,6 +343,7 @@ QByteArray JsonInfoBuilder::features(MapFeaturesData mapFeaturesData) const
            { "ndbs", JSON::object() },
            { "vors", JSON::object() },
            { "markers", JSON::object() },
+           { "waypoints", JSON::object() },
        };
 
        json["airports"].push_back({ "count", data.airports.count() });
@@ -356,6 +357,9 @@ QByteArray JsonInfoBuilder::features(MapFeaturesData mapFeaturesData) const
 
        json["markers"].push_back({ "count", data.markers.count() });
        json["markers"].push_back({ "result", JSON::array() });
+
+       json["waypoints"].push_back({ "count", data.waypoints.count() });
+       json["waypoints"].push_back({ "result", JSON::array() });
 
 
 
@@ -418,6 +422,19 @@ QByteArray JsonInfoBuilder::features(MapFeaturesData mapFeaturesData) const
            json["markers"]["result"][i]["type"] = qUtf8Printable(marker.type);
            json["markers"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(marker.position));
            json["markers"]["result"][i]["elevation"] =  marker.getPosition().getAltitude();
+
+       }
+
+       for(int i = 0; i < data.waypoints.count(); ++i){
+
+           map::MapWaypoint waypoint =  data.waypoints[i];
+
+           json["waypoints"]["result"][i]["object_id"] = waypoint.id;
+           json["waypoints"]["result"][i]["type_id"] = map::WAYPOINT;
+           json["waypoints"]["result"][i]["ident"] = qUtf8Printable(waypoint.ident);
+           json["waypoints"]["result"][i]["type"] = qUtf8Printable(waypoint.type);
+           json["waypoints"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(waypoint.position));
+           json["waypoints"]["result"][i]["elevation"] =  waypoint.getPosition().getAltitude();
 
        }
 
@@ -437,6 +454,7 @@ QByteArray JsonInfoBuilder::feature(MapFeaturesData mapFeaturesData) const
            { "ndbs", JSON::object() },
            { "vors", JSON::object() },
            { "markers", JSON::object() },
+           { "waypoints", JSON::object() },
        };
 
        json["airports"].push_back({ "count", data.airports.count() });
@@ -451,7 +469,8 @@ QByteArray JsonInfoBuilder::feature(MapFeaturesData mapFeaturesData) const
        json["markers"].push_back({ "count", data.markers.count() });
        json["markers"].push_back({ "result", JSON::array() });
 
-
+       json["waypoints"].push_back({ "count", data.waypoints.count() });
+       json["waypoints"].push_back({ "result", JSON::array() });
 
        for(int i = 0; i < data.airports.count(); ++i){
 
@@ -512,6 +531,19 @@ QByteArray JsonInfoBuilder::feature(MapFeaturesData mapFeaturesData) const
            json["markers"]["result"][i]["type"] = qUtf8Printable(marker.type);
            json["markers"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(marker.position));
            json["markers"]["result"][i]["elevation"] =  marker.getPosition().getAltitude();
+
+       }
+
+       for(int i = 0; i < data.waypoints.count(); ++i){
+
+           map::MapWaypoint waypoint =  data.waypoints[i];
+
+           json["waypoints"]["result"][i]["object_id"] = waypoint.id;
+           json["waypoints"]["result"][i]["type_id"] = map::WAYPOINT;
+           json["waypoints"]["result"][i]["ident"] = qUtf8Printable(waypoint.ident);
+           json["waypoints"]["result"][i]["type"] = qUtf8Printable(waypoint.type);
+           json["waypoints"]["result"][i]["position"] = coordinatesToJSON(getCoordinates(waypoint.position));
+           json["waypoints"]["result"][i]["elevation"] =  waypoint.getPosition().getAltitude();
 
        }
 

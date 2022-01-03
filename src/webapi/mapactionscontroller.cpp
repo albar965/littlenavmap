@@ -23,6 +23,7 @@
 #include <navapp.h>
 
 #include "query/mapquery.h"
+#include "query/waypointtrackquery.h"
 #include "mapgui/mappaintwidget.h"
 #include "mappainter/mappaintlayer.h"
 #include "mapgui/mapwidget.h"
@@ -131,12 +132,14 @@ WebApiResponse MapActionsController::featuresAction(WebApiRequest request){
     const QList<map::MapNdb> ndbs = *mapPaintWidget->getMapQuery()->getNdbsByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,overflow);
     const QList<map::MapVor> vors = *mapPaintWidget->getMapQuery()->getVorsByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,overflow);
     const QList<map::MapMarker> markers = *mapPaintWidget->getMapQuery()->getMarkersByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,overflow);
+    const QList<map::MapWaypoint> waypoints = mapPaintWidget->getWaypointTrackQuery()->getWaypointsByRect(rect,mapPaintWidget->getMapPaintLayer()->getMapLayer(), false,overflow);
 
     MapFeaturesData data = {
         airports,
         ndbs,
         vors,
-        markers
+        markers,
+        waypoints
     };
 
     response.body = infoBuilder->features(data);
@@ -154,13 +157,21 @@ WebApiResponse MapActionsController::featureAction(WebApiRequest request){
 
     map::MapResult result;
 
-    mapPaintWidget->getMapQuery()->getMapObjectById(result,type_id,map::AIRSPACE_SRC_NONE,object_id,false);
+    switch (type_id) {
+        case map::WAYPOINT:
+            result.waypoints.append(mapPaintWidget->getWaypointTrackQuery()->getWaypointById(object_id));
+            break;
+        default:
+            mapPaintWidget->getMapQuery()->getMapObjectById(result,type_id,map::AIRSPACE_SRC_NONE,object_id,false);
+            break;
+    }
 
     MapFeaturesData data = {
         result.airports,
         result.ndbs,
         result.vors,
-        result.markers
+        result.markers,
+        result.waypoints
     };
 
     response.body = infoBuilder->feature(data);
