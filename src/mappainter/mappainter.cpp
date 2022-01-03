@@ -888,7 +888,7 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
       painter->setBrush(context->darkMap ? mapcolors::msaDiagramFillColorDark : mapcolors::msaDiagramFillColor);
       drawPolygon(painter, msa.geometry);
 
-      TextPlacement textPlacement(painter, this, QRect());
+      TextPlacement textPlacement(painter, this, context->screenRect);
       QVector<atools::geo::Line> lines;
       QStringList texts;
 

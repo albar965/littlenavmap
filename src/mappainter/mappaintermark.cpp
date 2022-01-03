@@ -85,18 +85,22 @@ void MapPainterMark::render()
   paintMark();
   paintHome();
 
+  // Traffic patterns
   if(context->objectTypes.testFlag(map::MARK_PATTERNS))
     paintPatternMarks();
 
   if(context->objectTypes.testFlag(map::MARK_HOLDING))
     paintHoldingMarks(mapPaintWidget->getHoldingMarksFiltered(), true /* user */, context->drawFast);
 
+  // Airport MSA set by user
   if(context->objectTypes.testFlag(map::MARK_MSA))
     paintMsaMarks(mapPaintWidget->getMsaMarksFiltered(), true /* user */, context->drawFast);
 
+  // All range rings
   if(context->objectTypes.testFlag(map::MARK_RANGE))
     paintRangeMarks();
 
+  // Measurement lines
   if(context->objectTypes.testFlag(map::MARK_DISTANCE))
     paintDistanceMarks();
 
@@ -581,7 +585,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
         // Text for one line
         ageo::LineString positions = entry->lineString();
 
-        TextPlacement textPlacement(context->painter, this, QRect());
+        TextPlacement textPlacement(context->painter, this, context->screenRect);
         textPlacement.setDrawFast(context->drawFast);
         textPlacement.setLineWidth(outerlinewidth);
         textPlacement.calculateTextPositions(positions);
@@ -1266,7 +1270,7 @@ void MapPainterMark::paintDistanceMarks()
 
   const QList<map::DistanceMarker>& distanceMarkers = mapPaintWidget->getDistanceMarks().values();
   float lineWidth = context->szF(context->thicknessRangeDistance, 3);
-  TextPlacement textPlacement(context->painter, this, QRect());
+  TextPlacement textPlacement(context->painter, this, context->screenRect);
 
   for(const map::DistanceMarker& m : distanceMarkers)
   {
@@ -1351,8 +1355,7 @@ void MapPainterMark::paintDistanceMarks()
 
     if(context->dOptMeasurement(optsd::MEASUREMNENT_DIST))
     {
-      if(Unit::getUnitDist() == opts::DIST_KM && Unit::getUnitShortDist() == opts::DIST_SHORT_METER &&
-         distanceMeter < 6000)
+      if(Unit::getUnitDist() == opts::DIST_KM && Unit::getUnitShortDist() == opts::DIST_SHORT_METER && distanceMeter < 6000)
         texts.append(QLocale(QLocale::C).toString(distanceMeter, 'f', 0) % Unit::getUnitShortDistStr());
       else
       {
@@ -1370,7 +1373,8 @@ void MapPainterMark::paintDistanceMarks()
     if(m.from != m.to && !texts.isEmpty())
     {
       int xt = -1, yt = -1;
-      if(textPlacement.findTextPos(m.from, m.to, distanceMeter, metrics.width(texts.at(0)), metrics.height() * 2, xt, yt, nullptr))
+      ageo::Line line(m.from, m.to);
+      if(textPlacement.findTextPos(line, distanceMeter, metrics.width(texts.at(0)), metrics.height(), 20, xt, yt, nullptr))
         symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, textatt::CENTER);
     }
   }
@@ -1384,7 +1388,7 @@ void MapPainterMark::paintPatternMarks()
   float lineWidth = context->szF(context->thicknessRangeDistance, 3);
   context->szFont(context->textSizeRangeDistance);
 
-  TextPlacement textPlacement(painter, this, context->screenRect.marginsAdded(QMargins(50, 50, 50, 50)));
+  TextPlacement textPlacement(painter, this, context->screenRect);
   textPlacement.setLineWidth(lineWidth);
   painter->setBackgroundMode(Qt::OpaqueMode);
   painter->setBackground(Qt::white);
@@ -1507,21 +1511,19 @@ void MapPainterMark::paintPatternMarks()
           QLineF final (baseFinalPoint, originPoint);
           QPointF center = downwind.center();
           QString text = tr("%1/%2").
-                         arg(Unit::altFeet(pattern.position.getAltitude(), true /* addUnit */, true /* narrow */,
-                                           10.f /* round */)).
+                         arg(Unit::altFeet(pattern.position.getAltitude(), true /* addUnit */, true /* narrow */, 10.f /* round */)).
                          arg(formatter::courseTextFromTrue(ageo::opposedCourseDeg(pattern.courseTrue), pattern.magvar,
                                                            false /* magBold */, false /* trueSmall */, true /* narrow */));
 
           painter->setBrush(Qt::white);
-          textPlacement.drawTextAlongOneLine(text, angle, center, atools::roundToInt(downwind.length()), true /* both visible */);
+          textPlacement.drawTextAlongOneLine(text, angle, center, atools::roundToInt(downwind.length()));
 
           // Text for final leg =======================================
           text = tr("RW%1/%2").
                  arg(pattern.runwayName).
-                 arg(formatter::courseTextFromTrue(pattern.courseTrue, pattern.magvar,
-                                                   false /* magBold */, false /* trueSmall */, true /* narrow */));
-          textPlacement.drawTextAlongOneLine(text, oppAngle, final.pointAt(0.60), atools::roundToInt(final.length()),
-                                             true /* both visible */);
+                 arg(formatter::courseTextFromTrue(pattern.courseTrue, pattern.magvar, false /* magBold */, false /* trueSmall */,
+                                                   true /* narrow */));
+          textPlacement.drawTextAlongOneLine(text, oppAngle, final.pointAt(0.60), atools::roundToInt(final.length()));
 
           // Draw arrows on legs =======================================
           // Set a lighter fill color for arrows
@@ -1545,7 +1547,6 @@ void MapPainterMark::paintPatternMarks()
           // Crosswind leg
           paintArrowAlongLine(painter, QLineF(upwindCrosswindPoint, crosswindDownwindPoint), arrow);
         }
-
       }
     }
 

@@ -278,6 +278,7 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
       lines.first() = Line();
       routeTexts.first().clear();
     }
+
     bool transparent = context->flags2.testFlag(opts2::MAP_ROUTE_TRANSPARENT);
     float alpha = transparent ? (1.f - context->transparencyFlightplan) : 1.f;
     float lineWidth = transparent ? outerlinewidth : innerlinewidth;
@@ -350,9 +351,11 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
     positions.append(route->value(i).getPosition());
 
   // Adjust margins for texts on all symbol sides
-  TextPlacement textPlacement(painter, this, context->screenRect.marginsAdded(QMargins(100, 50, 100, 50)));
+  TextPlacement textPlacement(painter, this, context->screenRect);
+  textPlacement.setMinLengthForText(painter->fontMetrics().averageCharWidth() * 2);
   textPlacement.setDrawFast(context->drawFast);
   textPlacement.setLineWidth(outerlinewidth);
+  textPlacement.setTextOnLineCenter(true);
   textPlacement.calculateTextPositions(positions);
   textPlacement.calculateTextAlongLines(lines, routeTexts);
   painter->save();
@@ -538,7 +541,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
 
   // Draw segments and collect text placement information in drawTextLines ========================================
   // Need to set font since it is used by drawHold
-  context->szFont(context->textSizeFlightplan * 1.1f * context->mapLayerRoute->getRouteFontScale());
+  context->szFont(context->textSizeFlightplan * context->mapLayerRoute->getRouteFontScale());
 
   // Paint legs ====================================================
   bool noText = context->drawFast;
@@ -599,7 +602,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   }
 
   // Draw text along lines only on low zoom factors ========
-  if(context->mapLayerRoute->isApproachText())
+  if((!preview && context->mapLayerRoute->isRouteTextAndDetail()) || (preview && context->mapLayerRoute->isApproachText()))
   {
     if(!context->drawFast)
     {
@@ -669,9 +672,10 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
         positions.append(dt.line.getPos1());
       }
 
-      TextPlacement textPlacement(painter, this, context->screenRect.marginsAdded(QMargins(50, 50, 50, 50)));
+      TextPlacement textPlacement(painter, this, context->screenRect);
+      textPlacement.setMinLengthForText(painter->fontMetrics().averageCharWidth() * 2);
       textPlacement.setArrowForEmpty(previewAll); // Arrow for empty texts
-      textPlacement.setTextOnLineCenter(previewAll); // Place text on top of line
+      textPlacement.setTextOnLineCenter(true /*previewAll*/); // Place text on top of line
       textPlacement.setDrawFast(context->drawFast);
       textPlacement.setTextOnTopOfLine(false);
       textPlacement.setLineWidth(outerlinewidth);

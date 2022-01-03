@@ -44,7 +44,7 @@ class TextPlacement
   Q_DECLARE_TR_FUNCTIONS(TextPlacement)
 
 public:
-  TextPlacement(QPainter *painterParam, CoordinateConverter *coordinateConverter, const QRect& screenRectParam);
+  TextPlacement(QPainter *painterParam, const CoordinateConverter *coordinateConverter, const QRect& screenRectParam);
 
   /* Prepare for drawTextAlongLines and also fills data for getVisibleStartPoints and getStartPoints.
    * Lines do not have to form a connected linestring. */
@@ -59,25 +59,17 @@ public:
   void drawTextAlongLines();
   void clearLineTextData();
 
-  void drawTextAlongOneLine(const QString& text, float bearing, const QPointF& textCoord, int textLineLength,
-                            bool bothVisible);
+  void drawTextAlongOneLine(const QString& text, float bearing, const QPointF& textCoord, float textLineLength);
 
   /* Find text position along a great circle route
    *  @param x,y resulting text position
-   *  @param pos1,pos2 start and end coordinates of the line
-   *  @param bearing text bearing at the returned position
-   */
-  bool findTextPos(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2,
-                   int textWidth, int textHeight, int& x, int& y, float *bearing);
-
-  /* Find text position along a great circle route
-   *  @param x,y resulting text position
-   *  @param pos1,pos2 start and end coordinates of the line
+   *  @param line start and end coordinates of the line
    *  @param bearing text bearing at the returned position
    *  @param distanceMeter distance between points
+   *  @param maxPoints Maximum number of points to sample
    */
-  bool findTextPos(const atools::geo::Pos& pos1, const atools::geo::Pos& pos2,
-                   float distanceMeter, int textWidth, int textHeight, int& x, int& y, float *bearing);
+  bool findTextPos(const atools::geo::Line& line, float distanceMeter, float textWidth, float textHeight, int maxPoints, int& x, int& y,
+                   float *bearing) const;
 
   /* Bit array indicating which start point is visible or not.  Filled by calculateTextAlongLines */
   const QBitArray& getVisibleStartPoints() const
@@ -137,11 +129,32 @@ public:
     textOnLineCenter = value;
   }
 
+  /* Minimum line length before text is omitted */
+  void setMinLengthForText(int value)
+  {
+    minLengthForText = value;
+  }
+
+  /* Maximum number of points along line to search for position */
+  void setMaximumPoints(int value)
+  {
+    maximumPoints = value;
+  }
+
 private:
+  bool findTextPosInternal(const atools::geo::Line& line, float distanceMeter, float textWidth, float textHeight, int numPoints,
+                           bool allowPartial,
+                           int& x, int& y, float& bearing) const;
+  int findClosestInternal(const QVector<int>& fullyVisibleValid, const QVector<int>& pointsIdxValid, const QPolygonF& points,
+                          const QVector<QPointF>& neighbors) const;
+
+  /* Elide text with a buffer depending on font height */
+  QString elideText(const QString& text, const QString& arrow, float lineLength);
+
   QList<QPointF> textCoords;
-  QList<float> textBearing;
+  QList<float> textBearings;
   QStringList texts;
-  QList<int> textLineLengths;
+  QList<float> textLineLengths;
 
   // Collect start and end points of legs and visibility
   QList<QPointF> startPoints;
@@ -151,17 +164,20 @@ private:
   const float FIND_TEXT_POS_STEP = 0.02f;
 
   /* Minimum pixel length for a line to get a text label */
-  static Q_DECL_CONSTEXPR int MIN_LENGTH_FOR_TEXT = 80;
+  int minLengthForText = 80;
+
+  int maximumPoints = 50;
 
   bool fast = false, textOnTopOfLine = true, textOnLineCenter = false, arrowForEmpty = false;
   QPainter *painter = nullptr;
-  CoordinateConverter *converter = nullptr;
+  const CoordinateConverter *converter = nullptr;
   QString arrowRight, arrowLeft;
   float lineWidth = 10.f;
   QVector<QColor> colors;
   QVector<QColor> colors2;
 
   QRect screenRect;
+
 };
 
 #endif // LITTLENAVMAP_TEXTPLACEMENT_H

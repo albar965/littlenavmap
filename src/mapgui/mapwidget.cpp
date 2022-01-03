@@ -381,7 +381,7 @@ void MapWidget::fuelOnOffTimeout()
 
 void MapWidget::jumpBackToAircraftUpdateDistance()
 {
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_JUMPBACK
   qDebug() << Q_FUNC_INFO;
 #endif
 
@@ -391,7 +391,7 @@ void MapWidget::jumpBackToAircraftUpdateDistance()
 
 void MapWidget::jumpBackToAircraftStart(bool saveDistance)
 {
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_JUMPBACK
   qDebug() << Q_FUNC_INFO;
 #endif
 
@@ -411,7 +411,7 @@ void MapWidget::jumpBackToAircraftStart(bool saveDistance)
 
 void MapWidget::jumpBackToAircraftCancel()
 {
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_JUMPBACK
   qDebug() << Q_FUNC_INFO;
 #endif
 
@@ -420,7 +420,7 @@ void MapWidget::jumpBackToAircraftCancel()
 
 void MapWidget::jumpBackToAircraftTimeout(const atools::geo::Pos& pos)
 {
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_JUMPBACK
   qDebug() << Q_FUNC_INFO;
 #endif
 

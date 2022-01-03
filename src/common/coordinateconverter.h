@@ -104,28 +104,24 @@ public:
    * @param isHidden if not null will indicate if object is hidden behind globe
    * @return true if coordinate is visible and not hidden
    */
-  bool wToS(const Marble::GeoDataCoordinates& coords, double& x, double& y,
-            const QSize& size = DEFAULT_WTOS_SIZE, bool *isHidden = nullptr) const;
-
-  bool wToS(const Marble::GeoDataCoordinates& coords, int& x, int& y,
-            const QSize& size = DEFAULT_WTOS_SIZE, bool *isHidden = nullptr) const;
-
-  QPoint wToS(const atools::geo::Pos& coords, const QSize& size = DEFAULT_WTOS_SIZE,
-              bool *visible = nullptr, bool *isHidden = nullptr) const;
-  QPointF wToSF(const atools::geo::Pos& coords, const QSize& size = DEFAULT_WTOS_SIZE,
-                bool *visible = nullptr, bool *isHidden = nullptr) const;
-
-  bool wToS(const atools::geo::Pos& coords, int& x, int& y, const QSize& size = DEFAULT_WTOS_SIZE,
+  bool wToS(const Marble::GeoDataCoordinates& coords, double& x, double& y, const QSize& size = DEFAULT_WTOS_SIZE,
             bool *isHidden = nullptr) const;
 
-  bool wToS(const atools::geo::Pos& coords, float& x, float& y, const QSize& size = DEFAULT_WTOS_SIZE,
+  bool wToS(const Marble::GeoDataCoordinates& coords, int& x, int& y, const QSize& size = DEFAULT_WTOS_SIZE,
             bool *isHidden = nullptr) const;
 
-  bool wToS(const atools::geo::Pos& coords, double& x, double& y, const QSize& size = DEFAULT_WTOS_SIZE,
-            bool *isHidden = nullptr) const;
+  QPoint wToS(const atools::geo::Pos& coords, const QSize& size = DEFAULT_WTOS_SIZE, bool *visible = nullptr,
+              bool *isHidden = nullptr) const;
+  QPointF wToSF(const atools::geo::Pos& coords, const QSize& size = DEFAULT_WTOS_SIZE, bool *visible = nullptr,
+                bool *isHidden = nullptr) const;
 
-  bool wToS(const atools::geo::Line& coords, QLineF& line, const QSize& size = DEFAULT_WTOS_SIZE,
-            bool *isHidden = nullptr) const;
+  bool wToS(const atools::geo::Pos& coords, int& x, int& y, const QSize& size = DEFAULT_WTOS_SIZE, bool *isHidden = nullptr) const;
+
+  bool wToS(const atools::geo::Pos& coords, float& x, float& y, const QSize& size = DEFAULT_WTOS_SIZE, bool *isHidden = nullptr) const;
+
+  bool wToS(const atools::geo::Pos& coords, double& x, double& y, const QSize& size = DEFAULT_WTOS_SIZE, bool *isHidden = nullptr) const;
+
+  bool wToS(const atools::geo::Line& coords, QLineF& line, const QSize& size = DEFAULT_WTOS_SIZE, bool *isHidden = nullptr) const;
 
   bool sToW(int x, int y, atools::geo::Pos& pos) const;
   bool sToW(int x, int y, Marble::GeoDataCoordinates& coords) const;
@@ -138,14 +134,11 @@ public:
 
   /* Shortcuts for more readable code */
   static Q_DECL_CONSTEXPR Marble::GeoDataCoordinates::Unit DEG = Marble::GeoDataCoordinates::Degree;
-  static Q_DECL_CONSTEXPR Marble::GeoDataCoordinates::BearingType INITBRG =
-    Marble::GeoDataCoordinates::InitialBearing;
-  static Q_DECL_CONSTEXPR Marble::GeoDataCoordinates::BearingType FINALBRG =
-    Marble::GeoDataCoordinates::FinalBearing;
+  static Q_DECL_CONSTEXPR Marble::GeoDataCoordinates::BearingType INITBRG = Marble::GeoDataCoordinates::InitialBearing;
+  static Q_DECL_CONSTEXPR Marble::GeoDataCoordinates::BearingType FINALBRG = Marble::GeoDataCoordinates::FinalBearing;
 
 private:
-  bool wToSInternal(const Marble::GeoDataCoordinates& coords, double& x, double& y, const QSize& size,
-                    bool *isHidden) const;
+  bool wToSInternal(const Marble::GeoDataCoordinates& coords, double& x, double& y, const QSize& size, bool *isHidden) const;
 
   const Marble::ViewportParams *viewport;
 

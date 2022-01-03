@@ -287,7 +287,7 @@ void MapPainterNav::paintAirways(const QList<MapAirway> *airways, bool fast)
     }
   }
 
-  TextPlacement textPlacement(painter, this, QRect());
+  TextPlacement textPlacement(painter, this, context->screenRect);
 
   // Draw texts ----------------------------------------
   if(!textlist.isEmpty())
@@ -309,8 +309,8 @@ void MapPainterNav::paintAirways(const QList<MapAirway> *airways, bool fast)
 
       // First find text position with incomplete text
       QString text = place.texts.join(tr(", "));
-      if(textPlacement.findTextPos(airway.from, airway.to, metrics.width(text), metrics.height() * 2,
-                                   xt, yt, &textBearing))
+      Line line(airway.from, airway.to);
+      if(textPlacement.findTextPos(line, line.lengthMeter(), metrics.horizontalAdvance(text), metrics.height(), 20, xt, yt, &textBearing))
       {
         // Prepend arrows to all texts
         for(int j = 0; j < place.texts.size(); ++j)
@@ -320,16 +320,14 @@ void MapPainterNav::paintAirways(const QList<MapAirway> *airways, bool fast)
 
           if(aw.direction != map::DIR_BOTH)
             // Turn arrow depending on text angle, direction and depending if text segment is reversed compared to first
-            txt.prepend(((textBearing > 180.f) ^
-                         place.positionReversed.at(j) ^
-                         (aw.direction == map::DIR_FORWARD)) ? tr("◄ ") : tr("► "));
+            txt.prepend(((textBearing < 180.f) ^ place.positionReversed.at(j) ^ (aw.direction == map::DIR_FORWARD)) ? tr("◄ ") : tr("► "));
         }
         text = place.texts.join(tr(", "));
 
         painter->translate(xt, yt);
         painter->rotate(textBearing > 180.f ? textBearing + 90.f : textBearing - 90.f);
         painter->drawText(QPointF(-painter->fontMetrics().width(text) / 2,
-                                  painter->fontMetrics().ascent() + linewidthAirway), text);
+                                  -painter->fontMetrics().descent() - linewidthAirway), text);
         painter->resetTransform();
       }
       i++;
