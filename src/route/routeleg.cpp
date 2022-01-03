@@ -574,6 +574,42 @@ QString RouteLeg::getDisplayText(int elideName) const
   }
 }
 
+QStringList RouteLeg::buildLegText(bool dist, bool magCourse, bool trueCourse, bool narrow) const
+{
+  float distance = noDistanceDisplay() || !dist ? map::INVALID_DISTANCE_VALUE : getDistanceTo();
+  float courseMag = noCourseDisplay() || !magCourse ? map::INVALID_COURSE_VALUE : getCourseToMag();
+  float courseTrue = noCourseDisplay() || !trueCourse ? map::INVALID_COURSE_VALUE : getCourseToTrue();
+
+  return buildLegText(distance, courseMag, courseTrue, narrow);
+}
+
+QStringList RouteLeg::buildLegText(float distance, float courseMag, float courseTrue, bool narrow)
+{
+  QStringList texts;
+
+  if(distance < map::INVALID_DISTANCE_VALUE)
+    texts.append(Unit::distNm(distance, true /*addUnit*/, 20, narrow /*narrow*/));
+
+  bool addMagCourse = courseMag < map::INVALID_COURSE_VALUE;
+  bool addTrueCourse = courseTrue < map::INVALID_COURSE_VALUE;
+
+  QString courseMagStr = QString::number(atools::geo::normalizeCourse(courseMag), 'f', 0);
+  QString courseTrueStr = QString::number(atools::geo::normalizeCourse(courseTrue), 'f', 0);
+
+  if(addMagCourse && addTrueCourse && courseMagStr == courseTrueStr)
+    // True and mag course are equal - combine
+    texts.append(courseMagStr % (narrow ? tr("°M/T") : tr(" °M/T")));
+  else
+  {
+    if(addMagCourse)
+      texts.append(courseMagStr % (narrow ? tr("°M") : tr(" °M")));
+    if(addTrueCourse)
+      texts.append(courseTrueStr % (narrow ? tr("°T") : tr(" °T")));
+  }
+
+  return texts;
+}
+
 float RouteLeg::getCourseToMag() const
 {
   if(OptionData::instance().getFlags() & opts::ROUTE_IGNORE_VOR_DECLINATION)

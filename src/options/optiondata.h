@@ -533,12 +533,39 @@ enum DisplayOptionRoute
 {
   ROUTE_NONE = 0,
   ROUTE_DISTANCE = 1 << 0,
-  ROUTE_MAG_COURSE_GC = 1 << 1,
-  ROUTE_TRUE_COURSE_GC = 1 << 2
+  ROUTE_MAG_COURSE = 1 << 1,
+  ROUTE_TRUE_COURSE = 1 << 2
 };
 
 Q_DECLARE_FLAGS(DisplayOptionsRoute, DisplayOptionRoute);
 Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsRoute);
+
+enum DisplayOptionProfile
+{
+  PROFILE_NONE = 0,
+
+  /* Top label options */
+  PROFILE_TOP_DISTANCE = 1 << 0,
+  PROFILE_TOP_MAG_COURSE = 1 << 1,
+  PROFILE_TOP_TRUE_COURSE = 1 << 2,
+  PROFILE_TOP_RELATED = 1 << 3,
+
+  /* Flight plan line options */
+  PROFILE_FP_DIST = 1 << 4,
+  PROFILE_FP_MAG_COURSE = 1 << 5,
+  PROFILE_FP_TRUE_COURSE = 1 << 6,
+  PROFILE_FP_VERTICAL_ANGLE = 1 << 7,
+  PROFILE_FP_RESTRICTIONS = 1 << 8,
+
+  /* All drawn in the top label */
+  PROFILE_TOP_ANY = PROFILE_TOP_DISTANCE | PROFILE_TOP_MAG_COURSE | PROFILE_TOP_TRUE_COURSE | PROFILE_TOP_RELATED,
+
+  /* All drawn along the flight plan line */
+  PROFILE_FP_ANY = PROFILE_FP_DIST | PROFILE_FP_MAG_COURSE | PROFILE_FP_TRUE_COURSE | PROFILE_FP_VERTICAL_ANGLE,
+};
+
+Q_DECLARE_FLAGS(DisplayOptionsProfile, DisplayOptionProfile);
+Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsProfile);
 
 enum DisplayTooltipOption
 {
@@ -928,6 +955,11 @@ public:
   const optsd::DisplayOptionsRoute& getDisplayOptionsRoute() const
   {
     return displayOptionsRoute;
+  }
+
+  const optsd::DisplayOptionsProfile& getDisplayOptionsProfile() const
+  {
+    return displayOptionsProfile;
   }
 
   optsd::DisplayTooltipOptions getDisplayTooltipOptions() const
@@ -1551,7 +1583,9 @@ private:
 
   optsd::DisplayOptionsNavAid displayOptionsNavAid = optsd::NAVAIDS_NONE;
 
-  optsd::DisplayOptionsRoute displayOptionsRoute = optsd::ROUTE_DISTANCE | optsd::ROUTE_MAG_COURSE_GC;
+  optsd::DisplayOptionsRoute displayOptionsRoute = optsd::ROUTE_DISTANCE | optsd::ROUTE_MAG_COURSE;
+  optsd::DisplayOptionsProfile displayOptionsProfile = optsd::PROFILE_TOP_DISTANCE | optsd::PROFILE_TOP_RELATED |
+                                                       optsd::PROFILE_FP_MAG_COURSE | optsd::PROFILE_FP_VERTICAL_ANGLE;
 
   optsd::DisplayTooltipOptions displayTooltipOptions = optsd::TOOLTIP_AIRCRAFT_USER | optsd::TOOLTIP_AIRCRAFT_AI |
                                                        optsd::TOOLTIP_AIRPORT | optsd::TOOLTIP_AIRSPACE |

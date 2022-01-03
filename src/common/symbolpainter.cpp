@@ -1391,7 +1391,7 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, QPen t
     if(text.isEmpty())
       continue;
 
-    float w = static_cast<float>(metrics.width(text));
+    float w = static_cast<float>(metrics.horizontalAdvance(text));
     float newx = x;
     if(atts.testFlag(textatt::RIGHT))
       newx -= w;

@@ -128,7 +128,7 @@ private:
   void drawWindBarbAtWaypoint(float windSpeed, float windDir, float x, float y);
   void drawRouteInternal(QStringList routeTexts, QVector<atools::geo::Line> lines, int passedRouteLeg);
   QString buildLegText(const RouteLeg& leg);
-  QString buildLegText(float dist, float courseGcMag, float courseGcTrue);
+  QString buildLegText(float distance, float courseMag, float courseTrue);
 
   /* Avoid drawing duplicate navaids from flight plan and preview */
   QSet<map::MapObjectRef> routeProcIdMap;

@@ -119,7 +119,7 @@ QColor profileAltRestrictionOutline(Qt::black);
 QPen profileVasiCenterPen(Qt::darkGray, 1.5, Qt::DashLine);
 QPen profileLandOutlinePen(Qt::black, 1, Qt::SolidLine);
 QPen profileWaypointLinePen(Qt::gray, 1, Qt::SolidLine, Qt::FlatCap);
-QPen profileElevationScalePen(Qt::gray, 1, Qt::SolidLine, Qt::FlatCap);
+QPen profileElevationScalePen(Qt::darkGray, 1, Qt::SolidLine, Qt::FlatCap);
 QPen profileSafeAltLinePen(Qt::red, 4, Qt::SolidLine, Qt::FlatCap);
 QPen profileSafeAltLegLinePen(QColor(255, 100, 0), 3, Qt::SolidLine, Qt::FlatCap);
 

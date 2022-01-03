@@ -17,7 +17,8 @@
 
 #include "profile/profilescrollarea.h"
 #include "profile/profilewidget.h"
-#include "profile/profilelabelwidget.h"
+#include "profile/profilelabelwidgetvert.h"
+#include "profile/profilelabelwidgethoriz.h"
 #include "gui/widgetstate.h"
 #include "common/constants.h"
 #include "gui/helphandler.h"
@@ -47,9 +48,14 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
   scrollArea->setFocusPolicy(Qt::WheelFocus);
 
   // Create label widget on the left
-  labelWidget = new ProfileLabelWidget(profileWidget, this);
-  labelWidget->setMinimumWidth(1); // Setting to 0 hides the widget
-  ui->gridLayoutProfileDrawing->replaceWidget(ui->widgetProfileLabelLeft, labelWidget);
+  profileLabelWidgetVert = new ProfileLabelWidgetVert(profileWidget, this);
+  profileLabelWidgetVert->setMinimumWidth(1); // Setting to 0 hides the widget
+  ui->gridLayoutProfileDrawing->replaceWidget(ui->widgetProfileLabelVert, profileLabelWidgetVert);
+
+  // Create label widget on the top
+  profileLabelWidgetHoriz = new ProfileLabelWidgetHoriz(profileWidget, this);
+  profileLabelWidgetHoriz->setMinimumHeight(1); // Setting to 0 hides the widget
+  ui->gridLayoutProfileDrawing->replaceWidget(ui->widgetProfileLabelHoriz, profileLabelWidgetHoriz);
 
   // Update splitter icon and color
   styleChanged();
@@ -63,10 +69,8 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
   }
 
   // Connect zoom sliders
-  connect(ui->horizontalSliderProfileZoom, &QSlider::valueChanged,
-          this, &ProfileScrollArea::horizontalZoomSliderValueChanged);
-  connect(ui->verticalSliderProfileZoom, &QSlider::valueChanged,
-          this, &ProfileScrollArea::verticalZoomSliderValueChanged);
+  connect(ui->horizontalSliderProfileZoom, &QSlider::valueChanged, this, &ProfileScrollArea::horizontalZoomSliderValueChanged);
+  connect(ui->verticalSliderProfileZoom, &QSlider::valueChanged, this, &ProfileScrollArea::verticalZoomSliderValueChanged);
 
   // Update label on scroll bar changes and remember position
   connect(horizScrollBar, &QScrollBar::rangeChanged, this, &ProfileScrollArea::horizScrollBarChanged);
@@ -80,7 +84,8 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
   connect(ui->pushButtonProfileHelp, &QPushButton::clicked, this, &ProfileScrollArea::helpClicked);
   connect(ui->actionProfileExpand, &QAction::triggered, this, &ProfileScrollArea::expandWidget);
 
-  connect(ui->actionProfileShowLabels, &QAction::toggled, this, &ProfileScrollArea::showLabelsToggled);
+  connect(ui->actionProfileShowLabelsVert, &QAction::toggled, this, &ProfileScrollArea::showLabelsToggled);
+  connect(ui->actionProfileShowLabelsHoriz, &QAction::toggled, this, &ProfileScrollArea::showLabelsToggled);
   connect(ui->actionProfileShowScrollbars, &QAction::toggled, this, &ProfileScrollArea::showScrollbarsToggled);
   connect(ui->actionProfileShowTooltip, &QAction::toggled, this, &ProfileScrollArea::showTooltipToggled);
   connect(ui->actionProfileShowZoom, &QAction::toggled, this, &ProfileScrollArea::showZoomToggled);
@@ -121,7 +126,8 @@ ProfileScrollArea::~ProfileScrollArea()
   scrollArea->removeEventFilter(this);
   scrollArea->viewport()->removeEventFilter(this);
   delete tooltipLabel;
-  delete labelWidget;
+  delete profileLabelWidgetVert;
+  delete profileLabelWidgetHoriz;
 }
 
 void ProfileScrollArea::helpClicked()
@@ -204,7 +210,8 @@ void ProfileScrollArea::showTooltip(const QPoint& globalPos, const QString& text
 
 void ProfileScrollArea::hideTooltip()
 {
-  tooltipLabel->setVisible(false);
+  if(tooltipLabel != nullptr)
+    tooltipLabel->setVisible(false);
 }
 
 bool ProfileScrollArea::isTooltipVisible() const
@@ -250,7 +257,7 @@ void ProfileScrollArea::vertScrollBarChanged()
   }
 
   // Update y scale
-  labelWidget->update();
+  profileLabelWidgetVert->update();
 }
 
 void ProfileScrollArea::horizScrollBarValueChanged()
@@ -275,17 +282,21 @@ void ProfileScrollArea::horizScrollBarChanged()
       // Remember position
       lastHorizScrollPos = toScrollPos(horizScrollBar);
   }
+
+  // Update y scale
+  profileLabelWidgetHoriz->update();
 }
 
 void ProfileScrollArea::update()
 {
   scrollArea->update();
-  updateLabelWidget();
+  updateLabelWidgets();
 }
 
-void ProfileScrollArea::updateLabelWidget()
+void ProfileScrollArea::updateLabelWidgets()
 {
-  labelWidget->update();
+  profileLabelWidgetVert->update();
+  profileLabelWidgetHoriz->update();
 }
 
 void ProfileScrollArea::routeChanged(bool geometryChanged)
@@ -673,9 +684,11 @@ void ProfileScrollArea::showScrollbarsToggled(bool show)
   resizeEvent();
 }
 
-void ProfileScrollArea::showLabelsToggled(bool show)
+void ProfileScrollArea::showLabelsToggled(bool)
 {
-  labelWidget->setVisible(show);
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  profileLabelWidgetVert->setVisible(ui->actionProfileShowLabelsVert->isChecked());
+  profileLabelWidgetHoriz->setVisible(ui->actionProfileShowLabelsHoriz->isChecked());
 
   // Signal later in the event queue to give widget a chance to resize
   QTimer::singleShot(0, this, &ProfileScrollArea::resizeEvent);
@@ -686,10 +699,10 @@ void ProfileScrollArea::saveState()
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   atools::gui::WidgetState(lnm::PROFILE_WINDOW_OPTIONS).save({ui->splitterProfile, ui->actionProfileCenterAircraft, ui->actionProfileFollow,
-                                                              ui->actionProfileShowLabels, ui->actionProfileShowScrollbars,
-                                                              ui->actionProfileShowTooltip, ui->actionProfileShowZoom,
-                                                              ui->actionProfileShowIls, ui->actionProfileShowVasi,
-                                                              ui->actionProfileShowVerticalTrack});
+                                                              ui->actionProfileShowLabelsVert, ui->actionProfileShowLabelsHoriz,
+                                                              ui->actionProfileShowScrollbars, ui->actionProfileShowTooltip,
+                                                              ui->actionProfileShowZoom, ui->actionProfileShowIls,
+                                                              ui->actionProfileShowVasi, ui->actionProfileShowVerticalTrack});
 }
 
 void ProfileScrollArea::restoreState()
@@ -697,10 +710,11 @@ void ProfileScrollArea::restoreState()
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   atools::gui::WidgetState(lnm::PROFILE_WINDOW_OPTIONS).restore({ui->splitterProfile, ui->actionProfileCenterAircraft,
-                                                                 ui->actionProfileFollow, ui->actionProfileShowLabels,
-                                                                 ui->actionProfileShowScrollbars, ui->actionProfileShowTooltip,
-                                                                 ui->actionProfileShowZoom, ui->actionProfileShowIls,
-                                                                 ui->actionProfileShowVasi, ui->actionProfileShowVerticalTrack});
+                                                                 ui->actionProfileFollow, ui->actionProfileShowLabelsVert,
+                                                                 ui->actionProfileShowLabelsHoriz, ui->actionProfileShowScrollbars,
+                                                                 ui->actionProfileShowTooltip, ui->actionProfileShowZoom,
+                                                                 ui->actionProfileShowIls, ui->actionProfileShowVasi,
+                                                                 ui->actionProfileShowVerticalTrack});
   ui->splitterProfile->setHandleWidth(6);
 }
 
@@ -785,6 +799,14 @@ void ProfileScrollArea::styleChanged()
             " }").
     arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
 #endif
+  optionsChanged();
+}
+
+void ProfileScrollArea::optionsChanged()
+{
+  hideTooltip();
+  profileLabelWidgetHoriz->optionsChanged();
+  profileLabelWidgetVert->optionsChanged();
 }
 
 void ProfileScrollArea::setMaxVertZoom()

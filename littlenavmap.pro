@@ -321,7 +321,8 @@ SOURCES += \
   src/perf/perfmergedialog.cpp \
   src/print/printdialog.cpp \
   src/print/printsupport.cpp \
-  src/profile/profilelabelwidget.cpp \
+  src/profile/profilelabelwidgethoriz.cpp \
+  src/profile/profilelabelwidgetvert.cpp \
   src/profile/profilescrollarea.cpp \
   src/profile/profilewidget.cpp \
   src/query/airportquery.cpp \
@@ -501,7 +502,8 @@ HEADERS  += \
   src/perf/perfmergedialog.h \
   src/print/printdialog.h \
   src/print/printsupport.h \
-  src/profile/profilelabelwidget.h \
+  src/profile/profilelabelwidgethoriz.h \
+  src/profile/profilelabelwidgetvert.h \
   src/profile/profilescrollarea.h \
   src/profile/profilewidget.h \
   src/query/airportquery.h \

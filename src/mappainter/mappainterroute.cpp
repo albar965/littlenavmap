@@ -89,47 +89,28 @@ void MapPainterRoute::render()
 
 QString MapPainterRoute::buildLegText(const RouteLeg& leg)
 {
-  float distanceTo = leg.getDistanceTo();
-  float courseToMag = leg.getCourseToMag();
-  float courseToTrue = leg.getCourseToTrue();
+  if(context->distanceKm > layer::DISTANCE_CUT_OFF_LIMIT_KM)
+    return QString();
 
-  if(leg.noCourseDisplay())
-    courseToMag = courseToTrue = map::INVALID_COURSE_VALUE;
-
-  if(leg.noDistanceDisplay())
-    distanceTo = map::INVALID_DISTANCE_VALUE;
-
-  return buildLegText(distanceTo, courseToMag, courseToTrue);
+  return leg.buildLegText(context->dOptRoute(optsd::ROUTE_DISTANCE), context->dOptRoute(optsd::ROUTE_MAG_COURSE),
+                          context->dOptRoute(optsd::ROUTE_TRUE_COURSE), true /* narrow */).join(tr(" / "));
 }
 
-QString MapPainterRoute::buildLegText(float dist, float courseGcMag, float courseGcTrue)
+QString MapPainterRoute::buildLegText(float distance, float courseMag, float courseTrue)
 {
   if(context->distanceKm > layer::DISTANCE_CUT_OFF_LIMIT_KM)
     return QString();
 
-  QStringList texts;
+  if(!context->dOptRoute(optsd::ROUTE_DISTANCE))
+    distance = map::INVALID_DISTANCE_VALUE;
 
-  if(context->dOptRoute(optsd::ROUTE_DISTANCE) && dist < map::INVALID_DISTANCE_VALUE)
-    texts.append(Unit::distNm(dist, true /*addUnit*/, 20, true /*narrow*/));
+  if(!context->dOptRoute(optsd::ROUTE_MAG_COURSE))
+    courseMag = map::INVALID_DISTANCE_VALUE;
 
-  bool magGc = context->dOptRoute(optsd::ROUTE_MAG_COURSE_GC) && courseGcMag < map::INVALID_COURSE_VALUE;
-  bool trueGc = context->dOptRoute(optsd::ROUTE_TRUE_COURSE_GC) && courseGcTrue < map::INVALID_COURSE_VALUE;
+  if(!context->dOptRoute(optsd::ROUTE_TRUE_COURSE))
+    courseTrue = map::INVALID_DISTANCE_VALUE;
 
-  QString courseGcMagStr = QString::number(ageo::normalizeCourse(courseGcMag), 'f', 0);
-  QString courseGcTrueStr = QString::number(ageo::normalizeCourse(courseGcTrue), 'f', 0);
-
-  if(magGc && trueGc && courseGcMagStr == courseGcTrueStr)
-    // True and mag course are equal - combine
-    texts.append(courseGcMagStr % tr("°M/T"));
-  else
-  {
-    if(magGc)
-      texts.append(courseGcMagStr % tr("°M"));
-    if(trueGc)
-      texts.append(courseGcTrueStr % tr("°T"));
-  }
-
-  return texts.join(tr(" / "));
+  return RouteLeg::buildLegText(distance, courseMag, courseTrue, true /* narrow */).join(tr(" / "));
 }
 
 void MapPainterRoute::paintRoute()
@@ -634,12 +615,12 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
             {
               if(leg.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
               {
-                if(context->dOptRoute(optsd::ROUTE_MAG_COURSE_GC))
+                if(context->dOptRoute(optsd::ROUTE_MAG_COURSE))
                   // Use same values for mag - does not make a difference at the small values in procedures
                   courseMag = atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar);
               }
 
-              if(context->dOptRoute(optsd::ROUTE_MAG_COURSE_GC))
+              if(context->dOptRoute(optsd::ROUTE_MAG_COURSE))
                 courseTrue = leg.calculatedTrueCourse;
             }
 

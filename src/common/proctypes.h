@@ -715,6 +715,7 @@ QString proceduresLegSecialTypeLongStr(proc::LegSpecialType type);
 /* Get special leg type from ARINC description code */
 proc::LegSpecialType specialType(const QString& arincDescrCode);
 
+QStringList procedureLegRelated(const MapProcedureLeg& leg, bool onlyFull);
 QString procedureLegRemark(const MapProcedureLeg& leg);
 QString procedureLegRemDistance(const MapProcedureLeg& leg, float& remainingDistance);
 QString procedureLegDistance(const MapProcedureLeg& leg);

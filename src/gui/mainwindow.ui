@@ -5772,57 +5772,8 @@ relation to shown airport</string>
          <property name="spacing">
           <number>0</number>
          </property>
-         <item row="1" column="1">
-          <widget class="QScrollArea" name="scrollAreaProfile">
-           <property name="minimumSize">
-            <size>
-             <width>150</width>
-             <height>30</height>
-            </size>
-           </property>
-           <property name="lineWidth">
-            <number>1</number>
-           </property>
-           <property name="verticalScrollBarPolicy">
-            <enum>Qt::ScrollBarAlwaysOn</enum>
-           </property>
-           <property name="horizontalScrollBarPolicy">
-            <enum>Qt::ScrollBarAlwaysOn</enum>
-           </property>
-           <property name="alignment">
-            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
-           </property>
-           <widget class="QWidget" name="scrollAreaWidgetContentsProfile">
-            <property name="geometry">
-             <rect>
-              <x>0</x>
-              <y>8</y>
-              <width>228</width>
-              <height>86</height>
-             </rect>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout_28">
-             <property name="spacing">
-              <number>0</number>
-             </property>
-             <property name="leftMargin">
-              <number>0</number>
-             </property>
-             <property name="topMargin">
-              <number>0</number>
-             </property>
-             <property name="rightMargin">
-              <number>0</number>
-             </property>
-             <property name="bottomMargin">
-              <number>0</number>
-             </property>
-            </layout>
-           </widget>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QWidget" name="widgetProfileLabelLeft" native="true">
+         <item row="2" column="0">
+          <widget class="QWidget" name="widgetProfileLabelVert" native="true">
            <property name="minimumSize">
             <size>
              <width>65</width>
@@ -5850,6 +5801,68 @@ relation to shown airport</string>
            </property>
            <property name="textInteractionFlags">
             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QScrollArea" name="scrollAreaProfile">
+           <property name="minimumSize">
+            <size>
+             <width>150</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="lineWidth">
+            <number>1</number>
+           </property>
+           <property name="verticalScrollBarPolicy">
+            <enum>Qt::ScrollBarAlwaysOn</enum>
+           </property>
+           <property name="horizontalScrollBarPolicy">
+            <enum>Qt::ScrollBarAlwaysOn</enum>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignBottom|Qt::AlignLeading|Qt::AlignLeft</set>
+           </property>
+           <widget class="QWidget" name="scrollAreaWidgetContentsProfile">
+            <property name="geometry">
+             <rect>
+              <x>0</x>
+              <y>0</y>
+              <width>228</width>
+              <height>86</height>
+             </rect>
+            </property>
+            <layout class="QVBoxLayout" name="verticalLayout_28">
+             <property name="spacing">
+              <number>0</number>
+             </property>
+             <property name="leftMargin">
+              <number>0</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <property name="rightMargin">
+              <number>0</number>
+             </property>
+             <property name="bottomMargin">
+              <number>0</number>
+             </property>
+            </layout>
+           </widget>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QWidget" name="widgetProfileLabelHoriz" native="true">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>10</height>
+            </size>
+           </property>
+           <property name="focusPolicy">
+            <enum>Qt::StrongFocus</enum>
            </property>
           </widget>
          </item>
@@ -10158,7 +10171,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Center the user aircraft on the elevation profile</string>
    </property>
   </action>
-  <action name="actionProfileShowLabels">
+  <action name="actionProfileShowLabelsVert">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -10166,7 +10179,7 @@ Disabled if a navdatabase does not allow it.</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Show &amp;Labels</string>
+    <string>Show Altitude &amp;Labels</string>
    </property>
    <property name="toolTip">
     <string>Show or hide the labels at the left side of the elevation profile</string>
@@ -12430,6 +12443,23 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Ctrl+Y</string>
    </property>
   </action>
+  <action name="actionProfileShowLabelsHoriz">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show &amp;Top Labels</string>
+   </property>
+   <property name="toolTip">
+    <string>Show or hide the labels at the top of the elevation profile</string>
+   </property>
+   <property name="statusTip">
+    <string>Show or hide the labels at the top of the elevation profile</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12469,7 +12499,7 @@ Disabled if a navdatabase does not allow it.</string>
   <tabstop>textBrowserLogbookInfo</tabstop>
   <tabstop>textBrowserClientInfo</tabstop>
   <tabstop>textBrowserCenterInfo</tabstop>
-  <tabstop>widgetProfileLabelLeft</tabstop>
+  <tabstop>widgetProfileLabelVert</tabstop>
   <tabstop>scrollAreaProfile</tabstop>
   <tabstop>pushButtonProfileExpand</tabstop>
   <tabstop>pushButtonProfileHelp</tabstop>
@@ -12615,8 +12645,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

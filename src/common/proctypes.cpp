@@ -863,6 +863,23 @@ QString procedureLegRemDistance(const MapProcedureLeg& leg, float& remainingDist
   return retval;
 }
 
+QStringList procedureLegRelated(const MapProcedureLeg& leg, bool onlyFull)
+{
+  QStringList related;
+  if(!leg.recFixIdent.isEmpty())
+  {
+    if(leg.rho > 0.f)
+    {
+      related.append(leg.recFixIdent);
+      related.append(Unit::distNm(leg.rho /*, true, 20, true*/));
+      related.append(QLocale().toString(leg.theta, 'f', 0) + QObject::tr("°M"));
+    }
+    else if(!onlyFull)
+      related.append(leg.recFixIdent);
+  }
+  return related;
+}
+
 QString procedureLegRemark(const MapProcedureLeg& leg)
 {
   QStringList remarks;
@@ -880,15 +897,9 @@ QString procedureLegRemark(const MapProcedureLeg& leg)
   if(!legremarks.isEmpty())
     remarks.append(legremarks);
 
-  if(!leg.recFixIdent.isEmpty())
-  {
-    if(leg.rho > 0.f)
-      remarks.append(QObject::tr("Related: %1 / %2 / %3").arg(leg.recFixIdent).
-                     arg(Unit::distNm(leg.rho /*, true, 20, true*/)).
-                     arg(QLocale().toString(leg.theta, 'f', 0) + QObject::tr("°M")));
-    else
-      remarks.append(QObject::tr("Related: %1").arg(leg.recFixIdent));
-  }
+  QStringList related = procedureLegRelated(leg, false /* onlyFull */);
+  if(!related.isEmpty())
+    remarks.append(QObject::tr("Related: %1").arg(related.join(QObject::tr(" / "))));
 
   if(!leg.remarks.isEmpty())
     remarks.append(leg.remarks);
@@ -896,9 +907,12 @@ QString procedureLegRemark(const MapProcedureLeg& leg)
   if(!leg.fixIdent.isEmpty() && !leg.fixPos.isValid())
     remarks.append(QObject::tr("Error: Fix %1/%2 type %3 not found").
                    arg(leg.fixIdent).arg(leg.fixRegion).arg(leg.fixType));
+
   if(!leg.recFixIdent.isEmpty() && !leg.recFixPos.isValid())
     remarks.append(QObject::tr("Error: Recommended fix %1/%2 type %3 not found").
                    arg(leg.recFixIdent).arg(leg.recFixRegion).arg(leg.recFixType));
+
+  remarks.removeAll(QString());
 
   return remarks.join(", ");
 }

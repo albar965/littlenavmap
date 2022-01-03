@@ -15,8 +15,8 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#ifndef LNM_PROFILELABELWIDGET_H
-#define LNM_PROFILELABELWIDGET_H
+#ifndef LNM_PROFILELABELWIDGETVERT_H
+#define LNM_PROFILELABELWIDGETVERT_H
 
 #include <QWidget>
 
@@ -24,16 +24,18 @@ class ProfileWidget;
 class ProfileScrollArea;
 
 /*
- * Used to draw the left label area besides the scrollable elevation profile widget.
+ * Used to draw the left vertical label area besides the scrollable elevation profile widget.
  */
-class ProfileLabelWidget :
+class ProfileLabelWidgetVert :
   public QWidget
 {
   Q_OBJECT
 
 public:
-  explicit ProfileLabelWidget(ProfileWidget *parent, ProfileScrollArea *profileScrollArea);
-  virtual ~ProfileLabelWidget() override;
+  explicit ProfileLabelWidgetVert(ProfileWidget *parent, ProfileScrollArea *profileScrollArea);
+  virtual ~ProfileLabelWidgetVert() override;
+
+  void optionsChanged();
 
 private:
   virtual void paintEvent(QPaintEvent *) override;
@@ -45,4 +47,4 @@ private:
   ProfileScrollArea *scrollArea;
 };
 
-#endif // LNM_PROFILELABELWIDGET_H
+#endif // LNM_PROFILELABELWIDGETVERT_H

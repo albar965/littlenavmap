@@ -21,7 +21,8 @@
 #include <QObject>
 #include <QPoint>
 
-class ProfileLabelWidget;
+class ProfileLabelWidgetVert;
+class ProfileLabelWidgetHoriz;
 class ProfileWidget;
 class QKeyEvent;
 class QMouseEvent;
@@ -60,7 +61,7 @@ public:
   void update();
 
   /* Update label widget */
-  void updateLabelWidget();
+  void updateLabelWidgets();
 
   void saveState();
   void restoreState();
@@ -70,6 +71,8 @@ public:
 
   /* Update split on style change */
   void styleChanged();
+
+  void optionsChanged();
 
   /* Update actions */
   void routeChanged(bool geometryChanged);
@@ -84,9 +87,14 @@ public:
     return scrollArea;
   }
 
-  ProfileLabelWidget *getLabelWidget() const
+  ProfileLabelWidgetVert *getLabelWidgetVert() const
   {
-    return labelWidget;
+    return profileLabelWidgetVert;
+  }
+
+  ProfileLabelWidgetHoriz *getLabelWidgetHoriz() const
+  {
+    return profileLabelWidgetHoriz;
   }
 
   /* Update zoom slider and labels */
@@ -131,7 +139,7 @@ private:
   void showScrollbarsToggled(bool show);
 
   /* Show label widget on the left side */
-  void showLabelsToggled(bool show);
+  void showLabelsToggled(bool);
 
   /* Show right side of split window from action in menu */
   void showZoomToggled(bool show);
@@ -189,7 +197,8 @@ private:
   QScrollBar *horizScrollBar, *vertScrollBar;
   QScrollArea *scrollArea;
   QWidget *viewport;
-  ProfileLabelWidget *labelWidget = nullptr;
+  ProfileLabelWidgetVert *profileLabelWidgetVert = nullptr;
+  ProfileLabelWidgetHoriz *profileLabelWidgetHoriz = nullptr;
 
   /* Frameless label widget  */
   QLabel *tooltipLabel = nullptr;

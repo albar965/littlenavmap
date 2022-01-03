@@ -266,6 +266,7 @@ private:
   QHash<optsd::DisplayOptionsRose, QTreeWidgetItem *> displayOptItemIndexRose;
   QHash<optsd::DisplayOptionsMeasurement, QTreeWidgetItem *> displayOptItemIndexMeasurement;
   QHash<optsd::DisplayOptionsRoute, QTreeWidgetItem *> displayOptItemIndexRoute;
+  QHash<optsd::DisplayOptionsProfile, QTreeWidgetItem *> displayOptItemIndexProfile;
 
   UnitStringTool *units = nullptr;
 

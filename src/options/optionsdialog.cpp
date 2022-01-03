@@ -100,10 +100,10 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   list->addItem(pageListItem(list, tr("Units"), tr("Fuel, distance, speed and coordindate units as well as\noptions for course and heading display."), ":/littlenavmap/resources/icons/units.svg"));
   list->addItem(pageListItem(list, tr("Map"), tr("General map settings: Zoom, click and tooltip settings."), ":/littlenavmap/resources/icons/mapsettings.svg"));
   list->addItem(pageListItem(list, tr("Map Navigation"), tr("Zoom, click and screen navigation settings."), ":/littlenavmap/resources/icons/mapnavigation.svg"));
-  list->addItem(pageListItem(list, tr("Map Display"), tr("Change colors, symbols, texts and font for map display objects."), ":/littlenavmap/resources/icons/mapdisplay.svg"));
+  list->addItem(pageListItem(list, tr("Map Display"), tr("Change colors, symbols, texts and font for map display and elevation profile objects."), ":/littlenavmap/resources/icons/mapdisplay.svg"));
   list->addItem(pageListItem(list, tr("Map Display Flight Plan"), tr("Adjust display style and colors for the flight plan on the map and the elevation profile."), ":/littlenavmap/resources/icons/mapdisplayflightplan.svg"));
-  list->addItem(pageListItem(list, tr("Map Display User"), tr("Change colors, symbols and texts for marks, measurement lines and other user features."), ":/littlenavmap/resources/icons/mapdisplay2.svg"));
-  list->addItem(pageListItem(list, tr("Map Display Labels"), tr("Change label options for marks, user aircraft and more."), ":/littlenavmap/resources/icons/mapdisplaylabels.svg"));
+  list->addItem(pageListItem(list, tr("Map Display User"), tr("Change colors, symbols and texts for marks, measurement lines and other user features for map and elevation profile."), ":/littlenavmap/resources/icons/mapdisplay2.svg"));
+  list->addItem(pageListItem(list, tr("Map Display Labels"), tr("Change map display and elevation profile label options for marks, user aircraft and more."), ":/littlenavmap/resources/icons/mapdisplaylabels.svg"));
   list->addItem(pageListItem(list, tr("Map Display Online"), tr("Map display online center options."), ":/littlenavmap/resources/icons/airspaceonline.svg"));
   list->addItem(pageListItem(list, tr("Simulator Aircraft"), tr("Update and movement options for the user aircraft and trail."), ":/littlenavmap/resources/icons/aircraft.svg"));
   list->addItem(pageListItem(list, tr("Flight Plan"), tr("Options for flight plan calculation, saving and loading."), ":/littlenavmap/resources/icons/route.svg"));
@@ -117,10 +117,12 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   // Build tree settings to map tab =====================================================
   /* *INDENT-OFF* */
+  // Top of map =====================================================
   QTreeWidgetItem *topOfMap = addTopItem(tr("Top of Map"), tr("Select information that is displayed on top of the map."));
   addItem<optsac::DisplayOptionsUserAircraft>(topOfMap, displayOptItemIndexUser, tr("Wind Direction and Speed"), tr("Show wind direction and speed on the top center of the map."), optsac::ITEM_USER_AIRCRAFT_WIND, true);
   addItem<optsac::DisplayOptionsUserAircraft>(topOfMap, displayOptItemIndexUser, tr("Wind Pointer"), tr("Show wind direction pointer on the top center of the map."), optsac::ITEM_USER_AIRCRAFT_WIND_POINTER, true);
 
+  // Map Navigation Aids =====================================================
   QTreeWidgetItem *navAids = addTopItem(tr("Map Navigation Aids"), QString());
   addItem<optsd::DisplayOptionsNavAid>(navAids , displayOptItemIndexNavAid, tr("Center Cross"), tr("Shows the map center. Useful if \"Click map to center position\"\n"
                                                                                                    "on page \"Map Navigation\" is enabled."), optsd::NAVAIDS_CENTER_CROSS);
@@ -133,6 +135,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                                                                                         "Useful if map areas are used for touchscreen navigation.\n"
                                                                                                         "Only shown if \"Use map areas\" on page \"Map Navigation\" is enabled as well."), optsd::NAVAIDS_TOUCHSCREEN_ICONS);
 
+  // Airport =====================================================
   QTreeWidgetItem *airport = addTopItem(tr("Airport"), tr("Select airport labels to display on the map."));
   addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Name (Ident)"), tr("Airport name and ident in brackets depending on zoom factor.\n"
                                                                                                     "Ident can be internal, ICAO, FAA, IATA or local depending on avilability."), optsd::ITEM_AIRPORT_NAME, true);
@@ -141,6 +144,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Runway Information"), tr("Show runway length, width and light indicator text."), optsd::ITEM_AIRPORT_RUNWAY, true);
   // addItem(ap, tr("Wind Pointer"), optsd::ITEM_AIRPORT_WIND_POINTER);
 
+  // Airport details =====================================================
   QTreeWidgetItem *airportDetails = addTopItem(tr("Airport Details"), tr("Select airport diagram elements."));
   addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Runways"), tr("Show runways."), optsd::ITEM_AIRPORT_DETAIL_RUNWAY, true);
   addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Taxiways"), tr("Show taxiway lines and background."), optsd::ITEM_AIRPORT_DETAIL_TAXI, true);
@@ -149,11 +153,13 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Boundary"), tr("Display a white boundary around and below the airport diagram."), optsd::ITEM_AIRPORT_DETAIL_BOUNDARY);
 
 
+  // Flight plan =====================================================
   QTreeWidgetItem *route = addTopItem(tr("Flight Plan"), tr("Select display options for the flight plan line."));
   addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Distance"), tr("Show distance along flight plan leg."), optsd::ROUTE_DISTANCE, true);
-  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic great circle course"), tr("Show magnetic great circle start course at flight plan leg."), optsd::ROUTE_MAG_COURSE_GC, true);
-  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True great circle course"), tr("Show true great circle start course at flight plan leg."), optsd::ROUTE_TRUE_COURSE_GC);
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic great circle course"), tr("Show magnetic great circle start course at flight plan leg."), optsd::ROUTE_MAG_COURSE, true);
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True great circle course"), tr("Show true great circle start course at flight plan leg."), optsd::ROUTE_TRUE_COURSE);
 
+  // User aircraft =====================================================
   QTreeWidgetItem *userAircraft = addTopItem(tr("User Aircraft"), tr("Select text labels and other options for the user aircraft."));
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Registration"), QString(), optsac::ITEM_USER_AIRCRAFT_REGISTRATION);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Type"), tr("Show the aircraft type, like B738, B350 or M20T."), optsac::ITEM_USER_AIRCRAFT_TYPE);
@@ -172,6 +178,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Coordinates"), tr("Show aircraft coordinates using the format selected on options page \"Units\"."), optsac::ITEM_USER_AIRCRAFT_COORDINATES);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Icing"), tr("Show a red label \"ICE\" and icing values in percent when aircraft icing occurs."), optsac::ITEM_USER_AIRCRAFT_ICE);
 
+  // AI =====================================================
   QTreeWidgetItem *aiAircraft = addTopItem(tr("AI, Multiplayer and Online Client Aircraft"), tr("Select text labels for the AI, multiplayer and online client aircraft."));
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Registration, Number or Callsign"), QString(), optsac::ITEM_AI_AIRCRAFT_REGISTRATION, true);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Type"), QString(), optsac::ITEM_AI_AIRCRAFT_TYPE, true);
@@ -187,6 +194,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Departure and Destination"), QString(), optsac::ITEM_AI_AIRCRAFT_DEP_DEST, true);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Coordinates"), tr("Show aircraft coordinates using the format selected on options page \"Units\"."), optsac::ITEM_AI_AIRCRAFT_COORDINATES);
 
+  // Compass rose =====================================================
   QTreeWidgetItem *compassRose = addTopItem(tr("Compass Rose"), tr("Select display options for the compass rose."));
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Direction Labels"), tr("Show N, S, E and W labels."), optsd::ROSE_DIR_LABELS, true);
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Degree Tick Marks"), tr("Show tick marks for degrees on ring."), optsd::ROSE_DEGREE_MARKS, true);
@@ -199,12 +207,24 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("Course to Next Waypoint"), tr("Show the course to next waypoint for the user aircraft as a small magenta line."), optsd::ROSE_NEXT_WAYPOINT, true);
   addItem<optsd::DisplayOptionsRose>(compassRose, displayOptItemIndexRose, tr("True Heading"), tr("Show the whole circle and tick marks using true heading."), optsd::ROSE_TRUE_HEADING);
 
+  // Measurment lines =====================================================
   QTreeWidgetItem *measurement = addTopItem(tr("Measurement Lines"), tr("Select display options measurement lines."));
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Distance"), tr("Great circle distance for measurement line."), optsd::MEASUREMNENT_DIST, true);
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Magnetic Course"), tr("Show magnetic course for start and end of line."), optsd::MEASUREMNENT_MAG, true);
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("True Course"), tr("Show true course for start and end of line."), optsd::MEASUREMNENT_TRUE, true);
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Navaid or airport ident"), tr("Show ident if attached to navaid or airport.\n"
                                                                                                                            "Also show frequency if attached to a radio navaid. "), optsd::MEASUREMNENT_LABEL, true);
+  // Profile =====================================================
+  QTreeWidgetItem *profile = addTopItem(tr("Elevation Profile"), tr("Select display options for the elevation profile."));
+  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Distance on top Label"), tr("Distance of flight plan leg on the top label."), optsd::PROFILE_TOP_DISTANCE, true);
+  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Magnetic course on top Label"), tr("Show magnetic great circle start course at start flight plan leg on the top label."), optsd::PROFILE_TOP_MAG_COURSE);
+  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("True course on top Label"), tr("Show true great circle start course at flight plan leg on the top label."), optsd::PROFILE_TOP_TRUE_COURSE);
+  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Related navaid on top Label"), tr("Related navaid for a procedure fix including bearing and distance on the top label."), optsd::PROFILE_TOP_RELATED, true);
+
+  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Distance on Flight Plan Line"), tr("Distance of flight plan leg on the flight plan line."), optsd::PROFILE_FP_DIST);
+  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Magnetic course on Flight Plan Line"), tr("Show magnetic great circle start course on the flight plan line."), optsd::PROFILE_FP_MAG_COURSE, true);
+  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("True course on Flight Plan Line"), tr("Show true great circle start course on the flight plan line."), optsd::PROFILE_FP_TRUE_COURSE);
+  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Descent Flight Path Angle"), tr("Vertical descent path angle only in the descent phase."), optsd::PROFILE_FP_VERTICAL_ANGLE, true);
   /* *INDENT-ON* */
 
   ui->treeWidgetOptionsDisplayTextOptions->resizeColumnToContents(0);
@@ -933,6 +953,7 @@ void OptionsDialog::saveState()
   saveDisplayOptItemStates(displayOptItemIndexRose, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_COMPASS_ROSE);
   saveDisplayOptItemStates(displayOptItemIndexMeasurement, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_MEASUREMENT);
   saveDisplayOptItemStates(displayOptItemIndexRoute, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_ROUTE);
+  saveDisplayOptItemStates(displayOptItemIndexProfile, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_PROFILE);
   saveDisplayOptItemStates(displayOptItemIndexNavAid, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_NAVAID);
 
   Settings& settings = Settings::instance();
@@ -1026,6 +1047,7 @@ void OptionsDialog::restoreState()
   restoreOptionItemStates(displayOptItemIndexRose, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_COMPASS_ROSE);
   restoreOptionItemStates(displayOptItemIndexMeasurement, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_MEASUREMENT);
   restoreOptionItemStates(displayOptItemIndexRoute, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_ROUTE);
+  restoreOptionItemStates(displayOptItemIndexProfile, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_PROFILE);
   restoreOptionItemStates(displayOptItemIndexNavAid, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_NAVAID);
 
   ui->splitterOptions->setHandleWidth(6);
@@ -1539,6 +1561,9 @@ void OptionsDialog::widgetsToOptionData()
   data.displayOptionsRoute = optsd::ROUTE_NONE;
   displayOptWidgetToOptionData(data.displayOptionsRoute, displayOptItemIndexRoute);
 
+  data.displayOptionsProfile = optsd::PROFILE_NONE;
+  displayOptWidgetToOptionData(data.displayOptionsProfile, displayOptItemIndexProfile);
+
   data.displayOptionsNavAid = optsd::NAVAIDS_NONE;
   displayOptWidgetToOptionData(data.displayOptionsNavAid, displayOptItemIndexNavAid);
 
@@ -1824,6 +1849,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   displayOptDataToWidget(data.displayOptionsRose, displayOptItemIndexRose);
   displayOptDataToWidget(data.displayOptionsMeasurement, displayOptItemIndexMeasurement);
   displayOptDataToWidget(data.displayOptionsRoute, displayOptItemIndexRoute);
+  displayOptDataToWidget(data.displayOptionsProfile, displayOptItemIndexProfile);
   displayOptDataToWidget(data.displayOptionsNavAid, displayOptItemIndexNavAid);
 
   // Copy from check and radio buttons

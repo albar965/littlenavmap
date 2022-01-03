@@ -359,6 +359,10 @@ public:
   const atools::fs::pln::FlightplanEntry& getFlightplanEntry() const;
   atools::fs::pln::FlightplanEntry *getFlightplanEntry();
 
+  /* Build leg labels also depending on procedure flags */
+  QStringList buildLegText(bool dist, bool magCourse, bool trueCourse, bool narrow) const;
+  static QStringList buildLegText(float distance, float courseMag, float courseTrue, bool narrow);
+
 private:
   // TODO assign functions are duplicatd in FlightplanEntryBuilder
   void assignIntersection(const map::MapResult& mapobjectResult,

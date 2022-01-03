@@ -152,6 +152,13 @@ public:
 
   void aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf *);
 
+  const QVector<int>& getWaypointX() const
+  {
+    return waypointX;
+  }
+
+  const Route& getRoute() const;
+
 signals:
   /* Emitted when the mouse cursor hovers over the map profile.
    * @param pos Position on the map display.
