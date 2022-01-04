@@ -472,7 +472,8 @@ enum TextFlag
   ROUTE_TEXT = 0x0040, /* Object is part of route */
   ABS_POS = 0x0080, /* Use absolute text positioning */
   NO_BACKGROUND = 0x0100, /* No background */
-  LOG_TEXT = 0x0200 /* Object is part of log entry - only for airports */
+  LOG_TEXT = 0x0200, /* Object is part of log entry - only for airports */
+  ELLIPSE_IDENT = 0x0400 /* Add allipse to first text (ident) and ignore additional texts if additonal are not empty */
 };
 
 Q_DECLARE_FLAGS(TextFlags, TextFlag);

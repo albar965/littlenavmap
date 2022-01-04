@@ -1134,8 +1134,17 @@ void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float
     textAttrs |= textatt::CENTER;
   }
 
-  if(addtionalText != nullptr)
-    texts.append(*addtionalText);
+  if(addtionalText != nullptr && !addtionalText->isEmpty())
+  {
+    if(flags.testFlag(textflags::ELLIPSE_IDENT))
+    {
+      if(!texts.isEmpty())
+        // Ingore additional texts and add ellipsis
+        texts.first() = texts.first() % tr("…", "Dots used indicate additional text in map");
+    }
+    else
+      texts.append(*addtionalText);
+  }
 
   int transparency = fill ? 255 : 0;
   textBoxF(painter, texts, mapcolors::ndbSymbolColor, x, y, textAttrs, transparency);
@@ -1174,8 +1183,17 @@ void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, float
     textAttrs |= textatt::RIGHT;
   }
 
-  if(addtionalText != nullptr)
-    texts.append(*addtionalText);
+  if(addtionalText != nullptr && !addtionalText->isEmpty())
+  {
+    if(flags.testFlag(textflags::ELLIPSE_IDENT))
+    {
+      if(!texts.isEmpty())
+        // Ingore additional texts and add ellipsis
+        texts.first() = texts.first() % tr("…", "Dots used indicate additional text in map");
+    }
+    else
+      texts.append(*addtionalText);
+  }
 
   int transparency = fill ? 255 : 0;
   textBoxF(painter, texts, mapcolors::vorSymbolColor, x, y, textAttrs, transparency);
@@ -1187,11 +1205,11 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& 
 {
   QStringList texts;
 
-  if(flags & textflags::IDENT)
+  if(flags.testFlag(textflags::IDENT))
     texts.append(wp.ident);
 
   textatt::TextAttributes textAttrs = textatt::NONE;
-  if(flags & textflags::ROUTE_TEXT)
+  if(flags.testFlag(textflags::ROUTE_TEXT))
     textAttrs |= textatt::ROUTE_BG_COLOR;
 
   if(!flags.testFlag(textflags::ABS_POS))
@@ -1200,8 +1218,17 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& 
     textAttrs |= textatt::LEFT;
   }
 
-  if(addtionalText != nullptr)
-    texts.append(*addtionalText);
+  if(addtionalText != nullptr && !addtionalText->isEmpty())
+  {
+    if(flags.testFlag(textflags::ELLIPSE_IDENT))
+    {
+      if(!texts.isEmpty())
+        // Ingore additional texts and add ellipsis
+        texts.first() = texts.first() % tr("…", "Dots used indicate additional text in map");
+    }
+    else
+      texts.append(*addtionalText);
+  }
 
   int transparency = fill ? 255 : 0;
   textBoxF(painter, texts, mapcolors::waypointSymbolColor, x, y, textAttrs, transparency);
