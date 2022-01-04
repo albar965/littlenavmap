@@ -1123,7 +1123,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     setFont(optionData.getMapFont());
     mapcolors::scaleFont(&painter, optionData.getDisplayTextSizeFlightplanProfile() / 100.f, &painter.font());
 
-    // Draw the most unimportant symbols and texts first - userpoints, invalid and procedure ============================
+    // Draw the most unimportant symbols and texts first - userpoints, invalid and procedure points ============================
     int waypointIndex = waypointX.size();
     for(int routeIndex : indexes)
     {
@@ -1496,8 +1496,7 @@ void ProfileWidget::textsAndColorForLeg(QStringList& texts, QColor& color, bool&
     // Custom approach or departure
     ident = leg.getIdent();
 
-  if(!leg.isAnyProcedure() ||
-     (!leg.getProcedureLeg().noIdentDisplay() && proc::procedureLegDrawIdent(leg.getProcedureLegType())))
+  if(!leg.isAnyProcedure() || (!leg.getProcedureLeg().noIdentDisplay() && proc::procedureLegDrawIdent(leg.getProcedureLegType())))
     texts.append(ident);
 
   if(leg.isAnyProcedure())
@@ -1512,6 +1511,21 @@ void ProfileWidget::textsAndColorForLeg(QStringList& texts, QColor& color, bool&
 
   if(leg.getProcedureLegType() != proc::START_OF_PROCEDURE && procedureDisplayText)
     texts.append(leg.getProcedureLeg().displayText);
+
+  if(leg.isAnyProcedure() && !leg.getRunwayEnd().isValid())
+  {
+    // Add constrains if enabled in options
+    const optsd::DisplayOptionsProfile opts = OptionData::instance().getDisplayOptionsProfile();
+
+    // Do not add altitude for runways since this is given for departure and destination airport already
+    if(!leg.getProcedureLegAltRestr().isIls() && opts.testFlag(optsd::PROFILE_FP_ALT_RESTRICTION))
+      texts.append(proc::altRestrictionTextNarrow(leg.getProcedureLegAltRestr()));
+
+    if(opts.testFlag(optsd::PROFILE_FP_SPEED_RESTRICTION))
+      texts.append(proc::speedRestrictionTextNarrow(leg.getProcedureLegSpeedRestr()));
+  }
+
+  texts.removeDuplicates();
   texts.removeAll(QString());
   texts = atools::elideTextShort(texts, 15);
 }

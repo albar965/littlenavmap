@@ -156,8 +156,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   // Flight plan =====================================================
   QTreeWidgetItem *route = addTopItem(tr("Flight Plan"), tr("Select display options for the flight plan line."));
   addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Distance"), tr("Show distance along flight plan leg."), optsd::ROUTE_DISTANCE, true);
-  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic great circle course"), tr("Show magnetic great circle start course at flight plan leg."), optsd::ROUTE_MAG_COURSE, true);
-  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True great circle course"), tr("Show true great circle start course at flight plan leg."), optsd::ROUTE_TRUE_COURSE);
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic Course"), tr("Show magnetic great circle start course at flight plan leg."), optsd::ROUTE_MAG_COURSE, true);
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True Course"), tr("Show true great circle start course at flight plan leg."), optsd::ROUTE_TRUE_COURSE);
 
   // User aircraft =====================================================
   QTreeWidgetItem *userAircraft = addTopItem(tr("User Aircraft"), tr("Select text labels and other options for the user aircraft."));
@@ -217,14 +217,15 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   // Profile =====================================================
   QTreeWidgetItem *profile = addTopItem(tr("Elevation Profile"), tr("Select display options for the elevation profile."));
   addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Distance on top Label"), tr("Distance of flight plan leg on the top label."), optsd::PROFILE_TOP_DISTANCE, true);
-  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Magnetic course on top Label"), tr("Show magnetic great circle start course at start flight plan leg on the top label."), optsd::PROFILE_TOP_MAG_COURSE);
-  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("True course on top Label"), tr("Show true great circle start course at flight plan leg on the top label."), optsd::PROFILE_TOP_TRUE_COURSE);
-  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Related navaid on top Label"), tr("Related navaid for a procedure fix including bearing and distance on the top label."), optsd::PROFILE_TOP_RELATED, true);
-
+  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Magnetic Course on top Label"), tr("Show magnetic great circle start course at start flight plan leg on the top label."), optsd::PROFILE_TOP_MAG_COURSE);
+  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("True Course on top Label"), tr("Show true great circle start course at flight plan leg on the top label."), optsd::PROFILE_TOP_TRUE_COURSE);
+  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Related Navaid on top Label"), tr("Related navaid for a procedure fix including bearing and distance on the top label."), optsd::PROFILE_TOP_RELATED, true);
   addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Distance on Flight Plan Line"), tr("Distance of flight plan leg on the flight plan line."), optsd::PROFILE_FP_DIST);
-  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Magnetic course on Flight Plan Line"), tr("Show magnetic great circle start course on the flight plan line."), optsd::PROFILE_FP_MAG_COURSE, true);
-  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("True course on Flight Plan Line"), tr("Show true great circle start course on the flight plan line."), optsd::PROFILE_FP_TRUE_COURSE);
+  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Magnetic Course on Flight Plan Line"), tr("Show magnetic great circle start course on the flight plan line."), optsd::PROFILE_FP_MAG_COURSE, true);
+  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("True Course on Flight Plan Line"), tr("Show true great circle start course on the flight plan line."), optsd::PROFILE_FP_TRUE_COURSE);
   addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Descent Flight Path Angle"), tr("Vertical descent path angle only in the descent phase."), optsd::PROFILE_FP_VERTICAL_ANGLE, true);
+  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Altitude Restriction"), tr("Display procedure altitude restrictions at the navaid label."), optsd::PROFILE_FP_ALT_RESTRICTION, true);
+  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Speed Restriction"), tr("Show procedure speed restrictions at the navaid label."), optsd::PROFILE_FP_SPEED_RESTRICTION);
   /* *INDENT-ON* */
 
   ui->treeWidgetOptionsDisplayTextOptions->resizeColumnToContents(0);
