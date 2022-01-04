@@ -299,7 +299,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
      ui->listWidgetOptionsDatabaseAddon,
      ui->listWidgetOptionsDatabaseExclude,
-     ui->comboBoxMapScrollDetails,
+     ui->comboBoxMapScrollZoomDetails,
      ui->radioButtonOptionsSimUpdateFast,
      ui->radioButtonOptionsSimUpdateLow,
      ui->radioButtonOptionsSimUpdateMedium,
@@ -1673,7 +1673,7 @@ void OptionsDialog::widgetsToOptionData()
   for(int i = 0; i < ui->listWidgetOptionsDatabaseExclude->count(); i++)
     data.databaseExclude.append(ui->listWidgetOptionsDatabaseExclude->item(i)->text());
 
-  data.mapScrollDetail = static_cast<opts::MapScrollDetail>(ui->comboBoxMapScrollDetails->currentIndex());
+  data.mapScrollDetail = static_cast<opts::MapScrollDetail>(ui->comboBoxMapScrollZoomDetails->currentIndex());
 
   // Details when moving map =========================================
   if(ui->radioButtonOptionsSimUpdateFast->isChecked())
@@ -1954,7 +1954,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   for(const QString& str : data.databaseExclude)
     ui->listWidgetOptionsDatabaseExclude->addItem(str);
 
-  ui->comboBoxMapScrollDetails->setCurrentIndex(data.mapScrollDetail);
+  ui->comboBoxMapScrollZoomDetails->setCurrentIndex(data.mapScrollDetail);
 
   // Details when moving map =========================================
 

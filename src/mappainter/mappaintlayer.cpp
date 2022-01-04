@@ -275,7 +275,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
     opts::MapScrollDetail mapScrollDetail = OptionData::instance().getMapScrollDetail();
 
     // Check if no painting wanted during scroll
-    if(!(mapScrollDetail == opts::NONE && mapWidget->viewContext() == Marble::Animation) && !noRender())
+    if(!noRender())
     {
 #ifdef DEBUG_INFORMATION_PAINT
       qDebug() << Q_FUNC_INFO << "layer" << *mapLayer;
@@ -292,9 +292,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.objectDisplayTypes = objectDisplayTypes;
       context.airspaceFilterByLayer = getShownAirspacesTypesByLayer();
       context.viewContext = mapWidget->viewContext();
-      context.drawFast = (mapScrollDetail == opts::FULL || mapScrollDetail == opts::HIGHER) ?
-                         false : mapWidget->viewContext() == Marble::Animation;
-      context.lazyUpdate = mapScrollDetail == opts::FULL ? false : mapWidget->viewContext() == Marble::Animation;
+      context.drawFast = mapScrollDetail == opts::DETAIL_LOW && mapWidget->viewContext() == Marble::Animation;
+      context.lazyUpdate = mapScrollDetail != opts::DETAIL_HIGH && mapWidget->viewContext() == Marble::Animation;
       context.mapScrollDetail = mapScrollDetail;
       context.distanceKm = static_cast<float>(mapWidget->distance());
       context.distanceNm = atools::geo::meterToNm(context.distanceKm * 1000.f);

@@ -122,10 +122,9 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(opts::Flags);
 /* Map detail level during scrolling or zooming */
 enum MapScrollDetail
 {
-  FULL,
-  HIGHER,
-  NORMAL,
-  NONE
+  DETAIL_HIGH,
+  DETAIL_NORMAL,
+  DETAIL_LOW
 };
 
 /* Navigation mode */
@@ -1332,7 +1331,7 @@ private:
   // ui->listWidgetOptionsDatabaseExclude
   QStringList databaseExclude;
 
-  opts::MapScrollDetail mapScrollDetail = opts::HIGHER;
+  opts::MapScrollDetail mapScrollDetail = opts::DETAIL_NORMAL;
   opts::MapNavigation mapNavigation = opts::MAP_NAV_CLICK_DRAG_MOVE;
 
   // ui->radioButtonOptionsMapSimUpdateFast
