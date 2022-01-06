@@ -812,17 +812,13 @@ void AirportQuery::getBestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map:
       map::MapRunwayEnd secondaryEnd = getRunwayEndById(rw.secondaryEndId);
 
       // Check if either primary or secondary end matches by heading
-      if(ageo::angleInRange(heading,
-                            ageo::normalizeCourse(primaryEnd.heading - maxHeadingDeviation),
-                            ageo::normalizeCourse(primaryEnd.heading + maxHeadingDeviation)))
+      if(ageo::angleAbsDiff(heading, primaryEnd.heading) < maxHeadingDeviation)
       {
         runwayEnd = primaryEnd;
         runway = rw;
         break;
       }
-      else if(ageo::angleInRange(heading,
-                                 ageo::normalizeCourse(secondaryEnd.heading - maxHeadingDeviation),
-                                 ageo::normalizeCourse(secondaryEnd.heading + maxHeadingDeviation)))
+      else if(ageo::angleAbsDiff(heading, secondaryEnd.heading) < maxHeadingDeviation)
       {
         runwayEnd = secondaryEnd;
         runway = rw;
@@ -973,6 +969,8 @@ map::MapRunwayEnd AirportQuery::runwayEndByName(int airportId, const QString& ru
 bool AirportQuery::getBestRunwayEndForPosAndCourse(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
                                                    const ageo::Pos& pos, float trackTrue)
 {
+  qDebug() << Q_FUNC_INFO << "pos" << pos << "trackTrue" << trackTrue;
+
   QVector<map::MapRunway> runways;
 
   // Use inflated rectangle for query based on a radius or 5 NM
@@ -981,18 +979,23 @@ bool AirportQuery::getBestRunwayEndForPosAndCourse(map::MapRunwayEnd& runwayEnd,
   // Get all runways nearby ordered by distance between pos and runway line
   getRunways(runways, rect, pos);
 
+  qDebug() << Q_FUNC_INFO << "Found" << runways.size() << "runways";
+
   // Get closest runway that matches heading
-  getBestRunwayEndAndAirport(runwayEnd, airport, runways, pos, trackTrue,
-                             MAX_RUNWAY_DISTANCE_FT, MAX_HEADING_RUNWAY_DEVIATION);
+  getBestRunwayEndAndAirport(runwayEnd, airport, runways, pos, trackTrue, MAX_RUNWAY_DISTANCE_FT, MAX_HEADING_RUNWAY_DEVIATION);
 
   if(!runwayEnd.isValid())
-    getBestRunwayEndAndAirport(runwayEnd, airport, runways, pos, trackTrue,
-                               MAX_RUNWAY_DISTANCE_FT * 4.f, MAX_HEADING_RUNWAY_DEVIATION * 2.f);
+  {
+    qDebug() << Q_FUNC_INFO << "No runway end found. Doing second iteration.";
+    getBestRunwayEndAndAirport(runwayEnd, airport, runways, pos, trackTrue, MAX_RUNWAY_DISTANCE_FT * 4.f,
+                               MAX_HEADING_RUNWAY_DEVIATION * 2.f);
+  }
 
   if(!airport.isValid())
     qWarning() << Q_FUNC_INFO << "No runways or airports found for takeoff/landing";
+  else
+    qDebug() << Q_FUNC_INFO << "Found airport" << airport.ident << "runway" << runwayEnd.name;
 
-  qDebug() << Q_FUNC_INFO << airport.ident << runwayEnd.name << pos << trackTrue;
   return airport.isValid();
 }
 

@@ -206,8 +206,7 @@ void LogdataController::aircraftLanding(const atools::fs::sc::SimConnectUserAirc
   createTakeoffLanding(aircraft, false /*takeoff*/, flownDistanceNm);
 }
 
-void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff,
-                                             float flownDistanceNm)
+void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff, float flownDistanceNm)
 {
   if(NavApp::getMainUi()->actionLogdataCreateLogbook->isChecked())
   {
