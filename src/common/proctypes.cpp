@@ -18,17 +18,18 @@
 #include "common/proctypes.h"
 
 #include "atools.h"
-#include "geo/calculations.h"
 #include "common/unit.h"
 #include "fs/util/fsutil.h"
+#include "geo/calculations.h"
+#include "navapp.h"
 #include "options/optiondata.h"
-#include "route/route.h"
 #include "query/mapquery.h"
+#include "route/route.h"
 
 #include <QDataStream>
+#include <QStringBuilder>
 #include <QHash>
 #include <QObject>
-#include <navapp.h>
 
 namespace proc  {
 
@@ -347,7 +348,7 @@ QString procedureLegRemarks(proc::ProcedureLegType type)
   return approachLegRemarkStr.value(type);
 }
 
-QString restrictionText(const MapProcedureLeg& procedureLeg)
+QStringList restrictionText(const MapProcedureLeg& procedureLeg)
 {
   QStringList restrictions;
   if(procedureLeg.altRestriction.isValid() && !procedureLeg.isCustomDeparture())
@@ -359,7 +360,7 @@ QString restrictionText(const MapProcedureLeg& procedureLeg)
   if(procedureLeg.verticalAngle < -0.1f)
     restrictions.append(QObject::tr("%L1°").arg(procedureLeg.verticalAngle, 0, 'g', 3));
 
-  return restrictions.join(QObject::tr("/"));
+  return restrictions;
 }
 
 QString altRestrictionText(const MapAltRestriction& restriction)
@@ -574,9 +575,9 @@ QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
   out << "displayText" << leg.displayText
       << "remarks" << leg.remarks;
 
-  out << "navId" << leg.navId << "fix" << leg.fixType << leg.fixIdent << leg.fixRegion << leg.fixPos << endl;
+  out << "fix" << leg.fixType << leg.fixIdent << leg.fixRegion << leg.fixPos << endl;
 
-  out << "recNavId" << leg.recNavId << leg.recFixType << leg.recFixIdent << leg.recFixRegion << leg.recFixPos << endl;
+  out << leg.recFixType << leg.recFixIdent << leg.recFixRegion << leg.recFixPos << endl;
   out << "intercept" << leg.interceptPos << leg.intercept << endl;
   out << "pc pos" << leg.procedureTurnPos << endl;
   out << "geometry" << leg.geometry << endl;
@@ -863,24 +864,38 @@ QString procedureLegRemDistance(const MapProcedureLeg& leg, float& remainingDist
   return retval;
 }
 
-QStringList procedureLegRelated(const MapProcedureLeg& leg, bool onlyFull)
+QStringList procedureLegRecommended(const MapProcedureLeg& leg)
 {
   QStringList related;
   if(!leg.recFixIdent.isEmpty())
   {
-    if(leg.rho > 0.f)
+    related.append(leg.recFixIdent);
+
+    if(leg.recNavaids.hasIls())
+      related.append(leg.recNavaids.ils.first().freqMHzOrChannelLocale() % QObject::tr(" MHz"));
+
+    if(leg.recNavaids.hasVor())
     {
-      related.append(leg.recFixIdent);
-      related.append(Unit::distNm(leg.rho /*, true, 20, true*/));
-      related.append(QLocale().toString(leg.theta, 'f', 0) + QObject::tr("°M"));
+      const map::MapVor& vor = leg.recNavaids.vors.first();
+      if(vor.tacan)
+        related.append(vor.channel);
+      else
+        related.append(QLocale().toString(vor.frequency / 1000., 'f', 2) % QObject::tr(" MHz"));
     }
-    else if(!onlyFull)
-      related.append(leg.recFixIdent);
+
+    if(leg.recNavaids.hasNdb())
+      related.append(QLocale().toString(leg.recNavaids.ndbs.first().frequency / 100., 'f', 1) % QObject::tr(" kHz"));
+
+    if(leg.rho > 0.f && leg.rho < map::INVALID_DISTANCE_VALUE)
+      related.append(Unit::distNm(leg.rho));
+
+    if(leg.theta < map::INVALID_COURSE_VALUE)
+      related.append(QLocale().toString(leg.theta, 'f', 0) + QObject::tr("°M"));
   }
   return related;
 }
 
-QString procedureLegRemark(const MapProcedureLeg& leg)
+QStringList procedureLegRemark(const MapProcedureLeg& leg)
 {
   QStringList remarks;
   if(leg.flyover)
@@ -897,10 +912,6 @@ QString procedureLegRemark(const MapProcedureLeg& leg)
   if(!legremarks.isEmpty())
     remarks.append(legremarks);
 
-  QStringList related = procedureLegRelated(leg, false /* onlyFull */);
-  if(!related.isEmpty())
-    remarks.append(QObject::tr("Related: %1").arg(related.join(QObject::tr(" / "))));
-
   if(!leg.remarks.isEmpty())
     remarks.append(leg.remarks);
 
@@ -912,9 +923,10 @@ QString procedureLegRemark(const MapProcedureLeg& leg)
     remarks.append(QObject::tr("Error: Recommended fix %1/%2 type %3 not found").
                    arg(leg.recFixIdent).arg(leg.recFixRegion).arg(leg.recFixType));
 
+  remarks.removeDuplicates();
   remarks.removeAll(QString());
 
-  return remarks.join(", ");
+  return remarks;
 }
 
 proc::MapProcedureTypes procedureType(bool hasSidStar, const QString& type,

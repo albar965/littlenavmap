@@ -203,12 +203,10 @@ enum MapObjectQueryType
   QUERY_MARK_MSA = 1 << 7, /* Airport MSA sectors */
   QUERY_MARK_DISTANCE = 1 << 8, /* Measurement lines */
   QUERY_PREVIEW_PROC_POINTS = 1 << 9, /* Points from procedure preview */
+  QUERY_PROC_RECOMMENDED = 1 << 10, /* Recommended navaids from procedures */
 
   /* All user creatable/placeable features */
   QUERY_MARK = QUERY_MARK_DISTANCE | QUERY_MARK_HOLDINGS | QUERY_MARK_PATTERNS | QUERY_MARK_RANGE | QUERY_MARK_MSA,
-
-  QUERY_ALL = QUERY_PROC_POINTS | QUERY_PROC_MISSED_POINTS | QUERY_MARK_HOLDINGS | QUERY_MARK_PATTERNS | QUERY_PROCEDURES |
-              QUERY_MARK_RANGE | QUERY_MARK_MSA | QUERY_PREVIEW_PROC_POINTS
 };
 
 Q_DECLARE_FLAGS(MapObjectQueryTypes, MapObjectQueryType);

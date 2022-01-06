@@ -1311,14 +1311,19 @@ QTreeWidgetItem *ProcedureSearch::buildLegItem(const MapProcedureLeg& leg)
   texts << proc::procedureLegTypeStr(leg.type);
   texts << proc::procedureLegFixStr(leg);
 
-  texts << proc::restrictionText(leg) << proc::procedureLegCourse(leg) << proc::procedureLegDistance(leg);
+  texts << proc::restrictionText(leg).join(tr(", ")) << proc::procedureLegCourse(leg) << proc::procedureLegDistance(leg);
 
-  QString remarkStr = proc::procedureLegRemark(leg);
+  QStringList remarkStr = proc::procedureLegRemark(leg);
+
+  QStringList related = procedureLegRecommended(leg);
+  if(!related.isEmpty())
+    remarkStr.append(QObject::tr("Related: %1").arg(related.join(QObject::tr(", "))));
+
 #ifdef DEBUG_INFORMATION
-  remarkStr += QString(" | leg_id = %1 approach_id = %2 transition_id = %3 nav_id = %4").
-               arg(leg.legId).arg(leg.approachId).arg(leg.transitionId).arg(leg.navId);
+  remarkStr.append(QString(" | leg_id = %1 approach_id = %2 transition_id = %3").
+                   arg(leg.legId).arg(leg.approachId).arg(leg.transitionId));
 #endif
-  texts << remarkStr;
+  texts << remarkStr.join(tr(", "));
 
   QTreeWidgetItem *item = new QTreeWidgetItem(texts, itemIndex.size() - 1);
   if(!icon.isNull())
@@ -1327,7 +1332,7 @@ QTreeWidgetItem *ProcedureSearch::buildLegItem(const MapProcedureLeg& leg)
     item->setSizeHint(0, QSize(fontHeight - 3, fontHeight - 3));
   }
 
-  item->setToolTip(COL_REMARKS, remarkStr);
+  item->setToolTip(COL_REMARKS, remarkStr.join(tr(", ")));
 
   item->setTextAlignment(COL_RESTR, Qt::AlignRight);
   item->setTextAlignment(COL_COURSE, Qt::AlignRight);

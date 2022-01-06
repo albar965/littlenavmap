@@ -269,6 +269,10 @@ public:
   void getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance, map::MapResult& mapobjects,
                   map::MapObjectQueryTypes types) const;
 
+  /* Get nearest recommended navaids to given screen position xs/ys. */
+  void getNearestRecommended(const CoordinateConverter& conv, int xs, int ys, int screenDistance, map::MapResult& mapobjects,
+                             map::MapObjectQueryTypes types) const;
+
   void eraseAirway(int row);
 
   /* @return true if any leg has an airway name */

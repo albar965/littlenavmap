@@ -209,8 +209,8 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   leg.course = query->valueFloat("course");
   leg.distance = query->valueFloat("distance");
   leg.time = query->valueFloat("time");
-  leg.theta = query->valueFloat("theta");
-  leg.rho = query->valueFloat("rho");
+  leg.theta = query->isNull("theta") ? map::INVALID_COURSE_VALUE : query->valueFloat("theta");
+  leg.rho = query->isNull("rho") ? map::INVALID_DISTANCE_VALUE : query->valueFloat("rho");
 
   leg.calculatedDistance = 0.f;
   leg.calculatedTrueCourse = 0.f;
@@ -322,7 +322,6 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     {
       leg.fixPos = leg.navaids.waypoints.first().position;
       leg.magvar = leg.navaids.waypoints.first().magvar;
-      leg.navId = leg.navaids.waypoints.first().id;
     }
   }
   else if(leg.fixType == "V")
@@ -345,7 +344,6 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     {
       leg.fixPos = leg.navaids.vors.first().position;
       leg.magvar = leg.navaids.vors.first().magvar;
-      leg.navId = leg.navaids.vors.first().id;
 
       // Also update region and type if missing
       if(leg.fixRegion.isEmpty())
@@ -357,7 +355,6 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     {
       leg.fixPos = leg.navaids.ils.first().position;
       leg.magvar = leg.navaids.ils.first().magvar;
-      leg.navId = leg.navaids.ils.first().id;
 
       // Also update region and type if missing
       if(leg.fixRegion.isEmpty())
@@ -373,14 +370,12 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     {
       leg.fixPos = leg.navaids.ndbs.first().position;
       leg.magvar = leg.navaids.ndbs.first().magvar;
-      leg.navId = leg.navaids.ndbs.first().id;
     }
   }
   else if(leg.fixType == "R")
   {
     runwayEndByName(leg.navaids, leg.fixIdent, airport);
     leg.fixPos = leg.navaids.runwayEnds.isEmpty() ? airport.position : leg.navaids.runwayEnds.first().position;
-    leg.navId = -1;
   }
   else if(leg.fixType == "A")
   {
@@ -396,7 +391,6 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
       leg.fixIdent = leg.navaids.airports.first().ident;
       leg.fixPos = leg.navaids.airports.first().position;
       leg.magvar = leg.navaids.airports.first().magvar;
-      leg.navId = leg.navaids.airports.first().id;
     }
   }
   else if(leg.fixType == "L" || leg.fixType.isEmpty() /* Workaround for missing navaid type in DFD */)
@@ -406,7 +400,6 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     {
       leg.fixPos = leg.navaids.ils.first().position;
       leg.magvar = leg.navaids.ils.first().magvar;
-      leg.navId = leg.navaids.ils.first().id;
 
       if(leg.fixRegion.isEmpty())
         leg.fixRegion = leg.navaids.ils.first().region;
@@ -422,7 +415,6 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
       {
         leg.fixPos = leg.navaids.vors.first().position;
         leg.magvar = leg.navaids.vors.first().magvar;
-        leg.navId = leg.navaids.vors.first().id;
 
         if(leg.fixRegion.isEmpty())
           leg.fixRegion = leg.navaids.vors.first().region;
@@ -438,7 +430,6 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
         {
           leg.fixPos = leg.navaids.ndbs.first().position;
           leg.magvar = leg.navaids.ndbs.first().magvar;
-          leg.navId = leg.navaids.ndbs.first().id;
 
           if(leg.fixRegion.isEmpty())
             leg.fixRegion = leg.navaids.ndbs.first().region;
@@ -452,60 +443,57 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   // ============================================================================================
   // Load navaid information for recommended fix and set fix position
   // Also update magvar if not already set
-  map::MapResult recResult;
   if(leg.recFixType == "W" || leg.recFixType == "TW")
   {
-    mapObjectByIdent(recResult, map::WAYPOINT, leg.recFixIdent, leg.recFixRegion, QString(), recFixPos);
-    if(!recResult.waypoints.isEmpty())
+    mapObjectByIdent(leg.recNavaids, map::WAYPOINT, leg.recFixIdent, leg.recFixRegion, QString(), recFixPos);
+    if(!leg.recNavaids.waypoints.isEmpty())
     {
-      leg.recFixPos = recResult.waypoints.first().position;
-      leg.recNavId = recResult.waypoints.first().id;
+      leg.recFixPos = leg.recNavaids.waypoints.first().position;
 
       if(!(leg.magvar < map::INVALID_MAGVAR))
-        leg.magvar = recResult.waypoints.first().magvar;
+        leg.magvar = leg.recNavaids.waypoints.first().magvar;
     }
   }
   else if(leg.recFixType == "V")
   {
     // Get both VOR with region and ILS without region
-    mapObjectByIdent(recResult, map::VOR, leg.recFixIdent, leg.recFixRegion, QString(), recFixPos);
-    mapObjectByIdent(recResult, map::ILS, leg.recFixIdent, QString(), airport.ident, recFixPos);
+    mapObjectByIdent(leg.recNavaids, map::VOR, leg.recFixIdent, leg.recFixRegion, QString(), recFixPos);
+    mapObjectByIdent(leg.recNavaids, map::ILS, leg.recFixIdent, QString(), airport.ident, recFixPos);
 
-    if(recResult.hasVor() && recResult.hasIls())
+    if(leg.recNavaids.hasVor() && leg.recNavaids.hasIls())
     {
       // Remove the one with is farther away from the airport or fix position
-      if(recResult.vors.first().position.distanceMeterTo(leg.recFixPos) < recResult.ils.first().position.distanceMeterTo(leg.recFixPos))
-        recResult.clear(map::ILS); // VOR is closer
+      if(leg.recNavaids.vors.first().position.distanceMeterTo(leg.recFixPos) <
+         leg.recNavaids.ils.first().position.distanceMeterTo(leg.recFixPos))
+        leg.recNavaids.clear(map::ILS); // VOR is closer
       else
-        recResult.clear(map::VOR); // ILS is closer
+        leg.recNavaids.clear(map::VOR); // ILS is closer
     }
 
-    if(recResult.hasVor())
+    if(leg.recNavaids.hasVor())
     {
-      leg.recFixPos = recResult.vors.first().position;
-      leg.recNavId = recResult.vors.first().id;
+      leg.recFixPos = leg.recNavaids.vors.first().position;
 
       if(!(leg.magvar < map::INVALID_MAGVAR))
-        leg.magvar = recResult.vors.first().magvar;
+        leg.magvar = leg.recNavaids.vors.first().magvar;
 
       // Also update region and type if missing
       if(leg.recFixRegion.isEmpty())
-        leg.recFixRegion = recResult.vors.first().region;
+        leg.recFixRegion = leg.recNavaids.vors.first().region;
 
       if(leg.recFixType.isEmpty())
         leg.recFixType = "V";
     }
-    else if(recResult.hasIls())
+    else if(leg.recNavaids.hasIls())
     {
-      leg.recFixPos = recResult.ils.first().position;
-      leg.recNavId = recResult.ils.first().id;
+      leg.recFixPos = leg.recNavaids.ils.first().position;
 
       if(!(leg.magvar < map::INVALID_MAGVAR))
-        leg.magvar = recResult.ils.first().magvar;
+        leg.magvar = leg.recNavaids.ils.first().magvar;
 
       // Also update region and type if missing
       if(leg.recFixRegion.isEmpty())
-        leg.recFixRegion = recResult.ils.first().region;
+        leg.recFixRegion = leg.recNavaids.ils.first().region;
 
       if(leg.recFixType.isEmpty())
         leg.recFixType = "L";
@@ -513,35 +501,32 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   }
   else if(leg.recFixType == "N" || leg.recFixType == "TN")
   {
-    mapObjectByIdent(recResult, map::NDB, leg.recFixIdent, leg.recFixRegion, QString(), recFixPos);
-    if(!recResult.ndbs.isEmpty())
+    mapObjectByIdent(leg.recNavaids, map::NDB, leg.recFixIdent, leg.recFixRegion, QString(), recFixPos);
+    if(!leg.recNavaids.ndbs.isEmpty())
     {
-      leg.recFixPos = recResult.ndbs.first().position;
-      leg.recNavId = recResult.ndbs.first().id;
+      leg.recFixPos = leg.recNavaids.ndbs.first().position;
 
       if(!(leg.magvar < map::INVALID_MAGVAR))
-        leg.magvar = recResult.ndbs.first().magvar;
+        leg.magvar = leg.recNavaids.ndbs.first().magvar;
     }
   }
   else if(leg.recFixType == "R")
   {
-    runwayEndByName(recResult, leg.recFixIdent, airport);
-    leg.recFixPos = recResult.runwayEnds.isEmpty() ? airport.position : recResult.runwayEnds.first().position;
-    leg.recNavId = -1;
+    runwayEndByName(leg.recNavaids, leg.recFixIdent, airport);
+    leg.recFixPos = leg.recNavaids.runwayEnds.isEmpty() ? airport.position : leg.recNavaids.runwayEnds.first().position;
   }
   else if(leg.recFixType == "L" || leg.recFixType.isEmpty() /* Workaround for missing navaid type in DFD */)
   {
-    mapObjectByIdent(recResult, map::ILS, leg.recFixIdent, QString(), airport.ident, recFixPos);
-    if(!recResult.ils.isEmpty())
+    mapObjectByIdent(leg.recNavaids, map::ILS, leg.recFixIdent, QString(), airport.ident, recFixPos);
+    if(!leg.recNavaids.ils.isEmpty())
     {
-      leg.recFixPos = recResult.ils.first().position;
-      leg.recNavId = recResult.ils.first().id;
+      leg.recFixPos = leg.recNavaids.ils.first().position;
 
       if(!(leg.magvar < map::INVALID_MAGVAR))
-        leg.magvar = recResult.ils.first().magvar;
+        leg.magvar = leg.recNavaids.ils.first().magvar;
 
       if(leg.recFixRegion.isEmpty())
-        leg.recFixRegion = recResult.ils.first().region;
+        leg.recFixRegion = leg.recNavaids.ils.first().region;
 
       if(leg.recFixType.isEmpty())
         leg.recFixType = "L";
@@ -549,18 +534,17 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
     else
     {
       // Use a VOR or DME as fallback
-      recResult.clear();
-      mapObjectByIdent(recResult, map::VOR, leg.recFixIdent, QString(), airport.ident, recFixPos);
-      if(!recResult.vors.isEmpty())
+      leg.recNavaids.clear();
+      mapObjectByIdent(leg.recNavaids, map::VOR, leg.recFixIdent, QString(), airport.ident, recFixPos);
+      if(!leg.recNavaids.vors.isEmpty())
       {
-        leg.recFixPos = recResult.vors.first().position;
-        leg.recNavId = recResult.vors.first().id;
+        leg.recFixPos = leg.recNavaids.vors.first().position;
 
         if(!(leg.magvar < map::INVALID_MAGVAR))
-          leg.magvar = recResult.vors.first().magvar;
+          leg.magvar = leg.recNavaids.vors.first().magvar;
 
         if(leg.recFixRegion.isEmpty())
-          leg.recFixRegion = recResult.vors.first().region;
+          leg.recFixRegion = leg.recNavaids.vors.first().region;
 
         if(leg.recFixType.isEmpty())
           leg.recFixType = "V";
@@ -568,18 +552,17 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
       else
       {
         // Use a NDB as second fallback
-        recResult.clear();
-        mapObjectByIdent(recResult, map::NDB, leg.recFixIdent, QString(), airport.ident, recFixPos);
-        if(!recResult.ndbs.isEmpty())
+        leg.recNavaids.clear();
+        mapObjectByIdent(leg.recNavaids, map::NDB, leg.recFixIdent, QString(), airport.ident, recFixPos);
+        if(!leg.recNavaids.ndbs.isEmpty())
         {
-          leg.recFixPos = recResult.ndbs.first().position;
-          leg.recNavId = recResult.ndbs.first().id;
+          leg.recFixPos = leg.recNavaids.ndbs.first().position;
 
           if(!(leg.magvar < map::INVALID_MAGVAR))
-            leg.magvar = recResult.ndbs.first().magvar;
+            leg.magvar = leg.recNavaids.ndbs.first().magvar;
 
           if(leg.recFixRegion.isEmpty())
-            leg.recFixRegion = recResult.ndbs.first().region;
+            leg.recFixRegion = leg.recNavaids.ndbs.first().region;
 
           if(leg.recFixType.isEmpty())
             leg.recFixType = "N";
@@ -1111,7 +1094,6 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
         vectorLeg.airportId = legs.ref.airportId;
         vectorLeg.approachId = legs.ref.approachId;
         vectorLeg.transitionId = legs.ref.transitionId;
-        vectorLeg.navId = nextLeg.navId;
 
         vectorLeg.mapType = legs.mapType;
         vectorLeg.type = proc::VECTORS;
@@ -1125,7 +1107,9 @@ void ProcedureQuery::processArtificialLegs(const map::MapAirport& airport, proc:
         vectorLeg.fixPos = nextLeg.fixPos;
         vectorLeg.line = Line(prevLeg.line.getPos2(), nextLeg.line.getPos2());
         nextLeg.line.setPos1(nextLeg.line.getPos2());
-        vectorLeg.time = vectorLeg.theta = vectorLeg.rho = 0.f;
+        vectorLeg.time = 0.f;
+        vectorLeg.theta = map::INVALID_COURSE_VALUE;
+        vectorLeg.rho = map::INVALID_DISTANCE_VALUE;
         vectorLeg.magvar = nextLeg.magvar;
         vectorLeg.missed = vectorLeg.flyover =
           vectorLeg.trueCourse = vectorLeg.intercept =
@@ -1467,18 +1451,26 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
     if(type == proc::ARC_TO_FIX)
     {
       curPos = leg.fixPos;
-
-      // Check if first leg position matches distance to navaid - modify entry point to match distance if not
-      if(lastPos.isValid() && atools::almostNotEqual(leg.rho, meterToNm(lastPos.distanceMeterTo(leg.recFixPos)), 0.5f))
+      if(leg.rho < map::INVALID_DISTANCE_VALUE && leg.theta < map::INVALID_COURSE_VALUE)
       {
-        // Get point at correct distance to navaid between fix and recommended fix
-        leg.interceptPos = leg.recFixPos.endpoint(nmToMeter(leg.rho), leg.recFixPos.angleDegTo(lastPos));
-        leg.correctedArc = true;
-      }
+        // Check if first leg position matches distance to navaid - modify entry point to match distance if not
+        if(lastPos.isValid() && atools::almostNotEqual(leg.rho, meterToNm(lastPos.distanceMeterTo(leg.recFixPos)), 0.5f))
+        {
+          // Get point at correct distance to navaid between fix and recommended fix
+          leg.interceptPos = leg.recFixPos.endpoint(nmToMeter(leg.rho), leg.recFixPos.angleDegTo(lastPos));
+          leg.correctedArc = true;
+        }
 
-      leg.displayText << (leg.recFixIdent % tr("/") % Unit::distNm(leg.rho, true, 20, true) % tr("/") %
-                          QLocale().toString(leg.theta, 'f', 0) % tr("°M"));
-      leg.remarks << tr("DME %1").arg(Unit::distNm(leg.rho, true, 20, true));
+        leg.displayText << (leg.recFixIdent % tr("/") % Unit::distNm(leg.rho, true, 20, true) % tr("/") %
+                            QLocale().toString(leg.theta, 'f', 0) % tr("°M"));
+
+        if(leg.rho > 0.f)
+          leg.remarks << tr("DME %1").arg(Unit::distNm(leg.rho, true, 20, true));
+      }
+      else
+        qWarning() << "leg line type" << leg.type << "fix" << leg.fixIdent << "invalid rho or theta"
+                   << "approachId" << leg.approachId << "transitionId" << leg.transitionId << "legId" << leg.legId;
+
     }
     // ===========================================================
     else if(type == proc::COURSE_TO_FIX || type == proc::CUSTOM_APP_RUNWAY || type == proc::CUSTOM_DEP_END)
@@ -1639,49 +1631,53 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
     // ===========================================================
     else if(contains(type, {proc::COURSE_TO_RADIAL_TERMINATION, proc::HEADING_TO_RADIAL_TERMINATION}))
     {
-      // Distance to recommended fix for radial
-      float distToRecMeter = lastPos.distanceMeterTo(leg.recFixPos);
-
-      // Create a course line from start position with the given course
-      Line crsLine(lastPos, distToRecMeter * 10.f, leg.legTrueCourse());
-
-      // Create base distance for parallel line after turn to leg course
-      float parallelDist = 0.f;
-      if(leg.turnDirection == "L")
-        parallelDist = nmToMeter(2.f);
-      else if(leg.turnDirection == "R")
-        parallelDist = nmToMeter(-2.f);
-
-      // Now create parallel lines based on the course line until a valid intersection with the radial can be found
-      // Move parallel one step away from course line and lengthen parallel a bit for each iteration
+      bool valid = false;
       Pos intersect;
       Line parallel;
-      bool valid = false;
-      float ext = 0.f;
-      for(int j = 0; j < 5; j++)
+
+      if(leg.theta < map::INVALID_COURSE_VALUE)
       {
-        parallel = crsLine.parallel(parallelDist).extended(ext, ext);
-        intersect = Pos::intersectingRadials(parallel.getPos1(), parallel.angleDeg(), leg.recFixPos, leg.theta + leg.magvar);
+        // Distance to recommended fix for radial
+        float distToRecMeter = lastPos.distanceMeterTo(leg.recFixPos);
 
-        // Need maximum of 200 NM and minimum of 1.5 NM distance to the navaid from the intersection point
-        if(intersect.isValid() && intersect.distanceMeterTo(leg.recFixPos) < nmToMeter(200.f) &&
-           intersect.distanceMeterTo(leg.recFixPos) > nmToMeter(1.5f))
+        // Create a course line from start position with the given course
+        Line crsLine(lastPos, distToRecMeter * 10.f, leg.legTrueCourse());
+
+        // Create base distance for parallel line after turn to leg course
+        float parallelDist = 0.f;
+        if(leg.turnDirection == "L")
+          parallelDist = nmToMeter(2.f);
+        else if(leg.turnDirection == "R")
+          parallelDist = nmToMeter(-2.f);
+
+        // Now create parallel lines based on the course line until a valid intersection with the radial can be found
+        // Move parallel one step away from course line and lengthen parallel a bit for each iteration
+        float ext = 0.f;
+        for(int j = 0; j < 5; j++)
         {
-          valid = true;
-          break;
-        }
-        // Move away from base
-        parallelDist *= 1.2f;
+          parallel = crsLine.parallel(parallelDist).extended(ext, ext);
+          intersect = Pos::intersectingRadials(parallel.getPos1(), parallel.angleDeg(), leg.recFixPos, leg.theta + leg.magvar);
 
-        // Make half a NM longer
-        ext += 0.5f;
+          // Need maximum of 200 NM and minimum of 1.5 NM distance to the navaid from the intersection point
+          if(intersect.isValid() && intersect.distanceMeterTo(leg.recFixPos) < nmToMeter(200.f) &&
+             intersect.distanceMeterTo(leg.recFixPos) > nmToMeter(1.5f))
+          {
+            valid = true;
+            break;
+          }
+          // Move away from base
+          parallelDist *= 1.2f;
+
+          // Make half a NM longer
+          ext += 0.5f;
+        }
       }
 
       if(valid)
       {
         lastPos = parallel.getPos1();
         curPos = intersect;
-        leg.displayText << (leg.recFixIdent % "/" % QLocale().toString(leg.theta, 'f', 0) % tr("°M"));
+        leg.displayText << (leg.recFixIdent % tr("/") % QLocale().toString(leg.theta, 'f', 0) % tr("°M"));
       }
       else
       {
@@ -1698,7 +1694,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
 
       curPos = leg.fixPos.endpoint(nmToMeter(leg.distance), leg.legTrueCourse());
 
-      leg.displayText << (leg.fixIdent % "/" % Unit::distNm(leg.distance, true, 20, true) % "/" %
+      leg.displayText << (leg.fixIdent % tr("/") % Unit::distNm(leg.distance, true, 20, true) % tr("/") %
                           QLocale().toString(leg.course, 'f', 0) % (leg.trueCourse ? tr("°T") : tr("°M")));
     }
     // ===========================================================
@@ -1743,7 +1739,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
                    << "approachId" << leg.approachId << "transitionId" << leg.transitionId << "legId" << leg.legId;
       }
 
-      leg.displayText << (leg.recFixIdent % "/" % Unit::distNm(leg.distance, true, 20, true) % "/" %
+      leg.displayText << (leg.recFixIdent % tr("/") % Unit::distNm(leg.distance, true, 20, true) % tr("/") %
                           QLocale().toString(leg.course, 'f', 0) % (leg.trueCourse ? tr("°T") : tr("°M")));
     }
     // ===========================================================
@@ -1840,12 +1836,11 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs) co
             intersect = line.intersectionWithCircle(next->recFixPos, nmToMeter(next->rho), 20);
           }
           else
-            intersect =
-              Pos::intersectingRadials(start, leg.legTrueCourse(), next->line.getPos1(),
-                                       // Leg might have no course and calculated is not available yet
-                                       atools::almostEqual(next->course, 0.f) ||
-                                       !(next->course < map::INVALID_COURSE_VALUE) ?
-                                       next->line.angleDeg() : next->legTrueCourse());
+            intersect = Pos::intersectingRadials(start, leg.legTrueCourse(), next->line.getPos1(),
+                                                 // Leg might have no course and calculated is not available yet
+                                                 atools::almostEqual(next->course, 0.f) ||
+                                                 !(next->course < map::INVALID_COURSE_VALUE) ?
+                                                 next->line.angleDeg() : next->legTrueCourse());
 
           leg.line.setPos1(start);
 
@@ -1864,8 +1859,8 @@ void ProcedureQuery::processCourseInterceptLegs(proc::MapProcedureLegs& legs) co
               leg.line.setPos2(intersect);
               leg.displayText << tr("Intercept");
 
-              if(nextIsCircular)
-                leg.displayText << (next->recFixIdent % "/" % Unit::distNm(next->rho, true, 20, true));
+              if(nextIsCircular && next->rho < map::INVALID_DISTANCE_VALUE)
+                leg.displayText << (next->recFixIdent % tr("/") % Unit::distNm(next->rho, true, 20, true));
               else
                 leg.displayText << tr("Leg");
             }
@@ -2271,7 +2266,9 @@ void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, con
   startLeg.course = 0.f;
   startLeg.calculatedTrueCourse = map::INVALID_COURSE_VALUE;
   startLeg.distance = startLeg.calculatedDistance = 0.f;
-  startLeg.theta = startLeg.rho = startLeg.time = 0.f;
+  startLeg.time = 0.f;
+  startLeg.theta = map::INVALID_COURSE_VALUE;
+  startLeg.rho = map::INVALID_DISTANCE_VALUE;
   startLeg.magvar = airportSim.magvar;
   startLeg.missed = startLeg.flyover = startLeg.trueCourse = startLeg.intercept = startLeg.disabled = startLeg.malteseCross = false;
   procedure.approachLegs.append(startLeg);
@@ -2285,7 +2282,6 @@ void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, con
   runwayLeg.line = Line(initialFixPos, runwayEndSim.position);
   runwayLeg.geometry = LineString(initialFixPos, runwayEndSim.position);
   runwayLeg.navaids.runwayEnds.append(runwayEndSim);
-  runwayLeg.navId = -1;
   runwayLeg.altRestriction.descriptor = proc::MapAltRestriction::AT;
   runwayLeg.altRestriction.alt1 = airportSim.position.getAltitude();
   runwayLeg.type = proc::CUSTOM_APP_RUNWAY;
@@ -2293,7 +2289,9 @@ void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, con
   runwayLeg.course = ageo::normalizeCourse(finalCourseTrue - airportSim.magvar);
   runwayLeg.calculatedTrueCourse = finalCourseTrue;
   runwayLeg.distance = runwayLeg.calculatedDistance = distance;
-  runwayLeg.theta = runwayLeg.rho = runwayLeg.time = 0.f;
+  runwayLeg.time = 0.f;
+  runwayLeg.theta = map::INVALID_COURSE_VALUE;
+  runwayLeg.rho = map::INVALID_DISTANCE_VALUE;
   runwayLeg.magvar = airportSim.magvar;
   runwayLeg.missed = runwayLeg.flyover = runwayLeg.trueCourse = runwayLeg.intercept = runwayLeg.disabled = runwayLeg.malteseCross = false;
   procedure.approachLegs.append(runwayLeg);
@@ -2332,7 +2330,6 @@ void ProcedureQuery::createCustomDeparture(proc::MapProcedureLegs& procedure, co
   runwayLeg.line = Line(runwayEndSim.position);
   runwayLeg.geometry = LineString(runwayEndSim.position);
   runwayLeg.navaids.runwayEnds.append(runwayEndSim);
-  runwayLeg.navId = -1;
   runwayLeg.altRestriction.descriptor = proc::MapAltRestriction::AT;
   runwayLeg.altRestriction.alt1 = airportSim.position.getAltitude();
   runwayLeg.type = proc::CUSTOM_DEP_RUNWAY;
@@ -2340,7 +2337,9 @@ void ProcedureQuery::createCustomDeparture(proc::MapProcedureLegs& procedure, co
   runwayLeg.course = 0.f;
   runwayLeg.calculatedTrueCourse = map::INVALID_COURSE_VALUE;
   runwayLeg.distance = runwayLeg.calculatedDistance = 0.f;
-  runwayLeg.theta = runwayLeg.rho = runwayLeg.time = 0.f;
+  runwayLeg.time = 0.f;
+  runwayLeg.theta = map::INVALID_COURSE_VALUE;
+  runwayLeg.rho = map::INVALID_DISTANCE_VALUE;
   runwayLeg.magvar = airportSim.magvar;
   runwayLeg.missed = runwayLeg.flyover = runwayLeg.trueCourse = runwayLeg.intercept = runwayLeg.disabled = runwayLeg.malteseCross = false;
   procedure.approachLegs.append(runwayLeg);
@@ -2360,7 +2359,9 @@ void ProcedureQuery::createCustomDeparture(proc::MapProcedureLegs& procedure, co
   endLeg.course = ageo::normalizeCourse(runwayEndSim.heading - airportSim.magvar);
   endLeg.calculatedTrueCourse = runwayEndSim.heading;
   endLeg.distance = endLeg.calculatedDistance = distance;
-  endLeg.theta = endLeg.rho = endLeg.time = 0.f;
+  endLeg.time = 0.f;
+  endLeg.theta = map::INVALID_COURSE_VALUE;
+  endLeg.rho = map::INVALID_DISTANCE_VALUE;
   endLeg.magvar = airportSim.magvar;
   endLeg.missed = endLeg.flyover = endLeg.trueCourse = endLeg.intercept = endLeg.disabled = endLeg.malteseCross = false;
   procedure.approachLegs.append(endLeg);
@@ -3031,7 +3032,6 @@ proc::MapProcedureLeg ProcedureQuery::createRunwayLeg(const proc::MapProcedureLe
   rwleg.airportId = legs.ref.airportId;
   rwleg.approachId = legs.ref.approachId;
   rwleg.transitionId = legs.ref.transitionId;
-  rwleg.navId = leg.navId;
 
   // Use a generated id base on the previous leg id
   rwleg.legId = RUNWAY_LEG_ID_BASE + leg.legId;
@@ -3043,8 +3043,8 @@ proc::MapProcedureLeg ProcedureQuery::createRunwayLeg(const proc::MapProcedureLe
   rwleg.fixIdent = "RW" % legs.runwayEnd.name;
   rwleg.fixPos = legs.runwayEnd.position;
   rwleg.time = 0.f;
-  rwleg.theta = 0.f;
-  rwleg.rho = 0.f;
+  rwleg.theta = map::INVALID_COURSE_VALUE;
+  rwleg.rho = map::INVALID_DISTANCE_VALUE;
   rwleg.magvar = leg.magvar;
   rwleg.distance = meterToNm(rwleg.line.lengthMeter());
   rwleg.course = normalizeCourse(rwleg.line.angleDeg() - rwleg.magvar);
@@ -3073,13 +3073,12 @@ proc::MapProcedureLeg ProcedureQuery::createStartLeg(const proc::MapProcedureLeg
   sleg.fixIdent = leg.fixIdent;
   sleg.fixRegion = leg.fixRegion;
   sleg.fixType = leg.fixType;
-  sleg.navId = leg.navId;
   sleg.navaids = leg.navaids;
 
   // Correct distance is calculated in the RouteLeg to get a transition from route to procedure
   sleg.time = 0.f;
-  sleg.theta = 0.f;
-  sleg.rho = 0.f;
+  sleg.theta = map::INVALID_COURSE_VALUE;
+  sleg.rho = map::INVALID_DISTANCE_VALUE;
   sleg.magvar = leg.magvar;
   sleg.distance = 0.f;
   sleg.course = 0.f;

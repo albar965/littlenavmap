@@ -655,6 +655,9 @@ struct MapVor
   int frequency /* MHz * 1000 */, range /* nm */;
   QString channel;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
+  bool recommended = false; /* Filled by the get nearest methods for building the context menu
+                             *  Indicates navaid is a recommended fix */
+
   bool dmeOnly, hasDme, tacan, vortac;
 
   /* true if this is valid and a real VOR with calibration (VOR, VORDME or VORTAC) */
@@ -692,6 +695,8 @@ struct MapNdb
   float magvar;
   int frequency /* kHz * 100 */, range /* nm */;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
+  bool recommended = false; /* Filled by the get nearest methods for building the context menu
+                             *  Indicates navaid is a recommended fix */
 
   const QString& getIdent() const
   {
@@ -714,6 +719,8 @@ struct MapWaypoint
           type /* NAMED, UNAMED, etc. */,
           arincType /* ARINC * 424.18 field type definition 5.42 */;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
+  bool recommended = false; /* Filled by the get nearest methods for building the context menu
+                             *  Indicates navaid is a recommended fix */
 
   bool hasVictorAirways = false, hasJetAirways = false, hasTracks = false;
   int artificial = 0;

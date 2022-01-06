@@ -665,7 +665,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
   map::MapTypes shown = paintLayer->getShownMapObjects();
   map::MapObjectDisplayTypes shownDisplay = paintLayer->getShownMapObjectDisplayTypes();
 
-  // Check for user aircraft
+  // Check for user aircraft ======================================================
   result.userAircraft.clear();
   if(shown & map::AIRCRAFT && NavApp::isConnectedAndAircraft())
   {
@@ -752,6 +752,9 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
 
     // Get copies from flight plan if visible
     NavApp::getRouteConst().getNearest(conv, xs, ys, maxDistance, result, queryTypes);
+
+    if(types.testFlag(map::QUERY_PROC_RECOMMENDED))
+      NavApp::getRouteConst().getNearestRecommended(conv, xs, ys, maxDistance, result, queryTypes);
   }
 
   // Get points of procedure preview

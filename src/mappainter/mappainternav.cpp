@@ -353,7 +353,7 @@ void MapPainterNav::paintWaypoints(const QList<MapWaypoint> *waypoints, bool dra
          (drawTrack && waypoint.hasTracks)))
       continue;
 
-    if(context->routeProcIdMap.contains(waypoint.getRef()))
+    if(context->routeProcIdMap.contains(waypoint.getRef()) || context->routeProcIdMapRec.contains(waypoint.getRef()))
       continue;
 
     float x, y;
@@ -396,7 +396,7 @@ void MapPainterNav::paintVors(const QList<MapVor> *vors, bool drawFast)
 
   for(const MapVor& vor : *vors)
   {
-    if(context->routeProcIdMap.contains(vor.getRef()))
+    if(context->routeProcIdMap.contains(vor.getRef()) || context->routeProcIdMapRec.contains(vor.getRef()))
       continue;
 
     float x, y;
@@ -430,7 +430,7 @@ void MapPainterNav::paintNdbs(const QList<MapNdb> *ndbs, bool drawFast)
 
   for(const MapNdb& ndb : *ndbs)
   {
-    if(context->routeProcIdMap.contains(ndb.getRef()))
+    if(context->routeProcIdMap.contains(ndb.getRef()) || context->routeProcIdMapRec.contains(ndb.getRef()))
       continue;
 
     float x, y;

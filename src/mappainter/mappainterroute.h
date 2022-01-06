@@ -82,6 +82,7 @@ private:
   };
 
   void paintRoute();
+  void paintRecommended();
 
   void paintAirport(int x, int y, const map::MapAirport& obj);
   void paintVor(float x, float y, const map::MapVor& obj, bool preview);

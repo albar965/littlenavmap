@@ -64,7 +64,10 @@ void MapPainterRoute::render()
 
   // Draw route including procedures =====================================
   if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN))
+  {
     paintRoute();
+    paintRecommended();
+  }
 
   // Draw TOD and TOC markers ======================
   if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN) && context->objectDisplayTypes.testFlag(map::FLIGHTPLAN_TOC_TOD) &&
@@ -227,6 +230,61 @@ void MapPainterRoute::paintRoute()
   context->painter->restore();
 #endif
 
+}
+
+void MapPainterRoute::paintRecommended()
+{
+  // Margins for text at left (VOR), right (waypoints) and below (NDB)
+  QMargins margins(50, 10, 50, 20);
+
+  const Route& route = NavApp::getRouteConst();
+  for(int i = 0; i < route.size(); i++)
+  {
+    const RouteLeg& routeLeg = route.value(i);
+    map::MapTypes type = routeLeg.getMapObjectType();
+    if(type == map::PROCEDURE)
+    {
+      float x = 0, y = 0;
+      // Only show missed related if missed is shown
+      if(!routeLeg.getProcedureLeg().isMissed() || context->objectTypes & map::MISSED_APPROACH)
+      {
+        // Procedure recommended navaids drawn by route code
+        const map::MapResult& recNavaids = routeLeg.getProcedureLeg().recNavaids;
+        if(recNavaids.hasWaypoints())
+        {
+          const map::MapWaypoint& wp = recNavaids.waypoints.first();
+
+          if(wToSBuf(wp.position, x, y, margins))
+          {
+            paintWaypoint(QColor(), x, y, false);
+            paintWaypointText(x, y, wp, true /* drawTextDetails */, true /* draw as route */, nullptr);
+          }
+        }
+
+        if(recNavaids.hasVor())
+        {
+          const map::MapVor& vor = recNavaids.vors.first();
+
+          if(wToSBuf(vor.position, x, y, margins))
+          {
+            paintVor(x, y, vor, false);
+            paintVorText(x, y, vor, true /* drawTextDetails */, true /* draw as route */, nullptr);
+          }
+        }
+
+        if(recNavaids.hasNdb())
+        {
+          const map::MapNdb& ndb = recNavaids.ndbs.first();
+
+          if(wToSBuf(ndb.position, x, y, margins))
+          {
+            paintNdb(x, y, false);
+            paintNdbText(x, y, ndb, true /* drawTextDetails */, true /* draw as route */, nullptr);
+          }
+        }
+      }
+    }
+  }
 }
 
 void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> lines, int passedRouteLeg)

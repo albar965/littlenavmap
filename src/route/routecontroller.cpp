@@ -108,6 +108,7 @@ enum RouteColumns
   ALTITUDE,
   LATITUDE,
   LONGITUDE,
+  RECOMMENDED,
   REMARKS,
   LAST_COLUMN = REMARKS,
 
@@ -159,6 +160,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
     tr("Altitude\n%alt%"),
     tr("Latitude"),
     tr("Longitude"),
+    tr("Related\nIdent/Freq./Dist./Bearing"),
     tr("Remarks")});
 
   routeColumnDescription = QList<QString>({
@@ -197,6 +199,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
        "Calculated based on the aircraft performance profile."),
     tr("Waypoint latitude in format as selected in options."),
     tr("Waypoint longitude in format as selected in options."),
+    tr("Related or recommended navaid for procedure legs.\n"
+       "Shown with navaid ident, navaid frequency, distance and bearing defining a fix."),
     tr("Turn instructions, flyover or related navaid for procedure legs.")
   });
 
@@ -4234,8 +4238,8 @@ void RouteController::updateTableModel()
     {
       // Procedure ========================
       itemRow[rcol::AIRWAY_OR_LEGTYPE] =
-        new QStandardItem(atools::strJoin({leg.getFlightplanEntry().getAirway(), proc::procedureLegTypeStr(procedureLeg.type)}, tr(",")));
-      itemRow[rcol::RESTRICTION] = new QStandardItem(proc::restrictionText(procedureLeg));
+        new QStandardItem(atools::strJoin({leg.getFlightplanEntry().getAirway(), proc::procedureLegTypeStr(procedureLeg.type)}, tr(", ")));
+      itemRow[rcol::RESTRICTION] = new QStandardItem(proc::restrictionText(procedureLeg).join(tr(", ")));
     }
 
     // Get ILS for approach runway if it marks the end of an ILS or localizer approach procedure
@@ -4245,7 +4249,7 @@ void RouteController::updateTableModel()
       // Build string for ILS type - use recommended ILS which can also apply to non ILS approaches
       for(const map::MapIls& ils : route.getDestRunwayIlsFlightPlanTable())
       {
-        ilsTypeTexts.append(map::ilsType(ils, true /* gs */, true /* dme */, tr("/")));
+        ilsTypeTexts.append(map::ilsType(ils, true /* gs */, true /* dme */, tr(", ")));
         ilsFreqTexts.append(ils.freqMHzOrChannelLocale());
       }
     }
@@ -4256,7 +4260,7 @@ void RouteController::updateTableModel()
     else if(leg.getNdb().isValid())
       itemRow[rcol::TYPE] = new QStandardItem(map::ndbFullShortText(leg.getNdb()));
     else if(!ilsTypeTexts.isEmpty())
-      itemRow[rcol::TYPE] = new QStandardItem(ilsTypeTexts.join(","));
+      itemRow[rcol::TYPE] = new QStandardItem(ilsTypeTexts.join(", "));
 
     // VOR/NDB frequency =====================
     if(leg.getVor().isValid())
@@ -4269,7 +4273,7 @@ void RouteController::updateTableModel()
     else if(leg.getNdb().isValid())
       itemRow[rcol::FREQ] = new QStandardItem(QLocale().toString(leg.getFrequency() / 100.f, 'f', 1));
     else if(!ilsFreqTexts.isEmpty())
-      itemRow[rcol::FREQ] = new QStandardItem(ilsFreqTexts.join(","));
+      itemRow[rcol::FREQ] = new QStandardItem(ilsFreqTexts.join(", "));
 
     // VOR/NDB range =====================
     if(leg.getRange() > 0 && (leg.getVor().isValid() || leg.getNdb().isValid()))
@@ -4307,14 +4311,20 @@ void RouteController::updateTableModel()
     itemRow[rcol::LATITUDE] = new QStandardItem(Unit::coordsLatY(leg.getPosition()));
     itemRow[rcol::LONGITUDE] = new QStandardItem(Unit::coordsLonX(leg.getPosition()));
 
-    QString remarks;
-    if(leg.isAnyProcedure())
-      remarks = proc::procedureLegRemark(procedureLeg);
-    else
-      remarks = leg.getFlightplanEntry().getComment();
+    itemRow[rcol::RECOMMENDED] = new QStandardItem(atools::elideTextShort(proc::procedureLegRecommended(procedureLeg).join(tr(", ")), 80));
 
-    itemRow[rcol::REMARKS] = new QStandardItem(atools::elideTextShort(remarks, 80));
-    itemRow[rcol::REMARKS]->setToolTip(atools::elideTextLinesShort(remarks, 20, 80));
+    QString comment;
+    if(leg.isAnyProcedure())
+      // Show procedure remarks like turn and flyover
+      comment = proc::procedureLegRemark(procedureLeg).join(tr(" / "));
+    else
+      // Show user comment on normal leg
+      comment = leg.getFlightplanEntry().getComment();
+    if(!comment.isEmpty())
+    {
+      itemRow[rcol::REMARKS] = new QStandardItem(atools::elideTextShort(comment, 80));
+      itemRow[rcol::REMARKS]->setToolTip(atools::elideTextLinesShort(comment, 20, 80));
+    }
 
     // Travel time, remaining fuel and ETA are updated in updateModelRouteTime
 

@@ -631,6 +631,14 @@ const atools::geo::Pos& RouteLeg::getFixPosition() const
     return getPosition();
 }
 
+const atools::geo::Pos& RouteLeg::getRecommendedFixPosition() const
+{
+  if(isAnyProcedure())
+    return procedureLeg.recFixPos;
+
+  return atools::geo::EMPTY_POS;
+}
+
 const atools::geo::Pos& RouteLeg::getPosition() const
 {
   if(isAnyProcedure())

@@ -465,7 +465,7 @@ bool MapWidget::event(QEvent *event)
         // Get map objects for tooltip ===========================================================================
         map::MapObjectQueryTypes queryTypes = map::QUERY_PROC_POINTS | map::QUERY_MARK_HOLDINGS | map::QUERY_MARK_PATTERNS |
                                               map::QUERY_MARK_MSA | map::QUERY_MARK_DISTANCE | map::QUERY_MARK_RANGE |
-                                              map::QUERY_PREVIEW_PROC_POINTS;
+                                              map::QUERY_PREVIEW_PROC_POINTS | map::QUERY_PROC_RECOMMENDED;
 
         if(getShownMapFeatures().testFlag(map::MISSED_APPROACH))
           queryTypes |= map::QUERY_PROC_MISSED_POINTS;

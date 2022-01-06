@@ -90,7 +90,7 @@ struct PaintContext
 
   // All waypoints from the route and add them to the map to avoid duplicate drawing
   // Same for procedure preview
-  QSet<map::MapObjectRef> routeProcIdMap;
+  QSet<map::MapObjectRef> routeProcIdMap, routeProcIdMapRec;
 
   optsac::DisplayOptionsUserAircraft dispOptsUser;
   optsac::DisplayOptionsAiAircraft dispOptsAi;

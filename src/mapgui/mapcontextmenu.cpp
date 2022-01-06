@@ -1114,7 +1114,8 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
   }
 
   // Get objects near position =============================================================
-  screenIndex->getAllNearest(point.x(), point.y(), screenSearchDist, *result, map::QUERY_MARK | map::QUERY_PREVIEW_PROC_POINTS);
+  screenIndex->getAllNearest(point.x(), point.y(), screenSearchDist, *result,
+                             map::QUERY_MARK | map::QUERY_PREVIEW_PROC_POINTS | map::QUERY_PROC_RECOMMENDED);
 
   // Remove online aircraft from onlineAircraft which also have a simulator shadow in simAircraft
   // Menus should only show the online part

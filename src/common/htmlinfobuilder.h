@@ -424,6 +424,7 @@ private:
   QString strJoinHdr(const QStringList& list) const;
 
   QString highlightText(const QString& text) const;
+  void routeInfoText(atools::util::HtmlBuilder& html, int routeIndex, bool recommended) const;
 
   /* Airport, navaid and userpoint icon size */
   QSize symbolSize = QSize(18, 18);

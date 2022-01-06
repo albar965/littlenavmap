@@ -375,6 +375,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
           {
             if(!routeLeg.getProcedureLeg().isMissed() || context.objectTypes & map::MISSED_APPROACH)
             {
+              // Procedure navaids drawn by route code
               const map::MapResult& navaids = routeLeg.getProcedureLeg().navaids;
               if(navaids.hasWaypoints())
                 context.routeProcIdMap.insert({navaids.waypoints.first().id, map::WAYPOINT});
@@ -382,6 +383,15 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
                 context.routeProcIdMap.insert({navaids.vors.first().id, map::VOR});
               if(navaids.hasNdb())
                 context.routeProcIdMap.insert({navaids.ndbs.first().id, map::NDB});
+
+              // Procedure recommended navaids drawn by route code
+              const map::MapResult& recNavaids = routeLeg.getProcedureLeg().recNavaids;
+              if(recNavaids.hasWaypoints())
+                context.routeProcIdMapRec.insert({recNavaids.waypoints.first().id, map::WAYPOINT});
+              if(recNavaids.hasVor())
+                context.routeProcIdMapRec.insert({recNavaids.vors.first().id, map::VOR});
+              if(recNavaids.hasNdb())
+                context.routeProcIdMapRec.insert({recNavaids.ndbs.first().id, map::NDB});
             }
           }
         }

@@ -158,7 +158,7 @@ void ProfileLabelWidgetHoriz::paintEvent(QPaintEvent *)
           if(relatedOpt)
           {
             // Build second line for related text =====================================================
-            QStringList related = proc::procedureLegRelated(leg.getProcedureLeg(), false /* onlyFull */);
+            QStringList related = proc::procedureLegRecommended(leg.getProcedureLeg());
 
             if(metricsBold.horizontalAdvance(related.join(sep)) >= legWidth && !related.isEmpty())
               related.removeLast();

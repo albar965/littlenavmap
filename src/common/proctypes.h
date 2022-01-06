@@ -298,7 +298,7 @@ struct MapProcedureLeg
   atools::geo::LineString geometry; /* Same as line or geometry approximation for intercept or arcs for distance to leg calculation */
 
   /* Navaids resolved by approach query class */
-  map::MapResult navaids;
+  map::MapResult navaids, recNavaids;
 
   MapAltRestriction altRestriction;
   MapSpeedRestriction speedRestriction;
@@ -306,15 +306,15 @@ struct MapProcedureLeg
   proc::ProcedureLegType type = INVALID_LEG_TYPE; /* Type of this leg */
   proc::MapProcedureTypes mapType = PROCEDURE_NONE; /* Type of the procedure this leg belongs to */
 
-  int airportId = -1, approachId = -1, transitionId = -1, legId = -1, navId = -1, recNavId = -1;
+  int airportId = -1, approachId = -1, transitionId = -1, legId = -1;
 
   float course, /* magnetic from ARINC */
         distance /* Distance from source in NM */,
         calculatedDistance /* Calculated distance closer to the real one in NM */,
         calculatedTrueCourse /* Calculated distance closer to the real one - great circle line */,
         time /* Only for holds in minutes */,
-        theta /* magnetic course to recommended navaid */,
-        rho /* distance to recommended navaid in NM */,
+        theta /* magnetic course to recommended navaid or INVALID_COURSE_VALUE if not available */,
+        rho /* distance to recommended navaid in NM or INVALID_DISTANCE_VALUE if not available */,
         magvar /* from navaid or airport */,
         verticalAngle = map::INVALID_ANGLE_VALUE /* degrees or INVALID_ANGLE_VALUE if not available */;
 
@@ -694,7 +694,7 @@ QString procedureLegRemarks(proc::ProcedureLegType);
 QString altRestrictionText(const MapAltRestriction& restriction);
 
 /* Slash separated list of all restrictions, altitude, speed and angle */
-QString restrictionText(const MapProcedureLeg& procedureLeg);
+QStringList restrictionText(const MapProcedureLeg& procedureLeg);
 
 /* true if leg has fix at the start */
 bool procedureLegFixAtStart(proc::ProcedureLegType type);
@@ -715,8 +715,12 @@ QString proceduresLegSecialTypeLongStr(proc::LegSpecialType type);
 /* Get special leg type from ARINC description code */
 proc::LegSpecialType specialType(const QString& arincDescrCode);
 
-QStringList procedureLegRelated(const MapProcedureLeg& leg, bool onlyFull);
-QString procedureLegRemark(const MapProcedureLeg& leg);
+/* Ident, frequency, distance and bearing of recommended/related */
+QStringList procedureLegRecommended(const MapProcedureLeg& leg);
+
+/* Fly over, turn direction and error messages */
+QStringList procedureLegRemark(const MapProcedureLeg& leg);
+
 QString procedureLegRemDistance(const MapProcedureLeg& leg, float& remainingDistance);
 QString procedureLegDistance(const MapProcedureLeg& leg);
 QString procedureLegCourse(const MapProcedureLeg& leg);

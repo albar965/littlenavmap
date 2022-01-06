@@ -2092,12 +2092,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   }
 
   html.table();
-  if(!info && vor.routeIndex >= 0)
-  {
-    html.row2(tr("Flight Plan Position:"), locale.toString(vor.routeIndex + 1));
-    flightplanWaypointRemarks(html, vor.routeIndex);
-    routeWindText(html, NavApp::getRouteConst(), vor.routeIndex);
-  }
+  routeInfoText(html, vor.routeIndex, vor.recommended);
 
   if(!print) // Also tooltip due to magnetic variation
     bearingToUserText(vor.position, vor.magvar, html);
@@ -2179,12 +2174,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
   }
 
   html.table();
-  if(!info && ndb.routeIndex >= 0)
-  {
-    html.row2(tr("Flight Plan Position "), locale.toString(ndb.routeIndex + 1));
-    flightplanWaypointRemarks(html, ndb.routeIndex);
-    routeWindText(html, NavApp::getRouteConst(), ndb.routeIndex);
-  }
+  routeInfoText(html, ndb.routeIndex, ndb.recommended);
 
   if(!print && info)
     bearingToUserText(ndb.position, ndb.magvar, html);
@@ -2772,12 +2762,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   }
 
   html.table();
-  if(!info && waypoint.routeIndex >= 0)
-  {
-    html.row2(tr("Flight Plan Position:"), locale.toString(waypoint.routeIndex + 1));
-    flightplanWaypointRemarks(html, waypoint.routeIndex);
-    routeWindText(html, NavApp::getRouteConst(), waypoint.routeIndex);
-  }
+  routeInfoText(html, waypoint.routeIndex, waypoint.recommended);
 
   if(!print && info)
     bearingToUserText(waypoint.position, waypoint.magvar, html);
@@ -3413,18 +3398,7 @@ void HtmlInfoBuilder::procedurePointText(const map::MapProcedurePoint& procPoint
     }
 
     if(verbose)
-    {
-      if(!leg.recFixIdent.isEmpty())
-      {
-        if(leg.rho > 0.f)
-          html.row2(tr("Related Navaid:"),
-                    tr("%1 / %2 / %3").arg(leg.recFixIdent).
-                    arg(Unit::distNm(leg.rho /*, true, 20, true*/)).
-                    arg(courseTextFromMag(leg.theta, leg.magvar)), ahtml::NO_ENTITIES);
-        else
-          html.row2(tr("Related Navaid:"), leg.recFixIdent);
-      }
-    }
+      html.row2If(tr("Related Navaid:"), proc::procedureLegRecommended(leg).join(tr(", ")), ahtml::NO_ENTITIES);
   }
   html.tableEnd();
 }
@@ -3987,15 +3961,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         }
 
         // Next leg - approach related navaid ====================================================
-        if(!procLeg.recFixIdent.isEmpty())
-        {
-          if(procLeg.rho > 0.f)
-            html.id(pid::NEXT_RELATED).row2(tr("Related Navaid:"), tr("%1, %2, %3").arg(procLeg.recFixIdent).
-                                            arg(Unit::distNm(procLeg.rho /*, true, 20, true*/)).
-                                            arg(courseTextFromMag(procLeg.theta, procLeg.magvar)), ahtml::NO_ENTITIES);
-          else
-            html.id(pid::NEXT_RELATED).row2(tr("Related Navaid:"), procLeg.recFixIdent);
-        }
+        html.id(pid::NEXT_RELATED).row2If(tr("Related Navaid:"),
+                                          proc::procedureLegRecommended(procLeg).join(tr(", ")), ahtml::NO_ENTITIES);
 
         // Altitude restrictions for procedure legs ==============================================
         if(routeLegCorrected.isAnyProcedure())
@@ -4889,4 +4856,16 @@ QString HtmlInfoBuilder::identRegionText(const QString& ident, const QString& re
 QString HtmlInfoBuilder::highlightText(const QString& text) const
 {
   return HtmlBuilder::textStr(text, ahtml::BOLD | ahtml::BIG);
+}
+
+void HtmlInfoBuilder::routeInfoText(HtmlBuilder& html, int routeIndex, bool recommended) const
+{
+  if(!info && routeIndex >= 0)
+  {
+    if(recommended)
+      html.row2(tr("Related navaid for procedure"), QString());
+    html.row2(tr("Flight Plan Position:"), locale.toString(routeIndex + 1));
+    flightplanWaypointRemarks(html, routeIndex);
+    routeWindText(html, NavApp::getRouteConst(), routeIndex);
+  }
 }

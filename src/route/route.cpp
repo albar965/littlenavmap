@@ -1019,8 +1019,60 @@ const RouteLeg& Route::getDepartureAirportLeg() const
   return idx != map::INVALID_INDEX_VALUE ? value(idx) : EMPTY_ROUTELEG;
 }
 
-void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
-                       map::MapResult& mapobjects, map::MapObjectQueryTypes types) const
+void Route::getNearestRecommended(const CoordinateConverter& conv, int xs, int ys, int screenDistance, map::MapResult& mapobjects,
+                                  map::MapObjectQueryTypes types) const
+{
+  using maptools::insertSortedByDistance;
+
+  int x, y;
+
+  for(int i = 0; i < size(); i++)
+  {
+    const RouteLeg& leg = value(i);
+
+    if(leg.isAnyProcedure())
+    {
+      if(!types.testFlag(map::QUERY_PROCEDURES))
+        // Do not edit procedures
+        continue;
+
+      if(leg.getProcedureLeg().isMissed() && !types.testFlag(map::QUERY_PROCEDURES_MISSED))
+        // Do not edit missed procedures
+        continue;
+
+      if(conv.wToS(leg.getRecommendedFixPosition(), x, y) && manhattanDistance(x, y, xs, ys) < screenDistance)
+      {
+        const map::MapResult& result = leg.getProcedureLeg().recNavaids;
+        if(result.hasVor())
+        {
+          map::MapVor vor = result.vors.first();
+          vor.routeIndex = i;
+          vor.recommended = true;
+          insertSortedByDistance(conv, mapobjects.vors, &mapobjects.vorIds, xs, ys, vor);
+        }
+
+        if(result.hasNdb())
+        {
+          map::MapNdb ndb = result.ndbs.first();
+          ndb.routeIndex = i;
+          ndb.recommended = true;
+          insertSortedByDistance(conv, mapobjects.ndbs, &mapobjects.ndbIds, xs, ys, ndb);
+        }
+
+        if(result.hasWaypoints())
+        {
+          map::MapWaypoint waypoint = result.waypoints.first();
+          waypoint.routeIndex = i;
+          waypoint.recommended = true;
+          insertSortedByDistance(conv, mapobjects.waypoints, &mapobjects.waypointIds, xs, ys, waypoint);
+        }
+      }
+    }
+  }
+}
+
+void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance, map::MapResult& mapobjects,
+                       map::MapObjectQueryTypes types) const
 {
   using maptools::insertSortedByDistance;
 

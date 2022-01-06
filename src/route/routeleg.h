@@ -102,6 +102,7 @@ public:
 
   /* Get the real position of the procedure fix instead of the endpoint. Otherwise like getPosition() */
   const atools::geo::Pos& getFixPosition() const;
+  const atools::geo::Pos& getRecommendedFixPosition() const;
 
   /* Get ident of airport or navaid. Source can be flight plan entry or database. */
   QString getIdent() const;
