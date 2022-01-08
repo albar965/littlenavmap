@@ -213,7 +213,11 @@ void LogdataDialog::acceptClicked()
 {
   // Copy widget data to record
   dialogToRecord();
+
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << record;
+#endif
+
   QDialog::accept();
 }
 
@@ -229,7 +233,9 @@ void LogdataDialog::helpClicked()
 
 void LogdataDialog::resetClicked()
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
+#endif
 
   if(editMode == ld::EDIT_MULTIPLE)
   {
@@ -492,8 +498,7 @@ void LogdataDialog::dialogToRecord()
   helper.dialogToRecordStr(ui->lineEditFlightSimulator, "simulator", ui->checkBoxFlightSimulator);
   helper.dialogToRecordStr(ui->lineEditRouteString, "route_string", ui->checkBoxRouteString);
 
-  helper.dialogToRecordInt(ui->spinBoxFlightCruiseAltitude, "flightplan_cruise_altitude",
-                           ui->checkBoxFlightCruiseAltitude, Unit::altFeetF);
+  helper.dialogToRecordInt(ui->spinBoxFlightCruiseAltitude, "flightplan_cruise_altitude", ui->checkBoxFlightCruiseAltitude, Unit::altFeetF);
 
   helper.dialogToRecordStr(ui->lineEditFlightNumber, "flightplan_number", ui->checkBoxFlightNumber);
 
@@ -526,32 +531,34 @@ void LogdataDialog::dialogToRecord()
 
   if(editMode != ld::EDIT_MULTIPLE)
   {
-    // Check if airport has changed
+    // Check if departure airport has changed
     if(ui->lineEditDeparture->text().toUpper() != record->valueStr("departure_ident").toUpper() ||
        record->isNull("departure_lonx") || record->isNull("departure_laty"))
       setAirport(ui->lineEditDeparture->text(), "departure", true);
-  }
-  else
-  {
-    if(ui->checkBoxDeparture->isChecked())
-      setAirport(ui->lineEditDeparture->text(), "departure", true);
-    else
-      removeAirport("departure");
-  }
 
-  if(editMode != ld::EDIT_MULTIPLE)
-  {
-    // Check if airport has changed
+    // Check if destination airport has changed
     if(ui->lineEditDestination->text().toUpper() != record->valueStr("destination_ident").toUpper() ||
        record->isNull("destination_lonx") || record->isNull("destination_laty"))
       setAirport(ui->lineEditDestination->text(), "destination", true);
   }
   else
   {
+    // Set or remove all departure airport fields if checked
+    if(ui->checkBoxDeparture->isChecked())
+      setAirport(ui->lineEditDeparture->text(), "departure", true);
+    else
+      removeAirport("departure");
+
+    // Set or remove all destination airport fields if checked
     if(ui->checkBoxDestination->isChecked())
       setAirport(ui->lineEditDestination->text(), "destination", true);
     else
       removeAirport("destination");
+
+    // Not multi-edited: all attached files, departure_runway, destination_runway, departure_time, destination_time,
+    // departure_time_sim, destination_time_sim, distance, distance_flown, block_fuel, trip_fuel, used_fuel, grossweight
+    // Erase attachement columns to avoid data loss
+    record->remove({"flightplan", "aircraft_perf", "aircraft_trail"});
   }
 
 #ifdef DEBUG_INFORMATION
