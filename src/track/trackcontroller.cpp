@@ -119,6 +119,17 @@ void TrackController::postDatabaseLoad()
 
 void TrackController::startDownload()
 {
+  NavApp::getMainUi()->actionMapShowTracks->setChecked(true);
+  startDownloadInternal();
+}
+
+void TrackController::startDownloadStartup()
+{
+  startDownloadInternal();
+}
+
+void TrackController::startDownloadInternal()
+{
   qDebug() << Q_FUNC_INFO;
 
   deleteTracks();
@@ -149,7 +160,10 @@ void TrackController::deleteTracks()
 void TrackController::downloadToggled(bool checked)
 {
   if(checked && !hasTracks())
+  {
     startDownload();
+    NavApp::getMainUi()->actionMapShowTracks->setChecked(true);
+  }
 }
 
 void TrackController::cancelDownload()

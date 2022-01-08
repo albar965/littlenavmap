@@ -112,6 +112,18 @@ QString UserdataController::getDefaultType(const QString& type)
   return icons->getDefaultType(type);
 }
 
+void UserdataController::enableCategoryOnMap(const QString& category)
+{
+  if(icons->hasType(category))
+  {
+    if(!selectedTypes.contains(category))
+      selectedTypes.append(category);
+  }
+  else
+    selectedUnknownType = true;
+  typesToActions();
+}
+
 void UserdataController::addToolbarButton()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -186,24 +198,24 @@ void UserdataController::toolbarActionTriggered()
 {
   qDebug() << Q_FUNC_INFO;
 
-  QAction *action = dynamic_cast<QAction *>(sender());
-  if(action != nullptr)
+  QAction *actionSender = dynamic_cast<QAction *>(sender());
+  if(actionSender != nullptr)
   {
-    if(action == actionAll)
+    if(actionSender == actionAll)
     {
       // Select all buttons
       actionUnknown->setChecked(true);
-      for(QAction *a : actions)
-        if(a->data().type() == QVariant::String)
-          a->setChecked(true);
+      for(QAction *action : actions)
+        if(action->data().type() == QVariant::String)
+          action->setChecked(true);
     }
-    else if(action == actionNone)
+    else if(actionSender == actionNone)
     {
       // Deselect all buttons
       actionUnknown->setChecked(false);
-      for(QAction *a : actions)
-        if(a->data().type() == QVariant::String)
-          a->setChecked(false);
+      for(QAction *action : actions)
+        if(action->data().type() == QVariant::String)
+          action->setChecked(false);
     }
     // Copy action state to class data
     actionsToTypes();
@@ -301,15 +313,15 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
   qDebug() << Q_FUNC_INFO;
   if(result.isEmpty(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT))
     // No prefill start empty dialog of with last added data
-    addUserpoint(-1, pos);
+    addUserpointInternal(-1, pos, SqlRecord(), true /* enableCategory */);
   else
   {
     // Prepare the dialog prefill data
-    SqlRecord prefill = manager->getEmptyRecord();
+    SqlRecord prefillRec = manager->getEmptyRecord();
     if(result.hasAirports())
     {
       const map::MapAirport& ap = result.airports.first();
-      prefill.appendFieldAndValue("ident", ap.displayIdent())
+      prefillRec.appendFieldAndValue("ident", ap.displayIdent())
       .appendFieldAndValue("name", ap.name)
       .appendFieldAndValue("type", "Airport")
       .appendFieldAndValue("region", ap.region);
@@ -332,7 +344,7 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
       else
         type = "VOR";
 
-      prefill.appendFieldAndValue("ident", vor.ident)
+      prefillRec.appendFieldAndValue("ident", vor.ident)
       .appendFieldAndValue("name", map::vorText(vor))
       .appendFieldAndValue("type", type)
       .appendFieldAndValue("region", vor.region);
@@ -341,7 +353,7 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
     else if(result.hasNdb())
     {
       const map::MapNdb& ndb = result.ndbs.first();
-      prefill.appendFieldAndValue("ident", ndb.ident)
+      prefillRec.appendFieldAndValue("ident", ndb.ident)
       .appendFieldAndValue("name", map::ndbText(ndb))
       .appendFieldAndValue("type", "NDB")
       .appendFieldAndValue("region", ndb.region);
@@ -350,7 +362,7 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
     else if(result.hasWaypoints())
     {
       const map::MapWaypoint& wp = result.waypoints.first();
-      prefill.appendFieldAndValue("ident", wp.ident)
+      prefillRec.appendFieldAndValue("ident", wp.ident)
       .appendFieldAndValue("name", map::waypointText(wp))
       .appendFieldAndValue("type", "Waypoint")
       .appendFieldAndValue("region", wp.region);
@@ -359,7 +371,7 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
     else if(result.hasUserpoints())
     {
       const map::MapUserpoint& up = result.userpoints.first();
-      prefill.appendFieldAndValue("ident", up.ident)
+      prefillRec.appendFieldAndValue("ident", up.ident)
       .appendFieldAndValue("name", up.name)
       .appendFieldAndValue("type", up.type)
       .appendFieldAndValue("region", up.region)
@@ -369,11 +381,11 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
       pos = up.position;
     }
     else
-      prefill.appendFieldAndValue("type", UserdataDialog::DEFAULT_TYPE);
+      prefillRec.appendFieldAndValue("type", UserdataDialog::DEFAULT_TYPE);
 
-    prefill.appendFieldAndValue("altitude", pos.getAltitude());
+    prefillRec.appendFieldAndValue("altitude", pos.getAltitude());
 
-    addUserpointInternal(-1, pos, prefill);
+    addUserpointInternal(-1, pos, prefillRec, true /* enableCategory */);
   }
 }
 
@@ -425,10 +437,10 @@ void UserdataController::editUserpointFromMap(const map::MapResult& result)
 
 void UserdataController::addUserpoint(int id, const atools::geo::Pos& pos)
 {
-  addUserpointInternal(id, pos, SqlRecord());
+  addUserpointInternal(id, pos, SqlRecord(), false /* enableCategory */);
 }
 
-void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& pos, const SqlRecord& prefill)
+void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& pos, const SqlRecord& prefillRec, bool enableCategory)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -441,9 +453,9 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
     // Use last added dataset
     rec = *lastAddedRecord;
 
-  if(!prefill.isEmpty())
+  if(!prefillRec.isEmpty())
     // Use given record
-    rec = prefill;
+    rec = prefillRec;
 
   if(rec.isEmpty())
     // Otherwise fill nothing
@@ -480,6 +492,10 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
     SqlTransaction transaction(manager->getDatabase());
     manager->insertOneRecord(*lastAddedRecord);
     transaction.commit();
+
+    if(enableCategory)
+      enableCategoryOnMap(lastAddedRecord->valueStr("type"));
+
     emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
     emit userdataChanged();
     mainWindow->setStatusMessage(tr("Userpoint added."));

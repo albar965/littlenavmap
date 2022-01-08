@@ -3497,7 +3497,7 @@ void MainWindow::mainWindowShown()
   QTimer::singleShot(100, this, &MainWindow::mainWindowShownDelayed);
 
   if(ui->actionRouteDownloadTracks->isChecked())
-    QTimer::singleShot(1000, NavApp::getTrackController(), &TrackController::startDownload);
+    QTimer::singleShot(1000, NavApp::getTrackController(), &TrackController::startDownloadStartup);
 
   // Log screen information ==============
   for(QScreen *screen : QGuiApplication::screens())
