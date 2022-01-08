@@ -93,6 +93,8 @@ void LogdataController::undoTriggered()
     manager->undo();
     QGuiApplication::restoreOverrideCursor();
 
+    manager->clearGeometryCache();
+
     emit refreshLogSearch(false, false);
     emit logDataChanged();
   }
@@ -106,6 +108,8 @@ void LogdataController::redoTriggered()
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
     manager->redo();
     QGuiApplication::restoreOverrideCursor();
+
+    manager->clearGeometryCache();
 
     emit refreshLogSearch(false, false);
     emit logDataChanged();
@@ -470,6 +474,11 @@ void LogdataController::editLogEntries(const QVector<int>& ids)
     connectDialogSignals(&dlg);
     dlg.restoreState();
 
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << rec;
+    qDebug() << Q_FUNC_INFO << ids;
+#endif
+
     dlg.setRecord(rec);
     int retval = dlg.exec();
     if(retval == QDialog::Accepted)
@@ -481,8 +490,7 @@ void LogdataController::editLogEntries(const QVector<int>& ids)
 
       logChanged(false /* load all */, true /* keep selection */);
 
-      mainWindow->setStatusMessage(tr("%1 logbook %2 updated.").
-                                   arg(ids.size()).arg(ids.size() == 1 ? tr("entry") : tr("entries")));
+      mainWindow->setStatusMessage(tr("%1 logbook %2 updated.").arg(ids.size()).arg(ids.size() == 1 ? tr("entry") : tr("entries")));
     }
     dlg.saveState();
   }
