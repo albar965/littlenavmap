@@ -673,16 +673,30 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan,
 
       if(!star.isEmpty())
       {
-        // Found a STAR - this is the destination
+        // Found a STAR - this is the destination - stop here
         stars.append(star);
         airports.append(ap);
         break;
       }
 
       if(ap.isValid() &&
-         (airports.isEmpty() ||
-          airports.first().position.distanceMeterTo(ap.position) < ageo::nmToMeter(MAX_ALTERNATE_DISTANCE_NM)))
+         (airports.isEmpty() || airports.first().position.distanceMeterTo(ap.position) < ageo::nmToMeter(MAX_ALTERNATE_DISTANCE_NM)))
       {
+        // Check if given alternate airport ident matches with any VOR, NDB or WAYPOINT nearby =====================
+        QString item = cleanItems.value(idx);
+        if(item.length() == 3 || item.length() == 5)
+        {
+          // Get VOR, NDB or waypoints
+          map::MapResult result;
+          mapQuery->getMapObjectByIdent(result, map::VOR | map::NDB | map::WAYPOINT, cleanItems.value(idx), QString(), QString(),
+                                        ap.position, ageo::nmToMeter(MAX_ALTERNATE_DISTANCE_NM));
+          if(result.hasNavaids())
+          {
+            // Have overlapping navaid names - ignore airport identifier and stop here
+            break;
+          }
+        }
+
         // Found a valid airport, add and continue with previous one
         stars.append(star);
         airports.append(ap);

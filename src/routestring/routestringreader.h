@@ -19,12 +19,17 @@
 #define LITTLENAVMAP_ROUTESTRINGREADER_H
 
 #include "routestring/routestringtypes.h"
-#include "common/maptypes.h"
+#include "common/mapflags.h"
 
 #include <QStringList>
 #include <QApplication>
 
 namespace atools {
+
+namespace geo {
+class Pos;
+}
+
 namespace fs {
 namespace pln {
 class Flightplan;
@@ -35,6 +40,12 @@ class FlightplanEntry;
 
 namespace map {
 struct MapResult;
+struct MapAirwayWaypoint;
+struct MapWaypoint;
+struct MapAirport;
+struct MapObjectRefExt;
+struct MapAirway;
+typedef QVector<map::MapObjectRefExt> MapObjectRefExtVector;
 }
 
 namespace proc {

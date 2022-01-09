@@ -27,6 +27,7 @@
 #include "sql/sqltransaction.h"
 #include "sql/sqlutil.h"
 #include "io/binaryutil.h"
+#include "common/maptypes.h"
 
 #include <QDataStream>
 #include <QElapsedTimer>
