@@ -1453,8 +1453,8 @@ const QString& parkingRampName(const QString& ramp);
 const QString& parkingTypeName(const QString& type);
 const QString& parkingName(const QString& name);
 QString parkingText(const map::MapParking& parking);
-QString parkingNameNumberType(const map::MapParking& parking);
-QString parkingNameNumber(const map::MapParking& parking);
+QString parkingNameNumberAndType(const map::MapParking& parking);
+QString parkingNameOrNumber(const map::MapParking& parking);
 QString startType(const map::MapStart& start);
 
 QString helipadText(const map::MapHelipad& helipad);

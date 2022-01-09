@@ -143,7 +143,7 @@ void RouteLabel::buildHeaderAirports(atools::util::HtmlBuilder& html, bool widge
                        arg(route.getDepartureAirportLeg().getDisplayIdent());
 
     if(route.getDepartureAirportLeg().getDepartureParking().isValid())
-      departureParking = map::parkingNameNumber(route.getDepartureAirportLeg().getDepartureParking());
+      departureParking = map::parkingNameOrNumber(route.getDepartureAirportLeg().getDepartureParking());
     else if(route.getDepartureAirportLeg().getDepartureStart().isValid())
     {
       const map::MapStart& start = route.getDepartureAirportLeg().getDepartureStart();

@@ -3401,7 +3401,7 @@ void RouteController::routeSetParking(const map::MapParking& parking)
   emit routeChanged(true);
 
   NavApp::setStatusMessage(tr("Departure set to %1 parking %2.").arg(route.getDepartureAirportLeg().getDisplayIdent()).
-                           arg(map::parkingNameNumber(parking)));
+                           arg(map::parkingNameOrNumber(parking)));
 }
 
 /* Set start position (runway, helipad) for departure */

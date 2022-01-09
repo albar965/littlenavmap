@@ -213,6 +213,7 @@ void RunwaySelection::addItem(const RunwayIdxEntry& entry, int index)
   // Add ILS and similar approach aids
   for(map::MapIls i : NavApp::getMapQueryGui()->getIlsByAirportAndRunway(airport->ident, entry.end.name))
     atts.append(map::ilsTypeShort(i));
+  atts.removeAll(QString());
   atts.removeDuplicates();
 
   if(showPattern && entry.runway.patternAlt > 100.f)

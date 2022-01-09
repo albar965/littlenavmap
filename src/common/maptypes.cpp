@@ -873,30 +873,17 @@ const QString& parkingDatabaseName(const QString& name)
   return parkingDatabaseNameMap[name];
 }
 
-QString parkingNameNumberType(const map::MapParking& parking)
+QString parkingNameNumberAndType(const map::MapParking& parking)
 {
-  QStringList name;
-
-  if(parking.number != -1)
-    name.append(map::parkingName(parking.name) % " " % QLocale().toString(parking.number));
-  else
-    name.append(map::parkingName(parking.name));
-
-  name.append(map::parkingTypeName(parking.type));
-
-  return atools::strJoin(name, QObject::tr(", "));
+  return atools::strJoin({parkingNameOrNumber(parking), parkingTypeName(parking.type)}, QObject::tr(", "));
 }
 
-QString parkingNameNumber(const MapParking& parking)
+QString parkingNameOrNumber(const MapParking& parking)
 {
-  QStringList name;
-
   if(parking.number != -1)
-    name.append(map::parkingName(parking.name) % " " % QLocale().toString(parking.number));
+    return map::parkingName(parking.name) % " " % QLocale().toString(parking.number);
   else
-    name.append(map::parkingName(parking.name));
-
-  return atools::strJoin(name, QObject::tr(", "));
+    return map::parkingName(parking.name);
 }
 
 QString startType(const map::MapStart& start)
