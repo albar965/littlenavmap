@@ -594,7 +594,11 @@ void ProcedureSearch::fillApproachTreeWidget()
         itemIndex.append(MapProcedureRef(currentAirportNav.id, runwayEndId, apprId, -1, -1, type));
         const SqlRecordList *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
 
-        QTreeWidgetItem *apprItem = buildApproachItem(root, recApp, tr("Approach ") + approachTypeText, attText);
+        QString prefix;
+        if(type & proc::PROCEDURE_APPROACH)
+          prefix = tr("Approach ");
+
+        QTreeWidgetItem *apprItem = buildApproachItem(root, recApp, prefix % approachTypeText, attText);
 
         if(recTransVector != nullptr)
         {
