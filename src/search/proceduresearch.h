@@ -153,7 +153,7 @@ private:
   void restoreTreeViewState(const QBitArray& state, bool blockSignals);
 
   /* Build full approach or transition items for the tree view */
-  QTreeWidgetItem *buildApproachItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp, proc::MapProcedureTypes maptype);
+  QTreeWidgetItem *buildApproachItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp, const QString& approachType, const QStringList& attStr);
   QTreeWidgetItem *buildTransitionItem(QTreeWidgetItem *apprItem, const atools::sql::SqlRecord& recTrans, bool sidOrStar);
 
   /* Build an leg for the selected/table or tree view */
@@ -184,7 +184,7 @@ private:
 
   void filterIndexChanged(int index);
   void filterIndexRunwayChanged(int);
-  void filterIdentChanged(const QString&);
+  void filterChanged(const QString&);
   void clearRunwayFilter();
   void updateFilterBoxes();
   void resetSearch();
@@ -202,6 +202,8 @@ private:
 
   const proc::MapProcedureLegs *fetchProcData(proc::MapProcedureRef& ref, QTreeWidgetItem *item);
   void airportLabelLinkActivated(const QString& link);
+
+  void approachText(QString& approachTypeText, QStringList& attText, const atools::sql::SqlRecord& recApp, proc::MapProcedureTypes maptype);
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<proc::MapProcedureRef> itemIndex;

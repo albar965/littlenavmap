@@ -158,7 +158,7 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   connect(ui->comboBoxProcedureRunwayFilter, QOverload<int>::of(&QComboBox::currentIndexChanged),
           this, &ProcedureSearch::filterIndexRunwayChanged);
 
-  connect(ui->lineEditProcedureSearchIdentFilter, &QLineEdit::textChanged, this, &ProcedureSearch::filterIdentChanged);
+  connect(ui->lineEditProcedureSearchIdentFilter, &QLineEdit::textChanged, this, &ProcedureSearch::filterChanged);
 
   connect(ui->dockWidgetSearch, &QDockWidget::visibilityChanged, this, &ProcedureSearch::dockVisibilityChanged);
 
@@ -238,7 +238,7 @@ void ProcedureSearch::filterIndexRunwayChanged(int)
   updateFilter();
 }
 
-void ProcedureSearch::filterIdentChanged(const QString&)
+void ProcedureSearch::filterChanged(const QString&)
 {
   qDebug() << Q_FUNC_INFO;
   updateFilter();
@@ -494,13 +494,12 @@ void ProcedureSearch::fillApproachTreeWidget()
       QStringList runwayNames = airportQueryNav->getRunwayNames(currentAirportNav.id);
       Ui::MainWindow *ui = NavApp::getMainUi();
       QTreeWidgetItem *root = treeWidget->invisibleRootItem();
-      SqlRecordList sorted;
+      QVector<SqlRecord> sorted;
 
       // Collect all procedures from the database
       for(SqlRecord recApp : *recAppVector)
       {
         QString rwname = atools::fs::util::runwayBestFit(recApp.valueStr("runway_name"), runwayNames);
-        QString fixIdent = recApp.valueStr("fix_ident");
 
         proc::MapProcedureTypes type = buildTypeFromApproachRec(recApp);
 
@@ -552,10 +551,6 @@ void ProcedureSearch::fillApproachTreeWidget()
                       sidStarArincNames.contains(allRunwayText);
         }
 
-        QString identFilter = ui->lineEditProcedureSearchIdentFilter->text();
-        if(!identFilter.isEmpty())
-          filterOk &= fixIdent.startsWith(identFilter, Qt::CaseInsensitive);
-
         if(filterOk)
         {
           // Add an extra field with the best airport runway name
@@ -578,15 +573,28 @@ void ProcedureSearch::fillApproachTreeWidget()
 
       for(const SqlRecord& recApp : sorted)
       {
+        QString fixIdent = recApp.valueStr("fix_ident");
         proc::MapProcedureTypes type = buildTypeFromApproachRec(recApp);
 
-        int runwayEndId = recApp.valueInt("runway_end_id");
+        QString approachTypeText; // RNAV 32-Y or ILS 16
+        QStringList attText; // GPS Overlay, etc.
+        approachText(approachTypeText, attText, recApp, type);
 
+        QString identFilter = ui->lineEditProcedureSearchIdentFilter->text();
+        if(!identFilter.isEmpty())
+        {
+          if(!fixIdent.startsWith(identFilter, Qt::CaseInsensitive) && // Ident does not match
+             (type & proc::PROCEDURE_SID_STAR_ALL || // Ident does not match and procedure is a SID or STAR - continue
+              !approachTypeText.startsWith(identFilter, Qt::CaseInsensitive))) // No ident match and approach - check type
+            continue;
+        }
+
+        int runwayEndId = recApp.valueInt("runway_end_id");
         int apprId = recApp.valueInt("approach_id");
         itemIndex.append(MapProcedureRef(currentAirportNav.id, runwayEndId, apprId, -1, -1, type));
         const SqlRecordList *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
 
-        QTreeWidgetItem *apprItem = buildApproachItem(root, recApp, type);
+        QTreeWidgetItem *apprItem = buildApproachItem(root, recApp, tr("Approach ") + approachTypeText, attText);
 
         if(recTransVector != nullptr)
         {
@@ -1226,39 +1234,41 @@ void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick, bool zo
   }
 }
 
-QTreeWidgetItem *ProcedureSearch::buildApproachItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp, proc::MapProcedureTypes maptype)
+void ProcedureSearch::approachText(QString& approachTypeText, QStringList& attText, const SqlRecord& recApp,
+                                   proc::MapProcedureTypes maptype)
 {
   QString suffix(recApp.valueStr("suffix"));
   QString type(recApp.valueStr("type"));
   int gpsOverlay = recApp.valueBool("has_gps_overlay");
 
-  QString approachType;
-  QStringList attStr;
-
   if(maptype == proc::PROCEDURE_SID)
-    approachType += tr("SID");
+    approachTypeText += tr("SID");
   else if(maptype == proc::PROCEDURE_STAR)
-    approachType += tr("STAR");
+    approachTypeText += tr("STAR");
   else if(maptype == proc::PROCEDURE_APPROACH)
   {
-    approachType = tr("Approach ") + proc::procedureType(type);
+    approachTypeText = proc::procedureType(type);
 
     if(!suffix.isEmpty())
-      approachType += tr("-%1").arg(suffix);
+      approachTypeText += tr("-%1").arg(suffix);
 
     if(gpsOverlay)
-      attStr.append(tr("GPS Overlay"));
+      attText.append(tr("GPS Overlay"));
   }
 
-  approachType.append(tr(" ") % recApp.valueStr("airport_runway_name"));
-  approachType.append(tr(" ") % recApp.valueStr("sid_star_arinc_name", QString()));
+  approachTypeText.append(tr(" ") % recApp.valueStr("airport_runway_name"));
+  approachTypeText.append(tr(" ") % recApp.valueStr("sid_star_arinc_name", QString()));
+}
 
+QTreeWidgetItem *ProcedureSearch::buildApproachItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp,
+                                                    const QString& approachType, const QStringList& attStr)
+{
   QString altStr;
   // if(recApp.valueFloat("altitude") > 0.f)
   // altStr = Unit::altFeet(recApp.valueFloat("altitude"), false);
 
-  QTreeWidgetItem *item = new QTreeWidgetItem(
-    {approachType, recApp.valueStr("fix_ident"), altStr, QString(), QString(), attStr.join(tr(", "))}, itemIndex.size() - 1);
+  QTreeWidgetItem *item = new QTreeWidgetItem({approachType, recApp.valueStr("fix_ident"),
+                                               altStr, QString(), QString(), attStr.join(tr(", "))}, itemIndex.size() - 1);
   item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
   item->setTextAlignment(COL_RESTR, Qt::AlignRight);
   item->setTextAlignment(COL_COURSE, Qt::AlignRight);
@@ -1546,8 +1556,7 @@ void ProcedureSearch::itemSelectionChanged()
 
 proc::MapProcedureTypes ProcedureSearch::buildTypeFromApproachRec(const SqlRecord& recApp)
 {
-  return proc::procedureType(NavApp::hasSidStarInDatabase(),
-                             recApp.valueStr("type"), recApp.valueStr("suffix"),
+  return proc::procedureType(NavApp::hasSidStarInDatabase(), recApp.valueStr("type"), recApp.valueStr("suffix"),
                              recApp.valueBool("has_gps_overlay"));
 }
 
