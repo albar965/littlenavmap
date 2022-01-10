@@ -475,6 +475,7 @@ void ProcedureSearch::updateFilterBoxes()
 
   ui->comboBoxProcedureSearchFilter->setEnabled(currentAirportNav.isValid() && currentAirportNav.procedure());
   ui->comboBoxProcedureRunwayFilter->setEnabled(currentAirportNav.isValid() && currentAirportNav.procedure());
+  ui->lineEditProcedureSearchIdentFilter->setEnabled(currentAirportNav.isValid() && currentAirportNav.procedure());
 }
 
 void ProcedureSearch::fillApproachTreeWidget()
