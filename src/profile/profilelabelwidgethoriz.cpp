@@ -17,12 +17,13 @@
 
 #include "profile/profilelabelwidgethoriz.h"
 
-#include "profile/profilewidget.h"
+#include "atools.h"
 #include "common/mapcolors.h"
-#include "profile/profilescrollarea.h"
-#include "navapp.h"
-#include "route/route.h"
 #include "common/unit.h"
+#include "navapp.h"
+#include "profile/profilescrollarea.h"
+#include "profile/profilewidget.h"
+#include "route/route.h"
 
 #include <QContextMenuEvent>
 #include <QPainter>
@@ -132,15 +133,8 @@ void ProfileLabelWidgetHoriz::paintEvent(QPaintEvent *)
           int pos = x0 + legWidth / 2;
 
           // Build up text depending on space ==============================================
-          QString text = leg.buildLegText(distOpt, magCrsOpt, trueCrsOpt, false).join(sep);
-          if(metricsBold.horizontalAdvance(text) >= legWidth)
-            text = leg.buildLegText(distOpt, magCrsOpt, false, false).join(sep);
-
-          if(metricsBold.horizontalAdvance(text) >= legWidth)
-            text = leg.buildLegText(distOpt, false, false, false).join(sep);
-
-          if(metricsBold.horizontalAdvance(text) >= legWidth)
-            text = Unit::distNm(leg.getDistanceTo(), false, 20, false);
+          QString text = atools::elidedText(metricsBold, leg.buildLegText(distOpt, magCrsOpt, trueCrsOpt, false).join(sep), Qt::ElideRight,
+                                            legWidth - 4);
 
           if(!text.isEmpty())
           {
@@ -158,25 +152,20 @@ void ProfileLabelWidgetHoriz::paintEvent(QPaintEvent *)
           if(relatedOpt)
           {
             // Build second line for related text =====================================================
-            QStringList related = proc::procedureLegRecommended(leg.getProcedureLeg());
+            QString related = atools::elidedText(metricsNormal, proc::procedureLegRecommended(leg.getProcedureLeg()).join(sep),
+                                                 Qt::ElideRight, legWidth - 4);
 
-            if(metricsBold.horizontalAdvance(related.join(sep)) >= legWidth && !related.isEmpty())
-              related.removeLast();
-
-            if(metricsBold.horizontalAdvance(related.join(sep)) >= legWidth && !related.isEmpty())
-              related.removeLast();
-
-            if(!related.isEmpty())
+            // Avoid extra empty line by single dot
+            if(related.size() > 1)
             {
               painter.setFont(fontNormal);
 
-              QString relTxt = related.join(sep);
-              int textWidthRelated = metricsNormal.horizontalAdvance(relTxt);
+              int textWidthRelated = metricsNormal.horizontalAdvance(related);
 
               if(textWidthRelated < legWidth)
               {
                 painter.setFont(fontNormal);
-                painter.drawText(pos - offset.x() - textWidthRelated / 2 + 1, metricsNormal.ascent() + metricsNormal.height(), relTxt);
+                painter.drawText(pos - offset.x() - textWidthRelated / 2 + 1, metricsNormal.ascent() + metricsNormal.height(), related);
 
                 // Adjust lines for widget size
                 lines = std::max(lines, 2);

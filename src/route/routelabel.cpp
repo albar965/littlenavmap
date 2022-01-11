@@ -380,7 +380,7 @@ void RouteLabel::buildHeaderRunway(atools::util::HtmlBuilder& html)
             QStringList rwAtts;
             rwAtts.append(formatter::courseTextFromTrue(end.heading, destLeg.getMagvar()));
             rwAtts.append(Unit::distShortFeet(runway.length - (end.secondary ? runway.secondaryOffset : runway.primaryOffset)));
-            rwAtts.append(Unit::altFeet(destLeg.getAltitude()) % tr(" elev."));
+            rwAtts.append(Unit::altFeet(destLeg.getAltitude()) % tr(" elevation"));
             if(end.hasAnyVasi())
               rwAtts.append(end.uniqueVasiTypeStr().join(QObject::tr("/")));
 
