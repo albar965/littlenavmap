@@ -125,6 +125,8 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   treeWidget->setItemDelegate(gridDelegate);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
+  ui->comboBoxProcedureSearchFilter->insertSeparator(FILTER_SEPARATOR_1);
+
   ui->actionSearchProcedureSelectNothing->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
   ui->actionInfoApproachAttach->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -442,12 +444,23 @@ void ProcedureSearch::clearRunwayFilter()
   ui->comboBoxProcedureRunwayFilter->blockSignals(false);
 }
 
+void ProcedureSearch::clearTypeFilter()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  // Remove all additional type filters below approach all
+  ui->comboBoxProcedureSearchFilter->blockSignals(true);
+  for(int i = ui->comboBoxProcedureSearchFilter->count() - 1; i > FILTER_APPROACH_ALL; i--)
+    ui->comboBoxProcedureSearchFilter->removeItem(i);
+  ui->comboBoxProcedureSearchFilter->blockSignals(false);
+}
+
 void ProcedureSearch::updateFilterBoxes()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  ui->comboBoxProcedureSearchFilter->setHidden(!NavApp::hasSidStarInDatabase());
 
   clearRunwayFilter();
+  clearTypeFilter();
 
   if(currentAirportNav->isValid())
   {
@@ -458,6 +471,7 @@ void ProcedureSearch::updateFilterBoxes()
 
     if(recAppVector != nullptr) // Deduplicate runways
     {
+      // Update runway name filter combo box ============================================
       QSet<QString> runways;
       for(const SqlRecord& recApp : *recAppVector)
         runways.insert(atools::fs::util::runwayBestFit(recApp.valueStr("runway_name"), runwayNames));
@@ -472,6 +486,26 @@ void ProcedureSearch::updateFilterBoxes()
           ui->comboBoxProcedureRunwayFilter->addItem(tr("No Runway"), rw);
         else
           ui->comboBoxProcedureRunwayFilter->addItem(tr("Runway %1").arg(rw), rw);
+      }
+
+      // Update type filter combo box ============================================
+      QStringList types;
+      for(const SqlRecord& recApp : *recAppVector)
+      {
+        // No SID/STAR GPS fake types
+        if(!(buildTypeFromApproachRec(recApp) & proc::PROCEDURE_SID_STAR_ALL))
+          types.append(recApp.valueStr("type"));
+      }
+
+      types.removeAll(QString());
+      types.removeDuplicates();
+      if(types.size() > 1)
+      {
+        std::sort(types.begin(), types.end());
+
+        // Add to combo box - old types were deleted in clearTypeFilter()
+        for(const QString& type : types)
+          ui->comboBoxProcedureSearchFilter->addItem(tr("%1 Approaches").arg(proc::MapProcedureLegs::displayApproachType(type)), type);
       }
     }
     else
@@ -511,64 +545,51 @@ void ProcedureSearch::fillApproachTreeWidget()
 
         bool filterOk = false;
 
-        switch(filterIndex)
-        {
-          case ProcedureSearch::FILTER_STAR_PROCEDURES:
-            filterOk = type & proc::PROCEDURE_STAR_ALL;
-            break;
-
-          case ProcedureSearch::FILTER_ALL_PROCEDURES:
-            filterOk = true;
-            break;
-
-          case ProcedureSearch::FILTER_SID_PROCEDURES:
-            filterOk = type & proc::PROCEDURE_DEPARTURE;
-            break;
-
-          case ProcedureSearch::FILTER_ARRIVAL_PROCEDURES:
-            filterOk = type & proc::PROCEDURE_ARRIVAL_ALL;
-            break;
-
-          case ProcedureSearch::FILTER_APPROACH_AND_TRANSITIONS:
-            filterOk = type & proc::PROCEDURE_APPROACH_ALL_MISSED;
-            break;
-        }
+        if(filterIndex == ProcedureSearch::FILTER_ALL_PROCEDURES)
+          filterOk = true;
+        else if(filterIndex == ProcedureSearch::FILTER_SID_PROCEDURES)
+          filterOk = type & proc::PROCEDURE_SID_ALL;
+        else if(filterIndex == ProcedureSearch::FILTER_STAR_PROCEDURES)
+          filterOk = type & proc::PROCEDURE_STAR_ALL;
+        else if(filterIndex == ProcedureSearch::FILTER_ARRIVAL_PROCEDURES)
+          filterOk = type & proc::PROCEDURE_ARRIVAL_ALL;
+        else if(filterIndex >= ProcedureSearch::FILTER_APPROACH_ALL) // More types after FILTER_APPROACH_ALL
+          filterOk = type & proc::PROCEDURE_APPROACH_ALL_MISSED;
 
         // Resolve parallel runway assignments
         QStringList sidStarArincNames, sidStarRunways;
         QString allRunwayText(tr("All"));
-        if((type & proc::PROCEDURE_SID) || (type & proc::PROCEDURE_STAR))
+        if(type & proc::PROCEDURE_SID_STAR_ALL)
           atools::fs::util::sidStarMultiRunways(runwayNames, recApp.valueStr("arinc_name", QString()), allRunwayText,
                                                 &sidStarRunways, &sidStarArincNames);
 
-        QString rwnamefilter = ui->comboBoxProcedureRunwayFilter->currentData(Qt::UserRole).toString();
-        int rwnameindex = ui->comboBoxProcedureRunwayFilter->currentIndex();
+        QString rwName = atools::fs::util::runwayBestFit(recApp.valueStr("runway_name"), runwayNames);
+        QString rwNamefilter = ui->comboBoxProcedureRunwayFilter->currentData(Qt::UserRole).toString();
+        int rwNameIndex = ui->comboBoxProcedureRunwayFilter->currentIndex();
 
-        if(rwnameindex == 0)
+        if(rwNameIndex == 0)
           // All selected
           filterOk &= true;
-        else if(rwnamefilter.isEmpty())
+        else if(rwNamefilter.isEmpty())
           // No rwy selected
-          filterOk &= rwname.isEmpty() && sidStarArincNames.isEmpty();
+          filterOk &= rwName.isEmpty() && sidStarArincNames.isEmpty();
         else
-        {
-          filterOk &= rwname == rwnamefilter || // name equal
-                      (!sidStarArincNames.isEmpty() && sidStarArincNames.contains(rwnamefilter)) ||
+          filterOk &= rwName == rwNamefilter || // name equal
+                      (!sidStarArincNames.isEmpty() && sidStarArincNames.contains(rwNamefilter)) ||
                       sidStarArincNames.contains(allRunwayText);
-        }
 
         if(filterOk)
         {
           // Add an extra field with the best airport runway name
           recApp.appendField("airport_runway_name", QVariant::String);
-          recApp.setValue("airport_runway_name", rwname);
+          recApp.setValue("airport_runway_name", rwName);
 
           // Keep the runways for the context menu
           recApp.appendField("sid_star_runways", QVariant::StringList);
           recApp.setValue("sid_star_runways", sidStarRunways);
 
           recApp.appendField("sid_star_arinc_name", QVariant::String);
-          if(((type & proc::PROCEDURE_SID) || (type & proc::PROCEDURE_STAR)) && rwname.isEmpty())
+          if(type & proc::PROCEDURE_SID_STAR_ALL && rwName.isEmpty())
             recApp.setValue("sid_star_arinc_name", sidStarArincNames.join(", "));
 
           sorted.append(recApp);
@@ -577,33 +598,36 @@ void ProcedureSearch::fillApproachTreeWidget()
 
       std::sort(sorted.begin(), sorted.end(), procedureSortFunc);
 
+      QString typefilter = ui->comboBoxProcedureSearchFilter->currentData(Qt::UserRole).toString();
+      int typeindex = ui->comboBoxProcedureSearchFilter->currentIndex();
+
       for(const SqlRecord& recApp : sorted)
       {
-        QString fixIdent = recApp.valueStr("fix_ident");
         proc::MapProcedureTypes type = buildTypeFromApproachRec(recApp);
 
-        QString approachTypeText; // RNAV 32-Y or ILS 16
-        QStringList attText; // GPS Overlay, etc.
-        approachText(approachTypeText, attText, recApp, type);
-
+        // Check ident filter ==========================================
         QString identFilter = ui->lineEditProcedureSearchIdentFilter->text();
-        if(!identFilter.isEmpty())
-        {
-          if(!fixIdent.startsWith(identFilter, Qt::CaseInsensitive) && // Ident does not match
-             (type & proc::PROCEDURE_SID_STAR_ALL || // Ident does not match and procedure is a SID or STAR - continue
-              !approachTypeText.startsWith(identFilter, Qt::CaseInsensitive))) // No ident match and approach - check type
-            continue;
-        }
+        if(!identFilter.isEmpty() && !recApp.valueStr("fix_ident").startsWith(identFilter, Qt::CaseInsensitive))
+          continue;
+
+        // Check type name filter ==========================================
+        if(!(type & proc::PROCEDURE_SID_STAR_ALL) && typeindex > FILTER_APPROACH_ALL && recApp.valueStr("type") != typefilter)
+          continue;
 
         int runwayEndId = recApp.valueInt("runway_end_id");
         int apprId = recApp.valueInt("approach_id");
-        itemIndex.append(MapProcedureRef(currentAirportNav.id, runwayEndId, apprId, -1, -1, type));
+        itemIndex.append(MapProcedureRef(currentAirportNav->id, runwayEndId, apprId, -1, -1, type));
+
+        // Get transitions ======================================================
         const SqlRecordList *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
 
         QString prefix;
         if(type & proc::PROCEDURE_APPROACH)
           prefix = tr("Approach ");
 
+        QString approachTypeText; // RNAV 32-Y or ILS 16
+        QStringList attText; // GPS Overlay, etc.
+        approachDisplayText(approachTypeText, attText, recApp, type);
         QTreeWidgetItem *apprItem = buildApproachItem(root, recApp, prefix % approachTypeText, attText);
 
         if(recTransVector != nullptr)
@@ -1244,8 +1268,8 @@ void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick, bool zo
   }
 }
 
-void ProcedureSearch::approachText(QString& approachTypeText, QStringList& attText, const SqlRecord& recApp,
-                                   proc::MapProcedureTypes maptype)
+void ProcedureSearch::approachDisplayText(QString& approachTypeText, QStringList& attText, const SqlRecord& recApp,
+                                          proc::MapProcedureTypes maptype)
 {
   QString suffix(recApp.valueStr("suffix"));
   QString type(recApp.valueStr("type"));

@@ -126,7 +126,9 @@ private:
     FILTER_SID_PROCEDURES,
     FILTER_STAR_PROCEDURES,
     FILTER_ARRIVAL_PROCEDURES,
-    FILTER_APPROACH_AND_TRANSITIONS
+    FILTER_SEPARATOR_1,
+    FILTER_APPROACH_ALL
+    /* Approach types follow */
   };
 
   enum RunwayFilterIndex
@@ -198,6 +200,7 @@ private:
   void filterIndexRunwayChanged(int);
   void filterChanged(const QString&);
   void clearRunwayFilter();
+  void clearTypeFilter();
   void updateFilterBoxes();
   void resetSearch();
   void dockVisibilityChanged(bool visible);
@@ -215,7 +218,7 @@ private:
   const proc::MapProcedureLegs *fetchProcData(proc::MapProcedureRef& ref, QTreeWidgetItem *item);
   void airportLabelLinkActivated(const QString& link);
 
-  void approachText(QString& approachTypeText, QStringList& attText, const atools::sql::SqlRecord& recApp, proc::MapProcedureTypes maptype);
+  void approachDisplayText(QString& approachTypeText, QStringList& attText, const atools::sql::SqlRecord& recApp, proc::MapProcedureTypes maptype);
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<proc::MapProcedureRef> itemIndex;

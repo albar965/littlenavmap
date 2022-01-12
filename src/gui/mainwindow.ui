@@ -2568,7 +2568,7 @@
              </item>
              <item>
               <property name="text">
-               <string>Approaches and Transitions</string>
+               <string>All Approaches</string>
               </property>
              </item>
             </widget>
@@ -2585,14 +2585,13 @@
            <item>
             <widget class="QLineEdit" name="lineEditProcedureSearchIdentFilter">
              <property name="toolTip">
-              <string>Filter procedures by idents beginning with given text or 
-by procedure types like &quot;RNAV&quot; or &quot;ILS&quot;.</string>
+              <string>Filter procedures by idents beginning with given text</string>
              </property>
              <property name="statusTip">
               <string>Filter procedures by idents beginning with text</string>
              </property>
              <property name="placeholderText">
-              <string>Ident or Type</string>
+              <string>Ident</string>
              </property>
              <property name="clearButtonEnabled">
               <bool>true</bool>
@@ -5829,7 +5828,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>13</y>
+              <y>0</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -12646,8 +12645,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
-  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>
