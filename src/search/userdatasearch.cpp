@@ -35,6 +35,7 @@
 #include "userdata/userdatacontroller.h"
 #include "sql/sqlrecord.h"
 #include "userdata/userdataicons.h"
+#include "common/mapresult.h"
 
 UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("userdata", "userdata_id"), tabWidgetIndex)

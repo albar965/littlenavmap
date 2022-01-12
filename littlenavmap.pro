@@ -245,6 +245,7 @@ SOURCES += \
   src/common/maptools.cpp \
   src/common/maptypes.cpp \
   src/common/maptypesfactory.cpp \
+  src/common/procflags.cpp \
   src/common/proctypes.cpp \
   src/common/settingsmigrate.cpp \
   src/common/symbolpainter.cpp \
@@ -427,6 +428,7 @@ HEADERS  += \
   src/common/maptools.h \
   src/common/maptypes.h \
   src/common/maptypesfactory.h \
+  src/common/procflags.h \
   src/common/proctypes.h \
   src/common/settingsmigrate.h \
   src/common/symbolpainter.h \

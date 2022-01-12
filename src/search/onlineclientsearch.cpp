@@ -17,19 +17,20 @@
 
 #include "search/onlineclientsearch.h"
 
-#include "navapp.h"
-#include "common/constants.h"
-#include "online/onlinedatacontroller.h"
-#include "fs/online/onlinetypes.h"
-#include "search/sqlcontroller.h"
-#include "search/column.h"
-#include "ui_mainwindow.h"
-#include "search/columnlist.h"
-#include "gui/widgetstate.h"
-#include "common/unit.h"
 #include "atools.h"
-#include "sql/sqlrecord.h"
+#include "common/constants.h"
 #include "common/formatter.h"
+#include "common/mapresult.h"
+#include "common/unit.h"
+#include "fs/online/onlinetypes.h"
+#include "gui/widgetstate.h"
+#include "navapp.h"
+#include "online/onlinedatacontroller.h"
+#include "search/column.h"
+#include "search/columnlist.h"
+#include "search/sqlcontroller.h"
+#include "sql/sqlrecord.h"
+#include "ui_mainwindow.h"
 
 OnlineClientSearch::OnlineClientSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("client", "client_id"), tabWidgetIndex)

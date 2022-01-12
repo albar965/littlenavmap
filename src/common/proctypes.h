@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_PROCTYPES_H
 
 #include "common/mapresult.h"
+#include "common/procflags.h"
 
 #include <QColor>
 #include <QRegularExpression>
@@ -33,53 +34,6 @@ namespace proc {
 
 /* Initialize all text that are translateable after loading the translation files */
 void initTranslateableTexts();
-
-// =====================================================================
-/* Type covering all objects that are passed around in the program. Also use to determine what should be drawn. */
-enum MapProcedureType
-{
-  PROCEDURE_NONE = 0,
-  PROCEDURE_APPROACH = 1 << 0, /* Also custom */
-  PROCEDURE_MISSED = 1 << 1,
-  PROCEDURE_TRANSITION = 1 << 2,
-  PROCEDURE_SID = 1 << 3, /* Also custom */
-  PROCEDURE_SID_TRANSITION = 1 << 4,
-  PROCEDURE_STAR = 1 << 5,
-  PROCEDURE_STAR_TRANSITION = 1 << 6,
-
-  /* SID, STAR and respective transitions */
-  PROCEDURE_STAR_ALL = PROCEDURE_STAR | PROCEDURE_STAR_TRANSITION,
-  PROCEDURE_SID_ALL = PROCEDURE_SID | PROCEDURE_SID_TRANSITION,
-
-  /* Approach and transition but no missed */
-  PROCEDURE_APPROACH_ALL = PROCEDURE_APPROACH | PROCEDURE_TRANSITION,
-
-  /* Approach, transition and missed */
-  PROCEDURE_APPROACH_ALL_MISSED = PROCEDURE_TRANSITION | PROCEDURE_APPROACH | PROCEDURE_MISSED,
-
-  /* All SID, STAR and respective transitions */
-  PROCEDURE_SID_STAR_ALL = PROCEDURE_STAR_ALL | PROCEDURE_SID_ALL,
-
-  /* All leading towards destination */
-  PROCEDURE_ARRIVAL_ALL = PROCEDURE_APPROACH_ALL_MISSED | PROCEDURE_STAR_ALL,
-
-  /* All from departure */
-  PROCEDURE_DEPARTURE = PROCEDURE_SID_ALL,
-
-  /* Any procedure but not transitions */
-  PROCEDURE_ANY_PROCEDURE = PROCEDURE_APPROACH | PROCEDURE_SID | PROCEDURE_STAR,
-
-  /* Any transition */
-  PROCEDURE_ANY_TRANSITION = PROCEDURE_TRANSITION | PROCEDURE_SID_TRANSITION | PROCEDURE_STAR_TRANSITION,
-
-  PROCEDURE_ALL = PROCEDURE_ARRIVAL_ALL | PROCEDURE_DEPARTURE,
-  PROCEDURE_ALL_BUT_MISSED = PROCEDURE_ALL & ~PROCEDURE_MISSED,
-};
-
-Q_DECLARE_FLAGS(MapProcedureTypes, MapProcedureType);
-Q_DECLARE_OPERATORS_FOR_FLAGS(proc::MapProcedureTypes);
-
-QDebug operator<<(QDebug out, const proc::MapProcedureTypes& type);
 
 // =====================================================================
 /* Altitude restriction for approaches or transitions */
@@ -135,69 +89,6 @@ struct MapSpeedRestriction
     return descriptor != NONE && speed > 0.f;
   }
 
-};
-
-// =====================================================================
-/* ARINC leg types */
-enum ProcedureLegType
-{
-  INVALID_LEG_TYPE,
-  ARC_TO_FIX,
-  COURSE_TO_ALTITUDE,
-  COURSE_TO_DME_DISTANCE,
-  COURSE_TO_FIX,
-  COURSE_TO_INTERCEPT,
-  COURSE_TO_RADIAL_TERMINATION,
-  DIRECT_TO_FIX,
-  FIX_TO_ALTITUDE,
-  TRACK_FROM_FIX_FROM_DISTANCE,
-  TRACK_FROM_FIX_TO_DME_DISTANCE,
-  FROM_FIX_TO_MANUAL_TERMINATION,
-  HOLD_TO_ALTITUDE,
-  HOLD_TO_FIX,
-  HOLD_TO_MANUAL_TERMINATION,
-  INITIAL_FIX,
-  PROCEDURE_TURN,
-  CONSTANT_RADIUS_ARC,
-  TRACK_TO_FIX,
-  HEADING_TO_ALTITUDE_TERMINATION,
-  HEADING_TO_DME_DISTANCE_TERMINATION,
-  HEADING_TO_INTERCEPT,
-  HEADING_TO_MANUAL_TERMINATION,
-  HEADING_TO_RADIAL_TERMINATION,
-
-  DIRECT_TO_RUNWAY, /* Artifical last segment inserted for first leg of departure (similar to IF) */
-  CIRCLE_TO_LAND, /* Artifical last segment inserted if approach does not contain a runway end and is a CTL
-                   *  Points for airport center */
-  STRAIGHT_IN, /* Artifical last segment inserted from MAP to runway */
-  START_OF_PROCEDURE, /* Artifical first point if procedures do not start with an initial fix
-                       *  or with a track, heading or course to fix having length 0 */
-  VECTORS, /* Fills a gap between manual segments and an initial fix */
-
-  /* Custom approach */
-  CUSTOM_APP_START, /* Start: INITIAL_FIX */
-  CUSTOM_APP_RUNWAY, /* End: COURSE_TO_FIX */
-
-  /* Custom departure */
-  CUSTOM_DEP_END, /* End: COURSE_TO_FIX */
-  CUSTOM_DEP_RUNWAY /* Start: DIRECT_TO_RUNWAY */,
-};
-
-QDebug operator<<(QDebug out, const proc::ProcedureLegType& type);
-
-// =====================================================================
-/* Special leg types */
-enum LegSpecialType
-{
-  NONE,
-  IAF, /* The Initial Approach Fix (IAF) is the point where the initial approach segment of an instrument approach begins.  */
-  FAF, /* Final approach fix. The final approach point on an instrument approach with vertical guidance is glide
-        *  slope or glide path intercept at the lowest published altitude (ICAO definition). */
-  FACF, /* Final approach course fix. */
-  MAP, /* Miseed approach point.
-        * This is the point prescribed in each instrument approach at which a missed approach procedure shall
-        * be executed if the required visual reference does not exist.[ */
-  FEP /* Final endpoint fix - only needed to ignore altitude restriction */
 };
 
 // =====================================================================
@@ -517,6 +408,12 @@ struct MapProcedureLegs
   {
     // Correct wrong designation of GLS approaches as GNSS for display
     return approachType == "GNSS" ? "GLS" : approachType;
+  }
+
+  static QString displayApproachType(const QString& type)
+  {
+    // Correct wrong designation of GLS approaches as GNSS for display
+    return type == "GNSS" ? "GLS" : type;
   }
 
   /* Anything that needs to display an ILS frequency or GNSS channel */

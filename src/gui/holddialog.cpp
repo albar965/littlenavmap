@@ -29,7 +29,7 @@
 #include "settings/settings.h"
 #include "common/unit.h"
 #include "geo/calculations.h"
-#include "common/proctypes.h"
+#include "common/mapresult.h"
 
 #include <QColor>
 #include <QColorDialog>

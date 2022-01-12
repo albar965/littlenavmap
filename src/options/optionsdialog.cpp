@@ -40,6 +40,7 @@
 #include "util/updatecheck.h"
 #include "weather/weatherreporter.h"
 #include "web/webcontroller.h"
+#include "fs/weather/weathertypes.h"
 
 #include <QFileInfo>
 #include <QMessageBox>

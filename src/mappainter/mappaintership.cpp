@@ -21,6 +21,7 @@
 #include "mapgui/mapwidget.h"
 #include "mapgui/maplayer.h"
 #include "util/paintercontextsaver.h"
+#include "fs/sc/simconnectuseraircraft.h"
 
 #include <marble/GeoPainter.h>
 

@@ -17,20 +17,25 @@
 
 #include "search/logdatasearch.h"
 
-#include "navapp.h"
-#include "common/constants.h"
-#include "search/sqlcontroller.h"
-#include "search/column.h"
-#include "query/airportquery.h"
-#include "ui_mainwindow.h"
-#include "search/columnlist.h"
-#include "gui/widgetutil.h"
-#include "gui/widgetstate.h"
-#include "common/mapcolors.h"
-#include "common/unit.h"
 #include "atools.h"
+#include "common/constants.h"
+#include "common/mapcolors.h"
 #include "common/maptypesfactory.h"
+#include "common/maptypes.h"
+#include "common/mapresult.h"
+#include "common/unit.h"
+#include "gui/widgetstate.h"
+#include "gui/widgetutil.h"
+#include "navapp.h"
+#include "query/airportquery.h"
+#include "search/column.h"
+#include "search/columnlist.h"
+#include "search/sqlcontroller.h"
 #include "sql/sqlrecord.h"
+#include "sql/sqlrecord.h"
+#include "ui_mainwindow.h"
+
+#include <QDateTime>
 
 LogdataSearch::LogdataSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("logbook", "logbook_id"), tabWidgetIndex)

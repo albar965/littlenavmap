@@ -17,19 +17,21 @@
 
 #include "routestring/routestringreader.h"
 
-#include "navapp.h"
+#include "common/mapresult.h"
+#include "common/maptools.h"
+#include "common/proctypes.h"
+#include "common/unit.h"
+#include "fs/pln/flightplan.h"
 #include "fs/util/coordinates.h"
 #include "fs/util/fsutil.h"
-#include "query/procedurequery.h"
-#include "fs/pln/flightplan.h"
-#include "util/htmlbuilder.h"
-#include "query/mapquery.h"
-#include "query/airwaytrackquery.h"
+#include "navapp.h"
 #include "query/airportquery.h"
-#include "route/flightplanentrybuilder.h"
-#include "common/maptools.h"
-#include "common/unit.h"
+#include "query/airwaytrackquery.h"
+#include "query/mapquery.h"
+#include "query/procedurequery.h"
 #include "query/waypointtrackquery.h"
+#include "route/flightplanentrybuilder.h"
+#include "util/htmlbuilder.h"
 
 #include <QElapsedTimer>
 #include <QRegularExpression>

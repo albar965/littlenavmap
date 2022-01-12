@@ -20,7 +20,7 @@
 #include "common/constants.h"
 #include "common/maptypesfactory.h"
 #include "query/querytypes.h"
-#include "common/proctypes.h"
+#include "common/mapresult.h"
 #include "fs/common/binarygeometry.h"
 #include "sql/sqldatabase.h"
 #include "common/maptools.h"

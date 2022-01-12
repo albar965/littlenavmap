@@ -18,7 +18,6 @@
 #include "gui/mainwindow.h"
 
 #include "common/constants.h"
-#include "common/proctypes.h"
 #include "navapp.h"
 #include "atools.h"
 #include "common/mapcolors.h"

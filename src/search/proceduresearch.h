@@ -18,7 +18,8 @@
 #ifndef LITTLENAVMAP_PROCTREECONTROLLER_H
 #define LITTLENAVMAP_PROCTREECONTROLLER_H
 
-#include "common/proctypes.h"
+ #include "common/procflags.h"
+#include "common/mapflags.h"
 #include "search/abstractsearch.h"
 
 #include <QBitArray>
@@ -39,6 +40,16 @@ namespace geo {
 class Pos;
 class Rect;
 }
+}
+
+namespace map {
+struct MapAirport;
+}
+
+namespace proc {
+struct MapProcedureRef;
+struct MapProcedureLeg;
+struct MapProcedureLegs;
 }
 
 class InfoQuery;
@@ -100,7 +111,7 @@ signals:
   void routeInsertProcedure(const proc::MapProcedureLegs& legs);
 
   /* Show information info window on navaid on double click */
-  void showInformation(map::MapResult result);
+  void showInformation(const map::MapResult& result);
 
   /* Show a map object in the search panel (context menu) */
   void showInSearch(map::MapTypes type, const atools::sql::SqlRecord& record, bool select);
@@ -153,7 +164,8 @@ private:
   void restoreTreeViewState(const QBitArray& state, bool blockSignals);
 
   /* Build full approach or transition items for the tree view */
-  QTreeWidgetItem *buildApproachItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp, const QString& approachType, const QStringList& attStr);
+  QTreeWidgetItem *buildApproachItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp, const QString& approachType,
+                                     const QStringList& attStr);
   QTreeWidgetItem *buildTransitionItem(QTreeWidgetItem *apprItem, const atools::sql::SqlRecord& recTrans, bool sidOrStar);
 
   /* Build an leg for the selected/table or tree view */
@@ -219,7 +231,7 @@ private:
   QTreeWidget *treeWidget = nullptr;
   QFont transitionFont, approachFont, legFont, missedLegFont, invalidLegFont, identFont;
 
-  map::MapAirport currentAirportNav, currentAirportSim;
+  map::MapAirport *currentAirportNav, *currentAirportSim;
 
   // Maps airport ID to expanded state of the tree widget items - bit array is same content as itemLoadedIndex
   QHash<int, QBitArray> recentTreeState;

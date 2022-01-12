@@ -18,9 +18,9 @@
 #ifndef LITTLENAVMAP_SEARCHBASE_H
 #define LITTLENAVMAP_SEARCHBASE_H
 
-#include "common/proctypes.h"
-
 #include "search/abstractsearch.h"
+
+#include "common/mapflags.h"
 
 class QTableView;
 class SqlController;
@@ -52,9 +52,8 @@ class Rect;
 
 namespace map {
 struct MapAirport;
-
+struct MapAirportMsa;
 struct MapResult;
-
 }
 
 /*
@@ -152,7 +151,7 @@ signals:
   void selectionChanged(const SearchBaseTable *source, int selected, int visible, int total);
 
   /* Show information in context menu selected */
-  void showInformation(map::MapResult result);
+  void showInformation(const map::MapResult& result);
 
   /* Show approaches in context menu selected */
   void showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter);
@@ -169,13 +168,13 @@ signals:
   void routeAddAlternate(const map::MapAirport& airport);
 
   /* Add airport or navaid to flight plan. Leg will be selected automatically */
-  void routeAdd(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex);
+  void routeAdd(int id, const atools::geo::Pos& userPos, map::MapTypes type, int legIndex);
 
   /* Load flight plan or load aircraft performance file triggered from logbook */
   void loadRouteFile(const QString& filepath);
   void loadPerfFile(const QString& filepath);
 
-  void addAirportMsa(map::MapAirportMsa airportMsa);
+  void addAirportMsa(const map::MapAirportMsa& airportMsa);
 
 protected:
   /* Update the hamburger menu button. Add * for change and check/uncheck actions */

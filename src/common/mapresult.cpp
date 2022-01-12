@@ -17,7 +17,6 @@
 
 #include "common/mapresult.h"
 
-#include "common/proctypes.h"
 #include "geo/calculations.h"
 #include "options/optiondata.h"
 #include "common/maptools.h"

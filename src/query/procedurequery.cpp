@@ -16,18 +16,19 @@
 *****************************************************************************/
 
 #include "query/procedurequery.h"
-#include "navapp.h"
-#include "sql/sqlrecord.h"
-#include "query/mapquery.h"
-#include "query/airportquery.h"
-#include "geo/calculations.h"
-#include "sql/sqldatabase.h"
-#include "common/unit.h"
+
 #include "common/constants.h"
-#include "geo/line.h"
+#include "common/proctypes.h"
+#include "common/unit.h"
 #include "fs/pln/flightplan.h"
 #include "fs/util/fsutil.h"
-
+#include "geo/calculations.h"
+#include "geo/line.h"
+#include "navapp.h"
+#include "query/airportquery.h"
+#include "query/mapquery.h"
+#include "sql/sqldatabase.h"
+#include "sql/sqlrecord.h"
 #include "sql/sqlquery.h"
 
 #include <QStringBuilder>

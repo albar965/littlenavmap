@@ -19,7 +19,6 @@
 
 #include "common/constants.h"
 #include "common/maptypesfactory.h"
-#include "common/proctypes.h"
 #include "mapgui/maplayer.h"
 #include "settings/settings.h"
 #include "sql/sqldatabase.h"

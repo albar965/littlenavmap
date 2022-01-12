@@ -21,7 +21,7 @@
 #include "geo/calculations.h"
 #include "common/unit.h"
 #include "navapp.h"
-#include "proctypes.h"
+#include "common/proctypes.h"
 #include "common/symbolpainter.h"
 #include "common/formatter.h"
 #include "fs/util/fsutil.h"

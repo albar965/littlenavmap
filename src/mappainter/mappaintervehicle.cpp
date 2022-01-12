@@ -17,18 +17,20 @@
 
 #include "mappainter/mappaintervehicle.h"
 
-#include "mapgui/mapwidget.h"
-#include "common/mapcolors.h"
-#include "geo/calculations.h"
-#include "common/symbolpainter.h"
-#include "mapgui/mapscale.h"
-#include "mapgui/maplayer.h"
-#include "common/unit.h"
-#include "navapp.h"
-#include "util/paintercontextsaver.h"
-#include "settings/settings.h"
-#include "common/vehicleicons.h"
 #include "common/aircrafttrack.h"
+#include "common/mapcolors.h"
+#include "common/symbolpainter.h"
+#include "common/unit.h"
+#include "common/vehicleicons.h"
+#include "geo/calculations.h"
+#include "mapgui/maplayer.h"
+#include "common/maptypes.h"
+#include "mapgui/mapscale.h"
+#include "mapgui/mapwidget.h"
+#include "navapp.h"
+#include "settings/settings.h"
+#include "util/paintercontextsaver.h"
+#include "fs/sc/simconnectuseraircraft.h"
 
 #include <marble/GeoPainter.h>
 

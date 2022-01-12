@@ -21,7 +21,9 @@
 #include "mapgui/mappaintwidget.h"
 
 #include "gui/mapposhistory.h"
+#include "geo/linestring.h"
 
+#include <QDateTime>
 #include <QTimer>
 
 class JumpBack;
@@ -35,6 +37,17 @@ namespace atools {
 namespace sql {
 class SqlRecord;
 }
+}
+
+namespace map {
+struct MapUserpoint;
+struct MapParking;
+struct MapHelipad;
+struct MapAirport;
+struct MapWaypoint;
+struct MapVor;
+struct MapNdb;
+struct MapBase;
 }
 
 namespace mw {
@@ -222,7 +235,7 @@ public:
   }
 
   /* Time of takeoff detected. Independent of automatically created logbook entries. */
-  QDateTime getTakeoffDateTime() const
+  const QDateTime& getTakeoffDateTime() const
   {
     return takeoffTimeSim;
   }
@@ -239,29 +252,29 @@ signals:
   void aircraftLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, float flownDistanceNm);
 
   /* Set parking position, departure, destination for flight plan from context menu */
-  void routeSetParkingStart(map::MapParking parking);
-  void routeSetHelipadStart(map::MapHelipad helipad);
+  void routeSetParkingStart(const map::MapParking& parking);
+  void routeSetHelipadStart(const map::MapHelipad& helipad);
 
   /* Set route departure or destination from context menu */
-  void routeSetStart(map::MapAirport ap);
-  void routeSetDest(map::MapAirport ap);
-  void routeAddAlternate(map::MapAirport ap);
+  void routeSetStart(const map::MapAirport& ap);
+  void routeSetDest(const map::MapAirport& ap);
+  void routeAddAlternate(const map::MapAirport& ap);
 
   /* Add, replace or delete object from flight plan from context menu or drag and drop.
    *  index = 0: prepend to route
    *  index = size()-1: append to route */
-  void routeAdd(int id, atools::geo::Pos userPos, map::MapTypes type, int legIndex);
-  void routeReplace(int id, atools::geo::Pos userPos, map::MapTypes type, int oldIndex);
+  void routeAdd(int id, const atools::geo::Pos& userPos, map::MapTypes type, int legIndex);
+  void routeReplace(int id, const atools::geo::Pos& userPos, map::MapTypes type, int oldIndex);
 
   /* Show a map object in the search panel (context menu) */
   void showInSearch(map::MapTypes type, const atools::sql::SqlRecord& record, bool select);
 
   /* Show information about objects from single click or context menu */
-  void showInformation(map::MapResult result);
+  void showInformation(const map::MapResult& result);
 
   /* Add user point and pass result to it so it can prefill the dialog */
-  void addUserpointFromMap(map::MapResult result, const atools::geo::Pos& pos);
-  void editUserpointFromMap(map::MapResult result);
+  void addUserpointFromMap(const map::MapResult& result, const atools::geo::Pos& pos);
+  void editUserpointFromMap(const map::MapResult& result);
   void deleteUserpointFromMap(int id);
 
   void editLogEntryFromMap(int id);
@@ -270,9 +283,9 @@ signals:
   void moveUserpointFromMap(const map::MapUserpoint& point);
 
   /* Show approaches from context menu */
-  void showProcedures(map::MapAirport airport, bool departureFilter, bool arrivalFilter);
-  void showCustomApproach(map::MapAirport airport, const QString& suffix);
-  void showCustomDeparture(map::MapAirport airport, const QString& suffix);
+  void showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter);
+  void showCustomApproach(const map::MapAirport& airport, const QString& suffix);
+  void showCustomDeparture(const map::MapAirport& airport, const QString& suffix);
 
   /* Emitted when the user presses the on-screen button */
   void exitFullScreenPressed();
@@ -437,18 +450,17 @@ private:
 
   /* Current position and pixmap when drawing userpoint on map */
   QPoint userpointDragCur;
-  map::MapUserpoint userpointDrag;
+  map::MapUserpoint *userpointDrag;
   QPixmap userpointDragPixmap;
 
   /* Save last tooltip position. If invalid/null no tooltip will be shown */
   QPoint tooltipPos;
-  map::MapResult mapSearchResultTooltip;
-  map::MapResult mapSearchResultInfoClick;
+  map::MapResult *mapSearchResultTooltip, *mapSearchResultInfoClick;
 
   MapTooltip *mapTooltip;
 
   /* Backup of distance marker for drag and drop in case the action is cancelled */
-  map::DistanceMarker distanceMarkerBackup;
+  map::DistanceMarker *distanceMarkerBackup;
 
   atools::gui::MapPosHistory history;
 
@@ -482,7 +494,7 @@ private:
   MapVisible *mapVisible;
 
   /* Used for distance calculation */
-  atools::fs::sc::SimConnectUserAircraft takeoffLandingLastAircraft;
+  atools::fs::sc::SimConnectUserAircraft *takeoffLandingLastAircraft;
 
   /* Used to check for simulator aircraft updates */
   qint64 lastSimUpdateMs = 0L;

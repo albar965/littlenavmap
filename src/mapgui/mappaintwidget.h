@@ -18,13 +18,37 @@
 #ifndef LITTLENAVMAP_NAVMAPPAINTWIDGET_H
 #define LITTLENAVMAP_NAVMAPPAINTWIDGET_H
 
-#include "common/proctypes.h"
+#include "common/mapflags.h"
+#include "geo/pos.h"
 
 #include <marble/GeoDataLatLonAltBox.h>
 #include <marble/MarbleWidget.h>
 
-namespace atools {
+namespace map {
+struct MapResult;
+struct RangeMarker;
+struct DistanceMarker;
+struct PatternMarker;
+struct HoldingMarker;
+struct MsaMarker;
+struct MapHolding;
+struct MapAirportMsa;
+struct MapAirspace;
+struct MapAirway;
+}
 
+namespace atools {
+namespace fs {
+namespace sc {
+class SimConnectUserAircraft;
+class SimConnectData;
+class SimConnectAircraft;
+}
+}
+
+namespace geo {
+class Rect;
+}
 namespace fs {
 class SimConnectData;
 }
