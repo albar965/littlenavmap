@@ -2564,7 +2564,8 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 #endif
   bool saveApproachWp = options.testFlag(rf::SAVE_APPROACH_WP),
        saveSidWp = options.testFlag(rf::SAVE_SIDSTAR_WP), saveStarWp = options.testFlag(rf::SAVE_SIDSTAR_WP),
-       replaceCustomWp = options.testFlag(rf::REPLACE_CUSTOM_WP), msfs = options.testFlag(rf::SAVE_MSFS);
+       replaceCustomWp = options.testFlag(rf::REPLACE_CUSTOM_WP), msfs = options.testFlag(rf::SAVE_MSFS),
+       removeCustom = options.testFlag(rf::REMOVE_CUSTOM_PROC);
 
   // Create copy which allows to modify the plan ==============
   Route route(origRoute);
@@ -2649,16 +2650,33 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 
   // Remember value since type is cleared later
   bool customApproach = route.getApproachLegs().isCustomApproach();
-
-  // Replace custom approach with user defined waypoints ==============
-  if(customApproach && replaceCustomWp)
-    saveApproachWp = true;
-
   bool customDeparture = route.getSidLegs().isCustomDeparture();
-  if(customDeparture && replaceCustomWp)
-    saveSidWp = true;
+
+  if(!removeCustom)
+  {
+    // Replace custom approach with user defined waypoints ==============
+    if(customApproach && replaceCustomWp)
+      saveApproachWp = true;
+
+    if(customDeparture && replaceCustomWp)
+      saveSidWp = true;
+  }
 
   // First remove properties and procedure structures if needed ====================================
+  if(removeCustom)
+  {
+    // Remove custom departures and approaches including legs
+    proc::MapProcedureTypes removeTypes = proc::PROCEDURE_NONE;
+    if(customApproach)
+      removeTypes |= proc::PROCEDURE_APPROACH_ALL_MISSED;
+    if(customDeparture)
+      removeTypes |= proc::PROCEDURE_SID_ALL;
+
+    route.clearProcedureLegs(removeTypes);
+    route.clearFlightplanProcedureProperties(removeTypes);
+    route.clearProcedureLegs(removeTypes);
+    route.updateIndicesAndOffsets();
+  }
 
   if(msfs)
   {

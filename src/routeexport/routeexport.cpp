@@ -1313,8 +1313,8 @@ bool RouteExport::exportFlighplanAsGfp(const QString& filename, bool saveAsUserW
 bool RouteExport::exportFlighplanAsTxt(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QString txt = RouteStringWriter().createStringForRoute(
-    buildAdjustedRoute(rf::DEFAULT_OPTS), 0.f, rs::DCT | rs::START_AND_DEST | rs::SID_STAR_GENERIC);
+  QString txt = RouteStringWriter().createStringForRoute(buildAdjustedRoute(rf::DEFAULT_OPTS | rf::REMOVE_CUSTOM_PROC), 0.f,
+                                                         rs::DCT | rs::START_AND_DEST | rs::SID_STAR_GENERIC);
 
   QFile file(filename);
   if(file.open(QFile::WriteOnly | QIODevice::Text))

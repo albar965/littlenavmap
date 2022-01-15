@@ -46,6 +46,8 @@ enum RouteAdjustOption
   XPLANE_REPLACE_AIRPORT_IDENTS = 1 << 13, /* Replace airport idents in waypoint list only
                                             * with either ICAO, FAA, IATA or local ones */
 
+  REMOVE_CUSTOM_PROC = 1 << 14, /* Remove custom procedures and their waypoints */
+
   /* Export adjust options for most export formats */
   DEFAULT_OPTS = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT,
 
