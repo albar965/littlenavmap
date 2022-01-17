@@ -887,10 +887,12 @@ QStringList procedureLegRecommended(const MapProcedureLeg& leg)
       related.append(QLocale().toString(leg.recNavaids.ndbs.first().frequency / 100., 'f', 1) % QObject::tr(" kHz"));
 
     if(leg.rho > 0.f && leg.rho < map::INVALID_DISTANCE_VALUE)
+    {
       related.append(Unit::distNm(leg.rho));
 
-    if(leg.theta < map::INVALID_COURSE_VALUE)
-      related.append(QLocale().toString(leg.theta, 'f', 0) + QObject::tr("°M"));
+      if(leg.theta < map::INVALID_COURSE_VALUE)
+        related.append(QLocale().toString(leg.theta, 'f', 0) + QObject::tr("°M"));
+    }
   }
   return related;
 }

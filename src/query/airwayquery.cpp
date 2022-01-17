@@ -18,6 +18,7 @@
 #include "query/airwayquery.h"
 
 #include "common/constants.h"
+#include "common/mapresult.h"
 #include "common/maptypesfactory.h"
 #include "mapgui/maplayer.h"
 #include "settings/settings.h"
@@ -37,12 +38,9 @@ AirwayQuery::AirwayQuery(SqlDatabase *sqlDbNav, bool trackDatabaseParam)
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
-  queryRectInflationFactor = settings.getAndStoreValue(
-    lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.3).toDouble();
-  queryRectInflationIncrement = settings.getAndStoreValue(
-    lnm::SETTINGS_MAPQUERY + "QueryRectInflationIncrement", 0.1).toDouble();
-  queryMaxRows =
-    settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirwayQueryRowLimit", map::MAX_MAP_OBJECTS).toInt();
+  queryRectInflationFactor = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.3).toDouble();
+  queryRectInflationIncrement = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "QueryRectInflationIncrement", 0.1).toDouble();
+  queryMaxRows = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirwayQueryRowLimit", map::MAX_MAP_OBJECTS).toInt();
 }
 
 AirwayQuery::~AirwayQuery()
