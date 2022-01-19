@@ -39,6 +39,7 @@
 #include "options/optiondata.h"
 #include "mapgui/mapwidget.h"
 #include "gui/tabwidgethandler.h"
+#include "util/htmlbuilder.h"
 
 #include <QUrlQuery>
 

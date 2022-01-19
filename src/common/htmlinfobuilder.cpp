@@ -2141,6 +2141,11 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
     addCoordinates(rec, html);
   html.tableEnd();
 
+  MapWaypoint wp = NavApp::getWaypointTrackQueryGui()->getWaypointByNavId(vor.id);
+  if(wp.artificial)
+    // Artificial waypoints are not shown - display airway list here
+    waypointAirwayText(wp, html);
+
   if(rec != nullptr)
     addScenery(rec, html);
 
@@ -2208,6 +2213,11 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
     addCoordinates(rec, html);
   html.tableEnd();
 
+  MapWaypoint wp = NavApp::getWaypointTrackQueryGui()->getWaypointByNavId(ndb.id);
+  if(wp.artificial)
+    // Artificial waypoints are not shown - display airway list here
+    waypointAirwayText(wp, html);
+
   if(rec != nullptr)
     addScenery(rec, html);
 
@@ -2262,7 +2272,7 @@ void HtmlInfoBuilder::holdingTextInternal(const MapHolding& holding, HtmlBuilder
     // Hold at a position
     title.append(tr("Holding %1").arg(courseTextFromTrue(holding.courseTrue, holding.magvar)));
 
-  navaidTitle(html, title, ahtml::NO_ENTITIES);
+  navaidTitle(html, title, true /* noEntities */);
 
   html.table();
   // Add bearing/distance to table
@@ -2385,7 +2395,7 @@ void HtmlInfoBuilder::patternMarkerText(const PatternMarker& pattern, atools::ut
   html.img(QIcon(":/littlenavmap/resources/icons/trafficpattern.svg"), QString(), QString(), symbolSizeTitle);
   html.nbsp().nbsp();
 
-  navaidTitle(html, tr("Traffic Pattern"), ahtml::NO_ENTITIES);
+  navaidTitle(html, tr("Traffic Pattern"), true /* noEntities */);
 
   html.table();
   html.row2If(tr("Airport:"), pattern.airportIcao);
@@ -2808,6 +2818,26 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
 
   html.tableEnd();
 
+  // Waypoints should normally not appear here if they are artificial except for FSX, MSFS and the like
+  waypointAirwayText(waypoint, html);
+
+  if(rec != nullptr)
+    addScenery(rec, html);
+
+#ifdef DEBUG_INFORMATION
+  if(info)
+    html.small(QString("Database: waypoint_id = %1, artificial = %2").arg(waypoint.getId()).arg(waypoint.artificial)).br();
+#endif
+
+  if(info)
+    html.br();
+}
+
+void HtmlInfoBuilder::waypointAirwayText(const MapWaypoint& waypoint, HtmlBuilder& html) const
+{
+  if(!waypoint.isValid())
+    return;
+
   QList<MapAirway> airways;
   NavApp::getAirwayTrackQueryGui()->getAirwaysForWaypoint(airways, waypoint.id);
 
@@ -2879,17 +2909,6 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
       }
     }
   }
-
-  if(rec != nullptr)
-    addScenery(rec, html);
-
-#ifdef DEBUG_INFORMATION
-  if(info)
-    html.small(QString("Database: waypoint_id = %1, artificial = %2").arg(waypoint.getId()).arg(waypoint.artificial)).br();
-#endif
-
-  if(info)
-    html.br();
 }
 
 bool HtmlInfoBuilder::distanceToRouteText(const ageo::Pos& pos, HtmlBuilder& html) const
@@ -4694,12 +4713,12 @@ void HtmlInfoBuilder::head(HtmlBuilder& html, const QString& text) const
     html.b(text);
 }
 
-void HtmlInfoBuilder::navaidTitle(HtmlBuilder& html, const QString& text, atools::util::html::Flags flags) const
+void HtmlInfoBuilder::navaidTitle(HtmlBuilder& html, const QString& text, bool noEntities) const
 {
   if(info)
-    html.text(text, ahtml::BOLD | ahtml::BIG | flags);
+    html.text(text, ahtml::BOLD | ahtml::BIG | (noEntities ? ahtml::NO_ENTITIES : ahtml::NONE));
   else
-    html.text(text, ahtml::BOLD | flags);
+    html.text(text, ahtml::BOLD | (noEntities ? ahtml::NO_ENTITIES : ahtml::NONE));
 }
 
 void HtmlInfoBuilder::rowForFloat(HtmlBuilder& html, const SqlRecord *rec, const QString& colName,

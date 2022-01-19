@@ -50,6 +50,9 @@ public:
   /* Get one by database id */
   map::MapWaypoint getWaypointById(int id);
 
+  /* By VOR or NDB id */
+  map::MapWaypoint getWaypointByNavId(int navId);
+
   /* Get a list of matching points for ident and optionally region. */
   void getWaypointByByIdent(QList<map::MapWaypoint>& waypoints, const QString& ident,
                             const QString& region = QString());
@@ -67,8 +70,7 @@ public:
   void getWaypointRectNearest(map::MapWaypoint& waypoint, const atools::geo::Pos& pos, float distanceNm);
 
   /* Similar to getAirports */
-  const QList<map::MapWaypoint> *getWaypoints(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                              bool lazy, bool& overflow);
+  const QList<map::MapWaypoint> *getWaypoints(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow);
 
   /* Get record for joined tables waypoint, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getWaypointInformation(int waypointId);
@@ -99,8 +101,9 @@ private:
   bool trackDatabase;
 
   /* Database queries */
-  atools::sql::SqlQuery *waypointByIdQuery = nullptr, *waypointNearestQuery = nullptr, *waypointRectQuery = nullptr,
-                        *waypointByIdentQuery = nullptr, *waypointsByRectQuery = nullptr, *waypointInfoQuery = nullptr;
+  atools::sql::SqlQuery *waypointByIdQuery = nullptr, *waypointByNavIdQuery = nullptr, *waypointNearestQuery = nullptr,
+                        *waypointRectQuery = nullptr, *waypointByIdentQuery = nullptr, *waypointsByRectQuery = nullptr,
+                        *waypointInfoQuery = nullptr;
 };
 
 #endif // LITTLENAVMAP_WAYPOINTQUERY_H

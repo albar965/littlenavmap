@@ -47,8 +47,19 @@ map::MapWaypoint WaypointTrackQuery::getWaypointById(int id)
   return waypoint;
 }
 
-void WaypointTrackQuery::getWaypointByIdent(QList<map::MapWaypoint>& waypoints, const QString& ident,
-                                            const QString& region)
+MapWaypoint WaypointTrackQuery::getWaypointByNavId(int navId)
+{
+  map::MapWaypoint waypoint;
+  if(useTracks)
+    waypoint = trackQuery->getWaypointByNavId(navId);
+
+  if(!waypoint.isValid())
+    waypoint = waypointQuery->getWaypointByNavId(navId);
+
+  return waypoint;
+}
+
+void WaypointTrackQuery::getWaypointByIdent(QList<map::MapWaypoint>& waypoints, const QString& ident, const QString& region)
 {
   if(useTracks)
     trackQuery->getWaypointByByIdent(waypoints, ident, region);

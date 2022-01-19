@@ -67,6 +67,17 @@ map::MapWaypoint WaypointQuery::getWaypointById(int id)
   return wp;
 }
 
+MapWaypoint WaypointQuery::getWaypointByNavId(int navId)
+{
+  map::MapWaypoint wp;
+  waypointByNavIdQuery->bindValue(":id", navId);
+  waypointByNavIdQuery->exec();
+  if(waypointByNavIdQuery->next())
+    mapTypesFactory->fillWaypoint(waypointByNavIdQuery->record(), wp, trackDatabase);
+  waypointByNavIdQuery->finish();
+  return wp;
+}
+
 void WaypointQuery::getWaypointByByIdent(QList<map::MapWaypoint>& waypoints, const QString& ident,
                                          const QString& region)
 {
@@ -127,8 +138,7 @@ const QList<map::MapWaypoint> *WaypointQuery::getWaypoints(const GeoDataLatLonBo
 
   if(waypointCache.list.isEmpty() && !lazy)
   {
-    for(const GeoDataLatLonBox& r :
-        query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+    for(const GeoDataLatLonBox& r : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
       query::bindRect(r, waypointsByRectQuery);
       waypointsByRectQuery->exec();
@@ -136,7 +146,10 @@ const QList<map::MapWaypoint> *WaypointQuery::getWaypoints(const GeoDataLatLonBo
       {
         map::MapWaypoint wp;
         mapTypesFactory->fillWaypoint(waypointsByRectQuery->record(), wp, trackDatabase);
-        waypointCache.list.append(wp);
+
+        // Avoid artificial waypoints created only for procedure or airway resolution
+        if(wp.artificial == 0)
+          waypointCache.list.append(wp);
       }
     }
   }
@@ -216,6 +229,9 @@ void WaypointQuery::initQueries()
   waypointByIdQuery = new SqlQuery(dbNav);
   waypointByIdQuery->prepare("select " + waypointQueryBase + " from " + table + " where " + id + " = :id");
 
+  waypointByNavIdQuery = new SqlQuery(dbNav);
+  waypointByNavIdQuery->prepare("select " + waypointQueryBase + " from " + table + " where nav_id = :id");
+
   // Get Waypoint in rect
   waypointRectQuery = new SqlQuery(dbNav);
   waypointRectQuery->prepare("select " + waypointQueryBase + " from " + table + " where " + whereRect + " " +
@@ -254,6 +270,9 @@ void WaypointQuery::deInitQueries()
 
   delete waypointByIdQuery;
   waypointByIdQuery = nullptr;
+
+  delete waypointByNavIdQuery;
+  waypointByNavIdQuery = nullptr;
 
   delete waypointInfoQuery;
   waypointInfoQuery = nullptr;
