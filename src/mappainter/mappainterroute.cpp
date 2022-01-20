@@ -65,14 +65,16 @@ void MapPainterRoute::render()
   // Draw route including procedures =====================================
   if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN))
   {
+    // Plan, procedures and departure position
     paintRoute();
-    paintRecommended();
-  }
 
-  // Draw TOD and TOC markers ======================
-  if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN) && context->objectDisplayTypes.testFlag(map::FLIGHTPLAN_TOC_TOD) &&
-     context->mapLayerRoute->isRouteTextAndDetail())
-    paintTopOfDescentAndClimb();
+    // Recommended navaids
+    paintRecommended();
+
+    // Draw TOD and TOC markers ======================
+    if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN_TOC_TOD) && context->mapLayerRoute->isRouteTextAndDetail())
+      paintTopOfDescentAndClimb();
+  }
 
   // Draw the approach preview if any selected in the procedure search tab ========================
   if(context->mapLayerRoute->isApproach())
@@ -254,10 +256,15 @@ void MapPainterRoute::paintRecommended()
         {
           const map::MapWaypoint& wp = recNavaids.waypoints.first();
 
-          if(wToSBuf(wp.position, x, y, margins))
+          // Do not draw related if it was drawn already as a part of a procedure
+          if(!routeProcIdMap.contains(wp.getRef()))
           {
-            paintWaypoint(QColor(), x, y, false);
-            paintWaypointText(x, y, wp, true /* drawTextDetails */, true /* draw as route */, nullptr);
+            routeProcIdMap.insert(wp.getRef());
+            if(wToSBuf(wp.position, x, y, margins))
+            {
+              paintWaypoint(QColor(), x, y, false);
+              paintWaypointText(x, y, wp, true /* drawTextDetails */, true /* draw as route */, nullptr);
+            }
           }
         }
 
@@ -265,10 +272,15 @@ void MapPainterRoute::paintRecommended()
         {
           const map::MapVor& vor = recNavaids.vors.first();
 
-          if(wToSBuf(vor.position, x, y, margins))
+          // Do not draw related if it was drawn already as a part of a procedure
+          if(!routeProcIdMap.contains(vor.getRef()))
           {
-            paintVor(x, y, vor, false);
-            paintVorText(x, y, vor, true /* drawTextDetails */, true /* draw as route */, nullptr);
+            routeProcIdMap.insert(vor.getRef());
+            if(wToSBuf(vor.position, x, y, margins))
+            {
+              paintVor(x, y, vor, false);
+              paintVorText(x, y, vor, true /* drawTextDetails */, true /* draw as route */, nullptr);
+            }
           }
         }
 
@@ -276,10 +288,15 @@ void MapPainterRoute::paintRecommended()
         {
           const map::MapNdb& ndb = recNavaids.ndbs.first();
 
-          if(wToSBuf(ndb.position, x, y, margins))
+          // Do not draw related if it was drawn already as a part of a procedure
+          if(!routeProcIdMap.contains(ndb.getRef()))
           {
-            paintNdb(x, y, false);
-            paintNdbText(x, y, ndb, true /* drawTextDetails */, true /* draw as route */, nullptr);
+            routeProcIdMap.insert(ndb.getRef());
+            if(wToSBuf(ndb.position, x, y, margins))
+            {
+              paintNdb(x, y, false);
+              paintNdbText(x, y, ndb, true /* drawTextDetails */, true /* draw as route */, nullptr);
+            }
           }
         }
       }
