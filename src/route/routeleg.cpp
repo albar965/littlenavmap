@@ -106,15 +106,15 @@ void RouteLeg::createFromProcedureLeg(int entryIndex, const proc::MapProcedureLe
   type = map::PROCEDURE;
 
   if(procedureLeg.navaids.hasWaypoints())
-    waypoint = procedureLeg.navaids.waypoints.first();
+    waypoint = procedureLeg.navaids.waypoints.constFirst();
   if(procedureLeg.navaids.hasVor())
-    vor = procedureLeg.navaids.vors.first();
+    vor = procedureLeg.navaids.vors.constFirst();
   if(procedureLeg.navaids.hasNdb())
-    ndb = procedureLeg.navaids.ndbs.first();
+    ndb = procedureLeg.navaids.ndbs.constFirst();
   if(procedureLeg.navaids.hasIls())
-    ils = procedureLeg.navaids.ils.first();
+    ils = procedureLeg.navaids.ils.constFirst();
   if(procedureLeg.navaids.hasRunwayEnd())
-    runwayEnd = procedureLeg.navaids.runwayEnds.first();
+    runwayEnd = procedureLeg.navaids.runwayEnds.constFirst();
 
   updateMagvar();
   updateDistanceAndCourse(entryIndex, prevLeg);
@@ -263,7 +263,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
 
           // Assign found values to leg =====================================================
           if(parkings.isEmpty() ||
-             parkings.first().position.distanceMeterTo(flightplan->getDepartureParkingPosition()) >
+             parkings.constFirst().position.distanceMeterTo(flightplan->getDepartureParkingPosition()) >
              MAX_PARKING_DIST_METER)
           {
             // No parking found or too far away
@@ -277,7 +277,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
               qWarning() << Q_FUNC_INFO << "Found multiple parking spots for" << name;
 
             // Found one and position is close enough
-            parking = parkings.first();
+            parking = parkings.constFirst();
 
             // Update flightplan with found name
             if(translateName)
@@ -712,7 +712,7 @@ QString RouteLeg::getIdent() const
   else if(runwayEnd.isValid())
     return "RW" + runwayEnd.name;
   else if(!procedureLeg.displayText.isEmpty())
-    return procedureLeg.displayText.first();
+    return procedureLeg.displayText.constFirst();
   else if(type == map::INVALID)
     return getFlightplanEntry().getIdent();
   else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER)
@@ -971,7 +971,7 @@ void RouteLeg::assignAirport(const map::MapResult& mapobjectResult,
                              atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
   type = map::AIRPORT;
-  airport = mapobjectResult.airports.first();
+  airport = mapobjectResult.airports.constFirst();
 
   flightplanEntry->setWaypointType(atools::fs::pln::entry::AIRPORT);
   if(!flightplanEntry->getPosition().isValid())
@@ -987,7 +987,7 @@ void RouteLeg::assignIntersection(const map::MapResult& mapobjectResult,
                                   atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
   type = map::WAYPOINT;
-  waypoint = mapobjectResult.waypoints.first();
+  waypoint = mapobjectResult.waypoints.constFirst();
 
   // Update all fields in entry if found - otherwise leave as is
   flightplanEntry->setRegion(waypoint.region);
@@ -1000,7 +1000,7 @@ void RouteLeg::assignIntersection(const map::MapResult& mapobjectResult,
 void RouteLeg::assignVor(const map::MapResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
   type = map::VOR;
-  vor = mapobjectResult.vors.first();
+  vor = mapobjectResult.vors.constFirst();
 
   // Update all fields in entry if found - otherwise leave as is
   flightplanEntry->setRegion(vor.region);
@@ -1015,7 +1015,7 @@ void RouteLeg::assignVor(const map::MapResult& mapobjectResult, atools::fs::pln:
 void RouteLeg::assignNdb(const map::MapResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
   type = map::NDB;
-  ndb = mapobjectResult.ndbs.first();
+  ndb = mapobjectResult.ndbs.constFirst();
 
   // Update all fields in entry if found - otherwise leave as is
   flightplanEntry->setRegion(ndb.region);

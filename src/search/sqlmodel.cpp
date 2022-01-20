@@ -547,7 +547,7 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
     if(builderResult.overrideQuery && (!whereConditionMap.isEmpty() || boundingRect.isValid()))
     {
       // Get first overriding column for display
-      overridingColumns.append(columns->getColumn(queryBuilder.getColumns().first()));
+      overridingColumns.append(columns->getColumn(queryBuilder.getColumns().constFirst()));
       overrideModeActive = true;
 
       // No other conditions used if overriding

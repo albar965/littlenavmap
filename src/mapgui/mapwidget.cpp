@@ -258,8 +258,6 @@ void MapWidget::removeFullScreenExitButton()
   }
 }
 
-
-
 void MapWidget::getUserpointDragPoints(QPoint& cur, QPixmap& pixmap)
 {
   cur = userpointDragCur;
@@ -369,9 +367,9 @@ void MapWidget::handleInfoClick(QPoint point)
   if(opts.testFlag(optsd::CLICK_AIRPORT) && opts.testFlag(optsd::CLICK_AIRPORT_PROC) && mapSearchResultInfoClick->hasAirports())
   {
     bool departureFilter, arrivalFilter;
-    NavApp::getRouteConst().getAirportProcedureFlags(mapSearchResultInfoClick->airports.first(), -1, departureFilter, arrivalFilter);
+    NavApp::getRouteConst().getAirportProcedureFlags(mapSearchResultInfoClick->airports.constFirst(), -1, departureFilter, arrivalFilter);
 
-    emit showProcedures(mapSearchResultInfoClick->airports.first(), departureFilter, arrivalFilter);
+    emit showProcedures(mapSearchResultInfoClick->airports.constFirst(), departureFilter, arrivalFilter);
   }
 
   emit showInformation(*mapSearchResultInfoClick);
@@ -649,13 +647,13 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
         if(result.hasVor())
         {
           // Add VOR range
-          const map::MapVor& vor = result.vors.first();
+          const map::MapVor& vor = result.vors.constFirst();
           addNavRangeMark(vor.position, map::VOR, vor.ident, vor.getFrequencyOrChannel(), vor.range);
         }
         else if(result.hasNdb())
         {
           // Add NDB range
-          const map::MapNdb& ndb = result.ndbs.first();
+          const map::MapNdb& ndb = result.ndbs.constFirst();
           addNavRangeMark(ndb.position, map::NDB, ndb.ident, QString::number(ndb.frequency), ndb.range);
         }
         else
@@ -1054,39 +1052,39 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   }
   else if(!mapSearchResult.aiAircraft.isEmpty())
   {
-    showPos(mapSearchResult.aiAircraft.first().getPosition(), 0.f, true);
+    showPos(mapSearchResult.aiAircraft.constFirst().getPosition(), 0.f, true);
     mainWindow->setStatusMessage(QString(tr("Showing AI / multiplayer aircraft on map.")));
   }
   else if(!mapSearchResult.onlineAircraft.isEmpty())
   {
-    showPos(mapSearchResult.onlineAircraft.first().getPosition(), 0.f, true);
+    showPos(mapSearchResult.onlineAircraft.constFirst().getPosition(), 0.f, true);
     mainWindow->setStatusMessage(QString(tr("Showing online client aircraft on map.")));
   }
   else if(!mapSearchResult.airports.isEmpty())
   {
-    showRect(mapSearchResult.airports.first().bounding, true);
+    showRect(mapSearchResult.airports.constFirst().bounding, true);
     mainWindow->setStatusMessage(QString(tr("Showing airport on map.")));
   }
   else
   {
     if(!mapSearchResult.vors.isEmpty())
-      showPos(mapSearchResult.vors.first().position, 0.f, true);
+      showPos(mapSearchResult.vors.constFirst().position, 0.f, true);
     else if(!mapSearchResult.ndbs.isEmpty())
-      showPos(mapSearchResult.ndbs.first().position, 0.f, true);
+      showPos(mapSearchResult.ndbs.constFirst().position, 0.f, true);
     else if(!mapSearchResult.waypoints.isEmpty())
-      showPos(mapSearchResult.waypoints.first().position, 0.f, true);
+      showPos(mapSearchResult.waypoints.constFirst().position, 0.f, true);
     else if(!mapSearchResult.ils.isEmpty())
-      showRect(mapSearchResult.ils.first().bounding, true);
+      showRect(mapSearchResult.ils.constFirst().bounding, true);
     else if(!mapSearchResult.userpointsRoute.isEmpty())
-      showPos(mapSearchResult.userpointsRoute.first().position, 0.f, true);
+      showPos(mapSearchResult.userpointsRoute.constFirst().position, 0.f, true);
     else if(!mapSearchResult.userpoints.isEmpty())
-      showPos(mapSearchResult.userpoints.first().position, 0.f, true);
+      showPos(mapSearchResult.userpoints.constFirst().position, 0.f, true);
     else if(!mapSearchResult.patternMarks.isEmpty())
-      showPos(mapSearchResult.patternMarks.first().position, 0.f, true);
+      showPos(mapSearchResult.patternMarks.constFirst().position, 0.f, true);
     else if(!mapSearchResult.rangeMarks.isEmpty())
-      showPos(mapSearchResult.rangeMarks.first().position, 0.f, true);
+      showPos(mapSearchResult.rangeMarks.constFirst().position, 0.f, true);
     else if(!mapSearchResult.holdings.isEmpty())
-      showPos(mapSearchResult.holdings.first().position, 0.f, true);
+      showPos(mapSearchResult.holdings.constFirst().position, 0.f, true);
     mainWindow->setStatusMessage(QString(tr("Showing on map.")));
   }
 }
@@ -1623,10 +1621,10 @@ void MapWidget::resetPaintForDrag()
 
 void MapWidget::addMeasurement(const atools::geo::Pos& pos, const map::MapResult& result)
 {
-  addMeasurement(pos, atools::firstOrNull(result.airports),
-                 atools::firstOrNull(result.vors),
-                 atools::firstOrNull(result.ndbs),
-                 atools::firstOrNull(result.waypoints));
+  addMeasurement(pos, atools::constFirstOrNull(result.airports),
+                 atools::constFirstOrNull(result.vors),
+                 atools::constFirstOrNull(result.ndbs),
+                 atools::constFirstOrNull(result.waypoints));
 }
 
 void MapWidget::addMeasurement(const atools::geo::Pos& pos, const map::MapAirport *airport,

@@ -527,12 +527,12 @@ struct MapProcedureLegs
     return atInternalConst(i);
   }
 
-  const MapProcedureLeg& first() const
+  const MapProcedureLeg& constFirst() const
   {
     return atInternalConst(0);
   }
 
-  const MapProcedureLeg& last() const
+  const MapProcedureLeg& constLast() const
   {
     return atInternalConst(size() - 1);
   }

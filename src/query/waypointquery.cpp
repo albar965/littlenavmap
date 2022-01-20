@@ -124,7 +124,7 @@ void WaypointQuery::getWaypointRectNearest(map::MapWaypoint& waypoint, const Pos
   QVector<map::MapWaypoint> waypoints;
   getWaypointsRect(waypoints, pos, distanceNm);
   if(!waypoints.isEmpty())
-    waypoint = waypoints.first();
+    waypoint = waypoints.constFirst();
 }
 
 const QList<map::MapWaypoint> *WaypointQuery::getWaypoints(const GeoDataLatLonBox& rect,

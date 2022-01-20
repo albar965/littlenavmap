@@ -158,8 +158,8 @@ void RouteLabel::buildHeaderAirports(atools::util::HtmlBuilder& html, bool widge
   else
   {
     departureAirport = tr("%1 (%2)").
-                       arg(flightplan.getEntries().first().getIdent()).
-                       arg(flightplan.getEntries().first().getWaypointTypeAsDisplayString());
+                       arg(flightplan.getEntries().constFirst().getIdent()).
+                       arg(flightplan.getEntries().constFirst().getWaypointTypeAsDisplayString());
   }
 
   // Add destination to text ==============================================================

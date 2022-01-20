@@ -170,18 +170,18 @@ bool AircraftTrack::appendTrackPos(const atools::fs::sc::SimConnectUserAircraft&
     long epsilonTime = onGround ? MIN_POSITION_TIME_DIFF_GROUND_MS : MIN_POSITION_TIME_DIFF_MS;
 
     long time = timestamp.toMSecsSinceEpoch();
-    long lastTime = last().timestamp * 1000L;
+    long lastTime = constLast().timestamp * 1000L;
 
-    if(!pos.almostEqual(last().pos, epsilonPos) && !atools::almostEqual(lastTime, time, epsilonTime))
+    if(!pos.almostEqual(constLast().pos, epsilonPos) && !atools::almostEqual(lastTime, time, epsilonTime))
     {
       bool lastValid = lastUserAircraft->isValid();
       bool aircraftChanged = lastValid && lastUserAircraft->hasAircraftChanged(userAircraft);
-      bool jumped = !isEmpty() && pos.distanceMeterTo(last().pos) > atools::geo::nmToMeter(MAX_POINT_DISTANCE_NM);
+      bool jumped = !isEmpty() && pos.distanceMeterTo(constLast().pos) > atools::geo::nmToMeter(MAX_POINT_DISTANCE_NM);
 
-      if(allowSplit && jumped && (last().onGround || onGround || aircraftChanged))
+      if(allowSplit && jumped && (constLast().onGround || onGround || aircraftChanged))
       {
         qDebug() << Q_FUNC_INFO << "Splitting trail" << "allowSplit" << allowSplit << "jumped" << jumped
-                 << "last().onGround" << last().onGround << "onGround" << onGround
+                 << "constLast().onGround" << constLast().onGround << "onGround" << onGround
                  << "aircraftChanged" << aircraftChanged;
 
         // Add an invalid position before indicating a break
@@ -196,7 +196,7 @@ bool AircraftTrack::appendTrackPos(const atools::fs::sc::SimConnectUserAircraft&
             removeFirst();
 
           // Remove invalid segments
-          while(!isEmpty() && !first().isValid())
+          while(!isEmpty() && !constFirst().isValid())
             removeFirst();
 
           pruned = true;

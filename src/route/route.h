@@ -155,12 +155,12 @@ public:
   /* Create copies of first and last to ease tracking */
   const RouteLeg& getLastLeg() const
   {
-    return last();
+    return constLast();
   }
 
   const RouteLeg& getFirstLeg() const
   {
-    return first();
+    return constFirst();
   }
 
   /* Returns an empty leg if the index is not valid */

@@ -1355,7 +1355,7 @@ bool RouteExport::exportFlighplanAsUFmc(const QString& filename)
   {
     QTextStream stream(&file);
     // Save start and destination
-    stream << list.first() << endl << list.last() << endl;
+    stream << list.constFirst() << endl << list.constLast() << endl;
 
     // Waypoints and airways
     for(int i = 1; i < list.size() - 1; i++)

@@ -59,7 +59,7 @@ MapLayer MapLayerSettings::cloneLast(float maximumRangeKm) const
   if(layers.isEmpty())
     return MapLayer(maximumRangeKm);
   else
-    return layers.last().clone(maximumRangeKm);
+    return layers.constLast().clone(maximumRangeKm);
 }
 
 void MapLayerSettings::finishAppend()
@@ -82,7 +82,7 @@ const MapLayer *MapLayerSettings::getLayer(float distanceKm, int detailFactor) c
     it += MAP_DEFAULT_DETAIL_FACTOR - detailFactor;
 
   if(it >= layers.end())
-    return &layers.last();
+    return &layers.constLast();
 
   if(it < layers.begin())
     return &(*(layers.begin()));

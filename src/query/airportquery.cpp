@@ -196,7 +196,7 @@ void AirportQuery::getAirportByOfficialIdent(map::MapAirport& airport, const QSt
 {
   QList<map::MapAirport> airports;
   getAirportsByOfficialIdent(airports, ident, pos, maxDistanceMeter, flags);
-  airport = airports.isEmpty() ? map::MapAirport() : airports.first();
+  airport = airports.isEmpty() ? map::MapAirport() : airports.constFirst();
 }
 
 MapAirport AirportQuery::getAirportByOfficialIdent(const QString& ident, const atools::geo::Pos *pos, float maxDistanceMeter,
@@ -204,7 +204,7 @@ MapAirport AirportQuery::getAirportByOfficialIdent(const QString& ident, const a
 {
   QList<map::MapAirport> airports;
   getAirportsByOfficialIdent(airports, ident, pos, maxDistanceMeter, flags);
-  return airports.isEmpty() ? map::MapAirport() : airports.first();
+  return airports.isEmpty() ? map::MapAirport() : airports.constFirst();
 }
 
 void AirportQuery::getAirportsByOfficialIdent(QList<map::MapAirport>& airports, const QString& ident,
@@ -313,7 +313,7 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
 
       if(!airports.isEmpty())
         // Assign to cache object
-        *ap = airports.first();
+        *ap = airports.constFirst();
     } // else assign empty airport to indicate that is it not available
 
     airport = *ap;
@@ -486,7 +486,7 @@ const QList<map::MapApron> *AirportQuery::getAprons(int airportId)
 
           if(!ap.geometry.boundary.isEmpty())
             // Set position to first for validity check
-            ap.position = ap.geometry.boundary.first().node;
+            ap.position = ap.geometry.boundary.constFirst().node;
         }
       }
 
@@ -502,7 +502,7 @@ const QList<map::MapApron> *AirportQuery::getAprons(int airportId)
 
           // Set position to first for validity check
           if(!ap.vertices.isEmpty())
-            ap.position = ap.vertices.first();
+            ap.position = ap.vertices.constFirst();
         }
       }
 
@@ -831,7 +831,7 @@ void AirportQuery::getBestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map:
     else
     {
       // No runway end found - get at least the nearest airport
-      getAirportById(airport, runways.first().airportId);
+      getAirportById(airport, runways.constFirst().airportId);
       runwayEnd = map::MapRunwayEnd();
     }
   }

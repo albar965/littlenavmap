@@ -1296,11 +1296,11 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, Htm
 {
   if(!windStack.isEmpty())
   {
-    float magVar = NavApp::getMagVar(windStack.first().pos);
+    float magVar = NavApp::getMagVar(windStack.constFirst().pos);
     if(windStack.size() == 1)
     {
       // Single line wind report for flight plan waypoints =============================================
-      const atools::grib::WindPos& wind = windStack.first();
+      const atools::grib::WindPos& wind = windStack.constFirst();
       if(wind.isValid())
       {
         html.row2(tr("Flight Plan wind (%1)").arg(source), tr("%2, %3, %4").
@@ -1588,7 +1588,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
 
     if(result.hasVor())
     {
-      const MapVor& vor = result.vors.first();
+      const MapVor& vor = result.vors.constFirst();
 
       if(vor.tacan)
       {
@@ -1635,7 +1635,7 @@ void HtmlInfoBuilder::addRadionavFixType(HtmlBuilder& html, const SqlRecord& rec
 
     if(result.hasNdb())
     {
-      const MapNdb& ndb = result.ndbs.first();
+      const MapNdb& ndb = result.ndbs.constFirst();
 
       html.row2If(tr("NDB Type:"), map::navTypeNameNdb(ndb.type));
       html.row2(tr("NDB Frequency:"), locale.toString(ndb.frequency / 100., 'f', 2) % tr(" kHz"));
@@ -1883,7 +1883,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   const atools::fs::weather::MetarParser& parsed = metar.getParsedMetar();
 
   QVector<atools::fs::weather::MetarCloud> clouds = parsed.getClouds();
-  bool hasClouds = !clouds.isEmpty() && clouds.first().getCoverage() != atools::fs::weather::MetarCloud::COVERAGE_CLEAR;
+  bool hasClouds = !clouds.isEmpty() && clouds.constFirst().getCoverage() != atools::fs::weather::MetarCloud::COVERAGE_CLEAR;
 
   html.table();
 
@@ -2885,7 +2885,7 @@ void HtmlInfoBuilder::waypointAirwayText(const MapWaypoint& waypoint, HtmlBuilde
         std::sort(airwayTexts.begin(), airwayTexts.end(),
                   [](const QStringList& item1, const QStringList& item2)
         {
-          return item1.first() == item2.first() ? item1.at(1) < item2.at(1) : item1.first() < item2.first();
+          return item1.constFirst() == item2.constFirst() ? item1.at(1) < item2.at(1) : item1.constFirst() < item2.constFirst();
         });
 
         // Remove duplicates
@@ -3996,7 +3996,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           if(restrictions.size() > 1)
             html.id(pid::NEXT_RESTRICTION).row2(tr("Restrictions:"), restrictions.join(tr(", ")));
           else if(restrictions.size() == 1)
-            html.id(pid::NEXT_RESTRICTION).row2(tr("Restriction:"), restrictions.first());
+            html.id(pid::NEXT_RESTRICTION).row2(tr("Restriction:"), restrictions.constFirst());
         }
 
         // Distance, time and ETA for next waypoint ==============================================

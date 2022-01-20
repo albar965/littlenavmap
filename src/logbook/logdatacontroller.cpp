@@ -467,7 +467,7 @@ void LogdataController::editLogEntries(const QVector<int>& ids)
 {
   qDebug() << Q_FUNC_INFO << ids;
 
-  SqlRecord rec = manager->getRecord(ids.first());
+  SqlRecord rec = manager->getRecord(ids.constFirst());
   if(!rec.isEmpty())
   {
     LogdataDialog dlg(mainWindow, ids.size() == 1 ? ld::EDIT_ONE : ld::EDIT_MULTIPLE);

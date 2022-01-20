@@ -754,7 +754,7 @@ void ProcedureSearch::fetchSingleTransitionId(MapProcedureRef& ref)
       // Special case for SID which consists only of transition legs
       QVector<int> transitionIds = procedureQuery->getTransitionIdsForProcedure(ref.approachId);
       if(!transitionIds.isEmpty())
-        ref.transitionId = transitionIds.first();
+        ref.transitionId = transitionIds.constFirst();
     }
   }
 }
@@ -1172,7 +1172,7 @@ void ProcedureSearch::showApproachTriggered()
   if(treeWidget->selectedItems().isEmpty())
     return;
 
-  showEntry(treeWidget->selectedItems().first(), false /* double click*/, true /* zoom */);
+  showEntry(treeWidget->selectedItems().constFirst(), false /* double click*/, true /* zoom */);
 }
 
 void ProcedureSearch::attachApproach()
@@ -1181,7 +1181,7 @@ void ProcedureSearch::attachApproach()
     return;
 
   MapProcedureRef ref;
-  const proc::MapProcedureLegs *procedureLegs = fetchProcData(ref, treeWidget->selectedItems().first());
+  const proc::MapProcedureLegs *procedureLegs = fetchProcData(ref, treeWidget->selectedItems().constFirst());
 
   qDebug() << Q_FUNC_INFO << ref;
 

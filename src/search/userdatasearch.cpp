@@ -150,7 +150,7 @@ void UserdataSearch::connectSearchSlots()
 void UserdataSearch::addUserpointTriggered()
 {
   QVector<int> ids = getSelectedIds();
-  emit addUserpoint(ids.isEmpty() ? -1 : ids.first(), atools::geo::EMPTY_POS);
+  emit addUserpoint(ids.isEmpty() ? -1 : ids.constFirst(), atools::geo::EMPTY_POS);
 }
 
 void UserdataSearch::editUserpointsTriggered()

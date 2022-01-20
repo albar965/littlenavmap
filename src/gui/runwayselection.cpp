@@ -108,7 +108,7 @@ void RunwaySelection::getCurrentSelected(map::MapRunway& runway, map::MapRunwayE
     QModelIndexList rows = selection->selectedRows();
     if(!rows.isEmpty())
     {
-      QTableWidgetItem *item = runwayTableWidget->item(rows.first().row(), 0);
+      QTableWidgetItem *item = runwayTableWidget->item(rows.constFirst().row(), 0);
       if(item != nullptr)
       {
         // Get index and primary from user role data

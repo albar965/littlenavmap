@@ -398,7 +398,7 @@ void InfoController::anchorClicked(const QUrl& url)
                                                                                    pos.isValid() ? &pos : nullptr);
 
         if(!airports.isEmpty())
-          emit showRect(airports.first().bounding, false);
+          emit showRect(airports.constFirst().bounding, false);
         else
           qWarning() << Q_FUNC_INFO << "No airport found for" << query.queryItemValue("airport");
       }
@@ -551,7 +551,7 @@ void InfoController::updateAirportInternal(bool newAirport, bool bearingChange, 
   {
     map::WeatherContext currentWeatherContext;
     bool weatherChanged = mainWindow->buildWeatherContextForInfo(currentWeatherContext,
-                                                                 currentSearchResult.airports.first());
+                                                                 currentSearchResult.airports.constFirst());
 
     // qDebug() << Q_FUNC_INFO << "newAirport" << newAirport << "weatherChanged" << weatherChanged
     // << "ident" << currentWeatherContext.ident;
@@ -560,7 +560,7 @@ void InfoController::updateAirportInternal(bool newAirport, bool bearingChange, 
     {
       HtmlBuilder html(true);
       map::MapAirport airport;
-      airportQuery->getAirportById(airport, currentSearchResult.airports.first().id);
+      airportQuery->getAirportById(airport, currentSearchResult.airports.constFirst().id);
 
       // qDebug() << Q_FUNC_INFO << "Updating html" << airport.ident << airport.id;
 
@@ -746,14 +746,14 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
   if(!result.airports.isEmpty())
   {
 #ifdef DEBUG_INFORMATION
-    qDebug() << "Found airport" << result.airports.first().ident;
+    qDebug() << "Found airport" << result.airports.constFirst().ident;
 #endif
 
     // Only one airport shown - have to make a copy here since currentSearchResult might be equal to result
     // when updating
-    map::MapAirport airport = result.airports.first();
+    map::MapAirport airport = result.airports.constFirst();
 
-    bool changed = !currentSearchResult.hasAirports() || currentSearchResult.airports.first().id != airport.id;
+    bool changed = !currentSearchResult.hasAirports() || currentSearchResult.airports.constFirst().id != airport.id;
 
     currentSearchResult.airports.clear();
     currentSearchResult.airportIds.clear();

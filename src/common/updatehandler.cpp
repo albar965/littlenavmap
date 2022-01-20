@@ -129,7 +129,7 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
     html.h3(tr("Update Available"));
 
     // Show only the newest one
-    const atools::util::Update& update = updates.first();
+    const atools::util::Update& update = updates.constFirst();
     QString channel;
     switch(update.channel)
     {
@@ -177,7 +177,7 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
       if(updateDialog.isIgnoreThisUpdate())
       {
         // Add latest update - do not report anything earlier or equal again
-        QString ignore = updates.first().version;
+        QString ignore = updates.constFirst().version;
         qDebug() << Q_FUNC_INFO << "Ignoring updates now" << ignore;
         Settings::instance().setValue(lnm::OPTIONS_UPDATE_ALREADY_CHECKED, ignore);
       }

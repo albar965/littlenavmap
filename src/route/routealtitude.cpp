@@ -1272,7 +1272,7 @@ void RouteAltitude::calculateDeparture()
          !maxAltRestricts)
       {
         // Reached TOC - calculate distance
-        distanceTopOfClimb = distanceForAltitude(alt.geometry.first(), QPointF(alt.geometry.last().x(), uncorrectedAlt),
+        distanceTopOfClimb = distanceForAltitude(alt.geometry.constFirst(), QPointF(alt.geometry.constLast().x(), uncorrectedAlt),
                                                  cruiseAltitude);
         legIndexTopOfClimb = i;
 
@@ -1419,7 +1419,7 @@ void RouteAltitude::calculateArrival()
         }
 
         // Reached TOD - calculate distance
-        distanceTopOfDescent = distanceForAltitude(value(i + 1).getGeometry().last(),
+        distanceTopOfDescent = distanceForAltitude(value(i + 1).getGeometry().constLast(),
                                                    QPointF(alt.getDistanceFromStart(), uncorrectedAltitude), cruiseAltitude);
         legIndexTopOfDescent = i + 1;
 
@@ -1618,7 +1618,7 @@ float RouteAltitude::distanceForAltitude(const QPointF& leg1, const QPointF& leg
 
 float RouteAltitude::distanceForAltitude(const RouteAltitudeLeg& leg, float altitude)
 {
-  return distanceForAltitude(leg.geometry.first(), leg.geometry.last(), altitude);
+  return distanceForAltitude(leg.geometry.constFirst(), leg.geometry.constLast(), altitude);
 }
 
 void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)

@@ -4580,7 +4580,7 @@ void MainWindow::dragEnterEvent(QDragEnterEvent *event)
     if(!urls.isEmpty())
     {
       // Has to be a file
-      QUrl url = urls.first();
+      QUrl url = urls.constFirst();
       if(url.isLocalFile())
       {
         // accept if file exists, is readable and matches the supported extensions or content
@@ -4605,7 +4605,7 @@ void MainWindow::dropEvent(QDropEvent *event)
 {
   if(event->mimeData()->urls().size() == 1)
   {
-    QString filepath = event->mimeData()->urls().first().toLocalFile();
+    QString filepath = event->mimeData()->urls().constFirst().toLocalFile();
     qDebug() << Q_FUNC_INFO << "Dropped file:" << filepath;
 
     if(atools::gui::DockWidgetHandler::isWindowLayoutFile(filepath))

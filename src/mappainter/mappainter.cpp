@@ -505,7 +505,7 @@ void MapPainter::drawLineString(Marble::GeoPainter *painter, const atools::geo::
     }
 
     // Add last point
-    geoLineStr << GeoDataCoordinates(splitLines.last().getLonX(), splitLines.last().getLatY(), 0, DEG);
+    geoLineStr << GeoDataCoordinates(splitLines.constLast().getLonX(), splitLines.constLast().getLatY(), 0, DEG);
 
     painter->drawPolyline(geoLineStr);
   }

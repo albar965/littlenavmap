@@ -119,7 +119,7 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
   if(!lines.isEmpty())
   {
     // Add last point
-    const Line& line = lines.last();
+    const Line& line = lines.constLast();
     converter->wToS(line.getPos2(), x2, y2);
 
     if(!colors.isEmpty())
@@ -276,7 +276,7 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
     if(!hidden)
     {
       if(!points.isEmpty())
-        lineLength += QLineF(QPointF(xt, yt), points.last()).length();
+        lineLength += QLineF(QPointF(xt, yt), points.constLast()).length();
       points.append(QPointF(xt, yt));
 
       // Remember visibility for first and last point
@@ -365,7 +365,7 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
 #ifdef DEBUG_TEXPLACEMENT_PAINT
           painter->setPen(QPen(Qt::red, 0.8));
           painter->drawPolyline(textPolygon);
-          painter->drawText(textPolygon.first(), QString("ptIdx %1 i %2").arg(ptIdx).arg(i));
+          painter->drawText(textPolygon.constFirst(), QString("ptIdx %1 i %2").arg(ptIdx).arg(i));
 #endif
         }
         // Check partial visibility ================
@@ -375,7 +375,7 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
 #ifdef DEBUG_TEXPLACEMENT_PAINT
           painter->setPen(QPen(Qt::blue, 0.8, Qt::DotLine));
           painter->drawPolyline(textPolygon);
-          painter->drawText(textPolygon.first(), QString("ptIdx %1 i %2").arg(ptIdx).arg(i));
+          painter->drawText(textPolygon.constFirst(), QString("ptIdx %1 i %2").arg(ptIdx).arg(i));
 #endif
         }
       }
@@ -396,9 +396,9 @@ bool TextPlacement::findTextPosInternal(const Line& line, float distanceMeter, f
           // Get one point closest to either last or first
           QVector<QPointF> nearest;
           if(firstVisible)
-            nearest.append(points.first());
+            nearest.append(points.constFirst());
           if(lastVisible)
-            nearest.append(points.last());
+            nearest.append(points.constLast());
           foundIndexValid = findClosestInternal(partiallyVisibleValid, pointsIdxValid, points, nearest);
         }
       }

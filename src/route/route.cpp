@@ -306,7 +306,7 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
     // Special case point route - remain on first and only leg ==========================
     activeLegIndex = 0;
     // Test if still nearby
-    activePos.pos.distanceMeterToLine(first().getPosition(), first().getPosition(), activeLegResult);
+    activePos.pos.distanceMeterToLine(constFirst().getPosition(), constFirst().getPosition(), activeLegResult);
   }
   else
   {
@@ -568,7 +568,7 @@ bool Route::getRouteDistances(float *distFromStart, float *distToDest,
       double toDest = 0.;
       if(getSizeWithoutAlternates() == 1)
         // Single airport in plan only - calculate direct distance to
-        toDest = meterToNm(activePos.pos.distanceMeterTo(first().getPosition()));
+        toDest = meterToNm(activePos.pos.distanceMeterTo(constFirst().getPosition()));
       else
       {
         if(activeIsMissed)
@@ -800,7 +800,7 @@ void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::
                                       false /* nav data */);
 
     if(runwayEnd != nullptr && !runwayEnds.isEmpty())
-      *runwayEnd = runwayEnds.first();
+      *runwayEnd = runwayEnds.constFirst();
 
     if(approachLegs.runwayEnd.isValid())
     {
@@ -1045,7 +1045,7 @@ void Route::getNearestRecommended(const CoordinateConverter& conv, int xs, int y
         const map::MapResult& result = leg.getProcedureLeg().recNavaids;
         if(result.hasVor())
         {
-          map::MapVor vor = result.vors.first();
+          map::MapVor vor = result.vors.constFirst();
           vor.routeIndex = i;
           vor.recommended = true;
           insertSortedByDistance(conv, mapobjects.vors, &mapobjects.vorIds, xs, ys, vor);
@@ -1053,7 +1053,7 @@ void Route::getNearestRecommended(const CoordinateConverter& conv, int xs, int y
 
         if(result.hasNdb())
         {
-          map::MapNdb ndb = result.ndbs.first();
+          map::MapNdb ndb = result.ndbs.constFirst();
           ndb.routeIndex = i;
           ndb.recommended = true;
           insertSortedByDistance(conv, mapobjects.ndbs, &mapobjects.ndbIds, xs, ys, ndb);
@@ -1061,7 +1061,7 @@ void Route::getNearestRecommended(const CoordinateConverter& conv, int xs, int y
 
         if(result.hasWaypoints())
         {
-          map::MapWaypoint waypoint = result.waypoints.first();
+          map::MapWaypoint waypoint = result.waypoints.constFirst();
           waypoint.routeIndex = i;
           waypoint.recommended = true;
           insertSortedByDistance(conv, mapobjects.waypoints, &mapobjects.waypointIds, xs, ys, waypoint);
@@ -1194,7 +1194,7 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
 bool Route::hasDepartureParking() const
 {
   if(hasValidDeparture())
-    return first().getDepartureParking().isValid();
+    return constFirst().getDepartureParking().isValid();
 
   return false;
 }
@@ -1202,7 +1202,7 @@ bool Route::hasDepartureParking() const
 bool Route::hasDepartureRunway() const
 {
   if(hasDepartureStart())
-    return !first().getDepartureStart().runwayName.isEmpty();
+    return !constFirst().getDepartureStart().runwayName.isEmpty();
 
   return false;
 }
@@ -1210,7 +1210,7 @@ bool Route::hasDepartureRunway() const
 bool Route::hasDepartureHelipad() const
 {
   if(hasDepartureStart())
-    return first().getDepartureStart().helipadNumber > 0;
+    return constFirst().getDepartureStart().helipadNumber > 0;
 
   return false;
 }
@@ -1218,7 +1218,7 @@ bool Route::hasDepartureHelipad() const
 bool Route::hasDepartureStart() const
 {
   if(hasValidDeparture())
-    return first().getDepartureStart().isValid();
+    return constFirst().getDepartureStart().isValid();
 
   return false;
 }
@@ -2158,7 +2158,7 @@ const RouteLeg& Route::getLegAt(int index) const
 
 bool Route::isAirportDeparture(const QString& ident) const
 {
-  return !isEmpty() && first().getAirport().isValid() && first().getAirport().ident == ident;
+  return !isEmpty() && constFirst().getAirport().isValid() && constFirst().getAirport().ident == ident;
 }
 
 bool Route::isAirportDestination(const QString& ident) const
@@ -2511,7 +2511,7 @@ void Route::createRouteLegsFromFlightplan()
                  << "region" << flightplan.at(i).getRegion() << "is not valid";
 
     append(leg);
-    lastLeg = &last();
+    lastLeg = &constLast();
   }
 }
 
@@ -2964,7 +2964,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
       const QList<map::MapRunway> *runways = NavApp::getAirportQuerySim()->
                                              getRunways(route.getDestinationAirportLeg().getId());
       if(runways != nullptr && !runways->isEmpty())
-        plan.getProperties().insert(atools::fs::pln::APPROACHRW, runways->last().primaryName);
+        plan.getProperties().insert(atools::fs::pln::APPROACHRW, runways->constLast().primaryName);
     }
   }
 
@@ -3072,7 +3072,7 @@ bool Route::hasValidParking() const
 {
   if(hasValidDeparture())
   {
-    const QList<map::MapParking> *parkingCache = NavApp::getAirportQuerySim()->getParkingsForAirport(first().getId());
+    const QList<map::MapParking> *parkingCache = NavApp::getAirportQuerySim()->getParkingsForAirport(constFirst().getId());
 
     if(!parkingCache->isEmpty())
       return hasDepartureParking() || hasDepartureHelipad();
@@ -3167,10 +3167,10 @@ int Route::getAdjustedAltitude(int newAltitude) const
 {
   if(getSizeWithoutAlternates() > 1)
   {
-    const Pos& departurePos = first().getPosition();
+    const Pos& departurePos = constFirst().getPosition();
     const Pos& destinationPos = getDestinationAirportLeg().getPosition();
 
-    float magvar = (first().getMagvar() + getDestinationAirportLeg().getMagVarBySettings()) / 2;
+    float magvar = (constFirst().getMagvar() + getDestinationAirportLeg().getMagVarBySettings()) / 2;
 
     float fpDir = atools::geo::normalizeCourse(departurePos.angleDegToRhumb(destinationPos) - magvar);
 

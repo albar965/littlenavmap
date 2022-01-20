@@ -333,7 +333,7 @@ void MapContextMenu::insertMenuOrAction(QMenu& menu, mc::MenuActionType actionTy
     insertAction(menu, actionType, text, tip, key, icon, nullptr, false, allowNoMapObject, callback);
   else if(index.size() == 1)
     // Insert a single menu item with text
-    insertAction(menu, actionType, text, tip, key, icon, index.first(), false, allowNoMapObject, callback);
+    insertAction(menu, actionType, text, tip, key, icon, index.constFirst(), false, allowNoMapObject, callback);
   else
   {
     QString subText = text.arg(QString());

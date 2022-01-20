@@ -330,8 +330,8 @@ void LogdataDialog::airportUpdated(QLineEdit *lineEdit, QLabel *label)
 
     if(!airports.isEmpty())
       label->setText(tr("%1,   elevation %2%3").
-                     arg(airports.first().name).
-                     arg(Unit::altFeet(airports.first().position.getAltitude())).
+                     arg(airports.constFirst().name).
+                     arg(Unit::altFeet(airports.constFirst().position.getAltitude())).
                      arg(airports.size() > 1 ? tr(" (more found)") : QString()));
     else
       label->setText(atools::util::HtmlBuilder::errorMessage(tr("No airport found.").arg(ident)));
@@ -584,7 +584,7 @@ void LogdataDialog::setAirport(const QString& ident, const QString& prefix, bool
 
   if(!airports.isEmpty())
   {
-    const map::MapAirport& ap = airports.first();
+    const map::MapAirport& ap = airports.constFirst();
     record->setValue(prefix + "_lonx", ap.position.getLonX());
     record->setValue(prefix + "_laty", ap.position.getLatY());
     record->setValue(prefix + "_alt", ap.position.getAltitude());

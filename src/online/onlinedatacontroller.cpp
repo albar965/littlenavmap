@@ -636,7 +636,7 @@ bool OnlinedataController::getShadowAircraft(atools::fs::sc::SimConnectAircraft&
 
     if(!clients.isEmpty())
     {
-      fillAircraftFromClient(onlineClient, clients.first());
+      fillAircraftFromClient(onlineClient, clients.constFirst());
 
       // Update to real simulator position including altitude for shadows
       onlineClient.getPosition() = simAircraft.getPosition();

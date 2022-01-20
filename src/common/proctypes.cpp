@@ -872,11 +872,11 @@ QStringList procedureLegRecommended(const MapProcedureLeg& leg)
     related.append(leg.recFixIdent);
 
     if(leg.recNavaids.hasIls())
-      related.append(leg.recNavaids.ils.first().freqMHzOrChannelLocale() % QObject::tr(" MHz"));
+      related.append(leg.recNavaids.ils.constFirst().freqMHzOrChannelLocale() % QObject::tr(" MHz"));
 
     if(leg.recNavaids.hasVor())
     {
-      const map::MapVor& vor = leg.recNavaids.vors.first();
+      const map::MapVor& vor = leg.recNavaids.vors.constFirst();
       if(vor.tacan)
         related.append(vor.channel);
       else
@@ -884,7 +884,7 @@ QStringList procedureLegRecommended(const MapProcedureLeg& leg)
     }
 
     if(leg.recNavaids.hasNdb())
-      related.append(QLocale().toString(leg.recNavaids.ndbs.first().frequency / 100., 'f', 1) % QObject::tr(" kHz"));
+      related.append(QLocale().toString(leg.recNavaids.ndbs.constFirst().frequency / 100., 'f', 1) % QObject::tr(" kHz"));
 
     if(leg.rho > 0.f && leg.rho < map::INVALID_DISTANCE_VALUE)
     {

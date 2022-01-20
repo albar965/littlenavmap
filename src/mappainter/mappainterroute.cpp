@@ -254,7 +254,7 @@ void MapPainterRoute::paintRecommended()
         const map::MapResult& recNavaids = routeLeg.getProcedureLeg().recNavaids;
         if(recNavaids.hasWaypoints())
         {
-          const map::MapWaypoint& wp = recNavaids.waypoints.first();
+          const map::MapWaypoint& wp = recNavaids.waypoints.constFirst();
 
           // Do not draw related if it was drawn already as a part of a procedure
           if(!routeProcIdMap.contains(wp.getRef()))
@@ -270,7 +270,7 @@ void MapPainterRoute::paintRecommended()
 
         if(recNavaids.hasVor())
         {
-          const map::MapVor& vor = recNavaids.vors.first();
+          const map::MapVor& vor = recNavaids.vors.constFirst();
 
           // Do not draw related if it was drawn already as a part of a procedure
           if(!routeProcIdMap.contains(vor.getRef()))
@@ -286,7 +286,7 @@ void MapPainterRoute::paintRecommended()
 
         if(recNavaids.hasNdb())
         {
-          const map::MapNdb& ndb = recNavaids.ndbs.first();
+          const map::MapNdb& ndb = recNavaids.ndbs.constFirst();
 
           // Do not draw related if it was drawn already as a part of a procedure
           if(!routeProcIdMap.contains(ndb.getRef()))
@@ -832,8 +832,8 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
       // QLineF simpleLine(lastLine.p2(), line.p1());
       if(draw)
       {
-        if(!lastLines.last().p2().isNull() && !line.p1().isNull())
-          drawLine(painter, lastLines.last().p2(), line.p1());
+        if(!lastLines.constLast().p2().isNull() && !line.p1().isNull())
+          drawLine(painter, lastLines.constLast().p2(), line.p1());
         if(!line.isNull())
           drawLine(painter, line);
       }
@@ -905,8 +905,8 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
 #endif
       prevLeg != nullptr /*&& !prevLeg->isInitialFix() && prevLeg->type != proc::START_OF_PROCEDURE*/)
     {
-      float lineDist = static_cast<float>(QLineF(lastLines.last().p2(), line.p1()).length());
-      if(!lastLines.last().p2().isNull() && lineDist > 2.f)
+      float lineDist = static_cast<float>(QLineF(lastLines.constLast().p2(), line.p1()).length());
+      if(!lastLines.constLast().p2().isNull() && lineDist > 2.f)
       {
         // Lines are not connected which can happen if a CF follows after a FD or similar
         paintProcedureBow(prevLeg, lastLines, painter, line, leg, interceptPoint, draw);
@@ -963,11 +963,11 @@ void MapPainterRoute::paintProcedureSegment(const proc::MapProcedureLegs& legs,
       {
         if(draw)
         {
-          if(!lastLines.last().p2().isNull() && QLineF(lastLines.last().p2(), line.p1()).length() > 2)
+          if(!lastLines.constLast().p2().isNull() && QLineF(lastLines.constLast().p2(), line.p1()).length() > 2)
           {
             if(!(prevLeg != nullptr && (prevLeg->isCircleToLand() || prevLeg->isStraightIn()) && leg.isMissed()))
               // Close any gaps in the lines but not for circle-to-land legs
-              drawLine(painter, lastLines.last().p2(), line.p1());
+              drawLine(painter, lastLines.constLast().p2(), line.p1());
           }
 
           drawLine(painter, line);
@@ -1108,16 +1108,16 @@ void MapPainterRoute::paintProcedureBow(const proc::MapProcedureLeg *prevLeg, QV
       lastP1 = wToS(prevLeg->geometry.at(prevLeg->geometry.size() - 2), DEFAULT_WTOS_SIZE, &visible, &hidden);
       if(hidden)
         // Ignore calculated point behind globe
-        lastP1 = lastLines.last().p1();
+        lastP1 = lastLines.constLast().p1();
       else
         prevCircle = true;
 
-      lastP2 = lastLines.last().p2();
+      lastP2 = lastLines.constLast().p2();
     }
     else
     {
-      lastP1 = lastLines.last().p1();
-      lastP2 = lastLines.last().p2();
+      lastP1 = lastLines.constLast().p1();
+      lastP2 = lastLines.constLast().p2();
     }
   }
 
@@ -1195,7 +1195,7 @@ QLineF MapPainterRoute::paintProcedureTurn(QVector<QLineF>& lastLines, QLineF li
   if(leg.interceptPos.isValid())
     endPos = intersectPoint;
 
-  const QLineF& lastLine = lastLines.last();
+  const QLineF& lastLine = lastLines.constLast();
 
   // The returned value represents the number of degrees you need to add to this
   // line to make it have the same angle as the given line, going counter-clockwise.
@@ -1530,12 +1530,12 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   const map::MapResult& navaids = leg.navaids;
   int symbolSize = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
 
-  if(!navaids.waypoints.isEmpty() && wToSBuf(navaids.waypoints.first().position, x, y, margins))
+  if(!navaids.waypoints.isEmpty() && wToSBuf(navaids.waypoints.constFirst().position, x, y, margins))
   {
     if(drawUnderlay)
       paintProcedureUnderlay(leg, x, y, symbolSize);
 
-    const map::MapWaypoint& wp = navaids.waypoints.first();
+    const map::MapWaypoint& wp = navaids.waypoints.constFirst();
     if(!routeProcIdMap.contains(wp.getRef()))
     {
       routeProcIdMap.insert(wp.getRef());
@@ -1545,12 +1545,12 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     if(drawText)
       paintWaypointText(x, y, wp, drawTextDetails, true /* draw as route */, &texts);
   }
-  else if(!navaids.vors.isEmpty() && wToSBuf(navaids.vors.first().position, x, y, margins))
+  else if(!navaids.vors.isEmpty() && wToSBuf(navaids.vors.constFirst().position, x, y, margins))
   {
     if(drawUnderlay)
       paintProcedureUnderlay(leg, x, y, symbolSize);
 
-    const map::MapVor& vor = navaids.vors.first();
+    const map::MapVor& vor = navaids.vors.constFirst();
     if(!routeProcIdMap.contains(vor.getRef()))
     {
       routeProcIdMap.insert(vor.getRef());
@@ -1561,13 +1561,13 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     if(drawText)
       paintVorText(x, y, vor, drawTextDetails, true /* draw as route */, &texts);
   }
-  else if(!navaids.ndbs.isEmpty() && wToSBuf(navaids.ndbs.first().position, x, y, margins))
+  else if(!navaids.ndbs.isEmpty() && wToSBuf(navaids.ndbs.constFirst().position, x, y, margins))
   {
     symbolSize = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getNdbSymbolSize());
     if(drawUnderlay)
       paintProcedureUnderlay(leg, x, y, symbolSize);
 
-    const map::MapNdb& ndb = navaids.ndbs.first();
+    const map::MapNdb& ndb = navaids.ndbs.constFirst();
     if(!routeProcIdMap.contains(ndb.getRef()))
     {
       routeProcIdMap.insert(ndb.getRef());
@@ -1577,9 +1577,9 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     if(drawText)
       paintNdbText(x, y, ndb, drawTextDetails, true /* draw as route */, &texts);
   }
-  else if(!navaids.ils.isEmpty() && wToSBuf(navaids.ils.first().position, x, y, margins))
+  else if(!navaids.ils.isEmpty() && wToSBuf(navaids.ils.constFirst().position, x, y, margins))
   {
-    const map::MapIls& ils = navaids.ils.first();
+    const map::MapIls& ils = navaids.ils.constFirst();
     if(!routeProcIdMap.contains(ils.getRef()))
     {
       routeProcIdMap.insert(ils.getRef());
@@ -1592,7 +1592,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     if(drawText)
       paintText(mapcolors::routeProcedurePointColor, x, y, drawTextDetails, texts, true /* draw as route */);
   }
-  else if(!navaids.runwayEnds.isEmpty() && wToSBuf(navaids.runwayEnds.first().position, x, y, margins))
+  else if(!navaids.runwayEnds.isEmpty() && wToSBuf(navaids.runwayEnds.constFirst().position, x, y, margins))
   {
     texts.prepend(leg.fixIdent);
     if(drawUnderlay)
@@ -1818,7 +1818,7 @@ void MapPainterRoute::paintText(const QColor& color, float x, float y, bool draw
       else
       {
         // Truncate long texts like "intercept ..." and add ellipsis to ignore additional texts
-        texts.first() = texts.first().mid(0, 5) % (tr("…", "Dots used indicate additional text in map"));
+        texts.first() = texts.constFirst().mid(0, 5) % (tr("…", "Dots used indicate additional text in map"));
         texts = texts.mid(0, 1);
       }
     }

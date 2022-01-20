@@ -719,7 +719,7 @@ void MapTypesFactory::fillParking(const SqlRecord& record, map::MapParking& park
     if(!textsShort.isEmpty())
     {
       // Use first character and last numbers
-      textsShort.prepend(texts.first().at(0));
+      textsShort.prepend(texts.constFirst().at(0));
       parking.nameShort = textsShort.join(" ");
     }
   }

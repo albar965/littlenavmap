@@ -1356,7 +1356,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
         routePlan.setDepartureName(flightplan.getDepartureName());
         routePlan.setDepartureIdent(flightplan.getDepartureIdent());
         routePlan.setDeparturePosition(flightplan.getDeparturePosition(),
-                                       flightplan.getEntries().first().getPosition().getAltitude());
+                                       flightplan.getEntries().constFirst().getPosition().getAltitude());
         routePlan.setDepartureParkingPosition(flightplan.getDepartureParkingPosition(),
                                               flightplan.getDepartureParkingPosition().getAltitude(),
                                               flightplan.getDepartureParkingHeading());
@@ -1484,7 +1484,7 @@ Route RouteController::getRouteForSelection() const
 {
   QList<int> rows = getSelectedRows(false /* reverse */);
   Route saveRoute(route);
-  saveRoute.removeAllExceptRange(rows.first(), rows.last());
+  saveRoute.removeAllExceptRange(rows.constFirst(), rows.constLast());
   saveRoute.updateIndicesAndOffsets();
   saveRoute.getFlightplan().adjustDepartureAndDestination(true /* force */); // Fill departure and destination fields
   return saveRoute;
@@ -1495,7 +1495,7 @@ bool RouteController::saveFlightplanLnmAsSelection(const QString& filename)
   // Range must not contains procedures or alternates.
   QList<int> rows = getSelectedRows(false /* reverse */);
   qDebug() << Q_FUNC_INFO << filename << rows;
-  return saveFlightplanLnmSelectionAs(filename, rows.first(), rows.last());
+  return saveFlightplanLnmSelectionAs(filename, rows.constFirst(), rows.constLast());
 }
 
 bool RouteController::saveFlightplanLnm()
@@ -2040,8 +2040,8 @@ void RouteController::reverseRoute()
   flightplan.setDestinationIdent(depIdent);
 
   // Overwrite parking position with airport position
-  flightplan.setDeparturePosition(entries.first().getPosition());
-  flightplan.setDepartureParkingPosition(entries.first().getPosition(),
+  flightplan.setDeparturePosition(entries.constFirst().getPosition());
+  flightplan.setDepartureParkingPosition(entries.constFirst().getPosition(),
                                          atools::fs::pln::INVALID_ALTITUDE, atools::fs::pln::INVALID_HEADING);
   flightplan.setDepartureParkingName(QString());
   flightplan.setDepartureParkingType(atools::fs::pln::NO_POS);
@@ -2097,7 +2097,7 @@ void RouteController::postDatabaseLoad()
   // Update runway or parking if one of these has changed due to the database switch
   Flightplan& flightplan = route.getFlightplan();
   if(!flightplan.getEntries().isEmpty() &&
-     flightplan.getEntries().first().getWaypointType() == atools::fs::pln::entry::AIRPORT &&
+     flightplan.getEntries().constFirst().getWaypointType() == atools::fs::pln::entry::AIRPORT &&
      flightplan.getDepartureParkingName().isEmpty())
     updateStartPositionBestRunway(false /* force */, false /* undo */);
 
@@ -2177,14 +2177,14 @@ void RouteController::updateMoveAndDeleteActions()
       containsAlternate |= route.value(row).isAlternate();
     }
 
-    moveUpTouchesProc = rows.first() > 0 && route.value(rows.first() - 1).isAnyProcedure();
-    moveDownTouchesProc = rows.last() < route.size() - 1 && route.value(rows.last() + 1).isAnyProcedure();
+    moveUpTouchesProc = rows.constFirst() > 0 && route.value(rows.constFirst() - 1).isAnyProcedure();
+    moveDownTouchesProc = rows.constLast() < route.size() - 1 && route.value(rows.constLast() + 1).isAnyProcedure();
 
-    moveUpTouchesAlt = rows.first() > 0 && route.value(rows.first() - 1).isAlternate();
-    moveDownTouchesAlt = rows.last() < route.size() - 1 && route.value(rows.last() + 1).isAlternate();
+    moveUpTouchesAlt = rows.constFirst() > 0 && route.value(rows.constFirst() - 1).isAlternate();
+    moveDownTouchesAlt = rows.constLast() < route.size() - 1 && route.value(rows.constLast() + 1).isAlternate();
 
-    moveUpLeavesAlt = rows.first() > 0 && !route.value(rows.first() - 1).isAlternate();
-    moveDownLeavesAlt = rows.last() >= route.size() - 1 || !route.value(rows.last() + 1).isAlternate();
+    moveUpLeavesAlt = rows.constFirst() > 0 && !route.value(rows.constFirst() - 1).isAlternate();
+    moveDownLeavesAlt = rows.constLast() >= route.size() - 1 || !route.value(rows.constLast() + 1).isAlternate();
 
     if(rows.size() == 1 && containsAlternate)
     {
@@ -2341,7 +2341,7 @@ void RouteController::visibleColumnsTriggered()
 void RouteController::activateLegTriggered()
 {
   if(hasTableSelection())
-    activateLegManually(selectedRows.first());
+    activateLegManually(selectedRows.constFirst());
 }
 
 void RouteController::helpClicked()
@@ -2358,7 +2358,7 @@ bool RouteController::canCalcSelection()
 {
   // Check if selected rows contain a procedure or if a procedure is between first and last selection
   if(selectedRows.size() > 1)
-    return route.canCalcSelection(selectedRows.first(), selectedRows.last());
+    return route.canCalcSelection(selectedRows.constFirst(), selectedRows.constLast());
 
   return false;
 }
@@ -2367,7 +2367,7 @@ bool RouteController::canSaveSelection()
 {
   // Check if selected rows contain a procedure or if a procedure is between first and last selection
   if(selectedRows.size() > 1)
-    return route.canSaveSelection(selectedRows.first(), selectedRows.last());
+    return route.canSaveSelection(selectedRows.constFirst(), selectedRows.constLast());
 
   return false;
 }
@@ -2407,7 +2407,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
     // Fall back to selction and get first field there
     QList<int> rows = atools::gui::selectedRows(view->selectionModel(), false /* reverse */);
     if(!rows.isEmpty())
-      index = model->index(rows.first(), 0);
+      index = model->index(rows.constFirst(), 0);
     else
       // Get current position
       index = view->currentIndex();
@@ -3160,8 +3160,8 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
       model->insertRow(row + direction, model->takeRow(row));
     }
 
-    int firstRow = rows.first();
-    int lastRow = rows.last();
+    int firstRow = rows.constFirst();
+    int lastRow = rows.constLast();
 
     bool forceDeparturePosition = false;
     if(direction == MOVE_DOWN)
@@ -3242,7 +3242,7 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
       procs & proc::PROCEDURE_ALL ? tr("Delete Procedure") : tr("Delete Waypoints"),
       procs & proc::PROCEDURE_ALL ? rctype::EDIT : rctype::DELETE);
 
-    int firstRow = rows.last();
+    int firstRow = rows.constLast();
 
     if(view->selectionModel() != nullptr)
       view->selectionModel()->clear();
@@ -3496,7 +3496,7 @@ void RouteController::routeSetDepartureInternal(const map::MapAirport& airport)
   if(route.getSizeWithoutAlternates() > 1)
   {
     // Replace current departure
-    const FlightplanEntry& first = flightplan.getEntries().first();
+    const FlightplanEntry& first = flightplan.getEntries().constFirst();
     if(first.getWaypointType() == pln::entry::AIRPORT &&
        flightplan.getDepartureIdent() == first.getIdent())
     {

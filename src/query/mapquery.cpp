@@ -1182,8 +1182,8 @@ void MapQuery::runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const 
 #endif
   }
 #ifdef DEBUG_INFORMATION
-  else if(result.runwayEnds.first().name != name)
-    qWarning() << "Found runway" << result.runwayEnds.first().name
+  else if(result.runwayEnds.constFirst().name != name)
+    qWarning() << "Found runway" << result.runwayEnds.constFirst().name
                << "as replacement for" << name << "airport" << airport.ident;
 #endif
 

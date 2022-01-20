@@ -61,7 +61,7 @@ void AirspaceToolBarHandler::updateAirspaceToolButtons()
                                             airspaceToolButtonFilters.at(i).flags & filter.flags);
     else
       // Depress button if the first is not selected in groups
-      airspaceToolButtons.at(i)->setChecked(!airspaceToolGroups.at(i)->actions().first()->isChecked());
+      airspaceToolButtons.at(i)->setChecked(!airspaceToolGroups.at(i)->actions().constFirst()->isChecked());
 
     // Enable button if any airspace type is enabled
     airspaceToolButtons.at(i)->setEnabled((airspaceAction->isChecked() && hasAirspaces));

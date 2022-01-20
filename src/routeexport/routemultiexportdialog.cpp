@@ -783,7 +783,7 @@ QModelIndex RouteMultiExportDialog::selectedIndex()
   QItemSelectionModel *selectionModel = ui->tableViewRouteExport->selectionModel();
   if(selectionModel != nullptr && selectionModel->hasSelection())
   {
-    QModelIndex index = selectionModel->selectedIndexes().first();
+    QModelIndex index = selectionModel->selectedIndexes().constFirst();
     return proxyModel->mapToSource(index);
   }
   return QModelIndex();

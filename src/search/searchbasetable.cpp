@@ -974,7 +974,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     // Fall back to selction and get first field there
     QList<int> selectedRows = controller->getSelectedRows(false /* reverse */);
     if(!selectedRows.isEmpty())
-      index = controller->getModelIndexFor(selectedRows.first(), 0);
+      index = controller->getModelIndexFor(selectedRows.constFirst(), 0);
     else
       // Get current position
       index = controller->getCurrentIndex();
@@ -1026,11 +1026,11 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
                                                     result.getRegion(msaTypeList), QString(), result.getPosition(msaTypeList));
 
     objectText = result.objectText(mapObjType, NAVAID_NAMES_ELIDE);
-    if((result.hasVor() && result.vors.first().range > 0) || (result.hasNdb() && result.ndbs.first().range > 0))
+    if((result.hasVor() && result.vors.constFirst().range > 0) || (result.hasNdb() && result.ndbs.constFirst().range > 0))
       navaidRangeText = objectText;
 
     if(mapObjType == map::AIRPORT && result.hasAirports())
-      airport = result.airports.first();
+      airport = result.airports.constFirst();
     else if(mapObjType == map::LOGBOOK)
     {
       // Prepare airport for menu items in logbook
@@ -1046,7 +1046,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 
       if(!airports.isEmpty())
       {
-        airport = airports.first();
+        airport = airports.constFirst();
         logAirport = true;
       }
       else
@@ -1588,7 +1588,7 @@ map::MapAirport SearchBaseTable::currentAirport()
   QModelIndex index = view->currentIndex();
   if(!rows.isEmpty())
     // Get topmost airport from selection
-    row = rows.first();
+    row = rows.constFirst();
   else if(index.isValid())
     // ... otherwise get current at cursor position
     row = index.row();
@@ -1723,42 +1723,42 @@ void SearchBaseTable::showOnMapTriggered()
 
       if(!result.airports.isEmpty())
       {
-        emit showRect(result.airports.first().bounding, false);
+        emit showRect(result.airports.constFirst().bounding, false);
         NavApp::setStatusMessage(tr("Showing airport on map."));
       }
       else if(!result.airspaces.isEmpty())
       {
-        emit showRect(result.airspaces.first().bounding, false);
+        emit showRect(result.airspaces.constFirst().bounding, false);
         NavApp::setStatusMessage(tr("Showing airspace on map."));
       }
       else if(!result.vors.isEmpty())
       {
-        emit showPos(result.vors.first().getPosition(), 0.f, false);
+        emit showPos(result.vors.constFirst().getPosition(), 0.f, false);
         NavApp::setStatusMessage(tr("Showing VOR on map."));
       }
       else if(!result.ndbs.isEmpty())
       {
-        emit showPos(result.ndbs.first().getPosition(), 0.f, false);
+        emit showPos(result.ndbs.constFirst().getPosition(), 0.f, false);
         NavApp::setStatusMessage(tr("Showing NDB on map."));
       }
       else if(!result.waypoints.isEmpty())
       {
-        emit showPos(result.waypoints.first().getPosition(), 0.f, false);
+        emit showPos(result.waypoints.constFirst().getPosition(), 0.f, false);
         NavApp::setStatusMessage(tr("Showing waypoint on map."));
       }
       else if(!result.userpoints.isEmpty())
       {
-        emit showPos(result.userpoints.first().getPosition(), 0.f, false);
+        emit showPos(result.userpoints.constFirst().getPosition(), 0.f, false);
         NavApp::setStatusMessage(tr("Showing userpoint on map."));
       }
       else if(!result.logbookEntries.isEmpty())
       {
-        emit showRect(result.logbookEntries.first().bounding(), false);
+        emit showRect(result.logbookEntries.constFirst().bounding(), false);
         NavApp::setStatusMessage(tr("Showing logbook entry on map."));
       }
       else if(!result.onlineAircraft.isEmpty())
       {
-        emit showPos(result.onlineAircraft.first().getPosition(), 0.f, false);
+        emit showPos(result.onlineAircraft.constFirst().getPosition(), 0.f, false);
         NavApp::setStatusMessage(tr("Showing online client/aircraft on map."));
       }
     }

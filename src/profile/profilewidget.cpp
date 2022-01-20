@@ -214,7 +214,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
           aircraftTrackPoints.append(currentPoint);
         else
         {
-          QLineF delta(aircraftTrackPoints.last(), currentPoint);
+          QLineF delta(aircraftTrackPoints.constLast(), currentPoint);
 
           if(std::abs(delta.dx()) > 0.1 /* NM */ || std::abs(delta.dy()) > 50. /* ft */)
             aircraftTrackPoints.append(currentPoint);
@@ -349,7 +349,7 @@ void ProfileWidget::updateScreenCoords()
     qDebug() << Q_FUNC_INFO << num << leg.ident << "leg.elevation" << leg.elevation;
 #endif
 
-    waypointX.append(left + static_cast<int>(leg.distances.first() * horizontalScale));
+    waypointX.append(left + static_cast<int>(leg.distances.constFirst() * horizontalScale));
 
     QPoint lastPt;
     for(int i = 0; i < leg.elevation.size(); i++)
@@ -443,7 +443,7 @@ QPolygon ProfileWidget::toScreen(const QPolygonF& leg) const
     QPoint pt = toScreen(point);
     if(retval.isEmpty())
       retval.append(pt);
-    else if((retval.last() - point).manhattanLength() > 3)
+    else if((retval.constLast() - point).manhattanLength() > 3)
       retval.append(pt);
   }
   return retval;
@@ -867,7 +867,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
           // Connect waypoint with restriction with a thin vertical line
           painter.setPen(thinLinePen);
-          painter.drawLine(QPoint(wpx, y1), altLegs.at(routeIndex).last());
+          painter.drawLine(QPoint(wpx, y1), altLegs.at(routeIndex).constLast());
 
           if(descr == proc::MapAltRestriction::AT_OR_ABOVE ||
              descr == proc::MapAltRestriction::AT)
@@ -1154,7 +1154,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       }
 
       // Symbols ========================================================
-      QPoint symPt(altLegs.at(waypointIndex).last());
+      QPoint symPt(altLegs.at(waypointIndex).constLast());
       if(!procSymbol)
       {
         // Draw all except airport, waypoint, VOR and NDB
@@ -1206,7 +1206,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       textsAndColorForLeg(texts, color, procSymbol, leg, !(leg.isAnyProcedure() && procedureLeg.interceptPos.isValid()));
 
       // Symbols ========================================================
-      QPoint symPt(altLegs.at(waypointIndex).last());
+      QPoint symPt(altLegs.at(waypointIndex).constLast());
       if(!procSymbol)
       {
         // Draw all except airport, VOR, NDB and userpoint
@@ -1249,7 +1249,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       textsAndColorForLeg(texts, color, procSymbol, leg, !(leg.isAnyProcedure() && procedureLeg.interceptPos.isValid()));
 
       // Symbols ========================================================
-      QPoint symPt(altLegs.at(waypointIndex).last());
+      QPoint symPt(altLegs.at(waypointIndex).constLast());
       if(!procSymbol)
       {
         // Draw all except airport, waypoint and userpoint
@@ -1282,7 +1282,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       waypointIndex--;
       if(altLegs.at(waypointIndex).isEmpty())
         continue;
-      QPoint symPt(altLegs.at(waypointIndex).last());
+      QPoint symPt(altLegs.at(waypointIndex).constLast());
 
       // Draw all airport except destination and departure
       if(leg.getMapObjectType() == map::AIRPORT && routeIndex > 0 && routeIndex < route.getDestinationAirportLegIndex())
@@ -1673,11 +1673,11 @@ bool ProfileWidget::fetchRouteElevations(atools::geo::LineString& elevations, co
   if(!elevations.isEmpty())
   {
     // Add start or end point if heightProfile omitted these - check only lat lon not alt
-    if(!elevations.first().almostEqual(geometry.first()))
-      elevations.prepend(Pos(geometry.first().getLonX(), geometry.first().getLatY(), elevations.first().getAltitude()));
+    if(!elevations.constFirst().almostEqual(geometry.constFirst()))
+      elevations.prepend(Pos(geometry.constFirst().getLonX(), geometry.constFirst().getLatY(), elevations.constFirst().getAltitude()));
 
-    if(!elevations.last().almostEqual(geometry.last()))
-      elevations.append(Pos(geometry.last().getLonX(), geometry.last().getLatY(), elevations.last().getAltitude()));
+    if(!elevations.constLast().almostEqual(geometry.constLast()))
+      elevations.append(Pos(geometry.constLast().getLonX(), geometry.constLast().getLatY(), elevations.constLast().getAltitude()));
   }
 
   return true;
@@ -1733,7 +1733,7 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
 
       geometry.removeInvalid();
       if(geometry.size() == 1)
-        geometry.append(geometry.first());
+        geometry.append(geometry.constFirst());
 
       // Includes first and last point
       LineString elevations;
@@ -1783,11 +1783,11 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
       float distanceTo = altLeg.getDistanceTo();
       totalDistanceNm += distanceTo;
 
-      double lastDist = leg.distances.last();
+      double lastDist = leg.distances.constLast();
       if(!leg.distances.isEmpty() && atools::almostNotEqual(lastDist, totalDistanceNm))
         // Accumulated distance is different from route total distance - adjust
         // This can happen with the online elevation provider which does not return all points exactly on the leg
-        scale = totalDistanceNm / leg.distances.last();
+        scale = totalDistanceNm / leg.distances.constLast();
     }
     else
     {
@@ -1847,8 +1847,8 @@ void ProfileWidget::calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& 
   // Get index for leg
   routeIndex = 0;
 
-  if(x > waypointX.last())
-    x = waypointX.last();
+  if(x > waypointX.constLast())
+    x = waypointX.constLast();
 
 #ifdef DEBUG_INFORMATION_PROFILE
   qDebug() << Q_FUNC_INFO << waypointX;
@@ -1899,8 +1899,8 @@ void ProfileWidget::calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& 
   maxElev = calcGroundBuffer(leg.maxElevation);
 
   // Get Position for highlight on map
-  float legdistpart = distance - static_cast<float>(leg.distances.first());
-  float legdist = static_cast<float>(leg.distances.last() - leg.distances.first());
+  float legdistpart = distance - static_cast<float>(leg.distances.constFirst());
+  float legdist = static_cast<float>(leg.distances.constLast() - leg.distances.constFirst());
 
   // Calculate position along the flight plan
   pos = leg.geometry.interpolate(legdistpart / legdist);

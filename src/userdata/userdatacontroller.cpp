@@ -322,7 +322,7 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
     SqlRecord prefillRec = manager->getEmptyRecord();
     if(result.hasAirports())
     {
-      const map::MapAirport& ap = result.airports.first();
+      const map::MapAirport& ap = result.airports.constFirst();
       prefillRec.appendFieldAndValue("ident", ap.displayIdent())
       .appendFieldAndValue("name", ap.name)
       .appendFieldAndValue("type", "Airport")
@@ -331,7 +331,7 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
     }
     else if(result.hasVor())
     {
-      const map::MapVor& vor = result.vors.first();
+      const map::MapVor& vor = result.vors.constFirst();
 
       // Determine default type
       QString type = "VOR";
@@ -354,7 +354,7 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
     }
     else if(result.hasNdb())
     {
-      const map::MapNdb& ndb = result.ndbs.first();
+      const map::MapNdb& ndb = result.ndbs.constFirst();
       prefillRec.appendFieldAndValue("ident", ndb.ident)
       .appendFieldAndValue("name", map::ndbText(ndb))
       .appendFieldAndValue("type", "NDB")
@@ -363,7 +363,7 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
     }
     else if(result.hasWaypoints())
     {
-      const map::MapWaypoint& wp = result.waypoints.first();
+      const map::MapWaypoint& wp = result.waypoints.constFirst();
       prefillRec.appendFieldAndValue("ident", wp.ident)
       .appendFieldAndValue("name", map::waypointText(wp))
       .appendFieldAndValue("type", "Waypoint")
@@ -372,7 +372,7 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
     }
     else if(result.hasUserpoints())
     {
-      const map::MapUserpoint& up = result.userpoints.first();
+      const map::MapUserpoint& up = result.userpoints.constFirst();
       prefillRec.appendFieldAndValue("ident", up.ident)
       .appendFieldAndValue("name", up.name)
       .appendFieldAndValue("type", up.type)
@@ -434,7 +434,7 @@ void UserdataController::setMagDecReader(atools::fs::common::MagDecReader *magDe
 void UserdataController::editUserpointFromMap(const map::MapResult& result)
 {
   qDebug() << Q_FUNC_INFO;
-  editUserpoints({result.userpoints.first().id});
+  editUserpoints({result.userpoints.constFirst().id});
 }
 
 void UserdataController::addUserpoint(int id, const atools::geo::Pos& pos)
@@ -509,7 +509,7 @@ void UserdataController::editUserpoints(const QVector<int>& ids)
 {
   qDebug() << Q_FUNC_INFO;
 
-  SqlRecord rec = manager->getRecord(ids.first());
+  SqlRecord rec = manager->getRecord(ids.constFirst());
   if(!rec.isEmpty())
   {
     UserdataDialog dlg(mainWindow, ids.size() > 1 ? ud::EDIT_MULTIPLE : ud::EDIT_ONE, icons);

@@ -303,7 +303,7 @@ void MapPainterNav::paintAirways(const QList<MapAirway> *airways, bool fast)
 
     for(Place& place: textlist)
     {
-      const MapAirway& airway = airways->at(place.airwayIndexByText.first());
+      const MapAirway& airway = airways->at(place.airwayIndexByText.constFirst());
       int xt = -1, yt = -1;
       float textBearing;
 

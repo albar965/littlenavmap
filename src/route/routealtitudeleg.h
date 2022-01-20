@@ -85,7 +85,7 @@ public:
   /* Position of the waypoint of this leg. x = distance from start and y = altitude */
   QPointF asPoint() const
   {
-    return geometry.isEmpty() ? QPointF() : geometry.last();
+    return geometry.isEmpty() ? QPointF() : geometry.constLast();
   }
 
   /* true if this leg should be drawn as a procedure leg. Does not neccesarily mean
@@ -122,7 +122,7 @@ public:
 
   float getWaypointAltitude() const
   {
-    return geometry.isEmpty() ? map::INVALID_ALTITUDE_VALUE : geometry.last().y();
+    return geometry.isEmpty() ? map::INVALID_ALTITUDE_VALUE : geometry.constLast().y();
   }
 
   bool isTopOfClimb() const
@@ -211,13 +211,13 @@ private:
   /* Waypoint of last leg - altitude */
   float y1() const
   {
-    return geometry.isEmpty() ? 0.f : static_cast<float>(geometry.first().y());
+    return geometry.isEmpty() ? 0.f : static_cast<float>(geometry.constFirst().y());
   }
 
   /* Waypoint of last leg - distance from start */
   float x1() const
   {
-    return geometry.isEmpty() ? 0.f : static_cast<float>(geometry.first().x());
+    return geometry.isEmpty() ? 0.f : static_cast<float>(geometry.constFirst().x());
   }
 
   void setY1(float y);
@@ -225,23 +225,23 @@ private:
   /* Waypoint of this leg - altitude */
   float y2() const
   {
-    return geometry.isEmpty() ? 0.f : static_cast<float>(geometry.last().y());
+    return geometry.isEmpty() ? 0.f : static_cast<float>(geometry.constLast().y());
   }
 
   /* Waypoint of this leg - distance from start */
   float x2() const
   {
-    return geometry.isEmpty() ? 0.f : static_cast<float>(geometry.last().x());
+    return geometry.isEmpty() ? 0.f : static_cast<float>(geometry.constLast().x());
   }
 
   QPointF pt1() const
   {
-    return geometry.isEmpty() ? QPointF() : geometry.first();
+    return geometry.isEmpty() ? QPointF() : geometry.constFirst();
   }
 
   QPointF pt2() const
   {
-    return geometry.isEmpty() ? QPointF() : geometry.last();
+    return geometry.isEmpty() ? QPointF() : geometry.constLast();
   }
 
   /* Sets all if leg is a point */

@@ -119,7 +119,7 @@ void ElevationProvider::getElevations(atools::geo::LineString& elevations, const
 
       if(!elevations.isEmpty())
       {
-        if(atools::almostEqual(elevations.last().getAltitude(), pos.getAltitude(), SAME_ONLINE_ELEVATION_EPSILON))
+        if(atools::almostEqual(elevations.constLast().getAltitude(), pos.getAltitude(), SAME_ONLINE_ELEVATION_EPSILON))
         {
           // Drop points with similar altitude
           lastDropped = pos;

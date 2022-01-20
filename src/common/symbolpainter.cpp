@@ -598,7 +598,7 @@ void SymbolPainter::drawBarbFeathers(QPainter *painter, const QVector<int>& barb
                                      float barbLength10, float barbLength50, float barbStep) const
 {
   // Lenghten the line for the rectangle
-  float barbPos = barbs.first() == 50 ? -lineLength + barbLength50 / 2.f : -lineLength;
+  float barbPos = barbs.constFirst() == 50 ? -lineLength + barbLength50 / 2.f : -lineLength;
   for(int barb : barbs)
   {
     if(barb == 50)
@@ -1140,7 +1140,7 @@ void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float
     {
       if(!texts.isEmpty())
         // Ingore additional texts and add ellipsis
-        texts.first() = texts.first() % tr("…", "Dots used indicate additional text in map");
+        texts.first() = texts.constFirst() % tr("…", "Dots used indicate additional text in map");
     }
     else
       texts.append(*addtionalText);
@@ -1189,7 +1189,7 @@ void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, float
     {
       if(!texts.isEmpty())
         // Ingore additional texts and add ellipsis
-        texts.first() = texts.first() % tr("…", "Dots used indicate additional text in map");
+        texts.first() = texts.constFirst() % tr("…", "Dots used indicate additional text in map");
     }
     else
       texts.append(*addtionalText);
@@ -1224,7 +1224,7 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& 
     {
       if(!texts.isEmpty())
         // Ingore additional texts and add ellipsis
-        texts.first() = texts.first() % tr("…", "Dots used indicate additional text in map");
+        texts.first() = texts.constFirst() % tr("…", "Dots used indicate additional text in map");
     }
     else
       texts.append(*addtionalText);

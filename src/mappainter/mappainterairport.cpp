@@ -91,18 +91,18 @@ void MapPainterAirport::render()
   if(context->route->getDepartureAirportLeg().getAirport().isValid())
   {
     airports.append(context->route->getDepartureAirportLeg().getAirport());
-    routeAirportIds.insert(airports.last().id);
+    routeAirportIds.insert(airports.constLast().id);
   }
   if(context->route->getDestinationAirportLeg().getAirport().isValid())
   {
     airports.append(context->route->getDestinationAirportLeg().getAirport());
-    routeAirportIds.insert(airports.last().id);
+    routeAirportIds.insert(airports.constLast().id);
   }
   QVector<MapAirport> alternates = context->route->getAlternateAirports();
   for(const map::MapAirport& ap : alternates)
   {
     airports.append(ap);
-    routeAirportIds.insert(airports.last().id);
+    routeAirportIds.insert(airports.constLast().id);
   }
 
   // Merge flight plan airports with other visible airports
@@ -476,10 +476,10 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
 
         // Simplified text placement - take first, last and middle name for a path
         if(!paths.isEmpty())
-          pathsToLabel.append(paths.first());
+          pathsToLabel.append(paths.constFirst());
         if(paths.size() > 2)
           pathsToLabel.append(paths.at(paths.size() / 2));
-        pathsToLabel.append(paths.last());
+        pathsToLabel.append(paths.constLast());
 
         for(const MapTaxiPath& taxipath : pathsToLabel)
         {

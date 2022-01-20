@@ -47,7 +47,7 @@ enum RouteStringOption
   SKYVECTOR_COORDS = 1 << 13, /* Skyvector coordinate format */
   NO_FINAL_DCT = 1 << 14, /* omit last DCT for Flight Factor export */
 
-  ALTERNATES = 1 << 15, /* treat last airport as alternate */
+  ALTERNATES = 1 << 15, /* Write alternate at end of list */
 
   /* Reading options when converting string to flight plan ====================== */
   READ_ALTERNATES = 1 << 16, /* Read any consecutive list of airports at the end of the string as alternates */

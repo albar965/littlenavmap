@@ -692,7 +692,7 @@ void DatabaseManager::insertSimSwitchActions()
 
   if(actions.size() == 1)
     // Noting to select if there is only one option
-    actions.first()->setDisabled(true);
+    actions.constFirst()->setDisabled(true);
 
   QString file = buildDatabaseFileName(FsPaths::NAVIGRAPH);
 

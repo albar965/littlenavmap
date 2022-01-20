@@ -661,7 +661,7 @@ void MapPainterMark::paintAirwayList(const QList<map::MapAirway>& airwayList)
   // Collect all waypoints from airway list ===========================
   ageo::LineString linestring;
   if(!airwayList.isEmpty())
-    linestring.append(airwayList.first().from);
+    linestring.append(airwayList.constFirst().from);
   for(const map::MapAirway& airway : airwayList)
   {
     if(airway.isValid())
@@ -1044,7 +1044,7 @@ void MapPainterMark::paintCompassRose()
     for(float angle = 0.f; angle < 360.f; angle += 5)
     {
       endpoints.append(pos.endpoint(radiusMeter, magVar + angle));
-      endpointsScreen.append(wToSF(endpoints.last()));
+      endpointsScreen.append(wToSF(endpoints.constLast()));
     }
 
     // Draw tick marks ======================================================
