@@ -38,16 +38,6 @@
           <downloadPolicy usage="Browse" maximumConnections="2"/>
           <downloadPolicy usage="Bulk" maximumConnections="2"/>
         </texture>
-       <texture name="hillshading" expire="31536000">
-          <sourcedir format="PNG"> earth/hillshading </sourcedir>
-          <tileSize width="256" height="256"/>
-          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="17" mode="OpenStreetMap"/>
-          <projection name="Mercator"/>
-          <downloadUrl protocol="http" host="a.tiles.wmflabs.org" path="/hillshading/"/>
-          <downloadUrl protocol="http" host="b.tiles.wmflabs.org" path="/hillshading/"/>
-          <downloadUrl protocol="http" host="c.tiles.wmflabs.org" path="/hillshading/"/>
-          <blending name="AlphaBlending"/>
-        </texture>
         </layer>
     </map>
     <settings>
@@ -55,12 +45,6 @@
         <value>false</value>
         <available>true</available>
       </property>
-      <group name="Texture Layers">
-        <property name="hillshading">
-          <value>false</value>
-          <available>true</available>
-        </property>
-      </group>
     </settings>
   </document>
 </dgml>

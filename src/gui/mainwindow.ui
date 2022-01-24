@@ -420,7 +420,6 @@
     <addaction name="separator"/>
     <addaction name="actionMapShowGrid"/>
     <addaction name="actionMapShowCities"/>
-    <addaction name="actionMapShowHillshading"/>
     <addaction name="actionMapShowMinimumAltitude"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowAirportWeather"/>
@@ -5496,7 +5495,6 @@ relation to shown airport</string>
    <addaction name="separator"/>
    <addaction name="actionMapShowGrid"/>
    <addaction name="actionMapShowCities"/>
-   <addaction name="actionMapShowHillshading"/>
    <addaction name="actionMapShowMinimumAltitude"/>
    <addaction name="actionMapShowAirportWeather"/>
    <addaction name="actionMapShowSunShading"/>
@@ -8060,27 +8058,6 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+D</string>
-   </property>
-  </action>
-  <action name="actionMapShowHillshading">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/hillshading.svg</normaloff>:/littlenavmap/resources/icons/hillshading.svg</iconset>
-   </property>
-   <property name="text">
-    <string>Show &amp;Hillshading</string>
-   </property>
-   <property name="toolTip">
-    <string>Show hillshading on map</string>
-   </property>
-   <property name="statusTip">
-    <string>Show hillshading on map</string>
    </property>
   </action>
   <action name="actionAboutMarble">
