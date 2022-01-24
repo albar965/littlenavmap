@@ -3051,7 +3051,6 @@ void MapWidget::updateThemeUi(int index)
       case map::OPENSTREETMAP:
       case map::CARTOLIGHT:
       case map::CARTODARK:
-      case map::HUMANITARIAN:
         ui->actionMapShowCities->setEnabled(false);
         ui->actionMapShowSunShading->setEnabled(true);
         break;

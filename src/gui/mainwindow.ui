@@ -345,7 +345,6 @@
      <addaction name="actionMapThemeStamenTerrain"/>
      <addaction name="actionMapThemeCartoLight"/>
      <addaction name="actionMapThemeCartoDark"/>
-     <addaction name="actionMapThemeHumanitarian"/>
      <addaction name="separator"/>
      <addaction name="actionMapThemeSimple"/>
      <addaction name="actionMapThemePlain"/>
@@ -8694,23 +8693,6 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+2</string>
-   </property>
-  </action>
-  <action name="actionMapThemeHumanitarian">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>&amp;Humanitarian</string>
-   </property>
-   <property name="toolTip">
-    <string>Humanitarian online map theme</string>
-   </property>
-   <property name="statusTip">
-    <string>Humanitarian online map theme</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+Alt+6</string>
    </property>
   </action>
   <action name="actionMapThemePlain">

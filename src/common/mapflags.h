@@ -414,7 +414,6 @@ enum MapThemeComboIndex
   STAMENTERRAIN,
   CARTOLIGHT,
   CARTODARK,
-  HUMANITARIAN,
   SIMPLE, // political
   PLAIN,
   ATLAS, // srtm
@@ -425,7 +424,7 @@ enum MapThemeComboIndex
 /* All known map theme names =========================================== */
 static const QStringList STOCK_MAP_THEMES({
     // Slippy maps - online maps
-    "openstreetmap", "opentopomap", "stamenterrain", "cartolight", "cartodark", "humanitarian",
+    "openstreetmap", "opentopomap", "stamenterrain", "cartolight", "cartodark",
     // Included offline maps
     "political", "plain", "srtm",
     // Other background services
