@@ -201,12 +201,6 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other)
   mapDetailLevel = other.mapDetailLevel;
   avoidBlurredMap = other.avoidBlurredMap;
 
-  if(hillshading != other.hillshading)
-  {
-    hillshading = other.hillshading;
-    setPropertyValue("hillshading", hillshading);
-  }
-
   if(size() != other.size())
     resize(other.size());
 }

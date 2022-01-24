@@ -502,9 +502,6 @@ protected:
   /* Defines amount of objects and other attributes on the map. min 5, max 15, default 10. */
   int mapDetailLevel;
 
-  /* Need to maintain this parallel since Marble has no method to read properties */
-  bool hillshading = false;
-
   MapPaintLayer *paintLayer;
 
   /* Do not draw while database is unavailable */

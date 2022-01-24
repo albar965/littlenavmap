@@ -2977,7 +2977,7 @@ void MapWidget::resetSettingActionsToDefault()
                                       ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach, ui->actionMapShowEndurance,
                                       ui->actionMapShowSelectedAltRange, ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi,
                                       ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
-                                      ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowHillshading,
+                                      ui->actionMapShowGrid, ui->actionMapShowCities,
                                       ui->actionMapShowMinimumAltitude, ui->actionMapShowAirportWeather, ui->actionMapShowSunShading});
 
   // Menu map =====================================
@@ -3020,7 +3020,6 @@ void MapWidget::resetSettingActionsToDefault()
   // -----------------
   ui->actionMapShowGrid->setChecked(true);
   ui->actionMapShowCities->setChecked(true);
-  ui->actionMapShowHillshading->setChecked(true);
   ui->actionMapShowMinimumAltitude->setChecked(true);
 
   // -----------------
@@ -3040,7 +3039,6 @@ void MapWidget::updateThemeUi(int index)
   {
     // Enable all buttons for custom maps
     ui->actionMapShowCities->setEnabled(true);
-    ui->actionMapShowHillshading->setEnabled(true);
     ui->actionMapShowSunShading->setEnabled(true);
   }
   else
@@ -3050,17 +3048,11 @@ void MapWidget::updateThemeUi(int index)
     {
       case map::STAMENTERRAIN:
       case map::OPENTOPOMAP:
-        ui->actionMapShowCities->setEnabled(false);
-        ui->actionMapShowHillshading->setEnabled(false);
-        ui->actionMapShowSunShading->setEnabled(true);
-        break;
-
       case map::OPENSTREETMAP:
       case map::CARTOLIGHT:
       case map::CARTODARK:
       case map::HUMANITARIAN:
         ui->actionMapShowCities->setEnabled(false);
-        ui->actionMapShowHillshading->setEnabled(true);
         ui->actionMapShowSunShading->setEnabled(true);
         break;
 
@@ -3068,7 +3060,6 @@ void MapWidget::updateThemeUi(int index)
       case map::PLAIN:
       case map::ATLAS:
         ui->actionMapShowCities->setEnabled(true);
-        ui->actionMapShowHillshading->setEnabled(false);
         ui->actionMapShowSunShading->setEnabled(false);
         break;
 
@@ -3119,10 +3110,6 @@ void MapWidget::updateMapObjectsShown()
   // Other map features ====================================================
   setShowMapPois(ui->actionMapShowCities->isEnabled() && ui->actionMapShowCities->isChecked());
   setShowGrid(ui->actionMapShowGrid->isChecked());
-
-  // Need to keep track of hillshading separately since Marble has no getter
-  hillshading = ui->actionMapShowHillshading->isEnabled() && ui->actionMapShowHillshading->isChecked();
-  setPropertyValue("hillshading", hillshading);
 
   map::MapTypes oldTypes = getShownMapFeatures();
   map::MapObjectDisplayTypes oldDisplayTypes = getShownMapFeaturesDisplay();

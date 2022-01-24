@@ -429,7 +429,7 @@ static const QStringList STOCK_MAP_THEMES({
     // Included offline maps
     "political", "plain", "srtm",
     // Other background services
-    "hillshading", "srtm2"});
+    "srtm2"});
 
 /* Sun shading sub menu actions.
  * Values are saved in settings do not change */
