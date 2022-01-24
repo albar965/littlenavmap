@@ -1334,7 +1334,7 @@ bool RouteExport::exportFlighplanAsTxt(const QString& filename)
 bool RouteExport::exportFlighplanAsUFmc(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
-  QStringList list = RouteStringWriter().createStringForRouteList(
+  QStringList list = RouteStringWriter().createStringListForRoute(
     buildAdjustedRoute(rf::DEFAULT_OPTS), 0.f, rs::DCT | rs::START_AND_DEST);
 
   // Remove last DCT

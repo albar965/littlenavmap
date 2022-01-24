@@ -292,7 +292,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       {
         // Update takeoff record with landing data ===========================================
         atools::sql::SqlRecord record = manager->getRecord(logEntryId);
-        record.setValue("distance", NavApp::getRoute().getTotalDistance()); // integer,
+        record.setValue("distance", NavApp::getRouteConst().getTotalDistance()); // integer,
         record.setValue("distance_flown", flownDistanceNm); // integer,
         if(aircraftAtTakeoff != nullptr)
           record.setValue("used_fuel", aircraftAtTakeoff->getFuelTotalWeightLbs() - aircraft.getFuelTotalWeightLbs()); // integer,
@@ -315,7 +315,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
 
         // Save GPX with simplified flight plan and trail =========================
         record.setValue("aircraft_trail",
-                        FlightplanIO().saveGpxGz(NavApp::getRoute().
+                        FlightplanIO().saveGpxGz(NavApp::getRouteConst().
                                                  updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_GPX).
                                                  getFlightplan(),
                                                  NavApp::getAircraftTrackLogbook().getLineStrings(),
@@ -371,7 +371,7 @@ void LogdataController::logChanged(bool loadAll, bool keepSelection)
 
 void LogdataController::recordFlightplanAndPerf(atools::sql::SqlRecord& record)
 {
-  atools::fs::pln::Flightplan fp = NavApp::getRoute().
+  atools::fs::pln::Flightplan fp = NavApp::getRouteConst().
                                    updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN).getFlightplan();
 
   if(fp.isEmpty())

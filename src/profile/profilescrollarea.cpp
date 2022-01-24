@@ -387,7 +387,7 @@ bool ProfileScrollArea::eventFilter(QObject *object, QEvent *event)
 
 bool ProfileScrollArea::keyEvent(QKeyEvent *event)
 {
-  if(NavApp::getRoute().getSizeWithoutAlternates() < 2)
+  if(NavApp::getRouteConst().getSizeWithoutAlternates() < 2)
     return false;
 
   bool consumed = false;
@@ -487,7 +487,7 @@ bool ProfileScrollArea::mouseMoveEvent(QMouseEvent *event)
 
 bool ProfileScrollArea::mousePressEvent(QMouseEvent *event)
 {
-  if(NavApp::getRoute().getSizeWithoutAlternates() < 2 || event->button() != Qt::LeftButton)
+  if(NavApp::getRouteConst().getSizeWithoutAlternates() < 2 || event->button() != Qt::LeftButton)
     return false;
 
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -504,7 +504,7 @@ bool ProfileScrollArea::mousePressEvent(QMouseEvent *event)
 
 bool ProfileScrollArea::mouseReleaseEvent(QMouseEvent *event)
 {
-  if(NavApp::getRoute().getSizeWithoutAlternates() < 2 || event->button() != Qt::LeftButton)
+  if(NavApp::getRouteConst().getSizeWithoutAlternates() < 2 || event->button() != Qt::LeftButton)
     return false;
 
   // End mouse dragging
@@ -519,7 +519,7 @@ bool ProfileScrollArea::wheelEvent(QWheelEvent *event)
     // Ignore wheel events that appear outside of the view and on the scrollbars
     return false;
 
-  if(NavApp::getRoute().getSizeWithoutAlternates() > 1)
+  if(NavApp::getRouteConst().getSizeWithoutAlternates() > 1)
   {
     emit hideRubberBand();
 
@@ -825,7 +825,7 @@ void ProfileScrollArea::setMaxHorizZoom()
   // Max horizontal scale for window width 4 NM
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->horizontalSliderProfileZoom->setMaximum(
-    atools::roundToInt(std::max(NavApp::getRoute().getTotalDistance() / 4.f, 4.f)));
+    atools::roundToInt(std::max(NavApp::getRouteConst().getTotalDistance() / 4.f, 4.f)));
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << ui->horizontalSliderProfileZoom->minimum() << ui->horizontalSliderProfileZoom->maximum();

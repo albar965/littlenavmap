@@ -78,7 +78,7 @@ void ProfileLabelWidgetVert::paintEvent(QPaintEvent *)
     QPoint offset = scrollArea->getOffset();
     int safeAltY = profileWidget->getMinSafeAltitudeY() - offset.y();
     int flightplanY = profileWidget->getFlightplanAltY() - offset.y();
-    float routeAlt = NavApp::getRoute().getCruisingAltitudeFeet();
+    float routeAlt = NavApp::getRouteConst().getCruisingAltitudeFeet();
 
     // Draw labels on left side widget ========================================================
 

@@ -51,7 +51,7 @@ QString RouteStringWriter::createStringForRoute(const Route& route, float speed,
 #endif
 }
 
-QStringList RouteStringWriter::createStringForRouteList(const Route& route, float speed,
+QStringList RouteStringWriter::createStringListForRoute(const Route& route, float speed,
                                                         rs::RouteStringOptions options) const
 {
   if(route.isEmpty())

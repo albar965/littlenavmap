@@ -921,7 +921,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     paintIls(painter, route);
 
   // Get active route leg but ignore alternate legs
-  const Route& curRoute = NavApp::getRoute();
+  const Route& curRoute = NavApp::getRouteConst();
   bool activeValid = curRoute.isActiveValid();
 
   // Active normally start at 1 - this will consider all legs as not passed
@@ -1606,7 +1606,7 @@ void ProfileWidget::updateTimeout()
   // Need a copy of the leg list before starting thread to avoid synchronization problems
   // Start the computation in background
   ElevationLegList legs;
-  legs.route = NavApp::getRoute();
+  legs.route = NavApp::getRouteConst();
 
   // Start thread
   future = QtConcurrent::run(this, &ProfileWidget::fetchRouteElevationsThread, legs);
@@ -2216,7 +2216,7 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
 void ProfileWidget::updateLabel()
 {
   float distFromStartNm = 0.f, distToDestNm = 0.f, nearestLegDistance = 0.f;
-  const Route& curRoute = NavApp::getRoute();
+  const Route& curRoute = NavApp::getRouteConst();
   if(simData.getUserAircraftConst().isValid())
   {
     if(curRoute.getRouteDistances(&distFromStartNm, &distToDestNm, &nearestLegDistance))
