@@ -190,7 +190,8 @@ public:
   void updateErrorLabels();
   void makeErrorLabel(QString& toolTipText, QStringList errors, const QString& header);
 
-  map::MapThemeComboIndex getMapThemeIndex() const;
+  /* Index of theme in MapThemeHandler. Not related to position in combo box due to separators */
+  int getMapThemeIndex() const;
 
   const InfoController *getInfoController() const
   {
@@ -273,7 +274,11 @@ private:
   /* Update status bar section for online status */
   void updateConnectionStatusMessageText();
 
+  /* Set up own UI elements that cannot be created in designer */
   void setupUi();
+
+  /* Fill map themes in menu and combo box after initializing map widget */
+  void setupMapThemesUi();
 
   void preDatabaseLoad();
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
@@ -346,7 +351,6 @@ private:
   void changeMapProjection(int index);
   void changeMapTheme();
   void scaleToolbar(QToolBar *toolbar, float scale);
-  void findCustomMaps(QFileInfoList& customDgmlFiles);
   void themeMenuTriggered(bool checked);
   void updateLegend();
   void clearWeatherContext();
@@ -476,9 +480,6 @@ private:
   atools::gui::ErrorHandler *errorHandler = nullptr;
   atools::gui::HelpHandler *helpHandler = nullptr;
   atools::gui::DockWidgetHandler *dockHandler = nullptr;
-
-  /* Map theme submenu actions */
-  QList<QAction *> customMapThemeMenuActions;
 
   /* Managment and controller classes */
   WeatherReporter *weatherReporter = nullptr;

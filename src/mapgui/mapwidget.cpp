@@ -56,6 +56,7 @@
 #include "ui_mainwindow.h"
 #include "userdata/userdataicons.h"
 #include "weather/windreporter.h"
+#include "mapgui/mapthemehandler.h"
 
 #include <QContextMenuEvent>
 #include <QToolTip>
@@ -65,6 +66,7 @@
 #include <marble/AbstractFloatItem.h>
 #include <marble/MarbleWidgetInputHandler.h>
 #include <marble/MarbleModel.h>
+#include <marble/MapThemeManager.h>
 
 /* Stores delta values depending on fast or slow update. User aircraft is only updated if
  * delta values are exceeded. */
@@ -2785,6 +2787,8 @@ void MapWidget::saveState()
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
   for(QAction *action : mapOverlays)
     state.save(action);
+
+  mapThemeHandler->saveState();
 }
 
 void MapWidget::restoreState()
@@ -2860,6 +2864,9 @@ void MapWidget::restoreState()
     paintLayer->setShowAirspaces({map::AIRSPACE_DEFAULT, map::AIRSPACE_FLAG_DEFAULT});
 
   history.restoreState(atools::settings::Settings::getConfigFilename(".history"));
+
+  mapThemeHandler->restoreState();
+  setKeys(mapThemeHandler->getMapThemeKeysHash());
 }
 
 void MapWidget::sunShadingToUi(map::MapSunShading sunShading)
@@ -3034,39 +3041,8 @@ void MapWidget::resetSettingActionsToDefault()
 void MapWidget::updateThemeUi(int index)
 {
   Ui::MainWindow *ui = mainWindow->getUi();
-
-  if(index >= map::CUSTOM)
-  {
-    // Enable all buttons for custom maps
-    ui->actionMapShowCities->setEnabled(true);
-    ui->actionMapShowSunShading->setEnabled(true);
-  }
-  else
-  {
-    // Update theme specific options
-    switch(index)
-    {
-      case map::STAMENTERRAIN:
-      case map::OPENTOPOMAP:
-      case map::OPENSTREETMAP:
-      case map::CARTOLIGHT:
-      case map::CARTODARK:
-        ui->actionMapShowCities->setEnabled(false);
-        ui->actionMapShowSunShading->setEnabled(true);
-        break;
-
-      case map::SIMPLE:
-      case map::PLAIN:
-      case map::ATLAS:
-        ui->actionMapShowCities->setEnabled(true);
-        ui->actionMapShowSunShading->setEnabled(false);
-        break;
-
-      case map::INVALID_THEME:
-        qWarning() << "Invalid theme index" << index;
-        break;
-    }
-  }
+  ui->actionMapShowCities->setEnabled(mapThemeHandler->hasPlacemarks(index));
+  ui->actionMapShowSunShading->setEnabled(mapThemeHandler->canSunShading(index));
 }
 
 void MapWidget::updateMapVisibleUi() const
@@ -3512,7 +3488,8 @@ void MapWidget::zoomInOut(bool directionIn, bool smooth)
   }
   else
   {
-    if(currentThemeIndex == map::PLAIN || currentThemeIndex == map::SIMPLE)
+    // if(currentThemeIndex == map::PLAIN || currentThemeIndex == map::SIMPLE)
+    if(mapThemeHandler->hasDiscreteZoom(currentThemeIndex))
     {
       if(directionIn)
         zoomViewBy(zoomStep() * 3);

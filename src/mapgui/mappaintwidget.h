@@ -62,6 +62,7 @@ class MapQuery;
 class AirwayTrackQuery;
 class WaypointTrackQuery;
 class MapLayer;
+class MapThemeHandler;
 
 namespace proc {
 struct MapProcedureLeg;
@@ -353,12 +354,8 @@ public:
     return visibleWidget;
   }
 
+  /* Get short copyright message for map theme */
   QString getMapCopyright() const;
-
-  map::MapThemeComboIndex getCurrentThemeIndex() const
-  {
-    return currentThemeIndex;
-  }
 
   /* Logbook display options have changed or new or edited logbook entry */
   void updateLogEntryScreenGeometry();
@@ -396,6 +393,18 @@ public:
 
   /* Print all layers to debug channel */
   void dumpMapLayers() const;
+
+  const MapThemeHandler *getMapThemeHandler() const
+  {
+    return mapThemeHandler;
+  }
+
+  /* Get or set map theme API keys or tokens */
+  const QMap<QString, QString>& getMapThemeKeys();
+  void setMapThemeKeys(const QMap<QString, QString>& keys);
+
+  /* Clear values */
+  void clearMapThemeKeyValues();
 
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
@@ -528,11 +537,12 @@ protected:
   /* Dummy paint cycle without any navigation stuff. Just used to initialize Marble */
   bool noNavPaint = false;
 
-  /* Index of the theme combo box in the toolbar */
-  map::MapThemeComboIndex currentThemeIndex = map::INVALID_THEME;
+  /* Index for theme in MapThemeHandler and *not* the combo box. */
+  int currentThemeIndex = 0;
 
   /* Trail/track of user aircraft */
-  AircraftTrack *aircraftTrack, *aircraftTrackLogbook;
+  AircraftTrack *aircraftTrack = nullptr, *aircraftTrackLogbook = nullptr;
+  MapThemeHandler *mapThemeHandler = nullptr;
 
 private:
   /* Set map theme and adjust properties accordingly */

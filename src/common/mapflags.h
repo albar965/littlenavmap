@@ -406,30 +406,6 @@ enum MapAirportType
   AP_TYPE_HELIPORT = 17,
 };
 
-/* Index values of the map theme combo box */
-enum MapThemeComboIndex
-{
-  OPENSTREETMAP,
-  OPENTOPOMAP,
-  STAMENTERRAIN,
-  CARTOLIGHT,
-  CARTODARK,
-  SIMPLE, // political
-  PLAIN,
-  ATLAS, // srtm
-  CUSTOM, /* Custom maps count from this index up */
-  INVALID_THEME = -1
-};
-
-/* All known map theme names =========================================== */
-static const QStringList STOCK_MAP_THEMES({
-    // Slippy maps - online maps
-    "openstreetmap", "opentopomap", "stamenterrain", "cartolight", "cartodark",
-    // Included offline maps
-    "political", "plain", "srtm",
-    // Other background services
-    "srtm2"});
-
 /* Sun shading sub menu actions.
  * Values are saved in settings do not change */
 enum MapSunShading

@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_OPTIONDATA_H
 
 #include <QColor>
+#include <QMap>
 
 class QSize;
 class QFont;
@@ -1624,6 +1625,9 @@ private:
   bool webEncrypted = false;
 
   QString guiFont, mapFont;
+
+  /* API keys or tokens extracted from DGML files. Saved and loaded in MapThemeHandler class. */
+  QMap<QString, QString> mapThemeKeys;
 };
 
 #endif // LITTLENAVMAP_OPTIONDATA_H

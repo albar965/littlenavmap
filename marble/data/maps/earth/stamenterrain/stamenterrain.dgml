@@ -9,7 +9,7 @@
     <head>
       <!-- The license here applies to the actual map content, not this dgml file. See the license header above for the dgml file license -->
       <!-- The content that this license refers to is not distributed with this package -->
-      <license short="© OpenStreetMap contributors">Source: © OpenStreetMap contributors, License: Creative Commons Attribution-ShareAlike 2.0 (CC BY-SA)</license>
+      <license short="© stamen and OpenStreetMap contributors">Source: © OpenStreetMap contributors, License: Creative Commons Attribution-ShareAlike 2.0 (CC BY-SA)</license>
       <name>StamenTerrain</name>
       <target>earth</target>
       <theme>stamenterrain</theme>

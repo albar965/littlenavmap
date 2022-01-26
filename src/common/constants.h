@@ -95,6 +95,7 @@ const QLatin1String ACTIONS_SHOW_TRACK_DOWNLOAD_FAIL("Actions/TrackDownloadFaile
 const QLatin1String ACTIONS_SHOW_TRACK_DOWNLOAD_SUCCESS("Actions/TrackDownloadSuccess");
 const QLatin1String ACTIONS_SHOW_LOGBOOK_CONVERSION("Actions/LogbookConversion");
 const QLatin1String ACTIONS_SHOW_USER_AIRSPACE_NOTE("Actions/UserAirspaceNote");
+const QLatin1String ACTIONS_SHOW_MAPTHEME_REQUIRES_KEY("Actions/MapThemeRequiresKey");
 
 const QLatin1String ACTIONS_SHOW_SSL_WARNING_ONLINE("Actions/SslWarningOnline");
 const QLatin1String ACTIONS_SHOW_SSL_WARNING_WIND("Actions/SslWarningWind");
@@ -155,6 +156,7 @@ const QLatin1String MAP_OVERLAY_VISIBLE("Map/OverlayVisible");
 const QLatin1String MAP_WEATHER_SOURCE("Map/WeatherSource");
 const QLatin1String MAP_SUN_SHADING_TIME_OPTION("Map/SunShadingTimeOption");
 const QLatin1String MAP_SUN_SHADING_TIME("Map/SunShadingTime");
+const QLatin1String MAP_THEME_KEYS("Map/ThemeKeys");
 
 const QLatin1String MAP_DISTANCEMARKERS("Map/DistanceMarkers28");
 const QLatin1String MAP_TRAFFICPATTERNS("Map/TrafficPatterns28");

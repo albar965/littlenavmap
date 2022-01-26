@@ -109,7 +109,7 @@ void AircraftProgressConfig::progressConfiguration()
   treeDialog.addItem2(nextItem, pid::NEXT_HEADING,          tr("Heading"), tr("Heading to fly to the next waypoint considering wind."), QString());
   treeDialog.addItem2(nextItem, pid::NEXT_CROSS_TRACK_DIST, tr("Cross Track Distance"), tr("Distance to flight plan leg.\n"
                                                                                            "► means aircraft is left of flight plan leg (fly right) and ◄ means right of leg."), QString());
-  treeDialog.addItem2(nextItem, pid::NEXT_REMARKS,              tr("Remarks"), tr("User entered remarks for a user flight plan position."), QString());
+  treeDialog.addItem2(nextItem, pid::NEXT_REMARKS,              tr("Remarks"), tr("User entered remarks for an user flight plan position."), QString());
 
   // Aircraft ==========================================================================================================
   QTreeWidgetItem *aircraftItem = treeDialog.addTopItem1(tr("Aircraft"));

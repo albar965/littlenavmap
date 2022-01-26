@@ -39,6 +39,7 @@ class UnitStringTool;
 class QListWidgetItem;
 class QListWidget;
 class QFontDialog;
+class QTableWidgetItem;
 
 namespace atools {
 namespace gui {
@@ -103,6 +104,9 @@ private:
   void buttonBoxClicked(QAbstractButton *button);
   void widgetsToOptionData();
   void optionDataToWidgets(const OptionData& data);
+
+  void widgetToMapThemeKeys(OptionData& data);
+  void mapThemeKeysToWidget(const OptionData& data);
 
   void toFlags(QCheckBox *checkBox, opts::Flags flag);
   void toFlags(QRadioButton *radioButton, opts::Flags flag);
@@ -249,6 +253,7 @@ private:
    * Uses current locale to convert numbers and check min and max. */
   QVector<float> rangeStringToFloat(const QString& rangeStr) const;
   QString rangeFloatToString(const QVector<float>& ranges) const;
+  void mapThemeKeyEdited(QTableWidgetItem *item);
 
   QString guiLanguage, guiFont, mapFont;
   QColor flightplanColor, flightplanOutlineColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
@@ -272,7 +277,7 @@ private:
 
   QFontDialog *fontDialog = nullptr;
 
-  atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
+  atools::gui::ItemViewZoomHandler *zoomHandlerLabelTree = nullptr, *zoomHandlerMapThemeKeysTable = nullptr;
   atools::gui::GridDelegate *gridDelegate = nullptr;
 };
 

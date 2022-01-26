@@ -173,7 +173,7 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeCont
 
   action = new QAction(tr("Read first and last item as Navaid"), buttonMenu);
   action->setObjectName("actionNavaid");
-  action->setToolTip(tr("Does not expect the first and last string item to be a airport ICAO ident if checked"));
+  action->setToolTip(tr("Does not expect the first and last string item to be an airport ICAO ident if checked"));
   action->setCheckable(true);
   action->setData(static_cast<int>(rs::READ_NO_AIRPORTS));
   buttonMenu->addAction(action);

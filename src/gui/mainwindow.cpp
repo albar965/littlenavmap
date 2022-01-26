@@ -53,6 +53,7 @@
 #include "mapgui/maplayersettings.h"
 #include "search/searchcontroller.h"
 #include "settings/settings.h"
+#include "mapgui/mapthemehandler.h"
 #include "options/optionsdialog.h"
 #include "print/printsupport.h"
 #include "exception.h"
@@ -312,6 +313,9 @@ MainWindow::MainWindow()
       setCentralWidget(mapWidget);
       ui->dockWidgetMap->hide();
     }
+
+    // Fill theme combo box and menus after setting up map widget
+    setupMapThemesUi();
 
     // Init a few late objects since these depend on the map widget instance
     NavApp::initQueries();
@@ -731,7 +735,73 @@ void MainWindow::scaleToolbar(QToolBar *toolbar, float scale)
   toolbar->setIconSize(size.toSize());
 }
 
-/* Set up own UI elements that cannot be created in designer */
+void MainWindow::setupMapThemesUi()
+{
+  // Theme combo box ============================
+  mapThemeComboBox = new QComboBox(this);
+  mapThemeComboBox->setObjectName("mapThemeComboBox");
+  mapThemeComboBox->setToolTip(tr("Select map theme"));
+  mapThemeComboBox->setStatusTip(mapThemeComboBox->toolTip());
+  ui->toolBarMapThemeProjection->addWidget(mapThemeComboBox);
+
+  // Theme menu items ===============================
+  actionGroupMapTheme = new QActionGroup(ui->menuViewTheme);
+  actionGroupMapTheme->setObjectName("actionGroupMapTheme");
+
+  bool online = true;
+  int index = 0;
+  // Sort order is always online/offline and then alphabetical
+  for(const MapTheme& theme : mapWidget->getMapThemeHandler()->getThemes())
+  {
+    // Check if offline map come after online and add separators
+    if(!theme.isOnline() && online)
+    {
+      // Add separator between online and offline maps
+      ui->menuViewTheme->addSeparator();
+      mapThemeComboBox->insertSeparator(mapThemeComboBox->count());
+    }
+
+    // Add item to combo box in toolbar
+    QString name = theme.isOnline() ? theme.getName() : tr("%1 (offline)").arg(theme.getName());
+    if(theme.hasKeys())
+      // Add star to maps which require an API key or token
+      name += tr(" *");
+
+    // Build tooltip for entries
+    QStringList tip;
+    tip.append(theme.getName());
+    tip.append(theme.isOnline() ? tr("online") : tr("offline"));
+    tip.append(theme.hasKeys() ? tr("* requires registration") : tr("free"));
+
+    // Add item and attach index for theme in MapThemeHandler
+    mapThemeComboBox->addItem(name, index);
+    mapThemeComboBox->setItemData(index, tip.join(tr(", ")), Qt::ToolTipRole);
+
+    // Create action for map/theme submenu
+    QAction *action = ui->menuViewTheme->addAction(name);
+    action->setCheckable(true);
+    action->setToolTip(tip.join(tr(", ")));
+    action->setStatusTip(action->toolTip());
+    action->setActionGroup(actionGroupMapTheme);
+
+    // Add keyboard shortcut for top 10 themes
+    if(index < 10)
+      action->setShortcut(tr("Ctrl+Alt+%1").arg(index));
+
+    // Attach index for theme in MapThemeHandler
+    action->setData(index);
+
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << name << index;
+#endif
+
+    index++;
+
+    // Remember theme online status
+    online = theme.isOnline();
+  }
+}
+
 void MainWindow::setupUi()
 {
   // Reduce large icons on mac
@@ -753,6 +823,9 @@ void MainWindow::setupUi()
   mapProjectionComboBox->setStatusTip(helpText);
   mapProjectionComboBox->addItem(tr("Mercator"), Marble::Mercator);
   mapProjectionComboBox->addItem(tr("Spherical"), Marble::Spherical);
+  mapProjectionComboBox->setItemData(0, tr("Flat map projection"), Qt::ToolTipRole);
+  mapProjectionComboBox->setItemData(1, tr("Map projection showing a globe"), Qt::ToolTipRole);
+
   ui->toolBarMapThemeProjection->addWidget(mapProjectionComboBox);
 
   // Projection menu items
@@ -760,23 +833,6 @@ void MainWindow::setupUi()
   actionGroupMapProjection->setObjectName("actionGroupMapProjection");
   ui->actionMapProjectionMercator->setActionGroup(actionGroupMapProjection);
   ui->actionMapProjectionSpherical->setActionGroup(actionGroupMapProjection);
-
-  // Theme combo box
-  mapThemeComboBox = new QComboBox(this);
-  mapThemeComboBox->setObjectName("mapThemeComboBox");
-  helpText = tr("Select map theme");
-  mapThemeComboBox->setToolTip(helpText);
-  mapThemeComboBox->setStatusTip(helpText);
-  // Item order has to match MapWidget::MapThemeComboIndex
-  mapThemeComboBox->addItem(tr("OpenStreetMap"), "earth/openstreetmap/openstreetmap.dgml");
-  mapThemeComboBox->addItem(tr("OpenTopoMap"), "earth/opentopomap/opentopomap.dgml");
-  mapThemeComboBox->addItem(tr("Stamen Terrain"), "earth/stamenterrain/stamenterrain.dgml");
-  mapThemeComboBox->addItem(tr("CARTO Light"), "earth/cartolight/cartolight.dgml");
-  mapThemeComboBox->addItem(tr("CARTO Dark"), "earth/cartodark/cartodark.dgml");
-  mapThemeComboBox->addItem(tr("Simple (Offline)"), "earth/political/political.dgml");
-  mapThemeComboBox->addItem(tr("Plain (Offline)"), "earth/plain/plain.dgml");
-  mapThemeComboBox->addItem(tr("Atlas (Offline)"), "earth/srtm/srtm.dgml");
-  ui->toolBarMapThemeProjection->addWidget(mapThemeComboBox);
 
   // Sun shading sub menu
   actionGroupMapSunShading = new QActionGroup(ui->menuSunShading);
@@ -801,62 +857,6 @@ void MainWindow::setupUi()
   actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindDisabled);
   actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindNOAA);
   actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindSimulator);
-
-  // Theme menu items
-  actionGroupMapTheme = new QActionGroup(ui->menuViewTheme);
-  actionGroupMapTheme->setObjectName("actionGroupMapTheme");
-  ui->actionMapThemeOpenStreetMap->setActionGroup(actionGroupMapTheme);
-  ui->actionMapThemeOpenStreetMap->setData(map::OPENSTREETMAP);
-
-  ui->actionMapThemeOpenTopoMap->setActionGroup(actionGroupMapTheme);
-  ui->actionMapThemeOpenTopoMap->setData(map::OPENTOPOMAP);
-
-  ui->actionMapThemeStamenTerrain->setActionGroup(actionGroupMapTheme);
-  ui->actionMapThemeStamenTerrain->setData(map::STAMENTERRAIN);
-
-  ui->actionMapThemeCartoLight->setActionGroup(actionGroupMapTheme);
-  ui->actionMapThemeCartoLight->setData(map::CARTOLIGHT);
-
-  ui->actionMapThemeCartoDark->setActionGroup(actionGroupMapTheme);
-  ui->actionMapThemeCartoDark->setData(map::CARTODARK);
-
-  ui->actionMapThemeSimple->setActionGroup(actionGroupMapTheme);
-  ui->actionMapThemeSimple->setData(map::SIMPLE);
-
-  ui->actionMapThemePlain->setActionGroup(actionGroupMapTheme);
-  ui->actionMapThemePlain->setData(map::PLAIN);
-
-  ui->actionMapThemeAtlas->setActionGroup(actionGroupMapTheme);
-  ui->actionMapThemeAtlas->setData(map::ATLAS);
-
-  // Add any custom map themes that were found besides the stock themes
-  QFileInfoList customDgmlFiles;
-  findCustomMaps(customDgmlFiles);
-
-  if(!customDgmlFiles.isEmpty())
-    ui->menuViewTheme->addSeparator();
-
-  for(int i = 0; i < customDgmlFiles.size(); i++)
-  {
-    const QFileInfo& dgmlFile = customDgmlFiles.at(i);
-    QString nameShort = tr("* %1").arg(dgmlFile.baseName());
-
-    // Add item to combo box in toolbar
-    mapThemeComboBox->addItem(nameShort, dgmlFile.filePath());
-
-    // Create action for map/theme submenu
-    QString name = tr("Custom (%1)").arg(dgmlFile.baseName());
-    QString helptext = tr("Custom map theme (%1)").arg(dgmlFile.baseName());
-    QAction *action = ui->menuViewTheme->addAction(name);
-    action->setCheckable(true);
-    action->setToolTip(helptext);
-    action->setStatusTip(helptext);
-    action->setActionGroup(actionGroupMapTheme);
-    action->setData(map::CUSTOM + i);
-
-    // Add to list for connect signal etc.
-    customMapThemeMenuActions.append(action);
-  }
 
   // Update dock widget actions with tooltip, status tip and keypress
   ui->dockWidgetSearch->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/searchdock.svg"));
@@ -1170,7 +1170,7 @@ void MainWindow::connectAllSlots()
 
   // User data ===================================================================================
   UserdataController *userdataController = NavApp::getUserdataController();
- // Import ================
+  // Import ================
   connect(ui->actionUserdataImportCSV, &QAction::triggered, userdataController, &UserdataController::importCsv);
   connect(ui->actionUserdataImportGarminGTN, &QAction::triggered, userdataController, &UserdataController::importGarmin);
   connect(ui->actionUserdataImportUserfixDat, &QAction::triggered, userdataController, &UserdataController::importXplaneUserFixDat);
@@ -1418,16 +1418,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionWindowLayoutSaveAs, &QAction::triggered, this, &MainWindow::layoutSaveAs);
 
   // Let theme menus update combo boxes
-  connect(ui->actionMapThemeOpenStreetMap, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
-  connect(ui->actionMapThemeOpenTopoMap, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
-  connect(ui->actionMapThemeStamenTerrain, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
-  connect(ui->actionMapThemeCartoLight, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
-  connect(ui->actionMapThemeCartoDark, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
-  connect(ui->actionMapThemeSimple, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
-  connect(ui->actionMapThemePlain, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
-  connect(ui->actionMapThemeAtlas, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
-
-  for(QAction *action : customMapThemeMenuActions)
+  for(QAction *action : actionGroupMapTheme->actions())
     connect(action, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
 
   // Map object/feature display
@@ -1824,40 +1815,19 @@ void MainWindow::themeMenuTriggered(bool checked)
 {
   QAction *action = dynamic_cast<QAction *>(sender());
   if(action != nullptr && checked)
-    mapThemeComboBox->setCurrentIndex(action->data().toInt());
-}
-
-/* Look for new directories with a valid DGML file in the earth dir */
-void MainWindow::findCustomMaps(QFileInfoList& customDgmlFiles)
-{
-  QDir dir(atools::buildPath({QCoreApplication::applicationDirPath(), "data", "maps", "earth"}));
-
-  qDebug() << Q_FUNC_INFO << "Looking for custom maps in" << dir;
-
-  QFileInfoList entries = dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot);
-  // Look for new map themes
-  for(const QFileInfo& info : entries)
   {
-    if(!map::STOCK_MAP_THEMES.contains(info.baseName(), Qt::CaseInsensitive))
+    // Get index in MapThemeHandler
+    int index = action->data().toInt();
+
+    for(int i = 0; i < mapThemeComboBox->count(); i++)
     {
-      // Found a new directory
-      qDebug() << "Custom theme" << info.absoluteFilePath();
-      QFileInfo dgml(info.filePath() + QDir::separator() + info.baseName() + ".dgml");
-      // Check if DGML exists
-      if(dgml.exists() && dgml.isFile() && dgml.isReadable())
+      if(mapThemeComboBox->itemData(i).isValid() && mapThemeComboBox->itemData(i).toInt() == index)
       {
-        // Create a new entry with path relative to "earth"
-        QString dgmlFileRelative(QString("earth") +
-                                 QDir::separator() + dir.relativeFilePath(info.absoluteFilePath()) +
-                                 QDir::separator() + info.baseName() + ".dgml");
-        qInfo() << "Custom theme DGML" << dgml.absoluteFilePath() << "relative path" << dgmlFileRelative;
-        customDgmlFiles.append(dgmlFileRelative);
+        // Use signal from combo box to activate theme
+        mapThemeComboBox->setCurrentIndex(i);
+        break;
       }
-      else
-        qWarning() << "No DGML found for custom theme" << info.absoluteFilePath();
     }
-    else
-      qDebug() << "Found stock theme" << info.baseName();
   }
 }
 
@@ -1883,17 +1853,84 @@ void MainWindow::changeMapProjection(int index)
 void MainWindow::changeMapTheme()
 {
   mapWidget->cancelDragAll();
+  const MapThemeHandler *mapThemeHandler = mapWidget->getMapThemeHandler();
 
-  QString theme = mapThemeComboBox->currentData().toString();
-  int index = mapThemeComboBox->currentIndex();
-  qDebug() << "Changing theme to" << theme << "index" << index;
-  mapWidget->setTheme(theme, index);
+  int index = mapThemeComboBox->currentData().toInt();
+  MapTheme theme = mapThemeHandler->getTheme(index);
 
+  if(!theme.isValid())
+  {
+    qDebug() << Q_FUNC_INFO << "Falling back to default theme due to invalid index" << index;
+    // No theme for index found - use default OSM
+    theme = mapThemeHandler->getDefaultTheme();
+    index = theme.getIndex();
+
+    // Search for combo box entry with index for MapThemeHandler
+    for(int i = 0; i < mapThemeComboBox->count(); i++)
+    {
+      if(mapThemeComboBox->itemData(i).isValid() && mapThemeComboBox->itemData(i).toInt() == index)
+      {
+        // Avoid recursion by blocking signals
+        mapThemeComboBox->blockSignals(true);
+        mapThemeComboBox->setCurrentIndex(i);
+        mapThemeComboBox->blockSignals(false);
+        break;
+      }
+    }
+  }
+
+  // Check if theme needs API keys, usernames or tokens ======================================
+  if(theme.hasKeys())
+  {
+    // Get all available key/value pairs from handler
+    QMap<QString, QString> mapThemeKeys = mapThemeHandler->getMapThemeKeys();
+
+    // Check if all required values are set
+    bool allValid = true;
+    for(const QString& key : theme.getKeys())
+    {
+      if(mapThemeKeys.value(key).isEmpty())
+      {
+        allValid = false;
+        break;
+      }
+    }
+
+    if(!allValid)
+    {
+      // One or more keys are not present or empty - show info dialog =================================
+      NavApp::deleteSplashScreen();
+
+      // Fetch all keys for map theme
+      QString url;
+      if(!theme.getUrlRef().isEmpty())
+        url = tr("<p>Click here to create an account: <a href=\"%1\">%2</a></p>").
+              arg(theme.getUrlRef()).arg(theme.getUrlName().isEmpty() ? tr("Link") : theme.getUrlName());
+
+      dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_MAPTHEME_REQUIRES_KEY,
+                             tr("<p>The map theme \"%1\" requires additional information.</p>"
+                                  "<p>You have to create an user account at the related website and then create an username, an access key or a token.<br/>"
+                                  "Most of these services offer a free plan for hobbyists.</p>"
+                                  "<p>Then go to menu \"Tools\" -> \"Options\" and to page \"Map Display Keys\" in Little Navmap and "
+                                    "enter the information for the key(s) below:</p>"
+                                    "<ul><li>%2</li></ul>"
+                                      "<p>The map will not show correctly until this is done.</p>%3").
+                             arg(theme.getName()).arg(theme.getKeys().join(tr("</li><li>"))).arg(url),
+                             tr("Do not &show this dialog again."));
+    }
+  }
+
+  qDebug() << Q_FUNC_INFO << "index" << index << theme;
+
+  mapWidget->setTheme(theme.getId(), index);
+
+  // Update menu items in group
   for(QAction *action : actionGroupMapTheme->actions())
+  {
+    action->blockSignals(true);
     action->setChecked(action->data() == index);
-
-  for(int i = 0; i < customMapThemeMenuActions.size(); i++)
-    customMapThemeMenuActions.at(i)->setChecked(index == map::CUSTOM + i);
+    action->blockSignals(false);
+  }
 
   updateLegend();
 
@@ -2002,29 +2039,20 @@ void MainWindow::renderStatusUpdateLabel(RenderStatus status, bool forceUpdate)
 {
   if(status != lastRenderStatus || forceUpdate)
   {
-    QString suffix = mapWidget->model()->workOffline() ?
-                     tr(" ") + atools::util::HtmlBuilder::errorMessage(tr("Offline")) :
-                     QString();
-
-    if(mapWidget->getCurrentThemeIndex() >= map::CUSTOM)
-      renderStatusLabel->setText(suffix);
-    else
+    switch(status)
     {
-      switch(status)
-      {
-        case Marble::Complete:
-          renderStatusLabel->setText(tr("Done") + suffix);
-          break;
-        case Marble::WaitingForUpdate:
-          renderStatusLabel->setText(tr("Updating") + suffix);
-          break;
-        case Marble::WaitingForData:
-          renderStatusLabel->setText(tr("Loading") + suffix);
-          break;
-        case Marble::Incomplete:
-          renderStatusLabel->setText(tr("Incomplete") + suffix);
-          break;
-      }
+      case Marble::Complete:
+        renderStatusLabel->setText(tr("Done"));
+        break;
+      case Marble::WaitingForUpdate:
+        renderStatusLabel->setText(tr("Updating"));
+        break;
+      case Marble::WaitingForData:
+        renderStatusLabel->setText(tr("Loading"));
+        break;
+      case Marble::Incomplete:
+        renderStatusLabel->setText(tr("Incomplete"));
+        break;
     }
     lastRenderStatus = status;
   }
@@ -3257,6 +3285,7 @@ void MainWindow::resetMessages()
   settings.setValue(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_SUCCESS, true);
   settings.setValue(lnm::ACTIONS_SHOW_LOGBOOK_CONVERSION, true);
   settings.setValue(lnm::ACTIONS_SHOW_USER_AIRSPACE_NOTE, true);
+  settings.setValue(lnm::ACTIONS_SHOW_MAPTHEME_REQUIRES_KEY, true);
   settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_ONLINE, true);
   settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_WIND, true);
   settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_TRACK, true);
@@ -3959,11 +3988,31 @@ void MainWindow::restoreStateMain()
     mapWidget->resetSettingActionsToDefault();
 
   // Map settings that are always loaded
-  widgetState.restore({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowGrid, ui->actionMapShowCities,
+  widgetState.restore({mapProjectionComboBox, ui->actionMapShowGrid, ui->actionMapShowCities,
                        ui->actionRouteEditMode, ui->actionRouteSaveSidStarWaypoints,
                        ui->actionRouteSaveApprWaypoints, ui->actionRouteSaveAirwayWaypoints, ui->actionLogdataCreateLogbook,
                        ui->actionMapShowSunShading, ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude,
                        ui->actionRunWebserver, ui->actionShowAllowDocking, ui->actionShowAllowMoving, ui->actionWindowStayOnTop});
+
+  if(widgetState.contains(mapThemeComboBox))
+    // Restore map theme selection
+    widgetState.restore(mapThemeComboBox);
+  else
+  {
+    // Load default theme OSM
+    int defaultIndex = mapWidget->getMapThemeHandler()->getDefaultTheme().getIndex();
+    for(int i = 0; i < mapThemeComboBox->count(); i++)
+    {
+      if(mapThemeComboBox->itemData(i).isValid() && mapThemeComboBox->itemData(i).toInt() == defaultIndex)
+      {
+        mapThemeComboBox->blockSignals(true);
+        mapThemeComboBox->setCurrentIndex(defaultIndex);
+        mapThemeComboBox->blockSignals(false);
+        break;
+      }
+    }
+  }
+
   widgetState.setBlockSignals(false);
 
   firstApplicationStart = settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
@@ -4680,9 +4729,9 @@ void MainWindow::updateErrorLabels()
   }
 }
 
-map::MapThemeComboIndex MainWindow::getMapThemeIndex() const
+int MainWindow::getMapThemeIndex() const
 {
-  return static_cast<map::MapThemeComboIndex>(mapThemeComboBox->currentIndex());
+  return mapThemeComboBox->currentData().toInt();
 }
 
 void MainWindow::showFlightPlan()

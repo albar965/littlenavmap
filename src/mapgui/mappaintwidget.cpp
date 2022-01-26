@@ -17,6 +17,7 @@
 
 #include "mapgui/mappaintwidget.h"
 
+#include "mapgui/mapthemehandler.h"
 #include "navapp.h"
 #include "mappainter/mappaintlayer.h"
 #include "mapgui/mapscale.h"
@@ -34,6 +35,7 @@
 #include "query/airwaytrackquery.h"
 #include "query/waypointquery.h"
 #include "query/waypointtrackquery.h"
+#include "exception.h"
 
 #include <QPainter>
 #include <QJsonDocument>
@@ -70,6 +72,21 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible)
 
   aircraftTrack = new AircraftTrack;
   aircraftTrackLogbook = new AircraftTrack;
+
+  try
+  {
+    mapThemeHandler = new MapThemeHandler;
+    mapThemeHandler->loadThemes();
+  }
+  // Exit application if something goes wrong
+  catch(atools::Exception& e)
+  {
+    ATOOLS_HANDLE_EXCEPTION(e);
+  }
+  catch(...)
+  {
+    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
+  }
 
   // Set the map quality to gain speed while moving
   setMapQualityForViewContext(HighQuality, Still);
@@ -139,6 +156,9 @@ MapPaintWidget::~MapPaintWidget()
 
   qDebug() << Q_FUNC_INFO << "delete mapQuery";
   delete mapQuery;
+
+  qDebug() << Q_FUNC_INFO << "delete   mapThemeHandler";
+  delete mapThemeHandler;
   mapQuery = nullptr;
 }
 
@@ -146,6 +166,10 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other)
 {
   paintLayer->copySettings(*other.paintLayer);
   screenIndex->copy(*other.screenIndex);
+
+  delete mapThemeHandler;
+  mapThemeHandler = new MapThemeHandler;
+  *mapThemeHandler = *other.mapThemeHandler;
 
   // Copy all MarbleWidget settings - some on demand to avoid overhead
   if(projection() != other.projection())
@@ -214,14 +238,14 @@ void MapPaintWidget::setTheme(const QString& theme, int index)
 {
   qDebug() << "setting map theme to index" << index << theme;
 
-  currentThemeIndex = map::MapThemeComboIndex(index);
+  currentThemeIndex = index;
 
   setThemeInternal(theme);
 }
 
 bool MapPaintWidget::isDarkMap() const
 {
-  return currentThemeIndex == map::CARTODARK;
+  return mapThemeHandler->isDarkTheme(currentThemeIndex);
 }
 
 bool MapPaintWidget::noRender() const
@@ -239,34 +263,11 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
   setMapThemeId(theme);
   setShowClouds(false);
 
-  if(currentThemeIndex < map::CUSTOM)
-  {
-    // Update theme specific options
-    switch(currentThemeIndex)
-    {
-      case map::STAMENTERRAIN:
-      case map::OPENSTREETMAP:
-      case map::OPENTOPOMAP:
-      case map::CARTODARK:
-      case map::CARTOLIGHT:
-      case map::CUSTOM:
-        // Need to remove the placemark files since they are shown randomly on online maps
-        removePlacemarks();
-        break;
-
-      case map::SIMPLE:
-      case map::PLAIN:
-      case map::ATLAS:
-        // Add placemark files again - ignored if already loaded
-        addPlacemarks();
-        break;
-
-      case map::INVALID_THEME:
-        qWarning() << "Invalid theme index" << currentThemeIndex;
-        break;
-    }
-  }
+  if(mapThemeHandler->hasPlacemarks(currentThemeIndex))
+    // Add placemark files again - ignored if already loaded
+    addPlacemarks();
   else
+    // Need to remove the placemark files since they are shown randomly on online maps
     removePlacemarks();
 
   updateMapObjectsShown();
@@ -283,6 +284,7 @@ void MapPaintWidget::removePlacemarks()
   // Need to remove the placemark files since they are shown randomly on online maps
   for(const QString& file : PLACEMARK_FILES_CACHE)
     m->removeGeoData(file);
+
   for(const QString& file : PLACEMARK_FILES_KML)
     m->removeGeoData(file);
 }
@@ -290,6 +292,7 @@ void MapPaintWidget::removePlacemarks()
 void MapPaintWidget::addPlacemarks()
 {
   MarbleModel *m = model();
+
   // Add placemark files again - ignored if already loaded
   for(const QString& file : PLACEMARK_FILES_CACHE)
     m->addGeoDataFile(file);
@@ -314,6 +317,9 @@ void MapPaintWidget::unitsUpdated()
 void MapPaintWidget::optionsChanged()
 {
   const OptionData& options = OptionData::instance();
+
+  // Pass API keys or tokens to map
+  setKeys(mapThemeHandler->getMapThemeKeysHash());
 
   setFont(options.getMapFont());
 
@@ -391,6 +397,10 @@ void MapPaintWidget::setSunShadingDateTime(const QDateTime& datetime)
 
 void MapPaintWidget::setShowMapPois(bool show)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << show;
+#endif
+
   // Enable all POI stuff
   setShowPlaces(show);
   setShowCities(show);
@@ -427,6 +437,21 @@ void MapPaintWidget::updateGeometryIndex(map::MapTypes oldTypes, map::MapObjectD
 void MapPaintWidget::dumpMapLayers() const
 {
   paintLayer->dumpMapLayers();
+}
+
+const QMap<QString, QString>& MapPaintWidget::getMapThemeKeys()
+{
+  return mapThemeHandler->getMapThemeKeys();
+}
+
+void MapPaintWidget::setMapThemeKeys(const QMap<QString, QString>& keys)
+{
+  mapThemeHandler->setMapThemeKeys(keys);
+}
+
+void MapPaintWidget::clearMapThemeKeyValues()
+{
+  mapThemeHandler->clearMapThemeKeyValues();
 }
 
 void MapPaintWidget::setShowMapObjects(map::MapTypes type, map::MapTypes mask)
@@ -494,30 +519,7 @@ ApronGeometryCache *MapPaintWidget::getApronGeometryCache()
 
 QString MapPaintWidget::getMapCopyright() const
 {
-  static const QString OSM("© OpenStreetMap contributors");
-  static const QString OTM("© OpenStreetMap / OpenTopoMap contributors");
-  static const QString NONE;
-
-  switch(currentThemeIndex)
-  {
-    case map::OPENTOPOMAP:
-      return OTM;
-
-    case map::OPENSTREETMAP:
-    case map::STAMENTERRAIN:
-    case map::CARTOLIGHT:
-    case map::CARTODARK:
-      return OSM;
-
-    // Pubic domain, none or other open licenses
-    case map::SIMPLE:
-    case map::PLAIN:
-    case map::ATLAS:
-    case map::CUSTOM:
-    case map::INVALID_THEME:
-      break;
-  }
-  return NONE;
+  return mapThemeHandler->getTheme(currentThemeIndex).getCopyright();
 }
 
 void MapPaintWidget::preDatabaseLoad()

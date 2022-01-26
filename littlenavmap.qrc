@@ -309,5 +309,6 @@
         <file>resources/icons/altrange.svg</file>
         <file>resources/icons/verticaltrack.svg</file>
         <file>resources/icons/loc.svg</file>
+        <file>resources/icons/mapdisplaykeys.svg</file>
     </qresource>
 </RCC>

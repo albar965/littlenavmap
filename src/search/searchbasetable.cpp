@@ -561,8 +561,7 @@ void SearchBaseTable::distanceSearchChanged(bool checked, bool changeViewState)
 {
   MapWidget *mapWidget = NavApp::getMapWidgetGui();
 
-  if((mapWidget->getSearchMarkPos().isNull() ||
-      !mapWidget->getSearchMarkPos().isValid()) && checked)
+  if((mapWidget->getSearchMarkPos().isNull() || !mapWidget->getSearchMarkPos().isValid()) && checked)
   {
     atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_SEARCH_CENTER_NULL,
                                                    tr("The search center is not set.\n"
@@ -578,11 +577,10 @@ void SearchBaseTable::distanceSearchChanged(bool checked, bool changeViewState)
   if(changeViewState)
     saveViewState(!checked);
 
-  controller->filterByDistance(
-    checked ? mapWidget->getSearchMarkPos() : atools::geo::Pos(),
-    static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
-    Unit::rev(minDistanceWidget->value(), Unit::distNmF),
-    Unit::rev(maxDistanceWidget->value(), Unit::distNmF));
+  controller->filterByDistance(checked ? mapWidget->getSearchMarkPos() : atools::geo::Pos(),
+                               static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
+                               Unit::rev(minDistanceWidget->value(), Unit::distNmF),
+                               Unit::rev(maxDistanceWidget->value(), Unit::distNmF));
 
   minDistanceWidget->setEnabled(checked);
   maxDistanceWidget->setEnabled(checked);

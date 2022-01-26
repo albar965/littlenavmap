@@ -292,6 +292,7 @@ SOURCES += \
   src/mapgui/mappaintwidget.cpp \
   src/mapgui/mapscale.cpp \
   src/mapgui/mapscreenindex.cpp \
+  src/mapgui/mapthemehandler.cpp \
   src/mapgui/maptooltip.cpp \
   src/mapgui/mapvisible.cpp \
   src/mapgui/mapwidget.cpp \
@@ -474,6 +475,7 @@ HEADERS  += \
   src/mapgui/mappaintwidget.h \
   src/mapgui/mapscale.h \
   src/mapgui/mapscreenindex.h \
+  src/mapgui/mapthemehandler.h \
   src/mapgui/maptooltip.h \
   src/mapgui/mapvisible.h \
   src/mapgui/mapwidget.h \

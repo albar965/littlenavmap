@@ -53,6 +53,7 @@
 #include <QFontDialog>
 #include <QFontDatabase>
 #include <QStringBuilder>
+#include <QStandardItem>
 
 #include <marble/MarbleModel.h>
 #include <marble/MarbleDirs.h>
@@ -88,7 +89,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     ui->splitterOptions->handle(1)->setStatusTip(ui->splitterOptions->handle(1)->toolTip());
   }
 
-  zoomHandler = new atools::gui::ItemViewZoomHandler(ui->treeWidgetOptionsDisplayTextOptions);
+  zoomHandlerMapThemeKeysTable = new atools::gui::ItemViewZoomHandler(ui->tableWidgetOptionsMapKeys);
+
+  zoomHandlerLabelTree = new atools::gui::ItemViewZoomHandler(ui->treeWidgetOptionsDisplayTextOptions);
   gridDelegate = new atools::gui::GridDelegate(ui->treeWidgetOptionsDisplayTextOptions);
   ui->treeWidgetOptionsDisplayTextOptions->setItemDelegate(gridDelegate);
 
@@ -105,6 +108,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   list->addItem(pageListItem(list, tr("Map Display Flight Plan"), tr("Adjust display style and colors for the flight plan on the map and the elevation profile."), ":/littlenavmap/resources/icons/mapdisplayflightplan.svg"));
   list->addItem(pageListItem(list, tr("Map Display User"), tr("Change colors, symbols and texts for marks, measurement lines and other user features for map and elevation profile."), ":/littlenavmap/resources/icons/mapdisplay2.svg"));
   list->addItem(pageListItem(list, tr("Map Display Labels"), tr("Change map display and elevation profile label options for marks, user aircraft and more."), ":/littlenavmap/resources/icons/mapdisplaylabels.svg"));
+  list->addItem(pageListItem(list, tr("Map Display Keys"), tr("Enter username, API keys or tokens for map services which require a login."), ":/littlenavmap/resources/icons/mapdisplaykeys.svg"));
   list->addItem(pageListItem(list, tr("Map Display Online"), tr("Map display online center options."), ":/littlenavmap/resources/icons/airspaceonline.svg"));
   list->addItem(pageListItem(list, tr("Simulator Aircraft"), tr("Update and movement options for the user aircraft and trail."), ":/littlenavmap/resources/icons/aircraft.svg"));
   list->addItem(pageListItem(list, tr("Flight Plan"), tr("Options for flight plan calculation, saving and loading."), ":/littlenavmap/resources/icons/route.svg"));
@@ -605,6 +609,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   // Flight plan =======================================================================
   connect(ui->checkBoxOptionsRouteEastWestRule, &QPushButton::clicked, this, &OptionsDialog::eastWestRuleClicked);
+
+  // Map theme key double clicked ===================================================================
+  connect(ui->tableWidgetOptionsMapKeys, &QTableWidget::itemDoubleClicked, this, &OptionsDialog::mapThemeKeyEdited);
 }
 
 /* called at program end */
@@ -612,7 +619,8 @@ OptionsDialog::~OptionsDialog()
 {
   ui->treeWidgetOptionsDisplayTextOptions->setItemDelegate(nullptr);
   delete gridDelegate;
-  delete zoomHandler;
+  delete zoomHandlerLabelTree;
+  delete zoomHandlerMapThemeKeysTable;
 
   delete units;
   delete ui;
@@ -627,6 +635,9 @@ void OptionsDialog::styleChanged()
 void OptionsDialog::open()
 {
   qDebug() << Q_FUNC_INFO;
+  // Fetch keys from handler
+  OptionData::instanceInternal().mapThemeKeys = NavApp::getMapWidgetGui()->getMapThemeKeys();
+
   optionDataToWidgets(OptionData::instanceInternal());
   updateCacheElevationStates();
   updateCacheUserAirspaceStates();
@@ -647,6 +658,84 @@ void OptionsDialog::open()
   styleChanged();
 
   QDialog::open();
+}
+
+void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
+{
+  qDebug() << "Clicked" << button->text();
+  MapWidget *mapWidget = NavApp::getMapWidgetGui();
+
+  if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Apply))
+  {
+    // Test if user uses a too low update rate for well known URLs of official networks
+    checkOfficialOnlineUrls();
+
+    widgetsToOptionData();
+    saveState();
+
+    updateTooltipOption();
+
+    mapWidget->setMapThemeKeys(OptionData::instanceInternal().mapThemeKeys);
+
+    emit optionsChanged();
+
+    // Update dialog internal stuff
+    updateWidgetStates();
+
+    updateWebOptionsFromData();
+    updateWebServerStatus();
+
+  }
+  else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Ok))
+  {
+    // Test if user uses a too low update rate for well known URLs of official networks
+    checkOfficialOnlineUrls();
+
+    widgetsToOptionData();
+    saveState();
+    updateWidgetUnits();
+    updateWebOptionsFromData();
+
+    updateTooltipOption();
+
+    mapWidget->setMapThemeKeys(OptionData::instanceInternal().mapThemeKeys);
+
+    emit optionsChanged();
+    accept();
+  }
+  else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Help))
+    HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "OPTIONS.html", lnm::helpLanguageOnline());
+  else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Cancel))
+    reject();
+  else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::RestoreDefaults))
+  {
+    qDebug() << "OptionsDialog::resetDefaultClicked";
+
+    int result = QMessageBox::question(this, QApplication::applicationName(), tr("Reset all options to default?"),
+                                       QMessageBox::No | QMessageBox::Yes, QMessageBox::No);
+
+    if(result == QMessageBox::Yes)
+    {
+      // Do reset - this can be undone with cancel
+
+      // Create data object with default options
+      OptionData defaultOpts;
+
+      // Get all keys and remove values for reset in default options
+      defaultOpts.mapThemeKeys = mapWidget->getMapThemeKeys();
+      for(auto it = defaultOpts.mapThemeKeys.begin(); it != defaultOpts.mapThemeKeys.end(); ++it)
+        it.value().clear();
+
+      optionDataToWidgets(defaultOpts);
+      updateWidgetStates();
+
+      updateWebOptionsFromData();
+      updateFontFromData();
+      updateWebServerStatus();
+
+      updateTooltipOption();
+    }
+  }
 }
 
 void OptionsDialog::reject()
@@ -854,69 +943,6 @@ QString OptionsDialog::selectCacheUserAirspace()
 {
   userAirspacePathSelectClicked();
   return ui->lineEditCacheUserAirspacePath->text();
-}
-
-void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
-{
-  qDebug() << "Clicked" << button->text();
-
-  if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Apply))
-  {
-    // Test if user uses a too low update rate for well known URLs of official networks
-    checkOfficialOnlineUrls();
-
-    widgetsToOptionData();
-    saveState();
-
-    updateTooltipOption();
-
-    emit optionsChanged();
-
-    // Update dialog internal stuff
-    updateWidgetStates();
-
-    updateWebOptionsFromData();
-    updateWebServerStatus();
-  }
-  else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Ok))
-  {
-    // Test if user uses a too low update rate for well known URLs of official networks
-    checkOfficialOnlineUrls();
-
-    widgetsToOptionData();
-    saveState();
-    updateWidgetUnits();
-    updateWebOptionsFromData();
-
-    updateTooltipOption();
-
-    emit optionsChanged();
-    accept();
-  }
-  else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Help))
-    HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "OPTIONS.html", lnm::helpLanguageOnline());
-  else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Cancel))
-    reject();
-  else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::RestoreDefaults))
-  {
-    qDebug() << "OptionsDialog::resetDefaultClicked";
-
-    int result = QMessageBox::question(this, QApplication::applicationName(),
-                                       tr("Reset all options to default?"),
-                                       QMessageBox::No | QMessageBox::Yes, QMessageBox::No);
-
-    if(result == QMessageBox::Yes)
-    {
-      optionDataToWidgets(OptionData());
-      updateWidgetStates();
-
-      updateWebOptionsFromData();
-      updateFontFromData();
-      updateWebServerStatus();
-
-      updateTooltipOption();
-    }
-  }
 }
 
 void OptionsDialog::updateWidgetStates()
@@ -1788,20 +1814,14 @@ void OptionsDialog::widgetsToOptionData()
   data.onlineCustomReload = ui->spinBoxOptionsOnlineUpdate->value();
   data.onlineFormat = static_cast<opts::OnlineFormat>(ui->comboBoxOptionsOnlineFormat->currentIndex());
 
-  data.displayOnlineClearance = displayOnlineRangeToData(ui->spinBoxDisplayOnlineClearance,
-                                                         ui->checkBoxDisplayOnlineClearanceRange);
+  data.displayOnlineClearance = displayOnlineRangeToData(ui->spinBoxDisplayOnlineClearance, ui->checkBoxDisplayOnlineClearanceRange);
   data.displayOnlineArea = displayOnlineRangeToData(ui->spinBoxDisplayOnlineArea, ui->checkBoxDisplayOnlineAreaRange);
-  data.displayOnlineApproach = displayOnlineRangeToData(ui->spinBoxDisplayOnlineApproach,
-                                                        ui->checkBoxDisplayOnlineApproachRange);
-  data.displayOnlineDeparture = displayOnlineRangeToData(ui->spinBoxDisplayOnlineDeparture,
-                                                         ui->checkBoxDisplayOnlineDepartureRange);
+  data.displayOnlineApproach = displayOnlineRangeToData(ui->spinBoxDisplayOnlineApproach, ui->checkBoxDisplayOnlineApproachRange);
+  data.displayOnlineDeparture = displayOnlineRangeToData(ui->spinBoxDisplayOnlineDeparture, ui->checkBoxDisplayOnlineDepartureRange);
   data.displayOnlineFir = displayOnlineRangeToData(ui->spinBoxDisplayOnlineFir, ui->checkBoxDisplayOnlineFirRange);
-  data.displayOnlineObserver = displayOnlineRangeToData(ui->spinBoxDisplayOnlineObserver,
-                                                        ui->checkBoxDisplayOnlineObserverRange);
-  data.displayOnlineGround = displayOnlineRangeToData(ui->spinBoxDisplayOnlineGround,
-                                                      ui->checkBoxDisplayOnlineGroundRange);
-  data.displayOnlineTower =
-    displayOnlineRangeToData(ui->spinBoxDisplayOnlineTower, ui->checkBoxDisplayOnlineTowerRange);
+  data.displayOnlineObserver = displayOnlineRangeToData(ui->spinBoxDisplayOnlineObserver, ui->checkBoxDisplayOnlineObserverRange);
+  data.displayOnlineGround = displayOnlineRangeToData(ui->spinBoxDisplayOnlineGround, ui->checkBoxDisplayOnlineGroundRange);
+  data.displayOnlineTower = displayOnlineRangeToData(ui->spinBoxDisplayOnlineTower, ui->checkBoxDisplayOnlineTowerRange);
 
   data.webPort = ui->spinBoxOptionsWebPort->value();
   data.webDocumentRoot = QDir::fromNativeSeparators(ui->lineEditOptionsWebDocroot->text());
@@ -1809,6 +1829,8 @@ void OptionsDialog::widgetsToOptionData()
 
   data.weatherXplaneWind = ui->lineEditOptionsWeatherXplaneWind->text();
   data.weatherNoaaWindBaseUrl = ui->lineEditOptionsWeatherNoaaWindUrl->text();
+
+  widgetToMapThemeKeys(data);
 
   data.valid = true;
 }
@@ -2098,6 +2120,66 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
 
   ui->lineEditOptionsWeatherXplaneWind->setText(data.weatherXplaneWind);
   ui->lineEditOptionsWeatherNoaaWindUrl->setText(data.weatherNoaaWindBaseUrl);
+
+  mapThemeKeysToWidget(data);
+}
+
+void OptionsDialog::mapThemeKeyEdited(QTableWidgetItem *item)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  if(item->flags().testFlag(Qt::ItemIsEditable))
+    ui->tableWidgetOptionsMapKeys->editItem(item);
+}
+
+void OptionsDialog::widgetToMapThemeKeys(OptionData& data)
+{
+  data.mapThemeKeys.clear();
+  for(int i = 0; i < ui->tableWidgetOptionsMapKeys->rowCount(); i++)
+    data.mapThemeKeys.insert(ui->tableWidgetOptionsMapKeys->item(i, 0)->text(), ui->tableWidgetOptionsMapKeys->item(i, 1)->text());
+}
+
+void OptionsDialog::mapThemeKeysToWidget(const OptionData& data)
+{
+  ui->tableWidgetOptionsMapKeys->clear();
+
+  if(data.mapThemeKeys.isEmpty())
+  {
+    // Add single message for empty list =======================================
+    ui->tableWidgetOptionsMapKeys->setSelectionMode(QAbstractItemView::NoSelection);
+    ui->tableWidgetOptionsMapKeys->clearSelection();
+
+    ui->tableWidgetOptionsMapKeys->setRowCount(1);
+    ui->tableWidgetOptionsMapKeys->setColumnCount(1);
+    ui->tableWidgetOptionsMapKeys->setItem(0, 0, new QTableWidgetItem(tr("No keys found in DGML map configuration files.")));
+  }
+  else
+  {
+    // Fill table with key/value pairs =======================================
+    ui->tableWidgetOptionsMapKeys->setSelectionMode(QAbstractItemView::SingleSelection);
+    ui->tableWidgetOptionsMapKeys->setRowCount(data.mapThemeKeys.size());
+    ui->tableWidgetOptionsMapKeys->setColumnCount(2);
+    ui->tableWidgetOptionsMapKeys->setHorizontalHeaderLabels({tr(" API Key / Username / Token "), tr(" Value ")});
+
+    int index = 0;
+    for(auto it = data.mapThemeKeys.constBegin(); it != data.mapThemeKeys.constEnd(); ++it)
+    {
+      // Item for key name ==================
+      QTableWidgetItem *item = new QTableWidgetItem(it.key());
+      item->setFlags(Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+      ui->tableWidgetOptionsMapKeys->setItem(index, 0, item);
+
+      // Editable item for key value ==================
+      QString value = it.value();
+      item = new QTableWidgetItem(value);
+      item->setFlags(Qt::ItemIsEditable | Qt::ItemIsEnabled | Qt::ItemIsSelectable);
+      item->setToolTip(tr("Double click to edit key value"));
+      ui->tableWidgetOptionsMapKeys->setItem(index, 1, item);
+
+      index++;
+    }
+  }
+  ui->tableWidgetOptionsMapKeys->resizeColumnsToContents();
 }
 
 void OptionsDialog::toFlagsWeather(QCheckBox *checkBox, optsw::FlagsWeather flag)

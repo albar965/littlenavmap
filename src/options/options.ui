@@ -61,7 +61,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
+             <width>600</width>
              <height>532</height>
             </rect>
            </property>
@@ -402,7 +402,7 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
+             <width>600</width>
              <height>532</height>
             </rect>
            </property>
@@ -609,7 +609,7 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
+             <width>600</width>
              <height>532</height>
             </rect>
            </property>
@@ -1104,7 +1104,7 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
+             <width>600</width>
              <height>532</height>
             </rect>
            </property>
@@ -1420,8 +1420,8 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>581</width>
-             <height>548</height>
+             <width>586</width>
+             <height>543</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_12">
@@ -1886,7 +1886,7 @@ Use &quot;Window&quot; -&gt; &quot;Reset Window Layout&quot; in the main menu to
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
+             <width>600</width>
              <height>532</height>
             </rect>
            </property>
@@ -2206,7 +2206,7 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
+             <width>600</width>
              <height>532</height>
             </rect>
            </property>
@@ -2930,7 +2930,7 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
+             <width>600</width>
              <height>532</height>
             </rect>
            </property>
@@ -3317,7 +3317,7 @@ Not used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
+             <width>600</width>
              <height>532</height>
             </rect>
            </property>
@@ -3998,6 +3998,67 @@ logbook entries:</string>
         </item>
        </layout>
       </widget>
+      <widget class="QWidget" name="page">
+       <layout class="QVBoxLayout" name="verticalLayout_39">
+        <item>
+         <widget class="QGroupBox" name="groupBox_33">
+          <property name="title">
+           <string>API Keys, usernames or tokens for map services</string>
+          </property>
+          <layout class="QVBoxLayout" name="verticalLayout_38">
+           <item>
+            <widget class="QLabel" name="label_10">
+             <property name="text">
+              <string>You can enter login information, tokens or API keys for map services which need an user account.
+The needed keys shown below are extracted from the installed map themes.
+Double click a value to edit.
+Do not show this this information publicly in forums on screenshots.</string>
+             </property>
+             <property name="textInteractionFlags">
+              <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QTableWidget" name="tableWidgetOptionsMapKeys">
+             <property name="toolTip">
+              <string/>
+             </property>
+             <property name="editTriggers">
+              <set>QAbstractItemView::NoEditTriggers</set>
+             </property>
+             <property name="showDropIndicator" stdset="0">
+              <bool>false</bool>
+             </property>
+             <property name="alternatingRowColors">
+              <bool>true</bool>
+             </property>
+             <property name="selectionMode">
+              <enum>QAbstractItemView::NoSelection</enum>
+             </property>
+             <attribute name="horizontalHeaderStretchLastSection">
+              <bool>true</bool>
+             </attribute>
+             <attribute name="verticalHeaderVisible">
+              <bool>false</bool>
+             </attribute>
+             <column>
+              <property name="text">
+               <string>Key</string>
+              </property>
+             </column>
+             <column>
+              <property name="text">
+               <string>Value</string>
+              </property>
+             </column>
+            </widget>
+           </item>
+          </layout>
+         </widget>
+        </item>
+       </layout>
+      </widget>
       <widget class="QWidget" name="stackedWidgetOptionsMapDisplayOnline">
        <layout class="QGridLayout" name="gridLayout_27">
         <item row="0" column="0">
@@ -4010,7 +4071,7 @@ logbook entries:</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
+             <width>600</width>
              <height>532</height>
             </rect>
            </property>
@@ -4448,8 +4509,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>532</height>
+             <width>594</width>
+             <height>491</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -4876,8 +4937,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>532</height>
+             <width>491</width>
+             <height>393</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -5195,8 +5256,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>532</height>
+             <width>284</width>
+             <height>324</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -5391,8 +5452,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>532</height>
+             <width>430</width>
+             <height>390</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -5854,8 +5915,8 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>532</height>
+             <width>341</width>
+             <height>333</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -6136,8 +6197,8 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>532</height>
+             <width>450</width>
+             <height>234</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -6323,8 +6384,8 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>532</height>
+             <width>505</width>
+             <height>496</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -6692,8 +6753,8 @@ Currently only OpenAir is supported (*.txt). </string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
-             <height>532</height>
+             <width>205</width>
+             <height>557</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">

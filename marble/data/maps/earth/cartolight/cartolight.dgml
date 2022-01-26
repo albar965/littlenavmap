@@ -9,8 +9,8 @@
     <head>
       <!-- The license here applies to the actual map content, not this dgml file. See the license header above for the dgml file license -->
       <!-- The content that this license refers to is not distributed with this package -->
-      <license short="© OpenStreetMap contributors">Source: © OpenStreetMap contributors, License: Creative Commons Attribution-ShareAlike 2.0 (CC BY-SA)</license>
-      <name>CARTO Light (Positron)</name>
+      <license short="© CARTO and OpenStreetMap contributors">Source: © OpenStreetMap contributors, License: Creative Commons Attribution-ShareAlike 2.0 (CC BY-SA)</license>
+      <name>CARTO Positron</name>
       <target>earth</target>
       <theme>cartolight</theme>
       <icon pixmap="cartolight-preview.png"/>
@@ -21,6 +21,7 @@
         <maximum>  3328  </maximum>
         <discrete> true </discrete>
       </zoom>
+      <url href="https://www.carto.com">CARTO</url>
     </head>
     <map bgcolor="#000000">
       <canvas/>

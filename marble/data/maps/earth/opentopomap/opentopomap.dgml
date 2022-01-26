@@ -45,35 +45,6 @@
           <downloadPolicy usage="Bulk" maximumConnections="2"/>
         </texture>
       </layer>
-      <layer name="naturalearth" backend="geodata">
-        <geodata name="glacier" property="ice">
-            <sourcefile> naturalearth/ne_50m_glaciated_areas.pn2 </sourcefile>
-            <brush color="#ffffff" alpha="0.9" />
-            <pen color="transparent" style="nopen"/>
-        </geodata>
-        <geodata name="antarciticiceshelves" property="ice">
-            <sourcefile> naturalearth/ne_50m_antarctic_ice_shelves_polys.pn2 </sourcefile>
-            <pen color="#5182b4" style="dashline"/>
-            <brush color="#ffffff" alpha="0.4" />
-        </geodata>
-      </layer>
-      <layer name="standardplaces" backend="geodata">
-        <geodata name="cityplacemarks">
-          <sourcefile>cityplacemarks.cache</sourcefile>
-        </geodata>
-        <geodata name="baseplacemarks">
-          <sourcefile>baseplacemarks.cache</sourcefile>
-        </geodata>
-        <geodata name="elevplacemarks">
-          <sourcefile>elevplacemarks.cache</sourcefile>
-        </geodata>
-        <geodata name="otherplacemarks">
-          <sourcefile>otherplacemarks.cache</sourcefile>
-        </geodata>
-        <geodata name="boundaryplacemarks">
-          <sourcefile>boundaryplacemarks.cache</sourcefile>
-        </geodata>
-      </layer>
     </map>
     <settings>
         <group name="Places">
