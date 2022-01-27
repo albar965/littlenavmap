@@ -738,11 +738,11 @@ void MainWindow::scaleToolbar(QToolBar *toolbar, float scale)
 void MainWindow::setupMapThemesUi()
 {
   // Theme combo box ============================
-  mapThemeComboBox = new QComboBox(this);
-  mapThemeComboBox->setObjectName("mapThemeComboBox");
-  mapThemeComboBox->setToolTip(tr("Select map theme"));
-  mapThemeComboBox->setStatusTip(mapThemeComboBox->toolTip());
-  ui->toolBarMapThemeProjection->addWidget(mapThemeComboBox);
+  comboBoxMapTheme = new QComboBox(this);
+  comboBoxMapTheme->setObjectName("comboBoxMapTheme");
+  comboBoxMapTheme->setToolTip(tr("Select map theme"));
+  comboBoxMapTheme->setStatusTip(comboBoxMapTheme->toolTip());
+  ui->toolBarMapThemeProjection->addWidget(comboBoxMapTheme);
 
   // Theme menu items ===============================
   actionGroupMapTheme = new QActionGroup(ui->menuViewTheme);
@@ -758,7 +758,7 @@ void MainWindow::setupMapThemesUi()
     {
       // Add separator between online and offline maps
       ui->menuViewTheme->addSeparator();
-      mapThemeComboBox->insertSeparator(mapThemeComboBox->count());
+      comboBoxMapTheme->insertSeparator(comboBoxMapTheme->count());
     }
 
     // Add item to combo box in toolbar
@@ -774,8 +774,8 @@ void MainWindow::setupMapThemesUi()
     tip.append(theme.hasKeys() ? tr("* requires registration") : tr("free"));
 
     // Add item and attach index for theme in MapThemeHandler
-    mapThemeComboBox->addItem(name, index);
-    mapThemeComboBox->setItemData(index, tip.join(tr(", ")), Qt::ToolTipRole);
+    comboBoxMapTheme->addItem(name, index);
+    comboBoxMapTheme->setItemData(index, tip.join(tr(", ")), Qt::ToolTipRole);
 
     // Create action for map/theme submenu
     QAction *action = ui->menuViewTheme->addAction(name);
@@ -1397,7 +1397,7 @@ void MainWindow::connectAllSlots()
 
   // Connect toolbar combo boxes
   connect(mapProjectionComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::changeMapProjection);
-  connect(mapThemeComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::changeMapTheme);
+  connect(comboBoxMapTheme, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::changeMapTheme);
 
   // Let projection menus update combo boxes
   connect(ui->actionMapProjectionMercator, &QAction::triggered, this, [ = ](bool checked)
@@ -1819,12 +1819,12 @@ void MainWindow::themeMenuTriggered(bool checked)
     // Get index in MapThemeHandler
     int index = action->data().toInt();
 
-    for(int i = 0; i < mapThemeComboBox->count(); i++)
+    for(int i = 0; i < comboBoxMapTheme->count(); i++)
     {
-      if(mapThemeComboBox->itemData(i).isValid() && mapThemeComboBox->itemData(i).toInt() == index)
+      if(comboBoxMapTheme->itemData(i).isValid() && comboBoxMapTheme->itemData(i).toInt() == index)
       {
         // Use signal from combo box to activate theme
-        mapThemeComboBox->setCurrentIndex(i);
+        comboBoxMapTheme->setCurrentIndex(i);
         break;
       }
     }
@@ -1855,7 +1855,7 @@ void MainWindow::changeMapTheme()
   mapWidget->cancelDragAll();
   const MapThemeHandler *mapThemeHandler = mapWidget->getMapThemeHandler();
 
-  int index = mapThemeComboBox->currentData().toInt();
+  int index = comboBoxMapTheme->currentData().toInt();
   MapTheme theme = mapThemeHandler->getTheme(index);
 
   if(!theme.isValid())
@@ -1866,14 +1866,14 @@ void MainWindow::changeMapTheme()
     index = theme.getIndex();
 
     // Search for combo box entry with index for MapThemeHandler
-    for(int i = 0; i < mapThemeComboBox->count(); i++)
+    for(int i = 0; i < comboBoxMapTheme->count(); i++)
     {
-      if(mapThemeComboBox->itemData(i).isValid() && mapThemeComboBox->itemData(i).toInt() == index)
+      if(comboBoxMapTheme->itemData(i).isValid() && comboBoxMapTheme->itemData(i).toInt() == index)
       {
         // Avoid recursion by blocking signals
-        mapThemeComboBox->blockSignals(true);
-        mapThemeComboBox->setCurrentIndex(i);
-        mapThemeComboBox->blockSignals(false);
+        comboBoxMapTheme->blockSignals(true);
+        comboBoxMapTheme->setCurrentIndex(i);
+        comboBoxMapTheme->blockSignals(false);
         break;
       }
     }
@@ -1934,7 +1934,7 @@ void MainWindow::changeMapTheme()
 
   updateLegend();
 
-  setStatusMessage(tr("Map theme changed to %1.").arg(mapThemeComboBox->currentText()));
+  setStatusMessage(tr("Map theme changed to %1.").arg(comboBoxMapTheme->currentText()));
 }
 
 void MainWindow::updateLegend()
@@ -3994,20 +3994,20 @@ void MainWindow::restoreStateMain()
                        ui->actionMapShowSunShading, ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude,
                        ui->actionRunWebserver, ui->actionShowAllowDocking, ui->actionShowAllowMoving, ui->actionWindowStayOnTop});
 
-  if(widgetState.contains(mapThemeComboBox))
+  if(widgetState.contains(comboBoxMapTheme))
     // Restore map theme selection
-    widgetState.restore(mapThemeComboBox);
+    widgetState.restore(comboBoxMapTheme);
   else
   {
     // Load default theme OSM
     int defaultIndex = mapWidget->getMapThemeHandler()->getDefaultTheme().getIndex();
-    for(int i = 0; i < mapThemeComboBox->count(); i++)
+    for(int i = 0; i < comboBoxMapTheme->count(); i++)
     {
-      if(mapThemeComboBox->itemData(i).isValid() && mapThemeComboBox->itemData(i).toInt() == defaultIndex)
+      if(comboBoxMapTheme->itemData(i).isValid() && comboBoxMapTheme->itemData(i).toInt() == defaultIndex)
       {
-        mapThemeComboBox->blockSignals(true);
-        mapThemeComboBox->setCurrentIndex(defaultIndex);
-        mapThemeComboBox->blockSignals(false);
+        comboBoxMapTheme->blockSignals(true);
+        comboBoxMapTheme->setCurrentIndex(defaultIndex);
+        comboBoxMapTheme->blockSignals(false);
         break;
       }
     }
@@ -4201,7 +4201,7 @@ void MainWindow::saveActionStates()
   qDebug() << Q_FUNC_INFO;
 
   atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
-  widgetState.save({mapProjectionComboBox, mapThemeComboBox, ui->actionMapShowVor, ui->actionMapShowNdb,
+  widgetState.save({mapProjectionComboBox, comboBoxMapTheme, ui->actionMapShowVor, ui->actionMapShowNdb,
                     ui->actionMapShowWp, ui->actionMapShowIls, ui->actionMapShowGls, ui->actionMapShowHolding, ui->actionMapShowAirportMsa,
                     ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks, ui->actionShowAirspaces,
                     ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
@@ -4731,7 +4731,7 @@ void MainWindow::updateErrorLabels()
 
 int MainWindow::getMapThemeIndex() const
 {
-  return mapThemeComboBox->currentData().toInt();
+  return comboBoxMapTheme->currentData().toInt();
 }
 
 void MainWindow::showFlightPlan()

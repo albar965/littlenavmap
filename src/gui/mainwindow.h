@@ -447,7 +447,7 @@ private:
   QString legendFile;
 
   /* Combo boxes that are added to the toolbar */
-  QComboBox *mapThemeComboBox = nullptr, *mapProjectionComboBox = nullptr;
+  QComboBox *comboBoxMapTheme = nullptr, *mapProjectionComboBox = nullptr;
 
   Ui::MainWindow *ui;
   MapWidget *mapWidget = nullptr;
