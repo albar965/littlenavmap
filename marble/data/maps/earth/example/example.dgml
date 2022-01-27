@@ -79,7 +79,7 @@
 
           <!-- Example to build an url with access token, username and style.
                A single access token or API key is often sufficient to access a map which requires an user account.
-               All keys enclosed in braces (except common ones like "x", "y", "z" and "zoomLevel") are extracted from
+               All keys enclosed in braces (except common ones like "x", "y", "z", "zoomLevel" and "language") are extracted from
                the URL by LNM and are shown in the options dialog on page "Map Display Keys".
                Allowed characters for keys are A-Z, a-z, 0-9, _, - and space.
                The keys should to be unique for all available maps/map providers and shoult be user readable.
@@ -89,6 +89,14 @@
                <downloadUrl protocol="https" host="tile.openstreetmap.org" path="/{z}/{x}/{y}.png" />
 
                DGML without tag "downloadUrl" will be marked as offline maps.
+
+               Default keys are:
+               {language}  Two letter language code as used in the GUI
+               {zoomLevel} Slippy map zoom level
+               {z}         Synonym for {zoomLevel}
+               {x}         Slippy map tile coordinate
+               {y}         Slippy map tile coordinate
+
                -->
           <downloadUrl host="example.com"
                        path="/styles/v1/{Example Map Username}/{Example Map Style}/tiles/512/{z}/{x}/{y}?access_token={Example Token}"

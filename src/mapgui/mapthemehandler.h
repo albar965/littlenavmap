@@ -46,7 +46,7 @@ public:
   /* Enable show city and other POIs button if true */
   bool hasPlacemarks() const
   {
-    return geodataLayer;
+    return geodataLayer && !online;
   }
 
   /* Offline themes cannot do sun shading */
