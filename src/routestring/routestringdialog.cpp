@@ -41,11 +41,13 @@
 using atools::gui::HelpHandler;
 namespace apln = atools::fs::pln;
 
-RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeController)
-  : QDialog(parent), ui(new Ui::RouteStringDialog), controller(routeController)
+RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& routeStringParam)
+  : QDialog(parent), ui(new Ui::RouteStringDialog), routeString(routeStringParam)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
   setWindowModality(Qt::ApplicationModal);
+
+  controller = NavApp::getRouteController();
 
   ui->setupUi(this);
 
@@ -79,7 +81,7 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeCont
 
   flightplan = new apln::Flightplan;
   routeStringWriter = new RouteStringWriter();
-  routeStringReader = new RouteStringReader(routeController->getFlightplanEntryBuilder());
+  routeStringReader = new RouteStringReader(controller->getFlightplanEntryBuilder());
 
   // Build options dropdown menu ====================================================
   // Add tear off menu =======
@@ -186,8 +188,7 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeCont
   buttonMenu->addAction(action);
 
   connect(ui->pushButtonRouteStringRead, &QPushButton::clicked, this, &RouteStringDialog::readButtonClicked);
-  connect(ui->pushButtonRouteStringFromClipboard, &QPushButton::clicked, this,
-          &RouteStringDialog::fromClipboardClicked);
+  connect(ui->pushButtonRouteStringFromClipboard, &QPushButton::clicked, this, &RouteStringDialog::fromClipboardClicked);
   connect(ui->pushButtonRouteStringToClipboard, &QPushButton::clicked, this, &RouteStringDialog::toClipboardClicked);
 
   connect(ui->plainTextEditRouteString, &QPlainTextEdit::textChanged, this, &RouteStringDialog::updateButtonState);
@@ -196,8 +197,7 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, RouteController *routeCont
 
   connect(ui->buttonBoxRouteString, &QDialogButtonBox::clicked, this, &RouteStringDialog::buttonBoxClicked);
 
-  connect(ui->toolButtonRouteStringOptions->menu(), &QMenu::triggered,
-          this, &RouteStringDialog::toolButtonOptionTriggered);
+  connect(ui->toolButtonRouteStringOptions->menu(), &QMenu::triggered, this, &RouteStringDialog::toolButtonOptionTriggered);
 
   connect(ui->pushButtonRouteStringUpdate, &QPushButton::clicked, this, &RouteStringDialog::updateButtonClicked);
 }
@@ -258,9 +258,12 @@ void RouteStringDialog::restoreState()
   options = getOptionsFromSettings();
   updateButtonState();
 
-  ui->plainTextEditRouteString->setPlainText(routeStringWriter->createStringForRoute(NavApp::getRouteConst(),
-                                                                                     NavApp::getRouteCruiseSpeedKts(),
-                                                                                     options));
+  if(routeString.isEmpty())
+    ui->plainTextEditRouteString->setPlainText(routeStringWriter->createStringForRoute(NavApp::getRouteConst(),
+                                                                                       NavApp::getRouteCruiseSpeedKts(),
+                                                                                       options));
+  else
+    ui->plainTextEditRouteString->setPlainText(routeString);
 }
 
 rs::RouteStringOptions RouteStringDialog::getOptionsFromSettings()

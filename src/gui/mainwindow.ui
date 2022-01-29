@@ -82,6 +82,9 @@
     <addaction name="actionRouteSaveAsFms11"/>
     <addaction name="actionRouteSaveAsFlightGear"/>
     <addaction name="separator"/>
+    <addaction name="actionRouteFetchFromSimBrief"/>
+    <addaction name="actionRouteSendToSimBrief"/>
+    <addaction name="separator"/>
     <addaction name="actionRouteShowSkyVector"/>
     <addaction name="menuExportFlightplanToOnlineFormats"/>
     <addaction name="separator"/>
@@ -5817,7 +5820,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>0</y>
+              <y>13</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -9603,10 +9606,10 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Show Flight Plan in Sky&amp;Vector ...</string>
    </property>
    <property name="toolTip">
-    <string>Show the flight plan in SkyVector in the default web browser</string>
+    <string>Show the flight plan in SkyVector in your web browser</string>
    </property>
    <property name="statusTip">
-    <string>Show the flight plan in SkyVector in the default web browser</string>
+    <string>Show the flight plan in SkyVector in your web browser</string>
    </property>
   </action>
   <action name="actionRouteTableSelectAll">
@@ -12272,6 +12275,28 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Show or hide the labels at the top of the elevation profile</string>
    </property>
   </action>
+  <action name="actionRouteSendToSimBrief">
+   <property name="text">
+    <string>Export Flight &amp;Plan to SimBrief ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Send the flight plan to SimBrief and open it in your web browser</string>
+   </property>
+   <property name="statusTip">
+    <string>Send the flight plan to SimBrief and open it in your web browser</string>
+   </property>
+  </action>
+  <action name="actionRouteFetchFromSimBrief">
+   <property name="text">
+    <string>Open Flight Plan from &amp;SimBrief ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Fetches the flight plan from your current SimBrief plan</string>
+   </property>
+   <property name="statusTip">
+    <string>Fetches the flight plan from your current SimBrief plan</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12458,7 +12483,7 @@ Disabled if a navdatabase does not allow it.</string>
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupRouteCalc"/>
-  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
  </buttongroups>
 </ui>

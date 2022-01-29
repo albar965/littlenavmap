@@ -95,12 +95,14 @@ const QLatin1String ACTIONS_SHOW_TRACK_DOWNLOAD_FAIL("Actions/TrackDownloadFaile
 const QLatin1String ACTIONS_SHOW_TRACK_DOWNLOAD_SUCCESS("Actions/TrackDownloadSuccess");
 const QLatin1String ACTIONS_SHOW_LOGBOOK_CONVERSION("Actions/LogbookConversion");
 const QLatin1String ACTIONS_SHOW_USER_AIRSPACE_NOTE("Actions/UserAirspaceNote");
+const QLatin1String ACTIONS_SHOW_SEND_SIMBRIEF("Actions/SendSimBrief");
 const QLatin1String ACTIONS_SHOW_MAPTHEME_REQUIRES_KEY("Actions/MapThemeRequiresKey");
 
 const QLatin1String ACTIONS_SHOW_SSL_WARNING_ONLINE("Actions/SslWarningOnline");
 const QLatin1String ACTIONS_SHOW_SSL_WARNING_WIND("Actions/SslWarningWind");
 const QLatin1String ACTIONS_SHOW_SSL_WARNING_TRACK("Actions/SslWarningTrack");
 const QLatin1String ACTIONS_SHOW_SSL_WARNING_WEATHER("Actions/SslWarningWeather");
+const QLatin1String ACTIONS_SHOW_SSL_WARNING_SIMBRIEF("Actions/SslWarningSimBrief");
 
 const QLatin1String ACTIONS_SHOW_NAVDATA_WARNING("Actions/ShowNavdataWarning");
 const QLatin1String ACTIONS_SHOW_CRUISE_ZERO_WARNING("Actions/ShowCruiseZeroWarning");
@@ -190,10 +192,8 @@ const QLatin1String ROUTE_STRING_DIALOG_OPTIONS("Route/StringDialogOptions");
 const QLatin1String ROUTEWINDOW_WIDGET_TABS("Route/WidgetTabs");
 const QLatin1String TRAFFIC_PATTERN_DIALOG("Route/TrafficPatternDialog");
 const QLatin1String TRAFFIC_PATTERN_DIALOG_COLOR("Route/TrafficPatternDialogColor");
+const QLatin1String FETCH_SIMBRIEF_DIALOG("Route/FetchSimBrief");
 const QLatin1String HOLD_DIALOG("Route/HoldDialog");
-const QLatin1String ROUTE_EXPORT_DIALOG("RouteExport/RouteExportDialog");
-const QLatin1String ROUTE_EXPORT_DIALOG_ZOOM("RouteExport/RouteExportDialogZoom");
-const QLatin1String ROUTE_EXPORT_FORMATS("RouteExport/RouteExportFormats");
 const QLatin1String HOLD_DIALOG_COLOR("Route/HoldDialogColor");
 const QLatin1String CUSTOM_APPROACH_DIALOG("Route/CustomApproachDialog");
 const QLatin1String CUSTOM_DEPARTURE_DIALOG("Route/CustomDepartureDialog");
@@ -208,6 +208,12 @@ const QLatin1String SEARCHTAB_NAV_VIEW_WIDGET("SearchPaneNav/WidgetView");
 const QLatin1String SEARCHTAB_NAV_VIEW_DIST_WIDGET("SearchPaneNav/WidgetDistView");
 const QLatin1String SEARCHTAB_USERDATA_VIEW_WIDGET("SearchPaneUserdata/WidgetView");
 const QLatin1String SEARCHTAB_LOGDATA_VIEW_WIDGET("SearchPaneLogdata/WidgetView");
+
+const QLatin1String ROUTE_EXPORT_DIALOG("RouteExport/RouteExportDialog");
+const QLatin1String ROUTE_EXPORT_DIALOG_ZOOM("RouteExport/RouteExportDialogZoom");
+const QLatin1String ROUTE_EXPORT_FORMATS("RouteExport/RouteExportFormats");
+const QLatin1String ROUTE_EXPORT_SIMBRIEF_DISPATCH_URL("RouteExport/RouteExportSimBriefDispatchUrl");
+const QLatin1String ROUTE_EXPORT_SIMBRIEF_FETCHER_URL("RouteExport/RouteExportSimBriefFetcherUrl");
 
 const QLatin1String IMAGE_EXPORT_DIALOG("Map/ImageExportDialog");
 const QLatin1String IMAGE_EXPORT_AVITAB_DIALOG("Map/ImageExportDialogAviTab");
@@ -333,7 +339,6 @@ const QLatin1String OPTIONS_TRACK_AUSOTS_PARAM("Track/AusotsUrlParam");
 
 /* Used to override  default URL */
 const QLatin1String OPTIONS_UPDATE_URL("Update/Url");
-
 const QLatin1String OPTIONS_UPDATE_ALREADY_CHECKED("Update/AlreadyChecked");
 const QLatin1String OPTIONS_UPDATE_LAST_CHECKED("Update/LastCheckTimestamp");
 

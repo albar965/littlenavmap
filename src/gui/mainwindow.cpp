@@ -17,76 +17,77 @@
 
 #include "gui/mainwindow.h"
 
-#include "common/constants.h"
-#include "navapp.h"
+#include "airspace/airspacecontroller.h"
 #include "atools.h"
+#include "common/constants.h"
+#include "common/dirtool.h"
+#include "common/elevationprovider.h"
 #include "common/mapcolors.h"
 #include "common/settingsmigrate.h"
-#include "gui/stylehandler.h"
-#include "util/htmlbuilder.h"
-#include "fs/common/morareader.h"
-#include "gui/application.h"
-#include "route/routealtitude.h"
-#include "weather/weatherreporter.h"
+#include "common/unit.h"
 #include "connect/connectclient.h"
-#include "common/elevationprovider.h"
 #include "db/databasemanager.h"
+#include "exception.h"
+#include "fs/common/morareader.h"
+#include "fs/perf/aircraftperf.h"
+#include "fs/pln/flightplanio.h"
+#include "gui/application.h"
+#include "gui/choicedialog.h"
+#include "gui/clicktooltiphandler.h"
 #include "gui/dialog.h"
+#include "gui/dockwidgethandler.h"
 #include "gui/errorhandler.h"
+#include "gui/filehistoryhandler.h"
 #include "gui/helphandler.h"
-#include "gui/tabwidgethandler.h"
 #include "gui/itemviewzoomhandler.h"
+#include "gui/statusbareventfilter.h"
+#include "gui/stylehandler.h"
+#include "gui/tabwidgethandler.h"
+#include "gui/timedialog.h"
 #include "gui/translator.h"
 #include "gui/widgetstate.h"
 #include "info/infocontroller.h"
-#include "logging/logginghandler.h"
+#include "logbook/logdatacontroller.h"
 #include "logging/loggingguiabort.h"
-#include "query/airportquery.h"
-#include "mapgui/mapwidget.h"
+#include "logging/logginghandler.h"
 #include "mapgui/aprongeometrycache.h"
-#include "profile/profilewidget.h"
-#include "route/routecontroller.h"
-#include "gui/filehistoryhandler.h"
-#include "search/airportsearch.h"
-#include "search/userdatasearch.h"
-#include "search/navsearch.h"
+#include "mapgui/imageexportdialog.h"
+#include "mapgui/mapairporthandler.h"
 #include "mapgui/maplayersettings.h"
-#include "search/searchcontroller.h"
-#include "settings/settings.h"
+#include "mapgui/mapmarkhandler.h"
+#include "mapgui/mapwidget.h"
 #include "mapgui/mapthemehandler.h"
+#include "navapp.h"
+#include "online/onlinedatacontroller.h"
 #include "options/optionsdialog.h"
+#include "perf/aircraftperfcontroller.h"
 #include "print/printsupport.h"
-#include "exception.h"
+#include "profile/profilewidget.h"
+#include "query/airportquery.h"
+#include "query/procedurequery.h"
+#include "route/routealtitude.h"
+#include "route/routecontroller.h"
+#include "routeexport/routeexport.h"
+#include "routeexport/simbriefhandler.h"
 #include "routestring/routestringdialog.h"
 #include "routestring/routestringwriter.h"
-#include "common/unit.h"
-#include "fs/pln/flightplanio.h"
-#include "query/procedurequery.h"
-#include "search/proceduresearch.h"
-#include "userdata/userdatacontroller.h"
-#include "online/onlinedatacontroller.h"
-#include "search/onlineclientsearch.h"
-#include "search/onlinecentersearch.h"
-#include "search/onlineserversearch.h"
-#include "routeexport/routeexport.h"
-#include "gui/timedialog.h"
-#include "util/version.h"
-#include "perf/aircraftperfcontroller.h"
-#include "fs/perf/aircraftperf.h"
-#include "mapgui/imageexportdialog.h"
-#include "web/webcontroller.h"
-#include "weather/windreporter.h"
-#include "logbook/logdatacontroller.h"
+#include "search/airportsearch.h"
 #include "search/logdatasearch.h"
-#include "airspace/airspacecontroller.h"
-#include "mapgui/mapmarkhandler.h"
-#include "mapgui/mapairporthandler.h"
-#include "gui/choicedialog.h"
-#include "gui/dockwidgethandler.h"
+#include "search/navsearch.h"
+#include "search/onlinecentersearch.h"
+#include "search/onlineclientsearch.h"
+#include "search/onlineserversearch.h"
+#include "search/proceduresearch.h"
+#include "search/searchcontroller.h"
+#include "search/userdatasearch.h"
+#include "settings/settings.h"
 #include "track/trackcontroller.h"
-#include "common/dirtool.h"
-#include "gui/statusbareventfilter.h"
-#include "gui/clicktooltiphandler.h"
+#include "userdata/userdatacontroller.h"
+#include "util/htmlbuilder.h"
+#include "util/version.h"
+#include "weather/weatherreporter.h"
+#include "weather/windreporter.h"
+#include "web/webcontroller.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -229,6 +230,7 @@ MainWindow::MainWindow()
     currentWeatherContext = new map::WeatherContext;
 
     routeExport = new RouteExport(this);
+    simbriefHandler = new SimBriefHandler(this);
 
     qDebug() << Q_FUNC_INFO << "Creating OptionsDialog";
     optionsDialog = new OptionsDialog(this);
@@ -525,6 +527,8 @@ MainWindow::~MainWindow()
   delete currentWeatherContext;
   qDebug() << Q_FUNC_INFO << "delete routeExport";
   delete routeExport;
+  qDebug() << Q_FUNC_INFO << "delete simbriefHandler";
+  delete simbriefHandler;
 
   qDebug() << Q_FUNC_INFO << "NavApplication::deInit()";
   NavApp::deInit();
@@ -1087,6 +1091,10 @@ void MainWindow::connectAllSlots()
   connect(routeExport, &RouteExport::showRect, mapWidget, &MapPaintWidget::showRect);
   connect(routeExport, &RouteExport::selectDepartureParking, routeController, &RouteController::selectDepartureParking);
 
+  // Fetch and upload to/from SimBrief
+  connect(ui->actionRouteSendToSimBrief, &QAction::triggered, simbriefHandler, &SimBriefHandler::sendRouteToSimBrief);
+  connect(ui->actionRouteFetchFromSimBrief, &QAction::triggered, simbriefHandler, &SimBriefHandler::fetchRouteFromSimBrief);
+
   // Route controller signals =======================================================
   connect(routeController, &RouteController::showRect, mapWidget, &MapPaintWidget::showRect);
   connect(routeController, &RouteController::showPos, mapWidget, &MapPaintWidget::showPos);
@@ -1313,7 +1321,7 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionRouteCenter, &QAction::triggered, this, &MainWindow::routeCenter);
   connect(ui->actionRouteNew, &QAction::triggered, this, &MainWindow::routeNew);
-  connect(ui->actionRouteNewFromString, &QAction::triggered, this, &MainWindow::routeNewFromString);
+  connect(ui->actionRouteNewFromString, &QAction::triggered, this, &MainWindow::routeFromStringCurrent);
   connect(ui->actionRouteOpen, &QAction::triggered, this, &MainWindow::routeOpen);
   connect(ui->actionRouteAppend, &QAction::triggered, this, &MainWindow::routeAppend);
   connect(ui->actionRouteTableAppend, &QAction::triggered, this, &MainWindow::routeAppend);
@@ -2292,30 +2300,44 @@ bool MainWindow::routeCheckForChanges()
 }
 
 /* Open a dialog that allows to create a new route from a string */
-void MainWindow::routeNewFromString()
+void MainWindow::routeFromStringCurrent()
 {
-  RouteStringDialog routeStringDialog(this, routeController);
+  routeFromStringInternal(QString());
+}
+
+void MainWindow::routeFromString(const QString& routeString)
+{
+  routeFromStringInternal(routeString);
+}
+
+void MainWindow::routeFromStringInternal(const QString& routeString)
+{
+  qDebug() << Q_FUNC_INFO;
+  RouteStringDialog routeStringDialog(this, routeString);
   routeStringDialog.restoreState();
 
   if(routeStringDialog.exec() == QDialog::Accepted)
   {
     if(!routeStringDialog.getFlightplan().isEmpty())
-    {
-      if(routeCheckForChanges())
-      {
-        routeController->loadFlightplan(routeStringDialog.getFlightplan(), atools::fs::pln::LNM_PLN, QString(),
-                                        true /*quiet*/, true /*changed*/,
-                                        !routeStringDialog.isAltitudeIncluded() /*adjust alt*/);
-        if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
-          routeCenter();
-        showFlightPlan();
-        setStatusMessage(tr("Created new flight plan."));
-      }
-    }
+      routeFromFlightplan(routeStringDialog.getFlightplan(), !routeStringDialog.isAltitudeIncluded() /* adjustAltitude */);
     else
       qWarning() << "Flight plan is null";
   }
   routeStringDialog.saveState();
+}
+
+void MainWindow::routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  if(routeCheckForChanges())
+  {
+    routeController->loadFlightplan(flightplan, atools::fs::pln::LNM_PLN, QString(), true /*quiet*/, true /*changed*/, adjustAltitude);
+    if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
+      routeCenter();
+    showFlightPlan();
+    setStatusMessage(tr("Created new flight plan."));
+  }
 }
 
 /* Called from menu or toolbar by action */
@@ -3285,11 +3307,14 @@ void MainWindow::resetMessages()
   settings.setValue(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_SUCCESS, true);
   settings.setValue(lnm::ACTIONS_SHOW_LOGBOOK_CONVERSION, true);
   settings.setValue(lnm::ACTIONS_SHOW_USER_AIRSPACE_NOTE, true);
+  settings.setValue(lnm::ACTIONS_SHOW_SEND_SIMBRIEF, true);
   settings.setValue(lnm::ACTIONS_SHOW_MAPTHEME_REQUIRES_KEY, true);
+
   settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_ONLINE, true);
   settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_WIND, true);
   settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_TRACK, true);
   settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_WEATHER, true);
+  settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_SIMBRIEF, true);
 
   setStatusMessage(tr("All message dialogs reset."));
 }
@@ -3747,6 +3772,7 @@ void MainWindow::updateActionStates()
   ui->actionRouteSaveAsGpx->setEnabled(hasFlightplan || hasTrack);
   ui->actionRouteSaveAsHtml->setEnabled(hasFlightplan);
   ui->actionRouteSaveAll->setEnabled(hasFlightplan && routeExport->hasSelected());
+  ui->actionRouteSendToSimBrief->setEnabled(hasFlightplan);
 
   ui->actionRouteSaveAsVfp->setEnabled(hasFlightplan);
   ui->actionRouteSaveAsIvap->setEnabled(hasFlightplan);

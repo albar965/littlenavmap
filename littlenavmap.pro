@@ -352,12 +352,14 @@ SOURCES += \
   src/route/routeleg.cpp \
   src/route/runwayselectiondialog.cpp \
   src/route/userwaypointdialog.cpp \
+  src/routeexport/fetchroutedialog.cpp \
   src/routeexport/routeexport.cpp \
   src/routeexport/routeexportdata.cpp \
   src/routeexport/routeexportdialog.cpp \
   src/routeexport/routeexportflags.cpp \
   src/routeexport/routeexportformat.cpp \
   src/routeexport/routemultiexportdialog.cpp \
+  src/routeexport/simbriefhandler.cpp \
   src/routestring/routestringdialog.cpp \
   src/routestring/routestringreader.cpp \
   src/routestring/routestringtypes.cpp \
@@ -535,12 +537,14 @@ HEADERS  += \
   src/route/routeleg.h \
   src/route/runwayselectiondialog.h \
   src/route/userwaypointdialog.h \
+  src/routeexport/fetchroutedialog.h \
   src/routeexport/routeexport.h \
   src/routeexport/routeexportdata.h \
   src/routeexport/routeexportdialog.h \
   src/routeexport/routeexportflags.h \
   src/routeexport/routeexportformat.h \
   src/routeexport/routemultiexportdialog.h \
+  src/routeexport/simbriefhandler.h \
   src/routestring/routestringdialog.h \
   src/routestring/routestringreader.h \
   src/routestring/routestringtypes.h \
@@ -613,6 +617,7 @@ FORMS += \
   src/route/parkingdialog.ui \
   src/route/runwayselectiondialog.ui \
   src/route/userwaypointdialog.ui \
+  src/routeexport/fetchroutedialog.ui \
   src/routeexport/routeexportdialog.ui \
   src/routeexport/routemultiexportdialog.ui \
   src/routestring/routestringdialog.ui \

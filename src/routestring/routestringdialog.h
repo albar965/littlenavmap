@@ -47,7 +47,7 @@ class RouteStringDialog :
   Q_OBJECT
 
 public:
-  RouteStringDialog(QWidget *parent, RouteController *routeController);
+  RouteStringDialog(QWidget *parent, const QString& routeStringParam);
   virtual ~RouteStringDialog() override;
 
   RouteStringDialog(const RouteStringDialog& other) = delete;
@@ -81,6 +81,7 @@ private:
   void updateButtonState();
   void toolButtonOptionTriggered(QAction *action);
   void updateButtonClicked();
+  void updateFlightplan();
 
   Ui::RouteStringDialog *ui;
   atools::fs::pln::Flightplan *flightplan = nullptr;
@@ -90,11 +91,11 @@ private:
   RouteStringReader *routeStringReader;
   QActionGroup *procActionGroup;
 
+  QString routeString;
+
   float speedKts = 0.f;
   bool altitudeIncluded = false, updatingActions = false;
   rs::RouteStringOptions options = rs::DEFAULT_OPTIONS;
-
-  void updateFlightplan();
 
 };
 

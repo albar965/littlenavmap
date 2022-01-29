@@ -46,6 +46,7 @@ class SearchBaseTable;
 class SearchController;
 class WeatherReporter;
 class WindReporter;
+class SimBriefHandler;
 
 namespace Marble {
 class LegendWidget;
@@ -55,6 +56,11 @@ class ElevationModel;
 }
 
 namespace atools {
+namespace fs {
+namespace pln {
+class Flightplan;
+}
+}
 namespace geo {
 class Pos;
 }
@@ -231,6 +237,12 @@ public:
   /* Push button in map pressed */
   void exitFullScreenPressed();
 
+  /* Called from SimBrief handler to open route string dialog */
+  void routeFromString(const QString& routeString);
+
+  /* Called from SimBrief handler to create new plan */
+  void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude);
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -302,8 +314,15 @@ private:
 
   void routeSelectionChanged(int selected, int total);
 
-  void routeNewFromString();
+  /* New flight plan from opening route string dialog using current plan for prefill */
+  void routeFromStringCurrent();
+
+  /* New flight plan from opening route string dialog using given plan for prefill */
+  void routeFromStringInternal(const QString& routeString);
+
+  /* Clear route */
   void routeNew();
+
   void routeOpen();
   void routeOpenFile(QString filepath);
   void routeAppend();
@@ -486,6 +505,7 @@ private:
   WindReporter *windReporter = nullptr;
   InfoController *infoController = nullptr;
   RouteExport *routeExport = nullptr;
+  SimBriefHandler *simbriefHandler = nullptr;
 
   /* Action  groups for main menu */
   QActionGroup *actionGroupMapProjection = nullptr, *actionGroupMapTheme = nullptr, *actionGroupMapSunShading = nullptr,

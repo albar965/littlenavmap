@@ -748,8 +748,7 @@ void RouteController::routeStringToClipboard() const
 {
   qDebug() << Q_FUNC_INFO;
 
-  QString str = RouteStringWriter().createStringForRoute(route,
-                                                         NavApp::getRouteCruiseSpeedKts(),
+  QString str = RouteStringWriter().createStringForRoute(route, NavApp::getRouteCruiseSpeedKts(),
                                                          RouteStringDialog::getOptionsFromSettings());
 
   qDebug() << "route string" << str;
