@@ -62,6 +62,7 @@ FetchRouteDialog::FetchRouteDialog(QWidget *parent) :
   connect(downloader, &HttpDownloader::downloadFinished, this, &FetchRouteDialog::downloadFinished);
   connect(downloader, &HttpDownloader::downloadSslErrors, this, &FetchRouteDialog::downloadSslErrors);
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &FetchRouteDialog::buttonBoxClicked);
+  connect(ui->lineEditUsername, &QLineEdit::textChanged, this, &FetchRouteDialog::updateButtonStates);
 
   // Change button texts and tooltips ============================================
   ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("&Download Flight Plan"));
@@ -129,7 +130,7 @@ void FetchRouteDialog::updateButtonStates()
   }
   else
   {
-    ui->buttonBox->button(QDialogButtonBox::Ok)->setEnabled(true); // Download
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setDisabled(ui->lineEditUsername->text().isEmpty()); // Download
     ui->buttonBox->button(QDialogButtonBox::Yes)->setDisabled(flightplan->isEmpty()); // Create plan
     ui->buttonBox->button(QDialogButtonBox::YesToAll)->setDisabled(routeString.isEmpty()); // Pass to route description
   }
