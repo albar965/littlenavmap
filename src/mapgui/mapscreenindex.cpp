@@ -751,10 +751,10 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
       queryTypes |= map::QUERY_PROC_MISSED_POINTS | map::QUERY_PROCEDURES_MISSED;
 
     // Get copies from flight plan if visible
-    NavApp::getRouteConst().getNearest(conv, xs, ys, maxDistance, result, queryTypes);
+    NavApp::getRouteConst().getNearest(conv, xs, ys, maxDistance, result, queryTypes, routeDrawnNavaids);
 
     if(types.testFlag(map::QUERY_PROC_RECOMMENDED))
-      NavApp::getRouteConst().getNearestRecommended(conv, xs, ys, maxDistance, result, queryTypes);
+      NavApp::getRouteConst().getNearestRecommended(conv, xs, ys, maxDistance, result, queryTypes, routeDrawnNavaids);
   }
 
   // Get points of procedure preview

@@ -454,6 +454,16 @@ void MapPaintWidget::clearMapThemeKeyValues()
   mapThemeHandler->clearMapThemeKeyValues();
 }
 
+const QVector<map::MapObjectRef>& MapPaintWidget::getRouteDrawnNavaidsConst() const
+{
+  return screenIndex->getRouteDrawnNavaidsConst();
+}
+
+QVector<map::MapObjectRef>* MapPaintWidget::getRouteDrawnNavaids()
+{
+  return screenIndex->getRouteDrawnNavaids();
+}
+
 void MapPaintWidget::setShowMapObjects(map::MapTypes type, map::MapTypes mask)
 {
   paintLayer->setShowMapObjects(type, mask);

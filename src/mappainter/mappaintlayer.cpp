@@ -360,14 +360,22 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.weatherSource = weatherSource;
       context.visibleWidget = mapWidget->isVisibleWidget();
 
+      // Prepare index for all navaids drawn by route - needed for context menu and tooltips
+      context.routeDrawnNavaids = mapWidget->getRouteDrawnNavaids();
+      context.routeDrawnNavaids->clear();
+
       // ====================================
       // Get all waypoints from the route and add them to the map to avoid duplicate drawing
       if(context.objectDisplayTypes.testFlag(map::FLIGHTPLAN))
       {
-        const Route& route = NavApp::getRouteConst();
-        for(int i = 0; i < route.size(); i++)
+        const Route *route = context.route;
+        // Active normally start at 1 - this will consider all legs as not passed
+        int activeRouteLeg = route->isActiveValid() ? route->getActiveLegIndex() : 0;
+        int passedRouteLeg = context.flags2.testFlag(opts2::MAP_ROUTE_DIM_PASSED) ? activeRouteLeg : 0;
+
+        for(int i = passedRouteLeg; i < route->size(); i++)
         {
-          const RouteLeg& routeLeg = route.value(i);
+          const RouteLeg& routeLeg = route->value(i);
           map::MapTypes type = routeLeg.getMapObjectType();
           if(type == map::AIRPORT || type == map::VOR || type == map::NDB || type == map::WAYPOINT)
             context.routeProcIdMap.insert(map::MapObjectRef(routeLeg.getId(), routeLeg.getMapObjectType()));

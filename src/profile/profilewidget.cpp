@@ -926,13 +926,13 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   // Active normally start at 1 - this will consider all legs as not passed
   int activeRouteLeg = activeValid ? atools::minmax(0, waypointX.size() - 1, curRoute.getActiveLegIndex()) : 0;
-  int passedRouteLeg = optionData.getFlags2() & opts2::MAP_ROUTE_DIM_PASSED ? activeRouteLeg : 0;
+  int passedRouteLeg = optionData.getFlags2().testFlag(opts2::MAP_ROUTE_DIM_PASSED) ? activeRouteLeg : 0;
 
   if(curRoute.isActiveAlternate())
   {
     // Disable active leg and show all legs as passed if an alternate is enabled
     activeRouteLeg = 0;
-    passedRouteLeg = optionData.getFlags2() & opts2::MAP_ROUTE_DIM_PASSED ? std::min(passedRouteLeg + 1, waypointX.size()) : 0;
+    passedRouteLeg = optionData.getFlags2().testFlag(opts2::MAP_ROUTE_DIM_PASSED) ? std::min(passedRouteLeg + 1, waypointX.size()) : 0;
   }
 
   // Draw flight plan =============================================================================
@@ -1333,7 +1333,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         painter.setPen(QPen(Qt::black, width, Qt::SolidLine, Qt::FlatCap));
         painter.setBrush(Qt::NoBrush);
 
-        if(!(optionData.getFlags2() & opts2::MAP_ROUTE_DIM_PASSED) ||
+        if(!optionData.getFlags2().testFlag(opts2::MAP_ROUTE_DIM_PASSED) ||
            activeRouteLeg == map::INVALID_INDEX_VALUE || route.getTopOfClimbLegIndex() > activeRouteLeg - 1)
         {
           if(tocDist > 0.2f)
@@ -1353,7 +1353,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
           }
         }
 
-        if(!(optionData.getFlags2() & opts2::MAP_ROUTE_DIM_PASSED) ||
+        if(!optionData.getFlags2().testFlag(opts2::MAP_ROUTE_DIM_PASSED) ||
            activeRouteLeg == map::INVALID_INDEX_VALUE || route.getTopOfDescentLegIndex() > activeRouteLeg - 1)
         {
           if(todDist < route.getTotalDistance() - 0.2f)

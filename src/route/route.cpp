@@ -1020,7 +1020,7 @@ const RouteLeg& Route::getDepartureAirportLeg() const
 }
 
 void Route::getNearestRecommended(const CoordinateConverter& conv, int xs, int ys, int screenDistance, map::MapResult& mapobjects,
-                                  map::MapObjectQueryTypes types) const
+                                  map::MapObjectQueryTypes types, const QVector<map::MapObjectRef>& routeDrawnNavaids) const
 {
   using maptools::insertSortedByDistance;
 
@@ -1046,25 +1046,40 @@ void Route::getNearestRecommended(const CoordinateConverter& conv, int xs, int y
         if(result.hasVor())
         {
           map::MapVor vor = result.vors.constFirst();
-          vor.routeIndex = i;
-          vor.recommended = true;
-          insertSortedByDistance(conv, mapobjects.vors, &mapobjects.vorIds, xs, ys, vor);
+
+          // Do not search if it was not drawn (i.e. excluded by passed route legs)
+          if(routeDrawnNavaids.contains(vor.getRef()))
+          {
+            vor.routeIndex = i;
+            vor.recommended = true;
+            insertSortedByDistance(conv, mapobjects.vors, &mapobjects.vorIds, xs, ys, vor);
+          }
         }
 
         if(result.hasNdb())
         {
           map::MapNdb ndb = result.ndbs.constFirst();
-          ndb.routeIndex = i;
-          ndb.recommended = true;
-          insertSortedByDistance(conv, mapobjects.ndbs, &mapobjects.ndbIds, xs, ys, ndb);
+
+          // Do not search if it was not drawn (i.e. excluded by passed route legs)
+          if(routeDrawnNavaids.contains(ndb.getRef()))
+          {
+            ndb.routeIndex = i;
+            ndb.recommended = true;
+            insertSortedByDistance(conv, mapobjects.ndbs, &mapobjects.ndbIds, xs, ys, ndb);
+          }
         }
 
         if(result.hasWaypoints())
         {
           map::MapWaypoint waypoint = result.waypoints.constFirst();
-          waypoint.routeIndex = i;
-          waypoint.recommended = true;
-          insertSortedByDistance(conv, mapobjects.waypoints, &mapobjects.waypointIds, xs, ys, waypoint);
+
+          // Do not search if it was not drawn (i.e. excluded by passed route legs)
+          if(routeDrawnNavaids.contains(waypoint.getRef()))
+          {
+            waypoint.routeIndex = i;
+            waypoint.recommended = true;
+            insertSortedByDistance(conv, mapobjects.waypoints, &mapobjects.waypointIds, xs, ys, waypoint);
+          }
         }
       }
     }
@@ -1072,7 +1087,7 @@ void Route::getNearestRecommended(const CoordinateConverter& conv, int xs, int y
 }
 
 void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance, map::MapResult& mapobjects,
-                       map::MapObjectQueryTypes types) const
+                       map::MapObjectQueryTypes types, const QVector<map::MapObjectRef>& routeDrawnNavaids) const
 {
   using maptools::insertSortedByDistance;
 
@@ -1099,29 +1114,47 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
       if(leg.getVor().isValid())
       {
         map::MapVor vor = leg.getVor();
-        vor.routeIndex = i;
-        insertSortedByDistance(conv, mapobjects.vors, &mapobjects.vorIds, xs, ys, vor);
+
+        // Do not search if it was not drawn (i.e. excluded by passed route legs)
+        if(routeDrawnNavaids.contains(vor.getRef()))
+        {
+          vor.routeIndex = i;
+          insertSortedByDistance(conv, mapobjects.vors, &mapobjects.vorIds, xs, ys, vor);
+        }
       }
 
       if(leg.getWaypoint().isValid())
       {
         map::MapWaypoint wp = leg.getWaypoint();
-        wp.routeIndex = i;
-        insertSortedByDistance(conv, mapobjects.waypoints, &mapobjects.waypointIds, xs, ys, wp);
+
+        // Do not search if it was not drawn (i.e. excluded by passed route legs)
+        if(routeDrawnNavaids.contains(wp.getRef()))
+        {
+          wp.routeIndex = i;
+          insertSortedByDistance(conv, mapobjects.waypoints, &mapobjects.waypointIds, xs, ys, wp);
+        }
       }
 
       if(leg.getNdb().isValid())
       {
         map::MapNdb ndb = leg.getNdb();
-        ndb.routeIndex = i;
-        insertSortedByDistance(conv, mapobjects.ndbs, &mapobjects.ndbIds, xs, ys, ndb);
+
+        // Do not search if it was not drawn (i.e. excluded by passed route legs)
+        if(routeDrawnNavaids.contains(ndb.getRef()))
+        {
+          ndb.routeIndex = i;
+          insertSortedByDistance(conv, mapobjects.ndbs, &mapobjects.ndbIds, xs, ys, ndb);
+        }
       }
 
       if(leg.getAirport().isValid())
       {
         map::MapAirport ap = leg.getAirport();
+
+        // Route airports are always shown - even if legs are passed
         ap.routeIndex = i;
         insertSortedByDistance(conv, mapobjects.airports, &mapobjects.airportIds, xs, ys, ap);
+        // }
       }
 
       if(leg.getMapObjectType() == map::INVALID)
@@ -1142,13 +1175,18 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
         map::MapUserpointRoute up;
         up.id = i;
         up.routeIndex = i;
-        up.ident = leg.getIdent();
-        up.region = leg.getRegion();
-        up.name = leg.getName();
-        up.comment = leg.getComment();
-        up.position = leg.getPosition();
-        up.magvar = NavApp::getMagVar(leg.getPosition());
-        mapobjects.userpointsRoute.append(up);
+
+        // Do not search if it was not drawn (i.e. excluded by passed route legs)
+        if(routeDrawnNavaids.contains(up.getRef()))
+        {
+          up.ident = leg.getIdent();
+          up.region = leg.getRegion();
+          up.name = leg.getName();
+          up.comment = leg.getComment();
+          up.position = leg.getPosition();
+          up.magvar = NavApp::getMagVar(leg.getPosition());
+          mapobjects.userpointsRoute.append(up);
+        }
       }
 
       if(leg.isAnyProcedure() && types.testFlag(map::QUERY_PROC_POINTS))

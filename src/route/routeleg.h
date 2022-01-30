@@ -215,6 +215,9 @@ public:
     return waypoint;
   }
 
+  /* Build object for userpoint. id is routeindex */
+  map::MapUserpointRoute getUserpointRoute() const;
+
   /* Get Waypoint or empty object if not assigned. Use position.isValid to check for empty */
   map::MapRunwayEnd getRunwayEnd() const
   {

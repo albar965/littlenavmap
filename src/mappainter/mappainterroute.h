@@ -31,20 +31,15 @@ class RouteLeg;
 
 namespace proc {
 struct MapProcedureLegs;
-
 struct MapProcedureLeg;
-
 }
 
 namespace map {
 struct MapAirport;
-
 struct MapVor;
-
 struct MapNdb;
-
 struct MapWaypoint;
-
+struct MapUserpointRoute;
 }
 
 /*
@@ -82,12 +77,14 @@ private:
   };
 
   void paintRoute();
-  void paintRecommended();
+  void paintRecommended(int passedRouteLeg);
 
   void paintAirport(int x, int y, const map::MapAirport& obj);
   void paintVor(float x, float y, const map::MapVor& obj, bool preview);
-  void paintNdb(float x, float y, bool preview);
+  void paintNdb(float x, float y, const map::MapNdb& obj, bool preview);
+  void paintWaypoint(float x, float y, const map::MapWaypoint& obj, bool preview);
   void paintWaypoint(const QColor& col, float x, float y, bool preview);
+
   void paintProcedure(proc::MapProcedureLeg& lastLegPoint, const proc::MapProcedureLegs& legs, int legsRouteOffset, const QColor& color,
                       bool preview, bool previewAll);
   void paintWaypointText(float x, float y, const map::MapWaypoint& obj, bool drawTextDetails, bool drawAsRoute,
@@ -97,7 +94,7 @@ private:
   void paintAirportText(float x, float y, const map::MapAirport& obj, bool drawAsRoute);
   void paintText(const QColor& color, float x, float y, bool drawTextDetails, QStringList texts, bool drawAsRoute,
                  textatt::TextAttributes atts = textatt::NONE);
-  void paintUserpoint(int x, int y, bool preview);
+  void paintUserpoint(int x, int y, const map::MapUserpointRoute& obj, bool preview);
   void paintProcedurePoint(float x, float y, bool preview);
 
   void paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, const proc::MapProcedureLegs& legs, int index, bool preview,

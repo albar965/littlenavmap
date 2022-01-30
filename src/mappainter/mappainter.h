@@ -104,6 +104,7 @@ struct PaintContext
   map::MapWeatherSource weatherSource;
   bool visibleWidget;
   int mimimumRunwayLengthFt = -1;
+  QVector<map::MapObjectRef> *routeDrawnNavaids; /* All navaids drawn for route and procedures. Points to vector in MapScreenIndex */
 
   /* Text sizes and line thickness in percent / 100 as set in options dialog */
   float textSizeAircraftAi = 1.f;

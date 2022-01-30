@@ -573,6 +573,20 @@ QString RouteLeg::getDisplayText(int elideName) const
   }
 }
 
+map::MapUserpointRoute RouteLeg::getUserpointRoute() const
+{
+  const atools::fs::pln::FlightplanEntry& entry = getFlightplanEntry();
+  map::MapUserpointRoute user;
+  user.ident = entry.getIdent();
+  user.region = entry.getRegion();
+  user.name = entry.getName();
+  user.comment = entry.getComment();
+  user.magvar = entry.getMagvar();
+  user.position = entry.getPosition();
+  user.routeIndex = user.id = index;
+  return user;
+}
+
 QStringList RouteLeg::buildLegText(bool dist, bool magCourse, bool trueCourse, bool narrow) const
 {
   float distance = noDistanceDisplay() || !dist ? map::INVALID_DISTANCE_VALUE : getDistanceTo();

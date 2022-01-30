@@ -26,6 +26,7 @@
 
 namespace map {
 struct MapResult;
+struct MapObjectRef;
 struct RangeMarker;
 struct DistanceMarker;
 struct PatternMarker;
@@ -405,6 +406,10 @@ public:
 
   /* Clear values */
   void clearMapThemeKeyValues();
+
+  const QVector<map::MapObjectRef>& getRouteDrawnNavaidsConst() const;
+
+  QVector<map::MapObjectRef>* getRouteDrawnNavaids();
 
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */

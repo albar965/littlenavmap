@@ -68,9 +68,6 @@ void MapPainterRoute::render()
     // Plan, procedures and departure position
     paintRoute();
 
-    // Recommended navaids
-    paintRecommended();
-
     // Draw TOD and TOC markers ======================
     if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN_TOC_TOD) && context->mapLayerRoute->isRouteTextAndDetail())
       paintTopOfDescentAndClimb();
@@ -141,7 +138,7 @@ void MapPainterRoute::paintRoute()
     return;
   }
 
-  int passedRouteLeg = context->flags2 & opts2::MAP_ROUTE_DIM_PASSED ? activeRouteLeg : 0;
+  int passedRouteLeg = context->flags2.testFlag(opts2::MAP_ROUTE_DIM_PASSED) ? activeRouteLeg : 0;
 
   // Collect line text and geometry from the route
   QStringList routeTexts;
@@ -208,6 +205,9 @@ void MapPainterRoute::paintRoute()
     }
   }
 
+  // Recommended navaids
+  paintRecommended(passedRouteLeg);
+
 #ifdef DEBUG_ROUTE_PAINT
   context->painter->save();
   context->painter->setPen(Qt::black);
@@ -234,13 +234,13 @@ void MapPainterRoute::paintRoute()
 
 }
 
-void MapPainterRoute::paintRecommended()
+void MapPainterRoute::paintRecommended(int passedRouteLeg)
 {
   // Margins for text at left (VOR), right (waypoints) and below (NDB)
   QMargins margins(50, 10, 50, 20);
 
   const Route& route = NavApp::getRouteConst();
-  for(int i = 0; i < route.size(); i++)
+  for(int i = passedRouteLeg; i < route.size(); i++)
   {
     const RouteLeg& routeLeg = route.value(i);
     map::MapTypes type = routeLeg.getMapObjectType();
@@ -262,7 +262,7 @@ void MapPainterRoute::paintRecommended()
             routeProcIdMap.insert(wp.getRef());
             if(wToSBuf(wp.position, x, y, margins))
             {
-              paintWaypoint(QColor(), x, y, false);
+              paintWaypoint(x, y, wp, false);
               paintWaypointText(x, y, wp, true /* drawTextDetails */, true /* draw as route */, nullptr);
             }
           }
@@ -294,7 +294,7 @@ void MapPainterRoute::paintRecommended()
             routeProcIdMap.insert(ndb.getRef());
             if(wToSBuf(ndb.position, x, y, margins))
             {
-              paintNdb(x, y, false);
+              paintNdb(x, y, ndb, false);
               paintNdbText(x, y, ndb, true /* drawTextDetails */, true /* draw as route */, nullptr);
             }
           }
@@ -556,7 +556,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   // Get active approach leg
   bool activeValid = route->isActiveValid();
   int activeProcLeg = activeValid ? route->getActiveLegIndex() - legsRouteOffset : 0;
-  int passedProcLeg = context->flags2 & opts2::MAP_ROUTE_DIM_PASSED ? activeProcLeg : 0;
+  int passedProcLeg = context->flags2.testFlag(opts2::MAP_ROUTE_DIM_PASSED) ? activeProcLeg : 0;
 
   // Draw black background ========================================
 
@@ -1540,7 +1540,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     {
       routeProcIdMap.insert(wp.getRef());
 
-      paintWaypoint(QColor(), x, y, false);
+      paintWaypoint(x, y, wp, false);
     }
     if(drawText)
       paintWaypointText(x, y, wp, drawTextDetails, true /* draw as route */, &texts);
@@ -1572,7 +1572,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
     {
       routeProcIdMap.insert(ndb.getRef());
 
-      paintNdb(x, y, false);
+      paintNdb(x, y, ndb, false);
     }
     if(drawText)
       paintNdbText(x, y, ndb, drawTextDetails, true /* draw as route */, &texts);
@@ -1645,6 +1645,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 
 void MapPainterRoute::paintAirport(int x, int y, const map::MapAirport& obj)
 {
+  context->routeDrawnNavaids->append(obj.getRef());
   int size = context->sz(context->symbolSizeAirport, context->mapLayerRoute->getAirportSymbolSize());
   symbolPainter->drawAirportSymbol(context->painter, obj, x, y, size, false, false,
                                    context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
@@ -1657,6 +1658,12 @@ void MapPainterRoute::paintAirportText(float x, float y, const map::MapAirport& 
                                  context->airportTextFlagsRoute(drawAsRoute, false /* draw as log */), size,
                                  context->mapLayerRoute->isAirportDiagram(),
                                  context->mapLayerRoute->getMaxTextLengthAirport());
+}
+
+void MapPainterRoute::paintWaypoint(float x, float y, const map::MapWaypoint& obj, bool preview)
+{
+  context->routeDrawnNavaids->append(obj.getRef());
+  paintWaypoint(QColor(), x, y, preview);
 }
 
 void MapPainterRoute::paintWaypoint(const QColor& col, float x, float y, bool preview)
@@ -1697,6 +1704,7 @@ void MapPainterRoute::paintWaypointText(float x, float y, const map::MapWaypoint
 
 void MapPainterRoute::paintVor(float x, float y, const map::MapVor& obj, bool preview)
 {
+  context->routeDrawnNavaids->append(obj.getRef());
   float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSize());
   size = std::max(size, 8.f);
   symbolPainter->drawVorSymbol(context->painter, obj, x, y,
@@ -1736,8 +1744,9 @@ void MapPainterRoute::paintVorText(float x, float y, const map::MapVor& obj, boo
   symbolPainter->drawVorText(context->painter, obj, x, y, flags, size, fill, additionalText);
 }
 
-void MapPainterRoute::paintNdb(float x, float y, bool preview)
+void MapPainterRoute::paintNdb(float x, float y, const map::MapNdb& obj, bool preview)
 {
+  context->routeDrawnNavaids->append(obj.getRef());
   float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getNdbSymbolSize());
   size = std::max(size, 8.f);
   symbolPainter->drawNdbSymbol(context->painter, x, y, size, !preview, false);
@@ -1790,8 +1799,9 @@ void MapPainterRoute::paintProcedureUnderlay(const proc::MapProcedureLeg& leg, f
 }
 
 /* Paint user defined waypoint */
-void MapPainterRoute::paintUserpoint(int x, int y, bool preview)
+void MapPainterRoute::paintUserpoint(int x, int y, const map::MapUserpointRoute& obj, bool preview)
 {
+  context->routeDrawnNavaids->append(obj.getRef());
   int size = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
   size = std::max(size, 8);
   symbolPainter->drawUserpointSymbol(context->painter, x, y, size, !preview);
@@ -1841,8 +1851,8 @@ void MapPainterRoute::drawSymbols(const QBitArray& visibleStartPoints, const QLi
     {
       int x = atools::roundToInt(pt.x());
       int y = atools::roundToInt(pt.y());
-      const RouteLeg& obj = context->route->value(i);
-      map::MapTypes type = obj.getMapObjectType();
+      const RouteLeg& leg = context->route->value(i);
+      map::MapTypes type = leg.getMapObjectType();
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wswitch"
       switch(type)
@@ -1852,19 +1862,19 @@ void MapPainterRoute::drawSymbols(const QBitArray& visibleStartPoints, const QLi
           paintWaypoint(mapcolors::routeInvalidPointColor, x, y, preview);
           break;
         case map::USERPOINTROUTE:
-          paintUserpoint(x, y, preview);
+          paintUserpoint(x, y, leg.getUserpointRoute(), preview);
           break;
         case map::AIRPORT:
-          paintAirport(x, y, obj.getAirport());
+          paintAirport(x, y, leg.getAirport());
           break;
         case map::VOR:
-          paintVor(x, y, obj.getVor(), preview);
+          paintVor(x, y, leg.getVor(), preview);
           break;
         case map::NDB:
-          paintNdb(x, y, preview);
+          paintNdb(x, y, leg.getNdb(), preview);
           break;
         case map::WAYPOINT:
-          paintWaypoint(QColor(), x, y, preview);
+          paintWaypoint(x, y, leg.getWaypoint(), preview);
           break;
       }
 #pragma GCC diagnostic pop

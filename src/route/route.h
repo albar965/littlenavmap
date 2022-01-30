@@ -267,11 +267,11 @@ public:
 
   /* Get nearest flight plan leg to given screen position xs/ys. */
   void getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance, map::MapResult& mapobjects,
-                  map::MapObjectQueryTypes types) const;
+                  map::MapObjectQueryTypes types, const QVector<map::MapObjectRef>& routeDrawnNavaids) const;
 
   /* Get nearest recommended navaids to given screen position xs/ys. */
   void getNearestRecommended(const CoordinateConverter& conv, int xs, int ys, int screenDistance, map::MapResult& mapobjects,
-                             map::MapObjectQueryTypes types) const;
+                             map::MapObjectQueryTypes types, const QVector<map::MapObjectRef>& routeDrawnNavaids) const;
 
   void eraseAirway(int row);
 
