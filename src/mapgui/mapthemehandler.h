@@ -230,7 +230,8 @@ public:
   /* Clear values from all keys */
   void clearMapThemeKeyValues();
 
-  /* Load and save key values from configuration.
+  /* Load and save key values from separate binary file to avoid users accidentally
+   * sharing their keys with the .ini configuration file.
    * Adds only keys which are available from map configuration when loading. Others are ignored */
   void restoreState();
   void saveState();

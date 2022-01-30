@@ -18,9 +18,10 @@
 #include "mapgui/mapthemehandler.h"
 
 #include "atools.h"
+#include "common/constants.h"
 #include "exception.h"
 #include "settings/settings.h"
-#include "common/constants.h"
+#include "util/simplecrypt.h"
 #include "util/xmlstream.h"
 
 #include <QCoreApplication>
@@ -28,6 +29,10 @@
 #include <QFileInfo>
 #include <QXmlStreamReader>
 #include <QRegularExpression>
+#include <QDataStream>
+
+const static quint64 KEY = 0x19CB0467EBD391CC;
+const static QLatin1String FILENAME("mapthemekeys.bin");
 
 void MapThemeHandler::loadThemes()
 {
@@ -104,31 +109,53 @@ void MapThemeHandler::clearMapThemeKeyValues()
     it.value().clear();
 }
 
-void MapThemeHandler::restoreState()
-{
-  QStringList keys = atools::settings::Settings::instance().valueStrList(lnm::MAP_THEME_KEYS);
-
-  for(int i = 0; i < keys.size(); i += 2)
-  {
-    QString key = keys.value(i);
-
-    // Add only keys which are available from map configuration - others are ignored
-    if(mapThemeKeys.contains(key))
-      mapThemeKeys.insert(key, keys.value(i + 1));
-  }
-}
-
 void MapThemeHandler::saveState()
 {
-  QStringList list;
-
-  for(auto it = mapThemeKeys.begin(); it != mapThemeKeys.end(); ++it)
+  QFile keyFile(atools::settings::Settings::instance().getPath() + QDir::separator() + FILENAME);
+  if(keyFile.open(QIODevice::WriteOnly))
   {
-    list.append(it.key());
-    list.append(it.value());
-  }
+    // Apply simple encryption to the keys
+    // Note that this is not safe since the keys can be decrypted by all having access to these sources and the KEY above.
+    atools::util::SimpleCrypt crypt(KEY);
+    crypt.setCompressionMode(atools::util::SimpleCrypt::CompressionNever);
+    crypt.setIntegrityProtectionMode(atools::util::SimpleCrypt::ProtectionChecksum);
 
-  atools::settings::Settings::instance().setValue(lnm::MAP_THEME_KEYS, list);
+    // Create a copy and encrypt keys
+    QMap<QString, QString> keys(mapThemeKeys);
+    for(auto it = keys.begin(); it != keys.end(); ++it)
+      it.value() = crypt.encryptToString(it.value());
+
+    // Save to binary file
+    QDataStream stream(&keyFile);
+    stream << keys;
+    keyFile.close();
+  }
+  else
+    throw atools::Exception(tr("Cannot open file %1. Reason: %2").arg(keyFile.fileName()).arg(keyFile.errorString()));
+}
+
+void MapThemeHandler::restoreState()
+{
+  QFile keyFile(atools::settings::Settings::instance().getPath() + QDir::separator() + FILENAME);
+
+  if(atools::checkFile(keyFile, false /* warn */))
+  {
+    if(keyFile.open(QIODevice::ReadOnly))
+    {
+      // Load from binary file
+      QDataStream stream(&keyFile);
+      stream >> mapThemeKeys;
+
+      // Decrypt keys
+      atools::util::SimpleCrypt crypt(KEY);
+      for(auto it = mapThemeKeys.begin(); it != mapThemeKeys.end(); ++it)
+        it.value() = crypt.decryptToString(it.value());
+
+      keyFile.close();
+    }
+    else
+      throw atools::Exception(tr("Cannot open file %1. Reason: %2").arg(keyFile.fileName()).arg(keyFile.errorString()));
+  }
 }
 
 MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
