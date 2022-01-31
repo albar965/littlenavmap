@@ -736,7 +736,7 @@ void syncColors()
   // Sync airspace colors ============================================
   colorSettings.beginGroup("Airspace");
 
-  for(auto it = airspaceConfigNames.begin(); it != airspaceConfigNames.end(); ++it)
+  for(auto it = airspaceConfigNames.constBegin(); it != airspaceConfigNames.constEnd(); ++it)
   {
     const QString& name = it.key();
     map::MapAirspaceTypes type = it.value();

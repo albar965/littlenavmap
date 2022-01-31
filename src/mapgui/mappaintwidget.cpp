@@ -1239,7 +1239,7 @@ QList<map::MapHolding> MapPaintWidget::getHoldingMarksFiltered() const
 {
   QList<map::MapHolding> retval;
   const QHash<int, map::HoldingMarker>& marks = screenIndex->getHoldingMarks();
-  for(auto it = marks.begin(); it != marks.end(); ++it)
+  for(auto it = marks.constBegin(); it != marks.constEnd(); ++it)
     retval.append(it.value().holding);
   return retval;
 }
@@ -1248,7 +1248,7 @@ QList<map::MapAirportMsa> MapPaintWidget::getMsaMarksFiltered() const
 {
   QList<map::MapAirportMsa> retval;
   const QHash<int, map::MsaMarker>& marks = screenIndex->getMsaMarks();
-  for(auto it = marks.begin(); it != marks.end(); ++it)
+  for(auto it = marks.constBegin(); it != marks.constEnd(); ++it)
     retval.append(it.value().msa);
   return retval;
 }

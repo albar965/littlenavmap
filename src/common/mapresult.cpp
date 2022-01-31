@@ -288,7 +288,7 @@ bool MapResult::hasOnlineAirspaces() const
 const map::MapAirspace *MapResult::firstSimNavUserAirspace() const
 {
   QList<map::MapAirspace>::const_iterator it =
-    std::find_if(airspaces.begin(), airspaces.end(), [](const map::MapAirspace& a) -> bool
+    std::find_if(airspaces.constBegin(), airspaces.constEnd(), [](const map::MapAirspace& a) -> bool
     {
       return !a.isOnline();
     });
@@ -302,7 +302,7 @@ const map::MapAirspace *MapResult::firstSimNavUserAirspace() const
 const map::MapAirspace *MapResult::firstOnlineAirspace() const
 {
   QList<map::MapAirspace>::const_iterator it =
-    std::find_if(airspaces.begin(), airspaces.end(), [](const map::MapAirspace& a) -> bool
+    std::find_if(airspaces.constBegin(), airspaces.constEnd(), [](const map::MapAirspace& a) -> bool
     {
       return a.isOnline();
     });

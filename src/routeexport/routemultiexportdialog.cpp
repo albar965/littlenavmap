@@ -302,7 +302,7 @@ void RouteMultiExportDialog::buttonBoxClicked(QAbstractButton *button)
                                              lnm::helpLanguageOnline());
 
 #ifdef DEBUG_INFORMATION
-  for(auto it = formatMapDialog->begin(); it != formatMapDialog->end(); ++it)
+  for(auto it = formatMapDialog->constBegin(); it != formatMapDialog->constEnd(); ++it)
     qDebug() << Q_FUNC_INFO << it.value().getPath() << it.value().getPattern();
 #endif
 }
@@ -732,7 +732,7 @@ void RouteMultiExportDialog::resetPathsAndSelection()
   if(msgBox.exec() == QMessageBox::Yes)
   {
     // Reset values in map ========================================
-    for(auto it = formatMapDialog->begin(); it != formatMapDialog->end(); ++it)
+    for(auto it = formatMapDialog->constBegin(); it != formatMapDialog->constEnd(); ++it)
     {
       formatMapDialog->clearPath(it.key());
       formatMapDialog->clearPattern(it.key());

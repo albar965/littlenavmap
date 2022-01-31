@@ -263,7 +263,7 @@ void TrackController::tracksLoaded()
   {
     QStringList str;
     QString err;
-    for(auto it = numTracks.begin(); it != numTracks.end(); ++it)
+    for(auto it = numTracks.constBegin(); it != numTracks.constEnd(); ++it)
     {
       atools::track::TrackType type = it.key();
       int num = numTracks.value(type);
@@ -289,7 +289,7 @@ void TrackController::tracksLoaded()
   else
   {
     QStringList msg;
-    for(auto it = numTracks.begin(); it != numTracks.end(); ++it)
+    for(auto it = numTracks.constBegin(); it != numTracks.constEnd(); ++it)
     {
       atools::track::TrackType type = it.key();
       int num = numTracks.value(type);

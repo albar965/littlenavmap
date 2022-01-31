@@ -673,7 +673,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
         // Copy aircraft from the AI list to the online list if they are shadows
 
         // First check if there is already an online aircraft with the same registration in the online list
-        auto it = std::find_if(result.onlineAircraft.begin(), result.onlineAircraft.end(),
+        auto it = std::find_if(result.onlineAircraft.constBegin(), result.onlineAircraft.constEnd(),
                                [&mapAiAircraft](const map::MapOnlineAircraft& ac) -> bool
         {
           return ac.getAircraft().getAirplaneRegistration() == mapAiAircraft.getAircraft().getAirplaneRegistration();
@@ -1320,7 +1320,7 @@ void InfoController::updateAiAirports(const atools::fs::sc::SimConnectData& data
     for(const map::MapAiAircraft& aircraft : currentSearchResult.aiAircraft)
     {
       QVector<atools::fs::sc::SimConnectAircraft>::const_iterator it =
-        std::find_if(newAiAircraft.begin(), newAiAircraft.end(),
+        std::find_if(newAiAircraft.constBegin(), newAiAircraft.constEnd(),
                      [ = ](const SimConnectAircraft& ac) -> bool
       {
         return ac.getObjectId() == aircraft.getAircraft().getObjectId();

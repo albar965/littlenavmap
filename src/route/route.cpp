@@ -873,7 +873,7 @@ void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::
         maptools::insert(ilsMapAll, ilsMapRecommended); // Merge and deduplicate
 
         // Check if there is a RNP navaid matching the approach ==========
-        auto found = std::find_if(ilsMapAll.begin(), ilsMapAll.end(), [ = ](const map::MapIls& ils) {
+        auto found = std::find_if(ilsMapAll.constBegin(), ilsMapAll.constEnd(), [ = ](const map::MapIls& ils) {
           return ils.ident == approachLegs.approachArincName;
         });
 

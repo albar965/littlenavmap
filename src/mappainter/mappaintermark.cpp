@@ -811,7 +811,7 @@ void MapPainterMark::paintRangeMarks()
   for(const map::RangeMarker& rings : rangeRings)
   {
     // Get the biggest ring to check visibility
-    QVector<float>::const_iterator maxRingIter = std::max_element(rings.ranges.begin(), rings.ranges.end());
+    auto maxRingIter = std::max_element(rings.ranges.constBegin(), rings.ranges.constEnd());
 
     if(maxRingIter != rings.ranges.end())
     {

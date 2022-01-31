@@ -96,7 +96,7 @@ float RouteAltitude::getAltitudeForDistance(float distanceToDest) const
     // Now search through the geometry to find a matching line (if more than one)
     const RouteAltitudeLeg& leg = value(idx);
 
-    auto itGeo = std::lower_bound(leg.geometry.begin(), leg.geometry.end(), distFromStart, [](const QPointF& pt, float dist) -> bool {
+    auto itGeo = std::lower_bound(leg.geometry.constBegin(), leg.geometry.constEnd(), distFromStart, [](const QPointF& pt, float dist) -> bool {
       // true if first is less than second, i.e. ordered before
       return pt.x() < dist;
     });
@@ -137,7 +137,7 @@ float RouteAltitude::getVerticalAngleAtDistance(float distanceToDest, bool *requ
       return leg.getVerticalProcAngle();
     }
 
-    auto itGeo = std::lower_bound(leg.geometry.begin(), leg.geometry.end(), route->getTotalDistance() - distanceToDest,
+    auto itGeo = std::lower_bound(leg.geometry.constBegin(), leg.geometry.constEnd(), route->getTotalDistance() - distanceToDest,
                                   [](const QPointF& pt, float dist) -> bool {
       // true if first is less than second, i.e. ordered before
       return pt.x() < dist;

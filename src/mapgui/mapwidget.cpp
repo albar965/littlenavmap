@@ -2438,7 +2438,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
               if(!aircraftWpRect.isPoint(POS_IS_POINT_EPSILON_DEG))
               {
                 // Get zoom distance from table
-                auto zoomDist = std::lower_bound(ALT_TO_MIN_ZOOM_FT_NM.begin(), ALT_TO_MIN_ZOOM_FT_NM.end(),
+                auto zoomDist = std::lower_bound(ALT_TO_MIN_ZOOM_FT_NM.constBegin(), ALT_TO_MIN_ZOOM_FT_NM.constEnd(),
                                                  aircraft.getAltitudeAboveGroundFt(),
                                                  [](const std::pair<float, float>& pair, float value)->bool {
                   return pair.first < value;
@@ -2630,7 +2630,7 @@ void MapWidget::clearHistory()
 
 void MapWidget::showOverlays(bool show, bool showScalebar)
 {
-  for(auto it = mapOverlays.begin(); it != mapOverlays.end(); ++it)
+  for(auto it = mapOverlays.constBegin(); it != mapOverlays.constEnd(); ++it)
   {
     QString name = it.key();
     Marble::AbstractFloatItem *overlay = floatItem(name);
@@ -2665,7 +2665,7 @@ void MapWidget::overlayStateToMenu()
   qDebug() << Q_FUNC_INFO << "ignoreOverlayUpdates" << ignoreOverlayUpdates;
   if(!ignoreOverlayUpdates)
   {
-    for(auto it = mapOverlays.begin(); it != mapOverlays.end(); ++it)
+    for(auto it = mapOverlays.constBegin(); it != mapOverlays.constEnd(); ++it)
     {
       QString name = it.key();
       Marble::AbstractFloatItem *overlay = floatItem(name);
@@ -2685,7 +2685,7 @@ void MapWidget::overlayStateFromMenu()
   qDebug() << Q_FUNC_INFO << "ignoreOverlayUpdates" << ignoreOverlayUpdates;
   if(!ignoreOverlayUpdates)
   {
-    for(auto it = mapOverlays.begin(); it != mapOverlays.end(); ++it)
+    for(auto it = mapOverlays.constBegin(); it != mapOverlays.constEnd(); ++it)
     {
       QString name = it.key();
       Marble::AbstractFloatItem *overlay = floatItem(name);
@@ -2717,7 +2717,7 @@ void MapWidget::connectOverlayMenus()
   for(QAction *action : mapOverlays)
     connect(action, &QAction::toggled, this, &MapWidget::overlayStateFromMenu);
 
-  for(auto it = mapOverlays.begin(); it != mapOverlays.end(); ++it)
+  for(auto it = mapOverlays.constBegin(); it != mapOverlays.constEnd(); ++it)
   {
     Marble::AbstractFloatItem *overlay = floatItem(it.key());
     if(overlay != nullptr)

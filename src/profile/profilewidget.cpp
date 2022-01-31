@@ -1856,10 +1856,10 @@ void ProfileWidget::calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& 
 
   // Returns an iterator pointing to the first element in the range [first, last) that
   // is not less than (i.e. greater or equal to) value, or last if no such element is found.
-  QVector<int>::iterator it = std::lower_bound(waypointX.begin(), waypointX.end(), x);
-  if(it != waypointX.end())
+  auto it = std::lower_bound(waypointX.constBegin(), waypointX.constEnd(), x);
+  if(it != waypointX.constEnd())
   {
-    routeIndex = static_cast<int>(std::distance(waypointX.begin(), it)) - 1;
+    routeIndex = static_cast<int>(std::distance(waypointX.constBegin(), it)) - 1;
     if(routeIndex < 0)
       routeIndex = 0;
   }
