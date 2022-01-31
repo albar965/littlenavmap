@@ -1833,6 +1833,9 @@ void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atoo
     }
   }
 
+  if(info && !user)
+    addScenery(infoQuery->getMsaInformation(msa.id), html);
+
   if(info)
     html.br();
 }
@@ -2323,6 +2326,9 @@ void HtmlInfoBuilder::holdingTextInternal(const MapHolding& holding, HtmlBuilder
       html.row2If(tr("Max altitude:"), Unit::altFeet(holding.maxAltititude));
   }
   html.tableEnd();
+
+  if(info && !user)
+    addScenery(infoQuery->getHoldingInformation(holding.id), html);
 
   if(info)
     html.br();
@@ -4567,9 +4573,9 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
   html.tableEnd();
 }
 
-void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html, bool ilsOrCom) const
+void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html, bool onlySimOrNav) const
 {
-  if(ilsOrCom)
+  if(onlySimOrNav)
   {
     head(html, tr("Scenery"));
     html.table();

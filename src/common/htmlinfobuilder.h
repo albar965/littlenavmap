@@ -336,7 +336,7 @@ private:
                                 float magVar, bool frequencyCol, bool airportCol) const;
 
   /* Add scenery entries and links into table */
-  void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html, bool ilsOrCom = false) const;
+  void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html, bool onlySimOrNav = false) const;
   void addAirportSceneryAndLinks(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
   void addAirportFolder(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
 

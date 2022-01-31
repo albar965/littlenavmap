@@ -1345,7 +1345,7 @@ QDataStream& operator>>(QDataStream& dataStream, map::HoldingMarker& obj);
 QDataStream& operator<<(QDataStream& dataStream, const map::HoldingMarker& obj);
 
 // =====================================================================
-/* Range rings marker. Can be converted to QVariant and uses its own type distinct from database MSA. */
+/* MSA marker as placed by user. Can be converted to QVariant and uses its own type distinct from database MSA. */
 struct MsaMarker
   : public MapBase
 {

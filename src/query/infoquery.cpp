@@ -36,6 +36,8 @@ InfoQuery::InfoQuery(SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav, ato
   airportCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirportCache", 100).toInt());
   vorCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "VorCache", 100).toInt());
   ndbCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "NdbCache", 100).toInt());
+  msaCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "MsaCache", 100).toInt());
+  holdingCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "HoldingCache", 100).toInt());
   runwayEndCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "RunwayEndCache", 100).toInt());
   comCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "ComCache", 100).toInt());
   runwayCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "RunwayCache", 100).toInt());
@@ -43,8 +45,7 @@ InfoQuery::InfoQuery(SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav, ato
   startCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "StartCache", 100).toInt());
   approachCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "ApproachCache", 100).toInt());
   transitionCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "TransitionCache", 100).toInt());
-  airportSceneryCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirportSceneryCache",
-                                                           100).toInt());
+  airportSceneryCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirportSceneryCache", 100).toInt());
 }
 
 InfoQuery::~InfoQuery()
@@ -132,6 +133,18 @@ const atools::sql::SqlRecord *InfoQuery::getNdbInformation(int ndbId)
   return query::cachedRecord(ndbCache, ndbQuery, ndbId);
 }
 
+const SqlRecord *InfoQuery::getMsaInformation(int msaId)
+{
+  msaQuery->bindValue(":id", msaId);
+  return query::cachedRecord(msaCache, msaQuery, msaId);
+}
+
+const SqlRecord *InfoQuery::getHoldingInformation(int holdingId)
+{
+  holdingQuery->bindValue(":id", holdingId);
+  return query::cachedRecord(holdingCache, holdingQuery, holdingId);
+}
+
 atools::sql::SqlRecord InfoQuery::getTrackMetadata(int trackId)
 {
   SqlQuery query(dbTrack);
@@ -169,6 +182,18 @@ void InfoQuery::initQueries()
                     "join bgl_file on vor.file_id = bgl_file.bgl_file_id "
                     "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
                     "where vor_id = :id");
+
+  msaQuery = new SqlQuery(dbNav);
+  msaQuery->prepare("select * from airport_msa "
+                    "join bgl_file on airport_msa.file_id = bgl_file.bgl_file_id "
+                    "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
+                    "where airport_msa_id = :id");
+
+  holdingQuery = new SqlQuery(dbNav);
+  holdingQuery->prepare("select * from holding "
+                        "join bgl_file on holding.file_id = bgl_file.bgl_file_id "
+                        "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
+                        "where holding_id = :id");
 
   ndbQuery = new SqlQuery(dbNav);
   ndbQuery->prepare("select * from ndb "
@@ -208,6 +233,8 @@ void InfoQuery::deInitQueries()
   airportCache.clear();
   vorCache.clear();
   ndbCache.clear();
+  msaCache.clear();
+  holdingCache.clear();
   runwayEndCache.clear();
   comCache.clear();
   runwayCache.clear();
@@ -228,6 +255,12 @@ void InfoQuery::deInitQueries()
 
   delete vorQuery;
   vorQuery = nullptr;
+
+  delete msaQuery;
+  msaQuery = nullptr;
+
+  delete holdingQuery;
+  holdingQuery = nullptr;
 
   delete ndbQuery;
   ndbQuery = nullptr;
