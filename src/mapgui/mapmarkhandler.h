@@ -55,6 +55,7 @@ public:
     return markTypes & type;
   }
 
+  /* Adds new types to current ones */
   void showMarkTypes(map::MapTypes types);
 
   QStringList getMarkTypesText() const;
@@ -72,7 +73,7 @@ private:
 
   void flagsToActions();
   void actionsToFlags();
-  QAction *addButton(const QString& icon, const QString& text, const QString& tooltip);
+  QAction *addAction(const QString& icon, const QString& text, const QString& tooltip);
 
   /* Actions for toolbar button and menu */
   QAction *actionAll = nullptr, *actionNone = nullptr, *actionRangeRings = nullptr, *actionMeasurementLines = nullptr,

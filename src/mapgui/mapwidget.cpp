@@ -1632,6 +1632,9 @@ void MapWidget::addMeasurement(const atools::geo::Pos& pos, const map::MapResult
 void MapWidget::addMeasurement(const atools::geo::Pos& pos, const map::MapAirport *airport,
                                const map::MapVor *vor, const map::MapNdb *ndb, const map::MapWaypoint *waypoint)
 {
+  // Enable display of user feature
+  NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_DISTANCE);
+
   // Distance line
   map::DistanceMarker dm;
   dm.id = map::getNextUserFeatureId();
@@ -3246,6 +3249,9 @@ void MapWidget::addPatternMark(const map::MapAirport& airport)
   int retval = dialog.exec();
   if(retval == QDialog::Accepted)
   {
+    // Enable display of user feature
+    NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_PATTERNS);
+
     map::PatternMarker pattern;
     dialog.fillPatternMarker(pattern);
     getScreenIndex()->addPatternMark(pattern);
@@ -3273,6 +3279,9 @@ void MapWidget::addHold(const map::MapResult& result, const atools::geo::Pos& po
   HoldDialog dialog(mainWindow, result, position);
   if(dialog.exec() == QDialog::Accepted)
   {
+    // Enable display of user feature
+    NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_HOLDING);
+
     map::HoldingMarker holding;
     dialog.fillHold(holding);
 
@@ -3301,6 +3310,9 @@ void MapWidget::addMsaMark(map::MapAirportMsa airportMsa)
 
   if(airportMsa.isValid())
   {
+    // Enable display of user feature
+    NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_MSA);
+
     map::MsaMarker msa;
     msa.id = map::getNextUserFeatureId();
     msa.msa = airportMsa;
@@ -3405,6 +3417,9 @@ void MapWidget::addNavRangeMark(const atools::geo::Pos& pos, map::MapTypes type,
 {
   if(range > 0.f)
   {
+    // Enable display of user feature
+    NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_RANGE);
+
     map::RangeMarker marker;
     marker.id = map::getNextUserFeatureId();
     marker.navType = type;
@@ -3454,6 +3469,9 @@ void MapWidget::addRangeMark(const atools::geo::Pos& pos, bool showDialog)
 
     dialogOpened = true;
   }
+
+  // Enable display of user feature
+  NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_RANGE);
 
   // Fill the marker object
   map::RangeMarker marker;

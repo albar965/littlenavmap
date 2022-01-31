@@ -2622,44 +2622,24 @@ void RouteController::tableContextMenu(const QPoint& pos)
   }
 
   // Add marks ==============================================================================
-  // Update texts to give user a hint for hidden user features in the disabled menu items =====================
-  QString notShown(tr(" (hidden on map)"));
 
-  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE))
-  {
-    ActionTool::setText(ui->actionMapRangeRings, false, QString(), notShown);
-    ActionTool::setText(ui->actionMapNavaidRange, false, QString(), notShown);
-  }
-  else
-  {
-    ActionTool::setText(ui->actionMapRangeRings, routeLeg != nullptr, objectText);
+  ActionTool::setText(ui->actionMapRangeRings, routeLeg != nullptr, objectText);
 
-    if(numRadioNavaids == 0)
-      ui->actionMapNavaidRange->setEnabled(false);
-    else if(numRadioNavaids == 1)
-      ActionTool::setText(ui->actionMapNavaidRange, routeLeg != nullptr, navaidText);
-    else if(numRadioNavaids > 1)
-      ActionTool::setText(ui->actionMapNavaidRange, routeLeg != nullptr, tr("selected Navaids"));
-  }
+  if(numRadioNavaids == 0)
+    ui->actionMapNavaidRange->setEnabled(false);
+  else if(numRadioNavaids == 1)
+    ActionTool::setText(ui->actionMapNavaidRange, routeLeg != nullptr, navaidText);
+  else if(numRadioNavaids > 1)
+    ActionTool::setText(ui->actionMapNavaidRange, routeLeg != nullptr, tr("selected Navaids"));
 
-  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDING))
-    ActionTool::setText(ui->actionMapHold, false, QString(), notShown);
-  else
-    ActionTool::setText(ui->actionMapHold, routeLeg != nullptr, objectText);
+  ActionTool::setText(ui->actionMapHold, routeLeg != nullptr, objectText);
 
   ui->actionMapAirportMsa->setEnabled(msaResult.hasAirportMsa());
-  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_MSA))
-    ActionTool::setText(ui->actionMapAirportMsa, false, QString(), notShown);
 
-  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_PATTERNS))
-    ActionTool::setText(ui->actionMapTrafficPattern, false, QString(), notShown);
+  if(routeLeg != nullptr && routeLeg->getAirport().isValid())
+    ActionTool::setText(ui->actionMapTrafficPattern, !routeLeg->getAirport().noRunways(), objectText, tr(" (no runway)"));
   else
-  {
-    if(routeLeg != nullptr && routeLeg->getAirport().isValid())
-      ActionTool::setText(ui->actionMapTrafficPattern, !routeLeg->getAirport().noRunways(), objectText, tr(" (no runway)"));
-    else
-      ActionTool::setText(ui->actionMapTrafficPattern, false);
-  }
+    ActionTool::setText(ui->actionMapTrafficPattern, false);
 
   // build menu ====================================================================
 

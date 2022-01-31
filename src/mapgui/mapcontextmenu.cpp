@@ -628,14 +628,10 @@ void MapContextMenu::insertMeasureMenu(QMenu& menu)
   ActionCallback callback =
     [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void
     {
-      disable = !visibleOnMap || !NavApp::getMapMarkHandler()->isShown(map::MARK_DISTANCE);
+      disable = !visibleOnMap;
       if(base == nullptr)
         // Any position
         text = text.arg(tr("here"));
-
-      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_DISTANCE))
-        // Hidden - add remark and disable
-        text.append(tr(" (hidden on map)"));
     };
 
   insertMenuOrAction(menu, mc::MEASURE, MapResultIndex().
@@ -650,11 +646,9 @@ void MapContextMenu::insertNavaidRangeMenu(QMenu& menu)
   ActionCallback callback =
     [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void
     {
-      disable = base == nullptr || !NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE);
-      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE))
-        // Hidden - add remark and disable
-        text.append(tr(" (hidden on map)"));
-      else if(base != nullptr)
+      disable = base == nullptr;
+
+      if(base != nullptr)
       {
         int range = 0;
         if(base->objType == map::VOR)
@@ -682,33 +676,24 @@ void MapContextMenu::insertPatternMenu(QMenu& menu)
   ActionCallback callback =
     [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void
     {
-      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_PATTERNS))
+      if(base != nullptr && base->objType == map::AIRPORT)
       {
-        // Hidden - add remark and disable
-        text.append(tr(" (hidden on map)"));
-        disable = true;
-      }
-      else
-      {
-        if(base != nullptr && base->objType == map::AIRPORT)
+        const map::MapAirport *airport = base->asPtr<map::MapAirport>();
+        if(airport->noRunways())
         {
-          const map::MapAirport *airport = base->asPtr<map::MapAirport>();
-          if(airport->noRunways())
-          {
-            text.append(tr(" (no runway)"));
-            disable = true;
-          }
-          else
-            disable = false;
-
-          // Do our own text substitution for the airport to use shorter name
-          if(text.contains("%1"))
-            text = text.arg(map::airportTextShort(*base->asPtr<map::MapAirport>(), TEXT_ELIDE_AIRPORT_NAME));
+          text.append(tr(" (no runway)"));
+          disable = true;
         }
         else
-          // No object or not an airport
-          disable = true;
+          disable = false;
+
+        // Do our own text substitution for the airport to use shorter name
+        if(text.contains("%1"))
+          text = text.arg(map::airportTextShort(*base->asPtr<map::MapAirport>(), TEXT_ELIDE_AIRPORT_NAME));
       }
+      else
+        // No object or not an airport
+        disable = true;
     };
 
   insertMenuOrAction(menu, mc::PATTERN, MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
@@ -721,12 +706,9 @@ void MapContextMenu::insertHoldMenu(QMenu& menu)
   ActionCallback callback =
     [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void
     {
-      disable = !visibleOnMap || !NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDING);
+      disable = !visibleOnMap;
       if(base == nullptr)
         text = tr("Add &Holding here ...");
-      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDING))
-        // Hidden - add remark and disable
-        text.append(tr(" (hidden on map)"));
     };
 
   insertMenuOrAction(menu, mc::HOLDING, MapResultIndex().
@@ -739,13 +721,9 @@ void MapContextMenu::insertHoldMenu(QMenu& menu)
 void MapContextMenu::insertAirportMsaMenu(QMenu& menu)
 {
   ActionCallback callback =
-    [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void
+    [ = ](const map::MapBase *base, QString&, QIcon&, bool& disable, bool) -> void
     {
-      disable = !visibleOnMap || !NavApp::getMapMarkHandler()->isShown(map::MARK_MSA) || base == nullptr;
-
-      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_MSA))
-        // Hidden - add remark and disable
-        text.append(tr(" (hidden on map)"));
+      disable = !visibleOnMap || base == nullptr;
     };
 
   insertMenuOrAction(menu, mc::AIRPORT_MSA, MapResultIndex().addRef(*result, map::AIRPORT_MSA).
@@ -1132,10 +1110,7 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
     ui->actionMapCopyCoordinates->setText(ui->actionMapCopyCoordinates->text().arg(Unit::coords(mapBasePos->position)));
 
   // Enable or disable map marks ===========================
-  ui->actionMapRangeRings->setEnabled(visibleOnMap && NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE));
-
-  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE))
-    ui->actionMapRangeRings->setText(ui->actionMapRangeRings->text() + tr(" (hidden on map)"));
+  ui->actionMapRangeRings->setEnabled(visibleOnMap);
 
   // Build the menu =============================================================
   // The result must not be modified after building the menu because objects are referenced via dataIndex by pointers

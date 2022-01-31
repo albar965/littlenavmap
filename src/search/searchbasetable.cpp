@@ -1189,39 +1189,22 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 
   // Add marks ==============================================================================
   // Update texts to give user a hint for hidden user features in the disabled menu items =====================
-  QString notShown(tr(" (hidden on map)"));
 
   ui->actionMapRangeRings->setEnabled(index.isValid() && position.isValid());
   ui->actionSearchSetMark->setEnabled(index.isValid() && position.isValid());
 
-  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE))
-  {
-    ActionTool::setText(ui->actionMapRangeRings, false, QString(), notShown);
-    ActionTool::setText(ui->actionMapNavaidRange, false, QString(), notShown);
-  }
-  else
-    ActionTool::setText(ui->actionMapRangeRings, result.hasTypes(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT),
-                        navaidRangeText);
+  ActionTool::setText(ui->actionMapRangeRings, result.hasTypes(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT),
+                      navaidRangeText);
 
-  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDING))
-    ActionTool::setText(ui->actionMapHold, false, QString(), notShown);
-  else
-    ActionTool::setText(ui->actionMapHold, result.hasTypes(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT),
-                        objectText);
+  ActionTool::setText(ui->actionMapHold, result.hasTypes(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT),
+                      objectText);
 
   ui->actionMapAirportMsa->setEnabled(msaResult.hasAirportMsa());
-  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_MSA))
-    ActionTool::setText(ui->actionMapAirportMsa, false, QString(), notShown);
 
-  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_PATTERNS))
-    ActionTool::setText(ui->actionMapTrafficPattern, false, QString(), notShown);
+  if(airport.isValid())
+    ActionTool::setText(ui->actionMapTrafficPattern, !airport.noRunways(), objectText, tr(" (no runway)"));
   else
-  {
-    if(airport.isValid())
-      ActionTool::setText(ui->actionMapTrafficPattern, !airport.noRunways(), objectText, tr(" (no runway)"));
-    else
-      ActionTool::setText(ui->actionMapTrafficPattern, false);
-  }
+    ActionTool::setText(ui->actionMapTrafficPattern, false);
 
   ui->actionSearchShowInformation->setEnabled(mapObjType != map::NONE);
   ui->actionSearchShowOnMap->setEnabled(mapObjType != map::NONE);
