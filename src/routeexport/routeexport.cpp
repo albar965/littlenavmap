@@ -407,9 +407,6 @@ bool RouteExport::routeExportInternalFlp(const RouteExportFormat& format, bool c
   qDebug() << Q_FUNC_INFO;
   if(routeValidateMulti(format))
   {
-    // Use shorter suffix for MSFS CFJ since it accepts only 8 characters
-    QString suffix = msfs || crj ? ".flp" : "01.flp";
-
     // <Documents>/Aerosoft/Airbus/Flightplans.
     QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
@@ -903,6 +900,38 @@ bool RouteExport::routeExportTfdiMulti(const RouteExportFormat& format)
   return false;
 }
 
+bool RouteExport::routeExportIflyMulti(const RouteExportFormat& format)
+{
+  // Documents\Prepar3D v5 Add- ons\iFlyData\navdata\FLTPLAN
+
+  qDebug() << Q_FUNC_INFO;
+  if(routeValidateMulti(format))
+  {
+    QString routeFile = exportFileMulti(format);
+    if(!routeFile.isEmpty())
+    {
+      try
+      {
+        flightplanIO->saveIfly(buildAdjustedRoute(rf::DEFAULT_OPTS_NO_PROC).getFlightplan(), routeFile);
+      }
+      catch(atools::Exception& e)
+      {
+        atools::gui::ErrorHandler(mainWindow).handleException(e);
+        return false;
+      }
+      catch(...)
+      {
+        atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+        return false;
+      }
+
+      formatExportedCallback(format, routeFile);
+      return true;
+    }
+  }
+  return false;
+}
+
 bool RouteExport::routeExportPms50Multi(const RouteExportFormat& format)
 {
   qDebug() << Q_FUNC_INFO;
@@ -913,8 +942,7 @@ bool RouteExport::routeExportPms50Multi(const RouteExportFormat& format)
     {
       try
       {
-        Route route = buildAdjustedRoute(rf::DEFAULT_OPTS_MSFS);
-        flightplanIO->savePlnMsfs(route.getFlightplan(), routeFile);
+        flightplanIO->savePlnMsfs(buildAdjustedRoute(rf::DEFAULT_OPTS_MSFS).getFlightplan(), routeFile);
       }
       catch(atools::Exception& e)
       {

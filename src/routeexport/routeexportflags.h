@@ -85,13 +85,14 @@ enum RouteExportFormatType : quint16
   QWRTE = 24, /* QualityWings Aircraft RTE */
   MDR = 25, /* Leonardo Maddog X */
   TFDI = 26, /* TFDi Design 717 */
+  IFLY = 40, /* iFly Jets Advanced Series */
 
   /* Other ================ */
   EFBR = 27, /* AivlaSoft EFB */
   GPX = 28, /* Garmin exchange format. Not a flight plan format.  */
   HTML = 29, /* Export as HTML page */
 
-  // Next = 40
+  // Next = 41
 };
 
 /* Flags for export format. Some flags are saved to the configuration,

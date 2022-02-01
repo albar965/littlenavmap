@@ -193,6 +193,9 @@ public:
   /* TFDi Design 717 */
   bool routeExportTfdiMulti(const RouteExportFormat& format);
 
+  /* iFly Jets Advanced Series */
+  bool routeExportIflyMulti(const RouteExportFormat& format);
+
   /* Integrated Simavionics / ISG - FSX/PLN format with modified user waypoints */
   bool routeExportIsgMulti(const RouteExportFormat& format);
 
