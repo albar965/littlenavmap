@@ -27,8 +27,8 @@
       <canvas/>
       <target/>
       <layer name="mapboxoutdoors" backend="texture">
-        <!-- OpenStreetMap mapnik rendered tiles expire after 14 days -->
-        <texture name="mapnik_data" expire="1209600">
+        <!-- Tiles expire after 60 days -->
+        <texture name="mapnik_data" expire="5184000">
           <sourcedir format="PNG"> earth/mapboxoutdoors </sourcedir>
           <tileSize width="512" height="512"/>
           <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
@@ -37,7 +37,7 @@
           <downloadUrl protocol="https" host="api.mapbox.com" path="/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}?access_token={Mapbox Token}" />
 
           <!-- Use 2 to adapt to OSM requirements http://wiki.openstreetmap.org/wiki/Tile_usage_policy -->
-          <downloadPolicy usage="Browse" maximumConnections="20"/>
+          <downloadPolicy usage="Browse" maximumConnections="4"/>
 
           <downloadPolicy usage="Bulk" maximumConnections="2"/>
         </texture>

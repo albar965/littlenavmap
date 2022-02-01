@@ -27,17 +27,17 @@
       <canvas/>
       <target/>
       <layer name="thunderforestlandscape" backend="texture">
-        <!-- OpenStreetMap mapnik rendered tiles expire after 14 days -->
-        <texture name="mapnik_data" expire="1209600">
+        <!-- Tiles expire after 60 days -->
+        <texture name="mapnik_data" expire="5184000">
           <sourcedir format="PNG"> earth/thunderforestlandscape </sourcedir>
           <tileSize width="256" height="256"/>
           <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
           <projection name="Mercator"/>
 
-          <downloadUrl protocol="http" host="tile.thunderforest.com" path="/landscape/{z}/{x}/{y}.png?apikey={Thunderforest API Key}" />
+          <downloadUrl protocol="https" host="tile.thunderforest.com" path="/landscape/{z}/{x}/{y}.png?apikey={Thunderforest API Key}" />
 
           <!-- Use 2 to adapt to OSM requirements http://wiki.openstreetmap.org/wiki/Tile_usage_policy -->
-          <downloadPolicy usage="Browse" maximumConnections="20"/>
+          <downloadPolicy usage="Browse" maximumConnections="4"/>
 
           <downloadPolicy usage="Bulk" maximumConnections="2"/>
         </texture>

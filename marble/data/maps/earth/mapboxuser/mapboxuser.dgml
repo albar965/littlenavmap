@@ -37,7 +37,7 @@
           <downloadUrl protocol="https" host="api.mapbox.com" path="/styles/v1/{Mapbox Username}/{Mapbox User Style}/tiles/512/{z}/{x}/{y}?access_token={Mapbox Token}" />
 
           <!-- Use 2 to adapt to OSM requirements http://wiki.openstreetmap.org/wiki/Tile_usage_policy -->
-          <downloadPolicy usage="Browse" maximumConnections="20"/>
+          <downloadPolicy usage="Browse" maximumConnections="4"/>
 
           <downloadPolicy usage="Bulk" maximumConnections="2"/>
         </texture>

@@ -45,7 +45,7 @@
         <discrete> true </discrete>
       </zoom>
 
-      <!-- Name and URL for the map provider. Will be used in LNM dialogs to point to registration site. -->
+      <!-- Name and URL for the map provider. Will be used in LNM dialogs to point to registration site. Optional. -->
       <url href="https://www.example.com">Example.com</url>
     </head>
 
@@ -59,7 +59,7 @@
            Name is same as "target". -->
       <layer backend="texture" name="example">
 
-        <!-- Tiles expire after 14 days in cache. -->
+        <!-- Tiles expire after 14 days in cache. Value in seconds. -->
         <texture expire="1209600" name="mapnik_data">
 
           <!-- Cache folder based on "C:\Users\YOURUSERNAME\AppData\Local\.marble\data" on Windows,
@@ -68,10 +68,10 @@
                Adjust format as provided by map service. -->
           <sourcedir format="PNG"> earth/mapboxuser </sourcedir>
 
-          <!-- Tile size. OSM and related use 256. Mapbox 512. -->
+          <!-- Tile size. OSM and related use 256. Mapbox and MapTiler 512. -->
           <tileSize height="256" width="256"/>
 
-          <!-- Defines the URL used to fetch tiles from the web. Mode "Custom" can be used for all. -->
+          <!-- Defines the URL used to fetch tiles from the web. Mode "Custom" is recommended for all maps. -->
           <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
 
           <!-- Usually Mercator for slippy maps. Depends on map provider. -->
@@ -82,8 +82,10 @@
                All keys enclosed in braces (except common ones like "x", "y", "z", "zoomLevel" and "language") are extracted from
                the URL by LNM and are shown in the options dialog on page "Map Display Keys".
                Allowed characters for keys are A-Z, a-z, 0-9, _, - and space.
-               The keys should to be unique for all available maps/map providers and shoult be user readable.
+               The keys have to be unique for all available maps/map providers and should be user readable.
                Best prefix them with your map name.
+
+               More than one download URL can be used for client side load balancing.
 
                A typical free map configuration for the OpenStreetMap would look like this:
                <downloadUrl protocol="https" host="tile.openstreetmap.org" path="/{z}/{x}/{y}.png" />
@@ -96,11 +98,10 @@
                {z}         Synonym for {zoomLevel}
                {x}         Slippy map tile coordinate
                {y}         Slippy map tile coordinate
-
+               All other keys are treated as user customizable keys and are shown in the LNM options dialog.
                -->
-          <downloadUrl host="example.com"
-                       path="/styles/v1/{Example Map Username}/{Example Map Style}/tiles/512/{z}/{x}/{y}?access_token={Example Token}"
-                       protocol="https"/>
+          <downloadUrl protocol="https" host="tiles.example.com"
+                       path="/styles/v1/{Example Map Username}/{Example Map Style}/tiles/512/{z}/{x}/{y}?access_token={Example Token}"/>
 
           <!-- Maximum tile downloads. Do not increase these values. Some services require lower values. -->
           <downloadPolicy maximumConnections="20" usage="Browse"/>

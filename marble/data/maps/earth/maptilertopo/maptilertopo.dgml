@@ -9,11 +9,11 @@
     <head>
       <!-- The license here applies to the actual map content, not this dgml file. See the license header above for the dgml file license -->
       <!-- The content that this license refers to is not distributed with this package -->
-      <license short="© Mapbox and OpenStreetMap contributors">Source: © OpenStreetMap contributors, License: Creative Commons Attribution-ShareAlike 2.0 (CC BY-SA)</license>
-      <name>Mapbox Satellite Streets</name>
+      <license short="© MapTiler and OpenStreetMap contributors">Source: © OpenStreetMap contributors, License: Creative Commons Attribution-ShareAlike 2.0 (CC BY-SA)</license>
+      <name>MapTiler Topo</name>
       <target>earth</target>
-      <theme>mapboxsatellitestreets</theme>
-      <icon pixmap="mapboxsatellitestreets-preview.png"/>
+      <theme>maptilertopo</theme>
+      <icon pixmap="maptilertopo-preview.png"/>
       <visible>true</visible>
       <description><![CDATA[<p>A <i>global roadmap</i> created by the OpenStreetMap (OSM) project.</p><p>OSM is an open community which creates free editable maps. The OSM data was rendered using Mapnik.</p>]]></description>
       <zoom>
@@ -21,20 +21,20 @@
         <maximum>  3500  </maximum>
         <discrete> true </discrete>
       </zoom>
-      <url href="https://www.mapbox.com">Mapbox</url>
+      <url href="https://www.maptiler.com">MapTiler</url>
     </head>
     <map bgcolor="#000000">
       <canvas/>
       <target/>
-      <layer name="mapboxsatellitestreets" backend="texture">
+      <layer name="maptilertopo" backend="texture">
         <!-- Tiles expire after 60 days -->
         <texture name="mapnik_data" expire="5184000">
-          <sourcedir format="PNG"> earth/mapboxsatellitestreets </sourcedir>
+          <sourcedir format="PNG"> earth/maptilertopo </sourcedir>
           <tileSize width="512" height="512"/>
           <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
           <projection name="Mercator"/>
 
-          <downloadUrl protocol="https" host="api.mapbox.com" path="/styles/v1/mapbox/satellite-streets-v11/tiles/512/{z}/{x}/{y}?access_token={Mapbox Token}" />
+          <downloadUrl protocol="https" host="api.maptiler.com" path="/maps/topo/{z}/{x}/{y}.png?key={MapTiler API Key}" />
 
           <!-- Use 2 to adapt to OSM requirements http://wiki.openstreetmap.org/wiki/Tile_usage_policy -->
           <downloadPolicy usage="Browse" maximumConnections="4"/>

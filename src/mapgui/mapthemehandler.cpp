@@ -143,13 +143,14 @@ void MapThemeHandler::restoreState()
     if(keyFile.open(QIODevice::ReadOnly))
     {
       // Load from binary file
+      QMap<QString, QString> keys;
       QDataStream stream(&keyFile);
-      stream >> mapThemeKeys;
+      stream >> keys;
 
-      // Decrypt keys
+      // Decrypt keys and merge into list fetched from DGML files
       atools::util::SimpleCrypt crypt(KEY);
-      for(auto it = mapThemeKeys.begin(); it != mapThemeKeys.end(); ++it)
-        it.value() = crypt.decryptToString(it.value());
+      for(auto it = keys.begin(); it != keys.end(); ++it)
+        mapThemeKeys.insert(it.key(), crypt.decryptToString(it.value()));
 
       keyFile.close();
     }
