@@ -17,17 +17,19 @@
 
 #include "query/infoquery.h"
 
+#include "common/constants.h"
+#include "query/querytypes.h"
+#include "settings/settings.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlrecord.h"
-#include "settings/settings.h"
-#include "query/querytypes.h"
-#include "common/constants.h"
+#include "sql/sqlutil.h"
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlDatabase;
 using atools::sql::SqlRecord;
 using atools::sql::SqlRecordList;
+using atools::sql::SqlUtil;
 
 InfoQuery::InfoQuery(SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbTrack)
   : dbSim(sqlDb), dbNav(sqlDbNav), dbTrack(sqlDbTrack)
@@ -135,14 +137,24 @@ const atools::sql::SqlRecord *InfoQuery::getNdbInformation(int ndbId)
 
 const SqlRecord *InfoQuery::getMsaInformation(int msaId)
 {
-  msaQuery->bindValue(":id", msaId);
-  return query::cachedRecord(msaCache, msaQuery, msaId);
+  if(msaQuery != nullptr)
+  {
+    msaQuery->bindValue(":id", msaId);
+    return query::cachedRecord(msaCache, msaQuery, msaId);
+  }
+  else
+    return nullptr;
 }
 
 const SqlRecord *InfoQuery::getHoldingInformation(int holdingId)
 {
-  holdingQuery->bindValue(":id", holdingId);
-  return query::cachedRecord(holdingCache, holdingQuery, holdingId);
+  if(holdingQuery != nullptr)
+  {
+    holdingQuery->bindValue(":id", holdingId);
+    return query::cachedRecord(holdingCache, holdingQuery, holdingId);
+  }
+  else
+    return nullptr;
 }
 
 atools::sql::SqlRecord InfoQuery::getTrackMetadata(int trackId)
@@ -183,17 +195,31 @@ void InfoQuery::initQueries()
                     "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
                     "where vor_id = :id");
 
-  msaQuery = new SqlQuery(dbNav);
-  msaQuery->prepare("select * from airport_msa "
-                    "join bgl_file on airport_msa.file_id = bgl_file.bgl_file_id "
-                    "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
-                    "where airport_msa_id = :id");
+  // Same as above for airport MSA table
+  SqlDatabase *msaDb = SqlUtil::getDbWithTableAndRows("airport_msa", {dbNav, dbSim});
+  qDebug() << Q_FUNC_INFO << "Airport MSA database" << (msaDb == nullptr ? "None" : msaDb->databaseName());
 
-  holdingQuery = new SqlQuery(dbNav);
-  holdingQuery->prepare("select * from holding "
-                        "join bgl_file on holding.file_id = bgl_file.bgl_file_id "
-                        "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
-                        "where holding_id = :id");
+  if(msaDb != nullptr)
+  {
+    msaQuery = new SqlQuery(msaDb);
+    msaQuery->prepare("select * from airport_msa "
+                      "join bgl_file on airport_msa.file_id = bgl_file.bgl_file_id "
+                      "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
+                      "where airport_msa_id = :id");
+  }
+
+  // Check for holding table in nav (Navigraph) database and then in simulator database (X-Plane only)
+  SqlDatabase *holdingDb = SqlUtil::getDbWithTableAndRows("holding", {dbNav, dbSim});
+  qDebug() << Q_FUNC_INFO << "Holding database" << (holdingDb == nullptr ? "None" : holdingDb->databaseName());
+
+  if(holdingDb != nullptr)
+  {
+    holdingQuery = new SqlQuery(holdingDb);
+    holdingQuery->prepare("select * from holding "
+                          "join bgl_file on holding.file_id = bgl_file.bgl_file_id "
+                          "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
+                          "where holding_id = :id");
+  }
 
   ndbQuery = new SqlQuery(dbNav);
   ndbQuery->prepare("select * from ndb "

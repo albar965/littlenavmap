@@ -4582,13 +4582,15 @@ void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder&
     html.row2(NavApp::isNavdataAll() ? tr("Navigraph") : tr("Simulator"));
     html.tableEnd();
   }
-  else if(rec != nullptr && rec->contains("title") && rec->contains("filepath"))
+  else if(rec != nullptr)
   {
     head(html, tr("Scenery"));
     html.table();
-    html.row2(rec->valueStr("title"), filepathTextShow(rec->valueStr("filepath")), ahtml::NO_ENTITIES);
+    html.row2(rec->valueStr("title", QString()), filepathTextShow(rec->valueStr("filepath", QString())), ahtml::NO_ENTITIES);
     html.tableEnd();
   }
+  else
+    head(html, tr("Scenery - Unknown"));
 }
 
 void HtmlInfoBuilder::addAirportFolder(const MapAirport& airport, HtmlBuilder& html) const
