@@ -1,0 +1,46 @@
+<!ELEMENT available>
+<!ELEMENT brush EMPTY>
+<!ELEMENT coastline>
+<!ELEMENT color>
+<!ELEMENT customPlugin>
+<!ELEMENT dem>
+<!ELEMENT description (#PCDATA)>
+<!ELEMENT discrete>
+<!ELEMENT dgml (document)>
+<!ELEMENT document (head, map, settings, legend)>
+<!-- FIXME: specify downloadUrl attributes: protocol, user, password, host, port, path -->
+<!ELEMENT downloadUrl>
+<!ELEMENT filter>
+<!ELEMENT geodata (sourcefile, pick*)>
+<!ELEMENT group (group|property)*>
+<!ELEMENT head (name, target?, theme, icon?, visible?, description?, zoom?)>
+<!ELEMENT heading (#PCDATA)>
+<!ELEMENT icon EMPTY>
+<!ELEMENT installMap>
+<!ELEMENT item (icon|text)?>
+<!ELEMENT layer (texture* | vector* | geodata* | filter*)>
+<!ELEMENT legend (section|item)*>
+<!ELEMENT map (canvas, layer*, target, layer*)>
+<!ELEMENT maximum>
+<!ELEMENT minimum>
+<!ELEMENT name (#PCDATA)>
+<!ELEMENT palette>
+<!ELEMENT pen EMPTY>
+<!ELEMENT pick>
+<!-- FIXME: specify projection attributes: name -->
+<!ELEMENT projection>
+<!ELEMENT property (available?, value?)>
+<!ELEMENT section (heading, item*)>
+<!ELEMENT settings (group|property)*>
+<!ELEMENT sourceDir>
+<!ELEMENT sourceFile>
+<!-- FIXME: specify storageLayout attributes: levelZeroColumns, levelZeroRows, mode -->
+<!ELEMENT storageLayout (#PCDATA)>
+<!ELEMENT target EMPTY>
+<!ELEMENT text (#PCDATA)>
+<!ELEMENT texture (sourcedir, installmap?, storageLayout?, projection?, downloadUrl?)>
+<!ELEMENT theme (#PCDATA)>
+<!ELEMENT value>
+<!ELEMENT vector (sourcefile, pen?, brush?)>
+<!ELEMENT visible>
+<!ELEMENT zoom ((minimum, maximum)?, discrete?)>
