@@ -24,7 +24,6 @@
 #include <QDebug>
 #include <QUrl>
 #include <QDesktopServices>
-#include <QApplication>
 #include <QSqlField>
 #include <QSqlRecord>
 

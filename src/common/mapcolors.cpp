@@ -24,7 +24,7 @@
 
 #include <QPen>
 #include <QString>
-#include <QApplication>
+#include <QCoreApplication>
 #include <QPalette>
 #include <QSettings>
 #include <QPainter>

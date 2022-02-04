@@ -23,7 +23,7 @@
 #include "fs/fspaths.h"
 
 #include <QCache>
-#include <QApplication>
+#include <QCoreApplication>
 #include <functional>
 
 namespace atools {

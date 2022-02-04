@@ -29,7 +29,6 @@
 #include "fs/weather/metarparser.h"
 
 #include <QPainter>
-#include <QApplication>
 #include <QStringBuilder>
 #include <marble/GeoPainter.h>
 

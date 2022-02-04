@@ -37,7 +37,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QTextCodec>
-#include <QApplication>
+#include <QCoreApplication>
 
 // #define DEBUG_ONLINE_DOWNLOAD 1
 

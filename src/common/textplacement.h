@@ -22,7 +22,7 @@
 #include <QLineF>
 #include <QList>
 #include <QPoint>
-#include <QApplication>
+#include <QCoreApplication>
 #include <QColor>
 #include <QVector>
 #include <QRect>

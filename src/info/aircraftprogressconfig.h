@@ -20,7 +20,7 @@
 
 #include "common/htmlinfobuilderflags.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <QBitArray>
 
 /*

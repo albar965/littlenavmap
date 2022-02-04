@@ -19,7 +19,7 @@
 #define LNM_FUELTOOL_H
 
 #include "options/optiondata.h"
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace fs {

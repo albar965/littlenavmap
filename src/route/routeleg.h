@@ -20,7 +20,7 @@
 
 #include "common/proctypes.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace fs {

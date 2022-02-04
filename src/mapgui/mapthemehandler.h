@@ -20,7 +20,7 @@
 
 #include <QStringList>
 #include <QMap>
-#include <QApplication>
+#include <QCoreApplication>
 #include <QDir>
 
 class QFileInfo;

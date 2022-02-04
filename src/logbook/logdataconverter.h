@@ -18,7 +18,8 @@
 #ifndef LNM_LOGDATACONVERTER_H
 #define LNM_LOGDATACONVERTER_H
 
-#include <QApplication>
+#include <QCoreApplication>
+#include <QLocale>
 
 namespace atools {
 namespace fs {

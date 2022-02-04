@@ -31,7 +31,7 @@
 #include "common/constants.h"
 
 #include <QSettings>
-#include <QApplication>
+#include <QCoreApplication>
 #include <QStandardPaths>
 #include <QDir>
 #include <QMessageBox>
@@ -137,7 +137,7 @@ void WebController::startServer()
   if(!listener->isListening())
   {
     // Not listening - display error dialog ====================================================
-    QMessageBox::warning(parentWidget, QApplication::applicationName(),
+    QMessageBox::warning(parentWidget, QCoreApplication::applicationName(),
                          tr("Unable to start the server. Error:\n%1.").arg(listener->errorString()));
     stopServer();
   }

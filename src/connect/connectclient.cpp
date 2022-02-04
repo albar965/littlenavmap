@@ -35,7 +35,7 @@
 #include <QDataStream>
 #include <QTcpSocket>
 #include <QWidget>
-#include <QApplication>
+#include <QCoreApplication>
 #include <QThread>
 
 using atools::fs::sc::DataReaderThread;

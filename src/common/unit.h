@@ -20,7 +20,7 @@
 
 #include "options/optiondata.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <functional>
 
 namespace atools {

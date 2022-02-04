@@ -25,7 +25,7 @@
 
 #include <marble/MarbleWidget.h>
 #include <QPen>
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace geo {

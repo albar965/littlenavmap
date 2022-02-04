@@ -22,7 +22,7 @@
 #include "common/mapflags.h"
 
 #include <QStringList>
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 

@@ -20,7 +20,7 @@
 
 #include "route/routealtitudeleg.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace grib {
