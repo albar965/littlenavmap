@@ -242,6 +242,9 @@ public:
    * Shows an error dialog if this is the case */
   void checkForChangedNavAndSimDatabases();
 
+  /* Checks if version of database is smaller than application database version and shows a warning dialog if it is */
+  void checkDatabaseVersion();
+
 signals:
   /* Emitted before opening the scenery database dialog, loading a database or switching to a new simulator database.
    * Recipients have to close all database connections and clear all caches. The database instance itself is not changed

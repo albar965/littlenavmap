@@ -97,6 +97,7 @@ const QLatin1String ACTIONS_SHOW_LOGBOOK_CONVERSION("Actions/LogbookConversion")
 const QLatin1String ACTIONS_SHOW_USER_AIRSPACE_NOTE("Actions/UserAirspaceNote");
 const QLatin1String ACTIONS_SHOW_SEND_SIMBRIEF("Actions/SendSimBrief");
 const QLatin1String ACTIONS_SHOW_MAPTHEME_REQUIRES_KEY("Actions/MapThemeRequiresKey");
+const QLatin1String ACTIONS_SHOW_DATABASE_OLD("Actions/DatabaseOld");
 
 const QLatin1String ACTIONS_SHOW_SSL_WARNING_ONLINE("Actions/SslWarningOnline");
 const QLatin1String ACTIONS_SHOW_SSL_WARNING_WIND("Actions/SslWarningWind");

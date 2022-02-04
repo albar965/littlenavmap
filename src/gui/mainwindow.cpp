@@ -3309,6 +3309,7 @@ void MainWindow::resetMessages()
   settings.setValue(lnm::ACTIONS_SHOW_USER_AIRSPACE_NOTE, true);
   settings.setValue(lnm::ACTIONS_SHOW_SEND_SIMBRIEF, true);
   settings.setValue(lnm::ACTIONS_SHOW_MAPTHEME_REQUIRES_KEY, true);
+  settings.setValue(lnm::ACTIONS_SHOW_DATABASE_OLD, true);
 
   settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_ONLINE, true);
   settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_WIND, true);
@@ -3512,6 +3513,9 @@ void MainWindow::mainWindowShown()
     databaseManager->run();
   }
 
+  // Checks if version of database is smaller than application database version and shows a warning dialog if it is
+  databaseManager->checkDatabaseVersion();
+
   NavApp::logDatabaseMeta();
 
   // If enabled connect to simulator without showing dialog
@@ -3525,8 +3529,7 @@ void MainWindow::mainWindowShown()
   weatherUpdateTimer.start();
 
   // Check for updates once main window is visible
-  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(),
-                          false /* manually triggered */, false /* forceDebug */);
+  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */, false /* forceDebug */);
 
   optionsDialog->checkOfficialOnlineUrls();
 

@@ -679,13 +679,13 @@ void NavApp::logDatabaseMeta()
 {
   qDebug() << Q_FUNC_INFO << "databaseMetaNav";
   if(databaseMetaNav != nullptr)
-    databaseMetaNav->log();
+    databaseMetaNav->logInfo();
   else
     qDebug() << Q_FUNC_INFO << "databaseMetaNav == nullptr";
 
   qDebug() << Q_FUNC_INFO << "databaseMetaSim";
   if(databaseMetaSim != nullptr)
-    databaseMetaSim->log();
+    databaseMetaSim->logInfo();
   else
     qDebug() << Q_FUNC_INFO << "databaseMetaSim == nullptr";
 }

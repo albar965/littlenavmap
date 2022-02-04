@@ -73,7 +73,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   : QObject(parent), mainWindow(parent)
 {
   databaseMetaText = QObject::tr(
-    "<p><big>Last Update: %1. Database Version: %2.%3. Program Version: %4.%5.%6</big></p>");
+    "<p><big>Last Update: %1. Database Version: %2. Program Version: %3.%4</big></p>");
 
   databaseAiracCycleText = QObject::tr(" AIRAC Cycle %1.");
 
@@ -162,8 +162,8 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   // Find any stale databases that do not belong to a simulator and update installed and has database flags
   updateSimulatorFlags();
 
-  for(atools::fs::FsPaths::SimulatorType t : simulators.keys())
-    qDebug() << t << simulators.value(t);
+  for(auto it = simulators.constBegin(); it != simulators.constEnd(); ++it)
+    qDebug() << it.key() << it.value();
 
   // Correct if current simulator is invalid
   correctSimulatorType();
@@ -312,9 +312,10 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
     QStringList databaseNames, databaseFiles;
 
     // Collect all incompatible databases
-    for(atools::fs::FsPaths::SimulatorType type : simulators.keys())
+
+    for(auto it = simulators.constBegin(); it != simulators.constEnd(); ++it)
     {
-      QString dbName = buildDatabaseFileName(type);
+      QString dbName = buildDatabaseFileName(it.key());
       if(QFile::exists(dbName))
       {
         // Database file exists
@@ -328,7 +329,7 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
         else if(!meta.isDatabaseCompatible())
         {
           // Not compatible add to list
-          databaseNames.append("<i>" + FsPaths::typeToName(type) + "</i>");
+          databaseNames.append("<i>" + FsPaths::typeToName(it.key()) + "</i>");
           databaseFiles.append(dbName);
           qWarning() << "Incompatible database" << dbName;
         }
@@ -863,7 +864,7 @@ void DatabaseManager::switchSimFromMainMenu()
     mainWindow->setStatusMessage(tr("Switched to %1.").arg(FsPaths::typeToName(currentFsType)));
 
     saveState();
-
+    checkDatabaseVersion();
   }
 
   // Check and uncheck manually since the QActionGroup is unreliable
@@ -1067,12 +1068,7 @@ void DatabaseManager::openDatabaseFileInternal(atools::sql::SqlDatabase *db, con
     db->open(databasePragmas);
   }
 
-  DatabaseMeta dbmeta(db);
-  qInfo().nospace() << "Database version "
-                    << dbmeta.getMajorVersion() << "." << dbmeta.getMinorVersion();
-
-  qInfo().nospace() << "Application database version "
-                    << DatabaseMeta::DB_VERSION_MAJOR << "." << DatabaseMeta::DB_VERSION_MINOR;
+  DatabaseMeta(db).logInfo();
 }
 
 void DatabaseManager::closeAllDatabases()
@@ -1767,12 +1763,14 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
     tempDb.open();
   }
 
+  atools::util::Version applicationVersion = DatabaseMeta::getApplicationVersion();
   if(tempDb.isOpen())
   {
     DatabaseMeta dbmeta(tempDb);
+    atools::util::Version databaseVersion = dbmeta.getDatabaseVersion();
+
     if(!dbmeta.isValid())
-      metaText = databaseMetaText.arg(tr("None")).arg(tr("None")).arg(tr("None")).
-                 arg(DatabaseMeta::DB_VERSION_MAJOR).arg(DatabaseMeta::DB_VERSION_MINOR).arg(QString());
+      metaText = databaseMetaText.arg(tr("None")).arg(tr("None")).arg(applicationVersion.getVersionString()).arg(QString());
     else
     {
       QString cycleText;
@@ -1781,16 +1779,11 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
 
       metaText = databaseMetaText.
                  arg(dbmeta.getLastLoadTime().isValid() ? dbmeta.getLastLoadTime().toString() : tr("None")).
-                 arg(dbmeta.getMajorVersion()).
-                 arg(dbmeta.getMinorVersion()).
-                 arg(DatabaseMeta::DB_VERSION_MAJOR).
-                 arg(DatabaseMeta::DB_VERSION_MINOR).
-                 arg(cycleText);
+                 arg(databaseVersion.getVersionString()).arg(applicationVersion.getVersionString()).arg(cycleText);
     }
   }
   else
-    metaText = databaseMetaText.arg(tr("None")).arg(tr("None")).arg(tr("None")).
-               arg(DatabaseMeta::DB_VERSION_MAJOR).arg(DatabaseMeta::DB_VERSION_MINOR).arg(QString());
+    metaText = databaseMetaText.arg(tr("None")).arg(tr("None")).arg(applicationVersion.getVersionString()).arg(QString());
 
   QString tableText;
   if(tempDb.isOpen() && hasSchema(&tempDb))
@@ -1890,8 +1883,9 @@ void DatabaseManager::updateSimulatorPathsFromDialog()
 {
   const SimulatorTypeMap& dlgPaths = databaseDialog->getPaths();
 
-  for(FsPaths::SimulatorType type : dlgPaths.keys())
+  for(auto it = dlgPaths.constBegin(); it != dlgPaths.constEnd(); ++it)
   {
+    const FsPaths::SimulatorType type = it.key();
     if(simulators.contains(type))
     {
       simulators[type].basePath = dlgPaths.value(type).basePath;
@@ -1947,4 +1941,21 @@ void DatabaseManager::metaFromFile(QString *cycle, QDateTime *compilationTime, b
   }
 
   closeDatabaseFile(&tempDb);
+}
+
+void DatabaseManager::checkDatabaseVersion()
+{
+  if(navDatabaseStatus != dm::NAVDATABASE_ALL)
+  {
+    atools::util::Version databaseVersion = NavApp::getDatabaseMetaSim()->getDatabaseVersion();
+    atools::util::Version applicationVersion = NavApp::getDatabaseMetaSim()->getApplicationVersion();
+
+    if(databaseVersion < applicationVersion)
+      atools::gui::Dialog(mainWindow).
+      showWarnMsgBox(lnm::ACTIONS_SHOW_DATABASE_OLD,
+                     tr("<p>The scenery library database was created using a previous version of Little Navmap.</p>"
+                          "<p>It is strongly recommended to reload the scenery library database.</p>"
+                            "<p>You can do this in menu \"Scenery Library\" -> \"Reload Scenery Library\".</p>"),
+                     tr("Do not &show this dialog again."));
+  }
 }

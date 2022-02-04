@@ -69,6 +69,10 @@ public:
   QList<atools::fs::FsPaths::SimulatorType> getAllHavingDatabase() const;
 
   /* Make needed base class methods public */
+  using QHash::begin;
+  using QHash::end;
+  using QHash::constBegin;
+  using QHash::constEnd;
   using QHash::keys;
   using QHash::isEmpty;
   using QHash::value;
