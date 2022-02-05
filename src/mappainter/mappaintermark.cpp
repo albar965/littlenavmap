@@ -1295,7 +1295,7 @@ void MapPainterMark::paintDistanceMarks()
 
     painter->setPen(QPen(m.color, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
     // Draw great circle line ========================================================
-    float distanceMeter = m.from.distanceMeterTo(m.to);
+    float distanceMeter = m.getDistanceMeter();
 
     // Draw line
     drawLine(painter, ageo::Line(m.from, m.to));
@@ -1353,7 +1353,7 @@ void MapPainterMark::paintDistanceMarks()
       }
     }
 
-    if(context->dOptMeasurement(optsd::MEASUREMNENT_DIST))
+    if(context->dOptMeasurement(optsd::MEASUREMNENT_DIST) && distanceMeter < INVALID_DISTANCE_VALUE)
     {
       if(Unit::getUnitDist() == opts::DIST_KM && Unit::getUnitShortDist() == opts::DIST_SHORT_METER && distanceMeter < 6000)
         texts.append(QLocale(QLocale::C).toString(distanceMeter, 'f', 0) % Unit::getUnitShortDistStr());

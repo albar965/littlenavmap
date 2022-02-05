@@ -1566,10 +1566,13 @@ QString rangeMarkText(const RangeMarker& obj)
 
 QString distanceMarkText(const DistanceMarker& obj)
 {
+  float distanceMeter = obj.getDistanceMeter();
+  QString distStr(distanceMeter < map::INVALID_DISTANCE_VALUE ? Unit::distMeter(distanceMeter) : QString());
+
   if(obj.text.isEmpty())
-    return QObject::tr("Measurement %1").arg(Unit::distMeter(obj.from.distanceMeterTo(obj.to)));
+    return QObject::tr("Measurement %1").arg(distStr);
   else
-    return QObject::tr("Measurement %1 %2").arg(obj.text).arg(Unit::distMeter(obj.from.distanceMeterTo(obj.to)));
+    return QObject::tr("Measurement %1 %2").arg(obj.text).arg(distStr);
 }
 
 QString holdingMarkText(const HoldingMarker& obj)
@@ -2619,6 +2622,11 @@ const QIcon& ilsIcon(const MapIls& ils)
     return ILS;
   else
     return LOC;
+}
+
+float DistanceMarker::getDistanceNm() const
+{
+  return atools::geo::meterToNm(getDistanceMeter());
 }
 
 } // namespace types

@@ -1403,6 +1403,13 @@ struct DistanceMarker
     return to;
   }
 
+  float getDistanceMeter() const
+  {
+    return from.distanceMeterTo(to);
+  }
+
+  float getDistanceNm() const;
+
 };
 
 QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj);

@@ -2369,10 +2369,23 @@ void HtmlInfoBuilder::distanceMarkerText(const DistanceMarker& marker, atools::u
   float finalTrue =
     static_cast<float>(normalizeCourse(from.bearing(to, Marble::GeoDataCoordinates::Degree, Marble::GeoDataCoordinates::FinalBearing)));
 
+  QString initCourseStr = tr("%L1°M, %L2°T").arg(initTrue - marker.magvar, 0, 'f', 0).arg(initTrue, 0, 'f', 0);
+  QString finalCourseStr = tr("%L1°M, %L2°T").arg(finalTrue - marker.magvar, 0, 'f', 0).arg(finalTrue, 0, 'f', 0);
+
+  float distMeter = marker.getDistanceMeter();
   html.table();
   html.row2If(tr("Label:"), marker.text);
-  html.row2If(tr("Initial Course:"), tr("%L1°M, %L2°T").arg(initTrue - marker.magvar, 0, 'f', 0).arg(initTrue, 0, 'f', 0));
-  html.row2If(tr("Final Course:"), tr("%L1°M, %L2°T").arg(finalTrue - marker.magvar, 0, 'f', 0).arg(finalTrue, 0, 'f', 0));
+  if(distMeter < map::INVALID_DISTANCE_VALUE)
+    html.row2If(tr("Distance:"), Unit::distMeter(distMeter));
+
+  if(initCourseStr != finalCourseStr)
+  {
+    html.row2If(tr("Initial Course:"), initCourseStr);
+    html.row2If(tr("Final Course:"), finalCourseStr);
+  }
+  else
+    html.row2If(tr("Course:"), initCourseStr);
+
   html.tableEnd();
 }
 
