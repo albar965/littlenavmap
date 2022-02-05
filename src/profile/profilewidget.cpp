@@ -1110,7 +1110,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
           painter.resetTransform();
         }
       } // for(int i = passedRouteLeg; i < waypointX.size(); i++)
-    }
+    } // if(optionData.getDisplayOptionsProfile() & optsd::PROFILE_FP_ANY)
 
     // ========================================================================================
     // Calculate symbol sizes
@@ -1134,11 +1134,13 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       if(altLegs.at(waypointIndex).isEmpty())
         continue;
 
+      int legScreenWidth = calcLegScreenWidth(altLegs, waypointIndex) - 10;
+
       QColor color;
-      QStringList texts;
       bool procSymbol = false;
       // Do not get display text for intercept texts if any since these will be drawn separately
-      textsAndColorForLeg(texts, color, procSymbol, leg, !(leg.isAnyProcedure() && procedureLeg.interceptPos.isValid()));
+      QStringList texts = textsAndColorForLeg(color, procSymbol, leg,
+                                              !(leg.isAnyProcedure() && procedureLeg.interceptPos.isValid()), legScreenWidth);
 
       // Check for an intercept position which can be drawn separately within the leg
       if(routeIndex >= activeRouteLeg - 1 && leg.isAnyProcedure() && procedureLeg.interceptPos.isValid())
@@ -1149,8 +1151,9 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
         // Draw symbol and label for intercept position
         symPainter.drawProcedureSymbol(&painter, interceptX, interceptY, waypointSize, true);
-        symPainter.textBox(&painter, procedureLeg.displayText, color, interceptX + 5, std::min(interceptY + 14, h),
-                           textatt::ROUTE_BG_COLOR, 255);
+        QStringList displayText = atools::elidedTexts(painter.fontMetrics(), procedureLeg.displayText, Qt::ElideRight,
+                                                      legScreenWidth); // TODO legScreenWidth is not correct due to offset
+        symPainter.textBox(&painter, displayText, color, interceptX + 5, std::min(interceptY + 14, h), textatt::ROUTE_BG_COLOR, 255);
       }
 
       // Symbols ========================================================
@@ -1179,8 +1182,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       {
         // Procedure symbols ========================================================
         if(leg.isAnyProcedure())
-          symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6,
-                                           procedureLeg.flyover, procedureLeg.malteseCross);
+          symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6, procedureLeg.flyover, procedureLeg.malteseCross);
 
         // Labels ========================
         symPainter.textBox(&painter, texts, color, symPt.x() + 5, std::min(symPt.y() + 14, h), textatt::ROUTE_BG_COLOR, 255);
@@ -1189,7 +1191,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     } // for(int routeIndex : indexes)
 
     // ===============================================================================================
-    // Draw waypoints ============================
+    // Draw waypoints below radio navaids ============================
     waypointIndex = waypointX.size();
     for(int routeIndex : indexes)
     {
@@ -1200,10 +1202,12 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       if(altLegs.at(waypointIndex).isEmpty())
         continue;
 
+      int legScreenWidth = calcLegScreenWidth(altLegs, waypointIndex) - 10;
+
       QColor color;
-      QStringList texts;
       bool procSymbol = false;
-      textsAndColorForLeg(texts, color, procSymbol, leg, !(leg.isAnyProcedure() && procedureLeg.interceptPos.isValid()));
+      QStringList texts = textsAndColorForLeg(color, procSymbol, leg, !(leg.isAnyProcedure() && procedureLeg.interceptPos.isValid()),
+                                              legScreenWidth);
 
       // Symbols ========================================================
       QPoint symPt(altLegs.at(waypointIndex).constLast());
@@ -1230,7 +1234,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
         symPainter.textBox(&painter, texts, color, symPt.x() + 5, std::min(symPt.y() + 14, h), textatt::ROUTE_BG_COLOR, 255);
       }
-    }
+    } // for(int routeIndex : indexes)
 
     // Draw the more important radio navaids =======================================================
     waypointIndex = waypointX.size();
@@ -1243,10 +1247,12 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       if(altLegs.at(waypointIndex).isEmpty())
         continue;
 
+      int legScreenWidth = calcLegScreenWidth(altLegs, waypointIndex) - 10;
+
       QColor color;
-      QStringList texts;
       bool procSymbol = false;
-      textsAndColorForLeg(texts, color, procSymbol, leg, !(leg.isAnyProcedure() && procedureLeg.interceptPos.isValid()));
+      QStringList texts = textsAndColorForLeg(color, procSymbol, leg, !(leg.isAnyProcedure() && procedureLeg.interceptPos.isValid()),
+                                              legScreenWidth);
 
       // Symbols ========================================================
       QPoint symPt(altLegs.at(waypointIndex).constLast());
@@ -1295,7 +1301,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
           symPainter.drawAirportText(&painter, leg.getAirport(), symPt.x() - 5, std::min(symPt.y() + 14, h),
                                      optsd::AIRPORT_NONE, TEXTFLAGS, 10, false, 16);
       }
-    }
+    } // for(int routeIndex : indexes)
 
     if(!route.isEmpty())
     {
@@ -1464,7 +1470,22 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   scrollArea->updateLabelWidgets();
 }
 
-void ProfileWidget::textsAndColorForLeg(QStringList& texts, QColor& color, bool& procSymbol, const RouteLeg& leg, bool procedureDisplayText)
+int ProfileWidget::calcLegScreenWidth(const QVector<QPolygon>& altLegs, int waypointIndex)
+{
+  QPolygon legWidth = altLegs.value(waypointIndex + 1);
+  int legScreenWidth = legWidth.isEmpty() ? 0 : legWidth.constLast().x() - legWidth.constFirst().x();
+
+  // Check if this is a zero-length FAF or other leg
+  if(legScreenWidth == 0)
+  {
+    legWidth = altLegs.value(waypointIndex + 2);
+    legScreenWidth = legWidth.isEmpty() ? 200 : legWidth.constLast().x() - legWidth.constFirst().x();
+  }
+  return legScreenWidth;
+}
+
+QStringList ProfileWidget::textsAndColorForLeg(QColor& color, bool& procSymbol, const RouteLeg& leg, bool procedureDisplayText,
+                                               int legWidth)
 {
   map::MapTypes type = leg.getMapObjectType();
   QString ident;
@@ -1496,9 +1517,6 @@ void ProfileWidget::textsAndColorForLeg(QStringList& texts, QColor& color, bool&
     // Custom approach or departure
     ident = leg.getIdent();
 
-  if(!leg.isAnyProcedure() || (!leg.getProcedureLeg().noIdentDisplay() && proc::procedureLegDrawIdent(leg.getProcedureLegType())))
-    texts.append(ident);
-
   if(leg.isAnyProcedure())
   {
     if(leg.getProcedureLeg().noIdentDisplay() || !proc::procedureLegDrawIdent(leg.getProcedureLegType()))
@@ -1509,12 +1527,18 @@ void ProfileWidget::textsAndColorForLeg(QStringList& texts, QColor& color, bool&
   else
     procSymbol = false;
 
+  // Start with ident ===============
+  QStringList texts;
+  if(!leg.isAnyProcedure() || (!leg.getProcedureLeg().noIdentDisplay() && proc::procedureLegDrawIdent(leg.getProcedureLegType())))
+    texts.append(atools::elideTextShort(ident, 10));
+
+  // Display texts ===============
   if(leg.getProcedureLegType() != proc::START_OF_PROCEDURE && procedureDisplayText)
     texts.append(leg.getProcedureLeg().displayText);
 
   if(leg.isAnyProcedure() && !leg.getRunwayEnd().isValid())
   {
-    // Add constrains if enabled in options
+    // Add constrains if enabled in options ======================
     const optsd::DisplayOptionsProfile opts = OptionData::instance().getDisplayOptionsProfile();
 
     // Do not add altitude for runways since this is given for departure and destination airport already
@@ -1525,9 +1549,12 @@ void ProfileWidget::textsAndColorForLeg(QStringList& texts, QColor& color, bool&
       texts.append(proc::speedRestrictionTextNarrow(leg.getProcedureLegSpeedRestr()));
   }
 
-  texts.removeDuplicates();
+  // Elide all texts in the list
+  texts = atools::elidedTexts(fontMetrics(), texts, Qt::ElideRight, legWidth);
   texts.removeAll(QString());
-  texts = atools::elideTextShort(texts, 15);
+  texts.removeDuplicates();
+
+  return texts;
 }
 
 /* Update signal from Marble elevation model */

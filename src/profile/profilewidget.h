@@ -240,8 +240,11 @@ private:
   /* Get either indicated or real */
   float aircraftAlt(const atools::fs::sc::SimConnectUserAircraft& aircraft);
 
+  /* Screen pixel width of this leg. Considers zero-length IAF legs */
+  int calcLegScreenWidth(const QVector<QPolygon>& altLegs, int waypointIndex);
+
   /* Get text and text color for a leg. procSymbol is true if only the generic procedure waypoint should be drawn */
-  void textsAndColorForLeg(QStringList& texts, QColor& color, bool& procSymbol, const RouteLeg& leg, bool procedureDisplayText);
+  QStringList textsAndColorForLeg(QColor& color, bool& procSymbol, const RouteLeg& leg, bool procedureDisplayText, int legWidth);
 
   /* Scale levels to test for display */
   static Q_DECL_CONSTEXPR int NUM_SCALE_STEPS = 5;
