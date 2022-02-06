@@ -1945,17 +1945,30 @@ void DatabaseManager::metaFromFile(QString *cycle, QDateTime *compilationTime, b
 
 void DatabaseManager::checkDatabaseVersion()
 {
-  if(navDatabaseStatus != dm::NAVDATABASE_ALL)
-  {
-    atools::util::Version databaseVersion = NavApp::getDatabaseMetaSim()->getDatabaseVersion();
-    atools::util::Version applicationVersion = NavApp::getDatabaseMetaSim()->getApplicationVersion();
+  static const int MAX_AGE_MONTHS = 2;
 
-    if(databaseVersion < applicationVersion)
+  const atools::fs::db::DatabaseMeta *databaseMetaSim = NavApp::getDatabaseMetaSim();
+  if(navDatabaseStatus != dm::NAVDATABASE_ALL && databaseMetaSim != nullptr)
+  {
+    QStringList msg;
+    if(databaseMetaSim->getDatabaseVersion() < databaseMetaSim->getApplicationVersion())
+      msg.append(tr("The scenery library database was created using a previous version of Little Navmap."));
+
+    if(databaseMetaSim->getLastLoadTime() < QDateTime::currentDateTime().addMonths(-MAX_AGE_MONTHS))
+      msg.append(tr("The scenery library database was not reloaded for two months."));
+
+    if(!msg.isEmpty())
+    {
+      qDebug() << Q_FUNC_INFO << msg;
+
       atools::gui::Dialog(mainWindow).
       showWarnMsgBox(lnm::ACTIONS_SHOW_DATABASE_OLD,
-                     tr("<p>The scenery library database was created using a previous version of Little Navmap.</p>"
-                          "<p>It is strongly recommended to reload the scenery library database.</p>"
-                            "<p>You can do this in menu \"Scenery Library\" -> \"Reload Scenery Library\".</p>"),
+                     tr("<p>%1</p>"
+                          "<p>It is recommended to reload the scenery library database after each Little Navmap update, "
+                            "after installing new add-on scenery or "
+                            "after a flight simulator update.</p>"
+                            "<p>You can do this in menu \"Scenery Library\" -> \"Reload Scenery Library\".</p>").arg(msg.join(tr("<br/>"))),
                      tr("Do not &show this dialog again."));
+    }
   }
 }
