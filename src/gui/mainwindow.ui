@@ -706,6 +706,8 @@
 &lt;li&gt;Default is search for entries that start with text.&lt;/li&gt;
 &lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;
 &lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;
+&lt;li&gt;Only ident field: Use double quotes like &amp;quot;FRA&amp;quot; to force exact search.&lt;/li&gt;
+&lt;li&gt;Only ident field: Enter a space separated list of idents to look for more than one airport.&lt;/li&gt;
 &lt;/ul&gt;
 
 &lt;p&gt;Check boxes: &lt;/p&gt;
@@ -1970,6 +1972,8 @@
 &lt;li&gt;Default is search for entries that start with text.&lt;/li&gt;
 &lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;
 &lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;
+&lt;li&gt;Only ident field: Use double quotes like &amp;quot;TAU&amp;quot; to force exact search.&lt;/li&gt;
+&lt;li&gt;Only ident field: Enter a space separated list of idents to look for more than one navaid.&lt;/li&gt;
 &lt;/ul&gt;
 &lt;/body&gt;&lt;/html&gt;</string>
                </property>
@@ -12483,7 +12487,7 @@ Disabled if a navdatabase does not allow it.</string>
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupRouteCalc"/>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>
