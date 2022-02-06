@@ -77,7 +77,6 @@ Reload the scenery library after updating.
 * Fixed issue where airport weather icons were limited in number despite using IVAO, VATSIM or NOAA weather.
 * Fixed issues with navaids in procedure preview drawn more than once. #595
 
-
 ### Flying and User Aircraft
 
 * Fixed issue where map position was constantly pulled back to aircraft when using mouse wheel for zooming. Fixed several issues with jump back to aircraft functionality.
@@ -179,6 +178,7 @@ Reload the scenery library after updating.
 * Added display of X-Plane airport type which might not always match the type determined by *Little Navmap*.
 * Moved distance to flight plan and distance/bearing to user to common top of tooltip.
 * Showing detailed waypoint description now if available (Navigraph and X-Plane). #321
+* Added [ChartFox](https://chartfox.org) to airport information in link section. You have to be logged in to see charts.
 
 ### Logbook
 

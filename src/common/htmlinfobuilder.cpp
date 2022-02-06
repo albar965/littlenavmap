@@ -4665,6 +4665,8 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
                                   arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
     links.append(html.cleared().a(tr("SkyVector"), QString("https://skyvector.com/airport/%1").
                                   arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
+    links.append(html.cleared().a(tr("ChartFox (needs login)"), QString("https://chartfox.org/%1").
+                                  arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
   }
 
   // Use internal id for X-Plane gateway since this includes the long internal idents
