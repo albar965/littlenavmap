@@ -311,7 +311,7 @@ int main(int argc, char *argv[])
     // Check for minimum macOS version  macOS Sierra 10.12
     if(QSysInfo::macVersion() != QSysInfo::MV_None && QSysInfo::macVersion() < QSysInfo::MV_10_12)
     {
-      NavApp::deleteSplashScreen();
+      NavApp::closeSplashScreen();
       QMessageBox::critical(nullptr, QObject::tr("%1 - Error").arg(QApplication::applicationName()),
                             QObject::tr("%1 needs at least macOS Sierra version 10.12 or newer.").
                             arg(QApplication::applicationName()));
@@ -324,7 +324,7 @@ int main(int argc, char *argv[])
     QSharedMemory shared("203abd54-8a6a-4308-a654-6771efec62cd" + Settings::instance().getDirName()); // generated GUID
     if(!shared.create(512, QSharedMemory::ReadWrite))
     {
-      NavApp::deleteSplashScreen();
+      NavApp::closeSplashScreen();
       QMessageBox::critical(nullptr, QObject::tr("%1 - Error").arg(QApplication::applicationName()),
                             QObject::tr("%1 is already running.").arg(QApplication::applicationName()));
       return 1;
