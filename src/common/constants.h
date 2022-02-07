@@ -178,9 +178,12 @@ const QLatin1String RANGE_MARKER_DIALOG_RADII("Map/RangeMarkerDialogRadii");
 const QLatin1String NAVCONNECT_REMOTEHOSTS("NavConnect/RemoteHosts");
 const QLatin1String NAVCONNECT_REMOTE("NavConnect/Remote");
 const QLatin1String ROUTE_FILENAME("Route/Filename");
-const QLatin1String ROUTE_HEADER_AIRPORT("Route/HeaderAirport");
-const QLatin1String ROUTE_HEADER_DEPARTDEST("Route/HeaderDepartDest");
-const QLatin1String ROUTE_HEADER_RUNWAY("Route/HeaderRunway");
+
+const QLatin1String ROUTE_HEADER_AIRPORTS("Route/HeaderAirports");
+const QLatin1String ROUTE_HEADER_DEPARTURE("Route/HeaderDeparture");
+const QLatin1String ROUTE_HEADER_ARRIVAL("Route/HeaderArrival");
+const QLatin1String ROUTE_HEADER_RUNWAY_TAKEOFF("Route/HeaderRunwayTakeoff");
+const QLatin1String ROUTE_HEADER_RUNWAY_LAND("Route/HeaderRunwayLand");
 const QLatin1String ROUTE_HEADER_DISTTIME("Route/HeaderDistTime");
 
 const QLatin1String ROUTE_FILENAMES_RECENT("Route/FilenamesRecent");
