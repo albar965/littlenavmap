@@ -884,11 +884,13 @@ bool RouteExport::routeExportTfdiMulti(const RouteExportFormat& format)
       }
       catch(atools::Exception& e)
       {
+        NavApp::closeSplashScreen();
         atools::gui::ErrorHandler(mainWindow).handleException(e);
         return false;
       }
       catch(...)
       {
+        NavApp::closeSplashScreen();
         atools::gui::ErrorHandler(mainWindow).handleUnknownException();
         return false;
       }
@@ -916,11 +918,13 @@ bool RouteExport::routeExportIflyMulti(const RouteExportFormat& format)
       }
       catch(atools::Exception& e)
       {
+        NavApp::closeSplashScreen();
         atools::gui::ErrorHandler(mainWindow).handleException(e);
         return false;
       }
       catch(...)
       {
+        NavApp::closeSplashScreen();
         atools::gui::ErrorHandler(mainWindow).handleUnknownException();
         return false;
       }
@@ -946,11 +950,13 @@ bool RouteExport::routeExportPms50Multi(const RouteExportFormat& format)
       }
       catch(atools::Exception& e)
       {
+        NavApp::closeSplashScreen();
         atools::gui::ErrorHandler(mainWindow).handleException(e);
         return false;
       }
       catch(...)
       {
+        NavApp::closeSplashScreen();
         atools::gui::ErrorHandler(mainWindow).handleUnknownException();
         return false;
       }
@@ -977,11 +983,13 @@ bool RouteExport::routeExportIsgMulti(const RouteExportFormat& format)
       }
       catch(atools::Exception& e)
       {
+        NavApp::closeSplashScreen();
         atools::gui::ErrorHandler(mainWindow).handleException(e);
         return false;
       }
       catch(...)
       {
+        NavApp::closeSplashScreen();
         atools::gui::ErrorHandler(mainWindow).handleUnknownException();
         return false;
       }
@@ -1221,7 +1229,7 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
     validateCycle |= fmt.getFlags().testFlag(rexp::CYCLE);
   }
 
-  NavApp::deleteSplashScreen();
+  NavApp::closeSplashScreen();
 
   // Default is to contue and save all formats
   bool save = true;
@@ -1415,11 +1423,13 @@ bool RouteExport::exportFlighplanAsRxpGns(const QString& filename, bool saveAsUs
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     return false;
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     return false;
   }
@@ -1669,11 +1679,13 @@ bool RouteExport::exportFlighplan(const QString& filename, rf::RouteAdjustOption
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     return false;
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     return false;
   }
@@ -1858,11 +1870,13 @@ bool RouteExport::exportFlightplanAsGpx(const QString& filename)
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     return false;
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     return false;
   }

@@ -1907,7 +1907,7 @@ void MainWindow::changeMapTheme()
     if(!allValid)
     {
       // One or more keys are not present or empty - show info dialog =================================
-      NavApp::deleteSplashScreen();
+      NavApp::closeSplashScreen();
 
       // Fetch all keys for map theme
       QString url;
@@ -2499,7 +2499,7 @@ void MainWindow::routeOpenRecent(const QString& routeFile)
     }
     else
     {
-      NavApp::deleteSplashScreen();
+      NavApp::closeSplashScreen();
 
       // File not valid remove from history
       atools::gui::Dialog::warning(this, tr("File \"%1\" does not exist").arg(routeFile));
@@ -2720,6 +2720,7 @@ void MainWindow::layoutSaveAs()
     }
     catch(atools::Exception& e)
     {
+      NavApp::closeSplashScreen();
       atools::gui::ErrorHandler(this).handleException(e);
     }
   }
@@ -2762,6 +2763,7 @@ bool MainWindow::layoutOpenInternal(const QString& layoutFile)
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(this).handleException(e);
   }
   return false;
@@ -3394,7 +3396,7 @@ void MainWindow::mainWindowShown()
   // Show a warning if SSL was not intiaized properly. Can happen if the redist packages are not installed.
   if(!QSslSocket::supportsSsl())
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
 
     QString message = QObject::tr("<p>Error initializing SSL subsystem.</p>"
                                     "<p>The program will not be able to use encrypted network connections<br/>"
@@ -3415,7 +3417,7 @@ void MainWindow::mainWindowShown()
 
   if(!NavApp::getElevationProvider()->isGlobeOfflineProvider())
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
 
     // Text from options
     // <p><a href="https://www.ngdc.noaa.gov/mgg/topo/gltiles.html"><b>Click here to open the download page for the GLOBE data in your browser</b></a><br/>
@@ -3445,7 +3447,7 @@ void MainWindow::mainWindowShown()
   DirTool dirTool(this, atools::documentsDir(), QApplication::applicationName(), lnm::ACTIONS_SHOW_INSTALL_DIRS);
   if(!dirTool.hasAllDirs())
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     dirTool.run();
   }
 
@@ -3459,7 +3461,7 @@ void MainWindow::mainWindowShown()
 
     if(!databaseManager->hasSimulatorDatabases())
     {
-      NavApp::deleteSplashScreen();
+      NavApp::closeSplashScreen();
 
       // Show the scenery database dialog on first start
 #ifdef Q_OS_WIN32
@@ -3502,14 +3504,14 @@ void MainWindow::mainWindowShown()
     } // else have databases do nothing
 
     // Open connection dialog ============================
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     NavApp::getConnectClient()->connectToServerDialog();
   }
   else if(databasesErased)
   {
     databasesErased = false;
     // Databases were removed - show dialog
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     databaseManager->run();
   }
 
@@ -3574,6 +3576,7 @@ void MainWindow::mainWindowShownDelayed()
     }
     catch(atools::Exception& e)
     {
+      NavApp::closeSplashScreen();
       atools::gui::ErrorHandler(this).handleException(e);
     }
   }

@@ -204,6 +204,9 @@ void TrackController::trackDownloadFinished(const atools::track::TrackVectorType
 
 void TrackController::trackDownloadSslErrors(const QStringList& errors, const QString& downloadUrl)
 {
+  qWarning() << Q_FUNC_INFO;
+  NavApp::closeSplashScreen();
+
   int result = atools::gui::Dialog(mainWindow).
                showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_TRACK,
                                   tr("<p>Errors while trying to establish an encrypted "
@@ -282,7 +285,7 @@ void TrackController::tracksLoaded()
     err += tr("</li></ul>");
     QString boxMessage = tr("<p>Tracks downloaded.</p><ul>%1</ul>%2").arg(str.join("")).arg(err);
 
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     QMessageBox::warning(mainWindow, QApplication::applicationName(), boxMessage);
     NavApp::setStatusMessage(tr("Track download finished with errors."), true /* addToLog */);
   }

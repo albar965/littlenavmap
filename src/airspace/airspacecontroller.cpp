@@ -170,7 +170,7 @@ void AirspaceController::getAirspacesInternal(AirspaceVector& airspaceVector, co
                                               float flightPlanAltitude, bool lazy,
                                               map::MapAirspaceSources src, bool& overflow)
 {
-  if((src& map::AIRSPACE_SRC_USER) && loadingUserAirspaces)
+  if((src & map::AIRSPACE_SRC_USER) && loadingUserAirspaces)
     // Avoid deadlock while loading user airspaces
     return;
 
@@ -422,10 +422,12 @@ void AirspaceController::loadAirspaces()
     }
     catch(atools::Exception& e)
     {
+      NavApp::closeSplashScreen();
       atools::gui::ErrorHandler(mainWindow).handleException(e);
     }
     catch(...)
     {
+      NavApp::closeSplashScreen();
       atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     }
 

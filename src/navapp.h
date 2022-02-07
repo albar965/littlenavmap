@@ -323,10 +323,12 @@ public:
   static void deleteAircraftTrackLogbook();
 
   static void initSplashScreen();
+
+  /* Called by main application once startup is done */
   static void finishSplashScreen();
 
   /* Remove splash when showing error messages, etc. to avoid overlay */
-  static void deleteSplashScreen();
+  static void closeSplashScreen();
 
   static bool isShuttingDown();
   static void setShuttingDown(bool value);

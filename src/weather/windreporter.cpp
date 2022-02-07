@@ -197,6 +197,9 @@ void WindReporter::windDownloadProgress(qint64 bytesReceived, qint64 bytesTotal,
 
 void WindReporter::windDownloadSslErrors(const QStringList& errors, const QString& downloadUrl)
 {
+  qWarning() << Q_FUNC_INFO;
+  NavApp::closeSplashScreen();
+
   int result = atools::gui::Dialog(NavApp::getQMainWindow()).
                showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_WIND,
                                   tr("<p>Errors while trying to establish an encrypted "
@@ -220,7 +223,7 @@ void WindReporter::windDownloadFailed(const QString& error, int errorCode)
   if(!downloadErrorReported)
   {
     // Get rid of splash in case this happens on startup
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     QMessageBox::warning(NavApp::getQMainWidget(), QApplication::applicationName(),
                          tr("Error downloading or reading wind data: %1 (%2)").arg(error).arg(errorCode));
     downloadErrorReported = true;
@@ -609,7 +612,8 @@ atools::grib::WindPosVector WindReporter::getWindStackForPos(const atools::geo::
       // Get wind for layer/altitude
       wp.pos = pos.alt(alt);
       if(currentSource != wind::NOAA && altitudesFt.at(i) == wind::AGL)
-        wp.wind = {map::INVALID_COURSE_VALUE, map::INVALID_SPEED_VALUE};
+        wp.wind = {map::INVALID_COURSE_VALUE, map::INVALID_SPEED_VALUE}
+      ;
       else
         wp.wind = windQuery->getWindForPos(wp.pos);
       winds.append(wp);

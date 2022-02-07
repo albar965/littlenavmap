@@ -1135,7 +1135,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 
   if(showWarning)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     QTimer::singleShot(0, this, [ = ](void) -> void {
       atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_START_CHANGED,
                                                      tr("The flight plan had no valid start position.\n"
@@ -1230,13 +1230,13 @@ bool RouteController::loadFlightplanLnmStr(const QString& string)
   }
   catch(atools::Exception& e)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     return false;
   }
   catch(...)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     return false;
   }
@@ -1257,7 +1257,7 @@ bool RouteController::loadFlightplan(const QString& filename)
     if(fp.getEntries().size() <= 2 &&
        (format == atools::fs::pln::FMS3 || format == atools::fs::pln::FMS11))
     {
-      NavApp::deleteSplashScreen();
+      NavApp::closeSplashScreen();
       atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_LOAD_FMS_ALT_WARN,
                                                      tr("FMS flight plan has no intermediate waypoints.<br/><br/>"
                                                         "Can therefore not determine the cruising altitude.<br/>"
@@ -1273,13 +1273,13 @@ bool RouteController::loadFlightplan(const QString& filename)
   }
   catch(atools::Exception& e)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     return false;
   }
   catch(...)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     return false;
   }
@@ -1438,11 +1438,13 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     return false;
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     return false;
   }
@@ -1533,11 +1535,13 @@ bool RouteController::saveFlightplanLnmSelectionAs(const QString& filename, int 
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     return false;
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     return false;
   }
@@ -1633,11 +1637,13 @@ bool RouteController::saveFlightplanLnmInternal()
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     return false;
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     return false;
   }

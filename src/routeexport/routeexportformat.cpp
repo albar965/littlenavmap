@@ -103,12 +103,12 @@ void RouteExportFormatMap::restoreState()
   }
   catch(atools::Exception& e)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(NavApp::getQMainWidget()).handleException(e);
   }
   catch(...)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(NavApp::getQMainWidget()).handleUnknownException();
   }
 

@@ -320,13 +320,13 @@ void NavApp::readMagDecFromDatabase()
     }
     catch(atools::Exception& e)
     {
-      deleteSplashScreen();
+      closeSplashScreen();
       // Show dialog if something went wrong but do not exit
       atools::gui::ErrorHandler(mainWindow).handleException(e, tr("While reading magnetic declination from database:"));
     }
     catch(...)
     {
-      deleteSplashScreen();
+      closeSplashScreen();
       atools::gui::ErrorHandler(mainWindow).
       handleUnknownException(tr("While reading magnetic declination from database:"));
     }
@@ -1086,16 +1086,6 @@ map::MapAirspaceFilter NavApp::getShownMapAirspaces()
   return mainWindow->getMapWidget()->getShownAirspaces();
 }
 
-void NavApp::deleteSplashScreen()
-{
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO;
-#endif
-
-  if(splashScreen != nullptr)
-    splashScreen->close();
-}
-
 bool NavApp::isShuttingDown()
 {
   return shuttingDown;
@@ -1149,4 +1139,14 @@ void NavApp::finishSplashScreen()
 
   if(splashScreen != nullptr)
     splashScreen->finish(mainWindow);
+}
+
+void NavApp::closeSplashScreen()
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
+
+  if(splashScreen != nullptr)
+    splashScreen->close();
 }

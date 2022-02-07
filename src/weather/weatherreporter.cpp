@@ -594,6 +594,9 @@ void WeatherReporter::updateAirportWeather()
 
 void WeatherReporter::weatherDownloadSslErrors(const QStringList& errors, const QString& downloadUrl)
 {
+  qWarning() << Q_FUNC_INFO;
+  NavApp::closeSplashScreen();
+
   int result = atools::gui::Dialog(mainWindow).
                showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_WEATHER,
                                   tr("<p>Errors while trying to establish an encrypted "

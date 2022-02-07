@@ -368,7 +368,7 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
       }
 
       // Avoid the splash screen hiding the dialog
-      NavApp::deleteSplashScreen();
+      NavApp::closeSplashScreen();
 
       QMessageBox box(QMessageBox::Question, QApplication::applicationName(),
                       msg.arg(databaseNames.join("<br/>")).arg(trailingMsg),
@@ -384,7 +384,7 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
         ok = false;
       else if(result == QMessageBox::Yes)
       {
-        NavApp::deleteSplashScreen();
+        NavApp::closeSplashScreen();
         QMessageBox *dialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow, tr("Deleting ..."));
         atools::gui::Application::processEventsExtended();
 
@@ -468,7 +468,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
     {
       if(hasSettings)
       {
-        NavApp::deleteSplashScreen();
+        NavApp::closeSplashScreen();
         result = atools::gui::Dialog(mainWindow).showQuestionMsgBox(
           lnm::ACTIONS_SHOW_OVERWRITE_DATABASE,
           tr("Your current navdata is older than the navdata included in the Little Navmap download archive.<br/><br/>"
@@ -555,7 +555,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
 
   if(settingsNeedsPreparation && hasSettings)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     QMessageBox *dialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow, tr("Preparing %1 Database ...").
                                                                         arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
     atools::gui::Application::processEventsExtended();
@@ -1458,6 +1458,7 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   catch(atools::Exception& e)
   {
     // Show dialog if something went wrong but do not exit
+    NavApp::closeSplashScreen();
     ErrorHandler(progressDialog).handleException(
       e, currentBglFilePath.isEmpty() ? QString() : tr("Processed files:\n%1\n").arg(currentBglFilePath));
     success = false;
@@ -1465,6 +1466,7 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   catch(...)
   {
     // Show dialog if something went wrong but do not exit
+    NavApp::closeSplashScreen();
     ErrorHandler(progressDialog).handleUnknownException(
       currentBglFilePath.isEmpty() ? QString() : tr("Processed files:\n%1\n").arg(currentBglFilePath));
     success = false;

@@ -180,13 +180,13 @@ void AircraftPerfController::loadStr(const QString& string)
   }
   catch(atools::Exception& e)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     noPerfLoaded();
   }
   catch(...)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     noPerfLoaded();
   }
@@ -218,14 +218,14 @@ void AircraftPerfController::loadFile(const QString& perfFile)
   }
   catch(atools::Exception& e)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     noPerfLoaded();
     fileHistory->removeFile(perfFile);
   }
   catch(...)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     noPerfLoaded();
     fileHistory->removeFile(perfFile);
@@ -349,11 +349,13 @@ void AircraftPerfController::load()
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     noPerfLoaded();
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     noPerfLoaded();
   }
@@ -381,13 +383,13 @@ bool AircraftPerfController::save()
     }
     catch(atools::Exception& e)
     {
-      NavApp::deleteSplashScreen();
+      NavApp::closeSplashScreen();
       atools::gui::ErrorHandler(mainWindow).handleException(e);
       retval = false;
     }
     catch(...)
     {
-      NavApp::deleteSplashScreen();
+      NavApp::closeSplashScreen();
       atools::gui::ErrorHandler(mainWindow).handleUnknownException();
       retval = false;
     }
@@ -428,11 +430,13 @@ bool AircraftPerfController::saveAsStr(const QString& string) const
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     retval = false;
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     retval = false;
   }
@@ -498,13 +502,13 @@ bool AircraftPerfController::saveAs()
   }
   catch(atools::Exception& e)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     retval = false;
   }
   catch(...)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     retval = false;
   }

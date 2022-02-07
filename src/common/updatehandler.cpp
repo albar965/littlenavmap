@@ -119,7 +119,7 @@ void UpdateHandler::checkForUpdates(opts::UpdateChannels channelOpts, bool manua
 void UpdateHandler::updateFound(atools::util::UpdateList updates)
 {
   qDebug() << Q_FUNC_INFO;
-  NavApp::deleteSplashScreen();
+  NavApp::closeSplashScreen();
 
   if(!updates.isEmpty())
   {
@@ -163,7 +163,7 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
     if(!update.changelog.isEmpty())
       html.text(update.changelog, atools::util::html::NO_ENTITIES);
 
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
 
     // Show dialog
     UpdateDialog updateDialog(mainWindow, manual, hasDownload);
@@ -193,7 +193,7 @@ void UpdateHandler::updateFailed(QString errorString)
 {
   qDebug() << Q_FUNC_INFO;
 
-  NavApp::deleteSplashScreen();
+  NavApp::closeSplashScreen();
 
   QString message = tr("Error while checking for updates at\n\"%1\":\n%2").
                     arg(updateCheck->getUrl().toDisplayString()).arg(errorString);
