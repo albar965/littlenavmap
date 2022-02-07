@@ -1085,7 +1085,7 @@ bool MapAirport::softOnly() const
   return !flags.testFlag(AP_HARD) && flags.testFlag(AP_SOFT);
 }
 
-bool MapAirport::minor() const
+bool MapAirport::isMinor() const
 {
   return softOnly() || helipadOnly() || waterOnly() || closed();
 }
@@ -1141,7 +1141,7 @@ bool MapAirport::isVisible(map::MapTypes types, int minRunwayFt, const MapLayer 
     return false;
 
   // Check layer
-  if(minor() && !layer->isAirportMinor())
+  if(isMinor() && !layer->isAirportMinor())
     return false;
 
   if(waterOnly() && !types.testFlag(map::AIRPORT_WATER))

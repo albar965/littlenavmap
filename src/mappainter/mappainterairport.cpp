@@ -181,7 +181,7 @@ void MapPainterAirport::render()
     const QPointF& pt = visibleAirports.at(i).point;
     float x = static_cast<float>(pt.x());
     float y = static_cast<float>(pt.y());
-    bool minor = airport->minor();
+    bool minor = airport->isMinor();
 
     // Airport diagram is not influenced by detail level
     if(!context->mapLayer->isAirportDiagramRunway())

@@ -30,6 +30,10 @@
 #include <QWidget>
 #include <QXmlStreamReader>
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::endl;
+#endif
+
 MapLayerSettings::MapLayerSettings(bool verbose)
 {
   fileWatcher = new atools::util::FileSystemWatcher(this, verbose);

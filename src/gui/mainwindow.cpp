@@ -123,6 +123,10 @@ using atools::gui::FileHistoryHandler;
 using atools::gui::MapPosHistory;
 using atools::gui::HelpHandler;
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::endl;
+#endif
+
 MainWindow::MainWindow()
   : QMainWindow(nullptr), ui(new Ui::MainWindow)
 {

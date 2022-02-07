@@ -33,6 +33,10 @@
 
 namespace proc  {
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::endl;
+#endif
+
 static QHash<QString, QString> approachFixTypeToStr;
 static QHash<QString, QString> approachTypeToStr;
 static QHash<ProcedureLegType, QString> approachLegTypeToStr;
@@ -1354,4 +1358,4 @@ QStringList procedureTextFirstAndLastFix(const MapProcedureLegs& legs, proc::Map
   return fixes;
 }
 
-} // namespace types
+} // namespace proc

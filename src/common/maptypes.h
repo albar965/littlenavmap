@@ -406,7 +406,7 @@ struct MapAirport
   bool procedure() const;
 
   /* For map layer configuration soft, water, helipad and closed */
-  bool minor() const;
+  bool isMinor() const;
 
   /* Check if airport should be drawn empty */
   bool emptyDraw() const;

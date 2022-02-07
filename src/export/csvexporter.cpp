@@ -39,6 +39,10 @@ using atools::gui::Dialog;
 using atools::sql::SqlQuery;
 using atools::sql::SqlExport;
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::endl;
+#endif
+
 CsvExporter::CsvExporter(QWidget *parent, SqlController *controllerParam)
   : Exporter(parent, controllerParam)
 {

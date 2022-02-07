@@ -22,6 +22,10 @@
 
 #include <QXmlStreamReader>
 
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+using Qt::endl;
+#endif
+
 MapLayer::MapLayer(float maximumRangeKm)
 {
   maxRange = maximumRangeKm;
