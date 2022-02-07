@@ -51,10 +51,6 @@ using atools::geo::manhattanDistance;
 using atools::fs::pln::FlightplanEntry;
 using atools::fs::pln::Flightplan;
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-using Qt::endl;
-#endif
-
 // Disable leg activation if distance is larger
 const float MAX_FLIGHT_PLAN_DIST_FOR_CENTER_NM = 40.f;
 

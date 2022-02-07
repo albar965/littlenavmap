@@ -46,10 +46,6 @@
 
 using atools::fs::pln::FlightplanIO;
 
-#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
-using Qt::endl;
-#endif
-
 RouteExport::RouteExport(MainWindow *parent)
   : mainWindow(parent)
 {
