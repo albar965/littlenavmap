@@ -1165,16 +1165,18 @@ void AirportQuery::initQueries()
   airportByRectAndProcQuery->prepare("select " + airportQueryBase.join(", ") + " from airport where " + whereRect +
                                      " and num_approach > 0 " + whereLimit);
 
+  QString runwayEndQueryBase("e.runway_end_id, e.end_type, e.name, e.heading, e.left_vasi_pitch, e.right_vasi_pitch, e.is_pattern, "
+                             "e.left_vasi_type, e.right_vasi_type, e.lonx, e.laty ");
+  SqlRecord aprec = db->record("runway_end");
+  if(aprec.contains("altitude"))
+    runwayEndQueryBase.append(", e.altitude ");
+
   runwayEndByIdQuery = new SqlQuery(db);
-  runwayEndByIdQuery->prepare("select runway_end_id, end_type, name, heading, left_vasi_pitch, right_vasi_pitch, is_pattern, "
-                              "left_vasi_type, right_vasi_type, "
-                              "altitude, lonx, laty from runway_end where runway_end_id = :id");
+  runwayEndByIdQuery->prepare("select " + runwayEndQueryBase + " from runway_end e where e.runway_end_id = :id");
 
   runwayEndByNameQuery = new SqlQuery(db);
   runwayEndByNameQuery->prepare(
-    "select e.runway_end_id, e.end_type, "
-    "e.left_vasi_pitch, e.right_vasi_pitch, e.left_vasi_type, e.right_vasi_type, is_pattern, "
-    "e.name, e.heading, e.altitude, e.lonx, e.laty "
+    "select " + runwayEndQueryBase +
     "from runway r join runway_end e on (r.primary_end_id = e.runway_end_id or r.secondary_end_id = e.runway_end_id) "
     "join airport a on r.airport_id = a.airport_id "
     "where e.name = :name and a.ident = :airport");
