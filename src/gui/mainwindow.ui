@@ -220,6 +220,9 @@
     <addaction name="separator"/>
     <addaction name="menuHelpFilesAndFolders"/>
     <addaction name="separator"/>
+    <addaction name="actionRouteDisplayOptions"/>
+    <addaction name="actionInfoDisplayOptions"/>
+    <addaction name="separator"/>
     <addaction name="actionOptions"/>
    </widget>
    <widget class="QMenu" name="menuMap">
@@ -5824,7 +5827,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>13</y>
+              <y>0</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -11045,7 +11048,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/settingsroute.svg</normaloff>:/littlenavmap/resources/icons/settingsroute.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Display Options ...</string>
+    <string>&amp;Flight Plan Display Options ...</string>
    </property>
    <property name="toolTip">
     <string>Select visible columns and header lines for flight plan</string>
@@ -12118,7 +12121,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/settingsroute.svg</normaloff>:/littlenavmap/resources/icons/settingsroute.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Display Options ...</string>
+    <string>&amp;Progress Display Options ...</string>
    </property>
    <property name="toolTip">
     <string>Select the fields to show in the aircraft progress tab</string>
@@ -12486,8 +12489,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
  </buttongroups>
 </ui>
