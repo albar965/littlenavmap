@@ -374,13 +374,24 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
         int activeRouteLeg = route->isActiveValid() ? route->getActiveLegIndex() : 0;
         int passedRouteLeg = context.flags2.testFlag(opts2::MAP_ROUTE_DIM_PASSED) ? activeRouteLeg : 0;
 
+        // Check starting with previous leg of active for normal legs ====================
+        for(int i = passedRouteLeg - 1; i < route->size(); i++)
+        {
+          if(i < 0)
+            continue;
+
+          const RouteLeg& routeLeg = route->value(i);
+          map::MapTypes type = routeLeg.getMapObjectType();
+          if(type == map::AIRPORT || type == map::VOR || type == map::NDB || type == map::WAYPOINT)
+            context.routeProcIdMap.insert(map::MapObjectRef(routeLeg.getId(), type));
+        }
+
+        // Add procedure navaids and recommended procedure navaids ==============
         for(int i = passedRouteLeg; i < route->size(); i++)
         {
           const RouteLeg& routeLeg = route->value(i);
           map::MapTypes type = routeLeg.getMapObjectType();
-          if(type == map::AIRPORT || type == map::VOR || type == map::NDB || type == map::WAYPOINT)
-            context.routeProcIdMap.insert(map::MapObjectRef(routeLeg.getId(), routeLeg.getMapObjectType()));
-          else if(type == map::PROCEDURE)
+          if(type == map::PROCEDURE)
           {
             if(!routeLeg.getProcedureLeg().isMissed() || context.objectTypes & map::MISSED_APPROACH)
             {
@@ -403,8 +414,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
                 context.routeProcIdMapRec.insert({recNavaids.ndbs.constFirst().id, map::NDB});
             }
           }
-        }
-      }
+        } // for(int i = passedRouteLeg; i < route->size(); i++)
+      } // if(context.objectDisplayTypes.testFlag(map::FLIGHTPLAN))
 
       // ====================================
       // Get navaids from procedure highlight to avoid duplicate drawing
