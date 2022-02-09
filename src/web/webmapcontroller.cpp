@@ -225,3 +225,13 @@ MapPixmap WebMapController::getPixmapRect(int width, int height, atools::geo::Re
 MapPaintWidget* WebMapController::getMapPaintWidget() const{
     return mapPaintWidget;
 }
+
+void WebMapController::preDatabaseLoad()
+{
+  mapPaintWidget->preDatabaseLoad();
+}
+
+void WebMapController::postDatabaseLoad()
+{
+  mapPaintWidget->postDatabaseLoad();
+}

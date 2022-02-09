@@ -27,6 +27,9 @@
 #include "sql/sqlrecord.h"
 #include "fs/util/morsecode.h"
 #include "fs/sc/simconnectdata.h"
+#include "mapgui/mappaintwidget.h"
+#include "web/webcontroller.h"
+#include "web/webmapcontroller.h"
 
 namespace ageo = atools::geo;
 using atools::fs::util::MorseCode;
@@ -52,13 +55,13 @@ NavApp* AbstractLnmActionsController::getNavApp(){
 }
 
 MapQuery* AbstractLnmActionsController::getMapQuery(){
-  // TODO you have to get the map query from the MapPaintWidget instance used for the web UI
-    return getNavApp()->getMapQueryGui();
+    // Get "own" MapQuery since it contains caches releated to shown screen area
+    return getNavApp()->getWebController()->getWebMapController()->getMapPaintWidget()->getMapQuery();
 }
 
 WaypointTrackQuery* AbstractLnmActionsController::getWaypointTrackQuery(){
-  // TODO you have to get the map query from the MapPaintWidget instance used for the web UI
-    return getNavApp()->getWaypointTrackQueryGui();
+    // Get "own" WaypointQuery since it contains caches releated to shown screen area
+    return getNavApp()->getWebController()->getWebMapController()->getMapPaintWidget()->getWaypointTrackQuery();
 }
 
 InfoQuery* AbstractLnmActionsController::getInfoQuery(){

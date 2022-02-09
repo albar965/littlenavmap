@@ -88,6 +88,7 @@
 #include "weather/weatherreporter.h"
 #include "weather/windreporter.h"
 #include "web/webcontroller.h"
+#include "web/webmapcontroller.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -4407,7 +4408,10 @@ void MainWindow::preDatabaseLoad()
 
     searchController->preDatabaseLoad();
     routeController->preDatabaseLoad();
+
     mapWidget->preDatabaseLoad();
+    NavApp::getWebController()->postDatabaseLoad();
+
     profileWidget->preDatabaseLoad();
     infoController->preDatabaseLoad();
     weatherReporter->preDatabaseLoad();
@@ -4428,6 +4432,7 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 
   if(hasDatabaseLoadStatus)
   {
+    NavApp::getWebController()->postDatabaseLoad();
     mapWidget->postDatabaseLoad(); // Init map widget dependent queries first
     NavApp::postDatabaseLoad();
     searchController->postDatabaseLoad();

@@ -304,3 +304,13 @@ WebMapController *WebController::getWebMapController() const{
     return mapController;
 
 }
+
+void WebController::preDatabaseLoad()
+{
+  mapController->preDatabaseLoad();
+}
+
+void WebController::postDatabaseLoad()
+{
+  mapController->postDatabaseLoad();
+}
