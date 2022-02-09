@@ -21,10 +21,10 @@
 #include "navapp.h"
 #include "util/paintercontextsaver.h"
 #include "mapgui/mapthemehandler.h"
+#include "mapgui/mappaintwidget.h"
 
 #ifdef DEBUG_INFORMATION
 #include "common/proctypes.h"
-#include "mapgui/mappaintwidget.h"
 #endif
 
 #include <marble/GeoPainter.h>
