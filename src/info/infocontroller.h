@@ -108,6 +108,9 @@ public:
 
   void resetWindowLayout();
 
+  /* Get enabled fields in user aircraft progress tab */
+  const QBitArray& getEnabledProgressBits() const;
+
 signals:
   /* Emitted when the user clicks on the "Map" link in the text browsers */
   void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);

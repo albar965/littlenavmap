@@ -422,6 +422,7 @@ inline void RequestHandler::handleHtmlFileRequest(HttpRequest& request, HttpResp
       {
         Route route = emit getRoute();
         html.clear();
+        html.setIdBits(NavApp::getInfoController()->getEnabledProgressBits());
         htmlInfoBuilder->aircraftProgressText(userAircraft, html, route);
         t.setVariable(QStringLiteral(u"aircraftProgressText"), html.getHtml());
       }

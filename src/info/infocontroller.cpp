@@ -1466,3 +1466,8 @@ void InfoController::resetWindowLayout()
   tabHandlerAirportInfo->reset();
   tabHandlerAircraft->reset();
 }
+
+const QBitArray& InfoController::getEnabledProgressBits() const
+{
+  return aircraftProgressConfig->getEnabledBits();
+}
