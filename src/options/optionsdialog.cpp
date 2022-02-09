@@ -33,6 +33,7 @@
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
 #include "mapgui/mapwidget.h"
+#include "mapgui/mapthemehandler.h"
 #include "navapp.h"
 #include "settings/settings.h"
 #include "ui_options.h"
@@ -636,7 +637,7 @@ void OptionsDialog::open()
 {
   qDebug() << Q_FUNC_INFO;
   // Fetch keys from handler
-  OptionData::instanceInternal().mapThemeKeys = NavApp::getMapWidgetGui()->getMapThemeKeys();
+  OptionData::instanceInternal().mapThemeKeys = NavApp::getMapThemeHandler()->getMapThemeKeys();
 
   optionDataToWidgets(OptionData::instanceInternal());
   updateCacheElevationStates();
@@ -663,8 +664,6 @@ void OptionsDialog::open()
 void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
 {
   qDebug() << "Clicked" << button->text();
-  MapWidget *mapWidget = NavApp::getMapWidgetGui();
-
   if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Apply))
   {
     // Test if user uses a too low update rate for well known URLs of official networks
@@ -675,7 +674,7 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
 
     updateTooltipOption();
 
-    mapWidget->setMapThemeKeys(OptionData::instanceInternal().mapThemeKeys);
+    NavApp::getMapThemeHandler()->setMapThemeKeys(OptionData::instanceInternal().mapThemeKeys);
 
     emit optionsChanged();
 
@@ -698,7 +697,7 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
 
     updateTooltipOption();
 
-    mapWidget->setMapThemeKeys(OptionData::instanceInternal().mapThemeKeys);
+    NavApp::getMapThemeHandler()->setMapThemeKeys(OptionData::instanceInternal().mapThemeKeys);
 
     emit optionsChanged();
     accept();
@@ -722,7 +721,7 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
       OptionData defaultOpts;
 
       // Get all keys and remove values for reset in default options
-      defaultOpts.mapThemeKeys = mapWidget->getMapThemeKeys();
+      defaultOpts.mapThemeKeys = NavApp::getMapThemeHandler()->getMapThemeKeys();
       for(auto it = defaultOpts.mapThemeKeys.begin(); it != defaultOpts.mapThemeKeys.end(); ++it)
         it.value().clear();
 

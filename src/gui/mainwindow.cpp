@@ -303,6 +303,9 @@ MainWindow::MainWindow()
     layoutFileHistory = new FileHistoryHandler(this, lnm::LAYOUT_RECENT, ui->menuWindowLayoutRecent,
                                                ui->actionWindowLayoutClearRecent);
 
+    mapThemeHandler = new MapThemeHandler;
+    mapThemeHandler->loadThemes();
+
     // Create map widget and replace dummy widget in window
     qDebug() << Q_FUNC_INFO << "Creating MapWidget";
     mapWidget = new MapWidget(this);
@@ -380,6 +383,7 @@ MainWindow::MainWindow()
     updateOnlineActionStates();
 
     qDebug() << Q_FUNC_INFO << "Setting theme";
+    updateMapKeys(); // First update keys in GUI map widget - web API not started yet
     changeMapTheme();
 
     qDebug() << Q_FUNC_INFO << "Setting projection";
@@ -530,6 +534,8 @@ MainWindow::~MainWindow()
   delete routeExport;
   qDebug() << Q_FUNC_INFO << "delete simbriefHandler";
   delete simbriefHandler;
+  qDebug() << Q_FUNC_INFO << "delete   mapThemeHandler";
+  delete mapThemeHandler;
 
   qDebug() << Q_FUNC_INFO << "NavApplication::deInit()";
   NavApp::deInit();
@@ -756,7 +762,7 @@ void MainWindow::setupMapThemesUi()
   bool online = true;
   int index = 0;
   // Sort order is always online/offline and then alphabetical
-  for(const MapTheme& theme : mapWidget->getMapThemeHandler()->getThemes())
+  for(const MapTheme& theme : mapThemeHandler->getThemes())
   {
     // Check if offline map come after online and add separators
     if(!theme.isOnline() && online)
@@ -1862,7 +1868,6 @@ void MainWindow::changeMapProjection(int index)
 void MainWindow::changeMapTheme()
 {
   mapWidget->cancelDragAll();
-  const MapThemeHandler *mapThemeHandler = mapWidget->getMapThemeHandler();
 
   int index = comboBoxMapTheme->currentData().toInt();
   MapTheme theme = mapThemeHandler->getTheme(index);
@@ -3541,7 +3546,10 @@ void MainWindow::mainWindowShown()
 
   // Start webserver
   if(ui->actionRunWebserver->isChecked())
+  {
     NavApp::getWebController()->startServer();
+    updateMapKeys(); // Update API keys in web map widget
+  }
   webserverStatusChanged(NavApp::getWebController()->isRunning());
 
   renderStatusUpdateLabel(Marble::Complete, true /* forceUpdate */);
@@ -4004,6 +4012,9 @@ void MainWindow::restoreStateMain()
   qDebug() << "routeExport";
   routeExport->restoreState();
 
+  mapThemeHandler->restoreState();
+  updateMapKeys();
+
   widgetState.setBlockSignals(true);
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
   {
@@ -4033,7 +4044,7 @@ void MainWindow::restoreStateMain()
   else
   {
     // Load default theme OSM
-    int defaultIndex = mapWidget->getMapThemeHandler()->getDefaultTheme().getIndex();
+    int defaultIndex = mapThemeHandler->getDefaultTheme().getIndex();
     for(int i = 0; i < comboBoxMapTheme->count(); i++)
     {
       if(comboBoxMapTheme->itemData(i).isValid() && comboBoxMapTheme->itemData(i).toInt() == defaultIndex)
@@ -4070,6 +4081,24 @@ void MainWindow::optionsChanged()
 
   dockHandler->setAutoRaiseDockWindows(OptionData::instance().getFlags2().testFlag(opts2::RAISE_DOCK_WINDOWS));
   dockHandler->setAutoRaiseMainWindow(OptionData::instance().getFlags2().testFlag(opts2::RAISE_MAIN_WINDOW));
+
+  updateMapKeys();
+}
+
+void MainWindow::updateMapKeys()
+{
+  // Is null on startup
+  if(mapWidget != nullptr)
+    mapWidget->setKeys(mapThemeHandler->getMapThemeKeysHash());
+
+  // Might be null if not started
+  if(NavApp::getWebController() != nullptr && NavApp::getWebController()->getWebMapController() != nullptr)
+  {
+    MapPaintWidget *mapPaintWidget = NavApp::getWebController()->getWebMapController()->getMapPaintWidget();
+
+    if(mapPaintWidget != nullptr)
+      mapPaintWidget->setKeys(mapThemeHandler->getMapThemeKeysHash());
+  }
 }
 
 void MainWindow::saveStateNow()
@@ -4108,77 +4137,81 @@ void MainWindow::saveStateMain()
 
   saveMainWindowStates();
 
-  qDebug() << "searchController";
+  qDebug() << Q_FUNC_INFO << "searchController";
   if(searchController != nullptr)
     searchController->saveState();
 
-  qDebug() << "mapWidget";
+  qDebug() << Q_FUNC_INFO << "mapWidget";
   if(mapWidget != nullptr)
     mapWidget->saveState();
 
-  qDebug() << "userDataController";
+  qDebug() << Q_FUNC_INFO << "userDataController";
+  if(mapThemeHandler != nullptr)
+    mapThemeHandler->saveState();
+
+  qDebug() << Q_FUNC_INFO << "userDataController";
   if(NavApp::getUserdataController() != nullptr)
     NavApp::getUserdataController()->saveState();
 
-  qDebug() << "mapMarkHandler";
+  qDebug() << Q_FUNC_INFO << "mapMarkHandler";
   if(NavApp::getMapMarkHandler() != nullptr)
     NavApp::getMapMarkHandler()->saveState();
 
-  qDebug() << "mapAirportHandler";
+  qDebug() << Q_FUNC_INFO << "mapAirportHandler";
   if(NavApp::getMapAirportHandler() != nullptr)
     NavApp::getMapAirportHandler()->saveState();
 
-  qDebug() << "logdataController";
+  qDebug() << Q_FUNC_INFO << "logdataController";
   if(NavApp::getLogdataController() != nullptr)
     NavApp::getLogdataController()->saveState();
 
-  qDebug() << "windReporter";
+  qDebug() << Q_FUNC_INFO << "windReporter";
   if(NavApp::getWindReporter() != nullptr)
     NavApp::getWindReporter()->saveState();
 
-  qDebug() << "aircraftPerfController";
+  qDebug() << Q_FUNC_INFO << "aircraftPerfController";
   if(NavApp::getAircraftPerfController() != nullptr)
     NavApp::getAircraftPerfController()->saveState();
 
-  qDebug() << "airspaceController";
+  qDebug() << Q_FUNC_INFO << "airspaceController";
   if(NavApp::getAirspaceController() != nullptr)
     NavApp::getAirspaceController()->saveState();
 
-  qDebug() << "routeController";
+  qDebug() << Q_FUNC_INFO << "routeController";
   if(routeController != nullptr)
     routeController->saveState();
 
-  qDebug() << "profileWidget";
+  qDebug() << Q_FUNC_INFO << "profileWidget";
   if(profileWidget != nullptr)
     profileWidget->saveState();
 
-  qDebug() << "connectClient";
+  qDebug() << Q_FUNC_INFO << "connectClient";
   if(NavApp::getConnectClient() != nullptr)
     NavApp::getConnectClient()->saveState();
 
-  qDebug() << "trackController";
+  qDebug() << Q_FUNC_INFO << "trackController";
   if(NavApp::getTrackController() != nullptr)
     NavApp::getTrackController()->saveState();
 
-  qDebug() << "infoController";
+  qDebug() << Q_FUNC_INFO << "infoController";
   if(infoController != nullptr)
     infoController->saveState();
 
   saveFileHistoryStates();
 
-  qDebug() << "printSupport";
+  qDebug() << Q_FUNC_INFO << "printSupport";
   if(printSupport != nullptr)
     printSupport->saveState();
 
-  qDebug() << "routeExport";
+  qDebug() << Q_FUNC_INFO << "routeExport";
   if(routeExport != nullptr)
     routeExport->saveState();
 
-  qDebug() << "optionsDialog";
+  qDebug() << Q_FUNC_INFO << "optionsDialog";
   if(optionsDialog != nullptr)
     optionsDialog->saveState();
 
-  qDebug() << "styleHandler";
+  qDebug() << Q_FUNC_INFO << "styleHandler";
   if(NavApp::getStyleHandler() != nullptr)
     NavApp::getStyleHandler()->saveState();
 
@@ -4187,28 +4220,28 @@ void MainWindow::saveStateMain()
   Settings& settings = Settings::instance();
   settings.setValue(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, firstApplicationStart);
 
-  qDebug() << "databaseManager";
+  qDebug() << Q_FUNC_INFO << "databaseManager";
   if(NavApp::getDatabaseManager() != nullptr)
     NavApp::getDatabaseManager()->saveState();
 
-  qDebug() << "syncSettings";
+  qDebug() << Q_FUNC_INFO << "syncSettings";
   settings.syncSettings();
-  qDebug() << "save state done";
+  qDebug() << Q_FUNC_INFO << "save state done";
 }
 
 void MainWindow::saveFileHistoryStates()
 {
   qDebug() << Q_FUNC_INFO;
 
-  qDebug() << "routeFileHistory";
+  qDebug() << Q_FUNC_INFO << "routeFileHistory";
   if(routeFileHistory != nullptr)
     routeFileHistory->saveState();
 
-  qDebug() << "kmlFileHistory";
+  qDebug() << Q_FUNC_INFO << "kmlFileHistory";
   if(kmlFileHistory != nullptr)
     kmlFileHistory->saveState();
 
-  qDebug() << "layoutFileHistory";
+  qDebug() << Q_FUNC_INFO << "layoutFileHistory";
   if(layoutFileHistory != nullptr)
     layoutFileHistory->saveState();
 
@@ -4810,7 +4843,10 @@ void MainWindow::webserverStatusChanged(bool running)
 void MainWindow::toggleWebserver(bool checked)
 {
   if(checked)
+  {
     NavApp::getWebController()->startServer();
+    updateMapKeys();
+  }
   else
     NavApp::getWebController()->stopServer();
 }

@@ -24,6 +24,7 @@
 #include "mapgui/maplayersettings.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/mapwidget.h"
+#include "mapgui/mapthemehandler.h"
 #include "mappainter/mappainteraircraft.h"
 #include "mappainter/mappainterairport.h"
 #include "mappainter/mappainterairspace.h"
@@ -302,7 +303,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.userPointTypesAll = NavApp::getUserdataController()->getAllTypes();
       context.userPointTypeUnknown = NavApp::getUserdataController()->isSelectedUnknownType();
       context.zoomDistanceMeter = static_cast<float>(mapWidget->distance() * 1000.);
-      context.darkMap = mapWidget->isDarkMap();
+      context.darkMap = NavApp::getMapThemeHandler()->isDarkTheme(mapWidget->getCurrentThemeIndex());
 
       context.mimimumRunwayLengthFt = minimumRunwayLenghtFt;
 

@@ -20,6 +20,7 @@
 #include "common/mapcolors.h"
 #include "navapp.h"
 #include "util/paintercontextsaver.h"
+#include "mapgui/mapthemehandler.h"
 
 #ifdef DEBUG_INFORMATION
 #include "common/proctypes.h"
@@ -147,7 +148,7 @@ void MapPainterTop::render()
 
 void MapPainterTop::paintCopyright()
 {
-  QString mapCopyright = NavApp::getMapCopyright();
+  QString mapCopyright = NavApp::getMapThemeHandler()->getTheme(mapPaintWidget->getCurrentThemeIndex()).getCopyright();
   if(!mapCopyright.isEmpty())
   {
     Marble::GeoPainter *painter = context->painter;

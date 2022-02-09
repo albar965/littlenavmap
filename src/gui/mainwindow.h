@@ -47,6 +47,7 @@ class SearchController;
 class WeatherReporter;
 class WindReporter;
 class SimBriefHandler;
+class MapThemeHandler;
 
 namespace Marble {
 class LegendWidget;
@@ -243,6 +244,11 @@ public:
   /* Called from SimBrief handler to create new plan */
   void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude);
 
+  MapThemeHandler *getMapThemeHandler() const
+  {
+    return mapThemeHandler;
+  }
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -433,6 +439,9 @@ private:
   void saveStateNow();
   void optionsChanged();
 
+  /* Update API keys or tokens in GUI map widget and web API map widget */
+  void updateMapKeys();
+
   void openOptionsDialog();
 
 #ifdef DEBUG_INFORMATION
@@ -506,6 +515,7 @@ private:
   InfoController *infoController = nullptr;
   RouteExport *routeExport = nullptr;
   SimBriefHandler *simbriefHandler = nullptr;
+  MapThemeHandler *mapThemeHandler = nullptr;
 
   /* Action  groups for main menu */
   QActionGroup *actionGroupMapProjection = nullptr, *actionGroupMapTheme = nullptr, *actionGroupMapSunShading = nullptr,

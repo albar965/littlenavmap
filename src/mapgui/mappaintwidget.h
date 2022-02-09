@@ -63,7 +63,6 @@ class MapQuery;
 class AirwayTrackQuery;
 class WaypointTrackQuery;
 class MapLayer;
-class MapThemeHandler;
 
 namespace proc {
 struct MapProcedureLeg;
@@ -214,9 +213,6 @@ public:
    */
   void setTheme(const QString& theme, int index);
 
-  /* true of map is dark like CartoDark. Night mode does not count */
-  bool isDarkMap() const;
-
   /* Show points of interest and other labels for certain map themes */
   void setShowMapPois(bool show);
 
@@ -355,9 +351,6 @@ public:
     return visibleWidget;
   }
 
-  /* Get short copyright message for map theme */
-  QString getMapCopyright() const;
-
   /* Logbook display options have changed or new or edited logbook entry */
   void updateLogEntryScreenGeometry();
 
@@ -395,21 +388,14 @@ public:
   /* Print all layers to debug channel */
   void dumpMapLayers() const;
 
-  const MapThemeHandler *getMapThemeHandler() const
-  {
-    return mapThemeHandler;
-  }
-
-  /* Get or set map theme API keys or tokens */
-  const QMap<QString, QString>& getMapThemeKeys();
-  void setMapThemeKeys(const QMap<QString, QString>& keys);
-
-  /* Clear values */
-  void clearMapThemeKeyValues();
-
   const QVector<map::MapObjectRef>& getRouteDrawnNavaidsConst() const;
 
-  QVector<map::MapObjectRef>* getRouteDrawnNavaids();
+  QVector<map::MapObjectRef> *getRouteDrawnNavaids();
+
+  int getCurrentThemeIndex() const
+  {
+    return currentThemeIndex;
+  }
 
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
@@ -547,7 +533,6 @@ protected:
 
   /* Trail/track of user aircraft */
   AircraftTrack *aircraftTrack = nullptr, *aircraftTrackLogbook = nullptr;
-  MapThemeHandler *mapThemeHandler = nullptr;
 
 private:
   /* Set map theme and adjust properties accordingly */

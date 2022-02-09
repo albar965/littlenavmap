@@ -73,21 +73,6 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible)
   aircraftTrack = new AircraftTrack;
   aircraftTrackLogbook = new AircraftTrack;
 
-  try
-  {
-    mapThemeHandler = new MapThemeHandler;
-    mapThemeHandler->loadThemes();
-  }
-  // Exit application if something goes wrong
-  catch(atools::Exception& e)
-  {
-    ATOOLS_HANDLE_EXCEPTION(e);
-  }
-  catch(...)
-  {
-    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
-  }
-
   // Set the map quality to gain speed while moving
   setMapQualityForViewContext(HighQuality, Still);
   setMapQualityForViewContext(LowQuality, Animation);
@@ -156,20 +141,12 @@ MapPaintWidget::~MapPaintWidget()
 
   qDebug() << Q_FUNC_INFO << "delete mapQuery";
   delete mapQuery;
-
-  qDebug() << Q_FUNC_INFO << "delete   mapThemeHandler";
-  delete mapThemeHandler;
-  mapQuery = nullptr;
 }
 
 void MapPaintWidget::copySettings(const MapPaintWidget& other)
 {
   paintLayer->copySettings(*other.paintLayer);
   screenIndex->copy(*other.screenIndex);
-
-  delete mapThemeHandler;
-  mapThemeHandler = new MapThemeHandler;
-  *mapThemeHandler = *other.mapThemeHandler;
 
   // Copy all MarbleWidget settings - some on demand to avoid overhead
   if(projection() != other.projection())
@@ -243,11 +220,6 @@ void MapPaintWidget::setTheme(const QString& theme, int index)
   setThemeInternal(theme);
 }
 
-bool MapPaintWidget::isDarkMap() const
-{
-  return mapThemeHandler->isDarkTheme(currentThemeIndex);
-}
-
 bool MapPaintWidget::noRender() const
 {
   return paintLayer->noRender();
@@ -263,7 +235,7 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
   setMapThemeId(theme);
   setShowClouds(false);
 
-  if(mapThemeHandler->hasPlacemarks(currentThemeIndex))
+  if(NavApp::getMapThemeHandler()->hasPlacemarks(currentThemeIndex))
     // Add placemark files again - ignored if already loaded
     addPlacemarks();
   else
@@ -319,7 +291,7 @@ void MapPaintWidget::optionsChanged()
   const OptionData& options = OptionData::instance();
 
   // Pass API keys or tokens to map
-  setKeys(mapThemeHandler->getMapThemeKeysHash());
+  setKeys(NavApp::getMapThemeHandler()->getMapThemeKeysHash());
 
   setFont(options.getMapFont());
 
@@ -439,27 +411,12 @@ void MapPaintWidget::dumpMapLayers() const
   paintLayer->dumpMapLayers();
 }
 
-const QMap<QString, QString>& MapPaintWidget::getMapThemeKeys()
-{
-  return mapThemeHandler->getMapThemeKeys();
-}
-
-void MapPaintWidget::setMapThemeKeys(const QMap<QString, QString>& keys)
-{
-  mapThemeHandler->setMapThemeKeys(keys);
-}
-
-void MapPaintWidget::clearMapThemeKeyValues()
-{
-  mapThemeHandler->clearMapThemeKeyValues();
-}
-
 const QVector<map::MapObjectRef>& MapPaintWidget::getRouteDrawnNavaidsConst() const
 {
   return screenIndex->getRouteDrawnNavaidsConst();
 }
 
-QVector<map::MapObjectRef>* MapPaintWidget::getRouteDrawnNavaids()
+QVector<map::MapObjectRef> *MapPaintWidget::getRouteDrawnNavaids()
 {
   return screenIndex->getRouteDrawnNavaids();
 }
@@ -525,11 +482,6 @@ map::MapAirspaceFilter MapPaintWidget::getShownAirspaceTypesByLayer() const
 ApronGeometryCache *MapPaintWidget::getApronGeometryCache()
 {
   return apronGeometryCache;
-}
-
-QString MapPaintWidget::getMapCopyright() const
-{
-  return mapThemeHandler->getTheme(currentThemeIndex).getCopyright();
 }
 
 void MapPaintWidget::preDatabaseLoad()

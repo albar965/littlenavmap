@@ -62,6 +62,7 @@ class WindReporter;
 class MapMarkHandler;
 class MapAirportHandler;
 class TrackManager;
+class MapThemeHandler;
 
 namespace atools {
 namespace gui {
@@ -294,7 +295,7 @@ public:
   static atools::gui::TabWidgetHandler *getRouteTabHandler();
   static const InfoController *getInfoController();
   static QFont getTextBrowserInfoFont();
-  static QString getMapCopyright();
+  static MapThemeHandler *getMapThemeHandler();
 
   static DatabaseManager *getDatabaseManager();
 

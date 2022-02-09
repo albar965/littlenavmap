@@ -45,6 +45,7 @@
 #include "mapgui/mapscreenindex.h"
 #include "mapgui/maptooltip.h"
 #include "mapgui/mapvisible.h"
+#include "mapgui/mapthemehandler.h"
 #include "mappainter/mappaintlayer.h"
 #include "navapp.h"
 #include "online/onlinedatacontroller.h"
@@ -2795,8 +2796,6 @@ void MapWidget::saveState()
   atools::gui::WidgetState state(lnm::MAP_OVERLAY_VISIBLE, false /*save visibility*/, true /*block signals*/);
   for(QAction *action : mapOverlays)
     state.save(action);
-
-  mapThemeHandler->saveState();
 }
 
 void MapWidget::restoreState()
@@ -2872,9 +2871,6 @@ void MapWidget::restoreState()
     paintLayer->setShowAirspaces({map::AIRSPACE_DEFAULT, map::AIRSPACE_FLAG_DEFAULT});
 
   history.restoreState(atools::settings::Settings::getConfigFilename(".history"));
-
-  mapThemeHandler->restoreState();
-  setKeys(mapThemeHandler->getMapThemeKeysHash());
 }
 
 void MapWidget::sunShadingToUi(map::MapSunShading sunShading)
@@ -3049,8 +3045,8 @@ void MapWidget::resetSettingActionsToDefault()
 void MapWidget::updateThemeUi(int index)
 {
   Ui::MainWindow *ui = mainWindow->getUi();
-  ui->actionMapShowCities->setEnabled(mapThemeHandler->hasPlacemarks(index));
-  ui->actionMapShowSunShading->setEnabled(mapThemeHandler->canSunShading(index));
+  ui->actionMapShowCities->setEnabled(NavApp::getMapThemeHandler()->hasPlacemarks(index));
+  ui->actionMapShowSunShading->setEnabled(NavApp::getMapThemeHandler()->canSunShading(index));
 }
 
 void MapWidget::updateMapVisibleUi() const
@@ -3512,7 +3508,7 @@ void MapWidget::zoomInOut(bool directionIn, bool smooth)
   else
   {
     // if(currentThemeIndex == map::PLAIN || currentThemeIndex == map::SIMPLE)
-    if(mapThemeHandler->hasDiscreteZoom(currentThemeIndex))
+    if(NavApp::getMapThemeHandler()->hasDiscreteZoom(currentThemeIndex))
     {
       if(directionIn)
         zoomViewBy(zoomStep() * 3);

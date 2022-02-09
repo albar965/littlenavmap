@@ -4009,10 +4009,15 @@ logbook entries:</string>
            <item>
             <widget class="QLabel" name="label_10">
              <property name="text">
-              <string>You can enter login information, tokens or API keys for map services which need an user account.
-The needed keys shown below are extracted from the installed map themes.
-Double click a value to edit.
-Do not show this this information publicly in forums on screenshots.</string>
+              <string>&lt;p&gt;You can enter login information, tokens or API keys for map services which need an user account.
+The required keys shown below are extracted from the installed map themes.&lt;/p&gt;
+&lt;p&gt;&lt;b&gt;A restart might be needed after changing keys.&lt;br/&gt;
+Do not show this this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&gt;
+&lt;p&gt;Double click a value to edit.&lt;/p&gt;
+</string>
+             </property>
+             <property name="wordWrap">
+              <bool>true</bool>
              </property>
              <property name="textInteractionFlags">
               <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>

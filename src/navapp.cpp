@@ -976,9 +976,9 @@ QFont NavApp::getTextBrowserInfoFont()
   return getMainUi()->textBrowserAirportInfo->font();
 }
 
-QString NavApp::getMapCopyright()
+MapThemeHandler *NavApp::getMapThemeHandler()
 {
-  return mainWindow->getMapWidget()->getMapCopyright();
+  return mainWindow->getMapThemeHandler();
 }
 
 const QString& NavApp::getCurrentRouteFilepath()
