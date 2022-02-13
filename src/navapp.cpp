@@ -52,6 +52,7 @@
 #include "userdata/userdatacontroller.h"
 #include "weather/weatherreporter.h"
 #include "web/webcontroller.h"
+#include "web/webmapcontroller.h"
 
 #include "query/waypointquery.h"
 #include "ui_mainwindow.h"
@@ -1004,6 +1005,14 @@ const QString& NavApp::getCurrentAircraftPerfAircraftType()
 WebController *NavApp::getWebController()
 {
   return webController;
+}
+
+MapPaintWidget *NavApp::getMapPaintWidgetWeb()
+{
+  if(webController != nullptr && webController->getWebMapController() != nullptr)
+    return webController->getWebMapController()->getMapPaintWidget();
+  else
+    return nullptr;
 }
 
 DatabaseManager *NavApp::getDatabaseManager()

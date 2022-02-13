@@ -378,6 +378,7 @@ public:
   static const QString& getCurrentAircraftPerfAircraftType();
 
   static WebController *getWebController();
+  static MapPaintWidget *getMapPaintWidgetWeb();
 
   static MapMarkHandler *getMapMarkHandler();
   static MapAirportHandler *getMapAirportHandler();

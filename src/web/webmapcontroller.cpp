@@ -222,16 +222,19 @@ MapPixmap WebMapController::getPixmapRect(int width, int height, atools::geo::Re
   }
 }
 
-MapPaintWidget* WebMapController::getMapPaintWidget() const{
-    return mapPaintWidget;
+MapPaintWidget *WebMapController::getMapPaintWidget() const
+{
+  return mapPaintWidget;
 }
 
 void WebMapController::preDatabaseLoad()
 {
-  mapPaintWidget->preDatabaseLoad();
+  if(mapPaintWidget != nullptr)
+    mapPaintWidget->preDatabaseLoad();
 }
 
 void WebMapController::postDatabaseLoad()
 {
-  mapPaintWidget->postDatabaseLoad();
+  if(mapPaintWidget != nullptr)
+    mapPaintWidget->postDatabaseLoad();
 }

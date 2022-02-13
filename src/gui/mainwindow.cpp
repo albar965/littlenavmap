@@ -4092,13 +4092,8 @@ void MainWindow::updateMapKeys()
     mapWidget->setKeys(mapThemeHandler->getMapThemeKeysHash());
 
   // Might be null if not started
-  if(NavApp::getWebController() != nullptr && NavApp::getWebController()->getWebMapController() != nullptr)
-  {
-    MapPaintWidget *mapPaintWidget = NavApp::getWebController()->getWebMapController()->getMapPaintWidget();
-
-    if(mapPaintWidget != nullptr)
-      mapPaintWidget->setKeys(mapThemeHandler->getMapThemeKeysHash());
-  }
+  if(NavApp::getMapPaintWidgetWeb() != nullptr)
+    NavApp::getMapPaintWidgetWeb()->setKeys(mapThemeHandler->getMapThemeKeysHash());
 }
 
 void MainWindow::saveStateNow()

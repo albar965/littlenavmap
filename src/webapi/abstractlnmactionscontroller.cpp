@@ -56,12 +56,18 @@ NavApp* AbstractLnmActionsController::getNavApp(){
 
 MapQuery* AbstractLnmActionsController::getMapQuery(){
     // Get "own" MapQuery since it contains caches releated to shown screen area
-    return getNavApp()->getWebController()->getWebMapController()->getMapPaintWidget()->getMapQuery();
+    if(getNavApp()->getMapPaintWidgetWeb() != nullptr)
+      return getNavApp()->getMapPaintWidgetWeb()->getMapQuery();
+    else
+      return nullptr;
 }
 
 WaypointTrackQuery* AbstractLnmActionsController::getWaypointTrackQuery(){
     // Get "own" WaypointQuery since it contains caches releated to shown screen area
-    return getNavApp()->getWebController()->getWebMapController()->getMapPaintWidget()->getWaypointTrackQuery();
+    if(getNavApp()->getMapPaintWidgetWeb() != nullptr)
+      return getNavApp()->getMapPaintWidgetWeb()->getWaypointTrackQuery();
+    else
+      return nullptr;
 }
 
 InfoQuery* AbstractLnmActionsController::getInfoQuery(){
@@ -109,11 +115,14 @@ const AirportAdminNames AbstractLnmActionsController::getAirportAdminNames(map::
 }
 int AbstractLnmActionsController::getTransitionAltitude(map::MapAirport& airport){
     // Get transition altitude from nav database
-    map::MapAirport navAirport = airport;
-    getMapQuery()->getAirportNavReplace(navAirport);
-    if(navAirport.isValid() && navAirport.transitionAltitude > 0)
-      return navAirport.transitionAltitude;
-    return -1;
+    if(getMapQuery() != nullptr)
+    {
+      map::MapAirport navAirport = airport;
+      getMapQuery()->getAirportNavReplace(navAirport);
+      if(navAirport.isValid() && navAirport.transitionAltitude > 0)
+        return navAirport.transitionAltitude;
+      return -1;
+    }
 }
 const QTime AbstractLnmActionsController::getSunset(const SqlRecord& airportInformation){
     return calculateSunriseSunset(getPosFromAirportInformation(airportInformation),ageo::SUNSET_CIVIL);
