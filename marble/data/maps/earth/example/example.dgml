@@ -68,7 +68,11 @@
                Adjust format as provided by map service. -->
           <sourcedir format="PNG"> earth/mapboxuser </sourcedir>
 
-          <!-- Tile size. OSM and related use 256. Mapbox and MapTiler 512. -->
+          <!-- Tile size. OSM and related use 256. Mapbox and MapTiler 512 pixel.
+               Width and height have to be equal.
+               IMPORTANT: The overview file "data/maps/earth/YOURTHEMENAME/0/0/0.png" has to match the size.
+               Otherwise Little Navmap will crash when using the spheric map projection.
+          -->
           <tileSize height="256" width="256"/>
 
           <!-- Defines the URL used to fetch tiles from the web. Mode "Custom" is recommended for all maps. -->
