@@ -308,6 +308,11 @@ void ProcedureQuery::buildLegEntry(atools::sql::SqlQuery *query, proc::MapProced
   else
     leg.verticalAngle = map::INVALID_ANGLE_VALUE;
 
+  if(query->hasField("rnp") && !query->isNull("rnp"))
+    leg.rnp = query->valueFloat("rnp");
+  else
+    leg.rnp = map::INVALID_DISTANCE_VALUE;
+
   leg.magvar = map::INVALID_MAGVAR;
 
   // Use fix position if present - otherwise use airport position to get nearest fix
@@ -730,6 +735,7 @@ proc::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const map::MapAirpor
     legs->approachSuffix = approach->approachSuffix;
     legs->approachFixIdent = approach->approachFixIdent;
     legs->approachArincName = approach->approachArincName;
+    legs->aircraftCategory = approach->aircraftCategory;
     legs->gpsOverlay = approach->gpsOverlay;
     legs->circleToLand = approach->circleToLand;
 
@@ -787,6 +793,7 @@ proc::MapProcedureLegs *ProcedureQuery::buildApproachLegs(const map::MapAirport&
     legs->approachSuffix = approachQuery->value("suffix").toString();
     legs->approachFixIdent = approachQuery->value("fix_ident").toString();
     legs->approachArincName = approachQuery->valueStr("arinc_name", QString());
+    legs->aircraftCategory = approachQuery->valueStr("aircraft_category", QString());
     legs->gpsOverlay = approachQuery->value("has_gps_overlay").toBool();
     legs->procedureRunway = approachQuery->value("runway_name").toString();
   }

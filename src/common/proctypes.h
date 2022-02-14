@@ -207,7 +207,8 @@ struct MapProcedureLeg
         theta /* magnetic course to recommended navaid or INVALID_COURSE_VALUE if not available */,
         rho /* distance to recommended navaid in NM or INVALID_DISTANCE_VALUE if not available */,
         magvar /* from navaid or airport */,
-        verticalAngle = map::INVALID_ANGLE_VALUE /* degrees or INVALID_ANGLE_VALUE if not available */;
+        verticalAngle = map::INVALID_ANGLE_VALUE /* degrees or INVALID_ANGLE_VALUE if not available */,
+        rnp = map::INVALID_DISTANCE_VALUE /* Required Navigation Performance - ARINC 5.211 */;
 
   bool missed = false, flyover = false, trueCourse = false,
        intercept = false, /* Leg was modified by a previous intercept */
@@ -382,7 +383,8 @@ struct MapProcedureLegs
   QString approachType, /* GNSS (display GLS) GPS IGS ILS LDA LOC LOCB NDB NDBDME RNAV (RNV) SDF TCN VOR VORDME */
           approachSuffix, approachFixIdent /* Approach fix or SID/STAR name */,
           approachArincName, transitionType, transitionFixIdent,
-          procedureRunway; /* Runway from the procedure does not have to match the airport runway but is saved */
+          procedureRunway, /* Runway from the procedure does not have to match the airport runway but is saved */
+          aircraftCategory; /* 5.221 */
 
   /* Only for approaches - the found runway end at the airport - can be different due to fuzzy search */
   map::MapRunwayEnd runwayEnd;
