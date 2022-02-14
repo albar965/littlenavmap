@@ -1450,10 +1450,12 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
 
   try
   {
+    bool foundBasicValidationError = false;
     atools::fs::NavDatabase nd(&navDatabaseOpts, db, &errors, GIT_REVISION);
     QString sceneryCfgCodec = (selectedFsType == atools::fs::FsPaths::P3D_V4 ||
                                selectedFsType == atools::fs::FsPaths::P3D_V5) ? "UTF-8" : QString();
-    nd.create(sceneryCfgCodec);
+    nd.create(sceneryCfgCodec, foundBasicValidationError);
+    qDebug() << Q_FUNC_INFO << "foundBasicValidationError" << foundBasicValidationError;
   }
   catch(atools::Exception& e)
   {
