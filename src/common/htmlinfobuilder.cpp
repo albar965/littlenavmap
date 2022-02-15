@@ -1201,7 +1201,6 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
   if(!procInfo && verbose)
   {
     html.row2(tr("Magnetic declination:"), map::magvarText(ils.magvar));
-    html.row2(tr("Elevation:"), Unit::altFeet(ils.position.getAltitude()));
 
     if(!ils.isAnyGls())
     {
