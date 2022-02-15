@@ -81,7 +81,7 @@ public:
   /* From nav db, depending on mode */
   map::MapNdb getNdbById(int id);
 
-  /* Always from sim db */
+  /* Always from nav db */
   map::MapIls getIlsById(int id);
 
   /* Either nav or sim db */

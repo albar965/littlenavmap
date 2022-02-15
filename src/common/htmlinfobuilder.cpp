@@ -736,7 +736,7 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) cons
 
       if(info)
         // Add scenery indicator to clear source - either nav or sim
-        addScenery(nullptr, html, true /* ilsOrCom */);
+        addScenery(nullptr, html, true /* com */, false /* ils */);
 
     }
     else
@@ -1264,7 +1264,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
 
   if(info && infoOrTooltip && !procInfo)
     // Add scenery indicator to clear source - either nav or sim
-    addScenery(nullptr, html, true /* ilsOrCom */);
+    addScenery(nullptr, html, false /* com */, true /* ils */);
 
 #ifdef DEBUG_INFORMATION
   if(info && !procInfo)
@@ -1834,7 +1834,7 @@ void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atoo
   }
 
   if(info && !user)
-    addScenery(infoQuery->getMsaInformation(msa.id), html);
+    addScenery(infoQuery->getMsaInformation(msa.id), html, false /* com */, false /* ils */);
 
   if(info)
     html.br();
@@ -2150,7 +2150,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
     waypointAirwayText(wp, html);
 
   if(rec != nullptr)
-    addScenery(rec, html);
+    addScenery(rec, html, false /* com */, false /* ils */);
 
 #ifdef DEBUG_INFORMATION
   if(info)
@@ -2222,7 +2222,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
     waypointAirwayText(wp, html);
 
   if(rec != nullptr)
-    addScenery(rec, html);
+    addScenery(rec, html, false /* com */, false /* ils */);
 
 #ifdef DEBUG_INFORMATION
   if(info)
@@ -2328,7 +2328,7 @@ void HtmlInfoBuilder::holdingTextInternal(const MapHolding& holding, HtmlBuilder
   html.tableEnd();
 
   if(info && !user)
-    addScenery(infoQuery->getHoldingInformation(holding.id), html);
+    addScenery(infoQuery->getHoldingInformation(holding.id), html, false /* com */, false /* ils */);
 
   if(info)
     html.br();
@@ -2841,7 +2841,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   waypointAirwayText(waypoint, html);
 
   if(rec != nullptr)
-    addScenery(rec, html);
+    addScenery(rec, html, false /* com */, false /* ils */);
 
 #ifdef DEBUG_INFORMATION
   if(info)
@@ -3104,7 +3104,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     atools::sql::SqlRecord rec = NavApp::getAirspaceController()->getAirspaceInfoRecordById(airspace.combinedId());
 
     if(!rec.isEmpty())
-      addScenery(&rec, html);
+      addScenery(&rec, html, false /* com */, false /* ils */);
   }
 
 #ifdef DEBUG_INFORMATION
@@ -4586,13 +4586,22 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
   html.tableEnd();
 }
 
-void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html, bool onlySimOrNav) const
+void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html, bool com, bool ils) const
 {
-  if(onlySimOrNav)
+  if(com)
   {
+    // COM is used from sim except in Navigraph all
     head(html, tr("Scenery"));
     html.table();
     html.row2(NavApp::isNavdataAll() ? tr("Navigraph") : tr("Simulator"));
+    html.tableEnd();
+  }
+  else if(ils)
+  {
+    // ILS is from navdata except in Navigraph off
+    head(html, tr("Scenery"));
+    html.table();
+    html.row2(!NavApp::isNavdataOff() ? tr("Navigraph") : tr("Simulator"));
     html.tableEnd();
   }
   else if(rec != nullptr)

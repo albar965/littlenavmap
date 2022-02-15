@@ -234,6 +234,8 @@ public:
 
   /* Selected navdatabase in menu */
   static bool isNavdataAll();
+  static bool isNavdataOff();
+  static bool isNavdataMixed();
 
   static OptionsDialog *getOptionsDialog();
 

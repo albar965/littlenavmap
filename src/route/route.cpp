@@ -878,7 +878,7 @@ void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::
         });
 
         // Keep only the matching RNP navaid if one matches
-        if(found != ilsMapAll.end())
+        if(found != ilsMapAll.constEnd())
         {
           map::MapIls ils = *found; // Create copy before clearing list
           ilsMapAll.clear();

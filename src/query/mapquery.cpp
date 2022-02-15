@@ -191,8 +191,7 @@ void MapQuery::getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos)
   ndbNearestQuery->finish();
 }
 
-map::MapResultIndex *MapQuery::getNearestNavaids(const Pos& pos, float distanceNm, map::MapTypes type,
-                                                 int maxIls, float maxIlsDist)
+map::MapResultIndex *MapQuery::getNearestNavaids(const Pos& pos, float distanceNm, map::MapTypes type, int maxIls, float maxIlsDist)
 {
   map::MapResultIndex *nearest = nearestNavaidsInternal(pos, distanceNm, type, maxIls, maxIlsDist);
   if(nearest == nullptr || nearest->size() < 5)
@@ -200,8 +199,7 @@ map::MapResultIndex *MapQuery::getNearestNavaids(const Pos& pos, float distanceN
   return nearest;
 }
 
-map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float distanceNm, map::MapTypes type,
-                                                      int maxIls, float maxIlsDist)
+map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float distanceNm, map::MapTypes type, int maxIls, float maxIlsDist)
 {
   query::NearestCacheKeyNavaid key = {pos, distanceNm, type};
 
@@ -402,8 +400,8 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
     NavApp::getAirwayTrackQueryGui()->getAirwaysByName(result.airways, ident);
 }
 
-void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map::MapAirspaceSources src,
-                                int id, bool airportFromNavDatabase)
+void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map::MapAirspaceSources src, int id,
+                                bool airportFromNavDatabase)
 {
   if(type == map::AIRPORT)
   {
@@ -1217,11 +1215,15 @@ void MapQuery::initQueries()
                                           "vor_dme_only, vor_has_dme, region, multiple_code, true_bearing, mag_var, "
                                           "left_lonx, top_laty, right_lonx, bottom_laty, radius, lonx, laty, geometry ");
 
-  QString extraIlsCols = SqlUtil(dbSim).buildColumnListIf("ils", {"type", "perf_indicator", "provider"}).join(", ");
+  SqlUtil navUtil(dbNav);
+  QString extraIlsCols = navUtil.buildColumnListIf("ils", {"type", "perf_indicator", "provider"}).join(", ");
   if(!extraIlsCols.isEmpty())
     ilsQueryBase.append(", " + extraIlsCols);
 
   deInitQueries();
+
+  // Check for GLS ground station or GBAS threshold
+  gls = navUtil.hasTableAndColumn("ils", "type") && navUtil.hasRows("ils", "type in ('G', 'T')");
 
   // Check for holding table in nav (Navigraph) database and then in simulator database (X-Plane only)
   SqlDatabase *holdingDb = SqlUtil::getDbWithTableAndRows("holding", {dbNav, dbSim});
@@ -1236,10 +1238,6 @@ void MapQuery::initQueries()
 
   ndbByIdentQuery = new SqlQuery(dbNav);
   ndbByIdentQuery->prepare("select " + ndbQueryBase + " from ndb where " + whereIdentRegion);
-
-  ilsByIdentQuery = new SqlQuery(dbSim);
-  ilsByIdentQuery->prepare("select " + ilsQueryBase +
-                           " from ils where ident = :ident and loc_airport_ident = :airport");
 
   vorByIdQuery = new SqlQuery(dbNav);
   vorByIdQuery->prepare("select " + vorQueryBase + " from vor where vor_id = :id");
@@ -1269,22 +1267,26 @@ void MapQuery::initQueries()
   ndbNearestQuery->prepare(
     "select " + ndbQueryBase + " from ndb order by (abs(lonx - :lonx) + abs(laty - :laty)) limit 1");
 
-  ilsByIdQuery = new SqlQuery(dbSim);
-  ilsByIdQuery->prepare("select " + ilsQueryBase + " from ils where ils_id = :id");
-
   if(holdingDb != nullptr)
   {
     holdingByIdQuery = new SqlQuery(holdingDb);
     holdingByIdQuery->prepare("select " + holdingQueryBase + " from holding where holding_id = :id");
   }
 
-  ilsQuerySimByAirportAndRw = new SqlQuery(dbSim);
-  ilsQuerySimByAirportAndRw->prepare("select " + ilsQueryBase +
-                                     " from ils where loc_airport_ident = :apt and loc_runway_name = :rwy");
+  ilsByIdQuery = new SqlQuery(dbNav);
+  ilsByIdQuery->prepare("select " + ilsQueryBase + " from ils where ils_id = :id");
 
-  ilsQuerySimByAirportAndIdent = new SqlQuery(dbSim);
-  ilsQuerySimByAirportAndIdent->prepare("select " + ilsQueryBase +
-                                        " from ils where loc_airport_ident = :apt and ident = :ident");
+  ilsByIdentQuery = new SqlQuery(dbNav);
+  ilsByIdentQuery->prepare("select " + ilsQueryBase + " from ils where ident = :ident and loc_airport_ident = :airport");
+
+  ilsQuerySimByAirportAndRw = new SqlQuery(dbNav);
+  ilsQuerySimByAirportAndRw->prepare("select " + ilsQueryBase + " from ils where loc_airport_ident = :apt and loc_runway_name = :rwy");
+
+  ilsQuerySimByAirportAndIdent = new SqlQuery(dbNav);
+  ilsQuerySimByAirportAndIdent->prepare("select " + ilsQueryBase + " from ils where loc_airport_ident = :apt and ident = :ident");
+
+  ilsByRectQuery = new SqlQuery(dbNav);
+  ilsByRectQuery->prepare("select " + ilsQueryBase + " from ils where " + whereRect + " " + whereLimit);
 
   airportByRectQuery = new SqlQuery(dbSim);
   airportByRectQuery->prepare("select " + airportQueryBase.join(", ") + " from airport where " + whereRect +
@@ -1330,18 +1332,11 @@ void MapQuery::initQueries()
     "from marker "
     "where " + whereRect + " " + whereLimit);
 
-  ilsByRectQuery = new SqlQuery(dbSim);
-  ilsByRectQuery->prepare("select " + ilsQueryBase + " from ils where " + whereRect + " " + whereLimit);
-
   if(holdingDb != nullptr)
   {
     holdingByRectQuery = new SqlQuery(holdingDb);
     holdingByRectQuery->prepare("select " + holdingQueryBase + " from holding where " + whereRect + " " + whereLimit);
   }
-
-  // Check for GLS ground station or GBAS threshold
-  SqlUtil simUtil(dbSim);
-  gls = simUtil.hasTableAndColumn("ils", "type") && simUtil.hasRows("ils", "type in ('G', 'T')");
 }
 
 void MapQuery::deInitQueries()
@@ -1369,8 +1364,6 @@ void MapQuery::deInitQueries()
   ndbsByRectQuery = nullptr;
   delete markersByRectQuery;
   markersByRectQuery = nullptr;
-  delete ilsByRectQuery;
-  ilsByRectQuery = nullptr;
   delete holdingByRectQuery;
   holdingByRectQuery = nullptr;
 
@@ -1381,8 +1374,6 @@ void MapQuery::deInitQueries()
   vorByIdentQuery = nullptr;
   delete ndbByIdentQuery;
   ndbByIdentQuery = nullptr;
-  delete ilsByIdentQuery;
-  ilsByIdentQuery = nullptr;
 
   delete vorByIdQuery;
   vorByIdQuery = nullptr;
@@ -1399,17 +1390,19 @@ void MapQuery::deInitQueries()
   delete ndbNearestQuery;
   ndbNearestQuery = nullptr;
 
+  delete ilsByRectQuery;
+  ilsByRectQuery = nullptr;
+  delete ilsByIdentQuery;
+  ilsByIdentQuery = nullptr;
   delete ilsByIdQuery;
   ilsByIdQuery = nullptr;
+  delete ilsQuerySimByAirportAndRw;
+  ilsQuerySimByAirportAndRw = nullptr;
+  delete ilsQuerySimByAirportAndIdent;
+  ilsQuerySimByAirportAndIdent = nullptr;
 
   delete holdingByIdQuery;
   holdingByIdQuery = nullptr;
-
-  delete ilsQuerySimByAirportAndRw;
-  ilsQuerySimByAirportAndRw = nullptr;
-
-  delete ilsQuerySimByAirportAndIdent;
-  ilsQuerySimByAirportAndIdent = nullptr;
 
   delete airportMsaByIdentQuery;
   airportMsaByIdentQuery = nullptr;

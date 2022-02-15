@@ -211,8 +211,8 @@ void RunwaySelection::addItem(const RunwayIdxEntry& entry, int index)
     atts.append(tr("Closed"));
 
   // Add ILS and similar approach aids
-  for(map::MapIls i : NavApp::getMapQueryGui()->getIlsByAirportAndRunway(airport->ident, entry.end.name))
-    atts.append(map::ilsTypeShort(i));
+  for(const map::MapIls& ils : NavApp::getMapQueryGui()->getIlsByAirportAndRunway(airport->ident, entry.end.name))
+    atts.append(map::ilsTypeShort(ils));
   atts.removeAll(QString());
   atts.removeDuplicates();
 

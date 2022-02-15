@@ -1043,8 +1043,8 @@ struct MapIls
                       * LDA Facility no glideslope          A
                       * SDF Facility with glideslope        S
                       * SDF Facility no glideslope          F
-                      *  G: GLS ground station,
-                      *  T: SBAS/GBAS threshold point*/
+                      * GLS ground station                  G (only Navigraph and X-Plane)
+                      * SBAS/GBAS threshold point           T (only Navigraph and X-Plane) */
 
   float magvar, slope, heading, width;
   int frequency /* MHz * 1000 */, range /* nm */;
