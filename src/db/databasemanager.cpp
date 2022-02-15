@@ -1952,7 +1952,7 @@ void DatabaseManager::checkDatabaseVersion()
   static const int MAX_AGE_MONTHS = 2;
 
   const atools::fs::db::DatabaseMeta *databaseMetaSim = NavApp::getDatabaseMetaSim();
-  if(navDatabaseStatus != dm::NAVDATABASE_ALL && databaseMetaSim != nullptr)
+  if(navDatabaseStatus != dm::NAVDATABASE_ALL && databaseMetaSim != nullptr && databaseMetaSim->hasData())
   {
     QStringList msg;
     if(databaseMetaSim->getDatabaseVersion() < databaseMetaSim->getApplicationVersion())
