@@ -22,9 +22,9 @@
 #include <QLocale>
 
 namespace InfoBuilderTypes {
-    class AirportInfoData;
-    class SimConnectInfoData;
-    class UiInfoData;
+    struct AirportInfoData;
+    struct SimConnectInfoData;
+    struct UiInfoData;
 }
 namespace atools {
     namespace sql {
@@ -63,7 +63,7 @@ public:
 
   /**
    * Creates a description for the provided airport.
-   * 
+   *
    * @param airportInfoData
    */
   virtual QByteArray airport(AirportInfoData airportInfoData) const;

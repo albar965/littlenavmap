@@ -314,6 +314,20 @@ struct MapBase
     return objType;
   }
 
+  MapBase(const MapBase& other)
+  {
+    this->operator=(other);
+  }
+
+  MapBase& operator=(const MapBase& other)
+  {
+    id = other.id;
+    position = other.position;
+    objType = other.objType;
+
+    return *this;
+  }
+
 protected:
   /* Hide destructor to avoid inadvertent deletion of base */
   ~MapBase()

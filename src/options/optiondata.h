@@ -441,7 +441,7 @@ enum DisplayOptionUserAircraft
 Q_DECLARE_FLAGS(DisplayOptionsUserAircraft, DisplayOptionUserAircraft);
 Q_DECLARE_OPERATORS_FOR_FLAGS(optsac::DisplayOptionsUserAircraft);
 
-enum DisplayOptionAiAircraft
+enum DisplayOptionAiAircraft : quint32
 {
   ITEM_AI_AIRCRAFT_NONE = 0,
   ITEM_AI_AIRCRAFT_DEP_DEST = 1 << 21,
@@ -455,7 +455,7 @@ enum DisplayOptionAiAircraft
   ITEM_AI_AIRCRAFT_CLIMB_SINK = 1 << 28,
   ITEM_AI_AIRCRAFT_HEADING = 1 << 29,
   ITEM_AI_AIRCRAFT_ALTITUDE = 1 << 30,
-  ITEM_AI_AIRCRAFT_TAS = 1 << 31,
+  ITEM_AI_AIRCRAFT_TAS = 0x8000'0000,
   ITEM_AI_AIRCRAFT_COORDINATES = 1 << 1
 };
 

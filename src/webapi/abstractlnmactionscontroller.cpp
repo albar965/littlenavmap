@@ -121,9 +121,10 @@ int AbstractLnmActionsController::getTransitionAltitude(map::MapAirport& airport
       getMapQuery()->getAirportNavReplace(navAirport);
       if(navAirport.isValid() && navAirport.transitionAltitude > 0)
         return navAirport.transitionAltitude;
-      return -1;
     }
+    return -1;
 }
+
 const QTime AbstractLnmActionsController::getSunset(const SqlRecord& airportInformation){
     return calculateSunriseSunset(getPosFromAirportInformation(airportInformation),ageo::SUNSET_CIVIL);
 };

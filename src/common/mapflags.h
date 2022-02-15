@@ -234,7 +234,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(map::AirportQueryFlags);
 
 /* ================================================================================== */
 /* Covers all airspace types */
-enum MapAirspaceType
+enum MapAirspaceType : quint32
 {
   AIRSPACE_NONE = 0,
   CENTER = 1 << 0,
@@ -271,7 +271,7 @@ enum MapAirspaceType
 
   GCA = 1 << 29, // New general control area combining several unknown types
   MCTR = 1 << 30, // Military Control Zone (MCTR)
-  TRSA = 1 << 31, // Terminal Radar Service Area (TRSA)
+  TRSA = 0x8000'0000, // Terminal Radar Service Area (TRSA)
 
   AIRSPACE_CLASS_ICAO = CLASS_A | CLASS_B | CLASS_C | CLASS_D | CLASS_E,
   AIRSPACE_CLASS_FG = CLASS_F | CLASS_G,
