@@ -4,7 +4,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
-# Version 2.7.7.develop
+# Version 2.7.8.develop
 
 ## Notes
 
@@ -30,7 +30,25 @@ and `$HOME/.config/ABarthel` on Linux and macOS.
 
 **Reload the scenery library after updating.**
 
-## Changes from 2.6.17 to 2.7.7.develop
+## Changes from 2.7.7.develop to 2.7.8.develop
+
+* Fixed crash after loading or switching scenery library when web server is disabled.
+* Fixed crash with MapTiler and MapBox map themes when using spherical map projection.
+* Fixed issues where GLS/RNP approaches were not found when using FSX/P3D/MSFS databases. ILS and
+  GLS information is now always taken from Navigraph database except when using
+  `Do not use Navigraph Database`. As a result ILS course might probably not match for older
+  scenery data or airport add-ons. Select `Do not use Navigraph Database` temporarily if this is an
+  issue. Note that some approach information about RNP is not yet available with the current
+  Navigraph cycle.
+* Removed wrong warning dialog about old scenery library database if scenery library is empty.
+* Updated French translation from Patrick.
+* Fixed issue when downloading NAT tracks containing text like
+  `PBCS TRACKS AS FOLLOWS / V W X / END OF PBCS OTS`. `V W X` was wrongly recognized as a track
+  resulting in an error message.
+
+===============================================================================
+
+# Version 2.7.7.develop
 
 ### Map Display Themes
 
