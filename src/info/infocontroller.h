@@ -111,6 +111,9 @@ public:
   /* Get enabled fields in user aircraft progress tab */
   const QBitArray& getEnabledProgressBits() const;
 
+  /* Always enables coordinate display or other required fields. */
+  const QBitArray& getEnabledProgressBitsWeb() const;
+
 signals:
   /* Emitted when the user clicks on the "Map" link in the text browsers */
   void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);

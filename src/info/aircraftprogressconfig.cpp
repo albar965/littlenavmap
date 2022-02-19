@@ -52,6 +52,9 @@ const static QVector<pid::ProgressConfId> DEFAULTIDS({
   pid::DESCENT_DEVIATION, pid::DESCENT_ANGLE_SPEED, pid::ENV_WIND_DIR_SPEED, pid::ENV_TAT, pid::ENV_SAT, pid::ENV_ISA_DEV,
   pid::ENV_SEA_LEVEL_PRESS, pid::ENV_CONDITIONS, pid::ENV_VISIBILITY});
 
+// Always enables coordinate display or other required fields for web interface
+const static QVector<pid::ProgressConfId> ADDITIONAL_WEB_IDS({pid::POS_COORDINATES});
+
 void AircraftProgressConfig::progressConfiguration()
 {
   atools::gui::TreeDialog treeDialog(parent, QCoreApplication::applicationName() + tr(" - Aircraft Progress Configuration"),
@@ -215,4 +218,9 @@ void AircraftProgressConfig::updateBits()
   enabledBits.fill(false, pid::LAST + 1);
   for(pid::ProgressConfId id : enabledIds)
     enabledBits.setBit(id, true);
+
+  // Update separate bitfield with required additional fields
+  enabledBitsWeb = enabledBits;
+  for(pid::ProgressConfId id : ADDITIONAL_WEB_IDS)
+    enabledBitsWeb.setBit(id, true);
 }

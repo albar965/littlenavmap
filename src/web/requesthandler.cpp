@@ -422,7 +422,10 @@ inline void RequestHandler::handleHtmlFileRequest(HttpRequest& request, HttpResp
       {
         Route route = emit getRoute();
         html.clear();
-        html.setIdBits(NavApp::getInfoController()->getEnabledProgressBits());
+
+        // Additional required progress fields are defined in aircraftprogressconfig.cpp in vector ADDITIONAL_WEB_IDS
+        html.setIdBits(NavApp::getInfoController()->getEnabledProgressBitsWeb());
+
         htmlInfoBuilder->aircraftProgressText(userAircraft, html, route);
         t.setVariable(QStringLiteral(u"aircraftProgressText"), html.getHtml());
       }

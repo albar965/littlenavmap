@@ -47,6 +47,12 @@ public:
     return enabledBits;
   }
 
+  /* Always enables coordinate display or other required fields. */
+  const QBitArray& getEnabledBitsWeb() const
+  {
+    return enabledBitsWeb;
+  }
+
 private:
   void updateBits();
 
@@ -54,7 +60,7 @@ private:
   QVector<pid::ProgressConfId> enabledIds;
 
   /* Bit field with check state according to enum */
-  QBitArray enabledBits;
+  QBitArray enabledBits, enabledBitsWeb;
 
   QWidget *parent;
 };

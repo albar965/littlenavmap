@@ -1471,3 +1471,8 @@ const QBitArray& InfoController::getEnabledProgressBits() const
 {
   return aircraftProgressConfig->getEnabledBits();
 }
+
+const QBitArray& InfoController::getEnabledProgressBitsWeb() const
+{
+  return aircraftProgressConfig->getEnabledBitsWeb();
+}
