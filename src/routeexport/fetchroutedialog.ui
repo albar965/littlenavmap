@@ -64,7 +64,7 @@
    <item row="1" column="0" colspan="2">
     <widget class="QLabel" name="labelUsername">
      <property name="text">
-      <string>SimBrief login name:</string>
+      <string>&amp;SimBrief alias:</string>
      </property>
      <property name="buddy">
       <cstring>lineEditUsername</cstring>
