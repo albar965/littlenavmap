@@ -6102,13 +6102,13 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
                   </sizepolicy>
                  </property>
                  <property name="toolTip">
-                  <string>Download the &quot;whazzup.txt&quot; or &quot;status.txt&quot; file periodically.</string>
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Download the &amp;quot;whazzup.txt&amp;quot; or &amp;quot;status.txt&amp;quot; file periodically.&lt;/p&gt;&lt;p&gt;Use low values only for private servers.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                  </property>
                  <property name="suffix">
                   <string> seconds</string>
                  </property>
                  <property name="minimum">
-                  <number>2</number>
+                  <number>1</number>
                  </property>
                  <property name="maximum">
                   <number>1800</number>
