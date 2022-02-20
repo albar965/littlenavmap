@@ -1899,8 +1899,7 @@ void ProfileWidget::calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& 
 
   // Get distance value index for lower and upper bound at cursor position
   int indexLowDist = 0;
-  QVector<double>::const_iterator lowDistIt = std::lower_bound(leg.distances.begin(),
-                                                               leg.distances.end(), distance);
+  QVector<double>::const_iterator lowDistIt = std::lower_bound(leg.distances.begin(), leg.distances.end(), distance);
   if(lowDistIt != leg.distances.end())
   {
     indexLowDist = static_cast<int>(std::distance(leg.distances.begin(), lowDistIt));
@@ -1908,8 +1907,7 @@ void ProfileWidget::calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& 
       indexLowDist = 0;
   }
   int indexUpperDist = 0;
-  QVector<double>::const_iterator upperDistIt = std::upper_bound(leg.distances.begin(),
-                                                                 leg.distances.end(), distance);
+  QVector<double>::const_iterator upperDistIt = std::upper_bound(leg.distances.begin(), leg.distances.end(), distance);
   if(upperDistIt != leg.distances.end())
   {
     indexUpperDist = static_cast<int>(std::distance(leg.distances.begin(), upperDistIt));

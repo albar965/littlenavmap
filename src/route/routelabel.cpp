@@ -199,7 +199,7 @@ void RouteLabel::buildHeaderAirports(atools::util::HtmlBuilder& html, bool widge
       // Add airports with links ==============================
       html.a(departureAirport, "lnm://showdeparture", ahtml::LINK_NO_UL | ahtml::BOLD);
       if(!departureParking.isEmpty())
-        html.text(tr(" pos. ")).a(departureParking, "lnm://showdepartureparking", ahtml::LINK_NO_UL | ahtml::BOLD);
+        html.text(tr(" / ")).a(departureParking, "lnm://showdepartureparking", ahtml::LINK_NO_UL | ahtml::BOLD);
 
       if(!destinationAirport.isEmpty() && route.getSizeWithoutAlternates() > 1)
         html.text(tr(" to ")).a(destinationAirport, "lnm://showdestination", ahtml::LINK_NO_UL | ahtml::BOLD);

@@ -425,10 +425,19 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
          )
       {
         // qDebug() << Q_FUNC_INFO << "special transition for leg" << index << procedureLeg;
-
-        // Use course and distance from last route leg to get to this point legs
-        courseTo = normalizeCourse(prevPos.angleDegTo(procedureLeg.line.getPos1()));
-        distanceTo = meterToNm(procedureLeg.line.getPos1().distanceMeterTo(prevPos));
+        const Pos& legPos = procedureLeg.line.getPos1();
+        if(procedureLeg.isAnyDeparture() && prevLeg->getDeparturePosition().isValid())
+        {
+          // First SID leg and previous is airport - use distance and angle from start position if valid
+          courseTo = normalizeCourse(prevLeg->getDeparturePosition().angleDegTo(legPos));
+          distanceTo = meterToNm(prevLeg->getDeparturePosition().distanceMeterTo(legPos));
+        }
+        else
+        {
+          // Use course and distance from last route leg to get to this point legs
+          courseTo = normalizeCourse(prevPos.angleDegTo(legPos));
+          distanceTo = meterToNm(prevPos.distanceMeterTo(legPos));
+        }
       }
       else
       {
@@ -571,6 +580,16 @@ QString RouteLeg::getDisplayText(int elideName) const
     texts.removeAll(QString());
     return texts.join(tr(" "));
   }
+}
+
+const Pos& RouteLeg::getDeparturePosition() const
+{
+  if(parking.isValid())
+    return parking.position;
+  else if(start.isValid())
+    return start.position;
+  else
+    return atools::geo::EMPTY_POS;
 }
 
 map::MapUserpointRoute RouteLeg::getUserpointRoute() const

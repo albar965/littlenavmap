@@ -96,7 +96,8 @@ float RouteAltitude::getAltitudeForDistance(float distanceToDest) const
     // Now search through the geometry to find a matching line (if more than one)
     const RouteAltitudeLeg& leg = value(idx);
 
-    auto itGeo = std::lower_bound(leg.geometry.constBegin(), leg.geometry.constEnd(), distFromStart, [](const QPointF& pt, float dist) -> bool {
+    auto itGeo = std::lower_bound(leg.geometry.constBegin(), leg.geometry.constEnd(), distFromStart, [](const QPointF& pt,
+                                                                                                        float dist) -> bool {
       // true if first is less than second, i.e. ordered before
       return pt.x() < dist;
     });
@@ -1525,7 +1526,15 @@ void RouteAltitude::fillGeometry()
 
         // Build simple line consisting of start and end - might receive TOD and/or TOC position later
         if(i > 0)
-          altLeg.line.append(route->value(i - 1).getPosition().alt(altLeg.y1()));
+        {
+          const RouteLeg& prevLeg = route->value(i - 1);
+          if(i == 1 && prevLeg.getDeparturePosition().isValid() && routeLeg.getProcedureLeg().isAnyDeparture())
+            // Use departure parking spot as start position for "proceeed to runway" if this is the start of an SID
+            altLeg.line.append(prevLeg.getDeparturePosition().alt(altLeg.y1()));
+          else
+            altLeg.line.append(route->value(i - 1).getPosition().alt(altLeg.y1()));
+        }
+
         altLeg.line.append(routeLeg.getPosition().alt(altLeg.y2()));
 
         if(!altLeg.isAnyProcedure())
@@ -1533,12 +1542,12 @@ void RouteAltitude::fillGeometry()
           altLeg.geoLine = altLeg.line;
       }
 
+      // Add TOD and TOC =======================
       if(altLeg.topOfClimb)
         altLeg.line.insert(1, route->getPositionAtDistance(distanceTopOfClimb).alt(cruiseAltitude));
 
       if(altLeg.topOfDescent)
-        altLeg.line.insert(altLeg.line.size() - 1,
-                           route->getPositionAtDistance(distanceTopOfDescent).alt(cruiseAltitude));
+        altLeg.line.insert(altLeg.line.size() - 1, route->getPositionAtDistance(distanceTopOfDescent).alt(cruiseAltitude));
     }
 
     if(!altLeg.line.hasAllValidPoints())

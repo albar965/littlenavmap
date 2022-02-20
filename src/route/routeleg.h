@@ -197,6 +197,9 @@ public:
     return start;
   }
 
+  /* Return start position of gate/parking/runway otherwise invalid */
+  const atools::geo::Pos& getDeparturePosition() const;
+
   /* Get VOR or empty object if not assigned. Use position.isValid to check for empty */
   const map::MapVor& getVor() const
   {
