@@ -770,13 +770,13 @@ void LogdataController::convertUserdata()
 
   int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_LOGBOOK_CONVERSION,
                                           tr("This will convert all userpoints of type "
-                                             "<code>Logbook</code> to logbook entries.<br/><br/>"
+                                             "\"Logbook\" to logbook entries.<br/><br/>"
                                              "This works best if you did not modify the field "
-                                             "<code>Description</code> in the userpoints and if "
+                                             "\"Description\" in the userpoints and if "
                                                "you did not insert entries manually.<br/><br/>"
                                                "Note that not all fields can be converted automatically.<br/><br/>"
                                                "The created log entries can be found by searching"
-                                               "for<br/><code>*Converted from userdata*</code><br/>"
+                                               "for<br/>\"*Converted from userdata*\"<br/>"
                                                "in the field &quot;Remarks&quot;.<br/><br/>"
                                                "Continue?"),
                                           tr("Do not &show this dialog again and run the conversion in the future."),
