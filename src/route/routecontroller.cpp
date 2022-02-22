@@ -3826,7 +3826,8 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
       {
         // Show dialog allowing the user to select a runway
         QString text = proc::procedureLegsText(legs, proc::PROCEDURE_NONE,
-                                               false /* narrow */, true /* includeRunway*/, false /* missedAsApproach*/);
+                                               false /* narrow */, true /* includeRunway*/, false /* missedAsApproach*/,
+                                               false /* transitionAsProcedure */);
         RunwaySelectionDialog runwaySelectionDialog(mainWindow, airportSim, sidStarRunways, text);
         if(runwaySelectionDialog.exec() == QDialog::Accepted)
           sidStarRunway = runwaySelectionDialog.getSelectedName();
@@ -4204,7 +4205,8 @@ void RouteController::updateTableModel()
       itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Alternate"));
     else if(leg.isAnyProcedure())
       itemRow[rcol::PROCEDURE] =
-        new QStandardItem(route.getProcedureLegText(leg.getProcedureType(), false /* includeRunway */, false /* missedAsApproach */));
+        new QStandardItem(route.getProcedureLegText(leg.getProcedureType(), false /* includeRunway */, false /* missedAsApproach */,
+                                                    true /* transitionAsProcedure */));
 
     // Airway or leg type and restriction ===========================================
     if(leg.isRoute())
@@ -4214,8 +4216,7 @@ void RouteController::updateTableModel()
 
       QStringList awname;
 
-      awname.append(airway.isValid() &&
-                    airway.isTrack() ? tr("Track %1").arg(leg.getAirwayName()) : leg.getAirwayName());
+      awname.append(airway.isValid() && airway.isTrack() ? tr("Track %1").arg(leg.getAirwayName()) : leg.getAirwayName());
 
       if(airway.isValid())
       {

@@ -3341,7 +3341,8 @@ void HtmlInfoBuilder::procedurePointText(const map::MapProcedurePoint& procPoint
 
   if(!procPoint.preview && route != nullptr)
     // Part of the route
-    header = route->getProcedureLegText(leg.mapType, true /* includeRunway */, false /* missedAsApproach */);
+    header =
+      route->getProcedureLegText(leg.mapType, true /* includeRunway */, false /* missedAsApproach */, false /* transitionAsProcedure */);
   else
     header = map::procedurePointText(procPoint);
 

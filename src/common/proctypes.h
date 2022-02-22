@@ -571,7 +571,7 @@ QDebug operator<<(QDebug out, const MapProcedureLegs& legs);
 /* Text describing procedure name and type. procType of related leg determines if
  * certain types like missed or transition are shown */
 QString procedureLegsText(const proc::MapProcedureLegs& legs, proc::MapProcedureTypes procType, bool narrow, bool includeRunway,
-                          bool missedAsApproach);
+                          bool missedAsApproach, bool transitionAsProcedure);
 QString procedureTypeText(proc::MapProcedureTypes mapType);
 QString procedureTypeText(const proc::MapProcedureLeg& leg);
 

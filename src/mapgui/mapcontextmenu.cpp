@@ -901,7 +901,9 @@ void MapContextMenu::insertDeleteRouteWaypointMenu(QMenu& menu)
           const map::MapProcedurePoint *procPt = base->asPtr<map::MapProcedurePoint>();
           if(procPt != nullptr)
           {
-            QString procName = route.getProcedureLegText(procPt->getLeg().mapType, false /* includeRunway */, true /* missedAsApproach */);
+            QString procName = route.getProcedureLegText(procPt->getLeg().mapType,
+                                                         false /* includeRunway */, true /* missedAsApproach */,
+                                                         false /* transitionAsProcedure */);
             text = tr("&Delete %1 from Flight Plan").arg(procName);
             icon = QIcon(":/littlenavmap/resources/icons/approach.svg");
             disable = false;
@@ -1171,7 +1173,8 @@ QString MapContextMenu::procedureName(const map::MapBase *base) const
     {
       const RouteLeg& leg = route.value(routeIndex);
       if(leg.isAnyProcedure())
-        return route.getProcedureLegText(leg.getProcedureType(), false /* includeRunway */, true /* missedAsApproach */);
+        return route.getProcedureLegText(leg.getProcedureType(),
+                                         false /* includeRunway */, true /* missedAsApproach */, false /* transitionAsProcedure */);
     }
   }
   return QString();

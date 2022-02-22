@@ -975,7 +975,7 @@ QString procedureTypeText(const proc::MapProcedureLeg& leg)
 }
 
 QString procedureLegsText(const proc::MapProcedureLegs& legs, proc::MapProcedureTypes procType, bool narrow, bool includeRunway,
-                          bool missedAsApproach)
+                          bool missedAsApproach, bool transitionAsProcedure)
 {
   QString procText;
 
@@ -988,19 +988,25 @@ QString procedureLegsText(const proc::MapProcedureLegs& legs, proc::MapProcedure
   {
     if(legs.mapType.testFlag(proc::PROCEDURE_APPROACH) || procType.testFlag(proc::PROCEDURE_MISSED))
     {
-      // Approach procedure or transition =================================================
-      procText = QObject::tr("%1%2%3 %4").
-                 // Add missed text if leg ist missed
-                 arg(narrow ? QString() :
-                     (procType.testFlag(proc::PROCEDURE_MISSED) && !missedAsApproach ?
-                      QObject::tr("Missed ") : QObject::tr("Approach "))).
-                 arg(legs.displayApproachType()).
-                 arg(legs.approachSuffix.isEmpty() ? QString() : (QObject::tr("-") + legs.approachSuffix)).
-                 arg(legs.approachFixIdent);
+      if(transitionAsProcedure && procType.testFlag(proc::PROCEDURE_TRANSITION))
+        // This leg is a transition leg and text "APPR via TRANS" is not desired
+        procText = QObject::tr("Transition %1").arg(legs.transitionFixIdent);
+      else
+      {
+        // Approach procedure or transition =================================================
+        procText = QObject::tr("%1%2%3 %4").
+                   // Add missed text if leg ist missed
+                   arg(narrow ? QString() :
+                       (procType.testFlag(proc::PROCEDURE_MISSED) && !missedAsApproach ?
+                        QObject::tr("Missed ") : QObject::tr("Approach "))).
+                   arg(legs.displayApproachType()).
+                   arg(legs.approachSuffix.isEmpty() ? QString() : (QObject::tr("-") + legs.approachSuffix)).
+                   arg(legs.approachFixIdent);
 
-      // Add transition text if type from related leg is a transitionn
-      if(procType.testFlag(proc::PROCEDURE_TRANSITION) && legs.mapType.testFlag(proc::PROCEDURE_TRANSITION))
-        procText.append(QObject::tr(" via %1").arg(legs.transitionFixIdent));
+        // Add transition text if type from related leg is a transitionn
+        if(procType.testFlag(proc::PROCEDURE_TRANSITION) && legs.mapType.testFlag(proc::PROCEDURE_TRANSITION))
+          procText.append(QObject::tr(" via %1").arg(legs.transitionFixIdent));
+      }
     }
     else
     {

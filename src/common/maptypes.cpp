@@ -2601,13 +2601,15 @@ const QString& MapProcedurePoint::getIdent() const
 QString procedurePointText(const MapProcedurePoint& procPoint)
 {
   return proc::procedureLegsText(*procPoint.legs, procPoint.getLeg().mapType,
-                                 false /* narrow */, true /* includeRunway*/, false /* missedAsApproach*/);
+                                 false /* narrow */, true /* includeRunway*/, false /* missedAsApproach*/,
+                                 false /* transitionAsProcedure */);
 }
 
 QString procedurePointTextShort(const MapProcedurePoint& procPoint)
 {
   return proc::procedureLegsText(*procPoint.legs, procPoint.getLeg().mapType,
-                                 true /* narrow */, true /* includeRunway*/, false /* missedAsApproach*/);
+                                 true /* narrow */, true /* includeRunway*/, false /* missedAsApproach*/,
+                                 false /* transitionAsProcedure */);
 }
 
 const QIcon& ilsIcon(const MapIls& ils)

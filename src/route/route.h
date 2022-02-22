@@ -646,7 +646,7 @@ public:
    * @param includeRunway Include runway information.
    * @param missedAsApproach Show "Approach" for missed legs instead of "Missed".
    */
-  QString getProcedureLegText(proc::MapProcedureTypes mapType, bool includeRunway, bool missedAsApproach) const;
+  QString getProcedureLegText(proc::MapProcedureTypes mapType, bool includeRunway, bool missedAsApproach, bool transitionAsProcedure) const;
 
   /* Assign index and pointer to flight plan for all objects and also update all procedure and alternate offsets */
   void updateIndicesAndOffsets();

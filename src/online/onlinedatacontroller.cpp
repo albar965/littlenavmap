@@ -466,8 +466,7 @@ LineString *OnlinedataController::geometryCallback(const QString& callsign, atoo
 
   // Try to get airspace boundary by name vs. callsign if set in options
   if(flags2 & opts2::ONLINE_AIRSPACE_BY_NAME)
-    lineString = NavApp::getAirspaceController()->
-                 getOnlineAirspaceGeoByName(callsign, atools::fs::online::facilityTypeText(type));
+    lineString = NavApp::getAirspaceController()->getOnlineAirspaceGeoByName(callsign, atools::fs::online::facilityTypeText(type));
 
   // Try to get airspace boundary by file name vs. callsign if set in options
   if(flags2 & opts2::ONLINE_AIRSPACE_BY_FILE)

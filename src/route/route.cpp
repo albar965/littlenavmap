@@ -3272,7 +3272,8 @@ float Route::getDistanceToFlightPlan() const
     return map::INVALID_DISTANCE_VALUE;
 }
 
-QString Route::getProcedureLegText(proc::MapProcedureTypes mapType, bool includeRunway, bool missedAsApproach) const
+QString Route::getProcedureLegText(proc::MapProcedureTypes mapType, bool includeRunway, bool missedAsApproach,
+                                   bool transitionAsProcedure) const
 {
   const proc::MapProcedureLegs *procLegs = nullptr;
 
@@ -3284,7 +3285,7 @@ QString Route::getProcedureLegText(proc::MapProcedureTypes mapType, bool include
     procLegs = &approachLegs;
 
   if(procLegs != nullptr)
-    return proc::procedureLegsText(*procLegs, mapType, false /* narrow */, includeRunway, missedAsApproach);
+    return proc::procedureLegsText(*procLegs, mapType, false /* narrow */, includeRunway, missedAsApproach, transitionAsProcedure);
   else
     return QString();
 }
