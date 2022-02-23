@@ -1541,9 +1541,10 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
       routeProcIdMap.insert(wp.getRef());
 
       paintWaypoint(x, y, wp, false);
+
+      if(drawText)
+        paintWaypointText(x, y, wp, drawTextDetails, true /* draw as route */, &texts);
     }
-    if(drawText)
-      paintWaypointText(x, y, wp, drawTextDetails, true /* draw as route */, &texts);
   }
   else if(!navaids.vors.isEmpty() && wToSBuf(navaids.vors.constFirst().position, x, y, margins))
   {
@@ -1557,9 +1558,10 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 
       symbolSize = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSize());
       paintVor(x, y, vor, false);
+
+      if(drawText)
+        paintVorText(x, y, vor, drawTextDetails, true /* draw as route */, &texts);
     }
-    if(drawText)
-      paintVorText(x, y, vor, drawTextDetails, true /* draw as route */, &texts);
   }
   else if(!navaids.ndbs.isEmpty() && wToSBuf(navaids.ndbs.constFirst().position, x, y, margins))
   {
@@ -1573,9 +1575,10 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
       routeProcIdMap.insert(ndb.getRef());
 
       paintNdb(x, y, ndb, false);
+
+      if(drawText)
+        paintNdbText(x, y, ndb, drawTextDetails, true /* draw as route */, &texts);
     }
-    if(drawText)
-      paintNdbText(x, y, ndb, drawTextDetails, true /* draw as route */, &texts);
   }
   else if(!navaids.ils.isEmpty() && wToSBuf(navaids.ils.constFirst().position, x, y, margins))
   {

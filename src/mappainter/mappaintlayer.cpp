@@ -386,8 +386,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
             context.routeProcIdMap.insert(map::MapObjectRef(routeLeg.getId(), type));
         }
 
-        // Add procedure navaids and recommended procedure navaids ==============
-        for(int i = passedRouteLeg; i < route->size(); i++)
+        // Add procedure navaids beginning from previous leg ==============
+        for(int i = passedRouteLeg - 1; i < route->size(); i++)
         {
           const RouteLeg& routeLeg = route->value(i);
           map::MapTypes type = routeLeg.getMapObjectType();
@@ -403,7 +403,19 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
                 context.routeProcIdMap.insert({navaids.vors.constFirst().id, map::VOR});
               if(navaids.hasNdb())
                 context.routeProcIdMap.insert({navaids.ndbs.constFirst().id, map::NDB});
+            }
+          }
+        } // for(int i = passedRouteLeg -1 ; i < route->size(); i++)
 
+        // Add recommended procedure navaids beginning with this leg ==============
+        for(int i = passedRouteLeg; i < route->size(); i++)
+        {
+          const RouteLeg& routeLeg = route->value(i);
+          map::MapTypes type = routeLeg.getMapObjectType();
+          if(type == map::PROCEDURE)
+          {
+            if(!routeLeg.getProcedureLeg().isMissed() || context.objectTypes & map::MISSED_APPROACH)
+            {
               // Procedure recommended navaids drawn by route code
               const map::MapResult& recNavaids = routeLeg.getProcedureLeg().recNavaids;
               if(recNavaids.hasWaypoints())
