@@ -4280,8 +4280,10 @@ void RouteController::updateTableModel()
 
     // Course =====================
     bool afterArrivalAirport = route.isAirportAfterArrival(i);
-    if(row > 0 && !afterArrivalAirport && leg.getDistanceTo() < map::INVALID_DISTANCE_VALUE && leg.getDistanceTo() > 0.f &&
-       !leg.noCourseDisplay())
+    bool parkingToDeparture = route.hasAnySidProcedure() && i == 0;
+
+    if(row > 0 && !afterArrivalAirport && !parkingToDeparture && leg.getDistanceTo() < map::INVALID_DISTANCE_VALUE &&
+       leg.getDistanceTo() > 0.f && !leg.noCourseDisplay())
     {
       if(leg.getCourseToMag() < map::INVALID_COURSE_VALUE)
         itemRow[rcol::COURSE] = new QStandardItem(QLocale().toString(leg.getCourseToMag(), 'f', 0));
