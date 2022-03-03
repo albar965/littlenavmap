@@ -8291,7 +8291,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/aircraft.svg</normaloff>:/littlenavmap/resources/icons/aircraft.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Aircraft</string>
+    <string>Show User &amp;Aircraft</string>
    </property>
    <property name="toolTip">
     <string>Show simulator aircraft position and data on map</string>
@@ -8339,7 +8339,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/aircrafttrail.svg</normaloff>:/littlenavmap/resources/icons/aircrafttrail.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Aircraft &amp;Trail</string>
+    <string>Show User Aircraft &amp;Trail</string>
    </property>
    <property name="toolTip">
     <string>Show simulator aircraft trail on map</string>
