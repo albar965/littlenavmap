@@ -329,8 +329,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->radioButtonCacheUseOnlineElevation,
      ui->lineEditCacheOfflineDataPath,
      ui->lineEditOptionsRouteFilename,
-     ui->lineEditCacheUserAirspacePath,
-     ui->lineEditCacheUserAirspaceExtensions,
 
      ui->spinBoxOptionsGuiInfoText,
      ui->spinBoxOptionsGuiAircraftPerf,
@@ -566,9 +564,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->lineEditCacheOfflineDataPath, &QLineEdit::textEdited, this, &OptionsDialog::updateCacheElevationStates);
   connect(ui->pushButtonCacheOfflineDataSelect, &QPushButton::clicked, this, &OptionsDialog::offlineDataSelectClicked);
 
-  connect(ui->pushButtonCacheUserAirspacePathSelect, &QPushButton::clicked, this, &OptionsDialog::userAirspacePathSelectClicked);
-  connect(ui->lineEditCacheUserAirspacePath, &QLineEdit::textEdited, this, &OptionsDialog::updateCacheUserAirspaceStates);
-
   connect(ui->pushButtonOptionsStartupCheckUpdate, &QPushButton::clicked, this, &OptionsDialog::checkUpdateClicked);
 
   connect(ui->checkBoxOptionsMapEmptyAirports, &QCheckBox::toggled, this, &OptionsDialog::mapEmptyAirportsClicked);
@@ -641,7 +636,6 @@ void OptionsDialog::open()
 
   optionDataToWidgets(OptionData::instanceInternal());
   updateCacheElevationStates();
-  updateCacheUserAirspaceStates();
   updateDatabaseButtonState();
   updateNavOptions();
   updateOnlineWidgetStatus();
@@ -938,12 +932,6 @@ QString OptionsDialog::getLocale()
   return Settings::instance().valueStr(lnm::OPTIONS_DIALOG_LANGUAGE, QLocale().name());
 }
 
-QString OptionsDialog::selectCacheUserAirspace()
-{
-  userAirspacePathSelectClicked();
-  return ui->lineEditCacheUserAirspacePath->text();
-}
-
 void OptionsDialog::updateWidgetStates()
 {
   updateWhileFlyingWidgets(false);
@@ -954,7 +942,6 @@ void OptionsDialog::updateWidgetStates()
   eastWestRuleClicked();
   mapEmptyAirportsClicked(false);
   updateCacheElevationStates();
-  updateCacheUserAirspaceStates();
   updateDatabaseButtonState();
   updateNavOptions();
   updateOnlineWidgetStatus();
@@ -1664,8 +1651,6 @@ void OptionsDialog::widgetsToOptionData()
 
   data.flightplanPattern = ui->lineEditOptionsRouteFilename->text();
   data.cacheOfflineElevationPath = ui->lineEditCacheOfflineDataPath->text();
-  data.cacheUserAirspacePath = ui->lineEditCacheUserAirspacePath->text();
-  data.cacheUserAirspaceExtensions = ui->lineEditCacheUserAirspaceExtensions->text();
 
   data.displayTooltipOptions.setFlag(optsd::TOOLTIP_VERBOSE, ui->checkBoxOptionsMapTooltipVerbose->isChecked());
 
@@ -1945,8 +1930,6 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
 
   ui->lineEditOptionsRouteFilename->setText(data.flightplanPattern);
   ui->lineEditCacheOfflineDataPath->setText(data.cacheOfflineElevationPath);
-  ui->lineEditCacheUserAirspacePath->setText(data.cacheUserAirspacePath);
-  ui->lineEditCacheUserAirspaceExtensions->setText(data.cacheUserAirspaceExtensions);
 
   ui->checkBoxOptionsMapTooltipVerbose->setChecked(data.displayTooltipOptions.testFlag(optsd::TOOLTIP_VERBOSE));
   ui->checkBoxOptionsMapTooltipUserAircraft->setChecked(data.displayTooltipOptions.testFlag(optsd::TOOLTIP_AIRCRAFT_USER));
@@ -2263,44 +2246,6 @@ void OptionsDialog::offlineDataSelectClicked()
     ui->lineEditCacheOfflineDataPath->setText(QDir::toNativeSeparators(path));
 
   updateCacheElevationStates();
-}
-
-void OptionsDialog::userAirspacePathSelectClicked()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  QString defaultPath = ui->lineEditCacheUserAirspacePath->text();
-
-  if(defaultPath.isEmpty())
-    defaultPath = atools::documentsDir();
-
-  QString path = atools::gui::Dialog(mainWindow).openDirectoryDialog(
-    tr("Select Directory for User Airspaces"), lnm::DATABASE_USER_AIRSPACE_PATH, defaultPath);
-
-  if(!path.isEmpty())
-  {
-    ui->lineEditCacheUserAirspacePath->setText(QDir::toNativeSeparators(path));
-    OptionData::instanceInternal().cacheUserAirspacePath = ui->lineEditCacheUserAirspacePath->text();
-  }
-
-  updateCacheUserAirspaceStates();
-}
-
-void OptionsDialog::updateCacheUserAirspaceStates()
-{
-  const QString& path = ui->lineEditCacheUserAirspacePath->text();
-  if(!path.isEmpty())
-  {
-    QFileInfo fileinfo(path);
-    if(!fileinfo.exists())
-      ui->labelCacheUserAirspacePathStatus->setText(HtmlBuilder::errorMessage(tr("Directory does not exist.")));
-    else if(!fileinfo.isDir())
-      ui->labelCacheUserAirspacePathStatus->setText(HtmlBuilder::errorMessage(tr(("Is not a directory."))));
-    else
-      ui->labelCacheUserAirspacePathStatus->setText(tr("Directory is valid."));
-  }
-  else
-    ui->labelCacheUserAirspacePathStatus->setText(tr("No directory selected."));
 }
 
 void OptionsDialog::updateCacheElevationStates()

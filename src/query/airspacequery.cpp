@@ -26,6 +26,7 @@
 #include "common/maptools.h"
 #include "settings/settings.h"
 #include "db/databasemanager.h"
+#include "options/optiondata.h"
 
 #include <QFileInfo>
 
@@ -321,7 +322,6 @@ LineString *AirspaceQuery::getAirspaceGeometryByName(const QString& callsign, co
 
       // Check if the airspace name matches the callsign
       airspaceGeoByNameQuery->bindValue(":name", callsign);
-      airspaceGeoByNameQuery->bindValue(":type", "%"); // Not used yet
       airspaceGeoByNameQuery->exec();
 
       if(airspaceGeoByNameQuery->next())
@@ -329,6 +329,7 @@ LineString *AirspaceQuery::getAirspaceGeometryByName(const QString& callsign, co
         atools::fs::common::BinaryGeometry geo(airspaceGeoByNameQuery->value("geometry").toByteArray());
         geo.swapGeometry(*lineString);
       }
+
       airspaceGeoByNameQuery->finish();
       onlineCenterGeoCache.insert(callsign, lineString);
       if(!lineString->isEmpty())
@@ -457,7 +458,8 @@ void AirspaceQuery::initQueries()
   if(!(source & map::AIRSPACE_SRC_ONLINE))
   {
     airspaceGeoByNameQuery = new SqlQuery(db);
-    airspaceGeoByNameQuery->prepare("select geometry from " + table + " where name = :name and type like :type");
+
+    airspaceGeoByNameQuery->prepare("select geometry from " + table + " where name like :name");
 
     airspaceGeoByFileQuery = new SqlQuery(db);
     airspaceGeoByFileQuery->prepare("select b.geometry, f.filepath from " + table +

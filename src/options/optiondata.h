@@ -1134,16 +1134,6 @@ public:
     return weatherNoaaWindBaseUrl;
   }
 
-  const QString& getCacheUserAirspacePath() const
-  {
-    return cacheUserAirspacePath;
-  }
-
-  const QString& getCacheUserAirspaceExtensions() const
-  {
-    return cacheUserAirspaceExtensions;
-  }
-
   int getDisplayTransparencyMora() const
   {
     return displayTransparencyMora;
@@ -1182,29 +1172,7 @@ public:
 
   /* User set online refresh rate in seconds for custom configurations or stock networks in seconds
    * or -1 for auto value fetched from whazzup or JSON */
-  int getOnlineReload(opts::OnlineNetwork network) const
-  {
-    switch(network)
-    {
-      break;
-      case opts::ONLINE_VATSIM:
-        return onlineVatsimReload;
-
-      case opts::ONLINE_IVAO:
-        return onlineIvaoReload;
-
-      case opts::ONLINE_PILOTEDGE:
-        return onlinePilotEdgeReload;
-
-      case opts::ONLINE_CUSTOM_STATUS:
-      case opts::ONLINE_CUSTOM:
-        return onlineCustomReload;
-
-      case opts::ONLINE_NONE:
-        break;
-    }
-    return 180;
-  }
+  int getOnlineReload(opts::OnlineNetwork network) const;
 
   /* Seconds */
   int getOnlineVatsimTransceiverReload() const
@@ -1324,7 +1292,7 @@ private:
   /* X-Plane GRIB file or NOAA GRIB base URL */
   QString weatherXplaneWind;
 
-  QString cacheOfflineElevationPath, cacheUserAirspacePath, cacheUserAirspaceExtensions = "*.txt";
+  QString cacheOfflineElevationPath;
 
   // Initialized by widget
   QString flightplanPattern;

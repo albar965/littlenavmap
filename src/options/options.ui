@@ -6621,98 +6621,6 @@ Source data has many errors.</string>
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_15">
-              <property name="title">
-               <string>User Airspaces</string>
-              </property>
-              <layout class="QGridLayout" name="gridLayout_30">
-               <property name="leftMargin">
-                <number>2</number>
-               </property>
-               <property name="topMargin">
-                <number>2</number>
-               </property>
-               <property name="rightMargin">
-                <number>2</number>
-               </property>
-               <property name="bottomMargin">
-                <number>2</number>
-               </property>
-               <property name="spacing">
-                <number>2</number>
-               </property>
-               <item row="0" column="0">
-                <widget class="QLabel" name="labelCacheUserAirspacePath">
-                 <property name="text">
-                  <string>&amp;User Airspace Base Directory:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>lineEditCacheUserAirspacePath</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="2">
-                <widget class="QPushButton" name="pushButtonCacheUserAirspacePathSelect">
-                 <property name="text">
-                  <string>&amp;Select ...</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="0" column="1">
-                <widget class="QLineEdit" name="lineEditCacheUserAirspacePath">
-                 <property name="toolTip">
-                  <string>Select the directoy that contains the user airspace text files.
-Little Navmap can currently only read OpenAIR files.</string>
-                 </property>
-                 <property name="placeholderText">
-                  <string>No directory for user airspaces selected.</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="1">
-                <widget class="QLineEdit" name="lineEditCacheUserAirspaceExtensions">
-                 <property name="toolTip">
-                  <string>Space separated list of file extension to read as OpenAIR airspace files.</string>
-                 </property>
-                 <property name="text">
-                  <string notr="true">*.txt</string>
-                 </property>
-                 <property name="placeholderText">
-                  <string/>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="0">
-                <widget class="QLabel" name="labelCacheUserAirspaceExtensions">
-                 <property name="toolTip">
-                  <string>Files with these extensions will be loaded as airspaces.
-Currently only OpenAir is supported (*.txt). </string>
-                 </property>
-                 <property name="text">
-                  <string>File &amp;extensions:</string>
-                 </property>
-                 <property name="buddy">
-                  <cstring>lineEditCacheUserAirspaceExtensions</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="1" colspan="2">
-                <widget class="QLabel" name="labelCacheUserAirspacePathStatus">
-                 <property name="text">
-                  <string>Valid</string>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="margin">
-                  <number>5</number>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
              <spacer name="verticalSpacer_16">
               <property name="orientation">
                <enum>Qt::Vertical</enum>
@@ -7165,9 +7073,6 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>radioButtonCacheUseOffineElevation</tabstop>
   <tabstop>lineEditCacheOfflineDataPath</tabstop>
   <tabstop>pushButtonCacheOfflineDataSelect</tabstop>
-  <tabstop>lineEditCacheUserAirspacePath</tabstop>
-  <tabstop>pushButtonCacheUserAirspacePathSelect</tabstop>
-  <tabstop>lineEditCacheUserAirspaceExtensions</tabstop>
   <tabstop>scrollArea_16</tabstop>
   <tabstop>listWidgetOptionsDatabaseExclude</tabstop>
   <tabstop>pushButtonOptionsDatabaseAddExcludeDir</tabstop>

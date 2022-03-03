@@ -122,7 +122,8 @@ const QLatin1String DATABASE_SCENERYCONFIG("Database/SceneryConfig");
 const QLatin1String DATABASE_SIMULATOR("Database/Simulator");
 const QLatin1String DATABASE_LOAD_INACTIVE("Database/LoadInactive");
 const QLatin1String DATABASE_LOAD_ADDONXML("Database/LoadAddOnXml");
-const QLatin1String DATABASE_USER_AIRSPACE_PATH("Database/UserAirspacePath");
+const QLatin1String DATABASE_USER_AIRSPACE_PATH("Database/UserAirspacePathFileDialog");
+const QLatin1String DATABASE_AIRSPACECONFIG("Database/AirspaceConfig");
 
 const QLatin1String EXPORT_FILEDIALOG("Export/FileDialog");
 const QLatin1String INFOWINDOW_CURRENTMAPOBJECTS("InfoWindow/CurrentMapObjects");

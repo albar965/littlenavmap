@@ -81,8 +81,6 @@ public:
   /* Get locale name like "en_US" or "de" directly from settings file */
   static QString getLocale();
 
-  QString selectCacheUserAirspace();
-
   /* Test if a public network is used with a too low update rate */
   void checkOfficialOnlineUrls();
 
@@ -195,9 +193,7 @@ private:
   void updateGuiFontLabel();
   void updateButtonColors();
   void updateCacheElevationStates();
-  void updateCacheUserAirspaceStates();
   void offlineDataSelectClicked();
-  void userAirspacePathSelectClicked();
   void checkUpdateClicked();
   void mapEmptyAirportsClicked(bool state);
   int displayOnlineRangeToData(const QSpinBox *spinBox, const QCheckBox *checkButton);
