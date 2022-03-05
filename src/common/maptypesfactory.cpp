@@ -159,7 +159,8 @@ void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& 
     ap.longestRunwayLength = record.valueInt("longest_runway_length");
     ap.longestRunwayHeading = static_cast<int>(std::round(record.valueFloat("longest_runway_heading")));
     ap.magvar = record.valueFloat("mag_var");
-    ap.transitionAltitude = record.valueInt("transition_altitude", 0);
+    ap.transitionAltitude = record.valueFloat("transition_altitude", 0.f);
+    ap.transitionLevel = record.valueFloat("transition_level", 0.f);
 
     if(record.contains("flatten"))
       ap.flatten = record.isNull("flatten") ? -1 : record.valueInt("flatten");
@@ -629,7 +630,7 @@ void MapTypesFactory::fillHolding(const atools::sql::SqlRecord& record, map::Map
   //// Calculate variance if not given except for VOR, VORTAC, VORDME and TACAN
   // holding.magvar = NavApp::getMagVar(holding.position);
   // else
-  holding.magvar = record.valueFloat("mag_var");   // Magnetic variance in degree < 0 for West and > 0 for East
+  holding.magvar = record.valueFloat("mag_var"); // Magnetic variance in degree < 0 for West and > 0 for East
 
   holding.courseTrue = atools::geo::normalizeCourse(record.valueFloat("course") + holding.magvar);
 

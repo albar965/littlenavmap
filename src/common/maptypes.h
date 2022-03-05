@@ -374,8 +374,14 @@ struct MapAirport
            name, /* Full name */
            region; /* Two letter region code */
 
-  int longestRunwayLength = 0, longestRunwayHeading = 0, transitionAltitude = 0, rating = -1,
+  int longestRunwayLength = 0, longestRunwayHeading = 0, rating = -1,
       flatten; /* X-Plane flatten flag. -1 if not set */
+
+  float transitionAltitude = 0.f, /* Feet. Transition Altitude is the altitude when flying where you are required to change from a
+                                   * local QNH to the standard of 1013.25 hectopascals or 29.92 inches of mercury */
+
+        transitionLevel = 0.f; /* Feet. Transition Level is the altitude when flying where you are required to change from
+                                * standard of 1013 back to the local QNH. This is above the Transition Altitude. */
 
   map::MapAirportType type; /* 1 Land airport, 16 Seaplane base, 17 Heliport. X-Plane only. -1 if not set. */
 

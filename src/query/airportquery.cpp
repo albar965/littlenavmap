@@ -1055,6 +1055,8 @@ QStringList AirportQuery::airportColumns(const atools::sql::SqlDatabase *db)
     airportQueryBase.append("is_3d");
   if(aprec.contains("transition_altitude"))
     airportQueryBase.append("transition_altitude");
+  if(aprec.contains("transition_level"))
+    airportQueryBase.append("transition_level");
   if(aprec.contains("type"))
     airportQueryBase.append("type");
   return airportQueryBase;

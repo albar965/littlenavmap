@@ -239,16 +239,17 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(info)
   {
     // Try transition altitude from nav database
-    float transitionAltitude = 0.f;
-    map::MapAirport navAirport = mapQuery->getAirportNav(airport);
-    if(navAirport.isValid() && navAirport.transitionAltitude > 0)
-      transitionAltitude = navAirport.transitionAltitude;
-    else if(airport.transitionAltitude > 0)
-      // try from simulator database
-      transitionAltitude = airport.transitionAltitude;
-
-    if(transitionAltitude > 0)
+    float transitionAltitude = 0.f, transitionLevel = 0.f;
+    mapQuery->getAirportTransitionAltiudeAndLevel(airport, transitionAltitude, transitionLevel);
+    if(transitionAltitude > 0.f)
+      // Transition Altitude is the altitude when flying where you are required to change from a
+      // local QNH to the standard of 1013.25 hectopascals or 29.92 inches of mercury
       html.row2(tr("Transition altitude:"), Unit::altFeet(transitionAltitude));
+    if(transitionLevel > 0.f)
+      // Transition Level is the altitude when flying where you are required to change from
+      // standard of 1013 back to the local QNH. This is above the Transition Altitude.
+      html.row2(tr("Transition level:"), tr("%1 (FL%2)").
+                arg(Unit::altFeet(transitionLevel)).arg(transitionLevel / 100.f, 3, 'f', 0, QChar('0')));
 
     // Sunrise and sunset ===========================
     QDateTime datetime =
@@ -1661,9 +1662,20 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
     if(!print)
       airportTitle(airport, html, -1);
 
-    map::MapAirport navAirport = mapWidget->getMapQuery()->getAirportNav(airport);
-    if(navAirport.isValid() && navAirport.transitionAltitude > 0)
-      html.br().br().b(tr("Transition altitude: ")).text(Unit::altFeet(navAirport.transitionAltitude));
+    MapQuery *mapQuery = mapWidget->getMapQuery();
+
+    float transitionAltitude = 0.f, transitionLevel = 0.f;
+    mapQuery->getAirportTransitionAltiudeAndLevel(airport, transitionAltitude, transitionLevel);
+
+    QStringList transitionStr;
+    if(transitionAltitude > 0.f)
+      transitionStr.append(tr("Altitude %1").arg(Unit::altFeet(transitionAltitude)));
+    if(transitionLevel > 0.f)
+      transitionStr.append(tr("Level %1 (FL%2)").
+                           arg(Unit::altFeet(transitionLevel)).arg(transitionLevel / 100.f, 3, 'f', 0, QChar('0')));
+
+    if(!transitionStr.isEmpty())
+      html.br().br().b(tr("Transition: ")).text(transitionStr.join(tr(", ")));
 
     optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
 

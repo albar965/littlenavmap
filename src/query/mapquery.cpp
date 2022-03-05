@@ -92,7 +92,7 @@ MapQuery::~MapQuery()
   delete mapTypesFactory;
 }
 
-bool MapQuery::hasProcedures(const map::MapAirport& airport)
+bool MapQuery::hasProcedures(const map::MapAirport& airport) const
 {
   MapAirport airportNav = getAirportNav(airport);
   if(airportNav.isValid())
@@ -101,7 +101,7 @@ bool MapQuery::hasProcedures(const map::MapAirport& airport)
   return false;
 }
 
-bool MapQuery::hasArrivalProcedures(const map::MapAirport& airport)
+bool MapQuery::hasArrivalProcedures(const map::MapAirport& airport) const
 {
   MapAirport airportNav = getAirportNav(airport);
   if(airportNav.isValid())
@@ -110,7 +110,7 @@ bool MapQuery::hasArrivalProcedures(const map::MapAirport& airport)
   return false;
 }
 
-bool MapQuery::hasDepartureProcedures(const map::MapAirport& airport)
+bool MapQuery::hasDepartureProcedures(const map::MapAirport& airport) const
 {
   MapAirport airportNav = getAirportNav(airport);
   if(airportNav.isValid())
@@ -119,7 +119,7 @@ bool MapQuery::hasDepartureProcedures(const map::MapAirport& airport)
   return false;
 }
 
-map::MapAirport MapQuery::getAirportSim(const map::MapAirport& airport)
+map::MapAirport MapQuery::getAirportSim(const map::MapAirport& airport) const
 {
   if(airport.navdata)
   {
@@ -130,7 +130,7 @@ map::MapAirport MapQuery::getAirportSim(const map::MapAirport& airport)
   return airport;
 }
 
-map::MapAirport MapQuery::getAirportNav(const map::MapAirport& airport)
+map::MapAirport MapQuery::getAirportNav(const map::MapAirport& airport) const
 {
   if(!airport.navdata)
   {
@@ -141,19 +141,37 @@ map::MapAirport MapQuery::getAirportNav(const map::MapAirport& airport)
   return airport;
 }
 
-void MapQuery::getAirportSimReplace(map::MapAirport& airport)
+void MapQuery::getAirportSimReplace(map::MapAirport& airport) const
 {
   if(airport.navdata)
     NavApp::getAirportQuerySim()->getAirportFuzzy(airport, airport);
 }
 
-void MapQuery::getAirportNavReplace(map::MapAirport& airport)
+void MapQuery::getAirportNavReplace(map::MapAirport& airport) const
 {
   if(!airport.navdata)
     NavApp::getAirportQueryNav()->getAirportFuzzy(airport, airport);
 }
 
-void MapQuery::getVorForWaypoint(map::MapVor& vor, int waypointId)
+void MapQuery::getAirportTransitionAltiudeAndLevel(const map::MapAirport& airport, float& transitionAltitude, float& transitionLevel) const
+{
+  map::MapAirport sim(getAirportSim(airport)), nav(getAirportNav(airport));
+  transitionAltitude = transitionLevel = 0.f;
+
+  if(sim.isValid() && sim.transitionAltitude > 0.f)
+    transitionAltitude = sim.transitionAltitude;
+  else if(nav.isValid() && transitionAltitude > 0.f)
+    // try from simulator database
+    transitionAltitude = nav.transitionAltitude;
+
+  if(sim.isValid() && sim.transitionLevel > 0.f)
+    transitionLevel = sim.transitionLevel;
+  else if(nav.isValid() && nav.transitionLevel > 0.f)
+    // try from simulator database
+    transitionLevel = nav.transitionLevel;
+}
+
+void MapQuery::getVorForWaypoint(map::MapVor& vor, int waypointId) const
 {
   vorByWaypointIdQuery->bindValue(":id", waypointId);
   vorByWaypointIdQuery->exec();
@@ -162,7 +180,7 @@ void MapQuery::getVorForWaypoint(map::MapVor& vor, int waypointId)
   vorByWaypointIdQuery->finish();
 }
 
-void MapQuery::getNdbForWaypoint(map::MapNdb& ndb, int waypointId)
+void MapQuery::getNdbForWaypoint(map::MapNdb& ndb, int waypointId) const
 {
   ndbByWaypointIdQuery->bindValue(":id", waypointId);
   ndbByWaypointIdQuery->exec();
@@ -171,7 +189,7 @@ void MapQuery::getNdbForWaypoint(map::MapNdb& ndb, int waypointId)
   ndbByWaypointIdQuery->finish();
 }
 
-void MapQuery::getVorNearest(map::MapVor& vor, const atools::geo::Pos& pos)
+void MapQuery::getVorNearest(map::MapVor& vor, const atools::geo::Pos& pos) const
 {
   vorNearestQuery->bindValue(":lonx", pos.getLonX());
   vorNearestQuery->bindValue(":laty", pos.getLatY());
@@ -181,7 +199,7 @@ void MapQuery::getVorNearest(map::MapVor& vor, const atools::geo::Pos& pos)
   vorNearestQuery->finish();
 }
 
-void MapQuery::getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos)
+void MapQuery::getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos) const
 {
   ndbNearestQuery->bindValue(":lonx", pos.getLonX());
   ndbNearestQuery->bindValue(":laty", pos.getLatY());
@@ -280,20 +298,21 @@ map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float dist
 
 void MapQuery::getMapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident, const QString& region,
                                    const QString& airport, const Pos& sortByDistancePos, float maxDistanceMeter,
-                                   bool airportFromNavDatabase, map::AirportQueryFlags flags)
+                                   bool airportFromNavDatabase, map::AirportQueryFlags flags) const
 {
   mapObjectByIdentInternal(result, type, ident, region, airport, sortByDistancePos, maxDistanceMeter, airportFromNavDatabase, flags);
 }
 
 void MapQuery::getMapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident,
-                                   const QString& region, const QString& airport, bool airportFromNavDatabase, map::AirportQueryFlags flags)
+                                   const QString& region, const QString& airport, bool airportFromNavDatabase,
+                                   map::AirportQueryFlags flags) const
 {
   mapObjectByIdentInternal(result, type, ident, region, airport, EMPTY_POS, map::INVALID_DISTANCE_VALUE, airportFromNavDatabase, flags);
 }
 
 void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes type, const QString& ident,
                                         const QString& region, const QString& airport, const Pos& sortByDistancePos,
-                                        float maxDistanceMeter, bool airportFromNavDatabase, map::AirportQueryFlags flags)
+                                        float maxDistanceMeter, bool airportFromNavDatabase, map::AirportQueryFlags flags) const
 {
   if(type & map::AIRPORT)
   {
@@ -401,7 +420,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
 }
 
 void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map::MapAirspaceSources src, int id,
-                                bool airportFromNavDatabase)
+                                bool airportFromNavDatabase) const
 {
   if(type == map::AIRPORT)
   {
@@ -487,7 +506,7 @@ void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map:
   }
 }
 
-map::MapVor MapQuery::getVorById(int id)
+map::MapVor MapQuery::getVorById(int id) const
 {
   MapVor vor;
   vorByIdQuery->bindValue(":id", id);
@@ -498,7 +517,7 @@ map::MapVor MapQuery::getVorById(int id)
   return vor;
 }
 
-map::MapNdb MapQuery::getNdbById(int id)
+map::MapNdb MapQuery::getNdbById(int id) const
 {
   MapNdb ndb;
   ndbByIdQuery->bindValue(":id", id);
@@ -509,7 +528,7 @@ map::MapNdb MapQuery::getNdbById(int id)
   return ndb;
 }
 
-map::MapIls MapQuery::getIlsById(int id)
+map::MapIls MapQuery::getIlsById(int id) const
 {
   MapIls ils;
   ilsByIdQuery->bindValue(":id", id);
@@ -520,7 +539,7 @@ map::MapIls MapQuery::getIlsById(int id)
   return ils;
 }
 
-map::MapAirportMsa MapQuery::getAirportMsaById(int id)
+map::MapAirportMsa MapQuery::getAirportMsaById(int id) const
 {
   MapAirportMsa msa;
   if(airportMsaByIdQuery != nullptr)
@@ -534,7 +553,7 @@ map::MapAirportMsa MapQuery::getAirportMsaById(int id)
   return msa;
 }
 
-map::MapHolding MapQuery::getHoldingById(int id)
+map::MapHolding MapQuery::getHoldingById(int id) const
 {
   MapHolding holding;
   if(holdingByIdQuery != nullptr)
@@ -548,7 +567,7 @@ map::MapHolding MapQuery::getHoldingById(int id)
   return holding;
 }
 
-QVector<map::MapIls> MapQuery::getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway)
+QVector<map::MapIls> MapQuery::getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway) const
 {
   QVector<MapIls> ils;
   for(const QString& rname : atools::fs::util::runwayNameZeroPrefixVariants(runway))
@@ -560,7 +579,7 @@ QVector<map::MapIls> MapQuery::getIlsByAirportAndRunway(const QString& airportId
   return ils;
 }
 
-QVector<MapIls> MapQuery::getIlsByAirportAndIdent(const QString& airportIdent, const QString& ilsIdent)
+QVector<MapIls> MapQuery::getIlsByAirportAndIdent(const QString& airportIdent, const QString& ilsIdent) const
 {
   QVector<MapIls> ilsList;
   ilsQuerySimByAirportAndIdent->bindValue(":apt", airportIdent);
@@ -575,7 +594,7 @@ QVector<MapIls> MapQuery::getIlsByAirportAndIdent(const QString& airportIdent, c
   return ilsList;
 }
 
-QVector<map::MapIls> MapQuery::ilsByAirportAndRunway(const QString& airportIdent, const QString& runway)
+QVector<map::MapIls> MapQuery::ilsByAirportAndRunway(const QString& airportIdent, const QString& runway) const
 {
   QVector<MapIls> ilsList;
   ilsQuerySimByAirportAndRw->bindValue(":apt", airportIdent);
@@ -592,7 +611,7 @@ QVector<map::MapIls> MapQuery::ilsByAirportAndRunway(const QString& airportIdent
 
 void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
                                        bool airportDiagram, map::MapTypes types,
-                                       int xs, int ys, int screenDistance, map::MapResult& result)
+                                       int xs, int ys, int screenDistance, map::MapResult& result) const
 {
   using maptools::insertSortedByDistance;
   using maptools::insertSortedByTowerDistance;
@@ -868,24 +887,23 @@ const QList<map::MapUserpoint> MapQuery::getUserdataPoints(const GeoDataLatLonBo
   return retval;
 }
 
-QString MapQuery::getAirportIdentFromWaypoint(const QString& ident, const QString& region, const Pos& pos,
-                                              bool found)
+QString MapQuery::getAirportIdentFromWaypoint(const QString& ident, const QString& region, const Pos& pos, bool found) const
 {
   return airportIdentFromQuery(AIRPORTIDENT_FROM_WAYPOINT, ident, region, pos, found);
 }
 
-QString MapQuery::getAirportIdentFromVor(const QString& ident, const QString& region, const Pos& pos, bool found)
+QString MapQuery::getAirportIdentFromVor(const QString& ident, const QString& region, const Pos& pos, bool found) const
 {
   return airportIdentFromQuery(AIRPORTIDENT_FROM_VOR, ident, region, pos, found);
 }
 
-QString MapQuery::getAirportIdentFromNdb(const QString& ident, const QString& region, const Pos& pos, bool found)
+QString MapQuery::getAirportIdentFromNdb(const QString& ident, const QString& region, const Pos& pos, bool found) const
 {
   return airportIdentFromQuery(AIRPORTIDENT_FROM_NDB, ident, region, pos, found);
 }
 
-QString MapQuery::airportIdentFromQuery(const QString& queryStr, const QString& ident, const QString& region,
-                                        const Pos& pos, bool& found)
+QString MapQuery::airportIdentFromQuery(const QString& queryStr, const QString& ident, const QString& region, const Pos& pos,
+                                        bool& found) const
 {
   found = false;
 
@@ -1135,7 +1153,7 @@ const QList<map::MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
 /* Get runway end and try lower and higher numbers if nothing was found - adds a dummy entry with airport
  * position if no runway ends were found */
 void MapQuery::getRunwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name,
-                                       const map::MapAirport& airport, bool navData)
+                                       const map::MapAirport& airport, bool navData) const
 {
   for(const QString& rname : atools::fs::util::runwayNameZeroPrefixVariants(name))
   {
@@ -1146,7 +1164,7 @@ void MapQuery::getRunwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, con
 }
 
 void MapQuery::runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name,
-                                    const map::MapAirport& airport, bool navData)
+                                    const map::MapAirport& airport, bool navData) const
 {
   AirportQuery *aquery = navData ? NavApp::getAirportQueryNav() : NavApp::getAirportQuerySim();
   map::MapResult result;
