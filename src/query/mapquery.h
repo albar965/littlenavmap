@@ -66,7 +66,7 @@ public:
   void getAirportSimReplace(map::MapAirport& airport) const;
   void getAirportNavReplace(map::MapAirport& airport) const;
 
-  /* Get from nav or sim database trying simulator first. values are zero if not available */
+  /* Get from nav or sim database trying nav first. Values are zero if not available */
   void getAirportTransitionAltiudeAndLevel(const map::MapAirport& airport, float& transitionAltitude, float& transitionLevel) const;
 
   /* If waypoint is of type VOR get the related VOR object */
@@ -87,7 +87,7 @@ public:
   /* Always from nav db */
   map::MapIls getIlsById(int id) const;
 
-  /* Either nav or sim db */
+  /* Either nav or sim db in this order where available */
   map::MapAirportMsa getAirportMsaById(int id) const;
 
   /* True if table ils contains GLS/RNP approaches - GLS ground stations or GBAS threshold points */
@@ -96,7 +96,7 @@ public:
     return gls;
   }
 
-  /* From perm nav db, depending on mode */
+  /* Either nav or sim db in this order where available */
   map::MapHolding getHoldingById(int id) const;
 
   /* True if table is present in schema and has one row */

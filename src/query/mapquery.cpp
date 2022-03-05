@@ -155,20 +155,25 @@ void MapQuery::getAirportNavReplace(map::MapAirport& airport) const
 
 void MapQuery::getAirportTransitionAltiudeAndLevel(const map::MapAirport& airport, float& transitionAltitude, float& transitionLevel) const
 {
-  map::MapAirport sim(getAirportSim(airport)), nav(getAirportNav(airport));
+  map::MapAirport nav(getAirportNav(airport));
   transitionAltitude = transitionLevel = 0.f;
 
-  if(sim.isValid() && sim.transitionAltitude > 0.f)
-    transitionAltitude = sim.transitionAltitude;
-  else if(nav.isValid() && transitionAltitude > 0.f)
-    // try from simulator database
+  if(nav.isValid())
+  {
+    // Get both values from navdatabase since it is more reliable
     transitionAltitude = nav.transitionAltitude;
-
-  if(sim.isValid() && sim.transitionLevel > 0.f)
-    transitionLevel = sim.transitionLevel;
-  else if(nav.isValid() && nav.transitionLevel > 0.f)
-    // try from simulator database
     transitionLevel = nav.transitionLevel;
+  }
+  else
+  {
+    // Fall back to simulator database
+    map::MapAirport sim(getAirportSim(airport));
+    if(sim.isValid())
+    {
+      transitionAltitude = sim.transitionAltitude;
+      transitionLevel = sim.transitionLevel;
+    }
+  }
 }
 
 void MapQuery::getVorForWaypoint(map::MapVor& vor, int waypointId) const
