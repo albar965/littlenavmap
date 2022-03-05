@@ -4433,7 +4433,16 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     // if(data.getFlags() & atools::fs::sc::IN_CLOUD) // too unreliable
     // precip.append(tr("Cloud"));
     if(userAircraft->inRain())
-      precip.append(tr("Rain"));
+    {
+      // X-Plane does not deliver snow flag - show if temperature is below zero
+      if(NavApp::isXpConnect() && userAircraft->getAmbientTemperatureCelsius() < 5.f)
+        precip.append(tr("Snow"));
+      else if(NavApp::isXpConnect() && userAircraft->getAmbientTemperatureCelsius() < 0.f)
+        precip.append(tr("Rain or Snow"));
+      else
+        precip.append(tr("Rain"));
+    }
+
     if(userAircraft->inSnow())
       precip.append(tr("Snow"));
 

@@ -165,6 +165,7 @@ public:
   static bool isConnected();
   static bool isConnectedActive();
   static bool isConnectedNetwork();
+  static bool isXpConnect();
   static bool isSimConnect();
   static bool isConnectedAndAircraft();
   static bool isConnectedAndAircraftFlying();

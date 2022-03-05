@@ -426,6 +426,11 @@ bool NavApp::isConnectedNetwork()
   return connectClient->isConnectedNetwork();
 }
 
+bool NavApp::isXpConnect()
+{
+  return connectClient->isXpConnect();
+}
+
 bool NavApp::isSimConnect()
 {
   return connectClient->isSimConnect();
