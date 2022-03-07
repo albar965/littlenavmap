@@ -1375,8 +1375,7 @@ void MapPainterMark::paintDistanceMarks()
 
     // Draw radial number
     if(context->dOptMeasurement(optsd::MEASUREMENT_RADIAL) && m.flags.testFlag(map::DIST_MARK_RADIAL))
-      texts.append(tr("R") %
-                   QString::number(ageo::normalizeCourse(ageo::opposedCourseDeg(m.from.angleDegToRhumb(m.to)) - m.magvar), 'f', precision));
+      texts.append(tr("R%1").arg(ageo::normalizeCourse(m.from.angleDegToRhumb(m.to) - m.magvar), 3, 'f', 0, QChar('0')));
 
 #ifdef DEBUG_INFORMATION_DISTANCE
     texts.append("[" + QString::number(distanceMeter, 'f', 0) + " m]");
