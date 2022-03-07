@@ -1364,7 +1364,7 @@ QDataStream& operator<<(QDataStream& dataStream, const map::RangeMarker& obj)
 
 QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj)
 {
-  dataStream >> obj.text >> obj.color >> obj.from >> obj.to >> obj.magvar;
+  dataStream >> obj.text >> obj.color >> obj.from >> obj.to >> obj.magvar >> obj.flags;
   obj.objType = map::MARK_DISTANCE;
   obj.position = obj.to;
   return dataStream;
@@ -1372,7 +1372,7 @@ QDataStream& operator>>(QDataStream& dataStream, map::DistanceMarker& obj)
 
 QDataStream& operator<<(QDataStream& dataStream, const map::DistanceMarker& obj)
 {
-  dataStream << obj.text << obj.color << obj.from << obj.to << obj.magvar;
+  dataStream << obj.text << obj.color << obj.from << obj.to << obj.magvar << obj.flags;
   return dataStream;
 }
 

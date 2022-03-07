@@ -1412,6 +1412,7 @@ struct DistanceMarker
   QColor color; /* Line color depends on origin (airport or navaid type */
   atools::geo::Pos from, to;
   float magvar = 0.f;
+  map::DistanceMarkerFlags flags = map::DIST_MARK_NONE;
 
   bool isValid() const
   {

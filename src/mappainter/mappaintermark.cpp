@@ -1293,8 +1293,15 @@ void MapPainterMark::paintDistanceMarks()
       painter->drawLine(x, y - SYMBOL_SIZE, x, y + SYMBOL_SIZE);
     }
 
-    painter->setPen(QPen(m.color, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+    // Draw radial / constant course line ========================================================
+    if(context->dOptMeasurement(optsd::MEASUREMENT_RADIAL_LINE) && m.flags.testFlag(map::DIST_MARK_RADIAL))
+    {
+      painter->setPen(QPen(m.color, lineWidth * 0.2, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
+      drawLineRadial(painter, ageo::Line(m.from, m.to));
+    }
+
     // Draw great circle line ========================================================
+    painter->setPen(QPen(m.color, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
     float distanceMeter = m.getDistanceMeter();
 
     // Draw line
@@ -1303,7 +1310,7 @@ void MapPainterMark::paintDistanceMarks()
     // Build and draw text
     QStringList texts;
 
-    if(context->dOptMeasurement(optsd::MEASUREMNENT_LABEL) && !m.text.isEmpty())
+    if(context->dOptMeasurement(optsd::MEASUREMENT_LABEL) && !m.text.isEmpty())
       texts.append(m.text);
 
     GeoDataCoordinates from(m.from.getLonX(), m.from.getLatY(), 0, DEG);
@@ -1326,7 +1333,7 @@ void MapPainterMark::paintDistanceMarks()
     QString arrowLeft = tr("► ");
 #endif
 
-    if(context->dOptMeasurement(optsd::MEASUREMNENT_TRUE) && context->dOptMeasurement(optsd::MEASUREMNENT_MAG) &&
+    if(context->dOptMeasurement(optsd::MEASUREMENT_TRUE) && context->dOptMeasurement(optsd::MEASUREMENT_MAG) &&
        initTrueText == initMagText && finalTrueText == finalMagText)
     {
       if(initTrueText == finalTrueText)
@@ -1336,7 +1343,7 @@ void MapPainterMark::paintDistanceMarks()
     }
     else
     {
-      if(context->dOptMeasurement(optsd::MEASUREMNENT_MAG))
+      if(context->dOptMeasurement(optsd::MEASUREMENT_MAG))
       {
         if(initMagText == finalMagText)
           texts.append(initMagText % tr("°M"));
@@ -1344,7 +1351,7 @@ void MapPainterMark::paintDistanceMarks()
           texts.append(initMagText % tr("°M ") % arrowLeft % finalMagText % tr("°M"));
       }
 
-      if(context->dOptMeasurement(optsd::MEASUREMNENT_TRUE))
+      if(context->dOptMeasurement(optsd::MEASUREMENT_TRUE))
       {
         if(initTrueText == finalTrueText)
           texts.append(initTrueText % tr("°T"));
@@ -1353,7 +1360,7 @@ void MapPainterMark::paintDistanceMarks()
       }
     }
 
-    if(context->dOptMeasurement(optsd::MEASUREMNENT_DIST) && distanceMeter < INVALID_DISTANCE_VALUE)
+    if(context->dOptMeasurement(optsd::MEASUREMENT_DIST) && distanceMeter < INVALID_DISTANCE_VALUE)
     {
       if(Unit::getUnitDist() == opts::DIST_KM && Unit::getUnitShortDist() == opts::DIST_SHORT_METER && distanceMeter < 6000)
         texts.append(QLocale(QLocale::C).toString(distanceMeter, 'f', 0) % Unit::getUnitShortDistStr());
@@ -1365,6 +1372,11 @@ void MapPainterMark::paintDistanceMarks()
           texts.append(Unit::distShortMeter(distanceMeter, true /* addUnit */, true /* narrow */));
       }
     }
+
+    // Draw radial number
+    if(context->dOptMeasurement(optsd::MEASUREMENT_RADIAL) && m.flags.testFlag(map::DIST_MARK_RADIAL))
+      texts.append(tr("R") %
+                   QString::number(ageo::normalizeCourse(ageo::opposedCourseDeg(m.from.angleDegToRhumb(m.to)) - m.magvar), 'f', precision));
 
 #ifdef DEBUG_INFORMATION_DISTANCE
     texts.append("[" + QString::number(distanceMeter, 'f', 0) + " m]");

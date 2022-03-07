@@ -1663,6 +1663,9 @@ void MapWidget::addMeasurement(const atools::geo::Pos& pos, const map::MapAirpor
     dm.from = vor->position;
     dm.magvar = vor->magvar;
     dm.color = mapcolors::vorSymbolColor;
+
+    if(!vor->dmeOnly)
+      dm.flags = map::DIST_MARK_RADIAL;
   }
   else if(ndb != nullptr && ndb->isValid())
   {
@@ -1670,6 +1673,7 @@ void MapWidget::addMeasurement(const atools::geo::Pos& pos, const map::MapAirpor
     dm.from = ndb->position;
     dm.magvar = ndb->magvar;
     dm.color = mapcolors::ndbSymbolColor;
+    dm.flags = map::DIST_MARK_RADIAL;
   }
   else if(waypoint != nullptr && waypoint->isValid())
   {

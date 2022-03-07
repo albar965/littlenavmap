@@ -215,6 +215,17 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectQueryTypes);
 
 /* ================================================================================== */
 /* Ident queries for airport defines which ident columns should be used in the lookup */
+enum DistanceMarkerFlag
+{
+  DIST_MARK_NONE = 0,
+  DIST_MARK_RADIAL = 1 << 0
+};
+
+Q_DECLARE_FLAGS(DistanceMarkerFlags, DistanceMarkerFlag);
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::DistanceMarkerFlags);
+
+/* ================================================================================== */
+/* Ident queries for airport defines which ident columns should be used in the lookup */
 enum AirportQueryFlag
 {
   AP_QUERY_NONE = 0,

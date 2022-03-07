@@ -155,18 +155,18 @@ const QLatin1String MAP_HOMELONX("Map/HomeLonX");
 const QLatin1String MAP_KMLFILES("Map/KmlFiles");
 const QLatin1String MAP_MARKLATY("Map/MarkLatY");
 const QLatin1String MAP_MARKLONX("Map/MarkLonX");
-const QLatin1String MAP_RANGEMARKERS("Map/RangeMarkers28");
+const QLatin1String MAP_RANGEMARKERS("Map/RangeMarkers1");
 const QLatin1String MAP_OVERLAY_VISIBLE("Map/OverlayVisible");
 const QLatin1String MAP_WEATHER_SOURCE("Map/WeatherSource");
 const QLatin1String MAP_SUN_SHADING_TIME_OPTION("Map/SunShadingTimeOption");
 const QLatin1String MAP_SUN_SHADING_TIME("Map/SunShadingTime");
 const QLatin1String MAP_THEME_KEYS("Map/ThemeKeys");
 
-const QLatin1String MAP_DISTANCEMARKERS("Map/DistanceMarkers28");
-const QLatin1String MAP_TRAFFICPATTERNS("Map/TrafficPatterns28");
-const QLatin1String MAP_HOLDINGS("Map/Holdings28");
-const QLatin1String MAP_AIRPORT_MSA("Map/AirportMsa28");
-const QLatin1String MAP_MARK_DISPLAY("Map/MarkDisplay28");
+const QLatin1String MAP_DISTANCEMARKERS("Map/DistanceMarkers1");
+const QLatin1String MAP_TRAFFICPATTERNS("Map/TrafficPatt1ns1");
+const QLatin1String MAP_HOLDINGS("Map/Holdings1");
+const QLatin1String MAP_AIRPORT_MSA("Map/AirportMsa1");
+const QLatin1String MAP_MARK_DISPLAY("Map/MarkDisplay1");
 const QLatin1String MAP_AIRPORT("Map/Airports");
 const QLatin1String MAP_AIRPORT_RUNWAY_LENGTH("Map/AirportsRunwayLength");
 
@@ -244,7 +244,7 @@ const QLatin1String AIRSPACE_CONTROLLER_WIDGETS("AirspaceController/Widget");
 
 /* General settings in the configuration file not covered by any GUI elements */
 const QLatin1String SETTINGS_INFOQUERY("Settings/InfoQuery");
-const QLatin1String SETTINGS_MAPQUERY("Settings/MapQuery28");
+const QLatin1String SETTINGS_MAPQUERY("Settings/MapQuery1");
 const QLatin1String SETTINGS_DATABASE("Settings/Database");
 
 const QLatin1String APPROACHTREE_WIDGET("ApproachTree/Widget");

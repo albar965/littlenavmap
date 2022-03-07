@@ -501,11 +501,13 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsNavAid);
 /* Measurement lines */
 enum DisplayOptionMeasurement
 {
-  MEASUREMNENT_NONE = 0,
-  MEASUREMNENT_TRUE = 1 << 0,
-  MEASUREMNENT_MAG = 1 << 1,
-  MEASUREMNENT_DIST = 1 << 2,
-  MEASUREMNENT_LABEL = 1 << 3
+  MEASUREMENT_NONE = 0,
+  MEASUREMENT_TRUE = 1 << 0,
+  MEASUREMENT_MAG = 1 << 1,
+  MEASUREMENT_DIST = 1 << 2,
+  MEASUREMENT_LABEL = 1 << 3,
+  MEASUREMENT_RADIAL = 1 << 4,
+  MEASUREMENT_RADIAL_LINE = 1 << 5
 };
 
 Q_DECLARE_FLAGS(DisplayOptionsMeasurement, DisplayOptionMeasurement);
@@ -1549,8 +1551,8 @@ private:
     optsd::ROSE_TRACK_LINE | optsd::ROSE_TRACK_LABEL | optsd::ROSE_CRAB_ANGLE | optsd::ROSE_NEXT_WAYPOINT |
     optsd::ROSE_DIR_LABELS;
 
-  optsd::DisplayOptionsMeasurement displayOptionsMeasurement = optsd::MEASUREMNENT_MAG | optsd::MEASUREMNENT_TRUE |
-                                                               optsd::MEASUREMNENT_DIST | optsd::MEASUREMNENT_LABEL;
+  optsd::DisplayOptionsMeasurement displayOptionsMeasurement = optsd::MEASUREMENT_MAG | optsd::MEASUREMENT_TRUE |
+                                                               optsd::MEASUREMENT_DIST | optsd::MEASUREMENT_LABEL;
 
   optsd::DisplayOptionsNavAid displayOptionsNavAid = optsd::NAVAIDS_NONE;
 

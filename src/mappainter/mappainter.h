@@ -305,7 +305,9 @@ protected:
                 bool fast);
 
   void drawLineString(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
+  void drawLineStringRadial(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
   void drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool noRecurse = false);
+  void drawLineRadial(Marble::GeoPainter *painter, const atools::geo::Line& line, bool noRecurse = false);
 
   void drawPolygon(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
 

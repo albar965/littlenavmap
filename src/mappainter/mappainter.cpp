@@ -511,6 +511,61 @@ void MapPainter::drawLineString(Marble::GeoPainter *painter, const atools::geo::
   }
 }
 
+void MapPainter::drawLineStringRadial(Marble::GeoPainter *painter, const atools::geo::LineString& linestring)
+{
+  if(linestring.size() < 2)
+    return;
+
+  const float LATY_CORRECTION = 0.00001f;
+  LineString splitLines = linestring.splitAtAntiMeridian();
+  splitLines.removeDuplicates();
+
+  // Avoid the straight line Marble draws wrongly for equal latitudes - needed to force GC path
+  for(int i = 0; i < splitLines.size() - 1; i++)
+  {
+    Pos& p1(splitLines[i]);
+    Pos& p2(splitLines[i + 1]);
+
+    if(atools::almostEqual(p1.getLatY(), p2.getLatY()))
+    {
+      // Move latitude a bit up and down if equal
+      p1.setLatY(p1.getLatY() + LATY_CORRECTION);
+      p2.setLatY(p2.getLatY() - LATY_CORRECTION);
+    }
+  }
+
+  // Build Marble geometry object
+  if(!splitLines.isEmpty())
+  {
+    GeoDataLineString geoLineStr;
+    geoLineStr.setTessellate(true);
+
+    for(int i = 0; i < splitLines.size() - 1; i++)
+    {
+      Line line(splitLines.at(i), splitLines.at(i + 1));
+
+      // Split long lines to work around the buggy visibility check in Marble resulting in disappearing line segments
+      // Do a quick check using Manhattan distance in degree
+      LineString ls;
+      if(line.lengthSimple() > 30.f)
+        line.interpolatePointsRhumb(line.lengthMeter(), 20, ls);
+      else if(line.lengthSimple() > 5.f)
+        line.interpolatePointsRhumb(line.lengthMeter(), 5, ls);
+      else
+        ls.append(line.getPos1());
+
+      // Append split points or single point
+      for(const Pos& pos : ls)
+        geoLineStr << GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG);
+    }
+
+    // Add last point
+    geoLineStr << GeoDataCoordinates(splitLines.constLast().getLonX(), splitLines.constLast().getLatY(), 0, DEG);
+
+    painter->drawPolyline(geoLineStr);
+  }
+}
+
 void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool noRecurse)
 {
   if(line.isValid() && !line.isPoint())
@@ -527,6 +582,24 @@ void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& 
     }
     else
       drawLineString(painter, LineString(line.getPos1(), line.getPos2()));
+  }
+}
+void MapPainter::drawLineRadial(Marble::GeoPainter *painter, const atools::geo::Line& line, bool noRecurse)
+{
+  if(line.isValid() && !line.isPoint())
+  {
+    if(line.crossesAntiMeridian())
+    {
+      // Avoid endless recursion because hitting anti-meridian again because of inaccuracies
+      if(!noRecurse)
+      {
+        for(const Line& split : line.splitAtAntiMeridian())
+          // Call self again
+          drawLineRadial(painter, split, true /* noRecurse */);
+      }
+    }
+    else
+      drawLineStringRadial(painter, LineString(line.getPos1(), line.getPos2()));
   }
 }
 

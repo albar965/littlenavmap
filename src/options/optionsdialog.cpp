@@ -215,11 +215,13 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   // Measurment lines =====================================================
   QTreeWidgetItem *measurement = addTopItem(tr("Measurement Lines"), tr("Select display options measurement lines."));
-  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Distance"), tr("Great circle distance for measurement line."), optsd::MEASUREMNENT_DIST, true);
-  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Magnetic Course"), tr("Show magnetic course for start and end of line."), optsd::MEASUREMNENT_MAG, true);
-  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("True Course"), tr("Show true course for start and end of line."), optsd::MEASUREMNENT_TRUE, true);
+  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Distance"), tr("Great circle distance for measurement line."), optsd::MEASUREMENT_DIST, true);
+  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Magnetic Course"), tr("Show magnetic course for start and end of line."), optsd::MEASUREMENT_MAG, true);
+  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("True Course"), tr("Show true course for start and end of line."), optsd::MEASUREMENT_TRUE, true);
+  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Radial Number"), tr("Shows the radial prefixed with \"R\" for VOR, VORDME, VORTAC, TACAN or NDB."), optsd::MEASUREMENT_RADIAL);
+  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Radial Line"), tr("Shows an additional thin line depicting the constant course to a VOR, VORDME, VORTAC, TACAN or NDB."), optsd::MEASUREMENT_RADIAL_LINE);
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Navaid or airport ident"), tr("Show ident if attached to navaid or airport.\n"
-                                                                                                                           "Also show frequency if attached to a radio navaid. "), optsd::MEASUREMNENT_LABEL, true);
+                                                                                                                           "Also show frequency if attached to a radio navaid. "), optsd::MEASUREMENT_LABEL, true);
   // Profile =====================================================
   QTreeWidgetItem *profile = addTopItem(tr("Elevation Profile"), tr("Select display options for the elevation profile."));
   addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Distance on top Label"), tr("Distance of flight plan leg on the top label."), optsd::PROFILE_TOP_DISTANCE, true);
@@ -1244,6 +1246,7 @@ QTreeWidgetItem *OptionsDialog::addTopItem(const QString& text, const QString& d
 {
   QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidgetOptionsDisplayTextOptions->invisibleRootItem(), {text, description});
   item->setFlags(Qt::ItemIsSelectable /*| Qt::ItemIsUserCheckable*/ /*| Qt::ItemIsAutoTristate*/ | Qt::ItemIsEnabled);
+  item->setToolTip(1, description);
 
   QFont font = item->font(0);
   font.setBold(true);
@@ -1256,6 +1259,7 @@ QTreeWidgetItem *OptionsDialog::addItem(QTreeWidgetItem *root, QHash<TYPE, QTree
                                         const QString& text, const QString& description, TYPE type, bool checked) const
 {
   QTreeWidgetItem *item = new QTreeWidgetItem(root, {text, description}, static_cast<int>(type));
+  item->setToolTip(1, description);
   item->setCheckState(0, checked ? Qt::Checked : Qt::Unchecked);
   item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsEnabled);
   index.insert(type, item);
@@ -1569,7 +1573,7 @@ void OptionsDialog::widgetsToOptionData()
   data.displayOptionsRose = optsd::ROSE_NONE;
   displayOptWidgetToOptionData(data.displayOptionsRose, displayOptItemIndexRose);
 
-  data.displayOptionsMeasurement = optsd::MEASUREMNENT_NONE;
+  data.displayOptionsMeasurement = optsd::MEASUREMENT_NONE;
   displayOptWidgetToOptionData(data.displayOptionsMeasurement, displayOptItemIndexMeasurement);
 
   data.displayOptionsRoute = optsd::ROUTE_NONE;
