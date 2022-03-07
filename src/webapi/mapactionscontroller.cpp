@@ -25,9 +25,11 @@
 #include "query/mapquery.h"
 #include "query/waypointtrackquery.h"
 #include "mapgui/mappaintwidget.h"
+#include "mapgui/mapthemehandler.h"
 #include "mappainter/mappaintlayer.h"
 #include "mapgui/mapwidget.h"
 #include "navapp.h"
+#include "common/mapresult.h"
 
 #include <QDebug>
 #include <QBuffer>
@@ -88,7 +90,7 @@ WebApiResponse MapActionsController::imageAction(WebApiRequest request){
         qWarning() << Q_FUNC_INFO << "invalid format";
 
       // Add copyright/attributions to header
-      response.headers.insert("Image-Attributions", mapPaintWidget->getMapCopyright().toUtf8());
+      response.headers.insert("Image-Attributions", getNavApp()->getMapThemeHandler()->getTheme(mapPaintWidget->getCurrentThemeIndex()).getCopyright().toUtf8());
 
       response.status = 200;
       response.body = bytes;
