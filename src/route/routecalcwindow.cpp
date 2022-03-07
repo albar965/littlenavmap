@@ -108,8 +108,8 @@ void RouteCalcWindow::routeChanged()
   NavApp::getRouteController()->getSelectedRouteLegs(selLegIndexes);
   std::sort(selLegIndexes.begin(), selLegIndexes.end());
 
-  fromIndex = selLegIndexes.isEmpty() ? -1 : selLegIndexes.first();
-  toIndex = selLegIndexes.isEmpty() ? -1 : selLegIndexes.last();
+  fromIndex = selLegIndexes.isEmpty() ? -1 : selLegIndexes.constFirst();
+  toIndex = selLegIndexes.isEmpty() ? -1 : selLegIndexes.constLast();
 
   canCalculateSelection = NavApp::getRouteConst().canCalcSelection(fromIndex, toIndex);
 

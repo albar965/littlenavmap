@@ -60,8 +60,7 @@ const atools::sql::SqlRecord *cachedRecord(QCache<ID, atools::sql::SqlRecord>& c
                                            atools::sql::SqlQuery *query, ID id);
 
 template<typename ID>
-const atools::sql::SqlRecordVector *cachedRecordVector(QCache<ID, atools::sql::SqlRecordVector>& cache,
-                                                       atools::sql::SqlQuery *query, ID id);
+const atools::sql::SqlRecordList *cachedRecordList(QCache<ID, atools::sql::SqlRecordList>& cache, atools::sql::SqlQuery *query, ID id);
 
 /* Simple spatial cache that deals with objects in a bounding rectangle but does not run any queries to load data */
 template<typename TYPE>
@@ -178,10 +177,9 @@ const atools::sql::SqlRecord *cachedRecord(QCache<ID, atools::sql::SqlRecord>& c
 
 /* Get a record vector from the cache of get it from a database query */
 template<typename ID>
-const atools::sql::SqlRecordVector *cachedRecordVector(QCache<ID, atools::sql::SqlRecordVector>& cache,
-                                                       atools::sql::SqlQuery *query, ID id)
+const atools::sql::SqlRecordList *cachedRecordList(QCache<ID, atools::sql::SqlRecordList>& cache, atools::sql::SqlQuery *query, ID id)
 {
-  atools::sql::SqlRecordVector *rec = cache.object(id);
+  atools::sql::SqlRecordList *rec = cache.object(id);
   if(rec != nullptr)
   {
     // Found record in cache
@@ -195,7 +193,7 @@ const atools::sql::SqlRecordVector *cachedRecordVector(QCache<ID, atools::sql::S
   {
     query->exec();
 
-    rec = new atools::sql::SqlRecordVector;
+    rec = new atools::sql::SqlRecordList;
 
     while(query->next())
       rec->append(query->record());

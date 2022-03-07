@@ -99,9 +99,6 @@ public:
   /* Export waypoints into a XML file for BGL compilation */
   void exportBglXml();
 
-  /* Remove all data but keep the schema to avoid locks */
-  void  clearDatabase();
-
   /* Show search tab and raise window */
   void  showSearch();
 
@@ -167,7 +164,7 @@ private:
   /* Copy class state to actions and vice versa */
   void typesToActions();
   void actionsToTypes();
-  void addUserpointInternal(int id, const atools::geo::Pos& pos, const atools::sql::SqlRecord& prefill);
+  void addUserpointInternal(int id, const atools::geo::Pos& pos, const atools::sql::SqlRecord& prefillRec, bool enableCategory);
   bool exportSelectedQuestion(bool& selected, bool& append, bool& header, bool appendAllowed, bool headerAllowed);
 
   /* Get default X-Plane path to user_fix.dat file */
@@ -175,6 +172,11 @@ private:
 
   /* Get default Garmin GTN export path */
   QString garminGtnUserWptPath();
+
+  void undoTriggered();
+  void redoTriggered();
+
+  void enableCategoryOnMap(const QString& category);
 
   /* Currently in actions selected types */
   QStringList selectedTypes,

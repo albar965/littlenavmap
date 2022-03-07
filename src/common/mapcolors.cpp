@@ -24,7 +24,7 @@
 
 #include <QPen>
 #include <QString>
-#include <QApplication>
+#include <QCoreApplication>
 #include <QPalette>
 #include <QSettings>
 #include <QPainter>
@@ -119,7 +119,7 @@ QColor profileAltRestrictionOutline(Qt::black);
 QPen profileVasiCenterPen(Qt::darkGray, 1.5, Qt::DashLine);
 QPen profileLandOutlinePen(Qt::black, 1, Qt::SolidLine);
 QPen profileWaypointLinePen(Qt::gray, 1, Qt::SolidLine, Qt::FlatCap);
-QPen profileElevationScalePen(Qt::gray, 1, Qt::SolidLine, Qt::FlatCap);
+QPen profileElevationScalePen(Qt::darkGray, 1, Qt::SolidLine, Qt::FlatCap);
 QPen profileSafeAltLinePen(Qt::red, 4, Qt::SolidLine, Qt::FlatCap);
 QPen profileSafeAltLegLinePen(QColor(255, 100, 0), 3, Qt::SolidLine, Qt::FlatCap);
 
@@ -736,7 +736,7 @@ void syncColors()
   // Sync airspace colors ============================================
   colorSettings.beginGroup("Airspace");
 
-  for(auto it = airspaceConfigNames.begin(); it != airspaceConfigNames.end(); ++it)
+  for(auto it = airspaceConfigNames.constBegin(); it != airspaceConfigNames.constEnd(); ++it)
   {
     const QString& name = it.key();
     map::MapAirspaceTypes type = it.value();

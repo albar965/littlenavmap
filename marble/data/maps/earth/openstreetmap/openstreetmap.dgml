@@ -30,43 +30,16 @@
         <texture name="mapnik_data" expire="1209600">
           <sourcedir format="PNG"> earth/openstreetmap </sourcedir>
           <tileSize width="256" height="256"/>
-          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="OpenStreetMap"/>
+          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
           <projection name="Mercator"/>
 
-          <!-- Free MapTiles CDN - https://maptiles.xyz -->
-          <!-- <downloadUrl protocol="http" host="a.osm.maptiles.xyz" path="/"/> -->
-          <!-- <downloadUrl protocol="http" host="b.osm.maptiles.xyz" path="/"/> -->
-          <!-- <downloadUrl protocol="http" host="c.osm.maptiles.xyz" path="/"/> -->
-
-          <!-- OSM tile servers according to http://wiki.openstreetmap.org/wiki/Servers -->
-          <!-- <downloadUrl protocol="http" host="orm.openstreetmap.org" path="/"/> -->
-          <!-- <downloadUrl protocol="http" host="yevaud.openstreetmap.org" path="/"/> -->
-
-          <!-- OSM content delivery network proxy servers -->
-          <downloadUrl protocol="https" host="a.tile.openstreetmap.org" path="/"/>
-          <downloadUrl protocol="https" host="b.tile.openstreetmap.org" path="/"/>
-          <downloadUrl protocol="https" host="c.tile.openstreetmap.org" path="/"/>
-
-          <!-- OSM content delivery network German proxy servers -->
-          <!-- <downloadUrl protocol="http" host="a.tile.openstreetmap.de" path="/tiles/osmde/"/> -->
-          <!-- <downloadUrl protocol="http" host="b.tile.openstreetmap.de" path="/tiles/osmde/"/> -->
-          <!-- <downloadUrl protocol="http" host="c.tile.openstreetmap.de" path="/tiles/osmde/"/> -->
-          <!-- <downloadUrl protocol="http" host="d.tile.openstreetmap.de" path="/tiles/osmde/"/> -->
+          <!-- https://tile.openstreetmap.org/15/17138/11071.png -->
+          <downloadUrl protocol="https" host="tile.openstreetmap.org" path="/{z}/{x}/{y}.png" />
 
           <!-- Use 2 to adapt to OSM requirements http://wiki.openstreetmap.org/wiki/Tile_usage_policy -->
           <downloadPolicy usage="Browse" maximumConnections="20"/>
 
           <downloadPolicy usage="Bulk" maximumConnections="2"/>
-        </texture>
-        <texture name="hillshading" expire="31536000">
-          <sourcedir format="PNG"> earth/hillshading </sourcedir>
-          <tileSize width="256" height="256"/>
-          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="17" mode="OpenStreetMap"/>
-          <projection name="Mercator"/>
-          <downloadUrl protocol="http" host="a.tiles.wmflabs.org" path="/hillshading/"/>
-          <downloadUrl protocol="http" host="b.tiles.wmflabs.org" path="/hillshading/"/>
-          <downloadUrl protocol="http" host="c.tiles.wmflabs.org" path="/hillshading/"/>
-          <blending name="AlphaBlending"/>
         </texture>
       </layer>
     </map>
@@ -75,12 +48,6 @@
         <value>false</value>
         <available>true</available>
       </property>
-      <group name="Texture Layers">
-        <property name="hillshading">
-          <value>false</value>
-          <available>true</available>
-        </property>
-      </group>
     </settings>
     <legend>
 

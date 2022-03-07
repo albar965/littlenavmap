@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dgml xmlns="http://edu.kde.org/marble/dgml/2.0">
+  <!-- ================================================================================================
+       Documented example DGML file explaining special fields used by Little Navmap.
+       See also https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/MAPTHEMES.html,
+       https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames and
+       https://techbase.kde.org/Marble/OSMSlippyMaps for more information.
+       ================================================================================================ -->
+  <document>
+
+    <!-- ================================================================================================ -->
+    <!-- Header -->
+    <head>
+      <!-- The license here applies to the actual map content, not this dgml file. See the license header above for the dgml file license
+           The content that this license refers to is not distributed with this package.
+           The short copyright message is always shown on the map -->
+      <license short="© Mapbox and OpenStreetMap contributors">Source: © OpenStreetMap contributors, License: Creative Commons Attribution-ShareAlike 2.0 (CC BY-SA)</license>
+
+      <!-- Map name as shown in LNM menu and toolbar. -->
+      <name>Example</name>
+
+      <!-- Target is always earth. Do not change. -->
+      <target>earth</target>
+
+      <!-- Map theme short name which has to match the basename of this DGML file and the theme folder.
+           The name has to be adapted in several places below.
+           Make sure this is unique across all available maps. Otherwise theme might not be shown. -->
+      <theme>example</theme>
+
+      <!-- Preview pixmap. Not used in LNM. -->
+      <icon pixmap="example-preview.png"/>
+
+      <!-- Set this to "true" for real maps. Otherwise they will not be shown in the LNM menu and toolbar.
+           This is set to "false" here to hide the example from the menu. -->
+      <visible>false</visible>
+
+      <!-- Long description. Not used. -->
+      <description><![CDATA[<p>A <i>global roadmap</i> created by the OpenStreetMap (OSM) project.</p><p>OSM is an open community which creates free editable maps. The OSM data was rendered using Mapnik.</p>]]></description>
+
+      <!-- Zoom values. Get these from the map provider. -->
+      <zoom>
+        <minimum>   900  </minimum>
+        <maximum>  3500  </maximum>
+        <!-- Zooming can be done in discrete (for tiled online maps) steps or smooth -->
+        <discrete> true </discrete>
+      </zoom>
+
+      <!-- Name and URL for the map provider. Will be used in LNM dialogs to point to registration site. Optional. -->
+      <url href="https://www.example.com">Example.com</url>
+    </head>
+
+    <!-- ================================================================================================ -->
+    <!-- Map definition -->
+    <map bgcolor="#000000">
+      <canvas/>
+      <target/>
+
+      <!-- Backend can be "texture" or "geodata". See "plain.dgml", "political.dgml" and "srtm.dgml" for examples using local geodata.
+           Name is same as "target". -->
+      <layer backend="texture" name="example">
+
+        <!-- Tiles expire after 14 days in cache. Value in seconds. -->
+        <texture expire="1209600" name="mapnik_data">
+
+          <!-- Cache folder based on "C:\Users\YOURUSERNAME\AppData\Local\.marble\data" on Windows,
+               for example (see also https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/FILES.html#disk-cache).
+               Make sure this is unique across all available maps to avoid messing up the cache.
+               Adjust format as provided by map service. -->
+          <sourcedir format="PNG"> earth/mapboxuser </sourcedir>
+
+          <!-- Tile size. OSM and related use 256. Mapbox and MapTiler 512 pixel.
+               Width and height have to be equal.
+               IMPORTANT: The overview file "data/maps/earth/YOURTHEMENAME/0/0/0.png" has to match the size.
+               Otherwise Little Navmap will crash when using the spheric map projection.
+          -->
+          <tileSize height="256" width="256"/>
+
+          <!-- Defines the URL used to fetch tiles from the web. Mode "Custom" is recommended for all maps. -->
+          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
+
+          <!-- Usually Mercator for slippy maps. Depends on map provider. -->
+          <projection name="Mercator"/>
+
+          <!-- Example to build an url with access token, username and style.
+               A single access token or API key is often sufficient to access a map which requires an user account.
+               All keys enclosed in braces (except common ones like "x", "y", "z", "zoomLevel" and "language") are extracted from
+               the URL by LNM and are shown in the options dialog on page "Map Display Keys".
+               Allowed characters for keys are A-Z, a-z, 0-9, _, - and space.
+               The keys have to be unique for all available maps/map providers and should be user readable.
+               Best prefix them with your map name.
+
+               More than one download URL can be used for client side load balancing.
+
+               A typical free map configuration for the OpenStreetMap would look like this:
+               <downloadUrl protocol="https" host="tile.openstreetmap.org" path="/{z}/{x}/{y}.png" />
+
+               DGML without tag "downloadUrl" will be marked as offline maps.
+
+               Default keys are:
+               {language}  Two letter language code as used in the GUI
+               {zoomLevel} Slippy map zoom level
+               {z}         Synonym for {zoomLevel}
+               {x}         Slippy map tile coordinate
+               {y}         Slippy map tile coordinate
+               All other keys are treated as user customizable keys and are shown in the LNM options dialog.
+               -->
+          <downloadUrl protocol="https" host="tiles.example.com"
+                       path="/styles/v1/{Example Map Username}/{Example Map Style}/tiles/512/{z}/{x}/{y}?access_token={Example Token}"/>
+
+          <!-- Maximum tile downloads. Do not increase these values. Some services require lower values. -->
+          <downloadPolicy maximumConnections="20" usage="Browse"/>
+          <downloadPolicy maximumConnections="2" usage="Bulk"/>
+        </texture>
+      </layer>
+
+    </map>
+
+    <!-- Do not change to always allow the display of the coordinate grid -->
+    <settings>
+      <property name="coordinate-grid">
+        <value>false</value>
+        <available>true</available>
+      </property>
+    </settings>
+  </document>
+</dgml>

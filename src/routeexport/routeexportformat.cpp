@@ -103,12 +103,12 @@ void RouteExportFormatMap::restoreState()
   }
   catch(atools::Exception& e)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(NavApp::getQMainWidget()).handleException(e);
   }
   catch(...)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(NavApp::getQMainWidget()).handleUnknownException();
   }
 
@@ -221,6 +221,7 @@ void RouteExportFormatMap::initCallbacks(RouteExport *routeExport)
   (*this)[QWRTE       ].CB(bind(&RouteExport::routeExportQwRteMulti,        routeExport, _1));
   (*this)[MDR         ].CB(bind(&RouteExport::routeExportMdrMulti,          routeExport, _1));
   (*this)[TFDI        ].CB(bind(&RouteExport::routeExportTfdiMulti,         routeExport, _1));
+  (*this)[IFLY        ].CB(bind(&RouteExport::routeExportIflyMulti,         routeExport, _1));
   (*this)[PLNISG      ].CB(bind(&RouteExport::routeExportIsgMulti,          routeExport, _1));
   (*this)[PMS50       ].CB(bind(&RouteExport::routeExportPms50Multi,        routeExport, _1));
   /* *INDENT-ON* */
@@ -296,7 +297,7 @@ void RouteExportFormatMap::init()
   FMT(UFMC,         AIRPORTS,         S0 % tr("ufmc"),    tr("FMC"),       tr("UFMC")                                                            );
   FMT(PROSIM,       AIRPORTS|FILEAPP, tr("companyroutes.xml"), tr("Simulator"), tr("ProSim")                                                     );
   FMT(BBS,          AIRPORTS,         S0 % tr("pln"),     tr("Aircraft"),  tr("BlackBox Simulations Airbus")                                     );
-  FMT(VFP,          AIRPORTS,         S0 % tr("vfp"),     tr("Online"),    tr("VATSIM vPilot or SWIFT") % mainMenu                               );
+  FMT(VFP,          AIRPORTS,         S0 % tr("vfp"),     tr("Online"),    tr("VATSIM vPilot, xPilot or SWIFT") % mainMenu                       );
   FMT(IVAP,         AIRPORTS,         S0 % tr("fpl"),     tr("Online"),    tr("IvAp for IVAO") % mainMenu                                        );
   FMT(XIVAP,        AIRPORTS,         S0 % tr("fpl"),     tr("Online"),    tr("X-IVAP for IVAO") % mainMenu                                      );
   FMT(FEELTHEREFPL, AIRPORTS,         SU % tr("fpl"),     tr("Aircraft"),  tr("FeelThere or Wilco")                                              );
@@ -305,6 +306,7 @@ void RouteExportFormatMap::init()
   FMT(QWRTE,        AIRPORTS,         S0 % tr("rte"),     tr("Aircraft"),  tr("QualityWings")                                                    );
   FMT(MDR,          AIRPORTS,         S0 % tr("mdr"),     tr("Aircraft"),  tr("Leonardo Maddog X")                                               );
   FMT(TFDI,         AIRPORTS,         S0 % tr("xml"),     tr("Aircraft"),  tr("TFDi Design 717")                                                 );
+  FMT(IFLY,         AIRPORTS,         S0 % tr("route"),   tr("Aircraft"),  tr("iFly Jets Advanced Series")                                       );
   FMT(PLNISG,       AIRPORTS,         S0 % tr("pln"),     tr("FMS"),       tr("ISG Integrated Simavionics gauges")                               );
   FMT(PMS50,        FILEREP|AIRPORTS, tr("fpl.pln"),      tr("Garmin"),    tr("PMS50 GTN750")                                                    );
   /* *INDENT-ON* */
@@ -441,6 +443,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[QWRTE       ].DP(fsxP3dBasePath);
   (*this)[MDR         ].DP(fsxP3dBasePath);
   (*this)[TFDI        ].DP(fsxP3dBasePath % SEP % "SimObjects" % SEP % "Airplanes" % SEP % "TFDi_Design_717" % SEP % "Documents" % SEP % "Company Routes");
+  (*this)[IFLY        ].DP(documents % SEP % "Prepar3D v5 Add-ons" % SEP % "iFlyData" % SEP % "navdata" % SEP % "FLTPLAN");
   (*this)[PLNISG      ].DP(fsxP3dBasePath % SEP % "ISG" % SEP % "FlightPlans"); // C:\Program Files\Lockheed Martin\Prepar3D v4\ISG\FlightPlans
   (*this)[PMS50       ].DP(msfsBasePath % SEP % "Community" % SEP % "pms50-gtn750-premium" % SEP % "fpl" % SEP % "gtn750");
   /* *INDENT-ON* */

@@ -96,10 +96,11 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
     "QRadioButton::indicator:checked:!enabled { image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked_disabled.png); }" %
 
     "QRadioButton::indicator:unchecked { image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked.png); }" %
-    "QRadioButton::indicator:unchecked:!enabled { image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked_disabled.png); }" %
+    "QRadioButton::indicator:unchecked:!enabled { image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked_disabled.png); }"
 
 #if !defined(Q_OS_MACOS)
     // Night mode shows bright tab bars with this change in macOS
+    %
     "QTabBar::close-button { image: url(:/littlenavmap/resources/icons/tab_close_button_night.png); }" %
     "QTabBar::close-button:hover { image: url(:/littlenavmap/resources/icons/tab_close_button_hover_night.png); }"
 #endif

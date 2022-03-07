@@ -1,12 +1,31 @@
-#include "randomdepartureairportpickingbycriteria.h"
+/*****************************************************************************
+* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+*
+* This program is free software: you can redistribute it and/or modify
+* it under the terms of the GNU General Public License as published by
+* the Free Software Foundation, either version 3 of the License, or
+* (at your option) any later version.
+*
+* This program is distributed in the hope that it will be useful,
+* but WITHOUT ANY WARRANTY; without even the implied warranty of
+* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+* GNU General Public License for more details.
+*
+* You should have received a copy of the GNU General Public License
+* along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*****************************************************************************/
+
+#include "search/randomdepartureairportpickingbycriteria.h"
+#include "search/randomdestinationairportpickingbycriteria.h"
 
 #include "search/airportsearch.h"
+#include "geo/pos.h"
 
 #include <QRandomGenerator>
 
 int RandomDepartureAirportPickingByCriteria::countResult = 0;
 int RandomDepartureAirportPickingByCriteria::randomLimit = 0;
-QVector<std::pair<int, atools::geo::Pos>>* RandomDepartureAirportPickingByCriteria::data = nullptr;
+QVector<std::pair<int, atools::geo::Pos> > *RandomDepartureAirportPickingByCriteria::data = nullptr;
 int RandomDepartureAirportPickingByCriteria::distanceMin = 0;
 int RandomDepartureAirportPickingByCriteria::distanceMax = 0;
 
@@ -16,7 +35,9 @@ RandomDepartureAirportPickingByCriteria::RandomDepartureAirportPickingByCriteria
   noSuccess = true;
 }
 
-void RandomDepartureAirportPickingByCriteria::initStatics(int countResult, int randomLimit, QVector<std::pair<int, atools::geo::Pos>>* data, int distanceMinMeter,  int distanceMaxMeter)
+void RandomDepartureAirportPickingByCriteria::initStatics(int countResult, int randomLimit, QVector<std::pair<int,
+                                                                                                              atools::geo::Pos> > *data,
+                                                          int distanceMinMeter, int distanceMaxMeter)
 {
   RandomDepartureAirportPickingByCriteria::countResult = countResult;
   RandomDepartureAirportPickingByCriteria::randomLimit = randomLimit;
@@ -28,9 +49,9 @@ void RandomDepartureAirportPickingByCriteria::initStatics(int countResult, int r
 
 void RandomDepartureAirportPickingByCriteria::run()
 {
-  std::pair<int, atools::geo::Pos>* data = this->data->data();
+  std::pair<int, atools::geo::Pos> *data = this->data->data();
 
-  QMap<int, bool> triedIndexDeparture;                                          // acts as a lookup which indices have been tried already; QMap keys are sorted, lookup is very fast
+  QMap<int, bool> triedIndexDeparture; // acts as a lookup which indices have been tried already; QMap keys are sorted, lookup is very fast
 
   bool departureSuccess;
 
@@ -53,14 +74,13 @@ void RandomDepartureAirportPickingByCriteria::run()
         do
         {
           indexDeparture = QRandomGenerator::global()->bounded(countResult);
-        }
-        while(triedIndexDeparture.contains(indexDeparture));
+        }while(triedIndexDeparture.contains(indexDeparture));
         triedIndexDeparture.insert(indexDeparture, true);
         departureSuccess = true;
-      }
-      while(!data[indexDeparture].second.isValid());
+      }while(!data[indexDeparture].second.isValid());
     }
-    else {
+    else
+    {
       // random pick, then increment
       indexDeparture = QRandomGenerator::global()->bounded(countResult);
       do
@@ -74,20 +94,22 @@ void RandomDepartureAirportPickingByCriteria::run()
         }
         triedIndexDeparture.insert(indexDeparture, true);
         departureSuccess = true;
-      }
-      while(!data[indexDeparture].second.isValid());
+      }while(!data[indexDeparture].second.isValid());
     }
 
     if(departureSuccess)
     {
       runningDestinationThreads++;
-      RandomDestinationAirportPickingByCriteria* destinationPicker = new RandomDestinationAirportPickingByCriteria(indexDeparture);
-      connect(destinationPicker, &RandomDestinationAirportPickingByCriteria::resultReady, this, &RandomDepartureAirportPickingByCriteria::dataReceived);
+      RandomDestinationAirportPickingByCriteria *destinationPicker = new RandomDestinationAirportPickingByCriteria(indexDeparture);
+      connect(destinationPicker, &RandomDestinationAirportPickingByCriteria::resultReady, this,
+              &RandomDepartureAirportPickingByCriteria::dataReceived);
       connect(destinationPicker, &RandomDestinationAirportPickingByCriteria::finished, destinationPicker, &QObject::deleteLater);
       destinationPicker->start();
     }
 
-    while(noSuccess && ((runningDestinationThreads >= QThread::idealThreadCount()) || ((triedIndexDeparture.count() == countResult) && (runningDestinationThreads != 0))))             // if a CPU affinity tool is used on lnm exe, all threads created by lnm might be run on the designated core instead of being evenly distributed (at least with Process Lasso)
+    while(noSuccess &&
+          ((runningDestinationThreads >= QThread::idealThreadCount()) ||
+           ((triedIndexDeparture.count() == countResult) && (runningDestinationThreads != 0)))) // if a CPU affinity tool is used on lnm exe, all threads created by lnm might be run on the designated core instead of being evenly distributed (at least with Process Lasso)
     {
       emit progressing();
       sleep(1);
@@ -95,16 +117,15 @@ void RandomDepartureAirportPickingByCriteria::run()
 
     if(!noSuccess || triedIndexDeparture.count() == countResult)
       break;
-  }
-  while(true);
+  }while(true);
 
   RandomDestinationAirportPickingByCriteria::stopExecution = true;
   while(runningDestinationThreads > 0)
   {
-    sleep(1);                                                                   // make sure all destination threads which still might use data have exited but not be a tight loop
+    sleep(1); // make sure all destination threads which still might use data have exited but not be a tight loop
   }
 
-  if(departureSuccess && indexDestination > -1)                                 // on cancellation departureSuccess is true and noSuccess is false but indexDestination is still -1
+  if(departureSuccess && indexDestination > -1) // on cancellation departureSuccess is true and noSuccess is false but indexDestination is still -1
   {
     emit resultReady(true, associatedIndexDeparture, indexDestination, this->data);
   }

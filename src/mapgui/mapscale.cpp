@@ -152,8 +152,7 @@ float MapScale::getPixelForMeter(float meter, float directionDeg) const
   float upperScale = scales.at(octant + 1);
 
   // Screen pixel per km interpolated between upper and lower calculated octant value
-  float pixelPerKm = lowerScale + (upperScale - lowerScale) * (directionDeg - lowerDeg) /
-                     (upperDeg - lowerDeg);
+  float pixelPerKm = lowerScale + (upperScale - lowerScale) * (directionDeg - lowerDeg) / (upperDeg - lowerDeg);
 
   return pixelPerKm * meter / 1000.f;
 }

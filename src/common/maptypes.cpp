@@ -21,7 +21,7 @@
 #include "geo/calculations.h"
 #include "common/unit.h"
 #include "navapp.h"
-#include "proctypes.h"
+#include "common/proctypes.h"
 #include "common/symbolpainter.h"
 #include "common/formatter.h"
 #include "fs/util/fsutil.h"
@@ -873,30 +873,17 @@ const QString& parkingDatabaseName(const QString& name)
   return parkingDatabaseNameMap[name];
 }
 
-QString parkingNameNumberType(const map::MapParking& parking)
+QString parkingNameNumberAndType(const map::MapParking& parking)
 {
-  QStringList name;
-
-  if(parking.number != -1)
-    name.append(map::parkingName(parking.name) % " " % QLocale().toString(parking.number));
-  else
-    name.append(map::parkingName(parking.name));
-
-  name.append(map::parkingTypeName(parking.type));
-
-  return atools::strJoin(name, QObject::tr(", "));
+  return atools::strJoin({parkingNameOrNumber(parking), parkingTypeName(parking.type)}, QObject::tr(", "));
 }
 
-QString parkingNameNumber(const MapParking& parking)
+QString parkingNameOrNumber(const MapParking& parking)
 {
-  QStringList name;
-
   if(parking.number != -1)
-    name.append(map::parkingName(parking.name) % " " % QLocale().toString(parking.number));
+    return map::parkingName(parking.name) % " " % QLocale().toString(parking.number);
   else
-    name.append(map::parkingName(parking.name));
-
-  return atools::strJoin(name, QObject::tr(", "));
+    return map::parkingName(parking.name);
 }
 
 QString startType(const map::MapStart& start)
@@ -923,8 +910,8 @@ QString parkingNameForFlightplan(const map::MapParking& parking)
 
 const QString& MapAirport::displayIdentIcao() const
 {
-  if(xplane&&!icao.isEmpty())
-      return icao;
+  if(xplane && !icao.isEmpty())
+    return icao;
 
   // Otherwise internal id
   return ident;
@@ -1098,7 +1085,7 @@ bool MapAirport::softOnly() const
   return !flags.testFlag(AP_HARD) && flags.testFlag(AP_SOFT);
 }
 
-bool MapAirport::minor() const
+bool MapAirport::isMinor() const
 {
   return softOnly() || helipadOnly() || waterOnly() || closed();
 }
@@ -1154,7 +1141,7 @@ bool MapAirport::isVisible(map::MapTypes types, int minRunwayFt, const MapLayer 
     return false;
 
   // Check layer
-  if(minor() && !layer->isAirportMinor())
+  if(isMinor() && !layer->isAirportMinor())
     return false;
 
   if(waterOnly() && !types.testFlag(map::AIRPORT_WATER))
@@ -1579,10 +1566,13 @@ QString rangeMarkText(const RangeMarker& obj)
 
 QString distanceMarkText(const DistanceMarker& obj)
 {
+  float distanceMeter = obj.getDistanceMeter();
+  QString distStr(distanceMeter < map::INVALID_DISTANCE_VALUE ? Unit::distMeter(distanceMeter) : QString());
+
   if(obj.text.isEmpty())
-    return QObject::tr("Measurement %1").arg(Unit::distMeter(obj.from.distanceMeterTo(obj.to)));
+    return QObject::tr("Measurement %1").arg(distStr);
   else
-    return QObject::tr("Measurement %1 %2").arg(obj.text).arg(Unit::distMeter(obj.from.distanceMeterTo(obj.to)));
+    return QObject::tr("Measurement %1 %2").arg(obj.text).arg(distStr);
 }
 
 QString holdingMarkText(const HoldingMarker& obj)
@@ -2424,7 +2414,7 @@ QIcon mapBaseIcon(const map::MapBase *base, int size)
         return painter.createNdbIcon(size);
 
       case map::ILS:
-        return QIcon(":/littlenavmap/resources/icons/ils.svg");
+        return map::ilsIcon(base->asObj<map::MapIls>());
 
       case map::HOLDING:
         return QIcon(":/littlenavmap/resources/icons/enroutehold.svg");
@@ -2611,13 +2601,34 @@ const QString& MapProcedurePoint::getIdent() const
 QString procedurePointText(const MapProcedurePoint& procPoint)
 {
   return proc::procedureLegsText(*procPoint.legs, procPoint.getLeg().mapType,
-                                 false /* narrow */, true /* includeRunway*/, false /* missedAsApproach*/);
+                                 false /* narrow */, true /* includeRunway*/, false /* missedAsApproach*/,
+                                 false /* transitionAsProcedure */);
 }
 
 QString procedurePointTextShort(const MapProcedurePoint& procPoint)
 {
   return proc::procedureLegsText(*procPoint.legs, procPoint.getLeg().mapType,
-                                 true /* narrow */, true /* includeRunway*/, false /* missedAsApproach*/);
+                                 true /* narrow */, true /* includeRunway*/, false /* missedAsApproach*/,
+                                 false /* transitionAsProcedure */);
+}
+
+const QIcon& ilsIcon(const MapIls& ils)
+{
+  const static QIcon GLS(":/littlenavmap/resources/icons/gls.svg");
+  const static QIcon ILS(":/littlenavmap/resources/icons/ils.svg");
+  const static QIcon LOC(":/littlenavmap/resources/icons/loc.svg");
+
+  if(ils.isAnyGls())
+    return GLS;
+  else if(ils.hasGlideslope())
+    return ILS;
+  else
+    return LOC;
+}
+
+float DistanceMarker::getDistanceNm() const
+{
+  return atools::geo::meterToNm(getDistanceMeter());
 }
 
 } // namespace types

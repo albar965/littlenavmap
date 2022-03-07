@@ -33,6 +33,7 @@ struct MapProcedureLegs;
 }
 
 namespace map {
+struct MapObjectRef;
 struct MapResult;
 struct MapAirport;
 struct MapVor;
@@ -292,6 +293,16 @@ public:
     return airwayLines;
   }
 
+  const QVector<map::MapObjectRef>& getRouteDrawnNavaidsConst() const
+  {
+    return routeDrawnNavaids;
+  }
+
+  QVector<map::MapObjectRef> *getRouteDrawnNavaids()
+  {
+    return &routeDrawnNavaids;
+  }
+
 private:
   void getNearestAirways(int xs, int ys, int maxDistance, map::MapResult& result) const;
   void getNearestLogEntries(int xs, int ys, int maxDistance, map::MapResult& result) const;
@@ -321,6 +332,10 @@ private:
 
   /* All highlights from search windows - also online airspaces */
   map::MapResult *searchHighlights;
+
+  /* Cleared before and filled while painting with all navaids that were actually painted from route and procedures including recommended.
+   * This includes route userpoints */
+  QVector<map::MapObjectRef> routeDrawnNavaids;
 
   /* One procedure highlight from selection */
   proc::MapProcedureLeg *procedureLegHighlight = nullptr;

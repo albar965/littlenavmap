@@ -184,7 +184,7 @@ int LogdataConverter::convertFromUserdata()
         // Fill null fields with empty strings to avoid issue when searching
         atools::fs::userdata::LogdataManager::fixEmptyFields(rec);
 
-        logManager->insertByRecord(rec);
+        logManager->insertOneRecord(rec);
         rec.clearValues();
         type = NONE;
         numCreated++;

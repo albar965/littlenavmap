@@ -350,8 +350,8 @@ inline void RequestHandler::handleWebApiRequest(HttpRequest& request, HttpRespon
   // Map API response
   response.setStatus(result.status);
   QMultiMap<QByteArray, QByteArray>::iterator i;
-  for (i = result.headers.begin(); i != result.headers.end(); ++i)
-      response.setHeader(i.key(),i.value());
+  for (auto it = result.headers.constBegin(); it != result.headers.constEnd(); ++it)
+      response.setHeader(it.key(),it.value());
 
   // Write output
   response.write(result.body, true);
@@ -422,6 +422,10 @@ inline void RequestHandler::handleHtmlFileRequest(HttpRequest& request, HttpResp
       {
         Route route = emit getRoute();
         html.clear();
+
+        // Additional required progress fields are defined in aircraftprogressconfig.cpp in vector ADDITIONAL_WEB_IDS
+        html.setIdBits(NavApp::getInfoController()->getEnabledProgressBitsWeb());
+
         htmlInfoBuilder->aircraftProgressText(userAircraft, html, route);
         t.setVariable(QStringLiteral(u"aircraftProgressText"), html.getHtml());
       }

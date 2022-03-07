@@ -23,32 +23,34 @@ namespace pid {
  * Id number values are used to save settings for data field visibility in aircraft progress tab.
  *
  * ALLIDS in aircraftprogressconfig.cpp has to be updated together with this enumeration.
+ * Maximum is HtmlBuilder::MAX_ID (512)
  */
 enum ProgressConfId
 {
-  DATE_TIME_REAL,
+  /* Leave gaps in number ranges for future extensions */
+  DATE_TIME_REAL = 10,
   LOCAL_TIME_REAL,
   DATE_TIME,
   LOCAL_TIME,
   FLOWN,
 
   // "Destination" =================================
-  DEST_DIST_TIME_ARR,
+  DEST_DIST_TIME_ARR = 20,
   DEST_FUEL,
   DEST_GROSS_WEIGHT,
 
   // "Top of descent" =================================
-  TOD_DIST_TIME_ARR,
+  TOD_DIST_TIME_ARR = 40,
   TOD_FUEL,
   TOD_TO_DESTINATION,
 
   // "Top of climb" =================================
-  TOC_DIST_TIME_ARR,
+  TOC_DIST_TIME_ARR = 60,
   TOC_FUEL,
   TOC_FROM_DESTINATION,
 
   // "Next waypoint" =================================
-  NEXT_LEG_TYPE,
+  NEXT_LEG_TYPE = 80,
   NEXT_INSTRUCTIONS,
   NEXT_RELATED,
   NEXT_RESTRICTION,
@@ -62,7 +64,7 @@ enum ProgressConfId
   NEXT_REMARKS,
 
   // "Aircraft" =================================
-  AIRCRAFT_HEADING,
+  AIRCRAFT_HEADING = 100,
   AIRCRAFT_TRACK,
   AIRCRAFT_FUEL_FLOW,
   AIRCRAFT_FUEL,
@@ -71,24 +73,25 @@ enum ProgressConfId
   AIRCRAFT_ICE,
 
   // "Altitude" =================================
-  ALT_INDICATED,
+  ALT_INDICATED = 120,
   ALT_ACTUAL,
   ALT_ABOVE_GROUND,
   ALT_GROUND_ELEVATION,
+  ALT_AUTOPILOT_ALT,
 
   // "Speed" =================================
-  SPEED_INDICATED,
+  SPEED_INDICATED = 140,
   SPEED_GROUND,
   SPEED_TRUE,
   SPEED_MACH,
   SPEED_VERTICAL,
 
   // "Descent Path" =================================
-  DESCENT_DEVIATION,
+  DESCENT_DEVIATION = 160,
   DESCENT_ANGLE_SPEED,
 
   // "Environment" =================================
-  ENV_WIND_DIR_SPEED,
+  ENV_WIND_DIR_SPEED = 180,
   ENV_TAT,
   ENV_SAT,
   ENV_ISA_DEV,
@@ -97,7 +100,11 @@ enum ProgressConfId
   ENV_VISIBILITY,
 
   // "Position" =================================
-  POS_COORDINATES,
+  POS_COORDINATES = 200,
+
+  LAST = POS_COORDINATES, /* Last field to determine bit array size */
+
+  /* Maximum is HtmlBuilder::MAX_ID (512) ==================================== */
 };
 
 }

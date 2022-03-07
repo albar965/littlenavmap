@@ -18,20 +18,34 @@
 #ifndef LITTLENAVMAP_APPROACHQUERY_H
 #define LITTLENAVMAP_APPROACHQUERY_H
 
-#include "common/proctypes.h"
+#include "common/procflags.h"
+#include "common/mapflags.h"
 #include "fs/fspaths.h"
 
 #include <QCache>
-#include <QApplication>
+#include <QCoreApplication>
 #include <functional>
 
 namespace atools {
+namespace geo {
+class Pos;
+}
 namespace sql {
 class SqlDatabase;
 class SqlQuery;
 }
 }
 
+namespace proc {
+struct MapProcedureLeg;
+struct MapProcedureLegs;
+}
+
+namespace map {
+struct MapAirport;
+struct MapRunwayEnd;
+struct MapResult;
+}
 class MapQuery;
 class AirportQuery;
 
@@ -81,9 +95,8 @@ public:
   /* Resolves all procedures based on given properties and loads them from the database.
    * Procedures are partially resolved in a fuzzy way. */
   void getLegsForFlightplanProperties(const QHash<QString, QString> properties,
-                                      const map::MapAirport& departure,
-                                      const map::MapAirport& destination,
-                                      proc::MapProcedureLegs& arrivalLegs, proc::MapProcedureLegs& starLegs,
+                                      const map::MapAirport& departure, const map::MapAirport& destination,
+                                      proc::MapProcedureLegs& approachLegs, proc::MapProcedureLegs& starLegs,
                                       proc::MapProcedureLegs& sidLegs, QStringList& errors);
 
   /* Get dot-separated SID/STAR and the respective transition from the properties */
@@ -92,9 +105,15 @@ public:
 
   /* Populate the property list for given procedures */
   static void fillFlightplanProcedureProperties(QHash<QString, QString>& properties,
-                                                const proc::MapProcedureLegs& arrivalLegs,
+                                                const proc::MapProcedureLegs& approachLegs,
                                                 const proc::MapProcedureLegs& starLegs,
                                                 const proc::MapProcedureLegs& sidLegs);
+
+  /* Check if structs are filled according to properties. If a struct is empty return flag for missing (not resolved) procedure */
+  static proc::MapProcedureTypes getMissingProcedures(QHash<QString, QString>& properties,
+                                                      const proc::MapProcedureLegs& approachLegs,
+                                                      const proc::MapProcedureLegs& starLegs,
+                                                      const proc::MapProcedureLegs& sidLegs);
 
   /* Removes properties from the given map based on given types */
   static void clearFlightplanProcedureProperties(QHash<QString, QString>& properties,
@@ -129,7 +148,7 @@ public:
 
   /* Stitch manual legs between either STAR and airport or STAR and approach together.
    * This will modify the procedures.*/
-  void postProcessLegsForRoute(proc::MapProcedureLegs& starLegs, const proc::MapProcedureLegs& arrivalLegs,
+  void postProcessLegsForRoute(proc::MapProcedureLegs& starLegs, const proc::MapProcedureLegs& approachLegs,
                                const map::MapAirport& airport);
 
 private:
@@ -185,7 +204,7 @@ private:
   int approachIdForTransitionId(int transitionId);
   void mapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident,
                         const QString& region, const QString& airport,
-                        const atools::geo::Pos& sortByDistancePos = atools::geo::EMPTY_POS);
+                        const atools::geo::Pos& sortByDistancePos);
 
   int findTransitionId(const map::MapAirport& airport, atools::sql::SqlQuery *query,
                        bool strict);

@@ -19,18 +19,19 @@
 
 #include "navapp.h"
 
-#include "route/route.h"
-#include "route/routealtitude.h"
+#include "atools.h"
+#include "common/constants.h"
+#include "common/formatter.h"
+#include "common/unit.h"
+#include "fs/pln/flightplan.h"
 #include "fs/util/fsutil.h"
 #include "query/airportquery.h"
-#include "common/constants.h"
-#include "atools.h"
-#include "util/htmlbuilder.h"
-#include "ui_mainwindow.h"
-#include "fs/pln/flightplan.h"
-#include "common/unit.h"
-#include "common/formatter.h"
+#include "query/mapquery.h"
+#include "route/route.h"
+#include "route/routealtitude.h"
 #include "settings/settings.h"
+#include "ui_mainwindow.h"
+#include "util/htmlbuilder.h"
 
 #include <QStringBuilder>
 
@@ -54,18 +55,22 @@ RouteLabel::~RouteLabel()
 void RouteLabel::saveState()
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
-  settings.setValue(lnm::ROUTE_HEADER_AIRPORT, headerAirports);
-  settings.setValue(lnm::ROUTE_HEADER_DEPARTDEST, headerDepartDest);
-  settings.setValue(lnm::ROUTE_HEADER_RUNWAY, headerRunway);
+  settings.setValue(lnm::ROUTE_HEADER_AIRPORTS, headerAirports);
+  settings.setValue(lnm::ROUTE_HEADER_DEPARTURE, headerDeparture);
+  settings.setValue(lnm::ROUTE_HEADER_ARRIVAL, headerArrival);
+  settings.setValue(lnm::ROUTE_HEADER_RUNWAY_TAKEOFF, headerRunwayTakeoff);
+  settings.setValue(lnm::ROUTE_HEADER_RUNWAY_LAND, headerRunwayLand);
   settings.setValue(lnm::ROUTE_HEADER_DISTTIME, headerDistTime);
 }
 
 void RouteLabel::restoreState()
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
-  headerAirports = settings.valueBool(lnm::ROUTE_HEADER_AIRPORT, true);
-  headerDepartDest = settings.valueBool(lnm::ROUTE_HEADER_DEPARTDEST, true);
-  headerRunway = settings.valueBool(lnm::ROUTE_HEADER_RUNWAY, true);
+  headerAirports = settings.valueBool(lnm::ROUTE_HEADER_AIRPORTS, true);
+  headerDeparture = settings.valueBool(lnm::ROUTE_HEADER_DEPARTURE, true);
+  headerArrival = settings.valueBool(lnm::ROUTE_HEADER_ARRIVAL, true);
+  headerRunwayTakeoff = settings.valueBool(lnm::ROUTE_HEADER_RUNWAY_TAKEOFF, true);
+  headerRunwayLand = settings.valueBool(lnm::ROUTE_HEADER_RUNWAY_LAND, true);
   headerDistTime = settings.valueBool(lnm::ROUTE_HEADER_DISTTIME, true);
 }
 
@@ -74,28 +79,35 @@ void RouteLabel::updateWindowLabel()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  bool visible = !route.isEmpty() && (headerAirports || headerDepartDest || headerRunway || headerDistTime);
+  bool visible = !route.isEmpty() &&
+                 (headerAirports || headerDeparture || headerArrival || headerRunwayTakeoff || headerRunwayLand || headerDistTime);
 
   // Hide label if no plan or nothing selected
   ui->labelRouteInfo->setVisible(visible);
 
   if(visible)
   {
-    autil::HtmlBuilder htmlAirports, htmlDeparArr, htmlRunway, htmlDistTime;
+    autil::HtmlBuilder htmlAirport, htmlDepart, htmlArrival, htmlLand, htmlDistTime;
     if(headerAirports)
-      buildHeaderAirports(htmlAirports, true /* widget */);
+      buildHeaderAirports(htmlAirport, true /* widget */);
 
-    if(headerDepartDest)
-      buildHeaderDepartArrival(htmlDeparArr, true /* widget */);
+    if(headerRunwayTakeoff)
+      buildHeaderRunwayTakeoff(htmlDepart);
 
-    if(headerRunway)
-      buildHeaderRunway(htmlRunway);
+    if(headerDeparture)
+      buildHeaderDepart(htmlDepart, true /* widget */);
+
+    if(headerArrival)
+      buildHeaderArrival(htmlArrival, true /* widget */);
+
+    if(headerRunwayLand)
+      buildHeaderRunwayLand(htmlLand);
 
     if(headerDistTime)
       buildHeaderDistTime(htmlDistTime);
 
     // Join all texts with <br>
-    ui->labelRouteInfo->setText(HtmlBuilder::joinBr({htmlAirports, htmlDeparArr, htmlRunway, htmlDistTime}));
+    ui->labelRouteInfo->setText(HtmlBuilder::joinBr({htmlAirport, htmlDepart, htmlArrival, htmlLand, htmlDistTime}));
   }
   else
     ui->labelRouteInfo->clear();
@@ -117,11 +129,19 @@ void RouteLabel::buildPrintText(atools::util::HtmlBuilder& html, bool titleOnly)
     html.pEnd();
 
     html.p();
-    buildHeaderDepartArrival(html, false /* widget */);
+    buildHeaderRunwayTakeoff(html);
     html.pEnd();
 
     html.p();
-    buildHeaderRunway(html);
+    buildHeaderDepart(html, false /* widget */);
+    html.pEnd();
+
+    html.p();
+    buildHeaderArrival(html, false /* widget */);
+    html.pEnd();
+
+    html.p();
+    buildHeaderRunwayLand(html);
     html.pEnd();
 
     html.p();
@@ -143,7 +163,7 @@ void RouteLabel::buildHeaderAirports(atools::util::HtmlBuilder& html, bool widge
                        arg(route.getDepartureAirportLeg().getDisplayIdent());
 
     if(route.getDepartureAirportLeg().getDepartureParking().isValid())
-      departureParking = map::parkingNameNumber(route.getDepartureAirportLeg().getDepartureParking());
+      departureParking = map::parkingNameOrNumber(route.getDepartureAirportLeg().getDepartureParking());
     else if(route.getDepartureAirportLeg().getDepartureStart().isValid())
     {
       const map::MapStart& start = route.getDepartureAirportLeg().getDepartureStart();
@@ -158,8 +178,8 @@ void RouteLabel::buildHeaderAirports(atools::util::HtmlBuilder& html, bool widge
   else
   {
     departureAirport = tr("%1 (%2)").
-                       arg(flightplan.getEntries().first().getIdent()).
-                       arg(flightplan.getEntries().first().getWaypointTypeAsDisplayString());
+                       arg(flightplan.getEntries().constFirst().getIdent()).
+                       arg(flightplan.getEntries().constFirst().getWaypointTypeAsDisplayString());
   }
 
   // Add destination to text ==============================================================
@@ -179,7 +199,7 @@ void RouteLabel::buildHeaderAirports(atools::util::HtmlBuilder& html, bool widge
       // Add airports with links ==============================
       html.a(departureAirport, "lnm://showdeparture", ahtml::LINK_NO_UL | ahtml::BOLD);
       if(!departureParking.isEmpty())
-        html.nbsp().a(departureParking, "lnm://showdepartureparking", ahtml::LINK_NO_UL | ahtml::BOLD);
+        html.text(tr(" / ")).a(departureParking, "lnm://showdepartureparking", ahtml::LINK_NO_UL | ahtml::BOLD);
 
       if(!destinationAirport.isEmpty() && route.getSizeWithoutAlternates() > 1)
         html.text(tr(" to ")).a(destinationAirport, "lnm://showdestination", ahtml::LINK_NO_UL | ahtml::BOLD);
@@ -195,10 +215,8 @@ void RouteLabel::buildHeaderAirports(atools::util::HtmlBuilder& html, bool widge
   }
 }
 
-void RouteLabel::buildHeaderDepartArrival(atools::util::HtmlBuilder& html, bool widget)
+void RouteLabel::buildHeaderDepart(atools::util::HtmlBuilder& html, bool widget)
 {
-  QString approachRunway, starRunway;
-
   // Add procedures to text ==============================================================
 
   HtmlBuilder departHtml = html.cleared(), arrHtml = html.cleared();
@@ -206,8 +224,6 @@ void RouteLabel::buildHeaderDepartArrival(atools::util::HtmlBuilder& html, bool 
   if(route.hasAnyProcedure())
   {
     const proc::MapProcedureLegs& sidLegs = route.getSidLegs();
-    const proc::MapProcedureLegs& starLegs = route.getStarLegs();
-    const proc::MapProcedureLegs& arrivalLegs = route.getApproachLegs();
 
     if(!sidLegs.isEmpty() && !sidLegs.isCustomDeparture())
     {
@@ -218,16 +234,57 @@ void RouteLabel::buildHeaderDepartArrival(atools::util::HtmlBuilder& html, bool 
         departHtml.text(tr(" using SID "));
       else
       {
-        departHtml.text(tr(" runway "));
-        departHtml.b(sidLegs.runwayEnd.name);
+        if(!headerRunwayTakeoff || !widget)
+        {
+          departHtml.text(tr(" runway "));
+          departHtml.b(sidLegs.runwayEnd.name);
+        }
         departHtml.text(tr(" using SID "));
       }
 
       departHtml.b(sidLegs.approachFixIdent);
-
-      if(arrivalLegs.mapType & proc::PROCEDURE_ARRIVAL_ALL || starLegs.mapType & proc::PROCEDURE_ARRIVAL_ALL)
-        departHtml.text(tr(". "));
+      departHtml.text(tr(". "));
     }
+
+    if(widget)
+    {
+      // Header label widget
+      html.append(departHtml);
+      if(!arrHtml.isEmpty())
+      {
+        if(!departHtml.isEmpty())
+          html.br();
+        html.append(arrHtml);
+      }
+    }
+    else
+    {
+      // HTML export or printing
+      if(!departHtml.isEmpty() || !arrHtml.isEmpty())
+      {
+        html.p();
+        if(!departHtml.isEmpty())
+          html.append(departHtml);
+        if(!arrHtml.isEmpty())
+          html.nbsp().append(arrHtml);
+        html.pEnd();
+      }
+    }
+  }
+}
+
+void RouteLabel::buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget)
+{
+  QString approachRunway, starRunway;
+
+  // Add procedures to text ==============================================================
+
+  HtmlBuilder departHtml = html.cleared(), arrHtml = html.cleared();
+
+  if(route.hasAnyProcedure())
+  {
+    const proc::MapProcedureLegs& starLegs = route.getStarLegs();
+    const proc::MapProcedureLegs& arrivalLegs = route.getApproachLegs();
 
     // Add arrival procedures to text ==============================================================
     if(!starLegs.isEmpty())
@@ -243,16 +300,19 @@ void RouteLabel::buildHeaderDepartArrival(atools::util::HtmlBuilder& html, bool 
 
       starRunway = starLegs.procedureRunway;
 
-      if(!(arrivalLegs.mapType & proc::PROCEDURE_APPROACH))
+      if(!headerRunwayLand || !widget)
       {
-        // No approach. Direct from STAR to runway.
-        arrHtml.text(tr(" at runway "));
-        arrHtml.b(starLegs.procedureRunway);
+        if(!(arrivalLegs.mapType & proc::PROCEDURE_APPROACH))
+        {
+          // No approach. Direct from STAR to runway.
+          arrHtml.text(tr(" at runway "));
+          arrHtml.b(starLegs.procedureRunway);
+        }
+        else if(!starLegs.procedureRunway.isEmpty())
+          arrHtml.text(tr(" (")).b(starLegs.procedureRunway).text(tr(") "));
       }
-      else if(!starLegs.procedureRunway.isEmpty())
-        arrHtml.text(tr(" (")).b(starLegs.procedureRunway).text(tr(") "));
 
-      if(!(arrivalLegs.mapType & proc::PROCEDURE_APPROACH))
+      if(!(arrivalLegs.mapType & proc::PROCEDURE_APPROACH) || arrivalLegs.isCustomApproach())
         arrHtml.text(tr(". "));
     }
 
@@ -286,19 +346,24 @@ void RouteLabel::buildHeaderDepartArrival(atools::util::HtmlBuilder& html, bool 
         arrHtml.b(arrivalLegs.approachFixIdent);
 
         if(!arrivalLegs.approachArincName.isEmpty())
-          arrHtml.b(tr(" (%1) ").arg(arrivalLegs.approachArincName));
+          arrHtml.b(tr(" (%1)").arg(arrivalLegs.approachArincName));
 
-        // Runway =======================
-        if(arrivalLegs.runwayEnd.isValid() && !arrivalLegs.runwayEnd.name.isEmpty())
+        if(!headerRunwayLand || !widget)
         {
-          // Add runway for approach
-          arrHtml.text(arrHtml.isEmpty() ? tr("At runway ") : tr(" at runway "));
-          arrHtml.b(arrivalLegs.runwayEnd.name);
-          arrHtml.text(tr(". "));
+          // Runway =======================
+          if(arrivalLegs.runwayEnd.isValid() && !arrivalLegs.runwayEnd.name.isEmpty())
+          {
+            // Add runway for approach
+            arrHtml.text(arrHtml.isEmpty() ? tr("At runway ") : tr(" at runway "));
+            arrHtml.b(arrivalLegs.runwayEnd.name);
+            arrHtml.text(tr(". "));
+          }
+          else
+            // Add runway text
+            arrHtml.text(arrHtml.isEmpty() ? tr("At runway.") : tr(" at runway."));
         }
         else
-          // Add runway text
-          arrHtml.text(arrHtml.isEmpty() ? tr("At runway.") : tr(" at runway."));
+          arrHtml.text(tr("."));
       }
 
       approachRunway = arrivalLegs.runwayEnd.name;
@@ -335,58 +400,81 @@ void RouteLabel::buildHeaderDepartArrival(atools::util::HtmlBuilder& html, bool 
   }
 }
 
-void RouteLabel::buildHeaderRunway(atools::util::HtmlBuilder& html)
+void RouteLabel::buildHeaderRunwayTakeoff(atools::util::HtmlBuilder& html)
 {
   if(route.hasAnyProcedure())
   {
+    AirportQuery *airportQuerySim = NavApp::getAirportQuerySim();
+    MapQuery *mapQuery = NavApp::getMapQueryGui();
+
     if(route.hasValidDeparture())
     {
       // Departure runway information =======================================
       const proc::MapProcedureLegs& departureLegs = route.getSidLegs();
-      const map::MapRunwayEnd& end = departureLegs.runwayEnd;
+      map::MapRunwayEnd end = departureLegs.runwayEnd; // Navdata
       if(!departureLegs.isEmpty() && end.isValid())
       {
         const RouteLeg& departLeg = route.getDepartureAirportLeg();
-
         if(departLeg.isValid())
         {
-          map::MapRunway runway = NavApp::getAirportQuerySim()->getRunwayByEndId(departLeg.getId(), end.id);
+          // Get runway from simulator data by name if possible
+          QList<map::MapRunwayEnd> runwayEnds;
+          mapQuery->getRunwayEndByNameFuzzy(runwayEnds, end.name, departLeg.getAirport(), false /* navdata */);
+          if(!runwayEnds.isEmpty())
+            end = runwayEnds.first();
+
+          html.b(tr("Takeoff")).text(tr(" from ")).b(end.name).text(tr(", "));
+          html.text(formatter::courseTextFromTrue(end.heading, departLeg.getMagvar()), ahtml::NO_ENTITIES);
+
+          map::MapRunway runway = airportQuerySim->getRunwayByEndId(departLeg.getId(), end.id);
           if(runway.isValid())
-          {
-            html.b(tr("Takeoff")).text(tr(" from ")).b(end.name).text(tr(", "));
-            html.text(formatter::courseTextFromTrue(end.heading, departLeg.getMagvar()), ahtml::NO_ENTITIES);
-            html.text(tr(", ")).text(Unit::distShortFeet(runway.length)).text(tr(". "));
-          }
+            html.text(tr(", ")).text(Unit::distShortFeet(runway.length));
+          html.text(tr(". "));
         }
       }
     } // if(route.hasValidDeparture())
+  } // if(route.hasAnyProcedure())
+}
+
+void RouteLabel::buildHeaderRunwayLand(atools::util::HtmlBuilder& html)
+{
+  if(route.hasAnyProcedure())
+  {
+    AirportQuery *airportQuerySim = NavApp::getAirportQuerySim();
+    MapQuery *mapQuery = NavApp::getMapQueryGui();
 
     if(route.hasValidDestination())
     {
       // Destination runway information =======================================
       const proc::MapProcedureLegs& apprLegs = route.getApproachLegs();
-      const map::MapRunwayEnd& end = apprLegs.runwayEnd;
+      map::MapRunwayEnd end = apprLegs.runwayEnd;
       if(!apprLegs.isEmpty() && end.isValid())
       {
         const RouteLeg& destLeg = route.getDestinationAirportLeg();
 
         if(destLeg.isValid())
         {
-          map::MapRunway runway = NavApp::getAirportQuerySim()->getRunwayByEndId(destLeg.getId(), end.id);
+          // Get runway from simulator data by name if possible
+          QList<map::MapRunwayEnd> runwayEnds;
+          mapQuery->getRunwayEndByNameFuzzy(runwayEnds, end.name, destLeg.getAirport(), false /* navdata */);
+          if(!runwayEnds.isEmpty())
+            end = runwayEnds.first();
+
+          html.b(tr("Land")).text(tr(" at ")).b(end.name).text(tr(", "));
+
+          QStringList rwAtts;
+          rwAtts.append(formatter::courseTextFromTrue(end.heading, destLeg.getMagvar()));
+
+          map::MapRunway runway = airportQuerySim->getRunwayByEndId(destLeg.getId(), end.id);
           if(runway.isValid())
-          {
-            html.b(tr("Land")).text(tr(" at ")).b(end.name).text(tr(", "));
-
-            QStringList rwAtts;
-            rwAtts.append(formatter::courseTextFromTrue(end.heading, destLeg.getMagvar()));
             rwAtts.append(Unit::distShortFeet(runway.length - (end.secondary ? runway.secondaryOffset : runway.primaryOffset)));
-            rwAtts.append(Unit::altFeet(destLeg.getAltitude()) % tr(" elev."));
-            if(end.hasAnyVasi())
-              rwAtts.append(end.uniqueVasiTypeStr().join(QObject::tr("/")));
 
-            html.text(rwAtts.join(tr(", ")), ahtml::NO_ENTITIES);
-            html.text(tr(". "));
-          }
+          rwAtts.append(Unit::altFeet(destLeg.getAltitude()) % tr(" elevation"));
+          if(end.hasAnyVasi())
+            rwAtts.append(end.uniqueVasiTypeStr().join(QObject::tr("/")));
+
+          html.text(rwAtts.join(tr(", ")), ahtml::NO_ENTITIES);
+          html.text(tr("."));
         }
       }
     } // if(route.hasValidDestination())

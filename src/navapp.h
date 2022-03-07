@@ -62,6 +62,7 @@ class WindReporter;
 class MapMarkHandler;
 class MapAirportHandler;
 class TrackManager;
+class MapThemeHandler;
 
 namespace atools {
 namespace gui {
@@ -164,6 +165,7 @@ public:
   static bool isConnected();
   static bool isConnectedActive();
   static bool isConnectedNetwork();
+  static bool isXpConnect();
   static bool isSimConnect();
   static bool isConnectedAndAircraft();
   static bool isConnectedAndAircraftFlying();
@@ -233,6 +235,8 @@ public:
 
   /* Selected navdatabase in menu */
   static bool isNavdataAll();
+  static bool isNavdataOff();
+  static bool isNavdataMixed();
 
   static OptionsDialog *getOptionsDialog();
 
@@ -294,7 +298,7 @@ public:
   static atools::gui::TabWidgetHandler *getRouteTabHandler();
   static const InfoController *getInfoController();
   static QFont getTextBrowserInfoFont();
-  static QString getMapCopyright();
+  static MapThemeHandler *getMapThemeHandler();
 
   static DatabaseManager *getDatabaseManager();
 
@@ -323,10 +327,12 @@ public:
   static void deleteAircraftTrackLogbook();
 
   static void initSplashScreen();
+
+  /* Called by main application once startup is done */
   static void finishSplashScreen();
 
   /* Remove splash when showing error messages, etc. to avoid overlay */
-  static void deleteSplashScreen();
+  static void closeSplashScreen();
 
   static bool isShuttingDown();
   static void setShuttingDown(bool value);
@@ -371,8 +377,11 @@ public:
 
   static const QString& getCurrentRouteFilepath();
   static const QString& getCurrentAircraftPerfFilepath();
+  static const QString& getCurrentAircraftPerfName();
+  static const QString& getCurrentAircraftPerfAircraftType();
 
   static WebController *getWebController();
+  static MapPaintWidget *getMapPaintWidgetWeb();
 
   static MapMarkHandler *getMapMarkHandler();
   static MapAirportHandler *getMapAirportHandler();

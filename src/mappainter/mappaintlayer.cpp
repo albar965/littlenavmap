@@ -24,6 +24,7 @@
 #include "mapgui/maplayersettings.h"
 #include "mapgui/mapscale.h"
 #include "mapgui/mapwidget.h"
+#include "mapgui/mapthemehandler.h"
 #include "mappainter/mappainteraircraft.h"
 #include "mappainter/mappainterairport.h"
 #include "mappainter/mappainterairspace.h"
@@ -275,7 +276,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
     opts::MapScrollDetail mapScrollDetail = OptionData::instance().getMapScrollDetail();
 
     // Check if no painting wanted during scroll
-    if(!(mapScrollDetail == opts::NONE && mapWidget->viewContext() == Marble::Animation) && !noRender())
+    if(!noRender())
     {
 #ifdef DEBUG_INFORMATION_PAINT
       qDebug() << Q_FUNC_INFO << "layer" << *mapLayer;
@@ -292,9 +293,8 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.objectDisplayTypes = objectDisplayTypes;
       context.airspaceFilterByLayer = getShownAirspacesTypesByLayer();
       context.viewContext = mapWidget->viewContext();
-      context.drawFast = (mapScrollDetail == opts::FULL || mapScrollDetail == opts::HIGHER) ?
-                         false : mapWidget->viewContext() == Marble::Animation;
-      context.lazyUpdate = mapScrollDetail == opts::FULL ? false : mapWidget->viewContext() == Marble::Animation;
+      context.drawFast = mapScrollDetail == opts::DETAIL_LOW && mapWidget->viewContext() == Marble::Animation;
+      context.lazyUpdate = mapScrollDetail != opts::DETAIL_HIGH && mapWidget->viewContext() == Marble::Animation;
       context.mapScrollDetail = mapScrollDetail;
       context.distanceKm = static_cast<float>(mapWidget->distance());
       context.distanceNm = atools::geo::meterToNm(context.distanceKm * 1000.f);
@@ -303,7 +303,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.userPointTypesAll = NavApp::getUserdataController()->getAllTypes();
       context.userPointTypeUnknown = NavApp::getUserdataController()->isSelectedUnknownType();
       context.zoomDistanceMeter = static_cast<float>(mapWidget->distance() * 1000.);
-      context.darkMap = mapWidget->isDarkMap();
+      context.darkMap = NavApp::getMapThemeHandler()->isDarkTheme(mapWidget->getCurrentThemeIndex());
       context.paintCopyright = mapWidget->isPaintCopyright();
 
       context.mimimumRunwayLengthFt = minimumRunwayLenghtFt;
@@ -362,32 +362,73 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.weatherSource = weatherSource;
       context.visibleWidget = mapWidget->isVisibleWidget();
 
+      // Prepare index for all navaids drawn by route - needed for context menu and tooltips
+      context.routeDrawnNavaids = mapWidget->getRouteDrawnNavaids();
+      context.routeDrawnNavaids->clear();
+
       // ====================================
       // Get all waypoints from the route and add them to the map to avoid duplicate drawing
       if(context.objectDisplayTypes.testFlag(map::FLIGHTPLAN))
       {
-        const Route& route = NavApp::getRouteConst();
-        for(int i = 0; i < route.size(); i++)
+        const Route *route = context.route;
+        // Active normally start at 1 - this will consider all legs as not passed
+        int activeRouteLeg = route->isActiveValid() ? route->getActiveLegIndex() : 0;
+        int passedRouteLeg = context.flags2.testFlag(opts2::MAP_ROUTE_DIM_PASSED) ? activeRouteLeg : 0;
+
+        // Check starting with previous leg of active for normal legs ====================
+        for(int i = passedRouteLeg - 1; i < route->size(); i++)
         {
-          const RouteLeg& routeLeg = route.value(i);
+          if(i < 0)
+            continue;
+
+          const RouteLeg& routeLeg = route->value(i);
           map::MapTypes type = routeLeg.getMapObjectType();
           if(type == map::AIRPORT || type == map::VOR || type == map::NDB || type == map::WAYPOINT)
-            context.routeProcIdMap.insert(map::MapObjectRef(routeLeg.getId(), routeLeg.getMapObjectType()));
-          else if(type == map::PROCEDURE)
+            context.routeProcIdMap.insert(map::MapObjectRef(routeLeg.getId(), type));
+        }
+
+        // Add procedure navaids beginning from previous leg ==============
+        for(int i = passedRouteLeg - 1; i < route->size(); i++)
+        {
+          const RouteLeg& routeLeg = route->value(i);
+          map::MapTypes type = routeLeg.getMapObjectType();
+          if(type == map::PROCEDURE)
           {
             if(!routeLeg.getProcedureLeg().isMissed() || context.objectTypes & map::MISSED_APPROACH)
             {
+              // Procedure navaids drawn by route code
               const map::MapResult& navaids = routeLeg.getProcedureLeg().navaids;
               if(navaids.hasWaypoints())
-                context.routeProcIdMap.insert({navaids.waypoints.first().id, map::WAYPOINT});
+                context.routeProcIdMap.insert({navaids.waypoints.constFirst().id, map::WAYPOINT});
               if(navaids.hasVor())
-                context.routeProcIdMap.insert({navaids.vors.first().id, map::VOR});
+                context.routeProcIdMap.insert({navaids.vors.constFirst().id, map::VOR});
               if(navaids.hasNdb())
-                context.routeProcIdMap.insert({navaids.ndbs.first().id, map::NDB});
+                context.routeProcIdMap.insert({navaids.ndbs.constFirst().id, map::NDB});
             }
           }
-        }
-      }
+        } // for(int i = passedRouteLeg -1 ; i < route->size(); i++)
+
+        // Add recommended procedure navaids beginning with this leg ==============
+        for(int i = passedRouteLeg; i < route->size(); i++)
+        {
+          const RouteLeg& routeLeg = route->value(i);
+          map::MapTypes type = routeLeg.getMapObjectType();
+          if(type == map::PROCEDURE)
+          {
+            if(!routeLeg.getProcedureLeg().isMissed() || context.objectTypes & map::MISSED_APPROACH)
+            {
+              // Procedure recommended navaids drawn by route code
+              const map::MapResult& recNavaids = routeLeg.getProcedureLeg().recNavaids;
+              if(recNavaids.hasWaypoints())
+                context.routeProcIdMapRec.insert({recNavaids.waypoints.constFirst().id, map::WAYPOINT});
+              if(recNavaids.hasVor())
+                context.routeProcIdMapRec.insert({recNavaids.vors.constFirst().id, map::VOR});
+              if(recNavaids.hasNdb())
+                context.routeProcIdMapRec.insert({recNavaids.ndbs.constFirst().id, map::NDB});
+            }
+          }
+        } // for(int i = passedRouteLeg; i < route->size(); i++)
+      } // if(context.objectDisplayTypes.testFlag(map::FLIGHTPLAN))
 
       // ====================================
       // Get navaids from procedure highlight to avoid duplicate drawing
@@ -401,11 +442,11 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
           {
             const map::MapResult& navaids = procedure.at(i).navaids;
             if(navaids.hasWaypoints())
-              context.routeProcIdMap.insert({navaids.waypoints.first().id, map::WAYPOINT});
+              context.routeProcIdMap.insert({navaids.waypoints.constFirst().id, map::WAYPOINT});
             if(navaids.hasVor())
-              context.routeProcIdMap.insert({navaids.vors.first().id, map::VOR});
+              context.routeProcIdMap.insert({navaids.vors.constFirst().id, map::VOR});
             if(navaids.hasNdb())
-              context.routeProcIdMap.insert({navaids.ndbs.first().id, map::NDB});
+              context.routeProcIdMap.insert({navaids.ndbs.constFirst().id, map::NDB});
           }
         }
 
@@ -414,11 +455,11 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
         {
           const map::MapResult& navaids = procedure.at(i).navaids;
           if(navaids.hasWaypoints())
-            context.routeProcIdMap.insert({navaids.waypoints.first().id, map::WAYPOINT});
+            context.routeProcIdMap.insert({navaids.waypoints.constFirst().id, map::WAYPOINT});
           if(navaids.hasVor())
-            context.routeProcIdMap.insert({navaids.vors.first().id, map::VOR});
+            context.routeProcIdMap.insert({navaids.vors.constFirst().id, map::VOR});
           if(navaids.hasNdb())
-            context.routeProcIdMap.insert({navaids.ndbs.first().id, map::NDB});
+            context.routeProcIdMap.insert({navaids.ndbs.constFirst().id, map::NDB});
         }
       }
 

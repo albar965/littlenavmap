@@ -27,6 +27,9 @@
 #include "sql/sqlrecord.h"
 #include "fs/util/morsecode.h"
 #include "fs/sc/simconnectdata.h"
+#include "mapgui/mappaintwidget.h"
+#include "web/webcontroller.h"
+#include "web/webmapcontroller.h"
 
 namespace ageo = atools::geo;
 using atools::fs::util::MorseCode;
@@ -51,12 +54,20 @@ NavApp* AbstractLnmActionsController::getNavApp(){
     return NavApp::navAppInstance();
 }
 
-MapQuery* AbstractLnmActionsController::getMapQueryGui(){
-    return getNavApp()->getMapQueryGui();
+MapQuery* AbstractLnmActionsController::getMapQuery(){
+    // Get "own" MapQuery since it contains caches releated to shown screen area
+    if(getNavApp()->getMapPaintWidgetWeb() != nullptr)
+      return getNavApp()->getMapPaintWidgetWeb()->getMapQuery();
+    else
+      return nullptr;
 }
 
-WaypointTrackQuery* AbstractLnmActionsController::getWaypointTrackQueryGui(){
-    return getNavApp()->getWaypointTrackQueryGui();
+WaypointTrackQuery* AbstractLnmActionsController::getWaypointTrackQuery(){
+    // Get "own" WaypointQuery since it contains caches releated to shown screen area
+    if(getNavApp()->getMapPaintWidgetWeb() != nullptr)
+      return getNavApp()->getMapPaintWidgetWeb()->getWaypointTrackQuery();
+    else
+      return nullptr;
 }
 
 InfoQuery* AbstractLnmActionsController::getInfoQuery(){
@@ -104,12 +115,16 @@ const AirportAdminNames AbstractLnmActionsController::getAirportAdminNames(map::
 }
 int AbstractLnmActionsController::getTransitionAltitude(map::MapAirport& airport){
     // Get transition altitude from nav database
-    map::MapAirport navAirport = airport;
-    getMapQueryGui()->getAirportNavReplace(navAirport);
-    if(navAirport.isValid() && navAirport.transitionAltitude > 0)
-      return navAirport.transitionAltitude;
+    if(getMapQuery() != nullptr)
+    {
+      map::MapAirport navAirport = airport;
+      getMapQuery()->getAirportNavReplace(navAirport);
+      if(navAirport.isValid() && navAirport.transitionAltitude > 0)
+        return navAirport.transitionAltitude;
+    }
     return -1;
 }
+
 const QTime AbstractLnmActionsController::getSunset(const SqlRecord& airportInformation){
     return calculateSunriseSunset(getPosFromAirportInformation(airportInformation),ageo::SUNSET_CIVIL);
 };

@@ -29,7 +29,7 @@
 #include "settings/settings.h"
 #include "common/unit.h"
 #include "geo/calculations.h"
-#include "common/proctypes.h"
+#include "common/mapresult.h"
 
 #include <QColor>
 #include <QColorDialog>
@@ -158,15 +158,15 @@ void HoldDialog::updateWidgets()
   QString text;
 
   if(result->hasAirports())
-    text = map::airportText(result->airports.first());
+    text = map::airportText(result->airports.constFirst());
   else if(result->hasVor())
-    text = map::vorText(result->vors.first());
+    text = map::vorText(result->vors.constFirst());
   else if(result->hasNdb())
-    text = map::ndbText(result->ndbs.first());
+    text = map::ndbText(result->ndbs.constFirst());
   else if(result->hasWaypoints())
-    text = map::waypointText(result->waypoints.first());
+    text = map::waypointText(result->waypoints.constFirst());
   else if(result->hasUserpoints())
-    text = map::userpointText(result->userpoints.first());
+    text = map::userpointText(result->userpoints.constFirst());
   else
     text = tr("Coordinates %1").arg(Unit::coords(*position));
 
@@ -190,14 +190,14 @@ void HoldDialog::fillHold(map::HoldingMarker& holdingMarker)
 
   if(result->hasAirports())
   {
-    holding.navIdent = result->airports.first().displayIdent();
-    holding.position = result->airports.first().position;
-    holding.magvar = result->airports.first().magvar;
+    holding.navIdent = result->airports.constFirst().displayIdent();
+    holding.position = result->airports.constFirst().position;
+    holding.magvar = result->airports.constFirst().magvar;
     holding.navType = map::AIRPORT;
   }
   else if(result->hasVor())
   {
-    const map::MapVor& vor = result->vors.first();
+    const map::MapVor& vor = result->vors.constFirst();
     holding.navIdent = vor.ident;
     holding.position = vor.position;
     holding.magvar = vor.magvar;
@@ -210,22 +210,22 @@ void HoldDialog::fillHold(map::HoldingMarker& holdingMarker)
   }
   else if(result->hasNdb())
   {
-    holding.navIdent = result->ndbs.first().ident;
-    holding.position = result->ndbs.first().position;
-    holding.magvar = result->ndbs.first().magvar;
+    holding.navIdent = result->ndbs.constFirst().ident;
+    holding.position = result->ndbs.constFirst().position;
+    holding.magvar = result->ndbs.constFirst().magvar;
     holding.navType = map::NDB;
   }
   else if(result->hasWaypoints())
   {
-    holding.navIdent = result->waypoints.first().ident;
-    holding.position = result->waypoints.first().position;
-    holding.magvar = result->waypoints.first().magvar;
+    holding.navIdent = result->waypoints.constFirst().ident;
+    holding.position = result->waypoints.constFirst().position;
+    holding.magvar = result->waypoints.constFirst().magvar;
     holding.navType = map::WAYPOINT;
   }
   else if(result->hasUserpoints())
   {
-    holding.navIdent = result->userpoints.first().ident;
-    holding.position = result->userpoints.first().position;
+    holding.navIdent = result->userpoints.constFirst().ident;
+    holding.position = result->userpoints.constFirst().position;
     holding.magvar = NavApp::getMagVar(*position);
     holding.navType = map::USERPOINT;
   }

@@ -18,16 +18,12 @@
 #ifndef LITTLENAVMAP_MAPHTMLINFOBUILDER_H
 #define LITTLENAVMAP_MAPHTMLINFOBUILDER_H
 
-#include "util/htmlbuilder.h"
-#include "fs/weather/metar.h"
-
 #include <QCoreApplication>
 #include <QLocale>
+#include <QSize>
 
 class RouteLeg;
-class MapQuery;
 class AirportQuery;
-class WaypointTrackQuery;
 class InfoQuery;
 class WeatherReporter;
 class Route;
@@ -35,6 +31,18 @@ class MainWindow;
 class MapPaintWidget;
 
 class QFileInfo;
+
+namespace atools {
+namespace fs {
+namespace weather {
+class Metar;
+class MetarParser;
+}
+}
+namespace util {
+class HtmlBuilder;
+}
+}
 
 namespace map {
 struct MapAirport;
@@ -328,7 +336,7 @@ private:
                                 float magVar, bool frequencyCol, bool airportCol) const;
 
   /* Add scenery entries and links into table */
-  void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html, bool ilsOrCom = false) const;
+  void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html, bool com, bool ils) const;
   void addAirportSceneryAndLinks(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
   void addAirportFolder(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
 
@@ -342,8 +350,7 @@ private:
   /* Distance to last flight plan waypoint. Returns true if text was addded. */
   bool distanceToRouteText(const atools::geo::Pos& pos, atools::util::HtmlBuilder& html) const;
 
-  void navaidTitle(atools::util::HtmlBuilder& html, const QString& text,
-                   atools::util::html::Flags flags = atools::util::html::NONE) const;
+  void navaidTitle(atools::util::HtmlBuilder& html, const QString& text, bool noEntities = false) const;
 
   void airportTitle(const map::MapAirport& airport, atools::util::HtmlBuilder& html, int rating) const;
 
@@ -424,6 +431,9 @@ private:
   QString strJoinHdr(const QStringList& list) const;
 
   QString highlightText(const QString& text) const;
+  void routeInfoText(atools::util::HtmlBuilder& html, int routeIndex, bool recommended) const;
+
+  void waypointAirwayText(const map::MapWaypoint& waypoint, atools::util::HtmlBuilder& html) const;
 
   /* Airport, navaid and userpoint icon size */
   QSize symbolSize = QSize(18, 18);

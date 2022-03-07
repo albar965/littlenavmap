@@ -245,6 +245,7 @@ SOURCES += \
   src/common/maptools.cpp \
   src/common/maptypes.cpp \
   src/common/maptypesfactory.cpp \
+  src/common/procflags.cpp \
   src/common/proctypes.cpp \
   src/common/settingsmigrate.cpp \
   src/common/symbolpainter.cpp \
@@ -256,6 +257,7 @@ SOURCES += \
   src/common/vehicleicons.cpp \
   src/connect/connectclient.cpp \
   src/connect/connectdialog.cpp \
+  src/db/airspacedialog.cpp \
   src/db/databasedialog.cpp \
   src/db/databasemanager.cpp \
   src/db/databaseprogressdialog.cpp \
@@ -291,6 +293,7 @@ SOURCES += \
   src/mapgui/mappaintwidget.cpp \
   src/mapgui/mapscale.cpp \
   src/mapgui/mapscreenindex.cpp \
+  src/mapgui/mapthemehandler.cpp \
   src/mapgui/maptooltip.cpp \
   src/mapgui/mapvisible.cpp \
   src/mapgui/mapwidget.cpp \
@@ -321,7 +324,8 @@ SOURCES += \
   src/perf/perfmergedialog.cpp \
   src/print/printdialog.cpp \
   src/print/printsupport.cpp \
-  src/profile/profilelabelwidget.cpp \
+  src/profile/profilelabelwidgethoriz.cpp \
+  src/profile/profilelabelwidgetvert.cpp \
   src/profile/profilescrollarea.cpp \
   src/profile/profilewidget.cpp \
   src/query/airportquery.cpp \
@@ -349,12 +353,14 @@ SOURCES += \
   src/route/routeleg.cpp \
   src/route/runwayselectiondialog.cpp \
   src/route/userwaypointdialog.cpp \
+  src/routeexport/fetchroutedialog.cpp \
   src/routeexport/routeexport.cpp \
   src/routeexport/routeexportdata.cpp \
   src/routeexport/routeexportdialog.cpp \
   src/routeexport/routeexportflags.cpp \
   src/routeexport/routeexportformat.cpp \
   src/routeexport/routemultiexportdialog.cpp \
+  src/routeexport/simbriefhandler.cpp \
   src/routestring/routestringdialog.cpp \
   src/routestring/routestringreader.cpp \
   src/routestring/routestringtypes.cpp \
@@ -427,6 +433,7 @@ HEADERS  += \
   src/common/maptools.h \
   src/common/maptypes.h \
   src/common/maptypesfactory.h \
+  src/common/procflags.h \
   src/common/proctypes.h \
   src/common/settingsmigrate.h \
   src/common/symbolpainter.h \
@@ -438,6 +445,7 @@ HEADERS  += \
   src/common/vehicleicons.h \
   src/connect/connectclient.h \
   src/connect/connectdialog.h \
+  src/db/airspacedialog.h \
   src/db/databasedialog.h \
   src/db/databasemanager.h \
   src/db/databaseprogressdialog.h \
@@ -472,6 +480,7 @@ HEADERS  += \
   src/mapgui/mappaintwidget.h \
   src/mapgui/mapscale.h \
   src/mapgui/mapscreenindex.h \
+  src/mapgui/mapthemehandler.h \
   src/mapgui/maptooltip.h \
   src/mapgui/mapvisible.h \
   src/mapgui/mapwidget.h \
@@ -502,7 +511,8 @@ HEADERS  += \
   src/perf/perfmergedialog.h \
   src/print/printdialog.h \
   src/print/printsupport.h \
-  src/profile/profilelabelwidget.h \
+  src/profile/profilelabelwidgethoriz.h \
+  src/profile/profilelabelwidgetvert.h \
   src/profile/profilescrollarea.h \
   src/profile/profilewidget.h \
   src/query/airportquery.h \
@@ -530,12 +540,14 @@ HEADERS  += \
   src/route/routeleg.h \
   src/route/runwayselectiondialog.h \
   src/route/userwaypointdialog.h \
+  src/routeexport/fetchroutedialog.h \
   src/routeexport/routeexport.h \
   src/routeexport/routeexportdata.h \
   src/routeexport/routeexportdialog.h \
   src/routeexport/routeexportflags.h \
   src/routeexport/routeexportformat.h \
   src/routeexport/routemultiexportdialog.h \
+  src/routeexport/simbriefhandler.h \
   src/routestring/routestringdialog.h \
   src/routestring/routestringreader.h \
   src/routestring/routestringtypes.h \
@@ -588,6 +600,7 @@ HEADERS  += \
 
 FORMS += \
   src/connect/connectdialog.ui \
+  src/db/airspacedialog.ui \
   src/db/databasedialog.ui \
   src/db/databaseprogressdialog.ui \
   src/gui/holddialog.ui \
@@ -609,6 +622,7 @@ FORMS += \
   src/route/parkingdialog.ui \
   src/route/runwayselectiondialog.ui \
   src/route/userwaypointdialog.ui \
+  src/routeexport/fetchroutedialog.ui \
   src/routeexport/routeexportdialog.ui \
   src/routeexport/routemultiexportdialog.ui \
   src/routestring/routestringdialog.ui \

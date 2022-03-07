@@ -107,7 +107,7 @@ void RwVector::sortRunwayEnds()
     }
   }
   else if(size() == 1)
-    totalNumber = first().names.size();
+    totalNumber = constFirst().names.size();
 }
 
 } // namespace maptools

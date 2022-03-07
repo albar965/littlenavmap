@@ -29,7 +29,6 @@
 #include "fs/weather/metarparser.h"
 
 #include <QPainter>
-#include <QApplication>
 #include <QStringBuilder>
 #include <marble/GeoPainter.h>
 
@@ -598,7 +597,7 @@ void SymbolPainter::drawBarbFeathers(QPainter *painter, const QVector<int>& barb
                                      float barbLength10, float barbLength50, float barbStep) const
 {
   // Lenghten the line for the rectangle
-  float barbPos = barbs.first() == 50 ? -lineLength + barbLength50 / 2.f : -lineLength;
+  float barbPos = barbs.constFirst() == 50 ? -lineLength + barbLength50 / 2.f : -lineLength;
   for(int barb : barbs)
   {
     if(barb == 50)
@@ -915,7 +914,8 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
   if(size > 4)
   {
     float lineWidth = std::max(size / 16.f, 1.5f);
-    float roseLineWidth = std::max(size / 36.f, 1.1f);
+    float roseLineWidth = std::max(size / 20.f, 0.8f);
+
     painter->setPen(QPen(mapcolors::vorSymbolColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
 
     painter->translate(x, y);
@@ -1133,8 +1133,17 @@ void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float
     textAttrs |= textatt::CENTER;
   }
 
-  if(addtionalText != nullptr)
-    texts.append(*addtionalText);
+  if(addtionalText != nullptr && !addtionalText->isEmpty())
+  {
+    if(flags.testFlag(textflags::ELLIPSE_IDENT))
+    {
+      if(!texts.isEmpty())
+        // Ingore additional texts and add ellipsis
+        texts.first() = texts.constFirst() % tr("…", "Dots used indicate additional text in map");
+    }
+    else
+      texts.append(*addtionalText);
+  }
 
   int transparency = fill ? 255 : 0;
   textBoxF(painter, texts, mapcolors::ndbSymbolColor, x, y, textAttrs, transparency);
@@ -1173,8 +1182,17 @@ void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, float
     textAttrs |= textatt::RIGHT;
   }
 
-  if(addtionalText != nullptr)
-    texts.append(*addtionalText);
+  if(addtionalText != nullptr && !addtionalText->isEmpty())
+  {
+    if(flags.testFlag(textflags::ELLIPSE_IDENT))
+    {
+      if(!texts.isEmpty())
+        // Ingore additional texts and add ellipsis
+        texts.first() = texts.constFirst() % tr("…", "Dots used indicate additional text in map");
+    }
+    else
+      texts.append(*addtionalText);
+  }
 
   int transparency = fill ? 255 : 0;
   textBoxF(painter, texts, mapcolors::vorSymbolColor, x, y, textAttrs, transparency);
@@ -1186,11 +1204,11 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& 
 {
   QStringList texts;
 
-  if(flags & textflags::IDENT)
+  if(flags.testFlag(textflags::IDENT))
     texts.append(wp.ident);
 
   textatt::TextAttributes textAttrs = textatt::NONE;
-  if(flags & textflags::ROUTE_TEXT)
+  if(flags.testFlag(textflags::ROUTE_TEXT))
     textAttrs |= textatt::ROUTE_BG_COLOR;
 
   if(!flags.testFlag(textflags::ABS_POS))
@@ -1199,8 +1217,17 @@ void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& 
     textAttrs |= textatt::LEFT;
   }
 
-  if(addtionalText != nullptr)
-    texts.append(*addtionalText);
+  if(addtionalText != nullptr && !addtionalText->isEmpty())
+  {
+    if(flags.testFlag(textflags::ELLIPSE_IDENT))
+    {
+      if(!texts.isEmpty())
+        // Ingore additional texts and add ellipsis
+        texts.first() = texts.constFirst() % tr("…", "Dots used indicate additional text in map");
+    }
+    else
+      texts.append(*addtionalText);
+  }
 
   int transparency = fill ? 255 : 0;
   textBoxF(painter, texts, mapcolors::waypointSymbolColor, x, y, textAttrs, transparency);
@@ -1390,7 +1417,7 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, QPen t
     if(text.isEmpty())
       continue;
 
-    float w = static_cast<float>(metrics.width(text));
+    float w = static_cast<float>(metrics.horizontalAdvance(text));
     float newx = x;
     if(atts.testFlag(textatt::RIGHT))
       newx -= w;

@@ -293,6 +293,9 @@ public:
   bool hasErrors() const;
   QStringList getErrorStrings() const;
 
+  /* Update header label with sim information */
+  void updateRemarkHeader();
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -400,9 +403,6 @@ private:
   /* Assign type and altitude from GUI */
   void updateFlightplanFromWidgets(atools::fs::pln::Flightplan& flightplan);
   void updateFlightplanFromWidgets();
-
-  /* Insert properties for aircraft performance */
-  void assignFlightplanPerfProperties(atools::fs::pln::Flightplan& flightplan) const;
 
   /* Used by undo/redo */
   void changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan);
@@ -516,7 +516,7 @@ private:
   QString routeFilename, fileDepartureIdent, fileDestinationIdent;
 
   /* Same as above for cruise altitude */
-  float fileCruiseAlt;
+  float fileCruiseAltFt;
 
   /* Current loaded or saved format since the plans in the undo stack have different values */
   atools::fs::pln::FlightplanType fileIfrVfr;
@@ -530,6 +530,8 @@ private:
   QUndoStack *undoStack = nullptr;
   FlightplanEntryBuilder *entryBuilder = nullptr;
   atools::fs::pln::FlightplanIO *flightplanIO = nullptr;
+
+  QAction *undoAction = nullptr, *redoAction = nullptr;
 
   /* Takes care of the top label */
   RouteLabel *routeLabel = nullptr;

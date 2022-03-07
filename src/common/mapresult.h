@@ -198,6 +198,12 @@ struct MapResult
     return !onlineAircraft.isEmpty();
   }
 
+  /* Enroute navaids not ILS */
+  bool hasNavaids() const
+  {
+    return hasVor() || hasNdb() || hasWaypoints();
+  }
+
   /* Special methods for the online and navdata airspaces which are stored mixed */
   bool hasSimNavUserAirspaces() const;
   bool hasOnlineAirspaces() const;

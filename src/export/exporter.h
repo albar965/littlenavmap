@@ -18,7 +18,7 @@
 #ifndef LITTLELOGBOOK_EXPORTER_H
 #define LITTLELOGBOOK_EXPORTER_H
 
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace gui {

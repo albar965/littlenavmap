@@ -9,8 +9,8 @@
     <head>
       <!-- The license here applies to the actual map content, not this dgml file. See the license header above for the dgml file license -->
       <!-- The content that this license refers to is not distributed with this package -->
-      <license short="© OpenStreetMap contributors">Source: © OpenStreetMap contributors, License: Creative Commons Attribution-ShareAlike 2.0 (CC BY-SA)</license>
-      <name>CARTO Dark (Dark Matter)</name>
+      <license short="© CARTO and OpenStreetMap contributors">Source: © OpenStreetMap contributors, License: Creative Commons Attribution-ShareAlike 2.0 (CC BY-SA)</license>
+      <name>CARTO Dark Matter</name>
       <target>earth</target>
       <theme>cartodark</theme>
       <icon pixmap="cartodark-preview.png"/>
@@ -21,6 +21,7 @@
         <maximum>  3328  </maximum>
         <discrete> true </discrete>
       </zoom>
+      <url href="https://www.carto.com">CARTO</url>
     </head>
     <map bgcolor="#000000">
       <canvas/>
@@ -38,16 +39,6 @@
           <downloadPolicy usage="Browse" maximumConnections="2"/>
           <downloadPolicy usage="Bulk" maximumConnections="2"/>
         </texture>
-       <texture name="hillshading" expire="31536000">
-          <sourcedir format="PNG"> earth/hillshading </sourcedir>
-          <tileSize width="256" height="256"/>
-          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="17" mode="OpenStreetMap"/>
-          <projection name="Mercator"/>
-          <downloadUrl protocol="http" host="a.tiles.wmflabs.org" path="/hillshading/"/>
-          <downloadUrl protocol="http" host="b.tiles.wmflabs.org" path="/hillshading/"/>
-          <downloadUrl protocol="http" host="c.tiles.wmflabs.org" path="/hillshading/"/>
-          <blending name="AlphaBlending"/>
-        </texture>
         </layer>
     </map>
     <settings>
@@ -55,12 +46,6 @@
         <value>false</value>
         <available>true</available>
       </property>
-      <group name="Texture Layers">
-        <property name="hillshading">
-          <value>false</value>
-          <available>true</available>
-        </property>
-      </group>
     </settings>
   </document>
 </dgml>

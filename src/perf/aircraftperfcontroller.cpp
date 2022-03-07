@@ -79,12 +79,9 @@ AircraftPerfController::AircraftPerfController(MainWindow *parent)
                                                     ui->menuAircraftPerformanceRecent,
                                                     ui->actionAircraftPerformanceClearMenu);
 
-  connect(fileHistory, &atools::gui::FileHistoryHandler::fileSelected,
-          this, &AircraftPerfController::loadFile);
-  connect(ui->textBrowserAircraftPerformanceReport, &QTextBrowser::anchorClicked,
-          this, &AircraftPerfController::anchorClicked);
-  connect(ui->textBrowserAircraftPerformanceCurrent, &QTextBrowser::anchorClicked,
-          this, &AircraftPerfController::anchorClicked);
+  connect(fileHistory, &atools::gui::FileHistoryHandler::fileSelected, this, &AircraftPerfController::loadFile);
+  connect(ui->textBrowserAircraftPerformanceReport, &QTextBrowser::anchorClicked, this, &AircraftPerfController::anchorClicked);
+  connect(ui->textBrowserAircraftPerformanceCurrent, &QTextBrowser::anchorClicked, this, &AircraftPerfController::anchorClicked);
 
   // Pass wind change with a delay to avoid lagging mouse wheel
   connect(&windChangeTimer, &QTimer::timeout, this, &AircraftPerfController::windChangedDelayed);
@@ -119,7 +116,7 @@ void AircraftPerfController::create()
   mainWindow->showAircraftPerformance();
 
   AircraftPerf editPerf;
-  editPerf.resetToDefault();
+  editPerf.resetToDefault(NavApp::getCurrentSimulatorShortName());
   if(editInternal(editPerf, tr("Create")))
   {
     if(checkForChanges())
@@ -183,13 +180,13 @@ void AircraftPerfController::loadStr(const QString& string)
   }
   catch(atools::Exception& e)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     noPerfLoaded();
   }
   catch(...)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     noPerfLoaded();
   }
@@ -221,14 +218,14 @@ void AircraftPerfController::loadFile(const QString& perfFile)
   }
   catch(atools::Exception& e)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     noPerfLoaded();
     fileHistory->removeFile(perfFile);
   }
   catch(...)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     noPerfLoaded();
     fileHistory->removeFile(perfFile);
@@ -352,11 +349,13 @@ void AircraftPerfController::load()
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     noPerfLoaded();
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     noPerfLoaded();
   }
@@ -384,13 +383,13 @@ bool AircraftPerfController::save()
     }
     catch(atools::Exception& e)
     {
-      NavApp::deleteSplashScreen();
+      NavApp::closeSplashScreen();
       atools::gui::ErrorHandler(mainWindow).handleException(e);
       retval = false;
     }
     catch(...)
     {
-      NavApp::deleteSplashScreen();
+      NavApp::closeSplashScreen();
       atools::gui::ErrorHandler(mainWindow).handleUnknownException();
       retval = false;
     }
@@ -431,11 +430,13 @@ bool AircraftPerfController::saveAsStr(const QString& string) const
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     retval = false;
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     retval = false;
   }
@@ -501,13 +502,13 @@ bool AircraftPerfController::saveAs()
   }
   catch(atools::Exception& e)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
     retval = false;
   }
   catch(...)
   {
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     retval = false;
   }
@@ -722,7 +723,7 @@ void AircraftPerfController::updateReport()
     // Write HTML report ================================================================
 
     // Icon, name and aircraft type =======================================================
-    QStringList headerList({perf->getName(), perf->getAircraftType()});
+    QStringList headerList({perf->getName(), perf->getAircraftType(), perf->getSimulator()});
     headerList.removeAll(QString());
     QString header = headerList.join(tr(" - "));
 
@@ -830,7 +831,7 @@ void AircraftPerfController::updateReportCurrent()
              QSize(symbolSize, symbolSize));
     html.nbsp().nbsp();
 
-    QStringList header({curPerfLbs.getName(), curPerfLbs.getAircraftType()});
+    QStringList header({curPerfLbs.getName(), curPerfLbs.getAircraftType(), curPerfLbs.getSimulator()});
     header.removeAll(QString());
 
     if(!header.isEmpty())
@@ -1039,7 +1040,9 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
     // Other issues
     if(hasLegs && perf->getUsableFuel() > 1.f && altLegs.getBlockFuel(*perf) > perf->getUsableFuel())
     {
-      QString msg(tr("Block fuel exceeds usable of %1.").arg(ft.weightVolLocal(perf->getUsableFuel())));
+      QString msg(tr("Block fuel of %1 exceeds usable of %2.").
+                  arg(ft.weightVolLocal(altLegs.getBlockFuel(*perf))).
+                  arg(ft.weightVolLocal(perf->getUsableFuel())));
       errorTooltips.append(msg);
 
       if(visible)
@@ -1048,7 +1051,9 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
 
     if(perf->getUsableFuel() > 1.f && perf->getReserveFuel() > perf->getUsableFuel())
     {
-      QString msg(tr("Reserve fuel exceeds usable."));
+      QString msg(tr("Reserve fuel of %1 exceeds usable of %2.").
+                  arg(ft.weightVolLocal(perf->getReserveFuel())).
+                  arg(ft.weightVolLocal(perf->getUsableFuel())));
       errorTooltips.append(msg);
 
       if(visible)
@@ -1390,7 +1395,7 @@ void AircraftPerfController::simDataChanged(const atools::fs::sc::SimConnectData
   *lastSimData = simulatorData;
 
   // Pass to handler for averaging
-  perfHandler->simDataChanged(simulatorData);
+  perfHandler->simDataChanged(simulatorData, NavApp::getCurrentSimulatorShortName());
 
   if(simulatorData.isUserAircraftValid())
   {
@@ -1436,7 +1441,7 @@ void AircraftPerfController::windChangedDelayed()
 void AircraftPerfController::noPerfLoaded()
 {
   // Invalidate performance file after an error - state "none loaded"
-  perf->resetToDefault();
+  perf->resetToDefault(QString());
   changed = false;
   currentFilepath.clear();
 }
@@ -1489,7 +1494,8 @@ bool AircraftPerfController::hasErrors() const
 QStringList AircraftPerfController::getErrorStrings() const
 {
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << errorTooltips;
+  if(!errorTooltips.isEmpty())
+    qDebug() << Q_FUNC_INFO << errorTooltips;
 #endif
 
   return errorTooltips;

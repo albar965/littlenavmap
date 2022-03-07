@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+     This xml file is free software licensed under the GNU LGPL. You can
+     find a copy of this license in LICENSE.txt in the top directory of
+     the source code.
+-->
+<dgml xmlns="http://edu.kde.org/marble/dgml/2.0">
+  <document>
+    <head>
+      <!-- The license here applies to the actual map content, not this dgml file. See the license header above for the dgml file license -->
+      <!-- The content that this license refers to is not distributed with this package -->
+      <license short="© Mapbox and OpenStreetMap contributors">Source: © OpenStreetMap contributors, License: Creative Commons Attribution-ShareAlike 2.0 (CC BY-SA)</license>
+      <name>Mapbox Outdoors</name>
+      <target>earth</target>
+      <theme>mapboxoutdoors</theme>
+      <icon pixmap="mapboxoutdoors-preview.png"/>
+      <visible>true</visible>
+      <description><![CDATA[<p>A <i>global roadmap</i> created by the OpenStreetMap (OSM) project.</p><p>OSM is an open community which creates free editable maps. The OSM data was rendered using Mapnik.</p>]]></description>
+      <zoom>
+        <minimum>   900  </minimum>
+        <maximum>  3500  </maximum>
+        <discrete> true </discrete>
+      </zoom>
+      <url href="https://www.mapbox.com">Mapbox</url>
+    </head>
+    <map bgcolor="#000000">
+      <canvas/>
+      <target/>
+      <layer name="mapboxoutdoors" backend="texture">
+        <!-- Tiles expire after 60 days -->
+        <texture name="mapnik_data" expire="5184000">
+          <sourcedir format="PNG"> earth/mapboxoutdoors </sourcedir>
+          <tileSize width="512" height="512"/>
+          <storageLayout levelZeroColumns="1" levelZeroRows="1" maximumTileLevel="19" mode="Custom"/>
+          <projection name="Mercator"/>
+
+          <downloadUrl protocol="https" host="api.mapbox.com" path="/styles/v1/mapbox/outdoors-v11/tiles/512/{z}/{x}/{y}?access_token={Mapbox Token}" />
+
+          <!-- Use 2 to adapt to OSM requirements http://wiki.openstreetmap.org/wiki/Tile_usage_policy -->
+          <downloadPolicy usage="Browse" maximumConnections="4"/>
+
+          <downloadPolicy usage="Bulk" maximumConnections="2"/>
+        </texture>
+      </layer>
+    </map>
+    <settings>
+      <property name="coordinate-grid">
+        <value>false</value>
+        <available>true</available>
+      </property>
+    </settings>
+  </document>
+</dgml>

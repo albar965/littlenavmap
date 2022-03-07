@@ -20,7 +20,7 @@
 #include "common/constants.h"
 #include "common/maptypesfactory.h"
 #include "query/querytypes.h"
-#include "common/proctypes.h"
+#include "common/mapresult.h"
 #include "fs/common/binarygeometry.h"
 #include "sql/sqldatabase.h"
 #include "common/maptools.h"
@@ -196,7 +196,7 @@ void AirportQuery::getAirportByOfficialIdent(map::MapAirport& airport, const QSt
 {
   QList<map::MapAirport> airports;
   getAirportsByOfficialIdent(airports, ident, pos, maxDistanceMeter, flags);
-  airport = airports.isEmpty() ? map::MapAirport() : airports.first();
+  airport = airports.isEmpty() ? map::MapAirport() : airports.constFirst();
 }
 
 MapAirport AirportQuery::getAirportByOfficialIdent(const QString& ident, const atools::geo::Pos *pos, float maxDistanceMeter,
@@ -204,7 +204,7 @@ MapAirport AirportQuery::getAirportByOfficialIdent(const QString& ident, const a
 {
   QList<map::MapAirport> airports;
   getAirportsByOfficialIdent(airports, ident, pos, maxDistanceMeter, flags);
-  return airports.isEmpty() ? map::MapAirport() : airports.first();
+  return airports.isEmpty() ? map::MapAirport() : airports.constFirst();
 }
 
 void AirportQuery::getAirportsByOfficialIdent(QList<map::MapAirport>& airports, const QString& ident,
@@ -313,7 +313,7 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
 
       if(!airports.isEmpty())
         // Assign to cache object
-        *ap = airports.first();
+        *ap = airports.constFirst();
     } // else assign empty airport to indicate that is it not available
 
     airport = *ap;
@@ -486,7 +486,7 @@ const QList<map::MapApron> *AirportQuery::getAprons(int airportId)
 
           if(!ap.geometry.boundary.isEmpty())
             // Set position to first for validity check
-            ap.position = ap.geometry.boundary.first().node;
+            ap.position = ap.geometry.boundary.constFirst().node;
         }
       }
 
@@ -502,7 +502,7 @@ const QList<map::MapApron> *AirportQuery::getAprons(int airportId)
 
           // Set position to first for validity check
           if(!ap.vertices.isEmpty())
-            ap.position = ap.vertices.first();
+            ap.position = ap.vertices.constFirst();
         }
       }
 
@@ -812,17 +812,13 @@ void AirportQuery::getBestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map:
       map::MapRunwayEnd secondaryEnd = getRunwayEndById(rw.secondaryEndId);
 
       // Check if either primary or secondary end matches by heading
-      if(ageo::angleInRange(heading,
-                            ageo::normalizeCourse(primaryEnd.heading - maxHeadingDeviation),
-                            ageo::normalizeCourse(primaryEnd.heading + maxHeadingDeviation)))
+      if(ageo::angleAbsDiff(heading, primaryEnd.heading) < maxHeadingDeviation)
       {
         runwayEnd = primaryEnd;
         runway = rw;
         break;
       }
-      else if(ageo::angleInRange(heading,
-                                 ageo::normalizeCourse(secondaryEnd.heading - maxHeadingDeviation),
-                                 ageo::normalizeCourse(secondaryEnd.heading + maxHeadingDeviation)))
+      else if(ageo::angleAbsDiff(heading, secondaryEnd.heading) < maxHeadingDeviation)
       {
         runwayEnd = secondaryEnd;
         runway = rw;
@@ -835,7 +831,7 @@ void AirportQuery::getBestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map:
     else
     {
       // No runway end found - get at least the nearest airport
-      getAirportById(airport, runways.first().airportId);
+      getAirportById(airport, runways.constFirst().airportId);
       runwayEnd = map::MapRunwayEnd();
     }
   }
@@ -973,6 +969,8 @@ map::MapRunwayEnd AirportQuery::runwayEndByName(int airportId, const QString& ru
 bool AirportQuery::getBestRunwayEndForPosAndCourse(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
                                                    const ageo::Pos& pos, float trackTrue)
 {
+  qDebug() << Q_FUNC_INFO << "pos" << pos << "trackTrue" << trackTrue;
+
   QVector<map::MapRunway> runways;
 
   // Use inflated rectangle for query based on a radius or 5 NM
@@ -981,18 +979,23 @@ bool AirportQuery::getBestRunwayEndForPosAndCourse(map::MapRunwayEnd& runwayEnd,
   // Get all runways nearby ordered by distance between pos and runway line
   getRunways(runways, rect, pos);
 
+  qDebug() << Q_FUNC_INFO << "Found" << runways.size() << "runways";
+
   // Get closest runway that matches heading
-  getBestRunwayEndAndAirport(runwayEnd, airport, runways, pos, trackTrue,
-                             MAX_RUNWAY_DISTANCE_FT, MAX_HEADING_RUNWAY_DEVIATION);
+  getBestRunwayEndAndAirport(runwayEnd, airport, runways, pos, trackTrue, MAX_RUNWAY_DISTANCE_FT, MAX_HEADING_RUNWAY_DEVIATION);
 
   if(!runwayEnd.isValid())
-    getBestRunwayEndAndAirport(runwayEnd, airport, runways, pos, trackTrue,
-                               MAX_RUNWAY_DISTANCE_FT * 4.f, MAX_HEADING_RUNWAY_DEVIATION * 2.f);
+  {
+    qDebug() << Q_FUNC_INFO << "No runway end found. Doing second iteration.";
+    getBestRunwayEndAndAirport(runwayEnd, airport, runways, pos, trackTrue, MAX_RUNWAY_DISTANCE_FT * 4.f,
+                               MAX_HEADING_RUNWAY_DEVIATION * 2.f);
+  }
 
   if(!airport.isValid())
     qWarning() << Q_FUNC_INFO << "No runways or airports found for takeoff/landing";
+  else
+    qDebug() << Q_FUNC_INFO << "Found airport" << airport.ident << "runway" << runwayEnd.name;
 
-  qDebug() << Q_FUNC_INFO << airport.ident << runwayEnd.name << pos << trackTrue;
   return airport.isValid();
 }
 
@@ -1052,6 +1055,8 @@ QStringList AirportQuery::airportColumns(const atools::sql::SqlDatabase *db)
     airportQueryBase.append("is_3d");
   if(aprec.contains("transition_altitude"))
     airportQueryBase.append("transition_altitude");
+  if(aprec.contains("transition_level"))
+    airportQueryBase.append("transition_level");
   if(aprec.contains("type"))
     airportQueryBase.append("type");
   return airportQueryBase;
@@ -1162,16 +1167,18 @@ void AirportQuery::initQueries()
   airportByRectAndProcQuery->prepare("select " + airportQueryBase.join(", ") + " from airport where " + whereRect +
                                      " and num_approach > 0 " + whereLimit);
 
+  QString runwayEndQueryBase("e.runway_end_id, e.end_type, e.name, e.heading, e.left_vasi_pitch, e.right_vasi_pitch, e.is_pattern, "
+                             "e.left_vasi_type, e.right_vasi_type, e.lonx, e.laty ");
+  SqlRecord aprec = db->record("runway_end");
+  if(aprec.contains("altitude"))
+    runwayEndQueryBase.append(", e.altitude ");
+
   runwayEndByIdQuery = new SqlQuery(db);
-  runwayEndByIdQuery->prepare("select runway_end_id, end_type, name, heading, left_vasi_pitch, right_vasi_pitch, is_pattern, "
-                              "left_vasi_type, right_vasi_type, "
-                              "altitude, lonx, laty from runway_end where runway_end_id = :id");
+  runwayEndByIdQuery->prepare("select " + runwayEndQueryBase + " from runway_end e where e.runway_end_id = :id");
 
   runwayEndByNameQuery = new SqlQuery(db);
   runwayEndByNameQuery->prepare(
-    "select e.runway_end_id, e.end_type, "
-    "e.left_vasi_pitch, e.right_vasi_pitch, e.left_vasi_type, e.right_vasi_type, is_pattern, "
-    "e.name, e.heading, e.altitude, e.lonx, e.laty "
+    "select " + runwayEndQueryBase +
     "from runway r join runway_end e on (r.primary_end_id = e.runway_end_id or r.secondary_end_id = e.runway_end_id) "
     "join airport a on r.airport_id = a.airport_id "
     "where e.name = :name and a.ident = :airport");

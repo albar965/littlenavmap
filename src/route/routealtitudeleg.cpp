@@ -36,7 +36,7 @@ float RouteAltitudeLeg::getDistanceFromStart() const
   if(geometry.isEmpty())
     return map::INVALID_DISTANCE_VALUE;
   else
-    return static_cast<float>(geometry.last().x());
+    return static_cast<float>(geometry.constLast().x());
 }
 
 float RouteAltitudeLeg::getDistanceTo() const
@@ -44,7 +44,7 @@ float RouteAltitudeLeg::getDistanceTo() const
   if(geometry.isEmpty())
     return map::INVALID_DISTANCE_VALUE;
   else
-    return static_cast<float>(getDistanceFromStart() - geometry.first().x());
+    return static_cast<float>(getDistanceFromStart() - geometry.constFirst().x());
 }
 
 float RouteAltitudeLeg::climbDist() const
@@ -208,7 +208,7 @@ bool RouteAltitudeLeg::isPoint() const
 float RouteAltitudeLeg::dx() const
 {
   if(!geometry.isEmpty())
-    return static_cast<float>(geometry.last().x() - geometry.first().x());
+    return static_cast<float>(geometry.constLast().x() - geometry.constFirst().x());
   else
     return map::INVALID_DISTANCE_VALUE;
 }

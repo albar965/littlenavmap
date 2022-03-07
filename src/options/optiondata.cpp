@@ -145,6 +145,29 @@ QFont OptionData::getGuiFont() const
   return font;
 }
 
+int OptionData::getOnlineReload(opts::OnlineNetwork network) const
+{
+  switch(network)
+  {
+    case opts::ONLINE_VATSIM:
+      return onlineVatsimReload;
+
+    case opts::ONLINE_IVAO:
+      return onlineIvaoReload;
+
+    case opts::ONLINE_PILOTEDGE:
+      return onlinePilotEdgeReload;
+
+    case opts::ONLINE_CUSTOM_STATUS:
+    case opts::ONLINE_CUSTOM:
+      return onlineCustomReload;
+
+    case opts::ONLINE_NONE:
+      break;
+  }
+  return 180;
+}
+
 QSize OptionData::getGuiToolbarSize() const
 {
   return QSize(guiToolbarSize, guiToolbarSize);

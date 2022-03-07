@@ -52,8 +52,14 @@ void MapMarkHandler::restoreState()
 
 void MapMarkHandler::showMarkTypes(map::MapTypes types)
 {
+  map::MapTypes markTypesOld = markTypes;
   markTypes |= types;
-  flagsToActions();
+
+  if(markTypes != markTypesOld)
+  {
+    flagsToActions();
+    emit updateMarkTypes(markTypes);
+  }
 }
 
 QStringList MapMarkHandler::getMarkTypesText() const
@@ -117,16 +123,16 @@ void MapMarkHandler::addToolbarButton()
   ui->menuViewUserFeatures->addSeparator();
   buttonMenu->addSeparator();
 
-  actionRangeRings = addButton(":/littlenavmap/resources/icons/rangerings.svg", tr("&Range Rings"), tr("Show or hide range rings"));
-  actionMeasurementLines = addButton(":/littlenavmap/resources/icons/distancemeasure.svg", tr("&Measurement Lines"),
+  actionRangeRings = addAction(":/littlenavmap/resources/icons/rangerings.svg", tr("&Range Rings"), tr("Show or hide range rings"));
+  actionMeasurementLines = addAction(":/littlenavmap/resources/icons/distancemeasure.svg", tr("&Measurement Lines"),
                                      tr("Show or hide measurement lines"));
-  actionPatterns = addButton(":/littlenavmap/resources/icons/trafficpattern.svg", tr("&Traffic Patterns"),
+  actionPatterns = addAction(":/littlenavmap/resources/icons/trafficpattern.svg", tr("&Traffic Patterns"),
                              tr("Show or hide traffic patterns"));
-  actionHolds = addButton(":/littlenavmap/resources/icons/enroutehold.svg", tr("&Holdings"), tr("Show or hide holdings"));
-  actionAirportMsa = addButton(":/littlenavmap/resources/icons/msa.svg", tr("&MSA Diagrams"), tr("Show or hide airport MSA sectors"));
+  actionHolds = addAction(":/littlenavmap/resources/icons/enroutehold.svg", tr("&Holdings"), tr("Show or hide holdings"));
+  actionAirportMsa = addAction(":/littlenavmap/resources/icons/msa.svg", tr("&MSA Diagrams"), tr("Show or hide airport MSA sectors"));
 }
 
-QAction *MapMarkHandler::addButton(const QString& icon, const QString& text, const QString& tooltip)
+QAction *MapMarkHandler::addAction(const QString& icon, const QString& text, const QString& tooltip)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
@@ -138,6 +144,7 @@ QAction *MapMarkHandler::addButton(const QString& icon, const QString& text, con
   toolButton->menu()->addAction(action);
   ui->menuViewUserFeatures->addAction(action);
 
+  // Not called when programmatically changed
   connect(action, &QAction::triggered, this, &MapMarkHandler::toolbarActionTriggered);
 
   return action;

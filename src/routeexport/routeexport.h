@@ -101,7 +101,7 @@ public:
   bool routeExportFlightgearMan(); /* Called by action */
   bool routeExportFlightgear(const RouteExportFormat& format);
 
-  /* vPilot VATSIM */
+  /* vPilot/xPilot VATSIM */
   bool routeExportVfpMan(); /* Called by action */
   bool routeExportVfp(const RouteExportFormat& format);
 
@@ -192,6 +192,9 @@ public:
 
   /* TFDi Design 717 */
   bool routeExportTfdiMulti(const RouteExportFormat& format);
+
+  /* iFly Jets Advanced Series */
+  bool routeExportIflyMulti(const RouteExportFormat& format);
 
   /* Integrated Simavionics / ISG - FSX/PLN format with modified user waypoints */
   bool routeExportIsgMulti(const RouteExportFormat& format);

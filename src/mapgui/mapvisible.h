@@ -18,7 +18,7 @@
 #ifndef MAPVISIBLEOBJECTSTATUS_H
 #define MAPVISIBLEOBJECTSTATUS_H
 
-#include <QApplication>
+#include <QCoreApplication>
 
 class MapPaintLayer;
 

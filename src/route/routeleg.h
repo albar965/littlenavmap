@@ -20,7 +20,7 @@
 
 #include "common/proctypes.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace fs {
@@ -102,6 +102,7 @@ public:
 
   /* Get the real position of the procedure fix instead of the endpoint. Otherwise like getPosition() */
   const atools::geo::Pos& getFixPosition() const;
+  const atools::geo::Pos& getRecommendedFixPosition() const;
 
   /* Get ident of airport or navaid. Source can be flight plan entry or database. */
   QString getIdent() const;
@@ -196,6 +197,9 @@ public:
     return start;
   }
 
+  /* Return start position of gate/parking/runway otherwise invalid */
+  const atools::geo::Pos& getDeparturePosition() const;
+
   /* Get VOR or empty object if not assigned. Use position.isValid to check for empty */
   const map::MapVor& getVor() const
   {
@@ -213,6 +217,9 @@ public:
   {
     return waypoint;
   }
+
+  /* Build object for userpoint. id is routeindex */
+  map::MapUserpointRoute getUserpointRoute() const;
 
   /* Get Waypoint or empty object if not assigned. Use position.isValid to check for empty */
   map::MapRunwayEnd getRunwayEnd() const
@@ -358,6 +365,10 @@ public:
 
   const atools::fs::pln::FlightplanEntry& getFlightplanEntry() const;
   atools::fs::pln::FlightplanEntry *getFlightplanEntry();
+
+  /* Build leg labels also depending on procedure flags */
+  QStringList buildLegText(bool dist, bool magCourse, bool trueCourse, bool narrow) const;
+  static QStringList buildLegText(float distance, float courseMag, float courseTrue, bool narrow);
 
 private:
   // TODO assign functions are duplicatd in FlightplanEntryBuilder

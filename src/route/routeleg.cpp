@@ -22,7 +22,6 @@
 #include "geo/calculations.h"
 #include "fs/pln/flightplan.h"
 #include "common/maptools.h"
-#include "common/proctypes.h"
 #include "atools.h"
 #include "fs/util/fsutil.h"
 #include "route/route.h"
@@ -107,15 +106,15 @@ void RouteLeg::createFromProcedureLeg(int entryIndex, const proc::MapProcedureLe
   type = map::PROCEDURE;
 
   if(procedureLeg.navaids.hasWaypoints())
-    waypoint = procedureLeg.navaids.waypoints.first();
+    waypoint = procedureLeg.navaids.waypoints.constFirst();
   if(procedureLeg.navaids.hasVor())
-    vor = procedureLeg.navaids.vors.first();
+    vor = procedureLeg.navaids.vors.constFirst();
   if(procedureLeg.navaids.hasNdb())
-    ndb = procedureLeg.navaids.ndbs.first();
+    ndb = procedureLeg.navaids.ndbs.constFirst();
   if(procedureLeg.navaids.hasIls())
-    ils = procedureLeg.navaids.ils.first();
+    ils = procedureLeg.navaids.ils.constFirst();
   if(procedureLeg.navaids.hasRunwayEnd())
-    runwayEnd = procedureLeg.navaids.runwayEnds.first();
+    runwayEnd = procedureLeg.navaids.runwayEnds.constFirst();
 
   updateMagvar();
   updateDistanceAndCourse(entryIndex, prevLeg);
@@ -264,7 +263,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
 
           // Assign found values to leg =====================================================
           if(parkings.isEmpty() ||
-             parkings.first().position.distanceMeterTo(flightplan->getDepartureParkingPosition()) >
+             parkings.constFirst().position.distanceMeterTo(flightplan->getDepartureParkingPosition()) >
              MAX_PARKING_DIST_METER)
           {
             // No parking found or too far away
@@ -278,7 +277,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
               qWarning() << Q_FUNC_INFO << "Found multiple parking spots for" << name;
 
             // Found one and position is close enough
-            parking = parkings.first();
+            parking = parkings.constFirst();
 
             // Update flightplan with found name
             if(translateName)
@@ -426,10 +425,19 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
          )
       {
         // qDebug() << Q_FUNC_INFO << "special transition for leg" << index << procedureLeg;
-
-        // Use course and distance from last route leg to get to this point legs
-        courseTo = normalizeCourse(prevPos.angleDegTo(procedureLeg.line.getPos1()));
-        distanceTo = meterToNm(procedureLeg.line.getPos1().distanceMeterTo(prevPos));
+        const Pos& legPos = procedureLeg.line.getPos1();
+        if(procedureLeg.isAnyDeparture() && prevLeg->getDeparturePosition().isValid())
+        {
+          // First SID leg and previous is airport - use distance and angle from start position if valid
+          courseTo = normalizeCourse(prevLeg->getDeparturePosition().angleDegTo(legPos));
+          distanceTo = meterToNm(prevLeg->getDeparturePosition().distanceMeterTo(legPos));
+        }
+        else
+        {
+          // Use course and distance from last route leg to get to this point legs
+          courseTo = normalizeCourse(prevPos.angleDegTo(legPos));
+          distanceTo = meterToNm(prevPos.distanceMeterTo(legPos));
+        }
       }
       else
       {
@@ -574,6 +582,66 @@ QString RouteLeg::getDisplayText(int elideName) const
   }
 }
 
+const Pos& RouteLeg::getDeparturePosition() const
+{
+  if(parking.isValid())
+    return parking.position;
+  else if(start.isValid())
+    return start.position;
+  else
+    return atools::geo::EMPTY_POS;
+}
+
+map::MapUserpointRoute RouteLeg::getUserpointRoute() const
+{
+  const atools::fs::pln::FlightplanEntry& entry = getFlightplanEntry();
+  map::MapUserpointRoute user;
+  user.ident = entry.getIdent();
+  user.region = entry.getRegion();
+  user.name = entry.getName();
+  user.comment = entry.getComment();
+  user.magvar = entry.getMagvar();
+  user.position = entry.getPosition();
+  user.routeIndex = user.id = index;
+  return user;
+}
+
+QStringList RouteLeg::buildLegText(bool dist, bool magCourse, bool trueCourse, bool narrow) const
+{
+  float distance = noDistanceDisplay() || !dist ? map::INVALID_DISTANCE_VALUE : getDistanceTo();
+  float courseMag = noCourseDisplay() || !magCourse ? map::INVALID_COURSE_VALUE : getCourseToMag();
+  float courseTrue = noCourseDisplay() || !trueCourse ? map::INVALID_COURSE_VALUE : getCourseToTrue();
+
+  return buildLegText(distance, courseMag, courseTrue, narrow);
+}
+
+QStringList RouteLeg::buildLegText(float distance, float courseMag, float courseTrue, bool narrow)
+{
+  QStringList texts;
+
+  if(distance < map::INVALID_DISTANCE_VALUE)
+    texts.append(Unit::distNm(distance, true /*addUnit*/, 20, narrow /*narrow*/));
+
+  bool addMagCourse = courseMag < map::INVALID_COURSE_VALUE;
+  bool addTrueCourse = courseTrue < map::INVALID_COURSE_VALUE;
+
+  QString courseMagStr = QString::number(atools::geo::normalizeCourse(courseMag), 'f', 0);
+  QString courseTrueStr = QString::number(atools::geo::normalizeCourse(courseTrue), 'f', 0);
+
+  if(addMagCourse && addTrueCourse && courseMagStr == courseTrueStr)
+    // True and mag course are equal - combine
+    texts.append(courseMagStr % (narrow ? tr("°M/T") : tr(" °M/T")));
+  else
+  {
+    if(addMagCourse)
+      texts.append(courseMagStr % (narrow ? tr("°M") : tr(" °M")));
+    if(addTrueCourse)
+      texts.append(courseTrueStr % (narrow ? tr("°T") : tr(" °T")));
+  }
+
+  return texts;
+}
+
 float RouteLeg::getCourseToMag() const
 {
   if(OptionData::instance().getFlags() & opts::ROUTE_IGNORE_VOR_DECLINATION)
@@ -593,6 +661,14 @@ const atools::geo::Pos& RouteLeg::getFixPosition() const
     return procedureLeg.fixPos;
   else
     return getPosition();
+}
+
+const atools::geo::Pos& RouteLeg::getRecommendedFixPosition() const
+{
+  if(isAnyProcedure())
+    return procedureLeg.recFixPos;
+
+  return atools::geo::EMPTY_POS;
 }
 
 const atools::geo::Pos& RouteLeg::getPosition() const
@@ -669,7 +745,7 @@ QString RouteLeg::getIdent() const
   else if(runwayEnd.isValid())
     return "RW" + runwayEnd.name;
   else if(!procedureLeg.displayText.isEmpty())
-    return procedureLeg.displayText.first();
+    return procedureLeg.displayText.constFirst();
   else if(type == map::INVALID)
     return getFlightplanEntry().getIdent();
   else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER)
@@ -928,7 +1004,7 @@ void RouteLeg::assignAirport(const map::MapResult& mapobjectResult,
                              atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
   type = map::AIRPORT;
-  airport = mapobjectResult.airports.first();
+  airport = mapobjectResult.airports.constFirst();
 
   flightplanEntry->setWaypointType(atools::fs::pln::entry::AIRPORT);
   if(!flightplanEntry->getPosition().isValid())
@@ -944,7 +1020,7 @@ void RouteLeg::assignIntersection(const map::MapResult& mapobjectResult,
                                   atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
   type = map::WAYPOINT;
-  waypoint = mapobjectResult.waypoints.first();
+  waypoint = mapobjectResult.waypoints.constFirst();
 
   // Update all fields in entry if found - otherwise leave as is
   flightplanEntry->setRegion(waypoint.region);
@@ -957,7 +1033,7 @@ void RouteLeg::assignIntersection(const map::MapResult& mapobjectResult,
 void RouteLeg::assignVor(const map::MapResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
   type = map::VOR;
-  vor = mapobjectResult.vors.first();
+  vor = mapobjectResult.vors.constFirst();
 
   // Update all fields in entry if found - otherwise leave as is
   flightplanEntry->setRegion(vor.region);
@@ -972,7 +1048,7 @@ void RouteLeg::assignVor(const map::MapResult& mapobjectResult, atools::fs::pln:
 void RouteLeg::assignNdb(const map::MapResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
   type = map::NDB;
-  ndb = mapobjectResult.ndbs.first();
+  ndb = mapobjectResult.ndbs.constFirst();
 
   // Update all fields in entry if found - otherwise leave as is
   flightplanEntry->setRegion(ndb.region);

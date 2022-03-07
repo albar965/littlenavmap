@@ -72,6 +72,9 @@ public:
   /* Update navdata properties in flightplan properties for export and save */
   void updateRouteCycleMetadata();
 
+  /* Insert properties for aircraft performance */
+  void updateAircraftPerfMetadata();
+
   /* Update positions, distances and try to select next leg*/
   void updateActiveLegAndPos(const map::PosCourse& pos);
   void updateActiveLegAndPos(bool force, bool flying);
@@ -152,12 +155,12 @@ public:
   /* Create copies of first and last to ease tracking */
   const RouteLeg& getLastLeg() const
   {
-    return last();
+    return constLast();
   }
 
   const RouteLeg& getFirstLeg() const
   {
-    return first();
+    return constFirst();
   }
 
   /* Returns an empty leg if the index is not valid */
@@ -263,9 +266,12 @@ public:
   }
 
   /* Get nearest flight plan leg to given screen position xs/ys. */
-  void getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance,
-                  map::MapResult& mapobjects,
-                  map::MapObjectQueryTypes types) const;
+  void getNearest(const CoordinateConverter& conv, int xs, int ys, int screenDistance, map::MapResult& mapobjects,
+                  map::MapObjectQueryTypes types, const QVector<map::MapObjectRef>& routeDrawnNavaids) const;
+
+  /* Get nearest recommended navaids to given screen position xs/ys. */
+  void getNearestRecommended(const CoordinateConverter& conv, int xs, int ys, int screenDistance, map::MapResult& mapobjects,
+                             map::MapObjectQueryTypes types, const QVector<map::MapObjectRef>& routeDrawnNavaids) const;
 
   void eraseAirway(int row);
 
@@ -503,43 +509,43 @@ public:
 
   int getSizeWithoutAlternates() const;
 
-  bool isEmpty() const // OK
+  bool isEmpty() const
   {
     return QList::isEmpty();
   }
 
-  void append(const RouteLeg& leg) // OK
+  void append(const RouteLeg& leg)
   {
     QList::append(leg);
   }
 
-  void prepend(const RouteLeg& leg) // OK
+  void prepend(const RouteLeg& leg)
   {
     QList::prepend(leg);
   }
 
-  void insert(int before, const RouteLeg& leg) // OK
+  void insert(int before, const RouteLeg& leg)
   {
     QList::insert(before, leg);
   }
 
-  void replace(int i, const RouteLeg& leg) // OK
+  void replace(int i, const RouteLeg& leg)
   {
     QList::replace(i, leg);
   }
 
-  void move(int from, int to) // OK
+  void move(int from, int to)
   {
     QList::move(from, to);
   }
 
-  void removeAt(int i) // OK
+  void removeAt(int i)
   {
     QList::removeAt(i);
   }
 
   /* Removes the shadowed flight plan entry too */
-  void removeAllAt(int i) // OK
+  void removeAllAt(int i)
   {
     QList::removeAt(i);
     flightplan.getEntries().removeAt(i);
@@ -549,7 +555,7 @@ public:
   void removeAllExceptRange(int from, int to);
 
   /* Removes only route legs and does not touch the flight plan copy */
-  void clear() // OK
+  void clear()
   {
     QList::clear();
   }
@@ -598,14 +604,31 @@ public:
     return *altitude;
   }
 
-  /* Get a list of matching ILS which have a slope and are not too far away from runway (in case of CTL) */
-  const QVector<map::MapIls>& getDestRunwayIls() const;
+  /* Get ILS which are referenced from the recommended fix of the approach procedure for display in the flight plan table. */
+  const QVector<map::MapIls>& getDestRunwayIlsFlightPlanTable() const
+  {
+    return destRunwayIlsFlightPlanTable;
+  }
 
-  /* As above but filtered out for elevation profile  */
-  const QVector<map::MapIls>& getDestRunwayIlsProfile() const;
+  /* Get a list of matching ILS/LOC which are not too far away from runway (in case of CTL) */
+  const QVector<map::MapIls>& getDestRunwayIlsMap() const
+  {
+    return destRunwayIlsMap;
+  }
 
-  /* Get ILS which are referenced from the recommended fix of the approach procedure */
-  const QVector<map::MapIls>& getDestRunwayIlsRecommended() const;
+  /* As above but filtered out for elevation profile only having slope  */
+  const QVector<map::MapIls>& getDestRunwayIlsProfile() const
+  {
+    return destRunwayIlsProfile;
+  }
+
+  const map::MapRunwayEnd& getDestRunwayEnd() const
+  {
+    return destRunwayEnd;
+  }
+
+  /* Get ILS (for ILS and LOC approaches) and VASI pitch if approach is available */
+  void updateApproachIls();
 
   const RouteAltitudeLeg& getAltitudeLegAt(int i) const;
   bool hasAltitudeLegs() const;
@@ -615,10 +638,6 @@ public:
   /* Calculate route leg altitudes that are needed for the elevation profile */
   void updateLegAltitudes();
 
-  /* Get a list of approach ILS (not localizer) and the used runway end. Only for approaches. */
-  void getApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd, bool profile,
-                                  bool recommended) const;
-
   /* general distance in NM which is either cross track, previous or next waypoint */
   float getDistanceToFlightPlan() const;
   bool isTooFarToFlightPlan() const;
@@ -627,7 +646,7 @@ public:
    * @param includeRunway Include runway information.
    * @param missedAsApproach Show "Approach" for missed legs instead of "Missed".
    */
-  QString getProcedureLegText(proc::MapProcedureTypes mapType, bool includeRunway, bool missedAsApproach) const;
+  QString getProcedureLegText(proc::MapProcedureTypes mapType, bool includeRunway, bool missedAsApproach, bool transitionAsProcedure) const;
 
   /* Assign index and pointer to flight plan for all objects and also update all procedure and alternate offsets */
   void updateIndicesAndOffsets();
@@ -667,7 +686,15 @@ public:
   /* Uses pattern from options if empty */
   QString buildDefaultFilename(QString pattern, QString suffix, bool clean = true) const;
 
+  /* Get all missing (i.e. not loaded) procedures where property values are present
+   * but procedure structs are not loaded/resolved */
+  proc::MapProcedureTypes getMissingProcedures();
+
 private:
+  /* Get a list of approach ILS (not localizer) and the used runway end. Only for approaches. */
+  void updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd,
+                                     bool recommended, bool map, bool profile) const;
+
   /* Copy flight plan profile altitudes into entries for FMS and other formats
    *  All following functions have to use setCoords instead of setPosition to avoid overwriting*/
   void assignAltitudes();
@@ -729,7 +756,7 @@ private:
 
   atools::fs::pln::Flightplan flightplan;
   proc::MapProcedureLegs approachLegs, starLegs, sidLegs;
-  map::MapTypes shownTypes;
+  map::MapTypes shownTypes = map::NONE;
 
   int activeLegIndex = map::INVALID_INDEX_VALUE;
   atools::geo::LineDistance activeLegResult;
@@ -739,6 +766,20 @@ private:
       approachLegsOffset = map::INVALID_INDEX_VALUE, /* First approach leg */
       alternateLegsOffset = map::INVALID_INDEX_VALUE; /* First alternate airport*/
   int numAlternateLegs = 0;
+
+  QVector<map::MapIls>
+  /* Get a list of matching ILS which have a slope and are not too far away from runway (in case of CTL).
+   * These ones can be used for map display. */
+  destRunwayIlsMap,
+
+  /* Get a list of matching ILS which have a slope and are not too far away from runway (in case of CTL).
+   * These ones can be used for elevation profile display. */
+    destRunwayIlsProfile,
+  /* Get ILS which are referenced from the recommended fix of the approach procedure */
+    destRunwayIlsFlightPlanTable;
+
+  /* Get runway end at destination if any. Used to get the VASI information */
+  map::MapRunwayEnd destRunwayEnd;
 
   RouteAltitude *altitude = nullptr;
 };

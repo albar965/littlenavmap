@@ -62,6 +62,9 @@ public:
   /* Get one by database id */
   map::MapWaypoint getWaypointById(int id);
 
+  /* By VOR or NDB id */
+  map::MapWaypoint getWaypointByNavId(int navId);
+
   /* Get a list of matching points for ident and optionally region. */
   void getWaypointByIdent(QList<map::MapWaypoint>& waypoints, const QString& ident,
                           const QString& region = QString());

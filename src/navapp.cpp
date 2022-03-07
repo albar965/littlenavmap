@@ -25,6 +25,7 @@
 #include "connect/connectclient.h"
 #include "db/databasemanager.h"
 #include "exception.h"
+#include "fs/perf/aircraftperf.h"
 #include "fs/common/magdecreader.h"
 #include "fs/common/morareader.h"
 #include "fs/db/databasemeta.h"
@@ -51,6 +52,7 @@
 #include "userdata/userdatacontroller.h"
 #include "weather/weatherreporter.h"
 #include "web/webcontroller.h"
+#include "web/webmapcontroller.h"
 
 #include "query/waypointquery.h"
 #include "ui_mainwindow.h"
@@ -109,7 +111,7 @@ void NavApp::initApplication()
   setApplicationName("Little Navmap");
   setOrganizationName("ABarthel");
   setOrganizationDomain("littlenavmap.org");
-  setApplicationVersion("2.7.6.develop"); // VERSION_NUMBER - Little Navmap
+  setApplicationVersion("2.7.8.develop"); // VERSION_NUMBER - Little Navmap
 }
 
 NavApp *NavApp::navAppInstance()
@@ -319,13 +321,13 @@ void NavApp::readMagDecFromDatabase()
     }
     catch(atools::Exception& e)
     {
-      deleteSplashScreen();
+      closeSplashScreen();
       // Show dialog if something went wrong but do not exit
       atools::gui::ErrorHandler(mainWindow).handleException(e, tr("While reading magnetic declination from database:"));
     }
     catch(...)
     {
-      deleteSplashScreen();
+      closeSplashScreen();
       atools::gui::ErrorHandler(mainWindow).
       handleUnknownException(tr("While reading magnetic declination from database:"));
     }
@@ -422,6 +424,11 @@ bool NavApp::isConnected()
 bool NavApp::isConnectedNetwork()
 {
   return connectClient->isConnectedNetwork();
+}
+
+bool NavApp::isXpConnect()
+{
+  return connectClient->isXpConnect();
 }
 
 bool NavApp::isSimConnect()
@@ -644,6 +651,16 @@ bool NavApp::isNavdataAll()
   return databaseManager->getNavDatabaseStatus() == dm::NAVDATABASE_ALL;
 }
 
+bool NavApp::isNavdataMixed()
+{
+  return databaseManager->getNavDatabaseStatus() == dm::NAVDATABASE_MIXED;
+}
+
+bool NavApp::isNavdataOff()
+{
+  return databaseManager->getNavDatabaseStatus() == dm::NAVDATABASE_OFF;
+}
+
 OptionsDialog *NavApp::getOptionsDialog()
 {
   return mainWindow->getOptionsDialog();
@@ -678,13 +695,13 @@ void NavApp::logDatabaseMeta()
 {
   qDebug() << Q_FUNC_INFO << "databaseMetaNav";
   if(databaseMetaNav != nullptr)
-    databaseMetaNav->log();
+    databaseMetaNav->logInfo();
   else
     qDebug() << Q_FUNC_INFO << "databaseMetaNav == nullptr";
 
   qDebug() << Q_FUNC_INFO << "databaseMetaSim";
   if(databaseMetaSim != nullptr)
-    databaseMetaSim->log();
+    databaseMetaSim->logInfo();
   else
     qDebug() << Q_FUNC_INFO << "databaseMetaSim == nullptr";
 }
@@ -975,9 +992,9 @@ QFont NavApp::getTextBrowserInfoFont()
   return getMainUi()->textBrowserAirportInfo->font();
 }
 
-QString NavApp::getMapCopyright()
+MapThemeHandler *NavApp::getMapThemeHandler()
 {
-  return mainWindow->getMapWidget()->getMapCopyright();
+  return mainWindow->getMapThemeHandler();
 }
 
 const QString& NavApp::getCurrentRouteFilepath()
@@ -990,9 +1007,27 @@ const QString& NavApp::getCurrentAircraftPerfFilepath()
   return aircraftPerfController->getCurrentFilepath();
 }
 
+const QString& NavApp::getCurrentAircraftPerfName()
+{
+  return aircraftPerfController->getAircraftPerformance().getName();
+}
+
+const QString& NavApp::getCurrentAircraftPerfAircraftType()
+{
+  return aircraftPerfController->getAircraftPerformance().getAircraftType();
+}
+
 WebController *NavApp::getWebController()
 {
   return webController;
+}
+
+MapPaintWidget *NavApp::getMapPaintWidgetWeb()
+{
+  if(webController != nullptr && webController->getWebMapController() != nullptr)
+    return webController->getWebMapController()->getMapPaintWidget();
+  else
+    return nullptr;
 }
 
 DatabaseManager *NavApp::getDatabaseManager()
@@ -1075,16 +1110,6 @@ map::MapAirspaceFilter NavApp::getShownMapAirspaces()
   return mainWindow->getMapWidget()->getShownAirspaces();
 }
 
-void NavApp::deleteSplashScreen()
-{
-#ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO;
-#endif
-
-  if(splashScreen != nullptr)
-    splashScreen->close();
-}
-
 bool NavApp::isShuttingDown()
 {
   return shuttingDown;
@@ -1138,4 +1163,14 @@ void NavApp::finishSplashScreen()
 
   if(splashScreen != nullptr)
     splashScreen->finish(mainWindow);
+}
+
+void NavApp::closeSplashScreen()
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
+
+  if(splashScreen != nullptr)
+    splashScreen->close();
 }

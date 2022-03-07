@@ -17,11 +17,11 @@
 
 #include "common/dirtool.h"
 
-#include "options/optiondata.h"
-#include "settings/settings.h"
+#include "common/constants.h"
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
-#include "common/constants.h"
+#include "options/optiondata.h"
+#include "settings/settings.h"
 
 #include <QDir>
 #include <QDebug>
@@ -120,7 +120,7 @@ void DirTool::run()
     createAllDirs();
 
     if(!errors.isEmpty())
-      QMessageBox::warning(parentWidget, QApplication::applicationName(),
+      QMessageBox::warning(parentWidget, QCoreApplication::applicationName(),
                            tr("Errors creating directory structure:\n%1").arg(errors.join("\n")));
     else
       updateOptions();
@@ -186,8 +186,7 @@ QString DirTool::d(const QString& dir)
 
 bool DirTool::hasAllDirs()
 {
-  return hasDir(flightPlanDir) && hasDir(perfDir) && hasDir(layoutDir) && hasDir(airspaceDir) && hasDir(globeDir) &&
-         hasDir(airportsDir);
+  return hasDir(flightPlanDir) && hasDir(perfDir) && hasDir(layoutDir) && hasDir(airspaceDir) && hasDir(globeDir) && hasDir(airportsDir);
 }
 
 void DirTool::updateOptions()

@@ -19,7 +19,7 @@
 #define LITTLENAVMAP_MAPTOOLTIP_H
 
 #include <QColor>
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace map {
 struct MapResult;

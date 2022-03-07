@@ -104,6 +104,13 @@ public:
 
   /* Get the map paint widget */
   MapPaintWidget* getMapPaintWidget() const;
+
+  /* Need to clear caches and tear down queries before switching database */
+  void preDatabaseLoad();
+
+  /* Initialize queries again after a database change */
+  void postDatabaseLoad();
+
 private:
   MapPaintWidget *mapPaintWidget = nullptr;
   QWidget *parentWidget;

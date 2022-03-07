@@ -20,14 +20,28 @@
 
 #include <QDialog>
 
-#include "common/maptypes.h"
+namespace map {
+struct MapAirport;
+struct MapParking;
+struct MapStart;
+}
 
 namespace Ui {
 class ParkingDialog;
 }
 
 class QListWidget;
-class MapQuery;
+class QAbstractButton;
+
+namespace atools {
+namespace gui {
+class ItemViewZoomHandler;
+}
+}
+
+namespace internal {
+struct StartPosition;
+}
 
 /*
  * Allows to select the flight plan departure parking or start position.
@@ -39,7 +53,7 @@ class ParkingDialog :
   Q_OBJECT
 
 public:
-  ParkingDialog(QWidget *parent, const map::MapAirport& departureAirport);
+  ParkingDialog(QWidget *parent, const map::MapAirport& departureAirportParam);
   virtual ~ParkingDialog() override;
 
   /* Get selected parking spot
@@ -51,17 +65,18 @@ public:
   bool getSelectedStartPosition(map::MapStart& start) const;
 
 private:
+  void saveState();
+  void restoreState();
   void updateButtons();
+  void updateTable();
+  void filterTextEdited();
+  void buttonBoxClicked(QAbstractButton *button);
+  void doubleClicked();
 
-  // Used to fill the list
-  struct StartPosition
-  {
-    map::MapParking parking;
-    map::MapStart start;
-  };
-
-  QList<StartPosition> entries;
+  QList<internal::StartPosition> entries;
   Ui::ParkingDialog *ui;
+  atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
+  const map::MapAirport& departureAirport;
 };
 
 #endif // LITTLENAVMAP_PARKINGDIALOG_H

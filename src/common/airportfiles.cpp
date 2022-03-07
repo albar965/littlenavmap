@@ -18,7 +18,6 @@
 #include "common/airportfiles.h"
 #include "atools.h"
 
-#include <QApplication>
 #include <QDir>
 #include <QSet>
 #include <QStandardPaths>

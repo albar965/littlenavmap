@@ -314,6 +314,20 @@ struct MapBase
     return objType;
   }
 
+  MapBase(const MapBase& other)
+  {
+    this->operator=(other);
+  }
+
+  MapBase& operator=(const MapBase& other)
+  {
+    id = other.id;
+    position = other.position;
+    objType = other.objType;
+
+    return *this;
+  }
+
 protected:
   /* Hide destructor to avoid inadvertent deletion of base */
   ~MapBase()
@@ -360,8 +374,14 @@ struct MapAirport
            name, /* Full name */
            region; /* Two letter region code */
 
-  int longestRunwayLength = 0, longestRunwayHeading = 0, transitionAltitude = 0, rating = -1,
+  int longestRunwayLength = 0, longestRunwayHeading = 0, rating = -1,
       flatten; /* X-Plane flatten flag. -1 if not set */
+
+  float transitionAltitude = 0.f, /* Feet. Transition Altitude is the altitude when flying where you are required to change from a
+                                   * local QNH to the standard of 1013.25 hectopascals or 29.92 inches of mercury */
+
+        transitionLevel = 0.f; /* Feet. Transition Level is the altitude when flying where you are required to change from
+                                * standard of 1013 back to the local QNH. This is above the Transition Altitude. */
 
   map::MapAirportType type; /* 1 Land airport, 16 Seaplane base, 17 Heliport. X-Plane only. -1 if not set. */
 
@@ -406,7 +426,7 @@ struct MapAirport
   bool procedure() const;
 
   /* For map layer configuration soft, water, helipad and closed */
-  bool minor() const;
+  bool isMinor() const;
 
   /* Check if airport should be drawn empty */
   bool emptyDraw() const;
@@ -526,8 +546,8 @@ struct MapRunwayEnd
 
   QStringList uniqueVasiTypeStr() const;
 
-  bool secondary;
-  bool navdata; /* true if source is third party nav database, false if source is simulator data */
+  bool secondary = false;
+  bool navdata = false; /* true if source is third party nav database, false if source is simulator data */
 };
 
 // =====================================================================
@@ -581,11 +601,11 @@ struct MapParking
   }
 
   QString type, name, nameShort, airlineCodes /* Comma separated list of airline codes */;
-  int airportId /* database id airport.airport_id */;
-  int number, /* -1 for X-Plane style free names. Otherwise FSX/P3D number */
-      radius; /* Radius in feet or 0 if not available */
-  float heading; /* heading in degrees true or INVALID_HEADING if not available */
-  bool jetway;
+  int airportId = 0 /* database id airport.airport_id */;
+  int number = 0, /* -1 for X-Plane style free names. Otherwise FSX/P3D number */
+      radius = 0; /* Radius in feet or 0 if not available */
+  float heading = 0.f; /* heading in degrees true or INVALID_HEADING if not available */
+  bool jetway = false;
 
   int getRadius() const
   {
@@ -621,9 +641,9 @@ struct MapStart
 
   QChar type = '\0' /* R(UNWAY), H(ELIPAD) or W(ATER) */;
   QString runwayName /* not empty if this is a runway start */;
-  int airportId /* database id airport.airport_id */;
+  int airportId = 0 /* database id airport.airport_id */;
   int helipadNumber /* -1 if not a helipad otherwise sequence number as it appeared in the BGL */;
-  float heading;
+  float heading = 0.f;
 };
 
 // =====================================================================
@@ -655,6 +675,9 @@ struct MapVor
   int frequency /* MHz * 1000 */, range /* nm */;
   QString channel;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
+  bool recommended = false; /* Filled by the get nearest methods for building the context menu
+                             *  Indicates navaid is a recommended fix */
+
   bool dmeOnly, hasDme, tacan, vortac;
 
   /* true if this is valid and a real VOR with calibration (VOR, VORDME or VORTAC) */
@@ -692,6 +715,8 @@ struct MapNdb
   float magvar;
   int frequency /* kHz * 100 */, range /* nm */;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
+  bool recommended = false; /* Filled by the get nearest methods for building the context menu
+                             *  Indicates navaid is a recommended fix */
 
   const QString& getIdent() const
   {
@@ -714,6 +739,8 @@ struct MapWaypoint
           type /* NAMED, UNAMED, etc. */,
           arincType /* ARINC * 424.18 field type definition 5.42 */;
   int routeIndex = -1; /* Filled by the get nearest methods for building the context menu */
+  bool recommended = false; /* Filled by the get nearest methods for building the context menu
+                             *  Indicates navaid is a recommended fix */
 
   bool hasVictorAirways = false, hasJetAirways = false, hasTracks = false;
   int artificial = 0;
@@ -1036,8 +1063,8 @@ struct MapIls
                       * LDA Facility no glideslope          A
                       * SDF Facility with glideslope        S
                       * SDF Facility no glideslope          F
-                      *  G: GLS ground station,
-                      *  T: SBAS/GBAS threshold point*/
+                      * GLS ground station                  G (only Navigraph and X-Plane)
+                      * SBAS/GBAS threshold point           T (only Navigraph and X-Plane) */
 
   float magvar, slope, heading, width;
   int frequency /* MHz * 1000 */, range /* nm */;
@@ -1338,7 +1365,7 @@ QDataStream& operator>>(QDataStream& dataStream, map::HoldingMarker& obj);
 QDataStream& operator<<(QDataStream& dataStream, const map::HoldingMarker& obj);
 
 // =====================================================================
-/* Range rings marker. Can be converted to QVariant and uses its own type distinct from database MSA. */
+/* MSA marker as placed by user. Can be converted to QVariant and uses its own type distinct from database MSA. */
 struct MsaMarker
   : public MapBase
 {
@@ -1384,7 +1411,7 @@ struct DistanceMarker
   QString text; /* Text to display like VOR name and frequency */
   QColor color; /* Line color depends on origin (airport or navaid type */
   atools::geo::Pos from, to;
-  float magvar;
+  float magvar = 0.f;
 
   bool isValid() const
   {
@@ -1395,6 +1422,13 @@ struct DistanceMarker
   {
     return to;
   }
+
+  float getDistanceMeter() const
+  {
+    return from.distanceMeterTo(to);
+  }
+
+  float getDistanceNm() const;
 
 };
 
@@ -1431,6 +1465,7 @@ QString ilsText(const map::MapIls& ils); /* No locale use - for map display */
 QString ilsType(const MapIls& ils, bool gs, bool dme, const QString& separator);
 QString ilsTypeShort(const map::MapIls& ils);
 QString ilsTextShort(const MapIls& ils);
+const QIcon& ilsIcon(const MapIls& ils);
 
 QString holdingTextShort(const map::MapHolding& holding, bool user);
 
@@ -1445,8 +1480,8 @@ const QString& parkingRampName(const QString& ramp);
 const QString& parkingTypeName(const QString& type);
 const QString& parkingName(const QString& name);
 QString parkingText(const map::MapParking& parking);
-QString parkingNameNumberType(const map::MapParking& parking);
-QString parkingNameNumber(const map::MapParking& parking);
+QString parkingNameNumberAndType(const map::MapParking& parking);
+QString parkingNameOrNumber(const map::MapParking& parking);
 QString startType(const map::MapStart& start);
 
 QString helipadText(const map::MapHelipad& helipad);

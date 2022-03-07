@@ -37,9 +37,9 @@ const static QVector<pid::ProgressConfId> ALLIDS({
   pid::NEXT_ALTITUDE, pid::NEXT_FUEL, pid::NEXT_COURSE_TO_WP, pid::NEXT_LEG_COURSE, pid::NEXT_HEADING, pid::NEXT_CROSS_TRACK_DIST,
   pid::NEXT_REMARKS, pid::AIRCRAFT_HEADING, pid::AIRCRAFT_TRACK, pid::AIRCRAFT_FUEL_FLOW, pid::AIRCRAFT_ENDURANCE, pid::AIRCRAFT_FUEL,
   pid::AIRCRAFT_GROSS_WEIGHT, pid::AIRCRAFT_ICE, pid::ALT_INDICATED, pid::ALT_ACTUAL, pid::ALT_ABOVE_GROUND, pid::ALT_GROUND_ELEVATION,
-  pid::SPEED_INDICATED, pid::SPEED_GROUND, pid::SPEED_TRUE, pid::SPEED_MACH, pid::SPEED_VERTICAL, pid::DESCENT_DEVIATION,
-  pid::DESCENT_ANGLE_SPEED, pid::ENV_WIND_DIR_SPEED, pid::ENV_TAT, pid::ENV_SAT, pid::ENV_ISA_DEV, pid::ENV_SEA_LEVEL_PRESS,
-  pid::ENV_CONDITIONS, pid::ENV_VISIBILITY, pid::POS_COORDINATES});
+  pid::ALT_AUTOPILOT_ALT, pid::SPEED_INDICATED, pid::SPEED_GROUND, pid::SPEED_TRUE, pid::SPEED_MACH, pid::SPEED_VERTICAL,
+  pid::DESCENT_DEVIATION, pid::DESCENT_ANGLE_SPEED, pid::ENV_WIND_DIR_SPEED, pid::ENV_TAT, pid::ENV_SAT, pid::ENV_ISA_DEV,
+  pid::ENV_SEA_LEVEL_PRESS, pid::ENV_CONDITIONS, pid::ENV_VISIBILITY, pid::POS_COORDINATES});
 
 // Default ids which are enabled with out settings
 const static QVector<pid::ProgressConfId> DEFAULTIDS({
@@ -48,13 +48,16 @@ const static QVector<pid::ProgressConfId> DEFAULTIDS({
   pid::NEXT_DIST_TIME_ARR, pid::NEXT_ALTITUDE, pid::NEXT_FUEL, pid::NEXT_COURSE_TO_WP, pid::NEXT_LEG_COURSE, pid::NEXT_HEADING,
   pid::NEXT_CROSS_TRACK_DIST, pid::NEXT_REMARKS, pid::AIRCRAFT_HEADING, pid::AIRCRAFT_TRACK, pid::AIRCRAFT_FUEL_FLOW,
   pid::AIRCRAFT_ENDURANCE, pid::AIRCRAFT_ICE, pid::ALT_INDICATED, pid::ALT_ACTUAL, pid::ALT_ABOVE_GROUND, pid::ALT_GROUND_ELEVATION,
-  pid::SPEED_INDICATED, pid::SPEED_GROUND, pid::SPEED_TRUE, pid::SPEED_MACH, pid::SPEED_VERTICAL, pid::DESCENT_DEVIATION,
-  pid::DESCENT_ANGLE_SPEED, pid::ENV_WIND_DIR_SPEED, pid::ENV_TAT, pid::ENV_SAT, pid::ENV_ISA_DEV, pid::ENV_SEA_LEVEL_PRESS,
-  pid::ENV_CONDITIONS, pid::ENV_VISIBILITY});
+  pid::ALT_AUTOPILOT_ALT, pid::SPEED_INDICATED, pid::SPEED_GROUND, pid::SPEED_TRUE, pid::SPEED_MACH, pid::SPEED_VERTICAL,
+  pid::DESCENT_DEVIATION, pid::DESCENT_ANGLE_SPEED, pid::ENV_WIND_DIR_SPEED, pid::ENV_TAT, pid::ENV_SAT, pid::ENV_ISA_DEV,
+  pid::ENV_SEA_LEVEL_PRESS, pid::ENV_CONDITIONS, pid::ENV_VISIBILITY});
+
+// Always enables coordinate display or other required fields for web interface
+const static QVector<pid::ProgressConfId> ADDITIONAL_WEB_IDS({pid::POS_COORDINATES});
 
 void AircraftProgressConfig::progressConfiguration()
 {
-  atools::gui::TreeDialog treeDialog(parent, QApplication::applicationName() + tr(" - Aircraft Progress Configuration"),
+  atools::gui::TreeDialog treeDialog(parent, QCoreApplication::applicationName() + tr(" - Aircraft Progress Configuration"),
                                      tr("Select the fields to show in the aircraft progress tab.\n"
                                         "Note that some fields are only shown if certain conditions apply."),
                                      lnm::INFOWINDOW_PROGRESS_FIELD_DIALOG, "INFO.html#progress-field-configuration",
@@ -109,7 +112,7 @@ void AircraftProgressConfig::progressConfiguration()
   treeDialog.addItem2(nextItem, pid::NEXT_HEADING,          tr("Heading"), tr("Heading to fly to the next waypoint considering wind."), QString());
   treeDialog.addItem2(nextItem, pid::NEXT_CROSS_TRACK_DIST, tr("Cross Track Distance"), tr("Distance to flight plan leg.\n"
                                                                                            "► means aircraft is left of flight plan leg (fly right) and ◄ means right of leg."), QString());
-  treeDialog.addItem2(nextItem, pid::NEXT_REMARKS,              tr("Remarks"), tr("User entered remarks for a user flight plan position."), QString());
+  treeDialog.addItem2(nextItem, pid::NEXT_REMARKS,              tr("Remarks"), tr("User entered remarks for an user flight plan position."), QString());
 
   // Aircraft ==========================================================================================================
   QTreeWidgetItem *aircraftItem = treeDialog.addTopItem1(tr("Aircraft"));
@@ -130,6 +133,7 @@ void AircraftProgressConfig::progressConfiguration()
   treeDialog.addItem2(altitudeItem, pid::ALT_ACTUAL,           tr("Actual"), tr("Actual altitude."), QString());
   treeDialog.addItem2(altitudeItem, pid::ALT_ABOVE_GROUND,     tr("Above Ground"), tr("Altitude above ground as reported by simulator."), QString());
   treeDialog.addItem2(altitudeItem, pid::ALT_GROUND_ELEVATION, tr("Ground Elevation"), tr("Ground elevation above normal as reported by simulator."), QString());
+  treeDialog.addItem2(altitudeItem, pid::ALT_AUTOPILOT_ALT,    tr("Autopilot Selected"), tr("Preselected altitude in autopilot."), QString());
 
   // Speed ==========================================================================================================
   QTreeWidgetItem *speedItem = treeDialog.addTopItem1(tr("Speed"));
@@ -211,7 +215,12 @@ void AircraftProgressConfig::restoreState()
 void AircraftProgressConfig::updateBits()
 {
   // Update bitfield for HtmlBuilder
-  enabledBits.fill(false, ALLIDS.size() + 1);
+  enabledBits.fill(false, pid::LAST + 1);
   for(pid::ProgressConfId id : enabledIds)
     enabledBits.setBit(id, true);
+
+  // Update separate bitfield with required additional fields
+  enabledBitsWeb = enabledBits;
+  for(pid::ProgressConfId id : ADDITIONAL_WEB_IDS)
+    enabledBitsWeb.setBit(id, true);
 }

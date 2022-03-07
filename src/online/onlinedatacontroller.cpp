@@ -37,7 +37,7 @@
 #include <QDebug>
 #include <QMessageBox>
 #include <QTextCodec>
-#include <QApplication>
+#include <QCoreApplication>
 
 // #define DEBUG_ONLINE_DOWNLOAD 1
 
@@ -416,6 +416,9 @@ void OnlinedataController::downloadFailed(const QString& error, int errorCode, Q
 
 void OnlinedataController::downloadSslErrors(const QStringList& errors, const QString& downloadUrl)
 {
+  qWarning() << Q_FUNC_INFO;
+  NavApp::closeSplashScreen();
+
   int result = atools::gui::Dialog(mainWindow).
                showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_ONLINE,
                                   tr("<p>Errors while trying to establish an encrypted connection "
@@ -463,8 +466,7 @@ LineString *OnlinedataController::geometryCallback(const QString& callsign, atoo
 
   // Try to get airspace boundary by name vs. callsign if set in options
   if(flags2 & opts2::ONLINE_AIRSPACE_BY_NAME)
-    lineString = NavApp::getAirspaceController()->
-                 getOnlineAirspaceGeoByName(callsign, atools::fs::online::facilityTypeText(type));
+    lineString = NavApp::getAirspaceController()->getOnlineAirspaceGeoByName(callsign, atools::fs::online::facilityTypeText(type));
 
   // Try to get airspace boundary by file name vs. callsign if set in options
   if(flags2 & opts2::ONLINE_AIRSPACE_BY_FILE)
@@ -632,11 +634,11 @@ bool OnlinedataController::getShadowAircraft(atools::fs::sc::SimConnectAircraft&
 {
   if(isShadowAircraft(simAircraft))
   {
-    atools::sql::SqlRecordVector clients = manager->getClientRecordsByCallsign(simAircraft.getAirplaneRegistration());
+    atools::sql::SqlRecordList clients = manager->getClientRecordsByCallsign(simAircraft.getAirplaneRegistration());
 
     if(!clients.isEmpty())
     {
-      fillAircraftFromClient(onlineClient, clients.first());
+      fillAircraftFromClient(onlineClient, clients.constFirst());
 
       // Update to real simulator position including altitude for shadows
       onlineClient.getPosition() = simAircraft.getPosition();

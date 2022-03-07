@@ -372,7 +372,7 @@ void LogStatisticsDialog::initQueries()
       "select logbook_id, departure_ident as ident, departure_name as name from logbook where departure_ident is not null "
       "union "
       "select logbook_id, destination_ident as ident, destination_name as name from logbook where destination_ident is not null) "
-      "group by ident, name order by count(1) desc limit 250"
+      "group by ident, name order by count(1) desc limit 1000"
     },
 
     Query{
@@ -380,7 +380,7 @@ void LogStatisticsDialog::initQueries()
       {tr("Number of\ndepartures"), tr("ICAO"), tr("Name")},
       {Qt::AlignRight, Qt::AlignRight, Qt::AlignLeft},
       "select count(1), departure_ident, departure_name "
-      "from logbook group by departure_ident, departure_name order by count(1) desc limit 250"
+      "from logbook group by departure_ident, departure_name order by count(1) desc limit 1000"
     },
 
     Query{
@@ -388,7 +388,7 @@ void LogStatisticsDialog::initQueries()
       {tr("Number of\ndestinations"), tr("ICAO"), tr("Name")},
       {Qt::AlignRight, Qt::AlignRight, Qt::AlignLeft},
       "select count(1), destination_ident, destination_name "
-      "from logbook group by destination_ident, destination_name order by count(1) desc limit 250"
+      "from logbook group by destination_ident, destination_name order by count(1) desc limit 1000"
     },
 
     Query{
@@ -399,7 +399,7 @@ void LogStatisticsDialog::initQueries()
        Qt::AlignLeft, Qt::AlignLeft},
       "select cast(distance * %1 as int), departure_ident, departure_name, destination_ident, destination_name, "
       "simulator, aircraft_name, aircraft_type, aircraft_registration "
-      "from logbook order by distance desc limit 250"
+      "from logbook order by distance desc limit 1000"
     },
 
     Query{
@@ -414,7 +414,7 @@ void LogStatisticsDialog::initQueries()
       "simulator, aircraft_name, aircraft_type, aircraft_registration "
       "from logbook "
       "where strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim) > 0 "
-      "order by strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim) desc limit 250"
+      "order by strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim) desc limit 1000"
     },
 
     Query{
@@ -427,7 +427,7 @@ void LogStatisticsDialog::initQueries()
       "select cast((strftime('%s', destination_time) - strftime('%s', departure_time)) / 3600. as double), "
       "departure_ident, departure_name, destination_ident, destination_name, "
       "simulator, aircraft_name, aircraft_type, aircraft_registration "
-      "from logbook order by strftime('%s', destination_time) - strftime('%s', departure_time) desc limit 250"
+      "from logbook order by strftime('%s', destination_time) - strftime('%s', departure_time) desc limit 1000"
     },
 
     Query{
@@ -452,7 +452,7 @@ void LogStatisticsDialog::initQueries()
       "cast(sum((strftime('%s', destination_time) - strftime('%s', departure_time)) / 3600.) as double), "
       "cast(sum(max(strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim), 0) / 3600.) as double), "
       "aircraft_type "
-      "from logbook group by simulator, aircraft_type order by count(1) desc limit 250"
+      "from logbook group by simulator, aircraft_type order by count(1) desc limit 1000"
     },
 
     Query{
@@ -464,7 +464,7 @@ void LogStatisticsDialog::initQueries()
       "cast(sum((strftime('%s', destination_time) - strftime('%s', departure_time)) / 3600.) as double), "
       "cast(sum(max(strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim), 0) / 3600.) as double), "
       "aircraft_registration "
-      "from logbook group by simulator, aircraft_registration order by count(1) desc limit 250"
+      "from logbook group by simulator, aircraft_registration order by count(1) desc limit 1000"
     }
   };
 }

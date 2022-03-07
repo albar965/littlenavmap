@@ -203,12 +203,10 @@ enum MapObjectQueryType
   QUERY_MARK_MSA = 1 << 7, /* Airport MSA sectors */
   QUERY_MARK_DISTANCE = 1 << 8, /* Measurement lines */
   QUERY_PREVIEW_PROC_POINTS = 1 << 9, /* Points from procedure preview */
+  QUERY_PROC_RECOMMENDED = 1 << 10, /* Recommended navaids from procedures */
 
   /* All user creatable/placeable features */
   QUERY_MARK = QUERY_MARK_DISTANCE | QUERY_MARK_HOLDINGS | QUERY_MARK_PATTERNS | QUERY_MARK_RANGE | QUERY_MARK_MSA,
-
-  QUERY_ALL = QUERY_PROC_POINTS | QUERY_PROC_MISSED_POINTS | QUERY_MARK_HOLDINGS | QUERY_MARK_PATTERNS | QUERY_PROCEDURES |
-              QUERY_MARK_RANGE | QUERY_MARK_MSA | QUERY_PREVIEW_PROC_POINTS
 };
 
 Q_DECLARE_FLAGS(MapObjectQueryTypes, MapObjectQueryType);
@@ -236,7 +234,7 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(map::AirportQueryFlags);
 
 /* ================================================================================== */
 /* Covers all airspace types */
-enum MapAirspaceType
+enum MapAirspaceType : quint32
 {
   AIRSPACE_NONE = 0,
   CENTER = 1 << 0,
@@ -273,7 +271,7 @@ enum MapAirspaceType
 
   GCA = 1 << 29, // New general control area combining several unknown types
   MCTR = 1 << 30, // Military Control Zone (MCTR)
-  TRSA = 1 << 31, // Terminal Radar Service Area (TRSA)
+  TRSA = 0x8000'0000, // Terminal Radar Service Area (TRSA)
 
   AIRSPACE_CLASS_ICAO = CLASS_A | CLASS_B | CLASS_C | CLASS_D | CLASS_E,
   AIRSPACE_CLASS_FG = CLASS_F | CLASS_G,
@@ -408,31 +406,6 @@ enum MapAirportType
   AP_TYPE_HELIPORT = 17,
 };
 
-/* Index values of the map theme combo box */
-enum MapThemeComboIndex
-{
-  OPENSTREETMAP,
-  OPENTOPOMAP,
-  STAMENTERRAIN,
-  CARTOLIGHT,
-  CARTODARK,
-  HUMANITARIAN,
-  SIMPLE, // political
-  PLAIN,
-  ATLAS, // srtm
-  CUSTOM, /* Custom maps count from this index up */
-  INVALID_THEME = -1
-};
-
-/* All known map theme names =========================================== */
-static const QStringList STOCK_MAP_THEMES({
-    // Slippy maps - online maps
-    "openstreetmap", "opentopomap", "stamenterrain", "cartolight", "cartodark", "humanitarian",
-    // Included offline maps
-    "political", "plain", "srtm",
-    // Other background services
-    "hillshading", "srtm2"});
-
 /* Sun shading sub menu actions.
  * Values are saved in settings do not change */
 enum MapSunShading
@@ -472,7 +445,8 @@ enum TextFlag
   ROUTE_TEXT = 0x0040, /* Object is part of route */
   ABS_POS = 0x0080, /* Use absolute text positioning */
   NO_BACKGROUND = 0x0100, /* No background */
-  LOG_TEXT = 0x0200 /* Object is part of log entry - only for airports */
+  LOG_TEXT = 0x0200, /* Object is part of log entry - only for airports */
+  ELLIPSE_IDENT = 0x0400 /* Add allipse to first text (ident) and ignore additional texts if additonal are not empty */
 };
 
 Q_DECLARE_FLAGS(TextFlags, TextFlag);

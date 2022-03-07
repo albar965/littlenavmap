@@ -17,17 +17,19 @@
 
 #include "query/infoquery.h"
 
+#include "common/constants.h"
+#include "query/querytypes.h"
+#include "settings/settings.h"
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlrecord.h"
-#include "settings/settings.h"
-#include "query/querytypes.h"
-#include "common/constants.h"
+#include "sql/sqlutil.h"
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlDatabase;
 using atools::sql::SqlRecord;
-using atools::sql::SqlRecordVector;
+using atools::sql::SqlRecordList;
+using atools::sql::SqlUtil;
 
 InfoQuery::InfoQuery(SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbTrack)
   : dbSim(sqlDb), dbNav(sqlDbNav), dbTrack(sqlDbTrack)
@@ -36,6 +38,8 @@ InfoQuery::InfoQuery(SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav, ato
   airportCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirportCache", 100).toInt());
   vorCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "VorCache", 100).toInt());
   ndbCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "NdbCache", 100).toInt());
+  msaCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "MsaCache", 100).toInt());
+  holdingCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "HoldingCache", 100).toInt());
   runwayEndCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "RunwayEndCache", 100).toInt());
   comCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "ComCache", 100).toInt());
   runwayCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "RunwayCache", 100).toInt());
@@ -43,8 +47,7 @@ InfoQuery::InfoQuery(SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav, ato
   startCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "StartCache", 100).toInt());
   approachCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "ApproachCache", 100).toInt());
   transitionCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "TransitionCache", 100).toInt());
-  airportSceneryCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirportSceneryCache",
-                                                           100).toInt());
+  airportSceneryCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirportSceneryCache", 100).toInt());
 }
 
 InfoQuery::~InfoQuery()
@@ -58,46 +61,46 @@ const SqlRecord *InfoQuery::getAirportInformation(int airportId)
   return query::cachedRecord(airportCache, airportQuery, airportId);
 }
 
-const atools::sql::SqlRecordVector *InfoQuery::getAirportSceneryInformation(const QString& ident)
+const atools::sql::SqlRecordList *InfoQuery::getAirportSceneryInformation(const QString& ident)
 {
   airportSceneryQuery->bindValue(":id", ident);
-  return query::cachedRecordVector(airportSceneryCache, airportSceneryQuery, ident);
+  return query::cachedRecordList(airportSceneryCache, airportSceneryQuery, ident);
 }
 
-const SqlRecordVector *InfoQuery::getComInformation(int airportId)
+const SqlRecordList *InfoQuery::getComInformation(int airportId)
 {
   comQuery->bindValue(":id", airportId);
-  return query::cachedRecordVector(comCache, comQuery, airportId);
+  return query::cachedRecordList(comCache, comQuery, airportId);
 }
 
-const SqlRecordVector *InfoQuery::getApproachInformation(int airportId)
+const SqlRecordList *InfoQuery::getApproachInformation(int airportId)
 {
   approachQuery->bindValue(":id", airportId);
-  return query::cachedRecordVector(approachCache, approachQuery, airportId);
+  return query::cachedRecordList(approachCache, approachQuery, airportId);
 }
 
-const SqlRecordVector *InfoQuery::getTransitionInformation(int approachId)
+const SqlRecordList *InfoQuery::getTransitionInformation(int approachId)
 {
   transitionQuery->bindValue(":id", approachId);
-  return query::cachedRecordVector(transitionCache, transitionQuery, approachId);
+  return query::cachedRecordList(transitionCache, transitionQuery, approachId);
 }
 
-const SqlRecordVector *InfoQuery::getRunwayInformation(int airportId)
+const SqlRecordList *InfoQuery::getRunwayInformation(int airportId)
 {
   runwayQuery->bindValue(":id", airportId);
-  return query::cachedRecordVector(runwayCache, runwayQuery, airportId);
+  return query::cachedRecordList(runwayCache, runwayQuery, airportId);
 }
 
-const SqlRecordVector *InfoQuery::getHelipadInformation(int airportId)
+const SqlRecordList *InfoQuery::getHelipadInformation(int airportId)
 {
   helipadQuery->bindValue(":id", airportId);
-  return query::cachedRecordVector(helipadCache, helipadQuery, airportId);
+  return query::cachedRecordList(helipadCache, helipadQuery, airportId);
 }
 
-const SqlRecordVector *InfoQuery::getStartInformation(int airportId)
+const SqlRecordList *InfoQuery::getStartInformation(int airportId)
 {
   startQuery->bindValue(":id", airportId);
-  return query::cachedRecordVector(startCache, startQuery, airportId);
+  return query::cachedRecordList(startCache, startQuery, airportId);
 }
 
 const atools::sql::SqlRecord *InfoQuery::getRunwayEndInformation(int runwayEndId)
@@ -130,6 +133,28 @@ const atools::sql::SqlRecord *InfoQuery::getNdbInformation(int ndbId)
 {
   ndbQuery->bindValue(":id", ndbId);
   return query::cachedRecord(ndbCache, ndbQuery, ndbId);
+}
+
+const SqlRecord *InfoQuery::getMsaInformation(int msaId)
+{
+  if(msaQuery != nullptr)
+  {
+    msaQuery->bindValue(":id", msaId);
+    return query::cachedRecord(msaCache, msaQuery, msaId);
+  }
+  else
+    return nullptr;
+}
+
+const SqlRecord *InfoQuery::getHoldingInformation(int holdingId)
+{
+  if(holdingQuery != nullptr)
+  {
+    holdingQuery->bindValue(":id", holdingId);
+    return query::cachedRecord(holdingCache, holdingQuery, holdingId);
+  }
+  else
+    return nullptr;
 }
 
 atools::sql::SqlRecord InfoQuery::getTrackMetadata(int trackId)
@@ -170,6 +195,32 @@ void InfoQuery::initQueries()
                     "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
                     "where vor_id = :id");
 
+  // Same as above for airport MSA table
+  SqlDatabase *msaDb = SqlUtil::getDbWithTableAndRows("airport_msa", {dbNav, dbSim});
+  qDebug() << Q_FUNC_INFO << "Airport MSA database" << (msaDb == nullptr ? "None" : msaDb->databaseName());
+
+  if(msaDb != nullptr)
+  {
+    msaQuery = new SqlQuery(msaDb);
+    msaQuery->prepare("select * from airport_msa "
+                      "join bgl_file on airport_msa.file_id = bgl_file.bgl_file_id "
+                      "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
+                      "where airport_msa_id = :id");
+  }
+
+  // Check for holding table in nav (Navigraph) database and then in simulator database (X-Plane only)
+  SqlDatabase *holdingDb = SqlUtil::getDbWithTableAndRows("holding", {dbNav, dbSim});
+  qDebug() << Q_FUNC_INFO << "Holding database" << (holdingDb == nullptr ? "None" : holdingDb->databaseName());
+
+  if(holdingDb != nullptr)
+  {
+    holdingQuery = new SqlQuery(holdingDb);
+    holdingQuery->prepare("select * from holding "
+                          "join bgl_file on holding.file_id = bgl_file.bgl_file_id "
+                          "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
+                          "where holding_id = :id");
+  }
+
   ndbQuery = new SqlQuery(dbNav);
   ndbQuery->prepare("select * from ndb "
                     "join bgl_file on ndb.file_id = bgl_file.bgl_file_id "
@@ -208,6 +259,8 @@ void InfoQuery::deInitQueries()
   airportCache.clear();
   vorCache.clear();
   ndbCache.clear();
+  msaCache.clear();
+  holdingCache.clear();
   runwayEndCache.clear();
   comCache.clear();
   runwayCache.clear();
@@ -228,6 +281,12 @@ void InfoQuery::deInitQueries()
 
   delete vorQuery;
   vorQuery = nullptr;
+
+  delete msaQuery;
+  msaQuery = nullptr;
+
+  delete holdingQuery;
+  holdingQuery = nullptr;
 
   delete ndbQuery;
   ndbQuery = nullptr;

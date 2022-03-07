@@ -51,7 +51,7 @@ QString RouteStringWriter::createStringForRoute(const Route& route, float speed,
 #endif
 }
 
-QStringList RouteStringWriter::createStringForRouteList(const Route& route, float speed,
+QStringList RouteStringWriter::createStringListForRoute(const Route& route, float speed,
                                                         rs::RouteStringOptions options) const
 {
   if(route.isEmpty())
@@ -107,9 +107,9 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
   qDebug() << Q_FUNC_INFO << string;
 
   // Remove any useless DCTs
-  if(!string.isEmpty() && string.last() == "DCT")
+  if(!string.isEmpty() && string.constLast() == "DCT")
     string.removeLast();
-  if(!string.isEmpty() && string.first() == "DCT")
+  if(!string.isEmpty() && string.constFirst() == "DCT")
     string.removeFirst();
 
   if(!string.isEmpty())
@@ -136,7 +136,7 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
     else
       retval += ":F:";
 
-    retval += string.last();
+    retval += string.constLast();
   }
 
   // Add procedures and airports
@@ -240,7 +240,7 @@ QString RouteStringWriter::createGfpStringForRouteInternal(const Route& route, b
 
   if(!string.isEmpty())
   {
-    retval += "FPN/RI:F:" + string.first();
+    retval += "FPN/RI:F:" + string.constFirst();
 
     if(string.size() > 2)
     {
@@ -258,14 +258,13 @@ QString RouteStringWriter::createGfpStringForRouteInternal(const Route& route, b
     else
       retval += ":F:";
 
-    retval += string.last();
+    retval += string.constLast();
   }
   qDebug() << Q_FUNC_INFO << retval;
   return retval.toUpper();
 }
 
-QStringList RouteStringWriter::createStringForRouteInternal(const Route& routeParam, float speed,
-                                                            rs::RouteStringOptions options) const
+QStringList RouteStringWriter::createStringForRouteInternal(const Route& routeParam, float speed, rs::RouteStringOptions options) const
 {
   Route route = routeParam.adjustedToOptions(rf::DEFAULT_OPTS_ROUTESTRING);
 
@@ -372,11 +371,11 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
   int insertPosition = (route.hasValidDeparture() && options & rs::START_AND_DEST) ? 1 : 0;
   if(!retval.isEmpty())
   {
-    if(hasStar && retval.last() == "DCT")
+    if(hasStar && retval.constLast() == "DCT")
       // Remove last DCT so it does not collide with the STAR - destination airport not inserted yet
       retval.removeLast();
 
-    if(options & rs::APPROACH && retval.last() == "DCT")
+    if(options & rs::APPROACH && retval.constLast() == "DCT")
       // Remove last DCT if approach information is desired
       retval.removeLast();
 
@@ -406,7 +405,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
     retval.append("STAR");
 
   // Remove last DCT for flight factor export
-  if(options & rs::NO_FINAL_DCT && retval.last() == "DCT")
+  if(options & rs::NO_FINAL_DCT && retval.constLast() == "DCT")
     retval.removeLast();
 
   // Add destination airport

@@ -7,7 +7,7 @@
 <dgml xmlns="http://edu.kde.org/marble/dgml/2.0">
     <document>
         <head>
-            <name>SRTM Data</name>
+            <name>SRTM Data - Elevation Profile Only</name>
             <target>earth</target>
             <theme>srtm2</theme>
 

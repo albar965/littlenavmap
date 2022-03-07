@@ -20,7 +20,8 @@
 
 #include "routeexport/routeexportflags.h"
 
-#include <QApplication>
+#include <QCoreApplication>
+#include <QMap>
 
 class RouteExport;
 

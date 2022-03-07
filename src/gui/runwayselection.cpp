@@ -108,7 +108,7 @@ void RunwaySelection::getCurrentSelected(map::MapRunway& runway, map::MapRunwayE
     QModelIndexList rows = selection->selectedRows();
     if(!rows.isEmpty())
     {
-      QTableWidgetItem *item = runwayTableWidget->item(rows.first().row(), 0);
+      QTableWidgetItem *item = runwayTableWidget->item(rows.constFirst().row(), 0);
       if(item != nullptr)
       {
         // Get index and primary from user role data
@@ -211,8 +211,9 @@ void RunwaySelection::addItem(const RunwayIdxEntry& entry, int index)
     atts.append(tr("Closed"));
 
   // Add ILS and similar approach aids
-  for(map::MapIls i : NavApp::getMapQueryGui()->getIlsByAirportAndRunway(airport->ident, entry.end.name))
-    atts.append(map::ilsTypeShort(i));
+  for(const map::MapIls& ils : NavApp::getMapQueryGui()->getIlsByAirportAndRunway(airport->ident, entry.end.name))
+    atts.append(map::ilsTypeShort(ils));
+  atts.removeAll(QString());
   atts.removeDuplicates();
 
   if(showPattern && entry.runway.patternAlt > 100.f)

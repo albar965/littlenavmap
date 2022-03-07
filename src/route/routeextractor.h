@@ -39,7 +39,7 @@ class RouteExtractor
 public:
   RouteExtractor(const atools::routing::RouteFinder *routeFinderParam);
 
-  /* Extract route points and total distance if calculateRoute was successfull.
+  /* Extract route points and total distance if calculateRoute was successful.
    * From and to are not included in the list */
   void extractRoute(QVector<RouteEntry>& route, float& distanceMeter) const;
 

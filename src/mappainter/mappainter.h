@@ -25,7 +25,7 @@
 
 #include <marble/MarbleWidget.h>
 #include <QPen>
-#include <QApplication>
+#include <QCoreApplication>
 
 namespace atools {
 namespace geo {
@@ -90,7 +90,8 @@ struct PaintContext
 
   // All waypoints from the route and add them to the map to avoid duplicate drawing
   // Same for procedure preview
-  QSet<map::MapObjectRef> routeProcIdMap;
+  QSet<map::MapObjectRef> routeProcIdMap, /* Navaids on plan */
+                          routeProcIdMapRec /* Recommended navaids */;
 
   optsac::DisplayOptionsUserAircraft dispOptsUser;
   optsac::DisplayOptionsAiAircraft dispOptsAi;
@@ -104,6 +105,7 @@ struct PaintContext
   bool visibleWidget;
   bool paintCopyright = true;
   int mimimumRunwayLengthFt = -1;
+  QVector<map::MapObjectRef> *routeDrawnNavaids; /* All navaids drawn for route and procedures. Points to vector in MapScreenIndex */
 
   /* Text sizes and line thickness in percent / 100 as set in options dialog */
   float textSizeAircraftAi = 1.f;
@@ -304,7 +306,7 @@ protected:
                 bool fast);
 
   void drawLineString(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
-  void drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line);
+  void drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool noRecurse = false);
 
   void drawPolygon(Marble::GeoPainter *painter, const atools::geo::LineString& linestring);
 
@@ -364,6 +366,12 @@ protected:
 
   /* Draw large semi-transparent MSA enabled by user */
   void paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool user, bool drawFast);
+
+  /* Draw small flat circle for small radii or close zoom distances */
+  void paintCircleSmallInternal(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast, QPoint *textPos);
+
+  /* Draw a large spherical correct projected circle */
+  void paintCircleLargeInternal(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast, QPoint *textPos);
 
   /* Minimum points to use for a circle */
   const int CIRCLE_MIN_POINTS = 16;

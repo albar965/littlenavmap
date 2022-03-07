@@ -18,6 +18,8 @@
 #ifndef LITTLENAVMAP_INFOQUERY_H
 #define LITTLENAVMAP_INFOQUERY_H
 
+#include "sql/sqltypes.h"
+
 #include <QCache>
 #include <QObject>
 
@@ -26,7 +28,6 @@ namespace sql {
 class SqlDatabase;
 class SqlQuery;
 class SqlRecord;
-typedef QVector<atools::sql::SqlRecord> SqlRecordVector;
 }
 }
 
@@ -48,10 +49,10 @@ public:
 
   /* Get record for joined tables airport, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getAirportInformation(int airportId);
-  const atools::sql::SqlRecordVector *getAirportSceneryInformation(const QString& ident);
+  const atools::sql::SqlRecordList *getAirportSceneryInformation(const QString& ident);
 
   /* Get record for table com */
-  const atools::sql::SqlRecordVector *getComInformation(int airportId);
+  const atools::sql::SqlRecordList *getComInformation(int airportId);
 
   /* Get record for joined tables vor, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getVorInformation(int vorId);
@@ -60,20 +61,23 @@ public:
   /* Get record for joined tables ndb, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getNdbInformation(int ndbId);
 
+  const atools::sql::SqlRecord *getMsaInformation(int msaId);
+  const atools::sql::SqlRecord *getHoldingInformation(int holdingId);
+
   /* Get record list for table runway of an airport */
-  const atools::sql::SqlRecordVector *getRunwayInformation(int airportId);
+  const atools::sql::SqlRecordList *getRunwayInformation(int airportId);
 
   /* Get record for table runway_end */
   const atools::sql::SqlRecord *getRunwayEndInformation(int runwayEndId);
 
-  const atools::sql::SqlRecordVector *getHelipadInformation(int airportId);
-  const atools::sql::SqlRecordVector *getStartInformation(int airportId);
+  const atools::sql::SqlRecordList *getHelipadInformation(int airportId);
+  const atools::sql::SqlRecordList *getStartInformation(int airportId);
 
   /* Get runway name and all columns from table approach */
-  const atools::sql::SqlRecordVector *getApproachInformation(int airportId);
+  const atools::sql::SqlRecordList *getApproachInformation(int airportId);
 
   /* Get record for table transition */
-  const atools::sql::SqlRecordVector *getTransitionInformation(int approachId);
+  const atools::sql::SqlRecordList *getTransitionInformation(int approachId);
 
   /* Get a record from table trackmeta for given track id */
   atools::sql::SqlRecord getTrackMetadata(int trackId);
@@ -86,20 +90,20 @@ public:
 
 private:
   /* Caches */
-  QCache<int, atools::sql::SqlRecord> airportCache, vorCache, ndbCache, runwayEndCache;
+  QCache<int, atools::sql::SqlRecord> airportCache, vorCache, ndbCache, runwayEndCache, msaCache, holdingCache;
 
-  QCache<int, atools::sql::SqlRecordVector> comCache, runwayCache, helipadCache, startCache, approachCache,
-                                            transitionCache;
+  QCache<int, atools::sql::SqlRecordList> comCache, runwayCache, helipadCache, startCache, approachCache,
+                                          transitionCache;
 
-  QCache<QString, atools::sql::SqlRecordVector> airportSceneryCache;
+  QCache<QString, atools::sql::SqlRecordList> airportSceneryCache;
 
   atools::sql::SqlDatabase *dbSim, *dbNav, *dbTrack;
 
   /* Prepared database queries */
-  atools::sql::SqlQuery *airportQuery = nullptr, *airportSceneryQuery = nullptr, *vorQuery = nullptr,
-                        *ndbQuery = nullptr, *comQuery = nullptr, *runwayQuery = nullptr, *runwayEndQuery = nullptr,
-                        *helipadQuery = nullptr, *startQuery = nullptr,
-                        *vorIdentRegionQuery = nullptr, *approachQuery = nullptr, *transitionQuery = nullptr;
+  atools::sql::SqlQuery *airportQuery = nullptr, *airportSceneryQuery = nullptr, *vorQuery = nullptr, *msaQuery = nullptr,
+                        *holdingQuery = nullptr, *ndbQuery = nullptr, *comQuery = nullptr, *runwayQuery = nullptr,
+                        *runwayEndQuery = nullptr, *helipadQuery = nullptr, *startQuery = nullptr, *vorIdentRegionQuery = nullptr,
+                        *approachQuery = nullptr, *transitionQuery = nullptr;
 
 };
 

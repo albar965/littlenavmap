@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "profile/profilelabelwidget.h"
+#include "profile/profilelabelwidgetvert.h"
 
 #include "profile/profilewidget.h"
 #include "common/symbolpainter.h"
@@ -28,20 +28,25 @@
 #include <QContextMenuEvent>
 #include <QPainter>
 
-ProfileLabelWidget::ProfileLabelWidget(ProfileWidget *parent, ProfileScrollArea *profileScrollArea)
+ProfileLabelWidgetVert::ProfileLabelWidgetVert(ProfileWidget *parent, ProfileScrollArea *profileScrollArea)
   : QWidget(parent), profileWidget(parent), scrollArea(profileScrollArea)
 {
   setContextMenuPolicy(Qt::DefaultContextMenu);
   setFocusPolicy(Qt::StrongFocus);
 }
 
-ProfileLabelWidget::~ProfileLabelWidget()
+ProfileLabelWidgetVert::~ProfileLabelWidgetVert()
 {
 
 }
 
+void ProfileLabelWidgetVert::optionsChanged()
+{
+  update();
+}
+
 /* Pass context menu to profile widget */
-void ProfileLabelWidget::contextMenuEvent(QContextMenuEvent *event)
+void ProfileLabelWidgetVert::contextMenuEvent(QContextMenuEvent *event)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -55,7 +60,7 @@ void ProfileLabelWidget::contextMenuEvent(QContextMenuEvent *event)
   profileWidget->showContextMenu(globalpoint);
 }
 
-void ProfileLabelWidget::paintEvent(QPaintEvent *)
+void ProfileLabelWidgetVert::paintEvent(QPaintEvent *)
 {
   // qDebug() << Q_FUNC_INFO;
   int w = rect().width(), h = rect().height();
@@ -73,7 +78,7 @@ void ProfileLabelWidget::paintEvent(QPaintEvent *)
     QPoint offset = scrollArea->getOffset();
     int safeAltY = profileWidget->getMinSafeAltitudeY() - offset.y();
     int flightplanY = profileWidget->getFlightplanAltY() - offset.y();
-    float routeAlt = NavApp::getRoute().getCruisingAltitudeFeet();
+    float routeAlt = NavApp::getRouteConst().getCruisingAltitudeFeet();
 
     // Draw labels on left side widget ========================================================
 
@@ -81,10 +86,14 @@ void ProfileLabelWidget::paintEvent(QPaintEvent *)
     SymbolPainter symPainter;
     QVector<std::pair<int, int> > scaleValues = profileWidget->calcScaleValues();
 
-    QFont f = painter.font();
+    QFont f = QApplication::font();
+    f.setPointSizeF(f.pointSizeF() * 0.9);
     f.setBold(true);
+    painter.setFont(f);
     QFontMetrics metrics(f);
 
+    textatt::TextAttributes atts = textatt::BOLD | textatt::RIGHT;
+    QColor baseColor = QApplication::palette().color(QPalette::Base);
     int maxw = 1;
     for(const std::pair<int, int>& scale : scaleValues)
     {
@@ -92,9 +101,7 @@ void ProfileLabelWidget::paintEvent(QPaintEvent *)
       if(y > -5 && y < h + 5)
       {
         QString str = QLocale().toString(scale.second);
-        symPainter.textBox(&painter, {str},
-                           mapcolors::profileElevationScalePen,
-                           w - 2, y, textatt::BOLD | textatt::RIGHT, 0);
+        symPainter.textBox(&painter, {str}, mapcolors::profileElevationScalePen, w - 2, y, atts, 0, baseColor);
         maxw = std::max(metrics.boundingRect(str).width(), maxw);
       }
     }
@@ -103,10 +110,7 @@ void ProfileLabelWidget::paintEvent(QPaintEvent *)
     if(safeAltY > -5 && safeAltY < h + 5)
     {
       QString str = Unit::altFeet(profileWidget->getMinSafeAltitudeFt());
-      symPainter.textBox(&painter, {str},
-                         mapcolors::profileSafeAltLinePen,
-                         w - 2, safeAltY, textatt::BOLD | textatt::RIGHT, 255,
-                         QApplication::palette().color(QPalette::Base));
+      symPainter.textBox(&painter, {str}, mapcolors::profileSafeAltLinePen, w - 2, safeAltY, atts, 255, baseColor);
       maxw = std::max(metrics.boundingRect(str).width(), maxw);
     }
 
@@ -114,10 +118,7 @@ void ProfileLabelWidget::paintEvent(QPaintEvent *)
     if(flightplanY > -5 && flightplanY < h + 5)
     {
       QString str = Unit::altFeet(routeAlt);
-      symPainter.textBox(&painter, {str},
-                         QApplication::palette().color(QPalette::Text),
-                         w - 2, flightplanY, textatt::BOLD | textatt::RIGHT, 255,
-                         QApplication::palette().color(QPalette::Base));
+      symPainter.textBox(&painter, {str}, QApplication::palette().color(QPalette::Text), w - 2, flightplanY, atts, 255, baseColor);
       maxw = std::max(metrics.boundingRect(str).width(), maxw);
     }
     setMinimumWidth(maxw + metrics.width("X"));

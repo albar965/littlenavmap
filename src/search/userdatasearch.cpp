@@ -35,6 +35,7 @@
 #include "userdata/userdatacontroller.h"
 #include "sql/sqlrecord.h"
 #include "userdata/userdataicons.h"
+#include "common/mapresult.h"
 
 UserdataSearch::UserdataSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex)
   : SearchBaseTable(parent, tableView, new ColumnList("userdata", "userdata_id"), tabWidgetIndex)
@@ -149,7 +150,7 @@ void UserdataSearch::connectSearchSlots()
 void UserdataSearch::addUserpointTriggered()
 {
   QVector<int> ids = getSelectedIds();
-  emit addUserpoint(ids.isEmpty() ? -1 : ids.first(), atools::geo::EMPTY_POS);
+  emit addUserpoint(ids.isEmpty() ? -1 : ids.constFirst(), atools::geo::EMPTY_POS);
 }
 
 void UserdataSearch::editUserpointsTriggered()

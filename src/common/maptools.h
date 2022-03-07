@@ -78,7 +78,7 @@ void insert(QHash<int, TYPE>& map, const QList<TYPE>& list)
 template<typename TYPE>
 void insert(QHash<int, TYPE>& map, const QHash<int, TYPE>& other)
 {
-  for(auto it = other.begin(); it != other.end(); ++it)
+  for(auto it = other.constBegin(); it != other.constEnd(); ++it)
     map.insert(it.key(), it.value());
 }
 

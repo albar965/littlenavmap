@@ -287,7 +287,7 @@ void MapPainterNav::paintAirways(const QList<MapAirway> *airways, bool fast)
     }
   }
 
-  TextPlacement textPlacement(painter, this, QRect());
+  TextPlacement textPlacement(painter, this, context->screenRect);
 
   // Draw texts ----------------------------------------
   if(!textlist.isEmpty())
@@ -303,14 +303,14 @@ void MapPainterNav::paintAirways(const QList<MapAirway> *airways, bool fast)
 
     for(Place& place: textlist)
     {
-      const MapAirway& airway = airways->at(place.airwayIndexByText.first());
+      const MapAirway& airway = airways->at(place.airwayIndexByText.constFirst());
       int xt = -1, yt = -1;
       float textBearing;
 
       // First find text position with incomplete text
       QString text = place.texts.join(tr(", "));
-      if(textPlacement.findTextPos(airway.from, airway.to, metrics.width(text), metrics.height() * 2,
-                                   xt, yt, &textBearing))
+      Line line(airway.from, airway.to);
+      if(textPlacement.findTextPos(line, line.lengthMeter(), metrics.horizontalAdvance(text), metrics.height(), 20, xt, yt, &textBearing))
       {
         // Prepend arrows to all texts
         for(int j = 0; j < place.texts.size(); ++j)
@@ -320,16 +320,14 @@ void MapPainterNav::paintAirways(const QList<MapAirway> *airways, bool fast)
 
           if(aw.direction != map::DIR_BOTH)
             // Turn arrow depending on text angle, direction and depending if text segment is reversed compared to first
-            txt.prepend(((textBearing > 180.f) ^
-                         place.positionReversed.at(j) ^
-                         (aw.direction == map::DIR_FORWARD)) ? tr("◄ ") : tr("► "));
+            txt.prepend(((textBearing < 180.f) ^ place.positionReversed.at(j) ^ (aw.direction == map::DIR_FORWARD)) ? tr("◄ ") : tr("► "));
         }
         text = place.texts.join(tr(", "));
 
         painter->translate(xt, yt);
         painter->rotate(textBearing > 180.f ? textBearing + 90.f : textBearing - 90.f);
         painter->drawText(QPointF(-painter->fontMetrics().width(text) / 2,
-                                  painter->fontMetrics().ascent() + linewidthAirway), text);
+                                  -painter->fontMetrics().descent() - linewidthAirway), text);
         painter->resetTransform();
       }
       i++;
@@ -355,7 +353,7 @@ void MapPainterNav::paintWaypoints(const QList<MapWaypoint> *waypoints, bool dra
          (drawTrack && waypoint.hasTracks)))
       continue;
 
-    if(context->routeProcIdMap.contains(waypoint.getRef()))
+    if(context->routeProcIdMap.contains(waypoint.getRef()) || context->routeProcIdMapRec.contains(waypoint.getRef()))
       continue;
 
     float x, y;
@@ -398,7 +396,7 @@ void MapPainterNav::paintVors(const QList<MapVor> *vors, bool drawFast)
 
   for(const MapVor& vor : *vors)
   {
-    if(context->routeProcIdMap.contains(vor.getRef()))
+    if(context->routeProcIdMap.contains(vor.getRef()) || context->routeProcIdMapRec.contains(vor.getRef()))
       continue;
 
     float x, y;
@@ -432,7 +430,7 @@ void MapPainterNav::paintNdbs(const QList<MapNdb> *ndbs, bool drawFast)
 
   for(const MapNdb& ndb : *ndbs)
   {
-    if(context->routeProcIdMap.contains(ndb.getRef()))
+    if(context->routeProcIdMap.contains(ndb.getRef()) || context->routeProcIdMapRec.contains(ndb.getRef()))
       continue;
 
     float x, y;

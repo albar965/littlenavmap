@@ -26,17 +26,118 @@
       <layout class="QVBoxLayout" name="verticalLayout_4">
        <item>
         <layout class="QGridLayout" name="gridLayout_7">
-         <item row="4" column="0">
-          <widget class="QLabel" name="labelRunwayLength">
+         <item row="1" column="0">
+          <widget class="QLabel" name="labelSimulator">
            <property name="text">
-            <string>&amp;Required runway:</string>
+            <string>&amp;Simulator</string>
            </property>
            <property name="buddy">
-            <cstring>spinBoxRunwayLength</cstring>
+            <cstring>lineEditName</cstring>
            </property>
           </widget>
          </item>
-         <item row="4" column="1">
+         <item row="2" column="1">
+          <widget class="QLineEdit" name="lineEditName">
+           <property name="toolTip">
+            <string>Name of aircraft.
+This is for informational purposes only.</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="comboBoxSimulator">
+           <property name="toolTip">
+            <string>Short name for simulator like FSX, FSXSE, P3DV4, P3DV5, XP11 or MSFS.
+A performance file can often be used for all simulators.
+</string>
+           </property>
+           <item>
+            <property name="text">
+             <string>All</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string notr="true">XP11</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string notr="true">MSFS</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string notr="true">P3DV5</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string notr="true">P3DV4</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string notr="true">P3DV3</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string notr="true">FSX</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string notr="true">FSXSE</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="labelType">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Aircraft &amp;type:</string>
+           </property>
+           <property name="buddy">
+            <cstring>lineEditType</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QLabel" name="labelTypeLink">
+           <property name="toolTip">
+            <string>Opens the official ICAO database in the web browser to look up aircraft type designators.</string>
+           </property>
+           <property name="text">
+            <string>&lt;a style=&quot;text-decoration:none;&quot; href=&quot;https://www.icao.int/publications/DOC8643/Pages/Search.aspx&quot;&gt;&lt;b&gt;Click here to look up official ICAO aircraft codes.&lt;/b&gt;&lt;/a&gt;
+
+</string>
+           </property>
+           <property name="openExternalLinks">
+            <bool>true</bool>
+           </property>
+           <property name="textInteractionFlags">
+            <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0">
+          <widget class="QLabel" name="labelRunwayType">
+           <property name="text">
+            <string>Required runway &amp;type:</string>
+           </property>
+           <property name="buddy">
+            <cstring>comboBoxRunwayType</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
           <widget class="QSpinBox" name="spinBoxRunwayLength">
            <property name="toolTip">
             <string>Minimum required runway length for takeoff or landing.
@@ -54,58 +155,7 @@ This is for informational purposes only.</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="0">
-          <widget class="QLabel" name="labelType">
-           <property name="font">
-            <font>
-             <weight>75</weight>
-             <bold>true</bold>
-            </font>
-           </property>
-           <property name="text">
-            <string>Aircraft &amp;type:</string>
-           </property>
-           <property name="buddy">
-            <cstring>lineEditType</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0" colspan="2">
-          <widget class="Line" name="line">
-           <property name="orientation">
-            <enum>Qt::Horizontal</enum>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="labelName">
-           <property name="text">
-            <string>&amp;Aircraft model:</string>
-           </property>
-           <property name="buddy">
-            <cstring>lineEditName</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="5" column="0">
-          <widget class="QLabel" name="labelRunwayType">
-           <property name="text">
-            <string>Required runway &amp;type:</string>
-           </property>
-           <property name="buddy">
-            <cstring>comboBoxRunwayType</cstring>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QLineEdit" name="lineEditName">
-           <property name="toolTip">
-            <string>Name of aircraft.
-This is for informational purposes only.</string>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
+         <item row="3" column="1">
           <widget class="QLineEdit" name="lineEditType">
            <property name="toolTip">
             <string>ICAO aircraft type like B732 or C172.
@@ -113,7 +163,24 @@ The fuel report will show a warning if this does not match the simulator aircraf
            </property>
           </widget>
          </item>
-         <item row="5" column="1">
+         <item row="6" column="0" colspan="2">
+          <widget class="Line" name="line">
+           <property name="orientation">
+            <enum>Qt::Horizontal</enum>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="labelRunwayLength">
+           <property name="text">
+            <string>&amp;Required runway:</string>
+           </property>
+           <property name="buddy">
+            <cstring>spinBoxRunwayLength</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
           <widget class="QComboBox" name="comboBoxRunwayType">
            <property name="toolTip">
             <string>This is for informational purposes only.</string>
@@ -140,18 +207,20 @@ The fuel report will show a warning if this does not match the simulator aircraf
            </item>
           </widget>
          </item>
-         <item row="2" column="1">
-          <widget class="QLabel" name="labelTypeLink">
-           <property name="toolTip">
-            <string>Opens the official ICAO database in the web browser to look up aircraft type designators.</string>
-           </property>
+         <item row="2" column="0">
+          <widget class="QLabel" name="labelName">
            <property name="text">
-            <string>&lt;a style=&quot;text-decoration:none;&quot; href=&quot;https://www.icao.int/publications/DOC8643/Pages/Search.aspx&quot;&gt;&lt;b&gt;Click here to look up official ICAO aircraft codes.&lt;/b&gt;&lt;/a&gt;
-
-</string>
+            <string>&amp;Aircraft model:</string>
            </property>
-           <property name="openExternalLinks">
-            <bool>true</bool>
+           <property name="buddy">
+            <cstring>lineEditName</cstring>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLabel" name="labelTypeStatus">
+           <property name="text">
+            <string/>
            </property>
            <property name="textInteractionFlags">
             <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>

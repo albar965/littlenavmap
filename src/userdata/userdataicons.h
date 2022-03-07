@@ -20,7 +20,7 @@
 
 #include <QCache>
 #include <QMap>
-#include <QApplication>
+#include <QCoreApplication>
 
 class MainWindow;
 class QFileInfo;

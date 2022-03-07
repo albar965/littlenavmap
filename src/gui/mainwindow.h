@@ -46,6 +46,8 @@ class SearchBaseTable;
 class SearchController;
 class WeatherReporter;
 class WindReporter;
+class SimBriefHandler;
+class MapThemeHandler;
 
 namespace Marble {
 class LegendWidget;
@@ -55,6 +57,11 @@ class ElevationModel;
 }
 
 namespace atools {
+namespace fs {
+namespace pln {
+class Flightplan;
+}
+}
 namespace geo {
 class Pos;
 }
@@ -190,7 +197,8 @@ public:
   void updateErrorLabels();
   void makeErrorLabel(QString& toolTipText, QStringList errors, const QString& header);
 
-  map::MapThemeComboIndex getMapThemeIndex() const;
+  /* Index of theme in MapThemeHandler. Not related to position in combo box due to separators */
+  int getMapThemeIndex() const;
 
   const InfoController *getInfoController() const
   {
@@ -229,6 +237,17 @@ public:
 
   /* Push button in map pressed */
   void exitFullScreenPressed();
+
+  /* Called from SimBrief handler to open route string dialog */
+  void routeFromString(const QString& routeString);
+
+  /* Called from SimBrief handler to create new plan */
+  void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude);
+
+  MapThemeHandler *getMapThemeHandler() const
+  {
+    return mapThemeHandler;
+  }
 
 signals:
   /* Emitted when window is shown the first time */
@@ -273,7 +292,11 @@ private:
   /* Update status bar section for online status */
   void updateConnectionStatusMessageText();
 
+  /* Set up own UI elements that cannot be created in designer */
   void setupUi();
+
+  /* Fill map themes in menu and combo box after initializing map widget */
+  void setupMapThemesUi();
 
   void preDatabaseLoad();
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
@@ -297,8 +320,15 @@ private:
 
   void routeSelectionChanged(int selected, int total);
 
-  void routeNewFromString();
+  /* New flight plan from opening route string dialog using current plan for prefill */
+  void routeFromStringCurrent();
+
+  /* New flight plan from opening route string dialog using given plan for prefill */
+  void routeFromStringInternal(const QString& routeString);
+
+  /* Clear route */
   void routeNew();
+
   void routeOpen();
   void routeOpenFile(QString filepath);
   void routeAppend();
@@ -346,7 +376,6 @@ private:
   void changeMapProjection(int index);
   void changeMapTheme();
   void scaleToolbar(QToolBar *toolbar, float scale);
-  void findCustomMaps(QFileInfoList& customDgmlFiles);
   void themeMenuTriggered(bool checked);
   void updateLegend();
   void clearWeatherContext();
@@ -410,6 +439,9 @@ private:
   void saveStateNow();
   void optionsChanged();
 
+  /* Update API keys or tokens in GUI map widget and web API map widget */
+  void updateMapKeys();
+
   void openOptionsDialog();
 
 #ifdef DEBUG_INFORMATION
@@ -443,7 +475,7 @@ private:
   QString legendFile;
 
   /* Combo boxes that are added to the toolbar */
-  QComboBox *mapThemeComboBox = nullptr, *mapProjectionComboBox = nullptr;
+  QComboBox *comboBoxMapTheme = nullptr, *mapProjectionComboBox = nullptr;
 
   Ui::MainWindow *ui;
   MapWidget *mapWidget = nullptr;
@@ -477,14 +509,13 @@ private:
   atools::gui::HelpHandler *helpHandler = nullptr;
   atools::gui::DockWidgetHandler *dockHandler = nullptr;
 
-  /* Map theme submenu actions */
-  QList<QAction *> customMapThemeMenuActions;
-
   /* Managment and controller classes */
   WeatherReporter *weatherReporter = nullptr;
   WindReporter *windReporter = nullptr;
   InfoController *infoController = nullptr;
   RouteExport *routeExport = nullptr;
+  SimBriefHandler *simbriefHandler = nullptr;
+  MapThemeHandler *mapThemeHandler = nullptr;
 
   /* Action  groups for main menu */
   QActionGroup *actionGroupMapProjection = nullptr, *actionGroupMapTheme = nullptr, *actionGroupMapSunShading = nullptr,

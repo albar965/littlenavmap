@@ -18,7 +18,7 @@
 #ifndef LNM_DIRTOOL_H
 #define LNM_DIRTOOL_H
 
-#include <QApplication>
+#include <QCoreApplication>
 
 class QDir;
 

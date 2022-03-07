@@ -61,31 +61,34 @@ public:
   MapQuery& operator=(const MapQuery& other) = delete;
 
   /* Convert airport instances from/to simulator and third party nav databases */
-  map::MapAirport  getAirportSim(const map::MapAirport& airport);
-  map::MapAirport  getAirportNav(const map::MapAirport& airport);
-  void getAirportSimReplace(map::MapAirport& airport);
-  void getAirportNavReplace(map::MapAirport& airport);
+  map::MapAirport  getAirportSim(const map::MapAirport& airport) const;
+  map::MapAirport  getAirportNav(const map::MapAirport& airport) const;
+  void getAirportSimReplace(map::MapAirport& airport) const;
+  void getAirportNavReplace(map::MapAirport& airport) const;
+
+  /* Get from nav or sim database trying simulator first. values are zero if not available */
+  void getAirportTransitionAltiudeAndLevel(const map::MapAirport& airport, float& transitionAltitude, float& transitionLevel) const;
 
   /* If waypoint is of type VOR get the related VOR object */
-  void getVorForWaypoint(map::MapVor& vor, int waypointId);
-  void getVorNearest(map::MapVor& vor, const atools::geo::Pos& pos);
+  void getVorForWaypoint(map::MapVor& vor, int waypointId) const;
+  void getVorNearest(map::MapVor& vor, const atools::geo::Pos& pos) const;
 
   /* If waypoint is of type NDB get the related NDB object */
-  void getNdbForWaypoint(map::MapNdb& ndb, int waypointId);
-  void getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos);
+  void getNdbForWaypoint(map::MapNdb& ndb, int waypointId) const;
+  void getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos) const;
 
   /* Get map objects by unique database id  */
   /* From nav db, depending on mode */
-  map::MapVor getVorById(int id);
+  map::MapVor getVorById(int id) const;
 
   /* From nav db, depending on mode */
-  map::MapNdb getNdbById(int id);
+  map::MapNdb getNdbById(int id) const;
 
-  /* Always from sim db */
-  map::MapIls getIlsById(int id);
+  /* Always from nav db */
+  map::MapIls getIlsById(int id) const;
 
   /* Either nav or sim db */
-  map::MapAirportMsa getAirportMsaById(int id);
+  map::MapAirportMsa getAirportMsaById(int id) const;
 
   /* True if table ils contains GLS/RNP approaches - GLS ground stations or GBAS threshold points */
   bool hasGls() const
@@ -94,7 +97,7 @@ public:
   }
 
   /* From perm nav db, depending on mode */
-  map::MapHolding getHoldingById(int id);
+  map::MapHolding getHoldingById(int id) const;
 
   /* True if table is present in schema and has one row */
   bool hasHoldings() const
@@ -110,15 +113,15 @@ public:
 
   /* Get ILS from sim database based on airport ident and runway name.
    * Runway name can be zero prefixed or prefixed with "RW". */
-  QVector<map::MapIls> getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway);
+  QVector<map::MapIls> getIlsByAirportAndRunway(const QString& airportIdent, const QString& runway) const;
 
   /* Get ILS from sim database based on airport ident and ILS ident. Uses exact match. */
-  QVector<map::MapIls> getIlsByAirportAndIdent(const QString& airportIdent, const QString& ilsIdent);
+  QVector<map::MapIls> getIlsByAirportAndIdent(const QString& airportIdent, const QString& ilsIdent) const;
 
   /* Get runway end and try lower and higher numbers if nothing was found - adds a dummy entry with airport
    * position if no runway ends were found */
   void getRunwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name,
-                               const map::MapAirport& airport, bool navData);
+                               const map::MapAirport& airport, bool navData) const;
 
   /*
    * Get a map object by type, ident and region. Results are appended.
@@ -130,10 +133,10 @@ public:
   void getMapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident, const QString& region = QString(),
                            const QString& airport = QString(), const atools::geo::Pos& sortByDistancePos = atools::geo::EMPTY_POS,
                            float maxDistanceMeter = map::INVALID_DISTANCE_VALUE, bool airportFromNavDatabase = false,
-                           map::AirportQueryFlags flags = map::AP_QUERY_ALL);
+                           map::AirportQueryFlags flags = map::AP_QUERY_ALL) const;
 
   void getMapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident, const QString& region,
-                           const QString& airport, bool airportFromNavDatabase, map::AirportQueryFlags flags = map::AP_QUERY_ALL);
+                           const QString& airport, bool airportFromNavDatabase, map::AirportQueryFlags flags = map::AP_QUERY_ALL) const;
 
   /*
    * Get a map object by type and id
@@ -142,7 +145,7 @@ public:
    * @param id database id
    */
   void getMapObjectById(map::MapResult& result, map::MapTypes type, map::MapAirspaceSources src, int id,
-                        bool airportFromNavDatabase);
+                        bool airportFromNavDatabase) const;
 
   /*
    * Get objects near a screen coordinate from the cache which will cover all visible objects.
@@ -160,7 +163,7 @@ public:
    */
   void getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, bool airportDiagram,
                                map::MapTypes types, int xs, int ys, int screenDistance,
-                               map::MapResult& result);
+                               map::MapResult& result) const;
 
   /* Only VOR, NDB, ILS and waypoints
    * All sorted by distance to pos with a maximum distance distanceNm
@@ -225,10 +228,9 @@ public:
 
   /* Get related airport for navaids from current nav database.
    * found is true if navaid search was successful and max distance to pos is not exceeded. */
-  QString getAirportIdentFromWaypoint(const QString& ident, const QString& region, const atools::geo::Pos& pos,
-                                      bool found);
-  QString getAirportIdentFromVor(const QString& ident, const QString& region, const atools::geo::Pos& pos, bool found);
-  QString getAirportIdentFromNdb(const QString& ident, const QString& region, const atools::geo::Pos& pos, bool found);
+  QString getAirportIdentFromWaypoint(const QString& ident, const QString& region, const atools::geo::Pos& pos, bool found) const;
+  QString getAirportIdentFromVor(const QString& ident, const QString& region, const atools::geo::Pos& pos, bool found) const;
+  QString getAirportIdentFromNdb(const QString& ident, const QString& region, const atools::geo::Pos& pos, bool found) const;
 
   /* Close all query objects thus disconnecting from the database */
   void initQueries();
@@ -237,9 +239,9 @@ public:
   void deInitQueries();
 
   /* Check in navdatabase (Navigraph or other) if airport has procedures */
-  bool hasProcedures(const map::MapAirport& airport);
-  bool hasArrivalProcedures(const map::MapAirport& airport);
-  bool hasDepartureProcedures(const map::MapAirport& airport);
+  bool hasProcedures(const map::MapAirport& airport) const;
+  bool hasArrivalProcedures(const map::MapAirport& airport) const;
+  bool hasDepartureProcedures(const map::MapAirport& airport) const;
 
 private:
   map::MapResultIndex *nearestNavaidsInternal(const atools::geo::Pos& pos, float distanceNm,
@@ -248,17 +250,17 @@ private:
   void mapObjectByIdentInternal(map::MapResult& result, map::MapTypes type,
                                 const QString& ident, const QString& region, const QString& airport,
                                 const atools::geo::Pos& sortByDistancePos,
-                                float maxDistanceMeter, bool airportFromNavDatabase, map::AirportQueryFlags flags);
+                                float maxDistanceMeter, bool airportFromNavDatabase, map::AirportQueryFlags flags) const;
 
   const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
                                               atools::sql::SqlQuery *query,
                                               bool lazy, bool overview, bool addon, bool normal, bool& overflow);
-  QVector<map::MapIls> ilsByAirportAndRunway(const QString& airportIdent, const QString& runway);
+  QVector<map::MapIls> ilsByAirportAndRunway(const QString& airportIdent, const QString& runway) const;
 
   void runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name, const map::MapAirport& airport,
-                            bool navData);
+                            bool navData) const;
   QString airportIdentFromQuery(const QString& queryStr, const QString& ident, const QString& region,
-                                const atools::geo::Pos& pos, bool& found);
+                                const atools::geo::Pos& pos, bool& found) const;
 
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *dbSim, *dbNav, *dbUser;

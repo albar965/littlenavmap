@@ -199,10 +199,13 @@ void MapPainter::paintArc(GeoPainter *painter, const Pos& centerPos, float radiu
 
   bool ringVisible = false, lastVisible = false;
   LineString ellipse;
+  if(angleDegEnd < angleDegStart)
+    angleDegEnd += 360.f;
+
   for(float angle = angleDegStart; angle <= angleDegEnd; angle += step)
   {
     // Line segment from p1 to p2
-    Pos p2 = centerPos.endpoint(radiusMeter, angle);
+    Pos p2 = centerPos.endpoint(radiusMeter, atools::geo::normalizeCourse(angle));
 
     wToS(p2, x2, y2, DEFAULT_WTOS_SIZE, &hidden2);
 
@@ -248,6 +251,53 @@ void MapPainter::paintCircle(GeoPainter *painter, const Pos& centerPos, float ra
   if(radiusNm > atools::geo::EARTH_CIRCUMFERENCE_METER / 4.f)
     return;
 
+  if(radiusNm < 1.f || atools::geo::meterToNm(context->zoomDistanceMeter) < 5.f)
+    // Use different method to draw circles with small radius to avoid distortion because of rounding errors
+    // This one ignores spherical shape and projection at low zoom distances
+    paintCircleSmallInternal(painter, centerPos, radiusNm, fast, textPos);
+  else
+    // Draw large circles with correct shape in projection
+    paintCircleLargeInternal(painter, centerPos, radiusNm, fast, textPos);
+}
+
+void MapPainter::paintCircleSmallInternal(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos)
+{
+  Q_UNUSED(fast)
+
+  // Get pixel size for line from center to north
+  int pixel = scale->getPixelIntForMeter(nmToMeter(radiusNm), 0.f);
+
+  bool visible, hidden;
+  QPoint pt = wToS(centerPos, QSize(pixel * 3, pixel * 3), &visible, &hidden);
+
+  if(!hidden)
+  {
+    // Rectangle for the circle
+    QRect rect(pt.x() - pixel, pt.y() - pixel, pixel * 2, pixel * 2);
+
+    if(context->screenRect.intersects(rect))
+    {
+      // Draw simple circle
+      painter->drawEllipse(pt, pixel, pixel);
+      if(textPos != nullptr)
+      {
+        // Check each circle octant for a visible text position
+        for(int angle = 0; angle <= 360; angle += 45)
+        {
+          // Create a line and rotate P2 clockwise
+          QLineF line(pt.x(), pt.y(), pt.x(), pt.y() - pixel);
+          line.setAngle(atools::geo::angleToQt(angle));
+
+          if(context->screenRect.contains(atools::roundToInt(line.p2().x()), atools::roundToInt(line.p2().y())))
+            *textPos = line.p2().toPoint();
+        }
+      }
+    }
+  }
+}
+
+void MapPainter::paintCircleLargeInternal(GeoPainter *painter, const Pos& centerPos, float radiusNm, bool fast, QPoint *textPos)
+{
   // Calculate the number of points to use depending on screen resolution
   int pixel = scale->getPixelIntForMeter(nmToMeter(radiusNm));
   int numPoints = std::min(std::max(pixel / (fast ? 20 : 2), CIRCLE_MIN_POINTS), CIRCLE_MAX_POINTS);
@@ -408,66 +458,75 @@ void MapPainter::drawPolygon(Marble::GeoPainter *painter, const atools::geo::Lin
 
 void MapPainter::drawLineString(Marble::GeoPainter *painter, const atools::geo::LineString& linestring)
 {
-  GeoDataLineString ls;
-  ls.setTessellate(true);
-  for(int i = 1; i < linestring.size(); i++)
+  if(linestring.size() < 2)
+    return;
+
+  const float LATY_CORRECTION = 0.00001f;
+  LineString splitLines = linestring.splitAtAntiMeridian();
+  splitLines.removeDuplicates();
+
+  // Avoid the straight line Marble draws wrongly for equal latitudes - needed to force GC path
+  for(int i = 0; i < splitLines.size() - 1; i++)
   {
-    if(linestring.at(i - 1).almostEqual(linestring.at(i)))
-      // Do not draw  duplicates
-      continue;
+    Pos& p1(splitLines[i]);
+    Pos& p2(splitLines[i + 1]);
 
-    // Avoid the straight line Marble draws for equal latitudes - needed to force GC path
-    qreal correction = 0.;
-    if(atools::almostEqual(linestring.at(i - 1).getLatY(), linestring.at(i).getLatY()))
-      correction = 0.000001;
-
-    ls << GeoDataCoordinates(linestring.at(i - 1).getLonX(), linestring.at(i - 1).getLatY() - correction, 0, DEG)
-       << GeoDataCoordinates(linestring.at(i).getLonX(), linestring.at(i).getLatY() + correction, 0, DEG);
+    if(atools::almostEqual(p1.getLatY(), p2.getLatY()))
+    {
+      // Move latitude a bit up and down if equal
+      p1.setLatY(p1.getLatY() + LATY_CORRECTION);
+      p2.setLatY(p2.getLatY() - LATY_CORRECTION);
+    }
   }
 
-  QVector<GeoDataLineString *> dateLineCorrected = ls.toDateLineCorrected();
-  for(GeoDataLineString *corrected : dateLineCorrected)
-    painter->drawPolyline(*corrected);
-  qDeleteAll(dateLineCorrected);
+  // Build Marble geometry object
+  if(!splitLines.isEmpty())
+  {
+    GeoDataLineString geoLineStr;
+    geoLineStr.setTessellate(true);
+
+    for(int i = 0; i < splitLines.size() - 1; i++)
+    {
+      Line line(splitLines.at(i), splitLines.at(i + 1));
+
+      // Split long lines to work around the buggy visibility check in Marble resulting in disappearing line segments
+      // Do a quick check using Manhattan distance in degree
+      LineString ls;
+      if(line.lengthSimple() > 30.f)
+        line.interpolatePoints(line.lengthMeter(), 20, ls);
+      else if(line.lengthSimple() > 5.f)
+        line.interpolatePoints(line.lengthMeter(), 5, ls);
+      else
+        ls.append(line.getPos1());
+
+      // Append split points or single point
+      for(const Pos& pos : ls)
+        geoLineStr << GeoDataCoordinates(pos.getLonX(), pos.getLatY(), 0, DEG);
+    }
+
+    // Add last point
+    geoLineStr << GeoDataCoordinates(splitLines.constLast().getLonX(), splitLines.constLast().getLatY(), 0, DEG);
+
+    painter->drawPolyline(geoLineStr);
+  }
 }
 
-void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line)
+void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& line, bool noRecurse)
 {
   if(line.isValid() && !line.isPoint())
   {
-    // Split long lines to work around the buggy visibility check in Marble
-    // Do a quick check using Manhattan distance in degree
-    if(line.lengthSimple() > 30.f)
+    if(line.crossesAntiMeridian())
     {
-      LineString linestring;
-      line.interpolatePoints(line.lengthMeter(), 20, linestring);
-      linestring.append(line.getPos2());
-      drawLineString(painter, linestring);
-    }
-    else if(line.lengthSimple() > 5.f)
-    {
-      LineString linestring;
-      line.interpolatePoints(line.lengthMeter(), 5, linestring);
-      linestring.append(line.getPos2());
-      drawLineString(painter, linestring);
+      // Avoid endless recursion because hitting anti-meridian again because of inaccuracies
+      if(!noRecurse)
+      {
+        for(const Line& split : line.splitAtAntiMeridian())
+          // Call self again
+          drawLine(painter, split, true /* noRecurse */);
+      }
     }
     else
-    {
-      // Avoid the straight line Marble draws for equal latitudes - needed to force GC path
-      qreal correction = 0.;
-      if(atools::almostEqual(line.getPos1().getLatY(), line.getPos2().getLatY()))
-        correction = 0.000001;
-
-      GeoDataLineString ls;
-      ls.setTessellate(true);
-      ls << GeoDataCoordinates(line.getPos1().getLonX(), line.getPos1().getLatY() - correction, 0, DEG)
-         << GeoDataCoordinates(line.getPos2().getLonX(), line.getPos2().getLatY() + correction, 0, DEG);
-
-      QVector<GeoDataLineString *> dateLineCorrected = ls.toDateLineCorrected();
-      for(GeoDataLineString *corrected : dateLineCorrected)
-        painter->drawPolyline(*corrected);
-      qDeleteAll(dateLineCorrected);
-    }
+      drawLineString(painter, LineString(line.getPos1(), line.getPos2()));
   }
 }
 
@@ -829,7 +888,7 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
       painter->setBrush(context->darkMap ? mapcolors::msaDiagramFillColorDark : mapcolors::msaDiagramFillColor);
       drawPolygon(painter, msa.geometry);
 
-      TextPlacement textPlacement(painter, this, QRect());
+      TextPlacement textPlacement(painter, this, context->screenRect);
       QVector<atools::geo::Line> lines;
       QStringList texts;
 

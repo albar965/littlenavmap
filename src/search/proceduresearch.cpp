@@ -65,7 +65,7 @@ enum TreeColumnIndex
 
 using atools::sql::SqlRecord;
 
-using atools::sql::SqlRecordVector;
+using atools::sql::SqlRecordList;
 using proc::MapProcedureLeg;
 using proc::MapProcedureLegs;
 using proc::MapProcedureRef;
@@ -115,6 +115,9 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   procedureQuery = NavApp::getProcedureQuery();
   airportQueryNav = NavApp::getAirportQueryNav();
 
+  currentAirportNav = new map::MapAirport;
+  currentAirportSim = new map::MapAirport;
+
   zoomHandler = new atools::gui::ItemViewZoomHandler(treeWidget);
   connect(NavApp::navAppInstance(), &atools::gui::Application::fontChanged, this, &ProcedureSearch::fontChanged);
   gridDelegate = new atools::gui::GridDelegate(treeWidget);
@@ -122,6 +125,8 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   treeWidget->setItemDelegate(gridDelegate);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
+  ui->comboBoxProcedureSearchFilter->insertSeparator(FILTER_SEPARATOR_1);
+
   ui->actionSearchProcedureSelectNothing->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
   ui->actionInfoApproachAttach->setShortcutContext(Qt::WidgetWithChildrenShortcut);
@@ -158,7 +163,7 @@ ProcedureSearch::ProcedureSearch(QMainWindow *main, QTreeWidget *treeWidgetParam
   connect(ui->comboBoxProcedureRunwayFilter, QOverload<int>::of(&QComboBox::currentIndexChanged),
           this, &ProcedureSearch::filterIndexRunwayChanged);
 
-  connect(ui->lineEditProcedureSearchIdentFilter, &QLineEdit::textChanged, this, &ProcedureSearch::filterIdentChanged);
+  connect(ui->lineEditProcedureSearchIdentFilter, &QLineEdit::textChanged, this, &ProcedureSearch::filterChanged);
 
   connect(ui->dockWidgetSearch, &QDockWidget::visibilityChanged, this, &ProcedureSearch::dockVisibilityChanged);
 
@@ -181,6 +186,8 @@ ProcedureSearch::~ProcedureSearch()
   treeWidget->viewport()->removeEventFilter(treeEventFilter);
   delete treeEventFilter;
   delete gridDelegate;
+  delete currentAirportNav;
+  delete currentAirportSim;
 }
 
 void ProcedureSearch::airportLabelLinkActivated(const QString& link)
@@ -238,7 +245,7 @@ void ProcedureSearch::filterIndexRunwayChanged(int)
   updateFilter();
 }
 
-void ProcedureSearch::filterIdentChanged(const QString&)
+void ProcedureSearch::filterChanged(const QString&)
 {
   qDebug() << Q_FUNC_INFO;
   updateFilter();
@@ -274,7 +281,7 @@ void ProcedureSearch::preDatabaseLoad()
 
   itemIndex.clear();
   itemLoadedIndex.clear();
-  currentAirportNav = currentAirportSim = map::MapAirport();
+  *currentAirportNav = *currentAirportSim = map::MapAirport();
   recentTreeState.clear();
 }
 
@@ -312,7 +319,7 @@ void ProcedureSearch::showProcedures(const map::MapAirport& airport, bool depart
   ui->lineEditProcedureSearchIdentFilter->clear();
   ui->pushButtonProcedureShowAll->setChecked(false);
 
-  if(currentAirportNav.isValid() && currentAirportNav.ident == navAirport.ident)
+  if(currentAirportNav->isValid() && currentAirportNav->ident == navAirport.ident)
     // Ignore if noting has changed - or jump out of the view mode
     return;
 
@@ -320,19 +327,19 @@ void ProcedureSearch::showProcedures(const map::MapAirport& airport, bool depart
   emit proceduresSelected(QVector<proc::MapProcedureRef>());
   emit procedureLegSelected(proc::MapProcedureRef());
 
-  currentAirportSim = airport;
+  *currentAirportSim = airport;
 
   // Put state on stack and update tree
-  if(currentAirportNav.isValid())
-    recentTreeState.insert(currentAirportNav.id, saveTreeViewState());
+  if(currentAirportNav->isValid())
+    recentTreeState.insert(currentAirportNav->id, saveTreeViewState());
 
-  airportQueryNav->getAirportByIdent(currentAirportNav, navAirport.ident);
+  airportQueryNav->getAirportByIdent(*currentAirportNav, navAirport.ident);
 
   updateFilterBoxes();
 
   fillApproachTreeWidget();
 
-  restoreTreeViewState(recentTreeState.value(currentAirportNav.id), false /* block signals */);
+  restoreTreeViewState(recentTreeState.value(currentAirportNav->id), false /* block signals */);
   updateHeaderLabel();
   updateWidgets();
 }
@@ -356,11 +363,11 @@ void ProcedureSearch::updateHeaderLabel()
 
   QString tooltip, statusTip;
   Ui::MainWindow *ui = NavApp::getMainUi();
-  if(currentAirportSim.isValid())
+  if(currentAirportSim->isValid())
   {
     atools::util::HtmlBuilder html;
-    html.a(map::airportTextShort(currentAirportSim), "lnm://showairport", atools::util::html::BOLD | atools::util::html::LINK_NO_UL).br();
-    if(currentAirportNav.procedure())
+    html.a(map::airportTextShort(*currentAirportSim), "lnm://showairport", atools::util::html::BOLD | atools::util::html::LINK_NO_UL).br();
+    if(currentAirportNav->procedure())
       html.text(procs).nbsp();
     else
       html.text(tr("Airport has no procedure.")).nbsp();
@@ -437,22 +444,34 @@ void ProcedureSearch::clearRunwayFilter()
   ui->comboBoxProcedureRunwayFilter->blockSignals(false);
 }
 
+void ProcedureSearch::clearTypeFilter()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  // Remove all additional type filters below approach all
+  ui->comboBoxProcedureSearchFilter->blockSignals(true);
+  for(int i = ui->comboBoxProcedureSearchFilter->count() - 1; i > FILTER_APPROACH_ALL; i--)
+    ui->comboBoxProcedureSearchFilter->removeItem(i);
+  ui->comboBoxProcedureSearchFilter->blockSignals(false);
+}
+
 void ProcedureSearch::updateFilterBoxes()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  ui->comboBoxProcedureSearchFilter->setHidden(!NavApp::hasSidStarInDatabase());
 
   clearRunwayFilter();
+  clearTypeFilter();
 
-  if(currentAirportNav.isValid())
+  if(currentAirportNav->isValid())
   {
-    QStringList runwayNames = airportQueryNav->getRunwayNames(currentAirportNav.id);
+    QStringList runwayNames = airportQueryNav->getRunwayNames(currentAirportNav->id);
 
     // Add a tree of transitions and approaches
-    const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(currentAirportNav.id);
+    const SqlRecordList *recAppVector = infoQuery->getApproachInformation(currentAirportNav->id);
 
     if(recAppVector != nullptr) // Deduplicate runways
     {
+      // Update runway name filter combo box ============================================
       QSet<QString> runways;
       for(const SqlRecord& recApp : *recAppVector)
         runways.insert(atools::fs::util::runwayBestFit(recApp.valueStr("runway_name"), runwayNames));
@@ -468,13 +487,35 @@ void ProcedureSearch::updateFilterBoxes()
         else
           ui->comboBoxProcedureRunwayFilter->addItem(tr("Runway %1").arg(rw), rw);
       }
+
+      // Update type filter combo box ============================================
+      QStringList types;
+      for(const SqlRecord& recApp : *recAppVector)
+      {
+        // No SID/STAR GPS fake types
+        if(!(buildTypeFromApproachRec(recApp) & proc::PROCEDURE_SID_STAR_ALL))
+          types.append(recApp.valueStr("type"));
+      }
+
+      types.removeAll(QString());
+      types.removeDuplicates();
+      if(types.size() > 1)
+      {
+        std::sort(types.begin(), types.end());
+
+        // Add to combo box - old types were deleted in clearTypeFilter()
+        for(const QString& type : types)
+          ui->comboBoxProcedureSearchFilter->addItem(tr("%1 Approaches").arg(proc::MapProcedureLegs::displayApproachType(type)), type);
+      }
     }
     else
-      qWarning() << Q_FUNC_INFO << "nothing found for airport id" << currentAirportNav.id;
+      qWarning() << Q_FUNC_INFO << "nothing found for airport id" << currentAirportNav->id;
   }
 
-  ui->comboBoxProcedureSearchFilter->setEnabled(currentAirportNav.isValid() && currentAirportNav.procedure());
-  ui->comboBoxProcedureRunwayFilter->setEnabled(currentAirportNav.isValid() && currentAirportNav.procedure());
+  bool enable = currentAirportNav->isValid() && currentAirportNav->procedure();
+  ui->comboBoxProcedureSearchFilter->setEnabled(enable);
+  ui->comboBoxProcedureRunwayFilter->setEnabled(enable);
+  ui->lineEditProcedureSearchIdentFilter->setEnabled(enable);
 }
 
 void ProcedureSearch::fillApproachTreeWidget()
@@ -484,90 +525,71 @@ void ProcedureSearch::fillApproachTreeWidget()
   itemIndex.clear();
   itemLoadedIndex.clear();
 
-  if(currentAirportNav.isValid())
+  if(currentAirportNav->isValid())
   {
     // Add a tree of transitions and approaches
-    const SqlRecordVector *recAppVector = infoQuery->getApproachInformation(currentAirportNav.id);
+    const SqlRecordList *recAppVector = infoQuery->getApproachInformation(currentAirportNav->id);
 
     if(recAppVector != nullptr)
     {
-      QStringList runwayNames = airportQueryNav->getRunwayNames(currentAirportNav.id);
+      QStringList runwayNames = airportQueryNav->getRunwayNames(currentAirportNav->id);
       Ui::MainWindow *ui = NavApp::getMainUi();
       QTreeWidgetItem *root = treeWidget->invisibleRootItem();
-      SqlRecordVector sorted;
+      QVector<SqlRecord> sorted;
 
       // Collect all procedures from the database
       for(SqlRecord recApp : *recAppVector)
       {
-        QString rwname = atools::fs::util::runwayBestFit(recApp.valueStr("runway_name"), runwayNames);
-        QString fixIdent = recApp.valueStr("fix_ident");
 
         proc::MapProcedureTypes type = buildTypeFromApproachRec(recApp);
 
         bool filterOk = false;
 
-        switch(filterIndex)
-        {
-          case ProcedureSearch::FILTER_STAR_PROCEDURES:
-            filterOk = type & proc::PROCEDURE_STAR_ALL;
-            break;
-
-          case ProcedureSearch::FILTER_ALL_PROCEDURES:
-            filterOk = true;
-            break;
-
-          case ProcedureSearch::FILTER_SID_PROCEDURES:
-            filterOk = type & proc::PROCEDURE_DEPARTURE;
-            break;
-
-          case ProcedureSearch::FILTER_ARRIVAL_PROCEDURES:
-            filterOk = type & proc::PROCEDURE_ARRIVAL_ALL;
-            break;
-
-          case ProcedureSearch::FILTER_APPROACH_AND_TRANSITIONS:
-            filterOk = type & proc::PROCEDURE_APPROACH_ALL_MISSED;
-            break;
-        }
+        if(filterIndex == ProcedureSearch::FILTER_ALL_PROCEDURES)
+          filterOk = true;
+        else if(filterIndex == ProcedureSearch::FILTER_SID_PROCEDURES)
+          filterOk = type & proc::PROCEDURE_SID_ALL;
+        else if(filterIndex == ProcedureSearch::FILTER_STAR_PROCEDURES)
+          filterOk = type & proc::PROCEDURE_STAR_ALL;
+        else if(filterIndex == ProcedureSearch::FILTER_ARRIVAL_PROCEDURES)
+          filterOk = type & proc::PROCEDURE_ARRIVAL_ALL;
+        else if(filterIndex >= ProcedureSearch::FILTER_APPROACH_ALL) // More types after FILTER_APPROACH_ALL
+          filterOk = type & proc::PROCEDURE_APPROACH_ALL_MISSED;
 
         // Resolve parallel runway assignments
         QStringList sidStarArincNames, sidStarRunways;
         QString allRunwayText(tr("All"));
-        if((type & proc::PROCEDURE_SID) || (type & proc::PROCEDURE_STAR))
+        if(type & proc::PROCEDURE_SID_STAR_ALL)
           atools::fs::util::sidStarMultiRunways(runwayNames, recApp.valueStr("arinc_name", QString()), allRunwayText,
                                                 &sidStarRunways, &sidStarArincNames);
 
-        QString rwnamefilter = ui->comboBoxProcedureRunwayFilter->currentData(Qt::UserRole).toString();
-        int rwnameindex = ui->comboBoxProcedureRunwayFilter->currentIndex();
+        QString rwName = atools::fs::util::runwayBestFit(recApp.valueStr("runway_name"), runwayNames);
+        QString rwNamefilter = ui->comboBoxProcedureRunwayFilter->currentData(Qt::UserRole).toString();
+        int rwNameIndex = ui->comboBoxProcedureRunwayFilter->currentIndex();
 
-        if(rwnameindex == 0)
+        if(rwNameIndex == 0)
           // All selected
           filterOk &= true;
-        else if(rwnamefilter.isEmpty())
+        else if(rwNamefilter.isEmpty())
           // No rwy selected
-          filterOk &= rwname.isEmpty() && sidStarArincNames.isEmpty();
+          filterOk &= rwName.isEmpty() && sidStarArincNames.isEmpty();
         else
-        {
-          filterOk &= rwname == rwnamefilter || // name equal
-                      (!sidStarArincNames.isEmpty() && sidStarArincNames.contains(rwnamefilter)) ||
+          filterOk &= rwName == rwNamefilter || // name equal
+                      (!sidStarArincNames.isEmpty() && sidStarArincNames.contains(rwNamefilter)) ||
                       sidStarArincNames.contains(allRunwayText);
-        }
-
-        QString identFilter = ui->lineEditProcedureSearchIdentFilter->text();
-        if(!identFilter.isEmpty())
-          filterOk &= fixIdent.startsWith(identFilter, Qt::CaseInsensitive);
 
         if(filterOk)
         {
           // Add an extra field with the best airport runway name
           recApp.appendField("airport_runway_name", QVariant::String);
-          recApp.setValue("airport_runway_name", rwname);
+          recApp.setValue("airport_runway_name", rwName);
 
           // Keep the runways for the context menu
           recApp.appendField("sid_star_runways", QVariant::StringList);
           recApp.setValue("sid_star_runways", sidStarRunways);
 
           recApp.appendField("sid_star_arinc_name", QVariant::String);
-          if(((type & proc::PROCEDURE_SID) || (type & proc::PROCEDURE_STAR)) && rwname.isEmpty())
+          if(type & proc::PROCEDURE_SID_STAR_ALL && rwName.isEmpty())
             recApp.setValue("sid_star_arinc_name", sidStarArincNames.join(", "));
 
           sorted.append(recApp);
@@ -576,17 +598,37 @@ void ProcedureSearch::fillApproachTreeWidget()
 
       std::sort(sorted.begin(), sorted.end(), procedureSortFunc);
 
+      QString typefilter = ui->comboBoxProcedureSearchFilter->currentData(Qt::UserRole).toString();
+      int typeindex = ui->comboBoxProcedureSearchFilter->currentIndex();
+
       for(const SqlRecord& recApp : sorted)
       {
         proc::MapProcedureTypes type = buildTypeFromApproachRec(recApp);
 
+        // Check ident filter ==========================================
+        QString identFilter = ui->lineEditProcedureSearchIdentFilter->text();
+        if(!identFilter.isEmpty() && !recApp.valueStr("fix_ident").startsWith(identFilter, Qt::CaseInsensitive))
+          continue;
+
+        // Check type name filter ==========================================
+        if(!(type & proc::PROCEDURE_SID_STAR_ALL) && typeindex > FILTER_APPROACH_ALL && recApp.valueStr("type") != typefilter)
+          continue;
+
         int runwayEndId = recApp.valueInt("runway_end_id");
-
         int apprId = recApp.valueInt("approach_id");
-        itemIndex.append(MapProcedureRef(currentAirportNav.id, runwayEndId, apprId, -1, -1, type));
-        const SqlRecordVector *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
+        itemIndex.append(MapProcedureRef(currentAirportNav->id, runwayEndId, apprId, -1, -1, type));
 
-        QTreeWidgetItem *apprItem = buildApproachItem(root, recApp, type);
+        // Get transitions ======================================================
+        const SqlRecordList *recTransVector = infoQuery->getTransitionInformation(recApp.valueInt("approach_id"));
+
+        QString prefix;
+        if(type & proc::PROCEDURE_APPROACH)
+          prefix = tr("Approach ");
+
+        QString approachTypeText; // RNAV 32-Y or ILS 16
+        QStringList attText; // GPS Overlay, etc.
+        approachDisplayText(approachTypeText, attText, recApp, type);
+        QTreeWidgetItem *apprItem = buildApproachItem(root, recApp, prefix % approachTypeText, attText);
 
         if(recTransVector != nullptr)
         {
@@ -594,7 +636,7 @@ void ProcedureSearch::fillApproachTreeWidget()
           for(const SqlRecord& recTrans : *recTransVector)
           {
             // Also add runway from parent approach to transition
-            itemIndex.append({MapProcedureRef(currentAirportNav.id, runwayEndId, apprId, recTrans.valueInt("transition_id"), -1, type)});
+            itemIndex.append({MapProcedureRef(currentAirportNav->id, runwayEndId, apprId, recTrans.valueInt("transition_id"), -1, type)});
             buildTransitionItem(apprItem, recTrans,
                                 type & proc::PROCEDURE_DEPARTURE || type & proc::PROCEDURE_STAR_ALL);
           }
@@ -617,16 +659,16 @@ void ProcedureSearch::saveState()
 
   // Use current state and update the map too
   QBitArray state = saveTreeViewState();
-  if(currentAirportNav.isValid())
-    recentTreeState.insert(currentAirportNav.id, state);
+  if(currentAirportNav->isValid())
+    recentTreeState.insert(currentAirportNav->id, state);
   settings.setValueVar(lnm::APPROACHTREE_STATE, state);
 
   // Save column order and width
   WidgetState(lnm::APPROACHTREE_WIDGET).save(treeWidget);
-  if(currentAirportNav.isValid())
-    settings.setValue(lnm::APPROACHTREE_AIRPORT_NAV, currentAirportNav.id);
-  if(currentAirportSim.isValid())
-    settings.setValue(lnm::APPROACHTREE_AIRPORT_SIM, currentAirportSim.id);
+  if(currentAirportNav->isValid())
+    settings.setValue(lnm::APPROACHTREE_AIRPORT_NAV, currentAirportNav->id);
+  if(currentAirportSim->isValid())
+    settings.setValue(lnm::APPROACHTREE_AIRPORT_SIM, currentAirportSim->id);
 }
 
 void ProcedureSearch::restoreState()
@@ -636,8 +678,8 @@ void ProcedureSearch::restoreState()
   {
     if(NavApp::hasDataInDatabase())
     {
-      airportQueryNav->getAirportById(currentAirportNav, settings.valueInt(lnm::APPROACHTREE_AIRPORT_NAV, -1));
-      NavApp::getAirportQuerySim()->getAirportById(currentAirportSim, settings.valueInt(lnm::APPROACHTREE_AIRPORT_SIM, -1));
+      airportQueryNav->getAirportById(*currentAirportNav, settings.valueInt(lnm::APPROACHTREE_AIRPORT_NAV, -1));
+      NavApp::getAirportQuerySim()->getAirportById(*currentAirportSim, settings.valueInt(lnm::APPROACHTREE_AIRPORT_SIM, -1));
     }
   }
 
@@ -651,10 +693,10 @@ void ProcedureSearch::restoreState()
                                                    ui->actionSearchProcedureFollowSelection, ui->lineEditProcedureSearchIdentFilter});
 
     fillApproachTreeWidget();
-    if(currentAirportNav.isValid() && currentAirportNav.procedure())
+    if(currentAirportNav->isValid() && currentAirportNav->procedure())
     {
       state = settings.valueVar(lnm::APPROACHTREE_STATE).toBitArray();
-      recentTreeState.insert(currentAirportNav.id, state);
+      recentTreeState.insert(currentAirportNav->id, state);
     }
   }
 
@@ -664,7 +706,7 @@ void ProcedureSearch::restoreState()
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_SEARCH)
   {
     // Restoring state will emit above signal
-    if(currentAirportNav.isValid() && currentAirportNav.procedure())
+    if(currentAirportNav->isValid() && currentAirportNav->procedure())
       restoreTreeViewState(state, true /* block signals */);
   }
 
@@ -706,13 +748,13 @@ void ProcedureSearch::fetchSingleTransitionId(MapProcedureRef& ref)
   if(ref.hasApproachOnlyIds())
   {
     // No transition
-    const proc::MapProcedureLegs *legs = procedureQuery->getApproachLegs(currentAirportNav, ref.approachId);
+    const proc::MapProcedureLegs *legs = procedureQuery->getApproachLegs(*currentAirportNav, ref.approachId);
     if(legs != nullptr && legs->approachLegs.isEmpty())
     {
       // Special case for SID which consists only of transition legs
       QVector<int> transitionIds = procedureQuery->getTransitionIdsForProcedure(ref.approachId);
       if(!transitionIds.isEmpty())
-        ref.transitionId = transitionIds.first();
+        ref.transitionId = transitionIds.constFirst();
     }
   }
 }
@@ -783,7 +825,7 @@ void ProcedureSearch::updateApproachItem(QTreeWidgetItem *apprItem, int transiti
       const MapProcedureRef& childref = itemIndex.at(child->type());
       if(childref.isLeg())
       {
-        const proc::MapProcedureLegs *legs = procedureQuery->getTransitionLegs(currentAirportNav, transitionId);
+        const proc::MapProcedureLegs *legs = procedureQuery->getTransitionLegs(*currentAirportNav, transitionId);
         if(legs != nullptr)
         {
           const proc::MapProcedureLeg *aleg = legs->transitionLegById(childref.legId);
@@ -826,7 +868,7 @@ void ProcedureSearch::itemExpanded(QTreeWidgetItem *item)
     {
       if(ref.approachId != -1 && ref.transitionId == -1)
       {
-        const MapProcedureLegs *legs = procedureQuery->getApproachLegs(currentAirportNav, ref.approachId);
+        const MapProcedureLegs *legs = procedureQuery->getApproachLegs(*currentAirportNav, ref.approachId);
         if(legs != nullptr)
         {
           QList<QTreeWidgetItem *> items = buildApproachLegItems(legs, -1);
@@ -838,11 +880,11 @@ void ProcedureSearch::itemExpanded(QTreeWidgetItem *item)
             item->addChildren(items);
         }
         else
-          qWarning() << Q_FUNC_INFO << "no legs found for" << currentAirportNav.id << ref.approachId;
+          qWarning() << Q_FUNC_INFO << "no legs found for" << currentAirportNav->id << ref.approachId;
       }
       else if(ref.approachId != -1 && ref.transitionId != -1)
       {
-        const MapProcedureLegs *legs = procedureQuery->getTransitionLegs(currentAirportNav, ref.transitionId);
+        const MapProcedureLegs *legs = procedureQuery->getTransitionLegs(*currentAirportNav, ref.transitionId);
         if(legs != nullptr)
         {
           QList<QTreeWidgetItem *> items = buildTransitionLegItems(legs);
@@ -850,7 +892,7 @@ void ProcedureSearch::itemExpanded(QTreeWidgetItem *item)
           itemLoadedIndex.setBit(item->type());
         }
         else
-          qWarning() << Q_FUNC_INFO << "no legs found for" << currentAirportNav.id << ref.transitionId;
+          qWarning() << Q_FUNC_INFO << "no legs found for" << currentAirportNav->id << ref.transitionId;
       }
       itemLoadedIndex.resize(itemIndex.size());
     }
@@ -963,17 +1005,17 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
       ui->actionInfoApproachShow->setText(ui->actionInfoApproachShow->text().arg(showText));
 
       if((route.hasValidDeparture() &&
-          route.getDepartureAirportLeg().getId() == currentAirportSim.id && ref.mapType & proc::PROCEDURE_DEPARTURE) ||
-         (route.hasValidDestination() && route.getDestinationAirportLeg().getId() == currentAirportSim.id &&
+          route.getDepartureAirportLeg().getId() == currentAirportSim->id && ref.mapType & proc::PROCEDURE_DEPARTURE) ||
+         (route.hasValidDestination() && route.getDestinationAirportLeg().getId() == currentAirportSim->id &&
           ref.mapType & proc::PROCEDURE_ARRIVAL_ALL))
         ui->actionInfoApproachAttach->setText(tr("&Insert %1 into Flight Plan").arg(text));
       else
       {
         if(ref.mapType & proc::PROCEDURE_ARRIVAL_ALL)
-          ui->actionInfoApproachAttach->setText(tr("&Use %1 and %2 as Destination").arg(currentAirportSim.displayIdent()).arg(text));
+          ui->actionInfoApproachAttach->setText(tr("&Use %1 and %2 as Destination").arg(currentAirportSim->displayIdent()).arg(text));
 
         else if(ref.mapType & proc::PROCEDURE_DEPARTURE)
-          ui->actionInfoApproachAttach->setText(tr("&Use %1 and %2 as Departure").arg(currentAirportSim.displayIdent()).arg(text));
+          ui->actionInfoApproachAttach->setText(tr("&Use %1 and %2 as Departure").arg(currentAirportSim->displayIdent()).arg(text));
       }
     }
   }
@@ -987,11 +1029,11 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   }
 
   // Build airport context menu entries ====================================================
-  ui->actionSearchProcedureInformation->setEnabled(currentAirportSim.isValid());
-  ui->actionSearchProcedureShowOnMap->setEnabled(currentAirportSim.isValid());
-  ui->actionSearchProcedureShowInSearch->setEnabled(currentAirportSim.isValid());
+  ui->actionSearchProcedureInformation->setEnabled(currentAirportSim->isValid());
+  ui->actionSearchProcedureShowOnMap->setEnabled(currentAirportSim->isValid());
+  ui->actionSearchProcedureShowInSearch->setEnabled(currentAirportSim->isValid());
 
-  QString airportText = currentAirportSim.isValid() ? map::airportTextShort(currentAirportSim) : tr("Airport");
+  QString airportText = currentAirportSim->isValid() ? map::airportTextShort(*currentAirportSim) : tr("Airport");
   ui->actionSearchProcedureInformation->setText(ui->actionSearchProcedureInformation->text().arg(airportText));
   ui->actionSearchProcedureShowOnMap->setText(ui->actionSearchProcedureShowOnMap->text().arg(airportText));
   ui->actionSearchProcedureShowInSearch->setText(ui->actionSearchProcedureShowInSearch->text().arg(airportText));
@@ -1078,7 +1120,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
   else if(action == ui->actionSearchProcedureShowInSearch)
   {
     NavApp::getSearchController()->setCurrentSearchTabId(si::SEARCH_AIRPORT);
-    emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident", currentAirportSim.ident), true /* select */);
+    emit showInSearch(map::AIRPORT, SqlRecord().appendFieldAndValue("ident", currentAirportSim->ident), true /* select */);
   }
 
   // else Other are done by the actions themselves
@@ -1087,10 +1129,10 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
 void ProcedureSearch::showInformationSelected()
 {
   // ui->actionSearchProcedureInformation
-  if(currentAirportSim.isValid())
+  if(currentAirportSim->isValid())
   {
     map::MapResult result;
-    result.airports.append(currentAirportSim);
+    result.airports.append(*currentAirportSim);
     emit showInformation(result);
   }
 }
@@ -1098,8 +1140,8 @@ void ProcedureSearch::showInformationSelected()
 void ProcedureSearch::showOnMapSelected()
 {
   // ui->actionSearchProcedureShowOnMap
-  if(currentAirportSim.isValid())
-    emit showRect(currentAirportSim.bounding, false /* doubleClick */);
+  if(currentAirportSim->isValid())
+    emit showRect(currentAirportSim->bounding, false /* doubleClick */);
 }
 
 const proc::MapProcedureLegs *ProcedureSearch::fetchProcData(MapProcedureRef& ref, QTreeWidgetItem *item)
@@ -1119,9 +1161,9 @@ const proc::MapProcedureLegs *ProcedureSearch::fetchProcData(MapProcedureRef& re
   const proc::MapProcedureLegs *procedureLegs = nullptr;
   // Get the aproach legs for the initial fix
   if(ref.hasApproachOnlyIds())
-    procedureLegs = procedureQuery->getApproachLegs(currentAirportNav, ref.approachId);
+    procedureLegs = procedureQuery->getApproachLegs(*currentAirportNav, ref.approachId);
   else if(ref.hasApproachAndTransitionIds())
-    procedureLegs = procedureQuery->getTransitionLegs(currentAirportNav, ref.transitionId);
+    procedureLegs = procedureQuery->getTransitionLegs(*currentAirportNav, ref.transitionId);
   return procedureLegs;
 }
 
@@ -1130,7 +1172,7 @@ void ProcedureSearch::showApproachTriggered()
   if(treeWidget->selectedItems().isEmpty())
     return;
 
-  showEntry(treeWidget->selectedItems().first(), false /* double click*/, true /* zoom */);
+  showEntry(treeWidget->selectedItems().constFirst(), false /* double click*/, true /* zoom */);
 }
 
 void ProcedureSearch::attachApproach()
@@ -1139,7 +1181,7 @@ void ProcedureSearch::attachApproach()
     return;
 
   MapProcedureRef ref;
-  const proc::MapProcedureLegs *procedureLegs = fetchProcData(ref, treeWidget->selectedItems().first());
+  const proc::MapProcedureLegs *procedureLegs = fetchProcData(ref, treeWidget->selectedItems().constFirst());
 
   qDebug() << Q_FUNC_INFO << ref;
 
@@ -1200,9 +1242,9 @@ void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick, bool zo
     const proc::MapProcedureLeg *leg = nullptr;
 
     if(ref.transitionId != -1)
-      leg = procedureQuery->getTransitionLeg(currentAirportNav, ref.legId);
+      leg = procedureQuery->getTransitionLeg(*currentAirportNav, ref.legId);
     else if(ref.approachId != -1)
-      leg = procedureQuery->getApproachLeg(currentAirportNav, ref.approachId, ref.legId);
+      leg = procedureQuery->getApproachLeg(*currentAirportNav, ref.approachId, ref.legId);
 
     if(leg != nullptr)
     {
@@ -1214,51 +1256,53 @@ void ProcedureSearch::showEntry(QTreeWidgetItem *item, bool doubleClick, bool zo
   }
   else if(ref.transitionId != -1 && !doubleClick)
   {
-    const proc::MapProcedureLegs *legs = procedureQuery->getTransitionLegs(currentAirportNav, ref.transitionId);
+    const proc::MapProcedureLegs *legs = procedureQuery->getTransitionLegs(*currentAirportNav, ref.transitionId);
     if(legs != nullptr)
       emit showRect(legs->bounding, doubleClick);
   }
   else if(ref.approachId != -1 && !doubleClick)
   {
-    const proc::MapProcedureLegs *legs = procedureQuery->getApproachLegs(currentAirportNav, ref.approachId);
+    const proc::MapProcedureLegs *legs = procedureQuery->getApproachLegs(*currentAirportNav, ref.approachId);
     if(legs != nullptr)
       emit showRect(legs->bounding, doubleClick);
   }
 }
 
-QTreeWidgetItem *ProcedureSearch::buildApproachItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp, proc::MapProcedureTypes maptype)
+void ProcedureSearch::approachDisplayText(QString& approachTypeText, QStringList& attText, const SqlRecord& recApp,
+                                          proc::MapProcedureTypes maptype)
 {
   QString suffix(recApp.valueStr("suffix"));
   QString type(recApp.valueStr("type"));
   int gpsOverlay = recApp.valueBool("has_gps_overlay");
 
-  QString approachType;
-  QStringList attStr;
-
   if(maptype == proc::PROCEDURE_SID)
-    approachType += tr("SID");
+    approachTypeText += tr("SID");
   else if(maptype == proc::PROCEDURE_STAR)
-    approachType += tr("STAR");
+    approachTypeText += tr("STAR");
   else if(maptype == proc::PROCEDURE_APPROACH)
   {
-    approachType = tr("Approach ") + proc::procedureType(type);
+    approachTypeText = proc::procedureType(type);
 
     if(!suffix.isEmpty())
-      approachType += tr("-%1").arg(suffix);
+      approachTypeText += tr("-%1").arg(suffix);
 
     if(gpsOverlay)
-      attStr.append(tr("GPS Overlay"));
+      attText.append(tr("GPS Overlay"));
   }
 
-  approachType.append(tr(" ") % recApp.valueStr("airport_runway_name"));
-  approachType.append(tr(" ") % recApp.valueStr("sid_star_arinc_name", QString()));
+  approachTypeText.append(tr(" ") % recApp.valueStr("airport_runway_name"));
+  approachTypeText.append(tr(" ") % recApp.valueStr("sid_star_arinc_name", QString()));
+}
 
+QTreeWidgetItem *ProcedureSearch::buildApproachItem(QTreeWidgetItem *runwayItem, const SqlRecord& recApp,
+                                                    const QString& approachType, const QStringList& attStr)
+{
   QString altStr;
   // if(recApp.valueFloat("altitude") > 0.f)
   // altStr = Unit::altFeet(recApp.valueFloat("altitude"), false);
 
-  QTreeWidgetItem *item = new QTreeWidgetItem(
-    {approachType, recApp.valueStr("fix_ident"), altStr, QString(), QString(), attStr.join(tr(", "))}, itemIndex.size() - 1);
+  QTreeWidgetItem *item = new QTreeWidgetItem({approachType, recApp.valueStr("fix_ident"),
+                                               altStr, QString(), QString(), attStr.join(tr(", "))}, itemIndex.size() - 1);
   item->setChildIndicatorPolicy(QTreeWidgetItem::ShowIndicator);
   item->setTextAlignment(COL_RESTR, Qt::AlignRight);
   item->setTextAlignment(COL_COURSE, Qt::AlignRight);
@@ -1311,14 +1355,19 @@ QTreeWidgetItem *ProcedureSearch::buildLegItem(const MapProcedureLeg& leg)
   texts << proc::procedureLegTypeStr(leg.type);
   texts << proc::procedureLegFixStr(leg);
 
-  texts << proc::restrictionText(leg) << proc::procedureLegCourse(leg) << proc::procedureLegDistance(leg);
+  texts << proc::restrictionText(leg).join(tr(", ")) << proc::procedureLegCourse(leg) << proc::procedureLegDistance(leg);
 
-  QString remarkStr = proc::procedureLegRemark(leg);
+  QStringList remarkStr = proc::procedureLegRemark(leg);
+
+  QStringList related = procedureLegRecommended(leg);
+  if(!related.isEmpty())
+    remarkStr.append(QObject::tr("Related: %1").arg(related.join(QObject::tr(", "))));
+
 #ifdef DEBUG_INFORMATION
-  remarkStr += QString(" | leg_id = %1 approach_id = %2 transition_id = %3 nav_id = %4").
-               arg(leg.legId).arg(leg.approachId).arg(leg.transitionId).arg(leg.navId);
+  remarkStr.append(QString(" | leg_id = %1 approach_id = %2 transition_id = %3").
+                   arg(leg.legId).arg(leg.approachId).arg(leg.transitionId));
 #endif
-  texts << remarkStr;
+  texts << remarkStr.join(tr(", "));
 
   QTreeWidgetItem *item = new QTreeWidgetItem(texts, itemIndex.size() - 1);
   if(!icon.isNull())
@@ -1327,7 +1376,7 @@ QTreeWidgetItem *ProcedureSearch::buildLegItem(const MapProcedureLeg& leg)
     item->setSizeHint(0, QSize(fontHeight - 3, fontHeight - 3));
   }
 
-  item->setToolTip(COL_REMARKS, remarkStr);
+  item->setToolTip(COL_REMARKS, remarkStr.join(tr(", ")));
 
   item->setTextAlignment(COL_RESTR, Qt::AlignRight);
   item->setTextAlignment(COL_COURSE, Qt::AlignRight);
@@ -1541,8 +1590,7 @@ void ProcedureSearch::itemSelectionChanged()
 
 proc::MapProcedureTypes ProcedureSearch::buildTypeFromApproachRec(const SqlRecord& recApp)
 {
-  return proc::procedureType(NavApp::hasSidStarInDatabase(),
-                             recApp.valueStr("type"), recApp.valueStr("suffix"),
+  return proc::procedureType(NavApp::hasSidStarInDatabase(), recApp.valueStr("type"), recApp.valueStr("suffix"),
                              recApp.valueBool("has_gps_overlay"));
 }
 

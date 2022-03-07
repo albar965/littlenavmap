@@ -27,6 +27,7 @@
 #include "sql/sqltransaction.h"
 #include "sql/sqlutil.h"
 #include "io/binaryutil.h"
+#include "common/maptypes.h"
 
 #include <QDataStream>
 #include <QElapsedTimer>
@@ -37,15 +38,15 @@ using atools::sql::SqlTransaction;
 using atools::sql::SqlQuery;
 using atools::sql::SqlUtil;
 using atools::sql::SqlRecord;
-using atools::sql::SqlRecordVector;
 using atools::track::TrackVectorType;
 using atools::track::TrackType;
 using atools::track::Track;
 
 TrackManager::TrackManager(SqlDatabase *trackDatabase, SqlDatabase *navDatabase)
-  : atools::fs::userdata::DataManagerBase(trackDatabase, "track", "track_id",
-                                          ":/atools/resources/sql/fs/track/create_track_schema.sql",
-                                          ":/atools/resources/sql/fs/track/drop_track_schema.sql"),
+  : atools::sql::DataManagerBase(trackDatabase, "track", "track_id",
+                                 ":/atools/resources/sql/fs/track/create_track_schema.sql",
+                                 QString(), /* undoSqlScript */
+                                 ":/atools/resources/sql/fs/track/drop_track_schema.sql"),
   dbNav(navDatabase)
 {
 }
@@ -152,7 +153,7 @@ void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
       }
 
       // Empty records
-      SqlRecord rec = getEmptyRecord(); // track table
+      SqlRecord trackRec = getEmptyRecord(); // track table
       SqlRecord trackpointRec = db->record("trackpoint");
 
       int startPointId = -1, endPointId = -1;
@@ -171,17 +172,17 @@ void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
         const map::MapObjectRefExt *refLast2 = i > 1 ? &refs.at(i - 2) : nullptr;
         const map::MapObjectRefExt& refLast1 = refs.at(i - 1);
 
-        rec.setValue("track_id", trackId++);
-        rec.setValue("trackmeta_id", trackmetaId);
-        rec.setValue("track_name", track.name);
-        rec.setValue("track_type", atools::charToStr(track.type));
-        rec.setValue("sequence_no", i);
-        rec.setValue("track_fragment_no", nameFragmentHash.value(track.name));
+        trackRec.setValue("track_id", trackId++);
+        trackRec.setValue("trackmeta_id", trackmetaId);
+        trackRec.setValue("track_name", track.name);
+        trackRec.setValue("track_type", atools::charToStr(track.type));
+        trackRec.setValue("sequence_no", i);
+        trackRec.setValue("track_fragment_no", nameFragmentHash.value(track.name));
 
         if(!track.eastLevels.isEmpty())
-          rec.setValue("altitude_levels_east", atools::io::writeVector<quint16, quint16>(track.eastLevels));
+          trackRec.setValue("altitude_levels_east", atools::io::writeVector<quint16, quint16>(track.eastLevels));
         if(!track.westLevels.isEmpty())
-          rec.setValue("altitude_levels_west", atools::io::writeVector<quint16, quint16>(track.westLevels));
+          trackRec.setValue("altitude_levels_west", atools::io::writeVector<quint16, quint16>(track.westLevels));
 
         int airwayId = -1;
         map::MapObjectRefExt fromRef, toRef;
@@ -201,15 +202,15 @@ void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
         if(airwayId != -1)
         {
           // Save copy of certain airway fields ============
-          rec.setValue("airway_id", airwayId);
+          trackRec.setValue("airway_id", airwayId);
 
           airwayQuery->bindValue(0, airwayId);
           airwayQuery->exec();
           if(airwayQuery->next())
           {
-            rec.setValue("airway_minimum_altitude", airwayQuery->value("minimum_altitude"));
-            rec.setValue("airway_maximum_altitude", airwayQuery->value("maximum_altitude"));
-            rec.setValue("airway_direction", airwayQuery->value("direction"));
+            trackRec.setValue("airway_minimum_altitude", airwayQuery->value("minimum_altitude"));
+            trackRec.setValue("airway_maximum_altitude", airwayQuery->value("maximum_altitude"));
+            trackRec.setValue("airway_direction", airwayQuery->value("direction"));
           }
         }
 
@@ -226,27 +227,27 @@ void TrackManager::loadTracks(const TrackVectorType& tracks, bool onlyValid)
         if(i == refs.size() - 1)
           endPointId = toId;
 
-        rec.setValue("from_waypoint_id", fromId);
-        rec.setValue("from_waypoint_name", fromRef.name);
-        rec.setValue("to_waypoint_id", toId);
-        rec.setValue("to_waypoint_name", toRef.name);
+        trackRec.setValue("from_waypoint_id", fromId);
+        trackRec.setValue("from_waypoint_name", fromRef.name);
+        trackRec.setValue("to_waypoint_id", toId);
+        trackRec.setValue("to_waypoint_name", toRef.name);
 
         // Coordinates and bounding rectangle
         atools::geo::Rect rect(atools::geo::LineString({fromRef.position, toRef.position}));
-        rec.setValue("left_lonx", rect.getWest());
-        rec.setValue("top_laty", rect.getNorth());
-        rec.setValue("right_lonx", rect.getEast());
-        rec.setValue("bottom_laty", rect.getSouth());
-        rec.setValue("from_lonx", fromRef.position.getLonX());
-        rec.setValue("from_laty", fromRef.position.getLatY());
-        rec.setValue("to_lonx", ref.position.getLonX());
-        rec.setValue("to_laty", ref.position.getLatY());
+        trackRec.setValue("left_lonx", rect.getWest());
+        trackRec.setValue("top_laty", rect.getNorth());
+        trackRec.setValue("right_lonx", rect.getEast());
+        trackRec.setValue("bottom_laty", rect.getSouth());
+        trackRec.setValue("from_lonx", fromRef.position.getLonX());
+        trackRec.setValue("from_laty", fromRef.position.getLatY());
+        trackRec.setValue("to_lonx", ref.position.getLonX());
+        trackRec.setValue("to_laty", ref.position.getLatY());
 
         // Insert into database
-        insertByRecordId(rec);
+        insertOneRecord(trackRec);
 
         // Set all to null
-        rec.clearValues();
+        trackRec.clearValues();
       }
 
       // Add to trackmeta table if a new track was found
@@ -424,9 +425,9 @@ bool TrackManager::addTrackmeta(QHash<std::pair<TrackType, QString>, SqlRecord>&
 
 void TrackManager::clearTracks()
 {
-  removeRows();
-  removeRows("trackpoint");
-  removeRows("trackmeta");
+  deleteAllRows();
+  deleteAllRows("trackpoint");
+  deleteAllRows("trackmeta");
 }
 
 QMap<atools::track::TrackType, int> TrackManager::getNumTracks()

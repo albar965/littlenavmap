@@ -24,7 +24,7 @@
 
 #include <QColor>
 #include <QIcon>
-#include <QApplication>
+#include <QCoreApplication>
 #include <QCache>
 
 namespace atools {

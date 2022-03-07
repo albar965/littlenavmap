@@ -119,7 +119,7 @@ void UpdateHandler::checkForUpdates(opts::UpdateChannels channelOpts, bool manua
 void UpdateHandler::updateFound(atools::util::UpdateList updates)
 {
   qDebug() << Q_FUNC_INFO;
-  NavApp::deleteSplashScreen();
+  NavApp::closeSplashScreen();
 
   if(!updates.isEmpty())
   {
@@ -129,7 +129,7 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
     html.h3(tr("Update Available"));
 
     // Show only the newest one
-    const atools::util::Update& update = updates.first();
+    const atools::util::Update& update = updates.constFirst();
     QString channel;
     switch(update.channel)
     {
@@ -163,7 +163,7 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
     if(!update.changelog.isEmpty())
       html.text(update.changelog, atools::util::html::NO_ENTITIES);
 
-    NavApp::deleteSplashScreen();
+    NavApp::closeSplashScreen();
 
     // Show dialog
     UpdateDialog updateDialog(mainWindow, manual, hasDownload);
@@ -177,7 +177,7 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
       if(updateDialog.isIgnoreThisUpdate())
       {
         // Add latest update - do not report anything earlier or equal again
-        QString ignore = updates.first().version;
+        QString ignore = updates.constFirst().version;
         qDebug() << Q_FUNC_INFO << "Ignoring updates now" << ignore;
         Settings::instance().setValue(lnm::OPTIONS_UPDATE_ALREADY_CHECKED, ignore);
       }
@@ -193,7 +193,7 @@ void UpdateHandler::updateFailed(QString errorString)
 {
   qDebug() << Q_FUNC_INFO;
 
-  NavApp::deleteSplashScreen();
+  NavApp::closeSplashScreen();
 
   QString message = tr("Error while checking for updates at\n\"%1\":\n%2").
                     arg(updateCheck->getUrl().toDisplayString()).arg(errorString);

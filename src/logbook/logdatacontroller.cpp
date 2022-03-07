@@ -66,6 +66,15 @@ LogdataController::LogdataController(atools::fs::userdata::LogdataManager *logda
   statsDialog = new LogStatisticsDialog(mainWindow, this);
 
   connect(this, &LogdataController::logDataChanged, statsDialog, &LogStatisticsDialog::logDataChanged);
+  connect(this, &LogdataController::logDataChanged, manager, &atools::sql::DataManagerBase::updateUndoRedoActions);
+
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  connect(ui->actionSearchLogdataUndo, &QAction::triggered, this, &LogdataController::undoTriggered);
+  connect(ui->actionSearchLogdataRedo, &QAction::triggered, this, &LogdataController::redoTriggered);
+
+  manager->setMaximumUndoSteps(50);
+  manager->setTextSuffix(tr(" Logbook Entry"), tr(" Logbook Entries"));
+  manager->setActions(ui->actionSearchLogdataUndo, ui->actionSearchLogdataRedo);
 }
 
 LogdataController::~LogdataController()
@@ -73,6 +82,38 @@ LogdataController::~LogdataController()
   delete statsDialog;
   delete aircraftAtTakeoff;
   delete dialog;
+}
+
+void LogdataController::undoTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  if(manager->canUndo())
+  {
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    manager->undo();
+    QGuiApplication::restoreOverrideCursor();
+
+    manager->clearGeometryCache();
+
+    emit refreshLogSearch(false, false);
+    emit logDataChanged();
+  }
+}
+
+void LogdataController::redoTriggered()
+{
+  qDebug() << Q_FUNC_INFO;
+  if(manager->canRedo())
+  {
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    manager->redo();
+    QGuiApplication::restoreOverrideCursor();
+
+    manager->clearGeometryCache();
+
+    emit refreshLogSearch(false, false);
+    emit logDataChanged();
+  }
 }
 
 void LogdataController::showSearch()
@@ -92,6 +133,7 @@ void LogdataController::saveState()
 void LogdataController::restoreState()
 {
   // logEntryId = atools::settings::Settings::instance().valueInt(lnm::LOGDATA_ENTRY_ID);
+  manager->updateUndoRedoActions();
 }
 
 void LogdataController::optionsChanged()
@@ -168,8 +210,7 @@ void LogdataController::aircraftLanding(const atools::fs::sc::SimConnectUserAirc
   createTakeoffLanding(aircraft, false /*takeoff*/, flownDistanceNm);
 }
 
-void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff,
-                                             float flownDistanceNm)
+void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUserAircraft& aircraft, bool takeoff, float flownDistanceNm)
 {
   if(NavApp::getMainUi()->actionLogdataCreateLogbook->isChecked())
   {
@@ -234,7 +275,8 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
 
       // Add to database and remember created id
       SqlTransaction transaction(manager->getDatabase());
-      manager->insertByRecord(record, &logEntryId);
+      manager->insertOneRecord(record);
+      logEntryId = manager->getCurrentId();
       transaction.commit();
 
       logChanged(false /* load all */, true /* keep selection */);
@@ -250,7 +292,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       {
         // Update takeoff record with landing data ===========================================
         atools::sql::SqlRecord record = manager->getRecord(logEntryId);
-        record.setValue("distance", NavApp::getRoute().getTotalDistance()); // integer,
+        record.setValue("distance", NavApp::getRouteConst().getTotalDistance()); // integer,
         record.setValue("distance_flown", flownDistanceNm); // integer,
         if(aircraftAtTakeoff != nullptr)
           record.setValue("used_fuel", aircraftAtTakeoff->getFuelTotalWeightLbs() - aircraft.getFuelTotalWeightLbs()); // integer,
@@ -273,7 +315,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
 
         // Save GPX with simplified flight plan and trail =========================
         record.setValue("aircraft_trail",
-                        FlightplanIO().saveGpxGz(NavApp::getRoute().
+                        FlightplanIO().saveGpxGz(NavApp::getRouteConst().
                                                  updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_GPX).
                                                  getFlightplan(),
                                                  NavApp::getAircraftTrackLogbook().getLineStrings(),
@@ -290,7 +332,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
           record.setValue("is_jetfuel", jetfuel); // integer,
 
         SqlTransaction transaction(manager->getDatabase());
-        manager->updateByRecord(record, {logEntryId});
+        manager->updateRecords(record, {logEntryId});
         transaction.commit();
 
         logChanged(false /* load all */, false /* keep selection */);
@@ -319,6 +361,8 @@ void LogdataController::logChanged(bool loadAll, bool keepSelection)
 {
   // Clear cache and update map screen index
   manager->clearGeometryCache();
+  manager->updateUndoRedoActions();
+
   emit logDataChanged();
 
   // Reload search
@@ -327,7 +371,7 @@ void LogdataController::logChanged(bool loadAll, bool keepSelection)
 
 void LogdataController::recordFlightplanAndPerf(atools::sql::SqlRecord& record)
 {
-  atools::fs::pln::Flightplan fp = NavApp::getRoute().
+  atools::fs::pln::Flightplan fp = NavApp::getRouteConst().
                                    updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_LNMPLN).getFlightplan();
 
   if(fp.isEmpty())
@@ -423,12 +467,17 @@ void LogdataController::editLogEntries(const QVector<int>& ids)
 {
   qDebug() << Q_FUNC_INFO << ids;
 
-  SqlRecord rec = manager->getRecord(ids.first());
+  SqlRecord rec = manager->getRecord(ids.constFirst());
   if(!rec.isEmpty())
   {
     LogdataDialog dlg(mainWindow, ids.size() == 1 ? ld::EDIT_ONE : ld::EDIT_MULTIPLE);
     connectDialogSignals(&dlg);
     dlg.restoreState();
+
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << rec;
+    qDebug() << Q_FUNC_INFO << ids;
+#endif
 
     dlg.setRecord(rec);
     int retval = dlg.exec();
@@ -436,13 +485,12 @@ void LogdataController::editLogEntries(const QVector<int>& ids)
     {
       // Change modified columns for all given ids
       SqlTransaction transaction(manager->getDatabase());
-      manager->updateByRecord(dlg.getRecord(), ids);
+      manager->updateRecords(dlg.getRecord(), ids);
       transaction.commit();
 
       logChanged(false /* load all */, true /* keep selection */);
 
-      mainWindow->setStatusMessage(tr("%1 logbook %2 updated.").
-                                   arg(ids.size()).arg(ids.size() == 1 ? tr("entry") : tr("entries")));
+      mainWindow->setStatusMessage(tr("%1 logbook %2 updated.").arg(ids.size()).arg(ids.size() == 1 ? tr("entry") : tr("entries")));
     }
     dlg.saveState();
   }
@@ -536,7 +584,7 @@ void LogdataController::addLogEntry()
 
     // Add to database
     SqlTransaction transaction(manager->getDatabase());
-    manager->insertByRecord(dlg.getRecord());
+    manager->insertOneRecord(dlg.getRecord());
     transaction.commit();
 
     logChanged(false /* load all */, false /* keep selection */);
@@ -551,21 +599,13 @@ void LogdataController::deleteLogEntries(const QVector<int>& ids)
   qDebug() << Q_FUNC_INFO;
 
   QString txt = ids.size() == 1 ? tr("entry") : tr("entries");
-  int retval =
-    QMessageBox::question(mainWindow, QApplication::applicationName(),
-                          tr("Delete %1 logbook %2?").arg(ids.size()).arg(txt) +
-                          tr("\n\nThis cannot be undone."), QMessageBox::No | QMessageBox::Yes, QMessageBox::No);
+  SqlTransaction transaction(manager->getDatabase());
+  manager->deleteRows(ids);
+  transaction.commit();
 
-  if(retval == QMessageBox::Yes)
-  {
-    SqlTransaction transaction(manager->getDatabase());
-    manager->removeRows(ids);
-    transaction.commit();
+  logChanged(false /* load all */, false /* keep selection */);
 
-    logChanged(false /* load all */, false /* keep selection */);
-
-    mainWindow->setStatusMessage(tr("%1 logbook %2 deleted.").arg(ids.size()).arg(txt));
-  }
+  mainWindow->setStatusMessage(tr("%1 logbook %2 deleted.").arg(ids.size()).arg(txt));
 }
 
 void LogdataController::importXplane()
@@ -602,10 +642,12 @@ void LogdataController::importXplane()
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
@@ -631,10 +673,12 @@ void LogdataController::importCsv()
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
@@ -710,10 +754,12 @@ void LogdataController::exportCsv()
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
@@ -724,13 +770,13 @@ void LogdataController::convertUserdata()
 
   int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_LOGBOOK_CONVERSION,
                                           tr("This will convert all userpoints of type "
-                                             "<code>Logbook</code> to logbook entries.<br/><br/>"
+                                             "\"Logbook\" to logbook entries.<br/><br/>"
                                              "This works best if you did not modify the field "
-                                             "<code>Description</code> in the userpoints and if "
+                                             "\"Description\" in the userpoints and if "
                                                "you did not insert entries manually.<br/><br/>"
                                                "Note that not all fields can be converted automatically.<br/><br/>"
                                                "The created log entries can be found by searching"
-                                               "for<br/><code>*Converted from userdata*</code><br/>"
+                                               "for<br/>\"*Converted from userdata*\"<br/>"
                                                "in the field &quot;Remarks&quot;.<br/><br/>"
                                                "Continue?"),
                                           tr("Do not &show this dialog again and run the conversion in the future."),
@@ -813,10 +859,12 @@ void LogdataController::planOpen(atools::sql::SqlRecord *record, QWidget *parent
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleException(e);
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleUnknownException();
   }
 }
@@ -850,10 +898,12 @@ void LogdataController::planAttachLnmpln(atools::sql::SqlRecord *record, const Q
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleException(e);
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleUnknownException();
   }
 }
@@ -875,10 +925,12 @@ void LogdataController::planSaveAs(atools::sql::SqlRecord *record, QWidget *pare
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleException(e);
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleUnknownException();
   }
 }
@@ -901,10 +953,12 @@ void LogdataController::gpxAttach(atools::sql::SqlRecord *record, QWidget *paren
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleException(e);
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleUnknownException();
   }
 }
@@ -938,10 +992,12 @@ void LogdataController::gpxAdd(atools::sql::SqlRecord *record, QWidget *parent)
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleException(e);
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleUnknownException();
   }
 }
@@ -1011,10 +1067,12 @@ void LogdataController::gpxSaveAs(atools::sql::SqlRecord *record, QWidget *paren
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleException(e);
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleUnknownException();
   }
 }
@@ -1043,10 +1101,12 @@ void LogdataController::perfAttachLnmperf(atools::sql::SqlRecord *record, const 
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleException(e);
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleUnknownException();
   }
 }
@@ -1061,10 +1121,12 @@ void LogdataController::perfOpen(atools::sql::SqlRecord *record, QWidget *parent
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleException(e);
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }
@@ -1078,10 +1140,12 @@ void LogdataController::perfSaveAs(atools::sql::SqlRecord *record, QWidget *pare
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(parent).handleException(e);
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
 }

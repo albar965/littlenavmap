@@ -333,7 +333,7 @@ void MapContextMenu::insertMenuOrAction(QMenu& menu, mc::MenuActionType actionTy
     insertAction(menu, actionType, text, tip, key, icon, nullptr, false, allowNoMapObject, callback);
   else if(index.size() == 1)
     // Insert a single menu item with text
-    insertAction(menu, actionType, text, tip, key, icon, index.first(), false, allowNoMapObject, callback);
+    insertAction(menu, actionType, text, tip, key, icon, index.constFirst(), false, allowNoMapObject, callback);
   else
   {
     QString subText = text.arg(QString());
@@ -628,14 +628,10 @@ void MapContextMenu::insertMeasureMenu(QMenu& menu)
   ActionCallback callback =
     [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void
     {
-      disable = !visibleOnMap || !NavApp::getMapMarkHandler()->isShown(map::MARK_DISTANCE);
+      disable = !visibleOnMap;
       if(base == nullptr)
         // Any position
         text = text.arg(tr("here"));
-
-      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_DISTANCE))
-        // Hidden - add remark and disable
-        text.append(tr(" (hidden on map)"));
     };
 
   insertMenuOrAction(menu, mc::MEASURE, MapResultIndex().
@@ -650,11 +646,9 @@ void MapContextMenu::insertNavaidRangeMenu(QMenu& menu)
   ActionCallback callback =
     [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void
     {
-      disable = base == nullptr || !NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE);
-      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE))
-        // Hidden - add remark and disable
-        text.append(tr(" (hidden on map)"));
-      else if(base != nullptr)
+      disable = base == nullptr;
+
+      if(base != nullptr)
       {
         int range = 0;
         if(base->objType == map::VOR)
@@ -682,33 +676,24 @@ void MapContextMenu::insertPatternMenu(QMenu& menu)
   ActionCallback callback =
     [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void
     {
-      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_PATTERNS))
+      if(base != nullptr && base->objType == map::AIRPORT)
       {
-        // Hidden - add remark and disable
-        text.append(tr(" (hidden on map)"));
-        disable = true;
-      }
-      else
-      {
-        if(base != nullptr && base->objType == map::AIRPORT)
+        const map::MapAirport *airport = base->asPtr<map::MapAirport>();
+        if(airport->noRunways())
         {
-          const map::MapAirport *airport = base->asPtr<map::MapAirport>();
-          if(airport->noRunways())
-          {
-            text.append(tr(" (no runway)"));
-            disable = true;
-          }
-          else
-            disable = false;
-
-          // Do our own text substitution for the airport to use shorter name
-          if(text.contains("%1"))
-            text = text.arg(map::airportTextShort(*base->asPtr<map::MapAirport>(), TEXT_ELIDE_AIRPORT_NAME));
+          text.append(tr(" (no runway)"));
+          disable = true;
         }
         else
-          // No object or not an airport
-          disable = true;
+          disable = false;
+
+        // Do our own text substitution for the airport to use shorter name
+        if(text.contains("%1"))
+          text = text.arg(map::airportTextShort(*base->asPtr<map::MapAirport>(), TEXT_ELIDE_AIRPORT_NAME));
       }
+      else
+        // No object or not an airport
+        disable = true;
     };
 
   insertMenuOrAction(menu, mc::PATTERN, MapResultIndex().addRef(*result, map::AIRPORT).sort(alphaSort),
@@ -721,12 +706,9 @@ void MapContextMenu::insertHoldMenu(QMenu& menu)
   ActionCallback callback =
     [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void
     {
-      disable = !visibleOnMap || !NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDING);
+      disable = !visibleOnMap;
       if(base == nullptr)
         text = tr("Add &Holding here ...");
-      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_HOLDING))
-        // Hidden - add remark and disable
-        text.append(tr(" (hidden on map)"));
     };
 
   insertMenuOrAction(menu, mc::HOLDING, MapResultIndex().
@@ -739,13 +721,9 @@ void MapContextMenu::insertHoldMenu(QMenu& menu)
 void MapContextMenu::insertAirportMsaMenu(QMenu& menu)
 {
   ActionCallback callback =
-    [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void
+    [ = ](const map::MapBase *base, QString&, QIcon&, bool& disable, bool) -> void
     {
-      disable = !visibleOnMap || !NavApp::getMapMarkHandler()->isShown(map::MARK_MSA) || base == nullptr;
-
-      if(!NavApp::getMapMarkHandler()->isShown(map::MARK_MSA))
-        // Hidden - add remark and disable
-        text.append(tr(" (hidden on map)"));
+      disable = !visibleOnMap || base == nullptr;
     };
 
   insertMenuOrAction(menu, mc::AIRPORT_MSA, MapResultIndex().addRef(*result, map::AIRPORT_MSA).
@@ -923,7 +901,9 @@ void MapContextMenu::insertDeleteRouteWaypointMenu(QMenu& menu)
           const map::MapProcedurePoint *procPt = base->asPtr<map::MapProcedurePoint>();
           if(procPt != nullptr)
           {
-            QString procName = route.getProcedureLegText(procPt->getLeg().mapType, false /* includeRunway */, true /* missedAsApproach */);
+            QString procName = route.getProcedureLegText(procPt->getLeg().mapType,
+                                                         false /* includeRunway */, true /* missedAsApproach */,
+                                                         false /* transitionAsProcedure */);
             text = tr("&Delete %1 from Flight Plan").arg(procName);
             icon = QIcon(":/littlenavmap/resources/icons/approach.svg");
             disable = false;
@@ -1001,7 +981,7 @@ void MapContextMenu::insertUserpointAddMenu(QMenu& menu)
                      MapResultIndex().
                      addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT).
                      sort(DEFAULT_TYPE_SORT, alphaSort),
-                     tr("Add &Userpoint %1 ..."), tr("Add a userpoint at this position"),
+                     tr("Add &Userpoint %1 ..."), tr("Add an userpoint at this position"),
                      tr("Ctrl+Shift+Click"), QIcon(":/littlenavmap/resources/icons/userdata_add.svg"), true /* allowNoMapObject */,
                      callback);
 }
@@ -1114,7 +1094,8 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
   }
 
   // Get objects near position =============================================================
-  screenIndex->getAllNearest(point.x(), point.y(), screenSearchDist, *result, map::QUERY_MARK | map::QUERY_PREVIEW_PROC_POINTS);
+  screenIndex->getAllNearest(point.x(), point.y(), screenSearchDist, *result,
+                             map::QUERY_MARK | map::QUERY_PREVIEW_PROC_POINTS | map::QUERY_PROC_RECOMMENDED);
 
   // Remove online aircraft from onlineAircraft which also have a simulator shadow in simAircraft
   // Menus should only show the online part
@@ -1131,10 +1112,7 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
     ui->actionMapCopyCoordinates->setText(ui->actionMapCopyCoordinates->text().arg(Unit::coords(mapBasePos->position)));
 
   // Enable or disable map marks ===========================
-  ui->actionMapRangeRings->setEnabled(visibleOnMap && NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE));
-
-  if(!NavApp::getMapMarkHandler()->isShown(map::MARK_RANGE))
-    ui->actionMapRangeRings->setText(ui->actionMapRangeRings->text() + tr(" (hidden on map)"));
+  ui->actionMapRangeRings->setEnabled(visibleOnMap);
 
   // Build the menu =============================================================
   // The result must not be modified after building the menu because objects are referenced via dataIndex by pointers
@@ -1195,7 +1173,8 @@ QString MapContextMenu::procedureName(const map::MapBase *base) const
     {
       const RouteLeg& leg = route.value(routeIndex);
       if(leg.isAnyProcedure())
-        return route.getProcedureLegText(leg.getProcedureType(), false /* includeRunway */, true /* missedAsApproach */);
+        return route.getProcedureLegText(leg.getProcedureType(),
+                                         false /* includeRunway */, true /* missedAsApproach */, false /* transitionAsProcedure */);
     }
   }
   return QString();

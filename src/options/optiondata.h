@@ -19,6 +19,7 @@
 #define LITTLENAVMAP_OPTIONDATA_H
 
 #include <QColor>
+#include <QMap>
 
 class QSize;
 class QFont;
@@ -122,10 +123,9 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(opts::Flags);
 /* Map detail level during scrolling or zooming */
 enum MapScrollDetail
 {
-  FULL,
-  HIGHER,
-  NORMAL,
-  NONE
+  DETAIL_HIGH,
+  DETAIL_NORMAL,
+  DETAIL_LOW
 };
 
 /* Navigation mode */
@@ -441,7 +441,7 @@ enum DisplayOptionUserAircraft
 Q_DECLARE_FLAGS(DisplayOptionsUserAircraft, DisplayOptionUserAircraft);
 Q_DECLARE_OPERATORS_FOR_FLAGS(optsac::DisplayOptionsUserAircraft);
 
-enum DisplayOptionAiAircraft
+enum DisplayOptionAiAircraft : quint32
 {
   ITEM_AI_AIRCRAFT_NONE = 0,
   ITEM_AI_AIRCRAFT_DEP_DEST = 1 << 21,
@@ -455,7 +455,7 @@ enum DisplayOptionAiAircraft
   ITEM_AI_AIRCRAFT_CLIMB_SINK = 1 << 28,
   ITEM_AI_AIRCRAFT_HEADING = 1 << 29,
   ITEM_AI_AIRCRAFT_ALTITUDE = 1 << 30,
-  ITEM_AI_AIRCRAFT_TAS = 1 << 31,
+  ITEM_AI_AIRCRAFT_TAS = 0x8000'0000,
   ITEM_AI_AIRCRAFT_COORDINATES = 1 << 1
 };
 
@@ -522,7 +522,8 @@ enum DisplayOptionRose
   ROSE_TRACK_LABEL = 1 << 5,
   ROSE_CRAB_ANGLE = 1 << 6,
   ROSE_NEXT_WAYPOINT = 1 << 7,
-  ROSE_DIR_LABELS = 1 << 8
+  ROSE_DIR_LABELS = 1 << 8,
+  ROSE_TRUE_HEADING = 1 << 9
 };
 
 Q_DECLARE_FLAGS(DisplayOptionsRose, DisplayOptionRose);
@@ -532,12 +533,42 @@ enum DisplayOptionRoute
 {
   ROUTE_NONE = 0,
   ROUTE_DISTANCE = 1 << 0,
-  ROUTE_MAG_COURSE_GC = 1 << 1,
-  ROUTE_TRUE_COURSE_GC = 1 << 2
+  ROUTE_MAG_COURSE = 1 << 1,
+  ROUTE_TRUE_COURSE = 1 << 2
 };
 
 Q_DECLARE_FLAGS(DisplayOptionsRoute, DisplayOptionRoute);
 Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsRoute);
+
+enum DisplayOptionProfile
+{
+  PROFILE_NONE = 0,
+
+  /* Top label options */
+  PROFILE_TOP_DISTANCE = 1 << 0,
+  PROFILE_TOP_MAG_COURSE = 1 << 1,
+  PROFILE_TOP_TRUE_COURSE = 1 << 2,
+  PROFILE_TOP_RELATED = 1 << 3,
+
+  /* Flight plan line options */
+  PROFILE_FP_DIST = 1 << 4,
+  PROFILE_FP_MAG_COURSE = 1 << 5,
+  PROFILE_FP_TRUE_COURSE = 1 << 6,
+  PROFILE_FP_VERTICAL_ANGLE = 1 << 7,
+
+  /* Shown at navaid label */
+  PROFILE_FP_ALT_RESTRICTION = 1 << 8,
+  PROFILE_FP_SPEED_RESTRICTION = 1 << 9,
+
+  /* All drawn in the top label */
+  PROFILE_TOP_ANY = PROFILE_TOP_DISTANCE | PROFILE_TOP_MAG_COURSE | PROFILE_TOP_TRUE_COURSE | PROFILE_TOP_RELATED,
+
+  /* All drawn along the flight plan line */
+  PROFILE_FP_ANY = PROFILE_FP_DIST | PROFILE_FP_MAG_COURSE | PROFILE_FP_TRUE_COURSE | PROFILE_FP_VERTICAL_ANGLE,
+};
+
+Q_DECLARE_FLAGS(DisplayOptionsProfile, DisplayOptionProfile);
+Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsProfile);
 
 enum DisplayTooltipOption
 {
@@ -929,6 +960,11 @@ public:
     return displayOptionsRoute;
   }
 
+  const optsd::DisplayOptionsProfile& getDisplayOptionsProfile() const
+  {
+    return displayOptionsProfile;
+  }
+
   optsd::DisplayTooltipOptions getDisplayTooltipOptions() const
   {
     return displayTooltipOptions;
@@ -1098,16 +1134,6 @@ public:
     return weatherNoaaWindBaseUrl;
   }
 
-  const QString& getCacheUserAirspacePath() const
-  {
-    return cacheUserAirspacePath;
-  }
-
-  const QString& getCacheUserAirspaceExtensions() const
-  {
-    return cacheUserAirspaceExtensions;
-  }
-
   int getDisplayTransparencyMora() const
   {
     return displayTransparencyMora;
@@ -1146,29 +1172,7 @@ public:
 
   /* User set online refresh rate in seconds for custom configurations or stock networks in seconds
    * or -1 for auto value fetched from whazzup or JSON */
-  int getOnlineReload(opts::OnlineNetwork network) const
-  {
-    switch(network)
-    {
-      break;
-      case opts::ONLINE_VATSIM:
-        return onlineVatsimReload;
-
-      case opts::ONLINE_IVAO:
-        return onlineIvaoReload;
-
-      case opts::ONLINE_PILOTEDGE:
-        return onlinePilotEdgeReload;
-
-      case opts::ONLINE_CUSTOM_STATUS:
-      case opts::ONLINE_CUSTOM:
-        return onlineCustomReload;
-
-      case opts::ONLINE_NONE:
-        break;
-    }
-    return 180;
-  }
+  int getOnlineReload(opts::OnlineNetwork network) const;
 
   /* Seconds */
   int getOnlineVatsimTransceiverReload() const
@@ -1288,7 +1292,7 @@ private:
   /* X-Plane GRIB file or NOAA GRIB base URL */
   QString weatherXplaneWind;
 
-  QString cacheOfflineElevationPath, cacheUserAirspacePath, cacheUserAirspaceExtensions = "*.txt";
+  QString cacheOfflineElevationPath;
 
   // Initialized by widget
   QString flightplanPattern;
@@ -1299,7 +1303,7 @@ private:
   // ui->listWidgetOptionsDatabaseExclude
   QStringList databaseExclude;
 
-  opts::MapScrollDetail mapScrollDetail = opts::HIGHER;
+  opts::MapScrollDetail mapScrollDetail = opts::DETAIL_NORMAL;
   opts::MapNavigation mapNavigation = opts::MAP_NAV_CLICK_DRAG_MOVE;
 
   // ui->radioButtonOptionsMapSimUpdateFast
@@ -1550,7 +1554,9 @@ private:
 
   optsd::DisplayOptionsNavAid displayOptionsNavAid = optsd::NAVAIDS_NONE;
 
-  optsd::DisplayOptionsRoute displayOptionsRoute = optsd::ROUTE_DISTANCE | optsd::ROUTE_MAG_COURSE_GC;
+  optsd::DisplayOptionsRoute displayOptionsRoute = optsd::ROUTE_DISTANCE | optsd::ROUTE_MAG_COURSE;
+  optsd::DisplayOptionsProfile displayOptionsProfile = optsd::PROFILE_TOP_DISTANCE | optsd::PROFILE_TOP_RELATED |
+                                                       optsd::PROFILE_FP_MAG_COURSE | optsd::PROFILE_FP_VERTICAL_ANGLE;
 
   optsd::DisplayTooltipOptions displayTooltipOptions = optsd::TOOLTIP_AIRCRAFT_USER | optsd::TOOLTIP_AIRCRAFT_AI |
                                                        optsd::TOOLTIP_AIRPORT | optsd::TOOLTIP_AIRSPACE |
@@ -1587,6 +1593,9 @@ private:
   bool webEncrypted = false;
 
   QString guiFont, mapFont;
+
+  /* API keys or tokens extracted from DGML files. Saved and loaded in MapThemeHandler class. */
+  QMap<QString, QString> mapThemeKeys;
 };
 
 #endif // LITTLENAVMAP_OPTIONDATA_H

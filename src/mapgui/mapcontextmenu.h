@@ -18,7 +18,7 @@
 #ifndef LNM_MAPCONTEXTMENU_H
 #define LNM_MAPCONTEXTMENU_H
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <QMenu>
 
 class MapWidget;

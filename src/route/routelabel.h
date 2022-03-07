@@ -54,49 +54,64 @@ public:
   void saveState();
   void restoreState();
 
-  /* Enable first line. Example: "Ronchi Dei Legionari (LIPQ) 20 to Almeria (LEAM)" */
+  bool isHeaderAirports() const
+  {
+    return headerAirports;
+  }
+
   void setHeaderAirports(bool value)
   {
     headerAirports = value;
   }
 
-  /* Enable second line for departure and arrival procedures.
-   * Example: "Depart runway 09 using SID CHI8B. Arrive using STAR DOSE2R (07) via ELVEX and RNAV-ZAM07W (R07-Z) at runway 07. " */
-  void setHeaderDepartDest(bool value)
+  bool isHeaderDeparture() const
   {
-    headerDepartDest = value;
+    return headerDeparture;
   }
 
-  /* Enable runway information. Example: "Takeoff from 09, 86°M, 90°T, 9.810 ft. Land at 07, 73°M, 9.982 ft, PAPI4." */
-  void setHeaderRunway(bool value)
+  void setHeaderDeparture(bool value)
   {
-    headerRunway = value;
+    headerDeparture = value;
   }
 
-  /* Distance and time information like "Distance 965 nm, time 2 h 37 m." */
+  bool isHeaderArrival() const
+  {
+    return headerArrival;
+  }
+
+  void setHeaderArrival(bool value)
+  {
+    headerArrival = value;
+  }
+
+  bool isHeaderRunwayTakeoff() const
+  {
+    return headerRunwayTakeoff;
+  }
+
+  void setHeaderRunwayTakeoff(bool value)
+  {
+    headerRunwayTakeoff = value;
+  }
+
+  bool isHeaderRunwayLand() const
+  {
+    return headerRunwayLand;
+  }
+
+  void setHeaderRunwayLand(bool value)
+  {
+    headerRunwayLand = value;
+  }
+
+  bool isHeaderDistTime() const
+  {
+    return headerDistTime;
+  }
+
   void setHeaderDistTime(bool value)
   {
     headerDistTime = value;
-  }
-
-  bool getHeaderAirports() const
-  {
-    return headerAirports;
-  }
-
-  bool getHeaderDepartDest() const
-  {
-    return headerDepartDest;
-  }
-
-  bool getHeaderRunway() const
-  {
-    return headerRunway;
-  }
-
-  bool getHeaderDistTime() const
-  {
-    return headerDistTime;
   }
 
 signals:
@@ -105,12 +120,15 @@ signals:
 
 private:
   void buildHeaderAirports(atools::util::HtmlBuilder& html, bool widget);
-  void buildHeaderDepartArrival(atools::util::HtmlBuilder& html, bool widget);
-  void buildHeaderRunway(atools::util::HtmlBuilder& html);
+  void buildHeaderDepart(atools::util::HtmlBuilder& html, bool widget);
+  void buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget);
+  void buildHeaderRunwayTakeoff(atools::util::HtmlBuilder& html);
+  void buildHeaderRunwayLand(atools::util::HtmlBuilder& html);
   void buildHeaderTocTod(atools::util::HtmlBuilder& html); /* Only for print and HTML export */
   void buildHeaderDistTime(atools::util::HtmlBuilder& html);
 
-  bool headerAirports = true, headerDepartDest = true, headerRunway = true, headerDistTime = true;
+  bool headerAirports = true, headerDeparture = true, headerArrival = true, headerRunwayTakeoff = true, headerRunwayLand = true,
+       headerDistTime = true;
 
   const Route& route;
 };

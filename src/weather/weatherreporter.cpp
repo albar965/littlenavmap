@@ -65,12 +65,11 @@ using atools::settings::Settings;
 WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type)
   : QObject(parentWindow), simType(type), mainWindow(parentWindow)
 {
-  using namespace std::placeholders;
   onlineWeatherTimeoutSecs = atools::settings::Settings::instance().valueInt(lnm::OPTIONS_WEATHER_UPDATE, 600);
 
   verbose = Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_DEBUG, false).toBool();
 
-  auto coordFunc = std::bind(&WeatherReporter::fetchAirportCoordinates, this, _1);
+  auto coordFunc = std::bind(&WeatherReporter::fetchAirportCoordinates, this, std::placeholders::_1);
 
   xpWeatherReader = new atools::fs::weather::XpWeatherReader(this, verbose);
 
@@ -508,7 +507,7 @@ void WeatherReporter::findActiveSkyFiles(QString& asnSnapshot, QString& flightpl
   QString appdata = QProcessEnvironment::systemEnvironment().value("APPDATA");
 #else
   // Use $HOME/.config for testing
-  QString appdata = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).first();
+  QString appdata = QStandardPaths::standardLocations(QStandardPaths::ConfigLocation).constFirst();
 #endif
 
   QString simPathComponent;
@@ -594,6 +593,9 @@ void WeatherReporter::updateAirportWeather()
 
 void WeatherReporter::weatherDownloadSslErrors(const QStringList& errors, const QString& downloadUrl)
 {
+  qWarning() << Q_FUNC_INFO;
+  NavApp::closeSplashScreen();
+
   int result = atools::gui::Dialog(mainWindow).
                showQuestionMsgBox(lnm::ACTIONS_SHOW_SSL_WARNING_WEATHER,
                                   tr("<p>Errors while trying to establish an encrypted "

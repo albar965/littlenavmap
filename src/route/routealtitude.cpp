@@ -96,7 +96,8 @@ float RouteAltitude::getAltitudeForDistance(float distanceToDest) const
     // Now search through the geometry to find a matching line (if more than one)
     const RouteAltitudeLeg& leg = value(idx);
 
-    auto itGeo = std::lower_bound(leg.geometry.begin(), leg.geometry.end(), distFromStart, [](const QPointF& pt, float dist) -> bool {
+    auto itGeo = std::lower_bound(leg.geometry.constBegin(), leg.geometry.constEnd(), distFromStart, [](const QPointF& pt,
+                                                                                                        float dist) -> bool {
       // true if first is less than second, i.e. ordered before
       return pt.x() < dist;
     });
@@ -137,7 +138,7 @@ float RouteAltitude::getVerticalAngleAtDistance(float distanceToDest, bool *requ
       return leg.getVerticalProcAngle();
     }
 
-    auto itGeo = std::lower_bound(leg.geometry.begin(), leg.geometry.end(), route->getTotalDistance() - distanceToDest,
+    auto itGeo = std::lower_bound(leg.geometry.constBegin(), leg.geometry.constEnd(), route->getTotalDistance() - distanceToDest,
                                   [](const QPointF& pt, float dist) -> bool {
       // true if first is less than second, i.e. ordered before
       return pt.x() < dist;
@@ -197,9 +198,6 @@ void RouteAltitude::clearAll()
   distanceTopOfDescent = map::INVALID_DISTANCE_VALUE;
   legIndexTopOfClimb = map::INVALID_INDEX_VALUE;
   legIndexTopOfDescent = map::INVALID_INDEX_VALUE;
-  destRunwayIls.clear();
-  destRunwayIlsProfile.clear();
-  destRunwayEnd = map::MapRunwayEnd();
   travelTime = 0.f;
   averageGroundSpeed = 0.f;
   unflyableLegs = false;
@@ -253,7 +251,8 @@ bool RouteAltitude::hasErrors() const
 QStringList RouteAltitude::getErrorStrings() const
 {
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << errors;
+  if(!errors.isEmpty())
+    qDebug() << Q_FUNC_INFO << errors;
 #endif
 
   return errors;
@@ -1049,11 +1048,26 @@ void RouteAltitude::calculate(QStringList& altRestErrors)
   // Prefill all legs with distance and cruise altitude
   calculateDistances();
 
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
+  qDebug() << Q_FUNC_INFO << "After calculateDistances() ==================================";
+  qDebug() << Q_FUNC_INFO << *this;
+#endif
+
   if(calcTopOfClimb)
     calculateDeparture();
 
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
+  qDebug() << Q_FUNC_INFO << "After calculateDeparture() ==================================";
+  qDebug() << Q_FUNC_INFO << *this;
+#endif
+
   if(calcTopOfDescent)
     calculateArrival();
+
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
+  qDebug() << Q_FUNC_INFO << "After calculateArrival() ==================================";
+  qDebug() << Q_FUNC_INFO << *this;
+#endif
 
   // Check for violations because of too low cruise but only if TOD and TOC calculation succeeded
   if(getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE && getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE)
@@ -1106,9 +1120,6 @@ void RouteAltitude::calculate(QStringList& altRestErrors)
 
   // Fill vertical angles
   calculateGeoAngles();
-
-  // Fetch ILS and VASI at destination
-  calculateApproachIlsAndSlopes();
 
   // Set coordinates into legs
   fillGeometry();
@@ -1205,6 +1216,10 @@ void RouteAltitude::calculateDeparture()
     return;
   }
 
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
+  qDebug() << Q_FUNC_INFO << "climbRateWindFtPerNm" << climbRateWindFtPerNm;
+#endif
+
   float departAlt = getDepartureAltitude();
 
   if(departureLegIdx > 0) // Assign altitude to dummy for departure airport too
@@ -1258,7 +1273,7 @@ void RouteAltitude::calculateDeparture()
          !maxAltRestricts)
       {
         // Reached TOC - calculate distance
-        distanceTopOfClimb = distanceForAltitude(alt.geometry.first(), QPointF(alt.geometry.last().x(), uncorrectedAlt),
+        distanceTopOfClimb = distanceForAltitude(alt.geometry.constFirst(), QPointF(alt.geometry.constLast().x(), uncorrectedAlt),
                                                  cruiseAltitude);
         legIndexTopOfClimb = i;
 
@@ -1300,11 +1315,24 @@ void RouteAltitude::calculateArrival()
   }
   int destinationAirportLegIndex = route->getDestinationAirportLegIndex();
 
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
+  qDebug() << Q_FUNC_INFO << "descentRateWindFtPerNm" << descentRateWindFtPerNm;
+#endif
+
   // Calculate from last leg down until we hit the cruise altitude (TOD)
   for(int i = destinationAirportLegIndex; i >= 0; i--)
   {
     RouteAltitudeLeg& alt = (*this)[i];
     RouteAltitudeLeg *lastAltLeg = i < destinationLegIdx ? &(*this)[i + 1] : nullptr;
+
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
+    qDebug() << Q_FUNC_INFO << "alt.getIdent()" << alt.getIdent();
+
+    if(lastAltLeg != nullptr)
+      qDebug() << Q_FUNC_INFO << "lastAltLeg->getIdent()" << lastAltLeg->getIdent();
+    else
+      qDebug() << Q_FUNC_INFO << "lastAltLeg is null";
+#endif
 
     // Use altitude of last leg
     float lastLegAlt = lastAltLeg != nullptr ? lastAltLeg->y2() : 0.;
@@ -1315,6 +1343,10 @@ void RouteAltitude::calculateArrival()
 
     // Start with altitude of the right leg (close to dest)
     float newAltitude = lastLegAlt;
+
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
+    qDebug() << Q_FUNC_INFO << "lastLegAlt" << lastLegAlt;
+#endif
 
     if(i <= destinationLegIdx)
     {
@@ -1335,6 +1367,10 @@ void RouteAltitude::calculateArrival()
       }
     }
 
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
+    qDebug() << Q_FUNC_INFO << "newAltitude" << newAltitude;
+#endif
+
     if(!alt.isEmpty())
     {
       // Remember geometry which is not changed by altitude restrictions for calculation of cruise intersection
@@ -1342,6 +1378,10 @@ void RouteAltitude::calculateArrival()
 
       // Get new altitude corrected by restrictions
       newAltitude = adjustAltitudeForRestriction(newAltitude, alt.restriction);
+
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
+      qDebug() << Q_FUNC_INFO << "newAltitude adjusted" << newAltitude;
+#endif
 
       // Correct calculated altitude restriction if the result from the path angle is not accurate
       if(alt.restriction.verticalAngleAlt < map::INVALID_ALTITUDE_VALUE)
@@ -1352,8 +1392,16 @@ void RouteAltitude::calculateArrival()
       if(maxAlt < map::INVALID_ALTITUDE_VALUE)
         newAltitude = std::min(newAltitude, maxAlt);
 
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
+      qDebug() << Q_FUNC_INFO << "newAltitude adjusted to maxAlt" << newAltitude;
+#endif
+
       // Never lower than right leg
       newAltitude = std::max(newAltitude, lastAlt);
+
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
+      qDebug() << Q_FUNC_INFO << "newAltitude adjusted to lastAlt" << newAltitude;
+#endif
 
       // Check the limits to the left - either cruise or an altitude restriction
       // Set to true if an altitude restriction is limiting and postone calculation of the TOD
@@ -1363,13 +1411,22 @@ void RouteAltitude::calculateArrival()
          uncorrectedAltitude > cruiseAltitude && i + 1 < size())
       {
         if(value(i + 1).isEmpty())
+        {
           // Stepped into the dummies after arrival runway - bail out
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
+          qDebug() << Q_FUNC_INFO << "Stepped into dummies";
+#endif
           break;
+        }
 
         // Reached TOD - calculate distance
-        distanceTopOfDescent = distanceForAltitude(value(i + 1).getGeometry().last(),
+        distanceTopOfDescent = distanceForAltitude(value(i + 1).getGeometry().constLast(),
                                                    QPointF(alt.getDistanceFromStart(), uncorrectedAltitude), cruiseAltitude);
         legIndexTopOfDescent = i + 1;
+
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
+        qDebug() << Q_FUNC_INFO << "distanceTopOfDescent" << distanceTopOfDescent << "uncorrectedAltitude" << uncorrectedAltitude;
+#endif
 
         if(lastAltLeg != nullptr)
         {
@@ -1387,6 +1444,10 @@ void RouteAltitude::calculateArrival()
         // Done here
         if(legIndexTopOfDescent < size())
           (*this)[legIndexTopOfDescent].topOfDescent = true;
+
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
+        qDebug() << Q_FUNC_INFO << "Done";
+#endif
         break;
       }
 
@@ -1427,24 +1488,6 @@ void RouteAltitude::calculateGeoAngles()
   }
 }
 
-void RouteAltitude::calculateApproachIlsAndSlopes()
-{
-  // Get ILS and runway from route
-  route->getApproachRunwayEndAndIls(destRunwayIls, &destRunwayEnd, false /* profile */, false /* recommended */);
-  route->getApproachRunwayEndAndIls(destRunwayIlsProfile, &destRunwayEnd, true /* profile */, false /* recommended */);
-  route->getApproachRunwayEndAndIls(destRunwayIlsRecommended, &destRunwayEnd, true /* profile */,
-                                    true /* recommended */);
-
-  // Filter out unusable ILS for profile display
-  destRunwayIlsProfile.erase(std::remove_if(destRunwayIlsProfile.begin(), destRunwayIlsProfile.end(),
-                                            [ = ](const map::MapIls& ils) -> bool
-  {
-    // Needs to have GS, not farther away from runway end than 4NM and not more than 20 degree difference
-    return !ils.hasGlideslope() || destRunwayEnd.position.distanceMeterTo(ils.position) > ageo::nmToMeter(4.) ||
-    ageo::angleAbsDiff(destRunwayEnd.heading, ils.heading) > 20.f;
-  }), destRunwayIlsProfile.end());
-}
-
 void RouteAltitude::fillGeometry()
 {
   Q_ASSERT(route->size() == size());
@@ -1483,7 +1526,15 @@ void RouteAltitude::fillGeometry()
 
         // Build simple line consisting of start and end - might receive TOD and/or TOC position later
         if(i > 0)
-          altLeg.line.append(route->value(i - 1).getPosition().alt(altLeg.y1()));
+        {
+          const RouteLeg& prevLeg = route->value(i - 1);
+          if(i == 1 && prevLeg.getDeparturePosition().isValid() && routeLeg.getProcedureLeg().isAnyDeparture())
+            // Use departure parking spot as start position for "proceeed to runway" if this is the start of an SID
+            altLeg.line.append(prevLeg.getDeparturePosition().alt(altLeg.y1()));
+          else
+            altLeg.line.append(route->value(i - 1).getPosition().alt(altLeg.y1()));
+        }
+
         altLeg.line.append(routeLeg.getPosition().alt(altLeg.y2()));
 
         if(!altLeg.isAnyProcedure())
@@ -1491,12 +1542,12 @@ void RouteAltitude::fillGeometry()
           altLeg.geoLine = altLeg.line;
       }
 
+      // Add TOD and TOC =======================
       if(altLeg.topOfClimb)
         altLeg.line.insert(1, route->getPositionAtDistance(distanceTopOfClimb).alt(cruiseAltitude));
 
       if(altLeg.topOfDescent)
-        altLeg.line.insert(altLeg.line.size() - 1,
-                           route->getPositionAtDistance(distanceTopOfDescent).alt(cruiseAltitude));
+        altLeg.line.insert(altLeg.line.size() - 1, route->getPositionAtDistance(distanceTopOfDescent).alt(cruiseAltitude));
     }
 
     if(!altLeg.line.hasAllValidPoints())
@@ -1576,7 +1627,7 @@ float RouteAltitude::distanceForAltitude(const QPointF& leg1, const QPointF& leg
 
 float RouteAltitude::distanceForAltitude(const RouteAltitudeLeg& leg, float altitude)
 {
-  return distanceForAltitude(leg.geometry.first(), leg.geometry.last(), altitude);
+  return distanceForAltitude(leg.geometry.constFirst(), leg.geometry.constLast(), altitude);
 }
 
 void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
@@ -1608,6 +1659,10 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
   {
     RouteAltitudeLeg& leg = (*this)[i];
     float legDist = leg.getDistanceTo();
+
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
+    qDebug() << Q_FUNC_INFO << "leg.getIdent()" << leg.getIdent();
+#endif
 
     if(atools::almostEqual(legDist, 0.f))
       // same as last one - no travel time and no fuel

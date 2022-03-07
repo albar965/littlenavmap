@@ -233,7 +233,7 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
   if(paintLayer->getShownMapObjectDisplayTypes().testFlag(map::FLIGHTPLAN))
   {
     // Get ILS from flight plan which are also painted in the profile - only if plan is shown
-    ilsVector = NavApp::getRouteConst().getDestRunwayIls();
+    ilsVector = NavApp::getRouteConst().getDestRunwayIlsMap();
     for(const map::MapIls& ils : ilsVector)
       routeIlsIds.insert(ils.id);
   }
@@ -665,7 +665,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
   map::MapTypes shown = paintLayer->getShownMapObjects();
   map::MapObjectDisplayTypes shownDisplay = paintLayer->getShownMapObjectDisplayTypes();
 
-  // Check for user aircraft
+  // Check for user aircraft ======================================================
   result.userAircraft.clear();
   if(shown & map::AIRCRAFT && NavApp::isConnectedAndAircraft())
   {
@@ -751,7 +751,10 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
       queryTypes |= map::QUERY_PROC_MISSED_POINTS | map::QUERY_PROCEDURES_MISSED;
 
     // Get copies from flight plan if visible
-    NavApp::getRouteConst().getNearest(conv, xs, ys, maxDistance, result, queryTypes);
+    NavApp::getRouteConst().getNearest(conv, xs, ys, maxDistance, result, queryTypes, routeDrawnNavaids);
+
+    if(types.testFlag(map::QUERY_PROC_RECOMMENDED))
+      NavApp::getRouteConst().getNearestRecommended(conv, xs, ys, maxDistance, result, queryTypes, routeDrawnNavaids);
   }
 
   // Get points of procedure preview

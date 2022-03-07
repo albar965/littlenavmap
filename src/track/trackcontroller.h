@@ -50,6 +50,7 @@ public:
   /* Start download from all three sources and load the tracks into the database once done.
    * The raw data is kept so it can be loaded into the database again when switching simulators.*/
   void startDownload();
+  void startDownloadStartup();
   void deleteTracks();
   void downloadToggled(bool checked);
 
@@ -77,6 +78,7 @@ private:
   void trackDownloadSslErrors(const QStringList& errors, const QString& downloadUrl);
   void tracksLoaded();
   QVector<atools::track::TrackType> enabledTracks();
+  void startDownloadInternal();
 
   /* Avoid multiple error reports. */
   bool errorReported = false;

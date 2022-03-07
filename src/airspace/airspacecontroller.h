@@ -24,6 +24,12 @@
 #include <QObject>
 
 namespace atools {
+namespace fs {
+namespace userdata {
+class AirspaceReaderBase;
+}
+
+}
 namespace sql {
 class SqlDatabase;
 class SqlRecord;
@@ -75,7 +81,7 @@ public:
   /* Get airspaces from all enabled sources for map display */
   void getAirspaces(AirspaceVector& airspaces, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                     map::MapAirspaceFilter filter, float flightPlanAltitude, bool lazy,
-                    map::MapAirspaceSources sources, bool& overflow);
+                    map::MapAirspaceSources sourcesParam, bool& overflow);
 
   /* Get Geometry for any airspace and source database */
   const atools::geo::LineString *getAirspaceGeometry(map::MapAirspaceId id);
@@ -149,6 +155,11 @@ private:
                             bool lazy, map::MapAirspaceSources src, bool& overflow);
   void preLoadAirpaces();
   void postLoadAirpaces();
+
+  void loadAirspace(atools::fs::userdata::AirspaceReaderBase& reader, const QString& file, int fileId, int& nextAirspaceId,
+                    int& numReadFile);
+  void collectErrors(QStringList& errors, const atools::fs::userdata::AirspaceReaderBase& reader, const QString& basePath);
+  atools::geo::Pos fetchAirportCoordinates(const QString& airportIdent);
 
   AirspaceQueryMapType queries;
   map::MapAirspaceSources sources = map::AIRSPACE_SRC_NONE;

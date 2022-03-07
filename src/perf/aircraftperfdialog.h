@@ -86,6 +86,9 @@ private:
   /* Update range label */
   void updateRange();
 
+  /* Show error if not valid */
+  void aircraftTypeEdited();
+
   /* Get conversion functions depending on fuel type combo box setting*/
   static std::function<float(float value, bool fuelAsVolume)> fuelUnitsToDialogFunc(FuelUnit unit);
   static std::function<float(float value, bool fuelAsVolume)> fuelUnitsFromDialogFunc(FuelUnit unit);

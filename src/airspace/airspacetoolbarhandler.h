@@ -20,7 +20,7 @@
 
 #include "common/mapflags.h"
 
-#include <QApplication>
+#include <QCoreApplication>
 #include <QVector>
 
 class QAction;

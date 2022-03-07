@@ -18,13 +18,38 @@
 #ifndef LITTLENAVMAP_NAVMAPPAINTWIDGET_H
 #define LITTLENAVMAP_NAVMAPPAINTWIDGET_H
 
-#include "common/proctypes.h"
+#include "common/mapflags.h"
+#include "geo/pos.h"
 
 #include <marble/GeoDataLatLonAltBox.h>
 #include <marble/MarbleWidget.h>
 
-namespace atools {
+namespace map {
+struct MapResult;
+struct MapObjectRef;
+struct RangeMarker;
+struct DistanceMarker;
+struct PatternMarker;
+struct HoldingMarker;
+struct MsaMarker;
+struct MapHolding;
+struct MapAirportMsa;
+struct MapAirspace;
+struct MapAirway;
+}
 
+namespace atools {
+namespace fs {
+namespace sc {
+class SimConnectUserAircraft;
+class SimConnectData;
+class SimConnectAircraft;
+}
+}
+
+namespace geo {
+class Rect;
+}
 namespace fs {
 class SimConnectData;
 }
@@ -188,9 +213,6 @@ public:
    */
   void setTheme(const QString& theme, int index);
 
-  /* true of map is dark like CartoDark. Night mode does not count */
-  bool isDarkMap() const;
-
   /* Show points of interest and other labels for certain map themes */
   void setShowMapPois(bool show);
 
@@ -339,13 +361,6 @@ public:
     return visibleWidget;
   }
 
-  QString getMapCopyright() const;
-
-  map::MapThemeComboIndex getCurrentThemeIndex() const
-  {
-    return currentThemeIndex;
-  }
-
   /* Logbook display options have changed or new or edited logbook entry */
   void updateLogEntryScreenGeometry();
 
@@ -386,6 +401,15 @@ public:
 
   /* Print all layers to debug channel */
   void dumpMapLayers() const;
+
+  const QVector<map::MapObjectRef>& getRouteDrawnNavaidsConst() const;
+
+  QVector<map::MapObjectRef> *getRouteDrawnNavaids();
+
+  int getCurrentThemeIndex() const
+  {
+    return currentThemeIndex;
+  }
 
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
@@ -492,9 +516,6 @@ protected:
   /* Defines amount of objects and other attributes on the map. min 5, max 15, default 10. */
   int mapDetailLevel;
 
-  /* Need to maintain this parallel since Marble has no method to read properties */
-  bool hillshading = false;
-
   MapPaintLayer *paintLayer;
 
   /* Do not draw while database is unavailable */
@@ -523,12 +544,12 @@ protected:
 
   /* Paint copyright note into image */
   bool paintCopyright = true;
-
-  /* Index of the theme combo box in the toolbar */
-  map::MapThemeComboIndex currentThemeIndex = map::INVALID_THEME;
+  
+  /* Index for theme in MapThemeHandler and *not* the combo box. */
+  int currentThemeIndex = 0;
 
   /* Trail/track of user aircraft */
-  AircraftTrack *aircraftTrack, *aircraftTrackLogbook;
+  AircraftTrack *aircraftTrack = nullptr, *aircraftTrackLogbook = nullptr;
 
 private:
   /* Set map theme and adjust properties accordingly */

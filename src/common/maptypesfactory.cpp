@@ -17,12 +17,14 @@
 
 #include "common/maptypesfactory.h"
 
-#include <cmath>
-#include "sql/sqlrecord.h"
-#include "geo/calculations.h"
+#include "navapp.h"
 #include "common/maptypes.h"
-#include "io/binaryutil.h"
 #include "fs/common/binarymsageometry.h"
+#include "geo/calculations.h"
+#include "io/binaryutil.h"
+#include "sql/sqlrecord.h"
+
+#include <cmath>
 
 using namespace atools::geo;
 using atools::sql::SqlRecord;
@@ -157,7 +159,8 @@ void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& 
     ap.longestRunwayLength = record.valueInt("longest_runway_length");
     ap.longestRunwayHeading = static_cast<int>(std::round(record.valueFloat("longest_runway_heading")));
     ap.magvar = record.valueFloat("mag_var");
-    ap.transitionAltitude = record.valueInt("transition_altitude", 0);
+    ap.transitionAltitude = record.valueFloat("transition_altitude", 0.f);
+    ap.transitionLevel = record.valueFloat("transition_level", 0.f);
 
     if(record.contains("flatten"))
       ap.flatten = record.isNull("flatten") ? -1 : record.valueInt("flatten");
@@ -612,6 +615,7 @@ void MapTypesFactory::fillHolding(const atools::sql::SqlRecord& record, map::Map
   // airport_ident varchar(5),           -- ICAO ident
   holding.navIdent = record.valueStr("nav_ident");
   // region varchar(2),                  -- ICAO two letter region identifier
+  holding.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
 
   holding.navType = strToType(record.valueStr("nav_type"));
   holding.name = record.valueStr("name");
@@ -622,15 +626,20 @@ void MapTypesFactory::fillHolding(const atools::sql::SqlRecord& record, map::Map
   holding.vorDmeOnly = record.valueInt("vor_dme_only");
   holding.vorHasDme = record.valueInt("vor_has_dme");
 
+  // if(atools::almostEqual(record.valueFloat("mag_var"), 0.f) && (holding.vorType.isEmpty() || holding.vorDmeOnly))
+  //// Calculate variance if not given except for VOR, VORTAC, VORDME and TACAN
+  // holding.magvar = NavApp::getMagVar(holding.position);
+  // else
   holding.magvar = record.valueFloat("mag_var"); // Magnetic variance in degree < 0 for West and > 0 for East
-  holding.courseTrue = record.valueFloat("course");
+
+  holding.courseTrue = atools::geo::normalizeCourse(record.valueFloat("course") + holding.magvar);
+
   holding.turnLeft = record.valueStr("name") == "L";
   holding.length = record.valueFloat("leg_length");
   holding.time = record.valueFloat("leg_time");
   holding.minAltititude = record.valueFloat("minimum_altitude");
   holding.maxAltititude = record.valueFloat("maximum_altitude");
   holding.speedLimit = record.valueFloat("speed_limit");
-  holding.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));
 
   holding.speedKts = 0.f;
 }
@@ -719,7 +728,7 @@ void MapTypesFactory::fillParking(const SqlRecord& record, map::MapParking& park
     if(!textsShort.isEmpty())
     {
       // Use first character and last numbers
-      textsShort.prepend(texts.first().at(0));
+      textsShort.prepend(texts.constFirst().at(0));
       parking.nameShort = textsShort.join(" ");
     }
   }

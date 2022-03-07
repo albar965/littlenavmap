@@ -39,7 +39,7 @@ public:
    * UZ669 MILPA UL612 MOU UM129 LMG UN460 CNA DCT LFCY
    */
   QString createStringForRoute(const Route& route, float speed, rs::RouteStringOptions options) const;
-  QStringList createStringForRouteList(const Route& route, float speed, rs::RouteStringOptions options) const;
+  QStringList createStringListForRoute(const Route& route, float speed, rs::RouteStringOptions options) const;
 
   /*
    * Create a route string in garming flight plan format (GFP):

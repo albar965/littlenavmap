@@ -17,25 +17,27 @@
 
 #include "airspace/airspacecontroller.h"
 
-#include "sql/sqlrecord.h"
-#include "query/airspacequery.h"
-#include "geo/linestring.h"
-#include "common/constants.h"
-#include "db/databasemanager.h"
 #include "airspace/airspacetoolbarhandler.h"
-#include "navapp.h"
-#include "ui_mainwindow.h"
-#include "gui/widgetstate.h"
-#include "gui/dialog.h"
-#include "gui/mainwindow.h"
-#include "options/optionsdialog.h"
-#include "fs/userdata/airspacereaderopenair.h"
-#include "sql/sqltransaction.h"
-#include "gui/textdialog.h"
-#include "util/htmlbuilder.h"
-#include "fs/common/metadatawriter.h"
+#include "atools.h"
+#include "common/constants.h"
+#include "db/airspacedialog.h"
+#include "db/databasemanager.h"
 #include "exception.h"
+#include "fs/common/metadatawriter.h"
+#include "fs/userdata/airspacereaderivao.h"
+#include "fs/userdata/airspacereaderopenair.h"
+#include "fs/userdata/airspacereadervatsim.h"
+#include "gui/dialog.h"
 #include "gui/errorhandler.h"
+#include "gui/mainwindow.h"
+#include "gui/textdialog.h"
+#include "gui/widgetstate.h"
+#include "navapp.h"
+#include "query/airportquery.h"
+#include "query/airspacequery.h"
+#include "ui_mainwindow.h"
+#include "util/htmlbuilder.h"
+#include "sql/sqltransaction.h"
 
 #include <QAction>
 #include <QDir>
@@ -65,8 +67,7 @@ AirspaceController::AirspaceController(MainWindow *mainWindowParam,
   airspaceHandler = new AirspaceToolBarHandler(NavApp::getMainWindow());
   airspaceHandler->createToolButtons();
 
-  connect(airspaceHandler, &AirspaceToolBarHandler::updateAirspaceTypes,
-          this, &AirspaceController::updateAirspaceTypes);
+  connect(airspaceHandler, &AirspaceToolBarHandler::updateAirspaceTypes, this, &AirspaceController::updateAirspaceTypes);
 
   // Connect source selection actions ========================
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -170,7 +171,7 @@ void AirspaceController::getAirspacesInternal(AirspaceVector& airspaceVector, co
                                               float flightPlanAltitude, bool lazy,
                                               map::MapAirspaceSources src, bool& overflow)
 {
-  if((src& map::AIRSPACE_SRC_USER) && loadingUserAirspaces)
+  if((src & map::AIRSPACE_SRC_USER) && loadingUserAirspaces)
     // Avoid deadlock while loading user airspaces
     return;
 
@@ -197,12 +198,12 @@ void AirspaceController::getAirspacesInternal(AirspaceVector& airspaceVector, co
 void AirspaceController::getAirspaces(AirspaceVector& airspaces, const Marble::GeoDataLatLonBox& rect,
                                       const MapLayer *mapLayer, map::MapAirspaceFilter filter,
                                       float flightPlanAltitude, bool lazy,
-                                      map::MapAirspaceSources sources, bool& overflow)
+                                      map::MapAirspaceSources sourcesParam, bool& overflow)
 {
   // Merge airspace pointers from all sources/caches into one list
   for(map::MapAirspaceSources src : map::MAP_AIRSPACE_SRC_VALUES)
   {
-    if(sources & src)
+    if(sourcesParam & src)
       getAirspacesInternal(airspaces, rect, mapLayer, filter, flightPlanAltitude, lazy, src, overflow);
 
     if(overflow)
@@ -319,30 +320,21 @@ void AirspaceController::loadAirspaces()
 {
   qDebug() << Q_FUNC_INFO;
 
-  // Get base path from options dialog ===============================
-  QString basePath = OptionData::instance().getCacheUserAirspacePath();
+  using atools::fs::userdata::AirspaceReaderBase;
 
-  if(basePath.isEmpty() || !QFileInfo::exists(basePath) || !QFileInfo(basePath).isDir())
+  AirspaceDialog dialog(mainWindow);
+  int result = dialog.exec();
+
+  if(result == QDialog::Accepted)
   {
-    // Path is either empty or not set - allow user to select a (new) folder ==========================
-    basePath = NavApp::getOptionsDialog()->selectCacheUserAirspace();
-
-    /*: Make sure that dialog and tab name match translations in the options dialog */
-    atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_USER_AIRSPACE_NOTE,
-                                                   tr("You can change this path in the dialog <code>Options</code> "
-                                                      "on the tab <code>Cache and Files</code>."),
-                                                   tr("Do not &show this dialog again."));
-  }
-
-  if(!basePath.isEmpty())
-  {
+    QString basePath = dialog.getAirspacePath();
     qDebug() << Q_FUNC_INFO << basePath;
 
     // Disable queries to avoid locked database
     preLoadAirpaces();
 
     bool success = false;
-    int sceneryId = 1, fileId = 1, numRead = 0, numFiles = 0;
+    int sceneryId = 1, fileId = 1, numReadTotal = 0, numFiles = 0;
     QStringList errors;
 
     try
@@ -360,7 +352,7 @@ void AirspaceController::loadAirspaces()
       metadataWriter.writeSceneryArea(basePath, "User Airspaces", sceneryId);
 
       // Prepare filters and flags for folder search ========================
-      QStringList filter = OptionData::instance().getCacheUserAirspaceExtensions().simplified().split(" ");
+      QStringList filter = dialog.getAirspaceFilePatterns().simplified().split(" ");
       QDir::Filters filterFlags = QDir::Files | QDir::Hidden | QDir::System;
       QDirIterator::IteratorFlags iterFlags = QDirIterator::Subdirectories | QDirIterator::FollowSymlinks;
 
@@ -379,21 +371,47 @@ void AirspaceController::loadAirspaces()
       progress.show();
 
       // Read files ==================================================
-      atools::fs::userdata::AirspaceReaderOpenAir writer(dbUserAirspace);
+      atools::fs::userdata::AirspaceReaderOpenAir openAirReader(dbUserAirspace);
+      atools::fs::userdata::AirspaceReaderIvao ivaoReader(dbUserAirspace);
+      atools::fs::userdata::AirspaceReaderVatsim vatsimReader(dbUserAirspace);
+
       int fileProgress = 0;
       bool canceled = false;
       QDirIterator dirIter(basePath, filter, filterFlags, iterFlags);
+      int nextAirspaceId = 0;
       while(dirIter.hasNext())
       {
+        int numReadFile = 0;
         QString file = dirIter.next();
-        qDebug() << Q_FUNC_INFO << file;
 
         // Write file metadata for display in information window
         metadataWriter.writeFile(file, QString(), sceneryId, fileId);
 
-        // Read OpenAir file =============================================================
-        writer.readFile(fileId, file);
-        numRead += writer.getNumAirspacesRead();
+        // Get first lines at beginning of file and remove empty lines
+        AirspaceReaderBase::Format format = AirspaceReaderBase::detectFileFormat(file);
+
+        // Check if file is IVAO JSON which starts with an array at top level
+        if(format == AirspaceReaderBase::IVAO_JSON)
+        {
+          // Read IVAO JSON file =============================================================
+          loadAirspace(ivaoReader, file, fileId, nextAirspaceId, numReadFile);
+          collectErrors(errors, ivaoReader, basePath);
+        }
+
+        // Check if file is a GeoJSON which starts with an object at top level
+        if(numReadFile == 0 && format == AirspaceReaderBase::VATSIM_GEO_JSON)
+        {
+          loadAirspace(vatsimReader, file, fileId, nextAirspaceId, numReadFile);
+          collectErrors(errors, vatsimReader, basePath);
+        }
+
+        // OpenAir starts with a comment "*" or an upper case letter
+        if(numReadFile == 0 && format == AirspaceReaderBase::OPEN_AIR)
+        {
+          // Read OpenAir file =============================================================
+          loadAirspace(openAirReader, file, fileId, nextAirspaceId, numReadFile);
+          collectErrors(errors, openAirReader, basePath);
+        }
 
         progress.setValue(fileProgress++);
 
@@ -403,11 +421,8 @@ void AirspaceController::loadAirspaces()
           break;
         }
 
-        for(const atools::fs::userdata::AirspaceReaderOpenAir::AirspaceErr& err : writer.getErrors())
-          errors.append(tr("File \"%1\" line %2: %3").
-                        arg(QDir(basePath).relativeFilePath(err.file)).arg(err.line).arg(err.message));
-
         fileId++;
+        numReadTotal += numReadFile;
       }
       progress.setValue(numFiles);
 
@@ -422,10 +437,12 @@ void AirspaceController::loadAirspaces()
     }
     catch(atools::Exception& e)
     {
+      NavApp::closeSplashScreen();
       atools::gui::ErrorHandler(mainWindow).handleException(e);
     }
     catch(...)
     {
+      NavApp::closeSplashScreen();
       atools::gui::ErrorHandler(mainWindow).handleUnknownException();
     }
 
@@ -433,7 +450,7 @@ void AirspaceController::loadAirspaces()
     if(success)
     {
       QString message = tr("Loaded %1 airspaces from %2 files from base path\n"
-                           "\"%3\".").arg(numRead).arg(numFiles).arg(basePath);
+                           "\"%3\".").arg(numReadTotal).arg(numFiles).arg(basePath);
 
       if(!errors.isEmpty())
       {
@@ -471,6 +488,34 @@ void AirspaceController::loadAirspaces()
   }
 }
 
+void AirspaceController::loadAirspace(atools::fs::userdata::AirspaceReaderBase& reader, const QString& file, int fileId,
+                                      int& nextAirspaceId, int& numReadFile)
+{
+  // Read OpenAir file =============================================================
+  qDebug() << Q_FUNC_INFO << "Reading" << file << "as OpenAIR";
+  reader.setFetchAirportCoords(std::bind(&AirspaceController::fetchAirportCoordinates, this, std::placeholders::_1));
+
+  reader.setFileId(fileId);
+  reader.setAirspaceId(nextAirspaceId);
+  reader.readFile(file);
+  numReadFile += reader.getNumAirspacesRead();
+  nextAirspaceId = reader.getNextAirspaceId();
+}
+
+atools::geo::Pos AirspaceController::fetchAirportCoordinates(const QString& airportIdent)
+{
+  if(!NavApp::isLoadingDatabase())
+    return NavApp::getAirportQuerySim()->getAirportPosByIdent(airportIdent);
+  else
+    return atools::geo::EMPTY_POS;
+}
+
+void AirspaceController::collectErrors(QStringList& errors, const atools::fs::userdata::AirspaceReaderBase& reader, const QString& basePath)
+{
+  for(const atools::fs::userdata::AirspaceReaderOpenAir::AirspaceErr& err : reader.getErrors())
+    errors.append(tr("File \"%1\" line %2: %3").arg(QDir(basePath).relativeFilePath(err.file)).arg(err.line).arg(err.message));
+}
+
 atools::geo::LineString *AirspaceController::getOnlineAirspaceGeoByFile(const QString& callsign)
 {
   // Avoid deadlock while loading user airspaces
@@ -483,8 +528,7 @@ atools::geo::LineString *AirspaceController::getOnlineAirspaceGeoByFile(const QS
   return nullptr;
 }
 
-atools::geo::LineString *AirspaceController::getOnlineAirspaceGeoByName(const QString& callsign,
-                                                                        const QString& facilityType)
+atools::geo::LineString *AirspaceController::getOnlineAirspaceGeoByName(const QString& callsign, const QString& facilityType)
 {
   if(!loadingUserAirspaces)
   {

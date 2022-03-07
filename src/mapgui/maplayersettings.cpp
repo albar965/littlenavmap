@@ -59,7 +59,7 @@ MapLayer MapLayerSettings::cloneLast(float maximumRangeKm) const
   if(layers.isEmpty())
     return MapLayer(maximumRangeKm);
   else
-    return layers.last().clone(maximumRangeKm);
+    return layers.constLast().clone(maximumRangeKm);
 }
 
 void MapLayerSettings::finishAppend()
@@ -72,7 +72,7 @@ const MapLayer *MapLayerSettings::getLayer(float distanceKm, int detailFactor) c
   using namespace std::placeholders;
 
   // Get the layer with the next lowest zoom distance
-  QList<MapLayer>::const_iterator it = std::lower_bound(layers.begin(), layers.end(), distanceKm,
+  auto it = std::lower_bound(layers.constBegin(), layers.constEnd(), distanceKm,
                                                         std::bind(&MapLayerSettings::compare, this, _1, _2));
 
   // Adjust iterator for detail level changes
@@ -82,7 +82,7 @@ const MapLayer *MapLayerSettings::getLayer(float distanceKm, int detailFactor) c
     it += MAP_DEFAULT_DETAIL_FACTOR - detailFactor;
 
   if(it >= layers.end())
-    return &layers.last();
+    return &layers.constLast();
 
   if(it < layers.begin())
     return &(*(layers.begin()));

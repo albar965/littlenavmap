@@ -206,15 +206,15 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const atools::geo::Pos& userPo
   }
 
   if(moType == map::AIRPORT)
-    entryFromAirport(result.airports.first(), entry, false /* alternate */);
+    entryFromAirport(result.airports.constFirst(), entry, false /* alternate */);
   else if(moType == map::WAYPOINT)
-    entryFromWaypoint(result.waypoints.first(), entry, resolveWaypoints);
+    entryFromWaypoint(result.waypoints.constFirst(), entry, resolveWaypoints);
   else if(moType == map::VOR)
-    entryFromVor(result.vors.first(), entry);
+    entryFromVor(result.vors.constFirst(), entry);
   else if(moType == map::NDB)
-    entryFromNdb(result.ndbs.first(), entry);
+    entryFromNdb(result.ndbs.constFirst(), entry);
   else if(moType == map::USERPOINT)
-    entryFromUserpoint(result.userpoints.first(), entry);
+    entryFromUserpoint(result.userpoints.constFirst(), entry);
   else if(moType == map::USERPOINTROUTE)
     entryFromUserPos(userPos, entry, QString(), QString(), QString());
   else
@@ -233,11 +233,11 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const proc::MapProcedureLeg& l
                                                   bool resolveWaypoints)
 {
   if(leg.navaids.hasWaypoints())
-    entryFromWaypoint(leg.navaids.waypoints.first(), entry, resolveWaypoints);
+    entryFromWaypoint(leg.navaids.waypoints.constFirst(), entry, resolveWaypoints);
   else if(leg.navaids.hasVor())
-    entryFromVor(leg.navaids.vors.first(), entry);
+    entryFromVor(leg.navaids.vors.constFirst(), entry);
   else if(leg.navaids.hasNdb())
-    entryFromNdb(leg.navaids.ndbs.first(), entry);
+    entryFromNdb(leg.navaids.ndbs.constFirst(), entry);
   else
     entryFromUserPos(leg.line.getPos2(), entry, leg.fixIdent, leg.fixRegion, QString());
 

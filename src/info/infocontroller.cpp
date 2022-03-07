@@ -39,6 +39,7 @@
 #include "options/optiondata.h"
 #include "mapgui/mapwidget.h"
 #include "gui/tabwidgethandler.h"
+#include "util/htmlbuilder.h"
 
 #include <QUrlQuery>
 
@@ -397,7 +398,7 @@ void InfoController::anchorClicked(const QUrl& url)
                                                                                    pos.isValid() ? &pos : nullptr);
 
         if(!airports.isEmpty())
-          emit showRect(airports.first().bounding, false);
+          emit showRect(airports.constFirst().bounding, false);
         else
           qWarning() << Q_FUNC_INFO << "No airport found for" << query.queryItemValue("airport");
       }
@@ -550,7 +551,7 @@ void InfoController::updateAirportInternal(bool newAirport, bool bearingChange, 
   {
     map::WeatherContext currentWeatherContext;
     bool weatherChanged = mainWindow->buildWeatherContextForInfo(currentWeatherContext,
-                                                                 currentSearchResult.airports.first());
+                                                                 currentSearchResult.airports.constFirst());
 
     // qDebug() << Q_FUNC_INFO << "newAirport" << newAirport << "weatherChanged" << weatherChanged
     // << "ident" << currentWeatherContext.ident;
@@ -559,7 +560,7 @@ void InfoController::updateAirportInternal(bool newAirport, bool bearingChange, 
     {
       HtmlBuilder html(true);
       map::MapAirport airport;
-      airportQuery->getAirportById(airport, currentSearchResult.airports.first().id);
+      airportQuery->getAirportById(airport, currentSearchResult.airports.constFirst().id);
 
       // qDebug() << Q_FUNC_INFO << "Updating html" << airport.ident << airport.id;
 
@@ -672,7 +673,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
         // Copy aircraft from the AI list to the online list if they are shadows
 
         // First check if there is already an online aircraft with the same registration in the online list
-        auto it = std::find_if(result.onlineAircraft.begin(), result.onlineAircraft.end(),
+        auto it = std::find_if(result.onlineAircraft.constBegin(), result.onlineAircraft.constEnd(),
                                [&mapAiAircraft](const map::MapOnlineAircraft& ac) -> bool
         {
           return ac.getAircraft().getAirplaneRegistration() == mapAiAircraft.getAircraft().getAirplaneRegistration();
@@ -745,14 +746,14 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
   if(!result.airports.isEmpty())
   {
 #ifdef DEBUG_INFORMATION
-    qDebug() << "Found airport" << result.airports.first().ident;
+    qDebug() << "Found airport" << result.airports.constFirst().ident;
 #endif
 
     // Only one airport shown - have to make a copy here since currentSearchResult might be equal to result
     // when updating
-    map::MapAirport airport = result.airports.first();
+    map::MapAirport airport = result.airports.constFirst();
 
-    bool changed = !currentSearchResult.hasAirports() || currentSearchResult.airports.first().id != airport.id;
+    bool changed = !currentSearchResult.hasAirports() || currentSearchResult.airports.constFirst().id != airport.id;
 
     currentSearchResult.airports.clear();
     currentSearchResult.airportIds.clear();
@@ -1319,7 +1320,7 @@ void InfoController::updateAiAirports(const atools::fs::sc::SimConnectData& data
     for(const map::MapAiAircraft& aircraft : currentSearchResult.aiAircraft)
     {
       QVector<atools::fs::sc::SimConnectAircraft>::const_iterator it =
-        std::find_if(newAiAircraft.begin(), newAiAircraft.end(),
+        std::find_if(newAiAircraft.constBegin(), newAiAircraft.constEnd(),
                      [ = ](const SimConnectAircraft& ac) -> bool
       {
         return ac.getObjectId() == aircraft.getAircraft().getObjectId();
@@ -1464,4 +1465,14 @@ void InfoController::resetWindowLayout()
   tabHandlerInfo->reset();
   tabHandlerAirportInfo->reset();
   tabHandlerAircraft->reset();
+}
+
+const QBitArray& InfoController::getEnabledProgressBits() const
+{
+  return aircraftProgressConfig->getEnabledBits();
+}
+
+const QBitArray& InfoController::getEnabledProgressBitsWeb() const
+{
+  return aircraftProgressConfig->getEnabledBitsWeb();
 }

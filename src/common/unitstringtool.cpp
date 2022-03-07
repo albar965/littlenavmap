@@ -99,19 +99,19 @@ void UnitStringTool::update(WidgetData& widgetData, bool save, bool fuelAsVolume
   {
     if(save)
       widgetData.texts << l->text();
-    l->setText(Unit::replacePlaceholders(widgetData.texts.first(), fuelAsVolume, unit));
+    l->setText(Unit::replacePlaceholders(widgetData.texts.constFirst(), fuelAsVolume, unit));
   }
   else if(QLineEdit *le = dynamic_cast<QLineEdit *>(widget))
   {
     if(save)
       widgetData.texts << le->placeholderText();
-    le->setPlaceholderText(Unit::replacePlaceholders(widgetData.texts.first(), fuelAsVolume, unit));
+    le->setPlaceholderText(Unit::replacePlaceholders(widgetData.texts.constFirst(), fuelAsVolume, unit));
   }
   else if(QTextEdit *te = dynamic_cast<QTextEdit *>(widget))
   {
     if(save)
       widgetData.texts << te->placeholderText();
-    te->setPlaceholderText(Unit::replacePlaceholders(widgetData.texts.first(), fuelAsVolume, unit));
+    te->setPlaceholderText(Unit::replacePlaceholders(widgetData.texts.constFirst(), fuelAsVolume, unit));
   }
   else if(QSpinBox *sb = dynamic_cast<QSpinBox *>(widget))
   {
@@ -141,13 +141,13 @@ void UnitStringTool::update(WidgetData& widgetData, bool save, bool fuelAsVolume
   {
     if(save)
       widgetData.texts << a->text();
-    a->setText(Unit::replacePlaceholders(widgetData.texts.first(), fuelAsVolume, unit));
+    a->setText(Unit::replacePlaceholders(widgetData.texts.constFirst(), fuelAsVolume, unit));
   }
   else if(QAbstractButton *b = dynamic_cast<QAbstractButton *>(widget))
   {
     if(save)
       widgetData.texts << b->text();
-    b->setText(Unit::replacePlaceholders(widgetData.texts.first(), fuelAsVolume, unit));
+    b->setText(Unit::replacePlaceholders(widgetData.texts.constFirst(), fuelAsVolume, unit));
   }
   else
     qWarning() << "Found unsupported widget type in save" << widget->metaObject()->className();

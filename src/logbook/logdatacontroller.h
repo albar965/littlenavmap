@@ -208,6 +208,9 @@ private:
 
   QString buildFilename(const atools::sql::SqlRecord *record, const atools::fs::pln::Flightplan& flightplan, const QString& suffix);
 
+  void undoTriggered();
+  void redoTriggered();
+
   /* Remember last aircraft for fuel calculations */
   const atools::fs::sc::SimConnectUserAircraft *aircraftAtTakeoff = nullptr;
   int logEntryId = -1;

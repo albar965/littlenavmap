@@ -122,9 +122,10 @@ extern QPen ilsCenterPen;
 extern QPen glsCenterPen;
 extern QPen profileLandOutlinePen;
 extern QPen profileWaypointLinePen;
-extern QPen profileElevationScalePen;
 extern QPen profileSafeAltLinePen;
 extern QPen profileSafeAltLegLinePen;
+
+extern QPen profileElevationScalePen;
 
 /* Objects highlighted because of selection in search */
 extern QColor highlightBackColor;
@@ -228,7 +229,7 @@ const QColor routeProcedurePreviewMissedColor = QColor(0, 120, 230);
 
 /* Text along route and approach segments */
 const QColor routeTextColor = QColor(0, 0, 0);
-const QColor routeTextBackgroundColor = QColor(255, 255, 255, 180);
+const QColor routeTextBackgroundColor = QColor(255, 255, 255, 220);
 
 const QColor routeProcedureMissedTextColor = QColor(90, 90, 90);
 const QColor routeProcedureTextColor = QColor(0, 0, 0);

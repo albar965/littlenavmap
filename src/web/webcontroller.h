@@ -107,6 +107,12 @@ public:
 
   WebMapController *getWebMapController() const;
 
+  /* Need to clear caches and tear down queries in map widget before switching database */
+  void preDatabaseLoad();
+
+  /* Initialize queries again after a database change */
+  void postDatabaseLoad();
+
 signals:
   /* Send after server is started or before server is shutdown */
   void webserverStatusChanged(bool running);
