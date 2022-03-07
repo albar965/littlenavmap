@@ -310,5 +310,6 @@
         <file>resources/icons/verticaltrack.svg</file>
         <file>resources/icons/loc.svg</file>
         <file>resources/icons/mapdisplaykeys.svg</file>
+        <file>resources/icons/airportclosed.svg</file>
     </qresource>
 </RCC>

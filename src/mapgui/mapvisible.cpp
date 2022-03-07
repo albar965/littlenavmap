@@ -143,6 +143,12 @@ void MapVisible::updateVisibleObjectsStatusBar()
           apShort.append(tr("P"));
         }
 
+        if(shown.testFlag(map::AIRPORT_CLOSED))
+        {
+          features.append(tr("closed (C)"));
+          apShort.append(tr("C"));
+        }
+
         if(shown.testFlag(map::AIRPORT_ADDON))
         {
           features.append(tr("add-on display forced (A)"));

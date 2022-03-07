@@ -1156,6 +1156,9 @@ bool MapAirport::isVisible(map::MapTypes types, int minRunwayFt, const MapLayer 
   if(!procedure() && !types.testFlag(map::AIRPORT_NO_PROCS))
     return false;
 
+  if(closed() && !types.testFlag(map::AIRPORT_CLOSED))
+    return false;
+
   return true;
 }
 

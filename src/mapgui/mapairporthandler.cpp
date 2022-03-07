@@ -17,16 +17,16 @@
 
 #include "mapgui/mapairporthandler.h"
 
-#include "settings/settings.h"
-#include "common/constants.h"
-#include "navapp.h"
 #include "atools.h"
+#include "common/constants.h"
 #include "common/unit.h"
-#include "mapgui/mapwidget.h"
-#include "mapgui/maplayer.h"
-#include "options/optiondata.h"
-#include "ui_mainwindow.h"
 #include "gui/signalblocker.h"
+#include "mapgui/maplayer.h"
+#include "mapgui/mapwidget.h"
+#include "navapp.h"
+#include "options/optiondata.h"
+#include "settings/settings.h"
+#include "ui_mainwindow.h"
 
 #include <QWidgetAction>
 #include <QDebug>
@@ -341,6 +341,7 @@ void MapAirportHandler::addToolbarButton()
                               tr("Show unlighted airports"), QKeySequence());
   actionNoProcedures = addAction(":/littlenavmap/resources/icons/airportproc.svg", tr("&No procedure"),
                                  tr("Show airports having no approach procedure"), QKeySequence());
+  actionClosed = addAction(":/littlenavmap/resources/icons/airportclosed.svg", tr("&Closed"), tr("Show closed airports"), QKeySequence());
 
   toolButton->menu()->addSeparator();
   actionAddon = addAction(":/littlenavmap/resources/icons/airportaddon.svg", tr("&Add-on"),
@@ -400,7 +401,7 @@ void MapAirportHandler::toolbarActionTriggered()
 void MapAirportHandler::flagsToActions()
 {
   atools::gui::SignalBlocker blocker({NavApp::getMainUi()->actionMapShowAirports, actionHard, actionSoft, actionWater, actionHelipad,
-                                      actionAddon, actionUnlighted, actionNoProcedures, actionEmpty});
+                                      actionAddon, actionUnlighted, actionNoProcedures, actionClosed, actionEmpty});
 
   NavApp::getMainUi()->actionMapShowAirports->setChecked(airportTypes.testFlag(map::AIRPORT));
   actionHard->setChecked(airportTypes.testFlag(map::AIRPORT_HARD));
@@ -410,6 +411,7 @@ void MapAirportHandler::flagsToActions()
   actionAddon->setChecked(airportTypes.testFlag(map::AIRPORT_ADDON));
   actionUnlighted->setChecked(airportTypes.testFlag(map::AIRPORT_UNLIGHTED));
   actionNoProcedures->setChecked(airportTypes.testFlag(map::AIRPORT_NO_PROCS));
+  actionClosed->setChecked(airportTypes.testFlag(map::AIRPORT_CLOSED));
   actionEmpty->setChecked(airportTypes.testFlag(map::AIRPORT_EMPTY));
 }
 
@@ -440,6 +442,9 @@ void MapAirportHandler::actionsToFlags()
 
   if(actionNoProcedures->isChecked())
     airportTypes |= map::AIRPORT_NO_PROCS;
+
+  if(actionClosed->isChecked())
+    airportTypes |= map::AIRPORT_CLOSED;
 
   if(actionEmpty->isChecked())
     airportTypes |= map::AIRPORT_EMPTY;

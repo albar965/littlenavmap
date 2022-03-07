@@ -94,7 +94,8 @@ private:
 
   /* Actions for toolbar button and menu */
   QAction *actionReset = nullptr, *actionHard = nullptr, *actionSoft = nullptr, *actionEmpty = nullptr, *actionAddon = nullptr,
-          *actionUnlighted = nullptr, *actionNoProcedures = nullptr, *actionWater = nullptr, *actionHelipad = nullptr;
+          *actionUnlighted = nullptr, *actionNoProcedures = nullptr, *actionClosed = nullptr, *actionWater = nullptr,
+          *actionHelipad = nullptr;
 
   /* Widget wrapper allowing to put an arbitrary widget into a menu */
   internal::SliderAction *sliderActionRunwayLength = nullptr;
