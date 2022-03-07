@@ -302,6 +302,8 @@ QByteArray JsonInfoBuilder::siminfo(SimConnectInfoData simconnectInfoData) const
            { "ground_altitude", data.getUserAircraft().getGroundAltitudeFt() },
            { "altitude_above_ground", data.getUserAircraft().getAltitudeAboveGroundFt() },
            { "heading", data.getUserAircraft().getHeadingDegMag() },
+           { "wind_direction", simconnectInfoData.windDir },
+           { "wind_speed", simconnectInfoData.windSpeed },
        };
 
     }else{

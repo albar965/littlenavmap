@@ -478,6 +478,7 @@ components:
           example: 178.37759399414062
         heading:
           type: number
+          description: "degrees"
           example: 155.85145568847656
         indicated_altitude:
           description: "ft"
@@ -505,6 +506,14 @@ components:
           description: "fpm"
           type: number
           example: -4.088292598724365
+        wind_direction:
+          description: "degrees corrected by aircrafts position magvar"
+          type: number
+          example: 50.69130325317383
+        wind_speed:
+          description: "kts"
+          type: number
+          example: 4.874995708465576
     UiInfoResponse:
       type: object
       description: Common UI info

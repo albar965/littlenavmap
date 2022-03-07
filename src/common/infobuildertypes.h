@@ -72,6 +72,8 @@ namespace InfoBuilderTypes {
      */
     struct SimConnectInfoData{
         const SimConnectData* data;
+        const float windSpeed;
+        const float windDir;
     };
 
     /**
