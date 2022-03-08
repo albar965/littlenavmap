@@ -60,6 +60,18 @@ QByteArray AbstractInfoBuilder::uiinfo(UiInfoData uiInfoData) const
     return "not implemented";
 }
 
+QByteArray AbstractInfoBuilder::features(MapFeaturesData mapFeaturesData) const
+{
+  Q_UNUSED(mapFeaturesData);
+    return "not implemented";
+}
+
+QByteArray AbstractInfoBuilder::feature(MapFeaturesData mapFeaturesData) const
+{
+  Q_UNUSED(mapFeaturesData);
+    return "not implemented";
+}
+
 
 QString AbstractInfoBuilder::getHeadingsStringByMagVar(float heading, float magvar) const {
 

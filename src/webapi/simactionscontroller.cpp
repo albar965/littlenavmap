@@ -4,9 +4,11 @@
 #include "common/abstractinfobuilder.h"
 #include "navapp.h"
 #include "atools.h"
+#include "geo/calculations.h"
 #include "fs/sc/simconnectdata.h"
 
 using InfoBuilderTypes::SimConnectInfoData;
+using atools::geo::normalizeCourse;
 
 SimActionsController::SimActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder) :
     AbstractLnmActionsController(parent, verboseParam, infoBuilder)
@@ -26,8 +28,13 @@ Q_UNUSED(request)
 
     SimConnectData simConnectData = getSimConnectData();
 
+    float windSpeed = simConnectData.getUserAircraft().getWindSpeedKts();
+    float windDir = normalizeCourse(simConnectData.getUserAircraft().getWindDirectionDegT() - simConnectData.getUserAircraft().getMagVarDeg());
+
     SimConnectInfoData data = {
-      &simConnectData
+      &simConnectData,
+      windSpeed,
+      windDir
     };
 
     response.body = infoBuilder->siminfo(data);

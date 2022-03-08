@@ -72,6 +72,8 @@ namespace InfoBuilderTypes {
      */
     struct SimConnectInfoData{
         const SimConnectData* data;
+        const float windSpeed;
+        const float windDir;
     };
 
     /**
@@ -82,6 +84,17 @@ namespace InfoBuilderTypes {
         const int zoomWeb;
         const qreal distanceUi;
         const qreal distanceWeb;
+    };
+
+    /**
+     * @brief Data container for map features data
+     */
+    struct MapFeaturesData{
+        const QList<map::MapAirport> airports;
+        const QList<map::MapNdb> ndbs;
+        const QList<map::MapVor> vors;
+        const QList<map::MapMarker> markers;
+        const QList<map::MapWaypoint> waypoints;
     };
 
 }

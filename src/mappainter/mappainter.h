@@ -103,6 +103,7 @@ struct PaintContext
   opts2::Flags2 flags2;
   map::MapWeatherSource weatherSource;
   bool visibleWidget;
+  bool paintCopyright = true;
   int mimimumRunwayLengthFt = -1;
   QVector<map::MapObjectRef> *routeDrawnNavaids; /* All navaids drawn for route and procedures. Points to vector in MapScreenIndex */
 

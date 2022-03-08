@@ -160,6 +160,7 @@ public:
   }
 
   void initQueries();
+  void updateLayers();
 
   int getShownMinimumRunwayFt() const
   {
@@ -179,7 +180,6 @@ public:
 
 private:
   void initMapLayerSettings();
-  void updateLayers();
 
   /* Implemented from LayerInterface: We  draw above all but below user tools */
   virtual QStringList renderPosition() const override

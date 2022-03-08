@@ -190,14 +190,25 @@ public:
   const QList<map::MapAirport> *getAirports(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
                                             map::MapTypes types, bool& overflow);
 
+  const QList<map::MapAirport> *getAirportsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer, bool lazy, map::MapTypes types,
+                                                      bool& overflow);
+
   /* Similar to getAirports */
   const QList<map::MapVor> *getVors(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow);
 
+  const QList<map::MapVor> *getVorsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer, bool lazy,
+                                                      bool& overflow);
   /* Similar to getAirports */
   const QList<map::MapNdb> *getNdbs(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow);
 
+  const QList<map::MapNdb> *getNdbsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer, bool lazy,
+                                                      bool& overflow);
+
   /* Similar to getAirports */
   const QList<map::MapMarker> *getMarkers(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow);
+
+  const QList<map::MapMarker> *getMarkersByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer, bool lazy,
+                                                      bool& overflow);
 
   /* Similar to getAirports */
   const QList<map::MapHolding> *getHoldings(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow);

@@ -776,7 +776,7 @@ void MapPaintWidget::showPosInternal(const atools::geo::Pos& pos, float distance
     setDistanceToMap(distanceKm, allowAdjust);
 }
 
-void MapPaintWidget::showRectStreamlined(const atools::geo::Rect& rect)
+void MapPaintWidget::showRectStreamlined(const atools::geo::Rect& rect, bool constrainDistance)
 {
   if(rect.isPoint(POS_IS_POINT_EPSILON_DEG))
     showPosNotAdjusted(rect.getTopLeft(), 0.f);
@@ -796,10 +796,12 @@ void MapPaintWidget::showRectStreamlined(const atools::geo::Rect& rect)
       // Center on rectangle
       centerRectOnMap(rect);
 
-    float distanceKm = atools::geo::nmToKm(Unit::rev(OptionData::instance().getMapZoomShowMenu(), Unit::distNmF));
+    if(constrainDistance){
+        float distanceKm = atools::geo::nmToKm(Unit::rev(OptionData::instance().getMapZoomShowMenu(), Unit::distNmF));
 
-    if(distance() < distanceKm)
-      setDistanceToMap(distanceKm);
+        if(distance() < distanceKm)
+          setDistanceToMap(distanceKm);
+    }
   }
 }
 

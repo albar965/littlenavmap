@@ -1,0 +1,164 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>OpenLayers Map</title>
+  <style>
+  </style>
+</head>
+
+<body>
+  <script>
+    /**
+     * Plugin replacing the single frame map with an iframe embedding
+     * the littlenavmap-openlayers implementation and overriding ui functions
+     * to match ol-map handling.
+     * 
+     * See: 
+     * - https://github.com/KOKAProduktion/littlenavmap-openlayers
+     * - /web/ol (dist of littlenavmap-openlayers)
+     */
+
+    var mapButton;
+    var contentIframe;
+
+    var singleFrameMapContainer;
+    var refreshForm;
+    var flightPlanForm;
+    var toolBar;
+
+    var olMapContainer;
+    var olMapIFrame;
+
+    var littlenavmap;
+
+    var overriden_submitMapAirportCmd;
+
+    function init(callback, version) {
+
+      // plugin init method
+      var returned_Value = callback(callback.TYPE_BACKGROUND, stop);
+
+      mapButton = parent.document.querySelector("button#buttonMap");
+
+      // build up plugin
+      refresh();
+
+      // handle clicks on map button (returning from other panels)
+      trapMapButton();
+
+      console.log("ol-map plugin initialised");
+    }
+
+    function trapMapButton() {
+      mapButton.addEventListener("click", trapContentIFrame)
+    }
+
+    function untrapMapButton() {
+      mapButton.removeEventListener("click", trapContentIFrame)
+    }
+
+    function trapContentIFrame() {
+      contentIframe.addEventListener("load", refresh);
+    }
+
+    function untrapContentIFrame() {
+      contentIframe.removeEventListener("load", refresh);
+    }
+
+    function refresh() {
+
+      // get refs
+      contentIframe = parent.document.querySelector("iframe[name=contentiframe]");
+      singleFrameMapContainer = contentIframe.contentDocument.querySelector("div#mapcontainer");
+      refreshForm = contentIframe.contentDocument.querySelector("form#refreshform");
+      flightPlanForm = contentIframe.contentDocument.querySelector("form#flightplanform");
+      toolBar = contentIframe.contentDocument.querySelector("div#header");
+
+      // modify single frame map related elements
+      singleFrameMapContainer.style.display = "none";
+      refreshForm.style.display = "none";
+      flightPlanForm.style.display = "none";
+      toolBar.style.position = "absolute";
+
+      // init ol-map elements
+      olMapContainer = contentIframe.contentDocument.createElement("div");
+      olMapContainer.setAttribute("id", "ol-map-container");
+      olMapContainer.style.width = "100%";
+      olMapContainer.style.height = "100%";
+      olMapContainer.style.overflow = "hidden";
+
+      olMapIFrame = contentIframe.contentDocument.createElement("iframe");
+      olMapIFrame.setAttribute("id", "ol-map-iframe");
+      olMapIFrame.style.width = "100%";
+      olMapIFrame.style.height = "100%";
+      olMapIFrame.style.border = "none";
+
+      // get littlenavmap object ref
+      olMapIFrame.addEventListener("load", () => {
+        littlenavmap = olMapIFrame.contentWindow.littlenavmap;
+        // expose littlenavmap globally
+        contentIframe.contentWindow.littlenavmap = littlenavmap;
+      })
+
+      olMapIFrame.src = "/ol/index.html";
+
+      // assembly
+      olMapContainer.appendChild(olMapIFrame);
+      contentIframe.contentDocument.body.appendChild(olMapContainer);
+
+      applyOverrides();
+
+      // remove iframe load listener (allowing navigation to other panels)
+      untrapContentIFrame();
+    }
+
+    function stop() {
+
+      // remove ol-map container
+      olMapContainer.remove();
+
+      // revert single frame map related elements
+      singleFrameMapContainer.style.display = "block";
+      refreshForm.style.display = "flex";
+      flightPlanForm.style.display = "flex";
+      toolBar.style.position = "inherit";
+
+      revertOverrides();
+
+      // remove click listener on map button
+      untrapMapButton();
+
+      console.log("ol-map plugin stopped");
+    }
+
+    function applyOverrides() {
+
+      // fetch airport info and center map on its position
+      overriden_submitMapAirportCmd = contentIframe.contentWindow.submitMapAirportCmd;
+      contentIframe.contentWindow.submitMapAirportCmd = () => {
+        var ident = contentIframe.contentDocument.querySelector("input#airporttext").value;
+        fetch("/api/airport/info?ident=" + ident).then((response) => {
+          return response.json();
+        }).then((json) => {
+          // turn off aircraft follow
+          if (littlenavmap.following) {
+            littlenavmap.map.getControls().getArray()[0].handleFollow();
+          }
+          // move to airport position
+          littlenavmap.moveTo([json.position.lon, json.position.lat]);
+        }).catch((error) => {
+          console.log(error);
+        })
+      }
+
+    }
+
+    function revertOverrides() {
+      contentIframe.contentWindow.submitMapAirportCmd = overriden_submitMapAirportCmd;
+    }
+  </script>
+</body>
+
+</html>

@@ -110,9 +110,9 @@ public:
 
   /* Show the bounding rectangle on the map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
-
-  /* streamlined for webmapcontroller from showRect(rect, false) */
-  void showRectStreamlined(const atools::geo::Rect& rect);
+  /* streamlined for webmapcontroller from showRect(rect, false)
+  *  constrainDistance determines whether map distance should be constrained by OptionData values */
+  void showRectStreamlined(const atools::geo::Rect& rect, bool constrainDistance = true);
 
   /* Show user simulator aircraft. state is tool button state */
   void showAircraft(bool centerAircraftChecked);
@@ -343,6 +343,16 @@ public:
     noNavPaint = value;
   }
 
+  bool isPaintCopyright() const
+  {
+    return paintCopyright;
+  }
+
+  void setPaintCopyright(bool value)
+  {
+    paintCopyright = value;
+  }
+
   ApronGeometryCache *getApronGeometryCache();
 
   /* true if real map display widget - false if hidden for online services or other applications */
@@ -358,6 +368,10 @@ public:
   MapScreenIndex *getScreenIndex()
   {
     return screenIndex;
+  }
+
+  MapPaintLayer *getMapPaintLayer(){
+      return paintLayer;
   }
 
   /* Saved bounding box from last zoom or scroll operation. Needed to detect view changes. */
@@ -528,6 +542,9 @@ protected:
   /* Dummy paint cycle without any navigation stuff. Just used to initialize Marble */
   bool noNavPaint = false;
 
+  /* Paint copyright note into image */
+  bool paintCopyright = true;
+  
   /* Index for theme in MapThemeHandler and *not* the combo box. */
   int currentThemeIndex = 0;
 
