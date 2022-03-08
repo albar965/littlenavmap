@@ -20,6 +20,7 @@
      * - /web/ol (dist of littlenavmap-openlayers)
      */
 
+    var mapButton;
     var contentIframe;
 
     var singleFrameMapContainer;
@@ -38,6 +39,35 @@
 
       // plugin init method
       var returned_Value = callback(callback.TYPE_BACKGROUND, stop);
+
+      mapButton = parent.document.querySelector("button#buttonMap");
+
+      // build up plugin
+      refresh();
+
+      // handle clicks on map button (returning from other panels)
+      trapMapButton();
+
+      console.log("ol-map plugin initialised");
+    }
+
+    function trapMapButton() {
+      mapButton.addEventListener("click", trapContentIFrame)
+    }
+
+    function untrapMapButton() {
+      mapButton.removeEventListener("click", trapContentIFrame)
+    }
+
+    function trapContentIFrame() {
+      contentIframe.addEventListener("load", refresh);
+    }
+
+    function untrapContentIFrame() {
+      contentIframe.removeEventListener("load", refresh);
+    }
+
+    function refresh() {
 
       // get refs
       contentIframe = parent.document.querySelector("iframe[name=contentiframe]");
@@ -80,7 +110,8 @@
 
       applyOverrides();
 
-      console.log("ol-map plugin initialised");
+      // remove iframe load listener (allowing navigation to other panels)
+      untrapContentIFrame();
     }
 
     function stop() {
@@ -95,6 +126,9 @@
       toolBar.style.position = "inherit";
 
       revertOverrides();
+
+      // remove click listener on map button
+      untrapMapButton();
 
       console.log("ol-map plugin stopped");
     }
