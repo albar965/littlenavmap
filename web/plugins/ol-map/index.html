@@ -11,8 +11,9 @@
 <body>
   <script>
     /**
-     * Plugin replacing the single frame map image with an iframe embedding
-     * the littlenavmap-openlayers implementation
+     * Plugin replacing the single frame map with an iframe embedding
+     * the littlenavmap-openlayers implementation and overriding ui functions
+     * to match ol-map handling.
      * 
      * See: 
      * - https://github.com/KOKAProduktion/littlenavmap-openlayers
@@ -28,6 +29,10 @@
 
     var olMapContainer;
     var olMapIFrame;
+
+    var littlenavmap;
+
+    var overriden_submitMapAirportCmd;
 
     function init(callback, version) {
 
@@ -60,11 +65,20 @@
       olMapIFrame.style.height = "100%";
       olMapIFrame.style.border = "none";
 
+      // get littlenavmap object ref
+      olMapIFrame.addEventListener("load", () => {
+        littlenavmap = olMapIFrame.contentWindow.littlenavmap;
+        // expose littlenavmap globally
+        contentIframe.contentWindow.littlenavmap = littlenavmap;
+      })
+
       olMapIFrame.src = "/ol/index.html";
 
       // assembly
       olMapContainer.appendChild(olMapIFrame);
       contentIframe.contentDocument.body.appendChild(olMapContainer);
+
+      applyOverrides();
 
       console.log("ol-map plugin initialised");
     }
@@ -80,7 +94,30 @@
       flightPlanForm.style.display = "flex";
       toolBar.style.position = "inherit";
 
+      revertOverrides();
+
       console.log("ol-map plugin stopped");
+    }
+
+    function applyOverrides() {
+
+      // fetch airport info and center map on its position
+      overriden_submitMapAirportCmd = contentIframe.contentWindow.submitMapAirportCmd;
+      contentIframe.contentWindow.submitMapAirportCmd = () => {
+        var ident = contentIframe.contentDocument.querySelector("input#airporttext").value;
+        fetch("/api/airport/info?ident=" + ident).then((response) => {
+          return response.json();
+        }).then((json) => {
+          littlenavmap.moveTo([json.position.lon, json.position.lat]);
+        }).catch((error) => {
+          console.log(error);
+        })
+      }
+
+    }
+
+    function revertOverrides() {
+      contentIframe.contentWindow.submitMapAirportCmd = overriden_submitMapAirportCmd;
     }
   </script>
 </body>
