@@ -219,7 +219,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Magnetic Course"), tr("Show magnetic course for start and end of line."), optsd::MEASUREMENT_MAG, true);
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("True Course"), tr("Show true course for start and end of line."), optsd::MEASUREMENT_TRUE, true);
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Radial Number"), tr("Shows the radial prefixed with \"R\" for VOR, VORDME, VORTAC, TACAN or NDB."), optsd::MEASUREMENT_RADIAL);
-  addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Radial Line"), tr("Shows an additional thin line depicting the constant course to a VOR, VORDME, VORTAC, TACAN or NDB."), optsd::MEASUREMENT_RADIAL_LINE);
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Navaid or airport ident"), tr("Show ident if attached to navaid or airport.\n"
                                                                                                                            "Also show frequency if attached to a radio navaid. "), optsd::MEASUREMENT_LABEL, true);
   // Profile =====================================================

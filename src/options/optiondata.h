@@ -506,8 +506,7 @@ enum DisplayOptionMeasurement
   MEASUREMENT_MAG = 1 << 1,
   MEASUREMENT_DIST = 1 << 2,
   MEASUREMENT_LABEL = 1 << 3,
-  MEASUREMENT_RADIAL = 1 << 4,
-  MEASUREMENT_RADIAL_LINE = 1 << 5
+  MEASUREMENT_RADIAL = 1 << 4
 };
 
 Q_DECLARE_FLAGS(DisplayOptionsMeasurement, DisplayOptionMeasurement);

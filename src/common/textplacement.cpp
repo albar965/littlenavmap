@@ -37,13 +37,8 @@ TextPlacement::TextPlacement(QPainter *painterParam, const CoordinateConverter *
                              const QRect& screenRectParam)
   : painter(painterParam), converter(coordinateConverter)
 {
-#ifdef DEBUG_ALTERNATE_ARROW
-  arrowRight = " >>";
-  arrowLeft = "<< ";
-#else
   arrowRight = tr(" ►");
   arrowLeft = tr("◄ ");
-#endif
 
   screenRect = screenRectParam;
 }

@@ -1293,13 +1293,6 @@ void MapPainterMark::paintDistanceMarks()
       painter->drawLine(x, y - SYMBOL_SIZE, x, y + SYMBOL_SIZE);
     }
 
-    // Draw radial / constant course line ========================================================
-    if(context->dOptMeasurement(optsd::MEASUREMENT_RADIAL_LINE) && m.flags.testFlag(map::DIST_MARK_RADIAL))
-    {
-      painter->setPen(QPen(m.color, lineWidth * 0.2, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
-      drawLineRadial(painter, ageo::Line(m.from, m.to));
-    }
-
     // Draw great circle line ========================================================
     painter->setPen(QPen(m.color, lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::MiterJoin));
     float distanceMeter = m.getDistanceMeter();
@@ -1317,6 +1310,7 @@ void MapPainterMark::paintDistanceMarks()
     GeoDataCoordinates to(m.to.getLonX(), m.to.getLatY(), 0, DEG);
     double initTrue = ageo::normalizeCourse(from.bearing(to, DEG, INITBRG));
     double finalTrue = ageo::normalizeCourse(from.bearing(to, DEG, FINALBRG));
+
 #ifdef DEBUG_INFORMATION_MEASUREMENT
     int precision = 3;
 #else
@@ -1327,11 +1321,7 @@ void MapPainterMark::paintDistanceMarks()
     QString initMagText = QString::number(ageo::normalizeCourse(initTrue - m.magvar), 'f', precision);
     QString finalMagText = QString::number(ageo::normalizeCourse(finalTrue - NavApp::getMagVar(m.to, m.magvar)), 'f', precision);
 
-#ifdef DEBUG_ALTERNATE_ARROW
-    QString arrowLeft = ">> ";
-#else
     QString arrowLeft = tr("► ");
-#endif
 
     if(context->dOptMeasurement(optsd::MEASUREMENT_TRUE) && context->dOptMeasurement(optsd::MEASUREMENT_MAG) &&
        initTrueText == initMagText && finalTrueText == finalMagText)
@@ -1375,7 +1365,7 @@ void MapPainterMark::paintDistanceMarks()
 
     // Draw radial number
     if(context->dOptMeasurement(optsd::MEASUREMENT_RADIAL) && m.flags.testFlag(map::DIST_MARK_RADIAL))
-      texts.append(tr("R%1").arg(ageo::normalizeCourse(m.from.angleDegToRhumb(m.to) - m.magvar), 3, 'f', 0, QChar('0')));
+      texts.append(tr("R%1").arg(ageo::normalizeCourse(initTrue - m.magvar), 3, 'f', 0, QChar('0')));
 
 #ifdef DEBUG_INFORMATION_DISTANCE
     texts.append("[" + QString::number(distanceMeter, 'f', 0) + " m]");
