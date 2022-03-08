@@ -1,0 +1,88 @@
+<!doctype html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <title>OpenLayers Map</title>
+  <style>
+  </style>
+</head>
+
+<body>
+  <script>
+    /**
+     * Plugin replacing the single frame map image with an iframe embedding
+     * the littlenavmap-openlayers implementation
+     * 
+     * See: 
+     * - https://github.com/KOKAProduktion/littlenavmap-openlayers
+     * - /web/ol (dist of littlenavmap-openlayers)
+     */
+
+    var contentIframe;
+
+    var singleFrameMapContainer;
+    var refreshForm;
+    var flightPlanForm;
+    var toolBar;
+
+    var olMapContainer;
+    var olMapIFrame;
+
+    function init(callback, version) {
+
+      // plugin init method
+      var returned_Value = callback(callback.TYPE_BACKGROUND, stop);
+
+      // get refs
+      contentIframe = parent.document.querySelector("iframe[name=contentiframe]");
+      singleFrameMapContainer = contentIframe.contentDocument.querySelector("div#mapcontainer");
+      refreshForm = contentIframe.contentDocument.querySelector("form#refreshform");
+      flightPlanForm = contentIframe.contentDocument.querySelector("form#flightplanform");
+      toolBar = contentIframe.contentDocument.querySelector("div#header");
+
+      // modify single frame map related elements
+      singleFrameMapContainer.style.display = "none";
+      refreshForm.style.display = "none";
+      flightPlanForm.style.display = "none";
+      toolBar.style.position = "absolute";
+
+      // init ol-map elements
+      olMapContainer = contentIframe.contentDocument.createElement("div");
+      olMapContainer.setAttribute("id", "ol-map-container");
+      olMapContainer.style.width = "100%";
+      olMapContainer.style.height = "100%";
+      olMapContainer.style.overflow = "hidden";
+
+      olMapIFrame = contentIframe.contentDocument.createElement("iframe");
+      olMapIFrame.setAttribute("id", "ol-map-iframe");
+      olMapIFrame.style.width = "100%";
+      olMapIFrame.style.height = "100%";
+      olMapIFrame.style.border = "none";
+
+      olMapIFrame.src = "/ol/index.html";
+
+      // assembly
+      olMapContainer.appendChild(olMapIFrame);
+      contentIframe.contentDocument.body.appendChild(olMapContainer);
+
+      console.log("ol-map plugin initialised");
+    }
+
+    function stop() {
+
+      // remove ol-map container
+      olMapContainer.remove();
+
+      // revert single frame map related elements
+      singleFrameMapContainer.style.display = "block";
+      refreshForm.style.display = "flex";
+      flightPlanForm.style.display = "flex";
+      toolBar.style.position = "inherit";
+
+      console.log("ol-map plugin stopped");
+    }
+  </script>
+</body>
+
+</html>
