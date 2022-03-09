@@ -5507,10 +5507,10 @@ Note that this value does not affect flight plan calculation or saving of flight
                 <widget class="QLineEdit" name="lineEditOptionsWeatherIvaoUrl">
                  <property name="toolTip">
                   <string>Download URL for the IVAO weather file.
-Default is &quot;http://wx.ivao.aero/metar.php&quot;.</string>
+Default is &quot;https://api.ivao.aero/v2/airports/all/metar&quot;.</string>
                  </property>
                  <property name="text">
-                  <string notr="true">https://wx.ivao.aero/metar.php</string>
+                  <string notr="true">https://api.ivao.aero/v2/airports/all/metar</string>
                  </property>
                  <property name="cursorPosition">
                   <number>30</number>

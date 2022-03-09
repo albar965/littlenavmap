@@ -261,9 +261,10 @@ void checkAndMigrateSettings()
       }
 
       if(optionsVersion <= Version("2.6.17"))
-      {
         removeAndLog(settings, "Map/MarkDisplay"); // MAP_MARK_DISPLAY
-      }
+
+      if(optionsVersion <= Version("2.7.8"))
+        removeAndLog(settings, "OptionsDialog/Widget_lineEditOptionsWeatherIvaoUrl");
 
       // Set program version to options and save ===================
       settings.setValue(lnm::OPTIONS_VERSION, programVersion.getVersionString());

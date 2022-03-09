@@ -817,7 +817,7 @@ void OptionsDialog::onlineTestUrl(const QString& url, bool statusFile)
   qDebug() << Q_FUNC_INFO << url;
   QStringList result;
 
-  if(atools::fs::weather::testUrl(url, QString(), result, 250))
+  if(atools::fs::weather::testUrl(result, url, QString(), QHash<QString, QString>(), 250))
   {
     bool ok = false;
     for(const QString& str : result)
@@ -835,18 +835,14 @@ void OptionsDialog::onlineTestUrl(const QString& url, bool statusFile)
     else
     {
       if(statusFile)
-        atools::gui::Dialog::warning(this,
-                                     tr(
-                                       "<p>Downloaded successfully but the file does not look like a status.txt file.</p>"
-                                         "<p><b>One of the keys <i>url0</i> and/or <i>url1</i> is missing.</b></p>"
-                                           "<p>First lines in file:</p><hr/><code>%1</code><hr/><br/>").
+        atools::gui::Dialog::warning(this, tr("<p>Downloaded successfully but the file does not look like a status.txt file.</p>"
+                                                "<p><b>One of the keys <i>url0</i> and/or <i>url1</i> is missing.</b></p>"
+                                                  "<p>First lines in file:</p><hr/><code>%1</code><hr/><br/>").
                                      arg(result.mid(0, 6).join("<br/>")));
       else
-        atools::gui::Dialog::warning(this,
-                                     tr(
-                                       "<p>Downloaded successfully but the file does not look like a whazzup.txt file.</p>"
-                                         "<p><b>One of the sections <i>!GENERAL</i> and/or <i>!CLIENTS</i> is missing.</b></p>"
-                                           "<p>First lines in file:</p><hr/><code>%1</code><hr/><br/>").
+        atools::gui::Dialog::warning(this, tr("<p>Downloaded successfully but the file does not look like a whazzup.txt file.</p>"
+                                                "<p><b>One of the sections <i>!GENERAL</i> and/or <i>!CLIENTS</i> is missing.</b></p>"
+                                                  "<p>First lines in file:</p><hr/><code>%1</code><hr/><br/>").
                                      arg(result.mid(0, 6).join("<br/>")));
     }
   }
@@ -1353,13 +1349,13 @@ void OptionsDialog::testWeatherNoaaUrlClicked()
   datetime.setTime(QTime(datetime.time().hour(), 0, 0));
   QString url = ui->lineEditOptionsWeatherNoaaStationsUrl->text().arg(datetime.time().hour(), 2, 10, QChar('0'));
 
-  bool result = WeatherReporter::testUrl(url, QString(), resultStr);
+  bool result = WeatherReporter::testUrl(resultStr, url, QString());
 
   QGuiApplication::restoreOverrideCursor();
 
   if(result)
     QMessageBox::information(this, QApplication::applicationName(),
-                             tr("<p>Success. First METARs in file:</p><hr/><code>%1</code><hr/><br/>").
+                             tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
                              arg(resultStr.join("<br/>")));
   else
     atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join("\n")));
@@ -1372,12 +1368,12 @@ void OptionsDialog::testWeatherVatsimUrlClicked()
   QStringList resultStr;
 
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-  bool result = WeatherReporter::testUrl(ui->lineEditOptionsWeatherVatsimUrl->text(), QString(), resultStr);
+  bool result = WeatherReporter::testUrl(resultStr, ui->lineEditOptionsWeatherVatsimUrl->text(), QString());
   QGuiApplication::restoreOverrideCursor();
 
   if(result)
     QMessageBox::information(this, QApplication::applicationName(),
-                             tr("<p>Success. First METARs in file:</p><hr/><code>%1</code><hr/><br/>").
+                             tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").
                              arg(resultStr.join("<br/>")));
   else
     atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join("\n")));
@@ -1390,13 +1386,16 @@ void OptionsDialog::testWeatherIvaoUrlClicked()
   QStringList resultStr;
 
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-  bool result = WeatherReporter::testUrl(ui->lineEditOptionsWeatherIvaoUrl->text(), QString(), resultStr);
+  bool result = WeatherReporter::testUrl(resultStr, ui->lineEditOptionsWeatherIvaoUrl->text(), QString(), {
+    {"accept", "application/json"},
+    {"apiKey", atools::strFromCryptFile(":/littlenavmap/little_navmap_keys/ivao_weather_api_key.bin", 0x2B1A96468EB62460)}
+  });
+
   QGuiApplication::restoreOverrideCursor();
 
   if(result)
     QMessageBox::information(this, QApplication::applicationName(),
-                             tr("<p>Success. First METARs in file:</p><hr/><code>%1</code><hr/><br/>").
-                             arg(resultStr.join("<br/>")));
+                             tr("<p>Success. First lines in file:</p><hr/><code>%1</code><hr/><br/>").arg(resultStr.join("<br/>")));
   else
     atools::gui::Dialog::warning(this, tr("Failed. Reason:\n%1").arg(resultStr.join("\n")));
 }
@@ -1407,7 +1406,7 @@ void OptionsDialog::testWeatherNoaaWindUrlClicked()
   qDebug() << Q_FUNC_INFO;
   QStringList resultStr;
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-  bool result = WeatherReporter::testUrl(ui->lineEditOptionsWeatherNoaaWindUrl->text(), QString(), resultStr);
+  bool result = WeatherReporter::testUrl(resultStr, ui->lineEditOptionsWeatherNoaaWindUrl->text(), QString());
   QGuiApplication::restoreOverrideCursor();
   if(result)
     QMessageBox::information(this, QApplication::applicationName(), tr("Success."));

@@ -628,8 +628,13 @@ FORMS += \
   src/routestring/routestringdialog.ui \
   src/userdata/userdatadialog.ui
 
-RESOURCES += \
-  littlenavmap.qrc
+RESOURCES += littlenavmap.qrc
+
+# =====================================================================
+# Add API key resource only if it exists
+exists($$PWD/../little_navmap_keys) {
+  RESOURCES += keys.qrc
+}
 
 ICON = resources/icons/littlenavmap.icns
 
