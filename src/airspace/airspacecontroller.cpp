@@ -219,7 +219,7 @@ const atools::geo::LineString *AirspaceController::getAirspaceGeometry(map::MapA
 
   AirspaceQuery *query = queries.value(id.src);
   if(query != nullptr)
-    return query->getAirspaceGeometryByName(id.id);
+    return query->getAirspaceGeometryById(id.id);
 
   return nullptr;
 }
@@ -516,7 +516,7 @@ void AirspaceController::collectErrors(QStringList& errors, const atools::fs::us
     errors.append(tr("File \"%1\" line %2: %3").arg(QDir(basePath).relativeFilePath(err.file)).arg(err.line).arg(err.message));
 }
 
-atools::geo::LineString *AirspaceController::getOnlineAirspaceGeoByFile(const QString& callsign)
+const atools::geo::LineString *AirspaceController::getOnlineAirspaceGeoByFile(const QString& callsign)
 {
   // Avoid deadlock while loading user airspaces
   if(!loadingUserAirspaces)
@@ -528,7 +528,7 @@ atools::geo::LineString *AirspaceController::getOnlineAirspaceGeoByFile(const QS
   return nullptr;
 }
 
-atools::geo::LineString *AirspaceController::getOnlineAirspaceGeoByName(const QString& callsign, const QString& facilityType)
+const atools::geo::LineString *AirspaceController::getOnlineAirspaceGeoByName(const QString& callsign, const QString& facilityType)
 {
   if(!loadingUserAirspaces)
   {

@@ -67,13 +67,13 @@ public:
   /* Get airspaces for map display */
   const QList<map::MapAirspace> *getAirspaces(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                               map::MapAirspaceFilter filter, float flightPlanAltitude, bool lazy, bool& overflow);
-  const atools::geo::LineString *getAirspaceGeometryByName(int airspaceId);
+  const atools::geo::LineString *getAirspaceGeometryById(int airspaceId);
 
   /* Query raw geometry blob by online callsign (name) and facility type */
-  atools::geo::LineString *getAirspaceGeometryByName(const QString& callsign, const QString& facilityType);
+  const atools::geo::LineString *getAirspaceGeometryByName(QString callsign, const QString& facilityType);
 
   /* Tries to fetch online airspace geometry by  file name. */
-  atools::geo::LineString *getAirspaceGeometryByFile(QString callsign);
+  const atools::geo::LineString *getAirspaceGeometryByFile(QString callsign);
 
   /* True if tables atc or boundary have content. Updated in clearCache and initQueries */
   bool hasAirspacesDatabase()
@@ -92,6 +92,7 @@ public:
 
 private:
   void updateAirspaceStatus();
+  const atools::geo::LineString *airspaceGeometryByNameInternal(const QString& callsign, const QString& facilityType);
 
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *db;

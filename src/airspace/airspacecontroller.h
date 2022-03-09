@@ -122,10 +122,10 @@ public:
   void loadAirspaces();
 
   /* Tries to fetch online airspace geometry by name and facility. */
-  atools::geo::LineString *getOnlineAirspaceGeoByName(const QString& callsign, const QString& facilityType);
+  const atools::geo::LineString* getOnlineAirspaceGeoByName(const QString& callsign, const QString& facilityType);
 
   /* Tries to fetch online airspace geometry by file name. */
-  atools::geo::LineString *getOnlineAirspaceGeoByFile(const QString& callsign);
+  const atools::geo::LineString* getOnlineAirspaceGeoByFile(const QString& callsign);
 
   void resetSettingsToDefault();
 

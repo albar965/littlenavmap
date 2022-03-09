@@ -2237,6 +2237,9 @@ void MainWindow::updateWindowTitle()
   else if(NavApp::getAircraftPerfController()->hasChanged())
     newTitle += tr(" - *");
 
+  if(!NavApp::getOnlineNetworkTranslated().isEmpty())
+    newTitle += tr(" - %1").arg(NavApp::getOnlineNetworkTranslated());
+
 #ifndef QT_NO_DEBUG
   newTitle += " - DEBUG";
 #endif

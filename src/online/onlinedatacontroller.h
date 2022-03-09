@@ -164,7 +164,7 @@ private:
   void startDownloader();
 
   /* Tries to fetch geometry for atc centers from the user geometry database from cache */
-  atools::geo::LineString *geometryCallback(const QString& callsign, atools::fs::online::fac::FacilityType type);
+  const atools::geo::LineString *airspaceGeometryCallback(const QString& callsign, atools::fs::online::fac::FacilityType type);
 
   /* Database manager */
   atools::fs::online::OnlinedataManager *manager;

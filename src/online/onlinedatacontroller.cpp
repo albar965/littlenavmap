@@ -104,7 +104,7 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
   connect(&downloadTimer, &QTimer::timeout, this, &OnlinedataController::startDownloadInternal);
 
   using namespace std::placeholders;
-  manager->setGeometryCallback(std::bind(&OnlinedataController::geometryCallback, this, _1, _2));
+  manager->setGeometryCallback(std::bind(&OnlinedataController::airspaceGeometryCallback, this, _1, _2));
 
 #ifdef DEBUG_ONLINE_DOWNLOAD
   downloader->enableCache(60);
@@ -458,15 +458,15 @@ void OnlinedataController::showMessageDialog()
                            tr("Message from downloaded status file:\n\n%2\n").arg(manager->getMessageFromStatus()));
 }
 
-LineString *OnlinedataController::geometryCallback(const QString& callsign, atools::fs::online::fac::FacilityType type)
+const LineString *OnlinedataController::airspaceGeometryCallback(const QString& callsign, atools::fs::online::fac::FacilityType type)
 {
   opts2::Flags2 flags2 = OptionData::instance().getFlags2();
 
-  LineString *lineString = nullptr;
+  const LineString *lineString = nullptr;
 
   // Try to get airspace boundary by name vs. callsign if set in options
   if(flags2 & opts2::ONLINE_AIRSPACE_BY_NAME)
-    lineString = NavApp::getAirspaceController()->getOnlineAirspaceGeoByName(callsign, atools::fs::online::facilityTypeText(type));
+    lineString = NavApp::getAirspaceController()->getOnlineAirspaceGeoByName(callsign, atools::fs::online::facilityTypeToDb(type));
 
   // Try to get airspace boundary by file name vs. callsign if set in options
   if(flags2 & opts2::ONLINE_AIRSPACE_BY_FILE)

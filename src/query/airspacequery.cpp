@@ -239,7 +239,7 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
   return &airspaceCache.list;
 }
 
-const LineString *AirspaceQuery::getAirspaceGeometryByName(int airspaceId)
+const LineString *AirspaceQuery::getAirspaceGeometryById(int airspaceId)
 {
   if(airspaceLineCache.contains(airspaceId))
     return airspaceLineCache.object(airspaceId);
@@ -261,14 +261,14 @@ const LineString *AirspaceQuery::getAirspaceGeometryByName(int airspaceId)
   }
 }
 
-LineString *AirspaceQuery::getAirspaceGeometryByFile(QString callsign)
+const LineString *AirspaceQuery::getAirspaceGeometryByFile(QString callsign)
 {
   if(airspaceGeoByFileQuery != nullptr)
   {
     if(onlineCenterGeoFileCache.contains(callsign))
     {
       // Return nullptr if empty - empty objects in cache indicate object not present
-      LineString *lineString = onlineCenterGeoFileCache.object(callsign);
+      const LineString *lineString = onlineCenterGeoFileCache.object(callsign);
       if(lineString != nullptr && !lineString->isEmpty())
         return lineString;
     }
@@ -303,16 +303,48 @@ LineString *AirspaceQuery::getAirspaceGeometryByFile(QString callsign)
   return nullptr;
 }
 
-LineString *AirspaceQuery::getAirspaceGeometryByName(const QString& callsign, const QString& facilityType)
+const LineString *AirspaceQuery::getAirspaceGeometryByName(QString callsign, const QString& facilityType)
 {
-  Q_UNUSED(facilityType)
+  callsign.replace('-', '_');
+
+  const LineString *geometry = airspaceGeometryByNameInternal(callsign, facilityType);
+  if(geometry == nullptr)
+  {
+    QStringList callsignSplit = callsign.split('_');
+
+    // Work on middle section
+    if(callsignSplit.size() > 2)
+    {
+      if(callsign.section('_', 1, 1).size() > 1)
+      {
+        // Shorten middle initial: "EDGG_DKB_CTR" to "EDGG_D_CTR"
+        callsignSplit[1] = callsignSplit[1].mid(1);
+        geometry = airspaceGeometryByNameInternal(callsignSplit.join('_'), facilityType);
+      }
+
+      if(geometry == nullptr)
+      {
+        // Remove middle initial "EDGG_D_CTR" to "EDGG_CTR"
+        callsignSplit.removeAt(1);
+        geometry = airspaceGeometryByNameInternal(callsignSplit.join('_'), facilityType);
+      }
+    }
+  }
+  return geometry;
+}
+
+const LineString *AirspaceQuery::airspaceGeometryByNameInternal(const QString& callsign, const QString& facilityType)
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << callsign << facilityType;
+#endif
 
   if(airspaceGeoByNameQuery != nullptr)
   {
     if(onlineCenterGeoCache.contains(callsign))
     {
       // Return nullptr if empty - empty objects in cache indicate object not present
-      LineString *lineString = onlineCenterGeoCache.object(callsign);
+      const LineString *lineString = onlineCenterGeoCache.object(callsign);
       if(lineString != nullptr && !lineString->isEmpty())
         return lineString;
     }
@@ -322,6 +354,7 @@ LineString *AirspaceQuery::getAirspaceGeometryByName(const QString& callsign, co
 
       // Check if the airspace name matches the callsign
       airspaceGeoByNameQuery->bindValue(":name", callsign);
+      airspaceGeoByNameQuery->bindValue(":type", facilityType.isEmpty() ? "%" : facilityType);
       airspaceGeoByNameQuery->exec();
 
       if(airspaceGeoByNameQuery->next())
@@ -458,8 +491,7 @@ void AirspaceQuery::initQueries()
   if(!(source & map::AIRSPACE_SRC_ONLINE))
   {
     airspaceGeoByNameQuery = new SqlQuery(db);
-
-    airspaceGeoByNameQuery->prepare("select geometry from " + table + " where name like :name");
+    airspaceGeoByNameQuery->prepare("select geometry from " + table + " where name like :name and type like :type");
 
     airspaceGeoByFileQuery = new SqlQuery(db);
     airspaceGeoByFileQuery->prepare("select b.geometry, f.filepath from " + table +
