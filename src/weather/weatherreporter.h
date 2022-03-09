@@ -123,7 +123,8 @@ public:
    * @param result metar if successfull - otherwise error message
    * @return true if successfull
    */
-  static bool testUrl(const QString& url, const QString& airportIcao, QStringList& result);
+  static bool testUrl(QStringList& result, const QString& url, const QString& airportIcao,
+                      const QHash<QString, QString>& headerParameters = QHash<QString, QString>());
 
   enum ActiveSkyType
   {

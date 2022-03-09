@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/littlenavmap">
+        <file>../little_navmap_keys/ivao_weather_api_key.bin</file>
+    </qresource>
+</RCC>

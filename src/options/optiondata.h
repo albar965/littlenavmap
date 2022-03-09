@@ -1457,6 +1457,11 @@ private:
   QString weatherXplaneWind, weatherNoaaWindBaseUrl = "https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl";
 
   QString guiFont, mapFont;
+
+  const static QString WEATHER_NOAA_DEFAULT_URL;
+  const static QString WEATHER_VATSIM_DEFAULT_URL;
+  const static QString WEATHER_IVAO_DEFAULT_URL;
+  const static QString WEATHER_NOAA_WIND_BASE_DEFAULT_URL;
 };
 
 #endif // LITTLENAVMAP_OPTIONDATA_H

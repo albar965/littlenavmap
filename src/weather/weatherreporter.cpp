@@ -76,15 +76,22 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
 
   noaaWeather = new NoaaWeatherDownloader(parentWindow, verbose);
   noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
-  noaaWeather->setFetchAirportCoords(coordFunc);
+  noaaWeather->setFetchAirportCoords(coordFunc); //// Set callback so the reader can build an index for nearest airports
 
   vatsimWeather = new WeatherNetDownload(parentWindow, atools::fs::weather::FLAT, verbose);
   vatsimWeather->setRequestUrl(OptionData::instance().getWeatherVatsimUrl());
   vatsimWeather->setFetchAirportCoords(coordFunc);
 
-  ivaoWeather = new WeatherNetDownload(parentWindow, atools::fs::weather::FLAT, verbose);
-  ivaoWeather->setRequestUrl(OptionData::instance().getWeatherIvaoUrl());
-  // Set callback so the reader can build an index for nearest airports
+  ivaoWeather = new WeatherNetDownload(parentWindow, atools::fs::weather::JSON, verbose);
+  const QLatin1String KEY(":/littlenavmap/little_navmap_keys/ivao_weather_api_key.bin");
+  if(QFile::exists(KEY))
+  {
+    ivaoWeather->setRequestUrl(OptionData::instance().getWeatherIvaoUrl());
+    ivaoWeather->setHeaderParameters({
+      {"accept", "application/json"},
+      {"apiKey", atools::strFromCryptFile(KEY, 0x2B1A96468EB62460)}
+    });
+  }
   ivaoWeather->setFetchAirportCoords(coordFunc);
 
   // Update IVAO and NOAA timeout periods - timeout is disable if weather services are not used
@@ -110,20 +117,14 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
   connect(ivaoWeather, &WeatherNetDownload::weatherDownloadFailed, this, &WeatherReporter::weatherDownloadFailed);
 
   // Forward signals from clients for SSL errors
-  connect(noaaWeather, &NoaaWeatherDownloader::weatherDownloadSslErrors,
-          this, &WeatherReporter::weatherDownloadSslErrors);
-  connect(vatsimWeather, &WeatherNetDownload::weatherDownloadSslErrors,
-          this, &WeatherReporter::weatherDownloadSslErrors);
-  connect(ivaoWeather, &WeatherNetDownload::weatherDownloadSslErrors,
-          this, &WeatherReporter::weatherDownloadSslErrors);
+  connect(noaaWeather, &NoaaWeatherDownloader::weatherDownloadSslErrors, this, &WeatherReporter::weatherDownloadSslErrors);
+  connect(vatsimWeather, &WeatherNetDownload::weatherDownloadSslErrors, this, &WeatherReporter::weatherDownloadSslErrors);
+  connect(ivaoWeather, &WeatherNetDownload::weatherDownloadSslErrors, this, &WeatherReporter::weatherDownloadSslErrors);
 
   // Forward signals from clients for progress
-  connect(noaaWeather, &NoaaWeatherDownloader::weatherDownloadProgress,
-          this, &WeatherReporter::weatherDownloadProgress);
-  connect(vatsimWeather, &WeatherNetDownload::weatherDownloadProgress,
-          this, &WeatherReporter::weatherDownloadProgress);
-  connect(ivaoWeather, &WeatherNetDownload::weatherDownloadProgress,
-          this, &WeatherReporter::weatherDownloadProgress);
+  connect(noaaWeather, &NoaaWeatherDownloader::weatherDownloadProgress, this, &WeatherReporter::weatherDownloadProgress);
+  connect(vatsimWeather, &WeatherNetDownload::weatherDownloadProgress, this, &WeatherReporter::weatherDownloadProgress);
+  connect(ivaoWeather, &WeatherNetDownload::weatherDownloadProgress, this, &WeatherReporter::weatherDownloadProgress);
 }
 
 WeatherReporter::~WeatherReporter()
@@ -567,9 +568,10 @@ void WeatherReporter::findActiveSkyFiles(QString& asnSnapshot, QString& flightpl
     qInfo() << "file does not exist" << weatherFile;
 }
 
-bool WeatherReporter::testUrl(const QString& url, const QString& airportIcao, QStringList& result)
+bool WeatherReporter::testUrl(QStringList& result, const QString& url, const QString& airportIcao,
+                              const QHash<QString, QString>& headerParameters)
 {
-  return atools::fs::weather::testUrl(url, airportIcao, result);
+  return atools::fs::weather::testUrl(result, url, airportIcao, headerParameters);
 }
 
 QString WeatherReporter::getCurrentActiveSkyName() const
