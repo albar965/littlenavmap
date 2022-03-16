@@ -131,6 +131,8 @@ enum MapType : unsigned long long
 
   /* Visible and filter flags */
   AIRPORT_ALL = AIRPORT_ALL_VISIBLE | AIRPORT | AIRPORT_EMPTY | AIRPORT_UNLIGHTED | AIRPORT_NO_PROCS | AIRPORT_CLOSED,
+
+  /* Also default value on first start */
   AIRPORT_ALL_AND_ADDON = AIRPORT_ALL | AIRPORT_ADDON,
 
   /* All online, AI and multiplayer aircraft ========================================= */

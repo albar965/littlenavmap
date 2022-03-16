@@ -305,7 +305,7 @@ const LineString *AirspaceQuery::getAirspaceGeometryByFile(QString callsign)
 
 const LineString *AirspaceQuery::getAirspaceGeometryByName(QString callsign, const QString& facilityType)
 {
-  callsign.replace('-', '_');
+  callsign.replace('-', '_').replace("__", "_");
 
   const LineString *geometry = airspaceGeometryByNameInternal(callsign, facilityType);
   if(geometry == nullptr)

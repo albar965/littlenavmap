@@ -1761,7 +1761,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
       decodedMetars(html, context.ivaoMetar, airport, tr("IVAO"), src == WEATHER_SOURCE_IVAO && weatherShown);
     } // if(flags & optsw::WEATHER_INFO_ALL)
     else
-      html.p().warning(tr("No weather display selected in options dialog in page \"Weather\"."));
+      html.p().warning(tr("No weather display selected in options dialog on page \"Weather\"."));
   } // if(info)
 }
 
@@ -4612,7 +4612,7 @@ void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder&
   if(com)
   {
     // COM is used from sim except in Navigraph all
-    head(html, tr("Scenery"));
+    head(html, tr("Data Source"));
     html.table();
     html.row2(NavApp::isNavdataAll() ? tr("Navigraph") : tr("Simulator"));
     html.tableEnd();
@@ -4620,20 +4620,20 @@ void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder&
   else if(ils)
   {
     // ILS is from navdata except in Navigraph off
-    head(html, tr("Scenery"));
+    head(html, tr("Data Source"));
     html.table();
     html.row2(!NavApp::isNavdataOff() ? tr("Navigraph") : tr("Simulator"));
     html.tableEnd();
   }
   else if(rec != nullptr)
   {
-    head(html, tr("Scenery"));
+    head(html, tr("Data Source"));
     html.table();
     html.row2(rec->valueStr("title", QString()), filepathTextShow(rec->valueStr("filepath", QString())), ahtml::NO_ENTITIES);
     html.tableEnd();
   }
   else
-    head(html, tr("Scenery - Unknown"));
+    head(html, tr("Data Source Unknown"));
 }
 
 void HtmlInfoBuilder::addAirportFolder(const MapAirport& airport, HtmlBuilder& html) const
@@ -4663,7 +4663,7 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
 
   if(sceneryInfo != nullptr)
   {
-    head(html, tr("Scenery"));
+    head(html, sceneryInfo->size() > 1 ? tr("Data Sources") : tr("Data Source"));
     html.table();
 
     int i = 0;

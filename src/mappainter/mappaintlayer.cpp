@@ -388,7 +388,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
         }
 
         // Add procedure navaids beginning from previous leg ==============
-        for(int i = passedRouteLeg - 1; i < route->size(); i++)
+        for(int i = std::max(passedRouteLeg - 1, 0); i < route->size(); i++)
         {
           const RouteLeg& routeLeg = route->value(i);
           map::MapTypes type = routeLeg.getMapObjectType();
