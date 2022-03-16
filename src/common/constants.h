@@ -72,29 +72,25 @@ const QLatin1String ACTIONS_SHOW_LOAD_FLP_WARN("Actions/ShowLoadFlpWarn");
 const QLatin1String ACTIONS_SHOW_LOAD_FMS_ALT_WARN("Actions/ShowLoadFmsAltitudeWarn");
 const QLatin1String ACTIONS_SHOW_QUIT("Actions/ShowQuit");
 const QLatin1String ACTIONS_SHOW_INVALID_PROC_WARNING("Actions/ShowInvalidProcedure");
-const QLatin1String ACTIONS_SHOW_RESET_VIEW("Actions/ShowResetView");
-const QLatin1String ACTIONS_SHOWROUTE_PARKING_WARNING("Actions/ShowRouteParkingWarning");
-const QLatin1String ACTIONS_SHOWROUTE_WARNING("Actions/ShowRouteWarning");
-const QLatin1String ACTIONS_SHOWROUTE_WARNING_MULTI("Actions/ShowRouteWarningMulti");
-const QLatin1String ACTIONS_SHOWROUTE_NO_CYCLE_WARNING("Actions/ShowRouteNoCycleWarning");
-const QLatin1String ACTIONS_SHOWROUTE_ERROR("Actions/ShowRouteError");
-const QLatin1String ACTIONS_SHOWROUTE_ALTERNATE_ERROR("Actions/ShowRouteAlternateError");
-const QLatin1String ACTIONS_SHOWROUTE_START_CHANGED("Actions/ShowRouteStartChanged");
+const QLatin1String ACTIONS_SHOW_ROUTE_PARKING_WARNING("Actions/ShowRouteParkingWarning");
+const QLatin1String ACTIONS_SHOW_ROUTE_WARNING("Actions/ShowRouteWarning");
+const QLatin1String ACTIONS_SHOW_ROUTE_WARNING_MULTI("Actions/ShowRouteWarningMulti");
+const QLatin1String ACTIONS_SHOW_ROUTE_NO_CYCLE_WARNING("Actions/ShowRouteNoCycleWarning");
+const QLatin1String ACTIONS_SHOW_ROUTE_ERROR("Actions/ShowRouteError");
+const QLatin1String ACTIONS_SHOW_ROUTE_ALTERNATE_ERROR("Actions/ShowRouteAlternateError");
+const QLatin1String ACTIONS_SHOW_ROUTE_START_CHANGED("Actions/ShowRouteStartChanged");
 const QLatin1String ACTIONS_SHOW_UPDATE_FAILED("Actions/ShowUpdateFailed");
 const QLatin1String ACTIONS_SHOW_SSL_FAILED("Actions/ShowSslFailed");
 const QLatin1String ACTIONS_SHOW_INSTALL_GLOBE("Actions/ShowInstallGlobe");
 const QLatin1String ACTIONS_SHOW_INSTALL_DIRS("Actions/ShowInstallDirs");
 const QLatin1String ACTIONS_SHOW_OVERWRITE_DATABASE("Actions/ShowOverwriteDatabase");
-const QLatin1String ACTIONS_SHOW_START_PERF_COLLECTION("Actions/ShowPerfCollection");
 const QLatin1String ACTIONS_SHOW_DELETE_TRAIL("Actions/DeleteTrail");
 const QLatin1String ACTIONS_SHOW_DELETE_MARKS("Actions/DeleteMarks");
 const QLatin1String ACTIONS_SHOW_RESET_PERF("Actions/ResetPerformanceColl");
 const QLatin1String ACTIONS_SHOW_SEARCH_CENTER_NULL("Actions/SearchCenterNull");
 const QLatin1String ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL("Actions/DownloadFailed");
 const QLatin1String ACTIONS_SHOW_TRACK_DOWNLOAD_FAIL("Actions/TrackDownloadFailed");
-const QLatin1String ACTIONS_SHOW_TRACK_DOWNLOAD_SUCCESS("Actions/TrackDownloadSuccess");
 const QLatin1String ACTIONS_SHOW_LOGBOOK_CONVERSION("Actions/LogbookConversion");
-const QLatin1String ACTIONS_SHOW_USER_AIRSPACE_NOTE("Actions/UserAirspaceNote");
 const QLatin1String ACTIONS_SHOW_SEND_SIMBRIEF("Actions/SendSimBrief");
 const QLatin1String ACTIONS_SHOW_MAPTHEME_REQUIRES_KEY("Actions/MapThemeRequiresKey");
 const QLatin1String ACTIONS_SHOW_DATABASE_OLD("Actions/DatabaseOld");
@@ -111,7 +107,6 @@ const QLatin1String ACTIONS_SHOW_CRUISE_ZERO_WARNING("Actions/ShowCruiseZeroWarn
 const QLatin1String ACTIONS_SHOW_SAVE_LNMPLN_WARNING("Actions/ShowSaveLnmplnWarning");
 const QLatin1String ACTIONS_SHOW_SAVE_WARNING("Actions/ShowSaveWarning");
 const QLatin1String ACTIONS_SHOW_ZOOM_WARNING("Actions/ShowZoomsWarning");
-const QLatin1String ACTIONS_OFFLINE_WARNING("Actions/OfflineWarning");
 
 /* Other setting key names */
 const QLatin1String DATABASE_BASEPATH("Database/BasePath");
@@ -305,7 +300,6 @@ const QLatin1String OPTIONS_DIALOG_DISPLAY_OPTIONS_ROUTE("OptionsDialog/DisplayO
 const QLatin1String OPTIONS_DIALOG_DISPLAY_OPTIONS_PROFILE("OptionsDialog/DisplayOptionsProfile");
 const QLatin1String OPTIONS_DIALOG_DISPLAY_OPTIONS_NAVAID("OptionsDialog/DisplayOptionsNavAid");
 const QLatin1String OPTIONS_DIALOG_GUI_STYLE_INDEX("OptionsDialog/GuiStyleIndex");
-const QLatin1String OPTIONS_DIALOG_WARN_STYLE("OptionsDialog/StyleWarning");
 const QLatin1String OPTIONS_DIALOG_WEB_DOCROOT_DLG("OptionsDialog/WebDocroot");
 const QLatin1String OPTIONS_DIALOG_SHOW_SPLASH("OptionsDialog/Widget_checkBoxOptionsStartupShowSplash");
 

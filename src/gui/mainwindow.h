@@ -343,6 +343,8 @@ private:
   void routeCenter();
   bool routeCheckForChanges();
   void showMapLegend();
+
+  /* Reset all "do not show this again" message box status values */
   void resetMessages();
   void resetAllSettings();
   void showDatabaseFiles();

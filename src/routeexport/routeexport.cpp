@@ -1257,7 +1257,7 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
     message += reallyContinue;
 
     int result = dialog->showQuestionMsgBox(
-      multi ? lnm::ACTIONS_SHOWROUTE_WARNING_MULTI : lnm::ACTIONS_SHOWROUTE_WARNING,
+      multi ? lnm::ACTIONS_SHOW_ROUTE_WARNING_MULTI : lnm::ACTIONS_SHOW_ROUTE_WARNING,
       message, doNotShowAgainText, QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
 
     if(result == QMessageBox::Cancel)
@@ -1279,7 +1279,7 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
     message += reallyContinue;
 
     int result = dialog->showQuestionMsgBox(
-      lnm::ACTIONS_SHOWROUTE_NO_CYCLE_WARNING,
+      lnm::ACTIONS_SHOW_ROUTE_NO_CYCLE_WARNING,
       message, doNotShowAgainText, QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
 
     if(result == QMessageBox::No)
@@ -1304,7 +1304,7 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
 
     message += tr("The departure airport has parking spots but no parking was selected for this Flight Plan.");
     int result = dialog->showQuestionMsgBox(
-      lnm::ACTIONS_SHOWROUTE_PARKING_WARNING,
+      lnm::ACTIONS_SHOW_ROUTE_PARKING_WARNING,
       message,
       tr("Do not &show this dialog again and save Flight Plan in the future."),
       BUTTONS, QMessageBox::Yes, QMessageBox::Save);

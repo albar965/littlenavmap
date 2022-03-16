@@ -201,6 +201,5 @@ void UpdateHandler::updateFailed(QString errorString)
   if(manual)
     QMessageBox::warning(mainWindow, QApplication::applicationName(), message);
   else
-    atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_UPDATE_FAILED, message,
-                                                   tr("Do not &show this dialog again."));
+    atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_UPDATE_FAILED, message, tr("Do not &show this dialog again."));
 }

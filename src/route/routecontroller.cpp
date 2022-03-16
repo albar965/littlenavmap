@@ -1139,7 +1139,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   {
     NavApp::closeSplashScreen();
     QTimer::singleShot(0, this, [ = ](void) -> void {
-      atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_START_CHANGED,
+      atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_ROUTE_START_CHANGED,
                                                      tr("The flight plan had no valid start position.\n"
                                                         "The start position is now set to the longest "
                                                         "primary runway of the departure airport."),
@@ -1976,7 +1976,7 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
 
   QGuiApplication::restoreOverrideCursor();
   if(!found && !canceled)
-    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOWROUTE_ERROR,
+    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_ROUTE_ERROR,
                                                    tr("Cannot calculate flight plan.\n\n"
                                                       "Try another calculation type,\n"
                                                       "change the cruise altitude or\n"

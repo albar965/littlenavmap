@@ -267,6 +267,7 @@ SOURCES += \
   src/gui/holddialog.cpp \
   src/gui/coordinatedialog.cpp \
   src/gui/mainwindow.cpp \
+  src/gui/messagesettings.cpp \
   src/gui/runwayselection.cpp \
   src/gui/statusbareventfilter.cpp \
   src/gui/stylehandler.cpp \
@@ -455,6 +456,7 @@ HEADERS  += \
   src/gui/holddialog.h \
   src/gui/coordinatedialog.h \
   src/gui/mainwindow.h \
+  src/gui/messagesettings.h \
   src/gui/runwayselection.h \
   src/gui/statusbareventfilter.h \
   src/gui/stylehandler.h \

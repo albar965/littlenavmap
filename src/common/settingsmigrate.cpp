@@ -21,14 +21,15 @@
 #include "common/constants.h"
 #include "util/version.h"
 #include "options/optiondata.h"
+#include "gui/messagesettings.h"
 
-#include <QDebug>
 #include <QApplication>
-#include <QRegularExpression>
-#include <QFile>
+#include <QDebug>
 #include <QDir>
-#include <QSettings>
+#include <QFile>
 #include <QFont>
+#include <QRegularExpression>
+#include <QSettings>
 
 using atools::settings::Settings;
 using  atools::util::Version;
@@ -36,6 +37,12 @@ using  atools::util::Version;
 namespace migrate {
 
 static Version optionsVersion;
+
+void removeAllAndLog(Settings& settings)
+{
+  qInfo() << Q_FUNC_INFO << "Removing all keys";
+  settings.clearSettings();
+}
 
 void removeAndLog(Settings& settings, const QString& key)
 {
@@ -57,30 +64,6 @@ void checkAndMigrateSettings()
   {
     qInfo() << Q_FUNC_INFO << "Options" << optionsVersion << "program" << programVersion;
 
-    // Migrate map style file =======================================================================
-    QFile nightstyleFile(Settings::getPath() + QDir::separator() + "little_navmap_nightstyle.ini");
-    QFile mapstyleFile(Settings::getPath() + QDir::separator() + "little_navmap_mapstyle.ini");
-    QSettings mapstyleSettings(mapstyleFile.fileName(), QSettings::IniFormat);
-    QSettings nightstyleSettings(nightstyleFile.fileName(), QSettings::IniFormat);
-    Version mapstyleVersion(mapstyleSettings.value("Options/Version").toString());
-
-    // No version or old
-    if(!mapstyleVersion.isValid() || mapstyleVersion < Version("2.0.1.beta"))
-    {
-      qInfo() << Q_FUNC_INFO << "Moving little_navmap_mapstyle.ini to backup";
-
-      // Backup with version name
-      QString newName = Settings::getPath() + QDir::separator() + "little_navmap_mapstyle_backup" +
-                        (mapstyleVersion.isValid() ? "_" + mapstyleVersion.getVersionString() : "") +
-                        ".ini";
-
-      // Rename so LNM can create a new one later
-      if(mapstyleFile.rename(newName))
-        qInfo() << "Renamed" << mapstyleFile.fileName() << "to" << newName;
-      else
-        qWarning() << "Renaming" << mapstyleFile.fileName() << "to" << newName << "failed";
-    }
-
     // Migrate settings =======================================================================
     if(optionsVersion != programVersion)
     {
@@ -88,37 +71,10 @@ void checkAndMigrateSettings()
         optionsVersion << "Program version" << programVersion << ".";
 
       // ===============================================================
-      if(optionsVersion <= Version("2.0.2"))
+      if(optionsVersion < Version("2.4.0"))
       {
-        // CenterRadiusACC=60 and CenterRadiusFIR=60
-        qInfo() << Q_FUNC_INFO << "Adjusting Online/CenterRadiusACC and Online/CenterRadiusFIR";
-        if(settings.valueInt("Online/CenterRadiusACC", -1) == -1)
-          settings.setValue("Online/CenterRadiusACC", 100);
-        if(settings.valueInt("Online/CenterRadiusFIR", -1) == -1)
-          settings.setValue("Online/CenterRadiusFIR", 100);
-        settings.syncSettings();
-      }
-
-      // ===============================================================
-      if(optionsVersion < Version("2.2.4"))
-      {
-        qInfo() << Q_FUNC_INFO << "Adjusting NOAA URL";
-        // http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT to
-        // https://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT
-        // in widget Widget_lineEditOptionsWeatherNoaaUrl
-
-        // Widget_lineEditOptionsWeatherNoaaUrl=http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT
-        QString noaaUrl = settings.valueStr("OptionsDialog/Widget_lineEditOptionsWeatherNoaaUrl");
-
-        if(noaaUrl.isEmpty() ||
-           noaaUrl.toLower() == "http://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.txt")
-        {
-          qInfo() << Q_FUNC_INFO << "Changing NOAA URL to HTTPS";
-          // Need to cast to QString to avoid using the overloaded boolean method
-          settings.setValue("OptionsDialog/Widget_lineEditOptionsWeatherNoaaUrl",
-                            QString("https://tgftp.nws.noaa.gov/data/observations/metar/stations/%1.TXT"));
-          settings.syncSettings();
-        }
+        qInfo() << Q_FUNC_INFO << "Clearing all settings before 2.4.0";
+        removeAllAndLog(settings);
       }
 
       // ===============================================================
@@ -127,9 +83,6 @@ void checkAndMigrateSettings()
         qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before 2.4.2.beta";
         removeAndLog(settings, lnm::ROUTE_STRING_DIALOG_OPTIONS);
         settings.syncSettings();
-
-        nightstyleSettings.remove("StyleColors/Disabled_WindowText");
-        nightstyleSettings.sync();
       }
 
       // ===============================================================
@@ -264,7 +217,13 @@ void checkAndMigrateSettings()
         removeAndLog(settings, "Map/MarkDisplay"); // MAP_MARK_DISPLAY
 
       if(optionsVersion <= Version("2.7.8"))
+      {
         removeAndLog(settings, "OptionsDialog/Widget_lineEditOptionsWeatherIvaoUrl");
+        removeAndLog(settings, "Map/Airports");
+      }
+
+      qInfo() << Q_FUNC_INFO << "Clearing all essential messages since version differs";
+      messages::resetEssentialMessages();
 
       // Set program version to options and save ===================
       settings.setValue(lnm::OPTIONS_VERSION, programVersion.getVersionString());

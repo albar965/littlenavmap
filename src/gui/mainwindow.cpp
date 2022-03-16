@@ -22,6 +22,7 @@
 #include "common/constants.h"
 #include "common/dirtool.h"
 #include "common/elevationprovider.h"
+#include "gui/messagesettings.h"
 #include "common/mapcolors.h"
 #include "common/settingsmigrate.h"
 #include "common/unit.h"
@@ -3276,58 +3277,9 @@ void MainWindow::openOptionsDialog()
   optionsDialog->open();
 }
 
-/* Reset all "do not show this again" message box status values */
 void MainWindow::resetMessages()
 {
-  qDebug() << "resetMessages";
-  Settings& settings = Settings::instance();
-
-  // Show all message dialogs again
-  settings.setValue(lnm::ACTIONS_SHOW_DISCONNECT_INFO, true);
-  settings.setValue(lnm::ACTIONS_SHOW_LOAD_FLP_WARN, true);
-  settings.setValue(lnm::ACTIONS_SHOW_QUIT, true);
-  settings.setValue(lnm::ACTIONS_SHOW_INVALID_PROC_WARNING, true);
-  settings.setValue(lnm::ACTIONS_SHOW_RESET_VIEW, true);
-  settings.setValue(lnm::ACTIONS_SHOWROUTE_PARKING_WARNING, true);
-  settings.setValue(lnm::ACTIONS_SHOWROUTE_WARNING, true);
-  settings.setValue(lnm::ACTIONS_SHOWROUTE_WARNING_MULTI, true);
-  settings.setValue(lnm::ACTIONS_SHOWROUTE_ERROR, true);
-  settings.setValue(lnm::ACTIONS_SHOWROUTE_ALTERNATE_ERROR, true);
-  settings.setValue(lnm::ACTIONS_SHOWROUTE_START_CHANGED, true);
-  settings.setValue(lnm::OPTIONS_DIALOG_WARN_STYLE, true);
-  settings.setValue(lnm::ACTIONS_SHOW_LOAD_FMS_ALT_WARN, true);
-  settings.setValue(lnm::ACTIONS_SHOW_SAVE_WARNING, true);
-  settings.setValue(lnm::ACTIONS_SHOW_SAVE_LNMPLN_WARNING, true);
-  settings.setValue(lnm::ACTIONS_SHOW_ZOOM_WARNING, true);
-  settings.setValue(lnm::ACTIONS_OFFLINE_WARNING, true);
-  settings.setValue(lnm::ACTIONS_SHOW_UPDATE_FAILED, true);
-  settings.setValue(lnm::ACTIONS_SHOW_SSL_FAILED, true);
-  settings.setValue(lnm::ACTIONS_SHOW_OVERWRITE_DATABASE, true);
-  settings.setValue(lnm::ACTIONS_SHOW_NAVDATA_WARNING, true);
-  settings.setValue(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING, true);
-  settings.setValue(lnm::ACTIONS_SHOWROUTE_NO_CYCLE_WARNING, true);
-  settings.setValue(lnm::ACTIONS_SHOW_INSTALL_GLOBE, true);
-  settings.setValue(lnm::ACTIONS_SHOW_INSTALL_DIRS, true);
-  settings.setValue(lnm::ACTIONS_SHOW_START_PERF_COLLECTION, true);
-  settings.setValue(lnm::ACTIONS_SHOW_DELETE_TRAIL, true);
-  settings.setValue(lnm::ACTIONS_SHOW_DELETE_MARKS, true);
-  settings.setValue(lnm::ACTIONS_SHOW_RESET_PERF, true);
-  settings.setValue(lnm::ACTIONS_SHOW_SEARCH_CENTER_NULL, true);
-  settings.setValue(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL, true);
-  settings.setValue(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_FAIL, true);
-  settings.setValue(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_SUCCESS, true);
-  settings.setValue(lnm::ACTIONS_SHOW_LOGBOOK_CONVERSION, true);
-  settings.setValue(lnm::ACTIONS_SHOW_USER_AIRSPACE_NOTE, true);
-  settings.setValue(lnm::ACTIONS_SHOW_SEND_SIMBRIEF, true);
-  settings.setValue(lnm::ACTIONS_SHOW_MAPTHEME_REQUIRES_KEY, true);
-  settings.setValue(lnm::ACTIONS_SHOW_DATABASE_OLD, true);
-
-  settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_ONLINE, true);
-  settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_WIND, true);
-  settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_TRACK, true);
-  settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_WEATHER, true);
-  settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_SIMBRIEF, true);
-
+  messages::resetAllMessages();
   setStatusMessage(tr("All message dialogs reset."));
 }
 
