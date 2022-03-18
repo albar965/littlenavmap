@@ -783,11 +783,11 @@ const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonB
   return fetchAirports(rect, airportByRectQuery, lazy, false /* overview */, addon, normal, overflow);
 }
 
-const QList<map::MapAirport> *MapQuery::getAirportsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer, bool lazy, map::MapTypes types,
-                                                    bool& overflow)
+const QList<map::MapAirport> *MapQuery::getAirportsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer, bool lazy,
+                                                          map::MapTypes types, bool& overflow)
 {
 
-  const GeoDataLatLonBox latLonBox= GeoDataLatLonBox(rect.getNorth(),rect.getSouth(),rect.getEast(), rect.getWest());
+  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest());
 
   // Get flags for running separate queries for add-on and normal airports
   bool addon = types.testFlag(map::AIRPORT_ADDON);
@@ -828,16 +828,14 @@ const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const 
   return &vorCache.list;
 }
 
-const QList<map::MapVor> *MapQuery::getVorsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer,
-                                            bool lazy, bool& overflow)
+const QList<map::MapVor> *MapQuery::getVorsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
-  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(),rect.getSouth(),rect.getEast(), rect.getWest(), GeoDataCoordinates::Degree);
-  return getVors(latLonBox,mapLayer,lazy,overflow);
+  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(),
+                                                      rect.getWest(), GeoDataCoordinates::Degree);
+  return getVors(latLonBox, mapLayer, lazy, overflow);
 }
 
-
-const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                            bool lazy, bool& overflow)
+const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
   ndbCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                        [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -864,11 +862,11 @@ const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const 
   return &ndbCache.list;
 }
 
-const QList<map::MapNdb> *MapQuery::getNdbsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer,
-                                            bool lazy, bool& overflow)
+const QList<map::MapNdb> *MapQuery::getNdbsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
-  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(),rect.getSouth(),rect.getEast(), rect.getWest(), GeoDataCoordinates::Degree);
-  return getNdbs(latLonBox,mapLayer,lazy,overflow);
+  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(),
+                                                      rect.getWest(), GeoDataCoordinates::Degree);
+  return getNdbs(latLonBox, mapLayer, lazy, overflow);
 }
 
 const QList<map::MapUserpoint> MapQuery::getUserdataPoints(const GeoDataLatLonBox& rect, const QStringList& types,
@@ -969,8 +967,7 @@ QString MapQuery::airportIdentFromQuery(const QString& queryStr, const QString& 
   return airport;
 }
 
-const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                                  bool lazy, bool& overflow)
+const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
   markerCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                           [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -998,10 +995,11 @@ const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, 
 }
 
 const QList<map::MapMarker> *MapQuery::getMarkersByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer,
-                                            bool lazy, bool& overflow)
+                                                        bool lazy, bool& overflow)
 {
-  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(),rect.getSouth(),rect.getEast(), rect.getWest(), GeoDataCoordinates::Degree);
-  return getMarkers(latLonBox,mapLayer,lazy,overflow);
+  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(),
+                                                      rect.getWest(), GeoDataCoordinates::Degree);
+  return getMarkers(latLonBox, mapLayer, lazy, overflow);
 }
 
 const QList<map::MapHolding> *MapQuery::getHoldings(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
@@ -1111,8 +1109,7 @@ const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer
  * @param overview fetch only incomplete data for overview airports
  * @return pointer to the airport cache
  */
-const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect,
-                                                      atools::sql::SqlQuery *query,
+const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
                                                       bool lazy, bool overview, bool addon, bool normal, bool& overflow)
 {
   if(airportCache.list.isEmpty() && !lazy)
@@ -1218,8 +1215,7 @@ void MapQuery::runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const 
     QString bestRunway = atools::fs::util::runwayBestFit(name, aquery->getRunwayNames(airport.id));
 
     if(!bestRunway.isEmpty())
-      getMapObjectByIdent(result, map::RUNWAYEND, bestRunway, QString(), airport.ident,
-                          navData /* airport or runway from nav database */);
+      getMapObjectByIdent(result, map::RUNWAYEND, bestRunway, QString(), airport.ident, navData /* airport or runway from nav database */);
   }
 
   if(result.runwayEnds.isEmpty())
