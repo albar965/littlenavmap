@@ -2827,8 +2827,10 @@ void ProcedureQuery::insertSidStarRunway(proc::MapProcedureLegs& legs, const QSt
       // Assign first matching runway for this sid if not assigned yet
       legs.procedureRunway = anyMatchingRunwayForSidStar(legs.approachArincName, runwayNames);
     else
+    {
       // Assign given runway
-      legs.procedureRunway = runway;
+      legs.procedureRunway = atools::fs::util::runwayBestFitFromList(runway, runwayNames);
+    }
 
     legs.runwayEnd = airportQueryNav->getRunwayEndByName(legs.ref.airportId, legs.procedureRunway);
 

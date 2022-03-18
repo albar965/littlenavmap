@@ -1051,9 +1051,13 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
 {
   bool closed = rec->valueBool("has_closed_markings");
 
-  html.br().br().text(rec->valueStr("name"), (closed ? (ahtml::STRIKEOUT) : ahtml::NONE) |
-                      ahtml::BOLD | ahtml::BIG);
+  QString name = rec->valueStr("name");
+  html.br().br().text(name, (closed ? (ahtml::STRIKEOUT) : ahtml::NONE) | ahtml::BOLD | ahtml::BIG);
   html.table();
+
+  if(name.endsWith('T'))
+    html.row2(tr("Uses true course"), QString());
+
   if(closed)
     html.row2(tr("Closed"), QString());
   html.row2(tr("Heading:"), courseTextFromTrue(hdgPrimTrue, airport.magvar, true), ahtml::NO_ENTITIES);

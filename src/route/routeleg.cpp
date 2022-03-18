@@ -971,7 +971,7 @@ bool RouteLeg::isAirwaySetAndInvalid(float altitudeFt, QStringList *errors, bool
       bool track = isTrack() || name.length() == 1 || ok ||
                    // AUSOTS like "MY16"
                    (atools::charAt(name, 0).isLetter() && atools::charAt(name, 1).isLetter() &&
-                    atools::charAt(name, 2).isNumber() && atools::charAt(name, 3).isNumber());
+                    atools::charAt(name, 2).isDigit() && atools::charAt(name, 3).isDigit());
 
       invalid = true;
       if(errors != nullptr)

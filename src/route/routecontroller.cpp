@@ -3858,6 +3858,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
       route.removeProcedureLegs(proc::PROCEDURE_ARRIVAL_ALL);
       routeSetDestinationInternal(airportSim);
     }
+
     // Will take care of the flight plan entries too
     if(legs.mapType & proc::PROCEDURE_STAR)
     {
@@ -3865,6 +3866,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
       NavApp::getProcedureQuery()->insertSidStarRunway(legs, sidStarRunway);
       route.setStarProcedureLegs(legs);
     }
+
     if(legs.mapType & proc::PROCEDURE_APPROACH_ALL_MISSED)
       route.setArrivalProcedureLegs(legs);
 
@@ -3879,6 +3881,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
       route.removeProcedureLegs(proc::PROCEDURE_DEPARTURE);
       routeSetDepartureInternal(airportSim);
     }
+
     // Assign runway for SID/STAR than can have multiple runways
     NavApp::getProcedureQuery()->insertSidStarRunway(legs, sidStarRunway);
 
