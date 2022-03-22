@@ -106,7 +106,7 @@ void MapPainterWeather::render()
 
   // ================================
   // Limit weather display to the 10 most important/biggest airports if connected via network or SimConnect
-  if((NavApp::isConnectedNetwork() || NavApp::isSimConnect()) && NavApp::isConnectedActive() &&
+  if((NavApp::isNetworkConnect() || NavApp::isSimConnect()) && NavApp::isConnectedActive() &&
      context->weatherSource == map::WEATHER_SOURCE_SIMULATOR)
   {
     visibleAirportWeather.erase(std::remove_if(visibleAirportWeather.begin(), visibleAirportWeather.end(),

@@ -164,7 +164,7 @@ public:
   static bool isFetchAiShip();
   static bool isConnected();
   static bool isConnectedActive();
-  static bool isConnectedNetwork();
+  static bool isNetworkConnect();
   static bool isXpConnect();
   static bool isSimConnect();
   static bool isConnectedAndAircraft();

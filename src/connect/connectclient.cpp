@@ -132,7 +132,7 @@ void ConnectClient::connectToServerDialog()
 
   // Show dialog and determine which tab to open
   cd::ConnectSimType type = cd::UNKNOWN;
-  if(isConnectedNetwork() && isConnected())
+  if(isNetworkConnect() && isConnected())
     type = cd::REMOTE;
   else if(isSimConnect() && isConnected())
     type = cd::FSX_P3D_MSFS;
@@ -323,7 +323,7 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
   } // if(dataPacket.getStatus() == atools::fs::sc::OK)
   else
   {
-    bool xplane = dataReader != nullptr ? dataReader->isXplaneHandler() : false, network = isConnectedNetwork();
+    bool xplane = dataReader != nullptr ? dataReader->isXplaneHandler() : false, network = isNetworkConnect();
     atools::fs::sc::SimConnectStatus status = dataPacket.getStatus();
     QString statusText = simConnectData->getStatusText();
 
@@ -372,7 +372,7 @@ void ConnectClient::statusPosted(atools::fs::sc::SimConnectStatus status, QStrin
   qDebug() << Q_FUNC_INFO << status << statusText;
 
   if(status != atools::fs::sc::OK)
-    handleError(status, statusText, dataReader->isXplaneHandler(), isConnectedNetwork());
+    handleError(status, statusText, dataReader->isXplaneHandler(), isNetworkConnect());
   else
     mainWindow->setConnectionStatusMessageText(QString(), statusText);
 }
@@ -639,7 +639,7 @@ bool ConnectClient::isXpConnect() const
   return dataReader != nullptr && dataReader->isXplaneHandler();
 }
 
-bool ConnectClient::isConnectedNetwork() const
+bool ConnectClient::isNetworkConnect() const
 {
   return socket != nullptr && socket->isOpen();
 }
@@ -813,7 +813,7 @@ void ConnectClient::readFromSocket()
       {
         // Something went wrong - shutdown
 
-        bool xplane = dataReader != nullptr ? dataReader->isXplaneHandler() : false, network = isConnectedNetwork();
+        bool xplane = dataReader != nullptr ? dataReader->isXplaneHandler() : false, network = isNetworkConnect();
         atools::fs::sc::SimConnectStatus status = simConnectData->getStatus();
         QString statusText = simConnectData->getStatusText();
 

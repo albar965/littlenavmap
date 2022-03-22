@@ -81,7 +81,7 @@ public:
   bool isXpConnect() const;
 
   /* Connected to Little Navconnect */
-  bool isConnectedNetwork() const;
+  bool isNetworkConnect() const;
 
   /* Just saves and restores the state of the dialog */
   void saveState();

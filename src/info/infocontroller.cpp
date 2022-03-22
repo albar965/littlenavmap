@@ -100,8 +100,7 @@ InfoController::InfoController(MainWindow *parent)
   ui->textBrowserAircraftAiInfo->setSearchPaths(paths);
 
   // Inactive texts, tooltips and placeholders
-  waitingForUpdateText = tr("Little Navmap is connected to a "
-                            "simulator or Little Navconnect.\n\n"
+  waitingForUpdateText = tr("Little Navmap is connected to %1.\n\n"
                             "Prepare the flight and load your aircraft in the simulator to see progress updates.");
 
   notConnectedText = tr("Not connected to simulator.\n\n"
@@ -167,6 +166,18 @@ InfoController::~InfoController()
   delete tabHandlerAirportInfo;
   delete tabHandlerAircraft;
   delete infoBuilder;
+}
+
+QString InfoController::getConnectionTypeText()
+{
+  if(NavApp::isNetworkConnect())
+    return tr("Little Navconnect");
+  else if(NavApp::isXpConnect())
+    return tr("X-Plane");
+  else if(NavApp::isSimConnect())
+    return tr("FSX, P3D or MSFS");
+
+  return QString();
 }
 
 void InfoController::showProgressContextMenu(const QPoint& point)
@@ -1152,7 +1163,7 @@ void InfoController::updateUserAircraftText()
     else
     {
       ui->textBrowserAircraftInfo->clear();
-      ui->textBrowserAircraftInfo->setPlaceholderText(waitingForUpdateText);
+      ui->textBrowserAircraftInfo->setPlaceholderText(waitingForUpdateText.arg(getConnectionTypeText()));
     }
   }
   else
@@ -1188,7 +1199,7 @@ void InfoController::updateAircraftProgressText()
     else
     {
       ui->textBrowserAircraftProgressInfo->clear();
-      ui->textBrowserAircraftProgressInfo->setPlaceholderText(waitingForUpdateText);
+      ui->textBrowserAircraftProgressInfo->setPlaceholderText(waitingForUpdateText.arg(getConnectionTypeText()));
     }
   }
   else
@@ -1249,7 +1260,7 @@ void InfoController::updateAiAircraftText()
     else
     {
       ui->textBrowserAircraftAiInfo->clear();
-      ui->textBrowserAircraftAiInfo->setPlaceholderText(waitingForUpdateText);
+      ui->textBrowserAircraftAiInfo->setPlaceholderText(waitingForUpdateText.arg(getConnectionTypeText()));
     }
   }
   else

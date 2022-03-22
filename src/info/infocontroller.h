@@ -161,6 +161,7 @@ private:
                       void (HtmlInfoBuilder::*func)(const TYPE&, atools::util::HtmlBuilder&) const) const;
 
   void showProgressContextMenu(const QPoint& point);
+  QString getConnectionTypeText();
 
   QString waitingForUpdateText, notConnectedText;
 

@@ -421,9 +421,9 @@ bool NavApp::isConnected()
   return connectClient->isConnected();
 }
 
-bool NavApp::isConnectedNetwork()
+bool NavApp::isNetworkConnect()
 {
-  return connectClient->isConnectedNetwork();
+  return connectClient->isNetworkConnect();
 }
 
 bool NavApp::isXpConnect()
