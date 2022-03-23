@@ -311,5 +311,6 @@
         <file>resources/icons/loc.svg</file>
         <file>resources/icons/mapdisplaykeys.svg</file>
         <file>resources/icons/airportclosed.svg</file>
+        <file>resources/icons/centeraircraftdest.svg</file>
     </qresource>
 </RCC>

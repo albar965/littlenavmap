@@ -237,7 +237,7 @@ void ProfileScrollArea::vertScrollBarValueChanged()
 {
   vertScrollBarChanged();
 
-  if(!centeringAircraft)
+  if(!changingView)
     emit jumpBackToAircraftStart();
 }
 
@@ -264,7 +264,7 @@ void ProfileScrollArea::horizScrollBarValueChanged()
 {
   horizScrollBarChanged();
 
-  if(!centeringAircraft)
+  if(!changingView)
     emit jumpBackToAircraftStart();
 }
 
@@ -446,7 +446,7 @@ bool ProfileScrollArea::keyEvent(QKeyEvent *event)
     consumed = true;
   }
 
-  if(consumed && !centeringAircraft)
+  if(consumed && !changingView)
     emit jumpBackToAircraftStart();
 
   return consumed;
@@ -454,8 +454,6 @@ bool ProfileScrollArea::keyEvent(QKeyEvent *event)
 
 bool ProfileScrollArea::mouseDoubleClickEvent(QMouseEvent *event)
 {
-  qDebug() << Q_FUNC_INFO << (event->pos() + getOffset());
-
   if(!profileWidget->hasValidRouteForDisplay())
     return false;
 
@@ -478,7 +476,7 @@ bool ProfileScrollArea::mouseMoveEvent(QMouseEvent *event)
     startDragPos = event->pos();
 
     // Event consumed - do not propagate
-    if(!centeringAircraft)
+    if(!changingView)
       emit jumpBackToAircraftStart();
     return true;
   }
@@ -583,7 +581,7 @@ bool ProfileScrollArea::wheelEvent(QWheelEvent *event)
     }
   }
 
-  if(!centeringAircraft)
+  if(!changingView)
     emit jumpBackToAircraftStart();
 
   // Consume all events
@@ -628,6 +626,10 @@ void ProfileScrollArea::scaleView(QScrollBar *scrollBar)
     calculatedHorizScrollPos = toScrollBarValue(horizScrollBar, lastHorizScrollPos);
     scrollBar->setValue(calculatedHorizScrollPos);
   }
+
+#ifdef DEBUG_INFORMATION
+  debugPrintValues();
+#endif
 }
 
 int ProfileScrollArea::toScrollBarValue(const QScrollBar *scrollBar, double scrollPos) const
@@ -698,7 +700,8 @@ void ProfileScrollArea::saveState()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  atools::gui::WidgetState(lnm::PROFILE_WINDOW_OPTIONS).save({ui->splitterProfile, ui->actionProfileCenterAircraft, ui->actionProfileFollow,
+  atools::gui::WidgetState(lnm::PROFILE_WINDOW_OPTIONS).save({ui->splitterProfile, ui->actionProfileCenterAircraft,
+                                                              ui->actionProfileZoomAircraft, ui->actionProfileFollow,
                                                               ui->actionProfileShowLabelsVert, ui->actionProfileShowLabelsHoriz,
                                                               ui->actionProfileShowScrollbars, ui->actionProfileShowTooltip,
                                                               ui->actionProfileShowZoom, ui->actionProfileShowIls,
@@ -710,11 +713,11 @@ void ProfileScrollArea::restoreState()
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   atools::gui::WidgetState(lnm::PROFILE_WINDOW_OPTIONS).restore({ui->splitterProfile, ui->actionProfileCenterAircraft,
-                                                                 ui->actionProfileFollow, ui->actionProfileShowLabelsVert,
-                                                                 ui->actionProfileShowLabelsHoriz, ui->actionProfileShowScrollbars,
-                                                                 ui->actionProfileShowTooltip, ui->actionProfileShowZoom,
-                                                                 ui->actionProfileShowIls, ui->actionProfileShowVasi,
-                                                                 ui->actionProfileShowVerticalTrack});
+                                                                 ui->actionProfileZoomAircraft, ui->actionProfileFollow,
+                                                                 ui->actionProfileShowLabelsVert, ui->actionProfileShowLabelsHoriz,
+                                                                 ui->actionProfileShowScrollbars, ui->actionProfileShowTooltip,
+                                                                 ui->actionProfileShowZoom, ui->actionProfileShowIls,
+                                                                 ui->actionProfileShowVasi, ui->actionProfileShowVerticalTrack});
   ui->splitterProfile->setHandleWidth(6);
 }
 
@@ -738,8 +741,78 @@ void ProfileScrollArea::restoreSplitter()
   }
 }
 
-bool ProfileScrollArea::centerAircraft(const QPoint& screenPoint, float verticalSpeed)
+bool ProfileScrollArea::isPointVisible(const QPoint& point)
 {
+  return atools::inRange(horizScrollBar->value(), horizScrollBar->value() + viewport->width(), point.x()) &&
+         atools::inRange(vertScrollBar->value(), vertScrollBar->value() + viewport->height(), point.y());
+}
+
+void ProfileScrollArea::centerAircraftAndDest(const QPoint& aircraftScreenPoint, const QPoint& destScreenPoint, bool zoomVertically,
+                                              bool force)
+{
+  // point1 and point2 are relative to profile widget rect
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  if(!aircraftScreenPoint.isNull() && !destScreenPoint.isNull())
+  {
+    // Convert points to floating point
+    QPointF aircraftPt(aircraftScreenPoint), destPt(destScreenPoint);
+
+    // Add margins to left point to avoid zooming in too deep
+    aircraftPt.rx() -= viewport->width() / 20.f;
+    aircraftPt.ry() -= viewport->height() / 10.f;
+
+    // Calculate relative coordinates where 0 = left edge and 1 = right edge - these are independent of the zoom
+    double relative1X = aircraftPt.x() / profileWidget->width(), relative1Y = aircraftPt.y() / profileWidget->height(),
+           relative2X = destPt.x() / profileWidget->width(), relative2Y = destPt.y() / profileWidget->height();
+
+    // Calculate zoom factor by using inverse of relative distance
+
+    // Calculate the viewport dimensions to avoid zooming in too close
+    double viewportWidthNm = viewport->width() / profileWidget->getHorizontalScale();
+    double viewportHeightFt = viewport->height() / profileWidget->getVerticalScale();
+
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << aircraftScreenPoint << destScreenPoint << aircraftPt << destPt
+             << "widthNm" << viewportWidthNm << "heightFt" << viewportHeightFt;
+    qDebug() << Q_FUNC_INFO << "rel1X" << relative1X << "rel1Y" << relative1Y << "rel2X" << relative2X << "rel2Y" << relative2Y;
+    qDebug() << Q_FUNC_INFO << "viewport" << viewport->rect() << "profile widget" << profileWidget->rect();
+    qDebug() << Q_FUNC_INFO << "VSCROLL" << vertScrollBar->value() << "HSCROLL" << horizScrollBar->value();
+#endif
+
+    changingView = true;
+
+    // Zoom and postion only if value has changed and current zoom is not closer than 10 NM for the viewport
+    double relHoriz = std::abs(relative1X - relative2X);
+    if(relHoriz > 0.001)
+    {
+      int zoomHoriz = static_cast<int>(1. / relHoriz);
+      if(force || (ui->horizontalSliderProfileZoom->value() != zoomHoriz && viewportWidthNm > 10.))
+      {
+        ui->horizontalSliderProfileZoom->setValue(zoomHoriz);
+        horizScrollBar->setValue(static_cast<int>(aircraftPt.x() * profileWidget->width()));
+      }
+    }
+
+    // Zoom and postion only vertically if value has changed and current zoom is not closer than 6000 ft for the viewport
+    double relVert = std::abs(relative1Y - relative2Y);
+    if(relHoriz > 0.001)
+    {
+      int zoomVert = static_cast<int>(1. / relVert);
+      if(force || (ui->verticalSliderProfileZoom->value() != zoomVert && zoomVertically && viewportHeightFt > 6000.))
+      {
+        ui->verticalSliderProfileZoom->setValue(zoomVert);
+        vertScrollBar->setValue(static_cast<int>(aircraftPt.y() * profileWidget->height()));
+      }
+    }
+
+    changingView = false;
+  }
+}
+
+void ProfileScrollArea::centerAircraft(const QPoint& aircraftScreenPoint, float verticalSpeed, bool force)
+{
+  // aircraftScreenPoint is relative to profile widget rect
   // Use rectangle on the left side of the view
   int xmarginLeft = viewport->width() / 20;
   int xmarginRight = viewport->width() * 8 / 10;
@@ -767,24 +840,20 @@ bool ProfileScrollArea::centerAircraft(const QPoint& screenPoint, float vertical
     vertPos = viewport->height() / 2;
   }
 
-  int x = screenPoint.x();
-  int y = screenPoint.y();
+  int x = aircraftScreenPoint.x();
+  int y = aircraftScreenPoint.y();
 
-  bool centered = false;
-  centeringAircraft = true;
-  if(x - xmarginLeft < horizScrollBar->value() || x > horizScrollBar->value() + viewport->width() - xmarginRight)
-  {
-    centered = true;
-    horizScrollBar->setValue(std::min(std::max(horizScrollBar->minimum(), x - xmarginLeft), horizScrollBar->maximum()));
-  }
+  changingView = true;
+  if(force || x - xmarginLeft < horizScrollBar->value() || x > horizScrollBar->value() + viewport->width() - xmarginRight)
+    horizScrollBar->setValue(x - xmarginLeft);
 
-  if(y - ymarginTop < vertScrollBar->value() || y > vertScrollBar->value() + viewport->height() - ymarginBottom)
-  {
-    centered = true;
-    vertScrollBar->setValue(std::min(std::max(vertScrollBar->minimum(), y - vertPos), vertScrollBar->maximum()));
-  }
-  centeringAircraft = false;
-  return centered;
+  if(force || y - ymarginTop < vertScrollBar->value() || y > vertScrollBar->value() + viewport->height() - ymarginBottom)
+    vertScrollBar->setValue(y - vertPos);
+  changingView = false;
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "x" << x << "y" << y << "centeringAircraft" << changingView;
+#endif
 }
 
 void ProfileScrollArea::styleChanged()
@@ -812,22 +881,28 @@ void ProfileScrollArea::optionsChanged()
 void ProfileScrollArea::setMaxVertZoom()
 {
   // Max vertical scale for window height 500 ft
-  NavApp::getMainUi()->verticalSliderProfileZoom->setMaximum(std::min(atools::roundToInt(maxWindowAlt / 500.f), 500));
-
-#ifdef DEBUG_INFORMATION
   Ui::MainWindow *ui = NavApp::getMainUi();
-  qDebug() << Q_FUNC_INFO << ui->verticalSliderProfileZoom->minimum() << ui->verticalSliderProfileZoom->maximum();
-#endif
+  ui->verticalSliderProfileZoom->setMaximum(std::min(atools::roundToInt(maxWindowAlt / 500.f), 500));
 }
 
 void ProfileScrollArea::setMaxHorizZoom()
 {
   // Max horizontal scale for window width 4 NM
   Ui::MainWindow *ui = NavApp::getMainUi();
-  ui->horizontalSliderProfileZoom->setMaximum(
-    atools::roundToInt(std::max(NavApp::getRouteConst().getTotalDistance() / 4.f, 4.f)));
+  ui->horizontalSliderProfileZoom->setMaximum(atools::roundToInt(std::max(NavApp::getRouteConst().getTotalDistance() / 4.f, 4.f)));
+}
 
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << ui->horizontalSliderProfileZoom->minimum() << ui->horizontalSliderProfileZoom->maximum();
-#endif
+void ProfileScrollArea::debugPrintValues()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  qDebug() << Q_FUNC_INFO
+           << "VERT min" << ui->verticalSliderProfileZoom->minimum() << "max" << ui->verticalSliderProfileZoom->maximum()
+           << "value" << ui->verticalSliderProfileZoom->value()
+           << "HORIZ min" << ui->horizontalSliderProfileZoom->minimum() << "max" << ui->horizontalSliderProfileZoom->maximum()
+           << "value" << ui->horizontalSliderProfileZoom->value();
+
+  qDebug() << Q_FUNC_INFO << "viewport" << viewport->size() << "profile widget" << profileWidget->size();
 }
+
+#endif

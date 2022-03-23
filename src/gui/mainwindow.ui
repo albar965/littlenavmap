@@ -12304,6 +12304,24 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Fetches the flight plan from your current SimBrief plan</string>
    </property>
   </action>
+  <action name="actionProfileZoomAircraft">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/centeraircraftdest.svg</normaloff>:/littlenavmap/resources/icons/centeraircraftdest.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Zoom to Aircraft and Destination</string>
+   </property>
+   <property name="toolTip">
+    <string>Zoom elevation profile to aircraft and destination</string>
+   </property>
+   <property name="statusTip">
+    <string>Zoom elevation profile to aircraft and destination</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>

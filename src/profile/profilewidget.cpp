@@ -126,6 +126,7 @@ ProfileWidget::ProfileWidget(QWidget *parent)
   connect(scrollArea, &ProfileScrollArea::jumpBackToAircraftStart, this, &ProfileWidget::jumpBackToAircraftStart);
   connect(scrollArea, &ProfileScrollArea::jumpBackToAircraftCancel, this, &ProfileWidget::jumpBackToAircraftCancel);
   connect(ui->actionProfileCenterAircraft, &QAction::toggled, this, &ProfileWidget::jumpBackToAircraftCancel);
+  connect(ui->actionProfileZoomAircraft, &QAction::toggled, this, &ProfileWidget::jumpBackToAircraftCancel);
 
   // Create single shot timer that will restart the thread after a delay
   updateTimer = new QTimer(this);
@@ -176,6 +177,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
   if(databaseLoadStatus || !simulatorData.getUserAircraftConst().isValid())
     return;
 
+  Ui::MainWindow *ui = NavApp::getMainUi();
   bool updateWidget = false;
 
   // Need route with update active leg and aircraft position
@@ -206,6 +208,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
 
       // Get point (NM/ft) for current update
       QPointF currentPoint(aircraftDistanceFromStart, simAlt);
+      QPoint currentScreenPoint = toScreen(currentPoint);
 
       // Add track point if delta value between last and current update is large enough
       if(simPosValid)
@@ -233,10 +236,10 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
         QPointF lastPoint;
         if(lastPosValid)
           lastPoint = QPointF(lastAircraftDistanceFromStart, lastAlt);
-
         // Update widget if delta value between last and current update is large enough
         if(!lastPosValid || // No last position
-           (toScreen(lastPoint) - toScreen(currentPoint)).manhattanLength() >= deltas.manhattanLengthDelta || // Position change on screen
+           !scrollArea->isPointVisible(currentScreenPoint) ||
+           (toScreen(lastPoint) - currentScreenPoint).manhattanLength() >= deltas.manhattanLengthDelta || // Position change on screen
            almostNotEqual(lastAlt, simAlt, deltas.altitudeDelta) // Altitude change
            )
         {
@@ -250,10 +253,22 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
             // Scale up to keep the aircraft visible
             updateScreenCoords();
 
-          // Probably center aircraft on scroll area
-          if(NavApp::getMainUi()->actionProfileCenterAircraft->isChecked() && !jumpBack->isActive())
-            scrollArea->centerAircraft(toScreen(currentPoint),
-                                       simData.getUserAircraftConst().getVerticalSpeedFeetPerMin());
+          if(!jumpBack->isActive())
+          {
+            // Vertical zoom only in descent phase
+            bool zoomVertically = route.getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE &&
+                                  aircraftDistanceFromStart > route.getTopOfDescentDistance();
+
+            // Probably center aircraft on scroll area
+            if(ui->actionProfileCenterAircraft->isChecked())
+            {
+              if(ui->actionProfileZoomAircraft->isChecked())
+                scrollArea->centerAircraftAndDest(currentScreenPoint, destinationAirportScreenPos(), zoomVertically, false /* force */);
+              else
+                scrollArea->centerAircraft(currentScreenPoint, simData.getUserAircraftConst().getVerticalSpeedFeetPerMin(),
+                                           false /* force */);
+            }
+          }
 
           // Aircraft position has changed enough
           updateWidget = true;
@@ -447,6 +462,22 @@ QPolygon ProfileWidget::toScreen(const QPolygonF& leg) const
       retval.append(pt);
   }
   return retval;
+}
+
+QPoint ProfileWidget::destinationAirportScreenPos() const
+{
+  const Route& route = NavApp::getRouteConst();
+
+  int destIdx = route.getDestinationAirportLegIndex();
+  if(destIdx != map::INVALID_INDEX_VALUE)
+  {
+    float destAlt = route.getAltitudeLegAt(destIdx).getWaypointAltitude();
+    float distanceFromStart = route.getAltitudeLegAt(destIdx).getDistanceFromStart();
+
+    if(destAlt < map::INVALID_ALTITUDE_VALUE && distanceFromStart < map::INVALID_DISTANCE_VALUE)
+      return toScreen(QPointF(distanceFromStart, destAlt));
+  }
+  return QPoint();
 }
 
 int ProfileWidget::distanceX(float distanceNm) const
@@ -1293,8 +1324,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       // Draw all airport except destination and departure
       if(leg.getMapObjectType() == map::AIRPORT && routeIndex > 0 && routeIndex < route.getDestinationAirportLegIndex())
       {
-        symPainter.drawAirportSymbol(&painter, leg.getAirport(), symPt.x(), symPt.y(), airportSize, false, false,
-                                     false);
+        symPainter.drawAirportSymbol(&painter, leg.getAirport(), symPt.x(), symPt.y(), airportSize, false, false, false);
 
         // Labels ========================
         if(routeIndex >= activeRouteLeg - 1)
@@ -2190,6 +2220,9 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   ui->actionProfileShowOnMap->setEnabled(hasPosition && hasValidRouteForDisplay());
   ui->actionProfileDeleteAircraftTrack->setEnabled(hasTrackPoints());
 
+  // Zoom to aircraft and destination is only enabled if center is checked
+  ui->actionProfileZoomAircraft->setEnabled(ui->actionProfileCenterAircraft->isChecked());
+
   QMenu menu;
   menu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
   menu.addAction(ui->actionProfileShowOnMap);
@@ -2197,6 +2230,7 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   menu.addAction(ui->actionProfileExpand);
   menu.addSeparator();
   menu.addAction(ui->actionProfileCenterAircraft);
+  menu.addAction(ui->actionProfileZoomAircraft);
   menu.addAction(ui->actionProfileDeleteAircraftTrack);
   menu.addSeparator();
   menu.addAction(ui->actionProfileShowVasi);
@@ -2220,7 +2254,7 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
     if(pos.isValid())
       emit showPos(pos, 0.f, false);
   }
-  else if(action == ui->actionProfileCenterAircraft || action == ui->actionProfileFollow)
+  else if(action == ui->actionProfileCenterAircraft || action == ui->actionProfileZoomAircraft || action == ui->actionProfileFollow)
     scrollArea->update();
   else if(action == ui->actionProfileShowIls || action == ui->actionProfileShowVasi || action == ui->actionMapShowTocTod ||
           action == ui->actionProfileShowVerticalTrack)
@@ -2419,6 +2453,7 @@ void ProfileWidget::terminateThread()
 
 void ProfileWidget::jumpBackToAircraftStart()
 {
+  // Zoom only enabled with center
   if(NavApp::getMainUi()->actionProfileCenterAircraft->isChecked())
     jumpBack->start();
 }
@@ -2430,9 +2465,9 @@ void ProfileWidget::jumpBackToAircraftCancel()
 
 void ProfileWidget::jumpBackToAircraftTimeout()
 {
-  if(NavApp::getMainUi()->actionProfileCenterAircraft->isChecked() && NavApp::isConnectedAndAircraft() &&
-     OptionData::instance().getFlags2() & opts2::ROUTE_NO_FOLLOW_ON_MOVE &&
-     aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE)
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  if(ui->actionProfileCenterAircraft->isChecked() && NavApp::isConnectedAndAircraft() &&
+     OptionData::instance().getFlags2() & opts2::ROUTE_NO_FOLLOW_ON_MOVE && aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE)
   {
     if(QApplication::mouseButtons() & Qt::LeftButton || contextMenuActive)
       // Restart as long as menu is active or user is dragging around
@@ -2441,11 +2476,20 @@ void ProfileWidget::jumpBackToAircraftTimeout()
     {
       jumpBack->cancel();
 
-      QPoint pt = toScreen(QPointF(aircraftDistanceFromStart, aircraftAlt(simData.getUserAircraft())));
-      bool centered = scrollArea->centerAircraft(pt, simData.getUserAircraft().getVerticalSpeedFeetPerMin());
+      if(ui->actionProfileCenterAircraft->isChecked())
+      {
+        // Vertical zoom only in descent phase
+        const Route& route = NavApp::getRouteConst();
+        bool zoomVertically = route.getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE &&
+                              aircraftDistanceFromStart > route.getTopOfDescentDistance();
 
-      if(centered)
-        NavApp::setStatusMessage(tr("Jumped back to aircraft."));
+        QPoint pt = toScreen(QPointF(aircraftDistanceFromStart, aircraftAlt(simData.getUserAircraft())));
+
+        if(ui->actionProfileZoomAircraft->isChecked())
+          scrollArea->centerAircraftAndDest(pt, destinationAirportScreenPos(), zoomVertically, true /* force */);
+        else
+          scrollArea->centerAircraft(pt, simData.getUserAircraftConst().getVerticalSpeedFeetPerMin(), true /* force */);
+      }
     }
   }
   else

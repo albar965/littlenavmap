@@ -159,6 +159,18 @@ public:
 
   const Route& getRoute() const;
 
+  /* Multiply with NM to get distance on screen in pixel for given distance. Divide pixel by this value to get distance in NM. */
+  float getVerticalScale() const
+  {
+    return verticalScale;
+  }
+
+  /* Multiply with feet to get altitude on screen in pixel for altitude. Divide pixel by this value to get altitude in feet. */
+  float getHorizontalScale() const
+  {
+    return horizontalScale;
+  }
+
 signals:
   /* Emitted when the mouse cursor hovers over the map profile.
    * @param pos Position on the map display.
@@ -211,9 +223,12 @@ private:
   int distanceX(float distanceNm) const;
   int altitudeY(float altitudeFt) const;
 
-  /* Convert points (x = distance and y = altitude) to screen coordinates x/y */
+  /* Convert points (x = distance and y = altitude) to screen coordinates x/y.
+   * Coordinate does not relate to the left buffer space but window rectangle. */
   QPoint toScreen(const QPointF& pt) const;
   QPolygon toScreen(const QPolygonF& leg) const;
+
+  QPoint destinationAirportScreenPos() const;
 
   void hideRubberBand();
 

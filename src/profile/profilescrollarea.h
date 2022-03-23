@@ -67,7 +67,12 @@ public:
   void restoreState();
 
   /* Check if position is outside margins and position it into left third of the profile if yes */
-  bool centerAircraft(const QPoint& screenPoint, float verticalSpeed);
+  void centerAircraft(const QPoint& aircraftScreenPoint, float verticalSpeed, bool force);
+
+  /* Adjust zoom to have aircraft and destination available */
+  void centerAircraftAndDest(const QPoint& aircraftScreenPoint, const QPoint& destScreenPoint, bool zoomVertically, bool force);
+
+  bool isPointVisible(const QPoint& point);
 
   /* Update split on style change */
   void styleChanged();
@@ -188,6 +193,11 @@ private:
   void horizScrollBarValueChanged();
   void vertScrollBarValueChanged();
 
+#ifdef DEBUG_INFORMATION
+  void debugPrintValues();
+
+#endif
+
   /* Scaling factor for widget - default is minimum as set in ui file */
   int horizScaleFactor = 1;
   int vertScaleFactor = 1;
@@ -223,7 +233,7 @@ private:
   int calculatedVertScrollPos = 0;
 
   /* Omit notifications from widgets (jumping back, ...) when updating position */
-  bool centeringAircraft = false;
+  bool changingView = false;
 };
 
 #endif // LNM_PROFILESCROLLAREA_H
