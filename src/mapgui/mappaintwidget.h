@@ -456,7 +456,7 @@ protected:
   virtual void overlayStateToMenu();
 
   /* Start jump back time - default is no-op */
-  virtual void jumpBackToAircraftStart(bool);
+  virtual void jumpBackToAircraftStart();
 
   /* Cancel all drag and drop operations - default is no-op */
   virtual void cancelDragAll();
@@ -544,7 +544,7 @@ protected:
 
   /* Paint copyright note into image */
   bool paintCopyright = true;
-  
+
   /* Index for theme in MapThemeHandler and *not* the combo box. */
   int currentThemeIndex = 0;
 

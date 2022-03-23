@@ -763,7 +763,7 @@ void MapPaintWidget::showPosInternal(const atools::geo::Pos& pos, float distance
 
   hideTooltip();
   showAircraft(false);
-  jumpBackToAircraftStart(true /* saveDistance */);
+  jumpBackToAircraftStart();
 
   if(atools::almostEqual(distanceKm, 0.f))
     // Use distance depending on double click
@@ -816,7 +816,7 @@ void MapPaintWidget::showRect(const atools::geo::Rect& rect, bool doubleClick)
 
   hideTooltip();
   showAircraft(false);
-  jumpBackToAircraftStart(true /* saveDistance */);
+  jumpBackToAircraftStart();
 
   float w = std::abs(rect.getWidthDegree());
   float h = std::abs(rect.getHeightDegree());
@@ -1098,7 +1098,7 @@ void MapPaintWidget::overlayStateToMenu()
   // No-op
 }
 
-void MapPaintWidget::jumpBackToAircraftStart(bool)
+void MapPaintWidget::jumpBackToAircraftStart()
 {
   // No-op
 }

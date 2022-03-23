@@ -118,9 +118,6 @@ public:
 
   map::MapWeatherSource getMapWeatherSource() const;
 
-  /* Update zoom */
-  void jumpBackToAircraftUpdateDistance();
-
   /* Update tooltip in case of weather changes */
   void showTooltip(bool update);
   void updateTooltip();
@@ -386,11 +383,14 @@ private:
   virtual void optionsChanged() override;
   virtual void overlayStateFromMenu() override;
   virtual void overlayStateToMenu() override;
-  virtual void jumpBackToAircraftStart(bool saveDistance) override;
+
   virtual void updateThemeUi(int index) override;
   virtual void updateMapVisibleUi() const override;
 
-  /* From center button */
+  /* Called at start of user interaction like moving or scrolling */
+  virtual void jumpBackToAircraftStart() override;
+
+  /* From center button. Stops timer. */
   virtual void jumpBackToAircraftCancel() override;
 
   /* Hide and prevent re-show */
