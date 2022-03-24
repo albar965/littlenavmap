@@ -759,14 +759,14 @@ void ProfileScrollArea::centerAircraftAndDest(const QPoint& aircraftScreenPoint,
     QPointF aircraftPt(aircraftScreenPoint), destPt(destScreenPoint);
 
     // Add margins to left point to avoid zooming in too deep
-    aircraftPt.rx() -= viewport->width() / 20.f;
+    aircraftPt.rx() -= viewport->width() / 10.f;
     aircraftPt.ry() -= viewport->height() / 10.f;
 
     // Calculate relative coordinates where 0 = left edge and 1 = right edge - these are independent of the zoom
-    double relative1X = aircraftPt.x() / profileWidget->width(), relative1Y = aircraftPt.y() / profileWidget->height(),
-           relative2X = destPt.x() / profileWidget->width(), relative2Y = destPt.y() / profileWidget->height();
-
-    // Calculate zoom factor by using inverse of relative distance
+    double relative1X = atools::minmax(0., 1., aircraftPt.x() / profileWidget->width()),
+           relative1Y = atools::minmax(0., 1., aircraftPt.y() / profileWidget->height()),
+           relative2X = atools::minmax(0., 1., destPt.x() / profileWidget->width()),
+           relative2Y = atools::minmax(0., 1., destPt.y() / profileWidget->height());
 
     // Calculate the viewport dimensions to avoid zooming in too close
     double viewportWidthNm = viewport->width() / profileWidget->getHorizontalScale();
@@ -782,27 +782,27 @@ void ProfileScrollArea::centerAircraftAndDest(const QPoint& aircraftScreenPoint,
 
     changingView = true;
 
-    // Zoom and postion only if value has changed and current zoom is not closer than 10 NM for the viewport
+    // Zoom and postion only if value has changed and current zoom is not closer than 8 NM for the viewport
     double relHoriz = std::abs(relative1X - relative2X);
-    if(relHoriz > 0.001)
+    if(relHoriz > 0.)
     {
       int zoomHoriz = static_cast<int>(1. / relHoriz);
-      if(force || (ui->horizontalSliderProfileZoom->value() != zoomHoriz && viewportWidthNm > 10.))
+      if(force || (ui->horizontalSliderProfileZoom->value() != zoomHoriz && viewportWidthNm > 6.))
       {
         ui->horizontalSliderProfileZoom->setValue(zoomHoriz);
-        horizScrollBar->setValue(static_cast<int>(aircraftPt.x() * profileWidget->width()));
+        horizScrollBar->setValue(static_cast<int>(relative1X * profileWidget->width()));
       }
     }
 
-    // Zoom and postion only vertically if value has changed and current zoom is not closer than 6000 ft for the viewport
+    // Zoom and postion only vertically if value has changed and current zoom is not closer than 3000 ft for the viewport
     double relVert = std::abs(relative1Y - relative2Y);
-    if(relHoriz > 0.001)
+    if(relHoriz > 0.)
     {
       int zoomVert = static_cast<int>(1. / relVert);
-      if(force || (ui->verticalSliderProfileZoom->value() != zoomVert && zoomVertically && viewportHeightFt > 6000.))
+      if(force || (ui->verticalSliderProfileZoom->value() != zoomVert && zoomVertically && viewportHeightFt > 3000.))
       {
         ui->verticalSliderProfileZoom->setValue(zoomVert);
-        vertScrollBar->setValue(static_cast<int>(aircraftPt.y() * profileWidget->height()));
+        vertScrollBar->setValue(static_cast<int>(relative1Y * profileWidget->height()));
       }
     }
 
