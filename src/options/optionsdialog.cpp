@@ -1192,8 +1192,7 @@ void OptionsDialog::updateButtonColors()
 }
 
 template<typename TYPE>
-void OptionsDialog::restoreOptionItemStates(const QHash<TYPE, QTreeWidgetItem *>& index,
-                                            const QString& optionPrefix) const
+void OptionsDialog::restoreOptionItemStates(const QHash<TYPE, QTreeWidgetItem *>& index, const QString& optionPrefix) const
 {
   const Settings& settings = Settings::instance();
   for(const TYPE& dispOpt : index.keys())
@@ -2120,7 +2119,8 @@ void OptionsDialog::widgetToMapThemeKeys(OptionData& data)
 {
   data.mapThemeKeys.clear();
   for(int i = 0; i < ui->tableWidgetOptionsMapKeys->rowCount(); i++)
-    data.mapThemeKeys.insert(ui->tableWidgetOptionsMapKeys->item(i, 0)->text(), ui->tableWidgetOptionsMapKeys->item(i, 1)->text());
+    data.mapThemeKeys.insert(ui->tableWidgetOptionsMapKeys->item(i, 0)->text().trimmed(),
+                             ui->tableWidgetOptionsMapKeys->item(i, 1)->text().trimmed());
 }
 
 void OptionsDialog::mapThemeKeysToWidget(const OptionData& data)
