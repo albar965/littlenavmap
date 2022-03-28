@@ -780,33 +780,43 @@ void ProfileScrollArea::centerAircraftAndDest(const QPoint& aircraftScreenPoint,
     qDebug() << Q_FUNC_INFO << "VSCROLL" << vertScrollBar->value() << "HSCROLL" << horizScrollBar->value();
 #endif
 
-    changingView = true;
+    // Force update if aircraft is not visible
+    if(!isPointVisible(aircraftScreenPoint))
+      force = true;
 
-    // Zoom and postion only if value has changed and current zoom is not closer than 8 NM for the viewport
-    double relHoriz = std::abs(relative1X - relative2X);
-    if(relHoriz > 0.)
+    // Do not update more often than five seconds
+    QDateTime now = QDateTime::currentDateTime();
+    if(force || !lastCenterAircraftAndDest.isValid() || now > lastCenterAircraftAndDest.addSecs(5))
     {
-      int zoomHoriz = static_cast<int>(1. / relHoriz);
-      if(force || (ui->horizontalSliderProfileZoom->value() != zoomHoriz && viewportWidthNm > 6.))
-      {
-        ui->horizontalSliderProfileZoom->setValue(zoomHoriz);
-        horizScrollBar->setValue(static_cast<int>(relative1X * profileWidget->width()));
-      }
-    }
+      lastCenterAircraftAndDest = now;
+      changingView = true;
 
-    // Zoom and postion only vertically if value has changed and current zoom is not closer than 3000 ft for the viewport
-    double relVert = std::abs(relative1Y - relative2Y);
-    if(relHoriz > 0.)
-    {
-      int zoomVert = static_cast<int>(1. / relVert);
-      if(force || (ui->verticalSliderProfileZoom->value() != zoomVert && zoomVertically && viewportHeightFt > 3000.))
+      // Zoom and postion only if value has changed and current zoom is not closer than 8 NM for the viewport
+      double relHoriz = std::abs(relative1X - relative2X);
+      if(relHoriz > 0.)
       {
-        ui->verticalSliderProfileZoom->setValue(zoomVert);
-        vertScrollBar->setValue(static_cast<int>(relative1Y * profileWidget->height()));
+        int zoomHoriz = static_cast<int>(1. / relHoriz);
+        if(force || (ui->horizontalSliderProfileZoom->value() != zoomHoriz && viewportWidthNm > 6.))
+        {
+          ui->horizontalSliderProfileZoom->setValue(zoomHoriz);
+          horizScrollBar->setValue(static_cast<int>(relative1X * profileWidget->width()));
+        }
       }
-    }
 
-    changingView = false;
+      // Zoom and postion only vertically if value has changed and current zoom is not closer than 3000 ft for the viewport
+      double relVert = std::abs(relative1Y - relative2Y);
+      if(relHoriz > 0.)
+      {
+        int zoomVert = static_cast<int>(1. / relVert);
+        if(force || (ui->verticalSliderProfileZoom->value() != zoomVert && zoomVertically && viewportHeightFt > 3000.))
+        {
+          ui->verticalSliderProfileZoom->setValue(zoomVert);
+          vertScrollBar->setValue(static_cast<int>(relative1Y * profileWidget->height()));
+        }
+      }
+
+      changingView = false;
+    }
   }
 }
 

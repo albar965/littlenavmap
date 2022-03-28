@@ -18,6 +18,7 @@
 #ifndef LNM_PROFILESCROLLAREA_H
 #define LNM_PROFILESCROLLAREA_H
 
+#include <QDateTime>
 #include <QObject>
 #include <QPoint>
 
@@ -209,6 +210,9 @@ private:
   QWidget *viewport;
   ProfileLabelWidgetVert *profileLabelWidgetVert = nullptr;
   ProfileLabelWidgetHoriz *profileLabelWidgetHoriz = nullptr;
+
+  /* Do not zoom to aircraft and destination too often */
+  QDateTime lastCenterAircraftAndDest;
 
   /* Frameless label widget  */
   QLabel *tooltipLabel = nullptr;

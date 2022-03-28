@@ -505,7 +505,6 @@ void ProfileWidget::paintVerticalPath(QPainter& painter, const Route& route)
 
   if(acx < map::INVALID_INDEX_VALUE && acy < map::INVALID_INDEX_VALUE && aircraftDistanceFromStart < route.getTotalDistance())
   {
-    float lineLen = std::min(LINE_LENGTH_NM, route.getTotalDistance() - aircraftDistanceFromStart);
 
     painter.setBrush(Qt::NoBrush);
     painter.setPen(mapcolors::adjustWidth(mapcolors::markSelectedAltitudeRangePen,
@@ -516,11 +515,13 @@ void ProfileWidget::paintVerticalPath(QPainter& painter, const Route& route)
     float verticalSpeedFeetPerMin = simData.getUserAircraftConst().getVerticalSpeedFeetPerMin();
     float groundSpeedFeetPerMin = atools::geo::nmToFeet(simData.getUserAircraftConst().getGroundSpeedKts()) / 60.f;
 
-    float travelTimeForLineMin = atools::geo::nmToFeet(lineLen) / groundSpeedFeetPerMin;
+    float lineLenNm = std::min(std::min(route.getTotalDistance() - aircraftDistanceFromStart, LINE_LENGTH_NM),
+                               scrollArea->getViewport()->width() / 3.f / horizontalScale);
+    float travelTimeForLineMin = atools::geo::nmToFeet(lineLenNm) / groundSpeedFeetPerMin;
     float feetForLine = travelTimeForLineMin * verticalSpeedFeetPerMin;
 
     painter.drawLine(toScreen(QPointF(aircraftDistanceFromStart, aircraftAltitude)),
-                     toScreen(QPointF(aircraftDistanceFromStart + lineLen, aircraftAltitude + feetForLine)));
+                     toScreen(QPointF(aircraftDistanceFromStart + lineLenNm, aircraftAltitude + feetForLine)));
   }
 }
 
