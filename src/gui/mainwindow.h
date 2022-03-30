@@ -348,6 +348,7 @@ private:
   void resetMessages();
   void resetAllSettings();
   void showDatabaseFiles();
+  void showShowMapCache();
 
   /* Save map as images */
   void mapSaveImage();

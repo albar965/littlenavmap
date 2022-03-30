@@ -207,6 +207,7 @@
      <addaction name="actionHelpOpenLogFile"/>
      <addaction name="actionHelpOpenConfigFile"/>
      <addaction name="actionDatabaseFiles"/>
+     <addaction name="actionShowMapCache"/>
     </widget>
     <addaction name="actionConnectSimulator"/>
     <addaction name="actionConnectSimulatorToggle"/>
@@ -12322,6 +12323,17 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Zoom elevation profile to aircraft and destination</string>
    </property>
   </action>
+  <action name="actionShowMapCache">
+   <property name="text">
+    <string>Show &amp;Map Cache</string>
+   </property>
+   <property name="toolTip">
+    <string>Open the Little Navmap map cache directory in the default file manager</string>
+   </property>
+   <property name="statusTip">
+    <string>Open the Little Navmap map cache directory in the default file manager</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12507,8 +12519,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalc"/>
-  <buttongroup name="buttonGroupRouteCalcType"/>
  </buttongroups>
 </ui>

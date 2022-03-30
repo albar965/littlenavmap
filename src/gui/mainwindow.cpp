@@ -95,6 +95,7 @@
 #include <marble/MarbleAboutDialog.h>
 #include <marble/MarbleModel.h>
 #include <marble/HttpDownloadManager.h>
+#include <marble/MarbleDirs.h>
 
 #include <QDebug>
 #include <QCloseEvent>
@@ -1309,6 +1310,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionLoadAirspaces, &QAction::triggered, NavApp::getAirspaceController(), &AirspaceController::loadAirspaces);
   connect(ui->actionReloadScenery, &QAction::triggered, NavApp::getDatabaseManager(), &DatabaseManager::run);
   connect(ui->actionDatabaseFiles, &QAction::triggered, this, &MainWindow::showDatabaseFiles);
+  connect(ui->actionShowMapCache, &QAction::triggered, this, &MainWindow::showShowMapCache);
 
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::openOptionsDialog);
   connect(ui->actionResetMessages, &QAction::triggered, this, &MainWindow::resetMessages);
@@ -1969,7 +1971,16 @@ void MainWindow::showDatabaseFiles()
   QUrl url = QUrl::fromLocalFile(NavApp::getDatabaseManager()->getDatabaseDirectory());
 
   if(!QDesktopServices::openUrl(url))
-    atools::gui::Dialog::warning(this, tr("Error opening help URL \"%1\"").arg(url.toDisplayString()));
+    atools::gui::Dialog::warning(this, tr("Error opening database files directory \"%1\"").arg(url.toDisplayString()));
+}
+
+/* Menu item */
+void MainWindow::showShowMapCache()
+{
+  QUrl url = QUrl::fromLocalFile(Marble::MarbleDirs::localPath());
+
+  if(!QDesktopServices::openUrl(url))
+    atools::gui::Dialog::warning(this, tr("Error opening map cache directory \"%1\"").arg(url.toDisplayString()));
 }
 
 /* Updates label and tooltip for connection status */

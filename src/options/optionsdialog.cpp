@@ -2480,12 +2480,10 @@ void OptionsDialog::clearDiskCachedClicked()
 /* Opens the disk cache in explorer, finder, whatever */
 void OptionsDialog::showDiskCacheClicked()
 {
-  const QString& localPath = Marble::MarbleDirs::localPath();
-
-  QUrl url = QUrl::fromLocalFile(localPath);
+  QUrl url = QUrl::fromLocalFile(Marble::MarbleDirs::localPath());
 
   if(!QDesktopServices::openUrl(url))
-    atools::gui::Dialog::warning(this, tr("Error opening help URL \"%1\"").arg(url.toDisplayString()));
+    atools::gui::Dialog::warning(this, tr("Error opening disk cache \"%1\"").arg(url.toDisplayString()));
 }
 
 QListWidgetItem *OptionsDialog::pageListItem(QListWidget *parent, const QString& text,
