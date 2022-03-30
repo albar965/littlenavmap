@@ -231,7 +231,10 @@ public:
   static QString getSimulatorFilesPathBest(const QVector<atools::fs::FsPaths::SimulatorType>& types);
   static bool hasSimulator(atools::fs::FsPaths::SimulatorType type);
   static bool hasAnyMsSimulator();
-  static bool hasXplaneSimulator();
+
+  static bool hasAnyXplaneSimulator();
+  static bool hasXplane11Simulator();
+  static bool hasXplane12Simulator();
 
   /* Selected navdatabase in menu */
   static bool isNavdataAll();

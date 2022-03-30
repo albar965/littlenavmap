@@ -71,18 +71,18 @@ void DirTool::run()
   QString message;
 
   message.append(tr("<p style='white-space:pre'>"
-                      "<b><i>Little Navmap</i> can create a recommended directory structure "
+                      "<b>Little Navmap can create a recommended directory structure "
                         "to store all your files<br/>in your documents folder.</b></p>"
                         "<p>The following folders will be created:</p>"
                           "<p><b>%1</b><br/>"
-                          "Top level directory for all files of <i>Little Navmap</i> "
+                          "Top level directory for all files of Little Navmap "
                           "containing the following sub-directories:</p>").
                  arg(QDir::toNativeSeparators(documentsDir + SEP + applicationDir)));
 
   // Show list of folders and comment =========
   message.append(tr("<ul>"));
   message.append(tr("<li><b>%1</b><br/>"
-                    "For flight plans in <i>Little Navmap</i>'s own format <code>.lnmpln</code></li>").
+                    "For flight plans in Little Navmap's own format <code>.lnmpln</code></li>").
                  arg(flightPlanDir));
   message.append(tr("<li><b>%1</b><br/>"
                     "Directory for aircraft performance files (<code>.lnmperf</code>)</li>").
@@ -104,10 +104,9 @@ void DirTool::run()
   message.append(tr("<p>This step is optional.</p>"));
 
   QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallDirUrl, lnm::helpLanguageOnline());
-  message.append(tr("<p><a href=\"%1\"><b>Click here for more information in the <i>Little Navmap</i> "
-                      "online manual</b></a></p>").arg(url.toString()));
+  message.append(tr("<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>").arg(url.toString()));
 
-  message.append(tr("<p>Should <i>Little Navmap</i> create these directories now?</p>"));
+  message.append(tr("<p>Should Little Navmap create these directories now?</p>"));
 
   int result = atools::gui::Dialog(parentWidget).showQuestionMsgBox(settingsPrefix, message,
                                                                     QObject::tr("Do not &show this dialog again."),

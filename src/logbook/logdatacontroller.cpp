@@ -613,7 +613,10 @@ void LogdataController::importXplane()
   qDebug() << Q_FUNC_INFO;
   try
   {
-    QString xpBasePath = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE11);
+    QString xpBasePath = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE_12);
+    if(xpBasePath.isEmpty())
+      xpBasePath = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE_11);
+
     if(xpBasePath.isEmpty())
       xpBasePath = atools::documentsDir();
     else
@@ -773,12 +776,12 @@ void LogdataController::convertUserdata()
                                              "\"Logbook\" to logbook entries.<br/><br/>"
                                              "This works best if you did not modify the field "
                                              "\"Description\" in the userpoints and if "
-                                               "you did not insert entries manually.<br/><br/>"
-                                               "Note that not all fields can be converted automatically.<br/><br/>"
-                                               "The created log entries can be found by searching"
-                                               "for<br/>\"*Converted from userdata*\"<br/>"
-                                               "in the field &quot;Remarks&quot;.<br/><br/>"
-                                               "Continue?"),
+                                             "you did not insert entries manually.<br/><br/>"
+                                             "Note that not all fields can be converted automatically.<br/><br/>"
+                                             "The created log entries can be found by searching"
+                                             "for<br/>\"*Converted from userdata*\"<br/>"
+                                             "in the field &quot;Remarks&quot;.<br/><br/>"
+                                             "Continue?"),
                                           tr("Do not &show this dialog again and run the conversion in the future."),
                                           QMessageBox::Yes | QMessageBox::No | QMessageBox::Help,
                                           QMessageBox::No, QMessageBox::Yes);

@@ -48,9 +48,9 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
     // Disable the FSX and P3D controls if no simconnect
     ui->tabConnectFsx->setDisabled(true);
     ui->labelConnectFsx->setText(atools::util::HtmlBuilder::warningMessage(
-                                   tr("SimConnect not found. Your <i>Little Navmap</i> "
+                                   tr("SimConnect not found. Your Little Navmap "
                                       "installation is missing the file \"SimConnect.dll\".<br/>"
-                                      "Reinstall <i>Little Navmap</i> or "
+                                      "Reinstall Little Navmap or "
                                       "install a FSX SP2 compatible version of SimConnect on your computer.<br/>")) +
                                  ui->labelConnectFsx->text());
   }
@@ -312,7 +312,7 @@ void ConnectDialog::restoreState()
       activateTab(ui->tabConnectFsx);
     else
 #endif
-    if(NavApp::hasXplaneSimulator())
+    if(NavApp::hasAnyXplaneSimulator())
       // X - Plane
       activateTab(ui->tabConnectXp);
     else

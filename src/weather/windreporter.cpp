@@ -133,7 +133,7 @@ void WindReporter::updateDataSource()
   actionToValues();
   downloadErrorReported = false;
 
-  if(ui->actionMapShowWindSimulator->isChecked() && simType == atools::fs::FsPaths::XPLANE11)
+  if(ui->actionMapShowWindSimulator->isChecked() && atools::fs::FsPaths::isAnyXplane(simType))
   {
     // Load GRIB file only if X-Plane is enabled - will call windDownloadFinished later
     QString path = OptionData::instance().getWeatherXplaneWind();

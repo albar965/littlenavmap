@@ -31,84 +31,62 @@ void SimulatorTypeMap::fillDefault()
 
 atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest() const
 {
-#if defined(Q_OS_WIN32) || defined(DEBUG_FS_PATHS)
   if(contains(FsPaths::MSFS) && value(FsPaths::MSFS).hasDatabase)
     return FsPaths::MSFS;
+  else if(contains(FsPaths::XPLANE_12) && value(FsPaths::XPLANE_12).hasDatabase)
+    return FsPaths::XPLANE_12;
+  else if(contains(FsPaths::XPLANE_11) && value(FsPaths::XPLANE_11).hasDatabase)
+    return FsPaths::XPLANE_11;
   else if(contains(FsPaths::P3D_V5) && value(FsPaths::P3D_V5).hasDatabase)
     return FsPaths::P3D_V5;
   else if(contains(FsPaths::P3D_V4) && value(FsPaths::P3D_V4).hasDatabase)
     return FsPaths::P3D_V4;
   else if(contains(FsPaths::P3D_V3) && value(FsPaths::P3D_V3).hasDatabase)
     return FsPaths::P3D_V3;
-  else if(contains(FsPaths::P3D_V2) && value(FsPaths::P3D_V2).hasDatabase)
-    return FsPaths::P3D_V2;
   else if(contains(FsPaths::FSX_SE) && value(FsPaths::FSX_SE).hasDatabase)
     return FsPaths::FSX_SE;
   else if(contains(FsPaths::FSX) && value(FsPaths::FSX).hasDatabase)
     return FsPaths::FSX;
 
-  // else if(contains(FsPaths::XPLANE11) && value(FsPaths::XPLANE11).hasDatabase)
-  // If all fails use X-Plane as default
-  return FsPaths::XPLANE11;
-
-#else
-  // macOS and Linux - only X-Plane
-  return FsPaths::XPLANE11;
-
-#endif
+  return FsPaths::NONE;
 }
 
 FsPaths::SimulatorType SimulatorTypeMap::getBestInstalled() const
 {
-#if defined(Q_OS_WIN32) || defined(DEBUG_FS_PATHS)
-
-  FsPaths::SimulatorType type = getBestInstalled({FsPaths::MSFS, FsPaths::P3D_V5, FsPaths::P3D_V4, FsPaths::P3D_V3,
-                                                  FsPaths::P3D_V2, FsPaths::FSX_SE, FsPaths::FSX});
-
-  if(type == FsPaths::UNKNOWN)
-    return FsPaths::XPLANE11;
-  else
-    return type;
-
-#else
-  // macOS and Linux - only X-Plane
-  return FsPaths::XPLANE11;
-
-#endif
+  return getBestInstalled({FsPaths::MSFS, FsPaths::XPLANE_12, FsPaths::XPLANE_11, FsPaths::P3D_V5, FsPaths::P3D_V4,
+                           FsPaths::P3D_V3, FsPaths::FSX_SE, FsPaths::FSX});
 }
 
 FsPaths::SimulatorType SimulatorTypeMap::getBestInstalled(const FsPaths::SimulatorTypeVector& types) const
 {
-#if defined(Q_OS_WIN32) || defined(DEBUG_FS_PATHS)
   for(FsPaths::SimulatorType type : types)
   {
     if(contains(type) && (*this)[type].isInstalled)
       return type;
   }
 
-  return FsPaths::UNKNOWN;
-
-#else
-  return FsPaths::UNKNOWN;
-
-#endif
+  return FsPaths::NONE;
 }
 
 QList<FsPaths::SimulatorType> SimulatorTypeMap::getAllInstalled() const
 {
   QList<FsPaths::SimulatorType> retval;
-  for(FsPaths::SimulatorType simType : keys())
-    if(value(simType).isInstalled)
-      retval.append(simType);
+  for(auto it = begin(); it != end(); ++it)
+  {
+    if(it.value().isInstalled)
+      retval.append(it.key());
+  }
   return retval;
 }
 
 QList<FsPaths::SimulatorType> SimulatorTypeMap::getAllHavingDatabase() const
 {
   QList<FsPaths::SimulatorType> retval;
-  for(FsPaths::SimulatorType simType : keys())
-    if(value(simType).hasDatabase)
-      retval.append(simType);
+  for(auto it = begin(); it != end(); ++it)
+  {
+    if(it.value().hasDatabase)
+      retval.append(it.key());
+  }
   return retval;
 }
 
@@ -121,11 +99,8 @@ void SimulatorTypeMap::fillOneDefault(FsPaths::SimulatorType type)
   if(path.sceneryCfg.isEmpty())
     path.sceneryCfg = FsPaths::getSceneryLibraryPath(type);
 
-  if(type == FsPaths::XPLANE11)
-    path.isInstalled = !path.basePath.isEmpty();
-  else
-    // If already present or not - this one has a registry entry
-    path.isInstalled = FsPaths::hasSimulator(type);
+  // If already present or not - this one has a registry entry or an installation file for X-Plane
+  path.isInstalled = FsPaths::hasSimulator(type);
 }
 
 QDebug operator<<(QDebug out, const FsPathType& record)

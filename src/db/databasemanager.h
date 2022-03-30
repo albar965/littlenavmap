@@ -26,6 +26,9 @@
 
 namespace atools {
 namespace fs {
+namespace db {
+class DatabaseMeta;
+}
 namespace scenery {
 class LanguageJson;
 }
@@ -161,15 +164,7 @@ public:
   }
 
   /* Only true if airports come from X-Plane database as default */
-  bool isAirportDatabaseXPlane(bool navdata) const
-  {
-    if(navdata)
-      // Fetch from navdatabase - X-Plane airport only if navdata is not used
-      return currentFsType == atools::fs::FsPaths::XPLANE11 && navDatabaseStatus == dm::NAVDATABASE_OFF;
-    else
-      // Fetch from sim database - X-Plane airport only if navdata is not used for all
-      return currentFsType == atools::fs::FsPaths::XPLANE11 && navDatabaseStatus != dm::NAVDATABASE_ALL;
-  }
+  bool isAirportDatabaseXPlane(bool navdata) const;
 
   /* Base paths which might also be changed by the user */
   QString getCurrentSimulatorBasePath() const;
@@ -301,8 +296,7 @@ private:
   void correctSimulatorType();
 
   /* Get cycle metadata from a database file */
-  void metaFromFile(QString *cycle, QDateTime *compilationTime, bool *settingsNeedsPreparation, QString *source,
-                    const QString& file);
+  const atools::fs::db::DatabaseMeta metaFromFile(const QString& file);
 
   void clearLanguageIndex();
 
@@ -363,9 +357,9 @@ private:
 
   atools::fs::FsPaths::SimulatorType
   /* Currently selected simulator which will be used in the map, search, etc. */
-    currentFsType = atools::fs::FsPaths::UNKNOWN,
+    currentFsType = atools::fs::FsPaths::NONE,
   /* Currently selected simulator in the load scenery database dialog */
-    selectedFsType = atools::fs::FsPaths::UNKNOWN;
+    selectedFsType = atools::fs::FsPaths::NONE;
 
   /* Using Navigraph update or not */
   dm::NavdatabaseStatus navDatabaseStatus = dm::NAVDATABASE_OFF;

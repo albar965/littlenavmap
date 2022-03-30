@@ -641,9 +641,20 @@ bool NavApp::hasAnyMsSimulator()
   return atools::fs::FsPaths::hasAnyMsSimulator();
 }
 
-bool NavApp::hasXplaneSimulator()
+bool NavApp::hasAnyXplaneSimulator()
 {
-  return atools::fs::FsPaths::hasXplaneSimulator();
+  return atools::fs::FsPaths::hasAnyXplaneSimulator();
+
+}
+
+bool NavApp::hasXplane11Simulator()
+{
+  return atools::fs::FsPaths::hasXplane11Simulator();
+}
+
+bool NavApp::hasXplane12Simulator()
+{
+  return atools::fs::FsPaths::hasXplane12Simulator();
 }
 
 bool NavApp::isNavdataAll()

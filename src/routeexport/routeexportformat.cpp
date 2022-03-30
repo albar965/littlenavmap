@@ -335,10 +335,12 @@ void RouteExportFormatMap::updateDefaultPaths()
   QString documents = atools::documentsDir();
 
   // Get X-Plane base path ===========================
-  QString xpBasePath = NavApp::getSimulatorBasePath(FsPaths::XPLANE11);
+  QString xpBasePath = NavApp::getSimulatorBasePath(FsPaths::XPLANE_12);
+  if(xpBasePath.isEmpty())
+    xpBasePath = NavApp::getSimulatorBasePath(FsPaths::XPLANE_11);
 
   // Files path
-  QString xpFilesPath = NavApp::getSimulatorFilesPathBest({FsPaths::XPLANE11});
+  QString xpFilesPath = NavApp::getSimulatorFilesPathBest({FsPaths::XPLANE_12, FsPaths::XPLANE_11});
   if(xpFilesPath.isEmpty())
     xpFilesPath = documents;
 
@@ -355,13 +357,12 @@ void RouteExportFormatMap::updateDefaultPaths()
   QString fsxP3dBasePath;
 
   // Get for current database selection if not X-Plane or MSFS
-  if(curDb != FsPaths::XPLANE11 && curDb != FsPaths::MSFS && curDb != FsPaths::NAVIGRAPH)
+  if(curDb != FsPaths::XPLANE_11 && curDb != FsPaths::XPLANE_12 && curDb != FsPaths::MSFS && curDb != FsPaths::NAVIGRAPH)
     fsxP3dBasePath = NavApp::getSimulatorFilesPathBest({curDb});
 
   // Get best installed simulator
   if(fsxP3dBasePath.isEmpty())
-    fsxP3dBasePath = NavApp::getSimulatorFilesPathBest({FsPaths::P3D_V5, FsPaths::P3D_V4, FsPaths::P3D_V3,
-                                                        FsPaths::P3D_V2, FsPaths::FSX_SE, FsPaths::FSX});
+    fsxP3dBasePath = NavApp::getSimulatorFilesPathBest({FsPaths::P3D_V5, FsPaths::P3D_V4, FsPaths::P3D_V3, FsPaths::FSX_SE, FsPaths::FSX});
   if(fsxP3dBasePath.isEmpty())
     fsxP3dBasePath = documents;
 

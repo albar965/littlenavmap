@@ -163,12 +163,12 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   updateSimulatorFlags();
 
   for(auto it = simulators.constBegin(); it != simulators.constEnd(); ++it)
-    qDebug() << it.key() << it.value();
+    qDebug() << Q_FUNC_INFO << it.key() << it.value();
 
   // Correct if current simulator is invalid
   correctSimulatorType();
 
-  qDebug() << "fs type" << currentFsType;
+  qDebug() << Q_FUNC_INFO << "fs type" << currentFsType;
 
   if(mainWindow != nullptr)
   {
@@ -338,13 +338,13 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
     }
 
     // Delete the dummy database without dialog if needed
-    QString dummyName = buildDatabaseFileName(atools::fs::FsPaths::UNKNOWN);
+    QString dummyName = buildDatabaseFileName(atools::fs::FsPaths::NONE);
     sqlDb.setDatabaseName(dummyName);
     sqlDb.open();
     DatabaseMeta meta(&sqlDb);
     if(!meta.hasSchema() || !meta.isDatabaseCompatible())
     {
-      qDebug() << "Updating dummy database" << dummyName;
+      qDebug() << Q_FUNC_INFO << "Updating dummy database" << dummyName;
       createEmptySchema(&sqlDb);
     }
     sqlDb.close();
@@ -440,14 +440,21 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
   if(QFile::exists(appDb))
   {
     // Database in application directory
-    metaFromFile(&appCycle, &appLastLoad, nullptr, &appSource, appDb);
+    const atools::fs::db::DatabaseMeta appMeta = metaFromFile(appDb);
+    appLastLoad = appMeta.getLastLoadTime();
+    appCycle = appMeta.getAiracCycle();
+    appSource = appMeta.getDataSource();
     hasApp = true;
   }
 
   if(QFile::exists(settingsDb))
   {
     // Database in settings directory
-    metaFromFile(&settingsCycle, &settingsLastLoad, &settingsNeedsPreparation, &settingsSource, settingsDb);
+    const atools::fs::db::DatabaseMeta settingsMeta = metaFromFile(settingsDb);
+    settingsLastLoad = settingsMeta.getLastLoadTime();
+    settingsCycle = settingsMeta.getAiracCycle();
+    settingsSource = settingsMeta.getDataSource();
+    settingsNeedsPreparation = settingsMeta.hasScript();
     hasSettings = true;
   }
   int appCycleNum = appCycle.toInt();
@@ -455,9 +462,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
 
   qInfo() << Q_FUNC_INFO << "settings database" << settingsDb << settingsLastLoad << settingsCycle;
   qInfo() << Q_FUNC_INFO << "app database" << appDb << appLastLoad << appCycle;
-  qInfo() << Q_FUNC_INFO << "hasApp" << hasApp
-          << "hasSettings" << hasSettings
-          << "settingsNeedsPreparation" << settingsNeedsPreparation;
+  qInfo() << Q_FUNC_INFO << "hasApp" << hasApp << "hasSettings" << hasSettings << "settingsNeedsPreparation" << settingsNeedsPreparation;
 
   if(hasApp)
   {
@@ -505,7 +510,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
         if(hasSettings)
         {
           resultRemove = QFile(settingsDb).remove();
-          qDebug() << "removed" << settingsDb << resultRemove;
+          qDebug() << Q_FUNC_INFO << "removed" << settingsDb << resultRemove;
         }
 
         // Copy to target
@@ -516,7 +521,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
           dialog->repaint();
           atools::gui::Application::processEventsExtended();
           resultCopy = QFile(appDb).copy(settingsDb);
-          qDebug() << "copied" << appDb << "to" << settingsDb << resultCopy;
+          qDebug() << Q_FUNC_INFO << "copied" << appDb << "to" << settingsDb << resultCopy;
         }
 
         // Create indexes and delete script afterwards
@@ -580,6 +585,16 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
   }
 }
 
+bool DatabaseManager::isAirportDatabaseXPlane(bool navdata) const
+{
+  if(navdata)
+    // Fetch from navdatabase - X-Plane airport only if navdata is not used
+    return atools::fs::FsPaths::isAnyXplane(currentFsType) && navDatabaseStatus == dm::NAVDATABASE_OFF;
+  else
+    // Fetch from sim database - X-Plane airport only if navdata is not used for all
+    return atools::fs::FsPaths::isAnyXplane(currentFsType) && navDatabaseStatus != dm::NAVDATABASE_ALL;
+}
+
 QString DatabaseManager::getCurrentSimulatorBasePath() const
 {
   return getSimulatorBasePath(currentFsType);
@@ -598,7 +613,6 @@ QString DatabaseManager::getSimulatorFilesPathBest(const FsPaths::SimulatorTypeV
     // All not depending on installation path which might be changed by the user
     case atools::fs::FsPaths::FSX:
     case atools::fs::FsPaths::FSX_SE:
-    case atools::fs::FsPaths::P3D_V2:
     case atools::fs::FsPaths::P3D_V3:
     case atools::fs::FsPaths::P3D_V4:
     case atools::fs::FsPaths::P3D_V5:
@@ -606,7 +620,8 @@ QString DatabaseManager::getSimulatorFilesPathBest(const FsPaths::SimulatorTypeV
       // Ignore user changes of path for now
       return FsPaths::getFilesPath(type);
 
-    case atools::fs::FsPaths::XPLANE11:
+    case atools::fs::FsPaths::XPLANE_11:
+    case atools::fs::FsPaths::XPLANE_12:
       {
         // Might change with base path by user
         QString base = getSimulatorBasePath(type);
@@ -616,7 +631,7 @@ QString DatabaseManager::getSimulatorFilesPathBest(const FsPaths::SimulatorTypeV
 
     case atools::fs::FsPaths::DFD:
     case atools::fs::FsPaths::ALL_SIMULATORS:
-    case atools::fs::FsPaths::UNKNOWN:
+    case atools::fs::FsPaths::NONE:
       break;
   }
   return QString();
@@ -630,17 +645,17 @@ QString DatabaseManager::getSimulatorBasePathBest(const FsPaths::SimulatorTypeVe
     // All not depending on installation path which might be changed by the user
     case atools::fs::FsPaths::FSX:
     case atools::fs::FsPaths::FSX_SE:
-    case atools::fs::FsPaths::P3D_V2:
     case atools::fs::FsPaths::P3D_V3:
     case atools::fs::FsPaths::P3D_V4:
     case atools::fs::FsPaths::P3D_V5:
-    case atools::fs::FsPaths::XPLANE11:
+    case atools::fs::FsPaths::XPLANE_11:
+    case atools::fs::FsPaths::XPLANE_12:
     case atools::fs::FsPaths::MSFS:
       return FsPaths::getBasePath(type);
 
     case atools::fs::FsPaths::DFD:
     case atools::fs::FsPaths::ALL_SIMULATORS:
-    case atools::fs::FsPaths::UNKNOWN:
+    case atools::fs::FsPaths::NONE:
       return QString();
   }
   return QString();
@@ -674,44 +689,60 @@ void DatabaseManager::insertSimSwitchActions()
   {
     const FsPathType& pathType = simulators.value(type);
 
-    if(type == FsPaths::XPLANE11)
-    {
-      if(!pathType.basePath.isEmpty() || pathType.hasDatabase)
-        sims.append(type);
-    }
-    else if(pathType.isInstalled || pathType.hasDatabase)
+    if(pathType.isInstalled || pathType.hasDatabase)
       // Create an action for each simulator installation or database found
       sims.append(type);
   }
 
   int index = 1;
+  bool foundSim = false, foundDb = false;
   for(atools::fs::FsPaths::SimulatorType type : sims)
+  {
     insertSimSwitchAction(type, ui->menuViewAirspaceSource->menuAction(), ui->menuDatabase, index++);
+    foundSim |= simulators.value(type).isInstalled;
+    foundDb |= simulators.value(type).hasDatabase;
+  }
 
-  if(!sims.isEmpty())
-    menuDbSeparator = ui->menuDatabase->insertSeparator(ui->menuViewAirspaceSource->menuAction());
+  // Insert disabled action if nothing was found at all ===============================
+  if(!foundDb && !foundSim)
+    insertSimSwitchAction(atools::fs::FsPaths::NONE, ui->menuViewAirspaceSource->menuAction(), ui->menuDatabase, index++);
 
+  menuDbSeparator = ui->menuDatabase->insertSeparator(ui->menuViewAirspaceSource->menuAction());
+
+  // Update Reload scenery item ===============================
+  ui->actionReloadScenery->setEnabled(foundSim);
+  if(foundSim)
+    ui->actionReloadScenery->setText(tr("&Load Scenery Library ..."));
+  else
+    ui->actionReloadScenery->setText(tr("Load Scenery Library (no simulator)"));
+
+  // Noting to select if there is only one option ========================
   if(actions.size() == 1)
-    // Noting to select if there is only one option
     actions.constFirst()->setDisabled(true);
 
+  // Insert Navigraph menu ==================================
   QString file = buildDatabaseFileName(FsPaths::NAVIGRAPH);
 
   if(!file.isEmpty())
   {
-    QString cycle, source;
-    QDateTime date;
-    metaFromFile(&cycle, &date, nullptr, &source, file);
+    const atools::fs::db::DatabaseMeta meta = metaFromFile(file);
+    QString cycle = meta.getAiracCycle();
+    QString suffix;
 
     if(!cycle.isEmpty())
-      cycle = tr(" - AIRAC Cycle %1").arg(cycle);
+      suffix = tr(" - AIRAC Cycle %1").arg(cycle);
+    else
+      suffix = tr(" - No AIRAC Cycle");
+
+    if(!meta.hasData())
+      suffix += tr(" (database is empty)");
 
 #ifdef DEBUG_INFORMATION
-    cycle += " (" + date.toString() + " | " + source + ")";
+    suffix += " (" + meta.getLastLoadTime().toString() + " | " + meta.getDataSource() + ")";
 #endif
 
     QString dbname = FsPaths::typeToName(FsPaths::NAVIGRAPH);
-    navDbSubMenu = new QMenu("&" + QString::number(index) + " " + dbname + cycle);
+    navDbSubMenu = new QMenu(tr("&%1%2").arg(dbname).arg(suffix));
     navDbSubMenu->setToolTipsVisible(NavApp::isMenuToolTipsVisible());
     navDbGroup = new QActionGroup(navDbSubMenu);
 
@@ -725,8 +756,7 @@ void DatabaseManager::insertSimSwitchActions()
     navDbActionBlend = new QAction(tr("Use %1 for &Navaids and Procedures").arg(dbname), navDbSubMenu);
     navDbActionBlend->setCheckable(true);
     navDbActionBlend->setChecked(navDatabaseStatus == dm::NAVDATABASE_MIXED);
-    navDbActionBlend->setStatusTip(tr("Use only navaids, airways, airspaces and procedures from %1 database").arg(
-                                     dbname));
+    navDbActionBlend->setStatusTip(tr("Use only navaids, airways, airspaces and procedures from %1 database").arg(dbname));
     navDbActionBlend->setActionGroup(navDbGroup);
     navDbSubMenu->addAction(navDbActionBlend);
 
@@ -746,35 +776,60 @@ void DatabaseManager::insertSimSwitchActions()
   }
 }
 
-void DatabaseManager::insertSimSwitchAction(atools::fs::FsPaths::SimulatorType type, QAction *before, QMenu *menu,
-                                            int index)
+void DatabaseManager::insertSimSwitchAction(atools::fs::FsPaths::SimulatorType type, QAction *before, QMenu *menu, int index)
 {
-  QString cycle;
-  if(type == FsPaths::XPLANE11)
+  if(type == atools::fs::FsPaths::NONE)
   {
-    metaFromFile(&cycle, nullptr, nullptr, nullptr, buildDatabaseFileName(type));
-    if(!cycle.isEmpty())
-      cycle = tr(" - AIRAC Cycle %1").arg(cycle);
+    QAction *action = new QAction(tr("No Scenery Library and no Simulator found"), menu);
+    action->setToolTip(tr("No scenery library database and no simulator found"));
+    action->setStatusTip(action->toolTip());
+    action->setData(QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
+    action->setActionGroup(simDbGroup);
+
+    menu->insertAction(before, action);
+    actions.append(action);
   }
-
-  QAction *action = new QAction("&" + QString::number(index) + " " + FsPaths::typeToName(type) + cycle, menu);
-  action->setStatusTip(tr("Switch to %1 database").arg(FsPaths::typeToName(type)));
-  action->setData(QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
-  action->setCheckable(true);
-  action->setActionGroup(simDbGroup);
-
-  if(type == currentFsType)
+  else
   {
-    QSignalBlocker blocker(action);
-    Q_UNUSED(blocker)
-    action->setChecked(true);
+    QString suffix;
+    QStringList atts;
+    const atools::fs::db::DatabaseMeta meta = metaFromFile(buildDatabaseFileName(type));
+    if(atools::fs::FsPaths::isAnyXplane(type))
+    {
+      QString cycle = meta.getAiracCycle();
+      if(!cycle.isEmpty())
+        suffix = tr(" - AIRAC Cycle %1").arg(cycle);
+    }
+
+    // Built string for hint ===============
+    if(!meta.hasData())
+      atts.append(tr("empty"));
+
+    if(!simulators.value(type).isInstalled)
+      atts.append(tr("no simulator"));
+
+    if(!atts.isEmpty())
+      suffix.append(tr(" (%1)").arg(atts.join(tr(", "))));
+
+    QAction *action = new QAction(tr("&%1 %2%3").arg(index).arg(FsPaths::typeToName(type)).arg(suffix), menu);
+    action->setToolTip(tr("Switch to %1 database").arg(FsPaths::typeToName(type)));
+    action->setStatusTip(action->toolTip());
+    action->setData(QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
+    action->setCheckable(true);
+    action->setActionGroup(simDbGroup);
+
+    if(type == currentFsType)
+    {
+      QSignalBlocker blocker(action);
+      Q_UNUSED(blocker)
+      action->setChecked(true);
+    }
+
+    menu->insertAction(before, action);
+
+    connect(action, &QAction::triggered, this, &DatabaseManager::switchSimFromMainMenu);
+    actions.append(action);
   }
-
-  menu->insertAction(before, action);
-
-  connect(action, &QAction::triggered, this, &DatabaseManager::switchSimFromMainMenu);
-
-  actions.append(action);
 }
 
 /* User changed simulator in main menu */
@@ -787,11 +842,9 @@ void DatabaseManager::switchNavFromMainMenu()
     QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineNavdatabasesUrl, lnm::helpLanguageOnline());
     QString message = tr(
       "<p>Note that airport information is limited in this mode.<br/>"
-      "This means that aprons, taxiways, parking positions, runway surface information and other information is not available.</p>"
-      "<p>Additionally, smaller airports might be missing.</p>"
-        "<p>Runway layout might not match the runway layout in the simulator if you use stock or older airport scenery.</p>"
-          "<p><b>Click the link below for more information:<br/><br/>"
-          "<a href=\"%1\">Online Manual - Navigation Databases</a></b><br/></p>").arg(url.toString());
+      "This means that aprons, taxiways, parking positions, runway surface information and other information is not available.<br/>"
+      "Smaller airports might be missing and runway layout might not match the runway layout in the simulator.</p>"
+      "<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>").arg(url.toString());
 
     atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_NAVDATA_WARNING, message,
                                                    QObject::tr("Do not &show this dialog again."));
@@ -983,8 +1036,7 @@ void DatabaseManager::openAllDatabases()
   openDatabaseFile(databaseNavAirspace, navAirspaceDbFile, true /* readonly */, true /* createSchema */);
 }
 
-void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly,
-                                       bool createSchema)
+void DatabaseManager::openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly, bool createSchema)
 {
   try
   {
@@ -1028,7 +1080,7 @@ void DatabaseManager::openDatabaseFileInternal(atools::sql::SqlDatabase *db, con
   if(!readonly)
     databasePragmas.append("PRAGMA busy_timeout=2000");
 
-  qDebug() << "Opening database" << file;
+  qDebug() << Q_FUNC_INFO << "Opening database" << file;
   db->setDatabaseName(file);
 
   // Set foreign keys only on demand because they can decrease loading performance
@@ -1085,7 +1137,7 @@ void DatabaseManager::closeDatabaseFile(atools::sql::SqlDatabase *db)
   {
     if(db != nullptr && db->isOpen())
     {
-      qDebug() << "Closing database" << db->databaseName();
+      qDebug() << Q_FUNC_INFO << "Closing database" << db->databaseName();
       db->close();
     }
   }
@@ -1235,7 +1287,7 @@ bool DatabaseManager::runInternal()
       // Do further checks if basepath is valid =================
       if(configValid)
       {
-        if(selectedFsType == atools::fs::FsPaths::XPLANE11)
+        if(atools::fs::FsPaths::isAnyXplane(selectedFsType))
         {
           // Check scenery_packs.ini for X-Plane ========================================================
           QString filepath;
@@ -1909,42 +1961,29 @@ void DatabaseManager::updateSimulatorFlags()
 
 void DatabaseManager::correctSimulatorType()
 {
-  if(currentFsType == atools::fs::FsPaths::UNKNOWN ||
+  if(currentFsType == atools::fs::FsPaths::NONE ||
      (!simulators.value(currentFsType).hasDatabase && !simulators.value(currentFsType).isInstalled))
     currentFsType = simulators.getBest();
 
-  if(currentFsType == atools::fs::FsPaths::UNKNOWN)
+  if(currentFsType == atools::fs::FsPaths::NONE)
     currentFsType = simulators.getBestInstalled();
 
   // Correct if loading simulator is invalid - get the best installed
-  if(selectedFsType == atools::fs::FsPaths::UNKNOWN || !simulators.getAllInstalled().contains(selectedFsType))
+  if(selectedFsType == atools::fs::FsPaths::NONE || !simulators.getAllInstalled().contains(selectedFsType))
     selectedFsType = simulators.getBestInstalled();
 }
 
-void DatabaseManager::metaFromFile(QString *cycle, QDateTime *compilationTime, bool *settingsNeedsPreparation,
-                                   QString *source, const QString& file)
+const atools::fs::db::DatabaseMeta DatabaseManager::metaFromFile(const QString& file)
 {
   SqlDatabase tempDb(DATABASE_NAME_TEMP);
   tempDb.setDatabaseName(file);
   tempDb.setReadonly();
   tempDb.open();
-  {
-    DatabaseMeta meta(tempDb);
 
-    if(cycle != nullptr)
-      *cycle = meta.getAiracCycle();
-
-    if(source != nullptr)
-      *source = meta.getDataSource();
-
-    if(compilationTime != nullptr)
-      *compilationTime = meta.getLastLoadTime();
-
-    if(settingsNeedsPreparation != nullptr)
-      *settingsNeedsPreparation = SqlUtil(tempDb).hasTableAndRows("script");
-  }
-
+  DatabaseMeta meta(tempDb);
+  meta.deInit();   // Detach from database
   closeDatabaseFile(&tempDb);
+  return meta;
 }
 
 void DatabaseManager::checkDatabaseVersion()

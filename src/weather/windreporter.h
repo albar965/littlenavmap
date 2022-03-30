@@ -195,7 +195,7 @@ private:
 
   /* Group for mutual exclusion */
   bool verbose = false;
-  atools::fs::FsPaths::SimulatorType simType = atools::fs::FsPaths::UNKNOWN;
+  atools::fs::FsPaths::SimulatorType simType = atools::fs::FsPaths::NONE;
 
   QActionGroup *actionGroup = nullptr;
 

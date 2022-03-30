@@ -369,7 +369,9 @@ bool RouteExport::routeExportFms11(const RouteExportFormat& format)
   if(routeValidateMulti(format))
   {
     // Try to get X-Plane default output directory for flight plans
-    QString xpBasePath = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE11);
+    QString xpBasePath = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE_12);
+    if(xpBasePath.isEmpty())
+      xpBasePath = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE_11);
     if(xpBasePath.isEmpty())
       xpBasePath = atools::documentsDir();
     else

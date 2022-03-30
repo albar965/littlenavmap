@@ -801,7 +801,10 @@ void UserdataController::exportBglXml()
 
 QString UserdataController::xplaneUserWptDatPath()
 {
-  QString xpBasePath = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE11);
+  QString xpBasePath = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE_12);
+  if(xpBasePath.isEmpty())
+    xpBasePath = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE_11);
+
   if(xpBasePath.isEmpty())
     xpBasePath = atools::documentsDir();
   else

@@ -46,24 +46,23 @@ DatabaseDialog::DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap)
   // Sort keys to avoid random order
   QList<FsPaths::SimulatorType> keys = simulators.getAllInstalled();
 
-  // No registry key for X-Plane - add always
-  if(!keys.contains(FsPaths::XPLANE11))
-    keys.append(FsPaths::XPLANE11);
-
   std::sort(keys.begin(), keys.end(), [](FsPaths::SimulatorType t1, FsPaths::SimulatorType t2) {
     return FsPaths::typeToShortName(t1) < FsPaths::typeToShortName(t2);
   });
 
   // Add an item to the combo box for each installed simulator
+  bool simFound = false;
   for(atools::fs::FsPaths::SimulatorType type : keys)
   {
-    if(simulators.value(type).isInstalled || type == FsPaths::XPLANE11)
-      ui->comboBoxSimulator->addItem(FsPaths::typeToName(type),
-                                     QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
+    if(simulators.value(type).isInstalled)
+    {
+      ui->comboBoxSimulator->addItem(FsPaths::typeToName(type), QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
+      simFound = true;
+    }
   }
 
-  if(simulators.isEmpty())
-    ui->labelDatabaseInformation->setText(tr("<b>No Simulator Found and no database found.</b>"));
+  if(!simFound)
+    ui->labelDatabaseInformation->setText(tr("<b>No Simulator and no database found.</b>"));
 
   connect(ui->buttonBoxDatabase, &QDialogButtonBox::accepted, this, &QDialog::accept);
   connect(ui->buttonBoxDatabase, &QDialogButtonBox::rejected, this, &QDialog::reject);
@@ -76,7 +75,6 @@ DatabaseDialog::DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap)
   connect(ui->pushButtonDatabaseResetPaths, &QPushButton::clicked, this, &DatabaseDialog::resetPathsClicked);
 
   connect(ui->lineEditDatabaseBasePath, &QLineEdit::textEdited, this, &DatabaseDialog::basePathEdited);
-
   connect(ui->lineEditDatabaseSceneryFile, &QLineEdit::textEdited, this, &DatabaseDialog::sceneryConfigFileEdited);
 }
 
@@ -185,10 +183,7 @@ QString DatabaseDialog::getSceneryConfigFile() const
 
 void DatabaseDialog::setCurrentFsType(atools::fs::FsPaths::SimulatorType value)
 {
-  if(value == FsPaths::UNKNOWN)
-    currentFsType = FsPaths::XPLANE11;
-  else
-    currentFsType = value;
+  currentFsType = value;
   updateComboBox();
   updateWidgets();
 }
@@ -209,8 +204,8 @@ void DatabaseDialog::updateComboBox()
 
 void DatabaseDialog::updateWidgets()
 {
-  bool showXplane = currentFsType == atools::fs::FsPaths::XPLANE11 || currentFsType == atools::fs::FsPaths::UNKNOWN;
-  bool showMsfs = currentFsType == atools::fs::FsPaths::MSFS || currentFsType == atools::fs::FsPaths::UNKNOWN;
+  bool showXplane = atools::fs::FsPaths::isAnyXplane(currentFsType) || currentFsType == atools::fs::FsPaths::NONE;
+  bool showMsfs = currentFsType == atools::fs::FsPaths::MSFS || currentFsType == atools::fs::FsPaths::NONE;
 
   ui->lineEditDatabaseSceneryFile->setDisabled(showXplane || showMsfs);
   ui->labelDatabaseSceneryFile->setDisabled(showXplane || showMsfs);

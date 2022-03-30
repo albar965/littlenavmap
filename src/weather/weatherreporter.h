@@ -214,7 +214,7 @@ private:
   QString activeSkySnapshotPath;
   atools::util::FileSystemWatcher *fsWatcherAsPath = nullptr;
   atools::util::FileSystemWatcher *fsWatcherAsFlightplanPath = nullptr;
-  atools::fs::FsPaths::SimulatorType simType = atools::fs::FsPaths::UNKNOWN;
+  atools::fs::FsPaths::SimulatorType simType = atools::fs::FsPaths::NONE;
 
   atools::fs::weather::XpWeatherReader *xpWeatherReader = nullptr;
 

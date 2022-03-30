@@ -82,6 +82,7 @@ const QLatin1String ACTIONS_SHOW_ROUTE_START_CHANGED("Actions/ShowRouteStartChan
 const QLatin1String ACTIONS_SHOW_UPDATE_FAILED("Actions/ShowUpdateFailed");
 const QLatin1String ACTIONS_SHOW_SSL_FAILED("Actions/ShowSslFailed");
 const QLatin1String ACTIONS_SHOW_INSTALL_GLOBE("Actions/ShowInstallGlobe");
+const QLatin1String ACTIONS_SHOW_MISSING_SIMULATORS("Actions/ShowMissingSimulators");
 const QLatin1String ACTIONS_SHOW_INSTALL_DIRS("Actions/ShowInstallDirs");
 const QLatin1String ACTIONS_SHOW_OVERWRITE_DATABASE("Actions/ShowOverwriteDatabase");
 const QLatin1String ACTIONS_SHOW_DELETE_TRAIL("Actions/DeleteTrail");

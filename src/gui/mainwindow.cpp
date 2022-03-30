@@ -131,32 +131,32 @@ MainWindow::MainWindow()
   qDebug() << Q_FUNC_INFO << "constructor";
 
   aboutMessage =
-    QObject::tr("<p style='white-space:pre'>is a free open source flight planner, navigation tool, moving map,<br/>"
-                "airport search and airport information system<br/>"
-                "for X-Plane 11, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.</p>"
-                "<p>"
-                  "<b>"
-                    "If you would like to show your appreciation you can donate&nbsp;"
-                    "<a href=\"%1\">here"
-                    "</a>."
-                  "</b>"
-                "</p>"
-                "<p>This software is licensed under "
-                  "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3"
-                  "</a> or any later version."
-                "</p>"
-                "<p>The source code for this application is available at "
-                  "<a href=\"https://github.com/albar965\">Github"
-                  "</a>."
-                "</p>"
-                "<p>More about my projects at "
-                  "<a href=\"https://www.littlenavmap.org\">www.littlenavmap.org"
-                  "</a>."
-                "</p>"
-                "<p>"
-                  "<b>Copyright 2015-2021 Alexander Barthel"
-                  "</b>"
-                "</p>").arg(lnm::helpDonateUrl);
+    tr("<p style='white-space:pre'>is a free open source flight planner, navigation tool, moving map,<br/>"
+       "airport search and airport information system<br/>"
+       "for X-Plane 11, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.</p>"
+       "<p>"
+         "<b>"
+           "If you would like to show your appreciation you can donate&nbsp;"
+           "<a href=\"%1\">here"
+           "</a>."
+         "</b>"
+       "</p>"
+       "<p>This software is licensed under "
+         "<a href=\"http://www.gnu.org/licenses/gpl-3.0\">GPL3"
+         "</a> or any later version."
+       "</p>"
+       "<p>The source code for this application is available at "
+         "<a href=\"https://github.com/albar965\">Github"
+         "</a>."
+       "</p>"
+       "<p>More about my projects at "
+         "<a href=\"https://www.littlenavmap.org\">www.littlenavmap.org"
+         "</a>."
+       "</p>"
+       "<p>"
+         "<b>Copyright 2015-2022 Alexander Barthel"
+         "</b>"
+       "</p>").arg(lnm::helpDonateUrl);
 
   layoutWarnText = tr("The option \"Allow to undock map window\" in the layout file is "
                       "different than the currently set option.\n"
@@ -2256,7 +2256,7 @@ void MainWindow::deleteAircraftTrack(bool quiet)
   int result = QMessageBox::Yes;
 
   if(!quiet)
-    result = atools::gui::Dialog(this).
+    result = dialog->
              showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_TRAIL,
                                 tr("Delete aircraft trail?"),
                                 tr("Do not &show this dialog again."),
@@ -2536,10 +2536,10 @@ bool MainWindow::routeSaveLnm()
 {
   // Show a simple warning for the rare case that altitude is null ===============
   if(atools::almostEqual(NavApp::getRouteConst().getCruisingAltitudeFeet(), 0.f, 10.f))
-    atools::gui::Dialog(this).showInfoMsgBox(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING,
-                                             tr("Flight plan cruise altitude is zero.\n"
-                                                "A simulator might not be able to load the flight plan."),
-                                             QObject::tr("Do not &show this dialog again."));
+    dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_CRUISE_ZERO_WARNING,
+                           tr("Flight plan cruise altitude is zero.\n"
+                              "A simulator might not be able to load the flight plan."),
+                           tr("Do not &show this dialog again."));
 
   if(!routeController->isLnmFormatFlightplan())
   {
@@ -2629,12 +2629,11 @@ void MainWindow::clearRangeRingsAndDistanceMarkers(bool quiet)
 {
   if(!quiet)
   {
-    int result = atools::gui::Dialog(this).
-                 showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_MARKS,
-                                    tr("Delete all range rings, measurement lines, traffic patterns and holds from map?"),
-                                    tr("Do not &show this dialog again."),
-                                    QMessageBox::Yes | QMessageBox::No,
-                                    QMessageBox::No, QMessageBox::Yes);
+    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_MARKS,
+                                            tr("Delete all range rings, measurement lines, traffic patterns and holds from map?"),
+                                            tr("Do not &show this dialog again."),
+                                            QMessageBox::Yes | QMessageBox::No,
+                                            QMessageBox::No, QMessageBox::Yes);
 
     if(result == QMessageBox::Yes)
       mapWidget->clearAllMarkers();
@@ -3359,21 +3358,74 @@ void MainWindow::mainWindowShown()
   {
     NavApp::closeSplashScreen();
 
-    QString message = QObject::tr("<p>Error initializing SSL subsystem.</p>"
-                                    "<p>The program will not be able to use encrypted network connections<br/>"
-                                    "(i.e. HTTPS) that are needed to check for updates or<br/>"
-                                    "to load online maps.</p>");
+    QString message = tr("<p>Error initializing SSL subsystem.</p>"
+                           "<p>The program will not be able to use encrypted network connections<br/>"
+                           "(i.e. HTTPS) that are needed to check for updates or<br/>"
+                           "to load online maps.</p>");
 
 #if defined(Q_OS_WIN32)
     QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallRedistUrl, lnm::helpLanguageOnline());
-    QString message2 = QObject::tr("<p><b>Click the link below for more information:<br/><br/>"
-                                   "<a href=\"%1\">Online Manual - Installation</a></b><br/></p>").
+    QString message2 = tr("<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>").
                        arg(url.toString());
     message += message2;
 #endif
 
-    atools::gui::Dialog(this).showWarnMsgBox(lnm::ACTIONS_SHOW_SSL_FAILED, message,
-                                             QObject::tr("Do not &show this dialog again."));
+    dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_SSL_FAILED, message, tr("Do not &show this dialog again."));
+  }
+
+  // Create recommended folder structure if user confirms =========================================
+  DirTool dirTool(this, atools::documentsDir(), QApplication::applicationName(), lnm::ACTIONS_SHOW_INSTALL_DIRS);
+  if(!dirTool.hasAllDirs())
+  {
+    NavApp::closeSplashScreen();
+    dirTool.run();
+  }
+
+  DatabaseManager *databaseManager = NavApp::getDatabaseManager();
+
+  // Check for missing simulators and databases ====================================================
+  if(!databaseManager->hasSimulatorDatabases() && !databaseManager->hasInstalledSimulators())
+  {
+    NavApp::closeSplashScreen();
+
+    // No databases and no simulators - show a message dialog
+    QString message = tr("<p>Could not find a simulator installation on this computer. Also, no scenery library databases were found.</p>"
+                           "<p>You can copy a Little Navmap scenery library database from another computer "
+                             "if you wish to run this Little Navmap instance on a remote across a network.</p>");
+
+    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineUrl + "NETWORK.html", lnm::helpLanguageOnline());
+    message.append(tr("<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>").arg(url.toString()));
+
+    dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_MISSING_SIMULATORS, message, tr("Do not &show this dialog again."));
+  } // else have databases do nothing
+
+  // First installation actions ====================================================
+  if(firstApplicationStart)
+  {
+    firstApplicationStart = false;
+
+    NavApp::closeSplashScreen();
+
+    // Open a start page in the web browser ============================
+    helpHandler->openHelpUrlWeb(this, lnm::helpOnlineStartUrl, lnm::helpLanguageOnline());
+
+    // Show the scenery database dialog on first start
+    if(databaseManager->hasInstalledSimulators())
+    {
+      // No databases but simulators let the user create new databases
+      databaseManager->run();
+
+      // Open connection dialog ============================
+      NavApp::getConnectClient()->connectToServerDialog();
+    }
+    // else warning was already shown above
+  }
+  else if(databasesErased)
+  {
+    databasesErased = false;
+    // Databases were removed - show dialog
+    NavApp::closeSplashScreen();
+    databaseManager->run();
   }
 
   if(!NavApp::getElevationProvider()->isGlobeOfflineProvider())
@@ -3385,95 +3437,17 @@ void MainWindow::mainWindowShown()
     // Download the file <b><i>All Tiles in One .zip (all10g.zip)</i></b> from the page and extract
     // the archive to an arbitrary place, e.g in \"Documents\". Then click \"Select GLOBE Directory ...\"
     // above and choose the directory with the extracted files.</p>
-    // <p><a href="%1"><b>Click here for more information in the <i>Little Navmap</i> online manual</b></a></p>
+    // <p><a href="%1"><b>Click here for more information in the Little Navmap online manual</b></a></p>
 
     QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallGlobeUrl, lnm::helpLanguageOnline());
-    QString message = QObject::tr(
-      "<p>The online elevation data which is used by default for the elevation profile "
-        "is limited and has a lot of errors.<br/>"
-        "Therefore, it is recommended to download and use the offline GLOBE elevation data "
-        "which provides world wide coverage.</p>"
-        "<p><b>Go to the main menu -&gt; \"Tools\" -&gt; \"Options\" and "
-          "then to page \"Cache and files\" to add the GLOBE data.</b></p>"
-          "<p><a href=\"%1\"><b>Click here for more information in the "
-            "<i>Little Navmap</i> online manual</b></a></p>",
-      "Keep instructions in sync with translated menus")
-                      .arg(url.toString());
+    QString message = tr(
+      "<p>The online elevation data which is used by default for the elevation profile is limited and has a lot of errors.<br/>"
+      "Therefore, it is recommended to download and use the offline GLOBE elevation data which provides world wide coverage.</p>"
+      "<p>Go to the main menu -&gt; \"Tools\" -&gt; \"Options\" and then to page \"Cache and files\" to add the GLOBE data.</p>"
+        "<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>",
+      "Keep instructions in sync with translated menus").arg(url.toString());
 
-    atools::gui::Dialog(this).showInfoMsgBox(lnm::ACTIONS_SHOW_INSTALL_GLOBE, message,
-                                             QObject::tr("Do not &show this dialog again."));
-  }
-
-  // Create recommended folder structure if user confirms
-  DirTool dirTool(this, atools::documentsDir(), QApplication::applicationName(), lnm::ACTIONS_SHOW_INSTALL_DIRS);
-  if(!dirTool.hasAllDirs())
-  {
-    NavApp::closeSplashScreen();
-    dirTool.run();
-  }
-
-  DatabaseManager *databaseManager = NavApp::getDatabaseManager();
-  if(firstApplicationStart)
-  {
-    firstApplicationStart = false;
-
-    // Open a start page in the web browser ============================
-    helpHandler->openHelpUrlWeb(this, lnm::helpOnlineStartUrl, lnm::helpLanguageOnline());
-
-    if(!databaseManager->hasSimulatorDatabases())
-    {
-      NavApp::closeSplashScreen();
-
-      // Show the scenery database dialog on first start
-#ifdef Q_OS_WIN32
-      if(databaseManager->hasInstalledSimulators())
-        // No databases but simulators let the user create new databases
-        databaseManager->run();
-      else
-      {
-        // No databases and no simulators - show a message dialog
-        QMessageBox msgBox(this);
-        msgBox.setWindowTitle(QApplication::applicationName());
-        msgBox.setTextFormat(Qt::RichText);
-        msgBox.setText(
-          tr("Could not find a<ul>"
-             "<li>Microsoft Flight Simulator X,</li>"
-               "<li>Microsoft Flight Simulator - Steam Edition,</li>"
-                 "<li>Prepar3D or</li></ul>"
-                   "<li>Microsoft Flight Simulator 2020 installation</li>"
-                     "on this computer. Also, no scenery library databases were found.<br/><br/>"
-                     "You can copy a Little Navmap scenery library database from another computer.<br/>"
-                     "Press the help button for more information on this.<br/><br/>"
-                     "If you have X-Plane 11 installed you can go to the scenery library "
-                     "loading dialog by clicking the X-Plane button below.<br/><br/>"
-             )
-          );
-        msgBox.setStandardButtons(QMessageBox::Ok | QMessageBox::Open | QMessageBox::Help);
-        msgBox.setButtonText(QMessageBox::Open, tr("X-Plane"));
-        msgBox.setDefaultButton(QMessageBox::Ok);
-
-        int result = msgBox.exec();
-        if(result == QMessageBox::Help)
-          HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "RUNNOSIM.html", lnm::helpLanguageOnline());
-        else if(result == QMessageBox::Open)
-          databaseManager->run();
-      }
-#else
-      // Show always on non Windows systems ========================
-      databaseManager->run();
-#endif
-    } // else have databases do nothing
-
-    // Open connection dialog ============================
-    NavApp::closeSplashScreen();
-    NavApp::getConnectClient()->connectToServerDialog();
-  }
-  else if(databasesErased)
-  {
-    databasesErased = false;
-    // Databases were removed - show dialog
-    NavApp::closeSplashScreen();
-    databaseManager->run();
+    dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_INSTALL_GLOBE, message, tr("Do not &show this dialog again."));
   }
 
   // Checks if version of database is smaller than application database version and shows a warning dialog if it is
@@ -4461,7 +4435,7 @@ bool MainWindow::buildWeatherContextForInfo(map::WeatherContext& weatherContext,
 
   if(flags & optsw::WEATHER_INFO_FS)
   {
-    if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
+    if(atools::fs::FsPaths::isAnyXplane(NavApp::getCurrentSimulatorDb()))
     {
       currentWeatherContext->fsMetar = weatherReporter->getXplaneMetar(airport.ident, airport.position);
       changed = true;
@@ -4555,7 +4529,7 @@ void MainWindow::buildWeatherContext(map::WeatherContext& weatherContext, const 
 
   if(flags & optsw::WEATHER_INFO_FS)
   {
-    if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
+    if(atools::fs::FsPaths::isAnyXplane(NavApp::getCurrentSimulatorDb()))
       weatherContext.fsMetar = weatherReporter->getXplaneMetar(airport.ident, airport.position);
     else
       weatherContext.fsMetar =
@@ -4588,11 +4562,10 @@ void MainWindow::buildWeatherContextForTooltip(map::WeatherContext& weatherConte
 
   if(flags & optsw::WEATHER_TOOLTIP_FS)
   {
-    if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
+    if(atools::fs::FsPaths::isAnyXplane(NavApp::getCurrentSimulatorDb()))
       weatherContext.fsMetar = weatherReporter->getXplaneMetar(airport.ident, airport.position);
     else
-      weatherContext.fsMetar =
-        NavApp::getConnectClient()->requestWeather(airport.ident, airport.position, false /* station only */);
+      weatherContext.fsMetar = NavApp::getConnectClient()->requestWeather(airport.ident, airport.position, false /* station only */);
   }
 
   if(flags & optsw::WEATHER_TOOLTIP_ACTIVESKY)

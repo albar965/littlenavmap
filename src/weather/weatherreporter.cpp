@@ -224,7 +224,7 @@ void WeatherReporter::disableXplane()
 
 void WeatherReporter::initXplane()
 {
-  if(simType == atools::fs::FsPaths::XPLANE11 && !NavApp::getCurrentSimulatorBasePath().isEmpty())
+  if(atools::fs::FsPaths::isAnyXplane(simType) && !NavApp::getCurrentSimulatorBasePath().isEmpty())
   {
     QFileInfo base(NavApp::getCurrentSimulatorBasePath());
 
@@ -289,7 +289,7 @@ void WeatherReporter::initActiveSkyNext()
     // findActiveSkyFiles(asp4SnapshotPath, asp4FlightplanSnapshotPath, "AS_", "P3Dv5");
     // qInfo() << "ASP5 snapshot" << asp5SnapshotPath << "flight plan weather" << asp5FlightplanSnapshotPath;
     // }
-    else if(simType == atools::fs::FsPaths::XPLANE11)
+    else if(atools::fs::FsPaths::isAnyXplane(simType))
     {
       // C:\Users\USER\AppData\Roaming\Hifi\AS_XPL
       findActiveSkyFiles(asXplSnapshotPath, aspXplFlightplanSnapshotPath, "AS_", "XPL");
@@ -519,16 +519,16 @@ void WeatherReporter::findActiveSkyFiles(QString& asnSnapshot, QString& flightpl
       simPathComponent = activeSkyPrefix + "FSX";
     else if(simType == atools::fs::FsPaths::FSX_SE)
       simPathComponent = activeSkyPrefix + "FSX";
-    else if(simType == atools::fs::FsPaths::P3D_V2)
-      simPathComponent = activeSkyPrefix + "P3D";
     else if(simType == atools::fs::FsPaths::P3D_V3)
       simPathComponent = activeSkyPrefix + "P3D";
     else if(simType == atools::fs::FsPaths::P3D_V4)
       simPathComponent = activeSkyPrefix + "P3D";
     else if(simType == atools::fs::FsPaths::P3D_V5)
       simPathComponent = activeSkyPrefix + "P3D";
-    else if(simType == atools::fs::FsPaths::XPLANE11)
+    else if(simType == atools::fs::FsPaths::XPLANE_11)
       simPathComponent = activeSkyPrefix + "XP";
+    else if(simType == atools::fs::FsPaths::XPLANE_12)
+      simPathComponent = activeSkyPrefix + "XP"; // Unknown for now
   }
   else
     // Use fixed suffix for AS4
@@ -679,7 +679,7 @@ atools::fs::weather::Metar WeatherReporter::getAirportWeather(const QString& air
       return atools::fs::weather::Metar();
 
     case map::WEATHER_SOURCE_SIMULATOR:
-      if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::XPLANE11)
+      if(atools::fs::FsPaths::isAnyXplane(NavApp::getCurrentSimulatorDb()))
         // X-Plane weather file
         return Metar(getXplaneMetar(airportIcao, atools::geo::EMPTY_POS).metarForStation);
       else if(NavApp::isConnected() /*&& !NavApp::getConnectClient()->isConnectedNetwork()*/)
@@ -753,27 +753,23 @@ void WeatherReporter::updateTimeouts()
   // Disable periodic downloads if feature is not needed
   optsw::FlagsWeather flags = OptionData::instance().getFlagsWeather();
 
-  if(simType == atools::fs::FsPaths::XPLANE11 &&
-     (flags & optsw::WEATHER_INFO_FS || flags & optsw::WEATHER_TOOLTIP_FS ||
-      airportWeatherSource == map::WEATHER_SOURCE_SIMULATOR))
+  if(atools::fs::FsPaths::isAnyXplane(simType) && (flags & optsw::WEATHER_INFO_FS || flags & optsw::WEATHER_TOOLTIP_FS ||
+                                                   airportWeatherSource == map::WEATHER_SOURCE_SIMULATOR))
     initXplane();
   else
     disableXplane();
 
-  if(flags & optsw::WEATHER_INFO_NOAA || flags & optsw::WEATHER_TOOLTIP_NOAA ||
-     airportWeatherSource == map::WEATHER_SOURCE_NOAA)
+  if(flags & optsw::WEATHER_INFO_NOAA || flags & optsw::WEATHER_TOOLTIP_NOAA || airportWeatherSource == map::WEATHER_SOURCE_NOAA)
     noaaWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
   else
     noaaWeather->setUpdatePeriod(-1);
 
-  if(flags & optsw::WEATHER_INFO_IVAO || flags & optsw::WEATHER_TOOLTIP_IVAO ||
-     airportWeatherSource == map::WEATHER_SOURCE_IVAO)
+  if(flags & optsw::WEATHER_INFO_IVAO || flags & optsw::WEATHER_TOOLTIP_IVAO || airportWeatherSource == map::WEATHER_SOURCE_IVAO)
     ivaoWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
   else
     ivaoWeather->setUpdatePeriod(-1);
 
-  if(flags & optsw::WEATHER_INFO_VATSIM || flags & optsw::WEATHER_TOOLTIP_VATSIM ||
-     airportWeatherSource == map::WEATHER_SOURCE_VATSIM)
+  if(flags & optsw::WEATHER_INFO_VATSIM || flags & optsw::WEATHER_TOOLTIP_VATSIM || airportWeatherSource == map::WEATHER_SOURCE_VATSIM)
     vatsimWeather->setUpdatePeriod(onlineWeatherTimeoutSecs);
   else
     vatsimWeather->setUpdatePeriod(-1);

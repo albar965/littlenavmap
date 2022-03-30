@@ -91,7 +91,7 @@ private:
   QString fixBasePath(QString path);
 
   Ui::DatabaseDialog *ui;
-  atools::fs::FsPaths::SimulatorType currentFsType = atools::fs::FsPaths::UNKNOWN;
+  atools::fs::FsPaths::SimulatorType currentFsType = atools::fs::FsPaths::NONE;
 
   // Copy of the FS path map which can be used or not (in case of cancel)
   SimulatorTypeMap simulators;
