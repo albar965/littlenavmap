@@ -3582,7 +3582,7 @@ void MainWindow::allowDockingWindows()
 
   if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
     // Undockable map widget is not registered in handler
-    dockHandler->setDockingAllowed(ui->actionShowAllowDocking->isChecked());
+    dockHandler->setDockingAllowed(ui->dockWidgetMap, ui->actionShowAllowDocking->isChecked());
 }
 
 void MainWindow::raiseFloatingWindows()
@@ -3590,8 +3590,9 @@ void MainWindow::raiseFloatingWindows()
   qDebug() << Q_FUNC_INFO;
   dockHandler->raiseFloatingWindows();
 
-  // Map window is not registered in dockHandler
-  dockHandler->raiseFloatingWindow(ui->dockWidgetMap);
+  if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
+    // Map window is not registered in dockHandler
+    dockHandler->raiseFloatingWindow(ui->dockWidgetMap);
 
   // Avoid having random widget focus
   mapWidget->setFocus();
