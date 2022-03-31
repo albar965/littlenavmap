@@ -219,6 +219,7 @@
     <addaction name="actionResetAllSettings"/>
     <addaction name="actionSaveAllNow"/>
     <addaction name="separator"/>
+    <addaction name="actionCreateDirStructure"/>
     <addaction name="menuHelpFilesAndFolders"/>
     <addaction name="separator"/>
     <addaction name="actionRouteDisplayOptions"/>
@@ -12332,6 +12333,17 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="statusTip">
     <string>Open the Little Navmap map cache directory in the default file manager</string>
+   </property>
+  </action>
+  <action name="actionCreateDirStructure">
+   <property name="text">
+    <string>&amp;Create Directory Structure</string>
+   </property>
+   <property name="toolTip">
+    <string>Create the recommended directory structure for saving files</string>
+   </property>
+   <property name="statusTip">
+    <string>Create the recommended directory structure for saving files</string>
    </property>
   </action>
  </widget>

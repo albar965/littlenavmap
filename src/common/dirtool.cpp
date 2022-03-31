@@ -126,6 +126,23 @@ void DirTool::run()
   }
 }
 
+bool DirTool::runIfMissing()
+{
+  bool hasDirs = hasAllDirs();
+
+  qDebug() << Q_FUNC_INFO << "hasDirs" << hasDirs;
+
+  if(!hasDirs)
+    run();
+
+  return hasDirs;
+}
+
+QString DirTool::getApplicationDir() const
+{
+  return QDir::toNativeSeparators(QFileInfo(documentsDir + QDir::separator() + applicationDir).absoluteFilePath());
+}
+
 bool DirTool::createAllDirs()
 {
   errors.clear();

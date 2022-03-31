@@ -1314,6 +1314,7 @@ void MainWindow::connectAllSlots()
 
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::openOptionsDialog);
   connect(ui->actionResetMessages, &QAction::triggered, this, &MainWindow::resetMessages);
+  connect(ui->actionCreateDirStructure, &QAction::triggered, this, &MainWindow::runDirToolManual);
   connect(ui->actionSaveAllNow, &QAction::triggered, this, &MainWindow::saveStateNow);
 
   // Windows menu ============================================================
@@ -3384,17 +3385,8 @@ void MainWindow::mainWindowShown()
     dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_SSL_FAILED, message, tr("Do not &show this dialog again."));
   }
 
-  // Create recommended folder structure if user confirms =========================================
-  DirTool dirTool(this, atools::documentsDir(), QApplication::applicationName(), lnm::ACTIONS_SHOW_INSTALL_DIRS);
-  if(!dirTool.hasAllDirs())
-  {
-    NavApp::closeSplashScreen();
-    dirTool.run();
-  }
-
-  DatabaseManager *databaseManager = NavApp::getDatabaseManager();
-
   // Check for missing simulators and databases ====================================================
+  DatabaseManager *databaseManager = NavApp::getDatabaseManager();
   if(!databaseManager->hasSimulatorDatabases() && !databaseManager->hasInstalledSimulators())
   {
     NavApp::closeSplashScreen();
@@ -3417,13 +3409,16 @@ void MainWindow::mainWindowShown()
 
     NavApp::closeSplashScreen();
 
+    // Create recommended folder structure if user confirms =========================================
+    runDirTool(false /* manual */);
+
     // Open a start page in the web browser ============================
     helpHandler->openHelpUrlWeb(this, lnm::helpOnlineStartUrl, lnm::helpLanguageOnline());
 
     // Show the scenery database dialog on first start
     if(databaseManager->hasInstalledSimulators())
     {
-      // No databases but simulators let the user create new databases
+      // Found simulators let the user create new databases
       databaseManager->run();
 
       // Open connection dialog ============================
@@ -3575,6 +3570,24 @@ void MainWindow::mainWindowShownDelayed()
   profileWidget->restoreSplitter();
 
   NavApp::setMainWindowVisible();
+}
+
+void MainWindow::runDirToolManual()
+{
+  runDirTool(true);
+}
+
+void MainWindow::runDirTool(bool manual)
+{
+  DirTool dirTool(this, atools::documentsDir(), QApplication::applicationName(), lnm::ACTIONS_SHOW_INSTALL_DIRS);
+  bool hasDirs = dirTool.runIfMissing();
+
+  qDebug() << Q_FUNC_INFO << "hasDirs" << hasDirs << "manual" << manual;
+
+  if(hasDirs && manual)
+    QMessageBox::information(this, QApplication::applicationName(),
+                             tr("<p>Directory structure for Little Navmap files is already complete.</p>"
+                                  "<p>Base directory is<br/>\"%1\"</p>").arg(dirTool.getApplicationDir()));
 }
 
 void MainWindow::exitFullScreenPressed()

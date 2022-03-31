@@ -41,6 +41,12 @@ public:
   void run();
   bool hasAllDirs();
 
+  /* Checks for existence and shows dialog if folders are incomplete */
+  bool runIfMissing();
+
+  /* Get base folder like "C:\Users\ME\Documents\Little Navmap Files" with native separators. */
+  QString getApplicationDir() const;
+
 private:
   /* Fills errors if any */
   bool createAllDirs();

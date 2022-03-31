@@ -289,6 +289,9 @@ private:
 
   void updateOnlineActionStates();
 
+  void runDirToolManual();
+  void runDirTool(bool manual = true);
+
   /* Update status bar section for online status */
   void updateConnectionStatusMessageText();
 
