@@ -280,7 +280,7 @@ void RouteExportFormatMap::init()
   FMT(FLIGHTGEAR,   AIRPORTS,         DF % tr("fgfp"),    tr("Simulator"), tr("FlightGear") % mainMenu                                           );
   FMT(GFP,          AIRPORTS,         SD % tr("gfp"),     tr("Garmin"),    tr("Flight1 Garmin GTN 650/750")                                      );
   FMT(GFPUWP,       AIRPORTS|GARMIN_AS_WAYPOINTS, SD % tr("gfp"), tr("Garmin"), tr("Flight1 Garmin GTN 650/750 with user defined waypoints") % rxptooltip);
-  FMT(TXT,          AIRPORTS,         S0 % tr("txt"),     tr("Aircraft"),  tr("Rotate MD-80 and others")                                         );
+  FMT(TXT,          AIRPORTS,         S0 % tr("txt"),     tr("Aircraft"),  tr("Rotate MD-80, MD-11 and others")                                  );
   FMT(TXTJAR,       AIRPORTS,         S0 % tr("txt"),     tr("Aircraft"),  tr("JARDesign aircraft")                                              );
   FMT(RTE,          AIRPORTS,         S0 % tr("rte"),     tr("Aircraft"),  tr("PMDG aircraft")                                                   );
   FMT(GPX,          NONE,             DF % tr("gpx"),     tr("Other"),     tr("Garmin exchange format for Google Earth and others") % gpxTooltip % mainMenu );

@@ -312,5 +312,6 @@
         <file>resources/icons/mapdisplaykeys.svg</file>
         <file>resources/icons/airportclosed.svg</file>
         <file>resources/icons/centeraircraftdest.svg</file>
+        <file>resources/icons/userpoint_Radio Range.svg</file>
     </qresource>
 </RCC>
