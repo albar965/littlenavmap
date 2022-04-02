@@ -750,6 +750,10 @@ bool ProfileScrollArea::isPointVisible(const QPoint& point)
 void ProfileScrollArea::centerAircraftAndDest(const QPoint& aircraftScreenPoint, const QPoint& destScreenPoint, bool zoomVertically,
                                               bool force)
 {
+  const static double MIN_VIEWPORT_LENGTH_NM = 8.;
+  const static double MIN_VIEWPORT_HEIGHT_FT = 3000.;
+  const static int MIN_UPDATE_SECONDS = 5;
+
   // point1 and point2 are relative to profile widget rect
   Ui::MainWindow *ui = NavApp::getMainUi();
 
@@ -786,7 +790,7 @@ void ProfileScrollArea::centerAircraftAndDest(const QPoint& aircraftScreenPoint,
 
     // Do not update more often than five seconds
     QDateTime now = QDateTime::currentDateTime();
-    if(force || !lastCenterAircraftAndDest.isValid() || now > lastCenterAircraftAndDest.addSecs(5))
+    if(force || !lastCenterAircraftAndDest.isValid() || now > lastCenterAircraftAndDest.addSecs(MIN_UPDATE_SECONDS))
     {
       lastCenterAircraftAndDest = now;
       changingView = true;
@@ -796,7 +800,7 @@ void ProfileScrollArea::centerAircraftAndDest(const QPoint& aircraftScreenPoint,
       if(relHoriz > 0.)
       {
         int zoomHoriz = static_cast<int>(1. / relHoriz);
-        if(force || (ui->horizontalSliderProfileZoom->value() != zoomHoriz && viewportWidthNm > 6.))
+        if(force || (ui->horizontalSliderProfileZoom->value() != zoomHoriz && viewportWidthNm > MIN_VIEWPORT_LENGTH_NM))
         {
           ui->horizontalSliderProfileZoom->setValue(zoomHoriz);
           horizScrollBar->setValue(static_cast<int>(relative1X * profileWidget->width()));
@@ -808,7 +812,7 @@ void ProfileScrollArea::centerAircraftAndDest(const QPoint& aircraftScreenPoint,
       if(relHoriz > 0.)
       {
         int zoomVert = static_cast<int>(1. / relVert);
-        if(force || (ui->verticalSliderProfileZoom->value() != zoomVert && zoomVertically && viewportHeightFt > 3000.))
+        if(force || (ui->verticalSliderProfileZoom->value() != zoomVert && zoomVertically && viewportHeightFt > MIN_VIEWPORT_HEIGHT_FT))
         {
           ui->verticalSliderProfileZoom->setValue(zoomVert);
           vertScrollBar->setValue(static_cast<int>(relative1Y * profileWidget->height()));
