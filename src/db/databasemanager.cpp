@@ -1245,7 +1245,7 @@ void DatabaseManager::run()
         {
           // Navigraph update for MSFS used - Use Navigraph for Navaids and Procedures
 
-          dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH,
+          dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH,
                                  tr("<p>You are using MSFS with the Navigraph navdata update.</p>"
                                       "<p>You have to update the Little Navmap navdata with the "
                                         "Navigraph FMS Data Manager and use the right scenery library mode "
@@ -1266,7 +1266,7 @@ void DatabaseManager::run()
         {
           // not use the Navigraph update for MSFS - Do not use Navigraph Database
 
-          dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_OFF,
+          dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_OFF,
                                  tr("<p>You are using MSFS without the Navigraph navdata update.</p>"
                                       "<p>You have to use the scenery library mode \"Do not use Navigraph Database\" "
                                         "to avoid issues with airport information in Little Navmap.</p>"
@@ -1282,7 +1282,7 @@ void DatabaseManager::run()
     else if(navDatabaseStatus == dm::NAVDATABASE_ALL)
     {
       // Notify user and correct scenery mode  ==============================================
-      dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL,
+      dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL,
                              tr("<p>Your current scenery library mode is \"Use Navigraph for all Features\".</p>"
                                   "<p>Note that airport information is limited in this mode. "
                                     "This means that aprons, taxiways, parking positions, runway surfaces and more are not available, "
