@@ -77,4 +77,7 @@ void messages::resetEssentialMessages()
   settings.setValue(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_FAIL, true);
   settings.setValue(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL, true);
   settings.setValue(lnm::ACTIONS_SHOW_MISSING_SIMULATORS, true);
+  settings.setValue(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH, true);
+  settings.setValue(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_OFF, true);
+  settings.setValue(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL, true);
 }

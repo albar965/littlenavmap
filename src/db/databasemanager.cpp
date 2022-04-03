@@ -141,6 +141,8 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     "<big>Found:</big></br>"
     ) + databaseInfoText;
 
+  dialog = new atools::gui::Dialog(mainWindow);
+
   // Keeps MSFS translations from table "translation" in memory
   languageIndex = new atools::fs::scenery::LanguageJson;
 
@@ -262,6 +264,7 @@ DatabaseManager::~DatabaseManager()
   freeActions();
 
   delete databaseDialog;
+  delete dialog;
   delete progressDialog;
   delete userdataManager;
   delete trackManager;
@@ -370,10 +373,8 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
       // Avoid the splash screen hiding the dialog
       NavApp::closeSplashScreen();
 
-      QMessageBox box(QMessageBox::Question, QApplication::applicationName(),
-                      msg.arg(databaseNames.join("<br/>")).arg(trailingMsg),
-                      QMessageBox::No | QMessageBox::Yes,
-                      mainWindow);
+      QMessageBox box(QMessageBox::Question, QApplication::applicationName(), msg.arg(databaseNames.join("<br/>")).arg(trailingMsg),
+                      QMessageBox::No | QMessageBox::Yes, mainWindow);
       box.button(QMessageBox::No)->setText(tr("&No and Exit Application"));
       box.button(QMessageBox::Yes)->setText(tr("&Erase"));
 
@@ -385,15 +386,15 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
       else if(result == QMessageBox::Yes)
       {
         NavApp::closeSplashScreen();
-        QMessageBox *dialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow, tr("Deleting ..."));
+        QMessageBox *simpleProgressDialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow, tr("Deleting ..."));
         atools::gui::Application::processEventsExtended();
 
         int i = 0;
         for(const QString& dbfile : databaseFiles)
         {
-          dialog->setText(tr("Erasing database for %1 ...").arg(databaseNames.at(i)));
+          simpleProgressDialog->setText(tr("Erasing database for %1 ...").arg(databaseNames.at(i)));
           atools::gui::Application::processEventsExtended();
-          dialog->repaint();
+          simpleProgressDialog->repaint();
           atools::gui::Application::processEventsExtended();
 
           if(QFile::remove(dbfile))
@@ -412,14 +413,14 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
           else
           {
             qWarning() << "Removing database failed" << dbfile;
-            atools::gui::Dialog::warning(nullptr,
+            atools::gui::Dialog::warning(mainWindow,
                                          tr("Deleting of database<br/><br/>\"%1\"<br/><br/>failed.<br/><br/>"
                                             "Remove the database file manually and restart the program.").arg(dbfile));
             ok = false;
           }
           i++;
         }
-        atools::gui::Dialog::deleteSimpleProgressDialog(dialog);
+        atools::gui::Dialog::deleteSimpleProgressDialog(simpleProgressDialog);
       }
     }
   }
@@ -474,7 +475,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
       if(hasSettings)
       {
         NavApp::closeSplashScreen();
-        result = atools::gui::Dialog(mainWindow).showQuestionMsgBox(
+        result = dialog->showQuestionMsgBox(
           lnm::ACTIONS_SHOW_OVERWRITE_DATABASE,
           tr("Your current navdata is older than the navdata included in the Little Navmap download archive.<br/><br/>"
              "Overwrite the current navdata file with the new one?"
@@ -500,9 +501,9 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
       if(result == QMessageBox::Yes)
       {
         // We have a database in the application folder and it is newer than the one in the settings folder
-        QMessageBox *dialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow,
-                                                                            tr("Preparing %1 Database ...").
-                                                                            arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+        QMessageBox *simpleProgressDialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow,
+                                                                                          tr("Preparing %1 Database ...").
+                                                                                          arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
         atools::gui::Application::processEventsExtended();
 
         bool resultRemove = true, resultCopy = false;
@@ -516,9 +517,9 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
         // Copy to target
         if(resultRemove)
         {
-          dialog->setText(tr("Preparing %1 Database: Copying file ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+          simpleProgressDialog->setText(tr("Preparing %1 Database: Copying file ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
           atools::gui::Application::processEventsExtended();
-          dialog->repaint();
+          simpleProgressDialog->repaint();
           atools::gui::Application::processEventsExtended();
           resultCopy = QFile(appDb).copy(settingsDb);
           qDebug() << Q_FUNC_INFO << "copied" << appDb << "to" << settingsDb << resultCopy;
@@ -529,29 +530,29 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
         {
           SqlDatabase tempDb(DATABASE_NAME_TEMP);
           openDatabaseFile(&tempDb, settingsDb, false /* readonly */, true /* createSchema */);
-          dialog->setText(tr("Preparing %1 Database: Creating indexes ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+          simpleProgressDialog->setText(tr("Preparing %1 Database: Creating indexes ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
           atools::gui::Application::processEventsExtended();
-          dialog->repaint();
+          simpleProgressDialog->repaint();
           atools::gui::Application::processEventsExtended();
           NavDatabase::runPreparationScript(tempDb);
 
-          dialog->setText(tr("Preparing %1 Database: Analyzing ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+          simpleProgressDialog->setText(tr("Preparing %1 Database: Analyzing ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
           atools::gui::Application::processEventsExtended();
-          dialog->repaint();
+          simpleProgressDialog->repaint();
           atools::gui::Application::processEventsExtended();
           tempDb.analyze();
           closeDatabaseFile(&tempDb);
           settingsNeedsPreparation = false;
         }
-        atools::gui::Dialog::deleteSimpleProgressDialog(dialog);
+        atools::gui::Dialog::deleteSimpleProgressDialog(simpleProgressDialog);
 
         if(!resultRemove)
-          atools::gui::Dialog::warning(nullptr,
+          atools::gui::Dialog::warning(mainWindow,
                                        tr("Deleting of database<br/><br/>\"%1\"<br/><br/>failed.<br/><br/>"
                                           "Remove the database file manually and restart the program.").arg(settingsDb));
 
         if(!resultCopy)
-          atools::gui::Dialog::warning(nullptr,
+          atools::gui::Dialog::warning(mainWindow,
                                        tr("Cannot copy database<br/><br/>\"%1\"<br/><br/>to<br/><br/>"
                                           "\"%2\"<br/><br/>.").arg(appDb).arg(settingsDb));
       }
@@ -561,10 +562,10 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
   if(settingsNeedsPreparation && hasSettings)
   {
     NavApp::closeSplashScreen();
-    QMessageBox *dialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow, tr("Preparing %1 Database ...").
-                                                                        arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+    QMessageBox *simpleProgressDialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow, tr("Preparing %1 Database ...").
+                                                                                      arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
     atools::gui::Application::processEventsExtended();
-    dialog->repaint();
+    simpleProgressDialog->repaint();
     atools::gui::Application::processEventsExtended();
 
     SqlDatabase tempDb(DATABASE_NAME_TEMP);
@@ -581,7 +582,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
     tempDb.analyze();
     closeDatabaseFile(&tempDb);
 
-    atools::gui::Dialog::deleteSimpleProgressDialog(dialog);
+    atools::gui::Dialog::deleteSimpleProgressDialog(simpleProgressDialog);
   }
 }
 
@@ -628,6 +629,7 @@ QString DatabaseManager::getSimulatorFilesPathBest(const FsPaths::SimulatorTypeV
         if(!base.isEmpty())
           return atools::buildPathNoCase({base, "Output", "FMS plans"});
       }
+      break;
 
     case atools::fs::FsPaths::DFD:
     case atools::fs::FsPaths::ALL_SIMULATORS:
@@ -846,8 +848,7 @@ void DatabaseManager::switchNavFromMainMenu()
       "Smaller airports might be missing and runway layout might not match the runway layout in the simulator.</p>"
       "<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>").arg(url.toString());
 
-    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_NAVDATA_WARNING, message,
-                                                   QObject::tr("Do not &show this dialog again."));
+    dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_NAVDATA_WARNING, message, QObject::tr("Do not &show this dialog again."));
   }
 
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
@@ -1223,18 +1224,82 @@ void DatabaseManager::run()
   updateDialogInfo(selectedFsType);
 
   // try until user hits cancel or the database was loaded successfully
-  while(runInternal())
+  atools::fs::ResultFlags resultFlags = atools::fs::NONE;
+  while(runInternal(resultFlags))
     ;
 
   updateSimulatorFlags();
   insertSimSwitchActions();
 
   saveState();
+
+  if(!resultFlags.testFlag(atools::fs::COMPILE_ABORTED))
+  {
+    if(currentFsType == atools::fs::FsPaths::MSFS)
+    {
+      // Notify user and correct scenery mode after loading MSFS ==============================================
+
+      if(resultFlags.testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND))
+      {
+        if(navDatabaseStatus != dm::NAVDATABASE_MIXED)
+        {
+          // Navigraph update for MSFS used - Use Navigraph for Navaids and Procedures
+
+          dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH,
+                                 tr("<p>You are using MSFS with the Navigraph navdata update.</p>"
+                                      "<p>You have to update the Little Navmap navdata with the "
+                                        "Navigraph FMS Data Manager and use the right scenery library mode "
+                                        "\"Use Navigraph for Navaids and Procedures\" "
+                                        "to avoid issues with airport information in Little Navmap.</p>"
+                                        "<p>You can change the mode manually in the menu \"Scenery Library\" -> "
+                                          "\"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
+                                          "<p>Correcting scenery library mode now.</p>", "Sync texts with menu items"),
+                                 tr("Do not &show this dialog again and always correct the mode after loading."));
+
+          navDbActionBlend->setChecked(true);
+          switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
+        }
+      }
+      else
+      {
+        if(navDatabaseStatus != dm::NAVDATABASE_OFF)
+        {
+          // not use the Navigraph update for MSFS - Do not use Navigraph Database
+
+          dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_OFF,
+                                 tr("<p>You are using MSFS without the Navigraph navdata update.</p>"
+                                      "<p>You have to use the scenery library mode \"Do not use Navigraph Database\" "
+                                        "to avoid issues with airport information in Little Navmap.</p>"
+                                        "<p>You can change this manually in menu \"Scenery Library\" -> "
+                                          "\"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
+                                          "<p>Correcting scenery library mode now.</p>", "Sync texts with menu items"),
+                                 tr("Do not &show this dialog again and always correct the mode after loading."));
+          navDbActionOff->setChecked(true);
+          switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
+        }
+      }
+    }
+    else if(navDatabaseStatus == dm::NAVDATABASE_ALL)
+    {
+      // Notify user and correct scenery mode  ==============================================
+      dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL,
+                             tr("<p>Your current scenery library mode is \"Use Navigraph for all Features\".</p>"
+                                  "<p>Note that airport information is limited in this mode. "
+                                    "This means that aprons, taxiways, parking positions, runway surfaces and more are not available, "
+                                    "smaller airports will be missing and the runway layout might not match the one in the simulator.</p>"
+                                    "<p>You can change this manually in menu \"Scenery Library\" -> "
+                                      "\"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
+                                      "<p>Correcting scenery library mode now.</p>", "Sync texts with menu items"),
+                             tr("Do not &show this dialog again and always correct the mode after loading."));
+      navDbActionBlend->setChecked(true);
+      switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
+    }
+  } // if(!resultFlags.testFlag(atools::fs::COMPILE_ABORTED))
 }
 
 /* Shows scenery database loading dialog.
  * @return true if execution was successfull. false if it was cancelled */
-bool DatabaseManager::runInternal()
+bool DatabaseManager::runInternal(atools::fs::ResultFlags& resultFlags)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -1345,7 +1410,7 @@ bool DatabaseManager::runInternal()
         SqlDatabase tempDb(DATABASE_NAME_TEMP);
         openDatabaseFile(&tempDb, tempFilename, false /* readonly */, true /* createSchema */);
 
-        if(loadScenery(&tempDb))
+        if(loadScenery(&tempDb, resultFlags))
         {
           // Successfully loaded
           reopenDialog = false;
@@ -1411,7 +1476,7 @@ bool DatabaseManager::runInternal()
 
 /* Opens progress dialog and loads scenery
  * @return true if loading was successfull. false if cancelled or an error occured */
-bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
+bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db, atools::fs::ResultFlags& resultFlags)
 {
   using atools::fs::NavDatabaseOptions;
 
@@ -1489,8 +1554,7 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
   progressDialog->repaint();
   atools::gui::Application::processEventsExtended();
 
-  navDatabaseOpts.setProgressCallback(std::bind(&DatabaseManager::progressCallback, this,
-                                                std::placeholders::_1, timer));
+  navDatabaseOpts.setProgressCallback(std::bind(&DatabaseManager::progressCallback, this, std::placeholders::_1, timer));
 
   // Let the dialog close and show the busy pointer
   QApplication::processEvents();
@@ -1502,27 +1566,26 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
 
   try
   {
-    bool foundBasicValidationError = false;
-    atools::fs::NavDatabase nd(&navDatabaseOpts, db, &errors, GIT_REVISION);
+    atools::fs::NavDatabase navDatabase(&navDatabaseOpts, db, &errors, GIT_REVISION);
     QString sceneryCfgCodec = (selectedFsType == atools::fs::FsPaths::P3D_V4 ||
                                selectedFsType == atools::fs::FsPaths::P3D_V5) ? "UTF-8" : QString();
-    nd.create(sceneryCfgCodec, foundBasicValidationError);
-    qDebug() << Q_FUNC_INFO << "foundBasicValidationError" << foundBasicValidationError;
+    resultFlags = navDatabase.create(sceneryCfgCodec);
+    qDebug() << Q_FUNC_INFO << "resultFlags" << resultFlags;
   }
   catch(atools::Exception& e)
   {
     // Show dialog if something went wrong but do not exit
     NavApp::closeSplashScreen();
-    ErrorHandler(progressDialog).handleException(
-      e, currentBglFilePath.isEmpty() ? QString() : tr("Processed files:\n%1\n").arg(currentBglFilePath));
+    ErrorHandler(progressDialog).handleException(e, currentBglFilePath.isEmpty() ?
+                                                 QString() : tr("Processed files:\n%1\n").arg(currentBglFilePath));
     success = false;
   }
   catch(...)
   {
     // Show dialog if something went wrong but do not exit
     NavApp::closeSplashScreen();
-    ErrorHandler(progressDialog).handleUnknownException(
-      currentBglFilePath.isEmpty() ? QString() : tr("Processed files:\n%1\n").arg(currentBglFilePath));
+    ErrorHandler(progressDialog).handleUnknownException(currentBglFilePath.isEmpty() ?
+                                                        QString() : tr("Processed files:\n%1\n").arg(currentBglFilePath));
     success = false;
   }
 
@@ -1981,7 +2044,7 @@ const atools::fs::db::DatabaseMeta DatabaseManager::metaFromFile(const QString& 
   tempDb.open();
 
   DatabaseMeta meta(tempDb);
-  meta.deInit();   // Detach from database
+  meta.deInit(); // Detach from database
   closeDatabaseFile(&tempDb);
   return meta;
 }
@@ -2004,14 +2067,14 @@ void DatabaseManager::checkDatabaseVersion()
     {
       qDebug() << Q_FUNC_INFO << msg;
 
-      atools::gui::Dialog(mainWindow).
-      showWarnMsgBox(lnm::ACTIONS_SHOW_DATABASE_OLD,
-                     tr("<p>%1</p>"
-                          "<p>It is recommended to reload the scenery library database after each Little Navmap update, "
-                            "after installing new add-on scenery or "
-                            "after a flight simulator update.</p>"
-                            "<p>You can do this in menu \"Scenery Library\" -> \"Reload Scenery Library\".</p>").arg(msg.join(tr("<br/>"))),
-                     tr("Do not &show this dialog again."));
+      dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_DATABASE_OLD,
+                             tr("<p>%1</p>"
+                                  "<p>It is recommended to reload the scenery library database after each Little Navmap update, "
+                                    "after installing new add-on scenery or "
+                                    "after a flight simulator update.</p>"
+                                    "<p>You can do this in menu \"Scenery Library\" -> "
+                                      "\"Reload Scenery Library\".</p>").arg(msg.join(tr("<br/>"))),
+                             tr("Do not &show this dialog again."));
     }
   }
 }

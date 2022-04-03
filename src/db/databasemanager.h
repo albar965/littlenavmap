@@ -19,12 +19,16 @@
 #define LITTLENAVMAP_DATABASEMANAGER_H
 
 #include "fs/fspaths.h"
+#include "fs/navdatabaseflags.h"
 #include "db/dbtypes.h"
 
 #include <QAction>
 #include <QObject>
 
 namespace atools {
+namespace gui {
+class Dialog;
+}
 namespace fs {
 namespace db {
 class DatabaseMeta;
@@ -270,7 +274,7 @@ private:
   bool progressCallback(const atools::fs::NavDatabaseProgress& progress, QElapsedTimer& timer);
 
   void simulatorChangedFromComboBox(atools::fs::FsPaths::SimulatorType value);
-  bool runInternal();
+  bool runInternal(atools::fs::ResultFlags& resultFlags);
   void updateDialogInfo(atools::fs::FsPaths::SimulatorType value);
 
   /* Database stored in settings directory */
@@ -292,7 +296,7 @@ private:
   void insertSimSwitchAction(atools::fs::FsPaths::SimulatorType type, QAction *before, QMenu *menu, int index);
   void updateSimulatorFlags();
   void updateSimulatorPathsFromDialog();
-  bool loadScenery(atools::sql::SqlDatabase *db);
+  bool loadScenery(atools::sql::SqlDatabase *db, atools::fs::ResultFlags& resultFlags);
   void correctSimulatorType();
 
   /* Get cycle metadata from a database file */
@@ -327,6 +331,7 @@ private:
   const QString DATABASE_NAME_DLG_INFO_TEMP = "LNMTEMPDB2";
   const QString DATABASE_TYPE = "QSQLITE";
 
+  atools::gui::Dialog *dialog;
   DatabaseDialog *databaseDialog = nullptr;
   QString databaseDirectory;
   qint64 progressTimerElapsed = 0L;
