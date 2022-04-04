@@ -1245,19 +1245,23 @@ void DatabaseManager::run()
         {
           // Navigraph update for MSFS used - Use Navigraph for Navaids and Procedures
 
-          dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH,
-                                 tr("<p>You are using MSFS with the Navigraph navdata update.</p>"
-                                      "<p>You have to update the Little Navmap navdata with the "
-                                        "Navigraph FMS Data Manager and use the right scenery library mode "
-                                        "\"Use Navigraph for Navaids and Procedures\" "
-                                        "to avoid issues with airport information in Little Navmap.</p>"
-                                        "<p>You can change the mode manually in the menu \"Scenery Library\" -> "
-                                          "\"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
-                                          "<p>Correcting scenery library mode now.</p>", "Sync texts with menu items"),
-                                 tr("Do not &show this dialog again and always correct the mode after loading."));
+          int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH,
+                                                  tr("<p>You are using MSFS with the Navigraph navdata update.</p>"
+                                                       "<p>You have to update the Little Navmap navdata with the "
+                                                         "Navigraph FMS Data Manager and use the right scenery library mode "
+                                                         "\"Use Navigraph for Navaids and Procedures\" "
+                                                         "to avoid issues with airport information in Little Navmap.</p>"
+                                                         "<p>You can change the mode manually in the menu \"Scenery Library\" -> "
+                                                           "\"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
+                                                           "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
+                                                  tr("Do not &show this dialog again and always correct mode after loading."),
+                                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
 
-          navDbActionBlend->setChecked(true);
-          switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
+          if(result == QMessageBox::Yes)
+          {
+            navDbActionBlend->setChecked(true);
+            switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
+          }
         }
       }
       else
@@ -1266,33 +1270,43 @@ void DatabaseManager::run()
         {
           // not use the Navigraph update for MSFS - Do not use Navigraph Database
 
-          dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_OFF,
-                                 tr("<p>You are using MSFS without the Navigraph navdata update.</p>"
-                                      "<p>You have to use the scenery library mode \"Do not use Navigraph Database\" "
-                                        "to avoid issues with airport information in Little Navmap.</p>"
-                                        "<p>You can change this manually in menu \"Scenery Library\" -> "
-                                          "\"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
-                                          "<p>Correcting scenery library mode now.</p>", "Sync texts with menu items"),
-                                 tr("Do not &show this dialog again and always correct the mode after loading."));
-          navDbActionOff->setChecked(true);
-          switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
+          int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_OFF,
+                                                  tr("<p>You are using MSFS without the Navigraph navdata update.</p>"
+                                                       "<p>You have to use the scenery library mode \"Do not use Navigraph Database\" "
+                                                         "to avoid issues with airport information in Little Navmap.</p>"
+                                                         "<p>You can change this manually in menu \"Scenery Library\" -> "
+                                                           "\"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
+                                                           "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
+                                                  tr("Do not &show this dialog again and always correct mode after loading."),
+                                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
+
+          if(result == QMessageBox::Yes)
+          {
+            navDbActionOff->setChecked(true);
+            switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
+          }
         }
       }
     }
     else if(navDatabaseStatus == dm::NAVDATABASE_ALL)
     {
       // Notify user and correct scenery mode  ==============================================
-      dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL,
-                             tr("<p>Your current scenery library mode is \"Use Navigraph for all Features\".</p>"
-                                  "<p>Note that airport information is limited in this mode. "
-                                    "This means that aprons, taxiways, parking positions, runway surfaces and more are not available, "
-                                    "smaller airports will be missing and the runway layout might not match the one in the simulator.</p>"
-                                    "<p>You can change this manually in menu \"Scenery Library\" -> "
-                                      "\"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
-                                      "<p>Correcting scenery library mode now.</p>", "Sync texts with menu items"),
-                             tr("Do not &show this dialog again and always correct the mode after loading."));
-      navDbActionBlend->setChecked(true);
-      switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
+      int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL,
+                                              tr("<p>Your current scenery library mode is \"Use Navigraph for all Features\".</p>"
+                                                   "<p>Note that airport information is limited in this mode. "
+                                                     "This means that aprons, taxiways, parking positions, runway surfaces and more are not available, "
+                                                     "smaller airports will be missing and the runway layout might not match the one in the simulator.</p>"
+                                                     "<p>You can change this manually in menu \"Scenery Library\" -> "
+                                                       "\"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
+                                                       "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
+                                              tr("Do not &show this dialog again and always correct mode after loading."),
+                                              QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
+
+      if(result == QMessageBox::Yes)
+      {
+        navDbActionBlend->setChecked(true);
+        switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
+      }
     }
   } // if(!resultFlags.testFlag(atools::fs::COMPILE_ABORTED))
 }
@@ -1460,8 +1474,11 @@ bool DatabaseManager::runInternal(atools::fs::ResultFlags& resultFlags)
       } // if(configValid)
     }
     else
+    {
       // User hit close
+      resultFlags |= atools::fs::COMPILE_ABORTED;
       reopenDialog = false;
+    }
   }
   catch(atools::Exception& e)
   {
