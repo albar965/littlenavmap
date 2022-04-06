@@ -32,7 +32,7 @@ using map::MapWaypoint;
 
 static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
-int WaypointQuery::queryMaxRows = map::MAX_MAP_OBJECTS;
+int WaypointQuery::queryMaxRowsWaypoints = map::MAX_MAP_OBJECTS;
 
 WaypointQuery::WaypointQuery(SqlDatabase *sqlDbNav, bool trackDatabaseParam)
   : dbNav(sqlDbNav), trackDatabase(trackDatabaseParam)
@@ -40,14 +40,10 @@ WaypointQuery::WaypointQuery(SqlDatabase *sqlDbNav, bool trackDatabaseParam)
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
-  queryRectInflationFactor = settings.getAndStoreValue(
-    lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.3).toDouble();
-  queryRectInflationIncrement = settings.getAndStoreValue(
-    lnm::SETTINGS_MAPQUERY + "QueryRectInflationIncrement", 0.1).toDouble();
-  queryMaxRows =
-    settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "WaypointQueryRowLimit", map::MAX_MAP_OBJECTS).toInt();
-
-  waypointInfoCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "WaypointCache", 100).toInt());
+  queryRectInflationFactor = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.3).toDouble();
+  queryRectInflationIncrement = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "QueryRectInflationIncrement", 0.1).toDouble();
+  queryMaxRowsWaypoints = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "WaypointQueryRowLimit1", map::MAX_MAP_OBJECTS * 2).toInt();
+  waypointInfoCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY+ "WaypointCache", 100).toInt());
 }
 
 WaypointQuery::~WaypointQuery()
@@ -127,8 +123,8 @@ void WaypointQuery::getWaypointRectNearest(map::MapWaypoint& waypoint, const Pos
     waypoint = waypoints.constFirst();
 }
 
-const QList<map::MapWaypoint> *WaypointQuery::getWaypoints(const GeoDataLatLonBox& rect,
-                                                           const MapLayer *mapLayer, bool lazy, bool& overflow)
+const QList<map::MapWaypoint> *WaypointQuery::getWaypoints(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
+                                                           bool& overflow)
 {
   waypointCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                             [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
@@ -153,12 +149,41 @@ const QList<map::MapWaypoint> *WaypointQuery::getWaypoints(const GeoDataLatLonBo
       }
     }
   }
-  overflow = waypointCache.validate(queryMaxRows);
+  overflow = waypointCache.validate(queryMaxRowsWaypoints);
   return &waypointCache.list;
 }
 
-void WaypointQuery::getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer,
-                                            map::MapTypes types, int xs, int ys,
+const QList<MapWaypoint> *WaypointQuery::getWaypointsAirway(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
+                                                            bool& overflow)
+{
+  waypointAirwayCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
+                                  [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
+  {
+    return curLayer->hasSameQueryParametersWaypoint(newLayer) && curLayer->hasSameQueryParametersAirwayTrack(newLayer);
+  });
+
+  if(waypointAirwayCache.list.isEmpty() && !lazy)
+  {
+    for(const GeoDataLatLonBox& r : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+    {
+      query::bindRect(r, waypointsAirwayByRectQuery);
+      waypointsAirwayByRectQuery->exec();
+      while(waypointsAirwayByRectQuery->next())
+      {
+        map::MapWaypoint wp;
+        mapTypesFactory->fillWaypoint(waypointsAirwayByRectQuery->record(), wp, trackDatabase);
+
+        // Avoid artificial waypoints created only for procedure or airway resolution
+        if(wp.artificial == 0)
+          waypointAirwayCache.list.append(wp);
+      }
+    }
+  }
+  overflow = waypointAirwayCache.validate(queryMaxRowsWaypoints);
+  return &waypointAirwayCache.list;
+}
+
+void WaypointQuery::getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, map::MapTypes types, int xs, int ys,
                                             int screenDistance, map::MapResult& result)
 {
   int x, y;
@@ -178,9 +203,9 @@ void WaypointQuery::getNearestScreenObjects(const CoordinateConverter& conv, con
       (types.testFlag(map::AIRWAYV) || types.testFlag(map::AIRWAYJ))) ||
      (trackDatabase && mapLayer->isTrackWaypoint() && types.testFlag(map::TRACK)))
   {
-    for(int i = waypointCache.list.size() - 1; i >= 0; i--)
+    for(int i = waypointAirwayCache.list.size() - 1; i >= 0; i--)
     {
-      const MapWaypoint& wp = waypointCache.list.at(i);
+      const MapWaypoint& wp = waypointAirwayCache.list.at(i);
       if((wp.hasVictorAirways && types.testFlag(map::AIRWAYV)) ||
          (wp.hasJetAirways && types.testFlag(map::AIRWAYJ)) ||
          (wp.hasTracks && types.testFlag(map::TRACK)))
@@ -205,7 +230,7 @@ void WaypointQuery::initQueries()
   // Common where clauses
   static const QString whereRect("lonx between :leftx and :rightx and laty between :bottomy and :topy");
   static const QString whereIdentRegion("ident = :ident and region like :region");
-  static const QString whereLimit("limit " + QString::number(queryMaxRows));
+  static const QString whereLimit("limit " + QString::number(queryMaxRowsWaypoints));
 
   // Common select statements
   QString waypointQueryBase(id + ", ident, region, type, num_victor_airway, num_jet_airway, mag_var, lonx, laty ");
@@ -234,12 +259,15 @@ void WaypointQuery::initQueries()
 
   // Get Waypoint in rect
   waypointRectQuery = new SqlQuery(dbNav);
-  waypointRectQuery->prepare("select " + waypointQueryBase + " from " + table + " where " + whereRect + " " +
-                             whereLimit);
+  waypointRectQuery->prepare("select " + waypointQueryBase + " from " + table + " where " + whereRect + " " + whereLimit);
 
   waypointsByRectQuery = new SqlQuery(dbNav);
-  waypointsByRectQuery->prepare(
-    "select " + waypointQueryBase + " from " + table + " where " + whereRect + " " + whereLimit);
+  waypointsByRectQuery->prepare("select " + waypointQueryBase + " from " + table + " where " + whereRect + " " + whereLimit);
+
+  QString airwayCond = trackDatabase ? QString() : "num_victor_airway + num_jet_airway > 0 and";
+  waypointsAirwayByRectQuery = new SqlQuery(dbNav);
+  waypointsAirwayByRectQuery->prepare("select " + waypointQueryBase + " from " + table +
+                                      " where " + airwayCond + " " + whereRect + " " + whereLimit);
 
   waypointInfoQuery = new SqlQuery(dbNav);
 
@@ -258,6 +286,8 @@ void WaypointQuery::deInitQueries()
 
   delete waypointsByRectQuery;
   waypointsByRectQuery = nullptr;
+  delete waypointsAirwayByRectQuery;
+  waypointsAirwayByRectQuery = nullptr;
 
   delete waypointByIdentQuery;
   waypointByIdentQuery = nullptr;
@@ -281,5 +311,6 @@ void WaypointQuery::deInitQueries()
 void WaypointQuery::clearCache()
 {
   waypointCache.clear();
+  waypointAirwayCache.clear();
   waypointInfoCache.clear();
 }

@@ -304,6 +304,11 @@ public:
     return airway;
   }
 
+  bool isAirwayDetails() const
+  {
+    return airwayDetails;
+  }
+
   bool isAirwayWaypoint() const
   {
     return airwayWaypoint;
@@ -576,8 +581,8 @@ private:
 
   bool waypoint = true, waypointName = true, vor = true, vorIdent = true, vorInfo = true, vorLarge = true, ndb = true, ndbIdent = true,
        ndbInfo = true, marker = true, markerInfo = true, userpointInfo = true, ils = true, ilsIdent = true, ilsInfo = true, airway = true,
-       airwayWaypoint = true, airwayIdent = true, airwayInfo = true, track = true, trackWaypoint = true, trackIdent = true,
-       trackInfo = true, mora = true, holding = true, holdingInfo = true, holdingInfo2 = true;
+       airwayDetails = true, airwayWaypoint = true, airwayIdent = true, airwayInfo = true, track = true, trackWaypoint = true,
+       trackIdent = true, trackInfo = true, mora = true, holding = true, holdingInfo = true, holdingInfo2 = true;
 
   bool airportRouteInfo = true;
   bool vorRouteIdent = true, vorRouteInfo = true;

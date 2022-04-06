@@ -69,6 +69,7 @@
 
         <!-- Airways ================= -->
         <Airway>true</Airway>
+        <AirwayDetails>true</AirwayDetails>
         <AirwayIdent>true</AirwayIdent>
         <AirwayInfo>true</AirwayInfo>
         <AirwayWaypoint>true</AirwayWaypoint>
@@ -312,7 +313,7 @@
         <AirspaceOther>false</AirspaceOther>
         <AirspaceRestricted>false</AirspaceRestricted>
         <AirspaceSpecial>false</AirspaceSpecial>
-        <Airway>false</Airway>
+        <AirwayDetails>false</AirwayDetails>
         <Holding>false</Holding>
         <MinRunwayLength>6000</MinRunwayLength>
         <Ndb>false</Ndb>
@@ -329,6 +330,7 @@
         <AirportSymbolSize>6</AirportSymbolSize>
         <AirspaceFg>false</AirspaceFg>
         <AirspaceIcao>false</AirspaceIcao>
+        <Airway>false</Airway>
         <ApproachDetail>false</ApproachDetail>
         <MinRunwayLength>8000</MinRunwayLength>
         <RouteFontScale>0.8</RouteFontScale>

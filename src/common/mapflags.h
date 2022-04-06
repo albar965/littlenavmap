@@ -53,7 +53,7 @@ Q_DECL_CONSTEXPR static float MIN_GROUND_SPEED = 30.f;
 Q_DECL_CONSTEXPR static float MIN_WIND_BARB_ALTITUDE = 4000.f;
 
 /* Maximum number of objects to query and show on map */
-Q_DECL_CONSTEXPR static int MAX_MAP_OBJECTS = 8000;
+Q_DECL_CONSTEXPR static int MAX_MAP_OBJECTS = 12000;
 
 /* 64 bit Type covering all objects that are passed around in the program.
  * Partially used to determine what should be drawn.

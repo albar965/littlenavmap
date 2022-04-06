@@ -84,11 +84,15 @@ public:
 
   /* Wrapper for getWaypoints usage by atools Rect */
   const QList<map::MapWaypoint> getWaypointsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer,
-                                              bool lazy, bool& overflow);
+                                                   bool lazy, bool& overflow);
 
-  /* Similar to getAirports */
+  /* Similar to getAirports for map display. Caches values. */
   void getWaypoints(QList<map::MapWaypoint>& waypoints, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                     bool lazy, bool& overflow);
+
+  /* As getWaypoints() but only for waypoints having airways */
+  void getWaypointsAirway(QList<map::MapWaypoint>& waypoints, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
+                          bool lazy, bool& overflow);
 
   /* Get record for joined tables waypoint, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getWaypointInformation(int waypointId);

@@ -30,7 +30,7 @@ using namespace atools::geo;
 
 static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
-int AirwayQuery::queryMaxRows = map::MAX_MAP_OBJECTS;
+int AirwayQuery::queryMaxRowsAirways = map::MAX_MAP_OBJECTS;
 
 AirwayQuery::AirwayQuery(SqlDatabase *sqlDbNav, bool trackDatabaseParam)
   : dbNav(sqlDbNav), trackDatabase(trackDatabaseParam)
@@ -40,7 +40,7 @@ AirwayQuery::AirwayQuery(SqlDatabase *sqlDbNav, bool trackDatabaseParam)
 
   queryRectInflationFactor = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.3).toDouble();
   queryRectInflationIncrement = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "QueryRectInflationIncrement", 0.1).toDouble();
-  queryMaxRows = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirwayQueryRowLimit", map::MAX_MAP_OBJECTS).toInt();
+  queryMaxRowsAirways = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirwayQueryRowLimitAw", map::MAX_MAP_OBJECTS).toInt();
 }
 
 AirwayQuery::~AirwayQuery()
@@ -96,7 +96,7 @@ void AirwayQuery::getWaypointListForAirwayName(QList<map::MapAirwayWaypoint>& wa
   airwayWaypointsQuery->exec();
 
   // Collect records first
-  SqlRecordList records;
+  QVector<SqlRecord> records;
   while(airwayWaypointsQuery->next())
     records.append(airwayWaypointsQuery->record());
 
@@ -249,7 +249,7 @@ const QList<map::MapAirway> *AirwayQuery::getAirways(const GeoDataLatLonBox& rec
       }
     }
   }
-  airwayCache.validate(queryMaxRows);
+  airwayCache.validate(queryMaxRowsAirways);
   return &airwayCache.list;
 }
 

@@ -189,6 +189,8 @@ void MapLayer::loadFromXml(atools::util::XmlStream& xmlStream)
       airspaceSpecial = xmlStream.readElementTextBool();
     else if(reader.name() == "Airway")
       airway = xmlStream.readElementTextBool();
+    else if(reader.name() == "AirwayDetails")
+      airwayDetails = xmlStream.readElementTextBool();
     else if(reader.name() == "AirwayIdent")
       airwayIdent = xmlStream.readElementTextBool();
     else if(reader.name() == "AirwayInfo")
@@ -345,6 +347,7 @@ QDebug operator<<(QDebug out, const MapLayer& record)
   out << "<AirspaceRestricted>" << record.airspaceRestricted << "</AirspaceRestricted>" << endl;
   out << "<AirspaceSpecial>" << record.airspaceSpecial << "</AirspaceSpecial>" << endl;
   out << "<Airway>" << record.airway << "</Airway>" << endl;
+  out << "<AirwayDetails>" << record.airway << "</AirwayDetails>" << endl;
   out << "<AirwayIdent>" << record.airwayIdent << "</AirwayIdent>" << endl;
   out << "<AirwayInfo>" << record.airwayInfo << "</AirwayInfo>" << endl;
   out << "<AirwayWaypoint>" << record.airwayWaypoint << "</AirwayWaypoint>" << endl;

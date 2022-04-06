@@ -120,7 +120,7 @@ private:
   /* true if this uses the track database (PACOTS, NAT, etc.) */
   bool trackDatabase;
 
-  static int queryMaxRows;
+  static int queryMaxRowsAirways;
 
   /* Database queries */
   atools::sql::SqlQuery *airwayByRectQuery = nullptr;

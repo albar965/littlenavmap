@@ -128,12 +128,32 @@ void WaypointTrackQuery::getWaypoints(QList<map::MapWaypoint>& waypoints, const 
   }
 }
 
-const QList<map::MapWaypoint> WaypointTrackQuery::getWaypointsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer,
-                                            bool lazy, bool& overflow)
+void WaypointTrackQuery::getWaypointsAirway(QList<map::MapWaypoint>& waypoints, const Marble::GeoDataLatLonBox& rect,
+                                            const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
-  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(),rect.getSouth(),rect.getEast(), rect.getWest(), GeoDataCoordinates::Degree);
+  const QList<map::MapWaypoint> *wp;
+  if(useTracks && mapLayer->isTrackWaypoint())
+  {
+    wp = trackQuery->getWaypointsAirway(rect, mapLayer, lazy, overflow);
+    if(wp != nullptr)
+      waypoints.append(*wp);
+  }
+
+  if(!overflow && mapLayer->isAirwayWaypoint())
+  {
+    wp = waypointQuery->getWaypointsAirway(rect, mapLayer, lazy, overflow);
+    if(wp != nullptr)
+      copy(*wp, waypoints);
+  }
+}
+
+const QList<map::MapWaypoint> WaypointTrackQuery::getWaypointsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer,
+                                                                     bool lazy, bool& overflow)
+{
+  const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(),
+                                                      rect.getWest(), GeoDataCoordinates::Degree);
   QList<map::MapWaypoint> waypoints = QList<map::MapWaypoint>();
-  getWaypoints(waypoints,latLonBox,mapLayer,lazy,overflow);
+  getWaypoints(waypoints, latLonBox, mapLayer, lazy, overflow);
   return waypoints;
 }
 

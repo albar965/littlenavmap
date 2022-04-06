@@ -42,7 +42,7 @@ private:
   void paintMarkers(const QList<map::MapMarker> *markers, bool drawFast);
   void paintNdbs(const QList<map::MapNdb> *ndbs, bool drawFast);
   void paintVors(const QList<map::MapVor> *vors, bool drawFast);
-  void paintWaypoints(const QList<map::MapWaypoint> *waypoints, bool drawWaypoint);
+  void paintWaypoints(const QList<map::MapWaypoint> *waypoints, QSet<int>& waypointIds, bool drawAirwayWaypoints);
   void paintAirways(const QList<map::MapAirway> *airways, bool fast);
 
 };

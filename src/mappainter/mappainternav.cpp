@@ -79,18 +79,33 @@ void MapPainterNav::render()
   }
 
   context->szFont(context->textSizeNavaid);
-  // Waypoints -------------------------------------------------
-  bool drawWaypoint = context->mapLayer->isWaypoint() && context->objectTypes.testFlag(map::WAYPOINT);
-  if((drawWaypoint || drawAirway || drawTrack) && !context->isObjectOverflow())
+  // Waypoints on airways -------------------------------------------------
+  bool drawAllWaypoints = context->mapLayer->isWaypoint() && context->objectTypes.testFlag(map::WAYPOINT);
+  QSet<int> waypointIds;
+
+  // Skip if all waypoints are to be drawn anyway
+  if(!drawAllWaypoints && (drawAirway || drawTrack) && !context->isObjectOverflow() && context->mapLayer->isAirwayWaypoint())
   {
     // If airways are drawn we also have to go through waypoints
+    bool overflow = false;
+    QList<MapWaypoint> waypoints;
+    waypointQuery->getWaypointsAirway(waypoints, curBox, context->mapLayer, context->lazyUpdate, overflow);
+    context->setQueryOverflow(overflow);
+
+    if(!waypoints.isEmpty())
+      paintWaypoints(&waypoints, waypointIds, true /* drawAirwayWaypoints */);
+  }
+
+  // Waypoints -------------------------------------------------
+  if(drawAllWaypoints && !context->isObjectOverflow())
+  {
     bool overflow = false;
     QList<MapWaypoint> waypoints;
     waypointQuery->getWaypoints(waypoints, curBox, context->mapLayer, context->lazyUpdate, overflow);
     context->setQueryOverflow(overflow);
 
     if(!waypoints.isEmpty())
-      paintWaypoints(&waypoints, drawWaypoint);
+      paintWaypoints(&waypoints, waypointIds, false /* drawAirwayWaypoints */);
   }
 
   // VOR -------------------------------------------------
@@ -147,15 +162,8 @@ void MapPainterNav::paintAirways(const QList<MapAirway> *airways, bool fast)
   // Keep text placement information for each airway line which can cover multiple texts/airways
   struct Place
   {
-    Place()
-    {
-    }
-
     Place(const QString& text, int initialIndex, bool reversed)
-      : texts(
-    {
-      text
-    }), airwayIndexByText({initialIndex}), positionReversed({reversed})
+      : texts(text), airwayIndexByText({initialIndex}), positionReversed({reversed})
     {
     }
 
@@ -205,8 +213,7 @@ void MapPainterNav::paintAirways(const QList<MapAirway> *airways, bool fast)
     {
       // Check bounding rect for visibility
       const Rect& bnd = airway.bounding;
-      Marble::GeoDataLatLonBox airwaybox(bnd.getNorth(), bnd.getSouth(), bnd.getEast(), bnd.getWest(),
-                                         Marble::GeoDataCoordinates::Degree);
+      Marble::GeoDataLatLonBox airwaybox(bnd.getNorth(), bnd.getSouth(), bnd.getEast(), bnd.getWest(), Marble::GeoDataCoordinates::Degree);
       visible1 = airwaybox.intersects(context->viewport->viewLatLonAltBox());
     }
 
@@ -220,10 +227,9 @@ void MapPainterNav::paintAirways(const QList<MapAirway> *airways, bool fast)
 
       if(!fast)
       {
-        if(airway.direction != map::DIR_BOTH && !ident)
+        if(airway.direction != map::DIR_BOTH && !ident && context->mapLayer->isAirwayDetails())
         {
-          Line arrLine = airway.direction != map::DIR_FORWARD ?
-                         Line(airway.from, airway.to) : Line(airway.to, airway.from);
+          Line arrLine = airway.direction != map::DIR_FORWARD ? Line(airway.from, airway.to) : Line(airway.to, airway.from);
           paintArrowAlongLine(painter, arrLine, isTrack ? arrowTrack : arrowAirway, 0.5f);
         }
 
@@ -336,7 +342,7 @@ void MapPainterNav::paintAirways(const QList<MapAirway> *airways, bool fast)
 }
 
 /* Draw waypoints. If airways are enabled corresponding waypoints are drawn too */
-void MapPainterNav::paintWaypoints(const QList<MapWaypoint> *waypoints, bool drawWaypoint)
+void MapPainterNav::paintWaypoints(const QList<MapWaypoint> *waypoints, QSet<int>& waypointIds, bool drawAirwayWaypoints)
 {
   bool drawAirwayV = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYV);
   bool drawAirwayJ = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYJ);
@@ -349,12 +355,18 @@ void MapPainterNav::paintWaypoints(const QList<MapWaypoint> *waypoints, bool dra
   for(const MapWaypoint& waypoint : *waypoints)
   {
     // If waypoints are off, airways are on and waypoint has no airways skip it
-    if(!(drawWaypoint || (drawAirwayV && waypoint.hasVictorAirways) || (drawAirwayJ && waypoint.hasJetAirways) ||
+    if(!(!drawAirwayWaypoints || (drawAirwayV && waypoint.hasVictorAirways) || (drawAirwayJ && waypoint.hasJetAirways) ||
          (drawTrack && waypoint.hasTracks)))
       continue;
 
     if(context->routeProcIdMap.contains(waypoint.getRef()) || context->routeProcIdMapRec.contains(waypoint.getRef()))
       continue;
+
+    if(waypointIds.contains(waypoint.id))
+      // Already drawn by other function
+      continue;
+
+    waypointIds.insert(waypoint.id);
 
     float x, y;
     if(wToSBuf(waypoint.position, x, y, margins))

@@ -31,6 +31,7 @@ class CoordinateConverter;
 
 /*
  * Provides map related database queries.
+ * This is one is hidden by the facade WaypointTrackQuery and used in two instances for track and normal airway queries.
  *
  * All ids are database ids.
  */
@@ -69,8 +70,12 @@ public:
   void getWaypointsRect(QVector<map::MapWaypoint>& waypoints, const atools::geo::Pos& pos, float distanceNm);
   void getWaypointRectNearest(map::MapWaypoint& waypoint, const atools::geo::Pos& pos, float distanceNm);
 
-  /* Similar to getAirports */
+  /* Similar to getAirports for map display. Caches values. */
   const QList<map::MapWaypoint> *getWaypoints(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow);
+
+  /* As getWaypoints() but only for waypoints having airways */
+  const QList<map::MapWaypoint> *getWaypointsAirway(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
+                                                    bool& overflow);
 
   /* Get record for joined tables waypoint, bgl_file and scenery_area */
   const atools::sql::SqlRecord *getWaypointInformation(int waypointId);
@@ -93,17 +98,17 @@ private:
   atools::sql::SqlDatabase *dbNav;
 
   /* Simple bounding rectangle caches */
-  query::SimpleRectCache<map::MapWaypoint> waypointCache;
+  query::SimpleRectCache<map::MapWaypoint> waypointCache, waypointAirwayCache;
   QCache<int, atools::sql::SqlRecord> waypointInfoCache;
 
-  static int queryMaxRows;
+  static int queryMaxRowsWaypoints;
 
   bool trackDatabase;
 
   /* Database queries */
   atools::sql::SqlQuery *waypointByIdQuery = nullptr, *waypointByNavIdQuery = nullptr, *waypointNearestQuery = nullptr,
                         *waypointRectQuery = nullptr, *waypointByIdentQuery = nullptr, *waypointsByRectQuery = nullptr,
-                        *waypointInfoQuery = nullptr;
+                        *waypointsAirwayByRectQuery = nullptr, *waypointInfoQuery = nullptr;
 };
 
 #endif // LITTLENAVMAP_WAYPOINTQUERY_H

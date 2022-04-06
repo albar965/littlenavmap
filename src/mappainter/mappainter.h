@@ -143,7 +143,7 @@ struct PaintContext
   bool objCount()
   {
     objectCount++;
-    return objectCount > map::MAX_MAP_OBJECTS;
+    return objectCount >= map::MAX_MAP_OBJECTS;
   }
 
   bool isObjectOverflow() const
