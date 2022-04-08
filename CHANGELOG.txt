@@ -4,6 +4,43 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 2.6.18
+
+This release adapts *Little Navmap* to the latest MSFS changes that cause problems when loading the
+scenery library, as well as other fixes and improvements affecting other simulators.
+
+This release contains only the most pressing or easy to integrate issues. Development is going on
+in parallel for the next release and an alpha version was already released.
+
+## Changes from 2.6.17 to 2.6.18
+
+* Fixed "docking allowed" setting not applied to map window.
+* Removed hillshading option. This will be replaced by better maps. Closes #838
+* Fixed issue where all logbook attachments were replaced with the files from the first edited entry
+  when doing bulk edit. Closes #829
+* Increased limit in logbook statistics from 250 to 1000 rows.
+* Ok button was wrongly disabled with only ident check in userpoint bulk edit dialog.
+* Fixed issues with anti-meridian detection and line split resulting in kinks in flight plan
+  depiction. Now working around Marble insufficiency.
+* Corrected vertical splitter positions for first start in options dialog and profile widget.
+* Fixed issue where distance to destination was not correct in some cases.
+
+* Corrected closed airport logic for MSFS. Now fully relying on closed airport flag for MSFS. This
+  can result in closed airports having open runways and open airports having all runways open. #876
+* Fixed issue where all airports were recognized as add-on with MSFS update 9.
+* Fixed issues for updating airports by disabling a corner case from FSX and P3D which apparently
+  does not apply to MSFS. Before a feature was not updated if the new airport did not contain new
+  features like aprons or taxiways. Example LICC add-on.
+* Fix for window icon notification prevents hiding toolbar on windows with `raise windows` enabled.
+* Fixed issue when downloading NAT tracks containing PBCS TRACKS AS FOLLOWS/V W X/END OF PBCS OTS
+* Now dropping all artificial waypoints created only for procedure or airway resolution from
+  nav_search table.
+* Fixed detection of MSFS Navigraph update due to name change.
+* Fixed issues with anti-meridian detection when point is on meridian. Added anti-meridian split to
+  line and line string classes.
+
+===============================================================================
+
 # Version 2.6.17
 
 This release adapts *Little Navmap* to the latest MSFS changes that cause crashes when loading the

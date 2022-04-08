@@ -558,7 +558,9 @@ void LogdataDialog::dialogToRecord()
     // Not multi-edited: all attached files, departure_runway, destination_runway, departure_time, destination_time,
     // departure_time_sim, destination_time_sim, distance, distance_flown, block_fuel, trip_fuel, used_fuel, grossweight
     // Erase attachement columns to avoid data loss
-    record->remove({"flightplan", "aircraft_perf", "aircraft_trail"});
+    record->remove("flightplan");
+    record->remove("aircraft_perf");
+    record->remove("aircraft_trail");
   }
 
 #ifdef DEBUG_INFORMATION
