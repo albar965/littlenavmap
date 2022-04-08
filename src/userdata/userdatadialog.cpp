@@ -219,6 +219,7 @@ void UserdataDialog::saveState()
 void UserdataDialog::restoreState()
 {
   atools::gui::WidgetState(lnm::USERDATA_EDIT_ADD_DIALOG).restore(this);
+  updateWidgets();
 }
 
 void UserdataDialog::updateWidgets()
@@ -301,6 +302,7 @@ void UserdataDialog::recordToDialog()
   if(!record->isNull("lonx") && !record->isNull("laty"))
     ui->lineEditUserdataLatLon->setText(Unit::coords(atools::geo::Pos(record->valueFloat("lonx"), record->valueFloat("laty"))));
   coordsEdited(QString());
+  updateWidgets();
 }
 
 void UserdataDialog::dialogToRecord()
