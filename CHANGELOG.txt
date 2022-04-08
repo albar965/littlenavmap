@@ -1,4 +1,4 @@
-Numbers (#) refer to GitHub issues.
+﻿Numbers (#) refer to GitHub issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 This text is partially Markdown, hence sometimes strange formatting.
 
@@ -7,37 +7,60 @@ This text is partially Markdown, hence sometimes strange formatting.
 # Version 2.6.18
 
 This release adapts *Little Navmap* to the latest MSFS changes that cause problems when loading the
-scenery library, as well as other fixes and improvements affecting other simulators.
+scenery library as well as more fixes and improvements affecting other simulators too.
 
-This release contains only the most pressing or easy to integrate issues. Development is going on
-in parallel for the next release and an alpha version was already released.
+This release contains only the most important or easy to integrate issues. Development is going on
+in parallel for the next release 2.8 and an alpha version 2.7 was already released.
 
 ## Changes from 2.6.17 to 2.6.18
 
-* Fixed "docking allowed" setting not applied to map window.
-* Removed hillshading option. This will be replaced by better maps. Closes #838
-* Fixed issue where all logbook attachments were replaced with the files from the first edited entry
-  when doing bulk edit. Closes #829
-* Increased limit in logbook statistics from 250 to 1000 rows.
-* Ok button was wrongly disabled with only ident check in userpoint bulk edit dialog.
-* Fixed issues with anti-meridian detection and line split resulting in kinks in flight plan
-  depiction. Now working around Marble insufficiency.
-* Corrected vertical splitter positions for first start in options dialog and profile widget.
-* Fixed issue where distance to destination was not correct in some cases.
+### User Interface
 
-* Corrected closed airport logic for MSFS. Now fully relying on closed airport flag for MSFS. This
-  can result in closed airports having open runways and open airports having all runways open. #876
-* Fixed issue where all airports were recognized as add-on with MSFS update 9.
-* Fixed issues for updating airports by disabling a corner case from FSX and P3D which apparently
-  does not apply to MSFS. Before a feature was not updated if the new airport did not contain new
+* Removed hillshading option since server providing the data was shut down by `User:theDJ`. This will
+  be replaced by other maps in the next version of *Little Navmap*. #838
+* Fix for Windows icon notification preventing toolbar hiding on windows with `Raise Windows` options enabled.
+* `Docking Allowed` setting is now applied to map window as well.
+
+### MSFS
+
+* Fixed issue where all airports were recognized as add-on with MSFS update 9 due to new
+  folder `fs-base-genericairports`.
+* Corrected detection of MSFS Navigraph update due to name change in `manifest.json`. This fixes
+  issues where add-on airports did not update scenery correctly.
+* Fixed issues for updating airports by disabling a corner case from FSX and P3D which does not
+  apply to MSFS. Before a feature was not updated if the new airport did not contain new
   features like aprons or taxiways. Example LICC add-on.
-* Fix for window icon notification prevents hiding toolbar on windows with `raise windows` enabled.
-* Fixed issue when downloading NAT tracks containing PBCS TRACKS AS FOLLOWS/V W X/END OF PBCS OTS
-* Now dropping all artificial waypoints created only for procedure or airway resolution from
-  nav_search table.
-* Fixed detection of MSFS Navigraph update due to name change.
-* Fixed issues with anti-meridian detection when point is on meridian. Added anti-meridian split to
-  line and line string classes.
+* Corrected closed airport logic for MSFS. Now fully relying on closed airport flag for MSFS to get
+  consistent behavior with the simulator. This can result in closed airports having open runways and
+  open airports having all runways closed. #876
+* Fixed issue in scenery library loader where airports were wrongly recognized as MSFS POI dummies.
+
+### Weather
+
+* Fixed IVAO weather download to use new interface. IVAO weather URL is now reset to new value on update.
+* Added reset buttons for weather URLs in options dialog.
+
+### Flight Plan
+
+* Fixed issue where wrong distance was calculated for disconnected course to fix flight plan legs
+  which resulted in wrong leg and cursor positions in elevation profile.
+* Fixed issue where flight plan distance to destination was not correct in some cases.
+* Fixed issues with anti-meridian detection and line split resulting in kinks in flight plan
+  depiction around 180° East and West.
+
+### Logbook
+
+* Fixed issue where all logbook attachments were replaced with the files from the first edited entry
+  when doing bulk edit. #829
+* Query for airport by official code failed if ICAO columns was not available or not populated.
+  Could not find airport in logbook entry dialog when using MSFS. #808
+* Increased limit in logbook statistics from 250 to 1000 rows.
+
+### Other
+
+* Now skipping empty lines in X-Plane file header which appear in some malformed `apt.dat` files.
+* Fixed issue when downloading NAT tracks containing `PBCS TRACKS AS FOLLOWS/V W X/END OF PBCS OTS`.
+* Now dropping all artificial waypoints created only for procedure or airway resolution.
 
 ===============================================================================
 
