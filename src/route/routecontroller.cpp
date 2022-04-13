@@ -3291,8 +3291,9 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
     updateActiveLeg();
     updateTableModel();
 
-    // Update current position at the beginning of the former selection
-    view->setCurrentIndex(model->index(firstRow, 0));
+    // Update current position at the beginning of the former selection but do not update selection
+    view->selectionModel()->setCurrentIndex(model->index(firstRow, 0), QItemSelectionModel::NoUpdate);
+
     updateMoveAndDeleteActions();
 
     postChange(undoCommand);
