@@ -44,7 +44,7 @@ void FlightplanEntryBuilder::buildFlightplanEntry(int id, const atools::geo::Pos
 {
   map::MapResult result;
   NavApp::getMapQueryGui()->getMapObjectById(result, type, map::AIRSPACE_SRC_NONE, id,
-                                          false /* airport from nav database */);
+                                             false /* airport from nav database */);
   buildFlightplanEntry(userPos, result, entry, resolveWaypoints, map::NONE);
 }
 
@@ -240,6 +240,9 @@ void FlightplanEntryBuilder::buildFlightplanEntry(const proc::MapProcedureLeg& l
     entryFromNdb(leg.navaids.ndbs.constFirst(), entry);
   else
     entryFromUserPos(leg.line.getPos2(), entry, leg.fixIdent, leg.fixRegion, QString());
+
+  // Position is not correct for some leg types
+  // entry.setPosition(leg.line.getPos2());
 
   // Do not save procedure legs
   entry.setFlag(atools::fs::pln::entry::PROCEDURE);

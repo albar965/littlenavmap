@@ -3411,12 +3411,12 @@ void HtmlInfoBuilder::procedurePointText(const map::MapProcedurePoint& procPoint
 
     if(!legs->isCustomDeparture())
     {
-      html.row2(typeStr, leg.fixIdent);
+      html.row2If(typeStr, leg.fixIdent);
 
       if(verbose)
       {
         if(!legs->isAnyCustom())
-          html.row2(tr("Leg Type:"), proc::procedureLegTypeStr(leg.type));
+          html.row2If(tr("Leg Type:"), proc::procedureLegTypeStr(leg.type));
 
         if(leg.calculatedDistance > 0.f)
           html.row2(tr("Distance:"), Unit::distNm(leg.calculatedDistance /*, true, 20, true*/));

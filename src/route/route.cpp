@@ -1108,6 +1108,7 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
         continue;
     }
 
+    // ==========================================================================================
     // Use fix position to get real navaids from procedures instead of projected or otherwise modified positions
     if(conv.wToS(leg.getFixPosition(), x, y) && manhattanDistance(x, y, xs, ys) < screenDistance)
     {
@@ -1154,7 +1155,6 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
         // Route airports are always shown - even if legs are passed
         ap.routeIndex = i;
         insertSortedByDistance(conv, mapobjects.airports, &mapobjects.airportIds, xs, ys, ap);
-        // }
       }
 
       if(leg.getMapObjectType() == map::INVALID)
@@ -1188,43 +1188,46 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
           mapobjects.userpointsRoute.append(up);
         }
       }
+    } // if(conv.wToS(leg.getFixPosition(), x, y) && manhattanDistance(x, y, xs, ys) < screenDistance)
 
-      if(leg.isAnyProcedure() && types.testFlag(map::QUERY_PROC_POINTS))
+    // ==========================================================================================
+    // Get procedure information by calculated position
+    if(leg.isAnyProcedure() && types.testFlag(map::QUERY_PROC_POINTS) &&
+       conv.wToS(leg.getPosition(), x, y) && manhattanDistance(x, y, xs, ys) < screenDistance)
+    {
+      const proc::MapProcedureLeg& procLeg = leg.getProcedureLeg();
+
+      // Select owning procedure legs struct
+      const proc::MapProcedureLegs *procLegs = nullptr;
+      if(procLeg.isAnyDeparture())
+        procLegs = &sidLegs;
+      else if(procLeg.isAnyStar())
+        procLegs = &starLegs;
+      else if(procLeg.isAnyApproach())
+        procLegs = &approachLegs;
+
+      if(procLegs != nullptr)
       {
-        const proc::MapProcedureLeg& procLeg = leg.getProcedureLeg();
+        int procIndex = procLegs->indexForLeg(procLeg);
 
-        // Select owning procedure legs struct
-        const proc::MapProcedureLegs *procLegs = nullptr;
-        if(procLeg.isAnyDeparture())
-          procLegs = &sidLegs;
-        else if(procLeg.isAnyStar())
-          procLegs = &starLegs;
-        else if(procLeg.isAnyApproach())
-          procLegs = &approachLegs;
-
-        if(procLegs != nullptr)
+        if(procIndex != -1)
         {
-          int procIndex = procLegs->indexForLeg(procLeg);
-
-          if(procIndex != -1)
+          if(leg.getProcedureLeg().isMissed())
           {
-            if(leg.getProcedureLeg().isMissed())
-            {
-              // Add missed legs only if requested by query flags
-              if(types.testFlag(map::QUERY_PROC_MISSED_POINTS))
-                mapobjects.procPoints.append(map::MapProcedurePoint(*procLegs, procIndex, i,
-                                                                    false /* previewParam */, false /* previewParamAll */));
-            }
-            else
+            // Add missed legs only if requested by query flags
+            if(types.testFlag(map::QUERY_PROC_MISSED_POINTS))
               mapobjects.procPoints.append(map::MapProcedurePoint(*procLegs, procIndex, i,
                                                                   false /* previewParam */, false /* previewParamAll */));
           }
           else
-            qWarning() << Q_FUNC_INFO << "no legs for index found";
+            mapobjects.procPoints.append(map::MapProcedurePoint(*procLegs, procIndex, i,
+                                                                false /* previewParam */, false /* previewParamAll */));
         }
         else
-          qWarning() << Q_FUNC_INFO << "no legs found";
+          qWarning() << Q_FUNC_INFO << "no legs for index found";
       }
+      else
+        qWarning() << Q_FUNC_INFO << "no legs found";
     }
   }
 }

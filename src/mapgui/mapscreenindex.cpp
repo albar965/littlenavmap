@@ -743,6 +743,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
   getNearestAirspaces(xs, ys, result);
   getNearestIls(xs, ys, maxDistance, result);
 
+  // Flight plan objects =============================================================
   if(shownDisplay.testFlag(map::FLIGHTPLAN))
   {
     map::MapObjectQueryTypes queryTypes = types | map::QUERY_PROCEDURES | map::QUERY_PROC_POINTS;
