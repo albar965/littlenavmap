@@ -2789,6 +2789,8 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     {
       FlightplanEntry& entry = entries[i];
       const RouteLeg& leg = route.value(i);
+      const proc::MapProcedureLeg& procedureLeg = leg.getProcedureLeg();
+
       bool isAppr = leg.getProcedureType() & proc::PROCEDURE_APPROACH_ALL;
       bool isSid = leg.getProcedureType() & proc::PROCEDURE_SID_ALL;
       bool isStar = leg.getProcedureType() & proc::PROCEDURE_STAR_ALL;
@@ -2882,12 +2884,12 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
           entry.setWaypointType(atools::fs::pln::entry::USER);
 
           if((replaceCustomWp || saveApproachWp) && customApproach && leg.getProcedureType() & proc::PROCEDURE_APPROACH)
-            entry.setIdent(leg.getProcedureLeg().fixIdent);
+            entry.setIdent(procedureLeg.fixIdent);
           else if((replaceCustomWp || saveSidWp) && customDeparture && leg.getProcedureType() & proc::PROCEDURE_SID)
-            entry.setIdent(leg.getProcedureLeg().fixIdent);
+            entry.setIdent(procedureLeg.fixIdent);
           else
           {
-            QString legText = leg.getProcedureLeg().displayText.join(" ");
+            QString legText = procedureLeg.displayText.join(" ");
             if(msfs)
               // More relaxed than FSX
               entry.setIdent(atools::fs::util::adjustMsfsUserWpName(legText));
@@ -2895,6 +2897,22 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
               entry.setIdent(atools::fs::util::adjustFsxUserWpName(legText));
           }
         }
+
+        if(leg.isAnyProcedure())
+        {
+          // Correct coordinates for all distance or otherwise terminated legs ============================
+          if(atools::contains(procedureLeg.type, {
+            proc::COURSE_TO_ALTITUDE, proc::COURSE_TO_DME_DISTANCE, proc::COURSE_TO_INTERCEPT, proc::COURSE_TO_RADIAL_TERMINATION,
+            proc::FIX_TO_ALTITUDE, proc::TRACK_FROM_FIX_FROM_DISTANCE, proc::TRACK_FROM_FIX_TO_DME_DISTANCE,
+            proc::FROM_FIX_TO_MANUAL_TERMINATION, proc::HEADING_TO_ALTITUDE_TERMINATION, proc::HEADING_TO_DME_DISTANCE_TERMINATION,
+            proc::HEADING_TO_INTERCEPT, proc::HEADING_TO_MANUAL_TERMINATION, proc::HEADING_TO_RADIAL_TERMINATION}))
+          {
+            // Set user waypoint
+            entry.setWaypointType(atools::fs::pln::entry::USER);
+            entry.setPosition(leg.getPosition());
+            entry.setIdent(proc::procedureLegFixStr(procedureLeg));
+          }
+        } // if(leg.isAnyProcedure())
       } // if((saveApproachWp && (leg.getProcedureType() & proc::PROCEDURE_ARRIVAL)) || ...
     } // for(int i = 0; i < entries.size(); i++)
 
