@@ -3895,14 +3895,16 @@ void RouteController::updateTableModel()
     itemRow[rcol::REGION] = new QStandardItem(leg.getRegion());
     itemRow[rcol::NAME] = new QStandardItem(leg.getName());
 
-    if(row == route.getDepartureAirportLegIndex())
+    if(row == route.getDepartureAirportLegIndex() && !route.getDepartureAirportLeg().isAnyProcedure())
       itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Departure"));
-    else if(row == route.getDestinationAirportLegIndex())
+    else if(row == route.getDestinationAirportLegIndex() && !route.getDestinationAirportLeg().isAnyProcedure())
       itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Destination"));
     else if(leg.isAlternate())
       itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Alternate"));
-    else
-      itemRow[rcol::PROCEDURE] = new QStandardItem(route.getProcedureLegText(leg.getProcedureType()));
+    else if(leg.isAnyProcedure())
+      itemRow[rcol::PROCEDURE] = new QStandardItem(route.getProcedureLegText(leg.getProcedureType(),
+                                                                             false /* includeRunway */, false /* missedAsApproach */,
+                                                                             true /* transitionAsProcedure */));
 
     // Airway or leg type and restriction ===========================================
     if(leg.isRoute())

@@ -12,7 +12,104 @@ scenery library as well as more fixes and improvements affecting other simulator
 This release contains only the most important or easy to integrate issues. Development is going on
 in parallel for the next release 2.8 and an alpha version 2.7 was already released.
 
-## Changes from 2.6.17 to 2.6.18
+Some features like MSA, vertical paths or en-route holdings require either X-Plane, the included
+AIRAC 1801 database or a Navigraph database newer or equal than AIRAC 2201.
+
+See here for a [list of issues to do](https://github.com/albar965/littlenavmap/milestone/11) and a
+[list of issues done](https://github.com/albar965/littlenavmap/milestone/11?closed=1).
+Usually more issues are solved than publicly known on Github. This changelog lists all.
+
+Note that all dialogs, windows, menus and buttons are functional. There are no unfinished or fake
+buttons/dialogs in the program despite being an alpha release. Tooltips are updated with all new
+functions and give help. Help buttons are an exception since the manual is not updated yet.
+
+Please report if something does not work or does not work as expected.
+
+Create a backup of your settings and database folder just in case you'd like to go back to the
+stable release. Backup `ABarthel` in `C:\Users\YOURUSERNAME\AppData\Roaming\ABarthel` on Windows
+and `$HOME/.config/ABarthel` on Linux and macOS.
+
+**Reload the scenery library after updating.**
+
+**A big thank you to all who reported bugs and issues!**
+
+
+## Changes from 2.7.8.develop to 2.7.9.develop
+
+### Scenery Library
+
+#### MSFS
+
+* Fixed issue where all airports were recognized as add-on with MSFS update 9.
+* Now notifying user about wrong scenery library modes after loading. Considers MSFS and Navigraph
+  special cases. Allows user to change to the required mode after loading.
+* Corrected closed airport logic for MSFS to more adhere to the simulator logic. Now fully relying on
+  closed airport flag for MSFS. This can result in closed airports having open runways and open airports
+  having all runways closed. #876
+* Completely reworked scenery library menu. Now giving indications in menu items if no simulator and
+  only a database was found or if a database is empty.
+* Now always showing a dialog with hints if no simulator installations were found on start. Can be disabled.
+* Corrected issues with runways designated by true course like BGTL. Approaches were missing runway assignments
+  and could not be resolved before. #870
+* Fixed issues for updating airports by disabling a corner case from FSX and P3D which apparently
+  does not apply to MSFS. Before a feature was not updated if the new airport did not contain new
+  features like aprons or taxiways. Example LICC add-on.
+* Added airport transition level for X-Plane and DFD compiler. Improved transition level and
+  transtion altitude reading for X-Plane since users add various wrong variants. This is not yet
+  enabled in the Navigraph database.
+* Fixed issues with magnetic variation and inbound course in DFD and X-Plane compiler for holdings.
+  Holding course is now written as magnetic course to avoid unneeded calculations. Holding course
+  is still wrong in Navigraph database. This will be fixed in one of the next cycles.
+* Databases minor version updated to 24. The program will show a warning if a database was not updated.
+* Fixed exception while loading X-Plane scenery library if earth_hold.dat, earth_mora.dat or
+  earth_msa.dat cannot be found in Custom Data despite existing fix, nav and awy files.
+* Now allowing a `no simulator` state of the program instead of always showing X-Plane. This avoids the
+  confusing always enabled X-Plane scenery library database.
+* X-Plane now requires `x-plane_install_11.txt` and a valid installation path to be recognized.
+  Run X-Plane once to create this file so that _Little Navmap_ can detect it.
+* Prepared data compilation for X-Plane 12 based on limited information. #867
+* Fixed issue `Index out of bounds: Index: 5, size: 5` when reading X-Plane user_fix.dat with
+  optional last column missing.
+
+### Airspaces
+
+* Removed user airspace paths and patterns from options dialog. Changed loading of user airspaces
+  now by showing a separate loading dialog similar to the scenery library dialog. Fixes to airspace
+  selection by name. #490
+* Fixed crash with OpenAir airspace reader. #490
+* Added reader for IVAO and VATSIM JSON boundaries. You can now read IVAO JSON and VATSIM GeoJSON files.
+  Currently you can find IVAO boundaries here:
+  [Airspace Boundaries](https://www.littlenavmap.org/downloads/Airspace%20Boundaries/).
+  VATSIM boundaries are available here [VATSPY Data Project](https://github.com/vatsimnetwork/vatspy-data-project).
+* Now matching airspaces from online centers in a more or less fuzzy way. Now also
+  considering type when querying online airspaces. Showing connected online network in window title
+  bar now. #490
+
+### Map Display
+
+* Added option to vertically and horizontally zoom to aircraft and destination point in elevation
+  profile. Enable this in context menu of the elevation profile (`Zoom to aircraft and destination`). #868
+* Fixed issue where waypoint drawing stopped due to overlapping database queries. Increased
+  maximum number of map objects. #877
+* Increased airway drawing distance. Now shown on a higher zoom level. Omitting arrows on higher
+  zoom levels now.
+* Removed more annoying movements and zooming if center aircraft is active.
+* Added option for navaid radial display when drawing a measurment line from a VOR, VORTAC or NDB.
+  Default is off. Enable this in options on page `Map Display Labels` branch `Measurement Lines`. #860
+* Added option to hide closed airports in menu and toolbar button. See `View` -> `Airports` -> `Closed`.
+* Tooltips now showing on procedure legs like `Course to Altitude` and others again.
+* Added radio range userpoint icon.
+
+### Flight Plan
+
+* Now using correct start position, distance and course for first leg `Proceed to Runway` from
+  starting position to takeoff position when using a SID or if a departure runway was selected.
+  Previously the distance was wrongly calculated from airport center to runway.
+* Removed confusing course display from parking to departure runway in flight plan table.
+* Corrected SimBrief fetch dialog to show alias instead of user name. #857
+* Fixed missing waypoints in MSFS flight plan export for all distance, altitude or otherwise
+  terminated procedure legs.
+* Fixed issue where elevation profile could not be calculated if a STAR has an at altitude restriction.
 
 ### User Interface
 
