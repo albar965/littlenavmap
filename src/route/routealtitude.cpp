@@ -1684,78 +1684,79 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
       // Beginning and end of this leg
       float startDistLeg = leg.getDistanceFromStart() - leg.getDistanceTo();
       float endDistLeg = leg.getDistanceFromStart();
+      const atools::geo::LineString& legLine = leg.getLineString();
 
+      // Reset all variables
       float climbDist = 0.f, cruiseDist = 0.f, descentDist = 0.f;
       float climbSpeed = 0.f, cruiseSpeed = 0.f, descentSpeed = 0.f;
-      atools::grib::Wind climbWind = atools::grib::EMPTY_WIND,
-                         cruiseWind = atools::grib::EMPTY_WIND,
-                         descentWind = atools::grib::EMPTY_WIND;
+      atools::grib::Wind climbWind, cruiseWind, descentWind;
 
       // Check if leg covers TOC and/or TOD =================================================
       // Calculate wind, distance and averate speed (TAS) for this leg
       // Wind is interpolated by altitude
-      if(endDistLeg < tocDist)
+      // Need to use smaller/greater *or equal* to catch special cases of exactly matching distances
+      if(endDistLeg <= tocDist)
       {
         // All climb before TOC ==========================
         climbDist = legDist;
-        climbWind = windReporter->getWindForLineStringRoute(leg.getLineString());
+        climbWind = windReporter->getWindForLineStringRoute(legLine);
         climbSpeed = perf.getClimbSpeed();
       }
-      else if(startDistLeg > todDist)
+      else if(startDistLeg >= todDist)
       {
         // All descent after TOD ==========================
         descentDist = legDist;
-        descentWind = windReporter->getWindForLineStringRoute(leg.getLineString());
+        descentWind = windReporter->getWindForLineStringRoute(legLine);
         descentSpeed = perf.getDescentSpeed();
       }
-      else if(startDistLeg < tocDist && endDistLeg > todDist)
+      else if(startDistLeg <= tocDist && endDistLeg >= todDist)
       {
         // Crosses TOC *and* TOD  - phases climb, cruise and descent ==========================
         // Climb to TOC ===================
         climbDist = tocDist - startDistLeg;
-        climbWind = windReporter->getWindForLineStringRoute(leg.getLineString().left(2));
+        climbWind = windReporter->getWindForLineStringRoute(legLine.left(2));
         climbSpeed = perf.getClimbSpeed();
 
         // cruise - TOC to TOD ===================
         cruiseDist = todDist - tocDist;
-        cruiseWind = windReporter->getWindForLineStringRoute(leg.getLineString().mid(1, 2));
+        cruiseWind = windReporter->getWindForLineStringRoute(legLine.mid(1, 2));
         cruiseSpeed = perf.getCruiseSpeed();
 
         // TOD to destination ===================
         descentDist = endDistLeg - todDist;
-        descentWind = windReporter->getWindForLineStringRoute(leg.getLineString().right(2));
+        descentWind = windReporter->getWindForLineStringRoute(legLine.right(2));
         descentSpeed = perf.getDescentSpeed();
       }
-      else if(startDistLeg < tocDist && endDistLeg < todDist)
+      else if(startDistLeg <= tocDist && endDistLeg <= todDist)
       {
         // Crosses TOC and goes into cruise ==========================
         climbDist = tocDist - startDistLeg;
-        climbWind = windReporter->getWindForLineStringRoute(leg.getLineString().left(2));
+        climbWind = windReporter->getWindForLineStringRoute(legLine.left(2));
         climbSpeed = perf.getClimbSpeed();
 
         // Cruise to TOD ==========================
         cruiseDist = endDistLeg - tocDist;
-        cruiseWind = windReporter->getWindForLineStringRoute(leg.getLineString().right(2));
+        cruiseWind = windReporter->getWindForLineStringRoute(legLine.right(2));
         cruiseSpeed = perf.getCruiseSpeed();
       }
-      else if(startDistLeg > tocDist && endDistLeg > todDist)
+      else if(startDistLeg >= tocDist && endDistLeg >= todDist)
       {
         // Goes from cruise to and after TOD ==========================
         // Cruise to TOD ==========================
         cruiseDist = todDist - startDistLeg;
-        cruiseWind = windReporter->getWindForLineStringRoute(leg.getLineString().left(2));
+        cruiseWind = windReporter->getWindForLineStringRoute(legLine.left(2));
         cruiseSpeed = perf.getCruiseSpeed();
 
         // TOD to destination ===================
         descentDist = endDistLeg - todDist;
-        descentWind = windReporter->getWindForLineStringRoute(leg.getLineString().right(2));
+        descentWind = windReporter->getWindForLineStringRoute(legLine.right(2));
         descentSpeed = perf.getDescentSpeed();
       }
       else
       {
         // Cruise only ==========================
         cruiseDist = legDist;
-        cruiseWind = windReporter->getWindForLineStringRoute(leg.getLineString());
+        cruiseWind = windReporter->getWindForLineStringRoute(legLine);
         cruiseSpeed = perf.getCruiseSpeed();
       }
 
@@ -1846,7 +1847,7 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
         leg.cruiseFuel = perf.getCruiseFuelFlow() * leg.cruiseTime;
         leg.descentFuel = perf.getDescentFuelFlow() * leg.descentTime;
 
-        atools::grib::Wind wind = windReporter->getWindForPosRoute(leg.getLineString().getPos2());
+        atools::grib::Wind wind = windReporter->getWindForPosRoute(legLine.getPos2());
         leg.windSpeed = wind.speed;
         leg.windDirection = wind.dir;
 

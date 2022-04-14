@@ -109,6 +109,7 @@ and `$HOME/.config/ABarthel` on Linux and macOS.
 * Corrected SimBrief fetch dialog to show alias instead of user name. #857
 * Fixed missing waypoints in MSFS flight plan export for all distance, altitude or otherwise
   terminated procedure legs.
+* Fixed issue where elevation profile could not be calculated if a STAR has an at altitude restriction.
 
 ### User Interface
 
