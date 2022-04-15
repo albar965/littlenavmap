@@ -38,8 +38,6 @@ and `$HOME/.config/ABarthel` on Linux and macOS.
 
 ### Scenery Library
 
-#### MSFS
-
 * Fixed issue where all airports were recognized as add-on with MSFS update 9.
 * Now notifying user about wrong scenery library modes after loading. Considers MSFS and Navigraph
   special cases. Allows user to change to the required mode after loading.
@@ -129,6 +127,8 @@ and `$HOME/.config/ABarthel` on Linux and macOS.
 * Now removing trailing and leading spaces from map theme keys in options dialog.
 * Resetting some essential messages on update now to keep users alert and aware of potential issues.
 * Many more small user interface and map display improvements.
+* Added display of aircraft category and RNP to procedures and procedure legs in flight plan table
+  and procedure search.
 
 ===============================================================================
 
