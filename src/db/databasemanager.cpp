@@ -65,9 +65,10 @@ using atools::sql::SqlTransaction;
 using atools::sql::SqlQuery;
 using atools::fs::db::DatabaseMeta;
 
-const int MAX_ERROR_BGL_MESSAGES = 400;
-const int MAX_ERROR_SCENERY_MESSAGES = 400;
-const int MAX_TEXT_LENGTH = 120;
+const static int MAX_ERROR_BGL_MESSAGES = 400;
+const static int MAX_ERROR_SCENERY_MESSAGES = 400;
+const static int MAX_TEXT_LENGTH = 120;
+const static int MAX_AGE_MONTHS = 2;
 
 DatabaseManager::DatabaseManager(MainWindow *parent)
   : QObject(parent), mainWindow(parent)
@@ -806,6 +807,9 @@ void DatabaseManager::insertSimSwitchAction(atools::fs::FsPaths::SimulatorType t
     // Built string for hint ===============
     if(!meta.hasData())
       atts.append(tr("empty"));
+    else if(meta.getDatabaseVersion() < meta.getApplicationVersion() ||
+            meta.getLastLoadTime() < QDateTime::currentDateTime().addMonths(-MAX_AGE_MONTHS))
+      atts.append(tr("old"));
 
     if(!simulators.value(type).isInstalled)
       atts.append(tr("no simulator"));
@@ -2068,8 +2072,6 @@ const atools::fs::db::DatabaseMeta DatabaseManager::metaFromFile(const QString& 
 
 void DatabaseManager::checkDatabaseVersion()
 {
-  static const int MAX_AGE_MONTHS = 2;
-
   const atools::fs::db::DatabaseMeta *databaseMetaSim = NavApp::getDatabaseMetaSim();
   if(navDatabaseStatus != dm::NAVDATABASE_ALL && databaseMetaSim != nullptr && databaseMetaSim->hasData())
   {
