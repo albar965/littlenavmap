@@ -403,7 +403,9 @@ struct MapProcedureLegs
   bool gpsOverlay,
        hasError, /* Probably unusable due to missing navaid */
        hasHardError, /* Deny usage since geometry is not valid */
-       circleToLand; /* Runway is not part of procedure and was added internally */
+       circleToLand, /* Runway is not part of procedure and was added internally */
+       rnp, /* One or more legs have a required navigation performance */
+       verticalAngle; /* One or more legs have a vertical angle */
 
   /* Short display type name */
   QString displayApproachType() const
@@ -648,6 +650,7 @@ QString  procedureTextSuffixDeparture(const Route& route, const map::MapAirport&
 QString  procedureTextSuffixDestination(const Route& route, const map::MapAirport& airport, bool& disable);
 QString  procedureTextSuffixAlternate(const Route& route, const map::MapAirport& airport, bool& disable);
 
+QString aircraftCategoryText(const QString& cat);
 } // namespace types
 
 Q_DECLARE_TYPEINFO(proc::MapProcedureRef, Q_PRIMITIVE_TYPE);

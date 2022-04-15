@@ -737,6 +737,8 @@ proc::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const map::MapAirpor
     legs->approachArincName = approach->approachArincName;
     legs->aircraftCategory = approach->aircraftCategory;
     legs->gpsOverlay = approach->gpsOverlay;
+    legs->verticalAngle = approach->verticalAngle;
+    legs->rnp = approach->rnp;
     legs->circleToLand = approach->circleToLand;
 
     delete approach;
@@ -789,13 +791,15 @@ proc::MapProcedureLegs *ProcedureQuery::buildApproachLegs(const map::MapAirport&
   approachQuery->exec();
   if(approachQuery->next())
   {
-    legs->approachType = approachQuery->value("type").toString();
-    legs->approachSuffix = approachQuery->value("suffix").toString();
-    legs->approachFixIdent = approachQuery->value("fix_ident").toString();
+    legs->approachType = approachQuery->valueStr("type");
+    legs->approachSuffix = approachQuery->valueStr("suffix");
+    legs->approachFixIdent = approachQuery->valueStr("fix_ident");
     legs->approachArincName = approachQuery->valueStr("arinc_name", QString());
     legs->aircraftCategory = approachQuery->valueStr("aircraft_category", QString());
-    legs->gpsOverlay = approachQuery->value("has_gps_overlay").toBool();
-    legs->procedureRunway = approachQuery->value("runway_name").toString();
+    legs->gpsOverlay = approachQuery->valueBool("has_gps_overlay", false);
+    legs->verticalAngle = approachQuery->valueBool("has_vertical_angle", false);
+    legs->rnp = approachQuery->valueBool("has_rnp", false);
+    legs->procedureRunway = approachQuery->valueStr("runway_name");
   }
   approachQuery->finish();
 
@@ -2254,7 +2258,8 @@ void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, con
   procedure.customDistance = distance;
   procedure.customAltitude = altitude;
   procedure.customOffset = offsetAngle;
-  procedure.gpsOverlay = procedure.hasError = procedure.hasHardError = procedure.circleToLand = false;
+  procedure.gpsOverlay = procedure.hasError = procedure.hasHardError =
+    procedure.circleToLand = procedure.verticalAngle = procedure.rnp = false;
   procedure.transitionDistance = procedure.missedDistance = 0.f;
   procedure.bounding = Rect(initialFixPos);
   procedure.bounding.extend(runwayEndSim.position);
@@ -2324,7 +2329,8 @@ void ProcedureQuery::createCustomDeparture(proc::MapProcedureLegs& procedure, co
   procedure.customDistance = distance;
   procedure.customAltitude = 0.f;
   procedure.customOffset = 0.f;
-  procedure.gpsOverlay = procedure.hasError = procedure.hasHardError = procedure.circleToLand = false;
+  procedure.gpsOverlay = procedure.hasError = procedure.hasHardError = procedure.circleToLand =
+    procedure.verticalAngle = procedure.rnp = false;
   procedure.transitionDistance = procedure.missedDistance = 0.f;
   procedure.bounding = Rect(endFixPos);
   procedure.bounding.extend(runwayEndSim.position);

@@ -157,17 +157,17 @@ private:
   /* Called from menu actions */
   void showInformationSelected();
   void showOnMapSelected();
-  void approachAttachSelected();
-  void attachApproach();
-  void showApproachTriggered();
+  void procedureAttachSelected();
+  void attachProcedure();
+  void showProcedureTriggered();
 
   // Save and restore expanded and selected item state
   QBitArray saveTreeViewState();
   void restoreTreeViewState(const QBitArray& state, bool blockSignals);
 
   /* Build full approach or transition items for the tree view */
-  QTreeWidgetItem *buildApproachItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp, const QString& approachType,
-                                     const QStringList& attStr);
+  QTreeWidgetItem *buildProcedureItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp, const QString& procType,
+                                      const QStringList& attStr);
   QTreeWidgetItem *buildTransitionItem(QTreeWidgetItem *apprItem, const atools::sql::SqlRecord& recTrans, bool sidOrStar);
 
   /* Build an leg for the selected/table or tree view */
@@ -180,13 +180,13 @@ private:
   void showEntry(QTreeWidgetItem *item, bool doubleClick, bool zoom);
 
   /* Update course and distances in the approach legs when a preceding transition is selected */
-  void updateApproachItem(QTreeWidgetItem *apprItem, int transitionId);
+  void updateProcedureItem(QTreeWidgetItem *apprItem, int transitionId);
 
-  QList<QTreeWidgetItem *> buildApproachLegItems(const proc::MapProcedureLegs *legs, int transitionId);
+  QList<QTreeWidgetItem *> buildProcedureLegItems(const proc::MapProcedureLegs *legs, int transitionId);
 
   QList<QTreeWidgetItem *> buildTransitionLegItems(const proc::MapProcedureLegs *legs);
 
-  void fillApproachTreeWidget();
+  void fillProcedureTreeWidget();
 
   /* Fill header for tree or selected/table view */
   void updateTreeHeader();
@@ -206,11 +206,11 @@ private:
   void dockVisibilityChanged(bool visible);
   void fontChanged();
 
-  static proc::MapProcedureTypes buildTypeFromApproachRec(const atools::sql::SqlRecord& recApp);
+  static proc::MapProcedureTypes buildTypeFromProcedureRec(const atools::sql::SqlRecord& recApp);
   static bool procedureSortFunc(const atools::sql::SqlRecord& rec1, const atools::sql::SqlRecord& rec2);
 
   void fetchSingleTransitionId(proc::MapProcedureRef& ref);
-  QString approachAndTransitionText(const QTreeWidgetItem *item);
+  QString procedureAndTransitionText(const QTreeWidgetItem *item);
 
   void clearSelectionClicked();
   void showAllToggled(bool checked);
@@ -218,7 +218,8 @@ private:
   const proc::MapProcedureLegs *fetchProcData(proc::MapProcedureRef& ref, QTreeWidgetItem *item);
   void airportLabelLinkActivated(const QString& link);
 
-  void approachDisplayText(QString& approachTypeText, QStringList& attText, const atools::sql::SqlRecord& recApp, proc::MapProcedureTypes maptype);
+  void procedureDisplayText(QString& procTypeText, QStringList& attText, const atools::sql::SqlRecord& recApp,
+                            proc::MapProcedureTypes maptype);
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<proc::MapProcedureRef> itemIndex;
@@ -232,7 +233,7 @@ private:
   ProcedureQuery *procedureQuery = nullptr;
   AirportQuery *airportQueryNav = nullptr;
   QTreeWidget *treeWidget = nullptr;
-  QFont transitionFont, approachFont, legFont, missedLegFont, invalidLegFont, identFont;
+  QFont transitionFont, procedureFont, legFont, missedLegFont, invalidLegFont, identFont;
 
   map::MapAirport *currentAirportNav, *currentAirportSim;
 

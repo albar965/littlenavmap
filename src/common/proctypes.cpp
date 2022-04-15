@@ -914,6 +914,9 @@ QStringList procedureLegRemark(const MapProcedureLeg& leg)
   else if(leg.turnDirection == "B")
     remarks.append(QObject::tr("Turn left or right"));
 
+  if(leg.rnp > 0.f && leg.rnp < map::INVALID_DISTANCE_VALUE)
+    remarks.append(QObject::tr("RNP %L1").arg(leg.rnp, 0, 'g', 3));
+
   QString legremarks = proc::procedureLegRemarks(leg.type);
   if(!legremarks.isEmpty())
     remarks.append(legremarks);
@@ -1362,6 +1365,44 @@ QStringList procedureTextFirstAndLastFix(const MapProcedureLegs& legs, proc::Map
     }
   }
   return fixes;
+}
+
+QString aircraftCategoryText(const QString& cat)
+{
+  // Aircraft category
+  if(cat.isEmpty())
+    return QString();
+  else if(cat == "A")
+    return QObject::tr("All Aircraft");
+  else if(cat == "C")
+    return QObject::tr("All Aircraft, Cruise 250 kts or less");
+  else if(cat == "D")
+    return QObject::tr("Non-Jet and Turbo Prop");
+  else if(cat == "E")
+    return QObject::tr("Multi-Engine Props Only");
+  else if(cat == "F")
+    return QObject::tr("Jets and Turbo Props/Special, Cruise at least 190 kts");
+  else if(cat == "H")
+    return QObject::tr("Helicopter Only");
+  else if(cat == "J")
+    return QObject::tr("Jet Power");
+  else if(cat == "M")
+    return QObject::tr("Turbo-Prop/Special, Cruise at least 190 kts");
+  else if(cat == "N")
+    return QObject::tr("Non-Jet, Non-Turbo Prop");
+  else if(cat == "P")
+    return QObject::tr("Non-Jet, Cruise at least 190 kts");
+  else if(cat == "Q")
+    return QObject::tr("Non-Jet, Cruise below 190 kts");
+  else if(cat == "R")
+    // return QObject::tr("Aircraft as defined in a Notes Continuation Record");
+    return QString();
+  else if(cat == "S")
+    return QObject::tr("Single Engine");
+  else if(cat == "T")
+    return QObject::tr("Twin Engine");
+
+  return QObject::tr("Aircraft %1").arg(cat);
 }
 
 } // namespace proc
