@@ -64,10 +64,13 @@ and `$HOME/.config/ABarthel` on Linux and macOS.
 * Now allowing a `no simulator` state of the program instead of always showing X-Plane. This avoids the
   confusing always enabled X-Plane scenery library database.
 * X-Plane now requires `x-plane_install_11.txt` and a valid installation path to be recognized.
-  Run X-Plane once to create this file so that _Little Navmap_ can detect it.
+  Run X-Plane once to create this file so that *Little Navmap* can detect it.
 * Prepared data compilation for X-Plane 12 based on limited information. #867
 * Fixed issue `Index out of bounds: Index: 5, size: 5` when reading X-Plane user_fix.dat with
   optional last column missing.
+* Now adding suffix `old` to database in scenery library menu if a database was loaded with a
+  previous version of *Little Navmap* or if database was loaded two months ago. This is a reminder
+  for users to reload databases after simulator updates or updates of _Little Navmap_.
 
 ### Airspaces
 
