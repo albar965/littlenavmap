@@ -68,7 +68,7 @@ using atools::fs::db::DatabaseMeta;
 const static int MAX_ERROR_BGL_MESSAGES = 400;
 const static int MAX_ERROR_SCENERY_MESSAGES = 400;
 const static int MAX_TEXT_LENGTH = 120;
-const static int MAX_AGE_MONTHS = 2;
+const static int MAX_AGE_DAYS = 60;
 
 DatabaseManager::DatabaseManager(MainWindow *parent)
   : QObject(parent), mainWindow(parent)
@@ -807,9 +807,16 @@ void DatabaseManager::insertSimSwitchAction(atools::fs::FsPaths::SimulatorType t
     // Built string for hint ===============
     if(!meta.hasData())
       atts.append(tr("empty"));
-    else if(meta.getDatabaseVersion() < meta.getApplicationVersion() ||
-            meta.getLastLoadTime() < QDateTime::currentDateTime().addMonths(-MAX_AGE_MONTHS))
-      atts.append(tr("old"));
+    else
+    {
+      if(meta.getDatabaseVersion() < meta.getApplicationVersion())
+        atts.append(tr("prev. version - reload advised"));
+      else if(meta.getLastLoadTime() < QDateTime::currentDateTime().addDays(-MAX_AGE_DAYS))
+      {
+        qint64 days = meta.getLastLoadTime().date().daysTo(QDate::currentDate());
+        atts.append(tr("%1 days old - reload advised").arg(days));
+      }
+    }
 
     if(!simulators.value(type).isInstalled)
       atts.append(tr("no simulator"));
@@ -2079,8 +2086,11 @@ void DatabaseManager::checkDatabaseVersion()
     if(databaseMetaSim->getDatabaseVersion() < databaseMetaSim->getApplicationVersion())
       msg.append(tr("The scenery library database was created using a previous version of Little Navmap."));
 
-    if(databaseMetaSim->getLastLoadTime() < QDateTime::currentDateTime().addMonths(-MAX_AGE_MONTHS))
-      msg.append(tr("The scenery library database was not reloaded for two months."));
+    if(databaseMetaSim->getLastLoadTime() < QDateTime::currentDateTime().addMonths(-MAX_AGE_DAYS))
+    {
+      qint64 days = databaseMetaSim->getLastLoadTime().date().daysTo(QDate::currentDate());
+      msg.append(tr("Scenery library database was not reloaded for more than %1 days.").arg(days));
+    }
 
     if(!msg.isEmpty())
     {
@@ -2088,9 +2098,9 @@ void DatabaseManager::checkDatabaseVersion()
 
       dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_DATABASE_OLD,
                              tr("<p>%1</p>"
-                                  "<p>It is recommended to reload the scenery library database after each Little Navmap update, "
-                                    "after installing new add-on scenery or "
-                                    "after a flight simulator update.</p>"
+                                  "<p>It is advised to reload the scenery library database after each Little Navmap update, "
+                                    "after installing new add-on scenery or after a flight simulator update to "
+                                    "enable new features or benefit from bug fixes.</p>"
                                     "<p>You can do this in menu \"Scenery Library\" -> "
                                       "\"Reload Scenery Library\".</p>").arg(msg.join(tr("<br/>"))),
                              tr("Do not &show this dialog again."));
