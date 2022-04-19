@@ -52,6 +52,8 @@ const QVector<float> RangeMarkerDialog::MAP_RANGERINGS_DEFAULT({50.f, 100.f, 200
 class RangeRingValidator :
   public QValidator
 {
+  Q_OBJECT
+
 public:
   RangeRingValidator();
 
