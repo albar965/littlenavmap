@@ -19,6 +19,7 @@
 #define LNM_RANGEMARKER_DIALOG_H
 
 #include <QDialog>
+#include <QValidator>
 
 namespace Ui {
 class RangeMarkerDialog;
@@ -85,6 +86,22 @@ private:
   RangeRingValidator *rangeRingValidator;
 
   const static QVector<float> MAP_RANGERINGS_DEFAULT;
+};
+
+/* Validates the space separated list of range ring sizes */
+class RangeRingValidator :
+  public QValidator
+{
+  Q_OBJECT
+
+public:
+  RangeRingValidator();
+
+private:
+  virtual QValidator::State validate(QString& input, int&) const override;
+
+  bool ringStrToVector(const QString& str) const;
+
 };
 
 #endif // LNM_RANGEMARKER_DIALOG_H

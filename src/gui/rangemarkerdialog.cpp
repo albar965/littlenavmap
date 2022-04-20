@@ -48,22 +48,6 @@ const float MAX_RANGE_RING_SIZE_METER = atools::geo::EARTH_CIRCUMFERENCE_METER /
 const int MAX_RANGE_RINGS = 10;
 const QVector<float> RangeMarkerDialog::MAP_RANGERINGS_DEFAULT({50.f, 100.f, 200.f, 500.f});
 
-/* Validates the space separated list of range ring sizes */
-class RangeRingValidator :
-  public QValidator
-{
-  Q_OBJECT
-
-public:
-  RangeRingValidator();
-
-private:
-  virtual QValidator::State validate(QString& input, int&) const override;
-
-  bool ringStrToVector(const QString& str) const;
-
-};
-
 RangeRingValidator::RangeRingValidator()
 {
 }
