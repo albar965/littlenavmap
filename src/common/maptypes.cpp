@@ -176,11 +176,12 @@ void initTranslateableTexts()
       {"V", QObject::tr("Vehicles")}
     });
 
+  // Map for user interface names
   parkingNameMap = QHash<QString, QString>(
     {
       {"INVALID", QObject::tr("Invalid")},
       {"UNKNOWN", QObject::tr("Unknown")},
-      {"NONE", QObject::tr("No Parking")},
+      {"NONE", QObject::tr("Parking")},
       {"P", QObject::tr("Parking")},
       {"NP", QObject::tr("N Parking")},
       {"NEP", QObject::tr("NE Parking")},
@@ -481,11 +482,12 @@ void initTranslateableTexts()
 
 }
 
+// Map for flight plan values
 static QHash<QString, QString> parkingNameMapUntranslated(
   {
     {"INVALID", QLatin1String("Invalid")},
     {"UNKNOWN", QLatin1String("Unknown")},
-    {"NONE", QLatin1String("No Parking")},
+    {"NONE", QLatin1String("Parking None")},
     {"P", QLatin1String("Parking")},
     {"NP", QLatin1String("N Parking")},
     {"NEP", QLatin1String("NE Parking")},
