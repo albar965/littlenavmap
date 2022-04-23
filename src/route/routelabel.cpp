@@ -242,7 +242,11 @@ void RouteLabel::buildHeaderDepart(atools::util::HtmlBuilder& html, bool widget)
         departHtml.text(tr(" using SID "));
       }
 
-      departHtml.b(sidLegs.approachFixIdent);
+      QString sid(sidLegs.approachFixIdent);
+      if(!sidLegs.transitionFixIdent.isEmpty())
+        sid += "." % sidLegs.transitionFixIdent;
+
+      departHtml.b(sid);
       departHtml.text(tr(". "));
     }
 
@@ -295,7 +299,7 @@ void RouteLabel::buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget
 
       QString star(starLegs.approachFixIdent);
       if(!starLegs.transitionFixIdent.isEmpty())
-        star += "." + starLegs.transitionFixIdent;
+        star += "." % starLegs.transitionFixIdent;
       arrHtml.b(star);
 
       starRunway = starLegs.procedureRunway;
