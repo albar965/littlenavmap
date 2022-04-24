@@ -112,6 +112,7 @@ void PerfMergeDialog::restoreState()
 {
   atools::gui::WidgetState ws(lnm::AIRCRAFT_PERF_MERGE_DIALOG);
   ws.restore({this,
+              ui->comboBoxSimulator,
               ui->comboBoxName,
               ui->comboBoxType,
               ui->comboBoxClimbFuelFlow,
@@ -130,6 +131,10 @@ void PerfMergeDialog::restoreState()
               ui->comboBoxReserveFuel,
               ui->comboBoxUsableFuel});
 
+  // New in 2.7
+  if(ui->comboBoxSimulator->currentIndex() < 0 || ui->comboBoxSimulator->currentIndex() > 1)
+    ui->comboBoxSimulator->setCurrentIndex(0);
+
   // Reset values after change from beta 2.4.1 to 2.4.2
   if(ui->comboBoxName->currentIndex() < 0 || ui->comboBoxName->currentIndex() > 1)
     ui->comboBoxName->setCurrentIndex(0);
@@ -141,6 +146,7 @@ void PerfMergeDialog::saveState()
 {
   atools::gui::WidgetState ws(lnm::AIRCRAFT_PERF_MERGE_DIALOG);
   ws.save({this,
+           ui->comboBoxSimulator,
            ui->comboBoxName,
            ui->comboBoxType,
            ui->comboBoxClimbFuelFlow,
@@ -313,6 +319,7 @@ void PerfMergeDialog::mergeClicked()
 void PerfMergeDialog::updateComboBoxWidgetsStr(ComboBoxIndexStr idx)
 {
   /* Ignore copy merge */
+  ui->comboBoxSimulator->setCurrentIndex(idx);
   ui->comboBoxName->setCurrentIndex(idx);
   ui->comboBoxType->setCurrentIndex(idx);
 }
