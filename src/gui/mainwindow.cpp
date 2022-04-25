@@ -1786,7 +1786,9 @@ void MainWindow::showDatabaseFiles()
 /* Menu item */
 void MainWindow::showShowMapCache()
 {
-  QUrl url = QUrl::fromLocalFile(Marble::MarbleDirs::localPath());
+  // Windows: C:\Users\YOURUSERNAME\AppData\Local\.marble\data
+  // Linux and macOS: $HOME/.local/share/marble
+  QUrl url = QUrl::fromLocalFile(Marble::MarbleDirs::localPath() % QDir::separator() % "maps" % QDir::separator() % "earth");
 
   if(!QDesktopServices::openUrl(url))
     atools::gui::Dialog::warning(this, tr("Error opening map cache directory \"%1\"").arg(url.toDisplayString()));
