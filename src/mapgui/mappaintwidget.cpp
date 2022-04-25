@@ -153,7 +153,7 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other)
     setProjection(other.projection());
 
   if(mapThemeId() != other.mapThemeId())
-    setTheme(other.mapThemeId(), other.currentThemeIndex);
+    setTheme(other.mapThemeId(), other.currentThemeId);
 
   // Unused options
   // setAnimationsEnabled(other.animationsEnabled());
@@ -192,7 +192,7 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other)
   setSunShadingDimFactor(static_cast<double>(OptionData::instance().getDisplaySunShadingDimFactor()) / 100.);
 
   // Copy own/internal settings
-  currentThemeIndex = other.currentThemeIndex;
+  currentThemeId = other.currentThemeId;
   *aircraftTrack = *other.aircraftTrack;
   *aircraftTrackLogbook = *other.aircraftTrackLogbook;
   searchMarkPos = other.searchMarkPos;
@@ -211,11 +211,11 @@ void MapPaintWidget::copyView(const MapPaintWidget& other)
   currentViewBoundingBox = other.viewport()->viewLatLonAltBox();
 }
 
-void MapPaintWidget::setTheme(const QString& theme, int index)
+void MapPaintWidget::setTheme(const QString& theme, const QString& themeId)
 {
-  qDebug() << "setting map theme to index" << index << theme;
+  qDebug() << "setting map theme to" << themeId << theme;
 
-  currentThemeIndex = index;
+  currentThemeId = themeId;
 
   setThemeInternal(theme);
 }
@@ -230,12 +230,12 @@ void MapPaintWidget::setThemeInternal(const QString& theme)
   // Ignore any overlay state signals the widget sends while switching theme
   ignoreOverlayUpdates = true;
 
-  updateThemeUi(currentThemeIndex);
+  updateThemeUi(currentThemeId);
 
   setMapThemeId(theme);
   setShowClouds(false);
 
-  if(NavApp::getMapThemeHandler()->hasPlacemarks(currentThemeIndex))
+  if(NavApp::getMapThemeHandler()->hasPlacemarks(currentThemeId))
     // Add placemark files again - ignored if already loaded
     addPlacemarks();
   else
@@ -796,11 +796,12 @@ void MapPaintWidget::showRectStreamlined(const atools::geo::Rect& rect, bool con
       // Center on rectangle
       centerRectOnMap(rect);
 
-    if(constrainDistance){
-        float distanceKm = atools::geo::nmToKm(Unit::rev(OptionData::instance().getMapZoomShowMenu(), Unit::distNmF));
+    if(constrainDistance)
+    {
+      float distanceKm = atools::geo::nmToKm(Unit::rev(OptionData::instance().getMapZoomShowMenu(), Unit::distNmF));
 
-        if(distance() < distanceKm)
-          setDistanceToMap(distanceKm);
+      if(distance() < distanceKm)
+        setDistanceToMap(distanceKm);
     }
   }
 }
@@ -1149,7 +1150,7 @@ map::MapWeatherSource MapPaintWidget::weatherSourceFromUi()
   return paintLayer->getWeatherSource();
 }
 
-void MapPaintWidget::updateThemeUi(int)
+void MapPaintWidget::updateThemeUi(const QString&)
 {
   // No-op
 }

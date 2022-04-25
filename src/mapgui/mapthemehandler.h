@@ -24,6 +24,8 @@
 #include <QDir>
 
 class QFileInfo;
+class QComboBox;
+class QActionGroup;
 
 /*
  * Contains all information about a theme briefly extracted from a DGML file.
@@ -92,7 +94,7 @@ public:
   }
 
   /* Theme id/short name as found in the DGML file for tag "theme" in "header". */
-  const QString& getTheme() const
+  const QString& getThemeId() const
   {
     return theme;
   }
@@ -169,22 +171,32 @@ private:
 /*
  * Extracts all relevant information from map themes in folder data/maps/earth and keeps a sorted list of theme objects.
  * Also loads and saves API key, username or token values for maps.
+ *
+ * Themes are referenced by theme id which is element <theme> in the DGML file.
  */
-class MapThemeHandler
+class MapThemeHandler :
+  public QObject
 {
-  Q_DECLARE_TR_FUNCTIONS(MapThemeHandler)
+  Q_OBJECT
 
 public:
+  MapThemeHandler(QWidget *mainWindowParam);
+  virtual ~MapThemeHandler() override;
+
   /* Load all theme files into Theme objects. Not visible themes will be excluded */
   void loadThemes();
 
-  const MapTheme& getTheme(int themeIndex) const;
+  /* Get theme by theme id (element <theme> in DGML. */
+  const MapTheme& getTheme(const QString& themeId) const;
 
   /* Get default theme which is the one with short name "openstreetmap" */
   const MapTheme& getDefaultTheme() const
   {
     return defaultTheme;
   }
+
+  /* Currently selected theme id from combo box */
+  QString getCurrentThemeId() const;
 
   /* Sort order is always online/offline and then alphabetical */
   const QVector<MapTheme>& getThemes() const
@@ -193,24 +205,24 @@ public:
   }
 
   /* See related methods in MapTheme */
-  bool isDarkTheme(int themeIndex) const
+  bool isDarkTheme(const QString& themeId) const
   {
-    return getTheme(themeIndex).isDarkTheme();
+    return getTheme(themeId).isDarkTheme();
   }
 
-  bool hasPlacemarks(int themeIndex) const
+  bool hasPlacemarks(const QString& themeId) const
   {
-    return getTheme(themeIndex).hasPlacemarks();
+    return getTheme(themeId).hasPlacemarks();
   }
 
-  bool canSunShading(int themeIndex) const
+  bool canSunShading(const QString& themeId) const
   {
-    return !getTheme(themeIndex).canSunShading();
+    return !getTheme(themeId).canSunShading();
   }
 
-  bool hasDiscreteZoom(int themeIndex) const
+  bool hasDiscreteZoom(const QString& themeId) const
   {
-    return !getTheme(themeIndex).hasDiscreteZoom();
+    return !getTheme(themeId).hasDiscreteZoom();
   }
 
   /* Get a map of API key, username or token key/value pairs as loaded from all DGML configuration files. */
@@ -236,24 +248,44 @@ public:
   void restoreState();
   void saveState();
 
+  /* Sets up the combo box for the toolbar and the main menu actions */
+  void setupMapThemesUi();
+
+  /* Called by the toolbar combo box or main widget after key updates */
+  void changeMapTheme();
+
+  /* Update map legend widget after theme change */
+  void updateLegend();
+
 private:
+  /* Get theme by internal index */
+  const MapTheme& themeByIndex(int themeIndex) const;
+
   /* Look for directories with a valid DGML file in the earth dir */
   QList<QFileInfo> findMapThemes();
 
   /* Briefly read the most important data from a DGML file needed to build a MapTheme object */
   MapTheme loadTheme(const QFileInfo& dgml);
 
+  void themeMenuTriggered(bool checked);
+  void changeMapThemeComboBox(const QString& themeId, bool blockSignals);
+
   /* Base folder appdir/data/maps/earth */
   QDir earthDir;
 
   /* Sorted list of all loaded themes */
   QVector<MapTheme> themes;
+  QHash<QString, int> themeIdToIndexMap;
 
   /* Default OSM theme used as fallback */
   MapTheme defaultTheme;
 
   /* All keys for all maps */
   QMap<QString, QString> mapThemeKeys;
+
+  QComboBox *comboBoxMapTheme = nullptr;
+  QActionGroup *actionGroupMapTheme = nullptr;
+  QWidget *mainWindow;
 };
 
 QDebug operator<<(QDebug out, const MapTheme& theme);

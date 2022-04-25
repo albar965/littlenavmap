@@ -303,7 +303,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.userPointTypesAll = NavApp::getUserdataController()->getAllTypes();
       context.userPointTypeUnknown = NavApp::getUserdataController()->isSelectedUnknownType();
       context.zoomDistanceMeter = static_cast<float>(mapWidget->distance() * 1000.);
-      context.darkMap = NavApp::getMapThemeHandler()->isDarkTheme(mapWidget->getCurrentThemeIndex());
+      context.darkMap = NavApp::getMapThemeHandler()->isDarkTheme(mapWidget->getCurrentThemeId());
       context.paintCopyright = mapWidget->isPaintCopyright();
 
       context.mimimumRunwayLengthFt = minimumRunwayLenghtFt;

@@ -197,9 +197,6 @@ public:
   void updateErrorLabels();
   void makeErrorLabel(QString& toolTipText, QStringList errors, const QString& header);
 
-  /* Index of theme in MapThemeHandler. Not related to position in combo box due to separators */
-  int getMapThemeIndex() const;
-
   const InfoController *getInfoController() const
   {
     return infoController;
@@ -298,9 +295,6 @@ private:
   /* Set up own UI elements that cannot be created in designer */
   void setupUi();
 
-  /* Fill map themes in menu and combo box after initializing map widget */
-  void setupMapThemesUi();
-
   void preDatabaseLoad();
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 
@@ -380,10 +374,7 @@ private:
   void legendAnchorClicked(const QUrl& url);
 
   void changeMapProjection(int index);
-  void changeMapTheme();
   void scaleToolbar(QToolBar *toolbar, float scale);
-  void themeMenuTriggered(bool checked);
-  void updateLegend();
   void clearWeatherContext();
   void showOnlineHelp();
   void showOnlineTutorials();
@@ -480,8 +471,8 @@ private:
   /* Filepath of the inline nav map legend */
   QString legendFile;
 
-  /* Combo boxes that are added to the toolbar */
-  QComboBox *comboBoxMapTheme = nullptr, *mapProjectionComboBox = nullptr;
+  /* Combo box which is added to the toolbar */
+  QComboBox *mapProjectionComboBox = nullptr;
 
   Ui::MainWindow *ui;
   MapWidget *mapWidget = nullptr;
@@ -524,7 +515,7 @@ private:
   MapThemeHandler *mapThemeHandler = nullptr;
 
   /* Action  groups for main menu */
-  QActionGroup *actionGroupMapProjection = nullptr, *actionGroupMapTheme = nullptr, *actionGroupMapSunShading = nullptr,
+  QActionGroup *actionGroupMapProjection = nullptr, *actionGroupMapSunShading = nullptr,
                *actionGroupMapWeatherSource = nullptr, *actionGroupMapWeatherWindSource = nullptr;
 
   QTimer weatherUpdateTimer;

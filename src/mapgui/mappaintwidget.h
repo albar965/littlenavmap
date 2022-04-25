@@ -110,8 +110,9 @@ public:
 
   /* Show the bounding rectangle on the map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
+
   /* streamlined for webmapcontroller from showRect(rect, false)
-  *  constrainDistance determines whether map distance should be constrained by OptionData values */
+   *  constrainDistance determines whether map distance should be constrained by OptionData values */
   void showRectStreamlined(const atools::geo::Rect& rect, bool constrainDistance = true);
 
   /* Show user simulator aircraft. state is tool button state */
@@ -211,7 +212,7 @@ public:
    * @param theme filename of the map theme
    * @param index MapThemeComboIndex
    */
-  void setTheme(const QString& theme, int index);
+  void setTheme(const QString& theme, const QString& themeId);
 
   /* Show points of interest and other labels for certain map themes */
   void setShowMapPois(bool show);
@@ -370,8 +371,9 @@ public:
     return screenIndex;
   }
 
-  MapPaintLayer *getMapPaintLayer(){
-      return paintLayer;
+  MapPaintLayer *getMapPaintLayer()
+  {
+    return paintLayer;
   }
 
   /* Saved bounding box from last zoom or scroll operation. Needed to detect view changes. */
@@ -406,9 +408,9 @@ public:
 
   QVector<map::MapObjectRef> *getRouteDrawnNavaids();
 
-  int getCurrentThemeIndex() const
+  const QString& getCurrentThemeId() const
   {
-    return currentThemeIndex;
+    return currentThemeId;
   }
 
 signals:
@@ -474,7 +476,7 @@ protected:
   virtual map::MapWeatherSource weatherSourceFromUi();
 
   /* Update buttons based on current theme - default is no-op */
-  virtual void updateThemeUi(int);
+  virtual void updateThemeUi(const QString&);
 
   /* Update buttons for show/center aircraft - default is no-op */
   virtual void updateShowAircraftUi(bool);
@@ -545,8 +547,8 @@ protected:
   /* Paint copyright note into image */
   bool paintCopyright = true;
 
-  /* Index for theme in MapThemeHandler and *not* the combo box. */
-  int currentThemeIndex = 0;
+  /* Map theme id. */
+  QString currentThemeId;
 
   /* Trail/track of user aircraft */
   AircraftTrack *aircraftTrack = nullptr, *aircraftTrackLogbook = nullptr;

@@ -90,7 +90,8 @@ WebApiResponse MapActionsController::imageAction(WebApiRequest request){
         qWarning() << Q_FUNC_INFO << "invalid format";
 
       // Add copyright/attributions to header
-      response.headers.insert("Image-Attributions", getNavApp()->getMapThemeHandler()->getTheme(mapPaintWidget->getCurrentThemeIndex()).getCopyright().toUtf8());
+      response.headers.insert("Image-Attributions",
+                              getNavApp()->getMapThemeHandler()->getTheme(mapPaintWidget->getCurrentThemeId()).getCopyright().toUtf8());
 
       response.status = 200;
       response.body = bytes;

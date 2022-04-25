@@ -161,6 +161,7 @@ const QLatin1String MAP_WEATHER_SOURCE("Map/WeatherSource");
 const QLatin1String MAP_SUN_SHADING_TIME_OPTION("Map/SunShadingTimeOption");
 const QLatin1String MAP_SUN_SHADING_TIME("Map/SunShadingTime");
 const QLatin1String MAP_THEME_KEYS("Map/ThemeKeys");
+const QLatin1String MAP_THEME("Map/CurrentThemeId");
 
 const QLatin1String MAP_DISTANCEMARKERS("Map/DistanceMarkers1");
 const QLatin1String MAP_TRAFFICPATTERNS("Map/TrafficPatt1ns1");

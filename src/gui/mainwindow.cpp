@@ -305,7 +305,7 @@ MainWindow::MainWindow()
     layoutFileHistory = new FileHistoryHandler(this, lnm::LAYOUT_RECENT, ui->menuWindowLayoutRecent,
                                                ui->actionWindowLayoutClearRecent);
 
-    mapThemeHandler = new MapThemeHandler;
+    mapThemeHandler = new MapThemeHandler(this);
     mapThemeHandler->loadThemes();
 
     // Create map widget and replace dummy widget in window
@@ -323,7 +323,7 @@ MainWindow::MainWindow()
     }
 
     // Fill theme combo box and menus after setting up map widget
-    setupMapThemesUi();
+    mapThemeHandler->setupMapThemesUi();
 
     // Init a few late objects since these depend on the map widget instance
     NavApp::initQueries();
@@ -386,7 +386,7 @@ MainWindow::MainWindow()
 
     qDebug() << Q_FUNC_INFO << "Setting theme";
     updateMapKeys(); // First update keys in GUI map widget - web API not started yet
-    changeMapTheme();
+    mapThemeHandler->changeMapTheme();
 
     qDebug() << Q_FUNC_INFO << "Setting projection";
     mapWidget->setProjection(mapProjectionComboBox->currentData().toInt());
@@ -397,7 +397,7 @@ MainWindow::MainWindow()
     profileWidget->updateProfileShowFeatures();
 
     loadNavmapLegend();
-    updateLegend();
+    mapThemeHandler->updateLegend();
     updateWindowTitle();
 
     // Enable or disable tooltips - call later since it needs the map window
@@ -522,8 +522,6 @@ MainWindow::~MainWindow()
   delete dockHandler;
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapProjection";
   delete actionGroupMapProjection;
-  qDebug() << Q_FUNC_INFO << "delete actionGroupMapTheme";
-  delete actionGroupMapTheme;
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapSunShading";
   delete actionGroupMapSunShading;
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapWeatherSource";
@@ -746,73 +744,6 @@ void MainWindow::scaleToolbar(QToolBar *toolbar, float scale)
   QSizeF size = toolbar->iconSize();
   size *= scale;
   toolbar->setIconSize(size.toSize());
-}
-
-void MainWindow::setupMapThemesUi()
-{
-  // Theme combo box ============================
-  comboBoxMapTheme = new QComboBox(this);
-  comboBoxMapTheme->setObjectName("comboBoxMapTheme");
-  comboBoxMapTheme->setToolTip(tr("Select map theme"));
-  comboBoxMapTheme->setStatusTip(comboBoxMapTheme->toolTip());
-  ui->toolBarMapThemeProjection->addWidget(comboBoxMapTheme);
-
-  // Theme menu items ===============================
-  actionGroupMapTheme = new QActionGroup(ui->menuViewTheme);
-  actionGroupMapTheme->setObjectName("actionGroupMapTheme");
-
-  bool online = true;
-  int index = 0;
-  // Sort order is always online/offline and then alphabetical
-  for(const MapTheme& theme : mapThemeHandler->getThemes())
-  {
-    // Check if offline map come after online and add separators
-    if(!theme.isOnline() && online)
-    {
-      // Add separator between online and offline maps
-      ui->menuViewTheme->addSeparator();
-      comboBoxMapTheme->insertSeparator(comboBoxMapTheme->count());
-    }
-
-    // Add item to combo box in toolbar
-    QString name = theme.isOnline() ? theme.getName() : tr("%1 (offline)").arg(theme.getName());
-    if(theme.hasKeys())
-      // Add star to maps which require an API key or token
-      name += tr(" *");
-
-    // Build tooltip for entries
-    QStringList tip;
-    tip.append(theme.getName());
-    tip.append(theme.isOnline() ? tr("online") : tr("offline"));
-    tip.append(theme.hasKeys() ? tr("* requires registration") : tr("free"));
-
-    // Add item and attach index for theme in MapThemeHandler
-    comboBoxMapTheme->addItem(name, index);
-    comboBoxMapTheme->setItemData(index, tip.join(tr(", ")), Qt::ToolTipRole);
-
-    // Create action for map/theme submenu
-    QAction *action = ui->menuViewTheme->addAction(name);
-    action->setCheckable(true);
-    action->setToolTip(tip.join(tr(", ")));
-    action->setStatusTip(action->toolTip());
-    action->setActionGroup(actionGroupMapTheme);
-
-    // Add keyboard shortcut for top 10 themes
-    if(index < 10)
-      action->setShortcut(tr("Ctrl+Alt+%1").arg(index));
-
-    // Attach index for theme in MapThemeHandler
-    action->setData(index);
-
-#ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO << name << index;
-#endif
-
-    index++;
-
-    // Remember theme online status
-    online = theme.isOnline();
-  }
 }
 
 void MainWindow::setupUi()
@@ -1416,7 +1347,6 @@ void MainWindow::connectAllSlots()
 
   // Connect toolbar combo boxes
   connect(mapProjectionComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::changeMapProjection);
-  connect(comboBoxMapTheme, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::changeMapTheme);
 
   // Let projection menus update combo boxes
   connect(ui->actionMapProjectionMercator, &QAction::triggered, this, [ = ](bool checked)
@@ -1435,10 +1365,6 @@ void MainWindow::connectAllSlots()
   connect(layoutFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::layoutOpenRecent);
   connect(ui->actionWindowLayoutOpen, &QAction::triggered, this, &MainWindow::layoutOpen);
   connect(ui->actionWindowLayoutSaveAs, &QAction::triggered, this, &MainWindow::layoutSaveAs);
-
-  // Let theme menus update combo boxes
-  for(QAction *action : actionGroupMapTheme->actions())
-    connect(action, &QAction::triggered, this, &MainWindow::themeMenuTriggered);
 
   // Map object/feature display
   connect(ui->actionMapShowMinimumAltitude, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -1830,26 +1756,6 @@ void MainWindow::weatherUpdateTimeout()
   infoController->updateAirportWeather();
 }
 
-void MainWindow::themeMenuTriggered(bool checked)
-{
-  QAction *action = dynamic_cast<QAction *>(sender());
-  if(action != nullptr && checked)
-  {
-    // Get index in MapThemeHandler
-    int index = action->data().toInt();
-
-    for(int i = 0; i < comboBoxMapTheme->count(); i++)
-    {
-      if(comboBoxMapTheme->itemData(i).isValid() && comboBoxMapTheme->itemData(i).toInt() == index)
-      {
-        // Use signal from combo box to activate theme
-        comboBoxMapTheme->setCurrentIndex(i);
-        break;
-      }
-    }
-  }
-}
-
 /* Called by the toolbar combo box */
 void MainWindow::changeMapProjection(int index)
 {
@@ -1866,104 +1772,6 @@ void MainWindow::changeMapProjection(int index)
   ui->actionMapProjectionSpherical->setChecked(proj == Marble::Spherical);
 
   setStatusMessage(tr("Map projection changed to %1.").arg(mapProjectionComboBox->currentText()));
-}
-
-/* Called by the toolbar combo box */
-void MainWindow::changeMapTheme()
-{
-  mapWidget->cancelDragAll();
-
-  int index = comboBoxMapTheme->currentData().toInt();
-  MapTheme theme = mapThemeHandler->getTheme(index);
-
-  if(!theme.isValid())
-  {
-    qDebug() << Q_FUNC_INFO << "Falling back to default theme due to invalid index" << index;
-    // No theme for index found - use default OSM
-    theme = mapThemeHandler->getDefaultTheme();
-    index = theme.getIndex();
-
-    // Search for combo box entry with index for MapThemeHandler
-    for(int i = 0; i < comboBoxMapTheme->count(); i++)
-    {
-      if(comboBoxMapTheme->itemData(i).isValid() && comboBoxMapTheme->itemData(i).toInt() == index)
-      {
-        // Avoid recursion by blocking signals
-        comboBoxMapTheme->blockSignals(true);
-        comboBoxMapTheme->setCurrentIndex(i);
-        comboBoxMapTheme->blockSignals(false);
-        break;
-      }
-    }
-  }
-
-  // Check if theme needs API keys, usernames or tokens ======================================
-  if(theme.hasKeys())
-  {
-    // Get all available key/value pairs from handler
-    QMap<QString, QString> mapThemeKeys = mapThemeHandler->getMapThemeKeys();
-
-    // Check if all required values are set
-    bool allValid = true;
-    for(const QString& key : theme.getKeys())
-    {
-      if(mapThemeKeys.value(key).isEmpty())
-      {
-        allValid = false;
-        break;
-      }
-    }
-
-    if(!allValid)
-    {
-      // One or more keys are not present or empty - show info dialog =================================
-      NavApp::closeSplashScreen();
-
-      // Fetch all keys for map theme
-      QString url;
-      if(!theme.getUrlRef().isEmpty())
-        url = tr("<p>Click here to create an account: <a href=\"%1\">%2</a></p>").
-              arg(theme.getUrlRef()).arg(theme.getUrlName().isEmpty() ? tr("Link") : theme.getUrlName());
-
-      dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_MAPTHEME_REQUIRES_KEY,
-                             tr("<p>The map theme \"%1\" requires additional information.</p>"
-                                  "<p>You have to create an user account at the related website and then create an username, an access key or a token.<br/>"
-                                  "Most of these services offer a free plan for hobbyists.</p>"
-                                  "<p>Then go to menu \"Tools\" -> \"Options\" and to page \"Map Display Keys\" in Little Navmap and "
-                                    "enter the information for the key(s) below:</p>"
-                                    "<ul><li>%2</li></ul>"
-                                      "<p>The map will not show correctly until this is done.</p>%3").
-                             arg(theme.getName()).arg(theme.getKeys().join(tr("</li><li>"))).arg(url),
-                             tr("Do not &show this dialog again."));
-    }
-  }
-
-  qDebug() << Q_FUNC_INFO << "index" << index << theme;
-
-  mapWidget->setTheme(theme.getId(), index);
-
-  // Update menu items in group
-  for(QAction *action : actionGroupMapTheme->actions())
-  {
-    action->blockSignals(true);
-    action->setChecked(action->data() == index);
-    action->blockSignals(false);
-  }
-
-  updateLegend();
-
-  setStatusMessage(tr("Map theme changed to %1.").arg(comboBoxMapTheme->currentText()));
-}
-
-void MainWindow::updateLegend()
-{
-  Marble::LegendWidget *legendWidget = new Marble::LegendWidget(this);
-  legendWidget->setMarbleModel(mapWidget->model());
-  QString basePath;
-  QString html = legendWidget->getHtml(basePath);
-  ui->textBrowserLegendInfo->setSearchPaths({basePath});
-  ui->textBrowserLegendInfo->setText(html);
-  delete legendWidget;
 }
 
 /* Menu item */
@@ -3992,25 +3800,6 @@ void MainWindow::restoreStateMain()
                        ui->actionMapShowSunShading, ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude,
                        ui->actionRunWebserver, ui->actionShowAllowDocking, ui->actionShowAllowMoving, ui->actionWindowStayOnTop});
 
-  if(widgetState.contains(comboBoxMapTheme))
-    // Restore map theme selection
-    widgetState.restore(comboBoxMapTheme);
-  else
-  {
-    // Load default theme OSM
-    int defaultIndex = mapThemeHandler->getDefaultTheme().getIndex();
-    for(int i = 0; i < comboBoxMapTheme->count(); i++)
-    {
-      if(comboBoxMapTheme->itemData(i).isValid() && comboBoxMapTheme->itemData(i).toInt() == defaultIndex)
-      {
-        comboBoxMapTheme->blockSignals(true);
-        comboBoxMapTheme->setCurrentIndex(defaultIndex);
-        comboBoxMapTheme->blockSignals(false);
-        break;
-      }
-    }
-  }
-
   widgetState.setBlockSignals(false);
 
   firstApplicationStart = settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
@@ -4216,7 +4005,7 @@ void MainWindow::saveActionStates()
   qDebug() << Q_FUNC_INFO;
 
   atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
-  widgetState.save({mapProjectionComboBox, comboBoxMapTheme, ui->actionMapShowVor, ui->actionMapShowNdb,
+  widgetState.save({mapProjectionComboBox, ui->actionMapShowVor, ui->actionMapShowNdb,
                     ui->actionMapShowWp, ui->actionMapShowIls, ui->actionMapShowGls, ui->actionMapShowHolding, ui->actionMapShowAirportMsa,
                     ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks, ui->actionShowAirspaces,
                     ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
@@ -4745,11 +4534,6 @@ void MainWindow::updateErrorLabels()
     ui->labelRouteError->setToolTip(QString());
     ui->labelRouteError->setStatusTip(QString());
   }
-}
-
-int MainWindow::getMapThemeIndex() const
-{
-  return comboBoxMapTheme->currentData().toInt();
 }
 
 void MainWindow::showFlightPlan()

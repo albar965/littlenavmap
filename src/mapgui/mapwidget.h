@@ -384,7 +384,7 @@ private:
   virtual void overlayStateFromMenu() override;
   virtual void overlayStateToMenu() override;
 
-  virtual void updateThemeUi(int index) override;
+  virtual void updateThemeUi(const QString& themeId) override;
   virtual void updateMapVisibleUi() const override;
 
   /* Called at start of user interaction like moving or scrolling */

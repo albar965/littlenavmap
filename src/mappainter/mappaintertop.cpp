@@ -148,7 +148,7 @@ void MapPainterTop::render()
 
 void MapPainterTop::paintCopyright()
 {
-  QString mapCopyright = NavApp::getMapThemeHandler()->getTheme(mapPaintWidget->getCurrentThemeIndex()).getCopyright();
+  QString mapCopyright = NavApp::getMapThemeHandler()->getTheme(mapPaintWidget->getCurrentThemeId()).getCopyright();
   if(!mapCopyright.isEmpty() && context->paintCopyright)
   {
     Marble::GeoPainter *painter = context->painter;

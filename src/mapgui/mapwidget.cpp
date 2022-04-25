@@ -3036,11 +3036,11 @@ void MapWidget::resetSettingActionsToDefault()
   // Sun shading data unmodified
 }
 
-void MapWidget::updateThemeUi(int index)
+void MapWidget::updateThemeUi(const QString& themeId)
 {
   Ui::MainWindow *ui = mainWindow->getUi();
-  ui->actionMapShowCities->setEnabled(NavApp::getMapThemeHandler()->hasPlacemarks(index));
-  ui->actionMapShowSunShading->setEnabled(NavApp::getMapThemeHandler()->canSunShading(index));
+  ui->actionMapShowCities->setEnabled(NavApp::getMapThemeHandler()->hasPlacemarks(themeId));
+  ui->actionMapShowSunShading->setEnabled(NavApp::getMapThemeHandler()->canSunShading(themeId));
 }
 
 void MapWidget::updateMapVisibleUi() const
@@ -3502,7 +3502,7 @@ void MapWidget::zoomInOut(bool directionIn, bool smooth)
   else
   {
     // if(currentThemeIndex == map::PLAIN || currentThemeIndex == map::SIMPLE)
-    if(NavApp::getMapThemeHandler()->hasDiscreteZoom(currentThemeIndex))
+    if(NavApp::getMapThemeHandler()->hasDiscreteZoom(currentThemeId))
     {
       if(directionIn)
         zoomViewBy(zoomStep() * 3);

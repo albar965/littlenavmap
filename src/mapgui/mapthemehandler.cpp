@@ -23,6 +23,10 @@
 #include "settings/settings.h"
 #include "util/simplecrypt.h"
 #include "util/xmlstream.h"
+#include "mapgui/mapwidget.h"
+#include "navapp.h"
+#include "gui/mainwindow.h"
+#include "ui_mainwindow.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -30,9 +34,29 @@
 #include <QXmlStreamReader>
 #include <QRegularExpression>
 #include <QDataStream>
+#include <QActionGroup>
+#include <QComboBox>
+
+#include <gui/dialog.h>
+
+#include <marble/LegendWidget.h>
 
 const static quint64 KEY = 0x19CB0467EBD391CC;
 const static QLatin1String FILENAME("mapthemekeys.bin");
+
+MapThemeHandler::MapThemeHandler(QWidget *mainWindowParam)
+  : QObject(mainWindowParam), mainWindow(mainWindowParam)
+{
+}
+
+MapThemeHandler::~MapThemeHandler()
+{
+  qDebug() << Q_FUNC_INFO << "delete actionGroupMapTheme";
+  delete actionGroupMapTheme;
+
+  qDebug() << Q_FUNC_INFO << "delete comboBoxMapTheme";
+  delete comboBoxMapTheme;
+}
 
 void MapThemeHandler::loadThemes()
 {
@@ -45,10 +69,41 @@ void MapThemeHandler::loadThemes()
 
   // Load all these from folder
   themes.clear();
+  themeIdToIndexMap.clear();
+  QSet<QString> ids;
+  QStringList errors;
   for(const QFileInfo& dgml : findMapThemes())
   {
     MapTheme theme = loadTheme(dgml);
-    if(theme.visible && theme.target == "earth")
+
+    if(ids.contains(theme.theme))
+    {
+      errors.append(tr("Duplicate theme id \"%1\" in element \"&lt;theme&gt;\"."
+                       "<br/>File \"%2\".").arg(theme.theme).arg(theme.dgmlFilepath));
+      qWarning() << Q_FUNC_INFO << "Duplicate theme id" << theme.theme << "in theme file" << theme.dgmlFilepath;
+      continue;
+    }
+
+    if(theme.theme.isEmpty())
+    {
+      errors.append(tr("Empty theme id in in element \"&lt;theme&gt;\"."
+                       "<br/>File \"%1\".").arg(theme.dgmlFilepath));
+      qWarning() << Q_FUNC_INFO << "Empty theme id in theme file" << theme.dgmlFilepath;
+      continue;
+    }
+
+    if(theme.target != "earth")
+    {
+      errors.append(tr("Invalid target \"%1\" in element \"&lt;target&gt;\"."
+                       "<br/>File \"%2\".<br/>"
+                       "Element must contain text \"earth\".").arg(theme.target).arg(theme.dgmlFilepath));
+      qWarning() << Q_FUNC_INFO << "Invalid target" << theme.target << "in theme file" << theme.dgmlFilepath;
+      continue;
+    }
+
+    ids.insert(theme.theme);
+
+    if(theme.visible)
     {
       // Add only visible themes for Earth
       themes.append(theme);
@@ -57,6 +112,18 @@ void MapThemeHandler::loadThemes()
       for(const QString& key : theme.keys)
         mapThemeKeys.insert(key, QString());
     }
+    else
+      qInfo() << Q_FUNC_INFO << "Theme" << theme.theme << "not visible";
+  }
+
+  if(!errors.isEmpty())
+  {
+    NavApp::closeSplashScreen();
+    QMessageBox::warning(mainWindow, QApplication::applicationName(),
+                         tr("<p>Found errors in map %2:</p>"
+                              "<ul><li>%1</li></ul>"
+                                "<p>Ignoring %2.</p>").
+                         arg(errors.join("</li><li>")).arg(errors.size() == 1 ? tr("this map theme") : tr("these map themes")));
   }
 
   // Sort themes first by online/offline status and then by name
@@ -74,6 +141,9 @@ void MapThemeHandler::loadThemes()
 
     if(themes.at(i).theme == "openstreetmap")
       defaultTheme = themes.at(i);
+
+    // Add to index
+    themeIdToIndexMap.insert(themes.at(i).theme, i);
   }
 
   // Fall back to first if default OSM was not found
@@ -81,7 +151,7 @@ void MapThemeHandler::loadThemes()
     defaultTheme = themes.constFirst();
 }
 
-const MapTheme& MapThemeHandler::getTheme(int themeIndex) const
+const MapTheme& MapThemeHandler::themeByIndex(int themeIndex) const
 {
   const static MapTheme INVALID;
 
@@ -93,6 +163,16 @@ const MapTheme& MapThemeHandler::getTheme(int themeIndex) const
     qWarning() << Q_FUNC_INFO << "Invalid theme index" << themeIndex;
     return INVALID;
   }
+}
+
+const MapTheme& MapThemeHandler::getTheme(const QString& themeId) const
+{
+  return themeByIndex(themeIdToIndexMap.value(themeId, -1));
+}
+
+QString MapThemeHandler::getCurrentThemeId() const
+{
+  return comboBoxMapTheme->currentData().toString();
 }
 
 QHash<QString, QString> MapThemeHandler::getMapThemeKeysHash() const
@@ -132,6 +212,9 @@ void MapThemeHandler::saveState()
   }
   else
     throw atools::Exception(tr("Cannot open file %1. Reason: %2").arg(keyFile.fileName()).arg(keyFile.errorString()));
+
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
+  settings.setValue(lnm::MAP_THEME, getCurrentThemeId());
 }
 
 void MapThemeHandler::restoreState()
@@ -157,6 +240,15 @@ void MapThemeHandler::restoreState()
     else
       throw atools::Exception(tr("Cannot open file %1. Reason: %2").arg(keyFile.fileName()).arg(keyFile.errorString()));
   }
+
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
+
+  QString themeId = getDefaultTheme().getThemeId();
+  if(settings.contains(lnm::MAP_THEME) && getTheme(settings.valueStr(lnm::MAP_THEME)).isValid())
+    // Restore map theme selection
+    themeId = settings.valueStr(lnm::MAP_THEME);
+
+  changeMapThemeComboBox(themeId, true /* blockSignals */);
 }
 
 MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
@@ -345,4 +437,195 @@ QDebug operator<<(QDebug out, const MapTheme& theme)
       << "discrete" << theme.discrete
       << ")";
   return out;
+}
+
+void MapThemeHandler::setupMapThemesUi()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  // Theme combo box ============================
+  delete comboBoxMapTheme;
+  comboBoxMapTheme = new QComboBox(mainWindow);
+  comboBoxMapTheme->setObjectName("comboBoxMapTheme");
+  comboBoxMapTheme->setToolTip(tr("Select map theme"));
+  comboBoxMapTheme->setStatusTip(comboBoxMapTheme->toolTip());
+  ui->toolBarMapThemeProjection->addWidget(comboBoxMapTheme);
+
+  // Theme menu items ===============================
+  delete actionGroupMapTheme;
+  actionGroupMapTheme = new QActionGroup(ui->menuViewTheme);
+  actionGroupMapTheme->setObjectName("actionGroupMapTheme");
+
+  bool online = true;
+  int index = 0;
+  // Sort order is always online/offline and then alphabetical
+  for(const MapTheme& theme : getThemes())
+  {
+    // Check if offline map come after online and add separators
+    if(!theme.isOnline() && online)
+    {
+      // Add separator between online and offline maps
+      ui->menuViewTheme->addSeparator();
+      comboBoxMapTheme->insertSeparator(comboBoxMapTheme->count());
+    }
+
+    // Add item to combo box in toolbar
+    QString name = theme.isOnline() ? theme.getName() : tr("%1 (offline)").arg(theme.getName());
+    if(theme.hasKeys())
+      // Add star to maps which require an API key or token
+      name += tr(" *");
+
+    // Build tooltip for entries
+    QStringList tip;
+    tip.append(theme.getName());
+    tip.append(theme.isOnline() ? tr("online") : tr("offline"));
+    tip.append(theme.hasKeys() ? tr("* requires registration") : tr("free"));
+
+    // Add item and attach index for theme in MapThemeHandler
+    comboBoxMapTheme->addItem(name, theme.getThemeId());
+    comboBoxMapTheme->setItemData(index, tip.join(tr(", ")), Qt::ToolTipRole);
+
+    // Create action for map/theme submenu
+    QAction *action = ui->menuViewTheme->addAction(name);
+    action->setCheckable(true);
+    action->setToolTip(tip.join(tr(", ")));
+    action->setStatusTip(action->toolTip());
+    action->setActionGroup(actionGroupMapTheme);
+
+    // Add keyboard shortcut for top 10 themes
+    if(index < 10)
+      action->setShortcut(tr("Ctrl+Alt+%1").arg(index));
+
+    // Attach theme name for theme in MapThemeHandler
+    action->setData(theme.getThemeId());
+
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << name << index;
+#endif
+
+    index++;
+
+    // Remember theme online status
+    online = theme.isOnline();
+  }
+
+  connect(comboBoxMapTheme, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MapThemeHandler::changeMapTheme);
+  // Let theme menus update combo boxes
+  for(QAction *action : actionGroupMapTheme->actions())
+    connect(action, &QAction::triggered, this, &MapThemeHandler::themeMenuTriggered);
+}
+
+void MapThemeHandler::themeMenuTriggered(bool checked)
+{
+  QAction *action = dynamic_cast<QAction *>(sender());
+  if(action != nullptr && checked)
+    changeMapThemeComboBox(action->data().toString(), false /* blockSignals */);
+}
+
+void MapThemeHandler::changeMapThemeComboBox(const QString& themeId, bool blockSignals)
+{
+  if(!themeId.isEmpty())
+  {
+    // Search for combo box entry with index for MapThemeHandler
+    for(int i = 0; i < comboBoxMapTheme->count(); i++)
+    {
+      QVariant data = comboBoxMapTheme->itemData(i);
+      if(data.isValid() && data.toString() == themeId)
+      {
+        // Avoid recursion by blocking signals
+        if(blockSignals)
+          comboBoxMapTheme->blockSignals(true);
+        comboBoxMapTheme->setCurrentIndex(i);
+        if(blockSignals)
+          comboBoxMapTheme->blockSignals(false);
+        break;
+      }
+    }
+  }
+}
+
+void MapThemeHandler::changeMapTheme()
+{
+  MapWidget *mapWidget = NavApp::getMapWidgetGui();
+  mapWidget->cancelDragAll();
+
+  QString themeId = comboBoxMapTheme->currentData().toString();
+  MapTheme theme = getTheme(themeId);
+
+  if(!theme.isValid())
+  {
+    qDebug() << Q_FUNC_INFO << "Falling back to default theme due to invalid index" << themeId;
+    // No theme for index found - use default OSM
+    theme = getDefaultTheme();
+    themeId = theme.getThemeId();
+
+    changeMapThemeComboBox(themeId, true /* blockSignals */);
+  }
+
+  // Check if theme needs API keys, usernames or tokens ======================================
+  if(theme.hasKeys())
+  {
+    // Check if all required values are set
+    bool allValid = true;
+    for(const QString& key : theme.getKeys())
+    {
+      if(mapThemeKeys.value(key).isEmpty())
+      {
+        allValid = false;
+        break;
+      }
+    }
+
+    if(!allValid)
+    {
+      // One or more keys are not present or empty - show info dialog =================================
+      NavApp::closeSplashScreen();
+
+      // Fetch all keys for map theme
+      QString url;
+      if(!theme.getUrlRef().isEmpty())
+        url = tr("<p>Click here to create an account: <a href=\"%1\">%2</a></p>").
+              arg(theme.getUrlRef()).arg(theme.getUrlName().isEmpty() ? tr("Link") : theme.getUrlName());
+
+      atools::gui::Dialog(mainWindow).
+      showInfoMsgBox(lnm::ACTIONS_SHOW_MAPTHEME_REQUIRES_KEY,
+                     tr("<p>The map theme \"%1\" requires additional information.</p>"
+                          "<p>You have to create an user account at the related website and then create an username, an access key or a token.<br/>"
+                          "Most of these services offer a free plan for hobbyists.</p>"
+                          "<p>Then go to menu \"Tools\" -> \"Options\" and to page \"Map Display Keys\" in Little Navmap and "
+                            "enter the information for the key(s) below:</p>"
+                            "<ul><li>%2</li></ul>"
+                              "<p>The map will not show correctly until this is done.</p>%3").
+                     arg(theme.getName()).arg(theme.getKeys().join(tr("</li><li>"))).arg(url),
+                     tr("Do not &show this dialog again."));
+    }
+  }
+
+  qDebug() << Q_FUNC_INFO << themeId << theme;
+
+  mapWidget->setTheme(theme.getId(), themeId);
+
+  // Update menu items in group
+  for(QAction *action : actionGroupMapTheme->actions())
+  {
+    action->blockSignals(true);
+    action->setChecked(action->data().toString() == themeId);
+    action->blockSignals(false);
+  }
+
+  updateLegend();
+
+  NavApp::setStatusMessage(tr("Map theme changed to %1.").arg(comboBoxMapTheme->currentText()));
+}
+
+void MapThemeHandler::updateLegend()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  Marble::LegendWidget *legendWidget = new Marble::LegendWidget(mainWindow);
+  legendWidget->setMarbleModel(NavApp::getMapWidgetGui()->model());
+  QString basePath;
+  QString html = legendWidget->getHtml(basePath);
+  ui->textBrowserLegendInfo->setSearchPaths({basePath});
+  ui->textBrowserLegendInfo->setText(html);
+  delete legendWidget;
 }
