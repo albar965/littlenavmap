@@ -4688,34 +4688,36 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
   // Check if airport is in navdata
   QStringList links;
   MapAirport airportNav = mapWidget->getMapQuery()->getAirportNav(airport);
+  ahtml::Flags flags = ahtml::LINK_NO_UL | ahtml::NO_ENTITIES;
 
   if(airportNav.isValid() && airportNav.navdata)
   {
+    links.append(html.cleared().a(tr("ChartFox&nbsp;(needs&nbsp;login)"), QString("https://chartfox.org/%1").
+                                  arg(airportNav.displayIdent()), flags).getHtml());
+    links.append(html.cleared().a(tr("FltPlan"), QString("https://fltplan.com/Airport.cgi?%1").
+                                  arg(airportNav.displayIdent()), flags).getHtml());
     links.append(html.cleared().a(tr("FlightAware"), QString("https://www.flightaware.com/live/airport/%1").
-                                  arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
+                                  arg(airportNav.displayIdent()), flags).getHtml());
     links.append(html.cleared().a(tr("OpenNav"), QString("https://opennav.com/airport/%1").
-                                  arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
-    links.append(html.cleared().a(tr("Pilot Nav"), QString("https://www.pilotnav.com/airport/%1").
-                                  arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
+                                  arg(airportNav.displayIdent()), flags).getHtml());
+    links.append(html.cleared().a(tr("Pilot&nbsp;Nav"), QString("https://www.pilotnav.com/airport/%1").
+                                  arg(airportNav.displayIdent()), flags).getHtml());
     links.append(html.cleared().a(tr("SkyVector"), QString("https://skyvector.com/airport/%1").
-                                  arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
-    links.append(html.cleared().a(tr("ChartFox (needs login)"), QString("https://chartfox.org/%1").
-                                  arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
+                                  arg(airportNav.displayIdent()), flags).getHtml());
   }
 
   // Use internal id for X-Plane gateway since this includes the long internal idents
   if(airport.xplane)
-    links.append(html.cleared().a(tr("X-Plane Scenery Gateway"),
+    links.append(html.cleared().a(tr("X-Plane&nbsp;Scenery&nbsp;Gateway"),
                                   QString("https://gateway.x-plane.com/scenery/page/%1").
-                                  arg(airport.ident), ahtml::LINK_NO_UL).getHtml());
+                                  arg(airport.ident), flags).getHtml());
 
   // Display link table ===============
   if(!links.isEmpty())
   {
     head(html, tr("Links"));
     html.table();
-    for(const QString& link : links)
-      html.row2(QString(), link, ahtml::NO_ENTITIES);
+    html.row2(QString(), links.join(tr(",&nbsp;&nbsp; ")), ahtml::NO_ENTITIES);
     html.tableEnd();
   }
 }
