@@ -249,11 +249,11 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   undoAction = undoStack->createUndoAction(mainWindow, tr("&Undo Flight Plan"));
   undoAction->setIcon(QIcon(":/littlenavmap/resources/icons/undo.svg"));
-  undoAction->setShortcut(QKeySequence("Ctrl+Z"));
+  undoAction->setShortcut(QKeySequence(tr("Ctrl+Z")));
 
   redoAction = undoStack->createRedoAction(mainWindow, tr("&Redo Flight Plan"));
   redoAction->setIcon(QIcon(":/littlenavmap/resources/icons/redo.svg"));
-  redoAction->setShortcut(QKeySequence("Ctrl+Y"));
+  redoAction->setShortcut(QKeySequence(tr("Ctrl+Y")));
 
   connect(redoAction, &QAction::triggered, this, &RouteController::redoTriggered);
   connect(undoAction, &QAction::triggered, this, &RouteController::undoTriggered);
@@ -263,21 +263,20 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   // Need to add the undo/redo actions to all widgets and tabs but userpoint and logbook search to avoid collision
   // with other undo actions
-  ui->dockWidgetRoute->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
-  ui->dockWidgetRouteCalc->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
-  ui->dockWidgetInformation->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
-  ui->dockWidgetAircraft->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
-  ui->dockWidgetProfile->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
-  ui->dockWidgetMap->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
-  ui->tabAirportSearch->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
-  ui->tabProcedureSearch->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
-  ui->tabNavIdSearch->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
-  ui->tabOnlineCenterSearch->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
-  ui->tabOnlineClientSearch->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
-  ui->tabOnlineServerSearch->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
-
-  undoAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
-  redoAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  // ui->dockWidgetRoute->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  // ui->dockWidgetRouteCalc->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  // ui->dockWidgetInformation->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  // ui->dockWidgetAircraft->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  // ui->dockWidgetProfile->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  // ui->dockWidgetMap->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  // ui->tabAirportSearch->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  // ui->tabProcedureSearch->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  // ui->tabNavIdSearch->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  // ui->tabOnlineCenterSearch->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  // ui->tabOnlineClientSearch->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  // ui->tabOnlineServerSearch->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
+  // undoAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  // redoAction->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
   ui->menuRoute->insertActions(ui->actionRouteSelectParking, {undoAction, redoAction});
   ui->menuRoute->insertSeparator(ui->actionRouteSelectParking);

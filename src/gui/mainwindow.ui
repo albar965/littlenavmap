@@ -12210,7 +12210,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Undo last change</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Z</string>
+    <string>Ctrl+Shift+Z</string>
    </property>
   </action>
   <action name="actionSearchUserpointRedo">
@@ -12228,7 +12228,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Redo last change</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Y</string>
+    <string>Ctrl+Shift+Y</string>
    </property>
   </action>
   <action name="actionSearchLogdataUndo">
@@ -12246,7 +12246,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Undo last change</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Z</string>
+    <string>Ctrl+Shift+Z</string>
    </property>
   </action>
   <action name="actionSearchLogdataRedo">
@@ -12264,7 +12264,7 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Redo last change</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+Y</string>
+    <string>Ctrl+Shift+Y</string>
    </property>
   </action>
   <action name="actionProfileShowLabelsHoriz">
@@ -12531,8 +12531,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
-  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>
