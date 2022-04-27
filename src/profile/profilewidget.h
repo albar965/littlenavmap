@@ -46,6 +46,7 @@ class ProfileScrollArea;
 class JumpBack;
 class Route;
 class RouteLeg;
+class ProfileOptions;
 struct ElevationLegList;
 
 /*
@@ -171,6 +172,11 @@ public:
     return horizontalScale;
   }
 
+  ProfileOptions *getProfileOptions() const
+  {
+    return profileOptions;
+  }
+
 signals:
   /* Emitted when the mouse cursor hovers over the map profile.
    * @param pos Position on the map display.
@@ -261,6 +267,9 @@ private:
   /* Get text and text color for a leg. procSymbol is true if only the generic procedure waypoint should be drawn */
   QStringList textsAndColorForLeg(QColor& color, bool& procSymbol, const RouteLeg& leg, bool procedureDisplayText, int legWidth);
 
+  /* Shows the display options dialog */
+  void showDisplayOptions();
+
   /* Scale levels to test for display */
   static Q_DECL_CONSTEXPR int NUM_SCALE_STEPS = 5;
   const int SCALE_STEPS[NUM_SCALE_STEPS] = {500, 1000, 2000, 5000, 10000};
@@ -323,6 +332,8 @@ private:
         maxWindowAlt = 1.f; /* Maximum altitude at top of widget */
 
   ProfileScrollArea *scrollArea = nullptr;
+
+  ProfileOptions *profileOptions = nullptr;
 
   float verticalScale = 1.f /* Factor to convert altitude in feet to screen coordinates*/,
         horizontalScale = 1.f /* Factor to convert distance along flight plan in nautical miles to screen coordinates*/;

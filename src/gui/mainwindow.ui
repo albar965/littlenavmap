@@ -224,6 +224,7 @@
     <addaction name="separator"/>
     <addaction name="actionRouteDisplayOptions"/>
     <addaction name="actionInfoDisplayOptions"/>
+    <addaction name="actionProfileDisplayOptions"/>
     <addaction name="separator"/>
     <addaction name="actionOptions"/>
    </widget>
@@ -5870,161 +5871,241 @@ relation to shown airport</string>
         </layout>
        </widget>
        <widget class="QWidget" name="layoutWidgetProfileButtons">
-        <layout class="QGridLayout" name="gridLayoutProfileButtons">
+        <layout class="QVBoxLayout" name="verticalLayoutProfile">
+         <property name="spacing">
+          <number>0</number>
+         </property>
          <property name="rightMargin">
           <number>0</number>
          </property>
-         <property name="horizontalSpacing">
-          <number>2</number>
-         </property>
-         <property name="verticalSpacing">
-          <number>4</number>
-         </property>
-         <item row="2" column="1" alignment="Qt::AlignHCenter">
-          <widget class="QLabel" name="labelProfileHorizontalSlider">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+         <item>
+          <layout class="QHBoxLayout" name="horizontalLayout_8">
+           <property name="spacing">
+            <number>2</number>
            </property>
-           <property name="text">
-            <string/>
+           <property name="topMargin">
+            <number>0</number>
            </property>
-           <property name="pixmap">
-            <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/viewhoriz.svg</pixmap>
-           </property>
-          </widget>
+           <item>
+            <spacer name="horizontalSpacer_5">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+             <property name="sizeHint" stdset="0">
+              <size>
+               <width>40</width>
+               <height>20</height>
+              </size>
+             </property>
+            </spacer>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonProfileExpand">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Expand elevation profile to window size</string>
+             </property>
+             <property name="statusTip">
+              <string>Expand elevation profile to window size</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/viewreset.svg</normaloff>:/littlenavmap/resources/icons/viewreset.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonProfileSettings">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Select header lines and flight plan table columns to show</string>
+             </property>
+             <property name="statusTip">
+              <string>Select header lines and flight plan table columns to show</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/settingsroute.svg</normaloff>:/littlenavmap/resources/icons/settingsroute.svg</iconset>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QPushButton" name="pushButtonProfileHelp">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
+             <property name="toolTip">
+              <string>Show help for the elevation profile window</string>
+             </property>
+             <property name="statusTip">
+              <string>Show help for the elevation profile window</string>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+             <property name="icon">
+              <iconset resource="../../littlenavmap.qrc">
+               <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+             </property>
+            </widget>
+           </item>
+          </layout>
          </item>
-         <item row="2" column="0" alignment="Qt::AlignHCenter">
-          <widget class="QLabel" name="labelProfileVerticalSlider">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_41">
+           <property name="spacing">
+            <number>0</number>
            </property>
-           <property name="text">
-            <string/>
+           <property name="topMargin">
+            <number>0</number>
            </property>
-           <property name="pixmap">
-            <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/viewvert.svg</pixmap>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="1">
-          <widget class="QPushButton" name="pushButtonProfileHelp">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>Show help for the elevation profile window</string>
-           </property>
-           <property name="statusTip">
-            <string>Show help for the elevation profile window</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../../littlenavmap.qrc">
-             <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="1" alignment="Qt::AlignHCenter">
-          <widget class="QSlider" name="horizontalSliderProfileZoom">
-           <property name="toolTip">
-            <string>Zoom horizontally into the elevation profile (Mouse Wheel)</string>
-           </property>
-           <property name="statusTip">
-            <string>Zoom horizontally into the elevation profile</string>
-           </property>
-           <property name="minimum">
-            <number>1</number>
-           </property>
-           <property name="maximum">
-            <number>40</number>
-           </property>
-           <property name="singleStep">
-            <number>1</number>
-           </property>
-           <property name="pageStep">
-            <number>1</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="tickPosition">
-            <enum>QSlider::NoTicks</enum>
-           </property>
-           <property name="tickInterval">
-            <number>4</number>
-           </property>
-          </widget>
-         </item>
-         <item row="3" column="0" alignment="Qt::AlignHCenter">
-          <widget class="QSlider" name="verticalSliderProfileZoom">
-           <property name="toolTip">
-            <string>Zoom vertically into the elevation profile (Shift+Mouse Wheel)</string>
-           </property>
-           <property name="statusTip">
-            <string>Zoom vertically into the elevation profile</string>
-           </property>
-           <property name="minimum">
-            <number>1</number>
-           </property>
-           <property name="maximum">
-            <number>40</number>
-           </property>
-           <property name="singleStep">
-            <number>1</number>
-           </property>
-           <property name="pageStep">
-            <number>1</number>
-           </property>
-           <property name="orientation">
-            <enum>Qt::Vertical</enum>
-           </property>
-           <property name="invertedAppearance">
-            <bool>false</bool>
-           </property>
-           <property name="invertedControls">
-            <bool>false</bool>
-           </property>
-           <property name="tickPosition">
-            <enum>QSlider::NoTicks</enum>
-           </property>
-           <property name="tickInterval">
-            <number>4</number>
-           </property>
-          </widget>
-         </item>
-         <item row="1" column="0">
-          <widget class="QPushButton" name="pushButtonProfileExpand">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>Expand elevation profile to window size</string>
-           </property>
-           <property name="statusTip">
-            <string>Expand elevation profile to window size</string>
-           </property>
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset resource="../../littlenavmap.qrc">
-             <normaloff>:/littlenavmap/resources/icons/viewreset.svg</normaloff>:/littlenavmap/resources/icons/viewreset.svg</iconset>
-           </property>
-          </widget>
+           <item>
+            <widget class="Line" name="line_6">
+             <property name="orientation">
+              <enum>Qt::Horizontal</enum>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_9">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QLabel" name="labelProfileVerticalSlider">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="pixmap">
+                <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/viewvert.svg</pixmap>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="labelProfileHorizontalSlider">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string/>
+               </property>
+               <property name="pixmap">
+                <pixmap resource="../../littlenavmap.qrc">:/littlenavmap/resources/icons/viewhoriz.svg</pixmap>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+           <item>
+            <layout class="QHBoxLayout" name="horizontalLayout_10">
+             <property name="spacing">
+              <number>2</number>
+             </property>
+             <property name="topMargin">
+              <number>0</number>
+             </property>
+             <item>
+              <widget class="QSlider" name="verticalSliderProfileZoom">
+               <property name="toolTip">
+                <string>Zoom vertically into the elevation profile (Shift+Mouse Wheel)</string>
+               </property>
+               <property name="statusTip">
+                <string>Zoom vertically into the elevation profile</string>
+               </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>40</number>
+               </property>
+               <property name="singleStep">
+                <number>1</number>
+               </property>
+               <property name="pageStep">
+                <number>1</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="invertedAppearance">
+                <bool>false</bool>
+               </property>
+               <property name="invertedControls">
+                <bool>false</bool>
+               </property>
+               <property name="tickPosition">
+                <enum>QSlider::NoTicks</enum>
+               </property>
+               <property name="tickInterval">
+                <number>4</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSlider" name="horizontalSliderProfileZoom">
+               <property name="toolTip">
+                <string>Zoom horizontally into the elevation profile (Mouse Wheel)</string>
+               </property>
+               <property name="statusTip">
+                <string>Zoom horizontally into the elevation profile</string>
+               </property>
+               <property name="minimum">
+                <number>1</number>
+               </property>
+               <property name="maximum">
+                <number>40</number>
+               </property>
+               <property name="singleStep">
+                <number>1</number>
+               </property>
+               <property name="pageStep">
+                <number>1</number>
+               </property>
+               <property name="orientation">
+                <enum>Qt::Vertical</enum>
+               </property>
+               <property name="tickPosition">
+                <enum>QSlider::NoTicks</enum>
+               </property>
+               <property name="tickInterval">
+                <number>4</number>
+               </property>
+              </widget>
+             </item>
+            </layout>
+           </item>
+          </layout>
          </item>
         </layout>
        </widget>
@@ -9995,40 +10076,6 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Center the user aircraft on the elevation profile</string>
    </property>
   </action>
-  <action name="actionProfileShowLabelsVert">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Show Altitude &amp;Labels</string>
-   </property>
-   <property name="toolTip">
-    <string>Show or hide the labels at the left side of the elevation profile</string>
-   </property>
-   <property name="statusTip">
-    <string>Show or hide the labels at the left side of the elevation profile</string>
-   </property>
-  </action>
-  <action name="actionProfileShowScrollbars">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Show Scroll&amp;bars</string>
-   </property>
-   <property name="toolTip">
-    <string>Show or hide scrollbars around the elevation profile</string>
-   </property>
-   <property name="statusTip">
-    <string>Show or hide scrollbars around the elevation profile</string>
-   </property>
-  </action>
   <action name="actionProfileShowOnMap">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -11050,7 +11097,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/settingsroute.svg</normaloff>:/littlenavmap/resources/icons/settingsroute.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Flight Plan Display Options ...</string>
+    <string>&amp;Flight Plan Table Display Options ...</string>
    </property>
    <property name="toolTip">
     <string>Select visible columns and header lines for flight plan</string>
@@ -11515,23 +11562,6 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="statusTip">
     <string>Copies the coordinates into the clipboard</string>
-   </property>
-  </action>
-  <action name="actionProfileShowTooltip">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Show &amp;Tooltip</string>
-   </property>
-   <property name="toolTip">
-    <string>Show a tooltip with elevation and more information when hovering the mouse over the profile</string>
-   </property>
-   <property name="statusTip">
-    <string>Show a tooltip with elevation and more information when hovering the mouse over the profile</string>
    </property>
   </action>
   <action name="actionWindowLayoutOpen">
@@ -12123,7 +12153,7 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/settingsroute.svg</normaloff>:/littlenavmap/resources/icons/settingsroute.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Progress Display Options ...</string>
+    <string>&amp;Aircraft Progress Display Options ...</string>
    </property>
    <property name="toolTip">
     <string>Select the fields to show in the aircraft progress tab</string>
@@ -12267,23 +12297,6 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Ctrl+Shift+Y</string>
    </property>
   </action>
-  <action name="actionProfileShowLabelsHoriz">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>true</bool>
-   </property>
-   <property name="text">
-    <string>Show &amp;Top Labels</string>
-   </property>
-   <property name="toolTip">
-    <string>Show or hide the labels at the top of the elevation profile</string>
-   </property>
-   <property name="statusTip">
-    <string>Show or hide the labels at the top of the elevation profile</string>
-   </property>
-  </action>
   <action name="actionRouteSendToSimBrief">
    <property name="text">
     <string>Export Flight &amp;Plan to SimBrief ...</string>
@@ -12346,6 +12359,38 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Create the recommended directory structure for saving files</string>
    </property>
   </action>
+  <action name="actionProfileDisplayOptions">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/settingsroute.svg</normaloff>:/littlenavmap/resources/icons/settingsroute.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Elevation Profile Display Options ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Select display options for elevation profile</string>
+   </property>
+   <property name="statusTip">
+    <string>Select display options for elevation profile</string>
+   </property>
+  </action>
+  <action name="actionProfileShowScrollbars">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Scroll&amp;bars</string>
+   </property>
+   <property name="toolTip">
+    <string>Show or hide scrollbars around the elevation profile</string>
+   </property>
+   <property name="statusTip">
+    <string>Show or hide scrollbars around the elevation profile</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12387,10 +12432,6 @@ Disabled if a navdatabase does not allow it.</string>
   <tabstop>textBrowserCenterInfo</tabstop>
   <tabstop>widgetProfileLabelVert</tabstop>
   <tabstop>scrollAreaProfile</tabstop>
-  <tabstop>pushButtonProfileExpand</tabstop>
-  <tabstop>pushButtonProfileHelp</tabstop>
-  <tabstop>verticalSliderProfileZoom</tabstop>
-  <tabstop>horizontalSliderProfileZoom</tabstop>
   <tabstop>tabWidgetAircraft</tabstop>
   <tabstop>textBrowserAircraftInfo</tabstop>
   <tabstop>textBrowserAircraftProgressInfo</tabstop>
@@ -12532,7 +12573,7 @@ Disabled if a navdatabase does not allow it.</string>
  <connections/>
  <buttongroups>
   <buttongroup name="buttonGroupRouteCalc"/>
-  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
  </buttongroups>
 </ui>

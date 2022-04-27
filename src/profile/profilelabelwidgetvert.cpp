@@ -21,6 +21,7 @@
 #include "common/symbolpainter.h"
 #include "common/mapcolors.h"
 #include "profile/profilescrollarea.h"
+#include "profile/profileoptions.h"
 #include "navapp.h"
 #include "route/route.h"
 #include "common/unit.h"
@@ -40,9 +41,15 @@ ProfileLabelWidgetVert::~ProfileLabelWidgetVert()
 
 }
 
+void ProfileLabelWidgetVert::routeChanged()
+{
+  setVisible(profileWidget->getProfileOptions()->getDisplayOptions() & optsp::PROFILE_ALT_LABELS);
+  update();
+}
+
 void ProfileLabelWidgetVert::optionsChanged()
 {
-  update();
+  routeChanged();
 }
 
 /* Pass context menu to profile widget */
@@ -62,70 +69,76 @@ void ProfileLabelWidgetVert::contextMenuEvent(QContextMenuEvent *event)
 
 void ProfileLabelWidgetVert::paintEvent(QPaintEvent *)
 {
-  // qDebug() << Q_FUNC_INFO;
-  int w = rect().width(), h = rect().height();
+  // Hiding will result in no paintEvent being called - needs update from routeChanged() before
+  setVisible(profileWidget->getProfileOptions()->getDisplayOptions() & optsp::PROFILE_ALT_LABELS);
 
-  QPainter painter(this);
-  painter.setRenderHint(QPainter::Antialiasing);
-  painter.setRenderHint(QPainter::TextAntialiasing);
-
-  // Fill background white
-  painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
-
-  if(profileWidget->hasValidRouteForDisplay())
+  if(isVisible())
   {
-    // Calculate coordinates for local system from scroll widget
-    QPoint offset = scrollArea->getOffset();
-    int safeAltY = profileWidget->getMinSafeAltitudeY() - offset.y();
-    int flightplanY = profileWidget->getFlightplanAltY() - offset.y();
-    float routeAlt = NavApp::getRouteConst().getCruisingAltitudeFeet();
+    // qDebug() << Q_FUNC_INFO;
+    int w = rect().width(), h = rect().height();
 
-    // Draw labels on left side widget ========================================================
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setRenderHint(QPainter::TextAntialiasing);
 
-    // Draw altitude labels ================================
-    SymbolPainter symPainter;
-    QVector<std::pair<int, int> > scaleValues = profileWidget->calcScaleValues();
+    // Fill background white
+    painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
 
-    QFont f = QApplication::font();
-    f.setPointSizeF(f.pointSizeF() * 0.9);
-    f.setBold(true);
-    painter.setFont(f);
-    QFontMetrics metrics(f);
-
-    textatt::TextAttributes atts = textatt::BOLD | textatt::RIGHT;
-    QColor baseColor = QApplication::palette().color(QPalette::Base);
-    int maxw = 1;
-    for(const std::pair<int, int>& scale : scaleValues)
+    if(profileWidget->hasValidRouteForDisplay())
     {
-      int y = scale.first - offset.y();
-      if(y > -5 && y < h + 5)
+      // Calculate coordinates for local system from scroll widget
+      QPoint offset = scrollArea->getOffset();
+      int safeAltY = profileWidget->getMinSafeAltitudeY() - offset.y();
+      int flightplanY = profileWidget->getFlightplanAltY() - offset.y();
+      float routeAlt = NavApp::getRouteConst().getCruisingAltitudeFeet();
+
+      // Draw labels on left side widget ========================================================
+
+      // Draw altitude labels ================================
+      SymbolPainter symPainter;
+      QVector<std::pair<int, int> > scaleValues = profileWidget->calcScaleValues();
+
+      QFont f = QApplication::font();
+      f.setPointSizeF(f.pointSizeF() * 0.9);
+      f.setBold(true);
+      painter.setFont(f);
+      QFontMetrics metrics(f);
+
+      textatt::TextAttributes atts = textatt::BOLD | textatt::RIGHT;
+      QColor baseColor = QApplication::palette().color(QPalette::Base);
+      int maxw = 1;
+      for(const std::pair<int, int>& scale : scaleValues)
       {
-        QString str = QLocale().toString(scale.second);
-        symPainter.textBox(&painter, {str}, mapcolors::profileElevationScalePen, w - 2, y, atts, 0, baseColor);
+        int y = scale.first - offset.y();
+        if(y > -5 && y < h + 5)
+        {
+          QString str = QLocale().toString(scale.second);
+          symPainter.textBox(&painter, {str}, mapcolors::profileElevationScalePen, w - 2, y, atts, 0, baseColor);
+          maxw = std::max(metrics.boundingRect(str).width(), maxw);
+        }
+      }
+
+      // Safe altitude label ===========================
+      if(safeAltY > -5 && safeAltY < h + 5)
+      {
+        QString str = Unit::altFeet(profileWidget->getMinSafeAltitudeFt());
+        symPainter.textBox(&painter, {str}, mapcolors::profileSafeAltLinePen, w - 2, safeAltY, atts, 255, baseColor);
         maxw = std::max(metrics.boundingRect(str).width(), maxw);
       }
-    }
 
-    // Safe altitude label ===========================
-    if(safeAltY > -5 && safeAltY < h + 5)
-    {
-      QString str = Unit::altFeet(profileWidget->getMinSafeAltitudeFt());
-      symPainter.textBox(&painter, {str}, mapcolors::profileSafeAltLinePen, w - 2, safeAltY, atts, 255, baseColor);
-      maxw = std::max(metrics.boundingRect(str).width(), maxw);
+      // Route cruise altitude ==========================
+      if(flightplanY > -5 && flightplanY < h + 5)
+      {
+        QString str = Unit::altFeet(routeAlt);
+        symPainter.textBox(&painter, {str}, QApplication::palette().color(QPalette::Text), w - 2, flightplanY, atts, 255, baseColor);
+        maxw = std::max(metrics.boundingRect(str).width(), maxw);
+      }
+      setMinimumWidth(maxw + metrics.width("X"));
     }
+    else
+      setMinimumWidth(1); // Setting to 0 hides the widget
 
-    // Route cruise altitude ==========================
-    if(flightplanY > -5 && flightplanY < h + 5)
-    {
-      QString str = Unit::altFeet(routeAlt);
-      symPainter.textBox(&painter, {str}, QApplication::palette().color(QPalette::Text), w - 2, flightplanY, atts, 255, baseColor);
-      maxw = std::max(metrics.boundingRect(str).width(), maxw);
-    }
-    setMinimumWidth(maxw + metrics.width("X"));
+    // Dim the whole map for night mode by drawing a half transparent black rectangle
+    mapcolors::darkenPainterRect(painter);
   }
-  else
-    setMinimumWidth(1); // Setting to 0 hides the widget
-
-  // Dim the whole map for night mode by drawing a half transparent black rectangle
-  mapcolors::darkenPainterRect(painter);
 }

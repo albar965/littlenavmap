@@ -458,7 +458,7 @@ private:
   void activateLegTriggered();
   void fontChanged();
 
-  void visibleColumnsTriggered();
+  void routeTableOptions();
   void contextMenu(const QPoint& pos);
 
   void updateUnits();

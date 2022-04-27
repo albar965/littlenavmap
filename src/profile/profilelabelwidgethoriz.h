@@ -35,6 +35,7 @@ public:
   explicit ProfileLabelWidgetHoriz(ProfileWidget *parent, ProfileScrollArea *profileScrollArea);
   virtual ~ProfileLabelWidgetHoriz() override;
 
+  void routeChanged();
   void optionsChanged();
 
 private:

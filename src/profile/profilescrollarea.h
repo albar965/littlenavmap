@@ -144,14 +144,8 @@ private:
   /* Show scrollbars on scroll area */
   void showScrollbarsToggled(bool show);
 
-  /* Show label widget on the left side */
-  void showLabelsToggled(bool);
-
   /* Show right side of split window from action in menu */
   void showZoomToggled(bool show);
-
-  /* Enable or disable tooltip */
-  void showTooltipToggled(bool show);
 
   /* Help push button clicked */
   void helpClicked();

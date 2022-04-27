@@ -61,7 +61,7 @@ void AircraftProgressConfig::progressConfiguration()
                                      tr("Select the fields to show in the aircraft progress tab.\n"
                                         "Note that some fields are only shown if certain conditions apply."),
                                      lnm::INFOWINDOW_PROGRESS_FIELD_DIALOG, "INFO.html#progress-field-configuration",
-                                     true /* showExplandCollapse */);
+                                     true /* showExpandCollapse */);
 
   treeDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
   treeDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());

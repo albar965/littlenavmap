@@ -327,6 +327,7 @@ SOURCES += \
   src/print/printsupport.cpp \
   src/profile/profilelabelwidgethoriz.cpp \
   src/profile/profilelabelwidgetvert.cpp \
+  src/profile/profileoptions.cpp \
   src/profile/profilescrollarea.cpp \
   src/profile/profilewidget.cpp \
   src/query/airportquery.cpp \
@@ -515,6 +516,7 @@ HEADERS  += \
   src/print/printsupport.h \
   src/profile/profilelabelwidgethoriz.h \
   src/profile/profilelabelwidgetvert.h \
+  src/profile/profileoptions.h \
   src/profile/profilescrollarea.h \
   src/profile/profilewidget.h \
   src/query/airportquery.h \

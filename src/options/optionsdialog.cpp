@@ -221,18 +221,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Radial Number"), tr("Shows the radial prefixed with \"R\" for VOR, VORDME, VORTAC, TACAN or NDB."), optsd::MEASUREMENT_RADIAL);
   addItem<optsd::DisplayOptionsMeasurement>(measurement, displayOptItemIndexMeasurement, tr("Navaid or airport ident"), tr("Show ident if attached to navaid or airport.\n"
                                                                                                                            "Also show frequency if attached to a radio navaid. "), optsd::MEASUREMENT_LABEL, true);
-  // Profile =====================================================
-  QTreeWidgetItem *profile = addTopItem(tr("Elevation Profile"), tr("Select display options for the elevation profile."));
-  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Distance on top Label"), tr("Distance of flight plan leg on the top label."), optsd::PROFILE_TOP_DISTANCE, true);
-  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Magnetic Course on top Label"), tr("Show magnetic great circle start course at start flight plan leg on the top label."), optsd::PROFILE_TOP_MAG_COURSE);
-  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("True Course on top Label"), tr("Show true great circle start course at flight plan leg on the top label."), optsd::PROFILE_TOP_TRUE_COURSE);
-  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Related Navaid on top Label"), tr("Related navaid for a procedure fix including bearing and distance on the top label."), optsd::PROFILE_TOP_RELATED, true);
-  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Distance on Flight Plan Line"), tr("Distance of flight plan leg on the flight plan line."), optsd::PROFILE_FP_DIST);
-  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Magnetic Course on Flight Plan Line"), tr("Show magnetic great circle start course on the flight plan line."), optsd::PROFILE_FP_MAG_COURSE, true);
-  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("True Course on Flight Plan Line"), tr("Show true great circle start course on the flight plan line."), optsd::PROFILE_FP_TRUE_COURSE);
-  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Descent Flight Path Angle"), tr("Vertical descent path angle only in the descent phase."), optsd::PROFILE_FP_VERTICAL_ANGLE, true);
-  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Altitude Restriction"), tr("Display procedure altitude restrictions at the navaid label."), optsd::PROFILE_FP_ALT_RESTRICTION, true);
-  addItem<optsd::DisplayOptionsProfile>(profile, displayOptItemIndexProfile, tr("Speed Restriction"), tr("Show procedure speed restrictions at the navaid label."), optsd::PROFILE_FP_SPEED_RESTRICTION);
   /* *INDENT-ON* */
 
   ui->treeWidgetOptionsDisplayTextOptions->resizeColumnToContents(0);
@@ -964,7 +952,6 @@ void OptionsDialog::saveState()
   saveDisplayOptItemStates(displayOptItemIndexRose, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_COMPASS_ROSE);
   saveDisplayOptItemStates(displayOptItemIndexMeasurement, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_MEASUREMENT);
   saveDisplayOptItemStates(displayOptItemIndexRoute, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_ROUTE);
-  saveDisplayOptItemStates(displayOptItemIndexProfile, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_PROFILE);
   saveDisplayOptItemStates(displayOptItemIndexNavAid, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_NAVAID);
 
   Settings& settings = Settings::instance();
@@ -1058,7 +1045,6 @@ void OptionsDialog::restoreState()
   restoreOptionItemStates(displayOptItemIndexRose, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_COMPASS_ROSE);
   restoreOptionItemStates(displayOptItemIndexMeasurement, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_MEASUREMENT);
   restoreOptionItemStates(displayOptItemIndexRoute, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_ROUTE);
-  restoreOptionItemStates(displayOptItemIndexProfile, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_PROFILE);
   restoreOptionItemStates(displayOptItemIndexNavAid, lnm::OPTIONS_DIALOG_DISPLAY_OPTIONS_NAVAID);
 
   ui->splitterOptions->setHandleWidth(6);
@@ -1576,9 +1562,6 @@ void OptionsDialog::widgetsToOptionData()
   data.displayOptionsRoute = optsd::ROUTE_NONE;
   displayOptWidgetToOptionData(data.displayOptionsRoute, displayOptItemIndexRoute);
 
-  data.displayOptionsProfile = optsd::PROFILE_NONE;
-  displayOptWidgetToOptionData(data.displayOptionsProfile, displayOptItemIndexProfile);
-
   data.displayOptionsNavAid = optsd::NAVAIDS_NONE;
   displayOptWidgetToOptionData(data.displayOptionsNavAid, displayOptItemIndexNavAid);
 
@@ -1858,7 +1841,6 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   displayOptDataToWidget(data.displayOptionsRose, displayOptItemIndexRose);
   displayOptDataToWidget(data.displayOptionsMeasurement, displayOptItemIndexMeasurement);
   displayOptDataToWidget(data.displayOptionsRoute, displayOptItemIndexRoute);
-  displayOptDataToWidget(data.displayOptionsProfile, displayOptItemIndexProfile);
   displayOptDataToWidget(data.displayOptionsNavAid, displayOptItemIndexNavAid);
 
   // Copy from check and radio buttons

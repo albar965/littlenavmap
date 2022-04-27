@@ -370,8 +370,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(ui->pushButtonRouteClearSelection, &QPushButton::clicked, this, &RouteController::clearTableSelection);
   connect(ui->pushButtonRouteHelp, &QPushButton::clicked, this, &RouteController::helpClicked);
   connect(ui->actionRouteActivateLeg, &QAction::triggered, this, &RouteController::activateLegTriggered);
-  connect(ui->actionRouteDisplayOptions, &QAction::triggered, this, &RouteController::visibleColumnsTriggered);
-  connect(ui->pushButtonRouteSettings, &QPushButton::clicked, this, &RouteController::visibleColumnsTriggered);
+  connect(ui->actionRouteDisplayOptions, &QAction::triggered, this, &RouteController::routeTableOptions);
+  connect(ui->pushButtonRouteSettings, &QPushButton::clicked, this, &RouteController::routeTableOptions);
 
   connect(this, &RouteController::routeChanged, routeWindow, &RouteCalcWindow::routeChanged);
   connect(routeWindow, &RouteCalcWindow::calculateClicked, this, &RouteController::calculateRoute);
@@ -2286,7 +2286,7 @@ void RouteController::showOnMapMenu()
   }
 }
 
-void RouteController::visibleColumnsTriggered()
+void RouteController::routeTableOptions()
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -2294,7 +2294,7 @@ void RouteController::visibleColumnsTriggered()
                                      tr("Select header lines and flight plan table columns to show.\n"
                                         "You can move and resize columns by clicking into the flight plan column headers."),
                                      lnm::ROUTE_FLIGHTPLAN_COLUMS_DIALOG, "FLIGHTPLAN.html#flight-plan-table-columns",
-                                     true /* showExplandCollapse */);
+                                     true /* showExpandCollapse */);
 
   treeDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
   treeDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
@@ -2696,7 +2696,6 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   menu.addAction(ui->actionMapRangeRings);
   menu.addAction(ui->actionMapNavaidRange);
-  menu.addSeparator();
   menu.addAction(ui->actionMapTrafficPattern);
   menu.addAction(ui->actionMapHold);
   menu.addAction(ui->actionMapAirportMsa);
@@ -2711,10 +2710,12 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteResetView);
-  menu.addAction(ui->actionRouteDisplayOptions);
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteSetMark);
+  menu.addSeparator();
+
+  menu.addAction(ui->actionRouteDisplayOptions);
 
   // Execute menu =========================================================================================
   QAction *action = menu.exec(menuPos);

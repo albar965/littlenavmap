@@ -19,6 +19,7 @@
 #include "profile/profilewidget.h"
 #include "profile/profilelabelwidgetvert.h"
 #include "profile/profilelabelwidgethoriz.h"
+#include "profile/profileoptions.h"
 #include "gui/widgetstate.h"
 #include "common/constants.h"
 #include "gui/helphandler.h"
@@ -83,11 +84,8 @@ ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollA
   connect(ui->pushButtonProfileExpand, &QPushButton::clicked, this, &ProfileScrollArea::expandWidget);
   connect(ui->pushButtonProfileHelp, &QPushButton::clicked, this, &ProfileScrollArea::helpClicked);
   connect(ui->actionProfileExpand, &QAction::triggered, this, &ProfileScrollArea::expandWidget);
-
-  connect(ui->actionProfileShowLabelsVert, &QAction::toggled, this, &ProfileScrollArea::showLabelsToggled);
-  connect(ui->actionProfileShowLabelsHoriz, &QAction::toggled, this, &ProfileScrollArea::showLabelsToggled);
   connect(ui->actionProfileShowScrollbars, &QAction::toggled, this, &ProfileScrollArea::showScrollbarsToggled);
-  connect(ui->actionProfileShowTooltip, &QAction::toggled, this, &ProfileScrollArea::showTooltipToggled);
+
   connect(ui->actionProfileShowZoom, &QAction::toggled, this, &ProfileScrollArea::showZoomToggled);
 
   // Need to resize scroll area
@@ -154,7 +152,7 @@ void ProfileScrollArea::expandWidget()
 
 void ProfileScrollArea::showTooltip(const QPoint& globalPos, const QString& text)
 {
-  if(NavApp::getMainUi()->actionProfileShowTooltip->isChecked())
+  if(profileWidget->getProfileOptions()->getDisplayOptions().testFlag(optsp::PROFILE_TOOLTIP))
   {
     // Set text if changed and adjust window size
     if(text != tooltipLabel->text())
@@ -307,7 +305,9 @@ void ProfileScrollArea::routeChanged(bool geometryChanged)
     setMaxHorizZoom();
 
   routeAltitudeChanged();
-  updateWidgets();
+
+  profileLabelWidgetVert->routeChanged();
+  profileLabelWidgetHoriz->routeChanged();
 
   // Graphic update will be triggered later
   // profileWidget->update();
@@ -661,19 +661,13 @@ QPoint ProfileScrollArea::getOffset() const
   return profileWidget->pos() * -1;
 }
 
-void ProfileScrollArea::showTooltipToggled(bool show)
-{
-  if(!show)
-    hideTooltip();
-}
-
 void ProfileScrollArea::showZoomToggled(bool show)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   // Use arbitrary large value for the profile part - the widget will redistribute it automatically
   if(show)
-    ui->splitterProfile->setSizes({10000, ui->gridLayoutProfileButtons->minimumSize().width()});
+    ui->splitterProfile->setSizes({10000, ui->verticalLayoutProfile->minimumSize().width()});
   else
     ui->splitterProfile->setSizes({10000, 0});
   resizeEvent();
@@ -686,26 +680,15 @@ void ProfileScrollArea::showScrollbarsToggled(bool show)
   resizeEvent();
 }
 
-void ProfileScrollArea::showLabelsToggled(bool)
-{
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  profileLabelWidgetVert->setVisible(ui->actionProfileShowLabelsVert->isChecked());
-  profileLabelWidgetHoriz->setVisible(ui->actionProfileShowLabelsHoriz->isChecked());
-
-  // Signal later in the event queue to give widget a chance to resize
-  QTimer::singleShot(0, this, &ProfileScrollArea::resizeEvent);
-}
-
 void ProfileScrollArea::saveState()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   atools::gui::WidgetState(lnm::PROFILE_WINDOW_OPTIONS).save({ui->splitterProfile, ui->actionProfileCenterAircraft,
                                                               ui->actionProfileZoomAircraft, ui->actionProfileFollow,
-                                                              ui->actionProfileShowLabelsVert, ui->actionProfileShowLabelsHoriz,
-                                                              ui->actionProfileShowScrollbars, ui->actionProfileShowTooltip,
-                                                              ui->actionProfileShowZoom, ui->actionProfileShowIls,
-                                                              ui->actionProfileShowVasi, ui->actionProfileShowVerticalTrack});
+                                                              ui->actionProfileShowScrollbars, ui->actionProfileShowZoom,
+                                                              ui->actionProfileShowIls, ui->actionProfileShowVasi,
+                                                              ui->actionProfileShowVerticalTrack});
 }
 
 void ProfileScrollArea::restoreState()
@@ -714,10 +697,9 @@ void ProfileScrollArea::restoreState()
 
   atools::gui::WidgetState(lnm::PROFILE_WINDOW_OPTIONS).restore({ui->splitterProfile, ui->actionProfileCenterAircraft,
                                                                  ui->actionProfileZoomAircraft, ui->actionProfileFollow,
-                                                                 ui->actionProfileShowLabelsVert, ui->actionProfileShowLabelsHoriz,
-                                                                 ui->actionProfileShowScrollbars, ui->actionProfileShowTooltip,
-                                                                 ui->actionProfileShowZoom, ui->actionProfileShowIls,
-                                                                 ui->actionProfileShowVasi, ui->actionProfileShowVerticalTrack});
+                                                                 ui->actionProfileShowScrollbars, ui->actionProfileShowZoom,
+                                                                 ui->actionProfileShowIls, ui->actionProfileShowVasi,
+                                                                 ui->actionProfileShowVerticalTrack});
   ui->splitterProfile->setHandleWidth(6);
 }
 

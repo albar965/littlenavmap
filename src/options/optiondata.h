@@ -541,36 +541,6 @@ enum DisplayOptionRoute
 Q_DECLARE_FLAGS(DisplayOptionsRoute, DisplayOptionRoute);
 Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsRoute);
 
-enum DisplayOptionProfile
-{
-  PROFILE_NONE = 0,
-
-  /* Top label options */
-  PROFILE_TOP_DISTANCE = 1 << 0,
-  PROFILE_TOP_MAG_COURSE = 1 << 1,
-  PROFILE_TOP_TRUE_COURSE = 1 << 2,
-  PROFILE_TOP_RELATED = 1 << 3,
-
-  /* Flight plan line options */
-  PROFILE_FP_DIST = 1 << 4,
-  PROFILE_FP_MAG_COURSE = 1 << 5,
-  PROFILE_FP_TRUE_COURSE = 1 << 6,
-  PROFILE_FP_VERTICAL_ANGLE = 1 << 7,
-
-  /* Shown at navaid label */
-  PROFILE_FP_ALT_RESTRICTION = 1 << 8,
-  PROFILE_FP_SPEED_RESTRICTION = 1 << 9,
-
-  /* All drawn in the top label */
-  PROFILE_TOP_ANY = PROFILE_TOP_DISTANCE | PROFILE_TOP_MAG_COURSE | PROFILE_TOP_TRUE_COURSE | PROFILE_TOP_RELATED,
-
-  /* All drawn along the flight plan line */
-  PROFILE_FP_ANY = PROFILE_FP_DIST | PROFILE_FP_MAG_COURSE | PROFILE_FP_TRUE_COURSE | PROFILE_FP_VERTICAL_ANGLE,
-};
-
-Q_DECLARE_FLAGS(DisplayOptionsProfile, DisplayOptionProfile);
-Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayOptionsProfile);
-
 enum DisplayTooltipOption
 {
   TOOLTIP_NONE = 0,
@@ -961,10 +931,6 @@ public:
     return displayOptionsRoute;
   }
 
-  const optsd::DisplayOptionsProfile& getDisplayOptionsProfile() const
-  {
-    return displayOptionsProfile;
-  }
 
   optsd::DisplayTooltipOptions getDisplayTooltipOptions() const
   {
@@ -1556,8 +1522,6 @@ private:
   optsd::DisplayOptionsNavAid displayOptionsNavAid = optsd::NAVAIDS_NONE;
 
   optsd::DisplayOptionsRoute displayOptionsRoute = optsd::ROUTE_DISTANCE | optsd::ROUTE_MAG_COURSE;
-  optsd::DisplayOptionsProfile displayOptionsProfile = optsd::PROFILE_TOP_DISTANCE | optsd::PROFILE_TOP_RELATED |
-                                                       optsd::PROFILE_FP_MAG_COURSE | optsd::PROFILE_FP_VERTICAL_ANGLE;
 
   optsd::DisplayTooltipOptions displayTooltipOptions = optsd::TOOLTIP_AIRCRAFT_USER | optsd::TOOLTIP_AIRCRAFT_AI |
                                                        optsd::TOOLTIP_AIRPORT | optsd::TOOLTIP_AIRSPACE |

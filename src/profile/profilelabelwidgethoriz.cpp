@@ -23,6 +23,7 @@
 #include "navapp.h"
 #include "profile/profilescrollarea.h"
 #include "profile/profilewidget.h"
+#include "profile/profileoptions.h"
 #include "route/route.h"
 
 #include <QContextMenuEvent>
@@ -40,10 +41,16 @@ ProfileLabelWidgetHoriz::~ProfileLabelWidgetHoriz()
 
 }
 
+void ProfileLabelWidgetHoriz::routeChanged()
+{
+  setVisible(profileWidget->hasValidRouteForDisplay() &&
+             (profileWidget->getProfileOptions()->getDisplayOptions() & optsp::PROFILE_TOP_ANY));
+  update();
+}
+
 void ProfileLabelWidgetHoriz::optionsChanged()
 {
-  setVisible(OptionData::instance().getDisplayOptionsProfile() & optsd::PROFILE_TOP_ANY);
-  update();
+  routeChanged();
 }
 
 /* Pass context menu to profile widget */
@@ -71,9 +78,9 @@ void ProfileLabelWidgetHoriz::paintEvent(QPaintEvent *)
 
   // Fill background white
   painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
-  optsd::DisplayOptionsProfile opts = OptionData::instance().getDisplayOptionsProfile();
+  optsp::DisplayOptionsProfile opts = profileWidget->getProfileOptions()->getDisplayOptions();
 
-  if(profileWidget->hasValidRouteForDisplay() && opts & optsd::PROFILE_TOP_ANY)
+  if(profileWidget->hasValidRouteForDisplay() && (opts & optsp::PROFILE_TOP_ANY))
   {
     setVisible(true);
 
@@ -98,10 +105,10 @@ void ProfileLabelWidgetHoriz::paintEvent(QPaintEvent *)
     int lines = 0;
 
     // Get display options
-    bool distOpt = opts.testFlag(optsd::PROFILE_TOP_DISTANCE);
-    bool magCrsOpt = opts.testFlag(optsd::PROFILE_TOP_MAG_COURSE);
-    bool trueCrsOpt = opts.testFlag(optsd::PROFILE_TOP_TRUE_COURSE);
-    bool relatedOpt = opts.testFlag(optsd::PROFILE_TOP_RELATED);
+    bool distOpt = opts.testFlag(optsp::PROFILE_TOP_DISTANCE);
+    bool magCrsOpt = opts.testFlag(optsp::PROFILE_TOP_MAG_COURSE);
+    bool trueCrsOpt = opts.testFlag(optsp::PROFILE_TOP_TRUE_COURSE);
+    bool relatedOpt = opts.testFlag(optsp::PROFILE_TOP_RELATED);
 
     // Iterate through all waypoints =============================================================
     for(int i = 0; i < waypointX.size(); i++)
@@ -180,7 +187,10 @@ void ProfileLabelWidgetHoriz::paintEvent(QPaintEvent *)
     setMinimumHeight(metricsBold.height() * lines + 1);
   }
   else
+  {
     setMinimumWidth(1); // Setting to 0 hides the widget
+    setVisible(false); // Hiding will result in no paintEvent being called - needs update from routeChanged() before
+  }
 
   // Dim the whole map for night mode by drawing a half transparent black rectangle
   mapcolors::darkenPainterRect(painter);

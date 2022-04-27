@@ -24,6 +24,7 @@
 #include "profile/profilescrollarea.h"
 #include "profile/profilelabelwidgetvert.h"
 #include "profile/profilelabelwidgethoriz.h"
+#include "profile/profileoptions.h"
 #include "ui_mainwindow.h"
 #include "common/symbolpainter.h"
 #include "util/htmlbuilder.h"
@@ -111,6 +112,7 @@ ProfileWidget::ProfileWidget(QWidget *parent)
   setContextMenuPolicy(Qt::DefaultContextMenu);
   setFocusPolicy(Qt::WheelFocus);
 
+  profileOptions = new ProfileOptions(this);
   legList = new ElevationLegList;
 
   scrollArea = new ProfileScrollArea(this, ui->scrollAreaProfile);
@@ -127,6 +129,9 @@ ProfileWidget::ProfileWidget(QWidget *parent)
   connect(scrollArea, &ProfileScrollArea::jumpBackToAircraftCancel, this, &ProfileWidget::jumpBackToAircraftCancel);
   connect(ui->actionProfileCenterAircraft, &QAction::toggled, this, &ProfileWidget::jumpBackToAircraftCancel);
   connect(ui->actionProfileZoomAircraft, &QAction::toggled, this, &ProfileWidget::jumpBackToAircraftCancel);
+
+  connect(ui->actionProfileDisplayOptions, &QAction::triggered, this, &ProfileWidget::showDisplayOptions);
+  connect(ui->pushButtonProfileSettings, &QPushButton::clicked, this, &ProfileWidget::showDisplayOptions);
 
   // Create single shot timer that will restart the thread after a delay
   updateTimer = new QTimer(this);
@@ -154,6 +159,7 @@ ProfileWidget::~ProfileWidget()
   terminateThread();
   delete scrollArea;
   delete legList;
+  delete profileOptions;
 }
 
 void ProfileWidget::aircraftTrackPruned()
@@ -1043,13 +1049,13 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
     // =============================================================================
     // Draw flightplan symbols and labels ======================================================
-    bool distOpt = optionData.getDisplayOptionsProfile().testFlag(optsd::PROFILE_FP_DIST);
-    bool magCrsOpt = optionData.getDisplayOptionsProfile().testFlag(optsd::PROFILE_FP_MAG_COURSE);
-    bool trueCrsOpt = optionData.getDisplayOptionsProfile().testFlag(optsd::PROFILE_FP_TRUE_COURSE);
-    bool angleOpt = optionData.getDisplayOptionsProfile().testFlag(optsd::PROFILE_FP_VERTICAL_ANGLE);
+    bool distOpt = profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_FP_DIST);
+    bool magCrsOpt = profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_FP_MAG_COURSE);
+    bool trueCrsOpt = profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_FP_TRUE_COURSE);
+    bool angleOpt = profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_FP_VERTICAL_ANGLE);
 
     // Labels along line ========================================================================================
-    if(optionData.getDisplayOptionsProfile() & optsd::PROFILE_FP_ANY)
+    if(profileOptions->getDisplayOptions() & optsp::PROFILE_FP_ANY)
     {
       QFontMetricsF fontMetrics(painter.font());
       for(int i = passedRouteLeg; i < waypointX.size(); i++)
@@ -1570,13 +1576,13 @@ QStringList ProfileWidget::textsAndColorForLeg(QColor& color, bool& procSymbol, 
   if(leg.isAnyProcedure() && !leg.getRunwayEnd().isValid())
   {
     // Add constrains if enabled in options ======================
-    const optsd::DisplayOptionsProfile opts = OptionData::instance().getDisplayOptionsProfile();
+    const optsp::DisplayOptionsProfile opts = profileOptions->getDisplayOptions();
 
     // Do not add altitude for runways since this is given for departure and destination airport already
-    if(!leg.getProcedureLegAltRestr().isIls() && opts.testFlag(optsd::PROFILE_FP_ALT_RESTRICTION))
+    if(!leg.getProcedureLegAltRestr().isIls() && opts.testFlag(optsp::PROFILE_FP_ALT_RESTRICTION))
       texts.append(proc::altRestrictionTextNarrow(leg.getProcedureLegAltRestr()));
 
-    if(opts.testFlag(optsd::PROFILE_FP_SPEED_RESTRICTION))
+    if(opts.testFlag(optsp::PROFILE_FP_SPEED_RESTRICTION))
       texts.append(proc::speedRestrictionTextNarrow(leg.getProcedureLegSpeedRestr()));
   }
 
@@ -2016,7 +2022,7 @@ void ProfileWidget::buildTooltip(int x, bool force)
   if(!hasValidRouteForDisplay())
     return;
 
-  if(!NavApp::getMainUi()->actionProfileShowTooltip->isChecked())
+  if(!profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_TOOLTIP))
     return;
 
   if(atools::almostEqual(lastTooltipX, x, 3) && !force)
@@ -2241,11 +2247,10 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   menu.addSeparator();
   menu.addAction(ui->actionProfileFollow);
   menu.addSeparator();
-  menu.addAction(ui->actionProfileShowTooltip);
   menu.addAction(ui->actionProfileShowZoom);
-  menu.addAction(ui->actionProfileShowLabelsVert);
-  menu.addAction(ui->actionProfileShowLabelsHoriz);
   menu.addAction(ui->actionProfileShowScrollbars);
+  menu.addSeparator();
+  menu.addAction(ui->actionProfileDisplayOptions);
 
   QAction *action = menu.exec(menuPos);
 
@@ -2394,12 +2399,14 @@ void ProfileWidget::styleChanged()
 void ProfileWidget::saveState()
 {
   scrollArea->saveState();
+  profileOptions->saveState();
 
   saveAircraftTrack();
 }
 
 void ProfileWidget::restoreState()
 {
+  profileOptions->restoreState();
   scrollArea->restoreState();
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_TRAIL)
@@ -2547,4 +2554,10 @@ void ProfileWidget::loadAircraftTrack()
     else
       qWarning() << "Cannot read track" << trackFile.fileName() << ":" << trackFile.errorString();
   }
+}
+
+void ProfileWidget::showDisplayOptions()
+{
+  if(profileOptions->showOptions())
+    optionsChanged();
 }
