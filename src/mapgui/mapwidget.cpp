@@ -472,23 +472,11 @@ bool MapWidget::event(QEvent *event)
       const QHelpEvent *helpEvent = dynamic_cast<const QHelpEvent *>(event);
       if(helpEvent != nullptr)
       {
-        // Get map objects for tooltip ===========================================================================
-        map::MapObjectQueryTypes queryTypes = map::QUERY_PROC_POINTS | map::QUERY_MARK_HOLDINGS | map::QUERY_MARK_PATTERNS |
-                                              map::QUERY_MARK_MSA | map::QUERY_MARK_DISTANCE | map::QUERY_MARK_RANGE |
-                                              map::QUERY_PREVIEW_PROC_POINTS | map::QUERY_PROC_RECOMMENDED;
+        // Remember position
+        tooltipGlobalPos = helpEvent->globalPos();
 
-        if(getShownMapFeatures().testFlag(map::MISSED_APPROACH))
-          queryTypes |= map::QUERY_PROC_MISSED_POINTS;
-
-        // Load tooltip data into mapSearchResultTooltip
-        *mapSearchResultTooltip = map::MapResult();
-        getScreenIndexConst()->getAllNearest(helpEvent->pos().x(), helpEvent->pos().y(), screenSearchDistanceTooltip,
-                                             *mapSearchResultTooltip, queryTypes);
-
-        NavApp::getOnlinedataController()->filterOnlineShadowAircraft(mapSearchResultTooltip->onlineAircraft,
-                                                                      mapSearchResultTooltip->aiAircraft);
-
-        tooltipPos = helpEvent->globalPos();
+        // Update result set - fetch all near cursor
+        updateTooltipResult();
 
         // Build HTML
         showTooltip(false /* update */);
@@ -501,10 +489,28 @@ bool MapWidget::event(QEvent *event)
   return QWidget::event(event);
 }
 
+void MapWidget::updateTooltipResult()
+{
+  // Get map objects for tooltip ===========================================================================
+  map::MapObjectQueryTypes queryTypes = map::QUERY_PROC_POINTS | map::QUERY_MARK_HOLDINGS | map::QUERY_MARK_PATTERNS |
+                                        map::QUERY_MARK_MSA | map::QUERY_MARK_DISTANCE | map::QUERY_MARK_RANGE |
+                                        map::QUERY_PREVIEW_PROC_POINTS | map::QUERY_PROC_RECOMMENDED;
+
+  if(getShownMapFeatures().testFlag(map::MISSED_APPROACH))
+    queryTypes |= map::QUERY_PROC_MISSED_POINTS;
+
+  // Load tooltip data into mapSearchResultTooltip
+  *mapSearchResultTooltip = map::MapResult();
+  QPoint pos = mapFromGlobal(tooltipGlobalPos);
+  getScreenIndexConst()->getAllNearest(pos.x(), pos.y(), screenSearchDistanceTooltip, *mapSearchResultTooltip, queryTypes);
+
+  NavApp::getOnlinedataController()->filterOnlineShadowAircraft(mapSearchResultTooltip->onlineAircraft, mapSearchResultTooltip->aiAircraft);
+}
+
 void MapWidget::hideTooltip()
 {
   QToolTip::hideText();
-  tooltipPos = QPoint();
+  tooltipGlobalPos = QPoint();
 }
 
 void MapWidget::handleHistory()
@@ -527,7 +533,7 @@ void MapWidget::showTooltip(bool update)
     return;
 
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << "tooltipPos" << tooltipPos;
+  qDebug() << Q_FUNC_INFO << "tooltipPos" << tooltipGlobalPos;
 #endif
 
   // Try to avoid spurious tooltip events
@@ -536,7 +542,7 @@ void MapWidget::showTooltip(bool update)
 
   atools::geo::Pos pos;
   qreal lon, lat;
-  QPoint point = mapFromGlobal(tooltipPos);
+  QPoint point = mapFromGlobal(tooltipGlobalPos);
   if(geoCoordinates(point.x(), point.y(), lon, lat))
   {
     pos.setLonX(static_cast<float>(lon));
@@ -549,8 +555,8 @@ void MapWidget::showTooltip(bool update)
   if(paintLayer->getMapLayer() != nullptr)
     text = mapTooltip->buildTooltip(*mapSearchResultTooltip, pos, NavApp::getRouteConst(), paintLayer->getMapLayer()->isAirportDiagram());
 
-  if(!text.isEmpty() && !tooltipPos.isNull())
-    QToolTip::showText(tooltipPos, text /*, nullptr, QRect(), 3600 * 1000*/);
+  if(!text.isEmpty() && !tooltipGlobalPos.isNull())
+    QToolTip::showText(tooltipGlobalPos, text /*, nullptr, QRect(), 3600 * 1000*/);
   else
     hideTooltip();
 }
@@ -2212,7 +2218,6 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
 #ifdef DEBUG_INFORMATION_SIMUPDATE
   qDebug() << Q_FUNC_INFO << "=========================================================";
 #endif
-  const atools::fs::sc::SimConnectUserAircraft& last = getScreenIndexConst()->getLastUserAircraft();
 
   // Create screen coordinates =============================
   CoordinateConverter conv(viewport());
@@ -2220,6 +2225,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   QPoint aircraftPoint = conv.wToS(aircraft.getPosition(), CoordinateConverter::DEFAULT_WTOS_SIZE, &visible);
 
   // Difference from last movement on map
+  const atools::fs::sc::SimConnectUserAircraft& last = getScreenIndexConst()->getLastUserAircraft();
   QPoint aircraftPointDiff = aircraftPoint - conv.wToS(last.getPosition());
   const OptionData& od = OptionData::instance();
 
@@ -2262,16 +2268,28 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   // ================================================================================
   // Update tooltip for bearing
   qint64 now = QDateTime::currentMSecsSinceEpoch();
-  if(now - lastSimUpdateTooltipMs > MAX_SIM_UPDATE_TOOLTIP_MS)
+  if(now - lastSimUpdateTooltipMs > MAX_SIM_UPDATE_TOOLTIP_MS && QToolTip::isVisible())
   {
     lastSimUpdateTooltipMs = now;
 
-    // Update tooltip if it has bearing/distance fields
-    if((mapSearchResultTooltip->hasAirports() || mapSearchResultTooltip->hasVor() || mapSearchResultTooltip->hasNdb() ||
-        mapSearchResultTooltip->hasWaypoints() || mapSearchResultTooltip->hasIls() ||
-        mapSearchResultTooltip->hasHoldings() || mapSearchResultTooltip->hasAirportMsa() ||
-        mapSearchResultTooltip->hasUserpoints()) && NavApp::isConnectedAndAircraft())
-      updateTooltip();
+    // Update result set
+    updateTooltipResult();
+
+    // Update if any aircraft is shown for heading, speed and altitude
+    bool updateAircraft = NavApp::isConnectedAndAircraft() && mapSearchResultTooltip->hasAnyAircraft();
+
+    // Update tooltip if bearing is shown
+    bool updateBearing = (mapSearchResultTooltip->hasAirports() || mapSearchResultTooltip->hasVor() || mapSearchResultTooltip->hasNdb() ||
+                          mapSearchResultTooltip->hasWaypoints() || mapSearchResultTooltip->hasIls() ||
+                          mapSearchResultTooltip->hasHoldings() || mapSearchResultTooltip->hasAirportMsa() ||
+                          mapSearchResultTooltip->hasUserpoints()) && NavApp::isConnectedAndAircraft();
+
+    if(mapSearchResultTooltip->isEmpty())
+      // Nothing found or aircraft moved away from cursor
+      hideTooltip();
+    else if(updateBearing || updateAircraft)
+      // Update tooltip if it has bearing/distance fields
+      showTooltip(true /* update */);
   }
 
   // ================================================================================

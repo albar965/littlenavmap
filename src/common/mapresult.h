@@ -193,15 +193,30 @@ struct MapResult
     return !airspaces.isEmpty();
   }
 
+  /* Enroute navaids not ILS */
+  bool hasNavaids() const
+  {
+    return hasVor() || hasNdb() || hasWaypoints();
+  }
+
+  bool hasAnyAircraft() const
+  {
+    return hasUserAircraft() || hasOnlineAircraft() || hasAiAircraft();
+  }
+
+  bool hasUserAircraft() const
+  {
+    return userAircraft.isValid();
+  }
+
   bool hasOnlineAircraft() const
   {
     return !onlineAircraft.isEmpty();
   }
 
-  /* Enroute navaids not ILS */
-  bool hasNavaids() const
+  bool hasAiAircraft() const
   {
-    return hasVor() || hasNdb() || hasWaypoints();
+    return !aiAircraft.isEmpty();
   }
 
   /* Special methods for the online and navdata airspaces which are stored mixed */

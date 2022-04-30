@@ -3459,6 +3459,10 @@ void HtmlInfoBuilder::procedurePointText(const map::MapProcedurePoint& procPoint
 
 void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& aircraft, HtmlBuilder& html, int num, int total)
 {
+#ifdef DEBUG_INFORMATION
+  html.textBr("[HtmlInfoBuilder::aircraftText()]");
+#endif
+
   aircraftTitle(aircraft, html);
 
   QString aircraftText;
@@ -3474,6 +3478,42 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
     typeText = tr("Online Client");
   else
     typeText = tr("AI / Multiplayer %1").arg(type);
+
+  if(verbose)
+  {
+    // Heading, altitude and speed ======================
+    QStringList hdg;
+    float heading = atools::fs::sc::SC_INVALID_FLOAT;
+    if(aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
+      heading = aircraft.getHeadingDegMag();
+    else if(aircraft.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
+      heading = normalizeCourse(aircraft.getHeadingDegTrue() - NavApp::getMagVar(aircraft.getPosition()));
+
+    if(heading < atools::fs::sc::SC_INVALID_FLOAT)
+      hdg.append(courseText(heading, aircraft.getHeadingDegTrue(), false /* magBold */));
+
+    QStringList texts;
+    // Heading if available
+    if(!hdg.isEmpty())
+      texts.append(tr("<b>Heading</b>&nbsp;%1").arg(hdg.join(tr(", "))));
+
+    // Actual or indicated altitude
+    if(aircraft.getPosition().getAltitude() < atools::fs::sc::SC_INVALID_FLOAT)
+      texts.append(tr("<b>Act. Altitude</b>&nbsp;%1").arg(Unit::altFeet(aircraft.getPosition().getAltitude())));
+    else if(aircraft.getIndicatedAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
+      texts.append(tr("<b>Ind. Altitude</b>&nbsp;%1").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())));
+
+    if(!aircraft.isOnGround())
+    {
+    // Ground or indicated speed
+      if(aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
+        texts.append(tr("<b>Groundspeed</b>&nbsp;%1").arg(Unit::speedKts(aircraft.getGroundSpeedKts())));
+      else if(aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
+        texts.append(tr("<b>Ind. Speed</b>&nbsp;%1").arg(Unit::speedKts(aircraft.getIndicatedSpeedKts())));
+    }
+
+    html.p(atools::strJoin(texts, tr(", ")), ahtml::NO_ENTITIES);
+  }
 
   if(aircraft.isUser())
   {
@@ -3549,6 +3589,10 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
 void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraft& aircraft,
                                          const atools::sql::SqlRecord& onlineRec, HtmlBuilder& html)
 {
+#ifdef DEBUG_INFORMATION
+  html.textBr("[HtmlInfoBuilder::aircraftOnlineText()]");
+#endif
+
   if(!onlineRec.isEmpty() && info)
   {
 #ifdef DEBUG_INFORMATION

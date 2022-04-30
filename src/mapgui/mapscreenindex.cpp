@@ -689,12 +689,13 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
     {
       for(const atools::fs::sc::SimConnectAircraft& obj : simData.getAiAircraftConst())
       {
-        if(obj.isValid() && obj.isAnyBoat() &&
-           (obj.getModelRadiusCorrected() * 2 > layer::LARGE_SHIP_SIZE || mapLayer->isAiShipSmall()))
+        if(obj.isValid() && obj.isAnyBoat() && (obj.getModelRadiusCorrected() * 2 > layer::LARGE_SHIP_SIZE || mapLayer->isAiShipSmall()))
         {
           if(conv.wToS(obj.getPosition(), x, y))
+          {
             if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
               insertSortedByDistance(conv, result.aiAircraft, nullptr, xs, ys, map::MapAiAircraft(obj));
+          }
         }
       }
     }

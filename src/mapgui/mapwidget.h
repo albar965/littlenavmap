@@ -118,8 +118,7 @@ public:
 
   map::MapWeatherSource getMapWeatherSource() const;
 
-  /* Update tooltip in case of weather changes */
-  void showTooltip(bool update);
+  /* Called from weather reporter */
   void updateTooltip();
 
   /* The main window show event was triggered after program startup. */
@@ -309,6 +308,9 @@ private:
     NONE = 999
   };
 
+  /* Update tooltip in case of weather changes */
+  void showTooltip(bool update);
+
   /* Convert paint layer value to menu actions checked / not checked */
   virtual map::MapWeatherSource weatherSourceFromUi() override;
   void weatherSourceToUi(map::MapWeatherSource weatherSource);
@@ -395,6 +397,7 @@ private:
 
   /* Hide and prevent re-show */
   virtual void hideTooltip() override;
+  void updateTooltipResult();
 
   virtual void handleHistory() override;
   virtual void updateShowAircraftUi(bool centerAircraftChecked) override;
@@ -454,7 +457,7 @@ private:
   QPixmap userpointDragPixmap;
 
   /* Save last tooltip position. If invalid/null no tooltip will be shown */
-  QPoint tooltipPos;
+  QPoint tooltipGlobalPos;
   map::MapResult *mapSearchResultTooltip, *mapSearchResultInfoClick;
 
   MapTooltip *mapTooltip;

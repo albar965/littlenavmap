@@ -616,14 +616,12 @@ void InfoController::clearInfoTextBrowsers()
 
 void InfoController::showInformation(map::MapResult result)
 {
-  showInformationInternal(result, true /* Show windows */, true /* scroll to top */,
-                          false /* forceUpdate */);
+  showInformationInternal(result, true /* Show windows */, true /* scroll to top */, false /* forceUpdate */);
 }
 
 void InfoController::updateAllInformation()
 {
-  showInformationInternal(currentSearchResult, false /* Show windows */, false /* scroll to top */,
-                          false /* forceUpdate */);
+  showInformationInternal(currentSearchResult, false /* Show windows */, false /* scroll to top */, false /* forceUpdate */);
 }
 
 void InfoController::onlineNetworkChanged()
@@ -638,14 +636,12 @@ void InfoController::onlineNetworkChanged()
       airspaces.append(airspace);
   currentSearchResult.airspaces = airspaces;
 
-  showInformationInternal(currentSearchResult, false /* show windows */, false /* scroll to top */,
-                          true /* forceUpdate */);
+  showInformationInternal(currentSearchResult, false /* show windows */, false /* scroll to top */, true /* forceUpdate */);
 }
 
 void InfoController::onlineClientAndAtcUpdated()
 {
-  showInformationInternal(currentSearchResult, false /* show windows */,
-                          false /* scroll to top */, true /* forceUpdate */);
+  showInformationInternal(currentSearchResult, false /* show windows */, false /* scroll to top */, true /* forceUpdate */);
 }
 
 /* Show information in all tabs but do not show dock
@@ -690,7 +686,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
           return ac.getAircraft().getAirplaneRegistration() == mapAiAircraft.getAircraft().getAirplaneRegistration();
         });
 
-        if(it == result.onlineAircraft.end())
+        if(it == result.onlineAircraft.constEnd())
         {
           // Not found - get shadow and add to online list
           SimConnectAircraft ac;
