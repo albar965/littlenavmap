@@ -281,7 +281,7 @@ void MapPainterVehicle::paintTextLabelUser(float x, float y, int size, const Sim
     QStringList ice = map::aircraftIcing(aircraft, true /* narrow */);
     if(!ice.isEmpty())
     {
-      ice.prepend(tr("ICE %"));
+      ice.prepend(tr("Ice %"));
       symbolPainter->textBoxF(context->painter, ice, mapcolors::aircraftUserLabelColor, x - size * 3 / 4, y,
                               textatt::ERROR_COLOR | textatt::RIGHT, 255, mapcolors::aircraftUserLabelColorBg);
     }

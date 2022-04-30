@@ -2483,28 +2483,28 @@ QStringList aircraftIcing(const atools::fs::sc::SimConnectUserAircraft& aircraft
 {
   QStringList text;
   if(aircraft.getPitotIcePercent() >= 1.f)
-    text.append((narrow ? QObject::tr("Pitot %L1") : QObject::tr("Pitot %L1")).arg(aircraft.getPitotIcePercent(), 0, 'f', 0));
+    text.append((narrow ? QObject::tr("Pitot %L1") : QObject::tr("Pitot&nbsp;%L1")).arg(aircraft.getPitotIcePercent(), 0, 'f', 0));
 
   if(aircraft.getStructuralIcePercent() >= 1.f)
-    text.append((narrow ? QObject::tr("Strct %L1") : QObject::tr("Structure %L1")).arg(aircraft.getStructuralIcePercent(), 0, 'f', 0));
+    text.append((narrow ? QObject::tr("Struct %L1") : QObject::tr("Structure&nbsp;%L1")).arg(aircraft.getStructuralIcePercent(), 0, 'f', 0));
 
   if(aircraft.getAoaIcePercent() >= 1.f)
-    text.append((narrow ? QObject::tr("AOA %L1") : QObject::tr("AOA %L1")).arg(aircraft.getAoaIcePercent(), 0, 'f', 0));
+    text.append((narrow ? QObject::tr("AOA %L1") : QObject::tr("AOA&nbsp;%L1")).arg(aircraft.getAoaIcePercent(), 0, 'f', 0));
 
   if(aircraft.getInletIcePercent() >= 1.f)
-    text.append((narrow ? QObject::tr("Inlt %L1") : QObject::tr("Inlet %L1")).arg(aircraft.getInletIcePercent(), 0, 'f', 0));
+    text.append((narrow ? QObject::tr("Inlt %L1") : QObject::tr("Inlet&nbsp;%L1")).arg(aircraft.getInletIcePercent(), 0, 'f', 0));
 
   if(aircraft.getPropIcePercent() >= 1.f)
-    text.append((narrow ? QObject::tr("Prp %L1") : QObject::tr("Prop %L1")).arg(aircraft.getPropIcePercent(), 0, 'f', 0));
+    text.append((narrow ? QObject::tr("Prop %L1") : QObject::tr("Prop&nbsp;%L1")).arg(aircraft.getPropIcePercent(), 0, 'f', 0));
 
   if(aircraft.getStatIcePercent() >= 1.f)
-    text.append((narrow ? QObject::tr("Stc %L1") : QObject::tr("Static %L1")).arg(aircraft.getStatIcePercent(), 0, 'f', 0));
+    text.append((narrow ? QObject::tr("Static %L1") : QObject::tr("Static&nbsp;%L1")).arg(aircraft.getStatIcePercent(), 0, 'f', 0));
 
   if(aircraft.getWindowIcePercent() >= 1.f)
-    text.append((narrow ? QObject::tr("Win %L1") : QObject::tr("Window %L1")).arg(aircraft.getWindowIcePercent(), 0, 'f', 0));
+    text.append((narrow ? QObject::tr("Wind %L1") : QObject::tr("Window&nbsp;%L1")).arg(aircraft.getWindowIcePercent(), 0, 'f', 0));
 
   if(aircraft.getCarbIcePercent() >= 1.f)
-    text.append((narrow ? QObject::tr("Crb %L1") : QObject::tr("Carb. %L1")).arg(aircraft.getCarbIcePercent(), 0, 'f', 0));
+    text.append((narrow ? QObject::tr("Carb %L1") : QObject::tr("Carb.&nbsp;%L1")).arg(aircraft.getCarbIcePercent(), 0, 'f', 0));
 
   if(narrow)
   {
