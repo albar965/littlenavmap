@@ -2243,10 +2243,18 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
 
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->actionProfileShowOnMap->setEnabled(hasPosition && hasValidRouteForDisplay());
+  ui->actionProfileExpand->setEnabled(hasValidRouteForDisplay());
+
+  ui->actionProfileCenterAircraft->setEnabled(NavApp::isConnectedAndAircraft());
+  // Zoom to aircraft and destination is only enabled if center is checked
+  ui->actionProfileZoomAircraft->setEnabled(NavApp::isConnectedAndAircraft() && ui->actionProfileCenterAircraft->isChecked());
   ui->actionProfileDeleteAircraftTrack->setEnabled(hasTrackPoints());
 
-  // Zoom to aircraft and destination is only enabled if center is checked
-  ui->actionProfileZoomAircraft->setEnabled(ui->actionProfileCenterAircraft->isChecked());
+  ui->actionProfileShowVasi->setEnabled(hasValidRouteForDisplay());
+  ui->actionProfileShowIls->setEnabled(hasValidRouteForDisplay());
+  ui->actionProfileShowVerticalTrack->setEnabled(hasValidRouteForDisplay());
+
+  ui->actionProfileFollow->setEnabled(hasValidRouteForDisplay());
 
   QMenu menu;
   menu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
@@ -2260,7 +2268,7 @@ void ProfileWidget::showContextMenu(const QPoint& globalPoint)
   menu.addSeparator();
   menu.addAction(ui->actionProfileShowVasi);
   menu.addAction(ui->actionProfileShowIls);
-  menu.addAction(ui->actionMapShowTocTod);
+  menu.addAction(ui->actionMapShowTocTod); // Global option also used in other menus
   menu.addAction(ui->actionProfileShowVerticalTrack);
   menu.addSeparator();
   menu.addAction(ui->actionProfileFollow);
