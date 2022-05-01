@@ -44,22 +44,28 @@ bool ProfileOptions::showOptions()
   // Profile =====================================================
   /* *INDENT-OFF* */
   QTreeWidgetItem* rootItem = treeDialog.getRootItem();
-  treeDialog.addItem2(rootItem, optsp::PROFILE_TOOLTIP, tr("Show Tooltip"), tr("Show a tooltip with elevation and more information when hovering the mouse over the profile."), QString());
-  treeDialog.addItem2(rootItem, optsp::PROFILE_ALT_LABELS, tr("Show Altitude Labels"), tr("Show or hide the labels at the left side of the elevation profile."), QString());
+  treeDialog.addItem2(rootItem, optsp::PROFILE_TOOLTIP, tr("Show Tooltip"), tr("Show a tooltip with elevation and more information when hovering the mouse over the profile."));
+  treeDialog.addItem2(rootItem, optsp::PROFILE_HIGHLIGHT, tr("Highlight Position on Map"), tr("Highlight the flight plan position on the map while hovering the mouse over the profile."));
 
-  QTreeWidgetItem *topItem = treeDialog.addTopItem1(tr("Top Label"));
-  treeDialog.addItem2(topItem, optsp::PROFILE_TOP_DISTANCE, tr("Distance"), tr("Distance of flight plan leg."), QString());
-  treeDialog.addItem2(topItem, optsp::PROFILE_TOP_MAG_COURSE, tr("Magnetic Course"), tr( "Show magnetic great circle start course at start flight plan leg."), QString());
-  treeDialog.addItem2(topItem, optsp::PROFILE_TOP_TRUE_COURSE, tr("True Course"), tr( "Show true great circle start course at flight plan leg."), QString());
-  treeDialog.addItem2(topItem, optsp::PROFILE_TOP_RELATED, tr("Related Navaid"), tr( "Related navaid for a procedure fix including bearing and distance."), QString());
+  QTreeWidgetItem *labelItem = treeDialog.addTopItem1(tr("Labels"));
+  treeDialog.addItem2(labelItem, optsp::PROFILE_ALT_LABELS, tr("Show Altitude Labels"), tr("Show or hide the labels at the left side of the elevation profile."));
+  treeDialog.addItem2(labelItem, optsp::PROFILE_TOP_DISTANCE, tr("Distance"), tr("Distance of flight plan leg."));
+  treeDialog.addItem2(labelItem, optsp::PROFILE_TOP_MAG_COURSE, tr("Magnetic Course"), tr( "Show magnetic great circle start course at start flight plan leg."));
+  treeDialog.addItem2(labelItem, optsp::PROFILE_TOP_TRUE_COURSE, tr("True Course"), tr( "Show true great circle start course at flight plan leg."));
+  treeDialog.addItem2(labelItem, optsp::PROFILE_TOP_RELATED, tr("Related Navaid"), tr( "Related navaid for a procedure fix including bearing and distance."));
+
+  QTreeWidgetItem *profileItem = treeDialog.addTopItem1(tr("Elevation Profile"));
+  treeDialog.addItem2(profileItem, optsp::PROFILE_GROUND, tr("Ground"), tr("Green ground display."));
+  treeDialog.addItem2(profileItem, optsp::PROFILE_SAFE_ALTITUDE, tr("Safe Altitude Line"), tr("Red safe altitude line for whole flight plan."));
+  treeDialog.addItem2(profileItem, optsp::PROFILE_LEG_SAFE_ALTITUDE, tr("Leg Safe Altitude Lines"), tr("Orange safe altitude lines for for each flight plan leg."));
 
   QTreeWidgetItem *lineItem = treeDialog.addTopItem1(tr("Flight Plan Line"));
-  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_DIST, tr("Distance"), tr("Distance of flight plan leg."), QString());
-  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_MAG_COURSE, tr("Magnetic Course"), tr( "Show magnetic great circle start course."), QString());
-  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_TRUE_COURSE, tr("True Course"), tr("Show true great circle start course."), QString());
-  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_VERTICAL_ANGLE, tr("Descent Flight Path Angle"), tr("Vertical descent path angle only in the descent phase."), QString());
-  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_ALT_RESTRICTION, tr("Altitude Restriction"), tr( "Display procedure altitude restrictions at the navaid label."), QString());
-  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_SPEED_RESTRICTION, tr("Speed Restriction"), tr("Show procedure speed restrictions at the navaid label."), QString());
+  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_DIST, tr("Distance"), tr("Distance of flight plan leg."));
+  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_MAG_COURSE, tr("Magnetic Course"), tr( "Show magnetic great circle start course."));
+  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_TRUE_COURSE, tr("True Course"), tr("Show true great circle start course."));
+  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_VERTICAL_ANGLE, tr("Descent Flight Path Angle"), tr("Vertical descent path angle only in the descent phase."));
+  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_ALT_RESTRICTION, tr("Altitude Restriction"), tr( "Display procedure altitude restrictions at the navaid label."));
+  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_SPEED_RESTRICTION, tr("Speed Restriction"), tr("Show procedure speed restrictions at the navaid label."));
   /* *INDENT-ON* */
 
   treeDialog.restoreState(false /* restoreCheckState */, true /* restoreExpandState */);

@@ -43,8 +43,15 @@ enum DisplayOptionProfile
   PROFILE_FP_ALT_RESTRICTION = 1 << 8,
   PROFILE_FP_SPEED_RESTRICTION = 1 << 9,
 
-  PROFILE_ALT_LABELS = 1 << 10,
-  PROFILE_TOOLTIP = 1 << 11,
+  /* Elevation profile graphics */
+  PROFILE_GROUND = 1 << 10,
+  PROFILE_SAFE_ALTITUDE = 1 << 11,
+  PROFILE_LEG_SAFE_ALTITUDE = 1 << 12,
+
+  /* General options */
+  PROFILE_ALT_LABELS = 1 << 13,
+  PROFILE_TOOLTIP = 1 << 14,
+  PROFILE_HIGHLIGHT = 1 << 15,
 
   /* All drawn in the top label */
   PROFILE_TOP_ANY = PROFILE_TOP_DISTANCE | PROFILE_TOP_MAG_COURSE | PROFILE_TOP_TRUE_COURSE | PROFILE_TOP_RELATED,
@@ -62,7 +69,15 @@ static const QVector<optsp::DisplayOptionProfile> ALL_OPTIONS({optsp::PROFILE_TO
                                                                optsp::PROFILE_FP_DIST, optsp::PROFILE_FP_MAG_COURSE,
                                                                optsp::PROFILE_FP_TRUE_COURSE, optsp::PROFILE_FP_VERTICAL_ANGLE,
                                                                optsp::PROFILE_FP_ALT_RESTRICTION, optsp::PROFILE_FP_SPEED_RESTRICTION,
-                                                               optsp::PROFILE_ALT_LABELS, optsp::PROFILE_TOOLTIP});
+                                                               optsp::PROFILE_GROUND, optsp::PROFILE_SAFE_ALTITUDE,
+                                                               optsp::PROFILE_LEG_SAFE_ALTITUDE, optsp::PROFILE_ALT_LABELS,
+                                                               optsp::PROFILE_TOOLTIP, optsp::PROFILE_HIGHLIGHT});
+
+static const optsp::DisplayOptionsProfile DEFAULT_OPTIONS = optsp::PROFILE_TOP_DISTANCE | optsp::PROFILE_TOP_RELATED |
+                                                            optsp::PROFILE_FP_MAG_COURSE | optsp::PROFILE_FP_VERTICAL_ANGLE |
+                                                            optsp::PROFILE_GROUND | optsp::PROFILE_SAFE_ALTITUDE |
+                                                            optsp::PROFILE_LEG_SAFE_ALTITUDE | optsp::PROFILE_ALT_LABELS |
+                                                            optsp::PROFILE_TOOLTIP | optsp::PROFILE_HIGHLIGHT;
 }
 
 /*
@@ -90,9 +105,7 @@ public:
 
 private:
   /* Initialized with the default options for new installation */
-  optsp::DisplayOptionsProfile displayOptions = optsp::PROFILE_TOP_DISTANCE | optsp::PROFILE_TOP_RELATED |
-                                                optsp::PROFILE_FP_MAG_COURSE | optsp::PROFILE_FP_VERTICAL_ANGLE |
-                                                optsp::PROFILE_ALT_LABELS | optsp::PROFILE_TOOLTIP;
+  optsp::DisplayOptionsProfile displayOptions = optsp::DEFAULT_OPTIONS;
   QWidget *parentWidget;
 };
 

@@ -71,102 +71,102 @@ void AircraftProgressConfig::progressConfiguration()
   // =====================================================================================================================
   /*: This and all following texts have to match the ones in HtmlInfoBuilder::aircraftProgressText() */
   QTreeWidgetItem *rootItem = treeDialog.getRootItem();
-  treeDialog.addItem2(rootItem, pid::DATE_TIME_REAL,  tr("Real Date and Time"), tr("Real date and UTC time."), QString());
-  treeDialog.addItem2(rootItem, pid::LOCAL_TIME_REAL, tr("Real Local Time"), tr("Real local date and time."), QString());
-  treeDialog.addItem2(rootItem, pid::DATE_TIME,       tr("Simulator Date and Time"), tr("Simulator date and UTC time."), QString());
-  treeDialog.addItem2(rootItem, pid::LOCAL_TIME,      tr("Simulator Local Time"), tr("Simulator local date and time."), QString());
-  treeDialog.addItem2(rootItem, pid::FLOWN,           tr("Flown"), tr("Flown distance since takeoff."), QString());
+  treeDialog.addItem2(rootItem, pid::DATE_TIME_REAL,  tr("Real Date and Time"), tr("Real date and UTC time."));
+  treeDialog.addItem2(rootItem, pid::LOCAL_TIME_REAL, tr("Real Local Time"), tr("Real local date and time."));
+  treeDialog.addItem2(rootItem, pid::DATE_TIME,       tr("Simulator Date and Time"), tr("Simulator date and UTC time."));
+  treeDialog.addItem2(rootItem, pid::LOCAL_TIME,      tr("Simulator Local Time"), tr("Simulator local date and time."));
+  treeDialog.addItem2(rootItem, pid::FLOWN,           tr("Flown"), tr("Flown distance since takeoff."));
 
   // Destination ==========================================================================================================
   QTreeWidgetItem *destItem = treeDialog.addTopItem1(tr("Destination"));
-  treeDialog.addItem2(destItem, pid::DEST_DIST_TIME_ARR, tr("Distance, Time and Arrival"), tr("Distance to, time to and arrival time in UTC at destination."), QString());
+  treeDialog.addItem2(destItem, pid::DEST_DIST_TIME_ARR, tr("Distance, Time and Arrival"), tr("Distance to, time to and arrival time in UTC at destination."));
   treeDialog.addItem2(destItem, pid::DEST_FUEL,          tr("Fuel"), tr("Estimated fuel at destination.\n"
-                                                                        "Shows orange warning if below reserve and red error text if insufficient."), QString());
-  treeDialog.addItem2(destItem, pid::DEST_GROSS_WEIGHT,  tr("Gross Weight"), tr("Estimated aircraft gross weight at destination."), QString());
+                                                                        "Shows orange warning if below reserve and red error text if insufficient."));
+  treeDialog.addItem2(destItem, pid::DEST_GROSS_WEIGHT,  tr("Gross Weight"), tr("Estimated aircraft gross weight at destination."));
 
   // TOC ==========================================================================================================
   QTreeWidgetItem *tocItem = treeDialog.addTopItem1(tr("Top of Climb"));
-  treeDialog.addItem2(tocItem, pid::TOC_DIST_TIME_ARR,  tr("Distance, Time and Arrival"), tr("Distance to, time to and arrival time in UTC at the top of climb."), QString());
-  treeDialog.addItem2(tocItem, pid::TOC_FUEL,           tr("Fuel"), tr("Estimated fuel at top of climb."), QString());
-  treeDialog.addItem2(tocItem, pid::TOC_FROM_DESTINATION, tr("From Departure"), tr("Distance from departure to top of climb."), QString());
+  treeDialog.addItem2(tocItem, pid::TOC_DIST_TIME_ARR,  tr("Distance, Time and Arrival"), tr("Distance to, time to and arrival time in UTC at the top of climb."));
+  treeDialog.addItem2(tocItem, pid::TOC_FUEL,           tr("Fuel"), tr("Estimated fuel at top of climb."));
+  treeDialog.addItem2(tocItem, pid::TOC_FROM_DESTINATION, tr("From Departure"), tr("Distance from departure to top of climb."));
 
   // TOD ==========================================================================================================
   QTreeWidgetItem *todItem = treeDialog.addTopItem1(tr("Top of Descent"));
-  treeDialog.addItem2(todItem, pid::TOD_DIST_TIME_ARR,  tr("Distance, Time and Arrival"), tr("Distance to, time to and arrival time in UTC at the top of descent."), QString());
-  treeDialog.addItem2(todItem, pid::TOD_FUEL,           tr("Fuel"), tr("Estimated fuel at top of descent."), QString());
-  treeDialog.addItem2(todItem, pid::TOD_TO_DESTINATION, tr("To Destination"), tr("Distance from top of descent to destination."), QString());
+  treeDialog.addItem2(todItem, pid::TOD_DIST_TIME_ARR,  tr("Distance, Time and Arrival"), tr("Distance to, time to and arrival time in UTC at the top of descent."));
+  treeDialog.addItem2(todItem, pid::TOD_FUEL,           tr("Fuel"), tr("Estimated fuel at top of descent."));
+  treeDialog.addItem2(todItem, pid::TOD_TO_DESTINATION, tr("To Destination"), tr("Distance from top of descent to destination."));
 
   // Next ==========================================================================================================
   QTreeWidgetItem *nextItem = treeDialog.addTopItem1(tr("Next Waypoint"));
-  treeDialog.addItem2(nextItem, pid::NEXT_LEG_TYPE,         tr("Leg Type"), tr("Type of a procedure leg describing the flying path."), QString());
+  treeDialog.addItem2(nextItem, pid::NEXT_LEG_TYPE,         tr("Leg Type"), tr("Type of a procedure leg describing the flying path."));
   treeDialog.addItem2(nextItem, pid::NEXT_INSTRUCTIONS,     tr("Instructions"), tr("Procedure instructions showing how to fly,\n"
-                                                                                   "like turn direction or required overfly."), QString());
+                                                                                   "like turn direction or required overfly."));
   treeDialog.addItem2(nextItem, pid::NEXT_RELATED,          tr("Related Navaid"), tr("A related navaid for a procedure fix describing\n"
-                                                                                     "the fix position relative to the navaid."), QString());
-  treeDialog.addItem2(nextItem, pid::NEXT_RESTRICTION,      tr("Restriction"), tr("Altitude, speed or vertical angle restriction."), QString());
-  treeDialog.addItem2(nextItem, pid::NEXT_DIST_TIME_ARR,    tr("Distance, Time and Arrival"), tr("Distance to, time to and arrival time in UTC at the next waypoint."), QString());
-  treeDialog.addItem2(nextItem, pid::NEXT_ALTITUDE,         tr("Altitude"), tr("Calculated altitude at the next waypoint."), QString());
-  treeDialog.addItem2(nextItem, pid::NEXT_FUEL,             tr("Fuel"), tr("Estimated fuel at the next waypoint."), QString());
-  treeDialog.addItem2(nextItem, pid::NEXT_COURSE_TO_WP,     tr("Course to waypoint"), tr("Direct course to the next waypoint."), QString());
-  treeDialog.addItem2(nextItem, pid::NEXT_LEG_COURSE,       tr("Leg Course"), tr("Course of the current active flight plan leg."), QString());
-  treeDialog.addItem2(nextItem, pid::NEXT_HEADING,          tr("Heading"), tr("Heading to fly to the next waypoint considering wind."), QString());
+                                                                                     "the fix position relative to the navaid."));
+  treeDialog.addItem2(nextItem, pid::NEXT_RESTRICTION,      tr("Restriction"), tr("Altitude, speed or vertical angle restriction."));
+  treeDialog.addItem2(nextItem, pid::NEXT_DIST_TIME_ARR,    tr("Distance, Time and Arrival"), tr("Distance to, time to and arrival time in UTC at the next waypoint."));
+  treeDialog.addItem2(nextItem, pid::NEXT_ALTITUDE,         tr("Altitude"), tr("Calculated altitude at the next waypoint."));
+  treeDialog.addItem2(nextItem, pid::NEXT_FUEL,             tr("Fuel"), tr("Estimated fuel at the next waypoint."));
+  treeDialog.addItem2(nextItem, pid::NEXT_COURSE_TO_WP,     tr("Course to waypoint"), tr("Direct course to the next waypoint."));
+  treeDialog.addItem2(nextItem, pid::NEXT_LEG_COURSE,       tr("Leg Course"), tr("Course of the current active flight plan leg."));
+  treeDialog.addItem2(nextItem, pid::NEXT_HEADING,          tr("Heading"), tr("Heading to fly to the next waypoint considering wind."));
   treeDialog.addItem2(nextItem, pid::NEXT_CROSS_TRACK_DIST, tr("Cross Track Distance"), tr("Distance to flight plan leg.\n"
-                                                                                           "► means aircraft is left of flight plan leg (fly right) and ◄ means right of leg."), QString());
-  treeDialog.addItem2(nextItem, pid::NEXT_REMARKS,              tr("Remarks"), tr("User entered remarks for an user flight plan position."), QString());
+                                                                                           "► means aircraft is left of flight plan leg (fly right) and ◄ means right of leg."));
+  treeDialog.addItem2(nextItem, pid::NEXT_REMARKS,              tr("Remarks"), tr("User entered remarks for an user flight plan position."));
 
   // Aircraft ==========================================================================================================
   QTreeWidgetItem *aircraftItem = treeDialog.addTopItem1(tr("Aircraft"));
-  treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_HEADING,      tr("Heading"), tr("Aircraft heading."), QString());
-  treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_TRACK,        tr("Track"), tr("Flown aircraft track considering wind."), QString());
-  treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_FUEL_FLOW,    tr("Fuel Flow"), tr("Current fuel flow for all engines."), QString());
-  treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_FUEL,         tr("Fuel"), tr("Current fuel amount on board."), QString());
-  treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_GROSS_WEIGHT, tr("Gross Weight"), tr("Current aircraft gross weight."), QString());
+  treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_HEADING,      tr("Heading"), tr("Aircraft heading."));
+  treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_TRACK,        tr("Track"), tr("Flown aircraft track considering wind."));
+  treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_FUEL_FLOW,    tr("Fuel Flow"), tr("Current fuel flow for all engines."));
+  treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_FUEL,         tr("Fuel"), tr("Current fuel amount on board."));
+  treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_GROSS_WEIGHT, tr("Gross Weight"), tr("Current aircraft gross weight."));
   treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_ENDURANCE,    tr("Endurance"), tr("Estimated endurance based on current fuel flow and groundspeed\n"
                                                                                     "considering reserves and contingency. Only shown if airborne.\n"
                                                                                     "Shows orange warning if below reserve and red error text if insufficient\n"
-                                                                                    "when no flightplan is used."), QString());
-  treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_ICE,          tr("Ice"), tr("Aircraft icing, if any."), QString());
+                                                                                    "when no flightplan is used."));
+  treeDialog.addItem2(aircraftItem, pid::AIRCRAFT_ICE,          tr("Ice"), tr("Aircraft icing, if any."));
 
   // Altitude ==========================================================================================================
   QTreeWidgetItem *altitudeItem = treeDialog.addTopItem1(tr("Altitude"));
-  treeDialog.addItem2(altitudeItem, pid::ALT_INDICATED,        tr("Indicated"), tr("Indicated altitude considering aircraft barometer setting."), QString());
-  treeDialog.addItem2(altitudeItem, pid::ALT_ACTUAL,           tr("Actual"), tr("Actual altitude."), QString());
-  treeDialog.addItem2(altitudeItem, pid::ALT_ABOVE_GROUND,     tr("Above Ground"), tr("Altitude above ground as reported by simulator."), QString());
-  treeDialog.addItem2(altitudeItem, pid::ALT_GROUND_ELEVATION, tr("Ground Elevation"), tr("Ground elevation above normal as reported by simulator."), QString());
-  treeDialog.addItem2(altitudeItem, pid::ALT_AUTOPILOT_ALT,    tr("Autopilot Selected"), tr("Preselected altitude in autopilot."), QString());
+  treeDialog.addItem2(altitudeItem, pid::ALT_INDICATED,        tr("Indicated"), tr("Indicated altitude considering aircraft barometer setting."));
+  treeDialog.addItem2(altitudeItem, pid::ALT_ACTUAL,           tr("Actual"), tr("Actual altitude."));
+  treeDialog.addItem2(altitudeItem, pid::ALT_ABOVE_GROUND,     tr("Above Ground"), tr("Altitude above ground as reported by simulator."));
+  treeDialog.addItem2(altitudeItem, pid::ALT_GROUND_ELEVATION, tr("Ground Elevation"), tr("Ground elevation above normal as reported by simulator."));
+  treeDialog.addItem2(altitudeItem, pid::ALT_AUTOPILOT_ALT,    tr("Autopilot Selected"), tr("Preselected altitude in autopilot."));
 
   // Speed ==========================================================================================================
   QTreeWidgetItem *speedItem = treeDialog.addTopItem1(tr("Speed"));
   treeDialog.addItem2(speedItem, pid::SPEED_INDICATED, tr("Indicated"), tr("Aircraft indicated airspeed.\n"
-                                                                           "Shows orange and red if faster than 250 kts below %L1 ft.").arg(250).arg(10000), QString());
-  treeDialog.addItem2(speedItem, pid::SPEED_GROUND,    tr("Ground"), tr("Aircraft groundspeed."), QString());
-  treeDialog.addItem2(speedItem, pid::SPEED_TRUE,      tr("True Airspeed"), tr("Aircraft true airspeed."), QString());
-  treeDialog.addItem2(speedItem, pid::SPEED_MACH,      tr("Mach"), tr("Aircraft mach number."), QString());
-  treeDialog.addItem2(speedItem, pid::SPEED_VERTICAL,  tr("Vertical"), tr("Aircraft vertical speed."), QString());
+                                                                           "Shows orange and red if faster than 250 kts below %L1 ft.").arg(250).arg(10000));
+  treeDialog.addItem2(speedItem, pid::SPEED_GROUND,    tr("Ground"), tr("Aircraft groundspeed."));
+  treeDialog.addItem2(speedItem, pid::SPEED_TRUE,      tr("True Airspeed"), tr("Aircraft true airspeed."));
+  treeDialog.addItem2(speedItem, pid::SPEED_MACH,      tr("Mach"), tr("Aircraft mach number."));
+  treeDialog.addItem2(speedItem, pid::SPEED_VERTICAL,  tr("Vertical"), tr("Aircraft vertical speed."));
 
   // Descent ==========================================================================================================
   QTreeWidgetItem *descentItem = treeDialog.addTopItem1(tr("Descent Path"));
   treeDialog.addItem2(descentItem, pid::DESCENT_DEVIATION,   tr("Deviation"), tr("Vertical altitude deviation from descent path.\n"
-                                                                                 "▼ means above (increase sink rate) and ▲ means below (decrease sink rate)."), QString());
+                                                                                 "▼ means above (increase sink rate) and ▲ means below (decrease sink rate)."));
   treeDialog.addItem2(descentItem, pid::DESCENT_ANGLE_SPEED, tr("Angle and Speed"), tr("Vertical flight path angle needed to keep the vertical path angle.\n"
-                                                                                       "Changes to \"Required angle\" if mandatory in approach procedures."), QString());
+                                                                                       "Changes to \"Required angle\" if mandatory in approach procedures."));
 
   // Environment ==========================================================================================================
   QTreeWidgetItem *envItem = treeDialog.addTopItem1(tr("Environment"));
   treeDialog.addItem2(envItem, pid::ENV_WIND_DIR_SPEED,  tr("Wind Direction and Speed"), tr("Wind direction and speed at aircraft.\n"
                                                                                             "Second line shows headwind indicated by ▼ and tailwind by ▲\n"
-                                                                                            "as well as crosswind (► or ◄)."), QString());
+                                                                                            "as well as crosswind (► or ◄)."));
   treeDialog.addItem2(envItem, pid::ENV_TAT,             tr("Total Air Temperature"), tr("Total air temperature (TAT).\n"
-                                                                                         "Also indicated air temperature (IAT) or ram air temperature."), QString());
+                                                                                         "Also indicated air temperature (IAT) or ram air temperature."));
   treeDialog.addItem2(envItem, pid::ENV_SAT,             tr("Static Air Temperature"), tr("Static air temperature (SAT).\n"
-                                                                                          "Also outside air temperature (OAT) or true air temperature."), QString());
-  treeDialog.addItem2(envItem, pid::ENV_ISA_DEV,         tr("ISA Deviation"), tr("Deviation from standard temperature model."), QString());
-  treeDialog.addItem2(envItem, pid::ENV_SEA_LEVEL_PRESS, tr("Sea Level Pressure"), tr("Barometric pressure at sea level."), QString());
-  treeDialog.addItem2(envItem, pid::ENV_CONDITIONS,      tr("Conditions"), tr("Rain, snow or other weather conditions."), QString());
-  treeDialog.addItem2(envItem, pid::ENV_VISIBILITY,      tr("Visibility"), tr("Horizontal visibility at aircraft."), QString());
+                                                                                          "Also outside air temperature (OAT) or true air temperature."));
+  treeDialog.addItem2(envItem, pid::ENV_ISA_DEV,         tr("ISA Deviation"), tr("Deviation from standard temperature model."));
+  treeDialog.addItem2(envItem, pid::ENV_SEA_LEVEL_PRESS, tr("Sea Level Pressure"), tr("Barometric pressure at sea level."));
+  treeDialog.addItem2(envItem, pid::ENV_CONDITIONS,      tr("Conditions"), tr("Rain, snow or other weather conditions."));
+  treeDialog.addItem2(envItem, pid::ENV_VISIBILITY,      tr("Visibility"), tr("Horizontal visibility at aircraft."));
 
   // Coordinates ==========================================================================================================
-  treeDialog.addItem2(rootItem, pid::POS_COORDINATES, tr("Coordinates"), tr("Aircraft coordinates."), QString());
+  treeDialog.addItem2(rootItem, pid::POS_COORDINATES, tr("Coordinates"), tr("Aircraft coordinates."));
   /* *INDENT-ON* */
 
   treeDialog.restoreState(false /* restoreCheckState */, true /* restoreExpandState */);

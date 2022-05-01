@@ -2304,23 +2304,23 @@ void RouteController::routeTableOptions()
   QTreeWidgetItem *headerItem = treeDialog.addTopItem1(tr("Flight Plan Table Header"));
   treeDialog.addItem2(headerItem, rcol::HEADER_AIRPORTS, tr("Airports"),
                       tr("Departure and destination airports as links to show them on the map and in information."),
-                      QString(), routeLabel->isHeaderAirports());
+                      routeLabel->isHeaderAirports());
 
   treeDialog.addItem2(headerItem, rcol::HEADER_TAKEOFF, tr("Takeoff Runway"),
-                      tr("Departure runway heading and length."), QString(), routeLabel->isHeaderRunwayTakeoff());
+                      tr("Departure runway heading and length."), routeLabel->isHeaderRunwayTakeoff());
 
   treeDialog.addItem2(headerItem, rcol::HEADER_DEPARTURE, tr("Departure"),
-                      tr("SID information."), QString(), routeLabel->isHeaderDeparture());
+                      tr("SID information."), routeLabel->isHeaderDeparture());
 
   treeDialog.addItem2(headerItem, rcol::HEADER_ARRIVAL, tr("Arrival"),
-                      tr("STAR and approach procedure information."), QString(), routeLabel->isHeaderArrival());
+                      tr("STAR and approach procedure information."), routeLabel->isHeaderArrival());
 
   treeDialog.addItem2(headerItem, rcol::HEADER_LAND, tr("Landing Runway"),
                       tr("Destination runway heading, available distance for landing, elevation and facilities."),
-                      QString(), routeLabel->isHeaderRunwayLand());
+                      routeLabel->isHeaderRunwayLand());
 
-  treeDialog.addItem2(headerItem, rcol::HEADER_DIST_TIME, tr("Distance and Time"),
-                      tr("Flight plan total distance and flight time."), QString(), routeLabel->isHeaderDistTime());
+  treeDialog.addItem2(headerItem, rcol::HEADER_DIST_TIME, tr("Distance and Time"), tr("Flight plan total distance and flight time."),
+                      routeLabel->isHeaderDistTime());
 
   // Add column names and description texts to tree ====================
   QTreeWidgetItem *tableItem = treeDialog.addTopItem1(tr("Flight plan table columns"));

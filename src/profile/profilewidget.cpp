@@ -805,9 +805,12 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   painter.fillRect(left, 0, rect().width() - left * 2, rect().height(), mapcolors::profileSkyColor);
 
   // Draw the ground ======================================================
-  painter.setBrush(mapcolors::profileLandColor);
-  painter.setPen(mapcolors::profileLandOutlinePen);
-  painter.drawPolygon(landPolygon);
+  if(profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_GROUND))
+  {
+    painter.setBrush(mapcolors::profileLandColor);
+    painter.setPen(mapcolors::profileLandOutlinePen);
+    painter.drawPolygon(landPolygon);
+  }
 
   int flightplanTextY = flightplanY + 14;
   painter.setPen(mapcolors::profileWaypointLinePen);
@@ -824,21 +827,27 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   painter.drawLine(0, safeAltY, left, safeAltY);
 
   // Draw orange minimum safe altitude lines for each segment ======================================================
-  painter.setPen(mapcolors::profileSafeAltLegLinePen);
-  for(int i = 0; i < legList->elevationLegs.size(); i++)
+  if(profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_LEG_SAFE_ALTITUDE))
   {
-    if(waypointX.value(i, 0) == waypointX.value(i + 1, 0))
-      // Skip zero length segments to avoid dots on the graph
-      continue;
+    painter.setPen(mapcolors::profileSafeAltLegLinePen);
+    for(int i = 0; i < legList->elevationLegs.size(); i++)
+    {
+      if(waypointX.value(i, 0) == waypointX.value(i + 1, 0))
+        // Skip zero length segments to avoid dots on the graph
+        continue;
 
-    const ElevationLeg& leg = legList->elevationLegs.at(i);
-    int lineY = TOP + static_cast<int>(h - calcGroundBuffer(leg.maxElevation) * verticalScale);
-    painter.drawLine(waypointX.value(i, 0), lineY, waypointX.value(i + 1, 0), lineY);
+      const ElevationLeg& leg = legList->elevationLegs.at(i);
+      int lineY = TOP + static_cast<int>(h - calcGroundBuffer(leg.maxElevation) * verticalScale);
+      painter.drawLine(waypointX.value(i, 0), lineY, waypointX.value(i + 1, 0), lineY);
+    }
   }
 
   // Draw the red minimum safe altitude line ======================================================
-  painter.setPen(mapcolors::profileSafeAltLinePen);
-  painter.drawLine(left, safeAltY, left + static_cast<int>(w), safeAltY);
+  if(profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_SAFE_ALTITUDE))
+  {
+    painter.setPen(mapcolors::profileSafeAltLinePen);
+    painter.drawLine(left, safeAltY, left + static_cast<int>(w), safeAltY);
+  }
 
   // Calculate line y positions ======================================================
   // Flight plan waypoint screen coordinates. x = distance and y = altitude  =======================
@@ -1049,13 +1058,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
     // =============================================================================
     // Draw flightplan symbols and labels ======================================================
-    bool distOpt = profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_FP_DIST);
-    bool magCrsOpt = profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_FP_MAG_COURSE);
-    bool trueCrsOpt = profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_FP_TRUE_COURSE);
-    bool angleOpt = profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_FP_VERTICAL_ANGLE);
+    optsp::DisplayOptionsProfile displayOptions = profileOptions->getDisplayOptions();
+    bool distOpt = displayOptions.testFlag(optsp::PROFILE_FP_DIST);
+    bool magCrsOpt = displayOptions.testFlag(optsp::PROFILE_FP_MAG_COURSE);
+    bool trueCrsOpt = displayOptions.testFlag(optsp::PROFILE_FP_TRUE_COURSE);
+    bool angleOpt = displayOptions.testFlag(optsp::PROFILE_FP_VERTICAL_ANGLE);
 
     // Labels along line ========================================================================================
-    if(profileOptions->getDisplayOptions() & optsp::PROFILE_FP_ANY)
+    if(displayOptions & optsp::PROFILE_FP_ANY)
     {
       QFontMetricsF fontMetrics(painter.font());
       for(int i = passedRouteLeg; i < waypointX.size(); i++)
@@ -2002,8 +2012,9 @@ void ProfileWidget::mouseMoveEvent(QMouseEvent *mouseEvent)
       emit showPos(pos, map::INVALID_DISTANCE_VALUE, false);
   }
 
-  // Tell map widget to create a rubberband rectangle on the map
-  emit highlightProfilePoint(lastTooltipPos);
+  // Tell map widget to create a highlight on the map
+  if(profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_HIGHLIGHT))
+    emit highlightProfilePoint(lastTooltipPos);
 }
 
 void ProfileWidget::updateTooltip()
@@ -2022,7 +2033,10 @@ void ProfileWidget::buildTooltip(int x, bool force)
   if(!hasValidRouteForDisplay())
     return;
 
-  if(!profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_TOOLTIP))
+  optsp::DisplayOptionsProfile displayOpts = profileOptions->getDisplayOptions();
+
+  if(!displayOpts.testFlag(optsp::PROFILE_TOOLTIP) && !displayOpts.testFlag(optsp::PROFILE_HIGHLIGHT))
+    // Neither tooltip nor highlight selected
     return;
 
   if(atools::almostEqual(lastTooltipX, x, 3) && !force)
@@ -2040,6 +2054,10 @@ void ProfileWidget::buildTooltip(int x, bool force)
   int index;
   float distance, distanceToGo, groundElevation, maxElev;
   calculateDistancesAndPos(x, lastTooltipPos, index, distance, distanceToGo, groundElevation, maxElev);
+
+  if(!displayOpts.testFlag(optsp::PROFILE_TOOLTIP))
+    // No tooltip but highlight selected. hightlight needs calculateDistancesAndPos() and lastTooltipPos
+    return;
 
 #ifdef DEBUG_INFORMATION_PROFILE
   qDebug() << Q_FUNC_INFO << "x" << x << "lastTooltipPos" << lastTooltipPos << "index" << index << "distance" << distance

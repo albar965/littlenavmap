@@ -212,6 +212,7 @@ void MapPainterMark::paintHighlights()
   // Draw airways highlighted in the information window =====================================================
   for(const QList<MapAirway>& airwayFull : mapPaintWidget->getAirwayHighlights())
     paintAirwayList(airwayFull);
+
   for(const QList<MapAirway>& airwayFull : mapPaintWidget->getAirwayHighlights())
     paintAirwayTextList(airwayFull);
 
