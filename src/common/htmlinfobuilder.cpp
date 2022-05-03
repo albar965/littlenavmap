@@ -3505,7 +3505,7 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
 
     if(!aircraft.isOnGround())
     {
-    // Ground or indicated speed
+      // Ground or indicated speed
       if(aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
         texts.append(tr("<b>Groundspeed</b>&nbsp;%1").arg(Unit::speedKts(aircraft.getGroundSpeedKts())));
       else if(aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
@@ -4492,19 +4492,30 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     QStringList precip;
     // if(data.getFlags() & atools::fs::sc::IN_CLOUD) // too unreliable
     // precip.append(tr("Cloud"));
-    if(userAircraft->inRain())
+
+    if(NavApp::isXpConnect())
     {
-      // X-Plane does not deliver snow flag - show if temperature is below zero
-      if(NavApp::isXpConnect() && userAircraft->getAmbientTemperatureCelsius() < 5.f)
-        precip.append(tr("Snow"));
-      else if(NavApp::isXpConnect() && userAircraft->getAmbientTemperatureCelsius() < 0.f)
-        precip.append(tr("Rain or Snow"));
-      else
+      if(userAircraft->inRain())
+      {
+        // X-Plane does not deliver snow flag - show snow if temperature is below zero
+        if(userAircraft->getAmbientTemperatureCelsius() < 0.f)
+          precip.append(tr("Snow"));
+        else if(userAircraft->getAmbientTemperatureCelsius() < 5.f)
+          precip.append(tr("Rain or Snow"));
+        else
+          precip.append(tr("Rain"));
+      }
+    }
+    else
+    {
+      if(userAircraft->inRain())
         precip.append(tr("Rain"));
+
+      if(userAircraft->inSnow())
+        precip.append(tr("Snow"));
     }
 
-    if(userAircraft->inSnow())
-      precip.append(tr("Snow"));
+    precip.removeDuplicates();
 
     if(!precip.isEmpty())
       html.id(pid::ENV_CONDITIONS).row2(tr("Conditions:"), precip.join(tr(", ")));
