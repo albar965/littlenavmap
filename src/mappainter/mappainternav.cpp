@@ -27,6 +27,7 @@
 #include "query/mapquery.h"
 #include "query/airwaytrackquery.h"
 #include "query/waypointtrackquery.h"
+#include "common/maptools.h"
 
 #include <QElapsedTimer>
 #include <QStringBuilder>
@@ -79,62 +80,62 @@ void MapPainterNav::render()
   }
 
   context->szFont(context->textSizeNavaid);
-  // Waypoints on airways -------------------------------------------------
-  bool drawAllWaypoints = context->mapLayer->isWaypoint() && context->objectTypes.testFlag(map::WAYPOINT);
-  QSet<int> waypointIds;
 
-  // Skip if all waypoints are to be drawn anyway
-  if(!drawAllWaypoints && (drawAirway || drawTrack) && !context->isObjectOverflow() && context->mapLayer->isAirwayWaypoint())
+  // Waypoints on airways and tracks -------------------------------------------------
+  bool overflow = false;
+  bool drawAirwayWpV = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYV);
+  bool drawAirwayWpJ = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYJ);
+  bool drawNormalWp = context->mapLayer->isWaypoint() && context->objectTypes.testFlag(map::WAYPOINT);
+  bool drawTrackWp = context->mapLayer->isTrackWaypoint() && context->objectTypes.testFlag(map::TRACK);
+
+  // Merge and disambiguate all navaids and airway related navaids into hashes
+  QHash<int, MapWaypoint> allWaypoints;
+  QHash<int, MapVor> allVor;
+  QHash<int, MapNdb> allNdb;
+  if((drawAirwayWpV || drawAirwayWpJ || drawTrackWp) && !context->isObjectOverflow())
   {
     // If airways are drawn we also have to go through waypoints
-    bool overflow = false;
     QList<MapWaypoint> waypoints;
     waypointQuery->getWaypointsAirway(waypoints, curBox, context->mapLayer, context->lazyUpdate, overflow);
     context->setQueryOverflow(overflow);
 
-    if(!waypoints.isEmpty())
-      paintWaypoints(&waypoints, waypointIds, true /* drawAirwayWaypoints */);
+    // Resolve all artificial waypoints to the respective radio navaids and also filter by airway/track type
+    mapQuery->resolveWaypointNavaids(waypoints, allWaypoints, allVor, allNdb, drawNormalWp, drawAirwayWpV, drawAirwayWpJ, drawTrackWp);
   }
 
   // Waypoints -------------------------------------------------
-  if(drawAllWaypoints && !context->isObjectOverflow())
+  if(drawNormalWp && !context->isObjectOverflow())
   {
-    bool overflow = false;
     QList<MapWaypoint> waypoints;
     waypointQuery->getWaypoints(waypoints, curBox, context->mapLayer, context->lazyUpdate, overflow);
     context->setQueryOverflow(overflow);
-
-    if(!waypoints.isEmpty())
-      paintWaypoints(&waypoints, waypointIds, false /* drawAirwayWaypoints */);
+    maptools::insert(allWaypoints, waypoints);
   }
+  paintWaypoints(allWaypoints);
 
   // VOR -------------------------------------------------
   if(context->mapLayer->isVor() && context->objectTypes.testFlag(map::VOR) && !context->isObjectOverflow())
   {
-    bool overflow = false;
     const QList<MapVor> *vors = mapQuery->getVors(curBox, context->mapLayer, context->lazyUpdate, overflow);
     context->setQueryOverflow(overflow);
-
     if(vors != nullptr)
-      paintVors(vors, context->drawFast);
+      maptools::insert(allVor, *vors);
   }
+  paintVors(allVor, context->drawFast);
 
   // NDB -------------------------------------------------
   if(context->mapLayer->isNdb() && context->objectTypes.testFlag(map::NDB) && !context->isObjectOverflow())
   {
-    bool overflow = false;
     const QList<MapNdb> *ndbs = mapQuery->getNdbs(curBox, context->mapLayer, context->lazyUpdate, overflow);
     context->setQueryOverflow(overflow);
-
     if(ndbs != nullptr)
-      paintNdbs(ndbs, context->drawFast);
+      maptools::insert(allNdb, *ndbs);
   }
+  paintNdbs(allNdb, context->drawFast);
 
   // Marker -------------------------------------------------
-  // Show only with ILS enabled
   if(context->mapLayer->isMarker() && context->objectTypes.testFlag(map::MARKER) && !context->isObjectOverflow())
   {
-    bool overflow = false;
     const QList<MapMarker> *markers = mapQuery->getMarkers(curBox, context->mapLayer, context->lazyUpdate, overflow);
     context->setQueryOverflow(overflow);
 
@@ -145,7 +146,6 @@ void MapPainterNav::render()
   // Holding -------------------------------------------------
   if(context->mapLayer->isHolding() && context->objectTypes.testFlag(map::HOLDING) && !context->isObjectOverflow())
   {
-    bool overflow = false;
     const QList<MapHolding> *holds = mapQuery->getHoldings(curBox, context->mapLayer, context->lazyUpdate, overflow);
     context->setQueryOverflow(overflow);
 
@@ -155,7 +155,7 @@ void MapPainterNav::render()
 }
 
 /* Draw airways and texts */
-void MapPainterNav::paintAirways(const QList<MapAirway> *airways, bool fast)
+void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast)
 {
   QFontMetrics metrics = context->painter->fontMetrics();
 
@@ -342,7 +342,7 @@ void MapPainterNav::paintAirways(const QList<MapAirway> *airways, bool fast)
 }
 
 /* Draw waypoints. If airways are enabled corresponding waypoints are drawn too */
-void MapPainterNav::paintWaypoints(const QList<MapWaypoint> *waypoints, QSet<int>& waypointIds, bool drawAirwayWaypoints)
+void MapPainterNav::paintWaypoints(const QHash<int, map::MapWaypoint>& waypoints)
 {
   bool drawAirwayV = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYV);
   bool drawAirwayJ = context->mapLayer->isAirwayWaypoint() && context->objectTypes.testFlag(map::AIRWAYJ);
@@ -352,21 +352,11 @@ void MapPainterNav::paintWaypoints(const QList<MapWaypoint> *waypoints, QSet<int
 
   // Use margins for text placed on the right side of the object to avoid disappearing at the left screen border
   QMargins margins(50, 10, 10, 10);
-  for(const MapWaypoint& waypoint : *waypoints)
-  {
-    // If waypoints are off, airways are on and waypoint has no airways skip it
-    if(!(!drawAirwayWaypoints || (drawAirwayV && waypoint.hasVictorAirways) || (drawAirwayJ && waypoint.hasJetAirways) ||
-         (drawTrack && waypoint.hasTracks)))
-      continue;
 
+  for(const MapWaypoint& waypoint : waypoints)
+  {
     if(context->routeProcIdMap.contains(waypoint.getRef()) || context->routeProcIdMapRec.contains(waypoint.getRef()))
       continue;
-
-    if(waypointIds.contains(waypoint.id))
-      // Already drawn by other function
-      continue;
-
-    waypointIds.insert(waypoint.id);
 
     float x, y;
     if(wToSBuf(waypoint.position, x, y, margins))
@@ -377,8 +367,7 @@ void MapPainterNav::paintWaypoints(const QList<MapWaypoint> *waypoints, QSet<int
       int size = context->sz(context->symbolSizeNavaid, context->mapLayer->getWaypointSymbolSize());
 
       // Use minimum size for airway waypoints if respective airways are shown
-      if((waypoint.hasJetAirways && drawAirwayJ) || (waypoint.hasVictorAirways && drawAirwayV) ||
-         (waypoint.hasTracks && drawTrack))
+      if((waypoint.hasJetAirways && drawAirwayJ) || (waypoint.hasVictorAirways && drawAirwayV) || (waypoint.hasTracks && drawTrack))
         size = std::max(5, size);
 
       symbolPainter->drawWaypointSymbol(context->painter, QColor(), x, y, size, false);
@@ -387,14 +376,14 @@ void MapPainterNav::paintWaypoints(const QList<MapWaypoint> *waypoints, QSet<int
       if(context->mapLayer->isWaypointName() || // Draw all waypoint names or ...
          (context->mapLayer->isAirwayIdent() && // Draw names for specific airway waypoints
           ((drawAirwayV && waypoint.hasVictorAirways) || (drawAirwayJ && waypoint.hasJetAirways))) ||
-         (context->mapLayer->isTrackIdent() && // Draw names for specific airway waypoints
+         (context->mapLayer->isTrackInfo() && // Draw names for specific airway waypoints
           (drawTrack && waypoint.hasTracks)))
         symbolPainter->drawWaypointText(context->painter, waypoint, x, y, textflags::IDENT, size, fill);
     }
   }
 }
 
-void MapPainterNav::paintVors(const QList<MapVor> *vors, bool drawFast)
+void MapPainterNav::paintVors(const QHash<int, map::MapVor>& vors, bool drawFast)
 {
   bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
@@ -406,7 +395,7 @@ void MapPainterNav::paintVors(const QList<MapVor> *vors, bool drawFast)
   int margin = std::max(vorSize, size);
   QMargins margins(margin, margin, std::max(margin, 50), margin);
 
-  for(const MapVor& vor : *vors)
+  for(const MapVor& vor : vors)
   {
     if(context->routeProcIdMap.contains(vor.getRef()) || context->routeProcIdMapRec.contains(vor.getRef()))
       continue;
@@ -431,7 +420,7 @@ void MapPainterNav::paintVors(const QList<MapVor> *vors, bool drawFast)
   }
 }
 
-void MapPainterNav::paintNdbs(const QList<MapNdb> *ndbs, bool drawFast)
+void MapPainterNav::paintNdbs(const QHash<int, map::MapNdb>& ndbs, bool drawFast)
 {
   bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
@@ -440,7 +429,7 @@ void MapPainterNav::paintNdbs(const QList<MapNdb> *ndbs, bool drawFast)
   // Use margins for text placed on the bottom of the object to avoid disappearing at the top screen border
   QMargins margins(size, std::max(size, 50), size, size);
 
-  for(const MapNdb& ndb : *ndbs)
+  for(const MapNdb& ndb : ndbs)
   {
     if(context->routeProcIdMap.contains(ndb.getRef()) || context->routeProcIdMapRec.contains(ndb.getRef()))
       continue;
@@ -465,7 +454,7 @@ void MapPainterNav::paintNdbs(const QList<MapNdb> *ndbs, bool drawFast)
   }
 }
 
-void MapPainterNav::paintMarkers(const QList<MapMarker> *markers, bool drawFast)
+void MapPainterNav::paintMarkers(const QList<map::MapMarker> *markers, bool drawFast)
 {
   int transparency = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND ? 255 : 0;
 

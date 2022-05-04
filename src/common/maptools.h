@@ -198,8 +198,7 @@ static Q_DECL_CONSTEXPR int MAX_LIST_ENTRIES = 5;
 
 /* Inserts element into list sorted by screen distance to xs/ys using ids set for deduplication */
 template<typename TYPE>
-void insertSortedByDistance(const CoordinateConverter& conv, QList<TYPE>& list, QSet<int> *ids,
-                            int xs, int ys, TYPE type)
+void insertSortedByDistance(const CoordinateConverter& conv, QList<TYPE>& list, QSet<int> *ids, int xs, int ys, TYPE type)
 {
   if(list.size() > MAX_LIST_ENTRIES)
     return;

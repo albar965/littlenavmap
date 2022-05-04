@@ -750,6 +750,16 @@ struct MapWaypoint
     return ident;
   }
 
+  bool isVor() const
+  {
+    return type == "V";
+  }
+
+  bool isNdb() const
+  {
+    return type == "N";
+  }
+
 };
 
 /* Waypoint or intersection */

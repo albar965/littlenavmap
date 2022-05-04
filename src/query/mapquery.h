@@ -77,6 +77,12 @@ public:
   void getNdbForWaypoint(map::MapNdb& ndb, int waypointId) const;
   void getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos) const;
 
+  /* Fetch VOR and NDB features if a waypoint in allWaypoints is one of these types.
+   * Additionally filter waypoints for airway/track types. */
+  void resolveWaypointNavaids(const QList<map::MapWaypoint>& allWaypoints, QHash<int, map::MapWaypoint>& waypoints,
+                              QHash<int, map::MapVor>& vors, QHash<int, map::MapNdb>& ndbs, bool normalWaypoints, bool victorWaypoints,
+                              bool jetWaypoints, bool trackWaypoints) const;
+
   /* Get map objects by unique database id  */
   /* From nav db, depending on mode */
   map::MapVor getVorById(int id) const;
@@ -191,24 +197,25 @@ public:
                                             map::MapTypes types, bool& overflow);
 
   const QList<map::MapAirport> *getAirportsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer, bool lazy, map::MapTypes types,
-                                                      bool& overflow);
+                                                  bool& overflow);
 
   /* Similar to getAirports */
   const QList<map::MapVor> *getVors(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow);
 
   const QList<map::MapVor> *getVorsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer, bool lazy,
-                                                      bool& overflow);
+                                          bool& overflow);
+
   /* Similar to getAirports */
   const QList<map::MapNdb> *getNdbs(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow);
 
   const QList<map::MapNdb> *getNdbsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer, bool lazy,
-                                                      bool& overflow);
+                                          bool& overflow);
 
   /* Similar to getAirports */
   const QList<map::MapMarker> *getMarkers(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow);
 
   const QList<map::MapMarker> *getMarkersByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer, bool lazy,
-                                                      bool& overflow);
+                                                bool& overflow);
 
   /* Similar to getAirports */
   const QList<map::MapHolding> *getHoldings(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow);

@@ -214,6 +214,39 @@ void MapQuery::getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos) cons
   ndbNearestQuery->finish();
 }
 
+void MapQuery::resolveWaypointNavaids(const QList<MapWaypoint>& allWaypoints, QHash<int, MapWaypoint>& waypoints, QHash<int, MapVor>& vors,
+                                      QHash<int, MapNdb>& ndbs, bool normalWaypoints, bool victorWaypoints, bool jetWaypoints,
+                                      bool trackWaypoints) const
+{
+  for(const MapWaypoint& wp : allWaypoints)
+  {
+    // Add waypoint if airway/track status matches
+    if(normalWaypoints || (wp.hasJetAirways && jetWaypoints) || (wp.hasVictorAirways && victorWaypoints) ||
+       (wp.hasTracks && trackWaypoints))
+    {
+      if(wp.isVor() && wp.artificial > 0)
+      {
+        // Get related VOR for artificial waypoint
+        MapVor vor;
+        getVorForWaypoint(vor, wp.id);
+        if(vor.isValid())
+          vors.insert(vor.id, vor);
+      }
+      else if(wp.isNdb() && wp.artificial > 0)
+      {
+        // Get related NDB for artificial waypoint
+        MapNdb ndb;
+        getNdbForWaypoint(ndb, wp.id);
+        if(ndb.isValid())
+          ndbs.insert(ndb.id, ndb);
+      }
+      else
+        // Normal waypoint - artificial should never occur to normal ones
+        waypoints.insert(wp.id, wp);
+    }
+  }
+}
+
 map::MapResultIndex *MapQuery::getNearestNavaids(const Pos& pos, float distanceNm, map::MapTypes type, int maxIls, float maxIlsDist)
 {
   map::MapResultIndex *nearest = nearestNavaidsInternal(pos, distanceNm, type, maxIls, maxIlsDist);
@@ -703,10 +736,39 @@ void MapQuery::getNearestScreenObjects(const CoordinateConverter& conv, const Ma
   }
 
   // Add waypoints that displayed together with airways =================================
-  if((mapLayer->isAirwayWaypoint() && (types.testFlag(map::AIRWAYV) || types.testFlag(map::AIRWAYJ))) ||
-     (mapLayer->isTrackWaypoint() && types.testFlag(map::TRACK)) ||
-     (mapLayer->isWaypoint() && types.testFlag(map::WAYPOINT)))
+  bool victorWaypoints = mapLayer->isAirwayWaypoint() && types.testFlag(map::AIRWAYV);
+  bool jetWaypoints = mapLayer->isAirwayWaypoint() && types.testFlag(map::AIRWAYJ);
+  bool trackWaypoints = mapLayer->isTrackWaypoint() && types.testFlag(map::TRACK);
+  bool normalWaypoints = mapLayer->isWaypoint() && types.testFlag(map::WAYPOINT);
+
+  if((victorWaypoints || jetWaypoints) || trackWaypoints || normalWaypoints)
+  {
+    // Get all close waypoints
     NavApp::getWaypointTrackQueryGui()->getNearestScreenObjects(conv, mapLayer, types, xs, ys, screenDistance, result);
+
+    // Filter waypoints by airway/track type and remove artificial ones
+    QHash<int, MapWaypoint> waypoints;
+    QHash<int, MapVor> vors;
+    QHash<int, MapNdb> ndbs;
+    resolveWaypointNavaids(result.waypoints, waypoints, vors, ndbs, normalWaypoints, victorWaypoints, jetWaypoints, trackWaypoints);
+
+    // Add filtered waypoints back to list
+    result.waypoints.clear();
+    result.waypointIds.clear();
+    for(const map::MapWaypoint& wp : waypoints)
+    {
+      if(wp.artificial == 0)
+        insertSortedByDistance(conv, result.waypoints, &result.waypointIds, xs, ys, wp);
+    }
+
+    // Add VOR fetched for artificial waypoints
+    for(const map::MapVor& vor : vors)
+      insertSortedByDistance(conv, result.vors, &result.vorIds, xs, ys, vor);
+
+    // Add NDB fetched for artificial waypoints
+    for(const map::MapNdb& ndb : ndbs)
+      insertSortedByDistance(conv, result.ndbs, &result.ndbIds, xs, ys, ndb);
+  }
 
   if(mapLayer->isMarker() && types.testFlag(map::MARKER))
   {

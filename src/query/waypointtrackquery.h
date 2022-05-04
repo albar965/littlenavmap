@@ -71,8 +71,7 @@ public:
 
   /* Get nearest waypoint by screen coordinates for types and given map layer. */
   void getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, map::MapTypes types,
-                               int xs, int ys,
-                               int screenDistance, map::MapResult& result);
+                               int xs, int ys, int screenDistance, map::MapResult& result);
 
   /* Get nearest waypoint - slow */
   void getWaypointNearest(map::MapWaypoint& waypoint, const atools::geo::Pos& pos);
@@ -86,11 +85,11 @@ public:
   const QList<map::MapWaypoint> getWaypointsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer,
                                                    bool lazy, bool& overflow);
 
-  /* Similar to getAirports for map display. Caches values. */
+  /* Similar to getAirports for map display. Caches values. Does not return artifical waypoints. */
   void getWaypoints(QList<map::MapWaypoint>& waypoints, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                     bool lazy, bool& overflow);
 
-  /* As getWaypoints() but only for waypoints having airways */
+  /* As getWaypoints() but only for waypoints having airways. Also returns artifical waypoints. */
   void getWaypointsAirway(QList<map::MapWaypoint>& waypoints, const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                           bool lazy, bool& overflow);
 

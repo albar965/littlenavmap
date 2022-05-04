@@ -39,10 +39,11 @@ public:
   virtual void render() override;
 
 private:
+  void paintNdbs(const QHash<int, map::MapNdb>& ndbs, bool drawFast);
+  void paintVors(const QHash<int, map::MapVor>& vors, bool drawFast);
+  void paintWaypoints(const QHash<int, map::MapWaypoint>& waypoints);
+
   void paintMarkers(const QList<map::MapMarker> *markers, bool drawFast);
-  void paintNdbs(const QList<map::MapNdb> *ndbs, bool drawFast);
-  void paintVors(const QList<map::MapVor> *vors, bool drawFast);
-  void paintWaypoints(const QList<map::MapWaypoint> *waypoints, QSet<int>& waypointIds, bool drawAirwayWaypoints);
   void paintAirways(const QList<map::MapAirway> *airways, bool fast);
 
 };

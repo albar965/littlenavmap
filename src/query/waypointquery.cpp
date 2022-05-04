@@ -43,7 +43,7 @@ WaypointQuery::WaypointQuery(SqlDatabase *sqlDbNav, bool trackDatabaseParam)
   queryRectInflationFactor = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.3).toDouble();
   queryRectInflationIncrement = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "QueryRectInflationIncrement", 0.1).toDouble();
   queryMaxRowsWaypoints = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "WaypointQueryRowLimit1", map::MAX_MAP_OBJECTS * 2).toInt();
-  waypointInfoCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY+ "WaypointCache", 100).toInt());
+  waypointInfoCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "WaypointCache", 100).toInt());
 }
 
 WaypointQuery::~WaypointQuery()
@@ -173,9 +173,8 @@ const QList<MapWaypoint> *WaypointQuery::getWaypointsAirway(const Marble::GeoDat
         map::MapWaypoint wp;
         mapTypesFactory->fillWaypoint(waypointsAirwayByRectQuery->record(), wp, trackDatabase);
 
-        // Avoid artificial waypoints created only for procedure or airway resolution
-        if(wp.artificial == 0)
-          waypointAirwayCache.list.append(wp);
+        // Also insert artificial waypoints
+        waypointAirwayCache.list.append(wp);
       }
     }
   }
