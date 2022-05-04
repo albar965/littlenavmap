@@ -205,7 +205,6 @@
         <AirportMinorSymbolSize>18</AirportMinorSymbolSize>
         <AirportMsaSymbolScale>4</AirportMsaSymbolScale>
         <AirportSymbolSize>18</AirportSymbolSize>
-        <AirwayInfo>false</AirwayInfo>
         <MarkerInfo>false</MarkerInfo>
         <MaximumTextLengthAirport>20</MaximumTextLengthAirport>
         <MaximumTextLengthAirportMinor>15</MaximumTextLengthAirportMinor>
@@ -230,6 +229,7 @@
         <AirportMinorInfo>false</AirportMinorInfo>
         <AirportMinorSymbolSize>16</AirportMinorSymbolSize>
         <AirportSymbolSize>16</AirportSymbolSize>
+        <AirwayInfo>false</AirwayInfo>
         <ApproachTextDetail>false</ApproachTextDetail>
         <HoldingInfo2>false</HoldingInfo2>
         <IlsIdent>false</IlsIdent>
@@ -251,7 +251,6 @@
         <AirportMinorName>false</AirportMinorName>
         <AirportMinorSymbolSize>12</AirportMinorSymbolSize>
         <AirportSymbolSize>14</AirportSymbolSize>
-        <AirwayIdent>false</AirwayIdent>
         <HoldingInfo>false</HoldingInfo>
         <NdbInfo>false</NdbInfo>
         <NdbSymbolSize>16</NdbSymbolSize>
@@ -266,6 +265,7 @@
         <AirportName>false</AirportName>
         <AirportOverviewRunway>false</AirportOverviewRunway>
         <AirportSymbolSize>10</AirportSymbolSize>
+        <AirwayIdent>false</AirwayIdent>
         <ApproachText>false</ApproachText>
         <MaximumTextLengthUserpoint>8</MaximumTextLengthUserpoint>
         <NdbIdent>false</NdbIdent>
@@ -298,7 +298,6 @@
         <Ils>false</Ils>
         <MinRunwayLength>4000</MinRunwayLength>
         <NdbSymbolSize>4</NdbSymbolSize>
-        <TrackInfo>false</TrackInfo>
         <UserpointInfo>false</UserpointInfo>
         <VorSymbolSize>6</VorSymbolSize>
         <WaypointRouteName>false</WaypointRouteName>
@@ -334,7 +333,7 @@
         <ApproachDetail>false</ApproachDetail>
         <MinRunwayLength>8000</MinRunwayLength>
         <RouteFontScale>0.8</RouteFontScale>
-        <TrackWaypoint>false</TrackWaypoint>
+        <TrackInfo>false</TrackInfo>
         <Vor>false</Vor>
         <WindBarbsSymbolSize>10</WindBarbsSymbolSize>
       </Layer>
@@ -349,6 +348,7 @@
         <Mora>false</Mora>
         <NdbRouteIdent>false</NdbRouteIdent>
         <VorRouteIdent>false</VorRouteIdent>
+        <TrackWaypoint>false</TrackWaypoint>
         <WindBarbsSymbolSize>6</WindBarbsSymbolSize>
       </Layer>
       <!-- =================================================================================== -->
