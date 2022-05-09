@@ -515,6 +515,12 @@ struct MapRunwayEnd
   {
   }
 
+  /* True if coordinates and name are ok */
+  bool isFullyValid() const
+  {
+    return isValid() && !name.isEmpty() && name != "RW";
+  }
+
   QString name, leftVasiType, rightVasiType, pattern;
   float heading, /* degree true */
         leftVasiPitch = 0.f, rightVasiPitch = 0.f;

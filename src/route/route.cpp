@@ -792,7 +792,7 @@ void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::
   QString destAirportIdent = getDestinationAirportLeg().getIdent();
   MapQuery *mapQuery = NavApp::getMapQueryGui();
 
-  if(!approachLegs.runwayEnd.name.isEmpty() && approachLegs.runwayEnd.name != "RW")
+  if(!approachLegs.runwayEnd.isFullyValid())
   {
     // Runway name given in approach procedure ========================
     QList<map::MapRunwayEnd> runwayEnds;
@@ -802,7 +802,7 @@ void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::
     if(runwayEnd != nullptr && !runwayEnds.isEmpty())
       *runwayEnd = runwayEnds.constFirst();
 
-    if(approachLegs.runwayEnd.isValid())
+    if(approachLegs.runwayEnd.isFullyValid())
     {
       // Have runway database object for approach ============================================
 

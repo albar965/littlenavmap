@@ -386,7 +386,8 @@ struct MapProcedureLegs
           procedureRunway, /* Runway from the procedure does not have to match the airport runway but is saved */
           aircraftCategory; /* 5.221 */
 
-  /* Only for approaches - the found runway end at the airport - can be different due to fuzzy search */
+  /* Only for approaches - the found runway end at the airport - can be different due to fuzzy search.
+   * Coordinates might be set even for CTL approaches where name is empty in this case.s */
   map::MapRunwayEnd runwayEnd;
   proc::MapProcedureTypes mapType = PROCEDURE_NONE;
 
@@ -651,6 +652,7 @@ QString  procedureTextSuffixDestination(const Route& route, const map::MapAirpor
 QString  procedureTextSuffixAlternate(const Route& route, const map::MapAirport& airport, bool& disable);
 
 QString aircraftCategoryText(const QString& cat);
+
 } // namespace types
 
 Q_DECLARE_TYPEINFO(proc::MapProcedureRef, Q_PRIMITIVE_TYPE);

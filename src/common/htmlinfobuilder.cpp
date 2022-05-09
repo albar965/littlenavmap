@@ -4293,7 +4293,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     // Ice ===============================================
     QStringList ice = map::aircraftIcing(*userAircraft, false /* narrow */);
     if(!ice.isEmpty())
-      html.id(pid::AIRCRAFT_ICE).row2Error(tr("Ice:"), atools::strJoin(ice, tr(", "), tr(", "), tr(" %")));
+      html.id(pid::AIRCRAFT_ICE).row2Error(tr("Ice:"), atools::strJoin(ice, tr(", "), tr(", "), tr("&nbsp;%")));
   } // if(userAircraft != nullptr && info)
   html.tableEndIf();
 

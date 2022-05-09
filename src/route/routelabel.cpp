@@ -355,7 +355,7 @@ void RouteLabel::buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget
         if(!headerRunwayLand || !widget)
         {
           // Runway =======================
-          if(arrivalLegs.runwayEnd.isValid() && !arrivalLegs.runwayEnd.name.isEmpty())
+          if(arrivalLegs.runwayEnd.isFullyValid())
           {
             // Add runway for approach
             arrHtml.text(arrHtml.isEmpty() ? tr("At runway ") : tr(" at runway "));
@@ -416,7 +416,7 @@ void RouteLabel::buildHeaderRunwayTakeoff(atools::util::HtmlBuilder& html)
       // Departure runway information =======================================
       const proc::MapProcedureLegs& departureLegs = route.getSidLegs();
       map::MapRunwayEnd end = departureLegs.runwayEnd; // Navdata
-      if(!departureLegs.isEmpty() && end.isValid())
+      if(!departureLegs.isEmpty() && end.isFullyValid())
       {
         const RouteLeg& departLeg = route.getDepartureAirportLeg();
         if(departLeg.isValid())
@@ -452,7 +452,7 @@ void RouteLabel::buildHeaderRunwayLand(atools::util::HtmlBuilder& html)
       // Destination runway information =======================================
       const proc::MapProcedureLegs& apprLegs = route.getApproachLegs();
       map::MapRunwayEnd end = apprLegs.runwayEnd;
-      if(!apprLegs.isEmpty() && end.isValid())
+      if(!apprLegs.isEmpty() && end.isFullyValid())
       {
         const RouteLeg& destLeg = route.getDestinationAirportLeg();
 
@@ -464,20 +464,25 @@ void RouteLabel::buildHeaderRunwayLand(atools::util::HtmlBuilder& html)
           if(!runwayEnds.isEmpty())
             end = runwayEnds.first();
 
-          html.b(tr("Land")).text(tr(" at ")).b(end.name).text(tr(", "));
+          if(end.isFullyValid())
+          {
+            html.b(tr("Land")).text(tr(" at ")).b(end.name).text(tr(", "));
 
-          QStringList rwAtts;
-          rwAtts.append(formatter::courseTextFromTrue(end.heading, destLeg.getMagvar()));
+            QStringList rwAtts;
+            rwAtts.append(formatter::courseTextFromTrue(end.heading, destLeg.getMagvar()));
 
-          map::MapRunway runway = airportQuerySim->getRunwayByEndId(destLeg.getId(), end.id);
-          if(runway.isValid())
-            rwAtts.append(Unit::distShortFeet(runway.length - (end.secondary ? runway.secondaryOffset : runway.primaryOffset)));
+            map::MapRunway runway = airportQuerySim->getRunwayByEndId(destLeg.getId(), end.id);
+            if(runway.isValid())
+              rwAtts.append(Unit::distShortFeet(runway.length - (end.secondary ? runway.secondaryOffset : runway.primaryOffset)));
 
-          rwAtts.append(Unit::altFeet(destLeg.getAltitude()) % tr(" elevation"));
-          if(end.hasAnyVasi())
-            rwAtts.append(end.uniqueVasiTypeStr().join(QObject::tr("/")));
+            rwAtts.append(Unit::altFeet(destLeg.getAltitude()) % tr(" elevation"));
+            if(end.hasAnyVasi())
+              rwAtts.append(end.uniqueVasiTypeStr().join(QObject::tr("/")));
 
-          html.text(rwAtts.join(tr(", ")), ahtml::NO_ENTITIES);
+            html.text(rwAtts.join(tr(", ")), ahtml::NO_ENTITIES);
+          }
+          else
+            html.b(tr("Land")).text(tr(" at any runway, ")).text(Unit::altFeet(destLeg.getAltitude()) % tr(" elevation"));
           html.text(tr("."));
         }
       }
