@@ -3498,8 +3498,8 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
       texts.append(tr("<b>Heading</b>&nbsp;%1").arg(hdg.join(tr(", "))));
 
     // Actual or indicated altitude
-    if(aircraft.getPosition().getAltitude() < atools::fs::sc::SC_INVALID_FLOAT)
-      texts.append(tr("<b>Act. Altitude</b>&nbsp;%1").arg(Unit::altFeet(aircraft.getPosition().getAltitude())));
+    if(aircraft.getActualAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
+      texts.append(tr("<b>Act. Altitude</b>&nbsp;%1").arg(Unit::altFeet(aircraft.getActualAltitudeFt())));
     else if(aircraft.getIndicatedAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
       texts.append(tr("<b>Ind. Altitude</b>&nbsp;%1").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())));
 
@@ -4311,19 +4311,36 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     if(!aircraft.isAnyBoat())
     {
       if(longDisplay && aircraft.getIndicatedAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
+      {
+        // Check for display of alternate units
+        QString otherInd;
+        if(html.isIdSet(pid::ALT_INDICATED_OTHER))
+          otherInd = tr(", <b>%1</b>").arg(Unit::altFeetOther(aircraft.getIndicatedAltitudeFt()));
+
         html.id(pid::ALT_INDICATED).row2(tr("Indicated:"),
-                                         highlightText(Unit::altFeet(aircraft.getIndicatedAltitudeFt())), ahtml::NO_ENTITIES);
+                                         highlightText(Unit::altFeet(aircraft.getIndicatedAltitudeFt())) % otherInd, ahtml::NO_ENTITIES);
+      }
     }
 
-    if(aircraft.getPosition().getAltitude() < atools::fs::sc::SC_INVALID_FLOAT)
-      html.id(pid::ALT_ACTUAL).row2(longDisplay ? tr("Actual:") : tr("Altitude:"), Unit::altFeet(aircraft.getPosition().getAltitude()));
+    float speedActKts = aircraft.getActualAltitudeFt();
+    if(speedActKts < atools::fs::sc::SC_INVALID_FLOAT)
+    {
+      // Check for display of alternate units
+      QString otherAct;
+      if(html.isIdSet(pid::ALT_ACTUAL_OTHER))
+        otherAct = tr(", %1").arg(Unit::altFeetOther(speedActKts));
+
+      html.id(pid::ALT_ACTUAL).row2(longDisplay ? tr("Actual:") : tr("Altitude:"), Unit::altFeet(speedActKts) % otherAct);
+    }
 
     if(userAircraft != nullptr && longDisplay && !aircraft.isAnyBoat())
     {
       if(userAircraft->getAltitudeAboveGroundFt() < atools::fs::sc::SC_INVALID_FLOAT)
         html.id(pid::ALT_ABOVE_GROUND).row2(tr("Above Ground:"), Unit::altFeet(userAircraft->getAltitudeAboveGroundFt()));
+
       if(userAircraft->getGroundAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
         html.id(pid::ALT_GROUND_ELEVATION).row2(tr("Ground Elevation:"), Unit::altFeet(userAircraft->getGroundAltitudeFt()));
+
       if(userAircraft->getAltitudeAutopilotFt() < atools::fs::sc::SC_INVALID_FLOAT)
         html.id(pid::ALT_AUTOPILOT_ALT).row2(tr("Autopilot Selected:"), Unit::altFeet(userAircraft->getAltitudeAutopilotFt()));
     }
@@ -4339,39 +4356,54 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       if(longDisplay)
         head(html, tr("Speed"));
       html.table();
-      if(longDisplay && !aircraft.isAnyBoat() && aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
+      float speedIndKts = aircraft.getIndicatedSpeedKts();
+      if(longDisplay && !aircraft.isAnyBoat() && speedIndKts < atools::fs::sc::SC_INVALID_FLOAT)
       {
         QString warn(tr("Indicated (speed limit):")), normal(tr("Indicated:"));
 
-        if(aircraft.getIndicatedAltitudeFt() < 10000.f && aircraft.getIndicatedSpeedKts() > 260.f)
-          // Exceeding speed limit
-          html.id(pid::SPEED_INDICATED).row2Error(warn, Unit::speedKts(aircraft.getIndicatedSpeedKts()), ahtml::BIG);
+        QString otherInd;
+        if(html.isIdSet(pid::SPEED_INDICATED_OTHER))
+          otherInd = tr(", <b>%1</b>").arg(Unit::speedKtsOther(speedIndKts).join(tr(", ")));
+
+        html.id(pid::SPEED_INDICATED);
+        if(aircraft.getIndicatedAltitudeFt() < 10000.f && speedIndKts > 260.f)
+          // Exceeding speed limit - show red message
+          html.row2(warn, HtmlBuilder::errorMessage(Unit::speedKts(speedIndKts), HtmlBuilder::MSG_FLAGS | ahtml::BIG) % otherInd,
+                    ahtml::NO_ENTITIES);
         else
         {
           if(Unit::getUnitSpeed() == opts::SPEED_KTS)
           {
             // Use int value to compare and display to avoid confusing warning display for 250 on rounding errors
-            int indicatedSpeedKts = static_cast<int>(aircraft.getIndicatedSpeedKts());
-            if(aircraft.getIndicatedAltitudeFt() < 10000.f && indicatedSpeedKts > 250)
-              // Exceeding speed limit slightly
-              html.id(pid::SPEED_INDICATED).row2Warning(warn, Unit::speedKts(indicatedSpeedKts), ahtml::BIG);
+            int speedIndKtsInt = static_cast<int>(speedIndKts);
+            if(aircraft.getIndicatedAltitudeFt() < 10000.f && speedIndKtsInt > 250)
+              // Exceeding speed limit slightly - orange warning
+              html.row2(warn, HtmlBuilder::warningMessage(Unit::speedKts(speedIndKtsInt), HtmlBuilder::MSG_FLAGS | ahtml::BIG) % otherInd,
+                        ahtml::NO_ENTITIES);
             else
-              html.id(pid::SPEED_INDICATED).row2(normal, highlightText(Unit::speedKts(indicatedSpeedKts)), ahtml::NO_ENTITIES);
+              html.row2(normal, highlightText(Unit::speedKts(speedIndKtsInt)) % otherInd, ahtml::NO_ENTITIES);
           }
           else
           {
-            if(aircraft.getIndicatedAltitudeFt() < 10000.f && aircraft.getIndicatedSpeedKts() > 251.f)
-              // Exceeding speed limit slightly
-              html.id(pid::SPEED_INDICATED).row2Warning(warn, Unit::speedKts(aircraft.getIndicatedSpeedKts()), ahtml::BIG);
+            if(aircraft.getIndicatedAltitudeFt() < 10000.f && speedIndKts > 251.f)
+              // Exceeding speed limit slightly - orange warning
+              html.row2(warn, HtmlBuilder::warningMessage(Unit::speedKts(speedIndKts), HtmlBuilder::MSG_FLAGS | ahtml::BIG) % otherInd,
+                        ahtml::NO_ENTITIES);
             else
-              html.id(pid::SPEED_INDICATED).row2(normal, highlightText(Unit::speedKts(
-                                                                         aircraft.getIndicatedSpeedKts())), ahtml::NO_ENTITIES);
+              html.row2(normal, highlightText(Unit::speedKts(speedIndKts)) % otherInd, ahtml::NO_ENTITIES);
           }
         }
       }
 
       if(aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
-        html.id(pid::SPEED_GROUND).row2(longDisplay ? tr("Ground:") : tr("Groundspeed:"), Unit::speedKts(aircraft.getGroundSpeedKts()));
+      {
+        QString otherGnd;
+        if(html.isIdSet(pid::SPEED_GROUND_OTHER))
+          otherGnd = tr(", %1").arg(Unit::speedKtsOther(aircraft.getGroundSpeedKts()).join(tr(", ")));
+
+        html.id(pid::SPEED_GROUND).row2(longDisplay ? tr("Ground:") : tr("Groundspeed:"),
+                                        Unit::speedKts(aircraft.getGroundSpeedKts()) % otherGnd);
+      }
 
       if(longDisplay && !aircraft.isAnyBoat())
         if(aircraft.getTrueAirspeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
@@ -4400,8 +4432,12 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           if(vspeed < 10.f && vspeed > -10.f)
             vspeed = 0.f;
 
+          QString otherVert;
+          if(html.isIdSet(pid::SPEED_VERTICAL_OTHER))
+            otherVert = tr(", %1").arg(Unit::speedVertFpmOther(vspeed));
+
           html.id(pid::SPEED_VERTICAL).row2(longDisplay ? tr("Vertical:") : tr("Vertical Speed:"),
-                                            Unit::speedVertFpm(vspeed) % upDown, ahtml::NO_ENTITIES);
+                                            Unit::speedVertFpm(vspeed) % otherVert % upDown, ahtml::NO_ENTITIES);
         }
       }
       html.tableEndIf();
@@ -4420,7 +4456,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
       if(vertAlt < map::INVALID_ALTITUDE_VALUE)
       {
-        float diff = aircraft.getPosition().getAltitude() - vertAlt;
+        float diff = aircraft.getActualAltitudeFt() - vertAlt;
         QString upDown;
         if(diff >= 100.f)
           upDown = tr(", above <b>▼</b>");
@@ -4480,7 +4516,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.id(pid::ENV_SAT).row2(tr("Static Air Temperature:"), locale.toString(sat, 'f', 0) % tr(" °C, ") %
                                locale.toString(ageo::degCToDegF(sat), 'f', 0) % tr("°F"));
 
-    float isaDeviation = sat - ageo::isaTemperature(userAircraft->getPosition().getAltitude());
+    float isaDeviation = sat - ageo::isaTemperature(userAircraft->getActualAltitudeFt());
     if(isaDeviation < 0.f && isaDeviation > -0.5f)
       isaDeviation = 0.f;
     html.id(pid::ENV_ISA_DEV).row2(tr("ISA Deviation:"), locale.toString(isaDeviation, 'f', 0) % tr(" °C"));

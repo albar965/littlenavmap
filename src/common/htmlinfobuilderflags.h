@@ -79,12 +79,21 @@ enum ProgressConfId
   ALT_GROUND_ELEVATION,
   ALT_AUTOPILOT_ALT,
 
+  // Other units than default
+  ALT_INDICATED_OTHER,
+  ALT_ACTUAL_OTHER,
+
   // "Speed" =================================
   SPEED_INDICATED = 140,
   SPEED_GROUND,
   SPEED_TRUE,
   SPEED_MACH,
   SPEED_VERTICAL,
+
+  // Other units than default
+  SPEED_INDICATED_OTHER,
+  SPEED_GROUND_OTHER,
+  SPEED_VERTICAL_OTHER,
 
   // "Descent Path" =================================
   DESCENT_DEVIATION = 160,

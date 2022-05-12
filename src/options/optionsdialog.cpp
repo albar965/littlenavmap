@@ -2293,8 +2293,7 @@ void OptionsDialog::updateActiveSkyPathStatus()
     else if(!fileinfo.isFile())
       ui->labelOptionsWeatherAsnPathState->setText(HtmlBuilder::errorMessage(tr("Is not a file.")));
     else if(!WeatherReporter::validateActiveSkyFile(path))
-      ui->labelOptionsWeatherAsnPathState->setText(HtmlBuilder::errorMessage(
-                                                     tr("Is not an Active Sky weather snapshot file.")));
+      ui->labelOptionsWeatherAsnPathState->setText(HtmlBuilder::errorMessage(tr("Is not an Active Sky weather snapshot file.")));
     else
       ui->labelOptionsWeatherAsnPathState->setText(
         tr("Weather snapshot file is valid. Using this one for all simulators"));
@@ -2350,8 +2349,7 @@ void OptionsDialog::updateXplanePathStatus()
     else if(!fileinfo.isFile())
       ui->labelOptionsWeatherXplanePathState->setText(HtmlBuilder::errorMessage(tr("Is not a file.")));
     else
-      ui->labelOptionsWeatherXplanePathState->setText(
-        tr("Weather file is valid. Using this one for X-Plane."));
+      ui->labelOptionsWeatherXplanePathState->setText(tr("Weather file is valid. Using this one for X-Plane."));
   }
   else
     // No manual path set

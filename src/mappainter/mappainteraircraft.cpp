@@ -93,7 +93,7 @@ void MapPainterAircraft::render()
     for(const SimConnectAircraft *ac : allAircraft)
       aiSorted.append({ac,
                        pos.distanceMeterTo(ac->getPosition()),
-                       std::abs(pos.getAltitude() - ac->getPosition().getAltitude())});
+                       std::abs(pos.getAltitude() - ac->getActualAltitudeFt())});
 
     std::sort(aiSorted.begin(), aiSorted.end(), [](const AiDistType& ai1,
                                                    const AiDistType& ai2) -> bool

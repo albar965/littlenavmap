@@ -36,8 +36,9 @@ const static QVector<pid::ProgressConfId> ALLIDS({
   pid::TOC_FROM_DESTINATION, pid::NEXT_LEG_TYPE, pid::NEXT_INSTRUCTIONS, pid::NEXT_RELATED, pid::NEXT_RESTRICTION, pid::NEXT_DIST_TIME_ARR,
   pid::NEXT_ALTITUDE, pid::NEXT_FUEL, pid::NEXT_COURSE_TO_WP, pid::NEXT_LEG_COURSE, pid::NEXT_HEADING, pid::NEXT_CROSS_TRACK_DIST,
   pid::NEXT_REMARKS, pid::AIRCRAFT_HEADING, pid::AIRCRAFT_TRACK, pid::AIRCRAFT_FUEL_FLOW, pid::AIRCRAFT_ENDURANCE, pid::AIRCRAFT_FUEL,
-  pid::AIRCRAFT_GROSS_WEIGHT, pid::AIRCRAFT_ICE, pid::ALT_INDICATED, pid::ALT_ACTUAL, pid::ALT_ABOVE_GROUND, pid::ALT_GROUND_ELEVATION,
-  pid::ALT_AUTOPILOT_ALT, pid::SPEED_INDICATED, pid::SPEED_GROUND, pid::SPEED_TRUE, pid::SPEED_MACH, pid::SPEED_VERTICAL,
+  pid::AIRCRAFT_GROSS_WEIGHT, pid::AIRCRAFT_ICE, pid::ALT_INDICATED, pid::ALT_INDICATED_OTHER, pid::ALT_ACTUAL, pid::ALT_ACTUAL_OTHER,
+  pid::ALT_ABOVE_GROUND, pid::ALT_GROUND_ELEVATION, pid::ALT_AUTOPILOT_ALT, pid::SPEED_INDICATED, pid::SPEED_INDICATED_OTHER,
+  pid::SPEED_GROUND, pid::SPEED_GROUND_OTHER, pid::SPEED_TRUE, pid::SPEED_MACH, pid::SPEED_VERTICAL, pid::SPEED_VERTICAL_OTHER,
   pid::DESCENT_DEVIATION, pid::DESCENT_ANGLE_SPEED, pid::ENV_WIND_DIR_SPEED, pid::ENV_TAT, pid::ENV_SAT, pid::ENV_ISA_DEV,
   pid::ENV_SEA_LEVEL_PRESS, pid::ENV_CONDITIONS, pid::ENV_VISIBILITY, pid::POS_COORDINATES});
 
@@ -55,6 +56,29 @@ const static QVector<pid::ProgressConfId> DEFAULTIDS({
 // Always enables coordinate display or other required fields for web interface
 const static QVector<pid::ProgressConfId> ADDITIONAL_WEB_IDS({pid::POS_COORDINATES});
 
+void AircraftProgressConfig::treeDialogItemToggled(atools::gui::TreeDialog *treeDialog, int id, bool checked)
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << id << checked;
+#endif
+
+  if(treeDialog != nullptr)
+  {
+    // Disable related items depending on checkstates
+    pid::ProgressConfId configId = static_cast<pid::ProgressConfId>(id);
+    if(configId == pid::ALT_INDICATED)
+      treeDialog->setItemDisabled(pid::ALT_INDICATED_OTHER, !checked);
+    else if(configId == pid::ALT_ACTUAL)
+      treeDialog->setItemDisabled(pid::ALT_ACTUAL_OTHER, !checked);
+    else if(configId == pid::SPEED_INDICATED)
+      treeDialog->setItemDisabled(pid::SPEED_INDICATED_OTHER, !checked);
+    else if(configId == pid::SPEED_GROUND)
+      treeDialog->setItemDisabled(pid::SPEED_GROUND_OTHER, !checked);
+    else if(configId == pid::SPEED_VERTICAL)
+      treeDialog->setItemDisabled(pid::SPEED_VERTICAL_OTHER, !checked);
+  }
+}
+
 void AircraftProgressConfig::progressConfiguration()
 {
   atools::gui::TreeDialog treeDialog(parent, QCoreApplication::applicationName() + tr(" - Aircraft Progress Configuration"),
@@ -66,6 +90,9 @@ void AircraftProgressConfig::progressConfiguration()
   treeDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
   treeDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
   treeDialog.setHeader({tr("Field or Header"), tr("Description")});
+
+  // Get signals for changed item check states
+  treeDialog.connect(&treeDialog, &atools::gui::TreeDialog::itemToggled, &AircraftProgressConfig::treeDialogItemToggled);
 
   /* *INDENT-OFF* */
   // =====================================================================================================================
@@ -130,19 +157,29 @@ void AircraftProgressConfig::progressConfiguration()
   // Altitude ==========================================================================================================
   QTreeWidgetItem *altitudeItem = treeDialog.addTopItem1(tr("Altitude"));
   treeDialog.addItem2(altitudeItem, pid::ALT_INDICATED,        tr("Indicated"), tr("Indicated altitude considering aircraft barometer setting."));
+  treeDialog.addItem2(altitudeItem, pid::ALT_INDICATED_OTHER,  tr("Indicated Alternate"), tr("Indicated altitude additional display in other\n"
+                                                                                             "than selected default units (ft or m)."));
   treeDialog.addItem2(altitudeItem, pid::ALT_ACTUAL,           tr("Actual"), tr("Actual altitude."));
+  treeDialog.addItem2(altitudeItem, pid::ALT_ACTUAL_OTHER,     tr("Actual Alternate"), tr("Actual altitude additional display in other\n"
+                                                                                          "than selected default units (ft or m)."));
   treeDialog.addItem2(altitudeItem, pid::ALT_ABOVE_GROUND,     tr("Above Ground"), tr("Altitude above ground as reported by simulator."));
   treeDialog.addItem2(altitudeItem, pid::ALT_GROUND_ELEVATION, tr("Ground Elevation"), tr("Ground elevation above normal as reported by simulator."));
   treeDialog.addItem2(altitudeItem, pid::ALT_AUTOPILOT_ALT,    tr("Autopilot Selected"), tr("Preselected altitude in autopilot."));
 
   // Speed ==========================================================================================================
   QTreeWidgetItem *speedItem = treeDialog.addTopItem1(tr("Speed"));
-  treeDialog.addItem2(speedItem, pid::SPEED_INDICATED, tr("Indicated"), tr("Aircraft indicated airspeed.\n"
-                                                                           "Shows orange and red if faster than 250 kts below %L1 ft.").arg(250).arg(10000));
-  treeDialog.addItem2(speedItem, pid::SPEED_GROUND,    tr("Ground"), tr("Aircraft groundspeed."));
-  treeDialog.addItem2(speedItem, pid::SPEED_TRUE,      tr("True Airspeed"), tr("Aircraft true airspeed."));
-  treeDialog.addItem2(speedItem, pid::SPEED_MACH,      tr("Mach"), tr("Aircraft mach number."));
-  treeDialog.addItem2(speedItem, pid::SPEED_VERTICAL,  tr("Vertical"), tr("Aircraft vertical speed."));
+  treeDialog.addItem2(speedItem, pid::SPEED_INDICATED,       tr("Indicated"), tr("Aircraft indicated airspeed.\n"
+                                                                                 "Shows orange and red if faster than %L1 kts below %L2 ft.").arg(250).arg(10000));
+  treeDialog.addItem2(speedItem, pid::SPEED_INDICATED_OTHER, tr("Indicated Alternate"), tr("Aircraft indicated airspeed additional display in other\n"
+                                                                                           "than selected default units (kts, km/h or mph)."));
+  treeDialog.addItem2(speedItem, pid::SPEED_GROUND,          tr("Ground"), tr("Aircraft groundspeed."));
+  treeDialog.addItem2(speedItem, pid::SPEED_GROUND_OTHER,    tr("Ground Alternate"), tr("Aircraft groundspeed additional display in other\n"
+                                                                                        "than selected default units (kts, km/h or mph)."));
+  treeDialog.addItem2(speedItem, pid::SPEED_TRUE,            tr("True Airspeed"), tr("Aircraft true airspeed."));
+  treeDialog.addItem2(speedItem, pid::SPEED_MACH,            tr("Mach"), tr("Aircraft mach number."));
+  treeDialog.addItem2(speedItem, pid::SPEED_VERTICAL,        tr("Vertical"), tr("Aircraft vertical speed."));
+  treeDialog.addItem2(speedItem, pid::SPEED_VERTICAL_OTHER,  tr("Vertical Alternate"), tr("Aircraft vertical speed additional display in other\n"
+                                                                                          "than selected default units (fpm or m/s)."));
 
   // Descent ==========================================================================================================
   QTreeWidgetItem *descentItem = treeDialog.addTopItem1(tr("Descent Path"));

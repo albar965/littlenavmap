@@ -174,8 +174,7 @@ void ProfileWidget::aircraftTrackPruned()
 float ProfileWidget::aircraftAlt(const atools::fs::sc::SimConnectUserAircraft& aircraft)
 {
   return aircraft.getIndicatedAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT ?
-         aircraft.getIndicatedAltitudeFt() :
-         aircraft.getPosition().getAltitude();
+         aircraft.getIndicatedAltitudeFt() : aircraft.getActualAltitudeFt();
 }
 
 void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)

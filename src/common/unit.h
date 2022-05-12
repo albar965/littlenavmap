@@ -96,6 +96,10 @@ public:
 
   /* Speed: Returns either kts, km/h or m/h */
   static QString speedKts(float value, bool addUnit = true, bool narrow = false);
+
+  /* Get the other available two units except the currently selected one. */
+  static QStringList speedKtsOther(float value, bool addUnit = true, bool narrow = false);
+
   static float speedKtsF(float value);
   static QString speedMeterPerSec(float value, bool addUnit = true, bool narrow = false);
   static float speedMeterPerSecF(float value = true);
@@ -103,9 +107,15 @@ public:
   static QString speedVertFpm(float value, bool addUnit = true);
   static float speedVertFpmF(float value);
 
+  /* Speed: Returns either ft/m or m/s */
+  static QString speedVertFpmOther(float value, bool addUnit = true);
+
   /* Altitude: Returns either meter or feet */
   static QString altMeter(float value, bool addUnit = true, bool narrow = false, float round = 0.f);
   static QString altFeet(float value, bool addUnit = true, bool narrow = false, float round = 0.f);
+
+  /* Get the other unit ft vs. meter and vice versa */
+  static QString altFeetOther(float value, bool addUnit = true, bool narrow = false, float round = 0.f);
 
   static float altMeterF(float value);
   static float altFeetF(float value);

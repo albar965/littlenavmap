@@ -23,6 +23,12 @@
 #include <QCoreApplication>
 #include <QBitArray>
 
+namespace atools {
+namespace gui {
+class TreeDialog;
+}
+}
+
 /*
  * Stores and saves data field visibility flags in aircraft progress dialog.
  * Uses a tree dialog to show fields and description.
@@ -55,6 +61,9 @@ public:
 
 private:
   void updateBits();
+
+  /* Connected to tree widget and sent if checkbox state changes */
+  static void treeDialogItemToggled(atools::gui::TreeDialog *treeDialog, int id, bool checked);
 
   /* List of enums which are enabled */
   QVector<pid::ProgressConfId> enabledIds;

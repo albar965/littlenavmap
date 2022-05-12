@@ -2338,7 +2338,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                           almostNotEqual(last.getIndicatedSpeedKts(),
                                          aircraft.getIndicatedSpeedKts(), deltas.speedDelta) || // Speed has changed
                           almostNotEqual(last.getPosition().getAltitude(),
-                                         aircraft.getPosition().getAltitude(), deltas.altitudeDelta); // Altitude has changed
+                                         aircraft.getActualAltitudeFt(), deltas.altitudeDelta); // Altitude has changed
 
     // Force an update every five seconds to avoid hanging map view if aircraft does not move on map
     if(now - lastSimUpdateMs > 5000)

@@ -213,7 +213,7 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, int size, const SimCo
         QString upDown;
         if(!context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK))
           climbSinkPointer(upDown, aircraft);
-        texts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getPosition().getAltitude())).arg(upDown));
+        texts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getActualAltitudeFt())).arg(upDown));
       }
     }
 
@@ -262,7 +262,7 @@ void MapPainterVehicle::paintTextLabelUser(float x, float y, int size, const Sim
       altText.append(tr("IND %1").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())));
 
     if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ALTITUDE))
-      altText.append(tr("ALT %1").arg(Unit::altFeet(aircraft.getPosition().getAltitude())));
+      altText.append(tr("ALT %1").arg(Unit::altFeet(aircraft.getActualAltitudeFt())));
 
     if(!aircraft.isOnGround() && context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ALT_ABOVE_GROUND))
       altText.append(tr("AGL %1").arg(Unit::altFeet(aircraft.getAltitudeAboveGroundFt())));

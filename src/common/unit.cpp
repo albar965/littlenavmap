@@ -23,6 +23,8 @@
 
 #include <QStringBuilder>
 
+namespace ageo = atools::geo;
+
 const static QString COORDS_DEC_FORMAT_LONX("%L1° %L2");
 const static QString COORDS_DEC_FORMAT_LATY("%L1° %L2");
 const static QString COORDS_DMS_FORMAT_LONX("%L1° %L2' %L3\" %L4");
@@ -191,7 +193,7 @@ QString Unit::distMeter(float value, bool addUnit, int minValPrec, bool narrow)
 
 QString Unit::distNm(float value, bool addUnit, int minValPrec, bool narrow)
 {
-  return distMeter(atools::geo::nmToMeter(value), addUnit, minValPrec, narrow);
+  return distMeter(ageo::nmToMeter(value), addUnit, minValPrec, narrow);
 }
 
 float Unit::distMeterF(float value)
@@ -199,20 +201,20 @@ float Unit::distMeterF(float value)
   switch(unitDist)
   {
     case opts::DIST_NM:
-      return atools::geo::meterToNm(value);
+      return ageo::meterToNm(value);
 
     case opts::DIST_KM:
       return value / 1000.f;
 
     case opts::DIST_MILES:
-      return atools::geo::meterToMi(value);
+      return ageo::meterToMi(value);
   }
   return 0.f;
 }
 
 float Unit::distNmF(float value)
 {
-  return distMeterF(atools::geo::nmToMeter(value));
+  return distMeterF(ageo::nmToMeter(value));
 }
 
 QString Unit::distShortMeter(float value, bool addUnit, bool narrow)
@@ -222,12 +224,12 @@ QString Unit::distShortMeter(float value, bool addUnit, bool narrow)
 
 QString Unit::distShortNm(float value, bool addUnit, bool narrow)
 {
-  return distShortMeter(atools::geo::nmToMeter(value), addUnit, narrow);
+  return distShortMeter(ageo::nmToMeter(value), addUnit, narrow);
 }
 
 QString Unit::distShortFeet(float value, bool addUnit, bool narrow)
 {
-  return distShortMeter(atools::geo::feetToMeter(value), addUnit, narrow);
+  return distShortMeter(ageo::feetToMeter(value), addUnit, narrow);
 }
 
 float Unit::distShortMeterF(float value)
@@ -235,7 +237,7 @@ float Unit::distShortMeterF(float value)
   switch(unitShortDist)
   {
     case opts::DIST_SHORT_FT:
-      return atools::geo::meterToFeet(value);
+      return ageo::meterToFeet(value);
 
     case opts::DIST_SHORT_METER:
       return value;
@@ -245,17 +247,39 @@ float Unit::distShortMeterF(float value)
 
 float Unit::distShortNmF(float value)
 {
-  return distShortMeterF(atools::geo::nmToMeter(value));
+  return distShortMeterF(ageo::nmToMeter(value));
 }
 
 float Unit::distShortFeetF(float value)
 {
-  return distShortMeterF(atools::geo::feetToMeter(value));
+  return distShortMeterF(ageo::feetToMeter(value));
 }
 
 QString Unit::speedKts(float value, bool addUnit, bool narrow)
 {
   return u(speedKtsF(value), unitSpeedStr, addUnit, narrow);
+}
+
+QStringList Unit::speedKtsOther(float value, bool addUnit, bool narrow)
+{
+  switch(unitSpeed)
+  {
+    case opts::SPEED_KTS:
+      // Default is kts and kts input - print km/h and mph
+      return {u(ageo::nmToKm(value), suffixSpeedKmH, addUnit, narrow),
+              u(ageo::nmToMi(value), suffixSpeedMph, addUnit, narrow)};
+
+    case opts::SPEED_KMH:
+      // Default is km/h and kts input - print kts and mph
+      return {u(value, suffixSpeedKts, addUnit, narrow),
+              u(ageo::nmToMi(value), suffixSpeedMph, addUnit, narrow)};
+
+    case opts::SPEED_MPH:
+      // Default is mph and kts input - print kts and km/h
+      return {u(value, suffixSpeedKts, addUnit, narrow),
+              u(ageo::nmToKm(value), suffixSpeedKmH, addUnit, narrow)};
+  }
+  return QStringList();
 }
 
 float Unit::speedKtsF(float value)
@@ -266,10 +290,10 @@ float Unit::speedKtsF(float value)
       return value;
 
     case opts::SPEED_KMH:
-      return atools::geo::nmToKm(value);
+      return ageo::nmToKm(value);
 
     case opts::SPEED_MPH:
-      return atools::geo::nmToMi(value);
+      return ageo::nmToMi(value);
   }
   return 0.f;
 }
@@ -284,13 +308,13 @@ float Unit::speedMeterPerSecF(float value)
   switch(unitSpeed)
   {
     case opts::SPEED_KTS:
-      return atools::geo::meterToNm(value * 3600.f);
+      return ageo::meterToNm(value * 3600.f);
 
     case opts::SPEED_KMH:
       return value * 3.6f;
 
     case opts::SPEED_MPH:
-      return atools::geo::meterToMi(value * 3600.f);
+      return ageo::meterToMi(value * 3600.f);
   }
   return 0.f;
 }
@@ -303,7 +327,7 @@ QString Unit::speedVertFpm(float value, bool addUnit)
       return locale->toString(value, 'f', 0) % (addUnit ? " " % unitVertSpeedStr : QString());
 
     case opts::VERT_SPEED_MS:
-      return locale->toString(atools::geo::feetToMeter(value) / 60.f, 'f', 1) % (addUnit ? " " % unitVertSpeedStr : QString());
+      return locale->toString(ageo::feetToMeter(value) / 60.f, 'f', 2) % (addUnit ? " " % unitVertSpeedStr : QString());
   }
   return QString();
 }
@@ -316,9 +340,25 @@ float Unit::speedVertFpmF(float value)
       return value;
 
     case opts::VERT_SPEED_MS:
-      return atools::geo::feetToMeter(value) / 60.f;
+      return ageo::feetToMeter(value) / 60.f;
   }
   return 0.f;
+}
+
+QString Unit::speedVertFpmOther(float value, bool addUnit)
+{
+  switch(unitVertSpeed)
+  {
+    case opts::VERT_SPEED_FPM:
+      // Default is ft/m and ft/m input - print m/s
+      return locale->toString(ageo::feetToMeter(value) / 60.f, 'f', 2) % (addUnit ? " " % suffixVertSpeedMs : QString());
+
+    case opts::VERT_SPEED_MS:
+      // Default is m/s and ft/m input - print ft/m
+      return locale->toString(value, 'f', 0) % (addUnit ? " " % suffixVertSpeedFpm : QString());
+  }
+  return QString();
+
 }
 
 QString Unit::altMeter(float value, bool addUnit, bool narrow, float round)
@@ -328,7 +368,22 @@ QString Unit::altMeter(float value, bool addUnit, bool narrow, float round)
 
 QString Unit::altFeet(float value, bool addUnit, bool narrow, float round)
 {
-  return altMeter(atools::geo::feetToMeter(value), addUnit, narrow, round);
+  return altMeter(ageo::feetToMeter(value), addUnit, narrow, round);
+}
+
+QString Unit::altFeetOther(float value, bool addUnit, bool narrow, float round)
+{
+  switch(unitAlt)
+  {
+    case opts::ALT_FT:
+      // Default is ft and ft input - print meter
+      return u(atools::roundToNearest(ageo::feetToMeter(value), round), suffixAltMeter, addUnit, narrow);
+
+    case opts::ALT_METER:
+      // Default is meter and ft input - print ft
+      return u(atools::roundToNearest(value, round), suffixAltFt, addUnit, narrow);
+  }
+  return QString();
 }
 
 float Unit::altMeterF(float value)
@@ -336,7 +391,7 @@ float Unit::altMeterF(float value)
   switch(unitAlt)
   {
     case opts::ALT_FT:
-      return atools::geo::meterToFeet(value);
+      return ageo::meterToFeet(value);
 
     case opts::ALT_METER:
       return value;
@@ -346,12 +401,12 @@ float Unit::altMeterF(float value)
 
 float Unit::altFeetF(float value)
 {
-  return altMeterF(atools::geo::feetToMeter(value));
+  return altMeterF(ageo::feetToMeter(value));
 }
 
 int Unit::altFeetI(int value)
 {
-  return atools::roundToInt(altMeterF(atools::geo::feetToMeter(value)));
+  return atools::roundToInt(altMeterF(ageo::feetToMeter(value)));
 }
 
 QString Unit::volGallon(float value, bool addUnit)
@@ -453,7 +508,7 @@ QString Unit::weightLbsLocalOther(float valueLbs, bool localBold, bool otherSmal
         // lbs (kg)
         return localOtherText(localBold, otherSmall).
                arg(u(valueLbs, suffixFuelWeightLbs, true)).
-               arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true));
+               arg(u(ageo::lbsToKg(valueLbs), suffixFuelWeightKg, true));
       else
         // lbs only
         return localOtherText(localBold, otherSmall).
@@ -463,12 +518,12 @@ QString Unit::weightLbsLocalOther(float valueLbs, bool localBold, bool otherSmal
       if(showOtherFuel)
         // kg (lbs)
         return localOtherText(localBold, otherSmall).
-               arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
+               arg(u(ageo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
                arg(u(valueLbs, suffixFuelWeightLbs, true));
       else
         // kg only
         return localOtherText(localBold, otherSmall).
-               arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true));
+               arg(u(ageo::lbsToKg(valueLbs), suffixFuelWeightKg, true));
   }
   return QString();
 }
@@ -483,8 +538,8 @@ QString Unit::fuelLbsAndGalLocalOther(float valueLbs, float valueGal, bool local
         return localOtherText2(localBold, otherSmall).
                arg(u(valueLbs, suffixFuelWeightLbs, true)).
                arg(u(valueGal, suffixFuelVolGal, true)).
-               arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
-               arg(u(atools::geo::gallonToLiter(valueGal), suffixFuelVolLiter, true));
+               arg(u(ageo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
+               arg(u(ageo::gallonToLiter(valueGal), suffixFuelVolLiter, true));
       else
         // lbs, gal only
         return localOtherText2(localBold, otherSmall).
@@ -495,15 +550,15 @@ QString Unit::fuelLbsAndGalLocalOther(float valueLbs, float valueGal, bool local
       if(showOtherFuel)
         // kg, liter (lbs, gal)
         return localOtherText2(localBold, otherSmall).
-               arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
-               arg(u(atools::geo::gallonToLiter(valueGal), suffixFuelVolLiter, true)).
+               arg(u(ageo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
+               arg(u(ageo::gallonToLiter(valueGal), suffixFuelVolLiter, true)).
                arg(u(valueLbs, suffixFuelWeightLbs, true)).
                arg(u(valueGal, suffixFuelVolGal, true));
       else
         // kg, liter only
         return localOtherText2(localBold, otherSmall).
-               arg(u(atools::geo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
-               arg(u(atools::geo::gallonToLiter(valueGal), suffixFuelVolLiter, true));
+               arg(u(ageo::lbsToKg(valueLbs), suffixFuelWeightKg, true)).
+               arg(u(ageo::gallonToLiter(valueGal), suffixFuelVolLiter, true));
   }
   return QString();
 }
@@ -624,12 +679,12 @@ QString Unit::adjustNum(QString num)
   return num;
 }
 
-QString Unit::coords(const atools::geo::Pos& pos)
+QString Unit::coords(const ageo::Pos& pos)
 {
   return coords(pos, unitCoords);
 }
 
-QString Unit::coords(const atools::geo::Pos& pos, opts::UnitCoords coordUnit)
+QString Unit::coords(const ageo::Pos& pos, opts::UnitCoords coordUnit)
 {
   if(!pos.isValid())
     return QObject::tr("Invalid");
@@ -642,12 +697,12 @@ QString Unit::coords(const atools::geo::Pos& pos, opts::UnitCoords coordUnit)
     return tr("%1 %2").arg(coordsLatY(pos, coordUnit)).arg(coordsLonX(pos, coordUnit));
 }
 
-QString Unit::coordsLonX(const atools::geo::Pos& pos)
+QString Unit::coordsLonX(const ageo::Pos& pos)
 {
   return coordsLonX(pos, unitCoords);
 }
 
-QString Unit::coordsLonX(const atools::geo::Pos& pos, opts::UnitCoords coordUnit)
+QString Unit::coordsLonX(const ageo::Pos& pos, opts::UnitCoords coordUnit)
 {
   if(!pos.isValid())
     return QObject::tr("Invalid");
@@ -679,12 +734,12 @@ QString Unit::coordsLonX(const atools::geo::Pos& pos, opts::UnitCoords coordUnit
   return QString();
 }
 
-QString Unit::coordsLatY(const atools::geo::Pos& pos)
+QString Unit::coordsLatY(const ageo::Pos& pos)
 {
   return coordsLatY(pos, unitCoords);
 }
 
-QString Unit::coordsLatY(const atools::geo::Pos& pos, opts::UnitCoords coordUnit)
+QString Unit::coordsLatY(const ageo::Pos& pos, opts::UnitCoords coordUnit)
 {
   if(!pos.isValid())
     return QObject::tr("Invalid");
@@ -825,12 +880,12 @@ void Unit::optionsChanged()
 
 float Unit::fromUsToMetric(float value, bool fuelAsVolume)
 {
-  return fuelAsVolume ? atools::geo::gallonToLiter(value) : atools::geo::lbsToKg(value);
+  return fuelAsVolume ? ageo::gallonToLiter(value) : ageo::lbsToKg(value);
 }
 
 float Unit::fromMetricToUs(float value, bool fuelAsVolume)
 {
-  return fuelAsVolume ? atools::geo::literToGallon(value) : atools::geo::kgToLbs(value);
+  return fuelAsVolume ? ageo::literToGallon(value) : ageo::kgToLbs(value);
 }
 
 float Unit::fromCopy(float value, bool)
