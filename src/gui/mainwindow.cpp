@@ -1351,14 +1351,12 @@ void MainWindow::connectAllSlots()
   // Let projection menus update combo boxes
   connect(ui->actionMapProjectionMercator, &QAction::triggered, this, [ = ](bool checked)
   {
-    if(checked)
-      mapProjectionComboBox->setCurrentIndex(0);
+    mapProjectionComboBox->setCurrentIndex(checked ? 0 : 1);
   });
 
   connect(ui->actionMapProjectionSpherical, &QAction::triggered, this, [ = ](bool checked)
   {
-    if(checked)
-      mapProjectionComboBox->setCurrentIndex(1);
+    mapProjectionComboBox->setCurrentIndex(checked ? 1 : 0);
   });
 
   // Window menu ======================================
@@ -1768,8 +1766,13 @@ void MainWindow::changeMapProjection(int index)
   mapWidget->setProjection(proj);
 
   // Update menu items
+  ui->actionMapProjectionMercator->blockSignals(true);
   ui->actionMapProjectionMercator->setChecked(proj == Marble::Mercator);
+  ui->actionMapProjectionMercator->blockSignals(false);
+
+  ui->actionMapProjectionSpherical->blockSignals(true);
   ui->actionMapProjectionSpherical->setChecked(proj == Marble::Spherical);
+  ui->actionMapProjectionSpherical->blockSignals(false);
 
   setStatusMessage(tr("Map projection changed to %1.").arg(mapProjectionComboBox->currentText()));
 }
@@ -3797,13 +3800,15 @@ void MainWindow::restoreStateMain()
     mapWidget->resetSettingActionsToDefault();
 
   // Map settings that are always loaded
-  widgetState.restore({mapProjectionComboBox, ui->actionMapShowGrid, ui->actionMapShowCities,
-                       ui->actionRouteEditMode, ui->actionRouteSaveSidStarWaypoints,
+  widgetState.restore({ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionRouteEditMode, ui->actionRouteSaveSidStarWaypoints,
                        ui->actionRouteSaveApprWaypoints, ui->actionRouteSaveAirwayWaypoints, ui->actionLogdataCreateLogbook,
                        ui->actionMapShowSunShading, ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude,
                        ui->actionRunWebserver, ui->actionShowAllowDocking, ui->actionShowAllowMoving, ui->actionWindowStayOnTop});
 
   widgetState.setBlockSignals(false);
+
+  // Need to update menu items by signal
+  widgetState.restore(mapProjectionComboBox);
 
   firstApplicationStart = settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
 
