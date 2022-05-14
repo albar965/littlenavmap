@@ -2999,8 +2999,8 @@ void MapWidget::resetSettingActionsToDefault()
                                       ui->actionShowAirspaces, ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft,
                                       ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach, ui->actionMapShowEndurance,
                                       ui->actionMapShowSelectedAltRange, ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi,
-                                      ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
-                                      ui->actionMapShowGrid, ui->actionMapShowCities,
+                                      ui->actionMapShowAircraftOnline, ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack,
+                                      ui->actionInfoApproachShowMissedAppr, ui->actionMapShowGrid, ui->actionMapShowCities,
                                       ui->actionMapShowMinimumAltitude, ui->actionMapShowAirportWeather, ui->actionMapShowSunShading});
 
   // Menu map =====================================
@@ -3038,6 +3038,7 @@ void MapWidget::resetSettingActionsToDefault()
 
   // -----------------
   ui->actionMapShowAircraftAi->setChecked(true);
+  ui->actionMapShowAircraftOnline->setChecked(true);
   ui->actionMapShowAircraftAiBoat->setChecked(false);
 
   // -----------------
@@ -3122,6 +3123,7 @@ void MapWidget::updateMapObjectsShown()
   setShowMapObject(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
   setShowMapObjectDisplay(map::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
   setShowMapObject(map::AIRCRAFT_AI, ui->actionMapShowAircraftAi->isEnabled() && ui->actionMapShowAircraftAi->isChecked());
+  setShowMapObject(map::AIRCRAFT_ONLINE, ui->actionMapShowAircraftOnline->isEnabled() && ui->actionMapShowAircraftOnline->isChecked());
   setShowMapObject(map::AIRCRAFT_AI_SHIP, ui->actionMapShowAircraftAiBoat->isEnabled() && ui->actionMapShowAircraftAiBoat->isChecked());
 
   // Display types which are not used in structs

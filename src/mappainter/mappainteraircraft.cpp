@@ -57,27 +57,34 @@ void MapPainterAircraft::render()
   const atools::geo::Pos& pos = userAircraft.getPosition();
 
   // Draw AI and online aircraft - not boats ====================================================================
-  if(context->objectTypes & map::AIRCRAFT_AI)
+  if(context->objectTypes.testFlag(map::AIRCRAFT_AI) || context->objectTypes.testFlag(map::AIRCRAFT_ONLINE))
   {
     // Merge simulator aircraft and online aircraft
     QVector<const atools::fs::sc::SimConnectAircraft *> allAircraft;
     bool overflow = false;
 
-    // Filters duplicates from simulator and user aircraft out
-    const QList<atools::fs::sc::SimConnectAircraft> *onlineAircraft = NavApp::getOnlinedataController()->getAircraft(
-      context->viewport->viewLatLonAltBox(), context->mapLayer, context->lazyUpdate, overflow);
-
-    context->setQueryOverflow(overflow);
-
-    for(const atools::fs::sc::SimConnectAircraft& ac : *onlineAircraft)
-      allAircraft.append(&ac);
-
-    if(NavApp::isConnected() || mapPaintWidget->getUserAircraft().isDebug())
+    if(context->objectTypes.testFlag(map::AIRCRAFT_ONLINE))
     {
-      for(const SimConnectAircraft& ac : mapPaintWidget->getAiAircraft())
+      // Filters duplicates from simulator and user aircraft out
+      const QList<atools::fs::sc::SimConnectAircraft> *onlineAircraft =
+        NavApp::getOnlinedataController()->getAircraft(context->viewport->viewLatLonAltBox(),
+                                                       context->mapLayer, context->lazyUpdate, overflow);
+
+      context->setQueryOverflow(overflow);
+
+      for(const atools::fs::sc::SimConnectAircraft& ac : *onlineAircraft)
+        allAircraft.append(&ac);
+    }
+
+    if(context->objectTypes.testFlag(map::AIRCRAFT_AI))
+    {
+      if(NavApp::isConnected() || mapPaintWidget->getUserAircraft().isDebug())
       {
-        if(!ac.isAnyBoat())
-          allAircraft.append(&ac);
+        for(const SimConnectAircraft& ac : mapPaintWidget->getAiAircraft())
+        {
+          if(!ac.isAnyBoat())
+            allAircraft.append(&ac);
+        }
       }
     }
 

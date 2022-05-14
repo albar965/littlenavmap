@@ -427,6 +427,7 @@
     <addaction name="actionMapShowCompassRoseAttach"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowAircraftAi"/>
+    <addaction name="actionMapShowAircraftOnline"/>
     <addaction name="actionMapShowAircraftAiBoat"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowGrid"/>
@@ -5701,6 +5702,7 @@ relation to shown airport</string>
    <addaction name="actionMapShowCompassRose"/>
    <addaction name="separator"/>
    <addaction name="actionMapShowAircraftAi"/>
+   <addaction name="actionMapShowAircraftOnline"/>
    <addaction name="actionMapShowAircraftAiBoat"/>
    <addaction name="separator"/>
    <addaction name="actionMapShowGrid"/>
@@ -8734,13 +8736,13 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/aircraftai.svg</normaloff>:/littlenavmap/resources/icons/aircraftai.svg</iconset>
    </property>
    <property name="text">
-    <string>Show AI and &amp;Multiplayer Aircraft</string>
+    <string>Show &amp;AI and &amp;Multiplayer Aircraft</string>
    </property>
    <property name="toolTip">
-    <string>Show simulator AI, multiplayer and online client aircraft position and data on map</string>
+    <string>Show simulator AI and multiplayer aircraft position and data on map</string>
    </property>
    <property name="statusTip">
-    <string>Show simulator AI, multiplayer and online client aircraft position and data on map</string>
+    <string>Show simulator AI and multiplayer aircraft position and data on map</string>
    </property>
   </action>
   <action name="actionPrintMap">
@@ -12391,6 +12393,27 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Show or hide scrollbars around the elevation profile</string>
    </property>
   </action>
+  <action name="actionMapShowAircraftOnline">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/aircraftonline.svg</normaloff>:/littlenavmap/resources/icons/aircraftonline.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show &amp;Online Aircraft</string>
+   </property>
+   <property name="toolTip">
+    <string>Show online client aircraft position and data on map</string>
+   </property>
+   <property name="statusTip">
+    <string>Show online client aircraft position and data on map</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12572,8 +12595,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalc"/>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
  </buttongroups>
 </ui>

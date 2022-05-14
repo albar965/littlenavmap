@@ -3518,7 +3518,7 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
   if(aircraft.isUser())
   {
     aircraftText = typeText;
-    if(info && !(NavApp::getShownMapFeatures() & map::AIRCRAFT))
+    if(info && !(NavApp::getShownMapFeatures().testFlag(map::AIRCRAFT)))
       html.p(tr("User aircraft is not shown on map."), ahtml::BOLD);
   }
   else
@@ -3528,8 +3528,11 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
     else
       aircraftText = typeText;
 
-    if(info && num == 1 && !(NavApp::getShownMapFeatures() & map::AIRCRAFT_AI))
+    if(info && num == 1 && !(NavApp::getShownMapFeatures().testFlag(map::AIRCRAFT_AI)))
       html.p(tr("No %2 shown on map.").arg(typeText), ahtml::BOLD);
+
+    if(info && num == 1 && !(NavApp::getShownMapFeatures().testFlag(map::AIRCRAFT_ONLINE)))
+      html.p(tr("No online aircraft shown on map."), ahtml::BOLD);
   }
 
   head(html, aircraftText);

@@ -1410,6 +1410,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowSelectedAltRange, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraft, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftAi, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowAircraftOnline, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftAiBoat, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAircraftTrack, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionShowAirspaces, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -1485,6 +1486,7 @@ void MainWindow::connectAllSlots()
   // Update information after updateMapObjectsShownr updated the flags ============================
   connect(ui->actionMapShowAircraft, &QAction::toggled, infoController, &InfoController::updateAllInformation);
   connect(ui->actionMapShowAircraftAi, &QAction::toggled, infoController, &InfoController::updateAllInformation);
+  connect(ui->actionMapShowAircraftOnline, &QAction::toggled, infoController, &InfoController::updateAllInformation);
   connect(ui->actionMapShowAircraftAiBoat, &QAction::toggled, infoController, &InfoController::updateAllInformation);
 
   // Order is important here. First let the mapwidget delete the track then notify the profile
@@ -3580,6 +3582,7 @@ void MainWindow::updateActionStates()
   ui->actionMapAircraftCenter->setEnabled(true);
   ui->actionMapAircraftCenterNow->setEnabled(true);
   ui->actionMapShowAircraftAi->setEnabled(true);
+  ui->actionMapShowAircraftOnline->setEnabled(true);
   ui->actionMapShowAircraftAiBoat->setEnabled(true);
 #else
   ui->actionMapShowAircraft->setEnabled(NavApp::isConnected());
@@ -3587,8 +3590,8 @@ void MainWindow::updateActionStates()
   ui->actionMapAircraftCenterNow->setEnabled(NavApp::isConnected());
 
   // AI, multiplayer or online clients
-  ui->actionMapShowAircraftAi->setEnabled((NavApp::isConnected() && NavApp::isFetchAiAircraft()) ||
-                                          NavApp::getOnlinedataController()->isNetworkActive());
+  ui->actionMapShowAircraftAi->setEnabled(NavApp::isConnected() && NavApp::isFetchAiAircraft());
+  ui->actionMapShowAircraftOnline->setEnabled(NavApp::getOnlinedataController()->isNetworkActive());
 
   ui->actionMapShowAircraftAiBoat->setEnabled(NavApp::isConnected() && NavApp::isFetchAiShip());
 #endif
@@ -3792,9 +3795,9 @@ void MainWindow::restoreStateMain()
                          ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks, ui->actionShowAirspaces,
                          ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
                          ui->actionMapShowCompassRoseAttach, ui->actionMapShowEndurance, ui->actionMapShowSelectedAltRange,
-                         ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
-                         ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr, ui->actionSearchLogdataShowDirect,
-                         ui->actionSearchLogdataShowRoute, ui->actionSearchLogdataShowTrack});
+                         ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi, ui->actionMapShowAircraftOnline,
+                         ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
+                         ui->actionSearchLogdataShowDirect, ui->actionSearchLogdataShowRoute, ui->actionSearchLogdataShowTrack});
   }
   else
     mapWidget->resetSettingActionsToDefault();
@@ -4018,9 +4021,9 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks, ui->actionShowAirspaces,
                     ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,
                     ui->actionMapShowCompassRoseAttach, ui->actionMapShowEndurance, ui->actionMapShowSelectedAltRange,
-                    ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi, ui->actionMapShowAircraftAiBoat,
-                    ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr, ui->actionMapShowGrid, ui->actionMapShowCities,
-                    ui->actionMapShowSunShading, ui->actionMapShowAirportWeather,
+                    ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi, ui->actionMapShowAircraftOnline,
+                    ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
+                    ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowSunShading, ui->actionMapShowAirportWeather,
                     ui->actionMapShowMinimumAltitude, ui->actionRouteEditMode, ui->actionRouteSaveSidStarWaypoints,
                     ui->actionRouteSaveApprWaypoints, ui->actionRouteSaveAirwayWaypoints, ui->actionLogdataCreateLogbook,
                     ui->actionRunWebserver, ui->actionSearchLogdataShowDirect, ui->actionSearchLogdataShowRoute,
