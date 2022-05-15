@@ -149,8 +149,8 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other)
   screenIndex->copy(*other.screenIndex);
 
   // Copy all MarbleWidget settings - some on demand to avoid overhead
-  if(projection() != other.projection())
-    setProjection(other.projection());
+  if(projection() != Marble::Mercator)
+    setProjection(Marble::Mercator);
 
   if(mapThemeId() != other.mapThemeId())
     setTheme(other.mapThemeId(), other.currentThemeId);
