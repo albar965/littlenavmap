@@ -413,6 +413,9 @@ public:
     return currentThemeId;
   }
 
+  /* Too many objects on map */
+  bool isPaintOverflow() const;
+
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
   void resultTruncated();

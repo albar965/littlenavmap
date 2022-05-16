@@ -115,8 +115,6 @@ protected:
   virtual QWidget *createWidget(QWidget *parent) override;
   virtual void deleteWidget(QWidget *widget) override;
 
-  void sliderValueChanged(int value);
-
   /* minmum and maximum values in local unit (ft or meter) */
   int minValue() const; /* Unlimited */
   int maxValue() const;

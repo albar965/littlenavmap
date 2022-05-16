@@ -23,6 +23,7 @@
 #include "options/optiondata.h"
 #include "settings/settings.h"
 #include "mapgui/maplayersettings.h"
+#include "mapgui/mappaintwidget.h"
 #include "ui_mainwindow.h"
 
 #include <QWidgetAction>
@@ -68,7 +69,7 @@ QWidget *DetailSliderAction::createWidget(QWidget *parent)
   slider->setValue(sliderValue);
   slider->setToolTip(tr("Set detail level for map display (also \"Ctrl++\", \"Ctrl+-\" or \"Ctrl+Wheel\")."));
 
-  connect(slider, &QSlider::valueChanged, this, &DetailSliderAction::sliderValueChanged);
+  connect(slider, &QSlider::valueChanged, this, &DetailSliderAction::setSliderValue);
   connect(slider, &QSlider::valueChanged, this, &DetailSliderAction::valueChanged);
   connect(slider, &QSlider::sliderReleased, this, &DetailSliderAction::sliderReleased);
 
@@ -82,18 +83,12 @@ void DetailSliderAction::deleteWidget(QWidget *widget)
   QSlider *slider = dynamic_cast<QSlider *>(widget);
   if(slider != nullptr)
   {
-    disconnect(slider, &QSlider::valueChanged, this, &DetailSliderAction::sliderValueChanged);
+    disconnect(slider, &QSlider::valueChanged, this, &DetailSliderAction::setSliderValue);
     disconnect(slider, &QSlider::valueChanged, this, &DetailSliderAction::valueChanged);
     disconnect(slider, &QSlider::sliderReleased, this, &DetailSliderAction::sliderReleased);
     sliders.removeAll(slider);
     delete widget;
   }
-}
-
-void DetailSliderAction::sliderValueChanged(int value)
-{
-  sliderValue = value;
-  setSliderValue(value);
 }
 
 int DetailSliderAction::minValue() const
@@ -290,7 +285,7 @@ void MapDetailHandler::defaultMapDetail()
   {
     sliderActionDetailLevel->reset();
     updateActions();
-    emit updateDetailLevel(curLevel);
+    emit updateDetailLevel(getDetailLevel());
   }
 }
 
@@ -301,7 +296,7 @@ void MapDetailHandler::increaseMapDetail()
   {
     sliderActionDetailLevel->setSliderValue(curLevel + 1);
     updateActions();
-    emit updateDetailLevel(curLevel);
+    emit updateDetailLevel(getDetailLevel());
   }
 }
 
@@ -312,6 +307,6 @@ void MapDetailHandler::decreaseMapDetail()
   {
     sliderActionDetailLevel->setSliderValue(curLevel - 1);
     updateActions();
-    emit updateDetailLevel(curLevel);
+    emit updateDetailLevel(getDetailLevel());
   }
 }

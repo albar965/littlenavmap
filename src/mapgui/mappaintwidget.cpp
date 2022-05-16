@@ -420,6 +420,11 @@ QVector<map::MapObjectRef> *MapPaintWidget::getRouteDrawnNavaids()
   return screenIndex->getRouteDrawnNavaids();
 }
 
+bool MapPaintWidget::isPaintOverflow() const
+{
+  return paintLayer->isObjectOverflow() || paintLayer->isQueryOverflow();
+}
+
 void MapPaintWidget::setShowMapObjects(map::MapTypes type, map::MapTypes mask)
 {
   paintLayer->setShowMapObjects(type, mask);
