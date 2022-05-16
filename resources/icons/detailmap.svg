@@ -1540,20 +1540,27 @@
      id="path12038"
      style="fill:url(#linearGradient4543);fill-rule:evenodd;stroke:url(#linearGradient4565);stroke-width:2.06848;stroke-linejoin:round"
      d="m 27.935805,2.493644 v 10.34241 h 12.410892 c 0,-1.730471 -9.971117,-10.3128307 -12.410892,-10.34241 z" />
-  <text
-     xml:space="preserve"
-     style="font-style:normal;font-weight:normal;font-size:25.6877px;line-height:125%;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.15348;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
-     x="6.6980224"
-     y="21.137144"
-     id="text5408"><tspan
-       sodipodi:role="line"
-       id="tspan5406"
-       x="6.6980224"
-       y="21.137144"
-       style="font-style:normal;font-variant:normal;font-weight:bold;font-stretch:normal;font-family:sans-serif;-inkscape-font-specification:'sans-serif Bold';fill:#000000;fill-opacity:1;stroke:#000000;stroke-width:1.15348;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1">+/-</tspan></text>
+  <g
+     aria-label="+/-"
+     id="text5408"
+     style="font-size:25.6877px;line-height:125%;letter-spacing:0px;word-spacing:0px;stroke:#000000;stroke-width:1.15348"
+     transform="translate(12.284748,-2.5220327)">
+    <path
+       d="M 0.24214331,12.435683 H 5.0971183 v 2.748585 H 0.24214331 v 4.829287 H -2.5064407 v -4.829287 h -4.854976 v -2.748585 h 4.854976 V 7.5550204 h 2.74858401 z"
+       style="font-weight:bold;-inkscape-font-specification:'sans-serif Bold'"
+       id="path1235" />
+    <path
+       d="M 16.707923,4.5238724 9.8749953,22.86489 h -3.46784 L 13.240084,4.5238724 Z"
+       style="font-weight:bold;-inkscape-font-specification:'sans-serif Bold'"
+       id="path1237" />
+    <path
+       d="m 17.606947,17.547536 v -3.133899 h 6.730178 v 3.133899 z"
+       style="font-weight:bold;-inkscape-font-specification:'sans-serif Bold'"
+       id="path1239" />
+  </g>
   <g
      id="g1196"
-     transform="matrix(1.7032925,0,0,1.7032925,0.40751648,6.8577134)">
+     transform="matrix(1.7032716,0,0,1.7032716,3.1766025,9.2653676)">
     <path
        id="path11112"
        style="fill:url(#linearGradient2710);fill-rule:evenodd;stroke:#333333;stroke-width:0.77201;stroke-linecap:round;stroke-linejoin:round"
