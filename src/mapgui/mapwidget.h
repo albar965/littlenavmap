@@ -197,15 +197,11 @@ public:
   /* Remove measurement line on index, print message and update map */
   void removeDistanceMark(int id);
 
-  void setMapDetail(int factor);
+  /* Set map details in widget and update statusbar */
+  void setMapDetail(int level);
 
   /* Reset details and feature visibility on the map back to default */
   void resetSettingsToDefault();
-
-  /* Change map detail level */
-  void increaseMapDetail();
-  void decreaseMapDetail();
-  void defaultMapDetail();
 
   /* Removes all range rings and distance measurement lines */
   void clearAllMarkers();
@@ -227,7 +223,7 @@ public:
   float getTakeoffFlownDistanceNm() const
   {
     // Distance is already counted up before takeoff - wait until time is valid
-    return takeoffTimeSim.isValid() ? takeoffLandingDistanceNm : 0.f;
+    return takeoffTimeSim.isValid() ? static_cast<float>(takeoffLandingDistanceNm) : 0.f;
   }
 
   /* Time of takeoff detected. Independent of automatically created logbook entries. */
@@ -307,6 +303,9 @@ private:
 
     NONE = 999
   };
+
+  /* Change map detail level in paint layer and update map visible tooltip in statusbar */
+  void setDetailLevel(int level);
 
   /* Update tooltip in case of weather changes */
   void showTooltip(bool update);
@@ -419,11 +418,6 @@ private:
 
   /* Aircraft and next leg centering set in options and all other conditions are met (flight plan present, etc.) */
   bool isCenterLegAndAircraftActive();
-
-  /* Update actions from detail setting */
-  void updateDetailUi(int mapDetails);
-
-  void setDetailLevel(int factor);
 
   void zoomInOut(bool directionIn, bool smooth);
 

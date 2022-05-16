@@ -71,7 +71,7 @@ protected:
     MapPixmap getPixmapPosDistance(int width, int height, atools::geo::Pos pos, float distanceKm, const QString& mapCommand, const QString& errorCase = QLatin1String(""));
 
     /* Zoom to rectangel on map. */
-    MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect, int detailFactor = MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR, const QString& errorCase = tr("Invalid rectangle"));
+    MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect, int detailFactor = MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL, const QString& errorCase = tr("Invalid rectangle"));
 
     MapPaintWidget *mapPaintWidget = nullptr;
     QWidget *parentWidget;

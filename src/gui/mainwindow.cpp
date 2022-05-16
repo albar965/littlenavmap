@@ -54,6 +54,7 @@
 #include "mapgui/aprongeometrycache.h"
 #include "mapgui/imageexportdialog.h"
 #include "mapgui/mapairporthandler.h"
+#include "mapgui/mapdetailhandler.h"
 #include "mapgui/maplayersettings.h"
 #include "mapgui/mapmarkhandler.h"
 #include "mapgui/mapwidget.h"
@@ -366,6 +367,7 @@ MainWindow::MainWindow()
     // Order here defines order of buttons on toolbar
     NavApp::getMapMarkHandler()->addToolbarButton();
     NavApp::getMapAirportHandler()->addToolbarButton();
+    NavApp::getMapDetailHandler()->addToolbarButton();
 
     // Add user defined points toolbar button and submenu items
     NavApp::getUserdataController()->addToolbarButton();
@@ -1501,20 +1503,24 @@ void MainWindow::connectAllSlots()
   // Update jump back
   connect(ui->actionMapAircraftCenter, &QAction::toggled, mapWidget, &MapPaintWidget::jumpBackToAircraftCancel);
 
+  // Map history ===========================================
   connect(ui->actionMapBack, &QAction::triggered, mapWidget, &MapWidget::historyBack);
   connect(ui->actionMapNext, &QAction::triggered, mapWidget, &MapWidget::historyNext);
-
-  connect(ui->actionMapMoreDetails, &QAction::triggered, mapWidget, &MapWidget::increaseMapDetail);
-  connect(ui->actionMapLessDetails, &QAction::triggered, mapWidget, &MapWidget::decreaseMapDetail);
-  connect(ui->actionMapDefaultDetails, &QAction::triggered, mapWidget, &MapWidget::defaultMapDetail);
-
   connect(mapWidget->getHistory(), &MapPosHistory::historyChanged, this, &MainWindow::updateMapHistoryActions);
 
-  connect(routeController, &RouteController::routeSelectionChanged, this, &MainWindow::routeSelectionChanged);
+  // Map details ===========================================
+  MapDetailHandler *mapDetailHandler = NavApp::getMapDetailHandler();
+  connect(ui->actionMapDetailsMore, &QAction::triggered, mapDetailHandler, &MapDetailHandler::increaseMapDetail);
+  connect(ui->actionMapDetailsLess, &QAction::triggered, mapDetailHandler, &MapDetailHandler::decreaseMapDetail);
+  connect(ui->actionMapDetailsDefault, &QAction::triggered, mapDetailHandler, &MapDetailHandler::defaultMapDetail);
 
+  connect(mapDetailHandler, &MapDetailHandler::updateDetailLevel, mapWidget, &MapWidget::setMapDetail);
+  connect(mapDetailHandler, &MapDetailHandler::updateDetailLevel, this, &MainWindow::updateMapObjectsShown);
+
+  // Route editing ========================================
+  connect(routeController, &RouteController::routeSelectionChanged, this, &MainWindow::routeSelectionChanged);
   connect(ui->actionRouteSelectParking, &QAction::triggered, routeController, &RouteController::selectDepartureParking);
 
-  // Route editing
   connect(mapWidget, &MapWidget::routeSetStart, routeController, &RouteController::routeSetDeparture);
   connect(mapWidget, &MapWidget::routeSetParkingStart, routeController, &RouteController::routeSetParking);
   connect(mapWidget, &MapWidget::routeSetHelipadStart, routeController, &RouteController::routeSetHelipad);
@@ -3062,6 +3068,7 @@ void MainWindow::resetMapObjectsShown()
   NavApp::getWindReporter()->resetSettingsToDefault();
   NavApp::getMapMarkHandler()->resetSettingsToDefault();
   NavApp::getMapAirportHandler()->resetSettingsToDefault();
+  NavApp::getMapDetailHandler()->defaultMapDetail();
 
   mapWidget->updateMapObjectsShown();
 
@@ -3750,6 +3757,9 @@ void MainWindow::restoreStateMain()
   qDebug() << "mapAirportHandler";
   NavApp::getMapAirportHandler()->restoreState();
 
+  qDebug() << "mapDetailHandler";
+  NavApp::getMapDetailHandler()->restoreState();
+
   qDebug() << "userdataController";
   NavApp::getUserdataController()->restoreState();
 
@@ -3909,6 +3919,10 @@ void MainWindow::saveStateMain()
   qDebug() << Q_FUNC_INFO << "mapAirportHandler";
   if(NavApp::getMapAirportHandler() != nullptr)
     NavApp::getMapAirportHandler()->saveState();
+
+  qDebug() << Q_FUNC_INFO << "mapDetailHandler";
+  if(NavApp::getMapDetailHandler() != nullptr)
+    NavApp::getMapDetailHandler()->saveState();
 
   qDebug() << Q_FUNC_INFO << "logdataController";
   if(NavApp::getLogdataController() != nullptr)

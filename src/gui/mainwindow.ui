@@ -246,6 +246,10 @@
     <addaction name="separator"/>
     <addaction name="actionMapBack"/>
     <addaction name="actionMapNext"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapDetailsMore"/>
+    <addaction name="actionMapDetailsDefault"/>
+    <addaction name="actionMapDetailsLess"/>
    </widget>
    <widget class="QMenu" name="menuRoute">
     <property name="title">
@@ -324,14 +328,6 @@
     <property name="title">
      <string>&amp;View</string>
     </property>
-    <widget class="QMenu" name="menuViewDetails">
-     <property name="title">
-      <string>&amp;Details</string>
-     </property>
-     <addaction name="actionMapMoreDetails"/>
-     <addaction name="actionMapDefaultDetails"/>
-     <addaction name="actionMapLessDetails"/>
-    </widget>
     <widget class="QMenu" name="menuViewAirspaces">
      <property name="title">
       <string>&amp;Airspaces</string>
@@ -402,8 +398,6 @@
      </property>
     </widget>
     <addaction name="actionMapResetSettings"/>
-    <addaction name="separator"/>
-    <addaction name="menuViewDetails"/>
     <addaction name="separator"/>
     <addaction name="menuViewAirport"/>
     <addaction name="menuViewNavaids"/>
@@ -5678,10 +5672,6 @@ relation to shown airport</string>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionMapMoreDetails"/>
-   <addaction name="actionMapDefaultDetails"/>
-   <addaction name="actionMapLessDetails"/>
-   <addaction name="separator"/>
    <addaction name="actionMapShowAirports"/>
    <addaction name="actionMapShowVor"/>
    <addaction name="actionMapShowNdb"/>
@@ -7662,13 +7652,13 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Show navaid scenery search options</string>
    </property>
   </action>
-  <action name="actionMapMoreDetails">
+  <action name="actionMapDetailsMore">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/detailmore.svg</normaloff>:/littlenavmap/resources/icons/detailmore.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;More Detail</string>
+    <string>&amp;More Map Detail</string>
    </property>
    <property name="toolTip">
     <string>Show more detail on the map</string>
@@ -7680,13 +7670,13 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Ctrl++</string>
    </property>
   </action>
-  <action name="actionMapLessDetails">
+  <action name="actionMapDetailsLess">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/detailless.svg</normaloff>:/littlenavmap/resources/icons/detailless.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Less Detail</string>
+    <string>&amp;Less Map Detail</string>
    </property>
    <property name="toolTip">
     <string>Show less detail on the map</string>
@@ -7926,13 +7916,13 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Ctrl+Alt+I</string>
    </property>
   </action>
-  <action name="actionMapDefaultDetails">
+  <action name="actionMapDetailsDefault">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/detaildefault.svg</normaloff>:/littlenavmap/resources/icons/detaildefault.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Default Detail</string>
+    <string>&amp;Default Map Detail</string>
    </property>
    <property name="toolTip">
     <string>Go back to default detail on the map</string>
@@ -12595,8 +12585,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcType"/>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
  </buttongroups>
 </ui>

@@ -314,5 +314,6 @@
         <file>resources/icons/centeraircraftdest.svg</file>
         <file>resources/icons/userpoint_Radio Range.svg</file>
         <file>resources/icons/aircraftonline.svg</file>
+        <file>resources/icons/detailmap.svg</file>
     </qresource>
 </RCC>

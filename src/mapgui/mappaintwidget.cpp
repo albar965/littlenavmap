@@ -199,7 +199,6 @@ void MapPaintWidget::copySettings(const MapPaintWidget& other)
   homePos = other.homePos;
   homeDistance = other.homeDistance;
   kmlFilePaths = other.kmlFilePaths;
-  mapDetailLevel = other.mapDetailLevel;
   avoidBlurredMap = other.avoidBlurredMap;
 
   if(size() != other.size())

@@ -67,19 +67,19 @@ void MapLayerSettings::finishAppend()
   std::sort(layers.begin(), layers.end());
 }
 
-const MapLayer *MapLayerSettings::getLayer(float distanceKm, int detailFactor) const
+const MapLayer *MapLayerSettings::getLayer(float distanceKm, int detailLevel) const
 {
   using namespace std::placeholders;
 
   // Get the layer with the next lowest zoom distance
   auto it = std::lower_bound(layers.constBegin(), layers.constEnd(), distanceKm,
-                                                        std::bind(&MapLayerSettings::compare, this, _1, _2));
+                             std::bind(&MapLayerSettings::compare, this, _1, _2));
 
   // Adjust iterator for detail level changes
-  if(detailFactor > MAP_DEFAULT_DETAIL_FACTOR)
-    it -= detailFactor - MAP_DEFAULT_DETAIL_FACTOR;
-  else if(detailFactor < MAP_DEFAULT_DETAIL_FACTOR)
-    it += MAP_DEFAULT_DETAIL_FACTOR - detailFactor;
+  if(detailLevel > MAP_DEFAULT_DETAIL_LEVEL)
+    it -= detailLevel - MAP_DEFAULT_DETAIL_LEVEL;
+  else if(detailLevel < MAP_DEFAULT_DETAIL_LEVEL)
+    it += MAP_DEFAULT_DETAIL_LEVEL - detailLevel;
 
   if(it >= layers.end())
     return &layers.constLast();

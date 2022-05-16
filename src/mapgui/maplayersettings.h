@@ -53,7 +53,7 @@ public:
   void finishAppend();
 
   /* Get a layer for current zoom distance and detail factor */
-  const MapLayer *getLayer(float distanceKm, int detailFactor = MAP_DEFAULT_DETAIL_FACTOR) const;
+  const MapLayer *getLayer(float distanceKm, int detailLevel = MAP_DEFAULT_DETAIL_LEVEL) const;
 
   /* Load from mapsettings.xml in resources or overloaded file in settings folder. */
   void loadFromFile();
@@ -61,9 +61,9 @@ public:
   /* Connect a widget which is updated on file change */
   void connectMapSettingsUpdated(QWidget *mapWidget);
 
-  static Q_DECL_CONSTEXPR int MAP_DEFAULT_DETAIL_FACTOR = 10;
-  static Q_DECL_CONSTEXPR int MAP_MAX_DETAIL_FACTOR = 15;
-  static Q_DECL_CONSTEXPR int MAP_MIN_DETAIL_FACTOR = 8;
+  static Q_DECL_CONSTEXPR int MAP_DEFAULT_DETAIL_LEVEL = 10;
+  static Q_DECL_CONSTEXPR int MAP_MAX_DETAIL_LEVEL = 15;
+  static Q_DECL_CONSTEXPR int MAP_MIN_DETAIL_LEVEL = 8;
 
 signals:
   /* Sent if overloading configuration file changes */

@@ -287,6 +287,7 @@ SOURCES += \
   src/mapgui/imageexportdialog.cpp \
   src/mapgui/mapairporthandler.cpp \
   src/mapgui/mapcontextmenu.cpp \
+  src/mapgui/mapdetailhandler.cpp \
   src/mapgui/mapfunctions.cpp \
   src/mapgui/maplayer.cpp \
   src/mapgui/maplayersettings.cpp \
@@ -476,6 +477,7 @@ HEADERS  += \
   src/mapgui/imageexportdialog.h \
   src/mapgui/mapairporthandler.h \
   src/mapgui/mapcontextmenu.h \
+  src/mapgui/mapdetailhandler.h \
   src/mapgui/mapfunctions.h \
   src/mapgui/maplayer.h \
   src/mapgui/maplayersettings.h \

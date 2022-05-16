@@ -515,9 +515,6 @@ protected:
   /* Loaded KML file paths */
   QStringList kmlFilePaths;
 
-  /* Defines amount of objects and other attributes on the map. min 5, max 15, default 10. */
-  int mapDetailLevel;
-
   MapPaintLayer *paintLayer;
 
   /* Do not draw while database is unavailable */

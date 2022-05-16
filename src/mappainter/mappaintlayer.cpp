@@ -117,7 +117,7 @@ void MapPaintLayer::copySettings(const MapPaintLayer& other)
   sunShading = other.sunShading;
 
   // Updates layers too
-  setDetailFactor(other.detailFactor);
+  setDetailLevel(other.detailLevel);
 }
 
 void MapPaintLayer::preDatabaseLoad()
@@ -157,9 +157,9 @@ void MapPaintLayer::setShowAirspaces(map::MapAirspaceFilter types)
   airspaceTypes = types;
 }
 
-void MapPaintLayer::setDetailFactor(int factor)
+void MapPaintLayer::setDetailLevel(int level)
 {
-  detailFactor = factor;
+  detailLevel = level;
   updateLayers();
 }
 
@@ -237,8 +237,8 @@ void MapPaintLayer::updateLayers()
     float distKm = static_cast<float>(mapWidget->distance());
     // Get the uncorrected effective layer - route painting is independent of declutter
     mapLayerEffective = layers->getLayer(distKm);
-    mapLayer = layers->getLayer(distKm, detailFactor);
-    mapLayerRoute = layers->getLayer(distKm, detailFactor + 1);
+    mapLayer = layers->getLayer(distKm, detailLevel);
+    mapLayerRoute = layers->getLayer(distKm, detailLevel + 1);
   }
 }
 

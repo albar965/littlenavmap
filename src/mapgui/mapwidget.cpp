@@ -37,6 +37,7 @@
 #include "gui/trafficpatterndialog.h"
 #include "gui/widgetstate.h"
 #include "gui/coordinatedialog.h"
+#include "gui/tools.h"
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapcontextmenu.h"
 #include "mapgui/maplayersettings.h"
@@ -46,6 +47,7 @@
 #include "mapgui/maptooltip.h"
 #include "mapgui/mapvisible.h"
 #include "mapgui/mapthemehandler.h"
+#include "mapgui/mapdetailhandler.h"
 #include "mappainter/mappaintlayer.h"
 #include "navapp.h"
 #include "online/onlinedatacontroller.h"
@@ -611,7 +613,7 @@ void MapWidget::keyPressEvent(QKeyEvent *event)
     else if(event->key() == Qt::Key_Minus)
       zoomInOut(false /* in */, shift /* smooth */);
   }
-  else
+  else if(!(event->modifiers() & Qt::ControlModifier)) // Do not use with Ctrl since this is used for map details
   {
     // Do not check shift since different keyboard layouts might affect this
     if(event->key() == Qt::Key_Plus)
@@ -1130,9 +1132,9 @@ void MapWidget::wheelEvent(QWheelEvent *event)
     {
       // Adjust map detail ===================================================================
       if(event->angleDelta().y() > 0)
-        increaseMapDetail();
+        NavApp::getMapDetailHandler()->increaseMapDetail();
       else if(event->angleDelta().y() < 0)
-        decreaseMapDetail();
+        NavApp::getMapDetailHandler()->decreaseMapDetail();
     }
     else
     {
@@ -2790,7 +2792,6 @@ void MapWidget::saveState()
   s.setValue(lnm::MAP_HOMEDISTANCE, homeDistance);
 
   s.setValue(lnm::MAP_KMLFILES, kmlFilePaths);
-  s.setValue(lnm::MAP_DETAILFACTOR, mapDetailLevel);
   s.setValueVar(lnm::MAP_AIRSPACES, QVariant::fromValue(paintLayer->getShownAirspaces()));
 
   // Sun shading settings =====================================
@@ -2816,12 +2817,6 @@ void MapWidget::restoreState()
   atools::settings::Settings& s = atools::settings::Settings::instance();
 
   readPluginSettings(*s.getQSettings());
-
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
-    mapDetailLevel = s.valueInt(lnm::MAP_DETAILFACTOR, MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR);
-  else
-    mapDetailLevel = MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR;
-  setMapDetail(mapDetailLevel);
 
   // Sun shading settings ========================================
   map::MapSunShading sunShading =
@@ -3067,14 +3062,6 @@ void MapWidget::updateMapVisibleUi() const
   mapVisible->updateVisibleObjectsStatusBar();
 }
 
-void MapWidget::updateDetailUi(int mapDetails)
-{
-  Ui::MainWindow *ui = mainWindow->getUi();
-  ui->actionMapMoreDetails->setEnabled(mapDetails < MapLayerSettings::MAP_MAX_DETAIL_FACTOR);
-  ui->actionMapLessDetails->setEnabled(mapDetails > MapLayerSettings::MAP_MIN_DETAIL_FACTOR);
-  ui->actionMapDefaultDetails->setEnabled(mapDetails != MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR);
-}
-
 void MapWidget::updateShowAircraftUi(bool centerAircraftChecked)
 {
   // Adapt the menu item status if this method was not called by the action
@@ -3090,45 +3077,48 @@ void MapWidget::updateShowAircraftUi(bool centerAircraftChecked)
 
 void MapWidget::updateMapObjectsShown()
 {
+  // Checked if enabled and check state is true
+  using atools::gui::checked;
+
   Ui::MainWindow *ui = mainWindow->getUi();
 
   // Sun shading ====================================================
-  setShowMapSunShading(ui->actionMapShowSunShading->isEnabled() && ui->actionMapShowSunShading->isChecked());
+  setShowMapSunShading(checked(ui->actionMapShowSunShading));
   paintLayer->setSunShading(sunShadingFromUi());
 
   // Weather source ====================================================
   paintLayer->setWeatherSource(weatherSourceFromUi());
 
   // Other map features ====================================================
-  setShowMapPois(ui->actionMapShowCities->isEnabled() && ui->actionMapShowCities->isChecked());
-  setShowGrid(ui->actionMapShowGrid->isChecked());
+  setShowMapPois(checked(ui->actionMapShowCities));
+  setShowGrid(checked(ui->actionMapShowGrid));
 
   map::MapTypes oldTypes = getShownMapFeatures();
   map::MapObjectDisplayTypes oldDisplayTypes = getShownMapFeaturesDisplay();
 
-  setShowMapObject(map::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
-  setShowMapObject(map::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
-  setShowMapObject(map::TRACK, ui->actionMapShowTracks->isChecked() && NavApp::hasTracks());
+  setShowMapObject(map::AIRWAYV, checked(ui->actionMapShowVictorAirways));
+  setShowMapObject(map::AIRWAYJ, checked(ui->actionMapShowJetAirways));
+  setShowMapObject(map::TRACK, checked(ui->actionMapShowTracks) && NavApp::hasTracks());
 
-  setShowMapObject(map::AIRSPACE, getShownAirspaces().flags & map::AIRSPACE_ALL && ui->actionShowAirspaces->isChecked());
+  setShowMapObject(map::AIRSPACE, getShownAirspaces().flags & map::AIRSPACE_ALL && checked(ui->actionShowAirspaces));
 
-  setShowMapObjectDisplay(map::FLIGHTPLAN, ui->actionMapShowRoute->isChecked());
-  setShowMapObjectDisplay(map::FLIGHTPLAN_TOC_TOD, ui->actionMapShowTocTod->isChecked());
-  setShowMapObject(map::MISSED_APPROACH, ui->actionInfoApproachShowMissedAppr->isChecked());
+  setShowMapObjectDisplay(map::FLIGHTPLAN, checked(ui->actionMapShowRoute));
+  setShowMapObjectDisplay(map::FLIGHTPLAN_TOC_TOD, checked(ui->actionMapShowTocTod));
+  setShowMapObject(map::MISSED_APPROACH, checked(ui->actionInfoApproachShowMissedAppr));
 
-  setShowMapObjectDisplay(map::COMPASS_ROSE, ui->actionMapShowCompassRose->isChecked());
-  setShowMapObjectDisplay(map::COMPASS_ROSE_ATTACH, ui->actionMapShowCompassRoseAttach->isChecked());
-  setShowMapObjectDisplay(map::AIRCRAFT_ENDURANCE, ui->actionMapShowEndurance->isChecked());
-  setShowMapObjectDisplay(map::AIRCRAFT_SELECTED_ALT_RANGE, ui->actionMapShowSelectedAltRange->isChecked());
-  setShowMapObject(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
-  setShowMapObjectDisplay(map::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
-  setShowMapObject(map::AIRCRAFT_AI, ui->actionMapShowAircraftAi->isEnabled() && ui->actionMapShowAircraftAi->isChecked());
-  setShowMapObject(map::AIRCRAFT_ONLINE, ui->actionMapShowAircraftOnline->isEnabled() && ui->actionMapShowAircraftOnline->isChecked());
-  setShowMapObject(map::AIRCRAFT_AI_SHIP, ui->actionMapShowAircraftAiBoat->isEnabled() && ui->actionMapShowAircraftAiBoat->isChecked());
+  setShowMapObjectDisplay(map::COMPASS_ROSE, checked(ui->actionMapShowCompassRose));
+  setShowMapObjectDisplay(map::COMPASS_ROSE_ATTACH, checked(ui->actionMapShowCompassRoseAttach));
+  setShowMapObjectDisplay(map::AIRCRAFT_ENDURANCE, checked(ui->actionMapShowEndurance));
+  setShowMapObjectDisplay(map::AIRCRAFT_SELECTED_ALT_RANGE, checked(ui->actionMapShowSelectedAltRange));
+  setShowMapObject(map::AIRCRAFT, checked(ui->actionMapShowAircraft));
+  setShowMapObjectDisplay(map::AIRCRAFT_TRACK, checked(ui->actionMapShowAircraftTrack));
+  setShowMapObject(map::AIRCRAFT_AI, checked(ui->actionMapShowAircraftAi));
+  setShowMapObject(map::AIRCRAFT_ONLINE, checked(ui->actionMapShowAircraftOnline));
+  setShowMapObject(map::AIRCRAFT_AI_SHIP, checked(ui->actionMapShowAircraftAiBoat));
 
   // Display types which are not used in structs
-  setShowMapObjectDisplay(map::AIRPORT_WEATHER, ui->actionMapShowAirportWeather->isChecked());
-  setShowMapObjectDisplay(map::MORA, ui->actionMapShowMinimumAltitude->isChecked());
+  setShowMapObjectDisplay(map::AIRPORT_WEATHER, checked(ui->actionMapShowAirportWeather));
+  setShowMapObjectDisplay(map::MORA, checked(ui->actionMapShowMinimumAltitude));
   setShowMapObjectDisplay(map::WIND_BARBS, NavApp::getWindReporter()->isWindShown());
   setShowMapObjectDisplay(map::WIND_BARBS_ROUTE, NavApp::getWindReporter()->isRouteWindShown());
 
@@ -3136,17 +3126,17 @@ void MapWidget::updateMapObjectsShown()
   setShowMapObjectDisplay(map::LOGBOOK_ROUTE, NavApp::getLogdataController()->isRoutePreviewShown());
   setShowMapObjectDisplay(map::LOGBOOK_TRACK, NavApp::getLogdataController()->isTrackPreviewShown());
 
-  setShowMapObject(map::VOR, ui->actionMapShowVor->isChecked());
-  setShowMapObject(map::NDB, ui->actionMapShowNdb->isChecked());
-  setShowMapObject(map::WAYPOINT, ui->actionMapShowWp->isChecked());
-  setShowMapObject(map::HOLDING, ui->actionMapShowHolding->isChecked());
-  setShowMapObject(map::AIRPORT_MSA, ui->actionMapShowAirportMsa->isChecked());
+  setShowMapObject(map::VOR, checked(ui->actionMapShowVor));
+  setShowMapObject(map::NDB, checked(ui->actionMapShowNdb));
+  setShowMapObject(map::WAYPOINT, checked(ui->actionMapShowWp));
+  setShowMapObject(map::HOLDING, checked(ui->actionMapShowHolding));
+  setShowMapObject(map::AIRPORT_MSA, checked(ui->actionMapShowAirportMsa));
 
   // ILS and marker are shown together
-  setShowMapObject(map::ILS, ui->actionMapShowIls->isChecked());
-  setShowMapObject(map::MARKER, ui->actionMapShowIls->isChecked());
+  setShowMapObject(map::ILS, checked(ui->actionMapShowIls));
+  setShowMapObject(map::MARKER, checked(ui->actionMapShowIls));
 
-  setShowMapObjectDisplay(map::GLS, ui->actionMapShowGls->isChecked());
+  setShowMapObjectDisplay(map::GLS, checked(ui->actionMapShowGls));
 
   setShowMapObjects(NavApp::getMapMarkHandler()->getMarkTypes(), map::MARK_ALL);
   setShowMapObjects(NavApp::getMapAirportHandler()->getAirportTypes(), map::AIRPORT_ALL_AND_ADDON);
@@ -3353,8 +3343,7 @@ void MapWidget::removeMsaMark(int id)
 void MapWidget::resetSettingsToDefault()
 {
   paintLayer->setShowAirspaces({map::AIRSPACE_DEFAULT, map::AIRSPACE_FLAG_DEFAULT});
-  mapDetailLevel = MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR;
-  setMapDetail(mapDetailLevel);
+  NavApp::getMapDetailHandler()->defaultMapDetail();
 }
 
 void MapWidget::showSearchMark()
@@ -3559,49 +3548,23 @@ void MapWidget::removeDistanceMark(int id)
   mainWindow->setStatusMessage(QString(tr("Measurement line removed from map.")));
 }
 
-void MapWidget::setMapDetail(int factor)
+void MapWidget::setMapDetail(int level)
 {
-  mapDetailLevel = factor;
-  setDetailLevel(mapDetailLevel);
-  updateDetailUi(mapDetailLevel);
+  setDetailLevel(level);
   update();
 
-  int det = mapDetailLevel - MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR;
+  int levelUi = level - MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL; // -2 -> 0 -> 5
   QString detStr;
-  if(det == 0)
+  if(levelUi == 0)
     detStr = tr("Normal");
-  else if(det > 0)
-    detStr = "+" + QString::number(det);
-  else if(det < 0)
-    detStr = QString::number(det);
+  else if(levelUi > 0)
+    detStr = "+" + QString::number(levelUi);
+  else if(levelUi < 0)
+    detStr = QString::number(levelUi);
 
   // Update status bar label
   mainWindow->setDetailLabelText(tr("Detail %1").arg(detStr));
   mainWindow->setStatusMessage(tr("Map detail level changed."));
-}
-
-void MapWidget::defaultMapDetail()
-{
-  mapDetailLevel = MapLayerSettings::MAP_DEFAULT_DETAIL_FACTOR;
-  setMapDetail(mapDetailLevel);
-}
-
-void MapWidget::increaseMapDetail()
-{
-  if(mapDetailLevel < MapLayerSettings::MAP_MAX_DETAIL_FACTOR)
-  {
-    mapDetailLevel++;
-    setMapDetail(mapDetailLevel);
-  }
-}
-
-void MapWidget::decreaseMapDetail()
-{
-  if(mapDetailLevel > MapLayerSettings::MAP_MIN_DETAIL_FACTOR)
-  {
-    mapDetailLevel--;
-    setMapDetail(mapDetailLevel);
-  }
 }
 
 void MapWidget::clearAllMarkers()
@@ -3627,13 +3590,13 @@ void MapWidget::deleteAircraftTrackLogbook()
   aircraftTrackLogbook->clearTrack();
 }
 
-void MapWidget::setDetailLevel(int factor)
+void MapWidget::setDetailLevel(int level)
 {
-  qDebug() << "setDetailFactor" << factor;
+  qDebug() << Q_FUNC_INFO << level;
 
-  if(factor != paintLayer->getDetailFactor())
+  if(level != paintLayer->getDetailLevel())
   {
-    paintLayer->setDetailFactor(factor);
+    paintLayer->setDetailLevel(level);
     updateMapVisibleUi();
     getScreenIndex()->updateAllGeometry(getCurrentViewBoundingBox());
   }

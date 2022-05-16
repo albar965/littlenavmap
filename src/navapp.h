@@ -61,6 +61,7 @@ class WebController;
 class WindReporter;
 class MapMarkHandler;
 class MapAirportHandler;
+class MapDetailHandler;
 class TrackManager;
 class MapThemeHandler;
 
@@ -388,6 +389,7 @@ public:
 
   static MapMarkHandler *getMapMarkHandler();
   static MapAirportHandler *getMapAirportHandler();
+  static MapDetailHandler *getMapDetailHandler();
 
   static void showFlightPlan();
   static void showRouteCalc();
@@ -415,6 +417,7 @@ private:
   static UserdataController *userdataController;
   static MapMarkHandler *mapMarkHandler;
   static MapAirportHandler *mapAirportHandler;
+  static MapDetailHandler *mapDetailHandler;
   static LogdataController *logdataController;
   static OnlinedataController *onlinedataController;
   static TrackController *trackController;

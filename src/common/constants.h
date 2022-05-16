@@ -141,7 +141,6 @@ const QLatin1String MAINWINDOW_WIDGET_DOCKHANDLER("MainWindow/WidgetDockHandler"
 const QLatin1String MAINWINDOW_PRINT_SIZE("MainWindow/PrintPreviewSize");
 const QLatin1String MAINWINDOW_PLACE_ROUTE_CALC("MainWindow/PlaceRouteCalc");
 
-const QLatin1String MAP_DETAILFACTOR("Map/DetailFactor");
 const QLatin1String MAP_AIRSPACES("Map/AirspaceFilter");
 const QLatin1String MAP_USERDATA("Map/Userdata");
 const QLatin1String MAP_USERDATA_ALL("Map/UserdataAll");
@@ -170,6 +169,7 @@ const QLatin1String MAP_AIRPORT_MSA("Map/AirportMsa1");
 const QLatin1String MAP_MARK_DISPLAY("Map/MarkDisplay1");
 const QLatin1String MAP_AIRPORT("Map/Airports");
 const QLatin1String MAP_AIRPORT_RUNWAY_LENGTH("Map/AirportsRunwayLength");
+const QLatin1String MAP_DETAIL_LEVEL("Map/DetailLevel");
 
 const QLatin1String LAYOUT_RECENT("WindowLayout/FilenamesRecent");
 

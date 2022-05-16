@@ -302,7 +302,7 @@ void MapAirportHandler::addToolbarButton()
   toolButton->setIcon(QIcon(":/littlenavmap/resources/icons/airportmenu.svg"));
   toolButton->setPopupMode(QToolButton::InstantPopup);
   toolButton->setToolTip(tr("Select airport types to show.\n"
-                            "Button is shown in pressed state if any filter is selected."));
+                            "Button is highlighted if any filter is selected."));
   toolButton->setStatusTip(toolButton->toolTip());
   toolButton->setCheckable(true);
 
@@ -317,6 +317,7 @@ void MapAirportHandler::addToolbarButton()
 
   // Create and add actions to toolbar and menu =================================
   actionReset = new QAction(tr("&Reset airport display options"), buttonMenu);
+  actionReset->setIcon(QIcon(":/littlenavmap/resources/icons/clear.svg"));
   actionReset->setToolTip(tr("Reset to default and show all airport types"));
   actionReset->setStatusTip(actionReset->toolTip());
   buttonMenu->addAction(actionReset);
@@ -465,7 +466,9 @@ void MapAirportHandler::runwaySliderReleased()
 
 void MapAirportHandler::updateToolbutton()
 {
-  toolButton->setChecked(getMinimumRunwayFt() > 0 || !(airportTypes.testFlag(map::MapTypes(map::AIRPORT_FILTER_ALL))));
+  bool noDefault = getMinimumRunwayFt() > 0 || !(airportTypes.testFlag(map::MapTypes(map::AIRPORT_FILTER_ALL)));
+  toolButton->setChecked(noDefault);
+  actionReset->setEnabled(noDefault);
 }
 
 void MapAirportHandler::updateRunwayLabel()

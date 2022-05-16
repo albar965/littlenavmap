@@ -91,11 +91,11 @@ public:
   void setShowMapObjects(map::MapTypes type, map::MapTypes mask);
 
   /* Changes the detail factor (range 5-15 default is 10 */
-  void setDetailFactor(int factor);
+  void setDetailLevel(int level);
 
-  int getDetailFactor() const
+  int getDetailLevel() const
   {
-    return detailFactor;
+    return detailLevel;
   }
 
   /* Get all shown map objects like airports, VOR, NDB, etc. */
@@ -201,7 +201,7 @@ private:
   int minimumRunwayLenghtFt = 0;
 
   /* Default detail factor. Range is from 5 to 15 */
-  int detailFactor = 10;
+  int detailLevel = 10;
 
   bool databaseLoadStatus = false;
 

@@ -328,7 +328,7 @@ MapPixmap MapActionsController::getPixmapRect(int width, int height, atools::geo
       mapPaintWidget->setShowMapObjectDisplay(map::AIRCRAFT_TRACK,false);
 
       // Set detail factor
-      mapPaintWidget->getMapPaintLayer()->setDetailFactor(detailFactor);
+      mapPaintWidget->getMapPaintLayer()->setDetailLevel(detailFactor);
 
       // Disable copyright note
       mapPaintWidget->setPaintCopyright(false);
