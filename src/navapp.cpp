@@ -691,7 +691,7 @@ QString NavApp::getCurrentSimulatorShortName()
 
 QString NavApp::getCurrentSimulatorName()
 {
-  return atools::fs::FsPaths::typeToName(getCurrentSimulatorDb());
+  return atools::fs::FsPaths::typeToDisplayName(getCurrentSimulatorDb());
 }
 
 bool NavApp::hasSidStarInDatabase()

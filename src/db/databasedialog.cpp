@@ -56,7 +56,7 @@ DatabaseDialog::DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap)
   {
     if(simulators.value(type).isInstalled)
     {
-      ui->comboBoxSimulator->addItem(FsPaths::typeToName(type), QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
+      ui->comboBoxSimulator->addItem(FsPaths::typeToDisplayName(type), QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
       simFound = true;
     }
   }

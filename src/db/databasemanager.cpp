@@ -333,7 +333,7 @@ bool DatabaseManager::checkIncompatibleDatabases(bool *databasesErased)
         else if(!meta.isDatabaseCompatible())
         {
           // Not compatible add to list
-          databaseNames.append("<i>" + FsPaths::typeToName(it.key()) + "</i>");
+          databaseNames.append("<i>" + FsPaths::typeToDisplayName(it.key()) + "</i>");
           databaseFiles.append(dbName);
           qWarning() << "Incompatible database" << dbName;
         }
@@ -504,7 +504,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
         // We have a database in the application folder and it is newer than the one in the settings folder
         QMessageBox *simpleProgressDialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow,
                                                                                           tr("Preparing %1 Database ...").
-                                                                                          arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+                                                                                          arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
         atools::gui::Application::processEventsExtended();
 
         bool resultRemove = true, resultCopy = false;
@@ -518,7 +518,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
         // Copy to target
         if(resultRemove)
         {
-          simpleProgressDialog->setText(tr("Preparing %1 Database: Copying file ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+          simpleProgressDialog->setText(tr("Preparing %1 Database: Copying file ...").arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
           atools::gui::Application::processEventsExtended();
           simpleProgressDialog->repaint();
           atools::gui::Application::processEventsExtended();
@@ -531,13 +531,13 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
         {
           SqlDatabase tempDb(DATABASE_NAME_TEMP);
           openDatabaseFile(&tempDb, settingsDb, false /* readonly */, true /* createSchema */);
-          simpleProgressDialog->setText(tr("Preparing %1 Database: Creating indexes ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+          simpleProgressDialog->setText(tr("Preparing %1 Database: Creating indexes ...").arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
           atools::gui::Application::processEventsExtended();
           simpleProgressDialog->repaint();
           atools::gui::Application::processEventsExtended();
           NavDatabase::runPreparationScript(tempDb);
 
-          simpleProgressDialog->setText(tr("Preparing %1 Database: Analyzing ...").arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+          simpleProgressDialog->setText(tr("Preparing %1 Database: Analyzing ...").arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
           atools::gui::Application::processEventsExtended();
           simpleProgressDialog->repaint();
           atools::gui::Application::processEventsExtended();
@@ -564,7 +564,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
   {
     NavApp::closeSplashScreen();
     QMessageBox *simpleProgressDialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow, tr("Preparing %1 Database ...").
-                                                                                      arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+                                                                                      arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
     atools::gui::Application::processEventsExtended();
     simpleProgressDialog->repaint();
     atools::gui::Application::processEventsExtended();
@@ -744,7 +744,7 @@ void DatabaseManager::insertSimSwitchActions()
     suffix += " (" + meta.getLastLoadTime().toString() + " | " + meta.getDataSource() + ")";
 #endif
 
-    QString dbname = FsPaths::typeToName(FsPaths::NAVIGRAPH);
+    QString dbname = FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH);
     navDbSubMenu = new QMenu(tr("&%1%2").arg(dbname).arg(suffix));
     navDbSubMenu->setToolTipsVisible(NavApp::isMenuToolTipsVisible());
     navDbGroup = new QActionGroup(navDbSubMenu);
@@ -824,8 +824,8 @@ void DatabaseManager::insertSimSwitchAction(atools::fs::FsPaths::SimulatorType t
     if(!atts.isEmpty())
       suffix.append(tr(" (%1)").arg(atts.join(tr(", "))));
 
-    QAction *action = new QAction(tr("&%1 %2%3").arg(index).arg(FsPaths::typeToName(type)).arg(suffix), menu);
-    action->setToolTip(tr("Switch to %1 database").arg(FsPaths::typeToName(type)));
+    QAction *action = new QAction(tr("&%1 %2%3").arg(index).arg(FsPaths::typeToDisplayName(type)).arg(suffix), menu);
+    action->setToolTip(tr("Switch to %1 database").arg(FsPaths::typeToDisplayName(type)));
     action->setStatusTip(action->toolTip());
     action->setData(QVariant::fromValue<atools::fs::FsPaths::SimulatorType>(type));
     action->setCheckable(true);
@@ -895,7 +895,7 @@ void DatabaseManager::switchNavFromMainMenu()
 
   emit postDatabaseLoad(currentFsType);
 
-  mainWindow->setStatusMessage(text.arg(FsPaths::typeToName(FsPaths::NAVIGRAPH)));
+  mainWindow->setStatusMessage(text.arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
 
   saveState();
 
@@ -926,7 +926,7 @@ void DatabaseManager::switchSimFromMainMenu()
 
     // Reopen all with new database
     emit postDatabaseLoad(currentFsType);
-    mainWindow->setStatusMessage(tr("Switched to %1.").arg(FsPaths::typeToName(currentFsType)));
+    mainWindow->setStatusMessage(tr("Switched to %1.").arg(FsPaths::typeToDisplayName(currentFsType)));
 
     saveState();
     checkDatabaseVersion();

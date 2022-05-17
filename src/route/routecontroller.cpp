@@ -5110,9 +5110,10 @@ void RouteController::updateRemarkHeader()
       html.b(tr("Aircraft Performance: ")).text(perf);
 
     // Scenery data and cycle =============================================================
+    using atools::fs::FsPaths;
     QStringList data;
-    QString navdata = props.value(atools::fs::pln::NAVDATA);
-    QString simdata = props.value(atools::fs::pln::SIMDATA);
+    QString simdata = FsPaths::typeToShortDisplayName(FsPaths::stringToType(props.value(atools::fs::pln::SIMDATA)));
+    QString navdata = FsPaths::typeToShortDisplayName(FsPaths::stringToType(props.value(atools::fs::pln::NAVDATA)));
     QString simcycle = props.value(atools::fs::pln::SIMDATACYCLE);
     QString navcycle = props.value(atools::fs::pln::NAVDATACYCLE);
 
