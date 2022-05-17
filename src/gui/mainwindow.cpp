@@ -557,9 +557,6 @@ MainWindow::~MainWindow()
   atools::gui::Translator::unload();
 
   atools::logging::LoggingGuiAbortHandler::resetGuiAbortFunction();
-
-  qDebug() << Q_FUNC_INFO << "destructor about to shut down logging";
-  atools::logging::LoggingHandler::shutdown();
 }
 
 #ifdef DEBUG_INFORMATION

@@ -413,5 +413,8 @@ int main(int argc, char *argv[])
   delete dbManager;
   dbManager = nullptr;
 
+  qInfo() << "About to shut down logging";
+  atools::logging::LoggingHandler::shutdown();
+
   return retval;
 }
