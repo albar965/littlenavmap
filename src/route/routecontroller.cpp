@@ -1045,13 +1045,20 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   assignFlightplanPerfProperties(flightplan);
   route.setFlightplan(flightplan);
 
+  // Remove alternates - will be added later again once resolved
+  QString alternates = route.getFlightplan().getProperties().value(atools::fs::pln::ALTERNATES);
+
   route.createRouteLegsFromFlightplan();
 
   // test and error after undo/redo and switch
 
   loadProceduresFromFlightplan(false /* clear old procedure properties */);
   loadAlternateFromFlightplan();
-  route.updateAll();
+  route.updateAll(); // Removes alternate property if not resolvable
+
+    // Keep property also in case alternates were not added
+  route.getFlightplan().getProperties().insert(atools::fs::pln::ALTERNATES, alternates);
+
   route.updateAirwaysAndAltitude(adjustAltitude);
 
   // Save values for checking filename match when doing save
@@ -1992,8 +1999,16 @@ void RouteController::preDatabaseLoad()
 
 void RouteController::postDatabaseLoad()
 {
+  // Clear routing caches
   routeNetworkRadio->clear();
   routeNetworkAirway->clear();
+
+  // Remove error messages
+  clearAllErrors();
+
+  // Remove alternates - will be added later again once resolved
+  QString alternates = route.getFlightplan().getProperties().value(atools::fs::pln::ALTERNATES);
+  route.removeAlternateLegs();
 
   // Remove the legs but keep the properties
   route.clearProcedures(proc::PROCEDURE_ALL);
@@ -2001,8 +2016,12 @@ void RouteController::postDatabaseLoad()
 
   route.createRouteLegsFromFlightplan();
   loadProceduresFromFlightplan(false /* clear old procedure properties */);
-  // loadAlternateFromFlightplan();// not needed - alternates are already stored in dummy legs
-  route.updateAll();
+  loadAlternateFromFlightplan(); // Alternate dummy legs already removed above
+  route.updateAll(); // Removes alternate property if it cannot be resolved
+
+  // Keep property also in case alternates were not added
+  route.getFlightplan().getProperties().insert(atools::fs::pln::ALTERNATES, alternates);
+
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
 
