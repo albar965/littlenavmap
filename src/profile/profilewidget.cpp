@@ -437,9 +437,10 @@ int ProfileWidget::getFlightplanAltY() const
 
 bool ProfileWidget::hasValidRouteForDisplay() const
 {
-  return widgetVisible && !legList->elevationLegs.isEmpty() && legList->route.getSizeWithoutAlternates() >= 2 &&
-         legList->route.getAltitudeLegs().size() >= 2 &&
-         legList->route.size() == legList->route.getAltitudeLegs().size();
+  const Route& route = NavApp::getRouteConst();
+  return widgetVisible && !legList->elevationLegs.isEmpty() && route.getSizeWithoutAlternates() >= 2 &&
+         route.getAltitudeLegs().size() >= 2 &&
+         route.size() == route.getAltitudeLegs().size();
 }
 
 int ProfileWidget::altitudeY(float altitudeFt) const
@@ -756,7 +757,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   QPainter painter(this);
 
   // Nothing to show label =========================
-  if(route.isEmpty())
+  if(NavApp::getRouteConst().isEmpty())
   {
     setFont(optionData.getGuiFont());
     painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
@@ -767,9 +768,11 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
   else if(!hasValidRouteForDisplay())
   {
-    setFont(optionData.getGuiFont());
+    QFont font = optionData.getGuiFont();
+    font.setBold(true);
+    setFont(font);
     painter.fillRect(rect(), QApplication::palette().color(QPalette::Base));
-    symPainter.textBox(&painter, {tr("Flight Plan not valid.")}, QColor(255, 80, 0),
+    symPainter.textBox(&painter, {tr("Flight Plan not valid.")}, atools::util::HtmlBuilder::COLOR_FOREGROUND_WARNING,
                        4, painter.fontMetrics().ascent(), textatt::LEFT, 0);
     scrollArea->updateLabelWidgets();
     return;
