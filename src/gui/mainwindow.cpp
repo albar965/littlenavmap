@@ -211,7 +211,7 @@ MainWindow::MainWindow()
     // Create misc GUI handlers ============================================
     dialog = new atools::gui::Dialog(this);
     errorHandler = new atools::gui::ErrorHandler(this);
-    helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION);
+    helpHandler = new atools::gui::HelpHandler(this, aboutMessage, GIT_REVISION_LITTLENAVMAP);
 
     // Create dock and mainwindow handler ============================================
     atools::settings::Settings& settings = atools::settings::Settings::instance();
@@ -2026,7 +2026,7 @@ void MainWindow::updateWindowTitle()
   if(version.isStable() || version.isReleaseCandidate() || version.isBeta())
     newTitle += tr(" %1").arg(version.getVersionString());
   else
-    newTitle += tr(" %1 (%2)").arg(version.getVersionString()).arg(GIT_REVISION);
+    newTitle += tr(" %1 (%2)").arg(version.getVersionString()).arg(GIT_REVISION_LITTLENAVMAP);
 
   // Database information  ==========================================
   // Simulator database =========

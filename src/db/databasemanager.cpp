@@ -1594,7 +1594,7 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db, atools::fs::Resu
 
   try
   {
-    atools::fs::NavDatabase navDatabase(&navDatabaseOpts, db, &errors, GIT_REVISION);
+    atools::fs::NavDatabase navDatabase(&navDatabaseOpts, db, &errors, GIT_REVISION_LITTLENAVMAP);
     QString sceneryCfgCodec = (selectedFsType == atools::fs::FsPaths::P3D_V4 ||
                                selectedFsType == atools::fs::FsPaths::P3D_V5) ? "UTF-8" : QString();
     resultFlags = navDatabase.create(sceneryCfgCodec);
@@ -1846,10 +1846,10 @@ void DatabaseManager::createEmptySchema(atools::sql::SqlDatabase *db, bool bound
     NavDatabaseOptions opts;
     if(boundary)
       // Does not use a transaction
-      NavDatabase(&opts, db, nullptr, GIT_REVISION).createAirspaceSchema();
+      NavDatabase(&opts, db, nullptr, GIT_REVISION_LITTLENAVMAP).createAirspaceSchema();
     else
     {
-      NavDatabase(&opts, db, nullptr, GIT_REVISION).createSchema();
+      NavDatabase(&opts, db, nullptr, GIT_REVISION_LITTLENAVMAP).createSchema();
       DatabaseMeta(db).updateVersion();
     }
   }

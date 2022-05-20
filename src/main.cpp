@@ -210,7 +210,7 @@ int main(int argc, char *argv[])
       qInfo() << message;
 
     qInfo().noquote().nospace() << "atools revision " << atools::gitRevision() << " "
-                                << Application::applicationName() << " revision " << GIT_REVISION;
+                                << Application::applicationName() << " revision " << GIT_REVISION_LITTLENAVMAP;
 
     LoggingUtil::logStandardPaths();
     Settings::logSettingsInformation();

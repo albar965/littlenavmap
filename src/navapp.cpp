@@ -113,7 +113,7 @@ void NavApp::initApplication()
   setApplicationName("Little Navmap");
   setOrganizationName("ABarthel");
   setOrganizationDomain("littlenavmap.org");
-  setApplicationVersion("2.7.9.develop"); // VERSION_NUMBER - Little Navmap
+  setApplicationVersion(VERSION_NUMBER_LITTLENAVMAP); // VERSION_NUMBER - Little Navmap
 }
 
 NavApp *NavApp::navAppInstance()
@@ -1174,7 +1174,7 @@ void NavApp::initSplashScreen()
   processEvents();
 
   splashScreen->showMessage(QObject::tr("Version %5 (revision %6)").
-                            arg(Application::applicationVersion()).arg(GIT_REVISION),
+                            arg(Application::applicationVersion()).arg(GIT_REVISION_LITTLENAVMAP),
                             Qt::AlignRight | Qt::AlignBottom, Qt::black);
 
   processEvents(QEventLoop::ExcludeUserInputEvents);
