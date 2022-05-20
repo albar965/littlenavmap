@@ -230,7 +230,7 @@ void PrintSupport::createFlightplanDocuments()
   cursor.insertText(tr("\n\n%1 Version %2 (revision %3) on %4 ").
                     arg(QApplication::applicationName()).
                     arg(QApplication::applicationVersion()).
-                    arg(GIT_REVISION).
+                    arg(GIT_REVISION_LITTLENAVMAP).
                     arg(QLocale().toString(QDateTime::currentDateTime())));
 
   printDocument->adjustSize();
@@ -444,6 +444,6 @@ void PrintSupport::drawWatermarkInternal(const QPoint& pos, QPainter *painter)
                     tr("%1 Version %2 (revision %3) on %4 ").
                     arg(QApplication::applicationName()).
                     arg(QApplication::applicationVersion()).
-                    arg(GIT_REVISION).
+                    arg(GIT_REVISION_LITTLENAVMAP).
                     arg(QLocale().toString(QDateTime::currentDateTime())));
 }
