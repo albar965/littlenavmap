@@ -8,27 +8,47 @@ set -x
 if [ -z "$APROJECTS" ] ; then echo APROJECTS environment variable not set ; exit 1 ; fi
 if [ ! -d "$APROJECTS" ]; then echo "$APROJECTS" does not exist ; exit 1 ; fi
 
-export FILENAME=`date "+20%y%m%d-%H%M"`
-
 # Override by envrionment variable for another target
 export SSH_DEPLOY_TARGET=${SSH_DEPLOY_TARGET:-"sol:/data/alex/Public/Releases"}
 
 (
   cd ${APROJECTS}/deploy
 
+  # Files:
+  # - CHANGELOG-LittleNavconnect.txt
+  # - CHANGELOG-LittleNavmap.txt
+  # - LICENSE.txt
+  # - Little Navconnect.app
+  # - Little Navmap.app
+  # - Little Xpconnect
+  # - LittleNavconnect.zip
+  # - LittleNavmap.zip
+  # - LittleXpconnect.zip
+  # - README-LittleNavconnect.txt
+  # - README-LittleNavmap.txt
+  # - revision-LittleNavconnect.txt
+  # - revision-LittleNavmap.txt
+  # - version-LittleNavconnect.txt
+  # - version-LittleNavmap.txt
 
   rm -rfv LittleNavmap.zip LittleNavconnect.zip LittleXpconnect.zip
 
   zip -r -y -9 LittleNavmap.zip "Little Navmap.app" "Little Navconnect.app" "Little Xpconnect" \
          LICENSE.txt README-LittleNavconnect.txt CHANGELOG-LittleNavconnect.txt \
-         README-LittleNavmap.txt CHANGELOG-LittleNavmap.txt
+         README-LittleNavmap.txt CHANGELOG-LittleNavmap.txt \
+         revision-LittleNavmap.txt version-LittleNavmap.txt
 
   zip -r -y -9 LittleXpconnect.zip "Little Xpconnect"
 
   zip -r -y -9 LittleNavconnect.zip "Little Navconnect.app" \
-         LICENSE.txt README-LittleNavconnect.txt CHANGELOG-LittleNavconnect.txt
+         LICENSE.txt README-LittleNavconnect.txt CHANGELOG-LittleNavconnect.txt \
+         revision-LittleNavconnect.txt version-LittleNavconnect.txt
 
-  scp LittleXpconnect.zip ${SSH_DEPLOY_TARGET}/LittleXpconnect-macOS-${FILENAME}.zip
-  scp LittleNavconnect.zip ${SSH_DEPLOY_TARGET}/LittleNavconnect-macOS-${FILENAME}.zip
-  scp LittleNavmap.zip ${SSH_DEPLOY_TARGET}/LittleNavmap-macOS-${FILENAME}.zip
+  export FILENAME_LNM=$(head -n1 "${APROJECTS}/deploy/version-LittleNavmap.txt")
+  export FILENAME_LNC=$(head -n1 "${APROJECTS}/deploy/version-LittleNavconnect.txt")
+  export FILENAME_LXP=$(head -n1 "${APROJECTS}/deploy/Little Xpconnect/version.txt")
+
+  scp LittleXpconnect.zip ${SSH_DEPLOY_TARGET}/LittleXpconnect-macOS-${FILENAME_LNM}.zip
+  scp LittleNavconnect.zip ${SSH_DEPLOY_TARGET}/LittleNavconnect-macOS-${FILENAME_LNC}.zip
+  scp LittleNavmap.zip ${SSH_DEPLOY_TARGET}/LittleNavmap-macOS-${FILENAME_LXP}.zip
 )
