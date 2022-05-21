@@ -7,10 +7,6 @@ rem set SSH_DEPLOY_TARGET=user@host:/data/alex/Public/Releases
 
 rem === Deploy built programs. ZIP, check with Windows Defender and copy them to network shares =============================
 
-for /f "delims=" %%# in ('powershell get-date -format "{yyyyMMdd-HHmm}"') do @set FILEDATE=%%#
-
-echo Filedate %FILEDATE%
-
 pushd "%APROJECTS%\deploy"
 
 rem ===========================================================================
@@ -46,10 +42,20 @@ IF ERRORLEVEL 1 goto :err
 rem ===========================================================================
 rem ==== Copy all =============================================================
 
+rem Get file version number and emove spaces from variable
+set /p FILENAMETEMP=<"%APROJECTS%\deploy\Little Navmap\version.txt"
+set FILENAME_LNM=%FILENAMETEMP: =%
+
+set /p FILENAMETEMP=<"%APROJECTS%\deploy\Little Navconnect\version.txt"
+set FILENAME_LNC=%FILENAMETEMP: =%
+
+set /p FILENAMETEMP=<"%APROJECTS%\deploy\Little Xpconnect\version.txt"
+set FILENAME_LXP=%FILENAMETEMP: =%
+
 if defined SSH_DEPLOY_TARGET (
-pscp -i %HOMEDRIVE%\%HOMEPATH%\.ssh\id_rsa LittleNavmap.zip %SSH_DEPLOY_TARGET%/LittleNavmap-win-%FILEDATE%.zip
-pscp -i %HOMEDRIVE%\%HOMEPATH%\.ssh\id_rsa LittleXpconnect.zip %SSH_DEPLOY_TARGET%/LittleXpconnect-win-%FILEDATE%.zip
-pscp -i %HOMEDRIVE%\%HOMEPATH%\.ssh\id_rsa LittleNavconnect.zip %SSH_DEPLOY_TARGET%/LittleNavconnect-win-%FILEDATE%.zip
+pscp -i %HOMEDRIVE%\%HOMEPATH%\.ssh\id_rsa LittleNavmap.zip %SSH_DEPLOY_TARGET%/LittleNavmap-win-%FILENAME_LNM%.zip
+pscp -i %HOMEDRIVE%\%HOMEPATH%\.ssh\id_rsa LittleNavconnect.zip %SSH_DEPLOY_TARGET%/LittleNavconnect-win-%FILENAME_LNC%.zip
+pscp -i %HOMEDRIVE%\%HOMEPATH%\.ssh\id_rsa LittleXpconnect.zip %SSH_DEPLOY_TARGET%/LittleXpconnect-win-%FILENAME_LXP%.zip
 )
 
 popd

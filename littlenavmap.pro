@@ -169,8 +169,10 @@ macx {
 
 isEmpty(GIT_PATH) {
   GIT_REVISION=UNKNOWN
+  GIT_REVISION_FULL=UNKNOWN
 } else {
   GIT_REVISION=$$system('$$GIT_PATH' rev-parse --short HEAD)
+  GIT_REVISION_FULL=$$system('$$GIT_PATH' rev-parse HEAD)
 }
 
 PRE_TARGETDEPS += $$ATOOLS_LIB_PATH/libatools.a
@@ -203,6 +205,7 @@ exists($$PWD/../build_options.pro) {
 message(-----------------------------------)
 message(VERSION_NUMBER: $$VERSION_NUMBER)
 message(GIT_REVISION: $$GIT_REVISION)
+message(GIT_REVISION_FULL: $$GIT_REVISION_FULL)
 message(GIT_PATH: $$GIT_PATH)
 message(OPENSSL_PATH: $$OPENSSL_PATH)
 message(ATOOLS_INC_PATH: $$ATOOLS_INC_PATH)
@@ -669,7 +672,7 @@ unix:!macx {
   deploy.commands += mkdir -pv $$DEPLOY_DIR_LIB/printsupport &&
   deploy.commands += mkdir -pv $$DEPLOY_DIR_LIB/sqldrivers &&
   deploy.commands += echo $$VERSION_NUMBER > $$DEPLOY_DIR/version.txt &&
-  deploy.commands += echo $$GIT_REVISION > $$DEPLOY_DIR/revision.txt &&
+  deploy.commands += echo $$GIT_REVISION_FULL > $$DEPLOY_DIR/revision.txt &&
   deploy.commands += cp -Rvf $$MARBLE_LIB_PATH/*.so* $$DEPLOY_DIR_LIB &&
   deploy.commands += patchelf --set-rpath \'\$\$ORIGIN/.\' $$DEPLOY_DIR_LIB/libmarblewidget-qt5.so* &&
   deploy.commands += patchelf --set-rpath \'\$\$ORIGIN/.\' $$DEPLOY_DIR_LIB/libastro.so* &&
@@ -778,7 +781,7 @@ macx {
   deploy.commands += cp -fv $$[QT_INSTALL_TRANSLATIONS]/qtbase*.qm  $$DEPLOY_APP/Contents/MacOS &&
   deploy.commands += cp -fv $$PWD/build/mac/Info.plist $$ $$DEPLOY_APP/Contents &&
   deploy.commands += echo $$VERSION_NUMBER > $$DEPLOY_DIR/version-LittleNavmap.txt &&
-  deploy.commands += echo $$GIT_REVISION > $$DEPLOY_DIR/revision-LittleNavmap.txt &&
+  deploy.commands += echo $$GIT_REVISION_FULL > $$DEPLOY_DIR/revision-LittleNavmap.txt &&
   deploy.commands += cp -fv $$PWD/LICENSE.txt $$DEPLOY_DIR &&
   deploy.commands += cp -fv $$PWD/README.txt $$DEPLOY_DIR/README-LittleNavmap.txt &&
   deploy.commands += cp -fv $$PWD/CHANGELOG.txt $$DEPLOY_DIR/CHANGELOG-LittleNavmap.txt
@@ -799,7 +802,7 @@ win32 {
   deploy.commands += mkdir $$p($$DEPLOY_BASE/$$TARGET_NAME/translations) &&
   deploy.commands += mkdir $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += echo $$VERSION_NUMBER > $$p($$DEPLOY_BASE/$$TARGET_NAME/version.txt) &&
-  deploy.commands += echo $$GIT_REVISION > $$p($$DEPLOY_BASE/$$TARGET_NAME/revision.txt) &&
+  deploy.commands += echo $$GIT_REVISION_FULL > $$p($$DEPLOY_BASE/$$TARGET_NAME/revision.txt) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libCachePlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libAtmospherePlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libCompassFloatItem$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
