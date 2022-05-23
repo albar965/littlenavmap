@@ -4252,6 +4252,9 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 
   NavApp::getAirspaceController()->updateButtonsAndActions();
 
+  // Need to clear caches again and redraw after enabling queries
+  updateMapObjectsShown();
+
   NavApp::logDatabaseMeta();
 }
 
