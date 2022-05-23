@@ -461,13 +461,13 @@ void AirspaceController::loadAirspaces()
       else
         // No errors ======================
         QMessageBox::information(mainWindow, QApplication::applicationName(), message);
-
-      // Let online controller update airspace shapes
-      emit userAirspacesUpdated();
     }
 
     // Re-initialize queries again
     postLoadAirpaces();
+
+    // Let online controller update airspace shapes
+    emit userAirspacesUpdated();
   }
 }
 

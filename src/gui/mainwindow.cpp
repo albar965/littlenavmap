@@ -4304,6 +4304,10 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
   updateActionStates();
 
   NavApp::getAirspaceController()->updateButtonsAndActions();
+  // Need to clear caches again and redraw after enabling queries
+  updateMapObjectsShown();
+
+  NavApp::logDatabaseMeta();
 }
 
 /* Update the current weather context for the information window. Returns true if any
