@@ -76,11 +76,15 @@ const proc::MapProcedureLegs *ProcedureQuery::getTransitionLegs(map::MapAirport 
 int ProcedureQuery::approachIdForTransitionId(int transitionId)
 {
   int approachId = -1;
-  approachIdForTransQuery->bindValue(":id", transitionId);
-  approachIdForTransQuery->exec();
-  if(approachIdForTransQuery->next())
-    approachId = approachIdForTransQuery->value("approach_id").toInt();
-  approachIdForTransQuery->finish();
+
+  if(query::valid(Q_FUNC_INFO, approachIdForTransQuery))
+  {
+    approachIdForTransQuery->bindValue(":id", transitionId);
+    approachIdForTransQuery->exec();
+    if(approachIdForTransQuery->next())
+      approachId = approachIdForTransQuery->value("approach_id").toInt();
+    approachIdForTransQuery->finish();
+  }
   return approachId;
 }
 
@@ -127,16 +131,19 @@ const proc::MapProcedureLeg *ProcedureQuery::getTransitionLeg(const map::MapAirp
   else
 #endif
   {
-    // Get transition ID for leg
-    transitionIdForLegQuery->bindValue(":id", legId);
-    transitionIdForLegQuery->exec();
-    if(transitionIdForLegQuery->next())
+    if(query::valid(Q_FUNC_INFO, transitionIdForLegQuery))
     {
-      const MapProcedureLegs *legs = getTransitionLegs(airport, transitionIdForLegQuery->value("id").toInt());
-      if(legs != nullptr && transitionLegIndex.contains(legId))
-        return &legs->at(transitionLegIndex.value(legId).second);
+      // Get transition ID for leg
+      transitionIdForLegQuery->bindValue(":id", legId);
+      transitionIdForLegQuery->exec();
+      if(transitionIdForLegQuery->next())
+      {
+        const MapProcedureLegs *legs = getTransitionLegs(airport, transitionIdForLegQuery->value("id").toInt());
+        if(legs != nullptr && transitionLegIndex.contains(legId))
+          return &legs->at(transitionLegIndex.value(legId).second);
+      }
+      transitionIdForLegQuery->finish();
     }
-    transitionIdForLegQuery->finish();
   }
   qWarning() << "transition leg with id" << legId << "not found";
   return nullptr;
@@ -698,6 +705,9 @@ proc::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const map::MapAirpor
 {
   Q_ASSERT(airport.navdata);
 
+  if(!query::valid(Q_FUNC_INFO, transitionLegQuery) || !query::valid(Q_FUNC_INFO, transitionQuery))
+    return nullptr;
+
 #ifndef DEBUG_APPROACH_NO_CACHE
   if(transitionCache.contains(transitionId))
     return transitionCache.object(transitionId);
@@ -765,6 +775,9 @@ proc::MapProcedureLegs *ProcedureQuery::fetchTransitionLegs(const map::MapAirpor
 proc::MapProcedureLegs *ProcedureQuery::buildApproachLegs(const map::MapAirport& airport, int approachId)
 {
   Q_ASSERT(airport.navdata);
+
+  if(!query::valid(Q_FUNC_INFO, approachLegQuery) || !query::valid(Q_FUNC_INFO, approachQuery))
+    return nullptr;
 
   approachLegQuery->bindValue(":id", approachId);
   approachLegQuery->exec();
@@ -2415,6 +2428,9 @@ QVector<int> ProcedureQuery::getTransitionIdsForProcedure(int procedureId)
 {
   QVector<int> transitionIds;
 
+  if(!query::valid(Q_FUNC_INFO, transitionIdsForApproachQuery))
+    return transitionIds;
+
   transitionIdsForApproachQuery->bindValue(":id", procedureId);
   transitionIdsForApproachQuery->exec();
 
@@ -2871,6 +2887,9 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
                                        bool transition, bool strict)
 {
   QStringList airportRunways = airportQueryNav->getRunwayNames(airport.id);
+
+  if(!query::valid(Q_FUNC_INFO, query))
+    return -1;
 
   int procedureId = -1;
   QVector<int> ids;

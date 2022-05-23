@@ -42,6 +42,9 @@ class MapLayer;
 
 namespace query {
 
+/* Returns false and logs message if query is null */
+bool valid(const QString& function, const atools::sql::SqlQuery *query);
+
 void bindRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query, const QString& prefix = QString());
 void bindRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query, const QString& prefix = QString());
 

@@ -106,4 +106,14 @@ void fetchObjectsForRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *q
   }
 }
 
+bool valid(const QString& function, const atools::sql::SqlQuery *query)
+{
+  if(query == nullptr)
+  {
+    qWarning() << function << "Query is null";
+    return false;
+  }
+  return true;
+}
+
 }

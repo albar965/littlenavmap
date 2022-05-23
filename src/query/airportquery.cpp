@@ -91,6 +91,9 @@ AirportQuery::~AirportQuery()
 
 void AirportQuery::getAirportAdminNamesById(int airportId, QString& city, QString& state, QString& country)
 {
+  if(!query::valid(Q_FUNC_INFO, airportAdminByIdQuery))
+    return;
+
   airportAdminByIdQuery->bindValue(":id", airportId);
   airportAdminByIdQuery->exec();
   if(airportAdminByIdQuery->next())
@@ -111,6 +114,9 @@ map::MapAirport AirportQuery::getAirportById(int airportId)
 
 void AirportQuery::getAirportById(map::MapAirport& airport, int airportId)
 {
+  if(!query::valid(Q_FUNC_INFO, airportByIdQuery))
+    return;
+
   map::MapAirport *ap = airportIdCache.object(airportId);
 
   if(ap != nullptr)
@@ -140,6 +146,9 @@ map::MapAirport AirportQuery::getAirportByIdent(const QString& ident)
 
 void AirportQuery::getAirportByIdent(map::MapAirport& airport, const QString& ident)
 {
+  if(!query::valid(Q_FUNC_INFO, airportByIdentQuery))
+    return;
+
   map::MapAirport *ap = airportIdentCache.object(ident);
 
   if(ap != nullptr)
@@ -169,6 +178,9 @@ QList<MapAirport> AirportQuery::getAirportsByTruncatedIdent(const QString& ident
 
 void AirportQuery::getAirportsByTruncatedIdent(QList<map::MapAirport>& airports, QString ident)
 {
+  if(!query::valid(Q_FUNC_INFO, airportsByTruncatedIdentQuery))
+    return;
+
   if(!ident.endsWith(QChar('%')))
     ident.append(QChar('%'));
 
@@ -210,6 +222,9 @@ MapAirport AirportQuery::getAirportByOfficialIdent(const QString& ident, const a
 void AirportQuery::getAirportsByOfficialIdent(QList<map::MapAirport>& airports, const QString& ident,
                                               const atools::geo::Pos *pos, float maxDistanceMeter, map::AirportQueryFlags flags)
 {
+  if(!query::valid(Q_FUNC_INFO, airportByOfficialQuery))
+    return;
+
   // Use impossible value if not searching by ident since query connects with "or"
   const static QLatin1String INVALID_ID("====");
 
@@ -327,6 +342,9 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
 
 atools::geo::Pos AirportQuery::getAirportPosByIdent(const QString& ident)
 {
+  if(!query::valid(Q_FUNC_INFO, airportCoordsByIdentQuery))
+    return atools::geo::EMPTY_POS;
+
   ageo::Pos pos;
   airportCoordsByIdentQuery->bindValue(":ident", ident);
   airportCoordsByIdentQuery->exec();
@@ -387,6 +405,9 @@ void AirportQuery::getAirportRegion(map::MapAirport& airport)
 map::MapRunwayEnd AirportQuery::getRunwayEndById(int id)
 {
   map::MapRunwayEnd end;
+  if(!query::valid(Q_FUNC_INFO, runwayEndByIdQuery))
+    return end;
+
   runwayEndByIdQuery->bindValue(":id", id);
   runwayEndByIdQuery->exec();
   if(runwayEndByIdQuery->next())
@@ -441,6 +462,9 @@ void AirportQuery::getRunwayEndByNames(map::MapResult& result, const QString& ru
 void AirportQuery::runwayEndByNames(map::MapResult& result, const QString& runwayName,
                                     const QString& airportIdent)
 {
+  if(!query::valid(Q_FUNC_INFO, runwayEndByNameQuery))
+    return;
+
   QString rname(runwayName);
   if(rname.startsWith("RW"))
     rname.remove(0, 2);
@@ -458,6 +482,9 @@ void AirportQuery::runwayEndByNames(map::MapResult& result, const QString& runwa
 
 const QList<map::MapApron> *AirportQuery::getAprons(int airportId)
 {
+  if(!query::valid(Q_FUNC_INFO, apronQuery))
+    return nullptr;
+
   if(apronCache.contains(airportId))
     return apronCache.object(airportId);
   else
@@ -520,6 +547,9 @@ const QList<map::MapApron> *AirportQuery::getAprons(int airportId)
 
 const QList<map::MapParking> *AirportQuery::getParkingsForAirport(int airportId)
 {
+  if(!query::valid(Q_FUNC_INFO, parkingQuery))
+    return nullptr;
+
   if(parkingCache.contains(airportId))
     return parkingCache.object(airportId);
   else
@@ -543,6 +573,9 @@ const QList<map::MapParking> *AirportQuery::getParkingsForAirport(int airportId)
 
 const QList<map::MapStart> *AirportQuery::getStartPositionsForAirport(int airportId)
 {
+  if(!query::valid(Q_FUNC_INFO, startQuery))
+    return nullptr;
+
   if(startCache.contains(airportId))
     return startCache.object(airportId);
   else
@@ -681,6 +714,9 @@ void AirportQuery::startByNameAndPos(map::MapStart& start, int airportId,
 
 void AirportQuery::getStartById(map::MapStart& start, int startId)
 {
+  if(!query::valid(Q_FUNC_INFO, startByIdQuery))
+    return;
+
   startByIdQuery->bindValue(":id", startId);
   startByIdQuery->exec();
 
@@ -692,6 +728,9 @@ void AirportQuery::getStartById(map::MapStart& start, int startId)
 void AirportQuery::getParkingByNameAndNumber(QList<map::MapParking>& parkings, int airportId,
                                              const QString& name, int number)
 {
+  if(!query::valid(Q_FUNC_INFO, parkingTypeAndNumberQuery))
+    return;
+
   parkingTypeAndNumberQuery->bindValue(":airportId", airportId);
   if(name.isEmpty())
     // Use "like "%" if name is empty
@@ -712,6 +751,9 @@ void AirportQuery::getParkingByNameAndNumber(QList<map::MapParking>& parkings, i
 void AirportQuery::getParkingByName(QList<map::MapParking>& parkings, int airportId, const QString& name,
                                     const ageo::Pos& sortByDistancePos)
 {
+  if(!query::valid(Q_FUNC_INFO, parkingNameQuery))
+    return;
+
   parkingNameQuery->bindValue(":airportId", airportId);
   if(name.isEmpty())
     // Use "like "%" if name is empty
@@ -731,6 +773,9 @@ void AirportQuery::getParkingByName(QList<map::MapParking>& parkings, int airpor
 
 const QList<map::MapHelipad> *AirportQuery::getHelipads(int airportId)
 {
+  if(!query::valid(Q_FUNC_INFO, helipadQuery))
+    return nullptr;
+
   if(helipadCache.contains(airportId))
     return helipadCache.object(airportId);
   else
@@ -870,6 +915,9 @@ void AirportQuery::getRunways(QVector<map::MapRunway>& runways, const ageo::Rect
 
 const QList<map::MapTaxiPath> *AirportQuery::getTaxiPaths(int airportId)
 {
+  if(!query::valid(Q_FUNC_INFO, taxiparthQuery))
+    return nullptr;
+
   if(taxipathCache.contains(airportId))
     return taxipathCache.object(airportId);
   else
@@ -900,6 +948,9 @@ const QList<map::MapTaxiPath> *AirportQuery::getTaxiPaths(int airportId)
 
 const QList<map::MapRunway> *AirportQuery::getRunways(int airportId)
 {
+  if(!query::valid(Q_FUNC_INFO, runwaysQuery))
+    return nullptr;
+
   if(runwayCache.contains(airportId))
     return runwayCache.object(airportId);
   else

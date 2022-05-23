@@ -55,6 +55,10 @@ WaypointQuery::~WaypointQuery()
 map::MapWaypoint WaypointQuery::getWaypointById(int id)
 {
   map::MapWaypoint wp;
+
+  if(!query::valid(Q_FUNC_INFO, waypointByIdQuery))
+    return wp;
+
   waypointByIdQuery->bindValue(":id", id);
   waypointByIdQuery->exec();
   if(waypointByIdQuery->next())
@@ -66,6 +70,9 @@ map::MapWaypoint WaypointQuery::getWaypointById(int id)
 MapWaypoint WaypointQuery::getWaypointByNavId(int navId)
 {
   map::MapWaypoint wp;
+  if(!query::valid(Q_FUNC_INFO, waypointByNavIdQuery))
+    return wp;
+
   waypointByNavIdQuery->bindValue(":id", navId);
   waypointByNavIdQuery->exec();
   if(waypointByNavIdQuery->next())
@@ -77,6 +84,9 @@ MapWaypoint WaypointQuery::getWaypointByNavId(int navId)
 void WaypointQuery::getWaypointByByIdent(QList<map::MapWaypoint>& waypoints, const QString& ident,
                                          const QString& region)
 {
+  if(!query::valid(Q_FUNC_INFO, waypointByIdentQuery))
+    return;
+
   waypointByIdentQuery->bindValue(":ident", ident);
   waypointByIdentQuery->bindValue(":region", region.isEmpty() ? "%" : region);
   waypointByIdentQuery->exec();
@@ -90,6 +100,9 @@ void WaypointQuery::getWaypointByByIdent(QList<map::MapWaypoint>& waypoints, con
 
 void WaypointQuery::getWaypointNearest(map::MapWaypoint& waypoint, const Pos& pos)
 {
+  if(!query::valid(Q_FUNC_INFO, waypointNearestQuery))
+    return;
+
   waypointNearestQuery->bindValue(":lonx", pos.getLonX());
   waypointNearestQuery->bindValue(":laty", pos.getLatY());
   waypointNearestQuery->exec();
@@ -100,6 +113,9 @@ void WaypointQuery::getWaypointNearest(map::MapWaypoint& waypoint, const Pos& po
 
 void WaypointQuery::getWaypointsRect(QVector<map::MapWaypoint>& waypoints, const Pos& pos, float distanceNm)
 {
+  if(!query::valid(Q_FUNC_INFO, waypointRectQuery))
+    return;
+
   for(Rect r : Rect(pos, nmToMeter(distanceNm)).splitAtAntiMeridian())
   {
     query::bindRect(r, waypointRectQuery);
@@ -126,6 +142,9 @@ void WaypointQuery::getWaypointRectNearest(map::MapWaypoint& waypoint, const Pos
 const QList<map::MapWaypoint> *WaypointQuery::getWaypoints(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
                                                            bool& overflow)
 {
+  if(!query::valid(Q_FUNC_INFO, waypointsByRectQuery))
+    return nullptr;
+
   waypointCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                             [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
   {
@@ -156,6 +175,9 @@ const QList<map::MapWaypoint> *WaypointQuery::getWaypoints(const GeoDataLatLonBo
 const QList<MapWaypoint> *WaypointQuery::getWaypointsAirway(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
                                                             bool& overflow)
 {
+  if(!query::valid(Q_FUNC_INFO, waypointsAirwayByRectQuery))
+    return nullptr;
+
   waypointAirwayCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                                   [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
   {
@@ -217,6 +239,9 @@ void WaypointQuery::getNearestScreenObjects(const CoordinateConverter& conv, con
 
 const atools::sql::SqlRecord *WaypointQuery::getWaypointInformation(int waypointId)
 {
+  if(!query::valid(Q_FUNC_INFO, waypointInfoQuery))
+    return nullptr;
+
   waypointInfoQuery->bindValue(":id", waypointId);
   return query::cachedRecord(waypointInfoCache, waypointInfoQuery, waypointId);
 }

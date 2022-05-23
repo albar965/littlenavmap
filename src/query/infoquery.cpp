@@ -57,70 +57,103 @@ InfoQuery::~InfoQuery()
 
 const SqlRecord *InfoQuery::getAirportInformation(int airportId)
 {
+  if(!query::valid(Q_FUNC_INFO, airportQuery))
+    return nullptr;
+
   airportQuery->bindValue(":id", airportId);
   return query::cachedRecord(airportCache, airportQuery, airportId);
 }
 
 const atools::sql::SqlRecordList *InfoQuery::getAirportSceneryInformation(const QString& ident)
 {
+  if(!query::valid(Q_FUNC_INFO, airportSceneryQuery))
+    return nullptr;
+
   airportSceneryQuery->bindValue(":id", ident);
   return query::cachedRecordList(airportSceneryCache, airportSceneryQuery, ident);
 }
 
 const SqlRecordList *InfoQuery::getComInformation(int airportId)
 {
+  if(!query::valid(Q_FUNC_INFO, comQuery))
+    return nullptr;
+
   comQuery->bindValue(":id", airportId);
   return query::cachedRecordList(comCache, comQuery, airportId);
 }
 
 const SqlRecordList *InfoQuery::getApproachInformation(int airportId)
 {
+  if(!query::valid(Q_FUNC_INFO, approachQuery))
+    return nullptr;
+
   approachQuery->bindValue(":id", airportId);
   return query::cachedRecordList(approachCache, approachQuery, airportId);
 }
 
 const SqlRecordList *InfoQuery::getTransitionInformation(int approachId)
 {
+  if(!query::valid(Q_FUNC_INFO, transitionQuery))
+    return nullptr;
+
   transitionQuery->bindValue(":id", approachId);
   return query::cachedRecordList(transitionCache, transitionQuery, approachId);
 }
 
 const SqlRecordList *InfoQuery::getRunwayInformation(int airportId)
 {
+  if(!query::valid(Q_FUNC_INFO, runwayQuery))
+    return nullptr;
+
   runwayQuery->bindValue(":id", airportId);
   return query::cachedRecordList(runwayCache, runwayQuery, airportId);
 }
 
 const SqlRecordList *InfoQuery::getHelipadInformation(int airportId)
 {
+  if(!query::valid(Q_FUNC_INFO, helipadQuery))
+    return nullptr;
+
   helipadQuery->bindValue(":id", airportId);
   return query::cachedRecordList(helipadCache, helipadQuery, airportId);
 }
 
 const SqlRecordList *InfoQuery::getStartInformation(int airportId)
 {
+  if(!query::valid(Q_FUNC_INFO, startQuery))
+    return nullptr;
+
   startQuery->bindValue(":id", airportId);
   return query::cachedRecordList(startCache, startQuery, airportId);
 }
 
 const atools::sql::SqlRecord *InfoQuery::getRunwayEndInformation(int runwayEndId)
 {
+  if(!query::valid(Q_FUNC_INFO, runwayEndQuery))
+    return nullptr;
+
   runwayEndQuery->bindValue(":id", runwayEndId);
   return query::cachedRecord(runwayEndCache, runwayEndQuery, runwayEndId);
 }
 
 const atools::sql::SqlRecord *InfoQuery::getVorInformation(int vorId)
 {
+  if(!query::valid(Q_FUNC_INFO, vorQuery))
+    return nullptr;
+
   vorQuery->bindValue(":id", vorId);
   return query::cachedRecord(vorCache, vorQuery, vorId);
 }
 
 const atools::sql::SqlRecord InfoQuery::getVorByIdentAndRegion(const QString& ident, const QString& region)
 {
+  atools::sql::SqlRecord rec;
+  if(!query::valid(Q_FUNC_INFO, vorIdentRegionQuery))
+    return rec;
+
   vorIdentRegionQuery->bindValue(":ident", ident);
   vorIdentRegionQuery->bindValue(":region", region);
   vorIdentRegionQuery->exec();
-  atools::sql::SqlRecord rec;
 
   if(vorIdentRegionQuery->next())
     rec = vorIdentRegionQuery->record();
@@ -131,6 +164,9 @@ const atools::sql::SqlRecord InfoQuery::getVorByIdentAndRegion(const QString& id
 
 const atools::sql::SqlRecord *InfoQuery::getNdbInformation(int ndbId)
 {
+  if(!query::valid(Q_FUNC_INFO, ndbQuery))
+    return nullptr;
+
   ndbQuery->bindValue(":id", ndbId);
   return query::cachedRecord(ndbCache, ndbQuery, ndbId);
 }

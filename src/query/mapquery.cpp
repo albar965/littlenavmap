@@ -178,6 +178,9 @@ void MapQuery::getAirportTransitionAltiudeAndLevel(const map::MapAirport& airpor
 
 void MapQuery::getVorForWaypoint(map::MapVor& vor, int waypointId) const
 {
+  if(!query::valid(Q_FUNC_INFO, vorByWaypointIdQuery))
+    return;
+
   vorByWaypointIdQuery->bindValue(":id", waypointId);
   vorByWaypointIdQuery->exec();
   if(vorByWaypointIdQuery->next())
@@ -187,6 +190,9 @@ void MapQuery::getVorForWaypoint(map::MapVor& vor, int waypointId) const
 
 void MapQuery::getNdbForWaypoint(map::MapNdb& ndb, int waypointId) const
 {
+  if(!query::valid(Q_FUNC_INFO, ndbByWaypointIdQuery))
+    return;
+
   ndbByWaypointIdQuery->bindValue(":id", waypointId);
   ndbByWaypointIdQuery->exec();
   if(ndbByWaypointIdQuery->next())
@@ -196,6 +202,9 @@ void MapQuery::getNdbForWaypoint(map::MapNdb& ndb, int waypointId) const
 
 void MapQuery::getVorNearest(map::MapVor& vor, const atools::geo::Pos& pos) const
 {
+  if(!query::valid(Q_FUNC_INFO, vorNearestQuery))
+    return;
+
   vorNearestQuery->bindValue(":lonx", pos.getLonX());
   vorNearestQuery->bindValue(":laty", pos.getLatY());
   vorNearestQuery->exec();
@@ -206,6 +215,9 @@ void MapQuery::getVorNearest(map::MapVor& vor, const atools::geo::Pos& pos) cons
 
 void MapQuery::getNdbNearest(map::MapNdb& ndb, const atools::geo::Pos& pos) const
 {
+  if(!query::valid(Q_FUNC_INFO, ndbNearestQuery))
+    return;
+
   ndbNearestQuery->bindValue(":lonx", pos.getLonX());
   ndbNearestQuery->bindValue(":laty", pos.getLatY());
   ndbNearestQuery->exec();
@@ -393,7 +405,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
     maptools::removeByDistance(result.airportMsa, sortByDistancePos, maxDistanceMeter);
   }
 
-  if(type & map::VOR)
+  if(type & map::VOR && query::valid(Q_FUNC_INFO, vorByIdentQuery))
   {
     vorByIdentQuery->bindValue(":ident", ident);
     vorByIdentQuery->bindValue(":region", region.isEmpty() ? "%" : region);
@@ -408,7 +420,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
     maptools::removeByDistance(result.vors, sortByDistancePos, maxDistanceMeter);
   }
 
-  if(type & map::NDB)
+  if(type & map::NDB && query::valid(Q_FUNC_INFO, ndbByIdentQuery))
   {
     ndbByIdentQuery->bindValue(":ident", ident);
     ndbByIdentQuery->bindValue(":region", region.isEmpty() ? "%" : region);
@@ -430,7 +442,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
     maptools::removeByDistance(result.waypoints, sortByDistancePos, maxDistanceMeter);
   }
 
-  if(type & map::ILS)
+  if(type & map::ILS && query::valid(Q_FUNC_INFO, ilsByIdentQuery))
   {
     ilsByIdentQuery->bindValue(":ident", ident);
     ilsByIdentQuery->bindValue(":airport", airport);
@@ -547,6 +559,9 @@ void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map:
 map::MapVor MapQuery::getVorById(int id) const
 {
   MapVor vor;
+  if(!query::valid(Q_FUNC_INFO, vorByIdQuery))
+    return vor;
+
   vorByIdQuery->bindValue(":id", id);
   vorByIdQuery->exec();
   if(vorByIdQuery->next())
@@ -558,6 +573,9 @@ map::MapVor MapQuery::getVorById(int id) const
 map::MapNdb MapQuery::getNdbById(int id) const
 {
   MapNdb ndb;
+  if(!query::valid(Q_FUNC_INFO, ndbByIdQuery))
+    return ndb;
+
   ndbByIdQuery->bindValue(":id", id);
   ndbByIdQuery->exec();
   if(ndbByIdQuery->next())
@@ -569,6 +587,10 @@ map::MapNdb MapQuery::getNdbById(int id) const
 map::MapIls MapQuery::getIlsById(int id) const
 {
   MapIls ils;
+
+  if(!query::valid(Q_FUNC_INFO, ilsByIdQuery))
+    return ils;
+
   ilsByIdQuery->bindValue(":id", id);
   ilsByIdQuery->exec();
   if(ilsByIdQuery->next())
@@ -620,6 +642,10 @@ QVector<map::MapIls> MapQuery::getIlsByAirportAndRunway(const QString& airportId
 QVector<MapIls> MapQuery::getIlsByAirportAndIdent(const QString& airportIdent, const QString& ilsIdent) const
 {
   QVector<MapIls> ilsList;
+
+  if(!query::valid(Q_FUNC_INFO, ilsQuerySimByAirportAndIdent))
+    return ilsList;
+
   ilsQuerySimByAirportAndIdent->bindValue(":apt", airportIdent);
   ilsQuerySimByAirportAndIdent->bindValue(":ident", ilsIdent);
   ilsQuerySimByAirportAndIdent->exec();
@@ -635,6 +661,9 @@ QVector<MapIls> MapQuery::getIlsByAirportAndIdent(const QString& airportIdent, c
 QVector<map::MapIls> MapQuery::ilsByAirportAndRunway(const QString& airportIdent, const QString& runway) const
 {
   QVector<MapIls> ilsList;
+  if(!query::valid(Q_FUNC_INFO, ilsQuerySimByAirportAndRw))
+    return ilsList;
+
   ilsQuerySimByAirportAndRw->bindValue(":apt", airportIdent);
   ilsQuerySimByAirportAndRw->bindValue(":rwy", runway);
   ilsQuerySimByAirportAndRw->exec();
@@ -848,6 +877,8 @@ const QList<map::MapAirport> *MapQuery::getAirports(const Marble::GeoDataLatLonB
 const QList<map::MapAirport> *MapQuery::getAirportsByRect(const atools::geo::Rect& rect, const MapLayer *mapLayer, bool lazy,
                                                           map::MapTypes types, bool& overflow)
 {
+  if(!query::valid(Q_FUNC_INFO, airportByRectQuery))
+    return nullptr;
 
   const GeoDataLatLonBox latLonBox = GeoDataLatLonBox(rect.getNorth(), rect.getSouth(), rect.getEast(), rect.getWest());
 
@@ -865,6 +896,9 @@ const QList<map::MapAirport> *MapQuery::getAirportsByRect(const atools::geo::Rec
 const QList<map::MapVor> *MapQuery::getVors(const GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                             bool lazy, bool& overflow)
 {
+  if(!query::valid(Q_FUNC_INFO, vorsByRectQuery))
+    return nullptr;
+
   vorCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                        [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
   {
@@ -899,6 +933,9 @@ const QList<map::MapVor> *MapQuery::getVorsByRect(const atools::geo::Rect& rect,
 
 const QList<map::MapNdb> *MapQuery::getNdbs(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
+  if(!query::valid(Q_FUNC_INFO, ndbsByRectQuery))
+    return nullptr;
+
   ndbCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                        [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
   {
@@ -934,8 +971,12 @@ const QList<map::MapNdb> *MapQuery::getNdbsByRect(const atools::geo::Rect& rect,
 const QList<map::MapUserpoint> MapQuery::getUserdataPoints(const GeoDataLatLonBox& rect, const QStringList& types,
                                                            const QStringList& typesAll, bool unknownType, float distanceNm)
 {
-  // No caching here since points can change and the dataset is usually small
   QList<MapUserpoint> retval;
+
+  if(!query::valid(Q_FUNC_INFO, userdataPointByRectQuery))
+    return retval;
+
+  // No caching here since points can change and the dataset is usually small
   userpointCache.clear();
 
   // Display either unknown or any type
@@ -1031,6 +1072,9 @@ QString MapQuery::airportIdentFromQuery(const QString& queryStr, const QString& 
 
 const QList<map::MapMarker> *MapQuery::getMarkers(const GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
+  if(!query::valid(Q_FUNC_INFO, markersByRectQuery))
+    return nullptr;
+
   markerCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                           [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
   {
@@ -1131,6 +1175,9 @@ const QList<map::MapAirportMsa> *MapQuery::getAirportMsa(const Marble::GeoDataLa
 
 const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
+  if(!query::valid(Q_FUNC_INFO, ilsByRectQuery))
+    return nullptr;
+
   ilsCache.updateCache(rect, mapLayer, queryRectInflationFactor, queryRectInflationIncrement, lazy,
                        [](const MapLayer *curLayer, const MapLayer *newLayer) -> bool
   {
@@ -1174,12 +1221,14 @@ const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer
 const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
                                                       bool lazy, bool overview, bool addon, bool normal, bool& overflow)
 {
+  if(!query::valid(Q_FUNC_INFO, query))
+    return nullptr;
+
   if(airportCache.list.isEmpty() && !lazy)
   {
     bool navdata = NavApp::getDatabaseManager()->getNavDatabaseStatus() == dm::NAVDATABASE_ALL;
 
-    for(const GeoDataLatLonBox& r :
-        query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+    for(const GeoDataLatLonBox& r : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
       // Avoid duplicates between both queries
       QSet<int> ids;
@@ -1194,11 +1243,9 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
           MapAirport ap;
           if(overview)
             // Fill only a part of the object
-            mapTypesFactory->fillAirportForOverview(query->record(), ap, navdata,
-                                                    NavApp::isAirportDatabaseXPlane(navdata));
+            mapTypesFactory->fillAirportForOverview(query->record(), ap, navdata, NavApp::isAirportDatabaseXPlane(navdata));
           else
-            mapTypesFactory->fillAirport(query->record(), ap, true /* complete */, navdata,
-                                         NavApp::isAirportDatabaseXPlane(navdata));
+            mapTypesFactory->fillAirport(query->record(), ap, true /* complete */, navdata, NavApp::isAirportDatabaseXPlane(navdata));
 
           ids.insert(ap.id);
           airportCache.list.append(ap);
@@ -1206,7 +1253,7 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
       }
 
       // Get add-on airports ==========
-      if(addon)
+      if(addon && airportAddonByRectQuery != nullptr)
       {
         query::bindRect(r, airportAddonByRectQuery);
         airportAddonByRectQuery->exec();
@@ -1232,6 +1279,9 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
 
 const QList<map::MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
 {
+  if(!query::valid(Q_FUNC_INFO, runwayOverviewQuery))
+    return nullptr;
+
   if(runwayOverwiewCache.contains(airportId))
     return runwayOverwiewCache.object(airportId);
   else

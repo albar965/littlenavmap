@@ -74,6 +74,9 @@ map::MapAirspace AirspaceQuery::getAirspaceById(int airspaceId)
 
 bool AirspaceQuery::hasAirspaceById(int airspaceId)
 {
+  if(!query::valid(Q_FUNC_INFO, airspaceByIdQuery))
+    return false;
+
   bool retval = false;
   airspaceByIdQuery->bindValue(":id", airspaceId);
   airspaceByIdQuery->exec();
@@ -99,6 +102,9 @@ SqlRecord AirspaceQuery::getOnlineAirspaceRecordById(int airspaceId)
 
 void AirspaceQuery::getAirspaceById(map::MapAirspace& airspace, int airspaceId)
 {
+  if(!query::valid(Q_FUNC_INFO, airspaceByIdQuery))
+    return;
+
   airspaceByIdQuery->bindValue(":id", airspaceId);
   airspaceByIdQuery->exec();
   if(airspaceByIdQuery->next())
@@ -178,7 +184,7 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
         alt = 0;
       }
 
-      if(query != nullptr)
+      if(query::valid(Q_FUNC_INFO, airspaceByIdQuery))
       {
         QSet<int> ids;
 
@@ -231,8 +237,6 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
           return map::airspaceDrawingOrder(airspace1.type) < map::airspaceDrawingOrder(airspace2.type);
         });
       }
-      else
-        qWarning() << Q_FUNC_INFO << "query is null";
     }
   }
   overflow = airspaceCache.validate(queryMaxRows);
@@ -241,6 +245,9 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
 
 const LineString *AirspaceQuery::getAirspaceGeometryById(int airspaceId)
 {
+  if(!query::valid(Q_FUNC_INFO, airspaceLinesByIdQuery))
+    return nullptr;
+
   if(airspaceLineCache.contains(airspaceId))
     return airspaceLineCache.object(airspaceId);
   else
