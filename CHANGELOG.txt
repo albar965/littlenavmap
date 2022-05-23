@@ -2,9 +2,7 @@
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 This text is partially Markdown, hence sometimes strange formatting.
 
-===============================================================================
-
-# Version 2.7.9.develop
+# Version 2.7.10.develop
 
 ## Notes
 
@@ -25,16 +23,88 @@ functions and give help. Help buttons are an exception since the manual is not u
 
 Please report if something does not work or does not work as expected.
 
-Create a backup of your settings and database folder just in case you'd like to go back to the
+**Create a backup of your settings and database folder just in case you'd like to go back to the
 stable release. Backup `ABarthel` in `C:\Users\YOURUSERNAME\AppData\Roaming\ABarthel` on Windows
-and `$HOME/.config/ABarthel` on Linux and macOS.
+and `$HOME/.config/ABarthel` on Linux and macOS.**
+
+Or see [Multiple Installations](https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/INSTALLATION.html#multiple-installations) for information how to run the stable and alpha versions in parallel.
 
 **Reload the scenery library after updating.**
 
 **A big thank you to all who reported bugs and issues!**
 
+## Changes from 2.7.9.develop to 2.7.10.develop
 
-## Changes from 2.7.8.develop to 2.7.9.develop
+### Flight Plan
+
+* Fixed issue where alternate airport was lost and error message remained after switching databases.
+* Fixed issues where runway was wrongly detected on circle-to-land approaches.
+* Corrected mapping of parking names for empty or invalid MSFS parking spots which broke reloading
+  of parking positions from flight plans. Exported MSFS PLN files now have correct parking name set
+  for these cases.
+* Extended waypoint coordinate parser for all ARINC 424 Code Convention full degree waypoint formats
+  like `57N30`, `5730E` or `57S30`. Flight plan route descption can now read all these waypoints
+  independent if they are in the navdata or not.
+
+### User Interface
+
+* Added options to display speeds, altitude and vertical speed in other than selected default units.
+  This is for indicated and actual altitude as well as indicated, ground and vertical speed in
+  progress display. Enable this in menu `Tools` -> `Aircraft Progress Display Options`. #656
+* Fix for issues where the undo shortcut key for flight plan was not working. Logbook and userpoint
+  undo function assigned to `Ctrl+Shift+Z` and `Ctrl+Shift+Y` to avoid overlap with flight plan
+  undo function.
+* Map cache links in options and main menu now point directly to the correct sub-path `map/earth`.
+* Added link to FltPlan site in airport information.
+* More small user interface fixes and improvements.
+
+### Map
+
+* Combined three toolbar buttons for map detail into one drop down menu button containing a slider
+  and reset menu item. Moved map detail level settings to menu `Map`.
+* Fixed issue where using `Ctrl++` and `Ctrl+-` for more and less map details zoomed in or out at
+  end of detail level range. #435
+* Added button and menu item to disable online aircraft and simulator AI separately. #754
+* Adjustments for map layers to display airway and track waypoints earlier when zooming.
+* Fixed several issues where VOR or NDB being part of airways or tracks were not shown on the map.
+* Added bearing, distance and altitude to AI/multiplayer and user aircraft tooltip. Fixed several
+  issues where tooltip was not updated.
+* Changed map theme handling to avoid issues when installing or removing map themes. Added error
+  checking and reporting for invalid and duplicate theme ids. Map theme ids have to be unique now.
+* Fixed issue where new airspaces were not drawn after loading user airspaces.
+* Now setting map projection for online services always to Mercator to avoid garbled map display in
+  web user interface.
+
+### Elevation Profile
+
+* Moved elevation profile display settings from page `Map display` in options dialog into a
+  separate configuration dialog. Added menu item in `Tools`, elevation profile context menu item
+  and button for configuration options.
+* Added new options for elevation profile to disable highlighting and certain graphic  elements.
+* Fixed display issues where top label in profile was not  hidden in some cases.
+
+### Scenery Library
+
+* Updated database minor version to 25. Reloading is advised.
+* Fixed bug in which Little Navmap would only read and display a single transition from addon
+  (Community) SIDs and STARs, despite these procedures actually having more than one transition. This
+  happens when using the latest MSFS SDK (SU9 or later).
+  Thanks a lot to @flpduarte at Github for the fix.
+* Added warning messages for encrypted MSFS add-ons when reading scenery library.
+* Fixed issue where airport frequencies were not correctly written for MSFS resulting in
+  wrong search results when looking for towered airports, for example.
+* Now skipping empty X-Plane `apt.dat` files to avoid program freezing when reading malformed files.
+* Fixed issue where OpenAir airspace files were not recognized as OpenAir format in some cases.
+
+### Build
+
+* Moved version number to variable in file `littlenavmap.pro` instead of coding into sources.
+* Now writing files `version.txt` and `revision.txt` files into deployment folder allowing
+  deployment scripts to automatically name archives.
+
+===============================================================================
+
+# Version 2.7.9.develop
 
 ### Scenery Library
 
