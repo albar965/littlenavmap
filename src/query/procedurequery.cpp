@@ -1240,12 +1240,16 @@ void ProcedureQuery::processLegsFixRestrictions(const map::MapAirport& airport, 
     if(prevLeg.isApproach() && leg.isMissed() && prevLeg.altRestriction.isValid())
     {
       // Last leg before missed approach - usually runway
-      // Correct restriction where it is wrongly below airport altitude for some
+      // Correct restriction to used simulator airport where it is wrongly below airport altitude for some
 
-      if(prevLeg.altRestriction.alt1 < airport.position.getAltitude())
+      map::MapAirport airportSim = NavApp::getMapQuery()->getAirportSim(airport);
+      float airportAlt = airportSim.isValid() ? airportSim.position.getAltitude() : airport.position.getAltitude();
+
+      if(prevLeg.altRestriction.alt1 < airportAlt)
       {
-        prevLeg.altRestriction.alt1 = std::ceil(airport.position.getAltitude());
-        qWarning() << Q_FUNC_INFO << "Final leg altitude below airport altitude" << airport.ident;
+        prevLeg.altRestriction.alt1 = std::ceil(airportAlt);
+        qWarning() << Q_FUNC_INFO << "Final leg altitude below airport altitude" << airport.ident
+                   << "restriction" << prevLeg.altRestriction.alt1 << "airport" << airportAlt;
       }
     }
   }
