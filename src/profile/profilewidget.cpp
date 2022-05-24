@@ -375,8 +375,7 @@ void ProfileWidget::updateScreenCoords()
     for(int i = 0; i < leg.elevation.size(); i++)
     {
       float alt = leg.elevation.at(i).getAltitude();
-      QPoint pt(left + static_cast<int>(leg.distances.at(i) * horizontalScale),
-                TOP + static_cast<int>(h - alt * verticalScale));
+      QPoint pt(left + static_cast<int>(leg.distances.at(i) * horizontalScale), TOP + static_cast<int>(h - alt * verticalScale));
 
       if(lastPt.isNull() || i == leg.elevation.size() - 1 || (lastPt - pt).manhattanLength() > 2)
       {
@@ -1876,9 +1875,15 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
       leg.geometry = altLeg.getGeoLineString();
     }
 
-    // Convert distances to NM and apply correction
-    for(int j = 0; j < leg.distances.size(); j++)
-      leg.distances[j] = leg.distances.at(j) * scale;
+    // Apply correction starting with factor 1 for first and "scale" for last =====================
+    if(!leg.distances.isEmpty() && atools::almostNotEqual(scale, 1.))
+    {
+      double firstDist = leg.distances.constFirst();
+      double lastDist = leg.distances.constLast();
+
+      for(double& curDist : leg.distances)
+        curDist *= atools::interpolate(1., scale, firstDist, lastDist, curDist);
+    }
 
     legs.elevationLegs.append(leg);
   }
@@ -2184,20 +2189,20 @@ void ProfileWidget::buildTooltip(int x, bool force)
   NavApp::getAircraftPerfController()->calculateFuelAndTimeTo(result, distanceToGo, INVALID_DISTANCE_VALUE,
                                                               index + 1);
 
-  variableLabelText.append(QString("<br/><code>[alt %1,idx %2, crs %3, "
-                                     "fuel dest %4/%5, fuel TOD %6/%7, "
-                                     "time dest %8 (%9), time TOD %10 (%11)]</code>").
-                           arg(NavApp::getRoute().getAltitudeForDistance(distanceToGo)).
-                           arg(index).
-                           arg(leg != nullptr ? QString::number(leg->getCourseToTrue()) : "-").
-                           arg(result.fuelLbsToDest, 0, 'f', 2).
-                           arg(result.fuelGalToDest, 0, 'f', 2).
-                           arg(result.fuelLbsToTod < INVALID_WEIGHT_VALUE ? result.fuelLbsToTod : -1., 0, 'f', 2).
-                           arg(result.fuelGalToTod < INVALID_VOLUME_VALUE ? result.fuelGalToTod : -1., 0, 'f', 2).
-                           arg(result.timeToDest, 0, 'f', 2).
-                           arg(formatMinutesHours(result.timeToDest)).
-                           arg(result.timeToTod < map::INVALID_TIME_VALUE ? result.timeToTod : -1., 0, 'f', 2).
-                           arg(result.timeToTod < INVALID_TIME_VALUE ? formatMinutesHours(result.timeToTod) : "-1"));
+  html.append(QString("<br/><code>[alt %1,idx %2, crs %3, "
+                        "fuel dest %4/%5, fuel TOD %6/%7, "
+                        "time dest %8 (%9), time TOD %10 (%11)]</code>").
+              arg(NavApp::getRoute().getAltitudeForDistance(distanceToGo)).
+              arg(index).
+              arg(leg != nullptr ? QString::number(leg->getCourseToTrue()) : "-").
+              arg(result.fuelLbsToDest, 0, 'f', 2).
+              arg(result.fuelGalToDest, 0, 'f', 2).
+              arg(result.fuelLbsToTod < INVALID_WEIGHT_VALUE ? result.fuelLbsToTod : -1., 0, 'f', 2).
+              arg(result.fuelGalToTod < INVALID_VOLUME_VALUE ? result.fuelGalToTod : -1., 0, 'f', 2).
+              arg(result.timeToDest, 0, 'f', 2).
+              arg(formatMinutesHours(result.timeToDest)).
+              arg(result.timeToTod < map::INVALID_TIME_VALUE ? result.timeToTod : -1., 0, 'f', 2).
+              arg(result.timeToTod < INVALID_TIME_VALUE ? formatMinutesHours(result.timeToTod) : "-1"));
 #endif
   html.pEnd(); // html.p(atools::util::html::NOBR_WHITESPACE);
   lastTooltipString = html.getHtml();
