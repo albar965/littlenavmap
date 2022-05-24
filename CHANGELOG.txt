@@ -45,6 +45,11 @@ Or see [Multiple Installations](https://www.littlenavmap.org/manuals/littlenavma
 * Extended waypoint coordinate parser for all ARINC 424 Code Convention full degree waypoint formats
   like `57N30`, `5730E` or `57S30`. Flight plan route descption can now read all these waypoints
   independent if they are in the navdata or not.
+* Fixed issue appearing when airport altitude is reported higher from simulator data than procedure
+  runway altitude from navdata. Program showed wrongly a violated altitude restriction at runway for
+  an approach procedure.
+* Fixed issue where flight plan leg in elevation profile had wrong position offset related to
+  restriction when using online elevation data.
 
 ### User Interface
 
