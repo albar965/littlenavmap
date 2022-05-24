@@ -3921,9 +3921,7 @@ void RouteController::updateTableModel()
     else if(leg.isAlternate())
       itemRow[rcol::PROCEDURE] = new QStandardItem(tr("Alternate"));
     else if(leg.isAnyProcedure())
-      itemRow[rcol::PROCEDURE] = new QStandardItem(route.getProcedureLegText(leg.getProcedureType(),
-                                                                             false /* includeRunway */, false /* missedAsApproach */,
-                                                                             true /* transitionAsProcedure */));
+      itemRow[rcol::PROCEDURE] = new QStandardItem(route.getProcedureLegText(leg.getProcedureType()));
 
     // Airway or leg type and restriction ===========================================
     if(leg.isRoute())

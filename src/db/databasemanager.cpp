@@ -1475,7 +1475,7 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db)
     atools::fs::NavDatabase navDatabase(&navDatabaseOpts, db, &errors, GIT_REVISION_LITTLENAVMAP);
     QString sceneryCfgCodec = (selectedFsType == atools::fs::FsPaths::P3D_V4 ||
                                selectedFsType == atools::fs::FsPaths::P3D_V5) ? "UTF-8" : QString();
-    nd.create(sceneryCfgCodec);
+    navDatabase.create(sceneryCfgCodec);
   }
   catch(atools::Exception& e)
   {

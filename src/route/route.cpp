@@ -437,7 +437,7 @@ void Route::updateActiveLegAndPos(const map::PosCourse& pos)
 
       // Either left current leg or closer to next and on courses
       // Do not track on missed if legs are not displayed
-      if(!(!(shownTypes& map::MISSED_APPROACH) && value(nextLeg).getProcedureLeg().isMissed()))
+      if(!(!(shownTypes & map::MISSED_APPROACH) && value(nextLeg).getProcedureLeg().isMissed()))
       {
         // Go to next leg and increase all values
         activeLegIndex = nextLeg;
@@ -2290,6 +2290,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   qDebug() << Q_FUNC_INFO << "options" << options;
 #endif
   bool saveApproachWp = options.testFlag(rf::SAVE_APPROACH_WP), saveSidStarWp = options.testFlag(rf::SAVE_SIDSTAR_WP),
+       saveSidWp = options.testFlag(rf::SAVE_SIDSTAR_WP), saveStarWp = options.testFlag(rf::SAVE_SIDSTAR_WP),
        replaceCustomWp = options.testFlag(rf::REPLACE_CUSTOM_WP), msfs = options.testFlag(rf::SAVE_MSFS);
 
   // Create copy which allows to modify the plan ==============
@@ -2452,9 +2453,9 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
       bool legMatches = (saveApproachWp && isAppr) || (saveSidWp && isSid) || (saveStarWp && isStar);
 
       if( // Save approach or SID/STAR waypoints and this leg is part of a procedure
-        (saveApproachWp && appr) || (saveSidStarWp && sidStar) ||
+        legMatches ||
         // MSFS - save SID/STAR legs and this leg is one
-        (msfs && sidStar))
+        (msfs && (isSid || isStar)))
       {
         entry.setFlag(atools::fs::pln::entry::TRACK, false);
 
@@ -2465,7 +2466,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
         entry.setRegion(QString());
         entry.setAirway(QString());
 
-        if(!msfs || (saveSidStarWp && sidStar) || (saveApproachWp && appr))
+        if(!msfs || legMatches)
           // Clear procedure flag to keep legs in plan
           entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
         else
@@ -2539,8 +2540,6 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 
           if((replaceCustomWp || saveApproachWp) && customApproach && leg.getProcedureType() & proc::PROCEDURE_APPROACH)
             entry.setIdent(procedureLeg.fixIdent);
-          else if((replaceCustomWp || saveSidWp) && customDeparture && leg.getProcedureType() & proc::PROCEDURE_SID)
-            entry.setIdent(procedureLeg.fixIdent);
           else
           {
             QString legText = procedureLeg.displayText.join(" ");
@@ -2556,9 +2555,11 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
         {
           // Correct coordinates for all distance or otherwise terminated legs ============================
           if(atools::contains(procedureLeg.type, {
-            proc::COURSE_TO_ALTITUDE, proc::COURSE_TO_DME_DISTANCE, proc::COURSE_TO_INTERCEPT, proc::COURSE_TO_RADIAL_TERMINATION,
+            proc::COURSE_TO_ALTITUDE, proc::COURSE_TO_DME_DISTANCE, proc::COURSE_TO_INTERCEPT,
+            proc::COURSE_TO_RADIAL_TERMINATION,
             proc::FIX_TO_ALTITUDE, proc::TRACK_FROM_FIX_FROM_DISTANCE, proc::TRACK_FROM_FIX_TO_DME_DISTANCE,
-            proc::FROM_FIX_TO_MANUAL_TERMINATION, proc::HEADING_TO_ALTITUDE_TERMINATION, proc::HEADING_TO_DME_DISTANCE_TERMINATION,
+            proc::FROM_FIX_TO_MANUAL_TERMINATION, proc::HEADING_TO_ALTITUDE_TERMINATION,
+            proc::HEADING_TO_DME_DISTANCE_TERMINATION,
             proc::HEADING_TO_INTERCEPT, proc::HEADING_TO_MANUAL_TERMINATION, proc::HEADING_TO_RADIAL_TERMINATION}))
           {
             // Set user waypoint
