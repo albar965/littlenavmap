@@ -340,8 +340,7 @@ void ProfileWidget::updateScreenCoords()
     for(int i = 0; i < leg.elevation.size(); i++)
     {
       float alt = leg.elevation.at(i).getAltitude();
-      QPoint pt(left + static_cast<int>(leg.distances.at(i) * horizontalScale),
-                TOP + static_cast<int>(h - alt *verticalScale));
+      QPoint pt(left + static_cast<int>(leg.distances.at(i) * horizontalScale), TOP + static_cast<int>(h - alt * verticalScale));
 
       if(lastPt.isNull() || i == leg.elevation.size() - 1 || (lastPt - pt).manhattanLength() > 2)
       {
@@ -1517,7 +1516,7 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
     return ElevationLegList();
 
   // Total calculated distance across all legs
-  double totalDistanceMeter = 0.;
+  double totalDistanceNm = 0.;
 
   // Loop over all route legs - first is departure airport point
   for(int i = 1; i <= legs.route.getDestinationLegIndex(); i++)
@@ -1551,7 +1550,7 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
 
       leg.geometry = geometry;
 
-      double distMeter = totalDistanceMeter;
+      double distNm = totalDistanceNm;
       // Loop over all elevation points for the current leg
       Pos lastPos;
       for(int j = 0; j < elevations.size(); j++)
@@ -1571,44 +1570,53 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
 
         if(j > 0)
           // Update total distance
-          distMeter += lastPos.distanceMeterToDouble(coord);
+          distNm += meterToNm(lastPos.distanceMeterToDouble(coord));
 
         // Coordinate with elevation
         leg.elevation.append(coord);
 
         // Distance to elevation point from departure
-        leg.distances.append(distMeter);
+        leg.distances.append(distNm);
 
         legs.totalNumPoints++;
         lastPos = coord;
       }
 
-      totalDistanceMeter += nmToMeter(altLeg.getDistanceTo());
+      // float distanceTo = atools::geo::meterToNm(geometry.lengthMeter());
+      float distanceTo = altLeg.getDistanceTo();
+      totalDistanceNm += distanceTo;
 
-      if(!leg.distances.isEmpty() && atools::almostNotEqual(leg.distances.last(), totalDistanceMeter))
+      double lastDist = leg.distances.constLast();
+      if(!leg.distances.isEmpty() && atools::almostNotEqual(lastDist, totalDistanceNm))
         // Accumulated distance is different from route total distance - adjust
         // This can happen with the online elevation provider which does not return all points exactly on the leg
-        scale = totalDistanceMeter / leg.distances.last();
+        scale = totalDistanceNm / leg.distances.constLast();
     }
     else
     {
       // Skip long segment
-      leg.distances.append(totalDistanceMeter);
-      totalDistanceMeter += altLeg.getGeoLineString().lengthMeter();
-      leg.distances.append(totalDistanceMeter);
+      leg.distances.append(totalDistanceNm);
+      totalDistanceNm += atools::geo::meterToNm(altLeg.getGeoLineString().lengthMeter());
+      leg.distances.append(totalDistanceNm);
       leg.elevation = altLeg.getGeoLineString();
       leg.elevation.setAltitude(0.f);
       leg.geometry = altLeg.getGeoLineString();
     }
 
-    // Convert distances to NM and apply correction
-    for(int j = 0; j < leg.distances.size(); j++)
-      leg.distances[j] = meterToNm(leg.distances.at(j) * scale);
+    // Apply correction starting with factor 1 for first and "scale" for last =====================
+    if(!leg.distances.isEmpty() && atools::almostNotEqual(scale, 1.))
+    {
+      double firstDist = leg.distances.constFirst();
+      double lastDist = leg.distances.constLast();
+
+      for(double& curDist : leg.distances)
+        curDist *= atools::interpolate(1., scale, firstDist, lastDist, curDist);
+    }
 
     legs.elevationLegs.append(leg);
   }
 
-  legs.totalDistance = static_cast<float>(meterToNm(totalDistanceMeter));
+  legs.totalDistance = static_cast<float>(totalDistanceNm);
   return legs;
 }
 
@@ -1877,20 +1885,20 @@ void ProfileWidget::buildTooltip(int x, bool force)
   NavApp::getAircraftPerfController()->calculateFuelAndTimeTo(result, distanceToGo, INVALID_DISTANCE_VALUE,
                                                               index + 1);
 
-  variableLabelText.append(QString("<br/><code>[alt %1,idx %2, crs %3, "
-                                     "fuel dest %4/%5, fuel TOD %6/%7, "
-                                     "time dest %8 (%9), time TOD %10 (%11)]</code>").
-                           arg(NavApp::getRoute().getAltitudeForDistance(distanceToGo)).
-                           arg(index).
-                           arg(leg != nullptr ? QString::number(leg->getCourseToTrue()) : "-").
-                           arg(result.fuelLbsToDest, 0, 'f', 2).
-                           arg(result.fuelGalToDest, 0, 'f', 2).
-                           arg(result.fuelLbsToTod < INVALID_WEIGHT_VALUE ? result.fuelLbsToTod : -1., 0, 'f', 2).
-                           arg(result.fuelGalToTod < INVALID_VOLUME_VALUE ? result.fuelGalToTod : -1., 0, 'f', 2).
-                           arg(result.timeToDest, 0, 'f', 2).
-                           arg(formatMinutesHours(result.timeToDest)).
-                           arg(result.timeToTod < map::INVALID_TIME_VALUE ? result.timeToTod : -1., 0, 'f', 2).
-                           arg(result.timeToTod < INVALID_TIME_VALUE ? formatMinutesHours(result.timeToTod) : "-1"));
+  html.append(QString("<br/><code>[alt %1,idx %2, crs %3, "
+                        "fuel dest %4/%5, fuel TOD %6/%7, "
+                        "time dest %8 (%9), time TOD %10 (%11)]</code>").
+              arg(NavApp::getRoute().getAltitudeForDistance(distanceToGo)).
+              arg(index).
+              arg(leg != nullptr ? QString::number(leg->getCourseToTrue()) : "-").
+              arg(result.fuelLbsToDest, 0, 'f', 2).
+              arg(result.fuelGalToDest, 0, 'f', 2).
+              arg(result.fuelLbsToTod < INVALID_WEIGHT_VALUE ? result.fuelLbsToTod : -1., 0, 'f', 2).
+              arg(result.fuelGalToTod < INVALID_VOLUME_VALUE ? result.fuelGalToTod : -1., 0, 'f', 2).
+              arg(result.timeToDest, 0, 'f', 2).
+              arg(formatMinutesHours(result.timeToDest)).
+              arg(result.timeToTod < map::INVALID_TIME_VALUE ? result.timeToTod : -1., 0, 'f', 2).
+              arg(result.timeToTod < INVALID_TIME_VALUE ? formatMinutesHours(result.timeToTod) : "-1"));
 #endif
   html.pEnd(); // html.p(atools::util::html::NOBR_WHITESPACE);
   lastTooltipString = html.getHtml();
