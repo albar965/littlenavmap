@@ -20,6 +20,7 @@
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlrecord.h"
+#include "sql/sqlutil.h"
 #include "settings/settings.h"
 #include "query/querytypes.h"
 #include "common/constants.h"
@@ -27,6 +28,7 @@
 #include "fs/util/fsutil.h"
 
 using atools::sql::SqlQuery;
+using atools::sql::SqlUtil;
 using atools::sql::SqlDatabase;
 using atools::sql::SqlRecord;
 using atools::sql::SqlRecordVector;
@@ -267,20 +269,25 @@ void InfoQuery::initQueries()
   startQuery = new SqlQuery(dbSim);
   startQuery->prepare("select * from start where airport_id = :id order by type asc, runway_name");
 
-  ilsQuerySimById = new SqlQuery(dbSim);
-  ilsQuerySimById->prepare("select * from ils where ils_id = :id");
+  // Only for 2.6 versions and new databases
+  QString ilsSelectorNav = SqlUtil(dbNav).hasTableAndColumn("ils", "type") ? " and type not in ('G', 'T')" : QString();
+  QString ilsSelectorSim = SqlUtil(dbSim).hasTableAndColumn("ils", "type") ? " and type not in ('G', 'T')" : QString();
 
-  ilsQueryNavById = new SqlQuery(dbSim);
-  ilsQueryNavById->prepare("select * from ils where ils_id = :id");
+  ilsQuerySimById = new SqlQuery(dbSim);
+  ilsQuerySimById->prepare("select * from ils where ils_id = :id " + ilsSelectorSim);
+
+  ilsQueryNavById = new SqlQuery(dbNav);
+  ilsQueryNavById->prepare("select * from ils where ils_id = :id " + ilsSelectorNav);
 
   ilsQuerySim = new SqlQuery(dbSim);
-  ilsQuerySim->prepare("select * from ils where loc_runway_end_id = :id");
+  ilsQuerySim->prepare("select * from ils where loc_runway_end_id = :id " + ilsSelectorSim);
 
   ilsQueryNav = new SqlQuery(dbNav);
-  ilsQueryNav->prepare("select * from ils where loc_runway_end_id = :id");
+  ilsQueryNav->prepare("select * from ils where loc_runway_end_id = :id " + ilsSelectorNav);
 
   ilsQuerySimByName = new SqlQuery(dbSim);
-  ilsQuerySimByName->prepare("select * from ils where loc_airport_ident = :apt and loc_runway_name = :rwy");
+  ilsQuerySimByName->prepare(
+    "select * from ils where loc_airport_ident = :apt and loc_runway_name = :rwy " + ilsSelectorSim);
 
   vorIdentRegionQuery = new SqlQuery(dbNav);
   vorIdentRegionQuery->prepare("select * from vor where ident = :ident and region = :region");

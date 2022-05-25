@@ -26,6 +26,7 @@
 #include "airspace/airspacecontroller.h"
 #include "logbook/logdatacontroller.h"
 #include "userdata/userdatacontroller.h"
+#include "sql/sqlutil.h"
 #include "query/airportquery.h"
 #include "query/airwaytrackquery.h"
 #include "query/waypointtrackquery.h"
@@ -46,6 +47,7 @@ using map::MapIls;
 using map::MapParking;
 using map::MapHelipad;
 using map::MapUserpoint;
+using atools::sql::SqlUtil;
 
 static double queryRectInflationFactor = 0.2;
 static double queryRectInflationIncrement = 0.1;
@@ -1086,6 +1088,9 @@ void MapQuery::initQueries()
 
   deInitQueries();
 
+  // Only for 2.6 versions and new databases
+  QString ilsSelectorSim = SqlUtil(dbSim).hasTableAndColumn("ils", "type") ? " and type not in ('G', 'T') " : QString();
+
   vorByIdentQuery = new SqlQuery(dbNav);
   vorByIdentQuery->prepare("select " + vorQueryBase + " from vor where " + whereIdentRegion);
 
@@ -1094,7 +1099,7 @@ void MapQuery::initQueries()
 
   ilsByIdentQuery = new SqlQuery(dbSim);
   ilsByIdentQuery->prepare("select " + ilsQueryBase +
-                           " from ils where ident = :ident and loc_airport_ident = :airport");
+                           " from ils where ident = :ident and loc_airport_ident = :airport " + ilsSelectorSim);
 
   vorByIdQuery = new SqlQuery(dbNav);
   vorByIdQuery->prepare("select " + vorQueryBase + " from vor where vor_id = :id");
@@ -1125,15 +1130,16 @@ void MapQuery::initQueries()
     "select " + ndbQueryBase + " from ndb order by (abs(lonx - :lonx) + abs(laty - :laty)) limit 1");
 
   ilsByIdQuery = new SqlQuery(dbSim);
-  ilsByIdQuery->prepare("select " + ilsQueryBase + " from ils where ils_id = :id");
+  ilsByIdQuery->prepare("select " + ilsQueryBase + " from ils where ils_id = :id " + ilsSelectorSim);
 
   ilsQuerySimByAirportAndRw = new SqlQuery(dbSim);
   ilsQuerySimByAirportAndRw->prepare("select " + ilsQueryBase +
-                                     " from ils where loc_airport_ident = :apt and loc_runway_name = :rwy");
+                                     " from ils where loc_airport_ident = :apt and loc_runway_name = :rwy " +
+                                     ilsSelectorSim);
 
   ilsQuerySimByAirportAndIdent = new SqlQuery(dbSim);
   ilsQuerySimByAirportAndIdent->prepare("select " + ilsQueryBase +
-                                        " from ils where loc_airport_ident = :apt and ident = :ident");
+                                        " from ils where loc_airport_ident = :apt and ident = :ident " + ilsSelectorSim);
 
   airportByRectQuery = new SqlQuery(dbSim);
   airportByRectQuery->prepare(
@@ -1177,7 +1183,8 @@ void MapQuery::initQueries()
     "where " + whereRect + " " + whereLimit);
 
   ilsByRectQuery = new SqlQuery(dbSim);
-  ilsByRectQuery->prepare("select " + ilsQueryBase + " from ils where " + whereRect + " " + whereLimit);
+  ilsByRectQuery->prepare(
+    "select " + ilsQueryBase + " from ils where " + whereRect + " " + ilsSelectorSim + " " + whereLimit);
 }
 
 void MapQuery::deInitQueries()
