@@ -13,6 +13,12 @@
     <height>1395</height>
    </rect>
   </property>
+  <property name="minimumSize">
+   <size>
+    <width>300</width>
+    <height>300</height>
+   </size>
+  </property>
   <property name="windowTitle">
    <string>Little Navmap</string>
   </property>
