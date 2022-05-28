@@ -296,6 +296,9 @@ public:
   /* Update header label with sim information */
   void updateRemarkHeader();
 
+  /* Reset tab bar */
+  void resetTabLayout();
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);

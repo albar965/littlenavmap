@@ -165,7 +165,8 @@ public:
 
   si::TabSearchId getCurrentSearchTabId();
 
-  void resetWindowLayout();
+  /* Reset tab bar */
+  void resetTabLayout();
 
 private:
   void tabChanged(int index);

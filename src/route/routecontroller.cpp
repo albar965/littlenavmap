@@ -1100,7 +1100,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   loadAlternateFromFlightplan();
   route.updateAll(); // Removes alternate property if not resolvable
 
-    // Keep property also in case alternates were not added
+  // Keep property also in case alternates were not added
   route.getFlightplan().getProperties().insert(atools::fs::pln::ALTERNATES, alternates);
 
   route.updateAirwaysAndAltitude(adjustAltitude);
@@ -5156,6 +5156,11 @@ void RouteController::updateRemarkHeader()
   else
     // No plan - hide widget
     ui->labelRouteRemarksHeader->setVisible(false);
+}
+
+void RouteController::resetTabLayout()
+{
+  tabHandlerRoute->reset();
 }
 
 void RouteController::updateRemarkWidget()

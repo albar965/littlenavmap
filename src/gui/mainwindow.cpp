@@ -1226,6 +1226,7 @@ void MainWindow::connectAllSlots()
   connect(procedureSearch, &ProcedureSearch::showInformation, infoController, &InfoController::showInformation);
 
   connect(ui->actionResetLayout, &QAction::triggered, this, &MainWindow::resetWindowLayout);
+  connect(ui->actionResetTabs, &QAction::triggered, this, &MainWindow::resetTabLayout);
   connect(ui->actionResetAllSettings, &QAction::triggered, this, &MainWindow::resetAllSettings);
 
   connect(infoController, &InfoController::showPos, mapWidget, &MapPaintWidget::showPos);
@@ -3665,10 +3666,6 @@ void MainWindow::resetWindowLayout()
 
   ui->dockWidgetMap->setVisible(allowUndockMap);
 
-  NavApp::getRouteTabHandler()->reset();
-  infoController->resetWindowLayout();
-  searchController->resetWindowLayout();
-
   ui->actionShowFullscreenMap->blockSignals(true);
   ui->actionShowFullscreenMap->setChecked(false);
   ui->actionShowFullscreenMap->blockSignals(false);
@@ -3676,6 +3673,14 @@ void MainWindow::resetWindowLayout()
   ui->actionShowStatusbar->setChecked(true);
   ui->statusBar->setVisible(true);
   ui->menuBar->setVisible(true);
+}
+
+void MainWindow::resetTabLayout()
+{
+  qDebug() << Q_FUNC_INFO;
+  searchController->resetTabLayout();
+  infoController->resetTabLayout();
+  routeController->resetTabLayout();
 }
 
 /* Read settings for all windows, docks, controller and manager classes */

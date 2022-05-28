@@ -395,6 +395,7 @@ private:
   void updateAirspaceTypes(map::MapAirspaceFilter types);
   void updateAirspaceSources();
   void resetWindowLayout();
+  void resetTabLayout();
 
   /* Question dialog and then delete map and profile trail */
   void deleteAircraftTrack(bool quiet = false);

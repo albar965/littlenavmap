@@ -106,7 +106,8 @@ public:
   void setCurrentAirportInfoTabIndex(ic::TabAirportInfoId tabId);
   void setCurrentAircraftTabIndex(ic::TabAircraftId tabId);
 
-  void resetWindowLayout();
+  /* Reset all tab bars */
+  void resetTabLayout();
 
   /* Get enabled fields in user aircraft progress tab */
   const QBitArray& getEnabledProgressBits() const;

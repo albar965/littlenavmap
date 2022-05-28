@@ -1467,7 +1467,7 @@ void InfoController::setCurrentAircraftTabIndex(ic::TabAircraftId tabId)
   tabHandlerAircraft->setCurrentTab(tabId);
 }
 
-void InfoController::resetWindowLayout()
+void InfoController::resetTabLayout()
 {
   tabHandlerInfo->reset();
   tabHandlerAirportInfo->reset();

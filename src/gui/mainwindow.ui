@@ -163,6 +163,7 @@
     <addaction name="menuWindowLayoutRecent"/>
     <addaction name="separator"/>
     <addaction name="actionResetLayout"/>
+    <addaction name="actionResetTabs"/>
     <addaction name="separator"/>
     <addaction name="actionShowFullscreenMap"/>
     <addaction name="actionWindowStayOnTop"/>
@@ -12404,6 +12405,17 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Show online client aircraft position and data on map</string>
    </property>
   </action>
+  <action name="actionResetTabs">
+   <property name="text">
+    <string>Reset &amp;Tabs to Default</string>
+   </property>
+   <property name="toolTip">
+    <string>Reset all tabs back to default</string>
+   </property>
+   <property name="statusTip">
+    <string>Reset all tabs back to default</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12585,8 +12597,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalc"/>
   <buttongroup name="buttonGroupRouteCalcType"/>
  </buttongroups>
 </ui>

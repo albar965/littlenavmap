@@ -245,7 +245,7 @@ void SearchController::postCreateSearch(AbstractSearch *search)
   SearchBaseTable *base = dynamic_cast<SearchBaseTable *>(search);
   if(base != nullptr)
     NavApp::getMapWidgetGui()->connect(NavApp::getMapWidgetGui(), &MapWidget::searchMarkChanged,
-                                    base, &SearchBaseTable::searchMarkChanged);
+                                       base, &SearchBaseTable::searchMarkChanged);
   allSearchTabs.append(search);
 }
 
@@ -375,7 +375,7 @@ si::TabSearchId SearchController::getCurrentSearchTabId()
   return static_cast<si::TabSearchId>(tabHandlerSearch->getCurrentTabId());
 }
 
-void SearchController::resetWindowLayout()
+void SearchController::resetTabLayout()
 {
   tabHandlerSearch->reset();
 }
