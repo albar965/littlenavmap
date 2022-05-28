@@ -227,6 +227,8 @@ private:
 
   void mapClickAirportProcsToggled();
 
+  void mapboxUserMapClicked();
+
   /* Fill combo box with available languages and select best match. English, otherwise.*/
   void udpdateLanguageComboBox(const QString& guiLanguage);
   void languageChanged(int);

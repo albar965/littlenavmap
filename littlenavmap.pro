@@ -280,6 +280,7 @@ SOURCES += \
   src/gui/statusbareventfilter.cpp \
   src/gui/stylehandler.cpp \
   src/gui/textdialog.cpp \
+  src/gui/texteditdialog.cpp \
   src/gui/timedialog.cpp \
   src/gui/trafficpatterndialog.cpp \
   src/gui/rangemarkerdialog.cpp \
@@ -471,6 +472,7 @@ HEADERS  += \
   src/gui/statusbareventfilter.h \
   src/gui/stylehandler.h \
   src/gui/textdialog.h \
+  src/gui/texteditdialog.h \
   src/gui/timedialog.h \
   src/gui/trafficpatterndialog.h \
   src/gui/rangemarkerdialog.h \
@@ -621,6 +623,7 @@ FORMS += \
   src/gui/coordinatedialog.ui \
   src/gui/mainwindow.ui \
   src/gui/textdialog.ui \
+  src/gui/texteditdialog.ui \
   src/gui/timedialog.ui \
   src/gui/trafficpatterndialog.ui \
   src/gui/rangemarkerdialog.ui \

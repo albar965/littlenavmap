@@ -32,6 +32,7 @@
 #include "gui/translator.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
+#include "gui/texteditdialog.h"
 #include "mapgui/mapwidget.h"
 #include "mapgui/mapthemehandler.h"
 #include "navapp.h"
@@ -55,6 +56,7 @@
 #include <QFontDatabase>
 #include <QStringBuilder>
 #include <QStandardItem>
+#include <QInputDialog>
 
 #include <marble/MarbleModel.h>
 #include <marble/MarbleDirs.h>
@@ -503,6 +505,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   connect(ui->pushButtonOptionsDisplaySelectFont, &QPushButton::clicked, this, &OptionsDialog::selectMapFontClicked);
   connect(ui->pushButtonOptionsDisplayResetFont, &QPushButton::clicked, this, &OptionsDialog::resetMapFontClicked);
+
+  connect(ui->pushButtonOptionsMapboxUser, &QPushButton::clicked, this, &OptionsDialog::mapboxUserMapClicked);
 
   // ===========================================================================
   // Database exclude path
@@ -2767,4 +2771,53 @@ void OptionsDialog::updateFontFromData()
 
   if(QApplication::font() != font)
     QApplication::setFont(font);
+}
+
+void OptionsDialog::mapboxUserMapClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  QString label = tr("<p>Here you can enter a Mapbox User Style URL.</p>"
+                       "<p>Go to <a href=\"https://studio.mapbox.com/\">Mapbox Studio</a>, login and click on the three-dot menu button of your style.<br/> "
+                         "Then click on the copy icon of the \"Style URL\" to add it to the clipboard and enter it here.</p>"
+                         "<p>You also have to provide you Mapbox Access Token in the table \"API Keys\" if not already done.<br/>"
+                         "The Access Token can be found in your <a href=\"https://account.mapbox.com/\">Mapbox Account</a>.</p>"
+                         "<p>A style URL looks like \"mapbox://styles/USERNAME/STYLEID\".</p>");
+
+  TextEditDialog dialog(this, QApplication::applicationName() % tr(" - Enter Mapbox Style URL"), label, "OPTIONS.html#mapboxtheme");
+  if(dialog.exec() == QDialog::Accepted)
+  {
+    QString url = dialog.getText().simplified();
+    // now "mapbox://styles/USERNAME/STYLEID"
+
+    if(url.startsWith("mapbox://styles/", Qt::CaseInsensitive))
+    {
+      url.replace("mapbox://styles/", QString(), Qt::CaseInsensitive);
+      // Now "USERNAME/STYLEID"
+
+      QString userName = url.section('/', 0, 0);
+      if(!userName.isEmpty())
+      {
+        QString styleId = url.section('/', 1, 1);
+        if(!styleId.isEmpty())
+        {
+          // Write values directly into the table widget to allow undoing the changes on cancel
+          for(int row = 0; row < ui->tableWidgetOptionsMapKeys->rowCount(); row++)
+          {
+            QTableWidgetItem *item = ui->tableWidgetOptionsMapKeys->item(row, 0);
+            if(item->text() == "Mapbox Username") // Hardcoded and linked to variables in "mapboxuser.dgml"
+              ui->tableWidgetOptionsMapKeys->item(row, 1)->setText(userName);
+            else if(item->text() == "Mapbox User Style") // Hardcoded and linked to variables in "mapboxuser.dgml"
+              ui->tableWidgetOptionsMapKeys->item(row, 1)->setText(styleId);
+          }
+        }
+        else
+          QMessageBox::warning(this, QApplication::applicationName(), tr("Mapbox User Style not found in URL."));
+      }
+      else
+        QMessageBox::warning(this, QApplication::applicationName(), tr("Mapbox Username not found in URL."));
+    }
+    else
+      QMessageBox::warning(this, QApplication::applicationName(), tr("Style URL has to start with \"mapbox://styles/\"."));
+  }
 }
