@@ -690,7 +690,9 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     accept();
   }
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Help))
-    HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "OPTIONS.html", lnm::helpLanguageOnline());
+    HelpHandler::openHelpUrlWeb(this,
+                                lnm::helpOnlineUrl + QString("OPTIONS.html#page%1").arg(ui->stackedWidgetOptions->currentIndex() + 1),
+                                lnm::helpLanguageOnline());
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Cancel))
     reject();
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::RestoreDefaults))
