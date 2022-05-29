@@ -47,6 +47,12 @@ using atools::settings::Settings;
 const static char FORMAT_PROP_NAME[] = "format";
 const static char ROW_PROP_NAME[] = "row";
 
+// Object names of buttons which are children of the cell widget
+const static QLatin1String OBJ_NAME_CHECKBOX("MultiExpCheckBox");
+const static QLatin1String OBJ_NAME_EXP_SELECT("MultiExpSelectButton");
+const static QLatin1String OBJ_NAME_EXP_SAVE("MultiExpSaveButton");
+const static QLatin1String OBJ_NAME_EXP_RESET("MultiExpResetButton");
+
 // Data role for checkbox status set in model for first BUTTONS column
 // Needed for sorting
 static int CHECK_STATE_ROLE = Qt::UserRole;
@@ -369,14 +375,37 @@ void RouteMultiExportDialog::updateLabel()
 
 void RouteMultiExportDialog::updateActions()
 {
-  int row = selectedRow();
-  ui->actionSelectExportPath->setEnabled(row != -1);
-  ui->actionResetExportPath->setEnabled(row != -1);
-  ui->actionResetFilePattern->setEnabled(row != -1);
-  ui->actionEditPattern->setEnabled(row != -1);
-  ui->actionExportFileNow->setEnabled(row != -1);
-  ui->actionEditPath->setEnabled(row != -1);
-  ui->actionSelect->setEnabled(row != -1);
+  // Update actions ========================
+  bool routeEmpty = NavApp::isRouteEmpty();
+  int selRow = selectedRow();
+  ui->actionSelectExportPath->setEnabled(selRow != -1);
+  ui->actionResetExportPath->setEnabled(selRow != -1);
+  ui->actionResetFilePattern->setEnabled(selRow != -1);
+  ui->actionEditPattern->setEnabled(selRow != -1);
+  ui->actionExportFileNow->setEnabled(selRow != -1 && !routeEmpty);
+  ui->actionEditPath->setEnabled(selRow != -1);
+  ui->actionSelect->setEnabled(selRow != -1);
+
+  // Update table cell buttons ========================
+  int numSelected = 0;
+  for(int row = 0; row < ui->tableViewRouteExport->model()->rowCount(); row++)
+  {
+    QWidget *cellWidget = ui->tableViewRouteExport->indexWidget(proxyModel->mapFromSource(itemModel->index(row, BUTTONS)));
+    if(cellWidget != nullptr)
+    {
+      // Buttons are named children of the cell widget
+      QPushButton *exportNowButton = cellWidget->findChild<QPushButton *>(OBJ_NAME_EXP_SAVE, Qt::FindDirectChildrenOnly);
+      if(exportNowButton != nullptr)
+        exportNowButton->setDisabled(routeEmpty);
+
+      QCheckBox *checkBox = cellWidget->findChild<QCheckBox *>(OBJ_NAME_CHECKBOX, Qt::FindDirectChildrenOnly);
+      if(checkBox != nullptr)
+        numSelected += checkBox->isChecked();
+    }
+  }
+
+  // Update "Export Selected Formats"
+  ui->buttonBoxRouteExport->button(QDialogButtonBox::SaveAll)->setDisabled(routeEmpty || numSelected == 0);
 
   rexp::RouteExportFormatType type = selectedType();
   if(type != rexp::NO_TYPE)
@@ -490,6 +519,7 @@ void RouteMultiExportDialog::updateModel()
     QCheckBox *checkBox = new QCheckBox(cellWidget);
 #endif
 
+    checkBox->setObjectName(OBJ_NAME_CHECKBOX);
     checkBox->setToolTip(tr("Flight plan format will be exported with multiexport when checked"));
     checkBox->setProperty(FORMAT_PROP_NAME, userdata);
     checkBox->setProperty(ROW_PROP_NAME, row);
@@ -498,8 +528,8 @@ void RouteMultiExportDialog::updateModel()
     connect(checkBox, &QCheckBox::toggled, this, &RouteMultiExportDialog::selectForExportToggled);
     selectCheckBoxIndex.insert(format.getType(), checkBox);
 
-    QPushButton *selectButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/fileopen.svg"),
-                                                QString(), cellWidget);
+    QPushButton *selectButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/fileopen.svg"), QString(), cellWidget);
+    selectButton->setObjectName(OBJ_NAME_EXP_SELECT);
     selectButton->setToolTip(tr("Select %1 that will be used to export the flight plan").
                              arg(format.isAppendToFile() ? tr("an existing file") : tr("a directory")));
     selectButton->setProperty(FORMAT_PROP_NAME, userdata);
@@ -507,16 +537,16 @@ void RouteMultiExportDialog::updateModel()
     selectButton->setAutoFillBackground(true);
     connect(selectButton, &QPushButton::clicked, this, &RouteMultiExportDialog::selectPathClicked);
 
-    QPushButton *saveButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/filesaveas.svg"),
-                                              QString(), cellWidget);
+    QPushButton *saveButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/filesaveas.svg"), QString(), cellWidget);
+    saveButton->setObjectName(OBJ_NAME_EXP_SAVE);
     saveButton->setToolTip(tr("Export flight plan now"));
     saveButton->setProperty(FORMAT_PROP_NAME, userdata);
     saveButton->setProperty(ROW_PROP_NAME, row);
     saveButton->setAutoFillBackground(true);
     connect(saveButton, &QPushButton::clicked, this, &RouteMultiExportDialog::saveNowClicked);
 
-    QPushButton *resetButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/reset.svg"),
-                                               QString(), cellWidget);
+    QPushButton *resetButton = new QPushButton(QIcon(":/littlenavmap/resources/icons/reset.svg"), QString(), cellWidget);
+    resetButton->setObjectName(OBJ_NAME_EXP_RESET);
     resetButton->setToolTip(tr("Reset path back to default.\n"
                                "The default path is determined by the current scenery library or simulator selection.\n"
                                "If not applicable, the best estimate from installed simulators is used."));
@@ -584,6 +614,7 @@ void RouteMultiExportDialog::updateModel()
 
   updateTableColors();
   updateLabel();
+  updateActions();
 }
 
 RouteMultiExportDialog::ExportOptions RouteMultiExportDialog::getExportOptions() const
@@ -611,18 +642,17 @@ void RouteMultiExportDialog::selectForExportToggled()
   if(checkBox != nullptr)
   {
     // Select checkbox clicked ============================
-    rexp::RouteExportFormatType type =
-      static_cast<rexp::RouteExportFormatType>(checkBox->property(FORMAT_PROP_NAME).toInt());
+    rexp::RouteExportFormatType type = static_cast<rexp::RouteExportFormatType>(checkBox->property(FORMAT_PROP_NAME).toInt());
     qDebug() << Q_FUNC_INFO << static_cast<int>(type);
 
     // Checkbox clicked - update format in map and colors
     // Update user role for sorting
-    itemModel->setData(itemModel->index(checkBox->property(ROW_PROP_NAME).toInt(), BUTTONS), checkBox->isChecked(),
-                       CHECK_STATE_ROLE);
+    itemModel->setData(itemModel->index(checkBox->property(ROW_PROP_NAME).toInt(), BUTTONS), checkBox->isChecked(), CHECK_STATE_ROLE);
     formatMapDialog->setSelected(type, checkBox->checkState() == Qt::Checked);
     formatMapDialog->updatePathErrors();
     updateTableColors();
     updateLabel();
+    updateActions();
   }
 }
 

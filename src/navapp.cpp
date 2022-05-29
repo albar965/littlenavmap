@@ -603,6 +603,11 @@ float NavApp::getRouteCruiseAltFtWidget()
   return getRouteController()->getCruiseAltitudeWidget();
 }
 
+bool NavApp::isRouteEmpty()
+{
+  return getRouteConst().isEmpty();
+}
+
 atools::fs::FsPaths::SimulatorType NavApp::getCurrentSimulatorDb()
 {
   return getDatabaseManager()->getCurrentSimulator();

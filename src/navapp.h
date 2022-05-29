@@ -223,6 +223,8 @@ public:
   static float getRouteCruiseAltFt();
   static float getRouteCruiseAltFtWidget();
 
+  static bool isRouteEmpty();
+
   /* Currently selected simulator database */
   static atools::fs::FsPaths::SimulatorType getCurrentSimulatorDb();
   static bool isAirportDatabaseXPlane(bool navdata);
