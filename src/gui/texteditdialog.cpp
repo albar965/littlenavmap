@@ -29,7 +29,8 @@
 #include <QLabel>
 #include <QUrl>
 
-TextEditDialog::TextEditDialog(QWidget *parent, const QString& title, const QString& labelText, const QString& helpBaseUrlParam)
+TextEditDialog::TextEditDialog(QWidget *parent, const QString& title, const QString& labelText, const QString& labelText2,
+                               const QString& helpBaseUrlParam)
   : QDialog(parent), ui(new Ui::TextEditDialog), helpBaseUrl(helpBaseUrlParam)
 {
   ui->setupUi(this);
@@ -40,6 +41,10 @@ TextEditDialog::TextEditDialog(QWidget *parent, const QString& title, const QStr
   ui->label->setVisible(!labelText.isEmpty());
   ui->label->setText(labelText);
 
+  ui->lineEdit2->setVisible(!labelText2.isEmpty());
+  ui->label2->setVisible(!labelText2.isEmpty());
+  ui->label2->setText(labelText2);
+
   if(helpBaseUrl.isEmpty())
     ui->buttonBox->removeButton(ui->buttonBox->button(QDialogButtonBox::Help));
 
@@ -48,9 +53,24 @@ TextEditDialog::TextEditDialog(QWidget *parent, const QString& title, const QStr
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &TextEditDialog::buttonBoxClicked);
 }
 
+void TextEditDialog::setText(const QString& text)
+{
+  ui->lineEdit->setText(text);
+}
+
+void TextEditDialog::setText2(const QString& text)
+{
+  ui->lineEdit2->setText(text);
+}
+
 QString TextEditDialog::getText() const
 {
   return ui->lineEdit->text();
+}
+
+QString TextEditDialog::getText2() const
+{
+  return ui->lineEdit2->text();
 }
 
 TextEditDialog::~TextEditDialog()

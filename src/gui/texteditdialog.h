@@ -38,13 +38,18 @@ class TextEditDialog :
 public:
   /* settingsPrefixParam is used to save the dialog and checkbox state.
    * helpBaseUrlParam is the base URL of the help system. Help button will be hidden if empty.*/
-  explicit TextEditDialog(QWidget *parent, const QString& title, const QString& labelText, const QString& helpBaseUrlParam = QString());
+  explicit TextEditDialog(QWidget *parent, const QString& title, const QString& labelText, const QString& labelText2,
+                          const QString& helpBaseUrlParam = QString());
   virtual ~TextEditDialog() override;
 
   TextEditDialog(const TextEditDialog& other) = delete;
   TextEditDialog& operator=(const TextEditDialog& other) = delete;
 
+  void setText(const QString& text);
+  void setText2(const QString& text);
+
   QString getText() const;
+  QString getText2() const;
 
 private:
   void buttonBoxClicked(QAbstractButton *button);

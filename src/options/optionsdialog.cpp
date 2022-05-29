@@ -2778,48 +2778,79 @@ void OptionsDialog::updateFontFromData()
 void OptionsDialog::mapboxUserMapClicked()
 {
   qDebug() << Q_FUNC_INFO;
+  static const QLatin1String USERNAME_KEY("Mapbox Username"); // Hardcoded and linked to variables in "mapboxuser.dgml"
+  static const QLatin1String USERSTYLE_KEY("Mapbox User Style");
+  static const QLatin1String TOKEN_KEY("Mapbox Token");
 
   QString label = tr("<p>Here you can enter a Mapbox User Style URL.</p>"
-                       "<p>Go to <a href=\"https://studio.mapbox.com/\">Mapbox Studio</a>, login and click on the three-dot menu button of your style.<br/> "
-                         "Then click on the copy icon of the \"Style URL\" to add it to the clipboard and enter it here.</p>"
-                         "<p>You also have to provide you Mapbox Access Token in the table \"API Keys\" if not already done.<br/>"
-                         "The Access Token can be found in your <a href=\"https://account.mapbox.com/\">Mapbox Account</a>.</p>"
-                         "<p>A style URL looks like \"mapbox://styles/USERNAME/STYLEID\".</p>");
+                       "<p>Open the Mapbox Studio, login and click on the three-dot menu button of your style.<br/> "
+                         "Then click on the copy icon of the \"Style URL\" to add it to the clipboard and enter it below.</p>"
+                         "<p>A style URL looks like \"mapbox://styles/USERNAME/STYLEID\".</p>"
+                           "<p><a href=\"https://studio.mapbox.com/\"><b>Click here to open the Mapbox Studio page in your browser</b></a></p>");
 
-  TextEditDialog dialog(this, QApplication::applicationName() % tr(" - Enter Mapbox Style URL"), label, "OPTIONS.html#mapboxtheme");
-  if(dialog.exec() == QDialog::Accepted)
+  QString label2 = tr("<p>You can also to provide you Mapbox Access Token below if not already done.<br/>"
+                      "You can find the Token on your Mapbox Account page.</p>"
+                      "<p><a href=\"https://account.mapbox.com/\"><b>Click here to open the Mapbox Account page in your browser</b></a></p>");
+
+  // Collect all editable items by key ======================
+  QTableWidgetItem *userNameItem = nullptr, *userStyleItem = nullptr, *tokenItem = nullptr;
+  for(int row = 0; row < ui->tableWidgetOptionsMapKeys->rowCount(); row++)
   {
-    QString url = dialog.getText().simplified();
-    // now "mapbox://styles/USERNAME/STYLEID"
+    QTableWidgetItem *item = ui->tableWidgetOptionsMapKeys->item(row, 0);
+    if(item->text() == USERNAME_KEY)
+      userNameItem = ui->tableWidgetOptionsMapKeys->item(row, 1);
+    else if(item->text() == USERSTYLE_KEY)
+      userStyleItem = ui->tableWidgetOptionsMapKeys->item(row, 1);
+    else if(item->text() == TOKEN_KEY)
+      tokenItem = ui->tableWidgetOptionsMapKeys->item(row, 1);
+  }
 
-    if(url.startsWith("mapbox://styles/", Qt::CaseInsensitive))
+  if(userNameItem != nullptr && userStyleItem != nullptr && tokenItem != nullptr)
+  {
+    TextEditDialog dialog(this, QApplication::applicationName() % tr(" - Enter Mapbox Keys"), label, label2,
+                          "OPTIONS.html#mapboxtheme");
+
+    // Prefill with present keys ==============
+    dialog.setText(QString("mapbox://styles/%1/%2").arg(userNameItem->text()).arg(userStyleItem->text()));
+    dialog.setText2(tokenItem->text());
+
+    if(dialog.exec() == QDialog::Accepted)
     {
-      url.replace("mapbox://styles/", QString(), Qt::CaseInsensitive);
-      // Now "USERNAME/STYLEID"
+      QString url = dialog.getText().simplified();
+      // now "mapbox://styles/USERNAME/STYLEID"
 
-      QString userName = url.section('/', 0, 0);
-      if(!userName.isEmpty())
+      if(url.startsWith("mapbox://styles/", Qt::CaseInsensitive))
       {
-        QString styleId = url.section('/', 1, 1);
-        if(!styleId.isEmpty())
+        url.replace("mapbox://styles/", QString(), Qt::CaseInsensitive);
+        // Now "USERNAME/STYLEID"
+
+        QString userName = url.section('/', 0, 0);
+        if(!userName.isEmpty())
         {
-          // Write values directly into the table widget to allow undoing the changes on cancel
-          for(int row = 0; row < ui->tableWidgetOptionsMapKeys->rowCount(); row++)
+          QString styleId = url.section('/', 1, 1);
+          if(!styleId.isEmpty())
           {
-            QTableWidgetItem *item = ui->tableWidgetOptionsMapKeys->item(row, 0);
-            if(item->text() == "Mapbox Username") // Hardcoded and linked to variables in "mapboxuser.dgml"
-              ui->tableWidgetOptionsMapKeys->item(row, 1)->setText(userName);
-            else if(item->text() == "Mapbox User Style") // Hardcoded and linked to variables in "mapboxuser.dgml"
-              ui->tableWidgetOptionsMapKeys->item(row, 1)->setText(styleId);
+            if(!dialog.getText2().isEmpty())
+            {
+              // Write values directly into the table widget to allow undoing the changes on cancel
+              userNameItem->setText(userName.trimmed());
+              userStyleItem->setText(styleId.trimmed());
+              tokenItem->setText(dialog.getText2().trimmed());
+            }
+            else
+              QMessageBox::warning(this, QApplication::applicationName(), tr("Mapbox Token is empty."));
           }
+          else
+            QMessageBox::warning(this, QApplication::applicationName(), tr("Mapbox User Style not found in URL."));
         }
         else
-          QMessageBox::warning(this, QApplication::applicationName(), tr("Mapbox User Style not found in URL."));
+          QMessageBox::warning(this, QApplication::applicationName(), tr("Mapbox Username not found in URL."));
       }
       else
-        QMessageBox::warning(this, QApplication::applicationName(), tr("Mapbox Username not found in URL."));
+        QMessageBox::warning(this, QApplication::applicationName(), tr("Style URL has to start with \"mapbox://styles/\"."));
     }
-    else
-      QMessageBox::warning(this, QApplication::applicationName(), tr("Style URL has to start with \"mapbox://styles/\"."));
   }
+  else
+    QMessageBox::warning(this, QApplication::applicationName(), tr("One or more Mapbox keys are missing. "
+                                                                   "Installation might be incomplete since map themes are missing."));
 }
