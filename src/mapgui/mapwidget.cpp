@@ -3083,42 +3083,42 @@ void MapWidget::updateMapObjectsShown()
   Ui::MainWindow *ui = mainWindow->getUi();
 
   // Sun shading ====================================================
-  setShowMapSunShading(checked(ui->actionMapShowSunShading));
+  setShowMapSunShading(ui->actionMapShowSunShading->isChecked());
   paintLayer->setSunShading(sunShadingFromUi());
 
   // Weather source ====================================================
   paintLayer->setWeatherSource(weatherSourceFromUi());
 
   // Other map features ====================================================
-  setShowMapPois(checked(ui->actionMapShowCities));
-  setShowGrid(checked(ui->actionMapShowGrid));
+  setShowMapPois(ui->actionMapShowCities->isChecked());
+  setShowGrid(ui->actionMapShowGrid->isChecked());
 
   map::MapTypes oldTypes = getShownMapFeatures();
   map::MapObjectDisplayTypes oldDisplayTypes = getShownMapFeaturesDisplay();
 
-  setShowMapObject(map::AIRWAYV, checked(ui->actionMapShowVictorAirways));
-  setShowMapObject(map::AIRWAYJ, checked(ui->actionMapShowJetAirways));
-  setShowMapObject(map::TRACK, checked(ui->actionMapShowTracks) && NavApp::hasTracks());
+  setShowMapObject(map::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
+  setShowMapObject(map::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
+  setShowMapObject(map::TRACK, ui->actionMapShowTracks->isChecked() && NavApp::hasTracks());
 
-  setShowMapObject(map::AIRSPACE, getShownAirspaces().flags & map::AIRSPACE_ALL && checked(ui->actionShowAirspaces));
+  setShowMapObject(map::AIRSPACE, getShownAirspaces().flags & map::AIRSPACE_ALL && ui->actionShowAirspaces->isChecked());
 
-  setShowMapObjectDisplay(map::FLIGHTPLAN, checked(ui->actionMapShowRoute));
-  setShowMapObjectDisplay(map::FLIGHTPLAN_TOC_TOD, checked(ui->actionMapShowTocTod));
-  setShowMapObject(map::MISSED_APPROACH, checked(ui->actionInfoApproachShowMissedAppr));
+  setShowMapObjectDisplay(map::FLIGHTPLAN, ui->actionMapShowRoute->isChecked());
+  setShowMapObjectDisplay(map::FLIGHTPLAN_TOC_TOD, ui->actionMapShowTocTod->isChecked());
+  setShowMapObject(map::MISSED_APPROACH, ui->actionInfoApproachShowMissedAppr->isChecked());
 
-  setShowMapObjectDisplay(map::COMPASS_ROSE, checked(ui->actionMapShowCompassRose));
-  setShowMapObjectDisplay(map::COMPASS_ROSE_ATTACH, checked(ui->actionMapShowCompassRoseAttach));
-  setShowMapObjectDisplay(map::AIRCRAFT_ENDURANCE, checked(ui->actionMapShowEndurance));
-  setShowMapObjectDisplay(map::AIRCRAFT_SELECTED_ALT_RANGE, checked(ui->actionMapShowSelectedAltRange));
-  setShowMapObject(map::AIRCRAFT, checked(ui->actionMapShowAircraft));
-  setShowMapObjectDisplay(map::AIRCRAFT_TRACK, checked(ui->actionMapShowAircraftTrack));
-  setShowMapObject(map::AIRCRAFT_AI, checked(ui->actionMapShowAircraftAi));
-  setShowMapObject(map::AIRCRAFT_ONLINE, checked(ui->actionMapShowAircraftOnline));
-  setShowMapObject(map::AIRCRAFT_AI_SHIP, checked(ui->actionMapShowAircraftAiBoat));
+  setShowMapObjectDisplay(map::COMPASS_ROSE, ui->actionMapShowCompassRose->isChecked());
+  setShowMapObjectDisplay(map::COMPASS_ROSE_ATTACH, ui->actionMapShowCompassRoseAttach->isChecked());
+  setShowMapObjectDisplay(map::AIRCRAFT_ENDURANCE, ui->actionMapShowEndurance->isChecked());
+  setShowMapObjectDisplay(map::AIRCRAFT_SELECTED_ALT_RANGE, ui->actionMapShowSelectedAltRange->isChecked());
+  setShowMapObject(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
+  setShowMapObjectDisplay(map::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
+  setShowMapObject(map::AIRCRAFT_AI, ui->actionMapShowAircraftAi->isChecked());
+  setShowMapObject(map::AIRCRAFT_ONLINE, ui->actionMapShowAircraftOnline->isChecked());
+  setShowMapObject(map::AIRCRAFT_AI_SHIP, ui->actionMapShowAircraftAiBoat->isChecked());
 
   // Display types which are not used in structs
-  setShowMapObjectDisplay(map::AIRPORT_WEATHER, checked(ui->actionMapShowAirportWeather));
-  setShowMapObjectDisplay(map::MORA, checked(ui->actionMapShowMinimumAltitude));
+  setShowMapObjectDisplay(map::AIRPORT_WEATHER, ui->actionMapShowAirportWeather->isChecked());
+  setShowMapObjectDisplay(map::MORA, ui->actionMapShowMinimumAltitude->isChecked());
   setShowMapObjectDisplay(map::WIND_BARBS, NavApp::getWindReporter()->isWindShown());
   setShowMapObjectDisplay(map::WIND_BARBS_ROUTE, NavApp::getWindReporter()->isRouteWindShown());
 
@@ -3126,17 +3126,17 @@ void MapWidget::updateMapObjectsShown()
   setShowMapObjectDisplay(map::LOGBOOK_ROUTE, NavApp::getLogdataController()->isRoutePreviewShown());
   setShowMapObjectDisplay(map::LOGBOOK_TRACK, NavApp::getLogdataController()->isTrackPreviewShown());
 
-  setShowMapObject(map::VOR, checked(ui->actionMapShowVor));
-  setShowMapObject(map::NDB, checked(ui->actionMapShowNdb));
-  setShowMapObject(map::WAYPOINT, checked(ui->actionMapShowWp));
-  setShowMapObject(map::HOLDING, checked(ui->actionMapShowHolding));
-  setShowMapObject(map::AIRPORT_MSA, checked(ui->actionMapShowAirportMsa));
+  setShowMapObject(map::VOR, ui->actionMapShowVor->isChecked());
+  setShowMapObject(map::NDB, ui->actionMapShowNdb->isChecked());
+  setShowMapObject(map::WAYPOINT, ui->actionMapShowWp->isChecked());
+  setShowMapObject(map::HOLDING, ui->actionMapShowHolding->isChecked());
+  setShowMapObject(map::AIRPORT_MSA, ui->actionMapShowAirportMsa->isChecked());
 
   // ILS and marker are shown together
-  setShowMapObject(map::ILS, checked(ui->actionMapShowIls));
-  setShowMapObject(map::MARKER, checked(ui->actionMapShowIls));
+  setShowMapObject(map::ILS, ui->actionMapShowIls->isChecked());
+  setShowMapObject(map::MARKER, ui->actionMapShowIls->isChecked());
 
-  setShowMapObjectDisplay(map::GLS, checked(ui->actionMapShowGls));
+  setShowMapObjectDisplay(map::GLS, ui->actionMapShowGls->isChecked());
 
   setShowMapObjects(NavApp::getMapMarkHandler()->getMarkTypes(), map::MARK_ALL);
   setShowMapObjects(NavApp::getMapAirportHandler()->getAirportTypes(), map::AIRPORT_ALL_AND_ADDON);
