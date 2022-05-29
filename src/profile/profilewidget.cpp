@@ -800,13 +800,16 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   setFont(optionData.getMapFont());
 
+  optsp::DisplayOptionsProfile displayOptions = profileOptions->getDisplayOptions();
+  map::MapObjectDisplayTypes mapFeaturesDisplay = NavApp::getMapWidgetGui()->getShownMapFeaturesDisplay();
+
   // Fill background sky blue ====================================================
   painter.setRenderHint(QPainter::Antialiasing);
   painter.setRenderHint(QPainter::SmoothPixmapTransform);
   painter.fillRect(left, 0, rect().width() - left * 2, rect().height(), mapcolors::profileSkyColor);
 
   // Draw the ground ======================================================
-  if(profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_GROUND))
+  if(displayOptions.testFlag(optsp::PROFILE_GROUND))
   {
     painter.setBrush(mapcolors::profileLandColor);
     painter.setPen(mapcolors::profileLandOutlinePen);
@@ -828,7 +831,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   painter.drawLine(0, safeAltY, left, safeAltY);
 
   // Draw orange minimum safe altitude lines for each segment ======================================================
-  if(profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_LEG_SAFE_ALTITUDE))
+  if(displayOptions.testFlag(optsp::PROFILE_LEG_SAFE_ALTITUDE))
   {
     painter.setPen(mapcolors::profileSafeAltLegLinePen);
     for(int i = 0; i < legList->elevationLegs.size(); i++)
@@ -844,7 +847,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   // Draw the red minimum safe altitude line ======================================================
-  if(profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_SAFE_ALTITUDE))
+  if(displayOptions.testFlag(optsp::PROFILE_SAFE_ALTITUDE))
   {
     painter.setPen(mapcolors::profileSafeAltLinePen);
     painter.drawLine(left, safeAltY, left + static_cast<int>(w), safeAltY);
@@ -853,7 +856,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Calculate line y positions ======================================================
   // Flight plan waypoint screen coordinates. x = distance and y = altitude  =======================
   QVector<QPolygon> altLegs;
-  bool showTodToc = NavApp::getMapWidgetGui()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN_TOC_TOD);
+  bool showTodToc = mapFeaturesDisplay.testFlag(map::FLIGHTPLAN_TOC_TOD);
 
   for(int i = 0; i < altitudeLegs.size(); i++)
   {
@@ -881,7 +884,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   // Draw altitude restriction bars ============================================
-  if(NavApp::getMapWidgetGui()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN))
+  if(mapFeaturesDisplay.testFlag(map::FLIGHTPLAN) && displayOptions.testFlag(optsp::PROFILE_FP_ALT_RESTRICTION_BLOCK))
   {
     painter.setBackground(mapcolors::profileAltRestrictionFill);
     painter.setBackgroundMode(Qt::OpaqueMode);
@@ -957,7 +960,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         }
       } // if(restriction.isValid() && restriction.descriptor != proc::MapAltRestriction::ILS_AT && ...
     } // for(int routeIndex : indexes)
-  } // if(NavApp::getMapWidgetGui()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN))
+  } // if(mapFeaturesDisplay.testFlag(map::FLIGHTPLAN))
 
   // Draw ILS or VASI guidance ============================
   mapcolors::scaleFont(&painter, 0.95f);
@@ -987,7 +990,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   setFont(optionData.getMapFont());
   mapcolors::scaleFont(&painter, optionData.getDisplayTextSizeFlightplanProfile() / 100.f, &painter.font());
 
-  if(NavApp::getMapWidgetGui()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN))
+  if(mapFeaturesDisplay.testFlag(map::FLIGHTPLAN))
   {
     // Draw background line ======================================================
     float flightplanOutlineWidth = (optionData.getDisplayThicknessFlightplanProfile() / 100.f) * 7;
@@ -1059,7 +1062,6 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
     // =============================================================================
     // Draw flightplan symbols and labels ======================================================
-    optsp::DisplayOptionsProfile displayOptions = profileOptions->getDisplayOptions();
     bool distOpt = displayOptions.testFlag(optsp::PROFILE_FP_DIST);
     bool magCrsOpt = displayOptions.testFlag(optsp::PROFILE_FP_MAG_COURSE);
     bool trueCrsOpt = displayOptions.testFlag(optsp::PROFILE_FP_TRUE_COURSE);
@@ -1376,7 +1378,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
     if(!route.isFlightplanEmpty())
     {
-      if(NavApp::getMapWidgetGui()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN_TOC_TOD))
+      if(mapFeaturesDisplay.testFlag(map::FLIGHTPLAN_TOC_TOD))
       {
         float tocDist = altitudeLegs.getTopOfClimbDistance();
         float todDist = altitudeLegs.getTopOfDescentDistance();

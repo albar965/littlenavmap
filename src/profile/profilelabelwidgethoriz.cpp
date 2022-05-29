@@ -105,10 +105,10 @@ void ProfileLabelWidgetHoriz::paintEvent(QPaintEvent *)
     int lines = 0;
 
     // Get display options
-    bool distOpt = opts.testFlag(optsp::PROFILE_TOP_DISTANCE);
-    bool magCrsOpt = opts.testFlag(optsp::PROFILE_TOP_MAG_COURSE);
-    bool trueCrsOpt = opts.testFlag(optsp::PROFILE_TOP_TRUE_COURSE);
-    bool relatedOpt = opts.testFlag(optsp::PROFILE_TOP_RELATED);
+    bool distOpt = opts.testFlag(optsp::PROFILE_LABELS_DISTANCE);
+    bool magCrsOpt = opts.testFlag(optsp::PROFILE_LABELS_MAG_COURSE);
+    bool trueCrsOpt = opts.testFlag(optsp::PROFILE_LABELS_TRUE_COURSE);
+    bool relatedOpt = opts.testFlag(optsp::PROFILE_LABELS_RELATED);
 
     // Iterate through all waypoints =============================================================
     for(int i = 0; i < waypointX.size(); i++)

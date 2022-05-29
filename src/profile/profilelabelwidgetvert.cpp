@@ -43,7 +43,7 @@ ProfileLabelWidgetVert::~ProfileLabelWidgetVert()
 
 void ProfileLabelWidgetVert::routeChanged()
 {
-  setVisible(profileWidget->getProfileOptions()->getDisplayOptions() & optsp::PROFILE_ALT_LABELS);
+  setVisible(profileWidget->getProfileOptions()->getDisplayOptions() & optsp::PROFILE_LABELS_ALT);
   update();
 }
 
@@ -70,7 +70,7 @@ void ProfileLabelWidgetVert::contextMenuEvent(QContextMenuEvent *event)
 void ProfileLabelWidgetVert::paintEvent(QPaintEvent *)
 {
   // Hiding will result in no paintEvent being called - needs update from routeChanged() before
-  setVisible(profileWidget->getProfileOptions()->getDisplayOptions() & optsp::PROFILE_ALT_LABELS);
+  setVisible(profileWidget->getProfileOptions()->getDisplayOptions() & optsp::PROFILE_LABELS_ALT);
 
   if(isVisible())
   {

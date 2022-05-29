@@ -230,7 +230,7 @@ const QLatin1String RESET_FOR_NEW_FLIGHT_DIALOG("Route/ResetAllDialog");
 const QLatin1String ROUTE_FLIGHTPLAN_COLUMS_DIALOG("Route/FlightPlanTableColumns");
 
 const QLatin1String PROFILE_WINDOW_OPTIONS("Profile/Options");
-const QLatin1String PROFILE_DISPLAY_OPTIONS("Profile/DisplayOptions");
+const QLatin1String PROFILE_DISPLAY_OPTIONS("Profile/DisplayOptions2");
 const QLatin1String PROFILE_DISPLAY_OPTIONS_DIALOG("Profile/DisplayOptionsDlg");
 
 const QLatin1String SEARCHTAB_ONLINE_CLIENT_VIEW_WIDGET("SearchPaneOnlineClient/WidgetView");

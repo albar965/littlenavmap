@@ -27,34 +27,35 @@ enum DisplayOptionProfile
 {
   PROFILE_NONE = 0,
 
-  /* Top label options */
-  PROFILE_TOP_DISTANCE = 1 << 0,
-  PROFILE_TOP_MAG_COURSE = 1 << 1,
-  PROFILE_TOP_TRUE_COURSE = 1 << 2,
-  PROFILE_TOP_RELATED = 1 << 3,
+  /* General options */
+  PROFILE_TOOLTIP = 1 << 1,
+  PROFILE_HIGHLIGHT = 1 << 2,
+
+  /* Labels */
+  PROFILE_LABELS_ALT = 1 << 3,
+  PROFILE_LABELS_DISTANCE = 1 << 4,
+  PROFILE_LABELS_MAG_COURSE = 1 << 5,
+  PROFILE_LABELS_TRUE_COURSE = 1 << 6,
+  PROFILE_LABELS_RELATED = 1 << 7,
+
+  /* Elevation Profile */
+  PROFILE_GROUND = 1 << 8,
+  PROFILE_SAFE_ALTITUDE = 1 << 9,
+  PROFILE_LEG_SAFE_ALTITUDE = 1 << 10,
 
   /* Flight plan line options */
-  PROFILE_FP_DIST = 1 << 4,
-  PROFILE_FP_MAG_COURSE = 1 << 5,
-  PROFILE_FP_TRUE_COURSE = 1 << 6,
-  PROFILE_FP_VERTICAL_ANGLE = 1 << 7,
+  PROFILE_FP_DIST = 1 << 11,
+  PROFILE_FP_MAG_COURSE = 1 << 12,
+  PROFILE_FP_TRUE_COURSE = 1 << 13,
+  PROFILE_FP_VERTICAL_ANGLE = 1 << 14,
+  PROFILE_FP_ALT_RESTRICTION = 1 << 15,
+  PROFILE_FP_SPEED_RESTRICTION = 1 << 16,
+  PROFILE_FP_ALT_RESTRICTION_BLOCK = 1 << 17,
 
-  /* Shown at navaid label */
-  PROFILE_FP_ALT_RESTRICTION = 1 << 8,
-  PROFILE_FP_SPEED_RESTRICTION = 1 << 9,
-
-  /* Elevation profile graphics */
-  PROFILE_GROUND = 1 << 10,
-  PROFILE_SAFE_ALTITUDE = 1 << 11,
-  PROFILE_LEG_SAFE_ALTITUDE = 1 << 12,
-
-  /* General options */
-  PROFILE_ALT_LABELS = 1 << 13,
-  PROFILE_TOOLTIP = 1 << 14,
-  PROFILE_HIGHLIGHT = 1 << 15,
+  // Next is 1 << 18
 
   /* All drawn in the top label */
-  PROFILE_TOP_ANY = PROFILE_TOP_DISTANCE | PROFILE_TOP_MAG_COURSE | PROFILE_TOP_TRUE_COURSE | PROFILE_TOP_RELATED,
+  PROFILE_TOP_ANY = PROFILE_LABELS_DISTANCE | PROFILE_LABELS_MAG_COURSE | PROFILE_LABELS_TRUE_COURSE | PROFILE_LABELS_RELATED,
 
   /* All drawn along the flight plan line */
   PROFILE_FP_ANY = PROFILE_FP_DIST | PROFILE_FP_MAG_COURSE | PROFILE_FP_TRUE_COURSE | PROFILE_FP_VERTICAL_ANGLE,
@@ -64,20 +65,22 @@ Q_DECLARE_FLAGS(DisplayOptionsProfile, optsp::DisplayOptionProfile);
 Q_DECLARE_OPERATORS_FOR_FLAGS(optsp::DisplayOptionsProfile);
 
 /* All available options for loops */
-static const QVector<optsp::DisplayOptionProfile> ALL_OPTIONS({optsp::PROFILE_TOP_DISTANCE, optsp::PROFILE_TOP_MAG_COURSE,
-                                                               optsp::PROFILE_TOP_TRUE_COURSE, optsp::PROFILE_TOP_RELATED,
+static const QVector<optsp::DisplayOptionProfile> ALL_OPTIONS({optsp::PROFILE_LABELS_DISTANCE, optsp::PROFILE_LABELS_MAG_COURSE,
+                                                               optsp::PROFILE_LABELS_TRUE_COURSE, optsp::PROFILE_LABELS_RELATED,
                                                                optsp::PROFILE_FP_DIST, optsp::PROFILE_FP_MAG_COURSE,
                                                                optsp::PROFILE_FP_TRUE_COURSE, optsp::PROFILE_FP_VERTICAL_ANGLE,
                                                                optsp::PROFILE_FP_ALT_RESTRICTION, optsp::PROFILE_FP_SPEED_RESTRICTION,
-                                                               optsp::PROFILE_GROUND, optsp::PROFILE_SAFE_ALTITUDE,
-                                                               optsp::PROFILE_LEG_SAFE_ALTITUDE, optsp::PROFILE_ALT_LABELS,
-                                                               optsp::PROFILE_TOOLTIP, optsp::PROFILE_HIGHLIGHT});
+                                                               optsp::PROFILE_FP_ALT_RESTRICTION_BLOCK, optsp::PROFILE_GROUND,
+                                                               optsp::PROFILE_SAFE_ALTITUDE, optsp::PROFILE_LEG_SAFE_ALTITUDE,
+                                                               optsp::PROFILE_LABELS_ALT, optsp::PROFILE_TOOLTIP,
+                                                               optsp::PROFILE_HIGHLIGHT});
 
-static const optsp::DisplayOptionsProfile DEFAULT_OPTIONS = optsp::PROFILE_TOP_DISTANCE | optsp::PROFILE_TOP_RELATED |
+static const optsp::DisplayOptionsProfile DEFAULT_OPTIONS = optsp::PROFILE_LABELS_DISTANCE | optsp::PROFILE_LABELS_RELATED |
                                                             optsp::PROFILE_FP_MAG_COURSE | optsp::PROFILE_FP_VERTICAL_ANGLE |
-                                                            optsp::PROFILE_GROUND | optsp::PROFILE_SAFE_ALTITUDE |
-                                                            optsp::PROFILE_LEG_SAFE_ALTITUDE | optsp::PROFILE_ALT_LABELS |
-                                                            optsp::PROFILE_TOOLTIP | optsp::PROFILE_HIGHLIGHT;
+                                                            optsp::PROFILE_FP_ALT_RESTRICTION | optsp::PROFILE_FP_SPEED_RESTRICTION |
+                                                            optsp::PROFILE_FP_ALT_RESTRICTION_BLOCK | optsp::PROFILE_GROUND |
+                                                            optsp::PROFILE_SAFE_ALTITUDE | optsp::PROFILE_LEG_SAFE_ALTITUDE |
+                                                            optsp::PROFILE_LABELS_ALT | optsp::PROFILE_TOOLTIP | optsp::PROFILE_HIGHLIGHT;
 }
 
 /*
