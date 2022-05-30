@@ -361,7 +361,7 @@ QStringList restrictionText(const MapProcedureLeg& procedureLeg)
   if(procedureLeg.speedRestriction.isValid())
     restrictions.append(proc::speedRestrictionTextShort(procedureLeg.speedRestriction));
 
-  if(procedureLeg.verticalAngle < -0.1f)
+  if(procedureLeg.isVerticalAngleValid())
     restrictions.append(QObject::tr("%L1°").arg(procedureLeg.verticalAngle, 0, 'g', 3));
 
   return restrictions;
@@ -370,7 +370,7 @@ QStringList restrictionText(const MapProcedureLeg& procedureLeg)
 QString altRestrictionText(const MapAltRestriction& restriction)
 {
   if(restriction.verticalAngleAlt < map::INVALID_ALTITUDE_VALUE)
-    return QObject::tr("At %1 (path)").arg(Unit::altFeet(restriction.verticalAngleAlt));
+    return QObject::tr("At %1 (vertical path)").arg(Unit::altFeet(restriction.verticalAngleAlt));
   else
   {
     switch(restriction.descriptor)

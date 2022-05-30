@@ -67,7 +67,7 @@ public:
   /* Valid range according to ARINC */
   bool isVerticalProcAngleValid() const
   {
-    return verticalAngle < -0.9f && verticalAngle > -10.f;
+    return verticalAngle > -10.f && verticalAngle < -0.9f;
   }
 
   /* Altitude restriction from procedures if available. Otherwise invalid. */

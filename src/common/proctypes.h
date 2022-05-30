@@ -50,16 +50,17 @@ struct MapAltRestriction
     ILS_AT_OR_ABOVE /* ILS glideslope altitude at alt1*/
   };
 
-  Descriptor descriptor = NONE;
+  Descriptor descriptor = MapAltRestriction::NONE;
   float alt1, alt2,
         verticalAngleAlt = map::INVALID_ALTITUDE_VALUE; /* Forced since calculated from vertical angle */
 
-  /* Indicator used to force lowest altitude on final FAF and FACF to avoid arriving above glide slope or VASI */
+  /* Indicator used to force lowest altitude on final FAF and FACF to avoid arriving above glide slope or VASI.
+   * Not set if next leg has a vertical speed constraint. */
   bool forceFinal = false;
 
   bool isValid() const
   {
-    return descriptor != NONE;
+    return descriptor != MapAltRestriction::NONE;
   }
 
   bool isIls() const
@@ -81,12 +82,12 @@ struct MapSpeedRestriction
     MAX
   };
 
-  Descriptor descriptor = NONE;
+  Descriptor descriptor = MapSpeedRestriction::NONE;
   float speed = 0.f;
 
   bool isValid() const
   {
-    return descriptor != NONE && speed > 0.f;
+    return descriptor != MapSpeedRestriction::NONE && speed > 0.f;
   }
 
 };
@@ -223,6 +224,12 @@ struct MapProcedureLeg
   bool isValid() const
   {
     return type != INVALID_LEG_TYPE;
+  }
+
+  /* Valid range according to ARINC */
+  bool isVerticalAngleValid() const
+  {
+    return verticalAngle > -10.f && verticalAngle < -0.9f;
   }
 
   /* true if leg is probably unusable because a required navaid could not be resolved */

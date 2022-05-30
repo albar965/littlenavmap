@@ -2979,10 +2979,10 @@ void ProcedureQuery::processAltRestrictions(proc::MapProcedureLegs& procedure) c
     // Start at end of procedure (runway)
     for(int i = procedure.approachLegs.size() - 1; i >= 0; i--)
     {
-      const MapProcedureLeg& prev = procedure.approachLegs.value(i - 1);
+      const MapProcedureLeg& next = procedure.approachLegs.value(i + 1);
       MapProcedureLeg& leg = procedure.approachLegs[i];
-      if(prev.verticalAngle < -0.1f)
-        // Do not force altitude if previous leg has a required vertical angle
+      if(next.isValid() && next.isVerticalAngleValid())
+        // Do not force altitude if next (right) leg has a required vertical angle
         // Real altitude is calculated by angle and not by altitude restriction
         leg.altRestriction.forceFinal = false;
       else
@@ -2999,9 +2999,10 @@ void ProcedureQuery::processAltRestrictions(proc::MapProcedureLegs& procedure) c
         leg.altRestriction.forceFinal = force;
       }
 
-      if(force)
-        // Stop if there was already a fix - this will prefer FAF before FACF
-        break;
+      // Disabled to force FACF and FAF down to lowest restriction level again
+      // Stop if there was already a fix - this will prefer FAF before FACF
+      // if(force)
+      // break;
     }
   }
 }

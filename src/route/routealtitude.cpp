@@ -543,12 +543,28 @@ float RouteAltitude::adjustAltitudeForRestriction(float altitude, const proc::Ma
       break;
 
     case proc::MapAltRestriction::AT:
-    case proc::MapAltRestriction::ILS_AT:
       altitude = restriction.alt1;
       break;
 
-    case proc::MapAltRestriction::AT_OR_ABOVE:
+    case proc::MapAltRestriction::ILS_AT:
+      // Do not consider ILS_AT a restriction if overridden by vertical path
+      if(!(restriction.verticalAngleAlt < map::INVALID_ALTITUDE_VALUE))
+        altitude = restriction.alt1;
+      break;
+
     case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
+      // Do not consider ILS_AT_OR_ABOVE a restriction if overridden by vertical path
+      if(!(restriction.verticalAngleAlt < map::INVALID_ALTITUDE_VALUE))
+      {
+        if(forceFinal)
+          // Stick to lowest altitude on FAF or FACF
+          altitude = restriction.alt1;
+        else if(altitude < restriction.alt1)
+          altitude = restriction.alt1;
+      }
+      break;
+
+    case proc::MapAltRestriction::AT_OR_ABOVE:
       if(forceFinal)
         // Stick to lowest altitude on FAF or FACF
         altitude = restriction.alt1;
@@ -613,6 +629,10 @@ bool RouteAltitude::violatesAltitudeRestriction(QString& errorMessage, int legIn
         break;
     }
 
+    if(!retval && leg.restriction.verticalAngleAlt < map::INVALID_ALTITUDE_VALUE)
+      // Take altitude calculated from vertical angle and check it against restriction
+      retval = atools::almostNotEqual(legAlt, leg.restriction.verticalAngleAlt, 50.f);
+
     if(retval)
       errorMessage = tr("Leg number %1, %2 (%3) at %4 violates altitude restriction \"%5\".").
                      arg(legIndex + 1).arg(leg.getIdent()).arg(leg.getProcedureType()).arg(Unit::altFeet(legAlt)).
@@ -635,20 +655,25 @@ float RouteAltitude::findApproachMaxAltitude(int index) const
       for(int i = index - 1; i >= 0; i--)
       {
         const RouteLeg& leg = route->value(i);
+        const RouteLeg& next = route->value(i + 1);
 
         if(leg.isAnyProcedure() && leg.getProcedureLeg().isAnyArrival() && leg.getProcedureLegAltRestr().isValid())
         {
           const proc::MapAltRestriction& r = leg.getProcedureLegAltRestr();
 
+          if(r.descriptor == proc::MapAltRestriction::ILS_AT && next.isAnyProcedure() && next.getProcedureLeg().isVerticalAngleValid())
+            // Ignore ILS restriction if next (right) procedure has a vertical angle - continue lookup
+            continue;
+
           if(r.verticalAngleAlt < map::INVALID_ALTITUDE_VALUE)
             // Altitude required by flight path angle
             return r.verticalAngleAlt;
-          else if(r.forceFinal || atools::contains(r.descriptor,
-                                                   {proc::MapAltRestriction::AT,
-                                                    proc::MapAltRestriction::AT_OR_BELOW,
-                                                    proc::MapAltRestriction::BETWEEN,
-                                                    proc::MapAltRestriction::ILS_AT}))
-            // Forced by FAF, FCAF or restriction
+          else if(r.forceFinal || atools::contains(r.descriptor, {proc::MapAltRestriction::AT,
+                                                                  proc::MapAltRestriction::AT_OR_BELOW,
+                                                                  proc::MapAltRestriction::BETWEEN,
+                                                                  proc::MapAltRestriction::ILS_AT}))
+            // Either altitude is forced to lowest restriction value or altitude is limited by a "below", "at" or "between" restriction
+            // Forced by FAF, FCAF
             return r.alt1;
         }
       }
@@ -681,9 +706,14 @@ float RouteAltitude::findDepartureMaxAltitude(int index) const
         if(leg.isAnyProcedure() && leg.getProcedureLeg().isAnyDeparture() && leg.getProcedureLegAltRestr().isValid())
         {
           const proc::MapAltRestriction& r = leg.getProcedureLegAltRestr();
-          if(r.forceFinal || atools::contains(r.descriptor,
-                                              {proc::MapAltRestriction::AT, proc::MapAltRestriction::AT_OR_BELOW,
-                                               proc::MapAltRestriction::BETWEEN}))
+          if(r.verticalAngleAlt < map::INVALID_ALTITUDE_VALUE)
+            // Altitude required by flight path angle - might occur when iterating into approach procedure
+            return r.verticalAngleAlt;
+          else if(r.forceFinal || atools::contains(r.descriptor, {proc::MapAltRestriction::AT,
+                                                                  proc::MapAltRestriction::AT_OR_BELOW,
+                                                                  proc::MapAltRestriction::BETWEEN}))
+            // Either altitude is forced to lowest restriction value or altitude is limited by a "below", "at" or "between" restriction
+            // Forced by FAF, FCAF
             return r.alt1;
         }
       }
@@ -881,6 +911,10 @@ void RouteAltitude::simplifyRouteAltitude(int index, bool departure)
     if(leftSkippedAlt != nullptr)
       newAlt = adjustAltitudeForRestriction(newAlt, leftSkippedAlt->restriction);
 
+    if(!departure)
+      // Make new altitude never below next or right one for approaches. Avoid climb when forcing a FAF or FACF before a vertical path
+      newAlt = std::max(newAlt, static_cast<float>(rightPt.y()));
+
 #ifdef DEBUG_INFORMATION_ROUTE_ALT_SIMPLIFY
     qDebug() << Q_FUNC_INFO << "after adjust" << newAlt;
 #endif
@@ -1053,19 +1087,20 @@ void RouteAltitude::calculate(QStringList& altRestErrors)
   qDebug() << Q_FUNC_INFO << *this;
 #endif
 
-  if(calcTopOfClimb)
-    calculateDeparture();
-
-#ifdef DEBUG_INFORMATION_ROUTE_ALT
-  qDebug() << Q_FUNC_INFO << "After calculateDeparture() ==================================";
-  qDebug() << Q_FUNC_INFO << *this;
-#endif
-
+  // Calculate arrival first to get vertical path altitudes right which are needed by calculateDeparture()
   if(calcTopOfDescent)
     calculateArrival();
 
 #ifdef DEBUG_INFORMATION_ROUTE_ALT
   qDebug() << Q_FUNC_INFO << "After calculateArrival() ==================================";
+  qDebug() << Q_FUNC_INFO << *this;
+#endif
+
+  if(calcTopOfClimb)
+    calculateDeparture();
+
+#ifdef DEBUG_INFORMATION_ROUTE_ALT
+  qDebug() << Q_FUNC_INFO << "After calculateDeparture() ==================================";
   qDebug() << Q_FUNC_INFO << *this;
 #endif
 
@@ -1184,9 +1219,9 @@ void RouteAltitude::calculateDistances()
     if(leg.getProcedureLeg().isAnyArrival() && altLeg.isPoint() && lastAltLeg.restriction.isValid())
     {
       // If this is a point like an IF leg, copy restriction from last leg but save force flag
-      bool force = altLeg.restriction.forceFinal;
+      bool forceFinal = altLeg.restriction.forceFinal;
       altLeg.restriction = lastAltLeg.restriction;
-      altLeg.restriction.forceFinal = force;
+      altLeg.restriction.forceFinal = forceFinal;
     }
 
     altLeg.missed = leg.isAnyProcedure() && leg.getProcedureLeg().isMissed();
@@ -1203,7 +1238,9 @@ void RouteAltitude::calculateDistances()
 
 void RouteAltitude::calculateDeparture()
 {
+  // First leg of departure procedure. 1 if SID used otherwise 0.
   int departureLegIdx = route->getSidLegIndex();
+
   if(departureLegIdx == map::INVALID_INDEX_VALUE)
   {
     qWarning() << Q_FUNC_INFO << "departureLegIdx" << departureLegIdx;
@@ -1225,8 +1262,8 @@ void RouteAltitude::calculateDeparture()
   if(departureLegIdx > 0) // Assign altitude to dummy for departure airport too
     first().setAlt(departAlt);
 
-  // Start from departure forward until hitting cruise altitude (TOC)
-  for(int i = departureLegIdx; i <= route->getDestinationAirportLegIndex(); i++)
+  // Start from departure forward until hitting cruise altitude (TOC) or destination airport or runway
+  for(int i = departureLegIdx; i <= route->getDestinationLegIndex(); i++)
   {
     // Calculate altitude for this leg based on altitude of the leg to the right
     RouteAltitudeLeg& alt = (*this)[i];
@@ -1235,7 +1272,8 @@ void RouteAltitude::calculateDeparture()
       continue;
 
     // Altitude of last leg
-    float lastLegAlt = i > departureLegIdx ? value(i - 1).y2() : departAlt;
+    float lastAlt = i > departureLegIdx ? value(i - 1).y2() : departAlt;
+    float newAltitude = lastAlt;
 
     if(i <= departureLegIdx)
       // Departure leg - assign altitude to airport and RW too if available
@@ -1243,62 +1281,71 @@ void RouteAltitude::calculateDeparture()
     else
     {
       // Set geometry for climbing
-      alt.setY1(lastLegAlt);
+      alt.setY1(lastAlt);
+
       // Use a default value of 3 nm per 1000 ft if performance is not available
-      alt.setY2(lastLegAlt + alt.getDistanceTo() * climbRateWindFtPerNm);
+      newAltitude = lastAlt + alt.getDistanceTo() * climbRateWindFtPerNm;
     }
 
     if(!alt.isEmpty())
     {
       // Remember geometry which is not changed by altitude restrictions for calculation of cruise intersection
-      float uncorrectedAlt = alt.y2();
+      float uncorrectedAltitude = newAltitude;
 
-      adjustAltitudeForRestriction(alt);
+      // Get new altitude corrected by restrictions
+      newAltitude = adjustAltitudeForRestriction(newAltitude, alt.restriction);
 
       // Avoid climbing above any below/at/between restrictions
       float maxAlt = findDepartureMaxAltitude(i);
-      bool maxAltRestricts = false;
+      if(maxAlt < map::INVALID_ALTITUDE_VALUE)
+        newAltitude = std::min(newAltitude, maxAlt);
+
+      bool altitudeRestricts = false;
       if(maxAlt < map::INVALID_ALTITUDE_VALUE)
       {
-        alt.setY2(std::min(alt.y2(), maxAlt));
+        newAltitude = std::min(newAltitude, maxAlt);
 
         // Avoid climbing above next limiting restriction - no TOC yet
-        maxAltRestricts = maxAlt < cruiseAltitude;
+        altitudeRestricts = maxAlt < cruiseAltitude;
       }
 
       // Never lower than last leg
-      alt.setY2(std::max(alt.y2(), lastLegAlt));
+      newAltitude = std::max(newAltitude, lastAlt);
 
-      if(i > 0 && uncorrectedAlt > cruiseAltitude && !(distanceTopOfClimb < map::INVALID_ALTITUDE_VALUE) &&
-         !maxAltRestricts)
+      if(!altitudeRestricts && i > 0 && !(distanceTopOfClimb < map::INVALID_ALTITUDE_VALUE) && uncorrectedAltitude > cruiseAltitude)
       {
         // Reached TOC - calculate distance
-        distanceTopOfClimb = distanceForAltitude(alt.geometry.constFirst(), QPointF(alt.geometry.constLast().x(), uncorrectedAlt),
+        distanceTopOfClimb = distanceForAltitude(alt.geometry.constFirst(), QPointF(alt.geometry.constLast().x(), uncorrectedAltitude),
                                                  cruiseAltitude);
         legIndexTopOfClimb = i;
 
         // Adjust this leg
-        alt.setY2(std::min(alt.y2(), cruiseAltitude));
-        alt.setY2(std::max(alt.y2(), lastLegAlt));
+        newAltitude = std::min(newAltitude, cruiseAltitude);
+        newAltitude = std::max(newAltitude, lastAlt);
 
         // Add point to allow drawing the bend at TOC
         alt.geometry.insert(1, QPointF(distanceTopOfClimb, cruiseAltitude));
 
-        // Done here
+        // Done here =================================================
         alt.topOfClimb = true;
         break;
       }
     }
 
     // Adjust altitude to be above last and below cruise
-    alt.setY2(std::min(alt.y2(), cruiseAltitude));
-    alt.setY2(std::max(alt.y2(), lastLegAlt));
+    alt.setY2(std::min(newAltitude, cruiseAltitude));
+    alt.setY2(std::max(newAltitude, lastAlt));
   }
 }
 
 void RouteAltitude::calculateArrival()
 {
+  // Either destination airport or last leg of approach procedure (usually runway) before missed.
   int destinationLegIdx = route->getDestinationLegIndex();
+
+  // Destination airport after missed (if any) and one before the alternate if any.
+  int destinationAirportLegIndex = route->getDestinationAirportLegIndex();
+
   int departureLegIndex = route->getSidLegIndex();
   float lastAlt = getDestinationAltitude();
 
@@ -1313,16 +1360,20 @@ void RouteAltitude::calculateArrival()
     qWarning() << Q_FUNC_INFO << "descentRateWindFtPerNm " << descentRateWindFtPerNm;
     return;
   }
-  int destinationAirportLegIndex = route->getDestinationAirportLegIndex();
 
 #ifdef DEBUG_INFORMATION_ROUTE_ALT
   qDebug() << Q_FUNC_INFO << "descentRateWindFtPerNm" << descentRateWindFtPerNm;
 #endif
 
   // Calculate from last leg down until we hit the cruise altitude (TOD)
+  // Need to step from procedure over missed so that airport is caught too
   for(int i = destinationAirportLegIndex; i >= 0; i--)
   {
     RouteAltitudeLeg& alt = (*this)[i];
+
+    if(alt.isMissed())
+      continue;
+
     RouteAltitudeLeg *lastAltLeg = i < destinationLegIdx ? &(*this)[i + 1] : nullptr;
 
 #ifdef DEBUG_INFORMATION_ROUTE_ALT
@@ -1390,7 +1441,11 @@ void RouteAltitude::calculateArrival()
       // Avoid climbing (up the descent slope) above any below/at/between restrictions
       float maxAlt = findApproachMaxAltitude(i + 1);
       if(maxAlt < map::INVALID_ALTITUDE_VALUE)
-        newAltitude = std::min(newAltitude, maxAlt);
+      {
+        // Adjust only if there is no vertical angle restriction on the next/right leg
+        if(lastAltLeg == nullptr || !lastAltLeg->isVerticalProcAngleValid())
+          newAltitude = std::min(newAltitude, maxAlt);
+      }
 
 #ifdef DEBUG_INFORMATION_ROUTE_ALT
       qDebug() << Q_FUNC_INFO << "newAltitude adjusted to maxAlt" << newAltitude;
@@ -1441,13 +1496,13 @@ void RouteAltitude::calculateArrival()
           lastAltLeg->geometry.insert(lastAltLeg->geometry.size() - 1, QPointF(distanceTopOfDescent, cruiseAltitude));
         }
 
-        // Done here
         if(legIndexTopOfDescent < size())
           (*this)[legIndexTopOfDescent].topOfDescent = true;
 
 #ifdef DEBUG_INFORMATION_ROUTE_ALT
         qDebug() << Q_FUNC_INFO << "Done";
 #endif
+        // Done here  =================================================
         break;
       }
 

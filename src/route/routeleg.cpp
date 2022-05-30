@@ -1103,6 +1103,8 @@ QDebug operator<<(QDebug out, const RouteLeg& leg)
                           << (leg.isAlternate() ? ", alternate" : QString())
                           << (leg.isAnyProcedure() ? ", procedure" : QString())
                           << ", " << proc::procedureLegTypeStr(leg.getProcedureLegType())
+                          << ", verticalAngle " << leg.getProcedureLeg().verticalAngle
+                          << ", forceFinal " << leg.getProcedureLeg().altRestriction.forceFinal
                           << ", airway " << leg.getAirway().id << " " << leg.getAirwayName()
                           << (leg.getAirway().isValid() ? " valid" : " invalid")
                           << "]";
