@@ -71,6 +71,46 @@ static QHash<opts::SimUpdateRate, ProfileWidget::SimUpdateDelta> SIM_UPDATE_DELT
   }
 });
 
+/* Text label position and attributes for navaids */
+struct Label
+{
+  Label(QPoint symPtParam, const QColor& colorParam, bool procSymbolParam, const QStringList& textsParam, map::MapTypes typeParam)
+    : symPt(std::move(symPtParam)), color(colorParam), procSymbol(procSymbolParam), texts(textsParam), type(typeParam)
+  {
+  }
+
+  bool operator<(const Label& other) const
+  {
+    // Sort first by type and then by position
+    if(priority() == other.priority())
+      return symPt.x() > other.symPt.x();
+    else
+      return priority() < other.priority();
+  }
+
+  int priority() const
+  {
+    if(type == map::PROCEDURE)
+      return 0;
+    else if(type == map::VOR)
+      return 1;
+    else if(type == map::NDB)
+      return 2;
+    else if(type == map::WAYPOINT)
+      return 3;
+    else if(type == map::USERPOINTROUTE)
+      return 4;
+
+    return 5;
+  }
+
+  QPoint symPt;
+  QColor color;
+  bool procSymbol;
+  QStringList texts;
+  map::MapTypes type;
+};
+
 using Marble::GeoDataCoordinates;
 using Marble::GeoDataLineString;
 using atools::geo::Pos;
@@ -903,7 +943,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
          restriction.descriptor != proc::MapAltRestriction::ILS_AT_OR_ABOVE)
       {
         // Use 5 NM width and minimum of 10 pix and maximum of 40 pix
-        int rectWidth = roundToInt(std::min(std::max(5.f * horizontalScale, 10.f), 40.f));
+        int rectWidth = roundToInt(std::min(std::max(5.f * horizontalScale, 10.f), 20.f));
         int rectHeight = 16;
 
         // Start and end of line
@@ -1085,7 +1125,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         QVector<float> angles;
         bool requiredByProcedure = false;
 
-        if(angleOpt)
+        // Avoid display for wrongly required vertical angle if line is horizontal due to procedure inconsitencies
+        if(angleOpt && !altLeg.getGeometry().isEmpty() && altLeg.getGeometry().constFirst().y() > altLeg.getGeometry().constLast().y())
         {
           if(i > 0 && !leg.isCircleToLand() && !leg.isStraightIn() && !leg.isVectors() && !leg.isManual())
           {
@@ -1174,6 +1215,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     setFont(optionData.getMapFont());
     mapcolors::scaleFont(&painter, optionData.getDisplayTextSizeFlightplanProfile() / 100.f, &painter.font());
 
+    // Draw symbols and texts =====================================================================================
     // Draw the most unimportant symbols and texts first - userpoints, invalid and procedure points ============================
     int waypointIndex = waypointX.size();
     for(int routeIndex : indexes)
@@ -1229,19 +1271,11 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       else
         symPainter.drawProcedureSymbol(&painter, symPt.x(), symPt.y(), waypointSize, true);
 
-      if(routeIndex >= activeRouteLeg - 1)
-      {
-        // Procedure symbols ========================================================
-        if(leg.isAnyProcedure())
-          symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6, procedureLeg.flyover, procedureLeg.malteseCross);
-
-        // Labels ========================
-        symPainter.textBox(&painter, texts, color, symPt.x() + 5, std::min(symPt.y() + 14, h), textatt::ROUTE_BG_COLOR, 255);
-      }
-
+      // Procedure symbols ========================================================
+      if(routeIndex >= activeRouteLeg - 1 && leg.isAnyProcedure())
+        symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6, procedureLeg.flyover, procedureLeg.malteseCross);
     } // for(int routeIndex : indexes)
 
-    // ===============================================================================================
     // Draw waypoints below radio navaids ============================
     waypointIndex = waypointX.size();
     for(int routeIndex : indexes)
@@ -1276,15 +1310,9 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       }
       // else procedure symbols drawn before
 
-      // Labels ========================
-      if(routeIndex >= activeRouteLeg - 1)
-      {
-        // Procedure symbols ========================================================
-        if(leg.isAnyProcedure())
-          symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6, procedureLeg.flyover, procedureLeg.malteseCross);
-
-        symPainter.textBox(&painter, texts, color, symPt.x() + 5, std::min(symPt.y() + 14, h), textatt::ROUTE_BG_COLOR, 255);
-      }
+      // Procedure symbols ========================================================
+      if(routeIndex >= activeRouteLeg - 1 && leg.isAnyProcedure())
+        symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6, procedureLeg.flyover, procedureLeg.malteseCross);
     } // for(int routeIndex : indexes)
 
     // Draw the more important radio navaids =======================================================
@@ -1321,16 +1349,60 @@ void ProfileWidget::paintEvent(QPaintEvent *)
           symPainter.drawVorSymbol(&painter, leg.getVor(), symPt.x(), symPt.y(), navaidSize, true, false, false);
       }
 
-      // Labels ========================
-      if(routeIndex >= activeRouteLeg - 1)
-      {
-        // Procedure symbols ========================================================
-        if(leg.isAnyProcedure())
-          symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6, procedureLeg.flyover, procedureLeg.malteseCross);
-        symPainter.textBox(&painter, texts, color, symPt.x() + 5, std::min(symPt.y() + 14, h), textatt::ROUTE_BG_COLOR, 255);
-      }
+      // Procedure symbols ========================================================
+      if(routeIndex >= activeRouteLeg - 1 && leg.isAnyProcedure())
+        symPainter.drawProcedureUnderlay(&painter, symPt.x(), symPt.y(), 6, procedureLeg.flyover, procedureLeg.malteseCross);
     } // for(int routeIndex : indexes)
 
+    // ===============================================================================================
+    // Waypoint, procedure, VOR and NDB labels - collect and merge texts
+    QVector<Label> labels;
+    waypointIndex = waypointX.size();
+    for(int routeIndex : indexes)
+    {
+      if(routeIndex < activeRouteLeg - 1)
+        continue;
+
+      const RouteLeg& leg = route.value(routeIndex);
+
+      // Airports are drawn separately and need no merge for texts
+      if(leg.getMapObjectType() == map::AIRPORT)
+        continue;
+
+      waypointIndex--;
+      if(altLegs.at(waypointIndex).isEmpty())
+        continue;
+
+      int legScreenWidth = calcLegScreenWidth(altLegs, waypointIndex) - 10;
+
+      // Get text and attributes
+      QColor color;
+      bool procSymbol = false;
+      QStringList texts = textsAndColorForLeg(color, procSymbol, leg,
+                                              !(leg.isAnyProcedure() && leg.getProcedureLeg().interceptPos.isValid()),
+                                              legScreenWidth);
+
+      // Check if position is the same and merge texts (only for procedures)
+      Label *last = labels.isEmpty() ? nullptr : &labels.last();
+      QPoint symPt(altLegs.at(waypointIndex).constLast());
+      if(last != nullptr && last->symPt == symPt && last->color == color && last->procSymbol == procSymbol)
+      {
+        last->texts.append(texts);
+        last->texts.removeDuplicates();
+      }
+      else
+        labels.append(Label(symPt, color, procSymbol, texts, leg.getMapObjectType()));
+    }
+
+    // Sort by type and position (right to left)
+    std::sort(labels.begin(), labels.end());
+
+    // Draw Labels ========================
+    for(const Label& label : labels)
+      symPainter.textBox(&painter, label.texts, label.color, label.symPt.x() + 5,
+                         std::min(label.symPt.y() + 14, h), textatt::ROUTE_BG_COLOR, 255);
+
+    // ===============================================================================================
     // Draw the most important airport symbols on top ============================================
     waypointIndex = waypointX.size();
     for(int routeIndex : indexes)
@@ -1400,11 +1472,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
               // Draw the top of climb point and text =========================================================
               painter.drawEllipse(QPoint(tocX, flightplanY), radius, radius);
 
-              QStringList txt;
-              txt.append(tr("TOC"));
-              txt.append(Unit::distNm(route.getTopOfClimbDistance()));
-
-              symPainter.textBox(&painter, txt, QPen(Qt::black), tocX + 8, flightplanY + 8, textatt::ROUTE_BG_COLOR, 255);
+              symPainter.textBox(&painter, {tr("TOC %1").arg(Unit::distNm(route.getTopOfClimbDistance()))},
+                                 QPen(Qt::black), tocX - radius * 2, flightplanY - 6, textatt::ROUTE_BG_COLOR | textatt::RIGHT, 255);
             }
           }
         }
@@ -1420,11 +1489,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
               // Draw the top of descent point and text =========================================================
               painter.drawEllipse(QPoint(todX, flightplanY), radius, radius);
 
-              QStringList txt;
-              txt.append(tr("TOD"));
-              txt.append(Unit::distNm(route.getTopOfDescentFromDestination()));
-
-              symPainter.textBox(&painter, txt, QPen(Qt::black), todX + 8, flightplanY + 8, textatt::ROUTE_BG_COLOR, 255);
+              symPainter.textBox(&painter, {tr("TOD %1").arg(Unit::distNm(route.getTopOfDescentFromDestination()))},
+                                 QPen(Qt::black), todX + radius * 2, flightplanY - 6, textatt::ROUTE_BG_COLOR, 255);
             }
           }
         }
