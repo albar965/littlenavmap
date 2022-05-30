@@ -55,6 +55,7 @@ Or see [Multiple Installations](https://www.littlenavmap.org/manuals/littlenavma
   can appear if altitude restrictions related to path are violated by a too low cruise altitude.
 * Now always forcing flight altitude down to lowest allowed by restriction for FACF and FAF to
   avoid entering final approch too high.
+* Related navaids now use `R090` as notation for radials.
 
 ### Map
 

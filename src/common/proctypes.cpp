@@ -895,7 +895,7 @@ QStringList procedureLegRecommended(const MapProcedureLeg& leg)
       related.append(Unit::distNm(leg.rho));
 
       if(leg.theta < map::INVALID_COURSE_VALUE)
-        related.append(QLocale().toString(leg.theta, 'f', 0) + QObject::tr("°M"));
+        related.append(QObject::tr("R%1").arg(QLocale().toString(leg.theta, 'f', 0)));
     }
   }
   return related;

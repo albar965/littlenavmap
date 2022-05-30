@@ -1491,7 +1491,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
         }
 
         leg.displayText << (leg.recFixIdent % tr("/") % Unit::distNm(leg.rho, true, 20, true) % tr("/") %
-                            QLocale().toString(leg.theta, 'f', 0) % tr("°M"));
+                            QObject::tr("R%1").arg(QLocale().toString(leg.theta, 'f', 0)));
 
         if(leg.rho > 0.f)
           leg.remarks << tr("DME %1").arg(Unit::distNm(leg.rho, true, 20, true));
@@ -1706,7 +1706,7 @@ void ProcedureQuery::processLegs(proc::MapProcedureLegs& legs) const
       {
         lastPos = parallel.getPos1();
         curPos = intersect;
-        leg.displayText << (leg.recFixIdent % tr("/") % QLocale().toString(leg.theta, 'f', 0) % tr("°M"));
+        leg.displayText << (leg.recFixIdent % tr("/") % QObject::tr("R%1").arg(QLocale().toString(leg.theta, 'f', 0)));
       }
       else
       {
