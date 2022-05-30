@@ -50,18 +50,11 @@ Or see [Multiple Installations](https://www.littlenavmap.org/manuals/littlenavma
   an approach procedure.
 * Fixed issue where flight plan leg in elevation profile had wrong position offset related to
   restriction when using online elevation data.
-
-### User Interface
-
-* Added options to display speeds, altitude and vertical speed in other than selected default units.
-  This is for indicated and actual altitude as well as indicated, ground and vertical speed in
-  progress display. Enable this in menu `Tools` -> `Aircraft Progress Display Options`. #656
-* Fix for issues where the undo shortcut key for flight plan was not working. Logbook and userpoint
-  undo function assigned to `Ctrl+Shift+Z` and `Ctrl+Shift+Y` to avoid overlap with flight plan
-  undo function.
-* Map cache links in options and main menu now point directly to the correct sub-path `map/earth`.
-* Added link to FltPlan site in airport information.
-* More small user interface fixes and improvements.
+* Solved numerous problems with elevation profile calculation and vertical paths. Vertical
+  paths are now considered as restrictions and enforced while calculating profile. Error messages
+  can appear if altitude restrictions related to path are violated by a too low cruise altitude.
+* Now always forcing flight altitude down to lowest allowed by restriction for FACF and FAF to
+  avoid entering final approch too high.
 
 ### Map
 
@@ -80,6 +73,10 @@ Or see [Multiple Installations](https://www.littlenavmap.org/manuals/littlenavma
 * Now setting map projection for online services always to Mercator to avoid garbled map display in
   web user interface.
 
+* Improved key dialogs in options on page `Map Display Keys` and added related links to map services.
+* Added button and configuration dialog to add Mapbox user style configuration from style URL which
+  can be taken from Mapbox page.
+
 ### Elevation Profile
 
 * Moved elevation profile display settings from page `Map display` in options dialog into a
@@ -87,6 +84,9 @@ Or see [Multiple Installations](https://www.littlenavmap.org/manuals/littlenavma
   and button for configuration options.
 * Added new options for elevation profile to disable highlighting and certain graphic  elements.
 * Fixed display issues where top label in profile was not  hidden in some cases.
+* Improved text display on elevation profile. Merging duplicate texts now. Better placement for TOC
+  and TOD labels in elevation profile.
+* Added configuration option for elevation profile to hide altitude restriction blocks.
 
 ### Scenery Library
 
@@ -100,6 +100,24 @@ Or see [Multiple Installations](https://www.littlenavmap.org/manuals/littlenavma
   wrong search results when looking for towered airports, for example.
 * Now skipping empty X-Plane `apt.dat` files to avoid program freezing when reading malformed files.
 * Fixed issue where OpenAir airspace files were not recognized as OpenAir format in some cases.
+
+### User Interface
+
+* Added options to display speeds, altitude and vertical speed in other than selected default units.
+  This is for indicated and actual altitude as well as indicated, ground and vertical speed in
+  progress display. Enable this in menu `Tools` -> `Aircraft Progress Display Options`. #656
+* Fix for issues where the undo shortcut key for flight plan was not working. Logbook and userpoint
+  undo function assigned to `Ctrl+Shift+Z` and `Ctrl+Shift+Y` to avoid overlap with flight plan
+  undo function.
+* Map cache links in options and main menu now point directly to the correct sub-path `map/earth`.
+* Added link to FltPlan site in airport information.
+* Fixed several issues where buttons were not disabled in multi export options dialog on missing
+  selection or empty route.
+* Fixed issue where main window could not be resized below 1000 pixels. Minimum limit is now 300
+  pixels.
+* Separated tab bar reset into a new menu item in menu `Window`. Window layout and and tabs can now
+  be reset separately.
+* More small user interface fixes and improvements.
 
 ### Build
 
