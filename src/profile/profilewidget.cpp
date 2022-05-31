@@ -589,7 +589,7 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
       // Draw all ILS
       for(const map::MapIls& ils : ilsVector)
       {
-        bool isIls = !ils.isAnyGls();
+        bool isIls = !ils.isAnyGlsRnp();
 
         QColor fillColor = isIls ? mapcolors::ilsFillColor : mapcolors::glsFillColor;
         QColor symColor = isIls ? mapcolors::ilsSymbolColor : mapcolors::glsSymbolColor;

@@ -248,10 +248,10 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
     {
       for(const map::MapIls& ils : *ilsListPtr)
       {
-        if(ils.isAnyGls() && !displayTypes.testFlag(map::GLS))
+        if(ils.isAnyGlsRnp() && !displayTypes.testFlag(map::GLS))
           continue;
 
-        if(!ils.isAnyGls() && !types.testFlag(map::ILS))
+        if(!ils.isAnyGlsRnp() && !types.testFlag(map::ILS))
           continue;
 
         if(!routeIlsIds.contains(ils.id))

@@ -1105,7 +1105,7 @@ struct MapIls
     return type == SBAS_GBAS_THRESHOLD;
   }
 
-  bool isAnyGls() const
+  bool isAnyGlsRnp() const
   {
     return type == SBAS_GBAS_THRESHOLD || type == GLS_GROUND_STATION;
   }

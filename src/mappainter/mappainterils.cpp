@@ -76,10 +76,10 @@ void MapPainterIls::render()
             // Part of flight plan - paint later
             continue;
 
-          if(ils.isAnyGls() && !context->objectDisplayTypes.testFlag(map::GLS))
+          if(ils.isAnyGlsRnp() && !context->objectDisplayTypes.testFlag(map::GLS))
             continue;
 
-          if(!ils.isAnyGls() && !context->objectTypes.testFlag(map::ILS))
+          if(!ils.isAnyGlsRnp() && !context->objectTypes.testFlag(map::ILS))
             continue;
 
           // Need to get the real ILS size on the screen for Mercator projection - otherwise feather may vanish
@@ -121,7 +121,7 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
   if(!ils.hasGeometry)
     return;
 
-  bool isIls = !ils.isAnyGls();
+  bool isIls = !ils.isAnyGlsRnp();
 
   QColor fillColor = isIls ? mapcolors::ilsFillColor : mapcolors::glsFillColor;
   QColor symColor = isIls ? mapcolors::ilsSymbolColor : mapcolors::glsSymbolColor;
@@ -175,11 +175,11 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
       context->painter->setPen(QPen(textColor, 0.5f, Qt::SolidLine, Qt::FlatCap));
       context->painter->translate(origin);
 
-      float defaultWidth = ils.isAnyGls() ? map::DEFAULT_ILS_WIDTH_DEG * 2 : map::DEFAULT_ILS_WIDTH_DEG;
+      float defaultWidth = ils.isAnyGlsRnp() ? map::DEFAULT_ILS_WIDTH_DEG * 2 : map::DEFAULT_ILS_WIDTH_DEG;
       float width = ils.width < map::INVALID_COURSE_VALUE ? ils.width : defaultWidth;
 
       // Position GLS and RNP on the botton and ILS on the top of the feather
-      if(ils.isAnyGls())
+      if(ils.isAnyGlsRnp())
         width = -width;
 
       // Rotate to draw the text upwards so it is readable
@@ -199,7 +199,7 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
         }
 
         QFontMetrics metrics = context->painter->fontMetrics();
-        int texth = ils.isAnyGls() ? metrics.height() : -metrics.descent();
+        int texth = ils.isAnyGlsRnp() ? metrics.height() : -metrics.descent();
 
         // Cut text to feather length
         text = metrics.elidedText(text, Qt::ElideRight, featherLen);

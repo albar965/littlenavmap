@@ -690,7 +690,7 @@ bool HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuild
                                  QString(), waypoint, waypoint->magvar, frequencyCol, airportCol);
 
       const map::MapIls *ils = base->asPtr<map::MapIls>(map::ILS);
-      if(ils != nullptr && !ils->isAnyGls())
+      if(ils != nullptr && !ils->isAnyGlsRnp())
         nearestMapObjectsTextRow(airport, html, map::ilsType(*ils, true /* gs */, true /* dme */, tr(", ")),
                                  ils->ident, ils->name,
                                  ils->freqMHzOrChannelLocale(), ils, ils->magvar, frequencyCol, airportCol);
@@ -1198,7 +1198,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
       html.row2If(tr("Region:"), ils.region);
   }
 
-  if(ils.isAnyGls())
+  if(ils.isAnyGlsRnp())
     html.row2(prefix % tr("Channel:"), ils.freqMHzOrChannelLocale());
   else
     html.row2(prefix % tr("Frequency:"), ils.freqMHzOrChannelLocale() % tr(" MHz"));
@@ -1207,7 +1207,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
   {
     html.row2(tr("Magnetic declination:"), map::magvarText(ils.magvar));
 
-    if(!ils.isAnyGls())
+    if(!ils.isAnyGlsRnp())
     {
       if(ils.range > 0)
         html.row2(tr("Range:"), Unit::distNm(ils.range));
@@ -1221,12 +1221,12 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
   // Localizer information ==================================================
   float hdgTrue = ils.heading;
 
-  html.row2(prefix % (ils.isAnyGls() ? tr("Heading:") : tr("Localizer Heading:")),
+  html.row2(prefix % (ils.isAnyGlsRnp() ? tr("Heading:") : tr("Localizer Heading:")),
             courseTextFromTrue(hdgTrue, ils.magvar), ahtml::NO_ENTITIES);
 
   // Check for offset localizer ==================================================
   map::MapRunwayEnd end;
-  if(!ils.isAnyGls())
+  if(!ils.isAnyGlsRnp())
   {
     int endId = ils.runwayEndId;
     if(endId > 0)
@@ -1253,11 +1253,11 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
 
   if(ils.hasGlideslope())
   {
-    html.row2(prefix % (ils.isAnyGls() ? tr("Glidepath:") : tr("Glideslope:")),
+    html.row2(prefix % (ils.isAnyGlsRnp() ? tr("Glidepath:") : tr("Glideslope:")),
               locale.toString(ils.slope, 'f', 1) % tr("°"));
   }
 
-  if(info && ils.isAnyGls())
+  if(info && ils.isAnyGlsRnp())
   {
     html.row2If(tr("Performance:"), ils.perfIndicator);
     html.row2If(tr("Provider:"), ils.provider);
@@ -1483,7 +1483,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
             for(int i = 0; i < ilsVector.size(); i++)
             {
               const map::MapIls& ils = ilsVector.at(i);
-              if(!ils.isAnyGls())
+              if(!ils.isAnyGlsRnp())
               {
                 ilsTextProcInfo(ils, html);
                 html.row2(QString(), QString());
@@ -1501,7 +1501,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
           {
             for(const map::MapIls& ils : ilsVector)
             {
-              if(ils.isAnyGls())
+              if(ils.isAnyGlsRnp())
               {
                 ilsTextProcInfo(ils, html);
                 html.row2(QString(), QString());

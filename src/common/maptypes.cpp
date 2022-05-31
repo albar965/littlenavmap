@@ -2006,19 +2006,22 @@ QDebug operator<<(QDebug out, const WeatherContext& record)
 
 QString ilsText(const MapIls& ils)
 {
-  QString text = QObject::tr("%1 / %2 / %3 / %4°M").
-                 arg(ilsType(ils, false /* gs */, false /* dme */, QObject::tr(", "))).
-                 arg(ils.ident).
-                 arg(ils.freqMHzOrChannel()).
-                 arg(QString::number(atools::geo::normalizeCourse(ils.heading - ils.magvar), 'f', 0));
+  QStringList texts;
+  texts.append(ilsType(ils, false /* gs */, false /* dme */, QObject::tr(" / ")));
+  texts.append(ils.ident);
+
+  if(!ils.isAnyGlsRnp()) // Channel is not relevant on map display
+    texts.append(ils.freqMHzOrChannel());
+
+  texts.append(QObject::tr("%1°M").arg(QString::number(atools::geo::normalizeCourse(ils.heading - ils.magvar), 'f', 0)));
 
   if(ils.hasGlideslope())
-    text += (ils.isAnyGls() ? QObject::tr(" / GP %1°") : QObject::tr(" / GS %1°")).
-            arg(QString::number(ils.slope, 'f', 1));
-  if(ils.hasDme)
-    text += QObject::tr(" / DME");
+    texts.append((ils.isAnyGlsRnp() ? QObject::tr("GP %1°") : QObject::tr("GS %1°")).arg(QString::number(ils.slope, 'f', 1)));
 
-  return text;
+  if(ils.hasDme)
+    texts.append(QObject::tr("DME"));
+
+  return texts.join(QObject::tr(" / "));
 }
 
 QString ilsTypeShort(const map::MapIls& ils)
@@ -2048,7 +2051,7 @@ QString ilsType(const map::MapIls& ils, bool gs, bool dme, const QString& separa
 {
   QString text = ilsTypeShort(ils);
 
-  if(!ils.isAnyGls())
+  if(!ils.isAnyGlsRnp())
   {
     if(ils.type == '1')
       text += QObject::tr(" CAT I");
@@ -2066,8 +2069,10 @@ QString ilsType(const map::MapIls& ils, bool gs, bool dme, const QString& separa
   {
     if(!ils.perfIndicator.isEmpty())
       text += separator % ils.perfIndicator;
-    if(!ils.provider.isEmpty())
-      text += separator % ils.provider;
+
+    // Ignore EGNOS, WAAS display
+    // if(!ils.provider.isEmpty())
+    // text += separator % ils.provider;
   }
 
   return text;
@@ -2486,7 +2491,8 @@ QStringList aircraftIcing(const atools::fs::sc::SimConnectUserAircraft& aircraft
     text.append((narrow ? QObject::tr("Pitot %L1") : QObject::tr("Pitot&nbsp;%L1")).arg(aircraft.getPitotIcePercent(), 0, 'f', 0));
 
   if(aircraft.getStructuralIcePercent() >= 1.f)
-    text.append((narrow ? QObject::tr("Struct %L1") : QObject::tr("Structure&nbsp;%L1")).arg(aircraft.getStructuralIcePercent(), 0, 'f', 0));
+    text.append((narrow ? QObject::tr("Struct %L1") : QObject::tr("Structure&nbsp;%L1")).
+                arg(aircraft.getStructuralIcePercent(), 0, 'f', 0));
 
   if(aircraft.getAoaIcePercent() >= 1.f)
     text.append((narrow ? QObject::tr("AOA %L1") : QObject::tr("AOA&nbsp;%L1")).arg(aircraft.getAoaIcePercent(), 0, 'f', 0));
@@ -2623,7 +2629,7 @@ const QIcon& ilsIcon(const MapIls& ils)
   const static QIcon ILS(":/littlenavmap/resources/icons/ils.svg");
   const static QIcon LOC(":/littlenavmap/resources/icons/loc.svg");
 
-  if(ils.isAnyGls())
+  if(ils.isAnyGlsRnp())
     return GLS;
   else if(ils.hasGlideslope())
     return ILS;

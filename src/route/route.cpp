@@ -870,7 +870,7 @@ void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::
         if((it->isRnp() && approachLegs.isNonPrecision() && profile) || // Show glidepath for all non precision approaches in profile only
            (it->isRnp() && approachLegs.isRnavGps()) || // Show glidepath always for RNAV and GPS
            (it->isGls() && approachLegs.isGls()) || // Show GLS for all GLS approaches
-           (!it->isAnyGls() && approachLegs.hasFrequency())) // Show ILS, LOC, etc for all ILS, LOC, LDA, etc. approaches
+           (!it->isAnyGlsRnp() && approachLegs.hasFrequency())) // Show ILS, LOC, etc for all ILS, LOC, LDA, etc. approaches
         {
           ++it; // Keep ILS
           continue;
