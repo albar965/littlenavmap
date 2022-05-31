@@ -163,6 +163,7 @@ void Route::clearAll()
   altitude->clearAll();
   destRunwayIlsMap.clear();
   destRunwayIlsProfile.clear();
+  destRunwayIlsFlightPlanTable.clear();
   destRunwayEnd = map::MapRunwayEnd();
 
   totalDistance = 0.f;
@@ -777,13 +778,26 @@ void Route::updateApproachIls()
   destRunwayIlsFlightPlanTable.clear();
   updateApproachRunwayEndAndIls(destRunwayIlsFlightPlanTable, &destRunwayEnd, true /* recommended */, false /* map */, false);
 
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "destRunwayEnd" << destRunwayEnd;
+  qDebug() << Q_FUNC_INFO << "destRunwayIlsFlightPlanTable" << destRunwayIlsFlightPlanTable;
+#endif
+
   // Get ILS and runway from route for map
   destRunwayIlsMap.clear();
   updateApproachRunwayEndAndIls(destRunwayIlsMap, &destRunwayEnd, false /* recommended */, true /* map */, false);
 
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "destRunwayIlsMap" << destRunwayIlsMap;
+#endif
+
   // ILS for profile
   destRunwayIlsProfile.clear();
   updateApproachRunwayEndAndIls(destRunwayIlsProfile, &destRunwayEnd, false /* recommended */, false /* map */, true);
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "destRunwayIlsProfile" << destRunwayIlsProfile;
+#endif
 }
 
 void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::MapRunwayEnd *runwayEnd, bool recommended, bool map,
@@ -792,7 +806,7 @@ void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::
   QString destAirportIdent = getDestinationAirportLeg().getIdent();
   MapQuery *mapQuery = NavApp::getMapQueryGui();
 
-  if(!approachLegs.runwayEnd.isFullyValid())
+  if(approachLegs.runwayEnd.isFullyValid())
   {
     // Runway name given in approach procedure ========================
     QList<map::MapRunwayEnd> runwayEnds;
