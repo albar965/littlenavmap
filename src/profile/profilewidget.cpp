@@ -373,10 +373,13 @@ void ProfileWidget::updateScreenCoords()
   // Update elevation polygon
   // Add 1000 ft buffer and round up to the next 500 feet
   minSafeAltitudeFt = calcGroundBuffer(legList->maxElevationFt);
-  maxWindowAlt = std::max(minSafeAltitudeFt, legList->route.getCruisingAltitudeFeet());
 
-  if(simData.getUserAircraftConst().isValid() &&
-     (showAircraft || showAircraftTrack) && !NavApp::getRouteConst().isFlightplanEmpty())
+  if(profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_SAFE_ALTITUDE))
+    maxWindowAlt = std::max(minSafeAltitudeFt, legList->route.getCruisingAltitudeFeet());
+  else
+    maxWindowAlt = legList->route.getCruisingAltitudeFeet();
+
+  if(simData.getUserAircraftConst().isValid() && (showAircraft || showAircraftTrack) && !NavApp::getRouteConst().isFlightplanEmpty())
     maxWindowAlt = std::max(maxWindowAlt, aircraftAlt(simData.getUserAircraftConst()));
 
   // if(showAircraftTrack)
@@ -868,7 +871,6 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
   // Draw one line for the label to the left
   painter.drawLine(0, flightplanY, left + static_cast<int>(w), flightplanY);
-  painter.drawLine(0, safeAltY, left, safeAltY);
 
   // Draw orange minimum safe altitude lines for each segment ======================================================
   if(displayOptions.testFlag(optsp::PROFILE_LEG_SAFE_ALTITUDE))
@@ -890,6 +892,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   if(displayOptions.testFlag(optsp::PROFILE_SAFE_ALTITUDE))
   {
     painter.setPen(mapcolors::profileSafeAltLinePen);
+    painter.drawLine(0, safeAltY, left, safeAltY);
     painter.drawLine(left, safeAltY, left + static_cast<int>(w), safeAltY);
   }
 

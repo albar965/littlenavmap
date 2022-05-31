@@ -65,8 +65,8 @@ bool ProfileOptions::showOptions()
   treeDialog.addItem2(lineItem, optsp::PROFILE_FP_TRUE_COURSE, tr("True Course"), tr("Show true great circle start course."));
   treeDialog.addItem2(lineItem, optsp::PROFILE_FP_VERTICAL_ANGLE, tr("Descent Flight Path Angle"), tr("Vertical descent path angle only in the descent phase."));
   treeDialog.addItem2(lineItem, optsp::PROFILE_FP_ALT_RESTRICTION, tr("Altitude Restriction"), tr( "Display procedure altitude restrictions at the navaid label."));
+  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_ALT_RESTRICTION_BLOCK, tr("Altitude Restriction Indicator"), tr("Altitude restrictions shown as blocks in diagram."));
   treeDialog.addItem2(lineItem, optsp::PROFILE_FP_SPEED_RESTRICTION, tr("Speed Restriction"), tr("Show procedure speed restrictions at the navaid label."));
-  treeDialog.addItem2(lineItem, optsp::PROFILE_FP_ALT_RESTRICTION_BLOCK, tr("Altitude Restriction"), tr("Altitude restrictions shown as blocks in diagram."));
   /* *INDENT-ON* */
 
   treeDialog.restoreState(false /* restoreCheckState */, true /* restoreExpandState */);

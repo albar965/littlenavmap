@@ -70,7 +70,8 @@ void ProfileLabelWidgetVert::contextMenuEvent(QContextMenuEvent *event)
 void ProfileLabelWidgetVert::paintEvent(QPaintEvent *)
 {
   // Hiding will result in no paintEvent being called - needs update from routeChanged() before
-  setVisible(profileWidget->getProfileOptions()->getDisplayOptions() & optsp::PROFILE_LABELS_ALT);
+  optsp::DisplayOptionsProfile displayOptions = profileWidget->getProfileOptions()->getDisplayOptions();
+  setVisible(displayOptions & optsp::PROFILE_LABELS_ALT);
 
   if(isVisible())
   {
@@ -119,11 +120,14 @@ void ProfileLabelWidgetVert::paintEvent(QPaintEvent *)
       }
 
       // Safe altitude label ===========================
-      if(safeAltY > -5 && safeAltY < h + 5)
+      if(displayOptions.testFlag(optsp::PROFILE_SAFE_ALTITUDE))
       {
-        QString str = Unit::altFeet(profileWidget->getMinSafeAltitudeFt());
-        symPainter.textBox(&painter, {str}, mapcolors::profileSafeAltLinePen, w - 2, safeAltY, atts, 255, baseColor);
-        maxw = std::max(metrics.boundingRect(str).width(), maxw);
+        if(safeAltY > -5 && safeAltY < h + 5)
+        {
+          QString str = Unit::altFeet(profileWidget->getMinSafeAltitudeFt());
+          symPainter.textBox(&painter, {str}, mapcolors::profileSafeAltLinePen, w - 2, safeAltY, atts, 255, baseColor);
+          maxw = std::max(metrics.boundingRect(str).width(), maxw);
+        }
       }
 
       // Route cruise altitude ==========================
