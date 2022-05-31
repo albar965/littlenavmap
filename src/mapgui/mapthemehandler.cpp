@@ -341,7 +341,7 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
                       QString key = regexpIter.next().captured(1);
 
                       // Ignore default keys
-                      if(key != "x" && key != "y" && key != "z" && key != "zoomLevel" && key != "language" &&
+                      if(key != "x" && key != "y" && key != "z" && key != "zoomLevel" && key != "quadIndex" && key != "language" &&
                          key != "west" && key != "south" && key != "east" && key != "north")
                         theme.keys.append(key);
                     }

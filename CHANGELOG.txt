@@ -73,10 +73,10 @@ Or see [Multiple Installations](https://www.littlenavmap.org/manuals/littlenavma
 * Fixed issue where new airspaces were not drawn after loading user airspaces.
 * Now setting map projection for online services always to Mercator to avoid garbled map display in
   web user interface.
-
 * Improved key dialogs in options on page `Map Display Keys` and added related links to map services.
 * Added button and configuration dialog to add Mapbox user style configuration from style URL which
   can be taken from Mapbox page.
+* Fixed wrong warning dialog about key `quadIndex` key in DGML map theme configuration.
 
 ### Elevation Profile
 
