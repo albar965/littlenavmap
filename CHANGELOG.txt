@@ -88,6 +88,7 @@ Or see [Multiple Installations](https://www.littlenavmap.org/manuals/littlenavma
 * Improved text display on elevation profile. Merging duplicate texts now. Better placement for TOC
   and TOD labels in elevation profile.
 * Added configuration option for elevation profile to hide altitude restriction blocks.
+* Zooming with the touchpad is now less sensitive.
 
 ### Scenery Library
 
@@ -118,6 +119,8 @@ Or see [Multiple Installations](https://www.littlenavmap.org/manuals/littlenavma
   pixels.
 * Separated tab bar reset into a new menu item in menu `Window`. Window layout and and tabs can now
   be reset separately.
+* Added option to reverse all mouse wheel functions in map and elevation profile to options on
+  page `User Interface`.
 * More small user interface fixes and improvements.
 
 ### Build

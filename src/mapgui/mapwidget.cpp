@@ -1127,13 +1127,16 @@ void MapWidget::wheelEvent(QWheelEvent *event)
   {
     // Reset summed up values if accepted
     lastWheelAngle = 0;
-
+    bool reverse = OptionData::instance().getFlags().testFlag(opts::GUI_REVERSE_WHEEL);
     if(event->modifiers() == Qt::ControlModifier)
     {
+      if(reverse)
+        angleDelta = -angleDelta;
+
       // Adjust map detail ===================================================================
-      if(event->angleDelta().y() > 0)
+      if(angleDelta > 0)
         NavApp::getMapDetailHandler()->increaseMapDetail();
-      else if(event->angleDelta().y() < 0)
+      else if(angleDelta < 0)
         NavApp::getMapDetailHandler()->decreaseMapDetail();
     }
     else
@@ -1146,6 +1149,9 @@ void MapWidget::wheelEvent(QWheelEvent *event)
         // Position is visible
         qreal centerLat = centerLatitude();
         qreal centerLon = centerLongitude();
+
+        if(reverse)
+          directionIn = !directionIn;
 
         zoomInOut(directionIn, event->modifiers() == Qt::ShiftModifier /* smooth */);
 

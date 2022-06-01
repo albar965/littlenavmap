@@ -24,6 +24,7 @@
 #include "common/constants.h"
 #include "gui/helphandler.h"
 #include "route/route.h"
+#include "options/optiondata.h"
 
 #include "navapp.h"
 #include "atools.h"
@@ -523,12 +524,19 @@ bool ProfileScrollArea::wheelEvent(QWheelEvent *event)
 
     Ui::MainWindow *ui = NavApp::getMainUi();
 
-    int zoom = 0;
+    float zoom = 0.f;
     QPoint numDegrees = event->angleDelta() / 8;
     if(!event->pixelDelta().isNull())
-      zoom = event->pixelDelta().y();
+      zoom = event->pixelDelta().y() / 10.f;
     else if(!numDegrees.isNull())
-      zoom = numDegrees.y() / 15;
+      zoom = numDegrees.y() / 15.f;
+
+    if(OptionData::instance().getFlags().testFlag(opts::GUI_REVERSE_WHEEL))
+      zoom = -zoom;
+
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << "angleDelta" << event->angleDelta() << "pixelDelta" << event->pixelDelta() << "zoom" << zoom;
+#endif
 
     QPoint mouse = (event->pos() + getOffset());
     QPoint mouseToCenter = event->pos() - viewport->geometry().center(); // left neg, right pos
@@ -545,7 +553,7 @@ bool ProfileScrollArea::wheelEvent(QWheelEvent *event)
       double oldZoomVal = static_cast<double>(viewport->width()) / profileWidget->width();
 
       // Set to zoom slider
-      ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->value() + zoom);
+      ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->value() + static_cast<int>(zoom));
 
       // Calculate the correction for the fixed, not scaled offset in the profile widget
       double correction = profileLeftOffset * oldZoomVal * -mouseToCenter.x() / (viewport->width() / 2.);
@@ -568,7 +576,7 @@ bool ProfileScrollArea::wheelEvent(QWheelEvent *event)
       double oldZoomVal = static_cast<double>(viewport->height()) / profileWidget->height();
 
       // Set to zoom slider
-      ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->value() + zoom);
+      ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->value() + static_cast<int>(zoom));
 
       // Calculate the correction for the fixed, not scaled offset in the profile widget
       double correction = profileTopOffset * oldZoomVal * -mouseToCenter.y() / (viewport->height() / 2.);

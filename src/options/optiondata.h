@@ -115,6 +115,10 @@ enum Flag
    * ui->checkBoxOptionsStartupShowSplash */
   STARTUP_SHOW_SPLASH = 1 << 26,
 
+  /* Reverse wheel.
+   * ui->checkBoxOptionsGuiWheel */
+  GUI_REVERSE_WHEEL = 1 << 27,
+
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);
