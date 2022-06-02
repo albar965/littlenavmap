@@ -40,6 +40,12 @@
 
 using atools::fs::sc::DataReaderThread;
 
+const static int FLUSH_QUEUE_MS = 50;
+
+/* Any metar fetched from the Simulator will time out in 15 seconds */
+const static int WEATHER_TIMEOUT_FS_SECS = 15;
+const static int NOT_AVAILABLE_TIMEOUT_FS_SECS = 300;
+
 ConnectClient::ConnectClient(MainWindow *parent)
   : QObject(parent), mainWindow(parent), metarIdentCache(WEATHER_TIMEOUT_FS_SECS),
   notAvailableStations(NOT_AVAILABLE_TIMEOUT_FS_SECS)
@@ -58,16 +64,22 @@ ConnectClient::ConnectClient(MainWindow *parent)
   xpConnectHandler = new atools::fs::sc::XpConnectHandler();
 
   // Create thread class that reads data from handler
-  dataReader =
-    new DataReaderThread(mainWindow, settings.getAndStoreValue(lnm::OPTIONS_DATAREADER_DEBUG, false).toBool());
+  dataReader = new DataReaderThread(mainWindow, settings.getAndStoreValue(lnm::OPTIONS_DATAREADER_DEBUG, false).toBool());
+
+  directReconnectSimSec = settings.getAndStoreValue(lnm::OPTIONS_DATAREADER_RECONNECT_SIM, 15).toInt();
+  directReconnectXpSec = settings.getAndStoreValue(lnm::OPTIONS_DATAREADER_RECONNECT_XP, 5).toInt();
+  socketReconnectSec = settings.getAndStoreValue(lnm::OPTIONS_DATAREADER_RECONNECT_SOCKET, 10).toInt();
 
   if(simConnectHandler->isLoaded())
+  {
     dataReader->setHandler(simConnectHandler);
+    dataReader->setReconnectRateSec(directReconnectSimSec);
+  }
   else
+  {
     dataReader->setHandler(xpConnectHandler);
-
-  // We were able to connect
-  dataReader->setReconnectRateSec(DIRECT_RECONNECT_SEC);
+    dataReader->setReconnectRateSec(directReconnectXpSec);
+  }
 
   connect(dataReader, &DataReaderThread::postSimConnectData, this, &ConnectClient::postSimConnectData);
   connect(dataReader, &DataReaderThread::postStatus, this, &ConnectClient::statusPosted);
@@ -387,6 +399,12 @@ void ConnectClient::restoreState()
   dialog->restoreState();
 
   dataReader->setHandler(handlerByDialogSettings());
+
+  if(isXpConnect())
+    dataReader->setReconnectRateSec(directReconnectXpSec);
+  else if(isSimConnect())
+    dataReader->setReconnectRateSec(directReconnectSimSec);
+
   dataReader->setUpdateRate(dialog->getUpdateRateMs(dialog->getCurrentSimType()));
   dataReader->setAiFetchRadius(atools::geo::nmToKm(dialog->getAiFetchRadiusNm(dialog->getCurrentSimType())));
   fetchOptionsChanged(dialog->getCurrentSimType());
@@ -583,8 +601,14 @@ void ConnectClient::connectInternal()
   if(dialog->isAnyConnectDirect())
   {
     qDebug() << "Starting direct connection";
+
     // Datareader has its own reconnect mechanism
     dataReader->setHandler(handlerByDialogSettings());
+
+    if(isXpConnect())
+      dataReader->setReconnectRateSec(directReconnectXpSec);
+    else if(isSimConnect())
+      dataReader->setReconnectRateSec(directReconnectSimSec);
 
     // Copy settings from dialog
     updateRateChanged(dialog->getCurrentSimType());
@@ -748,7 +772,7 @@ void ConnectClient::closeSocket(bool allowRestart)
   {
     // For socket based connection use a timer - direct connection reconnects automatically
     silent = true;
-    reconnectNetworkTimer.start(SOCKET_RECONNECT_SEC * 1000);
+    reconnectNetworkTimer.start(socketReconnectSec * 1000);
   }
   else
     silent = false;

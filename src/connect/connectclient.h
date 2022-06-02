@@ -117,16 +117,6 @@ signals:
   void aiFetchOptionsChanged();
 
 private:
-  /* Try to reconnect every 5 seconds when network connection is lost */
-  const int SOCKET_RECONNECT_SEC = 5;
-  /* Try to reconnect every 5 seconds when the SimConnect or X-Plane connection is lost */
-  const int DIRECT_RECONNECT_SEC = 5;
-  const int FLUSH_QUEUE_MS = 50;
-
-  /* Any metar fetched from the Simulator will time out in 15 seconds */
-  const int WEATHER_TIMEOUT_FS_SECS = 15;
-  const int NOT_AVAILABLE_TIMEOUT_FS_SECS = 300;
-
   void readFromSocket();
   void readFromSocketError(QAbstractSocket::SocketError);
   void connectedToServerSocket();
@@ -188,6 +178,15 @@ private:
   bool socketConnected = false;
 
   bool errorState = false;
+
+  /* Try to reconnect every 10 seconds when network connection is lost */
+  int socketReconnectSec = 10;
+
+  /* Try to reconnect every 15 seconds when the SimConnect connection is lost */
+  int directReconnectSimSec = 15;
+
+  /* Try to reconnect every 5 seconds when the X-Plane connection is lost */
+  int directReconnectXpSec = 5;
 };
 
 #endif // LITTLENAVMAP_CONNECTCLIENT_H
