@@ -224,8 +224,7 @@ MainWindow::MainWindow()
                                           ui->dockWidgetRouteCalc},
                                          // Add all available toolbars  here =============================
                                          {ui->toolBarMain, ui->toolBarMap, ui->toolbarMapOptions,
-                                          ui->toolBarRoute, ui->toolBarView, ui->toolBarAirspaces,
-                                          ui->toolBarMapThemeProjection, ui->toolBarTools},
+                                          ui->toolBarRoute, ui->toolBarView, ui->toolBarAirspaces, ui->toolBarTools},
                                          settings.getAndStoreValue(lnm::OPTIONS_DOCKHANDLER_DEBUG, false).toBool());
 
     marbleAboutDialog = new Marble::MarbleAboutDialog(this);
@@ -323,7 +322,7 @@ MainWindow::MainWindow()
       ui->dockWidgetMap->hide();
     }
 
-    // Fill theme combo box and menus after setting up map widget
+    // Fill theme handler and menus after setting up map widget
     mapThemeHandler->setupMapThemesUi();
 
     // Init a few late objects since these depend on the map widget instance
@@ -389,9 +388,7 @@ MainWindow::MainWindow()
     qDebug() << Q_FUNC_INFO << "Setting theme";
     updateMapKeys(); // First update keys in GUI map widget - web API not started yet
     mapThemeHandler->changeMapTheme();
-
-    qDebug() << Q_FUNC_INFO << "Setting projection";
-    mapWidget->setProjection(mapProjectionComboBox->currentData().toInt());
+    mapThemeHandler->changeMapProjection();
 
     // Wait until everything is set up and update map
     updateMapObjectsShown();
@@ -758,19 +755,6 @@ void MainWindow::setupUi()
   scaleToolbar(ui->toolBarView, 0.72f);
 #endif
 
-  // Projection combo box
-  mapProjectionComboBox = new QComboBox(this);
-  mapProjectionComboBox->setObjectName("mapProjectionComboBox");
-  QString helpText = tr("Select map projection");
-  mapProjectionComboBox->setToolTip(helpText);
-  mapProjectionComboBox->setStatusTip(helpText);
-  mapProjectionComboBox->addItem(tr("Mercator"), Marble::Mercator);
-  mapProjectionComboBox->addItem(tr("Spherical"), Marble::Spherical);
-  mapProjectionComboBox->setItemData(0, tr("Flat map projection"), Qt::ToolTipRole);
-  mapProjectionComboBox->setItemData(1, tr("Map projection showing a globe"), Qt::ToolTipRole);
-
-  ui->toolBarMapThemeProjection->addWidget(mapProjectionComboBox);
-
   // Projection menu items
   actionGroupMapProjection = new QActionGroup(ui->menuViewProjection);
   actionGroupMapProjection->setObjectName("actionGroupMapProjection");
@@ -865,7 +849,6 @@ void MainWindow::setupUi()
                               {ui->toolBarMain->toggleViewAction(),
                                ui->toolBarMap->toggleViewAction(),
                                ui->toolbarMapOptions->toggleViewAction(),
-                               ui->toolBarMapThemeProjection->toggleViewAction(),
                                ui->toolBarRoute->toggleViewAction(),
                                ui->toolBarAirspaces->toggleViewAction(),
                                ui->toolBarView->toggleViewAction(),
@@ -1345,20 +1328,6 @@ void MainWindow::connectAllSlots()
 
   connect(mapWidget, &MapWidget::routeInsertProcedure, routeController, &RouteController::routeAddProcedure);
 
-  // Connect toolbar combo boxes
-  connect(mapProjectionComboBox, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &MainWindow::changeMapProjection);
-
-  // Let projection menus update combo boxes
-  connect(ui->actionMapProjectionMercator, &QAction::triggered, this, [ = ](bool checked)
-  {
-    mapProjectionComboBox->setCurrentIndex(checked ? 0 : 1);
-  });
-
-  connect(ui->actionMapProjectionSpherical, &QAction::triggered, this, [ = ](bool checked)
-  {
-    mapProjectionComboBox->setCurrentIndex(checked ? 1 : 0);
-  });
-
   // Window menu ======================================
   connect(layoutFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::layoutOpenRecent);
   connect(ui->actionWindowLayoutOpen, &QAction::triggered, this, &MainWindow::layoutOpen);
@@ -1758,29 +1727,6 @@ void MainWindow::weatherUpdateTimeout()
 {
   // if(connectClient != nullptr && connectClient->isConnected() && infoController != nullptr)
   infoController->updateAirportWeather();
-}
-
-/* Called by the toolbar combo box */
-void MainWindow::changeMapProjection(int index)
-{
-  Q_UNUSED(index)
-
-  mapWidget->cancelDragAll();
-
-  Marble::Projection proj = static_cast<Marble::Projection>(mapProjectionComboBox->currentData().toInt());
-  qDebug() << "Changing projection to" << proj;
-  mapWidget->setProjection(proj);
-
-  // Update menu items
-  ui->actionMapProjectionMercator->blockSignals(true);
-  ui->actionMapProjectionMercator->setChecked(proj == Marble::Mercator);
-  ui->actionMapProjectionMercator->blockSignals(false);
-
-  ui->actionMapProjectionSpherical->blockSignals(true);
-  ui->actionMapProjectionSpherical->setChecked(proj == Marble::Spherical);
-  ui->actionMapProjectionSpherical->blockSignals(false);
-
-  setStatusMessage(tr("Map projection changed to %1.").arg(mapProjectionComboBox->currentText()));
 }
 
 /* Menu item */
@@ -3815,9 +3761,6 @@ void MainWindow::restoreStateMain()
 
   widgetState.setBlockSignals(false);
 
-  // Need to update menu items by signal
-  widgetState.restore(mapProjectionComboBox);
-
   firstApplicationStart = settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
 
   // Already loaded in constructor early to allow database creations
@@ -4025,7 +3968,7 @@ void MainWindow::saveActionStates()
   qDebug() << Q_FUNC_INFO;
 
   atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET);
-  widgetState.save({mapProjectionComboBox, ui->actionMapShowVor, ui->actionMapShowNdb,
+  widgetState.save({ui->actionMapShowVor, ui->actionMapShowNdb,
                     ui->actionMapShowWp, ui->actionMapShowIls, ui->actionMapShowGls, ui->actionMapShowHolding, ui->actionMapShowAirportMsa,
                     ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks, ui->actionShowAirspaces,
                     ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft, ui->actionMapShowCompassRose,

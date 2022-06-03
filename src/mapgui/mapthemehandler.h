@@ -24,7 +24,7 @@
 #include <QDir>
 
 class QFileInfo;
-class QComboBox;
+class QToolButton;
 class QActionGroup;
 
 /*
@@ -173,6 +173,8 @@ private:
  * Also loads and saves API key, username or token values for maps.
  *
  * Themes are referenced by theme id which is element <theme> in the DGML file.
+ *
+ * Also takes care of the two actions for map projection.
  */
 class MapThemeHandler :
   public QObject
@@ -195,7 +197,7 @@ public:
     return defaultTheme;
   }
 
-  /* Currently selected theme id from combo box */
+  /* Currently selected theme id from actions */
   QString getCurrentThemeId() const;
 
   /* Sort order is always online/offline and then alphabetical */
@@ -248,11 +250,13 @@ public:
   void restoreState();
   void saveState();
 
-  /* Sets up the combo box for the toolbar and the main menu actions */
+  /* Sets up the toolbutton, menu and actions for the toolbar and the main menu */
   void setupMapThemesUi();
 
-  /* Called by the toolbar combo box or main widget after key updates */
+  /* Called by the actions after key updates */
   void changeMapTheme();
+
+  void changeMapProjection();
 
   /* Update map legend widget after theme change */
   void updateLegend();
@@ -267,8 +271,7 @@ private:
   /* Briefly read the most important data from a DGML file needed to build a MapTheme object */
   MapTheme loadTheme(const QFileInfo& dgml);
 
-  void themeMenuTriggered(bool checked);
-  void changeMapThemeComboBox(const QString& themeId, bool blockSignals);
+  void changeMapThemeActions(const QString& themeId);
 
   /* Base folder appdir/data/maps/earth */
   QDir earthDir;
@@ -283,9 +286,11 @@ private:
   /* All keys for all maps */
   QMap<QString, QString> mapThemeKeys;
 
-  QComboBox *comboBoxMapTheme = nullptr;
+  QToolButton *toolButtonMapTheme = nullptr;
   QActionGroup *actionGroupMapTheme = nullptr;
   QWidget *mainWindow;
+
+  QActionGroup *mapProjectionActionGroup = nullptr;
 };
 
 QDebug operator<<(QDebug out, const MapTheme& theme);

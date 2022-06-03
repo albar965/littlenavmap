@@ -35,7 +35,6 @@ class PrintSupport;
 class ProcedureSearch;
 class ProfileWidget;
 class QActionGroup;
-class QComboBox;
 class QLabel;
 class QPushButton;
 class QToolButton;
@@ -373,7 +372,6 @@ private:
 
   void legendAnchorClicked(const QUrl& url);
 
-  void changeMapProjection(int index);
   void scaleToolbar(QToolBar *toolbar, float scale);
   void clearWeatherContext();
   void showOnlineHelp();
@@ -471,9 +469,6 @@ private:
 
   /* Filepath of the inline nav map legend */
   QString legendFile;
-
-  /* Combo box which is added to the toolbar */
-  QComboBox *mapProjectionComboBox = nullptr;
 
   Ui::MainWindow *ui;
   MapWidget *mapWidget = nullptr;

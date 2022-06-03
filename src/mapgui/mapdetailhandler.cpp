@@ -226,8 +226,9 @@ void MapDetailHandler::addToolbarButton()
   buttonMenu->setToolTipsVisible(true);
   buttonMenu->setTearOffEnabled(true);
 
-  ui->toolBarMap->addSeparator();
-  ui->toolBarMap->addWidget(toolButton);
+  // Replace dummy action with this widget
+  ui->toolBarMap->insertWidget(ui->actionDetailHandlerDummy, toolButton);
+  ui->toolBarMap->removeAction(ui->actionDetailHandlerDummy);
 
   // Create and add actions to toolbar and menu =================================
   buttonMenu->addAction(ui->actionMapDetailsDefault);

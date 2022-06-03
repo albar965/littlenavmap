@@ -5668,45 +5668,10 @@ relation to shown airport</string>
    <addaction name="separator"/>
    <addaction name="actionMapBack"/>
    <addaction name="actionMapNext"/>
-  </widget>
-  <widget class="QToolBar" name="toolbarMapOptions">
-   <property name="windowTitle">
-    <string>Map Options Toolbar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionMapShowAirports"/>
-   <addaction name="actionMapShowVor"/>
-   <addaction name="actionMapShowNdb"/>
-   <addaction name="actionMapShowWp"/>
-   <addaction name="actionMapShowIls"/>
-   <addaction name="actionMapShowGls"/>
-   <addaction name="actionMapShowHolding"/>
-   <addaction name="actionMapShowAirportMsa"/>
-   <addaction name="actionMapShowVictorAirways"/>
-   <addaction name="actionMapShowJetAirways"/>
-   <addaction name="actionMapShowTracks"/>
    <addaction name="separator"/>
-   <addaction name="actionMapShowRoute"/>
-   <addaction name="actionInfoApproachShowMissedAppr"/>
+   <addaction name="actionDetailHandlerDummy"/>
    <addaction name="separator"/>
-   <addaction name="actionMapShowAircraft"/>
-   <addaction name="actionMapShowAircraftTrack"/>
-   <addaction name="actionMapShowCompassRose"/>
-   <addaction name="separator"/>
-   <addaction name="actionMapShowAircraftAi"/>
-   <addaction name="actionMapShowAircraftOnline"/>
-   <addaction name="actionMapShowAircraftAiBoat"/>
-   <addaction name="separator"/>
-   <addaction name="actionMapShowGrid"/>
-   <addaction name="actionMapShowCities"/>
-   <addaction name="actionMapShowMinimumAltitude"/>
-   <addaction name="actionMapShowAirportWeather"/>
-   <addaction name="actionMapShowSunShading"/>
+   <addaction name="actionThemeHandlerDummy"/>
   </widget>
   <widget class="QToolBar" name="toolBarRoute">
    <property name="windowTitle">
@@ -6268,18 +6233,6 @@ relation to shown airport</string>
     </layout>
    </widget>
   </widget>
-  <widget class="QToolBar" name="toolBarView">
-   <property name="windowTitle">
-    <string>Dock Window Toolbar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-   <addaction name="actionShowFullscreenMap"/>
-  </widget>
   <widget class="QDockWidget" name="dockWidgetLegend">
    <property name="enabled">
     <bool>true</bool>
@@ -6435,17 +6388,6 @@ relation to shown airport</string>
     <bool>false</bool>
    </attribute>
    <addaction name="actionShowAirspaces"/>
-  </widget>
-  <widget class="QToolBar" name="toolBarMapThemeProjection">
-   <property name="windowTitle">
-    <string>Map Projection and Theme Toolbar</string>
-   </property>
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
   </widget>
   <widget class="QDockWidget" name="dockWidgetRouteCalc">
    <property name="windowIcon">
@@ -7110,6 +7052,57 @@ Disabled if a navdatabase does not allow it.</string>
    <addaction name="actionConnectSimulator"/>
    <addaction name="actionReloadScenery"/>
    <addaction name="actionOptions"/>
+  </widget>
+  <widget class="QToolBar" name="toolBarView">
+   <property name="windowTitle">
+    <string>Dock Window Toolbar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionShowFullscreenMap"/>
+  </widget>
+  <widget class="QToolBar" name="toolbarMapOptions">
+   <property name="windowTitle">
+    <string>Map Options Toolbar</string>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="actionMapShowAirports"/>
+   <addaction name="actionMapShowVor"/>
+   <addaction name="actionMapShowNdb"/>
+   <addaction name="actionMapShowWp"/>
+   <addaction name="actionMapShowIls"/>
+   <addaction name="actionMapShowGls"/>
+   <addaction name="actionMapShowHolding"/>
+   <addaction name="actionMapShowAirportMsa"/>
+   <addaction name="actionMapShowVictorAirways"/>
+   <addaction name="actionMapShowJetAirways"/>
+   <addaction name="actionMapShowTracks"/>
+   <addaction name="separator"/>
+   <addaction name="actionMapShowRoute"/>
+   <addaction name="actionInfoApproachShowMissedAppr"/>
+   <addaction name="separator"/>
+   <addaction name="actionMapShowAircraft"/>
+   <addaction name="actionMapShowAircraftTrack"/>
+   <addaction name="actionMapShowCompassRose"/>
+   <addaction name="separator"/>
+   <addaction name="actionMapShowAircraftAi"/>
+   <addaction name="actionMapShowAircraftOnline"/>
+   <addaction name="actionMapShowAircraftAiBoat"/>
+   <addaction name="separator"/>
+   <addaction name="actionMapShowGrid"/>
+   <addaction name="actionMapShowCities"/>
+   <addaction name="actionMapShowMinimumAltitude"/>
+   <addaction name="actionMapShowAirportWeather"/>
+   <addaction name="actionMapShowSunShading"/>
   </widget>
   <action name="actionSearchFilterIncluding">
    <property name="icon">
@@ -8668,7 +8661,7 @@ Disabled if a navdatabase does not allow it.</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Mercator</string>
+    <string>&amp;Mercator Map Projection</string>
    </property>
    <property name="toolTip">
     <string>Mercator Map projection (flat)</string>
@@ -8682,7 +8675,7 @@ Disabled if a navdatabase does not allow it.</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Spherical</string>
+    <string>&amp;Spherical Map Projection</string>
    </property>
    <property name="toolTip">
     <string>Spherical map projection (globe)</string>
@@ -12422,6 +12415,16 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Reset all tabs back to default</string>
    </property>
   </action>
+  <action name="actionDetailHandlerDummy">
+   <property name="text">
+    <string>Detail Handler Dummy</string>
+   </property>
+  </action>
+  <action name="actionThemeHandlerDummy">
+   <property name="text">
+    <string>Theme Handler Dummy</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12603,8 +12606,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
+  <buttongroup name="buttonGroupRouteCalcType"/>
   <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalc"/>
-  <buttongroup name="buttonGroupRouteCalcType"/>
  </buttongroups>
 </ui>
