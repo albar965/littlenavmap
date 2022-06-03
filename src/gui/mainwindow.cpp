@@ -2866,27 +2866,23 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
   if(source->getTabIndex() == si::SEARCH_AIRPORT)
   {
     type = tr("Airports");
-    ui->labelAirportSearchStatus->setText(selectionLabelText.
-                                          arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
+    ui->labelAirportSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
   }
   else if(source->getTabIndex() == si::SEARCH_NAV)
   {
     type = tr("Navaids");
-    ui->labelNavSearchStatus->setText(selectionLabelText.
-                                      arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
+    ui->labelNavSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
   }
   else if(source->getTabIndex() == si::SEARCH_USER)
   {
     type = tr("Userpoints");
-    ui->labelUserdata->setText(selectionLabelText.
-                               arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
+    ui->labelUserdata->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
   }
   else if(source->getTabIndex() == si::SEARCH_LOG)
   {
     updateLogEntries = true;
     type = tr("Logbook Entries");
-    ui->labelLogdata->setText(selectionLabelText.
-                              arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
+    ui->labelLogdata->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
   }
   else if(source->getTabIndex() == si::SEARCH_ONLINE_CLIENT)
   {
@@ -2894,8 +2890,7 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
     QString lastUpdate = tr(" Last Update: %1").
                          arg(NavApp::getOnlinedataController()->getLastUpdateTime().toString(Qt::DefaultLocaleShortDate));
     ui->labelOnlineClientSearchStatus->setText(selectionLabelText.
-                                               arg(selected).arg(total).arg(type).arg(visible).
-                                               arg(lastUpdate));
+                                               arg(selected).arg(total).arg(type).arg(visible).arg(lastUpdate));
   }
   else if(source->getTabIndex() == si::SEARCH_ONLINE_CENTER)
   {
@@ -2903,9 +2898,7 @@ void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selec
     type = tr("Centers");
     QString lastUpdate = tr(" Last Update: %1").
                          arg(NavApp::getOnlinedataController()->getLastUpdateTime().toString(Qt::DefaultLocaleShortDate));
-    ui->labelOnlineCenterSearchStatus->setText(selectionLabelText.
-                                               arg(selected).arg(total).arg(type).arg(visible).
-                                               arg(lastUpdate));
+    ui->labelOnlineCenterSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(lastUpdate));
   }
 
   map::MapResult result;

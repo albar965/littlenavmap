@@ -291,18 +291,10 @@ void InfoController::anchorClicked(const QUrl& url)
     MapWidget *mapWidget = NavApp::getMapWidgetGui();
     if(url.host() == "do")
     {
-      if(query.hasQueryItem("hideairspaces"))
+      if(query.hasQueryItem("hideairspaces") || query.hasQueryItem("hideonlineairspaces"))
       {
         // Hide normal airspace highlights from information window =========================================
         mapWidget->clearAirspaceHighlights();
-        mainWindow->updateHighlightActionStates();
-      }
-      else if(query.hasQueryItem("hideonlineairspaces"))
-      {
-        // Hide online airspaces from search or information window =========================================
-        map::MapResult searchHighlights = mapWidget->getSearchHighlights();
-        searchHighlights.airspaces.clear();
-        mapWidget->changeSearchHighlights(searchHighlights, true /* updateAirspace*/, false /* updateLogEntries */);
         mainWindow->updateHighlightActionStates();
       }
       else if(query.hasQueryItem("hideairways"))
@@ -337,8 +329,7 @@ void InfoController::anchorClicked(const QUrl& url)
         if(query.hasQueryItem("distance"))
           distanceKm = query.queryItemValue("distance").toFloat();
 
-        emit showPos(atools::geo::Pos(query.queryItemValue("lonx"), query.queryItemValue("laty")), distanceKm,
-                     false /* doubleClick */);
+        emit showPos(atools::geo::Pos(query.queryItemValue("lonx"), query.queryItemValue("laty")), distanceKm, false /* doubleClick */);
       }
       else if(query.hasQueryItem("id") && query.hasQueryItem("type"))
       {
@@ -357,21 +348,11 @@ void InfoController::anchorClicked(const QUrl& url)
           // Append airspace to current highlight list if not already present
           map::MapAirspace airspace = airspaceController->getAirspaceById({id, src});
 
-          if(src & map::AIRSPACE_SRC_ONLINE)
-          {
-            // Append online center to current highlight list if not already present
-            map::MapResult searchHighlights = mapWidget->getSearchHighlights();
-            if(!maptools::containsId(searchHighlights.airspaces, airspace.id))
-              searchHighlights.airspaces.append(airspace);
-            mapWidget->changeSearchHighlights(searchHighlights, true /* updateAirspace*/, false /* updateLogEntries */);
-          }
-          else
-          {
-            QList<map::MapAirspace> airspaceHighlights = mapWidget->getAirspaceHighlights();
-            if(!maptools::containsId(airspaceHighlights, airspace.id))
-              airspaceHighlights.append(airspace);
-            mapWidget->changeAirspaceHighlights(airspaceHighlights);
-          }
+          QList<map::MapAirspace> airspaceHighlights = mapWidget->getAirspaceHighlights();
+          if(!maptools::containsId(airspaceHighlights, airspace.id))
+            airspaceHighlights.append(airspace);
+          mapWidget->changeAirspaceHighlights(airspaceHighlights);
+
           mainWindow->updateHighlightActionStates();
           emit showRect(airspace.bounding, false);
         }

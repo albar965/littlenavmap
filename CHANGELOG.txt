@@ -77,6 +77,7 @@ Or see [Multiple Installations](https://www.littlenavmap.org/manuals/littlenavma
 * Added button and configuration dialog to add Mapbox user style configuration from style URL which
   can be taken from Mapbox page.
 * Fixed wrong warning dialog about key `quadIndex` key in DGML map theme configuration.
+* Now keeping highlighted online airspaces when updating.
 
 ### Elevation Profile
 

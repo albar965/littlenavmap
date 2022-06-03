@@ -119,7 +119,7 @@ public:
   void showAircraft(bool centerAircraftChecked);
   void showAircraftNow(bool);
 
-  /* Update highlighted objects */
+  /* Update highlighted objects from search and route table */
   void changeSearchHighlights(const map::MapResult& newHighlights, bool updateAirspace, bool updateLogEntries);
   void changeRouteHighlights(const QList<int>& routeHighlight);
 
@@ -269,6 +269,7 @@ public:
   const QList<map::MapAirspace>& getAirspaceHighlights() const;
   const QList<QList<map::MapAirway> >& getAirwayHighlights() const;
 
+  /* Highlights from info window */
   void clearAirspaceHighlights();
   void clearAirwayHighlights();
 
