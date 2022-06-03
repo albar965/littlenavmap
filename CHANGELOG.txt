@@ -33,6 +33,10 @@ Or see [Multiple Installations](https://www.littlenavmap.org/manuals/littlenavma
 
 **A big thank you to all who reported bugs and issues!**
 
+## Known Issues
+
+* Enroute holding courses are not correct due to an error in declination calculation.
+
 ## Changes from 2.7.9.develop to 2.7.10.develop
 
 ### Flight Plan
@@ -64,6 +68,8 @@ Or see [Multiple Installations](https://www.littlenavmap.org/manuals/littlenavma
 * Fixed issue where using `Ctrl++` and `Ctrl+-` for more and less map details zoomed in or out at
   end of detail level range. #435
 * Added button and menu item to disable online aircraft and simulator AI separately. #754
+* Replaced map theme and map projection combo boxes in toolbar with a new tool button having a drop
+  down menu (dark globe icon on toolbar). Removed `Map Projection and Theme Toolbar`.
 * Adjustments for map layers to display airway and track waypoints earlier when zooming.
 * Fixed several issues where VOR or NDB being part of airways or tracks were not shown on the map.
 * Added bearing, distance and altitude to AI/multiplayer and user aircraft tooltip. Fixed several
