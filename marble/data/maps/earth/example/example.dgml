@@ -5,6 +5,8 @@
        See also https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/MAPTHEMES.html,
        https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames and
        https://techbase.kde.org/Marble/OSMSlippyMaps for more information.
+
+       All tags in these files are case sensitive.
        ================================================================================================ -->
   <document>
 
@@ -14,7 +16,7 @@
       <!-- The license here applies to the actual map content, not this dgml file. See the license header above for the dgml file license
            The content that this license refers to is not distributed with this package.
            The short copyright message is always shown on the map -->
-      <license short="© Mapbox and OpenStreetMap contributors">Source: © OpenStreetMap contributors, License: Creative Commons Attribution-ShareAlike 2.0 (CC BY-SA)</license>
+      <license short="© OpenStreetMap contributors">Source: © OpenStreetMap contributors, License: Creative Commons Attribution-ShareAlike 2.0 (CC BY-SA)</license>
 
       <!-- Map name as shown in LNM menu and toolbar. -->
       <name>Example</name>
@@ -39,10 +41,10 @@
 
       <!-- Zoom values. Get these from the map provider. -->
       <zoom>
-        <minimum>   900  </minimum>
-        <maximum>  3500  </maximum>
+        <minimum>900</minimum>
+        <maximum>3500</maximum>
         <!-- Zooming can be done in discrete (for tiled online maps) steps or smooth -->
-        <discrete> true </discrete>
+        <discrete>true</discrete>
       </zoom>
 
       <!-- Name and URL for the map provider. Will be used in LNM dialogs to point to registration site. Optional. -->
@@ -66,7 +68,7 @@
                for example (see also https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/FILES.html#disk-cache).
                Make sure this is unique across all available maps to avoid messing up the cache.
                Adjust format as provided by map service. -->
-          <sourcedir format="PNG"> earth/mapboxuser </sourcedir>
+          <sourcedir format="PNG">earth/example</sourcedir>
 
           <!-- Tile size. OSM and related use 256. Mapbox and MapTiler 512 pixel.
                Width and height have to be equal.

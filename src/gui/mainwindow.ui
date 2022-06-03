@@ -34,7 +34,7 @@
      <x>0</x>
      <y>0</y>
      <width>1261</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -5702,9 +5702,6 @@ relation to shown airport</string>
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/profiledock.svg</normaloff>:/littlenavmap/resources/icons/profiledock.svg</iconset>
    </property>
-   <property name="features">
-    <set>QDockWidget::AllDockWidgetFeatures</set>
-   </property>
    <property name="windowTitle">
     <string>Flight Plan Elevation Profile</string>
    </property>
@@ -5794,7 +5791,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>0</y>
+              <y>51</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -6244,9 +6241,6 @@ relation to shown airport</string>
    <property name="floating">
     <bool>false</bool>
    </property>
-   <property name="features">
-    <set>QDockWidget::AllDockWidgetFeatures</set>
-   </property>
    <property name="windowTitle">
     <string>Legend</string>
    </property>
@@ -6396,9 +6390,6 @@ relation to shown airport</string>
    </property>
    <property name="floating">
     <bool>true</bool>
-   </property>
-   <property name="features">
-    <set>QDockWidget::AllDockWidgetFeatures</set>
    </property>
    <property name="allowedAreas">
     <set>Qt::NoDockWidgetArea</set>
@@ -6844,7 +6835,6 @@ Disabled if a navdatabase does not allow it.</string>
          <widget class="QRadioButton" name="radioButtonRouteCalcAirway">
           <property name="font">
            <font>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -6885,7 +6875,6 @@ Disabled if a navdatabase does not allow it.</string>
          <widget class="QRadioButton" name="radioButtonRouteCalcRadio">
           <property name="font">
            <font>
-            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -8669,6 +8658,9 @@ Disabled if a navdatabase does not allow it.</string>
    <property name="statusTip">
     <string>Mercator Map projection (flat)</string>
    </property>
+   <property name="shortcut">
+    <string>Alt+Shift+M</string>
+   </property>
   </action>
   <action name="actionMapProjectionSpherical">
    <property name="checkable">
@@ -8682,6 +8674,9 @@ Disabled if a navdatabase does not allow it.</string>
    </property>
    <property name="statusTip">
     <string>Spherical map projection (globe)</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Shift+G</string>
    </property>
   </action>
   <action name="actionHelpMapLegend">

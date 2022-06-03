@@ -69,41 +69,56 @@ void MapThemeHandler::loadThemes()
   // Load all these from folder
   themes.clear();
   themeIdToIndexMap.clear();
-  QSet<QString> ids;
+  QSet<QString> ids, sourceDirs;
   QStringList errors;
   for(const QFileInfo& dgml : findMapThemes())
   {
     MapTheme theme = loadTheme(dgml);
 
-    if(ids.contains(theme.theme))
-    {
-      errors.append(tr("Duplicate theme id \"%1\" in element \"&lt;theme&gt;\"."
-                       "<br/>File \"%2\".").arg(theme.theme).arg(theme.dgmlFilepath));
-      qWarning() << Q_FUNC_INFO << "Duplicate theme id" << theme.theme << "in theme file" << theme.dgmlFilepath;
-      continue;
-    }
-
-    if(theme.theme.isEmpty())
-    {
-      errors.append(tr("Empty theme id in in element \"&lt;theme&gt;\"."
-                       "<br/>File \"%1\".").arg(theme.dgmlFilepath));
-      qWarning() << Q_FUNC_INFO << "Empty theme id in theme file" << theme.dgmlFilepath;
-      continue;
-    }
-
-    if(theme.target != "earth")
-    {
-      errors.append(tr("Invalid target \"%1\" in element \"&lt;target&gt;\"."
-                       "<br/>File \"%2\".<br/>"
-                       "Element must contain text \"earth\".").arg(theme.target).arg(theme.dgmlFilepath));
-      qWarning() << Q_FUNC_INFO << "Invalid target" << theme.target << "in theme file" << theme.dgmlFilepath;
-      continue;
-    }
-
-    ids.insert(theme.theme);
-
     if(theme.visible)
     {
+      if(ids.contains(theme.theme))
+      {
+        errors.append(tr("Duplicate theme id \"%1\" in element \"&lt;theme&gt;\".<br/>"
+                         "File \"%2\".<br/>"
+                         "Theme ids have to be unique across all map themes.").arg(theme.theme).arg(theme.dgmlFilepath));
+        continue;
+      }
+
+      if(theme.online && sourceDirs.contains(theme.sourceDir))
+      {
+        errors.append(tr("Duplicate source directory \"%1\" in element \"&lt;sourcedir&gt;\".<br/>"
+                         "File \"%2\".<br/>"
+                         "Source directories are used to cache map tiles and have to be unique across all map themes.").
+                      arg(theme.sourceDir).arg(theme.dgmlFilepath));
+        continue;
+      }
+
+      if(theme.theme.isEmpty())
+      {
+        errors.append(tr("Empty theme id in in element \"&lt;theme&gt;\".<br/>"
+                         "File \"%1\".").arg(theme.dgmlFilepath));
+        continue;
+      }
+
+      if(theme.online && theme.sourceDir.isEmpty())
+      {
+        errors.append(tr("Empty source directory in in element \"&lt;sourcedir&gt;\".<br/>"
+                         "File \"%1\".").arg(theme.dgmlFilepath));
+        continue;
+      }
+
+      if(theme.target != "earth")
+      {
+        errors.append(tr("Invalid target \"%1\" in element \"&lt;target&gt;\".<br/>"
+                         "File \"%2\".<br/>"
+                         "Element must contain text \"earth\".").arg(theme.target).arg(theme.dgmlFilepath));
+        continue;
+      }
+
+      ids.insert(theme.theme);
+      sourceDirs.insert(theme.sourceDir);
+
       // Add only visible themes for Earth
       themes.append(theme);
 
@@ -117,6 +132,8 @@ void MapThemeHandler::loadThemes()
 
   if(!errors.isEmpty())
   {
+    qWarning() << Q_FUNC_INFO << errors;
+
     NavApp::closeSplashScreen();
     QMessageBox::warning(mainWindow, QApplication::applicationName(),
                          tr("<p>Found errors in map %2:</p>"
@@ -365,8 +382,18 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
                     // Online theme of download URL is given
                     theme.online = true;
                   }
-
-                  xmlStream.skipCurrentElement();
+                  else if(reader.name() == "sourcedir")
+                  {
+#if defined(Q_OS_WIN32)
+                    theme.sourceDir = reader.readElementText().trimmed().toLower().replace('/', QDir::separator());
+#elif defined(Q_OS_MACOS)
+                    theme.sourceDir = reader.readElementText().trimmed().toLower().replace('\\', QDir::separator());
+#else
+                    theme.sourceDir = reader.readElementText().trimmed().replace('\\', QDir::separator());
+#endif
+                  }
+                  else
+                    xmlStream.skipCurrentElement();
                 }
               }
               // map/layer/geodata ===================
@@ -441,6 +468,7 @@ QDebug operator<<(QDebug out, const MapTheme& theme)
       << "index" << theme.index
       << "urlName" << theme.urlName
       << "urlRef" << theme.urlRef
+      << "sourceDir" << theme.sourceDir
       << "dgmlFilepath" << theme.dgmlFilepath
       << "name" << theme.name
       << "copyright" << theme.copyright

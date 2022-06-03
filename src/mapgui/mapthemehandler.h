@@ -163,7 +163,7 @@ private:
   friend QDebug operator<<(QDebug out, const MapTheme& theme);
 
   int index = -1;
-  QString id, dgmlFilepath, name, copyright, theme, target, urlName, urlRef;
+  QString id, dgmlFilepath, name, copyright, theme, target, urlName, urlRef, sourceDir;
   QStringList keys;
   bool textureLayer = false, geodataLayer = false, discrete = false, visible = false, online = false;
 };
