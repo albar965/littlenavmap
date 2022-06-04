@@ -1,4 +1,4 @@
-﻿Numbers (#) refer to GitHub issues.
+Numbers (#) refer to GitHub issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 This text is partially Markdown, hence sometimes strange formatting.
 
@@ -47,94 +47,103 @@ Or see [Multiple Installations](https://www.littlenavmap.org/manuals/littlenavma
   of parking positions from flight plans. Exported MSFS PLN files now have correct parking name set
   for these cases.
 * Extended waypoint coordinate parser for all ARINC 424 Code Convention full degree waypoint formats
-  like `57N30`, `5730E` or `57S30`. Flight plan route descption can now read all these waypoints
+  like `57N30`, `5730E` or `57S30`. Flight plan route description can now read these waypoints
   independent if they are in the navdata or not.
-* Fixed issue appearing when airport altitude is reported higher from simulator data than procedure
+* Fixed issue appearing when airport altitude from simulator is reported higher than procedure
   runway altitude from navdata. Program showed wrongly a violated altitude restriction at runway for
-  an approach procedure.
+  an approach procedure and refused to build elevation profile.
 * Fixed issue where flight plan leg in elevation profile had wrong position offset related to
   restriction when using online elevation data.
 * Solved numerous problems with elevation profile calculation and vertical paths. Vertical
   paths are now considered as restrictions and enforced while calculating profile. Error messages
-  can appear if altitude restrictions related to path are violated by a too low cruise altitude.
-* Now always forcing flight altitude down to lowest allowed by restriction for FACF and FAF to
-  avoid entering final approch too high.
-* Related navaids now use `R090` as notation for radials.
+  can appear if altitude restrictions related to a vertical path are violated by a too low cruise
+  altitude.
+* Now always forcing flight altitude down to lowest allowed by restriction for
+  FACF (final approach course fix) and FAF (final approach fix) points to avoid entering final
+  approach too high.
+* Related navaids now use notation with prefix `R` like `R090` for radials instead of `°M`.
 
 ### Map
 
-* Combined three toolbar buttons for map detail into one drop down menu button containing a slider
-  and reset menu item. Moved map detail level settings to menu `Map`.
+* Combined the three toolbar buttons for map detail into one drop down menu button on the toolbar
+  containing a slider and reset menu item. Moved map detail level settings from menu 'View' to menu `Map`.
+* Replaced map theme and map projection boxes in toolbar with a new tool button having a drop
+  down menu (dark globe icon on toolbar). This saves space in the toolbar area. Removed
+  `Map Projection and Theme Toolbar`.
+* Added button and menu item to disable online aircraft and simulator AI separately. #754
 * Fixed issue where using `Ctrl++` and `Ctrl+-` for more and less map details zoomed in or out at
   end of detail level range. #435
-* Added button and menu item to disable online aircraft and simulator AI separately. #754
-* Replaced map theme and map projection combo boxes in toolbar with a new tool button having a drop
-  down menu (dark globe icon on toolbar). Removed `Map Projection and Theme Toolbar`.
 * Adjustments for map layers to display airway and track waypoints earlier when zooming.
 * Fixed several issues where VOR or NDB being part of airways or tracks were not shown on the map.
 * Added bearing, distance and altitude to AI/multiplayer and user aircraft tooltip. Fixed several
   issues where tooltip was not updated.
 * Changed map theme handling to avoid issues when installing or removing map themes. Added error
-  checking and reporting for invalid and duplicate theme ids. Map theme ids have to be unique now.
-* Fixed issue where new airspaces were not drawn after loading user airspaces.
+  checking and reporting for invalid and duplicate theme. Map theme ids and source directories
+  (disk cache) have to be unique now.
+* Fixed issue where new airspaces were not shown after loading user airspaces.
 * Now setting map projection for online services always to Mercator to avoid garbled map display in
   web user interface.
 * Improved key dialogs in options on page `Map Display Keys` and added related links to map services.
 * Added button and configuration dialog to add Mapbox user style configuration from style URL which
-  can be taken from Mapbox page.
+  can be taken from the Mapbox page. Dialog contains explanations.
 * Fixed wrong warning dialog about key `quadIndex` key in DGML map theme configuration.
-* Now keeping highlighted online airspaces when updating.
+* Now keeping highlighted online airspaces when updating online network centers.
+* Wind pointer is now kept when disabling aircraft display. Wind pointer can be disabled in options
+  on page `Map Display Labels` in branch `Top of Map`.
 
 ### Elevation Profile
 
-* Moved elevation profile display settings from page `Map display` in options dialog into a
-  separate configuration dialog. Added menu item in `Tools`, elevation profile context menu item
-  and button for configuration options.
-* Added new options for elevation profile to disable highlighting and certain graphic  elements.
+* Moved elevation profile display settings from page `Map Display` in options dialog into a
+  separate configuration dialog. Added menu item in `Tools`, elevation profile context menu
+  and a button in elevation profile window for configuration options.
+* Added new options for elevation profile to disable highlighting and some graphical elements.
 * Fixed display issues where top label in profile was not  hidden in some cases.
 * Improved text display on elevation profile. Merging duplicate texts now. Better placement for TOC
   and TOD labels in elevation profile.
 * Added configuration option for elevation profile to hide altitude restriction blocks.
-* Zooming with the touchpad is now less sensitive.
+* Zooming with the touchpad is now less sensitive in the elevation profile.
 
 ### Scenery Library
 
-* Updated database minor version to 25. Reloading is advised.
-* Fixed bug in which Little Navmap would only read and display a single transition from addon
+* Updated database minor version to 25. Reloading is advised. User will be notified of this.
+* Fixed bug where Little Navmap would only read and display a single transition from add-on
   (Community) SIDs and STARs, despite these procedures actually having more than one transition. This
   happens when using the latest MSFS SDK (SU9 or later).
-  Thanks a lot to @flpduarte at Github for the fix.
-* Added warning messages for encrypted MSFS add-ons when reading scenery library.
-* Fixed issue where airport frequencies were not correctly written for MSFS resulting in
-  wrong search results when looking for towered airports, for example.
+  Thanks a lot to [flpduarte](https://github.com/flpduarte) at Github for the fix.
+* Added warning messages for encrypted MSFS add-ons when reading the scenery library. This helps to
+  identify unreadable airports.
+* Fixed issue where airport frequencies were not correctly written into the scenery library database
+  for MSFS resulting in wrong search results when looking for towered airports, for example.
 * Now skipping empty X-Plane `apt.dat` files to avoid program freezing when reading malformed files.
 * Fixed issue where OpenAir airspace files were not recognized as OpenAir format in some cases.
 
 ### User Interface
 
 * Added options to display speeds, altitude and vertical speed in other than selected default units.
-  This is for indicated and actual altitude as well as indicated, ground and vertical speed in
-  progress display. Enable this in menu `Tools` -> `Aircraft Progress Display Options`. #656
+  This is for indicated and actual altitude as well as indicated, ground and vertical speed in the
+  progress display tab. Enable this in menu `Tools` -> `Aircraft Progress Display Options`. #656
 * Fix for issues where the undo shortcut key for flight plan was not working. Logbook and userpoint
-  undo function assigned to `Ctrl+Shift+Z` and `Ctrl+Shift+Y` to avoid overlap with flight plan
-  undo function.
+  undo function now assigned to `Ctrl+Shift+Z` and `Ctrl+Shift+Y` to avoid overlap with flight plan
+  undo/redo functions.
+* Fixed issue where main window could not be resized below 1000 pixels. Minimum limit is now 300
+  pixels. Shrinking the window too much can cause a garbled or overlapping display of dock windows.
 * Map cache links in options and main menu now point directly to the correct sub-path `map/earth`.
 * Added link to FltPlan site in airport information.
 * Fixed several issues where buttons were not disabled in multi export options dialog on missing
   selection or empty route.
-* Fixed issue where main window could not be resized below 1000 pixels. Minimum limit is now 300
-  pixels.
-* Separated tab bar reset into a new menu item in menu `Window`. Window layout and and tabs can now
-  be reset separately.
-* Added option to reverse all mouse wheel functions in map and elevation profile to options on
+* Separated tab bar reset into a new menu item `Reset Tabs to Default` in menu `Window`. Window layout
+  and and tabs can now be reset separately.
+* Added option to reverse all mouse wheel functions in map and elevation profile in options dialog on
   page `User Interface`.
 * More small user interface fixes and improvements.
 
 ### Build
 
-* Moved version number to variable in file `littlenavmap.pro` instead of coding into sources.
+* Moved version number to variable `VERSION_NUMBER` in file `littlenavmap.pro` instead of coding it
+  into sources.
 * Now writing files `version.txt` and `revision.txt` files into deployment folder allowing
-  deployment scripts to automatically name archives.
+  deployment scripts to automatically name archives. These files can be used to identify
+  a version without opening the program.
 
 ===============================================================================
 
