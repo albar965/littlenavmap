@@ -36,6 +36,8 @@ Or see [Multiple Installations](https://www.littlenavmap.org/manuals/littlenavma
 ## Known Issues
 
 * Enroute holding courses are not correct due to an error in declination calculation.
+* Running Little Navmap with autoconnect for P3D, FSX or MSFS for several hours without starting
+  the simulator leaks resources. Disable autoconnect or quit the program to avoid this.
 
 ## Changes from 2.7.9.develop to 2.7.10.develop
 
