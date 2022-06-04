@@ -749,7 +749,6 @@ void MainWindow::setupUi()
   scaleToolbar(ui->toolBarMain, 0.72f);
   scaleToolbar(ui->toolBarMap, 0.72f);
   scaleToolbar(ui->toolbarMapOptions, 0.72f);
-  scaleToolbar(ui->toolBarMapThemeProjection, 0.72f);
   scaleToolbar(ui->toolBarRoute, 0.72f);
   scaleToolbar(ui->toolBarAirspaces, 0.72f);
   scaleToolbar(ui->toolBarView, 0.72f);
