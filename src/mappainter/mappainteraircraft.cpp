@@ -134,9 +134,9 @@ void MapPainterAircraft::render()
         if(!hidden)
           paintUserAircraft(userAircraft, x, y);
       }
-
-      if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_WIND_POINTER))
-        paintWindPointer(userAircraft, context->painter->device()->width() / 2, 0);
     }
   }
+
+  if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_WIND_POINTER) && userAircraft.isValid())
+    paintWindPointer(userAircraft, context->painter->device()->width() / 2, 0);
 }
