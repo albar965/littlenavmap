@@ -137,6 +137,7 @@ Or see [Multiple Installations](https://www.littlenavmap.org/manuals/littlenavma
   and and tabs can now be reset separately.
 * Added option to reverse all mouse wheel functions in map and elevation profile in options dialog on
   page `User Interface`.
+* Relaxed check for valid aircraft type to match ICAO types in aircraft performance.
 * More small user interface fixes and improvements.
 
 ### Build
