@@ -4,6 +4,72 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
+# Version 2.6.19
+
+This release fixes several issues affecting elevation profile, MSFS and X-Plane scenery libraries.
+
+This release contains only the most imortant or easy to integrate issues. Development is going on
+in parallel for the next release and an alpha version was already published.
+
+## Changes from 2.6.18 to 2.6.19
+
+### User Interface
+
+* Fixed issue where main window could not be resized below 1000 pixels. Minimum limit is now 300 pixels.
+* Changed style night style to improve visibility for checked icon menu items and menu separator
+  lines which were barely visible before.
+
+### Map Display
+
+* Disabled GLS and other virtual paths which were wrongly shown as ILS when using latest Navigraph
+  databases updated for future versions of Little Navmap.
+* Fixed issue where new airspaces were not drawn after reading from disk.
+
+### Flight Plan and Elevation Profile
+
+* Fixed issue which appeared when airport altitude is reported higher from simulator than runway
+  altitude from navdata for procedures. Program showed wrongly a violated altitude restriction at
+  runway and refused to build elevation profile.
+* Fixed issue where alternate airport was lost and error message remained after switching scenery
+  library databases.
+* Corrected mapping of parking names for empty or invalid MSFS parking spots which broke reloading
+  of parking positions from flight plans. Exported MSFS PLN files now have correct parking name set
+  for these cases.
+* Fixed issue where flight plan leg in elevation profile had wrong position offset related to
+  restriction.
+* Fixed issue where elevation profile could not be calculated if a STAR has an `At Altitude`
+  restriction.
+* Fixed missing waypoints in MSFS flight plan export for all distance, altitude or otherwise
+  terminated procedure legs.
+* Fixed issue where MSFS SID and STAR cannot be loaded due to missing runway in database.
+* Extended waypoint coordinate parser for all ARINC 424 Code Convention full degree waypoint formats
+  like `57N30`, `5730E` or `57S30`. Flight plan route description can now read these waypoints
+  independent if they are in the navdata or not.
+
+### Scenery Library
+
+* Database minor version updated to 21. Reloading is adivsed.
+* Added push request #16 of @flpduarte. Fixed bug in which Little Navmap would only read and
+  display a single transition from addon (Community) SIDs and STARs, despite these procedures
+  actually having more than one transition. This happens when using the latest MSFS SDK (SU9 or later).
+* Now saving invalid and null parking names from MSFS with indicator `NONE` into the database to
+  allow handling in flight plans.
+* Fixed issue where airport frequencies were written as 0 instead of null for MSFS resulting in
+  wrong search results.
+* Now skipping empty X-Plane `apt.dat` files to avoid program freezing in an empty loop for
+  malformed files.
+
+### Build
+
+* Moved version number to variable `VERSION_NUMBER` in file `littlenavmap.pro` instead of coding it
+  into sources.
+* Now writing files `version.txt` and `revision.txt` files into install folder allowing
+  deployment scripts to automatically name archives. These files can be used to identify
+  a version without opening the program.
+
+
+===============================================================================
+
 # Version 2.6.18
 
 This release adapts *Little Navmap* to the latest MSFS changes that cause problems when loading the
