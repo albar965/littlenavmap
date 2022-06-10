@@ -3493,7 +3493,7 @@ void MainWindow::mainWindowShownDelayed()
   ui->actionShowStatusbar->setChecked(!ui->statusBar->isHidden());
   ui->actionShowStatusbar->blockSignals(false);
 
-// Attempt to restore splitter after first start
+  // Attempt to restore splitter after first start
   profileWidget->restoreSplitter();
 
   NavApp::setMainWindowVisible();
@@ -4307,7 +4307,7 @@ void MainWindow::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
   // Need to clear caches again and redraw after enabling queries
   updateMapObjectsShown();
 
-  NavApp::logDatabaseMeta();
+  // NavApp::logDatabaseMeta();
 }
 
 /* Update the current weather context for the information window. Returns true if any
