@@ -45,6 +45,8 @@ in parallel for the next release and an alpha version was already published.
 * Extended waypoint coordinate parser for all ARINC 424 Code Convention full degree waypoint formats
   like `57N30`, `5730E` or `57S30`. Flight plan route description can now read these waypoints
   independent if they are in the navdata or not.
+* Improvements to Flightgear XML flightplan files import and export. Thanks to @colingeniet at
+  Github for the fixes.
 
 ### Scenery Library
 
