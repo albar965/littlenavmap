@@ -37,7 +37,6 @@ using atools::settings::Settings;
 StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   : QObject(mainWindowParam), mainWindow(mainWindowParam)
 {
-
   // Override goofy fusion tab close buttons on Windows and macOS
 #if defined(Q_OS_WIN32) || defined(Q_OS_MACOS)
   QString fusionStyleSheet(
@@ -77,28 +76,34 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
 
     // Toolbutton checked background ===============
     QString("QToolButton:checked { background-color: %1; }").arg(darkPalette.color(QPalette::Light).name()) %
+    QString("QPushButton:checked { background-color: %1; }").arg(darkPalette.color(QPalette::Light).name()) %
 
     // Thicker frame for selected menu items with icons
     "QMenu::icon:checked:enabled { border: 2px solid lightgray; border-radius: 5px; }" %
     "QMenu::icon:checked:disabled { border: 2px solid dimgray; border-radius: 5px; }" %
-    QString("QMenu::item:selected { border-color: lightgray; background: %1; }").arg(darkPalette.color(QPalette::Highlight).name()) %
+    QString("QMenu::item:selected { border-color: lightgray; background: %1; }").arg(darkPalette.color(QPalette::Highlight).name())
+    %
 
     // Checkbox images ====================
     "QCheckBox::indicator:checked { image: url(:/littlenavmap/resources/icons/checkbox_dark_checked.png); }" %
-    "QCheckBox::indicator:checked:!enabled { image: url(:/littlenavmap/resources/icons/checkbox_dark_checked_disabled.png); }" %
+    "QCheckBox::indicator:checked:!enabled { image: url(:/littlenavmap/resources/icons/checkbox_dark_checked_disabled.png); }"
+    %
 
     "QCheckBox::indicator:unchecked { image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked.png); }" %
-    "QCheckBox::indicator:unchecked:!enabled { image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked_disabled.png); }" %
+    "QCheckBox::indicator:unchecked:!enabled { image: url(:/littlenavmap/resources/icons/checkbox_dark_unchecked_disabled.png); }"
+    %
 
     // Radio button images ====================
     "QRadioButton::indicator:checked { image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked.png); }" %
-    "QRadioButton::indicator:checked:!enabled { image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked_disabled.png); }" %
+    "QRadioButton::indicator:checked:!enabled { image: url(:/littlenavmap/resources/icons/radiobutton_dark_checked_disabled.png); }"
+    %
 
     "QRadioButton::indicator:unchecked { image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked.png); }" %
-    "QRadioButton::indicator:unchecked:!enabled { image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked_disabled.png); }" %
+    "QRadioButton::indicator:unchecked:!enabled { image: url(:/littlenavmap/resources/icons/radiobutton_dark_unchecked_disabled.png); }"
 
 #if !defined(Q_OS_MACOS)
     // Night mode shows bright tab bars with this change in macOS
+    %
     "QTabBar::close-button { image: url(:/littlenavmap/resources/icons/tab_close_button_night.png); }" %
     "QTabBar::close-button:hover { image: url(:/littlenavmap/resources/icons/tab_close_button_hover_night.png); }"
 #endif
