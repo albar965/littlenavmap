@@ -140,6 +140,12 @@ Or see [Multiple Installations](https://www.littlenavmap.org/manuals/littlenavma
 * Relaxed check for valid aircraft type to match ICAO types in aircraft performance.
 * More small user interface fixes and improvements.
 
+### Other
+
+* Now decreasing connection rate for long running sessions using autoconnect to avoid loss of
+  internal SimConnect handles. After 30 minutes, an attempt is made to connect every 30 seconds, and
+  after one hour, every minute. Workaround for #891 which is most likely a SimConnect issue.
+
 ### Build
 
 * Moved version number to variable `VERSION_NUMBER` in file `littlenavmap.pro` instead of coding it
