@@ -492,7 +492,7 @@ atools::fs::weather::MetarResult ConnectClient::requestWeather(const QString& st
       if(verbose)
         qDebug() << "ConnectClient::requestWeather timed out" << station;
 
-      if((socket != nullptr && socket->isOpen()) || (dataReader->isFsxHandler() && dataReader->isConnected()))
+      if((socket != nullptr && socket->isOpen()) || (dataReader->isSimConnectHandler() && dataReader->isConnected()))
       {
         atools::fs::sc::WeatherRequest weatherRequest;
         weatherRequest.setStation(station);
@@ -656,7 +656,7 @@ bool ConnectClient::isConnected() const
 
 bool ConnectClient::isSimConnect() const
 {
-  return dataReader != nullptr && dataReader->isFsxHandler();
+  return dataReader != nullptr && dataReader->isSimConnectHandler();
 }
 
 bool ConnectClient::isXpConnect() const

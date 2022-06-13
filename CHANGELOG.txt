@@ -61,6 +61,12 @@ in parallel for the next release and an alpha version was already published.
 * Now skipping empty X-Plane `apt.dat` files to avoid program freezing in an empty loop for
   malformed files.
 
+### Other
+
+* Now decreasing connection rate for long running sessions using autoconnect to avoid loss of
+  internal SimConnect handles. After 30 minutes, an attempt is made to connect every 30 seconds, and
+  after one hour, every minute. Workaround for #891 which is most likely a SimConnect issue.
+
 ### Build
 
 * Moved version number to variable `VERSION_NUMBER` in file `littlenavmap.pro` instead of coding it
