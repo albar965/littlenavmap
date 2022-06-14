@@ -8,22 +8,26 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 This release fixes several issues affecting elevation profile, MSFS and X-Plane scenery libraries.
 
-This release contains only the most imortant or easy to integrate issues. Development is going on
-in parallel for the next release and an alpha version was already published.
+Only the most imortant or easy to integrate issues are integrated into this release.
+Development is going on in parallel for the next major release and a public alpha version was
+already published in the
+[Avsim Forum](https://www.avsim.com/forums/forum/780-little-navmap-little-navconnect-little-logbook-support-forum/).
+
+**Reload the scenery library to see fixed issues.**
 
 ## Changes from 2.6.18 to 2.6.19
 
 ### User Interface
 
 * Fixed issue where main window could not be resized below 1000 pixels. Minimum limit is now 300 pixels.
-* Changed style night style to improve visibility for checked icon menu items and menu separator
+* Changed style `Night` to improve visibility for checked icon menu items and menu separator
   lines which were barely visible before.
 
 ### Map Display
 
 * Disabled GLS and other virtual paths which were wrongly shown as ILS when using latest Navigraph
   databases updated for future versions of Little Navmap.
-* Fixed issue where new airspaces were not drawn after reading from disk.
+* Fixed issue where new user airspaces were not drawn after reading from disk.
 
 ### Flight Plan and Elevation Profile
 
@@ -50,7 +54,7 @@ in parallel for the next release and an alpha version was already published.
 
 ### Scenery Library
 
-* Database minor version updated to 21. Reloading is adivsed.
+* Database minor version updated to 21. Reloading is adivsed to see bug fixes.
 * Added push request #16 of @flpduarte. Fixed bug in which Little Navmap would only read and
   display a single transition from addon (Community) SIDs and STARs, despite these procedures
   actually having more than one transition. This happens when using the latest MSFS SDK (SU9 or later).
@@ -64,10 +68,10 @@ in parallel for the next release and an alpha version was already published.
 ### Other
 
 * Now decreasing connection rate for long running sessions using autoconnect to avoid loss of
-  internal SimConnect handles. After 30 minutes, an attempt is made to connect every 30 seconds, and
-  after one hour, every minute. Workaround for #891 which is most likely a SimConnect issue.
+  internal SimConnect resources. An attempt to connect is made every 30 seconds after half an hour
+  and every minute after one hour. Workaround for SimConnect issue mentinoned in #891.
 
-### Build
+### Development and Build
 
 * Moved version number to variable `VERSION_NUMBER` in file `littlenavmap.pro` instead of coding it
   into sources.
