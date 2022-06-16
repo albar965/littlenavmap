@@ -511,7 +511,11 @@ void MapWidget::updateTooltipResult()
 
 void MapWidget::hideTooltip()
 {
-  QToolTip::hideText();
+  // Hide tooltip only if cursor is inside map rectangle since hiding affects tooltips in the whole application
+  // Outside map the tooltip is hidden anyway
+  if(rect().contains(mapFromGlobal(QCursor::pos())))
+    QToolTip::hideText();
+
   tooltipGlobalPos = QPoint();
 }
 
