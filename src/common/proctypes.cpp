@@ -1407,7 +1407,13 @@ QString aircraftCategoryText(const QString& cat)
   else if(cat == "T")
     return QObject::tr("Twin Engine");
 
-  return QObject::tr("Aircraft %1").arg(cat);
+#ifdef DEBUG_INFORMATION
+  return QString("[Aircraft %1]").arg(cat);
+
+#else
+  return QString();
+
+#endif
 }
 
 } // namespace proc
