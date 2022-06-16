@@ -450,40 +450,50 @@ void RouteLabel::buildHeaderRunwayLand(atools::util::HtmlBuilder& html)
     if(route.hasValidDestination())
     {
       // Destination runway information =======================================
-      const proc::MapProcedureLegs& apprLegs = route.getApproachLegs();
-      map::MapRunwayEnd end = apprLegs.runwayEnd;
-      if(!apprLegs.isEmpty() && end.isFullyValid())
+      const proc::MapProcedureLegs *apprLegs = nullptr;
+      if(route.hasAnyApproachProcedure())
+        // Use approach runway information
+        apprLegs = &route.getApproachLegs();
+      else if(route.hasAnyStarProcedure())
+        // Use STAR runway information if available
+        apprLegs = &route.getStarLegs();
+
+      if(apprLegs != nullptr)
       {
-        const RouteLeg& destLeg = route.getDestinationAirportLeg();
-
-        if(destLeg.isValid())
+        map::MapRunwayEnd end = apprLegs->runwayEnd;
+        if(!apprLegs->isEmpty() && end.isFullyValid())
         {
-          // Get runway from simulator data by name if possible
-          QList<map::MapRunwayEnd> runwayEnds;
-          mapQuery->getRunwayEndByNameFuzzy(runwayEnds, end.name, destLeg.getAirport(), false /* navdata */);
-          if(!runwayEnds.isEmpty())
-            end = runwayEnds.first();
+          const RouteLeg& destLeg = route.getDestinationAirportLeg();
 
-          if(end.isFullyValid())
+          if(destLeg.isValid())
           {
-            html.b(tr("Land")).text(tr(" at ")).b(end.name).text(tr(", "));
+            // Get runway from simulator data by name if possible
+            QList<map::MapRunwayEnd> runwayEnds;
+            mapQuery->getRunwayEndByNameFuzzy(runwayEnds, end.name, destLeg.getAirport(), false /* navdata */);
+            if(!runwayEnds.isEmpty())
+              end = runwayEnds.first();
 
-            QStringList rwAtts;
-            rwAtts.append(formatter::courseTextFromTrue(end.heading, destLeg.getMagvar()));
+            if(end.isFullyValid())
+            {
+              html.b(tr("Land")).text(tr(" at ")).b(end.name).text(tr(", "));
 
-            map::MapRunway runway = airportQuerySim->getRunwayByEndId(destLeg.getId(), end.id);
-            if(runway.isValid())
-              rwAtts.append(Unit::distShortFeet(runway.length - (end.secondary ? runway.secondaryOffset : runway.primaryOffset)));
+              QStringList rwAtts;
+              rwAtts.append(formatter::courseTextFromTrue(end.heading, destLeg.getMagvar()));
 
-            rwAtts.append(Unit::altFeet(destLeg.getAltitude()) % tr(" elevation"));
-            if(end.hasAnyVasi())
-              rwAtts.append(end.uniqueVasiTypeStr().join(QObject::tr("/")));
+              map::MapRunway runway = airportQuerySim->getRunwayByEndId(destLeg.getId(), end.id);
+              if(runway.isValid())
+                rwAtts.append(Unit::distShortFeet(runway.length - (end.secondary ? runway.secondaryOffset : runway.primaryOffset)));
 
-            html.text(rwAtts.join(tr(", ")), ahtml::NO_ENTITIES);
+              rwAtts.append(Unit::altFeet(destLeg.getAltitude()) % tr(" elevation"));
+              if(end.hasAnyVasi())
+                rwAtts.append(end.uniqueVasiTypeStr().join(QObject::tr("/")));
+
+              html.text(rwAtts.join(tr(", ")), ahtml::NO_ENTITIES);
+            }
+            else
+              html.b(tr("Land")).text(tr(" at any runway, ")).text(Unit::altFeet(destLeg.getAltitude()) % tr(" elevation"));
+            html.text(tr("."));
           }
-          else
-            html.b(tr("Land")).text(tr(" at any runway, ")).text(Unit::altFeet(destLeg.getAltitude()) % tr(" elevation"));
-          html.text(tr("."));
         }
       }
     } // if(route.hasValidDestination())
