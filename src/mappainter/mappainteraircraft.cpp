@@ -46,97 +46,96 @@ MapPainterAircraft::~MapPainterAircraft()
 
 void MapPainterAircraft::render()
 {
-  if(!(context->objectTypes & map::AIRCRAFT_ALL))
-    // If actions are unchecked return
-    return;
-
   atools::util::PainterContextSaver saver(context->painter);
-  Q_UNUSED(saver)
-
   const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
-  const atools::geo::Pos& pos = userAircraft.getPosition();
 
-  // Draw AI and online aircraft - not boats ====================================================================
-  if(context->objectTypes.testFlag(map::AIRCRAFT_AI) || context->objectTypes.testFlag(map::AIRCRAFT_ONLINE))
+  if(context->objectTypes & map::AIRCRAFT_ALL)
   {
-    // Merge simulator aircraft and online aircraft
-    QVector<const atools::fs::sc::SimConnectAircraft *> allAircraft;
-    bool overflow = false;
+    const atools::geo::Pos& pos = userAircraft.getPosition();
 
-    if(context->objectTypes.testFlag(map::AIRCRAFT_ONLINE))
+    // Draw AI and online aircraft - not boats ====================================================================
+    if(context->objectTypes.testFlag(map::AIRCRAFT_AI) || context->objectTypes.testFlag(map::AIRCRAFT_ONLINE))
     {
-      // Filters duplicates from simulator and user aircraft out
-      const QList<atools::fs::sc::SimConnectAircraft> *onlineAircraft =
-        NavApp::getOnlinedataController()->getAircraft(context->viewport->viewLatLonAltBox(),
-                                                       context->mapLayer, context->lazyUpdate, overflow);
+      // Merge simulator aircraft and online aircraft
+      QVector<const atools::fs::sc::SimConnectAircraft *> allAircraft;
+      bool overflow = false;
 
-      context->setQueryOverflow(overflow);
-
-      for(const atools::fs::sc::SimConnectAircraft& ac : *onlineAircraft)
-        allAircraft.append(&ac);
-    }
-
-    if(context->objectTypes.testFlag(map::AIRCRAFT_AI))
-    {
-      if(NavApp::isConnected() || mapPaintWidget->getUserAircraft().isDebug())
+      if(context->objectTypes.testFlag(map::AIRCRAFT_ONLINE))
       {
-        for(const SimConnectAircraft& ac : mapPaintWidget->getAiAircraft())
+        // Filters duplicates from simulator and user aircraft out
+        const QList<atools::fs::sc::SimConnectAircraft> *onlineAircraft =
+          NavApp::getOnlinedataController()->getAircraft(context->viewport->viewLatLonAltBox(),
+                                                         context->mapLayer, context->lazyUpdate, overflow);
+
+        context->setQueryOverflow(overflow);
+
+        for(const atools::fs::sc::SimConnectAircraft& ac : *onlineAircraft)
+          allAircraft.append(&ac);
+      }
+
+      if(context->objectTypes.testFlag(map::AIRCRAFT_AI))
+      {
+        if(NavApp::isConnected() || mapPaintWidget->getUserAircraft().isDebug())
         {
-          if(!ac.isAnyBoat())
-            allAircraft.append(&ac);
+          for(const SimConnectAircraft& ac : mapPaintWidget->getAiAircraft())
+          {
+            if(!ac.isAnyBoat())
+              allAircraft.append(&ac);
+          }
+        }
+      }
+
+      // Sort by distance to user aircraft
+      struct AiDistType
+      {
+        const SimConnectAircraft *aircraft;
+        float distanceLateralMeter, distanceVerticalFt;
+      };
+
+      QVector<AiDistType> aiSorted;
+
+      for(const SimConnectAircraft *ac : allAircraft)
+        aiSorted.append({ac,
+                         pos.distanceMeterTo(ac->getPosition()),
+                         std::abs(pos.getAltitude() - ac->getActualAltitudeFt())});
+
+      std::sort(aiSorted.begin(), aiSorted.end(), [](const AiDistType& ai1,
+                                                     const AiDistType& ai2) -> bool
+      {
+        // returns ​true if the first argument is less than (i.e. is ordered before) the second.
+        return ai1.distanceLateralMeter > ai2.distanceLateralMeter;
+      });
+
+      int num = aiSorted.size();
+      for(const AiDistType& adt : aiSorted)
+      {
+        const SimConnectAircraft& ac = *adt.aircraft;
+        if(mapfunc::aircraftVisible(ac, context->mapLayer))
+        {
+          paintAiVehicle(ac, --num < NUM_CLOSEST_AI_LABELS &&
+                         adt.distanceLateralMeter < DIST_METER_CLOSEST_AI_LABELS &&
+                         adt.distanceVerticalFt < DIST_FT_CLOSEST_AI_LABELS);
         }
       }
     }
 
-    // Sort by distance to user aircraft
-    struct AiDistType
+    // Draw user aircraft ====================================================================
+    if(context->objectTypes.testFlag(map::AIRCRAFT))
     {
-      const SimConnectAircraft *aircraft;
-      float distanceLateralMeter, distanceVerticalFt;
-    };
-
-    QVector<AiDistType> aiSorted;
-
-    for(const SimConnectAircraft *ac : allAircraft)
-      aiSorted.append({ac,
-                       pos.distanceMeterTo(ac->getPosition()),
-                       std::abs(pos.getAltitude() - ac->getActualAltitudeFt())});
-
-    std::sort(aiSorted.begin(), aiSorted.end(), [](const AiDistType& ai1,
-                                                   const AiDistType& ai2) -> bool
-    {
-      // returns ​true if the first argument is less than (i.e. is ordered before) the second.
-      return ai1.distanceLateralMeter > ai2.distanceLateralMeter;
-    });
-
-    int num = aiSorted.size();
-    for(const AiDistType& adt : aiSorted)
-    {
-      const SimConnectAircraft& ac = *adt.aircraft;
-      if(mapfunc::aircraftVisible(ac, context->mapLayer))
+      if(pos.isValid())
       {
-        paintAiVehicle(ac, --num < NUM_CLOSEST_AI_LABELS &&
-                       adt.distanceLateralMeter < DIST_METER_CLOSEST_AI_LABELS &&
-                       adt.distanceVerticalFt < DIST_FT_CLOSEST_AI_LABELS);
+        bool hidden = false;
+        float x, y;
+        if(wToS(pos, x, y, DEFAULT_WTOS_SIZE, &hidden))
+        {
+          if(!hidden)
+            paintUserAircraft(userAircraft, x, y);
+        }
       }
     }
-  }
+  } // if(context->objectTypes & map::AIRCRAFT_ALL)
 
-  // Draw user aircraft ====================================================================
-  if(context->objectTypes.testFlag(map::AIRCRAFT))
-  {
-    if(pos.isValid())
-    {
-      bool hidden = false;
-      float x, y;
-      if(wToS(pos, x, y, DEFAULT_WTOS_SIZE, &hidden))
-      {
-        if(!hidden)
-          paintUserAircraft(userAircraft, x, y);
-      }
-    }
-  }
-
+  // Wind display depends only on option
   if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_WIND_POINTER) && userAircraft.isValid())
     paintWindPointer(userAircraft, context->painter->device()->width() / 2, 0);
 }
