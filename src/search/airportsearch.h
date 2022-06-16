@@ -23,7 +23,7 @@
 class Column;
 class AirportIconDelegate;
 class QAction;
-class QueryBuilderResult;
+struct QueryBuilderResult;
 class UnitStringTool;
 
 namespace atools {

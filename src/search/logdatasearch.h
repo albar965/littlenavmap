@@ -26,7 +26,7 @@ class QTableView;
 class QAction;
 class QMainWindow;
 class Column;
-class QueryBuilderResult;
+struct QueryBuilderResult;
 
 namespace atools {
 namespace sql {

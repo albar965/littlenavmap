@@ -30,7 +30,7 @@ class QAction;
 class QMainWindow;
 class Column;
 class NavIconDelegate;
-class QueryBuilderResult;
+struct QueryBuilderResult;
 
 namespace atools {
 namespace sql {

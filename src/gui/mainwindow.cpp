@@ -1514,13 +1514,11 @@ void MainWindow::connectAllSlots()
 
   // Deliver first to route controller to update active leg and distances
   connect(connectClient, &ConnectClient::dataPacketReceived, routeController, &RouteController::simDataChanged);
-
   connect(connectClient, &ConnectClient::dataPacketReceived, mapWidget, &MapWidget::simDataChanged);
   connect(connectClient, &ConnectClient::dataPacketReceived, profileWidget, &ProfileWidget::simDataChanged);
   connect(connectClient, &ConnectClient::dataPacketReceived, infoController, &InfoController::simDataChanged);
+  connect(connectClient, &ConnectClient::dataPacketReceived, NavApp::getAircraftPerfController(), &AircraftPerfController::simDataChanged);
 
-  connect(connectClient, &ConnectClient::dataPacketReceived,
-          NavApp::getAircraftPerfController(), &AircraftPerfController::simDataChanged);
   connect(connectClient, &ConnectClient::connectedToSimulator,
           NavApp::getAircraftPerfController(), &AircraftPerfController::connectedToSimulator);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator,
