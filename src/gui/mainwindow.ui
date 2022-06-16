@@ -34,7 +34,7 @@
      <x>0</x>
      <y>0</y>
      <width>1261</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -246,7 +246,12 @@
     <addaction name="actionMapJumpCoordinatesMain"/>
     <addaction name="separator"/>
     <addaction name="actionMapClearAllHighlights"/>
-    <addaction name="actionMapHideRangeRings"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapHideAllRangeRings"/>
+    <addaction name="actionMapHideAllDistanceMarkers"/>
+    <addaction name="actionMapHideAllPatterns"/>
+    <addaction name="actionMapHideAllHoldings"/>
+    <addaction name="actionMapHideAllMsa"/>
     <addaction name="separator"/>
     <addaction name="actionMapAircraftCenter"/>
     <addaction name="actionMapDeleteAircraftTrack"/>
@@ -5791,7 +5796,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>51</y>
+              <y>0</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -6835,6 +6840,7 @@ Disabled if a navdatabase does not allow it.</string>
          <widget class="QRadioButton" name="radioButtonRouteCalcAirway">
           <property name="font">
            <font>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -6875,6 +6881,7 @@ Disabled if a navdatabase does not allow it.</string>
          <widget class="QRadioButton" name="radioButtonRouteCalcRadio">
           <property name="font">
            <font>
+            <weight>75</weight>
             <bold>true</bold>
            </font>
           </property>
@@ -7953,22 +7960,19 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Show range for navaid on map</string>
    </property>
   </action>
-  <action name="actionMapHideRangeRings">
+  <action name="actionMapHideAllRangeRings">
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
      <normaloff>:/littlenavmap/resources/icons/rangeringsoff.svg</normaloff>:/littlenavmap/resources/icons/rangeringsoff.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Remove all Ranges, Measurements, Patterns and Holdings</string>
+    <string>&amp;Remove all Range Rings</string>
    </property>
    <property name="toolTip">
-    <string>Remove all range rings, measurements, traffic patterns and holdings from map</string>
+    <string>Remove all range rings from the map</string>
    </property>
    <property name="statusTip">
-    <string>Remove all range rings, measurements, traffic patterns and holdings from map</string>
-   </property>
-   <property name="shortcut">
-    <string>Alt+Shift+H</string>
+    <string>Remove all range rings from the map</string>
    </property>
   </action>
   <action name="actionMapHideOneRangeRing">
@@ -12418,6 +12422,66 @@ Disabled if a navdatabase does not allow it.</string>
   <action name="actionThemeHandlerDummy">
    <property name="text">
     <string>Theme Handler Dummy</string>
+   </property>
+  </action>
+  <action name="actionMapHideAllDistanceMarkers">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/distancemeasureoff.svg</normaloff>:/littlenavmap/resources/icons/distancemeasureoff.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Remove all &amp;Measurement Lines</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove all measurement lines from the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Remove all measurement lines from the map</string>
+   </property>
+  </action>
+  <action name="actionMapHideAllHoldings">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/holdoff.svg</normaloff>:/littlenavmap/resources/icons/holdoff.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Remove all &amp;Holdings</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove all holdings from the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Remove all holdings from the map</string>
+   </property>
+  </action>
+  <action name="actionMapHideAllPatterns">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/trafficpatternoff.svg</normaloff>:/littlenavmap/resources/icons/trafficpatternoff.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Remove all &amp;Traffic Patterns</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove all traffic patterns from the map</string>
+   </property>
+   <property name="statusTip">
+    <string>Remove all traffic patterns from the map</string>
+   </property>
+  </action>
+  <action name="actionMapHideAllMsa">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/msaoff.svg</normaloff>:/littlenavmap/resources/icons/msaoff.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Remove all &amp;MSA Diagrams</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove all MSA diagrams from the  map</string>
+   </property>
+   <property name="statusTip">
+    <string>Remove all MSA diagrams from the  map</string>
    </property>
   </action>
  </widget>

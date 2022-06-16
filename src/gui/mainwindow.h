@@ -245,6 +245,12 @@ public:
     return mapThemeHandler;
   }
 
+  /* Clear route */
+  void routeNew();
+
+  /* Question dialog and then delete map and profile trail */
+  void deleteAircraftTrack(bool quiet = false);
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -322,9 +328,6 @@ private:
   /* New flight plan from opening route string dialog using given plan for prefill */
   void routeFromStringInternal(const QString& routeString);
 
-  /* Clear route */
-  void routeNew();
-
   void routeOpen();
   void routeOpenFile(QString filepath);
   void routeAppend();
@@ -395,9 +398,6 @@ private:
   void resetWindowLayout();
   void resetTabLayout();
 
-  /* Question dialog and then delete map and profile trail */
-  void deleteAircraftTrack(bool quiet = false);
-
   void checkForUpdates();
   void updateClock() const;
 
@@ -406,12 +406,6 @@ private:
 
   /* Set user defined time for sun shading */
   void sunShadingTimeSet();
-
-  /* From menu action - remove all measurement lines, patterns, holds, etc. */
-  void clearRangeRingsAndDistanceMarkers(bool quiet = false);
-
-  /* Reset flight plan and other for new flight */
-  void routeResetAll();
 
   /* Action from shortcut menu triggered */
   void actionShortcutMapTriggered();

@@ -204,7 +204,7 @@ public:
   void resetSettingsToDefault();
 
   /* Removes all range rings and distance measurement lines */
-  void clearAllMarkers();
+  void clearAllMarkers(map::MapTypes types);
 
   /* Delete the current aircraft track. Will not stop collecting new track points */
   void deleteAircraftTrack();

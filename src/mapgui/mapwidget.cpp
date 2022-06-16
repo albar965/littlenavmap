@@ -3577,15 +3577,18 @@ void MapWidget::setMapDetail(int level)
   mainWindow->setStatusMessage(tr("Map detail level changed."));
 }
 
-void MapWidget::clearAllMarkers()
+void MapWidget::clearAllMarkers(map::MapTypes types)
 {
   qDebug() << Q_FUNC_INFO;
-  getScreenIndex()->clearAllMarkers();
-  currentDistanceMarkerId = -1;
+
+  getScreenIndex()->clearAllMarkers(types);
+
+  if(types.testFlag(map::MARK_DISTANCE))
+    currentDistanceMarkerId = -1;
 
   update();
   mainWindow->updateMarkActionStates();
-  mainWindow->setStatusMessage(tr("All range rings and measurement lines removed from map."));
+  mainWindow->setStatusMessage(tr("User features removed from map."));
 }
 
 void MapWidget::deleteAircraftTrack()

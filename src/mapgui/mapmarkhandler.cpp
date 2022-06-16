@@ -17,14 +17,24 @@
 
 #include "mapgui/mapmarkhandler.h"
 
-#include "settings/settings.h"
+#include "atools.h"
 #include "common/constants.h"
+#include "gui/choicedialog.h"
+#include "gui/dialog.h"
+#include "gui/mainwindow.h"
+#include "logbook/logdatacontroller.h"
+#include "mapgui/mapwidget.h"
 #include "navapp.h"
 #include "options/optiondata.h"
+#include "perf/aircraftperfcontroller.h"
+#include "route/routecontroller.h"
+#include "settings/settings.h"
 #include "ui_mainwindow.h"
 
-MapMarkHandler::MapMarkHandler(QWidget *parent)
-  : QObject(parent)
+#include <QMessageBox>
+
+MapMarkHandler::MapMarkHandler(MainWindow *mainWindowParam)
+  : QObject(mainWindowParam), mainWindow(mainWindowParam)
 {
 
 }
@@ -82,6 +92,31 @@ void MapMarkHandler::resetSettingsToDefault()
 {
   markTypes = map::MARK_ALL;
   flagsToActions();
+}
+
+void MapMarkHandler::clearRangeRings() const
+{
+  clearRangeRingsAndDistanceMarkers(false /* quiet */, map::MARK_RANGE);
+}
+
+void MapMarkHandler::clearDistanceMarkers() const
+{
+  clearRangeRingsAndDistanceMarkers(false /* quiet */, map::MARK_DISTANCE);
+}
+
+void MapMarkHandler::clearHoldings() const
+{
+  clearRangeRingsAndDistanceMarkers(false /* quiet */, map::MARK_HOLDING);
+}
+
+void MapMarkHandler::clearPatterns() const
+{
+  clearRangeRingsAndDistanceMarkers(false /* quiet */, map::MARK_PATTERNS);
+}
+
+void MapMarkHandler::clearMsa() const
+{
+  clearRangeRingsAndDistanceMarkers(false /* quiet */, map::MARK_MSA);
 }
 
 void MapMarkHandler::addToolbarButton()
@@ -194,4 +229,133 @@ void MapMarkHandler::actionsToFlags()
     markTypes |= map::MARK_MSA;
   if(actionPatterns->isChecked())
     markTypes |= map::MARK_PATTERNS;
+}
+
+QStringList MapMarkHandler::mapFlagTexts(map::MapTypes types) const
+{
+  QStringList featureStr;
+  if(types.testFlag(map::MARK_RANGE))
+    featureStr.append(tr("range rings"));
+
+  if(types.testFlag(map::MARK_DISTANCE))
+    featureStr.append(tr("measurement lines"));
+
+  if(types.testFlag(map::MARK_PATTERNS))
+    featureStr.append(tr("traffic patterns"));
+
+  if(types.testFlag(map::MARK_HOLDING))
+    featureStr.append(tr("holdings"));
+
+  if(types.testFlag(map::MARK_MSA))
+    featureStr.append(tr("MSA diagrams"));
+
+  return featureStr;
+}
+
+void MapMarkHandler::clearRangeRingsAndDistanceMarkers(bool quiet, map::MapTypes types) const
+{
+  if(!quiet)
+  {
+    // Only one type ========================
+    QString text = atools::strJoin(mapFlagTexts(types), tr(", "), tr(" and "));
+    int result = atools::gui::Dialog(mainWindow).showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_MARKS + QString::number(types),
+                                                                    tr("Delete all %1 from map?").arg(text),
+                                                                    tr("Do not &show this dialog again."),
+                                                                    QMessageBox::Yes | QMessageBox::No,
+                                                                    QMessageBox::No, QMessageBox::Yes);
+
+    if(result == QMessageBox::Yes)
+      NavApp::getMapWidgetGui()->clearAllMarkers(types);
+  }
+  else
+    // More than one type from choice dialog
+    NavApp::getMapWidgetGui()->clearAllMarkers(types);
+}
+
+void MapMarkHandler::routeResetAll()
+{
+  enum Choice
+  {
+    EMPTY_FLIGHT_PLAN,
+    DELETE_TRAIL,
+    DELETE_ACTIVE_LEG,
+    RESTART_PERF,
+    RESTART_LOGBOOK,
+    REMOVE_MARK_RANGE,
+    REMOVE_MARK_DISTANCE,
+    REMOVE_MARK_HOLDING,
+    REMOVE_MARK_PATTERNS,
+    REMOVE_MARK_MSA
+  };
+
+  qDebug() << Q_FUNC_INFO;
+
+  const MapWidget *mapWidget = NavApp::getMapWidgetGui();
+
+  // Create a dialog with four checkboxes
+  atools::gui::ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Reset for new Flight"),
+                                         tr("Select items to reset for a new flight"), lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "RESET.html");
+  choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
+  choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
+
+  choiceDialog.addCheckBox(EMPTY_FLIGHT_PLAN, tr("&Create an empty flight plan"), QString(), true /* checked */,
+                           NavApp::isRouteEmpty());
+
+  choiceDialog.addLine();
+  choiceDialog.addCheckBox(DELETE_TRAIL, tr("&Delete aircraft trail"),
+                           tr("Delete simulator aircraft trail from map and elevation profile"), true /* checked */,
+                           NavApp::isAircraftTrackEmpty());
+  choiceDialog.addCheckBox(DELETE_ACTIVE_LEG, tr("&Reset active flight plan leg"),
+                           tr("Remove the active flight plan leg"), true /* checked */);
+  choiceDialog.addCheckBox(RESTART_PERF, tr("Restart the aircraft &performance collection"),
+                           tr("Restarts the background aircraft performance collection"), true /* checked */);
+  choiceDialog.addCheckBox(RESTART_LOGBOOK, tr("Reset flight detection in &logbook"),
+                           tr("Reset the logbook to detect takeoff and landing for new logbook entries"), true /* checked */);
+
+  choiceDialog.addLine();
+  choiceDialog.addLabel(tr("Remove user features placed on map:"));
+  choiceDialog.addCheckBox(REMOVE_MARK_RANGE, tr("&Range rings"), QString(), false /* checked */,
+                           mapWidget->getRangeMarks().isEmpty());
+  choiceDialog.addCheckBox(REMOVE_MARK_DISTANCE, tr("&Measurement lines"), QString(), false /* checked */,
+                           mapWidget->getDistanceMarks().isEmpty());
+  choiceDialog.addCheckBox(REMOVE_MARK_HOLDING, tr("&Holdings"), QString(), false /* checked */,
+                           mapWidget->getHoldingMarks().isEmpty());
+  choiceDialog.addCheckBox(REMOVE_MARK_PATTERNS, tr("&Traffic patterns"), QString(), false /* checked */,
+                           mapWidget->getPatternsMarks().isEmpty());
+  choiceDialog.addCheckBox(REMOVE_MARK_MSA, tr("&MSA diagrams"), QString(), false /* checked */,
+                           mapWidget->getMsaMarks().isEmpty());
+  choiceDialog.addSpacer();
+
+  choiceDialog.restoreState();
+
+  if(choiceDialog.exec() == QDialog::Accepted)
+  {
+    if(choiceDialog.isChecked(EMPTY_FLIGHT_PLAN))
+      mainWindow->routeNew();
+
+    if(choiceDialog.isChecked(DELETE_TRAIL))
+      mainWindow->deleteAircraftTrack(true /* quiet */);
+
+    if(choiceDialog.isChecked(DELETE_ACTIVE_LEG))
+      NavApp::getRouteController()->resetActiveLeg();
+
+    if(choiceDialog.isChecked(RESTART_PERF))
+      NavApp::getAircraftPerfController()->restartCollection(true /* quiet */);
+
+    if(choiceDialog.isChecked(RESTART_LOGBOOK))
+    {
+      NavApp::getLogdataController()->resetTakeoffLandingDetection();
+      NavApp::getMapWidgetGui()->resetTakeoffLandingDetection();
+    }
+
+    map::MapTypes types = map::NONE;
+    types.setFlag(map::MARK_RANGE, choiceDialog.isChecked(REMOVE_MARK_RANGE));
+    types.setFlag(map::MARK_DISTANCE, choiceDialog.isChecked(REMOVE_MARK_DISTANCE));
+    types.setFlag(map::MARK_HOLDING, choiceDialog.isChecked(REMOVE_MARK_HOLDING));
+    types.setFlag(map::MARK_PATTERNS, choiceDialog.isChecked(REMOVE_MARK_PATTERNS));
+    types.setFlag(map::MARK_MSA, choiceDialog.isChecked(REMOVE_MARK_MSA));
+
+    if(types != map::NONE)
+      clearRangeRingsAndDistanceMarkers(true /* quiet */, types);
+  }
 }

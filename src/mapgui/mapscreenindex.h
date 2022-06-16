@@ -215,7 +215,7 @@ public:
   void removeHoldingMark(int id);
   void removeMsaMark(int id);
 
-  void clearAllMarkers();
+  void clearAllMarkers(map::MapTypes types);
 
   /* Update measurement lines */
   void updateDistanceMarkerTo(int id, const atools::geo::Pos& pos);

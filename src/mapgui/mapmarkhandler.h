@@ -23,6 +23,7 @@
 
 class QAction;
 class QToolButton;
+class MainWindow;
 
 /*
  * Adds a toolbutton and four actions to it that allow to show or hide user features like holds, range rings and others.
@@ -33,7 +34,7 @@ class MapMarkHandler :
   Q_OBJECT
 
 public:
-  explicit MapMarkHandler(QWidget *parent);
+  explicit MapMarkHandler(MainWindow *mainWindowParam);
   virtual ~MapMarkHandler() override;
 
   MapMarkHandler(const MapMarkHandler& other) = delete;
@@ -62,11 +63,24 @@ public:
 
   void resetSettingsToDefault();
 
+  /* Called from main menu actions */
+  void clearRangeRings() const;
+  void clearDistanceMarkers() const;
+  void clearHoldings() const;
+  void clearPatterns() const;
+  void clearMsa() const;
+
+  /* Reset flight plan and other for new flight by showing a choice dialog first */
+  void routeResetAll();
+
 signals:
   /* Redraw map */
   void updateMarkTypes(map::MapTypes types);
 
 private:
+  /* Remove all measurement lines, patterns, holds, etc. depending on types */
+  void clearRangeRingsAndDistanceMarkers(bool quiet, map::MapTypes types) const;
+
   void toolbarActionTriggered();
   void actionAllTriggered();
   void actionNoneTriggered();
@@ -75,6 +89,8 @@ private:
   void actionsToFlags();
   QAction *addAction(const QString& icon, const QString& text, const QString& tooltip);
 
+  QStringList mapFlagTexts(map::MapTypes types) const;
+
   /* Actions for toolbar button and menu */
   QAction *actionAll = nullptr, *actionNone = nullptr, *actionRangeRings = nullptr, *actionMeasurementLines = nullptr,
           *actionHolds = nullptr, *actionAirportMsa = nullptr, *actionPatterns = nullptr;
@@ -82,6 +98,7 @@ private:
   /* Toolbutton getting all actions for dropdown menu */
   QToolButton *toolButton = nullptr;
   map::MapTypes markTypes = map::MARK_ALL;
+  MainWindow *mainWindow;
 };
 
 #endif // LNM_MAPMARKHANDLER_H

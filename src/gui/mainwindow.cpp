@@ -1241,7 +1241,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionExit, &QAction::triggered, this, &MainWindow::close);
 
   // Flight plan file actions ============================================================
-  connect(ui->actionRouteResetAll, &QAction::triggered, this, &MainWindow::routeResetAll);
+  connect(ui->actionRouteResetAll, &QAction::triggered, mapMarkHandler, &MapMarkHandler::routeResetAll);
 
   connect(ui->actionRouteCenter, &QAction::triggered, this, &MainWindow::routeCenter);
   connect(ui->actionRouteNew, &QAction::triggered, this, &MainWindow::routeNew);
@@ -1349,7 +1349,13 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowTracks, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowTocTod, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
-  connect(ui->actionMapHideRangeRings, &QAction::triggered, this, &MainWindow::clearRangeRingsAndDistanceMarkers);
+
+  // MARK_RANGE  MARK_DISTANCE MARK_HOLDING  MARK_PATTERNS MARK_MSA
+  connect(ui->actionMapHideAllRangeRings, &QAction::triggered, mapMarkHandler, &MapMarkHandler::clearRangeRings);
+  connect(ui->actionMapHideAllDistanceMarkers, &QAction::triggered, mapMarkHandler, &MapMarkHandler::clearDistanceMarkers);
+  connect(ui->actionMapHideAllHoldings, &QAction::triggered, mapMarkHandler, &MapMarkHandler::clearHoldings);
+  connect(ui->actionMapHideAllPatterns, &QAction::triggered, mapMarkHandler, &MapMarkHandler::clearPatterns);
+  connect(ui->actionMapHideAllMsa, &QAction::triggered, mapMarkHandler, &MapMarkHandler::clearMsa);
 
   // Logbook view options ============================================
   connect(ui->actionSearchLogdataShowDirect, &QAction::toggled, logdataController, &LogdataController::displayOptionsChanged);
@@ -1859,62 +1865,6 @@ void MainWindow::renderStatusChanged(const RenderState& state)
     renderStatusTimer.stop();
 }
 
-void MainWindow::routeResetAll()
-{
-  enum Choice
-  {
-    EMPTY_FLIGHT_PLAN,
-    DELETE_TRAIL,
-    DELETE_ACTIVE_LEG,
-    RESTART_PERF,
-    RESTART_LOGBOOK,
-    REMOVE_MARKS
-  };
-
-  qDebug() << Q_FUNC_INFO;
-
-  // Create a dialog with four checkboxes
-  atools::gui::ChoiceDialog choiceDialog(this, QApplication::applicationName() + tr(" - Reset for new Flight"),
-                                         tr("Select items to reset for a new flight"), lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "RESET.html");
-  choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
-  choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
-
-  choiceDialog.addCheckBox(EMPTY_FLIGHT_PLAN, tr("&Create a new and empty flight plan"), QString(), true);
-  choiceDialog.addCheckBox(DELETE_TRAIL, tr("&Delete aircraft trail"),
-                           tr("Delete simulator aircraft trail from map and elevation profile"), true);
-  choiceDialog.addCheckBox(DELETE_ACTIVE_LEG, tr("&Reset active flight plan leg"),
-                           tr("Remove the active (magenta) flight plan leg"), true);
-  choiceDialog.addCheckBox(RESTART_PERF, tr("Restart Aircraft &Performance Collection"),
-                           tr("Restarts the background aircraft performance collection"), true);
-  choiceDialog.addCheckBox(RESTART_LOGBOOK, tr("Reset flight detection in &logbook"),
-                           tr("Reset the logbook to detect takeoff and landing for new logbook entries"), true);
-  choiceDialog.addCheckBox(REMOVE_MARKS, tr("&Remove all Ranges, Measurements, Patterns, Holdings and MSA Diagrams"),
-                           tr("Remove all range rings, measurements, traffic patterns, holdings and "
-                              "airport MSA diagrams from the map"), false);
-  choiceDialog.addSpacer();
-
-  choiceDialog.restoreState();
-
-  if(choiceDialog.exec() == QDialog::Accepted)
-  {
-    if(choiceDialog.isChecked(EMPTY_FLIGHT_PLAN))
-      routeNew();
-    if(choiceDialog.isChecked(DELETE_TRAIL))
-      deleteAircraftTrack(true /* do not ask questions */);
-    if(choiceDialog.isChecked(DELETE_ACTIVE_LEG))
-      NavApp::getRouteController()->resetActiveLeg();
-    if(choiceDialog.isChecked(RESTART_PERF))
-      NavApp::getAircraftPerfController()->restartCollection(true /* do not ask questions */);
-    if(choiceDialog.isChecked(RESTART_LOGBOOK))
-    {
-      NavApp::getLogdataController()->resetTakeoffLandingDetection();
-      mapWidget->resetTakeoffLandingDetection();
-    }
-    if(choiceDialog.isChecked(REMOVE_MARKS))
-      clearRangeRingsAndDistanceMarkers(true /* quiet */);
-  }
-}
-
 /* Route center action */
 void MainWindow::routeCenter()
 {
@@ -2030,12 +1980,8 @@ void MainWindow::deleteAircraftTrack(bool quiet)
   int result = QMessageBox::Yes;
 
   if(!quiet)
-    result = dialog->
-             showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_TRAIL,
-                                tr("Delete aircraft trail?"),
-                                tr("Do not &show this dialog again."),
-                                QMessageBox::Yes | QMessageBox::No,
-                                QMessageBox::No, QMessageBox::Yes);
+    result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_TRAIL, tr("Delete aircraft trail?"), tr("Do not &show this dialog again."),
+                                        QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
 
   if(result == QMessageBox::Yes)
   {
@@ -2397,23 +2343,6 @@ bool MainWindow::openInSkyVector()
 
   HelpHandler::openUrlWeb(this, "https://skyvector.com/?fpl=" + route);
   return true;
-}
-
-void MainWindow::clearRangeRingsAndDistanceMarkers(bool quiet)
-{
-  if(!quiet)
-  {
-    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_MARKS,
-                                            tr("Delete all range rings, measurement lines, traffic patterns and holds from map?"),
-                                            tr("Do not &show this dialog again."),
-                                            QMessageBox::Yes | QMessageBox::No,
-                                            QMessageBox::No, QMessageBox::Yes);
-
-    if(result == QMessageBox::Yes)
-      mapWidget->clearAllMarkers();
-  }
-  else
-    mapWidget->clearAllMarkers();
 }
 
 /* Called from menu or toolbar by action. Remove all KML from map */
@@ -3454,11 +3383,11 @@ void MainWindow::updateOnlineActionStates()
 /* Enable or disable actions */
 void MainWindow::updateMarkActionStates()
 {
-  ui->actionMapHideRangeRings->setEnabled(!mapWidget->getDistanceMarks().isEmpty() ||
-                                          !mapWidget->getRangeMarks().isEmpty() ||
-                                          !mapWidget->getPatternsMarks().isEmpty() ||
-                                          !mapWidget->getMsaMarks().isEmpty() ||
-                                          !mapWidget->getHoldingMarks().isEmpty());
+  ui->actionMapHideAllDistanceMarkers->setEnabled(!mapWidget->getDistanceMarks().isEmpty());
+  ui->actionMapHideAllRangeRings->setEnabled(!mapWidget->getRangeMarks().isEmpty());
+  ui->actionMapHideAllPatterns->setEnabled(!mapWidget->getPatternsMarks().isEmpty());
+  ui->actionMapHideAllMsa->setEnabled(!mapWidget->getMsaMarks().isEmpty());
+  ui->actionMapHideAllHoldings->setEnabled(!mapWidget->getHoldingMarks().isEmpty());
 }
 
 /* Enable or disable actions */

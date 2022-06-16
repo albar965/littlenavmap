@@ -569,13 +569,22 @@ void MapScreenIndex::removeMsaMark(int id)
   msaMarks.remove(id);
 }
 
-void MapScreenIndex::clearAllMarkers()
+void MapScreenIndex::clearAllMarkers(map::MapTypes types)
 {
-  rangeMarks.clear();
-  distanceMarks.clear();
-  patternMarks.clear();
-  holdingMarks.clear();
-  msaMarks.clear();
+  if(types.testFlag(map::MARK_RANGE))
+    rangeMarks.clear();
+
+  if(types.testFlag(map::MARK_DISTANCE))
+    distanceMarks.clear();
+
+  if(types.testFlag(map::MARK_PATTERNS))
+    patternMarks.clear();
+
+  if(types.testFlag(map::MARK_HOLDING))
+    holdingMarks.clear();
+
+  if(types.testFlag(map::MARK_MSA))
+    msaMarks.clear();
 }
 
 void MapScreenIndex::updateDistanceMarkerTo(int id, const atools::geo::Pos& pos)
