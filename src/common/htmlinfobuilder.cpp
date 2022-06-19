@@ -3461,7 +3461,8 @@ void HtmlInfoBuilder::procedurePointText(const map::MapProcedurePoint& procPoint
 void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& aircraft, HtmlBuilder& html, int num, int total)
 {
 #ifdef DEBUG_INFORMATION
-  html.textBr("[HtmlInfoBuilder::aircraftText()]");
+  html.textBr("[HtmlInfoBuilder::aircraftText()]").textBr(QString("[online %1 shadow %2]").
+                                                          arg(aircraft.isOnline()).arg(aircraft.isOnlineShadow()));
 #endif
 
   aircraftTitle(aircraft, html);

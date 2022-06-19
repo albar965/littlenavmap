@@ -653,8 +653,7 @@ bool OnlinedataController::getShadowAircraft(atools::fs::sc::SimConnectAircraft&
 bool OnlinedataController::isShadowAircraft(const atools::fs::sc::SimConnectAircraft& simAircraft)
 {
   const atools::geo::Pos pos = clientCallsignAndPosMap.value(simAircraft.getAirplaneRegistration());
-  return simAircraft.isOnlineShadow() ||
-         (pos.isValid() && pos.distanceMeterTo(simAircraft.getPosition()) < MIN_DISTANCE_DUPLICATE_M);
+  return simAircraft.isOnlineShadow() || (pos.isValid() && pos.distanceMeterTo(simAircraft.getPosition()) < MIN_DISTANCE_DUPLICATE_M);
 }
 
 void OnlinedataController::getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int id)

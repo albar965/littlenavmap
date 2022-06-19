@@ -702,30 +702,42 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
     }
   }
 
-  // Add AI or injected multiplayer aircraft ======================================
-  if(shown.testFlag(map::AIRCRAFT_AI) && (NavApp::isConnected() || mapWidget->getUserAircraft().isDebug()))
-  {
-    for(const atools::fs::sc::SimConnectAircraft& obj : mapWidget->getAiAircraft())
-    {
-      if(obj.isValid() && !obj.isAnyBoat() && mapfunc::aircraftVisible(obj, mapLayer))
-      {
-        if(conv.wToS(obj.getPosition(), x, y))
-        {
-          if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
-          {
-            // Add online network shadow aircraft from simulator to online list
-            atools::fs::sc::SimConnectAircraft shadow;
-            if(NavApp::getOnlinedataController()->getShadowAircraft(shadow, obj))
-              insertSortedByDistance(conv, result.onlineAircraft, &result.onlineAircraftIds, xs, ys, map::MapOnlineAircraft(shadow));
+  bool onlineEnabled = shown.testFlag(map::AIRCRAFT_ONLINE) && NavApp::isOnlineNetworkActive();
+  bool aiEnabled = shown.testFlag(map::AIRCRAFT_AI) && NavApp::isConnected();
 
-            insertSortedByDistance(conv, result.aiAircraft, nullptr, xs, ys, map::MapAiAircraft(obj));
-          }
+  // Add AI or injected multiplayer aircraft ======================================
+  for(const atools::fs::sc::SimConnectAircraft& ac : mapWidget->getAiAircraft())
+  {
+    // Skip boats
+    if(ac.isAnyBoat())
+      continue;
+
+    // Skip shadow aircraft if online is disabled
+    if(!onlineEnabled && ac.isOnlineShadow())
+      continue;
+
+    // Skip AI aircraft (means not shadow) if AI is disabled
+    if(!aiEnabled && !ac.isOnlineShadow())
+      continue;
+
+    if(ac.isValid() && !ac.isAnyBoat() && mapfunc::aircraftVisible(ac, mapLayer))
+    {
+      if(conv.wToS(ac.getPosition(), x, y))
+      {
+        if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
+        {
+          // Add online network shadow aircraft from simulator to online list
+          atools::fs::sc::SimConnectAircraft shadow;
+          if(NavApp::getOnlinedataController()->getShadowAircraft(shadow, ac))
+            insertSortedByDistance(conv, result.onlineAircraft, &result.onlineAircraftIds, xs, ys, map::MapOnlineAircraft(shadow));
+
+          insertSortedByDistance(conv, result.aiAircraft, nullptr, xs, ys, map::MapAiAircraft(ac));
         }
       }
     }
   }
 
-  if(shown.testFlag(map::AIRCRAFT_ONLINE) && NavApp::isOnlineNetworkActive())
+  if(onlineEnabled)
   {
     // Add online clients ======================================
     for(const atools::fs::sc::SimConnectAircraft& obj : *NavApp::getOnlinedataController()->getAircraftFromCache())

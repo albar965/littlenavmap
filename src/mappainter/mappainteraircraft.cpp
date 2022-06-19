@@ -54,15 +54,19 @@ void MapPainterAircraft::render()
     const atools::geo::Pos& pos = userAircraft.getPosition();
 
     // Draw AI and online aircraft - not boats ====================================================================
-    if(context->objectTypes.testFlag(map::AIRCRAFT_AI) || context->objectTypes.testFlag(map::AIRCRAFT_ONLINE))
+    bool onlineEnabled = context->objectTypes.testFlag(map::AIRCRAFT_ONLINE) && NavApp::isOnlineNetworkActive();
+    bool aiEnabled = context->objectTypes.testFlag(map::AIRCRAFT_AI) && NavApp::isConnected();
+    if(aiEnabled || onlineEnabled)
     {
-      // Merge simulator aircraft and online aircraft
-      QVector<const atools::fs::sc::SimConnectAircraft *> allAircraft;
       bool overflow = false;
 
-      if(context->objectTypes.testFlag(map::AIRCRAFT_ONLINE))
+      // Merge simulator aircraft and online aircraft
+      QVector<const atools::fs::sc::SimConnectAircraft *> allAircraft;
+
+      // Get all pure (slowly updated) online aircraft ======================================
+      if(onlineEnabled)
       {
-        // Filters duplicates from simulator and user aircraft out
+        // Filters duplicates from simulator and user aircraft out - remove shadow aircraft
         const QList<atools::fs::sc::SimConnectAircraft> *onlineAircraft =
           NavApp::getOnlinedataController()->getAircraft(context->viewport->viewLatLonAltBox(),
                                                          context->mapLayer, context->lazyUpdate, overflow);
@@ -73,16 +77,22 @@ void MapPainterAircraft::render()
           allAircraft.append(&ac);
       }
 
-      if(context->objectTypes.testFlag(map::AIRCRAFT_AI))
+      // Get all AI and online shadow aircraft ======================================
+      for(const SimConnectAircraft& ac : mapPaintWidget->getAiAircraft())
       {
-        if(NavApp::isConnected() || mapPaintWidget->getUserAircraft().isDebug())
-        {
-          for(const SimConnectAircraft& ac : mapPaintWidget->getAiAircraft())
-          {
-            if(!ac.isAnyBoat())
-              allAircraft.append(&ac);
-          }
-        }
+        // Skip boats
+        if(ac.isAnyBoat())
+          continue;
+
+        // Skip shadow aircraft if online is disabled
+        if(!onlineEnabled && ac.isOnlineShadow())
+          continue;
+
+        // Skip AI aircraft (means not shadow) if AI is disabled
+        if(!aiEnabled && !ac.isOnlineShadow())
+          continue;
+
+        allAircraft.append(&ac);
       }
 
       // Sort by distance to user aircraft
