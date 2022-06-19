@@ -119,8 +119,7 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
     // Get displayed airspaces ================================
     bool overflow = false;
     if(!highlights && paintLayer->getShownMapObjects().testFlag(map::AIRSPACE))
-      controller->getAirspaces(airspaces,
-                               curBox, paintLayer->getMapLayer(), mapWidget->getShownAirspaceTypesByLayer(),
+      controller->getAirspaces(airspaces, curBox, paintLayer->getMapLayer(), mapWidget->getShownAirspaceTypesByLayer(),
                                NavApp::getRouteConst().getCruisingAltitudeFeet(), false, source, overflow);
 
     // Get highlighted airspaces from info window ================================
@@ -157,8 +156,7 @@ void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceI
           for(const QPolygonF& poly : polygons)
           {
             // Cut off all polygon parts that are not visible on screen
-            airspacePolygons.append(std::make_pair(airspace->combinedId(),
-                                                   poly.intersected(QPolygon(mapWidget->rect())).toPolygon()));
+            airspacePolygons.append(std::make_pair(airspace->combinedId(), poly.intersected(QPolygon(mapWidget->rect())).toPolygon()));
             ids.insert(airspace->combinedId());
           }
         }
@@ -189,11 +187,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox
   QSet<map::MapAirspaceId> ids;
 
   // First get geometry from highlights
-  updateAirspaceScreenGeometryInternal(ids, NavApp::getAirspaceController()->getAirspaceSources(), curBox, true);
-
-  if(paintLayer->getMapLayerEffective()->isAirportDiagram())
-    // Airspace appearance is independent of detail settings
-    return;
+  updateAirspaceScreenGeometryInternal(ids, NavApp::getAirspaceController()->getAirspaceSources(), curBox, true /* highlights */);
 
   if(!paintLayer->getMapLayer()->isAirspace() || !paintLayer->getShownMapObjects().testFlag(map::AIRSPACE))
     return;
@@ -203,7 +197,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox
     return;
 
   // Get geometry from visible airspaces
-  updateAirspaceScreenGeometryInternal(ids, NavApp::getAirspaceController()->getAirspaceSources(), curBox, false);
+  updateAirspaceScreenGeometryInternal(ids, NavApp::getAirspaceController()->getAirspaceSources(), curBox, false /* highlights */);
 }
 
 void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& curBox)
@@ -343,8 +337,7 @@ void MapScreenIndex::updateAirwayScreenGeometry(const Marble::GeoDataLatLonBox& 
   updateAirwayScreenGeometryInternal(ids, curBox, false /* highlight */);
 }
 
-void MapScreenIndex::updateAirwayScreenGeometryInternal(QSet<int>& ids, const Marble::GeoDataLatLonBox& curBox,
-                                                        bool highlight)
+void MapScreenIndex::updateAirwayScreenGeometryInternal(QSet<int>& ids, const Marble::GeoDataLatLonBox& curBox, bool highlight)
 {
   const MapScale *scale = paintLayer->getMapScale();
   AirwayTrackQuery *airwayTrackQuery = mapWidget->getAirwayTrackQuery();
@@ -369,8 +362,7 @@ void MapScreenIndex::updateAirwayScreenGeometryInternal(QSet<int>& ids, const Ma
           if(ids.contains(airway.id))
             continue;
 
-          if((airway.type == map::AIRWAY_VICTOR && !showVictor) ||
-             (airway.type == map::AIRWAY_JET && !showJet))
+          if((airway.type == map::AIRWAY_VICTOR && !showVictor) || (airway.type == map::AIRWAY_JET && !showJet))
             // Not visible by map setting
             continue;
 
