@@ -91,6 +91,7 @@ using formatter::courseTextFromTrue;
 namespace ahtml = atools::util::html;
 namespace ageo = atools::geo;
 
+// Limits for nearest airports and navaids to airport
 const float NEAREST_MAX_DISTANCE_AIRPORT_NM = 75.f;
 const float NEAREST_MAX_DISTANCE_NAVAID_NM = 50.f;
 const int NEAREST_MAX_NUM_AIRPORT = 10;
@@ -99,8 +100,8 @@ const int NEAREST_MAX_NUM_NAVAID = 15;
 // Print weather time in red if older than this
 const int WEATHER_MAX_AGE_HOURS = 6;
 
-// Maximum distance for bearing display
-const int MAX_DISTANCE_FOR_BEARING_METER = ageo::nmToMeter(500);
+// Maximum distance for bearing display to user aircraft
+const int MAX_DISTANCE_FOR_BEARING_METER = ageo::nmToMeter(8000);
 
 HtmlInfoBuilder::HtmlInfoBuilder(QWidget *parent, MapPaintWidget *mapWidgetParam, bool infoParam, bool printParam, bool verboseParam)
   : parentWidget(parent), mapWidget(mapWidgetParam), info(infoParam), print(printParam), verbose(verboseParam)
