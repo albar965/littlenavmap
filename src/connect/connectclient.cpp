@@ -37,6 +37,7 @@
 #include <QWidget>
 #include <QCoreApplication>
 #include <QThread>
+#include <QDir>
 
 using atools::fs::sc::DataReaderThread;
 
@@ -244,9 +245,160 @@ void ConnectClient::disconnectedFromSimulatorDirect()
   manualDisconnect = false;
 }
 
+#ifdef DEBUG_WRITE_WHAZZUP
+void debugWriteWhazzup(const atools::fs::sc::SimConnectData& dataPacket)
+{
+  static QDateTime last;
+
+  // VATSIM
+  // ; !CLIENTS section -
+  // callsign:cid:realname:clienttype:frequency:latitude:longitude:altitude:groundspeed:planned_aircraft: planned_tascruise:planned_depairport:planned_altitude:planned_destairport:server:protrevision:rating :transponder:facilitytype:visualrange:planned_revision:planned_flighttype:planned_deptime:planned_ac tdeptime:planned_hrsenroute:planned_minenroute:planned_hrsfuel:planned_minfuel:planned_altairport:pl anned_remarks:planned_route:planned_depairport_lat:planned_depairport_lon:planned_destairport_lat:pl anned_destairport_lon:atis_message:time_last_atis_received:time_logon:heading:QNH_iHg:QNH_Mb:
+
+  // !GENERAL:
+  // VERSION = 8
+  // RELOAD = 2
+  // UPDATE = 20180322170014
+  // ATIS ALLOW MIN = 5
+  // CONNECTED CLIENTS = 586
+
+  // !CLIENTS:
+  // 4XAIA:1383303:Name LLBG:PILOT::32.18188:34.82802:125:0::0::::SWEDEN:100:1:1200::::::::::::::::::::20180322165257:105:29.919:1013:
+
+  QDateTime now = QDateTime::currentDateTime();
+
+  if(!last.isValid() || (now.toSecsSinceEpoch() > last.toSecsSinceEpoch() + 15))
+  {
+    QDir().mkpath(QDir::tempPath() + QDir::separator() + "lnm");
+
+    QDateTime simDateTime = dataPacket.getUserAircraftConst().getZuluTime();
+    QFile file(QDir::tempPath() + QDir::separator() + "lnm" + QDir::separator() +
+               "whazzup_" + simDateTime.toString("yyyyMMddhhmmss") + ".txt");
+
+    if(file.open(QIODevice::WriteOnly))
+    {
+      QTextStream stream(&file);
+      stream.setCodec("UTF-8");
+
+      stream << "!GENERAL:" << endl;
+      stream << "VERSION = 8" << endl;
+      stream << "RELOAD = 2" << endl;
+      stream << "UPDATE = " << now.toString("yyyyMMddhhmmss") << endl; // 2018 0322 170014
+      stream << "ATIS ALLOW MIN = 5" << endl;
+
+      QVector<atools::fs::sc::SimConnectAircraft> aircraft = dataPacket.getAiAircraftConst();
+      atools::fs::sc::SimConnectUserAircraft user = dataPacket.getUserAircraftConst();
+      user.setFlags(user.getFlags() | atools::fs::sc::IS_USER);
+      aircraft.prepend(user);
+
+      int numAircraft = 0; // User
+      for(atools::fs::sc::SimConnectAircraft ac : aircraft)
+      {
+        QString reg = ac.getAirplaneRegistration();
+        if(ac.isAnyBoat())
+          continue;
+        if(reg.startsWith("N6"))
+          continue;
+
+        numAircraft++;
+      }
+      stream << "CONNECTED CLIENTS = " << numAircraft << endl;
+
+      stream << "!CLIENTS:" << endl;
+
+      // callsign:cid:realname:clienttype:frequency:latitude:longitude:altitude:groundspeed:planned_aircraft:
+      // planned_tascruise:planned_depairport:planned_altitude:planned_destairport:server:protrevision:rating
+      // :transponder:facilitytype:visualrange:planned_revision:planned_flighttype:planned_deptime:planned_ac
+      // tdeptime:planned_hrsenroute:planned_minenroute:planned_hrsfuel:planned_minfuel:planned_altairport:pl
+      // anned_remarks:planned_route:planned_depairport_lat:planned_depairport_lon:planned_destairport_lat:pl
+      // anned_destairport_lon:atis_message:time_last_atis_received:time_logon:heading:QNH_iHg:QNH_Mb:
+
+      // AAL1064:1277950:Name
+      // KMIA:PILOT::37.85759:-76.72431:35099:471:B738/G:462:KMIA:35000:KLGA:USA-E:100:1:2444:::1:I:1503:0:2:
+      // 32:4:20:KPHL:PBN/A1B1C1D1L1O1S1 DOF/180322 REG/N917NN EET/KZJX0044 KZDC0113 KZNY0210 KZBW0231
+      // OPR/AAL PER/C RMK/TCAS SIMBRIEF /v/ SEL/AEBX:VALLY2 VALLY DCT PERMT AR16 ILM J191 PXT
+      // KORRY4:0:0:0:0:::20180322145209:26:30.017:1016:
+      for(atools::fs::sc::SimConnectAircraft ac : aircraft)
+      {
+        if(ac.isAnyBoat())
+          continue;
+
+        QString reg = ac.getAirplaneRegistration();
+
+        // Drop N6
+        if(reg.startsWith("N6"))
+          continue;
+
+        // Change reg for N7
+        if(reg.startsWith("N7"))
+        {
+          reg.replace(0, 1, 'X');
+          ac.setAirplaneRegistration(reg);
+        }
+
+        // Move N8
+        if(reg.startsWith("N8"))
+        {
+          atools::geo::Pos pos = ac.getPosition();
+          pos.setLatY(0.1f); // Move 6 NM down and east
+          pos.setLonX(0.1f);
+          ac.setCoordinates(pos);
+        }
+
+        QStringList text;
+
+        QString name;
+        if(ac.isUser())
+          name = "User " + reg;
+        else
+          name = "Client " + reg;
+
+        // callsign:cid:realname:clienttype:frequency:latitude:longitude:altitude ...
+        // AAL1064:1277950:Name KMIA:PILOT::37.85759:-76.72431:35099 ...
+        text << reg << QString::number(ac.getObjectId()) << name + " " + reg << "PILOT" << QString()
+             << QString::number(ac.getPosition().getLatY()) << QString::number(ac.getPosition().getLonX())
+             << QString::number(ac.getPosition().getAltitude());
+
+        // ... :groundspeed:planned_aircraft:planned_tascruise:planned_depairport:planned_altitude:planned_destairport ...
+        // ... 471:B738/G:462:KMIA:35000:KLGA ...
+        text << QString::number(ac.getGroundSpeedKts()) << ac.getAirplaneModel() << QString::number(ac.getGroundSpeedKts())
+             << ac.getFromIdent() << QString::number(atools::roundToInt(ac.getPosition().getAltitude())) << ac.getToIdent();
+
+        // ... :server:protrevision:rating:transponder:facilitytype:visualrange:planned_revision:planned_flighttype:
+        // planned_deptime:planned_ac tdeptime:planned_hrsenroute:planned_minenroute:planned_hrsfuel:planned_minfuel ...
+        // ... USA-E:100:1:2444:::1:I:1503:0:2:32:4:20 ...
+        text << "USA-E" << "100" << "1" << ac.getTransponderCodeStr() << QString() << QString() << "1" << "I"
+             << "1500" << "0" << "2" << "32" << "4" << "20";
+
+        // ... planned_altairport:planned_remarks:planned_route:planned_depairport_lat:planned_depairport_lon:
+        // planned_destairport_lat:pl anned_destairport_lon:atis_message:time_last_atis_received:time_logon:heading:QNH_iHg:QNH_Mb: ...
+        // ... KPHL:PBN/A1... F /v/ SEL/AEBX:VALLY2 VALLY DCT PERMT AR16 ILM J191 PXT KORRY4:0:0:0:0 ...
+        text << "KPHL" << "REMARKS" << (ac.getFromIdent() + " DCT " + ac.getToIdent()) << "0" << "0" << "0" << "0";
+
+        // ... :atis_message:time_last_atis_received:time_logon:heading:QNH_iHg:QNH_Mb:
+        // ... :::20180322145209:26:30.017:1016:
+        text << QString() << QString() << QString() << QString::number(atools::roundToInt(ac.getHeadingDegMag())) << QString() << "1013";
+
+        for(int i = text.size(); i < 40; i++)
+          text.append(QString());
+
+        stream << text.join(':') << endl;
+        numAircraft++;
+      }
+    }
+
+    last = now;
+  }
+}
+
+#endif
+
 /* Posts data received directly from simconnect or the socket and caches any metar reports */
 void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket)
 {
+#ifdef DEBUG_WRITE_WHAZZUP
+  debugWriteWhazzup(dataPacket);
+#endif
+
   // AI list does not include user aircraft
   atools::fs::sc::SimConnectUserAircraft& userAircraft = dataPacket.getUserAircraft();
 
