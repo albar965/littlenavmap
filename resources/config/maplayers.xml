@@ -222,7 +222,6 @@
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="50">
-        <AiAircraftText>false</AiAircraftText>
         <AiShipSmall>false</AiShipSmall>
         <AirportDiagramRunway>false</AirportDiagramRunway>
         <AirportMinorFontScale>0.9</AirportMinorFontScale>
@@ -278,6 +277,7 @@
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="250">
+        <AiAircraftText>false</AiAircraftText>
         <AirportFontScale>0.9</AirportFontScale>
         <AirportMinorIdent>false</AirportMinorIdent>
         <AirportMinorSymbolSize>8</AirportMinorSymbolSize>
