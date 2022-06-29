@@ -315,5 +315,11 @@
         <file>resources/icons/userpoint_Radio Range.svg</file>
         <file>resources/icons/aircraftonline.svg</file>
         <file>resources/icons/detailmap.svg</file>
+        <file>resources/icons/aircraft_helicopter_ground_online.svg</file>
+        <file>resources/icons/aircraft_helicopter_online.svg</file>
+        <file>resources/icons/aircraft_jet_ground_online.svg</file>
+        <file>resources/icons/aircraft_jet_online.svg</file>
+        <file>resources/icons/aircraft_small_ground_online.svg</file>
+        <file>resources/icons/aircraft_small_online.svg</file>
     </qresource>
 </RCC>

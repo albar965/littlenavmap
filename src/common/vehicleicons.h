@@ -31,12 +31,15 @@ class SimConnectAircraft;
 class QIcon;
 class QPixmap;
 
+namespace internal {
+struct PixmapKey;
+}
+
 /*
  * Caches pixmaps generated from SVG graphic files for aircraft, boat, helicopter, etc.
  */
 class VehicleIcons
 {
-  struct PixmapKey;
 
 public:
   VehicleIcons();
@@ -49,33 +52,9 @@ public:
   const QPixmap *pixmapFromCache(const atools::fs::sc::SimConnectAircraft& ac, int size, int rotate);
 
 private:
-  friend uint qHash(const VehicleIcons::PixmapKey& key);
+  const QPixmap *pixmapFromCache(const internal::PixmapKey& key, int rotate);
 
-  const QPixmap *pixmapFromCache(const PixmapKey& key, int rotate);
-
-  enum AircraftType
-  {
-    AC_SMALL,
-    AC_JET,
-    AC_HELICOPTER,
-    AC_SHIP,
-    AC_CARRIER,
-    AC_FRIGATE,
-    AC_ONLINE
-  };
-
-  /* Key built from all attributes */
-  struct PixmapKey
-  {
-    bool operator==(const VehicleIcons::PixmapKey& other) const;
-
-    AircraftType type;
-    bool ground;
-    bool user;
-    int size, rotate;
-  };
-
-  QCache<PixmapKey, QPixmap> aircraftPixmaps;
+  QCache<internal::PixmapKey, QPixmap> aircraftPixmaps;
 };
 
 #endif // LNM_VEHICLEICONS_H
