@@ -245,7 +245,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("True Airspeed"), QString(), optsac::ITEM_AI_AIRCRAFT_TAS);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Climb- and Sinkrate"), QString(), optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Heading"), QString(), optsac::ITEM_AI_AIRCRAFT_HEADING);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Altitude"), QString(), optsac::ITEM_AI_AIRCRAFT_ALTITUDE, true);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Actual Altitude"), QString(), optsac::ITEM_AI_AIRCRAFT_ALTITUDE, true);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Departure and Destination"), QString(), optsac::ITEM_AI_AIRCRAFT_DEP_DEST, true);
 
   QTreeWidgetItem *compassRose = addTopItem(root, tr("Compass Rose"), tr("Select display options for the compass rose."));
