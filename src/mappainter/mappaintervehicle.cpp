@@ -355,13 +355,13 @@ void MapPainterVehicle::appendSpeedText(QStringList& texts, const SimConnectAirc
                                         bool ias, bool gs, bool tas)
 {
   QStringList line;
-  if(ias && aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
+  if(ias && aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT / 2.f)
     line.append(tr("IAS %1").arg(Unit::speedKts(aircraft.getIndicatedSpeedKts())));
 
-  if(gs && aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
+  if(gs && aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT / 2.f)
     line.append(tr("GS %2").arg(Unit::speedKts(aircraft.getGroundSpeedKts())));
 
-  if(tas && aircraft.getTrueAirspeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
+  if(tas && aircraft.getTrueAirspeedKts() < atools::fs::sc::SC_INVALID_FLOAT / 2.f)
     line.append(tr("TAS %1").arg(Unit::speedKts(aircraft.getTrueAirspeedKts())));
 
   if(!line.isEmpty())
