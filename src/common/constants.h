@@ -330,6 +330,7 @@ const QLatin1String OPTIONS_MAP_JUMP_BACK_DEBUG("Options/MapJumpBackDebug");
 const QLatin1String OPTIONS_PROFILE_JUMP_BACK_DEBUG("Options/ProfileJumpBackDebug");
 const QLatin1String OPTIONS_MAP_LAYER_DEBUG("Options/MapLayerDebug");
 const QLatin1String OPTIONS_ONLINE_NETWORK_DEBUG("Options/OnlineNetworkDebug");
+const QLatin1String OPTIONS_ONLINE_NETWORK_DISABLE_SHADOW("Options/OnlineNetworkDisableShadow");
 const QLatin1String OPTIONS_TRACK_DEBUG("Options/TrackDebug");
 const QLatin1String OPTIONS_WEATHER_LEVELS("Options/WeatherLevels");
 const QLatin1String OPTIONS_WIND_DEBUG("Options/WindDebug");

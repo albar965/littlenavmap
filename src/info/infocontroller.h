@@ -91,7 +91,7 @@ public:
   void tracksChanged();
 
   /* Update aircraft and aircraft progress tab */
-  void simDataChanged(atools::fs::sc::SimConnectData data);
+  void simDataChanged(const atools::fs::sc::SimConnectData& data);
   void connectedToSimulator();
   void disconnectedFromSimulator();
 
@@ -128,16 +128,14 @@ private:
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_BEARING_TIME_MS = 1000;
 
   void updateAirportInternal(bool newAirport, bool bearingChange, bool scrollToTop, bool forceWeatherUpdate);
-  bool updateNavaidInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop,
-                            bool forceUpdate);
+  bool updateNavaidInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop, bool forceUpdate);
   bool updateUserpointInternal(const map::MapResult& result, bool bearingChanged, bool scrollToTop);
 
   void updateTextEditFontSizes();
   void setTextEditFontSize(QTextEdit *textEdit, float origSize, int percent);
   void anchorClicked(const QUrl& url);
   void clearInfoTextBrowsers();
-  void showInformationInternal(map::MapResult result,
-                               bool showWindows, bool scrollToTop, bool forceUpdate);
+  void showInformationInternal(map::MapResult result, bool showWindows, bool scrollToTop, bool forceUpdate);
   void updateAiAirports(const atools::fs::sc::SimConnectData& data);
   void updateUserAircraftText();
   void updateAircraftProgressText();

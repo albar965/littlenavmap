@@ -727,8 +727,8 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
         if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)
         {
           // Add online network shadow aircraft from simulator to online list
-          atools::fs::sc::SimConnectAircraft shadow;
-          if(NavApp::getOnlinedataController()->getShadowAircraft(shadow, ac))
+          atools::fs::sc::SimConnectAircraft shadow = NavApp::getOnlinedataController()->getShadowedOnlineAircraft(ac);
+          if(shadow.isValid())
             insertSortedByDistance(conv, result.onlineAircraft, &result.onlineAircraftIds, xs, ys, map::MapOnlineAircraft(shadow));
 
           insertSortedByDistance(conv, result.aiAircraft, nullptr, xs, ys, map::MapAiAircraft(ac));

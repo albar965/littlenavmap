@@ -380,16 +380,38 @@ void MapContextMenu::insertMenuOrAction(QMenu& menu, mc::MenuActionType actionTy
 
 void MapContextMenu::insertInformationMenu(QMenu& menu)
 {
-  insertMenuOrAction(menu, mc::INFORMATION,
-                     MapResultIndex().
-                     addRef(*result,
-                            map::AIRPORT | map::VOR | map::NDB | map::ILS | map::HOLDING | map::AIRPORT_MSA | map::WAYPOINT | map::AIRWAY |
-                            map::TRACK | map::USERPOINT | map::AIRSPACE | map::AIRCRAFT | map::AIRCRAFT_AI |
-                            map::AIRCRAFT_ONLINE | map::LOGBOOK).sort(DEFAULT_TYPE_SORT, alphaSort),
-                     tr("&Show Information for %1"),
-                     tr("Show information for airport or navaid"),
-                     tr("Click"),
-                     QIcon(":/littlenavmap/resources/icons/globals.svg"));
+  MapResultIndex index;
+  index.addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::ILS | map::HOLDING | map::AIRPORT_MSA | map::WAYPOINT | map::AIRWAY |
+               map::TRACK | map::USERPOINT | map::AIRSPACE | map::AIRCRAFT | map::AIRCRAFT_AI | map::AIRCRAFT_ONLINE | map::LOGBOOK).
+  sort(DEFAULT_TYPE_SORT, alphaSort);
+
+  // Remove all online aircraft having a simulator shadow from the index for this menu item only
+  // Collect shadowed online aircraft first
+  OnlinedataController *onlineDataController = NavApp::getOnlinedataController();
+  QSet<map::MapObjectRef> refs;
+  for(const map::MapBase *base : index)
+  {
+    // Check shadowed AI aircraft
+    const map::MapAiAircraft *ai = base->asPtr<map::MapAiAircraft>(map::AIRCRAFT_AI);
+    if(ai != nullptr && ai->getAircraft().isOnlineShadow())
+      refs.insert(map::MapObjectRef(onlineDataController->getShadowedOnlineAircraft(ai->getAircraft()).getId(), map::AIRCRAFT_ONLINE));
+    else
+    {
+      // Check shadowed user aircraft
+      const map::MapUserAircraft *user = base->asPtr<map::MapUserAircraft>(map::AIRCRAFT);
+      if(user != nullptr && user->getAircraft().isOnlineShadow())
+        refs.insert(map::MapObjectRef(onlineDataController->getShadowedOnlineAircraft(user->getAircraft()).getId(), map::AIRCRAFT_ONLINE));
+    }
+  }
+
+  // Remove shadowed online aircraft from index
+  index.erase(std::remove_if(index.begin(), index.end(), [refs](const map::MapBase *base) -> bool
+  {
+    return base != nullptr && refs.contains(base->getRef());
+  }), index.end());
+
+  insertMenuOrAction(menu, mc::INFORMATION, index, tr("&Show Information for %1"), tr("Show information for airport or navaid"),
+                     tr("Click"), QIcon(":/littlenavmap/resources/icons/globals.svg"));
 }
 
 void MapContextMenu::insertProcedureMenu(QMenu& menu)
@@ -1050,10 +1072,28 @@ void MapContextMenu::insertLogEntryEdit(QMenu& menu)
 
 void MapContextMenu::insertShowInSearchMenu(QMenu& menu)
 {
+  ActionCallback callback = [ = ](const map::MapBase *base, QString& text, QIcon&, bool& disable, bool) -> void
+                            {
+                              disable = !visibleOnMap || base == nullptr;
+
+                              if(base != nullptr && base->objType == map::AIRCRAFT)
+                              {
+                                // Add shadowed online aircraft for user
+                                const map::MapUserAircraft *userAircraft = base->asPtr<map::MapUserAircraft>();
+                                if(userAircraft != nullptr && userAircraft->getAircraft().isOnlineShadow())
+                                {
+                                  atools::fs::sc::SimConnectAircraft shadowedOnlineAircraft =
+                                    NavApp::getOnlinedataController()->getShadowedOnlineAircraft(userAircraft->getAircraft());
+
+                                  if(shadowedOnlineAircraft.isValid())
+                                    text = tr("&Show %1 in Search").arg(map::aircraftTextShort(shadowedOnlineAircraft));
+                                }
+                              }
+                            };
+
   MapResultIndex index;
   index.addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT | map::AIRSPACE |
-               map::AIRCRAFT | map::AIRCRAFT_AI | map::AIRCRAFT_ONLINE | map::LOGBOOK).
-  sort(DEFAULT_TYPE_SORT, alphaSort);
+               map::AIRCRAFT | map::AIRCRAFT_ONLINE | map::LOGBOOK).sort(DEFAULT_TYPE_SORT, alphaSort);
 
   // Erase all non-online airspaces and aircraft which are not online client shadows
   index.erase(std::remove_if(index.begin(), index.end(), [](const map::MapBase *base) -> bool
@@ -1061,15 +1101,12 @@ void MapContextMenu::insertShowInSearchMenu(QMenu& menu)
     if(base->getType() == map::AIRSPACE)
       return !base->asPtr<map::MapAirspace>()->src.testFlag(map::AIRSPACE_SRC_ONLINE);
 
-    if(base->objType == map::AIRCRAFT || base->objType == map::AIRCRAFT_AI)
-      return !map::isAircraftShadow(base);
-
     return false;
   }), index.end());
 
   insertMenuOrAction(menu, mc::SHOWINSEARCH, index,
                      tr("&Show %1 in Search"), tr("Show the airport, navaid, userpoint or other object in the search window"),
-                     QString(), QIcon(":/littlenavmap/resources/icons/search.svg"));
+                     QString(), QIcon(":/littlenavmap/resources/icons/search.svg"), false, callback);
 }
 
 bool MapContextMenu::exec(QPoint menuPos, QPoint point)
@@ -1097,9 +1134,6 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
   screenIndex->getAllNearest(point.x(), point.y(), screenSearchDist, *result,
                              map::QUERY_MARK | map::QUERY_PREVIEW_PROC_POINTS | map::QUERY_PROC_RECOMMENDED);
 
-  // Remove online aircraft from onlineAircraft which also have a simulator shadow in simAircraft
-  // Menus should only show the online part
-  NavApp::getOnlinedataController()->filterOnlineShadowAircraft(result->onlineAircraft, result->aiAircraft);
   result->moveOnlineAirspacesToFront();
 
   // Disable all general menu items that depend on position ===========================

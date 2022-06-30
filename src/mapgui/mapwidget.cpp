@@ -333,7 +333,7 @@ void MapWidget::handleInfoClick(QPoint point)
                                        map::QUERY_NONE /* For double click */);
 
   // Removes the online aircraft from onlineAircraft which also have a simulator shadow in simAircraft
-  NavApp::getOnlinedataController()->filterOnlineShadowAircraft(mapSearchResultInfoClick->onlineAircraft,
+  NavApp::getOnlinedataController()->removeOnlineShadowedAircraft(mapSearchResultInfoClick->onlineAircraft,
                                                                 mapSearchResultInfoClick->aiAircraft);
 
   // Remove all unwanted features
@@ -506,7 +506,7 @@ void MapWidget::updateTooltipResult()
   QPoint pos = mapFromGlobal(tooltipGlobalPos);
   getScreenIndexConst()->getAllNearest(pos.x(), pos.y(), screenSearchDistanceTooltip, *mapSearchResultTooltip, queryTypes);
 
-  NavApp::getOnlinedataController()->filterOnlineShadowAircraft(mapSearchResultTooltip->onlineAircraft, mapSearchResultTooltip->aiAircraft);
+  NavApp::getOnlinedataController()->removeOnlineShadowedAircraft(mapSearchResultTooltip->onlineAircraft, mapSearchResultTooltip->aiAircraft);
 }
 
 void MapWidget::hideTooltip()
@@ -3231,21 +3231,20 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
   {
     // Can only show online clients if aircraft is shadow of a client
     map::MapUserAircraft aircraft = base->asObj<map::MapUserAircraft>();
-    atools::fs::sc::SimConnectAircraft shadowAircraft;
-    NavApp::getOnlinedataController()->getShadowAircraft(shadowAircraft, aircraft.getAircraft());
-    emit showInSearch(map::AIRCRAFT_ONLINE,
-                      SqlRecord().appendFieldAndValue("callsign", shadowAircraft.getAirplaneRegistration()),
-                      true /* select */);
+    atools::fs::sc::SimConnectAircraft shadowAircraft = NavApp::getOnlinedataController()->getShadowedOnlineAircraft(aircraft.getAircraft());
+
+    if(shadowAircraft.isValid())
+      emit showInSearch(map::AIRCRAFT_ONLINE, SqlRecord().appendFieldAndValue("callsign", shadowAircraft.getAirplaneRegistration()),
+                        true /* select */);
   }
   else if(base->objType == map::AIRCRAFT_AI)
   {
     // Can only show online clients if aircraft is shadow of a client
     map::MapAiAircraft aircraft = base->asObj<map::MapAiAircraft>();
-    atools::fs::sc::SimConnectAircraft shadowAircraft;
-    NavApp::getOnlinedataController()->getShadowAircraft(shadowAircraft, aircraft.getAircraft());
-    emit showInSearch(map::AIRCRAFT_ONLINE,
-                      SqlRecord().appendFieldAndValue("callsign", shadowAircraft.getAirplaneRegistration()),
-                      true /* select */);
+    atools::fs::sc::SimConnectAircraft shadowAircraft = NavApp::getOnlinedataController()->getShadowedOnlineAircraft(aircraft.getAircraft());
+    if(shadowAircraft.isValid())
+      emit showInSearch(map::AIRCRAFT_ONLINE, SqlRecord().appendFieldAndValue("callsign", shadowAircraft.getAirplaneRegistration()),
+                        true /* select */);
   }
   else if(base->objType == map::AIRCRAFT_ONLINE)
     emit showInSearch(map::AIRCRAFT_ONLINE, SqlRecord().appendFieldAndValue("callsign",

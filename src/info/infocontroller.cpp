@@ -625,78 +625,98 @@ void InfoController::onlineClientAndAtcUpdated()
   showInformationInternal(currentSearchResult, false /* show windows */, false /* scroll to top */, true /* forceUpdate */);
 }
 
-/* Show information in all tabs but do not show dock
- *  @return true if information was updated */
+/* Show information in all tabs but do not show dock */
 void InfoController::showInformationInternal(map::MapResult result, bool showWindows, bool scrollToTop, bool forceUpdate)
 {
 #ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "======================================================";
   qDebug() << Q_FUNC_INFO << "result" << result;
   qDebug() << Q_FUNC_INFO << "currentSearchResult" << currentSearchResult;
 #endif
 
-  bool foundAirport = false, foundNavaid = false, foundUserpoint = false,
-       foundUserAircraft = false, foundUserAircraftShadow = false,
-       foundAiAircraft = false, foundOnlineClient = false,
-       foundAirspace = false, foundLogbookEntry = false, foundOnlineCenter = false;
+  // Flags used to decide which tab and window to raise
+  bool foundAirport = false, foundNavaid = false, foundUserpoint = false, foundUserAircraft = false, foundUserAircraftShadow = false,
+       foundAiAircraft = false, foundOnlineClient = false, foundAirspace = false, foundLogbookEntry = false, foundOnlineCenter = false;
+
   HtmlBuilder html(true);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
-  OnlinedataController *odc = NavApp::getOnlinedataController();
+  OnlinedataController *onlineDataController = NavApp::getOnlinedataController();
 
+  // Check for shadowed user aircraft ======================================
   currentSearchResult.userAircraft = result.userAircraft;
   foundUserAircraft = currentSearchResult.userAircraft.isValid();
   if(foundUserAircraft)
     foundUserAircraftShadow = currentSearchResult.userAircraft.getAircraft().isOnlineShadow();
 
-  // Remember the clicked AI for the next update - copy to currentSearchResult ====================
-  if(!result.aiAircraft.isEmpty())
+  // Filter online and AI aircraft with shadows ============================================================
+  if(!result.aiAircraft.isEmpty() || !result.onlineAircraft.isEmpty())
   {
-    qDebug() << "Found AI";
-    currentSearchResult.aiAircraft.clear();
+    QList<map::MapAiAircraft> aiAircraftList;
+    QList<map::MapOnlineAircraft> onlineAircraftList;
+    QSet<int> onlineIds;
 
+    // Get shadowed online aircraft from AI shadows ====================
     for(const map::MapAiAircraft& mapAiAircraft : result.aiAircraft)
     {
-      if(mapAiAircraft.getAircraft().isOnlineShadow())
+      atools::fs::sc::SimConnectAircraft onlineAircraft = onlineDataController->getShadowedOnlineAircraft(mapAiAircraft.getAircraft());
+
+      if(onlineAircraft.isValid())
       {
-        // Copy aircraft from the AI list to the online list if they are shadows
-
-        // First check if there is already an online aircraft with the same registration in the online list
-        auto it = std::find_if(result.onlineAircraft.constBegin(), result.onlineAircraft.constEnd(),
-                               [&mapAiAircraft](const map::MapOnlineAircraft& ac) -> bool
-        {
-          return ac.getAircraft().getAirplaneRegistration() == mapAiAircraft.getAircraft().getAirplaneRegistration();
-        });
-
-        if(it == result.onlineAircraft.constEnd())
-        {
-          // Not found - get shadow and add to online list
-          SimConnectAircraft ac;
-          odc->getShadowAircraft(ac, mapAiAircraft.getAircraft());
-          result.onlineAircraft.append(map::MapOnlineAircraft(ac));
-        }
-        else
-          currentSearchResult.aiAircraft.append(mapAiAircraft);
+        onlineAircraftList.append(map::MapOnlineAircraft(onlineAircraft));
+        onlineIds.insert(onlineAircraft.getId());
       }
-      else
-        currentSearchResult.aiAircraft.append(mapAiAircraft);
+      aiAircraftList.append(mapAiAircraft);
     }
 
-    currentSearchResult.aiAircraft = result.aiAircraft;
-    foundAiAircraft = true;
+    // Add present online aircraft which are not already added by shadow above ================
+    for(const map::MapOnlineAircraft& mapOnlineAircraft : result.onlineAircraft)
+    {
+      if(!onlineIds.contains(mapOnlineAircraft.getId()))
+        onlineAircraftList.append(map::MapOnlineAircraft(mapOnlineAircraft));
+    }
+
+    if(!onlineAircraftList.isEmpty())
+      // Copy to result for online display below
+      result.onlineAircraft = onlineAircraftList;
+
+    if(!aiAircraftList.isEmpty())
+    {
+      // Copy to current result for updateAiAircraftText()
+      currentSearchResult.aiAircraft = aiAircraftList;
+      foundAiAircraft = true;
+    }
   }
 
-  // AI aircraft ================================================================
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "result" << result;
+  qDebug() << Q_FUNC_INFO << "currentSearchResult" << currentSearchResult;
+#endif
+
+  // Check showWindows which indicates info click - update only once here
+  if(foundAiAircraft && showWindows)
+    // Uses currentSearchResult.aiAircraft
+    updateAiAircraftText();
+
+  // Online aircraft and user aircraft shadow ================================================================
   if(foundUserAircraftShadow || !result.onlineAircraft.isEmpty())
   {
     // User aircraft shadow ================================
     int num = 1;
     if(foundUserAircraftShadow)
     {
-      SimConnectAircraft ac;
-      odc->getShadowAircraft(ac, currentSearchResult.userAircraft.getAircraft());
-      infoBuilder->aircraftText(ac, html, num++, odc->getNumClients());
-      infoBuilder->aircraftProgressText(ac, html, Route());
-      infoBuilder->aircraftOnlineText(ac, odc->getClientRecordById(ac.getId()), html);
+      SimConnectAircraft ac = onlineDataController->getShadowedOnlineAircraft(currentSearchResult.userAircraft.getAircraft());
+      if(ac.isValid())
+      {
+        infoBuilder->aircraftText(ac, html, num++, onlineDataController->getNumClients());
+        infoBuilder->aircraftProgressText(ac, html, Route());
+        infoBuilder->aircraftOnlineText(ac, onlineDataController->getClientRecordById(ac.getId()), html);
+
+        // Clear online aircraft to avoid them returning to display
+        result.onlineAircraft.clear();
+        currentSearchResult.onlineAircraft.clear();
+        currentSearchResult.onlineAircraftIds.clear();
+      }
     }
 
     // Online aircraft ================================
@@ -708,8 +728,7 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
 
       for(const map::MapOnlineAircraft& mapOnlineAircraft : result.onlineAircraft)
       {
-        atools::fs::sc::SimConnectAircraft ac;
-        NavApp::getOnlinedataController()->getClientAircraftById(ac, mapOnlineAircraft.getId());
+        atools::fs::sc::SimConnectAircraft ac = onlineDataController->getClientAircraftById(mapOnlineAircraft.getId());
 
         if(!ac.isValid())
         {
@@ -719,14 +738,15 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
                      << mapOnlineAircraft.getId() << mapOnlineAircraft.getAircraft().getAirplaneRegistration();
         }
 
-        infoBuilder->aircraftText(ac, html, num++, odc->getNumClients());
+        infoBuilder->aircraftText(ac, html, num++, onlineDataController->getNumClients());
         infoBuilder->aircraftProgressText(ac, html, Route());
-        infoBuilder->aircraftOnlineText(ac, odc->getClientRecordById(ac.getId()), html);
+        infoBuilder->aircraftOnlineText(ac, onlineDataController->getClientRecordById(ac.getId()), html);
         currentSearchResult.onlineAircraft.append(map::MapOnlineAircraft(ac));
       }
     }
-    atools::gui::util::updateTextEdit(ui->textBrowserClientInfo, html.getHtml(),
-                                      false /* scroll to top*/, true /* keep selection */);
+    atools::gui::util::updateTextEdit(ui->textBrowserClientInfo, html.getHtml(), false /* scroll to top*/, true /* keep selection */);
+
+    // User or AI shadowed
     foundOnlineClient = true;
   }
 
@@ -1095,8 +1115,7 @@ void InfoController::styleChanged()
   tabHandlerInfo->styleChanged();
   tabHandlerAirportInfo->styleChanged();
   tabHandlerAircraft->styleChanged();
-  showInformationInternal(currentSearchResult, false /* Show windows */, false /* scroll to top */,
-                          true /* forceUpdate */);
+  showInformationInternal(currentSearchResult, false /* Show windows */, false /* scroll to top */, true /* forceUpdate */);
 }
 
 void InfoController::tracksChanged()
@@ -1110,8 +1129,7 @@ void InfoController::tracksChanged()
   }), currentSearchResult.airways.end());
 
   // Update all tabs and force update
-  showInformationInternal(currentSearchResult, false /* Show windows */, false /* scroll to top */,
-                          true /* forceUpdate */);
+  showInformationInternal(currentSearchResult, false /* Show windows */, false /* scroll to top */, true /* forceUpdate */);
 }
 
 void InfoController::updateUserAircraftText()
@@ -1247,7 +1265,7 @@ void InfoController::updateAiAircraftText()
   }
 }
 
-void InfoController::simDataChanged(atools::fs::sc::SimConnectData data)
+void InfoController::simDataChanged(const atools::fs::sc::SimConnectData& data)
 {
   if(databaseLoadStatus)
     return;
@@ -1346,8 +1364,7 @@ void InfoController::updateAircraftInfo()
 void InfoController::optionsChanged()
 {
   updateTextEditFontSizes();
-  showInformationInternal(currentSearchResult, false /* Show windows */, false /* scroll to top */,
-                          true /* forceUpdate */);
+  showInformationInternal(currentSearchResult, false /* Show windows */, false /* scroll to top */, true /* forceUpdate */);
   updateAircraftInfo();
 }
 

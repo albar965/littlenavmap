@@ -58,6 +58,7 @@
 #include "weather/windreporter.h"
 #include "route/routealtitude.h"
 #include "mapgui/mappaintwidget.h"
+#include "online/onlinedatacontroller.h"
 
 #include <QSize>
 #include <QUrl>
@@ -3461,25 +3462,28 @@ void HtmlInfoBuilder::procedurePointText(const map::MapProcedurePoint& procPoint
 void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& aircraft, HtmlBuilder& html, int num, int total)
 {
 #ifdef DEBUG_INFORMATION
-  html.textBr("[HtmlInfoBuilder::aircraftText()]").textBr(QString("[online %1 shadow %2]").
-                                                          arg(aircraft.isOnline()).arg(aircraft.isOnlineShadow()));
+  html.textBr("[HtmlInfoBuilder::aircraftText()]").textBr(QString("[online %1 shadow %2 id %3]").
+                                                          arg(aircraft.isOnline()).
+                                                          arg(aircraft.isOnlineShadow()).
+                                                          arg(aircraft.getObjectId()));
 #endif
 
+  // Icon and title
   aircraftTitle(aircraft, html);
 
-  QString aircraftText;
-  QString typeText;
-  QString type = map::aircraftTypeString(aircraft);
-  if(aircraft.isUser() && aircraft.isOnlineShadow())
-    typeText = tr("User %1 / Online Client").arg(type);
-  else if(aircraft.isUser())
-    typeText = tr("User %1").arg(type);
-  else if(aircraft.isOnlineShadow())
-    typeText = tr("AI / Multiplayer %1 / Online Client").arg(type);
+  // Show note for online/simulator shadow relation ===========================
+  if(aircraft.isOnlineShadow())
+  {
+    atools::fs::sc::SimConnectAircraft onlineAircraft = NavApp::getOnlinedataController()->getShadowedOnlineAircraft(aircraft);
+    if(onlineAircraft.isValid())
+      html.p(tr("Simulator aircraft for online client %1.").arg(onlineAircraft.getAirplaneRegistration()));
+  }
   else if(aircraft.isOnline())
-    typeText = tr("Online Client");
-  else
-    typeText = tr("AI / Multiplayer %1").arg(type);
+  {
+    atools::fs::sc::SimConnectAircraft simAircraft = NavApp::getOnlinedataController()->getShadowSimAircraft(aircraft.getId());
+    if(simAircraft.isValid())
+      html.p(tr("Online client related to simulator aircraft %1.").arg(simAircraft.getAirplaneRegistration()));
+  }
 
   if(verbose)
   {
@@ -3516,6 +3520,20 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
 
     html.p(atools::strJoin(texts, tr(", ")), ahtml::NO_ENTITIES);
   }
+
+  QString aircraftText;
+  QString typeText;
+  QString type = map::aircraftTypeString(aircraft);
+  if(aircraft.isUser() && aircraft.isOnlineShadow())
+    typeText = tr("User %1 / Online Client").arg(type);
+  else if(aircraft.isUser())
+    typeText = tr("User %1").arg(type);
+  else if(aircraft.isOnlineShadow())
+    typeText = tr("AI / Multiplayer %1 / Online Client").arg(type);
+  else if(aircraft.isOnline())
+    typeText = tr("Online Client");
+  else
+    typeText = tr("AI / Multiplayer %1").arg(type);
 
   if(aircraft.isUser())
   {

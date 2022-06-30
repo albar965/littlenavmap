@@ -71,6 +71,7 @@ public:
   bool hasSameQueryParametersIls(const MapLayer *other) const;
   bool hasSameQueryParametersHolding(const MapLayer *other) const;
   bool hasSameQueryParametersAirportMsa(const MapLayer *other) const;
+  bool hasSameQueryParametersAircraft(const MapLayer *other) const;
 
   bool operator<(const MapLayer& other) const;
 

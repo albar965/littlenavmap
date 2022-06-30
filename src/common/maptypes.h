@@ -813,7 +813,7 @@ struct MapUserAircraft
   }
 
   explicit MapUserAircraft(const atools::fs::sc::SimConnectUserAircraft& aircraftParam)
-    : MapBase(map::AIRCRAFT, static_cast<int>(aircraftParam.getObjectId()), aircraftParam.getPosition()),
+    : MapBase(map::AIRCRAFT, aircraftParam.getId(), aircraftParam.getPosition()),
     aircraft(aircraftParam)
   {
   }
@@ -844,7 +844,7 @@ struct MapAiAircraft
   }
 
   explicit MapAiAircraft(const atools::fs::sc::SimConnectAircraft& aircraftParam)
-    : MapBase(map::AIRCRAFT_AI, static_cast<int>(aircraftParam.getObjectId()),
+    : MapBase(map::AIRCRAFT_AI, aircraftParam.getId(),
               aircraftParam.getPosition()), aircraft(aircraftParam)
   {
   }
@@ -867,7 +867,7 @@ struct MapOnlineAircraft
   }
 
   explicit MapOnlineAircraft(const atools::fs::sc::SimConnectAircraft& aircraftParam)
-    : MapBase(map::AIRCRAFT_ONLINE, static_cast<int>(aircraftParam.getObjectId()),
+    : MapBase(map::AIRCRAFT_ONLINE, aircraftParam.getId(),
               aircraftParam.getPosition()), aircraft(aircraftParam)
   {
   }

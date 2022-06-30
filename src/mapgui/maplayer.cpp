@@ -96,6 +96,14 @@ bool MapLayer::hasSameQueryParametersAirportMsa(const MapLayer *other) const
   return airportMsa == other->airportMsa;
 }
 
+bool MapLayer::hasSameQueryParametersAircraft(const MapLayer *other) const
+{
+  return onlineAircraft == other->onlineAircraft &&
+         aiAircraftLarge == other->aiAircraftLarge &&
+         aiAircraftSmall == other->aiAircraftSmall &&
+         aiAircraftGround == other->aiAircraftGround;
+}
+
 bool MapLayer::operator<(const MapLayer& other) const
 {
   return maxRange < other.maxRange;

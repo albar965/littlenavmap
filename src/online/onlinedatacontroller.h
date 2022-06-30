@@ -18,12 +18,13 @@
 #ifndef LNM_ONLINECONTROLLER_H
 #define LNM_ONLINECONTROLLER_H
 
+#include "fs/online/onlinetypes.h"
+#include "geo/spatialindex.h"
+#include "query/querytypes.h"
+
 #include <QDateTime>
 #include <QObject>
 #include <QTimer>
-
-#include "query/querytypes.h"
-#include "fs/online/onlinetypes.h"
 
 class MapLayer;
 
@@ -111,13 +112,13 @@ public:
   const QList<atools::fs::sc::SimConnectAircraft> *getAircraftFromCache();
 
   /* Fill aircraft object from table "client" in database. */
-  void getClientAircraftById(atools::fs::sc::SimConnectAircraft& aircraft, int id);
+  atools::fs::sc::SimConnectAircraft getClientAircraftById(int id);
 
-  static void fillAircraftFromClient(atools::fs::sc::SimConnectAircraft& ac, const atools::sql::SqlRecord& record);
+  /* Fill from a record based on table "client". Tries to get sim shadow aircraft and fill additional fields. */
+  void fillAircraftFromClient(atools::fs::sc::SimConnectAircraft& ac, const atools::sql::SqlRecord& record);
 
-  /* Removes the online aircraft from onlineAircraft which also have a simulator shadow in simAircraft */
-  void filterOnlineShadowAircraft(QList<map::MapOnlineAircraft>& onlineAircraft,
-                                  const QList<map::MapAiAircraft>& simAircraft);
+  /* Removes the online aircraft from "onlineAircraft" which also have a simulator shadow in "simAircraft" */
+  void removeOnlineShadowedAircraft(QList<map::MapOnlineAircraft>& onlineAircraftList, const QList<map::MapAiAircraft>& simAircraftList);
 
   /* Get client record with all field values */
   atools::sql::SqlRecord getClientRecordById(int clientId);
@@ -128,15 +129,19 @@ public:
   /* Create and prepare all queries */
   void deInitQueries();
 
+  /* Get number of online clients/aircraft */
   int getNumClients() const;
 
-  /* Get an online network aircraft that has the same registration as the simulator aircraft and is close by */
-  bool getShadowAircraft(atools::fs::sc::SimConnectAircraft& onlineClient,
-                         const atools::fs::sc::SimConnectAircraft& simAircraft);
+  /* Get an online network aircraft for given simulator shadow aircraft with updated position */
+  atools::fs::sc::SimConnectAircraft getShadowedOnlineAircraft(const atools::fs::sc::SimConnectAircraft& simAircraft);
 
-  /* True if there is an online network aircraft that has the same registration as the simulator aircraft and is close.
-   * Used by connect client to set the flag in the simulator data. */
-  bool isShadowAircraft(const atools::fs::sc::SimConnectAircraft& simAircraft);
+  /* Get an simulator shadow aircraft for given online aircraft id */
+  const atools::fs::sc::SimConnectAircraft& getShadowSimAircraft(int onlineId);
+
+  /* Modify AI and user aircraft and set shadow flag if a online network aircraft with the same id exists.
+   * Also stores simulator aircraft data to maintain spatial index.
+   * Called by ConnectClient after receiving simulator data package. */
+  void updateAircraftShadowState(atools::fs::sc::SimConnectData& dataPacket);
 
 signals:
   /* Sent whenever new data was downloaded */
@@ -147,6 +152,9 @@ signals:
   void onlineNetworkChanged();
 
 private:
+  /* True if there is an online network aircraft that has similar position and altitude as the simulator aircraft. */
+  bool isShadowAircraft(const atools::fs::sc::SimConnectAircraft& simAircraft);
+
   /* HTTP download signal slots for all possible files/URLs */
   void downloadFinished(const QByteArray& data, QString url);
   void downloadFailed(const QString& error, int errorCode, QString url);
@@ -165,6 +173,13 @@ private:
 
   /* Tries to fetch geometry for atc centers from the user geometry database from cache */
   const atools::geo::LineString *airspaceGeometryCallback(const QString& callsign, atools::fs::online::fac::FacilityType type);
+
+  /* Called after each download */
+  void updateShadowIndex();
+  void clearShadowIndexes();
+
+  /* Return online aircraft for simulator aircraft based on distance and other parameter similarity */
+  atools::fs::online::OnlineAircraft shadowAircraftInternal(const atools::fs::sc::SimConnectAircraft& simAircraft);
 
   /* Database manager */
   atools::fs::online::OnlinedataManager *manager;
@@ -204,13 +219,23 @@ private:
 
   QTextCodec *codec = nullptr;
 
-  bool verbose = false;
+  bool verbose = false, disableShadow = false;
 
-  /* Simulator aircraft registrations and positions */
-  QHash<QString, atools::geo::Pos> simulatorAiRegistrations;
+  // All online aircraft from download for spatial search (nearest)
+  atools::geo::SpatialIndex<atools::fs::online::OnlineAircraft> onlineAircraftSpatialIndex;
 
-  QHash<QString, atools::geo::Pos> clientCallsignAndPosMap;
+  // Keys use either online database semi-permanent id or object ID from simulator. Includes user
+  // modeS_id for X-Plane: integer 24bit (0-16777215 or 0 - 0xFFFFFF) unique ID of the airframe. This is also known as the ADS-B "hexcode".
+  // dwObjectID for SimConnect
+  // Table and column "client.client_id" for online aircraft. Calculated as semi-permanent id. */
+  QHash<int, int> aircraftIdSimToOnline, // All shadow aircraft mapped from sim key to online value
+                  aircraftIdOnlineToSim; // Shadow aircraft mapped from online key to sim value
 
+  // Time series of all data received from simulator. Needed to get a set of aircraft which
+  // fit to the last update time of the downloaded whazzup file
+  QMap<QDateTime, atools::fs::sc::SimConnectData> currentDataPacketMap;
+
+  // Cache used for map display
   query::SimpleRectCache<atools::fs::sc::SimConnectAircraft> aircraftCache;
   atools::sql::SqlQuery *aircraftByRectQuery = nullptr;
 };

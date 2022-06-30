@@ -173,8 +173,7 @@ void sortByDistance(QList<TYPE>& list, const atools::geo::Pos& pos)
   if(list.size() <= 1 || !pos.isValid())
     return;
 
-  std::sort(list.begin(), list.end(),
-            [ = ](const TYPE& t1, const TYPE& t2) -> bool
+  std::sort(list.begin(), list.end(), [ = ](const TYPE& t1, const TYPE& t2) -> bool
     {
       return t1.getPosition().distanceMeterTo(pos) < t2.getPosition().distanceMeterTo(pos);
     });
@@ -186,10 +185,34 @@ void sortByDistance(QVector<TYPE>& list, const atools::geo::Pos& pos)
   if(list.size() <= 1 || !pos.isValid())
     return;
 
-  std::sort(list.begin(), list.end(),
-            [ = ](const TYPE& t1, const TYPE& t2) -> bool
+  std::sort(list.begin(), list.end(), [ = ](const TYPE& t1, const TYPE& t2) -> bool
     {
       return t1.getPosition().distanceMeterTo(pos) < t2.getPosition().distanceMeterTo(pos);
+    });
+}
+
+/* Sorts elements by distance to a point including simple altitude difference */
+template<typename TYPE>
+void sortByDistanceAndAltitude(QList<TYPE>& list, const atools::geo::Pos& pos, float altitudeWeight = 1.f)
+{
+  if(list.size() <= 1 || !pos.isValid())
+    return;
+
+  std::sort(list.begin(), list.end(), [ = ](const TYPE& t1, const TYPE& t2) -> bool
+    {
+      return t1.getPosition().distanceMeterTo3d(pos, altitudeWeight) < t2.getPosition().distanceMeterTo3d(pos, altitudeWeight);
+    });
+}
+
+template<typename TYPE>
+void sortByDistanceAndAltitude(QVector<TYPE>& list, const atools::geo::Pos& pos, float altitudeWeight = 1.f)
+{
+  if(list.size() <= 1 || !pos.isValid())
+    return;
+
+  std::sort(list.begin(), list.end(), [ = ](const TYPE& t1, const TYPE& t2) -> bool
+    {
+      return t1.getPosition().distanceMeterTo3d(pos, altitudeWeight) < t2.getPosition().distanceMeterTo3d(pos, altitudeWeight);
     });
 }
 
