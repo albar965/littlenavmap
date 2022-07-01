@@ -198,6 +198,7 @@ void RouteExportFormatMap::initCallbacks(RouteExport *routeExport)
   (*this)[TXT         ].CB(bind(&RouteExport::routeExportTxtMulti,          routeExport, _1));
   (*this)[TXTJAR      ].CB(bind(&RouteExport::routeExportTxtMulti,          routeExport, _1));
   (*this)[RTE         ].CB(bind(&RouteExport::routeExportRteMulti,          routeExport, _1));
+  (*this)[RTEMSFS     ].CB(bind(&RouteExport::routeExportRteMulti,          routeExport, _1));
   (*this)[GPX         ].CB(bind(&RouteExport::routeExportGpx,               routeExport, _1));
   (*this)[HTML        ].CB(bind(&RouteExport::routeExportHtml,              routeExport, _1));
   (*this)[FPR         ].CB(bind(&RouteExport::routeExportFprMulti,          routeExport, _1));
@@ -283,6 +284,7 @@ void RouteExportFormatMap::init()
   FMT(TXT,          AIRPORTS,         S0 % tr("txt"),     tr("Aircraft"),  tr("Rotate MD-80, MD-11 and others")                                  );
   FMT(TXTJAR,       AIRPORTS,         S0 % tr("txt"),     tr("Aircraft"),  tr("JARDesign aircraft")                                              );
   FMT(RTE,          AIRPORTS,         S0 % tr("rte"),     tr("Aircraft"),  tr("PMDG aircraft")                                                   );
+  FMT(RTEMSFS,      AIRPORTS,         S0 % tr("rte"),     tr("Aircraft"),  tr("PMDG aircraft for MSFS")                                          );
   FMT(GPX,          NONE,             DF % tr("gpx"),     tr("Other"),     tr("Garmin exchange format for Google Earth and others") % gpxTooltip % mainMenu );
   FMT(HTML,         NONE,             DF % tr("html"),    tr("Other"),     tr("HTML flight plan web page") % mainMenu                            );
   FMT(FPR,          AIRPORTS,         S0 % tr("fpr"),     tr("Aircraft"),  tr("Majestic Dash MJC8 Q400")                                         );
@@ -344,7 +346,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   if(xpFilesPath.isEmpty())
     xpFilesPath = documents;
 
-  // Get MSFS base path ===========================
+  // Get MSFS files path (LocalState) ===========================
   QString msfsFilesPath = NavApp::getSimulatorFilesPathBest({FsPaths::MSFS});
   if(msfsFilesPath.isEmpty())
     msfsFilesPath = documents;
@@ -421,6 +423,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[TXT         ].DP(xpBasePath % SEP % "Aircraft");
   (*this)[TXTJAR      ].DP(xpBasePath % SEP % "Aircraft");
   (*this)[RTE         ].DP(fsxP3dBasePath % SEP % "PMDG" % SEP % "FLIGHTPLANS");
+  (*this)[RTEMSFS     ].DP(msfsFilesPath % SEP % "packages" % SEP % "pmdg-aircraft-737" % SEP % "work" % SEP % "Flightplans");
   (*this)[GPX         ].DP(documents);
   (*this)[HTML        ].DP(documents);
   (*this)[FPR         ].DP(fsxP3dBasePath % SEP % "SimObjects" % SEP % "Airplanes" % SEP % "mjc8q400" % SEP % "nav" % SEP % "routes");
