@@ -141,6 +141,8 @@ bool AircraftPerfController::editInternal(atools::fs::perf::AircraftPerf& editPe
   if(dialog.exec() == QDialog::Accepted)
   {
     editPerf = dialog.getAircraftPerf();
+    if(dialog.isSaveClicked())
+      save();
     return true;
   }
   else
@@ -262,6 +264,9 @@ void AircraftPerfController::loadAndMerge()
       mainWindow->showAircraftPerformance();
       emit aircraftPerformanceChanged(perf);
       NavApp::setStatusMessage(tr("Aircraft performance merged."));
+
+      if(dialog.isSaveClicked())
+        save();
     }
   }
 }
@@ -319,6 +324,9 @@ void AircraftPerfController::mergeCollected()
     updateReport();
     emit aircraftPerformanceChanged(perf);
     NavApp::setStatusMessage(tr("Aircraft performance merged."));
+
+    if(dialog.isSaveClicked())
+      save();
   }
 }
 

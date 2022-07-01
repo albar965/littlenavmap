@@ -48,6 +48,9 @@ PerfMergeDialog::PerfMergeDialog(QWidget *parent, const AircraftPerf& sourcePerf
 
   ui->setupUi(this);
 
+  ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("&Merge"));
+  ui->buttonBox->button(QDialogButtonBox::Save)->setText(tr("Merge and &Save"));
+
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &PerfMergeDialog::buttonBoxClicked);
 
   // Push buttons to set all combo boxes to same index
@@ -174,9 +177,15 @@ void PerfMergeDialog::buttonBoxClicked(QAbstractButton *button)
     process();
     QDialog::accept();
   }
+  else if(button == ui->buttonBox->button(QDialogButtonBox::Save))
+  {
+    saveClicked = true;
+    saveState();
+    process();
+    QDialog::accept();
+  }
   else if(button == ui->buttonBox->button(QDialogButtonBox::Help))
-    atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "AIRCRAFTPERFMERGE.html",
-                                             lnm::helpLanguageOnline());
+    atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "AIRCRAFTPERFMERGE.html", lnm::helpLanguageOnline());
   else if(button == ui->buttonBox->button(QDialogButtonBox::Cancel))
   {
     saveState();

@@ -59,6 +59,12 @@ public:
     return changed;
   }
 
+  /* User clicked "Save perf" button */
+  bool isSaveClicked() const
+  {
+    return saveClicked;
+  }
+
 private:
   /* Indexes of all combo boxes for numeric values */
   enum ComboBoxIndexNum
@@ -104,7 +110,7 @@ private:
   atools::fs::perf::AircraftPerf *from;
   atools::fs::perf::AircraftPerf& to;
 
-  bool showAllWidgets = true, changed = false;
+  bool showAllWidgets = true, changed = false, saveClicked = false;
 };
 
 #endif // PERFMERGEDIALOG_H

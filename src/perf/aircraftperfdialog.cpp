@@ -44,6 +44,8 @@ AircraftPerfDialog::AircraftPerfDialog(QWidget *parent, const atools::fs::perf::
 
   ui->setupUi(this);
 
+  ui->buttonBox->button(QDialogButtonBox::Save)->setText(tr("OK and &Save"));
+
   setWindowTitle(windowTitle().arg(modeText));
 
   // Copy performance object
@@ -174,6 +176,12 @@ void AircraftPerfDialog::buttonBoxClicked(QAbstractButton *button)
 {
   if(button == ui->buttonBox->button(QDialogButtonBox::Ok))
   {
+    fromDialogToPerf(perf);
+    QDialog::accept();
+  }
+  else if(button == ui->buttonBox->button(QDialogButtonBox::Save))
+  {
+    saveClicked = true;
     fromDialogToPerf(perf);
     QDialog::accept();
   }

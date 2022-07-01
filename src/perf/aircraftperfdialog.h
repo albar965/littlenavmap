@@ -56,6 +56,12 @@ public:
   /* Get edited performance data */
   atools::fs::perf::AircraftPerf getAircraftPerf() const;
 
+  /* User clicked "Save perf" button */
+  bool isSaveClicked() const
+  {
+    return saveClicked;
+  }
+
 private:
   /* comboBoxFuelUnit index */
   enum FuelUnit
@@ -106,6 +112,8 @@ private:
 
   /* Set based on the fuel unit combo box */
   FuelUnit fuelUnit = WEIGHT_LBS;
+
+  bool saveClicked = false;
 };
 
 #endif // LNM_AIRCRAFTPERFDIALOG_H
