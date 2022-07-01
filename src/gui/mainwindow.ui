@@ -9951,13 +9951,13 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/minaltitude.svg</normaloff>:/littlenavmap/resources/icons/minaltitude.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;Minimum Altitude</string>
+    <string>Show &amp;Minimum off-route Altitude Grid</string>
    </property>
    <property name="toolTip">
-    <string>Show Minimum Altitude (MORA) on the map</string>
+    <string>Show minimum off-route altitude (MORA) grid on the map</string>
    </property>
    <property name="statusTip">
-    <string>Show Minimum Altitude (MORA) on the map</string>
+    <string>Show minimum off-route altitude (MORA) grid on the map</string>
    </property>
   </action>
   <action name="actionMapTrafficPattern">
