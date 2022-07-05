@@ -85,7 +85,6 @@
         <file>resources/icons/airwayvictor.svg</file>
         <file>resources/icons/application-exit.svg</file>
         <file>resources/icons/approach.svg</file>
-        <file>resources/icons/approachcustom.svg</file>
         <file>resources/icons/approachguide.svg</file>
         <file>resources/icons/approachselect.svg</file>
         <file>resources/icons/approachunselect.svg</file>
@@ -181,7 +180,6 @@
         <file>resources/icons/network.svg</file>
         <file>resources/icons/newroutefromstring.svg</file>
         <file>resources/icons/next.svg</file>
-        <file>resources/icons/offline.svg</file>
         <file>resources/icons/parkingfuel.svg</file>
         <file>resources/icons/parkinggate.svg</file>
         <file>resources/icons/parkinghangar.svg</file>
@@ -321,5 +319,6 @@
         <file>resources/icons/aircraft_jet_online.svg</file>
         <file>resources/icons/aircraft_small_ground_online.svg</file>
         <file>resources/icons/aircraft_small_online.svg</file>
+        <file>resources/icons/turnpath.svg</file>
     </qresource>
 </RCC>

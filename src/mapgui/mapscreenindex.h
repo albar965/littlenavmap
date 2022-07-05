@@ -18,12 +18,25 @@
 #ifndef LITTLENAVMAP_MAPSCREENINDEX_H
 #define LITTLENAVMAP_MAPSCREENINDEX_H
 
-#include "fs/sc/simconnectdata.h"
 #include "common/mapflags.h"
 
+#include <QDateTime>
+#include <QHash>
+
 namespace atools {
+namespace fs {
+namespace sc {
+class SimConnectData;
+class SimConnectAircraft;
+class SimConnectUserAircraft;
+}
+}
+namespace util {
+class MovingAverageTime;
+}
 namespace geo {
 class Line;
+class Pos;
 }
 }
 
@@ -33,27 +46,27 @@ struct MapProcedureLegs;
 }
 
 namespace map {
-struct MapObjectRef;
-struct MapResult;
-struct MapAirport;
-struct MapVor;
-struct MapNdb;
-struct MapWaypoint;
-struct MapIls;
-struct MapUserpointRoute;
-struct MapAirway;
-struct MapParking;
-struct MapHelipad;
-struct MapAirspace;
-struct MapUserpoint;
-struct MapLogbookEntry;
-struct RangeMarker;
 struct DistanceMarker;
-struct MapHolding;
-struct MapAirportMsa;
-struct PatternMarker;
 struct HoldingMarker;
+struct MapAirport;
+struct MapAirportMsa;
+struct MapAirspace;
+struct MapAirway;
+struct MapHelipad;
+struct MapHolding;
+struct MapIls;
+struct MapLogbookEntry;
+struct MapNdb;
+struct MapObjectRef;
+struct MapParking;
+struct MapResult;
+struct MapUserpoint;
+struct MapUserpointRoute;
+struct MapVor;
+struct MapWaypoint;
 struct MsaMarker;
+struct PatternMarker;
+struct RangeMarker;
 }
 
 namespace Marble {
@@ -222,50 +235,26 @@ public:
   void updateDistanceMarker(int id, const map::DistanceMarker& marker);
 
   // ====================
-  const atools::fs::sc::SimConnectUserAircraft& getUserAircraft() const
-  {
-    return simData.getUserAircraftConst();
-  }
+  const atools::fs::sc::SimConnectUserAircraft& getUserAircraft() const;
 
   const atools::fs::sc::SimConnectData& getSimConnectData() const
   {
-    return simData;
+    return *simData;
   }
 
-  const atools::fs::sc::SimConnectUserAircraft& getLastUserAircraft() const
-  {
-    return lastSimData.getUserAircraftConst();
-  }
+  const atools::fs::sc::SimConnectUserAircraft& getLastUserAircraft() const;
 
-  const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft() const
-  {
-    return simData.getAiAircraftConst();
-  }
+  const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft() const;
 
-  void updateSimData(const atools::fs::sc::SimConnectData& data)
-  {
-    simData = data;
-  }
+  void clearSimData();
 
-  bool isUserAircraftValid() const
-  {
-    return simData.getUserAircraftConst().isValid();
-  }
+  void updateSimData(const atools::fs::sc::SimConnectData& data);
 
-  void updateLastSimData(const atools::fs::sc::SimConnectData& data)
-  {
-    lastSimData = data;
-  }
+  void updateLastSimData(const atools::fs::sc::SimConnectData& data);
 
-  void setProfileHighlight(const atools::geo::Pos& value)
-  {
-    profileHighlight = value;
-  }
+  void setProfileHighlight(const atools::geo::Pos& value);
 
-  const atools::geo::Pos& getProfileHighlight() const
-  {
-    return profileHighlight;
-  }
+  const atools::geo::Pos& getProfileHighlight() const;
 
   const QList<map::MapAirspace>& getAirspaceHighlights() const
   {
@@ -303,6 +292,9 @@ public:
     return &routeDrawnNavaids;
   }
 
+  /* Get average ground speed and turn speed in degrees per second for user aircraft. Average is calculated for 2 seconds. */
+  void getAverageGroundAndTurnSpeed(float& groundSpeedKts, float& turnSpeedDegPerSec) const;
+
 private:
   void getNearestAirways(int xs, int ys, int maxDistance, map::MapResult& result) const;
   void getNearestLogEntries(int xs, int ys, int maxDistance, map::MapResult& result) const;
@@ -320,12 +312,23 @@ private:
   void updateLineScreenGeometry(QList<std::pair<int, QLine> >& index, int id, const atools::geo::Line& line,
                                 const Marble::GeoDataLatLonBox& curBox, const CoordinateConverter& conv);
 
+  /* Fill average values for ground speed and turn speed for turn path display. */
+  void updateAverageTurn();
+
   QSet<int> nearestLineIds(const QList<std::pair<int, QLine> >& lineList, int xs, int ys, int maxDistance, bool lineDistanceOnly) const;
 
   template<typename TYPE>
   int getNearestId(int xs, int ys, int maxDistance, const QHash<int, TYPE>& typeList) const;
 
-  atools::fs::sc::SimConnectData simData, lastSimData;
+  atools::fs::sc::SimConnectData *simData, *lastSimData;
+
+  /* Average values for ground speed and turn speed for turn path display. */
+  atools::fs::sc::SimConnectUserAircraft *lastUserAircraftForAverage;
+  QDateTime lastUserAircraftForAverageTs;
+
+  /* Moving average for speed and lateral angular speed. Value1 is GS and value2 is turn speed (track change per second). */
+  atools::util::MovingAverageTime *movingAverageSimAircraft;
+
   MapPaintWidget *mapWidget;
   AirportQuery *airportQuery;
   MapPaintLayer *paintLayer;
@@ -352,7 +355,7 @@ private:
   QList<QList<map::MapAirway> > airwayHighlights;
 
   /* Circle from elevation profile */
-  atools::geo::Pos profileHighlight;
+  atools::geo::Pos *profileHighlight;
 
   /* Circles from route table */
   QList<int> routeHighlights;
@@ -378,7 +381,6 @@ private:
   QList<std::pair<int, QPolygon> > ilsPolygons;
   QList<std::pair<int, QLine> > ilsLines; /* Index ILS center lines separately to allow
                                            * tooltips when getting the cursor near a line */
-
 };
 
 #endif // LITTLENAVMAP_MAPSCREENINDEX_H

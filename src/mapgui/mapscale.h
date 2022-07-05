@@ -49,12 +49,17 @@ public:
   /* Convert length unit into screen pixels for the given direction. This approximation loses accuracy with
    *  higher zoom distances. */
   float getPixelForMeter(float meter, float directionDeg = DEFAULT_ANGLE) const;
-  float getPixelForFeet(int feet, float directionDeg = DEFAULT_ANGLE) const;
+  float getPixelForFeet(float feet, float directionDeg = DEFAULT_ANGLE) const;
   float getPixelForNm(float nm, float directionDeg = DEFAULT_ANGLE) const;
 
   int getPixelIntForMeter(float meter, float directionDeg = DEFAULT_ANGLE) const;
-  int getPixelIntForFeet(int feet, float directionDeg = DEFAULT_ANGLE) const;
+  int getPixelIntForFeet(float feet, float directionDeg = DEFAULT_ANGLE) const;
   int getPixelIntForNm(float nm, float directionDeg = DEFAULT_ANGLE) const;
+
+  /* Get screen pixels for one unit on the screen center */
+  float getMeterPerPixel(float directionDeg = DEFAULT_ANGLE) const;
+  float getFeetPerPixel(float directionDeg = DEFAULT_ANGLE) const;
+  float getNmPerPixel(float directionDeg = DEFAULT_ANGLE) const;
 
   /*Get an approximation in screen pixes for the given coordinate rectangle */
   QSize getScreeenSizeForRect(const atools::geo::Rect& rect) const;

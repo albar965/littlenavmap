@@ -139,6 +139,7 @@ extern QColor profileHighlightBackColor;
 /* Endurance and "green banana" */
 extern QPen markEndurancePen;
 extern QPen markSelectedAltitudeRangePen;
+extern QPen markTurnPathPen;
 
 /* Map print colors */
 extern QColor mapPrintRowColor;

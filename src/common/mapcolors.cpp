@@ -134,6 +134,7 @@ QColor profileHighlightBackColor(Qt::black);
 
 QPen markEndurancePen(Qt::black, 2, Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
 QPen markSelectedAltitudeRangePen(Qt::darkGreen, 3, Qt::SolidLine, Qt::FlatCap);
+QPen markTurnPathPen(Qt::darkGreen, 2, Qt::SolidLine, Qt::FlatCap);
 
 /* Map print colors */
 QColor mapPrintRowColor(250, 250, 250);
@@ -685,6 +686,7 @@ void syncColors()
   syncPen(colorSettings, "TouchMarkFillPen", touchMarkFillPen);
   syncPen(colorSettings, "EndurancePen", markEndurancePen);
   syncPen(colorSettings, "SelectedAltitudeRangePen", markSelectedAltitudeRangePen);
+  syncPen(colorSettings, "TurnPathPen", markTurnPathPen);
   syncColorArgb(colorSettings, "TouchRegionFillColor", touchRegionFillColor);
   colorSettings.endGroup();
 

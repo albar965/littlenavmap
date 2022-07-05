@@ -75,6 +75,9 @@ private:
   /* Draw a "green banana" where aircraft reaches autopilot altitude */
   void paintSelectedAltitudeRange();
 
+  /* Draw a green turn path indicator */
+  void paintTurnPath();
+
   /* Draw drag operations in progress */
   void paintUserpointDrag();
   void paintRouteDrag();

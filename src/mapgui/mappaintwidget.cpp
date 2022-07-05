@@ -921,7 +921,7 @@ void MapPaintWidget::disconnectedFromSimulator()
 {
   qDebug() << Q_FUNC_INFO;
   // Clear all data on disconnect
-  screenIndex->updateSimData(atools::fs::sc::SimConnectData());
+  screenIndex->clearSimData();
   updateMapVisibleUi();
   jumpBackToAircraftCancel();
   update();

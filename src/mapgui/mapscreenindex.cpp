@@ -17,23 +17,25 @@
 
 #include "mapgui/mapscreenindex.h"
 
-#include "navapp.h"
-#include "route/routecontroller.h"
-#include "mapgui/maplayer.h"
-#include "online/onlinedatacontroller.h"
+#include "airspace/airspacecontroller.h"
+#include "common/constants.h"
+#include "common/maptools.h"
 #include "logbook/logdatacontroller.h"
-#include "mapgui/mapscale.h"
 #include "mapgui/mapfunctions.h"
+#include "mapgui/maplayer.h"
+#include "mapgui/mapmarkhandler.h"
+#include "mapgui/mapscale.h"
 #include "mapgui/mapwidget.h"
 #include "mappainter/mappaintlayer.h"
-#include "mapgui/mapmarkhandler.h"
-#include "common/maptools.h"
-#include "query/mapquery.h"
-#include "query/airwaytrackquery.h"
+#include "navapp.h"
+#include "online/onlinedatacontroller.h"
 #include "query/airportquery.h"
-#include "common/constants.h"
+#include "query/airwaytrackquery.h"
+#include "query/mapquery.h"
+#include "route/routecontroller.h"
 #include "settings/settings.h"
-#include "airspace/airspacecontroller.h"
+#include "util/average.h"
+#include "fs/sc/simconnectdata.h"
 
 #include <marble/GeoDataLineString.h>
 
@@ -44,6 +46,11 @@ using atools::geo::Rect;
 using map::MapAirway;
 using Marble::GeoDataLineString;
 using Marble::GeoDataCoordinates;
+using atools::fs::sc::SimConnectUserAircraft;
+using atools::fs::sc::SimConnectData;
+
+// Calculate averages for ground speed and turn speed for 2 seconds
+const static qint64 TURN_PATH_AVERAGE_TIME_MS = 2000L;
 
 template<typename TYPE>
 void assignIdAndInsert(const QString& settingsName, QHash<int, TYPE>& hash)
@@ -64,9 +71,14 @@ MapScreenIndex::MapScreenIndex(MapPaintWidget *mapPaintWidgetParam, MapPaintLaye
 {
   airportQuery = NavApp::getAirportQuerySim();
 
+  simData = new SimConnectData;
+  lastSimData = new SimConnectData;
+  lastUserAircraftForAverage = new SimConnectUserAircraft;
   searchHighlights = new map::MapResult;
   procedureHighlight = new proc::MapProcedureLegs;
   procedureLegHighlight = new proc::MapProcedureLeg;
+  movingAverageSimAircraft = new atools::util::MovingAverageTime(TURN_PATH_AVERAGE_TIME_MS);
+  profileHighlight = new atools::geo::Pos;
 }
 
 MapScreenIndex::~MapScreenIndex()
@@ -74,19 +86,29 @@ MapScreenIndex::~MapScreenIndex()
   delete searchHighlights;
   delete procedureLegHighlight;
   delete procedureHighlight;
+  delete movingAverageSimAircraft;
+  delete simData;
+  delete lastSimData;
+  delete lastUserAircraftForAverage;
+  delete profileHighlight;
 }
 
 void MapScreenIndex::copy(const MapScreenIndex& other)
 {
-  simData = other.simData;
-  lastSimData = other.lastSimData;
+  // Copy content of pointer objects
+  *simData = *other.simData;
+  *lastSimData = *other.lastSimData;
   *searchHighlights = *other.searchHighlights;
   *procedureLegHighlight = *other.procedureLegHighlight;
   *procedureHighlight = *other.procedureHighlight;
+  *lastUserAircraftForAverage = *other.lastUserAircraftForAverage;
+  *profileHighlight = *other.profileHighlight;
+  *movingAverageSimAircraft = *other.movingAverageSimAircraft;
+
+  // Copy content of aggregated members
   procedureHighlights = other.procedureHighlights;
   airspaceHighlights = other.airspaceHighlights;
   airwayHighlights = other.airwayHighlights;
-  profileHighlight = other.profileHighlight;
   routeHighlights = other.routeHighlights;
   rangeMarks = other.rangeMarks;
   distanceMarks = other.distanceMarks;
@@ -590,6 +612,85 @@ void MapScreenIndex::updateDistanceMarker(int id, const map::DistanceMarker& mar
   distanceMarks[id].id = id;
 }
 
+const atools::fs::sc::SimConnectUserAircraft& MapScreenIndex::getUserAircraft() const
+{
+  return simData->getUserAircraftConst();
+}
+
+const atools::fs::sc::SimConnectUserAircraft& MapScreenIndex::getLastUserAircraft() const
+{
+  return lastSimData->getUserAircraftConst();
+}
+
+const QVector<atools::fs::sc::SimConnectAircraft>& MapScreenIndex::getAiAircraft() const
+{
+  return simData->getAiAircraftConst();
+}
+
+void MapScreenIndex::clearSimData()
+{
+  updateSimData(SimConnectData());
+}
+
+void MapScreenIndex::updateSimData(const atools::fs::sc::SimConnectData& data)
+{
+  *simData = data;
+  updateAverageTurn();
+}
+
+void MapScreenIndex::updateAverageTurn()
+{
+  if(NavApp::isConnectedAndAircraftFlying())
+  {
+    // Sim is connected and aircraft is flying
+    QDateTime now = QDateTime::currentDateTimeUtc();
+
+    // Have a last aircraft and timestamp to calculate values
+    if(lastUserAircraftForAverage->isValid() && lastUserAircraftForAverageTs.isValid())
+    {
+      const SimConnectUserAircraft& userAircraft = simData->getUserAircraftConst();
+
+      // Turn right is positive and turn left is negative
+      float headingChange = atools::geo::angleAbsDiffSign(lastUserAircraftForAverage->getTrackDegTrue(), userAircraft.getTrackDegTrue());
+
+      // Heading change in degree per second
+      float lateralAngularVelocity = headingChange / static_cast<float>(lastUserAircraftForAverageTs.msecsTo(now)) * 1000.f;
+
+      // Sample groundspeed/turnspeed and timestamp
+      movingAverageSimAircraft->addSamples(userAircraft.getGroundSpeedKts(), lateralAngularVelocity, QDateTime::currentMSecsSinceEpoch());
+    }
+
+    *lastUserAircraftForAverage = simData->getUserAircraftConst();
+    lastUserAircraftForAverageTs = now;
+  }
+  else
+  {
+    // Disconnected or aircraft on ground - clear all data
+    lastUserAircraftForAverageTs = QDateTime();
+    movingAverageSimAircraft->reset();
+  }
+}
+
+void MapScreenIndex::getAverageGroundAndTurnSpeed(float& groundSpeedKts, float& turnSpeedDegPerSec) const
+{
+  movingAverageSimAircraft->getAverages(groundSpeedKts, turnSpeedDegPerSec);
+}
+
+void MapScreenIndex::updateLastSimData(const atools::fs::sc::SimConnectData& data)
+{
+  *lastSimData = data;
+}
+
+void MapScreenIndex::setProfileHighlight(const atools::geo::Pos& value)
+{
+  *profileHighlight = value;
+}
+
+const Pos& MapScreenIndex::getProfileHighlight() const
+{
+  return *profileHighlight;
+}
+
 void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& curBox)
 {
   const Route& route = NavApp::getRouteConst();
@@ -670,7 +771,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
   result.userAircraft.clear();
   if(shown & map::AIRCRAFT && NavApp::isConnectedAndAircraft())
   {
-    const atools::fs::sc::SimConnectUserAircraft& user = simData.getUserAircraftConst();
+    const SimConnectUserAircraft& user = simData->getUserAircraftConst();
     int x, y;
     if(conv.wToS(user.getPosition(), x, y))
     {
@@ -688,7 +789,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
   {
     if(shown & map::AIRCRAFT_AI_SHIP && mapLayer->isAiShipLarge())
     {
-      for(const atools::fs::sc::SimConnectAircraft& obj : simData.getAiAircraftConst())
+      for(const atools::fs::sc::SimConnectAircraft& obj : simData->getAiAircraftConst())
       {
         if(obj.isValid() && obj.isAnyBoat() && (obj.getModelRadiusCorrected() * 2 > layer::LARGE_SHIP_SIZE || mapLayer->isAiShipSmall()))
         {

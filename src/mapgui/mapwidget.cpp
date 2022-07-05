@@ -334,7 +334,7 @@ void MapWidget::handleInfoClick(QPoint point)
 
   // Removes the online aircraft from onlineAircraft which also have a simulator shadow in simAircraft
   NavApp::getOnlinedataController()->removeOnlineShadowedAircraft(mapSearchResultInfoClick->onlineAircraft,
-                                                                mapSearchResultInfoClick->aiAircraft);
+                                                                  mapSearchResultInfoClick->aiAircraft);
 
   // Remove all unwanted features
   optsd::DisplayClickOptions opts = OptionData::instance().getDisplayClickOptions();
@@ -506,7 +506,8 @@ void MapWidget::updateTooltipResult()
   QPoint pos = mapFromGlobal(tooltipGlobalPos);
   getScreenIndexConst()->getAllNearest(pos.x(), pos.y(), screenSearchDistanceTooltip, *mapSearchResultTooltip, queryTypes);
 
-  NavApp::getOnlinedataController()->removeOnlineShadowedAircraft(mapSearchResultTooltip->onlineAircraft, mapSearchResultTooltip->aiAircraft);
+  NavApp::getOnlinedataController()->removeOnlineShadowedAircraft(mapSearchResultTooltip->onlineAircraft,
+                                                                  mapSearchResultTooltip->aiAircraft);
 }
 
 void MapWidget::hideTooltip()
@@ -2346,7 +2347,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     bool dataHasChanged = posHasChanged ||
                           last.isFlying() != aircraft.isFlying() ||
                           last.isOnGround() != aircraft.isOnGround() ||
-                          angleAbsDiff(last.getHeadingDegMag(), aircraft.getHeadingDegMag()) > deltas.headingDelta || // Heading has changed
+                          angleAbsDiff(last.getHeadingDegMag(),
+                                       aircraft.getHeadingDegMag()) > deltas.headingDelta || // Heading has changed
                           almostNotEqual(last.getIndicatedSpeedKts(),
                                          aircraft.getIndicatedSpeedKts(), deltas.speedDelta) || // Speed has changed
                           almostNotEqual(last.getPosition().getAltitude(),
@@ -3003,10 +3005,11 @@ void MapWidget::resetSettingActionsToDefault()
                                       ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks,
                                       ui->actionShowAirspaces, ui->actionMapShowRoute, ui->actionMapShowTocTod, ui->actionMapShowAircraft,
                                       ui->actionMapShowCompassRose, ui->actionMapShowCompassRoseAttach, ui->actionMapShowEndurance,
-                                      ui->actionMapShowSelectedAltRange, ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi,
-                                      ui->actionMapShowAircraftOnline, ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack,
-                                      ui->actionInfoApproachShowMissedAppr, ui->actionMapShowGrid, ui->actionMapShowCities,
-                                      ui->actionMapShowMinimumAltitude, ui->actionMapShowAirportWeather, ui->actionMapShowSunShading});
+                                      ui->actionMapShowSelectedAltRange, ui->actionMapShowTurnPath, ui->actionMapAircraftCenter,
+                                      ui->actionMapShowAircraftAi, ui->actionMapShowAircraftOnline, ui->actionMapShowAircraftAiBoat,
+                                      ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr, ui->actionMapShowGrid,
+                                      ui->actionMapShowCities, ui->actionMapShowMinimumAltitude, ui->actionMapShowAirportWeather,
+                                      ui->actionMapShowSunShading});
 
   // Menu map =====================================
   ui->actionMapAircraftCenter->setChecked(true);
@@ -3038,7 +3041,8 @@ void MapWidget::resetSettingActionsToDefault()
   ui->actionMapShowAircraftTrack->setChecked(true);
   ui->actionMapShowCompassRose->setChecked(false);
   ui->actionMapShowCompassRoseAttach->setChecked(true);
-  ui->actionMapShowSelectedAltRange->setChecked(false);
+  ui->actionMapShowSelectedAltRange->setChecked(true);
+  ui->actionMapShowTurnPath->setChecked(true);
   ui->actionMapShowEndurance->setChecked(false);
 
   // -----------------
@@ -3120,6 +3124,7 @@ void MapWidget::updateMapObjectsShown()
   setShowMapObjectDisplay(map::COMPASS_ROSE_ATTACH, ui->actionMapShowCompassRoseAttach->isChecked());
   setShowMapObjectDisplay(map::AIRCRAFT_ENDURANCE, ui->actionMapShowEndurance->isChecked());
   setShowMapObjectDisplay(map::AIRCRAFT_SELECTED_ALT_RANGE, ui->actionMapShowSelectedAltRange->isChecked());
+  setShowMapObjectDisplay(map::AIRCRAFT_TURN_PATH, ui->actionMapShowTurnPath->isChecked());
   setShowMapObject(map::AIRCRAFT, ui->actionMapShowAircraft->isChecked());
   setShowMapObjectDisplay(map::AIRCRAFT_TRACK, ui->actionMapShowAircraftTrack->isChecked());
   setShowMapObject(map::AIRCRAFT_AI, ui->actionMapShowAircraftAi->isChecked());
@@ -3231,7 +3236,8 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
   {
     // Can only show online clients if aircraft is shadow of a client
     map::MapUserAircraft aircraft = base->asObj<map::MapUserAircraft>();
-    atools::fs::sc::SimConnectAircraft shadowAircraft = NavApp::getOnlinedataController()->getShadowedOnlineAircraft(aircraft.getAircraft());
+    atools::fs::sc::SimConnectAircraft shadowAircraft =
+      NavApp::getOnlinedataController()->getShadowedOnlineAircraft(aircraft.getAircraft());
 
     if(shadowAircraft.isValid())
       emit showInSearch(map::AIRCRAFT_ONLINE, SqlRecord().appendFieldAndValue("callsign", shadowAircraft.getAirplaneRegistration()),
@@ -3241,7 +3247,8 @@ void MapWidget::showResultInSearch(const map::MapBase *base)
   {
     // Can only show online clients if aircraft is shadow of a client
     map::MapAiAircraft aircraft = base->asObj<map::MapAiAircraft>();
-    atools::fs::sc::SimConnectAircraft shadowAircraft = NavApp::getOnlinedataController()->getShadowedOnlineAircraft(aircraft.getAircraft());
+    atools::fs::sc::SimConnectAircraft shadowAircraft =
+      NavApp::getOnlinedataController()->getShadowedOnlineAircraft(aircraft.getAircraft());
     if(shadowAircraft.isValid())
       emit showInSearch(map::AIRCRAFT_ONLINE, SqlRecord().appendFieldAndValue("callsign", shadowAircraft.getAirplaneRegistration()),
                         true /* select */);

@@ -183,6 +183,7 @@ enum MapObjectDisplayType
   AIRCRAFT_ENDURANCE = 1 << 18, /* Range ring for current aircraft endurance. */
 
   AIRCRAFT_SELECTED_ALT_RANGE = 1 << 19, /* Altitude range for selected autopilot altitude ("green banana"). */
+  AIRCRAFT_TURN_PATH = 1 << 20, /* Turn path at aircraft */
 
   LOGBOOK_ALL = LOGBOOK_DIRECT | LOGBOOK_ROUTE | LOGBOOK_TRACK
 };

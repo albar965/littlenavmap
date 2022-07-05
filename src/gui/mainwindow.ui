@@ -426,7 +426,9 @@
     <addaction name="separator"/>
     <addaction name="actionMapShowAircraft"/>
     <addaction name="actionMapShowAircraftTrack"/>
+    <addaction name="separator"/>
     <addaction name="actionMapShowSelectedAltRange"/>
+    <addaction name="actionMapShowTurnPath"/>
     <addaction name="actionMapShowEndurance"/>
     <addaction name="separator"/>
     <addaction name="actionMapShowCompassRose"/>
@@ -12176,7 +12178,7 @@ Disabled if a navdatabase does not allow it.</string>
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>false</bool>
+    <bool>true</bool>
    </property>
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -12484,6 +12486,30 @@ Disabled if a navdatabase does not allow it.</string>
     <string>Remove all MSA diagrams from the  map</string>
    </property>
   </action>
+  <action name="actionMapShowTurnPath">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/turnpath.svg</normaloff>:/littlenavmap/resources/icons/turnpath.svg</iconset>
+   </property>
+   <property name="text">
+    <string>Show &amp;Turn Flight Path</string>
+   </property>
+   <property name="toolTip">
+    <string>Shows flight path for turns</string>
+   </property>
+   <property name="statusTip">
+    <string>Shows flight path for turns</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Alt+L</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <tabstops>
@@ -12665,8 +12691,8 @@ Disabled if a navdatabase does not allow it.</string>
  </resources>
  <connections/>
  <buttongroups>
-  <buttongroup name="buttonGroupRouteCalcType"/>
-  <buttongroup name="buttonGroupRouteCalcAirway"/>
   <buttongroup name="buttonGroupRouteCalc"/>
+  <buttongroup name="buttonGroupRouteCalcAirway"/>
+  <buttongroup name="buttonGroupRouteCalcType"/>
  </buttongroups>
 </ui>

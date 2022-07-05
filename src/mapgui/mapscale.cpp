@@ -127,7 +127,7 @@ int MapScale::getPixelIntForMeter(float meter, float directionDeg) const
   return static_cast<int>(std::round(getPixelForMeter(meter, directionDeg)));
 }
 
-int MapScale::getPixelIntForFeet(int feet, float directionDeg) const
+int MapScale::getPixelIntForFeet(float feet, float directionDeg) const
 {
   return getPixelIntForMeter(atools::geo::feetToMeter(static_cast<float>(feet)), directionDeg);
 }
@@ -135,6 +135,21 @@ int MapScale::getPixelIntForFeet(int feet, float directionDeg) const
 int MapScale::getPixelIntForNm(float nm, float directionDeg) const
 {
   return getPixelIntForMeter(atools::geo::nmToMeter(nm), directionDeg);
+}
+
+float MapScale::getMeterPerPixel(float directionDeg) const
+{
+  return 1.f / getPixelForMeter(1.f, directionDeg);
+}
+
+float MapScale::getFeetPerPixel(float directionDeg) const
+{
+  return 1.f / getPixelForFeet(1.f, directionDeg);
+}
+
+float MapScale::getNmPerPixel(float directionDeg) const
+{
+  return 1.f / getPixelForNm(1.f, directionDeg);
 }
 
 float MapScale::getPixelForMeter(float meter, float directionDeg) const
@@ -157,9 +172,9 @@ float MapScale::getPixelForMeter(float meter, float directionDeg) const
   return pixelPerKm * meter / 1000.f;
 }
 
-float MapScale::getPixelForFeet(int feet, float directionDeg) const
+float MapScale::getPixelForFeet(float feet, float directionDeg) const
 {
-  return getPixelForMeter(atools::geo::feetToMeter(static_cast<float>(feet)), directionDeg);
+  return getPixelForMeter(atools::geo::feetToMeter(feet), directionDeg);
 }
 
 float MapScale::getPixelForNm(float nm, float directionDeg) const
