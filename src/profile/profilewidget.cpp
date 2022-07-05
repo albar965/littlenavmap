@@ -1322,12 +1322,12 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     waypointIndex = waypointX.size();
     for(int routeIndex : indexes)
     {
-      const RouteLeg& leg = route.value(routeIndex);
-      const proc::MapProcedureLeg& procedureLeg = leg.getProcedureLeg();
-
       waypointIndex--;
       if(altLegs.at(waypointIndex).isEmpty())
         continue;
+
+      const RouteLeg& leg = route.value(routeIndex);
+      const proc::MapProcedureLeg& procedureLeg = leg.getProcedureLeg();
 
       int legScreenWidth = calcLegScreenWidth(altLegs, waypointIndex) - 10;
 
@@ -1363,6 +1363,11 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     waypointIndex = waypointX.size();
     for(int routeIndex : indexes)
     {
+      waypointIndex--;
+
+      if(altLegs.at(waypointIndex).isEmpty())
+        continue;
+
       if(routeIndex < activeRouteLeg - 1)
         continue;
 
@@ -1370,10 +1375,6 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
       // Airports are drawn separately and need no merge for texts
       if(leg.getMapObjectType() == map::AIRPORT)
-        continue;
-
-      waypointIndex--;
-      if(altLegs.at(waypointIndex).isEmpty())
         continue;
 
       int legScreenWidth = calcLegScreenWidth(altLegs, waypointIndex) - 10;
