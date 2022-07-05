@@ -791,7 +791,7 @@ void Route::updateApproachIls()
   qDebug() << Q_FUNC_INFO << "destRunwayIlsMap" << destRunwayIlsMap;
 #endif
 
-  // ILS for profile
+  // ILS for profile - has to match runway heading
   destRunwayIlsProfile.clear();
   updateApproachRunwayEndAndIls(destRunwayIlsProfile, &destRunwayEnd, false /* recommended */, false /* map */, true);
 
@@ -918,9 +918,9 @@ void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::
         const proc::MapProcedureLeg& leg = approachLegs.approachLegs.at(i);
 
         // Do not look for NDB and waypoints - try VOR (V) and ILS/localizer (L)
-        if(!leg.isMissed() && !leg.recFixIdent.isEmpty() && leg.recFixType != "N" && leg.recFixType != "TW" &&
-           leg.recFixType != "TN" && leg.recFixType != "W")
+        if(!leg.isMissed() && !leg.recFixIdent.isEmpty() && leg.recFixType != "N" && leg.recFixType != "TN")
           // Get ILS referenced in the recommended fix
+          // Do not exclude waypoints since these are sometimes referenced instead of localizers
           ilsVector = mapQuery->getIlsByAirportAndIdent(destAirportIdent, leg.recFixIdent);
 
         if(!ilsVector.isEmpty())
