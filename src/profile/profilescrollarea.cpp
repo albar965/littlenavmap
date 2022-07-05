@@ -514,6 +514,8 @@ bool ProfileScrollArea::mouseReleaseEvent(QMouseEvent *event)
 
 bool ProfileScrollArea::wheelEvent(QWheelEvent *event)
 {
+  static const int ANGLE_THRESHOLD = 120;
+
   if(!viewport->geometry().contains(event->pos()))
     // Ignore wheel events that appear outside of the view and on the scrollbars
     return false;
@@ -524,71 +526,84 @@ bool ProfileScrollArea::wheelEvent(QWheelEvent *event)
 
     Ui::MainWindow *ui = NavApp::getMainUi();
 
-    float zoom = 0.f;
-    QPoint numDegrees = event->angleDelta() / 8;
-    if(!event->pixelDelta().isNull())
-      zoom = event->pixelDelta().y() / 10.f;
-    else if(!numDegrees.isNull())
-      zoom = numDegrees.y() / 15.f;
+    // Pixel is null for mouse wheel - otherwise touchpad
+    int angleDelta = event->angleDelta().y();
 
-    if(OptionData::instance().getFlags().testFlag(opts::GUI_REVERSE_WHEEL))
-      zoom = -zoom;
+    // Sum up wheel events to start action one threshold is exceeded
+    lastWheelAngle += angleDelta;
 
-#ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO << "angleDelta" << event->angleDelta() << "pixelDelta" << event->pixelDelta() << "zoom" << zoom;
-#endif
+    if(atools::sign(lastWheelAngle) != atools::sign(angleDelta))
+      // User changed direction while moving - reverse direction
+      // to allow immediate scroll direction change
+      lastWheelAngle = ANGLE_THRESHOLD * atools::sign(angleDelta);
 
-    QPoint mouse = (event->pos() + getOffset());
-    QPoint mouseToCenter = event->pos() - viewport->geometry().center(); // left neg, right pos
-
-    if(event->modifiers() == Qt::NoModifier)
+    if(std::abs(lastWheelAngle) >= ANGLE_THRESHOLD)
     {
-      // Zoom in horizontally ==================================
+      int zoom = lastWheelAngle > 0 ? 1 : -1;
+      if(OptionData::instance().getFlags().testFlag(opts::GUI_REVERSE_WHEEL))
+        zoom = -zoom;
 
-      // Center object at mouse position first
-      lastHorizScrollPos = static_cast<double>(mouse.x()) /
-                           static_cast<double>(horizScrollBar->maximum() + horizScrollBar->pageStep());
+      // Reset summed up values if accepted
+      lastWheelAngle = 0;
 
-      // Remember old zoom value
-      double oldZoomVal = static_cast<double>(viewport->width()) / profileWidget->width();
+      QPoint mouse = (event->pos() + getOffset());
+      QPoint mouseToCenter = event->pos() - viewport->geometry().center(); // left neg, right pos
 
-      // Set to zoom slider
-      ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->value() + static_cast<int>(zoom));
+      if(event->modifiers() == Qt::NoModifier)
+      {
+        // Zoom in horizontally ==================================
+        int value = ui->horizontalSliderProfileZoom->value();
+        if((zoom > 0 && value < ui->horizontalSliderProfileZoom->maximum()) ||
+           (zoom < 0 && value > ui->horizontalSliderProfileZoom->minimum()))
+        {
+          // Center object at mouse position first
+          lastHorizScrollPos = static_cast<double>(mouse.x()) / static_cast<double>(horizScrollBar->maximum() + horizScrollBar->pageStep());
 
-      // Calculate the correction for the fixed, not scaled offset in the profile widget
-      double correction = profileLeftOffset * oldZoomVal * -mouseToCenter.x() / (viewport->width() / 2.);
+          // Remember old zoom value
+          double oldZoomVal = static_cast<double>(viewport->width()) / profileWidget->width();
 
-      // Calculate difference if scroll bar was at the window edge and adjusted its value
-      int diffPos = horizScrollBar->value() - calculatedHorizScrollPos;
+          // Set to zoom slider
+          ui->horizontalSliderProfileZoom->setValue(value + zoom);
 
-      // Put position below mouse back
-      horizScrollBar->setValue(static_cast<int>(horizScrollBar->value() - (diffPos + mouseToCenter.x() + correction)));
-    }
-    else if(event->modifiers() == Qt::ShiftModifier)
-    {
-      // Zoom in vertically ==================================
+          // Calculate the correction for the fixed, not scaled offset in the profile widget
+          double correction = profileLeftOffset * oldZoomVal * -mouseToCenter.x() / (viewport->width() / 2.);
 
-      // Center object at mouse position first
-      lastVertScrollPos = static_cast<double>(mouse.y()) /
-                          static_cast<double>(vertScrollBar->maximum() + vertScrollBar->pageStep());
+          // Calculate difference if scroll bar was at the window edge and adjusted its value
+          int diffPos = horizScrollBar->value() - calculatedHorizScrollPos;
 
-      // Remember old zoom value
-      double oldZoomVal = static_cast<double>(viewport->height()) / profileWidget->height();
+          // Put position below mouse back
+          horizScrollBar->setValue(static_cast<int>(horizScrollBar->value() - (diffPos + mouseToCenter.x() + correction)));
+        }
+      }
+      else if(event->modifiers() == Qt::ShiftModifier)
+      {
+        // Zoom in vertically ==================================
+        int value = ui->verticalSliderProfileZoom->value();
+        if((zoom > 0 && value < ui->verticalSliderProfileZoom->maximum()) ||
+           (zoom < 0 && value > ui->verticalSliderProfileZoom->minimum()))
+        {
 
-      // Set to zoom slider
-      ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->value() + static_cast<int>(zoom));
+          // Center object at mouse position first
+          lastVertScrollPos = static_cast<double>(mouse.y()) / static_cast<double>(vertScrollBar->maximum() + vertScrollBar->pageStep());
 
-      // Calculate the correction for the fixed, not scaled offset in the profile widget
-      double correction = profileTopOffset * oldZoomVal * -mouseToCenter.y() / (viewport->height() / 2.);
+          // Remember old zoom value
+          double oldZoomVal = static_cast<double>(viewport->height()) / profileWidget->height();
 
-      // Calculate difference if scroll bar was at the window edge and adjusted its value
-      int diffPos = vertScrollBar->value() - calculatedVertScrollPos;
+          // Set to zoom slider
+          ui->verticalSliderProfileZoom->setValue(value + zoom);
 
-      // Put position below mouse back
-      vertScrollBar->setValue(static_cast<int>(vertScrollBar->value() - (diffPos + mouseToCenter.y() + correction)));
+          // Calculate the correction for the fixed, not scaled offset in the profile widget
+          double correction = profileTopOffset * oldZoomVal * -mouseToCenter.y() / (viewport->height() / 2.);
+
+          // Calculate difference if scroll bar was at the window edge and adjusted its value
+          int diffPos = vertScrollBar->value() - calculatedVertScrollPos;
+
+          // Put position below mouse back
+          vertScrollBar->setValue(static_cast<int>(vertScrollBar->value() - (diffPos + mouseToCenter.y() + correction)));
+        }
+      }
     }
   }
-
   if(!changingView)
     emit jumpBackToAircraftStart();
 

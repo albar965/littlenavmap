@@ -193,6 +193,9 @@ private:
 
 #endif
 
+  /* Sum up mouse wheel or trackpad movement before zooming */
+  int lastWheelAngle = 0;
+
   /* Scaling factor for widget - default is minimum as set in ui file */
   int horizScaleFactor = 1;
   int vertScaleFactor = 1;
