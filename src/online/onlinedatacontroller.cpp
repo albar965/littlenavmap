@@ -774,9 +774,9 @@ void OnlinedataController::updateShadowIndex()
 
     if(upper != currentDataPacketMap.end() && lower != currentDataPacketMap.end())
     {
-      qint64 lastUpdateWhazzupSecs = lastUpdateTimeWhazzup.currentSecsSinceEpoch();
-      if(std::abs(upper.key().currentSecsSinceEpoch() - lastUpdateWhazzupSecs) <
-         std::abs(lower.key().currentMSecsSinceEpoch() - lastUpdateWhazzupSecs))
+      qint64 lastUpdateWhazzupSecs = lastUpdateTimeWhazzup.toSecsSinceEpoch();
+      if(std::abs(upper.key().toSecsSinceEpoch() - lastUpdateWhazzupSecs) <
+         std::abs(lower.key().toSecsSinceEpoch() - lastUpdateWhazzupSecs))
         entry = upper;
       else
         entry = lower;
