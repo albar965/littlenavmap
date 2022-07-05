@@ -449,7 +449,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[TFDI        ].DP(fsxP3dBasePath % SEP % "SimObjects" % SEP % "Airplanes" % SEP % "TFDi_Design_717" % SEP % "Documents" % SEP % "Company Routes");
   (*this)[IFLY        ].DP(documents % SEP % "Prepar3D v5 Add-ons" % SEP % "iFlyData" % SEP % "navdata" % SEP % "FLTPLAN");
   (*this)[PLNISG      ].DP(fsxP3dBasePath % SEP % "ISG" % SEP % "FlightPlans"); // C:\Program Files\Lockheed Martin\Prepar3D v4\ISG\FlightPlans
-  (*this)[PMS50       ].DP(msfsBasePath % SEP % "Community" % SEP % "pms50-gtn750-premium" % SEP % "fpl" % SEP % "gtn750");
+  (*this)[PMS50       ].DP(msfsBasePath % SEP % "Community" % SEP % "pms50-instrument-gtn750" % SEP % "fpl" % SEP % "gtn750");
   /* *INDENT-ON* */
 #undef DP
 
