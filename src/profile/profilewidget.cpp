@@ -1525,8 +1525,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   }
 
   // Draw user aircraft =========================================================
-  if(simData.getUserAircraftConst().isValid() && showAircraft &&
-     aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE && !curRoute.isActiveMissed() &&
+  const atools::fs::sc::SimConnectUserAircraft& userAircraft = simData.getUserAircraftConst();
+  if(userAircraft.isValid() && showAircraft && aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE && !curRoute.isActiveMissed() &&
      !curRoute.isActiveAlternate())
   {
     // Draw path line ===================
@@ -1534,9 +1534,9 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       paintVerticalPath(painter, route);
 
     float acx = distanceX(aircraftDistanceFromStart);
-    float acy = altitudeY(aircraftAlt(simData.getUserAircraftConst()));
+    float acy = altitudeY(aircraftAlt(userAircraft));
 
-    // Draw aircraft symbol
+    // Draw aircraft symbol =======================
     int acsize = roundToInt(optionData.getDisplayTextSizeFlightplanProfile() / 100. * 40.);
     painter.translate(acx, acy);
     painter.rotate(90);
@@ -1548,25 +1548,51 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       // Reflection is a special case of scaling matrix
       painter.scale(1., -1.);
 
-    const QPixmap *pixmap = NavApp::getVehicleIcons()->pixmapFromCache(simData.getUserAircraftConst(), acsize, 0);
+    const QPixmap *pixmap = NavApp::getVehicleIcons()->pixmapFromCache(userAircraft, acsize, 0);
     painter.drawPixmap(QPointF(-acsize / 2., -acsize / 2.), *pixmap);
     painter.resetTransform();
 
     // Draw aircraft label
     mapcolors::scaleFont(&painter, optionData.getDisplayTextSizeFlightplanProfile() / 100.f, &painter.font());
 
-    int vspeed = roundToInt(simData.getUserAircraftConst().getVerticalSpeedFeetPerMin());
-    QString upDown;
-    if(vspeed > 100.f)
-      upDown = tr(" ▲");
-    else if(vspeed < -100.f)
-      upDown = tr(" ▼");
-
+    // Draw optional aircraft labels =======================
     QStringList texts;
-    texts.append(Unit::altFeet(aircraftAlt(simData.getUserAircraftConst())));
 
-    if(vspeed > 10.f || vspeed < -10.f)
-      texts.append(Unit::speedVertFpm(vspeed) + upDown);
+    // Actual altitude
+    if(displayOptions.testFlag(optsp::PROFILE_AIRCRAFT_ALTITUDE))
+      texts.append(Unit::altFeet(aircraftAlt(userAircraft)));
+
+    // Actual vertical speed
+    if(displayOptions.testFlag(optsp::PROFILE_AIRCRAFT_VERT_SPEED))
+    {
+      int vspeed = roundToInt(userAircraft.getVerticalSpeedFeetPerMin());
+      if(vspeed > 10.f || vspeed < -10.f)
+      {
+        QString upDown;
+        if(vspeed > 100.f)
+          upDown = tr(" ▲");
+        else if(vspeed < -100.f)
+          upDown = tr(" ▼");
+        texts.append(Unit::speedVertFpm(vspeed) % upDown);
+      }
+    }
+
+    // Needed vertical speed to catch next calculated altitude
+    if(displayOptions.testFlag(optsp::PROFILE_AIRCRAFT_VERT_ANGLE_NEXT))
+    {
+      const Route& origRoute = NavApp::getRouteConst();
+      // The corrected leg will point to an approach leg if we head to the start of a procedure
+      int activeLegIdx = origRoute.getActiveLegIndexCorrected();
+      float nextLegDistance = 0.f;
+
+      if(activeLegIdx != map::INVALID_INDEX_VALUE && origRoute.getRouteDistances(nullptr, nullptr, &nextLegDistance, nullptr))
+      {
+        float vertAngleToNext = origRoute.getVerticalAngleToNext(nextLegDistance);
+        if(vertAngleToNext < map::INVALID_ANGLE_VALUE)
+          texts.append(Unit::speedVertFpm(-atools::geo::descentSpeedForPathAngle(userAircraft.getGroundSpeedKts(),
+                                                                                 vertAngleToNext)) % tr(" ▼ N"));
+      }
+    }
 
     textatt::TextAttributes att = textatt::NONE;
     float textx = acx, texty = acy + 20.f;

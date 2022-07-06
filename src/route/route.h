@@ -140,10 +140,17 @@ public:
   }
 
   /* true if active leg is valid. false for special one airport case */
-  bool isActiveValid() const;
+  bool isActiveValid() const
+  {
+    return activeLegIndex > 0 && activeLegIndex < size();
+  }
 
   /* true if active leg is an alternate leg */
-  bool isActiveAlternate() const;
+  bool isActiveAlternate() const
+  {
+    return alternateLegsOffset != map::INVALID_INDEX_VALUE && activeLegIndex != map::INVALID_INDEX_VALUE &&
+           activeLegIndex >= alternateLegsOffset;
+  }
 
   /* true if active leg is destination airport. false if not or any arrival procedure is used. */
   bool isActiveDestinationAirport() const;
@@ -199,7 +206,7 @@ public:
   void getAirportProcedureFlags(const map::MapAirport& airport, int index, bool& departureFilter,
                                 bool& arrivalFilter) const;
 
-  /* Get active leg or null if this is none */
+  /* Get active leg or null if there is none */
   const RouteLeg *getActiveLeg() const;
 
   /* Give next procedure leg instead of route leg if approaching one */
@@ -236,6 +243,9 @@ public:
 
   /* Get either calculated or required by procedure vertical angle. */
   float getVerticalAngleAtDistance(float distanceToDest, bool *required = nullptr) const;
+
+  /* Vertical angle to reach next waypoint at calculated altitude depending on user aircraft altitude. */
+  float getVerticalAngleToNext(float nearestLegDistance) const;
 
   /* Same as above for TAS knots from performance profile */
   float getSpeedForDistance(float currentDistToDest) const;

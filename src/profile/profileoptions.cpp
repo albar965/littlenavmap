@@ -44,13 +44,20 @@ bool ProfileOptions::showOptions()
   // Profile =====================================================
   /* *INDENT-OFF* */
   QTreeWidgetItem* rootItem = treeDialog.getRootItem();
-  treeDialog.addItem2(rootItem, optsp::PROFILE_TOOLTIP, tr("Show Tooltip"), tr("Show a tooltip with elevation and more information when hovering the mouse over the profile."));
+  treeDialog.addItem2(rootItem, optsp::PROFILE_TOOLTIP, tr("Show Tooltip"), tr("Display a tooltip with elevation and more information when hovering the mouse over the profile."));
   treeDialog.addItem2(rootItem, optsp::PROFILE_HIGHLIGHT, tr("Highlight Position on Map"), tr("Highlight the flight plan position on the map while hovering the mouse over the profile."));
 
+  QTreeWidgetItem *aircraftItem = treeDialog.addTopItem1(tr("User Aircraft Labels"));
+  treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_ALTITUDE, tr("Altitude"), tr("Show actual user aircraft altitude at symbol."));
+  treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_VERT_SPEED, tr("Vertical Speed"), tr("Show vertical speed of at user aircraft symbol."));
+  treeDialog.addItem2(aircraftItem, optsp::PROFILE_AIRCRAFT_VERT_ANGLE_NEXT, tr("Vertical Speed to Next"),
+                      tr("Vertical speed needed to arrive at the calculated altitude at the next waypoint.\n"
+                         "Shown on descent only at user aircraft symbol suffixed with \"N\"."));
+
   QTreeWidgetItem *labelItem = treeDialog.addTopItem1(tr("Labels"));
-  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_ALT, tr("Show Altitude Labels"), tr("Show or hide the labels at the left side of the elevation profile."));
+  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_ALT, tr("Show Altitude"), tr("Show or hide the labels at the left side of the elevation profile."));
   treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_DISTANCE, tr("Distance"), tr("Distance of flight plan leg."));
-  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_MAG_COURSE, tr("Magnetic Course"), tr( "Show magnetic great circle start course at start flight plan leg."));
+  treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_MAG_COURSE, tr("Magnetic Course"), tr( "Show magnetic great circle start course at flight plan leg."));
   treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_TRUE_COURSE, tr("True Course"), tr( "Show true great circle start course at flight plan leg."));
   treeDialog.addItem2(labelItem, optsp::PROFILE_LABELS_RELATED, tr("Related Navaid"), tr( "Related navaid for a procedure fix including bearing and distance."));
 

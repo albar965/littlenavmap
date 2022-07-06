@@ -8808,13 +8808,13 @@ Disabled if a navdatabase does not allow it.</string>
      <normaloff>:/littlenavmap/resources/icons/newroutefromstring.svg</normaloff>:/littlenavmap/resources/icons/newroutefromstring.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;New Flight Plan from Route Description ...</string>
+    <string>&amp;Flight Plan Route Description ...</string>
    </property>
    <property name="toolTip">
-    <string>Create a new flight plan from route description</string>
+    <string>Edit flight plan route description</string>
    </property>
    <property name="statusTip">
-    <string>Create a new flight plan from route description</string>
+    <string>Edit flight plan route description</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+N</string>

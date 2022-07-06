@@ -98,6 +98,7 @@ enum ProgressConfId
   // "Descent Path" =================================
   DESCENT_DEVIATION = 160,
   DESCENT_ANGLE_SPEED,
+  DESCENT_VERT_ANGLE_NEXT,
 
   // "Environment" =================================
   ENV_WIND_DIR_SPEED = 180,

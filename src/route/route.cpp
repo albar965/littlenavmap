@@ -691,6 +691,30 @@ float Route::getVerticalAngleAtDistance(float distanceToDest, bool *required) co
   return altitude->getVerticalAngleAtDistance(distanceToDest, required);
 }
 
+float Route::getVerticalAngleToNext(float nearestLegDistance) const
+{
+  if(NavApp::isConnectedAndAircraftFlying())
+  {
+    int active = getActiveLegIndexCorrected();
+
+    if(active != map::INVALID_INDEX_VALUE)
+    {
+      float indicatedAltitudeFt = NavApp::getUserAircraft().getIndicatedAltitudeFt();
+      float waypointAltitudeFt = altitude->value(active).getWaypointAltitude();
+
+      // Need to be above next waypoint altitude
+      if(indicatedAltitudeFt > waypointAltitudeFt)
+      {
+        float angle = atools::geo::atan2Deg(indicatedAltitudeFt - waypointAltitudeFt, atools::geo::nmToFeet(nearestLegDistance));
+        if(angle > 0.1f && angle < 45.f)
+          return -angle;
+      }
+    }
+  }
+
+  return map::INVALID_ANGLE_VALUE;
+}
+
 float Route::getSpeedForDistance(float currentDistToDest) const
 {
   return altitude->getSpeedForDistance(currentDistToDest, NavApp::getAircraftPerformance());
@@ -2158,17 +2182,6 @@ const RouteLeg& Route::getLastLegOfDepartureProcedure() const
 const RouteLeg& Route::getDestinationBeforeProcedure() const
 {
   return value(getDestinationIndexBeforeProcedure());
-}
-
-bool Route::isActiveValid() const
-{
-  return activeLegIndex > 0 && activeLegIndex < size();
-}
-
-bool Route::isActiveAlternate() const
-{
-  return alternateLegsOffset != map::INVALID_INDEX_VALUE && activeLegIndex != map::INVALID_INDEX_VALUE &&
-         activeLegIndex >= alternateLegsOffset;
 }
 
 bool Route::isActiveDestinationAirport() const

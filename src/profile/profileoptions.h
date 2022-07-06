@@ -52,7 +52,12 @@ enum DisplayOptionProfile
   PROFILE_FP_SPEED_RESTRICTION = 1 << 16,
   PROFILE_FP_ALT_RESTRICTION_BLOCK = 1 << 17,
 
-  // Next is 1 << 18
+  /* User aircraft labels */
+  PROFILE_AIRCRAFT_ALTITUDE = 1 << 18,
+  PROFILE_AIRCRAFT_VERT_SPEED = 1 << 19,
+  PROFILE_AIRCRAFT_VERT_ANGLE_NEXT = 1 << 20,
+
+  // Next is 1 << 21
 
   /* All drawn in the top label */
   PROFILE_TOP_ANY = PROFILE_LABELS_DISTANCE | PROFILE_LABELS_MAG_COURSE | PROFILE_LABELS_TRUE_COURSE | PROFILE_LABELS_RELATED,
@@ -73,14 +78,18 @@ static const QVector<optsp::DisplayOptionProfile> ALL_OPTIONS({optsp::PROFILE_LA
                                                                optsp::PROFILE_FP_ALT_RESTRICTION_BLOCK, optsp::PROFILE_GROUND,
                                                                optsp::PROFILE_SAFE_ALTITUDE, optsp::PROFILE_LEG_SAFE_ALTITUDE,
                                                                optsp::PROFILE_LABELS_ALT, optsp::PROFILE_TOOLTIP,
-                                                               optsp::PROFILE_HIGHLIGHT});
+                                                               optsp::PROFILE_HIGHLIGHT, optsp::PROFILE_AIRCRAFT_ALTITUDE,
+                                                               optsp::PROFILE_AIRCRAFT_VERT_SPEED,
+                                                               optsp::PROFILE_AIRCRAFT_VERT_ANGLE_NEXT});
 
 static const optsp::DisplayOptionsProfile DEFAULT_OPTIONS = optsp::PROFILE_LABELS_DISTANCE | optsp::PROFILE_LABELS_RELATED |
                                                             optsp::PROFILE_FP_MAG_COURSE | optsp::PROFILE_FP_VERTICAL_ANGLE |
                                                             optsp::PROFILE_FP_ALT_RESTRICTION | optsp::PROFILE_FP_SPEED_RESTRICTION |
                                                             optsp::PROFILE_FP_ALT_RESTRICTION_BLOCK | optsp::PROFILE_GROUND |
                                                             optsp::PROFILE_SAFE_ALTITUDE | optsp::PROFILE_LEG_SAFE_ALTITUDE |
-                                                            optsp::PROFILE_LABELS_ALT | optsp::PROFILE_TOOLTIP | optsp::PROFILE_HIGHLIGHT;
+                                                            optsp::PROFILE_LABELS_ALT | optsp::PROFILE_TOOLTIP | optsp::PROFILE_HIGHLIGHT |
+                                                            optsp::PROFILE_AIRCRAFT_ALTITUDE | optsp::PROFILE_AIRCRAFT_VERT_SPEED |
+                                                            optsp::PROFILE_AIRCRAFT_VERT_ANGLE_NEXT;
 }
 
 /*

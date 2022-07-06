@@ -3803,7 +3803,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       html.warning(tr("User aircraft is not shown on map."));
   }
 
-  float distFromStartNm = 0.f, distToDestNm = 0.f, nearestLegDistance = 0.f, crossTrackDistance = 0.f;
+  float distFromStartNm = 0.f, distToDestNm = 0.f, nextLegDistance = 0.f, crossTrackDistance = 0.f;
 
   html.row2AlignRight();
 
@@ -3819,7 +3819,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     bool destination = route.isActiveDestinationAirport();
 
     if(activeLegIdxCorrected != map::INVALID_INDEX_VALUE &&
-       route.getRouteDistances(&distFromStartNm, &distToDestNm, &nearestLegDistance, &crossTrackDistance))
+       route.getRouteDistances(&distFromStartNm, &distToDestNm, &nextLegDistance, &crossTrackDistance))
     {
       if(distFromStartNm < map::INVALID_DISTANCE_VALUE)
       {
@@ -3829,10 +3829,10 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
       if(alternate)
         // Use distance to alternate instead of destination
-        distToDestNm = nearestLegDistance;
+        distToDestNm = nextLegDistance;
 
       // Calculates values based on performance profile if valid - otherwise estimated by aircraft fuel flow and speed
-      perfController->calculateFuelAndTimeTo(fuelTime, distToDestNm, nearestLegDistance, activeLegIdx);
+      perfController->calculateFuelAndTimeTo(fuelTime, distToDestNm, nextLegDistance, activeLegIdx);
 
       // Print warning messages ===================================================================
       if(route.getSizeWithoutAlternates() < 2)
@@ -4103,12 +4103,12 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
         // Distance, time and ETA for next waypoint ==============================================
         float courseToWptTrue = map::INVALID_COURSE_VALUE;
-        if(nearestLegDistance < map::INVALID_DISTANCE_VALUE)
+        if(nextLegDistance < map::INVALID_DISTANCE_VALUE)
         {
           QStringList distTimeStr, distTimeHeader;
 
           // Distance
-          distTimeStr.append(Unit::distNm(nearestLegDistance));
+          distTimeStr.append(Unit::distNm(nextLegDistance));
           distTimeHeader.append(tr("Distance"));
 
           if(aircraft.getGroundSpeedKts() > MIN_GROUND_SPEED &&
@@ -4474,29 +4474,43 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         head(html, tr("Descent Path"));
       html.table();
 
-      // Display vertical path deviation when after TOD
-      float vertAlt = route.getAltitudeForDistance(distToDestNm);
-
-      if(vertAlt < map::INVALID_ALTITUDE_VALUE)
+      if(html.isIdSet(pid::DESCENT_DEVIATION))
       {
-        float diff = aircraft.getActualAltitudeFt() - vertAlt;
-        QString upDown;
-        if(diff >= 100.f)
-          upDown = tr(", above <b>▼</b>");
-        else if(diff <= -100)
-          upDown = tr(", below <b>▲</b>");
+        // Display vertical path deviation when after TOD
+        float vertAlt = route.getAltitudeForDistance(distToDestNm);
 
-        html.id(pid::DESCENT_DEVIATION).row2(tr("Deviation:"), Unit::altFeet(diff) % upDown, ahtml::NO_ENTITIES);
+        if(vertAlt < map::INVALID_ALTITUDE_VALUE)
+        {
+          float diff = aircraft.getActualAltitudeFt() - vertAlt;
+          QString upDown;
+          if(diff >= 100.f)
+            upDown = tr(", above ▼");
+          else if(diff <= -100)
+            upDown = tr(", below ▲");
+
+          html.row2(tr("Deviation:"), Unit::altFeet(diff) % upDown, ahtml::NO_ENTITIES);
+        }
       }
 
-      bool required = false;
-      float vertAngle = route.getVerticalAngleAtDistance(distToDestNm, &required);
-      if(vertAngle < map::INVALID_ANGLE_VALUE)
-        html.id(pid::DESCENT_ANGLE_SPEED).row2(required ? tr("Required Angle and Speed:") : tr("Angle and Speed:"),
-                                               tr("%L1°, %L2").arg(vertAngle, 0, 'g', required ? 3 : 2).
-                                               arg(Unit::speedVertFpm(-ageo::descentSpeedForPathAngle(userAircraft->getGroundSpeedKts(),
-                                                                                                      vertAngle)) %
-                                                   tr(" <b>▼</b>")), ahtml::NO_ENTITIES);
+      if(html.isIdSet(pid::DESCENT_ANGLE_SPEED))
+      {
+        bool required = false;
+        float vertAngle = route.getVerticalAngleAtDistance(distToDestNm, &required);
+        if(vertAngle < map::INVALID_ANGLE_VALUE)
+          html.row2(required ? tr("Required Angle and Speed:") : tr("Angle and Speed:"),
+                    tr("%L1°, %L2").arg(vertAngle, 0, 'g', required ? 3 : 2).
+                    arg(Unit::speedVertFpm(-ageo::descentSpeedForPathAngle(userAircraft->getGroundSpeedKts(), vertAngle)) %
+                        tr(" ▼")));
+      }
+
+      if(html.isIdSet(pid::DESCENT_VERT_ANGLE_NEXT))
+      {
+        float vertAngleToNext = route.getVerticalAngleToNext(nextLegDistance);
+        if(vertAngleToNext < map::INVALID_ANGLE_VALUE)
+          html.row2(tr("Angle and Speed to Next:"), tr("%L1°, %L2").arg(vertAngleToNext, 0, 'g', 2).
+                    arg(Unit::speedVertFpm(-ageo::descentSpeedForPathAngle(userAircraft->getGroundSpeedKts(), vertAngleToNext)) %
+                        tr(" ▼")));
+      }
       html.tableEndIf();
     }
   }

@@ -39,10 +39,10 @@ const static QVector<pid::ProgressConfId> ALLIDS({
   pid::AIRCRAFT_GROSS_WEIGHT, pid::AIRCRAFT_ICE, pid::ALT_INDICATED, pid::ALT_INDICATED_OTHER, pid::ALT_ACTUAL, pid::ALT_ACTUAL_OTHER,
   pid::ALT_ABOVE_GROUND, pid::ALT_GROUND_ELEVATION, pid::ALT_AUTOPILOT_ALT, pid::SPEED_INDICATED, pid::SPEED_INDICATED_OTHER,
   pid::SPEED_GROUND, pid::SPEED_GROUND_OTHER, pid::SPEED_TRUE, pid::SPEED_MACH, pid::SPEED_VERTICAL, pid::SPEED_VERTICAL_OTHER,
-  pid::DESCENT_DEVIATION, pid::DESCENT_ANGLE_SPEED, pid::ENV_WIND_DIR_SPEED, pid::ENV_TAT, pid::ENV_SAT, pid::ENV_ISA_DEV,
-  pid::ENV_SEA_LEVEL_PRESS, pid::ENV_CONDITIONS, pid::ENV_VISIBILITY, pid::POS_COORDINATES});
+  pid::DESCENT_DEVIATION, pid::DESCENT_ANGLE_SPEED, pid::DESCENT_VERT_ANGLE_NEXT, pid::ENV_WIND_DIR_SPEED, pid::ENV_TAT, pid::ENV_SAT,
+  pid::ENV_ISA_DEV, pid::ENV_SEA_LEVEL_PRESS, pid::ENV_CONDITIONS, pid::ENV_VISIBILITY, pid::POS_COORDINATES});
 
-// Default ids which are enabled with out settings
+// Default ids which are enabled without settings
 const static QVector<pid::ProgressConfId> DEFAULTIDS({
   pid::DATE_TIME, pid::LOCAL_TIME, pid::FLOWN, pid::DEST_DIST_TIME_ARR, pid::DEST_FUEL, pid::DEST_GROSS_WEIGHT, pid::TOD_DIST_TIME_ARR,
   pid::TOD_FUEL, pid::TOD_TO_DESTINATION, pid::NEXT_LEG_TYPE, pid::NEXT_INSTRUCTIONS, pid::NEXT_RELATED, pid::NEXT_RESTRICTION,
@@ -50,8 +50,8 @@ const static QVector<pid::ProgressConfId> DEFAULTIDS({
   pid::NEXT_CROSS_TRACK_DIST, pid::NEXT_REMARKS, pid::AIRCRAFT_HEADING, pid::AIRCRAFT_TRACK, pid::AIRCRAFT_FUEL_FLOW,
   pid::AIRCRAFT_ENDURANCE, pid::AIRCRAFT_ICE, pid::ALT_INDICATED, pid::ALT_ACTUAL, pid::ALT_ABOVE_GROUND, pid::ALT_GROUND_ELEVATION,
   pid::ALT_AUTOPILOT_ALT, pid::SPEED_INDICATED, pid::SPEED_GROUND, pid::SPEED_TRUE, pid::SPEED_MACH, pid::SPEED_VERTICAL,
-  pid::DESCENT_DEVIATION, pid::DESCENT_ANGLE_SPEED, pid::ENV_WIND_DIR_SPEED, pid::ENV_TAT, pid::ENV_SAT, pid::ENV_ISA_DEV,
-  pid::ENV_SEA_LEVEL_PRESS, pid::ENV_CONDITIONS, pid::ENV_VISIBILITY});
+  pid::DESCENT_DEVIATION, pid::DESCENT_ANGLE_SPEED, pid::DESCENT_VERT_ANGLE_NEXT, pid::ENV_WIND_DIR_SPEED, pid::ENV_TAT, pid::ENV_SAT,
+  pid::ENV_ISA_DEV, pid::ENV_SEA_LEVEL_PRESS, pid::ENV_CONDITIONS, pid::ENV_VISIBILITY});
 
 // Always enables coordinate display or other required fields for web interface
 const static QVector<pid::ProgressConfId> ADDITIONAL_WEB_IDS({pid::POS_COORDINATES});
@@ -187,6 +187,8 @@ void AircraftProgressConfig::progressConfiguration()
                                                                                  "▼ means above (increase sink rate) and ▲ means below (decrease sink rate)."));
   treeDialog.addItem2(descentItem, pid::DESCENT_ANGLE_SPEED, tr("Angle and Speed"), tr("Vertical flight path angle needed to keep the vertical path angle.\n"
                                                                                        "Changes to \"Required angle\" if mandatory in approach procedures."));
+  treeDialog.addItem2(descentItem, pid::DESCENT_VERT_ANGLE_NEXT, tr("Angle and Speed to Next"), tr("Vertical descent angle and speed needed to arrive at\n"
+                                                                                                   "the calculated altitude at the next waypoint."));
 
   // Environment ==========================================================================================================
   QTreeWidgetItem *envItem = treeDialog.addTopItem1(tr("Environment"));
