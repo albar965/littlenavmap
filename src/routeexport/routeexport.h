@@ -223,6 +223,9 @@ public:
     return selected;
   }
 
+  /* Warning dialog when changing export options */
+  void warnExportOptions(bool checked);
+
 signals:
   /* Show airport on map to allow parking selection */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);

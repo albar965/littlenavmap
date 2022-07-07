@@ -23,7 +23,8 @@ namespace messages {
 /* Reset all "do not show this again" message box status values */
 void resetAllMessages();
 
-/* Reset all relevant "do not show this again" message box status values which are typically ignored by users */
+/* Reset all relevant "do not show this again" message box status values which are typically ignored by users.
+ * These are also reset on update (version number in settings different than application version) to keep user alert. */
 void resetEssentialMessages();
 
 }

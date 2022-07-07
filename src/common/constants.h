@@ -94,6 +94,7 @@ const QLatin1String ACTIONS_SHOW_TRACK_DOWNLOAD_FAIL("Actions/TrackDownloadFaile
 const QLatin1String ACTIONS_SHOW_LOGBOOK_CONVERSION("Actions/LogbookConversion");
 const QLatin1String ACTIONS_SHOW_SEND_SIMBRIEF("Actions/SendSimBrief");
 const QLatin1String ACTIONS_SHOW_MAPTHEME_REQUIRES_KEY("Actions/MapThemeRequiresKey");
+const QLatin1String ACTIONS_SHOW_FILE_EXPORT_OPTIONS_WARN("Actions/FileExportOptionsWarn");
 
 const QLatin1String ACTIONS_SHOW_DATABASE_OLD("Actions/DatabaseOld");
 const QLatin1String ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH("Actions/DatabaseMsfsNavigraph");

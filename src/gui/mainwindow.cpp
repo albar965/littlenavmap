@@ -935,8 +935,7 @@ void MainWindow::connectAllSlots()
 {
 
   // Get "show in browser"  click
-  connect(ui->textBrowserLegendNavInfo, &QTextBrowser::anchorClicked, this,
-          &MainWindow::legendAnchorClicked);
+  connect(ui->textBrowserLegendNavInfo, &QTextBrowser::anchorClicked, this, &MainWindow::legendAnchorClicked);
 
   // Options dialog ===================================================================
   // Notify others of options change
@@ -950,8 +949,7 @@ void MainWindow::connectAllSlots()
   // Reset weather context first
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::clearWeatherContext);
 
-  connect(optionsDialog, &OptionsDialog::optionsChanged,
-          NavApp::getAirspaceController(), &AirspaceController::optionsChanged);
+  connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getAirspaceController(), &AirspaceController::optionsChanged);
 
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateMapObjectsShown);
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::updateActionStates);
@@ -973,6 +971,11 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getTrackController(), &TrackController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::saveStateNow);
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::optionsChanged);
+
+  // Warning when selecting export options ===================================================================
+  connect(ui->actionRouteSaveApprWaypoints, &QAction::toggled, routeExport, &RouteExport::warnExportOptions);
+  connect(ui->actionRouteSaveSidStarWaypoints, &QAction::toggled, routeExport, &RouteExport::warnExportOptions);
+  connect(ui->actionRouteSaveAirwayWaypoints, &QAction::toggled, routeExport, &RouteExport::warnExportOptions);
 
   // Updated manually in dialog
   // connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getWebController(), &WebController::optionsChanged);

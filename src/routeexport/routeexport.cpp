@@ -1950,3 +1950,20 @@ void RouteExport::writeIvapLine(QTextStream& stream, const QString& key, int val
   else if(type == re::IVAP)
     stream << "\r\n";
 }
+
+void RouteExport::warnExportOptions(bool checked)
+{
+  if(checked)
+  {
+    QString message = tr("<p>Note that saving flight plans with one or more export options enabled can cause unexpected issues:</p>"
+                           "<ul>"
+                             "<li>Procedure and/or airway information will be missing when reloading the exported flight plans.</li>"
+                               "<li>Several approach procedure leg types like holds, turns and turns cannot be shown properly in simulators or aircraft.</li>"
+                                 "<li>Speed and altitude restrictions are not included in the exported flight plan.</li>"
+                                 "</ul>"
+                                 "<p>This does not apply to the the native LNMPLN file format.</p>"
+                                   "<p><b>Normally you should not use these export options.</b></p>");
+
+    dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_FILE_EXPORT_OPTIONS_WARN, message, tr("Do not &show this dialog again."));
+  }
+}

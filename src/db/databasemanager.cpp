@@ -858,7 +858,8 @@ void DatabaseManager::switchNavFromMainMenu()
       "<p>Note that airport information is limited in this mode.<br/>"
       "This means that aprons, taxiways, parking positions, runway surface information and other information is not available.<br/>"
       "Smaller airports might be missing and runway layout might not match the runway layout in the simulator.</p>"
-      "<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>").arg(url.toString());
+      "<p><b>Normally you should not use this mode.</b></p>"
+        "<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>").arg(url.toString());
 
     dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_NAVDATA_WARNING, message, QObject::tr("Do not &show this dialog again."));
   }
@@ -1310,7 +1311,8 @@ void DatabaseManager::run()
                                                      "smaller airports will be missing and the runway layout might not match the one in the simulator.</p>"
                                                      "<p>You can change this manually in menu \"Scenery Library\" -> "
                                                        "\"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
-                                                       "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
+                                                       "<p><b>Normally you should not use this mode.</b></p>"
+                                                         "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
                                               tr("Do not &show this dialog again and always correct mode after loading."),
                                               QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
 
