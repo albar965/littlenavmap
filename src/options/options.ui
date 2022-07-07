@@ -61,7 +61,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
+             <width>570</width>
              <height>532</height>
             </rect>
            </property>
@@ -402,7 +402,7 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>595</width>
+             <width>570</width>
              <height>532</height>
             </rect>
            </property>
@@ -646,8 +646,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>437</width>
-             <height>546</height>
+             <width>570</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1141,8 +1141,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>571</width>
-             <height>366</height>
+             <width>570</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -1382,7 +1382,6 @@ also define the order when reading coordinates in the user interface if enabled.
                 <widget class="QLabel" name="label_2">
                  <property name="font">
                   <font>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1458,7 +1457,7 @@ Also affects labels at holds and traffic patterns.</string>
              <x>0</x>
              <y>0</y>
              <width>578</width>
-             <height>543</height>
+             <height>522</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_12">
@@ -1923,8 +1922,8 @@ Use &quot;Window&quot; -&gt; &quot;Reset Window Layout&quot; in the main menu to
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>609</width>
-             <height>312</height>
+             <width>594</width>
+             <height>518</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_13">
@@ -2243,8 +2242,8 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>508</width>
-             <height>524</height>
+             <width>570</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -2967,8 +2966,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>422</width>
-             <height>326</height>
+             <width>570</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -3354,8 +3353,8 @@ Not used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>534</width>
-             <height>504</height>
+             <width>570</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -4148,8 +4147,8 @@ Do not show this this information publicly in forums on screenshots.&lt;/b&gt;&l
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>339</width>
-             <height>366</height>
+             <width>570</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -4587,7 +4586,7 @@ airspace filename has to match the callsign of the online center.</string>
              <x>0</x>
              <y>0</y>
              <width>594</width>
-             <height>491</height>
+             <height>518</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -5014,8 +5013,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>491</width>
-             <height>393</height>
+             <width>570</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -5333,8 +5332,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>284</width>
-             <height>324</height>
+             <width>570</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -5529,8 +5528,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>430</width>
-             <height>390</height>
+             <width>570</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -5585,7 +5584,7 @@ Default is &quot;https://api.ivao.aero/v2/airports/all/metar&quot;.</string>
                   <string notr="true">https://api.ivao.aero/v2/airports/all/metar</string>
                  </property>
                  <property name="cursorPosition">
-                  <number>30</number>
+                  <number>43</number>
                  </property>
                  <property name="placeholderText">
                   <string>No URL set. IVAO weather reports are disabled.</string>
@@ -5992,8 +5991,8 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>341</width>
-             <height>333</height>
+             <width>570</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -6274,8 +6273,8 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>450</width>
-             <height>234</height>
+             <width>570</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -6461,8 +6460,8 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>505</width>
-             <height>383</height>
+             <width>570</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -6738,8 +6737,8 @@ Source data has many errors.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>205</width>
-             <height>557</height>
+             <width>570</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
@@ -6764,23 +6763,7 @@ Source data has many errors.</string>
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="0" column="0" colspan="2">
-                <widget class="QLabel" name="labelOptionsDatabaseExclude">
-                 <property name="text">
-                  <string>&amp;Select paths to exclude from loading:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="buddy">
-                  <cstring>listWidgetOptionsDatabaseExclude</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="1" column="0">
+               <item row="2" column="0">
                 <widget class="QListWidget" name="listWidgetOptionsDatabaseExclude">
                  <property name="toolTip">
                   <string>All directories including sub-directories and files in this list will be omitted when loading the scenery library into the Little Navmap database.
@@ -6799,7 +6782,39 @@ You have to reload the scenery library so that the changes take effect.</string>
                  </property>
                 </widget>
                </item>
-               <item row="1" column="1">
+               <item row="1" column="0" colspan="2">
+                <widget class="QLabel" name="labelOptionsDatabaseExclude">
+                 <property name="text">
+                  <string>&amp;Select paths to exclude from loading:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="buddy">
+                  <cstring>listWidgetOptionsDatabaseExclude</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="0" colspan="2">
+                <widget class="QLabel" name="labelOptionsDatabaseAddon">
+                 <property name="text">
+                  <string>Select &amp;paths to exclude from add-on recognition:</string>
+                 </property>
+                 <property name="alignment">
+                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="buddy">
+                  <cstring>listWidgetOptionsDatabaseAddon</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
                 <layout class="QVBoxLayout" name="verticalLayoutOptionsDatabase">
                  <property name="spacing">
                   <number>2</number>
@@ -6843,23 +6858,7 @@ You have to reload the scenery library so that the changes take effect.</string>
                  </item>
                 </layout>
                </item>
-               <item row="2" column="0" colspan="2">
-                <widget class="QLabel" name="labelOptionsDatabaseAddon">
-                 <property name="text">
-                  <string>Select &amp;paths to exclude from add-on recognition:</string>
-                 </property>
-                 <property name="alignment">
-                  <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
-                 </property>
-                 <property name="wordWrap">
-                  <bool>true</bool>
-                 </property>
-                 <property name="buddy">
-                  <cstring>listWidgetOptionsDatabaseAddon</cstring>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="0">
+               <item row="4" column="0">
                 <widget class="QListWidget" name="listWidgetOptionsDatabaseAddon">
                  <property name="toolTip">
                   <string>All airports found outside the default &quot;scenery&quot; directory will be considered add-ons.
@@ -6879,7 +6878,7 @@ You have to reload the scenery library so that the changes take effect.</string>
                  </property>
                 </widget>
                </item>
-               <item row="3" column="1">
+               <item row="4" column="1">
                 <layout class="QVBoxLayout" name="verticalLayoutOptionsDatabase_2">
                  <property name="spacing">
                   <number>2</number>
@@ -6916,8 +6915,8 @@ You have to reload the scenery library so that the changes take effect.</string>
                  </item>
                 </layout>
                </item>
-               <item row="4" column="0" colspan="2">
-                <widget class="QLabel" name="label_7">
+               <item row="0" column="0" colspan="2">
+                <widget class="QLabel" name="labelOptionsDatabaseReload">
                  <property name="text">
                   <string>&lt;b&gt;You have to reload the scenery library for the changes to take effect.&lt;/b&gt;</string>
                  </property>

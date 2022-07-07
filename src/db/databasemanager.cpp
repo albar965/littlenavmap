@@ -502,9 +502,9 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
       if(result == QMessageBox::Yes)
       {
         // We have a database in the application folder and it is newer than the one in the settings folder
-        QMessageBox *simpleProgressDialog = atools::gui::Dialog::showSimpleProgressDialog(mainWindow,
-                                                                                          tr("Preparing %1 Database ...").
-                                                                                          arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
+        QMessageBox *simpleProgressDialog =
+          atools::gui::Dialog::showSimpleProgressDialog(mainWindow, tr("Preparing %1 Database ...").
+                                                        arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
         atools::gui::Application::processEventsExtended();
 
         bool resultRemove = true, resultCopy = false;
@@ -531,7 +531,8 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
         {
           SqlDatabase tempDb(DATABASE_NAME_TEMP);
           openDatabaseFile(&tempDb, settingsDb, false /* readonly */, true /* createSchema */);
-          simpleProgressDialog->setText(tr("Preparing %1 Database: Creating indexes ...").arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
+          simpleProgressDialog->setText(tr("Preparing %1 Database: Creating indexes ...").
+                                        arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
           atools::gui::Application::processEventsExtended();
           simpleProgressDialog->repaint();
           atools::gui::Application::processEventsExtended();
@@ -1620,23 +1621,52 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db, atools::fs::Resu
   QApplication::processEvents();
 
   // Show errors that occured during loading, if any
-  if(errors.getTotalErrors() > 0)
+  if(errors.getTotal() > 0)
   {
+    int totalErrors = errors.getTotalErrors();
+    int totalWarnings = errors.getTotalWarnings();
+
+    // Adjust text depending on warnings and errors =========================================
+    QString dialogTitle, headerText;
+    if(totalErrors > 0 && totalWarnings > 0)
+    {
+      dialogTitle = tr("Errors and Warnings");
+      headerText = tr("%1 errors and %2 warnings").arg(totalErrors).arg(totalWarnings);
+    }
+    else if(totalErrors > 0)
+    {
+      dialogTitle = tr("Errors");
+      headerText = tr("%1 errors").arg(totalErrors);
+    }
+    else if(totalWarnings > 0)
+    {
+      dialogTitle = tr("Warnings");
+      headerText = tr("%1 warnings").arg(totalWarnings);
+    }
+
     QString errorTexts;
-    errorTexts.append(tr("<h3>Found %1 errors in %2 scenery entries when loading the scenery database</h3>").
-                      arg(errors.getTotalErrors()).arg(errors.sceneryErrors.size()));
+    errorTexts.append(tr("<h3>Found %1 in %2 scenery entries when loading the scenery database</h3>").
+                      arg(headerText).arg(errors.sceneryErrors.size()));
 
-    errorTexts.append(tr("<b>If you wish to report this error attach the log and configuration files "
-                           "to your report, add all other available information and send it to one "
-                           "of the contact addresses below.</b>"
-                           "<hr/>%1"
-                             "<hr/>%2").
-                      arg(atools::gui::Application::getContactHtml()).
-                      arg(atools::gui::Application::getReportPathHtml()));
+    if(totalErrors > 0)
+    {
+      // Show contact for real errors =========================================
+      errorTexts.append(tr("<b>If you wish to report these errors attach the log and configuration files "
+                             "to your report, add all other available information and send it to one "
+                             "of the contact addresses below.</b>"
+                             "<hr/>%1"
+                               "<hr/>%2").
+                        arg(atools::gui::Application::getContactHtml()).
+                        arg(atools::gui::Application::getReportPathHtml()));
 
-    errorTexts.append(tr("<hr/>Some files or scenery directories could not be read.<br/>"
-                         "You should check if the airports of the affected sceneries display "
-                         "correctly and show the correct information.<hr/>"));
+      errorTexts.append(tr("<hr/>Some files or scenery directories could not be read.<br/>"
+                           "You should check if the airports of the affected sceneries display "
+                           "correctly and show the correct information.<hr/>"));
+    }
+    else if(totalWarnings > 0)
+      // Show normal header for encryption warnings =========================================
+      errorTexts.append(tr("<hr/>Some files or scenery directories could not be read properly "
+                             "due to encrypted airport data or other issues.<hr/>"));
 
     int numScenery = 0;
     for(const atools::fs::NavDatabaseErrors::SceneryErrors& scErr : errors.sceneryErrors)
@@ -1662,15 +1692,14 @@ bool DatabaseManager::loadScenery(atools::sql::SqlDatabase *db, atools::fs::Resu
         }
         numBgl++;
 
-        errorTexts.append(tr("<b>File:</b> \"%1\"<br/><b>Error:</b> %2<br/>").
+        errorTexts.append(tr("<b>File:</b> \"%1\"<br/><b>Message:</b> %2<br/>").
                           arg(bglErr.filepath).arg(bglErr.errorMessage));
       }
       errorTexts.append("<br/>");
       numScenery++;
     }
 
-    TextDialog errorDialog(progressDialog,
-                           QApplication::applicationName() + tr(" - Load Scenery Library Errors"),
+    TextDialog errorDialog(progressDialog, tr("%1 - Load Scenery Library %2").arg(QApplication::applicationName()).arg(dialogTitle),
                            "SCENERY.html#errors"); // anchor for future use
     errorDialog.setHtmlMessage(errorTexts, true /* print to log */);
     errorDialog.exec();
