@@ -117,7 +117,7 @@ void MapLayerSettings::reloadFromFile()
 
 void MapLayerSettings::loadFromFile()
 {
-  filename = atools::settings::Settings::instance().getOverloadedPath(lnm::MAP_LAYER_CONFIG);
+  filename = atools::settings::Settings::getOverloadedPath(lnm::MAP_LAYER_CONFIG);
 
   QFileInfo fi(filename);
   if(!fi.exists() || !fi.isReadable())

@@ -75,7 +75,7 @@ const QString helpLanguageOnline()
 
 void loadHelpUrls()
 {
-  QString urlsPath = atools::settings::Settings::instance().getOverloadedPath(lnm::URLS_CONFIG);
+  QString urlsPath = atools::settings::Settings::getOverloadedPath(lnm::URLS_CONFIG);
   qInfo() << Q_FUNC_INFO << "Loading urls.cfg from" << urlsPath;
 
   QSettings settings(urlsPath, QSettings::IniFormat);

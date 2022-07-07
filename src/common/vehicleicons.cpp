@@ -116,7 +116,7 @@ const QPixmap *VehicleIcons::pixmapFromCache(const internal::PixmapKey& key, int
     if(key.online && !key.user)
       name += "_online";
 
-    name = atools::settings::Settings::instance().getOverloadedPath(name + ".svg");
+    name = atools::settings::Settings::getOverloadedPath(name + ".svg");
     QPixmap *newPx = nullptr;
     QPixmap pixmap = QIcon(name).pixmap(QSize(size, size));
     if(rotate == 0)

@@ -82,7 +82,7 @@ void checkAndMigrateSettings()
       {
         qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before 2.4.2.beta";
         removeAndLog(settings, lnm::ROUTE_STRING_DIALOG_OPTIONS);
-        settings.syncSettings();
+        Settings::syncSettings();
       }
 
       // ===============================================================
@@ -90,7 +90,7 @@ void checkAndMigrateSettings()
       {
         qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before 2.4.3.rc1";
         removeAndLog(settings, "MainWindow/Widget_mapThemeComboBox");
-        settings.syncSettings();
+        Settings::syncSettings();
       }
 
       // ===============================================================
@@ -146,7 +146,7 @@ void checkAndMigrateSettings()
 
         // clear allow undock map?
 
-        settings.syncSettings();
+        Settings::syncSettings();
       }
 
       if(optionsVersion <= Version("2.6.0.beta"))
@@ -227,14 +227,14 @@ void checkAndMigrateSettings()
 
       // Set program version to options and save ===================
       settings.setValue(lnm::OPTIONS_VERSION, programVersion.getVersionString());
-      settings.syncSettings();
+      Settings::syncSettings();
     }
   }
   else
   {
     qWarning() << Q_FUNC_INFO << "No version information found in settings file. Updating to" << programVersion;
     settings.setValue(lnm::OPTIONS_VERSION, programVersion.getVersionString());
-    settings.syncSettings();
+    Settings::syncSettings();
   }
 
   // Always correct map font if missing
@@ -245,7 +245,7 @@ void checkAndMigrateSettings()
     QFont font(QGuiApplication::font());
     font.setBold(true);
     settings.setValueVar(lnm::OPTIONS_DIALOG_MAP_FONT, font);
-    settings.syncSettings();
+    Settings::syncSettings();
   }
 }
 

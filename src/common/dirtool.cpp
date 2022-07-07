@@ -213,5 +213,5 @@ void DirTool::updateOptions()
   settings.setValue("WindowLayout/FileDialogDir", d(layoutDir));
   settings.setValue("Database/AirspaceConfig_lineEditAirspacePath", d(airspaceDir));
   settings.setValue("OptionsDialog/CacheFileDialogGlobeFileDialogDir", d(globeDir));
-  settings.syncSettings();
+  atools::settings::Settings::syncSettings();
 }

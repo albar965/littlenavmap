@@ -988,7 +988,7 @@ void OptionsDialog::saveState()
   settings.setValueVar(lnm::OPTIONS_DIALOG_SEARCH_HIGHLIGHT_COLOR, highlightSearchColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_PROFILE_HIGHLIGHT_COLOR, highlightProfileColor);
 
-  settings.syncSettings();
+  Settings::syncSettings();
 }
 
 void OptionsDialog::restoreState()
@@ -997,7 +997,7 @@ void OptionsDialog::restoreState()
 
   // Reload online network settings from configuration file which can be overloaded by placing a copy
   // in the settings file
-  QString networksPath = settings.getOverloadedPath(lnm::NETWORKS_CONFIG);
+  QString networksPath = Settings::getOverloadedPath(lnm::NETWORKS_CONFIG);
   qInfo() << Q_FUNC_INFO << "Loading networks.cfg from" << networksPath;
 
   QSettings networkSettings(networksPath, QSettings::IniFormat);

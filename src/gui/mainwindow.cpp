@@ -126,6 +126,7 @@ using atools::settings::Settings;
 using atools::gui::FileHistoryHandler;
 using atools::gui::MapPosHistory;
 using atools::gui::HelpHandler;
+using atools::gui::DockWidgetHandler;
 
 MainWindow::MainWindow()
   : QMainWindow(nullptr), ui(new Ui::MainWindow)
@@ -631,7 +632,7 @@ void MainWindow::showNavmapLegend()
   else
   {
     // URL is empty loading failed - show it in browser
-    helpHandler->openHelpUrlWeb(this, lnm::helpOnlineLegendUrl, lnm::helpLanguageOnline());
+    HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineLegendUrl, lnm::helpLanguageOnline());
     setStatusMessage(tr("Opened map legend in browser."));
   }
 }
@@ -3102,7 +3103,7 @@ void MainWindow::mainWindowShown()
     runDirTool(false /* manual */);
 
     // Open a start page in the web browser ============================
-    helpHandler->openHelpUrlWeb(this, lnm::helpOnlineStartUrl, lnm::helpLanguageOnline());
+    HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineStartUrl, lnm::helpLanguageOnline());
 
     // Show the scenery database dialog on first start
     if(databaseManager->hasInstalledSimulators())
@@ -3352,7 +3353,7 @@ void MainWindow::allowMovingWindows()
 
   if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
     // Undockable map widget is not registered in handler
-    dockHandler->setMovingAllowed(ui->dockWidgetMap, ui->actionShowAllowMoving->isChecked());
+    DockWidgetHandler::setMovingAllowed(ui->dockWidgetMap, ui->actionShowAllowMoving->isChecked());
 }
 
 void MainWindow::allowDockingWindows()
@@ -3362,7 +3363,7 @@ void MainWindow::allowDockingWindows()
 
   if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
     // Undockable map widget is not registered in handler
-    dockHandler->setDockingAllowed(ui->dockWidgetMap, ui->actionShowAllowDocking->isChecked());
+    DockWidgetHandler::setDockingAllowed(ui->dockWidgetMap, ui->actionShowAllowDocking->isChecked());
 }
 
 void MainWindow::raiseFloatingWindows()
@@ -3372,7 +3373,7 @@ void MainWindow::raiseFloatingWindows()
 
   if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
     // Map window is not registered in dockHandler
-    dockHandler->raiseFloatingWindow(ui->dockWidgetMap);
+    DockWidgetHandler::raiseFloatingWindow(ui->dockWidgetMap);
 
   // Avoid having random widget focus
   mapWidget->setFocus();
@@ -3493,8 +3494,8 @@ void MainWindow::updateActionStates()
 
 void MainWindow::resetAllSettings()
 {
-  QString settingFile = Settings::instance().getFilename();
-  QString settingPath = Settings::instance().getPath();
+  QString settingFile = Settings::getFilename();
+  QString settingPath = Settings::getPath();
 
   QMessageBox::StandardButton retval =
     QMessageBox::warning(this, QApplication::applicationName() + tr("Reset all Settings "),
@@ -3857,7 +3858,7 @@ void MainWindow::saveStateMain()
     NavApp::getDatabaseManager()->saveState();
 
   qDebug() << Q_FUNC_INFO << "syncSettings";
-  settings.syncSettings();
+  Settings::syncSettings();
   qDebug() << Q_FUNC_INFO << "save state done";
 }
 
@@ -3877,7 +3878,7 @@ void MainWindow::saveFileHistoryStates()
   if(layoutFileHistory != nullptr)
     layoutFileHistory->saveState();
 
-  Settings::instance().syncSettings();
+  Settings::syncSettings();
 }
 
 void MainWindow::saveMainWindowStates()
@@ -3891,7 +3892,7 @@ void MainWindow::saveMainWindowStates()
 
   // Save profile dock size separately since it is sometimes resized by other docks
   // settings.setValue(lnm::MAINWINDOW_WIDGET_STATE + "ProfileDockHeight", ui->dockWidgetContentsProfile->height());
-  Settings::instance().syncSettings();
+  Settings::syncSettings();
 }
 
 void MainWindow::saveActionStates()
@@ -3912,7 +3913,7 @@ void MainWindow::saveActionStates()
                     ui->actionRunWebserver, ui->actionSearchLogdataShowDirect, ui->actionSearchLogdataShowRoute,
                     ui->actionSearchLogdataShowTrack, ui->actionShowAllowDocking, ui->actionShowAllowMoving, ui->actionWindowStayOnTop});
 
-  Settings::instance().syncSettings();
+  Settings::syncSettings();
 }
 
 #ifdef DEBUG_DUMP_SHORTCUTS
