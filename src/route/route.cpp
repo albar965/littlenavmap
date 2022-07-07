@@ -2732,6 +2732,9 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
           // Use display ident for DEP/DES since it does not matter in this configuration
           QString ident = useAirportKeys ? airport.ident : airport.displayIdent();
 
+          if(ident.size() > 4)
+            useAirportKeys = false;
+
           if(i == 0)
           {
             // Set for start
@@ -2740,8 +2743,10 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
             // Set properties to use ADEP/ADES or DEP/DES.  Read by FlightplanIO::saveFmsInternal()
             // Value does not matter - only presence is checked
             if(useAirportKeys)
+              // ADEP
               plan.getProperties().remove(atools::fs::pln::AIRPORT_DEPARTURE_NO_AIRPORT);
             else
+              // DEP
               plan.getProperties().insert(atools::fs::pln::AIRPORT_DEPARTURE_NO_AIRPORT, QString());
           }
           else if(i == entries.size() - 1)
@@ -2750,8 +2755,10 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
             plan.setDestinationIdent(ident);
 
             if(useAirportKeys)
+              // ADES
               plan.getProperties().remove(atools::fs::pln::AIRPORT_DESTINATION_NO_AIRPORT);
             else
+              // DES
               plan.getProperties().insert(atools::fs::pln::AIRPORT_DESTINATION_NO_AIRPORT, QString());
           }
         }
