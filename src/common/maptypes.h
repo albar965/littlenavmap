@@ -1095,6 +1095,9 @@ struct MapIls
   QString freqMHzOrChannelLocale() const;
   QString freqMHzOrChannel() const;
 
+  QString freqMHzLocale() const;
+  QString freqMHz() const;
+
   bool isGls() const
   {
     return type == GLS_GROUND_STATION;

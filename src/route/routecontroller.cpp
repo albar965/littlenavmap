@@ -4272,7 +4272,9 @@ void RouteController::updateTableModel()
       for(const map::MapIls& ils : route.getDestRunwayIlsFlightPlanTable())
       {
         ilsTypeTexts.append(map::ilsType(ils, true /* gs */, true /* dme */, tr(", ")));
-        ilsFreqTexts.append(ils.freqMHzOrChannelLocale());
+
+        if(!ils.isAnyGlsRnp())
+          ilsFreqTexts.append(ils.freqMHzLocale());
       }
     }
 

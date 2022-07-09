@@ -695,7 +695,7 @@ bool HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuild
       if(ils != nullptr && !ils->isAnyGlsRnp())
         nearestMapObjectsTextRow(airport, html, map::ilsType(*ils, true /* gs */, true /* dme */, tr(", ")),
                                  ils->ident, ils->name,
-                                 ils->freqMHzOrChannelLocale(), ils, ils->magvar, frequencyCol, airportCol);
+                                 ils->freqMHzLocale(), ils, ils->magvar, frequencyCol, airportCol);
     }
     html.tableEnd();
     return true;
@@ -1203,7 +1203,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
   if(ils.isAnyGlsRnp())
     html.row2(prefix % tr("Channel:"), ils.freqMHzOrChannelLocale());
   else
-    html.row2(prefix % tr("Frequency:"), ils.freqMHzOrChannelLocale() % tr(" MHz"));
+    html.row2(prefix % tr("Frequency:"), ils.freqMHzLocale() % tr(" MHz"));
 
   if(!procInfo && verbose)
   {
@@ -4082,8 +4082,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         }
 
         // Next leg - approach related navaid ====================================================
-        html.id(pid::NEXT_RELATED).row2If(tr("Related Navaid:"),
-                                          proc::procedureLegRecommended(procLeg).join(tr(", ")), ahtml::NO_ENTITIES);
+        html.id(pid::NEXT_RELATED).row2If(tr("Related Navaid:"), proc::procedureLegRecommended(procLeg).join(tr(", ")), ahtml::NO_ENTITIES);
 
         // Altitude restrictions for procedure legs ==============================================
         if(routeLegCorrected.isAnyProcedure())

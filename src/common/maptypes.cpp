@@ -2011,7 +2011,7 @@ QString ilsText(const MapIls& ils)
   texts.append(ils.ident);
 
   if(!ils.isAnyGlsRnp()) // Channel is not relevant on map display
-    texts.append(ils.freqMHzOrChannel());
+    texts.append(ils.freqMHz());
 
   texts.append(QObject::tr("%1°M").arg(QString::number(atools::geo::normalizeCourse(ils.heading - ils.magvar), 'f', 0)));
 
@@ -2173,6 +2173,22 @@ QString MapIls::freqMHzOrChannelLocale() const
 {
   if(type == GLS_GROUND_STATION || type == SBAS_GBAS_THRESHOLD)
     return QObject::tr("%L1").arg(frequency);
+  else
+    return QObject::tr("%L1").arg(static_cast<float>(frequency / 1000.f), 0, 'f', 2);
+}
+
+QString MapIls::freqMHz() const
+{
+  if(type == GLS_GROUND_STATION || type == SBAS_GBAS_THRESHOLD)
+    return QString();
+  else
+    return QObject::tr("%1").arg(static_cast<float>(frequency / 1000.f), 0, 'f', 2);
+}
+
+QString MapIls::freqMHzLocale() const
+{
+  if(type == GLS_GROUND_STATION || type == SBAS_GBAS_THRESHOLD)
+    return QString();
   else
     return QObject::tr("%L1").arg(static_cast<float>(frequency / 1000.f), 0, 'f', 2);
 }

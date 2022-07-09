@@ -209,7 +209,7 @@ struct MapProcedureLeg
         rho /* distance to recommended navaid in NM or INVALID_DISTANCE_VALUE if not available */,
         magvar /* from navaid or airport */,
         verticalAngle = map::INVALID_ANGLE_VALUE /* degrees or INVALID_ANGLE_VALUE if not available */,
-        rnp = map::INVALID_DISTANCE_VALUE /* Required Navigation Performance - ARINC 5.211 */;
+        rnp = map::INVALID_DISTANCE_VALUE /* Required Navigation Performance in NM - ARINC 5.211 */;
 
   bool missed = false, flyover = false, trueCourse = false,
        intercept = false, /* Leg was modified by a previous intercept */

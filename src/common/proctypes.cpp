@@ -877,10 +877,8 @@ QStringList procedureLegRecommended(const MapProcedureLeg& leg)
 
     if(leg.recNavaids.hasIls())
     {
-      if(leg.recNavaids.ils.constFirst().isAnyGlsRnp())
-        related.append(QObject::tr("Cha. ") % leg.recNavaids.ils.constFirst().freqMHzOrChannelLocale());
-      else
-        related.append(leg.recNavaids.ils.constFirst().freqMHzOrChannelLocale() % QObject::tr(" MHz"));
+      if(!leg.recNavaids.ils.constFirst().isAnyGlsRnp())
+        related.append(leg.recNavaids.ils.constFirst().freqMHzLocale() % QObject::tr(" MHz"));
     }
 
     if(leg.recNavaids.hasVor())
