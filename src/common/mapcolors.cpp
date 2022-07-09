@@ -117,11 +117,11 @@ QColor profileAltRestrictionFill(QColor(255, 255, 90));
 QColor profileAltRestrictionOutline(Qt::black);
 
 QPen profileVasiCenterPen(Qt::darkGray, 1.5, Qt::DashLine);
-QPen profileLandOutlinePen(Qt::black, 1, Qt::SolidLine);
-QPen profileWaypointLinePen(Qt::gray, 1, Qt::SolidLine, Qt::FlatCap);
-QPen profileElevationScalePen(Qt::darkGray, 1, Qt::SolidLine, Qt::FlatCap);
-QPen profileSafeAltLinePen(Qt::red, 4, Qt::SolidLine, Qt::FlatCap);
-QPen profileSafeAltLegLinePen(QColor(255, 100, 0), 3, Qt::SolidLine, Qt::FlatCap);
+QPen profileLandOutlinePen(Qt::black, 1., Qt::SolidLine);
+QPen profileWaypointLinePen(Qt::gray, 1., Qt::SolidLine, Qt::FlatCap);
+QPen profileElevationScalePen(Qt::darkGray, 1., Qt::SolidLine, Qt::FlatCap);
+QPen profileSafeAltLinePen(Qt::red, 4., Qt::SolidLine, Qt::FlatCap);
+QPen profileSafeAltLegLinePen(QColor(255, 100, 0), 3., Qt::SolidLine, Qt::FlatCap);
 
 /* Objects highlighted because of selection in search */
 QColor highlightBackColor(Qt::black);
@@ -132,19 +132,19 @@ QColor routeHighlightBackColor(Qt::black);
 /* Objects highlighted because of selection in route profile */
 QColor profileHighlightBackColor(Qt::black);
 
-QPen markEndurancePen(Qt::black, 2, Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
-QPen markSelectedAltitudeRangePen(Qt::darkGreen, 3, Qt::SolidLine, Qt::FlatCap);
-QPen markTurnPathPen(Qt::darkGreen, 2, Qt::SolidLine, Qt::FlatCap);
+QPen markEndurancePen(Qt::black, 2., Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
+QPen markSelectedAltitudeRangePen(Qt::darkGreen, 3., Qt::SolidLine, Qt::FlatCap);
+QPen markTurnPathPen(Qt::darkGreen, 2., Qt::SolidLine, Qt::FlatCap);
 
 /* Map print colors */
 QColor mapPrintRowColor(250, 250, 250);
 QColor mapPrintRowColorAlt(240, 240, 240);
 QColor mapPrintHeaderColor(220, 220, 220);
 
-QPen searchCenterBackPen(QColor(0, 0, 0), 6, Qt::SolidLine, Qt::FlatCap);
-QPen searchCenterFillPen(QColor(255, 255, 0), 2, Qt::SolidLine, Qt::FlatCap);
-QPen touchMarkBackPen(QColor(0, 0, 0), 4, Qt::SolidLine, Qt::FlatCap);
-QPen touchMarkFillPen(QColor(255, 255, 255), 2, Qt::SolidLine, Qt::FlatCap);
+QPen searchCenterBackPen(QColor(0, 0, 0), 6., Qt::SolidLine, Qt::FlatCap);
+QPen searchCenterFillPen(QColor(255, 255, 0), 2., Qt::SolidLine, Qt::FlatCap);
+QPen touchMarkBackPen(QColor(0, 0, 0), 4., Qt::SolidLine, Qt::FlatCap);
+QPen touchMarkFillPen(QColor(255, 255, 255), 2., Qt::SolidLine, Qt::FlatCap);
 QColor touchRegionFillColor("#40888888");
 
 QColor aircraftUserLabelColor(0, 0, 0);
