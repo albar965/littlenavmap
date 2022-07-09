@@ -1181,7 +1181,7 @@ This does not affect the map window which can be changed separately on the optio
                 <widget class="QComboBox" name="comboBoxOptionsUnitDistance">
                  <item>
                   <property name="text">
-                   <string>Nautical Miles (nm)</string>
+                   <string>Nautical Miles (NM)</string>
                   </property>
                  </item>
                  <item>

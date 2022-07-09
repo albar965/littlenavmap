@@ -149,7 +149,7 @@ void Unit::deInit()
 
 void Unit::initTranslateableTexts()
 {
-  suffixDistNm = Unit::tr("nm");
+  suffixDistNm = Unit::tr("NM");
   suffixDistKm = Unit::tr("km");
   suffixDistMi = Unit::tr("mi");
   suffixDistShortFt = Unit::tr("ft");
@@ -807,7 +807,7 @@ void Unit::optionsChanged()
   switch(unitDist)
   {
     case opts::DIST_NM:
-      unitDistStr = suffixDistNm; // Unit::tr("nm");
+      unitDistStr = suffixDistNm; // Unit::tr("NM");
       break;
     case opts::DIST_KM:
       unitDistStr = suffixDistKm; // Unit::tr("km");

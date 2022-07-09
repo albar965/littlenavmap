@@ -2063,7 +2063,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 
   if(parsed.getCavok())
     html.p().text(tr("CAVOK:"), ahtml::BOLD).br().
-    text(tr("No cloud below 5,000 ft (1,500 m), visibility of 10 km (6 nm) or more")).pEnd();
+    text(tr("No cloud below 5,000 ft (1,500 m), visibility of 10 km (6 NM) or more")).pEnd();
 
   if(!metar.getParsedMetar().getRemark().isEmpty())
     html.p().text(tr("Remarks:"), ahtml::BOLD).br().
