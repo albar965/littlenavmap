@@ -290,21 +290,17 @@ void MapMarkHandler::routeResetAll()
 
   qDebug() << Q_FUNC_INFO;
 
-  const MapWidget *mapWidget = NavApp::getMapWidgetGui();
-
   // Create a dialog with four checkboxes
   atools::gui::ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Reset for new Flight"),
                                          tr("Select items to reset for a new flight"), lnm::RESET_FOR_NEW_FLIGHT_DIALOG, "RESET.html");
   choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
   choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
 
-  choiceDialog.addCheckBox(EMPTY_FLIGHT_PLAN, tr("&Create an empty flight plan"), QString(), true /* checked */,
-                           NavApp::isRouteEmpty());
+  choiceDialog.addCheckBox(EMPTY_FLIGHT_PLAN, tr("&Create an empty flight plan"), QString(), true /* checked */);
 
   choiceDialog.addLine();
   choiceDialog.addCheckBox(DELETE_TRAIL, tr("&Delete aircraft trail"),
-                           tr("Delete simulator aircraft trail from map and elevation profile"), true /* checked */,
-                           NavApp::isAircraftTrackEmpty());
+                           tr("Delete simulator aircraft trail from map and elevation profile"), true /* checked */);
   choiceDialog.addCheckBox(DELETE_ACTIVE_LEG, tr("&Reset active flight plan leg"),
                            tr("Remove the active flight plan leg"), true /* checked */);
   choiceDialog.addCheckBox(RESTART_PERF, tr("Restart the aircraft &performance collection"),
@@ -314,16 +310,11 @@ void MapMarkHandler::routeResetAll()
 
   choiceDialog.addLine();
   choiceDialog.addLabel(tr("Remove user features placed on map:"));
-  choiceDialog.addCheckBox(REMOVE_MARK_RANGE, tr("&Range rings"), QString(), false /* checked */,
-                           mapWidget->getRangeMarks().isEmpty());
-  choiceDialog.addCheckBox(REMOVE_MARK_DISTANCE, tr("&Measurement lines"), QString(), false /* checked */,
-                           mapWidget->getDistanceMarks().isEmpty());
-  choiceDialog.addCheckBox(REMOVE_MARK_HOLDING, tr("&Holdings"), QString(), false /* checked */,
-                           mapWidget->getHoldingMarks().isEmpty());
-  choiceDialog.addCheckBox(REMOVE_MARK_PATTERNS, tr("&Traffic patterns"), QString(), false /* checked */,
-                           mapWidget->getPatternsMarks().isEmpty());
-  choiceDialog.addCheckBox(REMOVE_MARK_MSA, tr("&MSA diagrams"), QString(), false /* checked */,
-                           mapWidget->getMsaMarks().isEmpty());
+  choiceDialog.addCheckBox(REMOVE_MARK_RANGE, tr("&Range rings"), QString(), false /* checked */);
+  choiceDialog.addCheckBox(REMOVE_MARK_DISTANCE, tr("&Measurement lines"), QString(), false /* checked */);
+  choiceDialog.addCheckBox(REMOVE_MARK_HOLDING, tr("&Holdings"), QString(), false /* checked */);
+  choiceDialog.addCheckBox(REMOVE_MARK_PATTERNS, tr("&Traffic patterns"), QString(), false /* checked */);
+  choiceDialog.addCheckBox(REMOVE_MARK_MSA, tr("&MSA diagrams"), QString(), false /* checked */);
   choiceDialog.addSpacer();
 
   choiceDialog.restoreState();
