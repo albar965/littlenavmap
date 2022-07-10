@@ -192,9 +192,6 @@ public:
   void updateMarkActionStates();
   void updateHighlightActionStates();
 
-  /* Update red messages at bottom of route dock window and profile dock window if altitude calculation has errors*/
-  void updateErrorLabels();
-  void makeErrorLabel(QString& toolTipText, QStringList errors, const QString& header);
 
   const InfoController *getInfoController() const
   {

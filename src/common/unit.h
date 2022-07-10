@@ -136,8 +136,7 @@ public:
 
   /* Get unit string with unit as selected in options and other unit in brackets */
   static QString weightLbsLocalOther(float value, bool localBold = false, bool otherSmall = true);
-  static QString fuelLbsAndGalLocalOther(float valueLbs, float valueGal, bool localBold = false,
-                                         bool otherSmall = true);
+  static QString fuelLbsAndGalLocalOther(float valueLbs, float valueGal, bool localBold = false, bool otherSmall = true);
 
   /* Fuel flow US Gallon and lbs */
   static QString ffGallon(float value, bool addUnit = true);

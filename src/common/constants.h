@@ -189,6 +189,8 @@ const QLatin1String ROUTE_HEADER_ARRIVAL("Route/HeaderArrival");
 const QLatin1String ROUTE_HEADER_RUNWAY_TAKEOFF("Route/HeaderRunwayTakeoff");
 const QLatin1String ROUTE_HEADER_RUNWAY_LAND("Route/HeaderRunwayLand");
 const QLatin1String ROUTE_HEADER_DISTTIME("Route/HeaderDistTime");
+const QLatin1String ROUTE_FOOTER_SELECTION("Route/FooterSelection");
+const QLatin1String ROUTE_FOOTER_ERROR("Route/FooterError");
 
 const QLatin1String ROUTE_FILENAMES_RECENT("Route/FilenamesRecent");
 const QLatin1String ROUTE_FILENAMESKML_RECENT("Route/FilenamesKmlRecent");

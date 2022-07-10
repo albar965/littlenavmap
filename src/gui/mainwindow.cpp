@@ -34,7 +34,6 @@
 #include "fs/pln/flightplanio.h"
 #include "gui/application.h"
 #include "gui/choicedialog.h"
-#include "gui/clicktooltiphandler.h"
 #include "gui/dialog.h"
 #include "gui/dockwidgethandler.h"
 #include "gui/errorhandler.h"
@@ -922,9 +921,6 @@ void MainWindow::setupUi()
   ui->statusBar->installEventFilter(new StatusBarEventFilter(ui->statusBar, connectStatusLabel));
 
   connect(ui->statusBar, &QStatusBar::messageChanged, this, &MainWindow::statusMessageChanged);
-
-  // Show error messages in tooltip on click ========================================
-  ui->labelRouteError->installEventFilter(new atools::gui::ClickToolTipHandler(ui->labelRouteError));
 }
 
 void MainWindow::clearProcedureCache()
@@ -1042,9 +1038,7 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::routeInsert, this, &MainWindow::routeInsert);
   connect(routeController, &RouteController::addAirportMsa, mapWidget, &MapWidget::addMsaMark);
 
-  connect(routeController, &RouteController::routeChanged, NavApp::updateErrorLabels);
   connect(routeController, &RouteController::routeChanged, NavApp::updateWindowTitle);
-  connect(routeController, &RouteController::routeAltitudeChanged, NavApp::updateErrorLabels);
 
   // Add departure and dest runway actions separately to windows since their shortcuts overlap with context menu shortcuts
   QList<QAction *> actions({ui->actionShowDepartureCustom, ui->actionShowApproachCustom});
@@ -1556,8 +1550,8 @@ void MainWindow::connectAllSlots()
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, profileWidget,
           &ProfileWidget::disconnectedFromSimulator);
 
-  connect(connectClient, &ConnectClient::connectedToSimulator, NavApp::updateErrorLabels);
-  connect(connectClient, &ConnectClient::disconnectedFromSimulator, NavApp::updateErrorLabels);
+  connect(connectClient, &ConnectClient::connectedToSimulator, routeController, &RouteController::updateFooterErrorLabel);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, routeController, &RouteController::updateFooterErrorLabel);
 
   connect(connectClient, &ConnectClient::aiFetchOptionsChanged, this, &MainWindow::updateActionStates);
 
@@ -1617,7 +1611,7 @@ void MainWindow::actionShortcutMapTriggered()
   {
     ui->dockWidgetMap->show();
     ui->dockWidgetMap->activateWindow();
-    dockHandler->raiseFloatingWindow(ui->dockWidgetMap);
+    DockWidgetHandler::raiseFloatingWindow(ui->dockWidgetMap);
   }
   mapWidget->activateWindow();
   mapWidget->setFocus();
@@ -4376,63 +4370,6 @@ void MainWindow::resizeEvent(QResizeEvent *event)
 }
 
 #endif
-
-void MainWindow::makeErrorLabel(QString& toolTipText, QStringList errors, const QString& header)
-{
-  if(!errors.isEmpty())
-  {
-    if(errors.size() > 5)
-    {
-      errors = errors.mid(0, 5);
-      errors.append(tr("More ..."));
-    }
-
-    toolTipText.append(header);
-    toolTipText.append("<ul>");
-    for(const QString& str : errors)
-      toolTipText.append("<li>" % str % "</li>");
-    toolTipText.append("</ul>");
-  }
-}
-
-void MainWindow::updateErrorLabels()
-{
-  using atools::util::HtmlBuilder;
-
-  // Collect errors from all controllers =================================
-  QString toolTipText;
-
-  // Flight plan ============
-  makeErrorLabel(toolTipText, routeController->getErrorStrings(),
-                 tr("<nobr><b>Problems on tab \"Flight Plan\":</b></nobr>", "Synchronize name with tab name"));
-
-  // Elevation profile ============
-  makeErrorLabel(toolTipText, NavApp::getAltitudeLegs().getErrorStrings(),
-                 tr("<nobr><b>Problems when calculating profile for window \"Flight Plan Elevation Profile\":</b></nobr>",
-                    "Synchronize name with window name"));
-
-  // Aircraft performance ============
-  makeErrorLabel(toolTipText, NavApp::getAircraftPerfController()->getErrorStrings(),
-                 tr("<nobr><b>Problems on tab \"Fuel Report\":</b></nobr>", "Synchronize name with tab name"));
-
-  // Build tooltip message ====================================
-  if(!toolTipText.isEmpty())
-  {
-    ui->labelRouteError->setVisible(true);
-    ui->labelRouteError->setText(HtmlBuilder::errorMessage(tr("Found problems. Click here for details.")));
-
-    // Disallow text wrapping
-    ui->labelRouteError->setToolTip(toolTipText);
-    ui->labelRouteError->setStatusTip(tr("Found problems."));
-  }
-  else
-  {
-    ui->labelRouteError->setVisible(false);
-    ui->labelRouteError->setText(QString());
-    ui->labelRouteError->setToolTip(QString());
-    ui->labelRouteError->setStatusTip(QString());
-  }
-}
 
 void MainWindow::showFlightPlan()
 {

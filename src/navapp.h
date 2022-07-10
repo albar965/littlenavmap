@@ -287,7 +287,7 @@ public:
   static WindReporter *getWindReporter();
 
   static void updateWindowTitle();
-  static void updateErrorLabels();
+  static void updateErrorLabel();
   static void setStatusMessage(const QString& message, bool addToLog = false);
 
   /* Get main window in different variations to avoid including it */

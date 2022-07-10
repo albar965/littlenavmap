@@ -2637,7 +2637,7 @@ void ProfileWidget::jumpBackToAircraftTimeout()
 
 void ProfileWidget::updateErrorLabel()
 {
-  NavApp::updateErrorLabels();
+  NavApp::updateErrorLabel();
 }
 
 void ProfileWidget::saveAircraftTrack()

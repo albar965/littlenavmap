@@ -950,9 +950,9 @@ void NavApp::updateWindowTitle()
   mainWindow->updateWindowTitle();
 }
 
-void NavApp::updateErrorLabels()
+void NavApp::updateErrorLabel()
 {
-  mainWindow->updateErrorLabels();
+  getRouteController()->updateFooterErrorLabel();
 }
 
 void NavApp::setStatusMessage(const QString& message, bool addToLog)

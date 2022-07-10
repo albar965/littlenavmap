@@ -299,6 +299,9 @@ public:
   /* Reset tab bar */
   void resetTabLayout();
 
+  /* Update error label footer in flight plan window */
+  void updateFooterErrorLabel();
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);

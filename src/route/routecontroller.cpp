@@ -119,6 +119,9 @@ enum RouteColumns
   HEADER_ARRIVAL,
   HEADER_LAND,
   HEADER_DIST_TIME,
+
+  FOOTER_SELECTION = 1500,
+  FOOTER_ERROR,
 };
 
 }
@@ -217,9 +220,6 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   // Update units
   units = new UnitStringTool();
   units->init({ui->spinBoxRouteAlt, ui->spinBoxAircraftPerformanceWindSpeed});
-
-  ui->labelRouteError->setVisible(false);
-  ui->labelRouteInfo->setVisible(false); // Will be shown if route is created
 
   // Set default table cell and font size to avoid Qt overly large cell sizes
   zoomHandler = new atools::gui::ItemViewZoomHandler(view);
@@ -377,10 +377,12 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(routeWindow, &RouteCalcWindow::calculateClicked, this, &RouteController::calculateRoute);
   connect(routeWindow, &RouteCalcWindow::calculateDirectClicked, this, &RouteController::calculateDirect);
   connect(routeWindow, &RouteCalcWindow::calculateReverseClicked, this, &RouteController::reverseRoute);
-  connect(routeWindow, &RouteCalcWindow::downloadTrackClicked,
-          NavApp::getTrackController(), &TrackController::startDownload);
+  connect(routeWindow, &RouteCalcWindow::downloadTrackClicked, NavApp::getTrackController(), &TrackController::startDownload);
 
-  connect(ui->labelRouteInfo, &QLabel::linkActivated, this, &RouteController::flightplanLabelLinkActivated);
+  connect(routeLabel, &RouteLabel::flightplanLabelLinkActivated, this, &RouteController::flightplanLabelLinkActivated);
+
+  connect(this, &RouteController::routeChanged, this, &RouteController::updateFooterErrorLabel);
+  connect(this, &RouteController::routeAltitudeChanged, this, &RouteController::updateFooterErrorLabel);
 
   // UI editor cannot deal with line breaks - set text here
   ui->textBrowserViewRoute->setPlaceholderText(
@@ -774,7 +776,8 @@ void RouteController::aircraftPerformanceChanged()
   updateModelHighlights();
   highlightNextWaypoint(route.getActiveLegIndexCorrected());
 
-  routeLabel->updateWindowLabel();
+  routeLabel->updateHeaderLabel();
+  routeLabel->updateFooterSelectionLabel();
 
   // Emit also for empty route to catch performance changes
   emit routeChanged(true);
@@ -792,7 +795,8 @@ void RouteController::windUpdated()
     updateModelHighlights();
     highlightNextWaypoint(route.getActiveLegIndexCorrected());
   }
-  routeLabel->updateWindowLabel();
+  routeLabel->updateHeaderLabel();
+  routeLabel->updateFooterSelectionLabel();
 
   // Emit also for empty route to catch performance changes
   emit routeChanged(false);
@@ -812,7 +816,9 @@ void RouteController::routeAltChanged()
 
   postChange(undoCommand);
 
-  routeLabel->updateWindowLabel();
+  routeLabel->updateHeaderLabel();
+  routeLabel->updateFooterSelectionLabel();
+
   NavApp::updateWindowTitle();
 
   // Calls RouteController::routeAltChangedDelayed
@@ -828,7 +834,8 @@ void RouteController::routeAltChangedDelayed()
   updateModelHighlights();
   highlightNextWaypoint(route.getActiveLegIndexCorrected());
 
-  routeLabel->updateWindowLabel();
+  routeLabel->updateHeaderLabel();
+  routeLabel->updateFooterSelectionLabel();
 
   // Delay change to avoid hanging spin box when profile updates
   emit routeAltitudeChanged(route.getCruisingAltitudeFeet());
@@ -966,16 +973,12 @@ void RouteController::restoreState()
 
 void RouteController::getSelectedRouteLegs(QList<int>& selLegIndexes) const
 {
-  if(NavApp::getMainUi()->dockWidgetRoute->isVisible())
+  if(NavApp::getMainUi()->dockWidgetRoute->isVisible() && view->selectionModel() != nullptr)
   {
-    if(view->selectionModel() != nullptr)
+    for(const QItemSelectionRange& rng : view->selectionModel()->selection())
     {
-      QItemSelection sm = view->selectionModel()->selection();
-      for(const QItemSelectionRange& rng : sm)
-      {
-        for(int row = rng.top(); row <= rng.bottom(); ++row)
-          selLegIndexes.append(row);
-      }
+      for(int row = rng.top(); row <= rng.bottom(); ++row)
+        selLegIndexes.append(row);
     }
   }
 }
@@ -1964,7 +1967,7 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
       qDebug() << flightplan;
 #endif
 
-      NavApp::updateErrorLabels();
+      NavApp::updateErrorLabel();
 
       if(calcRange)
       {
@@ -2021,7 +2024,7 @@ void RouteController::adjustFlightplanAltitude()
     postChange(undoCommand);
 
     NavApp::updateWindowTitle();
-    NavApp::updateErrorLabels();
+    NavApp::updateErrorLabel();
 
     if(!route.isEmpty())
       emit routeAltitudeChanged(route.getCruisingAltitudeFeet());
@@ -2132,7 +2135,7 @@ void RouteController::postDatabaseLoad()
   updateTableModel();
   updateMoveAndDeleteActions();
 
-  NavApp::updateErrorLabels();
+  NavApp::updateErrorLabel();
   routeAltChangedDelayed();
   // route.updateRouteCycleMetadata();
 
@@ -2341,6 +2344,14 @@ void RouteController::routeTableOptions()
   treeDialog.addItem2(headerItem, rcol::HEADER_DIST_TIME, tr("Distance and Time"), tr("Flight plan total distance and flight time."),
                       routeLabel->isHeaderDistTime());
 
+  // Add footer options to tree ========================================
+  QTreeWidgetItem *footerItem = treeDialog.addTopItem1(tr("Flight Plan Table Footer"));
+  treeDialog.addItem2(footerItem, rcol::FOOTER_SELECTION, tr("Selected Flight Plan Legs"),
+                      tr("Show distance, time and fuel for selected flight plan legs."), routeLabel->isFooterSelection());
+  treeDialog.addItem2(footerItem, rcol::FOOTER_ERROR, tr("Error Messages"),
+                      tr("Show error messages for flight plan elements like missing airports and more.\n"
+                         "It is strongly recommended to keep the error label enabled."), routeLabel->isFooterError());
+
   // Add column names and description texts to tree ====================
   QTreeWidgetItem *tableItem = treeDialog.addTopItem1(tr("Flight plan table columns"));
   QHeaderView *header = view->horizontalHeader();
@@ -2367,9 +2378,16 @@ void RouteController::routeTableOptions()
     routeLabel->setHeaderRunwayLand(treeDialog.isItemChecked(rcol::HEADER_LAND));
     routeLabel->setHeaderDistTime(treeDialog.isItemChecked(rcol::HEADER_DIST_TIME));
 
+    routeLabel->setFooterSelection(treeDialog.isItemChecked(rcol::FOOTER_SELECTION));
+    routeLabel->setFooterError(treeDialog.isItemChecked(rcol::FOOTER_ERROR));
+
     updateModelTimeFuelWind();
     updateModelHighlights();
-    routeLabel->updateWindowLabel();
+
+    routeLabel->updateHeaderLabel();
+    routeLabel->updateFooterSelectionLabel();
+    routeLabel->updateFooterErrorLabel();
+
     highlightNextWaypoint(route.getActiveLegIndexCorrected());
   }
 }
@@ -2999,6 +3017,7 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
   NavApp::getMainUi()->pushButtonRouteClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
 
   routeWindow->selectionChanged();
+  routeLabel->updateFooterSelectionLabel();
 
   emit routeSelectionChanged(selectedRowSize, model->rowCount());
 
@@ -4418,7 +4437,10 @@ void RouteController::updateTableModel()
 
   updateModelHighlights();
   highlightNextWaypoint(route.getActiveLegIndexCorrected());
-  routeLabel->updateWindowLabel();
+
+  routeLabel->updateHeaderLabel();
+  routeLabel->updateFooterSelectionLabel();
+
   updatePlaceholderWidget();
 
   // Value from ui file is ignored
@@ -5163,6 +5185,11 @@ void RouteController::updateRemarkHeader()
 void RouteController::resetTabLayout()
 {
   tabHandlerRoute->reset();
+}
+
+void RouteController::updateFooterErrorLabel()
+{
+  routeLabel->updateFooterErrorLabel();
 }
 
 void RouteController::updateRemarkWidget()

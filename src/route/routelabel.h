@@ -42,7 +42,13 @@ public:
   virtual ~RouteLabel() override;
 
   /* Update the header label according to current configuration options */
-  void updateWindowLabel();
+  void updateHeaderLabel();
+
+  /* Update the footer showing distance, time and fuel for selected flight plan legs */
+  void updateFooterSelectionLabel();
+
+  /* Update red messages at bottom of route dock window and profile dock window if altitude calculation has errors*/
+  void updateFooterErrorLabel();
 
   /* Build header text formatted for printing */
   void buildPrintText(atools::util::HtmlBuilder& html, bool titleOnly);
@@ -114,11 +120,32 @@ public:
     headerDistTime = value;
   }
 
+  bool isFooterSelection() const
+  {
+    return footerSelection;
+  }
+
+  void setFooterSelection(bool value)
+  {
+    footerSelection = value;
+  }
+
+  bool isFooterError() const
+  {
+    return footerError;
+  }
+
+  void setFooterError(bool value)
+  {
+    footerError = value;
+  }
+
 signals:
   /* Departure or destination link in the header clicked */
   void flightplanLabelLinkActivated(const QString& link);
 
 private:
+  void buildErrorLabel(QString& toolTipText, QStringList errors, const QString& header);
   void buildHeaderAirports(atools::util::HtmlBuilder& html, bool widget);
   void buildHeaderDepart(atools::util::HtmlBuilder& html, bool widget);
   void buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget);
@@ -128,7 +155,7 @@ private:
   void buildHeaderDistTime(atools::util::HtmlBuilder& html);
 
   bool headerAirports = true, headerDeparture = true, headerArrival = true, headerRunwayTakeoff = true, headerRunwayLand = true,
-       headerDistTime = true;
+       headerDistTime = true, footerSelection = true, footerError = true;
 
   const Route& route;
 };

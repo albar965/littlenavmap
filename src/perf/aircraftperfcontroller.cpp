@@ -819,7 +819,7 @@ void AircraftPerfController::updateReport()
   } // if(NavApp::getRouteTabHandler()->getCurrentTabId() == rc::AIRCRAFT && ui->dockWidgetRoute->isVisible())
 
   // Update error message label
-  NavApp::updateErrorLabels();
+  NavApp::updateErrorLabel();
 }
 
 void AircraftPerfController::updateReportCurrent()

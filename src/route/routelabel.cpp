@@ -17,18 +17,21 @@
 
 #include "route/routelabel.h"
 
-#include "navapp.h"
-
 #include "atools.h"
 #include "common/constants.h"
 #include "common/formatter.h"
 #include "common/unit.h"
+#include "fs/perf/aircraftperf.h"
 #include "fs/pln/flightplan.h"
 #include "fs/util/fsutil.h"
+#include "gui/clicktooltiphandler.h"
+#include "navapp.h"
+#include "perf/aircraftperfcontroller.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
 #include "route/route.h"
 #include "route/routealtitude.h"
+#include "route/routecontroller.h"
 #include "settings/settings.h"
 #include "ui_mainwindow.h"
 #include "util/htmlbuilder.h"
@@ -37,6 +40,7 @@
 
 using atools::fs::pln::Flightplan;
 using atools::util::HtmlBuilder;
+using atools::fs::perf::AircraftPerf;
 namespace autil = atools::util;
 namespace ahtml = atools::util::html;
 
@@ -45,6 +49,13 @@ RouteLabel::RouteLabel(QWidget *parent, const Route& routeParam)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
   connect(ui->labelRouteInfo, &QLabel::linkActivated, this, &RouteLabel::flightplanLabelLinkActivated);
+
+  // Show error messages in tooltip on click ========================================
+  ui->labelRouteError->installEventFilter(new atools::gui::ClickToolTipHandler(ui->labelRouteError));
+  ui->labelRouteError->setVisible(false);
+
+  ui->labelRouteSelection->setVisible(false);
+  ui->labelRouteInfo->setVisible(false); // Will be shown if route is created
 }
 
 RouteLabel::~RouteLabel()
@@ -61,6 +72,8 @@ void RouteLabel::saveState()
   settings.setValue(lnm::ROUTE_HEADER_RUNWAY_TAKEOFF, headerRunwayTakeoff);
   settings.setValue(lnm::ROUTE_HEADER_RUNWAY_LAND, headerRunwayLand);
   settings.setValue(lnm::ROUTE_HEADER_DISTTIME, headerDistTime);
+  settings.setValue(lnm::ROUTE_FOOTER_SELECTION, footerSelection);
+  settings.setValue(lnm::ROUTE_FOOTER_ERROR, footerError);
 }
 
 void RouteLabel::restoreState()
@@ -72,10 +85,12 @@ void RouteLabel::restoreState()
   headerRunwayTakeoff = settings.valueBool(lnm::ROUTE_HEADER_RUNWAY_TAKEOFF, true);
   headerRunwayLand = settings.valueBool(lnm::ROUTE_HEADER_RUNWAY_LAND, true);
   headerDistTime = settings.valueBool(lnm::ROUTE_HEADER_DISTTIME, true);
+  footerSelection = settings.valueBool(lnm::ROUTE_FOOTER_SELECTION, true);
+  footerError = settings.valueBool(lnm::ROUTE_FOOTER_ERROR, true);
 }
 
 /* Update the dock window top level label */
-void RouteLabel::updateWindowLabel()
+void RouteLabel::updateHeaderLabel()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
@@ -534,5 +549,161 @@ void RouteLabel::buildHeaderDistTime(atools::util::HtmlBuilder& html)
       }
       html.text(tr("."));
     }
+  }
+}
+
+void RouteLabel::updateFooterErrorLabel()
+{
+  QString toolTipText;
+
+  if(footerError)
+  {
+    // Collect errors from all controllers =================================
+
+    // Flight plan ============
+    RouteController *routeController = NavApp::getRouteController();
+    buildErrorLabel(toolTipText, routeController->getErrorStrings(),
+                    tr("<nobr><b>Problems on tab \"Flight Plan\":</b></nobr>", "Synchronize name with tab name"));
+
+    // Elevation profile ============
+    buildErrorLabel(toolTipText, NavApp::getAltitudeLegs().getErrorStrings(),
+                    tr("<nobr><b>Problems when calculating profile for window \"Flight Plan Elevation Profile\":</b></nobr>",
+                       "Synchronize name with window name"));
+
+    // Aircraft performance ============
+    buildErrorLabel(toolTipText, NavApp::getAircraftPerfController()->getErrorStrings(),
+                    tr("<nobr><b>Problems on tab \"Fuel Report\":</b></nobr>", "Synchronize name with tab name"));
+  }
+
+  // Build tooltip message ====================================
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  if(!toolTipText.isEmpty())
+  {
+    ui->labelRouteError->setVisible(true);
+    ui->labelRouteError->setText(HtmlBuilder::errorMessage(tr("Found problems. Click here for details.")));
+
+    // Disallow text wrapping
+    ui->labelRouteError->setToolTip(toolTipText);
+    ui->labelRouteError->setStatusTip(tr("Found problems."));
+  }
+  else
+  {
+    ui->labelRouteError->setVisible(false);
+    ui->labelRouteError->setText(QString());
+    ui->labelRouteError->setToolTip(QString());
+    ui->labelRouteError->setStatusTip(QString());
+  }
+}
+
+void RouteLabel::buildErrorLabel(QString& toolTipText, QStringList errors, const QString& header)
+{
+  if(!errors.isEmpty())
+  {
+    if(errors.size() > 5)
+    {
+      errors = errors.mid(0, 5);
+      errors.append(tr("More ..."));
+    }
+
+    toolTipText.append(header);
+    toolTipText.append("<ul>");
+    for(const QString& str : errors)
+      toolTipText.append("<li>" % str % "</li>");
+    toolTipText.append("</ul>");
+  }
+}
+
+void RouteLabel::updateFooterSelectionLabel()
+{
+  QList<int> selectLegIndexes;
+  float distanceNm = 0.f, fuelGalLbs = 0.f, timeHours = 0.f;
+  bool missed = false;
+
+  // Check if enabled in settings
+  if(footerSelection)
+  {
+    NavApp::getRouteController()->getSelectedRouteLegs(selectLegIndexes);
+
+    // Show only for more than two legs
+    if(selectLegIndexes.size() > 1)
+    {
+      std::sort(selectLegIndexes.begin(), selectLegIndexes.end());
+
+      // Distance to first waypoint in selection is ignored
+      for(int index = selectLegIndexes.first() + 1; index <= selectLegIndexes.last(); index++)
+      {
+        const RouteLeg& leg = route.getLegAt(index);
+        if(leg.isValid())
+        {
+          // Check if missed approach is covered
+          if(leg.isAnyProcedure() && leg.getProcedureLeg().isMissed())
+            missed = true;
+
+          // Skip the airport after the missed approach since it would falsify the result
+          if(index == route.getDestinationAirportLegIndex() && missed)
+            continue;
+
+          distanceNm += leg.getDistanceTo();
+
+          if(route.getAltitudeLegs().isValidProfile())
+          {
+            const RouteAltitudeLeg& altLeg = route.getAltitudeLegAt(index);
+
+            if(!altLeg.isEmpty())
+            {
+              fuelGalLbs += altLeg.getFuel(); // Fuel (volume/weight) depends on aircraft performance
+              timeHours += altLeg.getTime();
+            }
+          }
+        }
+      }
+    }
+  }
+
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  if(selectLegIndexes.size() > 1)
+  {
+    QStringList texts, tooltip;
+    const AircraftPerf& aircraftPerformance = NavApp::getAircraftPerformance();
+
+    // Add texts for label
+    texts.append(Unit::distNm(distanceNm));
+    texts.append(formatter::formatMinutesHoursLong(timeHours));
+    texts.append(Unit::fuelLbsAndGal(aircraftPerformance.toFuelLbs(fuelGalLbs), aircraftPerformance.toFuelGal(fuelGalLbs)));
+
+    // Add texts for tooltip
+    tooltip.append(tr("<b>Distance:</b> %1").arg(Unit::distNm(distanceNm)));
+    tooltip.append(tr("<b>Time:</b> %1").arg(formatter::formatMinutesHoursLong(timeHours)));
+    tooltip.append(tr("<b>Fuel consumption:</b> %1").arg(Unit::fuelLbsAndGalLocalOther(aircraftPerformance.toFuelLbs(fuelGalLbs),
+                                                                                       aircraftPerformance.toFuelGal(fuelGalLbs))));
+
+    int first = selectLegIndexes.first();
+    int last = selectLegIndexes.last();
+
+    // Ignore airport after missed approach
+    if(last == route.getDestinationAirportLegIndex() && missed)
+      last--;
+
+    int numSelected = last - first + 1;
+
+    QString from = route.getLegAt(first).getIdent(), to = route.getLegAt(last).getIdent();
+    QString legText = numSelected == 1 ? tr("leg") : tr("legs");
+
+    ui->labelRouteSelection->setVisible(true);
+    ui->labelRouteSelection->setText(tr("%L1 %2 from <b>%3</b> to <b>%4</b>: %5").arg(numSelected).arg(legText).
+                                     arg(atools::elideTextShort(from, 6)).arg(atools::elideTextShort(to, 6)).arg(texts.join(tr(", "))));
+
+    ui->labelRouteSelection->setToolTip(tr("<p style='white-space:pre'>"
+                                             "%L1 flight plan %2 from <b>%3</b> to <b>%4</b> in selection:<br/>"
+                                             "%5</p>").
+                                        arg(numSelected).arg(legText).
+                                        arg(atools::elideTextShort(from, 20)).arg(atools::elideTextShort(to, 20)).
+                                        arg(tooltip.join(tr("<br/>"))));
+  }
+  else
+  {
+    ui->labelRouteSelection->setVisible(false);
+    ui->labelRouteSelection->setText(QString());
+    ui->labelRouteSelection->setToolTip(QString());
   }
 }
