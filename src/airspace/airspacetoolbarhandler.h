@@ -22,11 +22,18 @@
 
 #include <QCoreApplication>
 #include <QVector>
+#include <QWidgetAction>
 
 class QAction;
 class QActionGroup;
 class QToolButton;
+class QSlider;
 class MainWindow;
+
+namespace asinternal {
+class AirspaceAltSliderAction;
+class AirspaceLabelAction;
+}
 
 /* Manages the airspace toolbar, its tool buttons and all the actions in the drop down menus */
 class AirspaceToolBarHandler :
@@ -40,8 +47,8 @@ public:
 
   void createToolButtons();
 
-  /* Update buttons and menus based on NavApp::getShownMapAirspaces() */
-  void updateButtonsAndActions();
+  /* Updates all */
+  void updateAll();
 
   const QVector<QToolButton *>& getAirspaceToolButtons() const
   {
@@ -49,22 +56,37 @@ public:
   }
 
 signals:
-  void updateAirspaceTypes(map::MapAirspaceFilter types);
+  void updateAirspaceTypes(map::MapAirspaceFilter filter);
 
 private:
-  /* Update button depressed state or not */
-  void updateAirspaceToolButtons();
-
-  /* Check or uncheck menu items */
-  void updateAirspaceToolActions();
-
-  void createAirspaceToolButton(const QString& icon, const QString& help,
+  void createAirspaceToolButton(const QString& icon, const QString& buttonHelp,
                                 const std::initializer_list<map::MapAirspaceTypes>& types,
                                 const std::initializer_list<map::MapAirspaceFlags>& flags,
-                                bool groupActions = false);
-  void actionTriggered();
-  void actionGroupTriggered(QAction *action);
+                                bool groupActions = false, bool minMaxAltitude = false);
+
+  /* Update button depressed state or not */
+  void updateToolButtons();
+
+  /* Check or uncheck menu actions with blocked signal based on NavApp::getShownMapAirspaces() */
+  void updateToolActions();
+
+  /* Extract flags from not grouped actions all/none/type and emit updateAirspaceTypes() */
+  void actionAllNoneOrTypeTriggered();
+
+  /* Radio group button clicked. emit updateAirspaceTypes() */
+  void actionRadioGroupTriggered(QAction *action);
+
+  /* Sent from main airspace button */
   void allAirspacesToggled();
+
+  /* Altitude sliders moved or clicked */
+  void altSliderChanged();
+
+  /* Enable or disable sliders based on NavApp::getShownMapAirspaces() */
+  void updateSliders();
+
+  /* Update altitude label from slider values */
+  void updateSliderLabel();
 
   /* List of all actions */
   QVector<QAction *> airspaceActions;
@@ -79,6 +101,57 @@ private:
   QVector<map::MapAirspaceFilter> airspaceToolButtonFilters;
   MainWindow *mainWindow;
 
+  /* Widget wrapper allowing to put an arbitrary widget into a menu */
+  asinternal::AirspaceAltSliderAction *sliderActionAltMin = nullptr, *sliderActionAltMax = nullptr;
+  asinternal::AirspaceLabelAction *labelActionAirspace = nullptr;
 };
+
+namespace asinternal {
+/*
+ * Wraps a slider into an action allowing to add it to a menu.
+ * This is a single slider which can be used for minimum and maximum value
+ */
+class AirspaceAltSliderAction
+  : public QWidgetAction
+{
+  Q_OBJECT
+
+public:
+  AirspaceAltSliderAction(QObject *parent, bool maxSliderParam);
+
+  int getAltitudeFt() const;
+
+  /* Adjusts sliders but does not send signals */
+  void setAltitudeFt(int altitude);
+
+  /* Minimum step in feet */
+  const static int SLIDER_STEP_ALT_FT = 500;
+
+  /* true if used for maximum which means reversed display and values */
+  bool isMaxSlider() const
+  {
+    return maxSlider;
+  }
+
+signals:
+  void valueChanged(int value);
+  void sliderReleased();
+
+protected:
+  /* Create and delete widget for more than one menu (tearout and normal) */
+  virtual QWidget *createWidget(QWidget *parent) override;
+  virtual void deleteWidget(QWidget *widget) override;
+
+  /* minmum and maximum values in local unit (ft or meter) */
+  int minValue() const; /* Unlimited */
+  int maxValue() const;
+  void setSliderValue(int value);
+
+  /* List of created/registered slider widgets */
+  QVector<QSlider *> sliders;
+  int sliderValue = 0;
+  bool maxSlider;
+};
+}
 
 #endif // AIRSPACETOOLBARHANDLER_H

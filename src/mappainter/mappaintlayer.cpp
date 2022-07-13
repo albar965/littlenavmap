@@ -166,7 +166,7 @@ void MapPaintLayer::setDetailLevel(int level)
 map::MapAirspaceFilter MapPaintLayer::getShownAirspacesTypesByLayer() const
 {
   if(mapLayer == nullptr)
-    return map::MapAirspaceFilter({map::AIRSPACE_NONE, map::AIRSPACE_FLAG_NONE});
+    return map::MapAirspaceFilter();
 
   // Mask out all types that are not visible in the current layer
   map::MapAirspaceFilter filter = airspaceTypes;

@@ -95,6 +95,8 @@ void AirspaceController::sourceToggled()
   sources.setFlag(map::AIRSPACE_SRC_ONLINE, ui->actionViewAirspaceSrcOnline->isChecked());
 
   emit updateAirspaceSources(sources);
+
+  updateButtonsAndActions();
 }
 
 void AirspaceController::sourceToActions()
@@ -248,9 +250,9 @@ void AirspaceController::optionsChanged()
 {
   if(!loadingUserAirspaces)
   {
-    for(AirspaceQuery *q : queries)
+    for(AirspaceQuery *query : queries)
       // Also calls deinit before and clears caches
-      q->initQueries();
+      query->initQueries();
   }
 }
 
@@ -260,8 +262,8 @@ void AirspaceController::preDatabaseLoad()
   // preDatabaseLoadAirspaces and postDatabaseLoadAirspaces
   if(!loadingUserAirspaces)
   {
-    for(AirspaceQuery *q : queries)
-      q->deInitQueries();
+    for(AirspaceQuery *query : queries)
+      query->deInitQueries();
   }
 }
 
@@ -271,8 +273,8 @@ void AirspaceController::postDatabaseLoad()
   // preDatabaseLoadAirspaces and postDatabaseLoadAirspaces
   if(!loadingUserAirspaces)
   {
-    for(AirspaceQuery *q : queries)
-      q->initQueries();
+    for(AirspaceQuery *query : queries)
+      query->initQueries();
   }
 }
 
@@ -303,7 +305,7 @@ void AirspaceController::resetSettingsToDefault()
 
 void AirspaceController::updateButtonsAndActions()
 {
-  airspaceHandler->updateButtonsAndActions();
+  airspaceHandler->updateAll();
 }
 
 bool AirspaceController::hasAnyAirspaces() const

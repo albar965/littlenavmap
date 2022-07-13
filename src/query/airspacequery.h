@@ -99,7 +99,7 @@ private:
 
   /* Simple bounding rectangle caches */
   query::SimpleRectCache<map::MapAirspace> airspaceCache;
-  map::MapAirspaceFilter lastAirspaceFilter = {map::AIRSPACE_NONE, map::AIRSPACE_FLAG_NONE};
+  map::MapAirspaceFilter lastAirspaceFilter;
   float lastFlightplanAltitude = 0.f;
 
   /* ID/object caches */
@@ -114,10 +114,9 @@ private:
        hasFirUir = false;
 
   /* Database queries */
-  atools::sql::SqlQuery *airspaceByRectQuery = nullptr, *airspaceByRectBelowAltQuery = nullptr,
-                        *airspaceByRectAboveAltQuery = nullptr, *airspaceByRectAtAltQuery = nullptr,
-                        *airspaceLinesByIdQuery = nullptr, *airspaceGeoByNameQuery = nullptr,
-                        *airspaceGeoByFileQuery = nullptr, *airspaceByIdQuery = nullptr, *airspaceInfoQuery = nullptr;
+  atools::sql::SqlQuery *airspaceByRectQuery = nullptr, *airspaceByRectAltRangeQuery = nullptr, *airspaceByRectAltQuery = nullptr,
+                        *airspaceLinesByIdQuery = nullptr, *airspaceGeoByNameQuery = nullptr, *airspaceGeoByFileQuery = nullptr,
+                        *airspaceByIdQuery = nullptr, *airspaceInfoQuery = nullptr;
 
   /* Source database definition */
   map::MapAirspaceSources source;

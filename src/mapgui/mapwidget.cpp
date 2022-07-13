@@ -2777,40 +2777,41 @@ void MapWidget::optionsChanged()
 
 void MapWidget::saveState()
 {
-  atools::settings::Settings& s = atools::settings::Settings::instance();
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
 
-  writePluginSettings(*s.getQSettings());
+  writePluginSettings(*settings.getQSettings());
   // Workaround to overviewmap storing absolute paths which will be invalid when moving program location
-  s.remove("plugin_overviewmap/path_earth");
-  s.remove("plugin_overviewmap/path_jupiter");
-  s.remove("plugin_overviewmap/path_mars");
-  s.remove("plugin_overviewmap/path_mercury");
-  s.remove("plugin_overviewmap/path_moon");
-  s.remove("plugin_overviewmap/path_neptune");
-  s.remove("plugin_overviewmap/path_pluto");
-  s.remove("plugin_overviewmap/path_saturn");
-  s.remove("plugin_overviewmap/path_sky");
-  s.remove("plugin_overviewmap/path_sun");
-  s.remove("plugin_overviewmap/path_uranus");
-  s.remove("plugin_overviewmap/path_venus");
+  settings.remove("plugin_overviewmap/path_earth");
+  settings.remove("plugin_overviewmap/path_jupiter");
+  settings.remove("plugin_overviewmap/path_mars");
+  settings.remove("plugin_overviewmap/path_mercury");
+  settings.remove("plugin_overviewmap/path_moon");
+  settings.remove("plugin_overviewmap/path_neptune");
+  settings.remove("plugin_overviewmap/path_pluto");
+  settings.remove("plugin_overviewmap/path_saturn");
+  settings.remove("plugin_overviewmap/path_sky");
+  settings.remove("plugin_overviewmap/path_sun");
+  settings.remove("plugin_overviewmap/path_uranus");
+  settings.remove("plugin_overviewmap/path_venus");
 
   // Mark coordinates
-  s.setValue(lnm::MAP_MARKLONX, searchMarkPos.getLonX());
-  s.setValue(lnm::MAP_MARKLATY, searchMarkPos.getLatY());
+  settings.setValue(lnm::MAP_MARKLONX, searchMarkPos.getLonX());
+  settings.setValue(lnm::MAP_MARKLATY, searchMarkPos.getLatY());
 
   // Home coordinates and zoom
-  s.setValue(lnm::MAP_HOMELONX, homePos.getLonX());
-  s.setValue(lnm::MAP_HOMELATY, homePos.getLatY());
-  s.setValue(lnm::MAP_HOMEDISTANCE, homeDistance);
+  settings.setValue(lnm::MAP_HOMELONX, homePos.getLonX());
+  settings.setValue(lnm::MAP_HOMELATY, homePos.getLatY());
+  settings.setValue(lnm::MAP_HOMEDISTANCE, homeDistance);
 
-  s.setValue(lnm::MAP_KMLFILES, kmlFilePaths);
-  s.setValueVar(lnm::MAP_AIRSPACES, QVariant::fromValue(paintLayer->getShownAirspaces()));
+  settings.setValue(lnm::MAP_KMLFILES, kmlFilePaths);
+
+  settings.setValueVar(lnm::MAP_AIRSPACES, QVariant::fromValue(paintLayer->getShownAirspaces()));
 
   // Sun shading settings =====================================
-  s.setValue(lnm::MAP_SUN_SHADING_TIME_OPTION, paintLayer->getSunShading());
+  settings.setValue(lnm::MAP_SUN_SHADING_TIME_OPTION, paintLayer->getSunShading());
 
   // Weather source settings =====================================
-  s.setValue(lnm::MAP_WEATHER_SOURCE, paintLayer->getWeatherSource());
+  settings.setValue(lnm::MAP_WEATHER_SOURCE, paintLayer->getWeatherSource());
 
   history.saveState(atools::settings::Settings::getConfigFilename(".history"));
   getScreenIndexConst()->saveState();
@@ -2826,13 +2827,13 @@ void MapWidget::saveState()
 void MapWidget::restoreState()
 {
   qDebug() << Q_FUNC_INFO;
-  atools::settings::Settings& s = atools::settings::Settings::instance();
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
 
-  readPluginSettings(*s.getQSettings());
+  readPluginSettings(*atools::settings::Settings::getQSettings());
 
   // Sun shading settings ========================================
   map::MapSunShading sunShading =
-    static_cast<map::MapSunShading>(s.valueInt(lnm::MAP_SUN_SHADING_TIME_OPTION, map::SUN_SHADING_SIMULATOR_TIME));
+    static_cast<map::MapSunShading>(settings.valueInt(lnm::MAP_SUN_SHADING_TIME_OPTION, map::SUN_SHADING_SIMULATOR_TIME));
 
   if(sunShading == map::SUN_SHADING_USER_TIME)
     sunShading = map::SUN_SHADING_SIMULATOR_TIME;
@@ -2842,19 +2843,19 @@ void MapWidget::restoreState()
 
   // Weather source settings ========================================
   map::MapWeatherSource weatherSource =
-    static_cast<map::MapWeatherSource>(s.valueInt(lnm::MAP_WEATHER_SOURCE, map::WEATHER_SOURCE_SIMULATOR));
+    static_cast<map::MapWeatherSource>(settings.valueInt(lnm::MAP_WEATHER_SOURCE, map::WEATHER_SOURCE_SIMULATOR));
   weatherSourceToUi(weatherSource);
   paintLayer->setWeatherSource(weatherSource);
 
-  if(s.contains(lnm::MAP_MARKLONX) && s.contains(lnm::MAP_MARKLATY))
-    searchMarkPos = Pos(s.valueFloat(lnm::MAP_MARKLONX), s.valueFloat(lnm::MAP_MARKLATY));
+  if(settings.contains(lnm::MAP_MARKLONX) && settings.contains(lnm::MAP_MARKLATY))
+    searchMarkPos = Pos(settings.valueFloat(lnm::MAP_MARKLONX), settings.valueFloat(lnm::MAP_MARKLATY));
   else
     searchMarkPos = Pos(0.f, 0.f);
 
-  if(s.contains(lnm::MAP_HOMELONX) && s.contains(lnm::MAP_HOMELATY) && s.contains(lnm::MAP_HOMEDISTANCE))
+  if(settings.contains(lnm::MAP_HOMELONX) && settings.contains(lnm::MAP_HOMELATY) && settings.contains(lnm::MAP_HOMEDISTANCE))
   {
-    homePos = Pos(s.valueFloat(lnm::MAP_HOMELONX), s.valueFloat(lnm::MAP_HOMELATY));
-    homeDistance = s.valueFloat(lnm::MAP_HOMEDISTANCE);
+    homePos = Pos(settings.valueFloat(lnm::MAP_HOMELONX), settings.valueFloat(lnm::MAP_HOMELATY));
+    homeDistance = settings.valueFloat(lnm::MAP_HOMEDISTANCE);
   }
   else
   {
@@ -2864,7 +2865,7 @@ void MapWidget::restoreState()
   }
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_KML)
-    kmlFilePaths = s.valueStrList(lnm::MAP_KMLFILES);
+    kmlFilePaths = settings.valueStrList(lnm::MAP_KMLFILES);
 
   // Restore range rings, patterns, holds and more
   getScreenIndex()->restoreState();
@@ -2881,13 +2882,10 @@ void MapWidget::restoreState()
     state.restore(action);
 
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
-  {
-    map::MapAirspaceFilter defaultValue = {map::AIRSPACE_DEFAULT, map::AIRSPACE_FLAG_DEFAULT};
-    paintLayer->setShowAirspaces(s.valueVar(lnm::MAP_AIRSPACES,
-                                            QVariant::fromValue(defaultValue)).value<map::MapAirspaceFilter>());
-  }
+    paintLayer->setShowAirspaces(settings.valueVar(lnm::MAP_AIRSPACES,
+                                                   QVariant::fromValue(map::MapAirspaceFilter())).value<map::MapAirspaceFilter>());
   else
-    paintLayer->setShowAirspaces({map::AIRSPACE_DEFAULT, map::AIRSPACE_FLAG_DEFAULT});
+    paintLayer->setShowAirspaces(map::MapAirspaceFilter());
 
   history.restoreState(atools::settings::Settings::getConfigFilename(".history"));
 }
@@ -3358,7 +3356,7 @@ void MapWidget::removeMsaMark(int id)
 
 void MapWidget::resetSettingsToDefault()
 {
-  paintLayer->setShowAirspaces({map::AIRSPACE_DEFAULT, map::AIRSPACE_FLAG_DEFAULT});
+  paintLayer->setShowAirspaces(map::MapAirspaceFilter());
   NavApp::getMapDetailHandler()->defaultMapDetail();
 }
 

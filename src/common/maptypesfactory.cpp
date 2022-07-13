@@ -776,7 +776,7 @@ void MapTypesFactory::fillAirspace(const SqlRecord& record, map::MapAirspace& ai
   airspace.minAltitudeType = record.valueStr("min_altitude_type", QString());
   airspace.maxAltitudeType = record.valueStr("max_altitude_type", QString());
   airspace.maxAltitude = record.valueInt("max_altitude", 0);
-  airspace.minAltitude = record.valueInt("min_altitude", 60000);
+  airspace.minAltitude = record.valueInt("min_altitude", 70000);
 
   Pos topLeft(record.value("min_lonx"), record.value("max_laty"));
   Pos bottomRight(record.value("max_lonx"), record.value("min_laty"));

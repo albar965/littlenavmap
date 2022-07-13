@@ -390,7 +390,7 @@ private:
   virtual void showEvent(QShowEvent *event) override;
   void weatherUpdateTimeout();
   void fillActiveSkyType(map::WeatherContext& weatherContext, const QString& airportIdent) const;
-  void updateAirspaceTypes(map::MapAirspaceFilter types);
+  void updateAirspaceTypes(map::MapAirspaceFilter filter);
   void updateAirspaceSources();
   void resetWindowLayout();
   void resetTabLayout();

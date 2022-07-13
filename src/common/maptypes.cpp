@@ -67,6 +67,7 @@ static QHash<QString, QString> comTypeNames;
 static QHash<map::MapAirspaceTypes, QString> airspaceTypeNameMap;
 
 static QHash<map::MapAirspaceFlags, QString> airspaceFlagNameMap;
+static QHash<map::MapAirspaceFlags, QString> airspaceFlagNameMapLong;
 
 static QHash<map::MapAirspaceTypes, QString> airspaceRemarkMap;
 
@@ -434,12 +435,17 @@ void initTranslateableTexts()
   airspaceFlagNameMap = QHash<map::MapAirspaceFlags, QString>(
     {
       // Values below only for actions
-      {map::AIRSPACE_AT_FLIGHTPLAN, QObject::tr("At flight plan cruise altitude")},
-      {map::AIRSPACE_BELOW_10000, QObject::tr("Below 10,000 ft only")},
-      {map::AIRSPACE_BELOW_18000, QObject::tr("Below 18,000 ft only")},
-      {map::AIRSPACE_ABOVE_10000, QObject::tr("Above 10,000 ft only")},
-      {map::AIRSPACE_ABOVE_18000, QObject::tr("Above 18,000 ft only")},
-      {map::AIRSPACE_ALL_ALTITUDE, QObject::tr("All Altitudes")}
+      {map::AIRSPACE_ALTITUDE_ALL, QObject::tr("All altitudes")},
+      {map::AIRSPACE_ALTITUDE_FLIGHTPLAN, QObject::tr("At flight plan cruise altitude")},
+      {map::AIRSPACE_ALTITUDE_SET, QObject::tr("For minimum and maximum altitude")}
+    });
+
+  airspaceFlagNameMapLong = QHash<map::MapAirspaceFlags, QString>(
+    {
+      // Values below only for actions
+      {map::AIRSPACE_ALTITUDE_ALL, QObject::tr("Show airspaces for all altitudes")},
+      {map::AIRSPACE_ALTITUDE_FLIGHTPLAN, QObject::tr("Show airspaces touching flight plan cruise altitude")},
+      {map::AIRSPACE_ALTITUDE_SET, QObject::tr("Show airspaces overlapping selected minimum and maximum altitude")}
     });
 
   airspaceRemarkMap = QHash<map::MapAirspaceTypes, QString>(
@@ -678,15 +684,6 @@ const static QHash<map::MapAirspaceTypes, int> airspacePriorityMap(
 
     {map::TRAINING, 59},
   });
-
-void updateUnits()
-{
-  Q_ASSERT(!airspaceFlagNameMap.isEmpty());
-  airspaceFlagNameMap[map::AIRSPACE_BELOW_10000] = QObject::tr("Below %1 only").arg(Unit::altFeet(10000.f));
-  airspaceFlagNameMap[map::AIRSPACE_BELOW_18000] = QObject::tr("Below %1 only").arg(Unit::altFeet(18000.f));
-  airspaceFlagNameMap[map::AIRSPACE_ABOVE_10000] = QObject::tr("Above %1 only").arg(Unit::altFeet(10000.f));
-  airspaceFlagNameMap[map::AIRSPACE_ABOVE_18000] = QObject::tr("Above %1 only").arg(Unit::altFeet(18000.f));
-}
 
 QString navTypeName(const QString& type)
 {
@@ -1803,6 +1800,12 @@ const QString& airspaceFlagToString(map::MapAirspaceFlags type)
 {
   Q_ASSERT(!airspaceFlagNameMap.isEmpty());
   return airspaceFlagNameMap[type];
+}
+
+const QString& airspaceFlagToStringLong(map::MapAirspaceFlags type)
+{
+  Q_ASSERT(!airspaceFlagNameMapLong.isEmpty());
+  return airspaceFlagNameMapLong[type];
 }
 
 QString mapObjectTypeToString(MapTypes type)

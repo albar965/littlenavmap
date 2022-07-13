@@ -169,15 +169,16 @@ QDebug operator<<(QDebug out, const map::MapObjectDisplayTypes& type)
 QDataStream& operator>>(QDataStream& dataStream, MapAirspaceFilter& obj)
 {
   quint32 types, flags;
-  dataStream >> types >> flags;
+  dataStream >> types >> flags >> obj.minAltitudeFt >> obj.maxAltitudeFt;
   obj.types = map::MapAirspaceTypes(types);
   obj.flags = map::MapAirspaceFlags(flags);
+
   return dataStream;
 }
 
 QDataStream& operator<<(QDataStream& dataStream, const MapAirspaceFilter& obj)
 {
-  dataStream << static_cast<quint32>(obj.types) << static_cast<quint32>(obj.flags);
+  dataStream << static_cast<quint32>(obj.types) << static_cast<quint32>(obj.flags) << obj.minAltitudeFt << obj.maxAltitudeFt;
   return dataStream;
 }
 
@@ -205,5 +206,7 @@ QString mapWeatherSourceString(MapWeatherSource source)
   }
   return QString();
 }
+
+
 
 } // namespace map

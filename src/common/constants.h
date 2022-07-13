@@ -143,7 +143,7 @@ const QLatin1String MAINWINDOW_WIDGET_DOCKHANDLER("MainWindow/WidgetDockHandler"
 const QLatin1String MAINWINDOW_PRINT_SIZE("MainWindow/PrintPreviewSize");
 const QLatin1String MAINWINDOW_PLACE_ROUTE_CALC("MainWindow/PlaceRouteCalc");
 
-const QLatin1String MAP_AIRSPACES("Map/AirspaceFilter");
+const QLatin1String MAP_AIRSPACES("Map/AirspaceFilter2");
 const QLatin1String MAP_USERDATA("Map/Userdata");
 const QLatin1String MAP_USERDATA_ALL("Map/UserdataAll");
 const QLatin1String MAP_USERDATA_UNKNOWN("Map/UserdataUnknown");

@@ -1523,6 +1523,7 @@ QString parkingNameForFlightplan(const MapParking& parking);
 
 const QString& airspaceTypeToString(map::MapAirspaceTypes type);
 const QString& airspaceFlagToString(map::MapAirspaceFlags type);
+const QString& airspaceFlagToStringLong(map::MapAirspaceFlags type); // For tooltips
 QString mapObjectTypeToString(MapTypes type); /* For debugging purposes. Not translated */
 const QString& airspaceRemark(map::MapAirspaceTypes type);
 
@@ -1606,8 +1607,6 @@ QIcon mapBaseIcon(const map::MapBase *base, int size);
 
 /* Get a number for surface quality to get the best runway. Higher numbers are better surface. */
 int surfaceQuality(const QString& surface);
-
-void updateUnits();
 
 /* Assign artificial ids to measurement and range rings which allow to identify them */
 int getNextUserFeatureId();

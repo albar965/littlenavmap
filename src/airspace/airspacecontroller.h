@@ -131,7 +131,7 @@ public:
 
 signals:
   /* Filter in drop down buttons have changed */
-  void updateAirspaceTypes(map::MapAirspaceFilter types);
+  void updateAirspaceTypes(map::MapAirspaceFilter filter);
 
   /* Source database selection has changed */
   void updateAirspaceSources(map::MapAirspaceSources sources);

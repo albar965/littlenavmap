@@ -266,8 +266,6 @@ MainWindow::MainWindow()
 
     Unit::init();
 
-    map::updateUnits();
-
     // Remember original title
     mainWindowTitle = windowTitle();
 
@@ -956,7 +954,6 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, weatherReporter, &WeatherReporter::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, windReporter, &WindReporter::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, searchController, &SearchController::optionsChanged);
-  connect(optionsDialog, &OptionsDialog::optionsChanged, map::updateUnits);
   connect(optionsDialog, &OptionsDialog::optionsChanged, routeController, &RouteController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, infoController, &InfoController::optionsChanged);
   connect(optionsDialog, &OptionsDialog::optionsChanged, mapWidget, &MapPaintWidget::optionsChanged);
@@ -1392,8 +1389,6 @@ void MainWindow::connectAllSlots()
   // Airspace sources ======
   AirspaceController *airspaceController = NavApp::getAirspaceController();
   connect(airspaceController, &AirspaceController::updateAirspaceSources, this, &MainWindow::updateMapObjectsShown);
-  connect(airspaceController, &AirspaceController::updateAirspaceSources,
-          NavApp::getAirspaceController(), &AirspaceController::updateButtonsAndActions);
   connect(airspaceController, &AirspaceController::updateAirspaceSources, this, &MainWindow::updateAirspaceSources);
 
   // Other airspace signals ======
@@ -2906,9 +2901,9 @@ void MainWindow::procedureLegSelected(const proc::MapProcedureRef& ref)
   updateHighlightActionStates();
 }
 
-void MainWindow::updateAirspaceTypes(map::MapAirspaceFilter types)
+void MainWindow::updateAirspaceTypes(map::MapAirspaceFilter filter)
 {
-  mapWidget->setShowMapAirspaces(types);
+  mapWidget->setShowMapAirspaces(filter);
   mapWidget->updateMapObjectsShown();
 }
 

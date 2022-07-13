@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,17 +18,18 @@
 #include "query/airspacequery.h"
 
 #include "common/constants.h"
-#include "common/maptypesfactory.h"
-#include "mapgui/maplayer.h"
-#include "sql/sqlutil.h"
-#include "sql/sqldatabase.h"
-#include "fs/common/binarygeometry.h"
 #include "common/maptools.h"
-#include "settings/settings.h"
+#include "common/maptypesfactory.h"
 #include "db/databasemanager.h"
+#include "fs/common/binarygeometry.h"
+#include "mapgui/maplayer.h"
 #include "options/optiondata.h"
+#include "settings/settings.h"
+#include "sql/sqldatabase.h"
+#include "sql/sqlutil.h"
 
 #include <QFileInfo>
+#include <QStringBuilder>
 
 using namespace Marble;
 using namespace atools::sql;
@@ -44,19 +45,13 @@ AirspaceQuery::AirspaceQuery(SqlDatabase *sqlDb, map::MapAirspaceSources src)
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
-  airspaceLineCache.setMaxCost(settings.getAndStoreValue(
-                                 lnm::SETTINGS_MAPQUERY + "AirspaceLineCache", 10000).toInt());
-  onlineCenterGeoCache.setMaxCost(settings.getAndStoreValue(
-                                    lnm::SETTINGS_MAPQUERY + "OnlineCenterGeoCache", 10000).toInt());
-  onlineCenterGeoFileCache.setMaxCost(settings.getAndStoreValue(
-                                        lnm::SETTINGS_MAPQUERY + "OnlineCenterGeoFileCache", 10000).toInt());
+  airspaceLineCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "AirspaceLineCache", 10000).toInt());
+  onlineCenterGeoCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "OnlineCenterGeoCache", 10000).toInt());
+  onlineCenterGeoFileCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "OnlineCenterGeoFileCache", 10000).toInt());
 
-  queryRectInflationFactor = settings.getAndStoreValue(
-    lnm::SETTINGS_MAPQUERY + "QueryRectInflationFactor", 0.3).toDouble();
-  queryRectInflationIncrement = settings.getAndStoreValue(
-    lnm::SETTINGS_MAPQUERY + "QueryRectInflationIncrement", 0.1).toDouble();
-  queryMaxRows =
-    settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirspaceQueryRowLimit", map::MAX_MAP_OBJECTS).toInt();
+  queryRectInflationFactor = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "QueryRectInflationFactor", 0.3).toDouble();
+  queryRectInflationIncrement = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "QueryRectInflationIncrement", 0.1).toDouble();
+  queryMaxRows = settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "AirspaceQueryRowLimit", map::MAX_MAP_OBJECTS).toInt();
 }
 
 AirspaceQuery::~AirspaceQuery()
@@ -124,6 +119,7 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
   });
 
   if(filter.types != lastAirspaceFilter.types || filter.flags != lastAirspaceFilter.flags ||
+     filter.minAltitudeFt != lastAirspaceFilter.minAltitudeFt || filter.maxAltitudeFt != lastAirspaceFilter.maxAltitudeFt ||
      atools::almostNotEqual(lastFlightplanAltitude, flightPlanAltitude))
   {
     // Need a few more parameters to clear the cache which is different to other map features
@@ -151,61 +147,55 @@ const QList<map::MapAirspace> *AirspaceQuery::getAirspaces(const GeoDataLatLonBo
         }
       }
 
+      // Select query and assign altitude limits ======================================
       SqlQuery *query = nullptr;
-      int alt;
-      if(filter.flags & map::AIRSPACE_AT_FLIGHTPLAN)
-      {
-        query = airspaceByRectAtAltQuery;
-        alt = atools::roundToInt(flightPlanAltitude);
-      }
-      else if(filter.flags & map::AIRSPACE_BELOW_10000)
-      {
-        query = airspaceByRectBelowAltQuery;
-        alt = 10000;
-      }
-      else if(filter.flags & map::AIRSPACE_BELOW_18000)
-      {
-        query = airspaceByRectBelowAltQuery;
-        alt = 18000;
-      }
-      else if(filter.flags & map::AIRSPACE_ABOVE_10000)
-      {
-        query = airspaceByRectAboveAltQuery;
-        alt = 10000;
-      }
-      else if(filter.flags & map::AIRSPACE_ABOVE_18000)
-      {
-        query = airspaceByRectAboveAltQuery;
-        alt = 18000;
-      }
-      else
-      {
+      int minAlt = map::MapAirspaceFilter::MIN_AIRSPACE_ALT, maxAlt = map::MapAirspaceFilter::MAX_AIRSPACE_ALT;
+      if(filter.flags.testFlag(map::AIRSPACE_ALTITUDE_ALL))
+        // No altitude query =========
         query = airspaceByRectQuery;
-        alt = 0;
+      else if(filter.flags.testFlag(map::AIRSPACE_ALTITUDE_FLIGHTPLAN))
+      {
+        // One altitude query =========
+        minAlt = maxAlt = atools::roundToInt(flightPlanAltitude);
+        query = airspaceByRectAltQuery;
+      }
+      else if(filter.flags.testFlag(map::AIRSPACE_ALTITUDE_SET))
+      {
+        // Altitude range query =========
+        minAlt = filter.minAltitudeFt;
+
+        // Use unlimited for the maximum value if not equal
+        if(filter.minAltitudeFt != filter.maxAltitudeFt && filter.maxAltitudeFt == map::MapAirspaceFilter::MAX_AIRSPACE_ALT)
+          maxAlt = 100000;
+        else
+          maxAlt = filter.maxAltitudeFt;
+
+        // Can use single alt query if values are equal
+        query = maxAlt == minAlt ? airspaceByRectAltQuery : airspaceByRectAltRangeQuery;
       }
 
-      if(query::valid(Q_FUNC_INFO, airspaceByIdQuery))
+      if(query::valid(Q_FUNC_INFO, query))
       {
         QSet<int> ids;
 
-        // qDebug() << rect.toString(GeoDataCoordinates::Degree);
-
         // Get the airspace objects without geometry
-        for(const GeoDataLatLonBox& r :
-            query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+        for(const GeoDataLatLonBox& r : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
         {
-          // qDebug() << r.toString(GeoDataCoordinates::Degree);
-
           for(const QString& typeStr : typeStrings)
           {
             query::bindRect(r, query);
             query->bindValue(":type", typeStr);
 
-            if(alt > 0)
-              query->bindValue(":alt", alt);
+            // Bind altitude values ===========================
+            if(query == airspaceByRectAltQuery)
+              query->bindValue(":alt", minAlt);
+            else if(query == airspaceByRectAltRangeQuery)
+            {
+              query->bindValue(":minalt", minAlt);
+              query->bindValue(":maxalt", maxAlt);
+            }
 
-            // qDebug() << "==================== query" << endl << query->getFullQueryString();
-
+            // Run query ===========================================
             query->exec();
             while(query->next())
             {
@@ -451,7 +441,7 @@ void AirspaceQuery::initQueries()
   deInitQueries();
 
   airspaceByIdQuery = new SqlQuery(db);
-  airspaceByIdQuery->prepare("select " + airspaceQueryBase + " from " + table + " where " + id + " = :id");
+  airspaceByIdQuery->prepare("select " % airspaceQueryBase % " from " % table % " where " % id % " = :id");
 
   if(!(source & map::AIRSPACE_SRC_ONLINE))
   {
@@ -463,45 +453,35 @@ void AirspaceQuery::initQueries()
   }
 
   // Get all that are crossing the anti meridian too and filter them out from the query result
-  QString airspaceRect =
-    " (not (max_lonx < :leftx or min_lonx > :rightx or "
-    "min_laty > :topy or max_laty < :bottomy) or max_lonx < min_lonx) and ";
+  QString airspaceRect = " (not (max_lonx < :leftx or min_lonx > :rightx or "
+                         "min_laty > :topy or max_laty < :bottomy) or max_lonx < min_lonx) ";
 
   airspaceByRectQuery = new SqlQuery(db);
-  airspaceByRectQuery->prepare(
-    "select " + airspaceQueryBase + "from " + table +
-    " where " + airspaceRect + " type like :type");
+  airspaceByRectQuery->prepare("select " % airspaceQueryBase % "from " % table % " where " % airspaceRect % " and type like :type");
 
-  airspaceByRectBelowAltQuery = new SqlQuery(db);
-  airspaceByRectBelowAltQuery->prepare(
-    "select " + airspaceQueryBase + "from " + table +
-    " where " + airspaceRect + " type like :type and min_altitude < :alt");
+  airspaceByRectAltRangeQuery = new SqlQuery(db);
+  airspaceByRectAltRangeQuery->prepare("select " % airspaceQueryBase % " from " % table %
+                                       " where " % airspaceRect % " and type like :type and " %
+                                       "((:minalt <= max_altitude and :maxalt >= min_altitude) or "
+                                       "(max_altitude = 0 and :maxalt >= min_altitude))");
 
-  airspaceByRectAboveAltQuery = new SqlQuery(db);
-  airspaceByRectAboveAltQuery->prepare(
-    "select " + airspaceQueryBase + "from " + table +
-    " where " + airspaceRect + " type like :type and max_altitude > :alt");
-
-  airspaceByRectAtAltQuery = new SqlQuery(db);
-  airspaceByRectAtAltQuery->prepare(
-    "select " + airspaceQueryBase + "from " + table +
-    " where "
-    "not (max_lonx < :leftx or min_lonx > :rightx or "
-    "min_laty > :topy or max_laty < :bottomy) and "
-    "type like :type and "
-    ":alt between min_altitude and max_altitude");
+  airspaceByRectAltQuery = new SqlQuery(db);
+  airspaceByRectAltQuery->prepare("select " % airspaceQueryBase % " from " % table %
+                                  " where " % airspaceRect % " and type like :type and " %
+                                  "((:alt <= max_altitude and :alt >= min_altitude) or "
+                                  "(max_altitude = 0 and :alt >= min_altitude))");
 
   airspaceLinesByIdQuery = new SqlQuery(db);
-  airspaceLinesByIdQuery->prepare("select geometry from " + table + " where " + id + " = :id");
+  airspaceLinesByIdQuery->prepare("select geometry from " % table % " where " % id % " = :id");
 
   // Queries for online center boundary matches
   if(!(source & map::AIRSPACE_SRC_ONLINE))
   {
     airspaceGeoByNameQuery = new SqlQuery(db);
-    airspaceGeoByNameQuery->prepare("select geometry from " + table + " where name like :name and type like :type");
+    airspaceGeoByNameQuery->prepare("select geometry from " % table % " where name like :name and type like :type");
 
     airspaceGeoByFileQuery = new SqlQuery(db);
-    airspaceGeoByFileQuery->prepare("select b.geometry, f.filepath from " + table +
+    airspaceGeoByFileQuery->prepare("select b.geometry, f.filepath from " % table %
                                     " b join bgl_file f on b.file_id = f.bgl_file_id where f.filepath like :filepath");
   }
 }
@@ -512,12 +492,12 @@ void AirspaceQuery::deInitQueries()
 
   delete airspaceByRectQuery;
   airspaceByRectQuery = nullptr;
-  delete airspaceByRectBelowAltQuery;
-  airspaceByRectBelowAltQuery = nullptr;
-  delete airspaceByRectAboveAltQuery;
-  airspaceByRectAboveAltQuery = nullptr;
-  delete airspaceByRectAtAltQuery;
-  airspaceByRectAtAltQuery = nullptr;
+
+  delete airspaceByRectAltRangeQuery;
+  airspaceByRectAltRangeQuery = nullptr;
+
+  delete airspaceByRectAltQuery;
+  airspaceByRectAltQuery = nullptr;
 
   delete airspaceLinesByIdQuery;
   airspaceLinesByIdQuery = nullptr;

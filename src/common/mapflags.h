@@ -334,29 +334,42 @@ enum MapAirspaceFlag
 {
   AIRSPACE_FLAG_NONE = 0,
 
-  /* Special filter flags - not airspaces */
-  AIRSPACE_BELOW_10000 = 1 << 1,
-  AIRSPACE_BELOW_18000 = 1 << 2,
-  AIRSPACE_ABOVE_10000 = 1 << 3,
-  AIRSPACE_ABOVE_18000 = 1 << 4,
-  AIRSPACE_AT_FLIGHTPLAN = 1 << 5,
-  AIRSPACE_ALL_ALTITUDE = 1 << 6,
+  /* Special filter flags - not airspace types */
+  AIRSPACE_ALTITUDE_ALL = 1 << 0,
+  AIRSPACE_ALTITUDE_FLIGHTPLAN = 1 << 1,
+  AIRSPACE_ALTITUDE_SET = 1 << 2, /* Use values MapAirspaceFilter::minAltitudeFt and MapAirspaceFilter::maxAltitudeFt */
 
-  /* Action flags - not airspaces */
-  AIRSPACE_ALL_ON = 1 << 7,
-  AIRSPACE_ALL_OFF = 1 << 8,
+  /* Action flags - not airspace types */
+  AIRSPACE_ALL_ON = 1 << 3,
+  AIRSPACE_ALL_OFF = 1 << 4,
 
-  AIRSPACE_FLAG_DEFAULT = AIRSPACE_ALL_ALTITUDE
+  AIRSPACE_FLAG_DEFAULT = AIRSPACE_ALTITUDE_ALL
 };
 
 Q_DECLARE_FLAGS(MapAirspaceFlags, MapAirspaceFlag);
 Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapAirspaceFlags);
 
-/* Combines all airspace types and flags into a serializable object */
+/* Combines all airspace types and flags for display into a serializable object
+ * Serialized in MapWidget::saveState() and aggregated by MapPaintLayer::airspaceTypes */
 struct MapAirspaceFilter
 {
+  const static int MIN_AIRSPACE_ALT = 0;
+  const static int MAX_AIRSPACE_ALT = 60000; /* The max value is treated as unlimited in AirspaceQuery::getAirspaces() */
+
+  /* Construct default values also used for inital start */
+  MapAirspaceFilter()
+    : types(AIRSPACE_DEFAULT), flags(AIRSPACE_FLAG_DEFAULT), minAltitudeFt(MIN_AIRSPACE_ALT), maxAltitudeFt(MAX_AIRSPACE_ALT)
+  {
+  }
+
+  MapAirspaceFilter(const MapAirspaceTypes& typesParam, const MapAirspaceFlags& flagsParam, int minAltitudeFtParam, int maxAltitudeFtParam)
+    :  types(typesParam), flags(flagsParam), minAltitudeFt(minAltitudeFtParam), maxAltitudeFt(maxAltitudeFtParam)
+  {
+  }
+
   MapAirspaceTypes types;
   MapAirspaceFlags flags;
+  int minAltitudeFt, maxAltitudeFt;
 };
 
 QDataStream& operator>>(QDataStream& dataStream, map::MapAirspaceFilter& obj);
