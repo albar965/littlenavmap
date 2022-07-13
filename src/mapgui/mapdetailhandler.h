@@ -25,7 +25,7 @@ class QAction;
 class QToolButton;
 class QSlider;
 
-namespace internal {
+namespace mdinternal {
 class DetailSliderAction;
 class DetailLabelAction;
 }
@@ -78,14 +78,14 @@ private:
   QAction *actionReset = nullptr;
 
   /* Widget wrapper allowing to put an arbitrary widget into a menu */
-  internal::DetailSliderAction *sliderActionDetailLevel = nullptr;
-  internal::DetailLabelAction *labelActionDetailLevel = nullptr;
+  mdinternal::DetailSliderAction *sliderActionDetailLevel = nullptr;
+  mdinternal::DetailLabelAction *labelActionDetailLevel = nullptr;
 
   /* Toolbutton getting all actions for dropdown menu */
   QToolButton *toolButton = nullptr;
 };
 
-namespace internal {
+namespace mdinternal {
 /*
  * Wraps a slider into an action allowing to add it to a menu.
  */
@@ -111,7 +111,7 @@ signals:
   void sliderReleased();
 
 protected:
-  /* Create a delete widget for more than one menu (tearout and normal) */
+  /* Create and delete widget for more than one menu (tearout and normal) */
   virtual QWidget *createWidget(QWidget *parent) override;
   virtual void deleteWidget(QWidget *widget) override;
 

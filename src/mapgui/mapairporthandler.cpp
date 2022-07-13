@@ -38,33 +38,33 @@ static const int MAX_SLIDER_FT = 140;
 static const int MIN_SLIDER_ALL_METER = 0;
 static const int MAX_SLIDER_METER = 50;
 
-namespace internal {
+namespace apinternal {
 
-SliderAction::SliderAction(QObject *parent) : QWidgetAction(parent)
+AirportSliderAction::AirportSliderAction(QObject *parent) : QWidgetAction(parent)
 {
   sliderValue = minValue();
   setValue(sliderValue);
 }
 
-int SliderAction::getSliderValue() const
+int AirportSliderAction::getSliderValue() const
 {
   // -1 is unlimited
   return sliderValue == minValue() ? -1 : sliderValue;
 }
 
-void SliderAction::saveState()
+void AirportSliderAction::saveState()
 {
   atools::settings::Settings::instance().setValue(lnm::MAP_AIRPORT_RUNWAY_LENGTH, sliderValue);
 }
 
-void SliderAction::restoreState()
+void AirportSliderAction::restoreState()
 {
   sliderValue = atools::settings::Settings::instance().valueInt(lnm::MAP_AIRPORT_RUNWAY_LENGTH, minValue());
   setValue(sliderValue);
   sliderDistUnit = Unit::getUnitShortDist();
 }
 
-void SliderAction::optionsChanged()
+void AirportSliderAction::optionsChanged()
 {
   // Set all sliders to new range for given unit and reset to unlimited
   // Block signals to avoid recursion
@@ -97,7 +97,7 @@ void SliderAction::optionsChanged()
   }
 }
 
-QWidget *SliderAction::createWidget(QWidget *parent)
+QWidget *AirportSliderAction::createWidget(QWidget *parent)
 {
   QSlider *slider = new QSlider(Qt::Horizontal, parent);
   slider->setMinimum(minValue());
@@ -111,35 +111,35 @@ QWidget *SliderAction::createWidget(QWidget *parent)
   slider->setToolTip(tr("Set minimum runway length for airports to display.\n"
                         "Runway length might be also affected by zoom distance."));
 
-  connect(slider, &QSlider::valueChanged, this, &SliderAction::sliderValueChanged);
-  connect(slider, &QSlider::valueChanged, this, &SliderAction::valueChanged);
-  connect(slider, &QSlider::sliderReleased, this, &SliderAction::sliderReleased);
+  connect(slider, &QSlider::valueChanged, this, &AirportSliderAction::sliderValueChanged);
+  connect(slider, &QSlider::valueChanged, this, &AirportSliderAction::valueChanged);
+  connect(slider, &QSlider::sliderReleased, this, &AirportSliderAction::sliderReleased);
 
   // Add to list (register)
   sliders.append(slider);
   return slider;
 }
 
-void SliderAction::deleteWidget(QWidget *widget)
+void AirportSliderAction::deleteWidget(QWidget *widget)
 {
   QSlider *slider = dynamic_cast<QSlider *>(widget);
   if(slider != nullptr)
   {
-    disconnect(slider, &QSlider::valueChanged, this, &SliderAction::sliderValueChanged);
-    disconnect(slider, &QSlider::valueChanged, this, &SliderAction::valueChanged);
-    disconnect(slider, &QSlider::sliderReleased, this, &SliderAction::sliderReleased);
+    disconnect(slider, &QSlider::valueChanged, this, &AirportSliderAction::sliderValueChanged);
+    disconnect(slider, &QSlider::valueChanged, this, &AirportSliderAction::valueChanged);
+    disconnect(slider, &QSlider::sliderReleased, this, &AirportSliderAction::sliderReleased);
     sliders.removeAll(slider);
     delete widget;
   }
 }
 
-void SliderAction::sliderValueChanged(int value)
+void AirportSliderAction::sliderValueChanged(int value)
 {
   sliderValue = value;
   setValue(value);
 }
 
-int SliderAction::minValue() const
+int AirportSliderAction::minValue() const
 {
   switch(sliderDistUnit)
   {
@@ -152,7 +152,7 @@ int SliderAction::minValue() const
   return MIN_SLIDER_ALL_FT;
 }
 
-int SliderAction::maxValue() const
+int AirportSliderAction::maxValue() const
 {
   switch(sliderDistUnit)
   {
@@ -165,7 +165,7 @@ int SliderAction::maxValue() const
   return MAX_SLIDER_FT;
 }
 
-void SliderAction::setValue(int value)
+void AirportSliderAction::setValue(int value)
 {
   for(QSlider *s : sliders)
   {
@@ -175,7 +175,7 @@ void SliderAction::setValue(int value)
   }
 }
 
-void SliderAction::reset()
+void AirportSliderAction::reset()
 {
   sliderValue = minValue();
   setValue(sliderValue);
@@ -186,11 +186,11 @@ void SliderAction::reset()
 /*
  * Wrapper for label action.
  */
-class LabelAction
+class AirportLabelAction
   : public QWidgetAction
 {
 public:
-  LabelAction(QObject *parent) : QWidgetAction(parent)
+  AirportLabelAction(QObject *parent) : QWidgetAction(parent)
   {
   }
 
@@ -206,7 +206,7 @@ protected:
   QString text;
 };
 
-void LabelAction::setText(const QString& textParam)
+void AirportLabelAction::setText(const QString& textParam)
 {
   text = textParam;
   // Set text to all registered labels
@@ -214,7 +214,7 @@ void LabelAction::setText(const QString& textParam)
     label->setText(text);
 }
 
-QWidget *LabelAction::createWidget(QWidget *parent)
+QWidget *AirportLabelAction::createWidget(QWidget *parent)
 {
   QLabel *label = new QLabel(parent);
   label->setMargin(4);
@@ -223,7 +223,7 @@ QWidget *LabelAction::createWidget(QWidget *parent)
   return label;
 }
 
-void LabelAction::deleteWidget(QWidget *widget)
+void AirportLabelAction::deleteWidget(QWidget *widget)
 {
   labels.removeAll(dynamic_cast<QLabel *>(widget));
   delete widget;
@@ -350,13 +350,13 @@ void MapAirportHandler::addToolbarButton()
 
   // Create and add the wrapped actions ================
   buttonMenu->addSeparator();
-  labelActionRunwayLength = new internal::LabelAction(toolButton->menu());
+  labelActionRunwayLength = new apinternal::AirportLabelAction(toolButton->menu());
   toolButton->menu()->addAction(labelActionRunwayLength);
-  sliderActionRunwayLength = new internal::SliderAction(toolButton->menu());
+  sliderActionRunwayLength = new apinternal::AirportSliderAction(toolButton->menu());
   toolButton->menu()->addAction(sliderActionRunwayLength);
 
-  connect(sliderActionRunwayLength, &internal::SliderAction::valueChanged, this, &MapAirportHandler::runwaySliderValueChanged);
-  connect(sliderActionRunwayLength, &internal::SliderAction::sliderReleased, this, &MapAirportHandler::runwaySliderReleased);
+  connect(sliderActionRunwayLength, &apinternal::AirportSliderAction::valueChanged, this, &MapAirportHandler::runwaySliderValueChanged);
+  connect(sliderActionRunwayLength, &apinternal::AirportSliderAction::sliderReleased, this, &MapAirportHandler::runwaySliderReleased);
 }
 
 QAction *MapAirportHandler::addAction(const QString& icon, const QString& text, const QString& tooltip, const QKeySequence& shortcut)

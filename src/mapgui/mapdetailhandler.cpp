@@ -29,7 +29,7 @@
 #include <QWidgetAction>
 #include <QDebug>
 
-namespace internal {
+namespace mdinternal {
 
 DetailSliderAction::DetailSliderAction(QObject *parent) : QWidgetAction(parent)
 {
@@ -235,13 +235,13 @@ void MapDetailHandler::addToolbarButton()
   buttonMenu->addSeparator();
 
   // Create and add the wrapped actions ================
-  labelActionDetailLevel = new internal::DetailLabelAction(toolButton->menu());
+  labelActionDetailLevel = new mdinternal::DetailLabelAction(toolButton->menu());
   toolButton->menu()->addAction(labelActionDetailLevel);
-  sliderActionDetailLevel = new internal::DetailSliderAction(toolButton->menu());
+  sliderActionDetailLevel = new mdinternal::DetailSliderAction(toolButton->menu());
   toolButton->menu()->addAction(sliderActionDetailLevel);
 
-  connect(sliderActionDetailLevel, &internal::DetailSliderAction::valueChanged, this, &MapDetailHandler::detailSliderChanged);
-  connect(sliderActionDetailLevel, &internal::DetailSliderAction::sliderReleased, this, &MapDetailHandler::detailSliderChanged);
+  connect(sliderActionDetailLevel, &mdinternal::DetailSliderAction::valueChanged, this, &MapDetailHandler::detailSliderChanged);
+  connect(sliderActionDetailLevel, &mdinternal::DetailSliderAction::sliderReleased, this, &MapDetailHandler::detailSliderChanged);
 }
 
 void MapDetailHandler::detailSliderChanged()
