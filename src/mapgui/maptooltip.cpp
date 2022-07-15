@@ -325,12 +325,12 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
           if(!html.isEmpty())
             html.textBar(TEXT_BAR_LENGTH);
 
-          info.windText(winds, html, windReporter->getAltitude(), windReporter->getSourceText());
+          info.windText(winds, html, windReporter->getAltitudeFt(), windReporter->getSourceText());
 
 #ifdef DEBUG_INFORMATION
           html.hr().small(QString("Pos(%1, %2), alt(%3)").
                           arg(mapSearchResult.windPos.getLonX()).arg(mapSearchResult.windPos.getLatY()).
-                          arg(windReporter->getAltitude(), 0, 'f', 2)).br();
+                          arg(windReporter->getAltitudeFt(), 0, 'f', 2)).br();
 
           html.small(windReporter->getDebug(mapSearchResult.windPos));
 #endif

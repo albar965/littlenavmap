@@ -1001,6 +1001,7 @@ void MainWindow::connectAllSlots()
           &RouteController::aircraftPerformanceChanged);
   connect(perfController, &AircraftPerfController::windChanged, routeController, &RouteController::windUpdated);
   connect(perfController, &AircraftPerfController::windChanged, profileWidget, &ProfileWidget::windUpdated);
+  connect(perfController, &AircraftPerfController::windChanged, mapWidget, &MapWidget::windDisplayUpdated);
   connect(routeController, &RouteController::routeChanged, perfController, &AircraftPerfController::routeChanged);
   connect(routeController, &RouteController::routeAltitudeChanged, perfController, &AircraftPerfController::routeAltitudeChanged);
 
@@ -1565,8 +1566,10 @@ void MainWindow::connectAllSlots()
   connect(windReporter, &WindReporter::windUpdated, routeController, &RouteController::windUpdated);
   connect(windReporter, &WindReporter::windUpdated, profileWidget, &ProfileWidget::windUpdated);
   connect(windReporter, &WindReporter::windUpdated, perfController, &AircraftPerfController::updateReports);
-  connect(windReporter, &WindReporter::windUpdated, this, &MainWindow::updateMapObjectsShown);
-  connect(windReporter, &WindReporter::windUpdated, this, &MainWindow::updateActionStates);
+
+  connect(windReporter, &WindReporter::windDisplayUpdated, this, &MainWindow::updateMapObjectsShown);
+  connect(windReporter, &WindReporter::windDisplayUpdated, this, &MainWindow::updateActionStates);
+  connect(windReporter, &WindReporter::windDisplayUpdated, mapWidget, &MapWidget::windDisplayUpdated);
 
   // Legend ===============================================
   connect(ui->actionHelpNavmapLegend, &QAction::triggered, this, &MainWindow::showNavmapLegend);

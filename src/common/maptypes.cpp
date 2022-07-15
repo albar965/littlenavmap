@@ -435,9 +435,9 @@ void initTranslateableTexts()
   airspaceFlagNameMap = QHash<map::MapAirspaceFlags, QString>(
     {
       // Values below only for actions
-      {map::AIRSPACE_ALTITUDE_ALL, QObject::tr("All altitudes")},
-      {map::AIRSPACE_ALTITUDE_FLIGHTPLAN, QObject::tr("At flight plan cruise altitude")},
-      {map::AIRSPACE_ALTITUDE_SET, QObject::tr("For minimum and maximum altitude")}
+      {map::AIRSPACE_ALTITUDE_ALL, QObject::tr("&All altitudes")},
+      {map::AIRSPACE_ALTITUDE_FLIGHTPLAN, QObject::tr("At &flight plan cruise altitude")},
+      {map::AIRSPACE_ALTITUDE_SET, QObject::tr("For &minimum and maximum altitude")}
     });
 
   airspaceFlagNameMapLong = QHash<map::MapAirspaceFlags, QString>(

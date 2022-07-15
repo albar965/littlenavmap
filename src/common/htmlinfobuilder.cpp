@@ -1312,7 +1312,7 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, Htm
         html.row2(tr("Flight Plan wind (%1)").arg(source), tr("%2, %3, %4").
                   arg(Unit::altFeet(wind.pos.getAltitude())).
                   arg(courseTextFromTrue(wind.wind.dir, magVar, false /* no bold */, true /* no small */)).
-                  arg(Unit::speedKts(wind.wind.speed)), ahtml::NO_ENTITIES);
+                  arg(Unit::speedKts(wind.wind.speed)), ahtml::NO_ENTITIES | ahtml::NOBR);
       }
     }
     else
@@ -1324,12 +1324,15 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, Htm
 
       // Find index for current layer
       int currentLayerIndex = -1;
-      for(int i = 0; i < windStack.size(); i++)
+      if(currentAltitude < map::INVALID_ALTITUDE_VALUE)
       {
-        if(atools::almostEqual(windStack.at(i).pos.getAltitude(), currentAltitude, 10.f))
+        for(int i = 0; i < windStack.size(); i++)
         {
-          currentLayerIndex = i;
-          break;
+          if(atools::almostEqual(windStack.at(i).pos.getAltitude(), currentAltitude, 10.f))
+          {
+            currentLayerIndex = i;
+            break;
+          }
         }
       }
 
@@ -1350,6 +1353,9 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, Htm
         Flags flags = ahtml::ALIGN_RIGHT;
 
         flags |= currentLayer ? ahtml::BOLD : ahtml::NONE;
+        QString suffix;
+        if(currentLayer)
+          suffix = tr(" (wind barbs)");
 
         // One table row with three data fields
         QString courseTxt;
@@ -1368,6 +1374,7 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, Htm
         td(atools::almostEqual(alt, 260.f) ? tr("Ground") : Unit::altFeet(alt, false), flags).
         td(courseTxt, flags | ahtml::NO_ENTITIES).
         td(speedTxt, flags).
+        td(suffix).
         trEnd();
       }
       html.tableEnd();
@@ -2954,7 +2961,7 @@ bool HtmlInfoBuilder::distanceToRouteText(const ageo::Pos& pos, HtmlBuilder& htm
   {
     const RouteLeg& lastLeg = route.getDestinationLeg();
     float distance = pos.distanceMeterTo(lastLeg.getPosition());
-    html.row2(tr("Distance to last flight plan leg:"), Unit::distMeter(distance), ahtml::NO_ENTITIES);
+    html.row2(tr("To last flight plan leg:"), Unit::distMeter(distance), ahtml::NO_ENTITIES);
     return true;
   }
   return false;
@@ -5019,23 +5026,18 @@ void HtmlInfoBuilder::addMorse(atools::util::HtmlBuilder& html, const QString& n
 
 void HtmlInfoBuilder::routeWindText(HtmlBuilder& html, const Route& route, int index) const
 {
-  if(index >= 0)
+  // Wind text is always shown independent of barb status at route
+  if(index >= 0 && NavApp::getWindReporter()->hasAnyWindData() && route.hasValidProfile())
   {
-    // Wind text is always shown independent of barb status at route
-    if(NavApp::getWindReporter()->hasOnlineWindData() && route.hasValidProfile())
+    const RouteAltitudeLeg& altLeg = route.getAltitudeLegAt(index);
+    if(altLeg.getLineString().getPos2().getAltitude() > MIN_WIND_BARB_ALTITUDE && !altLeg.isMissed() && !altLeg.isAlternate())
     {
-      const RouteAltitudeLeg& altLeg = route.getAltitudeLegAt(index);
-      if(altLeg.getLineString().getPos2().getAltitude() > MIN_WIND_BARB_ALTITUDE && !altLeg.isMissed() &&
-         !altLeg.isAlternate())
-      {
-        atools::grib::WindPos wp;
-        wp.pos = altLeg.getLineString().getPos2();
-        wp.wind.dir = altLeg.getWindDirection();
-        wp.wind.speed = altLeg.getWindSpeed();
+      atools::grib::WindPos wp;
+      wp.pos = altLeg.getLineString().getPos2();
+      wp.wind.dir = altLeg.getWindDirection();
+      wp.wind.speed = altLeg.getWindSpeed();
 
-        windText({wp}, html, altLeg.getLineString().getPos2().getAltitude(),
-                 NavApp::getWindReporter()->getSourceText());
-      }
+      windText({wp}, html, altLeg.getLineString().getPos2().getAltitude(), NavApp::getWindReporter()->getSourceText());
     }
   }
 }

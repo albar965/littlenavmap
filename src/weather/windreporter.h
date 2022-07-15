@@ -22,6 +22,13 @@
 
 #include "query/querytypes.h"
 
+#include <QWidgetAction>
+
+namespace windinternal {
+class WindSliderAction;
+class WindLabelAction;
+}
+
 namespace atools {
 namespace geo {
 class Rect;
@@ -42,16 +49,18 @@ typedef QVector<WindPos> WindPosVector;
 class QToolButton;
 class QAction;
 class QActionGroup;
+class QSlider;
 class Route;
 
 namespace wind {
 
 /* All levels above 0 are millibar */
-enum SpecialLevels
+enum WindSelection
 {
-  NONE = -10, /* No wind barbs shown */
-  AGL = -11, /* 80 m / 250 ft above ground */
-  FLIGHTPLAN = -12 /* Flight plan altitude */
+  NONE, /* No wind barbs shown */
+  AGL, /* 80 m / 250 ft above ground */
+  FLIGHTPLAN, /* Flight plan altitude */
+  SELECTED /* Selected in slider */
 };
 
 enum WindSource
@@ -94,26 +103,26 @@ public:
   /* Adds the wind button to the toolbar including all actions. Also populates main menu */
   void addToolbarButton();
 
-  /* Get currently selected level. One of wr::SpecialLevels or millibar */
-  int getCurrentLevel() const
-  {
-    return currentLevel;
-  }
-
   /* true if wind barbs grid is to be drawn */
   bool isWindShown() const;
 
   /* true if wind barbs should be shown at flight plan waypoints */
   bool isRouteWindShown() const;
 
-  /* True if wind available */
+  /* True if online wind available */
   bool hasOnlineWindData() const;
 
   /* true if checkbox "manual" is checked */
   bool isWindManual() const;
 
+  /* Either manual or online */
+  bool hasAnyWindData() const
+  {
+    return hasOnlineWindData() || isWindManual();
+  }
+
   /* Get currently shown/selected wind bar altitude level in ft. 0. if none is selected.  */
-  float getAltitude() const;
+  float getAltitudeFt() const;
 
   /* Get a list of wind positions for the given rectangle for painting. Does not use manual wind setting. */
   const atools::grib::WindPosList *getWindForRect(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
@@ -146,8 +155,12 @@ public:
   /* Update toolbar button and menu items */
   void updateToolButtonState();
 
+  /* AGL, flight plan or altitude */
   QString getLevelText() const;
+
+  /* Manual, NOAA, Simulator, ... */
   QString getSourceText() const;
+  wind::WindSource getSource() const;
 
 #ifdef DEBUG_INFORMATION
   QString getDebug(const atools::geo::Pos& pos);
@@ -159,6 +172,9 @@ public:
 signals:
   /* Emitted when NOAA or X-Plane wind file changes or a request to weather was fullfilled */
   void windUpdated();
+
+  /* Emitted on display changes like wind altitude in slider */
+  void windDisplayUpdated();
 
 private:
   /* One of the toolbar dropdown menu items of main menu items was triggered */
@@ -180,6 +196,16 @@ private:
 
   void sourceActionTriggered();
 
+  void altSliderChanged();
+
+  /* Update altitude label from slider values */
+  void updateSliderLabel();
+
+  atools::grib::WindQuery *currentWindQuery()
+  {
+    return isWindManual() ? windQueryManual : windQueryOnline;
+  }
+
   /* GRIB wind data query for downloading files and monitoring files- Manual wind if for user setting. */
   atools::grib::WindQuery *windQueryOnline = nullptr, *windQueryManual = nullptr;
 
@@ -187,11 +213,8 @@ private:
   QToolButton *windlevelToolButton = nullptr;
 
   /* Special actions */
-  QAction *actionNone = nullptr, *actionFlightplanWaypoints = nullptr, *actionFlightplan = nullptr,
-          *actionAgl = nullptr;
-
-  /* Actions for levels */
-  QVector<QAction *> actionLevelVector;
+  QAction *actionNone = nullptr, *actionFlightplanWaypoints = nullptr, *actionFlightplan = nullptr, *actionAgl = nullptr,
+          *actionSelected = nullptr;
 
   /* Group for mutual exclusion */
   bool verbose = false;
@@ -199,14 +222,12 @@ private:
 
   QActionGroup *actionGroup = nullptr;
 
-  /* Levels for the dropdown menu in feet */
-  QVector<int> levels = {wind::AGL, wind::FLIGHTPLAN, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
-
   /* Levels for the tooltip */
-  QVector<int> levelsTooltip = {wind::AGL, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
+  QVector<int> levelsTooltip = {0 /* interpreted at AGL */, 1000, 2000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
 
   /* Currently displayed altitude or one of SpecialLevels */
-  int currentLevel = wind::NONE;
+  wind::WindSelection currentWindSelection = wind::NONE;
+
   wind::WindSource currentSource = wind::NOAA;
   bool showFlightplanWaypoints = false;
 
@@ -217,7 +238,54 @@ private:
   query::SimpleRectCache<atools::grib::WindPos> windPosCache;
   int cachedLevel = wind::NONE;
 
+  windinternal::WindSliderAction *sliderActionAltitude = nullptr;
+  windinternal::WindLabelAction *labelActionWindAltitude = nullptr;
+
   bool downloadErrorReported = false;
 };
+
+namespace windinternal {
+/*
+ * Wraps a slider into an action allowing to add it to a menu.
+ */
+class WindSliderAction
+  : public QWidgetAction
+{
+  Q_OBJECT
+
+public:
+  WindSliderAction(QObject *parent);
+
+  int getAltitudeFt() const;
+
+  /* Adjusts sliders but does not send signals */
+  void setAltitudeFt(int altitude);
+
+  /* Minimum step in feet */
+  const static int WIND_SLIDER_STEP_ALT_FT = 500;
+  const static int MIN_WIND_ALT = 1000;
+  const static int MAX_WIND_ALT = 45000;
+
+signals:
+  void valueChanged(int value);
+  void sliderReleased();
+
+protected:
+  /* Create and delete widget for more than one menu (tearout and normal) */
+  virtual QWidget *createWidget(QWidget *parent) override;
+  virtual void deleteWidget(QWidget *widget) override;
+
+  /* minmum and maximum values in ft */
+  int minValue() const;
+  int maxValue() const;
+  void setSliderValue(int value);
+
+  /* List of created/registered slider widgets */
+  QVector<QSlider *> sliders;
+
+  /* Altitude in feet / WIND_SLIDER_STEP_ALT_FT */
+  int sliderValue = 0;
+};
+}
 
 #endif // LNM_WINDREPORTER_H

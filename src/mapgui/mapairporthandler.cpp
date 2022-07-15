@@ -475,6 +475,6 @@ void MapAirportHandler::updateRunwayLabel()
 {
   int runwayLength = getMinimumRunwayFt();
   labelActionRunwayLength->setText(runwayLength > 0 ?
-                                   tr("Min. runway length %1.").arg(Unit::distShortFeet(runwayLength)) :
-                                   tr("No runway limit."));
+                                   tr("Minimum runway length %1.").arg(Unit::distShortFeet(runwayLength)) :
+                                   tr("No runway length limit."));
 }

@@ -87,8 +87,7 @@ AircraftPerfController::AircraftPerfController(MainWindow *parent)
   connect(&windChangeTimer, &QTimer::timeout, this, &AircraftPerfController::windChangedDelayed);
   windChangeTimer.setSingleShot(true);
 
-  connect(ui->checkBoxAircraftPerformanceWindMan, &QCheckBox::toggled, this,
-          &AircraftPerfController::manualWindToggled);
+  connect(ui->checkBoxAircraftPerformanceWindMan, &QCheckBox::toggled, this, &AircraftPerfController::manualWindToggled);
   connect(ui->actionMapShowWindManual, &QAction::toggled, this, &AircraftPerfController::manualWindToggledAction);
 
   // Widgets are only updated if visible - update on visbility changes of dock or tabs
@@ -1476,8 +1475,7 @@ void AircraftPerfController::manualWindToggled()
 {
   // The checkbox drives the action
   NavApp::getMainUi()->actionMapShowWindManual->blockSignals(true);
-  NavApp::getMainUi()->actionMapShowWindManual->setChecked(
-    NavApp::getMainUi()->checkBoxAircraftPerformanceWindMan->isChecked());
+  NavApp::getMainUi()->actionMapShowWindManual->setChecked(NavApp::getMainUi()->checkBoxAircraftPerformanceWindMan->isChecked());
   NavApp::getMainUi()->actionMapShowWindManual->blockSignals(false);
 
   updateActionStates();
@@ -1485,6 +1483,7 @@ void AircraftPerfController::manualWindToggled()
   updateReportCurrent();
 
   emit aircraftPerformanceChanged(perf);
+  emit windChanged();
 }
 
 void AircraftPerfController::tabVisibilityChanged()

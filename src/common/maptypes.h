@@ -1522,8 +1522,8 @@ QString parkingShortName(const QString& name);
 QString parkingNameForFlightplan(const MapParking& parking);
 
 const QString& airspaceTypeToString(map::MapAirspaceTypes type);
-const QString& airspaceFlagToString(map::MapAirspaceFlags type);
-const QString& airspaceFlagToStringLong(map::MapAirspaceFlags type); // For tooltips
+const QString& airspaceFlagToString(map::MapAirspaceFlags type); /* Includes mnemonics */
+const QString& airspaceFlagToStringLong(map::MapAirspaceFlags type); /* For tooltips */
 QString mapObjectTypeToString(MapTypes type); /* For debugging purposes. Not translated */
 const QString& airspaceRemark(map::MapAirspaceTypes type);
 

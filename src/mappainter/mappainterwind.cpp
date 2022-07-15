@@ -50,8 +50,7 @@ void MapPainterWind::render()
 
   bool overflow = false;
   const atools::grib::WindPosList *windForRect =
-    NavApp::getWindReporter()->getWindForRect(context->viewport->viewLatLonAltBox(),
-                                              context->mapLayer, context->lazyUpdate, overflow);
+    NavApp::getWindReporter()->getWindForRect(context->viewport->viewLatLonAltBox(), context->mapLayer, context->lazyUpdate, overflow);
   context->setQueryOverflow(overflow);
 
   if(windForRect != nullptr)

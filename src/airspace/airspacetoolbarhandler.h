@@ -142,14 +142,18 @@ protected:
   virtual QWidget *createWidget(QWidget *parent) override;
   virtual void deleteWidget(QWidget *widget) override;
 
-  /* minmum and maximum values in local unit (ft or meter) */
-  int minValue() const; /* Unlimited */
-  int maxValue() const;
+  /* minmum and maximum values in ft */
+  int minValue() const;
+  int maxValue() const; /* Unlimited */
   void setSliderValue(int value);
 
   /* List of created/registered slider widgets */
   QVector<QSlider *> sliders;
+
+  /* Altitude in feet / WIND_SLIDER_STEP_ALT_FT */
   int sliderValue = 0;
+
+  /* true if reversed for maximum slider */
   bool maxSlider;
 };
 }

@@ -337,13 +337,17 @@ void MapPaintWidget::weatherUpdated()
 {
   if(paintLayer->getShownMapObjectDisplayTypes().testFlag(map::AIRPORT_WEATHER))
     update();
+
+  updateMapVisibleUi();
 }
 
-void MapPaintWidget::windUpdated()
+void MapPaintWidget::windDisplayUpdated()
 {
   if(paintLayer->getShownMapObjectDisplayTypes().testFlag(map::WIND_BARBS) ||
      paintLayer->getShownMapObjectDisplayTypes().testFlag(map::WIND_BARBS_ROUTE))
     update();
+
+  updateMapVisibleUi();
 }
 
 map::MapWeatherSource MapPaintWidget::getMapWeatherSource() const
