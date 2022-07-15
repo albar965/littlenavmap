@@ -192,7 +192,6 @@ public:
   void updateMarkActionStates();
   void updateHighlightActionStates();
 
-
   const InfoController *getInfoController() const
   {
     return infoController;
@@ -296,6 +295,8 @@ private:
 
   /* Set up own UI elements that cannot be created in designer */
   void setupUi();
+
+  void updateStatusBarStyle();
 
   void preDatabaseLoad();
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
@@ -467,8 +468,8 @@ private:
   PrintSupport *printSupport = nullptr;
 
   /* Status bar labels */
-  QLabel *mapDistanceLabel = nullptr, *mapPosLabel = nullptr, *magvarLabel = nullptr, *renderStatusLabel = nullptr,
-         *detailLabel = nullptr, *messageLabel = nullptr, *connectStatusLabel = nullptr, *timeLabel = nullptr;
+  QLabel *mapDistanceLabel = nullptr, *mapPositionLabel = nullptr, *mapMagvarLabel = nullptr, *mapRenderStatusLabel = nullptr,
+         *mapDetailLabel = nullptr, *mapVisibleLabel = nullptr, *connectStatusLabel = nullptr, *timeLabel = nullptr;
 
   /* Connection field and tooltip in statusbar */
   QString connectionStatus, connectionStatusTooltip, onlineConnectionStatus, onlineConnectionStatusTooltip;

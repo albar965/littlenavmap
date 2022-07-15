@@ -277,6 +277,7 @@ MainWindow::MainWindow()
     NavApp::getStyleHandler()->insertMenuItems(ui->menuWindowStyle);
     NavApp::getStyleHandler()->restoreState();
     mapcolors::init();
+    updateStatusBarStyle();
 
     // Add actions for flight simulator database switch in main menu
     NavApp::getDatabaseManager()->insertSimSwitchActions();
@@ -863,50 +864,42 @@ void MainWindow::setupUi()
 
   // ==============================================================
   // Create labels for the statusbar
+  Qt::AlignmentFlag align = Qt::AlignCenter;
+  QFrame::Shadow shadow = QFrame::Sunken;
+  QFrame::Shape shape = QFrame::StyledPanel;
+
   connectStatusLabel = new QLabel();
-  connectStatusLabel->setAlignment(Qt::AlignCenter);
-  connectStatusLabel->setMinimumWidth(140);
   connectStatusLabel->setText(tr("Not connected."));
   connectStatusLabel->setToolTip(tr("Simulator connection status."));
   ui->statusBar->addPermanentWidget(connectStatusLabel);
 
-  messageLabel = new QLabel();
-  messageLabel->setAlignment(Qt::AlignCenter);
-  messageLabel->setMinimumWidth(150);
-  ui->statusBar->addPermanentWidget(messageLabel);
+  mapVisibleLabel = new QLabel();
+  ui->statusBar->addPermanentWidget(mapVisibleLabel);
 
-  detailLabel = new QLabel();
-  detailLabel->setAlignment(Qt::AlignCenter);
-  detailLabel->setMinimumWidth(120);
-  detailLabel->setToolTip(tr("Map detail level."));
-  ui->statusBar->addPermanentWidget(detailLabel);
+  mapDetailLabel = new QLabel();
+  mapDetailLabel->setToolTip(tr("Map detail level."));
+  ui->statusBar->addPermanentWidget(mapDetailLabel);
 
-  renderStatusLabel = new QLabel();
-  renderStatusLabel->setAlignment(Qt::AlignCenter);
-  renderStatusLabel->setMinimumWidth(140);
-  renderStatusLabel->setToolTip(tr("Map rendering and download status."));
-  ui->statusBar->addPermanentWidget(renderStatusLabel);
+  mapRenderStatusLabel = new QLabel();
+  mapRenderStatusLabel->setToolTip(tr("Map rendering and download status."));
+  ui->statusBar->addPermanentWidget(mapRenderStatusLabel);
 
   mapDistanceLabel = new QLabel();
-  mapDistanceLabel->setAlignment(Qt::AlignCenter);
-  mapDistanceLabel->setMinimumWidth(60);
   mapDistanceLabel->setToolTip(tr("Map view distance to ground."));
   ui->statusBar->addPermanentWidget(mapDistanceLabel);
 
-  mapPosLabel = new QLabel();
-  mapPosLabel->setAlignment(Qt::AlignCenter);
-  mapPosLabel->setMinimumWidth(240);
-  mapPosLabel->setToolTip(tr("Coordinates and elevation at cursor position."));
-  ui->statusBar->addPermanentWidget(mapPosLabel);
+  mapPositionLabel = new QLabel();
+  mapPositionLabel->setToolTip(tr("Coordinates and elevation at cursor position."));
+  ui->statusBar->addPermanentWidget(mapPositionLabel);
 
-  magvarLabel = new QLabel();
-  magvarLabel->setAlignment(Qt::AlignCenter);
-  magvarLabel->setMinimumWidth(40);
-  magvarLabel->setToolTip(tr("Magnetic declination at cursor position."));
-  ui->statusBar->addPermanentWidget(magvarLabel);
+  mapMagvarLabel = new QLabel();
+  mapMagvarLabel->setToolTip(tr("Magnetic declination at cursor position."));
+  ui->statusBar->addPermanentWidget(mapMagvarLabel);
 
   timeLabel = new QLabel();
-  timeLabel->setAlignment(Qt::AlignCenter);
+  timeLabel->setAlignment(align);
+  timeLabel->setFrameShadow(shadow);
+  timeLabel->setFrameShape(shape);
 #ifdef Q_OS_MACOS
   timeLabel->setMinimumWidth(60);
 #else
@@ -919,6 +912,85 @@ void MainWindow::setupUi()
   ui->statusBar->installEventFilter(new StatusBarEventFilter(ui->statusBar, connectStatusLabel));
 
   connect(ui->statusBar, &QStatusBar::messageChanged, this, &MainWindow::statusMessageChanged);
+}
+
+void MainWindow::updateStatusBarStyle()
+{
+  Qt::AlignmentFlag align = Qt::AlignCenter;
+  QFrame::Shadow shadow = connectStatusLabel->frameShadow();
+  QFrame::Shape shape = connectStatusLabel->frameShape();
+  bool adjustFrame = false;
+
+  // Adjust shadow and shape of status bar labels but not for macOS
+#ifndef Q_OS_MACOS
+  if(NavApp::getStyleHandler() != nullptr)
+  {
+    QString style = NavApp::getStyleHandler()->getCurrentGuiStyleDisplayName();
+    if(style.compare("Fusion", Qt::CaseInsensitive) == 0)
+    {
+      shadow = QFrame::Sunken;
+      shape = QFrame::StyledPanel;
+      adjustFrame = true;
+    }
+    else if(style.compare("Night", Qt::CaseInsensitive) == 0)
+    {
+      shadow = QFrame::Sunken;
+      shape = QFrame::Box;
+      adjustFrame = true;
+    }
+    // Windows styles already use a box
+  }
+
+  if(adjustFrame)
+  {
+    connectStatusLabel->setFrameShadow(shadow);
+    connectStatusLabel->setFrameShape(shape);
+    mapVisibleLabel->setFrameShadow(shadow);
+    mapVisibleLabel->setFrameShape(shape);
+    mapDetailLabel->setFrameShadow(shadow);
+    mapDetailLabel->setFrameShape(shape);
+    mapRenderStatusLabel->setFrameShadow(shadow);
+    mapRenderStatusLabel->setFrameShape(shape);
+    mapDistanceLabel->setFrameShadow(shadow);
+    mapDistanceLabel->setFrameShape(shape);
+    mapPositionLabel->setFrameShadow(shadow);
+    mapPositionLabel->setFrameShape(shape);
+    mapMagvarLabel->setFrameShadow(shadow);
+    mapMagvarLabel->setFrameShape(shape);
+    timeLabel->setFrameShadow(shadow);
+    timeLabel->setFrameShape(shape);
+  }
+#endif
+
+
+  connectStatusLabel->setAlignment(align);
+  connectStatusLabel->setMinimumWidth(100);
+
+  mapVisibleLabel->setAlignment(align);
+  mapVisibleLabel->setMinimumWidth(100);
+
+  mapDetailLabel->setAlignment(align);
+  mapDetailLabel->setMinimumWidth(100);
+
+  mapRenderStatusLabel->setAlignment(align);
+  mapRenderStatusLabel->setMinimumWidth(100);
+
+  mapDistanceLabel->setAlignment(align);
+  mapDistanceLabel->setMinimumWidth(60);
+
+  mapPositionLabel->setAlignment(align);
+  mapPositionLabel->setMinimumWidth(240);
+
+  mapMagvarLabel->setAlignment(align);
+  mapMagvarLabel->setMinimumWidth(40);
+
+  timeLabel->setAlignment(align);
+#ifdef Q_OS_MACOS
+  timeLabel->setMinimumWidth(60);
+#else
+  timeLabel->setMinimumWidth(55);
+#endif
+
 }
 
 void MainWindow::clearProcedureCache()
@@ -988,6 +1060,7 @@ void MainWindow::connectAllSlots()
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, perfController, &AircraftPerfController::optionsChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, NavApp::getInfoController(), &InfoController::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, optionsDialog, &OptionsDialog::styleChanged);
+  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, this, &MainWindow::updateStatusBarStyle);
 
   // WindReporter ===================================================================================
   // Wind has to be calculated first - receive routeChanged signal first
@@ -1782,8 +1855,8 @@ void MainWindow::updateConnectionStatusMessageText()
 /* Updates label and tooltip for objects shown on map */
 void MainWindow::setMapObjectsShownMessageText(const QString& text, const QString& tooltipText)
 {
-  messageLabel->setText(text);
-  messageLabel->setToolTip(tooltipText);
+  mapVisibleLabel->setText(text);
+  mapVisibleLabel->setToolTip(tooltipText);
 }
 
 const ElevationModel *MainWindow::getElevationModel()
@@ -1794,11 +1867,11 @@ const ElevationModel *MainWindow::getElevationModel()
 /* Called after each query */
 void MainWindow::resultTruncated()
 {
-  messageLabel->setText(atools::util::HtmlBuilder::errorMessage(tr("Too many objects")));
-  messageLabel->setToolTip(tr("Too many objects to show on map.\n"
-                              "Display might be incomplete.\n"
-                              "Reduce map details in the \"View\" menu.",
-                              "Keep menu item in sync with menu translation"));
+  mapVisibleLabel->setText(atools::util::HtmlBuilder::errorMessage(tr("Too many objects")));
+  mapVisibleLabel->setToolTip(tr("Too many objects to show on map.\n"
+                                 "Display might be incomplete.\n"
+                                 "Reduce map details in the \"View\" menu.",
+                                 "Keep menu item in sync with menu translation"));
 }
 
 void MainWindow::distanceChanged()
@@ -1834,16 +1907,16 @@ void MainWindow::renderStatusUpdateLabel(RenderStatus status, bool forceUpdate)
     switch(status)
     {
       case Marble::Complete:
-        renderStatusLabel->setText(tr("Done"));
+        mapRenderStatusLabel->setText(tr("Done"));
         break;
       case Marble::WaitingForUpdate:
-        renderStatusLabel->setText(tr("Updating"));
+        mapRenderStatusLabel->setText(tr("Updating"));
         break;
       case Marble::WaitingForData:
-        renderStatusLabel->setText(tr("Loading"));
+        mapRenderStatusLabel->setText(tr("Loading"));
         break;
       case Marble::Incomplete:
-        renderStatusLabel->setText(tr("Incomplete"));
+        mapRenderStatusLabel->setText(tr("Incomplete"));
         break;
     }
     lastRenderStatus = status;
@@ -1890,18 +1963,18 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
     magVarText = QString("%1 [%2]").arg(magVarText).arg(magVar, 0, 'f', 2);
 #endif
 
-    magvarLabel->setText(magVarText);
+    mapMagvarLabel->setText(magVarText);
 
 #ifdef DEBUG_INFORMATION
     text.append(QString(" [%1,%2]").arg(x).arg(y));
 #endif
 
-    mapPosLabel->setText(text);
+    mapPositionLabel->setText(text);
   }
   else
   {
-    mapPosLabel->setText(tr("No position"));
-    magvarLabel->clear();
+    mapPositionLabel->setText(tr("No position"));
+    mapMagvarLabel->clear();
   }
 }
 
@@ -3025,7 +3098,7 @@ void MainWindow::statusMessageChanged(const QString& text)
 
 void MainWindow::setDetailLabelText(const QString& text)
 {
-  detailLabel->setText(text);
+  mapDetailLabel->setText(text);
 }
 
 /* Called by window shown event when the main window is visible the first time */

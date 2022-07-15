@@ -52,10 +52,10 @@ public:
   void restoreState();
 
   /* Name like "Night" or "Fusion" */
-  QString getCurrentGuiStyleDisplayName();
+  QString getCurrentGuiStyleDisplayName() const;
 
   /* true if style requires darkening the map */
-  bool isCurrentGuiStyleNight();
+  bool isCurrentGuiStyleNight() const;
 
 signals:
   /* Sent on change */

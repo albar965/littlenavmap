@@ -119,12 +119,12 @@ StyleHandler::~StyleHandler()
   delete styleActionGroup;
 }
 
-QString StyleHandler::getCurrentGuiStyleDisplayName()
+QString StyleHandler::getCurrentGuiStyleDisplayName() const
 {
   return styles.at(currentStyleIndex).displayName;
 }
 
-bool StyleHandler::isCurrentGuiStyleNight()
+bool StyleHandler::isCurrentGuiStyleNight() const
 {
   return styles.at(currentStyleIndex).night;
 }
