@@ -58,12 +58,15 @@ void MapVisible::updateVisibleObjectsStatusBar()
            "or press <code>Ctrl+Shift+L</code>.<br/>"
            "Then choose the simulator and press \"Load\".</p>",
          "Keep instructions in sync with translated menus and shortcuts"));
+
+    NavApp::getMainWindow()->setMapObjectsShownMessageText(
+      tr("—"), tr("Database is empty. Reload scenery library database to see map features."));
   }
   else
   {
     const MapLayer *layer = paintLayer->getMapLayer();
 
-    if(layer != nullptr)
+    if(layer != nullptr && !paintLayer->noRender())
     {
       map::MapTypes shown = paintLayer->getShownMapObjects();
       map::MapObjectDisplayTypes shownDispTypes = paintLayer->getShownMapObjectDisplayTypes();
@@ -357,21 +360,47 @@ void MapVisible::updateVisibleObjectsStatusBar()
         tooltip.tr().td(tr("No AI / Multiplayer / online client")).trEnd();
 
       // Weather ==========================================================
+      QStringList weatherLabel;
       if(shownDispTypes.testFlag(map::AIRPORT_WEATHER) && layer->isAirportWeather())
       {
-        tooltip.tr().td().b(tr("Airport weather source: ")).
+        tooltip.tr().td().b(tr("Airport weather source (AW): ")).
         text(map::mapWeatherSourceString(paintLayer->getWeatherSource())).tdEnd().trEnd();
+
+        if(paintLayer->getWeatherSource() != map::WEATHER_SOURCE_DISABLED)
+          weatherLabel.append(tr("AW"));
       }
       else
         tooltip.tr().td(tr("No airport weather shown")).trEnd();
 
       if(shownDispTypes.testFlag(map::WIND_BARBS) && layer->isWindBarbs())
       {
-        tooltip.tr().td().b(tr("Wind shown: ")).text(NavApp::getWindReporter()->getLevelText()).
-        b(tr(" Wind source: ")).text(NavApp::getWindReporter()->getSourceText()).tdEnd().trEnd();
+        WindReporter *windReporter = NavApp::getWindReporter();
+        tooltip.tr().td().b(tr("Wind shown (W): ")).text(windReporter->getLevelText()).
+        b(tr(" Wind source: ")).text(windReporter->getSourceText()).tdEnd().trEnd();
+
+        if(windReporter->isWindShown() && (windReporter->getSource() != wind::NO_SOURCE || windReporter->isWindManual()))
+          weatherLabel.append(tr("W"));
       }
       else
         tooltip.tr().td(tr("No wind shown")).trEnd();
+
+      // Flight plan and track ==========================================================
+      QStringList routeLabel;
+      if(shownDispTypes.testFlag(map::FLIGHTPLAN)) // Always shown until cut off distance
+      {
+        tooltip.tr().td().b(tr("Flight plan (F)")).tdEnd().trEnd();
+        routeLabel.append(tr("F"));
+      }
+      else
+        tooltip.tr().td(tr("No wind shown")).trEnd();
+
+      if(shownDispTypes.testFlag(map::AIRCRAFT_TRACK)) // Always shown until cut off distance
+      {
+        tooltip.tr().td().b(tr("Aircraft track (T)")).tdEnd().trEnd();
+        routeLabel.append(tr("T"));
+      }
+      else
+        tooltip.tr().td(tr("No aircraft track shown")).trEnd();
 
       if(layer->isUserpoint())
       {
@@ -395,9 +424,18 @@ void MapVisible::updateVisibleObjectsStatusBar()
         label.append(airspaceGroupLabel.join(tr(",")));
       if(!aiLabel.isEmpty())
         label.append(aiLabel.join(tr(",")));
+      if(!weatherLabel.isEmpty())
+        label.append(weatherLabel.join(tr(",")));
+      if(!routeLabel.isEmpty())
+        label.append(routeLabel.join(tr(",")));
+
+      if(label.isEmpty())
+        label.append(tr("—"));
 
       // Update the statusbar label text and tooltip of the label
-      NavApp::getMainWindow()->setMapObjectsShownMessageText(atools::elideTextShort(label.join(" / "), 40), tooltip.getHtml());
-    }
-  }
+      NavApp::getMainWindow()->setMapObjectsShownMessageText(atools::elideTextShort(label.join(tr("/")), 40), tooltip.getHtml());
+    } // if(layer != nullptr && !paintLayer->noRender())
+    else
+      NavApp::getMainWindow()->setMapObjectsShownMessageText(tr("—"), tr("Nothing shown. Zoom in to see map features."));
+  } // if(!NavApp::hasDataInDatabase()) ... else
 }

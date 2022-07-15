@@ -549,7 +549,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       mapPainterAircraft->render();
 
       mapPainterTop->render();
-    }
+    } // if(!noRender())
 
     if(!mapWidget->isPrinting() && mapWidget->isVisibleWidget())
       // Dim the map by drawing a semi-transparent black rectangle - but not for printing or web services
