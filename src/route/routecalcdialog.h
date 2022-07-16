@@ -144,7 +144,7 @@ private:
   /* Adjust flight plan altitude spin box */
   void adjustAltitudePressed();
 
-  void helpClicked();
+  void buttonBoxClicked(QAbstractButton *button);
 
   /* Enable or disable toolbar/menu action */
   virtual void showEvent(QShowEvent *) override;

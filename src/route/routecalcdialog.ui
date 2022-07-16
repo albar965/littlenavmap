@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>453</width>
-    <height>463</height>
+    <height>497</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -41,47 +41,6 @@
        </property>
        <property name="textInteractionFlags">
         <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
-       </property>
-       <property name="buddy">
-        <cstring>pushButtonRouteCalcHelp</cstring>
-       </property>
-      </widget>
-     </item>
-     <item alignment="Qt::AlignTop">
-      <widget class="QPushButton" name="pushButtonRouteCalcHelp">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;
-&lt;p&gt;All set search conditions have to match.&lt;/p&gt;
-&lt;p&gt;Search tips for text fields: &lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Default is search for entries that start with text.&lt;/li&gt;
-&lt;li&gt;Use &amp;quot;*&amp;quot; as a placeholder for any text. &lt;/li&gt;
-&lt;li&gt;Prefix with &amp;quot;-&amp;quot; as first character to negate search.&lt;/li&gt;
-&lt;/ul&gt;
-
-&lt;p&gt;Check boxes: &lt;/p&gt;
-&lt;ul&gt;
-&lt;li&gt;Gray means: Condition is ignored.&lt;/li&gt;
-&lt;li&gt;Checked means: Condition must match.&lt;/li&gt;
-&lt;li&gt;Unchecked means: Condition must not match.&lt;/li&gt;
-&lt;/ul&gt;
-&lt;/body&gt;&lt;/html&gt;</string>
-       </property>
-       <property name="statusTip">
-        <string>Show help for the airport search tab</string>
-       </property>
-       <property name="text">
-        <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="../../littlenavmap.qrc">
-         <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
        </property>
       </widget>
      </item>
@@ -545,85 +504,88 @@ Disabled if a navdatabase does not allow it.</string>
     </spacer>
    </item>
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="1,0,1,1,3">
-     <property name="spacing">
-      <number>2</number>
+    <widget class="QFrame" name="">
+     <property name="frameShape">
+      <enum>QFrame::StyledPanel</enum>
      </property>
-     <item>
-      <widget class="QPushButton" name="pushButtonRouteCalcClose">
-       <property name="text">
-        <string>&amp;Close</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <spacer name="horizontalSpacer">
-       <property name="orientation">
-        <enum>Qt::Horizontal</enum>
-       </property>
-       <property name="sizeHint" stdset="0">
-        <size>
-         <width>40</width>
-         <height>20</height>
-        </size>
-       </property>
-      </spacer>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButtonRouteCalcDirect">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>Calculate a direct flight plan.
+     <layout class="QHBoxLayout" name="horizontalLayout_10" stretch="0,1,1">
+      <property name="spacing">
+       <number>2</number>
+      </property>
+      <property name="leftMargin">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>2</number>
+      </property>
+      <property name="rightMargin">
+       <number>2</number>
+      </property>
+      <property name="bottomMargin">
+       <number>2</number>
+      </property>
+      <item>
+       <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonRouteCalcDirect">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Calculate a direct flight plan.
 Keeps procedures.</string>
-       </property>
-       <property name="statusTip">
-        <string>Calculate a direct flight plan</string>
-       </property>
-       <property name="text">
-        <string>&amp;Direct</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButtonRouteCalcReverse">
-       <property name="sizePolicy">
-        <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-         <horstretch>0</horstretch>
-         <verstretch>0</verstretch>
-        </sizepolicy>
-       </property>
-       <property name="toolTip">
-        <string>Reverse the whole flight plan.
+        </property>
+        <property name="statusTip">
+         <string>Calculate a direct flight plan</string>
+        </property>
+        <property name="text">
+         <string>&amp;Direct</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButtonRouteCalcReverse">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+        <property name="toolTip">
+         <string>Reverse the whole flight plan.
 Erases procedures.</string>
-       </property>
-       <property name="statusTip">
-        <string>Reverse whole flight plan</string>
-       </property>
-       <property name="text">
-        <string>&amp;Reverse</string>
-       </property>
-      </widget>
-     </item>
-     <item>
-      <widget class="QPushButton" name="pushButtonRouteCalc">
-       <property name="toolTip">
-        <string>Calculate a flight plan using the settings above.
-Keeps procedures.</string>
-       </property>
-       <property name="statusTip">
-        <string>Calculate a flight plan using the settings above</string>
-       </property>
-       <property name="text">
-        <string>&amp;Calculate</string>
-       </property>
-      </widget>
-     </item>
-    </layout>
+        </property>
+        <property name="statusTip">
+         <string>Reverse whole flight plan</string>
+        </property>
+        <property name="text">
+         <string>&amp;Reverse</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+   <item>
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Apply|QDialogButtonBox::Close|QDialogButtonBox::Help</set>
+     </property>
+    </widget>
    </item>
   </layout>
  </widget>

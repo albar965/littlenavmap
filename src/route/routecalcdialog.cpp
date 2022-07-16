@@ -65,12 +65,11 @@ RouteCalcDialog::RouteCalcDialog(QWidget *parent)
              ui->checkBoxRouteCalcAirwayNoRnav, ui->checkBoxRouteCalcAirwayTrack, ui->radioButtonRouteCalcRadio,
              ui->radioButtonRouteCalcAirwayVictor, ui->radioButtonRouteCalcAirway, ui->checkBoxRouteCalcRadioNdb};
 
-  connect(ui->pushButtonRouteCalcClose, &QPushButton::clicked, this, &RouteCalcDialog::hide);
-  connect(ui->pushButtonRouteCalc, &QPushButton::clicked, this, &RouteCalcDialog::calculateClicked);
+  ui->buttonBox->button(QDialogButtonBox::Apply)->setText("&Calculate");
+
   connect(ui->pushButtonRouteCalcDirect, &QPushButton::clicked, this, &RouteCalcDialog::calculateDirectClicked);
   connect(ui->pushButtonRouteCalcReverse, &QPushButton::clicked, this, &RouteCalcDialog::calculateReverseClicked);
   connect(ui->pushButtonRouteCalcTrackDownload, &QPushButton::clicked, this, &RouteCalcDialog::downloadTrackClicked);
-  connect(ui->pushButtonRouteCalcHelp, &QPushButton::clicked, this, &RouteCalcDialog::helpClicked);
   connect(ui->pushButtonRouteCalcAdjustAltitude, &QPushButton::clicked, this, &RouteCalcDialog::adjustAltitudePressed);
   connect(ui->radioButtonRouteCalcAirway, &QRadioButton::clicked, this, &RouteCalcDialog::updateWidgets);
   connect(ui->radioButtonRouteCalcRadio, &QRadioButton::clicked, this, &RouteCalcDialog::updateWidgets);
@@ -86,11 +85,23 @@ RouteCalcDialog::RouteCalcDialog(QWidget *parent)
 
   Q_ASSERT(ui->horizontalSliderRouteCalcAirwayPreference->minimum() == AIRWAY_WAYPOINT_PREF_MIN);
   Q_ASSERT(ui->horizontalSliderRouteCalcAirwayPreference->maximum() == AIRWAY_WAYPOINT_PREF_MAX);
+
+  connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &RouteCalcDialog::buttonBoxClicked);
 }
 
 RouteCalcDialog::~RouteCalcDialog()
 {
   delete units;
+}
+
+void RouteCalcDialog::buttonBoxClicked(QAbstractButton *button)
+{
+  if(button == ui->buttonBox->button(QDialogButtonBox::Apply))
+    emit calculateClicked();
+  else if(button == ui->buttonBox->button(QDialogButtonBox::Help))
+    atools::gui::HelpHandler::openHelpUrlWeb(NavApp::getQMainWindow(), lnm::helpOnlineUrl + "ROUTECALC.html", lnm::helpLanguageOnline());
+  else if(button == ui->buttonBox->button(QDialogButtonBox::Close))
+    QDialog::hide();
 }
 
 void RouteCalcDialog::showForFullCalculation()
@@ -136,12 +147,6 @@ void RouteCalcDialog::setCruisingAltitudeFt(float altitude)
   ui->spinBoxRouteCalcCruiseAltitude->setValue(atools::roundToInt(Unit::altFeetF(altitude)));
 }
 
-void RouteCalcDialog::helpClicked()
-{
-  atools::gui::HelpHandler::openHelpUrlWeb(NavApp::getQMainWindow(), lnm::helpOnlineUrl + "ROUTECALC.html",
-                                           lnm::helpLanguageOnline());
-}
-
 void RouteCalcDialog::updateWidgets()
 {
   bool airway = ui->radioButtonRouteCalcAirway->isChecked();
@@ -159,7 +164,7 @@ void RouteCalcDialog::updateWidgets()
 
   bool canCalcRoute = NavApp::getRouteConst().canCalcRoute();
   ui->pushButtonRouteCalcAdjustAltitude->setEnabled(canCalcRoute);
-  ui->pushButtonRouteCalc->setEnabled(isCalculateSelection() ? canCalculateSelection : canCalcRoute);
+  ui->buttonBox->button(QDialogButtonBox::Apply)->setEnabled(isCalculateSelection() ? canCalculateSelection : canCalcRoute);
 
   ui->pushButtonRouteCalcDirect->setEnabled(canCalcRoute && NavApp::getRouteConst().hasEntries());
   ui->pushButtonRouteCalcReverse->setEnabled(canCalcRoute);
