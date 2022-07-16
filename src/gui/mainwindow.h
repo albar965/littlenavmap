@@ -207,7 +207,6 @@ public:
   void showAircraftPerformance();
   void showLogbookSearch();
   void showUserpointSearch();
-  void showRouteCalc();
 
   /* create a new flightplan from passed airports */
   void routeNewFromAirports(map::MapAirport departure, map::MapAirport destination);
@@ -246,6 +245,18 @@ public:
 
   /* Question dialog and then delete map and profile trail */
   void deleteAircraftTrack(bool quiet = false);
+
+  atools::gui::DockWidgetHandler *getDockHandler() const
+  {
+    return dockHandler;
+  }
+
+  /* Register and unregister dialogs for autoraise */
+  void addDialogToDockHandler(QDialog *dialogWidget);
+  void removeDialogFromDockHandler(QDialog *dialogWidget);
+
+  /* Get all actions from main menu which have a text and a shortcut */
+  QList<QAction *> getMainWindowActions();
 
 signals:
   /* Emitted when window is shown the first time */

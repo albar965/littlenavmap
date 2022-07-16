@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -15,7 +15,7 @@
 * along with this program.  If not, see <http://www.gnu.org/licenses/>.
 *****************************************************************************/
 
-#include "route/routecalcwindow.h"
+#include "route/routecalcdialog.h"
 #include "common/unitstringtool.h"
 #include "gui/helphandler.h"
 #include "gui/widgetstate.h"
@@ -28,47 +28,55 @@
 #include "util/htmlbuilder.h"
 #include "gui/clicktooltiphandler.h"
 #include "ui_mainwindow.h"
+#include "ui_routecalcdialog.h"
 
 // Factor to put on costs for direct connections. Airways <-> Waypoints
 static const float DIRECT_COST_FACTORS[11] = {10.f, 8.f, 6.f, 4.f, 3.f, 2.f, 1.6f, 1.4f, 1.3f, 1.2f, 1.f};
 
 using atools::util::HtmlBuilder;
 
-RouteCalcWindow::RouteCalcWindow(QWidget *parent) :
-  QObject(parent)
+RouteCalcDialog::RouteCalcDialog(QWidget *parent)
+  : QDialog(parent), ui(new Ui::RouteCalcDialog)
 {
+  setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
+  setWindowModality(Qt::NonModal);
+
+  ui->setupUi(this);
+
+  // Copy main menu actions to allow using shortcuts in the non-modal dialog too
+  addActions(NavApp::getMainWindowActions());
+
   preferenceTexts = QStringList({
     tr("Airways and tracks only.\nFastest calculation."),
-    tr("More airways and few direct.\nSlower calculation."),
-    tr("More airways and less direct.\nSlower calculation."),
-    tr("Airways and less direct.\nSlower calculation."),
-    tr("Airways and direct.\nSlower calculation."),
-    tr("Airways and direct.\nSlower calculation."),
-    tr("Airways and direct.\nSlower calculation."),
-    tr("Airways and more direct.\nSlower calculation."),
-    tr("Less airways and more direct.\nSlower calculation."),
-    tr("Few airways and more direct.\nSlower calculation."),
-    tr("Direct using waypoints only.\nSlower calculation.")
+    tr("More airways and few direct."),
+    tr("More airways and less direct."),
+    tr("Airways and less direct."),
+    tr("Airways and direct."),
+    tr("Airways and direct."),
+    tr("Airways and direct."),
+    tr("Airways and more direct."),
+    tr("Less airways and more direct."),
+    tr("Few airways and more direct."),
+    tr("Direct using waypoints only.")
   });
 
-  Ui::MainWindow *ui = NavApp::getMainUi();
   widgets = {ui->horizontalSliderRouteCalcAirwayPreference, ui->labelRouteCalcAirwayPreferWaypoint,
              ui->radioButtonRouteCalcAirwayJet, ui->spinBoxRouteCalcCruiseAltitude, ui->radioButtonRouteCalcAirwayAll,
              ui->checkBoxRouteCalcAirwayNoRnav, ui->checkBoxRouteCalcAirwayTrack, ui->radioButtonRouteCalcRadio,
              ui->radioButtonRouteCalcAirwayVictor, ui->radioButtonRouteCalcAirway, ui->checkBoxRouteCalcRadioNdb};
 
-  connect(ui->pushButtonRouteCalc, &QPushButton::clicked, this, &RouteCalcWindow::calculateClicked);
-  connect(ui->pushButtonRouteCalcDirect, &QPushButton::clicked, this, &RouteCalcWindow::calculateDirectClicked);
-  connect(ui->pushButtonRouteCalcReverse, &QPushButton::clicked, this, &RouteCalcWindow::calculateReverseClicked);
-  connect(ui->pushButtonRouteCalcTrackDownload, &QPushButton::clicked, this, &RouteCalcWindow::downloadTrackClicked);
-  connect(ui->pushButtonRouteCalcHelp, &QPushButton::clicked, this, &RouteCalcWindow::helpClicked);
-  connect(ui->pushButtonRouteCalcAdjustAltitude, &QPushButton::clicked, this, &RouteCalcWindow::adjustAltitudePressed);
-  connect(ui->radioButtonRouteCalcAirway, &QRadioButton::clicked, this, &RouteCalcWindow::updateWidgets);
-  connect(ui->radioButtonRouteCalcRadio, &QRadioButton::clicked, this, &RouteCalcWindow::updateWidgets);
-  connect(ui->radioButtonRouteCalcFull, &QRadioButton::toggled, this, &RouteCalcWindow::updateWidgets);
-  connect(ui->radioButtonRouteCalcSelection, &QRadioButton::toggled, this, &RouteCalcWindow::updateWidgets);
-  connect(ui->horizontalSliderRouteCalcAirwayPreference, &QSlider::valueChanged,
-          this, &RouteCalcWindow::updatePreferenceLabel);
+  connect(ui->pushButtonRouteCalcClose, &QPushButton::clicked, this, &RouteCalcDialog::hide);
+  connect(ui->pushButtonRouteCalc, &QPushButton::clicked, this, &RouteCalcDialog::calculateClicked);
+  connect(ui->pushButtonRouteCalcDirect, &QPushButton::clicked, this, &RouteCalcDialog::calculateDirectClicked);
+  connect(ui->pushButtonRouteCalcReverse, &QPushButton::clicked, this, &RouteCalcDialog::calculateReverseClicked);
+  connect(ui->pushButtonRouteCalcTrackDownload, &QPushButton::clicked, this, &RouteCalcDialog::downloadTrackClicked);
+  connect(ui->pushButtonRouteCalcHelp, &QPushButton::clicked, this, &RouteCalcDialog::helpClicked);
+  connect(ui->pushButtonRouteCalcAdjustAltitude, &QPushButton::clicked, this, &RouteCalcDialog::adjustAltitudePressed);
+  connect(ui->radioButtonRouteCalcAirway, &QRadioButton::clicked, this, &RouteCalcDialog::updateWidgets);
+  connect(ui->radioButtonRouteCalcRadio, &QRadioButton::clicked, this, &RouteCalcDialog::updateWidgets);
+  connect(ui->radioButtonRouteCalcFull, &QRadioButton::toggled, this, &RouteCalcDialog::updateWidgets);
+  connect(ui->radioButtonRouteCalcSelection, &QRadioButton::toggled, this, &RouteCalcDialog::updateWidgets);
+  connect(ui->horizontalSliderRouteCalcAirwayPreference, &QSlider::valueChanged, this, &RouteCalcDialog::updatePreferenceLabel);
 
   units = new UnitStringTool();
   units->init({ui->spinBoxRouteCalcCruiseAltitude});
@@ -80,29 +88,29 @@ RouteCalcWindow::RouteCalcWindow(QWidget *parent) :
   Q_ASSERT(ui->horizontalSliderRouteCalcAirwayPreference->maximum() == AIRWAY_WAYPOINT_PREF_MAX);
 }
 
-RouteCalcWindow::~RouteCalcWindow()
+RouteCalcDialog::~RouteCalcDialog()
 {
   delete units;
 }
 
-void RouteCalcWindow::showForFullCalculation()
+void RouteCalcDialog::showForFullCalculation()
 {
-  NavApp::getMainUi()->radioButtonRouteCalcFull->setChecked(true);
+  ui->radioButtonRouteCalcFull->setChecked(true);
   updateWidgets();
 }
 
-void RouteCalcWindow::showForSelectionCalculation()
+void RouteCalcDialog::showForSelectionCalculation()
 {
   selectionChanged();
-  NavApp::getMainUi()->radioButtonRouteCalcSelection->setChecked(true);
+  ui->radioButtonRouteCalcSelection->setChecked(true);
 }
 
-void RouteCalcWindow::selectionChanged()
+void RouteCalcDialog::selectionChanged()
 {
   routeChanged();
 }
 
-void RouteCalcWindow::routeChanged()
+void RouteCalcDialog::routeChanged()
 {
   QList<int> selLegIndexes;
   NavApp::getRouteController()->getSelectedRouteLegs(selLegIndexes);
@@ -116,28 +124,26 @@ void RouteCalcWindow::routeChanged()
   updateWidgets();
 }
 
-float RouteCalcWindow::getCruisingAltitudeFt() const
+float RouteCalcDialog::getCruisingAltitudeFt() const
 {
   // Convert UI to feet
-  return Unit::rev(NavApp::getMainUi()->spinBoxRouteCalcCruiseAltitude->value(), Unit::altFeetF);
+  return Unit::rev(ui->spinBoxRouteCalcCruiseAltitude->value(), Unit::altFeetF);
 }
 
-void RouteCalcWindow::setCruisingAltitudeFt(float altitude)
+void RouteCalcDialog::setCruisingAltitudeFt(float altitude)
 {
   // feet to UI
-  NavApp::getMainUi()->spinBoxRouteCalcCruiseAltitude->setValue(atools::roundToInt(Unit::altFeetF(altitude)));
+  ui->spinBoxRouteCalcCruiseAltitude->setValue(atools::roundToInt(Unit::altFeetF(altitude)));
 }
 
-void RouteCalcWindow::helpClicked()
+void RouteCalcDialog::helpClicked()
 {
   atools::gui::HelpHandler::openHelpUrlWeb(NavApp::getQMainWindow(), lnm::helpOnlineUrl + "ROUTECALC.html",
                                            lnm::helpLanguageOnline());
 }
 
-void RouteCalcWindow::updateWidgets()
+void RouteCalcDialog::updateWidgets()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
-
   bool airway = ui->radioButtonRouteCalcAirway->isChecked();
 
   ui->checkBoxRouteCalcRadioNdb->setEnabled(!airway);
@@ -175,17 +181,15 @@ void RouteCalcWindow::updateWidgets()
   updatePreferenceLabel();
 }
 
-void RouteCalcWindow::updatePreferenceLabel()
+void RouteCalcDialog::updatePreferenceLabel()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
   ui->labelRouteCalcPreference->setText(preferenceTexts.at(ui->horizontalSliderRouteCalcAirwayPreference->value()));
 }
 
-void RouteCalcWindow::updateHeader()
+void RouteCalcDialog::updateHeader()
 {
   const Route& route = NavApp::getRouteConst();
   QString departure, destination, title, tooltip, statustip;
-  Ui::MainWindow *ui = NavApp::getMainUi();
 
   if(ui->radioButtonRouteCalcSelection->isChecked())
   {
@@ -243,39 +247,42 @@ void RouteCalcWindow::updateHeader()
   ui->labelRouteCalcHeader->setStatusTip(statustip);
 }
 
-void RouteCalcWindow::restoreState()
+void RouteCalcDialog::restoreState()
 {
-  atools::gui::WidgetState(lnm::ROUTE_CALC_DIALOG).restore(widgets);
+  atools::gui::WidgetState state(lnm::ROUTE_CALC_DIALOG);
+  state.restore(this);
+  state.restore(widgets);
 }
 
-void RouteCalcWindow::saveState()
+void RouteCalcDialog::saveState()
 {
-  atools::gui::WidgetState(lnm::ROUTE_CALC_DIALOG).save(widgets);
+  atools::gui::WidgetState state(lnm::ROUTE_CALC_DIALOG);
+  state.save(widgets);
+  state.save(this);
 }
 
-void RouteCalcWindow::preDatabaseLoad()
+void RouteCalcDialog::preDatabaseLoad()
 {
 
 }
 
-void RouteCalcWindow::postDatabaseLoad()
+void RouteCalcDialog::postDatabaseLoad()
 {
   updateWidgets();
 }
 
-void RouteCalcWindow::optionsChanged()
+void RouteCalcDialog::optionsChanged()
 {
-  units->init({NavApp::getMainUi()->spinBoxRouteCalcCruiseAltitude});
+  units->init({ui->spinBoxRouteCalcCruiseAltitude});
 }
 
-rd::RoutingType RouteCalcWindow::getRoutingType() const
+rd::RoutingType RouteCalcDialog::getRoutingType() const
 {
-  return NavApp::getMainUi()->radioButtonRouteCalcAirway->isChecked() ? rd::AIRWAY : rd::RADIONNAV;
+  return ui->radioButtonRouteCalcAirway->isChecked() ? rd::AIRWAY : rd::RADIONNAV;
 }
 
-rd::AirwayRoutingType RouteCalcWindow::getAirwayRoutingType() const
+rd::AirwayRoutingType RouteCalcDialog::getAirwayRoutingType() const
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
   if(ui->radioButtonRouteCalcAirwayJet->isChecked())
     return rd::JET;
   else if(ui->radioButtonRouteCalcAirwayVictor->isChecked())
@@ -284,47 +291,60 @@ rd::AirwayRoutingType RouteCalcWindow::getAirwayRoutingType() const
     return rd::BOTH;
 }
 
-bool RouteCalcWindow::isAirwayNoRnav() const
+bool RouteCalcDialog::isAirwayNoRnav() const
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
   if(ui->checkBoxRouteCalcAirwayNoRnav->isEnabled())
     return ui->checkBoxRouteCalcAirwayNoRnav->isChecked();
   else
     return false;
 }
 
-bool RouteCalcWindow::isUseTracks() const
+bool RouteCalcDialog::isUseTracks() const
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
   if(ui->checkBoxRouteCalcAirwayTrack->isEnabled())
     return ui->checkBoxRouteCalcAirwayTrack->isChecked();
   else
     return false;
 }
 
-int RouteCalcWindow::getAirwayWaypointPreference() const
+int RouteCalcDialog::getAirwayWaypointPreference() const
 {
-  return NavApp::getMainUi()->horizontalSliderRouteCalcAirwayPreference->value();
+  return ui->horizontalSliderRouteCalcAirwayPreference->value();
 }
 
-bool RouteCalcWindow::isRadionavNdb() const
+bool RouteCalcDialog::isRadionavNdb() const
 {
-  return NavApp::getMainUi()->checkBoxRouteCalcRadioNdb->isChecked();
+  return ui->checkBoxRouteCalcRadioNdb->isChecked();
 }
 
-bool RouteCalcWindow::isCalculateSelection() const
+bool RouteCalcDialog::isCalculateSelection() const
 {
-  return NavApp::getMainUi()->radioButtonRouteCalcSelection->isChecked();
+  return ui->radioButtonRouteCalcSelection->isChecked();
 }
 
-float RouteCalcWindow::getAirwayPreferenceCostFactor() const
+float RouteCalcDialog::getAirwayPreferenceCostFactor() const
 {
-  return DIRECT_COST_FACTORS[NavApp::getMainUi()->horizontalSliderRouteCalcAirwayPreference->value()];
+  return DIRECT_COST_FACTORS[ui->horizontalSliderRouteCalcAirwayPreference->value()];
 }
 
-void RouteCalcWindow::adjustAltitudePressed()
+void RouteCalcDialog::adjustAltitudePressed()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  ui->spinBoxRouteCalcCruiseAltitude->setValue(NavApp::getRouteConst().
-                                               getAdjustedAltitude(ui->spinBoxRouteCalcCruiseAltitude->value()));
+  ui->spinBoxRouteCalcCruiseAltitude->setValue(NavApp::getRouteConst().getAdjustedAltitude(ui->spinBoxRouteCalcCruiseAltitude->value()));
+}
+
+void RouteCalcDialog::showEvent(QShowEvent *)
+{
+  Ui::MainWindow *mainUi = NavApp::getMainUi();
+
+  mainUi->actionRouteCalc->blockSignals(true);
+  mainUi->actionRouteCalc->setChecked(isVisible());
+  mainUi->actionRouteCalc->blockSignals(false);
+}
+
+void RouteCalcDialog::hideEvent(QHideEvent *)
+{
+  Ui::MainWindow *mainUi = NavApp::getMainUi();
+  mainUi->actionRouteCalc->blockSignals(true);
+  mainUi->actionRouteCalc->setChecked(isVisible());
+  mainUi->actionRouteCalc->blockSignals(false);
 }

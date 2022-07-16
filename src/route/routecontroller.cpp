@@ -55,7 +55,7 @@
 #include "route/customproceduredialog.h"
 #include "route/flightplanentrybuilder.h"
 #include "route/routealtitude.h"
-#include "route/routecalcwindow.h"
+#include "route/routecalcdialog.h"
 #include "route/routelabel.h"
 #include "route/runwayselectiondialog.h"
 #include "route/userwaypointdialog.h"
@@ -69,6 +69,7 @@
 #include "settings/settings.h"
 #include "track/trackcontroller.h"
 #include "ui_mainwindow.h"
+#include "gui/dockwidgethandler.h"
 #include "util/htmlbuilder.h"
 
 #include <QClipboard>
@@ -241,7 +242,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   routeNetworkRadio = new atools::routing::RouteNetwork(atools::routing::SOURCE_RADIO);
   routeNetworkAirway = new atools::routing::RouteNetwork(atools::routing::SOURCE_AIRWAY);
 
-  routeWindow = new RouteCalcWindow(mainWindow);
+  // Do not use a parent to allow the window moving to back
+  routeCalcDialog = new RouteCalcDialog(nullptr);
 
   // Set up undo/redo framework ========================================
   undoStack = new QUndoStack(mainWindow);
@@ -337,6 +339,9 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   ui->actionRouteTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteEditUserWaypoint->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
+  // Add to dock handler to enable auto raise
+  NavApp::addDialogToDockHandler(routeCalcDialog);
+
   // Add action/shortcuts to table view
   view->addActions({ui->actionRouteLegDown, ui->actionRouteLegUp, ui->actionRouteDeleteLeg,
                     ui->actionRouteTableCopy, ui->actionRouteShowInformation,
@@ -373,11 +378,11 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(ui->actionRouteDisplayOptions, &QAction::triggered, this, &RouteController::routeTableOptions);
   connect(ui->pushButtonRouteSettings, &QPushButton::clicked, this, &RouteController::routeTableOptions);
 
-  connect(this, &RouteController::routeChanged, routeWindow, &RouteCalcWindow::routeChanged);
-  connect(routeWindow, &RouteCalcWindow::calculateClicked, this, &RouteController::calculateRoute);
-  connect(routeWindow, &RouteCalcWindow::calculateDirectClicked, this, &RouteController::calculateDirect);
-  connect(routeWindow, &RouteCalcWindow::calculateReverseClicked, this, &RouteController::reverseRoute);
-  connect(routeWindow, &RouteCalcWindow::downloadTrackClicked, NavApp::getTrackController(), &TrackController::startDownload);
+  connect(this, &RouteController::routeChanged, routeCalcDialog, &RouteCalcDialog::routeChanged);
+  connect(routeCalcDialog, &RouteCalcDialog::calculateClicked, this, &RouteController::calculateRoute);
+  connect(routeCalcDialog, &RouteCalcDialog::calculateDirectClicked, this, &RouteController::calculateDirect);
+  connect(routeCalcDialog, &RouteCalcDialog::calculateReverseClicked, this, &RouteController::reverseRoute);
+  connect(routeCalcDialog, &RouteCalcDialog::downloadTrackClicked, NavApp::getTrackController(), &TrackController::startDownload);
 
   connect(routeLabel, &RouteLabel::flightplanLabelLinkActivated, this, &RouteController::flightplanLabelLinkActivated);
 
@@ -394,8 +399,10 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
 RouteController::~RouteController()
 {
+  NavApp::removeDialogFromDockHandler(routeCalcDialog);
   routeAltDelayTimer.stop();
-  delete routeWindow;
+
+  delete routeCalcDialog;
   delete tabHandlerRoute;
   delete units;
   delete entryBuilder;
@@ -916,13 +923,13 @@ void RouteController::saveState()
 
   routeLabel->saveState();
   tabHandlerRoute->saveState();
-  routeWindow->saveState();
+  routeCalcDialog->saveState();
 }
 
 void RouteController::restoreState()
 {
   tabHandlerRoute->restoreState();
-  routeWindow->restoreState();
+  routeCalcDialog->restoreState();
   Ui::MainWindow *ui = NavApp::getMainUi();
   updateTableHeaders();
 
@@ -1136,7 +1143,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   remarksFlightPlanToWidget();
   updateTableModel();
   updateMoveAndDeleteActions();
-  routeWindow->setCruisingAltitudeFt(route.getCruisingAltitudeFeet());
+  routeCalcDialog->setCruisingAltitudeFt(route.getCruisingAltitudeFeet());
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << route;
@@ -1692,17 +1699,37 @@ void RouteController::beforeRouteCalc()
 void RouteController::calculateRouteWindowSelection()
 {
   qDebug() << Q_FUNC_INFO;
-  routeWindow->showForSelectionCalculation();
-  routeWindow->setCruisingAltitudeFt(route.getCruisingAltitudeFeet());
-  NavApp::showRouteCalc();
+  routeCalcDialog->showForSelectionCalculation();
+  routeCalcDialog->setCruisingAltitudeFt(route.getCruisingAltitudeFeet());
+  calculateRouteWindowShow();
 }
 
 void RouteController::calculateRouteWindowFull()
 {
   qDebug() << Q_FUNC_INFO;
-  routeWindow->showForFullCalculation();
-  routeWindow->setCruisingAltitudeFt(route.getCruisingAltitudeFeet());
-  NavApp::showRouteCalc();
+  routeCalcDialog->showForFullCalculation();
+  routeCalcDialog->setCruisingAltitudeFt(route.getCruisingAltitudeFeet());
+  calculateRouteWindowShow();
+}
+
+void RouteController::calculateRouteWindowToggle(bool checked)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  if(!checked)
+    routeCalcDialog->hide();
+  else
+    calculateRouteWindowShow();
+}
+
+void RouteController::calculateRouteWindowShow()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // Always show - do no toggle
+  routeCalcDialog->show();
+  routeCalcDialog->focusWidget();
+  routeCalcDialog->raise();
 }
 
 void RouteController::calculateRoute()
@@ -1715,13 +1742,13 @@ void RouteController::calculateRoute()
   bool fetchAirways = false;
 
   // Build configuration for route finder =======================================
-  if(routeWindow->getRoutingType() == rd::AIRWAY)
+  if(routeCalcDialog->getRoutingType() == rd::AIRWAY)
   {
     net = routeNetworkAirway;
     fetchAirways = true;
 
     // Airway preference =======================================
-    switch(routeWindow->getAirwayRoutingType())
+    switch(routeCalcDialog->getAirwayRoutingType())
     {
       case rd::BOTH:
         command = tr("Airway Flight Plan Calculation");
@@ -1740,28 +1767,28 @@ void RouteController::calculateRoute()
     }
 
     // Airway/waypoint preference =======================================
-    int pref = routeWindow->getAirwayWaypointPreference();
-    if(pref == RouteCalcWindow::AIRWAY_WAYPOINT_PREF_MIN)
+    int pref = routeCalcDialog->getAirwayWaypointPreference();
+    if(pref == RouteCalcDialog::AIRWAY_WAYPOINT_PREF_MIN)
       mode &= ~atools::routing::MODE_WAYPOINT;
-    else if(pref == RouteCalcWindow::AIRWAY_WAYPOINT_PREF_MAX)
+    else if(pref == RouteCalcDialog::AIRWAY_WAYPOINT_PREF_MAX)
       mode &= ~atools::routing::MODE_AIRWAY;
 
     // RNAV setting
-    if(routeWindow->isAirwayNoRnav())
+    if(routeCalcDialog->isAirwayNoRnav())
       mode |= atools::routing::MODE_NO_RNAV;
 
     // Use tracks like NAT or PACOTS
-    if(routeWindow->isUseTracks())
+    if(routeCalcDialog->isUseTracks())
       mode |= atools::routing::MODE_TRACK;
   }
-  else if(routeWindow->getRoutingType() == rd::RADIONNAV)
+  else if(routeCalcDialog->getRoutingType() == rd::RADIONNAV)
   {
     // Radionav settings ========================================
     command = tr("Radionnav Flight Plan Calculation");
     fetchAirways = false;
     net = routeNetworkRadio;
     mode = atools::routing::MODE_RADIONAV_VOR;
-    if(routeWindow->isRadionavNdb())
+    if(routeCalcDialog->isRadionavNdb())
       mode |= atools::routing::MODE_RADIONAV_NDB;
   }
 
@@ -1772,13 +1799,13 @@ void RouteController::calculateRoute()
   }
 
   atools::routing::RouteFinder routeFinder(net);
-  routeFinder.setCostFactorForceAirways(routeWindow->getAirwayPreferenceCostFactor());
+  routeFinder.setCostFactorForceAirways(routeCalcDialog->getAirwayPreferenceCostFactor());
 
   int fromIdx = -1, toIdx = -1;
-  if(routeWindow->isCalculateSelection())
+  if(routeCalcDialog->isCalculateSelection())
   {
-    fromIdx = routeWindow->getRouteRangeFromIndex();
-    toIdx = routeWindow->getRouteRangeToIndex();
+    fromIdx = routeCalcDialog->getRouteRangeFromIndex();
+    toIdx = routeCalcDialog->getRouteRangeToIndex();
 
     // Disable certain optimizations in route finder - use nearest underlying point as start for departure position
     mode |= atools::routing::MODE_POINT_TO_POINT;
@@ -1788,13 +1815,13 @@ void RouteController::calculateRoute()
     // Disable certain optimizations in route finder - use nearest underlying point as start for departure position
     mode |= atools::routing::MODE_POINT_TO_POINT;
 
-  if(calculateRouteInternal(&routeFinder, command, fetchAirways, routeWindow->getCruisingAltitudeFt(),
+  if(calculateRouteInternal(&routeFinder, command, fetchAirways, routeCalcDialog->getCruisingAltitudeFt(),
                             fromIdx, toIdx, mode))
     NavApp::setStatusMessage(tr("Calculated flight plan."));
   else
     NavApp::setStatusMessage(tr("No route found."));
 
-  routeWindow->updateWidgets();
+  routeCalcDialog->updateWidgets();
 }
 
 void RouteController::clearAirwayNetworkCache()
@@ -2091,7 +2118,7 @@ void RouteController::preDatabaseLoad()
   route.resetActive();
   highlightNextWaypoint(route.getActiveLegIndex());
 
-  routeWindow->preDatabaseLoad();
+  routeCalcDialog->preDatabaseLoad();
 }
 
 void RouteController::postDatabaseLoad()
@@ -2139,7 +2166,7 @@ void RouteController::postDatabaseLoad()
   routeAltChangedDelayed();
   // route.updateRouteCycleMetadata();
 
-  routeWindow->postDatabaseLoad();
+  routeCalcDialog->postDatabaseLoad();
 
   NavApp::updateWindowTitle();
   loadingDatabaseState = false;
@@ -3016,7 +3043,7 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
 
   NavApp::getMainUi()->pushButtonRouteClearSelection->setEnabled(sm != nullptr && sm->hasSelection());
 
-  routeWindow->selectionChanged();
+  routeCalcDialog->selectionChanged();
   routeLabel->updateFooterSelectionLabel();
 
   emit routeSelectionChanged(selectedRowSize, model->rowCount());
@@ -3086,7 +3113,7 @@ void RouteController::styleChanged()
 void RouteController::optionsChanged()
 {
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
-  routeWindow->optionsChanged();
+  routeCalcDialog->optionsChanged();
 
   tableCleanupTimer.setInterval(OptionData::instance().getSimCleanupTableTime() * 1000);
 

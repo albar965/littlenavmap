@@ -64,6 +64,7 @@ class MapAirportHandler;
 class MapDetailHandler;
 class TrackManager;
 class MapThemeHandler;
+class QAction;
 
 namespace atools {
 namespace gui {
@@ -294,6 +295,9 @@ public:
   static QWidget *getQMainWidget();
   static QMainWindow *getQMainWindow();
   static MainWindow *getMainWindow();
+  static void addDialogToDockHandler(QDialog *dialog);
+  static void removeDialogFromDockHandler(QDialog *dialog);
+  static QList<QAction *> getMainWindowActions();
 
   /* true if tooltips in menus are visible */
   static bool isMenuToolTipsVisible();
@@ -394,7 +398,6 @@ public:
   static MapDetailHandler *getMapDetailHandler();
 
   static void showFlightPlan();
-  static void showRouteCalc();
   static void showAircraftPerformance();
   static void showLogbookSearch();
   static void showUserpointSearch();

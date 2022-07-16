@@ -60,7 +60,7 @@ class AirportQuery;
 class AirwayTrackQuery;
 class UnitStringTool;
 class QTextCursor;
-class RouteCalcWindow;
+class RouteCalcDialog;
 class RouteLabel;
 
 /*
@@ -190,6 +190,8 @@ public:
   /* Open flight plan calculation window. */
   void calculateRouteWindowFull();
   void calculateRouteWindowSelection();
+  void calculateRouteWindowShow();
+  void calculateRouteWindowToggle(bool checked);
 
   /* Reverse order of all waypoints, swap departure and destination and automatically
    * select a new start position (best runway) */
@@ -543,7 +545,7 @@ private:
   RouteLabel *routeLabel = nullptr;
 
   /* Route calculation dock window controller */
-  RouteCalcWindow *routeWindow = nullptr;
+  RouteCalcDialog *routeCalcDialog = nullptr;
 
   /* Do not update aircraft information more than every 0.1 seconds */
   static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 100;

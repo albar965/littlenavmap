@@ -199,7 +199,6 @@ MainWindow::MainWindow()
 #endif
 
     // Try to avoid short popping up on startup
-    ui->dockWidgetRouteCalc->hide();
     ui->labelProfileInfo->hide();
 
     setAcceptDrops(true);
@@ -220,8 +219,7 @@ MainWindow::MainWindow()
                                          // Add all available dock widgets here ==========================
                                          {ui->dockWidgetLegend, ui->dockWidgetAircraft,
                                           ui->dockWidgetSearch, ui->dockWidgetProfile,
-                                          ui->dockWidgetInformation, ui->dockWidgetRoute,
-                                          ui->dockWidgetRouteCalc},
+                                          ui->dockWidgetInformation, ui->dockWidgetRoute},
                                          // Add all available toolbars  here =============================
                                          {ui->toolBarMain, ui->toolBarMap, ui->toolbarMapOptions,
                                           ui->toolBarRoute, ui->toolBarView, ui->toolBarAirspaces, ui->toolBarTools},
@@ -563,9 +561,6 @@ void MainWindow::debugActionTriggered1()
   qDebug() << Q_FUNC_INFO;
   qDebug() << NavApp::getRouteConst();
   qDebug() << "======================================================================================";
-
-  qDebug() << Q_FUNC_INFO << ui->dockWidgetRouteCalc->windowFlags().testFlag(Qt::WindowStaysOnTopHint);
-
 }
 
 void MainWindow::debugActionTriggered2()
@@ -796,12 +791,6 @@ void MainWindow::setupUi()
                                                       arg(ui->dockWidgetRoute->windowTitle()));
   ui->dockWidgetRoute->toggleViewAction()->setStatusTip(ui->dockWidgetRoute->toggleViewAction()->toolTip());
 
-  ui->dockWidgetRouteCalc->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/routecalcdock.svg"));
-  ui->dockWidgetRouteCalc->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+3")));
-  ui->dockWidgetRouteCalc->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
-                                                          arg(ui->dockWidgetRouteCalc->windowTitle()));
-  ui->dockWidgetRouteCalc->toggleViewAction()->setStatusTip(ui->dockWidgetRouteCalc->toggleViewAction()->toolTip());
-
   ui->dockWidgetInformation->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/infodock.svg"));
   ui->dockWidgetInformation->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+4")));
   ui->dockWidgetInformation->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
@@ -834,7 +823,6 @@ void MainWindow::setupUi()
   ui->menuView->insertActions(ui->actionShowStatusbar,
                               {ui->dockWidgetSearch->toggleViewAction(),
                                ui->dockWidgetRoute->toggleViewAction(),
-                               ui->dockWidgetRouteCalc->toggleViewAction(),
                                ui->dockWidgetInformation->toggleViewAction(),
                                ui->dockWidgetProfile->toggleViewAction(),
                                ui->dockWidgetAircraft->toggleViewAction(),
@@ -856,7 +844,6 @@ void MainWindow::setupUi()
   // Add toobar actions to toolbar
   ui->toolBarView->addAction(ui->dockWidgetSearch->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetRoute->toggleViewAction());
-  ui->toolBarView->addAction(ui->dockWidgetRouteCalc->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetInformation->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetProfile->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetAircraft->toggleViewAction());
@@ -961,7 +948,6 @@ void MainWindow::updateStatusBarStyle()
     timeLabel->setFrameShape(shape);
   }
 #endif
-
 
   connectStatusLabel->setAlignment(align);
   connectStatusLabel->setMinimumWidth(100);
@@ -1196,15 +1182,14 @@ void MainWindow::connectAllSlots()
   connect(logdataController, &LogdataController::refreshLogSearch, logSearch, &LogdataSearch::refreshData);
   connect(logdataController, &LogdataController::logDataChanged, mapWidget, &MapWidget::updateLogEntryScreenGeometry);
   connect(logdataController, &LogdataController::logDataChanged, this, &MainWindow::updateMapObjectsShown);
-  connect(logdataController, &LogdataController::logDataChanged, infoController,
-          &InfoController::updateAllInformation);
+  connect(logdataController, &LogdataController::logDataChanged, infoController, &InfoController::updateAllInformation);
 
   connect(mapWidget, &MapWidget::aircraftTakeoff, logdataController, &LogdataController::aircraftTakeoff);
   connect(mapWidget, &MapWidget::aircraftLanding, logdataController, &LogdataController::aircraftLanding);
 
   connect(logdataController, &LogdataController::showInSearch, searchController, &SearchController::showInSearch);
 
-  connect(ui->actionLogdataShowStatistics, &QAction::triggered, logdataController, &LogdataController::showStatistics);
+  connect(ui->actionLogdataShowStatistics, &QAction::toggled, logdataController, &LogdataController::showStatisticsToggled);
   connect(ui->actionLogdataImportCSV, &QAction::triggered, logdataController, &LogdataController::importCsv);
   connect(ui->actionLogdataExportCSV, &QAction::triggered, logdataController, &LogdataController::exportCsv);
   connect(ui->actionLogdataImportXplane, &QAction::triggered, logdataController, &LogdataController::importXplane);
@@ -1357,7 +1342,7 @@ void MainWindow::connectAllSlots()
 
   // Flight plan calculation ========================================================================
   connect(ui->actionRouteCalcDirect, &QAction::triggered, routeController, &RouteController::calculateDirect);
-  connect(ui->actionRouteCalc, &QAction::triggered, routeController, &RouteController::calculateRouteWindowFull);
+  connect(ui->actionRouteCalc, &QAction::toggled, routeController, &RouteController::calculateRouteWindowToggle);
   connect(ui->actionRouteReverse, &QAction::triggered, routeController, &RouteController::reverseRoute);
   connect(ui->actionRouteCopyString, &QAction::triggered, routeController, &RouteController::routeStringToClipboard);
   connect(ui->actionRouteAdjustAltitude, &QAction::triggered, routeController, &RouteController::adjustFlightplanAltitude);
@@ -1682,7 +1667,7 @@ void MainWindow::actionShortcutMapTriggered()
   {
     ui->dockWidgetMap->show();
     ui->dockWidgetMap->activateWindow();
-    DockWidgetHandler::raiseFloatingWindow(ui->dockWidgetMap);
+    DockWidgetHandler::raiseFloatingDockWidget(ui->dockWidgetMap);
   }
   mapWidget->activateWindow();
   mapWidget->setFocus();
@@ -1742,15 +1727,7 @@ void MainWindow::actionShortcutFlightPlanTriggered()
 
 void MainWindow::actionShortcutCalcRouteTriggered()
 {
-  qDebug() << Q_FUNC_INFO;
-  dockHandler->activateWindow(ui->dockWidgetRouteCalc);
-
-  // Place window near cursor for first time show to avoid Qt positioning it randomly elsewhere
-  if(!Settings::instance().valueBool(lnm::MAINWINDOW_PLACE_ROUTE_CALC, false))
-  {
-    Settings::instance().setValue(lnm::MAINWINDOW_PLACE_ROUTE_CALC, true);
-    ui->dockWidgetRouteCalc->move(QCursor::pos() + QPoint(20, 20));
-  }
+  routeController->calculateRouteWindowToggle(ui->actionRouteCalc->isChecked());
 }
 
 void MainWindow::actionShortcutAircraftPerformanceTriggered()
@@ -3043,6 +3020,16 @@ void MainWindow::openOptionsDialog()
   optionsDialog->open();
 }
 
+void MainWindow::addDialogToDockHandler(QDialog *dialogWidget)
+{
+  dockHandler->addDialogWidget(dialogWidget);
+}
+
+void MainWindow::removeDialogFromDockHandler(QDialog *dialogWidget)
+{
+  dockHandler->removeDialogWidget(dialogWidget);
+}
+
 void MainWindow::resetMessages()
 {
   messages::resetAllMessages();
@@ -3434,11 +3421,11 @@ void MainWindow::allowDockingWindows()
 void MainWindow::raiseFloatingWindows()
 {
   qDebug() << Q_FUNC_INFO;
-  dockHandler->raiseFloatingWindows();
+  dockHandler->raiseWindows();
 
   if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
     // Map window is not registered in dockHandler
-    DockWidgetHandler::raiseFloatingWindow(ui->dockWidgetMap);
+    DockWidgetHandler::raiseFloatingDockWidget(ui->dockWidgetMap);
 
   // Avoid having random widget focus
   mapWidget->setFocus();
@@ -3778,7 +3765,7 @@ void MainWindow::optionsChanged()
   else
     setIconSize(defaultToolbarIconSize);
 
-  dockHandler->setAutoRaiseDockWindows(OptionData::instance().getFlags2().testFlag(opts2::RAISE_DOCK_WINDOWS));
+  dockHandler->setAutoRaiseWindows(OptionData::instance().getFlags2().testFlag(opts2::RAISE_DOCK_WINDOWS));
   dockHandler->setAutoRaiseMainWindow(OptionData::instance().getFlags2().testFlag(opts2::RAISE_MAIN_WINDOW));
 
   updateMapKeys();
@@ -3981,6 +3968,34 @@ void MainWindow::saveActionStates()
   Settings::syncSettings();
 }
 
+QList<QAction *> MainWindow::getMainWindowActions()
+{
+  QList<QAction *> actions;
+  for(QAction *menuBarAction : ui->menuBar->actions())
+  {
+    if(menuBarAction->menu() != nullptr)
+    {
+      for(QAction *menuAction : menuBarAction->menu()->actions())
+      {
+        if(menuAction->menu() != nullptr)
+        {
+          for(QAction *subMenuAction : menuAction->menu()->actions())
+          {
+            if(!subMenuAction->text().isEmpty() && !subMenuAction->shortcut().isEmpty())
+              actions.append(subMenuAction);
+          }
+        }
+        else
+        {
+          if(!menuAction->text().isEmpty() && !menuAction->shortcut().isEmpty())
+            actions.append(menuAction);
+        }
+      }
+    }
+  }
+  return actions;
+}
+
 #ifdef DEBUG_DUMP_SHORTCUTS
 void MainWindow::printShortcuts()
 {
@@ -4083,7 +4098,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
   {
     if(!routeCheckForChanges())
     {
+      // Do not exit
       event->ignore();
+
       // Do not restart process after settings reset
       NavApp::setRestartProcess(false);
       return;
@@ -4094,7 +4111,9 @@ void MainWindow::closeEvent(QCloseEvent *event)
   {
     if(!NavApp::getAircraftPerfController()->checkForChanges())
     {
+      // Do not exit
       event->ignore();
+
       // Do not restart process after settings reset
       NavApp::setRestartProcess(false);
       return;
@@ -4111,9 +4130,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
                                             QMessageBox::No, QMessageBox::Yes);
 
     if(result != QMessageBox::Yes)
+      // Do not exit
       event->ignore();
   }
 
+// Close all registerd non-modal dialogs to allow application to close
+  dockHandler->closeAllDialogWidgets();
   saveStateMain();
 }
 
@@ -4464,12 +4486,6 @@ void MainWindow::showUserpointSearch()
 {
   if(NavApp::isMainWindowVisible() && OptionData::instance().getFlags2() & opts2::RAISE_WINDOWS)
     actionShortcutUserpointSearchTriggered();
-}
-
-void MainWindow::showRouteCalc()
-{
-  if(NavApp::isMainWindowVisible())
-    actionShortcutCalcRouteTriggered();
 }
 
 void MainWindow::webserverStatusChanged(bool running)

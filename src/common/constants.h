@@ -141,7 +141,6 @@ const QLatin1String MAINWINDOW_WIDGET("MainWindow/Widget");
 const QLatin1String MAINWINDOW_WIDGET_MAPTHEME("MainWindow/WidgetMapTheme");
 const QLatin1String MAINWINDOW_WIDGET_DOCKHANDLER("MainWindow/WidgetDockHandler");
 const QLatin1String MAINWINDOW_PRINT_SIZE("MainWindow/PrintPreviewSize");
-const QLatin1String MAINWINDOW_PLACE_ROUTE_CALC("MainWindow/PlaceRouteCalc");
 
 const QLatin1String MAP_AIRSPACES("Map/AirspaceFilter2");
 const QLatin1String MAP_USERDATA("Map/Userdata");

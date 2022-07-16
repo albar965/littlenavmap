@@ -63,7 +63,12 @@ LogdataController::LogdataController(atools::fs::userdata::LogdataManager *logda
   : manager(logdataManager), mainWindow(parent)
 {
   dialog = new atools::gui::Dialog(mainWindow);
-  statsDialog = new LogStatisticsDialog(mainWindow, this);
+
+  // Do not use a parent to allow the window moving to back
+  statsDialog = new LogStatisticsDialog(nullptr, this);
+
+  // Add to dock handler to enable auto raise
+  NavApp::addDialogToDockHandler(statsDialog);
 
   connect(this, &LogdataController::logDataChanged, statsDialog, &LogStatisticsDialog::logDataChanged);
   connect(this, &LogdataController::logDataChanged, manager, &atools::sql::DataManagerBase::updateUndoRedoActions);
@@ -79,6 +84,7 @@ LogdataController::LogdataController(atools::fs::userdata::LogdataManager *logda
 
 LogdataController::~LogdataController()
 {
+  NavApp::removeDialogFromDockHandler(statsDialog);
   delete statsDialog;
   delete aircraftAtTakeoff;
   delete dialog;
@@ -190,9 +196,16 @@ void LogdataController::getFlightStatsSimulator(QVector<std::pair<int, QString> 
   manager->getFlightStatsSimulator(numSimulators);
 }
 
-void LogdataController::showStatistics()
+void LogdataController::showStatisticsToggled(bool checked)
 {
-  statsDialog->show();
+  if(checked)
+  {
+    statsDialog->show();
+    statsDialog->focusWidget();
+    statsDialog->raise();
+  }
+  else
+    statsDialog->hide();
 }
 
 atools::sql::SqlDatabase *LogdataController::getDatabase() const

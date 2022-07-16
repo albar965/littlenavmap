@@ -18,10 +18,15 @@
 #ifndef LNM_ROUTECALCWIN_H
 #define LNM_ROUTECALCWIN_H
 
+#include <QDialog>
 #include <QObject>
 
 class UnitStringTool;
 class QAbstractButton;
+
+namespace Ui {
+class RouteCalcDialog;
+}
 
 namespace rd {
 
@@ -45,17 +50,17 @@ enum AirwayRoutingType
 /*
  * Manages the flight plan calculation dock window and its widgets.
  */
-class RouteCalcWindow :
-  public QObject
+class RouteCalcDialog :
+  public QDialog
 {
   Q_OBJECT
 
 public:
-  explicit RouteCalcWindow(QWidget *parent);
-  virtual ~RouteCalcWindow() override;
+  explicit RouteCalcDialog(QWidget *parent);
+  virtual ~RouteCalcDialog() override;
 
-  RouteCalcWindow(const RouteCalcWindow& other) = delete;
-  RouteCalcWindow& operator=(const RouteCalcWindow& other) = delete;
+  RouteCalcDialog(const RouteCalcDialog& other) = delete;
+  RouteCalcDialog& operator=(const RouteCalcDialog& other) = delete;
 
   /* Open and set up the dialog for a full flight plan calculation */
   void showForFullCalculation();
@@ -141,6 +146,10 @@ private:
 
   void helpClicked();
 
+  /* Enable or disable toolbar/menu action */
+  virtual void showEvent(QShowEvent *) override;
+  virtual void hideEvent(QHideEvent *) override;
+
   /* Range/selection */
   int fromIndex = -1, toIndex = -1;
   bool canCalculateSelection = false;
@@ -148,6 +157,9 @@ private:
 
   QList<QObject *> widgets;
   QStringList preferenceTexts;
+
+  Ui::RouteCalcDialog *ui;
+
 };
 
 #endif // LNM_ROUTECALCWIN_H

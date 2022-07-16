@@ -18,18 +18,19 @@
 #include "logbook/logstatisticsdialog.h"
 #include "ui_logstatisticsdialog.h"
 
-#include "logdatacontroller.h"
-#include "util/htmlbuilder.h"
-#include "geo/calculations.h"
-#include "common/unit.h"
-#include "common/formatter.h"
 #include "common/constants.h"
-#include "gui/widgetstate.h"
-#include "sql/sqldatabase.h"
-#include "gui/itemviewzoomhandler.h"
-#include "gui/helphandler.h"
-#include "navapp.h"
+#include "common/formatter.h"
+#include "common/unit.h"
 #include "export/csvexporter.h"
+#include "geo/calculations.h"
+#include "gui/helphandler.h"
+#include "gui/itemviewzoomhandler.h"
+#include "gui/widgetstate.h"
+#include "logdatacontroller.h"
+#include "navapp.h"
+#include "sql/sqldatabase.h"
+#include "ui_mainwindow.h"
+#include "util/htmlbuilder.h"
 
 #include <QDateTime>
 #include <QSqlError>
@@ -94,6 +95,9 @@ LogStatisticsDialog::LogStatisticsDialog(QWidget *parent, LogdataController *log
   initQueries();
 
   ui->setupUi(this);
+
+  // Copy main menu actions to allow using shortcuts in the non-modal dialog too
+  addActions(NavApp::getMainWindowActions());
 
   // Copy to clipboard button in button bar ============================
   QPushButton *button = ui->buttonBoxLogStats->addButton(tr("&Copy to Clipboard"), QDialogButtonBox::NoRole);
@@ -471,15 +475,22 @@ void LogStatisticsDialog::initQueries()
 
 void LogStatisticsDialog::showEvent(QShowEvent *)
 {
-  qDebug() << Q_FUNC_INFO;
   setModel();
   updateWidgets();
+
+  Ui::MainWindow *mainUi = NavApp::getMainUi();
+  mainUi->actionLogdataShowStatistics->blockSignals(true);
+  mainUi->actionLogdataShowStatistics->setChecked(isVisible());
+  mainUi->actionLogdataShowStatistics->blockSignals(false);
 }
 
 void LogStatisticsDialog::hideEvent(QHideEvent *)
 {
-  qDebug() << Q_FUNC_INFO;
-
   // Disconnect from database if not shown
   clearModel();
+
+  Ui::MainWindow *mainUi = NavApp::getMainUi();
+  mainUi->actionLogdataShowStatistics->blockSignals(true);
+  mainUi->actionLogdataShowStatistics->setChecked(isVisible());
+  mainUi->actionLogdataShowStatistics->blockSignals(false);
 }

@@ -799,11 +799,6 @@ void NavApp::showFlightPlan()
   mainWindow->showFlightPlan();
 }
 
-void NavApp::showRouteCalc()
-{
-  mainWindow->showRouteCalc();
-}
-
 void NavApp::showAircraftPerformance()
 {
   mainWindow->showAircraftPerformance();
@@ -973,6 +968,21 @@ QMainWindow *NavApp::getQMainWindow()
 MainWindow *NavApp::getMainWindow()
 {
   return mainWindow;
+}
+
+void NavApp::addDialogToDockHandler(QDialog *dialog)
+{
+  mainWindow->addDialogToDockHandler(dialog);
+}
+
+void NavApp::removeDialogFromDockHandler(QDialog *dialog)
+{
+  mainWindow->removeDialogFromDockHandler(dialog);
+}
+
+QList<QAction *> NavApp::getMainWindowActions()
+{
+  return mainWindow->getMainWindowActions();
 }
 
 bool NavApp::isMenuToolTipsVisible()

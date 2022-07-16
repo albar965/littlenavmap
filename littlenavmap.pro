@@ -356,7 +356,7 @@ SOURCES += \
   src/route/route.cpp \
   src/route/routealtitude.cpp \
   src/route/routealtitudeleg.cpp \
-  src/route/routecalcwindow.cpp \
+  src/route/routecalcdialog.cpp \
   src/route/routecommand.cpp \
   src/route/routecontroller.cpp \
   src/route/routeextractor.cpp \
@@ -547,7 +547,7 @@ HEADERS  += \
   src/route/route.h \
   src/route/routealtitude.h \
   src/route/routealtitudeleg.h \
-  src/route/routecalcwindow.h \
+  src/route/routecalcdialog.h \
   src/route/routecommand.h \
   src/route/routecontroller.h \
   src/route/routeextractor.h \
@@ -619,14 +619,14 @@ FORMS += \
   src/db/airspacedialog.ui \
   src/db/databasedialog.ui \
   src/db/databaseprogressdialog.ui \
-  src/gui/holddialog.ui \
   src/gui/coordinatedialog.ui \
+  src/gui/holddialog.ui \
   src/gui/mainwindow.ui \
+  src/gui/rangemarkerdialog.ui \
   src/gui/textdialog.ui \
   src/gui/texteditdialog.ui \
   src/gui/timedialog.ui \
   src/gui/trafficpatterndialog.ui \
-  src/gui/rangemarkerdialog.ui \
   src/gui/updatedialog.ui \
   src/logbook/logdatadialog.ui \
   src/logbook/logstatisticsdialog.ui \
@@ -637,6 +637,7 @@ FORMS += \
   src/print/printdialog.ui \
   src/route/customproceduredialog.ui \
   src/route/parkingdialog.ui \
+  src/route/routecalcdialog.ui \
   src/route/runwayselectiondialog.ui \
   src/route/userwaypointdialog.ui \
   src/routeexport/fetchroutedialog.ui \

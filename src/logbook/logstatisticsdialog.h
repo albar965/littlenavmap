@@ -62,7 +62,8 @@ public:
   void optionsChanged();
 
 private:
-  /* Use events to update data and disconnect from database if not visible */
+  /* Use events to update data and disconnect from database if not visible. */
+  /* Also enable or disable toolbar/menu action. */
   virtual void showEvent(QShowEvent *) override;
   virtual void hideEvent(QHideEvent *) override;
 
@@ -96,6 +97,7 @@ private:
     QVector<Qt::Alignment> align; /* Column alignment - must be equal to query columns*/
     QString query; /* SQL query */
   };
+
   QVector<Query> QUERIES;
 
   Ui::LogStatisticsDialog *ui;
