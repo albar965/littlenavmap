@@ -3792,126 +3792,137 @@ void MainWindow::saveStateMain()
 {
   qDebug() << Q_FUNC_INFO;
 
-#ifdef DEBUG_CREATE_WINDOW_STATE
-  // Save the state into a binary file to be used for reset window layout
-  // One state is needed with undockable map window and one without
-  QFile stateFile(QString("mainwindow_state_%1.bin").
-                  arg(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK) ? "dock" : "nodock"));
-  if(stateFile.open(QFile::WriteOnly))
+  try
   {
-    stateFile.write(saveState());
-    stateFile.close();
-  }
+#ifdef DEBUG_CREATE_WINDOW_STATE
+    // Save the state into a binary file to be used for reset window layout
+    // One state is needed with undockable map window and one without
+    QFile stateFile(QString("mainwindow_state_%1.bin").
+                    arg(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK) ? "dock" : "nodock"));
+    if(stateFile.open(QFile::WriteOnly))
+    {
+      stateFile.write(saveState());
+      stateFile.close();
+    }
 
 #endif
 
 #ifdef DEBUG_DUMP_SHORTCUTS
-  printShortcuts();
+    printShortcuts();
 #endif
 
-  // About to reset all settings and restart application
-  if(NavApp::isRestartProcess())
-  {
-    deleteAircraftTrack(true /* do not ask questions */);
-    mapWidget->clearHistory();
+    // About to reset all settings and restart application
+    if(NavApp::isRestartProcess())
+    {
+      deleteAircraftTrack(true /* do not ask questions */);
+      mapWidget->clearHistory();
+    }
+
+    saveMainWindowStates();
+
+    qDebug() << Q_FUNC_INFO << "searchController";
+    if(searchController != nullptr)
+      searchController->saveState();
+
+    qDebug() << Q_FUNC_INFO << "mapWidget";
+    if(mapWidget != nullptr)
+      mapWidget->saveState();
+
+    qDebug() << Q_FUNC_INFO << "userDataController";
+    if(mapThemeHandler != nullptr)
+      mapThemeHandler->saveState();
+
+    qDebug() << Q_FUNC_INFO << "userDataController";
+    if(NavApp::getUserdataController() != nullptr)
+      NavApp::getUserdataController()->saveState();
+
+    qDebug() << Q_FUNC_INFO << "mapMarkHandler";
+    if(NavApp::getMapMarkHandler() != nullptr)
+      NavApp::getMapMarkHandler()->saveState();
+
+    qDebug() << Q_FUNC_INFO << "mapAirportHandler";
+    if(NavApp::getMapAirportHandler() != nullptr)
+      NavApp::getMapAirportHandler()->saveState();
+
+    qDebug() << Q_FUNC_INFO << "mapDetailHandler";
+    if(NavApp::getMapDetailHandler() != nullptr)
+      NavApp::getMapDetailHandler()->saveState();
+
+    qDebug() << Q_FUNC_INFO << "logdataController";
+    if(NavApp::getLogdataController() != nullptr)
+      NavApp::getLogdataController()->saveState();
+
+    qDebug() << Q_FUNC_INFO << "windReporter";
+    if(NavApp::getWindReporter() != nullptr)
+      NavApp::getWindReporter()->saveState();
+
+    qDebug() << Q_FUNC_INFO << "aircraftPerfController";
+    if(NavApp::getAircraftPerfController() != nullptr)
+      NavApp::getAircraftPerfController()->saveState();
+
+    qDebug() << Q_FUNC_INFO << "airspaceController";
+    if(NavApp::getAirspaceController() != nullptr)
+      NavApp::getAirspaceController()->saveState();
+
+    qDebug() << Q_FUNC_INFO << "routeController";
+    if(routeController != nullptr)
+      routeController->saveState();
+
+    qDebug() << Q_FUNC_INFO << "profileWidget";
+    if(profileWidget != nullptr)
+      profileWidget->saveState();
+
+    qDebug() << Q_FUNC_INFO << "connectClient";
+    if(NavApp::getConnectClient() != nullptr)
+      NavApp::getConnectClient()->saveState();
+
+    qDebug() << Q_FUNC_INFO << "trackController";
+    if(NavApp::getTrackController() != nullptr)
+      NavApp::getTrackController()->saveState();
+
+    qDebug() << Q_FUNC_INFO << "infoController";
+    if(infoController != nullptr)
+      infoController->saveState();
+
+    saveFileHistoryStates();
+
+    qDebug() << Q_FUNC_INFO << "printSupport";
+    if(printSupport != nullptr)
+      printSupport->saveState();
+
+    qDebug() << Q_FUNC_INFO << "routeExport";
+    if(routeExport != nullptr)
+      routeExport->saveState();
+
+    qDebug() << Q_FUNC_INFO << "optionsDialog";
+    if(optionsDialog != nullptr)
+      optionsDialog->saveState();
+
+    qDebug() << Q_FUNC_INFO << "styleHandler";
+    if(NavApp::getStyleHandler() != nullptr)
+      NavApp::getStyleHandler()->saveState();
+
+    saveActionStates();
+
+    Settings& settings = Settings::instance();
+    settings.setValue(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, firstApplicationStart);
+
+    qDebug() << Q_FUNC_INFO << "databaseManager";
+    if(NavApp::getDatabaseManager() != nullptr)
+      NavApp::getDatabaseManager()->saveState();
+
+    qDebug() << Q_FUNC_INFO << "syncSettings";
+    Settings::syncSettings();
+    qDebug() << Q_FUNC_INFO << "save state done";
   }
-
-  saveMainWindowStates();
-
-  qDebug() << Q_FUNC_INFO << "searchController";
-  if(searchController != nullptr)
-    searchController->saveState();
-
-  qDebug() << Q_FUNC_INFO << "mapWidget";
-  if(mapWidget != nullptr)
-    mapWidget->saveState();
-
-  qDebug() << Q_FUNC_INFO << "userDataController";
-  if(mapThemeHandler != nullptr)
-    mapThemeHandler->saveState();
-
-  qDebug() << Q_FUNC_INFO << "userDataController";
-  if(NavApp::getUserdataController() != nullptr)
-    NavApp::getUserdataController()->saveState();
-
-  qDebug() << Q_FUNC_INFO << "mapMarkHandler";
-  if(NavApp::getMapMarkHandler() != nullptr)
-    NavApp::getMapMarkHandler()->saveState();
-
-  qDebug() << Q_FUNC_INFO << "mapAirportHandler";
-  if(NavApp::getMapAirportHandler() != nullptr)
-    NavApp::getMapAirportHandler()->saveState();
-
-  qDebug() << Q_FUNC_INFO << "mapDetailHandler";
-  if(NavApp::getMapDetailHandler() != nullptr)
-    NavApp::getMapDetailHandler()->saveState();
-
-  qDebug() << Q_FUNC_INFO << "logdataController";
-  if(NavApp::getLogdataController() != nullptr)
-    NavApp::getLogdataController()->saveState();
-
-  qDebug() << Q_FUNC_INFO << "windReporter";
-  if(NavApp::getWindReporter() != nullptr)
-    NavApp::getWindReporter()->saveState();
-
-  qDebug() << Q_FUNC_INFO << "aircraftPerfController";
-  if(NavApp::getAircraftPerfController() != nullptr)
-    NavApp::getAircraftPerfController()->saveState();
-
-  qDebug() << Q_FUNC_INFO << "airspaceController";
-  if(NavApp::getAirspaceController() != nullptr)
-    NavApp::getAirspaceController()->saveState();
-
-  qDebug() << Q_FUNC_INFO << "routeController";
-  if(routeController != nullptr)
-    routeController->saveState();
-
-  qDebug() << Q_FUNC_INFO << "profileWidget";
-  if(profileWidget != nullptr)
-    profileWidget->saveState();
-
-  qDebug() << Q_FUNC_INFO << "connectClient";
-  if(NavApp::getConnectClient() != nullptr)
-    NavApp::getConnectClient()->saveState();
-
-  qDebug() << Q_FUNC_INFO << "trackController";
-  if(NavApp::getTrackController() != nullptr)
-    NavApp::getTrackController()->saveState();
-
-  qDebug() << Q_FUNC_INFO << "infoController";
-  if(infoController != nullptr)
-    infoController->saveState();
-
-  saveFileHistoryStates();
-
-  qDebug() << Q_FUNC_INFO << "printSupport";
-  if(printSupport != nullptr)
-    printSupport->saveState();
-
-  qDebug() << Q_FUNC_INFO << "routeExport";
-  if(routeExport != nullptr)
-    routeExport->saveState();
-
-  qDebug() << Q_FUNC_INFO << "optionsDialog";
-  if(optionsDialog != nullptr)
-    optionsDialog->saveState();
-
-  qDebug() << Q_FUNC_INFO << "styleHandler";
-  if(NavApp::getStyleHandler() != nullptr)
-    NavApp::getStyleHandler()->saveState();
-
-  saveActionStates();
-
-  Settings& settings = Settings::instance();
-  settings.setValue(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, firstApplicationStart);
-
-  qDebug() << Q_FUNC_INFO << "databaseManager";
-  if(NavApp::getDatabaseManager() != nullptr)
-    NavApp::getDatabaseManager()->saveState();
-
-  qDebug() << Q_FUNC_INFO << "syncSettings";
-  Settings::syncSettings();
-  qDebug() << Q_FUNC_INFO << "save state done";
+  catch(atools::Exception& e)
+  {
+    ATOOLS_HANDLE_EXCEPTION(e);
+  }
+  catch(...)
+  {
+    ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
+  }
 }
 
 void MainWindow::saveFileHistoryStates()
@@ -4134,7 +4145,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
       event->ignore();
   }
 
-// Close all registerd non-modal dialogs to allow application to close
+  // Close all registerd non-modal dialogs to allow application to close
   dockHandler->closeAllDialogWidgets();
   saveStateMain();
 }

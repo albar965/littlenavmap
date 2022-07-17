@@ -205,16 +205,18 @@ QHash<QString, QString> MapThemeHandler::getMapThemeKeysHash() const
   return hash;
 }
 
-void MapThemeHandler::clearMapThemeKeyValues()
+void MapThemeHandler::setMapThemeKeys(const QMap<QString, QString>& keys)
 {
-  for(auto it = mapThemeKeys.begin(); it != mapThemeKeys.end(); ++it)
-    it.value().clear();
+  qDebug() << Q_FUNC_INFO << keys.keys();
+  mapThemeKeys = keys;
 }
 
 void MapThemeHandler::saveState()
 {
+  qDebug() << Q_FUNC_INFO;
+
   // Save keys ===================================================
-  QFile keyFile(atools::settings::Settings::instance().getPath() + QDir::separator() + FILENAME);
+  QFile keyFile(atools::settings::Settings::getPath() + QDir::separator() + FILENAME);
   if(keyFile.open(QIODevice::WriteOnly))
   {
     // Apply simple encryption to the keys
@@ -226,15 +228,35 @@ void MapThemeHandler::saveState()
     // Create a copy and encrypt keys
     QMap<QString, QString> keys(mapThemeKeys);
     for(auto it = keys.begin(); it != keys.end(); ++it)
+    {
       it.value() = crypt.encryptToString(it.value());
+      if(crypt.lastError() != atools::util::SimpleCrypt::ErrorNoError)
+      {
+        qWarning() << Q_FUNC_INFO << "Failed encrypting key to" << keyFile.fileName() << "error" << crypt.lastError();
+        throw atools::Exception(tr("Failed encrypting key for %1. Reason: %2").arg(keyFile.fileName()).arg(crypt.lastError()));
+      }
+    }
 
     // Save to binary file
     QDataStream stream(&keyFile);
     stream << keys;
+
+    // Call flush to catch potential errors
+    if(keyFile.flush())
+      qDebug() << Q_FUNC_INFO << "Wrote" << keys.size() << "keys";
+    else
+    {
+      qWarning() << Q_FUNC_INFO << "Failed writing" << keys.size() << "keys to" << keyFile.fileName() << "error" << keyFile.errorString();
+      throw atools::Exception(tr("Failed writing to %1. Reason: %2").arg(keyFile.fileName()).arg(keyFile.errorString()));
+    }
+
     keyFile.close();
   }
   else
-    throw atools::Exception(tr("Cannot open file %1. Reason: %2").arg(keyFile.fileName()).arg(keyFile.errorString()));
+  {
+    qWarning() << Q_FUNC_INFO << "Cannot open for writing" << keyFile.fileName() << "error" << keyFile.errorString();
+    throw atools::Exception(tr("Cannot open file for writing %1. Reason: %2").arg(keyFile.fileName()).arg(keyFile.errorString()));
+  }
 
   // Save current theme ===================================================
   atools::settings::Settings& settings = atools::settings::Settings::instance();
@@ -246,10 +268,12 @@ void MapThemeHandler::saveState()
 
 void MapThemeHandler::restoreState()
 {
-  // Load keys ===================================================
-  QFile keyFile(atools::settings::Settings::instance().getPath() + QDir::separator() + FILENAME);
+  qDebug() << Q_FUNC_INFO;
 
-  if(atools::checkFile(keyFile, false /* warn */))
+  // Load keys ===================================================
+  QFile keyFile(atools::settings::Settings::getPath() + QDir::separator() + FILENAME);
+
+  if(keyFile.exists())
   {
     if(keyFile.open(QIODevice::ReadOnly))
     {
@@ -261,13 +285,31 @@ void MapThemeHandler::restoreState()
       // Decrypt keys and merge into list fetched from DGML files
       atools::util::SimpleCrypt crypt(KEY);
       for(auto it = keys.begin(); it != keys.end(); ++it)
+      {
         mapThemeKeys.insert(it.key(), crypt.decryptToString(it.value()));
+        if(crypt.lastError() != atools::util::SimpleCrypt::ErrorNoError)
+        {
+          qWarning() << Q_FUNC_INFO << "Failed decrypting key from" << keyFile.fileName() << crypt.lastError();
+          throw atools::Exception(tr("Failed decrypting key from %1. Reason: %2").arg(keyFile.fileName()).arg(crypt.lastError()));
+        }
+      }
+
+      if(keyFile.error() != QFileDevice::NoError)
+      {
+        qWarning() << Q_FUNC_INFO << "Failed writing" << keys.size() << "keys to" << keyFile.fileName() << "error" << keyFile.errorString();
+        throw atools::Exception(tr("Failed writing to %1. Reason: %2").arg(keyFile.fileName()).arg(keyFile.errorString()));
+      }
 
       keyFile.close();
     }
     else
-      throw atools::Exception(tr("Cannot open file %1. Reason: %2").arg(keyFile.fileName()).arg(keyFile.errorString()));
+    {
+      qWarning() << Q_FUNC_INFO << "Cannot open for reading" << keyFile.fileName() << "error" << keyFile.errorString();
+      throw atools::Exception(tr("Cannot open file for reading %1. Reason: %2").arg(keyFile.fileName()).arg(keyFile.errorString()));
+    }
   }
+  else
+    qDebug() << Q_FUNC_INFO << "File does not exist" << keyFile.fileName();
 
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 

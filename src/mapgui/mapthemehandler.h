@@ -236,13 +236,7 @@ public:
   QHash<QString, QString> getMapThemeKeysHash() const;
 
   /* Set theme keys to save */
-  void setMapThemeKeys(const QMap<QString, QString>& keys)
-  {
-    mapThemeKeys = keys;
-  }
-
-  /* Clear values from all keys */
-  void clearMapThemeKeyValues();
+  void setMapThemeKeys(const QMap<QString, QString>& keys);
 
   /* Load and save key values from separate binary file to avoid users accidentally
    * sharing their keys with the .ini configuration file.
