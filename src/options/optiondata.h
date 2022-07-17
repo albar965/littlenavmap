@@ -910,6 +910,11 @@ public:
     return trailColor;
   }
 
+  const QColor& getMeasurementColor() const
+  {
+    return measurementColor;
+  }
+
   const optsd::DisplayOptionsAirport& getDisplayOptionsAirport() const
   {
     return displayOptionsAirport;
@@ -945,9 +950,14 @@ public:
     return displayClickOptions;
   }
 
-  int getDisplayThicknessRangeDistance() const
+  int getDisplayThicknessUserFeature() const
   {
-    return displayThicknessRangeDistance;
+    return displayThicknessUserFeature;
+  }
+
+  int getDisplayThicknessMeasurement() const
+  {
+    return displayThicknessMeasurement;
   }
 
   int getDisplayThicknessCompassRose() const
@@ -1028,9 +1038,14 @@ public:
   /* URL to "whazzup.txt" or empty if not applicable */
   QString getOnlineWhazzupUrl() const;
 
-  int getDisplayTextSizeRangeDistance() const
+  int getDisplayTextSizeUserFeature() const
   {
-    return displayTextSizeRangeDistance;
+    return displayTextSizeUserFeature;
+  }
+
+  int getDisplayTextSizeMeasurement() const
+  {
+    return displayTextSizeMeasurement;
   }
 
   int getDisplayTextSizeCompassRose() const
@@ -1420,8 +1435,11 @@ private:
   // spinBoxOptionsDisplayThicknessTrail
   int displayThicknessTrail = 100;
 
-  // spinBoxOptionsDisplayThicknessRangeDistance
-  int displayThicknessRangeDistance = 100;
+  // spinBoxOptionsDisplayThicknessUserFeature
+  int displayThicknessUserFeature = 100;
+
+  // spinBoxOptionsDisplayThicknessMeasurement
+  int displayThicknessMeasurement = 100;
 
   // spinBoxOptionsDisplayThicknessCompassRose
   int displayThicknessCompassRose = 100;
@@ -1441,8 +1459,11 @@ private:
   // spinBoxOptionsSimCleanupTableTime,
   int simCleanupTableTime = 10;
 
-  // spinBoxOptionsDisplayTextSizeRangeDistance
-  int displayTextSizeRangeDistance = 100;
+  // spinBoxOptionsDisplayTextSizeUserFeature
+  int displayTextSizeUserFeature = 100;
+
+  // spinBoxOptionsDisplayTextSizeMeasurement
+  int displayTextSizeMeasurement = 100;
 
   // spinBoxOptionsDisplayTextSizeCompassRose
   int displayTextSizeCompassRose = 100;
@@ -1490,7 +1511,8 @@ private:
   int mapNavTouchArea = 10;
 
   QColor flightplanColor = QColor(Qt::yellow), flightplanOutlineColor = QColor(Qt::black), flightplanProcedureColor = QColor(255, 150, 0),
-         flightplanActiveColor = QColor(Qt::magenta), flightplanPassedColor = QColor(Qt::gray), trailColor = QColor(Qt::black);
+         flightplanActiveColor = QColor(Qt::magenta), flightplanPassedColor = QColor(Qt::gray), trailColor = QColor(Qt::black),
+         measurementColor = QColor(Qt::black);
 
   QColor highlightFlightplanColor = QColor(Qt::green), highlightSearchColor = QColor(Qt::yellow), highlightProfileColor = QColor(Qt::cyan);
 

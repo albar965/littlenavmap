@@ -165,6 +165,7 @@ private:
   void mapHighlightProfileColorClicked();
 
   void trailColorClicked();
+  void mapMeasurementColorClicked();
   void onlineDisplayRangeClicked();
   void eastWestRuleClicked();
 
@@ -254,8 +255,8 @@ private:
   void mapThemeKeyEdited(QTableWidgetItem *item);
 
   QString guiLanguage, guiFont, mapFont;
-  QColor flightplanColor, flightplanOutlineColor, flightplanProcedureColor, flightplanActiveColor, trailColor, flightplanPassedColor;
-  QColor highlightFlightplanColor, highlightSearchColor, highlightProfileColor;
+  QColor flightplanColor, flightplanOutlineColor, flightplanProcedureColor, flightplanActiveColor, trailColor, measurementColor,
+         flightplanPassedColor, highlightFlightplanColor, highlightSearchColor, highlightProfileColor;
 
   Ui::Options *ui;
   QMainWindow *mainWindow;

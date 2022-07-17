@@ -85,7 +85,6 @@ QColor holdingColor(50, 50, 50);
 
 QColor rangeRingColor(Qt::red);
 QColor rangeRingTextColor(Qt::black);
-QColor distanceColor(Qt::black);
 
 QColor weatherWindGustColor("#ff8040");
 QColor weatherWindColor(Qt::black);
@@ -675,7 +674,6 @@ void syncColors()
   colorSettings.endGroup();
 
   colorSettings.beginGroup("Marker");
-  syncColor(colorSettings, "DistanceGreatCircleColor", distanceColor);
   syncColor(colorSettings, "RangeRingColor", rangeRingColor);
   syncColor(colorSettings, "RangeRingTextColor", rangeRingTextColor);
   syncColor(colorSettings, "CompassRoseColor", compassRoseColor);

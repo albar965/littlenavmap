@@ -61,7 +61,7 @@ private:
   void paintRangeMarks();
 
   /* Draw great circle line distance measurement lines */
-  void paintDistanceMarks();
+  void paintMeasurementMarks();
 
   /* Traffic patterns */
   void paintPatternMarks();

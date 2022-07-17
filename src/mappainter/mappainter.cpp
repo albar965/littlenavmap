@@ -1050,7 +1050,7 @@ void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool 
   QColor backColor = user || context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND ? QColor(Qt::white) : QColor(Qt::transparent);
 
   if(user)
-    context->szFont(context->textSizeRangeDistance);
+    context->szFont(context->textSizeRangeUserFeature);
   else
     context->szFont(context->textSizeNavaid);
 
@@ -1065,7 +1065,7 @@ void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool 
 
     float dist = holding.distance();
     float distPixel = scale->getPixelForNm(dist);
-    float lineWidth = user ? context->szF(context->thicknessRangeDistance, 3) : (detail2 ? 2.5f : 1.5f);
+    float lineWidth = user ? context->szF(context->thicknessUserFeature, 3) : (detail2 ? 2.5f : 1.5f);
 
     if(context->mapLayer->isApproach() && distPixel > 10.f)
     {

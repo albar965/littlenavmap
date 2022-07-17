@@ -77,7 +77,6 @@ extern QColor rangeRingColor;
 extern QColor rangeRingTextColor;
 extern QColor compassRoseColor;
 extern QColor compassRoseTextColor;
-extern QColor distanceColor;
 
 /* MSA symbol */
 extern QColor msaFillColor;

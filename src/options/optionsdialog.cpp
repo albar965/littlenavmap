@@ -353,12 +353,14 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->spinBoxOptionsDisplaySymbolSizeAircraftUser,
      ui->spinBoxOptionsDisplayTextSizeAirport,
      ui->spinBoxOptionsDisplayThicknessTrail,
-     ui->spinBoxOptionsDisplayThicknessRangeDistance,
+     ui->spinBoxOptionsDisplayThicknessUserFeature,
+     ui->spinBoxOptionsDisplayThicknessMeasurement,
      ui->spinBoxOptionsDisplayThicknessCompassRose,
      ui->spinBoxOptionsDisplaySunShadeDarkness,
      ui->comboBoxOptionsDisplayTrailType,
      ui->spinBoxOptionsDisplayTextSizeCompassRose,
-     ui->spinBoxOptionsDisplayTextSizeRangeDistance,
+     ui->spinBoxOptionsDisplayTextSizeUserFeature,
+     ui->spinBoxOptionsDisplayTextSizeMeasurement,
 
      ui->checkBoxOptionsMapHighlightTransparent,
      ui->spinBoxOptionsMapHighlightTransparent,
@@ -543,6 +545,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
           &OptionsDialog::mapHighlightFlightplanColorClicked);
   connect(ui->pushButtonOptionsMapHighlightSearchColor, &QPushButton::clicked, this, &OptionsDialog::mapHighlightSearchColorClicked);
   connect(ui->pushButtonOptionsMapHighlightProfileColor, &QPushButton::clicked, this, &OptionsDialog::mapHighlightProfileColorClicked);
+  connect(ui->pushButtonOptionsMapMeasurementColor, &QPushButton::clicked, this, &OptionsDialog::mapMeasurementColorClicked);
 
   connect(ui->checkBoxOptionsMapFlightplanDimPassed, &QCheckBox::toggled, this, &OptionsDialog::updateFlightPlanColorWidgets);
   connect(ui->checkBoxOptionsMapFlightplanTransparent, &QCheckBox::toggled, this, &OptionsDialog::updateFlightPlanColorWidgets);
@@ -984,6 +987,7 @@ void OptionsDialog::saveState()
   settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR, flightplanActiveColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_PASSED_COLOR, flightplanPassedColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, trailColor);
+  settings.setValueVar(lnm::OPTIONS_DIALOG_MEASUREMENT_COLOR, measurementColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_HIGHLIGHT_COLOR, highlightFlightplanColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_SEARCH_HIGHLIGHT_COLOR, highlightSearchColor);
   settings.setValueVar(lnm::OPTIONS_DIALOG_PROFILE_HIGHLIGHT_COLOR, highlightProfileColor);
@@ -1067,6 +1071,7 @@ void OptionsDialog::restoreState()
   flightplanActiveColor = settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR, QColor(Qt::magenta)).value<QColor>();
   flightplanPassedColor = settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_PASSED_COLOR, QColor(Qt::gray)).value<QColor>();
   trailColor = settings.valueVar(lnm::OPTIONS_DIALOG_TRAIL_COLOR, QColor(Qt::black)).value<QColor>();
+  measurementColor = settings.valueVar(lnm::OPTIONS_DIALOG_MEASUREMENT_COLOR, QColor(Qt::black)).value<QColor>();
   highlightFlightplanColor = settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_HIGHLIGHT_COLOR, QColor(Qt::green)).value<QColor>();
   highlightSearchColor = settings.valueVar(lnm::OPTIONS_DIALOG_SEARCH_HIGHLIGHT_COLOR, QColor(Qt::yellow)).value<QColor>();
   highlightProfileColor = settings.valueVar(lnm::OPTIONS_DIALOG_PROFILE_HIGHLIGHT_COLOR, QColor(Qt::cyan)).value<QColor>();
@@ -1179,6 +1184,7 @@ void OptionsDialog::updateButtonColors()
   atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanActiveColor, flightplanActiveColor);
   atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayFlightplanPassedColor, flightplanPassedColor);
   atools::gui::util::changeWidgetColor(ui->pushButtonOptionsDisplayTrailColor, trailColor);
+  atools::gui::util::changeWidgetColor(ui->pushButtonOptionsMapMeasurementColor, measurementColor);
   atools::gui::util::changeWidgetColor(ui->pushButtonOptionsMapHighlightFlightPlanColor, highlightFlightplanColor);
   atools::gui::util::changeWidgetColor(ui->pushButtonOptionsMapHighlightSearchColor, highlightSearchColor);
   atools::gui::util::changeWidgetColor(ui->pushButtonOptionsMapHighlightProfileColor, highlightProfileColor);
@@ -1314,6 +1320,11 @@ void OptionsDialog::mapHighlightProfileColorClicked()
 void OptionsDialog::trailColorClicked()
 {
   colorButtonClicked(trailColor);
+}
+
+void OptionsDialog::mapMeasurementColorClicked()
+{
+  colorButtonClicked(measurementColor);
 }
 
 void OptionsDialog::updateHighlightWidgets()
@@ -1550,6 +1561,7 @@ void OptionsDialog::widgetsToOptionData()
   data.highlightProfileColor = highlightProfileColor;
 
   data.trailColor = trailColor;
+  data.measurementColor = measurementColor;
 
   data.displayOptionsUserAircraft = optsac::ITEM_USER_AIRCRAFT_NONE;
   displayOptWidgetToOptionData(data.displayOptionsUserAircraft, displayOptItemIndexUser);
@@ -1742,7 +1754,8 @@ void OptionsDialog::widgetsToOptionData()
   data.displaySymbolSizeAircraftUser = ui->spinBoxOptionsDisplaySymbolSizeAircraftUser->value();
   data.displayTextSizeAirport = ui->spinBoxOptionsDisplayTextSizeAirport->value();
   data.displayThicknessTrail = ui->spinBoxOptionsDisplayThicknessTrail->value();
-  data.displayThicknessRangeDistance = ui->spinBoxOptionsDisplayThicknessRangeDistance->value();
+  data.displayThicknessUserFeature = ui->spinBoxOptionsDisplayThicknessUserFeature->value();
+  data.displayThicknessMeasurement = ui->spinBoxOptionsDisplayThicknessMeasurement->value();
   data.displayThicknessCompassRose = ui->spinBoxOptionsDisplayThicknessCompassRose->value();
   data.displaySunShadingDimFactor = ui->spinBoxOptionsDisplaySunShadeDarkness->value();
   data.displayTrailType = static_cast<opts::DisplayTrailType>(ui->comboBoxOptionsDisplayTrailType->currentIndex());
@@ -1755,7 +1768,8 @@ void OptionsDialog::widgetsToOptionData()
 
   data.mapNavTouchArea = ui->spinBoxOptionsMapNavTouchArea->value();
 
-  data.displayTextSizeRangeDistance = ui->spinBoxOptionsDisplayTextSizeRangeDistance->value();
+  data.displayTextSizeUserFeature = ui->spinBoxOptionsDisplayTextSizeUserFeature->value();
+  data.displayTextSizeMeasurement = ui->spinBoxOptionsDisplayTextSizeMeasurement->value();
   data.displayTextSizeCompassRose = ui->spinBoxOptionsDisplayTextSizeCompassRose->value();
 
   data.displayMapHighlightTransparent = ui->spinBoxOptionsMapHighlightTransparent->value();
@@ -1838,6 +1852,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   flightplanActiveColor = data.flightplanActiveColor;
   flightplanPassedColor = data.flightplanPassedColor;
   trailColor = data.trailColor;
+  measurementColor = data.measurementColor;
   highlightFlightplanColor = data.highlightFlightplanColor;
   highlightSearchColor = data.highlightSearchColor;
   highlightProfileColor = data.highlightProfileColor;
@@ -2024,7 +2039,8 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsDisplaySymbolSizeAircraftUser->setValue(data.displaySymbolSizeAircraftUser);
   ui->spinBoxOptionsDisplayTextSizeAirport->setValue(data.displayTextSizeAirport);
   ui->spinBoxOptionsDisplayThicknessTrail->setValue(data.displayThicknessTrail);
-  ui->spinBoxOptionsDisplayThicknessRangeDistance->setValue(data.displayThicknessRangeDistance);
+  ui->spinBoxOptionsDisplayThicknessUserFeature->setValue(data.displayThicknessUserFeature);
+  ui->spinBoxOptionsDisplayThicknessMeasurement->setValue(data.displayThicknessMeasurement);
   ui->spinBoxOptionsDisplayThicknessCompassRose->setValue(data.displayThicknessCompassRose);
   ui->spinBoxOptionsDisplaySunShadeDarkness->setValue(data.displaySunShadingDimFactor);
   ui->comboBoxOptionsDisplayTrailType->setCurrentIndex(data.displayTrailType);
@@ -2033,7 +2049,8 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsDisplayTransparencyAirportMsa->setValue(data.displayTransparencyAirportMsa);
   ui->spinBoxOptionsDisplayTextSizeAirportMsa->setValue(data.displayTextSizeAirportMsa);
   ui->spinBoxOptionsMapNavTouchArea->setValue(data.mapNavTouchArea);
-  ui->spinBoxOptionsDisplayTextSizeRangeDistance->setValue(data.displayTextSizeRangeDistance);
+  ui->spinBoxOptionsDisplayTextSizeUserFeature->setValue(data.displayTextSizeUserFeature);
+  ui->spinBoxOptionsDisplayTextSizeMeasurement->setValue(data.displayTextSizeMeasurement);
   ui->spinBoxOptionsDisplayTextSizeCompassRose->setValue(data.displayTextSizeCompassRose);
   ui->spinBoxOptionsMapHighlightTransparent->setValue(data.displayMapHighlightTransparent);
   ui->comboBoxOptionsStartupUpdateRate->setCurrentIndex(data.updateRate);
@@ -2073,20 +2090,14 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsOnlineUpdate->setValue(data.onlineCustomReload);
   ui->comboBoxOptionsOnlineFormat->setCurrentIndex(data.onlineFormat);
 
-  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineClearance, ui->checkBoxDisplayOnlineClearanceRange,
-                             data.displayOnlineClearance);
+  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineClearance, ui->checkBoxDisplayOnlineClearanceRange, data.displayOnlineClearance);
   displayOnlineRangeFromData(ui->spinBoxDisplayOnlineArea, ui->checkBoxDisplayOnlineAreaRange, data.displayOnlineArea);
-  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineApproach, ui->checkBoxDisplayOnlineApproachRange,
-                             data.displayOnlineApproach);
-  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineDeparture, ui->checkBoxDisplayOnlineDepartureRange,
-                             data.displayOnlineDeparture);
+  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineApproach, ui->checkBoxDisplayOnlineApproachRange, data.displayOnlineApproach);
+  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineDeparture, ui->checkBoxDisplayOnlineDepartureRange, data.displayOnlineDeparture);
   displayOnlineRangeFromData(ui->spinBoxDisplayOnlineFir, ui->checkBoxDisplayOnlineFirRange, data.displayOnlineFir);
-  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineObserver, ui->checkBoxDisplayOnlineObserverRange,
-                             data.displayOnlineObserver);
-  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineGround, ui->checkBoxDisplayOnlineGroundRange,
-                             data.displayOnlineGround);
-  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineTower, ui->checkBoxDisplayOnlineTowerRange,
-                             data.displayOnlineTower);
+  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineObserver, ui->checkBoxDisplayOnlineObserverRange, data.displayOnlineObserver);
+  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineGround, ui->checkBoxDisplayOnlineGroundRange, data.displayOnlineGround);
+  displayOnlineRangeFromData(ui->spinBoxDisplayOnlineTower, ui->checkBoxDisplayOnlineTowerRange, data.displayOnlineTower);
 
   ui->spinBoxOptionsWebPort->setValue(data.webPort);
   ui->checkBoxOptionsWebEncrypted->setChecked(data.webEncrypted);

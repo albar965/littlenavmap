@@ -1695,7 +1695,7 @@ void MapWidget::addMeasurement(const atools::geo::Pos& pos, const map::MapAirpor
   {
     dm.magvar = NavApp::getMagVar(pos, 0.f);
     dm.from = pos;
-    dm.color = mapcolors::distanceColor;
+    // dm.color Leave uninitalized to allow override from options
   }
 
   getScreenIndex()->addDistanceMark(dm);

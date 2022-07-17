@@ -298,10 +298,12 @@ const QLatin1String OPTIONS_DIALOG_FLIGHTPLAN_PROCEDURE_COLOR("OptionsDialog/Fli
 const QLatin1String OPTIONS_DIALOG_FLIGHTPLAN_ACTIVE_COLOR("OptionsDialog/FlightplanActiveColor");
 const QLatin1String OPTIONS_DIALOG_FLIGHTPLAN_PASSED_COLOR("OptionsDialog/FlightplanPassedColor");
 const QLatin1String OPTIONS_DIALOG_TRAIL_COLOR("OptionsDialog/TrailColor");
+const QLatin1String OPTIONS_DIALOG_MEASUREMENT_COLOR("OptionsDialog/MeasurementColor");
 
 const QLatin1String OPTIONS_DIALOG_FLIGHTPLAN_HIGHLIGHT_COLOR("OptionsDialog/MapHighlightFlightplanColor");
 const QLatin1String OPTIONS_DIALOG_SEARCH_HIGHLIGHT_COLOR("OptionsDialog/MapHighlightSearchColor");
 const QLatin1String OPTIONS_DIALOG_PROFILE_HIGHLIGHT_COLOR("OptionsDialog/MapHighlightProfileColor");
+
 
 const QLatin1String OPTIONS_DIALOG_DISPLAY_OPTIONS_USER_AIRCRAFT("OptionsDialog/DisplayOptionsuserAircraft");
 const QLatin1String OPTIONS_DIALOG_DISPLAY_OPTIONS_AI_AIRCRAFT("OptionsDialog/DisplayOptionsAiAircraft");

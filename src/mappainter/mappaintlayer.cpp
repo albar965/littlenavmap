@@ -343,10 +343,12 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.transparencyAirportMsa = od.getDisplayTransparencyAirportMsa() / 100.f;
       context.transparencyFlightplan = od.getDisplayTransparencyFlightplan() / 100.f;
       context.transparencyHighlight = od.getDisplayMapHighlightTransparent() / 100.f;
-      context.textSizeRangeDistance = od.getDisplayTextSizeRangeDistance() / 100.f;
+      context.textSizeRangeUserFeature = od.getDisplayTextSizeUserFeature() / 100.f;
+      context.textSizeRangeMeasurement = od.getDisplayTextSizeMeasurement() / 100.f;
       context.thicknessFlightplan = od.getDisplayThicknessFlightplan() / 100.f;
       context.thicknessTrail = od.getDisplayThicknessTrail() / 100.f;
-      context.thicknessRangeDistance = od.getDisplayThicknessRangeDistance() / 100.f;
+      context.thicknessUserFeature = od.getDisplayThicknessUserFeature() / 100.f;
+      context.thicknessMeasurement = od.getDisplayThicknessMeasurement() / 100.f;
       context.thicknessCompassRose = od.getDisplayThicknessCompassRose() / 100.f;
       context.thicknessAirway = od.getDisplayThicknessAirway() / 100.f;
 
