@@ -34,7 +34,7 @@
      <x>0</x>
      <y>0</y>
      <width>1261</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -9838,7 +9838,7 @@ relation to shown airport</string>
     <string>Show Navaid Information</string>
    </property>
    <property name="shortcut">
-    <string>F11</string>
+    <string>Shift+F11</string>
    </property>
    <property name="shortcutContext">
     <enum>Qt::ApplicationShortcut</enum>
@@ -10913,7 +10913,7 @@ relation to shown airport</string>
     <string>Maximize the map and hide all other dock windows and the toolbar</string>
    </property>
    <property name="shortcut">
-    <string>Shift+F11</string>
+    <string>F11</string>
    </property>
   </action>
   <action name="actionMapCopyCoordinates">
