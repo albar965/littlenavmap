@@ -414,10 +414,12 @@ MainWindow::MainWindow()
   // Exit application if something goes wrong
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     ATOOLS_HANDLE_EXCEPTION(e);
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
 
@@ -3917,10 +3919,12 @@ void MainWindow::saveStateMain()
   }
   catch(atools::Exception& e)
   {
+    NavApp::closeSplashScreen();
     ATOOLS_HANDLE_EXCEPTION(e);
   }
   catch(...)
   {
+    NavApp::closeSplashScreen();
     ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
 }
