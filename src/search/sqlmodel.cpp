@@ -625,7 +625,7 @@ QString SqlModel::buildWhereValue(const WhereCondition& cond)
 {
   QString val;
   if(cond.valueSql.type() == QVariant::String || cond.valueSql.type() == QVariant::Char)
-    // Use semicolons for string
+    // Use semicolons for string and escape single quotes
     val = " '" + cond.valueSql.toString().replace("'", "''") + "'";
   else if(cond.valueSql.type() == QVariant::Bool ||
           cond.valueSql.type() == QVariant::Int || cond.valueSql.type() == QVariant::UInt ||

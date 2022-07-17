@@ -275,6 +275,8 @@ QueryBuilderResult NavSearch::navQueryBuilderFunc(QWidget *widget)
 
         if(!text.isEmpty())
         {
+          // Escape single quotes to avoid malformed query and resulting exception
+          text.replace("'", "''");
           QString query;
 
           if(exclude)
