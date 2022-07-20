@@ -1191,7 +1191,7 @@ void MainWindow::connectAllSlots()
 
   connect(logdataController, &LogdataController::showInSearch, searchController, &SearchController::showInSearch);
 
-  connect(ui->actionLogdataShowStatistics, &QAction::toggled, logdataController, &LogdataController::showStatisticsToggled);
+  connect(ui->actionLogdataShowStatistics, &QAction::triggered, logdataController, &LogdataController::statisticsLogbookShow);
   connect(ui->actionLogdataImportCSV, &QAction::triggered, logdataController, &LogdataController::importCsv);
   connect(ui->actionLogdataExportCSV, &QAction::triggered, logdataController, &LogdataController::exportCsv);
   connect(ui->actionLogdataImportXplane, &QAction::triggered, logdataController, &LogdataController::importXplane);
@@ -1344,7 +1344,7 @@ void MainWindow::connectAllSlots()
 
   // Flight plan calculation ========================================================================
   connect(ui->actionRouteCalcDirect, &QAction::triggered, routeController, &RouteController::calculateDirect);
-  connect(ui->actionRouteCalc, &QAction::toggled, routeController, &RouteController::calculateRouteWindowToggle);
+  connect(ui->actionRouteCalc, &QAction::triggered, routeController, &RouteController::calculateRouteWindowShow);
   connect(ui->actionRouteReverse, &QAction::triggered, routeController, &RouteController::reverseRoute);
   connect(ui->actionRouteCopyString, &QAction::triggered, routeController, &RouteController::routeStringToClipboard);
   connect(ui->actionRouteAdjustAltitude, &QAction::triggered, routeController, &RouteController::adjustFlightplanAltitude);
@@ -1729,7 +1729,7 @@ void MainWindow::actionShortcutFlightPlanTriggered()
 
 void MainWindow::actionShortcutCalcRouteTriggered()
 {
-  routeController->calculateRouteWindowToggle(ui->actionRouteCalc->isChecked());
+  routeController->calculateRouteWindowShow();
 }
 
 void MainWindow::actionShortcutAircraftPerformanceTriggered()
@@ -3534,7 +3534,6 @@ void MainWindow::updateActionStates()
 
   bool canCalcRoute = route.canCalcRoute();
   ui->actionRouteCalcDirect->setEnabled(canCalcRoute && NavApp::getRouteConst().hasEntries());
-  // ui->actionRouteCalc->setEnabled(canCalcRoute);
   ui->actionRouteReverse->setEnabled(canCalcRoute);
 
   ui->actionMapShowAirportWeather->setEnabled(NavApp::getAirportWeatherSource() != map::WEATHER_SOURCE_DISABLED);

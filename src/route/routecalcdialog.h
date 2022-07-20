@@ -146,10 +146,6 @@ private:
 
   void buttonBoxClicked(QAbstractButton *button);
 
-  /* Enable or disable toolbar/menu action */
-  virtual void showEvent(QShowEvent *) override;
-  virtual void hideEvent(QHideEvent *) override;
-
   /* Range/selection */
   int fromIndex = -1, toIndex = -1;
   bool canCalculateSelection = false;

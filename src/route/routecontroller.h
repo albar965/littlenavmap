@@ -191,7 +191,6 @@ public:
   void calculateRouteWindowFull();
   void calculateRouteWindowSelection();
   void calculateRouteWindowShow();
-  void calculateRouteWindowToggle(bool checked);
 
   /* Reverse order of all waypoints, swap departure and destination and automatically
    * select a new start position (best runway) */

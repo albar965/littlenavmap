@@ -1712,15 +1712,6 @@ void RouteController::calculateRouteWindowFull()
   calculateRouteWindowShow();
 }
 
-void RouteController::calculateRouteWindowToggle(bool checked)
-{
-  qDebug() << Q_FUNC_INFO;
-
-  if(!checked)
-    routeCalcDialog->hide();
-  else
-    calculateRouteWindowShow();
-}
 
 void RouteController::calculateRouteWindowShow()
 {
@@ -1728,8 +1719,8 @@ void RouteController::calculateRouteWindowShow()
 
   // Always show - do no toggle
   routeCalcDialog->show();
-  routeCalcDialog->focusWidget();
   routeCalcDialog->raise();
+  routeCalcDialog->activateWindow();
 }
 
 void RouteController::calculateRoute()

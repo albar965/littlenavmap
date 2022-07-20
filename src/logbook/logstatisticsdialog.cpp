@@ -477,20 +477,10 @@ void LogStatisticsDialog::showEvent(QShowEvent *)
 {
   setModel();
   updateWidgets();
-
-  Ui::MainWindow *mainUi = NavApp::getMainUi();
-  mainUi->actionLogdataShowStatistics->blockSignals(true);
-  mainUi->actionLogdataShowStatistics->setChecked(isVisible());
-  mainUi->actionLogdataShowStatistics->blockSignals(false);
 }
 
 void LogStatisticsDialog::hideEvent(QHideEvent *)
 {
   // Disconnect from database if not shown
   clearModel();
-
-  Ui::MainWindow *mainUi = NavApp::getMainUi();
-  mainUi->actionLogdataShowStatistics->blockSignals(true);
-  mainUi->actionLogdataShowStatistics->setChecked(isVisible());
-  mainUi->actionLogdataShowStatistics->blockSignals(false);
 }

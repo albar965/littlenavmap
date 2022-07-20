@@ -34,7 +34,7 @@
      <x>0</x>
      <y>0</y>
      <width>1261</width>
-     <height>20</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -269,7 +269,7 @@
     </property>
     <widget class="QMenu" name="menuTrackSources">
      <property name="title">
-      <string>Track &amp;Sources</string>
+      <string>Oceanic Track &amp;Sources</string>
      </property>
      <addaction name="actionTrackSourcesNat"/>
      <addaction name="actionTrackSourcesPacots"/>
@@ -284,14 +284,14 @@
     <addaction name="separator"/>
     <addaction name="actionRouteEditMode"/>
     <addaction name="separator"/>
-    <addaction name="actionRouteNewFromString"/>
-    <addaction name="actionRouteCopyString"/>
     <addaction name="separator"/>
+    <addaction name="actionRouteCalc"/>
     <addaction name="actionRouteCalcDirect"/>
     <addaction name="actionRouteReverse"/>
-    <addaction name="actionRouteCalc"/>
-    <addaction name="separator"/>
     <addaction name="actionRouteAdjustAltitude"/>
+    <addaction name="separator"/>
+    <addaction name="actionRouteNewFromString"/>
+    <addaction name="actionRouteCopyString"/>
     <addaction name="separator"/>
     <addaction name="actionRouteDownloadTracks"/>
     <addaction name="actionRouteDownloadTracksNow"/>
@@ -551,7 +551,11 @@
    <addaction name="separator"/>
    <addaction name="actionRouteResetAll"/>
   </widget>
-  <widget class="QStatusBar" name="statusBar"/>
+  <widget class="QStatusBar" name="statusBar">
+   <property name="sizeGripEnabled">
+    <bool>false</bool>
+   </property>
+  </widget>
   <widget class="QDockWidget" name="dockWidgetSearch">
    <property name="windowIcon">
     <iconset resource="../../littlenavmap.qrc">
@@ -10255,13 +10259,16 @@ relation to shown airport</string>
   </action>
   <action name="actionLogdataShowStatistics">
    <property name="checkable">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="text">
-    <string>S&amp;how Statistics</string>
+    <string>S&amp;how Logbook Statistics ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Shows the logbook statistics window</string>
    </property>
    <property name="statusTip">
-    <string>Show Statistics</string>
+    <string>Shows the logbook statistics window</string>
    </property>
   </action>
   <action name="actionLogdataConvertUserdata">
@@ -10505,7 +10512,7 @@ relation to shown airport</string>
   </action>
   <action name="actionRouteCalc">
    <property name="checkable">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">
@@ -10515,10 +10522,10 @@ relation to shown airport</string>
     <string>Show Flight Plan &amp;Calculation  ...</string>
    </property>
    <property name="toolTip">
-    <string>Calculate a flight plan between departure and destination</string>
+    <string>Shows the flight plan calculation window</string>
    </property>
    <property name="statusTip">
-    <string>Calculate a flight plan between departure and destination</string>
+    <string>Shows the flight plan calculation window</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+C</string>
@@ -10582,7 +10589,7 @@ relation to shown airport</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Download Tracks on &amp;Startup</string>
+    <string>Download Oceanic Tracks on &amp;Startup</string>
    </property>
    <property name="toolTip">
     <string>Download NAT, PACOTS and AUSOTS tracks on startup</string>
@@ -10593,7 +10600,7 @@ relation to shown airport</string>
   </action>
   <action name="actionRouteDeleteTracks">
    <property name="text">
-    <string>&amp;Delete Tracks</string>
+    <string>&amp;Delete Oceanic Tracks</string>
    </property>
    <property name="toolTip">
     <string>Delete all downloaded Tracks from Database</string>
@@ -10608,7 +10615,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/airwaytrackdown.svg</normaloff>:/littlenavmap/resources/icons/airwaytrackdown.svg</iconset>
    </property>
    <property name="text">
-    <string>Download &amp;Tracks</string>
+    <string>Download Oceanic &amp;Tracks</string>
    </property>
    <property name="toolTip">
     <string>Download NAT, PACOTS and AUSOTS tracks now</string>

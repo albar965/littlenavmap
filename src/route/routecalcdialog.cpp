@@ -336,20 +336,3 @@ void RouteCalcDialog::adjustAltitudePressed()
 {
   ui->spinBoxRouteCalcCruiseAltitude->setValue(NavApp::getRouteConst().getAdjustedAltitude(ui->spinBoxRouteCalcCruiseAltitude->value()));
 }
-
-void RouteCalcDialog::showEvent(QShowEvent *)
-{
-  Ui::MainWindow *mainUi = NavApp::getMainUi();
-
-  mainUi->actionRouteCalc->blockSignals(true);
-  mainUi->actionRouteCalc->setChecked(isVisible());
-  mainUi->actionRouteCalc->blockSignals(false);
-}
-
-void RouteCalcDialog::hideEvent(QHideEvent *)
-{
-  Ui::MainWindow *mainUi = NavApp::getMainUi();
-  mainUi->actionRouteCalc->blockSignals(true);
-  mainUi->actionRouteCalc->setChecked(isVisible());
-  mainUi->actionRouteCalc->blockSignals(false);
-}

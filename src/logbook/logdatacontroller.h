@@ -128,7 +128,7 @@ public:
   void getFlightStatsSimulator(QVector<std::pair<int, QString> >& numSimulators);
 
   /* Make the non-modal statistics dialog visible */
-  void showStatisticsToggled(bool checked);
+  void statisticsLogbookShow();
 
   /* Log database */
   atools::sql::SqlDatabase *getDatabase() const;

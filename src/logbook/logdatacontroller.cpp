@@ -196,16 +196,11 @@ void LogdataController::getFlightStatsSimulator(QVector<std::pair<int, QString> 
   manager->getFlightStatsSimulator(numSimulators);
 }
 
-void LogdataController::showStatisticsToggled(bool checked)
+void LogdataController::statisticsLogbookShow()
 {
-  if(checked)
-  {
-    statsDialog->show();
-    statsDialog->focusWidget();
-    statsDialog->raise();
-  }
-  else
-    statsDialog->hide();
+  statsDialog->show();
+  statsDialog->raise();
+  statsDialog->activateWindow();
 }
 
 atools::sql::SqlDatabase *LogdataController::getDatabase() const
