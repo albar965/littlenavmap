@@ -20,7 +20,6 @@
 #include "common/constants.h"
 #include "common/maptools.h"
 #include "common/maptypesfactory.h"
-#include "db/databasemanager.h"
 #include "fs/common/binarygeometry.h"
 #include "mapgui/maplayer.h"
 #include "options/optiondata.h"

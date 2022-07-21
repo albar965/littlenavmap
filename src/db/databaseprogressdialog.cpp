@@ -26,7 +26,7 @@ DatabaseProgressDialog::DatabaseProgressDialog(QWidget *parent, const QString& s
   : QDialog(parent), ui(new Ui::DatabaseProgressDialog)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-  setWindowModality(Qt::ApplicationModal);
+  setWindowModality(Qt::NonModal);
 
   ui->setupUi(this);
 
@@ -49,8 +49,14 @@ void DatabaseProgressDialog::buttonBoxClicked(QAbstractButton *button)
     QDialog::accept();
   else if(button == ui->buttonBoxDatabaseProgress->button(QDialogButtonBox::Cancel))
   {
-    canceled = true;
-    button->setDisabled(true);
+    if(finishedState)
+      // Close dialog once progress is finished and asking for use or cancel
+      QDialog::reject();
+    else
+    {
+      canceled = true;
+      button->setDisabled(true);
+    }
   }
 }
 
@@ -97,14 +103,15 @@ void DatabaseProgressDialog::setValue(int value)
   ui->progressBarDatabaseProgress->setValue(value);
 }
 
-void DatabaseProgressDialog::setOkButton()
+void DatabaseProgressDialog::setFinishedState()
 {
-  QPushButton *cancelButton = ui->buttonBoxDatabaseProgress->button(QDialogButtonBox::Cancel);
-  if(cancelButton != nullptr)
-  {
-    ui->buttonBoxDatabaseProgress->removeButton(cancelButton);
-    cancelButton->deleteLater();
-  }
+  finishedState = true;
 
+  // Add use button and enable cancel again
   ui->buttonBoxDatabaseProgress->addButton(QDialogButtonBox::Ok)->setDefault(true);
+  ui->buttonBoxDatabaseProgress->button(QDialogButtonBox::Ok)->setText(tr("&Use this database"));
+  ui->buttonBoxDatabaseProgress->button(QDialogButtonBox::Cancel)->setEnabled(true);
+
+  raise();
+  activateWindow();
 }

@@ -22,7 +22,6 @@
 #include "common/mapresult.h"
 #include "common/maptools.h"
 #include "common/maptypesfactory.h"
-#include "db/databasemanager.h"
 #include "fs/util/fsutil.h"
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapairporthandler.h"
@@ -1224,7 +1223,7 @@ const QList<map::MapAirport> *MapQuery::fetchAirports(const Marble::GeoDataLatLo
 
   if(airportCache.list.isEmpty() && !lazy)
   {
-    bool navdata = NavApp::getDatabaseManager()->getNavDatabaseStatus() == dm::NAVDATABASE_ALL;
+    bool navdata = NavApp::isNavdataAll();
 
     for(const GeoDataLatLonBox& r : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {

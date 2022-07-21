@@ -21,7 +21,7 @@
 #include "atools.h"
 #include "common/constants.h"
 #include "db/airspacedialog.h"
-#include "db/databasemanager.h"
+#include "db/dbtools.h"
 #include "exception.h"
 #include "fs/common/metadatawriter.h"
 #include "fs/userdata/airspacereaderivao.h"
@@ -35,9 +35,9 @@
 #include "navapp.h"
 #include "query/airportquery.h"
 #include "query/airspacequery.h"
+#include "sql/sqltransaction.h"
 #include "ui_mainwindow.h"
 #include "util/htmlbuilder.h"
-#include "sql/sqltransaction.h"
 
 #include <QAction>
 #include <QDir>
@@ -347,7 +347,7 @@ void AirspaceController::loadAirspaces()
       // Use a manual transaction
       atools::sql::SqlTransaction transaction(dbUserAirspace);
 
-      NavApp::getDatabaseManager()->createEmptySchema(dbUserAirspace, true /* boundary */);
+      dbtools::createEmptySchema(dbUserAirspace, true /* boundary */);
 
       // Write scenery area for display in information window =====================
       atools::fs::common::MetadataWriter metadataWriter(*dbUserAirspace);

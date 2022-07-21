@@ -67,7 +67,7 @@ LogdataController::LogdataController(atools::fs::userdata::LogdataManager *logda
   // Do not use a parent to allow the window moving to back
   statsDialog = new LogStatisticsDialog(nullptr, this);
 
-  // Add to dock handler to enable auto raise
+  // Add to dock handler to enable auto raise and closing on exit
   NavApp::addDialogToDockHandler(statsDialog);
 
   connect(this, &LogdataController::logDataChanged, statsDialog, &LogStatisticsDialog::logDataChanged);

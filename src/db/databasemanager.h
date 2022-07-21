@@ -42,8 +42,6 @@ namespace sql {
 class SqlDatabase;
 }
 namespace fs {
-class NavDatabaseProgress;
-
 namespace userdata {
 class UserdataManager;
 class LogdataManager;
@@ -56,15 +54,12 @@ class OnlinedataManager;
 }
 }
 
-class QElapsedTimer;
 class DatabaseDialog;
 class MainWindow;
-class QSplashScreen;
-class QMessageBox;
 class TrackManager;
-class DatabaseProgressDialog;
+class DatabaseLoader;
 
-namespace dm {
+namespace dbstat {
 enum NavdatabaseStatus
 {
   NAVDATABASE_ALL, /* Only third party nav database */
@@ -95,8 +90,17 @@ public:
   DatabaseManager(const DatabaseManager& other) = delete;
   DatabaseManager& operator=(const DatabaseManager& other) = delete;
 
-  /* Opens the dialog that allows to (re)load a new scenery database. */
-  void run();
+  /* Opens the dialog that allows to (re)load a new scenery database in the background. */
+  void loadScenery();
+
+  /* Stop background loading and hide progress dialog */
+  void loadSceneryStop();
+
+  /* Raise and activate progress window */
+  void showProgressWindow();
+
+  /* True if background process is loading */
+  bool isLoading();
 
   /* Save and restore all paths and current simulator settings */
   void saveState();
@@ -181,7 +185,7 @@ public:
   /* Same as above but for simulator base path */
   QString getSimulatorBasePathBest(const atools::fs::FsPaths::SimulatorTypeVector& types) const;
 
-  dm::NavdatabaseStatus getNavDatabaseStatus() const
+  dbstat::NavdatabaseStatus getNavDatabaseStatus() const
   {
     return navDatabaseStatus;
   }
@@ -228,9 +232,6 @@ public:
 
   atools::sql::SqlDatabase *getDatabaseOnline() const;
 
-  /* Create an empty database schema. Boundary option does not use transaction. */
-  void createEmptySchema(atools::sql::SqlDatabase *db, bool boundary = false);
-
   /* MSFS translations from table "translation" */
   const atools::fs::scenery::LanguageJson& getLanguageIndex() const
   {
@@ -256,25 +257,20 @@ signals:
   void postDatabaseLoad(atools::fs::FsPaths::SimulatorType type);
 
 private:
-  /* Catches exceptions and terminates program if any */
-  void openDatabaseFile(atools::sql::SqlDatabase *db, const QString& file, bool readonly, bool createSchema);
-
-  /* Does not catch exceptions */
-  void openDatabaseFileInternal(atools::sql::SqlDatabase *db, const QString& file, bool readonly, bool createSchema,
-                                bool exclusive, bool autoTransactions);
-
-  void closeDatabaseFile(atools::sql::SqlDatabase *db);
-
   void restoreState();
 
   bool isDatabaseCompatible(atools::sql::SqlDatabase *db);
-  bool hasSchema(atools::sql::SqlDatabase *db);
   bool hasData(atools::sql::SqlDatabase *db);
 
-  bool progressCallback(const atools::fs::NavDatabaseProgress& progress, QElapsedTimer& timer);
-
   void simulatorChangedFromComboBox(atools::fs::FsPaths::SimulatorType value);
-  bool runInternal(atools::fs::ResultFlags& resultFlags);
+  void loadSceneryInternal();
+
+  /* Called by signal DatabaseLoader::loadingFinished() */
+  void loadSceneryInternalPost();
+
+  /* Called by loadSceneryInternalPost() */
+  void loadSceneryPost();
+
   void updateDialogInfo(atools::fs::FsPaths::SimulatorType value);
 
   /* Database stored in settings directory */
@@ -296,7 +292,6 @@ private:
   void insertSimSwitchAction(atools::fs::FsPaths::SimulatorType type, QAction *before, QMenu *menu, int index);
   void updateSimulatorFlags();
   void updateSimulatorPathsFromDialog();
-  bool loadScenery(atools::sql::SqlDatabase *db, atools::fs::ResultFlags& resultFlags);
   void correctSimulatorType();
 
   /* Get cycle metadata from a database file */
@@ -304,37 +299,11 @@ private:
 
   void clearLanguageIndex();
 
-  /* Database name for all loaded from simulators */
-  const QString DATABASE_NAME_SIM = "LNMDBSIM";
-
-  /* Navaid database e.g. from Navigraph */
-  const QString DATABASE_NAME_NAV = "LNMDBNAV";
-
-  /* Userpoint database */
-  const QString DATABASE_NAME_USER = "LNMDBUSER";
-
-  /* NAT, PACOTS, AUSOTS */
-  const QString DATABASE_NAME_TRACK = "LNMDBTRACK";
-
-  /* Logbook database */
-  const QString DATABASE_NAME_LOGBOOK = "LNMDBLOG";
-
-  /* User airspace database */
-  const QString DATABASE_NAME_USER_AIRSPACE = "LNMDBUSERAS";
-  const QString DATABASE_NAME_SIM_AIRSPACE = "LNMDBSIMAS";
-  const QString DATABASE_NAME_NAV_AIRSPACE = "LNMDBNAVAS";
-
-  /* Network online player data */
-  const QString DATABASE_NAME_ONLINE = "LNMDBONLINE";
-
-  const QString DATABASE_NAME_TEMP = "LNMTEMPDB";
-  const QString DATABASE_NAME_DLG_INFO_TEMP = "LNMTEMPDB2";
-  const QString DATABASE_TYPE = "QSQLITE";
+  bool checkValidBasePaths();
 
   atools::gui::Dialog *dialog;
   DatabaseDialog *databaseDialog = nullptr;
   QString databaseDirectory;
-  qint64 progressTimerElapsed = 0L;
 
   // Need a pointer since it has to be deleted before the destructor is left
   atools::sql::SqlDatabase
@@ -351,7 +320,6 @@ private:
   bool showingDatabaseChangeWarning = false;
 
   MainWindow *mainWindow = nullptr;
-  DatabaseProgressDialog *progressDialog = nullptr;
 
   /* Switch simulator actions */
   QActionGroup *simDbGroup = nullptr, *navDbGroup = nullptr;
@@ -367,16 +335,15 @@ private:
     selectedFsType = atools::fs::FsPaths::NONE;
 
   /* Using Navigraph update or not */
-  dm::NavdatabaseStatus navDatabaseStatus = dm::NAVDATABASE_OFF;
+  dbstat::NavdatabaseStatus navDatabaseStatus = dbstat::NAVDATABASE_OFF;
+
+  DatabaseLoader *databaseLoader = nullptr;
 
   /* List of simulator installations and databases */
   SimulatorTypeMap simulators;
   bool readInactive = false, readAddOnXml = true;
 
-  QString currentBglFilePath;
-
-  QString databaseMetaText, databaseAiracCycleText, databaseInfoText, databaseLoadingText,
-          databaseTimeText;
+  QString databaseMetaText, databaseAiracCycleText;
 
   /* Also keep the database-close manager classes here */
   TrackManager *trackManager = nullptr;

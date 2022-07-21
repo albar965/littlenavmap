@@ -52,8 +52,8 @@ public:
     return canceled;
   }
 
-  /* Replace cancel button with Ok button */
-  void setOkButton();
+  /* Replace cancel button with use button after loading */
+  void setFinishedState();
 
 private:
   /* Save and restore dialog size. Called in constructor and destructor. */
@@ -67,7 +67,7 @@ private:
   Ui::DatabaseProgressDialog *ui;
 
   /* Use clicked cancel button */
-  bool canceled = false;
+  bool canceled = false, finishedState = false;
 };
 
 #endif // LNM_DATABASEPROGRESSDIALOG_H

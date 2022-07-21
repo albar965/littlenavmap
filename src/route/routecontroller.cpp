@@ -339,7 +339,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   ui->actionRouteTableCopy->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionRouteEditUserWaypoint->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
-  // Add to dock handler to enable auto raise
+  // Add to dock handler to enable auto raise and closing on exit
   NavApp::addDialogToDockHandler(routeCalcDialog);
 
   // Add action/shortcuts to table view

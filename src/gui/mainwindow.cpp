@@ -473,9 +473,9 @@ MainWindow::~MainWindow()
 {
   qDebug() << Q_FUNC_INFO;
 
-  clockTimer.stop();
+  NavApp::setShuttingDown();
 
-  NavApp::setShuttingDown(true);
+  clockTimer.stop();
 
   weatherUpdateTimer.stop();
 
@@ -1277,7 +1277,7 @@ void MainWindow::connectAllSlots()
 
   // Scenery library menu ============================================================
   connect(ui->actionLoadAirspaces, &QAction::triggered, NavApp::getAirspaceController(), &AirspaceController::loadAirspaces);
-  connect(ui->actionReloadScenery, &QAction::triggered, NavApp::getDatabaseManager(), &DatabaseManager::run);
+  connect(ui->actionReloadScenery, &QAction::triggered, NavApp::getDatabaseManager(), &DatabaseManager::loadScenery);
   connect(ui->actionDatabaseFiles, &QAction::triggered, this, &MainWindow::showDatabaseFiles);
   connect(ui->actionShowMapCache, &QAction::triggered, this, &MainWindow::showShowMapCache);
 
@@ -1961,7 +1961,7 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
 void MainWindow::updateWindowTitle()
 {
   QString newTitle = mainWindowTitle;
-  dm::NavdatabaseStatus navDbStatus = NavApp::getDatabaseManager()->getNavDatabaseStatus();
+  dbstat::NavdatabaseStatus navDbStatus = NavApp::getDatabaseManager()->getNavDatabaseStatus();
 
   atools::util::Version version(NavApp::applicationVersion());
 
@@ -1973,7 +1973,7 @@ void MainWindow::updateWindowTitle()
 
   // Database information  ==========================================
   // Simulator database =========
-  if(navDbStatus == dm::NAVDATABASE_ALL)
+  if(navDbStatus == dbstat::NAVDATABASE_ALL)
     newTitle += tr(" - (%1)").arg(NavApp::getCurrentSimulatorShortName());
   else
   {
@@ -1984,14 +1984,14 @@ void MainWindow::updateWindowTitle()
   }
 
   // Nav database =========
-  if(navDbStatus == dm::NAVDATABASE_ALL)
+  if(navDbStatus == dbstat::NAVDATABASE_ALL)
     newTitle += tr(" / N");
-  else if(navDbStatus == dm::NAVDATABASE_MIXED)
+  else if(navDbStatus == dbstat::NAVDATABASE_MIXED)
     newTitle += tr(" / N");
-  else if(navDbStatus == dm::NAVDATABASE_OFF)
+  else if(navDbStatus == dbstat::NAVDATABASE_OFF)
     newTitle += tr(" / (N)");
 
-  if((navDbStatus == dm::NAVDATABASE_ALL || navDbStatus == dm::NAVDATABASE_MIXED) &&
+  if((navDbStatus == dbstat::NAVDATABASE_ALL || navDbStatus == dbstat::NAVDATABASE_MIXED) &&
      !NavApp::getDatabaseAiracCycleNav().isEmpty())
     newTitle += tr(" %1").arg(NavApp::getDatabaseAiracCycleNav());
 
@@ -3163,7 +3163,7 @@ void MainWindow::mainWindowShown()
     if(databaseManager->hasInstalledSimulators())
     {
       // Found simulators let the user create new databases
-      databaseManager->run();
+      databaseManager->loadScenery();
 
       // Open connection dialog ============================
       NavApp::getConnectClient()->connectToServerDialog();
@@ -3175,7 +3175,7 @@ void MainWindow::mainWindowShown()
     databasesErased = false;
     // Databases were removed - show dialog
     NavApp::closeSplashScreen();
-    databaseManager->run();
+    databaseManager->loadScenery();
   }
 
   if(!NavApp::getElevationProvider()->isGlobeOfflineProvider())
@@ -4134,22 +4134,52 @@ void MainWindow::closeEvent(QCloseEvent *event)
     }
   }
 
+  bool quit = false;
   // Do not ask if user did a reset settings
   if(!NavApp::isRestartProcess())
   {
-    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_QUIT,
-                                            tr("Really Quit?"),
-                                            tr("Do not &show this dialog again."),
-                                            QMessageBox::Yes | QMessageBox::No,
-                                            QMessageBox::No, QMessageBox::Yes);
+    if(NavApp::getDatabaseManager()->isLoading())
+    {
+      // Database compiling in background ==========================
+      int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_QUIT_LOADING,
+                                              tr("%1 is loading the scenery library database in the background.\n"
+                                                 "Really quit and cancel the loading process?").arg(QApplication::applicationName()),
+                                              tr("Do not &show this dialog again and cancel loading in the future."),
+                                              QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
 
-    if(result != QMessageBox::Yes)
-      // Do not exit
-      event->ignore();
+      if(result != QMessageBox::Yes)
+      {
+        // Do not exit
+        event->ignore();
+        NavApp::getDatabaseManager()->showProgressWindow();
+      }
+      else
+        quit = true;
+    }
+    else
+    {
+      // Normal as quit dialog ======================================
+      int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_QUIT, tr("Really quit?"),
+                                              tr("Do not &show this dialog again and quit in the future."),
+                                              QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
+
+      if(result != QMessageBox::Yes)
+        // Do not exit
+        event->ignore();
+      else
+        quit = true;
+    }
   }
 
-  // Close all registerd non-modal dialogs to allow application to close
-  dockHandler->closeAllDialogWidgets();
+  if(quit)
+  {
+    NavApp::setCloseCalled();
+    NavApp::getDatabaseManager()->loadSceneryStop();
+
+    // Close all registerd non-modal dialogs to allow application to close
+    dockHandler->closeAllDialogWidgets();
+  }
+
   saveStateMain();
 }
 

@@ -267,8 +267,10 @@ SOURCES += \
   src/connect/connectdialog.cpp \
   src/db/airspacedialog.cpp \
   src/db/databasedialog.cpp \
+  src/db/databaseloader.cpp \
   src/db/databasemanager.cpp \
   src/db/databaseprogressdialog.cpp \
+  src/db/dbtools.cpp \
   src/db/dbtypes.cpp \
   src/export/csvexporter.cpp \
   src/export/exporter.cpp \
@@ -459,8 +461,10 @@ HEADERS  += \
   src/connect/connectdialog.h \
   src/db/airspacedialog.h \
   src/db/databasedialog.h \
+  src/db/databaseloader.h \
   src/db/databasemanager.h \
   src/db/databaseprogressdialog.h \
+  src/db/dbtools.h \
   src/db/dbtypes.h \
   src/export/csvexporter.h \
   src/export/exporter.h \

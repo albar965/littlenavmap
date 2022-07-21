@@ -40,6 +40,7 @@ void messages::resetAllMessages()
   settings.setValue(lnm::ACTIONS_SHOW_LOAD_FMS_ALT_WARN, true);
   settings.setValue(lnm::ACTIONS_SHOW_LOGBOOK_CONVERSION, true);
   settings.setValue(lnm::ACTIONS_SHOW_QUIT, true);
+  settings.setValue(lnm::ACTIONS_SHOW_QUIT_LOADING, true);
   settings.setValue(lnm::ACTIONS_SHOW_RESET_PERF, true);
   settings.setValue(lnm::ACTIONS_SHOW_SAVE_LNMPLN_WARNING, true);
   settings.setValue(lnm::ACTIONS_SHOW_SAVE_WARNING, true);

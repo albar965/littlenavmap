@@ -344,8 +344,13 @@ public:
   /* Remove splash when showing error messages, etc. to avoid overlay */
   static void closeSplashScreen();
 
+  /* Main window close event about to exit */
+  static bool isCloseCalled();
+  static void setCloseCalled(bool value = true);
+
+  /* Main window destructor called - appears later than isCloseCalled() */
   static bool isShuttingDown();
-  static void setShuttingDown(bool value);
+  static void setShuttingDown(bool value = true);
 
   /* true if map window is maximized */
   static bool isFullScreen();
@@ -444,6 +449,7 @@ private:
 
   static bool loadingDatabase;
   static bool shuttingDown;
+  static bool closeCalled;
   static bool mainWindowVisible;
 };
 

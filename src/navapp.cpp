@@ -93,6 +93,7 @@ StyleHandler *NavApp::styleHandler = nullptr;
 
 WebController *NavApp::webController = nullptr;
 
+bool NavApp::closeCalled = false;
 bool NavApp::shuttingDown = false;
 bool NavApp::loadingDatabase = false;
 bool NavApp::mainWindowVisible = false;
@@ -671,17 +672,17 @@ bool NavApp::hasXplane12Simulator()
 
 bool NavApp::isNavdataAll()
 {
-  return databaseManager->getNavDatabaseStatus() == dm::NAVDATABASE_ALL;
+  return databaseManager->getNavDatabaseStatus() == dbstat::NAVDATABASE_ALL;
 }
 
 bool NavApp::isNavdataMixed()
 {
-  return databaseManager->getNavDatabaseStatus() == dm::NAVDATABASE_MIXED;
+  return databaseManager->getNavDatabaseStatus() == dbstat::NAVDATABASE_MIXED;
 }
 
 bool NavApp::isNavdataOff()
 {
-  return databaseManager->getNavDatabaseStatus() == dm::NAVDATABASE_OFF;
+  return databaseManager->getNavDatabaseStatus() == dbstat::NAVDATABASE_OFF;
 }
 
 OptionsDialog *NavApp::getOptionsDialog()
@@ -1158,6 +1159,16 @@ void NavApp::setShuttingDown(bool value)
   qDebug() << Q_FUNC_INFO << value;
 
   shuttingDown = value;
+}
+
+bool NavApp::isCloseCalled()
+{
+  return closeCalled;
+}
+
+void NavApp::setCloseCalled(bool value)
+{
+  closeCalled = value;
 }
 
 bool NavApp::isFullScreen()

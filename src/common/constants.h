@@ -71,6 +71,7 @@ const QLatin1String ACTIONS_SHOW_DISCONNECT_INFO("Actions/ShowDisconnectInfo");
 const QLatin1String ACTIONS_SHOW_LOAD_FLP_WARN("Actions/ShowLoadFlpWarn");
 const QLatin1String ACTIONS_SHOW_LOAD_FMS_ALT_WARN("Actions/ShowLoadFmsAltitudeWarn");
 const QLatin1String ACTIONS_SHOW_QUIT("Actions/ShowQuit");
+const QLatin1String ACTIONS_SHOW_QUIT_LOADING("Actions/ShowQuitLoading");
 const QLatin1String ACTIONS_SHOW_INVALID_PROC_WARNING("Actions/ShowInvalidProcedure");
 const QLatin1String ACTIONS_SHOW_ROUTE_PARKING_WARNING("Actions/ShowRouteParkingWarning");
 const QLatin1String ACTIONS_SHOW_ROUTE_WARNING("Actions/ShowRouteWarning");
