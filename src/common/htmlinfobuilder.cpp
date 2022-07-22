@@ -3309,8 +3309,7 @@ void HtmlInfoBuilder::towerText(const MapAirport& airport, HtmlBuilder& html) co
 
 void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) const
 {
-  head(html, map::parkingName(parking.name) %
-       (parking.number != -1 ? " " % locale.toString(parking.number) : QString()));
+  head(html, map::parkingName(parking.name) % (parking.number != -1 ? " " % locale.toString(parking.number) % parking.suffix : QString()));
 
   if(!parking.type.isEmpty())
     html.brText(map::parkingTypeName(parking.type));

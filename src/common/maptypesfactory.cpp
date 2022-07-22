@@ -682,6 +682,7 @@ void MapTypesFactory::fillParking(const SqlRecord& record, map::MapParking& park
   parking.airportId = record.valueInt("airport_id");
   parking.type = record.valueStr("type");
   parking.name = record.valueStr("name");
+  parking.suffix = record.valueStr("suffix", QString());
   parking.airlineCodes = record.valueStr("airline_codes");
 
   parking.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"));

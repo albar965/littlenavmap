@@ -127,17 +127,12 @@ void ParkingDialog::updateTable()
     {
       // Same type
       if(p1.parking.isValid())
-      {
         // Compare parking
-        if(p1.parking.name == p2.parking.name)
-          return p1.parking.number < p2.parking.number;
-        else
-          return p1.parking.name < p2.parking.name;
-
-      }
+        return std::make_tuple(p1.parking.name, p1.parking.number, p1.parking.suffix) <
+        std::make_tuple(p2.parking.name, p2.parking.number, p2.parking.suffix);
       else if(p1.start.isValid())
       {
-        // Compare start
+        // Compare start - first runways by name and then helipads by name
         if(p1.start.type == p2.start.type)
           return p1.start.runwayName < p2.start.runwayName;
         else

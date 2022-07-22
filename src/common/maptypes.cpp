@@ -851,7 +851,7 @@ QString parkingText(const MapParking& parking)
 
   retval.append(map::parkingName(parking.name));
 
-  retval.append(parking.number != -1 ? " " % QLocale().toString(parking.number) : QString());
+  retval.append(parking.number != -1 ? " " % QLocale().toString(parking.number) % parking.suffix : QString());
   return atools::strJoin(retval, QObject::tr(" "));
 }
 
@@ -880,7 +880,7 @@ QString parkingNameNumberAndType(const map::MapParking& parking)
 QString parkingNameOrNumber(const MapParking& parking)
 {
   if(parking.number != -1)
-    return map::parkingName(parking.name) % " " % QLocale().toString(parking.number);
+    return map::parkingName(parking.name) % " " % QLocale().toString(parking.number) % parking.suffix;
   else
     return map::parkingName(parking.name);
 }
@@ -900,11 +900,11 @@ QString startType(const map::MapStart& start)
 QString parkingNameForFlightplan(const map::MapParking& parking)
 {
   if(parking.number == -1)
-    // Free name
+    // Free name - X-Plane
     return parking.name;
   else
     // FSX/P3D type
-    return parkingNameMapUntranslated.value(parking.name).toUpper() % " " % QString::number(parking.number);
+    return parkingNameMapUntranslated.value(parking.name).toUpper() % " " % QString::number(parking.number) % parking.suffix;
 }
 
 const QString& MapAirport::displayIdentIcao() const

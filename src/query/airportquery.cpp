@@ -1153,8 +1153,9 @@ void AirportQuery::initQueries()
   const QStringList airportQueryBase = airportColumns(db);
   const QStringList airportQueryBaseOverview = airportOverviewColumns(db);
 
-  static const QString parkingQueryBase(
-    "parking_id, airport_id, type, name, airline_codes, number, radius, heading, has_jetway, lonx, laty ");
+  QString parkingQueryBase("parking_id, airport_id, type, name, airline_codes, number, radius, heading, has_jetway, lonx, laty ");
+  if(db->record("parking").contains("suffix"))
+    parkingQueryBase.append(", suffix ");
 
   deInitQueries();
 
@@ -1220,8 +1221,7 @@ void AirportQuery::initQueries()
 
   QString runwayEndQueryBase("e.runway_end_id, e.end_type, e.name, e.heading, e.left_vasi_pitch, e.right_vasi_pitch, e.is_pattern, "
                              "e.left_vasi_type, e.right_vasi_type, e.lonx, e.laty ");
-  SqlRecord aprec = db->record("runway_end");
-  if(aprec.contains("altitude"))
+  if(db->record("runway_end").contains("altitude"))
     runwayEndQueryBase.append(", e.altitude ");
 
   runwayEndByIdQuery = new SqlQuery(db);

@@ -606,7 +606,10 @@ struct MapParking
   {
   }
 
-  QString type, name, nameShort, airlineCodes /* Comma separated list of airline codes */;
+  QString type, name,
+           suffix, /* Name suffix - only MSFS */
+           nameShort, /* Calculated short display name for X-Plane names */
+           airlineCodes /* Comma separated list of airline codes */;
   int airportId = 0 /* database id airport.airport_id */;
   int number = 0, /* -1 for X-Plane style free names. Otherwise FSX/P3D number */
       radius = 0; /* Radius in feet or 0 if not available */

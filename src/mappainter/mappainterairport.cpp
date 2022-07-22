@@ -747,7 +747,9 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
             {
               // FSX/P3D style names =========
               if(mapLayerEffective->isAirportDiagramDetail3())
-                text = map::parkingName(parking.name) % " " % QLocale().toString(parking.number);
+                text = map::parkingName(parking.name) % " " % QLocale().toString(parking.number) % parking.suffix;
+              else if(mapLayerEffective->isAirportDiagramDetail2())
+                text = QLocale().toString(parking.number) % parking.suffix;
               else
                 text = QLocale().toString(parking.number);
             }
