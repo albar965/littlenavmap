@@ -108,9 +108,15 @@ void DatabaseProgressDialog::setFinishedState()
   finishedState = true;
 
   // Add use button and enable cancel again
-  ui->buttonBoxDatabaseProgress->addButton(QDialogButtonBox::Ok)->setDefault(true);
-  ui->buttonBoxDatabaseProgress->button(QDialogButtonBox::Ok)->setText(tr("&Use this database"));
-  ui->buttonBoxDatabaseProgress->button(QDialogButtonBox::Cancel)->setEnabled(true);
+  QPushButton *okButton = ui->buttonBoxDatabaseProgress->addButton(QDialogButtonBox::Ok);
+  okButton->setText(tr("&Use this database"));
+  okButton->setDefault(true);
+  okButton->setAutoDefault(true);
+
+  QPushButton *cancelButton = ui->buttonBoxDatabaseProgress->button(QDialogButtonBox::Cancel);
+  cancelButton->setEnabled(true);
+  cancelButton->setDefault(false);
+  cancelButton->setAutoDefault(false);
 
   raise();
   activateWindow();
