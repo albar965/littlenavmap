@@ -175,7 +175,7 @@ int main(int argc, char *argv[])
 
   try
   {
-    app.processEvents();
+    QApplication::processEvents();
 
     QCommandLineParser parser;
     parser.addHelpOption();
@@ -226,14 +226,14 @@ int main(int argc, char *argv[])
 
     qInfo() << "QT_OPENGL" << QProcessEnvironment::systemEnvironment().value("QT_OPENGL");
     qInfo() << "QT_SCALE_FACTOR" << QProcessEnvironment::systemEnvironment().value("QT_SCALE_FACTOR");
-    if(app.testAttribute(Qt::AA_UseDesktopOpenGL))
+    if(QApplication::testAttribute(Qt::AA_UseDesktopOpenGL))
       qInfo() << "Using Qt desktop renderer";
-    if(app.testAttribute(Qt::AA_UseOpenGLES))
+    if(QApplication::testAttribute(Qt::AA_UseOpenGLES))
       qInfo() << "Using Qt angle renderer";
-    if(app.testAttribute(Qt::AA_UseSoftwareOpenGL))
+    if(QApplication::testAttribute(Qt::AA_UseSoftwareOpenGL))
       qInfo() << "Using Qt software renderer";
 
-    qInfo() << "UI default font" << app.font();
+    qInfo() << "UI default font" << QApplication::font();
     for(const QScreen *screen: QGuiApplication::screens())
       qInfo() << "Screen" << screen->name()
               << "size" << screen->size()
@@ -246,7 +246,7 @@ int main(int argc, char *argv[])
 
     Settings& settings = Settings::instance();
 
-    qInfo() << "Settings dir name" << Settings::instance().getDirName();
+    qInfo() << "Settings dir name" << Settings::getDirName();
 
     int pixmapCache = settings.valueInt(lnm::OPTIONS_PIXMAP_CACHE, -1);
     qInfo() << "QPixmapCache cacheLimit" << QPixmapCache::cacheLimit() << "KB";

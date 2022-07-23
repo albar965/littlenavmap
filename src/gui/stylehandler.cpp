@@ -57,7 +57,7 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
     if(styleName == "Fusion")
     {
       // Store fusion palette settings a in a separate ini file
-      QString filename = Settings::instance().getConfigFilename("_fusionstyle.ini");
+      QString filename = Settings::getConfigFilename("_fusionstyle.ini");
       atools::gui::PaletteSettings paletteSettings(filename, "StyleColors");
       paletteSettings.syncPalette(palette);
       stylesheet = fusionStyleSheet;
@@ -107,7 +107,7 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
     );
 
   // Store dark palette settings a in a separate ini file
-  QString filename = Settings::instance().getConfigFilename("_nightstyle.ini");
+  QString filename = Settings::getConfigFilename("_nightstyle.ini");
   atools::gui::PaletteSettings paletteSettings(filename, "StyleColors");
   paletteSettings.syncPalette(darkPalette);
 

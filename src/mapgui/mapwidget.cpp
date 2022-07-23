@@ -2779,7 +2779,8 @@ void MapWidget::saveState()
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
-  writePluginSettings(*settings.getQSettings());
+  QSettings *qSettings = atools::settings::Settings::getQSettings();
+  writePluginSettings(*qSettings);
   // Workaround to overviewmap storing absolute paths which will be invalid when moving program location
   settings.remove("plugin_overviewmap/path_earth");
   settings.remove("plugin_overviewmap/path_jupiter");

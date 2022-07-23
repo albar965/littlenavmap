@@ -154,7 +154,7 @@ QPixmap *UserdataIcons::getIconPixmap(const QString& type, int size, icon::TextP
 void UserdataIcons::loadIcons()
 {
   // First get new and overloaded icons from the configuration directory
-  QDir configDir(atools::settings::Settings::instance().getPath());
+  QDir configDir(atools::settings::Settings::getPath());
   for(const QFileInfo& entry : configDir.entryInfoList({"userpoint_*.svg", "userpoint_*.png",
                                                         "userpoint_*.jpg", "userpoint_*.gif"}))
     loadIcon(entry);

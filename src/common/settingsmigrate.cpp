@@ -38,17 +38,17 @@ namespace migrate {
 
 static Version optionsVersion;
 
-void removeAllAndLog(Settings& settings)
+void removeAllAndLog()
 {
   qInfo() << Q_FUNC_INFO << "Removing all keys";
-  settings.clearSettings();
+  Settings::clearSettings();
 }
 
 void removeAndLog(Settings& settings, const QString& key)
 {
   if(settings.contains(key))
   {
-    qInfo() << Q_FUNC_INFO << "Removing" << QFileInfo(settings.getFilename()).fileName() << key;
+    qInfo() << Q_FUNC_INFO << "Removing" << QFileInfo(Settings::getFilename()).fileName() << key;
     settings.remove(key);
   }
 }
@@ -74,7 +74,7 @@ void checkAndMigrateSettings()
       if(optionsVersion < Version("2.4.0"))
       {
         qInfo() << Q_FUNC_INFO << "Clearing all settings before 2.4.0";
-        removeAllAndLog(settings);
+        removeAllAndLog();
       }
 
       // ===============================================================
@@ -113,7 +113,7 @@ void checkAndMigrateSettings()
         removeAndLog(settings, "Route/ResetAllDialogCheckBoxStates");
 
         // Complete log search options
-        qInfo() << Q_FUNC_INFO << "Removing" << QFileInfo(settings.getFilename()).fileName() << "SearchPaneLogdata";
+        qInfo() << Q_FUNC_INFO << "Removing" << QFileInfo(Settings::getFilename()).fileName() << "SearchPaneLogdata";
         settings.remove("SearchPaneLogdata");
 
         // Search views

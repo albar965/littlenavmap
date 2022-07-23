@@ -610,7 +610,7 @@ void syncPen(QSettings& settings, const QString& key, QPen& pen)
 void syncColors()
 {
 #ifndef DEBUG_DISABLE_SYNC_COLORS
-  QString filename = atools::settings::Settings::instance().getConfigFilename("_mapstyle.ini");
+  QString filename = atools::settings::Settings::getConfigFilename("_mapstyle.ini");
 
   QSettings colorSettings(filename, QSettings::IniFormat);
   colorSettings.setValue("Options/Version", QApplication::applicationVersion());
