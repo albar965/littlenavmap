@@ -42,6 +42,7 @@
 #include <QDebug>
 #include <QProcessEnvironment>
 #include <QStandardPaths>
+#include <QScreen>
 
 using atools::sql::SqlTransaction;
 using atools::sql::SqlRecord;
@@ -180,19 +181,29 @@ void UserdataController::addToolbarButton()
   buttonMenu->addSeparator();
   ui->menuViewUserpoints->addSeparator();
 
+  int screenHeight = mainWindow->screen()->geometry().height();
+
   // Create and add select an action for each registered type =====================================
+  QMenu *menu = buttonMenu;
   for(const QString& type : icons->getAllTypes())
   {
     QIcon icon(icons->getIconPath(type));
-    QAction *action = new QAction(icon, type, buttonMenu);
+    QAction *action = new QAction(icon, type, menu);
     action->setData(QVariant(type));
     action->setCheckable(true);
     action->setToolTip(tr("Show or hide %1 userpoints").arg(type));
     action->setStatusTip(action->toolTip());
-    buttonMenu->addAction(action);
+    menu->addAction(action);
     ui->menuViewUserpoints->addAction(action);
     connect(action, &QAction::triggered, this, &UserdataController::toolbarActionTriggered);
     actions.append(action);
+
+    if(menu->sizeHint().height() > screenHeight * 9 / 10)
+    {
+      menu = menu->addMenu(tr("More ..."));
+      menu->setToolTipsVisible(true);
+      menu->setTearOffEnabled(true);
+    }
   }
 }
 
