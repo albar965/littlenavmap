@@ -21,7 +21,6 @@
 #include "common/mapcolors.h"
 #include "common/unit.h"
 #include "mapgui/mapwidget.h"
-#include "common/textplacement.h"
 #include "util/paintercontextsaver.h"
 #include "mapgui/maplayer.h"
 #include "query/mapquery.h"
@@ -88,8 +87,9 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
           y += size / 2.f;
         }
 
-        context->painter->drawPixmap(QPointF(x - size / 2.f, y - size / 2.f),
-                                     *icons->getIconPixmap(userpoint.type, atools::roundToInt(size)));
+        icon::TextPlacement textPlacementHint = icon::ICON_LABEL_LEFT;
+        const QPixmap *iconPixmap = icons->getIconPixmap(userpoint.type, atools::roundToInt(size), &textPlacementHint);
+        context->painter->drawPixmap(QPointF(x - size / 2.f, y - size / 2.f), *iconPixmap);
 
         if(context->mapLayer->isUserpointInfo() && !drawFast)
         {
@@ -102,7 +102,40 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
           if(!name.isEmpty())
             texts.append(name);
 
-          symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), x + size / 2, y, textatt::LEFT, fill ? 255 : 0);
+          textatt::TextAttributes textatts = textatt::NONE;
+          float xpos = x, ypos = y;
+          float offset = size / 2.f + size / 10.f;
+
+          // Decide text placement by hint given by userpoint type
+          switch(textPlacementHint)
+          {
+            case icon::ICON_LABEL_TOP:
+              // NDB - place on top
+              textatts = textatt::VBOTTOM | textatt::CENTER;
+              ypos = y - offset;
+              break;
+
+            case icon::ICON_LABEL_RIGHT:
+              // VOR - alight left and place right
+              textatts = textatt::LEFT;
+              xpos = x + offset;
+              break;
+
+            case icon::ICON_LABEL_BOTTOM:
+              // Place on bottom
+              textatts = textatt::VTOP | textatt::CENTER;
+              ypos = y + offset;
+              break;
+
+            case icon::ICON_LABEL_LEFT:
+              // Airports and waypoints - alight right and place left
+              textatts = textatt::RIGHT;
+              xpos = x - offset;
+              break;
+
+          }
+
+          symbolPainter->textBoxF(context->painter, texts, QPen(Qt::black), xpos, ypos, textatts, fill ? 255 : 0);
         }
       }
     }

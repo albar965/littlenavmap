@@ -482,18 +482,29 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(textflags::TextFlags);
 }
 
 namespace textatt {
+
 /* Low level text attributes for custom text boxes */
 enum TextAttribute
 {
   NONE = 0x0000,
+
+  /* Font attributes */
   BOLD = 0x0001,
   ITALIC = 0x0002,
   UNDERLINE = 0x0004,
   OVERLINE = 0x0008,
   STRIKEOUT = 0x0010,
-  RIGHT = 0x0020, /* Reference point is at the right of the text (left-aligned) */
-  LEFT = 0x0040,
+
+  /* Alignment */
+  RIGHT = 0x0020, /* Reference point is at the right of the text (right-aligned) to place text at the left of an icon */
+  LEFT = 0x0040, /* Reference point is at the left of the text (left-aligned) to place text at the right of an icon */
   CENTER = 0x0080,
+
+  /* Vertical alignment */
+  VTOP = 0x1000, /* Reference point at top to place text below an icon */
+  VBOTTOM = 0x2000, /* Reference point at bottom to place text on top of an icon */
+
+  /* Color attributes */
   ROUTE_BG_COLOR = 0x0100, /* Use light yellow background for route objects */
   LOG_BG_COLOR = 0x0200, /* Use light blue text background for log */
   WARNING_COLOR = 0x0400, /* Orange warning text */

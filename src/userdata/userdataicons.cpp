@@ -18,6 +18,7 @@
 #include "userdata/userdataicons.h"
 
 #include "settings/settings.h"
+#include "atools.h"
 
 #include <QDir>
 #include <QDebug>
@@ -113,7 +114,7 @@ UserdataIcons::~UserdataIcons()
   pixmapCache.clear();
 }
 
-QPixmap *UserdataIcons::getIconPixmap(const QString& type, int size)
+QPixmap *UserdataIcons::getIconPixmap(const QString& type, int size, icon::TextPlacement *textplacement)
 {
   PixmapCacheKey key = std::make_pair(type, size);
 
@@ -129,6 +130,22 @@ QPixmap *UserdataIcons::getIconPixmap(const QString& type, int size)
     else
       // Nothing found in map - use default
       pixmap = getIconPixmap(DEFAULT_TYPE, size);
+  }
+
+  if(textplacement != nullptr)
+  {
+    // Place label at the right per default
+    *textplacement = icon::ICON_LABEL_RIGHT;
+
+    // NDB navaids have their label at the bottom - place user NDB on top
+    if(type == "NDB")
+      *textplacement = icon::ICON_LABEL_TOP;
+    else if(atools::contains(type, {"Airport", "Airstrip", "Closed", "Helipad", "Seaport", "Waypoint"}))
+      // Airports and waypoints have their label at the right - place user at the left
+      *textplacement = icon::ICON_LABEL_LEFT;
+    // else if(atools::contains(type, {"VOR", "VORTAC", "VORDME", "TACAN", "DME"}))
+    //// All VOR types have labels at the left - place user at the right
+    // *textplacement = icon::ICON_LABEL_RIGHT;
   }
 
   return pixmap;

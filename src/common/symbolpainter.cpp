@@ -1406,8 +1406,25 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, QPen t
 
   // Draw the text
   QFontMetricsF metrics = painter->fontMetrics();
-  float h = static_cast<float>(metrics.height()) - 1.f;
-  float yoffset = (static_cast<float>(texts.size() * h)) / 2.f - static_cast<float>(metrics.descent());
+  float height = static_cast<float>(metrics.height()) - 1.f;
+  float totalHeight = height * texts.size();
+  float yoffset = 0.f;
+
+  if(atts.testFlag(textatt::VTOP))
+  {
+    // Reference point at top to place text below an icon
+    yoffset = static_cast<float>(metrics.descent()) + totalHeight;
+
+  }
+  else if(atts.testFlag(textatt::VBOTTOM))
+  {
+    // Reference point at bottom of text stack to place text on top of an icon
+    yoffset = -static_cast<float>(metrics.descent());
+  }
+  else
+    // Center text vertically
+    yoffset = totalHeight / 2.f - static_cast<float>(metrics.descent());
+
   painter->setPen(textPen);
 
   // Draw text in reverse order to avoid undercut
@@ -1420,12 +1437,14 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, QPen t
     float w = static_cast<float>(metrics.horizontalAdvance(text));
     float newx = x;
     if(atts.testFlag(textatt::RIGHT))
+      // Reference point is at the right of the text (right-aligned) to place text at the left of an icon
       newx -= w;
     else if(atts.testFlag(textatt::CENTER))
       newx -= w / 2.f;
+    // else LEFT  Reference point is at the left of the text (left-aligned) to place text at the right of an icon
 
     painter->drawText(QPointF(newx, y + yoffset), text);
-    yoffset -= h;
+    yoffset -= height;
   }
 }
 

@@ -25,6 +25,18 @@
 class MainWindow;
 class QFileInfo;
 
+namespace icon {
+/* Text placement hint depending on type to avoid overlaps with real features underneath. */
+enum TextPlacement
+{
+  ICON_LABEL_TOP,
+  ICON_LABEL_RIGHT,
+  ICON_LABEL_BOTTOM,
+  ICON_LABEL_LEFT
+};
+
+}
+
 /*
  * Maintains and caches the icons for user defined data types.
  * Icons with pattern userpoint_*.svg are taken from the resources and can be overloaded from the configuration directory.
@@ -41,7 +53,7 @@ public:
   UserdataIcons(const UserdataIcons& other) = delete;
   UserdataIcons& operator=(const UserdataIcons& other) = delete;
 
-  QPixmap *getIconPixmap(const QString& type, int size);
+  QPixmap *getIconPixmap(const QString& type, int size, icon::TextPlacement *textplacement = nullptr);
 
   /* Resolve icon names, overloads and extract types*/
   void loadIcons();
