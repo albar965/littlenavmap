@@ -48,8 +48,7 @@ void inflateQueryRect(Marble::GeoDataLatLonBox& rect, double factor, double incr
  * @param query
  * @param prefix used to prefix each bind variable
  */
-void bindRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
-              const QString& prefix)
+void bindRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query, const QString& prefix)
 {
   query->bindValue(":" + prefix + "leftx", rect.west(GeoDataCoordinates::Degree));
   query->bindValue(":" + prefix + "rightx", rect.east(GeoDataCoordinates::Degree));
@@ -57,8 +56,7 @@ void bindRect(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query
   query->bindValue(":" + prefix + "topy", rect.north(GeoDataCoordinates::Degree));
 }
 
-void bindRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query,
-              const QString& prefix)
+void bindRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query, const QString& prefix)
 {
   query->bindValue(":" + prefix + "leftx", rect.getWest());
   query->bindValue(":" + prefix + "rightx", rect.getEast());
@@ -67,8 +65,7 @@ void bindRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query,
 }
 
 /* Inflates the rectangle and splits it at the antimeridian (date line) if it overlaps */
-QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect, double factor,
-                                                    double increment)
+QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonBox& rect, double factor, double increment)
 {
   GeoDataLatLonBox newRect = rect;
   inflateQueryRect(newRect, factor, increment);
@@ -77,16 +74,12 @@ QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonB
   {
     // Split in western and eastern part
     GeoDataLatLonBox westOf;
-    westOf.setBoundaries(newRect.north(GeoDataCoordinates::Degree),
-                         newRect.south(GeoDataCoordinates::Degree),
-                         180.,
+    westOf.setBoundaries(newRect.north(GeoDataCoordinates::Degree), newRect.south(GeoDataCoordinates::Degree), 180.,
                          newRect.west(GeoDataCoordinates::Degree), GeoDataCoordinates::Degree);
 
     GeoDataLatLonBox eastOf;
-    eastOf.setBoundaries(newRect.north(GeoDataCoordinates::Degree),
-                         newRect.south(GeoDataCoordinates::Degree),
-                         newRect.east(GeoDataCoordinates::Degree),
-                         -180., GeoDataCoordinates::Degree);
+    eastOf.setBoundaries(newRect.north(GeoDataCoordinates::Degree), newRect.south(GeoDataCoordinates::Degree),
+                         newRect.east(GeoDataCoordinates::Degree), -180., GeoDataCoordinates::Degree);
 
     return QList<GeoDataLatLonBox>({westOf, eastOf});
   }
@@ -94,8 +87,7 @@ QList<Marble::GeoDataLatLonBox> splitAtAntiMeridian(const Marble::GeoDataLatLonB
     return QList<GeoDataLatLonBox>({newRect});
 }
 
-void fetchObjectsForRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query,
-                         std::function<void(atools::sql::SqlQuery *)> callback)
+void fetchObjectsForRect(const atools::geo::Rect& rect, atools::sql::SqlQuery *query, std::function<void(atools::sql::SqlQuery *)> callback)
 {
   for(const atools::geo::Rect& r : rect.splitAtAntiMeridian())
   {

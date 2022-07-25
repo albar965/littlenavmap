@@ -319,16 +319,19 @@ map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float dist
 
     if(type & map::ILS)
     {
-      QList<MapIls> ilsRes;
+      if(query::valid(Q_FUNC_INFO, ilsByRectQuery))
+      {
+        QList<MapIls> ilsRes;
 
-      query::fetchObjectsForRect(rect, ilsByRectQuery, [ =, &ilsRes](atools::sql::SqlQuery *query) -> void {
-        MapIls obj;
-        mapTypesFactory->fillIls(query->record(), obj);
-        ilsRes.append(obj);
-      });
-      maptools::removeByDistance(ilsRes, pos, atools::geo::nmToMeter(maxIlsDist));
-      maptools::sortByDistance(ilsRes, pos);
-      res.ils.append(ilsRes.mid(0, maxIls));
+        query::fetchObjectsForRect(rect, ilsByRectQuery, [ =, &ilsRes](atools::sql::SqlQuery *query) -> void {
+          MapIls obj;
+          mapTypesFactory->fillIls(query->record(), obj);
+          ilsRes.append(obj);
+        });
+        maptools::removeByDistance(ilsRes, pos, atools::geo::nmToMeter(maxIlsDist));
+        maptools::sortByDistance(ilsRes, pos);
+        res.ils.append(ilsRes.mid(0, maxIls));
+      }
     }
 
     result = new map::MapResultIndex;
@@ -1187,11 +1190,9 @@ const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer
     double increase = atools::geo::toRadians(9. / 60.);
 
     // Increase bounding rect since ILS has no bounding to query
-    rect.setBoundaries(rect.north() + increase, rect.south() - increase,
-                       rect.east() + increase, rect.west() - increase);
+    rect.setBoundaries(rect.north() + increase, rect.south() - increase, rect.east() + increase, rect.west() - increase);
 
-    for(const GeoDataLatLonBox& r :
-        query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
+    for(const GeoDataLatLonBox& r : query::splitAtAntiMeridian(rect, queryRectInflationFactor, queryRectInflationIncrement))
     {
       query::bindRect(r, ilsByRectQuery);
 
