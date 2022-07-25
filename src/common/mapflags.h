@@ -332,7 +332,7 @@ extern const QVector<map::MapAirspaceSources> MAP_AIRSPACE_SRC_NO_ONLINE_VALUES;
 /* Airspace filter flags */
 enum MapAirspaceFlag
 {
-  AIRSPACE_FLAG_NONE = 0,
+  AIRSPACE_FLAG_NONE = 0, /* Indicates that filter is used only for type */
 
   /* Special filter flags - not airspace types */
   AIRSPACE_ALTITUDE_ALL = 1 << 0,

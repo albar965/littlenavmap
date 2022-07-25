@@ -25,6 +25,7 @@
 #include "exception.h"
 #include "fs/userdata/userdatamanager.h"
 #include "geo/pos.h"
+#include "gui/actionbuttonhandler.h"
 #include "gui/choicedialog.h"
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
@@ -52,6 +53,7 @@ UserdataController::UserdataController(atools::fs::userdata::UserdataManager *us
   : manager(userdataManager), mainWindow(parent)
 {
   dialog = new atools::gui::Dialog(mainWindow);
+  buttonHandler = new atools::gui::ActionButtonHandler(mainWindow);
   icons = new UserdataIcons();
   icons->loadIcons();
   lastAddedRecord = new SqlRecord();
@@ -70,6 +72,7 @@ UserdataController::UserdataController(atools::fs::userdata::UserdataManager *us
 UserdataController::~UserdataController()
 {
   delete dialog;
+  delete buttonHandler;
   delete icons;
   delete lastAddedRecord;
 }
@@ -151,19 +154,19 @@ void UserdataController::addToolbarButton()
 
   // Create and add select all action =====================================
   actionAll = new QAction(tr("&All"), buttonMenu);
-  actionAll->setToolTip(tr("Show all userpoints"));
+  actionAll->setToolTip(tr("Toggle all / current selection of userpoints"));
   actionAll->setStatusTip(actionAll->toolTip());
   buttonMenu->addAction(actionAll);
   ui->menuViewUserpoints->addAction(actionAll);
-  connect(actionAll, &QAction::triggered, this, &UserdataController::toolbarActionTriggered);
+  buttonHandler->setAllAction(actionAll);
 
   // Create and add select none action =====================================
   actionNone = new QAction(tr("&None"), buttonMenu);
-  actionNone->setToolTip(tr("Hide all userpoints"));
+  actionNone->setToolTip(tr("Toggle none / current selection of userpoints"));
   actionNone->setStatusTip(actionNone->toolTip());
   buttonMenu->addAction(actionNone);
   ui->menuViewUserpoints->addAction(actionNone);
-  connect(actionNone, &QAction::triggered, this, &UserdataController::toolbarActionTriggered);
+  buttonHandler->setNoneAction(actionNone);
 
   buttonMenu->addSeparator();
   ui->menuViewUserpoints->addSeparator();
@@ -176,15 +179,14 @@ void UserdataController::addToolbarButton()
   buttonMenu->addAction(actionUnknown);
   ui->menuViewUserpoints->addAction(actionUnknown);
   ui->menuViewUserpoints->addSeparator();
-  connect(actionUnknown, &QAction::triggered, this, &UserdataController::toolbarActionTriggered);
+  buttonHandler->addOtherAction(actionUnknown);
 
   buttonMenu->addSeparator();
   ui->menuViewUserpoints->addSeparator();
 
-  int screenHeight = mainWindow->screen()->geometry().height();
-
   // Create and add select an action for each registered type =====================================
   QMenu *menu = buttonMenu;
+  int screenHeight = std::max(800, mainWindow->screen()->geometry().height());
   for(const QString& type : icons->getAllTypes())
   {
     QIcon icon(icons->getIconPath(type));
@@ -195,9 +197,10 @@ void UserdataController::addToolbarButton()
     action->setStatusTip(action->toolTip());
     menu->addAction(action);
     ui->menuViewUserpoints->addAction(action);
-    connect(action, &QAction::triggered, this, &UserdataController::toolbarActionTriggered);
+    buttonHandler->addOtherAction(action);
     actions.append(action);
 
+    // Create an overflow menu item if the menu exceeds the screen height
     if(menu->sizeHint().height() > screenHeight * 9 / 10)
     {
       menu = menu->addMenu(tr("More ..."));
@@ -205,34 +208,21 @@ void UserdataController::addToolbarButton()
       menu->setTearOffEnabled(true);
     }
   }
+
+  // Add all signals from actions to the same handler method
+  connect(buttonHandler, &atools::gui::ActionButtonHandler::actionAllTriggered, this, &UserdataController::toolbarActionTriggered);
+  connect(buttonHandler, &atools::gui::ActionButtonHandler::actionNoneTriggered, this, &UserdataController::toolbarActionTriggered);
+  connect(buttonHandler, &atools::gui::ActionButtonHandler::actionOtherTriggered, this, &UserdataController::toolbarActionTriggered);
 }
 
-void UserdataController::toolbarActionTriggered()
+void UserdataController::toolbarActionTriggered(QAction *)
 {
   qDebug() << Q_FUNC_INFO;
 
-  QAction *actionSender = dynamic_cast<QAction *>(sender());
-  if(actionSender != nullptr)
-  {
-    if(actionSender == actionAll)
-    {
-      // Select all buttons
-      actionUnknown->setChecked(true);
-      for(QAction *action : actions)
-        if(action->data().type() == QVariant::String)
-          action->setChecked(true);
-    }
-    else if(actionSender == actionNone)
-    {
-      // Deselect all buttons
-      actionUnknown->setChecked(false);
-      for(QAction *action : actions)
-        if(action->data().type() == QVariant::String)
-          action->setChecked(false);
-    }
-    // Copy action state to class data
-    actionsToTypes();
-  }
+  // Copy action state to class data
+  actionsToTypes();
+
+  // Update map
   emit userdataChanged();
 }
 

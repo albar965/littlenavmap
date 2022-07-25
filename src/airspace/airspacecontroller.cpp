@@ -305,7 +305,7 @@ void AirspaceController::resetSettingsToDefault()
 
 void AirspaceController::updateButtonsAndActions()
 {
-  airspaceHandler->updateAll();
+  airspaceHandler->updateButtonsAndActions();
 }
 
 bool AirspaceController::hasAnyAirspaces() const

@@ -19,6 +19,7 @@
 
 #include "common/maptypes.h"
 #include "common/unit.h"
+#include "gui/actionbuttonhandler.h"
 #include "navapp.h"
 #include "ui_mainwindow.h"
 
@@ -161,20 +162,31 @@ void AirspaceLabelAction::deleteWidget(QWidget *widget)
 
 // =======================================================================================
 
-AirspaceToolBarHandler::AirspaceToolBarHandler(MainWindow *parent)
-  : mainWindow(parent)
+AirspaceToolBarHandler::AirspaceToolBarHandler(QWidget *parent)
+  : parentWidget(parent)
 {
+  // Need a button handler for each toolbar button
+  buttonHandlerIcao = new atools::gui::ActionButtonHandler(parentWidget);
+  buttonHandlerFir = new atools::gui::ActionButtonHandler(parentWidget);
+  buttonHandlerRestricted = new atools::gui::ActionButtonHandler(parentWidget);
+  buttonHandlerSpecial = new atools::gui::ActionButtonHandler(parentWidget);
+  buttonHandlerOther = new atools::gui::ActionButtonHandler(parentWidget);
+
   connect(NavApp::getMainUi()->actionShowAirspaces, &QAction::toggled, this, &AirspaceToolBarHandler::allAirspacesToggled);
 }
 
 AirspaceToolBarHandler::~AirspaceToolBarHandler()
 {
-
+  delete buttonHandlerIcao;
+  delete buttonHandlerFir;
+  delete buttonHandlerRestricted;
+  delete buttonHandlerSpecial;
+  delete buttonHandlerOther;
 }
 
 void AirspaceToolBarHandler::allAirspacesToggled()
 {
-  updateAll();
+  updateButtonsAndActions();
 }
 
 void AirspaceToolBarHandler::updateToolButtons()
@@ -204,22 +216,13 @@ void AirspaceToolBarHandler::updateToolButtons()
 
 void AirspaceToolBarHandler::updateToolActions()
 {
-  map::MapAirspaceFilter shown = NavApp::getShownMapAirspaces();
-
-  for(QAction *action : airspaceActions)
+  bool enable = NavApp::getMainUi()->actionShowAirspaces->isChecked();
+  bool hasAirspaces = NavApp::hasAnyAirspaces();
+  for(QToolButton *toolButton : airspaceToolButtons)
   {
-    map::MapAirspaceFilter filterFromAction = action->data().value<map::MapAirspaceFilter>();
-
-    if(!(filterFromAction.flags & map::AIRSPACE_ALL_ON) && !(filterFromAction.flags & map::AIRSPACE_ALL_OFF))
-    {
-      action->blockSignals(true);
-      action->setChecked(filterFromAction.types & shown.types || filterFromAction.flags & shown.flags);
-      action->blockSignals(false);
-    }
+    for(QAction *action : toolButton->menu()->actions())
+      action->setEnabled(enable && hasAirspaces);
   }
-
-  for(QAction *action : airspaceActions)
-    action->setEnabled(NavApp::getMainUi()->actionShowAirspaces->isChecked());
 }
 
 void AirspaceToolBarHandler::updateSliders()
@@ -230,15 +233,46 @@ void AirspaceToolBarHandler::updateSliders()
   sliderActionAltMin->setEnabled(show);
 }
 
-void AirspaceToolBarHandler::updateAll()
+void AirspaceToolBarHandler::actionsToFilterTypes(map::MapAirspaceFilter& currentFilter)
+{
+  for(QToolButton *toolButton : airspaceToolButtons)
+  {
+    for(QAction *action : toolButton->menu()->actions())
+    {
+      map::MapAirspaceFilter filter = action->data().value<map::MapAirspaceFilter>();
+      if(filter.flags.testFlag(map::AIRSPACE_FLAG_NONE))
+      {
+        if(action->isChecked())
+          currentFilter.types |= filter.types;
+        else
+          currentFilter.types &= ~filter.types;
+      }
+    }
+  }
+}
+
+void AirspaceToolBarHandler::filterTypesToActions(const map::MapAirspaceFilter& currentFilter)
+{
+  for(QToolButton *toolButton : airspaceToolButtons)
+  {
+    for(QAction *action : toolButton->menu()->actions())
+    {
+      map::MapAirspaceFilter filter = action->data().value<map::MapAirspaceFilter>();
+      if(filter.flags.testFlag(map::AIRSPACE_FLAG_NONE))
+        action->setChecked(filter.types & currentFilter.types);
+    }
+  }
+}
+
+void AirspaceToolBarHandler::updateButtonsAndActions()
 {
   // Copy currently selected altitude values to sliders
   map::MapAirspaceFilter filter = NavApp::getShownMapAirspaces();
   sliderActionAltMin->setAltitudeFt(filter.minAltitudeFt);
   sliderActionAltMax->setAltitudeFt(filter.maxAltitudeFt);
 
-  /* Check or uncheck menu actions with blocked signal based on NavApp::getShownMapAirspaces() */
-  updateToolActions();
+  /* Set action check states depending on filter types */
+  filterTypesToActions(filter);
 
   /* Update button depressed state or not */
   updateToolButtons();
@@ -250,43 +284,17 @@ void AirspaceToolBarHandler::updateAll()
   updateSliderLabel();
 }
 
-void AirspaceToolBarHandler::actionAllNoneOrTypeTriggered()
+void AirspaceToolBarHandler::toolbarActionTriggered(QAction *)
 {
   qDebug() << Q_FUNC_INFO;
 
-  QAction *sendAction = dynamic_cast<QAction *>(sender());
-  if(sendAction != nullptr)
-  {
-    map::MapAirspaceFilter typeFromAction = sendAction->data().value<map::MapAirspaceFilter>();
-    map::MapAirspaceFilter newFilter = NavApp::getShownMapAirspaces();
+  // Extract filter types and insert into current filter
+  map::MapAirspaceFilter currentFilter = NavApp::getShownMapAirspaces();
+  actionsToFilterTypes(currentFilter);
+  emit updateAirspaceTypes(currentFilter);
 
-    if(typeFromAction.flags & map::AIRSPACE_ALL_ON)
-      newFilter.types |= typeFromAction.types;
-    else if(typeFromAction.flags & map::AIRSPACE_ALL_OFF)
-      newFilter.types &= ~typeFromAction.types;
-    else
-    {
-      for(QAction *action : airspaceActions)
-      {
-        map::MapAirspaceFilter filter = action->data().value<map::MapAirspaceFilter>();
-
-        if(!(filter.flags & map::AIRSPACE_ALL_ON) && !(filter.flags & map::AIRSPACE_ALL_OFF))
-        {
-          if(action->isChecked())
-            newFilter.types |= filter.types;
-          else
-            newFilter.types &= ~filter.types;
-        }
-      }
-    }
-
-    // Remove the button only flags
-    newFilter.flags &= ~map::AIRSPACE_ALL_ON;
-    newFilter.flags &= ~map::AIRSPACE_ALL_OFF;
-
-    emit updateAirspaceTypes(newFilter);
-    updateAll();
-  }
+  /* Update button depressed state or not */
+  updateToolButtons();
 }
 
 void AirspaceToolBarHandler::actionRadioGroupTriggered(QAction *action)
@@ -391,35 +399,37 @@ void AirspaceToolBarHandler::altSliderChanged()
 
 void AirspaceToolBarHandler::createToolButtons()
 {
-  createAirspaceToolButton(":/littlenavmap/resources/icons/airspaceicao.svg",
+  createAirspaceToolButton(buttonHandlerIcao, ":/littlenavmap/resources/icons/airspaceicao.svg",
                            tr("Select ICAO airspaces"),
                            {map::CLASS_A, map::CLASS_B, map::CLASS_C, map::CLASS_D, map::CLASS_E,
                             map::CLASS_F, map::CLASS_G}, {});
 
-  createAirspaceToolButton(":/littlenavmap/resources/icons/airspacefir.svg",
+  createAirspaceToolButton(buttonHandlerFir, ":/littlenavmap/resources/icons/airspacefir.svg",
                            tr("Select FIR airspaces"),
                            {map::FIR, map::UIR}, {});
 
-  createAirspaceToolButton(":/littlenavmap/resources/icons/airspacerestr.svg",
+  createAirspaceToolButton(buttonHandlerRestricted, ":/littlenavmap/resources/icons/airspacerestr.svg",
                            tr("Select MOA, restricted, prohibited and danger airspaces"),
                            {map::MOA, map::RESTRICTED, map::PROHIBITED, map::GLIDERPROHIBITED, map::DANGER}, {});
 
-  createAirspaceToolButton(":/littlenavmap/resources/icons/airspacespec.svg",
+  createAirspaceToolButton(buttonHandlerSpecial, ":/littlenavmap/resources/icons/airspacespec.svg",
                            tr("Select warning, alert and training airspaces"),
                            {map::WARNING, map::CAUTION, map::ALERT, map::TRAINING}, {});
 
-  createAirspaceToolButton(":/littlenavmap/resources/icons/airspaceother.svg",
+  createAirspaceToolButton(buttonHandlerOther, ":/littlenavmap/resources/icons/airspaceother.svg",
                            tr("Select centers and other airspaces"),
                            {map::CENTER, map::TOWER, map::GCA, map::MCTR, map::TRSA, map::CLEARANCE, map::GROUND,
                             map::DEPARTURE, map::APPROACH, map::NATIONAL_PARK, map::MODEC, map::RADAR, map::WAVEWINDOW,
                             map::ONLINE_OBSERVER}, {});
 
-  createAirspaceToolButton(":/littlenavmap/resources/icons/airspacealt.svg", tr("Select altitude limitations for airspace display"),
+  createAirspaceToolButton(nullptr, ":/littlenavmap/resources/icons/airspacealt.svg",
+                           tr("Select altitude limitations for airspace display"),
                            {}, {map::AIRSPACE_ALTITUDE_ALL, map::AIRSPACE_ALTITUDE_FLIGHTPLAN, map::AIRSPACE_ALTITUDE_SET},
                            true /* groupActions */, true /* minMaxAltitude */);
 }
 
-void AirspaceToolBarHandler::createAirspaceToolButton(const QString& icon, const QString& buttonHelp,
+void AirspaceToolBarHandler::createAirspaceToolButton(atools::gui::ActionButtonHandler *buttonHandler, const QString& icon,
+                                                      const QString& buttonHelp,
                                                       const std::initializer_list<map::MapAirspaceTypes>& types,
                                                       const std::initializer_list<map::MapAirspaceFlags>& flags,
                                                       bool groupActions, bool minMaxAltitude)
@@ -457,27 +467,27 @@ void AirspaceToolBarHandler::createAirspaceToolButton(const QString& icon, const
   // Add all on / all off menu items ======================================
   if(!groupActions)
   {
-    QAction *action = new QAction(tr("&All"), buttonMenu);
-    action->setToolTip(tr("Show all airspaces in this category"));
-    action->setStatusTip(action->toolTip());
+    QAction *actionAll = new QAction(tr("&All"), buttonMenu);
+    actionAll->setToolTip(tr("Toggle all / current selection of airspaces"));
+    actionAll->setStatusTip(actionAll->toolTip());
     map::MapAirspaceFilter filterOn;
     filterOn.types = allTypes;
     filterOn.flags = map::AIRSPACE_ALL_ON | allFlags;
-    action->setData(QVariant::fromValue(filterOn));
-    buttonMenu->addAction(action);
-    airspaceActions.append(action);
-    connect(action, &QAction::triggered, this, &AirspaceToolBarHandler::actionAllNoneOrTypeTriggered);
+    actionAll->setData(QVariant::fromValue(filterOn));
+    buttonHandler->setAllAction(actionAll);
+    buttonMenu->addAction(actionAll);
+    connect(buttonHandler, &atools::gui::ActionButtonHandler::actionAllTriggered, this, &AirspaceToolBarHandler::toolbarActionTriggered);
 
-    action = new QAction(tr("&None"), buttonMenu);
-    action->setToolTip(tr("Hide all airspaces in this category"));
-    action->setStatusTip(action->toolTip());
+    QAction *actionNone = new QAction(tr("&None"), buttonMenu);
+    actionNone->setToolTip(tr("Toggle none / current selection of airspaces"));
+    actionNone->setStatusTip(actionNone->toolTip());
     map::MapAirspaceFilter filterOff;
     filterOff.types = allTypes;
     filterOff.flags = map::AIRSPACE_ALL_OFF | allFlags;
-    action->setData(QVariant::fromValue(filterOff));
-    buttonMenu->addAction(action);
-    airspaceActions.append(action);
-    connect(action, &QAction::triggered, this, &AirspaceToolBarHandler::actionAllNoneOrTypeTriggered);
+    actionNone->setData(QVariant::fromValue(filterOff));
+    buttonHandler->setNoneAction(actionNone);
+    buttonMenu->addAction(actionNone);
+    connect(buttonHandler, &atools::gui::ActionButtonHandler::actionNoneTriggered, this, &AirspaceToolBarHandler::toolbarActionTriggered);
 
     buttonMenu->addSeparator();
   }
@@ -507,7 +517,6 @@ void AirspaceToolBarHandler::createAirspaceToolButton(const QString& icon, const
 
       action->setData(QVariant::fromValue(f));
       buttonMenu->addAction(action);
-      airspaceActions.append(action);
       ui->menuViewAirspaces->addAction(action);
     }
   }
@@ -529,11 +538,13 @@ void AirspaceToolBarHandler::createAirspaceToolButton(const QString& icon, const
 
       action->setData(QVariant::fromValue(f));
 
+      buttonHandler->addOtherAction(action);
       buttonMenu->addAction(action);
-      airspaceActions.append(action);
-      connect(action, &QAction::triggered, this, &AirspaceToolBarHandler::actionAllNoneOrTypeTriggered);
       ui->menuViewAirspaces->addAction(action);
     }
+
+    // Signal for all actions in handler
+    connect(buttonHandler, &atools::gui::ActionButtonHandler::actionOtherTriggered, this, &AirspaceToolBarHandler::toolbarActionTriggered);
   }
 
   if(minMaxAltitude)

@@ -35,6 +35,12 @@ class AirspaceAltSliderAction;
 class AirspaceLabelAction;
 }
 
+namespace atools {
+namespace gui {
+class ActionButtonHandler;
+}
+}
+
 /* Manages the airspace toolbar, its tool buttons and all the actions in the drop down menus */
 class AirspaceToolBarHandler :
   public QObject
@@ -42,36 +48,38 @@ class AirspaceToolBarHandler :
   Q_OBJECT
 
 public:
-  AirspaceToolBarHandler(MainWindow *parent);
+  explicit AirspaceToolBarHandler(QWidget *parent);
   virtual ~AirspaceToolBarHandler() override;
 
   void createToolButtons();
 
-  /* Updates all */
-  void updateAll();
-
-  const QVector<QToolButton *>& getAirspaceToolButtons() const
-  {
-    return airspaceToolButtons;
-  }
+  /* Updates all buttons and actions from the current airspace filter. */
+  void updateButtonsAndActions();
 
 signals:
   void updateAirspaceTypes(map::MapAirspaceFilter filter);
 
 private:
-  void createAirspaceToolButton(const QString& icon, const QString& buttonHelp,
+  /* Create one toolbar button with all menus */
+  void createAirspaceToolButton(atools::gui::ActionButtonHandler *buttonHandler, const QString& icon, const QString& buttonHelp,
                                 const std::initializer_list<map::MapAirspaceTypes>& types,
                                 const std::initializer_list<map::MapAirspaceFlags>& flags,
                                 bool groupActions = false, bool minMaxAltitude = false);
 
+  /* Extract filter types from action check states */
+  void actionsToFilterTypes(map::MapAirspaceFilter& currentFilter);
+
+  /* Set action check states depending on filter types */
+  void filterTypesToActions(const map::MapAirspaceFilter& currentFilter);
+
   /* Update button depressed state or not */
   void updateToolButtons();
 
-  /* Check or uncheck menu actions with blocked signal based on NavApp::getShownMapAirspaces() */
+  /* Enable or disable actions based on master airpace action */
   void updateToolActions();
 
   /* Extract flags from not grouped actions all/none/type and emit updateAirspaceTypes() */
-  void actionAllNoneOrTypeTriggered();
+  void toolbarActionTriggered(QAction *);
 
   /* Radio group button clicked. emit updateAirspaceTypes() */
   void actionRadioGroupTriggered(QAction *action);
@@ -88,9 +96,6 @@ private:
   /* Update altitude label from slider values */
   void updateSliderLabel();
 
-  /* List of all actions */
-  QVector<QAction *> airspaceActions;
-
   /* List of actions that are not grouped */
   QVector<QToolButton *> airspaceToolButtons;
 
@@ -99,11 +104,14 @@ private:
 
   /* Flags and types for each button */
   QVector<map::MapAirspaceFilter> airspaceToolButtonFilters;
-  MainWindow *mainWindow;
+  QWidget *parentWidget;
 
   /* Widget wrapper allowing to put an arbitrary widget into a menu */
   asinternal::AirspaceAltSliderAction *sliderActionAltMin = nullptr, *sliderActionAltMax = nullptr;
   asinternal::AirspaceLabelAction *labelActionAirspace = nullptr;
+
+  atools::gui::ActionButtonHandler *buttonHandlerIcao, *buttonHandlerFir, *buttonHandlerRestricted, *buttonHandlerSpecial,
+                                   *buttonHandlerOther;
 };
 
 namespace asinternal {
@@ -117,7 +125,7 @@ class AirspaceAltSliderAction
   Q_OBJECT
 
 public:
-  AirspaceAltSliderAction(QObject *parent, bool maxSliderParam);
+  explicit AirspaceAltSliderAction(QObject *parent, bool maxSliderParam);
 
   int getAltitudeFt() const;
 

@@ -33,6 +33,7 @@ namespace gui {
 class Dialog;
 class ErrorHandler;
 class HelpHandler;
+class ActionButtonHandler;
 }
 namespace fs {
 namespace sc {
@@ -69,7 +70,7 @@ class UserdataController :
   Q_OBJECT
 
 public:
-  UserdataController(atools::fs::userdata::UserdataManager *userdataManager, MainWindow *parent);
+  explicit UserdataController(atools::fs::userdata::UserdataManager *userdataManager, MainWindow *parent);
   virtual ~UserdataController() override;
 
   UserdataController(const UserdataController& other) = delete;
@@ -159,7 +160,7 @@ signals:
 
 private:
   /* Called by any action */
-  void toolbarActionTriggered();
+  void toolbarActionTriggered(QAction *);
 
   /* Copy class state to actions and vice versa */
   void typesToActions();
@@ -193,6 +194,9 @@ private:
   QAction *actionAll = nullptr, *actionNone = nullptr, *actionUnknown = nullptr;
   QVector<QAction *> actions;
   atools::sql::SqlRecord *lastAddedRecord = nullptr;
+
+  /* Takes care about all action logic like toggling of all/selected and none/selected */
+  atools::gui::ActionButtonHandler *buttonHandler;
 
 };
 

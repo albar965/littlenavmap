@@ -19,6 +19,7 @@
 
 #include "atools.h"
 #include "common/constants.h"
+#include "gui/actionbuttonhandler.h"
 #include "gui/choicedialog.h"
 #include "gui/dialog.h"
 #include "gui/mainwindow.h"
@@ -36,11 +37,12 @@
 MapMarkHandler::MapMarkHandler(MainWindow *mainWindowParam)
   : QObject(mainWindowParam), mainWindow(mainWindowParam)
 {
-
+  buttonHandler = new atools::gui::ActionButtonHandler(mainWindow);
 }
 
 MapMarkHandler::~MapMarkHandler()
 {
+  delete buttonHandler;
   delete toolButton;
 }
 
@@ -142,18 +144,18 @@ void MapMarkHandler::addToolbarButton()
 
   // Create and add actions to toolbar and menu =================================
   actionAll = new QAction(tr("&All"), buttonMenu);
-  actionAll->setToolTip(tr("Show all user features"));
+  actionAll->setToolTip(tr("Toggle all / current selection of user features"));
   actionAll->setStatusTip(actionAll->toolTip());
   buttonMenu->addAction(actionAll);
+  buttonHandler->setAllAction(actionAll);
   ui->menuViewUserFeatures->addAction(actionAll);
-  connect(actionAll, &QAction::triggered, this, &MapMarkHandler::actionAllTriggered);
 
   actionNone = new QAction(tr("&None"), buttonMenu);
-  actionNone->setToolTip(tr("Hide all user features"));
+  actionNone->setToolTip(tr("Toggle none / current selection of user features"));
   actionNone->setStatusTip(actionNone->toolTip());
   buttonMenu->addAction(actionNone);
+  buttonHandler->setNoneAction(actionNone);
   ui->menuViewUserFeatures->addAction(actionNone);
-  connect(actionNone, &QAction::triggered, this, &MapMarkHandler::actionNoneTriggered);
 
   ui->menuViewUserFeatures->addSeparator();
   buttonMenu->addSeparator();
@@ -165,41 +167,28 @@ void MapMarkHandler::addToolbarButton()
                              tr("Show or hide traffic patterns"));
   actionHolds = addAction(":/littlenavmap/resources/icons/enroutehold.svg", tr("&Holdings"), tr("Show or hide holdings"));
   actionAirportMsa = addAction(":/littlenavmap/resources/icons/msa.svg", tr("&MSA Diagrams"), tr("Show or hide airport MSA sectors"));
+
+  // Connect all action signals to same handler method
+  connect(buttonHandler, &atools::gui::ActionButtonHandler::actionAllTriggered, this, &MapMarkHandler::toolbarActionTriggered);
+  connect(buttonHandler, &atools::gui::ActionButtonHandler::actionNoneTriggered, this, &MapMarkHandler::toolbarActionTriggered);
+  connect(buttonHandler, &atools::gui::ActionButtonHandler::actionOtherTriggered, this, &MapMarkHandler::toolbarActionTriggered);
 }
 
 QAction *MapMarkHandler::addAction(const QString& icon, const QString& text, const QString& tooltip)
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
-
   QAction *action = new QAction(QIcon(icon), text, toolButton->menu());
   action->setToolTip(tooltip);
   action->setStatusTip(tooltip);
   action->setCheckable(true);
 
+  buttonHandler->addOtherAction(action);
   toolButton->menu()->addAction(action);
-  ui->menuViewUserFeatures->addAction(action);
-
-  // Not called when programmatically changed
-  connect(action, &QAction::triggered, this, &MapMarkHandler::toolbarActionTriggered);
+  NavApp::getMainUi()->menuViewUserFeatures->addAction(action);
 
   return action;
 }
 
-void MapMarkHandler::actionAllTriggered()
-{
-  markTypes = map::MARK_ALL;
-  flagsToActions();
-  emit updateMarkTypes(markTypes);
-}
-
-void MapMarkHandler::actionNoneTriggered()
-{
-  markTypes = map::NONE;
-  flagsToActions();
-  emit updateMarkTypes(markTypes);
-}
-
-void MapMarkHandler::toolbarActionTriggered()
+void MapMarkHandler::toolbarActionTriggered(QAction *)
 {
   actionsToFlags();
   toolButton->setChecked(markTypes & map::MARK_ALL);

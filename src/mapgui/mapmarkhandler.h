@@ -17,6 +17,7 @@
 
 #ifndef LNM_MAPMARKHANDLER_H
 #define LNM_MAPMARKHANDLER_H
+
 #include "common/mapflags.h"
 
 #include <QObject>
@@ -24,6 +25,12 @@
 class QAction;
 class QToolButton;
 class MainWindow;
+
+namespace atools {
+namespace gui {
+class ActionButtonHandler;
+}
+}
 
 /*
  * Adds a toolbutton and four actions to it that allow to show or hide user features like holds, range rings and others.
@@ -81,9 +88,7 @@ private:
   /* Remove all measurement lines, patterns, holds, etc. depending on types */
   void clearRangeRingsAndDistanceMarkers(bool quiet, map::MapTypes types) const;
 
-  void toolbarActionTriggered();
-  void actionAllTriggered();
-  void actionNoneTriggered();
+  void toolbarActionTriggered(QAction *);
 
   void flagsToActions();
   void actionsToFlags();
@@ -99,6 +104,9 @@ private:
   QToolButton *toolButton = nullptr;
   map::MapTypes markTypes = map::MARK_ALL;
   MainWindow *mainWindow;
+
+  /* Takes care about all action logic like toggling of all/selected and none/selected */
+  atools::gui::ActionButtonHandler *buttonHandler;
 };
 
 #endif // LNM_MAPMARKHANDLER_H
