@@ -58,7 +58,7 @@ class UserdataDialog :
   Q_OBJECT
 
 public:
-  UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, UserdataIcons *userdataIcons);
+  explicit UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, UserdataIcons *userdataIcons);
   virtual ~UserdataDialog() override;
 
   UserdataDialog(const UserdataDialog& other) = delete;

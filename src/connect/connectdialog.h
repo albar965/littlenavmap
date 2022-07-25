@@ -46,7 +46,7 @@ class ConnectDialog :
   Q_OBJECT
 
 public:
-  ConnectDialog(QWidget *parent, bool simConnectAvailable);
+  explicit ConnectDialog(QWidget *parent, bool simConnectAvailable);
   virtual ~ConnectDialog() override;
 
   /* Get hostname as entered in the edit field */

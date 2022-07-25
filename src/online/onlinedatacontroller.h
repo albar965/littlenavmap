@@ -73,7 +73,7 @@ class OnlinedataController :
   Q_OBJECT
 
 public:
-  OnlinedataController(atools::fs::online::OnlinedataManager *onlineManager, MainWindow *parent);
+  explicit OnlinedataController(atools::fs::online::OnlinedataManager *onlineManager, MainWindow *parent);
   virtual ~OnlinedataController() override;
 
   OnlinedataController(const OnlinedataController& other) = delete;

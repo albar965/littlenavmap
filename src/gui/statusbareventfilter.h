@@ -30,7 +30,7 @@ class StatusBarEventFilter :
   public QObject
 {
 public:
-  StatusBarEventFilter(QStatusBar *parentStatusBar, QLabel *firstLabel);
+  explicit StatusBarEventFilter(QStatusBar *parentStatusBar, QLabel *firstLabel);
   virtual ~StatusBarEventFilter() override;
 
 private:

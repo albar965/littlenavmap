@@ -95,7 +95,7 @@ class DetailSliderAction
   Q_OBJECT
 
 public:
-  DetailSliderAction(QObject *parent);
+  explicit DetailSliderAction(QObject *parent);
 
   /* MAP_MIN_DETAIL_LEVEL = 8 -> MAP_DEFAULT_DETAIL_LEVEL = 10 -> MAP_MAX_DETAIL_LEVEL = 15 */
   int getSliderValue() const;

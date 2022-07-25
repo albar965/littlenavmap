@@ -82,7 +82,7 @@ public:
   /*
    * @param parent can be null if only checkIncompatibleDatabases is to be called
    */
-  DatabaseManager(MainWindow *parent);
+  explicit DatabaseManager(MainWindow *parent);
 
   /* Also closes database if not already done */
   virtual ~DatabaseManager() override;

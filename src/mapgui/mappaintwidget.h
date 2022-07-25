@@ -88,7 +88,7 @@ class MapPaintWidget :
   Q_OBJECT
 
 public:
-  MapPaintWidget(QWidget *parent, bool visible);
+  explicit MapPaintWidget(QWidget *parent, bool visible);
   virtual ~MapPaintWidget() override;
 
   MapPaintWidget(const MapPaintWidget& other) = delete;

@@ -51,7 +51,7 @@ class ElevationProvider :
   Q_OBJECT
 
 public:
-  ElevationProvider(QObject *parent, const Marble::ElevationModel *model);
+  explicit ElevationProvider(QObject *parent, const Marble::ElevationModel *model);
   virtual ~ElevationProvider() override;
 
   ElevationProvider(const ElevationProvider& other) = delete;

@@ -35,7 +35,7 @@ public:
    * @param appName Application name used to create folders
    * @param settingsKeyPrefix Used to save dialog confirmation (do not show again)
    */
-  DirTool(QWidget *parent, const QString& base, const QString& appName, const QString& settingsKeyPrefix);
+  explicit DirTool(QWidget *parent, const QString& base, const QString& appName, const QString& settingsKeyPrefix);
 
   /* Asks user to create directory structure. Creates directories and changes file dialog defaults if user confirms.*/
   void run();

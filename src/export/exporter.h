@@ -39,7 +39,7 @@ class Exporter
   Q_DECLARE_TR_FUNCTIONS(Exporter)
 
 public:
-  Exporter(QWidget *parentWidgetParam, SqlController *controllerObj);
+  explicit Exporter(QWidget *parentWidgetParam, SqlController *controllerObj);
   virtual ~Exporter();
 
   Exporter(const Exporter& other) = delete;

@@ -47,7 +47,7 @@ class RouteStringDialog :
   Q_OBJECT
 
 public:
-  RouteStringDialog(QWidget *parent, const QString& routeStringParam);
+  explicit RouteStringDialog(QWidget *parent, const QString& routeStringParam);
   virtual ~RouteStringDialog() override;
 
   RouteStringDialog(const RouteStringDialog& other) = delete;

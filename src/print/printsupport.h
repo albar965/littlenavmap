@@ -51,7 +51,7 @@ class PrintSupport
   Q_DECLARE_TR_FUNCTIONS(PrintSupport)
 
 public:
-  PrintSupport(MainWindow *parent);
+  explicit PrintSupport(MainWindow *parent);
   virtual ~PrintSupport() override;
 
   PrintSupport(const PrintSupport& other) = delete;

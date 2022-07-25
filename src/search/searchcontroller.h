@@ -68,7 +68,7 @@ class SearchController :
   Q_OBJECT
 
 public:
-  SearchController(QMainWindow *parent, QTabWidget *tabWidgetSearchParam);
+  explicit SearchController(QMainWindow *parent, QTabWidget *tabWidgetSearchParam);
   virtual ~SearchController() override;
 
   SearchController(const SearchController& other) = delete;

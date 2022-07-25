@@ -42,7 +42,7 @@ class CoordinateDialog :
   Q_OBJECT
 
 public:
-  CoordinateDialog(QWidget *parent, const atools::geo::Pos& pos);
+  explicit CoordinateDialog(QWidget *parent, const atools::geo::Pos& pos);
   virtual ~CoordinateDialog() override;
 
   CoordinateDialog(const CoordinateDialog& other) = delete;

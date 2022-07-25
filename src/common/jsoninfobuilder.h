@@ -33,7 +33,7 @@ class JsonInfoBuilder : public AbstractInfoBuilder
 {
   Q_OBJECT
 public:
-  JsonInfoBuilder(QObject *parent);
+  explicit JsonInfoBuilder(QObject *parent);
   virtual ~JsonInfoBuilder();
   JsonInfoBuilder(const JsonInfoBuilder& other) = delete;
   JsonInfoBuilder& operator=(const JsonInfoBuilder& other) = delete;

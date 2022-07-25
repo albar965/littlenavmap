@@ -56,7 +56,7 @@ class ConnectClient :
   Q_OBJECT
 
 public:
-  ConnectClient(MainWindow *parent);
+  explicit ConnectClient(MainWindow *parent);
   virtual ~ConnectClient() override;
 
   ConnectClient(const ConnectClient& other) = delete;

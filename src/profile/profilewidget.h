@@ -62,7 +62,7 @@ class ProfileWidget :
   Q_OBJECT
 
 public:
-  ProfileWidget(QWidget *parent);
+  explicit ProfileWidget(QWidget *parent);
   virtual ~ProfileWidget() override;
 
   ProfileWidget(const ProfileWidget& other) = delete;

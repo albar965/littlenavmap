@@ -72,7 +72,7 @@ class LogdataController :
   Q_OBJECT
 
 public:
-  LogdataController(atools::fs::userdata::LogdataManager *logdataManager, MainWindow *parent);
+  explicit LogdataController(atools::fs::userdata::LogdataManager *logdataManager, MainWindow *parent);
   virtual ~LogdataController() override;
 
   LogdataController(const LogdataController& other) = delete;

@@ -66,7 +66,7 @@ class WeatherReporter :
 
 public:
   /* @param type flight simulator type needed to find Active Sky weather file. */
-  WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type);
+  explicit WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type);
   virtual ~WeatherReporter() override;
 
   WeatherReporter(const WeatherReporter& other) = delete;

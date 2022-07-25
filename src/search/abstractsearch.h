@@ -41,7 +41,7 @@ class AbstractSearch :
   Q_OBJECT
 
 public:
-  AbstractSearch(QMainWindow *parent, si::TabSearchId tabWidgetIndex);
+  explicit AbstractSearch(QMainWindow *parent, si::TabSearchId tabWidgetIndex);
   virtual ~AbstractSearch() override;
 
   /* Disconnect and reconnect queries on database change */

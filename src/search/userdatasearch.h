@@ -43,7 +43,7 @@ class UserdataSearch :
   Q_OBJECT
 
 public:
-  UserdataSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex);
+  explicit UserdataSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex);
   virtual ~UserdataSearch() override;
 
   UserdataSearch(const UserdataSearch& other) = delete;

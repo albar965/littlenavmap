@@ -47,7 +47,7 @@ class CsvExporter :
   Q_DECLARE_TR_FUNCTIONS(CsvExporter)
 
 public:
-  CsvExporter(QWidget *parentWidget, SqlController *controllerParam);
+  explicit CsvExporter(QWidget *parentWidget, SqlController *controllerParam);
   virtual ~CsvExporter() override;
 
   /* Copies selection in table as CSV. */

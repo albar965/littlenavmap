@@ -39,7 +39,7 @@ public:
   /*
    * @param pathMap which might be changed by the dialog
    */
-  DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap);
+  explicit DatabaseDialog(QWidget *parent, const SimulatorTypeMap& pathMap);
   virtual ~DatabaseDialog() override;
 
   /* Get the base path of the currently selected simulator in the combo box */

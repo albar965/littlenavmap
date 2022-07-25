@@ -53,7 +53,7 @@ class SqlProxyModel :
   Q_OBJECT
 
 public:
-  SqlProxyModel(QObject *parent, SqlModel *sqlModel);
+  explicit SqlProxyModel(QObject *parent, SqlModel *sqlModel);
   virtual ~SqlProxyModel() override;
 
   /*

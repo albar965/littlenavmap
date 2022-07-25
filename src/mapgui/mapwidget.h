@@ -89,7 +89,7 @@ class MapWidget :
   Q_OBJECT
 
 public:
-  MapWidget(MainWindow *parent);
+  explicit MapWidget(MainWindow *parent);
   virtual ~MapWidget() override;
 
   MapWidget(const MapWidget& other) = delete;

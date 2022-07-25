@@ -49,7 +49,7 @@ public:
    * @param sqlDb database to use
    * @param columnList column descriptors that will be used to build the SQL queries
    */
-  SqlModel(QWidget *parent, atools::sql::SqlDatabase *sqlDb, const ColumnList *columnList);
+  explicit SqlModel(QWidget *parent, atools::sql::SqlDatabase *sqlDb, const ColumnList *columnList);
   virtual ~SqlModel() override;
 
   /* Filter by using query builder callback */

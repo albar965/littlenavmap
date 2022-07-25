@@ -118,7 +118,7 @@ class AirportSliderAction
   Q_OBJECT
 
 public:
-  AirportSliderAction(QObject *parent);
+  explicit AirportSliderAction(QObject *parent);
 
   /* value or -1 for leftmost in local units */
   int getSliderValue() const;

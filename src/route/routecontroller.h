@@ -76,7 +76,7 @@ class RouteController :
   Q_OBJECT
 
 public:
-  RouteController(QMainWindow *parent, QTableView *tableView);
+  explicit RouteController(QMainWindow *parent, QTableView *tableView);
   virtual ~RouteController() override;
 
   RouteController(const RouteController& other) = delete;

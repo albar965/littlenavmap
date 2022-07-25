@@ -60,7 +60,7 @@ class OptionsDialog :
   Q_OBJECT
 
 public:
-  OptionsDialog(QMainWindow *parentWindow);
+  explicit OptionsDialog(QMainWindow *parentWindow);
   virtual ~OptionsDialog() override;
 
   OptionsDialog(const OptionsDialog& other) = delete;

@@ -34,7 +34,7 @@ class RandomDepartureAirportPickingByCriteria :
   Q_OBJECT
 
 public:
-  RandomDepartureAirportPickingByCriteria(QObject *parent);
+  explicit RandomDepartureAirportPickingByCriteria(QObject *parent);
 
   // required calling !!
   static void initStatics(int countResult, int randomLimit, QVector<std::pair<int, atools::geo::Pos> > *data, int distanceMinMeter,

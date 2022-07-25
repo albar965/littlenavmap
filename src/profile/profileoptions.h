@@ -101,7 +101,7 @@ class ProfileOptions
   Q_DECLARE_TR_FUNCTIONS(ProfileOptions)
 
 public:
-  ProfileOptions(QWidget *parentWidgetParam);
+  explicit ProfileOptions(QWidget *parentWidgetParam);
 
   /* Show edit dialog and return true if user hit ok */
   bool showOptions();

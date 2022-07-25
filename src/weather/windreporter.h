@@ -254,7 +254,7 @@ class WindSliderAction
   Q_OBJECT
 
 public:
-  WindSliderAction(QObject *parent);
+  explicit WindSliderAction(QObject *parent);
 
   int getAltitudeFt() const;
 

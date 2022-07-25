@@ -48,7 +48,7 @@ public:
 
   }
 
-  RouteLeg(atools::fs::pln::Flightplan *parentFlightplan);
+  explicit RouteLeg(atools::fs::pln::Flightplan *parentFlightplan);
 
   /*
    * Creates a route map object from a flight plan entry. Queries the database for existing navaids and airports.

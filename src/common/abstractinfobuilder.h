@@ -52,7 +52,7 @@ class AbstractInfoBuilder : public QObject
   Q_OBJECT
 
 public:
-  AbstractInfoBuilder(QObject *parent);
+  explicit AbstractInfoBuilder(QObject *parent);
   virtual ~AbstractInfoBuilder();
   AbstractInfoBuilder(const AbstractInfoBuilder& other) = delete;
   AbstractInfoBuilder& operator=(const AbstractInfoBuilder& other) = delete;

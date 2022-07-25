@@ -51,7 +51,7 @@ class InfoController :
   Q_OBJECT
 
 public:
-  InfoController(MainWindow *parent);
+  explicit InfoController(MainWindow *parent);
   virtual ~InfoController() override;
 
   InfoController(const InfoController& other) = delete;

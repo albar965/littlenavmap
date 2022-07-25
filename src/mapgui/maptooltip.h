@@ -53,7 +53,7 @@ class MapTooltip
   Q_DECLARE_TR_FUNCTIONS(MapTooltip)
 
 public:
-  MapTooltip(MainWindow *parentWindow);
+  explicit MapTooltip(MainWindow *parentWindow);
   virtual ~MapTooltip();
 
   /*

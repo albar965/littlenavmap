@@ -43,7 +43,7 @@ class AirportSearch :
   Q_OBJECT
 
 public:
-  AirportSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex);
+  explicit AirportSearch(QMainWindow *parent, QTableView *tableView, si::TabSearchId tabWidgetIndex);
   virtual ~AirportSearch() override;
 
   AirportSearch(const AirportSearch& other) = delete;
