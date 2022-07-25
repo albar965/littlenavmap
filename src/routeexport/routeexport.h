@@ -224,7 +224,7 @@ public:
   }
 
   /* Warning dialog when changing export options */
-  void warnExportOptions(bool checked);
+  void warnExportOptionsFromMenu(bool checked);
 
 signals:
   /* Show airport on map to allow parking selection */
@@ -237,6 +237,9 @@ signals:
   void  optionsUpdated();
 
 private:
+  /* Warning dialog when changing export options */
+  void warnExportOptions();
+
   /* Build filename according to pattern set in options. Uses pattern including file suffix from format.
    * Special characters are removed if normalize is true */
   QString buildDefaultFilename(const RouteExportFormat& format, bool normalize = false);
@@ -314,6 +317,9 @@ private:
 
   /* true if any formats are selected for multiexport */
   bool selected = false;
+
+  /* Show warning dialog about wrong format selection each session */
+  bool warnedFormatOptions = false;
 };
 
 #endif // LNM_ROUTEEXPORT_H

@@ -1027,9 +1027,9 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::optionsChanged);
 
   // Warning when selecting export options ===================================================================
-  connect(ui->actionRouteSaveApprWaypoints, &QAction::toggled, routeExport, &RouteExport::warnExportOptions);
-  connect(ui->actionRouteSaveSidStarWaypoints, &QAction::toggled, routeExport, &RouteExport::warnExportOptions);
-  connect(ui->actionRouteSaveAirwayWaypoints, &QAction::toggled, routeExport, &RouteExport::warnExportOptions);
+  connect(ui->actionRouteSaveApprWaypoints, &QAction::toggled, routeExport, &RouteExport::warnExportOptionsFromMenu);
+  connect(ui->actionRouteSaveSidStarWaypoints, &QAction::toggled, routeExport, &RouteExport::warnExportOptionsFromMenu);
+  connect(ui->actionRouteSaveAirwayWaypoints, &QAction::toggled, routeExport, &RouteExport::warnExportOptionsFromMenu);
 
   // Updated manually in dialog
   // connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getWebController(), &WebController::optionsChanged);

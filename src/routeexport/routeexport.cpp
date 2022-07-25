@@ -1209,6 +1209,9 @@ bool RouteExport::routeExportHtml(const RouteExportFormat& format)
 
 bool RouteExport::routeValidateMulti(const RouteExportFormat& format)
 {
+  if(format.getType() != rexp::LNMPLN)
+    warnExportOptions();
+
   if(format.isMulti())
     // Constraints are validated before running the export loop
     return true;
@@ -1951,19 +1954,32 @@ void RouteExport::writeIvapLine(QTextStream& stream, const QString& key, int val
     stream << "\r\n";
 }
 
-void RouteExport::warnExportOptions(bool checked)
+void RouteExport::warnExportOptionsFromMenu(bool checked)
 {
   if(checked)
+    warnExportOptions();
+}
+
+void RouteExport::warnExportOptions()
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  if(!warnedFormatOptions && (ui->actionRouteSaveApprWaypoints->isChecked() || ui->actionRouteSaveSidStarWaypoints->isChecked() ||
+                              ui->actionRouteSaveAirwayWaypoints->isChecked()))
   {
-    QString message = tr("<p>Note that saving flight plans with one or more export options enabled can cause unexpected issues:</p>"
+    QString message = tr("<p>Note that saving flight plans with one or more enabled options in menu \"File\" -> \"Export Options\" "
+                           "can cause unexpected issues:</p>"
                            "<ul>"
                              "<li>Procedure and/or airway information will be missing when reloading the exported flight plans.</li>"
-                               "<li>Several approach procedure leg types like holds, turns and turns cannot be shown properly in simulators or aircraft.</li>"
+                               "<li>Several approach procedure leg types like holds and turns cannot be shown properly in simulators or aircraft.</li>"
                                  "<li>Speed and altitude restrictions are not included in the exported flight plan.</li>"
                                  "</ul>"
                                  "<p>This does not apply to the the native LNMPLN file format.</p>"
                                    "<p><b>Normally you should not use these export options.</b></p>");
 
-    dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_FILE_EXPORT_OPTIONS_WARN, message, tr("Do not &show this dialog again."));
+    QMessageBox::warning(mainWindow, QApplication::applicationName(), message);
+
+    // Dialog will show once per session
+    warnedFormatOptions = true;
   }
 }
