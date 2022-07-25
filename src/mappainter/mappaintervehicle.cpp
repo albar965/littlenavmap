@@ -217,8 +217,20 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, int size, const SimCo
       }
     }
 
+    const Pos& pos = aircraft.getPosition();
+    const Pos& userPos = mapPaintWidget->getUserAircraft().getPosition();
+    if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_DIST_BEARING_FROM_USER))
+    {
+      float distMeter = pos.distanceMeterTo(userPos);
+
+      if(distMeter < atools::geo::nmToMeter(8000.f))
+        texts.append(tr("From User %1 %2°M").
+                     arg(Unit::distMeter(distMeter, true /* addUnit */, 5 /* minValPrec */, true /* narrow */)).
+                     arg(QString::number(atools::geo::normalizeCourse(userPos.angleDegTo(pos) - NavApp::getMagVar(userPos)), 'f', 0)));
+    }
+
     if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_COORDINATES))
-      texts.append(Unit::coords(aircraft.getPosition()));
+      texts.append(Unit::coords(pos));
 
     int transparency = context->flags2.testFlag(opts2::MAP_AI_TEXT_BACKGROUND) ? 255 : 0;
 
