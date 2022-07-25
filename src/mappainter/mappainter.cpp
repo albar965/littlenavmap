@@ -584,6 +584,7 @@ void MapPainter::drawLine(Marble::GeoPainter *painter, const atools::geo::Line& 
       drawLineString(painter, LineString(line.getPos1(), line.getPos2()));
   }
 }
+
 void MapPainter::drawLineRadial(Marble::GeoPainter *painter, const atools::geo::Line& line, bool noRecurse)
 {
   if(line.isValid() && !line.isPoint())
@@ -981,11 +982,6 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
           }
         }
 
-        // Do not use transparency but override from options
-        QColor textCol = context->darkMap ? mapcolors::msaDiagramNumberColorDark : mapcolors::msaDiagramNumberColor;
-        textCol.setAlphaF(1. - context->transparencyAirportMsa);
-        context->painter->setPen(textCol);
-
         // Calculate font size from radius
         float fontSize = scale->getPixelForNm(msa.radius) / 8.f * context->textSizeAirportMsa;
 
@@ -993,23 +989,31 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
           // Larger font for full circle restriction
           fontSize *= 2.f;
 
-        QFont font = context->painter->font();
-        font.setPixelSize(atools::roundToInt(fontSize));
-        context->painter->setFont(font);
-
-        // Draw altitude labels ===================================================================
-        for(int i = 0; i < msa.altitudes.size(); i++)
+        if(fontSize > 4.f)
         {
-          const atools::geo::Pos& labelPos = msa.labelPositions.value(i);
+          // Do not use transparency but override from options
+          QColor textCol = context->darkMap ? mapcolors::msaDiagramNumberColorDark : mapcolors::msaDiagramNumberColor;
+          textCol.setAlphaF(1. - context->transparencyAirportMsa);
+          context->painter->setPen(textCol);
 
-          float xp, yp;
-          bool visible = wToS(labelPos, xp, yp, scale->getScreeenSizeForRect(msa.bounding));
+          QFont font = context->painter->font();
+          font.setPixelSize(atools::roundToInt(fontSize));
+          context->painter->setFont(font);
 
-          if(visible)
+          // Draw altitude labels ===================================================================
+          for(int i = 0; i < msa.altitudes.size(); i++)
           {
-            QString text = Unit::altFeet(msa.altitudes.at(i), true /* addUnit */, true /* narrow */);
-            QSizeF txtsize = painter->fontMetrics().boundingRect(text).size();
-            painter->drawText(QPointF(xp - txtsize.width() / 2., yp + txtsize.height() / 2.), text);
+            const atools::geo::Pos& labelPos = msa.labelPositions.value(i);
+
+            float xp, yp;
+            bool visible = wToS(labelPos, xp, yp, scale->getScreeenSizeForRect(msa.bounding));
+
+            if(visible)
+            {
+              QString text = Unit::altFeet(msa.altitudes.at(i), true /* addUnit */, true /* narrow */);
+              QSizeF txtsize = painter->fontMetrics().boundingRect(text).size();
+              painter->drawText(QPointF(xp - txtsize.width() / 2., yp + txtsize.height() / 2.), text);
+            }
           }
         }
       }
