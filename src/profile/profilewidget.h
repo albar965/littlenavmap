@@ -177,6 +177,8 @@ public:
     return profileOptions;
   }
 
+  float getGroundBufferForLegFt(int legIndex);
+
 signals:
   /* Emitted when the mouse cursor hovers over the map profile.
    * @param pos Position on the map display.
@@ -185,6 +187,9 @@ signals:
 
   /* Show flight plan waypoint or user position on map */
   void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
+
+  /* Background calculations finished */
+  void profileAltCalculationFinished();
 
 private:
   /* Show position at x ordinate on profile on the map */
@@ -213,12 +218,13 @@ private:
   void calcLeftMargin();
 
   void terminateThread();
-  float calcGroundBuffer(float maxElevation);
+  float calcGroundBufferFt(float maxElevationFt);
 
   void updateLabel();
 
   /* Calculate map position on flight plan for x screen/widget position on profile.
-   *  Additionally gives index into route, distances from/to and altitude at x. maxElev is minimum elevation for leg */
+   * Additionally gives index into route, distances from/to and altitude at x. maxElev is minimum elevation for leg.
+   * Distances in NM and altitudes in feet. */
   void calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& routeIndex, float& distance, float& distanceToGo,
                                 float& groundElevation, float& maxElev);
 
@@ -270,25 +276,6 @@ private:
   /* Shows the display options dialog */
   void showDisplayOptions();
 
-  /* Scale levels to test for display */
-  static Q_DECL_CONSTEXPR int NUM_SCALE_STEPS = 5;
-  const int SCALE_STEPS[NUM_SCALE_STEPS] = {500, 1000, 2000, 5000, 10000};
-  /* Scales should be at least this amount of pixels apart */
-  static Q_DECL_CONSTEXPR int MIN_SCALE_SCREEN_DISTANCE = 25;
-  int left = 30; /* Left margin inside widget - calculated depending on font and text size in paint */
-  const int TOP = 16; /* Top margin inside widget */
-
-  /* Thread will start after this delay if route was changed */
-  static Q_DECL_CONSTEXPR int ROUTE_CHANGE_UPDATE_TIMEOUT_MS = 200;
-  static Q_DECL_CONSTEXPR int ROUTE_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS = 100;
-
-  /* Thread will start after this delay if an elevation update arrives */
-  static Q_DECL_CONSTEXPR int ELEVATION_CHANGE_ONLINE_UPDATE_TIMEOUT_MS = 5000;
-  static Q_DECL_CONSTEXPR int ELEVATION_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS = 100;
-
-  /* Do not calculate a profile for legs longer than this value */
-  static Q_DECL_CONSTEXPR int ELEVATION_MAX_LEG_NM = 2000;
-
   /* User aircraft data */
   atools::fs::sc::SimConnectData simData, lastSimData;
 
@@ -337,6 +324,9 @@ private:
 
   float verticalScale = 1.f /* Factor to convert altitude in feet to screen coordinates*/,
         horizontalScale = 1.f /* Factor to convert distance along flight plan in nautical miles to screen coordinates*/;
+
+  /* Left margin inside widget - calculated depending on font and text size in paint */
+  int left = 30;
 
   /* Numbers for aircraft track */
   static Q_DECL_CONSTEXPR quint32 FILE_MAGIC_NUMBER = 0x6B7C2A3C;

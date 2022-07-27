@@ -219,6 +219,7 @@ public:
   static const atools::geo::Rect& getRouteRect();
 
   static const RouteAltitude& getAltitudeLegs();
+  static float getGroundBufferForLegFt(int legIndex);
 
   static float getRouteCruiseSpeedKts();
   static float getRouteCruiseAltFt();

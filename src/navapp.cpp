@@ -589,6 +589,14 @@ const RouteAltitude& NavApp::getAltitudeLegs()
   return mainWindow->getRouteController()->getRoute().getAltitudeLegs();
 }
 
+float NavApp::getGroundBufferForLegFt(int legIndex)
+{
+  if(mainWindow->getProfileWidget() != nullptr)
+    return mainWindow->getProfileWidget()->getGroundBufferForLegFt(legIndex);
+  else
+    return map::INVALID_ALTITUDE_VALUE;
+}
+
 float NavApp::getRouteCruiseSpeedKts()
 {
   return aircraftPerfController->getRouteCruiseSpeedKts();

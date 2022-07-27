@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,9 +28,8 @@
 #include "ui_mainwindow.h"
 #include "common/symbolpainter.h"
 #include "util/htmlbuilder.h"
-#include "route/routecontroller.h"
+#include "route/route.h"
 #include "route/routealtitude.h"
-#include "common/aircrafttrack.h"
 #include "common/unit.h"
 #include "common/formatter.h"
 #include "settings/settings.h"
@@ -54,6 +53,28 @@
 #include <marble/ElevationModel.h>
 #include <marble/GeoDataCoordinates.h>
 #include <marble/GeoDataLineString.h>
+
+/* Scale levels to test for display */
+static const int NUM_SCALE_STEPS = 5;
+static const int SCALE_STEPS[NUM_SCALE_STEPS] = {500, 1000, 2000, 5000, 10000};
+/* Scales should be at least this amount of pixels apart */
+static const int MIN_SCALE_SCREEN_DISTANCE = 25;
+const int TOP = 16; /* Top margin inside widget */
+
+/* Thread will start after this delay if route was changed */
+static const int ROUTE_CHANGE_UPDATE_TIMEOUT_MS = 200;
+static const int ROUTE_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS = 100;
+
+/* Thread will start after this delay if an elevation update arrives */
+static const int ELEVATION_CHANGE_ONLINE_UPDATE_TIMEOUT_MS = 5000;
+static const int ELEVATION_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS = 100;
+
+// Defines a rectangle where five points are sampled and the maximum altitude is used.
+// Results in a sample rectangle with ELEVATION_SAMPLE_RADIUS_NM * ELEVATION_SAMPLE_RADIUS_NM size
+static const float ELEVATION_SAMPLE_RADIUS_NM = 0.25f;
+
+/* Do not calculate a profile for legs longer than this value */
+static const int ELEVATION_MAX_LEG_NM = 2000;
 
 /* Maximum delta values depending on update rate in options */
 // int manhattanLengthDelta;
@@ -350,12 +371,26 @@ void ProfileWidget::disconnectedFromSimulator()
   scrollArea->hideTooltip();
 }
 
-float ProfileWidget::calcGroundBuffer(float maxElevation)
+float ProfileWidget::getGroundBufferForLegFt(int legIndex)
 {
-  float groundBuffer = Unit::rev(OptionData::instance().getRouteGroundBuffer(), Unit::altFeetF);
-  float roundBuffer = Unit::rev(500.f, Unit::altFeetF);
+  if(atools::inRange(legList->elevationLegs, legIndex))
+    return calcGroundBufferFt(legList->elevationLegs.value(legIndex).maxElevation);
+  else
+    return map::INVALID_ALTITUDE_VALUE;
+}
 
-  return std::ceil((maxElevation + groundBuffer) / roundBuffer) * roundBuffer;
+float ProfileWidget::calcGroundBufferFt(float maxElevationFt)
+{
+  if(maxElevationFt < map::INVALID_ALTITUDE_VALUE)
+  {
+    // Revert local units to feet
+    float groundBufferFt = Unit::rev(OptionData::instance().getRouteGroundBuffer(), Unit::altFeetF);
+    float roundBufferFt = Unit::rev(500.f, Unit::altFeetF);
+
+    return std::ceil((maxElevationFt + groundBufferFt) / roundBufferFt) * roundBufferFt;
+  }
+  else
+    return map::INVALID_ALTITUDE_VALUE;
 }
 
 void ProfileWidget::updateScreenCoords()
@@ -372,9 +407,9 @@ void ProfileWidget::updateScreenCoords()
 
   // Update elevation polygon
   // Add 1000 ft buffer and round up to the next 500 feet
-  minSafeAltitudeFt = calcGroundBuffer(legList->maxElevationFt);
+  minSafeAltitudeFt = calcGroundBufferFt(legList->maxElevationFt);
 
-  if(profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_SAFE_ALTITUDE))
+  if(profileOptions->getDisplayOptions().testFlag(optsp::PROFILE_SAFE_ALTITUDE) && minSafeAltitudeFt < map::INVALID_ALTITUDE_VALUE)
     maxWindowAlt = std::max(minSafeAltitudeFt, legList->route.getCruisingAltitudeFeet());
   else
     maxWindowAlt = legList->route.getCruisingAltitudeFeet();
@@ -487,7 +522,7 @@ bool ProfileWidget::hasValidRouteForDisplay() const
 
 int ProfileWidget::altitudeY(float altitudeFt) const
 {
-  if(altitudeFt < map::INVALID_DISTANCE_VALUE)
+  if(altitudeFt < map::INVALID_ALTITUDE_VALUE)
     return static_cast<int>(rect().height() - altitudeFt * verticalScale);
   else
     return map::INVALID_INDEX_VALUE;
@@ -882,9 +917,12 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         // Skip zero length segments to avoid dots on the graph
         continue;
 
-      const ElevationLeg& leg = legList->elevationLegs.at(i);
-      int lineY = TOP + static_cast<int>(h - calcGroundBuffer(leg.maxElevation) * verticalScale);
-      painter.drawLine(waypointX.value(i, 0), lineY, waypointX.value(i + 1, 0), lineY);
+      float groundBuffer = getGroundBufferForLegFt(i);
+      if(groundBuffer < map::INVALID_ALTITUDE_VALUE)
+      {
+        int lineY = TOP + static_cast<int>(h - groundBuffer * verticalScale);
+        painter.drawLine(waypointX.value(i, 0), lineY, waypointX.value(i + 1, 0), lineY);
+      }
     }
   }
 
@@ -1806,6 +1844,9 @@ void ProfileWidget::updateThreadFinished()
 
     // Update scroll bars
     scrollArea->routeChanged(true);
+
+    // Update flight plan table and others
+    emit profileAltCalculationFinished();
   }
 }
 
@@ -1837,7 +1878,7 @@ bool ProfileWidget::fetchRouteElevations(atools::geo::LineString& elevations, co
 
         p1.toDeg();
         p2.toDeg();
-        elevationProvider->getElevations(elevations, atools::geo::Line(p1, p2));
+        elevationProvider->getElevations(elevations, atools::geo::Line(p1, p2), atools::geo::nmToMeter(ELEVATION_SAMPLE_RADIUS_NM));
       }
     }
     qDeleteAll(coordsCorrected);
@@ -2014,9 +2055,9 @@ void ProfileWidget::hideEvent(QHideEvent *)
 atools::geo::Pos ProfileWidget::calculatePos(int x)
 {
   atools::geo::Pos pos;
-  int index;
-  float distance, distanceToGo, alt, maxElev;
-  calculateDistancesAndPos(x, pos, index, distance, distanceToGo, alt, maxElev);
+  int indexDummy;
+  float distDummy, distToGoDummy, altDummy, maxElevDummy;
+  calculateDistancesAndPos(x, pos, indexDummy, distDummy, distToGoDummy, altDummy, maxElevDummy);
   return pos;
 }
 
@@ -2073,7 +2114,7 @@ void ProfileWidget::calculateDistancesAndPos(int x, atools::geo::Pos& pos, int& 
   groundElevation = (alt1 + alt2) / 2.f;
 
   // Calculate min altitude for this leg
-  maxElev = calcGroundBuffer(leg.maxElevation);
+  maxElev = calcGroundBufferFt(leg.maxElevation);
 
   // Get Position for highlight on map
   float legdistpart = distance - static_cast<float>(leg.distances.constFirst());

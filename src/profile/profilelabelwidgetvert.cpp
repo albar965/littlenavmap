@@ -124,9 +124,13 @@ void ProfileLabelWidgetVert::paintEvent(QPaintEvent *)
       {
         if(safeAltY > -5 && safeAltY < h + 5)
         {
-          QString str = Unit::altFeet(profileWidget->getMinSafeAltitudeFt());
-          symPainter.textBox(&painter, {str}, mapcolors::profileSafeAltLinePen, w - 2, safeAltY, atts, 255, baseColor);
-          maxw = std::max(metrics.boundingRect(str).width(), maxw);
+          float minSafeAltitudeFt = profileWidget->getMinSafeAltitudeFt();
+          if(minSafeAltitudeFt < map::INVALID_ALTITUDE_VALUE)
+          {
+            QString str = Unit::altFeet(minSafeAltitudeFt);
+            symPainter.textBox(&painter, {str}, mapcolors::profileSafeAltLinePen, w - 2, safeAltY, atts, 255, baseColor);
+            maxw = std::max(metrics.boundingRect(str).width(), maxw);
+          }
         }
       }
 

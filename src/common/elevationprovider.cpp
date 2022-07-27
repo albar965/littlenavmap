@@ -60,13 +60,13 @@ void ElevationProvider::marbleUpdateAvailable()
     emit updateAvailable();
 }
 
-float ElevationProvider::getElevationMeter(const atools::geo::Pos& pos)
+float ElevationProvider::getElevationMeter(const atools::geo::Pos& pos, float sampleRadiusMeter)
 {
   QMutexLocker locker(&mutex);
 
   if(isGlobeOfflineProvider())
   {
-    float elevation = globeReader->getElevation(pos);
+    float elevation = globeReader->getElevation(pos, sampleRadiusMeter);
     if(!(elevation > atools::fs::common::OCEAN && elevation < atools::fs::common::INVALID))
       return 0.f;
     else
@@ -76,7 +76,7 @@ float ElevationProvider::getElevationMeter(const atools::geo::Pos& pos)
     return 0.f;
 }
 
-void ElevationProvider::getElevations(atools::geo::LineString& elevations, const atools::geo::Line& line)
+void ElevationProvider::getElevations(atools::geo::LineString& elevations, const atools::geo::Line& line, float sampleRadiusMeter)
 {
   if(!line.isValid())
     return;
@@ -85,7 +85,7 @@ void ElevationProvider::getElevations(atools::geo::LineString& elevations, const
 
   if(isGlobeOfflineProvider())
   {
-    globeReader->getElevations(elevations, LineString(line.getPos1(), line.getPos2()));
+    globeReader->getElevations(elevations, LineString(line.getPos1(), line.getPos2()), sampleRadiusMeter);
     for(Pos& pos : elevations)
     {
       float alt = pos.getAltitude();

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -86,6 +86,8 @@ namespace rcol {
 // Route table column indexes
 enum RouteColumns
 {
+  /* Column indexes. Saved through view in RouteLabel::saveState()
+   * Update RouteController::routeColumns and RouteController::routeColumnDescription when adding new values */
   FIRST_COLUMN,
   IDENT = FIRST_COLUMN,
   REGION,
@@ -107,13 +109,15 @@ enum RouteColumns
   WIND,
   WIND_HEAD_TAIL,
   ALTITUDE,
+  SAFE_ALTITUDE,
   LATITUDE,
   LONGITUDE,
   RECOMMENDED,
   REMARKS,
   LAST_COLUMN = REMARKS,
 
-  // Not column names but identifiers for the tree dialog - not saved
+  /* Not column names but identifiers for the tree dialog
+   * Not saved directly but state is saved in RouteLabel::saveState() */
   HEADER_AIRPORTS = 1000,
   HEADER_TAKEOFF,
   HEADER_DEPARTURE,
@@ -164,6 +168,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
     tr("Wind\n°M/%speed%"),
     tr("Head- or Tailwind\n%speed%"),
     tr("Altitude\n%alt%"),
+    tr("Leg Safe Alt.\n%alt%"),
     tr("Latitude"),
     tr("Longitude"),
     tr("Related\nIdent/Freq./Dist./Bearing"),
@@ -171,16 +176,16 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   routeColumnDescription = QList<QString>({
     tr("ICAO ident of the navaid or airport."),
-    tr("Two letter region code of a navaid."),
-    tr("Name of airport or  navaid."),
+    tr("Two letter ICAO region code of a navaid."),
+    tr("Name of airport or navaid."),
     tr("Either SID, SID transition, STAR, STAR transition, transition,\n"
        "approach or missed plus the name of the procedure."),
     tr("Contains the airway name for en route legs or procedure instruction."),
     tr("Minimum and maximum altitude for en route airway segments.\n"
        "Procedure altitude restriction, speed limit or\n"
        "required descent flight path angle."),
-    tr("Type of a radio navaid. Shows ILS or LOC for\n"
-       "localizer approaches on the last runway leg."),
+    tr("Type of a radio navaid. Shows ILS, LOC or other for\n"
+       "approaches like ILS or localizer on the last runway leg."),
     tr("Frequency or channel of a radio navaid.\n"
        "Also shows ILS or localizer frequency for corresponding approaches\n"
        "on the last runway leg."),
@@ -189,25 +194,33 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
        "connecting the two waypoints of the leg."),
     tr("True start course of the great circle route connecting\n"
        "the two waypoints of the leg."),
-    tr("Distance of the flight plan leg."),
-    tr("Remaining distance to destination airport or procedure end point."),
+    tr("Length of the flight plan leg."),
+    tr("Remaining distance to destination airport or procedure end point.\n"
+       "Static value. Does not update while flying."),
     tr("Flying time for this leg.\n"
-       "Calculated based on the selected aircraft performance profile."),
+       "Calculated based on the selected aircraft performance profile.\n"
+       "Static value. Does not update while flying."),
     tr("Estimated time of arrival.\n"
-       "Calculated based on the selected aircraft performance profile."),
+       "Calculated based on the selected aircraft performance profile.\n"
+       "Static value. Does not update while flying."),
     tr("Fuel weight remaining at waypoint, once for volume and once for weight.\n"
-       "Calculated based on the aircraft performance profile."),
+       "Calculated based on the aircraft performance profile.\n"
+       "Static value. Does not update while flying."),
     tr("Fuel volume remaining at waypoint, once for volume and once for weight.\n"
-       "Calculated based on the aircraft performance profile."),
+       "Calculated based on the aircraft performance profile.\n"
+       "Static value. Does not update while flying."),
     tr("Wind direction and speed at waypoint."),
     tr("Head- or tailwind at waypoint."),
     tr("Altitude at waypoint\n"
        "Calculated based on the aircraft performance profile."),
+    tr("Safe altitude for a flight plan leg depending on ground elevation\n"
+       "and options on page \"Flight Plan\"."),
     tr("Waypoint latitude in format as selected in options."),
     tr("Waypoint longitude in format as selected in options."),
     tr("Related or recommended navaid for procedure legs.\n"
        "Shown with navaid ident, navaid frequency, distance and bearing defining a fix."),
-    tr("Turn instructions, flyover or related navaid for procedure legs.")
+    tr("Turn instructions, flyover, related navaid for procedure legs or\n"
+       "or remarks entered by user.")
   });
 
   flightplanIO = new atools::fs::pln::FlightplanIO();
@@ -779,7 +792,7 @@ void RouteController::aircraftPerformanceChanged()
   // Needs to be called with empty route as well to update the error messages
   route.updateLegAltitudes();
 
-  updateModelTimeFuelWind();
+  updateModelTimeFuelWindAlt();
   updateModelHighlights();
   highlightNextWaypoint(route.getActiveLegIndexCorrected());
 
@@ -793,12 +806,13 @@ void RouteController::aircraftPerformanceChanged()
 void RouteController::windUpdated()
 {
   qDebug() << Q_FUNC_INFO;
+
   if(!route.isEmpty())
   {
     // Get type, speed and cruise altitude from widgets
     route.updateLegAltitudes();
 
-    updateModelTimeFuelWind();
+    updateModelTimeFuelWindAlt();
     updateModelHighlights();
     highlightNextWaypoint(route.getActiveLegIndexCorrected());
   }
@@ -837,7 +851,7 @@ void RouteController::routeAltChangedDelayed()
   route.updateLegAltitudes();
 
   // Update performance
-  updateModelTimeFuelWind();
+  updateModelTimeFuelWindAlt();
   updateModelHighlights();
   highlightNextWaypoint(route.getActiveLegIndexCorrected());
 
@@ -1712,7 +1726,6 @@ void RouteController::calculateRouteWindowFull()
   calculateRouteWindowShow();
 }
 
-
 void RouteController::calculateRouteWindowShow()
 {
   qDebug() << Q_FUNC_INFO;
@@ -2385,10 +2398,11 @@ void RouteController::routeTableOptions()
   {
     treeDialog.saveState(false /* saveCheckState */, true /* saveExpandState */);
 
-    // Hiddend sections are saved with the view
+    // Hidden sections are saved with the view
     for(int col = rcol::LAST_COLUMN; col >= rcol::FIRST_COLUMN; col--)
       header->setSectionHidden(col, !treeDialog.isItemChecked(col));
 
+    // Set label options ==========================
     routeLabel->setHeaderAirports(treeDialog.isItemChecked(rcol::HEADER_AIRPORTS));
     routeLabel->setHeaderRunwayTakeoff(treeDialog.isItemChecked(rcol::HEADER_TAKEOFF));
     routeLabel->setHeaderDeparture(treeDialog.isItemChecked(rcol::HEADER_DEPARTURE));
@@ -2399,7 +2413,8 @@ void RouteController::routeTableOptions()
     routeLabel->setFooterSelection(treeDialog.isItemChecked(rcol::FOOTER_SELECTION));
     routeLabel->setFooterError(treeDialog.isItemChecked(rcol::FOOTER_ERROR));
 
-    updateModelTimeFuelWind();
+    // Update all =====================
+    updateModelTimeFuelWindAlt();
     updateModelHighlights();
 
     routeLabel->updateHeaderLabel();
@@ -4418,6 +4433,7 @@ void RouteController::updateTableModel()
     itemRow[rcol::WIND]->setTextAlignment(Qt::AlignRight);
     itemRow[rcol::WIND_HEAD_TAIL]->setTextAlignment(Qt::AlignRight);
     itemRow[rcol::ALTITUDE]->setTextAlignment(Qt::AlignRight);
+    itemRow[rcol::SAFE_ALTITUDE]->setTextAlignment(Qt::AlignRight);
     itemRow[rcol::LATITUDE]->setTextAlignment(Qt::AlignRight);
     itemRow[rcol::LONGITUDE]->setTextAlignment(Qt::AlignRight);
 
@@ -4428,7 +4444,7 @@ void RouteController::updateTableModel()
     row++;
   }
 
-  updateModelTimeFuelWind();
+  updateModelTimeFuelWindAlt();
 
   Flightplan& flightplan = route.getFlightplan();
 
@@ -4465,9 +4481,10 @@ void RouteController::updateTableModel()
   view->horizontalHeader()->setMinimumSectionSize(3);
 }
 
-/* Update travel times in table view model after speed change */
-void RouteController::updateModelTimeFuelWind()
+void RouteController::updateModelTimeFuelWindAlt()
 {
+  qDebug() << Q_FUNC_INFO;
+
   // Check if model is already initailized
   if(model->rowCount() == 0)
     return;
@@ -4499,6 +4516,7 @@ void RouteController::updateModelTimeFuelWind()
   int widthWind = header->isSectionHidden(rcol::WIND) ? -1 : view->columnWidth(rcol::WIND);
   int widthWindHt = header->isSectionHidden(rcol::WIND_HEAD_TAIL) ? -1 : view->columnWidth(rcol::WIND_HEAD_TAIL);
   int widthAlt = header->isSectionHidden(rcol::ALTITUDE) ? -1 : view->columnWidth(rcol::ALTITUDE);
+  int widthSafeAlt = header->isSectionHidden(rcol::SAFE_ALTITUDE) ? -1 : view->columnWidth(rcol::SAFE_ALTITUDE);
 
   for(int i = 0; i < route.size(); i++)
   {
@@ -4518,6 +4536,7 @@ void RouteController::updateModelTimeFuelWind()
       model->item(row, rcol::WIND)->setText(QString());
       model->item(row, rcol::WIND_HEAD_TAIL)->setText(QString());
       model->item(row, rcol::ALTITUDE)->setText(QString());
+      model->item(row, rcol::SAFE_ALTITUDE)->setText(QString());
     }
     else
     {
@@ -4617,10 +4636,19 @@ void RouteController::updateModelTimeFuelWind()
         }
 
         // Altitude at waypoint ========================================================
+        txt.clear();
         float alt = altLeg.getWaypointAltitude();
         if(alt < map::INVALID_ALTITUDE_VALUE)
           txt = Unit::altFeet(alt, false /* addUnit */);
         model->item(row, rcol::ALTITUDE)->setText(txt);
+
+        // Leg safe altitude ========================================================
+        txt.clear();
+        // Get ground buffer when flying towards waypoint
+        float safeAlt = NavApp::getGroundBufferForLegFt(i - 1);
+        if(safeAlt < map::INVALID_ALTITUDE_VALUE)
+          txt = Unit::altFeet(safeAlt, false /* addUnit */);
+        model->item(row, rcol::SAFE_ALTITUDE)->setText(txt);
       } // if(!leg.getProcedureLeg().isMissed())
     } // else if(!route.isAirportAfterArrival(row))
     row++;
@@ -4661,6 +4689,11 @@ void RouteController::updateModelTimeFuelWind()
     view->setColumnWidth(rcol::ALTITUDE, widthAlt);
   else
     header->hideSection(rcol::ALTITUDE);
+
+  if(widthSafeAlt > 0)
+    view->setColumnWidth(rcol::SAFE_ALTITUDE, widthSafeAlt);
+  else
+    header->hideSection(rcol::SAFE_ALTITUDE);
 }
 
 void RouteController::disconnectedFromSimulator()

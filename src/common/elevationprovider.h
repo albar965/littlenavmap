@@ -57,12 +57,14 @@ public:
   ElevationProvider(const ElevationProvider& other) = delete;
   ElevationProvider& operator=(const ElevationProvider& other) = delete;
 
-  /* Elevation in meter. Only for offline data. */
-  float getElevationMeter(const atools::geo::Pos& pos);
+  /* Elevation in meter. Only for offline data.
+   * "sampleRadiusMeter" defines a rectangle where five points are sampled and the maximum is used. */
+  float getElevationMeter(const atools::geo::Pos& pos, float sampleRadiusMeter = 0.f);
 
   /* Get elevations along a great circle line. Will create a point every 500 meters and delete
-   * consecutive ones with same elevation. Elevation given in meter */
-  void getElevations(atools::geo::LineString& elevations, const atools::geo::Line& line);
+   * consecutive ones with same elevation. Elevation given in meter
+   * "sampleRadiusMeter" defines a rectangle where five points are sampled for each pos and the maximum is used.*/
+  void getElevations(atools::geo::LineString& elevations, const atools::geo::Line& line, float sampleRadiusMeter = 0.f);
 
   /* true if the data is provided from the fast offline source */
   bool isGlobeOfflineProvider() const

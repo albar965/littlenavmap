@@ -1090,6 +1090,7 @@ void MainWindow::connectAllSlots()
   // Update rubber band in map window if user hovers over profile
   connect(profileWidget, &ProfileWidget::highlightProfilePoint, mapWidget, &MapPaintWidget::changeProfileHighlight);
   connect(profileWidget, &ProfileWidget::showPos, mapWidget, &MapPaintWidget::showPos);
+  connect(profileWidget, &ProfileWidget::profileAltCalculationFinished, routeController, &RouteController::updateModelTimeFuelWindAlt);
 
   connect(routeController, &RouteController::routeChanged, profileWidget, &ProfileWidget::routeChanged);
   connect(routeController, &RouteController::routeAltitudeChanged, profileWidget, &ProfileWidget::routeAltitudeChanged);

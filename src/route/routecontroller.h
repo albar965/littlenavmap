@@ -303,6 +303,9 @@ public:
   /* Update error label footer in flight plan window */
   void updateFooterErrorLabel();
 
+  /* Update travel times, fuel, wind and calculated altitude values in table view model after update */
+  void updateModelTimeFuelWindAlt();
+
 signals:
   /* Show airport on map */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
@@ -404,8 +407,6 @@ private:
                               const QString& commandName,
                               bool fetchAirways, float altitudeFt, int fromIndex, int toIndex,
                               atools::routing::Modes mode);
-
-  void updateModelTimeFuelWind();
 
   /* Assign type and altitude from GUI */
   void updateFlightplanFromWidgets(atools::fs::pln::Flightplan& flightplan);
