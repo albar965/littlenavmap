@@ -1041,9 +1041,9 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 
   clearAllErrors();
 
-  if(format == atools::fs::pln::FLP)
+  if(format == atools::fs::pln::FLP || format == atools::fs::pln::GARMIN_GFP)
   {
-    // FLP is nothing more than a sort of route string
+    // FLP and GFP are a sort of route string
     // New waypoints along airways have to be inserted and waypoints have to be resolved without coordinate backup
 
     // Create a route string
@@ -1055,7 +1055,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
         routeString.append(entry.getAirway());
       routeString.append(entry.getIdent());
     }
-    qInfo() << "FLP generated route string" << routeString;
+    qInfo() << "FLP/GFP generated route string" << routeString;
 
     // All is valid except the waypoint entries
     flightplan.getEntries().clear();

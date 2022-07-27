@@ -367,7 +367,7 @@ const QLatin1String OPTIONS_GUI_OVERRIDE_LOCALE("OptionsDialog/Widget_checkBoxOp
 
 /* File dialog patterns */
 const QLatin1String FILE_PATTERN_SCENERYCONFIG("(*.cfg)");
-const QLatin1String FILE_PATTERN_FLIGHTPLAN_LOAD("(*.lnmpln *.pln *.flp *.fms *.fgfp *.fpl *.fpl.bin)");
+const QLatin1String FILE_PATTERN_FLIGHTPLAN_LOAD("(*.lnmpln *.pln *.flp *.fms *.fgfp *.fpl *.fpl.bin *.gfp)");
 const QLatin1String FILE_PATTERN_LNMPLN("(*.lnmpln)");
 const QLatin1String FILE_PATTERN_KML("(*.kml *.kmz)");
 const QLatin1String FILE_PATTERN_GPX("(*.gpx)");

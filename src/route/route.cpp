@@ -244,17 +244,17 @@ const QString& Route::getApproachRunwayName() const
   return approachLegs.runwayEnd.name;
 }
 
-void Route::getArrivalNames(QString& arrivalArincName, QString& arrivalTransition) const
+void Route::getApproachNames(QString& approachArincName, QString& approachTransition) const
 {
   if(hasAnyApproachProcedure())
   {
-    arrivalArincName = approachLegs.approachArincName;
-    arrivalTransition = approachLegs.transitionFixIdent;
+    approachArincName = approachLegs.approachArincName;
+    approachTransition = approachLegs.transitionFixIdent;
   }
   else
   {
-    arrivalArincName.clear();
-    arrivalTransition.clear();
+    approachArincName.clear();
+    approachTransition.clear();
   }
 }
 

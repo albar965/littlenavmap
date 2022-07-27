@@ -391,7 +391,7 @@ public:
 
   /* Arrival rw is either STAR or approach */
   void getRunwayNames(QString& departure, QString& arrival) const;
-  void getArrivalNames(QString& arrivalArincName, QString& arrivalTransition) const;
+  void getApproachNames(QString& approachArincName, QString& approachTransition) const;
 
   const QString& getSidRunwayName() const;
   const QString& getStarRunwayName() const;

@@ -2036,8 +2036,8 @@ void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>&
 {
   if(type & proc::PROCEDURE_SID)
   {
-    properties.remove(pln::SIDAPPR);
-    properties.remove(pln::SIDAPPRRW);
+    properties.remove(pln::SID);
+    properties.remove(pln::SIDRW);
     properties.remove(pln::SIDTYPE);
     properties.remove(pln::DEPARTURE_CUSTOM_DISTANCE);
   }
@@ -2090,10 +2090,10 @@ void ProcedureQuery::fillFlightplanProcedureProperties(QHash<QString, QString>& 
       properties.insert(pln::SIDTRANS, sidLegs.transitionFixIdent);
 
     if(!sidLegs.approachFixIdent.isEmpty())
-      properties.insert(pln::SIDAPPR, sidLegs.approachFixIdent);
+      properties.insert(pln::SID, sidLegs.approachFixIdent);
 
     if(!sidLegs.procedureRunway.isEmpty())
-      properties.insert(pln::SIDAPPRRW, sidLegs.procedureRunway);
+      properties.insert(pln::SIDRW, sidLegs.procedureRunway);
   }
 
   if(!starLegs.isEmpty())
@@ -2143,7 +2143,7 @@ proc::MapProcedureTypes ProcedureQuery::getMissingProcedures(QHash<QString, QStr
 
   if(!sidLegs.isCustomDeparture())
   {
-    if(!properties.value(pln::SIDAPPR).isEmpty() && sidLegs.approachLegs.isEmpty())
+    if(!properties.value(pln::SID).isEmpty() && sidLegs.approachLegs.isEmpty())
       missing |= proc::PROCEDURE_SID;
 
     if(!properties.value(pln::SIDTRANS).isEmpty() && sidLegs.transitionLegs.isEmpty())
@@ -2469,7 +2469,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     map::MapAirport departureSim = mapQuery->getAirportSim(departure);
 
     if(departureSim.isValid())
-      createCustomDeparture(sidLegs, departureSim, properties.value(pln::SIDAPPRRW),
+      createCustomDeparture(sidLegs, departureSim, properties.value(pln::SIDRW),
                             properties.value(pln::DEPARTURE_CUSTOM_DISTANCE).toFloat());
     sidApprId = sidLegs.isEmpty() ? -1 : CUSTOM_DEPARTURE_ID;
   }
@@ -2477,17 +2477,17 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   {
     // Get a SID id (approach and transition) =================================================================
     // Get a SID id =================================================================
-    if(properties.contains(pln::SIDAPPR))
+    if(properties.contains(pln::SID))
     {
       if(departureNav.isValid())
-        sidApprId = getSidId(departureNav, properties.value(pln::SIDAPPR), properties.value(pln::SIDAPPRRW), true);
+        sidApprId = getSidId(departureNav, properties.value(pln::SID), properties.value(pln::SIDRW), true);
 
       if(sidApprId == -1)
       {
-        qWarning() << "Loading of SID" << properties.value(pln::SIDAPPR) << "failed";
+        qWarning() << "Loading of SID" << properties.value(pln::SID) << "failed";
         errors.append(tr("SID %1 from %2").
-                      arg(properties.value(pln::SIDAPPR)).
-                      arg(runwayErrorString(properties.value(pln::SIDAPPRRW))));
+                      arg(properties.value(pln::SID)).
+                      arg(runwayErrorString(properties.value(pln::SIDRW))));
       }
     }
 
@@ -2653,7 +2653,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     {
       sidLegs = *legs;
       // Assign runway to the legs copy if procedure has parallel or all runway reference
-      insertSidStarRunway(sidLegs, properties.value(pln::SIDAPPRRW));
+      insertSidStarRunway(sidLegs, properties.value(pln::SIDRW));
     }
     else
       qWarning() << Q_FUNC_INFO << "legs not found for" << departureNav.id << sidTransId;
@@ -2665,7 +2665,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     {
       sidLegs = *legs;
       // Assign runway to the legs copy if procedure has parallel or all runway reference
-      insertSidStarRunway(sidLegs, properties.value(pln::SIDAPPRRW));
+      insertSidStarRunway(sidLegs, properties.value(pln::SIDRW));
     }
     else
       qWarning() << Q_FUNC_INFO << "legs not found for" << departureNav.id << sidApprId;
@@ -2735,8 +2735,8 @@ bool ProcedureQuery::procedureValid(const proc::MapProcedureLegs *legs, QStringL
 QString ProcedureQuery::getSidAndTransition(QHash<QString, QString>& properties)
 {
   QString retval;
-  if(properties.contains(pln::SIDAPPR))
-    retval += properties.value(pln::SIDAPPR);
+  if(properties.contains(pln::SID))
+    retval += properties.value(pln::SID);
 
   if(properties.contains(pln::SIDTRANS))
     retval.append("." % properties.value(pln::SIDTRANS));

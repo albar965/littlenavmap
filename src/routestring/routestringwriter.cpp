@@ -183,7 +183,7 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
     if(route.hasAnyApproachProcedure())
     {
       QString apprArinc, apprTrans;
-      route.getArrivalNames(apprArinc, apprTrans);
+      route.getApproachNames(apprArinc, apprTrans);
       retval.append(":AP:" + apprArinc + (apprTrans.isEmpty() ? QString() : "." + apprTrans));
     }
   }
@@ -269,17 +269,17 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
   Route route = routeParam.adjustedToOptions(rf::DEFAULT_OPTS_ROUTESTRING);
 
   QStringList retval;
-  QString sid, sidTrans, star, starTrans, depRwy, destRwy, arrivalName, arrivalTransition;
+  QString sid, sidTrans, star, starTrans, depRwy, destRwy, approachName, approachTransition;
   route.getSidStarNames(sid, sidTrans, star, starTrans);
   route.getRunwayNames(depRwy, destRwy);
-  route.getArrivalNames(arrivalName, arrivalTransition);
+  route.getApproachNames(approachName, approachTransition);
   if(route.hasAnyApproachProcedure() && !route.getApproachLegs().approachType.isEmpty())
   {
     // Flight factor specialities - there are probably more to guess
     if(route.getApproachLegs().approachType == "RNAV")
-      arrivalName = "RNV" + destRwy;
+      approachName = "RNV" + destRwy;
     else
-      arrivalName = route.getApproachLegs().approachType + destRwy;
+      approachName = route.getApproachLegs().approachType + destRwy;
   }
 
   if(route.getSizeWithoutAlternates() == 0)
@@ -414,11 +414,11 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
 
   if(!route.getApproachLegs().isCustomApproach()) // Do not add custom approach
   {
-    if(options & rs::APPROACH && !arrivalName.isEmpty())
+    if(options & rs::APPROACH && !approachName.isEmpty())
     {
-      retval.append(arrivalName);
-      if(!arrivalTransition.isEmpty())
-        retval.append(arrivalTransition);
+      retval.append(approachName);
+      if(!approachTransition.isEmpty())
+        retval.append(approachTransition);
     }
   }
 
