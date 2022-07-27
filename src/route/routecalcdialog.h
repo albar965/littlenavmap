@@ -146,6 +146,10 @@ private:
 
   void buttonBoxClicked(QAbstractButton *button);
 
+  /* Catch events to allow repositioning */
+  virtual void showEvent(QShowEvent *) override;
+  virtual void hideEvent(QHideEvent *) override;
+
   /* Range/selection */
   int fromIndex = -1, toIndex = -1;
   bool canCalculateSelection = false;
@@ -156,6 +160,8 @@ private:
 
   Ui::RouteCalcDialog *ui;
 
+  /* Remember dilalog position when reopening */
+  QPoint position;
 };
 
 #endif // LNM_ROUTECALCWIN_H

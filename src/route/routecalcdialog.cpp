@@ -336,3 +336,14 @@ void RouteCalcDialog::adjustAltitudePressed()
 {
   ui->spinBoxRouteCalcCruiseAltitude->setValue(NavApp::getRouteConst().getAdjustedAltitude(ui->spinBoxRouteCalcCruiseAltitude->value()));
 }
+
+void RouteCalcDialog::showEvent(QShowEvent *)
+{
+  if(!position.isNull())
+    move(position);
+}
+
+void RouteCalcDialog::hideEvent(QHideEvent *)
+{
+  position = geometry().topLeft();
+}

@@ -475,12 +475,17 @@ void LogStatisticsDialog::initQueries()
 
 void LogStatisticsDialog::showEvent(QShowEvent *)
 {
+  if(!position.isNull())
+    move(position);
+
   setModel();
   updateWidgets();
 }
 
 void LogStatisticsDialog::hideEvent(QHideEvent *)
 {
+  position = geometry().topLeft();
+
   // Disconnect from database if not shown
   clearModel();
 }

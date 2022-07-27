@@ -111,6 +111,9 @@ private:
 
   /* Item delegate needed to change alignment */
   LogStatsDelegate *delegate = nullptr;
+
+  /* Remember dilalog position when reopening */
+  QPoint position;
 };
 
 /* Delegate to change table column data alignment */
