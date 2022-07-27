@@ -1464,6 +1464,9 @@ void MapPainterMark::paintMeasurementMarks()
       ageo::Line line(marker.from, marker.to);
       if(textPlacement.findTextPos(line, distanceMeter, metrics.width(texts.at(0)), metrics.height(), 20, xt, yt, nullptr))
         symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, textatt::CENTER);
+      else if(textPlacement.findTextPos(line, distanceMeter, 2.f, 2.f, 20, xt, yt, nullptr))
+        // No place found since line is probably too short - try again with 2 pixel size
+        symbolPainter->textBox(painter, texts, painter->pen(), xt, yt, textatt::CENTER);
     }
   }
 }

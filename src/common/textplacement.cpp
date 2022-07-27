@@ -205,11 +205,11 @@ bool TextPlacement::findTextPos(const Line& line, float distanceMeter, float tex
   float brg = 0.f;
 
   // Try with three points first and do not allow partial visibility. Finds only the center point.
-  bool retval = findTextPosInternal(line, distanceMeter, textWidth, textHeight, 3, false, x, y, brg);
+  bool retval = findTextPosInternal(line, distanceMeter, textWidth, textHeight, 3, false /* allowPartial */, x, y, brg);
 
   if(!retval)
     // Nothing found for the center line try again
-    retval = findTextPosInternal(line, distanceMeter, textWidth, textHeight, maxPoints, true, x, y, brg);
+    retval = findTextPosInternal(line, distanceMeter, textWidth, textHeight, maxPoints, true /* allowPartial */, x, y, brg);
 
   if(bearing != nullptr)
     *bearing = brg;
