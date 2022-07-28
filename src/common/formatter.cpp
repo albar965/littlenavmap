@@ -36,47 +36,47 @@ namespace formatter {
 
 static QStringList dateTimeFormats;
 
-QString formatMinutesHours(double time)
+QString formatMinutesHours(double timeHours)
 {
-  int hours = static_cast<int>(time);
-  int minutes = atools::roundToInt((time - hours) * 60.);
+  int hours = static_cast<int>(timeHours);
+  int minutes = atools::roundToInt((timeHours - hours) * 60.);
   if(minutes == 60)
   {
     hours++;
     minutes = 0;
   }
-  return QString(QObject::tr("%1:%2")).arg(QLocale().toString(hours)). arg(minutes, 2, 10, QChar('0'));
+  return QString(QObject::tr("%1:%2")).arg(QLocale().toString(hours)).arg(minutes, 2, 10, QChar('0'));
 }
 
-QString formatMinutesHoursLong(double time)
+QString formatMinutesHoursLong(double timeHours)
 {
-  int hours = static_cast<int>(time);
-  int minutes = atools::roundToInt((time - hours) * 60);
+  int hours = static_cast<int>(timeHours);
+  int minutes = atools::roundToInt((timeHours - hours) * 60);
   if(minutes == 60)
   {
     hours++;
     minutes = 0;
   }
 
-  return QString(QObject::tr("%1 h %2 m")).arg(QLocale().toString(hours)). arg(minutes, 2, 10, QChar('0'));
+  return QString(QObject::tr("%1 h %2 m")).arg(QLocale().toString(hours)).arg(minutes, 2, 10, QChar('0'));
 }
 
-QString formatMinutesHoursDays(double time)
+QString formatMinutesHoursDays(double timeHours)
 {
-  int days = static_cast<int>(time) / 24;
-  int hours = static_cast<int>(time) - (days * 24);
-  int minutes = atools::roundToInt((time - std::floor(time)) * 60.);
+  int days = static_cast<int>(timeHours) / 24;
+  int hours = static_cast<int>(timeHours) - (days * 24);
+  int minutes = atools::roundToInt((timeHours - std::floor(timeHours)) * 60.);
   return QString(QObject::tr("%1:%2:%3")).
          arg(QLocale().toString(days)).
          arg(hours, 2, 10, QChar('0')).
          arg(minutes, 2, 10, QChar('0'));
 }
 
-QString formatMinutesHoursDaysLong(double time)
+QString formatMinutesHoursDaysLong(double timeHours)
 {
-  int days = static_cast<int>(time) / 24;
-  int hours = static_cast<int>(time) - (days * 24);
-  int minutes = atools::roundToInt((time - std::floor(time)) * 60.);
+  int days = static_cast<int>(timeHours) / 24;
+  int hours = static_cast<int>(timeHours) - (days * 24);
+  int minutes = atools::roundToInt((timeHours - std::floor(timeHours)) * 60.);
   QString retval;
   if(days > 0)
     retval += QString(QObject::tr("%1 d")).arg(QLocale().toString(days));

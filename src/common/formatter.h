@@ -53,16 +53,16 @@ QString formatDate(int timeT);
 QString formatDateLong(int timeT);
 
 /* Format a decimal time in hours to h:mm format */
-QString formatMinutesHours(double time);
+QString formatMinutesHours(double timeHours);
 
 /* Format a decimal time in hours to X h Y m format */
-QString formatMinutesHoursLong(double time);
+QString formatMinutesHoursLong(double timeHours);
 
 /* Format a decimal time in hours to d:hh:mm format */
-QString formatMinutesHoursDays(double time);
+QString formatMinutesHoursDays(double timeHours);
 
 /* Format a decimal time in hours to X d Y h Z m format */
-QString formatMinutesHoursDaysLong(double time);
+QString formatMinutesHoursDaysLong(double timeHours);
 
 /* Format elapsed time to minutes and seconds */
 QString formatElapsed(const QElapsedTimer& timer);
