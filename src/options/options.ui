@@ -2651,7 +2651,7 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
                   <string> %</string>
                  </property>
                  <property name="prefix">
-                  <string>Width </string>
+                  <string>Line Width </string>
                  </property>
                  <property name="minimum">
                   <number>50</number>
@@ -2863,7 +2863,7 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
                   <string> %</string>
                  </property>
                  <property name="prefix">
-                  <string>Width </string>
+                  <string>Line Width </string>
                  </property>
                  <property name="minimum">
                   <number>50</number>
@@ -3003,7 +3003,7 @@ Not used in the elevation profile.</string>
                   <string> %</string>
                  </property>
                  <property name="prefix">
-                  <string>Width </string>
+                  <string>Line Width </string>
                  </property>
                  <property name="minimum">
                   <number>50</number>
@@ -3294,7 +3294,7 @@ Not used in the elevation profile.</string>
                   <string> %</string>
                  </property>
                  <property name="prefix">
-                  <string>Width </string>
+                  <string>Line Width </string>
                  </property>
                  <property name="minimum">
                   <number>50</number>
@@ -3355,7 +3355,7 @@ Not used in the elevation profile.</string>
              <x>0</x>
              <y>0</y>
              <width>581</width>
-             <height>547</height>
+             <height>553</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -3422,7 +3422,7 @@ Not used in the elevation profile.</string>
                   <string> %</string>
                  </property>
                  <property name="prefix">
-                  <string>Width </string>
+                  <string>Line Width </string>
                  </property>
                  <property name="minimum">
                   <number>50</number>
@@ -3499,7 +3499,7 @@ Value 0 is opaque and 90 is most transparent.</string>
                   <string> %</string>
                  </property>
                  <property name="prefix">
-                  <string>Width </string>
+                  <string>Line Width  </string>
                  </property>
                  <property name="minimum">
                   <number>50</number>
@@ -3589,7 +3589,7 @@ Value 0 is opaque and 90 is most transparent.</string>
                   <string> %</string>
                  </property>
                  <property name="prefix">
-                  <string>Width </string>
+                  <string>Line Width  </string>
                  </property>
                  <property name="minimum">
                   <number>50</number>
@@ -3805,7 +3805,8 @@ These are shown when a flight plan leg or an entry in a search result table is s
                <item row="6" column="2">
                 <widget class="QLabel" name="labelOptionsMapSizeHighlight">
                  <property name="text">
-                  <string>&amp;Highlight rings:</string>
+                  <string>&amp;Selection or
+Hover Highlights:</string>
                  </property>
                  <property name="buddy">
                   <cstring>spinBoxOptionsDisplayThicknessUserFeature</cstring>
@@ -4231,8 +4232,8 @@ Do not show this this information publicly in forums on screenshots.&lt;/b&gt;&l
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>339</width>
-             <height>366</height>
+             <width>595</width>
+             <height>532</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
