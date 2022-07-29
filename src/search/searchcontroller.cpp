@@ -17,26 +17,28 @@
 
 #include "search/searchcontroller.h"
 
-#include "navapp.h"
-#include "search/column.h"
-#include "search/columnlist.h"
-#include "search/airportsearch.h"
-#include "search/navsearch.h"
-#include "mapgui/mapwidget.h"
-#include "gui/helphandler.h"
-#include "sql/sqlrecord.h"
-#include "search/logdatasearch.h"
-#include "ui_mainwindow.h"
-#include "search/userdatasearch.h"
 #include "common/constants.h"
-#include "search/proceduresearch.h"
-#include "options/optiondata.h"
-#include "userdata/userdatacontroller.h"
-#include "logbook/logdatacontroller.h"
-#include "search/onlineclientsearch.h"
-#include "search/onlinecentersearch.h"
-#include "search/onlineserversearch.h"
+#include "common/formatter.h"
+#include "common/mapresult.h"
+#include "common/unit.h"
+#include "gui/helphandler.h"
+#include "online/onlinedatacontroller.h"
 #include "gui/tabwidgethandler.h"
+#include "logbook/logdatacontroller.h"
+#include "mapgui/mapwidget.h"
+#include "navapp.h"
+#include "gui/mainwindow.h"
+#include "options/optiondata.h"
+#include "search/airportsearch.h"
+#include "search/logdatasearch.h"
+#include "search/navsearch.h"
+#include "search/onlinecentersearch.h"
+#include "search/onlineclientsearch.h"
+#include "search/onlineserversearch.h"
+#include "search/proceduresearch.h"
+#include "search/userdatasearch.h"
+#include "ui_mainwindow.h"
+#include "userdata/userdatacontroller.h"
 
 #include <QTabWidget>
 #include <QUrl>
@@ -236,7 +238,6 @@ void SearchController::createProcedureSearch(QTreeWidget *treeWidget)
   connect(procedureSearch, &ProcedureSearch::showInSearch, this, &SearchController::showInSearch);
 }
 
-/* Connect signals and append search object to all search tabs list */
 void SearchController::postCreateSearch(AbstractSearch *search)
 {
   search->connectSearchSlots();
@@ -244,8 +245,7 @@ void SearchController::postCreateSearch(AbstractSearch *search)
 
   SearchBaseTable *base = dynamic_cast<SearchBaseTable *>(search);
   if(base != nullptr)
-    NavApp::getMapWidgetGui()->connect(NavApp::getMapWidgetGui(), &MapWidget::searchMarkChanged,
-                                       base, &SearchBaseTable::searchMarkChanged);
+    MapWidget::connect(NavApp::getMapWidgetGui(), &MapWidget::searchMarkChanged, base, &SearchBaseTable::searchMarkChanged);
   allSearchTabs.append(search);
 }
 
@@ -301,7 +301,8 @@ void SearchController::showInSearch(map::MapTypes type, const atools::sql::SqlRe
     case map::AIRPORT:
       // Shown in airport tab
       airportSearch->resetSearch();
-      airportSearch->filterByRecord(record);
+
+      airportSearch->showInSearch(record);
       if(select)
         airportSearch->selectAll();
       tabHandlerSearch->setCurrentTab(si::SEARCH_AIRPORT);
@@ -312,7 +313,8 @@ void SearchController::showInSearch(map::MapTypes type, const atools::sql::SqlRe
     case map::WAYPOINT:
       // Shown in navaid tab
       navSearch->resetSearch();
-      navSearch->filterByRecord(record);
+
+      navSearch->showInSearch(record);
       if(select)
         navSearch->selectAll();
       tabHandlerSearch->setCurrentTab(si::SEARCH_NAV);
@@ -321,7 +323,8 @@ void SearchController::showInSearch(map::MapTypes type, const atools::sql::SqlRe
     case map::USERPOINT:
       // Shown in user search tab
       userdataSearch->resetSearch();
-      userdataSearch->filterByRecord(record);
+
+      userdataSearch->showInSearch(record);
       if(select)
         userdataSearch->selectAll();
       tabHandlerSearch->setCurrentTab(si::SEARCH_USER);
@@ -329,8 +332,14 @@ void SearchController::showInSearch(map::MapTypes type, const atools::sql::SqlRe
 
     case map::LOGBOOK:
       // Shown in user search tab
+
+      // Enable more search options to show user the search criteria
+      ui->actionLogdataSearchShowMoreOptions->setChecked(true);
       logdataSearch->resetSearch();
-      logdataSearch->filterByRecord(record);
+
+      // Need to ignore the query builder since the columns of the combined search field overlap
+      // with the single destination and departure columns
+      logdataSearch->showInSearch(record, true /* ignoreQueryBuilder */);
       if(select)
         logdataSearch->selectAll();
       tabHandlerSearch->setCurrentTab(si::SEARCH_LOG);
@@ -339,7 +348,7 @@ void SearchController::showInSearch(map::MapTypes type, const atools::sql::SqlRe
     case map::AIRCRAFT_ONLINE:
       // Shown in user search tab
       onlineClientSearch->resetSearch();
-      onlineClientSearch->filterByRecord(record);
+      onlineClientSearch->showInSearch(record);
       if(select)
         onlineClientSearch->selectAll();
       tabHandlerSearch->setCurrentTab(si::SEARCH_ONLINE_CLIENT);
@@ -348,7 +357,8 @@ void SearchController::showInSearch(map::MapTypes type, const atools::sql::SqlRe
     case map::AIRSPACE:
       // Shown in user search tab
       onlineCenterSearch->resetSearch();
-      onlineCenterSearch->filterByRecord(record);
+
+      onlineCenterSearch->showInSearch(record);
       if(select)
         onlineCenterSearch->selectAll();
       tabHandlerSearch->setCurrentTab(si::SEARCH_ONLINE_CENTER);
@@ -378,4 +388,79 @@ si::TabSearchId SearchController::getCurrentSearchTabId()
 void SearchController::resetTabLayout()
 {
   tabHandlerSearch->reset();
+}
+
+void SearchController::searchSelectionChanged(const SearchBaseTable *source, int selected, int visible, int total)
+{
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  bool updateAirspace = false, updateLogEntries = false;
+  QString selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.%5");
+  QString type, lastUpdate;
+  if(source->getTabIndex() == si::SEARCH_ONLINE_CLIENT || source->getTabIndex() == si::SEARCH_ONLINE_CENTER)
+  {
+    QDateTime lastUpdateTime = NavApp::getOnlinedataController()->getLastUpdateTime();
+    lastUpdate = lastUpdateTime.isValid() ? tr(" Last Update: %1").arg(lastUpdateTime.toString(Qt::DefaultLocaleShortDate)) : QString();
+  }
+
+  if(source->getTabIndex() == si::SEARCH_AIRPORT)
+  {
+    type = tr("Airports");
+    ui->labelAirportSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
+  }
+  else if(source->getTabIndex() == si::SEARCH_NAV)
+  {
+    type = tr("Navaids");
+    ui->labelNavSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
+  }
+  else if(source->getTabIndex() == si::SEARCH_USER)
+  {
+    type = tr("Userpoints");
+    ui->labelUserdata->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
+  }
+  else if(source->getTabIndex() == si::SEARCH_LOG)
+  {
+    type = tr("Logbook Entries");
+    updateLogEntries = true;
+
+    map::MapResult result;
+    source->getSelectedMapObjects(result);
+
+    float travelTimeRealHours = 0.f, travelTimeSimHours = 0.f, distanceNm = 0.f;
+    for(const map::MapLogbookEntry& entry : result.logbookEntries)
+    {
+      travelTimeRealHours += entry.travelTimeRealHours;
+      travelTimeSimHours += entry.travelTimeSimHours;
+      distanceNm += entry.distanceNm;
+    }
+
+    QStringList logInformation;
+    if(travelTimeRealHours > 1.f / 60.f)
+      logInformation.append(tr("Real time %1").arg(formatter::formatMinutesHoursLong(travelTimeRealHours)));
+    if(travelTimeSimHours > 1.f / 60.f)
+      logInformation.append(tr("Sim. time %1").arg(formatter::formatMinutesHoursLong(travelTimeSimHours)));
+    if(distanceNm > 0.f)
+      logInformation.append(tr("Dist. %1").arg(Unit::distNm(distanceNm)));
+
+    QString logText;
+    if(!logInformation.isEmpty())
+      logText = tr("\nTravel Totals: %1.").arg(logInformation.join(tr(". ")));
+
+    ui->labelLogdata->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(logText));
+  }
+  else if(source->getTabIndex() == si::SEARCH_ONLINE_CLIENT)
+  {
+    type = tr("Clients");
+    ui->labelOnlineClientSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(lastUpdate));
+  }
+  else if(source->getTabIndex() == si::SEARCH_ONLINE_CENTER)
+  {
+    updateAirspace = true;
+    type = tr("Centers");
+    ui->labelOnlineCenterSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(lastUpdate));
+  }
+
+  map::MapResult result;
+  getSelectedMapObjects(result);
+  NavApp::getMapWidgetGui()->changeSearchHighlights(result, updateAirspace, updateLogEntries);
+  NavApp::getMainWindow()->updateHighlightActionStates();
 }

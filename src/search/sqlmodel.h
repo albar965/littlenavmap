@@ -19,8 +19,8 @@
 #define LITTLENAVMAP_SQLMODEL_H
 
 #include "geo/rect.h"
-
 #include "search/querybuilder.h"
+#include "search/sqlmodeltypes.h"
 
 #include <QSqlQueryModel>
 
@@ -56,10 +56,10 @@ public:
   void filterByBuilder();
 
   /* Creates an include filer for value at index in the table */
-  void filterIncluding(QModelIndex index, bool builder);
+  void filterIncluding(QModelIndex index, bool forceQueryBuilder);
 
   /* Creates an exclude filer for value at index in the table */
-  void filterExcluding(QModelIndex index, bool builder);
+  void filterExcluding(QModelIndex index, bool forceQueryBuilder);
 
   /* Clear all filters, sort order and go back to default view */
   void resetView();
@@ -130,8 +130,10 @@ public:
   /* Set sort order for the given column name. Does not update or restart the query */
   void setSort(const QString& colname, Qt::SortOrder order);
 
-  /* Reset search and filter by ident, region and airport */
-  void filterByRecord(const atools::sql::SqlRecord& record);
+  /* Reset search and filter by ident, region and airport
+   * "ignoreQueryBuilder" set to true will cause columns in record matching query builder
+   * columns to be used as normal queries (not query builder). */
+  void filterByRecord(const atools::sql::SqlRecord& record, bool ignoreQueryBuilder);
 
   /* Get empty record (no data) containing field/column information */
   atools::sql::SqlRecord getSqlRecord() const;
@@ -143,24 +145,11 @@ public:
   virtual QVariant data(const QModelIndex& index, int role = Qt::DisplayRole) const override;
 
   /*
-   * Callback function/method type defintion.
-   * @param colIndex Column index
-   * @param rowIndex Row index
-   * @param col column Descriptor
-   * @param roleValue Role value depending on role like color, font, etc.
-   * @param displayRoleValue actual column data
-   * @param role Data role
-   * @return a variant. Mostly string for display role.
-   */
-  typedef std::function<QVariant(int colIndex, int rowIndex, const Column *col, const QVariant& roleValue,
-                                 const QVariant& displayRoleValue, Qt::ItemDataRole role)> DataFunctionType;
-
-  /*
    * Sets a data callback that is called for each table cell and the given item data roles.
    * @param func callback function or method. Use std::bind to create callbacks to non static methods.
    * @param roles Roles that this callback should be called for
    */
-  void setDataCallback(const DataFunctionType& func, const QSet<Qt::ItemDataRole>& roles);
+  void setDataCallback(const sqlmodeltypes::DataFunctionType& func, const QSet<Qt::ItemDataRole>& roles);
 
   bool isOverrideModeActive() const
   {
@@ -196,13 +185,15 @@ private:
 
   virtual void sort(int column, Qt::SortOrder order) override;
 
-  void filterBy(bool exclude, QString whereCol, QVariant whereValue, bool builder);
+  void filterBy(bool exclude, QString whereCol, QVariant whereValue, bool forceQueryBuilder, bool ignoreQueryBuilder);
   QString buildColumnList(const atools::sql::SqlRecord& tableCols);
   QString buildWhere(const atools::sql::SqlRecord& tableCols, QVector<const Column *>& overridingColumns);
   QString buildWhereValue(const WhereCondition& cond);
   void buildQuery();
   void clearWhereConditions();
-  void filterBy(QModelIndex index, bool exclude, bool builder);
+
+  /* Filter by value at index (context menu in table view). forceQueryBuilder to always use it. */
+  void filterBy(QModelIndex index, bool exclude, bool forceQueryBuilder);
   QString  sortOrderToSql(Qt::SortOrder order);
   QVariant defaultDataHandler(int, int, const Column *, const QVariant&,
                               const QVariant& displayRoleValue, Qt::ItemDataRole role) const;
@@ -219,7 +210,7 @@ private:
   QString currentSqlQuery, currentSqlCountQuery, currentSqlFetchQuery;
 
   /* Data callback */
-  DataFunctionType dataFunction = nullptr;
+  sqlmodeltypes::DataFunctionType dataFunction = nullptr;
   /* Roles for the data callback */
   QSet<Qt::ItemDataRole> handlerRoles;
 

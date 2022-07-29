@@ -39,6 +39,7 @@ class QTableView;
 class QTabWidget;
 class QTreeWidget;
 class MapQuery;
+class SearchBaseTable;
 
 namespace atools {
 namespace gui {
@@ -168,9 +169,15 @@ public:
   /* Reset tab bar */
   void resetTabLayout();
 
+  /* Selection in one of the search result tables has changed. Update status line text. */
+  void searchSelectionChanged(const SearchBaseTable *source, int selected, int visible, int total);
+
 private:
   void tabChanged(int index);
+
+  /* Connect signals and append search object to all search tabs list */
   void postCreateSearch(AbstractSearch *search);
+
   void helpPressed();
   void helpPressedProcedure();
   void helpPressedUserdata();

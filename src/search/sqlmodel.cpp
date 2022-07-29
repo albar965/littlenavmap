@@ -31,6 +31,7 @@
 #include <QSqlError>
 #include <QRegularExpression>
 #include <QComboBox>
+#include <QStringBuilder>
 
 using atools::sql::SqlQuery;
 using atools::sql::SqlDatabase;
@@ -56,15 +57,15 @@ void SqlModel::filterByBuilder()
   buildQuery();
 }
 
-void SqlModel::filterIncluding(QModelIndex index, bool builder)
+void SqlModel::filterIncluding(QModelIndex index, bool forceQueryBuilder)
 {
-  filterBy(index, false, builder);
+  filterBy(index, false, forceQueryBuilder);
   buildQuery();
 }
 
-void SqlModel::filterExcluding(QModelIndex index, bool builder)
+void SqlModel::filterExcluding(QModelIndex index, bool forceQueryBuilder)
 {
-  filterBy(index, true, builder);
+  filterBy(index, true, forceQueryBuilder);
   buildQuery();
 }
 
@@ -74,21 +75,22 @@ void SqlModel::filterByBoundingRect(const atools::geo::Rect& boundingRectangle)
   buildQuery();
 }
 
-void SqlModel::filterByRecord(const atools::sql::SqlRecord& record)
+void SqlModel::filterByRecord(const atools::sql::SqlRecord& record, bool ignoreQueryBuilder)
 {
   for(int i = 0; i < record.count(); i++)
-    filterBy(false /* exclude */, record.fieldName(i), record.value(i), queryBuilder.getColumns().contains(record.fieldName(i)));
+    filterBy(false /* exclude */, record.fieldName(i),
+             record.value(i), queryBuilder.getColumns().contains(record.fieldName(i)), ignoreQueryBuilder);
   buildQuery();
 }
 
-/* Filter by value at index (context menu in table view) */
-void SqlModel::filterBy(QModelIndex index, bool exclude, bool builder)
+void SqlModel::filterBy(QModelIndex index, bool exclude, bool forceQueryBuilder)
 {
-  filterBy(exclude, getSqlRecord().fieldName(index.column()), QSqlQueryModel::data(index), builder);
+  filterBy(exclude, getSqlRecord().fieldName(index.column()), QSqlQueryModel::data(index), forceQueryBuilder,
+           false /* ignoreQueryBuilder */);
 }
 
 /* Simple include/exclude filter. Updates the attached search widgets */
-void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp, bool builder)
+void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp, bool forceQueryBuilder, bool ignoreQueryBuilder)
 {
   // If there is already a filter on the same column remove it
   if(whereConditionMap.contains(whereCol))
@@ -107,7 +109,9 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp,
 
   const Column *colDescr = columns->getColumn(whereCol);
 
-  if(queryBuilder.getColumns().contains(whereCol) || builder)
+  // Either use query builder forced or use it if columns match
+  // Using based on column match can be ignored if not wanted
+  if(!ignoreQueryBuilder && (queryBuilder.getColumns().contains(whereCol) || forceQueryBuilder))
   {
     // Field matches with one of the query builder columns
     QLineEdit *lineEdit = dynamic_cast<QLineEdit *>(queryBuilder.getWidget());
@@ -117,13 +121,13 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp,
   else if(QLineEdit *edit = columns->getColumn(whereCol)->getLineEditWidget())
   {
     // Set the search text into the corresponding line edit
-    edit->setText((exclude ? "-" : "") + whereValueDisp.toString());
+    edit->setText((exclude ? "-" : "") % whereValueDisp.toString());
   }
   else if(QComboBox *combo = columns->getColumn(whereCol)->getComboBoxWidget())
   {
     if(combo->isEditable())
       // Set the search text into the corresponding line edit
-      combo->setCurrentText((exclude ? "-" : "") + whereValueDisp.toString());
+      combo->setCurrentText((exclude ? "-" : "") % whereValueDisp.toString());
   }
   else if(QCheckBox *checkBox = columns->getColumn(whereCol)->getCheckBoxWidget())
   {
@@ -149,7 +153,7 @@ void SqlModel::filterBy(bool exclude, QString whereCol, QVariant whereValueDisp,
       checkBox->setCheckState(val ? Qt::Unchecked : Qt::Checked);
     }
   }
-  if(!builder)
+  if(!forceQueryBuilder)
     whereConditionMap.insert(whereCol, {whereOp, whereValueSql, whereValueDisp, colDescr});
 }
 
@@ -277,7 +281,7 @@ void SqlModel::buildSqlWhereValue(QString& whereValue) const
   if(whereValue.contains("*"))
     whereValue = whereValue.replace("*", "%");
   else if(!whereValue.isEmpty())
-    whereValue = whereValue + "%";
+    whereValue = whereValue % "%";
 }
 
 void SqlModel::setSort(const QString& colname, Qt::SortOrder order)
@@ -288,7 +292,7 @@ void SqlModel::setSort(const QString& colname, Qt::SortOrder order)
   orderByOrder = sortOrderToSql(order);
 }
 
-void SqlModel::setDataCallback(const DataFunctionType& func, const QSet<Qt::ItemDataRole>& roles)
+void SqlModel::setDataCallback(const sqlmodeltypes::DataFunctionType& func, const QSet<Qt::ItemDataRole>& roles)
 {
   if(func == nullptr)
   {
@@ -393,10 +397,13 @@ QString SqlModel::buildColumnList(const atools::sql::SqlRecord& tableCols)
   QVector<QString> colNames;
   for(const Column *col : columns->getColumns())
   {
-    if(col->isDistance() || !tableCols.contains(col->getColumnName()))
+    if(!col->getSqlFunc().isEmpty())
+      // Use SQL function as column if defined
+      colNames.append(QString("(%1) as %2").arg(col->getSqlFunc()).arg(col->getColumnName()));
+    else if(col->isDistance() || !tableCols.contains(col->getColumnName()))
       // Add null for special distance columns
       // Null for columns which do not exist in the database
-      colNames.append("null as " + col->getColumnName());
+      colNames.append("null as " % col->getColumnName());
     else
       colNames.append(col->getColumnName());
   }
@@ -433,31 +440,32 @@ void SqlModel::buildQuery()
   {
     Q_ASSERT(col != nullptr);
 
-    if(!tableCols.contains(orderByCol))
+    if(!col->getSqlFunc().isEmpty())
+      queryOrder += "order by (" % col->getSqlFunc() % ") " % orderByOrder;
+    else if(!tableCols.contains(orderByCol))
     {
       // Skip not existing columns for backwards compatibility
-      qWarning() << Q_FUNC_INFO << tablename + "." + col->getColumnName() << "does not exist";
+      qWarning() << Q_FUNC_INFO << tablename % "." % col->getColumnName() << "does not exist";
     }
     else if(!(col->getSortFuncAsc().isEmpty() && col->getSortFuncDesc().isEmpty()))
     {
       // Use sort functions to have null values at end of the list - will avoid indexes
       if(orderByOrder == "asc")
-        queryOrder += "order by " + col->getSortFuncAsc().arg(orderByCol) + " " + orderByOrder;
+        queryOrder += "order by " % col->getSortFuncAsc().arg(orderByCol) % " " % orderByOrder;
       else if(orderByOrder == "desc")
-        queryOrder += "order by " + col->getSortFuncDesc().arg(orderByCol) + " " + orderByOrder;
+        queryOrder += "order by " % col->getSortFuncDesc().arg(orderByCol) % " " % orderByOrder;
       else
         Q_ASSERT(orderByOrder != "asc" && orderByOrder != "desc");
     }
     else
-      queryOrder += "order by " + orderByCol + " " + orderByOrder;
+      queryOrder += "order by " % orderByCol % " " % orderByOrder;
   }
 
-  currentSqlQuery = "select " + queryCols + " from " + tablename +
-                    " " + queryWhere + " " + queryOrder;
+  currentSqlQuery = "select " % queryCols % " from " % tablename % " " % queryWhere % " " % queryOrder;
 
   // Build a query to find the total row count of the result ==================
   totalRowCount = 0;
-  currentSqlCountQuery = "select count(1) from " + tablename + " " + queryWhere;
+  currentSqlCountQuery = "select count(1) from " % tablename % " " % queryWhere;
 
   // Build a query to fetch the whole result set in getFullResultSet() ==================
   if(!boundingRect.isValid())
@@ -471,7 +479,7 @@ void SqlModel::buildQuery()
       colList.append("laty");
     }
 
-    currentSqlFetchQuery = "select " + colList.join(", ") + " from " + tablename + " " + queryWhere;
+    currentSqlFetchQuery = "select " % colList.join(", ") % " from " % tablename % " " % queryWhere;
   }
   else
     // No result set for distance searches since the result is not filtered by precise distance
@@ -569,7 +577,7 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
     if(!tableCols.contains(checkCol))
     {
       // Skip not existing columns for backwards compatibility
-      qWarning() << Q_FUNC_INFO << columns->getTablename() + "." + cond.col->getColumnName() << "does not exist";
+      qWarning() << Q_FUNC_INFO << columns->getTablename() % "." % cond.col->getColumnName() << "does not exist";
       continue;
     }
 
@@ -578,9 +586,9 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
 
     if(cond.col->isIncludesName())
       // Condition includes column name
-      queryWhere += " " + cond.oper + " ";
+      queryWhere += " " % cond.oper % " ";
     else
-      queryWhere += cond.col->getColumnName() + " " + cond.oper + " ";
+      queryWhere += cond.col->getColumnName() % " " % cond.oper % " ";
 
     if(!cond.valueSql.isNull())
       queryWhere += buildWhereValue(cond);
@@ -615,7 +623,7 @@ QString SqlModel::buildWhere(const atools::sql::SqlRecord& tableCols, QVector<co
   }
 
   if(!queryWhere.isEmpty())
-    queryWhere = "where (" + queryWhere + ")";
+    queryWhere = "where (" % queryWhere % ")";
 
   return queryWhere;
 }
@@ -626,12 +634,12 @@ QString SqlModel::buildWhereValue(const WhereCondition& cond)
   QString val;
   if(cond.valueSql.type() == QVariant::String || cond.valueSql.type() == QVariant::Char)
     // Use semicolons for string and escape single quotes
-    val = " '" + cond.valueSql.toString().replace("'", "''") + "'";
+    val = " '" % cond.valueSql.toString().replace("'", "''") % "'";
   else if(cond.valueSql.type() == QVariant::Bool ||
           cond.valueSql.type() == QVariant::Int || cond.valueSql.type() == QVariant::UInt ||
           cond.valueSql.type() == QVariant::LongLong || cond.valueSql.type() == QVariant::ULongLong ||
           cond.valueSql.type() == QVariant::Double)
-    val = " " + cond.valueSql.toString();
+    val = " " % cond.valueSql.toString();
   return val;
 }
 

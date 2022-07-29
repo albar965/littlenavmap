@@ -84,8 +84,10 @@ public:
   /* The center point of the distance search has changed. This will update the search result. */
   void searchMarkChanged(const atools::geo::Pos& mark);
 
-  /* Set the search filter to ident, region, airport ident and update the search result */
-  void filterByRecord(const atools::sql::SqlRecord& record);
+  /* Set the search filter to ident, region, airport ident and update the search result.
+   * "ignoreQueryBuilder" set to true will cause columns in record matching query builder
+   * columns to be used as normal queries (not query builder). */
+  void showInSearch(const atools::sql::SqlRecord& record, bool ignoreQueryBuilder = false);
 
   /* Options dialog has changed some options */
   virtual void optionsChanged() override;

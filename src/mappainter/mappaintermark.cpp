@@ -597,8 +597,8 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
         text.append(tr("%1 to %2").arg(entry->departureIdent).arg(entry->destinationIdent));
         // text.append(atools::elideTextShort(entry->aircraftType, 5));
         // text.append(atools::elideTextShort(entry->aircraftRegistration, 7));
-        if(entry->distanceGc > 0.f)
-          text.append(Unit::distNm(entry->distanceGc, true /* unit */, 20, true /* narrow */));
+        if(entry->distanceGcNm > 0.f)
+          text.append(Unit::distNm(entry->distanceGcNm, true /* unit */, 20, true /* narrow */));
         text.removeAll(QString());
 
         if(positions.size() >= 2)

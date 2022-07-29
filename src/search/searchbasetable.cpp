@@ -39,6 +39,7 @@
 #include "search/searchcontroller.h"
 #include "search/sqlcontroller.h"
 #include "sql/sqlrecord.h"
+#include "search/sqlmodel.h"
 #include "ui_mainwindow.h"
 
 #include <QTimer>
@@ -286,9 +287,9 @@ void SearchBaseTable::initViewAndController(atools::sql::SqlDatabase *db)
   csvExporter = new CsvExporter(mainWindow, controller);
 }
 
-void SearchBaseTable::filterByRecord(const atools::sql::SqlRecord& record)
+void SearchBaseTable::showInSearch(const atools::sql::SqlRecord& record, bool ignoreQueryBuilder)
 {
-  controller->filterByRecord(record);
+  controller->showInSearch(record, ignoreQueryBuilder);
 }
 
 void SearchBaseTable::optionsChanged()
@@ -350,7 +351,7 @@ void SearchBaseTable::updateDistanceSearch()
     QComboBox *distanceDirWidget = columns->getDistanceDirectionWidget();
 
     controller->filterByDistance(mapWidget->getSearchMarkPos(),
-                                 static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
+                                 static_cast<sqlmodeltypes::SearchDirection>(distanceDirWidget->currentIndex()),
                                  Unit::rev(minDistanceWidget->value(), Unit::distNmF),
                                  Unit::rev(maxDistanceWidget->value(), Unit::distNmF));
 
@@ -480,7 +481,7 @@ void SearchBaseTable::connectSearchWidgets()
     connect(minDistanceWidget, QOverload<int>::of(&QSpinBox::valueChanged), this, [ = ](int value)
     {
       controller->filterByDistanceUpdate(
-        static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
+        static_cast<sqlmodeltypes::SearchDirection>(distanceDirWidget->currentIndex()),
         Unit::rev(value, Unit::distNmF),
         Unit::rev(maxDistanceWidget->value(), Unit::distNmF));
 
@@ -492,7 +493,7 @@ void SearchBaseTable::connectSearchWidgets()
     connect(maxDistanceWidget, QOverload<int>::of(&QSpinBox::valueChanged), this, [ = ](int value)
     {
       controller->filterByDistanceUpdate(
-        static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
+        static_cast<sqlmodeltypes::SearchDirection>(distanceDirWidget->currentIndex()),
         Unit::rev(minDistanceWidget->value(), Unit::distNmF),
         Unit::rev(value, Unit::distNmF));
       minDistanceWidget->setMaximum(value);
@@ -502,7 +503,7 @@ void SearchBaseTable::connectSearchWidgets()
 
     connect(distanceDirWidget, QOverload<int>::of(&QComboBox::currentIndexChanged), this, [ = ](int index)
     {
-      controller->filterByDistanceUpdate(static_cast<sqlproxymodel::SearchDirection>(index),
+      controller->filterByDistanceUpdate(static_cast<sqlmodeltypes::SearchDirection>(index),
                                          Unit::rev(minDistanceWidget->value(), Unit::distNmF),
                                          Unit::rev(maxDistanceWidget->value(), Unit::distNmF));
       updateButtonMenu();
@@ -578,7 +579,7 @@ void SearchBaseTable::distanceSearchChanged(bool checked, bool changeViewState)
     saveViewState(!checked);
 
   controller->filterByDistance(checked ? mapWidget->getSearchMarkPos() : atools::geo::Pos(),
-                               static_cast<sqlproxymodel::SearchDirection>(distanceDirWidget->currentIndex()),
+                               static_cast<sqlmodeltypes::SearchDirection>(distanceDirWidget->currentIndex()),
                                Unit::rev(minDistanceWidget->value(), Unit::distNmF),
                                Unit::rev(maxDistanceWidget->value(), Unit::distNmF));
 

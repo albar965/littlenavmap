@@ -319,8 +319,6 @@ private:
   /* Reset drawing settings */
   void resetMapObjectsShown();
 
-  void searchSelectionChanged(const SearchBaseTable *source, int selected, int visible, int total);
-
   /* Selection in approach view has changed */
   void procedureLegSelected(const proc::MapProcedureRef& ref);
 

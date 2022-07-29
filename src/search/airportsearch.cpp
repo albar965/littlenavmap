@@ -34,6 +34,7 @@
 #include "query/airportquery.h"
 #include "search/column.h"
 #include "search/columnlist.h"
+#include "search/sqlmodel.h"
 #include "search/randomdepartureairportpickingbycriteria.h"
 #include "search/sqlcontroller.h"
 #include "settings/settings.h"

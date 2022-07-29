@@ -20,6 +20,8 @@
 #include "geo/calculations.h"
 #include "search/column.h"
 #include "search/columnlist.h"
+#include "search/sqlmodel.h"
+#include "search/sqlproxymodel.h"
 #include "sql/sqlrecord.h"
 #include "sql/sqldatabase.h"
 #include "gui/tools.h"
@@ -154,13 +156,13 @@ void SqlController::filterByBuilder()
   searchParamsChanged = true;
 }
 
-void SqlController::filterIncluding(const QModelIndex& index, bool builder)
+void SqlController::filterIncluding(const QModelIndex& index, bool forceQueryBuilder)
 {
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
 #endif
   view->clearSelection();
-  model->filterIncluding(toSource(index), builder);
+  model->filterIncluding(toSource(index), forceQueryBuilder);
   searchParamsChanged = true;
 }
 
@@ -211,13 +213,13 @@ void SqlController::filterBySpinBox(const Column *col, int value)
   searchParamsChanged = true;
 }
 
-void SqlController::filterByRecord(const atools::sql::SqlRecord& record)
+void SqlController::showInSearch(const atools::sql::SqlRecord& record, bool ignoreQueryBuilder)
 {
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO;
+  qDebug() << Q_FUNC_INFO << record;
 #endif
   view->clearSelection();
-  model->filterByRecord(record);
+  model->filterByRecord(record, ignoreQueryBuilder);
   searchParamsChanged = true;
 }
 
@@ -282,7 +284,7 @@ void SqlController::filterByComboBox(const Column *col, int value, bool noFilter
   searchParamsChanged = true;
 }
 
-void SqlController::filterByDistance(const atools::geo::Pos& center, sqlproxymodel::SearchDirection dir,
+void SqlController::filterByDistance(const atools::geo::Pos& center, sqlmodeltypes::SearchDirection dir,
                                      float minDistance, float maxDistance)
 {
 #ifdef DEBUG_INFORMATION
@@ -346,7 +348,7 @@ void SqlController::filterByDistance(const atools::geo::Pos& center, sqlproxymod
   searchParamsChanged = true;
 }
 
-void SqlController::filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, float minDistance, float maxDistance)
+void SqlController::filterByDistanceUpdate(sqlmodeltypes::SearchDirection dir, float minDistance, float maxDistance)
 {
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
@@ -614,8 +616,7 @@ void SqlController::loadAllRowsForDistanceSearch()
   }
 }
 
-void SqlController::setDataCallback(const SqlModel::DataFunctionType& value,
-                                    const QSet<Qt::ItemDataRole>& roles)
+void SqlController::setDataCallback(const sqlmodeltypes::DataFunctionType& value, const QSet<Qt::ItemDataRole>& roles)
 {
   model->setDataCallback(value, roles);
 }

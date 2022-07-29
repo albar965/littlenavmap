@@ -36,7 +36,7 @@ SqlProxyModel::~SqlProxyModel()
 
 }
 
-void SqlProxyModel::setDistanceFilter(const Pos& center, sqlproxymodel::SearchDirection dir,
+void SqlProxyModel::setDistanceFilter(const Pos& center, sqlmodeltypes::SearchDirection dir,
                                       float minDistance, float maxDistance)
 {
   minDistMeter = nmToMeter(minDistance);
@@ -61,29 +61,29 @@ bool SqlProxyModel::filterAcceptsRow(int sourceRow, const QModelIndex&) const
 
   switch(direction)
   {
-    case sqlproxymodel::ALL:
+    case sqlmodeltypes::ALL:
       // All directions
       return matchDistance(pos);
 
-    case sqlproxymodel::NORTH:
+    case sqlmodeltypes::NORTH:
       if(MIN_NORTH_DEG <= heading || heading <= MAX_NORTH_DEG)
         return matchDistance(pos);
       else
         return false;
 
-    case sqlproxymodel::EAST:
+    case sqlmodeltypes::EAST:
       if(MIN_EAST_DEG <= heading && heading <= MAX_EAST_DEG)
         return matchDistance(pos);
       else
         return false;
 
-    case sqlproxymodel::SOUTH:
+    case sqlmodeltypes::SOUTH:
       if(MIN_SOUTH_DEG <= heading && heading <= MAX_SOUTH_DEG)
         return matchDistance(pos);
       else
         return false;
 
-    case sqlproxymodel::WEST:
+    case sqlmodeltypes::WEST:
       if(MIN_WEST_DEG <= heading && heading <= MAX_WEST_DEG)
         return matchDistance(pos);
       else

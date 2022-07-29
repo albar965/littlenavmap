@@ -114,6 +114,12 @@ Column& Column::convertFunc(std::function<float(float)> unitConvertFunc)
   return *this;
 }
 
+Column& Column::sqlFunc(const QString& sqlFunctionParam)
+{
+  sqlFunction = sqlFunctionParam;
+  return *this;
+}
+
 Column& Column::defaultSortOrder(Qt::SortOrder order)
 {
   colDefaultSortOrd = order;

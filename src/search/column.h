@@ -18,7 +18,6 @@
 #ifndef LITTLENAVMAP_COLUMN_H
 #define LITTLENAVMAP_COLUMN_H
 
-#include <QString>
 #include <QStringList>
 #include <functional>
 
@@ -95,7 +94,11 @@ public:
   /* Indicates a condition that should be use for a spin box value, i.e. ">", "<" etc. */
   Column& condition(const QString& cond);
 
+  /* Unit conversion function */
   Column& convertFunc(std::function<float(float value)> unitConvertFunc);
+
+  /* Sql function to build column like "strftime('%s', destination_time) - strftime('%s', departure_time)" */
+  Column& sqlFunc(const QString& sqlFunctionParam);
 
   bool isFilter() const
   {
@@ -238,6 +241,11 @@ public:
     return unitConvert;
   }
 
+  const QString& getSqlFunc() const
+  {
+    return sqlFunction;
+  }
+
 private:
   friend class ColumnList;
 
@@ -253,6 +261,9 @@ private:
 
   /* Conditions used for spinboxes and others */
   QString colCondition;
+
+  /* SQL function to build column */
+  QString sqlFunction;
 
   /* Condition list used for combo boxes */
   QStringList colIndexConditionMap;

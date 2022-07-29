@@ -19,26 +19,11 @@
 #define LITTLENAVMAP_SQLPROXYMODEL_H
 
 #include "geo/pos.h"
+#include "search/sqlmodeltypes.h"
 
 #include <QSortFilterProxyModel>
 
 class SqlModel;
-
-namespace sqlproxymodel {
-
-/* Search direction. This is not the precise direction but an approximation where the ranges overlap.
- * E.g. EAST is 22.5f <= heading && heading <= 157.5f */
-enum SearchDirection
-{
-  /* Numbers have to match index in the combo box */
-  ALL = 0,
-  NORTH = 1,
-  EAST = 2,
-  SOUTH = 3,
-  WEST = 4
-};
-
-}
 
 /*
  * Proxy that does the second stage (fine) filtering for distance searches. The default model does a simple
@@ -63,8 +48,7 @@ public:
    * @param minDistance minimum distance to center point in nautical miles
    * @param maxDistance maximum distance to center point in nautical miles
    */
-  void setDistanceFilter(const atools::geo::Pos& center, sqlproxymodel::SearchDirection dir,
-                         float minDistance, float maxDistance);
+  void setDistanceFilter(const atools::geo::Pos& center, sqlmodeltypes::SearchDirection dir, float minDistance, float maxDistance);
 
   /* Clear distance search and stop all filtering */
   void clearDistanceFilter();
@@ -92,7 +76,7 @@ private:
 
   SqlModel *sourceSqlModel = nullptr;
   atools::geo::Pos centerPos;
-  sqlproxymodel::SearchDirection direction;
+  sqlmodeltypes::SearchDirection direction;
   float minDistMeter = 0.f, maxDistMeter = 0.f;
 
 };

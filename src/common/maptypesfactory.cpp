@@ -373,8 +373,27 @@ void MapTypesFactory::fillLogbookEntry(const atools::sql::SqlRecord& rec, MapLog
   obj.aircraftType = rec.valueStr("aircraft_type");
   obj.aircraftRegistration = rec.valueStr("aircraft_registration");
   obj.simulator = rec.valueStr("simulator");
-  obj.distance = rec.valueFloat("distance");
-  obj.distanceGc = atools::geo::meterToNm(obj.lineString().lengthMeter());
+  obj.distanceNm = rec.valueFloat("distance");
+  obj.distanceGcNm = atools::geo::meterToNm(obj.lineString().lengthMeter());
+
+  if(!rec.isNull("departure_time") && !rec.isNull("destination_time"))
+  {
+    // Calculate travel time if all times are valid
+    obj.travelTimeRealHours =
+      static_cast<float>(rec.valueDateTime("departure_time").secsTo(rec.valueDateTime("destination_time")) / 3600.);
+
+    // Avoid negative values
+    if(obj.travelTimeRealHours < 0.f)
+      obj.travelTimeRealHours = 0.f;
+  }
+
+  if(!rec.isNull("departure_time_sim") && !rec.isNull("destination_time_sim"))
+  {
+    obj.travelTimeSimHours =
+      static_cast<float>(rec.valueDateTime("departure_time_sim").secsTo(rec.valueDateTime("destination_time_sim")) / 3600.);
+    if(obj.travelTimeSimHours < 0.f)
+      obj.travelTimeSimHours = 0.f;
+  }
 
   obj.perfFile = rec.valueStr("performance_file");
   obj.routeFile = rec.valueStr("flightplan_file");

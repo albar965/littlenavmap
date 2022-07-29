@@ -22,24 +22,21 @@
 #include "common/constants.h"
 #include "common/dirtool.h"
 #include "common/elevationprovider.h"
-#include "gui/messagesettings.h"
 #include "common/mapcolors.h"
 #include "common/settingsmigrate.h"
 #include "common/unit.h"
 #include "connect/connectclient.h"
 #include "db/databasemanager.h"
 #include "exception.h"
-#include "fs/common/morareader.h"
 #include "fs/perf/aircraftperf.h"
 #include "fs/pln/flightplanio.h"
 #include "gui/application.h"
-#include "gui/choicedialog.h"
 #include "gui/dialog.h"
 #include "gui/dockwidgethandler.h"
 #include "gui/errorhandler.h"
 #include "gui/filehistoryhandler.h"
 #include "gui/helphandler.h"
-#include "gui/itemviewzoomhandler.h"
+#include "gui/messagesettings.h"
 #include "gui/statusbareventfilter.h"
 #include "gui/stylehandler.h"
 #include "gui/tabwidgethandler.h"
@@ -50,14 +47,12 @@
 #include "logbook/logdatacontroller.h"
 #include "logging/loggingguiabort.h"
 #include "logging/logginghandler.h"
-#include "mapgui/aprongeometrycache.h"
 #include "mapgui/imageexportdialog.h"
 #include "mapgui/mapairporthandler.h"
 #include "mapgui/mapdetailhandler.h"
-#include "mapgui/maplayersettings.h"
 #include "mapgui/mapmarkhandler.h"
-#include "mapgui/mapwidget.h"
 #include "mapgui/mapthemehandler.h"
+#include "mapgui/mapwidget.h"
 #include "navapp.h"
 #include "online/onlinedatacontroller.h"
 #include "options/optionsdialog.h"
@@ -66,7 +61,6 @@
 #include "profile/profilewidget.h"
 #include "query/airportquery.h"
 #include "query/procedurequery.h"
-#include "route/routealtitude.h"
 #include "route/routecontroller.h"
 #include "routeexport/routeexport.h"
 #include "routeexport/simbriefhandler.h"
@@ -89,7 +83,6 @@
 #include "weather/weatherreporter.h"
 #include "weather/windreporter.h"
 #include "web/webcontroller.h"
-#include "web/webmapcontroller.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -100,12 +93,8 @@
 #include <QDebug>
 #include <QCloseEvent>
 #include <QDesktopServices>
-#include <QFileInfo>
 #include <QScreen>
 #include <QWindow>
-#include <QDesktopWidget>
-#include <QDir>
-#include <QFileInfoList>
 #include <QSslSocket>
 #include <QEvent>
 #include <QMimeData>
@@ -1125,7 +1114,7 @@ void MainWindow::connectAllSlots()
   connect(airportSearch, &SearchBaseTable::routeSetDestination, routeController, &RouteController::routeSetDestination);
   connect(airportSearch, &SearchBaseTable::routeAddAlternate, routeController, &RouteController::routeAddAlternate);
   connect(airportSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
-  connect(airportSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+  connect(airportSearch, &SearchBaseTable::selectionChanged, searchController, &SearchController::searchSelectionChanged);
   connect(airportSearch, &SearchBaseTable::addAirportMsa, mapWidget, &MapWidget::addMsaMark);
 
   // Nav search ===================================================================================
@@ -1133,7 +1122,7 @@ void MainWindow::connectAllSlots()
   connect(navSearch, &SearchBaseTable::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(navSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(navSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
-  connect(navSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+  connect(navSearch, &SearchBaseTable::selectionChanged, searchController, &SearchController::searchSelectionChanged);
   connect(navSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
   connect(navSearch, &SearchBaseTable::addAirportMsa, mapWidget, &MapWidget::addMsaMark);
 
@@ -1142,7 +1131,7 @@ void MainWindow::connectAllSlots()
   connect(userSearch, &SearchBaseTable::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(userSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(userSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
-  connect(userSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+  connect(userSearch, &SearchBaseTable::selectionChanged, searchController, &SearchController::searchSelectionChanged);
   connect(userSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
 
   // Logbook search ===================================================================================
@@ -1150,7 +1139,7 @@ void MainWindow::connectAllSlots()
   connect(logSearch, &SearchBaseTable::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(logSearch, &SearchBaseTable::showRect, mapWidget, &MapPaintWidget::showRect);
   connect(logSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
-  connect(logSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+  connect(logSearch, &SearchBaseTable::selectionChanged, searchController, &SearchController::searchSelectionChanged);
   connect(logSearch, &SearchBaseTable::routeSetDeparture, routeController, &RouteController::routeSetDeparture);
   connect(logSearch, &SearchBaseTable::routeSetDestination, routeController, &RouteController::routeSetDestination);
   connect(logSearch, &SearchBaseTable::routeAddAlternate, routeController, &RouteController::routeAddAlternate);
@@ -1214,14 +1203,14 @@ void MainWindow::connectAllSlots()
   connect(clientSearch, &SearchBaseTable::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(clientSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(clientSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
-  connect(clientSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+  connect(clientSearch, &SearchBaseTable::selectionChanged, searchController, &SearchController::searchSelectionChanged);
 
   // Online center search ===================================================================================
   connect(centerSearch, &SearchBaseTable::showRect, mapWidget, &MapPaintWidget::showRect);
   connect(centerSearch, &SearchBaseTable::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(centerSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(centerSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
-  connect(centerSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
+  connect(centerSearch, &SearchBaseTable::selectionChanged, searchController, &SearchController::searchSelectionChanged);
 
   // Remove/add buttons and tabs
   connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
@@ -1250,9 +1239,6 @@ void MainWindow::connectAllSlots()
           NavApp::getAirspaceController(), &AirspaceController::updateButtonsAndActions);
   connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
           NavApp::getAirspaceController(), &AirspaceController::updateButtonsAndActions);
-
-  connect(clientSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
-  connect(centerSearch, &SearchBaseTable::selectionChanged, this, &MainWindow::searchSelectionChanged);
 
   // Approach controller ===================================================================
   ProcedureSearch *procedureSearch = searchController->getProcedureSearch();
@@ -2779,56 +2765,6 @@ void MainWindow::routeSelectionChanged(int selected, int total)
   updateHighlightActionStates();
 }
 
-/* Selection in one of the search result tables has changed */
-void MainWindow::searchSelectionChanged(const SearchBaseTable *source, int selected, int visible, int total)
-{
-  bool updateAirspace = false, updateLogEntries = false;
-  QString selectionLabelText = tr("%1 of %2 %3 selected, %4 visible.%5");
-  QString type;
-  if(source->getTabIndex() == si::SEARCH_AIRPORT)
-  {
-    type = tr("Airports");
-    ui->labelAirportSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
-  }
-  else if(source->getTabIndex() == si::SEARCH_NAV)
-  {
-    type = tr("Navaids");
-    ui->labelNavSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
-  }
-  else if(source->getTabIndex() == si::SEARCH_USER)
-  {
-    type = tr("Userpoints");
-    ui->labelUserdata->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
-  }
-  else if(source->getTabIndex() == si::SEARCH_LOG)
-  {
-    updateLogEntries = true;
-    type = tr("Logbook Entries");
-    ui->labelLogdata->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(QString()));
-  }
-  else if(source->getTabIndex() == si::SEARCH_ONLINE_CLIENT)
-  {
-    type = tr("Clients");
-    QString lastUpdate = tr(" Last Update: %1").
-                         arg(NavApp::getOnlinedataController()->getLastUpdateTime().toString(Qt::DefaultLocaleShortDate));
-    ui->labelOnlineClientSearchStatus->setText(selectionLabelText.
-                                               arg(selected).arg(total).arg(type).arg(visible).arg(lastUpdate));
-  }
-  else if(source->getTabIndex() == si::SEARCH_ONLINE_CENTER)
-  {
-    updateAirspace = true;
-    type = tr("Centers");
-    QString lastUpdate = tr(" Last Update: %1").
-                         arg(NavApp::getOnlinedataController()->getLastUpdateTime().toString(Qt::DefaultLocaleShortDate));
-    ui->labelOnlineCenterSearchStatus->setText(selectionLabelText.arg(selected).arg(total).arg(type).arg(visible).arg(lastUpdate));
-  }
-
-  map::MapResult result;
-  searchController->getSelectedMapObjects(result);
-  mapWidget->changeSearchHighlights(result, updateAirspace, updateLogEntries);
-  updateHighlightActionStates();
-}
-
 void MainWindow::procedureSelected(const proc::MapProcedureRef& ref)
 {
   proceduresSelectedInternal({ref}, false /* previewAll */);
@@ -3453,8 +3389,8 @@ void MainWindow::updateMarkActionStates()
 /* Enable or disable actions */
 void MainWindow::updateHighlightActionStates()
 {
-  ui->actionMapClearAllHighlights->setEnabled(
-    mapWidget->hasHighlights() || searchController->hasSelection() || routeController->hasTableSelection());
+  ui->actionMapClearAllHighlights->setEnabled(mapWidget->hasHighlights() || searchController->hasSelection() ||
+                                              routeController->hasTableSelection());
 }
 
 /* Enable or disable actions */

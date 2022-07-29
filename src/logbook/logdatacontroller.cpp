@@ -644,6 +644,9 @@ void LogdataController::importXplane()
 
       logChanged(false /* load all */, false /* keep selection */);
 
+      // Enable more search options to show user the search criteria
+      NavApp::getMainUi()->actionLogdataSearchShowMoreOptions->setChecked(true);
+
       /*: The text "Imported from X-Plane logbook" has to match the one in atools::fs::userdata::LogdataManager::importXplane */
       emit showInSearch(map::LOGBOOK,
                         atools::sql::SqlRecord().appendFieldAndValue("description",
@@ -838,6 +841,9 @@ void LogdataController::convertUserdata()
     mainWindow->showLogbookSearch();
 
     logChanged(false /* load all */, false /* keep selection */);
+
+    // Enable more search options to show user the search criteria
+    NavApp::getMainUi()->actionLogdataSearchShowMoreOptions->setChecked(true);
 
     /*: The text "Converted from userdata" has to match the one in LogdataConverter::convertFromUserdata */
     emit showInSearch(map::LOGBOOK,

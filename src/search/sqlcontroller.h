@@ -18,8 +18,10 @@
 #ifndef LITTLENAVMAP_CONTROLLER_H
 #define LITTLENAVMAP_CONTROLLER_H
 
-#include "search/sqlmodel.h"
-#include "search/sqlproxymodel.h"
+#include "geo/pos.h"
+#include "search/sqlmodeltypes.h"
+
+#include <QString>
 
 namespace atools {
 namespace geo {
@@ -27,13 +29,22 @@ class Pos;
 }
 namespace sql {
 class SqlDatabase;
+class SqlRecord;
 }
 }
 
-class QWidget;
-class QTableView;
+class Column;
 class ColumnList;
+class QAbstractItemModel;
+class QItemSelection;
+class QModelIndex;
+class QPoint;
+class QTableView;
+class QVariant;
+class QWidget;
 class QueryBuilder;
+class SqlModel;
+class SqlProxyModel;
 
 /*
  * Combines all functionality around the table SQL model, view, view header and
@@ -64,7 +75,7 @@ public:
   void filterByBuilder();
 
   /* Filter by text at the given index */
-  void filterIncluding(const QModelIndex& index, bool builder);
+  void filterIncluding(const QModelIndex& index, bool forceQueryBuilder);
 
   /* Filter excluding by text at the given index */
   void filterExcluding(const QModelIndex& index, bool builder);
@@ -142,15 +153,16 @@ public:
   /* Get the database id for the row at the index or -1 if the index is not valid */
   int getIdForRow(const QModelIndex& index);
 
-  /* Reset search and filter by fields in record */
-  void filterByRecord(const atools::sql::SqlRecord& record);
+  /* Reset search and filter by fields in record
+   * "ignoreQueryBuilder" set to true will cause columns in record matching query builder
+   * columns to be used as normal queries (not query builder). */
+  void showInSearch(const atools::sql::SqlRecord& record, bool ignoreQueryBuilder);
 
   /* Start or end distance search depending if center is valid or not */
-  void filterByDistance(const atools::geo::Pos& center, sqlproxymodel::SearchDirection dir,
-                        float minDistance, float maxDistance);
+  void filterByDistance(const atools::geo::Pos& center, sqlmodeltypes::SearchDirection dir, float minDistance, float maxDistance);
 
   /* Update distance search for changed values from spin box widgets */
-  void filterByDistanceUpdate(sqlproxymodel::SearchDirection dir, float minDistance, float maxDistance);
+  void filterByDistanceUpdate(sqlmodeltypes::SearchDirection dir, float minDistance, float maxDistance);
 
   /* Load all rows if a distance search is active. */
   void loadAllRowsForDistanceSearch();
@@ -163,7 +175,7 @@ public:
 
   /* Set the callback that will handle data rows and values, i.e. format values to strings.
    * Set the desired data roles that the callback should be called for */
-  void setDataCallback(const SqlModel::DataFunctionType& value, const QSet<Qt::ItemDataRole>& roles);
+  void setDataCallback(const sqlmodeltypes::DataFunctionType& value, const QSet<Qt::ItemDataRole>& roles);
 
   /* Get position for the row at the given index. The query needs to have a lonx and laty column */
   atools::geo::Pos getGeoPos(const QModelIndex& index, const QString& lonxCol, const QString& latyCol);
