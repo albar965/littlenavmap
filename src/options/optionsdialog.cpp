@@ -339,6 +339,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->spinBoxOptionsDisplayTextSizeAircraftAi,
      ui->spinBoxOptionsDisplaySymbolSizeNavaid,
      ui->spinBoxOptionsDisplaySymbolSizeUserpoint,
+     ui->spinBoxOptionsDisplaySymbolSizeHighlight,
      ui->spinBoxOptionsDisplayTextSizeNavaid,
      ui->spinBoxOptionsDisplayTextSizeUserpoint,
      ui->spinBoxOptionsDisplayThicknessFlightplan,
@@ -1738,6 +1739,7 @@ void OptionsDialog::widgetsToOptionData()
   data.displayTextSizeAircraftAi = ui->spinBoxOptionsDisplayTextSizeAircraftAi->value();
   data.displaySymbolSizeNavaid = ui->spinBoxOptionsDisplaySymbolSizeNavaid->value();
   data.displaySymbolSizeUserpoint = ui->spinBoxOptionsDisplaySymbolSizeUserpoint->value();
+  data.displaySymbolSizeHighlight = ui->spinBoxOptionsDisplaySymbolSizeHighlight->value();
   data.displayTextSizeNavaid = ui->spinBoxOptionsDisplayTextSizeNavaid->value();
   data.displayTextSizeUserpoint = ui->spinBoxOptionsDisplayTextSizeUserpoint->value();
   data.displayThicknessAirway = ui->spinBoxOptionsDisplayThicknessAirway->value();
@@ -2024,6 +2026,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->spinBoxOptionsDisplayTextSizeAircraftAi->setValue(data.displayTextSizeAircraftAi);
   ui->spinBoxOptionsDisplaySymbolSizeNavaid->setValue(data.displaySymbolSizeNavaid);
   ui->spinBoxOptionsDisplaySymbolSizeUserpoint->setValue(data.displaySymbolSizeUserpoint);
+  ui->spinBoxOptionsDisplaySymbolSizeHighlight->setValue(data.displaySymbolSizeHighlight);
   ui->spinBoxOptionsDisplayTextSizeUserpoint->setValue(data.displayTextSizeUserpoint);
   ui->spinBoxOptionsDisplayThicknessAirway->setValue(data.displayThicknessAirway);
   ui->spinBoxOptionsDisplayTextSizeAirway->setValue(data.displayTextSizeAirway);

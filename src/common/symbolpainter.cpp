@@ -663,7 +663,7 @@ int SymbolPainter::airportMsaSize(QPainter *painter, const map::MapAirportMsa& a
          atools::roundToInt(airportMsa.altitudes.size() > 1 || !drawDetails ? sizeFactor : sizeFactor / 2.f);
 }
 
-void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& airportMsa, float x, float y, int size, float symbolScale,
+void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& airportMsa, float x, float y, float size, float symbolScale,
                                    bool header, bool transparency, bool fast)
 {
   atools::util::PainterContextSaver saver(painter);
@@ -679,13 +679,13 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
 
   bool drawDetails = symbolScale > 0.f;
 
-  if(size <= 0)
+  if(size <= 0.f)
     size = airportMsaSize(painter, airportMsa, symbolScale, drawDetails);
 
-  int radius = size / 2;
+  float radius = size / 2.f;
 
   // Outer circle with semi-transparent fill
-  painter->drawEllipse(QPointF(x, y), radius - 2, radius - 2);
+  painter->drawEllipse(QPointF(x, y), radius - 2.f, radius - 2.f);
 
   if(!fast)
   {
@@ -728,7 +728,7 @@ void SymbolPainter::drawAirportMsa(QPainter *painter, const map::MapAirportMsa& 
           text.append(tr("►"));
 
         // Line from center to top
-        QLineF line(x, y, x, y - radius + 2);
+        QLineF line(x, y, x, y - radius + 2.f);
         line.setAngle(atools::geo::angleToQt(bearing));
 
         // Draw sector line
@@ -1150,7 +1150,7 @@ void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float
 }
 
 void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, float x, float y,
-                                textflags::TextFlags flags, int size, bool fill, const QStringList *addtionalText)
+                                textflags::TextFlags flags, float size, bool fill, const QStringList *addtionalText)
 {
   QStringList texts;
 
@@ -1199,8 +1199,7 @@ void SymbolPainter::drawVorText(QPainter *painter, const map::MapVor& vor, float
 }
 
 void SymbolPainter::drawWaypointText(QPainter *painter, const map::MapWaypoint& wp, float x, float y,
-                                     textflags::TextFlags flags, int size, bool fill,
-                                     const QStringList *addtionalText)
+                                     textflags::TextFlags flags, float size, bool fill, const QStringList *addtionalText)
 {
   QStringList texts;
 

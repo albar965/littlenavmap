@@ -160,10 +160,11 @@ void MapPainterMark::paintHome()
 void MapPainterMark::paintHighlights()
 {
   bool transparent = context->flags2.testFlag(opts2::MAP_HIGHLIGHT_TRANSPARENT);
+  const MapLayer *mapLayer = context->mapLayer;
+  GeoPainter *painter = context->painter;
 
   // Draw highlight from the search result view =====================================================
   const MapResult& highlightResultsSearch = mapPaintWidget->getSearchHighlights();
-  float radius = context->szF(context->symbolSizeAirport, transparent ? 3.f : 6.f);
 
   // Get airport entries from log to avoid rings around log entry airports
   QSet<int> logIds;
@@ -174,28 +175,6 @@ void MapPainterMark::paintHighlights()
     if(entry.destinationPos.isValid())
       logIds.insert(entry.destination.id);
   }
-
-  QVector<ageo::Pos> positions;
-  for(const MapAirport& ap : highlightResultsSearch.airports)
-  {
-    if(!logIds.contains(ap.id))
-      positions.append(ap.position);
-  }
-
-  for(const MapWaypoint& wp : highlightResultsSearch.waypoints)
-    positions.append(wp.position);
-
-  for(const MapVor& vor : highlightResultsSearch.vors)
-    positions.append(vor.position);
-
-  for(const MapNdb& ndb : highlightResultsSearch.ndbs)
-    positions.append(ndb.position);
-
-  for(const MapUserpoint& user : highlightResultsSearch.userpoints)
-    positions.append(user.position);
-
-  for(const map::MapOnlineAircraft& aircraft: highlightResultsSearch.onlineAircraft)
-    positions.append(aircraft.getPosition());
 
   // Draw boundary for selected online network airspaces =====================================================
   for(const MapAirspace& airspace: highlightResultsSearch.airspaces)
@@ -224,31 +203,57 @@ void MapPainterMark::paintHighlights()
   paintLogEntries(highlightResultsSearch.logbookEntries);
 
   // ====================================================================
-  // Draw all highlight rings for positions collected above =============
-  GeoPainter *painter = context->painter;
-  if(context->mapLayer->isAirport())
-    radius = context->sz(context->symbolSizeAirport, std::max(radius, static_cast<float>(context->mapLayer->getAirportSymbolSize())));
+  // Collect all highlight rings for positions =============
+  // Feature position and size (not radius)
+  QVector<std::pair<ageo::Pos, float> > positionSizeList;
+  for(const MapAirport& ap : highlightResultsSearch.airports)
+  {
+    // Do not add if already drawn by logbook preview
+    if(!logIds.contains(ap.id))
+      positionSizeList.append(std::make_pair(ap.position, context->szF(context->symbolSizeAirport, mapLayer->getAirportSymbolSize())));
+  }
 
-  if(transparent)
-    radius *= 0.75f;
+  for(const MapWaypoint& wp : highlightResultsSearch.waypoints)
+    positionSizeList.append(std::make_pair(wp.position, context->szF(context->symbolSizeNavaid, mapLayer->getWaypointSymbolSize())));
 
+  for(const MapVor& vor : highlightResultsSearch.vors)
+    positionSizeList.append(std::make_pair(vor.position, context->szF(context->symbolSizeNavaid, mapLayer->getVorSymbolSize())));
+
+  for(const MapNdb& ndb : highlightResultsSearch.ndbs)
+    positionSizeList.append(std::make_pair(ndb.position, context->szF(context->symbolSizeNavaid, mapLayer->getNdbSymbolSize())));
+
+  for(const MapUserpoint& user : highlightResultsSearch.userpoints)
+    positionSizeList.append(std::make_pair(user.position, context->szF(context->symbolSizeUserpoint, mapLayer->getUserPointSymbolSize())));
+
+  for(const map::MapOnlineAircraft& aircraft: highlightResultsSearch.onlineAircraft)
+  {
+    float size = std::max(context->sz(context->symbolSizeAircraftAi, mapLayer->getAiAircraftSize()),
+                          scale->getPixelIntForFeet(aircraft.getAircraft().getModelSize()));
+    positionSizeList.append(std::make_pair(aircraft.getPosition(), size * 0.75f));
+  }
+
+  // ====================================================================
+  // Draw all highlight rings for collected positions and sizes =============
   QColor highlightColor = OptionData::instance().getHighlightSearchColor();
-  const QPen outerPen(mapcolors::highlightBackColor, radius / 3. + 2., Qt::SolidLine, Qt::FlatCap);
-  const QPen innerPen(mapcolors::adjustAlphaF(highlightColor, alpha), transparent ? 1. : radius / 3., Qt::SolidLine, Qt::FlatCap);
   painter->setBrush(transparent ? QBrush(mapcolors::adjustAlphaF(highlightColor, alpha)) : QBrush(Qt::NoBrush));
-  painter->setPen(innerPen);
-  for(const ageo::Pos& pos : positions)
+  for(const std::pair<ageo::Pos, float>& posSize : positionSizeList)
   {
     float x, y;
-    if(wToS(pos, x, y))
+    if(wToS(posSize.first, x, y))
     {
+      // Adjust to highlight size in options
+      float size = context->szF(context->symbolSizeHighlight, posSize.second);
+
+      // Make radius a bit bigger and set minimum
+      float radius = std::max(size / 2.f * 1.4f, 6.f);
+
       if(!context->drawFast && !transparent)
       {
         // Draw black background for outline
-        painter->setPen(outerPen);
+        painter->setPen(QPen(mapcolors::highlightBackColor, radius / 3. + 2., Qt::SolidLine, Qt::FlatCap));
         painter->drawEllipse(QPointF(x, y), radius, radius);
-        painter->setPen(innerPen);
       }
+      painter->setPen(QPen(mapcolors::adjustAlphaF(highlightColor, alpha), transparent ? 1. : radius / 3., Qt::SolidLine, Qt::FlatCap));
       painter->drawEllipse(QPointF(x, y), radius, radius);
     }
   }
@@ -257,6 +262,14 @@ void MapPainterMark::paintHighlights()
   const QColor outerColorProc(mapcolors::highlightBackColor);
   const QColor innerColorProc(mapcolors::adjustAlphaF(mapcolors::highlightProcedureColor, alpha));
   painter->setBrush(transparent ? QBrush(mapcolors::adjustAlphaF(mapcolors::highlightProcedureColor, alpha)) : QBrush(Qt::NoBrush));
+
+  // Use one radius for all procedure fixes and flight plan waypoints
+  float radius = context->szF(context->symbolSizeAirport, transparent ? 3.f : 6.f);
+  if(mapLayer->isAirport())
+    radius = std::max(radius, static_cast<float>(mapLayer->getAirportSymbolSize()));
+
+  // Adjust to highlight size in options
+  radius = context->szF(context->symbolSizeHighlight, radius);
 
   const proc::MapProcedureLeg& leg = mapPaintWidget->getProcedureLegHighlight();
   if(leg.isValid())
@@ -335,14 +348,14 @@ void MapPainterMark::paintHighlights()
   }
 
   // Draw highlights from the flight plan view =====================================================
-  if(context->mapLayer->isAirport())
-    radius = std::max(radius, static_cast<float>(context->mapLayer->getAirportSymbolSize()));
+  if(mapLayer->isAirport())
+    radius = std::max(radius, static_cast<float>(mapLayer->getAirportSymbolSize()));
 
   if(transparent)
     radius *= 0.75f;
 
   const QList<int>& routeHighlightResults = mapPaintWidget->getRouteHighlights();
-  positions.clear();
+  QVector<atools::geo::Pos> positions;
   for(int idx : routeHighlightResults)
   {
     const RouteLeg& routeLeg = NavApp::getRouteConst().value(idx);
@@ -454,12 +467,12 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   // Draw route ==========================================================================
   if(context->objectDisplayTypes & map::LOGBOOK_ROUTE && !visibleRouteGeometries.isEmpty())
   {
-    float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
-    float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
+    float outerlinewidth = context->szF(context->thicknessFlightplan, 7);
+    float innerlinewidth = context->szF(context->thicknessFlightplan, 4);
     bool transparent = context->flags2.testFlag(opts2::MAP_ROUTE_TRANSPARENT);
     float alpha = transparent ? (1.f - context->transparencyFlightplan) : 1.f;
     float lineWidth = transparent ? outerlinewidth : innerlinewidth;
-    float symbolSize = context->sz(context->thicknessFlightplan, 10);
+    float symbolSize = context->szF(context->thicknessFlightplan, 10);
     QColor routeLogEntryColor = mapcolors::adjustAlphaF(mapcolors::routeLogEntryColor, alpha);
     QColor routeLogEntryOutlineColor = mapcolors::adjustAlphaF(mapcolors::routeLogEntryOutlineColor, alpha);
 
@@ -546,8 +559,8 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   if(context->objectDisplayTypes & map::LOGBOOK_DIRECT)
   {
     // Use smaller measurement line thickness for this direct connection
-    float outerlinewidth = context->sz(context->thicknessUserFeature, 7) * 0.6f;
-    float innerlinewidth = context->sz(context->thicknessUserFeature, 4) * 0.6f;
+    float outerlinewidth = context->szF(context->thicknessUserFeature, 7) * 0.6f;
+    float innerlinewidth = context->szF(context->thicknessUserFeature, 4) * 0.6f;
     QPen directPen(mapcolors::routeLogEntryColor, innerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     QPen directOutlinePen(mapcolors::routeLogEntryOutlineColor, outerlinewidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
     float size = context->szF(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());

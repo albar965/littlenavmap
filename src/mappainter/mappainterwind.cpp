@@ -82,7 +82,7 @@ void MapPainterWind::render()
 
 void MapPainterWind::drawWindBarb(float speed, float direction, float x, float y)
 {
-  float size = context->sz(context->symbolSizeWindBarbs, context->mapLayer->getWindBarbsSymbolSize());
+  float size = context->szF(context->symbolSizeWindBarbs, context->mapLayer->getWindBarbsSymbolSize());
   symbolPainter->drawWindBarbs(context->painter, speed, 0.f, direction, x, y, size,
                                true /* wind barbs */, true /* alt wind */, false /* route */, context->drawFast);
 }

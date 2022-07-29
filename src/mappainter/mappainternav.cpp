@@ -364,11 +364,11 @@ void MapPainterNav::paintWaypoints(const QHash<int, map::MapWaypoint>& waypoints
       if(context->objCount())
         return;
 
-      int size = context->sz(context->symbolSizeNavaid, context->mapLayer->getWaypointSymbolSize());
+      float size = context->szF(context->symbolSizeNavaid, context->mapLayer->getWaypointSymbolSize());
 
       // Use minimum size for airway waypoints if respective airways are shown
       if((waypoint.hasJetAirways && drawAirwayJ) || (waypoint.hasVictorAirways && drawAirwayV) || (waypoint.hasTracks && drawTrack))
-        size = std::max(5, size);
+        size = std::max(5.f, size);
 
       symbolPainter->drawWaypointSymbol(context->painter, QColor(), x, y, size, false);
 
@@ -387,8 +387,8 @@ void MapPainterNav::paintVors(const QHash<int, map::MapVor>& vors, bool drawFast
 {
   bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
-  int size = context->sz(context->symbolSizeNavaid, context->mapLayer->getVorSymbolSize());
-  int vorSize = context->mapLayer->isVorLarge() ? size * 5 : 0;
+  float size = context->szF(context->symbolSizeNavaid, context->mapLayer->getVorSymbolSize());
+  float vorSize = context->mapLayer->isVorLarge() ? size * 5.f : 0.f;
 
   // Use margins for text placed on the left side of the object to avoid disappearing at the right screen border
   // Also consider VOR size

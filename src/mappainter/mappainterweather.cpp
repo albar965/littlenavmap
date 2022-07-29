@@ -139,7 +139,7 @@ void MapPainterWeather::render()
 
 void MapPainterWeather::drawAirportWeather(const atools::fs::weather::Metar& metar, float x, float y)
 {
-  float size = context->sz(context->symbolSizeAirportWeather, context->mapLayer->getAirportSymbolSize());
+  float size = context->szF(context->symbolSizeAirportWeather, context->mapLayer->getAirportSymbolSize());
   bool windBarbs = context->mapLayer->isAirportWeatherDetails();
 
   symbolPainter->drawAirportWeather(context->painter, metar, x - size * 4.f / 5.f, y - size * 4.f / 5.f, size,

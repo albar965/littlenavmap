@@ -1201,6 +1201,11 @@ public:
     return displaySymbolSizeUserpoint;
   }
 
+  int getDisplaySymbolSizeHighlight() const
+  {
+    return displaySymbolSizeHighlight;
+  }
+
   int getDisplayMapHighlightTransparent() const
   {
     return displayMapHighlightTransparent;
@@ -1408,6 +1413,9 @@ private:
 
   // spinBoxOptionsDisplaySymbolSizeUserpoint
   int displaySymbolSizeUserpoint = 100;
+
+  // spinBoxOptionsDisplaySymbolSizeHighlight
+  int displaySymbolSizeHighlight = 100;
 
   // spinBoxOptionsDisplayTextSizeAirway
   int displayTextSizeAirway = 100;

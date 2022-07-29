@@ -314,8 +314,8 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
   painter->setBrush(Qt::NoBrush);
 
   // Draw route lines ==========================================================================
-  float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
-  float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
+  float outerlinewidth = context->szF(context->thicknessFlightplan, 7);
+  float innerlinewidth = context->szF(context->thicknessFlightplan, 4);
 
   int destAptIdx = route->getDestinationAirportLegIndex();
 
@@ -539,8 +539,8 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   const Route *route = context->route;
   const OptionData& od = OptionData::instance();
 
-  float outerlinewidth = context->sz(context->thicknessFlightplan, 7);
-  float innerlinewidth = context->sz(context->thicknessFlightplan, 4);
+  float outerlinewidth = context->szF(context->thicknessFlightplan, 7);
+  float innerlinewidth = context->szF(context->thicknessFlightplan, 4);
   bool transparent = context->flags2.testFlag(opts2::MAP_ROUTE_TRANSPARENT);
 
   float lineWidth = transparent ? outerlinewidth : innerlinewidth;
@@ -1680,7 +1680,7 @@ void MapPainterRoute::paintWaypoint(const QColor& col, float x, float y, bool pr
 void MapPainterRoute::paintWaypointText(float x, float y, const map::MapWaypoint& obj, bool drawTextDetails, bool drawAsRoute,
                                         const QStringList *additionalText)
 {
-  int size = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
+  float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
   textflags::TextFlags flags = textflags::NONE;
 
   if(drawAsRoute)

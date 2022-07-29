@@ -100,7 +100,7 @@ public:
   void drawWindPointer(QPainter *painter, float x, float y, int size, float dir);
 
   /* Draw large symbol with sectors and labels. MSA circle with bearings and altitude */
-  void drawAirportMsa(QPainter *painter, const map::MapAirportMsa& airportMsa, float x, float y, int size, float symbolScale, bool header,
+  void drawAirportMsa(QPainter *painter, const map::MapAirportMsa& airportMsa, float x, float y, float size, float symbolScale, bool header,
                       bool transparency, bool fast);
 
   /* Aircraft track */
@@ -108,7 +108,7 @@ public:
 
   /* Waypoint texts have no background excepts for flight plan */
   void drawWaypointText(QPainter *painter, const map::MapWaypoint& wp, float x, float y,
-                        textflags::TextFlags flags, int size, bool fill,
+                        textflags::TextFlags flags, float size, bool fill,
                         const QStringList *addtionalText = nullptr);
 
   /* VOR with large size has a ring with compass ticks. For VORs part of the route the interior is filled.  */
@@ -117,7 +117,7 @@ public:
 
   /* VOR texts have no background excepts for flight plan */
   void drawVorText(QPainter *painter, const map::MapVor& vor, float x, float y, textflags::TextFlags flags,
-                   int size, bool fill, const QStringList *addtionalText = nullptr);
+                   float size, bool fill, const QStringList *addtionalText = nullptr);
 
   /* NDB with dotted rings or solid rings depending on size. For NDBs part of the route the interior is filled.  */
   void drawNdbSymbol(QPainter *painter, float x, float y, float size, bool routeFill, bool fast);

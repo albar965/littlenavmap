@@ -329,6 +329,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       context.symbolSizeWindBarbs = od.getDisplaySymbolSizeWindBarbs() / 100.f;
       context.symbolSizeNavaid = od.getDisplaySymbolSizeNavaid() / 100.f;
       context.symbolSizeUserpoint = od.getDisplaySymbolSizeUserpoint() / 100.f;
+      context.symbolSizeHighlight = od.getDisplaySymbolSizeHighlight() / 100.f;
       context.textSizeAircraftAi = od.getDisplayTextSizeAircraftAi() / 100.f;
       context.textSizeAircraftUser = od.getDisplayTextSizeAircraftUser() / 100.f;
       context.textSizeAirport = od.getDisplayTextSizeAirport() / 100.f;
@@ -546,9 +547,9 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       if(!context.isObjectOverflow())
         mapPainterTrack->render();
 
-      mapPainterMark->render();
-
       mapPainterAircraft->render();
+
+      mapPainterMark->render();
 
       mapPainterTop->render();
     } // if(!noRender())
