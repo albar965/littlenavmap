@@ -1016,9 +1016,9 @@ void MainWindow::connectAllSlots()
   connect(optionsDialog, &OptionsDialog::optionsChanged, this, &MainWindow::optionsChanged);
 
   // Warning when selecting export options ===================================================================
-  connect(ui->actionRouteSaveApprWaypoints, &QAction::toggled, routeExport, &RouteExport::warnExportOptionsFromMenu);
-  connect(ui->actionRouteSaveSidStarWaypoints, &QAction::toggled, routeExport, &RouteExport::warnExportOptionsFromMenu);
-  connect(ui->actionRouteSaveAirwayWaypoints, &QAction::toggled, routeExport, &RouteExport::warnExportOptionsFromMenu);
+  connect(ui->actionRouteSaveApprWaypointsOpt, &QAction::toggled, routeExport, &RouteExport::warnExportOptionsFromMenu);
+  connect(ui->actionRouteSaveSidStarWaypointsOpt, &QAction::toggled, routeExport, &RouteExport::warnExportOptionsFromMenu);
+  connect(ui->actionRouteSaveAirwayWaypointsOpt, &QAction::toggled, routeExport, &RouteExport::warnExportOptionsFromMenu);
 
   // Updated manually in dialog
   // connect(optionsDialog, &OptionsDialog::optionsChanged, NavApp::getWebController(), &WebController::optionsChanged);
@@ -1035,7 +1035,7 @@ void MainWindow::connectAllSlots()
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, mapWidget, &MapPaintWidget::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, profileWidget, &ProfileWidget::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, perfController, &AircraftPerfController::optionsChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, NavApp::getInfoController(), &InfoController::styleChanged);
+  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, infoController, &InfoController::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, optionsDialog, &OptionsDialog::styleChanged);
   connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, this, &MainWindow::updateStatusBarStyle);
 
@@ -3676,8 +3676,8 @@ void MainWindow::restoreStateMain()
     mapWidget->resetSettingActionsToDefault();
 
   // Map settings that are always loaded
-  widgetState.restore({ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionRouteEditMode, ui->actionRouteSaveSidStarWaypoints,
-                       ui->actionRouteSaveApprWaypoints, ui->actionRouteSaveAirwayWaypoints, ui->actionLogdataCreateLogbook,
+  widgetState.restore({ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionRouteEditMode, ui->actionRouteSaveSidStarWaypointsOpt,
+                       ui->actionRouteSaveApprWaypointsOpt, ui->actionRouteSaveAirwayWaypointsOpt, ui->actionLogdataCreateLogbook,
                        ui->actionMapShowSunShading, ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude,
                        ui->actionRunWebserver, ui->actionShowAllowDocking, ui->actionShowAllowMoving, ui->actionWindowStayOnTop});
 
@@ -3911,8 +3911,8 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowTurnPath, ui->actionMapAircraftCenter, ui->actionMapShowAircraftAi, ui->actionMapShowAircraftOnline,
                     ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
                     ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowSunShading, ui->actionMapShowAirportWeather,
-                    ui->actionMapShowMinimumAltitude, ui->actionRouteEditMode, ui->actionRouteSaveSidStarWaypoints,
-                    ui->actionRouteSaveApprWaypoints, ui->actionRouteSaveAirwayWaypoints, ui->actionLogdataCreateLogbook,
+                    ui->actionMapShowMinimumAltitude, ui->actionRouteEditMode, ui->actionRouteSaveSidStarWaypointsOpt,
+                    ui->actionRouteSaveApprWaypointsOpt, ui->actionRouteSaveAirwayWaypointsOpt, ui->actionLogdataCreateLogbook,
                     ui->actionRunWebserver, ui->actionSearchLogdataShowDirect, ui->actionSearchLogdataShowRoute,
                     ui->actionSearchLogdataShowTrack, ui->actionShowAllowDocking, ui->actionShowAllowMoving, ui->actionWindowStayOnTop});
 

@@ -69,9 +69,9 @@
      <property name="title">
       <string>Export &amp;Options</string>
      </property>
-     <addaction name="actionRouteSaveApprWaypoints"/>
-     <addaction name="actionRouteSaveSidStarWaypoints"/>
-     <addaction name="actionRouteSaveAirwayWaypoints"/>
+     <addaction name="actionRouteSaveApprWaypointsOpt"/>
+     <addaction name="actionRouteSaveSidStarWaypointsOpt"/>
+     <addaction name="actionRouteSaveAirwayWaypointsOpt"/>
     </widget>
     <addaction name="actionRouteNew"/>
     <addaction name="actionRouteOpen"/>
@@ -8983,7 +8983,7 @@ relation to shown airport</string>
     <string>Del</string>
    </property>
   </action>
-  <action name="actionRouteSaveApprWaypoints">
+  <action name="actionRouteSaveApprWaypointsOpt">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -8997,7 +8997,7 @@ relation to shown airport</string>
     <string>Export procedure waypoints instead of approach information</string>
    </property>
   </action>
-  <action name="actionRouteSaveSidStarWaypoints">
+  <action name="actionRouteSaveSidStarWaypointsOpt">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -10642,7 +10642,7 @@ relation to shown airport</string>
     <string>Ctrl+Shift+P</string>
    </property>
   </action>
-  <action name="actionRouteSaveAirwayWaypoints">
+  <action name="actionRouteSaveAirwayWaypointsOpt">
    <property name="checkable">
     <bool>true</bool>
    </property>

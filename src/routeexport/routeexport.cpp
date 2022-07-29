@@ -1905,11 +1905,11 @@ Route RouteExport::buildAdjustedRoute(const Route& route, rf::RouteAdjustOptions
   // Do not convert procedures for LNMPLN - no matter how it is saved
   if(!options.testFlag(rf::SAVE_LNMPLN))
   {
-    if(NavApp::getMainUi()->actionRouteSaveApprWaypoints->isChecked())
+    if(NavApp::getMainUi()->actionRouteSaveApprWaypointsOpt->isChecked())
       options |= rf::SAVE_APPROACH_WP;
-    if(NavApp::getMainUi()->actionRouteSaveSidStarWaypoints->isChecked())
+    if(NavApp::getMainUi()->actionRouteSaveSidStarWaypointsOpt->isChecked())
       options |= rf::SAVE_SIDSTAR_WP;
-    if(NavApp::getMainUi()->actionRouteSaveAirwayWaypoints->isChecked())
+    if(NavApp::getMainUi()->actionRouteSaveAirwayWaypointsOpt->isChecked())
       options |= rf::SAVE_AIRWAY_WP;
   }
 
@@ -1964,8 +1964,8 @@ void RouteExport::warnExportOptions()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  if(!warnedFormatOptions && (ui->actionRouteSaveApprWaypoints->isChecked() || ui->actionRouteSaveSidStarWaypoints->isChecked() ||
-                              ui->actionRouteSaveAirwayWaypoints->isChecked()))
+  if(!warnedFormatOptions && (ui->actionRouteSaveApprWaypointsOpt->isChecked() || ui->actionRouteSaveSidStarWaypointsOpt->isChecked() ||
+                              ui->actionRouteSaveAirwayWaypointsOpt->isChecked()))
   {
     QString message = tr("<p>Note that saving flight plans with one or more enabled options in menu \"File\" -> \"Export Options\" "
                            "can cause unexpected issues:</p>"
