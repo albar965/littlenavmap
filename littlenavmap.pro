@@ -398,6 +398,7 @@ SOURCES += \
   src/search/searchcontroller.cpp \
   src/search/sqlcontroller.cpp \
   src/search/sqlmodel.cpp \
+  src/search/sqlmodeltypes.cpp \
   src/search/sqlproxymodel.cpp \
   src/search/userdatasearch.cpp \
   src/search/usericondelegate.cpp \
@@ -591,6 +592,7 @@ HEADERS  += \
   src/search/searchcontroller.h \
   src/search/sqlcontroller.h \
   src/search/sqlmodel.h \
+  src/search/sqlmodeltypes.h \
   src/search/sqlproxymodel.h \
   src/search/userdatasearch.h \
   src/search/usericondelegate.h \
