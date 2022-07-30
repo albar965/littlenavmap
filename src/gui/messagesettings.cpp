@@ -82,4 +82,5 @@ void messages::resetEssentialMessages()
   settings.setValue(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_OFF, true);
   settings.setValue(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL, true);
   settings.setValue(lnm::ACTIONS_SHOW_FILE_EXPORT_OPTIONS_WARN, true);
+  settings.setValue(lnm::ACTIONS_SHOW_FILE_EXPORT_OPTIONS_WARN_EXP, true);
 }

@@ -2936,8 +2936,10 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
           {
             // Set user waypoint
             entry.setWaypointType(atools::fs::pln::entry::USER);
-            entry.setPosition(leg.getPosition());
             entry.setIdent(proc::procedureLegFixStr(procedureLeg));
+
+            // Leg does not carry altitude in case of procedure points. Take this from the flight plan entry
+            entry.setPosition(leg.getPosition().alt(entry.getPosition().getAltitude()));
           }
         } // if(leg.isAnyProcedure())
       } // if((saveApproachWp && (leg.getProcedureType() & proc::PROCEDURE_ARRIVAL)) || ...
