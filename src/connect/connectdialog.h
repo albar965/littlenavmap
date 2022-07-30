@@ -93,6 +93,9 @@ private:
   void updateButtonStates();
   void activateTab(QWidget *tabWidget);
 
+  /* Show warning about scenery library mismatch */
+  void updateWarningMessage();
+
   Ui::ConnectDialog *ui;
   bool simConnect = false;
 

@@ -145,7 +145,7 @@ private:
   void statusPosted(atools::fs::sc::SimConnectStatus status, QString statusText);
 
   bool silent = false, manualDisconnect = false;
-  ConnectDialog *dialog = nullptr;
+  ConnectDialog *connectDialog = nullptr;
 
   /* Does automatic reconnect. Reads SimConnect or Xpconnect. */
   atools::fs::sc::DataReaderThread *dataReader = nullptr;

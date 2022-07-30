@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,14 +17,16 @@
 
 #include "connect/connectdialog.h"
 
+#include "atools.h"
 #include "common/constants.h"
-#include "gui/widgetstate.h"
+#include "fs/sc/datareaderthread.h"
 #include "gui/helphandler.h"
+#include "gui/widgetstate.h"
+#include "navapp.h"
 #include "settings/settings.h"
 #include "ui_connectdialog.h"
-#include "fs/sc/datareaderthread.h"
 #include "util/htmlbuilder.h"
-#include "navapp.h"
+#include "gui/clicktooltiphandler.h"
 
 #include <QDebug>
 #include <QUrl>
@@ -41,6 +43,8 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
   setWindowModality(Qt::ApplicationModal);
 
   ui->setupUi(this);
+
+  ui->labelConnectWarning->installEventFilter(new atools::gui::ClickToolTipHandler(ui->labelConnectWarning));
 
 #ifdef Q_OS_WIN32
   if(!simConnect)
@@ -91,6 +95,7 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
   connect(ui->checkBoxConnectFetchAiShipXp, &QCheckBox::toggled, this, &ConnectDialog::fetchOptionsClicked);
 
   connect(ui->tabWidgetConnect, &QTabWidget::currentChanged, this, &ConnectDialog::updateButtonStates);
+  connect(ui->tabWidgetConnect, &QTabWidget::currentChanged, this, &ConnectDialog::updateWarningMessage);
 
   connect(ui->comboBoxConnectHostname, &QComboBox::editTextChanged, this, &ConnectDialog::updateButtonStates);
 
@@ -153,6 +158,51 @@ void ConnectDialog::deleteClicked()
 {
   ui->comboBoxConnectHostname->removeItem(ui->comboBoxConnectHostname->currentIndex());
   updateButtonStates();
+}
+
+void ConnectDialog::updateWarningMessage()
+{
+  using atools::util::HtmlBuilder;
+
+  cd::ConnectSimType connectSim = getCurrentSimType();
+  atools::fs::FsPaths::SimulatorType simulatorDb = NavApp::getCurrentSimulatorDb();
+
+  if(NavApp::isNavdataAll())
+  {
+    // Always warn about navigraph for all mode =========================
+    ui->labelConnectWarning->show();
+    ui->labelConnectWarning->setText(HtmlBuilder::warningMessage(tr("Scenery library mode is \"Use Navigraph for all Features\".<br/>"
+                                                                    "Click here for details.")));
+    ui->labelConnectWarning->setToolTip(tr("<p>Little Navmap is using navdata and airports from the Navigraph database.<br/>"
+                                           "Airport aprons, taxiways and more are not available, smaller airports will be missing and "
+                                           "the runway layout might not match the one in the simulator.</p>"));
+  }
+  else if(connectSim == cd::FSX_P3D_MSFS && atools::fs::FsPaths::isAnyXplane(simulatorDb))
+  {
+    // Using XP databasee with MS simulator =========================
+    ui->labelConnectWarning->show();
+    ui->labelConnectWarning->setText(HtmlBuilder::warningMessage(tr("Using X-Plane scenery library with FSX, P3D or MSFS.<br>"
+                                                                    "Click here for details.")));
+    ui->labelConnectWarning->setToolTip(tr("<p>Little Navmap is using navdata and airports "
+                                             "from the X-Plane scenery library database but "
+                                             "you are about to connect to FSX, P3D or MSFS.</p>"));
+  }
+  else if(connectSim == cd::XPLANE && atools::fs::FsPaths::isAnyMs(simulatorDb))
+  {
+    // Using MS databasee with XP simulator =========================
+    ui->labelConnectWarning->show();
+    ui->labelConnectWarning->setText(HtmlBuilder::warningMessage(tr("Using FSX, P3D or MSFS scenery library with X-Plane.<br/>"
+                                                                    "Click here for details.")));
+    ui->labelConnectWarning->setToolTip(tr("<p>Little Navmap is using navdata and airports "
+                                             "from the FSX, P3D or MSFS scenery library database but "
+                                             "you are about to connect to X-Plane.</p>"));
+  }
+  else
+  {
+    ui->labelConnectWarning->hide();
+    ui->labelConnectWarning->clear();
+    ui->labelConnectWarning->setToolTip(QString());
+  }
 }
 
 void ConnectDialog::updateButtonStates()
@@ -321,11 +371,11 @@ void ConnectDialog::restoreState()
 
   widgetState.restore({this, ui->comboBoxConnectHostname, ui->spinBoxConnectPort, ui->spinBoxConnectUpdateRateFsx,
                        ui->spinBoxConnectAiFetchRadius, ui->spinBoxConnectUpdateRateXp, ui->checkBoxConnectOnStartup,
-                       ui->tabWidgetConnect, ui->checkBoxConnectFetchAiAircraftXp,
-                       ui->checkBoxConnectFetchAiAircraftFsx, ui->checkBoxConnectFetchAiShipFsx,
-                       ui->checkBoxConnectFetchAiShipXp});
+                       ui->tabWidgetConnect, ui->checkBoxConnectFetchAiAircraftXp, ui->checkBoxConnectFetchAiAircraftFsx,
+                       ui->checkBoxConnectFetchAiShipFsx, ui->checkBoxConnectFetchAiShipXp});
 
   updateButtonStates();
+  updateWarningMessage();
 }
 
 int ConnectDialog::execConnectDialog(cd::ConnectSimType connectionType)
@@ -348,5 +398,7 @@ int ConnectDialog::execConnectDialog(cd::ConnectSimType connectionType)
       activateTab(ui->tabConnectXp);
       break;
   }
+  updateButtonStates();
+  updateWarningMessage();
   return QDialog::exec();
 }
