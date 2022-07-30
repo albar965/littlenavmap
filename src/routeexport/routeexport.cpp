@@ -1977,7 +1977,7 @@ void RouteExport::warnExportOptions()
                                  "<p>This does not apply to the the native LNMPLN file format.</p>"
                                    "<p><b>Normally you should not use these export options.</b></p>");
 
-    QMessageBox::warning(mainWindow, QApplication::applicationName(), message);
+    dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_FILE_EXPORT_OPTIONS_WARN_EXP, message, tr("Do not &show this dialog again."));
 
     // Dialog will show once per session
     warnedFormatOptions = true;
