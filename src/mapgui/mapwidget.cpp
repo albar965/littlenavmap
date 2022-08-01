@@ -64,6 +64,7 @@
 #include <QContextMenuEvent>
 #include <QToolTip>
 #include <QClipboard>
+#include <QPushButton>
 #include <QStringBuilder>
 
 #include <marble/AbstractFloatItem.h>

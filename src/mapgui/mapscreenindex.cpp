@@ -886,10 +886,13 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
                            (map::AIRPORT_ALL_AND_ADDON | map::AIRPORT_MSA | map::VOR | map::NDB | map::WAYPOINT | map::MARKER |
                             map::HOLDING | map::AIRWAYJ | map::TRACK | map::AIRWAYV | map::USERPOINT | map::LOGBOOK);
 
-  mapWidget->getMapQuery()->getNearestScreenObjects(conv, mapLayer, mapLayer->isAirportDiagram() &&
-                                                    OptionData::instance().getDisplayOptionsAirport().
-                                                    testFlag(optsd::ITEM_AIRPORT_DETAIL_PARKING),
-                                                    mapTypes, xs, ys, maxDistance, result);
+  bool airportDiagram = mapLayer->isAirportDiagram() &&
+                        OptionData::instance().getDisplayOptionsAirport().testFlag(optsd::ITEM_AIRPORT_DETAIL_PARKING);
+
+  // Airports actually drawn having parking spots which require tooltips and more
+  const QSet<int>& shownDetailAirportIds = paintLayer->getShownDetailAirportIds();
+  mapWidget->getMapQuery()->getNearestScreenObjects(conv, mapLayer, shownDetailAirportIds, airportDiagram, mapTypes, xs, ys, maxDistance,
+                                                    result);
 
   // Update all incomplete objects, especially from search
   for(map::MapAirport& obj : result.airports)

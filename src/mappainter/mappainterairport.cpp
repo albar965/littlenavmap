@@ -642,6 +642,9 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
   // Draw parking, fuel and tower --------------------------------
   if(mapLayer->isAirportDiagram() && context->dOptAp(optsd::ITEM_AIRPORT_DETAIL_PARKING))
   {
+    // Add to index indicating that tooltips for parking or helipads are needed
+    context->shownDetailAirportIds->insert(airport.id);
+
     // Approximate needed margins by largest parking diameter to avoid parking circles dissappearing on the screen borders
     int size = scale->getPixelIntForFeet(200);
     QMargins margins(size, size, size, size);

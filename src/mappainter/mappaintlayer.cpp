@@ -282,7 +282,12 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       qDebug() << Q_FUNC_INFO << "layer" << *mapLayer;
 #endif
 
+      // Clear the airport id cache
+      shownDetailAirportIds.clear();
+
+      // Prepare context =====================================================
       context = PaintContext();
+      context.shownDetailAirportIds = &shownDetailAirportIds;
       context.route = &NavApp::getRouteConst();
       context.mapLayer = mapLayer;
       context.mapLayerRoute = mapLayerRoute;

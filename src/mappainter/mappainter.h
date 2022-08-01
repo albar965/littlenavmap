@@ -78,6 +78,9 @@ struct PaintContext
   atools::geo::Rect viewportRect; /* Rectangle of current viewport */
   QRect screenRect; /* Screen coordinate rect */
 
+  /* Airports drawn having parking spots which require tooltips and more */
+  QSet<int> *shownDetailAirportIds;
+
   opts::MapScrollDetail mapScrollDetail; /* Option that indicates the detail level when drawFast is true */
   QFont defaultFont /* Default widget font */;
   float distanceNm; /* Zoom distance in NM */

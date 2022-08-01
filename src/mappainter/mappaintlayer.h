@@ -178,6 +178,12 @@ public:
 
   void dumpMapLayers() const;
 
+  /* Airports actually drawn having parking spots which require tooltips and more */
+  const QSet<int>& getShownDetailAirportIds() const
+  {
+    return shownDetailAirportIds;
+  }
+
 private:
   void initMapLayerSettings();
 
@@ -197,6 +203,9 @@ private:
   map::MapAirspaceFilter airspaceTypes;
   map::MapWeatherSource weatherSource = map::WEATHER_SOURCE_SIMULATOR;
   map::MapSunShading sunShading = map::SUN_SHADING_SIMULATOR_TIME;
+
+  /* Airports drawn having parking spots which require tooltips and more */
+  QSet<int> shownDetailAirportIds;
 
   int minimumRunwayLenghtFt = 0;
 

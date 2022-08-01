@@ -167,7 +167,7 @@ public:
    * @param screenDistance maximum distance to coordinates
    * @param result will receive objects based on type
    */
-  void getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, bool airportDiagram,
+  void getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, const QSet<int>& shownDetailAirportIds, bool airportDiagram,
                                map::MapTypes types, int xs, int ys, int screenDistance,
                                map::MapResult& result) const;
 
@@ -259,9 +259,9 @@ private:
                                 const atools::geo::Pos& sortByDistancePos,
                                 float maxDistanceMeter, bool airportFromNavDatabase, map::AirportQueryFlags flags) const;
 
-  const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect,
-                                              atools::sql::SqlQuery *query,
+  const QList<map::MapAirport> *fetchAirports(const Marble::GeoDataLatLonBox& rect, atools::sql::SqlQuery *query,
                                               bool lazy, bool overview, bool addon, bool normal, bool& overflow);
+
   QVector<map::MapIls> ilsByAirportAndRunway(const QString& airportIdent, const QString& runway) const;
 
   void runwayEndByNameFuzzy(QList<map::MapRunwayEnd>& runwayEnds, const QString& name, const map::MapAirport& airport,

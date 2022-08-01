@@ -232,7 +232,7 @@ private:
   MapTypesFactory *mapTypesFactory;
   atools::sql::SqlDatabase *db;
 
-  /* ID/object caches */
+  /* airport ID / object caches */
   QCache<int, QList<map::MapRunway> > runwayCache;
   QCache<int, QList<map::MapApron> > apronCache;
   QCache<int, QList<map::MapTaxiPath> > taxipathCache;
