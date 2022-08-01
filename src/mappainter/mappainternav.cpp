@@ -406,7 +406,7 @@ void MapPainterNav::paintVors(const QHash<int, map::MapVor>& vors, bool drawFast
       if(context->objCount())
         return;
 
-      symbolPainter->drawVorSymbol(context->painter, vor, x, y, size, false, drawFast, vorSize);
+      symbolPainter->drawVorSymbol(context->painter, vor, x, y, size, false, drawFast, context->mapLayer->isVorLarge());
 
       textflags::TextFlags flags;
 

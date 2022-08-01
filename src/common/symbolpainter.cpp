@@ -812,9 +812,7 @@ void SymbolPainter::drawProcedureSymbol(QPainter *painter, float x, float y, int
 
   float lineWidth = std::max(size / 5.f, 2.0f);
   painter->setPen(QPen(mapcolors::routeProcedurePointColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
-
-  int radius = size / 2;
-  painter->drawEllipse(x - radius, y - radius, size, size);
+  painter->drawEllipse(QPointF(x, y), size / 2.f, size / 2.f);
 }
 
 void SymbolPainter::drawLogbookPreviewSymbol(QPainter *painter, float x, float y, float size)
@@ -825,9 +823,7 @@ void SymbolPainter::drawLogbookPreviewSymbol(QPainter *painter, float x, float y
 
   float lineWidth = std::max(size / 5.f, 2.0f);
   painter->setPen(QPen(mapcolors::routeLogEntryOutlineColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
-
-  int radius = size / 2;
-  painter->drawEllipse(x - radius, y - radius, size, size);
+  painter->drawEllipse(QPointF(x, y), size / 2.f, size / 2.f);
 }
 
 void SymbolPainter::drawProcedureUnderlay(QPainter *painter, float x, float y, int size, bool flyover, bool faf)
@@ -841,7 +837,7 @@ void SymbolPainter::drawProcedureUnderlay(QPainter *painter, float x, float y, i
     drawProcedureFaf(painter, x, y, size + 18);
 }
 
-void SymbolPainter::drawProcedureFlyover(QPainter *painter, float x, float y, int size)
+void SymbolPainter::drawProcedureFlyover(QPainter *painter, float x, float y, float size)
 {
   atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::OpaqueMode);
@@ -849,9 +845,7 @@ void SymbolPainter::drawProcedureFlyover(QPainter *painter, float x, float y, in
   float lineWidth = std::max(size / 10.f, 1.5f);
   painter->setPen(QPen(mapcolors::routeProcedurePointFlyoverColor, lineWidth, Qt::SolidLine, Qt::SquareCap));
   painter->setBrush(Qt::NoBrush);
-
-  int radius = size / 2;
-  painter->drawEllipse(x - radius, y - radius, size, size);
+  painter->drawEllipse(QPointF(x, y), size / 2.f, size / 2.f);
 }
 
 void SymbolPainter::drawProcedureFaf(QPainter *painter, float x, float y, int size)
@@ -897,8 +891,8 @@ void SymbolPainter::drawProcedureFaf(QPainter *painter, float x, float y, int si
   painter->drawPolygon(poly);
 }
 
-void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, float x, float y, float size,
-                                  bool routeFill, bool fast, int largeSize)
+void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, float x, float y, float size, bool routeFill, bool fast,
+                                  bool largeSize)
 {
   atools::util::PainterContextSaver saver(painter);
 
@@ -920,7 +914,7 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
 
     painter->translate(x, y);
 
-    if(largeSize > 0 && !vor.dmeOnly)
+    if(largeSize && !vor.dmeOnly)
       // If compass ticks are drawn rotate center symbol too
       painter->rotate(vor.magvar);
 
@@ -1009,7 +1003,7 @@ void SymbolPainter::drawVorSymbol(QPainter *painter, const map::MapVor& vor, flo
       }
     }
 
-    if(largeSize > 0 && !vor.dmeOnly)
+    if(largeSize && !vor.dmeOnly)
     {
       // Draw compass circle and ticks
       painter->setBrush(Qt::NoBrush);

@@ -1710,9 +1710,7 @@ void MapPainterRoute::paintVor(float x, float y, const map::MapVor& obj, bool pr
   context->routeDrawnNavaids->append(obj.getRef());
   float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSize());
   size = std::max(size, 8.f);
-  symbolPainter->drawVorSymbol(context->painter, obj, x, y,
-                               size, !preview, false,
-                               context->mapLayerRoute->isVorLarge() ? static_cast<int>(size) * 5 : 0);
+  symbolPainter->drawVorSymbol(context->painter, obj, x, y, size, !preview, false, context->mapLayerRoute->isVorLarge());
 }
 
 void MapPainterRoute::paintVorText(float x, float y, const map::MapVor& obj, bool drawTextDetails, bool drawAsRoute,
