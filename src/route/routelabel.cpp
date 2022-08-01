@@ -684,19 +684,20 @@ void RouteLabel::updateFooterSelectionLabel()
     if(last == route.getDestinationAirportLegIndex() && missed)
       last--;
 
-    int numSelected = last - first + 1;
+    // Two entries selected equals to one flight plan leg
+    int numLegs = last - first;
 
     QString from = route.getLegAt(first).getIdent(), to = route.getLegAt(last).getIdent();
-    QString legText = numSelected == 1 ? tr("leg") : tr("legs");
+    QString legText = numLegs == 1 ? tr("leg") : tr("legs");
 
     ui->labelRouteSelection->setVisible(true);
-    ui->labelRouteSelection->setText(tr("%L1 %2 from <b>%3</b> to <b>%4</b>: %5").arg(numSelected).arg(legText).
+    ui->labelRouteSelection->setText(tr("%L1 %2 from <b>%3</b> to <b>%4</b>: %5").arg(numLegs).arg(legText).
                                      arg(atools::elideTextShort(from, 6)).arg(atools::elideTextShort(to, 6)).arg(texts.join(tr(", "))));
 
     ui->labelRouteSelection->setToolTip(tr("<p style='white-space:pre'>"
                                              "%L1 flight plan %2 from <b>%3</b> to <b>%4</b> in selection:<br/>"
                                              "%5</p>").
-                                        arg(numSelected).arg(legText).
+                                        arg(numLegs).arg(legText).
                                         arg(atools::elideTextShort(from, 20)).arg(atools::elideTextShort(to, 20)).
                                         arg(tooltip.join(tr("<br/>"))));
   }
