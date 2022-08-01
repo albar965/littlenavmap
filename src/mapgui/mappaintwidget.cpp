@@ -96,8 +96,7 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible)
   apronGeometryCache = new ApronGeometryCache();
   apronGeometryCache->setViewportParams(viewport());
 
-  mapQuery = new MapQuery(NavApp::getDatabaseSim(), NavApp::getDatabaseNav(),
-                          NavApp::getDatabaseUser());
+  mapQuery = new MapQuery(NavApp::getDatabaseSim(), NavApp::getDatabaseNav(), NavApp::getDatabaseUser());
   mapQuery->initQueries();
 
   // Set up airway queries =====================

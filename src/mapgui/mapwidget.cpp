@@ -747,6 +747,13 @@ void MapWidget::mousePressEvent(QMouseEvent *event)
   qDebug() << Q_FUNC_INFO << "state" << mouseState << "modifiers" << event->modifiers() << "pos" << event->pos();
 #endif
 
+  if(noRender())
+  {
+    // Zoomed to far out - reset cursor and ignore input
+    setCursor(Qt::ArrowCursor);
+    return;
+  }
+
 #ifdef DEBUG_MOVING_AIRPLANE
   debugMovingPlane(event);
 #endif
@@ -805,6 +812,13 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "state" << mouseState << "modifiers" << event->modifiers() << "pos" << event->pos();
 #endif
+
+  if(noRender())
+  {
+    // Zoomed to far out - reset cursor and ignore input
+    setCursor(Qt::ArrowCursor);
+    return;
+  }
 
   // Take actions (add/remove range rings, measurement)
   if(mousePressCheckModifierActions(event))
@@ -1022,8 +1036,12 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
   qDebug() << Q_FUNC_INFO << "state" << mouseState << "modifiers" << event->modifiers() << "pos" << event->pos();
 #endif
 
-  // Show pos and show rect already call this
-  // jumpBackToAircraftStart();
+  if(noRender())
+  {
+    // Zoomed to far out - reset cursor and ignore input
+    setCursor(Qt::ArrowCursor);
+    return;
+  }
 
   if(mouseState != mw::NONE)
     return;
