@@ -2372,7 +2372,7 @@ void HtmlInfoBuilder::rangeMarkerText(const RangeMarker& marker, atools::util::H
   for(float dist : marker.ranges)
     distStr.append(Unit::distNm(dist, false));
 
-  html.row2If(marker.ranges.size() > 1 ? tr("Distances:") : tr("Distance"),
+  html.row2If(marker.ranges.size() > 1 ? tr("Radii:") : tr("Radius"),
               tr("%1 %2").arg(distStr.join(tr(", "))).arg(Unit::getUnitDistStr()));
 
   html.tableEnd();

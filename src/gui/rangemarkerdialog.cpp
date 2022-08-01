@@ -43,7 +43,7 @@ using atools::geo::Pos;
 
 // Also adjust text in options dialog if changing these numbers
 const float MIN_RANGE_RING_SIZE = 0.01f;
-const float MAX_RANGE_RING_SIZE_METER = atools::geo::EARTH_CIRCUMFERENCE_METER / 4.f;
+const float MAX_RANGE_RING_SIZE_METER = atools::geo::EARTH_CIRCUMFERENCE_METER / 2.f * 0.98f;
 
 const int MAX_RANGE_RINGS = 10;
 const QVector<float> RangeMarkerDialog::MAP_RANGERINGS_DEFAULT({50.f, 100.f, 200.f, 500.f});
