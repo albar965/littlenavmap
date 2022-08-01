@@ -88,21 +88,24 @@ void MapPainterAirport::render()
   // Collect departure, destination and alternate airports from flight plan for potential diagram painting ================
   QVector<MapAirport> airports;
   QSet<int> routeAirportIds;
-  if(context->route->getDepartureAirportLeg().getAirport().isValid())
+
+  if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN))
   {
-    airports.append(context->route->getDepartureAirportLeg().getAirport());
-    routeAirportIds.insert(airports.constLast().id);
-  }
-  if(context->route->getDestinationAirportLeg().getAirport().isValid())
-  {
-    airports.append(context->route->getDestinationAirportLeg().getAirport());
-    routeAirportIds.insert(airports.constLast().id);
-  }
-  QVector<MapAirport> alternates = context->route->getAlternateAirports();
-  for(const map::MapAirport& ap : alternates)
-  {
-    airports.append(ap);
-    routeAirportIds.insert(airports.constLast().id);
+    if(context->route->getDepartureAirportLeg().getAirport().isValid())
+    {
+      airports.append(context->route->getDepartureAirportLeg().getAirport());
+      routeAirportIds.insert(airports.constLast().id);
+    }
+    if(context->route->getDestinationAirportLeg().getAirport().isValid())
+    {
+      airports.append(context->route->getDestinationAirportLeg().getAirport());
+      routeAirportIds.insert(airports.constLast().id);
+    }
+    for(const map::MapAirport& ap : context->route->getAlternateAirports())
+    {
+      airports.append(ap);
+      routeAirportIds.insert(airports.constLast().id);
+    }
   }
 
   // Merge flight plan airports with other visible airports
