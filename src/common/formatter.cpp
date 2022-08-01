@@ -45,7 +45,7 @@ QString formatMinutesHours(double timeHours)
     hours++;
     minutes = 0;
   }
-  return QString(QObject::tr("%1:%2")).arg(QLocale().toString(hours)).arg(minutes, 2, 10, QChar('0'));
+  return QObject::tr("%L1:%L2").arg(hours).arg(minutes, 2, 10, QChar('0'));
 }
 
 QString formatMinutesHoursLong(double timeHours)
@@ -58,7 +58,7 @@ QString formatMinutesHoursLong(double timeHours)
     minutes = 0;
   }
 
-  return QString(QObject::tr("%1 h %2 m")).arg(QLocale().toString(hours)).arg(minutes, 2, 10, QChar('0'));
+  return QObject::tr("%L1 h %L2 m").arg(hours).arg(minutes, 2, 10, QChar('0'));
 }
 
 QString formatMinutesHoursDays(double timeHours)
@@ -66,10 +66,7 @@ QString formatMinutesHoursDays(double timeHours)
   int days = static_cast<int>(timeHours) / 24;
   int hours = static_cast<int>(timeHours) - (days * 24);
   int minutes = atools::roundToInt((timeHours - std::floor(timeHours)) * 60.);
-  return QString(QObject::tr("%1:%2:%3")).
-         arg(QLocale().toString(days)).
-         arg(hours, 2, 10, QChar('0')).
-         arg(minutes, 2, 10, QChar('0'));
+  return QObject::tr("%L1:%L2:%L3").arg(days).arg(hours, 2, 10, QChar('0')).arg(minutes, 2, 10, QChar('0'));
 }
 
 QString formatMinutesHoursDaysLong(double timeHours)
@@ -79,45 +76,22 @@ QString formatMinutesHoursDaysLong(double timeHours)
   int minutes = atools::roundToInt((timeHours - std::floor(timeHours)) * 60.);
   QString retval;
   if(days > 0)
-    retval += QString(QObject::tr("%1 d")).arg(QLocale().toString(days));
+    retval += QObject::tr("%L1 d").arg(days);
 
   if(hours > 0)
   {
     if(!retval.isEmpty())
-      retval += QString(QObject::tr(" %1 h")).arg(hours, 2, 10, QChar('0'));
+      retval += QObject::tr(" %L1 h").arg(hours, 2, 10, QChar('0'));
     else
-      retval += QString(QObject::tr("%1 h")).arg(QLocale().toString(hours));
+      retval += QObject::tr("%L1 h").arg(hours);
   }
 
   if(!retval.isEmpty())
-    retval += QString(QObject::tr(" %1 m")).arg(minutes, 2, 10, QChar('0'));
+    retval += QObject::tr(" %L1 m").arg(minutes, 2, 10, QChar('0'));
   else
-    retval += QString(QObject::tr("%1 m")).arg(QLocale().toString(minutes));
+    retval += QObject::tr("%L1 m").arg(minutes);
 
   return retval;
-}
-
-QString formatDate(int timeT)
-{
-  QDateTime dateTime;
-  dateTime.setTimeSpec(Qt::UTC);
-  dateTime.setTime_t(static_cast<uint>(timeT));
-  if(timeT > 0 && dateTime.isValid() && !dateTime.isNull())
-    return dateTime.toString(Qt::DefaultLocaleShortDate);
-  else
-    return QObject::tr("Invalid date");
-}
-
-QString formatDateLong(int timeT)
-{
-  QDateTime dateTime;
-  dateTime.setTimeSpec(Qt::UTC);
-  dateTime.setTime_t(static_cast<uint>(timeT));
-  if(timeT > 0 && dateTime.isValid() && !dateTime.isNull())
-    // Workaround to remove the UTC label since FSX stores local time without timezone spec
-    return dateTime.toString(Qt::DefaultLocaleLongDate).replace(QObject::tr("UTC"), "");
-  else
-    return QObject::tr("Invalid date");
 }
 
 QString formatElapsed(const QElapsedTimer& timer)
@@ -158,8 +132,7 @@ bool checkCoordinates(QString& message, const QString& text, atools::geo::Pos *p
     if(coords.simplified() != text.simplified())
     {
       if(Unit::getUnitCoords() == opts::COORDS_LATY_LONX || Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
-        message =
-          QObject::tr("Coordinates are valid: %1 (%2)").arg(coords).arg(Unit::coords(readPos, opts::COORDS_DMS));
+        message = QObject::tr("Coordinates are valid: %1 (%2)").arg(coords).arg(Unit::coords(readPos, opts::COORDS_DMS));
       else
         message = QObject::tr("Coordinates are valid: %1").arg(coords);
     }

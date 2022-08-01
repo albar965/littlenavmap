@@ -46,12 +46,6 @@ QString capNavString(const QString& str);
 
 /* All formatters are locale aware */
 
-/* Format time_t to short locale dependent date string */
-QString formatDate(int timeT);
-
-/* Format time_t to long locale dependent date string */
-QString formatDateLong(int timeT);
-
 /* Format a decimal time in hours to h:mm format */
 QString formatMinutesHours(double timeHours);
 
