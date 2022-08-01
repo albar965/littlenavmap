@@ -43,14 +43,14 @@ struct AircraftTrackPos
   {
   }
 
-  AircraftTrackPos(atools::geo::Pos position, quint32 time, bool ground)
-    : pos(position), timestamp(time), onGround(ground)
+  AircraftTrackPos(atools::geo::Pos position, qint64 timeMs, bool ground)
+    : pos(position), timestampMs(timeMs), onGround(ground)
   {
   }
 
   /* Create an invalid position which is used as a marker for separate trail segments */
-  AircraftTrackPos(quint32 time, bool ground)
-    : timestamp(time), onGround(ground)
+  AircraftTrackPos(qint64 timeMs, bool ground)
+    : timestampMs(timeMs), onGround(ground)
   {
   }
 
@@ -59,8 +59,28 @@ struct AircraftTrackPos
     return pos.isValid();
   }
 
+  const atools::geo::Pos& getPosition() const
+  {
+    return pos;
+  }
+
+  /* Milliseconds since Epoch UTC */
+  qint64 getTimestampMs() const
+  {
+    return timestampMs;
+  }
+
+  bool isOnGround() const
+  {
+    return onGround;
+  }
+
+private:
+  friend QDataStream& operator<<(QDataStream& dataStream, const at::AircraftTrackPos& trackPos);
+  friend QDataStream& operator>>(QDataStream& dataStream, at::AircraftTrackPos& trackPos);
+
   atools::geo::Pos pos;
-  quint32 timestamp; // TODO future overflow
+  qint64 timestampMs;
   bool onGround;
 };
 
@@ -108,11 +128,8 @@ public:
    * More than one linestring might be returned if the trail is interrupted. */
   QVector<atools::geo::LineString> getLineStrings() const;
 
-  /* Same as getLineStrings() but returns the timestamps for each position */
-  QVector<QVector<quint32> > getTimestamps() const;
-
-  /* Convert to linestring and timestamp values for export functions like GPX */
-  // void convert(atools::geo::LineString *track) const;
+  /* Same size as getLineStrings() but returns the timestamps in milliseconds since Epoch UTC for each position */
+  QVector<QVector<qint64> > getTimestampsMs() const;
 
   /* Pull only needed methods of the base class into public space */
   using QList::isEmpty;
@@ -129,6 +146,8 @@ public:
   bool readFromStream(QDataStream & in);
 
 private:
+  friend QDataStream& at::operator>>(QDataStream& dataStream, at::AircraftTrackPos& trackPos);
+
   /* Insert an invalid position as an break indicator if aircraft jumps too far on ground. */
   static const int MAX_POINT_DISTANCE_NM = 5;
 
@@ -143,10 +162,16 @@ private:
 
   static const quint32 FILE_MAGIC_NUMBER = 0x5B6C1A2B;
 
-  /* Version 2 to adds timstamp and single floating point precision */
-  static const quint16 FILE_VERSION = 2;
+  /* Version 2 to adds timstamp and single floating point precision. Uses 32-bit second timestamps */
+  static const quint16 FILE_VERSION_32BIT = 2;
+
+  /* Version 3 adds 64-bit millisecond values */
+  static const quint16 FILE_VERSION = 3;
 
   atools::fs::sc::SimConnectUserAircraft *lastUserAircraft;
+
+  /* Needed in RouteExportFormat stream operators to read different formats */
+  static quint16 version;
 };
 
 #endif // LITTLENAVMAP_AIRCRAFTTRACK_H

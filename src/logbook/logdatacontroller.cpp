@@ -327,7 +327,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
                                                  updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_GPX).
                                                  getFlightplan(),
                                                  NavApp::getAircraftTrackLogbook().getLineStrings(),
-                                                 NavApp::getAircraftTrackLogbook().getTimestamps(),
+                                                 NavApp::getAircraftTrackLogbook().getTimestampsMs(),
                                                  static_cast<int>(NavApp::getRouteConst().getCruisingAltitudeFeet()))); // blob
 
         // Clear separate logbook track =========================
@@ -962,7 +962,7 @@ void LogdataController::gpxAttach(atools::sql::SqlRecord *record, QWidget *paren
       record->setValue("aircraft_trail",
                        FlightplanIO().saveGpxGz(NavApp::getRouteConst().
                                                 updatedAltitudes().adjustedToOptions(rf::DEFAULT_OPTS_GPX).
-                                                getFlightplan(), track.getLineStrings(), track.getTimestamps(),
+                                                getFlightplan(), track.getLineStrings(), track.getTimestampsMs(),
                                                 static_cast<int>(NavApp::getRouteConst().getCruisingAltitudeFeet()))); // blob
     else
       record->setNull("aircraft_trail");

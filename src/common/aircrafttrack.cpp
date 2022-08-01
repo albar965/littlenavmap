@@ -27,17 +27,29 @@
 #include <QDateTime>
 #include <QFile>
 
+quint16 AircraftTrack::version = 0;
+
 namespace at {
 
 QDataStream& operator>>(QDataStream& dataStream, at::AircraftTrackPos& trackPos)
 {
-  dataStream >> trackPos.pos >> trackPos.timestamp >> trackPos.onGround;
+  if(AircraftTrack::version == AircraftTrack::FILE_VERSION)
+    // New 64-bit timestamp
+    dataStream >> trackPos.pos >> trackPos.timestampMs >> trackPos.onGround;
+  else if(AircraftTrack::version == AircraftTrack::FILE_VERSION_32BIT)
+  {
+    // Convert old 32-bit timestamp
+    quint32 oldTimestampSeconds;
+    dataStream >> trackPos.pos >> oldTimestampSeconds >> trackPos.onGround;
+    trackPos.timestampMs = oldTimestampSeconds * 1000L;
+  }
+
   return dataStream;
 }
 
 QDataStream& operator<<(QDataStream& dataStream, const at::AircraftTrackPos& trackPos)
 {
-  dataStream << trackPos.pos << trackPos.timestamp << trackPos.onGround;
+  dataStream << trackPos.pos << trackPos.timestampMs << trackPos.onGround;
   return dataStream;
 }
 
@@ -119,21 +131,20 @@ bool AircraftTrack::readFromStream(QDataStream& in)
   clear();
 
   quint32 magic;
-  quint16 version;
   in.setVersion(QDataStream::Qt_5_5);
   in.setFloatingPointPrecision(QDataStream::SinglePrecision);
   in >> magic;
 
   if(magic == FILE_MAGIC_NUMBER)
   {
-    in >> version;
-    if(version == FILE_VERSION)
+    in >> AircraftTrack::version;
+    if(AircraftTrack::version == FILE_VERSION || AircraftTrack::version == FILE_VERSION_32BIT)
     {
       in >> *this;
       retval = true;
     }
     else
-      qWarning() << "Cannot read track. Invalid version number:" << version;
+      qWarning() << "Cannot read track. Invalid version number:" << AircraftTrack::version;
   }
   else
     qWarning() << "Cannot read track. Invalid magic number:" << magic;
@@ -162,31 +173,35 @@ bool AircraftTrack::appendTrackPos(const atools::fs::sc::SimConnectUserAircraft&
   bool onGround = userAircraft.isOnGround();
 
   if(isEmpty() && userAircraft.isValid())
-    append(at::AircraftTrackPos(pos, timestamp.toTime_t(), onGround));
+    append(at::AircraftTrackPos(pos, timestamp.toMSecsSinceEpoch(), onGround));
   else
   {
     // Use a smaller distance on ground before storing position
     float epsilonPos = onGround ? atools::geo::Pos::POS_EPSILON_5M : atools::geo::Pos::POS_EPSILON_100M;
-    long epsilonTime = onGround ? MIN_POSITION_TIME_DIFF_GROUND_MS : MIN_POSITION_TIME_DIFF_MS;
+    qint64 epsilonTime = onGround ? MIN_POSITION_TIME_DIFF_GROUND_MS : MIN_POSITION_TIME_DIFF_MS;
 
-    long time = timestamp.toMSecsSinceEpoch();
-    long lastTime = constLast().timestamp * 1000L;
+    qint64 timeMs = timestamp.toMSecsSinceEpoch();
+    const at::AircraftTrackPos& last = constLast();
+    qint64 lastTimeMs = last.getTimestampMs();
 
-    if(!pos.almostEqual(constLast().pos, epsilonPos) && !atools::almostEqual(lastTime, time, epsilonTime))
+    if(!pos.almostEqual(last.getPosition(), epsilonPos) && !atools::almostEqual(lastTimeMs, timeMs, epsilonTime))
     {
       bool lastValid = lastUserAircraft->isValid();
       bool aircraftChanged = lastValid && lastUserAircraft->hasAircraftChanged(userAircraft);
-      bool jumped = !isEmpty() && pos.distanceMeterTo(constLast().pos) > atools::geo::nmToMeter(MAX_POINT_DISTANCE_NM);
+      bool jumped = !isEmpty() && pos.distanceMeterTo(last.getPosition()) > atools::geo::nmToMeter(MAX_POINT_DISTANCE_NM);
 
-      if(allowSplit && jumped && (constLast().onGround || onGround || aircraftChanged))
+      // Points where the track is interrupted (new flight) are indicated by invalid coordinates.
+      // Warping at altitude does not interrupt a track.
+      if(allowSplit && jumped && (last.isOnGround() || onGround || aircraftChanged))
       {
+#ifdef DEBUG_INFORMATION
         qDebug() << Q_FUNC_INFO << "Splitting trail" << "allowSplit" << allowSplit << "jumped" << jumped
-                 << "constLast().onGround" << constLast().onGround << "onGround" << onGround
-                 << "aircraftChanged" << aircraftChanged;
+                 << "last.onGround" << last.isOnGround() << "onGround" << onGround << "aircraftChanged" << aircraftChanged;
+#endif
 
         // Add an invalid position before indicating a break
-        append(at::AircraftTrackPos(timestamp.toTime_t(), onGround));
-        append(at::AircraftTrackPos(pos, timestamp.toTime_t(), onGround));
+        append(at::AircraftTrackPos(timestamp.toMSecsSinceEpoch(), onGround));
+        append(at::AircraftTrackPos(pos, timestamp.toMSecsSinceEpoch(), onGround));
       }
       else
       {
@@ -201,7 +216,7 @@ bool AircraftTrack::appendTrackPos(const atools::fs::sc::SimConnectUserAircraft&
 
           pruned = true;
         }
-        append(at::AircraftTrackPos(pos, timestamp.toTime_t(), onGround));
+        append(at::AircraftTrackPos(pos, timestamp.toMSecsSinceEpoch(), onGround));
       }
 
       *lastUserAircraft = userAircraft;
@@ -214,7 +229,7 @@ float AircraftTrack::getMaxAltitude() const
 {
   float maxAlt = 0.f;
   for(const at::AircraftTrackPos& trackPos : *this)
-    maxAlt = std::max(maxAlt, trackPos.pos.getAltitude());
+    maxAlt = std::max(maxAlt, trackPos.getPosition().getAltitude());
   return maxAlt;
 }
 
@@ -236,7 +251,7 @@ QVector<atools::geo::LineString> AircraftTrack::getLineStrings() const
         line.clear();
       }
       else
-        line.append(trackPos.pos);
+        line.append(trackPos.getPosition());
     }
 
     // Add rest
@@ -246,13 +261,13 @@ QVector<atools::geo::LineString> AircraftTrack::getLineStrings() const
   return linestrings;
 }
 
-QVector<QVector<quint32> > AircraftTrack::getTimestamps() const
+QVector<QVector<qint64> > AircraftTrack::getTimestampsMs() const
 {
-  QVector<QVector<quint32> > timestamps;
+  QVector<QVector<qint64> > timestamps;
 
   if(!isEmpty())
   {
-    QVector<quint32> times;
+    QVector<qint64> times;
     timestamps.reserve(size());
 
     for(const at::AircraftTrackPos& trackPos : *this)
@@ -264,7 +279,7 @@ QVector<QVector<quint32> > AircraftTrack::getTimestamps() const
         times.clear();
       }
       else
-        times.append(trackPos.timestamp);
+        times.append(trackPos.getTimestampMs());
     }
 
     // Add rest
