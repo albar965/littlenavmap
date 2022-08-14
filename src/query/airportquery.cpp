@@ -725,25 +725,38 @@ void AirportQuery::getStartById(map::MapStart& start, int startId)
   startByIdQuery->finish();
 }
 
-void AirportQuery::getParkingByNameAndNumber(QList<map::MapParking>& parkings, int airportId,
-                                             const QString& name, int number)
+void AirportQuery::getParkingByNameNumberSuffix(QList<map::MapParking>& parkings, int airportId, const QString& name, int number,
+                                                const QString& suffix)
 {
-  if(!query::valid(Q_FUNC_INFO, parkingTypeAndNumberQuery))
+  SqlQuery *query = parkingTypeNumberQuery;
+  bool hasSuffix = false;
+  if(!suffix.isEmpty() && parkingTypeNumberSuffixQuery != nullptr)
+  {
+    // Separate suffix currently only used by MSFS
+    query = parkingTypeNumberSuffixQuery;
+    hasSuffix = true;
+  }
+
+  if(!query::valid(Q_FUNC_INFO, query))
     return;
 
-  parkingTypeAndNumberQuery->bindValue(":airportId", airportId);
+  query->bindValue(":airportId", airportId);
   if(name.isEmpty())
     // Use "like "%" if name is empty
-    parkingTypeAndNumberQuery->bindValue(":name", "%");
+    query->bindValue(":name", "%");
   else
-    parkingTypeAndNumberQuery->bindValue(":name", name);
-  parkingTypeAndNumberQuery->bindValue(":number", number);
-  parkingTypeAndNumberQuery->exec();
+    query->bindValue(":name", name);
+  query->bindValue(":number", number);
 
-  while(parkingTypeAndNumberQuery->next())
+  if(hasSuffix)
+    query->bindValue(":suffix", suffix.isEmpty() ? "%" : suffix);
+
+  query->exec();
+
+  while(query->next())
   {
     map::MapParking parking;
-    mapTypesFactory->fillParking(parkingTypeAndNumberQuery->record(), parking);
+    mapTypesFactory->fillParking(query->record(), parking);
     parkings.append(parking);
   }
 }
@@ -1154,7 +1167,8 @@ void AirportQuery::initQueries()
   const QStringList airportQueryBaseOverview = airportOverviewColumns(db);
 
   QString parkingQueryBase("parking_id, airport_id, type, name, airline_codes, number, radius, heading, has_jetway, lonx, laty ");
-  if(db->record("parking").contains("suffix"))
+  bool parkingHasSuffix = db->record("parking").contains("suffix");
+  if(parkingHasSuffix)
     parkingQueryBase.append(", suffix ");
 
   deInitQueries();
@@ -1259,14 +1273,22 @@ void AirportQuery::initQueries()
     "select start_id, airport_id, type, heading, number, runway_name, altitude, lonx, laty "
     "from start s where start_id = :id");
 
-  parkingTypeAndNumberQuery = new SqlQuery(db);
-  parkingTypeAndNumberQuery->prepare(
-    "select " + parkingQueryBase +
-    " from parking where airport_id = :airportId and name like :name and number = :number order by radius desc");
+  parkingTypeNumberQuery = new SqlQuery(db);
+  parkingTypeNumberQuery->prepare("select " + parkingQueryBase +
+                                  " from parking where airport_id = :airportId and name like :name and number = :number "
+                                  " order by radius desc");
+
+  if(parkingHasSuffix)
+  {
+    parkingTypeNumberSuffixQuery = new SqlQuery(db);
+    parkingTypeNumberSuffixQuery->prepare("select " + parkingQueryBase +
+                                          " from parking where airport_id = :airportId and name like :name and number = :number and "
+                                          " suffix = :suffix order by radius desc");
+  }
 
   parkingNameQuery = new SqlQuery(db);
-  parkingNameQuery->prepare("select " + parkingQueryBase +
-                            " from parking where airport_id = :airportId and name like :name order by radius desc");
+  parkingNameQuery->prepare("select " + parkingQueryBase + " from parking where airport_id = :airportId and name like :name"
+                                                           " order by radius desc");
 
   helipadQuery = new SqlQuery(db);
   helipadQuery->prepare(
@@ -1326,8 +1348,11 @@ void AirportQuery::deInitQueries()
   delete startByIdQuery;
   startByIdQuery = nullptr;
 
-  delete parkingTypeAndNumberQuery;
-  parkingTypeAndNumberQuery = nullptr;
+  delete parkingTypeNumberQuery;
+  parkingTypeNumberQuery = nullptr;
+
+  delete parkingTypeNumberSuffixQuery;
+  parkingTypeNumberSuffixQuery = nullptr;
 
   delete parkingNameQuery;
   parkingNameQuery = nullptr;

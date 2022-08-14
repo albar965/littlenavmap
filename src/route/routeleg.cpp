@@ -35,7 +35,7 @@
 using namespace atools::geo;
 
 /* Extract parking name and number from FS flight plan */
-const QRegularExpression PARKING_TO_NAME_AND_NUM("([A-Za-z_ ]*)([0-9]+)");
+const QRegularExpression PARKING_TO_NAME_NUM_SUFFIX("([A-Za-z_ ]*)([0-9]+)([A-Z]*)");
 
 /* If region is not set search within this distance (real GC distance) for navaids with the same name */
 const int MAX_WAYPOINT_DISTANCE_METER = 10000.f;
@@ -244,27 +244,28 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
           }
           else
           {
-            // FSX/P3D ================================
+            // FSX/P3D/MSFS ================================
 
             // Extract text and number suffix
-            QRegularExpressionMatch match = PARKING_TO_NAME_AND_NUM.match(name);
+            QRegularExpressionMatch match = PARKING_TO_NAME_NUM_SUFFIX.match(name);
 
             // Convert parking name to the format used in the database
             QString parkingName = match.captured(1).trimmed().toUpper().replace(" ", "_");
 
             if(!parkingName.isEmpty())
             {
+              int number = match.captured(2).toInt();
+              QString suffix = match.captured(3);
+
               // Seems to be a parking position - extract FSX style
-              airportQuery->getParkingByNameAndNumber(parkings, airport.id, map::parkingDatabaseName(parkingName),
-                                                      QString(match.captured(2)).toInt());
+              airportQuery->getParkingByNameNumberSuffix(parkings, airport.id, map::parkingDatabaseName(parkingName), number, suffix);
               translateName = true;
             }
           }
 
           // Assign found values to leg =====================================================
           if(parkings.isEmpty() ||
-             parkings.constFirst().position.distanceMeterTo(flightplan->getDepartureParkingPosition()) >
-             MAX_PARKING_DIST_METER)
+             parkings.constFirst().position.distanceMeterTo(flightplan->getDepartureParkingPosition()) > MAX_PARKING_DIST_METER)
           {
             // No parking found or too far away
             // Always try runway or helipad if no start positions found
@@ -1062,12 +1063,12 @@ void RouteLeg::assignNdb(const map::MapResult& mapobjectResult, atools::fs::pln:
 
 void RouteLeg::assignRunwayOrHelipad(const QString& name)
 {
-  NavApp::getAirportQuerySim()->getStartByNameAndPos(start, airport.id, name,
-                                                     flightplan->getDepartureParkingPosition());
+  NavApp::getAirportQuerySim()->getStartByNameAndPos(start, airport.id, name, flightplan->getDepartureParkingPosition());
 
-  if(!start.isValid() ||
-     start.position.distanceMeterTo(flightplan->getDepartureParkingPosition()) > MAX_PARKING_DIST_METER)
+  if(!start.isValid() || start.position.distanceMeterTo(flightplan->getDepartureParkingPosition()) > MAX_PARKING_DIST_METER)
   {
+    // Navigraph database has no start table
+
     qWarning() << Q_FUNC_INFO << "Found no start positions for" << name;
     // Clear departure position in flight plan
     flightplan->setDepartureParkingName(QString());

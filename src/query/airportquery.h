@@ -140,9 +140,9 @@ public:
    * @param name name like PARKING, GATE_P, etc.
    * @param number parking number
    */
-  void getParkingByNameAndNumber(QList<map::MapParking>& parkings, int airportId, const QString& name, int number);
-  void getParkingByName(QList<map::MapParking>& parkings, int airportId, const QString& name,
-                        const atools::geo::Pos& sortByDistancePos);
+  void getParkingByNameNumberSuffix(QList<map::MapParking>& parkings, int airportId, const QString& name, int number,
+                                    const QString& suffix);
+  void getParkingByName(QList<map::MapParking>& parkings, int airportId, const QString& name, const atools::geo::Pos& sortByDistancePos);
 
   /*
    * Get a start position of an airport (runway, helipad and water)
@@ -250,9 +250,8 @@ private:
   /* Database queries */
   atools::sql::SqlQuery *runwayOverviewQuery = nullptr, *apronQuery = nullptr,
                         *parkingQuery = nullptr, *startQuery = nullptr, *startByIdQuery = nullptr,
-                        *helipadQuery = nullptr,
-                        *taxiparthQuery = nullptr, *runwaysQuery = nullptr,
-                        *parkingTypeAndNumberQuery = nullptr,
+                        *helipadQuery = nullptr, *taxiparthQuery = nullptr, *runwaysQuery = nullptr,
+                        *parkingTypeNumberQuery = nullptr, *parkingTypeNumberSuffixQuery = nullptr,
                         *parkingNameQuery = nullptr;
 
   atools::sql::SqlQuery *airportByIdentQuery = nullptr, *airportsByTruncatedIdentQuery = nullptr,

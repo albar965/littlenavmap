@@ -564,8 +564,7 @@ void MainWindow::debugActionTriggered2()
 
 void MainWindow::debugActionTriggered3()
 {
-  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */,
-                          true /* forceDebug */);
+  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */, true /* forceDebug */);
 }
 
 void MainWindow::debugActionTriggered4()
