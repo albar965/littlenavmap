@@ -898,7 +898,7 @@ void LogdataController::planAttachLnmpln(atools::sql::SqlRecord *record, const Q
   {
     // Store a new flight plan as logbook entry attachement - loaded plan can be any supported format
     // Plan is always attached in LNMPLN format
-    if(atools::checkFile(filename))
+    if(atools::checkFile(Q_FUNC_INFO, filename))
     {
       // Load flight plan in any supported format
       atools::fs::pln::Flightplan flightplan;
@@ -1104,7 +1104,7 @@ void LogdataController::perfAttachLnmperf(atools::sql::SqlRecord *record, const 
 {
   try
   {
-    if(atools::checkFile(filename))
+    if(atools::checkFile(Q_FUNC_INFO, filename))
     {
       // Load aircraft performance in any format (INI or XML) ===================
       atools::fs::perf::AircraftPerf perf;
