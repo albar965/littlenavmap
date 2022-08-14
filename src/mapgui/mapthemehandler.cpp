@@ -477,7 +477,7 @@ QList<QFileInfo> MapThemeHandler::findMapThemes()
   for(const QFileInfo& themeDirInfo : earthDir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
   {
     // Check if folder is accessible
-    if(atools::checkDir(themeDirInfo, true /* warn */))
+    if(atools::checkDir(Q_FUNC_INFO, themeDirInfo, true /* warn */))
     {
       // Theme folder
       QDir themeDir(themeDirInfo.absoluteFilePath());
@@ -486,7 +486,7 @@ QList<QFileInfo> MapThemeHandler::findMapThemes()
       int found = 0;
       for(const QFileInfo& themeFile : themeDir.entryInfoList({"*.dgml"}, QDir::Files | QDir::NoDotAndDotDot))
       {
-        if(atools::checkFile(themeFile, true /* warn */))
+        if(atools::checkFile(Q_FUNC_INFO, themeFile, true /* warn */))
         {
           qInfo() << Q_FUNC_INFO << "Found map theme file <<" << themeFile.absoluteFilePath();
           dgmlFileInfos.append(themeFile);
