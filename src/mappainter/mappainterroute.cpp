@@ -1646,17 +1646,17 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
   lastLegPoint = leg;
 }
 
-void MapPainterRoute::paintAirport(int x, int y, const map::MapAirport& obj)
+void MapPainterRoute::paintAirport(float x, float y, const map::MapAirport& obj)
 {
   context->routeDrawnNavaids->append(obj.getRef());
-  int size = context->sz(context->symbolSizeAirport, context->mapLayerRoute->getAirportSymbolSize());
+  float size = context->szF(context->symbolSizeAirport, context->mapLayerRoute->getAirportSymbolSize());
   symbolPainter->drawAirportSymbol(context->painter, obj, x, y, size, false, false,
                                    context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
 }
 
 void MapPainterRoute::paintAirportText(float x, float y, const map::MapAirport& obj, bool drawAsRoute)
 {
-  int size = context->sz(context->symbolSizeAirport, context->mapLayerRoute->getAirportSymbolSize());
+  float size = context->szF(context->symbolSizeAirport, context->mapLayerRoute->getAirportSymbolSize());
   symbolPainter->drawAirportText(context->painter, obj, x, y, context->dispOptsAirport,
                                  context->airportTextFlagsRoute(drawAsRoute, false /* draw as log */), size,
                                  context->mapLayerRoute->isAirportDiagram(),
@@ -1800,11 +1800,11 @@ void MapPainterRoute::paintProcedureUnderlay(const proc::MapProcedureLeg& leg, f
 }
 
 /* Paint user defined waypoint */
-void MapPainterRoute::paintUserpoint(int x, int y, const map::MapUserpointRoute& obj, bool preview)
+void MapPainterRoute::paintUserpoint(float x, float y, const map::MapUserpointRoute& obj, bool preview)
 {
   context->routeDrawnNavaids->append(obj.getRef());
-  int size = context->sz(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
-  size = std::max(size, 8);
+  float size = context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getWaypointSymbolSize());
+  size = std::max(size, 8.f);
   symbolPainter->drawUserpointSymbol(context->painter, x, y, size, !preview);
 }
 
@@ -1850,8 +1850,8 @@ void MapPainterRoute::drawSymbols(const QBitArray& visibleStartPoints, const QLi
   {
     if(visibleStartPoints.testBit(i))
     {
-      int x = atools::roundToInt(pt.x());
-      int y = atools::roundToInt(pt.y());
+      float x = static_cast<float>(pt.x());
+      float y = static_cast<float>(pt.y());
       const RouteLeg& leg = context->route->value(i);
       map::MapTypes type = leg.getMapObjectType();
 #pragma GCC diagnostic push

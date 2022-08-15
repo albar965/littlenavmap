@@ -83,10 +83,10 @@ public:
   QIcon createAirportMsaIcon(const map::MapAirportMsa& airportMsa, const QFont& font, float symbolScale, int *actualSize = nullptr);
 
   /* Airport symbol. For airport diagram use a transparent text background */
-  void drawAirportSymbol(QPainter *painter, const map::MapAirport& airport, float x, float y, int size,
+  void drawAirportSymbol(QPainter *painter, const map::MapAirport& airport, float x, float y, float size,
                          bool isAirportDiagram, bool fast, bool addonHighlight);
   void drawAirportText(QPainter *painter, const map::MapAirport& airport, float x, float y,
-                       optsd::DisplayOptionsAirport dispOpts, textflags::TextFlags flags, int size, bool diagram,
+                       optsd::DisplayOptionsAirport dispOpts, textflags::TextFlags flags, float size, bool diagram,
                        int maxTextLength);
 
   /* Waypoint symbol. Can use a different color for invalid waypoints that were not found in the database */
@@ -132,7 +132,7 @@ public:
   void drawHelipadSymbol(QPainter *painter, const map::MapHelipad& helipad, float x, float y, float w, float h, bool fast);
 
   /* User defined flight plan waypoint. Green rect. */
-  void drawUserpointSymbol(QPainter *painter, int x, int y, int size, bool routeFill);
+  void drawUserpointSymbol(QPainter *painter, float x, float y, float size, bool routeFill);
 
   /* Circle for approach points which are not navaids */
   void drawProcedureSymbol(QPainter *painter, float x, float y, int size, bool routeFill);

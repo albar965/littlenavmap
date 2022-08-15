@@ -79,7 +79,7 @@ private:
   void paintRoute();
   void paintRecommended(int passedRouteLeg);
 
-  void paintAirport(int x, int y, const map::MapAirport& obj);
+  void paintAirport(float x, float y, const map::MapAirport& obj);
   void paintVor(float x, float y, const map::MapVor& obj, bool preview);
   void paintNdb(float x, float y, const map::MapNdb& obj, bool preview);
   void paintWaypoint(float x, float y, const map::MapWaypoint& obj, bool preview);
@@ -94,7 +94,7 @@ private:
   void paintAirportText(float x, float y, const map::MapAirport& obj, bool drawAsRoute);
   void paintText(const QColor& color, float x, float y, bool drawTextDetails, QStringList texts, bool drawAsRoute,
                  textatt::TextAttributes atts = textatt::NONE);
-  void paintUserpoint(int x, int y, const map::MapUserpointRoute& obj, bool preview);
+  void paintUserpoint(float x, float y, const map::MapUserpointRoute& obj, bool preview);
   void paintProcedurePoint(float x, float y, bool preview);
 
   void paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, const proc::MapProcedureLegs& legs, int index, bool preview,

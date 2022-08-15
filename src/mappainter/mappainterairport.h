@@ -51,13 +51,10 @@ public:
   virtual void render() override;
 
 private:
-  void drawAirportSymbol(const map::MapAirport& ap, float x, float y, int size);
-
-  // void drawWindPointer(const maptypes::MapAirport& ap, int x, int y);
-
+  void drawAirportSymbol(const map::MapAirport& ap, float x, float y, float size);
   void drawAirportDiagram(const map::MapAirport& airport);
   void drawAirportDiagramBackground(const map::MapAirport& airport);
-  void drawAirportSymbolOverview(const map::MapAirport& ap, float x, float y, int symsize);
+  void drawAirportSymbolOverview(const map::MapAirport& ap, float x, float y, float symsize);
   void runwayCoords(const QList<map::MapRunway> *runways, QList<QPoint> *centers, QList<QRect> *rects,
                     QList<QRect> *innerRects, QList<QRect> *outlineRects, bool overview);
   void drawFsApron(const map::MapApron& apron);

@@ -628,7 +628,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   {
     float x, y;
     textflags::TextFlags flags = context->airportTextFlagsRoute(false /* draw as route */, true /* draw as log */);
-    int size = context->sz(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
+    float size = context->szF(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
     context->szFont(context->textSizeFlightplan);
     QMargins margins(120, 10, 10, 10);
 
@@ -659,8 +659,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
         {
           symbolPainter->drawAirportSymbol(context->painter, entry->destination, x, y, size, false, context->drawFast,
                                            context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
-          symbolPainter->drawAirportText(context->painter, entry->destination, x, y, context->dispOptsAirport, flags,
-                                         size,
+          symbolPainter->drawAirportText(context->painter, entry->destination, x, y, context->dispOptsAirport, flags, size,
                                          context->mapLayer->isAirportDiagram(),
                                          context->mapLayer->getMaxTextLengthAirport());
         }

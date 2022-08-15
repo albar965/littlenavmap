@@ -167,11 +167,11 @@ void MapPainterAirport::render()
   float airportSoftFontScale = context->mapLayer->getAirportMinorFontScale();
 
   // Calculate parameters for normal and soft airports
-  int symsize = context->sz(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
-  int symsizeMinor = context->sz(context->symbolSizeAirport, context->mapLayer->getAirportMinorSymbolSize());
+  float symsize = context->szF(context->symbolSizeAirport, context->mapLayer->getAirportSymbolSize());
+  float symsizeMinor = context->szF(context->symbolSizeAirport, context->mapLayer->getAirportMinorSymbolSize());
 
-  int apSymSize = context->mapLayer->isAirportDiagram() ? symsize * 2 : symsize;
-  int apMinorSymSize = context->mapLayer->isAirportDiagram() ? symsizeMinor * 2 : symsizeMinor;
+  float apSymSize = context->mapLayer->isAirportDiagram() ? symsize * 2.f : symsize;
+  float apMinorSymSize = context->mapLayer->isAirportDiagram() ? symsizeMinor * 2.f : symsizeMinor;
 
   // Get layer dependent text flags ===================
   textflags::TextFlags textFlags = context->airportTextFlags();
@@ -990,7 +990,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
 }
 
 /* Draw airport runway overview as in VFR maps (runways with white center line) */
-void MapPainterAirport::drawAirportSymbolOverview(const map::MapAirport& ap, float x, float y, int symsize)
+void MapPainterAirport::drawAirportSymbolOverview(const map::MapAirport& ap, float x, float y, float symsize)
 {
   Marble::GeoPainter *painter = context->painter;
 
@@ -1044,14 +1044,14 @@ void MapPainterAirport::drawAirportSymbolOverview(const map::MapAirport& ap, flo
 
     // Draw small symbol on top to find a clickspot
     symbolPainter->drawAirportSymbol(context->painter, ap, x, y,
-                                     runwayDrawn ? 10 : symsize, // Draw small icon only if runways are visible
+                                     runwayDrawn ? 10.f : symsize, // Draw small icon only if runways are visible
                                      false /* isAirportDiagram */, context->drawFast,
                                      context->flags2.testFlag(opts2::MAP_AIRPORT_HIGHLIGHT_ADDON));
   }
 }
 
 /* Draws the airport symbol. This is not drawn if the airport is drawn using runway overview */
-void MapPainterAirport::drawAirportSymbol(const map::MapAirport& ap, float x, float y, int size)
+void MapPainterAirport::drawAirportSymbol(const map::MapAirport& ap, float x, float y, float size)
 {
   if(!context->mapLayer->isAirportOverviewRunway() || ap.flags.testFlag(map::AP_CLOSED) ||
      ap.waterOnly() || ap.longestRunwayLength < RUNWAY_OVERVIEW_MIN_LENGTH_FEET ||
