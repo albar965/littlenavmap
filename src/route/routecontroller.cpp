@@ -4204,19 +4204,19 @@ QIcon RouteController::iconForLeg(const RouteLeg& leg, int size) const
 {
   QIcon icon;
   if(leg.getMapObjectType() == map::AIRPORT)
-    icon = symbolPainter->createAirportIcon(leg.getAirport(), size - 2);
+    icon = SymbolPainter::createAirportIcon(leg.getAirport(), size - 2);
   else if(leg.getVor().isValid())
-    icon = symbolPainter->createVorIcon(leg.getVor(), size);
+    icon = SymbolPainter::createVorIcon(leg.getVor(), size);
   else if(leg.getNdb().isValid())
-    icon = symbolPainter->createNdbIcon(size);
+    icon = SymbolPainter::createNdbIcon(size);
   else if(leg.getWaypoint().isValid())
-    icon = symbolPainter->createWaypointIcon(size);
+    icon = SymbolPainter::createWaypointIcon(size);
   else if(leg.getMapObjectType() == map::USERPOINTROUTE)
-    icon = symbolPainter->createUserpointIcon(size);
+    icon = SymbolPainter::createUserpointIcon(size);
   else if(leg.getMapObjectType() == map::INVALID)
-    icon = symbolPainter->createWaypointIcon(size, mapcolors::routeInvalidPointColor);
+    icon = SymbolPainter::createWaypointIcon(size, mapcolors::routeInvalidPointColor);
   else if(leg.isAnyProcedure())
-    icon = symbolPainter->createProcedurePointIcon(size);
+    icon = SymbolPainter::createProcedurePointIcon(size);
 
   return icon;
 }

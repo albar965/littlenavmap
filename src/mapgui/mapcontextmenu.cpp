@@ -528,7 +528,7 @@ void MapContextMenu::insertProcedureAddMenu(QMenu& menu)
 
             if(submenu && pt->previewAll)
               // Override icon to show color indicating procedure in multi preview
-              icon = SymbolPainter().createProcedurePreviewIcon(legs->previewColor, iconSize);
+              icon = SymbolPainter::createProcedurePreviewIcon(legs->previewColor, iconSize);
 
             if(leg.mapType & proc::PROCEDURE_SID_ALL)
             {

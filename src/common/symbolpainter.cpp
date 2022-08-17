@@ -201,8 +201,7 @@ QIcon SymbolPainter::createHelipadIcon(const MapHelipad& helipad, int size)
   return QIcon(pixmap);
 }
 
-void SymbolPainter::drawHelipadSymbol(QPainter *painter, const map::MapHelipad& helipad, float x, float y,
-                                      float w, float h, bool fast)
+void SymbolPainter::drawHelipadSymbol(QPainter *painter, const map::MapHelipad& helipad, float x, float y, float w, float h, bool fast)
 {
   painter->setBrush(mapcolors::colorForSurface(helipad.surface));
   painter->setPen(QPen(mapcolors::helipadOutlineColor, 2., Qt::SolidLine, Qt::FlatCap));

@@ -2422,7 +2422,6 @@ QIcon mapBaseIcon(const map::MapBase *base, int size)
   if(base != nullptr)
   {
     // Get size for icons
-    SymbolPainter painter;
     VehicleIcons *vehicleIcons = NavApp::getVehicleIcons();
 
 #pragma GCC diagnostic push
@@ -2431,16 +2430,16 @@ QIcon mapBaseIcon(const map::MapBase *base, int size)
 #pragma GCC diagnostic pop
     {
       case map::AIRPORT:
-        return painter.createAirportIcon(*base->asPtr<map::MapAirport>(), size);
+        return SymbolPainter::createAirportIcon(*base->asPtr<map::MapAirport>(), size);
 
       case map::AIRPORT_MSA:
         return QIcon(":/littlenavmap/resources/icons/msa.svg");
 
       case map::VOR:
-        return painter.createVorIcon(*base->asPtr<map::MapVor>(), size);
+        return SymbolPainter::createVorIcon(*base->asPtr<map::MapVor>(), size);
 
       case map::NDB:
-        return painter.createNdbIcon(size);
+        return SymbolPainter::createNdbIcon(size);
 
       case map::ILS:
         return map::ilsIcon(base->asObj<map::MapIls>());
@@ -2449,10 +2448,10 @@ QIcon mapBaseIcon(const map::MapBase *base, int size)
         return QIcon(":/littlenavmap/resources/icons/enroutehold.svg");
 
       case map::WAYPOINT:
-        return painter.createWaypointIcon(size);
+        return SymbolPainter::createWaypointIcon(size);
 
       case map::AIRWAY:
-        return painter.createAirwayIcon(*base->asPtr<map::MapAirway>(), size);
+        return SymbolPainter::createAirwayIcon(*base->asPtr<map::MapAirway>(), size);
 
       case map::AIRCRAFT:
         return vehicleIcons->iconFromCache(base->asPtr<map::MapUserAircraft>()->getAircraft(), size, 45 /* rotate */);
@@ -2464,16 +2463,16 @@ QIcon mapBaseIcon(const map::MapBase *base, int size)
         return vehicleIcons->iconFromCache(base->asPtr<map::MapOnlineAircraft>()->getAircraft(), size, 45 /* rotate */);
 
       case map::USERPOINTROUTE:
-        return painter.createUserpointIcon(size);
+        return SymbolPainter::createUserpointIcon(size);
 
       case map::AIRSPACE:
-        return painter.createAirspaceIcon(*base->asPtr<map::MapAirspace>(), size);
+        return SymbolPainter::createAirspaceIcon(*base->asPtr<map::MapAirspace>(), size);
 
       case map::PARKING:
         return mapcolors::iconForParkingType(base->asPtr<map::MapParking>()->type);
 
       case map::HELIPAD:
-        return painter.createHelipadIcon(*base->asPtr<map::MapHelipad>(), size);
+        return SymbolPainter::createHelipadIcon(*base->asPtr<map::MapHelipad>(), size);
 
       case map::USERPOINT:
         return QIcon(NavApp::getUserdataIcons()->getIconPath(base->asPtr<map::MapUserpoint>()->type));

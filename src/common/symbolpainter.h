@@ -67,20 +67,20 @@ class SymbolPainter
 
 public:
   /* Create icons for tooltips, table views and more. Size is pixel. */
-  QIcon createAirportIcon(const map::MapAirport& airport, int size);
-  QIcon createAirportWeatherIcon(const atools::fs::weather::Metar& metar, int size);
-  QIcon createVorIcon(const map::MapVor& vor, int size);
-  QIcon createNdbIcon(int size);
-  QIcon createAirwayIcon(const map::MapAirway& airway, int size);
-  QIcon createWaypointIcon(int size, const QColor& color = QColor());
-  QIcon createUserpointIcon(int size);
-  QIcon createProcedurePointIcon(int size);
-  QIcon createAirspaceIcon(const map::MapAirspace& airspace, int size);
-  QIcon createProcedurePreviewIcon(const QColor& color, int size);
-  QIcon createHelipadIcon(const map::MapHelipad& helipad, int size);
+  static QIcon createAirportIcon(const map::MapAirport& airport, int size);
+  static QIcon createAirportWeatherIcon(const atools::fs::weather::Metar& metar, int size);
+  static QIcon createVorIcon(const map::MapVor& vor, int size);
+  static QIcon createNdbIcon(int size);
+  static QIcon createAirwayIcon(const map::MapAirway& airway, int size);
+  static QIcon createWaypointIcon(int size, const QColor& color = QColor());
+  static QIcon createUserpointIcon(int size);
+  static QIcon createProcedurePointIcon(int size);
+  static QIcon createAirspaceIcon(const map::MapAirspace& airspace, int size);
+  static QIcon createProcedurePreviewIcon(const QColor& color, int size);
+  static QIcon createHelipadIcon(const map::MapHelipad& helipad, int size);
 
   /* Scale is not pixel size but a factor related for font size */
-  QIcon createAirportMsaIcon(const map::MapAirportMsa& airportMsa, const QFont& font, float symbolScale, int *actualSize = nullptr);
+  static QIcon createAirportMsaIcon(const map::MapAirportMsa& airportMsa, const QFont& font, float symbolScale, int *actualSize = nullptr);
 
   /* Airport symbol. For airport diagram use a transparent text background */
   void drawAirportSymbol(QPainter *painter, const map::MapAirport& airport, float x, float y, float size,
@@ -129,7 +129,7 @@ public:
   void drawMarkerSymbol(QPainter *painter, const map::MapMarker& marker, float x, float y, int size,
                         bool fast);
 
-  void drawHelipadSymbol(QPainter *painter, const map::MapHelipad& helipad, float x, float y, float w, float h, bool fast);
+  static void drawHelipadSymbol(QPainter *painter, const map::MapHelipad& helipad, float x, float y, float w, float h, bool fast);
 
   /* User defined flight plan waypoint. Green rect. */
   void drawUserpointSymbol(QPainter *painter, float x, float y, float size, bool routeFill);
@@ -171,7 +171,7 @@ private:
   const QPixmap *trackLineFromCache(int size);
 
   QCache<int, QPixmap> windPointerPixmaps, trackLinePixmaps;
-  void prepareForIcon(QPainter& painter);
+  static void prepareForIcon(QPainter& painter);
 
   void drawWindBarbs(QPainter *painter, const atools::fs::weather::MetarParser& parsedMetar, float x, float y,
                      float size, bool windBarbs, bool altWind, bool route, bool fast) const;
@@ -180,7 +180,7 @@ private:
   void drawBarbFeathers(QPainter *painter, const QVector<int>& barbs, float lineLength, float barbLength5,
                         float barbLength10, float barbLength50, float barbStep) const;
 
-  int airportMsaSize(QPainter *painter, const map::MapAirportMsa& airportMsa, float sizeFactor, bool drawDetails);
+  static int airportMsaSize(QPainter *painter, const map::MapAirportMsa& airportMsa, float sizeFactor, bool drawDetails);
 
 };
 

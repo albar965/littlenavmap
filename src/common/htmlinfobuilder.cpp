@@ -126,7 +126,7 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
 {
   if(!print)
   {
-    html.img(SymbolPainter().createAirportIcon(airport, symbolSizeTitle.height()),
+    html.img(SymbolPainter::createAirportIcon(airport, symbolSizeTitle.height()),
              QString(), QString(), symbolSizeTitle);
     html.nbsp().nbsp();
   }
@@ -1852,7 +1852,7 @@ void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atoo
 
       int actualSize = 0;
       float sizeFactor = info ? (msa.altitudes.size() > 1 ? 5. : 2.) : (msa.altitudes.size() > 1 ? 4. : 2.);
-      QIcon icon = SymbolPainter().createAirportMsaIcon(msa, QToolTip::font(), sizeFactor, &actualSize);
+      QIcon icon = SymbolPainter::createAirportMsaIcon(msa, QToolTip::font(), sizeFactor, &actualSize);
       html.p().img(icon, QString(), QString(), QSize(actualSize, actualSize)).pEnd();
     }
   }
@@ -2103,7 +2103,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   if(info && infoQuery != nullptr)
     rec = infoQuery->getVorInformation(vor.id);
 
-  QIcon icon = SymbolPainter().createVorIcon(vor, symbolSizeTitle.height());
+  QIcon icon = SymbolPainter::createVorIcon(vor, symbolSizeTitle.height());
   html.img(icon, QString(), QString(), symbolSizeTitle);
   html.nbsp().nbsp();
 
@@ -2191,7 +2191,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
   if(info && infoQuery != nullptr)
     rec = infoQuery->getNdbInformation(ndb.id);
 
-  QIcon icon = SymbolPainter().createNdbIcon(symbolSizeTitle.height());
+  QIcon icon = SymbolPainter::createNdbIcon(symbolSizeTitle.height());
   html.img(icon, QString(), QString(), symbolSizeTitle);
   html.nbsp().nbsp();
 
@@ -2800,7 +2800,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   if(info && infoQuery != nullptr)
     rec = mapWidget->getWaypointTrackQuery()->getWaypointInformation(waypoint.id);
 
-  QIcon icon = SymbolPainter().createWaypointIcon(symbolSizeTitle.height());
+  QIcon icon = SymbolPainter::createWaypointIcon(symbolSizeTitle.height());
   html.img(icon, QString(), QString(), symbolSizeTitle);
   html.nbsp().nbsp();
 
@@ -2989,7 +2989,7 @@ bool HtmlInfoBuilder::bearingToUserText(const ageo::Pos& pos, float magVar, Html
 
 void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sql::SqlRecord& onlineRec, HtmlBuilder& html) const
 {
-  QIcon icon = SymbolPainter().createAirspaceIcon(airspace, symbolSizeTitle.height());
+  QIcon icon = SymbolPainter::createAirspaceIcon(airspace, symbolSizeTitle.height());
   html.img(icon, QString(), QString(), symbolSizeTitle);
   html.nbsp().nbsp();
 
@@ -3333,7 +3333,7 @@ void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) 
 
 void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, HtmlBuilder& html) const
 {
-  QIcon icon = SymbolPainter().createUserpointIcon(symbolSizeTitle.height());
+  QIcon icon = SymbolPainter::createUserpointIcon(symbolSizeTitle.height());
   html.img(icon, QString(), QString(), symbolSizeTitle);
   html.nbsp().nbsp();
 
@@ -3392,7 +3392,7 @@ void HtmlInfoBuilder::procedurePointText(const map::MapProcedurePoint& procPoint
 
   if(procPoint.legs->previewColor.isValid() && procPoint.previewAll)
   {
-    QIcon procIcon = SymbolPainter().createProcedurePreviewIcon(procPoint.legs->previewColor, symbolSizeTitle.height());
+    QIcon procIcon = SymbolPainter::createProcedurePreviewIcon(procPoint.legs->previewColor, symbolSizeTitle.height());
     html.img(procIcon, QString(), QString(), symbolSizeTitle);
     html.nbsp().nbsp();
   }
@@ -5009,7 +5009,7 @@ void HtmlInfoBuilder::addFlightRulesSuffix(atools::util::HtmlBuilder& html,
 {
   if(!print)
   {
-    html.img(SymbolPainter().createAirportWeatherIcon(metar, symbolSize.height()),
+    html.img(SymbolPainter::createAirportWeatherIcon(metar, symbolSize.height()),
              QString(), QString(), symbolSize);
     html.nbsp();
   }

@@ -2050,11 +2050,10 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapTypes& type, const map
   const int ICON_SIZE = 20;
   QMenu menu;
   menu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
-  SymbolPainter symbolPainter;
 
   for(const map::MapAirport& obj : result.airports)
   {
-    QAction *action = new QAction(symbolPainter.createAirportIcon(obj, ICON_SIZE), menuText.arg(map::airportText(obj, 20)), this);
+    QAction *action = new QAction(SymbolPainter::createAirportIcon(obj, ICON_SIZE), menuText.arg(map::airportText(obj, 20)), this);
     action->setData(QVariant::fromValue(map::MapObjectRef(obj.id, map::AIRPORT)));
     menu.addAction(action);
   }
@@ -2066,19 +2065,19 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapTypes& type, const map
 
   for(const map::MapVor& obj : result.vors)
   {
-    QAction *action = new QAction(symbolPainter.createVorIcon(obj, ICON_SIZE), menuText.arg(map::vorText(obj)), this);
+    QAction *action = new QAction(SymbolPainter::createVorIcon(obj, ICON_SIZE), menuText.arg(map::vorText(obj)), this);
     action->setData(QVariant::fromValue(map::MapObjectRef(obj.id, map::VOR)));
     menu.addAction(action);
   }
   for(const map::MapNdb& obj : result.ndbs)
   {
-    QAction *action = new QAction(symbolPainter.createNdbIcon(ICON_SIZE), menuText.arg(map::ndbText(obj)), this);
+    QAction *action = new QAction(SymbolPainter::createNdbIcon(ICON_SIZE), menuText.arg(map::ndbText(obj)), this);
     action->setData(QVariant::fromValue(map::MapObjectRef(obj.id, map::NDB)));
     menu.addAction(action);
   }
   for(const map::MapWaypoint& obj : result.waypoints)
   {
-    QAction *action = new QAction(symbolPainter.createWaypointIcon(ICON_SIZE), menuText.arg(map::waypointText(obj)), this);
+    QAction *action = new QAction(SymbolPainter::createWaypointIcon(ICON_SIZE), menuText.arg(map::waypointText(obj)), this);
     action->setData(QVariant::fromValue(map::MapObjectRef(obj.id, map::WAYPOINT)));
     menu.addAction(action);
   }
@@ -2089,14 +2088,14 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapTypes& type, const map
     QAction *action = nullptr;
     if(numUserpoints > 5)
     {
-      action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE), tr("More ..."), this);
+      action = new QAction(SymbolPainter::createUserpointIcon(ICON_SIZE), tr("More ..."), this);
       action->setDisabled(true);
       menu.addAction(action);
       break;
     }
     else
     {
-      action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE), menuText.arg(map::userpointText(obj)), this);
+      action = new QAction(SymbolPainter::createUserpointIcon(ICON_SIZE), menuText.arg(map::userpointText(obj)), this);
       action->setData(QVariant::fromValue(map::MapObjectRef(obj.id, map::USERPOINT)));
       menu.addAction(action);
     }
@@ -2106,7 +2105,7 @@ bool MapWidget::showFeatureSelectionMenu(int& id, map::MapTypes& type, const map
   // Always present - userpoint
   menu.addSeparator();
   {
-    QAction *action = new QAction(symbolPainter.createUserpointIcon(ICON_SIZE), menuText.arg(tr("Position")), this);
+    QAction *action = new QAction(SymbolPainter::createUserpointIcon(ICON_SIZE), menuText.arg(tr("Position")), this);
     action->setData(QVariant::fromValue(map::MapObjectRef(-1, map::USERPOINTROUTE)));
     menu.addAction(action);
   }
