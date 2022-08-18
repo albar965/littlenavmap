@@ -1729,6 +1729,10 @@ void Route::updateDepartureAndDestination()
 {
   if(!isEmpty())
   {
+    // Only the departure airport has parking positions
+    for(int i = 1; i < size(); i++)
+      (*this)[i].clearParkingAndStart();
+
     // Correct departure and destination values
     const RouteLeg& departure = getDepartureAirportLeg();
     flightplan.setDepartureIdent(departure.getIdent());
@@ -2214,6 +2218,28 @@ void Route::setDepartureStart(const map::MapStart& departureStart)
     (*this)[idx].setDepartureStart(departureStart);
   else
     qWarning() << Q_FUNC_INFO << "invalid index" << idx;
+}
+
+map::MapParking Route::getDepartureParking() const
+{
+  int idx = getDepartureAirportLegIndex();
+
+  if(idx != map::INVALID_INDEX_VALUE)
+    return at(idx).getDepartureParking();
+  else
+    qWarning() << Q_FUNC_INFO << "invalid index" << idx;
+  return map::MapParking();
+}
+
+map::MapStart Route::getDepartureStart() const
+{
+  int idx = getDepartureAirportLegIndex();
+
+  if(idx != map::INVALID_INDEX_VALUE)
+    return at(idx).getDepartureStart();
+  else
+    qWarning() << Q_FUNC_INFO << "invalid index" << idx;
+  return map::MapStart();
 }
 
 const RouteLeg& Route::getLegAt(int index) const
@@ -3184,7 +3210,6 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
   if(isEmpty())
     return;
 
-  bool hasAirway = false;
   int minAltitude = 0, maxAltitude = 100000;
   for(int i = 1; i < size(); i++)
   {
@@ -3209,8 +3234,6 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
       minAltitude = std::max(airway.minAltitude, minAltitude);
       if(airway.maxAltitude > 0)
         maxAltitude = std::min(airway.maxAltitude, maxAltitude);
-
-      hasAirway |= !routeLeg.getAirwayName().isEmpty();
     }
     else
       routeLeg.setAirway(map::MapAirway());

@@ -595,58 +595,6 @@ const QList<map::MapStart> *AirportQuery::getStartPositionsForAirport(int airpor
   }
 }
 
-void AirportQuery::getBestStartPositionForAirport(map::MapStart& start, int airportId, const QString& runwayName)
-{
-  start = map::MapStart();
-
-  // No need to create a permanent query here since it is called rarely
-  // Get runways ordered by length descending
-  SqlQuery query(db);
-  query.prepare(
-    "select s.start_id, s.airport_id, s.type, s.heading, s.number, s.runway_name, s.altitude, s.lonx, s.laty, "
-    "r.surface from start s left outer join runway_end e on s.runway_end_id = e.runway_end_id "
-    "left outer join runway r on r.primary_end_id = e.runway_end_id "
-    "where s.airport_id = :airportId "
-    "order by r.length desc");
-  query.bindValue(":airportId", airportId);
-  query.exec();
-
-  // Get runway by name if given
-  if(!runwayName.isEmpty())
-  {
-    while(query.next())
-    {
-      if(atools::fs::util::runwayEqual(runwayName, query.valueStr("runway_name")))
-      {
-        mapTypesFactory->fillStart(query.record(), start);
-        break;
-      }
-    }
-  }
-
-  if(!start.isValid())
-  {
-    // Get best hard runway
-    query.exec();
-
-    // Get a runway with the best surface (hard)
-    int bestSurfaceQuality = -1;
-    while(query.next())
-    {
-      QString surface = query.valueStr("surface");
-
-      int quality = map::surfaceQuality(surface);
-      if(quality > bestSurfaceQuality || bestSurfaceQuality == -1)
-      {
-        bestSurfaceQuality = quality;
-        mapTypesFactory->fillStart(query.record(), start);
-      }
-      if(map::isHardSurface(surface))
-        break;
-    }
-  }
-}
-
 void AirportQuery::getStartByNameAndPos(map::MapStart& start, int airportId,
                                         const QString& runwayEndName, const ageo::Pos& position)
 {

@@ -40,7 +40,7 @@ class ItemViewZoomHandler;
 }
 
 namespace internal {
-struct StartPosition;
+class StartPosition;
 }
 
 /*
@@ -56,27 +56,33 @@ public:
   explicit ParkingDialog(QWidget *parent, const map::MapAirport& departureAirportParam);
   virtual ~ParkingDialog() override;
 
-  /* Get selected parking spot
-   * @return true if parking was selected */
-  bool getSelectedParking(map::MapParking& parking) const;
+  /* Get selected parking spot. Valid if parking was selected */
+  map::MapParking getSelectedParking() const;
 
-  /* Get selected start position.
-   * @return true if a start was selected */
-  bool getSelectedStartPosition(map::MapStart& start) const;
+  /* Get selected start position. Valid if a start was selected */
+  map::MapStart getSelectedStartPosition() const;
+
+  /* No position but airport selected */
+  bool isAirportSelected() const;
 
 private:
   void saveState();
   void restoreState();
-  void updateButtons();
+  void updateButtonsAndHeader();
   void updateTable();
+  void updateTableSelection();
   void filterTextEdited();
   void buttonBoxClicked(QAbstractButton *button);
   void doubleClicked();
+  const internal::StartPosition& currentPos() const;
 
-  QList<internal::StartPosition> entries;
+  /* Keeps filtered out entries. Index is stored in QTableWidgetItem data */
+  QList<internal::StartPosition> startPositions;
+
   Ui::ParkingDialog *ui;
   atools::gui::ItemViewZoomHandler *zoomHandler = nullptr;
   const map::MapAirport& departureAirport;
+
 };
 
 #endif // LITTLENAVMAP_PARKINGDIALOG_H

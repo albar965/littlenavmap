@@ -89,7 +89,7 @@ public:
    * and emits routeChanged. Uses file name as new current name  */
   bool loadFlightplan(const QString& filename);
   void loadFlightplan(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format,
-                      const QString& filename, bool quiet, bool changed, bool adjustAltitude);
+                      const QString& filename, bool changed, bool adjustAltitude);
 
   /* Load the plan from a string in LNMPLN format */
   bool loadFlightplanLnmStr(const QString& string);
@@ -177,8 +177,9 @@ public:
 
   /* Set departure parking position. If the airport of the parking spot is different to
    * the current departure it will be replaced too. */
-  void routeSetParking(const map::MapParking& parking);
-  void routeSetHelipad(const map::MapHelipad& helipad);
+  void routeSetParking(const map::MapParking& parking); /* From map context menu */
+  void routeSetHelipad(const map::MapHelipad& helipad); /* From map context menu */
+  void routeClearParkingAndStart(); /* Main menu and parking dialog - set airport as start */
 
   /* Shows the dialog to select departure parking or start position.
    *  @return true if position was set. false is dialog was canceled. */
@@ -440,7 +441,6 @@ private:
 
   void undoTriggered();
   void redoTriggered();
-  bool updateStartPositionBestRunway(bool force, bool undo);
   void helpClicked();
 
   void dockVisibilityChanged(bool visible);

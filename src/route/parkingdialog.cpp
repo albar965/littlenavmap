@@ -17,24 +17,60 @@
 
 #include "route/parkingdialog.h"
 
-#include "ui_parkingdialog.h"
 #include "atools.h"
-#include "geo/calculations.h"
 #include "common/constants.h"
 #include "common/mapcolors.h"
+#include "common/symbolpainter.h"
 #include "common/unit.h"
+#include "geo/calculations.h"
 #include "gui/helphandler.h"
 #include "gui/itemviewzoomhandler.h"
 #include "gui/widgetstate.h"
 #include "navapp.h"
 #include "query/airportquery.h"
 #include "query/mapquery.h"
+#include "route/route.h"
+#include "ui_parkingdialog.h"
 
 #include <QPushButton>
 
 namespace internal {
-struct StartPosition
+
+enum Column
 {
+  NAME,
+  TYPE,
+  SIZE,
+  CODES,
+  FACILITIES,
+  COUNT = FACILITIES + 1
+};
+
+/* Object for one table entry. Either start, parking or single airport */
+class StartPosition
+{
+public:
+  StartPosition()
+  {
+
+  }
+
+  explicit StartPosition(const map::MapAirport& airportParam)
+    : airport(airportParam)
+  {
+  }
+
+  explicit StartPosition(const map::MapParking& parkingParam)
+    : parking(parkingParam)
+  {
+  }
+
+  explicit StartPosition(const map::MapStart& startParam)
+    : start(startParam)
+  {
+  }
+
+  map::MapAirport airport;
   map::MapParking parking;
   map::MapStart start;
 };
@@ -49,18 +85,14 @@ ParkingDialog::ParkingDialog(QWidget *parent, const map::MapAirport& departureAi
 
   ui->setupUi(this);
 
-  // Update label with airport name/ident
-  ui->labelSelectParking->setText(tr("<b>%1, elevation %2:</b>").
-                                  arg(map::airportTextShort(departureAirport)).
-                                  arg(Unit::altFeet(departureAirport.position.getAltitude())));
-
   zoomHandler = new atools::gui::ItemViewZoomHandler(ui->tableWidgetSelectParking);
 
   restoreState();
   updateTable();
-  updateButtons();
+  updateTableSelection();
+  updateButtonsAndHeader();
 
-  connect(ui->tableWidgetSelectParking, &QTableWidget::itemSelectionChanged, this, &ParkingDialog::updateButtons);
+  connect(ui->tableWidgetSelectParking, &QTableWidget::itemSelectionChanged, this, &ParkingDialog::updateButtonsAndHeader);
   connect(ui->buttonBoxSelectParking, &QDialogButtonBox::clicked, this, &ParkingDialog::buttonBoxClicked);
   connect(ui->tableWidgetSelectParking, &QTableWidget::doubleClicked, this, &ParkingDialog::doubleClicked);
   connect(ui->lineEditSelectParkingFilter, &QLineEdit::textEdited, this, &ParkingDialog::filterTextEdited);
@@ -95,33 +127,25 @@ void ParkingDialog::doubleClicked()
 void ParkingDialog::filterTextEdited()
 {
   updateTable();
+  updateTableSelection();
 }
 
 void ParkingDialog::updateTable()
 {
-  enum
-  {
-    NAME,
-    TYPE,
-    SIZE,
-    CODES,
-    FACILITIES
-  };
-
-  entries.clear();
+  startPositions.clear();
 
   // Create a copy from the cached start objects to allow sorting ====================================
   AirportQuery *airportQuerySim = NavApp::getAirportQuerySim();
   for(const map::MapStart& start : *airportQuerySim->getStartPositionsForAirport(departureAirport.id))
-    entries.append({map::MapParking(), start});
+    startPositions.append(internal::StartPosition(start));
 
-  // Create a copy from the cached parking objects and exclude fuel ====================================
+  // Create a copy from the cached parking objects including fuel ====================================
   for(const map::MapParking& parking : *airportQuerySim->getParkingsForAirport(departureAirport.id))
-    // Vehicles are already omitted in database creation
-    entries.append({parking, map::MapStart()});
+    // Vehicle parking spots are already omitted in database creation
+    startPositions.append(internal::StartPosition(parking));
 
-  // Sort by type (order: runway, helipad, parking), name and numbers ======================
-  std::sort(entries.begin(), entries.end(), [](const internal::StartPosition& p1, const internal::StartPosition& p2) -> bool
+  // Sort copied objects by type (order: runway, helipad, parking), name and numbers ======================
+  std::sort(startPositions.begin(), startPositions.end(), [](const internal::StartPosition& p1, const internal::StartPosition& p2) -> bool
   {
     if(p1.parking.isValid() == p2.parking.isValid() && p1.start.isValid() == p2.start.isValid())
     {
@@ -143,166 +167,206 @@ void ParkingDialog::updateTable()
     return p1.parking.isValid() < p2.parking.isValid();
   });
 
+  // Put airport entry always on top independent of sorting
+  startPositions.prepend(internal::StartPosition(departureAirport));
+
+  // Text from filter
   QString searchText(ui->lineEditSelectParkingFilter->text());
 
-  if(entries.isEmpty())
-  {
-    // Empty
-    ui->tableWidgetSelectParking->setRowCount(1);
-    ui->tableWidgetSelectParking->setColumnCount(1);
-    ui->tableWidgetSelectParking->setItem(0, 0, new QTableWidgetItem(tr("No start positions found.")));
-    ui->tableWidgetSelectParking->setEnabled(false);
-  }
-  else
-  {
-    // Fill table ========================================================
-    ui->tableWidgetSelectParking->setEnabled(true);
-    ui->tableWidgetSelectParking->setColumnCount(5);
-    ui->tableWidgetSelectParking->setRowCount(entries.size()); // Rows will be reset later if smaller due to filter
-    ui->tableWidgetSelectParking->setHorizontalHeaderLabels({tr(" Name "), tr(" Type or\nSurface "),
-                                                             tr(" Size or\nLength, Width and Heading"),
-                                                             tr(" Airline Codes "), tr(" Facilities ")});
+  // Fill table ========================================================
+  ui->tableWidgetSelectParking->setEnabled(true);
+  ui->tableWidgetSelectParking->setColumnCount(internal::COUNT);
+  ui->tableWidgetSelectParking->setRowCount(startPositions.size()); // Rows will be reset later if smaller due to filter
+  ui->tableWidgetSelectParking->setHorizontalHeaderLabels({tr(" Name "), tr(" Type or\nSurface "),
+                                                           tr(" Size or\nLength, Width and Heading"),
+                                                           tr(" Airline Codes "), tr(" Facilities ")});
 
-    // Add to list widget
-    int rowsInserted = 0;
-    for(int i = 0; i < entries.size(); i++)
+  // Add to list widget
+  int rowsInserted = 0;
+  for(int i = 0; i < startPositions.size(); i++)
+  {
+    const internal::StartPosition& startPos = startPositions.at(i);
+    QVector<QTableWidgetItem *> items(5, nullptr);
+    if(startPos.airport.isValid())
     {
-      const internal::StartPosition& startPos = entries.at(i);
-      QVector<QTableWidgetItem *> items(5, nullptr);
-      if(startPos.parking.isValid())
-      {
-        // Parking position =======================================================================
-        items[NAME] = new QTableWidgetItem(mapcolors::iconForParkingType(startPos.parking.type),
-                                           map::parkingNameOrNumber(startPos.parking));
-        items[TYPE] = new QTableWidgetItem(map::parkingTypeName(startPos.parking.type));
-        items[SIZE] = new QTableWidgetItem(Unit::distShortFeet(startPos.parking.getRadius() * 2));
-        items[CODES] = new QTableWidgetItem(startPos.parking.airlineCodes.split(",").join(tr(", ")));
-        items[FACILITIES] = new QTableWidgetItem(startPos.parking.jetway ? tr("Has Jetway") : QString());
-      }
-      else if(startPos.start.isValid())
-      {
-        // Other start position - runway or helipad ===============================================
-        items[NAME] = new QTableWidgetItem(mapcolors::iconForStart(startPos.start),
-                                           tr("%1 %2").arg(map::startType(startPos.start)).arg(startPos.start.runwayName));
+      // First airport entry =======================================================================
+      QIcon icon = SymbolPainter::createAirportIcon(startPos.airport, ui->tableWidgetSelectParking->verticalHeader()->defaultSectionSize());
+      items[internal::NAME] = new QTableWidgetItem(icon, tr("Airport %1").arg(map::airportTextShort(startPos.airport, 20 /* elideName */)));
+    }
+    else if(startPos.parking.isValid())
+    {
+      // Parking position =======================================================================
+      items[internal::NAME] =
+        new QTableWidgetItem(mapcolors::iconForParkingType(startPos.parking.type), map::parkingNameOrNumber(startPos.parking));
+      items[internal::TYPE] = new QTableWidgetItem(map::parkingTypeName(startPos.parking.type));
+      items[internal::SIZE] = new QTableWidgetItem(Unit::distShortFeet(startPos.parking.getRadius() * 2));
+      items[internal::CODES] = new QTableWidgetItem(startPos.parking.airlineCodes.split(",").join(tr(", ")));
+      items[internal::FACILITIES] = new QTableWidgetItem(startPos.parking.jetway ? tr("Has Jetway") : QString());
+    }
+    else if(startPos.start.isValid())
+    {
+      // Other start position - runway or helipad ===============================================
+      items[internal::NAME] = new QTableWidgetItem(mapcolors::iconForStart(startPos.start),
+                                                   tr("%1 %2").arg(map::startType(startPos.start)).arg(startPos.start.runwayName));
 
-        if(!startPos.start.runwayName.isEmpty())
+      if(!startPos.start.runwayName.isEmpty())
+      {
+        // Runway start ==========================
+        map::MapRunwayEnd end = airportQuerySim->getRunwayEndByName(startPos.start.airportId, startPos.start.runwayName);
+        if(end.isValid())
         {
-          // Runway start ==========================
-          map::MapRunwayEnd end = airportQuerySim->getRunwayEndByName(startPos.start.airportId, startPos.start.runwayName);
-          if(end.isValid())
+          map::MapRunway runway = airportQuerySim->getRunwayByEndId(startPos.start.airportId, end.id);
+          if(runway.isValid())
           {
-            map::MapRunway runway = airportQuerySim->getRunwayByEndId(startPos.start.airportId, end.id);
-            if(runway.isValid())
+            if(departureAirport.isValid())
             {
-              if(departureAirport.isValid())
-              {
-                // Add runway information ===============================
-                float heading = atools::geo::normalizeCourse(end.heading - departureAirport.magvar);
-                items[TYPE] = new QTableWidgetItem(map::surfaceName(runway.surface));
-                items[SIZE] = new QTableWidgetItem(tr("%1 x %2, %3°M").
-                                                   arg(Unit::distShortFeet(runway.length, false)).
-                                                   arg(Unit::distShortFeet(runway.width)).
-                                                   arg(QLocale().toString(heading, 'f', 0)));
-              }
-
-              // Fill runway attribute list
-              QStringList atts;
-              if(runway.isLighted())
-                atts.append(tr("Lighted"));
-              if(!end.secondary && runway.primaryClosed)
-                atts.append(tr("Closed"));
-              if(end.secondary && runway.secondaryClosed)
-                atts.append(tr("Closed"));
-
-              // Add ILS and similar approach aids
-              if(departureAirport.isValid())
-              {
-                for(map::MapIls ils : NavApp::getMapQueryGui()->getIlsByAirportAndRunway(departureAirport.ident, end.name))
-                  atts.append(map::ilsTypeShort(ils));
-              }
-              atts.removeAll(QString());
-              atts.removeDuplicates();
-              items[FACILITIES] = new QTableWidgetItem(atts.join(tr(",")));
+              // Add runway information ===============================
+              float heading = atools::geo::normalizeCourse(end.heading - departureAirport.magvar);
+              items[internal::TYPE] = new QTableWidgetItem(map::surfaceName(runway.surface));
+              items[internal::SIZE] = new QTableWidgetItem(tr("%1 x %2, %3°M").
+                                                           arg(Unit::distShortFeet(runway.length, false)).
+                                                           arg(Unit::distShortFeet(runway.width)).
+                                                           arg(QLocale().toString(heading, 'f', 0)));
             }
+
+            // Fill runway attribute list
+            QStringList atts;
+            if(runway.isLighted())
+              atts.append(tr("Lighted"));
+            if(!end.secondary && runway.primaryClosed)
+              atts.append(tr("Closed"));
+            if(end.secondary && runway.secondaryClosed)
+              atts.append(tr("Closed"));
+
+            // Add ILS and similar approach aids
+            if(departureAirport.isValid())
+            {
+              for(map::MapIls ils : NavApp::getMapQueryGui()->getIlsByAirportAndRunway(departureAirport.ident, end.name))
+                atts.append(map::ilsTypeShort(ils));
+            }
+            atts.removeAll(QString());
+            atts.removeDuplicates();
+            items[internal::FACILITIES] = new QTableWidgetItem(atts.join(tr(",")));
           }
         }
       }
-      else
-        items[0] = new QTableWidgetItem(tr("Invalid position"));
-
-      bool match = true;
-      if(!searchText.isEmpty())
-      {
-        // Check if any column in an entry has a text match
-        match = false;
-        for(int c : {NAME, TYPE, CODES, FACILITIES})
-        {
-          if(items.at(c) != nullptr && items.at(c)->text().contains(searchText, Qt::CaseInsensitive))
-          {
-            match = true;
-            break;
-          }
-        }
-      }
-
-      if(match)
-      {
-        // First column in bold font
-        if(items.at(NAME) != nullptr)
-        {
-          QFont font = items.at(NAME)->font();
-          font.setBold(true);
-          items.at(NAME)->setFont(font);
-        }
-
-        // Align size right
-        if(items.at(SIZE) != nullptr)
-          items.at(SIZE)->setTextAlignment(Qt::AlignRight);
-
-        // Add items to table
-        for(int col = 0; col < items.size(); col++)
-        {
-          if(items.at(col) != nullptr)
-            ui->tableWidgetSelectParking->setItem(rowsInserted, col, items.at(col));
-          else
-            ui->tableWidgetSelectParking->setItem(rowsInserted, col, new QTableWidgetItem());
-        }
-        rowsInserted++;
-      }
-    } // for(int i = 0; i < entries.size(); i++)
-
-    // Re-adjust row count
-    ui->tableWidgetSelectParking->setRowCount(rowsInserted);
-
-    // Restore header or adjust column widths
-    atools::gui::WidgetState state(lnm::ROUTE_PARKING_DIALOG);
-    if(state.contains(ui->tableWidgetSelectParking))
-      state.restore(ui->tableWidgetSelectParking);
+    }
     else
-      ui->tableWidgetSelectParking->resizeColumnsToContents();
-  } // if(entries.isEmpty()) {} else ...
+      items[internal::NAME] = new QTableWidgetItem(tr("Invalid position"));
+
+    // First item contains index
+    items[internal::NAME]->setData(Qt::UserRole, i);
+
+    // Check if any column in an entry has a text match ==============================
+    bool match = true;
+    if(!searchText.isEmpty())
+    {
+      // User entered text
+      match = false;
+      for(int col : {internal::NAME, internal::TYPE, internal::CODES, internal::FACILITIES})
+      {
+        if(items.at(col) != nullptr && items.at(col)->text().contains(searchText, Qt::CaseInsensitive))
+        {
+          match = true;
+          break;
+        }
+      }
+    }
+
+    // Format and insert all matching items ==============================================
+    if(match)
+    {
+      // First column in bold font
+      if(items.at(internal::NAME) != nullptr)
+      {
+        QFont font = items.at(internal::NAME)->font();
+        font.setBold(true);
+        items.at(internal::NAME)->setFont(font);
+      }
+
+      // Align size right
+      if(items.at(internal::SIZE) != nullptr)
+        items.at(internal::SIZE)->setTextAlignment(Qt::AlignRight);
+
+      // Add items to table
+      for(int col = 0; col < items.size(); col++)
+      {
+        if(items.at(col) != nullptr)
+          ui->tableWidgetSelectParking->setItem(rowsInserted, col, items.at(col));
+        else
+          ui->tableWidgetSelectParking->setItem(rowsInserted, col, new QTableWidgetItem());
+      }
+      rowsInserted++;
+    }
+  } // for(int i = 0; i < entries.size(); i++)
+
+  // Re-adjust / lower row count
+  ui->tableWidgetSelectParking->setRowCount(rowsInserted);
+
+  // Restore header or adjust column widths
+  atools::gui::WidgetState state(lnm::ROUTE_PARKING_DIALOG);
+  if(state.contains(ui->tableWidgetSelectParking))
+    state.restore(ui->tableWidgetSelectParking);
+  else
+    ui->tableWidgetSelectParking->resizeColumnsToContents();
 }
 
-bool ParkingDialog::getSelectedParking(map::MapParking& parking) const
+void ParkingDialog::updateTableSelection()
 {
-  if(ui->tableWidgetSelectParking->currentItem() != nullptr)
+  // Get current values from route
+  map::MapParking parking = NavApp::getRouteConst().getDepartureParking();
+  map::MapStart start = NavApp::getRouteConst().getDepartureStart();
+
+  ui->tableWidgetSelectParking->clearSelection();
+
+  for(int row = 0; row < ui->tableWidgetSelectParking->rowCount(); row++)
   {
-    parking = entries.at(ui->tableWidgetSelectParking->currentRow()).parking;
-    if(parking.isValid())
-      return true;
+    QTableWidgetItem *item = ui->tableWidgetSelectParking->item(row, internal::NAME);
+    if(item != nullptr)
+    {
+      // Check if position matches current route values
+      const internal::StartPosition& pos = startPositions.value(item->data(Qt::UserRole).toInt());
+
+      if( // Parking matches
+        (pos.parking.isValid() && parking.name == pos.parking.name && parking.number == pos.parking.number &&
+         parking.suffix == pos.parking.suffix) ||
+        // Start matches
+        (pos.start.isValid() && start.type == pos.start.type && start.runwayName == pos.start.runwayName) ||
+        // Neither from route is valid and airport entry
+        (!parking.isValid() && !start.isValid() && pos.airport.isValid()))
+        ui->tableWidgetSelectParking->selectRow(row);
+    }
   }
-  return false;
 }
 
-bool ParkingDialog::getSelectedStartPosition(map::MapStart& start) const
+const internal::StartPosition& ParkingDialog::currentPos() const
 {
-  if(ui->tableWidgetSelectParking->currentItem() != nullptr)
+  const static internal::StartPosition EMPTY;
+
+  QTableWidgetItem *item = ui->tableWidgetSelectParking->item(ui->tableWidgetSelectParking->currentRow(), internal::NAME);
+  if(item != nullptr)
   {
-    start = entries.at(ui->tableWidgetSelectParking->currentRow()).start;
-    if(start.isValid())
-      return true;
+    int index = item->data(Qt::UserRole).toInt();
+    if(atools::inRange(startPositions, index))
+      return startPositions.at(index);
   }
-  return false;
+
+  return EMPTY;
+}
+
+map::MapParking ParkingDialog::getSelectedParking() const
+{
+  return currentPos().parking;
+}
+
+map::MapStart ParkingDialog::getSelectedStartPosition() const
+{
+  return currentPos().start;
+}
+
+bool ParkingDialog::isAirportSelected() const
+{
+  return currentPos().airport.isValid();
 }
 
 void ParkingDialog::saveState()
@@ -315,8 +379,22 @@ void ParkingDialog::restoreState()
   atools::gui::WidgetState(lnm::ROUTE_PARKING_DIALOG).restore({this, ui->tableWidgetSelectParking});
 }
 
-void ParkingDialog::updateButtons()
+void ParkingDialog::updateButtonsAndHeader()
 {
-  ui->buttonBoxSelectParking->button(QDialogButtonBox::Ok)->setEnabled(
-    ui->tableWidgetSelectParking->currentItem() != nullptr);
+  ui->buttonBoxSelectParking->button(QDialogButtonBox::Ok)->setEnabled(ui->tableWidgetSelectParking->currentItem() != nullptr);
+
+  map::MapParking parking = NavApp::getRouteConst().getDepartureParking();
+  map::MapStart start = NavApp::getRouteConst().getDepartureStart();
+
+  QString currentSelectedText;
+  if(parking.isValid())
+    currentSelectedText = tr("<br/>Currently selected in flight plan: %1.").arg(map::parkingNameOrNumber(parking));
+  else if(start.isValid())
+    currentSelectedText = tr("<br/>Currently selected in flight plan: %1 %2.").arg(map::startType(start)).arg(start.runwayName);
+  else
+    currentSelectedText = tr("<br/>Airport selected as start position.");
+
+  ui->labelSelectParking->setText(tr("<b>%1, elevation %2</b>%3").
+                                  arg(map::airportTextShort(departureAirport)).
+                                  arg(Unit::altFeet(departureAirport.position.getAltitude())).arg(currentSelectedText));
 }

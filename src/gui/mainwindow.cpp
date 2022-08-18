@@ -2097,7 +2097,7 @@ void MainWindow::routeFromFlightplan(const atools::fs::pln::Flightplan& flightpl
 
   if(routeCheckForChanges())
   {
-    routeController->loadFlightplan(flightplan, atools::fs::pln::LNM_PLN, QString(), true /*quiet*/, true /*changed*/, adjustAltitude);
+    routeController->loadFlightplan(flightplan, atools::fs::pln::LNM_PLN, QString(), true /*changed*/, adjustAltitude);
     if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
       routeCenter();
     showFlightPlan();

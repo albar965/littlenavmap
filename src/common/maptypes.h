@@ -624,7 +624,7 @@ struct MapParking
 };
 
 // =====================================================================
-/* Start position (runway, helipad or parking */
+/* Start position (runway, helipad or parking) */
 /* database id start.start_id */
 struct MapStart
   : public MapBase

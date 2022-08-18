@@ -388,6 +388,12 @@ void RouteLeg::setDepartureStart(const map::MapStart& departureStart)
   parking = map::MapParking();
 }
 
+void RouteLeg::clearParkingAndStart()
+{
+  start = map::MapStart();
+  parking = map::MapParking();
+}
+
 void RouteLeg::updateMagvar()
 {
   magvarPos = NavApp::getMagVar(getPosition());

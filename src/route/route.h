@@ -158,6 +158,8 @@ public:
   /* Set departure parking information. Parking clears start and vice versa. */
   void setDepartureParking(const map::MapParking& departureParking);
   void setDepartureStart(const map::MapStart& departureStart);
+  map::MapParking getDepartureParking() const;
+  map::MapStart getDepartureStart() const;
 
   /* Create copies of first and last to ease tracking */
   const RouteLeg& getLastLeg() const

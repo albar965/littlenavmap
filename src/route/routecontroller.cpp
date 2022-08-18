@@ -897,18 +897,30 @@ bool RouteController::selectDepartureParking()
 
   if(result == QDialog::Accepted)
   {
-    // Set either start of parking
-    map::MapParking parking;
-    map::MapStart start;
-    if(dialog.getSelectedParking(parking))
+    if(dialog.isAirportSelected())
     {
-      routeSetParking(parking);
-      return true;
+      // Clear start and parking and select airport
+      routeClearParkingAndStart();
+      return true; // Has changed
     }
-    else if(dialog.getSelectedStartPosition(start))
+    else
     {
-      routeSetStartPosition(start);
-      return true;
+      // Set either start of parking
+      map::MapParking parking = dialog.getSelectedParking();
+      if(parking.isValid())
+      {
+        routeSetParking(parking);
+        return true;
+      }
+      else
+      {
+        map::MapStart start = dialog.getSelectedStartPosition();
+        if(start.isValid())
+        {
+          routeSetStartPosition(start);
+          return true;
+        }
+      }
     }
   }
   return false;
@@ -1031,7 +1043,7 @@ void RouteController::newFlightplan()
 }
 
 void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format,
-                                     const QString& filename, bool quiet, bool changed, bool adjustAltitude)
+                                     const QString& filename, bool changed, bool adjustAltitude)
 {
   qDebug() << Q_FUNC_INFO << filename;
 
@@ -1141,19 +1153,6 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
   // Get number from user waypoint from user defined waypoint in fs flight plan
   entryBuilder->setCurUserpointNumber(route.getNextUserWaypointNumber());
 
-  // Force update start position for other formats than FSX, P3D or LNMPLN since
-  // these do not support loading and saving of start positions
-  bool forceUpdate = format != atools::fs::pln::LNM_PLN && format != atools::fs::pln::FSX_PLN &&
-                     format != atools::fs::pln::MSFS_PLN;
-
-  // Do not create an entry on the undo stack since this plan file type does not support it
-  bool showWarning = false;
-  if(updateStartPositionBestRunway(forceUpdate /* force */, false /* undo */))
-  {
-    if(forceUpdate ? false : !quiet)
-      showWarning = true;
-  }
-
   remarksFlightPlanToWidget();
   updateTableModel();
   updateMoveAndDeleteActions();
@@ -1164,18 +1163,6 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 #endif
 
   emit routeChanged(true /* geometry changed */, true /* new flight plan */);
-
-  if(showWarning)
-  {
-    NavApp::closeSplashScreen();
-    QTimer::singleShot(0, this, [ = ](void) -> void {
-      atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_ROUTE_START_CHANGED,
-                                                     tr("The flight plan had no valid start position.\n"
-                                                        "The start position is now set to the longest "
-                                                        "primary runway of the departure airport."),
-                                                     tr("Do not &show this dialog again."));
-    });
-  }
 }
 
 /* Appends alternates to the end of the flight plan */
@@ -1258,7 +1245,7 @@ bool RouteController::loadFlightplanLnmStr(const QString& string)
     // Convert altitude to local unit
     fp.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(fp.getCruisingAltitude())));
 
-    loadFlightplan(fp, atools::fs::pln::LNM_PLN, QString(), false /*quiet*/, false /*changed*/, false /*adjust alt*/);
+    loadFlightplan(fp, atools::fs::pln::LNM_PLN, QString(), false /*changed*/, false /*adjust alt*/);
   }
   catch(atools::Exception& e)
   {
@@ -1301,7 +1288,7 @@ bool RouteController::loadFlightplan(const QString& filename)
       // Convert altitude to local unit
       fp.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(fp.getCruisingAltitude())));
 
-    loadFlightplan(fp, format, filename, false /*quiet*/, false /*changed*/, false /*adjust alt*/);
+    loadFlightplan(fp, format, filename, false /*changed*/, false /*adjust alt*/);
   }
   catch(atools::Exception& e)
   {
@@ -2102,7 +2089,6 @@ void RouteController::reverseRoute()
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
-  updateStartPositionBestRunway(true /* force */, false /* undo */);
 
   updateActiveLeg();
   updateTableModel();
@@ -2152,13 +2138,6 @@ void RouteController::postDatabaseLoad()
 
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
-
-  // Update runway or parking if one of these has changed due to the database switch
-  Flightplan& flightplan = route.getFlightplan();
-  if(!flightplan.getEntries().isEmpty() &&
-     flightplan.getEntries().constFirst().getWaypointType() == atools::fs::pln::entry::AIRPORT &&
-     flightplan.getDepartureParkingName().isEmpty())
-    updateStartPositionBestRunway(false /* force */, false /* undo */);
 
   updateActiveLeg();
 
@@ -3232,12 +3211,10 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     int firstRow = rows.constFirst();
     int lastRow = rows.constLast();
 
-    bool forceDeparturePosition = false;
     if(direction == MOVE_DOWN)
     {
       qDebug() << "Move down" << firstRow << "to" << lastRow;
       // Departure moved down and was replaced by something else jumping up
-      forceDeparturePosition = rows.contains(0);
 
       // Erase airway names at start of the moved block - last is smaller here
       route.eraseAirway(lastRow);
@@ -3250,7 +3227,6 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     {
       qDebug() << "Move up" << firstRow << "to" << lastRow;
       // Something moved up and departure jumped up
-      forceDeparturePosition = rows.contains(1);
 
       // Erase airway name at start of the moved block - last is larger here
       route.eraseAirway(firstRow - 1);
@@ -3263,9 +3239,6 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     route.updateAll();
     route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
     route.updateLegAltitudes();
-
-    // Force update of start if departure airport was moved
-    updateStartPositionBestRunway(forceDeparturePosition, false /* undo */);
 
     route.updateDepartureAndDestination();
     // Get type and cruise altitude from widgets
@@ -3351,9 +3324,6 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
     route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
     route.updateLegAltitudes();
 
-    // Force update of start if departure airport was removed
-    updateStartPositionBestRunway(rows.contains(0) /* force */, false /* undo */);
-
     route.updateDepartureAndDestination();
 
     // Get type and cruise altitude from widgets
@@ -3428,14 +3398,47 @@ void RouteController::routeSetHelipad(const map::MapHelipad& helipad)
   routeSetStartPosition(start);
 }
 
+void RouteController::routeClearParkingAndStart()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  RouteCommand *undoCommand = nullptr;
+
+  undoCommand = preChange(tr("Set Start Position to Airport"));
+
+  // Update the current airport which is new or the same as the one used by the parking spot
+  route.setDepartureParking(map::MapParking());
+  route.setDepartureStart(map::MapStart());
+  route.updateAll();
+
+  // Update flightplan copy
+  pln::Flightplan& flightplan = route.getFlightplan();
+  flightplan.setDepartureParkingName(QString());
+  flightplan.setDepartureParkingType(atools::fs::pln::NO_POS);
+  flightplan.setDepartureParkingPosition(atools::geo::EMPTY_POS, atools::fs::pln::INVALID_ALTITUDE, atools::fs::pln::INVALID_HEADING);
+
+  route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
+  route.updateLegAltitudes();
+
+  route.updateDepartureAndDestination();
+  // Get type and cruise altitude from widgets
+  updateFlightplanFromWidgets();
+  updateTableModel();
+  updateMoveAndDeleteActions();
+
+  postChange(undoCommand);
+  emit routeChanged(true);
+
+  NavApp::setStatusMessage(tr("Start postition set to airport."));
+}
+
 void RouteController::routeSetParking(const map::MapParking& parking)
 {
   qDebug() << Q_FUNC_INFO << parking.id;
 
   RouteCommand *undoCommand = nullptr;
 
-  // if(route.getFlightplan().canSaveDepartureParking())
-  undoCommand = preChange(tr("Set Parking"));
+  undoCommand = preChange(tr("Set Start Position"));
 
   if(route.isEmpty() || route.getDepartureAirportLeg().getMapObjectType() != map::AIRPORT ||
      route.getDepartureAirportLeg().getId() != parking.airportId)
@@ -3470,7 +3473,7 @@ void RouteController::routeSetParking(const map::MapParking& parking)
   postChange(undoCommand);
   emit routeChanged(true);
 
-  NavApp::setStatusMessage(tr("Departure set to %1 parking %2.").arg(route.getDepartureAirportLeg().getDisplayIdent()).
+  NavApp::setStatusMessage(tr("Start position set to %1 parking %2.").arg(route.getDepartureAirportLeg().getDisplayIdent()).
                            arg(map::parkingNameOrNumber(parking)));
 }
 
@@ -3505,9 +3508,7 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   else
     flightplan.setDepartureParkingType(atools::fs::pln::AIRPORT);
 
-  flightplan.setDepartureParkingPosition(start.position,
-                                         route.getDepartureAirportLeg().getPosition().getAltitude(),
-                                         start.heading);
+  flightplan.setDepartureParkingPosition(start.position, route.getDepartureAirportLeg().getPosition().getAltitude(), start.heading);
 
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
@@ -3521,7 +3522,7 @@ void RouteController::routeSetStartPosition(map::MapStart start)
   postChange(undoCommand);
   emit routeChanged(true);
 
-  NavApp::setStatusMessage(tr("Departure set to %1 start position %2.").
+  NavApp::setStatusMessage(tr("Start position set to %1 position %2.").
                            arg(route.getDepartureAirportLeg().getDisplayIdent()).
                            arg(start.runwayName));
 }
@@ -3593,8 +3594,6 @@ void RouteController::routeSetDepartureInternal(const map::MapAirport& airport)
     routeLeg.createFromAirport(0, airport, nullptr);
     route.insert(0, routeLeg);
   }
-
-  updateStartPositionBestRunway(true /* force */, false /* undo */);
 }
 
 void RouteController::routeSetDestination(map::MapAirport airport)
@@ -3717,8 +3716,6 @@ void RouteController::routeSetDestinationInternal(const map::MapAirport& airport
     routeLeg.createFromAirport(insertPos, airport, lastLeg);
     route.insert(insertPos, routeLeg);
   }
-
-  updateStartPositionBestRunway(false /* force */, false /* undo */);
 }
 
 void RouteController::showCustomApproachMainMenu()
@@ -4031,8 +4028,6 @@ void RouteController::routeAdd(int id, atools::geo::Pos userPos, map::MapTypes t
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
 
-  // Force update of start if departure airport was added
-  updateStartPositionBestRunway(false /* force */, false /* undo */);
   route.updateDepartureAndDestination();
   // Get type and cruise altitude from widgets
   updateFlightplanFromWidgets();
@@ -4104,9 +4099,6 @@ void RouteController::routeReplace(int id, atools::geo::Pos userPos, map::MapTyp
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
   route.updateLegAltitudes();
-
-  // Force update of start if departure airport was changed
-  updateStartPositionBestRunway(legIndex == 0 /* force */, false /* undo */);
 
   route.updateDepartureAndDestination();
   // Get type and cruise altitude from widgets
@@ -5048,45 +5040,6 @@ void RouteController::postChange(RouteCommand *undoCommand)
   qDebug() << "postChange undoIndex" << undoIndex << "undoIndexClean" << undoIndexClean;
 #endif
   undoStack->push(undoCommand);
-}
-
-/*
- * Select the best runway start position for the departure airport.
- * @param force Update even if a start position is already set
- * @param undo Embed in undo operation
- * @return true if parking was changed
- */
-bool RouteController::updateStartPositionBestRunway(bool force, bool undo)
-{
-  if(route.hasValidDeparture())
-  {
-    if(force || (!route.hasDepartureParking() && !route.hasDepartureStart()))
-    {
-      QString dep, arr;
-      route.getRunwayNames(dep, arr);
-
-      // Reset departure position to best runway
-      map::MapStart start;
-      airportQuery->getBestStartPositionForAirport(start, route.getDepartureAirportLeg().getAirport().id, dep);
-
-      // Check if the airport has a start position - sone add-on airports don't
-      if(start.isValid())
-      {
-        RouteCommand *undoCommand = nullptr;
-
-        if(undo)
-          undoCommand = preChange(tr("Set Start Position"));
-
-        route.setDepartureStart(start);
-        route.updateDepartureAndDestination();
-
-        if(undo)
-          postChange(undoCommand);
-        return true;
-      }
-    }
-  }
-  return false;
 }
 
 proc::MapProcedureTypes RouteController::affectedProcedures(const QList<int>& indexes)

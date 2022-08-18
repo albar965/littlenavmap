@@ -90,6 +90,9 @@ public:
   void setDepartureParking(const map::MapParking& departureParking);
   void setDepartureStart(const map::MapStart& departureStart);
 
+  /* Set departure parking and start to invalid values which means airport is start position */
+  void clearParkingAndStart();
+
   /* Get database id of airport or navaid. -1 for invalid or user position. */
   int getId() const;
 

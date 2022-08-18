@@ -125,9 +125,6 @@ void MapPainterRoute::paintRoute()
 
   context->painter->setBrush(Qt::NoBrush);
 
-  if(context->mapLayerRoute->isRouteTextAndDetail())
-    drawStartParking();
-
   // Get active route leg
   bool activeValid = route->isActiveValid();
   // Active normally start at 1 - this will consider all legs as not passed
@@ -207,6 +204,10 @@ void MapPainterRoute::paintRoute()
 
   // Recommended navaids
   paintRecommended(passedRouteLeg);
+
+  // Draw highlight for departure parking, start, helipad or airport
+  if(context->mapLayerRoute->isRouteTextAndDetail())
+    drawStartParking();
 
 #ifdef DEBUG_ROUTE_PAINT
   context->painter->save();
@@ -1966,48 +1967,57 @@ void MapPainterRoute::drawStartParking()
 {
   const Route *route = context->route;
 
-  if(!route->isEmpty() && context->mapLayerRoute->isAirportDiagram())
+  // Draw start position or parking circle into the airport diagram
+  const RouteLeg& departureLeg = route->getDepartureAirportLeg();
+  if(departureLeg.isValid() && departureLeg.getMapObjectType() == map::AIRPORT)
   {
-    // Draw start position or parking circle into the airport diagram
-    const RouteLeg& first = route->value(0);
-    if(first.getMapObjectType() == map::AIRPORT)
+    // Use airport symbol as base size for default
+    float radius = context->szF(context->symbolSizeAirport, context->mapLayerRoute->getAirportSymbolSize()) * 0.75f;
+    float wradius = radius, hradius = radius;
+    Pos startPos;
+    if(route->hasDepartureParking())
     {
-      int size = 25;
-
-      Pos startPos;
-      if(route->hasDepartureParking())
+      // Parking ramp or gate ==================
+      if(context->mapLayerRoute->isAirportDiagramDetail())
       {
-        startPos = first.getDepartureParking().position;
-        size = first.getDepartureParking().getRadius();
+        // Radius based on parking size
+        startPos = departureLeg.getDepartureParking().position;
+        radius = departureLeg.getDepartureParking().getRadius();
+
+        // At least 10 pixel size - unaffected by scaling
+        wradius = std::max(10.f, scale->getPixelForFeet(radius, 90));
+        hradius = std::max(10.f, scale->getPixelForFeet(radius, 0));
       }
-      else if(route->hasDepartureStart())
-        startPos = first.getDepartureStart().position;
+    }
+    else if(route->hasDepartureStart())
+    {
+      // Start - runway, helipad or water ==================
+      if(context->mapLayerRoute->isAirportDiagramDetail())
+        startPos = departureLeg.getDepartureStart().position;
+    }
+    else
+      // No departure set - use airport ==================
+      startPos = departureLeg.getPosition();
 
-      if(startPos.isValid())
+    if(startPos.isValid())
+    {
+      float x, y;
+      if(wToSBuf(startPos, x, y, QMargins(20, 20, 20, 20)))
       {
-        float x, y;
-        if(wToSBuf(startPos, x, y, QMargins(20, 20, 20, 20)))
+        bool transparent = context->flags2.testFlag(opts2::MAP_HIGHLIGHT_TRANSPARENT);
+        if(!transparent)
         {
-
-          // At least 10 pixel size - unaffected by scaling
-          int w = std::max(10, scale->getPixelIntForFeet(size, 90));
-          int h = std::max(10, scale->getPixelIntForFeet(size, 0));
-
-          bool transparent = context->flags2.testFlag(opts2::MAP_HIGHLIGHT_TRANSPARENT);
-          if(!transparent)
-          {
-            context->painter->setPen(QPen(Qt::black, 9, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-            context->painter->drawEllipse(QPointF(x, y), w, h);
-          }
-
-          float alpha = transparent ? (1.f - context->transparencyHighlight) : 1.f;
-          context->painter->setPen(QPen(mapcolors::adjustAlphaF(OptionData::instance().getFlightplanColor(), alpha),
-                                        transparent ? 1.f : 5.f, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
-          context->painter->setBrush(transparent ?
-                                     QBrush(mapcolors::adjustAlphaF(OptionData::instance().getFlightplanColor(), alpha)) :
-                                     QBrush(Qt::NoBrush));
-          context->painter->drawEllipse(QPointF(x, y), w, h);
+          context->painter->setPen(QPen(Qt::black, 9, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+          context->painter->drawEllipse(QPointF(x, y), wradius, hradius);
         }
+
+        float alpha = transparent ? (1.f - context->transparencyHighlight) : 1.f;
+        context->painter->setPen(QPen(mapcolors::adjustAlphaF(OptionData::instance().getFlightplanColor(), alpha),
+                                      transparent ? 1.f : 5.f, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+        context->painter->setBrush(transparent ?
+                                   QBrush(mapcolors::adjustAlphaF(OptionData::instance().getFlightplanColor(), alpha)) :
+                                   QBrush(Qt::NoBrush));
+        context->painter->drawEllipse(QPointF(x, y), wradius, hradius);
       }
     }
   }
