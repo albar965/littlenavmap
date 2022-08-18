@@ -1128,9 +1128,23 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     if(activeRouteLeg > 0 && activeRouteLeg < route.size())
     {
       // Draw active  ======================================================
-      painter.setPen(QPen(optionData.getFlightplanActiveSegmentColor(), flightplanWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+      const RouteLeg& activeLeg = route.value(activeRouteLeg);
+      QColor activeColor;
 
-      const proc::MapProcedureLeg& actProcLeg = route.value(activeRouteLeg).getProcedureLeg();
+      // Choose color depending on highlight option for active leg and procedure or en-route
+      if(optionData.getFlags2().testFlag(opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE))
+        activeColor = optionData.getFlightplanActiveSegmentColor();
+      else
+      {
+        if(activeLeg.isAnyProcedure())
+          activeColor = optionData.getFlightplanProcedureColor();
+        else
+          activeColor = optionData.getFlightplanColor();
+      }
+
+      painter.setPen(QPen(activeColor, flightplanWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
+
+      const proc::MapProcedureLeg& actProcLeg = activeLeg.getProcedureLeg();
       if(actProcLeg.isCircleToLand() || actProcLeg.isStraightIn())
         mapcolors::adjustPenForCircleToLand(&painter);
       else if(actProcLeg.isVectors())

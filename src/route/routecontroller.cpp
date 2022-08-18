@@ -4782,7 +4782,7 @@ void RouteController::highlightNextWaypoint(int activeLegIdx)
     }
   }
 
-  if(!route.isEmpty())
+  if(!route.isEmpty() && OptionData::instance().getFlags2().testFlag(opts2::ROUTE_HIGHLIGHT_ACTIVE_TABLE))
   {
     // Add magenta brush for all columns in active row ======================
     if(activeLegIndex >= 0 && activeLegIndex < route.size())

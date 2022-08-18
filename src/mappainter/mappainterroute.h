@@ -124,8 +124,13 @@ private:
   QString buildLegText(const RouteLeg& leg);
   QString buildLegText(float distance, float courseMag, float courseTrue);
 
+  /* Active or normal color depending on options setting */
+  QColor flightplanActiveColor() const;
+  QColor flightplanActiveProcColor() const;
+
   /* Avoid drawing duplicate navaids from flight plan and preview */
   QSet<map::MapObjectRef> routeProcIdMap;
+
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERROUTE_H

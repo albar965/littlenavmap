@@ -126,9 +126,8 @@ void MapPainterRoute::paintRoute()
   context->painter->setBrush(Qt::NoBrush);
 
   // Get active route leg
-  bool activeValid = route->isActiveValid();
   // Active normally start at 1 - this will consider all legs as not passed
-  int activeRouteLeg = activeValid ? route->getActiveLegIndex() : 0;
+  int activeRouteLeg = route->isActiveValid() ? route->getActiveLegIndex() : 0;
   if(activeRouteLeg == map::INVALID_INDEX_VALUE)
   {
     qWarning() << Q_FUNC_INFO;
@@ -349,9 +348,10 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
 
     if(passedRouteLeg < map::INVALID_INDEX_VALUE)
     {
+      int passed = passedRouteLeg > 0 ? passedRouteLeg - 1 : 0;
       // Draw gray line for passed legs
       painter->setPen(routePassedPen);
-      for(int i = 0; i < passedRouteLeg; i++)
+      for(int i = 0; i < passed; i++)
         drawLine(painter, lines.at(i));
 
       if(!transparent)
@@ -365,13 +365,13 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
 
         // Draw background for legs ahead
         painter->setPen(routeOutlinePen);
-        for(int i = passedRouteLeg; i < route->getDestinationAirportLegIndex(); i++)
+        for(int i = passed; i < route->getDestinationAirportLegIndex(); i++)
           drawLine(painter, lines.at(i));
       }
 
       // Draw center line for legs ahead
       painter->setPen(routePen);
-      for(int i = passedRouteLeg; i < destAptIdx; i++)
+      for(int i = passed; i < destAptIdx; i++)
         drawLine(painter, lines.at(i));
 
       // Draw center line for alternates all from destination airport to each alternate
@@ -383,7 +383,7 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
       }
     }
 
-    if(route->isActiveValid())
+    if(route->isActiveValid() && context->flags2.testFlag(opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE))
     {
       int activeRouteLeg = route->getActiveLegIndex();
 
@@ -394,7 +394,7 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
         drawLine(painter, lines.at(activeRouteLeg - 1));
       }
 
-      painter->setPen(QPen(mapcolors::adjustAlphaF(OptionData::instance().getFlightplanActiveSegmentColor(), alpha), lineWidth,
+      painter->setPen(QPen(mapcolors::adjustAlphaF(flightplanActiveColor(), alpha), lineWidth,
                            Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
 
       drawLine(painter, lines.at(activeRouteLeg - 1));
@@ -583,10 +583,10 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   const QPen missedPen(mapcolors::adjustAlphaF(color, alpha), lineWidth, Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
   const QPen apprPen(mapcolors::adjustAlphaF(color, alpha), lineWidth, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
-  const QPen missedActivePen(mapcolors::adjustAlphaF(od.getFlightplanActiveSegmentColor(), alpha), lineWidth,
+  const QPen missedActivePen(mapcolors::adjustAlphaF(flightplanActiveProcColor(), alpha), lineWidth,
                              Qt::DotLine, Qt::RoundCap, Qt::RoundJoin);
-  const QPen apprActivePen(mapcolors::adjustAlphaF(od.getFlightplanActiveSegmentColor(), alpha), lineWidth,
-                           Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
+  const QPen procedureActivePen(mapcolors::adjustAlphaF(flightplanActiveProcColor(), alpha), lineWidth,
+                                Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
   const QPen routePassedPen(mapcolors::adjustAlphaF(od.getFlightplanPassedSegmentColor(), alpha), lineWidth,
                             Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin);
 
@@ -645,7 +645,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
      atools::inRange(0, legs.size() - 1, activeProcLeg))
   {
     // Use pen for active leg
-    painter->setPen(legs.at(activeProcLeg).isMissed() ? missedActivePen : apprActivePen);
+    painter->setPen(legs.at(activeProcLeg).isMissed() ? missedActivePen : procedureActivePen);
 
     if(legs.at(activeProcLeg).isCircleToLand() || legs.at(activeProcLeg).isStraightIn())
       // Use dashed line for CTL or straight in
@@ -750,7 +750,6 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
   {
     // No text labels for passed points but always for preview
     bool drawText = i + 1 >= passedProcLeg || !activeValid || preview;
-
     bool drawPoint = i + 1 >= passedProcLeg || !activeValid || preview || previewAll;
 
     if(!context->mapLayerRoute->isApproachText())
@@ -2031,4 +2030,20 @@ void MapPainterRoute::drawWindBarbAtWaypoint(float windSpeed, float windDir, flo
     symbolPainter->drawWindBarbs(context->painter, windSpeed, 0.f /* gust */, windDir, x - 5, y - 5, size,
                                  true /* barbs */, true /* alt wind */, true /* route */, context->drawFast);
   }
+}
+
+QColor MapPainterRoute::flightplanActiveColor() const
+{
+  if(context->flags2.testFlag(opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE))
+    return OptionData::instance().getFlightplanActiveSegmentColor();
+  else
+    return OptionData::instance().getFlightplanColor();
+}
+
+QColor MapPainterRoute::flightplanActiveProcColor() const
+{
+  if(context->flags2.testFlag(opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE))
+    return OptionData::instance().getFlightplanActiveSegmentColor();
+  else
+    return OptionData::instance().getFlightplanProcedureColor();
 }

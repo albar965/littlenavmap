@@ -266,7 +266,8 @@ enum Flag2
    * ui->checkBoxOptionsMapEmptyAirports3D */
   MAP_EMPTY_AIRPORTS_3D = 1 << 0,
 
-  // ROUTE_SAVE_SHORT_NAME = 1 << 1,
+  /* checkBoxOptionsMapFlightplanHighlightActive */
+  MAP_ROUTE_HIGHLIGHT_ACTIVE = 1 << 1,
 
   /* ui->checkBoxOptionsMapAirportText */
   MAP_AIRPORT_TEXT_BACKGROUND = 1 << 2,
@@ -277,7 +278,8 @@ enum Flag2
   /* ui->checkBoxOptionsMapFlightplanText */
   MAP_ROUTE_TEXT_BACKGROUND = 1 << 4,
 
-  // MAP_AIRPORT_BOUNDARY = 1 << 5,
+  /* ui->checkBoxOptionsSimHighlightActiveTable */
+  ROUTE_HIGHLIGHT_ACTIVE_TABLE = 1 << 5,
 
   /* ui->checkBoxOptionsMapFlightplanDimPassed */
   MAP_ROUTE_DIM_PASSED = 1 << 6,
@@ -352,7 +354,7 @@ enum Flag2
   ROUTE_ZOOM_LANDING = 1 << 29,
 
   /* checkBoxOptionsMapFlightplanTransparent */
-  MAP_ROUTE_TRANSPARENT = 1 << 30,
+  MAP_ROUTE_TRANSPARENT = 1 << 30
 };
 
 Q_DECLARE_FLAGS(Flags2, Flag2);
@@ -1258,11 +1260,11 @@ private:
     optsw::WEATHER_TOOLTIP_NOAA;
 
   opts2::Flags2 flags2 = opts2::MAP_AIRPORT_TEXT_BACKGROUND | opts2::MAP_AIRPORT_HIGHLIGHT_ADDON |
-                         opts2::MAP_ROUTE_TEXT_BACKGROUND | opts2::MAP_USER_TEXT_BACKGROUND |
+                         opts2::MAP_ROUTE_TEXT_BACKGROUND | opts2::MAP_USER_TEXT_BACKGROUND | opts2::ROUTE_HIGHLIGHT_ACTIVE_TABLE |
                          opts2::MAP_AI_TEXT_BACKGROUND | opts2::MAP_ROUTE_DIM_PASSED | opts2::MAP_AVOID_BLURRED_MAP |
                          opts2::ONLINE_AIRSPACE_BY_FILE | opts2::ONLINE_AIRSPACE_BY_NAME | opts2::RAISE_WINDOWS |
                          opts2::MAP_EMPTY_AIRPORTS_3D | opts2::HIGH_DPI_DISPLAY_SUPPORT | opts2::ROUTE_CENTER_ACTIVE_LEG |
-                         opts2::ROUTE_CENTER_ACTIVE_LEG | opts2::ROUTE_NO_FOLLOW_ON_MOVE;
+                         opts2::ROUTE_CENTER_ACTIVE_LEG | opts2::ROUTE_NO_FOLLOW_ON_MOVE | opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE;
 
   QString weatherActiveSkyPath, // ui->lineEditOptionsWeatherAsnPath
           weatherXplanePath; // lineEditOptionsWeatherXplanePath

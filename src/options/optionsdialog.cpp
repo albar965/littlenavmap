@@ -399,7 +399,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsMapNavaidText,
      ui->checkBoxOptionsMapUserpointText,
      ui->checkBoxOptionsMapFlightplanText,
+     ui->checkBoxOptionsSimHighlightActiveTable,
      ui->checkBoxOptionsMapFlightplanDimPassed,
+     ui->checkBoxOptionsMapFlightplanHighlightActive,
      ui->checkBoxOptionsMapFlightplanTransparent,
      ui->checkBoxOptionsSimCenterLeg,
      ui->checkBoxOptionsSimCenterLegTable,
@@ -550,6 +552,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->pushButtonOptionsMapMeasurementColor, &QPushButton::clicked, this, &OptionsDialog::mapMeasurementColorClicked);
 
   connect(ui->checkBoxOptionsMapFlightplanDimPassed, &QCheckBox::toggled, this, &OptionsDialog::updateFlightPlanColorWidgets);
+  connect(ui->checkBoxOptionsMapFlightplanHighlightActive, &QCheckBox::toggled, this, &OptionsDialog::updateFlightPlanColorWidgets);
   connect(ui->checkBoxOptionsMapFlightplanTransparent, &QCheckBox::toggled, this, &OptionsDialog::updateFlightPlanColorWidgets);
 
   connect(ui->checkBoxOptionsMapHighlightTransparent, &QCheckBox::toggled, this, &OptionsDialog::updateHighlightWidgets);
@@ -1337,6 +1340,7 @@ void OptionsDialog::updateHighlightWidgets()
 void OptionsDialog::updateFlightPlanColorWidgets()
 {
   ui->pushButtonOptionsDisplayFlightplanPassedColor->setEnabled(ui->checkBoxOptionsMapFlightplanDimPassed->isChecked());
+  ui->pushButtonOptionsDisplayFlightplanActiveColor->setEnabled(ui->checkBoxOptionsMapFlightplanHighlightActive->isChecked());
   ui->pushButtonOptionsDisplayFlightplanOutlineColor->setDisabled(ui->checkBoxOptionsMapFlightplanTransparent->isChecked());
   ui->spinBoxOptionsDisplayTransparencyFlightplan->setEnabled(ui->checkBoxOptionsMapFlightplanTransparent->isChecked());
   updateButtonColors();
@@ -1645,12 +1649,14 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxOptionsMapHighlightTransparent, opts2::MAP_HIGHLIGHT_TRANSPARENT);
 
   toFlags2(ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
+  toFlags2(ui->checkBoxOptionsMapFlightplanHighlightActive, opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE);
   toFlags2(ui->checkBoxOptionsMapFlightplanTransparent, opts2::MAP_ROUTE_TRANSPARENT);
   toFlags2(ui->checkBoxOptionsSimDoNotFollowScroll, opts2::ROUTE_NO_FOLLOW_ON_MOVE);
   toFlags2(ui->checkBoxOptionsSimCenterLeg, opts2::ROUTE_AUTOZOOM);
   toFlags2(ui->checkBoxOptionsSimCenterLegTable, opts2::ROUTE_CENTER_ACTIVE_LEG);
   toFlags2(ui->checkBoxOptionsSimClearSelection, opts2::ROUTE_CLEAR_SELECTION);
   toFlags2(ui->checkBoxOptionsSimZoomOnLanding, opts2::ROUTE_ZOOM_LANDING);
+  toFlags2(ui->checkBoxOptionsSimHighlightActiveTable, opts2::ROUTE_HIGHLIGHT_ACTIVE_TABLE);
 
   toFlags2(ui->checkBoxDisplayOnlineNameLookup, opts2::ONLINE_AIRSPACE_BY_NAME);
   toFlags2(ui->checkBoxDisplayOnlineFileLookup, opts2::ONLINE_AIRSPACE_BY_FILE);
@@ -1928,12 +1934,14 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags2(data, ui->checkBoxOptionsMapHighlightTransparent, opts2::MAP_HIGHLIGHT_TRANSPARENT);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanText, opts2::MAP_ROUTE_TEXT_BACKGROUND);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
+  fromFlags2(data, ui->checkBoxOptionsMapFlightplanHighlightActive, opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanTransparent, opts2::MAP_ROUTE_TRANSPARENT);
   fromFlags2(data, ui->checkBoxOptionsSimDoNotFollowScroll, opts2::ROUTE_NO_FOLLOW_ON_MOVE);
   fromFlags2(data, ui->checkBoxOptionsSimZoomOnLanding, opts2::ROUTE_ZOOM_LANDING);
   fromFlags2(data, ui->checkBoxOptionsSimCenterLeg, opts2::ROUTE_AUTOZOOM);
   fromFlags2(data, ui->checkBoxOptionsSimCenterLegTable, opts2::ROUTE_CENTER_ACTIVE_LEG);
   fromFlags2(data, ui->checkBoxOptionsSimClearSelection, opts2::ROUTE_CLEAR_SELECTION);
+  fromFlags2(data, ui->checkBoxOptionsSimHighlightActiveTable, opts2::ROUTE_HIGHLIGHT_ACTIVE_TABLE);
 
   fromFlags2(data, ui->checkBoxDisplayOnlineNameLookup, opts2::ONLINE_AIRSPACE_BY_NAME);
   fromFlags2(data, ui->checkBoxDisplayOnlineFileLookup, opts2::ONLINE_AIRSPACE_BY_FILE);
