@@ -3031,6 +3031,10 @@ void MainWindow::mainWindowShown()
 {
   qDebug() << Q_FUNC_INFO << "enter";
 
+  // Need to set the font again to pass it on to all menus
+  qDebug() << Q_FUNC_INFO << "QApplication::font()" << QApplication::font();
+  QApplication::setFont(QApplication::font());
+
   // Set empty to disable arbitrary messages from map view changes
   setStatusMessage(QString());
 
