@@ -4825,19 +4825,24 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
 
   if(airportNav.isValid() && airportNav.navdata)
   {
-    links.append(html.cleared().a(tr("ChartFox&nbsp;(needs&nbsp;login)"), QString("https://chartfox.org/%1").
-                                  arg(airportNav.displayIdent()), flags).getHtml());
-    links.append(html.cleared().a(tr("FltPlan"), QString("https://fltplan.com/Airport.cgi?%1").
-                                  arg(airportNav.displayIdent()), flags).getHtml());
-    links.append(html.cleared().a(tr("FlightAware"), QString("https://www.flightaware.com/live/airport/%1").
-                                  arg(airportNav.displayIdent()), flags).getHtml());
-    links.append(html.cleared().a(tr("OpenNav"), QString("https://opennav.com/airport/%1").
-                                  arg(airportNav.displayIdent()), flags).getHtml());
+    links.append(html.cleared().a(tr("ChartFox"), QString("https://chartfox.org/%1").arg(airportNav.displayIdent()), flags).
+                 text(tr("&nbsp;(needs&nbsp;login)"), ahtml::SMALL | ahtml::NO_ENTITIES).getHtml());
+
+    links.append(html.cleared().a(tr("FltPlan"),
+                                  QString("https://fltplan.com/Airport.cgi?%1").arg(airportNav.displayIdent()), flags).getHtml());
+
+    links.append(html.cleared().a(tr("FlightAware"),
+                                  QString("https://www.flightaware.com/live/airport/%1").arg(airportNav.displayIdent()), flags).getHtml());
+
+    links.append(html.cleared().a(tr("OpenNav"),
+                                  QString("https://opennav.com/airport/%1").arg(airportNav.displayIdent()), flags).getHtml());
+
     // Removed Pilot Nav since it tricks you into a commercial service
     // links.append(html.cleared().a(tr("Pilot&nbsp;Nav"), QString("https://www.pilotnav.com/airport/%1").
     // arg(airportNav.displayIdent()), flags).getHtml());
-    links.append(html.cleared().a(tr("SkyVector"), QString("https://skyvector.com/airport/%1").
-                                  arg(airportNav.displayIdent()), flags).getHtml());
+
+    links.append(html.cleared().a(tr("SkyVector"),
+                                  QString("https://skyvector.com/airport/%1").arg(airportNav.displayIdent()), flags).getHtml());
   }
 
   // Use internal id for X-Plane gateway since this includes the long internal idents
