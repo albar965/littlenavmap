@@ -400,6 +400,9 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
     fp->setDestinationPosition(entries.constLast().getPosition());
   }
 
+  if(options.testFlag(rs::REPORT))
+    addReport(fp);
+
 #ifdef DEBUG_INFORMATION
   qDebug() << "===============================";
   qDebug() << *fp;
@@ -413,6 +416,60 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
 #endif
 
   return true;
+}
+
+void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan)
+{
+  int insertIndex = 0;
+  QString from, to;
+  AirportQuery *airportQuery = NavApp::getAirportQuerySim();
+
+  if(!flightplan->getDepartureName().isEmpty() &&
+     flightplan->getDepartureName() != flightplan->getDepartureIdent())
+    // Departure is airport
+    from = tr("%1 (%2)").
+           arg(flightplan->getDepartureName()).
+           arg(airportQuery->getDisplayIdent(flightplan->getDepartureIdent()));
+  else
+    // Departure is waypoint
+    from = flightplan->getDepartureIdent();
+
+  if(!flightplan->getDestinationName().isEmpty() &&
+     flightplan->getDestinationName() != flightplan->getDestinationIdent())
+    // Departure is airport
+    to = tr("%1 (%2)").
+         arg(flightplan->getDestinationName()).
+         arg(airportQuery->getDisplayIdent(flightplan->getDestinationIdent()));
+  else
+    // Departure is waypoint
+    to = flightplan->getDestinationIdent();
+
+  insertMessage(tr("Flight plan from <b>%1</b> to <b>%2</b>.").arg(from).arg(to), insertIndex++);
+
+  insertMessage(tr("Distance without procedures: <b>%1</b>.").arg(Unit::distNm(flightplan->getDistanceNm())), insertIndex++);
+
+  QStringList idents;
+  for(atools::fs::pln::FlightplanEntry& entry : flightplan->getEntries())
+  {
+    if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
+      idents.append(airportQuery->getDisplayIdent(entry.getIdent()));
+    else
+      idents.append(entry.getIdent());
+  }
+
+  if(!idents.isEmpty())
+    insertMessage(tr("Found %1 %2: <b>%3</b>.").
+                  arg(idents.size()).
+                  arg(idents.size() == 1 ? tr("waypoint") : tr("waypoints")).
+                  arg(atools::elideTextShortMiddle(idents.join(tr(" ")), 150)), insertIndex++);
+
+  QString sid = ProcedureQuery::getSidAndTransition(flightplan->getProperties());
+  if(!sid.isEmpty())
+    insertMessage(tr("Found SID: <b>%1</b>.").arg(sid), insertIndex++);
+
+  QString star = ProcedureQuery::getStarAndTransition(flightplan->getProperties());
+  if(!star.isEmpty())
+    insertMessage(tr("Found STAR: <b>%1</b>.").arg(star), insertIndex++);
 }
 
 map::MapObjectRefExt RouteStringReader::mapObjectRefFromEntry(const FlightplanEntry& entry,
@@ -506,10 +563,16 @@ void RouteStringReader::resultWithClosest(map::MapResult& resultWithClosest, con
   }
 }
 
+void RouteStringReader::insertMessage(const QString& message, int index)
+{
+  messages.insert(index, message);
+  qInfo() << Q_FUNC_INFO << "Message:" << message;
+}
+
 void RouteStringReader::appendMessage(const QString& message)
 {
   messages.append(message);
-  qInfo() << "Message:" << message;
+  qInfo() << Q_FUNC_INFO << "Message:" << message;
 }
 
 void RouteStringReader::appendWarning(const QString& message)
@@ -519,7 +582,7 @@ void RouteStringReader::appendWarning(const QString& message)
     messages.append(message);
   else
     messages.append(atools::util::HtmlBuilder::warningMessage(message));
-  qWarning() << "Warning:" << message;
+  qWarning() << Q_FUNC_INFO << "Warning:" << message;
 }
 
 void RouteStringReader::appendError(const QString& message)
@@ -529,7 +592,7 @@ void RouteStringReader::appendError(const QString& message)
     messages.append(message);
   else
     messages.append(atools::util::HtmlBuilder::errorMessage(message));
-  qWarning() << "Error:" << message;
+  qWarning() << Q_FUNC_INFO << "Error:" << message;
 }
 
 QString RouteStringReader::extractAirportIdent(QString ident)

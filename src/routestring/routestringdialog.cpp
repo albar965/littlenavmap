@@ -292,79 +292,22 @@ void RouteStringDialog::readButtonClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
-  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-
   flightplan->clear();
-  flightplan->getProperties().clear();
 
-  bool success = routeStringReader->createRouteFromString(ui->plainTextEditRouteString->toPlainText(), options,
-                                                          flightplan, nullptr, &speedKts, &altitudeIncluded);
-
-  ui->textEditRouteStringErrors->clear();
-
+  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+  routeStringReader->createRouteFromString(ui->plainTextEditRouteString->toPlainText(), options | rs::REPORT, flightplan, nullptr,
+                                           &speedKts, &altitudeIncluded);
   QGuiApplication::restoreOverrideCursor();
 
-  if(success)
-  {
-    QString msg, from, to;
-    AirportQuery *airportQuery = NavApp::getAirportQuerySim();
-
-    if(!flightplan->getDepartureName().isEmpty() &&
-       flightplan->getDepartureName() != flightplan->getDepartureIdent())
-      // Departure is airport
-      from = tr("%1 (%2)").
-             arg(flightplan->getDepartureName()).
-             arg(airportQuery->getDisplayIdent(flightplan->getDepartureIdent()));
-    else
-      // Departure is waypoint
-      from = flightplan->getDepartureIdent();
-
-    if(!flightplan->getDestinationName().isEmpty() &&
-       flightplan->getDestinationName() != flightplan->getDestinationIdent())
-      // Departure is airport
-      to = tr("%1 (%2)").
-           arg(flightplan->getDestinationName()).
-           arg(airportQuery->getDisplayIdent(flightplan->getDestinationIdent()));
-    else
-      // Departure is waypoint
-      to = flightplan->getDestinationIdent();
-
-    msg = tr("Flight plan from <b>%1</b> to <b>%2</b>.<br/>").arg(from).arg(to);
-
-    msg.append(tr("Distance without procedures: <b>%1</b>.<br/>").arg(Unit::distNm(flightplan->getDistanceNm())));
-
-    QStringList idents;
-    for(apln::FlightplanEntry& entry : flightplan->getEntries())
-    {
-      if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
-        idents.append(airportQuery->getDisplayIdent(entry.getIdent()));
-      else
-        idents.append(entry.getIdent());
-    }
-
-    if(!idents.isEmpty())
-      msg.append(tr("Found %1 %2: <b>%3</b>.<br/>").
-                 arg(idents.size()).
-                 arg(idents.size() == 1 ? tr("waypoint") : tr("waypoints")).
-                 arg(atools::elideTextShortMiddle(idents.join(tr(" ")), 150)));
-
-    QString sid = ProcedureQuery::getSidAndTransition(flightplan->getProperties());
-    if(!sid.isEmpty())
-      msg += tr("Found SID: <b>%1</b>.<br/>").arg(sid);
-
-    QString star = ProcedureQuery::getStarAndTransition(flightplan->getProperties());
-    if(!star.isEmpty())
-      msg += tr("Found STAR: <b>%1</b>.<br/>").arg(star);
-
-    ui->textEditRouteStringErrors->setHtml(msg);
-  }
-
+  // Fill report into widget
+  ui->textEditRouteStringErrors->clear();
   if(!routeStringReader->getMessages().isEmpty())
   {
     for(const QString& err : routeStringReader->getMessages())
       ui->textEditRouteStringErrors->append(err + "<br/>");
   }
 
+  // Update route string again
   ui->plainTextEditRouteString->setPlainText(rs::cleanRouteString(ui->plainTextEditRouteString->toPlainText()).join(" "));
 
   // Avoid update issues with macOS and mac style - force repaint

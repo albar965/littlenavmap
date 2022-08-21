@@ -61,16 +61,18 @@ enum RouteStringOption
 
   STAR_REV_TRANSITION = 1 << 21, /* SimBrief needs TRANS.STAR */
 
-  // Next is 22
+  REPORT = 1 << 22, /* Add final report before all other messages on success */
 
-  DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR | ALTERNATES | READ_ALTERNATES,
+  // Next is 23
+
+  DEFAULT_OPTIONS = START_AND_DEST | ALT_AND_SPEED | SID_STAR | ALTERNATES | READ_ALTERNATES | REPORT,
 
   /* Values used to read tracks */
   TRACK_DEFAULTS = rs::READ_NO_AIRPORTS | rs::READ_MATCH_WAYPOINTS | rs::NO_TRACKS,
 
   /* Values used to write to SimBrief */
   SIMBRIEF_WRITE_DEFAULTS = rs::START_AND_DEST | rs::SID_STAR | rs::STAR_REV_TRANSITION | rs::SID_STAR_SPACE,
-  SIMBRIEF_READ_DEFAULTS = rs::READ_ALTERNATES
+  SIMBRIEF_READ_DEFAULTS = rs::READ_ALTERNATES | rs::REPORT
 };
 
 Q_DECLARE_FLAGS(RouteStringOptions, RouteStringOption);

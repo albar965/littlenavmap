@@ -264,20 +264,13 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
   RouteStringReader routeStringReader(NavApp::getRouteController()->getFlightplanEntryBuilder());
   bool ok = routeStringReader.createRouteFromString(routeString, rs::SIMBRIEF_READ_DEFAULTS, flightplan);
 
-  QString message(tr("<p>Flight successfully downloaded.<br/>"));
-  if(ok)
-    // Show distance only if parsing succeeded
-    message.append(tr("Distance without procedures: <b>%1</b>.<br/>").arg(Unit::distNm(flightplan->getDistanceNm())));
-  message.append(tr("Flight plan route description: <b>%1</b></p>").arg(routeString));
-
-  message.append(tr("<p>Reading of route description %1.%2").
-                 arg(ok ? tr("successful") : tr("failed")).
-                 arg(routeStringReader.getMessages().isEmpty() ? QString() : tr(" Messages:<br/>")));
+  QString message(tr("<p>Flight successfully downloaded. Reading of route description %1.<br/>").arg(ok ? tr("successful") : tr("failed")));
+  message.append(tr("Downloaded flight plan route description: <b>%1</b></p>").arg(routeString));
 
   // Add any information/warning/error messages from parsing
+  message.append(tr("<p>"));
   if(!routeStringReader.getMessages().isEmpty())
     message.append(routeStringReader.getMessages().join("<br/>"));
-
   message.append(tr("</p>"));
 
   if(!ok)
