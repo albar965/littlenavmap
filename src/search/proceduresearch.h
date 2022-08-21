@@ -168,7 +168,7 @@ private:
   /* Build full approach or transition items for the tree view */
   QTreeWidgetItem *buildProcedureItem(QTreeWidgetItem *runwayItem, const atools::sql::SqlRecord& recApp, const QString& procType,
                                       const QStringList& attStr);
-  QTreeWidgetItem *buildTransitionItem(QTreeWidgetItem *apprItem, const atools::sql::SqlRecord& recTrans, bool sidOrStar);
+  QTreeWidgetItem *buildTransitionItem(QTreeWidgetItem *procItem, const atools::sql::SqlRecord& recTrans, bool sidOrStar);
 
   /* Build an leg for the selected/table or tree view */
   QTreeWidgetItem *buildLegItem(const proc::MapProcedureLeg& leg);
@@ -219,7 +219,7 @@ private:
   void airportLabelLinkActivated(const QString& link);
 
   void procedureDisplayText(QString& procTypeText, QStringList& attText, const atools::sql::SqlRecord& recApp,
-                            proc::MapProcedureTypes maptype);
+                            proc::MapProcedureTypes maptype, int numTransitions);
 
   // item's types are the indexes into this array with approach, transition and leg ids
   QVector<proc::MapProcedureRef> itemIndex;
