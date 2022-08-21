@@ -182,27 +182,44 @@ int main(int argc, char *argv[])
     parser.addVersionOption();
 
     QCommandLineOption settingsDirOpt({"s", "settings-directory"},
-                                      QObject::tr("Use <settings-directory> instead of \"%1\".\n"
-                                                  "This does *not* override the full path.\n"
-                                                  "Spaces are replaced with underscores.").
-                                      arg(NavApp::organizationName()),
+                                      QObject::tr("Use <settings-directory> instead of \"%1\". This does *not* override the full path. "
+                                                  "Spaces are replaced with underscores.").arg(NavApp::organizationName()),
                                       QObject::tr("settings-directory"));
     parser.addOption(settingsDirOpt);
 
+    QCommandLineOption settingsPathOpt({"p", "settings-path"},
+                                       QObject::tr("Use <settings-path> to store options and databases into the given directory. "
+                                                   "<settings-path> can be relative or absolute. "
+                                                     "Missing directories are created. Path can be on any drive."),
+                                       QObject::tr("settings-path"));
+    parser.addOption(settingsPathOpt);
+
+                                                  "\".lnmperf\" on startup.").arg(lnm::STARTUP_AIRCRAFT_PERF),
+                                      lnm::STARTUP_AIRCRAFT_PERF);
+    parser.addOption(performanceOpt);
+
+    // ==============================================
     // Process the actual command line arguments given by the user
     parser.process(*QCoreApplication::instance());
 
+    // Settings directory
+    if(parser.isSet(settingsDirOpt) && parser.isSet(settingsPathOpt))
+      qWarning() << QObject::tr("Only one of options -s and -p can be used");
+
     if(parser.isSet(settingsDirOpt) && !parser.value(settingsDirOpt).isEmpty())
       Settings::setOverrideOrganisation(parser.value(settingsDirOpt));
+
+    if(parser.isSet(settingsPathOpt) && !parser.value(settingsPathOpt).isEmpty())
+      Settings::setOverridePath(parser.value(settingsPathOpt));
 
     // Start splash screen
     if(atools::settings::Settings::instance().valueBool(lnm::OPTIONS_DIALOG_SHOW_SPLASH, true))
       NavApp::initSplashScreen();
 
+    // ==============================================
     // Initialize logging and force logfiles into the system or user temp directory
     // This will prefix all log files with orgranization and application name and append ".log"
-    LoggingHandler::initializeForTemp(atools::settings::Settings::getOverloadedPath(
-                                        ":/littlenavmap/resources/config/logging.cfg"));
+    LoggingHandler::initializeForTemp(atools::settings::Settings::getOverloadedPath(":/littlenavmap/resources/config/logging.cfg"));
 
     // Print some information which can be useful for debugging
     LoggingUtil::logSystemInformation();
@@ -264,7 +281,7 @@ int main(int argc, char *argv[])
       font.fromString(fontStr);
 
       if(font != QApplication::font())
-        app.setFont(font);
+        QApplication::setFont(font);
     }
     qInfo() << "Loaded font" << font.toString() << "from options. Stored font info" << fontStr;
 
@@ -394,7 +411,7 @@ int main(int argc, char *argv[])
       NavApp::finishSplashScreen();
 
       qDebug() << "Before app.exec()";
-      retval = app.exec();
+      retval = QApplication::exec();
     }
 
     qInfo() << "app.exec() done, retval is" << retval << (retval == 0 ? "(ok)" : "(error)");
