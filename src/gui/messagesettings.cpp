@@ -63,6 +63,8 @@ void messages::resetAllMessages()
   settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_TRACK, true);
   settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_WEATHER, true);
   settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_WIND, true);
+
+  settings.setValue(lnm::ACTIONS_SHOW_DATABASE_BACKGROUND_HINT, true);
 }
 
 void messages::resetEssentialMessages()

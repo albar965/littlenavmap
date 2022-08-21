@@ -1331,6 +1331,15 @@ void DatabaseManager::loadSceneryInternal()
         databaseLoader->setDatabaseFilename(tempFilename);
         databaseLoader->clearResultFlags();
 
+        if(!backgroundHintShown)
+        {
+          dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_DATABASE_BACKGROUND_HINT,
+                                 tr("Note that you can now put the scenery library loading window into the background and "
+                                    "continue working with Little Navmap while it is loading."),
+                                 tr("Do not &show this dialog again."));
+          backgroundHintShown = true;
+        }
+
         // Load ==========================================
         // Signal DatabaseLoader::loadingFinished() calls method DatabaseManager::loadSceneryInternalPost()
         // Method loadSceneryInternalPost() calls method loadSceneryPost()

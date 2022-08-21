@@ -114,6 +114,7 @@ void DatabaseProgressDialog::setFinishedState()
   okButton->setAutoDefault(true);
 
   QPushButton *cancelButton = ui->buttonBoxDatabaseProgress->button(QDialogButtonBox::Cancel);
+  cancelButton->setText(tr("&Discard"));
   cancelButton->setEnabled(true);
   cancelButton->setDefault(false);
   cancelButton->setAutoDefault(false);

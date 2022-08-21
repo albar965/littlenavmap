@@ -102,6 +102,7 @@ const QLatin1String ACTIONS_SHOW_DATABASE_OLD("Actions/DatabaseOld");
 const QLatin1String ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH("Actions/DatabaseMsfsNavigraph");
 const QLatin1String ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_OFF("Actions/DatabaseMsfsNavigraphOff");
 const QLatin1String ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL("Actions/DatabaseMsfsNavigraphAll");
+const QLatin1String ACTIONS_SHOW_DATABASE_BACKGROUND_HINT("Actions/DatabaseBackgroundHint");
 
 const QLatin1String ACTIONS_SHOW_SSL_WARNING_ONLINE("Actions/SslWarningOnline");
 const QLatin1String ACTIONS_SHOW_SSL_WARNING_WIND("Actions/SslWarningWind");

@@ -353,6 +353,9 @@ private:
 
   /* MSFS translations from table "translation" */
   atools::fs::scenery::LanguageJson *languageIndex = nullptr;
+
+  /* Show hint dialog only once per session */
+  bool backgroundHintShown = false;
 };
 
 #endif // LITTLENAVMAP_DATABASEMANAGER_H
