@@ -267,7 +267,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
       record.setValue("departure_time_sim", aircraft.getZuluTime()); // varchar(100),
 
       record.setValue("simulator", NavApp::getCurrentSimulatorShortName()); // varchar(50),
-      record.setValue("route_string", NavApp::getRouteString()); // varchar(1024),
+      record.setValue("route_string", NavApp::getRouteStringDefaultOpts()); // varchar(1024),
 
       // Clear separate logbook track =========================
       NavApp::deleteAircraftTrackLogbook();
@@ -521,7 +521,7 @@ void LogdataController::prefillLogEntry(atools::sql::SqlRecord& rec)
 
   rec.setValue("aircraft_type", NavApp::getAircraftPerformance().getAircraftType());
   rec.setValue("simulator", NavApp::getCurrentSimulatorName());
-  rec.setValue("route_string", NavApp::getRouteString());
+  rec.setValue("route_string", NavApp::getRouteStringDefaultOpts());
   rec.setValue("flightplan_cruise_altitude", NavApp::getRouteCruiseAltFt());
   rec.setValue("block_fuel", NavApp::getAircraftPerfController()->getBlockFuel());
   rec.setValue("trip_fuel", NavApp::getAircraftPerfController()->getTripFuel());

@@ -163,6 +163,22 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& routeString
 
   buttonMenu->addSeparator();
 
+  action = new QAction(tr("Write STAR and transition reversed"), buttonMenu);
+  action->setObjectName("actionReversedStar");
+  action->setToolTip(tr("Write \"TRANS.STAR\" instead of \"STAR.TRANS\""));
+  action->setCheckable(true);
+  action->setData(static_cast<int>(rs::STAR_REV_TRANSITION));
+  buttonMenu->addAction(action);
+
+  action = new QAction(tr("Write SID/STAR and transition space separated"), buttonMenu);
+  action->setObjectName("actionSpaceSidStar");
+  action->setToolTip(tr("Use a space to separate SID, STAR and transition"));
+  action->setCheckable(true);
+  action->setData(static_cast<int>(rs::SID_STAR_SPACE));
+  buttonMenu->addAction(action);
+
+  buttonMenu->addSeparator();
+
   // Reading from string ===========================================
   action = new QAction(tr("Read trailing Airports as Alternates"), buttonMenu);
   action->setObjectName("actionTrailingAlternates");

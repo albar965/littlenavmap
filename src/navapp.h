@@ -215,7 +215,7 @@ public:
   static void updateRouteCycleMetadata();
 
   /* Get a generic route string */
-  static QString getRouteString();
+  static QString getRouteStringDefaultOpts();
   static const atools::geo::Rect& getRouteRect();
 
   static const RouteAltitude& getAltitudeLegs();
