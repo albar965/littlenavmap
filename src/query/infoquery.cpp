@@ -73,6 +73,31 @@ const atools::sql::SqlRecordList *InfoQuery::getAirportSceneryInformation(const 
   return query::cachedRecordList(airportSceneryCache, airportSceneryQuery, ident);
 }
 
+bool InfoQuery::isAirportXplaneCustomOnly(const QString& ident)
+{
+  // X-Plane 11/Resources/default scenery/default apt dat/Earth nav data/apt.dat
+  // X-Plane 11/Custom Scenery/Global Airports/Earth nav data/apt.dat
+
+  // X-Plane 12/Global Scenery/Global Airports/Earth nav data/apt.dat
+
+  const atools::sql::SqlRecordList *airportSceneryInformation = getAirportSceneryInformation(ident);
+  if(airportSceneryInformation != nullptr)
+  {
+    for(const atools::sql::SqlRecord& rec : *airportSceneryInformation)
+    {
+      QString filepath = rec.valueStr("filepath").replace('\\', '/');
+
+      if(filepath.endsWith("Resources/default scenery/default apt dat/Earth nav data/apt.dat", Qt::CaseInsensitive) ||
+         filepath.endsWith("Custom Scenery/Global Airports/Earth nav data/apt.dat", Qt::CaseInsensitive) ||
+         filepath.endsWith("Global Scenery/Global Airports/Earth nav data/apt.dat", Qt::CaseInsensitive))
+        // Also in stock and maybe only overloaded by an add-on
+        return false;
+    }
+  }
+  // No stock locations found - custom / add-on only
+  return true;
+}
+
 const SqlRecordList *InfoQuery::getComInformation(int airportId)
 {
   if(!query::valid(Q_FUNC_INFO, comQuery))
@@ -216,6 +241,8 @@ void InfoQuery::initQueries()
                         "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
                         "where airport_id = :id");
 
+  // airport_file_id	file_id	ident	bgl_file_id	scenery_area_id	bgl_create_time	file_modification_time
+  // filepath	filename	size	comment	scenery_area_id:1	number	layer	title	remote_path	local_path	active	required	exclude
   airportSceneryQuery = new SqlQuery(dbSim);
   airportSceneryQuery->prepare("select * from airport_file f "
                                "join bgl_file b on f.file_id = b.bgl_file_id  "

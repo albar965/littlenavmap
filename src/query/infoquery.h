@@ -51,6 +51,11 @@ public:
   const atools::sql::SqlRecord *getAirportInformation(int airportId);
   const atools::sql::SqlRecordList *getAirportSceneryInformation(const QString& ident);
 
+  /* Returns true if airport is *not* a part of the X-Plane stock scenery like
+   * "Resources/default scenery/default apt dat/Earth nav data/apt.dat" or
+   * "Custom Scenery/Global Airports/Earth nav data/apt.dat" */
+  bool isAirportXplaneCustomOnly(const QString& ident);
+
   /* Get record for table com */
   const atools::sql::SqlRecordList *getComInformation(int airportId);
 

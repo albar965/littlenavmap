@@ -17,23 +17,24 @@
 
 #include "route/route.h"
 
-#include "geo/calculations.h"
-#include "common/maptools.h"
-#include "query/mapquery.h"
-#include "query/airwaytrackquery.h"
-#include "common/unit.h"
 #include "common/constants.h"
-#include "route/flightplanentrybuilder.h"
-#include "query/procedurequery.h"
-#include "query/airportquery.h"
-#include "weather/windreporter.h"
-#include "navapp.h"
+#include "common/maptools.h"
+#include "common/unit.h"
 #include "fs/db/databasemeta.h"
-#include "fs/util/fsutil.h"
-#include "route/routealtitude.h"
 #include "fs/perf/aircraftperf.h"
 #include "fs/util/coordinates.h"
+#include "fs/util/fsutil.h"
+#include "geo/calculations.h"
+#include "navapp.h"
+#include "query/airportquery.h"
+#include "query/airwaytrackquery.h"
+#include "query/mapquery.h"
+#include "query/procedurequery.h"
+#include "query/infoquery.h"
+#include "route/flightplanentrybuilder.h"
+#include "route/routealtitude.h"
 #include "settings/settings.h"
+#include "weather/windreporter.h"
 
 #include <QBitArray>
 #include <QRegularExpression>
@@ -3128,6 +3129,13 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
           else if(!airport.local.isEmpty())
             // No ICAO and no FAA - ok to use ADEP/ADES keywords if local code is present and the same
             useAirportKeys = airport.local == airport.ident;
+
+          if(useAirportKeys)
+          {
+            // ADEP and ADES cannot be used if an airport is not stock but only add-on in X-Plane
+            if(NavApp::getInfoQuery()->isAirportXplaneCustomOnly(airport.ident))
+              useAirportKeys = false;
+          }
 
           // Use display ident for DEP/DES since it does not matter in this configuration
           QString ident = useAirportKeys ? airport.ident : airport.displayIdent();
