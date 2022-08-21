@@ -51,7 +51,7 @@ void SimBriefHandler::sendRouteToSimBrief()
   const Route& route = NavApp::getRouteConst();
 
   // Create route description string ================================
-  QString routeString = RouteStringWriter().createStringForRoute(route, 0.f, rs::START_AND_DEST | rs::SID_STAR);
+  QString routeString = RouteStringWriter().createStringForRoute(route, 0.f, rs::SIMBRIEF_WRITE_DEFAULTS);
   QString aircraftType = NavApp::getAircraftPerformance().getAircraftType();
 
   // Ask user ================================

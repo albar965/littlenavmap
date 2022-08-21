@@ -117,20 +117,20 @@ private:
   void appendError(const QString& message);
 
   /* Get the start and end index for the given waypoint ids*/
-  void findIndexesInAirway(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints, int lastId,
-                           int nextId, int& startIndex, int& endIndex, const QString& airway);
+  void findIndexesInAirway(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints, int lastId, int nextId, int& startIndex, int& endIndex,
+                           const QString& airway);
 
   /* get waypoints by start and end index */
   void extractWaypoints(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints, int startIndex, int endIndex,
                         QList<map::MapWaypoint>& airwayWaypoints);
 
   /* Build flight plan entry for the given search result. */
-  void buildEntryForResult(atools::fs::pln::FlightplanEntry& entry, const map::MapResult& result,
-                           const atools::geo::Pos& nearestPos, bool resolveWaypoints);
+  void buildEntryForResult(atools::fs::pln::FlightplanEntry& entry, const map::MapResult& result, const atools::geo::Pos& nearestPos,
+                           bool resolveWaypoints);
 
   /* Get a result set with the single closest element */
-  void resultWithClosest(map::MapResult& resultWithClosest, const map::MapResult& result,
-                         const atools::geo::Pos& nearestPos, map::MapTypes types);
+  void resultWithClosest(map::MapResult& resultWithClosest, const map::MapResult& result, const atools::geo::Pos& nearestPos,
+                         map::MapTypes types);
 
   /* Get airport or any navaid for item. Also resolves coordinate formats. Optionally tries to match position
    * to waypoints like oceaninc or confluence points.*/
@@ -146,28 +146,40 @@ private:
   void removeEmptyResults(QList<ParseEntry>& resultList);
 
   /* Fetch departure airport as well as SID */
-  bool addDeparture(atools::fs::pln::Flightplan *flightplan, map::MapObjectRefExtVector *mapObjectRefs,
-                    QStringList& cleanItems);
+  bool addDeparture(atools::fs::pln::Flightplan *flightplan, map::MapObjectRefExtVector *mapObjectRefs, QStringList& items);
 
   /* Fetch destination airport as well as STAR */
-  bool addDestination(atools::fs::pln::Flightplan *flightplan, map::MapObjectRefExtVector *mapObjectRefs,
-                      QStringList& cleanItems, rs::RouteStringOptions options);
-  void destinationInternal(map::MapAirport& destination, proc::MapProcedureLegs& starLegs,
-                           const QStringList& cleanItems, int index);
+  bool addDestination(atools::fs::pln::Flightplan *flightplan, map::MapObjectRefExtVector *mapObjectRefs, QStringList& items,
+                      rs::RouteStringOptions options);
+  void destinationInternal(map::MapAirport& destination, proc::MapProcedureLegs& starLegs, QStringList& items, int& consume, int index);
 
   /* Remove time and runways from ident and return airport ident only. Also add warning messages */
   QString extractAirportIdent(QString ident);
 
   /* Extract the first coordinate for the list if no airports are used */
-  atools::geo::Pos findFirstCoordinate(const QStringList& cleanItems);
+  atools::geo::Pos findFirstCoordinate(const QStringList& items);
 
   /* Create reference struct from given entry and map search result */
   map::MapObjectRefExt mapObjectRefFromEntry(const atools::fs::pln::FlightplanEntry& entry,
                                              const map::MapResult& result, const QString& name);
 
   /* Get airway segments with given name between  waypoints */
-  map::MapAirway extractAirway(const QList<map::MapAirway>& airways, int waypointId1, int waypointId2,
-                               const QString& airwayName);
+  map::MapAirway extractAirway(const QList<map::MapAirway>& airways, int waypointId1, int waypointId2, const QString& airwayName);
+
+  /* Read and consume SID and maybe transition from list. Can be "SID", "SID.TRANS" or "SID TRANS" */
+  void readSidAndTrans(QStringList& items, int& sidId, int& sidTransId, const map::MapAirport& departure);
+
+  /* Try to read all STAR and transition variants. Number of items to delete is given in "consume" */
+  void readStarAndTrans(QStringList& items, int& starId, int& starTransId, int& consume, const map::MapAirport& destination, int index);
+
+  /* Read a space spearated STAR with transition. Can be "STAR TRANS" or "TRANS STAR". Items are not consumed. */
+  void readStarAndTransSpace(const QString& star, QString trans, int& starId, int& starTransId, const map::MapAirport& destination);
+
+  /* Read a dot spearated STAR with transition. Can be "STAR.TRANS" or "TRANS.STAR". Items are not consumed. */
+  void readStarAndTransDot(const QString& starTrans, int& starId, int& starTransId, const map::MapAirport& destination);
+
+  /* Convert to abbreviated SID: ENVA UTUNA1A -> ENVA UTUN1A */
+  QString sidStarAbbrev(QString sid);
 
   MapQuery *mapQuery = nullptr;
   AirwayTrackQuery *airwayQuery = nullptr;

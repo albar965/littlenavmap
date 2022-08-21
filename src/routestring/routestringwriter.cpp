@@ -400,7 +400,13 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
 
   // Add STAR
   if((options & rs::SID_STAR) && !star.isEmpty())
-    retval.append(star + (starTrans.isEmpty() ? QString() : transSeparator + starTrans));
+  {
+    if((options & rs::STAR_REV_TRANSITION))
+      // Reverse for alternate notation like it is used by SimBrief
+      retval.append((starTrans.isEmpty() ? QString() : starTrans + transSeparator) + star);
+    else
+      retval.append(star + (starTrans.isEmpty() ? QString() : transSeparator + starTrans));
+  }
   else if(options & rs::SID_STAR_GENERIC)
     retval.append("STAR");
 
