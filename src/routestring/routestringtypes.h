@@ -61,7 +61,7 @@ enum RouteStringOption
 
   STAR_REV_TRANSITION = 1 << 21, /* SimBrief needs TRANS.STAR */
 
-  REPORT = 1 << 22, /* Add final report before all other messages on success */
+  REPORT = 1 << 22, /* Add final report and other information message before all other messages on success */
 
   // Next is 23
 

@@ -3232,6 +3232,10 @@ void MainWindow::mainWindowShownDelayed()
     mapWidget->setFocus();
   }
 
+  // Center flight plan after loading - do this delayed to consider window size changes
+  if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE && !NavApp::isRouteEmpty())
+    NavApp::getMapPaintWidgetGui()->showRect(routeController->getBoundingRect(), false);
+
   // Set window flag
   stayOnTop();
 
@@ -3254,6 +3258,9 @@ void MainWindow::mainWindowShownDelayed()
   profileWidget->restoreSplitter();
 
   NavApp::setMainWindowVisible();
+
+  // Map widget draws gray rectangle until main window is visible
+  mapWidget->update();
 }
 
 void MainWindow::runDirToolManual()

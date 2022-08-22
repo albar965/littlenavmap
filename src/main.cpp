@@ -194,6 +194,21 @@ int main(int argc, char *argv[])
                                        QObject::tr("settings-path"));
     parser.addOption(settingsPathOpt);
 
+    QCommandLineOption flightplanOpt({"f", lnm::STARTUP_FLIGHTPLAN},
+                                     QObject::tr("Load the given <%1> file on startup. Can be one of the supported formats like "
+                                                 "\".lnmpln\", \".pln\", \".fms\", "
+                                                 "\".fgfp\", \".fpl\", \".gfp\" or others.").arg(lnm::STARTUP_FLIGHTPLAN),
+                                     lnm::STARTUP_FLIGHTPLAN);
+    parser.addOption(flightplanOpt);
+
+    QCommandLineOption flightplanDescrOpt({"d", lnm::STARTUP_FLIGHTPLAN_DESCR},
+                                          QObject::tr("Parse and load the given <%1> flight plan route description on startup. "
+                                                      "Example \"EDDF BOMBI LIRF\".").arg(lnm::STARTUP_FLIGHTPLAN_DESCR),
+                                          lnm::STARTUP_FLIGHTPLAN_DESCR);
+    parser.addOption(flightplanDescrOpt);
+
+    QCommandLineOption performanceOpt({"a", lnm::STARTUP_AIRCRAFT_PERF},
+                                      QObject::tr("Load the given <%1> aircraft performance file "
                                                   "\".lnmperf\" on startup.").arg(lnm::STARTUP_AIRCRAFT_PERF),
                                       lnm::STARTUP_AIRCRAFT_PERF);
     parser.addOption(performanceOpt);
@@ -212,6 +227,20 @@ int main(int argc, char *argv[])
     if(parser.isSet(settingsPathOpt) && !parser.value(settingsPathOpt).isEmpty())
       Settings::setOverridePath(parser.value(settingsPathOpt));
 
+    // File loading
+    if(parser.isSet(flightplanOpt) && parser.isSet(flightplanDescrOpt))
+      qWarning() << QObject::tr("Only one of options -f and -d can be used");
+
+    if(parser.isSet(flightplanOpt) && !parser.value(flightplanOpt).isEmpty())
+      NavApp::addStartupOption(lnm::STARTUP_FLIGHTPLAN, parser.value(flightplanOpt));
+
+    if(parser.isSet(flightplanDescrOpt) && !parser.value(flightplanDescrOpt).isEmpty())
+      NavApp::addStartupOption(lnm::STARTUP_FLIGHTPLAN_DESCR, parser.value(flightplanDescrOpt));
+
+    if(parser.isSet(performanceOpt) && !parser.value(performanceOpt).isEmpty())
+      NavApp::addStartupOption(lnm::STARTUP_AIRCRAFT_PERF, parser.value(performanceOpt));
+
+    // ==============================================
     // Start splash screen
     if(atools::settings::Settings::instance().valueBool(lnm::OPTIONS_DIALOG_SHOW_SPLASH, true))
       NavApp::initSplashScreen();

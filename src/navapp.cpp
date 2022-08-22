@@ -33,6 +33,7 @@
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 #include "gui/stylehandler.h"
+#include "util/properties.h"
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapmarkhandler.h"
 #include "mapgui/mapairporthandler.h"
@@ -98,14 +99,19 @@ bool NavApp::shuttingDown = false;
 bool NavApp::loadingDatabase = false;
 bool NavApp::mainWindowVisible = false;
 
+atools::util::Properties *NavApp::startupOptions = nullptr;
+
 NavApp::NavApp(int& argc, char **argv, int flags)
   : atools::gui::Application(argc, argv, flags)
 {
+  startupOptions = new atools::util::Properties;
   initApplication();
 }
 
 NavApp::~NavApp()
 {
+  delete startupOptions;
+  startupOptions = nullptr;
 }
 
 void NavApp::initApplication()
@@ -820,6 +826,16 @@ void NavApp::showLogbookSearch()
 void NavApp::showUserpointSearch()
 {
   mainWindow->showUserpointSearch();
+}
+
+QString NavApp::getStartupOption(const QString& key)
+{
+  return startupOptions->value(key);
+}
+
+void NavApp::addStartupOption(const QString& key, const QString& value)
+{
+  startupOptions->insert(key, value);
 }
 
 LogdataController *NavApp::getLogdataController()

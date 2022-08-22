@@ -410,6 +410,11 @@ const QLatin1String MAP_LAYER_CONFIG(":/littlenavmap/resources/config/maplayers.
 /* Main window state for first startup. Generated in MainWindow::writeSettings() */
 extern const QSize DEFAULT_MAINWINDOW_SIZE;
 
+/* Startup options from command line. Used as long option names and keys in NavApp::startupOptions. */
+const QLatin1String STARTUP_FLIGHTPLAN("flight-plan");
+const QLatin1String STARTUP_FLIGHTPLAN_DESCR("flight-plan-descr");
+const QLatin1String STARTUP_AIRCRAFT_PERF("aircraft-perf");
+
 /*
  * Supported language for the online help system. Will be determined by presence of the file
  * little-navmap-user-manual-${LANG}.online in folder help and the current language settings of the system

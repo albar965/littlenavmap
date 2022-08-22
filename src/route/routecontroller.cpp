@@ -964,35 +964,46 @@ void RouteController::restoreState()
 
   routeLabel->restoreState();
 
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_ROUTE)
-  {
-    atools::settings::Settings& settings = atools::settings::Settings::instance();
-    QString newRouteFilename = settings.valueStr(lnm::ROUTE_FILENAME);
+  // Load plan from command line or last used =============================================
+  QString flightplanFile, flightplanDescr;
+  if(!NavApp::getStartupOption(lnm::STARTUP_FLIGHTPLAN).isEmpty())
+    flightplanFile = NavApp::getStartupOption(lnm::STARTUP_FLIGHTPLAN); // Command line file
+  if(!NavApp::getStartupOption(lnm::STARTUP_FLIGHTPLAN_DESCR).isEmpty())
+    flightplanDescr = NavApp::getStartupOption(lnm::STARTUP_FLIGHTPLAN_DESCR); // Command line description
+  else if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_ROUTE))
+    flightplanFile = atools::settings::Settings::instance().valueStr(lnm::ROUTE_FILENAME); // Last used
 
-    if(!newRouteFilename.isEmpty())
+  if(!flightplanDescr.isEmpty())
+    // Parse from route description ===================================================
+    loadFlightplanRouteStr(flightplanDescr);
+  else if(!flightplanFile.isEmpty())
+  {
+    // Load from file (last used or command line) ===================================================
+    QString message = atools::checkFileMsg(flightplanFile);
+    if(message.isEmpty())
     {
-      if(QFile::exists(newRouteFilename))
+      if(atools::fs::pln::FlightplanIO::detectFormat(flightplanFile) != atools::fs::pln::NONE)
       {
-        if(!loadFlightplan(newRouteFilename))
-        {
+        if(!loadFlightplan(flightplanFile))
           // Cannot be loaded - clear current filename
-          routeFilename.clear();
-          fileDepartureIdent.clear();
-          fileDestinationIdent.clear();
-          fileIfrVfr = pln::VFR;
-          fileCruiseAltFt = 0.f;
-          route.clear();
-        }
+          clearFlightplan();
+        // else Centered in MainWindow::mainWindowShownDelayed()
       }
       else
       {
-        routeFilename.clear();
-        fileDepartureIdent.clear();
-        fileDestinationIdent.clear();
-        fileIfrVfr = pln::VFR;
-        fileCruiseAltFt = 0.f;
-        route.clear();
+        // Not a flight plan file
+        clearFlightplan();
+        NavApp::closeSplashScreen();
+        QMessageBox::warning(mainWindow, QApplication::applicationName(),
+                             tr("File \"%1\" is a not supported flight plan format or not a flight plan.").arg(flightplanFile));
       }
+    }
+    else
+    {
+      // No file or not readable
+      clearFlightplan();
+      NavApp::closeSplashScreen();
+      QMessageBox::warning(mainWindow, QApplication::applicationName(), message);
     }
   }
 
@@ -1002,6 +1013,16 @@ void RouteController::restoreState()
   units->update();
 
   connect(NavApp::getRouteTabHandler(), &atools::gui::TabWidgetHandler::tabOpened, this, &RouteController::updateRouteTabChangedStatus);
+}
+
+void RouteController::clearFlightplan()
+{
+  routeFilename.clear();
+  fileDepartureIdent.clear();
+  fileDestinationIdent.clear();
+  fileIfrVfr = pln::VFR;
+  fileCruiseAltFt = 0.f;
+  route.clear();
 }
 
 void RouteController::getSelectedRouteLegs(QList<int>& selLegIndexes) const
@@ -1262,6 +1283,28 @@ bool RouteController::loadFlightplanLnmStr(const QString& string)
   return true;
 }
 
+void RouteController::loadFlightplanRouteStr(const QString& routeString)
+{
+  qDebug() << Q_FUNC_INFO << routeString;
+
+  RouteStringReader reader(entryBuilder);
+  reader.setPlaintextMessages(true);
+
+  Flightplan fp;
+
+  // true if an altitude item is included in string
+  bool altIncluded = false;
+
+  // Use settings from dialog
+  if(reader.createRouteFromString(routeString, RouteStringDialog::getOptionsFromSettings(), &fp, nullptr, nullptr, &altIncluded))
+    loadFlightplan(fp, atools::fs::pln::LNM_PLN, QString(), false /* changed */, !altIncluded /* adjustAltitude */);
+
+  if(reader.hasErrorMessages() || reader.hasWarningMessages())
+    QMessageBox::warning(mainWindow, QApplication::applicationName(),
+                         tr("<p>Errors reading flight plan route description<br/><b>%1</b><br/>from command line:</p><p>%2</p>").
+                         arg(routeString).arg(reader.getMessages().join("<br>")));
+}
+
 bool RouteController::loadFlightplan(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
@@ -1273,8 +1316,7 @@ bool RouteController::loadFlightplan(const QString& filename)
     atools::fs::pln::FileFormat format = flightplanIO->load(fp, filename);
     // qDebug() << "Flight plan custom data" << newFlightplan.getProperties();
 
-    if(fp.getEntries().size() <= 2 &&
-       (format == atools::fs::pln::FMS3 || format == atools::fs::pln::FMS11))
+    if(fp.getEntries().size() <= 2 && (format == atools::fs::pln::FMS3 || format == atools::fs::pln::FMS11))
     {
       NavApp::closeSplashScreen();
       atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_LOAD_FMS_ALT_WARN,

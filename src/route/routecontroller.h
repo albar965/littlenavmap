@@ -94,6 +94,9 @@ public:
   /* Load the plan from a string in LNMPLN format */
   bool loadFlightplanLnmStr(const QString& string);
 
+  /* Load from route description */
+  void loadFlightplanRouteStr(const QString& routeString);
+
   /* Loads flight plan from FSX PLN file and appends it to the current flight plan.
    * Use -1 for insertBefore to append.
    * Emits routeChanged. */
@@ -498,6 +501,9 @@ private:
 
   /* true if neither context menu is open nor scroll sliders are pressed down.*/
   bool canCleanupTable();
+
+  /* Clear all names and other properties */
+  void clearFlightplan();
 
   /* Selected rows in table. Updated on selection change. */
   QList<int> selectedRows;

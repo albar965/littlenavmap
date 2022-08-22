@@ -1288,7 +1288,13 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
     changed = true;
   }
 
+  // Erase map window to avoid black rectangle but do a dummy draw call to have everything initialized
   MarbleWidget::paintEvent(paintEvent);
+  if(!NavApp::isMainWindowVisible())
+  {
+    QPainter painter(this);
+    painter.fillRect(paintEvent->rect(), QGuiApplication::palette().color(QPalette::Window));
+  }
 
   if(changed)
   {

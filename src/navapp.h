@@ -67,6 +67,9 @@ class MapThemeHandler;
 class QAction;
 
 namespace atools {
+namespace util {
+class Properties;
+}
 namespace gui {
 class TabWidgetHandler;
 }
@@ -408,6 +411,10 @@ public:
   static void showLogbookSearch();
   static void showUserpointSearch();
 
+  /* Command line options */
+  static QString getStartupOption(const QString& key);
+  static void addStartupOption(const QString& key, const QString& value);
+
 private:
   static void initApplication();
   static void readMagDecFromDatabase();
@@ -447,6 +454,7 @@ private:
   static StyleHandler *styleHandler;
 
   static WebController *webController;
+  static atools::util::Properties *startupOptions;
 
   static bool loadingDatabase;
   static bool shuttingDown;

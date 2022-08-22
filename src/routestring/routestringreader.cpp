@@ -176,7 +176,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
     lastPos = fp->getDeparturePosition();
   }
 
-  if(altitude > 0.f)
+  if(altitude > 0.f && options.testFlag(rs::REPORT))
     appendMessage(tr("Using cruise altitude <b>%1</b> for flight plan.").arg(Unit::altFeet(altitude)));
 
   if(speedKts != nullptr && *speedKts > 0.f)
@@ -855,9 +855,10 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan, 
       {
         flightplan->getProperties().insert(atools::fs::pln::ALTERNATES, alternateIdents.join("#"));
 
-        appendMessage(tr("Found alternate %1 <b>%2</b>.").
-                      arg(alternateDisplayIdents.size() == 1 ? tr("airport") : tr("airports")).
-                      arg(alternateDisplayIdents.join(tr(", "))));
+        if(options.testFlag(rs::REPORT))
+          appendMessage(tr("Found alternate %1 <b>%2</b>.").
+                        arg(alternateDisplayIdents.size() == 1 ? tr("airport") : tr("airports")).
+                        arg(alternateDisplayIdents.join(tr(", "))));
       }
     } // if(!airports.isEmpty())
     else

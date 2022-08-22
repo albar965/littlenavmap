@@ -1347,8 +1347,26 @@ void AircraftPerfController::restoreState()
           this, &AircraftPerfController::updateTabTiltle);
 
   fileHistory->restoreState();
-  if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_PERF)
-    loadFile(settings.valueStr(lnm::AIRCRAFT_PERF_FILENAME));
+
+  // Load last used performance file or the one passed on the command line
+  QString perfFile;
+  if(!NavApp::getStartupOption(lnm::STARTUP_AIRCRAFT_PERF).isEmpty())
+    perfFile = NavApp::getStartupOption(lnm::STARTUP_AIRCRAFT_PERF); // Command line
+  else if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_PERF)
+    perfFile = settings.valueStr(lnm::AIRCRAFT_PERF_FILENAME);
+
+  if(!perfFile.isEmpty())
+  {
+    QString message = atools::checkFileMsg(perfFile);
+    if(message.isEmpty())
+      loadFile(perfFile);
+    else
+    {
+      // No file or not readable
+      NavApp::closeSplashScreen();
+      QMessageBox::warning(mainWindow, QApplication::applicationName(), message);
+    }
+  }
 
   Ui::MainWindow *ui = NavApp::getMainUi();
   atools::gui::WidgetState state(lnm::AIRCRAFT_PERF_WIDGETS, true /* visibility */, true /* block signals */);
