@@ -264,8 +264,7 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
   RouteStringReader routeStringReader(NavApp::getRouteController()->getFlightplanEntryBuilder());
   bool ok = routeStringReader.createRouteFromString(routeString, rs::SIMBRIEF_READ_DEFAULTS, flightplan);
 
-  QString message(tr("<p>Flight successfully downloaded. Reading of route description %1.<br/>").arg(ok ? tr("successful") : tr("failed")));
-  message.append(tr("Downloaded flight plan route description: <b>%1</b></p>").arg(routeString));
+  QString message(tr("<p>Flight successfully downloaded. Reading of route description %1.").arg(ok ? tr("successful") : tr("failed")));
 
   // Add any information/warning/error messages from parsing
   message.append(tr("<p>"));

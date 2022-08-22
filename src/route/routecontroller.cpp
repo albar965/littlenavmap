@@ -135,6 +135,10 @@ enum RouteColumns
 const static int MAX_REMARK_LINES_HTML_AND_PRINT = 1000;
 const static int MAX_REMARK_COLS_HTML_AND_PRINT = 200;
 
+/* Do not update aircraft information more than every 0.1 seconds */
+const static int MIN_SIM_UPDATE_TIME_MS = 100;
+const static int ROUTE_ALT_CHANGE_DELAY_MS = 500;
+
 using atools::fs::pln::Flightplan;
 using atools::fs::pln::FlightplanEntry;
 using atools::gui::ActionTool;

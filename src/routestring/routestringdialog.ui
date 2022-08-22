@@ -113,22 +113,6 @@ ETD and ETA are ignored.
           </widget>
          </item>
          <item>
-          <widget class="QPushButton" name="pushButtonRouteStringRead">
-           <property name="sizePolicy">
-            <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
-             <horstretch>0</horstretch>
-             <verstretch>0</verstretch>
-            </sizepolicy>
-           </property>
-           <property name="toolTip">
-            <string>Read the flight plan route description.</string>
-           </property>
-           <property name="text">
-            <string>&amp;Read Route Description</string>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QComboBox" name="comboBoxRouteStringFlightplanType">
            <property name="toolTip">
             <string>Create a VFR (Visual Flight Rules) or IFR (Instrument Flight Rules) flight plan</string>
@@ -211,7 +195,6 @@ ETD and ETA are ignored.
   <tabstop>pushButtonRouteStringToClipboard</tabstop>
   <tabstop>pushButtonRouteStringFromClipboard</tabstop>
   <tabstop>pushButtonRouteStringUpdate</tabstop>
-  <tabstop>pushButtonRouteStringRead</tabstop>
   <tabstop>comboBoxRouteStringFlightplanType</tabstop>
   <tabstop>toolButtonRouteStringOptions</tabstop>
   <tabstop>textEditRouteStringErrors</tabstop>

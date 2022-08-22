@@ -553,10 +553,6 @@ private:
   /* Route calculation dock window controller */
   RouteCalcDialog *routeCalcDialog = nullptr;
 
-  /* Do not update aircraft information more than every 0.1 seconds */
-  static Q_DECL_CONSTEXPR int MIN_SIM_UPDATE_TIME_MS = 100;
-  static Q_DECL_CONSTEXPR int ROUTE_ALT_CHANGE_DELAY_MS = 500;
-
   bool loadingDatabaseState = false;
   qint64 lastSimUpdate = 0;
 

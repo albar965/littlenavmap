@@ -116,7 +116,7 @@ private:
   void insertMessage(const QString& message, int index);
   void appendWarning(const QString& message);
   void appendError(const QString& message);
-  void addReport(atools::fs::pln::Flightplan *flightplan);
+  void addReport(atools::fs::pln::Flightplan *flightplan, const QString& rawRouteString);
 
   /* Get the start and end index for the given waypoint ids*/
   void findIndexesInAirway(const QList<map::MapAirwayWaypoint>& allAirwayWaypoints, int lastId, int nextId, int& startIndex, int& endIndex,

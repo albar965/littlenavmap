@@ -38,6 +38,8 @@
 #include <QMenu>
 #include <QButtonGroup>
 
+const static int TEXT_CHANGE_DELAY_MS = 500;
+
 using atools::gui::HelpHandler;
 namespace apln = atools::fs::pln;
 
@@ -203,11 +205,11 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& routeString
   action->setData(static_cast<int>(rs::READ_MATCH_WAYPOINTS));
   buttonMenu->addAction(action);
 
-  connect(ui->pushButtonRouteStringRead, &QPushButton::clicked, this, &RouteStringDialog::readButtonClicked);
   connect(ui->pushButtonRouteStringFromClipboard, &QPushButton::clicked, this, &RouteStringDialog::fromClipboardClicked);
   connect(ui->pushButtonRouteStringToClipboard, &QPushButton::clicked, this, &RouteStringDialog::toClipboardClicked);
 
   connect(ui->plainTextEditRouteString, &QPlainTextEdit::textChanged, this, &RouteStringDialog::updateButtonState);
+  connect(ui->plainTextEditRouteString, &QPlainTextEdit::textChanged, this, &RouteStringDialog::textChanged);
 
   connect(QGuiApplication::clipboard(), &QClipboard::dataChanged, this, &RouteStringDialog::updateButtonState);
 
@@ -216,10 +218,14 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& routeString
   connect(ui->toolButtonRouteStringOptions->menu(), &QMenu::triggered, this, &RouteStringDialog::toolButtonOptionTriggered);
 
   connect(ui->pushButtonRouteStringUpdate, &QPushButton::clicked, this, &RouteStringDialog::updateButtonClicked);
+
+  connect(&textUpdateTimer, &QTimer::timeout, this, &RouteStringDialog::textChangedDelayed);
+  textUpdateTimer.setSingleShot(true);
 }
 
 RouteStringDialog::~RouteStringDialog()
 {
+  textUpdateTimer.stop();
   delete routeStringWriter;
   delete routeStringReader;
   delete procActionGroup;
@@ -232,6 +238,7 @@ void RouteStringDialog::updateButtonClicked()
   ui->plainTextEditRouteString->setPlainText(routeStringWriter->createStringForRoute(NavApp::getRouteConst(),
                                                                                      NavApp::getRouteCruiseSpeedKts(),
                                                                                      options));
+  textChangedDelayed();
 }
 
 void RouteStringDialog::toolButtonOptionTriggered(QAction *action)
@@ -252,6 +259,7 @@ void RouteStringDialog::toolButtonOptionTriggered(QAction *action)
     else
       options &= ~opts;
   }
+  textChangedDelayed();
 }
 
 const atools::fs::pln::Flightplan& RouteStringDialog::getFlightplan() const
@@ -288,7 +296,13 @@ rs::RouteStringOptions RouteStringDialog::getOptionsFromSettings()
                                 valueInt(lnm::ROUTE_STRING_DIALOG_OPTIONS, rs::DEFAULT_OPTIONS));
 }
 
-void RouteStringDialog::readButtonClicked()
+void RouteStringDialog::textChanged()
+{
+  // Calls RouteStringDialog::textChangedDelayed()
+  textUpdateTimer.start(TEXT_CHANGE_DELAY_MS);
+}
+
+void RouteStringDialog::textChangedDelayed()
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -307,20 +321,16 @@ void RouteStringDialog::readButtonClicked()
       ui->textEditRouteStringErrors->append(err + "<br/>");
   }
 
-  // Update route string again
-  ui->plainTextEditRouteString->setPlainText(rs::cleanRouteString(ui->plainTextEditRouteString->toPlainText()).join(" "));
-
   // Avoid update issues with macOS and mac style - force repaint
   ui->textEditRouteStringErrors->repaint();
-  ui->plainTextEditRouteString->repaint();
 
   updateButtonState();
 }
 
 void RouteStringDialog::fromClipboardClicked()
 {
-  ui->plainTextEditRouteString->setPlainText(
-    rs::cleanRouteString(QGuiApplication::clipboard()->text()).join(" "));
+  ui->plainTextEditRouteString->setPlainText(rs::cleanRouteString(QGuiApplication::clipboard()->text()).join(" "));
+  textChangedDelayed();
 }
 
 void RouteStringDialog::toClipboardClicked()
@@ -355,14 +365,12 @@ void RouteStringDialog::buttonBoxClicked(QAbstractButton *button)
 
 void RouteStringDialog::updateButtonState()
 {
-  QStringList cleanString = rs::cleanRouteString(ui->plainTextEditRouteString->toPlainText());
 
-  ui->pushButtonRouteStringRead->setEnabled(!cleanString.isEmpty());
   ui->pushButtonRouteStringUpdate->setEnabled(!NavApp::getRouteConst().isEmpty());
 
   ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setDisabled(flightplan->getEntries().isEmpty());
 
-  ui->pushButtonRouteStringToClipboard->setDisabled(cleanString.isEmpty());
+  ui->pushButtonRouteStringToClipboard->setDisabled(ui->plainTextEditRouteString->toPlainText().isEmpty());
 
   ui->pushButtonRouteStringFromClipboard->setDisabled(QGuiApplication::clipboard()->text().simplified().isEmpty());
 

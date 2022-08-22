@@ -401,7 +401,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   }
 
   if(options.testFlag(rs::REPORT))
-    addReport(fp);
+    addReport(fp, routeString);
 
 #ifdef DEBUG_INFORMATION
   qDebug() << "===============================";
@@ -418,9 +418,8 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   return true;
 }
 
-void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan)
+void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan, const QString& rawRouteString)
 {
-  int insertIndex = 0;
   QString from, to;
   AirportQuery *airportQuery = NavApp::getAirportQuerySim();
 
@@ -443,6 +442,9 @@ void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan)
   else
     // Departure is waypoint
     to = flightplan->getDestinationIdent();
+
+  int insertIndex = 0;
+  insertMessage(tr("Route description: <b>%1</b>.").arg(rs::cleanRouteString(rawRouteString).join(" ")), insertIndex++);
 
   insertMessage(tr("Flight plan from <b>%1</b> to <b>%2</b>.").arg(from).arg(to), insertIndex++);
 

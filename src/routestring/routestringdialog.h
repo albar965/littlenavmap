@@ -21,6 +21,7 @@
 #include "routestring/routestringtypes.h"
 
 #include <QDialog>
+#include <QTimer>
 
 namespace Ui {
 class RouteStringDialog;
@@ -74,7 +75,8 @@ public:
   static rs::RouteStringOptions getOptionsFromSettings();
 
 private:
-  void readButtonClicked();
+  void textChanged();
+  void textChangedDelayed();
   void fromClipboardClicked();
   void toClipboardClicked();
   void buttonBoxClicked(QAbstractButton *button);
@@ -92,6 +94,8 @@ private:
   QActionGroup *procActionGroup;
 
   QString routeString;
+
+  QTimer textUpdateTimer;
 
   float speedKts = 0.f;
   bool altitudeIncluded = false, updatingActions = false;
