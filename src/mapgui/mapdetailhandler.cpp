@@ -25,9 +25,9 @@
 #include "mapgui/maplayersettings.h"
 #include "mapgui/mappaintwidget.h"
 #include "ui_mainwindow.h"
+#include "gui/signalblocker.h"
 
 #include <QWidgetAction>
-#include <QDebug>
 
 namespace mdinternal {
 
@@ -104,12 +104,9 @@ int DetailSliderAction::maxValue() const
 void DetailSliderAction::setSliderValue(int value)
 {
   sliderValue = value;
-  for(QSlider *s : sliders)
-  {
-    s->blockSignals(true);
-    s->setValue(value);
-    s->blockSignals(false);
-  }
+  atools::gui::SignalBlocker blocker(sliders);
+  for(QSlider *slider : sliders)
+    slider->setValue(value);
 }
 
 void DetailSliderAction::reset()

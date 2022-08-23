@@ -44,6 +44,7 @@
 #include "track/trackmanager.h"
 #include "ui_mainwindow.h"
 #include "util/version.h"
+#include "gui/signalblocker.h"
 
 #include <QDir>
 
@@ -811,56 +812,74 @@ void DatabaseManager::switchNavFromMainMenu()
 {
   qDebug() << Q_FUNC_INFO;
 
+  bool switchDatabase = true;
   if(navDbActionAll->isChecked())
   {
     QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineNavdatabasesUrl, lnm::helpLanguageOnline());
-    QString message = tr(
-      "<p>Note that airport information is limited in this mode.<br/>"
-      "This means that aprons, taxiways, parking positions, runway surface information and other information is not available.<br/>"
-      "Smaller airports might be missing and runway layout might not match the runway layout in the simulator.</p>"
-      "<p><b>Normally you should not use this mode.</b></p>"
-        "<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>").arg(url.toString());
+    QString message =
+      tr("<p>The scenery mode \"%1\" ignores all airports of the simulator.<p/>"
+         "<p>Airport information is limited in this mode.<br/>"
+         "This means that aprons, taxiways, parking positions, runway surface information and other information is not available.<br/>"
+         "Smaller airports might be missing and runway layout might not match the runway layout in the simulator.</p>"
+         "<p><b>Normally you should not use this mode.</b></p>"
+           "<p>Really switch to mode \"%1\" now?</p>"
+             "<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>").
+      arg(navDbActionAll->text().remove("&")).arg(url.toString());
 
-    dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_NAVDATA_WARNING, message, tr("Do not &show this dialog again."));
+    int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_NAVDATA_WARNING, message,
+                                            tr("Do not &show this dialog again and switch the mode in the future."),
+                                            QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
+
+    if(result == QMessageBox::No)
+    {
+      // Revert to previous mode
+      atools::gui::SignalBlocker blocker({navDbActionBlend, navDbActionOff, navDbActionAll});
+      navDbActionAll->setChecked(false);
+      navDbActionBlend->setChecked(navDatabaseStatus == dbstat::NAVDATABASE_MIXED);
+      navDbActionOff->setChecked(navDatabaseStatus == dbstat::NAVDATABASE_OFF);
+      switchDatabase = false;
+    }
   }
 
-  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-
-  // Disconnect all queries
-  emit preDatabaseLoad();
-
-  clearLanguageIndex();
-  closeAllDatabases();
-
-  QString text;
-  if(navDbActionAll->isChecked())
+  if(switchDatabase)
   {
-    navDatabaseStatus = dbstat::NAVDATABASE_ALL;
-    text = tr("Enabled all features for %1.");
-  }
-  else if(navDbActionBlend->isChecked())
-  {
-    navDatabaseStatus = dbstat::NAVDATABASE_MIXED;
-    text = tr("Enabled navaids, airways, airspaces and procedures for %1.");
-  }
-  else if(navDbActionOff->isChecked())
-  {
-    navDatabaseStatus = dbstat::NAVDATABASE_OFF;
-    text = tr("Disabled %1.");
-  }
-  qDebug() << Q_FUNC_INFO << "usingNavDatabase" << navDatabaseStatus;
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
 
-  openAllDatabases();
-  loadLanguageIndex();
+    // Disconnect all queries
+    emit preDatabaseLoad();
 
-  QGuiApplication::restoreOverrideCursor();
+    clearLanguageIndex();
+    closeAllDatabases();
 
-  emit postDatabaseLoad(currentFsType);
+    QString text;
+    if(navDbActionAll->isChecked())
+    {
+      navDatabaseStatus = dbstat::NAVDATABASE_ALL;
+      text = tr("Enabled all features for %1.");
+    }
+    else if(navDbActionBlend->isChecked())
+    {
+      navDatabaseStatus = dbstat::NAVDATABASE_MIXED;
+      text = tr("Enabled navaids, airways, airspaces and procedures for %1.");
+    }
+    else if(navDbActionOff->isChecked())
+    {
+      navDatabaseStatus = dbstat::NAVDATABASE_OFF;
+      text = tr("Disabled %1.");
+    }
+    qDebug() << Q_FUNC_INFO << "usingNavDatabase" << navDatabaseStatus;
 
-  mainWindow->setStatusMessage(text.arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
+    openAllDatabases();
+    loadLanguageIndex();
 
-  saveState();
+    QGuiApplication::restoreOverrideCursor();
 
+    emit postDatabaseLoad(currentFsType);
+
+    mainWindow->setStatusMessage(text.arg(FsPaths::typeToDisplayName(FsPaths::NAVIGRAPH)));
+
+    saveState();
+  } // if(switchDatabase)
 }
 
 void DatabaseManager::switchSimFromMainMenu()
@@ -894,12 +913,11 @@ void DatabaseManager::switchSimFromMainMenu()
     checkDatabaseVersion();
   }
 
-  // Check and uncheck manually since the QActionGroup is unreliable
-  for(QAction *act : actions)
   {
-    QSignalBlocker blocker(act);
-    Q_UNUSED(blocker)
-    act->setChecked(act->data().value<atools::fs::FsPaths::SimulatorType>() == currentFsType);
+    // Check and uncheck manually since the QActionGroup is unreliable
+    atools::gui::SignalBlocker blocker(actions);
+    for(QAction *action : actions)
+      action->setChecked(action->data().value<atools::fs::FsPaths::SimulatorType>() == currentFsType);
   }
 }
 

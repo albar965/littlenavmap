@@ -87,13 +87,12 @@ void AirportSliderAction::optionsChanged()
     sliderValue = atools::minmax(minValue(), maxValue(), sliderValue);
   }
 
+  atools::gui::SignalBlocker blocker(sliders);
   for(QSlider *slider : sliders)
   {
-    slider->blockSignals(true);
     slider->setValue(sliderValue);
     slider->setMinimum(minValue());
     slider->setMaximum(maxValue());
-    slider->blockSignals(false);
   }
 }
 
@@ -167,11 +166,11 @@ int AirportSliderAction::maxValue() const
 
 void AirportSliderAction::setValue(int value)
 {
-  for(QSlider *s : sliders)
+  for(QSlider *slider : sliders)
   {
-    s->blockSignals(true);
-    s->setValue(value);
-    s->blockSignals(false);
+    slider->blockSignals(true);
+    slider->setValue(value);
+    slider->blockSignals(false);
   }
 }
 
