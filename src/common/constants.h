@@ -65,6 +65,7 @@ extern QString updateDefaultUrl;
 void loadHelpUrls();
 
 // ======== Options ================================================================
+// Some options are versioned using a numeric suffix to ignore old settings on update
 
 /* State of "do not show again" dialog buttons */
 const QLatin1String ACTIONS_SHOW_DISCONNECT_INFO("Actions/ShowDisconnectInfo");
@@ -199,7 +200,7 @@ const QLatin1String ROUTE_FILENAMES_RECENT("Route/FilenamesRecent");
 const QLatin1String ROUTE_FILENAMESKML_RECENT("Route/FilenamesKmlRecent");
 const QLatin1String ROUTE_VIEW("Route/View");
 const QLatin1String ROUTE_PRINT_DIALOG("Route/PrintWidget");
-const QLatin1String ROUTE_STRING_DIALOG_SPLITTER("Route/StringDialogSplitter");
+const QLatin1String ROUTE_STRING_DIALOG_SPLITTER("Route/StringDialogSplitter2");
 const QLatin1String ROUTE_STRING_DIALOG_OPTIONS("Route/StringDialogOptions");
 const QLatin1String ROUTE_STRING_DIALOG_DESCR("Route/StringDialogDescr");
 
