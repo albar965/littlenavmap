@@ -2,6 +2,246 @@ Numbers (#) refer to GitHub issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 This text is partially Markdown, hence sometimes strange formatting.
 
+# Version 2.7.11.develop
+
+## Notes
+
+This is a public development/alpha release. Not all features are implemented yet for the next
+stable 2.8 branches. Translations are incomplete, new help links do not work and user manual is not
+adapted.
+
+Some features like MSA, vertical paths or en-route holdings require either X-Plane, the included
+AIRAC 1801 database or a Navigraph database newer or equal than AIRAC 2201.
+
+See here for a [list of issues to do](https://github.com/albar965/littlenavmap/milestone/11) and a
+[list of issues done](https://github.com/albar965/littlenavmap/milestone/11?closed=1).
+Usually more issues are solved than publicly known on Github. This changelog lists all.
+
+Note that all dialogs, windows, menus and buttons are functional. There are no unfinished or fake
+buttons/dialogs in the program despite being an alpha release. Tooltips are updated with all new
+functions and give help. Help buttons are an exception since the manual is not updated yet.
+
+Please report if something does not work or does not work as expected.
+
+**Create a backup of your settings and database folder just in case you'd like to go back to the
+stable release. Backup `ABarthel` in `C:\Users\YOURUSERNAME\AppData\Roaming\ABarthel` on Windows
+and `$HOME/.config/ABarthel` on Linux and macOS.**
+
+Or see [Multiple Installations](https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/INSTALLATION.html#multiple-installations) for information how to run the stable and alpha versions in parallel.
+
+**Reload the scenery library after updating.**
+
+**A big thank you to all who reported bugs and issues!**
+
+## Known Issues
+
+* Enroute holding courses are not correct due to an error in declination calculation.
+* Running Little Navmap with autoconnect for P3D, FSX or MSFS for several hours without starting
+  the simulator leaks resources. Disable autoconnect or quit the program to avoid this.
+  This is mitigated by automatically reducing the connection rate after 30 minutes.
+
+## Changes from 2.7.10.develop to 2.7.11.develop
+
+### Scenery Library
+
+* Scenery library database is now loaded in background which allows the user to plan a flight while
+  loading. Progress dialog is not blocking access to the program now and can be brought into background.
+  Loading dialog now gives an option to use or discard a database after loading. Added hint for
+  background loading.
+* Increased database minor version for parking suffix change. This will raise a notification to
+  recommend reloading of the database.
+* Better warning message for scenery library mode `Use Navigraph for all Features` which causes
+  issues often.
+* Messages for MSFS encrypted airports are now delivered as warnings instead of errors.
+* Now ignoring waypoints with empty ICAO region code and invalid type as they appear in some MSFS
+  add-on sceneries. This fixes the exception `NOT NULL constraint failed: tmp_waypoint.region ...`
+  when loading. #910
+* Now allowing BGL files from missions to catch respective airports when loading MSFS.
+* Changed handling for MSFS file `Content.xml` for SU10 and fixed crash when reading new file
+  layout. Priorities for known base folders are now forced to lowest values to ensure the correct
+  loading order. Other folders are loaded without any special order if not set in `Content.xml`.
+* Community path for MSFS is now optional for MSFS detection but will throw an error on loading.
+* Fixed database connection leak when compiling X-Plane scenery library.
+* Reduced logging for invalid MSFS BGL files.
+
+### Map
+
+* Added turn prediction line for user aircraft also having tick marks for half and one NM distance.
+  Enabled by default in menu `View` -> `Show Turn Flight Path`.
+* Added option to disable magenta highlight for active in options on page `Map Display Flight Plan`
+  in checkbox `Highlight active leg`. #785
+* Added optional label `Distance and Bearing from User` for AI aircraft. This can be enabled in options
+  on page `Map Display Labels`, branch `AI, Multiplayer and Online Client Aircraft` in line
+  `Distance and Bearing from User`. #708
+* Added options for measurement lines thickness, color and font size. These can be changed in options
+  on page `Map Display User` -> `Distance measurements`.
+* Added two sliders in airspace toolbar button dropdown menu for minimum and maximum altitude in
+  500 ft steps to show overlapping airspaces. #612
+* Changed wind altitude levels in toolbar button to use a slider instead of fixed altitude levels.
+* Improved highlight marks shown when selecting a flight plan leg or search result. Added size option for
+  highlight marks in options on page `Map Display User` -> `Circle Size`.
+* Highlight marks from table selections are always shown on top of other map features now.
+* Now placing userpoint labels depending on type to avoid overlap with underlying navaids or
+  airports.
+* Fixed issue where airspaces with unknown maximum altitude were not shown using altitude restriction.
+* Made writing and reading of map theme keys more error tolerant. Now writing error message to log
+  and throwing an exception if reading from or writing to file fails.
+* Corrected map display to hide flight plan airports if flight plan is disabled on map.
+* Improvements to status bar label showing visible map objects. Added flight plan, aircraft track
+  and wind barbs.
+* Fixed issues with ghost tooltips on not visible parking spots with certain map display
+  configurations (flight plan on/off).
+* Fixed issue where wind pointer on map was not visible on disabled AI display.
+* Corrected cursor behavior and shape when zoomed too far out on map.
+* Corrected disappearing label for short measurement lines.
+* Increased maximum limit for range rings.
+
+### Flight Plan and Elevation Profile
+
+* Added footer line in flight plan table which shows distance, time and fuel for selected flight
+  plan entries. Flight plan table options (menu `Tools` -> `Flight Plan Table Options` -> `Flight
+  Plan Table Footer` -> `Selected Flight Plan Legs`) now allows to disable selection and error footer
+  lines in flight plan table. #892
+* Changed flight plan calculation to a normal non-blocking dialog window also to avoid
+  the short popping up on start. Note that these non-blocking dialog windows can be put behind the
+  main window and show up in the Windows or other task lists.
+* Highlight of active in flight plan table can be disabled in options on page `Flight Plan`. #785
+* Removed forced assignment of runways if no parking is set for departure. An airport can now be
+  used as a departure point. Improved parking selection dialog.
+* Simulator connection modules (SimConnect and Little Xpconnect) changed to fetch fractional
+  seconds from simulator. #907
+* Format of the saved track has changed (file `little_navmap.track`). This version of Little Navmap
+  can load the old track format but not vice versa.
+* Added safe altitude display in flight plan table (orange line in elevation profile). Can be
+  enabled in menu `Tools` -> `Flight Plan Table Options`.
+* Changed reading of GLOBE data files to get more accuracy and buffer in elevation data.
+* Added options to display vertical path angle and speed to reach the next waypoint at the calculated
+  altitude. Can be shown in elevation profile (`Tools` -> `Elevation Profile Display Options`) as
+  aircraft label and in aircraft progress tab (`Tools` -> `Aircraft Progress Display Options`). Made
+  aircraft labels in elevation profile optional.
+* Destination runway for flight plan top label now also extracted from STAR if no approach is used.
+* ILS display in flight plan table and map is now forced for localizers in approaches like LOWI LOC-W.
+* Improved scrolling and zooming with mousewheel in elevation profile.
+
+### Flight Plan Export
+
+* Added reading support for Garmin GFP flight plan files. These are text files containing the
+  flight plan after the prefix `FPN/RI:`.
+* Now showing warning dialog on wrong flight plan export options when exporting flight plan.
+* `File` -> `Export Options` are now unchecked for this update since these often cause issues.
+* Changed GPX loading and saving to use millisecond accuracy. Fixed timezone issues when loading and
+  saving GPX. GPX now allows both millisecond and second ISO date. #907
+* Fixed issue with X-Plane FMS flight plan export where wrong airport designator for custom / add-on
+  only airports.
+* Fix for X-Plane FMS export using long airport ids.
+* Fixed issue where using export options resulted in missing waypoint names for pseudo waypoints in
+  X-Plane FMS export. #902
+* Fix for X-Plane FMS export using long airport ids.
+* Fixed issue where altitude was missing in some exported flight plan legs when selecting one of the
+  export options.
+* Corrected PMS50 export path to `Community\pms50-instrument-gtn750\fpl\gtn750`
+* Added separate export option for PMDG MSFS aircraft.
+* Added suffix to airport parking. This is only used by MSFS but still MSFS cannot load its own plans
+  saved with a suffix.
+* Added support for MSFS parking suffix to allow reloading flight plans. Example EDDG, 18A to 18E.
+  MSFS still cannot load parking positions with suffix. Not even its own ones.
+* Changes to Flightgear plan import and export: Waypoints with missing coordinates can now be
+  loaded. Waypoints marked `<type>basic</type>` can now be exported and loaded. Thanks a lot to
+  [colingeniet ](https://github.com/flpduarte) at Github for the fix
+* Fixed import and export to and from SimBrief to use correct notation for SID, STAR and transitions.
+
+### Flight plan route description
+
+* Flight plan route description window is now non-blocking and allows to continue working with the
+  main window while opened. Note that the non-blocking dialog window can be put behind the main window
+  and shows up in the Windows or other task lists.
+* Changes done by clicking `Create Flight Plan` can now be undone in the tab `Flight Plan`.
+* Removed `IFR`/`VFR` selection box. The flight plan type is now taken from the tab `Flight Plan`.
+* Update the description string manually by clicking `Load from Flight Plan` after changing flight
+  plan on the map or by other means.
+* Added separate help area in route description window and removed tooltips. Open or close the help
+  area with the blue help button.
+* Removed `Read Route Description` button in route description window and replaced its functionality with
+  a delayed automatic update. Results update while typing.
+* Added new options to route string dialog: `Write STAR and transition reversed` (format `TRANS.STAR` or
+  `TRANS STAR`) and `Write SID/STAR and transition space separated`.
+* Now reading space separated notation `SID TRANS`, `SID.TRANS` as well as `STAR TRANS`, `TRANS STAR`,
+  `STAR.TRANS` and `TRANS.STAR` in route description.
+
+### Online Flying #761 and #754
+
+* Completely reworked removal of duplicate aircraft (shadow aircraft) coming from simulator and
+  online network. Registration/callsign match function is now replaced by a spatial match. There is
+  no need to have matching registration/callsign values now. This applies to the user aircraft as
+  well as multiplayer aircraft.
+* Added note for simulator and online shadow aircraft in tooltip and information window.
+* Corrected map context menu and display of tooltip/information when using above aircraft. #761 and #552
+* New option in configuration file to disable shadow aircraft: `[Options]`, `OnlineNetworkDisableShadow`.
+* Added dark red online aircraft icons by type for simulator shadow aircraft. Now also showing
+  online helicopter or jet icon for online aircraft shadows.
+* Now showing AI and shadow aircraft labels earlier when zooming into map.
+* Fixed display of online, online shadow and AI aircraft. Disabling AI and online now hides the
+  correct aircraft. Corrected tooltip for online and AI too.
+
+### User Interface
+
+* Fixed issue where tooltips disappeared after a short time when being connected.
+* Swapped `Shift+F11` and `F11` functions. Fullscreen is now `F11` since this is a common shortcut for
+  most applications.
+* Added warning message if using scenery library with not matching simulator in connect dialog.
+* Added save button to aircraft performance merge and edit dialogs.
+* Added indicator for transitions `(T)` in procedure search tab for SID, STAR and approaches.
+  Number of transitions is shown in remarks column.
+* All actions for `None` and `All` in toolbar button dropdown menus can now toggle between states
+  none, all and selected state. Click `All` a second time to revert to the previous selection. #762
+* Now creating `More ...` overflow menu in for userpoint categories if userpoint category menu gets
+  too large.
+* Statistics and route calc windows are now raised or opened for each toolbar click instead of
+  toggled.
+* Fixed crash when entering single quote in airport or navaid ident search field. #901
+* Removed `Delete Aircraft Trail` function from toolbar to avoid accidental deletion. The function
+  can be accessed by shortcut `Alt+Shift+T` or in menu `Map`.
+* Split delete options for user feature types like range rings or measurement lines for all feature
+  types in menu `Map` and `Reset all for a new Flight`.
+* Now decreasing connection rate for long running sessions using autoconnect to avoid loss of
+  internal SimConnect resources. After 30 minutes, an attempt is made to connect every 30 seconds, and
+  after one hour, every minute. Workaround for #891.
+* Option `Center aircraft and next flight plan waypoint` is now disabled on first start since it
+  causes too much confusion for first time users.
+* Removed RNP channel number from flight plan table and other displays where it does not matter.
+* Changed symbol for nautical miles to correct official `NM`.
+* Selected user interface font now applies to menus as well.
+
+### Command Line #431
+
+Start program with the help option (`-h`) from a terminal to see available command line options.
+
+* Added command line option `-f` or `--flight-plan` to load a flight plan file using one of the
+  supported formats (`.lnmpln`, `.pln`, `.fmc` and more).
+* New command line option to load and parse a flight plan route description (`-d` or `--flight-plan-descr`).
+* Aircraft performance file can now be loaded from command line with option `-a` or `--aircraft-perf`.
+* Added option `-p` or `--settings-path` to change full path to settings and databases using an
+  absolute folder or one relative to the installation folder. This allows to put all settings and
+  databases on another drive.
+
+### Logbook
+
+* Added simulator and real travel time to logbook search result table.
+* Added footer line to logbook search which shows summed up values for travel times and distances
+  for selected logbook entries.
+* Now enabling search options which might be hidden after importing X-Plane logbook or using
+  `Show  in Search`.
+* Fixed `show in search` function for logbook entries which used the wrong filter. #592
+* Adapted logbook statistics dialog to use the same behavior as flight plan calculation window.
+
+## Weather
+
+* Added more altitude pressure equivalent layers for GRIB winds aloft download for more accuracy at
+  lower levels: 850 mbar (rounded to 4000 ft), 925 mbar (rounded to 2000 ft).
+* Fixed weather downloader to show error message on empty METAR file for pages not returning a 404 error.
+
+===============================================================================
+
 # Version 2.7.10.develop
 
 ## Notes
