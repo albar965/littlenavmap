@@ -54,7 +54,7 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& routeString
   ui->setupUi(this);
 
   // Styles cascade to children and mess up UI themes on linux - even if widget is selected by name
-#ifndef Q_OS_LINUX
+#if !defined(Q_OS_LINUX) || defined(DEBUG_INFORMATION)
   // Make the splitter handle better visible
   ui->splitterRouteString->setStyleSheet(QString("QSplitter::handle { "
                                                  "background: %1;"
@@ -63,14 +63,15 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& routeString
                                          arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
 #endif
 
-  // Disallow collapsing of the upper view
+  // Disallow collapsing of the upper and middle view
   ui->splitterRouteString->setCollapsible(0, false);
+  ui->splitterRouteString->setCollapsible(1, false);
+
+  // Set tooltips on splitter
   if(ui->splitterRouteString->handle(1) != nullptr)
-  {
-    ui->splitterRouteString->handle(1)->
-    setToolTip(tr("Resize upper and lower part or open and close lower message area of the dialog."));
-    ui->splitterRouteString->handle(1)->setStatusTip(ui->splitterRouteString->handle(1)->toolTip());
-  }
+    ui->splitterRouteString->handle(1)->setToolTip(tr("Resize upper and middle part."));
+  if(ui->splitterRouteString->handle(2) != nullptr)
+    ui->splitterRouteString->handle(2)->setToolTip(tr("Resize, open or close the help area."));
 
   QFont fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
 #if defined(Q_OS_MACOS)
@@ -207,17 +208,15 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& routeString
 
   connect(ui->pushButtonRouteStringFromClipboard, &QPushButton::clicked, this, &RouteStringDialog::fromClipboardClicked);
   connect(ui->pushButtonRouteStringToClipboard, &QPushButton::clicked, this, &RouteStringDialog::toClipboardClicked);
-
   connect(ui->plainTextEditRouteString, &QPlainTextEdit::textChanged, this, &RouteStringDialog::updateButtonState);
   connect(ui->plainTextEditRouteString, &QPlainTextEdit::textChanged, this, &RouteStringDialog::textChanged);
-
   connect(QGuiApplication::clipboard(), &QClipboard::dataChanged, this, &RouteStringDialog::updateButtonState);
-
   connect(ui->buttonBoxRouteString, &QDialogButtonBox::clicked, this, &RouteStringDialog::buttonBoxClicked);
-
   connect(ui->toolButtonRouteStringOptions->menu(), &QMenu::triggered, this, &RouteStringDialog::toolButtonOptionTriggered);
-
   connect(ui->pushButtonRouteStringUpdate, &QPushButton::clicked, this, &RouteStringDialog::updateButtonClicked);
+
+  connect(ui->pushButtonRouteStringShowHelp, &QPushButton::toggled, this, &RouteStringDialog::showHelpButtonToggled);
+  connect(ui->splitterRouteString, &QSplitter::splitterMoved, this, &RouteStringDialog::splitterMoved);
 
   connect(&textUpdateTimer, &QTimer::timeout, this, &RouteStringDialog::textChangedDelayed);
   textUpdateTimer.setSingleShot(true);
@@ -233,11 +232,43 @@ RouteStringDialog::~RouteStringDialog()
   delete flightplan;
 }
 
+void RouteStringDialog::splitterMoved()
+{
+  ui->pushButtonRouteStringShowHelp->blockSignals(true);
+  ui->pushButtonRouteStringShowHelp->setChecked(ui->splitterRouteString->sizes().value(2) > 0);
+  ui->pushButtonRouteStringShowHelp->blockSignals(false);
+}
+
+void RouteStringDialog::showHelpButtonToggled(bool checked)
+{
+  QList<int> sizes = ui->splitterRouteString->sizes();
+  int total = 0;
+  for(int size : sizes)
+    total += size;
+
+  if(sizes.size() == 3)
+  {
+    int topSize = sizes.at(0);
+    if(checked)
+    {
+      // Make space for lower widget and reduce only the size of the middle one - leave upper as is
+      sizes[1] = (total - topSize) / 2;
+      sizes[2] = (total - topSize) / 2;
+    }
+    else
+    {
+      // Enlarge middle widget and collapse lower one
+      sizes[1] = total - topSize;
+      sizes[2] = 0;
+    }
+    ui->splitterRouteString->setSizes(sizes);
+  }
+}
+
 void RouteStringDialog::updateButtonClicked()
 {
   ui->plainTextEditRouteString->setPlainText(routeStringWriter->createStringForRoute(NavApp::getRouteConst(),
-                                                                                     NavApp::getRouteCruiseSpeedKts(),
-                                                                                     options));
+                                                                                     NavApp::getRouteCruiseSpeedKts(), options));
   textChangedDelayed();
 }
 
@@ -269,15 +300,14 @@ const atools::fs::pln::Flightplan& RouteStringDialog::getFlightplan() const
 
 void RouteStringDialog::saveState()
 {
-  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER).save(
-    {this, ui->splitterRouteString, ui->comboBoxRouteStringFlightplanType});
+  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER).save({this, ui->splitterRouteString, ui->comboBoxRouteStringFlightplanType});
   atools::settings::Settings::instance().setValue(lnm::ROUTE_STRING_DIALOG_OPTIONS, static_cast<int>(options));
 }
 
 void RouteStringDialog::restoreState()
 {
-  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER).restore(
-    {this, ui->splitterRouteString, ui->comboBoxRouteStringFlightplanType});
+  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER).restore({this, ui->splitterRouteString,
+                                                                       ui->comboBoxRouteStringFlightplanType});
   ui->splitterRouteString->setHandleWidth(6);
   options = getOptionsFromSettings();
   updateButtonState();
@@ -288,12 +318,13 @@ void RouteStringDialog::restoreState()
                                                                                        options));
   else
     ui->plainTextEditRouteString->setPlainText(routeString);
+
+  splitterMoved();
 }
 
 rs::RouteStringOptions RouteStringDialog::getOptionsFromSettings()
 {
-  return rs::RouteStringOptions(atools::settings::Settings::instance().
-                                valueInt(lnm::ROUTE_STRING_DIALOG_OPTIONS, rs::DEFAULT_OPTIONS));
+  return rs::RouteStringOptions(atools::settings::Settings::instance().valueInt(lnm::ROUTE_STRING_DIALOG_OPTIONS, rs::DEFAULT_OPTIONS));
 }
 
 void RouteStringDialog::textChanged()
@@ -308,22 +339,30 @@ void RouteStringDialog::textChangedDelayed()
 
   flightplan->clear();
 
-  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-  routeStringReader->createRouteFromString(ui->plainTextEditRouteString->toPlainText(), options | rs::REPORT, flightplan, nullptr,
-                                           &speedKts, &altitudeIncluded);
-  QGuiApplication::restoreOverrideCursor();
+  QString string = ui->plainTextEditRouteString->toPlainText();
 
-  // Fill report into widget
-  ui->textEditRouteStringErrors->clear();
-  if(!routeStringReader->getMessages().isEmpty())
+  if(!string.isEmpty())
   {
-    for(const QString& err : routeStringReader->getMessages())
-      ui->textEditRouteStringErrors->append(err + "<br/>");
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    routeStringReader->createRouteFromString(ui->plainTextEditRouteString->toPlainText(), options | rs::REPORT, flightplan, nullptr,
+                                             &speedKts, &altitudeIncluded);
+    QGuiApplication::restoreOverrideCursor();
+
+    // Fill report into widget
+    ui->textEditRouteStringErrors->clear();
+    if(!routeStringReader->getMessages().isEmpty())
+    {
+      for(const QString& err : routeStringReader->getMessages())
+        ui->textEditRouteStringErrors->append(err + "<br/>");
+    }
+
+    // Avoid update issues with macOS and mac style - force repaint
   }
-
-  // Avoid update issues with macOS and mac style - force repaint
-  ui->textEditRouteStringErrors->repaint();
-
+  else
+  {
+    ui->textEditRouteStringErrors->clear();
+    ui->textEditRouteStringErrors->repaint();
+  }
   updateButtonState();
 }
 

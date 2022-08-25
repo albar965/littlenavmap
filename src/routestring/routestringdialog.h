@@ -84,6 +84,8 @@ private:
   void toolButtonOptionTriggered(QAction *action);
   void updateButtonClicked();
   void updateFlightplan();
+  void showHelpButtonToggled(bool checked);
+  void splitterMoved();
 
   Ui::RouteStringDialog *ui;
   atools::fs::pln::Flightplan *flightplan = nullptr;
