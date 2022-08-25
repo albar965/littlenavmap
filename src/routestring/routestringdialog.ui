@@ -32,12 +32,6 @@
       <layout class="QVBoxLayout" name="verticalLayout">
        <item>
         <widget class="QPlainTextEdit" name="plainTextEditRouteString">
-         <property name="sizePolicy">
-          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-           <horstretch>0</horstretch>
-           <verstretch>0</verstretch>
-          </sizepolicy>
-         </property>
          <property name="tabChangesFocus">
           <bool>true</bool>
          </property>
@@ -64,7 +58,7 @@
          <item>
           <widget class="QPushButton" name="pushButtonRouteStringToClipboard">
            <property name="toolTip">
-            <string>Copy the flight plan route description to the clipboard.</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Copy the current flight plan route description to the clipboard.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
             <string>&amp;To Clipboard</string>
@@ -83,41 +77,24 @@
             <string>Paste flight plan route description from clipboard.</string>
            </property>
            <property name="text">
-            <string>&amp;From Clipboard</string>
+            <string>F&amp;rom Clipboard</string>
            </property>
           </widget>
          </item>
          <item>
           <widget class="QPushButton" name="pushButtonRouteStringUpdate">
            <property name="toolTip">
-            <string>Update the string from the current flight plan after option changes.</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Update the route description from the current flight plan after option or other plan changes.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
-            <string>Update from Flight &amp;Plan</string>
+            <string>&amp;Load from Flight Plan</string>
            </property>
-          </widget>
-         </item>
-         <item>
-          <widget class="QComboBox" name="comboBoxRouteStringFlightplanType">
-           <property name="toolTip">
-            <string>Create a VFR (Visual Flight Rules) or IFR (Instrument Flight Rules) flight plan</string>
-           </property>
-           <item>
-            <property name="text">
-             <string>IFR</string>
-            </property>
-           </item>
-           <item>
-            <property name="text">
-             <string>VFR</string>
-            </property>
-           </item>
           </widget>
          </item>
          <item>
           <widget class="QToolButton" name="toolButtonRouteStringOptions">
            <property name="toolTip">
-            <string>Options for generated route string</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Options for reading and writing route description&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
             <string/>
@@ -137,7 +114,7 @@
          <item>
           <widget class="QPushButton" name="pushButtonRouteStringShowHelp">
            <property name="toolTip">
-            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle visibility of help area&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Toggle visibility of help area.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
            </property>
            <property name="text">
             <string/>
@@ -165,6 +142,9 @@
       <property name="tabChangesFocus">
        <bool>true</bool>
       </property>
+      <property name="undoRedoEnabled">
+       <bool>false</bool>
+      </property>
       <property name="textInteractionFlags">
        <set>Qt::TextSelectableByKeyboard|Qt::TextSelectableByMouse</set>
       </property>
@@ -173,6 +153,12 @@
       </property>
      </widget>
      <widget class="QTextEdit" name="textEditSyntaxHelp">
+      <property name="acceptDrops">
+       <bool>false</bool>
+      </property>
+      <property name="undoRedoEnabled">
+       <bool>false</bool>
+      </property>
       <property name="readOnly">
        <bool>true</bool>
       </property>
@@ -186,7 +172,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;FROM&lt;/span&gt; is the required departure airport. &lt;span style=&quot; font-weight:600;&quot;&gt;ETD&lt;/span&gt; is ignored.&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;SPEEDALT&lt;/span&gt; describes flight plan cruise altitude and speed.&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;SIDTRANS&lt;/span&gt; is a SID and an optional transition which can be given as &amp;quot;SID.TRANS&amp;quot; or &amp;quot;SID TRANS&amp;quot;&lt;/p&gt;
-&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;ENROUTE&lt;/span&gt; is a space separated list of navaids, airway/navaid combinations or user defined waypoints as coordinates.&lt;/p&gt;
+&lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;ENROUTE&lt;/span&gt; is a space separated list of navaids, navaid/airway/navaid combinations or user defined waypoints as coordinates.&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;STARTRANS&lt;/span&gt; is a STAR and an optional transition which can be given as &amp;quot;STAR.TRANS&amp;quot;, &amp;quot;STAR TRANS&amp;quot;, &amp;quot;TRANS.STAR&amp;quot; or &amp;quot;TRANS STAR &amp;quot;&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;TO&lt;/span&gt; is the required destination airport. &lt;span style=&quot; font-weight:600;&quot;&gt;ETA&lt;/span&gt; is ignored.&lt;/p&gt;
 &lt;p style=&quot; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px;&quot;&gt;&lt;span style=&quot; font-weight:600;&quot;&gt;ALTERNATES&lt;/span&gt; is a list of alternate or enroute airports depending on selected option.&lt;/p&gt;
@@ -201,7 +187,7 @@ p, li { white-space: pre-wrap; }
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
-      <set>QDialogButtonBox::Close|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Close|QDialogButtonBox::Help|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
@@ -211,7 +197,6 @@ p, li { white-space: pre-wrap; }
   <tabstop>pushButtonRouteStringToClipboard</tabstop>
   <tabstop>pushButtonRouteStringFromClipboard</tabstop>
   <tabstop>pushButtonRouteStringUpdate</tabstop>
-  <tabstop>comboBoxRouteStringFlightplanType</tabstop>
   <tabstop>toolButtonRouteStringOptions</tabstop>
  </tabstops>
  <resources>

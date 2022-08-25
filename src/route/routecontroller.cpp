@@ -1044,7 +1044,7 @@ void RouteController::getSelectedRouteLegs(QList<int>& selLegIndexes) const
 void RouteController::newFlightplan()
 {
   qDebug() << "newFlightplan";
-  clearRoute();
+  clearRouteAndUndo();
 
   clearAllErrors();
 
@@ -1068,7 +1068,7 @@ void RouteController::newFlightplan()
 }
 
 void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format,
-                                     const QString& filename, bool changed, bool adjustAltitude)
+                                     const QString& filename, bool changed, bool adjustAltitude, bool undo)
 {
   qDebug() << Q_FUNC_INFO << filename;
 
@@ -1077,6 +1077,10 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 #endif
 
   clearAllErrors();
+
+  RouteCommand *undoCommand = nullptr;
+  if(undo)
+    undoCommand = preChange(tr("Flight Plan Changed"));
 
   if(format == atools::fs::pln::FLP || format == atools::fs::pln::GARMIN_GFP)
   {
@@ -1135,12 +1139,23 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
       adjustAltitude = true; // Change altitude based on airways later
   }
 
-  clearRoute();
+  if(undo)
+    // Do not clear undo flags - only replace plan and allow undo/redo
+    clearRoute();
+  else
+    // Clear everything for a new plan
+    clearRouteAndUndo();
+
+  // Update
+  if(flightplan.getFlightplanType() == atools::fs::pln::NO_TYPE)
+    flightplan.setFlightplanType(NavApp::getMainUi()->comboBoxRouteType->currentIndex() == 0 ?
+                                 atools::fs::pln::IFR : atools::fs::pln::VFR);
 
   if(changed)
     undoIndexClean = -1;
 
-  routeFilename = filename;
+  if(!undo)
+    routeFilename = filename;
 
   // FSX and P3D use this field for helipad or runway numbers where the latter one is zero prefixed.
   // MSFS has no helipad number and we need a zero prefix added to the runway number to allow database queries
@@ -1186,6 +1201,9 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << route;
 #endif
+
+  if(undoCommand != nullptr)
+    postChange(undoCommand);
 
   emit routeChanged(true /* geometry changed */, true /* new flight plan */);
 }
@@ -1270,7 +1288,7 @@ bool RouteController::loadFlightplanLnmStr(const QString& string)
     // Convert altitude to local unit
     fp.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(fp.getCruisingAltitude())));
 
-    loadFlightplan(fp, atools::fs::pln::LNM_PLN, QString(), false /*changed*/, false /*adjust alt*/);
+    loadFlightplan(fp, atools::fs::pln::LNM_PLN, QString(), false /*changed*/, false /* adjustAltitude */, false /* undo */);
   }
   catch(atools::Exception& e)
   {
@@ -1301,7 +1319,7 @@ void RouteController::loadFlightplanRouteStr(const QString& routeString)
 
   // Use settings from dialog
   if(reader.createRouteFromString(routeString, RouteStringDialog::getOptionsFromSettings(), &fp, nullptr, nullptr, &altIncluded))
-    loadFlightplan(fp, atools::fs::pln::LNM_PLN, QString(), false /* changed */, !altIncluded /* adjustAltitude */);
+    loadFlightplan(fp, atools::fs::pln::LNM_PLN, QString(), false /* changed */, !altIncluded /* adjustAltitude */, false /* undo */);
 
   if(reader.hasErrorMessages() || reader.hasWarningMessages())
     QMessageBox::warning(mainWindow, QApplication::applicationName(),
@@ -1334,7 +1352,7 @@ bool RouteController::loadFlightplan(const QString& filename)
       // Convert altitude to local unit
       fp.setCruisingAltitude(atools::roundToInt(Unit::altFeetF(fp.getCruisingAltitude())));
 
-    loadFlightplan(fp, format, filename, false /*changed*/, false /*adjust alt*/);
+    loadFlightplan(fp, format, filename, false /*changed*/, false /* adjustAltitude */, false /* undo */);
   }
   catch(atools::Exception& e)
   {
@@ -4233,8 +4251,7 @@ void RouteController::updateFlightplanFromWidgets()
 void RouteController::updateFlightplanFromWidgets(Flightplan& flightplan)
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-  flightplan.setFlightplanType(ui->comboBoxRouteType->currentIndex() ==
-                               0 ? atools::fs::pln::IFR : atools::fs::pln::VFR);
+  flightplan.setFlightplanType(ui->comboBoxRouteType->currentIndex() == 0 ? atools::fs::pln::IFR : atools::fs::pln::VFR);
   flightplan.setCruisingAltitude(ui->spinBoxRouteAlt->value());
 }
 
@@ -5041,8 +5058,7 @@ void RouteController::flightplanLabelLinkActivated(const QString& link)
   }
 }
 
-/* Reset route and clear undo stack (new route) */
-void RouteController::clearRoute()
+void RouteController::clearRouteAndUndo()
 {
   route.clearAll();
   routeFilename.clear();
@@ -5053,6 +5069,14 @@ void RouteController::clearRoute()
   undoStack->clear();
   undoIndex = 0;
   undoIndexClean = 0;
+  entryBuilder->setCurUserpointNumber(1);
+  updateFlightplanFromWidgets();
+}
+
+/* Reset route and clear undo stack (new route) */
+void RouteController::clearRoute()
+{
+  route.clearAll();
   entryBuilder->setCurUserpointNumber(1);
   updateFlightplanFromWidgets();
 }

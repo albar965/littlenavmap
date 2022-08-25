@@ -30,6 +30,7 @@
 class ConnectClient;
 class DatabaseManager;
 class InfoController;
+class MapThemeHandler;
 class OptionsDialog;
 class PrintSupport;
 class ProcedureSearch;
@@ -41,12 +42,12 @@ class QToolButton;
 class Route;
 class RouteController;
 class RouteExport;
+class RouteStringDialog;
 class SearchBaseTable;
 class SearchController;
+class SimBriefHandler;
 class WeatherReporter;
 class WindReporter;
-class SimBriefHandler;
-class MapThemeHandler;
 
 namespace Marble {
 class LegendWidget;
@@ -230,10 +231,10 @@ public:
   void exitFullScreenPressed();
 
   /* Called from SimBrief handler to open route string dialog */
-  void routeFromString(const QString& routeString);
+  void routeFromStringSimBrief(const QString& routeString);
 
-  /* Called from SimBrief handler to create new plan */
-  void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude);
+  /* Called from SimBrief handler or non-modal route string dialog to create new plan */
+  void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo);
 
   MapThemeHandler *getMapThemeHandler() const
   {
@@ -331,9 +332,6 @@ private:
 
   /* New flight plan from opening route string dialog using current plan for prefill */
   void routeFromStringCurrent();
-
-  /* New flight plan from opening route string dialog using given plan for prefill */
-  void routeFromStringInternal(const QString& routeString);
 
   void routeOpen();
   void routeOpenFile(QString filepath);
@@ -510,6 +508,7 @@ private:
   RouteExport *routeExport = nullptr;
   SimBriefHandler *simbriefHandler = nullptr;
   MapThemeHandler *mapThemeHandler = nullptr;
+  RouteStringDialog *routeStringDialog = nullptr;
 
   /* Action  groups for main menu */
   QActionGroup *actionGroupMapProjection = nullptr, *actionGroupMapSunShading = nullptr,

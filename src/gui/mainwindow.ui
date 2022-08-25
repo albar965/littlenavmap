@@ -7709,7 +7709,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/network.svg</normaloff>:/littlenavmap/resources/icons/network.svg</iconset>
    </property>
    <property name="text">
-    <string>Flight Simulator &amp;Connection ...</string>
+    <string>&amp;Connect to Flight Simulator ...</string>
    </property>
    <property name="toolTip">
     <string>Connect to or disconnect from simulator via Little Navconnect on another computer or directly to a simulator on the same computer</string>

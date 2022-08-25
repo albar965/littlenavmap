@@ -471,6 +471,9 @@ MainWindow::~MainWindow()
   // Close all queries
   preDatabaseLoad();
 
+  qDebug() << Q_FUNC_INFO << "delete routeStringDialog";
+  NavApp::removeDialogFromDockHandler(routeStringDialog);
+  delete routeStringDialog;
   qDebug() << Q_FUNC_INFO << "delete routeController";
   delete routeController;
   qDebug() << Q_FUNC_INFO << "delete searchController";
@@ -2064,40 +2067,61 @@ bool MainWindow::routeCheckForChanges()
   return false;
 }
 
-/* Open a dialog that allows to create a new route from a string */
 void MainWindow::routeFromStringCurrent()
 {
-  routeFromStringInternal(QString());
-}
-
-void MainWindow::routeFromString(const QString& routeString)
-{
-  routeFromStringInternal(routeString);
-}
-
-void MainWindow::routeFromStringInternal(const QString& routeString)
-{
+  // Open or raises a dialog that allows to create a new route from a string
   qDebug() << Q_FUNC_INFO;
-  RouteStringDialog routeStringDialog(this, routeString);
-  routeStringDialog.restoreState();
 
-  if(routeStringDialog.exec() == QDialog::Accepted)
+  // Create dialog on demand the first call
+  if(routeStringDialog == nullptr)
   {
-    if(!routeStringDialog.getFlightplan().isEmpty())
-      routeFromFlightplan(routeStringDialog.getFlightplan(), !routeStringDialog.isAltitudeIncluded() /* adjustAltitude */);
+    routeStringDialog = new RouteStringDialog(nullptr, QString());
+
+    // Pass empty string to load last content
+    routeStringDialog->restoreState(QString());
+
+    // Add to dock handler to enable auto raise and closing on exit
+    NavApp::addDialogToDockHandler(routeStringDialog);
+
+    // Connect signals from and to non-modal dialog
+    connect(routeStringDialog, &RouteStringDialog::routeFromFlightplan, this, &MainWindow::routeFromFlightplan);
+    connect(routeController, &RouteController::routeChanged, routeStringDialog, &RouteStringDialog::updateButtonState);
+  }
+
+  routeStringDialog->show();
+  routeStringDialog->activateWindow();
+  routeStringDialog->raise();
+}
+
+void MainWindow::routeFromStringSimBrief(const QString& routeString)
+{
+  // Create a new modal dialog which allows to edit the route string
+  qDebug() << Q_FUNC_INFO << routeString;
+  RouteStringDialog routeStrDialog(this, "SimBrief");
+
+  // Pass string to avoid loading of the last content
+  routeStrDialog.restoreState(routeString);
+
+  if(routeStrDialog.exec() == QDialog::Accepted)
+  {
+    if(!routeStrDialog.getFlightplan().isEmpty())
+      // Load plan and mark it as changed - do not use undo stack
+      routeFromFlightplan(routeStrDialog.getFlightplan(), !routeStrDialog.isAltitudeIncluded() /* adjustAltitude */,
+                          true /* changed */, false /* undo */);
     else
       qWarning() << "Flight plan is null";
   }
-  routeStringDialog.saveState();
+  routeStrDialog.saveState();
 }
 
-void MainWindow::routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude)
+void MainWindow::routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo)
 {
   qDebug() << Q_FUNC_INFO;
 
-  if(routeCheckForChanges())
+  // Check for changes and show question dialog unless undo stack is used
+  if(undo || routeCheckForChanges())
   {
-    routeController->loadFlightplan(flightplan, atools::fs::pln::LNM_PLN, QString(), true /*changed*/, adjustAltitude);
+    routeController->loadFlightplan(flightplan, atools::fs::pln::LNM_PLN, QString(), changed, adjustAltitude, undo);
     if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE)
       routeCenter();
     showFlightPlan();
@@ -3831,6 +3855,10 @@ void MainWindow::saveStateMain()
     qDebug() << Q_FUNC_INFO << "infoController";
     if(infoController != nullptr)
       infoController->saveState();
+
+    qDebug() << Q_FUNC_INFO << "routeStringDialog";
+    if(routeStringDialog != nullptr)
+      routeStringDialog->saveState();
 
     saveFileHistoryStates();
 

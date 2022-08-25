@@ -48,7 +48,7 @@ class RouteStringDialog :
   Q_OBJECT
 
 public:
-  explicit RouteStringDialog(QWidget *parent, const QString& routeStringParam);
+  explicit RouteStringDialog(QWidget *parent, const QString& settingsSuffixParam);
   virtual ~RouteStringDialog() override;
 
   RouteStringDialog(const RouteStringDialog& other) = delete;
@@ -56,9 +56,17 @@ public:
 
   const atools::fs::pln::Flightplan& getFlightplan() const;
 
-  /* Saves and restores all values */
+  /* Saves dialog and menu action states */
+  void saveStateWidget();
+
+  /* Saves route string */
   void saveState();
-  void restoreState();
+
+  /* Restores last route string if "routeString" is empty */
+  void restoreState(const QString& routeString);
+
+  /* Update buttons depending on route state */
+  void updateButtonState();
 
   /* > 0 if speed was included in the string */
   float getSpeedKts() const
@@ -72,7 +80,12 @@ public:
     return altitudeIncluded;
   }
 
+  /* Get options from default non-modal dialog */
   static rs::RouteStringOptions getOptionsFromSettings();
+
+signals:
+  /* Emitted when user clicks "Create flight plan" */
+  void routeFromFlightplan(const atools::fs::pln::Flightplan& flightplan, bool adjustAltitude, bool changed, bool undo);
 
 private:
   void textChanged();
@@ -80,12 +93,14 @@ private:
   void fromClipboardClicked();
   void toClipboardClicked();
   void buttonBoxClicked(QAbstractButton *button);
-  void updateButtonState();
   void toolButtonOptionTriggered(QAction *action);
   void updateButtonClicked();
-  void updateFlightplan();
   void showHelpButtonToggled(bool checked);
   void splitterMoved();
+  void buildButtonMenu();
+
+  /* Updates text edit and starts parser without delay */
+  void plainTextEditRouteStringSet(const QString& text);
 
   Ui::RouteStringDialog *ui;
   atools::fs::pln::Flightplan *flightplan = nullptr;
@@ -94,15 +109,20 @@ private:
   RouteStringWriter *routeStringWriter;
   RouteStringReader *routeStringReader;
   QActionGroup *procActionGroup;
-
-  QString routeString;
-
   QTimer textUpdateTimer;
 
   float speedKts = 0.f;
   bool altitudeIncluded = false, updatingActions = false;
   rs::RouteStringOptions options = rs::DEFAULT_OPTIONS;
 
+  // Save different settings depending on suffix
+  QString settingsSuffix;
+
+  // non-blocking if parent is null
+  bool nonModal = false;
+
+  // Notify RouteStringDialog::textChanged() to a direct update instead of a delayed one
+  bool immediateUpdate = false;
 };
 
 #endif // LITTLENAVMAP_ROUTESTRINGDIALOG_H

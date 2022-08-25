@@ -120,6 +120,6 @@ void SimBriefHandler::fetchRouteFromSimBrief()
 
   FetchRouteDialog dialog(mainWindow);
   connect(&dialog, &FetchRouteDialog::routeNewFromFlightplan, mainWindow, &MainWindow::routeFromFlightplan);
-  connect(&dialog, &FetchRouteDialog::routeNewFromString, mainWindow, &MainWindow::routeFromString);
+  connect(&dialog, &FetchRouteDialog::routeNewFromString, mainWindow, &MainWindow::routeFromStringSimBrief);
   dialog.exec();
 }

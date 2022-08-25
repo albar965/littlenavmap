@@ -89,7 +89,7 @@ public:
    * and emits routeChanged. Uses file name as new current name  */
   bool loadFlightplan(const QString& filename);
   void loadFlightplan(atools::fs::pln::Flightplan flightplan, atools::fs::pln::FileFormat format,
-                      const QString& filename, bool changed, bool adjustAltitude);
+                      const QString& filename, bool changed, bool adjustAltitude, bool undo);
 
   /* Load the plan from a string in LNMPLN format */
   bool loadFlightplanLnmStr(const QString& string);
@@ -403,6 +403,8 @@ private:
 
   void routeTypeChanged();
 
+  /* Reset route and clear undo stack (new route) */
+  void clearRouteAndUndo();
   void clearRoute();
 
   /* Calculate flight plan pressed in dock window */

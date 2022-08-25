@@ -17,41 +17,44 @@
 
 #include "routestring/routestringdialog.h"
 
-#include "routestring/routestringwriter.h"
-#include "routestring/routestringreader.h"
-#include "navapp.h"
-#include "settings/settings.h"
-#include "query/procedurequery.h"
-#include "query/airportquery.h"
-#include "route/routecontroller.h"
-#include "fs/pln/flightplan.h"
+#include "common/constants.h"
 #include "gui/helphandler.h"
 #include "gui/widgetstate.h"
-#include "common/constants.h"
-#include "common/unit.h"
-#include "atools.h"
+#include "gui/widgetutil.h"
+#include "navapp.h"
+#include "route/routecontroller.h"
+#include "routestring/routestringreader.h"
+#include "routestring/routestringwriter.h"
+#include "settings/settings.h"
 
 #include "ui_routestringdialog.h"
 
 #include <QClipboard>
-#include <QAction>
 #include <QMenu>
 #include <QButtonGroup>
+#include <QScrollBar>
 
 const static int TEXT_CHANGE_DELAY_MS = 500;
 
 using atools::gui::HelpHandler;
 namespace apln = atools::fs::pln;
 
-RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& routeStringParam)
-  : QDialog(parent), ui(new Ui::RouteStringDialog), routeString(routeStringParam)
+RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuffixParam)
+  : QDialog(parent), ui(new Ui::RouteStringDialog), settingsSuffix(settingsSuffixParam)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
-  setWindowModality(Qt::ApplicationModal);
+
+  nonModal = parent == nullptr;
+
+  // Use non-modal if parent is not given
+  setWindowModality(nonModal ? Qt::NonModal : Qt::ApplicationModal);
 
   controller = NavApp::getRouteController();
 
   ui->setupUi(this);
+
+  // Copy main menu actions to allow using shortcuts in the non-modal dialog too
+  addActions(NavApp::getMainWindowActions());
 
   // Styles cascade to children and mess up UI themes on linux - even if widget is selected by name
 #if !defined(Q_OS_LINUX) || defined(DEBUG_INFORMATION)
@@ -80,12 +83,53 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& routeString
   ui->plainTextEditRouteString->setFont(fixedFont);
   ui->plainTextEditRouteString->setWordWrapMode(QTextOption::WrapAnywhere);
 
-  ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setText(tr("Create Flight &Plan"));
+  ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setText(tr("Create &Flight Plan"));
+
+  // Non-modal dialog has a close button and modal dialog a cancel button
+  if(parent == nullptr)
+    ui->buttonBoxRouteString->button(QDialogButtonBox::Cancel)->hide();
+  else
+    ui->buttonBoxRouteString->button(QDialogButtonBox::Close)->hide();
+
+  ui->pushButtonRouteStringFromClipboard->setVisible(parent == nullptr);
+  ui->pushButtonRouteStringUpdate->setVisible(parent == nullptr);
 
   flightplan = new apln::Flightplan;
+  flightplan->setFlightplanType(atools::fs::pln::NO_TYPE); // Set type to none to take it from GUI when creating plan
+
   routeStringWriter = new RouteStringWriter();
   routeStringReader = new RouteStringReader(controller->getFlightplanEntryBuilder());
 
+  buildButtonMenu();
+
+  connect(ui->pushButtonRouteStringFromClipboard, &QPushButton::clicked, this, &RouteStringDialog::fromClipboardClicked);
+  connect(ui->pushButtonRouteStringToClipboard, &QPushButton::clicked, this, &RouteStringDialog::toClipboardClicked);
+  connect(ui->plainTextEditRouteString, &QPlainTextEdit::textChanged, this, &RouteStringDialog::updateButtonState);
+  connect(ui->plainTextEditRouteString, &QPlainTextEdit::textChanged, this, &RouteStringDialog::textChanged);
+  connect(QGuiApplication::clipboard(), &QClipboard::dataChanged, this, &RouteStringDialog::updateButtonState);
+  connect(ui->buttonBoxRouteString, &QDialogButtonBox::clicked, this, &RouteStringDialog::buttonBoxClicked);
+  connect(ui->toolButtonRouteStringOptions->menu(), &QMenu::triggered, this, &RouteStringDialog::toolButtonOptionTriggered);
+  connect(ui->pushButtonRouteStringUpdate, &QPushButton::clicked, this, &RouteStringDialog::updateButtonClicked);
+
+  connect(ui->pushButtonRouteStringShowHelp, &QPushButton::toggled, this, &RouteStringDialog::showHelpButtonToggled);
+  connect(ui->splitterRouteString, &QSplitter::splitterMoved, this, &RouteStringDialog::splitterMoved);
+
+  connect(&textUpdateTimer, &QTimer::timeout, this, &RouteStringDialog::textChangedDelayed);
+  textUpdateTimer.setSingleShot(true);
+}
+
+RouteStringDialog::~RouteStringDialog()
+{
+  textUpdateTimer.stop();
+  delete routeStringWriter;
+  delete routeStringReader;
+  delete procActionGroup;
+  delete ui;
+  delete flightplan;
+}
+
+void RouteStringDialog::buildButtonMenu()
+{
   // Build options dropdown menu ====================================================
   // Add tear off menu =======
   ui->toolButtonRouteStringOptions->setMenu(new QMenu(ui->toolButtonRouteStringOptions));
@@ -205,31 +249,6 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& routeString
   action->setCheckable(true);
   action->setData(static_cast<int>(rs::READ_MATCH_WAYPOINTS));
   buttonMenu->addAction(action);
-
-  connect(ui->pushButtonRouteStringFromClipboard, &QPushButton::clicked, this, &RouteStringDialog::fromClipboardClicked);
-  connect(ui->pushButtonRouteStringToClipboard, &QPushButton::clicked, this, &RouteStringDialog::toClipboardClicked);
-  connect(ui->plainTextEditRouteString, &QPlainTextEdit::textChanged, this, &RouteStringDialog::updateButtonState);
-  connect(ui->plainTextEditRouteString, &QPlainTextEdit::textChanged, this, &RouteStringDialog::textChanged);
-  connect(QGuiApplication::clipboard(), &QClipboard::dataChanged, this, &RouteStringDialog::updateButtonState);
-  connect(ui->buttonBoxRouteString, &QDialogButtonBox::clicked, this, &RouteStringDialog::buttonBoxClicked);
-  connect(ui->toolButtonRouteStringOptions->menu(), &QMenu::triggered, this, &RouteStringDialog::toolButtonOptionTriggered);
-  connect(ui->pushButtonRouteStringUpdate, &QPushButton::clicked, this, &RouteStringDialog::updateButtonClicked);
-
-  connect(ui->pushButtonRouteStringShowHelp, &QPushButton::toggled, this, &RouteStringDialog::showHelpButtonToggled);
-  connect(ui->splitterRouteString, &QSplitter::splitterMoved, this, &RouteStringDialog::splitterMoved);
-
-  connect(&textUpdateTimer, &QTimer::timeout, this, &RouteStringDialog::textChangedDelayed);
-  textUpdateTimer.setSingleShot(true);
-}
-
-RouteStringDialog::~RouteStringDialog()
-{
-  textUpdateTimer.stop();
-  delete routeStringWriter;
-  delete routeStringReader;
-  delete procActionGroup;
-  delete ui;
-  delete flightplan;
 }
 
 void RouteStringDialog::splitterMoved()
@@ -262,14 +281,16 @@ void RouteStringDialog::showHelpButtonToggled(bool checked)
       sizes[2] = 0;
     }
     ui->splitterRouteString->setSizes(sizes);
+
+    if(checked)
+      // Scroll to top
+      ui->textEditSyntaxHelp->verticalScrollBar()->setValue(0);
   }
 }
 
 void RouteStringDialog::updateButtonClicked()
 {
-  ui->plainTextEditRouteString->setPlainText(routeStringWriter->createStringForRoute(NavApp::getRouteConst(),
-                                                                                     NavApp::getRouteCruiseSpeedKts(), options));
-  textChangedDelayed();
+  plainTextEditRouteStringSet(routeStringWriter->createStringForRoute(NavApp::getRouteConst(), NavApp::getRouteCruiseSpeedKts(), options));
 }
 
 void RouteStringDialog::toolButtonOptionTriggered(QAction *action)
@@ -300,24 +321,30 @@ const atools::fs::pln::Flightplan& RouteStringDialog::getFlightplan() const
 
 void RouteStringDialog::saveState()
 {
-  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER).save({this, ui->splitterRouteString, ui->comboBoxRouteStringFlightplanType});
-  atools::settings::Settings::instance().setValue(lnm::ROUTE_STRING_DIALOG_OPTIONS, static_cast<int>(options));
+  saveStateWidget();
+  atools::settings::Settings::instance().setValue(lnm::ROUTE_STRING_DIALOG_DESCR + settingsSuffix,
+                                                  ui->plainTextEditRouteString->toPlainText());
 }
 
-void RouteStringDialog::restoreState()
+void RouteStringDialog::saveStateWidget()
 {
-  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER).restore({this, ui->splitterRouteString,
-                                                                       ui->comboBoxRouteStringFlightplanType});
+  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER + settingsSuffix).save({this, ui->splitterRouteString});
+  atools::settings::Settings::instance().setValue(lnm::ROUTE_STRING_DIALOG_OPTIONS + settingsSuffix, static_cast<int>(options));
+}
+
+void RouteStringDialog::restoreState(const QString& routeString)
+{
+  atools::gui::WidgetState(lnm::ROUTE_STRING_DIALOG_SPLITTER + settingsSuffix).restore({this, ui->splitterRouteString});
   ui->splitterRouteString->setHandleWidth(6);
   options = getOptionsFromSettings();
   updateButtonState();
 
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
   if(routeString.isEmpty())
-    ui->plainTextEditRouteString->setPlainText(routeStringWriter->createStringForRoute(NavApp::getRouteConst(),
-                                                                                       NavApp::getRouteCruiseSpeedKts(),
-                                                                                       options));
+    // Load from settings
+    plainTextEditRouteStringSet(settings.valueStr(lnm::ROUTE_STRING_DIALOG_DESCR + settingsSuffix));
   else
-    ui->plainTextEditRouteString->setPlainText(routeString);
+    plainTextEditRouteStringSet(routeString);
 
   splitterMoved();
 }
@@ -329,8 +356,16 @@ rs::RouteStringOptions RouteStringDialog::getOptionsFromSettings()
 
 void RouteStringDialog::textChanged()
 {
-  // Calls RouteStringDialog::textChangedDelayed()
-  textUpdateTimer.start(TEXT_CHANGE_DELAY_MS);
+  if(immediateUpdate)
+  {
+    // Update without delay timer
+    textUpdateTimer.stop();
+    immediateUpdate = false;
+    textChangedDelayed();
+  }
+  else
+    // Calls RouteStringDialog::textChangedDelayed()
+    textUpdateTimer.start(TEXT_CHANGE_DELAY_MS);
 }
 
 void RouteStringDialog::textChangedDelayed()
@@ -338,10 +373,10 @@ void RouteStringDialog::textChangedDelayed()
   qDebug() << Q_FUNC_INFO;
 
   flightplan->clear();
+  flightplan->setFlightplanType(atools::fs::pln::NO_TYPE); // Set type to none to take it from GUI when creating plan
 
-  QString string = ui->plainTextEditRouteString->toPlainText();
-
-  if(!string.isEmpty())
+  QString errorString;
+  if(!ui->plainTextEditRouteString->toPlainText().isEmpty())
   {
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
     routeStringReader->createRouteFromString(ui->plainTextEditRouteString->toPlainText(), options | rs::REPORT, flightplan, nullptr,
@@ -349,27 +384,19 @@ void RouteStringDialog::textChangedDelayed()
     QGuiApplication::restoreOverrideCursor();
 
     // Fill report into widget
-    ui->textEditRouteStringErrors->clear();
-    if(!routeStringReader->getMessages().isEmpty())
-    {
-      for(const QString& err : routeStringReader->getMessages())
-        ui->textEditRouteStringErrors->append(err + "<br/>");
-    }
+    errorString.append(routeStringReader->getMessages().join("<br/>"));
+  }
 
-    // Avoid update issues with macOS and mac style - force repaint
-  }
-  else
-  {
-    ui->textEditRouteStringErrors->clear();
-    ui->textEditRouteStringErrors->repaint();
-  }
+  atools::gui::util::updateTextEdit(ui->textEditRouteStringErrors, errorString, false /* scrollToTop */, true /* keepSelection */);
+
+  // Avoid update issues with macOS and mac style - force repaint
+  ui->textEditRouteStringErrors->repaint();
   updateButtonState();
 }
 
 void RouteStringDialog::fromClipboardClicked()
 {
-  ui->plainTextEditRouteString->setPlainText(rs::cleanRouteString(QGuiApplication::clipboard()->text()).join(" "));
-  textChangedDelayed();
+  plainTextEditRouteStringSet(rs::cleanRouteString(QGuiApplication::clipboard()->text()).join(" "));
 }
 
 void RouteStringDialog::toClipboardClicked()
@@ -377,40 +404,54 @@ void RouteStringDialog::toClipboardClicked()
   QGuiApplication::clipboard()->setText(ui->plainTextEditRouteString->toPlainText());
 }
 
-void RouteStringDialog::updateFlightplan()
-{
-  // Update type from current combox box setting
-  // Low / high altitude is set later when resolving the airways
-
-  if(ui->comboBoxRouteStringFlightplanType->currentIndex() == 0)
-    flightplan->setFlightplanType(apln::IFR);
-  else
-    flightplan->setFlightplanType(apln::VFR);
-}
-
 /* A button box button was clicked */
 void RouteStringDialog::buttonBoxClicked(QAbstractButton *button)
 {
   if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Ok))
   {
-    updateFlightplan();
-    QDialog::accept();
+    if(nonModal)
+      // Create a new flight plan and use undo/redo - keep non-modal dialog open - do not mark plan as changed
+      emit routeFromFlightplan(*flightplan, isAltitudeIncluded(), false /* changed */, true /* undo */);
+    else
+      // Return QDialog::Accepted and close
+      QDialog::accept();
   }
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Help))
-    HelpHandler::openHelpUrlWeb(parentWidget(), lnm::helpOnlineUrl + "ROUTEDESCR.html", lnm::helpLanguageOnline());
-  else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Close))
+    HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "ROUTEDESCR.html", lnm::helpLanguageOnline());
+  else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Close) ||
+          button == ui->buttonBoxRouteString->button(QDialogButtonBox::Cancel))
     QDialog::reject();
+}
+
+void RouteStringDialog::plainTextEditRouteStringSet(const QString& text)
+{
+  QTextDocument *doc = ui->plainTextEditRouteString->document();
+
+  if(doc != nullptr)
+  {
+    // Do not delay update in RouteStringDialog::textChanged()
+    immediateUpdate = true;
+
+    // Remember cursor position
+    QCursor currentCursor = ui->plainTextEditRouteString->cursor();
+
+    // Select whole document and replace text - this keeps the undo stack
+    QTextCursor cursor(doc);
+    cursor.beginEditBlock();
+    cursor.select(QTextCursor::Document);
+    cursor.insertText(text);
+    cursor.endEditBlock();
+
+    // Restore cursor position
+    ui->plainTextEditRouteString->setCursor(currentCursor);
+  }
 }
 
 void RouteStringDialog::updateButtonState()
 {
-
   ui->pushButtonRouteStringUpdate->setEnabled(!NavApp::getRouteConst().isEmpty());
-
   ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setDisabled(flightplan->getEntries().isEmpty());
-
   ui->pushButtonRouteStringToClipboard->setDisabled(ui->plainTextEditRouteString->toPlainText().isEmpty());
-
   ui->pushButtonRouteStringFromClipboard->setDisabled(QGuiApplication::clipboard()->text().simplified().isEmpty());
 
   // Copy option flags to dropdown menu items
