@@ -53,6 +53,20 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
 
   ui->setupUi(this);
 
+  // Need to set text programatically since Qt Designer add garbage which messes up formatting on other platforms
+  ui->textEditSyntaxHelp->setText(
+    "<p><b>Format is: FROM[ETD] [SPEEDALT] [SIDTRANS] [ENROUTE] [STARTRANS] TO[ETA] [ALTERNATES]</b><br/>"
+    "<b>Fields enclosed with &quot;[]&quot; are optional.</b><br/>"
+    "<b>FROM</b> is the required departure airport. <b>ETD</b> is ignored.<br/>"
+    "<b>SPEEDALT</b> describes flight plan cruise altitude and speed. See manual for format details.<br/>"
+    "<b>SIDTRANS</b> is a SID and an optional transition which can be given as &quot;SID.TRANS&quot; or &quot;SID TRANS&quot;<br/>"
+    "<b>ENROUTE</b> is a space separated list of navaids, navaid/airway/navaid combinations or user defined waypoints as coordinates.<br/>"
+    "<b>STARTRANS</b> is a STAR and an optional transition which can be given as &quot;STAR.TRANS&quot;, "
+      "&quot;STAR TRANS&quot;, &quot;TRANS.STAR&quot; or &quot;TRANS STAR &quot;<br/>"
+      "<b>TO</b> is the required destination airport. <b>ETA</b> is ignored.<br/>"
+      "<b>ALTERNATES</b> is a list of alternate or enroute airports depending on selected option.<br/>"
+      "<b>Press the help button to open the online manual for more information.</b></p>");
+
   // Copy main menu actions to allow using shortcuts in the non-modal dialog too
   addActions(NavApp::getMainWindowActions());
 
