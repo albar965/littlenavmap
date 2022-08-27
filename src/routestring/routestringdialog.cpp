@@ -55,17 +55,18 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
 
   // Need to set text programatically since Qt Designer add garbage which messes up formatting on other platforms
   ui->textEditSyntaxHelp->setText(
-    "<p><b>Format is: FROM[ETD] [SPEEDALT] [SIDTRANS] [ENROUTE] [STARTRANS] TO[ETA] [ALTERNATES]</b><br/>"
-    "<b>Fields enclosed with &quot;[]&quot; are optional.</b><br/>"
-    "<b>FROM</b> is the required departure airport. <b>ETD</b> is ignored.<br/>"
-    "<b>SPEEDALT</b> describes flight plan cruise altitude and speed. See manual for format details.<br/>"
-    "<b>SIDTRANS</b> is a SID and an optional transition which can be given as &quot;SID.TRANS&quot; or &quot;SID TRANS&quot;<br/>"
-    "<b>ENROUTE</b> is a space separated list of navaids, navaid/airway/navaid combinations or user defined waypoints as coordinates.<br/>"
-    "<b>STARTRANS</b> is a STAR and an optional transition which can be given as &quot;STAR.TRANS&quot;, "
-      "&quot;STAR TRANS&quot;, &quot;TRANS.STAR&quot; or &quot;TRANS STAR &quot;<br/>"
-      "<b>TO</b> is the required destination airport. <b>ETA</b> is ignored.<br/>"
-      "<b>ALTERNATES</b> is a list of alternate or enroute airports depending on selected option.<br/>"
-      "<b>Press the help button to open the online manual for more information.</b></p>");
+    "<p><b>Quick Help</b><br/>"
+      "<b>Format:</b> FROM[ETD] [SPEEDALT] [SIDTRANS] [ENROUTE] [STARTRANS] TO[ETA] [ALTERNATES]<br/>"
+      "<b>Optional fields</b> are enclosed with <b>&quot;[]&quot;</b>.<br/>"
+      "<b>FROM</b> is the required departure airport. Departure time <b>ETD</b> is ignored.<br/>"
+      "<b>SPEEDALT</b> describes flight plan cruise altitude and speed. See manual for format details.<br/>"
+      "<b>SIDTRANS</b> is a SID and an optional transition which can be given as <b>&quot;SID.TRANS&quot;</b> or <b>&quot;SID TRANS&quot;</b><br/>"
+      "<b>ENROUTE</b> is a space separated list of navaids, navaid/airway/navaid combinations or user defined waypoints as coordinates.<br/>"
+      "<b>STARTRANS</b> is a STAR and an optional transition which can be given as <b>&quot;STAR.TRANS&quot;</b>, "
+        "<b>&quot;STAR TRANS&quot;</b>, <b>&quot;TRANS.STAR&quot;</b> or <b>&quot;TRANS STAR &quot;</b><br/>"
+        "<b>TO</b> is the required destination airport. Arrival time <b>ETA</b> is ignored.<br/>"
+        "<b>ALTERNATES</b> is a list of alternate or enroute airports depending on selected option.<br/>"
+        "<b>Press the help button to open the online manual for more information.</b></p>");
 
   // Copy main menu actions to allow using shortcuts in the non-modal dialog too
   addActions(NavApp::getMainWindowActions());
@@ -88,7 +89,7 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
   if(ui->splitterRouteString->handle(1) != nullptr)
     ui->splitterRouteString->handle(1)->setToolTip(tr("Resize upper and middle part."));
   if(ui->splitterRouteString->handle(2) != nullptr)
-    ui->splitterRouteString->handle(2)->setToolTip(tr("Resize, open or close the help area."));
+    ui->splitterRouteString->handle(2)->setToolTip(tr("Resize, open or close the quick help."));
 
   QFont fixedFont = QFontDatabase::systemFont(QFontDatabase::FixedFont);
 #if defined(Q_OS_MACOS)
