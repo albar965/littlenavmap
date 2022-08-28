@@ -294,6 +294,7 @@ QueryBuilderResult AirportSearch::airportQueryBuilderFunc(QWidget *widget)
 
       if(!text.isEmpty())
       {
+        text.replace("'", "''");
         QString query;
 
         if(exclude)
