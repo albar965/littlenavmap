@@ -460,7 +460,7 @@ void MapWidget::hideTooltip()
   if(rect().contains(mapFromGlobal(QCursor::pos())))
     QToolTip::hideText();
 
-  tooltipGlobalPos = QPoint();
+  tooltipPos = QPoint();
 }
 
 void MapWidget::handleHistory()
