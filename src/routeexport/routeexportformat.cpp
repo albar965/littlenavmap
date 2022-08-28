@@ -25,6 +25,7 @@
 #include "gui/errorhandler.h"
 
 #include <QDataStream>
+#include <QStringBuilder>
 #include <QDir>
 #include <QProcessEnvironment>
 #include <exception.h>
@@ -161,6 +162,7 @@ void RouteExportFormatMap::initCallbacks(RouteExport *routeExport)
   (*this)[TXT         ].CB(bind(&RouteExport::routeExportTxtMulti,          routeExport, _1));
   (*this)[TXTJAR      ].CB(bind(&RouteExport::routeExportTxtMulti,          routeExport, _1));
   (*this)[RTE         ].CB(bind(&RouteExport::routeExportRteMulti,          routeExport, _1));
+  (*this)[RTEMSFS     ].CB(bind(&RouteExport::routeExportRteMulti,          routeExport, _1));
   (*this)[GPX         ].CB(bind(&RouteExport::routeExportGpx,               routeExport, _1));
   (*this)[HTML        ].CB(bind(&RouteExport::routeExportHtml,              routeExport, _1));
   (*this)[FPR         ].CB(bind(&RouteExport::routeExportFprMulti,          routeExport, _1));
@@ -224,6 +226,7 @@ void RouteExportFormatMap::init()
   INS(TXT,          RF(TXT,          AIRPORTS,         tr("txt"),             tr("Aircraft"),  tr("Rotate MD-80 and others")                                         ));
   INS(TXTJAR,       RF(TXTJAR,       AIRPORTS,         tr("txt"),             tr("Aircraft"),  tr("JARDesign aircraft")                                              ));
   INS(RTE,          RF(RTE,          AIRPORTS,         tr("rte"),             tr("Aircraft"),  tr("PMDG aircraft")                                                   ));
+  INS(RTEMSFS,      RF(RTE,          AIRPORTS,         tr("rte"),             tr("Aircraft"),  tr("PMDG aircraft for MSFS")                                          ));
   INS(GPX,          RF(GPX,          NONE,             tr("gpx"),             tr("Other"),     tr("Garmin exchange format for Google Earth and others\n"
                                                                                                   "Exported with aircraft track and flight plan.")                   ));
   INS(HTML,         RF(HTML,         NONE,             tr("html"),            tr("Other"),     tr("HTML flight plan web page")                                       ));
@@ -351,6 +354,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[TXT         ].DP(xpBasePath + SEP + "Aircraft");
   (*this)[TXTJAR      ].DP(xpBasePath + SEP + "Aircraft");
   (*this)[RTE         ].DP(fsxP3dBasePath + SEP + "PMDG" + SEP + "FLIGHTPLANS");
+  (*this)[RTEMSFS     ].DP(msfsFilesPath % SEP % "packages" % SEP % "pmdg-aircraft-737" % SEP % "work" % SEP % "Flightplans");
   (*this)[GPX         ].DP(documents);
   (*this)[HTML        ].DP(documents);
   (*this)[FPR         ].DP(fsxP3dBasePath + SEP + "SimObjects" + SEP + "Airplanes" + SEP + "mjc8q400" + SEP + "nav" + SEP + "routes");

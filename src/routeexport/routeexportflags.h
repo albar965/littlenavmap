@@ -75,6 +75,7 @@ enum RouteExportFormatType : quint16
   TXT = 15, /* Rotate MD-80 and others */
   TXTJAR = 36, /* Jar Design */
   RTE = 16, /* PMDG RTE format */
+  RTEMSFS = 41, /* PMDG RTE format */
   FPR = 17, /* Majestic Dash binary format */
   FPL = 18, /* IXEG 737 */
   CORTEIN = 19, /* Flight factor airbus */
@@ -91,7 +92,7 @@ enum RouteExportFormatType : quint16
   GPX = 28, /* Garmin exchange format. Not a flight plan format.  */
   HTML = 29, /* Export as HTML page */
 
-  // Next = 40
+  // Next = 42
 };
 
 /* Flags for export format. Some flags are saved to the configuration,
