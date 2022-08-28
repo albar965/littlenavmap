@@ -4179,8 +4179,6 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
                                   arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
     links.append(html.cleared().a(tr("OpenNav"), QString("https://opennav.com/airport/%1").
                                   arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
-    links.append(html.cleared().a(tr("Pilot Nav"), QString("https://www.pilotnav.com/airport/%1").
-                                  arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
     links.append(html.cleared().a(tr("SkyVector"), QString("https://skyvector.com/airport/%1").
                                   arg(airportNav.displayIdent()), ahtml::LINK_NO_UL).getHtml());
   }
