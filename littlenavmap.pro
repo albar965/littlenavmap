@@ -75,7 +75,7 @@
 # =============================================================================
 
 # Define program version here
-VERSION_NUMBER=2.6.19
+VERSION_NUMBER=2.6.20
 
 QT += core gui sql xml network svg printsupport
 
