@@ -4,9 +4,9 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ===============================================================================
 
-# Version 2.6.19
+# Version 2.6.20
 
-This release fixes several issues affecting elevation profile, MSFS and X-Plane scenery libraries.
+This release fixes several smaller issues also related to MSFS SU10.
 
 Only the most imortant or easy to integrate issues are integrated into this release.
 Development is going on in parallel for the next major release and a public alpha version was
@@ -14,6 +14,36 @@ already published in the
 [Avsim Forum](https://www.avsim.com/forums/forum/780-little-navmap-little-navconnect-little-logbook-support-forum/).
 
 **Reload the scenery library to see fixed issues.**
+
+## Changes from 2.6.19 to 2.6.20
+
+### All
+
+* Fixed issue where tooltips disappeared after a short time when being connected.
+* Improved scrolling and zooming with mousewheel in elevation profile.
+* Fix for X-Plane FMS export using long airport ids. Note that ids from airport add-ons which are
+  not in the official X-Plane airport database cannot be exported as a start or destination. This is
+  fixed in the alpha version 2.7.11.develop.
+* Fixed issue where using export options resulted in missing waypoint names for pseudo waypoints in
+  X-Plane FMS export. #902
+* Fixed weather downloader to show error message on empty METAR file for pages not returning a 404 error.
+* Fixed crash when entering single quote in airport or navaid ident search field. #901
+
+### MSFS
+
+* Added separate export option for PMDG MSFS aircraft.
+* Changed handling for MSFS file `Content.xml` for SU10 and fixed crash when reading new file
+  layout. Priorities for known base folders are now forced to lowest values to ensure the correct
+  loading order. Other folders are loaded without any special order if not set in `Content.xml`.
+* Now ignoring waypoints with empty ICAO region code and invalid type as they appear in some MSFS
+  add-on sceneries. This fixes the exception `NOT NULL constraint failed: tmp_waypoint.region ...`
+  when loading. #910
+* Now allowing BGL files from missions to catch respective airports when loading MSFS.
+* Reduced logging for invalid MSFS BGL files.
+
+===============================================================================
+
+# Version 2.6.19
 
 ## Changes from 2.6.18 to 2.6.19
 
