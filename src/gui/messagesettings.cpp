@@ -65,6 +65,7 @@ void messages::resetAllMessages()
   settings.setValue(lnm::ACTIONS_SHOW_SSL_WARNING_WIND, true);
 
   settings.setValue(lnm::ACTIONS_SHOW_DATABASE_BACKGROUND_HINT, true);
+  settings.setValue(lnm::ROUTE_STRING_DIALOG_BACKGROUND_HINT, true);
 }
 
 void messages::resetEssentialMessages()

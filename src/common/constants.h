@@ -203,6 +203,7 @@ const QLatin1String ROUTE_PRINT_DIALOG("Route/PrintWidget");
 const QLatin1String ROUTE_STRING_DIALOG_SPLITTER("Route/StringDialogSplitter2");
 const QLatin1String ROUTE_STRING_DIALOG_OPTIONS("Route/StringDialogOptions");
 const QLatin1String ROUTE_STRING_DIALOG_DESCR("Route/StringDialogDescr");
+const QLatin1String ROUTE_STRING_DIALOG_BACKGROUND_HINT("Route/StringDialogBackgroundHint");
 
 const QLatin1String ROUTEWINDOW_WIDGET_TABS("Route/WidgetTabs");
 const QLatin1String TRAFFIC_PATTERN_DIALOG("Route/TrafficPatternDialog");

@@ -529,6 +529,9 @@ private:
   QString aboutMessage, layoutWarnText;
   QTimer clockTimer, renderStatusTimer;
   Marble::RenderStatus lastRenderStatus = Marble::Incomplete;
+
+  /* Show hint dialog only once per session */
+  bool backgroundHintRouteStringShown = false;
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H
