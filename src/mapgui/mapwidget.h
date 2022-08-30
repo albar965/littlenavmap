@@ -452,7 +452,7 @@ private:
 
   /* Save last tooltip position. If invalid/null no tooltip will be shown */
   QPoint tooltipGlobalPos;
-  map::MapResult *mapSearchResultTooltip, *mapSearchResultInfoClick;
+  map::MapResult *mapSearchResultTooltip, *mapSearchResultTooltipLast, *mapSearchResultInfoClick;
 
   MapTooltip *mapTooltip;
 

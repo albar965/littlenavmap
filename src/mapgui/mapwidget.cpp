@@ -156,6 +156,7 @@ MapWidget::MapWidget(MainWindow *parent)
 {
   takeoffLandingLastAircraft = new atools::fs::sc::SimConnectUserAircraft;
   mapSearchResultTooltip = new map::MapResult;
+  mapSearchResultTooltipLast = new map::MapResult;
   mapSearchResultInfoClick = new map::MapResult;
   distanceMarkerBackup = new map::DistanceMarker;
   userpointDrag = new map::MapUserpoint;
@@ -235,6 +236,7 @@ MapWidget::~MapWidget()
 
   delete takeoffLandingLastAircraft;
   delete mapSearchResultTooltip;
+  delete mapSearchResultTooltipLast;
   delete mapSearchResultInfoClick;
   delete distanceMarkerBackup;
   delete userpointDrag;
@@ -513,10 +515,9 @@ void MapWidget::updateTooltipResult()
 
 void MapWidget::hideTooltip()
 {
-  // Hide tooltip only if cursor is inside map rectangle since hiding affects tooltips in the whole application
-  // Outside map the tooltip is hidden anyway
-  if(rect().contains(mapFromGlobal(QCursor::pos())))
-    QToolTip::hideText();
+  // Passing empty string hides tooltip
+  // This affects and hides tooltips across the whole application
+  QToolTip::showText(tooltipGlobalPos, QString(), this);
 
   tooltipGlobalPos = QPoint();
 }
@@ -564,7 +565,7 @@ void MapWidget::showTooltip(bool update)
     text = mapTooltip->buildTooltip(*mapSearchResultTooltip, pos, NavApp::getRouteConst(), paintLayer->getMapLayer()->isAirportDiagram());
 
   if(!text.isEmpty() && !tooltipGlobalPos.isNull())
-    QToolTip::showText(tooltipGlobalPos, text /*, nullptr, QRect(), 3600 * 1000*/);
+    QToolTip::showText(tooltipGlobalPos, text, this);
   else
     hideTooltip();
 }
@@ -2315,12 +2316,20 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
                           mapSearchResultTooltip->hasHoldings() || mapSearchResultTooltip->hasAirportMsa() ||
                           mapSearchResultTooltip->hasUserpoints()) && NavApp::isConnectedAndAircraft();
 
-    if(mapSearchResultTooltip->isEmpty())
-      // Nothing found or aircraft moved away from cursor
+    // Aircraft moved away from cursor or nothing in current result
+    bool aircraftDisappeared = mapSearchResultTooltip->isEmpty() && mapSearchResultTooltipLast->hasAnyAircraft();
+
+    // Nothing found at all or aircraft moved away from cursor
+    // This affects and hides tooltips across the whole application and should not be used on each update
+    if(aircraftDisappeared)
       hideTooltip();
-    else if(updateBearing || updateAircraft)
-      // Update tooltip if it has bearing/distance fields
+
+    // Update tooltip if it has bearing/distance fields
+    if(updateBearing || updateAircraft)
       showTooltip(true /* update */);
+
+    // Remember last result to detech disappearing aircraft
+    *mapSearchResultTooltipLast = *mapSearchResultTooltip;
   }
 
   // ================================================================================
