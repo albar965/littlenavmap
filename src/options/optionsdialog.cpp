@@ -77,7 +77,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   ui->setupUi(this);
 
   // Styles cascade to children and mess up UI themes on linux - even if widget is selected by name
-#ifndef Q_OS_LINUX
+#if !defined(Q_OS_LINUX) || defined(DEBUG_INFORMATION)
   ui->splitterOptions->setStyleSheet(
     QString("QSplitter::handle { "
             "background: %1;"

@@ -878,7 +878,7 @@ void ProfileScrollArea::centerAircraft(const QPoint& aircraftScreenPoint, float 
 void ProfileScrollArea::styleChanged()
 {
   // Styles cascade to children and mess up UI themes on linux - even if widget is selected by name
-#ifndef Q_OS_LINUX
+#if !defined(Q_OS_LINUX) || defined(DEBUG_INFORMATION)
   // Make the elevation profile splitter handle better visible - update background color
   NavApp::getMainUi()->splitterProfile->setStyleSheet(
     QString("QSplitter::handle { "
