@@ -1267,7 +1267,7 @@ void MainWindow::connectAllSlots()
   DatabaseManager *databaseManager = NavApp::getDatabaseManager();
   connect(ui->actionLoadAirspaces, &QAction::triggered, NavApp::getAirspaceController(), &AirspaceController::loadAirspaces);
   connect(ui->actionReloadScenery, &QAction::triggered, databaseManager, &DatabaseManager::loadScenery);
-  connect(ui->actionValidateSceneryLibrarySettings, &QAction::triggered, databaseManager, &DatabaseManager::checkSceneryOptions);
+  connect(ui->actionValidateSceneryLibrarySettings, &QAction::triggered, databaseManager, &DatabaseManager::checkSceneryOptionsManual);
   connect(ui->actionDatabaseFiles, &QAction::triggered, this, &MainWindow::showDatabaseFiles);
   connect(ui->actionShowMapCache, &QAction::triggered, this, &MainWindow::showShowMapCache);
 

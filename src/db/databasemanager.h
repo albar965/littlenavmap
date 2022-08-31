@@ -246,7 +246,7 @@ public:
   void checkDatabaseVersion();
 
   /* Validate scenery library mode and show warning dialogs which allow to set the recommended mode */
-  void checkSceneryOptions();
+  void checkSceneryOptionsManual();
 
 signals:
   /* Emitted before opening the scenery database dialog, loading a database or switching to a new simulator database.
@@ -303,6 +303,10 @@ private:
   void clearLanguageIndex();
 
   bool checkValidBasePaths();
+
+  /* Validate scenery library mode and show warning dialogs which allow to set the recommended mode.
+   * manualCheck shows an "Ok" button if all is valid and ignores "do not show again" state. */
+  void checkSceneryOptions(bool manualCheck);
 
   // Get metadata independent of scenery library settings
   const atools::fs::db::DatabaseMeta databaseMetadata(atools::fs::FsPaths::SimulatorType type);
