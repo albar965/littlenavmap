@@ -342,6 +342,7 @@ void RouteMultiExportDialog::saveState()
 void RouteMultiExportDialog::updateLabel()
 {
   rexp::RouteExportFormatType type = selectedType();
+  QStringList texts;
   if(type != rexp::NO_TYPE)
   {
     RouteExportFormat format = formatMapDialog->value(type);
@@ -350,27 +351,35 @@ void RouteMultiExportDialog::updateLabel()
     QString pathMsg;
     format.isPathValid(&pathMsg);
 
-    // Collect pattern errors
+    // Collect pattern errors and generate example
     QString patternMsg;
     QString example = atools::fs::pln::Flightplan::getFilenamePatternExample(format.getPattern(), QString(), true /* html */, &patternMsg);
-
     QString errorMsg = pathMsg % patternMsg;
 
-    QString text = format.getToolTip();
-    text.replace("\n", "<br/>");
+    // Get header / short description
+    texts.append("<b>" % format.getComment() % "</b>");
 
+    // Add either example or error message
     if(errorMsg.isEmpty())
-      text.append(tr("<br/><br/>Example export path and file: &quot;%1&quot;").
-                  arg(QDir::toNativeSeparators(format.getPath() % QDir::separator() % example)));
+      texts.append(tr("<b>Example export path and file:</b> &quot;%1&quot;").
+                   arg(QDir::toNativeSeparators(format.getPath() % QDir::separator() % example)));
+    else
+      texts.append(atools::util::HtmlBuilder::errorMessage(errorMsg));
 
-    if(!errorMsg.isEmpty())
-      text.append(tr("<br/>") % atools::util::HtmlBuilder::errorMessage(errorMsg));
+    // Remaining description from the comment
+    texts.append(format.getComment2().split("\n"));
 
-    ui->labelRouteExportPath->setText(text);
     ui->actionSelect->setChecked(format.isSelected());
   }
   else
-    ui->labelRouteExportPath->setText(tr("Click on a row in the table above to see the resulting filename, path and other information."));
+    texts.append(tr("Click on a row in the table above to see the resulting filename, path and other information."));
+
+  // Remove empty string and append empty to avoid label resizing while scrolling
+  texts.removeAll(QString());
+  for(int i = texts.size(); i < 6; i++)
+    texts.append(QString());
+
+  ui->labelRouteExportPath->setText(texts.join("<br/>"));
 }
 
 void RouteMultiExportDialog::updateActions()

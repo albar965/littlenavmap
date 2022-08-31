@@ -76,10 +76,16 @@ public:
   /* Get file extension from pattern excluding dot upper case. */
   QString getFormat() const;
 
-  /* Comment is all before first linefeed */
+  /* Comment is all before first linefeed like "X-Plane FMS 11" */
   QString getComment() const
   {
     return comment.section('\n', 0, 0);
+  }
+
+  /* All after first linefeed */
+  QString getComment2() const
+  {
+    return comment.section('\n', 1);
   }
 
   /* Comment plus all after first linefeed */
