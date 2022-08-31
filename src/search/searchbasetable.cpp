@@ -1107,11 +1107,9 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
 
   if(mapObjType == map::AIRPORT && airport.isValid())
   {
-    bool departureFilter, arrivalFilter, hasDeparture, hasAnyArrival, airportDeparture, airportDestination,
-         airportRoundTrip;
-
-    route.getAirportProcedureFlags(airport, -1, departureFilter, arrivalFilter, hasDeparture,
-                                   hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip);
+    bool departureFilter, arrivalFilter, hasDeparture, hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip;
+    route.getAirportProcedureFlags(airport, -1, departureFilter, arrivalFilter, hasDeparture, hasAnyArrival, airportDeparture,
+                                   airportDestination, airportRoundTrip);
 
     if(hasAnyArrival || hasDeparture)
     {
@@ -1141,17 +1139,27 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     else
       ui->actionSearchShowApproaches->setText(tr("Show Procedures (no procedure)"));
 
-    ui->actionSearchShowApproachCustom->setEnabled(true);
     if(airportDestination)
-      ui->actionSearchShowApproachCustom->setText(tr("Select &Destination Runway for %1 ..."));
-    else
+    {
+      ui->actionSearchShowApproachCustom->setText(tr("Select Destination &Runway for %1 ..."));
+      ui->actionSearchShowApproachCustom->setEnabled(true);
+    }
+    else if(!airportDeparture)
+    {
       ui->actionSearchShowApproachCustom->setText(tr("Select &Runway and use %1 as Destination ..."));
+      ui->actionSearchShowApproachCustom->setEnabled(true);
+    }
 
-    ui->actionSearchShowDepartureCustom->setEnabled(true);
     if(airportDeparture)
+    {
       ui->actionSearchShowDepartureCustom->setText(tr("Select &Departure Runway for %1 ..."));
-    else
+      ui->actionSearchShowDepartureCustom->setEnabled(true);
+    }
+    else if(!airportDestination)
+    {
       ui->actionSearchShowDepartureCustom->setText(tr("Select Runway and use %1 as &Departure ..."));
+      ui->actionSearchShowDepartureCustom->setEnabled(true);
+    }
   }
   else
     ui->actionSearchShowApproaches->setText(tr("Show &Procedures"));
@@ -1163,8 +1171,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   }
   else
   {
-    ActionTool::setText(ui->actionSearchShowApproachCustom, true, objectText);
-    ActionTool::setText(ui->actionSearchShowDepartureCustom, true, objectText);
+    ActionTool::setText(ui->actionSearchShowApproachCustom, objectText);
+    ActionTool::setText(ui->actionSearchShowDepartureCustom, objectText);
   }
 
   if(tabIndex == si::SEARCH_LOG)
@@ -1289,8 +1297,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addSeparator();
   }
 
-  if(atools::contains(tabIndex, {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER,
-                                 si::SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(tabIndex, {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
   {
     menu.addAction(ui->actionMapRangeRings);
     if(atools::contains(tabIndex, {si::SEARCH_NAV}))
@@ -1670,16 +1677,29 @@ void SearchBaseTable::showApproaches(bool customApproach, bool customDeparture)
       int id = -1;
       getNavTypeAndId(index.row(), navType, id);
 
-      if(customApproach)
-        emit showCustomApproach(airportQuery->getAirportById(id), QString());
-      else if(customDeparture)
-        emit showCustomDeparture(airportQuery->getAirportById(id), QString());
-      else
+      map::MapAirport airport = airportQuery->getAirportById(id);
+
+      if(airport.isValid())
       {
-        map::MapAirport airport = airportQuery->getAirportById(id);
-        bool departureFilter, arrivalFilter;
-        NavApp::getRouteConst().getAirportProcedureFlags(airport, -1, departureFilter, arrivalFilter);
-        emit showProcedures(airport, departureFilter, arrivalFilter);
+        bool departure, destination;
+        proc::procedureFlags(NavApp::getRouteConst(), &airport, &departure, &destination);
+
+        if(customApproach)
+        {
+          if(!departure)
+            emit showCustomApproach(airport, QString());
+        }
+        else if(customDeparture)
+        {
+          if(!destination)
+            emit showCustomDeparture(airport, QString());
+        }
+        else
+        {
+          bool departureFilter, arrivalFilter;
+          NavApp::getRouteConst().getAirportProcedureFlags(airport, -1, departureFilter, arrivalFilter);
+          emit showProcedures(airport, departureFilter, arrivalFilter);
+        }
       }
     }
   }

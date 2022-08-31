@@ -2616,12 +2616,12 @@ void RouteController::tableContextMenu(const QPoint& pos)
     }
 
     // Prepare procedure menus ==============================================================================
+
     if(routeLeg->isValidWaypoint() && routeLeg->getMapObjectType() == map::AIRPORT)
     {
       bool departureFilter, arrivalFilter, hasDeparture, hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip;
-
-      route.getAirportProcedureFlags(routeLeg->getAirport(), row, departureFilter, arrivalFilter, hasDeparture,
-                                     hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip);
+      route.getAirportProcedureFlags(routeLeg->getAirport(), row, departureFilter, arrivalFilter, hasDeparture, hasAnyArrival,
+                                     airportDeparture, airportDestination, airportRoundTrip);
 
       if(hasAnyArrival || hasDeparture)
       {
@@ -2654,17 +2654,27 @@ void RouteController::tableContextMenu(const QPoint& pos)
       else
         ui->actionRouteShowApproaches->setText(tr("Show Procedures (no procedure)"));
 
-      ui->actionRouteShowApproachCustom->setEnabled(true);
       if(airportDestination)
+      {
         ui->actionRouteShowApproachCustom->setText(tr("Select Destination &Runway for %1 ..."));
-      else
+        ui->actionRouteShowApproachCustom->setEnabled(true);
+      }
+      else if(!airportDeparture)
+      {
         ui->actionRouteShowApproachCustom->setText(tr("Select &Runway and use %1 as Destination ..."));
+        ui->actionRouteShowApproachCustom->setEnabled(true);
+      }
 
-      ui->actionRouteShowDepartureCustom->setEnabled(true);
       if(airportDeparture)
+      {
         ui->actionRouteShowDepartureCustom->setText(tr("Select &Departure Runway for %1 ..."));
-      else
+        ui->actionRouteShowDepartureCustom->setEnabled(true);
+      }
+      else if(!airportDestination)
+      {
         ui->actionRouteShowDepartureCustom->setText(tr("Select Runway and use %1 as &Departure ..."));
+        ui->actionRouteShowDepartureCustom->setEnabled(true);
+      }
     }
     else
     {
@@ -2680,8 +2690,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
     }
     else
     {
-      ActionTool::setText(ui->actionRouteShowApproachCustom, true, objectText);
-      ActionTool::setText(ui->actionRouteShowDepartureCustom, true, objectText);
+      ActionTool::setText(ui->actionRouteShowApproachCustom, objectText);
+      ActionTool::setText(ui->actionRouteShowDepartureCustom, objectText);
     }
 
     ui->actionRouteShowOnMap->setEnabled(true);
@@ -3803,7 +3813,7 @@ void RouteController::showCustomApproachRouteMenu()
     return;
 
   QModelIndex index = view->currentIndex();
-  if(index.isValid())
+  if(index.isValid() && route.getDepartureAirportLegIndex() != index.row())
     showCustomApproach(route.value(index.row()).getAirport(), QString());
 }
 
@@ -3814,7 +3824,7 @@ void RouteController::showCustomDepartureRouteMenu()
     return;
 
   QModelIndex index = view->currentIndex();
-  if(index.isValid())
+  if(index.isValid() && route.getDestinationAirportLegIndex() != index.row())
     showCustomDeparture(route.value(index.row()).getAirport(), QString());
 }
 

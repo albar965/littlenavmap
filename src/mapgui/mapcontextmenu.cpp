@@ -575,16 +575,17 @@ void MapContextMenu::insertCustomApproachMenu(QMenu& menu)
         }
         else
         {
-          bool destination = false;
-          proc::procedureFlags(route, base, nullptr, &destination);
+          bool departure, destination;
+          proc::procedureFlags(route, base, &departure, &destination);
+
           if(destination)
             // Airport is destination - insert into plan
             text = submenu ? tr("%1 ...") : tr("Select Destination &Runway for %1 ....");
-          else
+          else if(!departure)
             // Airport is not destination - insert into plan and use airport
             text = submenu ? tr("%1 and use as Destination ...") : tr("Select &Runway and use %1 as Destination ...");
-
-          disable = false;
+          else
+            disable = true;
         }
 
         // Do our own text substitution for the airport to use shorter name
@@ -618,16 +619,17 @@ void MapContextMenu::insertCustomDepartureMenu(QMenu& menu)
         }
         else
         {
-          bool departure = false;
-          proc::procedureFlags(route, base, &departure);
+          bool departure, destination;
+          proc::procedureFlags(route, base, &departure, &destination);
+
           if(departure)
             // Airport is departure - insert into plan
             text = submenu ? tr("%1 ...") : tr("Select Departure &Runway for %1 ....");
-          else
+          else if(!destination)
             // Airport is not destination - insert into plan and use airport
             text = submenu ? tr("%1 and use as Departure ...") : tr("Select &Runway and use %1 as Departure ...");
-
-          disable = false;
+          else
+            disable = true;
         }
 
         // Do our own text substitution for the airport to use shorter name
