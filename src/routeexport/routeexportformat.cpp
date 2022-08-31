@@ -189,6 +189,7 @@ void RouteExportFormatMap::initCallbacks(RouteExport *routeExport)
   (*this)[PLNANNOTATED].CB(bind(&RouteExport::routeExportPlnAnnotatedMulti, routeExport, _1));
   (*this)[FMS3        ].CB(bind(&RouteExport::routeExportFms3Multi,         routeExport, _1));
   (*this)[FMS11       ].CB(bind(&RouteExport::routeExportFms11,             routeExport, _1));
+  (*this)[FMS12       ].CB(bind(&RouteExport::routeExportFms11,             routeExport, _1));
   (*this)[FLP         ].CB(bind(&RouteExport::routeExportFlpMulti,          routeExport, _1));
   (*this)[FLPCRJ      ].CB(bind(&RouteExport::routeExportFlpCrjMulti,       routeExport, _1));
   (*this)[FLPCRJMSFS  ].CB(bind(&RouteExport::routeExportFlpCrjMulti,       routeExport, _1));
@@ -247,6 +248,8 @@ void RouteExportFormatMap::init()
 
   const QString mainMenu = tr("\nThe given filename pattern is also used when exporting flight plans from the main menu \"File\".");
 
+  const QString xp12 = tr("\nThe same format as FMS 11 but saved to the X-Plane 12 folder.");
+
   // Short "DEPARTIDENT DESTIDENT"
   // Long "PLANTYPE DEPARTNAME (DEPARTIDENT) to DESTNAME (DESTIDENT)"
 
@@ -273,8 +276,9 @@ void RouteExportFormatMap::init()
   FMT(PLN,          AIRPORTS|PARKING, DF % tr("pln"),     tr("Simulator"), tr("FSX and Prepar3D") % mainMenu                                     );
   FMT(PLNMSFS,      AIRPORTS|PARKING, DF % tr("pln"),     tr("Simulator"), tr("Microsoft Flight Simulator 2020") % mainMenu                      );
   FMT(PLNANNOTATED, AIRPORTS|PARKING, DF % tr("pln"),     tr("Simulator"), tr("FSX and Prepar3D annotated\nOnly for old Little Navmap versions."));
-  FMT(FMS3,         AIRPORTS,         SD % tr("fms"),     tr("Simulator"), tr("X-Plane FMS 3\nOld limited format.")                              );
+  FMT(FMS3,         AIRPORTS,         SD % tr("fms"),     tr("Simulator"), tr("X-Plane FMS 3\nOld and limited format.")                          );
   FMT(FMS11,        AIRPORTS|CYCLE,   SD % tr("fms"),     tr("Simulator"), tr("X-Plane FMS 11") % mainMenu                                       );
+  FMT(FMS12,        AIRPORTS|CYCLE,   SD % tr("fms"),     tr("Simulator"), tr("X-Plane FMS 12") % xp12                                           );
   FMT(FLP,          AIRPORTS,         S0 % tr("flp"),     tr("Aircraft"),  tr("Aerosoft Airbus and others")                                      );
   FMT(FLPCRJ,       AIRPORTS,         S %  tr("01.flp"),  tr("Aircraft"),  tr("Aerosoft CRJ")                                                    );
   FMT(FLPCRJMSFS,   AIRPORTS,         S %  tr("01.flp"),  tr("Aircraft"),  tr("Aerosoft CRJ for MSFS")                                           );
@@ -336,15 +340,18 @@ void RouteExportFormatMap::updateDefaultPaths()
   // Documents path as fallback or for unknown ===========================
   QString documents = atools::documentsDir();
 
-  // Get X-Plane base path ===========================
-  QString xpBasePath = NavApp::getSimulatorBasePath(FsPaths::XPLANE_12);
-  if(xpBasePath.isEmpty())
-    xpBasePath = NavApp::getSimulatorBasePath(FsPaths::XPLANE_11);
+  // Get X-Plane base path - first 12 if available then 11 ===========================
+  QString xpBasePath = NavApp::getSimulatorBasePathBest({FsPaths::XPLANE_12, FsPaths::XPLANE_11});
 
-  // Files path
+  // Files path for 12 or 11 =============
   QString xpFilesPath = NavApp::getSimulatorFilesPathBest({FsPaths::XPLANE_12, FsPaths::XPLANE_11});
   if(xpFilesPath.isEmpty())
     xpFilesPath = documents;
+
+  // Files path for 12 only =============
+  QString xpFilesPath12 = NavApp::getSimulatorFilesPathBest({FsPaths::XPLANE_12});
+  if(xpFilesPath12.isEmpty())
+    xpFilesPath12 = documents;
 
   // Get MSFS files path (LocalState) ===========================
   QString msfsFilesPath = NavApp::getSimulatorFilesPathBest({FsPaths::MSFS});
@@ -414,6 +421,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[PLNANNOTATED].DP(fsxP3dBasePath);
   (*this)[FMS3        ].DP(xpFilesPath);
   (*this)[FMS11       ].DP(xpFilesPath);
+  (*this)[FMS12       ].DP(xpFilesPath12);
   (*this)[FLP         ].DP(documents);
   (*this)[FLPCRJ      ].DP(documents % SEP % "Aerosoft" % SEP % "Digital Aviation CRJ" % SEP % "FlightPlans");
   (*this)[FLPCRJMSFS  ].DP(documents);

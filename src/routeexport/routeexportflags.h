@@ -46,6 +46,7 @@ enum RouteExportFormatType : quint16
   PLNMSFS = 31, /* Microsoft Flight Simulator 2020 */
   FMS3 = 2, /* Old X-Plane FMS 3 */
   FMS11 = 3, /* New X-Plane FMS 11 */
+  FMS12 = 42, /* FMS 11 format in X-Plane 12 path */
   FLIGHTGEAR = 4, /* FlightGear XML */
   PROSIM = 5, /* ProSim */
 
@@ -93,7 +94,7 @@ enum RouteExportFormatType : quint16
   GPX = 28, /* Garmin exchange format. Not a flight plan format.  */
   HTML = 29, /* Export as HTML page */
 
-  // Next = 42
+  // Next = 43
 };
 
 /* Flags for export format. Some flags are saved to the configuration,

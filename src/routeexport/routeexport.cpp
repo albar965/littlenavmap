@@ -368,17 +368,15 @@ bool RouteExport::routeExportFms11(const RouteExportFormat& format)
 
   if(routeValidateMulti(format))
   {
-    // Try to get X-Plane default output directory for flight plans
-    QString xpBasePath = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE_12);
-    if(xpBasePath.isEmpty())
-      xpBasePath = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE_11);
+    // Build default path for manual export - try 12 first and then 11
+    QString xpBasePath = NavApp::getSimulatorBasePathBest({atools::fs::FsPaths::XPLANE_12, atools::fs::FsPaths::XPLANE_11});
+
     if(xpBasePath.isEmpty())
       xpBasePath = atools::documentsDir();
     else
       xpBasePath = atools::buildPathNoCase({xpBasePath, "Output", "FMS plans"});
 
-    QString routeFile = exportFile(format, "Route/Fms11", xpBasePath, buildDefaultFilename(format),
-                                   false /* dontComfirmOverwrite */);
+    QString routeFile = exportFile(format, "Route/Fms11", xpBasePath, buildDefaultFilename(format), false /* dontComfirmOverwrite */);
 
     if(!routeFile.isEmpty())
     {
