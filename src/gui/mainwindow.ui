@@ -315,6 +315,7 @@
     <addaction name="menuViewAirspaceSource"/>
     <addaction name="actionLoadAirspaces"/>
     <addaction name="separator"/>
+    <addaction name="actionValidateSceneryLibrarySettings"/>
     <addaction name="actionReloadScenery"/>
    </widget>
    <widget class="QMenu" name="menuUserdata">
@@ -11889,6 +11890,21 @@ relation to shown airport</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+L</string>
+   </property>
+  </action>
+  <action name="actionValidateSceneryLibrarySettings">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/databasecheck.svg</normaloff>:/littlenavmap/resources/icons/databasecheck.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Validate Scenery Library Settings</string>
+   </property>
+   <property name="toolTip">
+    <string>Check if the correct modes for the scenery library are used</string>
+   </property>
+   <property name="statusTip">
+    <string>Check if the correct modes for the scenery library are used</string>
    </property>
   </action>
  </widget>

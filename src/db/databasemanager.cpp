@@ -817,7 +817,7 @@ void DatabaseManager::switchNavFromMainMenu()
   {
     QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineNavdatabasesUrl, lnm::helpLanguageOnline());
     QString message =
-      tr("<p>The scenery mode \"%1\" ignores all airports of the simulator.<p/>"
+      tr("<p style='white-space:pre'>The scenery mode \"%1\" ignores all airports of the simulator.<p/>"
          "<p>Airport information is limited in this mode.<br/>"
          "This means that aprons, taxiways, parking positions, runway surface information and other information is not available.<br/>"
          "Smaller airports might be missing and runway layout might not match the runway layout in the simulator.</p>"
@@ -1145,85 +1145,187 @@ void DatabaseManager::loadSceneryPost()
 
   saveState();
 
+#ifdef DEBUG_SCENERY_COMPILE
+  checkSceneryOptions();
+#else
   // Show only if compilation was ok
   if(!databaseLoader->getResultFlags().testFlag(atools::fs::COMPILE_CANCELED) &&
      !databaseLoader->getResultFlags().testFlag(atools::fs::COMPILE_FAILED))
+    checkSceneryOptions();
+#endif
+}
+
+const atools::fs::db::DatabaseMeta DatabaseManager::databaseMetadata(atools::fs::FsPaths::SimulatorType type)
+{
+  // Get simulator database independent of settings in menu which might result in nav and sim using the same files =======
+
+  // Open temporary database and read metadata
+  SqlDatabase tempDb(dbtools::DATABASE_NAME_TEMP);
+  dbtools::openDatabaseFile(&tempDb, buildDatabaseFileName(type), true /* readonly */, false /* createSchema */);
+  DatabaseMeta metaSim(tempDb);
+  metaSim.deInit();
+  dbtools::closeDatabaseFile(&tempDb);
+  return metaSim;
+}
+
+void DatabaseManager::checkSceneryOptions()
+{
+  bool corrected = false;
+
+  // Get simulator database independent of settings in menu which might result in nav and sim using the same files =======
+  const atools::fs::db::DatabaseMeta metaSim = databaseMetadata(currentFsType);
+
+  if(currentFsType == atools::fs::FsPaths::MSFS)
   {
-    if(currentFsType == atools::fs::FsPaths::MSFS)
+    // ======================================================================================================
+    // Notify user and correct scenery mode after loading MSFS ==============================================
+    bool hasNavigraphUpdate = metaSim.hasProperty(atools::fs::db::PROPERTYNAME_MSFS_NAVIGRAPH_FOUND);
+
+    if(hasNavigraphUpdate || databaseLoader->getResultFlags().testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND))
     {
-      // Notify user and correct scenery mode after loading MSFS ==============================================
-
-      if(databaseLoader->getResultFlags().testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND))
+      if(navDatabaseStatus != dbstat::NAVDATABASE_MIXED)
       {
-        if(navDatabaseStatus != dbstat::NAVDATABASE_MIXED)
+        // Navigraph update for MSFS used - Use Navigraph for Navaids and Procedures ================================
+        int result =
+          dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH,
+                                     tr("<p style='white-space:pre'>You are using MSFS with the Navigraph navdata update.</p>"
+                                          "<p>You should update the Little Navmap navdata with the "
+                                            "Navigraph FMS Data Manager as well and use the right scenery library mode "
+                                            "\"Use Navigraph for Navaids and Procedures\" "
+                                            "to avoid issues with airport information in Little Navmap.</p>"
+                                            "<p style='white-space:pre'>You can change the mode manually in the menu<br/>"
+                                            "\"Scenery Library\" -> \"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
+                                            "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
+                                     tr("Do not &show this dialog again and always correct mode after loading."),
+                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
+
+        if(result == QMessageBox::Yes)
         {
-          // Navigraph update for MSFS used - Use Navigraph for Navaids and Procedures
-
-          int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH,
-                                                  tr("<p>You are using MSFS with the Navigraph navdata update.</p>"
-                                                       "<p>You have to update the Little Navmap navdata with the "
-                                                         "Navigraph FMS Data Manager and use the right scenery library mode "
-                                                         "\"Use Navigraph for Navaids and Procedures\" "
-                                                         "to avoid issues with airport information in Little Navmap.</p>"
-                                                         "<p>You can change the mode manually in the menu \"Scenery Library\" -> "
-                                                           "\"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
-                                                           "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
-                                                  tr("Do not &show this dialog again and always correct mode after loading."),
-                                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
-
-          if(result == QMessageBox::Yes)
-          {
-            navDbActionBlend->setChecked(true);
-            switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
-          }
-        }
-      }
-      else
-      {
-        if(navDatabaseStatus != dbstat::NAVDATABASE_OFF)
-        {
-          // not use the Navigraph update for MSFS - Do not use Navigraph Database
-
-          int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_OFF,
-                                                  tr("<p>You are using MSFS without the Navigraph navdata update.</p>"
-                                                       "<p>You have to use the scenery library mode \"Do not use Navigraph Database\" "
-                                                         "to avoid issues with airport information in Little Navmap.</p>"
-                                                         "<p>You can change this manually in menu \"Scenery Library\" -> "
-                                                           "\"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
-                                                           "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
-                                                  tr("Do not &show this dialog again and always correct mode after loading."),
-                                                  QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
-
-          if(result == QMessageBox::Yes)
-          {
-            navDbActionOff->setChecked(true);
-            switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
-          }
+          corrected = true;
+          navDbActionBlend->setChecked(true);
+          switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
         }
       }
     }
-    else if(navDatabaseStatus == dbstat::NAVDATABASE_ALL)
+    else
     {
-      // Notify user and correct scenery mode  ==============================================
-      int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL,
-                                              tr("<p>Your current scenery library mode is \"Use Navigraph for all Features\".</p>"
-                                                   "<p>Note that airport information is limited in this mode. "
-                                                     "This means that aprons, taxiways, parking positions, runway surfaces and more are not available, "
-                                                     "smaller airports will be missing and the runway layout might not match the one in the simulator.</p>"
-                                                     "<p>You can change this manually in menu \"Scenery Library\" -> "
-                                                       "\"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
-                                                       "<p><b>Normally you should not use this mode.</b></p>"
-                                                         "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
-                                              tr("Do not &show this dialog again and always correct mode after loading."),
-                                              QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
-
-      if(result == QMessageBox::Yes)
+      if(navDatabaseStatus != dbstat::NAVDATABASE_OFF)
       {
-        navDbActionBlend->setChecked(true);
-        switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
+        // Navigraph update for MSFS no installed - Do not use Navigraph Database ================================
+        int result =
+          dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_OFF,
+                                     tr("<p style='white-space:pre'>You are using MSFS without the Navigraph navdata update.</p>"
+                                          "<p>You should use the scenery library mode \"Do not use Navigraph Database\" "
+                                            "to avoid issues with airport information in Little Navmap.</p>"
+                                            "<p style='white-space:pre'>You can change the mode manually in the menu<br/>"
+                                            "\"Scenery Library\" -> \"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
+                                            "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
+                                     tr("Do not &show this dialog again and always correct mode after loading."),
+                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
+
+        if(result == QMessageBox::Yes)
+        {
+          corrected = true;
+          navDbActionOff->setChecked(true);
+          switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
+        }
       }
     }
-  } // if(!resultFlags.testFlag(atools::fs::COMPILE_CANCELED))
+  } // if(currentFsType == atools::fs::FsPaths::MSFS)
+  else if(FsPaths::isAnyXplane(currentFsType))
+  {
+    // =========================================================================================================
+    // Notify user and correct scenery mode after loading X-Plane ==============================================
+
+    // Get navdatabase =================
+    const atools::fs::db::DatabaseMeta metaNav = databaseMetadata(FsPaths::NAVIGRAPH);
+    int cycleNav = metaNav.getAiracCycleInt();
+    int cycleSim = metaSim.getAiracCycleInt();
+
+    // Both airac cycles available
+    if(cycleSim > 0 && cycleNav > 0)
+    {
+      // Recommend use mixed database if cycles are equal ====================================
+      if(cycleNav == cycleSim && navDatabaseStatus != dbstat::NAVDATABASE_MIXED)
+      {
+        // Cycles are equal but user uses the wrong mode ===============================================
+        int result =
+          dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DATABASE_CYCLE_MATCH,
+                                     tr("<p style='white-space:pre'>The AIRAC cycle %1 of your navigation data is "
+                                          "equal to the simulator cycle<p>"
+                                          "<p>This means you ignore the updated Navigraph navdata for Little Navmap.</p>"
+                                            "<p>You should use the scenery library mode \"Use Navigraph for Navaids and Procedures\" "
+                                              "to fetch airports from the simulator and navdata from the update.</p>"
+                                              "<p style='white-space:pre'>You can change this manually in the menu<br/>"
+                                              "\"Scenery Library\" -> \"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
+                                              "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items").
+                                     arg(metaNav.getAiracCycle()),
+                                     tr("Do not &show this dialog again and always correct mode after loading."),
+                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
+
+        if(result == QMessageBox::Yes)
+        {
+          corrected = true;
+          navDbActionBlend->setChecked(true);
+          switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
+        }
+      }
+      else if(cycleNav < cycleSim && navDatabaseStatus != dbstat::NAVDATABASE_OFF)
+      {
+        // Recommend use no Navigraph database if navdata is older ====================================
+
+        // Navdata uses a lower cycle - user should ignore it ===============================================
+        int result =
+          dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DATABASE_CYCLE_MISMATCH,
+                                     tr("<p style='white-space:pre'>The AIRAC cycle %1 of your navigation data is "
+                                          "older than the simulator cycle %2.</p>"
+                                          "<p>This can result warning messages when loading flight plans in X-Plane.</p>"
+                                            "<p>Update the Little Navmap navdata to use the same cycle as the X-Plane "
+                                              "navdata with the Navigraph FMS Data Manager to fix this.</p>"
+                                              "<p>You can also use the scenery library mode \"Do not use Navigraph Database\" "
+                                                "to fetch all data from the simulator.</p>"
+                                                "<p style='white-space:pre'>You can change this manually in the menu<br/>"
+                                                "\"Scenery Library\" -> \"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
+                                                "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items").
+                                     arg(metaNav.getAiracCycle()).arg(metaSim.getAiracCycle()),
+                                     tr("Do not &show this dialog again and always correct mode after loading."),
+                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
+
+        if(result == QMessageBox::Yes)
+        {
+          corrected = true;
+          navDbActionOff->setChecked(true);
+          switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
+        }
+      }
+    } // if(cycleSim > 0 && cycleNav > 0)
+  } // else if(FsPaths::isAnyXplane(currentFsType))
+
+  // Check for wrong mode navdata for all if it was not corrected before ===========================================
+  if(!corrected && navDatabaseStatus == dbstat::NAVDATABASE_ALL)
+  {
+    // Notify user and correct scenery mode use navdata for all ==============================================
+    int result =
+      dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL,
+                                 tr("<p style='white-space:pre'>Your current scenery library mode is "
+                                      "\"Use Navigraph for all Features\".</p>"
+                                      "<p>All information from the simulator scenery library is ignored in this mode.</p>"
+                                        "<p>Note that airport information is limited in this mode. "
+                                          "This means that aprons, taxiways, parking positions, runway surfaces and more are not available, "
+                                          "smaller airports will be missing and the runway layout might not match the one in the simulator.</p>"
+                                          "<p style='white-space:pre'>You can change this manually in the menu<br/>"
+                                          "\"Scenery Library\" -> \"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
+                                          "<p><b>Normally you should not use this mode.</b></p>"
+                                            "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
+                                 tr("Do not &show this dialog again and always correct mode after loading."),
+                                 QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
+
+    if(result == QMessageBox::Yes)
+    {
+      navDbActionBlend->setChecked(true);
+      switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
+    }
+  } // else if(navDatabaseStatus == dbstat::NAVDATABASE_ALL)
 }
 
 bool DatabaseManager::checkValidBasePaths()

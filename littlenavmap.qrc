@@ -320,5 +320,6 @@
         <file>resources/icons/aircraft_small_ground_online.svg</file>
         <file>resources/icons/aircraft_small_online.svg</file>
         <file>resources/icons/turnpath.svg</file>
+        <file>resources/icons/databasecheck.svg</file>
     </qresource>
 </RCC>

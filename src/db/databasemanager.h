@@ -245,6 +245,9 @@ public:
   /* Checks if version of database is smaller than application database version and shows a warning dialog if it is */
   void checkDatabaseVersion();
 
+  /* Validate scenery library mode and show warning dialogs which allow to set the recommended mode */
+  void checkSceneryOptions();
+
 signals:
   /* Emitted before opening the scenery database dialog, loading a database or switching to a new simulator database.
    * Recipients have to close all database connections and clear all caches. The database instance itself is not changed
@@ -300,6 +303,9 @@ private:
   void clearLanguageIndex();
 
   bool checkValidBasePaths();
+
+  // Get metadata independent of scenery library settings
+  const atools::fs::db::DatabaseMeta databaseMetadata(atools::fs::FsPaths::SimulatorType type);
 
   atools::gui::Dialog *dialog;
   DatabaseDialog *databaseDialog = nullptr;

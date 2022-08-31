@@ -979,7 +979,6 @@ void MainWindow::clearProcedureCache()
 
 void MainWindow::connectAllSlots()
 {
-
   // Get "show in browser"  click
   connect(ui->textBrowserLegendNavInfo, &QTextBrowser::anchorClicked, this, &MainWindow::legendAnchorClicked);
 
@@ -1265,8 +1264,10 @@ void MainWindow::connectAllSlots()
   connect(ui->actionShowStatusbar, &QAction::toggled, ui->statusBar, &QStatusBar::setVisible);
 
   // Scenery library menu ============================================================
+  DatabaseManager *databaseManager = NavApp::getDatabaseManager();
   connect(ui->actionLoadAirspaces, &QAction::triggered, NavApp::getAirspaceController(), &AirspaceController::loadAirspaces);
-  connect(ui->actionReloadScenery, &QAction::triggered, NavApp::getDatabaseManager(), &DatabaseManager::loadScenery);
+  connect(ui->actionReloadScenery, &QAction::triggered, databaseManager, &DatabaseManager::loadScenery);
+  connect(ui->actionValidateSceneryLibrarySettings, &QAction::triggered, databaseManager, &DatabaseManager::checkSceneryOptions);
   connect(ui->actionDatabaseFiles, &QAction::triggered, this, &MainWindow::showDatabaseFiles);
   connect(ui->actionShowMapCache, &QAction::triggered, this, &MainWindow::showShowMapCache);
 
@@ -1447,10 +1448,8 @@ void MainWindow::connectAllSlots()
           NavApp::getOnlinedataController(), &OnlinedataController::userAirspacesUpdated);
 
   // Connect airspace manger signals to database manager signals
-  connect(airspaceController, &AirspaceController::preDatabaseLoadAirspaces,
-          NavApp::getDatabaseManager(), &DatabaseManager::preDatabaseLoad);
-  connect(airspaceController, &AirspaceController::postDatabaseLoadAirspaces,
-          NavApp::getDatabaseManager(), &DatabaseManager::postDatabaseLoad);
+  connect(airspaceController, &AirspaceController::preDatabaseLoadAirspaces, databaseManager, &DatabaseManager::preDatabaseLoad);
+  connect(airspaceController, &AirspaceController::postDatabaseLoadAirspaces, databaseManager, &DatabaseManager::postDatabaseLoad);
 
   connect(ui->actionMapShowAircraft, &QAction::toggled, profileWidget, &ProfileWidget::updateProfileShowFeatures);
   connect(ui->actionMapShowAircraftTrack, &QAction::toggled, profileWidget, &ProfileWidget::updateProfileShowFeatures);
@@ -1548,8 +1547,8 @@ void MainWindow::connectAllSlots()
   // Messages about database query result status
   connect(mapWidget, &MapPaintWidget::resultTruncated, this, &MainWindow::resultTruncated);
 
-  connect(NavApp::getDatabaseManager(), &DatabaseManager::preDatabaseLoad, this, &MainWindow::preDatabaseLoad);
-  connect(NavApp::getDatabaseManager(), &DatabaseManager::postDatabaseLoad, this, &MainWindow::postDatabaseLoad);
+  connect(databaseManager, &DatabaseManager::preDatabaseLoad, this, &MainWindow::preDatabaseLoad);
+  connect(databaseManager, &DatabaseManager::postDatabaseLoad, this, &MainWindow::postDatabaseLoad);
 
   // Not needed. All properties removed from legend since they are not persistent
   // connect(legendWidget, &Marble::LegendWidget::propertyValueChanged,
@@ -1648,7 +1647,7 @@ void MainWindow::connectAllSlots()
 
   // Check for database file modifications on application activation
   connect(atools::gui::Application::applicationInstance(), &atools::gui::Application::applicationStateChanged,
-          NavApp::getDatabaseManager(), &DatabaseManager::checkForChangedNavAndSimDatabases);
+          databaseManager, &DatabaseManager::checkForChangedNavAndSimDatabases);
 }
 
 void MainWindow::actionShortcutMapTriggered()
