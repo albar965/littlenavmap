@@ -178,7 +178,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Ground Speed"), tr("Value prefixed with \"GS\" on the map"), optsac::ITEM_USER_AIRCRAFT_GS, true);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("True Airspeed"), tr("Value prefixed with \"TAS\" on the map"), optsac::ITEM_USER_AIRCRAFT_TAS);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Climb- and Sinkrate"), QString(), optsac::ITEM_USER_AIRCRAFT_CLIMB_SINK);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Heading"), tr("Aircraft heading prefixed with \"HDG\" on the map"), optsac::ITEM_USER_AIRCRAFT_HEADING);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Heading"), tr("Aircraft magnetic heading prefixed with \"HDG\" on the map"), optsac::ITEM_USER_AIRCRAFT_HEADING);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Actual Altitude"), tr("Real aircraft altitude prefixed with \"ALT\" on the map"), optsac::ITEM_USER_AIRCRAFT_ALTITUDE);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Indicated Altitude"), tr("Indicated aircraft altitude prefixed with \"IND\" on the map"), optsac::ITEM_USER_AIRCRAFT_INDICATED_ALTITUDE, true);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Altitude above ground"), tr("Actual altitude above ground. Prefixed with \"AGL\" on the map"), optsac::ITEM_USER_AIRCRAFT_ALT_ABOVE_GROUND);
@@ -189,19 +189,20 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   // AI =====================================================
   QTreeWidgetItem *aiAircraft = addTopItem(tr("AI, Multiplayer and Online Client Aircraft"), tr("Select text labels for the AI, multiplayer and online client aircraft."));
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Registration, Number or Callsign"), QString(), optsac::ITEM_AI_AIRCRAFT_REGISTRATION, true);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Type"), QString(), optsac::ITEM_AI_AIRCRAFT_TYPE, true);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Type"), tr("Show the AI aircraft type, like B738, B350 or M20T."), optsac::ITEM_AI_AIRCRAFT_TYPE, true);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Airline"), QString(), optsac::ITEM_AI_AIRCRAFT_AIRLINE, true);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Flight Number"), QString(), optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Transponder Code"), tr("Transponder code prefixed with \"XPDR\" on the map"), optsac::ITEM_AI_AIRCRAFT_TRANSPONDER_CODE);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Indicated Airspeed"), QString(), optsac::ITEM_AI_AIRCRAFT_IAS);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Ground Speed"), QString(), optsac::ITEM_AI_AIRCRAFT_GS, true);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("True Airspeed"), QString(), optsac::ITEM_AI_AIRCRAFT_TAS);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Indicated Airspeed"), tr("Value prefixed with \"IAS\" on the map"), optsac::ITEM_AI_AIRCRAFT_IAS);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Ground Speed"), tr("Value prefixed with \"GS\" on the map"), optsac::ITEM_AI_AIRCRAFT_GS, true);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("True Airspeed"), tr("Value prefixed with \"TAS\" on the map"), optsac::ITEM_AI_AIRCRAFT_TAS);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Climb- and Sinkrate"), QString(), optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Heading"), QString(), optsac::ITEM_AI_AIRCRAFT_HEADING);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Actual Altitude"), QString(), optsac::ITEM_AI_AIRCRAFT_ALTITUDE, true);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Departure and Destination"), QString(), optsac::ITEM_AI_AIRCRAFT_DEP_DEST, true);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Heading"), tr("Aircraft magnetic heading prefixed with \"HDG\" on the map"), optsac::ITEM_AI_AIRCRAFT_HEADING);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Actual Altitude"), tr("Real aircraft altitude prefixed with \"ALT\" on the map"), optsac::ITEM_AI_AIRCRAFT_ALTITUDE, true);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Indicated Altitude"), tr("Indicated aircraft altitude prefixed with \"IND\" on the map"), optsac::ITEM_AI_AIRCRAFT_INDICATED_ALTITUDE);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Departure and Destination"), tr("Departure and destination ICAO idents"), optsac::ITEM_AI_AIRCRAFT_DEP_DEST);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Coordinates"), tr("Show aircraft coordinates using the format selected on options page \"Units\"."), optsac::ITEM_AI_AIRCRAFT_COORDINATES);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Distance and Bearing from User"), tr("Distance and magnetic bearing from user aircraft prefixed with \"From User\"."), optsac::ITEM_AI_AIRCRAFT_DIST_BEARING_FROM_USER, false);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Distance and Bearing from User"), tr("Distance and magnetic bearing from user aircraft prefixed with \"From User\"."), optsac::ITEM_AI_AIRCRAFT_DIST_BEARING_FROM_USER);
 
   // Compass rose =====================================================
   QTreeWidgetItem *compassRose = addTopItem(tr("Compass Rose"), tr("Select display options for the compass rose."));

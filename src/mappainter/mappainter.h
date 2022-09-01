@@ -172,34 +172,34 @@ struct PaintContext
     return queryOverflow;
   }
 
-  bool  dOptUserAc(optsac::DisplayOptionUserAircraft opts) const
+  bool  dOptUserAc(optsac::DisplayOptionsUserAircraft opts) const
   {
-    return dispOptsUser.testFlag(opts);
+    return dispOptsUser & opts;
   }
 
-  bool  dOptAiAc(optsac::DisplayOptionAiAircraft opts) const
+  bool  dOptAiAc(optsac::DisplayOptionsAiAircraft opts) const
   {
-    return dispOptsAi.testFlag(opts);
+    return dispOptsAi & opts;
   }
 
-  bool  dOptAp(optsd::DisplayOptionAirport opts) const
+  bool  dOptAp(optsd::DisplayOptionsAirport opts) const
   {
-    return dispOptsAirport.testFlag(opts);
+    return dispOptsAirport & opts;
   }
 
-  bool  dOptRose(optsd::DisplayOptionRose opts) const
+  bool  dOptRose(optsd::DisplayOptionsRose opts) const
   {
-    return dispOptsRose.testFlag(opts);
+    return dispOptsRose & opts;
   }
 
-  bool  dOptMeasurement(optsd::DisplayOptionMeasurement opts) const
+  bool  dOptMeasurement(optsd::DisplayOptionsMeasurement opts) const
   {
-    return dispOptsMeasurement.testFlag(opts);
+    return dispOptsMeasurement & opts;
   }
 
-  bool  dOptRoute(optsd::DisplayOptionRoute opts) const
+  bool  dOptRoute(optsd::DisplayOptionsRoute opts) const
   {
-    return dispOptsRoute.testFlag(opts);
+    return dispOptsRoute & opts;
   }
 
   /* Calculate real symbol size */

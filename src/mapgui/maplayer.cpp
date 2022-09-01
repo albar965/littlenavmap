@@ -131,6 +131,10 @@ void MapLayer::loadFromXml(atools::util::XmlStream& xmlStream)
       aiAircraftSmall = xmlStream.readElementTextBool();
     else if(reader.name() == "AiAircraftText")
       aiAircraftText = xmlStream.readElementTextBool();
+    else if(reader.name() == "AiAircraftTextDetail")
+      aiAircraftTextDetail = xmlStream.readElementTextBool();
+    else if(reader.name() == "AiAircraftTextDetail2")
+      aiAircraftTextDetail2 = xmlStream.readElementTextBool();
     else if(reader.name() == "AiShipLarge")
       aiShipLarge = xmlStream.readElementTextBool();
     else if(reader.name() == "AiShipSmall")
@@ -320,6 +324,8 @@ QDebug operator<<(QDebug out, const MapLayer& record)
   out << "<AiAircraftSize>" << record.aiAircraftSize << "</AiAircraftSize>" << endl;
   out << "<AiAircraftSmall>" << record.aiAircraftSmall << "</AiAircraftSmall>" << endl;
   out << "<AiAircraftText>" << record.aiAircraftText << "</AiAircraftText>" << endl;
+  out << "<AiAircraftTextDetail>" << record.aiAircraftTextDetail << "</AiAircraftTextDetail>" << endl;
+  out << "<AiAircraftTextDetail2>" << record.aiAircraftTextDetail2 << "</AiAircraftTextDetail2>" << endl;
   out << "<AiShipLarge>" << record.aiShipLarge << "</AiShipLarge>" << endl;
   out << "<AiShipSmall>" << record.aiShipSmall << "</AiShipSmall>" << endl;
   out << "<Airport>" << record.airport << "</Airport>" << endl;

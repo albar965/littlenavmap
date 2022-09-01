@@ -441,6 +441,16 @@ public:
     return aiAircraftText;
   }
 
+  bool isAiAircraftTextDetail() const
+  {
+    return aiAircraftTextDetail;
+  }
+
+  bool isAiAircraftTextDetail2() const
+  {
+    return aiAircraftTextDetail2;
+  }
+
   bool isOnlineAircraft() const
   {
     return onlineAircraft;
@@ -600,7 +610,8 @@ private:
 
   int aiAircraftSize = 32;
   bool aiAircraftGround = true, aiAircraftLarge = true, aiAircraftSmall = true, onlineAircraft = true, aiShipLarge = true,
-       aiShipSmall = true, aiAircraftGroundText = true, aiAircraftText = true, onlineAircraftText = true;
+       aiShipSmall = true, aiAircraftGroundText = true, aiAircraftText = true, aiAircraftTextDetail = true, aiAircraftTextDetail2 = true,
+       onlineAircraftText = true;
 };
 
 #endif // LITTLENAVMAP_MAPLAYER_H

@@ -312,8 +312,8 @@ const QLatin1String OPTIONS_DIALOG_FLIGHTPLAN_HIGHLIGHT_COLOR("OptionsDialog/Map
 const QLatin1String OPTIONS_DIALOG_SEARCH_HIGHLIGHT_COLOR("OptionsDialog/MapHighlightSearchColor");
 const QLatin1String OPTIONS_DIALOG_PROFILE_HIGHLIGHT_COLOR("OptionsDialog/MapHighlightProfileColor");
 
-const QLatin1String OPTIONS_DIALOG_DISPLAY_OPTIONS_USER_AIRCRAFT("OptionsDialog/DisplayOptionsuserAircraft");
-const QLatin1String OPTIONS_DIALOG_DISPLAY_OPTIONS_AI_AIRCRAFT("OptionsDialog/DisplayOptionsAiAircraft");
+const QLatin1String OPTIONS_DIALOG_DISPLAY_OPTIONS_USER_AIRCRAFT("OptionsDialog/DisplayOptionsuserAircraft2");
+const QLatin1String OPTIONS_DIALOG_DISPLAY_OPTIONS_AI_AIRCRAFT("OptionsDialog/DisplayOptionsAiAircraft2");
 const QLatin1String OPTIONS_DIALOG_DISPLAY_OPTIONS_AIRPORT("OptionsDialog/DisplayOptionsAirport");
 const QLatin1String OPTIONS_DIALOG_DISPLAY_OPTIONS_COMPASS_ROSE("OptionsDialog/DisplayOptionsCompassRose");
 const QLatin1String OPTIONS_DIALOG_DISPLAY_OPTIONS_MEASUREMENT("OptionsDialog/DisplayOptionsMeasurement");

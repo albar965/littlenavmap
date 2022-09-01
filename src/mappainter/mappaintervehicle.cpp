@@ -171,66 +171,79 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, int size, const SimCo
      (aircraft.isOnline() && context->mapLayer->isOnlineAircraftText()) || // All online
      forceLabel) // Force label for nearby aircraft
   {
+    bool detail = context->mapLayer->isAiAircraftTextDetail();
+    bool detail2 = context->mapLayer->isAiAircraftTextDetail2();
+
     appendAtcText(texts, aircraft, context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_REGISTRATION),
-                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TYPE),
-                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_AIRLINE),
-                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER),
-                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TRANSPONDER_CODE));
+                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TYPE) && detail,
+                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_AIRLINE) && detail2,
+                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER) && detail2,
+                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TRANSPONDER_CODE) && detail2);
 
-    if(aircraft.getGroundSpeedKts() > 30)
-      appendSpeedText(texts, aircraft,
-                      context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_IAS),
-                      context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_GS),
-                      context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TAS));
-
-    if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_DEP_DEST) &&
-       (!aircraft.getFromIdent().isEmpty() || !aircraft.getToIdent().isEmpty()))
+    if(detail)
     {
-      texts.append(tr("%1 to %2").
-                   arg(aircraft.getFromIdent().isEmpty() ? tr("None") : aircraft.getFromIdent()).
-                   arg(aircraft.getToIdent().isEmpty() ? tr("None") : aircraft.getToIdent()));
-    }
+      if(aircraft.getGroundSpeedKts() > 30)
+        appendSpeedText(texts, aircraft,
+                        context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_IAS),
+                        context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_GS),
+                        context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TAS));
 
-    if(!aircraft.isOnGround())
-    {
-      if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_HEADING))
+      if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_DEP_DEST) &&
+         (!aircraft.getFromIdent().isEmpty() || !aircraft.getToIdent().isEmpty()) && detail2)
       {
-        float heading = atools::fs::sc::SC_INVALID_FLOAT;
-        if(aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
-          heading = aircraft.getHeadingDegMag();
-        else if(aircraft.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
-          heading = atools::geo::normalizeCourse(aircraft.getHeadingDegTrue() - NavApp::getMagVar(aircraft.getPosition()));
-
-        if(heading < atools::fs::sc::SC_INVALID_FLOAT)
-          texts.append(tr("HDG %3°M").arg(QString::number(heading, 'f', 0)));
+        texts.append(tr("%1 to %2").
+                     arg(aircraft.getFromIdent().isEmpty() ? tr("Unknown") : aircraft.getFromIdent()).
+                     arg(aircraft.getToIdent().isEmpty() ? tr("Unknown") : aircraft.getToIdent()));
       }
 
-      if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK))
-        appendClimbSinkText(texts, aircraft);
-
-      if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_ALTITUDE))
+      if(!aircraft.isOnGround())
       {
-        QString upDown;
-        if(!context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK))
-          climbSinkPointer(upDown, aircraft);
-        texts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getActualAltitudeFt())).arg(upDown));
+        if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_HEADING))
+        {
+          float heading = atools::fs::sc::SC_INVALID_FLOAT;
+          if(aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)
+            heading = aircraft.getHeadingDegMag();
+          else if(aircraft.getHeadingDegTrue() < atools::fs::sc::SC_INVALID_FLOAT)
+            heading = atools::geo::normalizeCourse(aircraft.getHeadingDegTrue() - NavApp::getMagVar(aircraft.getPosition()));
+
+          if(heading < atools::fs::sc::SC_INVALID_FLOAT)
+            texts.append(tr("HDG %3°M").arg(QString::number(heading, 'f', 0)));
+        }
+
+        if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK))
+          appendClimbSinkText(texts, aircraft);
+
+        QStringList altTexts;
+        if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_INDICATED_ALTITUDE) &&
+           aircraft.getIndicatedAltitudeFt() < map::INVALID_ALTITUDE_VALUE)
+          altTexts.append(tr("IND %1").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())));
+
+        if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_ALTITUDE) && aircraft.getActualAltitudeFt() < map::INVALID_ALTITUDE_VALUE)
+        {
+          QString upDown;
+          if(!context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_CLIMB_SINK))
+            climbSinkPointer(upDown, aircraft);
+          altTexts.append(tr("ALT %1%2").arg(Unit::altFeet(aircraft.getActualAltitudeFt())).arg(upDown));
+        }
+        if(!altTexts.isEmpty())
+          texts.append(altTexts.join(tr(", ")));
       }
-    }
 
-    const Pos& pos = aircraft.getPosition();
-    const Pos& userPos = mapPaintWidget->getUserAircraft().getPosition();
-    if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_DIST_BEARING_FROM_USER))
-    {
-      float distMeter = pos.distanceMeterTo(userPos);
+      const Pos& pos = aircraft.getPosition();
+      const Pos& userPos = mapPaintWidget->getUserAircraft().getPosition();
+      if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_DIST_BEARING_FROM_USER) && detail2)
+      {
+        float distMeter = pos.distanceMeterTo(userPos);
 
-      if(distMeter < atools::geo::nmToMeter(8000.f))
-        texts.append(tr("From User %1 %2°M").
-                     arg(Unit::distMeter(distMeter, true /* addUnit */, 5 /* minValPrec */, true /* narrow */)).
-                     arg(QString::number(atools::geo::normalizeCourse(userPos.angleDegTo(pos) - NavApp::getMagVar(userPos)), 'f', 0)));
-    }
+        if(distMeter < atools::geo::nmToMeter(8000.f))
+          texts.append(tr("From User %1 %2°M").
+                       arg(Unit::distMeter(distMeter, true /* addUnit */, 5 /* minValPrec */, true /* narrow */)).
+                       arg(QString::number(atools::geo::normalizeCourse(userPos.angleDegTo(pos) - NavApp::getMagVar(userPos)), 'f', 0)));
+      }
 
-    if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_COORDINATES))
-      texts.append(Unit::coords(pos));
+      if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_COORDINATES) && detail2)
+        texts.append(Unit::coords(pos));
+    } // if(detail)
 
     int transparency = context->flags2.testFlag(opts2::MAP_AI_TEXT_BACKGROUND) ? 255 : 0;
 
