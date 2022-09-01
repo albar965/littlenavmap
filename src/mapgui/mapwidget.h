@@ -424,9 +424,8 @@ private:
   QPixmap userpointDragPixmap;
 
   /* Save last tooltip position. If invalid/null no tooltip will be shown */
-  QPoint tooltipPos;
-  map::MapResult mapSearchResultTooltip;
-  map::MapResult mapSearchResultInfoClick;
+  QPoint tooltipGlobalPos;
+  map::MapResult *mapSearchResultTooltip, *mapSearchResultTooltipLast, *mapSearchResultInfoClick;
 
   MapTooltip *mapTooltip;
 

@@ -116,6 +116,12 @@ using atools::geo::Pos;
 MapWidget::MapWidget(MainWindow *parent)
   : MapPaintWidget(parent, true /* real visible widget */), mainWindow(parent)
 {
+  takeoffLandingLastAircraft = new atools::fs::sc::SimConnectUserAircraft;
+  mapSearchResultTooltip = new map::MapResult;
+  mapSearchResultTooltipLast = new map::MapResult;
+  mapSearchResultInfoClick = new map::MapResult;
+  distanceMarkerBackup = new map::DistanceMarker;
+  userpointDrag = new map::MapUserpoint;
   setSizePolicy(QSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding));
   setMinimumSize(QSize(50, 50));
 
@@ -188,6 +194,12 @@ MapWidget::~MapWidget()
 
   qDebug() << Q_FUNC_INFO << "delete pushButtonExitFullscreen";
   delete pushButtonExitFullscreen;
+  delete takeoffLandingLastAircraft;
+  delete mapSearchResultTooltip;
+  delete mapSearchResultTooltipLast;
+  delete mapSearchResultInfoClick;
+  delete distanceMarkerBackup;
+  delete userpointDrag;
 }
 
 void MapWidget::addFullScreenExitButton()
@@ -455,10 +467,9 @@ bool MapWidget::event(QEvent *event)
 
 void MapWidget::hideTooltip()
 {
-  // Hide tooltip only if cursor is inside map rectangle since hiding affects tooltips in the whole application
-  // Outside map the tooltip is hidden anyway
-  if(rect().contains(mapFromGlobal(QCursor::pos())))
-    QToolTip::hideText();
+  // Passing empty string hides tooltip
+  // This affects and hides tooltips across the whole application
+  QToolTip::showText(tooltipGlobalPos, QString(), this);
 
   tooltipPos = QPoint();
 }
@@ -490,8 +501,11 @@ void MapWidget::showTooltip(bool update)
   QString text = mapTooltip->buildTooltip(mapSearchResultTooltip, NavApp::getRouteConst(),
                                           paintLayer->getMapLayer()->isAirportDiagram());
 
-  if(!text.isEmpty() && !tooltipPos.isNull())
-    QToolTip::showText(tooltipPos, text /*, nullptr, QRect(), 3600 * 1000*/);
+  if(paintLayer->getMapLayer() != nullptr)
+    text = mapTooltip->buildTooltip(*mapSearchResultTooltip, pos, NavApp::getRouteConst(), paintLayer->getMapLayer()->isAirportDiagram());
+
+  if(!text.isEmpty() && !tooltipGlobalPos.isNull())
+    QToolTip::showText(tooltipGlobalPos, text, this);
   else
     hideTooltip();
 }
@@ -2180,11 +2194,32 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   {
     lastSimUpdateTooltipMs = now;
 
+    // Update result set
+    updateTooltipResult();
+
+    // Update if any aircraft is shown for heading, speed and altitude
+    bool updateAircraft = NavApp::isConnectedAndAircraft() && mapSearchResultTooltip->hasAnyAircraft();
+
+    // Update tooltip if bearing is shown
+    bool updateBearing = (mapSearchResultTooltip->hasAirports() || mapSearchResultTooltip->hasVor() || mapSearchResultTooltip->hasNdb() ||
+                          mapSearchResultTooltip->hasWaypoints() || mapSearchResultTooltip->hasIls() ||
+                          mapSearchResultTooltip->hasHoldings() || mapSearchResultTooltip->hasAirportMsa() ||
+                          mapSearchResultTooltip->hasUserpoints()) && NavApp::isConnectedAndAircraft();
+
+    // Aircraft moved away from cursor or nothing in current result
+    bool aircraftDisappeared = mapSearchResultTooltip->isEmpty() && mapSearchResultTooltipLast->hasAnyAircraft();
+
+    // Nothing found at all or aircraft moved away from cursor
+    // This affects and hides tooltips across the whole application and should not be used on each update
+    if(aircraftDisappeared)
+      hideTooltip();
+
     // Update tooltip if it has bearing/distance fields
-    if((mapSearchResultTooltip.hasAirports() || mapSearchResultTooltip.hasVor() || mapSearchResultTooltip.hasNdb() ||
-        mapSearchResultTooltip.hasWaypoints() || mapSearchResultTooltip.hasIls() ||
-        mapSearchResultTooltip.hasUserpoints()) && NavApp::isConnectedAndAircraft())
-      updateTooltip();
+    if(updateBearing || updateAircraft)
+      showTooltip(true /* update */);
+
+    // Remember last result to detech disappearing aircraft
+    *mapSearchResultTooltipLast = *mapSearchResultTooltip;
   }
 
   // ================================================================================
