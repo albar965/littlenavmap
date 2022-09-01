@@ -516,8 +516,7 @@ private:
 
   QTimer weatherUpdateTimer;
 
-  bool firstStart = true /* emit window shown only once after startup */,
-       firstApplicationStart = false /* first starup on a system after installation */;
+  bool firstStart = true; /* emit window shown only once after startup */
 
   map::WeatherContext *currentWeatherContext = nullptr;
 

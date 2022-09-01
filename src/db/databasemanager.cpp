@@ -1470,7 +1470,7 @@ void DatabaseManager::loadSceneryInternal()
         if(!backgroundHintShown)
         {
           dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_DATABASE_BACKGROUND_HINT,
-                                 tr("Note that you can now put the scenery library loading window into the background and "
+                                 tr("Note that you can put the scenery library loading window into the background and "
                                     "continue working with Little Navmap while it is loading."),
                                  tr("Do not &show this dialog again."));
           backgroundHintShown = true;
@@ -1848,14 +1848,20 @@ void DatabaseManager::checkDatabaseVersion()
     {
       qDebug() << Q_FUNC_INFO << msg;
 
-      dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_DATABASE_OLD,
-                             tr("<p>%1</p>"
-                                  "<p>It is advised to reload the scenery library database after each Little Navmap update, "
-                                    "after installing new add-on scenery or after a flight simulator update to "
-                                    "enable new features or benefit from bug fixes.</p>"
-                                    "<p>You can do this in menu \"Scenery Library\" -> "
-                                      "\"Reload Scenery Library\".</p>").arg(msg.join(tr("<br/>"))),
-                             tr("Do not &show this dialog again."));
+      int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DATABASE_OLD,
+                                              tr("<p>%1</p>"
+                                                   "<p>It is advised to reload the scenery library database after each Little Navmap update, "
+                                                     "after installing new add-on scenery or after a flight simulator update to "
+                                                     "enable new features or benefit from bug fixes.</p>"
+                                                     "<p>You can do this in menu \"Scenery Library\" -> "
+                                                       "\"Reload Scenery Library\".</p>"
+                                                       "<p>Open the \"Reload Scenery Library\" dialog window now?</p>").
+                                              arg(msg.join(tr("<br/>"))),
+                                              tr("Do not &show this dialog again."), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes,
+                                              QMessageBox::No);
+
+      if(result == QMessageBox::Yes)
+        loadScenery();
     }
   }
 }

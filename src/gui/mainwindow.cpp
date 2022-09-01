@@ -2077,7 +2077,7 @@ void MainWindow::routeFromStringCurrent()
     if(!backgroundHintRouteStringShown)
     {
       dialog->showInfoMsgBox(lnm::ROUTE_STRING_DIALOG_BACKGROUND_HINT,
-                             tr("Note that you can now put the flight plan route description window in the background and "
+                             tr("Note that you can put the flight plan route description window in the background and "
                                 "modify the flight plan on the map or flight plan table in parallel."),
                              tr("Do not &show this dialog again."));
       backgroundHintRouteStringShown = true;
@@ -3101,80 +3101,6 @@ void MainWindow::mainWindowShown()
     dialog->showWarnMsgBox(lnm::ACTIONS_SHOW_SSL_FAILED, message, tr("Do not &show this dialog again."));
   }
 
-  // Check for missing simulators and databases ====================================================
-  DatabaseManager *databaseManager = NavApp::getDatabaseManager();
-  if(!databaseManager->hasSimulatorDatabases() && !databaseManager->hasInstalledSimulators())
-  {
-    NavApp::closeSplashScreen();
-
-    // No databases and no simulators - show a message dialog
-    QString message = tr("<p>Could not find a simulator installation on this computer. Also, no scenery library databases were found.</p>"
-                           "<p>You can copy a Little Navmap scenery library database from another computer "
-                             "if you wish to run this Little Navmap instance on a remote across a network.</p>");
-
-    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineUrl + "NETWORK.html", lnm::helpLanguageOnline());
-    message.append(tr("<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>").arg(url.toString()));
-
-    dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_MISSING_SIMULATORS, message, tr("Do not &show this dialog again."));
-  } // else have databases do nothing
-
-  // First installation actions ====================================================
-  if(firstApplicationStart)
-  {
-    firstApplicationStart = false;
-
-    NavApp::closeSplashScreen();
-
-    // Create recommended folder structure if user confirms =========================================
-    runDirTool(false /* manual */);
-
-    // Open a start page in the web browser ============================
-    HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineStartUrl, lnm::helpLanguageOnline());
-
-    // Show the scenery database dialog on first start
-    if(databaseManager->hasInstalledSimulators())
-    {
-      // Found simulators let the user create new databases
-      databaseManager->loadScenery();
-
-      // Open connection dialog ============================
-      NavApp::getConnectClient()->connectToServerDialog();
-    }
-    // else warning was already shown above
-  }
-  else if(databasesErased)
-  {
-    databasesErased = false;
-    // Databases were removed - show dialog
-    NavApp::closeSplashScreen();
-    databaseManager->loadScenery();
-  }
-
-  if(!NavApp::getElevationProvider()->isGlobeOfflineProvider())
-  {
-    NavApp::closeSplashScreen();
-
-    // Text from options
-    // <p><a href="https://www.ngdc.noaa.gov/mgg/topo/gltiles.html"><b>Click here to open the download page for the GLOBE data in your browser</b></a><br/>
-    // Download the file <b><i>All Tiles in One .zip (all10g.zip)</i></b> from the page and extract
-    // the archive to an arbitrary place, e.g in \"Documents\". Then click \"Select GLOBE Directory ...\"
-    // above and choose the directory with the extracted files.</p>
-    // <p><a href="%1"><b>Click here for more information in the Little Navmap online manual</b></a></p>
-
-    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallGlobeUrl, lnm::helpLanguageOnline());
-    QString message = tr(
-      "<p>The online elevation data which is used by default for the elevation profile is limited and has a lot of errors.<br/>"
-      "Therefore, it is recommended to download and use the offline GLOBE elevation data which provides world wide coverage.</p>"
-      "<p>Go to the main menu -&gt; \"Tools\" -&gt; \"Options\" and then to page \"Cache and files\" to add the GLOBE data.</p>"
-        "<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>",
-      "Keep instructions in sync with translated menus").arg(url.toString());
-
-    dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_INSTALL_GLOBE, message, tr("Do not &show this dialog again."));
-  }
-
-  // Checks if version of database is smaller than application database version and shows a warning dialog if it is
-  databaseManager->checkDatabaseVersion();
-
   NavApp::logDatabaseMeta();
 
   // If enabled connect to simulator without showing dialog
@@ -3186,9 +3112,6 @@ void MainWindow::mainWindowShown()
   // Update the weather every 15 seconds if connected
   weatherUpdateTimer.setInterval(WEATHER_UPDATE_MS);
   weatherUpdateTimer.start();
-
-  // Check for updates once main window is visible
-  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */, false /* forceDebug */);
 
   optionsDialog->checkOfficialOnlineUrls();
 
@@ -3224,6 +3147,8 @@ void MainWindow::mainWindowShown()
 
 void MainWindow::mainWindowShownDelayed()
 {
+  NavApp::closeSplashScreen();
+
   if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_LAYOUT) && !layoutFileHistory->isEmpty())
   {
     try
@@ -3236,7 +3161,6 @@ void MainWindow::mainWindowShownDelayed()
     }
     catch(atools::Exception& e)
     {
-      NavApp::closeSplashScreen();
       atools::gui::ErrorHandler(this).handleException(e);
     }
   }
@@ -3291,8 +3215,108 @@ void MainWindow::mainWindowShownDelayed()
 
   NavApp::setMainWindowVisible();
 
+  // Draw map ============================================================================
   // Map widget draws gray rectangle until main window is visible
   mapWidget->update();
+
+  // Check for missing simulators and databases ====================================================
+  DatabaseManager *databaseManager = NavApp::getDatabaseManager();
+  if(!databaseManager->hasSimulatorDatabases() && !databaseManager->hasInstalledSimulators())
+  {
+    // No databases and no simulators - show a message dialog
+    QString message = tr("<p>Could not find a simulator installation on this computer. Also, no scenery library databases were found.</p>"
+                           "<p>You can copy a Little Navmap scenery library database from another computer "
+                             "if you wish to run this Little Navmap instance on a remote across a network.</p>");
+
+    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineUrl + "NETWORK.html", lnm::helpLanguageOnline());
+    message.append(tr("<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>").arg(url.toString()));
+
+    dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_MISSING_SIMULATORS, message, tr("Do not &show this dialog again."));
+  } // else have databases do nothing
+
+  // First installation actions ====================================================
+
+  Settings& settings = Settings::instance();
+  if(settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true))
+  {
+    settings.setValue(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, false);
+
+    QString text = tr("<html>"
+                        "<head><style>body { font-size: large; white-space: pre; }</style></head>"
+                          "<body>"
+                            "<h2>Welcome to Little Navmap</h2>"
+                              "<p>This seems to be the first time you are installing the program.</p>"
+                                "<p>In the following several dialog windows and a web page will<br/>"
+                                "open to guide you through the first steps:</p>"
+                                "<ol>"
+                                  "<li>Web page in the online user manual showing<br/>"
+                                  "important information for first time users.</li>"
+                                  "<li>A dialog window which allows to create a<br/>"
+                                  "directory structure to save your files.<br/>"
+                                  "You can do this later in menu \"Tools\" -> \"Create Directory Structure\".<br/>"
+                                  "This step is optional.</li>"
+                                  "<li>The dialog window \"Load Scenery Library\" opens to load the<br/>"
+                                  "simulator scenery into the Little Navmap database.<br/>"
+                                  "This process runs in the background.<br/>"
+                                  "You can start this manually in the menu<br/>"
+                                  "\"Scenery Library\" -> \"Reload Scenery Library\".</li>"
+                                  "<li>The connection dialog window opens allowing to attach Little Navmap<br/>"
+                                  "to a simulator while flying.<br/>"
+                                  "Do this manually in menu \"Tools\" -> \"Connect to Flight Simulator\".</li>"
+                                "</ol>"
+                                "<p>You can also skip all these steps and run them later.</p>"
+                                  "<p>See the help menu to access the online user manual and tutorials.</p>"
+                                  "</body>"
+                                "</html");
+
+    int retval = QMessageBox::information(this, tr("%1 - Introduction").arg(QApplication::applicationName()), text,
+                                          QMessageBox::Ok, QMessageBox::Cancel);
+
+    if(retval == QMessageBox::Ok)
+    {
+      // Open a start page in the web browser ============================
+      HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineStartUrl, lnm::helpLanguageOnline());
+
+      // Create recommended folder structure if user confirms =========================================
+      runDirTool(false /* manual */);
+
+      // Show the scenery database dialog on first start
+      if(databaseManager->hasInstalledSimulators())
+      {
+        // Found simulators let the user create new databases
+        databaseManager->loadScenery();
+
+        // Open connection dialog ============================
+        NavApp::getConnectClient()->connectToServerDialog();
+      }
+      // else warning was already shown above
+    }
+  }
+  else if(databasesErased)
+  {
+    databasesErased = false;
+    // Databases were removed - show dialog
+    databaseManager->loadScenery();
+  }
+
+  if(!NavApp::getElevationProvider()->isGlobeOfflineProvider())
+  {
+    QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallGlobeUrl, lnm::helpLanguageOnline());
+    QString message = tr(
+      "<p>The online elevation data which is used by default for the elevation profile is limited and has a lot of errors.<br/>"
+      "Therefore, it is recommended to download and use the offline GLOBE elevation data which provides world wide coverage.</p>"
+      "<p>Go to the main menu -&gt; \"Tools\" -&gt; \"Options\" and then to page \"Cache and files\" to add the GLOBE data.</p>"
+        "<p><a href=\"%1\">Click here for more information in the Little Navmap online manual</a></p>",
+      "Keep instructions in sync with translated menus").arg(url.toString());
+
+    dialog->showInfoMsgBox(lnm::ACTIONS_SHOW_INSTALL_GLOBE, message, tr("Do not &show this dialog again."));
+  }
+
+  // Checks if version of database is smaller than application database version and shows a warning dialog if it is
+  databaseManager->checkDatabaseVersion();
+
+  // Check for updates once main window is visible
+  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */, false /* forceDebug */);
 }
 
 void MainWindow::runDirToolManual()
@@ -3725,8 +3749,6 @@ void MainWindow::restoreStateMain()
 
   widgetState.setBlockSignals(false);
 
-  firstApplicationStart = settings.valueBool(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, true);
-
   // Already loaded in constructor early to allow database creations
   // databaseLoader->restoreState();
 
@@ -3887,9 +3909,6 @@ void MainWindow::saveStateMain()
       NavApp::getStyleHandler()->saveState();
 
     saveActionStates();
-
-    Settings& settings = Settings::instance();
-    settings.setValue(lnm::MAINWINDOW_FIRSTAPPLICATIONSTART, firstApplicationStart);
 
     qDebug() << Q_FUNC_INFO << "databaseManager";
     if(NavApp::getDatabaseManager() != nullptr)

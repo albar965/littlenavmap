@@ -55,7 +55,7 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
 
   // Need to set text programatically since Qt Designer add garbage which messes up formatting on other platforms
   ui->textEditSyntaxHelp->setText(
-    "<p><b>Quick Help</b><br/>"
+    "<p><b><big>Quick Help</big></b><br/>"
       "<b>Format:</b> FROM[ETD] [SPEEDALT] [SIDTRANS] [ENROUTE] [STARTRANS] TO[ETA] [ALTERNATES]<br/>"
       "<b>Optional fields</b> are enclosed with <b>&quot;[]&quot;</b>.<br/>"
       "<b>FROM</b> is the required departure airport. Departure time <b>ETD</b> is ignored.<br/>"
