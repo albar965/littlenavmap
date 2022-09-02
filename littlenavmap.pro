@@ -75,8 +75,8 @@
 # End of configuration documentation
 # =============================================================================
 
-# Define program version here
-VERSION_NUMBER=2.7.11.develop
+# Define program version here VERSION_NUMBER_TODO
+VERSION_NUMBER=2.8.0.beta
 
 QT += core gui sql xml network svg printsupport
 
