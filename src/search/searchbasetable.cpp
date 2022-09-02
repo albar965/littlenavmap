@@ -1284,9 +1284,11 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addAction(ui->actionSearchRouteAirportAlternate);
     menu.addSeparator();
 
-    menu.addAction(ui->actionSearchShowApproaches);
     menu.addAction(ui->actionSearchShowDepartureCustom);
     menu.addAction(ui->actionSearchShowApproachCustom);
+    menu.addSeparator();
+
+    menu.addAction(ui->actionSearchShowApproaches);
     menu.addSeparator();
   }
 

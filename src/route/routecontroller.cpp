@@ -2791,9 +2791,11 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addAction(ui->actionRouteShowOnMap);
   menu.addSeparator();
 
-  menu.addAction(ui->actionRouteShowApproaches);
   menu.addAction(ui->actionRouteShowDepartureCustom);
   menu.addAction(ui->actionRouteShowApproachCustom);
+  menu.addSeparator();
+
+  menu.addAction(ui->actionRouteShowApproaches);
   menu.addSeparator();
 
   menu.addAction(ui->actionRouteActivateLeg);

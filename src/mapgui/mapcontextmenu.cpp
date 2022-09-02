@@ -166,10 +166,12 @@ void MapContextMenu::buildMainMenu()
   insertAlternateMenu(mapMenu);
   mapMenu.addSeparator();
 
-  insertProcedureMenu(mapMenu);
-  insertProcedureAddMenu(mapMenu);
   insertCustomDepartureMenu(mapMenu);
   insertCustomApproachMenu(mapMenu);
+  mapMenu.addSeparator();
+
+  insertProcedureMenu(mapMenu);
+  insertProcedureAddMenu(mapMenu);
   mapMenu.addSeparator();
 
   insertAddRouteMenu(mapMenu);
