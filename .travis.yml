@@ -67,7 +67,7 @@ install:
 
 before_script:
     # Clone atools - atools VERSION_NUMBER_TODO
-    - git clone --branch=release/2.8 https://github.com/albar965/atools.git ../atools
+    - git clone --branch=release/3.8 https://github.com/albar965/atools.git ../atools
 
     # Clone littenavconnect (for deployment) - littenavconnect VERSION_NUMBER_TODO
     - git clone --branch=release/2.8 https://github.com/albar965/littlenavconnect.git ../littlenavconnect
