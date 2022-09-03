@@ -54,8 +54,8 @@ set FILENAME_LXP=%FILENAMETEMP: =%
 
 if defined SSH_DEPLOY_TARGET (
 pscp -i %HOMEDRIVE%\%HOMEPATH%\.ssh\id_rsa LittleNavmap.zip %SSH_DEPLOY_TARGET%/LittleNavmap-win-%FILENAME_LNM%.zip
-pscp -i %HOMEDRIVE%\%HOMEPATH%\.ssh\id_rsa LittleNavconnect.zip %SSH_DEPLOY_TARGET%/LittleNavconnect-win-%FILENAME_LNC%.zip
-pscp -i %HOMEDRIVE%\%HOMEPATH%\.ssh\id_rsa LittleXpconnect.zip %SSH_DEPLOY_TARGET%/LittleXpconnect-win-%FILENAME_LXP%.zip
+rem pscp -i %HOMEDRIVE%\%HOMEPATH%\.ssh\id_rsa LittleNavconnect.zip %SSH_DEPLOY_TARGET%/LittleNavconnect-win-%FILENAME_LNC%.zip
+rem pscp -i %HOMEDRIVE%\%HOMEPATH%\.ssh\id_rsa LittleXpconnect.zip %SSH_DEPLOY_TARGET%/LittleXpconnect-win-%FILENAME_LXP%.zip
 )
 
 popd

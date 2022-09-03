@@ -33,7 +33,7 @@ fi
 )
 
 scp ${APROJECTS}/deploy/LittleNavmap.tar.gz ${SSH_DEPLOY_TARGET}/LittleNavmap-linux-${FILENAME_LNM}.tar.gz
-scp ${APROJECTS}/deploy/LittleNavconnect.tar.gz ${SSH_DEPLOY_TARGET}/LittleNavconnect-linux-${FILENAME_LNC}.tar.gz
-scp ${APROJECTS}/deploy/LittleXpconnect.tar.gz ${SSH_DEPLOY_TARGET}/LittleXpconnect-linux-${FILENAME_LXP}.tar.gz
+#scp ${APROJECTS}/deploy/LittleNavconnect.tar.gz ${SSH_DEPLOY_TARGET}/LittleNavconnect-linux-${FILENAME_LNC}.tar.gz
+#scp ${APROJECTS}/deploy/LittleXpconnect.tar.gz ${SSH_DEPLOY_TARGET}/LittleXpconnect-linux-${FILENAME_LXP}.tar.gz
 
 
