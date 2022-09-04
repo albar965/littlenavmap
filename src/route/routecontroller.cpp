@@ -1919,7 +1919,7 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
 
   // ===================================================================
   // Set up a progress dialog which shows for all calculations taking more than half a second
-  QProgressDialog progress(tr("Calculating Flight Plan ..."), tr("Cancel"), 0, 0, mainWindow);
+  QProgressDialog progress(tr("Calculating Flight Plan ..."), tr("Cancel"), 0, 0, routeCalcDialog);
   progress.setWindowTitle(tr("Little Navmap - Calculating Flight Plan"));
   progress.setWindowFlags(progress.windowFlags() & ~Qt::WindowContextHelpButtonHint);
   progress.setWindowModality(Qt::ApplicationModal);

@@ -97,7 +97,13 @@ RouteCalcDialog::~RouteCalcDialog()
 void RouteCalcDialog::buttonBoxClicked(QAbstractButton *button)
 {
   if(button == ui->buttonBox->button(QDialogButtonBox::Apply))
+  {
+    calculating = true;
+    updateWidgets();
     emit calculateClicked();
+    calculating = false;
+    updateWidgets();
+  }
   else if(button == ui->buttonBox->button(QDialogButtonBox::Help))
     atools::gui::HelpHandler::openHelpUrlWeb(NavApp::getQMainWindow(), lnm::helpOnlineUrl + "ROUTECALC.html", lnm::helpLanguageOnline());
   else if(button == ui->buttonBox->button(QDialogButtonBox::Close))
@@ -150,37 +156,43 @@ void RouteCalcDialog::setCruisingAltitudeFt(float altitude)
 void RouteCalcDialog::updateWidgets()
 {
   bool airway = ui->radioButtonRouteCalcAirway->isChecked();
-
-  ui->checkBoxRouteCalcRadioNdb->setEnabled(!airway);
-  ui->radioButtonRouteCalcAirwayAll->setEnabled(airway);
-  ui->radioButtonRouteCalcAirwayJet->setEnabled(airway);
-  ui->radioButtonRouteCalcAirwayVictor->setEnabled(airway);
-  ui->checkBoxRouteCalcAirwayNoRnav->setEnabled(airway && NavApp::hasRouteTypeInDatabase());
-  ui->checkBoxRouteCalcAirwayTrack->setEnabled(airway && NavApp::hasTracks());
-  ui->horizontalSliderRouteCalcAirwayPreference->setEnabled(airway);
-  ui->groupBoxRouteCalcAirwayPrefer->setEnabled(airway);
-  ui->labelRouteCalcAirwayPreferAirway->setEnabled(airway);
-  ui->labelRouteCalcAirwayPreferWaypoint->setEnabled(airway);
-
-  bool canCalcRoute = NavApp::getRouteConst().canCalcRoute();
-  ui->pushButtonRouteCalcAdjustAltitude->setEnabled(canCalcRoute);
-  ui->buttonBox->button(QDialogButtonBox::Apply)->setEnabled(isCalculateSelection() ? canCalculateSelection : canCalcRoute);
-
-  ui->pushButtonRouteCalcDirect->setEnabled(canCalcRoute && NavApp::getRouteConst().hasEntries());
-  ui->pushButtonRouteCalcReverse->setEnabled(canCalcRoute);
-
-  QString msg = tr("Use downloaded NAT, PACOTS or AUSOTS tracks.\n"
-                   "Best track will be selected automatically.\n"
-                   "Ensure to use the correct flight level.\n"
-                   "Otherwise, tracks will not be used.");
-  QString err = tr("\n\nNo tracks available. Press the download button or\n"
-                   "go to \"Flight Plan\" -> \"Download Tracks\" to fetch tracks.",
-                   "Keep translation in sync with menu items");
-
-  if(NavApp::hasTracks())
-    ui->checkBoxRouteCalcAirwayTrack->setToolTip(msg);
+  if(calculating)
+    setDisabled(true);
   else
-    ui->checkBoxRouteCalcAirwayTrack->setToolTip(msg + err);
+  {
+    setDisabled(false);
+
+    ui->checkBoxRouteCalcRadioNdb->setEnabled(!airway);
+    ui->radioButtonRouteCalcAirwayAll->setEnabled(airway);
+    ui->radioButtonRouteCalcAirwayJet->setEnabled(airway);
+    ui->radioButtonRouteCalcAirwayVictor->setEnabled(airway);
+    ui->checkBoxRouteCalcAirwayNoRnav->setEnabled(airway && NavApp::hasRouteTypeInDatabase());
+    ui->checkBoxRouteCalcAirwayTrack->setEnabled(airway && NavApp::hasTracks());
+    ui->horizontalSliderRouteCalcAirwayPreference->setEnabled(airway);
+    ui->groupBoxRouteCalcAirwayPrefer->setEnabled(airway);
+    ui->labelRouteCalcAirwayPreferAirway->setEnabled(airway);
+    ui->labelRouteCalcAirwayPreferWaypoint->setEnabled(airway);
+
+    bool canCalcRoute = NavApp::getRouteConst().canCalcRoute();
+    ui->pushButtonRouteCalcAdjustAltitude->setEnabled(canCalcRoute);
+    ui->buttonBox->button(QDialogButtonBox::Apply)->setEnabled(isCalculateSelection() ? canCalculateSelection : canCalcRoute);
+
+    ui->pushButtonRouteCalcDirect->setEnabled(canCalcRoute && NavApp::getRouteConst().hasEntries());
+    ui->pushButtonRouteCalcReverse->setEnabled(canCalcRoute);
+
+    QString msg = tr("Use downloaded NAT, PACOTS or AUSOTS tracks.\n"
+                     "Best track will be selected automatically.\n"
+                     "Ensure to use the correct flight level.\n"
+                     "Otherwise, tracks will not be used.");
+    QString err = tr("\n\nNo tracks available. Press the download button or\n"
+                     "go to \"Flight Plan\" -> \"Download Tracks\" to fetch tracks.",
+                     "Keep translation in sync with menu items");
+
+    if(NavApp::hasTracks())
+      ui->checkBoxRouteCalcAirwayTrack->setToolTip(msg);
+    else
+      ui->checkBoxRouteCalcAirwayTrack->setToolTip(msg + err);
+  }
 
   updateHeader();
   updatePreferenceLabel();
