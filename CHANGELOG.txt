@@ -8,7 +8,11 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 This is a public beta release which is feature complete but might have issues.
 Furthermore, translations are incomplete, some help links do not work and the user manual is not
-adapted yet to the new features.
+adapted yet to the new features. Feel free to ask if something is not clear.
+
+**A big thank you to all who reported bugs and issues!**
+
+**This version is ready MSFS SU10 and for X-Plane 12.**
 
 Some features like MSA, vertical paths or en-route holdings require either X-Plane, the included
 AIRAC 1801 database or a Navigraph database newer or equal than AIRAC 2201.
@@ -16,11 +20,14 @@ AIRAC 1801 database or a Navigraph database newer or equal than AIRAC 2201.
 See here for a [list of issues done](https://github.com/albar965/littlenavmap/milestone/11?closed=1).
 More issues are solved than publicly known on Github. This changelog lists the most important.
 
-Note that all dialogs, windows, menus and buttons are functional. There are no unfinished or fake
-buttons/dialogs in the program. Tooltips are updated with all new
-functions and give help. Help buttons are an exception since the manual is not updated yet.
+Please report if something does not work or does not work as expected.
 
-**Please report if something does not work or does not work as expected.**
+**Little Navmap will remind you to reload the scenery library after updating. Please do so to
+benefit from new features and bug fixes.**
+
+**Note that certains settings are reset to default after updating to 2.8.**
+
+**A few keyboard shortcuts have changed.**
 
 **Create a backup of your settings and database folder just in case you'd like to go back to the
 stable release. Backup `ABarthel` in `C:\Users\YOURUSERNAME\AppData\Roaming\ABarthel` on Windows
@@ -29,22 +36,14 @@ and `$HOME/.config/ABarthel` on Linux and macOS.**
 Or see [Multiple Installations](https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/INSTALLATION.html#multiple-installations)
 for information how to run the stable and alpha versions in parallel.
 
-**Little Navmap will remind you to reload the scenery library after updating. Please do so to
-benefit from new features and bug fixes.**
-
-**Note that certains settings are reset to default after updating to 2.8.**
-
-**Some keyboard shortcuts have changed.**
-
-**This list is not complete. To really see all details refer to the
-[CHANGELOG.txt](https://github.com/albar965/littlenavmap/blob/d75b15c6edc2ff08e8dd2b56e8e9d53771e12b29/CHANGELOG.txt)
-at GitHub which includes smaller changes made during the public alpha release cycles from 2.7.7.develop to 2.7.11.develop.**
-
-**A big thank you to all who reported bugs and issues!**
-
 ## Known Issues
 
-* Enroute holding courses are not correct due to an error in declination calculation. This will be
+* X-Plane 12 weather and winds aloft are not read from the simulator yet. This will be added in the
+  next release. Use NOAA as a workaround for now.
+* Xpconnect build for Apple Silicon CPUs (ARM architecture) not yet available.
+  You can run X-Plane in the Intel emulation Rosetta as a workaround:
+  [How to force a native M1 Mac app to run as an Intel app instead](https://www.macworld.com/article/338843/how-to-force-a-native-m1-mac-app-to-run-as-an-intel-app-instead.html).
+* En-route holding courses are not correct due to an error in declination calculation. This will be
   fixed with AIRAC cycle 2210.
 * Running Little Navmap with autoconnect for P3D, FSX or MSFS for several hours without starting
   the simulator leaks resources. This is mitigated by automatically reducing the connection rate
@@ -111,7 +110,7 @@ at GitHub which includes smaller changes made during the public alpha release cy
 * Added options for measurement lines thickness, color and font size. These can be changed in options
   on page `Map Display User` -> `Distance measurements`.
 * Added size option for highlight marks in options on page `Map Display User` -> `Circle Size`.
-* Added option for navaid radial display when drawing a measurment line from a VOR, VORTAC or NDB.
+* Added option for navaid radial display when drawing a measurement line from a VOR, VORTAC or NDB.
   Default is off. Enable this in options on page `Map Display Labels` branch `Measurement Lines`. #860
 * Added options for display of user and AI aircraft coordinates on map. Page `Map Display Labels`. #700
 * Added AGL label option for user aircraft on map. See `Map Display Labels`.
@@ -127,7 +126,7 @@ at GitHub which includes smaller changes made during the public alpha release cy
 * Added function to zoom and jump to defined coordinates on map in main menu and map context menu.
   See map context menu `More` -> `Jump to Coordinates ...`.
 * Added `Go to User Aircraft` menu item in menu `Map` plus keyboard shortcut `Ctrl+PgUp`.
-* Added tooltip for distance measurement lines showing distance, label, intial and final course.
+* Added tooltip for distance measurement lines showing distance, label, initial and final course.
 * Now allowing compass rose minimum size down to 0.2 NM when zooming close. Corrected distance ring
   labels for small distances in compass rose.
 * Added option to show compass rose with true heading. See options on page `Map Display Labels` in
@@ -189,7 +188,7 @@ at GitHub which includes smaller changes made during the public alpha release cy
   enabled in menu `Tools` -> `Flight Plan Table Options`.
 * Related navaids in flight plan table and other places in program now use notation with prefix `R`
   like `R090` for radials instead of `°M`.
-* Changed flight plan table column selection to use confguration tree dialog including a
+* Changed flight plan table column selection to use configuration tree dialog including a
   description column instead showing the description in tooltips. Can also be used to disable
   header and footer labels in flight plan.
 * Users can now select departure runway instead of a SID. See context menus or menu `Flight Plan´ ->
@@ -303,7 +302,7 @@ at GitHub which includes smaller changes made during the public alpha release cy
 * Added footer line to logbook search which shows summed up values for travel times and distances
   for selected logbook entries.
 * Added simulator and real travel time to logbook search result table.
-* Logbook entry dialog is now pre-filled with all data (flight plan, perf and trail) from current
+* Logbook entry dialog is now pre-filled with all data (flight plan, performance and trail) from current
   session. Can be removed by pressing reset.
 
 ## Weather
@@ -487,12 +486,12 @@ at GitHub which includes smaller changes made during the public alpha release cy
 
 #### X-Plane
 
+* Data compilation adapted for X-Plane 12 folder changes. #867
+* X-Plane now requires `x-plane_install_11.txt` or `x-plane_install_12.txt` and a valid installation
+  path to be recognized. Run X-Plane once to create this file so that *Little Navmap* can detect it.
 * Now skipping empty X-Plane `apt.dat` files and files having empty lines in the header to avoid
   program freezing when reading malformed files.
 * Added airport transition level for X-Plane. This is not yet enabled in the Navigraph database.
-* X-Plane now requires `x-plane_install_11.txt` and a valid installation path to be recognized.
-  Run X-Plane once to create this file so that *Little Navmap* can detect it.
-* Prepared data compilation for X-Plane 12 based on limited information. #867
 * Fixed issue `Index out of bounds: Index: 5, size: 5` when reading X-Plane user_fix.dat with
   optional last column missing.
 * More X-Plane related fixes.
@@ -4337,7 +4336,7 @@ Version 1.8.0.beta
 
 * Fixed problem in route description parser where an airway as an invalid first entry did not generate a warning message.
 * Fixed error in route string parser which did not recognize STARs correctly.
-* Fixed error where first enroute waypoint contained an airway reference after calculating with SID in some cases.
+* Fixed error where first en-route waypoint contained an airway reference after calculating with SID in some cases.
   This caused problems when exporting some flight plan formats and in the route string parser.
 
 * Fixed several display issues with large airspaces and airways crossing the anti meridian. These showed up
