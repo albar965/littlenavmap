@@ -34,6 +34,7 @@
 #include "settings/settings.h"
 #include "sql/sqldatabase.h"
 
+#include <QDir>
 #include <QElapsedTimer>
 #include <QSettings>
 #include <QtConcurrent/QtConcurrentRun>
@@ -349,8 +350,8 @@ void DatabaseLoader::progressCallback()
       // Switched to a new scenery area
       progressDialog->setLabelText(
         databaseLoadingText.arg(atools::elideTextShortMiddle(navDatabaseProgressShared->getSceneryTitle(), MAX_TEXT_LENGTH)).
-        arg(atools::elideTextShortMiddle(navDatabaseProgressShared->getSceneryPath(), MAX_TEXT_LENGTH)).
-        arg(atools::elideTextShortMiddle(navDatabaseProgressShared->getBglFileName(), MAX_TEXT_LENGTH)).
+        arg(atools::elideTextShortMiddle(QDir::toNativeSeparators(navDatabaseProgressShared->getSceneryPath()), MAX_TEXT_LENGTH)).
+        arg(atools::elideTextShortMiddle(QDir::toNativeSeparators(navDatabaseProgressShared->getBglFileName()), MAX_TEXT_LENGTH)).
         arg(formatter::formatElapsed(timer)).
         arg(navDatabaseProgressShared->getNumErrors()).
         arg(navDatabaseProgressShared->getNumFiles()).
