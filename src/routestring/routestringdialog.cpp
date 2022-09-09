@@ -475,3 +475,14 @@ void RouteStringDialog::updateButtonState()
     act->setChecked(rs::RouteStringOptions(act->data().toInt()) & options);
   updatingActions = false;
 }
+
+void RouteStringDialog::showEvent(QShowEvent *)
+{
+  if(!position.isNull())
+    move(position);
+}
+
+void RouteStringDialog::hideEvent(QHideEvent *)
+{
+  position = geometry().topLeft();
+}

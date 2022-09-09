@@ -10520,7 +10520,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/routecalc.svg</normaloff>:/littlenavmap/resources/icons/routecalc.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Flight Plan &amp;Calculation  ...</string>
+    <string>Flight Plan &amp;Calculation  ...</string>
    </property>
    <property name="toolTip">
     <string>Shows the flight plan calculation window</string>

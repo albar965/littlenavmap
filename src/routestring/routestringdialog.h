@@ -102,6 +102,10 @@ private:
   /* Updates text edit and starts parser without delay */
   void plainTextEditRouteStringSet(const QString& text);
 
+  /* Catch events to allow repositioning */
+  virtual void showEvent(QShowEvent *) override;
+  virtual void hideEvent(QHideEvent *) override;
+
   Ui::RouteStringDialog *ui;
   atools::fs::pln::Flightplan *flightplan = nullptr;
   MapQuery *mapQuery = nullptr;
@@ -123,6 +127,9 @@ private:
 
   // Notify RouteStringDialog::textChanged() to a direct update instead of a delayed one
   bool immediateUpdate = false;
+
+  /* Remember dialog position when reopening */
+  QPoint position;
 };
 
 #endif // LITTLENAVMAP_ROUTESTRINGDIALOG_H
