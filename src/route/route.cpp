@@ -2066,8 +2066,6 @@ void Route::updateMagvar()
 
 void Route::updateLegAltitudes()
 {
-  // Uses default values if invalid values or collecting data
-  altitude->setSimplify(atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_PROFILE_SIMPLYFY, true).toBool());
 
   // Need to update the wind data for manual wind setting
   NavApp::getWindReporter()->updateManualRouteWinds();

@@ -349,7 +349,6 @@ const QLatin1String OPTIONS_WEBSERVER_DEBUG("Options/WebserverDebug");
 const QLatin1String OPTIONS_VERSION("Options/Version");
 const QLatin1String OPTIONS_NO_USER_AGENT("Options/NoUserAgent");
 const QLatin1String OPTIONS_WEATHER_UPDATE("Options/WeatherUpdate");
-const QLatin1String OPTIONS_PROFILE_SIMPLYFY("Options/SimplifyProfile");
 
 /* Track download URLs */
 const QLatin1String OPTIONS_TRACK_NAT_URL("Track/NatUrl");
