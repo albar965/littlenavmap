@@ -167,7 +167,7 @@ void StyleHandler::menuItemTriggered()
 {
   QAction *action = dynamic_cast<QAction *>(sender());
 
-  if(action != nullptr)
+  if(action != nullptr && currentStyleIndex != action->data().toInt())
   {
     currentStyleIndex = action->data().toInt();
     applyCurrentStyle();

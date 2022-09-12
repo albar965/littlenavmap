@@ -4199,7 +4199,7 @@ elevation profile hover:</string>
           </property>
           <layout class="QVBoxLayout" name="verticalLayout_38">
            <item>
-            <widget class="QLabel" name="label_10">
+            <widget class="QLabel" name="labelMapApiKeys">
              <property name="text">
               <string>&lt;p&gt;You can enter login information, tokens or API keys for map services which need an user account.
 The required keys shown below are extracted from the installed map themes.&lt;/p&gt;

@@ -3168,6 +3168,7 @@ void RouteController::styleChanged()
 {
   tabHandlerRoute->styleChanged();
   updateModelHighlights();
+  routeLabel->styleChanged();
   highlightNextWaypoint(route.getActiveLegIndexCorrected());
 }
 

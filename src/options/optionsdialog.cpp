@@ -628,6 +628,11 @@ OptionsDialog::~OptionsDialog()
 
 void OptionsDialog::styleChanged()
 {
+  // Remember text, clear label and set text again to force update after style changes
+  atools::gui::util::labelForcedUpdate(ui->labelMapApiKeys);
+  atools::gui::util::labelForcedUpdate(ui->labelCacheGlobePathDownload);
+  atools::gui::util::labelForcedUpdate(ui->labelOptionsWebStatus);
+
   gridDelegate->styleChanged();
 }
 

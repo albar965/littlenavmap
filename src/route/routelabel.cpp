@@ -89,6 +89,22 @@ void RouteLabel::restoreState()
   footerError = settings.valueBool(lnm::ROUTE_FOOTER_ERROR, true);
 }
 
+void RouteLabel::styleChanged()
+{
+  // Need to clear the labels to force style update - otherwise link colors remain the same
+  NavApp::getMainUi()->labelRouteInfo->clear();
+
+  // Update later in event queue to avoid obscure problem of disappearing labels
+  QTimer::singleShot(0, this, &RouteLabel::updateAll);
+}
+
+void RouteLabel::updateAll()
+{
+  updateHeaderLabel();
+  updateFooterSelectionLabel();
+  updateFooterErrorLabel();
+}
+
 /* Update the dock window top level label */
 void RouteLabel::updateHeaderLabel()
 {
@@ -122,6 +138,7 @@ void RouteLabel::updateHeaderLabel()
       buildHeaderDistTime(htmlDistTime);
 
     // Join all texts with <br>
+    ui->labelRouteInfo->setTextFormat(Qt::RichText);
     ui->labelRouteInfo->setText(HtmlBuilder::joinBr({htmlAirport, htmlDepart, htmlArrival, htmlLand, htmlDistTime}));
   }
   else

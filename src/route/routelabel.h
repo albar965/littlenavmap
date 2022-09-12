@@ -60,6 +60,8 @@ public:
   void saveState();
   void restoreState();
 
+  void styleChanged();
+
   bool isHeaderAirports() const
   {
     return headerAirports;
@@ -153,6 +155,7 @@ private:
   void buildHeaderRunwayLand(atools::util::HtmlBuilder& html);
   void buildHeaderTocTod(atools::util::HtmlBuilder& html); /* Only for print and HTML export */
   void buildHeaderDistTime(atools::util::HtmlBuilder& html);
+  void updateAll();
 
   bool headerAirports = true, headerDeparture = true, headerArrival = true, headerRunwayTakeoff = true, headerRunwayLand = true,
        headerDistTime = true, footerSelection = true, footerError = true;

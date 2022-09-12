@@ -259,6 +259,7 @@ void ProcedureSearch::optionsChanged()
   gridDelegate->styleChanged();
   zoomHandler->zoomPercent(OptionData::instance().getGuiSearchTableTextSize());
   createFonts();
+  updateHeaderLabel();
   updateTreeHeader();
   fillProcedureTreeWidget();
 
@@ -267,6 +268,9 @@ void ProcedureSearch::optionsChanged()
 
 void ProcedureSearch::styleChanged()
 {
+  // Need to clear the labels to force style update - otherwise link colors remain the same
+  NavApp::getMainUi()->labelRouteInfo->clear();
+
   optionsChanged();
 }
 

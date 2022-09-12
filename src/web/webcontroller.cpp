@@ -243,7 +243,7 @@ QStringList WebController::getUrlStr() const
 {
   QStringList retval;
   for(int i = 0; i < urlList.size(); i++)
-    retval.append(tr("<a href=\"%1\">%1</a> (IP address <a href=\"%2\">%2</a>)").
+    retval.append(tr("<a href=\"%1\"><b>%1</b></a> (IP address <a href=\"%2\">%2</a>)").
                   arg(urlList.value(i).toString()).arg(urlIpList.value(i).toString()));
   return retval;
 }
