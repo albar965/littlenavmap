@@ -62,7 +62,7 @@ FetchRouteDialog::FetchRouteDialog(QWidget *parent) :
   connect(downloader, &HttpDownloader::downloadFinished, this, &FetchRouteDialog::downloadFinished);
   connect(downloader, &HttpDownloader::downloadSslErrors, this, &FetchRouteDialog::downloadSslErrors);
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &FetchRouteDialog::buttonBoxClicked);
-  connect(ui->lineEditUsername, &QLineEdit::textChanged, this, &FetchRouteDialog::updateButtonStates);
+  connect(ui->lineEditLogin, &QLineEdit::textChanged, this, &FetchRouteDialog::updateButtonStates);
 
   // Change button texts and tooltips ============================================
   ui->buttonBox->button(QDialogButtonBox::Ok)->setText(tr("&Download Flight Plan"));
@@ -111,6 +111,7 @@ void FetchRouteDialog::buttonBoxClicked(QAbstractButton *button)
   else if(button == ui->buttonBox->button(QDialogButtonBox::Cancel))
   {
     // Stop all and close
+    saveState();
     downloader->cancelDownload();
     updateButtonStates();
     QDialog::reject();
@@ -130,7 +131,7 @@ void FetchRouteDialog::updateButtonStates()
   }
   else
   {
-    ui->buttonBox->button(QDialogButtonBox::Ok)->setDisabled(ui->lineEditUsername->text().isEmpty()); // Download
+    ui->buttonBox->button(QDialogButtonBox::Ok)->setDisabled(ui->lineEditLogin->text().isEmpty()); // Download
     ui->buttonBox->button(QDialogButtonBox::Yes)->setDisabled(flightplan->isEmpty()); // Create plan
     ui->buttonBox->button(QDialogButtonBox::YesToAll)->setDisabled(routeString.isEmpty()); // Pass to route description
   }
@@ -139,14 +140,14 @@ void FetchRouteDialog::updateButtonStates()
 void FetchRouteDialog::restoreState()
 {
   atools::gui::WidgetState widgetState(lnm::FETCH_SIMBRIEF_DIALOG, false);
-  widgetState.restore({this, ui->lineEditUsername});
+  widgetState.restore({this, ui->comboBoxLoginType, ui->lineEditLogin});
   updateButtonStates();
 }
 
 void FetchRouteDialog::saveState()
 {
   atools::gui::WidgetState widgetState(lnm::FETCH_SIMBRIEF_DIALOG, false);
-  widgetState.save({this, ui->lineEditUsername});
+  widgetState.save({this, ui->comboBoxLoginType, ui->lineEditLogin});
 }
 
 void FetchRouteDialog::startDownload()
@@ -159,12 +160,20 @@ void FetchRouteDialog::startDownload()
   // Example with username: https://www.simbrief.com/api/xml.fetcher.php?username=LOGINNAME
 
   QUrlQuery query;
-  query.addQueryItem("username", ui->lineEditUsername->text());
+  query.addQueryItem(ui->comboBoxLoginType->currentIndex() == 0 ? "username" : "userid", ui->lineEditLogin->text());
 
   QUrl url(fetcherUrl);
   url.setQuery(query);
 
-  qDebug() << Q_FUNC_INFO << url.toDisplayString();
+  {
+    QUrlQuery queryLog;
+    queryLog.addQueryItem(ui->comboBoxLoginType->currentIndex() == 0 ? "username" : "userid", "XXXXX");
+
+    QUrl urlLog(fetcherUrl);
+    urlLog.setQuery(queryLog);
+
+    qDebug() << Q_FUNC_INFO << urlLog.toDisplayString();
+  }
 
   downloader->setUrl(url.toEncoded());
   downloader->startDownload();
