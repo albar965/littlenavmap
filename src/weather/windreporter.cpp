@@ -255,13 +255,24 @@ void WindReporter::updateDataSource()
 
   if(ui->actionMapShowWindSimulator->isChecked() && atools::fs::FsPaths::isAnyXplane(simType))
   {
-    // Load GRIB file only if X-Plane is enabled - will call windDownloadFinished later
-    QString path = OptionData::instance().getWeatherXplaneWind();
-    if(path.isEmpty())
-      path = NavApp::getSimulatorBasePath(NavApp::getCurrentSimulatorDb()) + QDir::separator() + "global_winds.grib";
+    if(simType == atools::fs::FsPaths::XPLANE_11)
+    {
+      // Load GRIB file only if X-Plane is enabled - will call windDownloadFinished later
+      QString path = OptionData::instance().getWeatherXplaneWind();
+      if(path.isEmpty())
+        path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "global_winds.grib";
 
-    if(QFileInfo::exists(path))
-      windQueryOnline->initFromFile(path);
+      windQueryOnline->initFromPath(path, atools::fs::weather::WEATHER_XP11);
+    }
+    else if(simType == atools::fs::FsPaths::XPLANE_12)
+    {
+      QString path = OptionData::instance().getWeatherXplane12Path();
+      if(path.isEmpty())
+        // Use default base path
+        path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Output" + QDir::separator() + "real weather";
+
+      windQueryOnline->initFromPath(path, atools::fs::weather::WEATHER_XP12);
+    }
   }
   else if(ui->actionMapShowWindNOAA->isChecked())
     // Download from NOAA - will call windDownloadFinished later

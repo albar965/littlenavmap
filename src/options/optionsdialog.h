@@ -120,13 +120,15 @@ private:
   void fromFlagsWeather(const OptionData& data, QCheckBox *checkBox, optsw::FlagsWeather flag);
 
   void selectActiveSkyPathClicked();
-  void selectXplanePathClicked();
-  void weatherXplaneWindPathSelectClicked();
+  void selectXplane11PathClicked();
+  void selectXplane12PathClicked();
+  void weatherXplane11WindPathSelectClicked();
   void clearMemCachedClicked();
   void clearDiskCachedClicked();
   void updateWeatherButtonState();
   void updateActiveSkyPathStatus();
-  void updateXplanePathStatus();
+  void updateXplane11PathStatus();
+  void updateXplane12PathStatus();
   void updateXplaneWindStatus();
   void updateFlightPlanColorWidgets();
   void updateHighlightWidgets();

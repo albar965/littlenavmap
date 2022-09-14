@@ -102,8 +102,7 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
   xpWeatherReader->setFetchAirportCoords(coordFunc);
   initXplane();
 
-  connect(xpWeatherReader, &atools::fs::weather::XpWeatherReader::weatherUpdated,
-          this, &WeatherReporter::xplaneWeatherFileChanged);
+  connect(xpWeatherReader, &atools::fs::weather::XpWeatherReader::weatherUpdated, this, &WeatherReporter::xplaneWeatherFileChanged);
 
   // Forward signals from clients for updates
   connect(noaaWeather, &NoaaWeatherDownloader::weatherUpdated, this, &WeatherReporter::noaaWeatherUpdated);
@@ -176,8 +175,8 @@ void WeatherReporter::deleteFsWatcher()
   if(fsWatcherAsPath != nullptr)
   {
     // Remove watcher just in case the file changes
-    fsWatcherAsPath->disconnect(fsWatcherAsPath, &FileSystemWatcher::fileUpdated, this,
-                                &WeatherReporter::activeSkyWeatherFileChanged);
+    FileSystemWatcher::disconnect(fsWatcherAsPath, &FileSystemWatcher::filesUpdated, this,
+                                  &WeatherReporter::activeSkyWeatherFilesChanged);
     fsWatcherAsPath->deleteLater();
     fsWatcherAsPath = nullptr;
   }
@@ -185,8 +184,8 @@ void WeatherReporter::deleteFsWatcher()
   if(fsWatcherAsFlightplanPath != nullptr)
   {
     // Remove watcher just in case the file changes
-    fsWatcherAsFlightplanPath->disconnect(fsWatcherAsFlightplanPath, &FileSystemWatcher::fileUpdated, this,
-                                          &WeatherReporter::activeSkyWeatherFileChanged);
+    FileSystemWatcher::disconnect(fsWatcherAsFlightplanPath, &FileSystemWatcher::filesUpdated, this,
+                                  &WeatherReporter::activeSkyWeatherFilesChanged);
     fsWatcherAsFlightplanPath->deleteLater();
     fsWatcherAsFlightplanPath = nullptr;
   }
@@ -199,10 +198,9 @@ void WeatherReporter::createFsWatcher()
     // Watch file for changes
     fsWatcherAsPath = new FileSystemWatcher(this, verbose);
     fsWatcherAsPath->setMinFileSize(1000);
-    fsWatcherAsPath->connect(fsWatcherAsPath, &FileSystemWatcher::fileUpdated, this,
-                             &WeatherReporter::activeSkyWeatherFileChanged);
+    FileSystemWatcher::connect(fsWatcherAsPath, &FileSystemWatcher::filesUpdated, this, &WeatherReporter::activeSkyWeatherFilesChanged);
   }
-  activeSkyWeatherFileChanged(asPath);
+  activeSkyWeatherFilesChanged({asPath});
   fsWatcherAsPath->setFilenameAndStart(asPath);
 
   if(fsWatcherAsFlightplanPath == nullptr)
@@ -210,8 +208,8 @@ void WeatherReporter::createFsWatcher()
     // Watch file for changes
     fsWatcherAsFlightplanPath = new FileSystemWatcher(this, verbose);
     fsWatcherAsFlightplanPath->setMinFileSize(50);
-    fsWatcherAsFlightplanPath->connect(fsWatcherAsFlightplanPath, &FileSystemWatcher::fileUpdated, this,
-                                       &WeatherReporter::activeSkyWeatherFileChanged);
+    FileSystemWatcher::connect(fsWatcherAsFlightplanPath, &FileSystemWatcher::filesUpdated, this,
+                               &WeatherReporter::activeSkyWeatherFilesChanged);
   }
   fsWatcherAsFlightplanPath->setFilenameAndStart(asFlightplanPath);
 }
@@ -230,14 +228,22 @@ void WeatherReporter::initXplane()
 
     if(base.exists() && base.isDir())
     {
-      // Get user path
-      QString path = OptionData::instance().getWeatherXplanePath();
-      if(path.isEmpty())
-        // Use default base path
-        path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "METAR.rwx";
-
-      xpWeatherReader->setWeatherFile(path);
-      qDebug() << Q_FUNC_INFO << path;
+      if(simType == atools::fs::FsPaths::XPLANE_11)
+      {
+        QString path = OptionData::instance().getWeatherXplane11Path();
+        if(path.isEmpty())
+          // Use default base path
+          path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "METAR.rwx";
+        xpWeatherReader->setWeatherPath(path, atools::fs::weather::WEATHER_XP11);
+      }
+      else if(simType == atools::fs::FsPaths::XPLANE_12)
+      {
+        QString path = OptionData::instance().getWeatherXplane12Path();
+        if(path.isEmpty())
+          // Use default base path
+          path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Output" + QDir::separator() + "real weather";
+        xpWeatherReader->setWeatherPath(path, atools::fs::weather::WEATHER_XP12);
+      }
     }
     else
     {
@@ -775,9 +781,9 @@ void WeatherReporter::updateTimeouts()
     vatsimWeather->setUpdatePeriod(-1);
 }
 
-void WeatherReporter::activeSkyWeatherFileChanged(const QString& path)
+void WeatherReporter::activeSkyWeatherFilesChanged(const QStringList& paths)
 {
-  qDebug() << Q_FUNC_INFO << "file" << path << "changed";
+  qDebug() << Q_FUNC_INFO << "file" << paths << "changed";
 
   loadActiveSkySnapshot(asPath);
   loadActiveSkyFlightplanSnapshot(asFlightplanPath);

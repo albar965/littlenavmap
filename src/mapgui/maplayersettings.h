@@ -75,7 +75,7 @@ private:
   void loadXmlInternal(atools::util::XmlStream& xmlStream);
   bool compare(const MapLayer& layer, float distance) const;
   void reloadFromFile();
-  void reloadFromUpdate(const QString&);
+  void reloadFromUpdate(const QStringList&);
 
   QList<MapLayer> layers;
   atools::util::FileSystemWatcher *fileWatcher = nullptr;

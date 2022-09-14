@@ -34,7 +34,7 @@ MapLayerSettings::MapLayerSettings(bool verbose)
 {
   fileWatcher = new atools::util::FileSystemWatcher(this, verbose);
   fileWatcher->setMinFileSize(100);
-  connect(fileWatcher, &atools::util::FileSystemWatcher::fileUpdated, this, &MapLayerSettings::reloadFromUpdate);
+  connect(fileWatcher, &atools::util::FileSystemWatcher::filesUpdated, this, &MapLayerSettings::reloadFromUpdate);
 }
 
 MapLayerSettings::~MapLayerSettings()
@@ -90,7 +90,7 @@ const MapLayer *MapLayerSettings::getLayer(float distanceKm, int detailLevel) co
   return &(*it);
 }
 
-void MapLayerSettings::reloadFromUpdate(const QString&)
+void MapLayerSettings::reloadFromUpdate(const QStringList&)
 {
   // Reload from file update
   reloadFromFile();

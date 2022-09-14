@@ -171,7 +171,7 @@ private:
   void weatherDownloadFailed(const QString& error, int errorCode, QString url);
   void weatherDownloadSslErrors(const QStringList& errors, const QString& downloadUrl);
 
-  void activeSkyWeatherFileChanged(const QString& path);
+  void activeSkyWeatherFilesChanged(const QStringList& paths);
   void xplaneWeatherFileChanged();
 
   void loadActiveSkySnapshot(const QString& path);

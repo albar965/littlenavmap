@@ -291,6 +291,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      // ui->lineEditOptionsMapRangeRings, // Saved separately lnm::OPTIONS_DIALOG_RANGE_DISTANCES
      ui->lineEditOptionsWeatherAsnPath,
      ui->lineEditOptionsWeatherXplanePath,
+     ui->lineEditOptionsWeatherXplane12Path,
      ui->lineEditOptionsWeatherNoaaStationsUrl,
      ui->lineEditOptionsWeatherVatsimUrl,
      ui->lineEditOptionsWeatherIvaoUrl,
@@ -470,10 +471,15 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->lineEditOptionsWeatherAsnPath, &QLineEdit::editingFinished, this, &OptionsDialog::updateWeatherButtonState);
   connect(ui->lineEditOptionsWeatherAsnPath, &QLineEdit::textEdited, this, &OptionsDialog::updateActiveSkyPathStatus);
 
-  // Weather widgets - X-Plane METAR
-  connect(ui->pushButtonOptionsWeatherXplanePathSelect, &QPushButton::clicked, this, &OptionsDialog::selectXplanePathClicked);
+  // Weather widgets - X-Plane 11 METAR
+  connect(ui->pushButtonOptionsWeatherXplanePathSelect, &QPushButton::clicked, this, &OptionsDialog::selectXplane11PathClicked);
   connect(ui->lineEditOptionsWeatherXplanePath, &QLineEdit::editingFinished, this, &OptionsDialog::updateWeatherButtonState);
-  connect(ui->lineEditOptionsWeatherXplanePath, &QLineEdit::textEdited, this, &OptionsDialog::updateXplanePathStatus);
+  connect(ui->lineEditOptionsWeatherXplanePath, &QLineEdit::textEdited, this, &OptionsDialog::updateXplane11PathStatus);
+
+  // Weather widgets - X-Plane 12 METAR and Wind
+  connect(ui->pushButtonOptionsWeatherXplane12DirSelect, &QPushButton::clicked, this, &OptionsDialog::selectXplane12PathClicked);
+  connect(ui->lineEditOptionsWeatherXplane12Path, &QLineEdit::editingFinished, this, &OptionsDialog::updateWeatherButtonState);
+  connect(ui->lineEditOptionsWeatherXplane12Path, &QLineEdit::textEdited, this, &OptionsDialog::updateXplane12PathStatus);
 
   // ===========================================================================
   // Online weather
@@ -486,7 +492,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->lineEditOptionsWeatherXplaneWind, &QLineEdit::textEdited, this, &OptionsDialog::updateXplaneWindStatus);
 
   connect(ui->pushButtonOptionsWeatherXplaneWindPathSelect, &QPushButton::clicked, this,
-          &OptionsDialog::weatherXplaneWindPathSelectClicked);
+          &OptionsDialog::weatherXplane11WindPathSelectClicked);
 
   // ===========================================================================
   // Weather test buttons
@@ -1689,7 +1695,8 @@ void OptionsDialog::widgetsToOptionData()
   data.displayClickOptions.setFlag(optsd::CLICK_NAVAID, ui->checkBoxOptionsMapClickNavaid->isChecked());
   data.displayClickOptions.setFlag(optsd::CLICK_AIRSPACE, ui->checkBoxOptionsMapClickAirspace->isChecked());
 
-  data.weatherXplanePath = QDir::toNativeSeparators(ui->lineEditOptionsWeatherXplanePath->text());
+  data.weatherXplane11Path = QDir::toNativeSeparators(ui->lineEditOptionsWeatherXplanePath->text());
+  data.weatherXplane12Path = QDir::toNativeSeparators(ui->lineEditOptionsWeatherXplane12Path->text());
   data.weatherActiveSkyPath = QDir::toNativeSeparators(ui->lineEditOptionsWeatherAsnPath->text());
   data.weatherNoaaUrl = ui->lineEditOptionsWeatherNoaaStationsUrl->text();
   data.weatherVatsimUrl = ui->lineEditOptionsWeatherVatsimUrl->text();
@@ -1970,7 +1977,8 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->checkBoxOptionsMapClickNavaid->setChecked(data.displayClickOptions.testFlag(optsd::CLICK_NAVAID));
   ui->checkBoxOptionsMapClickAirspace->setChecked(data.displayClickOptions.testFlag(optsd::CLICK_AIRSPACE));
 
-  ui->lineEditOptionsWeatherXplanePath->setText(QDir::toNativeSeparators(data.weatherXplanePath));
+  ui->lineEditOptionsWeatherXplanePath->setText(QDir::toNativeSeparators(data.weatherXplane11Path));
+  ui->lineEditOptionsWeatherXplane12Path->setText(QDir::toNativeSeparators(data.weatherXplane12Path));
   ui->lineEditOptionsWeatherAsnPath->setText(QDir::toNativeSeparators(data.weatherActiveSkyPath));
   ui->lineEditOptionsWeatherNoaaStationsUrl->setText(data.weatherNoaaUrl);
   ui->lineEditOptionsWeatherVatsimUrl->setText(data.weatherVatsimUrl);
@@ -2313,7 +2321,8 @@ void OptionsDialog::updateWeatherButtonState()
     ui->pushButtonOptionsWeatherNoaaWindTest->setEnabled(!ui->lineEditOptionsWeatherNoaaWindUrl->text().isEmpty());
 
     updateActiveSkyPathStatus();
-    updateXplanePathStatus();
+    updateXplane11PathStatus();
+    updateXplane12PathStatus();
     updateXplaneWindStatus();
   }
 }
@@ -2334,7 +2343,7 @@ void OptionsDialog::updateActiveSkyPathStatus()
       ui->labelOptionsWeatherAsnPathState->setText(HtmlBuilder::errorMessage(tr("Is not an Active Sky weather snapshot file.")));
     else
       ui->labelOptionsWeatherAsnPathState->setText(
-        tr("Weather snapshot file is valid. Using this one for all simulators"));
+        tr("Weather snapshot file is valid. Using selected for all simulators"));
   }
   else
   {
@@ -2375,7 +2384,7 @@ void OptionsDialog::updateActiveSkyPathStatus()
   }
 }
 
-void OptionsDialog::updateXplanePathStatus()
+void OptionsDialog::updateXplane11PathStatus()
 {
   const QString& path = ui->lineEditOptionsWeatherXplanePath->text();
 
@@ -2387,11 +2396,30 @@ void OptionsDialog::updateXplanePathStatus()
     else if(!fileinfo.isFile())
       ui->labelOptionsWeatherXplanePathState->setText(HtmlBuilder::errorMessage(tr("Is not a file.")));
     else
-      ui->labelOptionsWeatherXplanePathState->setText(tr("Weather file is valid. Using this one for X-Plane."));
+      ui->labelOptionsWeatherXplanePathState->setText(tr("Weather file is valid. Using selected for X-Plane 11."));
   }
   else
     // No manual path set
-    ui->labelOptionsWeatherXplanePathState->setText(tr("Using default weather from X-Plane base path."));
+    ui->labelOptionsWeatherXplanePathState->setText(tr("Using default weather from X-Plane 11 base path."));
+}
+
+void OptionsDialog::updateXplane12PathStatus()
+{
+  const QString& path = ui->lineEditOptionsWeatherXplane12Path->text();
+
+  if(!path.isEmpty())
+  {
+    QFileInfo fileinfo(path);
+    if(!fileinfo.exists())
+      ui->labelOptionsWeatherXplane12PathState->setText(HtmlBuilder::errorMessage(tr("Directory does not exist.")));
+    else if(!fileinfo.isDir())
+      ui->labelOptionsWeatherXplane12PathState->setText(HtmlBuilder::errorMessage(tr("Is not a directory.")));
+    else
+      ui->labelOptionsWeatherXplane12PathState->setText(tr("Weather directory is valid. Using selected for X-Plane 12."));
+  }
+  else
+    // No manual path set
+    ui->labelOptionsWeatherXplane12PathState->setText(tr("Using default weather from X-Plane 12 base path."));
 }
 
 /* Checks the path to the X-Plane wind GRIB file. Display an error message in the label */
@@ -2406,12 +2434,12 @@ void OptionsDialog::updateXplaneWindStatus()
     else if(!fileinfo.isFile())
       ui->labelOptionsWeatherXplaneWindPathState->setText(HtmlBuilder::errorMessage(tr("Is not a file.")));
     else if(!atools::grib::GribReader::validateGribFile(path))
-      ui->labelOptionsWeatherXplaneWindPathState->setText(HtmlBuilder::errorMessage(tr("Is not a X-Plane wind file.")));
+      ui->labelOptionsWeatherXplaneWindPathState->setText(HtmlBuilder::errorMessage(tr("Is not a X-Plane 11 wind file.")));
     else
-      ui->labelOptionsWeatherXplaneWindPathState->setText(tr("X-Plane wind file is valid."));
+      ui->labelOptionsWeatherXplaneWindPathState->setText(tr("X-Plane 11 wind file is valid."));
   }
   else
-    ui->labelOptionsWeatherXplaneWindPathState->setText(tr("Using default X-Plane wind file."));
+    ui->labelOptionsWeatherXplaneWindPathState->setText(tr("Using default X-Plane 11 wind file."));
 }
 
 void OptionsDialog::selectActiveSkyPathClicked()
@@ -2419,7 +2447,7 @@ void OptionsDialog::selectActiveSkyPathClicked()
   qDebug() << Q_FUNC_INFO;
 
   QString path = atools::gui::Dialog(this).openFileDialog(
-    tr("Open Active Sky Weather Snapshot File"),
+    tr("Select Active Sky Weather Snapshot File"),
     tr("Active Sky Weather Snapshot Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_AS_SNAPSHOT),
     lnm::OPTIONS_DIALOG_AS_FILE_DLG, ui->lineEditOptionsWeatherAsnPath->text());
 
@@ -2429,14 +2457,18 @@ void OptionsDialog::selectActiveSkyPathClicked()
   updateWeatherButtonState();
 }
 
-void OptionsDialog::selectXplanePathClicked()
+void OptionsDialog::selectXplane11PathClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
-  QString path = atools::gui::Dialog(this).openFileDialog(
-    tr("Open X-Plane METAR File"),
-    tr("X-Plane METAR Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_XPLANE_METAR),
-    lnm::OPTIONS_DIALOG_XPLANE_DLG, ui->lineEditOptionsWeatherXplanePath->text());
+  QString path = ui->lineEditOptionsWeatherXplanePath->text();
+
+  if(path.isEmpty() || QFileInfo(path).isRelative())
+    path = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE_11) % path;
+
+  path = atools::gui::Dialog(this).openFileDialog(tr("Select X-Plane 11 METAR File"),
+                                                  tr("X-Plane METAR Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_XPLANE_METAR),
+                                                  lnm::OPTIONS_DIALOG_XPLANE_DLG, path);
 
   if(!path.isEmpty())
     ui->lineEditOptionsWeatherXplanePath->setText(QDir::toNativeSeparators(path));
@@ -2444,15 +2476,38 @@ void OptionsDialog::selectXplanePathClicked()
   updateWeatherButtonState();
 }
 
-void OptionsDialog::weatherXplaneWindPathSelectClicked()
+void OptionsDialog::selectXplane12PathClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
+  QString path = ui->lineEditOptionsWeatherXplane12Path->text();
+
+  if(path.isEmpty())
+    path = "Output" % QDir::separator() % "real weather";
+
+  if(QFileInfo(path).isRelative())
+    path = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE_12) % path;
+
+  path = atools::gui::Dialog(this).openDirectoryDialog(tr("Select X-Plane 12 Weather Directory"), lnm::OPTIONS_DIALOG_XPLANE12_DLG, path);
+
+  if(!path.isEmpty())
+    ui->lineEditOptionsWeatherXplane12Path->setText(QDir::toNativeSeparators(path));
+
+  updateWeatherButtonState();
+}
+
+void OptionsDialog::weatherXplane11WindPathSelectClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  QString path = ui->lineEditOptionsWeatherXplaneWind->text();
+  if(path.isEmpty() || QFileInfo(path).isRelative())
+    path = NavApp::getSimulatorBasePath(atools::fs::FsPaths::XPLANE_11) % path;
+
   // global_winds.grib
-  QString path = atools::gui::Dialog(this).openFileDialog(
-    tr("Open X-Plane Wind File"),
-    tr("X-Plane Wind Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GRIB),
-    lnm::OPTIONS_DIALOG_XPLANE_WIND_FILE_DLG, ui->lineEditOptionsWeatherXplaneWind->text());
+  path = atools::gui::Dialog(this).openFileDialog(tr("Select X-Plane 11 Wind File"),
+                                                  tr("X-Plane 11 Wind Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_GRIB),
+                                                  lnm::OPTIONS_DIALOG_XPLANE_WIND_FILE_DLG, path);
 
   if(!path.isEmpty())
     ui->lineEditOptionsWeatherXplaneWind->setText(QDir::toNativeSeparators(path));

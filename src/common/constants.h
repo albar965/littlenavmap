@@ -293,6 +293,7 @@ const QLatin1String LOGDATA_ENTRY_ID("Logdata/EntryId");
 const QLatin1String OPTIONS_DIALOG_WIDGET("OptionsDialog/Widget");
 const QLatin1String OPTIONS_DIALOG_AS_FILE_DLG("OptionsDialog/WeatherFileDialogAsn");
 const QLatin1String OPTIONS_DIALOG_XPLANE_DLG("OptionsDialog/WeatherFileDialogXplane");
+const QLatin1String OPTIONS_DIALOG_XPLANE12_DLG("OptionsDialog/WeatherFileDialogXplane12");
 const QLatin1String OPTIONS_DIALOG_XPLANE_WIND_FILE_DLG("OptionsDialog/WeatherFileDialogXplaneWind");
 const QLatin1String OPTIONS_DIALOG_GLOBE_FILE_DLG("OptionsDialog/CacheFileDialogGlobe");
 const QLatin1String OPTIONS_DIALOG_DB_DIR_DLG("OptionsDialog/DatabaseDirDialog");
@@ -383,7 +384,7 @@ const QLatin1String FILE_PATTERN_USER_WPT("(user.wpt)");
 const QLatin1String FILE_PATTERN_BGL_XML("(*.xml)");
 const QLatin1String FILE_PATTERN_AIRCRAFT_PERF("(*.lnmperf)");
 const QLatin1String FILE_PATTERN_AIRCRAFT_PERF_INI("(*.lnmperf)");
-const QLatin1String FILE_PATTERN_GRIB("(*.grib)");
+const QLatin1String FILE_PATTERN_GRIB("(global_winds.grib)");
 
 const QLatin1String FILE_PATTERN_LAYOUT("(*.lnmlayout)");
 

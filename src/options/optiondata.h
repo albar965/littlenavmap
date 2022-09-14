@@ -666,10 +666,16 @@ public:
     return weatherActiveSkyPath;
   }
 
-  /* X-Plane path that overrides the default */
-  const QString& getWeatherXplanePath() const
+  /* X-Plane 11 path to METAR.rwx that overrides the default */
+  const QString& getWeatherXplane11Path() const
   {
-    return weatherXplanePath;
+    return weatherXplane11Path;
+  }
+
+  /* X-Plane 12 path to METAR and wind files that overrides the default "X-Plane 12/Output/real weather" */
+  const QString& getWeatherXplane12Path() const
+  {
+    return weatherXplane12Path;
   }
 
   const QString& getWeatherNoaaUrl() const
@@ -1268,7 +1274,8 @@ private:
                          opts2::ROUTE_CENTER_ACTIVE_LEG | opts2::ROUTE_NO_FOLLOW_ON_MOVE | opts2::MAP_ROUTE_HIGHLIGHT_ACTIVE;
 
   QString weatherActiveSkyPath, // ui->lineEditOptionsWeatherAsnPath
-          weatherXplanePath; // lineEditOptionsWeatherXplanePath
+          weatherXplane11Path, // ui->lineEditOptionsWeatherXplanePath
+          weatherXplane12Path; // ui->lineEditOptionsWeatherXplane12Path
 
   /* Default weather URLs used in reset */
   const static QString WEATHER_NOAA_DEFAULT_URL;
