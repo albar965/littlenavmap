@@ -86,7 +86,6 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
     codec = QTextCodec::codecForLocale();
 
   verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_DEBUG, false).toBool();
-  disableShadow = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_DISABLE_SHADOW, false).toBool();
 
   downloader = new atools::util::HttpDownloader(mainWindow, verbose);
 
@@ -765,7 +764,7 @@ void OnlinedataController::updateShadowIndex()
 
   clearShadowIndexes();
 
-  if(!disableShadow && !currentDataPacketMap.isEmpty())
+  if(OptionData::instance().getFlags().testFlag(opts::ONLINE_REMOVE_SHADOW) && !currentDataPacketMap.isEmpty())
   {
     const QDateTime lastUpdateTimeWhazzup = manager->getLastUpdateTimeFromWhazzup();
     const auto upper = currentDataPacketMap.upperBound(lastUpdateTimeWhazzup);

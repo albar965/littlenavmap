@@ -288,8 +288,8 @@ MainWindow::MainWindow()
                                             ui->actionClearKmlMenu);
 
     qDebug() << Q_FUNC_INFO << "Creating FileHistoryHandler for layout files";
-    layoutFileHistory = new FileHistoryHandler(this, lnm::LAYOUT_RECENT, ui->menuWindowLayoutRecent,
-                                               ui->actionWindowLayoutClearRecent);
+    layoutFileHistory = new FileHistoryHandler(this, lnm::LAYOUT_RECENT, ui->menuWindowLayoutRecent, ui->actionWindowLayoutClearRecent);
+    layoutFileHistory->setFirstItemShortcut("Ctrl+Shift+W");
 
     mapThemeHandler = new MapThemeHandler(this);
     mapThemeHandler->loadThemes();

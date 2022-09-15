@@ -69,6 +69,9 @@ enum Flag
    * ui->checkBoxOptionsRouteEastWestRule */
   ROUTE_ALTITUDE_RULE = 1 << 9,
 
+  // ui->checkBoxOptionsOnlineRemoveShadow
+  ONLINE_REMOVE_SHADOW = 1 << 10,
+
   // Old options removed
 
   /* No box mode when moving map.
@@ -1255,7 +1258,7 @@ private:
   opts::Flags flags = opts::STARTUP_LOAD_KML | opts::STARTUP_LOAD_MAP_SETTINGS | opts::STARTUP_LOAD_ROUTE | opts::STARTUP_SHOW_LAST |
                       opts::GUI_CENTER_KML | opts::GUI_CENTER_ROUTE | opts::MAP_EMPTY_AIRPORTS | opts::ROUTE_ALTITUDE_RULE |
                       opts::CACHE_USE_ONLINE_ELEVATION | opts::STARTUP_LOAD_INFO | opts::STARTUP_LOAD_SEARCH | opts::STARTUP_LOAD_TRAIL |
-                      opts::STARTUP_SHOW_SPLASH;
+                      opts::STARTUP_SHOW_SPLASH | opts::ONLINE_REMOVE_SHADOW;
 
   // Defines the defaults used for reset
   optsw::FlagsWeather flagsWeather =

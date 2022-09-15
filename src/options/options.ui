@@ -637,8 +637,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
-             <height>532</height>
+             <width>408</width>
+             <height>514</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1117,8 +1117,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
-             <height>532</height>
+             <width>535</width>
+             <height>356</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -1412,8 +1412,8 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
-             <height>532</height>
+             <width>542</width>
+             <height>524</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_12">
@@ -1878,8 +1878,8 @@ Use &quot;Window&quot; -&gt; &quot;Reset Window Layout&quot; in the main menu to
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
-             <height>532</height>
+             <width>565</width>
+             <height>300</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_13">
@@ -2183,8 +2183,8 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
-             <height>532</height>
+             <width>472</width>
+             <height>511</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -2899,8 +2899,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
-             <height>532</height>
+             <width>413</width>
+             <height>315</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -3298,8 +3298,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
-             <height>532</height>
+             <width>516</width>
+             <height>526</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -4186,8 +4186,8 @@ Do not show this this information publicly in forums on screenshots.&lt;/b&gt;&l
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
-             <height>532</height>
+             <width>316</width>
+             <height>353</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -4600,8 +4600,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
-             <height>532</height>
+             <width>552</width>
+             <height>502</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -5039,8 +5039,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
-             <height>532</height>
+             <width>457</width>
+             <height>379</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -5352,8 +5352,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
-             <height>532</height>
+             <width>266</width>
+             <height>312</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -5548,7 +5548,7 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>569</width>
+             <width>356</width>
              <height>641</height>
             </rect>
            </property>
@@ -6197,6 +6197,26 @@ Default is &quot;https://api.ivao.aero/v2/airports/all/metar&quot;.</string>
                  </property>
                  <property name="text">
                   <string>&amp;Custom</string>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="Line" name="line_6">
+                 <property name="orientation">
+                  <enum>Qt::Horizontal</enum>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="checkBoxOptionsOnlineRemoveShadow">
+                 <property name="toolTip">
+                  <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Little Navmap fetches data from online networks using an interval of 15 to 180 seconds depending on settings and network.&lt;/p&gt;&lt;p&gt;The program also fetches AI or multiplayer aircraft from the simulator which are updated several times a second. These aircraft are injected into the simulator by the various online clients so they are visible there. Therefore, the user aircraft and other multiplayer aircraft can appear duplicated on the map.&lt;/p&gt;&lt;p&gt;Little Navmap tries to remove these duplicates by matching the aircraft position, altitude and more parameters if this option is enabled.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Remove duplicate aircraft from online service and simulator</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>

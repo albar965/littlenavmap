@@ -407,7 +407,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsMapFlightplanTransparent,
      ui->checkBoxOptionsSimCenterLeg,
      ui->checkBoxOptionsSimCenterLegTable,
-     ui->checkBoxOptionsSimClearSelection,
 
      ui->checkBoxOptionsSimDoNotFollowScroll,
      ui->spinBoxOptionsSimDoNotFollowScrollTime,
@@ -437,6 +436,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxDisplayOnlineDepartureRange,
      ui->checkBoxDisplayOnlineTowerRange,
      ui->checkBoxDisplayOnlineClearanceRange,
+     ui->checkBoxOptionsOnlineRemoveShadow,
+
      ui->spinBoxDisplayOnlineClearance,
      ui->spinBoxDisplayOnlineArea,
      ui->spinBoxDisplayOnlineApproach,
@@ -1673,6 +1674,8 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxDisplayOnlineNameLookup, opts2::ONLINE_AIRSPACE_BY_NAME);
   toFlags2(ui->checkBoxDisplayOnlineFileLookup, opts2::ONLINE_AIRSPACE_BY_FILE);
 
+  toFlags(ui->checkBoxOptionsOnlineRemoveShadow, opts::ONLINE_REMOVE_SHADOW);
+
   data.flightplanPattern = ui->lineEditOptionsRouteFilename->text();
   data.cacheOfflineElevationPath = ui->lineEditCacheOfflineDataPath->text();
 
@@ -1958,6 +1961,8 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
 
   fromFlags2(data, ui->checkBoxDisplayOnlineNameLookup, opts2::ONLINE_AIRSPACE_BY_NAME);
   fromFlags2(data, ui->checkBoxDisplayOnlineFileLookup, opts2::ONLINE_AIRSPACE_BY_FILE);
+
+  fromFlags(data, ui->checkBoxOptionsOnlineRemoveShadow, opts::ONLINE_REMOVE_SHADOW);
 
   ui->lineEditOptionsRouteFilename->setText(data.flightplanPattern);
   ui->lineEditCacheOfflineDataPath->setText(data.cacheOfflineElevationPath);

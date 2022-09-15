@@ -219,7 +219,7 @@ private:
 
   QTextCodec *codec = nullptr;
 
-  bool verbose = false, disableShadow = false;
+  bool verbose = false;
 
   // All online aircraft from download for spatial search (nearest)
   atools::geo::SpatialIndex<atools::fs::online::OnlineAircraft> onlineAircraftSpatialIndex;
