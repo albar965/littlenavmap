@@ -216,11 +216,14 @@ void checkAndMigrateSettings()
       if(optionsVersion <= Version("2.6.17"))
         removeAndLog(settings, "Map/MarkDisplay"); // MAP_MARK_DISPLAY
 
-      if(optionsVersion <= Version("2.7.8"))
+      if(optionsVersion <= Version("2.7.8.develop"))
       {
         removeAndLog(settings, "OptionsDialog/Widget_lineEditOptionsWeatherIvaoUrl");
         removeAndLog(settings, "Map/Airports");
       }
+
+      if(optionsVersion <= Version("2.8.0.beta"))
+        removeAndLog(settings, "SearchPaneLogdata/WidgetView_tableViewLogdata");
 
       qInfo() << Q_FUNC_INFO << "Clearing all essential messages since version differs";
       messages::resetEssentialMessages();
