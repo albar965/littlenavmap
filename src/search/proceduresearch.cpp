@@ -230,6 +230,8 @@ void ProcedureSearch::updateFilter()
 
   if(NavApp::getMainUi()->pushButtonProcedureShowAll->isChecked())
     showAllToggled(true);
+
+  updateWidgets();
 }
 
 void ProcedureSearch::filterIndexChanged(int index)
