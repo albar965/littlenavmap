@@ -653,8 +653,8 @@ void UserdataController::exportCsv()
   qDebug() << Q_FUNC_INFO;
   try
   {
-    bool selected, append, header;
-    if(exportSelectedQuestion(selected, append, header, true /* append allowed */, true /* header allowed */))
+    bool selected, append, header, xp12;
+    if(exportSelectedQuestion(selected, append, header, xp12, true /* appendAllowed */, true /* headerAllowed */, false /* xplane */))
     {
       QString file = dialog->saveFileDialog(
         tr("Export Userpoint CSV File"),
@@ -693,8 +693,8 @@ void UserdataController::exportXplaneUserFixDat()
   qDebug() << Q_FUNC_INFO;
   try
   {
-    bool selected, append, header;
-    if(exportSelectedQuestion(selected, append, header, true /* append allowed */, false /* header allowed */))
+    bool selected, append, header, xp12;
+    if(exportSelectedQuestion(selected, append, header, xp12, true /* appendAllowed */, false /* headerAllowed */, true /* xplane */))
     {
       QString file = dialog->saveFileDialog(
         tr("Export X-Plane user_fix.dat File"),
@@ -709,7 +709,7 @@ void UserdataController::exportXplaneUserFixDat()
         if(selected)
           ids = NavApp::getUserdataSearch()->getSelectedIds();
         int numExported =
-          manager->exportXplane(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE);
+          manager->exportXplane(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE, xp12);
         mainWindow->setStatusMessage(tr("%n userpoint(s) exported.", "", numExported));
       }
     }
@@ -731,8 +731,8 @@ void UserdataController::exportGarmin()
   qDebug() << Q_FUNC_INFO;
   try
   {
-    bool selected, append, header;
-    if(exportSelectedQuestion(selected, append, header, true /* append allowed */, false /* header allowed */))
+    bool selected, append, header, xp12;
+    if(exportSelectedQuestion(selected, append, header, xp12, true /* appendAllowed */, false /* headerAllowed */, false /* xplane */))
     {
       QString file = dialog->saveFileDialog(
         tr("Export Garmin User Waypoint File"),
@@ -769,8 +769,8 @@ void UserdataController::exportBglXml()
   qDebug() << Q_FUNC_INFO;
   try
   {
-    bool selected, append, header;
-    if(exportSelectedQuestion(selected, append, header, false /* append allowed */, false /* header allowed */))
+    bool selected, append, header, xp12;
+    if(exportSelectedQuestion(selected, append, header, xp12, false /* appendAllowed */, false /* headerAllowed */, false /* xplane */))
     {
       QString file = dialog->saveFileDialog(
         tr("Export XML File for FSX/P3D BGL Compiler"),
@@ -827,8 +827,8 @@ QString UserdataController::garminGtnUserWptPath()
   return path;
 }
 
-bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bool& header, bool appendAllowed,
-                                                bool headerAllowed)
+bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bool& header, bool& xp12, bool appendAllowed,
+                                                bool headerAllowed, bool xplane)
 {
   int numSelected = NavApp::getUserdataSearch()->getSelectedRowCount();
 
@@ -839,7 +839,7 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
   // Dialog options
   enum
   {
-    SELECTED, APPEND, HEADER
+    SELECTED, APPEND, HEADER, XP12
   };
 
   atools::gui::ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Userpoint Export Options"),
@@ -862,6 +862,12 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
   else
     choiceDialog.addCheckBoxHidden(HEADER);
 
+  if(xplane)
+    choiceDialog.addCheckBox(XP12, tr("Export for X-Plane 12"), tr("File will be formatted for X-Plane 12 if selected.\n"
+                                                                   "Otherwise X-Plane 11 format is used."), false);
+  else
+    choiceDialog.addCheckBoxHidden(XP12);
+
   choiceDialog.addSpacer();
 
   choiceDialog.restoreState();
@@ -878,6 +884,7 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
     selected = choiceDialog.isChecked(SELECTED); // Only true if enabled too
     append = choiceDialog.isChecked(APPEND);
     header = choiceDialog.isChecked(HEADER) && !choiceDialog.isChecked(APPEND);
+    xp12 = choiceDialog.isChecked(XP12);
     return true;
   }
   else

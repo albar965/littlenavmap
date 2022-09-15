@@ -166,7 +166,7 @@ private:
   void typesToActions();
   void actionsToTypes();
   void addUserpointInternal(int id, const atools::geo::Pos& pos, const atools::sql::SqlRecord& prefillRec, bool enableCategory);
-  bool exportSelectedQuestion(bool& selected, bool& append, bool& header, bool appendAllowed, bool headerAllowed);
+  bool exportSelectedQuestion(bool& selected, bool& append, bool& header, bool& xp12, bool appendAllowed, bool headerAllowed, bool xplane);
 
   /* Get default X-Plane path to user_fix.dat file */
   QString xplaneUserWptDatPath();
