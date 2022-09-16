@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,11 +18,11 @@
 #include "common/htmlinfobuilder.h"
 
 #include "airspace/airspacecontroller.h"
-#include "common/htmlinfobuilderflags.h"
 #include "atools.h"
 #include "common/airportfiles.h"
 #include "common/formatter.h"
 #include "common/fueltool.h"
+#include "common/htmlinfobuilderflags.h"
 #include "common/maptools.h"
 #include "common/maptypes.h"
 #include "common/symbolpainter.h"
@@ -40,9 +40,9 @@
 #include "geo/calculations.h"
 #include "grib/windquery.h"
 #include "logbook/logdatacontroller.h"
-#include "sql/sqltypes.h"
+#include "mapgui/mappaintwidget.h"
 #include "navapp.h"
-#include "options/optiondata.h"
+#include "online/onlinedatacontroller.h"
 #include "perf/aircraftperfcontroller.h"
 #include "query/airportquery.h"
 #include "query/airwaytrackquery.h"
@@ -50,20 +50,17 @@
 #include "query/mapquery.h"
 #include "query/waypointtrackquery.h"
 #include "route/route.h"
-#include "route/routealtitudeleg.h"
-#include "sql/sqlrecord.h"
+#include "route/routealtitude.h"
 #include "userdata/userdatacontroller.h"
 #include "userdata/userdataicons.h"
 #include "util/htmlbuilder.h"
 #include "weather/windreporter.h"
-#include "route/routealtitude.h"
-#include "mapgui/mappaintwidget.h"
-#include "online/onlinedatacontroller.h"
 
 #include <QSize>
 #include <QUrl>
 #include <QFileInfo>
 #include <QToolTip>
+#include <QRegularExpression>
 
 // Use % to concatenate strings faster than +
 #include <QStringBuilder>

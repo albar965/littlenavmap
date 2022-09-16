@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -986,7 +986,7 @@ void MapScreenIndex::nearestProcedureHighlightsInternal(int xs, int ys, int maxD
         // Multi preview does not include missed
         continue;
 
-      proc::MapProcedureRef ref(0 /* airportId */, 0 /* runwayEndId */, leg.approachId, leg.transitionId, leg.legId, leg.mapType);
+      proc::MapProcedureRef ref(0 /* airportId */, 0 /* runwayEndId */, leg.procedureId, leg.transitionId, leg.legId, leg.mapType);
       if(ids.contains(ref))
         continue;
       else

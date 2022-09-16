@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2021 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -334,7 +334,7 @@ void RouteLabel::buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget
         star += "." % starLegs.transitionFixIdent;
       arrHtml.b(star);
 
-      starRunway = starLegs.procedureRunway;
+      starRunway = starLegs.runway;
 
       if(!headerRunwayLand || !widget)
       {
@@ -342,10 +342,10 @@ void RouteLabel::buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget
         {
           // No approach. Direct from STAR to runway.
           arrHtml.text(tr(" at runway "));
-          arrHtml.b(starLegs.procedureRunway);
+          arrHtml.b(starLegs.runway);
         }
-        else if(!starLegs.procedureRunway.isEmpty())
-          arrHtml.text(tr(" (")).b(starLegs.procedureRunway).text(tr(") "));
+        else if(!starLegs.runway.isEmpty())
+          arrHtml.text(tr(" (")).b(starLegs.runway).text(tr(") "));
       }
 
       if(!(arrivalLegs.mapType & proc::PROCEDURE_APPROACH) || arrivalLegs.isCustomApproach())
@@ -374,15 +374,15 @@ void RouteLabel::buildHeaderArrival(atools::util::HtmlBuilder& html, bool widget
           arrHtml.b(tr("Arrive ")).text(tr(" via "));
 
         // Type and suffix =======================
-        QString type(arrivalLegs.displayApproachType());
-        if(!arrivalLegs.approachSuffix.isEmpty())
-          type += tr("-%1").arg(arrivalLegs.approachSuffix);
+        QString type(arrivalLegs.displayType());
+        if(!arrivalLegs.suffix.isEmpty())
+          type += tr("-%1").arg(arrivalLegs.suffix);
 
         arrHtml.b(type).nbsp();
         arrHtml.b(arrivalLegs.approachFixIdent);
 
-        if(!arrivalLegs.approachArincName.isEmpty())
-          arrHtml.b(tr(" (%1)").arg(arrivalLegs.approachArincName));
+        if(!arrivalLegs.arincName.isEmpty())
+          arrHtml.b(tr(" (%1)").arg(arrivalLegs.arincName));
 
         if(!headerRunwayLand || !widget)
         {

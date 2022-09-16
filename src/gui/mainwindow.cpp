@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -2818,7 +2818,7 @@ void MainWindow::proceduresSelectedInternal(const QVector<proc::MapProcedureRef>
   for(const proc::MapProcedureRef& ref: refs)
   {
 #ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO << "approachId" << ref.approachId << "transitionId" << ref.transitionId << "legId" << ref.legId;
+    qDebug() << Q_FUNC_INFO << "approachId" << ref.procedureId << "transitionId" << ref.transitionId << "legId" << ref.legId;
 #endif
 
     map::MapAirport airport = NavApp::getAirportQueryNav()->getAirportById(ref.airportId);
@@ -2834,7 +2834,7 @@ void MainWindow::proceduresSelectedInternal(const QVector<proc::MapProcedureRef>
     }
     else
     {
-      if(ref.hasApproachAndTransitionIds())
+      if(ref.hasProcedureAndTransitionIds())
       {
         // Load transition including approach
         const proc::MapProcedureLegs *legs = procedureQuery->getTransitionLegs(airport, ref.transitionId);
@@ -2843,14 +2843,14 @@ void MainWindow::proceduresSelectedInternal(const QVector<proc::MapProcedureRef>
         else
           qWarning() << "Transition not found" << ref.transitionId;
       }
-      else if(ref.hasApproachOnlyIds())
+      else if(ref.hasProcedureOnlyIds())
       {
         proc::MapProcedureRef curRef;
         if(!previewAll)
           // Only one procedure in preview - try to keep transition if user moved selection to approach leg
           curRef = mapWidget->getProcedureHighlight().ref;
 
-        if(ref.airportId == curRef.airportId && ref.approachId == curRef.approachId &&
+        if(ref.airportId == curRef.airportId && ref.procedureId == curRef.procedureId &&
            !ref.hasTransitionId() && curRef.hasTransitionId() && ref.isLeg())
         {
           // Approach leg selected - keep preview of current transition
@@ -2864,11 +2864,11 @@ void MainWindow::proceduresSelectedInternal(const QVector<proc::MapProcedureRef>
         }
         else
         {
-          const proc::MapProcedureLegs *legs = procedureQuery->getApproachLegs(airport, ref.approachId);
+          const proc::MapProcedureLegs *legs = procedureQuery->getProcedureLegs(airport, ref.procedureId);
           if(legs != nullptr)
             procedures.append(*legs);
           else
-            qWarning() << "Approach not found" << ref.approachId;
+            qWarning() << "Approach not found" << ref.procedureId;
         }
       }
     }
@@ -2904,7 +2904,7 @@ void MainWindow::procedureLegSelected(const proc::MapProcedureRef& ref)
   const proc::MapProcedureLeg *leg = nullptr;
 
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << "approachId" << ref.approachId << "transitionId" << ref.transitionId << "legId" << ref.legId;
+  qDebug() << Q_FUNC_INFO << "approachId" << ref.procedureId << "transitionId" << ref.transitionId << "legId" << ref.legId;
 #endif
 
   if(ref.legId != -1)
@@ -2913,7 +2913,7 @@ void MainWindow::procedureLegSelected(const proc::MapProcedureRef& ref)
     if(ref.transitionId != -1)
       leg = procedureQuery->getTransitionLeg(airport, ref.legId);
     else
-      leg = procedureQuery->getApproachLeg(airport, ref.approachId, ref.legId);
+      leg = procedureQuery->getProcedureLeg(airport, ref.procedureId, ref.legId);
   }
 
   if(leg != nullptr)

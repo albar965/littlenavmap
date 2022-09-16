@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -539,7 +539,7 @@ float RouteAltitude::adjustAltitudeForRestriction(float altitude, const proc::Ma
 
   switch(restriction.descriptor)
   {
-    case proc::MapAltRestriction::NONE:
+    case proc::MapAltRestriction::NO_ALT_RESTR:
       break;
 
     case proc::MapAltRestriction::AT:
@@ -607,7 +607,7 @@ bool RouteAltitude::violatesAltitudeRestriction(QString& errorMessage, int legIn
   {
     switch(leg.restriction.descriptor)
     {
-      case proc::MapAltRestriction::NONE:
+      case proc::MapAltRestriction::NO_ALT_RESTR:
       case proc::MapAltRestriction::ILS_AT:
       case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
         break;

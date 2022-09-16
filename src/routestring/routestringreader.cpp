@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -723,7 +723,7 @@ bool RouteStringReader::addDeparture(atools::fs::pln::Flightplan *flightplan, ma
         if(sidId != -1 && sidTransId == -1)
         {
           // Only SID
-          const proc::MapProcedureLegs *legs = procQuery->getApproachLegs(departure, sidId);
+          const proc::MapProcedureLegs *legs = procQuery->getProcedureLegs(departure, sidId);
           if(legs != nullptr)
             departureLegs = *legs;
         }
@@ -1018,7 +1018,7 @@ void RouteStringReader::destinationInternal(map::MapAirport& destination, proc::
     if(starId != -1 && starTransId == -1)
     {
       // Only STAR
-      const proc::MapProcedureLegs *legs = procQuery->getApproachLegs(destination, starId);
+      const proc::MapProcedureLegs *legs = procQuery->getProcedureLegs(destination, starId);
       if(legs != nullptr)
         starLegs = *legs;
     }

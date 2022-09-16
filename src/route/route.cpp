@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -249,7 +249,7 @@ void Route::getApproachNames(QString& approachArincName, QString& approachTransi
 {
   if(hasAnyApproachProcedure())
   {
-    approachArincName = approachLegs.approachArincName;
+    approachArincName = approachLegs.arincName;
     approachTransition = approachLegs.transitionFixIdent;
   }
   else
@@ -861,9 +861,9 @@ void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::
       // Look for recommended fix reference in approach legs independent of approach type
       // Iterate backwards to catch the recommended fix closest to the runway
       QHash<int, map::MapIls> ilsMapRecommended;
-      for(int i = approachLegs.approachLegs.size() - 1; i >= 0; i--)
+      for(int i = approachLegs.procedureLegs.size() - 1; i >= 0; i--)
       {
-        const proc::MapProcedureLeg& leg = approachLegs.approachLegs.at(i);
+        const proc::MapProcedureLeg& leg = approachLegs.procedureLegs.at(i);
 
         // Do not look for NDB and waypoints - try VOR (V) and ILS/localizer (L)
         if(!leg.isMissed() && !leg.recFixIdent.isEmpty() && leg.recFixType != "N" && leg.recFixType != "TW" &&
@@ -913,7 +913,7 @@ void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::
 
         // Check if there is a RNP navaid matching the approach ==========
         auto found = std::find_if(ilsMapAll.constBegin(), ilsMapAll.constEnd(), [ = ](const map::MapIls& ils) {
-          return ils.ident == approachLegs.approachArincName;
+          return ils.ident == approachLegs.arincName;
         });
 
         // Keep only the matching RNP navaid if one matches
@@ -938,9 +938,9 @@ void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::
     if(recommended || (map && approachLegs.hasFrequency()))
     {
       // Iterate backwards to catch the recommended fix closest to the runway
-      for(int i = approachLegs.approachLegs.size() - 1; i >= 0; i--)
+      for(int i = approachLegs.procedureLegs.size() - 1; i >= 0; i--)
       {
-        const proc::MapProcedureLeg& leg = approachLegs.approachLegs.at(i);
+        const proc::MapProcedureLeg& leg = approachLegs.procedureLegs.at(i);
 
         // Do not look for NDB and waypoints - try VOR (V) and ILS/localizer (L)
         if(!leg.isMissed() && !leg.recFixIdent.isEmpty() && leg.recFixType != "N" && leg.recFixType != "TN")
@@ -1395,19 +1395,19 @@ void Route::clearProcedures(proc::MapProcedureTypes type)
 {
   // Clear procedure legs
   if(type & proc::PROCEDURE_SID)
-    sidLegs.clearApproach();
+    sidLegs.clearProcedure();
   if(type & proc::PROCEDURE_SID_TRANSITION)
     sidLegs.clearTransition();
 
   if(type & proc::PROCEDURE_STAR_TRANSITION)
     starLegs.clearTransition();
   if(type & proc::PROCEDURE_STAR)
-    starLegs.clearApproach();
+    starLegs.clearProcedure();
 
   if(type & proc::PROCEDURE_TRANSITION)
     approachLegs.clearTransition();
   if(type & proc::PROCEDURE_APPROACH)
-    approachLegs.clearApproach();
+    approachLegs.clearProcedure();
 }
 
 void Route::reloadProcedures(proc::MapProcedureTypes procs)
@@ -1418,14 +1418,14 @@ void Route::reloadProcedures(proc::MapProcedureTypes procs)
   // Check which transitions are deleted where procedures are not touched
   // Reload procedures to get a clean version which is not modified by the transition
   if(procs & proc::PROCEDURE_SID_TRANSITION && !(procs & proc::PROCEDURE_SID))
-    sidLegs = *procQuery->getApproachLegs(apQuery->getAirportById(sidLegs.ref.airportId), sidLegs.ref.approachId);
+    sidLegs = *procQuery->getProcedureLegs(apQuery->getAirportById(sidLegs.ref.airportId), sidLegs.ref.procedureId);
 
   if(procs & proc::PROCEDURE_STAR_TRANSITION && !(procs & proc::PROCEDURE_STAR))
-    starLegs = *procQuery->getApproachLegs(apQuery->getAirportById(starLegs.ref.airportId), starLegs.ref.approachId);
+    starLegs = *procQuery->getProcedureLegs(apQuery->getAirportById(starLegs.ref.airportId), starLegs.ref.procedureId);
 
   if(procs & proc::PROCEDURE_TRANSITION && !(procs & proc::PROCEDURE_APPROACH))
-    approachLegs = *procQuery->getApproachLegs(apQuery->getAirportById(approachLegs.ref.airportId),
-                                               approachLegs.ref.approachId);
+    approachLegs = *procQuery->getProcedureLegs(apQuery->getAirportById(approachLegs.ref.airportId),
+                                                approachLegs.ref.procedureId);
 }
 
 void Route::removeProcedureLegs()
@@ -2880,7 +2880,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 
             // Set entry to SID but not transition
             entry.setSid(sid.approachFixIdent);
-            rw = sid.procedureRunway;
+            rw = sid.runway;
           }
           else if(leg.getProcedureType() & proc::PROCEDURE_STAR_ALL)
           {
@@ -2889,7 +2889,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 
             // Set entry to STAR but not transition
             entry.setStar(star.approachFixIdent);
-            rw = star.procedureRunway;
+            rw = star.runway;
           }
 
           if(!rw.isEmpty())
@@ -3009,12 +3009,12 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
         int number = 0;
         QString designator;
 
-        if(!appr.procedureRunway.isEmpty())
+        if(!appr.runway.isEmpty())
         {
-          if(atools::fs::util::runwayNameSplit(appr.procedureRunway, &number, &designator))
+          if(atools::fs::util::runwayNameSplit(appr.runway, &number, &designator))
             entry.setRunway(QString::number(number), atools::fs::util::runwayDesignatorLong(designator));
         }
-        entry.setApproach(appr.approachType, appr.approachSuffix, appr.transitionFixIdent);
+        entry.setApproach(appr.type, appr.suffix, appr.transitionFixIdent);
       }
     }
 

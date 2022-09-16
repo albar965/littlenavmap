@@ -3940,7 +3940,7 @@ void RouteController::updateRouteTabChangedStatus()
 void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
 {
   qDebug() << Q_FUNC_INFO
-           << legs.approachType << legs.approachFixIdent << legs.approachSuffix << legs.approachArincName
+           << legs.type << legs.approachFixIdent << legs.suffix << legs.arincName
            << legs.transitionType << legs.transitionFixIdent;
 
   if(legs.isEmpty())
@@ -3965,7 +3965,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
     {
       // Get runways for all or parallel runway procedures ===============================
       QStringList sidStarRunways;
-      atools::fs::util::sidStarMultiRunways(airportQuery->getRunwayNames(airportSim.id), legs.approachArincName, tr("All"),
+      atools::fs::util::sidStarMultiRunways(airportQuery->getRunwayNames(airportSim.id), legs.arincName, tr("All"),
                                             &sidStarRunways);
 
       if(!sidStarRunways.isEmpty())
@@ -5173,12 +5173,12 @@ proc::MapProcedureTypes RouteController::affectedProcedures(const QList<int>& in
     }
   }
 
-  if(types & proc::PROCEDURE_SID_TRANSITION && route.getSidLegs().approachLegs.isEmpty() &&
+  if(types & proc::PROCEDURE_SID_TRANSITION && route.getSidLegs().procedureLegs.isEmpty() &&
      !route.getSidLegs().approachFixIdent.isEmpty())
     // Remove the empty SID structure too
     types |= proc::PROCEDURE_SID;
 
-  if(types & proc::PROCEDURE_STAR_TRANSITION && route.getStarLegs().approachLegs.isEmpty())
+  if(types & proc::PROCEDURE_STAR_TRANSITION && route.getStarLegs().procedureLegs.isEmpty())
     // Remove the empty STAR structure too
     types |= proc::PROCEDURE_STAR_ALL;
 

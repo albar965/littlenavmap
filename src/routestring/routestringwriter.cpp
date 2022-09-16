@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -273,13 +273,13 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
   route.getSidStarNames(sid, sidTrans, star, starTrans);
   route.getRunwayNames(depRwy, destRwy);
   route.getApproachNames(approachName, approachTransition);
-  if(route.hasAnyApproachProcedure() && !route.getApproachLegs().approachType.isEmpty())
+  if(route.hasAnyApproachProcedure() && !route.getApproachLegs().type.isEmpty())
   {
     // Flight factor specialities - there are probably more to guess
-    if(route.getApproachLegs().approachType == "RNAV")
+    if(route.getApproachLegs().type == "RNAV")
       approachName = "RNV" + destRwy;
     else
-      approachName = route.getApproachLegs().approachType + destRwy;
+      approachName = route.getApproachLegs().type + destRwy;
   }
 
   if(route.getSizeWithoutAlternates() == 0)

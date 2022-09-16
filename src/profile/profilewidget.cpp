@@ -1032,7 +1032,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
             painter.drawLine(x21, y2, x22, y2);
           }
 
-          if(descr != proc::MapAltRestriction::NONE)
+          if(descr != proc::MapAltRestriction::NO_ALT_RESTR)
           {
             // Draw line for alt1 if any restriction
             painter.setPen(thickLinePen);
