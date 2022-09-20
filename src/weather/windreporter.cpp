@@ -192,10 +192,18 @@ WindReporter::WindReporter(QObject *parent, atools::fs::FsPaths::SimulatorType t
 
 WindReporter::~WindReporter()
 {
+  qDebug() << Q_FUNC_INFO << "delete windQueryOnline";
   delete windQueryOnline;
+  windQueryOnline = nullptr;
+  qDebug() << Q_FUNC_INFO << "delete windQueryManual";
   delete windQueryManual;
+  windQueryManual = nullptr;
+  qDebug() << Q_FUNC_INFO << "delete actionGroup";
   delete actionGroup;
+  actionGroup = nullptr;
+  qDebug() << Q_FUNC_INFO << "delete windlevelToolButton";
   delete windlevelToolButton;
+  windlevelToolButton = nullptr;
 }
 
 void WindReporter::preDatabaseLoad()

@@ -491,7 +491,7 @@ public:
     return airportMsaDetails;
   }
 
-  int getAirportMsaSymbolScale() const
+  float getAirportMsaSymbolScale() const
   {
     return airportMsaSymbolScale;
   }

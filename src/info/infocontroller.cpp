@@ -161,11 +161,25 @@ InfoController::InfoController(MainWindow *parent)
 
 InfoController::~InfoController()
 {
+  qDebug() << Q_FUNC_INFO << "delete aircraftProgressConfig";
   delete aircraftProgressConfig;
+  aircraftProgressConfig = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete tabHandlerInfo";
   delete tabHandlerInfo;
+  tabHandlerInfo = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete tabHandlerAirportInfo";
   delete tabHandlerAirportInfo;
+  tabHandlerAirportInfo = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete tabHandlerAircraft";
   delete tabHandlerAircraft;
+  tabHandlerAircraft = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete infoBuilder";
   delete infoBuilder;
+  infoBuilder = nullptr;
 }
 
 QString InfoController::getConnectionTypeText()
@@ -816,8 +830,9 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
 
     for(const map::MapAirspace& airspace : result.getSimNavUserAirspaces())
     {
+#ifdef DEBUG_INFORMATION
       qDebug() << "Found airspace" << airspace.id;
-
+#endif
       currentSearchResult.airspaces.append(airspace);
       infoBuilder->airspaceText(airspace, onlineRec, html);
       html.br();
@@ -856,8 +871,9 @@ void InfoController::showInformationInternal(map::MapResult result, bool showWin
 
     for(const map::MapAirspace& airspace : onlineAirspaces)
     {
+#ifdef DEBUG_INFORMATION
       qDebug() << "Found airspace" << airspace.id;
-
+#endif
       currentSearchResult.airspaces.append(airspace);
 
       // Get extra information for online network ATC

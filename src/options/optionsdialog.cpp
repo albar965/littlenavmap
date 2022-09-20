@@ -624,13 +624,30 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 OptionsDialog::~OptionsDialog()
 {
   ui->treeWidgetOptionsDisplayTextOptions->setItemDelegate(nullptr);
-  delete gridDelegate;
-  delete zoomHandlerLabelTree;
-  delete zoomHandlerMapThemeKeysTable;
 
+  qDebug() << Q_FUNC_INFO << "delete gridDelegate";
+  delete gridDelegate;
+  gridDelegate = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete zoomHandlerLabelTree";
+  delete zoomHandlerLabelTree;
+  zoomHandlerLabelTree = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete zoomHandlerMapThemeKeysTable";
+  delete zoomHandlerMapThemeKeysTable;
+  zoomHandlerMapThemeKeysTable = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete units";
   delete units;
+  units = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete ui";
   delete ui;
+  ui = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete fontDialog";
   delete fontDialog;
+  fontDialog = nullptr;
 }
 
 void OptionsDialog::styleChanged()

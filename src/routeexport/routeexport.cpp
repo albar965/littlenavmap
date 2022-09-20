@@ -63,10 +63,21 @@ RouteExport::RouteExport(MainWindow *parent)
 
 RouteExport::~RouteExport()
 {
+  qDebug() << Q_FUNC_INFO << "delete exportAllDialog";
   delete exportAllDialog;
+  exportAllDialog = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete dialog";
   delete dialog;
+  dialog = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete flightplanIO";
   delete flightplanIO;
+  flightplanIO = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete exportFormatMap";
   delete exportFormatMap;
+  exportFormatMap = nullptr;
 }
 
 void RouteExport::saveState()

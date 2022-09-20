@@ -91,7 +91,7 @@ WebApiResponse MapActionsController::imageAction(WebApiRequest request){
 
       // Add copyright/attributions to header
       response.headers.insert("Image-Attributions",
-                              getNavApp()->getMapThemeHandler()->getTheme(mapPaintWidget->getCurrentThemeId()).getCopyright().toUtf8());
+                              NavApp::getMapThemeHandler()->getTheme(mapPaintWidget->getCurrentThemeId()).getCopyright().toUtf8());
 
       response.status = 200;
       response.body = bytes;

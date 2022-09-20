@@ -122,7 +122,7 @@ public:
 
   float getWaypointAltitude() const
   {
-    return geometry.isEmpty() ? map::INVALID_ALTITUDE_VALUE : geometry.constLast().y();
+    return geometry.isEmpty() ? map::INVALID_ALTITUDE_VALUE : static_cast<float>(geometry.constLast().y());
   }
 
   bool isTopOfClimb() const

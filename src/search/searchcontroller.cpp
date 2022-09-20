@@ -77,15 +77,41 @@ SearchController::SearchController(QMainWindow *parent, QTabWidget *tabWidgetSea
 
 SearchController::~SearchController()
 {
+  qDebug() << Q_FUNC_INFO << "delete tabHandlerSearch";
   delete tabHandlerSearch;
+  tabHandlerSearch = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete airportSearch";
   delete airportSearch;
+  airportSearch = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete navSearch";
   delete navSearch;
+  navSearch = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete procedureSearch";
   delete procedureSearch;
+  procedureSearch = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete userdataSearch";
   delete userdataSearch;
+  userdataSearch = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete logdataSearch";
   delete logdataSearch;
+  logdataSearch = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete onlineClientSearch";
   delete onlineClientSearch;
+  onlineClientSearch = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete onlineCenterSearch";
   delete onlineCenterSearch;
+  onlineCenterSearch = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete onlineServerSearch";
   delete onlineServerSearch;
+  onlineServerSearch = nullptr;
 }
 
 void SearchController::getSelectedMapObjects(map::MapResult& result) const

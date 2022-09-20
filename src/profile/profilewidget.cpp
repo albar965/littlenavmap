@@ -218,9 +218,18 @@ ProfileWidget::~ProfileWidget()
   updateTimer->stop();
   updateTimer->deleteLater();
   terminateThread();
+
+  qDebug() << Q_FUNC_INFO << "delete scrollArea";
   delete scrollArea;
+  scrollArea = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete legList";
   delete legList;
+  legList = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete profileOptions";
   delete profileOptions;
+  profileOptions = nullptr;
 }
 
 void ProfileWidget::aircraftTrackPruned()

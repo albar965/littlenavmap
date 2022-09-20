@@ -160,9 +160,6 @@ private:
   QList<QPointF> startPoints;
   QBitArray visibleStartPoints;
 
-  /* Evaluate 50 text placement positions along line */
-  const float FIND_TEXT_POS_STEP = 0.02f;
-
   /* Minimum pixel length for a line to get a text label */
   int minLengthForText = 80;
 

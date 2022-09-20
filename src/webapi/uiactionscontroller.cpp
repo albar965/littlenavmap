@@ -30,9 +30,9 @@ Q_UNUSED(request)
 
     UiInfoData data = {
         getMainWindow()->getMapWidget()->zoom(),
-        getNavApp()->getMapPaintWidgetWeb()->zoom(),
+        NavApp::getMapPaintWidgetWeb()->zoom(),
         getMainWindow()->getMapWidget()->distance(),
-        getNavApp()->getMapPaintWidgetWeb()->distance()
+        NavApp::getMapPaintWidgetWeb()->distance()
     };
 
     response.body = infoBuilder->uiinfo(data);

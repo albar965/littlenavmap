@@ -759,8 +759,8 @@ void AirportSearch::resetSearch()
   // Flight plan search widgets are not registered and need to be changed here
   // Convert NM to user selected display units
   Ui::MainWindow *ui = NavApp::getMainUi();
-  ui->spinBoxAirportFlightplanMinSearch->setValue(Unit::distNmF(FLIGHTPLAN_MIN_DISTANCE_DEFAULT_NM));
-  ui->spinBoxAirportFlightplanMaxSearch->setValue(Unit::distNmF(FLIGHTPLAN_MAX_DISTANCE_DEFAULT_NM));
+  ui->spinBoxAirportFlightplanMinSearch->setValue(static_cast<int>(Unit::distNmF(FLIGHTPLAN_MIN_DISTANCE_DEFAULT_NM)));
+  ui->spinBoxAirportFlightplanMaxSearch->setValue(static_cast<int>(Unit::distNmF(FLIGHTPLAN_MAX_DISTANCE_DEFAULT_NM)));
 
   SearchBaseTable::resetSearch();
 }

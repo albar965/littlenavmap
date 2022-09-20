@@ -128,11 +128,22 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
 WeatherReporter::~WeatherReporter()
 {
   deleteFsWatcher();
-  delete noaaWeather;
-  delete vatsimWeather;
-  delete ivaoWeather;
 
+  qDebug() << Q_FUNC_INFO << "delete noaaWeather";
+  delete noaaWeather;
+  noaaWeather = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete vatsimWeather";
+  delete vatsimWeather;
+  vatsimWeather = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete ivaoWeather";
+  delete ivaoWeather;
+  ivaoWeather = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete xpWeatherReader";
   delete xpWeatherReader;
+  xpWeatherReader = nullptr;
 }
 
 void WeatherReporter::weatherDownloadProgress(qint64 bytesReceived, qint64 bytesTotal, QString downloadUrl)

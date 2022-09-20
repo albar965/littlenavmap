@@ -471,67 +471,122 @@ MainWindow::~MainWindow()
   // Close all queries
   preDatabaseLoad();
 
+  // Set all pointers to null to catch errors for late access
+
   qDebug() << Q_FUNC_INFO << "delete routeStringDialog";
   NavApp::removeDialogFromDockHandler(routeStringDialog);
   delete routeStringDialog;
+  routeStringDialog = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete routeController";
   delete routeController;
+  routeController = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete searchController";
   delete searchController;
+  searchController = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete weatherReporter";
   delete weatherReporter;
+  weatherReporter = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete windReporter";
   delete windReporter;
+  windReporter = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete profileWidget";
   delete profileWidget;
+  profileWidget = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete marbleAbout";
   delete marbleAboutDialog;
+  marbleAboutDialog = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete infoController";
   delete infoController;
+  infoController = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete printSupport";
   delete printSupport;
+  printSupport = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete routeFileHistory";
   delete routeFileHistory;
+  routeFileHistory = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete kmlFileHistory";
   delete kmlFileHistory;
+  kmlFileHistory = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete layoutFileHistory";
   delete layoutFileHistory;
+  layoutFileHistory = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete optionsDialog";
   delete optionsDialog;
+  optionsDialog = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete mapWidget";
   delete mapWidget;
-  qDebug() << Q_FUNC_INFO << "delete ui";
-  delete ui;
+  mapWidget = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete dialog";
   delete dialog;
+  dialog = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete errorHandler";
   delete errorHandler;
+  errorHandler = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete helpHandler";
   delete helpHandler;
-  qDebug() << Q_FUNC_INFO << "delete dockHandler";
-  delete dockHandler;
+  helpHandler = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapProjection";
   delete actionGroupMapProjection;
+  actionGroupMapProjection = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapSunShading";
   delete actionGroupMapSunShading;
+  actionGroupMapSunShading = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapWeatherSource";
   delete actionGroupMapWeatherSource;
+  actionGroupMapWeatherSource = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete actionGroupMapWeatherWindSource";
   delete actionGroupMapWeatherWindSource;
+  actionGroupMapWeatherWindSource = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete currentWeatherContext";
   delete currentWeatherContext;
+  currentWeatherContext = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete routeExport";
   delete routeExport;
+  routeExport = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete simbriefHandler";
   delete simbriefHandler;
+  simbriefHandler = nullptr;
+
   qDebug() << Q_FUNC_INFO << "delete   mapThemeHandler";
   delete mapThemeHandler;
+  mapThemeHandler = nullptr;
 
   qDebug() << Q_FUNC_INFO << "NavApplication::deInit()";
   NavApp::deInit();
 
   qDebug() << Q_FUNC_INFO << "Unit::deInit()";
   Unit::deInit();
+
+  qDebug() << Q_FUNC_INFO << "delete ui";
+  delete ui;
+  ui = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete dockHandler";
+  delete dockHandler;
+  dockHandler = nullptr;
 
   // Delete settings singleton
   qDebug() << Q_FUNC_INFO << "Settings::shutdown()";

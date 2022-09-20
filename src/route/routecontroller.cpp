@@ -419,18 +419,53 @@ RouteController::~RouteController()
   NavApp::removeDialogFromDockHandler(routeCalcDialog);
   routeAltDelayTimer.stop();
 
+  qDebug() << Q_FUNC_INFO << "delete routeCalcDialog";
   delete routeCalcDialog;
+  routeCalcDialog = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete tabHandlerRoute";
   delete tabHandlerRoute;
+  tabHandlerRoute = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete units";
   delete units;
+  units = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete entryBuilder";
   delete entryBuilder;
+  entryBuilder = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete model";
   delete model;
+  model = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete undoStack";
   delete undoStack;
+  undoStack = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete routeNetworkRadio";
   delete routeNetworkRadio;
+  routeNetworkRadio = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete routeNetworkAirway";
   delete routeNetworkAirway;
+  routeNetworkAirway = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete zoomHandler";
   delete zoomHandler;
+  zoomHandler = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete symbolPainter";
   delete symbolPainter;
+  symbolPainter = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete routeLabel";
   delete routeLabel;
+  routeLabel = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete flightplanIO";
   delete flightplanIO;
+  flightplanIO = nullptr;
 }
 
 void RouteController::fontChanged()

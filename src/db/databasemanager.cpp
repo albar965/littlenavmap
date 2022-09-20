@@ -916,8 +916,8 @@ void DatabaseManager::switchSimFromMainMenu()
   {
     // Check and uncheck manually since the QActionGroup is unreliable
     atools::gui::SignalBlocker blocker(actions);
-    for(QAction *action : actions)
-      action->setChecked(action->data().value<atools::fs::FsPaths::SimulatorType>() == currentFsType);
+    for(QAction *act : actions)
+      act->setChecked(act->data().value<atools::fs::FsPaths::SimulatorType>() == currentFsType);
   }
 }
 

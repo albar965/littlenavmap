@@ -33,7 +33,7 @@ class AbstractActionsController :
     Q_OBJECT
 public:
     AbstractActionsController(QObject *parent, bool verboseParam, AbstractInfoBuilder* infoBuilder);
-    virtual ~AbstractActionsController();
+    virtual ~AbstractActionsController() override;
     /**
      * @brief example for inheritable and invokable method/action
      */

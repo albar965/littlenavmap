@@ -392,7 +392,7 @@ void MapPainterNav::paintVors(const QHash<int, map::MapVor>& vors, bool drawFast
 
   // Use margins for text placed on the left side of the object to avoid disappearing at the right screen border
   // Also consider VOR size
-  int margin = std::max(vorSize, size);
+  int margin = static_cast<int>(std::max(vorSize, size));
   QMargins margins(margin, margin, std::max(margin, 50), margin);
 
   for(const MapVor& vor : vors)

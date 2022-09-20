@@ -60,7 +60,7 @@ class WeatherReporter;
 class WebController;
 class WindReporter;
 class MapMarkHandler;
-class MapAirportHandler;
+struct MapAirportHandler;
 class MapDetailHandler;
 class TrackManager;
 class MapThemeHandler;

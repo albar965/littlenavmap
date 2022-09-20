@@ -699,7 +699,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
         {
           int w = scale->getPixelIntForFeet(helipad.width, 90) / 2;
           int h = scale->getPixelIntForFeet(helipad.length, 0) / 2;
-          symbolPainter->drawHelipadSymbol(painter, helipad, x, y, w, h, fast);
+          SymbolPainter::drawHelipadSymbol(painter, helipad, x, y, w, h, fast);
         }
       }
     }

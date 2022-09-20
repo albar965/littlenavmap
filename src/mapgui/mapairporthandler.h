@@ -37,7 +37,7 @@ class AirportLabelAction;
  * Adds a toolbutton with more actions, a slider and a label to configure airport display on the map.
  * Saves and loads airport visibility flags.
  */
-class MapAirportHandler :
+struct MapAirportHandler :
   public QObject
 {
   Q_OBJECT
