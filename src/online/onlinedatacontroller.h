@@ -143,6 +143,9 @@ public:
    * Called by ConnectClient after receiving simulator data package. */
   void updateAircraftShadowState(atools::fs::sc::SimConnectData& dataPacket);
 
+  /* Print the size of all container classes to detect overflow or memory leak conditions */
+  void debugDumpContainerSizes() const;
+
 signals:
   /* Sent whenever new data was downloaded */
   void onlineClientAndAtcUpdated(bool loadAll, bool keepSelection);

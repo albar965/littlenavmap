@@ -887,3 +887,12 @@ void ConnectClient::readFromSocket()
     }
   }
 }
+
+void ConnectClient::debugDumpContainerSizes() const
+{
+  qDebug() << Q_FUNC_INFO << "metarIdentCache.size()" << metarIdentCache.size();
+  qDebug() << Q_FUNC_INFO << "outstandingReplies.size()" << outstandingReplies.size();
+  qDebug() << Q_FUNC_INFO << "queuedRequests.size()" << queuedRequests.size();
+  qDebug() << Q_FUNC_INFO << "queuedRequestIdents.size()" << queuedRequestIdents.size();
+  qDebug() << Q_FUNC_INFO << "notAvailableStations.size()" << notAvailableStations.size();
+}

@@ -105,8 +105,6 @@
 
 #include "ui_mainwindow.h"
 
-static const int WEATHER_UPDATE_MS = 15000;
-
 static const int MAX_STATUS_MESSAGES = 10;
 
 using namespace Marble;
@@ -397,6 +395,15 @@ MainWindow::MainWindow()
     renderStatusTimer.setInterval(5000);
     renderStatusTimer.setSingleShot(true);
     connect(&renderStatusTimer, &QTimer::timeout, this, &MainWindow::renderStatusReset);
+
+    // Print the size of all container classes to detect overflow or memory leak conditions
+    // Do this every 30 seconds if enabled with "[Options] StorageDebug=true" in ini file
+    if(Settings::instance().getAndStoreValue(lnm::OPTIONS_STORAGE_DEBUG, false).toBool())
+    {
+      debugDumpContainerSizesTimer.setInterval(30000);
+      connect(&debugDumpContainerSizesTimer, &QTimer::timeout, this, &MainWindow::debugDumpContainerSizes);
+      debugDumpContainerSizesTimer.start();
+    }
 
     qDebug() << Q_FUNC_INFO << "Constructor done";
   }
@@ -3165,7 +3172,7 @@ void MainWindow::mainWindowShown()
   weatherUpdateTimeout();
 
   // Update the weather every 15 seconds if connected
-  weatherUpdateTimer.setInterval(WEATHER_UPDATE_MS);
+  weatherUpdateTimer.setInterval(Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_UPDATE_RATE_SIM, 15000).toInt());
   weatherUpdateTimer.start();
 
   optionsDialog->checkOfficialOnlineUrls();
@@ -4609,4 +4616,18 @@ void MainWindow::toggleWebserver(bool checked)
 void MainWindow::openWebserver()
 {
   NavApp::getWebController()->openPage();
+}
+
+void MainWindow::debugDumpContainerSizes() const
+{
+  qDebug() << Q_FUNC_INFO << "======================================";
+  if(windReporter != nullptr)
+    windReporter->debugDumpContainerSizes();
+  if(weatherReporter != nullptr)
+    weatherReporter->debugDumpContainerSizes();
+  if(NavApp::getOnlinedataController() != nullptr)
+    NavApp::getOnlinedataController()->debugDumpContainerSizes();
+  if(NavApp::getConnectClient() != nullptr)
+    NavApp::getConnectClient()->debugDumpContainerSizes();
+  qDebug() << Q_FUNC_INFO << "======================================";
 }

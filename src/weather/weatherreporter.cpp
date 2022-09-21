@@ -808,3 +808,17 @@ void WeatherReporter::xplaneWeatherFileChanged()
   mainWindow->setStatusMessage(tr("X-Plane weather information updated."), true /* addToLog */);
   emit weatherUpdated();
 }
+
+void WeatherReporter::debugDumpContainerSizes() const
+{
+  qDebug() << Q_FUNC_INFO << "activeSkyMetars.size()" << activeSkyMetars.size();
+
+  if(noaaWeather != nullptr)
+    noaaWeather->debugDumpContainerSizes();
+  if(vatsimWeather != nullptr)
+    vatsimWeather->debugDumpContainerSizes();
+  if(ivaoWeather != nullptr)
+    ivaoWeather->debugDumpContainerSizes();
+  if(xpWeatherReader != nullptr)
+    xpWeatherReader->debugDumpContainerSizes();
+}

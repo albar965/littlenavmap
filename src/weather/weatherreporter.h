@@ -163,6 +163,9 @@ public:
   /* Map weather source has changed */
   void updateAirportWeather();
 
+  /* Print the size of all container classes to detect overflow or memory leak conditions */
+  void debugDumpContainerSizes() const;
+
 signals:
   /* Emitted when Active Sky or X-Plane weather file changes or a request to weather was fullfilled */
   void weatherUpdated();

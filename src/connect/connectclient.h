@@ -99,6 +99,9 @@ public:
   /* Connects or disconnects depending on state */
   void connectToggle(bool checked);
 
+  /* Print the size of all container classes to detect overflow or memory leak conditions */
+  void debugDumpContainerSizes() const;
+
 signals:
   /* Emitted when new data was received from the server (Little Navconnect), SimConnect or X-Plane.
    * can be aircraft position or weather update */

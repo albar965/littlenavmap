@@ -346,9 +346,11 @@ const QLatin1String OPTIONS_ONLINE_NETWORK_DEBUG("Options/OnlineNetworkDebug");
 const QLatin1String OPTIONS_TRACK_DEBUG("Options/TrackDebug");
 const QLatin1String OPTIONS_WIND_DEBUG("Options/WindDebug");
 const QLatin1String OPTIONS_WEBSERVER_DEBUG("Options/WebserverDebug");
+const QLatin1String OPTIONS_STORAGE_DEBUG("Options/StorageDebug");
 const QLatin1String OPTIONS_VERSION("Options/Version");
 const QLatin1String OPTIONS_NO_USER_AGENT("Options/NoUserAgent");
 const QLatin1String OPTIONS_WEATHER_UPDATE("Options/WeatherUpdate");
+const QLatin1String OPTIONS_WEATHER_UPDATE_RATE_SIM("Options/WeatherUpdateRateSim");
 
 /* Track download URLs */
 const QLatin1String OPTIONS_TRACK_NAT_URL("Track/NatUrl");

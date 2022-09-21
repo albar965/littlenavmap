@@ -668,6 +668,16 @@ void WindReporter::resetSettingsToDefault()
   emit windDisplayUpdated();
 }
 
+void WindReporter::debugDumpContainerSizes() const
+{
+  if(windQueryManual != nullptr)
+    windQueryManual->debugDumpContainerSizes();
+  if(windQueryOnline != nullptr)
+    windQueryOnline->debugDumpContainerSizes();
+  qDebug() << Q_FUNC_INFO << "windPosCache.list.size()" << windPosCache.list.size();
+
+}
+
 void WindReporter::actionToValues()
 {
   // Get setting from action data

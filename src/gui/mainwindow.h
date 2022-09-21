@@ -439,6 +439,9 @@ private:
 
   void openOptionsDialog();
 
+  /* Print the size of all container classes to detect overflow or memory leak conditions */
+  void debugDumpContainerSizes() const;
+
 #ifdef DEBUG_INFORMATION
   void debugActionTriggered1();
   void debugActionTriggered2();
@@ -531,6 +534,9 @@ private:
 
   /* Show hint dialog only once per session */
   bool backgroundHintRouteStringShown = false;
+
+  /* Call debugDumpContainerSizes() every 30 seconds */
+  QTimer debugDumpContainerSizesTimer;
 };
 
 #endif // LITTLENAVMAP_MAINWINDOW_H

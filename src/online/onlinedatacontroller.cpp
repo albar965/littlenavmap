@@ -970,3 +970,15 @@ QString OnlinedataController::stateAsStr(OnlinedataController::State state)
   }
   return QString();
 }
+
+void OnlinedataController::debugDumpContainerSizes() const
+{
+  if(downloader != nullptr)
+    downloader->debugDumpContainerSizes();
+  qDebug() << Q_FUNC_INFO << "currentDataPacketMap.size()" << currentDataPacketMap.size();
+  qDebug() << Q_FUNC_INFO << "onlineAircraftSpatialIndex.size()" << onlineAircraftSpatialIndex.size();
+  qDebug() << Q_FUNC_INFO << "aircraftIdSimToOnline.size()" << aircraftIdSimToOnline.size();
+  qDebug() << Q_FUNC_INFO << "aircraftIdOnlineToSim.size()" << aircraftIdOnlineToSim.size();
+  qDebug() << Q_FUNC_INFO << "aircraftCache.list.size()" << aircraftCache.list.size();
+
+}
