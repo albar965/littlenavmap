@@ -801,14 +801,27 @@ This will scale the Little Navmap map graphics and icons for better visibility i
                 <number>2</number>
                </property>
                <item>
-                <widget class="QCheckBox" name="checkBoxOptionsGuiTooltips">
+                <widget class="QCheckBox" name="checkBoxOptionsGuiTooltipsAll">
                  <property name="toolTip">
-                  <string>Disables display of tooltips for the whole application.
+                  <string>Enables display of tooltips for the whole application.
 Tooltips are small help windows which pop up when hovering the mouse above an object.
 This does not affect the map window which can be changed separately on the options page &quot;Map&quot;. </string>
                  </property>
                  <property name="text">
-                  <string>Disable &amp;tooltips for whole application</string>
+                  <string>Show &amp;tooltips in whole application</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
+                 </property>
+                </widget>
+               </item>
+               <item>
+                <widget class="QCheckBox" name="checkBoxOptionsGuiTooltipsMenu">
+                 <property name="toolTip">
+                  <string>Enables tooltips in main menu and context menus.</string>
+                 </property>
+                 <property name="text">
+                  <string>Show tooltips in &amp;menus</string>
                  </property>
                  <property name="checked">
                   <bool>false</bool>
@@ -7097,7 +7110,7 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>pushButtonOptionsGuiSelectFont</tabstop>
   <tabstop>pushButtonOptionsGuiResetFont</tabstop>
   <tabstop>checkBoxOptionsGuiHighDpi</tabstop>
-  <tabstop>checkBoxOptionsGuiTooltips</tabstop>
+  <tabstop>checkBoxOptionsGuiTooltipsAll</tabstop>
   <tabstop>spinBoxOptionsGuiRouteText</tabstop>
   <tabstop>spinBoxOptionsGuiAircraftPerf</tabstop>
   <tabstop>spinBoxOptionsGuiSearchText</tabstop>
