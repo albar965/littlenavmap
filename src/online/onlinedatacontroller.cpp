@@ -668,17 +668,24 @@ bool OnlinedataController::isShadowAircraft(const atools::fs::sc::SimConnectAirc
 // Called by ConnectClient after each simulator data package
 void OnlinedataController::updateAircraftShadowState(atools::fs::sc::SimConnectData& dataPacket)
 {
-  // Modify AI aircraft and set shadow flag if a online network aircraft is registered as shadowed in the index
-  if(!dataPacket.isEmptyReply() && dataPacket.isUserAircraftValid())
+  // Check if connected online to avoid overflow of currentDataPacketMap which
+  // is cleared in updateShadowIndex() after each online download
+  if(isNetworkActive())
   {
-    atools::fs::sc::SimConnectUserAircraft& userAircraft = dataPacket.getUserAircraft();
-    userAircraft.setFlag(atools::fs::sc::SIM_ONLINE_SHADOW, isShadowAircraft(userAircraft));
+    // Modify AI aircraft and set shadow flag if a online network aircraft is registered as shadowed in the index
+    if(!dataPacket.isEmptyReply() && dataPacket.isUserAircraftValid())
+    {
+      atools::fs::sc::SimConnectUserAircraft& userAircraft = dataPacket.getUserAircraft();
+      userAircraft.setFlag(atools::fs::sc::SIM_ONLINE_SHADOW, isShadowAircraft(userAircraft));
 
-    for(SimConnectAircraft& aiAircraft : dataPacket.getAiAircraft())
-      aiAircraft.setFlag(atools::fs::sc::SIM_ONLINE_SHADOW, isShadowAircraft(aiAircraft));
+      for(SimConnectAircraft& aiAircraft : dataPacket.getAiAircraft())
+        aiAircraft.setFlag(atools::fs::sc::SIM_ONLINE_SHADOW, isShadowAircraft(aiAircraft));
 
-    currentDataPacketMap.insert(QDateTime::currentDateTimeUtc(), dataPacket);
+      currentDataPacketMap.insert(QDateTime::currentDateTimeUtc(), dataPacket);
+    }
   }
+  else
+    currentDataPacketMap.clear();
 }
 
 /* Return online aircraft for simulator aircraft based on distance and other parameter similarity */
@@ -762,6 +769,7 @@ void OnlinedataController::updateShadowIndex()
   if(verbose)
     qDebug() << Q_FUNC_INFO << "===========================";
 
+  // Clear the id maps and the spatial index
   clearShadowIndexes();
 
   if(OptionData::instance().getFlags().testFlag(opts::ONLINE_REMOVE_SHADOW) && !currentDataPacketMap.isEmpty())
