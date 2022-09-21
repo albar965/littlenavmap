@@ -86,6 +86,12 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
     arg(QApplication::palette().color(QPalette::Window).darker(120).name()));
 #endif
 
+#ifdef Q_OS_MACOS
+  // Disable menu tooltips on macOS
+  ui->checkBoxOptionsGuiTooltipsMenu->hide();
+  ui->checkBoxOptionsGuiTooltipsMenu->setChecked(false);
+#endif
+
   if(ui->splitterOptions->handle(1) != nullptr)
   {
     ui->splitterOptions->handle(1)->setToolTip(tr("Resize options list."));
@@ -243,7 +249,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsGuiAvoidOverwrite,
      ui->checkBoxOptionsGuiOverrideLocale,
      ui->checkBoxOptionsGuiHighDpi,
-     ui->checkBoxOptionsGuiTooltips,
+     ui->checkBoxOptionsGuiTooltipsAll,
+     ui->checkBoxOptionsGuiTooltipsMenu,
      ui->checkBoxOptionsGuiToolbarSize,
      // ui->comboBoxOptionsGuiLanguage, saved directly
 
@@ -1139,10 +1146,17 @@ void OptionsDialog::restoreState()
 
 void OptionsDialog::updateTooltipOption()
 {
-  if(OptionData::instance().getFlags2().testFlag(opts2::DISABLE_TOOLTIPS))
-    NavApp::setTooltipsDisabled({NavApp::getMapWidgetGui()});
-  else
+  if(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_ALL))
     NavApp::setTooltipsEnabled();
+  else
+    NavApp::setTooltipsDisabled({NavApp::getMapWidgetGui()});
+
+#ifdef Q_OS_MACOS
+  NavApp::setToolTipsEnabledMainMenu(false);
+#else
+  // Menu tooltips only on Linux and Windows
+  NavApp::setToolTipsEnabledMainMenu(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_MENU));
+#endif
 }
 
 void OptionsDialog::languageChanged(int)
@@ -1660,7 +1674,6 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxOptionsMapZoomAvoidBlurred, opts2::MAP_AVOID_BLURRED_MAP);
   toFlags2(ui->checkBoxOptionsMapUndock, opts2::MAP_ALLOW_UNDOCK);
   toFlags2(ui->checkBoxOptionsGuiHighDpi, opts2::HIGH_DPI_DISPLAY_SUPPORT);
-  toFlags2(ui->checkBoxOptionsGuiTooltips, opts2::DISABLE_TOOLTIPS);
   toFlags2(ui->checkBoxOptionsGuiToolbarSize, opts2::OVERRIDE_TOOLBAR_SIZE);
 
   toFlags(ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
@@ -1685,13 +1698,14 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxOptionsSimCenterLeg, opts2::ROUTE_AUTOZOOM);
   toFlags2(ui->checkBoxOptionsSimCenterLegTable, opts2::ROUTE_CENTER_ACTIVE_LEG);
   toFlags2(ui->checkBoxOptionsSimClearSelection, opts2::ROUTE_CLEAR_SELECTION);
-  toFlags2(ui->checkBoxOptionsSimZoomOnLanding, opts2::ROUTE_ZOOM_LANDING);
   toFlags2(ui->checkBoxOptionsSimHighlightActiveTable, opts2::ROUTE_HIGHLIGHT_ACTIVE_TABLE);
 
   toFlags2(ui->checkBoxDisplayOnlineNameLookup, opts2::ONLINE_AIRSPACE_BY_NAME);
   toFlags2(ui->checkBoxDisplayOnlineFileLookup, opts2::ONLINE_AIRSPACE_BY_FILE);
 
   toFlags(ui->checkBoxOptionsOnlineRemoveShadow, opts::ONLINE_REMOVE_SHADOW);
+  toFlags(ui->checkBoxOptionsGuiTooltipsAll, opts::ENABLE_TOOLTIPS_ALL);
+  toFlags(ui->checkBoxOptionsGuiTooltipsMenu, opts::ENABLE_TOOLTIPS_MENU);
 
   data.flightplanPattern = ui->lineEditOptionsRouteFilename->text();
   data.cacheOfflineElevationPath = ui->lineEditCacheOfflineDataPath->text();
@@ -1714,7 +1728,7 @@ void OptionsDialog::widgetsToOptionData()
   data.displayClickOptions.setFlag(optsd::CLICK_AIRPORT_PROC, ui->checkBoxOptionsMapClickAirportProcs->isChecked());
   data.displayClickOptions.setFlag(optsd::CLICK_NAVAID, ui->checkBoxOptionsMapClickNavaid->isChecked());
   data.displayClickOptions.setFlag(optsd::CLICK_AIRSPACE, ui->checkBoxOptionsMapClickAirspace->isChecked());
-
+  toFlags2(ui->checkBoxOptionsSimZoomOnLanding, opts2::ROUTE_ZOOM_LANDING);
   data.weatherXplane11Path = QDir::toNativeSeparators(ui->lineEditOptionsWeatherXplanePath->text());
   data.weatherXplane12Path = QDir::toNativeSeparators(ui->lineEditOptionsWeatherXplane12Path->text());
   data.weatherActiveSkyPath = QDir::toNativeSeparators(ui->lineEditOptionsWeatherAsnPath->text());
@@ -1949,7 +1963,6 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags2(data, ui->checkBoxOptionsMapZoomAvoidBlurred, opts2::MAP_AVOID_BLURRED_MAP);
   fromFlags2(data, ui->checkBoxOptionsMapUndock, opts2::MAP_ALLOW_UNDOCK);
   fromFlags2(data, ui->checkBoxOptionsGuiHighDpi, opts2::HIGH_DPI_DISPLAY_SUPPORT);
-  fromFlags2(data, ui->checkBoxOptionsGuiTooltips, opts2::DISABLE_TOOLTIPS);
   fromFlags2(data, ui->checkBoxOptionsGuiToolbarSize, opts2::OVERRIDE_TOOLBAR_SIZE);
 
   fromFlags(data, ui->radioButtonCacheUseOffineElevation, opts::CACHE_USE_OFFLINE_ELEVATION);
@@ -1980,6 +1993,8 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags2(data, ui->checkBoxDisplayOnlineFileLookup, opts2::ONLINE_AIRSPACE_BY_FILE);
 
   fromFlags(data, ui->checkBoxOptionsOnlineRemoveShadow, opts::ONLINE_REMOVE_SHADOW);
+  fromFlags(data, ui->checkBoxOptionsGuiTooltipsAll, opts::ENABLE_TOOLTIPS_ALL);
+  fromFlags(data, ui->checkBoxOptionsGuiTooltipsMenu, opts::ENABLE_TOOLTIPS_MENU);
 
   ui->lineEditOptionsRouteFilename->setText(data.flightplanPattern);
   ui->lineEditCacheOfflineDataPath->setText(data.cacheOfflineElevationPath);

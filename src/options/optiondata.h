@@ -122,6 +122,11 @@ enum Flag
    * ui->checkBoxOptionsGuiWheel */
   GUI_REVERSE_WHEEL = 1 << 27,
 
+  /* checkBoxOptionsGuiTooltipsAll */
+  ENABLE_TOOLTIPS_ALL = 1 << 28,
+
+  /* checkBoxOptionsGuiTooltipsMenu */
+  ENABLE_TOOLTIPS_MENU = 1 << 29,
 };
 
 Q_DECLARE_FLAGS(Flags, Flag);
@@ -341,8 +346,7 @@ enum Flag2
   /* checkBoxOptionsMapUserpointText */
   MAP_USERPOINT_TEXT_BACKGROUND = 1 << 24,
 
-  /* checkBoxOptionsGuiTooltips */
-  DISABLE_TOOLTIPS = 1 << 25,
+  // Omitted ================
 
   /* checkBoxOptionsMapUserAircraftText */
   MAP_USER_TEXT_BACKGROUND = 1 << 26,
@@ -1258,7 +1262,7 @@ private:
   opts::Flags flags = opts::STARTUP_LOAD_KML | opts::STARTUP_LOAD_MAP_SETTINGS | opts::STARTUP_LOAD_ROUTE | opts::STARTUP_SHOW_LAST |
                       opts::GUI_CENTER_KML | opts::GUI_CENTER_ROUTE | opts::MAP_EMPTY_AIRPORTS | opts::ROUTE_ALTITUDE_RULE |
                       opts::CACHE_USE_ONLINE_ELEVATION | opts::STARTUP_LOAD_INFO | opts::STARTUP_LOAD_SEARCH | opts::STARTUP_LOAD_TRAIL |
-                      opts::STARTUP_SHOW_SPLASH | opts::ONLINE_REMOVE_SHADOW;
+                      opts::STARTUP_SHOW_SPLASH | opts::ONLINE_REMOVE_SHADOW | opts::ENABLE_TOOLTIPS_ALL;
 
   // Defines the defaults used for reset
   optsw::FlagsWeather flagsWeather =

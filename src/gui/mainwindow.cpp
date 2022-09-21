@@ -3701,25 +3701,6 @@ void MainWindow::restoreStateMain()
     // Use default state saved in application
     resetWindowLayout();
 
-#ifdef DEBUG_MENU_TOOLTIPS
-  // Enable tooltips for all menus
-  QList<QAction *> stack;
-  stack.append(ui->menuBar->actions());
-  while(!stack.isEmpty())
-  {
-    QMenu *menu = stack.takeLast()->menu();
-    if(menu != nullptr)
-    {
-      menu->setToolTipsVisible(true);
-      for(QAction *sub : menu->actions())
-      {
-        if(sub->menu() != nullptr)
-          stack.append(sub);
-      }
-    }
-  }
-#endif
-
   // Need to be loaded in constructor first since it reads all options
   // optionsDialog->restoreState();
 

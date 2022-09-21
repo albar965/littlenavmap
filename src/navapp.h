@@ -415,6 +415,8 @@ public:
   static QString getStartupOption(const QString& key);
   static void addStartupOption(const QString& key, const QString& value);
 
+  static void setToolTipsEnabledMainMenu(bool enabled);
+
 private:
   static void initApplication();
   static void readMagDecFromDatabase();

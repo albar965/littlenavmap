@@ -838,6 +838,27 @@ void NavApp::addStartupOption(const QString& key, const QString& value)
   startupOptions->insert(key, value);
 }
 
+void NavApp::setToolTipsEnabledMainMenu(bool enabled)
+{
+  // Enable tooltips for all menus
+  // The state is set programmatically in context menus from first file menu
+  QList<QAction *> stack;
+  stack.append(NavApp::getMainUi()->menuBar->actions());
+  while(!stack.isEmpty())
+  {
+    QMenu *menu = stack.takeLast()->menu();
+    if(menu != nullptr)
+    {
+      menu->setToolTipsVisible(enabled);
+      for(QAction *sub : menu->actions())
+      {
+        if(sub->menu() != nullptr)
+          stack.append(sub);
+      }
+    }
+  }
+}
+
 LogdataController *NavApp::getLogdataController()
 {
   return logdataController;
