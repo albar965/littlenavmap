@@ -3088,7 +3088,7 @@ void MapWidget::resetSettingActionsToDefault()
   ui->actionMapShowCompassRose->setChecked(false);
   ui->actionMapShowCompassRoseAttach->setChecked(true);
   ui->actionMapShowSelectedAltRange->setChecked(true);
-  ui->actionMapShowTurnPath->setChecked(true);
+  ui->actionMapShowTurnPath->setChecked(false);
   ui->actionMapShowEndurance->setChecked(false);
 
   // -----------------

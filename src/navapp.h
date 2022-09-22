@@ -229,6 +229,7 @@ public:
   static float getRouteCruiseAltFtWidget();
 
   static bool isRouteEmpty();
+  static bool isValidProfile();
 
   /* Currently selected simulator database */
   static atools::fs::FsPaths::SimulatorType getCurrentSimulatorDb();

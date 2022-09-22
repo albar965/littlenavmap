@@ -978,7 +978,7 @@ int Route::getNumAltitudeLegs() const
   return altitude->size();
 }
 
-bool Route::hasValidProfile() const
+bool Route::isValidProfile() const
 {
   return altitude->isValidProfile();
 }

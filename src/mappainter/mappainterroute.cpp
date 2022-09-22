@@ -1888,7 +1888,7 @@ void MapPainterRoute::drawWindBarbs(const QBitArray& visibleStartPoints, const Q
 {
   const Route *route = context->route;
 
-  if(!route->hasAltitudeLegs() || !route->hasValidProfile())
+  if(!route->hasAltitudeLegs() || !route->isValidProfile())
     return;
 
   QPointF lastPt;
@@ -2024,7 +2024,7 @@ void MapPainterRoute::drawStartParking()
 
 void MapPainterRoute::drawWindBarbAtWaypoint(float windSpeed, float windDir, float x, float y)
 {
-  if(context->route->hasAltitudeLegs() && context->route->hasValidProfile())
+  if(context->route->hasAltitudeLegs() && context->route->isValidProfile())
   {
     int size = context->sz(context->symbolSizeAirport, context->mapLayerRoute->getWindBarbsSymbolSize());
     symbolPainter->drawWindBarbs(context->painter, windSpeed, 0.f /* gust */, windDir, x - 5, y - 5, size,

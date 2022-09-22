@@ -21,7 +21,7 @@
 #include "mappainter/mappaintervehicle.h"
 
 /*
- * Draws the simulator user aircraft and aircraft track
+ * Draws the simulator user aircraft and wind pointer.
  */
 class MapPainterAircraft :
   public MapPainterVehicle

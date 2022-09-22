@@ -48,7 +48,7 @@ MapPainterAircraft::~MapPainterAircraft()
 void MapPainterAircraft::render()
 {
   atools::util::PainterContextSaver saver(context->painter);
-  const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
+  const SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
 
   if(context->objectTypes & map::AIRCRAFT_ALL)
   {
@@ -62,19 +62,19 @@ void MapPainterAircraft::render()
       bool overflow = false;
 
       // Merge simulator aircraft and online aircraft
-      QVector<const atools::fs::sc::SimConnectAircraft *> allAircraft;
+      QVector<const SimConnectAircraft *> allAircraft;
 
       // Get all pure (slowly updated) online aircraft ======================================
       if(onlineEnabled)
       {
         // Filters duplicates from simulator and user aircraft out - remove shadow aircraft
-        const QList<atools::fs::sc::SimConnectAircraft> *onlineAircraft =
+        const QList<SimConnectAircraft> *onlineAircraft =
           NavApp::getOnlinedataController()->getAircraft(context->viewport->viewLatLonAltBox(),
                                                          context->mapLayer, context->lazyUpdate, overflow);
 
         context->setQueryOverflow(overflow);
 
-        for(const atools::fs::sc::SimConnectAircraft& ac : *onlineAircraft)
+        for(const SimConnectAircraft& ac : *onlineAircraft)
           allAircraft.append(&ac);
       }
 
@@ -140,7 +140,10 @@ void MapPainterAircraft::render()
         if(wToS(pos, x, y, DEFAULT_WTOS_SIZE, &hidden))
         {
           if(!hidden)
+          {
+            paintTurnPath(userAircraft);
             paintUserAircraft(userAircraft, x, y);
+          }
         }
       }
     }

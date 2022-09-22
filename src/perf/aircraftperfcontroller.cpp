@@ -850,7 +850,13 @@ void AircraftPerfController::updateReportCurrent()
     FuelTool ft(curPerfLbs);
 
     // Display performance collection progress ==========================================================
-    if(segment != atools::fs::perf::NONE)
+    if(NavApp::isRouteEmpty())
+      html.p().b(tr("No flight plan.")).pEnd();
+    // else if(!NavApp::isValidProfile())
+    // html.p().b(tr("Elevation profile not valid.")).pEnd();
+    else if(segment == atools::fs::perf::NONE)
+      html.p().b(tr("No flight detected.")).pEnd();
+    else
     {
       html.p().b(tr("Aircraft")).pEnd();
       html.table();
@@ -860,8 +866,6 @@ void AircraftPerfController::updateReportCurrent()
       html.tableEnd();
       html.pEnd();
     }
-    else
-      html.p().b(tr("No flight detected.")).pEnd();
 
     if(segment >= atools::fs::perf::DEPARTURE_TAXI)
     {
@@ -968,7 +972,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
   const RouteAltitude& altLegs = NavApp::getAltitudeLegs();
 
   bool hasLegs = altLegs.size() > 1;
-  bool valid = NavApp::getAltitudeLegs().isValidProfile() && !NavApp::getAltitudeLegs().hasUnflyableLegs();
+  bool valid = NavApp::isValidProfile() && !NavApp::getAltitudeLegs().hasUnflyableLegs();
 
   if(print)
     // Include header here if printing
@@ -1429,7 +1433,7 @@ void AircraftPerfController::simDataChanged(const atools::fs::sc::SimConnectData
     if(userAircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT &&
        userAircraft.getFuelFlowPPH() > 1.0f && userAircraft.getGroundSpeedKts() > map::MIN_GROUND_SPEED)
       fuelFlowGroundspeedAverage->addSamples(userAircraft.getFuelFlowPPH(), userAircraft.getGroundSpeedKts(),
-                                             QDateTime::currentMSecsSinceEpoch());
+                                             userAircraft.getZuluTime().toMSecsSinceEpoch());
   }
 
   // Update report every second
@@ -1440,7 +1444,7 @@ void AircraftPerfController::simDataChanged(const atools::fs::sc::SimConnectData
     updateReportCurrent();
   }
 
-  // Update report every second
+  // Update current fuel report every second
   currentSampleTime = QDateTime::currentMSecsSinceEpoch();
   if(currentSampleTime > reportLastSampleTimeMs + 5000)
   {

@@ -49,8 +49,8 @@ using Marble::GeoDataCoordinates;
 using atools::fs::sc::SimConnectUserAircraft;
 using atools::fs::sc::SimConnectData;
 
-// Calculate averages for ground speed and turn speed for 2 seconds
-const static qint64 TURN_PATH_AVERAGE_TIME_MS = 2000L;
+// Calculate averages for ground speed and turn speed for 4 seconds
+const static qint64 TURN_PATH_AVERAGE_TIME_MS = 4000L;
 
 template<typename TYPE>
 void assignIdAndInsert(const QString& settingsName, QHash<int, TYPE>& hash)
@@ -123,6 +123,8 @@ void MapScreenIndex::copy(const MapScreenIndex& other)
   ilsLines = other.ilsLines;
   routePointsEditable = other.routePointsEditable;
   routePointsAll = other.routePointsAll;
+  lastUserAircraftForAverageTs = other.lastUserAircraftForAverageTs;
+  routeDrawnNavaids = other.routeDrawnNavaids;
 }
 
 void MapScreenIndex::updateAirspaceScreenGeometryInternal(QSet<map::MapAirspaceId>& ids, map::MapAirspaceSources source,
@@ -493,6 +495,11 @@ void MapScreenIndex::changeSearchHighlights(const map::MapResult& newHighlights)
   *searchHighlights = newHighlights;
 }
 
+void MapScreenIndex::setProcedureHighlights(const QVector<proc::MapProcedureLegs>& value)
+{
+  procedureHighlights = value;
+}
+
 void MapScreenIndex::setProcedureHighlight(const proc::MapProcedureLegs& newHighlight)
 {
   *procedureHighlight = newHighlight;
@@ -643,25 +650,49 @@ void MapScreenIndex::updateAverageTurn()
   if(NavApp::isConnectedAndAircraftFlying())
   {
     // Sim is connected and aircraft is flying
-    QDateTime now = QDateTime::currentDateTimeUtc();
+    const SimConnectUserAircraft& userAircraft = simData->getUserAircraftConst();
+
+#ifdef DEBUG_INFORMATION_TURN
+    qDebug() << Q_FUNC_INFO << "userAircraft.getZuluTime()" << userAircraft.getZuluTime().toMSecsSinceEpoch();
+#endif
 
     // Have a last aircraft and timestamp to calculate values
     if(lastUserAircraftForAverage->isValid() && lastUserAircraftForAverageTs.isValid())
     {
-      const SimConnectUserAircraft& userAircraft = simData->getUserAircraftConst();
+      // Time difference in milliseconds
+      double timeDiff = lastUserAircraftForAverageTs.msecsTo(userAircraft.getZuluTime());
 
-      // Turn right is positive and turn left is negative
-      float headingChange = atools::geo::angleAbsDiffSign(lastUserAircraftForAverage->getTrackDegTrue(), userAircraft.getTrackDegTrue());
+      if(timeDiff < 0.)
+      {
+        // Time changed backwards reset all
+        lastUserAircraftForAverageTs = QDateTime();
+        movingAverageSimAircraft->reset();
+      }
+      else
+      {
+        // Turn right is positive and turn left is negative
+        double headingChange = atools::geo::angleAbsDiffSign(lastUserAircraftForAverage->getTrackDegTrue(), userAircraft.getTrackDegTrue());
 
-      // Heading change in degree per second
-      float lateralAngularVelocity = headingChange / static_cast<float>(lastUserAircraftForAverageTs.msecsTo(now)) * 1000.f;
+        if(timeDiff > 0.)
+        {
+          // Heading change in degree per second
+          double lateralAngularVelocity = headingChange / timeDiff * 1000.;
 
-      // Sample groundspeed/turnspeed and timestamp
-      movingAverageSimAircraft->addSamples(userAircraft.getGroundSpeedKts(), lateralAngularVelocity, QDateTime::currentMSecsSinceEpoch());
+#ifdef DEBUG_INFORMATION_TURN
+          qDebug() << Q_FUNC_INFO << "headingChange" << headingChange;
+          qDebug() << Q_FUNC_INFO << "timeDiff" << timeDiff;
+          qDebug() << Q_FUNC_INFO << "lateralAngularVelocity" << lateralAngularVelocity;
+          movingAverageSimAircraft->debugDumpContainerSizes();
+#endif
+
+          // Sample groundspeed/turnspeed and timestamp
+          movingAverageSimAircraft->addSamples(userAircraft.getGroundSpeedKts(), static_cast<float>(lateralAngularVelocity),
+                                               userAircraft.getZuluTime().toMSecsSinceEpoch());
+        }
+      }
     }
-
     *lastUserAircraftForAverage = simData->getUserAircraftConst();
-    lastUserAircraftForAverageTs = now;
+    lastUserAircraftForAverageTs = userAircraft.getZuluTime();
   }
   else
   {
@@ -674,6 +705,10 @@ void MapScreenIndex::updateAverageTurn()
 void MapScreenIndex::getAverageGroundAndTurnSpeed(float& groundSpeedKts, float& turnSpeedDegPerSec) const
 {
   movingAverageSimAircraft->getAverages(groundSpeedKts, turnSpeedDegPerSec);
+#ifdef DEBUG_INFORMATION_TURN
+  qDebug() << Q_FUNC_INFO << "groundSpeedKts" << groundSpeedKts;
+  qDebug() << Q_FUNC_INFO << "turnSpeedDegPerSec" << turnSpeedDegPerSec;
+#endif
 }
 
 void MapScreenIndex::updateLastSimData(const atools::fs::sc::SimConnectData& data)

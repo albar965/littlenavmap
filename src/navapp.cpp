@@ -33,6 +33,7 @@
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 #include "gui/stylehandler.h"
+#include "route/routealtitude.h"
 #include "util/properties.h"
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mapmarkhandler.h"
@@ -56,7 +57,6 @@
 #include "web/webcontroller.h"
 #include "web/webmapcontroller.h"
 
-#include "query/waypointquery.h"
 #include "ui_mainwindow.h"
 
 #include <marble/MarbleModel.h>
@@ -620,6 +620,11 @@ float NavApp::getRouteCruiseAltFtWidget()
 bool NavApp::isRouteEmpty()
 {
   return getRouteConst().isEmpty();
+}
+
+bool NavApp::isValidProfile()
+{
+  return getRouteConst().getAltitudeLegs().isValidProfile();
 }
 
 atools::fs::FsPaths::SimulatorType NavApp::getCurrentSimulatorDb()

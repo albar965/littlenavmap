@@ -49,7 +49,6 @@
 const float MAX_COMPASS_ROSE_RADIUS_NM = 500.f;
 const float MIN_COMPASS_ROSE_RADIUS_NM = 0.2f;
 const double MIN_VIEW_DISTANCE_COMPASS_ROSE_KM = 6400.;
-const float MAX_TURN_PATH_NM = 5.f;
 
 using namespace Marble;
 using namespace map;
@@ -105,7 +104,6 @@ void MapPainterMark::render()
   paintCompassRose();
   paintEndurance();
   paintSelectedAltitudeRange();
-  paintTurnPath();
 
   paintHighlights();
   paintRouteDrag();
@@ -874,84 +872,6 @@ void MapPainterMark::paintRangeMarks()
       }
     }
   }
-}
-
-void MapPainterMark::paintTurnPath()
-{
-  const atools::fs::sc::SimConnectUserAircraft& userAircraft = mapPaintWidget->getUserAircraft();
-  if(context->objectDisplayTypes & map::AIRCRAFT_TURN_PATH && userAircraft.isFlying())
-  {
-    const ageo::Pos& aircraftPos = mapPaintWidget->getUserAircraft().getPosition();
-    if(aircraftPos.isValid())
-    {
-      float groundSpeedKts, turnSpeedDegPerSec;
-      mapPaintWidget->getScreenIndex()->getAverageGroundAndTurnSpeed(groundSpeedKts, turnSpeedDegPerSec);
-
-      if(groundSpeedKts > 20.f)
-      {
-        // Draw one line segment every 0.1 NM
-        float distanceStepNm = 0.1f;
-
-        // Turn in degree at each node
-        float turnStep = turnSpeedDegPerSec * (distanceStepNm * 3600.f / groundSpeedKts);
-
-        // Current distance from first node (aircraft)
-        float curDistance = 0.f;
-        float curHeading = userAircraft.getTrackDegTrue() + turnStep;
-
-        float lineWidth = context->szF(context->thicknessUserFeature, mapcolors::markTurnPathPen.width());
-        context->painter->setPen(mapcolors::adjustWidth(mapcolors::markTurnPathPen, lineWidth));
-        context->painter->setBrush(QBrush(mapcolors::markTurnPathPen.color()));
-
-        // One step is 0.1 NM
-        int step = 0;
-
-        float pixelForMaxTurnPath = scale->getPixelForNm(MAX_TURN_PATH_NM);
-        if(pixelForMaxTurnPath > 40)
-        {
-          ageo::Pos curPos = aircraftPos;
-          ageo::LineString line(aircraftPos);
-
-          // Stop either at distance or if turn radius drawn is close to 180°
-          while(curDistance < MAX_TURN_PATH_NM &&
-                atools::geo::angleAbsDiff(userAircraft.getTrackDegTrue(), curHeading) < 180.f - std::abs(turnStep))
-          {
-            // Next point for given distance and heading
-            ageo::Pos newPos = curPos.endpoint(ageo::nmToMeter(distanceStepNm), curHeading);
-            line.append(newPos);
-
-            // Draw mark at each 0.5 NM
-            if(step > 0 && (step % 5) == 0)
-            {
-              double length = lineWidth * 1.4;
-
-              // Longer mark at 1 NM
-              if((step % 10) == 0)
-                length *= 1.8;
-
-              // Draw line segment as mark
-              QPoint pt = wToS(curPos);
-              if(!pt.isNull())
-              {
-                context->painter->translate(pt);
-                context->painter->rotate(curHeading - (turnStep / 2.) + 90.);
-                context->painter->drawLine(QPointF(0., -length), QPointF(0., length));
-                context->painter->resetTransform();
-              }
-            }
-
-            curPos = newPos;
-            curDistance += distanceStepNm;
-            curHeading += turnStep;
-            curHeading = ageo::normalizeCourse(curHeading);
-            step++;
-          }
-
-          drawLineString(context->painter, line);
-        } // if(pixelForMaxTurnPath > 20)
-      } // if(groundSpeedKts > 20.f)
-    } // if(aircraftPos.isValid())
-  } // if(context->objectDisplayTypes & map::AIRCRAFT_TURN_PATH && userAircraft.isFlying())
 }
 
 void MapPainterMark::paintSelectedAltitudeRange()

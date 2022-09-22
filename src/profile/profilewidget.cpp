@@ -38,7 +38,6 @@
 #include "options/optiondata.h"
 #include "common/elevationprovider.h"
 #include "common/vehicleicons.h"
-#include "util/paintercontextsaver.h"
 #include "common/jumpback.h"
 #include "weather/windreporter.h"
 #include "grib/windquery.h"

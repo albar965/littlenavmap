@@ -56,6 +56,9 @@ public:
 protected:
   void paintAircraftTrack();
 
+  /* Draw a green turn path indicator */
+  void paintTurnPath(const atools::fs::sc::SimConnectUserAircraft& userAircraft);
+
   void paintUserAircraft(const atools::fs::sc::SimConnectUserAircraft& userAircraft, float x, float y);
   void paintAiVehicle(const atools::fs::sc::SimConnectAircraft& vehicle, bool forceLabel);
 

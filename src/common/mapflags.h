@@ -204,7 +204,7 @@ enum MapObjectQueryType
   QUERY_PROCEDURES = 1 << 4, /* Procedure navaids when querying route */
   QUERY_PROCEDURES_MISSED = 1 << 5, /* Missed procedure navaids when querying route */
   QUERY_MARK_RANGE = 1 << 6, /* Range rings */
-  QUERY_MARK_MSA = 1 << 7, /* Airport MSA sectors */
+  QUERY_MARK_MSA = 1 << 7, /* MSA sectors */
   QUERY_MARK_DISTANCE = 1 << 8, /* Measurement lines */
   QUERY_PREVIEW_PROC_POINTS = 1 << 9, /* Points from procedure preview */
   QUERY_PROC_RECOMMENDED = 1 << 10, /* Recommended navaids from procedures */

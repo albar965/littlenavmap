@@ -662,7 +662,7 @@ void RouteLabel::updateFooterSelectionLabel()
 
           distanceNm += leg.getDistanceTo();
 
-          if(route.getAltitudeLegs().isValidProfile())
+          if(route.isValidProfile())
           {
             const RouteAltitudeLeg& altLeg = route.getAltitudeLegAt(index);
 

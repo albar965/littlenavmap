@@ -5029,7 +5029,7 @@ void HtmlInfoBuilder::addMorse(atools::util::HtmlBuilder& html, const QString& n
 void HtmlInfoBuilder::routeWindText(HtmlBuilder& html, const Route& route, int index) const
 {
   // Wind text is always shown independent of barb status at route
-  if(index >= 0 && NavApp::getWindReporter()->hasAnyWindData() && route.hasValidProfile())
+  if(index >= 0 && NavApp::getWindReporter()->hasAnyWindData() && route.isValidProfile())
   {
     const RouteAltitudeLeg& altLeg = route.getAltitudeLegAt(index);
     if(altLeg.getLineString().getPos2().getAltitude() > MIN_WIND_BARB_ALTITUDE && !altLeg.isMissed() && !altLeg.isAlternate())
