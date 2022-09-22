@@ -42,12 +42,10 @@
 #include "gui/tools.h"
 #include "gui/treedialog.h"
 #include "gui/widgetstate.h"
-#include "mapgui/mapmarkhandler.h"
 #include "mapgui/mapwidget.h"
 #include "navapp.h"
 #include "options/optiondata.h"
 #include "parkingdialog.h"
-#include "perf/aircraftperfcontroller.h"
 #include "query/airportquery.h"
 #include "query/airwaytrackquery.h"
 #include "query/mapquery.h"
@@ -69,7 +67,6 @@
 #include "settings/settings.h"
 #include "track/trackcontroller.h"
 #include "ui_mainwindow.h"
-#include "gui/dockwidgethandler.h"
 #include "util/htmlbuilder.h"
 
 #include <QClipboard>

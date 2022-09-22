@@ -17,13 +17,13 @@
 
 #include "route/routealtitude.h"
 
-#include "route/route.h"
 #include "atools.h"
-#include "geo/calculations.h"
-#include "fs/perf/aircraftperf.h"
-#include "grib/windquery.h"
 #include "common/unit.h"
+#include "fs/perf/aircraftperf.h"
+#include "geo/calculations.h"
+#include "grib/windquery.h"
 #include "navapp.h"
+#include "route/route.h"
 #include "weather/windreporter.h"
 
 #include <QLineF>

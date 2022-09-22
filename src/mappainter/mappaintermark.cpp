@@ -32,15 +32,12 @@
 #include "navapp.h"
 #include "common/symbolpainter.h"
 #include "airspace/airspacecontroller.h"
-#include "common/constants.h"
 #include "common/unit.h"
 #include "route/routeleg.h"
 #include "route/route.h"
-#include "route/routecontroller.h"
 #include "util/paintercontextsaver.h"
 #include "common/textplacement.h"
 #include "fs/userdata/logdatamanager.h"
-#include "mapgui/mapscreenindex.h"
 
 #include <marble/GeoDataLineString.h>
 #include <marble/GeoDataLinearRing.h>

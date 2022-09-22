@@ -25,11 +25,10 @@
 #include "geo/calculations.h"
 #include "mapgui/maplayer.h"
 #include "common/maptypes.h"
+#include "mapgui/mappaintwidget.h"
 #include "mapgui/mapscale.h"
-#include "mapgui/mapwidget.h"
+#include "mapgui/mapscreenindex.h"
 #include "navapp.h"
-#include "settings/settings.h"
-#include "util/paintercontextsaver.h"
 #include "fs/sc/simconnectuseraircraft.h"
 
 #include <marble/GeoPainter.h>

@@ -17,16 +17,17 @@
 
 #include "mappainter/mappainteraircraft.h"
 
-#include "mapgui/mapwidget.h"
+#include "geo/calculations.h"
+#include "mapgui/mapfunctions.h"
+#include "mapgui/mappaintwidget.h"
 #include "navapp.h"
 #include "online/onlinedatacontroller.h"
-#include "mapgui/mapfunctions.h"
 #include "util/paintercontextsaver.h"
-#include "geo/calculations.h"
 
 #include <marble/GeoPainter.h>
 #include <marble/ViewportParams.h>
 
+using atools::fs::sc::SimConnectUserAircraft;
 using atools::fs::sc::SimConnectAircraft;
 
 const int NUM_CLOSEST_AI_LABELS = 5;

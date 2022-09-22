@@ -163,10 +163,7 @@ public:
     return procedureHighlights;
   }
 
-  void setProcedureHighlights(const QVector<proc::MapProcedureLegs>& value)
-  {
-    procedureHighlights = value;
-  }
+  void setProcedureHighlights(const QVector<proc::MapProcedureLegs>& value);
 
   /* Single procedure from search selection */
   const proc::MapProcedureLegs& getProcedureHighlight() const

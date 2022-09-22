@@ -17,7 +17,6 @@
 
 #include "route/route.h"
 
-#include "common/constants.h"
 #include "common/maptools.h"
 #include "common/unit.h"
 #include "fs/db/databasemeta.h"
@@ -28,12 +27,11 @@
 #include "navapp.h"
 #include "query/airportquery.h"
 #include "query/airwaytrackquery.h"
+#include "query/infoquery.h"
 #include "query/mapquery.h"
 #include "query/procedurequery.h"
-#include "query/infoquery.h"
 #include "route/flightplanentrybuilder.h"
 #include "route/routealtitude.h"
-#include "settings/settings.h"
 #include "weather/windreporter.h"
 
 #include <QBitArray>
