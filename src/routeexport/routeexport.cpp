@@ -1251,9 +1251,9 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
 
   QString doNotShowAgainText;
   if(multi)
-    doNotShowAgainText = tr("Do not &show this dialog again and export all files in the future.");
+    doNotShowAgainText = tr("Do not &show this dialog again and export all files.");
   else
-    doNotShowAgainText = tr("Do not &show this dialog again and save Flight Plan in the future.");
+    doNotShowAgainText = tr("Do not &show this dialog again and save Flight Plan.");
   QString reallyContinue = tr("\n\nReally continue?");
 
   // Check for valid airports for departure and destination ================================
@@ -1320,7 +1320,7 @@ bool RouteExport::routeValidate(const QVector<RouteExportFormat>& formats, bool 
     int result = dialog->showQuestionMsgBox(
       lnm::ACTIONS_SHOW_ROUTE_PARKING_WARNING,
       message,
-      tr("Do not &show this dialog again and save Flight Plan in the future."),
+      tr("Do not &show this dialog again and save Flight Plan."),
       BUTTONS, QMessageBox::Yes, QMessageBox::Save);
 
     if(result == QMessageBox::Yes)

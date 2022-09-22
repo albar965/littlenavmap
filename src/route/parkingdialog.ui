@@ -23,7 +23,7 @@
       <enum>QFrame::Sunken</enum>
      </property>
      <property name="text">
-      <string>&amp;Select a start position for departure&lt;br/&gt;%1:</string>
+      <string>Select a start position for departure&lt;br/&gt;%1:</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

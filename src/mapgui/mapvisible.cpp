@@ -139,10 +139,10 @@ void MapVisible::updateVisibleObjectsStatusBar()
         }
 
         if(shown.testFlag(map::AIRPORT_NO_PROCS))
-          features.append(tr("without approach procedure"));
+          features.append(tr("without procedure"));
         else
         {
-          features.append(tr("only with approach procedure (P)"));
+          features.append(tr("only with procedure (P)"));
           apShort.append(tr("P"));
         }
 
@@ -225,7 +225,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
       if(layer->isAirportMsa() && shown.testFlag(map::AIRPORT_MSA))
       {
         navaidLabel.append(tr("MSA"));
-        navaidsTooltip.append(tr("Airport MSA (MSA)"));
+        navaidsTooltip.append(tr("MSA Sectors (MSA)"));
       }
 
       if(layer->isMora() && shownDispTypes.testFlag(map::MORA) && NavApp::getMoraReader()->isDataAvailable())

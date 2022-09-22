@@ -104,7 +104,7 @@ InfoController::InfoController(MainWindow *parent)
                             "Prepare the flight and load your aircraft in the simulator to see progress updates.");
 
   notConnectedText = tr("Not connected to simulator.\n\n"
-                        "Go to the main menu -> \"Tools\" -> \"Flight Simulator Connection\" "
+                        "Go to the main menu -> \"Tools\" -> \"Connect to Flight Simulator\" "
                         "or press \"Ctrl+Shift+C\".\n"
                         "Then choose the simulator and click \"Connect\".\n",
                         "Keep instructions in sync with translated menus and shortcuts");

@@ -341,8 +341,7 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
   }
 }
 
-void ConnectClient::handleError(atools::fs::sc::SimConnectStatus status, const QString& error,
-                                bool xplane, bool network)
+void ConnectClient::handleError(atools::fs::sc::SimConnectStatus status, const QString& error, bool xplane, bool network)
 {
   QString hint, program;
 
@@ -357,10 +356,10 @@ void ConnectClient::handleError(atools::fs::sc::SimConnectStatus status, const Q
       break;
     case atools::fs::sc::INVALID_MAGIC_NUMBER:
     case atools::fs::sc::VERSION_MISMATCH:
-      hint = tr("Update <i>%1</i> to the latest version.<br/>"
-                "The installed version of <i>%1</i><br/>"
+      hint = tr("Update %1 to the latest version.<br/>"
+                "The installed version of %1<br/>"
                 "is not compatible with this version of Little Navmap.<br/><br/>"
-                "Install the latest version of <i>%1</i>.").arg(program);
+                "Install the latest version of %1.").arg(program);
       errorState = true;
       break;
     case atools::fs::sc::INSUFFICIENT_WRITE:
@@ -371,8 +370,7 @@ void ConnectClient::handleError(atools::fs::sc::SimConnectStatus status, const Q
       break;
   }
 
-  errorMessageBox->setText(tr("<p>Error receiving data from <i>%1</i>:</p>"
-                                "<p>%2</p><p>%3</p>").arg(program).arg(error).arg(hint));
+  errorMessageBox->setText(tr("<p>Error receiving data from %1:</p><p>%2</p><p>%3</p>").arg(program).arg(error).arg(hint));
   errorMessageBox->show();
 }
 

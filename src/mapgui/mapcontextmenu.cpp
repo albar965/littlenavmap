@@ -754,7 +754,7 @@ void MapContextMenu::insertAirportMsaMenu(QMenu& menu)
 
   insertMenuOrAction(menu, mc::AIRPORT_MSA, MapResultIndex().addRef(*result, map::AIRPORT_MSA).
                      sort(DEFAULT_TYPE_SORT, alphaSort),
-                     tr("Add &MSA Diagram at %1"), tr("Show an airport MSA sector diagram on the map at a position or a navaid"),
+                     tr("Add &MSA Diagram at %1"), tr("Show a MSA sector diagram on the map at an airport or a navaid"),
                      QString(), QIcon(":/littlenavmap/resources/icons/msa.svg"), false /* allowNoMapObject */, callback);
 }
 

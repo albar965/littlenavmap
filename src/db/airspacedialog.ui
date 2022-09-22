@@ -55,8 +55,7 @@
       <item row="0" column="1">
        <widget class="QLineEdit" name="lineEditAirspacePath">
         <property name="toolTip">
-         <string>Select the directoy that contains the user airspace text files.
-Little Navmap can currently only read OpenAIR files.</string>
+         <string>Select the directoy that contains the user airspace text files.</string>
         </property>
         <property name="placeholderText">
          <string>No directory for user airspaces selected.</string>
@@ -79,8 +78,7 @@ Little Navmap can currently only read OpenAIR files.</string>
       <item row="2" column="0">
        <widget class="QLabel" name="labelAirspaceExtensions">
         <property name="toolTip">
-         <string>Files with these extensions will be loaded as airspaces.
-Currently only OpenAir is supported (*.txt). </string>
+         <string>Files with these extensions will be loaded as airspaces.</string>
         </property>
         <property name="text">
          <string>File &amp;extensions:</string>

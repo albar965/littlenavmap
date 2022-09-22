@@ -204,10 +204,10 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
     tr("Estimated time of arrival.\n"
        "Calculated based on the selected aircraft performance profile.\n"
        "Static value. Does not update while flying."),
-    tr("Fuel weight remaining at waypoint, once for volume and once for weight.\n"
+    tr("Fuel weight remaining at waypoint.\n"
        "Calculated based on the aircraft performance profile.\n"
        "Static value. Does not update while flying."),
-    tr("Fuel volume remaining at waypoint, once for volume and once for weight.\n"
+    tr("Fuel volume remaining at waypoint.\n"
        "Calculated based on the aircraft performance profile.\n"
        "Static value. Does not update while flying."),
     tr("Wind direction and speed at waypoint."),

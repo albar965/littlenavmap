@@ -430,6 +430,9 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
                  <property name="wordWrap">
                   <bool>true</bool>
                  </property>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsGuiLanguage</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="0" column="1">
@@ -593,7 +596,7 @@ opening files, modifying the flight plan and other operations.</string>
                <item>
                 <widget class="QCheckBox" name="checkBoxOptionsGuiWheel">
                  <property name="toolTip">
-                  <string>Reverses mouse wheel function for map zoom (Wheel and Shift-Wheel), map details (Ctrl+Wheel) and elevation profile (Wheel and Shift-Wheel).</string>
+                  <string>Reverses mouse wheel function for map zoom (Wheel and Shift+Wheel), map details (Ctrl+Wheel) and elevation profile (Wheel and Shift+Wheel).</string>
                  </property>
                  <property name="text">
                   <string>Reverse mouse &amp;wheel direction in map and elevation profile</string>
@@ -637,8 +640,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>408</width>
-             <height>514</height>
+             <width>569</width>
+             <height>537</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1161,6 +1164,9 @@ This does not affect the map window which can be changed separately on the optio
                  <property name="text">
                   <string>&amp;Distance:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsUnitDistance</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="0" column="1">
@@ -1187,6 +1193,9 @@ This does not affect the map window which can be changed separately on the optio
                  <property name="text">
                   <string>&amp;Short Distance:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsUnitShortDistance</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="1" column="1">
@@ -1208,6 +1217,9 @@ This does not affect the map window which can be changed separately on the optio
                  <property name="text">
                   <string>&amp;Altitude and elevation:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsUnitAlt</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="2" column="1">
@@ -1228,6 +1240,9 @@ This does not affect the map window which can be changed separately on the optio
                 <widget class="QLabel" name="labelOptionsUnitSpeed">
                  <property name="text">
                   <string>&amp;Speed:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsUnitSpeed</cstring>
                  </property>
                 </widget>
                </item>
@@ -1255,6 +1270,9 @@ This does not affect the map window which can be changed separately on the optio
                  <property name="text">
                   <string>&amp;Vertical Speed:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsUnitVertSpeed</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="4" column="1">
@@ -1275,6 +1293,9 @@ This does not affect the map window which can be changed separately on the optio
                 <widget class="QLabel" name="labelOptionsUnitFuel">
                  <property name="text">
                   <string>&amp;Fuel and Weight:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsUnitFuelWeight</cstring>
                  </property>
                 </widget>
                </item>
@@ -1310,6 +1331,9 @@ information displays and tooltips besides selected units.</string>
                 <widget class="QLabel" name="labelOptionsUnitCoords">
                  <property name="text">
                   <string>&amp;Coordinates:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsUnitCoords</cstring>
                  </property>
                 </widget>
                </item>
@@ -1702,7 +1726,7 @@ userpoints and logbook entries when hovering the cursor over the map</string>
                <item>
                 <widget class="QCheckBox" name="checkBoxOptionsMapTooltipUser">
                  <property name="toolTip">
-                  <string>Show tooltip on user features like range rings, measurement lines, airport MSA, user holdings or traffic patterns.</string>
+                  <string>Show tooltip at the hotspot of user features like range rings, measurement lines, MSA diagrams, user holdings or traffic patterns.</string>
                  </property>
                  <property name="text">
                   <string>&amp;User Features</string>
@@ -1944,7 +1968,10 @@ Enable &quot;Navigation Aids&quot;, &quot;Screen Areas&quot; on options page &qu
                <item row="3" column="0">
                 <widget class="QLabel" name="labelOptionsMapNavTouchscreenArea">
                  <property name="text">
-                  <string>Screen click area size:</string>
+                  <string>&amp;Screen click area size:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsMapNavTouchArea</cstring>
                  </property>
                 </widget>
                </item>
@@ -1994,7 +2021,7 @@ options page &quot;Map Display Labels&quot; to display a screen center hint.</st
               </layout>
              </widget>
             </item>
-            <item row="1" column="0">
+            <item row="1" column="0" alignment="Qt::AlignTop">
              <widget class="QGroupBox" name="groupBoxOptionsMapZoomClick">
               <property name="title">
                <string>Zoom and Click</string>
@@ -2019,6 +2046,9 @@ options page &quot;Map Display Labels&quot; to display a screen center hint.</st
                 <widget class="QLabel" name="labelOptionsMapZoomShowMapDouble">
                  <property name="text">
                   <string>&amp;Zoom distance for double click on object:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>doubleSpinBoxOptionsMapZoomShowMap</cstring>
                  </property>
                 </widget>
                </item>
@@ -2049,6 +2079,9 @@ Smaller values will zoom in closer to an airport or navaid. </string>
                 <widget class="QLabel" name="labelOptionsMapZoomShowMapMenu">
                  <property name="text">
                   <string>&amp;Zoom distance for &quot;Show on Map&quot; menu item:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>doubleSpinBoxOptionsMapZoomShowMapMenu</cstring>
                  </property>
                 </widget>
                </item>
@@ -2095,7 +2128,7 @@ to next best step</string>
               </layout>
              </widget>
             </item>
-            <item row="1" column="1">
+            <item row="1" column="1" alignment="Qt::AlignTop">
              <widget class="QGroupBox" name="groupBoxMapClickSensitivity">
               <property name="title">
                <string>Click Sensitivity</string>
@@ -2120,6 +2153,9 @@ to next best step</string>
                 <widget class="QLabel" name="labelOptionsMapClickRect">
                  <property name="text">
                   <string>&amp;Click sensitivity when selecting objects on map:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsMapClickRect</cstring>
                  </property>
                 </widget>
                </item>
@@ -2151,6 +2187,9 @@ Smaller values will allow a finer selection.</string>
                  <property name="text">
                   <string>Tool tip &amp;sensitivity on map:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsMapTooltipRect</cstring>
+                 </property>
                 </widget>
                </item>
                <item>
@@ -2177,6 +2216,19 @@ Smaller values will allow a finer selection.</string>
                </item>
               </layout>
              </widget>
+            </item>
+            <item row="2" column="1">
+             <spacer name="verticalSpacer_19">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
             </item>
            </layout>
           </widget>
@@ -2301,6 +2353,9 @@ Note that some fonts, especially large fonts, can result in display errors on th
                  <property name="alignment">
                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
                  </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySymbolSizeAircraftUser</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="8" column="0" rowspan="2">
@@ -2310,6 +2365,9 @@ Note that some fonts, especially large fonts, can result in display errors on th
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySymbolSizeNavaid</cstring>
                  </property>
                 </widget>
                </item>
@@ -2377,6 +2435,9 @@ Note that some fonts, especially large fonts, can result in display errors on th
                 <widget class="QLabel" name="labelOptionsMapSizeAirportWeather">
                  <property name="text">
                   <string>Airport &amp;Weather:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySymbolSizeAirportWeather</cstring>
                  </property>
                 </widget>
                </item>
@@ -2552,6 +2613,9 @@ Note that some fonts, especially large fonts, can result in display errors on th
                  <property name="alignment">
                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
                  </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplayThicknessAirway</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="1" column="2">
@@ -2612,6 +2676,9 @@ Note that some fonts, especially large fonts, can result in display errors on th
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySymbolSizeAirport</cstring>
                  </property>
                 </widget>
                </item>
@@ -2676,6 +2743,9 @@ Note that some fonts, especially large fonts, can result in display errors on th
                 <widget class="QLabel" name="labelOptionsMapSizeAirportWindBarbs">
                  <property name="text">
                   <string>Wind &amp;Barbs:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySymbolSizeWindBarbs</cstring>
                  </property>
                 </widget>
                </item>
@@ -2756,6 +2826,9 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
                  <property name="alignment">
                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
                  </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySymbolSizeAircraftAi</cstring>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -2794,6 +2867,9 @@ For VOR, NDB, ILS, waypoints and holdings. Not for flight plan labels.</string>
                   <widget class="QLabel" name="labelOptionsMapSizeTrail">
                    <property name="text">
                     <string>User aircraft &amp;trail:</string>
+                   </property>
+                   <property name="buddy">
+                    <cstring>spinBoxOptionsDisplayThicknessTrail</cstring>
                    </property>
                   </widget>
                  </item>
@@ -3011,6 +3087,9 @@ Not used in the elevation profile.</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplayThicknessFlightplan</cstring>
                  </property>
                 </widget>
                </item>
@@ -3275,6 +3354,9 @@ Also used in the elevation profile.</string>
                  <property name="text">
                   <string>&amp;Flight plan line:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplayThicknessFlightplanProfile</cstring>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -3311,7 +3393,7 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>516</width>
+             <width>494</width>
              <height>526</height>
             </rect>
            </property>
@@ -3359,6 +3441,9 @@ Also used in the elevation profile.</string>
                   <string>&amp;Minimum altitude grid
 (MORA):</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplayTransparencyMora</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="14" column="2" colspan="3">
@@ -3374,7 +3459,10 @@ Also used in the elevation profile.</string>
                   <string>Thickness of the compass rose lines</string>
                  </property>
                  <property name="text">
-                  <string>&amp;Airport MSA sector diagram:</string>
+                  <string>&amp;MSA sector diagram:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplayTransparencyAirportMsa</cstring>
                  </property>
                 </widget>
                </item>
@@ -3397,6 +3485,9 @@ logbook entries:</string>
                  <property name="alignment">
                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
                  </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplayThicknessUserFeature</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="15" column="2" rowspan="2" alignment="Qt::AlignTop">
@@ -3406,6 +3497,9 @@ logbook entries:</string>
                  </property>
                  <property name="text">
                   <string>&amp;Compass rose:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplayThicknessCompassRose</cstring>
                  </property>
                 </widget>
                </item>
@@ -3527,7 +3621,7 @@ Value 0 is opaque and 90 is most transparent.</string>
                <item row="21" column="4">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayTextSizeAirportMsa">
                  <property name="toolTip">
-                  <string>Text size of the airport MSA altitude labels</string>
+                  <string>Text size of the MSA sector diagram altitude labels</string>
                  </property>
                  <property name="suffix">
                   <string> %</string>
@@ -3696,7 +3790,7 @@ Value 0 is opaque and 90 is most transparent.</string>
                <item row="3" column="3">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessMeasurement">
                  <property name="toolTip">
-                  <string>Line thickness for measurement labels</string>
+                  <string>Line thickness for measurement lines</string>
                  </property>
                  <property name="suffix">
                   <string> %</string>
@@ -3801,7 +3895,7 @@ Value 0 is opaque and 90 is most transparent.</string>
                <item row="21" column="3">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayTransparencyAirportMsa">
                  <property name="toolTip">
-                  <string>Transparency of the airport MSA sector text and lines.
+                  <string>Transparency of the MSA sector diagram text and lines.
 Value 0 is opaque and 90 is most transparent.</string>
                  </property>
                  <property name="suffix">
@@ -3891,6 +3985,9 @@ elevation profile hover:</string>
                  <property name="alignment">
                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
                  </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySymbolSizeHighlight</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="12" column="2" rowspan="2">
@@ -3901,6 +3998,9 @@ elevation profile hover:</string>
                  <property name="alignment">
                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
                  </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySymbolSizeUserpoint</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="3" column="2" rowspan="2">
@@ -3910,6 +4010,9 @@ elevation profile hover:</string>
                  </property>
                  <property name="alignment">
                   <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignTop</set>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplayThicknessMeasurement</cstring>
                  </property>
                 </widget>
                </item>
@@ -3941,6 +4044,9 @@ elevation profile hover:</string>
                 <widget class="QLabel" name="label">
                  <property name="text">
                   <string>&amp;Sun shading darkness:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsDisplaySunShadeDarkness</cstring>
                  </property>
                 </widget>
                </item>
@@ -3980,6 +4086,9 @@ elevation profile hover:</string>
                 <widget class="QLabel" name="labelOptionsGuiThemeMapDimming">
                  <property name="text">
                   <string>Map &amp;dimming in night style:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsGuiThemeMapDimming</cstring>
                  </property>
                 </widget>
                </item>
@@ -4295,6 +4404,9 @@ airspace filename has to match the callsign of the online center.</string>
                  <property name="text">
                   <string>&amp;Ground Control:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>spinBoxDisplayOnlineGround</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="7" column="2">
@@ -4383,6 +4495,9 @@ airspace filename has to match the callsign of the online center.</string>
                  <property name="text">
                   <string>&amp;Departure Control:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>spinBoxDisplayOnlineDeparture</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="5" column="2">
@@ -4434,6 +4549,9 @@ airspace filename has to match the callsign of the online center.</string>
                 <widget class="QLabel" name="labelDisplayOnlineArea">
                  <property name="text">
                   <string>&amp;Area Control Center:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxDisplayOnlineArea</cstring>
                  </property>
                 </widget>
                </item>
@@ -4488,6 +4606,9 @@ airspace filename has to match the callsign of the online center.</string>
                  <property name="text">
                   <string>&amp;Approach Control:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>spinBoxDisplayOnlineApproach</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="6" column="1">
@@ -4510,6 +4631,9 @@ airspace filename has to match the callsign of the online center.</string>
                 <widget class="QLabel" name="labelDisplayOnlineTower">
                  <property name="text">
                   <string>&amp;Tower:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxDisplayOnlineTower</cstring>
                  </property>
                 </widget>
                </item>
@@ -4534,6 +4658,9 @@ airspace filename has to match the callsign of the online center.</string>
                  <property name="text">
                   <string>&amp;Online Observer:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>spinBoxDisplayOnlineObserver</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="6" column="2">
@@ -4554,12 +4681,18 @@ airspace filename has to match the callsign of the online center.</string>
                  <property name="text">
                   <string>&amp;Clearance Delivery:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>spinBoxDisplayOnlineClearance</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="2" column="0">
                 <widget class="QLabel" name="labelDisplayOnlineFir">
                  <property name="text">
                   <string>&amp;Center:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxDisplayOnlineFir</cstring>
                  </property>
                 </widget>
                </item>
@@ -4703,6 +4836,9 @@ This is also used for &quot;Center map on aircraft and next flight plan waypoint
                  <property name="text">
                   <string>&amp;Simulator aircraft scroll box size (percent of map window size):</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsSimUpdateBox</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="0" column="0" colspan="2">
@@ -4722,6 +4858,9 @@ This is also used for &quot;Center map on aircraft and next flight plan waypoint
                 <widget class="QLabel" name="labelOptionsSimCenterLegZoom">
                  <property name="text">
                   <string>Zoom &amp;distance:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsSimCenterLegZoom</cstring>
                  </property>
                 </widget>
                </item>
@@ -4991,6 +5130,9 @@ put the active leg back on top after the given timeout while flying.</string>
                  <property name="text">
                   <string>Maximum number of aircraft &amp;trail points:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>spinBoxSimMaxTrackPoints</cstring>
+                 </property>
                 </widget>
                </item>
                <item>
@@ -5235,6 +5377,9 @@ Example: &quot;EDDF LIRF.lnmpln&quot;</string>
                  <property name="text">
                   <string>&amp;Pattern for default flight plan file names used when saving LNMPLN:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>lineEditOptionsRouteFilename</cstring>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -5305,6 +5450,9 @@ Check this if you rely on GPS when flying.</string>
                 <widget class="QLabel" name="labelOptionsRouteGroundBuffer">
                  <property name="text">
                   <string>&amp;Minimum altitude buffer to ground in elevation profile (red line):</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsRouteGroundBuffer</cstring>
                  </property>
                 </widget>
                </item>
@@ -6124,8 +6272,8 @@ Default is &quot;https://api.ivao.aero/v2/airports/all/metar&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
-             <height>532</height>
+             <width>378</width>
+             <height>349</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -6282,6 +6430,9 @@ Default is &quot;https://api.ivao.aero/v2/airports/all/metar&quot;.</string>
                  <property name="text">
                   <string>&amp;Whazzup File URL:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>lineEditOptionsOnlineWhazzupUrl</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="1" column="2">
@@ -6298,6 +6449,9 @@ Default is &quot;https://api.ivao.aero/v2/airports/all/metar&quot;.</string>
                 <widget class="QLabel" name="labelOptionsOnlineStatusUrl">
                  <property name="text">
                   <string>&amp;Status File URL:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>lineEditOptionsOnlineStatusUrl</cstring>
                  </property>
                 </widget>
                </item>
@@ -6341,6 +6495,9 @@ Default is &quot;https://api.ivao.aero/v2/airports/all/metar&quot;.</string>
                  <property name="text">
                   <string>&amp;Update every:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsOnlineUpdate</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="5" column="2">
@@ -6378,6 +6535,9 @@ Default is &quot;https://api.ivao.aero/v2/airports/all/metar&quot;.</string>
                  <property name="text">
                   <string>&amp;Format:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>comboBoxOptionsOnlineFormat</cstring>
+                 </property>
                 </widget>
                </item>
               </layout>
@@ -6414,8 +6574,8 @@ Default is &quot;https://api.ivao.aero/v2/airports/all/metar&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
-             <height>532</height>
+             <width>420</width>
+             <height>228</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -6444,6 +6604,9 @@ Default is &quot;https://api.ivao.aero/v2/airports/all/metar&quot;.</string>
                 <widget class="QLabel" name="labelOptionsWebDocroot">
                  <property name="text">
                   <string>&amp;Document root directory:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>lineEditOptionsWebDocroot</cstring>
                  </property>
                 </widget>
                </item>
@@ -6490,6 +6653,9 @@ Use this to serve your own modifed Little Navmap web page.</string>
                 <widget class="QLabel" name="labelOptionsWebPort">
                  <property name="text">
                   <string>&amp;Port number:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsWebPort</cstring>
                  </property>
                 </widget>
                </item>
@@ -6595,8 +6761,8 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
-             <height>532</height>
+             <width>471</width>
+             <height>370</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -6625,6 +6791,9 @@ Little Navmap GIT repository.
                 <widget class="QLabel" name="labelOptionsCacheDisk">
                  <property name="text">
                   <string>Maximum size of &amp;disk cache:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsCacheDiskSize</cstring>
                  </property>
                 </widget>
                </item>
@@ -6703,6 +6872,9 @@ Little Navmap GIT repository.
                 <widget class="QLabel" name="labelOptionsCacheMemory">
                  <property name="text">
                   <string>&amp;Maximum size of memory cache:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsCacheMemorySize</cstring>
                  </property>
                 </widget>
                </item>
@@ -6866,8 +7038,8 @@ Source data has many errors.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
-             <height>532</height>
+             <width>198</width>
+             <height>549</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
@@ -6922,6 +7094,9 @@ You have to reload the scenery library so that the changes take effect.</string>
                  <property name="wordWrap">
                   <bool>true</bool>
                  </property>
+                 <property name="buddy">
+                  <cstring>listWidgetOptionsDatabaseExclude</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="3" column="0" colspan="2">
@@ -6934,6 +7109,9 @@ You have to reload the scenery library so that the changes take effect.</string>
                  </property>
                  <property name="wordWrap">
                   <bool>true</bool>
+                 </property>
+                 <property name="buddy">
+                  <cstring>listWidgetOptionsDatabaseAddon</cstring>
                  </property>
                 </widget>
                </item>

@@ -86,7 +86,7 @@ QStringList MapMarkHandler::getMarkTypesText() const
   if(markTypes & map::MARK_PATTERNS)
     types.append(tr("Traffic Patterns"));
   if(markTypes & map::MARK_MSA)
-    types.append(tr("Airport MSA"));
+    types.append(tr("MSA Sector Diagrams"));
   return types;
 }
 
@@ -166,7 +166,7 @@ void MapMarkHandler::addToolbarButton()
   actionPatterns = addAction(":/littlenavmap/resources/icons/trafficpattern.svg", tr("&Traffic Patterns"),
                              tr("Show or hide traffic patterns"));
   actionHolds = addAction(":/littlenavmap/resources/icons/enroutehold.svg", tr("&Holdings"), tr("Show or hide holdings"));
-  actionAirportMsa = addAction(":/littlenavmap/resources/icons/msa.svg", tr("&MSA Diagrams"), tr("Show or hide airport MSA sectors"));
+  actionAirportMsa = addAction(":/littlenavmap/resources/icons/msa.svg", tr("&MSA Diagrams"), tr("Show or hide MSA sector diagrams"));
 
   // Connect all action signals to same handler method
   connect(buttonHandler, &atools::gui::ActionButtonHandler::actionAllTriggered, this, &MapMarkHandler::toolbarActionTriggered);
@@ -291,7 +291,7 @@ void MapMarkHandler::routeResetAll()
   choiceDialog.addCheckBox(DELETE_TRAIL, tr("&Delete aircraft trail"),
                            tr("Delete simulator aircraft trail from map and elevation profile"), true /* checked */);
   choiceDialog.addCheckBox(DELETE_ACTIVE_LEG, tr("&Reset active flight plan leg"),
-                           tr("Remove the active flight plan leg"), true /* checked */);
+                           tr("Reset the active flight plan leg"), true /* checked */);
   choiceDialog.addCheckBox(RESTART_PERF, tr("Restart the aircraft &performance collection"),
                            tr("Restarts the background aircraft performance collection"), true /* checked */);
   choiceDialog.addCheckBox(RESTART_LOGBOOK, tr("Reset flight detection in &logbook"),

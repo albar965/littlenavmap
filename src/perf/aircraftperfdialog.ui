@@ -48,8 +48,7 @@ This is for informational purposes only.</string>
           <widget class="QComboBox" name="comboBoxSimulator">
            <property name="toolTip">
             <string>Short name for simulator like FSX, FSXSE, P3DV4, P3DV5, XP11 or MSFS.
-A performance file can often be used for all simulators.
-</string>
+A performance file can often be used for all simulators.</string>
            </property>
            <item>
             <property name="text">

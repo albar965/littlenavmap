@@ -65,7 +65,7 @@ UserdataController::UserdataController(atools::fs::userdata::UserdataManager *us
   connect(ui->actionSearchUserpointRedo, &QAction::triggered, this, &UserdataController::redoTriggered);
 
   manager->setMaximumUndoSteps(50);
-  manager->setTextSuffix(tr(" Userpoint"), tr(" Userpoints"));
+  manager->setTextSuffix(tr("Userpoint"), tr("Userpoints"));
   manager->setActions(ui->actionSearchUserpointUndo, ui->actionSearchUserpointRedo);
 }
 

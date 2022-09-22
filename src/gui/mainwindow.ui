@@ -11357,7 +11357,7 @@ relation to shown airport</string>
     <string>Show &amp;MSA Sectors</string>
    </property>
    <property name="toolTip">
-    <string>Show airport MSA sectors on the map</string>
+    <string>Show MSA sectors on the map</string>
    </property>
    <property name="statusTip">
     <string>Show holdings on map</string>
@@ -11372,7 +11372,7 @@ relation to shown airport</string>
     <string>Add &amp;MSA Diagram at %1</string>
    </property>
    <property name="toolTip">
-    <string>Display airport MSA sector diagram</string>
+    <string>Display MSA sector diagram</string>
    </property>
    <property name="statusTip">
     <string>Display holding at this position or navaid</string>
@@ -11384,10 +11384,10 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/msaoff.svg</normaloff>:/littlenavmap/resources/icons/msaoff.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Remove Airport MSA</string>
+    <string>&amp;Remove MSA Sector Diagram</string>
    </property>
    <property name="toolTip">
-    <string>Remove this airport MSA sector diagram</string>
+    <string>Remove this MSA sector diagram</string>
    </property>
    <property name="statusTip">
     <string>Remove this holding</string>
@@ -11873,7 +11873,7 @@ relation to shown airport</string>
     <bool>true</bool>
    </property>
    <property name="checked">
-    <bool>true</bool>
+    <bool>false</bool>
    </property>
    <property name="icon">
     <iconset resource="../../littlenavmap.qrc">

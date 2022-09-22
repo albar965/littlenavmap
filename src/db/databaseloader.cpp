@@ -461,8 +461,8 @@ void DatabaseLoader::showErrors()
     {
       // Show contact for real errors =========================================
       errorTexts.append(tr("<b>If you wish to report these errors attach the log and configuration files "
-                             "to your report, add all other available information and send it to one "
-                             "of the contact addresses below.</b>"
+                             "to your report, add all other available information and send it to "
+                             "the contact address below.</b>"
                              "<hr/>%1"
                                "<hr/>%2").
                         arg(atools::gui::Application::getContactHtml()).

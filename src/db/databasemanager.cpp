@@ -456,7 +456,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
           arg(appSource).
           arg(appCycle).
           arg(QLocale().toString(appLastLoad, QLocale::ShortFormat)),
-          tr("Do not &show this dialog again and skip copying in the future."),
+          tr("Do not &show this dialog again and skip copying."),
           QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::No);
       }
 
@@ -827,7 +827,7 @@ void DatabaseManager::switchNavFromMainMenu()
       arg(navDbActionAll->text().remove("&")).arg(url.toString());
 
     int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_NAVDATA_WARNING, message,
-                                            tr("Do not &show this dialog again and switch the mode in the future."),
+                                            tr("Do not &show this dialog again and switch the mode."),
                                             QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
 
     if(result == QMessageBox::No)
@@ -1261,7 +1261,7 @@ void DatabaseManager::checkSceneryOptions(bool manualCheck)
         int result =
           dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_DATABASE_CYCLE_MATCH,
                                      tr("<p style='white-space:pre'>The AIRAC cycle %1 of your navigation data is "
-                                          "equal to the simulator cycle<p>"
+                                          "equal to the simulator cycle.<p>"
                                           "<p>This means you ignore the updated Navigraph navdata for Little Navmap.</p>"
                                             "<p>You should use the scenery library mode \"Use Navigraph for Navaids and Procedures\" "
                                               "to fetch airports from the simulator and navdata from the update.</p>"

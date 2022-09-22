@@ -104,9 +104,9 @@ RangeMarkerDialog::RangeMarkerDialog(QWidget *parent, const atools::geo::Pos& po
 
   // Change label depending on order
   if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
-    ui->labelRangeMarkerLatLon->setText("&Longitude and Latitude:");
+    ui->labelRangeMarkerLatLon->setText(tr("&Longitude and Latitude:"));
   else
-    ui->labelRangeMarkerLatLon->setText("&Latitude and Longitude:");
+    ui->labelRangeMarkerLatLon->setText(tr("&Latitude and Longitude:"));
 
   connect(ui->buttonBoxRangeMarker, &QDialogButtonBox::clicked, this, &RangeMarkerDialog::buttonBoxClicked);
   connect(ui->pushButtonRangeMarkerColor, &QPushButton::clicked, this, &RangeMarkerDialog::colorButtonClicked);

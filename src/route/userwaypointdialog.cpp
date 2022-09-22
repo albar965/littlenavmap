@@ -56,9 +56,9 @@ UserWaypointDialog::UserWaypointDialog(QWidget *parent, const atools::fs::pln::F
 
   // Change label depending on order
   if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
-    ui->labelRouteUserWaypointLatLon->setText("&Longitude and Latitude:");
+    ui->labelRouteUserWaypointLatLon->setText(tr("&Longitude and Latitude:"));
   else
-    ui->labelRouteUserWaypointLatLon->setText("&Latitude and Longitude:");
+    ui->labelRouteUserWaypointLatLon->setText(tr("&Latitude and Longitude:"));
 
   if(waypointEdit)
   {

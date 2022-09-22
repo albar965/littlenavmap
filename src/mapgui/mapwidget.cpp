@@ -3399,7 +3399,7 @@ void MapWidget::removeMsaMark(int id)
   getScreenIndex()->removeMsaMark(id);
   mainWindow->updateMarkActionStates();
   update();
-  mainWindow->setStatusMessage(QString(tr("Airport MSA removed from map.")));
+  mainWindow->setStatusMessage(QString(tr("MSA sector diagram removed from map.")));
 }
 
 void MapWidget::resetSettingsToDefault()

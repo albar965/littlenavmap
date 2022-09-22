@@ -73,9 +73,9 @@ UserdataDialog::UserdataDialog(QWidget *parent, ud::UserdataDialogMode mode, Use
 
   // Change label depending on order
   if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
-    ui->labelUserdataLatLon->setText("&Longitude and Latitude:");
+    ui->labelUserdataLatLon->setText(tr("&Longitude and Latitude:"));
   else
-    ui->labelUserdataLatLon->setText("&Latitude and Longitude:");
+    ui->labelUserdataLatLon->setText(tr("&Latitude and Longitude:"));
 
   // Update units
   units = new UnitStringTool();

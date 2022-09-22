@@ -122,7 +122,7 @@ MainWindow::MainWindow()
   aboutMessage =
     tr("<p style='white-space:pre'>is a free open source flight planner, navigation tool, moving map,<br/>"
        "airport search and airport information system<br/>"
-       "for X-Plane 11, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.</p>"
+       "for X-Plane 11, X-Plane 12, Flight Simulator X, Prepar3D and Microsoft Flight Simulator 2020.</p>"
        "<p>"
          "<b>"
            "If you would like to show your appreciation you can donate&nbsp;"
@@ -275,15 +275,13 @@ MainWindow::MainWindow()
     windReporter->addToolbarButton();
 
     qDebug() << Q_FUNC_INFO << "Creating FileHistoryHandler for flight plans";
-    routeFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMES_RECENT, ui->menuRecentRoutes,
-                                              ui->actionRecentRoutesClear);
+    routeFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMES_RECENT, ui->menuRecentRoutes, ui->actionRecentRoutesClear);
 
     qDebug() << Q_FUNC_INFO << "Creating RouteController";
     routeController = new RouteController(this, ui->tableViewRoute);
 
     qDebug() << Q_FUNC_INFO << "Creating FileHistoryHandler for KML files";
-    kmlFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESKML_RECENT, ui->menuRecentKml,
-                                            ui->actionClearKmlMenu);
+    kmlFileHistory = new FileHistoryHandler(this, lnm::ROUTE_FILENAMESKML_RECENT, ui->menuRecentKml, ui->actionClearKmlMenu);
 
     qDebug() << Q_FUNC_INFO << "Creating FileHistoryHandler for layout files";
     layoutFileHistory = new FileHistoryHandler(this, lnm::LAYOUT_RECENT, ui->menuWindowLayoutRecent, ui->actionWindowLayoutClearRecent);
@@ -3329,7 +3327,7 @@ void MainWindow::mainWindowShownDelayed()
                                 "<p>You can also skip all these steps and run them later.</p>"
                                   "<p>See the help menu to access the online user manual and tutorials.</p>"
                                   "</body>"
-                                "</html");
+                                "</html>");
 
     int retval = QMessageBox::information(this, tr("%1 - Introduction").arg(QApplication::applicationName()), text,
                                           QMessageBox::Ok, QMessageBox::Cancel);
@@ -3619,7 +3617,7 @@ void MainWindow::resetAllSettings()
     QMessageBox::warning(this, QApplication::applicationName() + tr("Reset all Settings "),
                          tr("<b>This will reset all options, window layout, dialog layout, "
                               "aircraft trail, map position history and file histories "
-                              "back to default and restart <i>%1</i>.</b><br/><br/>"
+                              "back to default and restart %1.</b><br/><br/>"
                               "User features like range rings or patterns as well as "
                               "scenery, logbook and userpoint databases are not affected.<br/><br/>"
                               "A copy of the settings file<br/><br/>"
@@ -4189,7 +4187,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
       int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_QUIT_LOADING,
                                               tr("%1 is loading the scenery library database in the background.\n"
                                                  "Really quit and cancel the loading process?").arg(QApplication::applicationName()),
-                                              tr("Do not &show this dialog again and cancel loading in the future."),
+                                              tr("Do not &show this dialog again and cancel loading."),
                                               QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
 
       if(result != QMessageBox::Yes)
@@ -4205,7 +4203,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
     {
       // Normal as quit dialog ======================================
       int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_QUIT, tr("Really quit?"),
-                                              tr("Do not &show this dialog again and quit in the future."),
+                                              tr("Do not &show this dialog again and quit."),
                                               QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
 
       if(result != QMessageBox::Yes)

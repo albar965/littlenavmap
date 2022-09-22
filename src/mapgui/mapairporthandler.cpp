@@ -340,7 +340,7 @@ void MapAirportHandler::addToolbarButton()
   actionUnlighted = addAction(":/littlenavmap/resources/icons/airportlight.svg", tr("&Not lighted"),
                               tr("Show unlighted airports"), QKeySequence());
   actionNoProcedures = addAction(":/littlenavmap/resources/icons/airportproc.svg", tr("&No procedure"),
-                                 tr("Show airports having no approach procedure"), QKeySequence());
+                                 tr("Show airports having no SID, STAR or approach procedure"), QKeySequence());
   actionClosed = addAction(":/littlenavmap/resources/icons/airportclosed.svg", tr("&Closed"), tr("Show closed airports"), QKeySequence());
 
   toolButton->menu()->addSeparator();

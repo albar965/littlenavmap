@@ -43,9 +43,9 @@ CoordinateDialog::CoordinateDialog(QWidget *parent, const atools::geo::Pos& pos)
 
   // Change label depending on order
   if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
-    ui->labelMapCoordinateLatLon->setText("&Longitude and Latitude:");
+    ui->labelMapCoordinateLatLon->setText(tr("&Longitude and Latitude:"));
   else
-    ui->labelMapCoordinateLatLon->setText("&Latitude and Longitude:");
+    ui->labelMapCoordinateLatLon->setText(tr("&Latitude and Longitude:"));
 
   coordsEdited(QString());
 

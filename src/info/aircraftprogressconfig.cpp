@@ -92,16 +92,16 @@ void AircraftProgressConfig::progressConfiguration()
   treeDialog.setHeader({tr("Field or Header"), tr("Description")});
 
   // Get signals for changed item check states
-  treeDialog.connect(&treeDialog, &atools::gui::TreeDialog::itemToggled, &AircraftProgressConfig::treeDialogItemToggled);
+  atools::gui::TreeDialog::connect(&treeDialog, &atools::gui::TreeDialog::itemToggled, &AircraftProgressConfig::treeDialogItemToggled);
 
   /* *INDENT-OFF* */
   // =====================================================================================================================
   /*: This and all following texts have to match the ones in HtmlInfoBuilder::aircraftProgressText() */
   QTreeWidgetItem *rootItem = treeDialog.getRootItem();
   treeDialog.addItem2(rootItem, pid::DATE_TIME_REAL,  tr("Real Date and Time"), tr("Real date and UTC time."));
-  treeDialog.addItem2(rootItem, pid::LOCAL_TIME_REAL, tr("Real Local Time"), tr("Real local date and time."));
+  treeDialog.addItem2(rootItem, pid::LOCAL_TIME_REAL, tr("Real local Date and Time"), tr("Real local date and time."));
   treeDialog.addItem2(rootItem, pid::DATE_TIME,       tr("Simulator Date and Time"), tr("Simulator date and UTC time."));
-  treeDialog.addItem2(rootItem, pid::LOCAL_TIME,      tr("Simulator Local Time"), tr("Simulator local date and time."));
+  treeDialog.addItem2(rootItem, pid::LOCAL_TIME,      tr("Simulator local Date and Time"), tr("Simulator local date and time."));
   treeDialog.addItem2(rootItem, pid::FLOWN,           tr("Flown"), tr("Flown distance since takeoff."));
 
   // Destination ==========================================================================================================

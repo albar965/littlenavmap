@@ -65,7 +65,7 @@ RouteCalcDialog::RouteCalcDialog(QWidget *parent)
              ui->checkBoxRouteCalcAirwayNoRnav, ui->checkBoxRouteCalcAirwayTrack, ui->radioButtonRouteCalcRadio,
              ui->radioButtonRouteCalcAirwayVictor, ui->radioButtonRouteCalcAirway, ui->checkBoxRouteCalcRadioNdb};
 
-  ui->buttonBox->button(QDialogButtonBox::Apply)->setText("&Calculate");
+  ui->buttonBox->button(QDialogButtonBox::Apply)->setText(tr("&Calculate"));
 
   connect(ui->pushButtonRouteCalcDirect, &QPushButton::clicked, this, &RouteCalcDialog::calculateDirectClicked);
   connect(ui->pushButtonRouteCalcReverse, &QPushButton::clicked, this, &RouteCalcDialog::calculateReverseClicked);

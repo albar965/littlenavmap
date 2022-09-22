@@ -78,7 +78,7 @@ LogdataController::LogdataController(atools::fs::userdata::LogdataManager *logda
   connect(ui->actionSearchLogdataRedo, &QAction::triggered, this, &LogdataController::redoTriggered);
 
   manager->setMaximumUndoSteps(50);
-  manager->setTextSuffix(tr(" Logbook Entry"), tr(" Logbook Entries"));
+  manager->setTextSuffix(tr("Logbook Entry"), tr("Logbook Entries"));
   manager->setActions(ui->actionSearchLogdataUndo, ui->actionSearchLogdataRedo);
 }
 
@@ -793,7 +793,7 @@ void LogdataController::convertUserdata()
                                              "for<br/>\"*Converted from userdata*\"<br/>"
                                              "in the field &quot;Remarks&quot;.<br/><br/>"
                                              "Continue?"),
-                                          tr("Do not &show this dialog again and run the conversion in the future."),
+                                          tr("Do not &show this dialog again and run the conversion."),
                                           QMessageBox::Yes | QMessageBox::No | QMessageBox::Help,
                                           QMessageBox::No, QMessageBox::Yes);
 
