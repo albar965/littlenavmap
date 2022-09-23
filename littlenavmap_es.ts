@@ -686,30 +686,30 @@
         <translation type="obsolete">&amp;Nombre:</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="293"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="294"/>
         <source>Fuel</source>
         <translation type="unfinished">Combustible</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="320"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="351"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="391"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="458"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="321"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="352"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="392"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="459"/>
         <source> %fuel%</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="333"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="334"/>
         <source>&amp;Extra fuel:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="471"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="472"/>
         <source>&amp;Taxi fuel:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="314"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="315"/>
         <source>Fuel used prior to takeoff by APU, engine start and taxi</source>
         <translation type="unfinished"></translation>
     </message>
@@ -719,27 +719,27 @@
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="134"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="135"/>
         <source>Required runway &amp;type:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="177"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="178"/>
         <source>&amp;Required runway:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="149"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="150"/>
         <source> %distshort%</source>
         <translation type="unfinished"> %distshort%</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="214"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="215"/>
         <source>&amp;Aircraft model:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="103"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="104"/>
         <source>Aircraft &amp;type:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -763,156 +763,156 @@ A performance file can often be used for all simulators.
         <translation type="unfinished">Todo</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="113"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="114"/>
         <source>Opens the official ICAO database in the web browser to look up aircraft type designators.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="162"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="163"/>
         <source>ICAO aircraft type designator like B732 or C172.
 The fuel report will show a warning if this does not match the simulator aircraft type.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="191"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="192"/>
         <source>Hard and Soft</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="196"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="197"/>
         <source>Hard</source>
         <translation type="unfinished">Duro</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="201"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="202"/>
         <source>Water</source>
         <translation type="unfinished">Agua</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="206"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="207"/>
         <source>Amphibian</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="253"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="254"/>
         <source>Performance</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="280"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="281"/>
         <source>Labels of minimum required values for fuel calculation and elevation profile are &lt;b&gt;bold&lt;/b&gt;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="364"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="365"/>
         <source>Estimated range considering reserve fuel.
 Based on cruise speed and fuel flow.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="489"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="490"/>
         <source>&amp;Fuel units:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="500"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="501"/>
         <source>Weight (lbs)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="505"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="506"/>
         <source>Volume (gal)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="510"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="511"/>
         <source>Weight (kg)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="515"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="516"/>
         <source>Volume (liter)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="523"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="524"/>
         <source>&amp;Fuel type:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="961"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="970"/>
         <source>Fuel flow  when flying to an alternate typically at low altitudes.
 The farthest alternate is used to calculate the fuel requirement.
 The default is the cruise fuel flow.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="1002"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="1011"/>
         <source>Average true airspeed when flying to alternate typically at low altitudes.
 The farthest alternate is used to calculate the fuel requirement.
 Default is cruise speed.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="1033"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="1042"/>
         <source>Remarks</source>
         <translation type="unfinished">Observaciones</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="442"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="443"/>
         <source> percent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="455"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="456"/>
         <source>Usable fuel in tanks</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="414"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="415"/>
         <source>&amp;Contingency fuel:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="424"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="425"/>
         <source>&amp;Usable fuel:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="404"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="405"/>
         <source>&amp;Reserve fuel:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="555"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="556"/>
         <source>Climb</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="582"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="735"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="842"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="1010"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="583"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="740"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="850"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="1019"/>
         <source> %speed% true airspeed</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="606"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="608"/>
         <source>Average &amp;climb speed:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="621"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="624"/>
         <source>Average vertical &amp;climb speed:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="671"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="675"/>
         <source> %vspeed% ▲</source>
         <translation type="unfinished"> %vspeed% ▲</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="636"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="640"/>
         <source>Average fuel flow for &amp;climb:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -923,139 +923,139 @@ This is for informational purposes only.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="116"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="117"/>
         <source>&lt;p&gt;Click on the links below to look up aircraft types:&lt;br/&gt;
 &lt;a style=&quot;text-decoration:none;&quot; href=&quot;https://www.icao.int/publications/DOC8643/Pages/Search.aspx&quot;&gt;&lt;b&gt;ICAO - Aircraft Type Designators&lt;/b&gt;&lt;/a&gt; or&lt;br/&gt;
 &lt;a style=&quot;text-decoration:none;&quot; href=&quot;https://en.wikipedia.org/wiki/List_of_ICAO_aircraft_type_designators&quot;&gt;&lt;b&gt;Wikipedia - List of ICAO aircraft type designators&lt;/b&gt;&lt;/a&gt;.&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="144"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="145"/>
         <source>Minimum required runway length for takeoff or landing.
 Use an approximate value for max takeoff weight.
 This is for informational purposes only.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="187"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="188"/>
         <source>This is for informational purposes only.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="533"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="534"/>
         <source>Used to convert from weight to volume units.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="576"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="577"/>
         <source>Average climb speed to typical cruise altitude.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="646"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="650"/>
         <source>Fuel flow in climb to typical cruise altitude.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="652"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="772"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="879"/>
-        <location filename="src/perf/aircraftperfdialog.ui" line="969"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="656"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="778"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="888"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="978"/>
         <source> %fuel% per hour</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="665"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="669"/>
         <source>Average vertical climb speed to typical cruise altitude.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="696"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="700"/>
         <source>Cruise</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="722"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="727"/>
         <source>C&amp;ruise speed at typical cruise altitude:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="759"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="765"/>
         <source>Fuel flow in c&amp;ruise:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="788"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="794"/>
         <source>Descent</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="814"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="821"/>
         <source>Average vertical &amp;descent speed:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="895"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="904"/>
         <source> %vspeed% ▼</source>
         <translation type="unfinished"> %vspeed% ▼</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="829"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="837"/>
         <source>Average &amp;descent speed:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="866"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="875"/>
         <source>Average fuel flow for &amp;descent:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="940"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="949"/>
         <source>Alternate</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="982"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="991"/>
         <source>Average speed for &amp;alternate:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="992"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="1001"/>
         <source>Average fuel flow for &amp;alternate:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="384"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="385"/>
         <source>Fuel added at the discretion of the
 captain or the dispatcher</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="343"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="344"/>
         <source>Minimum fuel required to fly for 30 minutes at 1,500 feet
 above the alternate or at the destination at holding speed if
 an alternate is not required</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="434"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="435"/>
         <source>This accounts for additional enroute fuel consumption
 caused by wind or routing changes.
 This will increase the trip fuel by the given percentage.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="537"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="538"/>
         <source>Avgas</source>
         <translation type="unfinished">Avgas</translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="542"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="543"/>
         <source>Jetfuel</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/aircraftperfdialog.ui" line="917"/>
+        <location filename="src/perf/aircraftperfdialog.ui" line="926"/>
         <source>Equivalent rule of thumb for
 the given descent speeds</source>
         <translation type="unfinished"></translation>
@@ -15984,8 +15984,9 @@ Button is highlighted if detail level is not default.</source>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="976"/>
-        <source> (No Start Position)</source>
-        <translation> (Sin Posición de Salida)</translation>
+        <source> (no Start Position)</source>
+        <oldsource> (No Start Position)</oldsource>
+        <translation type="unfinished"> (Sin Posición de Salida)</translation>
     </message>
     <message>
         <source>Local Time:</source>
@@ -22423,7 +22424,8 @@ userpoints and logbook entries when clicking on the map</source>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3850"/>
-        <source>Line thickness</source>
+        <source>Line width</source>
+        <oldsource>Line thickness</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -23067,8 +23069,8 @@ Does not apply to lines originating from airports or navaids.</source>
     </message>
     <message>
         <location filename="src/options/options.ui" line="3793"/>
-        <source>Line thickness for measurement lines</source>
-        <oldsource>Line thickness for measurement labels</oldsource>
+        <source>Line width for measurement lines</source>
+        <oldsource>Line thickness for measurement lines</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -24736,11 +24738,11 @@ Length, Width and Heading</source>
         <location filename="src/perf/perfmergedialog.ui" line="749"/>
         <location filename="src/perf/perfmergedialog.ui" line="768"/>
         <location filename="src/perf/perfmergedialog.ui" line="899"/>
-        <location filename="src/perf/perfmergedialog.ui" line="958"/>
-        <location filename="src/perf/perfmergedialog.ui" line="1069"/>
-        <location filename="src/perf/perfmergedialog.ui" line="1088"/>
-        <location filename="src/perf/perfmergedialog.ui" line="1188"/>
-        <location filename="src/perf/perfmergedialog.ui" line="1284"/>
+        <location filename="src/perf/perfmergedialog.ui" line="959"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1070"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1089"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1189"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1285"/>
         <source>Copy</source>
         <translation type="unfinished"></translation>
     </message>
@@ -24756,10 +24758,10 @@ Length, Width and Heading</source>
         <location filename="src/perf/perfmergedialog.ui" line="588"/>
         <location filename="src/perf/perfmergedialog.ui" line="754"/>
         <location filename="src/perf/perfmergedialog.ui" line="904"/>
-        <location filename="src/perf/perfmergedialog.ui" line="963"/>
-        <location filename="src/perf/perfmergedialog.ui" line="1074"/>
-        <location filename="src/perf/perfmergedialog.ui" line="1093"/>
-        <location filename="src/perf/perfmergedialog.ui" line="1193"/>
+        <location filename="src/perf/perfmergedialog.ui" line="964"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1075"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1094"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1194"/>
         <source>Merge</source>
         <translation type="unfinished"></translation>
     </message>
@@ -24778,11 +24780,11 @@ Length, Width and Heading</source>
         <location filename="src/perf/perfmergedialog.ui" line="759"/>
         <location filename="src/perf/perfmergedialog.ui" line="773"/>
         <location filename="src/perf/perfmergedialog.ui" line="909"/>
-        <location filename="src/perf/perfmergedialog.ui" line="968"/>
-        <location filename="src/perf/perfmergedialog.ui" line="1079"/>
-        <location filename="src/perf/perfmergedialog.ui" line="1098"/>
-        <location filename="src/perf/perfmergedialog.ui" line="1198"/>
-        <location filename="src/perf/perfmergedialog.ui" line="1289"/>
+        <location filename="src/perf/perfmergedialog.ui" line="969"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1080"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1099"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1199"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1290"/>
         <source>Ignore</source>
         <translation type="unfinished"></translation>
     </message>
@@ -24802,7 +24804,7 @@ Length, Width and Heading</source>
         <translation type="unfinished">&amp;Simulador de vuelo:</translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="941"/>
+        <location filename="src/perf/perfmergedialog.ui" line="942"/>
         <source>New Value</source>
         <translation type="unfinished"></translation>
     </message>
@@ -24848,12 +24850,12 @@ Length, Width and Heading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="1302"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1304"/>
         <source>Current Value</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="1177"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1178"/>
         <source>Average fuel flow for &amp;alternate:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -24894,7 +24896,7 @@ Length, Width and Heading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/perf/perfmergedialog.ui" line="1167"/>
+        <location filename="src/perf/perfmergedialog.ui" line="1168"/>
         <source>&amp;Taxi fuel:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -33785,12 +33787,12 @@ p, li { white-space: pre-wrap; }
     </message>
     <message>
         <location filename="src/gui/runwayselection.cpp" line="187"/>
-        <source> Heading </source>
+        <source> Surface </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="src/gui/runwayselection.cpp" line="187"/>
-        <source> Surface </source>
+        <source> Course </source>
         <translation type="unfinished"></translation>
     </message>
     <message>

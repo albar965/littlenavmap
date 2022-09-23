@@ -973,7 +973,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
           bool closed = heliRec.valueBool("is_closed");
           bool hasStart = !heliRec.isNull("start_number");
 
-          QString num = hasStart ? " " % heliRec.valueStr("runway_name") : tr(" (No Start Position)");
+          QString num = hasStart ? " " % heliRec.valueStr("runway_name") : tr(" (no Start Position)");
 
           html.h3(tr("Helipad%1").arg(num),
                   (closed ? ahtml::STRIKEOUT : ahtml::NONE)

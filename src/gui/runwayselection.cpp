@@ -184,7 +184,7 @@ void RunwaySelection::fillRunwayList()
     runwayTableWidget->setRowCount(runways.size());
     runwayTableWidget->setColumnCount(5);
 
-    runwayTableWidget->setHorizontalHeaderLabels({tr(" Number "), tr(" Length and Width "), tr(" Heading "), tr(" Surface "),
+    runwayTableWidget->setHorizontalHeaderLabels({tr(" Number "), tr(" Length and Width "), tr(" Course "), tr(" Surface "),
                                                   tr(" Facilities ")});
 
     // Index in runway table
