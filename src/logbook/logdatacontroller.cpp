@@ -78,7 +78,7 @@ LogdataController::LogdataController(atools::fs::userdata::LogdataManager *logda
   connect(ui->actionSearchLogdataRedo, &QAction::triggered, this, &LogdataController::redoTriggered);
 
   manager->setMaximumUndoSteps(50);
-  manager->setTextSuffix(tr("Logbook Entry"), tr("Logbook Entries"));
+  manager->setTextSuffix(tr("Logbook Entry", "Log singular"), tr("Logbook Entries", "Log plural"));
   manager->setActions(ui->actionSearchLogdataUndo, ui->actionSearchLogdataRedo);
 }
 

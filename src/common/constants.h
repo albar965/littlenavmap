@@ -381,6 +381,7 @@ const QLatin1String FILE_PATTERN_GPX("(*.gpx)");
 
 const QLatin1String FILE_PATTERN_USERDATA_CSV("(*.csv)");
 const QLatin1String FILE_PATTERN_USER_FIX_DAT("(user_fix.dat)");
+const QLatin1String FILE_PATTERN_DAT("(*.dat)");
 const QLatin1String FILE_PATTERN_USER_WPT("(user.wpt)");
 const QLatin1String FILE_PATTERN_BGL_XML("(*.xml)");
 const QLatin1String FILE_PATTERN_AIRCRAFT_PERF("(*.lnmperf)");

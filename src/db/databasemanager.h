@@ -121,8 +121,7 @@ public:
   void loadLanguageIndex();
 
   /* Open a writeable database for userpoints or online network data. Automatic transactions are off.  */
-  void openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name, const QString& displayName,
-                             bool backup);
+  void openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name, const QString& displayName, bool backup);
   void closeLogDatabase();
   void closeUserDatabase();
   void closeTrackDatabase();

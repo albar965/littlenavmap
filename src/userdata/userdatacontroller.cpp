@@ -65,7 +65,7 @@ UserdataController::UserdataController(atools::fs::userdata::UserdataManager *us
   connect(ui->actionSearchUserpointRedo, &QAction::triggered, this, &UserdataController::redoTriggered);
 
   manager->setMaximumUndoSteps(50);
-  manager->setTextSuffix(tr("Userpoint"), tr("Userpoints"));
+  manager->setTextSuffix(tr("Userpoint", "Userpoint singular"), tr("Userpoints", "Userpoint plural"));
   manager->setActions(ui->actionSearchUserpointUndo, ui->actionSearchUserpointRedo);
 }
 
@@ -590,11 +590,10 @@ void UserdataController::importXplaneUserFixDat()
   qDebug() << Q_FUNC_INFO;
   try
   {
-
     QString file = dialog->openFileDialog(
       tr("Open X-Plane user_fix.dat File"),
-      tr("X-Plane User Fix Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USER_FIX_DAT), "Userdata/UserFixDat",
-      xplaneUserWptDatPath());
+      tr("X-Plane User Fix Files %1;;X-Plane Dat Files %2;;All Files (*)").arg(lnm::FILE_PATTERN_USER_FIX_DAT).arg(lnm::FILE_PATTERN_DAT),
+      "Userdata/UserFixDat", xplaneUserWptDatPath());
 
     if(!file.isEmpty())
     {
@@ -698,10 +697,8 @@ void UserdataController::exportXplaneUserFixDat()
     {
       QString file = dialog->saveFileDialog(
         tr("Export X-Plane user_fix.dat File"),
-        tr("X-Plane User Fix Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USER_FIX_DAT),
-        ".dat",
-        "Userdata/UserFixDat",
-        xplaneUserWptDatPath(), "user_fix.dat", append /* dont confirm overwrite */);
+        tr("X-Plane User Fix Files %1;;X-Plane Dat Files %2;;All Files (*)").arg(lnm::FILE_PATTERN_USER_FIX_DAT).arg(lnm::FILE_PATTERN_DAT),
+        ".dat", "Userdata/UserFixDat", xplaneUserWptDatPath(), "user_fix.dat", append /* dont confirm overwrite */);
 
       if(!file.isEmpty())
       {
