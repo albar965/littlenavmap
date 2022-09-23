@@ -188,10 +188,14 @@ p, li { white-space: pre-wrap; }
   </layout>
  </widget>
  <tabstops>
+  <tabstop>plainTextEditRouteString</tabstop>
   <tabstop>pushButtonRouteStringToClipboard</tabstop>
   <tabstop>pushButtonRouteStringFromClipboard</tabstop>
   <tabstop>pushButtonRouteStringUpdate</tabstop>
   <tabstop>toolButtonRouteStringOptions</tabstop>
+  <tabstop>pushButtonRouteStringShowHelp</tabstop>
+  <tabstop>textEditRouteStringErrors</tabstop>
+  <tabstop>textEditSyntaxHelp</tabstop>
  </tabstops>
  <resources>
   <include location="../../littlenavmap.qrc"/>

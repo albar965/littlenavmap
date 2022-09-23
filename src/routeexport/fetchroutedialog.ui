@@ -94,6 +94,11 @@
    </item>
   </layout>
  </widget>
+ <tabstops>
+  <tabstop>comboBoxLoginType</tabstop>
+  <tabstop>lineEditLogin</tabstop>
+  <tabstop>textEditResult</tabstop>
+ </tabstops>
  <resources/>
  <connections/>
 </ui>

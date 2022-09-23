@@ -1422,10 +1422,14 @@ This updates only the path and does not attach the file to the logbook entry.</s
   <tabstop>checkBoxAircraftType</tabstop>
   <tabstop>lineEditDeparture</tabstop>
   <tabstop>checkBoxDeparture</tabstop>
+  <tabstop>lineEditDepartureRunway</tabstop>
   <tabstop>dateTimeEditDepartureDateTimeSim</tabstop>
+  <tabstop>dateTimeEditDepartureDateTimeReal</tabstop>
   <tabstop>lineEditDestination</tabstop>
   <tabstop>checkBoxDestination</tabstop>
+  <tabstop>lineEditDestinationRunway</tabstop>
   <tabstop>dateTimeEditDestinationDateTimeSim</tabstop>
+  <tabstop>dateTimeEditDestinationDateTimeReal</tabstop>
   <tabstop>lineEditFlightSimulator</tabstop>
   <tabstop>checkBoxFlightSimulator</tabstop>
   <tabstop>lineEditFlightNumber</tabstop>
@@ -1461,6 +1465,7 @@ This updates only the path and does not attach the file to the logbook entry.</s
   <tabstop>spinBoxFuelUsed</tabstop>
   <tabstop>spinBoxFuelGrossweight</tabstop>
   <tabstop>plainTextEditDescription</tabstop>
+  <tabstop>checkBoxAircraftDescription</tabstop>
  </tabstops>
  <resources/>
  <connections/>

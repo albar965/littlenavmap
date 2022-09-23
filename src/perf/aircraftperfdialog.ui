@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>531</width>
+    <width>601</width>
     <height>732</height>
    </rect>
   </property>
@@ -96,6 +96,7 @@ A performance file can often be used for all simulators.</string>
           <widget class="QLabel" name="labelType">
            <property name="font">
             <font>
+             <weight>75</weight>
              <bold>true</bold>
             </font>
            </property>
@@ -599,6 +600,7 @@ This will increase the trip fuel by the given percentage.</string>
            <widget class="QLabel" name="labelClimbSpeed">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -614,6 +616,7 @@ This will increase the trip fuel by the given percentage.</string>
            <widget class="QLabel" name="labelVertClimbSpeed">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -629,6 +632,7 @@ This will increase the trip fuel by the given percentage.</string>
            <widget class="QLabel" name="labelClimbFuelFlow">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -715,6 +719,7 @@ This will increase the trip fuel by the given percentage.</string>
            <widget class="QLabel" name="labelCruiseSpeed">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -752,6 +757,7 @@ This will increase the trip fuel by the given percentage.</string>
            <widget class="QLabel" name="labelCruiseFuelFlow">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -807,6 +813,7 @@ This will increase the trip fuel by the given percentage.</string>
            <widget class="QLabel" name="labelDescentVertSpeed">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -822,6 +829,7 @@ This will increase the trip fuel by the given percentage.</string>
            <widget class="QLabel" name="labelDescentSpeed">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -859,6 +867,7 @@ This will increase the trip fuel by the given percentage.</string>
            <widget class="QLabel" name="labelDescentFuelFlow">
             <property name="font">
              <font>
+              <weight>75</weight>
               <bold>true</bold>
              </font>
             </property>
@@ -1085,6 +1094,8 @@ Default is cruise speed.</string>
   </layout>
  </widget>
  <tabstops>
+  <tabstop>tabWidget</tabstop>
+  <tabstop>comboBoxSimulator</tabstop>
   <tabstop>lineEditName</tabstop>
   <tabstop>lineEditType</tabstop>
   <tabstop>spinBoxRunwayLength</tabstop>
@@ -1106,7 +1117,6 @@ Default is cruise speed.</string>
   <tabstop>spinBoxDescentFuelFlow</tabstop>
   <tabstop>spinBoxAlternateSpeed</tabstop>
   <tabstop>spinBoxAlternateFuelFlow</tabstop>
-  <tabstop>tabWidget</tabstop>
   <tabstop>plainTextEditDescription</tabstop>
  </tabstops>
  <resources/>

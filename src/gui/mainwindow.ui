@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>1261</width>
-    <height>1395</height>
+    <height>882</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -5818,7 +5818,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>98</y>
+              <y>0</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -11916,6 +11916,7 @@ relation to shown airport</string>
   <tabstop>pushButtonRouteClearSelection</tabstop>
   <tabstop>pushButtonRouteSettings</tabstop>
   <tabstop>pushButtonRouteHelp</tabstop>
+  <tabstop>textBrowserViewRoute</tabstop>
   <tabstop>tableViewRoute</tabstop>
   <tabstop>plainTextEditRouteRemarks</tabstop>
   <tabstop>checkBoxAircraftPerformanceWindMan</tabstop>
@@ -11946,8 +11947,6 @@ relation to shown airport</string>
   <tabstop>textBrowserLogbookInfo</tabstop>
   <tabstop>textBrowserClientInfo</tabstop>
   <tabstop>textBrowserCenterInfo</tabstop>
-  <tabstop>widgetProfileLabelVert</tabstop>
-  <tabstop>scrollAreaProfile</tabstop>
   <tabstop>tabWidgetAircraft</tabstop>
   <tabstop>textBrowserAircraftInfo</tabstop>
   <tabstop>textBrowserAircraftProgressInfo</tabstop>
@@ -11984,6 +11983,9 @@ relation to shown airport</string>
   <tabstop>spinBoxAirportDistMinSearch</tabstop>
   <tabstop>spinBoxAirportDistMaxSearch</tabstop>
   <tabstop>comboBoxAirportDistDirectionSearch</tabstop>
+  <tabstop>pushButtonAirportFlightplanSearch</tabstop>
+  <tabstop>spinBoxAirportFlightplanMinSearch</tabstop>
+  <tabstop>spinBoxAirportFlightplanMaxSearch</tabstop>
   <tabstop>lineEditAirportScenerySearch</tabstop>
   <tabstop>lineEditAirportFileSearch</tabstop>
   <tabstop>tableViewAirportSearch</tabstop>
@@ -12007,6 +12009,9 @@ relation to shown airport</string>
   <tabstop>tableViewNavSearch</tabstop>
   <tabstop>comboBoxProcedureSearchFilter</tabstop>
   <tabstop>comboBoxProcedureRunwayFilter</tabstop>
+  <tabstop>lineEditProcedureSearchIdentFilter</tabstop>
+  <tabstop>pushButtonProcedureShowAll</tabstop>
+  <tabstop>pushButtonProcedureSearchReset</tabstop>
   <tabstop>pushButtonProcedureSearchClearSelection</tabstop>
   <tabstop>pushButtonProcedureHelpSearch</tabstop>
   <tabstop>treeWidgetApproachSearch</tabstop>
@@ -12061,6 +12066,14 @@ relation to shown airport</string>
   <tabstop>pushButtonOnlineCenterHelpSearch</tabstop>
   <tabstop>tableViewOnlineCenterSearch</tabstop>
   <tabstop>tableViewOnlineServerSearch</tabstop>
+  <tabstop>widgetProfileLabelVert</tabstop>
+  <tabstop>widgetProfileLabelHoriz</tabstop>
+  <tabstop>scrollAreaProfile</tabstop>
+  <tabstop>verticalSliderProfileZoom</tabstop>
+  <tabstop>horizontalSliderProfileZoom</tabstop>
+  <tabstop>pushButtonProfileExpand</tabstop>
+  <tabstop>pushButtonProfileSettings</tabstop>
+  <tabstop>pushButtonProfileHelp</tabstop>
   <tabstop>tabWidgetLegend</tabstop>
   <tabstop>textBrowserLegendNavInfo</tabstop>
   <tabstop>textBrowserLegendInfo</tabstop>
