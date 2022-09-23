@@ -249,6 +249,7 @@ private:
   void updateFlightplanExample();
   void updateLinks();
   void colorButtonClicked(QColor& color);
+  void updateGuiWidgets();
 
   /* Converts range ring string to vector of floats. Falls back to 100 units single ring if nothing is valid.
    * Uses current locale to convert numbers and check min and max. */

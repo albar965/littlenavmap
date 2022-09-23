@@ -20,29 +20,27 @@
 #include "atools.h"
 #include "common/constants.h"
 #include "common/elevationprovider.h"
-#include "common/unit.h"
 #include "common/unitstringtool.h"
 #include "fs/pln/flightplan.h"
+#include "fs/weather/weathertypes.h"
 #include "grib/gribreader.h"
 #include "gui/dialog.h"
 #include "gui/griddelegate.h"
 #include "gui/helphandler.h"
 #include "gui/itemviewzoomhandler.h"
+#include "gui/texteditdialog.h"
 #include "gui/tools.h"
 #include "gui/translator.h"
 #include "gui/widgetstate.h"
 #include "gui/widgetutil.h"
-#include "gui/texteditdialog.h"
-#include "mapgui/mapwidget.h"
 #include "mapgui/mapthemehandler.h"
+#include "mapgui/mapwidget.h"
 #include "navapp.h"
 #include "settings/settings.h"
 #include "ui_options.h"
 #include "util/htmlbuilder.h"
-#include "util/updatecheck.h"
 #include "weather/weatherreporter.h"
 #include "web/webcontroller.h"
-#include "fs/weather/weathertypes.h"
 
 #include <QFileInfo>
 #include <QMessageBox>
@@ -472,6 +470,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->pushButtonOptionsGuiSelectFont, &QPushButton::clicked, this, &OptionsDialog::selectGuiFontClicked);
   connect(ui->pushButtonOptionsGuiResetFont, &QPushButton::clicked, this, &OptionsDialog::resetGuiFontClicked);
   connect(ui->checkBoxOptionsGuiToolbarSize, &QPushButton::clicked, this, &OptionsDialog::toolbarSizeClicked);
+  connect(ui->checkBoxOptionsGuiTooltipsAll, &QPushButton::clicked, this, &OptionsDialog::updateGuiWidgets);
 
   // ===========================================================================
   // Weather widgets - ASN
@@ -677,6 +676,7 @@ void OptionsDialog::open()
   updateCacheElevationStates();
   updateDatabaseButtonState();
   updateNavOptions();
+  updateGuiWidgets();
   updateOnlineWidgetStatus();
   updateWeatherButtonState();
   updateWebDocrootStatus();
@@ -981,6 +981,7 @@ void OptionsDialog::updateWidgetStates()
   updateCacheElevationStates();
   updateDatabaseButtonState();
   updateNavOptions();
+  updateGuiWidgets();
   updateOnlineWidgetStatus();
   updateWeatherButtonState();
   updateWidgetUnits();
@@ -2550,6 +2551,11 @@ void OptionsDialog::weatherXplane11WindPathSelectClicked()
     ui->lineEditOptionsWeatherXplaneWind->setText(QDir::toNativeSeparators(path));
 
   updateWeatherButtonState();
+}
+
+void OptionsDialog::updateGuiWidgets()
+{
+  ui->checkBoxOptionsGuiTooltipsMenu->setEnabled(ui->checkBoxOptionsGuiTooltipsAll->isChecked());
 }
 
 void OptionsDialog::updateNavOptions()
