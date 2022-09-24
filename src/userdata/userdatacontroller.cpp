@@ -840,7 +840,11 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
   };
 
   atools::gui::ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Userpoint Export Options"),
-                                         tr("Select export options for userpoints"), lnm::USERDATA_EXPORT_CHOICE_DIALOG, "USERPOINT.html");
+                                         tr("Select export options for userpoints.\n\n"
+                                            "Note that the field \"Tags\" is used for the ID of the airport "
+                                            "terminal area and the waypoint type.\n"
+                                            "Click \"Help\" for more information."),
+                                         lnm::USERDATA_EXPORT_CHOICE_DIALOG, "USERPOINT.html");
   choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
   choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
 
@@ -860,8 +864,8 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
     choiceDialog.addCheckBoxHidden(HEADER);
 
   if(xplane)
-    choiceDialog.addCheckBox(XP12, tr("Export for X-Plane 12"), tr("File will be formatted for X-Plane 12 if selected.\n"
-                                                                   "Otherwise X-Plane 11 format is used."), false);
+    choiceDialog.addCheckBox(XP12, tr("Export for &X-Plane 12"), tr("File will be formatted for X-Plane 12 if selected.\n"
+                                                                    "Otherwise X-Plane 11 format is used."), false);
   else
     choiceDialog.addCheckBoxHidden(XP12);
 

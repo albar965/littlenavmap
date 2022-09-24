@@ -5492,12 +5492,12 @@ Die Spalten sind beim Export leer, wenn deaktiviert.</translation>
     <message>
         <location filename="src/logbook/logdataconverter.cpp" line="114"/>
         <source>Entry has both departure and destination tag: %1.</source>
-        <translation>Eintrag hat Start- und Ankunftsetikett: %1.</translation>
+        <translation>Eintrag hat Tag für Start und Ziel: %1.</translation>
     </message>
     <message>
         <location filename="src/logbook/logdataconverter.cpp" line="123"/>
         <source>Entry has neither departure nor destination tag: %1.</source>
-        <translation>Eintrag hat weder Start- noch Ankunftsetikett: %1.</translation>
+        <translation>Eintrag hat weder Tag für Start noch für Ziel: %1.</translation>
     </message>
     <message>
         <location filename="src/logbook/logdataconverter.cpp" line="130"/>
@@ -38677,16 +38677,29 @@ Dies kann nicht rückgängig gemacht werden.</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatacontroller.cpp" line="843"/>
+        <source>Select export options for userpoints.
+
+Note that the field &quot;Tags&quot; is used for the ID of the airport terminal area and the waypoint type.
+Click &quot;Help&quot; for more information.</source>
+        <oldsource>Select export options for userpoints.
+Note that the field &quot;Tags&quot; is used for the ID of airport terminal area and the waypoint type</oldsource>
+        <translation>Wählen Sie die Exporteinstellungen für Nutzerpunkte.
+
+Beachten Sie, dass das Feld &quot;Tags&quot; für die ID des Flughafen-Terminalbereichs und den Wegpunkttyp verwendet wird.
+Klicken Sie auf &quot;Hilfe&quot; für weitere Informationen.</translation>
+    </message>
+    <message>
         <source>Select export options for userpoints</source>
-        <translation>Exporteinstellungen für Nutzerpunkte auswählen</translation>
+        <translation type="vanished">Exporteinstellungen für Nutzerpunkte auswählen</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="863"/>
-        <source>Export for X-Plane 12</source>
-        <translation>Export für X-Plane 12</translation>
+        <location filename="src/userdata/userdatacontroller.cpp" line="867"/>
+        <source>Export for &amp;X-Plane 12</source>
+        <oldsource>Export for &amp;X-Plane 12</oldsource>
+        <translation>Export für &amp;X-Plane 12</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="863"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="867"/>
         <source>File will be formatted for X-Plane 12 if selected.
 Otherwise X-Plane 11 format is used.</source>
         <translation>Die Datei wird für X-Plane 12 formatiert, falls ausgewählt.
@@ -38714,23 +38727,23 @@ erstellt.</translation>
         <translation type="vanished">Exportoptionen auswählen</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="848"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="852"/>
         <source>&amp;Append to an already present file</source>
         <translation>An eine bereits vorhandene Datei &amp;anhängen</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="849"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="853"/>
         <source>File header will be ignored if this is enabled.</source>
         <oldsource>File header will be ignore if this is enabled.</oldsource>
         <translation>Kopfzeilen werden ignoriert, wenn dies aktiviert ist.</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="854"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="858"/>
         <source>Export &amp;selected entries only</source>
         <translation>Nur &amp;ausgewählte Nutzerpunkte exportieren</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatacontroller.cpp" line="858"/>
+        <location filename="src/userdata/userdatacontroller.cpp" line="862"/>
         <source>Add a &amp;header to the first line</source>
         <translation>&amp;Kopfzeile hinzufügen</translation>
     </message>
@@ -38747,7 +38760,7 @@ erstellt.</translation>
         <translation>Little Navmap - Nutzerpunkt</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="254"/>
+        <location filename="src/userdata/userdatadialog.ui" line="258"/>
         <source>Check to change type for all selected waypoints</source>
         <translation>Aktivieren, um den Typ aller ausgewählten Wegpunkte zu ändern</translation>
     </message>
@@ -38769,7 +38782,7 @@ p, li { white-space: pre-wrap; }
 &lt;p style=&quot;-qt-paragraph-type:empty; margin-top:0px; margin-bottom:0px; margin-left:0px; margin-right:0px; -qt-block-indent:0; text-indent:0px; font-family:&apos;Ubuntu&apos;;&quot;&gt;&lt;br /&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="294"/>
+        <location filename="src/userdata/userdatadialog.ui" line="298"/>
         <source>&amp;Ident:</source>
         <translation>&amp;Kennung:</translation>
     </message>
@@ -38780,17 +38793,17 @@ p, li { white-space: pre-wrap; }
         <translation>&amp;Breiten- und Längengrad:</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="415"/>
+        <location filename="src/userdata/userdatadialog.ui" line="419"/>
         <source>&amp;Name:</source>
         <translation>&amp;Name:</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="395"/>
+        <location filename="src/userdata/userdatadialog.ui" line="399"/>
         <source>Check to change ident for all selected waypoints</source>
         <translation>Aktivieren, um die Kennung aller ausgewählten Wegpunkte zu ändern</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="373"/>
+        <location filename="src/userdata/userdatadialog.ui" line="377"/>
         <source>Recognized coordinate formats:
 - Degrees, minutes and seconds : N49° 26&apos; 41.57&quot; E9° 12&apos; 5.49&quot; or 49° 26&apos; 41.57&quot; N 9° 12&apos; 5.49&quot; E
 - Degrees and minutes: N54* 16.82&apos; W008* 35.95&apos;, N 52 33.58 E 13 17.26 or 49° 26.69&apos; N 9° 12.09&apos; E
@@ -38840,12 +38853,12 @@ Andere Formate:
 Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="346"/>
+        <location filename="src/userdata/userdatadialog.ui" line="350"/>
         <source>Check to change region for all selected waypoints</source>
         <translation>Aktivieren, um die Region aller ausgewählten Wegpunkte zu ändern</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="274"/>
+        <location filename="src/userdata/userdatadialog.ui" line="278"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Ident code of the waypoint. &lt;/p&gt;&lt;p&gt;An up to five character ident is required for export to other formats for X-Plane &amp;quot;user_fix.dat&amp;quot; or Garmin &amp;quot;user.wpt&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Kennung des Wegpunkts. &lt;/p&gt;&lt;p&gt;Eine Kennung mit bis zu fünf Zeichen ist für den Export zu anderen X-Plane-Formaten notwendig &amp;quot;user_fix.dat&amp;quot; oder Garmin &amp;quot;user.wpt&amp;quot;.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
@@ -38855,13 +38868,13 @@ Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
         <translation>Aktivieren, um die Sichtbarkeit aller ausgewählten Wegpunkte zu ändern</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="405"/>
+        <location filename="src/userdata/userdatadialog.ui" line="409"/>
         <source>Check to change remarks for all selected waypoints</source>
         <oldsource>Check to change description for all selected waypoints</oldsource>
         <translation>Aktivieren, um die Bezeichnung aller ausgewählten Wegpunkte zu ändern</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="336"/>
+        <location filename="src/userdata/userdatadialog.ui" line="340"/>
         <source>&amp;Region:</source>
         <translation>&amp;Region:</translation>
     </message>
@@ -38871,12 +38884,12 @@ Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
         <translation>&amp;Höhe:</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="287"/>
+        <location filename="src/userdata/userdatadialog.ui" line="291"/>
         <source>Imported from file:</source>
         <translation>Importiert aus Datei:</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="234"/>
+        <location filename="src/userdata/userdatadialog.ui" line="238"/>
         <source>&amp;Type:</source>
         <translation>&amp;Typ:</translation>
     </message>
@@ -38896,7 +38909,20 @@ Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
         <translation>Aktivieren, um die Tags aller ausgewählten Wegpunkte zu ändern</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="244"/>
+        <location filename="src/userdata/userdatadialog.ui" line="224"/>
+        <source>List of tags. Simple textfield for various purposes.
+
+Tags are also used for X-Plane export and import to and from &quot;user_fix.dat&quot;.
+The field &quot;Tags&quot; is used for the ID of the airport terminal area and the waypoint type.
+Click &quot;Help&quot; for more information.</source>
+        <translation>Liste der Tags. Einfaches Textfeld für verschiedene Zwecke.
+
+Tags werden auch für den X-Plane Export und Import von und nach &quot;user_fix.dat&quot; verwendet.
+Das Feld &quot;Tags&quot; wird für die ID des Flughafenterminals und den Wegpunkttyp verwendet.
+Klicken Sie auf &quot;Hilfe&quot; für weitere Informationen.</translation>
+    </message>
+    <message>
+        <location filename="src/userdata/userdatadialog.ui" line="248"/>
         <source>Check to change elevation for all selected waypoints</source>
         <translation>Aktivieren, um die Höhe aller ausgewählten Wegpunkte zu ändern</translation>
     </message>
@@ -38911,14 +38937,13 @@ Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
         <translation>Typ, der das benutzte Symbol bestimmt</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="264"/>
+        <location filename="src/userdata/userdatadialog.ui" line="268"/>
         <source>&amp;Tags:</source>
         <translation>&amp;Tags:</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="224"/>
         <source>List of tags. Simple textfield for various purposes.</source>
-        <translation>Liste der Tags. Einfaches Textfeld für verschiedene Zwecke.</translation>
+        <translation type="vanished">Liste der Tags. Einfaches Textfeld für verschiedene Zwecke.</translation>
     </message>
     <message>
         <location filename="src/userdata/userdatadialog.ui" line="105"/>
@@ -38930,12 +38955,12 @@ Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
         <translation type="vanished">&amp;Beschreibung:</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="304"/>
+        <location filename="src/userdata/userdatadialog.ui" line="308"/>
         <source>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Define the maximum view distance  where this waypoint is shown on the map.&lt;/p&gt;&lt;p&gt;The view distance is shown in the status bar.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Definiere die maximale Sichtdistanz, ab der der Wegpunkt auf der Karte angezeigt wird.&lt;/p&gt;&lt;p&gt;Die Sichtdistanz wird in der Statusleiste angezeigt.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="310"/>
+        <location filename="src/userdata/userdatadialog.ui" line="314"/>
         <source> %dist%</source>
         <translation> %dist%</translation>
     </message>
@@ -38952,12 +38977,12 @@ Wird für den Export in X-Plane &quot;user_fix.dat&quot; benötigt.</translation
         <translation>Aktivieren, um die Namen aller ausgewählten Wegpunkte zu ändern</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="356"/>
+        <location filename="src/userdata/userdatadialog.ui" line="360"/>
         <source>&amp;Remarks:</source>
         <translation>&amp;Anmerkungen:</translation>
     </message>
     <message>
-        <location filename="src/userdata/userdatadialog.ui" line="447"/>
+        <location filename="src/userdata/userdatadialog.ui" line="451"/>
         <source>&amp;Temporary userpoint. Delete on next startup.</source>
         <translation>&amp;Temporärer Nutzerpunkt. Beim nächsten Start löschen.</translation>
     </message>
