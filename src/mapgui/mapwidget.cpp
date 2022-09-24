@@ -3087,7 +3087,7 @@ void MapWidget::resetSettingActionsToDefault()
   ui->actionMapShowAircraftTrack->setChecked(true);
   ui->actionMapShowCompassRose->setChecked(false);
   ui->actionMapShowCompassRoseAttach->setChecked(true);
-  ui->actionMapShowSelectedAltRange->setChecked(true);
+  ui->actionMapShowSelectedAltRange->setChecked(false);
   ui->actionMapShowTurnPath->setChecked(false);
   ui->actionMapShowEndurance->setChecked(false);
 
