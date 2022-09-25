@@ -180,28 +180,14 @@ void DatabaseLoader::loadScenery()
 
   // Add exclude paths from option dialog ===================
   const OptionData& optionData = OptionData::instance();
-  navDatabaseOpts->addToAddonDirectoryExcludes(optionData.getDatabaseAddonExclude());
 
-  for(const QString& fileOrPath : optionData.getDatabaseExclude())
-  {
-    QFileInfo fileInfo(fileOrPath);
+  // Add add-on excludes for files and directories ================================================
+  for(const QString& path : optionData.getDatabaseAddonExclude())
+    navDatabaseOpts->addAddonExcludeGui(path);
 
-    if(fileInfo.exists())
-    {
-      if(fileInfo.isDir())
-      {
-        qInfo() << Q_FUNC_INFO << "Directory exclusion" << fileOrPath;
-        navDatabaseOpts->addToDirectoryExcludesGui({fileOrPath});
-      }
-      else
-      {
-        qInfo() << Q_FUNC_INFO << "File exclusion" << fileOrPath;
-        navDatabaseOpts->addToFilePathExcludesGui({fileOrPath});
-      }
-    }
-    else
-      qWarning() << Q_FUNC_INFO << "Exclusion does not exist" << fileOrPath;
-  }
+  // Add excludes for files and directories ================================================
+  for(const QString& path : optionData.getDatabaseExclude())
+    navDatabaseOpts->addExcludeGui(path);
 
   // Select simulator db to load
   navDatabaseOpts->setSimulatorType(selectedFsType);
@@ -243,6 +229,7 @@ void DatabaseLoader::loadScenery()
 
   navDatabaseOpts->setProgressCallback(std::bind(&DatabaseLoader::progressCallbackThread, this, std::placeholders::_1));
 
+  // Print all options to log file =================================
   qInfo() << Q_FUNC_INFO << *navDatabaseOpts;
 
   // ==================================================================================

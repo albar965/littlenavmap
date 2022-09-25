@@ -4807,7 +4807,7 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
       if(airport.xplane)
         title = i == 0 ? tr("X-Plane") : QString();
 
-      html.row2(title, filepathTextShow(rec.valueStr("filepath")), ahtml::NO_ENTITIES);
+      html.row2(title, filepathTextShow(rec.valueStr("filepath"), QString(), true /* canonical */), ahtml::NO_ENTITIES);
       i++;
     }
     html.tableEnd();
@@ -4858,17 +4858,20 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
   }
 }
 
-QString HtmlInfoBuilder::filepathTextShow(const QString& filepath, const QString& prefix) const
+QString HtmlInfoBuilder::filepathTextShow(const QString& filepath, const QString& prefix, bool canonical) const
 {
   HtmlBuilder link(true);
 
   if(filepath.isEmpty())
     return QString();
 
-  if(QFileInfo::exists(filepath))
-    link.small(prefix).a(filepath, QString("lnm://show?filepath=%1").arg(filepath), ahtml::LINK_NO_UL | ahtml::SMALL);
+  QFileInfo fileinfo(filepath);
+  QString filepathStr = canonical ? fileinfo.canonicalFilePath() : fileinfo.absoluteFilePath();
+
+  if(fileinfo.exists())
+    link.small(prefix).a(filepathStr, QString("lnm://show?filepath=%1").arg(filepathStr), ahtml::LINK_NO_UL | ahtml::SMALL);
   else
-    link.small(prefix).small(filepath).
+    link.small(prefix).small(filepathStr).
     text(tr(" (file not found)"), ahtml::SMALL | ahtml::BOLD);
   return link.getHtml();
 }

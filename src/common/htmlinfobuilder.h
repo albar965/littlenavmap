@@ -394,7 +394,7 @@ private:
                            const map::MapAirport& airport);
   void addRadionavFixType(atools::util::HtmlBuilder& html, const atools::sql::SqlRecord& recApp) const;
 
-  QString filepathTextShow(const QString& filepath, const QString& prefix = QString()) const;
+  QString filepathTextShow(const QString& filepath, const QString& prefix = QString(), bool canonical = false) const;
   QString filepathTextOpen(const QFileInfo& filepath, bool showPath) const;
 
   void airportRow(const map::MapAirport& ap, atools::util::HtmlBuilder& html) const;

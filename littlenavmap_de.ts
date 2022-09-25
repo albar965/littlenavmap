@@ -3130,7 +3130,7 @@ For MSFS this has to point to the directory containing &amp;quot;Community&amp;q
         <translation>&lt;p style=&quot;white-space:pre&quot;&gt;Bitte tragen Sie den Pfad zum Basisverzeichnis des Flugsimulators ein.
 Dies ist das Verzeichnis, welches das &quot;scenery&quot; Verzeichnis und die &quot;fsx.exe&quot; bzw. &quot;p3d.exe&quot; enthält.
 Für X-Plane ist dies der Pfad der die X-Plane.exe enthält.
-Für MSFS muss dieser Pfad auf das Verzeichnis verweisen, der die Ordner &amp;quot;Community&amp;quot; und &amp;quot;Official&amp;quot; enthält.&lt;/p&gt;</translation>
+Für MSFS muss dieser Pfad auf das Verzeichnis verweisen, das &amp;quot;Community&amp;quot; und &amp;quot;Official&amp;quot; enthält.&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasedialog.ui" line="102"/>
@@ -3235,12 +3235,12 @@ Hilfreich wenn Sie Werkzeuge benutzen, um bestimmte Szenerien für jeden Flug zu
 <context>
     <name>DatabaseLoader</name>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="238"/>
+        <location filename="src/db/databaseloader.cpp" line="224"/>
         <source>Counting files ...</source>
         <translation>Zähle Dateien ...</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="273"/>
+        <location filename="src/db/databaseloader.cpp" line="260"/>
         <source>Processed files:
 %1
 </source>
@@ -3249,83 +3249,83 @@ Hilfreich wenn Sie Werkzeuge benutzen, um bestimmte Szenerien für jeden Flug zu
 </translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="377"/>
+        <location filename="src/db/databaseloader.cpp" line="364"/>
         <source>&lt;big&gt;Done.&lt;/big&gt;</source>
         <translation>&lt;big&gt;Fertig.&lt;/big&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="442"/>
+        <location filename="src/db/databaseloader.cpp" line="429"/>
         <source>Errors and Warnings</source>
         <translation>Fehler und Warnungen</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="443"/>
+        <location filename="src/db/databaseloader.cpp" line="430"/>
         <source>%1 errors and %2 warnings</source>
         <translation>%1 Fehler und %2 Warnungen</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="447"/>
+        <location filename="src/db/databaseloader.cpp" line="434"/>
         <source>Errors</source>
         <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="448"/>
+        <location filename="src/db/databaseloader.cpp" line="435"/>
         <source>%1 errors</source>
         <translation>%1 Fehler</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="452"/>
+        <location filename="src/db/databaseloader.cpp" line="439"/>
         <source>Warnings</source>
         <translation>Warnungen</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="453"/>
+        <location filename="src/db/databaseloader.cpp" line="440"/>
         <source>%1 warnings</source>
         <translation>%1 Warnungen</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="457"/>
+        <location filename="src/db/databaseloader.cpp" line="444"/>
         <source>&lt;h3&gt;Found %1 in %2 scenery entries when loading the scenery database&lt;/h3&gt;</source>
         <translation>&lt;h3&gt;%1 Fehler in %2 Szenerieeinträgen beim Laden der Szeneriedatenbank gefunden&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="463"/>
+        <location filename="src/db/databaseloader.cpp" line="450"/>
         <source>&lt;b&gt;If you wish to report these errors attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</source>
         <oldsource>&lt;b&gt;If you wish to report these errors attach the log and configuration files to your report, add all other available information and send it to one of the contact address below.&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</oldsource>
         <translation>&lt;b&gt;Wenn Sie diesen Fehler melden wollen, fügen Sie die Log- und Konfigurationsdatei sowie alle anderen verfügbaren Informationen zu Ihrem Bericht hinzu und senden Sie diesen an die unten genannte Kontaktadresse.&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="471"/>
+        <location filename="src/db/databaseloader.cpp" line="458"/>
         <source>&lt;hr/&gt;Some files or scenery directories could not be read.&lt;br/&gt;You should check if the airports of the affected sceneries display correctly and show the correct information.&lt;hr/&gt;</source>
         <translation>&lt;hr/&gt;Einige Dateien oder Szenerieverzeichnisse konnten nicht geladen werden.&lt;br/&gt;Sie sollten überprüfen, ob die betroffenen Flugplätze korrekt dargestellt werden und die richtigen Informationen angezeigt werden.&lt;hr/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="477"/>
+        <location filename="src/db/databaseloader.cpp" line="464"/>
         <source>&lt;hr/&gt;Some files or scenery directories could not be read properly due to encrypted airport data or other issues.&lt;hr/&gt;</source>
         <translation>&lt;hr/&gt;Einige Dateien oder Szenerieverzeichnisse konnten aufgrund von verschlüsselten Flugplatzdaten oder anderen Problemen nicht richtig gelesen werden.&lt;hr/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="485"/>
+        <location filename="src/db/databaseloader.cpp" line="472"/>
         <source>&lt;b&gt;More scenery entries ...&lt;/b&gt;</source>
         <translation>&lt;b&gt;Weitere Szenerieeinträge ...&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="490"/>
+        <location filename="src/db/databaseloader.cpp" line="477"/>
         <source>&lt;b&gt;Scenery Title: %1&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Szenerietitel: %1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="499"/>
+        <location filename="src/db/databaseloader.cpp" line="486"/>
         <source>&lt;b&gt;More files ...&lt;/b&gt;</source>
         <translation>&lt;b&gt;Weitere Dateien ...&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="504"/>
+        <location filename="src/db/databaseloader.cpp" line="491"/>
         <source>&lt;b&gt;File:&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;Message:&lt;/b&gt; %2&lt;br/&gt;</source>
         <translation>&lt;b&gt;Datei:&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;Meldung:&lt;/b&gt; %2&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="511"/>
+        <location filename="src/db/databaseloader.cpp" line="498"/>
         <source>%1 - Load Scenery Library %2</source>
         <translation>%1 - Lade Szeneriebibliothek %2</translation>
     </message>
@@ -15446,7 +15446,7 @@ Die Schaltfläche wird hervorgehoben, wenn der Detailgrad nicht Standard ist.</t
         <location filename="src/common/htmlinfobuilder.cpp" line="3016"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3155"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="4733"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5021"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5024"/>
         <source>Map</source>
         <translation>Karte</translation>
     </message>
@@ -15682,8 +15682,8 @@ Die Schaltfläche wird hervorgehoben, wenn der Detailgrad nicht Standard ist.</t
         <location filename="src/common/htmlinfobuilder.cpp" line="4427"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="4530"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="4596"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5049"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5054"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5052"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5057"/>
         <source>, </source>
         <translation>, </translation>
     </message>
@@ -17601,19 +17601,19 @@ kHz/MHz</translation>
         <translation>Datenquellen</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4872"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4875"/>
         <source> (file not found)</source>
         <oldsource> (File not found)</oldsource>
         <translation> (Datei nicht gefunden)</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3405"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5054"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5057"/>
         <source> and </source>
         <translation> und </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5062"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5065"/>
         <source>%1/%2</source>
         <translation>%1/%2</translation>
     </message>
@@ -18249,7 +18249,7 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="192"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3344"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3402"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5076"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5079"/>
         <source>Flight Plan Position:</source>
         <translation>Flugplanposition:</translation>
     </message>
@@ -18943,7 +18943,7 @@ kHz/MHz</translation>
         <translation>,&amp;nbsp;&amp;nbsp; </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5075"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5078"/>
         <source>Related navaid for procedure</source>
         <translation>Zugehörige Navigationshilfe für Prozedur</translation>
     </message>
@@ -19067,7 +19067,7 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="2650"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2683"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="4445"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5021"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5024"/>
         <source>-</source>
         <translation>-</translation>
     </message>
@@ -19172,7 +19172,7 @@ kHz/MHz</translation>
         <translation>Position</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4895"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4898"/>
         <source>Coordinates:</source>
         <translation>Koordinaten:</translation>
     </message>
@@ -19242,7 +19242,7 @@ kHz/MHz</translation>
         <translation>Links</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4899"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4902"/>
         <source>Pos:</source>
         <translation>Pos:</translation>
     </message>
@@ -19285,24 +19285,24 @@ kHz/MHz</translation>
         <translation>SkyVector</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4994"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4997"/>
         <source>(</source>
         <translation>(</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4673"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4996"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4999"/>
         <source>)</source>
         <translation>)</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5004"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5054"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5007"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5057"/>
         <source>:</source>
         <translation>:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5004"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5007"/>
         <source> METAR:</source>
         <translation> METAR:</translation>
     </message>
@@ -25150,13 +25150,15 @@ Von der Verknüpfung oben &lt;b&gt;&lt;i&gt;All Tiles in One .zip (all10g.zip)&l
     </message>
     <message>
         <location filename="src/options/options.ui" line="7193"/>
-        <source>A&amp;dd ...</source>
-        <translation>&amp;Hinzufügen ...</translation>
+        <source>A&amp;dd Directory ...</source>
+        <oldsource>A&amp;dd ...</oldsource>
+        <translation>&amp;Verzeichnis Hinzufügen ...</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7200"/>
-        <source>R&amp;emove</source>
-        <translation>&amp;Löschen</translation>
+        <source>R&amp;emove Selected</source>
+        <oldsource>R&amp;emove</oldsource>
+        <translation>&amp;Ausgewählte Löschen</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="7129"/>
@@ -25189,8 +25191,9 @@ Sie müssen die Szeneriebibliothek neu laden, damit die Änderungen aktiv werden
     </message>
     <message>
         <location filename="src/options/options.ui" line="7143"/>
-        <source>&amp;Remove</source>
-        <translation>&amp;Löschen</translation>
+        <source>&amp;Remove Selected</source>
+        <oldsource>&amp;Remove</oldsource>
+        <translation>&amp;Ausgewählte Löschen</translation>
     </message>
     <message>
         <source>All directories including sub-directories in this list will be omitted when loading the scenery library into the Little Navmap database.

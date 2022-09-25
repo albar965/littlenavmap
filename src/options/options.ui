@@ -396,8 +396,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>597</width>
-             <height>430</height>
+             <width>499</width>
+             <height>404</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -640,7 +640,7 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
+             <width>408</width>
              <height>537</height>
             </rect>
            </property>
@@ -1133,8 +1133,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>597</width>
-             <height>430</height>
+             <width>535</width>
+             <height>356</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -1449,7 +1449,7 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>583</width>
+             <width>542</width>
              <height>524</height>
             </rect>
            </property>
@@ -1915,8 +1915,8 @@ Use &quot;Window&quot; -&gt; &quot;Reset Window Layout&quot; in the main menu to
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>597</width>
-             <height>430</height>
+             <width>565</width>
+             <height>300</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_13">
@@ -2248,7 +2248,7 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>511</width>
+             <width>472</width>
              <height>511</height>
             </rect>
            </property>
@@ -2988,8 +2988,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>525</width>
-             <height>469</height>
+             <width>413</width>
+             <height>315</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -3393,7 +3393,7 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>511</width>
+             <width>494</width>
              <height>526</height>
             </rect>
            </property>
@@ -4308,8 +4308,8 @@ Do not show this this information publicly in forums on screenshots.&lt;/b&gt;&l
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>525</width>
-             <height>469</height>
+             <width>316</width>
+             <height>353</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -5194,8 +5194,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>525</width>
-             <height>469</height>
+             <width>457</width>
+             <height>379</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -5513,8 +5513,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>525</width>
-             <height>469</height>
+             <width>266</width>
+             <height>312</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -5709,7 +5709,7 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>511</width>
+             <width>356</width>
              <height>641</height>
             </rect>
            </property>
@@ -6272,8 +6272,8 @@ Default is &quot;https://api.ivao.aero/v2/airports/all/metar&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>525</width>
-             <height>469</height>
+             <width>378</width>
+             <height>349</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -6574,8 +6574,8 @@ Default is &quot;https://api.ivao.aero/v2/airports/all/metar&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>570</width>
-             <height>458</height>
+             <width>420</width>
+             <height>228</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -6761,8 +6761,8 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>570</width>
-             <height>458</height>
+             <width>471</width>
+             <height>370</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -7037,7 +7037,7 @@ Source data has many errors.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-35</y>
              <width>556</width>
              <height>493</height>
             </rect>
@@ -7140,7 +7140,7 @@ You have to reload the scenery library so that the changes take effect.</string>
                  <item alignment="Qt::AlignTop">
                   <widget class="QPushButton" name="pushButtonOptionsDatabaseRemoveExclude">
                    <property name="text">
-                    <string>&amp;Remove</string>
+                    <string>&amp;Remove Selected</string>
                    </property>
                   </widget>
                  </item>
@@ -7190,14 +7190,14 @@ You have to reload the scenery library so that the changes take effect.</string>
                  <item alignment="Qt::AlignTop">
                   <widget class="QPushButton" name="pushButtonOptionsDatabaseAddAddon">
                    <property name="text">
-                    <string>A&amp;dd ...</string>
+                    <string>A&amp;dd Directory ...</string>
                    </property>
                   </widget>
                  </item>
                  <item alignment="Qt::AlignTop">
                   <widget class="QPushButton" name="pushButtonOptionsDatabaseRemoveAddon">
                    <property name="text">
-                    <string>R&amp;emove</string>
+                    <string>R&amp;emove Selected</string>
                    </property>
                   </widget>
                  </item>
