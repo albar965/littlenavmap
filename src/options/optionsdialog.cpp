@@ -164,7 +164,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Parking"), tr("Show fuel, tower, helipads, gates and ramp parking."), optsd::ITEM_AIRPORT_DETAIL_PARKING, true);
   addItem<optsd::DisplayOptionsAirport>(airportDetails, displayOptItemIndexAirport, tr("Boundary"), tr("Display a white boundary around and below the airport diagram."), optsd::ITEM_AIRPORT_DETAIL_BOUNDARY);
 
-
   // Flight plan =====================================================
   QTreeWidgetItem *route = addTopItem(tr("Flight Plan"), tr("Select display options for the flight plan line."));
   addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Distance"), tr("Show distance along flight plan leg."), optsd::ROUTE_DISTANCE, true);
@@ -941,19 +940,19 @@ void OptionsDialog::updateWidgetUnits()
   {
     units = new UnitStringTool();
     units->init({
-      ui->doubleSpinBoxOptionsMapZoomShowMap,
-      ui->doubleSpinBoxOptionsMapZoomShowMapMenu,
-      ui->spinBoxOptionsRouteGroundBuffer,
-      ui->spinBoxDisplayOnlineClearance,
-      ui->spinBoxDisplayOnlineArea,
-      ui->spinBoxDisplayOnlineApproach,
-      ui->spinBoxDisplayOnlineDeparture,
-      ui->spinBoxDisplayOnlineFir,
-      ui->spinBoxDisplayOnlineObserver,
-      ui->spinBoxDisplayOnlineGround,
-      ui->spinBoxDisplayOnlineTower,
-      ui->doubleSpinBoxOptionsSimZoomOnLanding
-    });
+                  ui->doubleSpinBoxOptionsMapZoomShowMap,
+                  ui->doubleSpinBoxOptionsMapZoomShowMapMenu,
+                  ui->spinBoxOptionsRouteGroundBuffer,
+                  ui->spinBoxDisplayOnlineClearance,
+                  ui->spinBoxDisplayOnlineArea,
+                  ui->spinBoxDisplayOnlineApproach,
+                  ui->spinBoxDisplayOnlineDeparture,
+                  ui->spinBoxDisplayOnlineFir,
+                  ui->spinBoxDisplayOnlineObserver,
+                  ui->spinBoxDisplayOnlineGround,
+                  ui->spinBoxDisplayOnlineTower,
+                  ui->doubleSpinBoxOptionsSimZoomOnLanding
+                });
   }
   else
     units->update();
@@ -1441,9 +1440,11 @@ void OptionsDialog::testWeatherIvaoUrlClicked()
 
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
   bool result = WeatherReporter::testUrl(resultStr, ui->lineEditOptionsWeatherIvaoUrl->text(), QString(), {
-    {"accept", "application/json"},
-    {"apiKey", atools::strFromCryptFile(":/littlenavmap/little_navmap_keys/ivao_weather_api_key.bin", 0x2B1A96468EB62460)}
-  });
+                                           {"accept", "application/json"},
+                                           {"apiKey",
+                                            atools::strFromCryptFile(":/littlenavmap/little_navmap_keys/ivao_weather_api_key.bin",
+                                                                     0x2B1A96468EB62460)}
+                                         });
 
   QGuiApplication::restoreOverrideCursor();
 
@@ -1515,6 +1516,8 @@ void OptionsDialog::addDatabaseExcludeFileClicked()
     QString(), // filter
     lnm::OPTIONS_DIALOG_DB_FILE_DLG,
     NavApp::getCurrentSimulatorBasePath());
+
+  paths.removeAll(QString());
 
   if(!paths.isEmpty())
   {
@@ -2912,15 +2915,17 @@ void OptionsDialog::mapboxUserMapClicked()
   static const QLatin1String USERSTYLE_KEY("Mapbox User Style");
   static const QLatin1String TOKEN_KEY("Mapbox Token");
 
-  QString label = tr("<p>Here you can enter a Mapbox User Style URL.</p>"
-                       "<p>Open the Mapbox Studio, login and click on the three-dot menu button of your style.<br/> "
-                         "Then click on the copy icon of the \"Style URL\" to add it to the clipboard and enter it below.</p>"
-                         "<p>A style URL looks like \"mapbox://styles/USERNAME/STYLEID\".</p>"
-                           "<p><a href=\"https://studio.mapbox.com/\"><b>Click here to open the Mapbox Studio page in your browser</b></a></p>");
+  QString label = tr(
+    "<p>Here you can enter a Mapbox User Style URL.</p>"
+      "<p>Open the Mapbox Studio, login and click on the three-dot menu button of your style.<br/> "
+        "Then click on the copy icon of the \"Style URL\" to add it to the clipboard and enter it below.</p>"
+        "<p>A style URL looks like \"mapbox://styles/USERNAME/STYLEID\".</p>"
+          "<p><a href=\"https://studio.mapbox.com/\"><b>Click here to open the Mapbox Studio page in your browser</b></a></p>");
 
-  QString label2 = tr("<p>You can also to provide you Mapbox Access Token below if not already done.<br/>"
-                      "You can find the Token on your Mapbox Account page.</p>"
-                      "<p><a href=\"https://account.mapbox.com/\"><b>Click here to open the Mapbox Account page in your browser</b></a></p>");
+  QString label2 = tr(
+    "<p>You can also to provide you Mapbox Access Token below if not already done.<br/>"
+    "You can find the Token on your Mapbox Account page.</p>"
+    "<p><a href=\"https://account.mapbox.com/\"><b>Click here to open the Mapbox Account page in your browser</b></a></p>");
 
   // Collect all editable items by key ======================
   QTableWidgetItem *userNameItem = nullptr, *userStyleItem = nullptr, *tokenItem = nullptr;

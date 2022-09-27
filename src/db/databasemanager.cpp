@@ -32,7 +32,6 @@
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
 #include "gui/mainwindow.h"
-#include "gui/textdialog.h"
 #include "io/fileroller.h"
 #include "navapp.h"
 #include "options/optiondata.h"

@@ -269,10 +269,20 @@ void DatabaseLoader::compileDatabasePost()
   {
     // Show results and wait until user selects ok or cancel
     progressDialog->setFinishedState();
+
+    // Show dialog modal and wait for discard / use database answer
     int result = progressDialog->exec();
 
     if(result == QDialog::Rejected)
+      // Discard clicked
       resultFlagsShared.setFlag(atools::fs::COMPILE_CANCELED);
+    else if(result == QDialog::Accepted)
+    {
+      // Use database clicked - raise main window
+      NavApp::getQMainWidget()->activateWindow();
+      NavApp::getQMainWidget()->raise();
+    }
+
   }
   // else reopen loading dialog
 

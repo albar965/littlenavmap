@@ -19,7 +19,6 @@
 #define LITTLENAVMAP_DATABASEMANAGER_H
 
 #include "fs/fspaths.h"
-#include "fs/navdatabaseflags.h"
 #include "db/dbtypes.h"
 
 #include <QAction>
