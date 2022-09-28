@@ -761,6 +761,7 @@ unix:!macx {
   deploy.commands += cp -vfa $$[QT_INSTALL_TRANSLATIONS]/qtbase*.qm  $$DEPLOY_DIR/translations &&
   exists($$DATABASE_BASE) : deploy.commands += cp -Rvf $$DATABASE_BASE $$DEPLOY_DIR &&
   exists($$HELP_BASE) : deploy.commands += cp -Rvf $$HELP_BASE/* $$DEPLOY_DIR/help &&
+  deploy.commands += cp -vf $$PWD/desktop/\"Little Navmap Portable Linux.sh\" $$DEPLOY_DIR/\"Little Navmap Portable.sh\" &&
   deploy.commands += cp -vf $$PWD/desktop/qt.conf $$DEPLOY_DIR &&
   deploy.commands += cp -vf $$PWD/CHANGELOG.txt $$DEPLOY_DIR &&
   deploy.commands += cp -vf $$PWD/README.txt $$DEPLOY_DIR &&
@@ -847,6 +848,7 @@ macx {
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libNavigationFloatItem.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libOverviewMap.so &&
   deploy.commands += macdeployqt littlenavmap.app -always-overwrite &&
+  deploy.commands += cp -vf $$PWD/desktop/\"Little Navmap Portable macOS.command\" $$DEPLOY_DIR/\"Little Navmap Portable.command\" &&
   deploy.commands += cp -rfv $$OUT_PWD/littlenavmap.app $$DEPLOY_APP &&
   deploy.commands += cp -fv $$[QT_INSTALL_TRANSLATIONS]/qt_??.qm  $$DEPLOY_APP/Contents/MacOS &&
   deploy.commands += cp -fv $$[QT_INSTALL_TRANSLATIONS]/qt_??_??.qm  $$DEPLOY_APP/Contents/MacOS &&
@@ -889,6 +891,7 @@ win32 {
   deploy.commands += xcopy $$p($$PWD/CHANGELOG.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$PWD/README.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$PWD/LICENSE.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$PWD/desktop/Little Navmap Portable Win.cmd) $$p($$DEPLOY_DIR/Little Navmap Portable.cmd) &&
   deploy.commands += xcopy $$p($$PWD/*.qm) $$p($$DEPLOY_BASE/$$TARGET_NAME/translations) &&
   deploy.commands += xcopy $$p($$ATOOLS_INC_PATH/../*.qm) $$p($$DEPLOY_BASE/$$TARGET_NAME/translations) &&
   exists($$DATABASE_BASE) : deploy.commands += xcopy /i /s /e /f /y $$p($$DATABASE_BASE) $$p($$DEPLOY_BASE/$$TARGET_NAME/little_navmap_db) &&

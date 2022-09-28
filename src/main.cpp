@@ -55,6 +55,7 @@
 #include <QSettings>
 #include <QScreen>
 #include <QProcess>
+#include <QStandardPaths>
 
 #include <marble/MarbleGlobal.h>
 #include <marble/MarbleDirs.h>
@@ -192,6 +193,12 @@ int main(int argc, char *argv[])
                                                      "Missing directories are created. Path can be on any drive."),
                                        QObject::tr("settings-path"));
     parser.addOption(settingsPathOpt);
+
+    QCommandLineOption cachePathOpt({"c", "cache-path"},
+                                    QObject::tr("Use <cache-path> to store tiles from online maps."
+                                                "Missing directories are created. Path can be on any drive."),
+                                    QObject::tr("cache-path"));
+    parser.addOption(cachePathOpt);
 
     QCommandLineOption flightplanOpt({"f", lnm::STARTUP_FLIGHTPLAN},
                                      QObject::tr("Load the given <%1> file on startup. Can be one of the supported formats like "
@@ -376,7 +383,8 @@ int main(int argc, char *argv[])
     }
 #endif
 
-    // Set up Marble widget and print debugging informations
+    // =============================================================================================
+    // Set up Marble widget and print debugging information
     MarbleGlobal::Profiles profiles = MarbleGlobal::detectProfiles();
     MarbleGlobal::getInstance()->setProfiles(profiles);
 
@@ -388,6 +396,32 @@ int main(int argc, char *argv[])
     qDebug() << "Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
 
     MarbleDirs::setMarbleDataPath(QApplication::applicationDirPath() + QDir::separator() + "data");
+
+    if(parser.isSet(cachePathOpt) && !parser.value(cachePathOpt).isEmpty())
+    {
+      // "/home/USER/.local/share" ("/home/USER/.local/share/marble/maps/earth/openstreetmap")
+      // "C:/Users/USER/AppData/Local" ("C:\Users\USER\AppData\Local\.marble\data\maps\earth\openstreetmap")
+
+      ///home/USER/.local/share/marble
+      QFileInfo cacheFileinfo(parser.value(cachePathOpt));
+
+      QString marbleCache;
+
+      if(cacheFileinfo.isRelative())
+        marbleCache = QApplication::applicationDirPath() + QDir::separator() + cacheFileinfo.filePath();
+      else
+        marbleCache = cacheFileinfo.absoluteFilePath();
+
+      marbleCache = marbleCache + QDir::separator() + "marble";
+
+      // Have to create full path to avoid Marble showing a migration dialog
+      QString marbleCachePath = marbleCache + QDir::separator() + "maps" + QDir::separator() + "earth";
+      qDebug() << Q_FUNC_INFO << "Creating" << marbleCachePath;
+      QDir().mkpath(marbleCachePath);
+
+      qDebug() << Q_FUNC_INFO << "Setting Marble cache to" << marbleCache;
+      MarbleDirs::setMarbleLocalPath(marbleCache);
+    }
 
 #if defined(Q_OS_MACOS)
     QDir pluginsDir(QApplication::applicationDirPath());
@@ -407,6 +441,7 @@ int main(int argc, char *argv[])
     qDebug() << "New Marble System Path:" << MarbleDirs::systemPath();
     qDebug() << "New Marble Plugin System Path:" << MarbleDirs::pluginSystemPath();
 
+    // =============================================================================================
     // Disable tooltip effects since these do not work well with tooltip updates while displaying
     QApplication::setEffectEnabled(Qt::UI_FadeTooltip, false);
     QApplication::setEffectEnabled(Qt::UI_AnimateTooltip, false);
@@ -415,6 +450,7 @@ int main(int argc, char *argv[])
     QApplication::setAttribute(Qt::AA_DisableWindowContextHelpButton);
 #endif
 
+    // =============================================================================================
     // Check if database is compatible and ask the user to erase all incompatible ones
     // If erasing databases is refused exit application
     bool databasesErased = false;
@@ -438,6 +474,8 @@ int main(int argc, char *argv[])
       // Hide splash once main window is shown
       NavApp::finishSplashScreen();
 
+      // =============================================================================================
+      // Run application
       qDebug() << "Before app.exec()";
       retval = QApplication::exec();
     }
