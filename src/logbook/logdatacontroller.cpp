@@ -669,7 +669,10 @@ void LogdataController::importXplane()
     int numImported = 0;
     if(!file.isEmpty())
     {
+      QGuiApplication::setOverrideCursor(Qt::WaitCursor);
       numImported += manager->importXplane(file, fetchAirportCoordinates);
+      QGuiApplication::restoreOverrideCursor();
+
       mainWindow->setStatusMessage(tr("Imported %1 %2 X-Plane logbook.").arg(numImported).
                                    arg(numImported == 1 ? tr("entry") : tr("entries")));
 
@@ -709,7 +712,10 @@ void LogdataController::importCsv()
     int numImported = 0;
     if(!file.isEmpty())
     {
+      QGuiApplication::setOverrideCursor(Qt::WaitCursor);
       numImported += manager->importCsv(file);
+      QGuiApplication::restoreOverrideCursor();
+
       mainWindow->setStatusMessage(tr("Imported %1 %2 from CSV file.").arg(numImported).
                                    arg(numImported == 1 ? tr("entry") : tr("entries")));
       mainWindow->showLogbookSearch();

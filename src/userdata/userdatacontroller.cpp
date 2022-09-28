@@ -584,17 +584,18 @@ void UserdataController::importCsv()
   qDebug() << Q_FUNC_INFO;
   try
   {
-
     QStringList files = dialog->openFileDialogMulti(
       tr("Open Userpoint CSV File(s)"),
       tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV), "Userdata/Csv");
 
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
     int numImported = 0;
     for(const QString& file:files)
     {
       if(!file.isEmpty())
         numImported += manager->importCsv(file, atools::fs::userdata::NONE, ',', '"');
     }
+    QGuiApplication::restoreOverrideCursor();
 
     if(!files.isEmpty())
     {
@@ -628,7 +629,10 @@ void UserdataController::importXplaneUserFixDat()
 
     if(!file.isEmpty())
     {
+      QGuiApplication::setOverrideCursor(Qt::WaitCursor);
       int numImported = manager->importXplane(file);
+      QGuiApplication::restoreOverrideCursor();
+
       mainWindow->showUserpointSearch();
       mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
       manager->updateUndoRedoActions();
@@ -659,7 +663,10 @@ void UserdataController::importGarmin()
 
     if(!file.isEmpty())
     {
+      QGuiApplication::setOverrideCursor(Qt::WaitCursor);
       int numImported = manager->importGarmin(file);
+      QGuiApplication::restoreOverrideCursor();
+
       mainWindow->showUserpointSearch();
       mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
       manager->updateUndoRedoActions();
