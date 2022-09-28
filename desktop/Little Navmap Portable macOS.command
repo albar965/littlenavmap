@@ -1,5 +1,4 @@
 #!/bin/bash
-
 # ===========================================================================
 # This script runs Little Navmap in portable mode.
 # It can be used to execute the program from a memory stick without modifying
@@ -12,6 +11,6 @@
 # double clicking on "Little Navmap.app".
 # ===========================================================================
 
-cd "Little Navmap.app/Contents/MacOS"
+cd "`dirname "$0"`"
 
-./littlenavmap -c "Little Navmap Cache" -p "Little Navmap Settings"
+"./Little Navmap.app/Contents/MacOS/littlenavmap" -c "Little Navmap Cache" -p "Little Navmap Settings" &
