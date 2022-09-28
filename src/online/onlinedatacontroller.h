@@ -205,6 +205,9 @@ private:
 
   QString stateAsStr(OnlinedataController::State state);
 
+  // Criteria used to detect shadow aircraft right after download finished
+  float maxShadowDistanceNm = 0.5f, maxShadowAltDiffFt = 500.f, maxShadowGsDiffKts = 30.f, maxShadowHdgDiffDeg = 20.f;
+
   State currentState = NONE;
 
   QTimer downloadTimer; /* Triggers recurring downloads OnlinedataController::startDownloadInternal */

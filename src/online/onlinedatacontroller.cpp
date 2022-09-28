@@ -45,12 +45,6 @@ static const int MIN_TRANSCEIVER_DOWNLOAD_INTERVAL_MIN = 5;
 // Minimum reload time for whazzup files (JSON or txt)
 static const int MIN_RELOAD_TIME_SECONDS = 15;
 
-// Criteria used to detect shadow aircraft right after download finished
-static const float MAX_SHADOW_DISTANCE_NM = 0.5f;
-static const float MAX_SHADOW_ALT_DIFF_FT = 500.f;
-static const float MAX_SHADOW_GS_DIFF_KTS = 30.f;
-static const float MAX_SHADOW_HDG_DIFF_DEG = 20.f;
-
 using atools::fs::online::OnlinedataManager;
 using atools::util::HttpDownloader;
 using atools::geo::LineString;
@@ -85,7 +79,14 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
   if(codec == nullptr)
     codec = QTextCodec::codecForLocale();
 
-  verbose = atools::settings::Settings::instance().getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_DEBUG, false).toBool();
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
+  verbose = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_DEBUG, false).toBool();
+
+  // Load criteria used to detect shadow aircraft right after download finished
+  maxShadowDistanceNm = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_DIST_NM, 1.0).toFloat();
+  maxShadowAltDiffFt = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_ALT_DIFF_FT, 500.).toFloat();
+  maxShadowGsDiffKts = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_GS_DIFF_KTS, 30.).toFloat();
+  maxShadowHdgDiffDeg = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_HDG_DIFF_DEG, 60.).toFloat();
 
   downloader = new atools::util::HttpDownloader(mainWindow, verbose);
 
@@ -712,26 +713,26 @@ OnlineAircraft OnlinedataController::shadowAircraftInternal(const atools::fs::sc
   {
     // First get all nearest aircraft from spatial index ======================================
     QVector<OnlineAircraft> nearest;
-    onlineAircraftSpatialIndex.getRadius(nearest, simAircraft.getPosition(), atools::geo::nmToMeter(MAX_SHADOW_DISTANCE_NM));
+    onlineAircraftSpatialIndex.getRadius(nearest, simAircraft.getPosition(), atools::geo::nmToMeter(maxShadowDistanceNm));
 
     if(simAircraft.isUser())
       qDebug() << Q_FUNC_INFO << "nearest.size()" << nearest.size();
 
     // Filter out all which do not match more non-spatial criteria =================================
-    nearest.erase(std::remove_if(nearest.begin(), nearest.end(), [simAircraft](const OnlineAircraft& aircraft) -> bool {
+    nearest.erase(std::remove_if(nearest.begin(), nearest.end(), [ = ](const OnlineAircraft& aircraft) -> bool {
       bool altOk = true, gsOk = true, hdgOk = true;
 
       if(atools::inRange(-1000.f, map::INVALID_ALTITUDE_VALUE / 4.f, simAircraft.getActualAltitudeFt()) &&
          atools::inRange(-1000.f, map::INVALID_ALTITUDE_VALUE / 4.f, aircraft.pos.getAltitude()))
-        altOk = atools::almostEqual(simAircraft.getActualAltitudeFt(), aircraft.pos.getAltitude(), MAX_SHADOW_ALT_DIFF_FT);
+        altOk = atools::almostEqual(simAircraft.getActualAltitudeFt(), aircraft.pos.getAltitude(), maxShadowAltDiffFt);
 
       if(atools::inRange(0.f, map::INVALID_SPEED_VALUE / 4.f, simAircraft.getGroundSpeedKts()) &&
          atools::inRange(0.f, map::INVALID_SPEED_VALUE / 4.f, aircraft.groundSpeedKts))
-        gsOk = atools::almostEqual(simAircraft.getGroundSpeedKts(), aircraft.groundSpeedKts, MAX_SHADOW_GS_DIFF_KTS);
+        gsOk = atools::almostEqual(simAircraft.getGroundSpeedKts(), aircraft.groundSpeedKts, maxShadowGsDiffKts);
 
       if(atools::inRange(0.f, map::INVALID_HEADING_VALUE / 4.f, simAircraft.getHeadingDegTrue()) &&
          atools::inRange(0.f, map::INVALID_HEADING_VALUE / 4.f, aircraft.headingTrue))
-        hdgOk = atools::geo::angleAbsDiff(simAircraft.getHeadingDegTrue(), aircraft.headingTrue) < MAX_SHADOW_HDG_DIFF_DEG;
+        hdgOk = atools::geo::angleAbsDiff(simAircraft.getHeadingDegTrue(), aircraft.headingTrue) < maxShadowHdgDiffDeg;
 
       return !(altOk && gsOk && hdgOk);
     }), nearest.end());
