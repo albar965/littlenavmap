@@ -21,6 +21,7 @@
 #include "common/constants.h"
 #include "common/maptypes.h"
 #include "common/maptypesfactory.h"
+#include "db/undoredoprogress.h"
 #include "exception.h"
 #include "fs/userdata/logdatamanager.h"
 #include "gui/dialog.h"
@@ -95,14 +96,29 @@ void LogdataController::undoTriggered()
   qDebug() << Q_FUNC_INFO;
   if(manager->canUndo())
   {
-    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    SqlTransaction transaction(manager->getDatabase());
+    UndoRedoProgress progress(mainWindow, tr("Little Navmap - Undoing Logbook changes"), tr("Undoing changes ..."));
+    manager->setProgressCallback(std::bind(&UndoRedoProgress::callback, &progress, std::placeholders::_1, std::placeholders::_2));
+
+    progress.start();
     manager->undo();
-    QGuiApplication::restoreOverrideCursor();
+    progress.stop();
 
-    manager->clearGeometryCache();
+    manager->setProgressCallback(nullptr);
+    if(!progress.isCanceled())
+    {
+      qDebug() << Q_FUNC_INFO << "Committing";
+      transaction.commit();
+      manager->clearGeometryCache();
 
-    emit refreshLogSearch(false, false);
-    emit logDataChanged();
+      emit refreshLogSearch(false, false);
+      emit logDataChanged();
+    }
+    else
+    {
+      qDebug() << Q_FUNC_INFO << "Rolling back";
+      transaction.rollback();
+    }
   }
 }
 
@@ -111,14 +127,29 @@ void LogdataController::redoTriggered()
   qDebug() << Q_FUNC_INFO;
   if(manager->canRedo())
   {
-    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    SqlTransaction transaction(manager->getDatabase());
+    UndoRedoProgress progress(mainWindow, tr("Little Navmap - Redoing Logbook changes"), tr("Redoing changes ..."));
+    manager->setProgressCallback(std::bind(&UndoRedoProgress::callback, &progress, std::placeholders::_1, std::placeholders::_2));
+
+    progress.start();
     manager->redo();
-    QGuiApplication::restoreOverrideCursor();
+    progress.stop();
 
-    manager->clearGeometryCache();
+    manager->setProgressCallback(nullptr);
+    if(!progress.isCanceled())
+    {
+      qDebug() << Q_FUNC_INFO << "Committing";
+      transaction.commit();
+      manager->clearGeometryCache();
 
-    emit refreshLogSearch(false, false);
-    emit logDataChanged();
+      emit refreshLogSearch(false, false);
+      emit logDataChanged();
+    }
+    else
+    {
+      qDebug() << Q_FUNC_INFO << "Rolling back";
+      transaction.rollback();
+    }
   }
 }
 

@@ -21,7 +21,7 @@
 #include "common/constants.h"
 #include "common/mapresult.h"
 #include "common/maptypesfactory.h"
-#include "common/unit.h"
+#include "db/undoredoprogress.h"
 #include "exception.h"
 #include "fs/userdata/userdatamanager.h"
 #include "geo/pos.h"
@@ -31,6 +31,7 @@
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 #include "navapp.h"
+#include "options/optiondata.h"
 #include "search/searchcontroller.h"
 #include "search/userdatasearch.h"
 #include "settings/settings.h"
@@ -82,12 +83,27 @@ void UserdataController::undoTriggered()
   qDebug() << Q_FUNC_INFO;
   if(manager->canUndo())
   {
-    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-    manager->undo();
-    QGuiApplication::restoreOverrideCursor();
+    SqlTransaction transaction(manager->getDatabase());
+    UndoRedoProgress progress(mainWindow, tr("Little Navmap - Undoing Userpoint changes"), tr("Undoing changes ..."));
+    manager->setProgressCallback(std::bind(&UndoRedoProgress::callback, &progress, std::placeholders::_1, std::placeholders::_2));
 
-    emit refreshUserdataSearch(false, false);
-    emit userdataChanged();
+    progress.start();
+    manager->undo();
+    progress.stop();
+
+    manager->setProgressCallback(nullptr);
+    if(!progress.isCanceled())
+    {
+      qDebug() << Q_FUNC_INFO << "Committing";
+      transaction.commit();
+      emit refreshUserdataSearch(false, false);
+      emit userdataChanged();
+    }
+    else
+    {
+      qDebug() << Q_FUNC_INFO << "Rolling back";
+      transaction.rollback();
+    }
   }
 }
 
@@ -96,12 +112,27 @@ void UserdataController::redoTriggered()
   qDebug() << Q_FUNC_INFO;
   if(manager->canRedo())
   {
-    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-    manager->redo();
-    QGuiApplication::restoreOverrideCursor();
+    SqlTransaction transaction(manager->getDatabase());
+    UndoRedoProgress progress(mainWindow, tr("Little Navmap - Redoing Userpoint changes"), tr("Redoing changes ..."));
+    manager->setProgressCallback(std::bind(&UndoRedoProgress::callback, &progress, std::placeholders::_1, std::placeholders::_2));
 
-    emit refreshUserdataSearch(false, false);
-    emit userdataChanged();
+    progress.start();
+    manager->redo();
+    progress.stop();
+
+    manager->setProgressCallback(nullptr);
+    if(!progress.isCanceled())
+    {
+      qDebug() << Q_FUNC_INFO << "Committing";
+      transaction.commit();
+      emit refreshUserdataSearch(false, false);
+      emit userdataChanged();
+    }
+    else
+    {
+      qDebug() << Q_FUNC_INFO << "Rolling back";
+      transaction.rollback();
+    }
   }
 }
 

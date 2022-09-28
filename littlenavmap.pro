@@ -272,6 +272,7 @@ SOURCES += \
   src/db/databaseprogressdialog.cpp \
   src/db/dbtools.cpp \
   src/db/dbtypes.cpp \
+  src/db/undoredoprogress.cpp \
   src/export/csvexporter.cpp \
   src/export/exporter.cpp \
   src/gui/holddialog.cpp \
@@ -467,6 +468,7 @@ HEADERS  += \
   src/db/databaseprogressdialog.h \
   src/db/dbtools.h \
   src/db/dbtypes.h \
+  src/db/undoredoprogress.h \
   src/export/csvexporter.h \
   src/export/exporter.h \
   src/gui/holddialog.h \
