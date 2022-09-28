@@ -891,7 +891,7 @@ win32 {
   deploy.commands += xcopy $$p($$PWD/CHANGELOG.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$PWD/README.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
   deploy.commands += xcopy $$p($$PWD/LICENSE.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$PWD/desktop/Little Navmap Portable Win.cmd) $$p($$DEPLOY_DIR/Little Navmap Portable.cmd) &&
+  deploy.commands += copy $$p($$PWD/desktop/Little Navmap Portable Win.cmd) $$p($$DEPLOY_BASE/$$TARGET_NAME/Little Navmap Portable.cmd) &&
   deploy.commands += xcopy $$p($$PWD/*.qm) $$p($$DEPLOY_BASE/$$TARGET_NAME/translations) &&
   deploy.commands += xcopy $$p($$ATOOLS_INC_PATH/../*.qm) $$p($$DEPLOY_BASE/$$TARGET_NAME/translations) &&
   exists($$DATABASE_BASE) : deploy.commands += xcopy /i /s /e /f /y $$p($$DATABASE_BASE) $$p($$DEPLOY_BASE/$$TARGET_NAME/little_navmap_db) &&
