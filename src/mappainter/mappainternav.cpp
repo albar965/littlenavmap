@@ -332,7 +332,7 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
 
         painter->translate(xt, yt);
         painter->rotate(textBearing > 180.f ? textBearing + 90.f : textBearing - 90.f);
-        painter->drawText(QPointF(-painter->fontMetrics().width(text) / 2,
+        painter->drawText(QPointF(-painter->fontMetrics().horizontalAdvance(text) / 2,
                                   -painter->fontMetrics().descent() - linewidthAirway), text);
         painter->resetTransform();
       }

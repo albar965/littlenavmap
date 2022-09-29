@@ -796,7 +796,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
               }
             }
 
-            painter->drawText(QPointF(x - metrics.width(text) / 2., y + metrics.ascent() / 2.), text);
+            painter->drawText(QPointF(x - metrics.horizontalAdvance(text) / 2., y + metrics.ascent() / 2.), text);
           }
         } // if(mapLayer->isAirportDiagramDetail2() || parking.radius > 40)
       } // for(const MapParking& parking : *parkings)
@@ -809,7 +809,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
         {
           QString text = mapLayerEffective->isAirportDiagramDetail3() ? tr("Tower") : tr("T");
           painter->setPen(QPen(mapcolors::towerTextColor, 2, Qt::SolidLine, Qt::FlatCap));
-          painter->drawText(QPointF(x - metrics.width(text) / 2., y + metrics.ascent() / 2.), text);
+          painter->drawText(QPointF(x - metrics.horizontalAdvance(text) / 2., y + metrics.ascent() / 2.), text);
         }
       }
     } // if(!fast && mapLayer->isAirportDiagramDetail())
@@ -855,7 +855,7 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
             text.append(tr(" / ") % surface);
         }
 
-        int textWidth = rwMetrics.width(text);
+        int textWidth = rwMetrics.horizontalAdvance(text);
         if(textWidth > runwayRect.height())
           textWidth = runwayRect.height();
 

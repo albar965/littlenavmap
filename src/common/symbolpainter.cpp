@@ -1462,14 +1462,14 @@ QRect SymbolPainter::textBoxSize(QPainter *painter, const QStringList& texts, te
   int yoffset = 0;
   for(const QString& t : texts)
   {
-    int w = metrics.width(t);
+    int w = metrics.horizontalAdvance(t);
     int newx = 0;
     if(atts.testFlag(textatt::RIGHT))
       newx -= w;
     else if(atts.testFlag(textatt::CENTER))
       newx -= w / 2;
 
-    int textW = metrics.width(t);
+    int textW = metrics.horizontalAdvance(t);
     if(retval.isNull())
       retval = QRect(newx, yoffset, textW, h);
     else

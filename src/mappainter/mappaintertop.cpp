@@ -166,7 +166,7 @@ void MapPainterTop::paintCopyright()
     painter->setBackground(QColor("#b0ffffff"));
     painter->setBrush(Qt::NoBrush);
     painter->setBackgroundMode(Qt::OpaqueMode);
-    painter->drawText(painter->viewport().width() - painter->fontMetrics().width(mapCopyright) - rightOffset,
+    painter->drawText(painter->viewport().width() - painter->fontMetrics().horizontalAdvance(mapCopyright) - rightOffset,
                       painter->viewport().height() - painter->fontMetrics().descent() - bottomOffset, mapCopyright);
   }
 }

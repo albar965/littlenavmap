@@ -141,7 +141,7 @@ void ProfileLabelWidgetVert::paintEvent(QPaintEvent *)
         symPainter.textBox(&painter, {str}, QApplication::palette().color(QPalette::Text), w - 2, flightplanY, atts, 255, baseColor);
         maxw = std::max(metrics.boundingRect(str).width(), maxw);
       }
-      setMinimumWidth(maxw + metrics.width("X"));
+      setMinimumWidth(maxw + metrics.horizontalAdvance("X"));
     }
     else
       setMinimumWidth(1); // Setting to 0 hides the widget

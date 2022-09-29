@@ -203,7 +203,7 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
 
         // Cut text to feather length
         text = metrics.elidedText(text, Qt::ElideRight, featherLen);
-        int textw = metrics.width(text);
+        int textw = metrics.horizontalAdvance(text);
 
         int textpos = ils.heading > 180 ? (featherLen - textw) / 2 : -(featherLen + textw) / 2;
 

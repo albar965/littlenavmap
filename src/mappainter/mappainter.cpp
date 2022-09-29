@@ -433,7 +433,7 @@ void MapPainter::drawText(Marble::GeoPainter *painter, const Pos& pos, const QSt
   if(!pt.isNull())
   {
     QFontMetrics metrics = painter->fontMetrics();
-    pt.setX(leftCorner ? pt.x() : pt.x() - metrics.width(text));
+    pt.setX(leftCorner ? pt.x() : pt.x() - metrics.horizontalAdvance(text));
     pt.setY(topCorner ? pt.y() + metrics.ascent() : pt.y() - metrics.descent());
     painter->drawText(pt, text);
   }
@@ -729,7 +729,7 @@ void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float di
     {
       // text pointing to origin
       QString str = metrics.elidedText(text, Qt::ElideRight, roundToInt(pixel));
-      int w1 = metrics.width(str);
+      int w1 = metrics.horizontalAdvance(str);
       painter->drawText(-w1 / 2, roundToInt(-lineWidth - 3), str);
     }
 
@@ -737,7 +737,7 @@ void MapPainter::paintHoldWithText(QPainter *painter, float x, float y, float di
     {
       // text on other side to origin
       QString str = metrics.elidedText(text2, Qt::ElideRight, roundToInt(pixel));
-      int w2 = metrics.width(str);
+      int w2 = metrics.horizontalAdvance(str);
 
       if(direction < 180.f)
         painter->translate(0, left ? -pixel / 2 : pixel / 2);
@@ -792,7 +792,7 @@ void MapPainter::paintProcedureTurnWithText(QPainter *painter, float x, float y,
     painter->setBackground(textColorBackground);
     QFontMetrics metrics = painter->fontMetrics();
     QString str = metrics.elidedText(text, Qt::ElideRight, roundToInt(turnSegment.length()));
-    int w1 = metrics.width(str);
+    int w1 = metrics.horizontalAdvance(str);
 
     painter->translate((turnSegment.x1() + turnSegment.x2()) / 2, (turnSegment.y1() + turnSegment.y2()) / 2);
     painter->rotate(turnCourse < 180.f ? turnCourse - 90.f : turnCourse + 90.f);

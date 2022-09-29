@@ -1079,7 +1079,7 @@ void OptionsDialog::restoreState()
     for(int i = 0; i < ui->listWidgetOptionPages->count(); i++)
     {
       QListWidgetItem *item = ui->listWidgetOptionPages->item(i);
-      maxWidth = std::max(QFontMetrics(item->font()).width(item->text()), maxWidth);
+      maxWidth = std::max(QFontMetrics(item->font()).horizontalAdvance(item->text()), maxWidth);
     }
 
     // Adjust splitter size to a reasonable value by setting maximum for the widget on the left
