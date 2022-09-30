@@ -124,7 +124,7 @@ public:
 
   /* NDB texts have no background excepts for flight plan */
   void drawNdbText(QPainter *painter, const map::MapNdb& ndb, float x, float y, textflags::TextFlags flags,
-                   int size, bool fill, const QStringList *addtionalText = nullptr);
+                   float size, bool fill, const QStringList *addtionalText = nullptr);
 
   void drawMarkerSymbol(QPainter *painter, const map::MapMarker& marker, float x, float y, int size,
                         bool fast);
@@ -135,19 +135,19 @@ public:
   void drawUserpointSymbol(QPainter *painter, float x, float y, float size, bool routeFill);
 
   /* Circle for approach points which are not navaids */
-  void drawProcedureSymbol(QPainter *painter, float x, float y, int size, bool routeFill);
+  void drawProcedureSymbol(QPainter *painter, float x, float y, float size, bool routeFill);
 
   /* Circle for flight plan waypoints */
   void drawLogbookPreviewSymbol(QPainter *painter, float x, float y, float size);
 
   /* Maltese cross to indicate FAF on the map and ring to indicate fly over*/
-  void drawProcedureUnderlay(QPainter *painter, float x, float y, int size, bool flyover, bool faf);
+  void drawProcedureUnderlay(QPainter *painter, float x, float y, float size, bool flyover, bool faf);
 
   /* Flyover underlay */
   void drawProcedureFlyover(QPainter *painter, float x, float y, float size);
 
   /* Maltese cross to indicate FAF on the map */
-  void drawProcedureFaf(QPainter *painter, float x, float y, int size);
+  void drawProcedureFaf(QPainter *painter, float x, float y, float size);
 
   /* Draw a custom text box */
   void textBox(QPainter *painter, const QStringList& texts, const QPen& textPen, int x, int y,

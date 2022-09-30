@@ -30,7 +30,6 @@
 #include "common/vehicleicons.h"
 #include "fs/bgl/ap/rw/runway.h"
 #include "fs/online/onlinetypes.h"
-#include "fs/sc/simconnectdata.h"
 #include "fs/userdata/userdatamanager.h"
 #include "fs/util/fsutil.h"
 #include "fs/util/morsecode.h"
@@ -2382,13 +2381,8 @@ void HtmlInfoBuilder::distanceMarkerText(const DistanceMarker& marker, atools::u
 
   navaidTitle(html, tr("Distance Measurement"));
 
-  Marble::GeoDataCoordinates from(marker.from.getLonX(), marker.from.getLatY(), 0, Marble::GeoDataCoordinates::Degree);
-  Marble::GeoDataCoordinates to(marker.to.getLonX(), marker.to.getLatY(), 0, Marble::GeoDataCoordinates::Degree);
-
-  float initTrue =
-    static_cast<float>(normalizeCourse(from.bearing(to, Marble::GeoDataCoordinates::Degree, Marble::GeoDataCoordinates::InitialBearing)));
-  float finalTrue =
-    static_cast<float>(normalizeCourse(from.bearing(to, Marble::GeoDataCoordinates::Degree, Marble::GeoDataCoordinates::FinalBearing)));
+  float initTrue = marker.from.initialBearing(marker.to);
+  float finalTrue = marker.from.finalBearing(marker.to);
 
   QString initCourseStr = tr("%L1°M, %L2°T").arg(initTrue - marker.magvar, 0, 'f', 0).arg(initTrue, 0, 'f', 0);
   QString finalCourseStr = tr("%L1°M, %L2°T").arg(finalTrue - marker.magvar, 0, 'f', 0).arg(finalTrue, 0, 'f', 0);

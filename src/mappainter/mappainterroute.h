@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@ class GeoDataLineString;
 
 class MapWidget;
 class RouteLeg;
+class TextPlacement;
 
 namespace proc {
 struct MapProcedureLegs;
@@ -115,7 +116,7 @@ private:
                          const proc::MapProcedureLeg& leg, const QPointF& intersectPoint, bool draw);
 
   /* Waypoint Underlays */
-  void paintProcedureUnderlay(const proc::MapProcedureLeg& leg, float x, float y, int size);
+  void paintProcedureUnderlay(const proc::MapProcedureLeg& leg, float x, float y, float size);
 
   void drawStartParking();
   void drawWindBarbs(const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints);
@@ -127,6 +128,7 @@ private:
   /* Active or normal color depending on options setting */
   QColor flightplanActiveColor() const;
   QColor flightplanActiveProcColor() const;
+  void paintInboundOutboundTexts(const TextPlacement& textPlacement, int passedRouteLeg, bool vor);
 
   /* Avoid drawing duplicate navaids from flight plan and preview */
   QSet<map::MapObjectRef> routeProcIdMap;

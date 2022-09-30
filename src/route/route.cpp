@@ -243,6 +243,46 @@ const QString& Route::getApproachRunwayName() const
   return approachLegs.runwayEnd.name;
 }
 
+void Route::getOutboundCourse(int index, float& magCourse, float& trueCourse) const
+{
+  magCourse = trueCourse = map::INVALID_COURSE_VALUE;
+
+  const RouteLeg& curLeg = value(index);
+  const RouteLeg& lastLeg = value(index - 1);
+
+  if(!curLeg.isValid() || !lastLeg.isValid())
+    return;
+
+  const LineString& geometry = curLeg.getGeometry();
+
+  if(geometry.size() >= 2)
+  {
+    // Course for first segment in geometry
+    trueCourse = geometry.at(0).initialBearing(geometry.at(1));
+    if(trueCourse < map::INVALID_COURSE_VALUE)
+      magCourse = normalizeCourse(trueCourse - lastLeg.getMagvarPosOrNavaid());
+  }
+}
+
+void Route::getInboundCourse(int index, float& magCourse, float& trueCourse) const
+{
+  magCourse = trueCourse = map::INVALID_COURSE_VALUE;
+
+  const RouteLeg& curLeg = value(index);
+
+  if(!curLeg.isValid())
+    return;
+
+  const LineString& geometry = curLeg.getGeometry();
+  if(geometry.size() >= 2)
+  {
+    // Course for last segment in geometry
+    trueCourse = geometry.at(geometry.size() - 2).finalBearing(geometry.at(geometry.size() - 1));
+    if(trueCourse < map::INVALID_COURSE_VALUE)
+      magCourse = normalizeCourse(trueCourse - curLeg.getMagvarPosOrNavaid());
+  }
+}
+
 void Route::getApproachNames(QString& approachArincName, QString& approachTransition) const
 {
   if(hasAnyApproachProcedure())
@@ -2044,7 +2084,7 @@ void Route::updateMagvar()
     leg.updateMagvar();
   }
 
-  // Update variance for to VOR legs and for legs which are outbound from VOR to other waypoint type
+  // Update variance for to VOR legs
   for(int i = 1; i < size(); i++)
   {
     RouteLeg& leg = (*this)[i];
@@ -2052,13 +2092,9 @@ void Route::updateMagvar()
       continue;
 
     const map::MapVor& vor = leg.getVor();
-    const map::MapVor& prevVor = value(i - 1).getVor();
     if(vor.isCalibratedVor())
       // This is a VOR at the end of the leg - user variance from calibration
       leg.setMagvar(vor.magvar);
-    else if(prevVor.isCalibratedVor())
-      // No VOR at the end of the leg but previous one is a VOR - use previous variance
-      leg.setMagvar(prevVor.magvar);
   }
 }
 
@@ -3292,7 +3328,7 @@ int Route::getAdjustedAltitude(int newAltitude) const
     const Pos& departurePos = constFirst().getPosition();
     const Pos& destinationPos = getDestinationAirportLeg().getPosition();
 
-    float magvar = (constFirst().getMagvar() + getDestinationAirportLeg().getMagVarBySettings()) / 2;
+    float magvar = (constFirst().getMagvar() + getDestinationAirportLeg().getMagvarBySettings()) / 2;
 
     float fpDir = atools::geo::normalizeCourse(departurePos.angleDegToRhumb(destinationPos) - magvar);
 

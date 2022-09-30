@@ -798,7 +798,7 @@ void SymbolPainter::drawUserpointSymbol(QPainter *painter, float x, float y, flo
   painter->drawRect(QRectF(x - radius, y - radius, size, size));
 }
 
-void SymbolPainter::drawProcedureSymbol(QPainter *painter, float x, float y, int size, bool routeFill)
+void SymbolPainter::drawProcedureSymbol(QPainter *painter, float x, float y, float size, bool routeFill)
 {
   atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::TransparentMode);
@@ -823,15 +823,15 @@ void SymbolPainter::drawLogbookPreviewSymbol(QPainter *painter, float x, float y
   painter->drawEllipse(QPointF(x, y), size / 2.f, size / 2.f);
 }
 
-void SymbolPainter::drawProcedureUnderlay(QPainter *painter, float x, float y, int size, bool flyover, bool faf)
+void SymbolPainter::drawProcedureUnderlay(QPainter *painter, float x, float y, float size, bool flyover, bool faf)
 {
   if(flyover)
     // Ring to indicate fly over
-    drawProcedureFlyover(painter, x, y, size + 14);
+    drawProcedureFlyover(painter, x, y, size + 14.f);
 
   if(faf)
     /* Maltese cross to indicate FAF on the map */
-    drawProcedureFaf(painter, x, y, size + 18);
+    drawProcedureFaf(painter, x, y, size + 18.f);
 }
 
 void SymbolPainter::drawProcedureFlyover(QPainter *painter, float x, float y, float size)
@@ -845,7 +845,7 @@ void SymbolPainter::drawProcedureFlyover(QPainter *painter, float x, float y, fl
   painter->drawEllipse(QPointF(x, y), size / 2.f, size / 2.f);
 }
 
-void SymbolPainter::drawProcedureFaf(QPainter *painter, float x, float y, int size)
+void SymbolPainter::drawProcedureFaf(QPainter *painter, float x, float y, float size)
 {
   static QPolygonF polygon(
   {
@@ -1097,7 +1097,7 @@ void SymbolPainter::drawMarkerSymbol(QPainter *painter, const map::MapMarker& ma
 }
 
 void SymbolPainter::drawNdbText(QPainter *painter, const map::MapNdb& ndb, float x, float y,
-                                textflags::TextFlags flags, int size, bool fill, const QStringList *addtionalText)
+                                textflags::TextFlags flags, float size, bool fill, const QStringList *addtionalText)
 {
   QStringList texts;
 

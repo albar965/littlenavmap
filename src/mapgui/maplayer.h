@@ -120,16 +120,19 @@ public:
     return airportDiagramRunway;
   }
 
+  /* Lowest detail */
   bool isAirportDiagramDetail() const
   {
     return airportDiagramDetail;
   }
 
+  /* Higher detail */
   bool isAirportDiagramDetail2() const
   {
     return airportDiagramDetail2;
   }
 
+  /* Highest detail */
   bool isAirportDiagramDetail3() const
   {
     return airportDiagramDetail3;
@@ -502,9 +505,16 @@ public:
     return mora;
   }
 
+  /* Lowest detail */
   bool isRouteTextAndDetail() const
   {
     return routeTextAndDetail;
+  }
+
+  /* Higher detail */
+  bool isRouteTextAndDetail2() const
+  {
+    return routeTextAndDetail2;
   }
 
   bool isWindBarbs() const
@@ -576,7 +586,8 @@ private:
 
        airportMinor = true, airportMinorIdent = true, airportMinorName = true, airportMinorInfo = true,
 
-       approachDetail = true, approachText = true, approachTextDetail = true, routeTextAndDetail = true, userpoint = true;
+       approachDetail = true, approachText = true, approachTextDetail = true, routeTextAndDetail = true, routeTextAndDetail2 = true,
+       userpoint = true;
 
   bool airportWeather = true, airportWeatherDetails = true;
 

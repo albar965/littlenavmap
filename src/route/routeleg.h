@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -140,11 +140,14 @@ public:
   QString getFrequencyOrChannel() const;
 
   /* Get magnetic variation. Source is always database. Depending on settings
-   * either environment or radio navaid declination. */
+   * either environment or radio navaid declination. Does NOT use VOR declination for VOR outbound legs. */
   float getMagvar() const
   {
     return magvar;
   }
+
+  /* Variation either calculated or VOR. Also depends on option settings. */
+  float getMagvarPosOrNavaid() const;
 
   void setMagvar(float value)
   {
@@ -158,7 +161,7 @@ public:
   }
 
   /* Gets either radio navaid declination or environment value depending on settings */
-  float getMagVarBySettings() const;
+  float getMagvarBySettings() const;
 
   /* Get range of radio navaid. -1 if not a radio navaid. Source is always database. */
   int getRange() const;
@@ -341,7 +344,10 @@ public:
     return procedureLeg.isValid() && procedureLeg.noIdentDisplay();
   }
 
-  const atools::geo::LineString& getGeometry() const;
+  const atools::geo::LineString& getGeometry() const
+  {
+    return geometry;
+  }
 
   /* true if approach and inital fix or any other point that should be skipped for certain calculations */
   bool isApproachPoint() const;
@@ -407,7 +413,7 @@ private:
   float distanceTo = 0.f,
         courseTo = 0.f, /* magnetic */
         magvar = 0.f, /* Either taken from navaid or average across the route */
-        magvarPos = 0.f; /* Calculate environment value */
+        magvarPos = 0.f; /* Calculated environment value */
   atools::geo::LineString geometry;
 
 };

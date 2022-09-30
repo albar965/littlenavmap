@@ -122,13 +122,13 @@ void TextPlacement::calculateTextAlongLines(const QVector<atools::geo::Line>& li
   }
 }
 
-QString TextPlacement::elideText(const QString& text, const QString& arrow, float lineLength)
+QString TextPlacement::elideText(const QString& text, const QString& arrow, float lineLength) const
 {
   QFontMetricsF metrics = painter->fontMetrics();
   return metrics.elidedText(text, Qt::ElideRight, lineLength - metrics.horizontalAdvance(arrow) - metrics.height() * 2);
 }
 
-void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing, const QPointF& textCoord, float textLineLength)
+void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing, const QPointF& textCoord, float textLineLength) const
 {
   if(!text.isEmpty() || arrowForEmpty)
   {
@@ -215,6 +215,13 @@ bool TextPlacement::findTextPos(const Line& line, float distanceMeter, float tex
     *bearing = brg;
 
   return retval;
+}
+
+float TextPlacement::getArrowWidth() const
+{
+  QFontMetricsF metrics(painter->font());
+  return static_cast<float>(std::max(metrics.horizontalAdvance(arrowLeft), metrics.horizontalAdvance(arrowRight)) +
+                            metrics.horizontalAdvance(' '));
 }
 
 int TextPlacement::findClosestInternal(const QVector<int>& fullyVisibleValid, const QVector<int>& pointsIdxValid, const QPolygonF& points,

@@ -59,7 +59,7 @@ public:
   void drawTextAlongLines();
   void clearLineTextData();
 
-  void drawTextAlongOneLine(const QString& text, float bearing, const QPointF& textCoord, float textLineLength);
+  void drawTextAlongOneLine(const QString& text, float bearing, const QPointF& textCoord, float textLineLength) const;
 
   /* Find text position along a great circle route
    *  @param x,y resulting text position
@@ -93,6 +93,8 @@ public:
   {
     arrowLeft = value;
   }
+
+  float getArrowWidth() const;
 
   void setDrawFast(bool value)
   {
@@ -141,6 +143,11 @@ public:
     maximumPoints = value;
   }
 
+  float getTextLineLength(int index) const
+  {
+    return textLineLengths.value(index);
+  }
+
 private:
   bool findTextPosInternal(const atools::geo::Line& line, float distanceMeter, float textWidth, float textHeight, int numPoints,
                            bool allowPartial,
@@ -149,7 +156,7 @@ private:
                           const QVector<QPointF>& neighbors) const;
 
   /* Elide text with a buffer depending on font height */
-  QString elideText(const QString& text, const QString& arrow, float lineLength);
+  QString elideText(const QString& text, const QString& arrow, float lineLength) const;
 
   QList<QPointF> textCoords;
   QList<float> textBearings;

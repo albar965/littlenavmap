@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -550,7 +550,9 @@ enum DisplayOptionRoute
   ROUTE_NONE = 0,
   ROUTE_DISTANCE = 1 << 0,
   ROUTE_MAG_COURSE = 1 << 1,
-  ROUTE_TRUE_COURSE = 1 << 2
+  ROUTE_TRUE_COURSE = 1 << 2,
+  ROUTE_INITIAL_FINAL_MAG_COURSE = 1 << 3,
+  ROUTE_INITIAL_FINAL_TRUE_COURSE = 1 << 4
 };
 
 Q_DECLARE_FLAGS(DisplayOptionsRoute, DisplayOptionRoute);
@@ -1568,7 +1570,7 @@ private:
 
   optsd::DisplayOptionsNavAid displayOptionsNavAid = optsd::NAVAIDS_NONE;
 
-  optsd::DisplayOptionsRoute displayOptionsRoute = optsd::ROUTE_DISTANCE | optsd::ROUTE_MAG_COURSE;
+  optsd::DisplayOptionsRoute displayOptionsRoute = optsd::ROUTE_DISTANCE | optsd::ROUTE_INITIAL_FINAL_MAG_COURSE;
 
   optsd::DisplayTooltipOptions displayTooltipOptions = optsd::TOOLTIP_AIRCRAFT_USER | optsd::TOOLTIP_AIRCRAFT_AI |
                                                        optsd::TOOLTIP_AIRPORT | optsd::TOOLTIP_AIRSPACE |

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -416,6 +416,12 @@ public:
   {
     sidLegs = legs;
   }
+
+  /* Outbound course from the waypoint of the previous leg, i.e. course at the start of the given leg. */
+  void getOutboundCourse(int index, float& magCourse, float& trueCourse) const;
+
+  /* Inbound course to the waypoint of the given leg, i.e. course at the end of the given leg. */
+  void getInboundCourse(int index, float& magCourse, float& trueCourse) const;
 
   /* Insert legs of procedures into flight plan and update all offsets and indexes */
   void updateProcedureLegs(FlightplanEntryBuilder *entryBuilder, bool clearOldProcedureProperties, bool cleanupRoute);

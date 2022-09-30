@@ -122,6 +122,7 @@
 
         <!-- Flight plan details ================= -->
         <RouteTextAndDetail>true</RouteTextAndDetail>
+        <RouteTextAndDetail2>true</RouteTextAndDetail2>
         <RouteFontScale>1</RouteFontScale>
 
         <!-- Oceaninc tracks ================= -->
@@ -361,6 +362,7 @@
         <AiAircraftText>false</AiAircraftText>
         <AirportSymbolSize>3</AirportSymbolSize>
         <Approach>false</Approach>
+        <RouteTextAndDetail2>false</RouteTextAndDetail2>
         <WindBarbs>false</WindBarbs>
       </Layer>
       <!-- =================================================================================== -->

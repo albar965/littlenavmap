@@ -151,8 +151,7 @@ MapPainter::~MapPainter()
   delete symbolPainter;
 }
 
-bool MapPainter::wToSBuf(const Pos& coords, int& x, int& y, QSize size, const QMargins& margins,
-                         bool *hidden) const
+bool MapPainter::wToSBuf(const Pos& coords, int& x, int& y, QSize size, const QMargins& margins, bool *hidden) const
 {
   float xf, yf;
   bool visible = wToSBuf(coords, xf, yf, size, margins, hidden);

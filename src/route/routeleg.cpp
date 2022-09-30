@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@
 #include "common/maptools.h"
 #include "atools.h"
 #include "fs/util/fsutil.h"
-#include "route/route.h"
 #include "options/optiondata.h"
 #include "navapp.h"
 #include "common/unit.h"
@@ -657,9 +656,9 @@ float RouteLeg::getCourseToMag() const
     return courseTo < map::INVALID_COURSE_VALUE ? normalizeCourse(courseTo - magvar) : courseTo;
 }
 
-float RouteLeg::getMagVarBySettings() const
+float RouteLeg::getMagvarBySettings() const
 {
-  return OptionData::instance().getFlags() & opts::ROUTE_IGNORE_VOR_DECLINATION ? magvarPos : magvar;
+  return OptionData::instance().getFlags().testFlag(opts::ROUTE_IGNORE_VOR_DECLINATION) ? magvarPos : magvar;
 }
 
 const atools::geo::Pos& RouteLeg::getFixPosition() const
@@ -860,6 +859,14 @@ QString RouteLeg::getFrequencyOrChannel() const
     return getChannel();
 }
 
+float RouteLeg::getMagvarPosOrNavaid() const
+{
+  if(vor.isCalibratedVor() && !OptionData::instance().getFlags().testFlag(opts::ROUTE_IGNORE_VOR_DECLINATION))
+    return vor.magvar;
+  else
+    return magvarPos;
+}
+
 QString RouteLeg::getChannel() const
 {
   if(vor.isValid() && vor.tacan)
@@ -907,11 +914,6 @@ atools::fs::pln::FlightplanEntry *RouteLeg::getFlightplanEntry()
     qWarning() << Q_FUNC_INFO << "invalid index" << index;
 
   return nullptr;
-}
-
-const LineString& RouteLeg::getGeometry() const
-{
-  return geometry;
 }
 
 bool RouteLeg::isApproachPoint() const

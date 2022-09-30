@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -166,9 +166,18 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   // Flight plan =====================================================
   QTreeWidgetItem *route = addTopItem(tr("Flight Plan"), tr("Select display options for the flight plan line."));
-  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Distance"), tr("Show distance along flight plan leg."), optsd::ROUTE_DISTANCE, true);
-  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic Course"), tr("Show magnetic great circle start course at flight plan leg."), optsd::ROUTE_MAG_COURSE, true);
-  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True Course"), tr("Show true great circle start course at flight plan leg."), optsd::ROUTE_TRUE_COURSE);
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Distance"), tr("Show distance along flight plan leg.\n"
+                                                                                          "The label moves to keep it visible while scrolling."), optsd::ROUTE_DISTANCE, true);
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic Course"), tr("Show magnetic great circle start course at flight plan leg.\n"
+                                                                                                 "The label moves to keep it visible while scrolling."), optsd::ROUTE_MAG_COURSE);
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True Course"), tr("Show true great circle start course at flight plan leg.\n"
+                                                                                             "The label moves to keep it visible while scrolling."), optsd::ROUTE_TRUE_COURSE);
+
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic Start and End Course"), tr("Display great circle initial and final magnetic course at the start and end of flight plan legs.\n"
+                                                                                                               "The label is fixed. Course also depends on VOR calibrated declination.\n"
+                                                                                                               "Not shown at procedure legs."), optsd::ROUTE_INITIAL_FINAL_MAG_COURSE, true);
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True Start and End Course"), tr("Display great circle initial and final true course at the start and end of flight plan legs.\n"
+                                                                                                           "The label is fixed. Not shown at procedure legs."), optsd::ROUTE_INITIAL_FINAL_TRUE_COURSE);
 
   // User aircraft =====================================================
   QTreeWidgetItem *userAircraft = addTopItem(tr("User Aircraft"), tr("Select text labels and other options for the user aircraft."));
@@ -940,19 +949,19 @@ void OptionsDialog::updateWidgetUnits()
   {
     units = new UnitStringTool();
     units->init({
-                  ui->doubleSpinBoxOptionsMapZoomShowMap,
-                  ui->doubleSpinBoxOptionsMapZoomShowMapMenu,
-                  ui->spinBoxOptionsRouteGroundBuffer,
-                  ui->spinBoxDisplayOnlineClearance,
-                  ui->spinBoxDisplayOnlineArea,
-                  ui->spinBoxDisplayOnlineApproach,
-                  ui->spinBoxDisplayOnlineDeparture,
-                  ui->spinBoxDisplayOnlineFir,
-                  ui->spinBoxDisplayOnlineObserver,
-                  ui->spinBoxDisplayOnlineGround,
-                  ui->spinBoxDisplayOnlineTower,
-                  ui->doubleSpinBoxOptionsSimZoomOnLanding
-                });
+      ui->doubleSpinBoxOptionsMapZoomShowMap,
+      ui->doubleSpinBoxOptionsMapZoomShowMapMenu,
+      ui->spinBoxOptionsRouteGroundBuffer,
+      ui->spinBoxDisplayOnlineClearance,
+      ui->spinBoxDisplayOnlineArea,
+      ui->spinBoxDisplayOnlineApproach,
+      ui->spinBoxDisplayOnlineDeparture,
+      ui->spinBoxDisplayOnlineFir,
+      ui->spinBoxDisplayOnlineObserver,
+      ui->spinBoxDisplayOnlineGround,
+      ui->spinBoxDisplayOnlineTower,
+      ui->doubleSpinBoxOptionsSimZoomOnLanding
+    });
   }
   else
     units->update();
@@ -1440,11 +1449,11 @@ void OptionsDialog::testWeatherIvaoUrlClicked()
 
   QGuiApplication::setOverrideCursor(Qt::WaitCursor);
   bool result = WeatherReporter::testUrl(resultStr, ui->lineEditOptionsWeatherIvaoUrl->text(), QString(), {
-                                           {"accept", "application/json"},
-                                           {"apiKey",
-                                            atools::strFromCryptFile(":/littlenavmap/little_navmap_keys/ivao_weather_api_key.bin",
-                                                                     0x2B1A96468EB62460)}
-                                         });
+    {"accept", "application/json"},
+    {"apiKey",
+     atools::strFromCryptFile(":/littlenavmap/little_navmap_keys/ivao_weather_api_key.bin",
+                              0x2B1A96468EB62460)}
+  });
 
   QGuiApplication::restoreOverrideCursor();
 

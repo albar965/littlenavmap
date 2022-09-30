@@ -326,4 +326,30 @@ QString courseText(float magCourse, float trueCourse, bool magBold, bool trueSma
   return QString();
 }
 
+QString courseTextNarrow(float magCourse, float trueCourse)
+{
+  QString initTrueText, initMagText;
+
+  if(trueCourse < map::INVALID_COURSE_VALUE)
+    initTrueText = QString::number(trueCourse, 'f', 0);
+
+  if(magCourse < map::INVALID_COURSE_VALUE)
+    initMagText = QString::number(magCourse, 'f', 0);
+
+  QString initText;
+  if(!initTrueText.isEmpty() && !initMagText.isEmpty())
+  {
+    if(initTrueText == initMagText)
+      initText = QObject::tr("%1°M/T").arg(initMagText);
+    else
+      initText = QObject::tr("%1°M %2°T").arg(initMagText).arg(initTrueText);
+  }
+  else if(!initMagText.isEmpty())
+    initText = QObject::tr("%1°M").arg(initMagText);
+  else if(!initTrueText.isEmpty())
+    initText = QObject::tr("%1°T").arg(initTrueText);
+
+  return initText;
+}
+
 } // namespace formatter

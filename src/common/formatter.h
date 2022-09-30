@@ -71,6 +71,7 @@ QString courseText(float magCourse, float trueCourse, bool magBold = false, bool
 QString courseSuffix();
 QString courseTextFromMag(float magCourse, float magvar, bool magBold = false, bool trueSmall = true, bool narrow = false);
 QString courseTextFromTrue(float trueCourse, float magvar, bool magBold = false, bool trueSmall = true, bool narrow = false);
+QString courseTextNarrow(float magCourse, float trueCourse);
 
 } // namespace formatter
 

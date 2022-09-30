@@ -255,6 +255,8 @@ void MapLayer::loadFromXml(atools::util::XmlStream& xmlStream)
       onlineAircraftText = xmlStream.readElementTextBool();
     else if(reader.name() == "RouteTextAndDetail")
       routeTextAndDetail = xmlStream.readElementTextBool();
+    else if(reader.name() == "RouteTextAndDetail2")
+      routeTextAndDetail2 = xmlStream.readElementTextBool();
     else if(reader.name() == "Track")
       track = xmlStream.readElementTextBool();
     else if(reader.name() == "TrackIdent")
@@ -393,6 +395,7 @@ QDebug operator<<(QDebug out, const MapLayer& record)
   out << "<OnlineAircraft>" << record.onlineAircraft << "</OnlineAircraft>" << endl;
   out << "<OnlineAircraftText>" << record.onlineAircraftText << "</OnlineAircraftText>" << endl;
   out << "<RouteTextAndDetail>" << record.routeTextAndDetail << "</RouteTextAndDetail>" << endl;
+  out << "<RouteTextAndDetail2>" << record.routeTextAndDetail2 << "</RouteTextAndDetail2>" << endl;
   out << "<Track>" << record.track << "</Track>" << endl;
   out << "<TrackIdent>" << record.trackIdent << "</TrackIdent>" << endl;
   out << "<TrackInfo>" << record.trackInfo << "</TrackInfo>" << endl;
