@@ -62,6 +62,7 @@ enum ProgressConfId
   NEXT_HEADING,
   NEXT_CROSS_TRACK_DIST,
   NEXT_REMARKS,
+  NEXT_COURSE_FROM_WP,
 
   // "Aircraft" =================================
   AIRCRAFT_HEADING = 100,

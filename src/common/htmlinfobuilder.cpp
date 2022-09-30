@@ -4052,8 +4052,10 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
         // If approaching an initial fix use corrected version
 
         // For course and distance use not corrected leg
-        const RouteLeg& routeLeg = activeLegIdx != map::INVALID_INDEX_VALUE &&
-                                   corrected ? route.value(activeLegIdx) : routeLegCorrected;
+        int routeLegIndex = activeLegIdx != map::INVALID_INDEX_VALUE && corrected ? activeLegIdx : activeLegIdxCorrected;
+        const RouteLeg& routeLeg = route.value(routeLegIndex);
+        const RouteLeg& lastRouteLeg = route.value(routeLegIndex - 1);
+
         const proc::MapProcedureLeg& procLeg = routeLegCorrected.getProcedureLeg();
 
         // Next leg - approach data ====================================================
@@ -4157,8 +4159,15 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             courseToWptTrue = aircraft.getPosition().angleDegTo(routeLeg.getPosition());
 
             html.id(pid::NEXT_COURSE_TO_WP).row2(tr("Course to waypoint:"),
-                                                 courseTextFromTrue(courseToWptTrue, routeLeg.getMagVarBySettings(), true /* bold */),
+                                                 courseTextFromTrue(courseToWptTrue, routeLeg.getMagvarBySettings(), true /* bold */),
                                                  ahtml::NO_ENTITIES);
+
+            float outboundCourseMag, outboundCourseTrue;
+            route.getOutboundCourse(routeLegIndex, outboundCourseMag, outboundCourseTrue);
+
+            if(atools::almostNotEqual(routeLeg.getCourseToMag(), outboundCourseMag, 1.5f))
+              html.id(pid::NEXT_COURSE_FROM_WP).row2(tr("Course from last waypoint %1:").arg(lastRouteLeg.getIdent()),
+                                                     courseText(outboundCourseMag, outboundCourseTrue), ahtml::NO_ENTITIES);
           }
 
         } // if(nearestLegDistance < map::INVALID_DISTANCE_VALUE)
