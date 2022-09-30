@@ -1318,10 +1318,8 @@ void MapPainterMark::paintMeasurementMarks()
     if(context->dOptMeasurement(optsd::MEASUREMENT_LABEL) && !marker.text.isEmpty())
       texts.append(marker.text);
 
-    GeoDataCoordinates from(marker.from.getLonX(), marker.from.getLatY(), 0, DEG);
-    GeoDataCoordinates to(marker.to.getLonX(), marker.to.getLatY(), 0, DEG);
-    double initTrue = ageo::normalizeCourse(from.bearing(to, DEG, INITBRG));
-    double finalTrue = ageo::normalizeCourse(from.bearing(to, DEG, FINALBRG));
+    float initTrue = marker.from.initialBearing(marker.to);
+    float finalTrue = marker.from.finalBearing(marker.to);
 
 #ifdef DEBUG_INFORMATION_MEASUREMENT
     int precision = 3;
@@ -1330,8 +1328,14 @@ void MapPainterMark::paintMeasurementMarks()
 #endif
     QString initTrueText = QString::number(initTrue, 'f', precision);
     QString finalTrueText = QString::number(finalTrue, 'f', precision);
+
     QString initMagText = QString::number(ageo::normalizeCourse(initTrue - marker.magvar), 'f', precision);
-    QString finalMagText = QString::number(ageo::normalizeCourse(finalTrue - NavApp::getMagVar(marker.to, marker.magvar)), 'f', precision);
+    QString finalMagText;
+
+    if(marker.flags.testFlag(map::DIST_MARK_MAGVAR))
+      finalMagText = QString::number(ageo::normalizeCourse(finalTrue - marker.magvar), 'f', precision);
+    else
+      finalMagText = QString::number(ageo::normalizeCourse(finalTrue - NavApp::getMagVar(marker.to, marker.magvar)), 'f', precision);
 
     QString arrowLeft = tr("► ");
 
@@ -1379,7 +1383,7 @@ void MapPainterMark::paintMeasurementMarks()
     if(context->dOptMeasurement(optsd::MEASUREMENT_RADIAL) && marker.flags.testFlag(map::DIST_MARK_RADIAL))
       texts.append(tr("R%1").arg(ageo::normalizeCourse(initTrue - marker.magvar), 3, 'f', 0, QChar('0')));
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_MEASUREMENT
     texts.append("[" + QString::number(distanceMeter, 'f', 0) + " m]");
     QPointF p1 = wToSF(marker.from);
     QPointF p2 = wToSF(marker.to);

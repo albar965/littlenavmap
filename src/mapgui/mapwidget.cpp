@@ -1714,7 +1714,10 @@ void MapWidget::addMeasurement(const atools::geo::Pos& pos, const map::MapAirpor
     dm.color = mapcolors::vorSymbolColor;
 
     if(!vor->dmeOnly)
-      dm.flags = map::DIST_MARK_RADIAL;
+      dm.flags |= map::DIST_MARK_RADIAL; // Also TACAN
+
+    if(vor->isCalibratedVor())
+      dm.flags |= map::DIST_MARK_MAGVAR; // Only VOR, VORDME and VORTAC
   }
   else if(ndb != nullptr && ndb->isValid())
   {

@@ -221,7 +221,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectQueryTypes);
 enum DistanceMarkerFlag
 {
   DIST_MARK_NONE = 0,
-  DIST_MARK_RADIAL = 1 << 0
+  DIST_MARK_RADIAL = 1 << 0, /* Draw radial */
+  DIST_MARK_MAGVAR = 1 << 1 /* Has calibrated declination */
 };
 
 Q_DECLARE_FLAGS(DistanceMarkerFlags, DistanceMarkerFlag);
