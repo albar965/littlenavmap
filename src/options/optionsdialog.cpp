@@ -168,9 +168,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   QTreeWidgetItem *route = addTopItem(tr("Flight Plan"), tr("Select display options for the flight plan line."));
   addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Distance"), tr("Show distance along flight plan leg.\n"
                                                                                           "The label moves to keep it visible while scrolling."), optsd::ROUTE_DISTANCE, true);
-  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic Course"), tr("Show magnetic great circle start course at flight plan leg.\n"
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic Course"), tr("Show great circle magnetic start course at flight plan leg.\n"
                                                                                                  "The label moves to keep it visible while scrolling."), optsd::ROUTE_MAG_COURSE);
-  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True Course"), tr("Show true great circle start course at flight plan leg.\n"
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("True Course"), tr("Show great circle true start course at flight plan leg.\n"
                                                                                              "The label moves to keep it visible while scrolling."), optsd::ROUTE_TRUE_COURSE);
 
   addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic Start and End Course"), tr("Display great circle initial and final magnetic course at the start and end of flight plan legs.\n"

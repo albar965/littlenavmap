@@ -136,7 +136,7 @@ void AircraftProgressConfig::progressConfiguration()
   treeDialog.addItem2(nextItem, pid::NEXT_FUEL,             tr("Fuel"), tr("Estimated fuel at the next waypoint."));
   treeDialog.addItem2(nextItem, pid::NEXT_COURSE_TO_WP,     tr("Course to waypoint"), tr("Direct course to the next waypoint."));
   treeDialog.addItem2(nextItem, pid::NEXT_COURSE_FROM_WP,   tr("Course from last waypoint"), tr("Outbound course from last waypoint also considering\n"
-                                                                                                "VOR calibrated declination. Only shown if different from course to."));
+                                                                                                "VOR calibrated declination. Only shown if different from \"Course to waypoint\"."));
   treeDialog.addItem2(nextItem, pid::NEXT_LEG_COURSE,       tr("Leg Course"), tr("Course of the current active flight plan leg."));
   treeDialog.addItem2(nextItem, pid::NEXT_HEADING,          tr("Heading"), tr("Heading to fly to the next waypoint considering wind."));
   treeDialog.addItem2(nextItem, pid::NEXT_CROSS_TRACK_DIST, tr("Cross Track Distance"), tr("Distance to flight plan leg.\n"

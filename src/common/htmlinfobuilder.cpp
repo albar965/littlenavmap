@@ -462,7 +462,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
                 Unit::distShortFeet(rec->valueInt("longest_runway_width")));
 
       float hdg = rec->valueFloat("longest_runway_heading");
-      html.row2(tr("Heading:"), courseTextFromTrue(hdg, airport.magvar) % tr(", ") %
+      html.row2(tr("Heading:", "runway heading"), courseTextFromTrue(hdg, airport.magvar) % tr(", ") %
                 courseTextFromTrue(opposedCourseDeg(hdg), airport.magvar), ahtml::NO_ENTITIES);
       html.row2If(tr("Surface:"), map::surfaceName(rec->valueStr("longest_runway_surface")));
     }
@@ -995,7 +995,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
           html.row2If(tr("Surface:"), map::surfaceName(heliRec.valueStr("surface")) %
                       (heliRec.valueBool("is_transparent") ? tr(" (Transparent)") : QString()));
           html.row2If(tr("Type:"), atools::capString(heliRec.valueStr("type")));
-          html.row2(tr("Heading:"), courseTextFromTrue(heliRec.valueFloat("heading"), airport.magvar),
+          html.row2(tr("Heading:", "runway heading"), courseTextFromTrue(heliRec.valueFloat("heading"), airport.magvar),
                     ahtml::NO_ENTITIES);
           html.row2(tr("Elevation:"), Unit::altFeet(heliRec.valueFloat("altitude")));
 
@@ -1058,7 +1058,7 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
 
   if(closed)
     html.row2(tr("Closed"), QString());
-  html.row2(tr("Heading:"), courseTextFromTrue(hdgPrimTrue, airport.magvar, true), ahtml::NO_ENTITIES);
+  html.row2(tr("Heading:", "runway heading"), courseTextFromTrue(hdgPrimTrue, airport.magvar, true), ahtml::NO_ENTITIES);
 
   float threshold = rec->valueFloat("offset_threshold");
   if(threshold > 1.f)
@@ -1219,7 +1219,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
   // Localizer information ==================================================
   float hdgTrue = ils.heading;
 
-  html.row2(prefix % (ils.isAnyGlsRnp() ? tr("Heading:") : tr("Localizer Heading:")),
+  html.row2(prefix % (ils.isAnyGlsRnp() ? tr("Heading:", "localizer heading") : tr("Localizer Heading:")),
             courseTextFromTrue(hdgTrue, ils.magvar), ahtml::NO_ENTITIES);
 
   // Check for offset localizer ==================================================
@@ -4187,8 +4187,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
               float headingTrue = ageo::windCorrectedHeading(userAircraft->getWindSpeedKts(), userAircraft->getWindDirectionDegT(),
                                                              courseToWptTrue, userAircraft->getTrueAirspeedKts());
               if(headingTrue < INVALID_COURSE_VALUE)
-                html.id(pid::NEXT_HEADING).row2(tr("Heading:"), courseTextFromTrue(headingTrue, userAircraft->getMagVarDeg()),
-                                                ahtml::NO_ENTITIES);
+                html.id(pid::NEXT_HEADING).row2(tr("Heading:", "heading to next"),
+                                                courseTextFromTrue(headingTrue, userAircraft->getMagVarDeg()), ahtml::NO_ENTITIES);
             }
           }
 
@@ -4277,7 +4277,7 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     hdg.append(courseText(heading, aircraft.getHeadingDegTrue(), true));
 
   if(!hdg.isEmpty())
-    html.id(pid::AIRCRAFT_HEADING).row2(tr("Heading:"), hdg.join(tr(", ")), ahtml::NO_ENTITIES);
+    html.id(pid::AIRCRAFT_HEADING).row2(tr("Heading:", "aircraft heading"), hdg.join(tr(", ")), ahtml::NO_ENTITIES);
 
   if(userAircraft != nullptr && info)
   {
