@@ -223,7 +223,10 @@ void checkAndMigrateSettings()
       }
 
       if(optionsVersion <= Version("2.8.0.beta"))
+      {
         removeAndLog(settings, "SearchPaneLogdata/WidgetView_tableViewLogdata");
+        removeAndLog(settings, "Route/View_tableViewRoute");
+      }
 
       qInfo() << Q_FUNC_INFO << "Clearing all essential messages since version differs";
       messages::resetEssentialMessages();
