@@ -342,13 +342,16 @@ void DatabaseLoader::progressCallback()
       qDebug() << Q_FUNC_INFO << "running new file or scenery area";
 #endif
 
-      currentBglFilePath = navDatabaseProgressShared->getBglFilePath();
+      currentBglFilePath = navDatabaseProgressShared->getFilePath();
+
+      QString path = QDir::toNativeSeparators(QDir::cleanPath(navDatabaseProgressShared->getSceneryPath()));
+      QString file = navDatabaseProgressShared->getFileName();
 
       // Switched to a new scenery area
       progressDialog->setLabelText(
         databaseLoadingText.arg(atools::elideTextShortMiddle(navDatabaseProgressShared->getSceneryTitle(), MAX_TEXT_LENGTH)).
-        arg(atools::elideTextShortMiddle(QDir::toNativeSeparators(navDatabaseProgressShared->getSceneryPath()), MAX_TEXT_LENGTH)).
-        arg(atools::elideTextShortMiddle(QDir::toNativeSeparators(navDatabaseProgressShared->getBglFileName()), MAX_TEXT_LENGTH)).
+        arg(atools::elideTextShortMiddle(path, MAX_TEXT_LENGTH)).
+        arg(atools::elideTextShortMiddle(file, MAX_TEXT_LENGTH)).
         arg(formatter::formatElapsed(timer)).
         arg(navDatabaseProgressShared->getNumErrors()).
         arg(navDatabaseProgressShared->getNumFiles()).
