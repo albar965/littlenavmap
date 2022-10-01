@@ -3356,7 +3356,8 @@ void MainWindow::mainWindowShownDelayed()
   {
     databasesErased = false;
     // Databases were removed - show dialog
-    databaseManager->loadScenery();
+    if(databaseManager->hasInstalledSimulators())
+      databaseManager->loadScenery();
   }
 
   if(!NavApp::getElevationProvider()->isGlobeOfflineProvider())

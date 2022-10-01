@@ -118,6 +118,7 @@ Formats above have to be given exactly as shown in the examples.</string>
  </widget>
  <tabstops>
   <tabstop>lineEditMapCoordinateLatLon</tabstop>
+  <tabstop>doubleSpinBoxMapCoordinateZoom</tabstop>
  </tabstops>
  <resources/>
  <connections/>
