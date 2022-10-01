@@ -365,9 +365,6 @@ private:
   /* Called by route command */
   void changeRouteRedo(const atools::fs::pln::Flightplan& newFlightplan);
 
-  /* Called by route command */
-  void undoMerge();
-
   /* Save undo state before and after change */
   RouteCommand *preChange(const QString& text = QString(), rctype::RouteCmdType rcType = rctype::EDIT);
   void postChange(RouteCommand *undoCommand);

@@ -3167,15 +3167,6 @@ void RouteController::changeRouteRedo(const atools::fs::pln::Flightplan& newFlig
   changeRouteUndoRedo(newFlightplan);
 }
 
-/* Called by undo command when commands are merged */
-void RouteController::undoMerge()
-{
-  undoIndex--;
-#ifdef DEBUG_INFORMATION
-  qDebug() << "undoMerge undoIndex" << undoIndex << "undoIndexClean" << undoIndexClean;
-#endif
-}
-
 /* Update window after undo or redo action */
 void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan)
 {

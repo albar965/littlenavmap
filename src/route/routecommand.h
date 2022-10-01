@@ -57,9 +57,6 @@ public:
   void setFlightplanAfter(const atools::fs::pln::Flightplan& flightplanAfter);
 
 private:
-  virtual int id() const override;
-  virtual bool mergeWith(const QUndoCommand *other) override;
-
   /* Avoid the first redo action when inserting the command. This not usable for complex interactions. */
   bool firstRedoExecuted = false;
   RouteController *controller;
