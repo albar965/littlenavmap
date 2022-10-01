@@ -3170,6 +3170,8 @@ void RouteController::changeRouteRedo(const atools::fs::pln::Flightplan& newFlig
 /* Update window after undo or redo action */
 void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan)
 {
+  int currentRow = view->currentIndex().isValid() ? view->currentIndex().row() : -1;
+
   route.clearAll();
   route.setFlightplan(newFlightplan);
 
@@ -3184,6 +3186,12 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
 
   updateTableModel();
   updateMoveAndDeleteActions();
+
+  if(currentRow == -1 || currentRow > view->model()->rowCount() - 1)
+    currentRow = view->model()->rowCount() - 1;
+
+  view->selectionModel()->setCurrentIndex(model->index(currentRow, 0), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
+
   emit routeChanged(true);
 }
 
@@ -3380,11 +3388,10 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
     proc::MapProcedureTypes procs = affectedProcedures(rows);
 
     // Do not merge for procedure deletes
-    RouteCommand *undoCommand = preChange(
-      procs & proc::PROCEDURE_ALL ? tr("Delete Procedure") : tr("Delete Waypoints"),
-      procs & proc::PROCEDURE_ALL ? rctype::EDIT : rctype::DELETE);
+    RouteCommand *undoCommand = preChange(procs & proc::PROCEDURE_ALL ? tr("Delete Procedure") : tr("Delete Waypoints"),
+                                          procs & proc::PROCEDURE_ALL ? rctype::EDIT : rctype::DELETE);
 
-    int firstRow = rows.constLast();
+    int currentRow = rows.constLast();
 
     if(view->selectionModel() != nullptr)
       view->selectionModel()->clear();
@@ -3433,7 +3440,14 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
     updateTableModel();
 
     // Update current position at the beginning of the former selection but do not update selection
-    view->selectionModel()->setCurrentIndex(model->index(firstRow, 0), QItemSelectionModel::NoUpdate);
+    if(currentRow == -1 || currentRow > view->model()->rowCount() - 1)
+      currentRow = view->model()->rowCount() - 1;
+
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << "currentRow" << currentRow;
+#endif
+
+    view->selectionModel()->setCurrentIndex(model->index(currentRow, 0), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
 
     updateMoveAndDeleteActions();
 
