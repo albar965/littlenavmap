@@ -537,7 +537,7 @@ private:
   bool contextMenuOpen = false;
 
   QMainWindow *mainWindow;
-  QTableView *view;
+  QTableView *tableViewRoute;
   AirportQuery *airportQuery;
   QStandardItemModel *model;
   QUndoStack *undoStack = nullptr;

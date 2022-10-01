@@ -144,7 +144,7 @@ using namespace atools::geo;
 namespace pln = atools::fs::pln;
 
 RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableView)
-  : QObject(parentWindow), mainWindow(parentWindow), view(tableView)
+  : QObject(parentWindow), mainWindow(parentWindow), tableViewRoute(tableView)
 {
   airportQuery = NavApp::getAirportQuerySim();
 
@@ -237,7 +237,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   units->init({ui->spinBoxRouteAlt, ui->spinBoxAircraftPerformanceWindSpeed});
 
   // Set default table cell and font size to avoid Qt overly large cell sizes
-  zoomHandler = new atools::gui::ItemViewZoomHandler(view);
+  zoomHandler = new atools::gui::ItemViewZoomHandler(tableViewRoute);
 #if QT_VERSION >= QT_VERSION_CHECK(5, 11, 0)
   connect(NavApp::navAppInstance(), &atools::gui::Application::fontChanged, this, &RouteController::fontChanged);
 #endif
@@ -250,7 +250,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   // Use saved font size for table view
   zoomHandler->zoomPercent(OptionData::instance().getGuiRouteTableTextSize());
 
-  view->setContextMenuPolicy(Qt::CustomContextMenu);
+  tableViewRoute->setContextMenuPolicy(Qt::CustomContextMenu);
 
   // Create flight plan calculation caches ===================================
   routeNetworkRadio = new atools::routing::RouteNetwork(atools::routing::SOURCE_RADIO);
@@ -302,8 +302,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   connect(ui->comboBoxRouteType, QOverload<int>::of(&QComboBox::activated), this, &RouteController::routeTypeChanged);
 
   // View ================================================================================
-  connect(view, &QTableView::doubleClicked, this, &RouteController::doubleClick);
-  connect(view, &QTableView::customContextMenuRequested, this, &RouteController::tableContextMenu);
+  connect(tableViewRoute, &QTableView::doubleClicked, this, &RouteController::doubleClick);
+  connect(tableViewRoute, &QTableView::customContextMenuRequested, this, &RouteController::tableContextMenu);
   connect(this, &RouteController::routeChanged, this, &RouteController::updateRemarkWidget);
   connect(this, &RouteController::routeChanged, this, &RouteController::updateRemarkHeader);
   connect(ui->plainTextEditRouteRemarks, &QPlainTextEdit::textChanged, this, &RouteController::remarksTextChanged);
@@ -319,21 +319,21 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   tableCleanupTimer.setSingleShot(true);
 
   // Restart timer when scrolling or holding the slider
-  connect(view->verticalScrollBar(), &QScrollBar::valueChanged, this, &RouteController::viewScrolled);
-  connect(view->horizontalScrollBar(), &QScrollBar::valueChanged, this, &RouteController::viewScrolled);
-  connect(view->verticalScrollBar(), &QScrollBar::sliderPressed, this, &RouteController::sliderPressedOrReleased);
-  connect(view->horizontalScrollBar(), &QScrollBar::sliderPressed, this, &RouteController::sliderPressedOrReleased);
-  connect(view->verticalScrollBar(), &QScrollBar::sliderReleased, this, &RouteController::sliderPressedOrReleased);
-  connect(view->horizontalScrollBar(), &QScrollBar::sliderReleased, this, &RouteController::sliderPressedOrReleased);
+  connect(tableViewRoute->verticalScrollBar(), &QScrollBar::valueChanged, this, &RouteController::viewScrolled);
+  connect(tableViewRoute->horizontalScrollBar(), &QScrollBar::valueChanged, this, &RouteController::viewScrolled);
+  connect(tableViewRoute->verticalScrollBar(), &QScrollBar::sliderPressed, this, &RouteController::sliderPressedOrReleased);
+  connect(tableViewRoute->horizontalScrollBar(), &QScrollBar::sliderPressed, this, &RouteController::sliderPressedOrReleased);
+  connect(tableViewRoute->verticalScrollBar(), &QScrollBar::sliderReleased, this, &RouteController::sliderPressedOrReleased);
+  connect(tableViewRoute->horizontalScrollBar(), &QScrollBar::sliderReleased, this, &RouteController::sliderPressedOrReleased);
 
   // set up table view
-  view->horizontalHeader()->setSectionsMovable(true);
-  view->verticalHeader()->setSectionsMovable(false);
-  view->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
+  tableViewRoute->horizontalHeader()->setSectionsMovable(true);
+  tableViewRoute->verticalHeader()->setSectionsMovable(false);
+  tableViewRoute->verticalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 
   model = new QStandardItemModel();
-  QItemSelectionModel *m = view->selectionModel();
-  view->setModel(model);
+  QItemSelectionModel *m = tableViewRoute->selectionModel();
+  tableViewRoute->setModel(model);
   delete m;
 
   // Avoid stealing of keys from other default menus
@@ -357,18 +357,18 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
   NavApp::addDialogToDockHandler(routeCalcDialog);
 
   // Add action/shortcuts to table view
-  view->addActions({ui->actionRouteLegDown, ui->actionRouteLegUp, ui->actionRouteDeleteLeg,
-                    ui->actionRouteTableCopy, ui->actionRouteShowInformation,
-                    ui->actionRouteShowApproaches, ui->actionRouteShowApproachCustom, ui->actionRouteShowDepartureCustom,
-                    ui->actionRouteShowOnMap, ui->actionRouteTableSelectNothing, ui->actionRouteTableSelectAll,
-                    ui->actionRouteActivateLeg, ui->actionRouteResetView, ui->actionRouteSetMark,
-                    ui->actionRouteEditUserWaypoint});
+  tableViewRoute->addActions({ui->actionRouteLegDown, ui->actionRouteLegUp, ui->actionRouteDeleteLeg,
+                              ui->actionRouteTableCopy, ui->actionRouteShowInformation,
+                              ui->actionRouteShowApproaches, ui->actionRouteShowApproachCustom, ui->actionRouteShowDepartureCustom,
+                              ui->actionRouteShowOnMap, ui->actionRouteTableSelectNothing, ui->actionRouteTableSelectAll,
+                              ui->actionRouteActivateLeg, ui->actionRouteResetView, ui->actionRouteSetMark,
+                              ui->actionRouteEditUserWaypoint});
 
   void (RouteController::*selChangedPtr)(const QItemSelection& selected, const QItemSelection& deselected) =
     &RouteController::tableSelectionChanged;
 
-  if(view->selectionModel() != nullptr)
-    connect(view->selectionModel(), &QItemSelectionModel::selectionChanged, this, selChangedPtr);
+  if(tableViewRoute->selectionModel() != nullptr)
+    connect(tableViewRoute->selectionModel(), &QItemSelectionModel::selectionChanged, this, selChangedPtr);
 
   // Connect actions - actions without shortcut key are used in the context menu method directly
   connect(ui->actionRouteTableCopy, &QAction::triggered, this, &RouteController::tableCopyClipboard);
@@ -502,7 +502,7 @@ void RouteController::tableCopyClipboard()
                   };
 
   QString csv;
-  int exported = CsvExporter::selectionAsCsv(view, true /* rows */, true /* header */, csv,
+  int exported = CsvExporter::selectionAsCsv(tableViewRoute, true /* rows */, true /* header */, csv,
                                              {}, nullptr, dataFunc);
 
   if(!csv.isEmpty())
@@ -552,7 +552,7 @@ void RouteController::flightplanTableAsTextTable(QTextCursor& cursor, const QBit
 
   // Fill header =====================================================================
   // Table header from GUI widget
-  QHeaderView *header = view->horizontalHeader();
+  QHeaderView *header = tableViewRoute->horizontalHeader();
 
   int cellIdx = 0;
   for(int viewCol = 0; viewCol < model->columnCount(); viewCol++)
@@ -697,7 +697,7 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
   using atools::util::HtmlBuilder;
 
   atools::util::HtmlBuilder html(mapcolors::webTableBackgroundColor, mapcolors::webTableAltBackgroundColor);
-  int minColWidth = view->horizontalHeader()->minimumSectionSize() + 1;
+  int minColWidth = tableViewRoute->horizontalHeader()->minimumSectionSize() + 1;
 
   routeLabel->buildHtmlText(html);
 
@@ -714,7 +714,7 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
   html.table();
 
   // Table header
-  QHeaderView *header = view->horizontalHeader();
+  QHeaderView *header = tableViewRoute->horizontalHeader();
   html.tr(Qt::lightGray);
   html.th(QString()); // Icon
   for(int viewCol = 0; viewCol < model->columnCount(); viewCol++)
@@ -725,7 +725,7 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
     if(logicalCol == -1)
       continue;
 
-    if(!view->isColumnHidden(logicalCol) && view->columnWidth(logicalCol) > minColWidth)
+    if(!tableViewRoute->isColumnHidden(logicalCol) && tableViewRoute->columnWidth(logicalCol) > minColWidth)
       html.th(model->headerData(logicalCol, Qt::Horizontal).
               toString().replace("-\n", "-<br/>").replace("\n", "<br/>"), atools::util::html::NO_ENTITIES);
   }
@@ -756,7 +756,7 @@ QString RouteController::getFlightplanTableAsHtml(float iconSizePixel, bool prin
       if(logicalCol == -1)
         continue;
 
-      if(!view->isColumnHidden(logicalCol) && view->columnWidth(logicalCol) > minColWidth)
+      if(!tableViewRoute->isColumnHidden(logicalCol) && tableViewRoute->columnWidth(logicalCol) > minColWidth)
       {
         QStandardItem *item = model->item(row, logicalCol);
 
@@ -978,7 +978,8 @@ void RouteController::saveState()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  atools::gui::WidgetState(lnm::ROUTE_VIEW).save({view, ui->comboBoxRouteType, ui->spinBoxRouteAlt, ui->actionRouteFollowSelection});
+  atools::gui::WidgetState(lnm::ROUTE_VIEW).save({tableViewRoute, ui->comboBoxRouteType, ui->spinBoxRouteAlt,
+                                                  ui->actionRouteFollowSelection});
 
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   settings.setValue(lnm::ROUTE_FILENAME, routeFilename);
@@ -996,7 +997,7 @@ void RouteController::restoreState()
   updateTableHeaders();
 
   atools::gui::WidgetState state(lnm::ROUTE_VIEW, true, true);
-  state.restore({view, ui->comboBoxRouteType, ui->spinBoxRouteAlt, ui->actionRouteFollowSelection});
+  state.restore({tableViewRoute, ui->comboBoxRouteType, ui->spinBoxRouteAlt, ui->actionRouteFollowSelection});
 
   routeLabel->restoreState();
 
@@ -1063,9 +1064,9 @@ void RouteController::clearFlightplan()
 
 void RouteController::getSelectedRouteLegs(QList<int>& selLegIndexes) const
 {
-  if(NavApp::getMainUi()->dockWidgetRoute->isVisible() && view->selectionModel() != nullptr)
+  if(NavApp::getMainUi()->dockWidgetRoute->isVisible() && tableViewRoute->selectionModel() != nullptr)
   {
-    for(const QItemSelectionRange& rng : view->selectionModel()->selection())
+    for(const QItemSelectionRange& rng : tableViewRoute->selectionModel()->selection())
     {
       for(int row = rng.top(); row <= rng.bottom(); ++row)
         selLegIndexes.append(row);
@@ -2296,7 +2297,7 @@ void RouteController::updateMoveAndDeleteActions()
     return;
 
   // One or more legs - check for details like procedures or procedure boundary
-  QItemSelectionModel *sm = view->selectionModel();
+  QItemSelectionModel *sm = tableViewRoute->selectionModel();
   if(sm != nullptr && sm->hasSelection())
   {
     bool containsProc = false, containsAlternate = false, moveDownTouchesProc = false, moveUpTouchesProc = false,
@@ -2350,7 +2351,7 @@ void RouteController::showInformationMenu()
     return;
 
   qDebug() << Q_FUNC_INFO;
-  QModelIndex index = view->currentIndex();
+  QModelIndex index = tableViewRoute->currentIndex();
   if(index.isValid())
     showInformationInternal(route.value(index.row()));
 }
@@ -2377,7 +2378,7 @@ void RouteController::showProceduresMenu()
   if(!hasTableSelection())
     return;
 
-  QModelIndex index = view->currentIndex();
+  QModelIndex index = tableViewRoute->currentIndex();
   if(index.isValid())
   {
     const RouteLeg& routeLeg = route.value(index.row());
@@ -2397,7 +2398,7 @@ void RouteController::showOnMapMenu()
   if(!hasTableSelection())
     return;
 
-  QModelIndex index = view->currentIndex();
+  QModelIndex index = tableViewRoute->currentIndex();
   if(index.isValid())
   {
     const RouteLeg& routeLeg = route.value(index.row());
@@ -2460,7 +2461,7 @@ void RouteController::routeTableOptions()
 
   // Add column names and description texts to tree ====================
   QTreeWidgetItem *tableItem = treeDialog.addTopItem1(tr("Flight plan table columns"));
-  QHeaderView *header = view->horizontalHeader();
+  QHeaderView *header = tableViewRoute->horizontalHeader();
   for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
   {
     QString textCol1 = Unit::replacePlaceholders(routeColumns.at(col)).replace("\n", " ");
@@ -2513,7 +2514,7 @@ void RouteController::helpClicked()
 
 void RouteController::selectAllTriggered()
 {
-  view->selectAll();
+  tableViewRoute->selectAll();
 }
 
 bool RouteController::canCalcSelection()
@@ -2542,8 +2543,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
   contextMenuOpen = true;
   QPoint menuPos = QCursor::pos();
   // Use widget center if position is not inside widget
-  if(!ui->tableViewRoute->rect().contains(ui->tableViewRoute->mapFromGlobal(QCursor::pos())))
-    menuPos = ui->tableViewRoute->mapToGlobal(ui->tableViewRoute->rect().center());
+  if(!tableViewRoute->rect().contains(tableViewRoute->mapFromGlobal(QCursor::pos())))
+    menuPos = tableViewRoute->mapToGlobal(tableViewRoute->rect().center());
 
   // Move menu position off the cursor to avoid accidental selection on touchpads
   menuPos += QPoint(3, 3);
@@ -2562,17 +2563,17 @@ void RouteController::tableContextMenu(const QPoint& pos)
   // Save text which will be changed below - Re-enable actions on exit to allow keystrokes
   atools::gui::ActionTool actionTool(actions);
 
-  QModelIndex index = view->indexAt(pos);
+  QModelIndex index = tableViewRoute->indexAt(pos);
 
   if(!index.isValid() && model->rowCount() > 0)
   {
     // Fall back to selction and get first field there
-    QList<int> rows = atools::gui::selectedRows(view->selectionModel(), false /* reverse */);
+    QList<int> rows = atools::gui::selectedRows(tableViewRoute->selectionModel(), false /* reverse */);
     if(!rows.isEmpty())
       index = model->index(rows.constFirst(), 0);
     else
       // Get current position
-      index = view->currentIndex();
+      index = tableViewRoute->currentIndex();
 
     if(!index.isValid() && model->rowCount() > 0)
       // Simply get first entry in case of no selection and no current position
@@ -2754,7 +2755,8 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   ui->actionRouteCalcSelected->setEnabled(canCalcSelection());
 
-  ui->actionRouteTableSelectNothing->setEnabled(view->selectionModel() == nullptr ? false : view->selectionModel()->hasSelection());
+  ui->actionRouteTableSelectNothing->setEnabled(
+    tableViewRoute->selectionModel() == nullptr ? false : tableViewRoute->selectionModel()->hasSelection());
   ui->actionRouteTableSelectAll->setEnabled(!route.isEmpty());
 
   // Edit position ======================================
@@ -2886,14 +2888,14 @@ void RouteController::tableContextMenu(const QPoint& pos)
     if(action == ui->actionRouteResetView)
     {
       for(int col = rcol::FIRST_COLUMN; col <= rcol::LAST_COLUMN; col++)
-        view->showColumn(col);
+        tableViewRoute->showColumn(col);
 
       // Reorder columns to match model order
-      QHeaderView *header = view->horizontalHeader();
+      QHeaderView *header = tableViewRoute->horizontalHeader();
       for(int i = 0; i < header->count(); i++)
         header->moveSection(header->visualIndex(i), i);
 
-      view->resizeColumnsToContents();
+      tableViewRoute->resizeColumnsToContents();
       NavApp::setStatusMessage(tr("Table view reset to defaults."));
     }
     else if(action == ui->actionRouteSetMark && routeLeg != nullptr)
@@ -2987,7 +2989,7 @@ void RouteController::updateActiveLeg()
 void RouteController::editUserWaypointTriggered()
 {
   if(hasTableSelection())
-    editUserWaypointName(view->currentIndex().row());
+    editUserWaypointName(tableViewRoute->currentIndex().row());
 }
 
 void RouteController::editUserWaypointName(int index)
@@ -3039,7 +3041,7 @@ void RouteController::dockVisibilityChanged(bool visible)
 
 bool RouteController::canCleanupTable()
 {
-  return !contextMenuOpen && !view->horizontalScrollBar()->isSliderDown() && !view->verticalScrollBar()->isSliderDown();
+  return !contextMenuOpen && !tableViewRoute->horizontalScrollBar()->isSliderDown() && !tableViewRoute->verticalScrollBar()->isSliderDown();
 }
 
 void RouteController::cleanupTableTimeout()
@@ -3059,8 +3061,9 @@ void RouteController::cleanupTableTimeout()
       if(hasTableSelection() && flags2.testFlag(opts2::ROUTE_CLEAR_SELECTION))
       {
         // Clear selection and move cursor to current row and first column
-        QModelIndex idx = view->model()->index(view->currentIndex().row(), view->horizontalHeader()->logicalIndex(0));
-        view->selectionModel()->setCurrentIndex(idx, QItemSelectionModel::Clear);
+        QModelIndex idx = tableViewRoute->model()->index(tableViewRoute->currentIndex().row(),
+                                                         tableViewRoute->horizontalHeader()->logicalIndex(0));
+        tableViewRoute->selectionModel()->setCurrentIndex(idx, QItemSelectionModel::Clear);
       }
 
       if(flags2.testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG))
@@ -3072,12 +3075,12 @@ void RouteController::cleanupTableTimeout()
 
 void RouteController::clearTableSelection()
 {
-  view->clearSelection();
+  tableViewRoute->clearSelection();
 }
 
 bool RouteController::hasTableSelection()
 {
-  return view->selectionModel() == nullptr ? false : view->selectionModel()->hasSelection();
+  return tableViewRoute->selectionModel() == nullptr ? false : tableViewRoute->selectionModel()->hasSelection();
 }
 
 void RouteController::updateCleanupTimer()
@@ -3116,7 +3119,7 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
   selectedRows = getSelectedRows(false);
 
   updateMoveAndDeleteActions();
-  QItemSelectionModel *sm = view->selectionModel();
+  QItemSelectionModel *sm = tableViewRoute->selectionModel();
 
   if(sm == nullptr)
     return;
@@ -3170,7 +3173,7 @@ void RouteController::changeRouteRedo(const atools::fs::pln::Flightplan& newFlig
 /* Update window after undo or redo action */
 void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& newFlightplan)
 {
-  int currentRow = view->currentIndex().isValid() ? view->currentIndex().row() : -1;
+  int currentRow = tableViewRoute->currentIndex().isValid() ? tableViewRoute->currentIndex().row() : -1;
 
   route.clearAll();
   route.setFlightplan(newFlightplan);
@@ -3187,10 +3190,11 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
   updateTableModel();
   updateMoveAndDeleteActions();
 
-  if(currentRow == -1 || currentRow > view->model()->rowCount() - 1)
-    currentRow = view->model()->rowCount() - 1;
+  if(currentRow == -1 || currentRow > tableViewRoute->model()->rowCount() - 1)
+    currentRow = tableViewRoute->model()->rowCount() - 1;
 
-  view->selectionModel()->setCurrentIndex(model->index(currentRow, 0), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
+  tableViewRoute->selectionModel()->setCurrentIndex(model->index(currentRow,
+                                                                 0), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
 
   emit routeChanged(true);
 }
@@ -3214,7 +3218,7 @@ void RouteController::optionsChanged()
   updateTableModel();
 
   updateUnits();
-  view->update();
+  tableViewRoute->update();
 
   updateCleanupTimer();
 }
@@ -3302,10 +3306,10 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
   {
     RouteCommand *undoCommand = preChange(tr("Move Waypoints"), rctype::MOVE);
 
-    QModelIndex curIdx = view->currentIndex();
+    QModelIndex curIdx = tableViewRoute->currentIndex();
     // Remove selection
-    if(view->selectionModel() != nullptr)
-      view->selectionModel()->clear();
+    if(tableViewRoute->selectionModel() != nullptr)
+      tableViewRoute->selectionModel()->clear();
     for(int row : rows)
     {
       // Change flight plan
@@ -3356,7 +3360,7 @@ void RouteController::moveSelectedLegsInternal(MoveDirection direction)
     updateTableModel();
 
     // Restore current position at new moved position
-    view->setCurrentIndex(model->index(curIdx.row() + direction, curIdx.column()));
+    tableViewRoute->setCurrentIndex(model->index(curIdx.row() + direction, curIdx.column()));
     // Restore previous selection at new moved position
     selectList(rows, direction);
 
@@ -3393,8 +3397,8 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
 
     int currentRow = rows.constLast();
 
-    if(view->selectionModel() != nullptr)
-      view->selectionModel()->clear();
+    if(tableViewRoute->selectionModel() != nullptr)
+      tableViewRoute->selectionModel()->clear();
 
     for(int row : rows)
     {
@@ -3440,14 +3444,15 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
     updateTableModel();
 
     // Update current position at the beginning of the former selection but do not update selection
-    if(currentRow == -1 || currentRow > view->model()->rowCount() - 1)
-      currentRow = view->model()->rowCount() - 1;
+    if(currentRow == -1 || currentRow > tableViewRoute->model()->rowCount() - 1)
+      currentRow = tableViewRoute->model()->rowCount() - 1;
 
 #ifdef DEBUG_INFORMATION
     qDebug() << Q_FUNC_INFO << "currentRow" << currentRow;
 #endif
 
-    view->selectionModel()->setCurrentIndex(model->index(currentRow, 0), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
+    tableViewRoute->selectionModel()->setCurrentIndex(model->index(currentRow,
+                                                                   0), QItemSelectionModel::SelectCurrent | QItemSelectionModel::Rows);
 
     updateMoveAndDeleteActions();
 
@@ -3460,7 +3465,7 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
 /* Get selected row numbers from the table model */
 QList<int> RouteController::getSelectedRows(bool reverse) const
 {
-  return atools::gui::selectedRows(view->selectionModel(), reverse);
+  return atools::gui::selectedRows(tableViewRoute->selectionModel(), reverse);
 }
 
 /* Select all columns of the given rows adding offset to each row index */
@@ -3477,7 +3482,7 @@ void RouteController::selectList(const QList<int>& rows, int offset)
     newSel.append(QItemSelectionRange(model->index(row + offset, rcol::FIRST_COLUMN),
                                       model->index(row + offset, rcol::LAST_COLUMN)));
 
-  view->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
+  tableViewRoute->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
 }
 
 void RouteController::selectRange(int from, int to)
@@ -3488,7 +3493,7 @@ void RouteController::selectRange(int from, int to)
 
   QItemSelection newSel;
 
-  int maxRows = view->model()->rowCount();
+  int maxRows = tableViewRoute->model()->rowCount();
 
   if(from < 0 || to < 0 || from > maxRows - 1 || to > maxRows - 1)
     qWarning() << Q_FUNC_INFO << "not in range from" << from << "to" << to << ", min 0 max" << maxRows;
@@ -3499,7 +3504,7 @@ void RouteController::selectRange(int from, int to)
   newSel.append(QItemSelectionRange(model->index(from, rcol::FIRST_COLUMN),
                                     model->index(to, rcol::LAST_COLUMN)));
 
-  view->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
+  tableViewRoute->selectionModel()->select(newSel, QItemSelectionModel::ClearAndSelect);
 }
 
 void RouteController::routeSetHelipad(const map::MapHelipad& helipad)
@@ -3852,7 +3857,7 @@ void RouteController::showCustomApproachRouteMenu()
   if(!hasTableSelection())
     return;
 
-  QModelIndex index = view->currentIndex();
+  QModelIndex index = tableViewRoute->currentIndex();
   if(index.isValid() && route.getDepartureAirportLegIndex() != index.row())
     showCustomApproach(route.value(index.row()).getAirport(), QString());
 }
@@ -3863,7 +3868,7 @@ void RouteController::showCustomDepartureRouteMenu()
   if(!hasTableSelection())
     return;
 
-  QModelIndex index = view->currentIndex();
+  QModelIndex index = tableViewRoute->currentIndex();
   if(index.isValid() && route.getDestinationAirportLegIndex() != index.row())
     showCustomDeparture(route.value(index.row()).getAirport(), QString());
 }
@@ -4329,9 +4334,8 @@ QIcon RouteController::iconForLeg(const RouteLeg& leg, int size) const
 void RouteController::updatePlaceholderWidget()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
-
   bool showPlaceholder = route.isEmpty();
-  ui->tableViewRoute->setVisible(!showPlaceholder);
+  tableViewRoute->setVisible(!showPlaceholder);
   ui->textBrowserViewRoute->setVisible(showPlaceholder);
 }
 
@@ -4364,7 +4368,7 @@ void RouteController::updateTableModel()
     else
       identStr = leg.getDisplayIdent();
 
-    QStandardItem *ident = new QStandardItem(iconForLeg(leg, view->verticalHeader()->defaultSectionSize() - 2), identStr);
+    QStandardItem *ident = new QStandardItem(iconForLeg(leg, tableViewRoute->verticalHeader()->defaultSectionSize() - 2), identStr);
     QFont f = ident->font();
     f.setBold(true);
     ident->setFont(f);
@@ -4583,7 +4587,7 @@ void RouteController::updateTableModel()
   updatePlaceholderWidget();
 
   // Value from ui file is ignored
-  view->horizontalHeader()->setMinimumSectionSize(3);
+  tableViewRoute->horizontalHeader()->setMinimumSectionSize(3);
 }
 
 void RouteController::updateModelTimeFuelWindAlt()
@@ -4613,15 +4617,15 @@ void RouteController::updateModelTimeFuelWindAlt()
   }
 
   // Remember colum widths
-  QHeaderView *header = view->horizontalHeader();
-  int widthLegTime = header->isSectionHidden(rcol::LEG_TIME) ? -1 : view->columnWidth(rcol::LEG_TIME);
-  int widthEta = header->isSectionHidden(rcol::ETA) ? -1 : view->columnWidth(rcol::ETA);
-  int widthFuelWeight = header->isSectionHidden(rcol::FUEL_WEIGHT) ? -1 : view->columnWidth(rcol::FUEL_WEIGHT);
-  int widthFuelVol = header->isSectionHidden(rcol::FUEL_VOLUME) ? -1 : view->columnWidth(rcol::FUEL_VOLUME);
-  int widthWind = header->isSectionHidden(rcol::WIND) ? -1 : view->columnWidth(rcol::WIND);
-  int widthWindHt = header->isSectionHidden(rcol::WIND_HEAD_TAIL) ? -1 : view->columnWidth(rcol::WIND_HEAD_TAIL);
-  int widthAlt = header->isSectionHidden(rcol::ALTITUDE) ? -1 : view->columnWidth(rcol::ALTITUDE);
-  int widthSafeAlt = header->isSectionHidden(rcol::SAFE_ALTITUDE) ? -1 : view->columnWidth(rcol::SAFE_ALTITUDE);
+  QHeaderView *header = tableViewRoute->horizontalHeader();
+  int widthLegTime = header->isSectionHidden(rcol::LEG_TIME) ? -1 : tableViewRoute->columnWidth(rcol::LEG_TIME);
+  int widthEta = header->isSectionHidden(rcol::ETA) ? -1 : tableViewRoute->columnWidth(rcol::ETA);
+  int widthFuelWeight = header->isSectionHidden(rcol::FUEL_WEIGHT) ? -1 : tableViewRoute->columnWidth(rcol::FUEL_WEIGHT);
+  int widthFuelVol = header->isSectionHidden(rcol::FUEL_VOLUME) ? -1 : tableViewRoute->columnWidth(rcol::FUEL_VOLUME);
+  int widthWind = header->isSectionHidden(rcol::WIND) ? -1 : tableViewRoute->columnWidth(rcol::WIND);
+  int widthWindHt = header->isSectionHidden(rcol::WIND_HEAD_TAIL) ? -1 : tableViewRoute->columnWidth(rcol::WIND_HEAD_TAIL);
+  int widthAlt = header->isSectionHidden(rcol::ALTITUDE) ? -1 : tableViewRoute->columnWidth(rcol::ALTITUDE);
+  int widthSafeAlt = header->isSectionHidden(rcol::SAFE_ALTITUDE) ? -1 : tableViewRoute->columnWidth(rcol::SAFE_ALTITUDE);
 
   for(int i = 0; i < route.size(); i++)
   {
@@ -4761,42 +4765,42 @@ void RouteController::updateModelTimeFuelWindAlt()
 
   // Set back column widths if visible - widget changes widths on setItem
   if(widthLegTime > 0)
-    view->setColumnWidth(rcol::LEG_TIME, widthLegTime);
+    tableViewRoute->setColumnWidth(rcol::LEG_TIME, widthLegTime);
   else
     header->hideSection(rcol::LEG_TIME);
 
   if(widthEta > 0)
-    view->setColumnWidth(rcol::ETA, widthEta);
+    tableViewRoute->setColumnWidth(rcol::ETA, widthEta);
   else
     header->hideSection(rcol::ETA);
 
   if(widthFuelWeight > 0)
-    view->setColumnWidth(rcol::FUEL_WEIGHT, widthFuelWeight);
+    tableViewRoute->setColumnWidth(rcol::FUEL_WEIGHT, widthFuelWeight);
   else
     header->hideSection(rcol::FUEL_WEIGHT);
 
   if(widthFuelVol > 0)
-    view->setColumnWidth(rcol::FUEL_VOLUME, widthFuelVol);
+    tableViewRoute->setColumnWidth(rcol::FUEL_VOLUME, widthFuelVol);
   else
     header->hideSection(rcol::FUEL_VOLUME);
 
   if(widthWind > 0)
-    view->setColumnWidth(rcol::WIND, widthWind);
+    tableViewRoute->setColumnWidth(rcol::WIND, widthWind);
   else
     header->hideSection(rcol::WIND);
 
   if(widthWindHt > 0)
-    view->setColumnWidth(rcol::WIND_HEAD_TAIL, widthWindHt);
+    tableViewRoute->setColumnWidth(rcol::WIND_HEAD_TAIL, widthWindHt);
   else
     header->hideSection(rcol::WIND_HEAD_TAIL);
 
   if(widthAlt > 0)
-    view->setColumnWidth(rcol::ALTITUDE, widthAlt);
+    tableViewRoute->setColumnWidth(rcol::ALTITUDE, widthAlt);
   else
     header->hideSection(rcol::ALTITUDE);
 
   if(widthSafeAlt > 0)
-    view->setColumnWidth(rcol::SAFE_ALTITUDE, widthSafeAlt);
+    tableViewRoute->setColumnWidth(rcol::SAFE_ALTITUDE, widthSafeAlt);
   else
     header->hideSection(rcol::SAFE_ALTITUDE);
 }
@@ -4863,7 +4867,7 @@ void RouteController::scrollToActive()
 
     if(routeLeg != map::INVALID_INDEX_VALUE && routeLeg >= 0 &&
        OptionData::instance().getFlags2().testFlag(opts2::ROUTE_CENTER_ACTIVE_LEG))
-      view->scrollTo(model->index(std::max(routeLeg - 1, 0), 0), QAbstractItemView::PositionAtTop);
+      tableViewRoute->scrollTo(model->index(std::max(routeLeg - 1, 0), 0), QAbstractItemView::PositionAtTop);
   }
 }
 
