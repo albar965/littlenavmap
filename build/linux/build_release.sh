@@ -87,8 +87,16 @@ rm -rf ${APROJECTS}/build-atools-${CONF_TYPE}
 mkdir -p ${APROJECTS}/build-atools-${CONF_TYPE}
 cd ${APROJECTS}/build-atools-${CONF_TYPE}
 
-export ATOOLS_NO_GRIB=true
 export ATOOLS_NO_FS=true
+export ATOOLS_NO_GRIB=true
+export ATOOLS_NO_GUI=true
+export ATOOLS_NO_ROUTING=true
+export ATOOLS_NO_SQL=true
+export ATOOLS_NO_TRACK=true
+export ATOOLS_NO_USERDATA=true
+export ATOOLS_NO_WEATHER=true
+export ATOOLS_NO_WEB=true
+export ATOOLS_NO_WMM=true
 
 ${QMAKE_STATIC} ${APROJECTS}/atools/atools.pro -spec linux-g++ CONFIG+=${CONF_TYPE}
 make -j4

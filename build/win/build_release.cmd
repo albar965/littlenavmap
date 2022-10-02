@@ -136,8 +136,16 @@ del /S /Q /F "%APROJECTS%\build-atools-%CONF_TYPE%"
 for /f %%f in ('dir /ad /b "%APROJECTS%\build-atools-%CONF_TYPE%"') do rd /s /q "%APROJECTS%\build-atools-%CONF_TYPE%\%%f"
 IF ERRORLEVEL 1 goto :err
 
-set ATOOLS_NO_GRIB=true
 set ATOOLS_NO_FS=true
+set ATOOLS_NO_GRIB=true
+set ATOOLS_NO_GUI=true
+set ATOOLS_NO_ROUTING=true
+set ATOOLS_NO_SQL=true
+set ATOOLS_NO_TRACK=true
+set ATOOLS_NO_USERDATA=true
+set ATOOLS_NO_WEATHER=true
+set ATOOLS_NO_WEB=true
+set ATOOLS_NO_WMM=true
 
 qmake.exe "%APROJECTS%\atools\atools.pro" -spec win32-g++ CONFIG+=%CONF_TYPE%
 IF ERRORLEVEL 1 goto :err
