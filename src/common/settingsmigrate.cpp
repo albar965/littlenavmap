@@ -226,6 +226,10 @@ void checkAndMigrateSettings()
       {
         removeAndLog(settings, "SearchPaneLogdata/WidgetView_tableViewLogdata");
         removeAndLog(settings, "Route/View_tableViewRoute");
+        removeAndLog(settings, "SearchPaneAirport/WidgetDistView_tableViewAirportSearch");
+        removeAndLog(settings, "SearchPaneAirport/WidgetView_tableViewAirportSearch");
+        removeAndLog(settings, "SearchPaneNav/WidgetDistView_tableViewNavSearch");
+        removeAndLog(settings, "SearchPaneNav/WidgetView_tableViewNavSearch");
       }
 
       qInfo() << Q_FUNC_INFO << "Clearing all essential messages since version differs";
