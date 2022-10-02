@@ -304,9 +304,6 @@ public:
   static void removeDialogFromDockHandler(QDialog *dialog);
   static QList<QAction *> getMainWindowActions();
 
-  /* true if tooltips in menus are visible */
-  static bool isMenuToolTipsVisible();
-
   static MapWidget *getMapWidgetGui();
   static MapPaintWidget *getMapPaintWidgetGui();
   static RouteController *getRouteController();
@@ -415,6 +412,9 @@ public:
   /* Command line options */
   static QString getStartupOption(const QString& key);
   static void addStartupOption(const QString& key, const QString& value);
+
+  /* true if tooltips in menus are visible */
+  static bool isMenuToolTipsVisible();
 
   static void setToolTipsEnabledMainMenu(bool enabled);
 

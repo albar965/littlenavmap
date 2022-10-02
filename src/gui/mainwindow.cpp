@@ -2072,6 +2072,20 @@ void MainWindow::updateWindowTitle()
   setWindowTitle(newTitle);
 }
 
+void MainWindow::setToolTipsEnabledMainMenu(bool enabled)
+{
+  // NavApp function disabled tooltips in whole menu - enable them again
+  if(!enabled)
+  {
+    if(routeFileHistory != nullptr)
+      routeFileHistory->updateMenuTooltips();
+    if(kmlFileHistory != nullptr)
+      kmlFileHistory->updateMenuTooltips();
+    if(layoutFileHistory != nullptr)
+      layoutFileHistory->updateMenuTooltips();
+  }
+}
+
 void MainWindow::deleteAircraftTrack(bool quiet)
 {
   int result = QMessageBox::Yes;

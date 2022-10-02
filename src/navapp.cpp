@@ -862,6 +862,10 @@ void NavApp::setToolTipsEnabledMainMenu(bool enabled)
       }
     }
   }
+
+  if(mainWindow != nullptr)
+    // Need to update the recent menus
+    mainWindow->setToolTipsEnabledMainMenu(enabled);
 }
 
 LogdataController *NavApp::getLogdataController()

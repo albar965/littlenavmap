@@ -1155,6 +1155,7 @@ void OptionsDialog::restoreState()
 
 void OptionsDialog::updateTooltipOption()
 {
+  // The overall tooltip state is checked by the Application event handler Application::notify()
   if(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_ALL))
     NavApp::setTooltipsEnabled();
   else
@@ -1163,7 +1164,7 @@ void OptionsDialog::updateTooltipOption()
 #ifdef Q_OS_MACOS
   NavApp::setToolTipsEnabledMainMenu(false);
 #else
-  // Menu tooltips only on Linux and Windows
+  // Menu tooltips only on Linux and Windows - also needs to keep them enabled for recent menus
   NavApp::setToolTipsEnabledMainMenu(OptionData::instance().getFlags().testFlag(opts::ENABLE_TOOLTIPS_MENU));
 #endif
 }

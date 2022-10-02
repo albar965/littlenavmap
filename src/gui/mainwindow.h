@@ -150,6 +150,9 @@ public:
   /* Update the window title after switching simulators, flight plan name or change status. */
   void updateWindowTitle();
 
+  /* Update tooltip state in recent menus */
+  void setToolTipsEnabledMainMenu(bool enabled);
+
   /* Update coordinate display in status bar */
   void updateMapPosLabel(const atools::geo::Pos& pos, int x, int y);
 
