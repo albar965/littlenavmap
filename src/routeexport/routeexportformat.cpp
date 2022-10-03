@@ -57,7 +57,7 @@ void RouteExportFormatMap::clearPath(rexp::RouteExportFormatType type)
 
 void RouteExportFormatMap::updatePath(rexp::RouteExportFormatType type, const QString& path)
 {
-  (*this)[type].setPath(QDir::toNativeSeparators(path));
+  (*this)[type].setPath(QDir::toNativeSeparators(QDir::cleanPath(path)));
 }
 
 void RouteExportFormatMap::clearPattern(rexp::RouteExportFormatType type)
@@ -461,11 +461,14 @@ void RouteExportFormatMap::updateDefaultPaths()
   /* *INDENT-ON* */
 #undef DP
 
+  // Cleanup paths and convert to native notation
   for(RouteExportFormat& format : *this)
   {
-    format.setDefaultPath(QDir::toNativeSeparators(format.getDefaultPath()));
+    format.setDefaultPath(QDir::toNativeSeparators(QDir::cleanPath(format.getDefaultPath())));
     if(format.getPath().isEmpty())
       format.setPath(format.getDefaultPath());
+    else
+      format.setPath(QDir::toNativeSeparators(QDir::cleanPath(format.getPath())));
   }
 }
 
@@ -501,10 +504,10 @@ void RouteExportFormat::updatePathError()
 
     if(!file.exists())
       pathError = tr("File \"%1\" does not exist.").
-                  arg(atools::elideTextShortLeft(QDir::toNativeSeparators(file.absoluteFilePath()), 100));
+                  arg(atools::elideTextShortLeft(QDir::toNativeSeparators(QDir::cleanPath(file.absoluteFilePath())), 100));
     else if(!file.isFile())
       pathError = tr("Expected file but \"%1\" is a directory.").
-                  arg(atools::elideTextShortLeft(QDir::toNativeSeparators(file.absoluteFilePath()), 100));
+                  arg(atools::elideTextShortLeft(QDir::toNativeSeparators(QDir::cleanPath(file.absoluteFilePath())), 100));
   }
   else
   {
@@ -512,10 +515,10 @@ void RouteExportFormat::updatePathError()
 
     if(!dir.exists())
       pathError = tr("Directory \"%1\" does not exist").
-                  arg(atools::elideTextShortLeft(QDir::toNativeSeparators(dir.absoluteFilePath()), 100));
+                  arg(atools::elideTextShortLeft(QDir::toNativeSeparators(QDir::cleanPath(dir.absoluteFilePath())), 100));
     else if(!dir.isDir())
       pathError = tr("Expected directory but \"%1\" is a file.").
-                  arg(atools::elideTextShortLeft(QDir::toNativeSeparators(dir.absoluteFilePath()), 100));
+                  arg(atools::elideTextShortLeft(QDir::toNativeSeparators(QDir::cleanPath(dir.absoluteFilePath())), 100));
   }
 }
 
@@ -551,7 +554,7 @@ QString RouteExportFormat::getSuffix() const
 
 void RouteExportFormat::copyLoadedDataTo(RouteExportFormat& other) const
 {
-  other.path = QDir::toNativeSeparators(path);
+  other.path = QDir::toNativeSeparators(QDir::cleanPath(path));
   other.pattern = pattern;
   other.flags.setFlag(rexp::SELECTED, flags.testFlag(rexp::SELECTED));
 }

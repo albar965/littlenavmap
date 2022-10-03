@@ -26,7 +26,6 @@
 #include "gui/itemviewzoomhandler.h"
 #include "gui/widgetstate.h"
 #include "navapp.h"
-#include "options/optiondata.h"
 #include "routeexport/routeexportformat.h"
 #include "settings/settings.h"
 #include "util/htmlbuilder.h"
@@ -362,7 +361,7 @@ void RouteMultiExportDialog::updateLabel()
     // Add either example or error message
     if(errorMsg.isEmpty())
       texts.append(tr("<b>Example export path and file:</b> &quot;%1&quot;").
-                   arg(QDir::toNativeSeparators(format.getPath() % QDir::separator() % example)));
+                   arg(QDir::toNativeSeparators(QDir::cleanPath(format.getPath() % QDir::separator() % example))));
     else
       texts.append(atools::util::HtmlBuilder::errorMessage(errorMsg));
 
@@ -706,7 +705,7 @@ void RouteMultiExportDialog::selectPath(rexp::RouteExportFormatType type, int ro
     }
     else
     {
-      filepath = QDir::toNativeSeparators(filepath);
+      filepath = QDir::toNativeSeparators(QDir::cleanPath(filepath));
       formatMapDialog->updatePath(type, filepath);
 
       itemModel->item(row, PATH)->setText(filepath);
@@ -854,7 +853,7 @@ void RouteMultiExportDialog::itemChanged(QStandardItem *item)
     {
       // Update custom path
       formatMapDialog->updatePath(type, item->text());
-      item->setText(QDir::toNativeSeparators(item->text()));
+      item->setText(QDir::toNativeSeparators(QDir::cleanPath(item->text())));
       updateTableColors();
       updateLabel();
     }
