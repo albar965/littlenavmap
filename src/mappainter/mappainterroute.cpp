@@ -1775,7 +1775,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 
   // Draw wind barbs for SID and STAR (not approaches) =======================================
   const Route *route = context->route;
-  if(!preview && !previewAll && (leg.isSid() || leg.isStar()))
+  if(!preview && !previewAll && (leg.isAnySid() || leg.isAnyStar()))
   {
     if(context->objectDisplayTypes.testFlag(map::WIND_BARBS_ROUTE) &&
        (NavApp::getWindReporter()->hasOnlineWindData() || NavApp::getWindReporter()->isWindManual()))
@@ -1783,9 +1783,9 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
       int routeIdx = index;
 
       // Convert from procedure index to route leg index
-      if(leg.isSid())
+      if(leg.isAnySid())
         routeIdx += route->getSidLegsOffset();
-      else if(leg.isStar())
+      else if(leg.isAnyStar())
         routeIdx += route->getStarLegsOffset();
 
       // Do not draw wind barbs for approaches
@@ -2060,8 +2060,7 @@ void MapPainterRoute::drawWindBarbs(const QBitArray& visibleStartPoints, const Q
          !altLeg.isAlternate() && distOk &&
          routeIndex > route->getDepartureAirportLegIndex() && routeIndex < route->getDestinationAirportLegIndex())
       {
-        drawWindBarbAtWaypoint(altLeg.getWindSpeed(), altLeg.getWindDirection(),
-                               static_cast<float>(pt.x()), static_cast<float>(pt.y()));
+        drawWindBarbAtWaypoint(altLeg.getWindSpeed(), altLeg.getWindDirection(), static_cast<float>(pt.x()), static_cast<float>(pt.y()));
         lastPt = pt;
       }
     }

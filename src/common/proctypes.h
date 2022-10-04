@@ -285,6 +285,7 @@ struct MapProcedureLeg
     return mapType & proc::PROCEDURE_SID_TRANSITION;
   }
 
+  /* STAR and transition */
   bool isAnyStar() const
   {
     return mapType & proc::PROCEDURE_STAR_ALL;
@@ -293,6 +294,12 @@ struct MapProcedureLeg
   bool isStar() const
   {
     return mapType & proc::PROCEDURE_STAR;
+  }
+
+  /* SID and transition */
+  bool isAnySid() const
+  {
+    return mapType & proc::PROCEDURE_SID_ALL;
   }
 
   bool isStarTransition() const
