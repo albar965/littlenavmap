@@ -248,19 +248,19 @@ void Route::getOutboundCourse(int index, float& magCourse, float& trueCourse) co
   magCourse = trueCourse = map::INVALID_COURSE_VALUE;
 
   const RouteLeg& curLeg = value(index);
-  const RouteLeg& lastLeg = value(index - 1);
-
-  if(!curLeg.isValid() || !lastLeg.isValid())
-    return;
-
-  const LineString& geometry = curLeg.getGeometry();
-
-  if(geometry.size() >= 2)
+  if(curLeg.isValid())
   {
     // Course for first segment in geometry
-    trueCourse = geometry.at(0).initialBearing(geometry.at(1));
+    trueCourse = curLeg.getCourseStartTrue();
     if(trueCourse < map::INVALID_COURSE_VALUE)
-      magCourse = normalizeCourse(trueCourse - lastLeg.getMagvarPosOrNavaid());
+    {
+      const RouteLeg& lastLeg = value(index - 1);
+      if(lastLeg.isValid())
+      {
+        float magvar = lastLeg.isCalibratedVor() ? lastLeg.getVor().magvar : lastLeg.getMagvarEnd();
+        magCourse = normalizeCourse(trueCourse - magvar);
+      }
+    }
   }
 }
 
@@ -269,17 +269,15 @@ void Route::getInboundCourse(int index, float& magCourse, float& trueCourse) con
   magCourse = trueCourse = map::INVALID_COURSE_VALUE;
 
   const RouteLeg& curLeg = value(index);
-
-  if(!curLeg.isValid())
-    return;
-
-  const LineString& geometry = curLeg.getGeometry();
-  if(geometry.size() >= 2)
+  if(curLeg.isValid())
   {
     // Course for last segment in geometry
-    trueCourse = geometry.at(geometry.size() - 2).finalBearing(geometry.at(geometry.size() - 1));
+    trueCourse = curLeg.getCourseEndTrue();
     if(trueCourse < map::INVALID_COURSE_VALUE)
-      magCourse = normalizeCourse(trueCourse - curLeg.getMagvarPosOrNavaid());
+    {
+      float magvar = curLeg.getVor().isCalibratedVor() ? curLeg.getVor().magvar : curLeg.getMagvarEnd();
+      magCourse = normalizeCourse(trueCourse - magvar);
+    }
   }
 }
 
@@ -2070,6 +2068,7 @@ void Route::updateDistancesAndCourse()
     }
     last = &leg;
   }
+
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "totalDistance" << totalDistance;
 #endif
@@ -2079,28 +2078,11 @@ void Route::updateMagvar()
 {
   // get magvar from internal database objects (waypoints, VOR and others)
   for(int i = 0; i < size(); i++)
-  {
-    RouteLeg& leg = (*this)[i];
-    leg.updateMagvar();
-  }
-
-  // Update variance for to VOR legs
-  for(int i = 1; i < size(); i++)
-  {
-    RouteLeg& leg = (*this)[i];
-    if(!leg.isRoute())
-      continue;
-
-    const map::MapVor& vor = leg.getVor();
-    if(vor.isCalibratedVor())
-      // This is a VOR at the end of the leg - user variance from calibration
-      leg.setMagvar(vor.magvar);
-  }
+    (*this)[i].updateMagvar(i > 0 ? &at(i - 1) : nullptr);
 }
 
 void Route::updateLegAltitudes()
 {
-
   // Need to update the wind data for manual wind setting
   NavApp::getWindReporter()->updateManualRouteWinds();
 
@@ -3328,9 +3310,10 @@ int Route::getAdjustedAltitude(int newAltitude) const
     const Pos& departurePos = constFirst().getPosition();
     const Pos& destinationPos = getDestinationAirportLeg().getPosition();
 
-    float magvar = (constFirst().getMagvar() + getDestinationAirportLeg().getMagvarBySettings()) / 2;
+    float magvarAverage = (getDepartureAirportLeg().getMagvarStart() + getDestinationAirportLeg().getMagvarEnd()) / 2.f;
 
-    float fpDir = atools::geo::normalizeCourse(departurePos.angleDegToRhumb(destinationPos) - magvar);
+    // Use constant course line to calculate
+    float fpDir = atools::geo::normalizeCourse(departurePos.angleDegToRhumb(destinationPos) - magvarAverage);
 
     if(fpDir < Pos::INVALID_VALUE)
     {

@@ -1816,7 +1816,7 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
       }
 
       // Calculate ground speed for each phase (climb, cruise, descent) of this leg - 0 is phase is not touched
-      float course = route->value(i).getCourseToTrue();
+      float course = route->value(i).getCourseEndTrue();
 
       float climbHeadWind = 0.f, cruiseHeadWind = 0.f, descentHeadWind = 0.f;
 

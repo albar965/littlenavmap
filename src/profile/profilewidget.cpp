@@ -2258,10 +2258,10 @@ void ProfileWidget::buildTooltip(int x, bool force)
     html.b(tr(", %1, %2 %3").arg(Unit::altFeet(altitude)).arg(fromTo).arg(toWaypoint));
 
   // Course ========================================
-  if(routeLeg.getCourseToMag() < map::INVALID_COURSE_VALUE)
+  if(routeLeg.getCourseStartMag() < map::INVALID_COURSE_VALUE)
   {
     html.br().b(tr("Course: ")).
-    text(formatter::courseTextFromMag(routeLeg.getCourseToMag(), routeLeg.getMagvar(), false /* magBold */),
+    text(formatter::courseTextFromMag(routeLeg.getCourseStartMag(), routeLeg.getMagvarStart(), false /* magBold */),
          atools::util::html::NO_ENTITIES);
 
     // Crab angle / heading ========================================
@@ -2275,12 +2275,10 @@ void ProfileWidget::buildTooltip(int x, bool force)
                     arg(tas, 0, 'f', 0).arg(wind.dir, 0, 'f', 0).arg(wind.speed, 0, 'f', 0));
 #endif
 
-        float headingTrue = atools::geo::windCorrectedHeading(wind.speed, wind.dir, routeLeg.getCourseToTrue(), tas);
-        if(headingTrue < map::INVALID_COURSE_VALUE &&
-           atools::almostNotEqual(headingTrue, routeLeg.getCourseToTrue(), 1.f))
-          html.br().b(tr("Heading: ")).
-          text(formatter::courseTextFromTrue(headingTrue, routeLeg.getMagvar()),
-               atools::util::html::NO_ENTITIES);
+        float headingTrue = atools::geo::windCorrectedHeading(wind.speed, wind.dir, routeLeg.getCourseEndTrue(), tas);
+        if(headingTrue < map::INVALID_COURSE_VALUE && atools::almostNotEqual(headingTrue, routeLeg.getCourseEndTrue(), 1.f))
+          html.br().b(tr("Heading: ", "Aircraft heading")).
+          text(formatter::courseTextFromTrue(headingTrue, routeLeg.getMagvarEnd()), atools::util::html::NO_ENTITIES);
       }
     }
   }
@@ -2317,7 +2315,7 @@ void ProfileWidget::buildTooltip(int x, bool force)
   if(wind.isValid() && !wind.isNull())
   {
     float headWind = 0.f, crossWind = 0.f;
-    atools::geo::windForCourse(headWind, crossWind, wind.speed, wind.dir, leg->getCourseToTrue());
+    atools::geo::windForCourse(headWind, crossWind, wind.speed, wind.dir, leg->getCourseEndTrue());
 
     float magVar = NavApp::getMagVar(lastTooltipPos);
 

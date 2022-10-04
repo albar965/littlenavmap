@@ -304,6 +304,8 @@ protected:
     return wToSBuf(coords, x, y, DEFAULT_WTOS_SIZE, margins, hidden);
   }
 
+  bool wToSBuf(const atools::geo::Pos& coords, QPointF& point, const QMargins& margins, bool *hidden = nullptr) const;
+
   /* Draw a circle and return text placement hints (xtext and ytext). Number of points used
    * for the circle depends on the zoom distance. Optimized for large circles. */
   void paintCircle(Marble::GeoPainter *painter, const atools::geo::Pos& centerPos, float radiusNm, bool fast, QPoint *textPos);

@@ -4159,17 +4159,33 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             courseToWptTrue = aircraft.getPosition().angleDegTo(routeLeg.getPosition());
 
             html.id(pid::NEXT_COURSE_TO_WP).row2(tr("Course to waypoint:"),
-                                                 courseTextFromTrue(courseToWptTrue, routeLeg.getMagvarBySettings(), true /* bold */),
+                                                 courseTextFromTrue(courseToWptTrue, routeLeg.getMagvarEnd(), true /* bold */),
                                                  ahtml::NO_ENTITIES);
 
-            float outboundCourseMag, outboundCourseTrue;
-            route.getOutboundCourse(routeLegIndex, outboundCourseMag, outboundCourseTrue);
+            int lastDepartureLegIdx = route.getLastIndexOfDepartureProcedure();
+            int lastRouteLegIdx = route.getDestinationIndexBeforeProcedure();
 
-            if(atools::almostNotEqual(routeLeg.getCourseToMag(), outboundCourseMag, 1.5f))
-              html.id(pid::NEXT_COURSE_FROM_WP).row2(tr("Course from last waypoint %1:").arg(lastRouteLeg.getIdent()),
-                                                     courseText(outboundCourseMag, outboundCourseTrue), ahtml::NO_ENTITIES);
+            if(routeLegIndex > lastDepartureLegIdx || routeLegIndex <= lastRouteLegIdx)
+            {
+              if(lastRouteLeg.isCalibratedVor())
+              {
+                float outboundCourseMag, dummy;
+                route.getOutboundCourse(routeLegIndex, outboundCourseMag, dummy);
+                html.id(pid::NEXT_COURSE_FROM_VOR).
+                row2(tr("Leg course from %1 %2:").arg(map::vorType(lastRouteLeg.getVor())).arg(lastRouteLeg.getIdent()),
+                     courseText(outboundCourseMag, map::INVALID_COURSE_VALUE), ahtml::NO_ENTITIES);
+              }
+
+              if(routeLeg.isCalibratedVor())
+              {
+                float inboundCourseMag, dummy;
+                route.getInboundCourse(routeLegIndex, inboundCourseMag, dummy);
+                html.id(pid::NEXT_COURSE_TO_VOR).
+                row2(tr("Leg course to %1 %2:").arg(map::vorType(routeLeg.getVor())).arg(routeLeg.getIdent()),
+                     courseText(inboundCourseMag, map::INVALID_COURSE_VALUE), ahtml::NO_ENTITIES);
+              }
+            }
           }
-
         } // if(nearestLegDistance < map::INVALID_DISTANCE_VALUE)
 
         // No cross track and course for holds
@@ -4178,8 +4194,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           // No course for arcs
           if(routeLeg.isRoute() || !routeLeg.getProcedureLeg().isCircular())
           {
-            html.id(pid::NEXT_LEG_COURSE).row2If(tr("Leg Course:"), courseText(routeLeg.getCourseToMag(), routeLeg.getCourseToTrue(),
-                                                                               true), ahtml::NO_ENTITIES);
+            html.id(pid::NEXT_LEG_COURSE).row2If(tr("Leg Start Course:"),
+                                                 courseText(routeLeg.getCourseStartMag(), routeLeg.getCourseStartTrue(),
+                                                            true), ahtml::NO_ENTITIES);
 
             if(userAircraft != nullptr && userAircraft->isFlying() && courseToWptTrue < INVALID_COURSE_VALUE)
             {

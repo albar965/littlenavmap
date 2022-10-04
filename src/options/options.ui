@@ -61,7 +61,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>570</width>
+             <width>543</width>
              <height>458</height>
             </rect>
            </property>
@@ -396,8 +396,8 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>499</width>
-             <height>404</height>
+             <width>543</width>
+             <height>458</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_22">
@@ -640,8 +640,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>408</width>
-             <height>537</height>
+             <width>529</width>
+             <height>515</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1133,8 +1133,8 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>535</width>
-             <height>356</height>
+             <width>543</width>
+             <height>458</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_36">
@@ -1374,7 +1374,6 @@ also define the order when reading coordinates in the user interface if enabled.
                 <widget class="QLabel" name="label_2">
                  <property name="font">
                   <font>
-                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1450,7 +1449,7 @@ Also affects labels at holds and traffic patterns.</string>
              <x>0</x>
              <y>0</y>
              <width>542</width>
-             <height>524</height>
+             <height>503</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_12">
@@ -1915,8 +1914,8 @@ Use &quot;Window&quot; -&gt; &quot;Reset Window Layout&quot; in the main menu to
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>565</width>
-             <height>300</height>
+             <width>554</width>
+             <height>444</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_13">
@@ -2248,8 +2247,8 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>472</width>
-             <height>511</height>
+             <width>529</width>
+             <height>490</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -2988,8 +2987,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>413</width>
-             <height>315</height>
+             <width>543</width>
+             <height>458</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_35">
@@ -3393,8 +3392,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>494</width>
-             <height>526</height>
+             <width>529</width>
+             <height>508</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -4308,8 +4307,8 @@ Do not show this this information publicly in forums on screenshots.&lt;/b&gt;&l
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>316</width>
-             <height>353</height>
+             <width>543</width>
+             <height>458</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_39">
@@ -4747,7 +4746,7 @@ airspace filename has to match the callsign of the online center.</string>
              <x>0</x>
              <y>0</y>
              <width>552</width>
-             <height>502</height>
+             <height>479</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -5194,8 +5193,8 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>457</width>
-             <height>379</height>
+             <width>543</width>
+             <height>458</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_26">
@@ -5386,46 +5385,6 @@ Example: &quot;EDDF LIRF.lnmpln&quot;</string>
              </widget>
             </item>
             <item>
-             <widget class="QGroupBox" name="groupBox_18">
-              <property name="title">
-               <string>Course Calculation</string>
-              </property>
-              <layout class="QVBoxLayout" name="verticalLayout_15">
-               <property name="spacing">
-                <number>2</number>
-               </property>
-               <property name="leftMargin">
-                <number>2</number>
-               </property>
-               <property name="topMargin">
-                <number>2</number>
-               </property>
-               <property name="rightMargin">
-                <number>2</number>
-               </property>
-               <property name="bottomMargin">
-                <number>2</number>
-               </property>
-               <item>
-                <widget class="QCheckBox" name="checkBoxOptionsRouteDeclination">
-                 <property name="toolTip">
-                  <string>Will calculate magnetic course based on environment and ignore the VOR declination value if checked.
-Little Navmap normally uses the station declination when calculating a course to a VOR
-which can result in wrong course values if the calibration of a VOR is very old.
-Check this if you rely on GPS when flying.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Ignore declination of VOR and other radio navaids</string>
-                 </property>
-                 <property name="checked">
-                  <bool>false</bool>
-                 </property>
-                </widget>
-               </item>
-              </layout>
-             </widget>
-            </item>
-            <item>
              <widget class="QGroupBox" name="groupBox_25">
               <property name="title">
                <string>Elevation Profile</string>
@@ -5513,8 +5472,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>266</width>
-             <height>312</height>
+             <width>543</width>
+             <height>458</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_27">
@@ -5709,8 +5668,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>356</width>
-             <height>641</height>
+             <width>529</width>
+             <height>614</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -6272,8 +6231,8 @@ Default is &quot;https://api.ivao.aero/v2/airports/all/metar&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>378</width>
-             <height>349</height>
+             <width>543</width>
+             <height>458</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_29">
@@ -6574,8 +6533,8 @@ Default is &quot;https://api.ivao.aero/v2/airports/all/metar&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>420</width>
-             <height>228</height>
+             <width>543</width>
+             <height>458</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_37">
@@ -6761,8 +6720,8 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>471</width>
-             <height>370</height>
+             <width>543</width>
+             <height>458</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_30">
@@ -7037,9 +6996,9 @@ Source data has many errors.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-35</y>
-             <width>556</width>
-             <height>493</height>
+             <y>0</y>
+             <width>529</width>
+             <height>488</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
@@ -7447,7 +7406,6 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>lineEditOptionsRouteFilename</tabstop>
   <tabstop>pushButtonOptionsRouteFilenameShort</tabstop>
   <tabstop>pushButtonOptionsRouteFilenameLong</tabstop>
-  <tabstop>checkBoxOptionsRouteDeclination</tabstop>
   <tabstop>spinBoxOptionsRouteGroundBuffer</tabstop>
   <tabstop>scrollArea_11</tabstop>
   <tabstop>checkBoxOptionsWeatherInfoFs</tabstop>

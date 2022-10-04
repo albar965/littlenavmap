@@ -76,14 +76,11 @@ public:
   /* Creates a clone of waypoint type but does not assign type PROCEDURE */
   void createCopyFromProcedureLeg(int entryIndex, const RouteLeg& leg, const RouteLeg *prevLeg);
 
-  /*
-   * Updates distance and course to this object if the predecessor is not null. Will reset values otherwise.
-   * @param predRouteMapObj
-   */
+  /* Updates distance and course to this object if the predecessor is not null. Will reset values otherwise. */
   void updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg);
 
   /* Get magvar from all known objects */
-  void updateMagvar();
+  void updateMagvar(const RouteLeg *prevLeg);
 
   /* Set parking and start position. Does not modify the flight plan entry.
    * Parking clears start and vice versa. */
@@ -139,29 +136,17 @@ public:
   QString getChannel() const;
   QString getFrequencyOrChannel() const;
 
-  /* Get magnetic variation. Source is always database. Depending on settings
-   * either environment or radio navaid declination. Does NOT use VOR declination for VOR outbound legs. */
-  float getMagvar() const
+  /* Get magnetic variation at leg start. Source is always database. Does NOT use VOR declination. */
+  float getMagvarStart() const
   {
-    return magvar;
+    return magvarStart;
   }
 
-  /* Variation either calculated or VOR. Also depends on option settings. */
-  float getMagvarPosOrNavaid() const;
-
-  void setMagvar(float value)
+  /* Get magnetic variation at leg end (waypoint). Source is always database. Does NOT use VOR declination. */
+  float getMagvarEnd() const
   {
-    magvar = value;
+    return magvarEnd;
   }
-
-  /* Get calculated declination from environment. */
-  float getMagvarPos() const
-  {
-    return magvarPos;
-  }
-
-  /* Gets either radio navaid declination or environment value depending on settings */
-  float getMagvarBySettings() const;
 
   /* Get range of radio navaid. -1 if not a radio navaid. Source is always database. */
   int getRange() const;
@@ -212,6 +197,12 @@ public:
     return vor;
   }
 
+  /* true if VOR and leg are valid and this is valid and a real VOR with calibration (VOR, VORDME or VORTAC) */
+  bool isCalibratedVor() const
+  {
+    return isValid() && vor.isCalibratedVor();
+  }
+
   /* Get NDB or empty object if not assigned. Use position.isValid to check for empty */
   const map::MapNdb& getNdb() const
   {
@@ -239,13 +230,24 @@ public:
     return distanceTo;
   }
 
-  /* Great circle start magnetic course to this route map object from the predecessor in degrees or 0 if first in route */
-  float getCourseToMag() const;
+  /* Great circle magnetic course at the start of this leg using start declination.
+   * INVALID_COURSE_VALUE if true course is not valid. */
+  float getCourseStartMag() const;
+
+  /* Great circle magnetic course at the end of this leg (at waypoint) using start declination.
+   * INVALID_COURSE_VALUE if true course is not valid. */
+  float getCourseEndMag() const;
 
   /* Great circle start true course to this route map object from the predecessor in degrees or 0 if first in route */
-  float getCourseToTrue() const
+  float getCourseStartTrue() const
   {
-    return courseTo;
+    return courseStartTrue;
+  }
+
+  /* Great circle end (at waypoint) true course to this route map object from the predecessor in degrees or 0 if first in route */
+  float getCourseEndTrue() const
+  {
+    return courseEndTrue;
   }
 
   /* @return false if this waypoint was not found in the database */
@@ -375,18 +377,18 @@ public:
   const atools::fs::pln::FlightplanEntry& getFlightplanEntry() const;
   atools::fs::pln::FlightplanEntry *getFlightplanEntry();
 
-  /* Build leg labels also depending on procedure flags */
+  /* Build leg labels also depending on procedure flags. Uses start course and normal declination (not VOR) */
   QStringList buildLegText(bool dist, bool magCourse, bool trueCourse, bool narrow) const;
   static QStringList buildLegText(float distance, float courseMag, float courseTrue, bool narrow);
 
 private:
-  // TODO assign functions are duplicatd in FlightplanEntryBuilder
-  void assignIntersection(const map::MapResult& mapobjectResult,
-                          atools::fs::pln::FlightplanEntry *flightplanEntry);
+  friend QDebug operator<<(QDebug out, const RouteLeg& leg);
+
+  // TODO assign functions are duplicated in FlightplanEntryBuilder
+  void assignIntersection(const map::MapResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
   void assignVor(const map::MapResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
   void assignNdb(const map::MapResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
-  void assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, const atools::geo::Pos& last,
-                       float maxDistance);
+  void assignAnyNavaid(atools::fs::pln::FlightplanEntry *flightplanEntry, const atools::geo::Pos& last, float maxDistance);
   void assignRunwayOrHelipad(const QString& name);
   void assignAirport(const map::MapResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
   void assignUser(atools::fs::pln::FlightplanEntry *flightplanEntry);
@@ -410,12 +412,8 @@ private:
 
   bool validWaypoint = false, alternate = false, valid = false;
 
-  float distanceTo = 0.f,
-        courseTo = 0.f, /* magnetic */
-        magvar = 0.f, /* Either taken from navaid or average across the route */
-        magvarPos = 0.f; /* Calculated environment value */
+  float distanceTo = 0.f, courseStartTrue = 0, courseEndTrue = 0.f, magvarStart = 0.f, magvarEnd = 0.f;
   atools::geo::LineString geometry;
-
 };
 
 QDebug operator<<(QDebug out, const RouteLeg& leg);

@@ -104,7 +104,8 @@ enum Flag
   // ROUTE_GARMIN_USER_WPT = 1 << 22,
 
   /* checkBoxOptionsRouteDeclination */
-  ROUTE_IGNORE_VOR_DECLINATION = 1 << 23,
+  // DELETED from 2.8.1.beta AND FREE
+  // ROUTE_IGNORE_VOR_DECLINATION = 1 << 23,
 
   /* Reload aircraft performance on startup.
    * ui->checkBoxOptionsStartupLoadperf */

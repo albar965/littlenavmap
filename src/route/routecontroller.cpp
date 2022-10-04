@@ -192,7 +192,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
        "on the last runway leg."),
     tr("Range of a radio navaid if available."),
     tr("Magnetic start course of the great circle route\n"
-       "connecting the two waypoints of the leg."),
+       "connecting the two waypoints of the leg.\n"
+       "Does not consider VOR calibrated declination."),
     tr("True start course of the great circle route connecting\n"
        "the two waypoints of the leg."),
     tr("Length of the flight plan leg."),
@@ -1181,8 +1182,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 
   // Update
   if(flightplan.getFlightplanType() == atools::fs::pln::NO_TYPE)
-    flightplan.setFlightplanType(NavApp::getMainUi()->comboBoxRouteType->currentIndex() == 0 ?
-                                 atools::fs::pln::IFR : atools::fs::pln::VFR);
+    flightplan.setFlightplanType(NavApp::getMainUi()->comboBoxRouteType->currentIndex() == 0 ? atools::fs::pln::IFR : atools::fs::pln::VFR);
 
   if(changed)
     undoIndexClean = -1;
@@ -4471,10 +4471,11 @@ void RouteController::updateTableModel()
     if(row > 0 && !afterArrivalAirport && !parkingToDeparture && leg.getDistanceTo() < map::INVALID_DISTANCE_VALUE &&
        leg.getDistanceTo() > 0.f && !leg.noCourseDisplay())
     {
-      if(leg.getCourseToMag() < map::INVALID_COURSE_VALUE)
-        itemRow[rcol::COURSE] = new QStandardItem(QLocale().toString(leg.getCourseToMag(), 'f', 0));
-      if(leg.getCourseToTrue() < map::INVALID_COURSE_VALUE)
-        itemRow[rcol::COURSETRUE] = new QStandardItem(QLocale().toString(leg.getCourseToTrue(), 'f', 0));
+      // Use start course of leg for display
+      if(leg.getCourseStartMag() < map::INVALID_COURSE_VALUE)
+        itemRow[rcol::COURSE] = new QStandardItem(QLocale().toString(leg.getCourseStartMag(), 'f', 0));
+      if(leg.getCourseStartTrue() < map::INVALID_COURSE_VALUE)
+        itemRow[rcol::COURSETRUE] = new QStandardItem(QLocale().toString(leg.getCourseStartTrue(), 'f', 0));
     }
 
     // Distance =====================
@@ -4720,11 +4721,11 @@ void RouteController::updateModelTimeFuelWindAlt()
           float headWind = 0.f, crossWind = 0.f;
           if(altLeg.getWindSpeed() >= 1.f)
           {
-            atools::geo::windForCourse(headWind, crossWind, altLeg.getWindSpeed(),
-                                       altLeg.getWindDirection(), leg.getCourseToTrue());
+            // Wind at waypoint at end of leg
+            atools::geo::windForCourse(headWind, crossWind, altLeg.getWindSpeed(), altLeg.getWindDirection(), leg.getCourseEndTrue());
 
             txt = tr("%1 / %2").
-                  arg(atools::geo::normalizeCourse(altLeg.getWindDirection() - leg.getMagvar()), 0, 'f', 0).
+                  arg(atools::geo::normalizeCourse(altLeg.getWindDirection() - leg.getMagvarEnd()), 0, 'f', 0).
                   arg(Unit::speedKts(altLeg.getWindSpeed(), false /* addUnit */));
           }
 

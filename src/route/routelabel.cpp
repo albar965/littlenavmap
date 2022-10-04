@@ -460,7 +460,7 @@ void RouteLabel::buildHeaderRunwayTakeoff(atools::util::HtmlBuilder& html)
             end = runwayEnds.first();
 
           html.b(tr("Takeoff")).text(tr(" from ")).b(end.name).text(tr(", "));
-          html.text(formatter::courseTextFromTrue(end.heading, departLeg.getMagvar()), ahtml::NO_ENTITIES);
+          html.text(formatter::courseTextFromTrue(end.heading, departLeg.getMagvarStart()), ahtml::NO_ENTITIES);
 
           map::MapRunway runway = airportQuerySim->getRunwayByEndId(departLeg.getId(), end.id);
           if(runway.isValid())
@@ -510,7 +510,7 @@ void RouteLabel::buildHeaderRunwayLand(atools::util::HtmlBuilder& html)
               html.b(tr("Land")).text(tr(" at ")).b(end.name).text(tr(", "));
 
               QStringList rwAtts;
-              rwAtts.append(formatter::courseTextFromTrue(end.heading, destLeg.getMagvar()));
+              rwAtts.append(formatter::courseTextFromTrue(end.heading, destLeg.getMagvarEnd()));
 
               map::MapRunway runway = airportQuerySim->getRunwayByEndId(destLeg.getId(), end.id);
               if(runway.isValid())

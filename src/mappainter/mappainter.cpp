@@ -176,6 +176,15 @@ bool MapPainter::wToSBuf(const Pos& coords, float& x, float& y, QSize size, cons
   return visible;
 }
 
+bool MapPainter::wToSBuf(const atools::geo::Pos& coords, QPointF& point, const QMargins& margins, bool *hidden) const
+{
+  float x, y;
+  bool retval = wToSBuf(coords, x, y, DEFAULT_WTOS_SIZE, margins, hidden);
+  point.setX(x);
+  point.setY(y);
+  return retval;
+}
+
 void MapPainter::paintArc(GeoPainter *painter, const Pos& centerPos, float radiusNm, float angleDegStart, float angleDegEnd, bool fast)
 {
   if(radiusNm > atools::geo::EARTH_CIRCUMFERENCE_METER / 4.f)

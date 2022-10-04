@@ -417,10 +417,10 @@ public:
     sidLegs = legs;
   }
 
-  /* Outbound course from the waypoint of the previous leg, i.e. course at the start of the given leg. */
+  /* Outbound course from the waypoint of the previous leg, i.e. course at the start of the given leg. Uses VOR declination if present. */
   void getOutboundCourse(int index, float& magCourse, float& trueCourse) const;
 
-  /* Inbound course to the waypoint of the given leg, i.e. course at the end of the given leg. */
+  /* Inbound course to the waypoint of the given leg, i.e. course at the end of the given leg.  Uses VOR declination if present.*/
   void getInboundCourse(int index, float& magCourse, float& trueCourse) const;
 
   /* Insert legs of procedures into flight plan and update all offsets and indexes */

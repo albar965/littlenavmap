@@ -495,7 +495,6 @@ void MapPainterRoute::paintInboundOutboundTexts(const TextPlacement& textPlaceme
                               context->szF(context->symbolSizeNavaid, context->mapLayerRoute->getVorSymbolSize()));
 
   // Collect options
-  bool ignore = OptionData::instance().getFlags().testFlag(opts::ROUTE_IGNORE_VOR_DECLINATION);
   bool magCourse = context->dOptRoute(optsd::ROUTE_INITIAL_FINAL_MAG_COURSE);
   bool trueCourse = context->dOptRoute(optsd::ROUTE_INITIAL_FINAL_TRUE_COURSE);
 
@@ -503,86 +502,112 @@ void MapPainterRoute::paintInboundOutboundTexts(const TextPlacement& textPlaceme
     // Nothing in options selected
     return;
 
+  // Make text a bit smaller
+  context->szFont(context->textSizeFlightplan * 0.9f * context->mapLayerRoute->getRouteFontScale());
+
   QFontMetricsF metrics = painter->fontMetrics();
   QMargins margins(100, 100, 100, 100); // Avoid pop out at screen borders
   float arrowWidth = textPlacement.getArrowWidth(); // Arrows added in text placement
 
+  int lastDepartureLeg = route->getLastIndexOfDepartureProcedure();
+  int lastRouteLeg = route->getDestinationIndexBeforeProcedure();
   for(int i = 1; i < route->size(); i++)
   {
     if(i < passedRouteLeg)
       continue;
 
+    // Leg where where the outbound text from last waypoint and inbound text to leg's waypoint is drawn
     const RouteLeg& curLeg = route->value(i);
     const RouteLeg& lastLeg = route->value(i - 1);
 
-    if(vor && !curLeg.getVor().isCalibratedVor() && !lastLeg.getVor().isCalibratedVor())
+    if(vor && !curLeg.isCalibratedVor() && !lastLeg.isCalibratedVor())
       continue;
 
-    if(curLeg.isAnyProcedure())
+    if(i <= lastDepartureLeg || i > lastRouteLeg)
       continue;
 
-    // Get first and last positions as well as visibility
-    const LineString& geometry = curLeg.getGeometry();
+    // Get first and last positions as well as visibility ============================
     bool firstHidden, lastHidden;
-    float firstX, firstY, lastX, lastY;
-    bool firstVisible = wToSBuf(geometry.value(0), firstX, firstY, margins, &firstHidden);
-    bool lastVisible = wToSBuf(geometry.value(geometry.size() - 1), lastX, lastY, margins, &lastHidden);
+    QPointF first1, last1;
+    bool firstVisible1 = wToSBuf(lastLeg.getPosition(), first1, margins, &firstHidden);
+    bool lastVisible1 = wToSBuf(curLeg.getPosition(), last1, margins, &lastHidden);
 
     if(firstHidden || lastHidden)
       // Return if any behind the globe
       continue;
 
-    QPointF firstPos(firstX, firstY), lastPos(lastX, lastY);
+    // Get final course and build text - Inbound to this curLeg navaid =====================
+    float inboundTrueBearing, inboundMagBearing;
+    route->getInboundCourse(i, inboundMagBearing, inboundTrueBearing);
+    QString inboundText = formatter::courseTextNarrow(magCourse ? inboundMagBearing : map::INVALID_COURSE_VALUE,
+                                                      trueCourse ? inboundTrueBearing : map::INVALID_COURSE_VALUE);
 
-    // Initial course
-    float initialTrueBearing, initialMagBearing;
-    route->getOutboundCourse(i, initialMagBearing, initialTrueBearing);
-    QString initialText = formatter::courseTextNarrow(magCourse ? initialMagBearing : map::INVALID_COURSE_VALUE,
-                                                      trueCourse ? initialTrueBearing : map::INVALID_COURSE_VALUE);
+    // Get initial course and build text - Outbound from lastLeg navaid =====================
+    float outboundTrueBearing, outboundMagBearing;
+    route->getOutboundCourse(i, outboundMagBearing, outboundTrueBearing);
+    QString outboundText = formatter::courseTextNarrow(magCourse ? outboundMagBearing : map::INVALID_COURSE_VALUE,
+                                                       trueCourse ? outboundTrueBearing : map::INVALID_COURSE_VALUE);
 
-    // Final course
-    float finalTrueBearing, finalMagBearing;
-    route->getInboundCourse(i, finalMagBearing, finalTrueBearing);
-    QString finalText = formatter::courseTextNarrow(magCourse ? finalMagBearing : map::INVALID_COURSE_VALUE,
-                                                    trueCourse ? finalTrueBearing : map::INVALID_COURSE_VALUE);
+    if(outboundText.isEmpty() && inboundText.isEmpty())
+      continue;
 
-    double lineLength = QLineF(firstPos, lastPos).length();
-    double outboundTextLength = metrics.horizontalAdvance(initialText) + arrowWidth;
-    double inboundTextLength = metrics.horizontalAdvance(finalText) + arrowWidth;
+    // Extend towards the center to calculate rotation later - needed for spherical projection ============================
+    Line line(lastLeg.getPosition(), curLeg.getPosition());
+    QPointF first2, last2;
+    float lengthToMeter = atools::geo::nmToMeter(curLeg.getDistanceTo());
+    float fraction = 1.f * scale->getMeterPerPixel() * 20.f / lengthToMeter; // Calculate fraction for roughly 20 pixels distance
+    wToSBuf(line.interpolate(lengthToMeter, fraction), first2, margins, &firstHidden);
+    wToSBuf(line.interpolate(lengthToMeter, 1.f - fraction), last2, margins, &lastHidden);
+
+    if(firstHidden || lastHidden)
+      // Return if any behind the globe
+      continue;
+
+#ifdef DEBUG_INFORMATION_BEARING
+    if(!outboundText.isEmpty())
+      outboundText += "[O" + QString::number(i) + curLeg.getIdent() + "]";
+    if(!inboundText.isEmpty())
+      inboundText += "[I" + QString::number(i) + curLeg.getIdent() + "]";
+#endif
+
+    // Get text line lengths
+    QLineF outboundTextLine(first1, first2), inboundTextLine(last1, last2);
+    double lineLength = QLineF(outboundTextLine.p1(), inboundTextLine.p1()).length();
+    double outboundTextLength = metrics.horizontalAdvance(outboundText) + arrowWidth;
+    double inboundTextLength = metrics.horizontalAdvance(inboundText) + arrowWidth;
 
     // Check if texts fit along line
     if(outboundTextLength + inboundTextLength < lineLength * 0.75)
     {
-      // Outbound from navaid  =================================
-      if(vor == lastLeg.getVor().isCalibratedVor() && firstVisible)
+      // Outbound from lastLeg navaid  =================================
+      if(!outboundText.isEmpty() && vor == lastLeg.isCalibratedVor() && firstVisible1)
       {
         // Draw blue if related to VOR
-        painter->setPen(lastLeg.getVor().isCalibratedVor() && !ignore ? mapcolors::vorSymbolColor : mapcolors::routeTextColor);
+        painter->setPen(lastLeg.isCalibratedVor() ? mapcolors::vorSymbolColor : mapcolors::routeTextColorGray);
 
-        // Create line, rotate along p1 and move p2 by setting length
-        QLineF outboundLine(firstPos, QPointF(firstPos.x(), firstPos.y() + outboundTextLength));
-        outboundLine.setAngle(atools::geo::angleToQt(normalizeCourse(initialTrueBearing)));
-        outboundLine.setLength(outboundLine.length() + symbolSize * 1.1);
+        // Move p2 by setting length to get accurate text center
+        outboundTextLine.setLength(outboundTextLength + symbolSize * 1.1);
 
         // Draw texts
-        textPlacement.drawTextAlongOneLine(initialText, initialTrueBearing, outboundLine.center(), 10000);
+        float rotate = static_cast<float>(atools::geo::angleFromQt(outboundTextLine.angle()));
+        textPlacement.drawTextAlongOneLine(outboundText, rotate, outboundTextLine.center(), 10000);
       }
 
-      // Inbound to navaid ==================================
-      if(vor == curLeg.getVor().isCalibratedVor() && lastVisible)
+      // Inbound to curLeg navaid  ==================================
+      if(!inboundText.isEmpty() && vor == curLeg.isCalibratedVor() && lastVisible1)
       {
         // Draw blue if related to VOR
-        painter->setPen(curLeg.getVor().isCalibratedVor() && !ignore ? mapcolors::vorSymbolColor : mapcolors::routeTextColor);
+        painter->setPen(curLeg.isCalibratedVor() ? mapcolors::vorSymbolColor : mapcolors::routeTextColorGray);
 
-        // Create line, rotate along p1 and move p2 by setting length
-        QLineF inboundLine(lastPos, QPointF(lastPos.x(), lastPos.y() - inboundTextLength));
-        inboundLine.setAngle(atools::geo::angleToQt(normalizeCourse(finalTrueBearing + 180.f)));
-        inboundLine.setLength(inboundLine.length() + symbolSize * 1.1);
+        // Move p2 by setting length to get accurate text center
+        inboundTextLine.setLength(inboundTextLength + symbolSize * 1.1);
 
-        textPlacement.drawTextAlongOneLine(finalText, finalTrueBearing, inboundLine.center(), 10000);
+        // Rotate + 180 since line is from end to interpolated end
+        float rotate = static_cast<float>(atools::geo::angleFromQt(inboundTextLine.angle() + 180.));
+        textPlacement.drawTextAlongOneLine(inboundText, rotate, inboundTextLine.center(), 10000);
       }
-    }
-  }
+    } // if(outboundTextLength + inboundTextLength < lineLength * 0.75)
+  } // for(int i = 1; i < route->size(); i++)
 }
 
 void MapPainterRoute::paintTopOfDescentAndClimb()

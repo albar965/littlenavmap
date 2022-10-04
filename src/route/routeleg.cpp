@@ -66,7 +66,7 @@ void RouteLeg::createFromAirport(int entryIndex, const map::MapAirport& newAirpo
   type = map::AIRPORT;
   airport = newAirport;
 
-  updateMagvar();
+  updateMagvar(prevLeg);
   updateDistanceAndCourse(entryIndex, prevLeg);
   valid = validWaypoint = true;
 }
@@ -92,7 +92,7 @@ void RouteLeg::createCopyFromProcedureLeg(int entryIndex, const RouteLeg& leg, c
 
   procedureLeg = proc::MapProcedureLeg();
 
-  updateMagvar();
+  updateMagvar(prevLeg);
   updateDistanceAndCourse(entryIndex, prevLeg);
 
 }
@@ -115,7 +115,7 @@ void RouteLeg::createFromProcedureLeg(int entryIndex, const proc::MapProcedureLe
   if(procedureLeg.navaids.hasRunwayEnd())
     runwayEnd = procedureLeg.navaids.runwayEnds.constFirst();
 
-  updateMagvar();
+  updateMagvar(prevLeg);
   updateDistanceAndCourse(entryIndex, prevLeg);
   valid = validWaypoint = true;
 }
@@ -371,7 +371,7 @@ void RouteLeg::createFromDatabaseByEntry(int entryIndex, const RouteLeg *prevLeg
 
   valid = true;
 
-  updateMagvar();
+  updateMagvar(prevLeg);
   updateDistanceAndCourse(entryIndex, prevLeg);
 }
 
@@ -393,22 +393,17 @@ void RouteLeg::clearParkingAndStart()
   parking = map::MapParking();
 }
 
-void RouteLeg::updateMagvar()
+void RouteLeg::updateMagvar(const RouteLeg *prevLeg)
 {
-  magvarPos = NavApp::getMagVar(getPosition());
   if(isAnyProcedure())
-    magvar = procedureLeg.magvar;
-  else if(waypoint.isValid())
-    magvar = waypoint.magvar;
-  else if(vor.isValid())
-    magvar = vor.magvar;
-  else if(ndb.isValid())
-    magvar = ndb.magvar;
-  // Airport is least reliable and often wrong
-  else if(airport.isValid())
-    magvar = airport.magvar;
+    magvarEnd = procedureLeg.magvar;
   else
-    magvar = magvarPos;
+    magvarEnd = NavApp::getMagVar(getPosition());
+
+  if(prevLeg != nullptr)
+    magvarStart = prevLeg->getMagvarEnd();
+  else
+    magvarStart = magvarEnd;
 }
 
 void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
@@ -427,28 +422,28 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
           ) && // Direct connection between procedures
 
          (atools::contains(procedureLeg.type, {proc::INITIAL_FIX, proc::CUSTOM_APP_START, proc::START_OF_PROCEDURE}) ||
-          procedureLeg.line.isPoint()) // Beginning of procedure
-         )
+          procedureLeg.line.isPoint())) // Beginning of procedure
       {
-        // qDebug() << Q_FUNC_INFO << "special transition for leg" << index << procedureLeg;
         const Pos& legPos = procedureLeg.line.getPos1();
         if(procedureLeg.isAnyDeparture() && prevLeg->getDeparturePosition().isValid())
         {
           // First SID leg and previous is airport - use distance and angle from start position if valid
-          courseTo = normalizeCourse(prevLeg->getDeparturePosition().angleDegTo(legPos));
+          courseStartTrue = prevLeg->getDeparturePosition().initialBearing(legPos);
+          courseEndTrue = prevLeg->getDeparturePosition().finalBearing(legPos);
           distanceTo = meterToNm(prevLeg->getDeparturePosition().distanceMeterTo(legPos));
         }
         else
         {
           // Use course and distance from last route leg to get to this point legs
-          courseTo = normalizeCourse(prevPos.angleDegTo(legPos));
+          courseStartTrue = prevPos.initialBearing(legPos);
+          courseEndTrue = prevPos.finalBearing(legPos);
           distanceTo = meterToNm(prevPos.distanceMeterTo(legPos));
         }
       }
       else
       {
         // Use course and distance from last procedure leg
-        courseTo = procedureLeg.calculatedTrueCourse;
+        courseEndTrue = courseStartTrue = procedureLeg.calculatedTrueCourse;
         distanceTo = procedureLeg.calculatedDistance;
       }
       geometry = procedureLeg.geometry;
@@ -459,14 +454,15 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
       {
         // Collapse any overlapping waypoints to avoid course display
         distanceTo = 0.f;
-        courseTo = map::INVALID_COURSE_VALUE;
+        courseEndTrue = courseStartTrue = map::INVALID_COURSE_VALUE;
         geometry = LineString({getPosition()});
       }
       else
       {
         // Calculate for normal or alternate leg - prev is destination airport for alternate legs
         distanceTo = meterToNm(getPosition().distanceMeterTo(prevPos));
-        courseTo = normalizeCourse(prevLeg->getPosition().angleDegTo(getPosition()));
+        courseStartTrue = prevLeg->getPosition().initialBearing(getPosition());
+        courseEndTrue = prevLeg->getPosition().finalBearing(getPosition());
         geometry = LineString({prevPos, getPosition()});
       }
     }
@@ -475,7 +471,7 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
   {
     // No predecessor - this one is the first in the list
     distanceTo = 0.f;
-    courseTo = 0.f;
+    courseEndTrue = courseStartTrue = 0.f;
     geometry = LineString({getPosition()});
   }
 }
@@ -615,8 +611,8 @@ map::MapUserpointRoute RouteLeg::getUserpointRoute() const
 QStringList RouteLeg::buildLegText(bool dist, bool magCourse, bool trueCourse, bool narrow) const
 {
   float distance = noDistanceDisplay() || !dist ? map::INVALID_DISTANCE_VALUE : getDistanceTo();
-  float courseMag = noCourseDisplay() || !magCourse ? map::INVALID_COURSE_VALUE : getCourseToMag();
-  float courseTrue = noCourseDisplay() || !trueCourse ? map::INVALID_COURSE_VALUE : getCourseToTrue();
+  float courseMag = noCourseDisplay() || !magCourse ? map::INVALID_COURSE_VALUE : getCourseStartMag();
+  float courseTrue = noCourseDisplay() || !trueCourse ? map::INVALID_COURSE_VALUE : getCourseStartTrue();
 
   return buildLegText(distance, courseMag, courseTrue, narrow);
 }
@@ -648,17 +644,14 @@ QStringList RouteLeg::buildLegText(float distance, float courseMag, float course
   return texts;
 }
 
-float RouteLeg::getCourseToMag() const
+float RouteLeg::getCourseStartMag() const
 {
-  if(OptionData::instance().getFlags() & opts::ROUTE_IGNORE_VOR_DECLINATION)
-    return courseTo < map::INVALID_COURSE_VALUE ? normalizeCourse(courseTo - magvarPos) : courseTo;
-  else
-    return courseTo < map::INVALID_COURSE_VALUE ? normalizeCourse(courseTo - magvar) : courseTo;
+  return courseStartTrue < map::INVALID_COURSE_VALUE ? normalizeCourse(courseStartTrue - magvarStart) : map::INVALID_COURSE_VALUE;
 }
 
-float RouteLeg::getMagvarBySettings() const
+float RouteLeg::getCourseEndMag() const
 {
-  return OptionData::instance().getFlags().testFlag(opts::ROUTE_IGNORE_VOR_DECLINATION) ? magvarPos : magvar;
+  return courseEndTrue < map::INVALID_COURSE_VALUE ? normalizeCourse(courseEndTrue - magvarEnd) : map::INVALID_COURSE_VALUE;
 }
 
 const atools::geo::Pos& RouteLeg::getFixPosition() const
@@ -859,14 +852,6 @@ QString RouteLeg::getFrequencyOrChannel() const
     return getChannel();
 }
 
-float RouteLeg::getMagvarPosOrNavaid() const
-{
-  if(vor.isCalibratedVor() && !OptionData::instance().getFlags().testFlag(opts::ROUTE_IGNORE_VOR_DECLINATION))
-    return vor.magvar;
-  else
-    return magvarPos;
-}
-
 QString RouteLeg::getChannel() const
 {
   if(vor.isValid() && vor.tacan)
@@ -1009,8 +994,7 @@ void RouteLeg::assignUser(atools::fs::pln::FlightplanEntry *flightplanEntry)
   flightplanEntry->setMagvar(NavApp::getMagVar(flightplanEntry->getPosition()));
 }
 
-void RouteLeg::assignAirport(const map::MapResult& mapobjectResult,
-                             atools::fs::pln::FlightplanEntry *flightplanEntry)
+void RouteLeg::assignAirport(const map::MapResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
   type = map::AIRPORT;
   airport = mapobjectResult.airports.constFirst();
@@ -1025,8 +1009,7 @@ void RouteLeg::assignAirport(const map::MapResult& mapobjectResult,
   flightplanEntry->setMagvar(airport.magvar);
 }
 
-void RouteLeg::assignIntersection(const map::MapResult& mapobjectResult,
-                                  atools::fs::pln::FlightplanEntry *flightplanEntry)
+void RouteLeg::assignIntersection(const map::MapResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
   type = map::WAYPOINT;
   waypoint = mapobjectResult.waypoints.constFirst();
@@ -1104,9 +1087,9 @@ QDebug operator<<(QDebug out, const RouteLeg& leg)
                           << ", " << leg.getMapObjectTypeName()
                           << ", distance " << leg.getDistanceTo()
                           << ", " << leg.getPosition()
-                          << ", course " << leg.getCourseToMag() << "°M " << leg.getCourseToTrue() << "°T"
-                          << ", magvar " << leg.getMagvar()
-                          << ", magvarPos " << leg.getMagvarPos()
+                          << ", course start " << leg.getCourseStartMag() << "°M " << leg.getCourseStartTrue() << "°T"
+                          << ", course end " << leg.getCourseEndMag() << "°M " << leg.getCourseEndTrue() << "°T"
+                          << ", magvar start " << leg.magvarStart << ", magvar end " << leg.magvarEnd
                           << (leg.isValidWaypoint() ? ", valid" : QString())
                           << (leg.isNavdata() ? ", nav" : QString())
                           << (leg.isAlternate() ? ", alternate" : QString())
