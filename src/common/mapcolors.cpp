@@ -17,7 +17,7 @@
 
 #include "common/mapcolors.h"
 
-#include "query/mapquery.h"
+#include "common/maptypes.h"
 #include "options/optiondata.h"
 #include "settings/settings.h"
 #include "atools.h"
@@ -150,6 +150,17 @@ QColor aircraftUserLabelColor(0, 0, 0);
 QColor aircraftUserLabelColorBg(255, 255, 150);
 QColor aircraftAiLabelColor(0, 0, 0);
 QColor aircraftAiLabelColorBg(255, 255, 255);
+
+/* Text along route and approach segments */
+QColor routeTextColor(0, 0, 0);
+QColor routeTextColorGray(80, 80, 80);
+QColor routeTextBackgroundColor(255, 255, 255, 220);
+QColor routeProcedureMissedTextColor(90, 90, 90);
+QColor routeProcedureTextColor(0, 0, 0);
+QColor routeProcedurePointColor(90, 90, 90);
+QColor routeProcedurePointFlyoverColor(Qt::black);
+QColor routeUserPointColor(Qt::darkYellow);
+QColor routeInvalidPointColor(Qt::red);
 
 /* Alternating colors */
 static QColor rowBgColor;
@@ -731,6 +742,18 @@ void syncColors()
   syncPen(colorSettings, "SafeAltLinePen", profileSafeAltLinePen);
   syncPen(colorSettings, "SafeAltLegLinePen", profileSafeAltLegLinePen);
   syncPen(colorSettings, "VasiCenterPen", profileVasiCenterPen);
+  colorSettings.endGroup();
+
+  colorSettings.beginGroup("Route");
+  syncColor(colorSettings, "TextColor", routeTextColor);
+  syncColor(colorSettings, "TextColorGray", routeTextColorGray);
+  syncColor(colorSettings, "TextBackgroundColor", routeTextBackgroundColor);
+  syncColor(colorSettings, "ProcedureMissedTextColor", routeProcedureMissedTextColor);
+  syncColor(colorSettings, "ProcedureTextColor", routeProcedureTextColor);
+  syncColor(colorSettings, "ProcedurePointColor", routeProcedurePointColor);
+  syncColor(colorSettings, "ProcedurePointFlyoverColor", routeProcedurePointFlyoverColor);
+  syncColor(colorSettings, "UserPointColor", routeUserPointColor);
+  syncColor(colorSettings, "InvalidPointColor", routeInvalidPointColor);
   colorSettings.endGroup();
 
   // Sync airspace colors ============================================

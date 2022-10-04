@@ -228,17 +228,15 @@ const QColor routeProcedurePreviewColor = QColor(0, 120, 230);
 const QColor routeProcedurePreviewMissedColor = QColor(0, 120, 230);
 
 /* Text along route and approach segments */
-const QColor routeTextColor = QColor(0, 0, 0);
-const QColor routeTextBackgroundColor = QColor(255, 255, 255, 220);
-
-const QColor routeProcedureMissedTextColor = QColor(90, 90, 90);
-const QColor routeProcedureTextColor = QColor(0, 0, 0);
-
-const QColor routeProcedurePointColor = QColor(90, 90, 90);
-const QColor routeProcedurePointFlyoverColor = QColor(Qt::black);
-const QColor routeUserPointColor = QColor(Qt::darkYellow);
-/* Point not found in database */
-const QColor routeInvalidPointColor = QColor(Qt::red);
+extern QColor routeTextColor;
+extern QColor routeTextColorGray;
+extern QColor routeTextBackgroundColor;
+extern QColor routeProcedureMissedTextColor;
+extern QColor routeProcedureTextColor;
+extern QColor routeProcedurePointColor;
+extern QColor routeProcedurePointFlyoverColor;
+extern QColor routeUserPointColor;
+extern QColor routeInvalidPointColor;
 
 /* Procedure colors */
 const QColor routeProcedureMissedTableColor = QColor(Qt::darkRed);
