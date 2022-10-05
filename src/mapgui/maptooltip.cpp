@@ -325,9 +325,11 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
           if(!html.isEmpty())
             html.textBar(TEXT_BAR_LENGTH);
 
-          info.windText(winds, html, windReporter->getAltitudeFt(), windReporter->getSourceText());
+          // Show wind stack with barb notation for layer
+          info.windText(winds, html, windReporter->getAltitudeFt(), map::INVALID_ALTITUDE_VALUE, windReporter->getSourceText(),
+                        false /* table */);
 
-#ifdef DEBUG_INFORMATION
+#ifdef DEBUG_INFORMATION_WIND
           html.hr().small(QString("Pos(%1, %2), alt(%3)").
                           arg(mapSearchResult.windPos.getLonX()).arg(mapSearchResult.windPos.getLatY()).
                           arg(windReporter->getAltitudeFt(), 0, 'f', 2)).br();

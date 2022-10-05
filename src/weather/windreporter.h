@@ -140,14 +140,14 @@ public:
   atools::grib::Wind getWindForLineRoute(const atools::geo::Line& line);
   atools::grib::Wind getWindForLineStringRoute(const atools::geo::LineString& line);
 
-  /* Get a list of winds for the given position at all given altitudes. Altitiude field in pos contains the altitude.
+  /* Get a list of winds for the given position at all given altitudes. Altitiude field in resulting pos contains the altitude.
    * Adds flight plan altitude if needed and selected in GUI. Does not use manual wind setting.*/
-  atools::grib::WindPosVector getWindStackForPos(const atools::geo::Pos& pos, QVector<int> altitudesFt);
+  atools::grib::WindPosVector getWindStackForPos(const atools::geo::Pos& pos, QVector<int> altitudesFt) const;
 
   /* Get a list of winds for the given position at all given altitudes. Returns only not interpolated levels.
-   * Altitiude field in pos contains the altitude.
+   * Altitiude field in resulting pos contains the altitude.
    * Adds flight plan altitude if needed and selected in GUI. Does not use manual wind setting. */
-  atools::grib::WindPosVector getWindStackForPos(const atools::geo::Pos& pos);
+  atools::grib::WindPosVector getWindStackForPos(const atools::geo::Pos& pos) const;
 
   /* Updates the query class */
   void updateManualRouteWinds();
@@ -204,7 +204,7 @@ private:
   /* Update altitude label from slider values */
   void updateSliderLabel();
 
-  atools::grib::WindQuery *currentWindQuery()
+  atools::grib::WindQuery *currentWindQuery() const
   {
     return isWindManual() ? windQueryManual : windQueryOnline;
   }

@@ -787,7 +787,7 @@ atools::grib::Wind WindReporter::getWindForLineStringRoute(const atools::geo::Li
   return (isWindManual() ? windQueryManual : windQueryOnline)->getWindAverageForLineString(line);
 }
 
-atools::grib::WindPosVector WindReporter::getWindStackForPos(const atools::geo::Pos& pos, QVector<int> altitudesFt)
+atools::grib::WindPosVector WindReporter::getWindStackForPos(const atools::geo::Pos& pos, QVector<int> altitudesFt) const
 {
   atools::grib::WindPosVector winds;
   atools::grib::WindQuery *windQuery = currentWindQuery();
@@ -825,7 +825,7 @@ atools::grib::WindPosVector WindReporter::getWindStackForPos(const atools::geo::
   return winds;
 }
 
-atools::grib::WindPosVector WindReporter::getWindStackForPos(const atools::geo::Pos& pos)
+atools::grib::WindPosVector WindReporter::getWindStackForPos(const atools::geo::Pos& pos) const
 {
   return getWindStackForPos(pos, levelsTooltip);
 }

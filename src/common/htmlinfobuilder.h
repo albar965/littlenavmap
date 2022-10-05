@@ -264,7 +264,7 @@ public:
    * @param html Result containing HTML snippet
    */
   void windText(const atools::grib::WindPosVector& windStack, atools::util::HtmlBuilder& html,
-                float currentAltitude, const QString& source) const;
+                float windbarbAltitude, float waypointAltitude, const QString& source, bool table) const;
 
   /*
    * Creates a HTML description for a user defined flight plan point.

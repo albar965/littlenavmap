@@ -190,7 +190,6 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     else
       html.row2(tr("Flight Plan Position:"), locale.toString(airport.routeIndex + 1));
     flightplanWaypointRemarks(html, airport.routeIndex);
-    routeWindText(html, *route, airport.routeIndex);
   }
 
   if(!print && info)
@@ -539,6 +538,8 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   // Add links to airport files directory "Documents/Airports/ICAO"
   if(info && !print)
     addAirportFolder(airport, html);
+
+  routeWindText(html, *route, airport.routeIndex);
 
 #ifdef DEBUG_INFORMATION
   if(info)
@@ -1294,8 +1295,13 @@ void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) 
 }
 
 void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, HtmlBuilder& html,
-                               float currentAltitude, const QString& source) const
+                               float windbarbAltitude, float waypointAltitude, const QString& source, bool table) const
 {
+  const static int WIND_LAYERS_AT_WAYPOINT = 4;
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
+
   if(!windStack.isEmpty())
   {
     float magVar = NavApp::getMagVar(windStack.constFirst().pos);
@@ -1314,21 +1320,29 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, Htm
     else
     {
       // Several wind layers report for wind barbs =============================================
-      head(html, tr("Wind (%1)").arg(source));
-      html.table();
+      if(!table)
+      {
+        head(html, tr("Wind (%1)").arg(source));
+        html.table();
+      }
+      else
+      {
+        html.table();
+        html.tr().th(tr("Wind (%1):").arg(source), ahtml::ALIGN_LEFT, QColor(), 3 /* colspan */).trEnd();
+      }
+
       html.tr().th(Unit::getUnitAltStr()).th(tr("Direction")).th(Unit::getUnitSpeedStr()).trEnd();
 
-      // Find index for current layer
-      int currentLayerIndex = -1;
-      if(currentAltitude < map::INVALID_ALTITUDE_VALUE)
+      // Find index for given layer altitudes - these have to be included in the stack already
+      int windbarbLayerIndex = -1, waypointLayerIndex = -1;
+      if(windbarbAltitude < map::INVALID_ALTITUDE_VALUE)
       {
         for(int i = 0; i < windStack.size(); i++)
         {
-          if(atools::almostEqual(windStack.at(i).pos.getAltitude(), currentAltitude, 10.f))
-          {
-            currentLayerIndex = i;
-            break;
-          }
+          if(atools::almostEqual(windStack.at(i).pos.getAltitude(), windbarbAltitude, 10.f))
+            windbarbLayerIndex = i;
+          if(atools::almostEqual(windStack.at(i).pos.getAltitude(), waypointAltitude, 10.f))
+            waypointLayerIndex = i;
         }
       }
 
@@ -1341,17 +1355,24 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, Htm
           continue;
 
         float alt = wind.pos.getAltitude();
-        bool currentLayer = currentLayerIndex == i;
 
-        if(!verbose && currentLayerIndex != -1 && atools::almostNotEqual(currentLayerIndex, i, 1))
+        if(waypointAltitude < map::INVALID_ALTITUDE_VALUE)
+        {
+          // Show only two layers below and two layers above
+          if(waypointLayerIndex != -1 && atools::almostNotEqual(waypointLayerIndex, i, WIND_LAYERS_AT_WAYPOINT / 2))
+            continue;
+        }
+        else if(!verbose && windbarbLayerIndex != -1 && atools::almostNotEqual(windbarbLayerIndex, i, 1))
           continue;
 
         Flags flags = ahtml::ALIGN_RIGHT;
 
-        flags |= currentLayer ? ahtml::BOLD : ahtml::NONE;
+        flags |= windbarbLayerIndex == i || waypointLayerIndex == i ? ahtml::BOLD : ahtml::NONE;
         QString suffix;
-        if(currentLayer)
+        if(windbarbLayerIndex == i)
           suffix = tr(" (wind barbs)");
+        if(waypointLayerIndex == i)
+          suffix = tr(" (flight plan waypoint)");
 
         // One table row with three data fields
         QString courseTxt;
@@ -2172,6 +2193,8 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   if(rec != nullptr)
     addScenery(rec, html, false /* com */, false /* ils */);
 
+  routeWindText(html, NavApp::getRouteConst(), vor.routeIndex);
+
 #ifdef DEBUG_INFORMATION
   if(info)
     html.small(QString("Database: vor_id = %1").arg(vor.getId())).br();
@@ -2243,6 +2266,8 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
 
   if(rec != nullptr)
     addScenery(rec, html, false /* com */, false /* ils */);
+
+  routeWindText(html, NavApp::getRouteConst(), ndb.routeIndex);
 
 #ifdef DEBUG_INFORMATION
   if(info)
@@ -2858,6 +2883,8 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   if(rec != nullptr)
     addScenery(rec, html, false /* com */, false /* ils */);
 
+  routeWindText(html, NavApp::getRouteConst(), waypoint.routeIndex);
+
 #ifdef DEBUG_INFORMATION
   if(info)
     html.small(QString("Database: waypoint_id = %1, artificial = %2").arg(waypoint.getId()).arg(waypoint.artificial)).br();
@@ -3324,6 +3351,10 @@ void HtmlInfoBuilder::parkingText(const MapParking& parking, HtmlBuilder& html) 
 
 void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, HtmlBuilder& html) const
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
+
   QIcon icon = SymbolPainter::createUserpointIcon(symbolSizeTitle.height());
   html.img(icon, QString(), QString(), symbolSizeTitle);
   html.nbsp().nbsp();
@@ -3344,6 +3375,7 @@ void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, Htm
     }
     else
       html.p().b(tr("Flight Plan Position: ") % QString::number(userpoint.routeIndex + 1)).pEnd();
+
     routeWindText(html, NavApp::getRouteConst(), userpoint.routeIndex);
   }
 }
@@ -5051,18 +5083,50 @@ void HtmlInfoBuilder::addMorse(atools::util::HtmlBuilder& html, const QString& n
 
 void HtmlInfoBuilder::routeWindText(HtmlBuilder& html, const Route& route, int index) const
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
+  const WindReporter *windReporter = NavApp::getWindReporter();
   // Wind text is always shown independent of barb status at route
-  if(index >= 0 && NavApp::getWindReporter()->hasAnyWindData() && route.isValidProfile())
+  if(index >= 0 && NavApp::getWindReporter()->hasAnyWindData() && route.isValidProfile() && windReporter->isRouteWindShown())
   {
     const RouteAltitudeLeg& altLeg = route.getAltitudeLegAt(index);
     if(altLeg.getLineString().getPos2().getAltitude() > MIN_WIND_BARB_ALTITUDE && !altLeg.isMissed() && !altLeg.isAlternate())
     {
-      atools::grib::WindPos wp;
-      wp.pos = altLeg.getLineString().getPos2();
-      wp.wind.dir = altLeg.getWindDirection();
-      wp.wind.speed = altLeg.getWindSpeed();
+      // Create entry for flight plan position
+      atools::grib::WindPos windPos;
+      windPos.pos = altLeg.getLineString().getPos2();
+      windPos.wind.dir = altLeg.getWindDirection();
+      windPos.wind.speed = altLeg.getWindSpeed();
 
-      windText({wp}, html, altLeg.getLineString().getPos2().getAltitude(), NavApp::getWindReporter()->getSourceText());
+      atools::grib::WindPosVector winds;
+      if(verbose)
+      {
+        // Get full stack for all default altitudes
+        winds = windReporter->getWindStackForPos(altLeg.getLineString().getPos2());
+
+        // Erase any wind altitude which overlaps with the generated position from the flight plan
+        winds.erase(std::remove_if(winds.begin(), winds.end(), [&windPos](const atools::grib::WindPos& wp) -> bool {
+          return atools::almostEqual(wp.pos.getAltitude(), windPos.pos.getAltitude(), 10.f);
+        }), winds.end());
+
+        // Get next entry below the given one
+        auto it = std::lower_bound(winds.begin(), winds.end(), windPos.pos.getAltitude(),
+                                   [](const atools::grib::WindPos& wp, float altitude) -> bool
+        {
+          return wp.pos.getAltitude() < altitude;
+        });
+
+        // Insert flight plan wind position into stack
+        winds.insert(it, windPos);
+      }
+      else
+        // Show only one entry if verbose tooltips not selected
+        winds.append(windPos);
+
+      // Show wind text without header but using a table only
+      windText(winds, html, windReporter->getAltitudeFt(), windPos.pos.getAltitude(), NavApp::getWindReporter()->getSourceText(),
+               true /* table */);
     }
   }
 }
@@ -5092,12 +5156,15 @@ QString HtmlInfoBuilder::highlightText(const QString& text) const
 
 void HtmlInfoBuilder::routeInfoText(HtmlBuilder& html, int routeIndex, bool recommended) const
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
+
   if(!info && routeIndex >= 0)
   {
     if(recommended)
       html.row2(tr("Related navaid for procedure"), QString());
     html.row2(tr("Flight Plan Position:"), locale.toString(routeIndex + 1));
     flightplanWaypointRemarks(html, routeIndex);
-    routeWindText(html, NavApp::getRouteConst(), routeIndex);
   }
 }
