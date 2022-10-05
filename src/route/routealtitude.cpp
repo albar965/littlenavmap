@@ -943,8 +943,11 @@ void RouteAltitude::collectErrors(const QStringList& altRestrErrors)
   }
   else if(!(getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE && getTopOfClimbDistance() < map::INVALID_DISTANCE_VALUE))
     errors.append(tr("Cannot calculate top of climb or top of descent. "
-                     "The flight plan is either too short or the cruise altitude is too high. "
-                     "Also check the climb and descent speeds in the aircraft performance."));
+                     "Possible reasons:<ul>"
+                     "<li>The flight plan is too short or the cruise altitude is too high.</li>"
+                       "<li>Climb and descent speeds in the aircraft performance data are too low.</li>"
+                         "<li>Departure or destination elevation is above cruise altitude.</li>"
+                           "<li>Cruise altitude violates one or more procedure altitude restrictions.</li></ul>"));
 }
 
 void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, float cruiseAltitudeFt)
