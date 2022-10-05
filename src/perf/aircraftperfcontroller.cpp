@@ -764,7 +764,7 @@ void AircraftPerfController::updateReport()
       warning(tr("Possible reasons:<br/>"
                  "- The flight plan is too short or the cruise altitude is too high.<br/>"
                  "- Climb and descent speeds in the aircraft performance data are too low.<br/>"
-                 "- Departure or destination elevation is above cruise altitude.<br/>"
+                 "- Departure or destination airport elevation is above cruise altitude.<br/>"
                  "- Cruise altitude violates one or more procedure altitude restrictions.")).
       pEnd();
   }

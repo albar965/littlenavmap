@@ -946,7 +946,7 @@ void RouteAltitude::collectErrors(const QStringList& altRestrErrors)
                      "Possible reasons:<ul>"
                      "<li>The flight plan is too short or the cruise altitude is too high.</li>"
                        "<li>Climb and descent speeds in the aircraft performance data are too low.</li>"
-                         "<li>Departure or destination elevation is above cruise altitude.</li>"
+                         "<li>Departure or destination airport elevation is above cruise altitude.</li>"
                            "<li>Cruise altitude violates one or more procedure altitude restrictions.</li></ul>"));
 }
 
