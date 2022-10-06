@@ -1926,7 +1926,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 
   const atools::fs::weather::MetarParser& parsed = metar.getParsedMetar();
 
-  QVector<atools::fs::weather::MetarCloud> clouds = parsed.getClouds();
+  QList<atools::fs::weather::MetarCloud> clouds = parsed.getClouds();
   bool hasClouds = !clouds.isEmpty() && clouds.constFirst().getCoverage() != atools::fs::weather::MetarCloud::COVERAGE_CLEAR;
 
   html.table();
