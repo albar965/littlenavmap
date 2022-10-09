@@ -64,7 +64,7 @@ struct PaintContext
                              *  should be used to visibility of map objects */
   const MapLayer *mapLayerEffective; /* layer for the current zoom distance not affected by detail level.
                                       *  Should be used to determine text visibility and object sizes. */
-  const MapLayer *mapLayerRoute; /* layer for the current zoom distance and details with more details for route. */
+  const MapLayer *mapLayerRoute; /* layer for the current zoom distance and more details for route. */
   Marble::GeoPainter *painter;
   Marble::ViewportParams *viewport;
   Marble::ViewContext viewContext;

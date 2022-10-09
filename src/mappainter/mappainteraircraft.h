@@ -32,6 +32,11 @@ public:
 
   virtual void render() override;
 
+private:
+  int maxNearestAiLabels = 5;
+  float maxNearestAiLabelsDistNm = 10;
+  float maxNearestAiLabelsVertDistFt = 5000;
+
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERMARKAIRCRAFT_H

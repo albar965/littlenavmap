@@ -169,6 +169,9 @@ const QLatin1String MAP_SUN_SHADING_TIME_OPTION("Map/SunShadingTimeOption");
 const QLatin1String MAP_SUN_SHADING_TIME("Map/SunShadingTime");
 const QLatin1String MAP_THEME_KEYS("Map/ThemeKeys");
 const QLatin1String MAP_THEME("Map/CurrentThemeId");
+const QLatin1String MAP_MAX_NEAREST_AI_LABELS("Map/MaxNearestAiLabels");
+const QLatin1String MAP_MAX_NEAREST_AI_LABELS_DIST_NM("Map/MaxNearestAiLabelsDistNm");
+const QLatin1String MAP_MAX_NEAREST_AI_LABELS_VERT_DIST_FT("Map/MaxNearestAiLabelsVertDistFt");
 
 const QLatin1String MAP_DISTANCEMARKERS("Map/DistanceMarkers1");
 const QLatin1String MAP_TRAFFICPATTERNS("Map/TrafficPatt1ns1");

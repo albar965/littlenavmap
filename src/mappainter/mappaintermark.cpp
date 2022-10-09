@@ -73,9 +73,10 @@ void MapPainterMark::render()
     atools::util::PainterContextSaver dbgsaver(context->painter);
     symbolPainter->textBox(context->painter, {
       QString("Layer %1").arg(context->mapLayer->getMaxRange()),
+      QString("Layer route %1").arg(context->mapLayerRoute->getMaxRange()),
       QString("Airport sym %1").arg(context->mapLayer->getAirportSymbolSize()),
-      QString("Min runway %1").arg(context->mapLayer->getMinRunwayLength())},
-                           mapcolors::routeLogEntryOutlineColor, 0, 50, textatt::ROUTE_BG_COLOR);
+      QString("Min RW %1").arg(context->mapLayer->getMinRunwayLength())},
+                           mapcolors::routeLogEntryOutlineColor, 1, 1, textatt::ROUTE_BG_COLOR | textatt::VTOP);
   }
 #endif
 

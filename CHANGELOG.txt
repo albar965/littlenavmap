@@ -114,6 +114,10 @@ Please report if something does not work or does not work as expected.
 * Adjusted AI aircraft label visibility depending on aircraft ground status and details.
 * Final course for measurement lines at VOR is now calculated based on VOR calibrated declination.
 * Fixed incorrect endurance range display and wrong warnings when simulator time is changed.
+* Adjusted map detail settings for AI and online aircraft.
+* Fixed detailed label display for the 5 nearest AI aircraft which are 10 NM near user and within 5000 ft of altitude.
+* Criteria for nearby AI labels can be changed in configuration file in group `[Map]` and keys
+  `MaxNearestAiLabels`, `MaxNearestAiLabelsDistNm` as well as `MaxNearestAiLabelsVertDistFt`.
 
 ### Undo / Redo
 

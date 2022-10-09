@@ -49,12 +49,20 @@ void MapPainterShip::render()
     if(context->objectTypes & map::AIRCRAFT_AI_SHIP && context->mapLayer->isAiShipLarge())
     {
       atools::util::PainterContextSaver saver(context->painter);
+      bool hidden = false;
+      float x, y;
+      QMargins margins(100, 100, 100, 100);
 
       for(const SimConnectAircraft& ac : mapPaintWidget->getAiAircraft())
       {
-        if(ac.isAnyBoat() &&
-           (ac.getModelRadiusCorrected() * 2 > layer::LARGE_SHIP_SIZE || context->mapLayer->isAiShipSmall()))
-          paintAiVehicle(ac, false /* force label */);
+        if(ac.isAnyBoat() && (ac.getModelRadiusCorrected() * 2 > layer::LARGE_SHIP_SIZE || context->mapLayer->isAiShipSmall()))
+        {
+          if(wToSBuf(ac.getPosition(), x, y, margins, &hidden))
+          {
+            if(!hidden)
+              paintAiVehicle(ac, x, y, false /* forceLabelNearby */);
+          }
+        }
       }
     }
   }

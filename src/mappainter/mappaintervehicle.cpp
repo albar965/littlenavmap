@@ -55,7 +55,7 @@ MapPainterVehicle::~MapPainterVehicle()
 
 }
 
-void MapPainterVehicle::paintAiVehicle(const SimConnectAircraft& vehicle, bool forceLabel)
+void MapPainterVehicle::paintAiVehicle(const SimConnectAircraft& vehicle, float x, float y, bool forceLabelNearby)
 {
   if(vehicle.isUser())
     return;
@@ -65,41 +65,34 @@ void MapPainterVehicle::paintAiVehicle(const SimConnectAircraft& vehicle, bool f
   if(!pos.isValid())
     return;
 
-  bool hidden = false;
-  float x, y;
-  if(wToS(pos, x, y, DEFAULT_WTOS_SIZE, &hidden))
+  float rotate = calcRotation(vehicle);
+
+  if(rotate < map::INVALID_COURSE_VALUE)
   {
-    if(!hidden)
+    // Position is visible
+    context->painter->translate(x, y);
+    context->painter->rotate(rotate);
+
+    int minSize;
+    if(vehicle.isUser())
+      minSize = 32;
+    else
+      minSize = vehicle.isAnyBoat() ? context->mapLayer->getAiAircraftSize() - 4 : context->mapLayer->getAiAircraftSize();
+
+    float size = std::max(context->szF(context->symbolSizeAircraftAi, minSize), scale->getPixelForFeet(vehicle.getModelSize()));
+    float offset = -(size / 2.f);
+
+    // Draw symbol
+    context->painter->drawPixmap(QPointF(offset, offset),
+                                 *NavApp::getVehicleIcons()->pixmapFromCache(vehicle, static_cast<int>(size), 0));
+
+    context->painter->resetTransform();
+
+    // Build text label
+    if(!vehicle.isAnyBoat())
     {
-      float rotate = calcRotation(vehicle);
-
-      if(rotate < map::INVALID_COURSE_VALUE)
-      {
-        // Position is visible
-        context->painter->translate(x, y);
-        context->painter->rotate(rotate);
-
-        int minSize;
-        if(vehicle.isUser())
-          minSize = 32;
-        else
-          minSize = vehicle.isAnyBoat() ? context->mapLayer->getAiAircraftSize() - 4 : context->mapLayer->getAiAircraftSize();
-
-        int size = std::max(context->sz(context->symbolSizeAircraftAi, minSize), scale->getPixelIntForFeet(vehicle.getModelSize()));
-        int offset = -(size / 2);
-
-        // Draw symbol
-        context->painter->drawPixmap(offset, offset, *NavApp::getVehicleIcons()->pixmapFromCache(vehicle, size, 0));
-
-        context->painter->resetTransform();
-
-        // Build text label
-        if(!vehicle.isAnyBoat())
-        {
-          context->szFont(context->textSizeAircraftAi);
-          paintTextLabelAi(x, y, size, vehicle, forceLabel);
-        }
-      }
+      context->szFont(context->textSizeAircraftAi);
+      paintTextLabelAi(x, y, size, vehicle, forceLabelNearby);
     }
   }
 }
@@ -240,21 +233,28 @@ void MapPainterVehicle::paintAircraftTrack()
   }
 }
 
-void MapPainterVehicle::paintTextLabelAi(float x, float y, int size, const SimConnectAircraft& aircraft, bool forceLabel)
+void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const SimConnectAircraft& aircraft, bool forceLabelNearby)
 {
   QStringList texts;
   bool flying = !aircraft.isOnGround();
 
-  if((!flying && context->mapLayer->isAiAircraftGroundText()) || // All AI on ground
-     (flying && context->mapLayer->isAiAircraftText()) || // All AI in the air
-     (aircraft.isOnline() && context->mapLayer->isOnlineAircraftText()) || // All online
-     forceLabel) // Force label for nearby aircraft
+  const MapLayer *layer = context->mapLayer;
+
+  if((!flying && layer->isAiAircraftGroundText()) || // All AI on ground
+     (flying && layer->isAiAircraftText()) || // All AI in the air
+     (aircraft.isOnline() && layer->isOnlineAircraftText()) || // All online
+     forceLabelNearby)
   {
-    bool detail = context->mapLayer->isAiAircraftTextDetail();
-    bool detail2 = context->mapLayer->isAiAircraftTextDetail2();
+    bool text = layer->isAiAircraftText();
+    bool detail = layer->isAiAircraftTextDetail(); // Lowest detail
+    bool detail2 = layer->isAiAircraftTextDetail2(); // Higher detail
+
+    if(forceLabelNearby)
+      detail = text;
 
     // Aircraft information ====================================================================================
-    appendAtcText(texts, aircraft, context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_REGISTRATION),
+    appendAtcText(texts, aircraft,
+                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_REGISTRATION),
                   context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TYPE) && detail,
                   context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_AIRLINE) && detail2,
                   context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER) && detail2,
@@ -265,11 +265,10 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, int size, const SimCo
       // Speeds ====================================================================================
       if(aircraft.getGroundSpeedKts() > 30)
         appendSpeedText(texts, aircraft,
-                        context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_IAS) && flying,
+                        context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_IAS) && flying && detail2,
                         context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_GS),
-                        context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TAS) && flying);
+                        context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TAS) && flying && detail2);
 
-      const Pos& pos = aircraft.getPosition();
       if(flying)
       {
         // Departure and destination ====================================================================================
@@ -300,7 +299,7 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, int size, const SimCo
 
         QStringList altTexts;
         if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_INDICATED_ALTITUDE) &&
-           aircraft.getIndicatedAltitudeFt() < map::INVALID_ALTITUDE_VALUE)
+           aircraft.getIndicatedAltitudeFt() < map::INVALID_ALTITUDE_VALUE && detail2)
           altTexts.append(tr("IND %1").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())));
 
         // Altitude ====================================================================================
@@ -316,28 +315,41 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, int size, const SimCo
 
         // Bearing to user ====================================================================================
         const Pos& userPos = mapPaintWidget->getUserAircraft().getPosition();
+        const Pos& aiPos = aircraft.getPosition();
         if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_DIST_BEARING_FROM_USER) && detail2)
         {
-          float distMeter = pos.distanceMeterTo(userPos);
+          float distMeter = aiPos.distanceMeterTo(userPos);
 
           if(distMeter < atools::geo::nmToMeter(8000.f))
+          {
+            QString dist = QString::number(atools::geo::normalizeCourse(userPos.angleDegTo(aiPos) - NavApp::getMagVar(userPos)), 'f', 0);
+
             texts.append(tr("From User %1 %2°M").
                          arg(Unit::distMeter(distMeter, true /* addUnit */, 5 /* minValPrec */, true /* narrow */)).
-                         arg(QString::number(atools::geo::normalizeCourse(userPos.angleDegTo(pos) - NavApp::getMagVar(userPos)), 'f', 0)));
+                         arg(dist));
+          }
         }
 
         // Coordinates ====================================================================================
         if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_COORDINATES) && detail2)
-          texts.append(Unit::coords(pos));
-      }
+          texts.append(Unit::coords(aiPos));
+      } // if(flying)
     } // if(detail)
 
+#ifdef DEBUG_INFORMATION
+    if(forceLabelNearby)
+      texts.prepend("[FORCE]");
+#endif
+
     int transparency = context->flags2.testFlag(opts2::MAP_AI_TEXT_BACKGROUND) ? 255 : 0;
+
+    // Do not place label far away from icon on lowest zoom levels
+    size = std::min(40.f, size);
 
     // Draw text label
     symbolPainter->textBoxF(context->painter, texts, mapcolors::aircraftAiLabelColor, x + size / 2.f, y + size / 2.f,
                             textatt::NONE, transparency, mapcolors::aircraftAiLabelColorBg);
-  }
+  } // if((!flying && layer->isAiAircraftGroundText()) ||
 }
 
 void MapPainterVehicle::paintTextLabelUser(float x, float y, int size, const SimConnectUserAircraft& aircraft)

@@ -60,11 +60,10 @@ protected:
   void paintTurnPath(const atools::fs::sc::SimConnectUserAircraft& userAircraft);
 
   void paintUserAircraft(const atools::fs::sc::SimConnectUserAircraft& userAircraft, float x, float y);
-  void paintAiVehicle(const atools::fs::sc::SimConnectAircraft& vehicle, bool forceLabel);
+  void paintAiVehicle(const atools::fs::sc::SimConnectAircraft& vehicle, float x, float y, bool forceLabelNearby);
 
   void paintTextLabelUser(float x, float y, int size, const atools::fs::sc::SimConnectUserAircraft& aircraft);
-  void paintTextLabelAi(float x, float y, int size, const atools::fs::sc::SimConnectAircraft& aircraft,
-                        bool forceLabel);
+  void paintTextLabelAi(float x, float y, float size, const atools::fs::sc::SimConnectAircraft& aircraft, bool forceLabelNearby);
   void appendClimbSinkText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft);
   void appendAtcText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft,
                      bool registration, bool type, bool airline, bool flightnumber, bool transponderCode);

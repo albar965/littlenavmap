@@ -444,11 +444,13 @@ public:
     return aiAircraftText;
   }
 
+  /* Lowest detail */
   bool isAiAircraftTextDetail() const
   {
     return aiAircraftTextDetail;
   }
 
+  /* Higher detail */
   bool isAiAircraftTextDetail2() const
   {
     return aiAircraftTextDetail2;
