@@ -113,6 +113,7 @@ Please report if something does not work or does not work as expected.
   `MaxShadow...`. Tuned shadow aircraft detection. Increased allowed heading difference.
 * Adjusted AI aircraft label visibility depending on aircraft ground status and details.
 * Final course for measurement lines at VOR is now calculated based on VOR calibrated declination.
+* Fixed incorrect endurance range display and wrong warnings when simulator time is changed.
 
 ### Undo / Redo
 

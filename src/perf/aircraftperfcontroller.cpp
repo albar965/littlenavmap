@@ -1426,6 +1426,13 @@ void AircraftPerfController::simDataChanged(const atools::fs::sc::SimConnectData
 {
   *lastSimData = simulatorData;
 
+#ifdef DEBUG_INFORMATION_PERF_SIMDATA
+  qDebug() << Q_FUNC_INFO << simulatorData.getUserAircraftConst().getZuluTime().toString(Qt::ISODateWithMs)
+           << simulatorData.getUserAircraftConst().getZuluTime().toMSecsSinceEpoch();
+  qDebug() << Q_FUNC_INFO << simulatorData.getUserAircraftConst().getLocalTime().toString(Qt::ISODateWithMs)
+           << simulatorData.getUserAircraftConst().getLocalTime().toMSecsSinceEpoch();
+#endif
+
   // Pass to handler for averaging
   perfHandler->simDataChanged(simulatorData, NavApp::getCurrentSimulatorShortName());
 
