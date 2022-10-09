@@ -3300,80 +3300,114 @@ Hilfreich wenn Sie Werkzeuge benutzen, um bestimmte Szenerien für jeden Flug zu
         <translation>&lt;big&gt;Fertig.&lt;/big&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="442"/>
         <source>Errors and Warnings</source>
-        <translation>Fehler und Warnungen</translation>
+        <translation type="vanished">Fehler und Warnungen</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="443"/>
         <source>%1 errors and %2 warnings</source>
-        <translation>%1 Fehler und %2 Warnungen</translation>
+        <translation type="vanished">%1 Fehler und %2 Warnungen</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="447"/>
         <source>Errors</source>
+        <translation type="vanished">Fehler</translation>
+    </message>
+    <message>
+        <source>%1 errors</source>
+        <translation type="vanished">%1 Fehler</translation>
+    </message>
+    <message>
+        <source>Warnings</source>
+        <translation type="vanished">Warnungen</translation>
+    </message>
+    <message>
+        <source>%1 warnings</source>
+        <translation type="vanished">%1 Warnungen</translation>
+    </message>
+    <message>
+        <location filename="src/db/databaseloader.cpp" line="442"/>
+        <location filename="src/db/databaseloader.cpp" line="445"/>
+        <source>%1 %2</source>
+        <translation>%1 %2</translation>
+    </message>
+    <message>
+        <location filename="src/db/databaseloader.cpp" line="442"/>
+        <source>errors</source>
         <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="448"/>
-        <source>%1 errors</source>
-        <translation>%1 Fehler</translation>
+        <location filename="src/db/databaseloader.cpp" line="442"/>
+        <source>error</source>
+        <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="452"/>
-        <source>Warnings</source>
+        <location filename="src/db/databaseloader.cpp" line="445"/>
+        <source>warnings</source>
         <translation>Warnungen</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="453"/>
-        <source>%1 warnings</source>
-        <translation>%1 Warnungen</translation>
+        <location filename="src/db/databaseloader.cpp" line="445"/>
+        <source>warning</source>
+        <translation>Warnung</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="457"/>
+        <location filename="src/db/databaseloader.cpp" line="448"/>
         <source>&lt;h3&gt;Found %1 in %2 scenery entries when loading the scenery database&lt;/h3&gt;</source>
-        <translation>&lt;h3&gt;%1 Fehler in %2 Szenerieeinträgen beim Laden der Szeneriedatenbank gefunden&lt;/h3&gt;</translation>
+        <translation>&lt;h3&gt;%1 in %2 Szenerieeinträgen beim Laden der Szeneriedatenbank gefunden&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="463"/>
+        <location filename="src/db/databaseloader.cpp" line="449"/>
+        <source>, </source>
+        <translation>, </translation>
+    </message>
+    <message>
+        <location filename="src/db/databaseloader.cpp" line="449"/>
+        <source> and </source>
+        <translation> und </translation>
+    </message>
+    <message>
+        <location filename="src/db/databaseloader.cpp" line="454"/>
         <source>&lt;b&gt;If you wish to report these errors attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</source>
         <oldsource>&lt;b&gt;If you wish to report these errors attach the log and configuration files to your report, add all other available information and send it to one of the contact address below.&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</oldsource>
         <translation>&lt;b&gt;Wenn Sie diesen Fehler melden wollen, fügen Sie die Log- und Konfigurationsdatei sowie alle anderen verfügbaren Informationen zu Ihrem Bericht hinzu und senden Sie diesen an die unten genannte Kontaktadresse.&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="471"/>
+        <location filename="src/db/databaseloader.cpp" line="462"/>
         <source>&lt;hr/&gt;Some files or scenery directories could not be read.&lt;br/&gt;You should check if the airports of the affected sceneries display correctly and show the correct information.&lt;hr/&gt;</source>
         <translation>&lt;hr/&gt;Einige Dateien oder Szenerieverzeichnisse konnten nicht geladen werden.&lt;br/&gt;Bitte überprüfen, ob die betroffenen Flugplätze korrekt dargestellt werden und die richtigen Informationen angezeigt werden.&lt;hr/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="477"/>
+        <location filename="src/db/databaseloader.cpp" line="468"/>
         <source>&lt;hr/&gt;Some files or scenery directories could not be read properly due to encrypted airport data or other issues.&lt;hr/&gt;</source>
         <translation>&lt;hr/&gt;Einige Dateien oder Szenerieverzeichnisse konnten aufgrund von verschlüsselten Flugplatzdaten oder anderen Problemen nicht richtig gelesen werden.&lt;hr/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="485"/>
+        <location filename="src/db/databaseloader.cpp" line="476"/>
         <source>&lt;b&gt;More scenery entries ...&lt;/b&gt;</source>
         <translation>&lt;b&gt;Weitere Szenerieeinträge ...&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="490"/>
+        <location filename="src/db/databaseloader.cpp" line="481"/>
         <source>&lt;b&gt;Scenery Title: %1&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Szenerietitel: %1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="499"/>
+        <location filename="src/db/databaseloader.cpp" line="490"/>
         <source>&lt;b&gt;More files ...&lt;/b&gt;</source>
         <translation>&lt;b&gt;Weitere Dateien ...&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="504"/>
+        <location filename="src/db/databaseloader.cpp" line="495"/>
         <source>&lt;b&gt;File:&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;Message:&lt;/b&gt; %2&lt;br/&gt;</source>
         <translation>&lt;b&gt;Datei:&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;Meldung:&lt;/b&gt; %2&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="511"/>
+        <location filename="src/db/databaseloader.cpp" line="502"/>
+        <source>%1 - Load Scenery Library Results</source>
+        <translation>%1 - Lade Szeneriebibliothek - Ergebnisse</translation>
+    </message>
+    <message>
         <source>%1 - Load Scenery Library %2</source>
-        <translation>%1 - Lade Szeneriebibliothek %2</translation>
+        <translation type="vanished">%1 - Lade Szeneriebibliothek %2</translation>
     </message>
 </context>
 <context>
@@ -19716,8 +19750,8 @@ kHz/MHz</translation>
         <location filename="src/mappainter/mappainternav.cpp" line="253"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="99"/>
         <location filename="src/mappainter/mappainterroute.cpp" line="116"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="450"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="460"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="462"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="472"/>
         <source> / </source>
         <translation> / </translation>
     </message>
@@ -19822,9 +19856,9 @@ kHz/MHz</translation>
     <message>
         <location filename="src/mappainter/mappainternav.cpp" line="317"/>
         <location filename="src/mappainter/mappainternav.cpp" line="331"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="315"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="383"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="480"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="314"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="395"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="492"/>
         <source>, </source>
         <translation>, </translation>
     </message>
@@ -19905,7 +19939,7 @@ kHz/MHz</translation>
         <translation>…</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="279"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="278"/>
         <source>%1 to %2</source>
         <translation>%1 nach %2</translation>
     </message>
@@ -19914,8 +19948,8 @@ kHz/MHz</translation>
         <translation type="vanished">Kein</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="294"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="363"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="293"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="375"/>
         <source>HDG %3°M</source>
         <translation>HDG %3°M</translation>
     </message>
@@ -19924,7 +19958,7 @@ kHz/MHz</translation>
         <translation type="vanished">HDG %3°T</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="312"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="311"/>
         <source>ALT %1%2</source>
         <translation>ALT %1%2</translation>
     </message>
@@ -19938,80 +19972,80 @@ kHz/MHz</translation>
         <translation>%1%2</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="304"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="374"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="303"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="386"/>
         <source>IND %1</source>
         <translation>IND %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="377"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="389"/>
         <source>ALT %1</source>
         <translation>ALT %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="380"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="392"/>
         <source>AGL %1</source>
         <translation>AGL %1</translation>
     </message>
     <message>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="279"/>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="280"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="281"/>
         <source>Unknown</source>
         <translation>Unbekannt</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="324"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="327"/>
         <source>From User %1 %2°M</source>
         <translation>Vom Nutzer %1 %2°M</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="396"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="408"/>
         <source>Ice %</source>
         <translation>Eis %</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="412"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="424"/>
         <source> ▲</source>
         <translation> ▲</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="414"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="426"/>
         <source> ▼</source>
         <translation> ▼</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="463"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="475"/>
         <source>XPDR %1</source>
         <oldsource>TCAS %1</oldsource>
         <translation>XPDR %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="471"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="483"/>
         <source>IAS %1</source>
         <translation>IAS %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="474"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="486"/>
         <source>GS %2</source>
         <translation>GS %2</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="477"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="489"/>
         <source>TAS %1</source>
         <translation>TAS %1</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="507"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="519"/>
         <source>%1 °M</source>
         <translation>%1 °M</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="511"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="523"/>
         <source>%2</source>
         <translation>%2</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="519"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="531"/>
         <source>No wind</source>
         <translation>Kein Wind</translation>
     </message>
@@ -20019,12 +20053,12 @@ kHz/MHz</translation>
 <context>
     <name>MapPainterMark</name>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="605"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="606"/>
         <source>%1 to %2</source>
         <translation>%1 nach %2</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="614"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="615"/>
         <source>,</source>
         <translation>,</translation>
     </message>
@@ -20033,52 +20067,52 @@ kHz/MHz</translation>
         <translation type="vanished">%1 / %2</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1142"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1143"/>
         <source>N</source>
         <comment>North</comment>
         <translation>N</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1144"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1145"/>
         <source>E</source>
         <comment>East</comment>
         <translation>O</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1146"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1147"/>
         <source>S</source>
         <comment>South</comment>
         <translation>S</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1148"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1149"/>
         <source>W</source>
         <comment>West</comment>
         <translation>W</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1260"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1261"/>
         <source>%1°T</source>
         <translation>%1°T</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1262"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1263"/>
         <source>%1°M</source>
         <translation>%1°M</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1264"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1265"/>
         <source>TRK</source>
         <translation>TRK</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1363"/>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1365"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1364"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1366"/>
         <source>°T</source>
         <translation>°T</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1384"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1385"/>
         <source>R%1</source>
         <translation>R%1</translation>
     </message>
@@ -20087,40 +20121,40 @@ kHz/MHz</translation>
         <translation type="vanished">°T ► </translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="864"/>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1192"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="865"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1193"/>
         <source>%1%2</source>
         <translation>%1%2</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1340"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1341"/>
         <source>► </source>
         <translation>► </translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1346"/>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1348"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1347"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1349"/>
         <source>°M/T</source>
         <translation>°M/T</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1348"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1349"/>
         <source>°M/T </source>
         <translation>°M/T </translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1355"/>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1357"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1356"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1358"/>
         <source>°M</source>
         <translation>°M</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1357"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1358"/>
         <source>°M </source>
         <translation>°M </translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1365"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1366"/>
         <source>°T </source>
         <translation>°T </translation>
     </message>
@@ -20129,12 +20163,12 @@ kHz/MHz</translation>
         <translation type="vanished">%1/%2/%3</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1537"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1538"/>
         <source>%1/%2</source>
         <translation>%1/%2</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1546"/>
+        <location filename="src/mappainter/mappaintermark.cpp" line="1547"/>
         <source>RW%1/%2</source>
         <translation></translation>
     </message>

@@ -436,26 +436,17 @@ void DatabaseLoader::showErrors()
     int totalWarnings = navDatabaseErrors->getTotalWarnings();
 
     // Adjust text depending on warnings and errors =========================================
-    QString dialogTitle, headerText;
-    if(totalErrors > 0 && totalWarnings > 0)
-    {
-      dialogTitle = tr("Errors and Warnings");
-      headerText = tr("%1 errors and %2 warnings").arg(totalErrors).arg(totalWarnings);
-    }
-    else if(totalErrors > 0)
-    {
-      dialogTitle = tr("Errors");
-      headerText = tr("%1 errors").arg(totalErrors);
-    }
-    else if(totalWarnings > 0)
-    {
-      dialogTitle = tr("Warnings");
-      headerText = tr("%1 warnings").arg(totalWarnings);
-    }
+    QStringList headerText;
+
+    if(totalErrors > 0)
+      headerText.append(tr("%1 %2").arg(totalErrors).arg(totalErrors > 1 ? tr("errors") : tr("error")));
+
+    if(totalWarnings > 0)
+      headerText.append(tr("%1 %2").arg(totalWarnings).arg(totalWarnings > 1 ? tr("warnings") : tr("warning")));
 
     QString errorTexts;
     errorTexts.append(tr("<h3>Found %1 in %2 scenery entries when loading the scenery database</h3>").
-                      arg(headerText).arg(navDatabaseErrors->sceneryErrors.size()));
+                      arg(atools::strJoin(headerText, tr(", "), tr(" and "))).arg(navDatabaseErrors->sceneryErrors.size()));
 
     if(totalErrors > 0)
     {
@@ -508,7 +499,7 @@ void DatabaseLoader::showErrors()
       numScenery++;
     }
 
-    TextDialog errorDialog(progressDialog, tr("%1 - Load Scenery Library %2").arg(QApplication::applicationName()).arg(dialogTitle),
+    TextDialog errorDialog(progressDialog, tr("%1 - Load Scenery Library Results").arg(QApplication::applicationName()),
                            "SCENERY.html#errors"); // anchor for future use
     errorDialog.setHtmlMessage(errorTexts, true /* print to log */);
     errorDialog.exec();
