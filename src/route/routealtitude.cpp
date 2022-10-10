@@ -1128,6 +1128,9 @@ void RouteAltitude::calculate(QStringList& altRestErrors)
         }
       }
     }
+
+    if(!altRestErrors.isEmpty() && route->hasAnyStarProcedure() && route->hasAnyArrivalProcedure())
+      altRestErrors.prepend(tr("STAR might not fit to the approach procedure due to altitude or vertical path restrictions."));
   }
 
 #ifdef DEBUG_INFORMATION_ROUTE_ALT

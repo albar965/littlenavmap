@@ -32373,6 +32373,12 @@ Der Flugplan ist entweder zu kurz oder die Reiseflughöhe ist zu hoch.
         <translation>Start ist nicht gültig. Flugplatz benötigt.</translation>
     </message>
     <message>
+        <location filename="src/route/routealtitude.cpp" line="1133"/>
+        <source>STAR might not fit to the approach procedure due to altitude or vertical path restrictions.</source>
+        <oldsource>STAR does not fit to the approach procedure due to altitude or vertical path restrictions.</oldsource>
+        <translation>STAR passt evtl. nicht zur Anflugprozedur aufgrund von Restriktionen für die Flughöhe oder des vertikalen Pfades.</translation>
+    </message>
+    <message>
         <source>
 </source>
         <translation type="vanished">
