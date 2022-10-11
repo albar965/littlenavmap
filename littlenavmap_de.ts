@@ -20112,9 +20112,8 @@ kHz/MHz</translation>
         <translation>°T</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintermark.cpp" line="1385"/>
         <source>R%1</source>
-        <translation>R%1</translation>
+        <translation type="vanished">R%1</translation>
     </message>
     <message>
         <source>°T ► </source>
@@ -27551,100 +27550,100 @@ Die Spaltenreihenfolge im Druck entspricht der Reihenfolge in der Flugplantabell
     <name>ProcedureQuery</name>
     <message>
         <location filename="src/query/procedurequery.cpp" line="1492"/>
-        <location filename="src/query/procedurequery.cpp" line="1708"/>
-        <location filename="src/query/procedurequery.cpp" line="1725"/>
-        <location filename="src/query/procedurequery.cpp" line="1770"/>
-        <location filename="src/query/procedurequery.cpp" line="1891"/>
+        <location filename="src/query/procedurequery.cpp" line="1707"/>
+        <location filename="src/query/procedurequery.cpp" line="1724"/>
+        <location filename="src/query/procedurequery.cpp" line="1769"/>
+        <location filename="src/query/procedurequery.cpp" line="1890"/>
         <source>/</source>
         <translation>/</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1726"/>
-        <location filename="src/query/procedurequery.cpp" line="1771"/>
+        <location filename="src/query/procedurequery.cpp" line="1725"/>
+        <location filename="src/query/procedurequery.cpp" line="1770"/>
         <source>°M</source>
         <translation>°M</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1496"/>
+        <location filename="src/query/procedurequery.cpp" line="1495"/>
         <source>DME %1</source>
         <translation>DME %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1618"/>
-        <location filename="src/query/procedurequery.cpp" line="1888"/>
-        <location filename="src/query/procedurequery.cpp" line="1900"/>
-        <location filename="src/query/procedurequery.cpp" line="1909"/>
-        <location filename="src/query/procedurequery.cpp" line="1923"/>
+        <location filename="src/query/procedurequery.cpp" line="1617"/>
+        <location filename="src/query/procedurequery.cpp" line="1887"/>
+        <location filename="src/query/procedurequery.cpp" line="1899"/>
+        <location filename="src/query/procedurequery.cpp" line="1908"/>
+        <location filename="src/query/procedurequery.cpp" line="1922"/>
         <source>Intercept</source>
         <translation>Anschneiden</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1618"/>
+        <location filename="src/query/procedurequery.cpp" line="1617"/>
         <source>Course to Fix</source>
         <translation>Kurs zu Wegpunkt</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1657"/>
-        <location filename="src/query/procedurequery.cpp" line="1802"/>
+        <location filename="src/query/procedurequery.cpp" line="1656"/>
+        <location filename="src/query/procedurequery.cpp" line="1801"/>
         <source>Altitude</source>
         <translation>Höhe</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1726"/>
-        <location filename="src/query/procedurequery.cpp" line="1771"/>
+        <location filename="src/query/procedurequery.cpp" line="1725"/>
+        <location filename="src/query/procedurequery.cpp" line="1770"/>
         <source>°T</source>
         <translation>°T</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1796"/>
-        <location filename="src/query/procedurequery.cpp" line="1814"/>
+        <location filename="src/query/procedurequery.cpp" line="1795"/>
+        <location filename="src/query/procedurequery.cpp" line="1813"/>
         <source>Manual</source>
         <translation>Manuell</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1808"/>
+        <location filename="src/query/procedurequery.cpp" line="1807"/>
         <source>Single</source>
         <translation>Einzeln</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="1893"/>
-        <location filename="src/query/procedurequery.cpp" line="1923"/>
+        <location filename="src/query/procedurequery.cpp" line="1892"/>
+        <location filename="src/query/procedurequery.cpp" line="1922"/>
         <source>Leg</source>
         <translation>Abschnitt</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2447"/>
+        <location filename="src/query/procedurequery.cpp" line="2446"/>
         <source>no runway</source>
         <translation>kein Runway</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2447"/>
+        <location filename="src/query/procedurequery.cpp" line="2446"/>
         <source>runway %1</source>
         <translation>Runway %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2487"/>
+        <location filename="src/query/procedurequery.cpp" line="2486"/>
         <source>SID %1 from %2</source>
         <translation>SID %1 von %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2544"/>
-        <location filename="src/query/procedurequery.cpp" line="2592"/>
+        <location filename="src/query/procedurequery.cpp" line="2543"/>
+        <location filename="src/query/procedurequery.cpp" line="2591"/>
         <source>Approach %1 to %2</source>
         <translation>Anflug %1 nach %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2626"/>
+        <location filename="src/query/procedurequery.cpp" line="2625"/>
         <source>STAR %1 to %2</source>
         <translation>STAR %1 nach %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2723"/>
+        <location filename="src/query/procedurequery.cpp" line="2722"/>
         <source>Procedure %1 %2 in scenery library has errors</source>
         <translation>Die Prozedur %1 %2 in der Szeneriebibliothek hat Fehler</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2730"/>
+        <location filename="src/query/procedurequery.cpp" line="2729"/>
         <source>Procedure not found in scenery library</source>
         <translation>Prozedur nicht in der Szeneriebibliothek gefunden</translation>
     </message>
@@ -27653,7 +27652,7 @@ Die Spaltenreihenfolge im Druck entspricht der Reihenfolge in der Flugplantabell
         <translation type="vanished">SID %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2501"/>
+        <location filename="src/query/procedurequery.cpp" line="2500"/>
         <source>SID transition %1</source>
         <translation>SID Übergang %1</translation>
     </message>
@@ -27662,7 +27661,7 @@ Die Spaltenreihenfolge im Druck entspricht der Reihenfolge in der Flugplantabell
         <translation type="vanished">Anflug %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2614"/>
+        <location filename="src/query/procedurequery.cpp" line="2613"/>
         <source>Transition %1</source>
         <translation>Übergang %1</translation>
     </message>
@@ -27671,7 +27670,7 @@ Die Spaltenreihenfolge im Druck entspricht der Reihenfolge in der Flugplantabell
         <translation type="vanished">STAR %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2641"/>
+        <location filename="src/query/procedurequery.cpp" line="2640"/>
         <source>STAR transition %1</source>
         <translation>STAR Übergang %1</translation>
     </message>
@@ -31229,11 +31228,14 @@ Wird beim Sinkflug nur beim Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; 
         <translation>Auf oder über %1 und auf oder unter %2</translation>
     </message>
     <message>
-        <location filename="src/common/proctypes.cpp" line="900"/>
-        <location filename="src/query/procedurequery.cpp" line="1493"/>
-        <location filename="src/query/procedurequery.cpp" line="1708"/>
+        <location filename="src/common/proctypes.cpp" line="1418"/>
         <source>R%1</source>
+        <comment>Radial</comment>
         <translation>R%1</translation>
+    </message>
+    <message>
+        <source>R%1</source>
+        <translation type="vanished">R%1</translation>
     </message>
     <message>
         <location filename="src/common/proctypes.cpp" line="920"/>
@@ -32006,8 +32008,8 @@ Basiert auf der Berechnung mit dem Flugzeugleistungsprofil.</translation>
         <translation>Fehler beim Lesen der Multiexport-Konfiguration: Ungültige Version. Inkompatible Multiexport-Konfiguration.</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2286"/>
-        <location filename="src/query/procedurequery.cpp" line="2380"/>
+        <location filename="src/query/procedurequery.cpp" line="2285"/>
+        <location filename="src/query/procedurequery.cpp" line="2379"/>
         <source>RW%1+%2</source>
         <translation>RW%1+%2</translation>
     </message>

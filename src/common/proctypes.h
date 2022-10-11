@@ -650,6 +650,9 @@ QString speedRestrictionTextNarrow(const proc::MapSpeedRestriction& speedRestric
 QString speedRestrictionText(const proc::MapSpeedRestriction& speedRestriction);
 QString speedRestrictionTextShort(const proc::MapSpeedRestriction& speedRestriction);
 
+/* VOR radial text like "R090" */
+QString radialText(float radial);
+
 /* Determine various route and procedure related states for the given map object.
  * Queries are omitted if the respective parameters are null */
 void procedureFlags(const Route& route, const map::MapBase *base, bool *departure = nullptr,

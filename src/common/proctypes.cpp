@@ -897,7 +897,7 @@ QStringList procedureLegRecommended(const MapProcedureLeg& leg)
       related.append(Unit::distNm(leg.rho));
 
       if(leg.theta < map::INVALID_COURSE_VALUE)
-        related.append(QObject::tr("R%1").arg(QLocale().toString(leg.theta, 'f', 0)));
+        related.append(radialText(leg.theta));
     }
   }
   return related;
@@ -1411,6 +1411,11 @@ QString aircraftCategoryText(const QString& cat)
   return QString();
 
 #endif
+}
+
+QString radialText(float radial)
+{
+  return QObject::tr("R%1", "Radial").arg(radial, 3, 'f', 0, QChar('0'));
 }
 
 } // namespace proc
