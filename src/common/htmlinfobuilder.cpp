@@ -539,7 +539,8 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(info && !print)
     addAirportFolder(airport, html);
 
-  routeWindText(html, *route, airport.routeIndex);
+  if(!info)
+    routeWindText(html, *route, airport.routeIndex);
 
 #ifdef DEBUG_INFORMATION
   if(info)
@@ -1311,10 +1312,12 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, Htm
       const atools::grib::WindPos& wind = windStack.constFirst();
       if(wind.isValid())
       {
+        html.table();
         html.row2(tr("Flight Plan wind (%1)").arg(source), tr("%2, %3, %4").
                   arg(Unit::altFeet(wind.pos.getAltitude())).
                   arg(courseTextFromTrue(wind.wind.dir, magVar, false /* no bold */, true /* no small */)).
                   arg(Unit::speedKts(wind.wind.speed)), ahtml::NO_ENTITIES | ahtml::NOBR);
+        html.tableEnd();
       }
     }
     else
@@ -2193,7 +2196,8 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   if(rec != nullptr)
     addScenery(rec, html, false /* com */, false /* ils */);
 
-  routeWindText(html, NavApp::getRouteConst(), vor.routeIndex);
+  if(!info)
+    routeWindText(html, NavApp::getRouteConst(), vor.routeIndex);
 
 #ifdef DEBUG_INFORMATION
   if(info)
@@ -2267,7 +2271,8 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
   if(rec != nullptr)
     addScenery(rec, html, false /* com */, false /* ils */);
 
-  routeWindText(html, NavApp::getRouteConst(), ndb.routeIndex);
+  if(!info)
+    routeWindText(html, NavApp::getRouteConst(), ndb.routeIndex);
 
 #ifdef DEBUG_INFORMATION
   if(info)
@@ -2883,7 +2888,8 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   if(rec != nullptr)
     addScenery(rec, html, false /* com */, false /* ils */);
 
-  routeWindText(html, NavApp::getRouteConst(), waypoint.routeIndex);
+  if(!info)
+    routeWindText(html, NavApp::getRouteConst(), waypoint.routeIndex);
 
 #ifdef DEBUG_INFORMATION
   if(info)
@@ -3376,7 +3382,8 @@ void HtmlInfoBuilder::userpointTextRoute(const MapUserpointRoute& userpoint, Htm
     else
       html.p().b(tr("Flight Plan Position: ") % QString::number(userpoint.routeIndex + 1)).pEnd();
 
-    routeWindText(html, NavApp::getRouteConst(), userpoint.routeIndex);
+    if(!info)
+      routeWindText(html, NavApp::getRouteConst(), userpoint.routeIndex);
   }
 }
 
