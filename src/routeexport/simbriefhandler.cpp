@@ -58,6 +58,7 @@ void SimBriefHandler::sendRouteToSimBrief()
   const static atools::gui::DialogButtonList BUTTONS({
     {QString(), QMessageBox::Cancel},
     {tr("&Export"), QMessageBox::Yes},
+    {tr("&Help"), QMessageBox::Help},
     {tr("&Copy web address to clipboard"), QMessageBox::YesToAll}
   });
 
@@ -89,6 +90,8 @@ void SimBriefHandler::sendRouteToSimBrief()
     QApplication::clipboard()->setText(url.toEncoded());
     NavApp::setStatusMessage(QString(tr("SimBrief address copied to clipboard.")));
   }
+  else if(result == QMessageBox::Help)
+    atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "LOADSIMBRIEF.html", lnm::helpLanguageOnline());
 }
 
 QUrl SimBriefHandler::sendRouteUrl(const QString& departure, const QString& destination, const QString& alternate, const QString& route,
