@@ -162,8 +162,11 @@ win32 {
 macx {
   isEmpty(GIT_PATH) : GIT_PATH=git
 
-  # Compatibility down to OS X Sierra 10.12 inclusive
-  QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.12
+  MACDEPLOY_FLAGS = -always-overwrite
+  CONFIG(debug, debug|release) : MACDEPLOY_FLAGS += -no-strip
+
+  # Compatibility down to OS X High Sierra 10.13 inclusive
+  QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.13
 
   LIBS += -L$$MARBLE_LIB_PATH -lmarblewidget-qt5 -L$$ATOOLS_LIB_PATH -latools  -lz
 }
@@ -849,7 +852,7 @@ macx {
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libMapScaleFloatItem.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libNavigationFloatItem.so &&
   deploy.commands +=  $$INSTALL_MARBLE_DYLIB_CMD/libOverviewMap.so &&
-  deploy.commands += macdeployqt littlenavmap.app -always-overwrite &&
+  deploy.commands += macdeployqt littlenavmap.app $$MACDEPLOY_FLAGS &&
   deploy.commands += cp -vf $$PWD/desktop/\"Little Navmap Portable macOS.command\" $$DEPLOY_DIR/\"Little Navmap Portable.command\" &&
   deploy.commands += cp -rfv $$OUT_PWD/littlenavmap.app $$DEPLOY_APP &&
   deploy.commands += cp -fv $$[QT_INSTALL_TRANSLATIONS]/qt_??.qm  $$DEPLOY_APP/Contents/MacOS &&
