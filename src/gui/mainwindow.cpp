@@ -2091,8 +2091,9 @@ void MainWindow::deleteAircraftTrack(bool quiet)
   int result = QMessageBox::Yes;
 
   if(!quiet)
-    result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_TRAIL, tr("Delete aircraft trail?"), tr("Do not &show this dialog again."),
-                                        QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
+    result =
+      dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_DELETE_TRAIL, tr("Delete user aircraft trail?"), tr("Do not &show this dialog again."),
+                                 QMessageBox::Yes | QMessageBox::No, QMessageBox::No, QMessageBox::Yes);
 
   if(result == QMessageBox::Yes)
   {

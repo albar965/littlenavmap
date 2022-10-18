@@ -288,7 +288,7 @@ void MapMarkHandler::routeResetAll()
   choiceDialog.addCheckBox(EMPTY_FLIGHT_PLAN, tr("&Create an empty flight plan"), QString(), true /* checked */);
 
   choiceDialog.addLine();
-  choiceDialog.addCheckBox(DELETE_TRAIL, tr("&Delete aircraft trail"),
+  choiceDialog.addCheckBox(DELETE_TRAIL, tr("&Delete user aircraft trail"),
                            tr("Delete simulator aircraft trail from map and elevation profile"), true /* checked */);
   choiceDialog.addCheckBox(DELETE_ACTIVE_LEG, tr("&Reset active flight plan leg"),
                            tr("Reset the active flight plan leg"), true /* checked */);

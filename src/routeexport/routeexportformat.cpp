@@ -278,7 +278,7 @@ void RouteExportFormatMap::init()
   FMT(PLNANNOTATED, AIRPORTS|PARKING, DF % tr("pln"),     tr("Simulator"), tr("FSX and Prepar3D annotated\nOnly for old Little Navmap versions."));
   FMT(FMS3,         AIRPORTS,         SD % tr("fms"),     tr("Simulator"), tr("X-Plane FMS 3\nOld and limited format.")                          );
   FMT(FMS11,        AIRPORTS|CYCLE,   SD % tr("fms"),     tr("Simulator"), tr("X-Plane FMS 11") % mainMenu                                       );
-  FMT(FMS12,        AIRPORTS|CYCLE,   SD % tr("fms"),     tr("Simulator"), tr("X-Plane FMS 12") % xp12                                           );
+  FMT(FMS12,        AIRPORTS|CYCLE,   SD % tr("fms"),     tr("Simulator"), tr("X-Plane FMS 12") % mainMenu % xp12                                );
   FMT(FLP,          AIRPORTS,         S0 % tr("flp"),     tr("Aircraft"),  tr("Aerosoft Airbus and others")                                      );
   FMT(FLPCRJ,       AIRPORTS,         S %  tr("01.flp"),  tr("Aircraft"),  tr("Aerosoft CRJ")                                                    );
   FMT(FLPCRJMSFS,   AIRPORTS,         S %  tr("01.flp"),  tr("Aircraft"),  tr("Aerosoft CRJ for MSFS")                                           );

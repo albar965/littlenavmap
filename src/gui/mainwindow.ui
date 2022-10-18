@@ -284,7 +284,6 @@
     <addaction name="separator"/>
     <addaction name="actionRouteEditMode"/>
     <addaction name="separator"/>
-    <addaction name="separator"/>
     <addaction name="actionRouteCalc"/>
     <addaction name="actionRouteCalcDirect"/>
     <addaction name="actionRouteReverse"/>
@@ -11192,13 +11191,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/gls.svg</normaloff>:/littlenavmap/resources/icons/gls.svg</iconset>
    </property>
    <property name="text">
-    <string>Show &amp;GLS Approach Paths</string>
+    <string>Show &amp;GLS/RNP Approach Paths</string>
    </property>
    <property name="toolTip">
-    <string>Show GLS approach paths on map</string>
+    <string>Show GLS and RNP approach paths on map</string>
    </property>
    <property name="statusTip">
-    <string>Show GLS approach paths on map</string>
+    <string>Show GLS and RNP approach paths on map</string>
    </property>
   </action>
   <action name="actionMapShowHolding">
