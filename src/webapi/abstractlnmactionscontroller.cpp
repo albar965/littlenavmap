@@ -28,8 +28,6 @@
 #include "fs/util/morsecode.h"
 #include "fs/sc/simconnectdata.h"
 #include "mapgui/mappaintwidget.h"
-#include "web/webcontroller.h"
-#include "web/webmapcontroller.h"
 
 namespace ageo = atools::geo;
 using atools::fs::util::MorseCode;

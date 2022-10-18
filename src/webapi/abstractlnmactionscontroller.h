@@ -37,7 +37,7 @@ namespace atools {
     }
 }
 namespace InfoBuilderTypes {
-    class AirportAdminNames;
+    struct AirportAdminNames;
 }
 namespace ageo = atools::geo;
 namespace map {
