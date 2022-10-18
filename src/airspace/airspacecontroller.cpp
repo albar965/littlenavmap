@@ -18,7 +18,6 @@
 #include "airspace/airspacecontroller.h"
 
 #include "airspace/airspacetoolbarhandler.h"
-#include "atools.h"
 #include "common/constants.h"
 #include "db/airspacedialog.h"
 #include "db/dbtools.h"
@@ -27,7 +26,6 @@
 #include "fs/userdata/airspacereaderivao.h"
 #include "fs/userdata/airspacereaderopenair.h"
 #include "fs/userdata/airspacereadervatsim.h"
-#include "gui/dialog.h"
 #include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
 #include "gui/textdialog.h"
@@ -42,6 +40,7 @@
 #include <QAction>
 #include <QDir>
 #include <QDirIterator>
+#include <QMessageBox>
 #include <QProgressDialog>
 
 AirspaceController::AirspaceController(MainWindow *mainWindowParam,

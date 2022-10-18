@@ -4075,8 +4075,9 @@ void MainWindow::printShortcuts()
   // Print all main menu and sub menu shortcuts ==============================================
   qDebug() << "===============================================================================";
 
-  QString out;
-  QTextStream stream(&out, QIODevice::WriteOnly);
+  QString outShortcuts, outItems;
+  QTextStream streamShortcuts(&outShortcuts, QIODevice::WriteOnly);
+  QTextStream streamItems(&outItems, QIODevice::WriteOnly);
   QSet<QKeySequence> keys;
   QStringList warnings;
 
@@ -4088,15 +4089,15 @@ void MainWindow::printShortcuts()
     {
       QString text = mainmenus->menu()->menuAction()->text().remove(QChar('&'));
 
-      stream << endl << ".. _shortcuts-main-" << text.toLower() << ":" << endl << endl;
+      streamShortcuts << endl << ".. _shortcuts-main-" << text.toLower() << ":" << endl << endl;
 
-      stream << text << endl;
-      stream << QString("^").repeated(text.size()) << endl << endl;
+      streamShortcuts << text << endl;
+      streamShortcuts << QString("^").repeated(text.size()) << endl << endl;
 
-      stream << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << endl;
-      stream << "| " << QString("Menu").leftJustified(c1 - 1)
-             << "| " << QString("Shortcut").leftJustified(c2 - 1) << "|" << endl;
-      stream << "+" << QString("=").repeated(c1) << "+" << QString("=").repeated(c2) << "+" << endl;
+      streamShortcuts << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << endl;
+      streamShortcuts << "| " << QString("Menu").leftJustified(c1 - 1)
+                      << "| " << QString("Shortcut").leftJustified(c2 - 1) << "|" << endl;
+      streamShortcuts << "+" << QString("=").repeated(c1) << "+" << QString("=").repeated(c2) << "+" << endl;
 
       QString mainmenu = mainmenus->text().remove(QChar('&'));
       for(const QAction *mainAction : mainmenus->menu()->actions())
@@ -4111,14 +4112,42 @@ void MainWindow::printShortcuts()
               if(keys.contains(subAction->shortcut()))
                 warnings.append(QString("Duplicate shortcut \"%1\"").arg(subAction->shortcut().toString()));
 
-              stream << "| "
-                     << QString(mainmenu + " -> " + submenu + " -> " +
-                         subAction->text().remove(QChar('&'))).leftJustified(c1 - 1)
-                     << "| "
-                     << ("``" + subAction->shortcut().toString() + "``").leftJustified(c2 - 1)
-                     << "|" << endl;
-              stream << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << endl;
+              streamShortcuts << "| "
+                              << QString(mainmenu + " -> " + submenu + " -> " + subAction->text().remove(QChar('&'))).leftJustified(c1 - 1)
+                              << "| "
+                              << ("``" + subAction->shortcut().toString() + "``").leftJustified(c2 - 1)
+                              << "|" << endl;
+              streamShortcuts << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << endl;
               keys.insert(subAction->shortcut());
+            }
+
+            if(!submenu.startsWith("Recent") && !subAction->text().isEmpty())
+            {
+              QString actionText = subAction->text().remove(QChar('&')).simplified().remove(" ...").remove("...");
+              QString imageName = subAction->icon().name().isEmpty() ? QString() : QFileInfo(subAction->icon().name()).baseName() % ".png";
+
+              streamItems << (".. ===== " % mainmenu % " -> " % submenu % " -> " % subAction->text().remove(QChar('&'))) << endl;
+
+              // .. _show-empty-airports:
+              streamItems << (".. _" % actionText.toLower().replace(" ", "-") % ":") << endl;
+
+              // if(imageName.isEmpty())
+              // {
+              //// Show empty Airports
+              //// '''''''''''''''''''''''''''''''''''''''''
+              // streamItems << actionText << endl;
+              // streamItems << QString("'").repeated(80) << endl << endl;
+              // }
+              // else
+              {
+                // |Show empty Airports| Show empty Airports
+                // '''''''''''''''''''''''''''''''''''''''''
+                streamItems << ("|" % actionText % "| " % actionText) << endl;
+                streamItems << QString("'").repeated(80) << endl << endl;
+
+                // .. |Show empty Airports| image:: ../images/icon_airportempty.png
+                streamItems << (".. |" % actionText % "| image:: ../images/icon_" % imageName) << endl << endl;
+              }
             }
           }
           submenu.clear();
@@ -4130,20 +4159,51 @@ void MainWindow::printShortcuts()
             if(keys.contains(mainAction->shortcut()))
               warnings.append(QString("Duplicate shortcut \"%1\"").arg(mainAction->shortcut().toString()));
 
-            stream << "| "
-                   << QString(mainmenu + " -> " + mainAction->text().remove(QChar('&'))).leftJustified(c1 - 1)
-                   << "| "
-                   << ("``" + mainAction->shortcut().toString() + "``").leftJustified(c2 - 1)
-                   << "|" << endl;
-            stream << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << endl;
+            streamShortcuts << "| "
+                            << QString(mainmenu + " -> " + mainAction->text().remove(QChar('&'))).leftJustified(c1 - 1)
+                            << "| "
+                            << ("``" + mainAction->shortcut().toString() + "``").leftJustified(c2 - 1)
+                            << "|" << endl;
+            streamShortcuts << "+" << QString("-").repeated(c1) << "+" << QString("-").repeated(c2) << "+" << endl;
             keys.insert(mainAction->shortcut());
+          }
+
+          if(!mainAction->text().isEmpty())
+          {
+            streamItems << (".. ===== " % mainmenu % " -> " % mainAction->text().remove(QChar('&'))) << endl;
+            QString actionText = mainAction->text().remove(QChar('&')).simplified().remove(" ...").remove("...");
+            QString imageName = mainAction->icon().name().isEmpty() ? QString() : QFileInfo(mainAction->icon().name()).baseName() % ".png";
+
+            // if(imageName.isEmpty())
+            // {
+            //// Show empty Airports
+            //// '''''''''''''''''''''''''''''''''''''''''
+            // streamItems << actionText << endl;
+            // streamItems << QString("'").repeated(80) << endl << endl;
+            // }
+            // else
+            {
+              // .. _show-empty-airports:
+              streamItems << (".. _" % actionText.toLower().replace(" ", "-") % ":") << endl;
+
+              // |Show empty Airports| Show empty Airports
+              // '''''''''''''''''''''''''''''''''''''''''
+              streamItems << ("|" % actionText % "| " % actionText) << endl;
+              streamItems << QString("'").repeated(80) << endl << endl;
+
+              // .. |Show empty Airports| image:: ../images/icon_airportempty.png
+              streamItems << (".. |" % actionText % "| image:: ../images/icon_" % imageName) << endl << endl;
+            }
           }
         }
       }
     }
   }
-  qDebug().nospace().noquote() << endl << out;
-
+  qDebug() << "Shortcuts ===============================================================================";
+  qDebug().nospace().noquote() << endl << outShortcuts;
+  qDebug() << "===============================================================================";
+  qDebug().nospace().noquote() << endl << outItems;
+  qDebug() << "Items ===============================================================================";
   for(const QString& warning : warnings)
     qWarning().nospace().noquote() << Q_FUNC_INFO << " " << warning;
 
