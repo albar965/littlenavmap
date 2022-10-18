@@ -359,18 +359,6 @@ int main(int argc, char *argv[])
     atools::fs::weather::initTranslateableTexts();
     formatter::initTranslateableTexts();
 
-#if defined(Q_OS_MACOS)
-    // Check for minimum macOS version  macOS Sierra 10.12
-    if(QSysInfo::macVersion() != QSysInfo::MV_None && QSysInfo::macVersion() < QSysInfo::MV_10_12)
-    {
-      NavApp::closeSplashScreen();
-      QMessageBox::critical(nullptr, QObject::tr("%1 - Error").arg(QApplication::applicationName()),
-                            QObject::tr("%1 needs at least macOS Sierra version 10.12 or newer.").
-                            arg(QApplication::applicationName()));
-      return 1;
-    }
-#endif
-
 #if defined(Q_OS_WIN32)
     // Detect other running application instance - this is unsafe on Unix since shm can remain after crashes
     QSharedMemory shared("203abd54-8a6a-4308-a654-6771efec62cd" + Settings::instance().getDirName()); // generated GUID
