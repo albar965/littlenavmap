@@ -597,6 +597,8 @@ Q_DECLARE_OPERATORS_FOR_FLAGS(optsd::DisplayClickOptions);
  *
  * Values applied by the reset function in the options dialog are defined in this structure.
  *
+ * Values applied on first startup are defined by action state in .ui file.
+ *
  * This class will be populated by the OptionsDialog which loads widget data from the settings
  * and transfers this data into this class.
  */
@@ -1265,7 +1267,7 @@ private:
   opts::Flags flags = opts::STARTUP_LOAD_KML | opts::STARTUP_LOAD_MAP_SETTINGS | opts::STARTUP_LOAD_ROUTE | opts::STARTUP_SHOW_LAST |
                       opts::GUI_CENTER_KML | opts::GUI_CENTER_ROUTE | opts::MAP_EMPTY_AIRPORTS | opts::ROUTE_ALTITUDE_RULE |
                       opts::CACHE_USE_ONLINE_ELEVATION | opts::STARTUP_LOAD_INFO | opts::STARTUP_LOAD_SEARCH | opts::STARTUP_LOAD_TRAIL |
-                      opts::STARTUP_SHOW_SPLASH | opts::ONLINE_REMOVE_SHADOW | opts::ENABLE_TOOLTIPS_ALL;
+                      opts::STARTUP_SHOW_SPLASH | opts::ONLINE_REMOVE_SHADOW | opts::ENABLE_TOOLTIPS_ALL | opts::STARTUP_LOAD_PERF;
 
   // Defines the defaults used for reset
   optsw::FlagsWeather flagsWeather =
@@ -1483,7 +1485,7 @@ private:
   int simNoFollowOnScrollTime = 10;
 
   // doubleSpinBoxOptionsSimZoomOnLanding,
-  float simZoomOnLandingDist = 0.2f;
+  float simZoomOnLandingDist = 0.1f;
 
   // spinBoxOptionsSimCleanupTableTime,
   int simCleanupTableTime = 10;
@@ -1498,7 +1500,7 @@ private:
   int displayTextSizeCompassRose = 100;
 
   // spinBoxOptionsMapHighlightTransparent
-  int displayMapHighlightTransparent = 100;
+  int displayMapHighlightTransparent = 50;
 
   // spinBoxDisplayOnlineClearance
   int displayOnlineClearance = -1;
@@ -1575,7 +1577,8 @@ private:
 
   optsd::DisplayTooltipOptions displayTooltipOptions = optsd::TOOLTIP_AIRCRAFT_USER | optsd::TOOLTIP_AIRCRAFT_AI |
                                                        optsd::TOOLTIP_AIRPORT | optsd::TOOLTIP_AIRSPACE |
-                                                       optsd::TOOLTIP_NAVAID | optsd::TOOLTIP_WIND | optsd::TOOLTIP_VERBOSE;
+                                                       optsd::TOOLTIP_NAVAID | optsd::TOOLTIP_WIND | optsd::TOOLTIP_VERBOSE |
+                                                       optsd::TOOLTIP_MARKS;
   optsd::DisplayClickOptions displayClickOptions = optsd::CLICK_AIRCRAFT_USER | optsd::CLICK_AIRCRAFT_AI |
                                                    optsd::CLICK_AIRPORT | optsd::CLICK_AIRSPACE | optsd::CLICK_NAVAID;
 

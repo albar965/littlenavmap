@@ -1116,6 +1116,8 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
 
 #ifdef DEBUG_INFORMATION
   html.row2("[secondary]", secondary);
+#else
+  Q_UNUSED(secondary)
 #endif
   html.tableEnd();
 

@@ -61,7 +61,7 @@
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
+             <width>570</width>
              <height>458</height>
             </rect>
            </property>
@@ -396,7 +396,7 @@ This is the file on top of the list &quot;Recent Window Layouts&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
+             <width>570</width>
              <height>458</height>
             </rect>
            </property>
@@ -640,8 +640,8 @@ opening files, modifying the flight plan and other operations.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>529</width>
-             <height>515</height>
+             <width>556</width>
+             <height>537</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_23">
@@ -1133,7 +1133,7 @@ This does not affect the map window which can be changed separately on the optio
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
+             <width>570</width>
              <height>458</height>
             </rect>
            </property>
@@ -1374,6 +1374,7 @@ also define the order when reading coordinates in the user interface if enabled.
                 <widget class="QLabel" name="label_2">
                  <property name="font">
                   <font>
+                   <weight>50</weight>
                    <bold>false</bold>
                   </font>
                  </property>
@@ -1448,8 +1449,8 @@ Also affects labels at holds and traffic patterns.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>542</width>
-             <height>503</height>
+             <width>556</width>
+             <height>524</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_12">
@@ -1914,8 +1915,8 @@ Use &quot;Window&quot; -&gt; &quot;Reset Window Layout&quot; in the main menu to
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>554</width>
-             <height>444</height>
+             <width>570</width>
+             <height>458</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_13">
@@ -2247,8 +2248,8 @@ Smaller values will allow a finer selection.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>529</width>
-             <height>490</height>
+             <width>556</width>
+             <height>511</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_20">
@@ -2987,7 +2988,7 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
+             <width>570</width>
              <height>458</height>
             </rect>
            </property>
@@ -3392,8 +3393,8 @@ Also used in the elevation profile.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>529</width>
-             <height>508</height>
+             <width>556</width>
+             <height>526</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_35">
@@ -4307,7 +4308,7 @@ Do not show this this information publicly in forums on screenshots.&lt;/b&gt;&l
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
+             <width>570</width>
              <height>458</height>
             </rect>
            </property>
@@ -4745,8 +4746,8 @@ airspace filename has to match the callsign of the online center.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>552</width>
-             <height>479</height>
+             <width>556</width>
+             <height>502</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -5193,7 +5194,7 @@ put the active leg back on top after the given timeout while flying.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
+             <width>570</width>
              <height>458</height>
             </rect>
            </property>
@@ -5472,7 +5473,7 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
+             <width>570</width>
              <height>458</height>
             </rect>
            </property>
@@ -5668,8 +5669,8 @@ Note that this value does not affect flight plan calculation or saving of flight
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>529</width>
-             <height>614</height>
+             <width>556</width>
+             <height>641</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_28">
@@ -6231,7 +6232,7 @@ Default is &quot;https://api.ivao.aero/v2/airports/all/metar&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
+             <width>570</width>
              <height>458</height>
             </rect>
            </property>
@@ -6533,7 +6534,7 @@ Default is &quot;https://api.ivao.aero/v2/airports/all/metar&quot;.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
+             <width>570</width>
              <height>458</height>
             </rect>
            </property>
@@ -6720,7 +6721,7 @@ Little Navmap GIT repository.
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>543</width>
+             <width>570</width>
              <height>458</height>
             </rect>
            </property>
@@ -6997,8 +6998,8 @@ Source data has many errors.</string>
             <rect>
              <x>0</x>
              <y>0</y>
-             <width>529</width>
-             <height>488</height>
+             <width>556</width>
+             <height>493</height>
             </rect>
            </property>
            <layout class="QGridLayout" name="gridLayout_38">
