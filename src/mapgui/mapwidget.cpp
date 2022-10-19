@@ -2621,18 +2621,19 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
               centerPosOnMap(aircraft.getPosition());
           }
         } // if(!aircraftVisible || ...
-
-        // Zoom close after touchdown ===================================================================
-        // Only if user is not mousing around on the map
-        if(touchdownDetectedZoom && od.getFlags2().testFlag(opts2::ROUTE_ZOOM_LANDING))
-        {
-          qDebug() << Q_FUNC_INFO << "Touchdown detected - zooming close" << touchdownZoomRectKm << "km";
-          centerPosOnMap(aircraft.getPosition());
-          setDistanceToMap(touchdownZoomRectKm);
-          touchdownDetectedZoom = false;
-        }
       } // if(mouseState == mw::NONE && viewContext() == Marble::Still && !jumpBack->isActive())
     } // if(centerAircraftChecked && !contextMenuActive)
+
+    // Zoom close after touchdown ===================================================================
+    // Only if user is not mousing around on the map
+    if(mouseState == mw::NONE && viewContext() == Marble::Still && !contextMenuActive && touchdownDetectedZoom &&
+       od.getFlags2().testFlag(opts2::ROUTE_ZOOM_LANDING))
+    {
+      qDebug() << Q_FUNC_INFO << "Touchdown detected - zooming close" << touchdownZoomRectKm << "km";
+      centerPosOnMap(aircraft.getPosition());
+      setDistanceToMap(touchdownZoomRectKm);
+      touchdownDetectedZoom = false;
+    }
 
     // if(aircraft.isFlying())
     // touchdownDetected = false;
