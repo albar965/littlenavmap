@@ -99,6 +99,10 @@ void FetchRouteDialog::buttonBoxClicked(QAbstractButton *button)
     // Close dialog and use flight plan
     saveState();
     QDialog::accept();
+
+    // Use always IFR for SimBrief plans
+    flightplan->setFlightplanType(atools::fs::pln::IFR);
+
     emit routeNewFromFlightplan(*flightplan, false /* adjustAltitude */, true /* changed */, false /* undo */);
   }
   else if(button == ui->buttonBox->button(QDialogButtonBox::YesToAll))
