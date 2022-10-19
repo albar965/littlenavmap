@@ -44,18 +44,24 @@ void removeAllAndLog()
   Settings::clearSettings();
 }
 
-void removeAndLog(Settings& settings, const QString& key)
+void removeAndLog(QSettings *settings, const QString& key)
 {
-  if(settings.contains(key))
+  if(settings != nullptr && settings->contains(key))
   {
-    qInfo() << Q_FUNC_INFO << "Removing" << QFileInfo(Settings::getFilename()).fileName() << key;
-    settings.remove(key);
+    qInfo() << Q_FUNC_INFO << "Removing" << QFileInfo(settings->fileName()).fileName() << key;
+    settings->remove(key);
   }
+}
+
+void removeAndLog(const QString& key)
+{
+  removeAndLog(Settings::getQSettings(), key);
 }
 
 void checkAndMigrateSettings()
 {
   Settings& settings = Settings::instance();
+  QSettings mapstyleSettings(atools::settings::Settings::getConfigFilename("_mapstyle.ini"), QSettings::IniFormat);
 
   optionsVersion = Version(settings.valueStr(lnm::OPTIONS_VERSION));
   Version programVersion;
@@ -81,7 +87,7 @@ void checkAndMigrateSettings()
       if(optionsVersion < Version("2.4.2.beta"))
       {
         qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before 2.4.2.beta";
-        removeAndLog(settings, lnm::ROUTE_STRING_DIALOG_OPTIONS);
+        removeAndLog(lnm::ROUTE_STRING_DIALOG_OPTIONS);
         Settings::syncSettings();
       }
 
@@ -89,7 +95,7 @@ void checkAndMigrateSettings()
       if(optionsVersion < Version("2.4.3.rc1"))
       {
         qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before 2.4.3.rc1";
-        removeAndLog(settings, "MainWindow/Widget_mapThemeComboBox");
+        removeAndLog("MainWindow/Widget_mapThemeComboBox");
         Settings::syncSettings();
       }
 
@@ -99,46 +105,46 @@ void checkAndMigrateSettings()
         qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before or equal to 2.4.5";
 
         // Route view
-        removeAndLog(settings, "Route/View_tableViewRoute");
+        removeAndLog("Route/View_tableViewRoute");
 
         // Table columns dialog
-        removeAndLog(settings, "Route/FlightPlanTableColumnsCheckBoxStates");
+        removeAndLog("Route/FlightPlanTableColumnsCheckBoxStates");
 
         // Route tabs
-        removeAndLog(settings, "Route/WidgetTabsTabIds");
-        removeAndLog(settings, "Route/WidgetTabsCurrentTabId");
-        removeAndLog(settings, "Route/WidgetTabsLocked");
+        removeAndLog("Route/WidgetTabsTabIds");
+        removeAndLog("Route/WidgetTabsCurrentTabId");
+        removeAndLog("Route/WidgetTabsLocked");
 
         // Reset all before flight
-        removeAndLog(settings, "Route/ResetAllDialogCheckBoxStates");
+        removeAndLog("Route/ResetAllDialogCheckBoxStates");
 
         // Complete log search options
         qInfo() << Q_FUNC_INFO << "Removing" << QFileInfo(Settings::getFilename()).fileName() << "SearchPaneLogdata";
         settings.remove("SearchPaneLogdata");
 
         // Search views
-        removeAndLog(settings, "SearchPaneAirport/WidgetView_tableViewAirportSearch");
-        removeAndLog(settings, "SearchPaneAirport/WidgetDistView_tableViewAirportSearch");
-        removeAndLog(settings, "SearchPaneNav/WidgetView_tableViewAirportSearch");
-        removeAndLog(settings, "SearchPaneNav/WidgetDistView_tableViewAirportSearch");
-        removeAndLog(settings, "SearchPaneUserdata/WidgetView_tableViewUserdata");
+        removeAndLog("SearchPaneAirport/WidgetView_tableViewAirportSearch");
+        removeAndLog("SearchPaneAirport/WidgetDistView_tableViewAirportSearch");
+        removeAndLog("SearchPaneNav/WidgetView_tableViewAirportSearch");
+        removeAndLog("SearchPaneNav/WidgetDistView_tableViewAirportSearch");
+        removeAndLog("SearchPaneUserdata/WidgetView_tableViewUserdata");
 
         // info tabs
-        removeAndLog(settings, "InfoWindow/WidgetTabsTabIds");
-        removeAndLog(settings, "InfoWindow/WidgetTabsCurrentTabId");
-        removeAndLog(settings, "InfoWindow/WidgetTabsLocked");
+        removeAndLog("InfoWindow/WidgetTabsTabIds");
+        removeAndLog("InfoWindow/WidgetTabsCurrentTabId");
+        removeAndLog("InfoWindow/WidgetTabsLocked");
 
         // Choice dialog import and export
-        removeAndLog(settings, "UserdataExport/ChoiceDialogCheckBoxStates");
-        removeAndLog(settings, "Logdata/CsvExportCheckBoxStates");
+        removeAndLog("UserdataExport/ChoiceDialogCheckBoxStates");
+        removeAndLog("Logdata/CsvExportCheckBoxStates");
 
         // Range rings
-        removeAndLog(settings, lnm::MAP_RANGEMARKERS);
+        removeAndLog(lnm::MAP_RANGEMARKERS);
 
         // Marble plugins
         for(const QString& key : settings.childGroups())
           if(key.startsWith("plugin_"))
-            removeAndLog(settings, key);
+            removeAndLog(key);
 
         // and vatsim URL,
         settings.setValue("OptionsDialog/Widget_lineEditOptionsWeatherVatsimUrl",
@@ -152,16 +158,16 @@ void checkAndMigrateSettings()
       if(optionsVersion <= Version("2.6.0.beta"))
       {
         qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before or equal to 2.6.0.beta";
-        removeAndLog(settings, "SearchPaneLogdata/WidgetView_tableViewLogdata");
+        removeAndLog("SearchPaneLogdata/WidgetView_tableViewLogdata");
       }
 
       if(optionsVersion <= Version("2.6.1.beta"))
       {
         qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before or equal to 2.6.1.beta";
-        removeAndLog(settings, lnm::ROUTE_EXPORT_FORMATS);
-        removeAndLog(settings, "RouteExport/RouteExportDialog_tableViewRouteExport");
-        removeAndLog(settings, "RouteExport/RouteExportDialog_RouteMultiExportDialog_size");
-        removeAndLog(settings, "RouteExport/RouteExportDialog_tableViewRouteExport");
+        removeAndLog(lnm::ROUTE_EXPORT_FORMATS);
+        removeAndLog("RouteExport/RouteExportDialog_tableViewRouteExport");
+        removeAndLog("RouteExport/RouteExportDialog_RouteMultiExportDialog_size");
+        removeAndLog("RouteExport/RouteExportDialog_tableViewRouteExport");
       }
 
       if(optionsVersion <= Version("2.6.6"))
@@ -190,52 +196,58 @@ void checkAndMigrateSettings()
       if(optionsVersion <= Version("2.6.13"))
       {
         qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before or equal to 2.6.13";
-        removeAndLog(settings, "SearchPaneOnlineCenter/WidgetView_tableViewOnlineCenterSearch");
-        removeAndLog(settings, "SearchPaneOnlineClient/WidgetView_tableViewOnlineClientSearch");
-        removeAndLog(settings, "SearchPaneOnlineServer/WidgetView_tableViewOnlineServerSearch");
+        removeAndLog("SearchPaneOnlineCenter/WidgetView_tableViewOnlineCenterSearch");
+        removeAndLog("SearchPaneOnlineClient/WidgetView_tableViewOnlineClientSearch");
+        removeAndLog("SearchPaneOnlineServer/WidgetView_tableViewOnlineServerSearch");
       }
 
       if(optionsVersion <= Version("2.6.14"))
       {
         qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before or equal to 2.6.14";
-        removeAndLog(settings, "SearchPaneAirport/WidgetDistView_tableViewAirportSearch");
-        removeAndLog(settings, "SearchPaneAirport/WidgetView_tableViewAirportSearch");
-        removeAndLog(settings, "OptionsDialog/Widget_lineEditOptionsWeatherVatsimUrl");
+        removeAndLog("SearchPaneAirport/WidgetDistView_tableViewAirportSearch");
+        removeAndLog("SearchPaneAirport/WidgetView_tableViewAirportSearch");
+        removeAndLog("OptionsDialog/Widget_lineEditOptionsWeatherVatsimUrl");
       }
 
       if(optionsVersion <= Version("2.6.16"))
       {
         qInfo() << Q_FUNC_INFO << "Adjusting settings for versions before or equal to 2.6.16";
-        removeAndLog(settings, "OptionsDialog/DisplayOptionsuserAircraft_2097152"); // ITEM_USER_AIRCRAFT_COORDINATES
-        removeAndLog(settings, "OptionsDialog/DisplayOptionsAiAircraft_2"); // ITEM_AI_AIRCRAFT_COORDINATES
-        removeAndLog(settings, "Route/View_tableViewRoute");
-        removeAndLog(settings, "OptionsDialog/Widget_lineEditOptionsWeatherIvaoUrl");
-        removeAndLog(settings, "Map/DetailFactor");
+        removeAndLog("OptionsDialog/DisplayOptionsuserAircraft_2097152"); // ITEM_USER_AIRCRAFT_COORDINATES
+        removeAndLog("OptionsDialog/DisplayOptionsAiAircraft_2"); // ITEM_AI_AIRCRAFT_COORDINATES
+        removeAndLog("Route/View_tableViewRoute");
+        removeAndLog("OptionsDialog/Widget_lineEditOptionsWeatherIvaoUrl");
+        removeAndLog("Map/DetailFactor");
       }
 
       if(optionsVersion <= Version("2.6.17"))
-        removeAndLog(settings, "Map/MarkDisplay"); // MAP_MARK_DISPLAY
+        removeAndLog("Map/MarkDisplay"); // MAP_MARK_DISPLAY
 
       if(optionsVersion <= Version("2.7.8.develop"))
       {
-        removeAndLog(settings, "OptionsDialog/Widget_lineEditOptionsWeatherIvaoUrl");
-        removeAndLog(settings, "Map/Airports");
+        removeAndLog("OptionsDialog/Widget_lineEditOptionsWeatherIvaoUrl");
+        removeAndLog("Map/Airports");
       }
 
       if(optionsVersion <= Version("2.8.0.beta"))
       {
-        removeAndLog(settings, "SearchPaneLogdata/WidgetView_tableViewLogdata");
-        removeAndLog(settings, "Route/View_tableViewRoute");
-        removeAndLog(settings, "SearchPaneAirport/WidgetDistView_tableViewAirportSearch");
-        removeAndLog(settings, "SearchPaneAirport/WidgetView_tableViewAirportSearch");
-        removeAndLog(settings, "SearchPaneNav/WidgetDistView_tableViewNavSearch");
-        removeAndLog(settings, "SearchPaneNav/WidgetView_tableViewNavSearch");
+        removeAndLog("SearchPaneLogdata/WidgetView_tableViewLogdata");
+        removeAndLog("Route/View_tableViewRoute");
+        removeAndLog("SearchPaneAirport/WidgetDistView_tableViewAirportSearch");
+        removeAndLog("SearchPaneAirport/WidgetView_tableViewAirportSearch");
+        removeAndLog("SearchPaneNav/WidgetDistView_tableViewNavSearch");
+        removeAndLog("SearchPaneNav/WidgetView_tableViewNavSearch");
       }
 
 #ifdef Q_OS_MACOS
       if(optionsVersion <= Version("2.8.1.beta"))
-        removeAndLog(settings, "OptionsDialog/GuiStyleIndex");
+        removeAndLog("OptionsDialog/GuiStyleIndex");
 #endif
+
+      if(optionsVersion <= Version("2.8.1.beta"))
+      {
+        removeAndLog(&mapstyleSettings, "Marker/TurnPathPen");
+        removeAndLog(&mapstyleSettings, "Marker/SelectedAltitudeRangePen");
+      }
 
       qInfo() << Q_FUNC_INFO << "Clearing all essential messages since version differs";
       messages::resetEssentialMessages();
@@ -243,6 +255,8 @@ void checkAndMigrateSettings()
       // Set program version to options and save ===================
       settings.setValue(lnm::OPTIONS_VERSION, programVersion.getVersionString());
       Settings::syncSettings();
+
+      mapstyleSettings.sync();
     }
   }
   else

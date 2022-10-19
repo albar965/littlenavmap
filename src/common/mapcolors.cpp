@@ -132,8 +132,8 @@ QColor routeHighlightBackColor(Qt::black);
 QColor profileHighlightBackColor(Qt::black);
 
 QPen markEndurancePen(Qt::black, 2., Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
-QPen markSelectedAltitudeRangePen(Qt::darkGreen, 3., Qt::SolidLine, Qt::FlatCap);
-QPen markTurnPathPen(Qt::darkGreen, 2., Qt::SolidLine, Qt::FlatCap);
+QPen markSelectedAltitudeRangePen(Qt::darkGreen, 1.5, Qt::SolidLine, Qt::FlatCap);
+QPen markTurnPathPen(Qt::darkGreen, 1.5, Qt::SolidLine, Qt::FlatCap);
 
 /* Map print colors */
 QColor mapPrintRowColor(250, 250, 250);
