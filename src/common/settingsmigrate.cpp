@@ -232,6 +232,11 @@ void checkAndMigrateSettings()
         removeAndLog(settings, "SearchPaneNav/WidgetView_tableViewNavSearch");
       }
 
+#ifdef Q_OS_MACOS
+      if(optionsVersion <= Version("2.8.1.beta"))
+        removeAndLog(settings, "OptionsDialog/GuiStyleIndex");
+#endif
+
       qInfo() << Q_FUNC_INFO << "Clearing all essential messages since version differs";
       messages::resetEssentialMessages();
 

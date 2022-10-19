@@ -966,13 +966,13 @@ void MainWindow::updateStatusBarStyle()
   if(NavApp::getStyleHandler() != nullptr)
   {
     QString style = NavApp::getStyleHandler()->getCurrentGuiStyleDisplayName();
-    if(style.compare("Fusion", Qt::CaseInsensitive) == 0)
+    if(style.compare(StyleHandler::DEFAULT_STYLE, Qt::CaseInsensitive) == 0)
     {
       shadow = QFrame::Sunken;
       shape = QFrame::StyledPanel;
       adjustFrame = true;
     }
-    else if(style.compare("Night", Qt::CaseInsensitive) == 0)
+    else if(style.compare(StyleHandler::DEFAULT_STYLE_DARK, Qt::CaseInsensitive) == 0)
     {
       shadow = QFrame::Sunken;
       shape = QFrame::Box;

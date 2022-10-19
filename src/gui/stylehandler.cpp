@@ -32,6 +32,9 @@
 #include <QWindow>
 #include <QStringBuilder>
 
+const QLatin1String StyleHandler::DEFAULT_STYLE("Fusion");
+const QLatin1String StyleHandler::DEFAULT_STYLE_DARK("Night");
+
 using atools::settings::Settings;
 
 StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
@@ -54,7 +57,7 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
 
     QPalette palette = style->standardPalette();
     QString stylesheet;
-    if(styleName == "Fusion")
+    if(styleName == DEFAULT_STYLE)
     {
       // Store fusion palette settings a in a separate ini file
       QString filename = Settings::getConfigFilename("_fusionstyle.ini");
@@ -63,7 +66,7 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
       stylesheet = fusionStyleSheet;
     }
 
-    styles.append({styleName, styleName, stylesheet, palette, false /* night */});
+    styles.append(Style(styleName, styleName, stylesheet, palette, false /* night */));
     delete style;
   }
 
@@ -111,7 +114,7 @@ StyleHandler::StyleHandler(QMainWindow *mainWindowParam)
   atools::gui::PaletteSettings paletteSettings(filename, "StyleColors");
   paletteSettings.syncPalette(darkPalette);
 
-  styles.append({"Night", "Fusion", nightStyleSheet, darkPalette, true /* night */});
+  styles.append(Style(DEFAULT_STYLE_DARK, DEFAULT_STYLE, nightStyleSheet, darkPalette, true /* night */));
 }
 
 StyleHandler::~StyleHandler()
@@ -144,12 +147,12 @@ void StyleHandler::insertMenuItems(QMenu *menu)
     action->setStatusTip(tr("Switch user interface style to \"%1\"").arg(style.displayName));
     action->setActionGroup(styleActionGroup);
 
-    if(style.displayName == "Fusion")
+    if(style.displayName == DEFAULT_STYLE)
     {
       action->setShortcut(QKeySequence(tr("Shift+F2")));
       action->setShortcutContext(Qt::ApplicationShortcut);
     }
-    else if(style.displayName == "Night")
+    else if(style.displayName == DEFAULT_STYLE_DARK)
     {
       action->setShortcut(QKeySequence(tr("Shift+F3")));
       action->setShortcutContext(Qt::ApplicationShortcut);
@@ -202,6 +205,12 @@ void StyleHandler::restoreState()
 {
   Settings& settings = Settings::instance();
 
+  if(menuItems.isEmpty())
+  {
+    qWarning() << Q_FUNC_INFO << "No styles found";
+    return;
+  }
+
   if(settings.contains(lnm::OPTIONS_DIALOG_GUI_STYLE_INDEX))
   {
     // Style already selected
@@ -221,9 +230,20 @@ void StyleHandler::restoreState()
 
     // Look for default style in the list
     int index = 0;
+    currentStyleIndex = -1;
+
+    // Use Fusion on macOS since the Qt apple style is a mess
+#ifdef Q_OS_MACOS
+    QString currentStyleName = DEFAULT_STYLE;
+#else
     QString currentStyleName = QApplication::style()->objectName();
+#endif
     for(const QString& styleName : QStyleFactory::keys())
     {
+#ifdef DEBUG_INFORMATION
+      qDebug() << Q_FUNC_INFO << "styleName" << styleName;
+#endif
+
       if(styleName.compare(currentStyleName, Qt::CaseInsensitive) == 0)
       {
         if(index >= menuItems.size())
@@ -235,6 +255,15 @@ void StyleHandler::restoreState()
       }
       index++;
     }
+
+    if(currentStyleIndex == -1)
+    {
+      qWarning() << Q_FUNC_INFO << "No default style" << currentStyleName << " found";
+      currentStyleIndex = 0;
+      menuItems[currentStyleIndex]->setChecked(true);
+    }
+    else
+      qDebug() << Q_FUNC_INFO << "Default style" << currentStyleName;
   }
 
   applyCurrentStyle();
