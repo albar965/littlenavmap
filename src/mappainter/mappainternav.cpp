@@ -19,8 +19,6 @@
 
 #include "common/symbolpainter.h"
 #include "common/mapcolors.h"
-#include "common/unit.h"
-#include "mapgui/mapwidget.h"
 #include "common/textplacement.h"
 #include "util/paintercontextsaver.h"
 #include "mapgui/maplayer.h"
@@ -210,12 +208,8 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
     bool visible2 = wToS(airway.to, x2, y2);
 
     if(!visible1 && !visible2)
-    {
       // Check bounding rect for visibility
-      const Rect& bnd = airway.bounding;
-      Marble::GeoDataLatLonBox airwaybox(bnd.getNorth(), bnd.getSouth(), bnd.getEast(), bnd.getWest(), Marble::GeoDataCoordinates::Degree);
-      visible1 = airwaybox.intersects(context->viewport->viewLatLonAltBox());
-    }
+      visible1 = context->viewportRect.overlaps(airway.bounding);
 
     // Draw line if both points are visible or line intersects screen coordinates
     if(visible1 || visible2)

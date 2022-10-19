@@ -479,6 +479,18 @@ void MapTypesFactory::fillAirwayOrTrack(const SqlRecord& record, map::MapAirway&
   airway.from = Pos(record.valueFloat("from_lonx"), record.valueFloat("from_laty"));
   airway.to = Pos(record.valueFloat("to_lonx"), record.valueFloat("to_laty"));
 
+  // Correct special cases at the anti-meridian to avoid "round-the-globe" case
+  // Happens if an airway or track starts or ends at the anti-meridian
+  if(airway.from.getLonX() < 0.f && atools::almostEqual(airway.to.getLonX(), 180.f))
+    airway.to.setLonX(-180.f);
+  if(airway.to.getLonX() < 0.f && atools::almostEqual(airway.from.getLonX(), 180.f))
+    airway.from.setLonX(-180.f);
+
+  if(airway.from.getLonX() > 0.f && atools::almostEqual(airway.to.getLonX(), -180.f))
+    airway.to.setLonX(180.f);
+  if(airway.to.getLonX() > 0.f && atools::almostEqual(airway.from.getLonX(), -180.f))
+    airway.from.setLonX(180.f);
+
   if(airway.from.isValid() && airway.to.isValid())
   {
     Line line(airway.from, airway.to);
