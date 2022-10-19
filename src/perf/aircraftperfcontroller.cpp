@@ -1037,9 +1037,9 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
       // Aircraft ICAO type ======================================
       if(perf->getAircraftType().isEmpty())
         extraErrors.append(tr("Aircraft type is empty. Use an official ICAO code like \"B738\", \"BE9L\" or \"C172\"."));
-      else if(!perf->isAircraftTypeValid())
-        extraErrors.append(tr("Aircraft type \"%1\" is not valid. Use official ICAO codes like \"B738\", \"BE9L\" or \"C172\".").
-                           arg(perf->getAircraftType()));
+      // else if(!perf->isAircraftTypeValid())
+      // extraErrors.append(tr("Aircraft type \"%1\" is not valid. Use official ICAO codes like \"B738\", \"BE9L\" or \"C172\".").
+      // arg(perf->getAircraftType()));
 
       if(!extraErrors.isEmpty())
       {

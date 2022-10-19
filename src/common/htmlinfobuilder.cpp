@@ -60,6 +60,7 @@
 #include <QFileInfo>
 #include <QToolTip>
 #include <QRegularExpression>
+#include <QDir>
 
 // Use % to concatenate strings faster than +
 #include <QStringBuilder>
@@ -4927,7 +4928,8 @@ QString HtmlInfoBuilder::filepathTextShow(const QString& filepath, const QString
     return QString();
 
   QFileInfo fileinfo(filepath);
-  QString filepathStr = canonical ? atools::canonicalFilePath(fileinfo) : fileinfo.absoluteFilePath();
+  QString filepathStr =
+    QDir::toNativeSeparators(QDir::cleanPath(canonical ? atools::canonicalFilePath(fileinfo) : fileinfo.absoluteFilePath()));
 
   if(fileinfo.exists())
     link.small(prefix).a(filepathStr, QString("lnm://show?filepath=%1").arg(filepathStr), ahtml::LINK_NO_UL | ahtml::SMALL);

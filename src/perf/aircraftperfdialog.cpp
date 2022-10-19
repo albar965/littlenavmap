@@ -206,17 +206,19 @@ void AircraftPerfDialog::buttonBoxClicked(QAbstractButton *button)
 
 void AircraftPerfDialog::aircraftTypeEdited()
 {
-  if(!atools::fs::perf::AircraftPerf::isAircraftTypeValid(ui->lineEditType->text()))
-  {
-    ui->labelTypeStatus->show();
-    ui->labelTypeStatus->setText(atools::util::HtmlBuilder::errorMessage(tr("Aircraft type seems to be invalid. "
-                                                                            "Use official ICAO codes like \"B738\", \"BE9L\" or \"C172\".")));
-  }
-  else if(ui->lineEditType->text().isEmpty())
+  if(ui->lineEditType->text().isEmpty())
   {
     ui->labelTypeStatus->show();
     ui->labelTypeStatus->setText(atools::util::HtmlBuilder::errorMessage(tr("Aircraft type is empty. "
-                                                                            "Use official ICAO codes like \"B738\", \"BE9L\" or \"C172\".")));
+                                                                            "It is recommended to use official ICAO codes like "
+                                                                            "\"B738\", \"BE9L\" or \"C172\".")));
+  }
+  else if(!atools::fs::perf::AircraftPerf::isAircraftTypeValid(ui->lineEditType->text()))
+  {
+    ui->labelTypeStatus->show();
+    ui->labelTypeStatus->setText(atools::util::HtmlBuilder::warningMessage(tr("Aircraft type is probably not valid. "
+                                                                              "It is recommended to use official ICAO codes like "
+                                                                              "\"B738\", \"BE9L\" or \"C172\".")));
   }
   else
     ui->labelTypeStatus->hide();
