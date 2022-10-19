@@ -60,6 +60,11 @@ public:
   /* True if there are tracks in the database */
   bool hasTracks() const;
 
+  bool hasTracksEnabled() const
+  {
+    return !enabledTracks().isEmpty();
+  }
+
   /* If true: Do not load tracks that are currently not valid. */
   void setDownloadOnlyValid(bool value)
   {
@@ -77,8 +82,9 @@ private:
   void trackDownloadFailed(const QString& error, int errorCode, QString downloadUrl, atools::track::TrackType type);
   void trackDownloadSslErrors(const QStringList& errors, const QString& downloadUrl);
   void tracksLoaded();
-  QVector<atools::track::TrackType> enabledTracks();
+  QVector<atools::track::TrackType> enabledTracks() const;
   void startDownloadInternal();
+  void trackSelectionChanged(bool);
 
   /* Avoid multiple error reports. */
   bool errorReported = false;

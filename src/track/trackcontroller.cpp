@@ -17,21 +17,17 @@
 
 #include "track/trackcontroller.h"
 
-#include "track/trackdownloader.h"
-#include "settings/settings.h"
-#include "gui/mainwindow.h"
-#include "common/constants.h"
-#include "track/trackmanager.h"
-#include "query/airwaytrackquery.h"
-#include "navapp.h"
 #include "atools.h"
+#include "common/constants.h"
 #include "gui/dialog.h"
-#include "query/airwayquery.h"
-#include "query/waypointtrackquery.h"
-#include "query/waypointquery.h"
-#include "ui_mainwindow.h"
+#include "gui/mainwindow.h"
 #include "gui/widgetstate.h"
+#include "navapp.h"
 #include "settings/settings.h"
+#include "settings/settings.h"
+#include "track/trackdownloader.h"
+#include "track/trackmanager.h"
+#include "ui_mainwindow.h"
 #include "ui_mainwindow.h"
 
 #include <QDebug>
@@ -75,6 +71,11 @@ TrackController::TrackController(TrackManager *trackManagerParam, MainWindow *ma
   connect(downloader, &TrackDownloader::trackDownloadFinished, this, &TrackController::trackDownloadFinished);
   connect(downloader, &TrackDownloader::trackDownloadFailed, this, &TrackController::trackDownloadFailed);
   connect(downloader, &TrackDownloader::trackDownloadSslErrors, this, &TrackController::trackDownloadSslErrors);
+
+  Ui::MainWindow *ui = NavApp::getMainUi();
+  connect(ui->actionTrackSourcesNat, &QAction::toggled, this, &TrackController::trackSelectionChanged);
+  connect(ui->actionTrackSourcesPacots, &QAction::toggled, this, &TrackController::trackSelectionChanged);
+  connect(ui->actionTrackSourcesAusots, &QAction::toggled, this, &TrackController::trackSelectionChanged);
 }
 
 TrackController::~TrackController()
@@ -86,8 +87,7 @@ void TrackController::restoreState()
   atools::gui::WidgetState state(lnm::AIRSPACE_CONTROLLER_WIDGETS, false /* visibility */, true /* block signals */);
 
   Ui::MainWindow *ui = NavApp::getMainUi();
-  state.restore({ui->actionTrackSourcesNat, ui->actionTrackSourcesPacots, ui->actionTrackSourcesAusots,
-                 ui->actionRouteDownloadTracks});
+  state.restore({ui->actionTrackSourcesNat, ui->actionTrackSourcesPacots, ui->actionTrackSourcesAusots, ui->actionRouteDownloadTracks});
 }
 
 void TrackController::saveState()
@@ -96,8 +96,7 @@ void TrackController::saveState()
 
   atools::gui::WidgetState state(lnm::AIRSPACE_CONTROLLER_WIDGETS);
 
-  state.save({ui->actionTrackSourcesNat, ui->actionTrackSourcesPacots, ui->actionTrackSourcesAusots,
-              ui->actionRouteDownloadTracks});
+  state.save({ui->actionTrackSourcesNat, ui->actionTrackSourcesPacots, ui->actionTrackSourcesAusots, ui->actionRouteDownloadTracks});
 }
 
 void TrackController::optionsChanged()
@@ -296,16 +295,14 @@ void TrackController::tracksLoaded()
     {
       atools::track::TrackType type = it.key();
       int num = numTracks.value(type);
-      msg.append(tr("%1: %2 tracks").
-                 arg(atools::track::typeToString(type)).
-                 arg(num == 0 ? tr("no") : QString::number(num)));
+      msg.append(tr("%1: %2 tracks").arg(atools::track::typeToString(type)).arg(num == 0 ? tr("no") : QString::number(num)));
     }
 
     NavApp::setStatusMessage(tr("Tracks downloaded: %1.").arg(msg.join(tr(", "))), true /* addToLog */);
   }
 }
 
-QVector<atools::track::TrackType> TrackController::enabledTracks()
+QVector<atools::track::TrackType> TrackController::enabledTracks() const
 {
   QVector<atools::track::TrackType> retval;
   Ui::MainWindow *ui = NavApp::getMainUi();
@@ -316,4 +313,15 @@ QVector<atools::track::TrackType> TrackController::enabledTracks()
   if(ui->actionTrackSourcesAusots->isChecked())
     retval.append(atools::track::AUSOTS);
   return retval;
+}
+
+void TrackController::trackSelectionChanged(bool)
+{
+  if(hasTracksEnabled())
+  {
+    cancelDownload();
+    startDownload();
+  }
+  else
+    deleteTracks();
 }

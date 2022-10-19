@@ -888,6 +888,11 @@ bool NavApp::hasTracks()
   return trackController->hasTracks();
 }
 
+bool NavApp::hasTracksEnabled()
+{
+  return trackController->hasTracksEnabled();
+}
+
 AircraftPerfController *NavApp::getAircraftPerfController()
 {
   return aircraftPerfController;

@@ -3585,6 +3585,9 @@ void MainWindow::updateActionStates()
   ui->actionRouteDeleteTracks->setEnabled(hasTracks);
   ui->actionMapShowTracks->setEnabled(hasTracks);
 
+  bool hasTracksEnabled = NavApp::hasTracksEnabled();
+  ui->actionRouteDownloadTracksNow->setEnabled(hasTracksEnabled);
+
 #ifdef DEBUG_MOVING_AIRPLANE
   ui->actionMapShowAircraft->setEnabled(true);
   ui->actionMapAircraftCenter->setEnabled(true);
@@ -3641,9 +3644,8 @@ void MainWindow::resetAllSettings()
                               "will be created in the folder<br/><br/>"
                               "\"%3\"<br/><br/>"
                               "which allows you to undo this change."
-                            ).arg(QApplication::applicationName()).arg(settingFile).arg(settingPath)
-                         , QMessageBox::Ok | QMessageBox::Cancel | QMessageBox::Help,
-                         QMessageBox::Cancel);
+                            ).arg(QApplication::applicationName()).arg(settingFile).arg(settingPath),
+                         QMessageBox::Ok | QMessageBox::Cancel | QMessageBox::Help, QMessageBox::Cancel);
 
   if(retval == QMessageBox::Ok)
   {

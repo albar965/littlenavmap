@@ -370,6 +370,7 @@ public:
 
   static TrackController *getTrackController();
   static bool hasTracks();
+  static bool hasTracksEnabled();
   static TrackManager *getTrackManager();
 
   static AirspaceController *getAirspaceController();
