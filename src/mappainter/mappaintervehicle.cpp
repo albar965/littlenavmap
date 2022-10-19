@@ -144,17 +144,17 @@ void MapPainterVehicle::paintTurnPath(const atools::fs::sc::SimConnectUserAircra
       if(groundSpeedKts > 20.f)
       {
         // Draw one line segment every 0.1 NM
-        float distanceStepNm = 0.1f;
+        double distanceStepNm = 0.1;
 
         // Turn in degree at each node
-        float turnStep = turnSpeedDegPerSec * (distanceStepNm * 3600.f / groundSpeedKts);
+        double turnStep = turnSpeedDegPerSec * (distanceStepNm * 3600. / groundSpeedKts);
 
         // Current distance from first node (aircraft)
-        float curDistance = 0.f;
-        float curHeading = userAircraft.getTrackDegTrue() + turnStep;
+        double curDistance = 0.f;
+        double curHeading = userAircraft.getTrackDegTrue() + turnStep;
 
-        float lineWidth = context->szF(context->thicknessUserFeature, mapcolors::markTurnPathPen.width());
-        context->painter->setPen(mapcolors::adjustWidth(mapcolors::markTurnPathPen, lineWidth));
+        double lineWidth = context->szF(context->thicknessUserFeature, mapcolors::markTurnPathPen.width());
+        context->painter->setPen(mapcolors::adjustWidth(mapcolors::markTurnPathPen, static_cast<float>(lineWidth)));
         context->painter->setBrush(QBrush(mapcolors::markTurnPathPen.color()));
 
         // One step is 0.1 NM
@@ -168,23 +168,24 @@ void MapPainterVehicle::paintTurnPath(const atools::fs::sc::SimConnectUserAircra
 
           // Stop either at distance or if turn radius drawn is close to 180°
           while(curDistance < MAX_TURN_PATH_NM &&
-                atools::geo::angleAbsDiff(userAircraft.getTrackDegTrue(), curHeading) < 180.f - std::abs(turnStep))
+                atools::geo::angleAbsDiff(static_cast<double>(userAircraft.getTrackDegTrue()), curHeading) < 180. - std::abs(turnStep))
           {
             // Next point for given distance and heading
-            atools::geo::Pos newPos = curPos.endpoint(atools::geo::nmToMeter(distanceStepNm), curHeading);
+            // Use maximal precision to avoid crawling
+            atools::geo::Pos newPos = curPos.endpointDouble(atools::geo::nmToMeter(distanceStepNm), curHeading);
             line.append(newPos);
 
             // Draw mark at each 0.5 NM
             if(step > 0 && (step % 5) == 0)
             {
-              double length = lineWidth * 1.4;
+              double length = lineWidth * 1.2;
 
               // Longer mark at 1 NM
               if((step % 10) == 0)
-                length *= 1.8;
+                length *= 1.6;
 
               // Draw line segment as mark
-              QPoint pt = wToS(curPos);
+              QPointF pt = wToSF(curPos);
               if(!pt.isNull())
               {
                 context->painter->translate(pt);
