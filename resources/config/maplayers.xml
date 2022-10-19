@@ -28,6 +28,7 @@
         <AiAircraftText>true</AiAircraftText>
         <AiAircraftTextDetail>true</AiAircraftTextDetail>
         <AiAircraftTextDetail2>true</AiAircraftTextDetail2>
+        <AiAircraftTextDetail3>true</AiAircraftTextDetail3>
         <AiShipLarge>true</AiShipLarge>
         <AiShipSmall>true</AiShipSmall>
 
@@ -204,7 +205,7 @@
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="10">
-        <AiAircraftTextDetail2>false</AiAircraftTextDetail2>
+        <AiAircraftTextDetail3>false</AiAircraftTextDetail3>
         <AirportDiagram>false</AirportDiagram>
         <AirportMinorSymbolSize>18</AirportMinorSymbolSize>
         <AirportMsaSymbolScale>4</AirportMsaSymbolScale>
@@ -227,7 +228,7 @@
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="50">
-        <AiAircraftTextDetail>false</AiAircraftTextDetail>
+        <AiAircraftTextDetail2>false</AiAircraftTextDetail2>
         <AiShipSmall>false</AiShipSmall>
         <AirportDiagramRunway>false</AirportDiagramRunway>
         <AirportMinorFontScale>0.9</AirportMinorFontScale>
@@ -295,6 +296,7 @@
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="400">
+        <AiAircraftTextDetail>false</AiAircraftTextDetail>
         <AiAircraftSize>26</AiAircraftSize>
         <AirportMinor>false</AirportMinor>
         <AirportRouteInfo>false</AirportRouteInfo>

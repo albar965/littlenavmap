@@ -248,32 +248,35 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
     bool text = layer->isAiAircraftText();
     bool detail = layer->isAiAircraftTextDetail(); // Lowest detail
     bool detail2 = layer->isAiAircraftTextDetail2(); // Higher detail
+    bool detail3 = layer->isAiAircraftTextDetail3(); // Highest detail
 
     if(forceLabelNearby)
-      detail = text;
+      detail = detail2 = text;
 
     // Aircraft information ====================================================================================
     appendAtcText(texts, aircraft,
-                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_REGISTRATION),
-                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TYPE) && detail,
-                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_AIRLINE) && detail2,
-                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER) && detail2,
-                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TRANSPONDER_CODE) && detail2 && flying);
+                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_REGISTRATION) && text,
+                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TYPE) && detail2,
+                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_AIRLINE) && text,
+                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER) && text,
+                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TRANSPONDER_CODE) && detail3 && flying,
+                  !detail3 /* eitherRegOrNumber */,
+                  detail3 ? 20 : 8 /* elideAirline */);
 
-    if(detail)
+    if(detail2)
     {
       // Speeds ====================================================================================
       if(aircraft.getGroundSpeedKts() > 30)
         appendSpeedText(texts, aircraft,
-                        context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_IAS) && flying && detail2,
+                        context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_IAS) && flying && detail3,
                         context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_GS),
-                        context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TAS) && flying && detail2);
+                        context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TAS) && flying && detail3);
 
       if(flying)
       {
         // Departure and destination ====================================================================================
         if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_DEP_DEST) &&
-           (!aircraft.getFromIdent().isEmpty() || !aircraft.getToIdent().isEmpty()) && detail2)
+           (!aircraft.getFromIdent().isEmpty() || !aircraft.getToIdent().isEmpty()) && detail3)
         {
           texts.append(tr("%1 to %2").
                        arg(aircraft.getFromIdent().isEmpty() ? tr("Unknown") : aircraft.getFromIdent()).
@@ -299,7 +302,7 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
 
         QStringList altTexts;
         if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_INDICATED_ALTITUDE) &&
-           aircraft.getIndicatedAltitudeFt() < map::INVALID_ALTITUDE_VALUE && detail2)
+           aircraft.getIndicatedAltitudeFt() < map::INVALID_ALTITUDE_VALUE && detail3)
           altTexts.append(tr("IND %1").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())));
 
         // Altitude ====================================================================================
@@ -316,7 +319,7 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
         // Bearing to user ====================================================================================
         const Pos& userPos = mapPaintWidget->getUserAircraft().getPosition();
         const Pos& aiPos = aircraft.getPosition();
-        if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_DIST_BEARING_FROM_USER) && detail2)
+        if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_DIST_BEARING_FROM_USER) && detail3)
         {
           float distMeter = aiPos.distanceMeterTo(userPos);
 
@@ -331,14 +334,15 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
         }
 
         // Coordinates ====================================================================================
-        if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_COORDINATES) && detail2)
+        if(context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_COORDINATES) && detail3)
           texts.append(Unit::coords(aiPos));
       } // if(flying)
     } // if(detail)
 
 #ifdef DEBUG_INFORMATION
-    if(forceLabelNearby)
-      texts.prepend("[FORCE]");
+    texts.prepend(QString("[%1%2%3%4%5]").
+                  arg(forceLabelNearby ? "F" : "").arg(text ? "T" : "-").
+                  arg(detail ? "D" : "-").arg(detail2 ? "2" : "").arg(detail3 ? "3" : ""));
 #endif
 
     int transparency = context->flags2.testFlag(opts2::MAP_AI_TEXT_BACKGROUND) ? 255 : 0;
@@ -360,7 +364,7 @@ void MapPainterVehicle::paintTextLabelUser(float x, float y, int size, const Sim
                 context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_TYPE),
                 context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_AIRLINE),
                 context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER),
-                context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_TRANSPONDER_CODE));
+                context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_TRANSPONDER_CODE), false /* eitherRegOrNumber */, 15 /* elideAirline */);
 
   if(aircraft.getGroundSpeedKts() > 30)
   {
@@ -444,34 +448,58 @@ void MapPainterVehicle::appendClimbSinkText(QStringList& texts, const SimConnect
 
 void MapPainterVehicle::appendAtcText(QStringList& texts, const SimConnectAircraft& aircraft,
                                       bool registration, bool type, bool airline, bool flightnumber,
-                                      bool transponderCode)
+                                      bool transponderCode, bool eitherRegOrNumber, int elideAirline)
 {
-  QStringList line;
-  if(registration)
+  bool hasReg = !aircraft.getAirplaneRegistration().isEmpty() && registration;
+  bool hasAirline = !aircraft.getAirplaneAirline().isEmpty() && airline;
+  bool hasFlightNum = !aircraft.getAirplaneFlightnumber().isEmpty() && flightnumber;
+  bool hasTransponder = aircraft.isTransponderCodeValid() && transponderCode;
+
+  if(eitherRegOrNumber)
   {
-    if(!aircraft.getAirplaneRegistration().isEmpty())
-      line.append(aircraft.getAirplaneRegistration());
-    else
-      line.append(QString::number(aircraft.getObjectId() + 1));
+    // Compact display and use either registration or airline and flight number
+
+    if(hasReg && hasFlightNum && hasAirline)
+      // Disable registration if flight number and airline available
+      hasReg = false;
+
+    if(hasFlightNum && !hasAirline)
+      // Disable flight number if no airline
+      hasFlightNum = false;
   }
+
+  QStringList line;
+  if(hasReg)
+    line.append(aircraft.getAirplaneRegistration());
 
   if(!aircraft.getAirplaneModel().isEmpty() && type)
     line.append(aircraft.getAirplaneModel());
 
   if(!line.isEmpty())
-    texts.append(line.join(tr(" / ")));
+    texts.append(line.join(tr("/")));
   line.clear();
 
-  if(!aircraft.getAirplaneAirline().isEmpty() && airline)
-    line.append(aircraft.getAirplaneAirline());
+  if(!texts.isEmpty() || hasTransponder)
+  {
+    if(hasAirline)
+      line.append(atools::elideTextShort(aircraft.getAirplaneAirline(), elideAirline));
 
-  if(!aircraft.getAirplaneFlightnumber().isEmpty() && flightnumber)
-    line.append(aircraft.getAirplaneFlightnumber());
+    if(hasFlightNum)
+      line.append(aircraft.getAirplaneFlightnumber());
+  }
+  else
+  {
+    if(hasAirline)
+      texts.append(atools::elideTextShort(aircraft.getAirplaneAirline(), elideAirline));
+
+    if(hasFlightNum)
+      texts.append(aircraft.getAirplaneFlightnumber());
+  }
 
   if(!line.isEmpty())
-    texts.append(line.join(tr(" / ")));
+    texts.append(line.join(tr("/")));
 
-  if(transponderCode && aircraft.isTransponderCodeValid())
+  if(hasTransponder)
     texts.append(tr("XPDR %1").arg(aircraft.getTransponderCodeStr()));
 }
 

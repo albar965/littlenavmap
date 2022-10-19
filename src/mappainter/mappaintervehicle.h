@@ -66,7 +66,7 @@ protected:
   void paintTextLabelAi(float x, float y, float size, const atools::fs::sc::SimConnectAircraft& aircraft, bool forceLabelNearby);
   void appendClimbSinkText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft);
   void appendAtcText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft,
-                     bool registration, bool type, bool airline, bool flightnumber, bool transponderCode);
+                     bool registration, bool type, bool airline, bool flightnumber, bool transponderCode, bool eitherRegOrNumber, int elideAirline);
   void appendSpeedText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft, bool ias, bool gs,
                        bool tas);
   void climbSinkPointer(QString& upDown, const atools::fs::sc::SimConnectAircraft& aircraft);
