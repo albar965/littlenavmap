@@ -378,7 +378,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
         tooltip.tr().td().b(tr("Wind shown (W): ")).text(windReporter->getLevelText()).
         b(tr(" Wind source: ")).text(windReporter->getSourceText()).tdEnd().trEnd();
 
-        if(windReporter->isWindShown() && (windReporter->getSource() != wind::NO_SOURCE || windReporter->isWindManual()))
+        if(windReporter->isWindShown() && windReporter->getSource() != wind::WIND_SOURCE_DISABLED)
           weatherLabel.append(tr("W"));
       }
       else

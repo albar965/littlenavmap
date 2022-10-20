@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -65,9 +65,10 @@ enum WindSelection
 
 enum WindSource
 {
-  NO_SOURCE, /* Disabled */
-  SIMULATOR, /* X-Plane GRIB file */
-  NOAA /* Download from NOAA site */
+  WIND_SOURCE_DISABLED, /* Disabled */
+  WIND_SOURCE_MANUAL, /* Set in fuel report panel */
+  WIND_SOURCE_SIMULATOR, /* X-Plane GRIB file */
+  WIND_SOURCE_NOAA /* Download from NOAA site */
 };
 
 }
@@ -112,7 +113,7 @@ public:
   /* True if online wind available */
   bool hasOnlineWindData() const;
 
-  /* true if checkbox "manual" is checked */
+  /* true if action "manual" is selected */
   bool isWindManual() const;
 
   /* Either manual or online */
@@ -122,7 +123,10 @@ public:
   }
 
   /* Get currently shown/selected wind bar altitude level in ft. 0. if none is selected.  */
-  float getAltitudeFt() const;
+  float getDisplayAltitudeFt() const;
+
+  /* Selecte manual altitude for wind layer */
+  float getManualAltitudeFt() const;
 
   /* Get a list of wind positions for the given rectangle for painting. Does not use manual wind setting. */
   const atools::grib::WindPosList *getWindForRect(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
@@ -140,14 +144,9 @@ public:
   atools::grib::Wind getWindForLineRoute(const atools::geo::Line& line);
   atools::grib::Wind getWindForLineStringRoute(const atools::geo::LineString& line);
 
-  /* Get a list of winds for the given position at all given altitudes. Altitiude field in resulting pos contains the altitude.
-   * Adds flight plan altitude if needed and selected in GUI. Does not use manual wind setting.*/
-  atools::grib::WindPosVector getWindStackForPos(const atools::geo::Pos& pos, QVector<int> altitudesFt) const;
-
   /* Get a list of winds for the given position at all given altitudes. Returns only not interpolated levels.
-   * Altitiude field in resulting pos contains the altitude.
-   * Adds flight plan altitude if needed and selected in GUI. Does not use manual wind setting. */
-  atools::grib::WindPosVector getWindStackForPos(const atools::geo::Pos& pos) const;
+   * Altitiude field in resulting pos contains the altitude. */
+  atools::grib::WindPosVector getWindStackForPos(const atools::geo::Pos& pos, const atools::grib::WindPos *additionalWind = nullptr) const;
 
   /* Updates the query class */
   void updateManualRouteWinds();
@@ -180,6 +179,10 @@ signals:
   void windDisplayUpdated();
 
 private:
+  /* Get a list of winds for the given position at all given altitudes. Altitiude field in resulting pos contains the altitude.
+   * Adds flight plan altitude if needed and selected in GUI. Does not use manual wind setting.*/
+  atools::grib::WindPosVector windStackForPosInternal(const atools::geo::Pos& pos, QVector<int> altitudesFt) const;
+
   /* One of the toolbar dropdown menu items of main menu items was triggered */
   void toolbarActionTriggered();
   void toolbarActionFlightplanTriggered();
@@ -226,12 +229,12 @@ private:
   QActionGroup *actionGroup = nullptr;
 
   /* Levels for the tooltip */
-  QVector<int> levelsTooltip = {0 /* interpreted at AGL */, 1000, 2000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
+  QVector<int> levelsTooltipFt = {0 /* interpreted at AGL */, 1000, 2000, 5000, 10000, 15000, 20000, 25000, 30000, 35000, 40000, 45000};
 
   /* Currently displayed altitude or one of SpecialLevels */
   wind::WindSelection currentWindSelection = wind::NONE;
 
-  wind::WindSource currentSource = wind::NOAA;
+  wind::WindSource currentSource = wind::WIND_SOURCE_NOAA;
   bool showFlightplanWaypoints = false;
 
   /* Avoid action signals when updating GUI elements */

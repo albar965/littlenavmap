@@ -263,8 +263,7 @@ public:
    * Creates a HTML description for a all upper layer winds at position
    * @param html Result containing HTML snippet
    */
-  void windText(const atools::grib::WindPosVector& windStack, atools::util::HtmlBuilder& html,
-                float windbarbAltitude, float waypointAltitude, const QString& source, bool table) const;
+  void windText(const atools::grib::WindPosVector& windStack, atools::util::HtmlBuilder& html, float waypointAltitude, bool table) const;
 
   /*
    * Creates a HTML description for a user defined flight plan point.

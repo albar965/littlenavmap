@@ -1298,9 +1298,15 @@ void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) 
     html.brText(tr("Is Closed"));
 }
 
-void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, HtmlBuilder& html,
-                               float windbarbAltitude, float waypointAltitude, const QString& source, bool table) const
+void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, HtmlBuilder& html, float waypointAltitude, bool table) const
 {
+  const WindReporter *windReporter = NavApp::getWindReporter();
+
+  float windbarbAltitude = windReporter->getDisplayAltitudeFt();
+  float manualAltitude = windReporter->getManualAltitudeFt();
+  float cruiseAltitude = NavApp::getRouteCruiseAltFt();
+  QString source = windReporter->getSourceText();
+
   const static int WIND_LAYERS_AT_WAYPOINT = 4;
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
@@ -1340,16 +1346,17 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, Htm
       html.tr().th(Unit::getUnitAltStr()).th(tr("Direction")).th(Unit::getUnitSpeedStr()).trEnd();
 
       // Find index for given layer altitudes - these have to be included in the stack already
-      int windbarbLayerIndex = -1, waypointLayerIndex = -1;
-      if(windbarbAltitude < map::INVALID_ALTITUDE_VALUE)
+      int windbarbLayerIndex = -1, waypointLayerIndex = -1, manualLayerIndex = -1, cruiseLayerIndex = -1;
+      for(int i = 0; i < windStack.size(); i++)
       {
-        for(int i = 0; i < windStack.size(); i++)
-        {
-          if(atools::almostEqual(windStack.at(i).pos.getAltitude(), windbarbAltitude, 10.f))
-            windbarbLayerIndex = i;
-          if(atools::almostEqual(windStack.at(i).pos.getAltitude(), waypointAltitude, 10.f))
-            waypointLayerIndex = i;
-        }
+        if(atools::almostEqual(windStack.at(i).pos.getAltitude(), windbarbAltitude, 10.f))
+          windbarbLayerIndex = i;
+        if(atools::almostEqual(windStack.at(i).pos.getAltitude(), waypointAltitude, 10.f))
+          waypointLayerIndex = i;
+        if(atools::almostEqual(windStack.at(i).pos.getAltitude(), manualAltitude, 10.f))
+          manualLayerIndex = i;
+        if(atools::almostEqual(windStack.at(i).pos.getAltitude(), cruiseAltitude, 10.f))
+          cruiseLayerIndex = i;
       }
 
       // Wind reports are all at the same position
@@ -1371,14 +1378,25 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, Htm
         else if(!verbose && windbarbLayerIndex != -1 && atools::almostNotEqual(windbarbLayerIndex, i, 1))
           continue;
 
-        Flags flags = ahtml::ALIGN_RIGHT;
+        Flags flags = windbarbLayerIndex == i || waypointLayerIndex == i || manualLayerIndex == i || cruiseLayerIndex == i ?
+                      ahtml::BOLD | ahtml::ALIGN_RIGHT : ahtml::ALIGN_RIGHT;
+        QStringList suffixList;
 
-        flags |= windbarbLayerIndex == i || waypointLayerIndex == i ? ahtml::BOLD : ahtml::NONE;
-        QString suffix;
+        if(waypointLayerIndex == i && cruiseLayerIndex == i)
+          suffixList.append(tr("flight plan waypoint and cruise"));
+        else if(waypointLayerIndex == i)
+          suffixList.append(tr("flight plan waypoint"));
+        else if(cruiseLayerIndex == i)
+          suffixList.append(tr("flight plan cruise"));
+
         if(windbarbLayerIndex == i)
-          suffix = tr(" (wind barbs)");
-        if(waypointLayerIndex == i)
-          suffix = tr(" (flight plan waypoint)");
+          suffixList.append(tr("wind barbs"));
+        if(manualLayerIndex == i)
+          suffixList.append(tr("manual layer"));
+
+        QString suffix;
+        if(!suffixList.isEmpty())
+          suffix = tr(" (%1)").arg(suffixList.join(tr(", ")));
 
         // One table row with three data fields
         QString courseTxt;
@@ -5104,40 +5122,22 @@ void HtmlInfoBuilder::routeWindText(HtmlBuilder& html, const Route& route, int i
     const RouteAltitudeLeg& altLeg = route.getAltitudeLegAt(index);
     if(altLeg.getLineString().getPos2().getAltitude() > MIN_WIND_BARB_ALTITUDE && !altLeg.isMissed() && !altLeg.isAlternate())
     {
-      // Create entry for flight plan position
-      atools::grib::WindPos windPos;
-      windPos.pos = altLeg.getLineString().getPos2();
-      windPos.wind.dir = altLeg.getWindDirection();
-      windPos.wind.speed = altLeg.getWindSpeed();
+      // Create entry for flight plan position which might be different from the cruise altitude
+      atools::grib::WindPos routeWpWindPos;
+      routeWpWindPos.pos = altLeg.getLineString().getPos2();
+      routeWpWindPos.wind.dir = altLeg.getWindDirection();
+      routeWpWindPos.wind.speed = altLeg.getWindSpeed();
 
       atools::grib::WindPosVector winds;
       if(verbose)
-      {
-        // Get full stack for all default altitudes
-        winds = windReporter->getWindStackForPos(altLeg.getLineString().getPos2());
-
-        // Erase any wind altitude which overlaps with the generated position from the flight plan
-        winds.erase(std::remove_if(winds.begin(), winds.end(), [&windPos](const atools::grib::WindPos& wp) -> bool {
-          return atools::almostEqual(wp.pos.getAltitude(), windPos.pos.getAltitude(), 10.f);
-        }), winds.end());
-
-        // Get next entry below the given one
-        auto it = std::lower_bound(winds.begin(), winds.end(), windPos.pos.getAltitude(),
-                                   [](const atools::grib::WindPos& wp, float altitude) -> bool
-        {
-          return wp.pos.getAltitude() < altitude;
-        });
-
-        // Insert flight plan wind position into stack
-        winds.insert(it, windPos);
-      }
+        // Get full stack for all default altitudes - flight plan cruise altitude layer is already added
+        winds = windReporter->getWindStackForPos(altLeg.getLineString().getPos2(), &routeWpWindPos);
       else
-        // Show only one entry if verbose tooltips not selected
-        winds.append(windPos);
+        // Show only one entry for flight plan pos if verbose tooltips not selected
+        winds.append(routeWpWindPos);
 
       // Show wind text without header but using a table only
-      windText(winds, html, windReporter->getAltitudeFt(), windPos.pos.getAltitude(), NavApp::getWindReporter()->getSourceText(),
-               true /* table */);
+      windText(winds, html, routeWpWindPos.pos.getAltitude(), true /* table */);
     }
   }
 }

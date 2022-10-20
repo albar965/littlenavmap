@@ -512,9 +512,8 @@
      <property name="title">
       <string>&amp;Wind source</string>
      </property>
-     <addaction name="actionMapShowWindManual"/>
-     <addaction name="separator"/>
      <addaction name="actionMapShowWindDisabled"/>
+     <addaction name="actionMapShowWindManual"/>
      <addaction name="actionMapShowWindSimulator"/>
      <addaction name="actionMapShowWindNOAA"/>
     </widget>
@@ -4707,20 +4706,31 @@ Matches any visited airport.</string>
               <number>0</number>
              </property>
              <item>
-              <widget class="QCheckBox" name="checkBoxAircraftPerformanceWindMan">
+              <widget class="QToolButton" name="toolButtonAircraftPerformanceWind">
                <property name="toolTip">
-                <string>Use manual wind settings for fuel calculation if checked.
-This will also be reflected by the wind barbs at the flight plan waypoints and the
-wind display in the elevation profile top line.</string>
+                <string>Select wind source for performance calculation</string>
                </property>
                <property name="statusTip">
-                <string>Use manual wind settings for fuel calculation.</string>
+                <string>Select wind source for performance calculation</string>
                </property>
                <property name="text">
-                <string>&amp;Manual Wind</string>
+                <string/>
+               </property>
+               <property name="icon">
+                <iconset resource="../../littlenavmap.qrc">
+                 <normaloff>:/littlenavmap/resources/icons/wind.svg</normaloff>:/littlenavmap/resources/icons/wind.svg</iconset>
+               </property>
+               <property name="checkable">
+                <bool>true</bool>
                </property>
                <property name="checked">
-                <bool>false</bool>
+                <bool>true</bool>
+               </property>
+               <property name="popupMode">
+                <enum>QToolButton::InstantPopup</enum>
+               </property>
+               <property name="toolButtonStyle">
+                <enum>Qt::ToolButtonTextBesideIcon</enum>
                </property>
               </widget>
              </item>
@@ -4915,7 +4925,7 @@ wind display in the elevation profile top line.</string>
              <item>
               <widget class="QSpinBox" name="spinBoxAircraftPerformanceWindDirection">
                <property name="toolTip">
-                <string>Average true wind direction at flight plan cruise level</string>
+                <string>Average true wind direction at selected altitude.</string>
                </property>
                <property name="statusTip">
                 <string>Average true wind direction at flight plan cruise level</string>
@@ -4934,7 +4944,7 @@ wind display in the elevation profile top line.</string>
              <item>
               <widget class="QSpinBox" name="spinBoxAircraftPerformanceWindSpeed">
                <property name="toolTip">
-                <string>Average wind at flight plan cruise level.
+                <string>Average wind at selected altitude.
 Wind speed will be interpolated for climb and descent phases.</string>
                </property>
                <property name="statusTip">
@@ -4948,6 +4958,45 @@ Wind speed will be interpolated for climb and descent phases.</string>
                </property>
                <property name="singleStep">
                 <number>10</number>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QLabel" name="labelAircraftPerformanceWindAt">
+               <property name="sizePolicy">
+                <sizepolicy hsizetype="Fixed" vsizetype="Preferred">
+                 <horstretch>0</horstretch>
+                 <verstretch>0</verstretch>
+                </sizepolicy>
+               </property>
+               <property name="text">
+                <string>&amp;at</string>
+               </property>
+               <property name="buddy">
+                <cstring>spinBoxAircraftPerformanceWindAlt</cstring>
+               </property>
+              </widget>
+             </item>
+             <item>
+              <widget class="QSpinBox" name="spinBoxAircraftPerformanceWindAlt">
+               <property name="toolTip">
+                <string>Altitude for average wind value.
+Wind speed will be interpolated between this altitude and ground level.</string>
+               </property>
+               <property name="statusTip">
+                <string>Altitude for average wind value.\nWind speed will be interpolated between this altitude and ground level.</string>
+               </property>
+               <property name="suffix">
+                <string> %alt%</string>
+               </property>
+               <property name="maximum">
+                <number>100000</number>
+               </property>
+               <property name="singleStep">
+                <number>500</number>
+               </property>
+               <property name="value">
+                <number>10000</number>
                </property>
               </widget>
              </item>
@@ -11063,13 +11112,13 @@ relation to shown airport</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Manual Wind</string>
+    <string>&amp;Manual</string>
    </property>
    <property name="toolTip">
-    <string>Manual wind in fuel report overrides other</string>
+    <string>Manual wind in fuel report</string>
    </property>
    <property name="statusTip">
-    <string>Manual wind in fuel report overrides other</string>
+    <string>Manual wind in fuel report</string>
    </property>
   </action>
   <action name="actionTrackSourcesNat">
@@ -11918,7 +11967,7 @@ relation to shown airport</string>
   <tabstop>textBrowserViewRoute</tabstop>
   <tabstop>tableViewRoute</tabstop>
   <tabstop>plainTextEditRouteRemarks</tabstop>
-  <tabstop>checkBoxAircraftPerformanceWindMan</tabstop>
+  <tabstop>toolButtonAircraftPerformanceWind</tabstop>
   <tabstop>pushButtonAircraftPerformanceEdit</tabstop>
   <tabstop>pushButtonAircraftPerformanceNew</tabstop>
   <tabstop>pushButtonAircraftPerformanceLoad</tabstop>
@@ -11927,6 +11976,7 @@ relation to shown airport</string>
   <tabstop>pushButtonAircraftPerformanceHelp</tabstop>
   <tabstop>spinBoxAircraftPerformanceWindDirection</tabstop>
   <tabstop>spinBoxAircraftPerformanceWindSpeed</tabstop>
+  <tabstop>spinBoxAircraftPerformanceWindAlt</tabstop>
   <tabstop>textBrowserAircraftPerformanceReport</tabstop>
   <tabstop>pushButtonAircraftPerfCollectRestart</tabstop>
   <tabstop>pushButtonAircraftPerfCollectMerge</tabstop>

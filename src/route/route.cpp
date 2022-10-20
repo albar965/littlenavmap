@@ -2083,9 +2083,6 @@ void Route::updateMagvar()
 
 void Route::updateLegAltitudes()
 {
-  // Need to update the wind data for manual wind setting
-  NavApp::getWindReporter()->updateManualRouteWinds();
-
   // Calculate also with empty route to allow updating of error messages
   altitude->calculateAll(NavApp::getAircraftPerformance(), getCruisingAltitudeFeet());
 }

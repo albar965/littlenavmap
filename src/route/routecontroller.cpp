@@ -235,7 +235,7 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 
   // Update units
   units = new UnitStringTool();
-  units->init({ui->spinBoxRouteAlt, ui->spinBoxAircraftPerformanceWindSpeed});
+  units->init({ui->spinBoxRouteAlt, ui->spinBoxAircraftPerformanceWindSpeed, ui->spinBoxAircraftPerformanceWindAlt});
 
   // Set default table cell and font size to avoid Qt overly large cell sizes
   zoomHandler = new atools::gui::ItemViewZoomHandler(tableViewRoute);

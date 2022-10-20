@@ -2246,7 +2246,7 @@ void ProfileWidget::buildTooltip(int x, bool force)
   const RouteLeg *leg = index < legList->route.size() - 1 ? &legList->route.value(index + 1) : nullptr;
   WindReporter *windReporter = NavApp::getWindReporter();
   atools::grib::Wind wind;
-  if((windReporter->hasOnlineWindData() || windReporter->isWindManual()) && leg != nullptr)
+  if(windReporter->hasAnyWindData() && leg != nullptr)
     wind = windReporter->getWindForPosRoute(lastTooltipPos.alt(altitude));
 
   html.p(atools::util::html::NOBR_WHITESPACE);

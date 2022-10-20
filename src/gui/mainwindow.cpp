@@ -828,8 +828,13 @@ void MainWindow::setupUi()
   actionGroupMapWeatherWindSource = new QActionGroup(ui->menuHighAltitudeWindSource);
   actionGroupMapWeatherWindSource->setObjectName("actionGroupMapWeatherWindSource");
   actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindDisabled);
-  actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindNOAA);
+  actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindManual);
   actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindSimulator);
+  actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindNOAA);
+
+  // Tool button in flight plan report
+  ui->toolButtonAircraftPerformanceWind->addActions({ui->actionMapShowWindDisabled, ui->actionMapShowWindManual,
+                                                     ui->actionMapShowWindSimulator, ui->actionMapShowWindNOAA});
 
   // Update dock widget actions with tooltip, status tip and keypress
   ui->dockWidgetSearch->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/searchdock.svg"));
@@ -1102,10 +1107,8 @@ void MainWindow::connectAllSlots()
 
   // WindReporter ===================================================================================
   // Wind has to be calculated first - receive routeChanged signal first
-  connect(routeController, &RouteController::routeChanged, windReporter, &WindReporter::updateManualRouteWinds);
   connect(routeController, &RouteController::routeChanged, windReporter, &WindReporter::updateToolButtonState);
-  connect(perfController, &AircraftPerfController::aircraftPerformanceChanged,
-          windReporter, &WindReporter::updateToolButtonState);
+  connect(perfController, &AircraftPerfController::aircraftPerformanceChanged, windReporter, &WindReporter::updateToolButtonState);
 
   // Aircraft performance signals =======================================================
   connect(perfController, &AircraftPerfController::aircraftPerformanceChanged, routeController,

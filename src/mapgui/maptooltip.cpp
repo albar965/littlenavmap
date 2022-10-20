@@ -17,19 +17,18 @@
 
 #include "mapgui/maptooltip.h"
 
-#include "common/maptypes.h"
-#include "navapp.h"
-#include "util/htmlbuilder.h"
-#include "common/htmlinfobuilder.h"
-#include "gui/mainwindow.h"
-#include "route/route.h"
 #include "airspace/airspacecontroller.h"
-#include "options/optiondata.h"
-#include "sql/sqlrecord.h"
-#include "weather/windreporter.h"
+#include "common/htmlinfobuilder.h"
+#include "common/maptypes.h"
 #include "grib/windquery.h"
-#include "route/routealtitudeleg.h"
+#include "gui/mainwindow.h"
 #include "mapgui/mappaintwidget.h"
+#include "navapp.h"
+#include "options/optiondata.h"
+#include "route/route.h"
+#include "sql/sqlrecord.h"
+#include "util/htmlbuilder.h"
+#include "weather/windreporter.h"
 
 #include <QPalette>
 #include <QToolTip>
@@ -307,7 +306,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
     buildOneTooltip(html, overflow, numEntries, mapSearchResult.airways, info, &HtmlInfoBuilder::airwayText);
   }
 
-  // High altitude winds ===========================================================================
+  // High altitude wind barbs - not flight plan ===========================================================================
   if(!overflow)
   {
     if(opts.testFlag(optsd::TOOLTIP_WIND) && mapSearchResult.windPos.isValid())
@@ -326,8 +325,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
             html.textBar(TEXT_BAR_LENGTH);
 
           // Show wind stack with barb notation for layer
-          info.windText(winds, html, windReporter->getAltitudeFt(), map::INVALID_ALTITUDE_VALUE, windReporter->getSourceText(),
-                        false /* table */);
+          info.windText(winds, html, map::INVALID_ALTITUDE_VALUE, false /* table */);
 
 #ifdef DEBUG_INFORMATION_WIND
           html.hr().small(QString("Pos(%1, %2), alt(%3)").

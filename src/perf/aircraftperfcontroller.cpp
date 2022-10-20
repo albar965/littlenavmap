@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -86,9 +86,6 @@ AircraftPerfController::AircraftPerfController(MainWindow *parent)
   // Pass wind change with a delay to avoid lagging mouse wheel
   connect(&windChangeTimer, &QTimer::timeout, this, &AircraftPerfController::windChangedDelayed);
   windChangeTimer.setSingleShot(true);
-
-  connect(ui->checkBoxAircraftPerformanceWindMan, &QCheckBox::toggled, this, &AircraftPerfController::manualWindToggled);
-  connect(ui->actionMapShowWindManual, &QAction::toggled, this, &AircraftPerfController::manualWindToggledAction);
 
   // Widgets are only updated if visible - update on visbility changes of dock or tabs
   connect(ui->dockWidgetRoute, &QDockWidget::visibilityChanged, this, &AircraftPerfController::tabVisibilityChanged);
@@ -573,19 +570,24 @@ bool AircraftPerfController::checkForChanges()
   return false;
 }
 
-float AircraftPerfController::getWindDir() const
+float AircraftPerfController::getManualWindDirDeg() const
 {
   return NavApp::getMainUi()->spinBoxAircraftPerformanceWindDirection->value();
 }
 
-float AircraftPerfController::getWindSpeed() const
+float AircraftPerfController::getManualWindSpeedKts() const
 {
   return Unit::rev(NavApp::getMainUi()->spinBoxAircraftPerformanceWindSpeed->value(), Unit::speedKtsF);
 }
 
+float AircraftPerfController::getManualWindAltFt() const
+{
+  return Unit::rev(NavApp::getMainUi()->spinBoxAircraftPerformanceWindAlt->value(), Unit::altFeetF);
+}
+
 bool AircraftPerfController::isWindManual() const
 {
-  return NavApp::getMainUi()->checkBoxAircraftPerformanceWindMan->isChecked();
+  return NavApp::getMainUi()->actionMapShowWindManual->isChecked();
 }
 
 float AircraftPerfController::cruiseAlt()
@@ -677,9 +679,11 @@ void AircraftPerfController::connectAllSlots()
   connect(ui->pushButtonAircraftPerfCollectHelp, &QPushButton::clicked, this,
           &AircraftPerfController::helpClickedPerfCollect);
 
-  connect(ui->spinBoxAircraftPerformanceWindDirection, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+  connect(ui->spinBoxAircraftPerformanceWindDirection, QOverload<int>::of(&QSpinBox::valueChanged),
           this, &AircraftPerfController::windBoxesChanged);
-  connect(ui->spinBoxAircraftPerformanceWindSpeed, static_cast<void (QSpinBox::*)(int)>(&QSpinBox::valueChanged),
+  connect(ui->spinBoxAircraftPerformanceWindSpeed, QOverload<int>::of(&QSpinBox::valueChanged),
+          this, &AircraftPerfController::windBoxesChanged);
+  connect(ui->spinBoxAircraftPerformanceWindAlt, QOverload<int>::of(&QSpinBox::valueChanged),
           this, &AircraftPerfController::windBoxesChanged);
 }
 
@@ -706,15 +710,14 @@ void AircraftPerfController::updateActionStates()
   // Update tab title to indicate change ========================================
   updateTabTiltle();
 
-  bool routeValid = NavApp::getRouteConst().getSizeWithoutAlternates() >= 2;
-
   ui->actionAircraftPerformanceRestart->setEnabled(perfHandler->hasFlightSegment());
   ui->pushButtonAircraftPerfCollectRestart->setEnabled(perfHandler->hasFlightSegment());
 
-  bool manWind = ui->checkBoxAircraftPerformanceWindMan->isChecked();
-  ui->spinBoxAircraftPerformanceWindDirection->setEnabled(manWind && routeValid);
-  ui->spinBoxAircraftPerformanceWindSpeed->setEnabled(manWind && routeValid);
-  atools::gui::util::showHideLayoutElements({ui->horizontalLayoutManWind}, manWind, {});
+  bool manualWind = isWindManual();
+  ui->spinBoxAircraftPerformanceWindDirection->setEnabled(manualWind);
+  ui->spinBoxAircraftPerformanceWindSpeed->setEnabled(manualWind);
+  ui->spinBoxAircraftPerformanceWindAlt->setEnabled(manualWind);
+  atools::gui::util::showHideLayoutElements({ui->horizontalLayoutManWind}, manualWind, {});
 }
 
 void AircraftPerfController::updateReport()
@@ -1340,7 +1343,7 @@ void AircraftPerfController::saveState()
   Ui::MainWindow *ui = NavApp::getMainUi();
   atools::gui::WidgetState(lnm::AIRCRAFT_PERF_WIDGETS).save({ui->spinBoxAircraftPerformanceWindSpeed,
                                                              ui->spinBoxAircraftPerformanceWindDirection,
-                                                             ui->checkBoxAircraftPerformanceWindMan});
+                                                             ui->spinBoxAircraftPerformanceWindAlt});
 }
 
 void AircraftPerfController::restoreState()
@@ -1348,10 +1351,8 @@ void AircraftPerfController::restoreState()
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
   // Need to initialize this late since route controller is not valid when AircraftPerfController constructor is called
-  connect(NavApp::getRouteTabHandler(), &atools::gui::TabWidgetHandler::tabChanged,
-          this, &AircraftPerfController::tabVisibilityChanged);
-  connect(NavApp::getRouteTabHandler(), &atools::gui::TabWidgetHandler::tabOpened,
-          this, &AircraftPerfController::updateTabTiltle);
+  connect(NavApp::getRouteTabHandler(), &atools::gui::TabWidgetHandler::tabChanged, this, &AircraftPerfController::tabVisibilityChanged);
+  connect(NavApp::getRouteTabHandler(), &atools::gui::TabWidgetHandler::tabOpened, this, &AircraftPerfController::updateTabTiltle);
 
   fileHistory->restoreState();
 
@@ -1379,10 +1380,7 @@ void AircraftPerfController::restoreState()
   atools::gui::WidgetState state(lnm::AIRCRAFT_PERF_WIDGETS, true /* visibility */, true /* block signals */);
   state.restore({ui->spinBoxAircraftPerformanceWindSpeed,
                  ui->spinBoxAircraftPerformanceWindDirection,
-                 ui->checkBoxAircraftPerformanceWindMan});
-
-  NavApp::getMainUi()->actionMapShowWindManual->setChecked(
-    NavApp::getMainUi()->checkBoxAircraftPerformanceWindMan->isChecked());
+                 ui->spinBoxAircraftPerformanceWindAlt});
 
   perfHandler->setCruiseAltitude(cruiseAlt());
   perfHandler->start();
@@ -1465,15 +1463,21 @@ void AircraftPerfController::simDataChanged(const atools::fs::sc::SimConnectData
 
 void AircraftPerfController::windBoxesChanged()
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
+#endif
 
-  // Start delayed wind update - calls windChangedDelayed
+  // Start delayed wind update - calls windChangedDelayed()
   windChangeTimer.start(500);
 }
 
 void AircraftPerfController::windChangedDelayed()
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
+#endif
+
+  NavApp::getWindReporter()->updateManualRouteWinds();
   emit windChanged();
 }
 
@@ -1494,28 +1498,6 @@ void AircraftPerfController::anchorClicked(const QUrl& url)
     atools::gui::showInFileManager(query.queryItemValue("filepath"), mainWindow);
   else
     atools::gui::anchorClicked(mainWindow, url);
-}
-
-void AircraftPerfController::manualWindToggledAction()
-{
-  // Let signal propagate from checkbox
-  NavApp::getMainUi()->checkBoxAircraftPerformanceWindMan->setChecked(
-    NavApp::getMainUi()->actionMapShowWindManual->isChecked());
-}
-
-void AircraftPerfController::manualWindToggled()
-{
-  // The checkbox drives the action
-  NavApp::getMainUi()->actionMapShowWindManual->blockSignals(true);
-  NavApp::getMainUi()->actionMapShowWindManual->setChecked(NavApp::getMainUi()->checkBoxAircraftPerformanceWindMan->isChecked());
-  NavApp::getMainUi()->actionMapShowWindManual->blockSignals(false);
-
-  updateActionStates();
-  updateReport();
-  updateReportCurrent();
-
-  emit aircraftPerformanceChanged(perf);
-  emit windChanged();
 }
 
 void AircraftPerfController::tabVisibilityChanged()

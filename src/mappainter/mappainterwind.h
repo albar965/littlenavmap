@@ -34,9 +34,6 @@ public:
 
   virtual void render() override;
 
-private:
-  void drawWindBarb(float speed, float direction, float x, float y);
-
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERWIND_H

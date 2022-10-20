@@ -21,8 +21,6 @@
 #include "common/constants.h"
 #include "common/unit.h"
 #include "gui/signalblocker.h"
-#include "mapgui/maplayer.h"
-#include "mapgui/mapwidget.h"
 #include "navapp.h"
 #include "options/optiondata.h"
 #include "settings/settings.h"

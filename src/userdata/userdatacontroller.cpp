@@ -506,7 +506,9 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
       rec.appendFieldAndValue("altitude", pos.getAltitude());
   }
 
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << rec;
+#endif
 
   UserdataDialog dlg(mainWindow, ud::ADD, icons);
   dlg.restoreState();
@@ -520,7 +522,9 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
     if(lastAddedRecord->contains("import_file_path"))
       lastAddedRecord->setNull("import_file_path");
 
+#ifdef DEBUG_INFORMATION
     qDebug() << Q_FUNC_INFO << rec;
+#endif
 
     // Add to database
     SqlTransaction transaction(manager->getDatabase());

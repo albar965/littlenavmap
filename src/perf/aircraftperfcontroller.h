@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -121,10 +121,13 @@ public:
   float getRouteCruiseSpeedKts();
 
   /* Wind direction in degree as set in the flight plan dock on tab aircraft */
-  float getWindDir() const;
+  float getManualWindDirDeg() const;
 
   /* Wind speed in knots as set in the flight plan dock on tab aircraft */
-  float getWindSpeed() const;
+  float getManualWindSpeedKts() const;
+
+  /* Selected wind altitude */
+  float getManualWindAltFt() const;
 
   /* Checkbox above flight plan table */
   bool isWindManual() const;
@@ -201,9 +204,6 @@ private:
   /* Open related help in browser */
   void helpClickedPerf() const;
   void helpClickedPerfCollect() const;
-
-  void manualWindToggled();
-  void manualWindToggledAction();
 
   /* Wind spin boxes changed */
   void windBoxesChanged();
