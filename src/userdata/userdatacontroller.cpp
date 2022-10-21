@@ -345,6 +345,7 @@ QStringList UserdataController::getAllTypes() const
 void UserdataController::addUserpointFromMap(const map::MapResult& result, atools::geo::Pos pos)
 {
   qDebug() << Q_FUNC_INFO;
+
   if(result.isEmpty(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT))
     // No prefill start empty dialog of with last added data
     addUserpointInternal(-1, pos, SqlRecord(), true /* enableCategory */);

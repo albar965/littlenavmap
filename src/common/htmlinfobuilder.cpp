@@ -335,10 +335,16 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
 
   if(airport.helipad())
     facilities.append(tr("Helipads"));
-  if(airport.flags.testFlag(AP_AVGAS))
-    facilities.append(tr("Avgas"));
-  if(airport.flags.testFlag(AP_JETFUEL))
-    facilities.append(tr("Jetfuel"));
+
+  if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::MSFS && airport.flags.testFlag(AP_AVGAS) && airport.flags.testFlag(AP_JETFUEL))
+      facilities.append(tr("Fuel"));
+  else
+  {
+    if(airport.flags.testFlag(AP_AVGAS))
+      facilities.append(tr("Avgas"));
+    if(airport.flags.testFlag(AP_JETFUEL))
+      facilities.append(tr("Jetfuel"));
+  }
 
   if(mapQuery->hasProcedures(airport))
     facilities.append(tr("Procedures"));
