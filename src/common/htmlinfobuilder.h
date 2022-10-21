@@ -18,6 +18,8 @@
 #ifndef LITTLENAVMAP_MAPHTMLINFOBUILDER_H
 #define LITTLENAVMAP_MAPHTMLINFOBUILDER_H
 
+#include "grib/windtypes.h"
+
 #include <QCoreApplication>
 #include <QLocale>
 #include <QSize>
@@ -75,10 +77,6 @@ struct DistanceMarker;
 
 namespace atools {
 
-namespace grib {
-struct WindPos;
-typedef QVector<atools::grib::WindPos> WindPosVector;
-}
 namespace geo {
 class Pos;
 }
@@ -263,7 +261,7 @@ public:
    * Creates a HTML description for a all upper layer winds at position
    * @param html Result containing HTML snippet
    */
-  void windText(const atools::grib::WindPosVector& windStack, atools::util::HtmlBuilder& html, float waypointAltitude, bool table) const;
+  void windText(const atools::grib::WindPosList& windStack, atools::util::HtmlBuilder& html, float waypointAltitude, bool table) const;
 
   /*
    * Creates a HTML description for a user defined flight plan point.

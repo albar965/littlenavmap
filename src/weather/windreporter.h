@@ -19,7 +19,7 @@
 #define LNM_WINDREPORTER_H
 
 #include "fs/fspaths.h"
-
+#include "grib/windtypes.h"
 #include "query/querytypes.h"
 
 #include <QWidgetAction>
@@ -32,17 +32,11 @@ class WindLabelAction;
 namespace atools {
 namespace geo {
 class Rect;
-class Pos;
 class Line;
 class LineString;
 }
 namespace grib {
 class WindQuery;
-struct WindPos;
-struct Wind;
-
-typedef QList<WindPos> WindPosList;
-typedef QVector<WindPos> WindPosVector;
 }
 }
 
@@ -128,7 +122,8 @@ public:
   /* Selecte manual altitude for wind layer */
   float getManualAltitudeFt() const;
 
-  /* Get a list of wind positions for the given rectangle for painting. Does not use manual wind setting. */
+  /* Get a list of wind positions for the given rectangle for painting. Does not use manual wind setting.
+   * Result is sorted by y and x coordinates. */
   const atools::grib::WindPosList *getWindForRect(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
                                                   bool lazy, bool& overflow);
 
@@ -146,7 +141,7 @@ public:
 
   /* Get a list of winds for the given position at all given altitudes. Returns only not interpolated levels.
    * Altitiude field in resulting pos contains the altitude. */
-  atools::grib::WindPosVector getWindStackForPos(const atools::geo::Pos& pos, const atools::grib::WindPos *additionalWind = nullptr) const;
+  atools::grib::WindPosList getWindStackForPos(const atools::geo::Pos& pos, const atools::grib::WindPos *additionalWind = nullptr) const;
 
   /* Updates the query class */
   void updateManualRouteWinds();
@@ -181,7 +176,7 @@ signals:
 private:
   /* Get a list of winds for the given position at all given altitudes. Altitiude field in resulting pos contains the altitude.
    * Adds flight plan altitude if needed and selected in GUI. Does not use manual wind setting.*/
-  atools::grib::WindPosVector windStackForPosInternal(const atools::geo::Pos& pos, QVector<int> altitudesFt) const;
+  atools::grib::WindPosList windStackForPosInternal(const atools::geo::Pos& pos, QVector<int> altitudesFt) const;
 
   /* One of the toolbar dropdown menu items of main menu items was triggered */
   void toolbarActionTriggered();

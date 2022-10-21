@@ -40,6 +40,7 @@ Q_DECL_CONSTEXPR static float INVALID_SPEED_VALUE = std::numeric_limits<float>::
 Q_DECL_CONSTEXPR static float INVALID_TIME_VALUE = std::numeric_limits<float>::max();
 Q_DECL_CONSTEXPR static float INVALID_WEIGHT_VALUE = std::numeric_limits<float>::max();
 Q_DECL_CONSTEXPR static float INVALID_VOLUME_VALUE = std::numeric_limits<float>::max();
+Q_DECL_CONSTEXPR static float INVALID_LON_LAT_VALUE = std::numeric_limits<float>::max();
 Q_DECL_CONSTEXPR static int INVALID_INDEX_VALUE = std::numeric_limits<int>::max();
 
 Q_DECL_CONSTEXPR static float INVALID_MAGVAR = 9999.f;

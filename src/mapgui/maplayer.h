@@ -525,7 +525,8 @@ public:
     return routeTextAndDetail2;
   }
 
-  bool isWindBarbs() const
+  /* 2 = show barbs at every even coordinate, 1 = show at every coordinate */
+  int getWindBarbs() const
   {
     return windBarbs;
   }
@@ -603,7 +604,7 @@ private:
 
   int airportSymbolSize = 3, airportMinorSymbolSize = 3, minRunwayLength = 0;
 
-  bool windBarbs = true;
+  int windBarbs = 1;
   int windBarbsSymbolSize = 6;
 
   float airportMsaSymbolScale = 6.f;

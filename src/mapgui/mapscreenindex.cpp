@@ -941,18 +941,21 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
   }
 
   // Check if pointer is near a wind barb in the one degree grid
-  if(paintLayer->getShownMapObjectDisplayTypes() & map::WIND_BARBS)
+  if(paintLayer->getShownMapObjectDisplayTypes().testFlag(map::WIND_BARBS))
   {
-    // Round screen position to nearest grid cell
+    // Round screen position to nearest full degree grid cell
     atools::geo::Pos pos = conv.sToW(xs, ys).snapToGrid();
     if(pos.isValid())
     {
-      int xg, yg;
-      if(conv.wToS(pos, xg, yg))
+      if(mapfunc::windBarbVisible(pos, mapLayer, mapWidget->viewport()->projection() == Marble::Spherical))
       {
-        // Screen distance in pixel to the nearest cell
-        if(atools::geo::manhattanDistance(xg, yg, xs, ys) < maxDistance)
-          result.windPos = pos;
+        int xg, yg;
+        if(conv.wToS(pos, xg, yg))
+        {
+          // Screen distance in pixel to the nearest cell
+          if(atools::geo::manhattanDistance(xg, yg, xs, ys) < maxDistance)
+            result.windPos = pos;
+        }
       }
     }
   }

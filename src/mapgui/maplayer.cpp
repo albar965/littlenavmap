@@ -296,7 +296,7 @@ void MapLayer::loadFromXml(atools::util::XmlStream& xmlStream)
     else if(reader.name() == "WaypointSymbolSize")
       waypointSymbolSize = xmlStream.readElementTextInt();
     else if(reader.name() == "WindBarbs")
-      windBarbs = xmlStream.readElementTextBool();
+      windBarbs = xmlStream.readElementTextInt();
     else if(reader.name() == "WindBarbsSymbolSize")
       windBarbsSymbolSize = xmlStream.readElementTextInt();
     else if(reader.name() == "MaximumTextLengthAirport")

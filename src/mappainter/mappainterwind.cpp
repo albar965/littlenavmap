@@ -19,11 +19,10 @@
 
 #include "common/symbolpainter.h"
 #include "mapgui/maplayer.h"
-#include "query/mapquery.h"
 #include "util/paintercontextsaver.h"
 #include "navapp.h"
 #include "weather/windreporter.h"
-#include "grib/windquery.h"
+#include "mapgui/mapfunctions.h"
 
 #include <marble/GeoPainter.h>
 #include <marble/ViewportParams.h>
@@ -41,49 +40,48 @@ MapPainterWind::~MapPainterWind()
 
 void MapPainterWind::render()
 {
-  bool drawWeather = context->objectDisplayTypes.testFlag(map::WIND_BARBS) && context->mapLayer->isWindBarbs();
-
-  if(!drawWeather)
+  if(!context->objectDisplayTypes.testFlag(map::WIND_BARBS) || context->mapLayer->getWindBarbs() == 0)
     return;
 
   atools::util::PainterContextSaver saver(context->painter);
 
   bool overflow = false;
+
   const atools::grib::WindPosList *windForRect =
     NavApp::getWindReporter()->getWindForRect(context->viewport->viewLatLonAltBox(), context->mapLayer, context->lazyUpdate, overflow);
   context->setQueryOverflow(overflow);
 
   if(windForRect != nullptr)
   {
+    float size = context->szF(context->symbolSizeWindBarbs, context->mapLayer->getWindBarbsSymbolSize());
+
+    int marginsSize = static_cast<int>(size) * 5;
+    QMargins margins(marginsSize, marginsSize, marginsSize, marginsSize);
+
     atools::geo::Rect rect = context->viewportRect;
 
     // Inflate for half a grid cell size to avoid disappearing symbols at map border
     rect.inflate(0.5f, 0.5f);
 
-    QList<std::pair<QPointF, const atools::grib::WindPos *> > windPositions;
     for(const atools::grib::WindPos& windPos : *windForRect)
     {
-      if(!windPos.wind.isValid())
-        continue;
-
-      if(rect.contains(windPos.pos))
+      if(windPos.wind.isValid() && rect.contains(windPos.pos) &&
+         mapfunc::windBarbVisible(windPos.pos, context->mapLayer, context->viewport->projection() == Marble::Spherical))
       {
-        bool isVisible, isHidden;
-        QPointF point = wToSF(windPos.pos, DEFAULT_WTOS_SIZE, &isVisible, &isHidden);
-        if(!point.isNull() && /*isVisible && */ !isHidden)
-          windPositions.append(std::make_pair(point, &windPos));
+
+        QPointF point;
+        bool isHidden;
+        bool visible = wToSBuf(windPos.pos, point, margins, &isHidden);
+        if(visible && !isHidden)
+        {
+          symbolPainter->drawWindBarbs(context->painter, windPos.wind.speed, 0.f, windPos.wind.dir,
+                                       static_cast<float>(point.x()), static_cast<float>(point.y()), size,
+                                       true /* wind barbs */, true /* alt wind */, false /* route */, context->drawFast);
+
+          if(context->objCount())
+            break;
+        }
       }
-    }
-
-    float size = context->szF(context->symbolSizeWindBarbs, context->mapLayer->getWindBarbsSymbolSize());
-    for(auto windPos : windPositions)
-    {
-      symbolPainter->drawWindBarbs(context->painter, windPos.second->wind.speed, 0.f, windPos.second->wind.dir,
-                                   static_cast<float>(windPos.first.x()), static_cast<float>(windPos.first.y()), size,
-                                   true /* wind barbs */, true /* alt wind */, false /* route */, context->drawFast);
-
-      if(context->objCount())
-        break;
     }
   }
 }

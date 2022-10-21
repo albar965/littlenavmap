@@ -372,7 +372,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
       else
         tooltip.tr().td(tr("No airport weather shown")).trEnd();
 
-      if(shownDispTypes.testFlag(map::WIND_BARBS) && layer->isWindBarbs())
+      if(shownDispTypes.testFlag(map::WIND_BARBS) && layer->getWindBarbs() > 0)
       {
         WindReporter *windReporter = NavApp::getWindReporter();
         tooltip.tr().td().b(tr("Wind shown (W): ")).text(windReporter->getLevelText()).

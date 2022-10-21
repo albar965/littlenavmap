@@ -37,7 +37,6 @@
 #include "fs/weather/metar.h"
 #include "fs/weather/metarparser.h"
 #include "geo/calculations.h"
-#include "grib/windquery.h"
 #include "logbook/logdatacontroller.h"
 #include "mapgui/mappaintwidget.h"
 #include "navapp.h"
@@ -1298,7 +1297,7 @@ void HtmlInfoBuilder::helipadText(const MapHelipad& helipad, HtmlBuilder& html) 
     html.brText(tr("Is Closed"));
 }
 
-void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, HtmlBuilder& html, float waypointAltitude, bool table) const
+void HtmlInfoBuilder::windText(const atools::grib::WindPosList& windStack, HtmlBuilder& html, float waypointAltitude, bool table) const
 {
   const WindReporter *windReporter = NavApp::getWindReporter();
 
@@ -1329,7 +1328,7 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, Htm
         html.tableEnd();
       }
     }
-    else
+    else if(!windStack.isEmpty())
     {
       // Several wind layers report for wind barbs =============================================
       if(!table)
@@ -1349,13 +1348,14 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, Htm
       int windbarbLayerIndex = -1, waypointLayerIndex = -1, manualLayerIndex = -1, cruiseLayerIndex = -1;
       for(int i = 0; i < windStack.size(); i++)
       {
-        if(atools::almostEqual(windStack.at(i).pos.getAltitude(), windbarbAltitude, 10.f))
+        float alt = windStack.at(i).pos.getAltitude();
+        if(atools::almostEqual(alt, windbarbAltitude, 10.f))
           windbarbLayerIndex = i;
-        if(atools::almostEqual(windStack.at(i).pos.getAltitude(), waypointAltitude, 10.f))
+        if(atools::almostEqual(alt, waypointAltitude, 10.f))
           waypointLayerIndex = i;
-        if(atools::almostEqual(windStack.at(i).pos.getAltitude(), manualAltitude, 10.f))
+        if(atools::almostEqual(alt, manualAltitude, 10.f))
           manualLayerIndex = i;
-        if(atools::almostEqual(windStack.at(i).pos.getAltitude(), cruiseAltitude, 10.f))
+        if(atools::almostEqual(alt, cruiseAltitude, 10.f))
           cruiseLayerIndex = i;
       }
 
@@ -1418,6 +1418,11 @@ void HtmlInfoBuilder::windText(const atools::grib::WindPosVector& windStack, Htm
         td(suffix).
         trEnd();
       }
+
+#ifdef DEBUG_INFORMATION
+      html.row2(tr("Pos:"), QString("Pos(%1, %2)").arg(windStack.first().pos.getLonX()).arg(windStack.first().pos.getLatY()), ahtml::PRE);
+#endif
+
       html.tableEnd();
     }
   }
@@ -5128,7 +5133,7 @@ void HtmlInfoBuilder::routeWindText(HtmlBuilder& html, const Route& route, int i
       routeWpWindPos.wind.dir = altLeg.getWindDirection();
       routeWpWindPos.wind.speed = altLeg.getWindSpeed();
 
-      atools::grib::WindPosVector winds;
+      atools::grib::WindPosList winds;
       if(verbose)
         // Get full stack for all default altitudes - flight plan cruise altitude layer is already added
         winds = windReporter->getWindStackForPos(altLeg.getLineString().getPos2(), &routeWpWindPos);

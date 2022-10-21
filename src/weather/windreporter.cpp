@@ -750,6 +750,16 @@ float WindReporter::getManualAltitudeFt() const
 const atools::grib::WindPosList *WindReporter::getWindForRect(const Marble::GeoDataLatLonBox& rect,
                                                               const MapLayer *mapLayer, bool lazy, bool& overflow)
 {
+  // Result is sorted by y and x coordinates
+  // Pos(-127.000000,52.000000,11500.000000)
+  // Pos(-127.000000,51.000000,11500.000000)
+  // Pos(-127.000000,50.000000,11500.000000)
+  // Pos(-127.000000,49.000000,11500.000000)
+  // Pos(-126.000000,52.000000,11500.000000)
+  // Pos(-126.000000,51.000000,11500.000000)
+  // Pos(-126.000000,50.000000,11500.000000)
+  // Pos(-126.000000,49.000000,11500.000000)
+
   atools::grib::WindQuery *windQuery = currentWindQuery();
   if(windQuery->hasWindData())
   {
@@ -768,9 +778,9 @@ const atools::grib::WindPosList *WindReporter::getWindForRect(const Marble::GeoD
         atools::geo::Rect geoRect(box.west(Marble::GeoDataCoordinates::Degree), box.north(Marble::GeoDataCoordinates::Degree),
                                   box.east(Marble::GeoDataCoordinates::Degree), box.south(Marble::GeoDataCoordinates::Degree));
 
-        atools::grib::WindPosVector windPosVector;
-        windQuery->getWindForRect(windPosVector, geoRect, getDisplayAltitudeFt());
-        windPosCache.list.append(windPosVector.toList());
+        atools::grib::WindPosList windPosList;
+        windQuery->getWindForRect(windPosList, geoRect, getDisplayAltitudeFt());
+        windPosCache.list.append(windPosList);
         cachedLevel = sliderActionAltitude->getAltitudeFt();
       }
     }
@@ -817,9 +827,9 @@ atools::grib::Wind WindReporter::getWindForLineStringRoute(const atools::geo::Li
   return currentWindQuery()->getWindAverageForLineString(line);
 }
 
-atools::grib::WindPosVector WindReporter::windStackForPosInternal(const atools::geo::Pos& pos, QVector<int> altitudesFt) const
+atools::grib::WindPosList WindReporter::windStackForPosInternal(const atools::geo::Pos& pos, QVector<int> altitudesFt) const
 {
-  atools::grib::WindPosVector winds;
+  atools::grib::WindPosList winds;
   atools::grib::WindQuery *windQuery = currentWindQuery();
 
   if(windQuery->hasWindData())
@@ -847,7 +857,7 @@ atools::grib::WindPosVector WindReporter::windStackForPosInternal(const atools::
   return winds;
 }
 
-atools::grib::WindPosVector WindReporter::getWindStackForPos(const atools::geo::Pos& pos, const atools::grib::WindPos *additionalWind) const
+atools::grib::WindPosList WindReporter::getWindStackForPos(const atools::geo::Pos& pos, const atools::grib::WindPos *additionalWind) const
 {
   QVector<int> altitudesFt = levelsTooltipFt;
 
@@ -878,7 +888,7 @@ atools::grib::WindPosVector WindReporter::getWindStackForPos(const atools::geo::
   qDebug() << Q_FUNC_INFO << altitudesFt;
 #endif
 
-  atools::grib::WindPosVector winds = windStackForPosInternal(pos, altitudesFt);
+  atools::grib::WindPosList winds = windStackForPosInternal(pos, altitudesFt);
 
   // Add additonal wind layer/position to result if needed ==================
   if(additionalWind != nullptr)

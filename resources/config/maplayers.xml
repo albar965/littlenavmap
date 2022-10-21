@@ -153,7 +153,7 @@
         <WaypointSymbolSize>3</WaypointSymbolSize>
 
         <!-- Wind barbs ================= -->
-        <WindBarbs>true</WindBarbs>
+        <WindBarbs>1</WindBarbs> <!-- At every degree, 2 = at every even degree grid point, etc. -->
         <WindBarbsSymbolSize>6</WindBarbsSymbolSize>
       </Layer>
       <!-- ==============================================================================
@@ -173,7 +173,7 @@
         <UserpointSymbolSize>28</UserpointSymbolSize>
         <VorSymbolSize>30</VorSymbolSize>
         <WaypointSymbolSize>14</WaypointSymbolSize>
-        <WindBarbsSymbolSize>22</WindBarbsSymbolSize>
+        <WindBarbsSymbolSize>14</WindBarbsSymbolSize>
       </Layer>
       <!-- ==============================================================================
       Following layers are derived from their respective predecessor, i.e. "0.3" derives from "0.2".
@@ -182,7 +182,6 @@
       <Layer MaximumRangeKm="0.3">
         <AirportDiagramDetail3>false</AirportDiagramDetail3>
         <AirportMsaSymbolScale>7</AirportMsaSymbolScale>
-        <WindBarbsSymbolSize>20</WindBarbsSymbolSize>
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="1">
@@ -201,7 +200,7 @@
         <UserpointSymbolSize>26</UserpointSymbolSize>
         <VorSymbolSize>26</VorSymbolSize>
         <WaypointSymbolSize>10</WaypointSymbolSize>
-        <WindBarbsSymbolSize>18</WindBarbsSymbolSize>
+        <WindBarbsSymbolSize>13</WindBarbsSymbolSize>
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="10">
@@ -216,7 +215,7 @@
         <NdbSymbolSize>24</NdbSymbolSize>
         <VorSymbolSize>24</VorSymbolSize>
         <WaypointSymbolSize>8</WaypointSymbolSize>
-        <WindBarbsSymbolSize>16</WindBarbsSymbolSize>
+        <WindBarbsSymbolSize>12</WindBarbsSymbolSize>
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="25">
@@ -262,7 +261,7 @@
         <VorInfo>false</VorInfo>
         <VorSymbolSize>16</VorSymbolSize>
         <WaypointSymbolSize>3</WaypointSymbolSize>
-        <WindBarbsSymbolSize>14</WindBarbsSymbolSize>
+        <WindBarbsSymbolSize>11</WindBarbsSymbolSize>
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="150">
@@ -307,7 +306,7 @@
         <UserpointInfo>false</UserpointInfo>
         <VorSymbolSize>6</VorSymbolSize>
         <WaypointRouteName>false</WaypointRouteName>
-        <WindBarbsSymbolSize>12</WindBarbsSymbolSize>
+        <WindBarbsSymbolSize>10</WindBarbsSymbolSize>
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="750">
@@ -326,6 +325,7 @@
         <UserpointSymbolSize>12</UserpointSymbolSize>
         <VorRouteInfo>false</VorRouteInfo>
         <VorSymbolSize>3</VorSymbolSize>
+        <WindBarbsSymbolSize>9</WindBarbsSymbolSize>
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="1200">
@@ -341,8 +341,11 @@
         <RouteFontScale>0.8</RouteFontScale>
         <TrackInfo>false</TrackInfo>
         <Vor>false</Vor>
-        <WindBarbsSymbolSize>10</WindBarbsSymbolSize>
-      </Layer>
+     </Layer>
+      <!-- =================================================================================== -->
+      <Layer MaximumRangeKm="1800">
+        <WindBarbs>2</WindBarbs>
+     </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="2400">
         <AiAircraftSize>10</AiAircraftSize>
@@ -356,7 +359,11 @@
         <NdbRouteIdent>false</NdbRouteIdent>
         <VorRouteIdent>false</VorRouteIdent>
         <TrackWaypoint>false</TrackWaypoint>
-        <WindBarbsSymbolSize>6</WindBarbsSymbolSize>
+        <WindBarbsSymbolSize>8</WindBarbsSymbolSize>
+      </Layer>
+      <!-- =================================================================================== -->
+      <Layer MaximumRangeKm="3600">
+        <WindBarbs>3</WindBarbs>
       </Layer>
       <!-- =================================================================================== -->
       <!-- Distance cutoff limit. -->
@@ -365,7 +372,6 @@
         <AirportSymbolSize>3</AirportSymbolSize>
         <Approach>false</Approach>
         <RouteTextAndDetail2>false</RouteTextAndDetail2>
-        <WindBarbs>false</WindBarbs>
       </Layer>
       <!-- =================================================================================== -->
       <!-- Use very large range to always have a layer available with all drawing disabled. -->
@@ -378,6 +384,7 @@
         <Track>false</Track>
         <TrackIdent>false</TrackIdent>
         <Userpoint>false</Userpoint>
+        <WindBarbs>0</WindBarbs> <!-- At no degree -->
       </Layer>
     </Layers>
   </MapLayerSettings>

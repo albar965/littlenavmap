@@ -312,7 +312,7 @@ QString MapTooltip::buildTooltip(const map::MapResult& mapSearchResult, const at
     if(opts.testFlag(optsd::TOOLTIP_WIND) && mapSearchResult.windPos.isValid())
     {
       WindReporter *windReporter = NavApp::getWindReporter();
-      atools::grib::WindPosVector winds = windReporter->getWindStackForPos(mapSearchResult.windPos);
+      atools::grib::WindPosList winds = windReporter->getWindStackForPos(mapSearchResult.windPos);
       if(!winds.isEmpty())
       {
         if(checkText(html))
