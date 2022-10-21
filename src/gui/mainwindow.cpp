@@ -833,8 +833,12 @@ void MainWindow::setupUi()
   actionGroupMapWeatherWindSource->addAction(ui->actionMapShowWindNOAA);
 
   // Tool button in flight plan report
-  ui->toolButtonAircraftPerformanceWind->addActions({ui->actionMapShowWindDisabled, ui->actionMapShowWindManual,
-                                                     ui->actionMapShowWindSimulator, ui->actionMapShowWindNOAA});
+
+  ui->toolButtonAircraftPerformanceWind->setMenu(new QMenu(ui->toolButtonAircraftPerformanceWind));
+  QMenu *buttonMenu = ui->toolButtonAircraftPerformanceWind->menu();
+  buttonMenu->setToolTipsVisible(true);
+  buttonMenu->addActions({ui->actionMapShowWindDisabled, ui->actionMapShowWindManual,
+                          ui->actionMapShowWindSimulator, ui->actionMapShowWindNOAA});
 
   // Update dock widget actions with tooltip, status tip and keypress
   ui->dockWidgetSearch->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/searchdock.svg"));

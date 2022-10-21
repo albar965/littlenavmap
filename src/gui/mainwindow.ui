@@ -4708,10 +4708,10 @@ Matches any visited airport.</string>
              <item>
               <widget class="QToolButton" name="toolButtonAircraftPerformanceWind">
                <property name="toolTip">
-                <string>Select wind source for performance calculation</string>
+                <string>Select wind source for performance calculation and map display</string>
                </property>
                <property name="statusTip">
-                <string>Select wind source for performance calculation</string>
+                <string>Select wind source for performance calculation and map display</string>
                </property>
                <property name="text">
                 <string/>
@@ -10044,10 +10044,10 @@ relation to shown airport</string>
     <string>&amp;Flight Simulator (X-Plane only)</string>
    </property>
    <property name="toolTip">
-    <string>Use the X-Plane wind file</string>
+    <string>Use the X-Plane wind file for fuel report and map display</string>
    </property>
    <property name="statusTip">
-    <string>Use the X-Plane wind file</string>
+    <string>Use the X-Plane wind file for fuel report and map display</string>
    </property>
   </action>
   <action name="actionMapShowWindNOAA">
@@ -10061,10 +10061,10 @@ relation to shown airport</string>
     <string>&amp;NOAA</string>
    </property>
    <property name="toolTip">
-    <string>Download wind files from NOAA</string>
+    <string>Download wind files from NOAAf or fuel report and map display</string>
    </property>
    <property name="statusTip">
-    <string>Download wind files from NOAA</string>
+    <string>Download wind files from NOAA for fuel report and map display</string>
    </property>
   </action>
   <action name="actionMapShowWindDisabled">
@@ -11115,10 +11115,10 @@ relation to shown airport</string>
     <string>&amp;Manual</string>
    </property>
    <property name="toolTip">
-    <string>Manual wind in fuel report</string>
+    <string>Manual wind for fuel report and map display</string>
    </property>
    <property name="statusTip">
-    <string>Manual wind in fuel report</string>
+    <string>Manual wind for fuel report and map display</string>
    </property>
   </action>
   <action name="actionTrackSourcesNat">

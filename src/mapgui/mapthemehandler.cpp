@@ -25,7 +25,6 @@
 #include "util/xmlstream.h"
 #include "mapgui/mapwidget.h"
 #include "navapp.h"
-#include "gui/mainwindow.h"
 #include "ui_mainwindow.h"
 #include "gui/dialog.h"
 #include "gui/widgetstate.h"
