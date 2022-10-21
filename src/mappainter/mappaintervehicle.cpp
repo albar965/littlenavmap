@@ -254,16 +254,6 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
     if(forceLabelNearby)
       detail = detail2 = text;
 
-    // Aircraft information ====================================================================================
-    appendAtcText(texts, aircraft,
-                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_REGISTRATION) && text,
-                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TYPE) && detail2,
-                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_AIRLINE) && text,
-                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER) && text,
-                  context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TRANSPONDER_CODE) && detail3 && flying,
-                  !detail3 /* eitherRegOrNumber */,
-                  detail3 ? 20 : 8 /* elideAirline */);
-
     if(detail2)
     {
       // Speeds ====================================================================================
@@ -340,7 +330,19 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
       } // if(flying)
     } // if(detail)
 
-#ifdef DEBUG_INFORMATION
+    // Aircraft information ====================================================================================
+    // Formatting depends on list size
+    prependAtcText(texts, aircraft,
+                   context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_REGISTRATION) && text,
+                   context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TYPE) && detail,
+                   context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_AIRLINE) && text,
+                   context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER) && text,
+                   context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_TRANSPONDER_CODE) && detail3 && flying,
+                   detail2 ? 20 : 8, // elideAirline
+                   detail3 ? 150 : 70 // maxTextWidth
+                   );
+
+#ifdef DEBUG_INFORMATION_AI
     texts.prepend(QString("[%1%2%3%4%5]").
                   arg(forceLabelNearby ? "F" : "").arg(text ? "T" : "-").
                   arg(detail ? "D" : "-").arg(detail2 ? "2" : "").arg(detail3 ? "3" : ""));
@@ -360,12 +362,6 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
 void MapPainterVehicle::paintTextLabelUser(float x, float y, int size, const SimConnectUserAircraft& aircraft)
 {
   QStringList texts;
-
-  appendAtcText(texts, aircraft, context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_REGISTRATION),
-                context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_TYPE),
-                context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_AIRLINE),
-                context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER),
-                context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_TRANSPONDER_CODE), false /* eitherRegOrNumber */, 15 /* elideAirline */);
 
   if(aircraft.getGroundSpeedKts() > 30)
   {
@@ -405,6 +401,16 @@ void MapPainterVehicle::paintTextLabelUser(float x, float y, int size, const Sim
 
   int transparency = context->flags2.testFlag(opts2::MAP_USER_TEXT_BACKGROUND) ? 255 : 0;
 
+  // ATC text depends on other formatting ============
+  prependAtcText(texts, aircraft, context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_REGISTRATION),
+                 context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_TYPE),
+                 context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_AIRLINE),
+                 context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER),
+                 context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_TRANSPONDER_CODE),
+                 20, // elideAirline
+                 150 // maxTextWidth
+                 );
+
   if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_ICE))
   {
     QStringList ice = map::aircraftIcing(aircraft, true /* narrow */);
@@ -437,71 +443,45 @@ void MapPainterVehicle::appendClimbSinkText(QStringList& texts, const SimConnect
   if(aircraft.getVerticalSpeedFeetPerMin() < atools::fs::sc::SC_INVALID_FLOAT)
   {
     int vspeed = atools::roundToInt(aircraft.getVerticalSpeedFeetPerMin());
-    QString upDown;
-    climbSinkPointer(upDown, aircraft);
-
-    if(vspeed < 10.f && vspeed > -10.f)
+    if(vspeed < 50.f && vspeed > -50.f)
       vspeed = 0.f;
 
-    texts.append(Unit::speedVertFpm(vspeed) % upDown);
+    if(vspeed != 0)
+    {
+      QString upDown;
+      climbSinkPointer(upDown, aircraft);
+
+      texts.append(Unit::speedVertFpm(vspeed) % upDown);
+    }
   }
 }
 
-void MapPainterVehicle::appendAtcText(QStringList& texts, const SimConnectAircraft& aircraft,
-                                      bool registration, bool type, bool airline, bool flightnumber,
-                                      bool transponderCode, bool eitherRegOrNumber, int elideAirline)
+void MapPainterVehicle::prependAtcText(QStringList& texts, const SimConnectAircraft& aircraft,
+                                       bool registration, bool type, bool airline, bool flightnumber,
+                                       bool transponderCode, int elideAirline, int maxTextWidth)
 {
-  bool hasReg = !aircraft.getAirplaneRegistration().isEmpty() && registration;
-  bool hasAirline = !aircraft.getAirplaneAirline().isEmpty() && airline;
-  bool hasFlightNum = !aircraft.getAirplaneFlightnumber().isEmpty() && flightnumber;
-  bool hasTransponder = aircraft.isTransponderCodeValid() && transponderCode;
+  QStringList atctexts;
+  if(registration && !aircraft.getAirplaneRegistration().isEmpty())
+    atctexts.append(aircraft.getAirplaneRegistration());
 
-  if(eitherRegOrNumber)
+  if(type && !aircraft.getAirplaneModel().isEmpty())
+    atctexts.append(aircraft.getAirplaneModel());
+
+  if(airline && !aircraft.getAirplaneAirline().isEmpty())
+    atctexts.append(atools::elideTextShort(aircraft.getAirplaneAirline(), elideAirline));
+
+  if(flightnumber && !aircraft.getAirplaneFlightnumber().isEmpty())
+    atctexts.append(aircraft.getAirplaneFlightnumber());
+
+  if(transponderCode && aircraft.isTransponderCodeValid())
+    atctexts.append(tr("XPDR %1").arg(aircraft.getTransponderCodeStr()));
+
+  if(!atctexts.isEmpty())
   {
-    // Compact display and use either registration or airline and flight number
-
-    if(hasReg && hasFlightNum && hasAirline)
-      // Disable registration if flight number and airline available
-      hasReg = false;
-
-    if(hasFlightNum && !hasAirline)
-      // Disable flight number if no airline
-      hasFlightNum = false;
+    if(!texts.isEmpty() || atctexts.size() > 2)
+      atctexts = atools::wrapText(atctexts, context->painter->fontMetrics(), maxTextWidth, "/");
+    std::copy(atctexts.crbegin(), atctexts.crend(), std::front_inserter(texts));
   }
-
-  QStringList line;
-  if(hasReg)
-    line.append(aircraft.getAirplaneRegistration());
-
-  if(!aircraft.getAirplaneModel().isEmpty() && type)
-    line.append(aircraft.getAirplaneModel());
-
-  if(!line.isEmpty())
-    texts.append(line.join(tr("/")));
-  line.clear();
-
-  if(!texts.isEmpty() || hasTransponder)
-  {
-    if(hasAirline)
-      line.append(atools::elideTextShort(aircraft.getAirplaneAirline(), elideAirline));
-
-    if(hasFlightNum)
-      line.append(aircraft.getAirplaneFlightnumber());
-  }
-  else
-  {
-    if(hasAirline)
-      texts.append(atools::elideTextShort(aircraft.getAirplaneAirline(), elideAirline));
-
-    if(hasFlightNum)
-      texts.append(aircraft.getAirplaneFlightnumber());
-  }
-
-  if(!line.isEmpty())
-    texts.append(line.join(tr("/")));
-
-  if(hasTransponder)
-    texts.append(tr("XPDR %1").arg(aircraft.getTransponderCodeStr()));
 }
 
 void MapPainterVehicle::appendSpeedText(QStringList& texts, const SimConnectAircraft& aircraft,

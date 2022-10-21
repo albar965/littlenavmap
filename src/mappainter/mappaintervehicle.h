@@ -65,8 +65,9 @@ protected:
   void paintTextLabelUser(float x, float y, int size, const atools::fs::sc::SimConnectUserAircraft& aircraft);
   void paintTextLabelAi(float x, float y, float size, const atools::fs::sc::SimConnectAircraft& aircraft, bool forceLabelNearby);
   void appendClimbSinkText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft);
-  void appendAtcText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft,
-                     bool registration, bool type, bool airline, bool flightnumber, bool transponderCode, bool eitherRegOrNumber, int elideAirline);
+  void prependAtcText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft,
+                     bool registration, bool type, bool airline, bool flightnumber, bool transponderCode, int elideAirline,
+                     int maxTextWidth);
   void appendSpeedText(QStringList& texts, const atools::fs::sc::SimConnectAircraft& aircraft, bool ias, bool gs,
                        bool tas);
   void climbSinkPointer(QString& upDown, const atools::fs::sc::SimConnectAircraft& aircraft);
@@ -78,7 +79,6 @@ protected:
   float calcRotation(const atools::fs::sc::SimConnectAircraft& aircraft);
 
   static Q_DECL_CONSTEXPR int WIND_POINTER_SIZE = 40;
-
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERVECHICLE_H
