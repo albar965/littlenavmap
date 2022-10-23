@@ -58,6 +58,7 @@ enum RouteExportFormatType : quint16
   GFP = 8, /* Garmin GFP Format */
   GFPUWP = 34, /* Garmin GFP Format with user defined waypoints */
   PMS50 = 39, /* Garmin PMS50 GTN750  */
+  TDSGTNXI = 43, /* TDS GTNXi - GFP format */
 
   /* Online ================ */
   VFP = 9, /* vPilot or xPilot VATSIM */
@@ -94,7 +95,7 @@ enum RouteExportFormatType : quint16
   GPX = 28, /* Garmin exchange format. Not a flight plan format.  */
   HTML = 29, /* Export as HTML page */
 
-  // Next = 43
+  // Next = 44
 };
 
 /* Flags for export format. Some flags are saved to the configuration,
@@ -112,7 +113,7 @@ enum RouteExportFormatFlag : quint16
   PARKING = 1 << 4, /* Format allows to import parking start position */
   AIRPORTS = 1 << 5, /* Valid departure and destination airports are needed */
   CYCLE = 1 << 6, /* Format needs a valid AIRAC cycle */
-  GARMIN_AS_WAYPOINTS = 1 << 7, /* Format to export Garmin as waypoints. */
+  GARMIN_WP = 1 << 7, /* Format to export Garmin as waypoints. */
 
   FILEREP = 1 << 8, /* Select folder or file and program creates or overwrites file on export. */
 

@@ -139,6 +139,9 @@ public:
   /* Flight plan export functions */
   bool routeExportGfpMulti(const RouteExportFormat& format);
 
+  /* TDS GTNXi */
+  bool routeExportTdsGtnXi(const RouteExportFormat& format);
+
   /* Rotate MD-80 and others */
   bool routeExportTxtMulti(const RouteExportFormat& format);
 

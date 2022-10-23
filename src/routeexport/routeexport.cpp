@@ -498,7 +498,7 @@ bool RouteExport::routeExportRxpGnsMulti(const RouteExportFormat& format)
     QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
-      if(exportFlighplanAsRxpGns(routeFile, format.getFlags().testFlag(rexp::GARMIN_AS_WAYPOINTS)))
+      if(exportFlighplanAsRxpGns(routeFile, format.getFlags().testFlag(rexp::GARMIN_WP)))
       {
         formatExportedCallback(format, routeFile);
         return true;
@@ -534,7 +534,7 @@ bool RouteExport::routeExportRxpGtnMulti(const RouteExportFormat& format)
     QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
-      if(exportFlighplanAsRxpGtn(routeFile, format.getFlags().testFlag(rexp::GARMIN_AS_WAYPOINTS)))
+      if(exportFlighplanAsRxpGtn(routeFile, format.getFlags().testFlag(rexp::GARMIN_WP)))
       {
         formatExportedCallback(format, routeFile);
         return true;
@@ -555,7 +555,28 @@ bool RouteExport::routeExportGfpMulti(const RouteExportFormat& format)
     QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
-      if(exportFlighplanAsGfp(routeFile, format.getFlags().testFlag(rexp::GARMIN_AS_WAYPOINTS)))
+      if(exportFlighplanAsGfp(routeFile, format.getFlags().testFlag(rexp::GARMIN_WP)))
+      {
+        formatExportedCallback(format, routeFile);
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+/* Called from menu or toolbar by action */
+bool RouteExport::routeExportTdsGtnXi(const RouteExportFormat& format)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // TDS GTNXi
+  if(routeValidateMulti(format))
+  {
+    QString routeFile = exportFileMulti(format);
+    if(!routeFile.isEmpty())
+    {
+      if(exportFlighplanAsGfp(routeFile, format.getFlags().testFlag(rexp::GARMIN_WP)))
       {
         formatExportedCallback(format, routeFile);
         return true;

@@ -226,6 +226,7 @@ void RouteExportFormatMap::initCallbacks(RouteExport *routeExport)
   (*this)[IFLY        ].CB(bind(&RouteExport::routeExportIflyMulti,         routeExport, _1));
   (*this)[PLNISG      ].CB(bind(&RouteExport::routeExportIsgMulti,          routeExport, _1));
   (*this)[PMS50       ].CB(bind(&RouteExport::routeExportPms50Multi,        routeExport, _1));
+  (*this)[TDSGTNXI    ].CB(bind(&RouteExport::routeExportTdsGtnXi,          routeExport, _1));
   /* *INDENT-ON* */
 
 #undef CB
@@ -284,7 +285,7 @@ void RouteExportFormatMap::init()
   FMT(FLPCRJMSFS,   AIRPORTS,         S %  tr("01.flp"),  tr("Aircraft"),  tr("Aerosoft CRJ for MSFS")                                           );
   FMT(FLIGHTGEAR,   AIRPORTS,         DF % tr("fgfp"),    tr("Simulator"), tr("FlightGear") % mainMenu                                           );
   FMT(GFP,          AIRPORTS,         SD % tr("gfp"),     tr("Garmin"),    tr("Flight1 Garmin GTN 650/750")                                      );
-  FMT(GFPUWP,       AIRPORTS|GARMIN_AS_WAYPOINTS, SD % tr("gfp"), tr("Garmin"), tr("Flight1 Garmin GTN 650/750 with user defined waypoints") % rxptooltip);
+  FMT(GFPUWP,       AIRPORTS|GARMIN_WP, SD % tr("gfp"),   tr("Garmin"),    tr("Flight1 Garmin GTN 650/750 with user defined waypoints") % rxptooltip);
   FMT(TXT,          AIRPORTS,         S0 % tr("txt"),     tr("Aircraft"),  tr("Rotate MD-80, MD-11 and others")                                  );
   FMT(TXTJAR,       AIRPORTS,         S0 % tr("txt"),     tr("Aircraft"),  tr("JARDesign aircraft")                                              );
   FMT(RTE,          AIRPORTS,         S0 % tr("rte"),     tr("Aircraft"),  tr("PMDG aircraft")                                                   );
@@ -295,9 +296,9 @@ void RouteExportFormatMap::init()
   FMT(FPL,          AIRPORTS,         S0 % tr("fpl"),     tr("Aircraft"),  tr("IXEG Boeing 737")                                                 );
   FMT(CORTEIN,      AIRPORTS|FILEAPP, tr("corte.in"),     tr("Aircraft"),  tr("Flight Factor Airbus")                                            );
   FMT(RXPGNS,       AIRPORTS,         S0 % tr("fpl"),     tr("Garmin"),    tr("Reality XP GNS 530W/430W V2")                                     );
-  FMT(RXPGNSUWP,    AIRPORTS|GARMIN_AS_WAYPOINTS, S0 % tr("fpl"), tr("Garmin"), tr("Reality XP GNS 530W/430W V2 with user defined waypoints") % rxptooltip);
+  FMT(RXPGNSUWP,    AIRPORTS|GARMIN_WP, S0 % tr("fpl"),   tr("Garmin"),    tr("Reality XP GNS 530W/430W V2 with user defined waypoints") % rxptooltip);
   FMT(RXPGTN,       AIRPORTS,         SU % tr("gfp"),     tr("Garmin"),    tr("Reality XP GTN 750/650 Touch")                                    );
-  FMT(RXPGTNUWP,    AIRPORTS|GARMIN_AS_WAYPOINTS, SU % tr("gfp"), tr("Garmin"), tr("Reality XP GTN 750/650 Touch with user defined waypoints") % rxptooltip);
+  FMT(RXPGTNUWP,    AIRPORTS|GARMIN_WP, SU % tr("gfp"),   tr("Garmin"),    tr("Reality XP GTN 750/650 Touch with user defined waypoints") % rxptooltip);
   FMT(FLTPLAN,      AIRPORTS,         S0 % tr("fltplan"), tr("Aircraft"),  tr("iFly")                                                            );
   FMT(XFMC,         AIRPORTS,         S0 % tr("fpl"),     tr("FMC"),       tr("X-FMC")                                                           );
   FMT(UFMC,         AIRPORTS,         S0 % tr("ufmc"),    tr("FMC"),       tr("UFMC")                                                            );
@@ -315,6 +316,7 @@ void RouteExportFormatMap::init()
   FMT(IFLY,         AIRPORTS,         S0 % tr("route"),   tr("Aircraft"),  tr("iFly Jets Advanced Series")                                       );
   FMT(PLNISG,       AIRPORTS,         S0 % tr("pln"),     tr("FMS"),       tr("ISG Integrated Simavionics gauges")                               );
   FMT(PMS50,        FILEREP|AIRPORTS, tr("fpl.pln"),      tr("Garmin"),    tr("PMS50 GTN750")                                                    );
+  FMT(TDSGTNXI,     AIRPORTS,         SU % tr("gfp"),     tr("Garmin"),    tr("TDS GTNXi")                                                       );
   /* *INDENT-ON* */
 
 #undef FMT
@@ -398,6 +400,17 @@ void RouteExportFormatMap::updateDefaultPaths()
   gtn = documents;
 #endif
 
+  // TDS path ===========================
+  QString tdsGtmGfp;
+  // Location depends on trainer version - this is all above 6.41
+#ifdef Q_OS_WIN32
+  tdsGtmGfp = QString("C:\\ProgramData\\TDS\\GTNXi\\FPL");
+#elif DEBUG_INFORMATION
+  tdsGtmGfp = atools::buildPath({documents, "TDS", "GTNXi", "FPL"});
+#else
+  tdsGtmGfp = documents;
+#endif
+
   // Normalize path endings
   if(xpBasePath.endsWith('\\') || xpBasePath.endsWith('/'))
     xpBasePath.chop(1);
@@ -458,6 +471,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[IFLY        ].DP(documents % SEP % "Prepar3D v5 Add-ons" % SEP % "iFlyData" % SEP % "navdata" % SEP % "FLTPLAN");
   (*this)[PLNISG      ].DP(fsxP3dBasePath % SEP % "ISG" % SEP % "FlightPlans"); // C:\Program Files\Lockheed Martin\Prepar3D v4\ISG\FlightPlans
   (*this)[PMS50       ].DP(msfsBasePath % SEP % "Community" % SEP % "pms50-instrument-gtn750" % SEP % "fpl" % SEP % "gtn750");
+  (*this)[TDSGTNXI    ].DP(tdsGtmGfp);
   /* *INDENT-ON* */
 #undef DP
 
