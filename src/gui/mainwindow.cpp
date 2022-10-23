@@ -359,6 +359,7 @@ MainWindow::MainWindow()
     // Update window states based on actions
     allowDockingWindows();
     allowMovingWindows();
+    hideTitleBar();
 
     updateActionStates();
     updateMarkActionStates();
@@ -1348,6 +1349,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionWindowStayOnTop, &QAction::toggled, this, &MainWindow::stayOnTop);
   connect(ui->actionShowAllowDocking, &QAction::toggled, this, &MainWindow::allowDockingWindows);
   connect(ui->actionShowAllowMoving, &QAction::toggled, this, &MainWindow::allowMovingWindows);
+  connect(ui->actionShowWindowTitleBar, &QAction::toggled, this, &MainWindow::hideTitleBar);
   connect(ui->actionShowFullscreenMap, &QAction::toggled, this, &MainWindow::fullScreenMapToggle);
 
   // File menu ============================================================
@@ -1439,6 +1441,9 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::exitFullScreenPressed, this, &MainWindow::exitFullScreenPressed);
 
   connect(mapWidget, &MapWidget::routeInsertProcedure, routeController, &RouteController::routeAddProcedure);
+
+  // Map needs to restore title bar state when floating
+  connect(ui->dockWidgetMap, &QDockWidget::topLevelChanged, this, &MainWindow::mapDockTopLevelChanged);
 
   // Window menu ======================================
   connect(layoutFileHistory, &FileHistoryHandler::fileSelected, this, &MainWindow::layoutOpenRecent);
@@ -3506,6 +3511,23 @@ void MainWindow::allowDockingWindows()
     DockWidgetHandler::setDockingAllowed(ui->dockWidgetMap, ui->actionShowAllowDocking->isChecked());
 }
 
+void MainWindow::hideTitleBar()
+{
+  qDebug() << Q_FUNC_INFO;
+  dockHandler->setHideTitleBar(!ui->actionShowWindowTitleBar->isChecked());
+
+  if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
+    // Undockable map widget is not registered in handler
+    DockWidgetHandler::setHideTitleBar(ui->dockWidgetMap, !ui->actionShowWindowTitleBar->isChecked());
+}
+
+void MainWindow::mapDockTopLevelChanged(bool topLevel)
+{
+  // Map widget changed floating state
+  if(OptionData::instance().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK))
+    DockWidgetHandler::setHideTitleBar(ui->dockWidgetMap, dockHandler->getHideTitle() && !topLevel);
+}
+
 void MainWindow::raiseFloatingWindows()
 {
   qDebug() << Q_FUNC_INFO;
@@ -3793,7 +3815,7 @@ void MainWindow::restoreStateMain()
   widgetState.setBlockSignals(true);
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_MAP_SETTINGS)
   {
-    // Restore map settings if desired by the user
+    // Restore map settings if requested by the user
     widgetState.restore({ui->actionMapShowVor, ui->actionMapShowNdb, ui->actionMapShowWp,
                          ui->actionMapShowIls, ui->actionMapShowGls, ui->actionMapShowHolding, ui->actionMapShowAirportMsa,
                          ui->actionMapShowVictorAirways, ui->actionMapShowJetAirways, ui->actionMapShowTracks, ui->actionShowAirspaces,
@@ -3811,7 +3833,8 @@ void MainWindow::restoreStateMain()
   widgetState.restore({ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionRouteEditMode, ui->actionRouteSaveSidStarWaypointsOpt,
                        ui->actionRouteSaveApprWaypointsOpt, ui->actionRouteSaveAirwayWaypointsOpt, ui->actionLogdataCreateLogbook,
                        ui->actionMapShowSunShading, ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude,
-                       ui->actionRunWebserver, ui->actionShowAllowDocking, ui->actionShowAllowMoving, ui->actionWindowStayOnTop});
+                       ui->actionRunWebserver, ui->actionShowAllowDocking, ui->actionShowAllowMoving, ui->actionShowWindowTitleBar,
+                       ui->actionWindowStayOnTop});
 
   widgetState.setBlockSignals(false);
 
@@ -4045,7 +4068,8 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowMinimumAltitude, ui->actionRouteEditMode, ui->actionRouteSaveSidStarWaypointsOpt,
                     ui->actionRouteSaveApprWaypointsOpt, ui->actionRouteSaveAirwayWaypointsOpt, ui->actionLogdataCreateLogbook,
                     ui->actionRunWebserver, ui->actionSearchLogdataShowDirect, ui->actionSearchLogdataShowRoute,
-                    ui->actionSearchLogdataShowTrack, ui->actionShowAllowDocking, ui->actionShowAllowMoving, ui->actionWindowStayOnTop});
+                    ui->actionSearchLogdataShowTrack, ui->actionShowAllowDocking, ui->actionShowAllowMoving, ui->actionShowWindowTitleBar,
+                    ui->actionWindowStayOnTop});
 
   Settings::syncSettings();
 }

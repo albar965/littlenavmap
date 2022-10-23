@@ -281,9 +281,13 @@ private:
 
   /* Dock window functions */
   void raiseFloatingWindows();
+  void hideTitleBar();
   void allowDockingWindows();
   void allowMovingWindows();
   void stayOnTop();
+
+  /* Map dock widget floating state changed */
+  void mapDockTopLevelChanged(bool topLevel);
 
   /* Called by action */
   void fullScreenMapToggle();

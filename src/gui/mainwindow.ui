@@ -177,6 +177,7 @@
     <addaction name="actionShowFloatingWindows"/>
     <addaction name="actionShowAllowDocking"/>
     <addaction name="actionShowAllowMoving"/>
+    <addaction name="actionShowWindowTitleBar"/>
     <addaction name="separator"/>
     <addaction name="actionShowStatusbar"/>
     <addaction name="separator"/>
@@ -9179,7 +9180,7 @@ relation to shown airport</string>
   </action>
   <action name="actionShowFloatingWindows">
    <property name="text">
-    <string>Show all &amp;floating Windows</string>
+    <string>Show all &amp;floating Dock Windows</string>
    </property>
    <property name="toolTip">
     <string>Raise and show all undocked floating windows</string>
@@ -11188,7 +11189,7 @@ relation to shown airport</string>
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Allow Window &amp;moving</string>
+    <string>Allow Dock Window &amp;moving</string>
    </property>
    <property name="toolTip">
     <string>Allows to move dock windows by clicking into the title bar.</string>
@@ -11953,6 +11954,26 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Check if the correct modes for the scenery library are used</string>
+   </property>
+  </action>
+  <action name="actionShowWindowTitleBar">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Show Dock Window &amp;Title Bars</string>
+   </property>
+   <property name="iconText">
+    <string>Show Dock Window Title Bars</string>
+   </property>
+   <property name="toolTip">
+    <string>Show or hide the title bars of docked windows</string>
+   </property>
+   <property name="statusTip">
+    <string>Show or hide the title bars of docked windows</string>
    </property>
   </action>
  </widget>
