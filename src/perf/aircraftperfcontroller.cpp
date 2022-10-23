@@ -113,7 +113,7 @@ void AircraftPerfController::create()
 
   AircraftPerf editPerf;
   editPerf.resetToDefault(NavApp::getCurrentSimulatorShortName());
-  if(editInternal(editPerf, tr("Create")))
+  if(editInternal(editPerf, tr("Create"), true /* newPerf */))
   {
     if(checkForChanges())
     {
@@ -129,11 +129,11 @@ void AircraftPerfController::create()
   }
 }
 
-bool AircraftPerfController::editInternal(atools::fs::perf::AircraftPerf& editPerf, const QString& modeText)
+bool AircraftPerfController::editInternal(atools::fs::perf::AircraftPerf& editPerf, const QString& modeText, bool newPerf)
 {
   qDebug() << Q_FUNC_INFO;
 
-  AircraftPerfDialog dialog(mainWindow, editPerf, modeText);
+  AircraftPerfDialog dialog(mainWindow, editPerf, modeText, newPerf);
   if(dialog.exec() == QDialog::Accepted)
   {
     editPerf = dialog.getAircraftPerf();
@@ -149,7 +149,7 @@ void AircraftPerfController::edit()
 {
   qDebug() << Q_FUNC_INFO;
 
-  if(editInternal(*perf, tr("Edit")))
+  if(editInternal(*perf, tr("Edit"), false /* newPerf */))
   {
     changed = true;
     windChangeTimer.stop();
