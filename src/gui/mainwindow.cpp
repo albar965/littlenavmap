@@ -1052,11 +1052,14 @@ void MainWindow::connectAllSlots()
   connect(perfController, &AircraftPerfController::aircraftPerformanceChanged, windReporter, &WindReporter::updateToolButtonState);
 
   // Aircraft performance signals =======================================================
+  connect(ui->actionAircraftPerformanceWarnMismatch, &QAction::toggled, perfController, &AircraftPerfController::warningChanged);
+
   connect(perfController, &AircraftPerfController::aircraftPerformanceChanged, routeController,
           &RouteController::aircraftPerformanceChanged);
   connect(perfController, &AircraftPerfController::windChanged, routeController, &RouteController::windUpdated);
   connect(perfController, &AircraftPerfController::windChanged, profileWidget, &ProfileWidget::windUpdated);
   connect(perfController, &AircraftPerfController::windChanged, mapWidget, &MapWidget::windDisplayUpdated);
+
   connect(routeController, &RouteController::routeChanged, perfController, &AircraftPerfController::routeChanged);
   connect(routeController, &RouteController::routeAltitudeChanged, perfController, &AircraftPerfController::routeAltitudeChanged);
 
@@ -3767,9 +3770,9 @@ void MainWindow::restoreStateMain()
   // Map settings that are always loaded
   widgetState.restore({ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionRouteEditMode, ui->actionRouteSaveSidStarWaypointsOpt,
                        ui->actionRouteSaveApprWaypointsOpt, ui->actionRouteSaveAirwayWaypointsOpt, ui->actionLogdataCreateLogbook,
-                       ui->actionMapShowSunShading, ui->actionMapShowAirportWeather, ui->actionMapShowMinimumAltitude,
-                       ui->actionRunWebserver, ui->actionShowAllowDocking, ui->actionShowAllowMoving, ui->actionShowWindowTitleBar,
-                       ui->actionWindowStayOnTop});
+                       ui->actionAircraftPerformanceWarnMismatch, ui->actionMapShowSunShading, ui->actionMapShowAirportWeather,
+                       ui->actionMapShowMinimumAltitude, ui->actionRunWebserver, ui->actionShowAllowDocking, ui->actionShowAllowMoving,
+                       ui->actionShowWindowTitleBar, ui->actionWindowStayOnTop});
 
   widgetState.setBlockSignals(false);
 
@@ -4001,10 +4004,10 @@ void MainWindow::saveActionStates()
                     ui->actionMapShowAircraftAiBoat, ui->actionMapShowAircraftTrack, ui->actionInfoApproachShowMissedAppr,
                     ui->actionMapShowGrid, ui->actionMapShowCities, ui->actionMapShowSunShading, ui->actionMapShowAirportWeather,
                     ui->actionMapShowMinimumAltitude, ui->actionRouteEditMode, ui->actionRouteSaveSidStarWaypointsOpt,
-                    ui->actionRouteSaveApprWaypointsOpt, ui->actionRouteSaveAirwayWaypointsOpt, ui->actionLogdataCreateLogbook,
-                    ui->actionRunWebserver, ui->actionSearchLogdataShowDirect, ui->actionSearchLogdataShowRoute,
-                    ui->actionSearchLogdataShowTrack, ui->actionShowAllowDocking, ui->actionShowAllowMoving, ui->actionShowWindowTitleBar,
-                    ui->actionWindowStayOnTop});
+                    ui->actionAircraftPerformanceWarnMismatch, ui->actionRouteSaveApprWaypointsOpt, ui->actionRouteSaveAirwayWaypointsOpt,
+                    ui->actionLogdataCreateLogbook, ui->actionRunWebserver, ui->actionSearchLogdataShowDirect,
+                    ui->actionSearchLogdataShowRoute, ui->actionSearchLogdataShowTrack, ui->actionShowAllowDocking,
+                    ui->actionShowAllowMoving, ui->actionShowWindowTitleBar, ui->actionWindowStayOnTop});
 
   Settings::syncSettings();
 }

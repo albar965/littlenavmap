@@ -136,6 +136,7 @@ public:
   void routeChanged(bool, bool = false);
   void updateReports();
   void routeAltitudeChanged(float);
+  void warningChanged();
 
   void flightSegmentChanged(const atools::fs::perf::FlightSegment& flightSegment);
 

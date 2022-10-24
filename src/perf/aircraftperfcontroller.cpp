@@ -602,7 +602,10 @@ float AircraftPerfController::cruiseAlt()
 
 void AircraftPerfController::routeChanged(bool, bool)
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
+#endif
+
   perfHandler->setCruiseAltitude(cruiseAlt());
   updateReport();
   updateReportCurrent();
@@ -617,12 +620,19 @@ void AircraftPerfController::updateReports()
 
 void AircraftPerfController::routeAltitudeChanged(float)
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
+#endif
 
   perfHandler->setCruiseAltitude(cruiseAlt());
   updateReport();
   updateReportCurrent();
   updateActionStates();
+}
+
+void AircraftPerfController::warningChanged()
+{
+  updateReport();
 }
 
 void AircraftPerfController::flightSegmentChanged(const atools::fs::perf::FlightSegment& flightSegment)
@@ -1079,15 +1089,19 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
 
     if(!perf->getAircraftType().isEmpty())
     {
-      QString model = lastSimData->getUserAircraft().getAirplaneModel();
-      if(!model.isEmpty() && perf->getAircraftType() != model)
+      if(NavApp::getMainUi()->actionAircraftPerformanceWarnMismatch->isChecked())
       {
-        QString msg(tr("User aircraft type \"%1\" in simulator is not equal to type \"%2\" used in performance file.").
-                    arg(model).arg(perf->getAircraftType()));
-        errorTooltips.append(msg);
+        QString model = lastSimData->getUserAircraft().getAirplaneModel();
+        if(!model.isEmpty() && perf->getAircraftType() != model)
+        {
+          QString msg(tr("User aircraft type \"%1\" in simulator is not equal to type \"%2\" used in performance file.\n"
+                         "Load the matching aircraft performance file or adapt the field \"Aircraft type\" in the currently loaded file.").
+                      arg(model).arg(perf->getAircraftType()));
+          errorTooltips.append(msg);
 
-        if(visible)
-          html.p().error(msg).pEnd();
+          if(visible)
+            html.p().warning(msg).pEnd();
+        }
       }
     }
   } // if(!print)

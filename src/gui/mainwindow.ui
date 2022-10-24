@@ -473,6 +473,8 @@
     <addaction name="actionAircraftPerformanceLoadMerge"/>
     <addaction name="actionAircraftPerformanceMerge"/>
     <addaction name="actionAircraftPerformanceRestart"/>
+    <addaction name="separator"/>
+    <addaction name="actionAircraftPerformanceWarnMismatch"/>
    </widget>
    <widget class="QMenu" name="menuLogbook">
     <property name="title">
@@ -11868,6 +11870,23 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Show or hide the title bars of docked windows</string>
+   </property>
+  </action>
+  <action name="actionAircraftPerformanceWarnMismatch">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Warning for Aircraft Type Mismatch</string>
+   </property>
+   <property name="toolTip">
+    <string>Show a warning if the loaded performance file does not match the simulator aircraft</string>
+   </property>
+   <property name="statusTip">
+    <string>Show a warning if the loaded performance file does not match the simulator aircraft</string>
    </property>
   </action>
  </widget>
