@@ -1197,7 +1197,8 @@ void MapScreenIndex::getNearestLogEntries(int xs, int ys, int maxDistance, map::
 
 void MapScreenIndex::getNearestIls(int xs, int ys, int maxDistance, map::MapResult& result) const
 {
-  if(!paintLayer->getShownMapObjects().testFlag(map::ILS) &&
+  if(!paintLayer->getShownMapObjects().testFlag(map::ILS) && // Display and object type
+     !paintLayer->getShownMapObjectDisplayTypes().testFlag(map::GLS) && // Display type
      !paintLayer->getShownMapObjectDisplayTypes().testFlag(map::FLIGHTPLAN))
     return;
 
