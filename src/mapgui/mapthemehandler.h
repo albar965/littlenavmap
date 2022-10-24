@@ -252,9 +252,6 @@ public:
 
   void changeMapProjection();
 
-  /* Update map legend widget after theme change */
-  void updateLegend();
-
 private:
   /* Get theme by internal index */
   const MapTheme& themeByIndex(int themeIndex) const;

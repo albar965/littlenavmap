@@ -184,7 +184,7 @@ void UserdataController::addToolbarButton()
   ui->toolbarMapOptions->insertSeparator(ui->actionMapShowRoute);
 
   // Create and add select all action =====================================
-  actionAll = new QAction(tr("&All"), buttonMenu);
+  actionAll = new QAction(tr("&All Userpoints"), buttonMenu);
   actionAll->setToolTip(tr("Toggle all / current selection of userpoints"));
   actionAll->setStatusTip(actionAll->toolTip());
   buttonMenu->addAction(actionAll);
@@ -192,7 +192,7 @@ void UserdataController::addToolbarButton()
   buttonHandler->setAllAction(actionAll);
 
   // Create and add select none action =====================================
-  actionNone = new QAction(tr("&None"), buttonMenu);
+  actionNone = new QAction(tr("&No Userpoints"), buttonMenu);
   actionNone->setToolTip(tr("Toggle none / current selection of userpoints"));
   actionNone->setStatusTip(actionNone->toolTip());
   buttonMenu->addAction(actionNone);

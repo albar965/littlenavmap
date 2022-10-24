@@ -188,13 +188,12 @@
     </property>
     <addaction name="actionHelpContents"/>
     <addaction name="actionHelpTutorials"/>
-    <addaction name="actionHelpFaq"/>
+    <addaction name="actionHelpNavmapLegend"/>
+    <addaction name="separator"/>
     <addaction name="actionHelpContentsOffline"/>
     <addaction name="separator"/>
+    <addaction name="actionHelpFaq"/>
     <addaction name="actionHelpDownloads"/>
-    <addaction name="separator"/>
-    <addaction name="actionHelpNavmapLegend"/>
-    <addaction name="actionHelpMapLegend"/>
     <addaction name="separator"/>
     <addaction name="actionHelpAbout"/>
     <addaction name="separator"/>
@@ -5867,7 +5866,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>0</y>
+              <y>29</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -6296,111 +6295,6 @@ relation to shown airport</string>
            </property>
            <property name="openLinks">
             <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-      </widget>
-     </item>
-    </layout>
-   </widget>
-  </widget>
-  <widget class="QDockWidget" name="dockWidgetLegend">
-   <property name="enabled">
-    <bool>true</bool>
-   </property>
-   <property name="windowIcon">
-    <iconset resource="../../littlenavmap.qrc">
-     <normaloff>:/littlenavmap/resources/icons/legenddock.svg</normaloff>:/littlenavmap/resources/icons/legenddock.svg</iconset>
-   </property>
-   <property name="floating">
-    <bool>false</bool>
-   </property>
-   <property name="windowTitle">
-    <string>Legend</string>
-   </property>
-   <attribute name="dockWidgetArea">
-    <number>2</number>
-   </attribute>
-   <widget class="QWidget" name="dockWidgetContents">
-    <layout class="QVBoxLayout" name="verticalLayout_13">
-     <property name="spacing">
-      <number>2</number>
-     </property>
-     <property name="leftMargin">
-      <number>2</number>
-     </property>
-     <property name="topMargin">
-      <number>0</number>
-     </property>
-     <property name="rightMargin">
-      <number>2</number>
-     </property>
-     <property name="bottomMargin">
-      <number>0</number>
-     </property>
-     <item>
-      <widget class="QTabWidget" name="tabWidgetLegend">
-       <property name="currentIndex">
-        <number>0</number>
-       </property>
-       <widget class="QWidget" name="tabLegendNav">
-        <attribute name="title">
-         <string>Navmap</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_21">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-         <property name="leftMargin">
-          <number>2</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <property name="rightMargin">
-          <number>2</number>
-         </property>
-         <property name="bottomMargin">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QTextBrowser" name="textBrowserLegendNavInfo">
-           <property name="openExternalLinks">
-            <bool>false</bool>
-           </property>
-           <property name="openLinks">
-            <bool>false</bool>
-           </property>
-          </widget>
-         </item>
-        </layout>
-       </widget>
-       <widget class="QWidget" name="tabLegend">
-        <attribute name="title">
-         <string>Map</string>
-        </attribute>
-        <layout class="QVBoxLayout" name="verticalLayout_20">
-         <property name="spacing">
-          <number>2</number>
-         </property>
-         <property name="leftMargin">
-          <number>2</number>
-         </property>
-         <property name="topMargin">
-          <number>2</number>
-         </property>
-         <property name="rightMargin">
-          <number>2</number>
-         </property>
-         <property name="bottomMargin">
-          <number>2</number>
-         </property>
-         <item>
-          <widget class="QTextBrowser" name="textBrowserLegendInfo">
-           <property name="openExternalLinks">
-            <bool>true</bool>
            </property>
           </widget>
          </item>
@@ -6905,7 +6799,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Contents (Online)</string>
+    <string>&amp;User Manual (Online)</string>
    </property>
    <property name="toolTip">
     <string>Show the online help in a browser</string>
@@ -7905,7 +7799,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Navmap Legend</string>
+    <string>&amp;User Manual - Map Legend (Online)</string>
    </property>
    <property name="toolTip">
     <string>Show the navigation map legend online in a browser</string>
@@ -8334,7 +8228,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Contents (Offline, PDF)</string>
+    <string>&amp;User Manual (Offline, PDF)</string>
    </property>
    <property name="toolTip">
     <string>Show the offline help also including the legend in a PDF viewer</string>
@@ -8500,10 +8394,10 @@ relation to shown airport</string>
     <string>Select Approach &amp;Runway for %1 ...</string>
    </property>
    <property name="toolTip">
-    <string>Select approach runway for airport</string>
+    <string>Add an approach runway and a final leg to the flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Add a custom approach to the flight plan</string>
+    <string>Add an approach runway and a final leg to the flight plan</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+U</string>
@@ -8518,10 +8412,10 @@ relation to shown airport</string>
     <string>Select Approach &amp;Runway for %1 ...</string>
    </property>
    <property name="toolTip">
-    <string>Select approach runway for airport</string>
+    <string>Add an approach runway and a final leg to the flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Add a custom approach to the flight plan</string>
+    <string>Add an approach runway and a final leg to the flight plan</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+U</string>
@@ -8726,7 +8620,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Tutorials (Online)</string>
+    <string>&amp;User Manual - Tutorials (Online)</string>
    </property>
    <property name="toolTip">
     <string>Show the online tutorials in a browser</string>
@@ -11451,10 +11345,10 @@ relation to shown airport</string>
     <string>Select &amp;Departure Runway for %1 ...</string>
    </property>
    <property name="toolTip">
-    <string>Select departure runway for airport</string>
+    <string>Add a departure runway and extended runway leg to the flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Add a custom approach to the flight plan</string>
+    <string>Add a departure runway and extended runway leg to the flight plan</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+R</string>
@@ -11469,10 +11363,10 @@ relation to shown airport</string>
     <string>Select &amp;Departure Runway for %1 ...</string>
    </property>
    <property name="toolTip">
-    <string>Select departure runway for airport</string>
+    <string>Add a departure runway and extended runway leg to the flight plan</string>
    </property>
    <property name="statusTip">
-    <string>Add a custom approach to the flight plan</string>
+    <string>Add a departure runway and extended runway leg to the flight plan</string>
    </property>
    <property name="shortcut">
     <string>Alt+Shift+R</string>
@@ -11616,7 +11510,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/altrange.svg</normaloff>:/littlenavmap/resources/icons/altrange.svg</iconset>
    </property>
    <property name="text">
-    <string>Show Selected &amp;Altitude Range</string>
+    <string>Show Selected &amp;Altitude Range Arc</string>
    </property>
    <property name="toolTip">
     <string>Show range for selected autopilot altitude</string>
@@ -12144,9 +12038,6 @@ relation to shown airport</string>
   <tabstop>pushButtonProfileExpand</tabstop>
   <tabstop>pushButtonProfileSettings</tabstop>
   <tabstop>pushButtonProfileHelp</tabstop>
-  <tabstop>tabWidgetLegend</tabstop>
-  <tabstop>textBrowserLegendNavInfo</tabstop>
-  <tabstop>textBrowserLegendInfo</tabstop>
  </tabstops>
  <resources>
   <include location="../../littlenavmap.qrc"/>

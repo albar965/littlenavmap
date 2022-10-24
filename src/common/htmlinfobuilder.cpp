@@ -337,7 +337,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
     facilities.append(tr("Helipads"));
 
   if(NavApp::getCurrentSimulatorDb() == atools::fs::FsPaths::MSFS && airport.flags.testFlag(AP_AVGAS) && airport.flags.testFlag(AP_JETFUEL))
-      facilities.append(tr("Fuel"));
+    facilities.append(tr("Fuel"));
   else
   {
     if(airport.flags.testFlag(AP_AVGAS))
@@ -1866,7 +1866,7 @@ void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atoo
       title.append(tr(" (%1 %2)").arg(tr("Airport")).arg(msa.airportIdent));
   }
 
-  navaidTitle(html, tr("MSA %1at %2").arg(msa.multipleCode % tr(" ")).arg(title));
+  navaidTitle(html, tr("%1 %2at %3").arg(user ? tr("User MSA Diagram") : QString(tr("MSA"))).arg(msa.multipleCode % tr(" ")).arg(title));
 
   if(info)
   {

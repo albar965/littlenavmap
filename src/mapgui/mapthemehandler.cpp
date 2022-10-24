@@ -701,22 +701,7 @@ void MapThemeHandler::changeMapTheme()
 
   mapWidget->setTheme(theme.getId(), themeId);
 
-  updateLegend();
-
   NavApp::setStatusMessage(tr("Map theme changed to %1.").arg(actionGroupMapTheme->checkedAction()->text()));
-}
-
-void MapThemeHandler::updateLegend()
-{
-  Ui::MainWindow *ui = NavApp::getMainUi();
-
-  Marble::LegendWidget *legendWidget = new Marble::LegendWidget(mainWindow);
-  legendWidget->setMarbleModel(NavApp::getMapWidgetGui()->model());
-  QString basePath;
-  QString html = legendWidget->getHtml(basePath);
-  ui->textBrowserLegendInfo->setSearchPaths({basePath});
-  ui->textBrowserLegendInfo->setText(html);
-  delete legendWidget;
 }
 
 /* Called by actions */

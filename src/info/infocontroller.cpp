@@ -419,9 +419,6 @@ void InfoController::anchorClicked(const QUrl& url)
 
 void InfoController::saveState()
 {
-  Ui::MainWindow *ui = NavApp::getMainUi();
-  atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).save(ui->tabWidgetLegend);
-
   // Store currently shown map objects in a string list containing id and type
   map::MapObjectRefVector refs;
   for(const map::MapAirport& airport  : currentSearchResult.airports)
@@ -511,9 +508,6 @@ void InfoController::restoreState()
     res.removeInvalid();
 
     showInformationInternal(res, false /* show windows */, false /* scroll to top */, true /* forceUpdate */);
-
-    Ui::MainWindow *ui = NavApp::getMainUi();
-    atools::gui::WidgetState(lnm::INFOWINDOW_WIDGET).restore(ui->tabWidgetLegend);
   }
   updateTextEditFontSizes();
   updateAircraftInfo();

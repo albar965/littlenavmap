@@ -204,8 +204,7 @@ MainWindow::MainWindow()
     dockHandler =
       new atools::gui::DockWidgetHandler(this,
                                          // Add all available dock widgets here ==========================
-                                         {ui->dockWidgetLegend, ui->dockWidgetAircraft,
-                                          ui->dockWidgetSearch, ui->dockWidgetProfile,
+                                         {ui->dockWidgetAircraft, ui->dockWidgetSearch, ui->dockWidgetProfile,
                                           ui->dockWidgetInformation, ui->dockWidgetRoute},
                                          // Add all available toolbars  here =============================
                                          {ui->toolBarMain, ui->toolBarMap, ui->toolbarMapOptions,
@@ -378,8 +377,6 @@ MainWindow::MainWindow()
 
     profileWidget->updateProfileShowFeatures();
 
-    loadNavmapLegend();
-    mapThemeHandler->updateLegend();
     updateWindowTitle();
 
     // Enable or disable tooltips - call later since it needs the map window
@@ -670,57 +667,15 @@ void MainWindow::updateClock() const
 /* Show map legend and bring information dock to front */
 void MainWindow::showNavmapLegend()
 {
-  if(!legendFile.isEmpty() && QFile::exists(legendFile))
-  {
-    dockHandler->activateWindow(ui->dockWidgetLegend);
-    ui->tabWidgetLegend->setCurrentIndex(0);
-    setStatusMessage(tr("Opened navigation map legend."));
-  }
-  else
-  {
-    // URL is empty loading failed - show it in browser
-    HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineLegendUrl, lnm::helpLanguageOnline());
-    setStatusMessage(tr("Opened map legend in browser."));
-  }
-}
-
-/* Load the navmap legend into the text browser */
-void MainWindow::loadNavmapLegend()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  legendFile = HelpHandler::getHelpFile(lnm::helpLegendLocalFile, OptionData::instance().getLanguage());
-  qDebug() << "legendUrl" << legendFile;
-
-  QFile legend(legendFile);
-  if(legend.open(QIODevice::ReadOnly))
-  {
-    QTextStream stream(&legend);
-    stream.setCodec("UTF-8");
-    QString legendText = stream.readAll();
-
-#ifdef DEBUG_INFORMATION_LEGEND
-    qDebug() << Q_FUNC_INFO << "==========================================";
-    qDebug().noquote().nospace() << legendText;
-    qDebug() << Q_FUNC_INFO << "==========================================";
-#endif
-
-    QString searchPath = QCoreApplication::applicationDirPath() + QDir::separator() + "help";
-    ui->textBrowserLegendNavInfo->setSearchPaths({searchPath});
-    ui->textBrowserLegendNavInfo->setText(legendText);
-  }
-  else
-  {
-    qWarning() << "Error opening legend" << legendFile << legend.errorString();
-    legendFile.clear();
-  }
+  // Show it in browser
+  HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineLegendUrl, lnm::helpLanguageOnline());
+  setStatusMessage(tr("Opened map legend in browser."));
 }
 
 /* Check manually for updates as triggered by the action */
 void MainWindow::checkForUpdates()
 {
-  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(),
-                          true /* manually triggered */, false /* forceDebug */);
+  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), true /* manually triggered */, false /* forceDebug */);
 }
 
 void MainWindow::showOnlineHelp()
@@ -762,14 +717,6 @@ void MainWindow::openLogFile()
 void MainWindow::openConfigFile()
 {
   HelpHandler::openFile(this, Settings::getFilename());
-}
-
-/* Show marble legend */
-void MainWindow::showMapLegend()
-{
-  dockHandler->activateWindow(ui->dockWidgetLegend);
-  ui->tabWidgetLegend->setCurrentIndex(1);
-  setStatusMessage(tr("Opened map legend."));
 }
 
 /* User clicked "show in browser" in legend */
@@ -873,12 +820,6 @@ void MainWindow::setupUi()
                                                          arg(ui->dockWidgetAircraft->windowTitle()));
   ui->dockWidgetAircraft->toggleViewAction()->setStatusTip(ui->dockWidgetAircraft->toggleViewAction()->toolTip());
 
-  ui->dockWidgetLegend->toggleViewAction()->setIcon(QIcon(":/littlenavmap/resources/icons/legenddock.svg"));
-  ui->dockWidgetLegend->toggleViewAction()->setShortcut(QKeySequence(tr("Alt+7")));
-  ui->dockWidgetLegend->toggleViewAction()->setToolTip(tr("Open or show the %1 dock window").
-                                                       arg(ui->dockWidgetLegend->windowTitle()));
-  ui->dockWidgetLegend->toggleViewAction()->setStatusTip(ui->dockWidgetLegend->toggleViewAction()->toolTip());
-
   // Connect to methods internally
   dockHandler->connectDockWindows();
 
@@ -888,8 +829,7 @@ void MainWindow::setupUi()
                                ui->dockWidgetRoute->toggleViewAction(),
                                ui->dockWidgetInformation->toggleViewAction(),
                                ui->dockWidgetProfile->toggleViewAction(),
-                               ui->dockWidgetAircraft->toggleViewAction(),
-                               ui->dockWidgetLegend->toggleViewAction()});
+                               ui->dockWidgetAircraft->toggleViewAction()});
 
   ui->menuView->insertSeparator(ui->actionShowStatusbar);
 
@@ -910,7 +850,6 @@ void MainWindow::setupUi()
   ui->toolBarView->addAction(ui->dockWidgetInformation->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetProfile->toggleViewAction());
   ui->toolBarView->addAction(ui->dockWidgetAircraft->toggleViewAction());
-  ui->toolBarView->addAction(ui->dockWidgetLegend->toggleViewAction());
 
   // ==============================================================
   // Create labels for the statusbar
@@ -1049,9 +988,6 @@ void MainWindow::clearProcedureCache()
 
 void MainWindow::connectAllSlots()
 {
-  // Get "show in browser"  click
-  connect(ui->textBrowserLegendNavInfo, &QTextBrowser::anchorClicked, this, &MainWindow::legendAnchorClicked);
-
   // Options dialog ===================================================================
   // Notify others of options change
   // The units need to be called before all others
@@ -1693,7 +1629,6 @@ void MainWindow::connectAllSlots()
 
   // Legend ===============================================
   connect(ui->actionHelpNavmapLegend, &QAction::triggered, this, &MainWindow::showNavmapLegend);
-  connect(ui->actionHelpMapLegend, &QAction::triggered, this, &MainWindow::showMapLegend);
 
   connect(&weatherUpdateTimer, &QTimer::timeout, this, &MainWindow::weatherUpdateTimeout);
 

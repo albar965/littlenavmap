@@ -143,14 +143,14 @@ void MapMarkHandler::addToolbarButton()
   ui->toolbarMapOptions->insertWidget(ui->actionMapShowRoute, toolButton);
 
   // Create and add actions to toolbar and menu =================================
-  actionAll = new QAction(tr("&All"), buttonMenu);
+  actionAll = new QAction(tr("&All User Features"), buttonMenu);
   actionAll->setToolTip(tr("Toggle all / current selection of user features"));
   actionAll->setStatusTip(actionAll->toolTip());
   buttonMenu->addAction(actionAll);
   buttonHandler->setAllAction(actionAll);
   ui->menuViewUserFeatures->addAction(actionAll);
 
-  actionNone = new QAction(tr("&None"), buttonMenu);
+  actionNone = new QAction(tr("&No User Features"), buttonMenu);
   actionNone->setToolTip(tr("Toggle none / current selection of user features"));
   actionNone->setStatusTip(actionNone->toolTip());
   buttonMenu->addAction(actionNone);
