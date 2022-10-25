@@ -5741,6 +5741,7 @@ relation to shown airport</string>
    <addaction name="separator"/>
    <addaction name="actionMapAircraftCenter"/>
    <addaction name="separator"/>
+   <addaction name="actionMapDeleteAircraftTrack"/>
    <addaction name="actionMapClearAllHighlights"/>
    <addaction name="separator"/>
    <addaction name="actionMapBack"/>
