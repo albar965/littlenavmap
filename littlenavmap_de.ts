@@ -3604,12 +3604,12 @@ Hilfreich wenn Sie Werkzeuge benutzen, um bestimmte Szenerien für jeden Flug zu
     <message>
         <location filename="src/db/databasemanager.cpp" line="774"/>
         <source>prev. version - reload advised</source>
-        <translation>vorherige Version - Neuladen empfohlen</translation>
+        <translation>vorherige Version - neu laden empfohlen</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="778"/>
         <source>%1 days old - reload advised</source>
-        <translation>%1 Tage alt - Neuladen empfohlen</translation>
+        <translation>%1 Tage alt - neu laden empfohlen</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="783"/>
@@ -38673,7 +38673,7 @@ will be removed when reloading a flight plan.</source>
         <oldsource>Name of the waypoint. Note that special characters
 will be removed when reloading a flight plan.</oldsource>
         <translation type="vanished">Name des Wegpunktes. Sonderzeichen
-werden beim Neuladen des Flugplans entfernt.</translation>
+werden beim neu laden des Flugplans entfernt.</translation>
     </message>
     <message>
         <location filename="src/route/userwaypointdialog.ui" line="23"/>

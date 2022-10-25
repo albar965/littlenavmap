@@ -176,13 +176,9 @@ void MapPainterVehicle::paintTurnPath(const atools::fs::sc::SimConnectUserAircra
             line.append(newPos);
 
             // Draw mark at each 0.5 NM
-            if(step > 0 && (step % 5) == 0)
+            if(step > 0 && (step % 10) == 0)
             {
               double length = lineWidth * 1.2;
-
-              // Longer mark at 1 NM
-              if((step % 10) == 0)
-                length *= 1.6;
 
               // Draw line segment as mark
               QPointF pt = wToSF(curPos);

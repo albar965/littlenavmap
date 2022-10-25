@@ -248,6 +248,7 @@ void checkAndMigrateSettings()
         removeAndLog(&mapstyleSettings, "Marker/TurnPathPen");
         removeAndLog(&mapstyleSettings, "Marker/SelectedAltitudeRangePen");
         removeAndLog("Map/WindSource");
+        removeAndLog("Actions/DeleteTrail");
       }
 
       qInfo() << Q_FUNC_INFO << "Clearing all essential messages since version differs";
