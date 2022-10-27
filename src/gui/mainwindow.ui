@@ -240,7 +240,6 @@
      <string>&amp;Map</string>
     </property>
     <addaction name="actionMapShowHome"/>
-    <addaction name="actionMapAircraftCenterNow"/>
     <addaction name="actionMapShowMark"/>
     <addaction name="actionRouteCenter"/>
     <addaction name="actionMapJumpCoordinatesMain"/>
@@ -3214,7 +3213,7 @@ Matches any visited airport.</string>
               <string>Departure or destination airport ICAO code. </string>
              </property>
              <property name="placeholderText">
-              <string>Airport ICAO</string>
+              <string>Airport Ident</string>
              </property>
              <property name="clearButtonEnabled">
               <bool>true</bool>
@@ -3429,7 +3428,7 @@ Matches any visited airport.</string>
                 <string>Departure airport ICAO code</string>
                </property>
                <property name="placeholderText">
-                <string>Departure ICAO</string>
+                <string>Departure Airport Ident</string>
                </property>
                <property name="clearButtonEnabled">
                 <bool>true</bool>
@@ -3451,7 +3450,7 @@ Matches any visited airport.</string>
                 <string>Destination airport ICAO code</string>
                </property>
                <property name="placeholderText">
-                <string>Destination ICAO</string>
+                <string>Destination Airport Ident</string>
                </property>
                <property name="clearButtonEnabled">
                 <bool>true</bool>
@@ -5739,6 +5738,7 @@ relation to shown airport</string>
    <addaction name="actionMapShowMark"/>
    <addaction name="actionRouteCenter"/>
    <addaction name="separator"/>
+   <addaction name="actionMapAircraftCenterNow"/>
    <addaction name="actionMapAircraftCenter"/>
    <addaction name="separator"/>
    <addaction name="actionMapDeleteAircraftTrack"/>
@@ -11279,10 +11279,10 @@ relation to shown airport</string>
     <string>Goto &amp;User Aircraft</string>
    </property>
    <property name="toolTip">
-    <string>Keep the user aircraft centered on the map</string>
+    <string>Jump to the user aircraft</string>
    </property>
    <property name="statusTip">
-    <string>Keep the user aircraft centered on the map</string>
+    <string>Jump to the user aircraft</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+PgUp</string>
