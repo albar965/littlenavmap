@@ -1080,17 +1080,32 @@ void MapContextMenu::insertShowInSearchMenu(QMenu& menu)
                             {
                               disable = !visibleOnMap || base == nullptr;
 
+#ifdef DEBUG_INFORMATION
+                              if(base != nullptr)
+                                qDebug() << Q_FUNC_INFO << map::mapObjectTypeToString(base->getType());
+#endif
+
                               if(base != nullptr && base->objType == map::AIRCRAFT)
                               {
                                 // Add shadowed online aircraft for user
                                 const map::MapUserAircraft *userAircraft = base->asPtr<map::MapUserAircraft>();
-                                if(userAircraft != nullptr && userAircraft->getAircraft().isOnlineShadow())
+                                if(userAircraft != nullptr)
                                 {
-                                  atools::fs::sc::SimConnectAircraft shadowedOnlineAircraft =
-                                    NavApp::getOnlinedataController()->getShadowedOnlineAircraft(userAircraft->getAircraft());
+                                  if(userAircraft->getAircraft().isOnlineShadow())
+                                  {
+                                    atools::fs::sc::SimConnectAircraft shadowedOnlineAircraft =
+                                      NavApp::getOnlinedataController()->getShadowedOnlineAircraft(userAircraft->getAircraft());
 
-                                  if(shadowedOnlineAircraft.isValid())
-                                    text = tr("&Show %1 in Search").arg(map::aircraftTextShort(shadowedOnlineAircraft));
+                                    if(shadowedOnlineAircraft.isValid())
+                                      text = tr("&Show %1 in Search").arg(map::aircraftTextShort(shadowedOnlineAircraft));
+                                    else
+                                      disable = true;
+                                  }
+                                  else
+                                    disable = true;
+
+                                  if(disable)
+                                    text = tr("&Show in Search");
                                 }
                               }
                             };
