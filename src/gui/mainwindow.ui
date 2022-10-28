@@ -484,6 +484,8 @@
     <addaction name="actionSearchLogdataUndo"/>
     <addaction name="actionSearchLogdataRedo"/>
     <addaction name="separator"/>
+    <addaction name="actionLogdataCleanup"/>
+    <addaction name="separator"/>
     <addaction name="actionLogdataShowStatistics"/>
     <addaction name="separator"/>
     <addaction name="actionLogdataImportCSV"/>
@@ -11888,6 +11890,17 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Show a warning if the loaded performance file does not match the simulator aircraft</string>
+   </property>
+  </action>
+  <action name="actionLogdataCleanup">
+   <property name="text">
+    <string>&amp;Cleanup Logbook Entries ...</string>
+   </property>
+   <property name="toolTip">
+    <string>Remove invalid logbook entries</string>
+   </property>
+   <property name="statusTip">
+    <string>Remove invalid logbook entries</string>
    </property>
   </action>
  </widget>

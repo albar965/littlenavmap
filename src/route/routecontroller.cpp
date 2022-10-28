@@ -1903,8 +1903,7 @@ void RouteController::calculateRoute()
     // Disable certain optimizations in route finder - use nearest underlying point as start for departure position
     mode |= atools::routing::MODE_POINT_TO_POINT;
 
-  if(calculateRouteInternal(&routeFinder, command, fetchAirways, routeCalcDialog->getCruisingAltitudeFt(),
-                            fromIdx, toIdx, mode))
+  if(calculateRouteInternal(&routeFinder, command, fetchAirways, routeCalcDialog->getCruisingAltitudeFt(), fromIdx, toIdx, mode))
     NavApp::setStatusMessage(tr("Calculated flight plan."));
   else
     NavApp::setStatusMessage(tr("No route found."));

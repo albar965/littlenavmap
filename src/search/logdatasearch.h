@@ -58,6 +58,7 @@ signals:
   void addLogEntry();
   void editLogEntries(const QVector<int>& ids);
   void deleteLogEntries(const QVector<int>& ids);
+  void cleanupLogEntries();
 
 private:
   virtual void updateButtonMenu() override;
@@ -82,7 +83,7 @@ private:
   void addLogEntryTriggered();
 
   /* Callback function which creates a where clause using destination and departure ident. */
-  QueryBuilderResult airportQueryBuilderFunc(QWidget* widget);
+  QueryBuilderResult airportQueryBuilderFunc(QWidget *widget);
 
   /* All layouts, lines and drop down menu items */
   QList<QObject *> logdataSearchWidgets;

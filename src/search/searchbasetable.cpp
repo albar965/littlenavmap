@@ -1324,6 +1324,10 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addAction(ui->actionLogdataAdd);
     menu.addAction(ui->actionLogdataEdit);
     menu.addAction(ui->actionLogdataDelete);
+    menu.addAction(ui->actionLogdataDelete);
+    menu.addSeparator();
+
+    menu.addAction(ui->actionLogdataCleanup);
     menu.addSeparator();
 
     // Logbook airport menu if clicked on departure or destination =======================

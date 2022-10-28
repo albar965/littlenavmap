@@ -24,6 +24,7 @@
 #include "db/undoredoprogress.h"
 #include "exception.h"
 #include "fs/userdata/logdatamanager.h"
+#include "geo/calculations.h"
 #include "gui/dialog.h"
 #include "gui/errorhandler.h"
 #include "gui/helphandler.h"
@@ -51,6 +52,7 @@
 #include "fs/perf/aircraftperf.h"
 #include "gui/choicedialog.h"
 #include "gui/errorhandler.h"
+#include "common/unit.h"
 
 #include <QDebug>
 #include <QStandardPaths>
@@ -631,6 +633,66 @@ void LogdataController::addLogEntry()
     mainWindow->setStatusMessage(tr("Logbook entry added."));
   }
   dlg.saveState();
+}
+
+void LogdataController::cleanupLogEntries()
+{
+  enum Choice
+  {
+    SHORT_DISTANCE,
+    DEPARTURE_AND_DESTINATION_EQUAL,
+    DEPARTURE_OR_DESTINATION_EMPTY
+  };
+
+  qDebug() << Q_FUNC_INFO;
+
+  // Create a dialog with tree checkboxes =====================
+  atools::gui::ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Cleanup Logbook"),
+                                         tr("Select criteria for cleanup.\nNote that you can undo this change."),
+                                         lnm::SEARCHTAB_LOGDATA_CLEAN_DIALOG, "LOGBOOK.html#logbook-cleanup");
+
+  choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
+  choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
+
+  // Get right value and unit for distance
+  float distNm;
+  switch(Unit::getUnitDist())
+  {
+    case opts::DIST_NM:
+      distNm = 5.f;
+      break;
+
+    case opts::DIST_KM:
+      distNm = atools::geo::kmToNm(10.f);
+      break;
+
+    case opts::DIST_MILES:
+      distNm = atools::geo::miToNm(5.f);
+      break;
+  }
+
+  choiceDialog.addCheckBox(SHORT_DISTANCE, tr("&Shorter than %1").arg(Unit::distNm(distNm, true /* addUnit */, 0 /* minValPrec*/)),
+                           tr("Removes all entries having a too small flown distance."));
+  choiceDialog.addCheckBox(DEPARTURE_AND_DESTINATION_EQUAL, tr("&Departure and destination ident equal"),
+                           tr("Removes all entries where the idents of departure and destination are the same. E.g. pattern work."));
+  choiceDialog.addCheckBox(DEPARTURE_OR_DESTINATION_EMPTY, tr("&Either departure or destinaion ident empty"),
+                           tr("Removes incomplete entries where the flight was terminated early, for example."));
+
+  choiceDialog.restoreState();
+
+  if(choiceDialog.exec() == QDialog::Accepted)
+  {
+    // Dialog ok. Remove entries.
+    SqlTransaction transaction(manager->getDatabase());
+    int removed = manager->cleanupLogEntries(choiceDialog.isChecked(DEPARTURE_AND_DESTINATION_EQUAL),
+                                             choiceDialog.isChecked(DEPARTURE_OR_DESTINATION_EMPTY),
+                                             choiceDialog.isChecked(SHORT_DISTANCE) ? distNm : -1.f);
+    transaction.commit();
+
+    if(removed > 0)
+      logChanged(false /* load all */, false /* keep selection */);
+    mainWindow->setStatusMessage(tr("%1 logbook %2 deleted.").arg(removed).arg(removed == 1 ? tr("entry") : tr("entries")));
+  }
 }
 
 void LogdataController::deleteLogEntries(const QVector<int>& ids)

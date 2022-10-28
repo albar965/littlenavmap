@@ -231,12 +231,10 @@ void SearchController::createLogdataSearch(QTableView *tableView)
   postCreateSearch(logdataSearch);
 
   // Get edit and delete signals from user search action and pushbuttons
-  connect(logdataSearch, &LogdataSearch::editLogEntries,
-          NavApp::getLogdataController(), &LogdataController::editLogEntries);
-  connect(logdataSearch, &LogdataSearch::deleteLogEntries,
-          NavApp::getLogdataController(), &LogdataController::deleteLogEntries);
-  connect(logdataSearch, &LogdataSearch::addLogEntry,
-          NavApp::getLogdataController(), &LogdataController::addLogEntry);
+  connect(logdataSearch, &LogdataSearch::editLogEntries, NavApp::getLogdataController(), &LogdataController::editLogEntries);
+  connect(logdataSearch, &LogdataSearch::deleteLogEntries, NavApp::getLogdataController(), &LogdataController::deleteLogEntries);
+  connect(logdataSearch, &LogdataSearch::addLogEntry, NavApp::getLogdataController(), &LogdataController::addLogEntry);
+  connect(logdataSearch, &LogdataSearch::cleanupLogEntries, NavApp::getLogdataController(), &LogdataController::cleanupLogEntries);
 }
 
 void SearchController::createOnlineClientSearch(QTableView *tableView)

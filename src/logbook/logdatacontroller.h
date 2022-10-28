@@ -81,6 +81,7 @@ public:
   /* Show edit dialog and save changes to the database if accepted for the given ids */
   void editLogEntries(const QVector<int>& ids);
   void addLogEntry();
+  void cleanupLogEntries();
 
   /* Show message box and delete entries with the given ids */
   void deleteLogEntries(const QVector<int>& ids);

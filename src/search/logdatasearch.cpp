@@ -196,8 +196,9 @@ void LogdataSearch::connectSearchSlots()
   ui->actionLogdataEdit->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionLogdataAdd->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionLogdataDelete->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionLogdataCleanup->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
-  ui->tableViewLogdata->addActions({ui->actionLogdataEdit, ui->actionLogdataAdd, ui->actionLogdataDelete});
+  ui->tableViewLogdata->addActions({ui->actionLogdataEdit, ui->actionLogdataAdd, ui->actionLogdataDelete, ui->actionLogdataCleanup});
 
   connect(ui->pushButtonLogdataEdit, &QPushButton::clicked, this, &LogdataSearch::editLogEntriesTriggered);
   connect(ui->actionLogdataEdit, &QAction::triggered, this, &LogdataSearch::editLogEntriesTriggered);
@@ -207,6 +208,8 @@ void LogdataSearch::connectSearchSlots()
 
   connect(ui->pushButtonLogdataAdd, &QPushButton::clicked, this, &LogdataSearch::addLogEntryTriggered);
   connect(ui->actionLogdataAdd, &QAction::triggered, this, &LogdataSearch::addLogEntryTriggered);
+
+  connect(ui->actionLogdataCleanup, &QAction::triggered, this, &LogdataSearch::cleanupLogEntries);
 }
 
 void LogdataSearch::addLogEntryTriggered()
