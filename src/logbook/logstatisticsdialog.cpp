@@ -381,7 +381,7 @@ void LogStatisticsDialog::initQueries()
 
     Query{
       tr("Top departure airports"),
-      {tr("Number of\ndepartures"), tr("ICAO"), tr("Name")},
+      {tr("Number of\ndepartures"), tr("Ident"), tr("Name")},
       {Qt::AlignRight, Qt::AlignRight, Qt::AlignLeft},
       "select count(1), departure_ident, departure_name "
       "from logbook group by departure_ident, departure_name order by count(1) desc limit 1000"
@@ -389,7 +389,7 @@ void LogStatisticsDialog::initQueries()
 
     Query{
       tr("Top destination airports"),
-      {tr("Number of\ndestinations"), tr("ICAO"), tr("Name")},
+      {tr("Number of\ndestinations"), tr("Ident"), tr("Name")},
       {Qt::AlignRight, Qt::AlignRight, Qt::AlignLeft},
       "select count(1), destination_ident, destination_name "
       "from logbook group by destination_ident, destination_name order by count(1) desc limit 1000"

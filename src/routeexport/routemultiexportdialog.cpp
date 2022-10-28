@@ -430,9 +430,9 @@ void RouteMultiExportDialog::updateTableColors()
                                "The file suffix like \".lnmpln\", \".pln\" or \".fgfp\" is a part of the pattern.\n"
                                "\n"
                                "PLANTYPE: \"IFR\" or \"VFR\"\n"
-                               "DEPARTIDENT: Departure airport ICAO code\n"
+                               "DEPARTIDENT: Departure airport ident\n"
                                "DEPARTNAME: Departure airport name\n"
-                               "DESTIDENT: Destination airport ICAO code\n"
+                               "DESTIDENT: Destination airport ident\n"
                                "DESTNAME: Destination airport name\n"
                                "CRUISEALT: Cruise altitude"));
 

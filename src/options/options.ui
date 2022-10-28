@@ -5307,9 +5307,9 @@ File patterns for other flight plan files are defined in the multi export option
 The file suffix &quot;.lnmpln&quot; is appended automatically.
 
 PLANTYPE: IFR or VFR
-DEPARTIDENT: Departure airport ICAO code
+DEPARTIDENT: Departure airport ident
 DEPARTNAME: Departure airport name
-DESTIDENT: Destination airport ICAO code
+DESTIDENT: Destination airport ident
 DESTNAME: Destination airport name
 CRUISEALT: Cruise altitude</string>
                  </property>

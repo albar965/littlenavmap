@@ -3208,11 +3208,11 @@
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Departure or destination airport ICAO code.
+              <string>Departure or destination airport ident.
 Matches any visited airport.</string>
              </property>
              <property name="statusTip">
-              <string>Departure or destination airport ICAO code. </string>
+              <string>Departure or destination airport ident. </string>
              </property>
              <property name="placeholderText">
               <string>Airport Ident</string>
@@ -3424,10 +3424,10 @@ Matches any visited airport.</string>
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>Departure airport ICAO code</string>
+                <string>Departure airport ident</string>
                </property>
                <property name="statusTip">
-                <string>Departure airport ICAO code</string>
+                <string>Departure airport ident</string>
                </property>
                <property name="placeholderText">
                 <string>Departure Airport Ident</string>
@@ -3446,10 +3446,10 @@ Matches any visited airport.</string>
                 </sizepolicy>
                </property>
                <property name="toolTip">
-                <string>Destination airport ICAO code</string>
+                <string>Destination airport ident</string>
                </property>
                <property name="statusTip">
-                <string>Destination airport ICAO code</string>
+                <string>Destination airport ident</string>
                </property>
                <property name="placeholderText">
                 <string>Destination Airport Ident</string>
@@ -3788,10 +3788,10 @@ Matches any visited airport.</string>
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Departure airport ICAO code</string>
+              <string>Departure airport ident</string>
              </property>
              <property name="statusTip">
-              <string>Departure airport ICAO code</string>
+              <string>Departure airport ident</string>
              </property>
              <property name="placeholderText">
               <string comment="Online Client Departure">Departure</string>
@@ -3810,10 +3810,10 @@ Matches any visited airport.</string>
               </sizepolicy>
              </property>
              <property name="toolTip">
-              <string>Destination airport ICAO code</string>
+              <string>Destination airport ident</string>
              </property>
              <property name="statusTip">
-              <string>Destination airport ICAO code</string>
+              <string>Destination airport ident</string>
              </property>
              <property name="placeholderText">
               <string>Destination</string>
@@ -10070,7 +10070,7 @@ relation to shown airport</string>
     <string>Edit one or more logbook entries</string>
    </property>
    <property name="statusTip">
-    <string>Edit one or more userpoints</string>
+    <string>Edit one or more logbook entries</string>
    </property>
    <property name="shortcut">
     <string>Return</string>
@@ -10088,7 +10088,7 @@ relation to shown airport</string>
     <string>Add logbook entry</string>
    </property>
    <property name="statusTip">
-    <string>Add Userpoint</string>
+    <string>Add logbook entry</string>
    </property>
    <property name="shortcut">
     <string>Ins</string>
@@ -10106,7 +10106,7 @@ relation to shown airport</string>
     <string>Remove one or more logbook entries</string>
    </property>
    <property name="statusTip">
-    <string>Remove one or more userpoints</string>
+    <string>Remove one or more logbook entries</string>
    </property>
    <property name="shortcut">
     <string>Del</string>

@@ -156,7 +156,7 @@ void RouteStringDialog::buildButtonMenu()
   QAction *action;
   action = new QAction(tr("Write departure and destination airport"), buttonMenu);
   action->setObjectName("actionDepartDest");
-  action->setToolTip(tr("Omit departure and destination airport ICAO code.\n"
+  action->setToolTip(tr("Omit departure and destination airport ident.\n"
                         "Note that the resulting description cannot be read into a flight plan."));
   action->setCheckable(true);
   action->setData(static_cast<int>(rs::START_AND_DEST));
