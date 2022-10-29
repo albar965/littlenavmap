@@ -91,12 +91,12 @@ void MapPainterAirport::render()
 
   if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN))
   {
-    if(context->route->getDepartureAirportLeg().getAirport().isValid())
+    if(context->route->getDepartureAirportLeg().isAirport())
     {
       airports.append(context->route->getDepartureAirportLeg().getAirport());
       routeAirportIds.insert(airports.constLast().id);
     }
-    if(context->route->getDestinationAirportLeg().getAirport().isValid())
+    if(context->route->getDestinationAirportLeg().isAirport())
     {
       airports.append(context->route->getDestinationAirportLeg().getAirport());
       routeAirportIds.insert(airports.constLast().id);

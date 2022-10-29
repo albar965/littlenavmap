@@ -2618,7 +2618,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
   if(routeLeg != nullptr)
   {
     if(routeLeg->getVor().isValid() || routeLeg->getNdb().isValid() || routeLeg->getWaypoint().isValid() ||
-       routeLeg->getAirport().isValid())
+       routeLeg->isAirport())
       NavApp::getMapQueryGui()->getMapObjectByIdent(msaResult, map::AIRPORT_MSA, routeLeg->getIdent(),
                                                     routeLeg->getRegion(), QString(), routeLeg->getPosition());
 
@@ -2717,8 +2717,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
     if(routeLeg->getAirport().noRunways())
     {
-      ActionTool::setText(ui->actionRouteShowApproachCustom, false, QString(), tr(" (no runway)"));
-      ActionTool::setText(ui->actionRouteShowDepartureCustom, false, QString(), tr(" (no runway)"));
+      QString norw = routeLeg->isAirport() ? tr(" (no runway)") : QString();
+      ActionTool::setText(ui->actionRouteShowApproachCustom, false, QString(), norw);
+      ActionTool::setText(ui->actionRouteShowDepartureCustom, false, QString(), norw);
     }
     else
     {
@@ -2810,7 +2811,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
   ui->actionMapAirportMsa->setEnabled(msaResult.hasAirportMsa());
 
-  if(routeLeg != nullptr && routeLeg->getAirport().isValid())
+  if(routeLeg != nullptr && routeLeg->isAirport())
     ActionTool::setText(ui->actionMapTrafficPattern, !routeLeg->getAirport().noRunways(), objectText, tr(" (no runway)"));
   else
     ActionTool::setText(ui->actionMapTrafficPattern, false);
@@ -4978,7 +4979,7 @@ void RouteController::updateModelHighlights()
           else
             item->setToolTip(QString());
 
-          if(leg.getAirport().isValid())
+          if(leg.isAirport())
           {
             QFont font = item->font();
             if(leg.getAirport().addon())

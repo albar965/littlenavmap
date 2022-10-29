@@ -372,6 +372,11 @@ public:
     return airway.isValid() && airway.isAirway();
   }
 
+  bool isAirport() const
+  {
+    return airport.isValid();
+  }
+
   void clearAirwayOrTrack();
 
   const atools::fs::pln::FlightplanEntry& getFlightplanEntry() const;

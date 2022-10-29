@@ -79,7 +79,7 @@ void MapPainterWeather::render()
   // Collect all airports that are visible from route ======================================
   if(context->objectDisplayTypes.testFlag(map::FLIGHTPLAN))
   {
-    if(context->route->getDepartureAirportLeg().getAirport().isValid())
+    if(context->route->getDepartureAirportLeg().isAirport())
     {
       const MapAirport& airport = context->route->getDepartureAirportLeg().getAirport();
       visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);
@@ -87,7 +87,7 @@ void MapPainterWeather::render()
         visibleAirportWeather.append(PaintAirportType(airport, x, y));
     }
 
-    if(context->route->getDestinationAirportLeg().getAirport().isValid())
+    if(context->route->getDestinationAirportLeg().isAirport())
     {
       const MapAirport& airport = context->route->getDestinationAirportLeg().getAirport();
       visibleOnMap = wToS(airport.position, x, y, scale->getScreeenSizeForRect(airport.bounding), &hidden);

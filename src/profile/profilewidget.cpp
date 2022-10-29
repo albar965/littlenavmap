@@ -1318,7 +1318,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       {
         // Draw all except airport, waypoint, VOR and NDB
         map::MapTypes type = leg.getMapObjectType();
-        if(type == map::AIRPORT || leg.getAirport().isValid() ||
+        if(type == map::AIRPORT || leg.isAirport() ||
            type == map::WAYPOINT || leg.getWaypoint().isValid() ||
            type == map::VOR || leg.getVor().isValid() ||
            type == map::NDB || leg.getNdb().isValid())
@@ -1363,7 +1363,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       {
         // Draw all except airport, VOR, NDB and userpoint
         map::MapTypes type = leg.getMapObjectType();
-        if(type == map::AIRPORT || leg.getAirport().isValid() ||
+        if(type == map::AIRPORT || leg.isAirport() ||
            type == map::VOR || leg.getVor().isValid() ||
            type == map::NDB || leg.getNdb().isValid() ||
            type == map::USERPOINTROUTE || type == map::INVALID)
@@ -1402,7 +1402,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
       {
         // Draw all except airport, waypoint and userpoint
         map::MapTypes type = leg.getMapObjectType();
-        if(type == map::AIRPORT || leg.getAirport().isValid() ||
+        if(type == map::AIRPORT || leg.isAirport() ||
            type == map::WAYPOINT || leg.getWaypoint().isValid() ||
            type == map::USERPOINTROUTE || type == map::INVALID)
           continue;

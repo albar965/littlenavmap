@@ -272,12 +272,12 @@ QVector<float> RouteAltitude::getAltitudes() const
     {
       // Fix departure altitude if airport is valid
       const RouteLeg& first = route->getDepartureAirportLeg();
-      if(first.isRoute() && first.getAirport().isValid())
+      if(first.isRoute() && first.isAirport())
         retval.replace(0, first.getPosition().getAltitude());
 
       // Replace the zero altitude of the last dummy segment with the airport altitude
       const RouteLeg& last = route->getDestinationAirportLeg();
-      if(last.isRoute() && last.getAirport().isValid())
+      if(last.isRoute() && last.isAirport())
         retval.replace(retval.size() - 1, last.getPosition().getAltitude());
     }
   }
@@ -289,9 +289,9 @@ QVector<float> RouteAltitude::getAltitudes() const
     {
       const RouteLeg& leg = route->value(i);
 
-      if(i == 0 && leg.getAirport().isValid())
+      if(i == 0 && leg.isAirport())
         retval.append(leg.getPosition().getAltitude());
-      else if(i == destinationAirportLegIndex && leg.getAirport().isValid())
+      else if(i == destinationAirportLegIndex && leg.isAirport())
         retval.append(leg.getPosition().getAltitude());
       else
         retval.append(route->getCruisingAltitudeFeet());
@@ -1633,7 +1633,7 @@ float RouteAltitude::getDestinationAltitude() const
         // Not valid - start at cruise at a waypoint
         return adjustAltitudeForRestriction(cruiseAltitude, destLeg.getProcedureLegAltRestr());
     }
-    else if(destLeg.getAirport().isValid())
+    else if(destLeg.isAirport())
       // Airport altitude
       return destLeg.getPosition().getAltitude();
   }
@@ -1664,7 +1664,7 @@ float RouteAltitude::getDepartureAltitude() const
       // Not valid - start at cruise at a waypoint
       return adjustAltitudeForRestriction(cruiseAltitude, startLeg.getProcedureLegAltRestr());
   }
-  else if(startLeg.getAirport().isValid())
+  else if(startLeg.isAirport())
     // Airport altitude
     return startLeg.getPosition().getAltitude();
 

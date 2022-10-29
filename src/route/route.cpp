@@ -1223,7 +1223,7 @@ void Route::getNearest(const CoordinateConverter& conv, int xs, int ys, int scre
         }
       }
 
-      if(leg.getAirport().isValid())
+      if(leg.isAirport())
       {
         map::MapAirport ap = leg.getAirport();
 
@@ -1375,24 +1375,24 @@ bool Route::hasUserWaypoints() const
 
 bool Route::hasValidDeparture() const
 {
-  return getDepartureAirportLeg().getAirport().isValid();
+  return getDepartureAirportLeg().isAirport();
 }
 
 bool Route::hasValidDestination() const
 {
-  return getDestinationAirportLeg().getAirport().isValid();
+  return getDestinationAirportLeg().isAirport();
 }
 
 bool Route::hasValidDepartureAndRunways() const
 {
   const RouteLeg& leg = getDepartureAirportLeg();
-  return leg.getAirport().isValid() && !leg.getAirport().noRunways();
+  return leg.isAirport() && !leg.getAirport().noRunways();
 }
 
 bool Route::hasValidDestinationAndRunways() const
 {
   const RouteLeg& leg = getDestinationAirportLeg();
-  return leg.getAirport().isValid() && !leg.getAirport().noRunways();
+  return leg.isAirport() && !leg.getAirport().noRunways();
 }
 
 bool Route::hasEntries() const
@@ -1530,7 +1530,7 @@ QVector<map::MapAirport> Route::getAlternateAirports() const
   {
     for(int idx = offset; idx < offset + getNumAlternateLegs(); idx++)
     {
-      if(value(idx).getAirport().isValid())
+      if(value(idx).isAirport())
         alternates.append(value(idx).getAirport());
     }
   }
@@ -2264,13 +2264,12 @@ const RouteLeg& Route::getLegAt(int index) const
 
 bool Route::isAirportDeparture(const QString& ident) const
 {
-  return !isEmpty() && constFirst().getAirport().isValid() && constFirst().getAirport().ident == ident;
+  return !isEmpty() && constFirst().isAirport() && constFirst().getAirport().ident == ident;
 }
 
 bool Route::isAirportDestination(const QString& ident) const
 {
-  return !isEmpty() && getDestinationAirportLeg().getAirport().isValid() &&
-         getDestinationAirportLeg().getAirport().ident == ident;
+  return !isEmpty() && getDestinationAirportLeg().isAirport() && getDestinationAirportLeg().getAirport().ident == ident;
 }
 
 bool Route::isAirportAlternate(const QString& ident) const
@@ -2913,7 +2912,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
         }
 
         // Assign navaid to flight plan entry ================
-        if(leg.getAirport().isValid())
+        if(leg.isAirport())
         {
           entry.setWaypointType(atools::fs::pln::entry::AIRPORT);
           entry.setIdent(leg.getAirport().ident);
@@ -3081,7 +3080,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     // ========================================================================
     // Check for a circle-to-land approach without runway - add a random (best) runway from the airport to
     // satisfy the X-Plane GPS/FMC/G1000
-    if(route.getDestinationAirportLeg().getAirport().isValid() &&
+    if(route.getDestinationAirportLeg().isAirport() &&
        plan.getProperties().value(atools::fs::pln::APPROACHRW).isEmpty() &&
        (!plan.getProperties().value(atools::fs::pln::APPROACH).isEmpty() ||
         !plan.getProperties().value(atools::fs::pln::APPROACH_ARINC).isEmpty()))
