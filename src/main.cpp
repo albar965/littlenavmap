@@ -219,6 +219,12 @@ int main(int argc, char *argv[])
                                       lnm::STARTUP_AIRCRAFT_PERF);
     parser.addOption(performanceOpt);
 
+    QCommandLineOption languageOpt({"l", "language"},
+                                   QObject::tr("Use language code <language> like \"de\" or \"en_US\" for the user interface. "
+                                               "The code is not checked for existence or validity and "
+                                               "is saved for the next startup."), "language");
+    parser.addOption(languageOpt);
+
     // ==============================================
     // Process the actual command line arguments given by the user
     parser.process(*QCoreApplication::instance());
@@ -247,20 +253,27 @@ int main(int argc, char *argv[])
       NavApp::addStartupOption(lnm::STARTUP_AIRCRAFT_PERF, parser.value(performanceOpt));
 
     // ==============================================
+    // Initialize logging and force logfiles into the system or user temp directory
+    // This will prefix all log files with orgranization and application name and append ".log"
+    LoggingHandler::initializeForTemp(atools::settings::Settings::getOverloadedPath(":/littlenavmap/resources/config/logging.cfg"));
+
+    // ==============================================
     // Start splash screen
     if(atools::settings::Settings::instance().valueBool(lnm::OPTIONS_DIALOG_SHOW_SPLASH, true))
       NavApp::initSplashScreen();
 
     // ==============================================
-    // Initialize logging and force logfiles into the system or user temp directory
-    // This will prefix all log files with orgranization and application name and append ".log"
-    LoggingHandler::initializeForTemp(atools::settings::Settings::getOverloadedPath(":/littlenavmap/resources/config/logging.cfg"));
+    // Set language from command line into options - will be saved
+    if(parser.isSet(languageOpt) && !parser.value(languageOpt).isEmpty())
+      atools::settings::Settings::instance().setValue(lnm::OPTIONS_DIALOG_LANGUAGE, parser.value(languageOpt));
 
+    // ==============================================
     // Print some information which can be useful for debugging
     LoggingUtil::logSystemInformation();
     for(const QString& message : messages)
       qInfo() << message;
 
+    // Log system information
     qInfo().noquote().nospace() << "atools revision " << atools::gitRevision() << " "
                                 << Application::applicationName() << " revision " << GIT_REVISION_LITTLENAVMAP;
 

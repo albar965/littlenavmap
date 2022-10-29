@@ -31834,32 +31834,37 @@ Spaces are replaced with underscores.</oldsource>
         <translation>Lade die gegebene Flugzeugleistungsdatei &lt;%1&gt;  &quot;.lnmperf&quot; beim Start.</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="228"/>
+        <location filename="src/main.cpp" line="223"/>
+        <source>Use language code &lt;language&gt; like &quot;de&quot; or &quot;en_US&quot; for the user interface. The code is not checked for existence or validity and is saved for the next startup.</source>
+        <translation>Einen Sprachcode &lt;language&gt; wie &quot;de&quot; oder &quot;en_US&quot; für die Benutzeroberfläche verwenden. Der Code wird nicht auf Existenz oder Gültigkeit geprüft und wird für den nächsten Start gespeichert.</translation>
+    </message>
+    <message>
+        <location filename="src/main.cpp" line="234"/>
         <source>Only one of options -s and -p can be used</source>
         <translation>Nur eine der Optionen -s und -p kann benutzt werden</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="238"/>
+        <location filename="src/main.cpp" line="244"/>
         <source>Only one of options -f and -d can be used</source>
         <translation>Nur eine der Optionen -f und -d kann benutzt werden</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="340"/>
+        <location filename="src/main.cpp" line="353"/>
         <source>Log files:</source>
         <translation>Logdateien:</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="342"/>
+        <location filename="src/main.cpp" line="355"/>
         <source>Database directory:</source>
         <translation>Datenbankverzeichnis:</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="344"/>
+        <location filename="src/main.cpp" line="357"/>
         <source>Configuration:</source>
         <translation>Konfiguration:</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="368"/>
+        <location filename="src/main.cpp" line="381"/>
         <source>%1 - Error</source>
         <translation>%1 - Fehler</translation>
     </message>
@@ -31869,7 +31874,7 @@ Spaces are replaced with underscores.</oldsource>
         <translation type="vanished">%1 benötigt mindestens macOS Sierra Version 10.12 or neuer.</translation>
     </message>
     <message>
-        <location filename="src/main.cpp" line="369"/>
+        <location filename="src/main.cpp" line="382"/>
         <source>%1 is already running.</source>
         <translation>%1 läuft bereits.</translation>
     </message>
