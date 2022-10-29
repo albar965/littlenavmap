@@ -19,6 +19,7 @@
 
 #include "atools.h"
 #include "common/constants.h"
+#include "common/settingsmigrate.h"
 #include "db/databasedialog.h"
 #include "db/databaseloader.h"
 #include "db/dbtools.h"
@@ -178,6 +179,13 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     onlinedataManager = new atools::fs::online::OnlinedataManager(databaseOnline, verbose);
     onlinedataManager->createSchema();
     onlinedataManager->initQueries();
+
+    if(migrate::getOptionsVersion().isValid() && migrate::getOptionsVersion() <= atools::util::Version("2.8.1.beta"))
+    {
+      qDebug() << Q_FUNC_INFO << "Cleaning undo/redo in logbook and userdata";
+      logdataManager->clearUndoRedoData();
+      userdataManager->clearUndoRedoData();
+    }
   }
 
   if(mainWindow != nullptr)
