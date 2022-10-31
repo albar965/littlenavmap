@@ -1279,7 +1279,7 @@ void AircraftPerfController::getEnduranceFull(float& enduranceHours, float& endu
   }
 }
 
-void AircraftPerfController::getEnduranceCurrent(float& enduranceHours, float& enduranceNm, bool average)
+void AircraftPerfController::getEnduranceAverage(float& enduranceHours, float& enduranceNm)
 {
   const atools::fs::sc::SimConnectUserAircraft& userAircraft = lastSimData->getUserAircraftConst();
 
@@ -1287,13 +1287,7 @@ void AircraftPerfController::getEnduranceCurrent(float& enduranceHours, float& e
      userAircraft.getFuelFlowPPH() > 1.0f && userAircraft.getGroundSpeedKts() > map::MIN_GROUND_SPEED)
   {
     float fuelFlowPph = 0.f, groundspeedKts = 0.f;
-    if(average)
-      fuelFlowGroundspeedAverage->getAverages(fuelFlowPph, groundspeedKts);
-    else
-    {
-      fuelFlowPph = userAircraft.getFuelFlowPPH();
-      groundspeedKts = userAircraft.getGroundSpeedKts();
-    }
+    fuelFlowGroundspeedAverage->getAverages(fuelFlowPph, groundspeedKts);
 
     float realFuelFlow = fuelFlowPph * perf->getContingencyFuelFactor();
     enduranceHours = std::max((userAircraft.getFuelTotalWeightLbs() - perf->getReserveFuelLbs()) / realFuelFlow, 0.f);

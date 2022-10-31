@@ -4384,8 +4384,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
     if(userAircraft->isFlying())
     {
-      float hoursRemaining, distanceRemaining;
-      perfController->getEnduranceCurrent(hoursRemaining, distanceRemaining, false /* average */);
+      float hoursRemaining = 0.f, distanceRemaining = 0.f;
+      perfController->getEnduranceAverage(hoursRemaining, distanceRemaining);
 
       if(hoursRemaining < map::INVALID_TIME_VALUE && distanceRemaining < map::INVALID_DISTANCE_VALUE)
       {

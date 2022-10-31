@@ -922,8 +922,8 @@ void MapPainterMark::paintEndurance()
     if(pos.isValid())
     {
       // Get endurance
-      float enduranceHours, enduranceNm;
-      NavApp::getAircraftPerfController()->getEnduranceCurrent(enduranceHours, enduranceNm, true /* average */);
+      float enduranceHours = 0.f, enduranceNm = 0.f;
+      NavApp::getAircraftPerfController()->getEnduranceAverage(enduranceHours, enduranceNm);
       if(enduranceNm < map::INVALID_DISTANCE_VALUE)
       {
         Marble::GeoPainter *painter = context->painter;

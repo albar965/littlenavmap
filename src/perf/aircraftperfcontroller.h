@@ -168,7 +168,7 @@ public:
   void getEnduranceFull(float& enduranceHours, float& enduranceNm);
 
   /* Current aircraft endurance based on current fuel flow. This is the rolling average over ten seconds or current value. */
-  void getEnduranceCurrent(float& enduranceHours, float& enduranceNm, bool average);
+  void getEnduranceAverage(float& enduranceHours, float& enduranceNm);
 
   /* Get collected major errors */
   bool hasErrors() const;
