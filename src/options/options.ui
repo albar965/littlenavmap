@@ -639,7 +639,7 @@ opening files, modifying the flight plan and other operations.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-79</y>
              <width>556</width>
              <height>537</height>
             </rect>
@@ -925,6 +925,9 @@ This does not affect the map window which can be changed separately on the optio
                  <property name="text">
                   <string>Text size for &amp;flight plan table:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsGuiRouteText</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="1" column="1">
@@ -959,6 +962,9 @@ This does not affect the map window which can be changed separately on the optio
                 <widget class="QLabel" name="labelOptionsGuiSimInfoText">
                  <property name="text">
                   <string>Text size for &amp;simulator aircraft information dock window:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsGuiSimInfoText</cstring>
                  </property>
                 </widget>
                </item>
@@ -1033,6 +1039,9 @@ This does not affect the map window which can be changed separately on the optio
                  <property name="text">
                   <string>Text size for &amp;flight plan fuel report:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsGuiAircraftPerf</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="4" column="0">
@@ -1040,12 +1049,18 @@ This does not affect the map window which can be changed separately on the optio
                  <property name="text">
                   <string>Text size for &amp;information dock window:</string>
                  </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsGuiInfoText</cstring>
+                 </property>
                 </widget>
                </item>
                <item row="3" column="0">
                 <widget class="QLabel" name="labelOptionsGuiSearchText">
                  <property name="text">
                   <string>Text size for &amp;search result tables and procedure view:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsGuiSearchText</cstring>
                  </property>
                 </widget>
                </item>
@@ -4216,7 +4231,7 @@ The required keys shown below are extracted from the installed map themes.&lt;/p
 &lt;/p&gt;
 
 &lt;p&gt;&lt;b&gt;A restart might be needed after changing keys.&lt;br/&gt;
-Do not show this this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&gt;
+Do not show this information publicly in forums on screenshots.&lt;/b&gt;&lt;/p&gt;
 
 &lt;p&gt;Double click a value to edit.&lt;/p&gt;
 </string>
@@ -5668,7 +5683,7 @@ Note that this value does not affect flight plan calculation or saving of flight
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>0</y>
+             <y>-183</y>
              <width>556</width>
              <height>641</height>
             </rect>

@@ -22,7 +22,6 @@
 #include "gui/runwayselection.h"
 #include "gui/helphandler.h"
 #include "gui/widgetstate.h"
-#include "settings/settings.h"
 
 #include <QPushButton>
 #include <QStringBuilder>

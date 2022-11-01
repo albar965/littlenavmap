@@ -278,13 +278,21 @@ The fuel report will show a warning if this does not match the simulator aircraf
           <enum>QFrame::Sunken</enum>
          </property>
          <property name="text">
-          <string>Labels of minimum required values for fuel calculation and elevation profile are &lt;b&gt;bold&lt;/b&gt;.</string>
+          <string>Labels of minimum required values for fuel calculation and elevation profile are &lt;b&gt;bold&lt;/b&gt;.&lt;br/&gt;
+
+&lt;b&gt;See &lt;a href=&quot;https://contentzone.eurocontrol.int/aircraftperformance/default.aspx?&quot;&gt;Aircraft Performance Database&lt;/a&gt; for a start.&lt;/b&gt;</string>
          </property>
          <property name="wordWrap">
           <bool>true</bool>
          </property>
          <property name="margin">
           <number>5</number>
+         </property>
+         <property name="openExternalLinks">
+          <bool>true</bool>
+         </property>
+         <property name="textInteractionFlags">
+          <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
          </property>
         </widget>
        </item>

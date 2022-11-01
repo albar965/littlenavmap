@@ -902,8 +902,8 @@ void RouteMultiExportDialog::tableContextMenu(const QPoint&)
   menu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
   menu.addAction(ui->actionSelect);
   menu.addSeparator();
-  menu.addAction(ui->actionExportFileNow);
   menu.addAction(ui->actionSelectExportPath);
+  menu.addAction(ui->actionExportFileNow);
   menu.addSeparator();
   menu.addAction(ui->actionEditPath);
   menu.addAction(ui->actionResetExportPath);

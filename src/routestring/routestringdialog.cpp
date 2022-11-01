@@ -63,7 +63,7 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
       "<b>SIDTRANS</b> is a SID and an optional transition which can be given as <b>&quot;SID.TRANS&quot;</b> or <b>&quot;SID TRANS&quot;</b><br/>"
       "<b>ENROUTE</b> is a space separated list of navaids, navaid/airway/navaid combinations or user defined waypoints as coordinates.<br/>"
       "<b>STARTRANS</b> is a STAR and an optional transition which can be given as <b>&quot;STAR.TRANS&quot;</b>, "
-        "<b>&quot;STAR TRANS&quot;</b>, <b>&quot;TRANS.STAR&quot;</b> or <b>&quot;TRANS STAR &quot;</b><br/>"
+        "<b>&quot;STAR TRANS&quot;</b>, <b>&quot;TRANS.STAR&quot;</b> or <b>&quot;TRANS STAR&quot;</b><br/>"
         "<b>TO</b> is the required destination airport. Arrival time <b>ETA</b> is ignored.<br/>"
         "<b>ALTERNATES</b> is a list of alternate or enroute airports depending on selected option.<br/>"
         "<b>Press the help button to open the online manual for more information.</b></p>");
