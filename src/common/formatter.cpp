@@ -117,9 +117,10 @@ QString capNavString(const QString& str)
 
 bool checkCoordinates(QString& message, const QString& text, atools::geo::Pos *pos)
 {
-  atools::geo::Pos readPos = atools::fs::util::fromAnyFormat(text);
+  bool hemisphere = false;
+  atools::geo::Pos readPos = atools::fs::util::fromAnyFormat(text, &hemisphere);
 
-  if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
+  if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY && !hemisphere)
     // Swap coordinates for lat lon formats if no hemisphere (N, S, E, W) is given
     atools::fs::util::maybeSwapOrdinates(readPos, text);
 

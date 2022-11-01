@@ -360,9 +360,10 @@ void UserdataDialog::dialogToRecord()
 
   if(editMode != ud::EDIT_MULTIPLE)
   {
-    atools::geo::Pos pos = atools::fs::util::fromAnyFormat(ui->lineEditUserdataLatLon->text());
+    bool hemisphere = false;
+    atools::geo::Pos pos = atools::fs::util::fromAnyFormat(ui->lineEditUserdataLatLon->text(), &hemisphere);
 
-    if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
+    if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY && !hemisphere)
       // Swap coordinates for lat lon formats if no hemisphere (N, S, E, W) is given
       atools::fs::util::maybeSwapOrdinates(pos, ui->lineEditUserdataLatLon->text());
 

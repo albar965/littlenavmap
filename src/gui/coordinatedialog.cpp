@@ -72,9 +72,10 @@ void CoordinateDialog::buttonBoxClicked(QAbstractButton *button)
 {
   if(button == ui->buttonBoxMapCoordinate->button(QDialogButtonBox::Ok))
   {
-    atools::geo::Pos pos = atools::fs::util::fromAnyFormat(ui->lineEditMapCoordinateLatLon->text());
+    bool hemisphere = false;
+    atools::geo::Pos pos = atools::fs::util::fromAnyFormat(ui->lineEditMapCoordinateLatLon->text(), &hemisphere);
 
-    if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
+    if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY && !hemisphere)
       // Parsing uses lat/lon - swap for lon/lat
       // Swap coordinates for lat lon formats if no hemisphere (N, S, E, W) is given
       atools::fs::util::maybeSwapOrdinates(pos, ui->lineEditMapCoordinateLatLon->text());

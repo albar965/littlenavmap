@@ -228,9 +228,10 @@ void RangeMarkerDialog::updateButtonColor()
 
 void RangeMarkerDialog::fillRangeMarker(map::RangeMarker& marker, bool dialogOpened)
 {
-  *position = atools::fs::util::fromAnyFormat(ui->lineEditRangeMarkerLatLon->text());
+  bool hemisphere = false;
+  *position = atools::fs::util::fromAnyFormat(ui->lineEditRangeMarkerLatLon->text(), &hemisphere);
 
-  if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY)
+  if(Unit::getUnitCoords() == opts::COORDS_LONX_LATY && !hemisphere)
     // Swap coordinates for lat lon formats if no hemisphere (N, S, E, W) is given
     atools::fs::util::maybeSwapOrdinates(*position, ui->lineEditRangeMarkerLatLon->text());
 
