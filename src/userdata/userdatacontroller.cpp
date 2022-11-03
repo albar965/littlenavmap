@@ -612,11 +612,13 @@ void UserdataController::importCsv()
   }
   catch(atools::Exception& e)
   {
+    QGuiApplication::restoreOverrideCursor();
     NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
+    QGuiApplication::restoreOverrideCursor();
     NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
@@ -646,11 +648,13 @@ void UserdataController::importXplaneUserFixDat()
   }
   catch(atools::Exception& e)
   {
+    QGuiApplication::restoreOverrideCursor();
     NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
+    QGuiApplication::restoreOverrideCursor();
     NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
@@ -680,11 +684,13 @@ void UserdataController::importGarmin()
   }
   catch(atools::Exception& e)
   {
+    QGuiApplication::restoreOverrideCursor();
     NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
+    QGuiApplication::restoreOverrideCursor();
     NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
@@ -701,8 +707,7 @@ void UserdataController::exportCsv()
       QString file = dialog->saveFileDialog(
         tr("Export Userpoint CSV File"),
         tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV),
-        ".csv",
-        "Userdata/Csv", QString(), QString(), append /* dont confirm overwrite */);
+        ".csv", "Userdata/Csv", QString(), QString(), append /* dont confirm overwrite */);
 
       if(!file.isEmpty())
       {
@@ -748,8 +753,7 @@ void UserdataController::exportXplaneUserFixDat()
         QVector<int> ids;
         if(selected)
           ids = NavApp::getUserdataSearch()->getSelectedIds();
-        int numExported =
-          manager->exportXplane(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE, xp12);
+        int numExported = manager->exportXplane(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE, xp12);
         mainWindow->setStatusMessage(tr("%n userpoint(s) exported.", "", numExported));
       }
     }
@@ -859,7 +863,7 @@ QString UserdataController::garminGtnUserWptPath()
 #ifdef Q_OS_WIN32
   QString gtnPath(QProcessEnvironment::systemEnvironment().value("GTNSIMDATA"));
   path = gtnPath.isEmpty() ? "C:\\ProgramData\\Garmin\\Trainers\\GTN" : gtnPath;
-#elif DEBUG_INFORMATION
+#elif defined(DEBUG_INFORMATION)
   path = atools::buildPath({atools::documentsDir(), "Garmin", "Trainers", "GTN"});
 #else
   path = atools::documentsDir();

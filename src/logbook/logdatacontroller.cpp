@@ -752,11 +752,13 @@ void LogdataController::importXplane()
   }
   catch(atools::Exception& e)
   {
+    QGuiApplication::restoreOverrideCursor();
     NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
+    QGuiApplication::restoreOverrideCursor();
     NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
@@ -786,11 +788,13 @@ void LogdataController::importCsv()
   }
   catch(atools::Exception& e)
   {
+    QGuiApplication::restoreOverrideCursor();
     NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleException(e);
   }
   catch(...)
   {
+    QGuiApplication::restoreOverrideCursor();
     NavApp::closeSplashScreen();
     atools::gui::ErrorHandler(mainWindow).handleUnknownException();
   }
