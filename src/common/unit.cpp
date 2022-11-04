@@ -105,6 +105,7 @@ QString Unit::replacePlaceholders(const QString& text, bool fuelAsVolume, opts::
 {
   QString retval(text);
   retval.replace("%distshort%", unitShortDistStr);
+  retval.replace("%dists%", unitShortDistStr);
   retval.replace("%dist%", unitDistStr);
   retval.replace("%alt%", unitAltStr);
   retval.replace("%speed%", unitSpeedStr);

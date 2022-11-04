@@ -118,6 +118,8 @@ void MapThemeHandler::loadThemes()
       ids.insert(theme.theme);
       sourceDirs.insert(theme.sourceDir);
 
+      qInfo() << Q_FUNC_INFO << "Found" << theme.theme << theme.name;
+
       // Add only visible themes for Earth
       themes.append(theme);
 

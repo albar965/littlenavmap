@@ -631,7 +631,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportNameSearch">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <item>
               <widget class="QLineEdit" name="lineEditAirportIcaoSearch">
@@ -779,7 +779,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportNameSearch2">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <item>
               <widget class="QLineEdit" name="lineEditAirportCitySearch">
@@ -954,7 +954,7 @@
                 <string>Airports with procedures</string>
                </property>
                <property name="text">
-                <string>&amp;Procedures</string>
+                <string>&amp;Proc.</string>
                </property>
                <property name="tristate">
                 <bool>true</bool>
@@ -1077,7 +1077,10 @@
            </item>
            <item>
             <layout class="QGridLayout" name="gridLayoutAirportSearchParking">
-             <property name="spacing">
+             <property name="horizontalSpacing">
+              <number>0</number>
+             </property>
+             <property name="verticalSpacing">
               <number>2</number>
              </property>
              <item row="0" column="1">
@@ -1197,7 +1200,10 @@
            </item>
            <item>
             <layout class="QGridLayout" name="gridLayoutAirportSearchRunway">
-             <property name="spacing">
+             <property name="horizontalSpacing">
+              <number>0</number>
+             </property>
+             <property name="verticalSpacing">
               <number>2</number>
              </property>
              <item row="0" column="0">
@@ -1209,7 +1215,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>&amp;Runways:</string>
+                <string>&amp;Rwy:</string>
                </property>
                <property name="alignment">
                 <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
@@ -1234,7 +1240,7 @@
                 <bool>true</bool>
                </property>
                <property name="suffix">
-                <string> %distshort% max</string>
+                <string> %dists% max</string>
                </property>
                <property name="maximum">
                 <number>50000</number>
@@ -1259,7 +1265,7 @@
                 <bool>true</bool>
                </property>
                <property name="suffix">
-                <string> %distshort% min</string>
+                <string> %dists% min</string>
                </property>
                <property name="maximum">
                 <number>50000</number>
@@ -1340,7 +1346,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportAltitudeSearch">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="topMargin">
               <number>0</number>
@@ -1357,7 +1363,7 @@
                 </sizepolicy>
                </property>
                <property name="text">
-                <string>&amp;Elevation:</string>
+                <string>&amp;Elev:</string>
                </property>
                <property name="buddy">
                 <cstring>spinBoxAirportAltitudeMinSearch</cstring>
@@ -1441,7 +1447,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportDistanceSearch">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="topMargin">
               <number>0</number>
@@ -1461,7 +1467,7 @@
                 <string>Search for all airports within the given distance limits around the distance search center</string>
                </property>
                <property name="text">
-                <string>&amp;Distance:</string>
+                <string>&amp;Dist:</string>
                </property>
               </widget>
              </item>
@@ -1583,7 +1589,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportFlightplanSearch">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="topMargin">
               <number>0</number>
@@ -1631,7 +1637,7 @@
                 <bool>true</bool>
                </property>
                <property name="suffix">
-                <string> %dist% min distance</string>
+                <string> %dist% min</string>
                </property>
                <property name="maximum">
                 <number>20490</number>
@@ -1659,7 +1665,7 @@
                 <bool>true</bool>
                </property>
                <property name="suffix">
-                <string> %dist% max distance</string>
+                <string> %dist% max</string>
                </property>
                <property name="minimum">
                 <number>10</number>
@@ -1696,7 +1702,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAirportScenerySearch">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <item>
               <widget class="QLineEdit" name="lineEditAirportScenerySearch">
@@ -1850,7 +1856,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutNavNameSearch">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="topMargin">
               <number>0</number>
@@ -2056,7 +2062,10 @@
              <property name="topMargin">
               <number>0</number>
              </property>
-             <property name="spacing">
+             <property name="horizontalSpacing">
+              <number>0</number>
+             </property>
+             <property name="verticalSpacing">
               <number>2</number>
              </property>
              <item row="2" column="1">
@@ -2257,7 +2266,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutNavDistanceSearch">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="topMargin">
               <number>0</number>
@@ -2399,7 +2408,7 @@
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutNavScenerySearch">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="bottomMargin">
               <number>0</number>
@@ -2548,19 +2557,19 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_2">
            <property name="spacing">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="leftMargin">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="topMargin">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="rightMargin">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="bottomMargin">
-            <number>2</number>
+            <number>0</number>
            </property>
            <item>
             <widget class="QComboBox" name="comboBoxProcedureSearchFilter">
@@ -2652,13 +2661,6 @@
              </property>
              <property name="flat">
               <bool>false</bool>
-             </property>
-            </widget>
-           </item>
-           <item>
-            <widget class="Line" name="line_2">
-             <property name="orientation">
-              <enum>Qt::Vertical</enum>
              </property>
             </widget>
            </item>
@@ -2790,7 +2792,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayoutUserdata">
            <property name="spacing">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -3025,7 +3027,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayoutUserdataMore">
            <property name="spacing">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -3194,7 +3196,7 @@
          <item>
           <layout class="QHBoxLayout" name="horizontalLayoutLogdata">
            <property name="spacing">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -3410,7 +3412,7 @@ Matches any visited airport.</string>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutLogdataDepartDest">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="topMargin">
               <number>0</number>
@@ -3464,7 +3466,7 @@ Matches any visited airport.</string>
            <item>
             <layout class="QHBoxLayout" name="horizontalLayoutAircraftSim">
              <property name="spacing">
-              <number>2</number>
+              <number>0</number>
              </property>
              <property name="topMargin">
               <number>0</number>
@@ -3571,7 +3573,7 @@ Matches any visited airport.</string>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayoutLogdataDist">
            <property name="spacing">
-            <number>2</number>
+            <number>0</number>
            </property>
            <property name="topMargin">
             <number>0</number>
@@ -3733,7 +3735,7 @@ Matches any visited airport.</string>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayoutOnlineClient">
            <property name="spacing">
-            <number>2</number>
+            <number>0</number>
            </property>
            <item>
             <widget class="QLineEdit" name="lineEditOnlineClientCallsign">
@@ -3992,7 +3994,7 @@ Matches any visited airport.</string>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayoutOnlineCenter">
            <property name="spacing">
-            <number>2</number>
+            <number>0</number>
            </property>
            <item>
             <widget class="QLineEdit" name="lineEditOnlineCenterCallsign">
@@ -12006,7 +12008,6 @@ relation to shown airport</string>
   <tabstop>tableViewNavSearch</tabstop>
   <tabstop>comboBoxProcedureSearchFilter</tabstop>
   <tabstop>comboBoxProcedureRunwayFilter</tabstop>
-  <tabstop>lineEditProcedureSearchIdentFilter</tabstop>
   <tabstop>pushButtonProcedureShowAll</tabstop>
   <tabstop>pushButtonProcedureSearchReset</tabstop>
   <tabstop>pushButtonProcedureSearchClearSelection</tabstop>

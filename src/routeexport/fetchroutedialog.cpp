@@ -21,7 +21,6 @@
 
 #include "atools.h"
 #include "common/constants.h"
-#include "common/unit.h"
 #include "fs/pln/flightplan.h"
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
@@ -29,6 +28,7 @@
 #include "navapp.h"
 #include "route/routecontroller.h"
 #include "routestring/routestringreader.h"
+#include "util/htmlbuilder.h"
 #include "util/httpdownloader.h"
 #include "util/xmlstream.h"
 #include "zip/gzip.h"
@@ -304,10 +304,14 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
 void FetchRouteDialog::downloadFailed(const QString& error, int errorCode, QString downloadUrl)
 {
   qDebug() << Q_FUNC_INFO;
-  ui->textEditResult->setText(tr("<p>Downloading flight plan failed.</p>"
-                                   "<p>Download of SimBrief Flight plan from<br/>"
-                                   "\"%1\"<br/>failed.</p>" "<p>Error: %2 (%3)</p>").
-                              arg(downloadUrl).arg(error).arg(errorCode));
+  QString message = atools::util::HtmlBuilder::errorMessage(tr("Download of SimBrief flight plan failed."));
+
+  ui->textEditResult->setText(tr("<p>%1</p>"
+                                   "<p>URL: &quot;%2&quot;</p>"
+                                     "<p>Error: %3 (%4)</p>"
+                                       "<p>Did you log into SimBrief and generate a flight plan?</p>"
+                                         "<p>Is your Pilot ID or Username correct?</p>").
+                              arg(message).arg(downloadUrl).arg(error).arg(errorCode));
 
   // Have to update states in event queue since isDownloading is still set while in this method
   QTimer::singleShot(0, this, &FetchRouteDialog::updateButtonStates);
