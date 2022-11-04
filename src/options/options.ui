@@ -639,7 +639,7 @@ opening files, modifying the flight plan and other operations.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-79</y>
+             <y>0</y>
              <width>556</width>
              <height>537</height>
             </rect>
@@ -4762,7 +4762,7 @@ airspace filename has to match the callsign of the online center.</string>
              <x>0</x>
              <y>0</y>
              <width>556</width>
-             <height>502</height>
+             <height>528</height>
             </rect>
            </property>
            <layout class="QVBoxLayout" name="verticalLayout_25">
@@ -4958,25 +4958,11 @@ Smaller values zoom closer.</string>
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="2" column="1">
-                <widget class="QCheckBox" name="checkBoxOptionsSimDoNotFollowScroll">
-                 <property name="toolTip">
-                  <string>The map will stop following the aircraft for the given time if the user does any interaction with the map like scrolling or zooming.
-This setting is also used in the elevation profile.
-See notes in the manual for details of this setting and how to move around in the map.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Allow scrolling and zooming in the map and jump back to aircraft after:</string>
-                 </property>
-                 <property name="checked">
-                  <bool>true</bool>
-                 </property>
-                </widget>
-               </item>
-               <item row="3" column="2">
+               <item row="4" column="2">
                 <widget class="QDoubleSpinBox" name="doubleSpinBoxOptionsSimZoomOnLanding">
                  <property name="toolTip">
-                  <string>Zoom distance that should be applied after touchdown</string>
+                  <string>Zoom distance that should be applied after touchdown.
+Smaller means closer.</string>
                  </property>
                  <property name="suffix">
                   <string> %dist%</string>
@@ -4998,10 +4984,28 @@ See notes in the manual for details of this setting and how to move around in th
                  </property>
                 </widget>
                </item>
-               <item row="3" column="1">
+               <item row="4" column="1">
                 <widget class="QCheckBox" name="checkBoxOptionsSimZoomOnLanding">
+                 <property name="toolTip">
+                  <string>Zoom in to see airport details after touchdown</string>
+                 </property>
                  <property name="text">
                   <string>&amp;Zoom in on touchdown:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QCheckBox" name="checkBoxOptionsSimDoNotFollowScroll">
+                 <property name="toolTip">
+                  <string>The map will stop following the aircraft for the given time if the user does any interaction with the map like scrolling or zooming.
+This setting is also used in the elevation profile.
+See notes in the manual for details of this setting and how to move around in the map.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Allow scrolling and zooming in the map and jump back to aircraft after:</string>
+                 </property>
+                 <property name="checked">
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
@@ -5019,6 +5023,38 @@ This setting is also used in the elevation profile.</string>
                  </property>
                  <property name="maximum">
                   <number>300</number>
+                 </property>
+                 <property name="value">
+                  <number>10</number>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="1">
+                <widget class="QCheckBox" name="checkBoxOptionsSimZoomOnTakeoff">
+                 <property name="toolTip">
+                  <string>Zoom out after takeoff.
+Not applicable if &quot;Center map on aircraft and next flight plan waypoint&quot; is selected.</string>
+                 </property>
+                 <property name="text">
+                  <string>&amp;Zoom out on takeoff:</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="3" column="2">
+                <widget class="QSpinBox" name="spinBoxOptionsSimZoomOnTakeoff">
+                 <property name="toolTip">
+                  <string>Zoom distance to be applied after takeoff.
+Not applicable if &quot;Center map on aircraft and next flight plan waypoint&quot; is selected.
+Smaller means closer.</string>
+                 </property>
+                 <property name="suffix">
+                  <string> %dist%</string>
+                 </property>
+                 <property name="minimum">
+                  <number>1</number>
+                 </property>
+                 <property name="maximum">
+                  <number>1000</number>
                  </property>
                  <property name="value">
                   <number>10</number>
@@ -5683,7 +5719,7 @@ Note that this value does not affect flight plan calculation or saving of flight
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-183</y>
+             <y>0</y>
              <width>556</width>
              <height>641</height>
             </rect>
@@ -7407,6 +7443,8 @@ Changes only settings that can be done with this dialog.</string>
   <tabstop>spinBoxOptionsSimUpdateBox</tabstop>
   <tabstop>checkBoxOptionsSimDoNotFollowScroll</tabstop>
   <tabstop>spinBoxOptionsSimDoNotFollowScrollTime</tabstop>
+  <tabstop>checkBoxOptionsSimZoomOnTakeoff</tabstop>
+  <tabstop>spinBoxOptionsSimZoomOnTakeoff</tabstop>
   <tabstop>checkBoxOptionsSimZoomOnLanding</tabstop>
   <tabstop>doubleSpinBoxOptionsSimZoomOnLanding</tabstop>
   <tabstop>checkBoxOptionsSimCenterLegTable</tabstop>

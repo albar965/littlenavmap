@@ -2221,6 +2221,9 @@ void MapWidget::takeoffLandingTimeout()
     // Clear for no zoom close
     touchdownDetectedZoom = false;
 
+    // Set for one zoom close
+    takeoffDetectedZoom = true; // Reset in simDataChanged()
+
     // Do not record logbook entries for replay
     if(!aircraft.isSimReplay() && !takeoffLandingLastAircraft->isSimReplay())
     {
@@ -2238,6 +2241,9 @@ void MapWidget::takeoffLandingTimeout()
 
     // Set for one zoom close
     touchdownDetectedZoom = true; // Reset in simDataChanged()
+
+    // Clear for no zoom out
+    takeoffDetectedZoom = false;
 
     // Do not record logbook entries for replay
     if(!aircraft.isSimReplay() && !takeoffLandingLastAircraft->isSimReplay())
@@ -2442,6 +2448,10 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     if(od.getFlags2().testFlag(opts2::ROUTE_ZOOM_LANDING))
       touchdownZoomRectKm = Unit::rev(od.getSimZoomOnLandingDistance(), Unit::distMeterF) / 1000.f;
 
+    float takeoffZoomRectKm = MAX_ZOOM_RECT_DIAMETER_KM;
+    if(od.getFlags2().testFlag(opts2::ROUTE_ZOOM_TAKEOFF))
+      takeoffZoomRectKm = Unit::rev(od.getSimZoomOnTakeoffDistance(), Unit::distMeterF) / 1000.f;
+
     if(centerAircraftChecked && !contextMenuActive) // centering required by button but not while menu is open
     {
       // Postpone screen updates
@@ -2620,19 +2630,28 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
               // Center aircraft only
               centerPosOnMap(aircraft.getPosition());
           }
-        } // if(!aircraftVisible || ...
+        } // if(!aircraftVisible || ...&Center map on aircraft and next flight plan waypoint
       } // if(mouseState == mw::NONE && viewContext() == Marble::Still && !jumpBack->isActive())
     } // if(centerAircraftChecked && !contextMenuActive)
 
     // Zoom close after touchdown ===================================================================
     // Only if user is not mousing around on the map
-    if(mouseState == mw::NONE && viewContext() == Marble::Still && !contextMenuActive && touchdownDetectedZoom &&
-       od.getFlags2().testFlag(opts2::ROUTE_ZOOM_LANDING))
+    if(mouseState == mw::NONE && viewContext() == Marble::Still && !contextMenuActive)
     {
-      qDebug() << Q_FUNC_INFO << "Touchdown detected - zooming close" << touchdownZoomRectKm << "km";
-      centerPosOnMap(aircraft.getPosition());
-      setDistanceToMap(touchdownZoomRectKm);
-      touchdownDetectedZoom = false;
+      if(touchdownDetectedZoom && od.getFlags2().testFlag(opts2::ROUTE_ZOOM_LANDING))
+      {
+        qDebug() << Q_FUNC_INFO << "Touchdown detected - zooming close" << touchdownZoomRectKm << "km";
+        centerPosOnMap(aircraft.getPosition());
+        setDistanceToMap(touchdownZoomRectKm);
+        touchdownDetectedZoom = false;
+      }
+      else if(takeoffDetectedZoom && !centerAircraftAndLeg && od.getFlags2().testFlag(opts2::ROUTE_ZOOM_TAKEOFF))
+      {
+        qDebug() << Q_FUNC_INFO << "Takeoff detected - zooming out" << takeoffZoomRectKm << "km";
+        centerPosOnMap(aircraft.getPosition());
+        setDistanceToMap(takeoffZoomRectKm);
+        takeoffDetectedZoom = false;
+      }
     }
 
     // if(aircraft.isFlying())

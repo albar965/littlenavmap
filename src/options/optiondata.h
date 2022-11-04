@@ -347,7 +347,8 @@ enum Flag2
   /* checkBoxOptionsMapUserpointText */
   MAP_USERPOINT_TEXT_BACKGROUND = 1 << 24,
 
-  // Omitted ================
+  /* checkBoxOptionsSimZoomOnTakeoff */
+  ROUTE_ZOOM_TAKEOFF = 1 << 25,
 
   /* checkBoxOptionsMapUserAircraftText */
   MAP_USER_TEXT_BACKGROUND = 1 << 26,
@@ -1038,6 +1039,12 @@ public:
     return simZoomOnLandingDist;
   }
 
+  /* In local user units (NM, mi, KM) */
+  float getSimZoomOnTakeoffDistance() const
+  {
+    return simZoomOnTakeoffDist;
+  }
+
   int getSimCleanupTableTime() const
   {
     return simCleanupTableTime;
@@ -1486,6 +1493,9 @@ private:
 
   // doubleSpinBoxOptionsSimZoomOnLanding,
   float simZoomOnLandingDist = 0.1f;
+
+  // spinBoxOptionsSimZoomOnTakeoff,
+  float simZoomOnTakeoffDist = 10.f;
 
   // spinBoxOptionsSimCleanupTableTime,
   int simCleanupTableTime = 10;

@@ -475,7 +475,7 @@ private:
   double takeoffLandingDistanceNm = 0.;
 
   /* Used in simDataChanged() to zoom close to the airport after touchdown */
-  bool touchdownDetectedZoom = false;
+  bool touchdownDetectedZoom = false, takeoffDetectedZoom = false;
 
   /* Time of takeoff or invalid if not detected yet */
   QDateTime takeoffTimeSim;

@@ -502,6 +502,7 @@ protected:
   /* If width and height of a bounding rect are smaller than this: Use show point */
   static constexpr float POS_IS_POINT_EPSILON_DEG = 0.0001f;
   static constexpr float MIN_ZOOM_RECT_DIAMETER_KM = 0.04f;
+  static constexpr float MAX_ZOOM_RECT_DIAMETER_KM = 1000.f;
 
   /* Caches complex X-Plane apron geometry as objects in screen coordinates for faster painting. */
   ApronGeometryCache *apronGeometryCache;
