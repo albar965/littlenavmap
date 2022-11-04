@@ -2457,8 +2457,8 @@ void HtmlInfoBuilder::distanceMarkerText(const DistanceMarker& marker, atools::u
 
   if(initCourseStr != finalCourseStr)
   {
-    html.row2If(tr("Initial Course:"), initCourseStr);
-    html.row2If(tr("Final Course:"), finalCourseStr);
+    html.row2If(tr("Start Course:"), initCourseStr);
+    html.row2If(tr("End Course:"), finalCourseStr);
   }
   else
     html.row2If(tr("Course:"), initCourseStr);
@@ -2541,7 +2541,12 @@ bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
       bearingToUserText(userpoint.position, NavApp::getMagVar(userpoint.position), html);
 
     // Be cautious with user defined data and adapt it for HTML display
-    html.row2If(tr("Type:"), userpoint.type, ahtml::REPLACE_CRLF);
+    QString transType = UserdataIcons::typeToTranslated(userpoint.type);
+    if(transType == userpoint.type)
+      html.row2If(tr("Type:"), userpoint.type, ahtml::REPLACE_CRLF);
+    else
+      html.row2If(tr("Type:"), tr("%1 (%2)").arg(userpoint.type).arg(UserdataIcons::typeToTranslated(userpoint.type)), ahtml::REPLACE_CRLF);
+
     html.row2If(tr("Ident:"), userpoint.ident, ahtml::REPLACE_CRLF);
     if(info)
       html.row2If(tr("Region:"), userpoint.region, ahtml::REPLACE_CRLF);
