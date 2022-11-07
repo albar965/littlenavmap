@@ -271,6 +271,11 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
   }
 
   // Join plan elements to route string =============================
+
+  // SimBrief sometimes reports a departure or arrival alternate - clear these
+  if(alternate == departure || alternate == destination)
+    alternate.clear();
+
   routeString = departure % " " % route % " " % destination % " " % alternate;
 
   // Read string to flight plan
