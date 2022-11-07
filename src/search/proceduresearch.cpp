@@ -1308,8 +1308,11 @@ void ProcedureSearch::procedureDisplayText(QString& procTypeText, QStringList& a
   if(recApp.valueBool("has_rnp", false))
     attText.append(tr("RNP"));
 
-  procTypeText.append(tr(" ") % recApp.valueStr("airport_runway_name"));
-  procTypeText.append(tr(" ") % recApp.valueStr("sid_star_arinc_name", QString()));
+  if(!recApp.valueStr("airport_runway_name", QString()).isEmpty())
+    procTypeText.append(tr(" ") % recApp.valueStr("airport_runway_name"));
+
+  if(!recApp.valueStr("sid_star_arinc_name", QString()).isEmpty())
+    procTypeText.append(tr(" ") % recApp.valueStr("sid_star_arinc_name", QString()));
 
   if(numTransitions > 0)
     procTypeText.append(tr(" (T)"));

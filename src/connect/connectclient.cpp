@@ -354,14 +354,16 @@ void ConnectClient::handleError(atools::fs::sc::SimConnectStatus status, const Q
   {
     case atools::fs::sc::OK:
       break;
+
     case atools::fs::sc::INVALID_MAGIC_NUMBER:
     case atools::fs::sc::VERSION_MISMATCH:
       hint = tr("Update %1 to the latest version.<br/>"
                 "The installed version of %1<br/>"
                 "is not compatible with this version of Little Navmap.<br/><br/>"
-                "Install the latest version of %1.").arg(program);
+                "Install the latest version of %1 which you can always find in the Little Navmap installation directory.").arg(program);
       errorState = true;
       break;
+
     case atools::fs::sc::INSUFFICIENT_WRITE:
     case atools::fs::sc::WRITE_ERROR:
       hint = tr("The connection is not reliable.<br/><br/>"

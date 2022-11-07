@@ -9383,7 +9383,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</normaloff>:/littlenavmap/resources/icons/centeraircraft.svg</iconset>
    </property>
    <property name="text">
-    <string>Center &amp;Aircraft</string>
+    <string>&amp;Keep User Aircraft Centered</string>
    </property>
    <property name="toolTip">
     <string>Center the user aircraft on the elevation profile</string>
@@ -11653,7 +11653,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/centeraircraftdest.svg</normaloff>:/littlenavmap/resources/icons/centeraircraftdest.svg</iconset>
    </property>
    <property name="text">
-    <string>&amp;Zoom to Aircraft and Destination</string>
+    <string>&amp;Center on Aircraft and Destination</string>
    </property>
    <property name="toolTip">
     <string>Zoom elevation profile to aircraft and destination</string>

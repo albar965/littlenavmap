@@ -2585,14 +2585,14 @@ Currently only OpenAir is supported (*.txt). </oldsource>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="216"/>
-        <location filename="src/connect/connectclient.cpp" line="812"/>
+        <location filename="src/connect/connectclient.cpp" line="814"/>
         <source>Connected to simulator.</source>
         <translation>Mit dem Simulator verbunden.</translation>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="229"/>
-        <location filename="src/connect/connectclient.cpp" line="566"/>
-        <location filename="src/connect/connectclient.cpp" line="725"/>
+        <location filename="src/connect/connectclient.cpp" line="568"/>
+        <location filename="src/connect/connectclient.cpp" line="727"/>
         <source>Disconnected</source>
         <translation>Verbindung getrennt</translation>
     </message>
@@ -2617,7 +2617,7 @@ Currently only OpenAir is supported (*.txt). </oldsource>
     </message>
     <message>
         <location filename="src/connect/connectclient.cpp" line="240"/>
-        <location filename="src/connect/connectclient.cpp" line="758"/>
+        <location filename="src/connect/connectclient.cpp" line="760"/>
         <source>Disconnected from simulator.</source>
         <translation>Verbindung zum Simulator getrennt.</translation>
     </message>
@@ -2632,13 +2632,12 @@ Currently only OpenAir is supported (*.txt). </oldsource>
         <translation>Little Navconnect</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="359"/>
         <source>Update %1 to the latest version.&lt;br/&gt;The installed version of %1&lt;br/&gt;is not compatible with this version of Little Navmap.&lt;br/&gt;&lt;br/&gt;Install the latest version of %1.</source>
         <oldsource>Update &lt;i&gt;%1&lt;/i&gt; to the latest version.&lt;br/&gt;The installed version of &lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;is not compatible with this version of Little Navmap.&lt;br/&gt;&lt;br/&gt;Install the latest version of &lt;i&gt;%1&lt;/i&gt;.</oldsource>
-        <translation>Bitte %1 auf die neueste Version aktualisieren.&lt;br/&gt;Die installierte Version von %1&lt;br/&gt;ist nicht kompatibel mit dieser Version von Little Navmap.&lt;br/&gt;&lt;br/&gt;Installieren Sie die neueste Version von %1.</translation>
+        <translation type="vanished">Bitte %1 auf die neueste Version aktualisieren.&lt;br/&gt;Die installierte Version von %1&lt;br/&gt;ist nicht kompatibel mit dieser Version von Little Navmap.&lt;br/&gt;&lt;br/&gt;Installieren Sie die neueste Version von %1.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="367"/>
+        <location filename="src/connect/connectclient.cpp" line="369"/>
         <source>The connection is not reliable.&lt;br/&gt;&lt;br/&gt;Check your network or installation.</source>
         <translation>Unzuverlässige Verbindung.&lt;br/&gt;&lt;br/&gt;Bitte Netzwerk oder Installation überprüfen.</translation>
     </message>
@@ -2647,95 +2646,100 @@ Currently only OpenAir is supported (*.txt). </oldsource>
         <translation type="vanished">&lt;p&gt;Fehler beim Lesen der Daten von &lt;i&gt;%1&lt;/i&gt;:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;&lt;p&gt;%3&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="373"/>
+        <location filename="src/connect/connectclient.cpp" line="360"/>
+        <source>Update %1 to the latest version.&lt;br/&gt;The installed version of %1&lt;br/&gt;is not compatible with this version of Little Navmap.&lt;br/&gt;&lt;br/&gt;Install the latest version of %1 which you can always find in the Little Navmap installation directory.</source>
+        <translation>Aktualisieren Sie %1 auf die neueste Version.&lt;br/&gt;Die installierte Version von %1&lt;br/&gt;ist nicht mit dieser Version von Little Navmap kompatibel.&lt;br/&gt;&lt;br/&gt;Installieren Sie die neueste Version von %1, die Sie immer im Installationsverzeichnis von Little Navmap finden können.</translation>
+    </message>
+    <message>
+        <location filename="src/connect/connectclient.cpp" line="375"/>
         <source>&lt;p&gt;Error receiving data from %1:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;&lt;p&gt;%3&lt;/p&gt;</source>
         <translation>&lt;p&gt;Fehler beim Lesen der Daten von %1:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;&lt;p&gt;%3&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="566"/>
+        <location filename="src/connect/connectclient.cpp" line="568"/>
         <source>Autoconnect switched off.</source>
         <translation>Automatisches Verbinden ist deaktiviert.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="615"/>
+        <location filename="src/connect/connectclient.cpp" line="617"/>
         <source>Connecting (%1) ...</source>
         <oldsource>Connecting (%1)...</oldsource>
         <translation>Verbinde (%1) ...</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="616"/>
+        <location filename="src/connect/connectclient.cpp" line="618"/>
         <source>Trying to connect to local flight simulator (%1).</source>
         <translation>Versuche, zum lokalen Flugsimulator (%1) zu verbinden.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="634"/>
-        <location filename="src/connect/connectclient.cpp" line="732"/>
+        <location filename="src/connect/connectclient.cpp" line="636"/>
+        <location filename="src/connect/connectclient.cpp" line="734"/>
         <source>Connecting ...</source>
         <oldsource>Connecting...</oldsource>
         <translation>Verbinde ...</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="635"/>
+        <location filename="src/connect/connectclient.cpp" line="637"/>
         <source>Trying to connect to remote flight simulator on &quot;%1&quot;.</source>
         <translation>Versuche, zum Flugsimulator auf &quot;%1&quot; zu verbinden.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="682"/>
+        <location filename="src/connect/connectclient.cpp" line="684"/>
         <source>Remote end closed connection.</source>
         <translation>Netzwerkcomputer hat die Verbindung geschlossen.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="683"/>
+        <location filename="src/connect/connectclient.cpp" line="685"/>
         <source>Do not &amp;show this dialog again.</source>
         <oldsource>Do &amp;not show this dialog again.</oldsource>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="687"/>
+        <location filename="src/connect/connectclient.cpp" line="689"/>
         <source>Error in server connection: %1 (%2).%3</source>
         <translation>Fehler bei der Serververbindung: %1 (%2). %3</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="690"/>
+        <location filename="src/connect/connectclient.cpp" line="692"/>
         <source>
 Will retry to connect.</source>
         <translation>
 Versuche neu zu verbinden.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="726"/>
+        <location filename="src/connect/connectclient.cpp" line="728"/>
         <source>Disconnected from remote flight simulator on &quot;%1&quot;.</source>
         <translation>Vom Flugsimulator auf &quot;%1&quot; getrennt.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="733"/>
+        <location filename="src/connect/connectclient.cpp" line="735"/>
         <source>Error while trying to connect to &quot;%1&quot;: %2 (%3).
 Will retry.</source>
         <translation>Fehler beim Versuch mit &quot;%1&quot;: %2 (%3) zu verbinden.
 Versuche es erneut.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="738"/>
+        <location filename="src/connect/connectclient.cpp" line="740"/>
         <source>Connect Error</source>
         <translation>Verbindungsfehler</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="739"/>
+        <location filename="src/connect/connectclient.cpp" line="741"/>
         <source>Error in server connection to &quot;%1&quot;: %2 (%3)</source>
         <translation>Fehler in der Serververbindung zu &quot;%1&quot;: %2 (%3)</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="785"/>
+        <location filename="src/connect/connectclient.cpp" line="787"/>
         <source>Error writing reply to Little Navconnect: %1.</source>
         <translation>Fehler beim Schreiben der Antwort an Little Navconnect: %1.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="803"/>
+        <location filename="src/connect/connectclient.cpp" line="805"/>
         <source>Connected</source>
         <translation>Verbunden</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="804"/>
+        <location filename="src/connect/connectclient.cpp" line="806"/>
         <source>Connected to remote flight simulator on &quot;%1&quot;.</source>
         <translation>Verbunden mit Flugsimulator auf &quot;%1&quot;.</translation>
     </message>
@@ -4180,23 +4184,23 @@ Routenbeschreibungsfenster öffnen.</translation>
         <translation>Lade Flugplan herunter ...</translation>
     </message>
     <message>
-        <location filename="src/routeexport/fetchroutedialog.cpp" line="280"/>
+        <location filename="src/routeexport/fetchroutedialog.cpp" line="285"/>
         <source>&lt;p&gt;Flight successfully downloaded. Reading of route description %1.</source>
         <oldsource>&lt;p&gt;Flight successfully downloaded.&lt;br/&gt;</oldsource>
         <translation>&lt;p&gt;Flug erfolgreich heruntergeladen. Lesen der Streckenbeschreibung %1.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/fetchroutedialog.cpp" line="283"/>
+        <location filename="src/routeexport/fetchroutedialog.cpp" line="288"/>
         <source>&lt;p&gt;</source>
         <translation>&lt;p&gt;</translation>
     </message>
     <message>
-        <location filename="src/routeexport/fetchroutedialog.cpp" line="307"/>
+        <location filename="src/routeexport/fetchroutedialog.cpp" line="312"/>
         <source>Download of SimBrief flight plan failed.</source>
         <translation>Herunterladen des SimBrief Flugplanes fehlgeschlagen.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/fetchroutedialog.cpp" line="309"/>
+        <location filename="src/routeexport/fetchroutedialog.cpp" line="314"/>
         <source>&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;URL: &amp;quot;%2&amp;quot;&lt;/p&gt;&lt;p&gt;Error: %3 (%4)&lt;/p&gt;&lt;p&gt;Did you log into SimBrief and generate a flight plan?&lt;/p&gt;&lt;p&gt;Is your Pilot ID or Username correct?&lt;/p&gt;</source>
         <translation>&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;Webadresse: &amp;quot;%2&amp;quot;&lt;/p&gt;&lt;p&gt;Fehler: %3 (%4)&lt;/p&gt;&lt;p&gt;Sind Sie in SimBrief eingeloggt und haben einen Flugplan erstellt?&lt;/p&gt;&lt;p&gt;Ist Ihre Pilot ID oder Ihr Username korrekt?&lt;/p&gt;</translation>
     </message>
@@ -4205,17 +4209,17 @@ Routenbeschreibungsfenster öffnen.</translation>
         <translation type="obsolete">Distanz ohne Prozeduren: &lt;b&gt;%1&lt;/b&gt;.&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/routeexport/fetchroutedialog.cpp" line="280"/>
+        <location filename="src/routeexport/fetchroutedialog.cpp" line="285"/>
         <source>successful</source>
         <translation>erfolgreich</translation>
     </message>
     <message>
-        <location filename="src/routeexport/fetchroutedialog.cpp" line="280"/>
+        <location filename="src/routeexport/fetchroutedialog.cpp" line="285"/>
         <source>failed</source>
         <translation>fehlgeschlagen</translation>
     </message>
     <message>
-        <location filename="src/routeexport/fetchroutedialog.cpp" line="286"/>
+        <location filename="src/routeexport/fetchroutedialog.cpp" line="291"/>
         <source>&lt;/p&gt;</source>
         <translation>&lt;/p&gt;</translation>
     </message>
@@ -4224,17 +4228,17 @@ Routenbeschreibungsfenster öffnen.</translation>
         <translation type="vanished">&lt;p&gt;Herunterladen des Flugplanes fehlgeschlagen.&lt;/p&gt;&lt;p&gt;Herunterladen des SimBrief-Flugplanes von&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;fehlgeschlagen.&lt;/p&gt;&lt;p&gt;Fehler: %2 (%3)&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/routeexport/fetchroutedialog.cpp" line="327"/>
+        <location filename="src/routeexport/fetchroutedialog.cpp" line="332"/>
         <source>&lt;p&gt;Errors while trying to establish an encrypted connection to SimBrief:&lt;/p&gt;&lt;p&gt;URL: %1&lt;/p&gt;&lt;p&gt;Error messages:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Continue?&lt;/p&gt;</source>
         <translation>&lt;p&gt;Fehler beim Versuch, eine verschlüsselte Verbindung zu SimBrief herzustellen:&lt;/p&gt;&lt;p&gt;Adresse: %1&lt;/p&gt;&lt;p&gt;Fehlermeldungen:&lt;br/&gt;%2&lt;/p&gt;&lt;p&gt;Weiter?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/routeexport/fetchroutedialog.cpp" line="332"/>
+        <location filename="src/routeexport/fetchroutedialog.cpp" line="337"/>
         <source>&lt;br/&gt;</source>
         <translation>&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/routeexport/fetchroutedialog.cpp" line="333"/>
+        <location filename="src/routeexport/fetchroutedialog.cpp" line="338"/>
         <source>Do not &amp;show this again and ignore errors.</source>
         <oldsource>Do not &amp;show this again and ignore errors in the future</oldsource>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen und Fehler ignorieren</translation>
@@ -9565,7 +9569,8 @@ Der beste Track wird automatisch ausgewählt.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11656"/>
-        <source>&amp;Zoom to Aircraft and Destination</source>
+        <source>&amp;Center on Aircraft and Destination</source>
+        <oldsource>&amp;Zoom to Aircraft and Destination</oldsource>
         <translation>&amp;Zoom zum Flugzeug und Ziel</translation>
     </message>
     <message>
@@ -12351,7 +12356,8 @@ Die Windgeschwindigkeit wird zwischen dieser Höhe und der Bodenhöhe interpolie
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9386"/>
-        <source>Center &amp;Aircraft</source>
+        <source>&amp;Keep User Aircraft Centered</source>
+        <oldsource>Center &amp;Aircraft</oldsource>
         <translation>Flugzeug &amp;zentrieren</translation>
     </message>
     <message>
@@ -26062,42 +26068,47 @@ Wird bei Prozedurabschnitten nicht angezeigt.</translation>
         <translation>X-Plane 11 Winddateien %1;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2942"/>
+        <location filename="src/options/optionsdialog.cpp" line="2920"/>
+        <source>Font too large for user interface. Size was corrected. Maximum is 30 pixels/points.</source>
+        <translation>Schriftart zu groß für Benutzeroberfläche. Die Größe wurde korrigiert. Maximum ist 30 Pixel/Punkte.</translation>
+    </message>
+    <message>
+        <location filename="src/options/optionsdialog.cpp" line="2954"/>
         <source>&lt;p&gt;Here you can enter a Mapbox User Style URL.&lt;/p&gt;&lt;p&gt;Open the Mapbox Studio, login and click on the three-dot menu button of your style.&lt;br/&gt; Then click on the copy icon of the &quot;Style URL&quot; to add it to the clipboard and enter it below.&lt;/p&gt;&lt;p&gt;A style URL looks like &quot;mapbox://styles/USERNAME/STYLEID&quot;.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://studio.mapbox.com/&quot;&gt;&lt;b&gt;Click here to open the Mapbox Studio page in your browser&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;Hier können Sie eine Mapbox User Style Webadresse eingeben.&lt;/p&gt;&lt;p&gt;Öffnen Sie das Mapbox Studio, loggen Sie sich ein und klicken Sie auf die Schaltfläche mit den drei Punkten in Ihrem Stil.&lt;br/&gt;Klicken Sie dann auf das Kopiersymbol der &quot;Stil-URL&quot;, um sie in die Zwischenablage zu übernehmen, und geben Sie sie unten ein.&lt;/p&gt;&lt;p&gt;Eine Stil-URL sieht aus wie &quot;mapbox://styles/USERNAME/STYLEID&quot;.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://studio.mapbox.com/&quot;&gt;&lt;b&gt;Klicken Sie hier, um die Mapbox Studio-Seite in Ihrem Browser zu öffnen&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2949"/>
+        <location filename="src/options/optionsdialog.cpp" line="2961"/>
         <source>&lt;p&gt;You can also to provide you Mapbox Access Token below if not already done.&lt;br/&gt;You can find the Token on your Mapbox Account page.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://account.mapbox.com/&quot;&gt;&lt;b&gt;Click here to open the Mapbox Account page in your browser&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;Sie können auch Ihr Mapbox Access Token unten angeben, falls noch nicht geschehen.&lt;br/&gt;Sie finden den Token auf der Seite Ihres Mapbox-Kontos.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;https://account.mapbox.com/&quot;&gt;&lt;b&gt;Klicken Sie hier, um die Mapbox-Kontoseite in Ihrem Browser zu öffnen&lt;/b&gt;&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="2969"/>
+        <location filename="src/options/optionsdialog.cpp" line="2981"/>
         <source> - Enter Mapbox Keys</source>
         <translation> - Mapbox Schlüssel eingeben</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3000"/>
+        <location filename="src/options/optionsdialog.cpp" line="3012"/>
         <source>Mapbox Token is empty.</source>
         <translation>Mapbox Token ist leer</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3003"/>
+        <location filename="src/options/optionsdialog.cpp" line="3015"/>
         <source>Mapbox User Style not found in URL.</source>
         <translation>Mapbox Nutzerstil nicht in der URL gefunden.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3006"/>
+        <location filename="src/options/optionsdialog.cpp" line="3018"/>
         <source>Mapbox Username not found in URL.</source>
         <translation>Mapbox Benutzername nicht in der URL gefunden</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3009"/>
+        <location filename="src/options/optionsdialog.cpp" line="3021"/>
         <source>Style URL has to start with &quot;mapbox://styles/&quot;.</source>
         <translation>Die Stil-URL muss mit &quot;mapbox://styles/&quot; anfangen.</translation>
     </message>
     <message>
-        <location filename="src/options/optionsdialog.cpp" line="3013"/>
+        <location filename="src/options/optionsdialog.cpp" line="3025"/>
         <source>One or more Mapbox keys are missing. Installation might be incomplete since map themes are missing.</source>
         <translation>Es fehlen ein oder mehrere Mapbox-Schlüssel. Die Installation könnte unvollständig sein, da Kartenthemen fehlen.</translation>
     </message>
@@ -28226,32 +28237,32 @@ Wirklich benutzen?</translation>
         <translation>RNP</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1311"/>
         <location filename="src/search/proceduresearch.cpp" line="1312"/>
+        <location filename="src/search/proceduresearch.cpp" line="1315"/>
         <source> </source>
         <translation> </translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1315"/>
+        <location filename="src/search/proceduresearch.cpp" line="1318"/>
         <source> (T)</source>
         <translation> (T)</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1326"/>
-        <location filename="src/search/proceduresearch.cpp" line="1356"/>
-        <location filename="src/search/proceduresearch.cpp" line="1379"/>
-        <location filename="src/search/proceduresearch.cpp" line="1391"/>
-        <location filename="src/search/proceduresearch.cpp" line="1400"/>
+        <location filename="src/search/proceduresearch.cpp" line="1329"/>
+        <location filename="src/search/proceduresearch.cpp" line="1359"/>
+        <location filename="src/search/proceduresearch.cpp" line="1382"/>
+        <location filename="src/search/proceduresearch.cpp" line="1394"/>
+        <location filename="src/search/proceduresearch.cpp" line="1403"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1350"/>
+        <location filename="src/search/proceduresearch.cpp" line="1353"/>
         <source>Full</source>
         <translation>Voll</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1352"/>
+        <location filename="src/search/proceduresearch.cpp" line="1355"/>
         <source>DME</source>
         <translation>DME</translation>
     </message>
@@ -28343,7 +28354,7 @@ erforderlicher Flugpfadwinkel für den Sinkflug.</translation>
         <translation type="vanished"> (GPS Überlagerung)</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1356"/>
+        <location filename="src/search/proceduresearch.cpp" line="1359"/>
         <source>Transition</source>
         <translation>Übergang</translation>
     </message>
@@ -29024,7 +29035,7 @@ Wird beim Sinkflug nur beim Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; 
         <location filename="src/common/maptypes.cpp" line="2086"/>
         <location filename="src/common/maptypes.cpp" line="2276"/>
         <location filename="src/common/maptypes.cpp" line="2542"/>
-        <location filename="src/search/proceduresearch.cpp" line="1385"/>
+        <location filename="src/search/proceduresearch.cpp" line="1388"/>
         <source>, </source>
         <translation>, </translation>
     </message>
@@ -31808,7 +31819,7 @@ Wird beim Sinkflug nur beim Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; 
         <translation>°M</translation>
     </message>
     <message>
-        <location filename="src/search/proceduresearch.cpp" line="1385"/>
+        <location filename="src/search/proceduresearch.cpp" line="1388"/>
         <source>Related: %1</source>
         <translation>Zugehörig: %1</translation>
     </message>
@@ -32508,9 +32519,13 @@ Distanzkreise wie oben angegeben verwenden.</translation>
         <translation>&lt;p&gt;&lt;b&gt;%1&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/rangemarkerdialog.cpp" line="129"/>
         <source>Coordinates %1</source>
-        <translation>Koordinaten %1</translation>
+        <translation type="vanished">Koordinaten %1</translation>
+    </message>
+    <message>
+        <location filename="src/gui/rangemarkerdialog.cpp" line="129"/>
+        <source>Coordinates at click spot: %1</source>
+        <translation>Koordinaten an Klickposition: %1</translation>
     </message>
     <message>
         <location filename="src/gui/rangemarkerdialog.cpp" line="138"/>

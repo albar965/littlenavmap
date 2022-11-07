@@ -126,7 +126,7 @@ RangeMarkerDialog::RangeMarkerDialog(QWidget *parent, const atools::geo::Pos& po
   ui->lineEditRangeMarkerRadii->setValidator(rangeRingValidator);
 
   /// Header text
-  ui->labelRangeMarkerHeader->setText(tr("<p><b>%1</b></p>").arg(tr("Coordinates %1").arg(Unit::coords(*position))));
+  ui->labelRangeMarkerHeader->setText(tr("<p><b>%1</b></p>").arg(tr("Coordinates at click spot: %1").arg(Unit::coords(*position))));
 
   // Aircraft endurance label
   float enduranceHours, enduranceNm;
