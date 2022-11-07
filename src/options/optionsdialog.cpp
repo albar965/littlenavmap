@@ -2902,10 +2902,22 @@ void OptionsDialog::selectGuiFontClicked()
     QFont selfont = fontDialog->selectedFont();
 
     // Limit size to keep the user from messing up the UI without an option to change
+    bool corrected = false;
     if(selfont.pointSizeF() > 30.)
+    {
       selfont.setPointSizeF(30.);
+      corrected = true;
+    }
+
     if(selfont.pixelSize() > 30)
+    {
       selfont.setPixelSize(30);
+      corrected = true;
+    }
+
+    if(corrected)
+      QMessageBox::warning(this, QApplication::applicationName(),
+                           tr("Font too large for user interface. Size was corrected. Maximum is 30 pixels/points."));
 
     guiFont = selfont.toString();
     qDebug() << Q_FUNC_INFO << guiFont;
