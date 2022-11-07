@@ -1050,6 +1050,12 @@ void MapScreenIndex::nearestProcedureHighlightsInternal(int xs, int ys, int maxD
             result.procPoints.append(map::MapProcedurePoint(legs, i, -1 /* routeIndex */, true /* preview */, previewAll));
         }
       }
+
+      // Remove artificial waypoints which were created to procedures or airways
+      result.waypoints.erase(std::remove_if(result.waypoints.begin(), result.waypoints.end(),
+                                            [ = ](const map::MapWaypoint& wp) -> bool {
+        return wp.artificial != 0;
+      }), result.waypoints.end());
     }
   }
 }
