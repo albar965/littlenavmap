@@ -497,7 +497,7 @@ Auch die Steig- bzw. Sinkfluggeschwindigkeiten in der Flugzeugleistung überprü
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1052"/>
         <source>Aircraft type is empty. Use an official ICAO code like &quot;B738&quot;, &quot;BE9L&quot; or &quot;C172&quot;.</source>
-        <translation>Der Flugzeugtyp ist leer. Verwenden Sie einen offiziellen ICAO-Code wie &quot;B738&quot;, &quot;BE9L&quot; oder &quot;C172&quot;.</translation>
+        <translation>Der Flugzeugtyp ist leer. Verwenden Sie einen offiziellen ICAO-Code, wie &quot;B738&quot;, &quot;BE9L&quot; oder &quot;C172&quot;.</translation>
     </message>
     <message>
         <source>Aircraft type &quot;%1&quot; is not valid. Use official ICAO codes like &quot;B738&quot;, &quot;BE9L&quot; or &quot;C172&quot;.</source>
@@ -957,7 +957,7 @@ A performance file can often be used for all simulators.</source>
         <oldsource>Short name for simulator like FSX, FSXSE, P3DV4, P3DV5, XP11 or MSFS.
 A performance file can often be used for all simulators.
 </oldsource>
-        <translation>Kurzbezeichnung für Simulatoren wie FSX, FSXSE, P3DV4, P3DV5, XP11 oder MSFS.
+        <translation>Kurzbezeichnung für Simulatoren, wie FSX, FSXSE, P3DV4, P3DV5, XP11 oder MSFS.
 Eine Leistungsdatei kann oft für alle Simulatoren verwendet werden.</translation>
     </message>
     <message>
@@ -974,7 +974,7 @@ Eine Leistungsdatei kann oft für alle Simulatoren verwendet werden.</translatio
         <location filename="src/perf/aircraftperfdialog.ui" line="163"/>
         <source>ICAO aircraft type designator like B732 or C172.
 The fuel report will show a warning if this does not match the simulator aircraft type.</source>
-        <translation>ICAO-Flugzeugtyp-Kennung wie B732 oder C172.
+        <translation>ICAO-Flugzeugtyp-Kennung, wie B732 oder C172.
 Der Treibstoffbericht zeigt eine Warnung an, wenn dieser nicht mit dem Flugzeugtyp des Simulators übereinstimmt.</translation>
     </message>
     <message>
@@ -1225,7 +1225,7 @@ die angegebenen Sinkgeschwindigkeiten</translation>
         <location filename="src/perf/aircraftperfdialog.cpp" line="220"/>
         <source>Aircraft type is probably not valid. It is recommended to use official ICAO codes like &quot;B738&quot;, &quot;BE9L&quot; or &quot;C172&quot;.</source>
         <oldsource>Aircraft type seems to be invalid. Use official ICAO codes like &quot;B738&quot;, &quot;BE9L&quot; or &quot;C172&quot;.</oldsource>
-        <translation>Der Flugzeugtyp scheint ungültig zu sein. Verwenden Sie offizielle ICAO-Codes wie &quot;B738&quot;, &quot;BE9L&quot; oder &quot;C172&quot;.</translation>
+        <translation>Der Flugzeugtyp scheint ungültig zu sein. Verwenden Sie offizielle ICAO-Codes, wie &quot;B738&quot;, &quot;BE9L&quot; oder &quot;C172&quot;.</translation>
     </message>
     <message>
         <source>Aircraft type is empty. Use official ICAO codes like &quot;B738&quot;, &quot;BE9L&quot; or &quot;C172&quot;.</source>
@@ -1234,7 +1234,7 @@ die angegebenen Sinkgeschwindigkeiten</translation>
     <message>
         <location filename="src/perf/aircraftperfdialog.cpp" line="213"/>
         <source>Aircraft type is empty. It is recommended to use official ICAO codes like &quot;B738&quot;, &quot;BE9L&quot; or &quot;C172&quot;.</source>
-        <translation>Der Flugzeugtyp ist leer. Verwenden Sie einen offiziellen ICAO-Code wie &quot;B738&quot;, &quot;BE9L&quot; oder &quot;C172&quot;.</translation>
+        <translation>Der Flugzeugtyp ist leer. Verwenden Sie einen offiziellen ICAO-Code, wie &quot;B738&quot;, &quot;BE9L&quot; oder &quot;C172&quot;.</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfdialog.cpp" line="232"/>
@@ -1278,7 +1278,7 @@ die angegebenen Sinkgeschwindigkeiten</translation>
         <location filename="src/info/aircraftprogressconfig.cpp" line="87"/>
         <source>Select the fields to show in the aircraft progress tab.
 Note that some fields are only shown if certain conditions apply.</source>
-        <translation>Wählen Sie die Felder aus, die auf der Registerkarte &quot;Flugzeugverlauf&quot; angezeigt werden sollen.
+        <translation>Wählen Sie die Felder aus, die auf dem Reiter &quot;Flugzeugverlauf&quot; angezeigt werden sollen.
 Beachten Sie, dass einige Felder nur angezeigt werden, wenn bestimmte Bedingungen zutreffen.</translation>
     </message>
     <message>
@@ -1305,12 +1305,12 @@ Beachten Sie, dass einige Felder nur angezeigt werden, wenn bestimmte Bedingunge
         <location filename="src/info/aircraftprogressconfig.cpp" line="104"/>
         <source>Real local Date and Time</source>
         <oldsource>Real Local Time</oldsource>
-        <translation>Wirkliches lokales Datum und Zeit</translation>
+        <translation>Lokales Datum und Zeit</translation>
     </message>
     <message>
         <location filename="src/info/aircraftprogressconfig.cpp" line="104"/>
         <source>Real local date and time.</source>
-        <translation>Wirkliches lokales Datum und Zeit.</translation>
+        <translation>Lokales Datum und Zeit.</translation>
     </message>
     <message>
         <location filename="src/info/aircraftprogressconfig.cpp" line="105"/>
@@ -1609,7 +1609,7 @@ und ◄ bedeutet rechts von der Strecke.</translation>
     <message>
         <location filename="src/info/aircraftprogressconfig.cpp" line="152"/>
         <source>Aircraft heading.</source>
-        <translation>Flugzeugsteuerkurs.</translation>
+        <translation>Steuerkurs des Flugzeuges.</translation>
     </message>
     <message>
         <location filename="src/info/aircraftprogressconfig.cpp" line="153"/>
@@ -1683,7 +1683,7 @@ wenn kein Flugplan verwendet wird.</translation>
         <location filename="src/info/aircraftprogressconfig.cpp" line="166"/>
         <location filename="src/info/aircraftprogressconfig.cpp" line="179"/>
         <source>Indicated Alternate</source>
-        <translation>Angezeigte Höhe alternativ</translation>
+        <translation>Angezeigte alternativ</translation>
     </message>
     <message>
         <location filename="src/info/aircraftprogressconfig.cpp" line="166"/>
@@ -1880,7 +1880,7 @@ Second line shows headwind indicated by ▼ and tailwind by ▲
 as well as crosswind (► or ◄).</source>
         <translation>Windrichtung und -geschwindigkeit am Flugzeug.
 In der zweiten Zeile wird der Gegenwind durch ▼ und der Rückenwind durch ▲ angezeigt
-sowie den Seitenwind (► oder ◄).</translation>
+sowie der Seitenwind durch ► oder ◄.</translation>
     </message>
     <message>
         <location filename="src/info/aircraftprogressconfig.cpp" line="204"/>
@@ -2041,7 +2041,7 @@ oder Provinz</translation>
         <source>Country or
 Area Code</source>
         <translation>Land oder
-Area Code</translation>
+Gebietskennung</translation>
     </message>
     <message>
         <location filename="src/search/airportsearch.cpp" line="186"/>
@@ -2307,7 +2307,7 @@ Runways</translation>
     <message>
         <location filename="src/search/airportsearch.cpp" line="890"/>
         <source>No airports found in the search result satisfying the criteria.</source>
-        <translation>Keine Flughäfen im Suchergebnis gefunden, die den Kriterien entsprechen.</translation>
+        <translation>Keine Flugplätze im Suchergebnis gefunden, die den Kriterien entsprechen.</translation>
     </message>
     <message>
         <source>%1 overriding all other search options.</source>
@@ -3058,7 +3058,7 @@ Andere Formate:
 - Grad, Minuten und Sekunden 481200N0112842E (SkyVector)
 - Grad und Minuten im Paar &quot;N6500 W08000&quot; oder &quot;N6500/W08000&quot;
 - NAT-Typ 5020N
-Die obigen Formate müssen genau wie in den Beispielen gezeigt angegeben werden.</translation>
+Die obigen Formate müssen genau, wie in den Beispielen gezeigt angegeben werden.</translation>
     </message>
     <message>
         <location filename="src/gui/coordinatedialog.ui" line="104"/>
@@ -3268,7 +3268,7 @@ Hilfreich wenn Sie Werkzeuge benutzen, um bestimmte Szenerien für jeden Flug zu
         <translation>Add-on.xml Pakete für Prepar3D lesen</translation>
     </message>
     <message>
-        <location filename="src/db/databasedialog.cpp" line="43"/>
+        <location filename="src/db/databasedialog.cpp" line="42"/>
         <source>&amp;Load</source>
         <translation>&amp;Laden</translation>
     </message>
@@ -3277,22 +3277,22 @@ Hilfreich wenn Sie Werkzeuge benutzen, um bestimmte Szenerien für jeden Flug zu
         <translation type="vanished">&lt;b&gt;Kein Simulator und keine Datenbank gefunden&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasedialog.cpp" line="65"/>
+        <location filename="src/db/databasedialog.cpp" line="64"/>
         <source>&lt;b&gt;No Simulator and no database found.&lt;/b&gt;</source>
         <translation>&lt;b&gt;Keinen Simulator und keine Datenbank gefunden.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasedialog.cpp" line="125"/>
+        <location filename="src/db/databasedialog.cpp" line="124"/>
         <source>Select Flight Simulator Basepath</source>
         <translation>Basispfad des Flugsimulators wählen</translation>
     </message>
     <message>
-        <location filename="src/db/databasedialog.cpp" line="138"/>
+        <location filename="src/db/databasedialog.cpp" line="137"/>
         <source>Open Scenery Configuration File</source>
         <translation>Konfigurationsdatei der Szenerie öffnen</translation>
     </message>
     <message>
-        <location filename="src/db/databasedialog.cpp" line="139"/>
+        <location filename="src/db/databasedialog.cpp" line="138"/>
         <source>Scenery Configuration Files %1;;All Files (*)</source>
         <translation>Szeneriekonfigurationsdateien %1;;Alle Dateien (*)</translation>
     </message>
@@ -3366,68 +3366,82 @@ Hilfreich wenn Sie Werkzeuge benutzen, um bestimmte Szenerien für jeden Flug zu
         <translation>Fehler</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="445"/>
         <source>warnings</source>
-        <translation>Warnungen</translation>
+        <translation type="vanished">Warnungen</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="445"/>
         <source>warning</source>
-        <translation>Warnung</translation>
+        <translation type="vanished">Warnung</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="448"/>
+        <location filename="src/db/databaseloader.cpp" line="446"/>
+        <source>notes</source>
+        <comment>Database loading notes</comment>
+        <translation>Hinweise</translation>
+    </message>
+    <message>
+        <location filename="src/db/databaseloader.cpp" line="447"/>
+        <source>note</source>
+        <comment>Database loading notes</comment>
+        <translation>Hinweis</translation>
+    </message>
+    <message>
+        <location filename="src/db/databaseloader.cpp" line="450"/>
         <source>&lt;h3&gt;Found %1 in %2 scenery entries when loading the scenery database&lt;/h3&gt;</source>
         <translation>&lt;h3&gt;%1 in %2 Szenerieeinträgen beim Laden der Szeneriedatenbank gefunden&lt;/h3&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="449"/>
+        <location filename="src/db/databaseloader.cpp" line="451"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="449"/>
+        <location filename="src/db/databaseloader.cpp" line="451"/>
         <source> and </source>
         <translation> und </translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="454"/>
+        <location filename="src/db/databaseloader.cpp" line="456"/>
         <source>&lt;b&gt;If you wish to report these errors attach the log and configuration files to your report, add all other available information and send it to the contact address below.&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</source>
         <oldsource>&lt;b&gt;If you wish to report these errors attach the log and configuration files to your report, add all other available information and send it to one of the contact address below.&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</oldsource>
         <translation>&lt;b&gt;Wenn Sie diesen Fehler melden wollen, fügen Sie die Log- und Konfigurationsdatei sowie alle anderen verfügbaren Informationen zu Ihrem Bericht hinzu und senden Sie diesen an die unten genannte Kontaktadresse.&lt;/b&gt;&lt;hr/&gt;%1&lt;hr/&gt;%2</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="462"/>
+        <location filename="src/db/databaseloader.cpp" line="464"/>
         <source>&lt;hr/&gt;Some files or scenery directories could not be read.&lt;br/&gt;You should check if the airports of the affected sceneries display correctly and show the correct information.&lt;hr/&gt;</source>
         <translation>&lt;hr/&gt;Einige Dateien oder Szenerieverzeichnisse konnten nicht geladen werden.&lt;br/&gt;Bitte überprüfen, ob die betroffenen Flugplätze korrekt dargestellt werden und die richtigen Informationen angezeigt werden.&lt;hr/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="468"/>
-        <source>&lt;hr/&gt;Some files or scenery directories could not be read properly due to encrypted airport data or other issues.&lt;hr/&gt;</source>
-        <translation>&lt;hr/&gt;Einige Dateien oder Szenerieverzeichnisse konnten aufgrund von verschlüsselten Flugplatzdaten oder anderen Problemen nicht richtig gelesen werden.&lt;hr/&gt;</translation>
+        <location filename="src/db/databaseloader.cpp" line="470"/>
+        <source>&lt;hr/&gt;Some files or scenery directories could not be read properly due to encrypted airport data.&lt;hr/&gt;</source>
+        <translation>&lt;hr/&gt;Einige Dateien oder Szenerieverzeichnisse konnten aufgrund von verschlüsselten Flugplatzdaten nicht richtig gelesen werden.&lt;hr/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="476"/>
+        <source>&lt;hr/&gt;Some files or scenery directories could not be read properly due to encrypted airport data or other issues.&lt;hr/&gt;</source>
+        <translation type="vanished">&lt;hr/&gt;Einige Dateien oder Szenerieverzeichnisse konnten aufgrund von verschlüsselten Flugplatzdaten oder anderen Problemen nicht richtig gelesen werden.&lt;hr/&gt;</translation>
+    </message>
+    <message>
+        <location filename="src/db/databaseloader.cpp" line="478"/>
         <source>&lt;b&gt;More scenery entries ...&lt;/b&gt;</source>
         <translation>&lt;b&gt;Weitere Szenerieeinträge ...&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="481"/>
+        <location filename="src/db/databaseloader.cpp" line="483"/>
         <source>&lt;b&gt;Scenery Title: %1&lt;/b&gt;&lt;br/&gt;</source>
         <translation>&lt;b&gt;Szenerietitel: %1&lt;/b&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="490"/>
+        <location filename="src/db/databaseloader.cpp" line="492"/>
         <source>&lt;b&gt;More files ...&lt;/b&gt;</source>
         <translation>&lt;b&gt;Weitere Dateien ...&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="495"/>
+        <location filename="src/db/databaseloader.cpp" line="497"/>
         <source>&lt;b&gt;File:&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;Message:&lt;/b&gt; %2&lt;br/&gt;</source>
         <translation>&lt;b&gt;Datei:&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;Meldung:&lt;/b&gt; %2&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databaseloader.cpp" line="502"/>
+        <location filename="src/db/databaseloader.cpp" line="504"/>
         <source>%1 - Load Scenery Library Results</source>
         <translation>%1 - Lade Szeneriebibliothek - Ergebnisse</translation>
     </message>
@@ -3651,7 +3665,7 @@ Hilfreich wenn Sie Werkzeuge benutzen, um bestimmte Szenerien für jeden Flug zu
     <message>
         <location filename="src/db/databasemanager.cpp" line="827"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;The scenery mode &quot;%1&quot; ignores all airports of the simulator.&lt;p/&gt;&lt;p&gt;Airport information is limited in this mode.&lt;br/&gt;This means that aprons, taxiways, parking positions, runway surface information and other information is not available.&lt;br/&gt;Smaller airports might be missing and runway layout might not match the runway layout in the simulator.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normally you should not use this mode.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Really switch to mode &quot;%1&quot; now?&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Click here for more information in the Little Navmap online manual&lt;/a&gt;&lt;/p&gt;</source>
-        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Der Szeneriemodus &quot;%1&quot; ignoriert alle Flugplätze des Simulators.&lt;p/&gt;&lt;p&gt;Die Flugplatzinformationen sind in diesem Modus begrenzt.&lt;br/&gt;Dies bedeutet, dass Vorfelder, Rollwege, Abstellpositionen, Informationen über die Oberfläche der Runways sowie weitere Informationen nicht verfügbar sind.&lt;br/&gt;Kleinere Flughäfen könnten fehlen, und das Layout der Start- und Landebahnen könnte nicht mit dem des Simulators übereinstimmen.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normalerweise sollten Sie diesen Modus nicht verwenden.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Jetzt wirklich in den Modus &quot;%1&quot; wechseln?&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Klicken Sie hier für weitere Informationen im Little Navmap Online-Handbuch&lt;/a&gt;&lt;/p&gt;</translation>
+        <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Der Szeneriemodus &quot;%1&quot; ignoriert alle Flugplätze des Simulators.&lt;p/&gt;&lt;p&gt;Die Flugplatzinformationen sind in diesem Modus begrenzt.&lt;br/&gt;Dies bedeutet, dass Vorfelder, Rollwege, Abstellpositionen, Informationen über die Oberfläche der Runways sowie weitere Informationen nicht verfügbar sind.&lt;br/&gt;Kleinere Flugplätze könnten fehlen, und das Layout der Start- und Landebahnen könnte nicht mit dem des Simulators übereinstimmen.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normalerweise sollten Sie diesen Modus nicht verwenden.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Jetzt wirklich in den Modus &quot;%1&quot; wechseln?&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Klicken Sie hier für weitere Informationen im Little Navmap Online-Handbuch&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
         <location filename="src/db/databasemanager.cpp" line="837"/>
@@ -6689,12 +6703,12 @@ Distanz %dist%</translation>
         <location filename="src/gui/mainwindow.ui" line="819"/>
         <location filename="src/gui/mainwindow.ui" line="822"/>
         <source>Airport country or area code if available</source>
-        <translation>Flugplatz Länder- oder Area-Code wenn verfügbar</translation>
+        <translation>Flugplatz Länder- oder Gebietskennung, wenn verfügbar</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="825"/>
         <source>Country / Area Code</source>
-        <translation>Land / Area-Code</translation>
+        <translation>Land / Gebietskennung</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="855"/>
@@ -7156,7 +7170,7 @@ Distanz %dist%</translation>
         <location filename="src/gui/mainwindow.ui" line="1923"/>
         <location filename="src/gui/mainwindow.ui" line="1926"/>
         <source>Navaid two-letter code for region</source>
-        <translation>Zwei-Buchstaben-Code für Region der Navigationshilfe</translation>
+        <translation>Zwei-Buchstaben-Kennung für Region der Navigationshilfe</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1929"/>
@@ -7484,7 +7498,7 @@ Distanz %dist%</translation>
         <location filename="src/gui/mainwindow.ui" line="2831"/>
         <location filename="src/gui/mainwindow.ui" line="2834"/>
         <source>Two-letter code for ICAO region</source>
-        <translation>Zwei-Buchstaben-Code für die ICAO Region</translation>
+        <translation>Zwei-Buchstaben-Kennung für die ICAO Region</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="2853"/>
@@ -17525,7 +17539,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="230"/>
         <source>Country or Area Code:</source>
-        <translation>Land oder Area-Code:</translation>
+        <translation>Land oder Gebietskennung:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2036"/>
@@ -18099,7 +18113,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3390"/>
         <source>Airline Codes: </source>
-        <translation>Codes für Fluggesellschaften: </translation>
+        <translation>Kennungen für Fluggesellschaften: </translation>
     </message>
     <message>
         <source>Flight Plan position: </source>
@@ -18472,7 +18486,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3643"/>
         <source>Transponder Code:</source>
-        <translation>Transponder Code:</translation>
+        <translation>Transpondercode:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2007"/>
@@ -19107,7 +19121,7 @@ kHz/MHz</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3145"/>
         <source>Multiple code:</source>
-        <translation>Mehrfachcode:</translation>
+        <translation>Mehrfachkennung:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3475"/>
@@ -21886,8 +21900,8 @@ Reiseflughöhe</translation>
         <location filename="src/search/onlineclientsearch.cpp" line="62"/>
         <source>Transponder
 Code</source>
-        <translation>Transponder
-Code</translation>
+        <translation>Transponder-
+code</translation>
     </message>
     <message>
         <location filename="src/search/onlineclientsearch.cpp" line="63"/>
@@ -22469,7 +22483,7 @@ Der neue Name lautet &quot;filename_1.pln&quot;, wenn z.B. &quot;filename.pln&qu
 opening files, modifying the flight plan and other operations.</source>
         <oldsource>This will open related windows and raise tabs on actions like
 opening files, modifying the flight plan and other operations.</oldsource>
-        <translation>Dies öffnet und aktiviert entsprechende Fenster und Registerkarten für Aktionen wie z.B.
+        <translation>Dies öffnet und aktiviert entsprechende Fenster und Reiter für Aktionen, wie z.B.
 das Öffnen von Dateien, Ändern des Flugplans und anderer Operationen.</translation>
     </message>
     <message>
@@ -22499,7 +22513,7 @@ und Logbuch</translation>
     <message>
         <location filename="src/options/options.ui" line="1553"/>
         <source>Show procedures in procedure search tab on airport click</source>
-        <translation>Zeige Prozeduren im Reiter Prozedursuche beim Klick auf Flughäfen</translation>
+        <translation>Zeige Prozeduren im Reiter Prozedursuche beim Klick auf Flugplätze</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1556"/>
@@ -23899,7 +23913,7 @@ Die Daten haben ein Raster von 30 Bogensekunden (ca. 900 Meter nahe des Äquator
         <source>Zooms the map one step out for actions like center flight plan or double click to achieve a sharp map display.
 This works best with the Mercator projection and online maps.
 Map views might be shown with a larger zoom distance than expected if this option is selected.</source>
-        <translation>Vergrößert die Karte um einen Schritt für Aktionen wie Flugplan zentrieren oder Doppelklick, um eine scharfe Kartendarstellung zu erhalten.
+        <translation>Vergrößert die Karte um einen Schritt für Aktionen, wie Flugplan zentrieren oder Doppelklick, um eine scharfe Kartendarstellung zu erhalten.
 Dies funktioniert am besten mit der Mercator-Projektion und Online-Karten.
 Kartenansichten werden möglicherweise mit einer größeren Zoomdistanz als erwartet angezeigt, wenn diese Option aktiviert ist.</translation>
     </message>
@@ -24133,7 +24147,7 @@ Beeinflusst auch Beschriftungen bei Warteschleifen und Platzrunden.</translation
         <location filename="src/options/options.ui" line="5015"/>
         <source>Time until aircraft following is activated again after any map interaction like scrolling or zooming.
 This setting is also used in the elevation profile.</source>
-        <translation>Zeit, bis das Zentrieren des Flugzeuges nach jeder Karteninteraktion wie Scrollen oder Zoomen wieder aktiviert wird.
+        <translation>Zeit, bis das Zentrieren des Flugzeuges nach jeder Karteninteraktion, wie Scrollen oder Zoomen wieder aktiviert wird.
 Diese Einstellung wird auch im Höhenprofil verwendet.</translation>
     </message>
     <message>
@@ -24531,8 +24545,8 @@ Beachten Sie, dass einige Schriftarten, insbesondere große Schriftarten, zu Dar
         <location filename="src/options/options.ui" line="5124"/>
         <source>User can scroll in the flight plan table but the program will  
 put the active leg back on top after the given timeout while flying.</source>
-        <translation>Scrollen in der Flugplantabelle ist möglich, aber das Programm wird  
-den aktiven Abschnitt nach der vorgegebenen Zeit während des Fluges wieder nach oben legen.</translation>
+        <translation>Scrollen in der Flugplantabelle ist möglich, das Programm wird jedoch  
+den aktiven Abschnitt nach der vorgegebenen Zeit während des Fluges wieder nach oben verschieben.</translation>
     </message>
     <message>
         <source>&amp;Scroll flight plan table back to active leg after time below</source>
@@ -24792,13 +24806,13 @@ Kleinere Werte sind nur für private Netzwerke.&lt;/b&gt;</translation>
         <source>Port number for the web server.  Default is 8965.
 Change this if you get an error message like &quot;Bound address already in use&quot; when running the server.</source>
         <translation>Portnummer für den Webserver. Der Standardwert ist 8965.
-Dies ändern, wenn beim Betrieb des Servers eine Fehlermeldung wie &quot;Adresse bereits im Gebrauch&quot; auftritt.</translation>
+Dies ändern, wenn beim Betrieb des Servers eine Fehlermeldung, wie &quot;Adresse bereits im Gebrauch&quot; auftritt.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1744"/>
         <source>Show tooltip at the hotspot of user features like range rings, measurement lines, MSA diagrams, user holdings or traffic patterns.</source>
         <oldsource>Show tooltip on user features like range rings, measurement lines, airport MSA, user holdings or traffic patterns.</oldsource>
-        <translation>Zeige Tooltips am Hotspot von Nutzerobjekten wie Distanzkreisen, Messlinien, MSA-Diagrammen, Warteschleifen oder Platzrunden an.</translation>
+        <translation>Zeige Tooltips am Hotspot von Nutzerobjekten, wie Distanzkreisen, Messlinien, MSA-Diagrammen, Warteschleifen oder Platzrunden an.</translation>
     </message>
     <message>
         <location filename="src/options/options.ui" line="1747"/>
@@ -25725,7 +25739,7 @@ Any airports found in these directories and their sub-directories will not be co
 These paths apply to all Flight Simulators  (FSX, P3D and X-Plane).
 You have to reload the scenery library so that the changes take effect.</oldsource>
         <translation>Alle Flugplätze die außerhalb des Standard &quot;scenery&quot; Verzeichnisses gefunden werden, werden als Add-Ons behandelt.
-Sie können diese Liste benutzen um dieses Verhalten zu ändern.
+Sie können diese Liste benutzen, um dieses Verhalten zu ändern.
 Alle Flugplätze in diesen Verzeichnissen und ihren Unterverzeichnissen werden nicht wie Add-Ons behandelt.
 Diese Pfade treffen auf alle Flugsimulatoren (FSX, P3D, MSFS und X-Plane) zu.
 Sie müssen die Szeneriebibliothek neu laden, damit die Änderungen aktiv werden.</translation>
@@ -26302,7 +26316,7 @@ Wird bei Prozedurabschnitten nicht angezeigt.</translation>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="124"/>
         <source>Select online flying services like VATSIM, IVAO or custom.</source>
-        <translation>Online-Flugdienste wie VATSIM, IVAO oder Eigener.</translation>
+        <translation>Online-Flugdienste, wie VATSIM, IVAO oder Eigener.</translation>
     </message>
     <message>
         <location filename="src/options/optionsdialog.cpp" line="125"/>
@@ -26681,7 +26695,7 @@ Zeigt auch die Frequenz, falls die Linie von einem Funkfeuer ausgeht. </translat
         <source>Do not use an update period smaller than %1 seconds for official networks like VATSIM, IVAO or PilotEdge.
 
 Resetting update period back to %1 seconds.</source>
-        <translation>Verwenden Sie für offizielle Netzwerke wie VATSIM, IVAO oder PilotEdge keine Aktualisierungsperiode kleiner als %1 Sekunden.
+        <translation>Verwenden Sie für offizielle Netzwerke, wie VATSIM, IVAO oder PilotEdge keine Aktualisierungsperiode kleiner als %1 Sekunden.
 
 Setze Aktualisierungsperiode auf %1 Sekunden zurück.</translation>
     </message>
@@ -27288,12 +27302,12 @@ Dieser Prozess läuft im Hintergrund und kann eine Weile dauern.</translation>
     <message>
         <location filename="src/route/parkingdialog.ui" line="52"/>
         <source>Filter entries by name, type, airline codes or facilities containing given text</source>
-        <translation>Einträge nach Name, Typ, Flugliniencodes oder Einrichtungen filtern, die einen bestimmten Text enthalten</translation>
+        <translation>Einträge nach Name, Typ, Fluglinienkennungen oder Einrichtungen filtern, die einen bestimmten Text enthalten</translation>
     </message>
     <message>
         <location filename="src/route/parkingdialog.ui" line="58"/>
         <source>Filter by name, type, airline codes or facilities</source>
-        <translation>Filter nach Name, Typ, Flugliniencodes oder Einrichtungen</translation>
+        <translation>Filter nach Name, Typ, Fluglinienkennungen oder Einrichtungen</translation>
     </message>
     <message>
         <location filename="src/route/parkingdialog.ui" line="68"/>
@@ -27330,7 +27344,7 @@ Länge, Breite und Ausrichtung</translation>
     <message>
         <location filename="src/route/parkingdialog.cpp" line="182"/>
         <source> Airline Codes </source>
-        <translation> Codes für Fluggesellschaften </translation>
+        <translation> Kennungen für Fluggesellschaften </translation>
     </message>
     <message>
         <location filename="src/route/parkingdialog.cpp" line="182"/>
@@ -28452,7 +28466,7 @@ erforderlicher Flugpfadwinkel für den Sinkflug.</translation>
         <source>Vertical speed needed to arrive at the calculated altitude at the next waypoint.
 Shown on descent only at user aircraft symbol suffixed with &quot;N&quot;.</source>
         <translation>Vertikale Geschwindigkeit, die benötigt wird, um die berechnete Höhe am nächsten Wegpunkt zu erreichen.
-Wird beim Sinkflug nur beim Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; gezeigt.</translation>
+Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; gezeigt.</translation>
     </message>
     <message>
         <location filename="src/profile/profileoptions.cpp" line="57"/>
@@ -28465,9 +28479,8 @@ Wird beim Sinkflug nur beim Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; 
         <translation>Zeige Höhe</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="58"/>
         <source>Show or hide the labels at the left side of the elevation profile.</source>
-        <translation>Zeigt oder verbirgt die Beschriftungen auf der linken Seite des Höhenprofils.</translation>
+        <translation type="vanished">Zeigt oder verbirgt die Beschriftungen auf der linken Seite des Höhenprofils.</translation>
     </message>
     <message>
         <location filename="src/profile/profileoptions.cpp" line="59"/>
@@ -28476,7 +28489,6 @@ Wird beim Sinkflug nur beim Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; 
         <translation>Distanz</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="59"/>
         <location filename="src/profile/profileoptions.cpp" line="70"/>
         <source>Distance of flight plan leg.</source>
         <translation>Distanz des Flugplanabschnittes.</translation>
@@ -28488,9 +28500,8 @@ Wird beim Sinkflug nur beim Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; 
         <translation>Magnetischer Kurs</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="60"/>
         <source>Show magnetic great circle start course at flight plan leg.</source>
-        <translation>Zeige magnetischen Startkurs für Großkreisroute am Anfang des Flugplanabschnittes.</translation>
+        <translation type="vanished">Zeige magnetischen Startkurs für Großkreisroute am Anfang des Flugplanabschnittes.</translation>
     </message>
     <message>
         <location filename="src/profile/profileoptions.cpp" line="61"/>
@@ -28499,9 +28510,8 @@ Wird beim Sinkflug nur beim Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; 
         <translation>Wahrer Kurs</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="61"/>
         <source>Show true great circle start course at flight plan leg.</source>
-        <translation>Zeige wahren Startkurs für Großkreisroute am Anfang des Flugplanabschnittes.</translation>
+        <translation type="vanished">Zeige wahren Startkurs für Großkreisroute am Anfang des Flugplanabschnittes.</translation>
     </message>
     <message>
         <location filename="src/profile/profileoptions.cpp" line="62"/>
@@ -28509,9 +28519,33 @@ Wird beim Sinkflug nur beim Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; 
         <translation>Zugehörige Navigationshilfe</translation>
     </message>
     <message>
-        <location filename="src/profile/profileoptions.cpp" line="62"/>
         <source>Related navaid for a procedure fix including bearing and distance.</source>
-        <translation>Zugehörige Navigationshilfe für einen Punkt einschließlich Richtung und Distanz.</translation>
+        <translation type="vanished">Zugehörige Navigationshilfe für einen Punkt einschließlich Richtung und Distanz.</translation>
+    </message>
+    <message>
+        <location filename="src/profile/profileoptions.cpp" line="58"/>
+        <source>Show or hide the altitude labels at the left side of the elevation profile.</source>
+        <translation>Zeigt oder verbirgt die Höhenbeschriftungen auf der linken Seite des Höhenprofils.</translation>
+    </message>
+    <message>
+        <location filename="src/profile/profileoptions.cpp" line="59"/>
+        <source>Distance of flight plan leg in the elevation profile header.</source>
+        <translation>Distanz des Flugplanabschnittes in der Kopfzeile.</translation>
+    </message>
+    <message>
+        <location filename="src/profile/profileoptions.cpp" line="60"/>
+        <source>Show magnetic great circle start course for flight plan leg in the header.</source>
+        <translation>Zeige magnetischen Startkurs für Großkreisroute in der Kopfzeile.</translation>
+    </message>
+    <message>
+        <location filename="src/profile/profileoptions.cpp" line="61"/>
+        <source>Show true great circle start course for flight plan leg in the header.</source>
+        <translation>Zeige wahren Startkurs für Großkreisroute in der Kopfzeile.</translation>
+    </message>
+    <message>
+        <location filename="src/profile/profileoptions.cpp" line="62"/>
+        <source>Related navaid for a procedure fix including bearing and distance in the header.</source>
+        <translation>Zugehörige Navigationshilfe für einen Punkt einschließlich Richtung und Distanz in der Kopfzeile anzeigen.</translation>
     </message>
     <message>
         <location filename="src/profile/profileoptions.cpp" line="64"/>
@@ -30582,7 +30616,7 @@ Wird beim Sinkflug nur beim Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; 
     <message>
         <location filename="src/common/maptypes.cpp" line="778"/>
         <source>Multiple</source>
-        <translation>Mehrfachcode</translation>
+        <translation>Mehrfachkennung</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="807"/>
@@ -31952,7 +31986,7 @@ Spaces are replaced with underscores.</oldsource>
     <message>
         <location filename="src/main.cpp" line="223"/>
         <source>Use language code &lt;language&gt; like &quot;de&quot; or &quot;en_US&quot; for the user interface. The code is not checked for existence or validity and is saved for the next startup.</source>
-        <translation>Einen Sprachcode &lt;language&gt; wie &quot;de&quot; oder &quot;en_US&quot; für die Benutzeroberfläche verwenden. Der Code wird nicht auf Existenz oder Gültigkeit geprüft und wird für den nächsten Start gespeichert.</translation>
+        <translation>Einen Sprachcode &lt;language&gt;, wie &quot;de&quot; oder &quot;en_US&quot; für die Benutzeroberfläche verwenden. Der Code wird nicht auf Existenz oder Gültigkeit geprüft und wird für den nächsten Start gespeichert.</translation>
     </message>
     <message>
         <location filename="src/main.cpp" line="234"/>
@@ -32470,7 +32504,7 @@ Andere Formate:
 - Grad, Minuten und Sekunden: 481200N0112842E (SkyVector)
 - Grad und Minuten als Paar: &quot;N6500 W08000&quot; oder &quot;N6500/W08000&quot;
 - NAT-Typ: 5020N
-Die obigen Formate müssen exakt wie im Beispiel angegeben werden.</translation>
+Die obigen Formate müssen exakt, wie im Beispiel angegeben werden.</translation>
     </message>
     <message>
         <location filename="src/gui/rangemarkerdialog.ui" line="111"/>
@@ -33759,7 +33793,7 @@ Anflug oder Fehlanflug plus Prozedurname.</translation>
     <message>
         <location filename="src/route/routecontroller.cpp" line="184"/>
         <source>Contains the airway name for en route legs or procedure instruction.</source>
-        <translation>Enthält den Luftstrassenname für Abschnitte oder Prozeduranweisungen.</translation>
+        <translation>Enthält den Luftstrassennamen für Abschnitte oder Prozeduranweisungen.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="185"/>
@@ -34322,7 +34356,7 @@ erstellen Sie den Flugplan manuell.</translation>
     <message>
         <location filename="src/route/routecontroller.cpp" line="180"/>
         <source>Two letter ICAO region code of a navaid.</source>
-        <translation>ICAO zwei-Buchstaben-Code für Region einer Navigationshilfe.</translation>
+        <translation>ICAO zwei-Buchstaben-Kennung für Region einer Navigationshilfe.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="181"/>
@@ -34459,7 +34493,7 @@ Sie können Spalten verschieben und in der Größe verändern, indem Sie in die 
     <message>
         <location filename="src/route/routecontroller.cpp" line="2434"/>
         <source>Departure and destination airports as links to show them on the map and in information.</source>
-        <translation>Abflug- und Zielflughäfen als Links, um sie auf der Karte und in den Informationen anzuzeigen.</translation>
+        <translation>Abflug- und Zielflugplätze als Links, um sie auf der Karte und in den Informationen anzuzeigen.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2437"/>
@@ -34474,7 +34508,7 @@ Sie können Spalten verschieben und in der Größe verändern, indem Sie in die 
     <message>
         <location filename="src/route/routecontroller.cpp" line="2441"/>
         <source>SID information.</source>
-        <translation>SID Information.</translation>
+        <translation>Informationen zur SID.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2443"/>
@@ -34530,8 +34564,8 @@ Sie können Spalten verschieben und in der Größe verändern, indem Sie in die 
         <location filename="src/route/routecontroller.cpp" line="2458"/>
         <source>Show error messages for flight plan elements like missing airports and more.
 It is strongly recommended to keep the error label enabled.</source>
-        <translation>Anzeige von Fehlermeldungen für Flugplanelemente wie fehlende Flugplätze und mehr.
-Es wird dringend empfohlen, die Fehlermeldung aktiviert zu lassen.</translation>
+        <translation>Anzeige von Fehlermeldungen für Flugplanelemente, wie fehlende Flugplätze und mehr.
+Es wird empfohlen, die Fehlermeldung aktiviert zu lassen.</translation>
     </message>
     <message>
         <location filename="src/route/routecontroller.cpp" line="2462"/>
@@ -35856,7 +35890,7 @@ Use this format to save and backup your plans since it covers all features like 
 Note that using this option is the same as using &quot;Save&quot; or &quot;Save as&quot; in the main menu &quot;File&quot;.</source>
         <translation>
 Verwenden Sie dieses Format, um Ihre Pläne zu sichern, da es alle Funktionen wie Anmerkungen und mehr abdeckt.
-Beachten Sie, dass die Verwendung dieser Einstellung die gleiche ist wie die Verwendung von &quot;Speichern&quot; oder &quot;Speichern als&quot; im Dateimenü.</translation>
+Beachten Sie, dass die Verwendung dieser Einstellung die gleiche ist wie die Verwendung von &quot;Speichern&quot; oder &quot;Speichern als&quot; im Menü &quot;Datei&quot;.</translation>
     </message>
     <message>
         <location filename="src/routeexport/routeexportformat.cpp" line="250"/>
@@ -39386,7 +39420,7 @@ Click &quot;Help&quot; for more information.</source>
 Note that the field &quot;Tags&quot; is used for the ID of airport terminal area and the waypoint type</oldsource>
         <translation>Wählen Sie die Exporteinstellungen für Nutzerpunkte.
 
-Beachten Sie, dass das Feld &quot;Tags&quot; für die ID des Flughafen-Terminalbereichs und den Wegpunkttyp verwendet wird.
+Beachten Sie, dass das Feld &quot;Tags&quot; für die ID des Flugplatzterminalbereichs und den Wegpunkttyp verwendet wird.
 Klicken Sie auf &quot;Hilfe&quot; für weitere Informationen.</translation>
     </message>
     <message>
@@ -39619,7 +39653,7 @@ Click &quot;Help&quot; for more information.</source>
         <translation>Liste der Tags. Einfaches Textfeld für verschiedene Zwecke.
 
 Tags werden auch für den X-Plane Export und Import von und nach &quot;user_fix.dat&quot; verwendet.
-Das Feld &quot;Tags&quot; wird für die ID des Flughafenterminals und den Wegpunkttyp verwendet.
+Das Feld &quot;Tags&quot; wird für die Flugplatzterminalkennung und den Wegpunkttyp verwendet.
 Klicken Sie auf &quot;Hilfe&quot; für weitere Informationen.</translation>
     </message>
     <message>
@@ -39669,7 +39703,7 @@ Klicken Sie auf &quot;Hilfe&quot; für weitere Informationen.</translation>
         <location filename="src/userdata/userdatadialog.ui" line="158"/>
         <source>Two letter ICAO region code.
 Required for export to X-Plane &quot;user_fix.dat&quot;.</source>
-        <translation>Zwei-Buchstaben-Code der ICAO Region.
+        <translation>Zwei-Buchstaben-Kennung der ICAO Region.
 Wird für den Export in X-Plane &quot;user_fix.dat&quot; benötigt.</translation>
     </message>
     <message>

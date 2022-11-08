@@ -433,7 +433,7 @@ void DatabaseLoader::showErrors()
   if(navDatabaseErrors->getTotal() > 0)
   {
     int totalErrors = navDatabaseErrors->getTotalErrors();
-    int totalWarnings = navDatabaseErrors->getTotalWarnings();
+    int totalNotes = navDatabaseErrors->getTotalWarnings();
 
     // Adjust text depending on warnings and errors =========================================
     QStringList headerText;
@@ -441,67 +441,69 @@ void DatabaseLoader::showErrors()
     if(totalErrors > 0)
       headerText.append(tr("%1 %2").arg(totalErrors).arg(totalErrors > 1 ? tr("errors") : tr("error")));
 
-    if(totalWarnings > 0)
-      headerText.append(tr("%1 %2").arg(totalWarnings).arg(totalWarnings > 1 ? tr("warnings") : tr("warning")));
+    if(totalNotes > 0)
+      headerText.append(tr("%1 %2").arg(totalNotes).arg(totalNotes > 1 ?
+                                                        tr("notes", "Database loading notes") :
+                                                        tr("note", "Database loading notes")));
 
-    QString errorTexts;
-    errorTexts.append(tr("<h3>Found %1 in %2 scenery entries when loading the scenery database</h3>").
-                      arg(atools::strJoin(headerText, tr(", "), tr(" and "))).arg(navDatabaseErrors->sceneryErrors.size()));
+    QString texts;
+    texts.append(tr("<h3>Found %1 in %2 scenery entries when loading the scenery database</h3>").
+                 arg(atools::strJoin(headerText, tr(", "), tr(" and "))).arg(navDatabaseErrors->sceneryErrors.size()));
 
     if(totalErrors > 0)
     {
       // Show contact for real errors =========================================
-      errorTexts.append(tr("<b>If you wish to report these errors attach the log and configuration files "
-                             "to your report, add all other available information and send it to "
-                             "the contact address below.</b>"
-                             "<hr/>%1"
-                               "<hr/>%2").
-                        arg(atools::gui::Application::getContactHtml()).
-                        arg(atools::gui::Application::getReportPathHtml()));
+      texts.append(tr("<b>If you wish to report these errors attach the log and configuration files "
+                        "to your report, add all other available information and send it to "
+                        "the contact address below.</b>"
+                        "<hr/>%1"
+                          "<hr/>%2").
+                   arg(atools::gui::Application::getContactHtml()).
+                   arg(atools::gui::Application::getReportPathHtml()));
 
-      errorTexts.append(tr("<hr/>Some files or scenery directories could not be read.<br/>"
-                           "You should check if the airports of the affected sceneries display "
-                           "correctly and show the correct information.<hr/>"));
+      texts.append(tr("<hr/>Some files or scenery directories could not be read.<br/>"
+                      "You should check if the airports of the affected sceneries display "
+                      "correctly and show the correct information.<hr/>"));
     }
-    else if(totalWarnings > 0)
+    else if(totalNotes > 0)
       // Show normal header for encryption warnings =========================================
-      errorTexts.append(tr("<hr/>Some files or scenery directories could not be read properly "
-                             "due to encrypted airport data or other issues.<hr/>"));
+      texts.append(tr("<hr/>Some files or scenery directories could not be read properly "
+                        "due to encrypted airport data.<hr/>"));
 
     int numScenery = 0;
     for(const atools::fs::NavDatabaseErrors::SceneryErrors& scErr : navDatabaseErrors->sceneryErrors)
     {
       if(numScenery >= MAX_ERROR_SCENERY_MESSAGES)
       {
-        errorTexts.append(tr("<b>More scenery entries ...</b>"));
+        texts.append(tr("<b>More scenery entries ...</b>"));
         break;
       }
 
       int numBgl = 0;
-      errorTexts.append(tr("<b>Scenery Title: %1</b><br/>").arg(scErr.scenery.getTitle()));
+      texts.append(tr("<b>Scenery Title: %1</b><br/>").arg(scErr.scenery.getTitle()));
 
       for(const QString& err : scErr.sceneryErrorsMessages)
-        errorTexts.append(err + "<br/>");
+        texts.append(err + "<br/>");
 
       for(const atools::fs::NavDatabaseErrors::SceneryFileError& bglErr : scErr.fileErrors)
       {
         if(numBgl >= MAX_ERROR_BGL_MESSAGES)
         {
-          errorTexts.append(tr("<b>More files ...</b>"));
+          texts.append(tr("<b>More files ...</b>"));
           break;
         }
         numBgl++;
 
-        errorTexts.append(tr("<b>File:</b> \"%1\"<br/><b>Message:</b> %2<br/>").
-                          arg(bglErr.filepath).arg(bglErr.errorMessage));
+        texts.append(tr("<b>File:</b> \"%1\"<br/><b>Message:</b> %2<br/>").
+                     arg(bglErr.filepath).arg(bglErr.errorMessage));
       }
-      errorTexts.append("<br/>");
+      texts.append("<br/>");
       numScenery++;
     }
 
     TextDialog errorDialog(progressDialog, tr("%1 - Load Scenery Library Results").arg(QApplication::applicationName()),
                            "SCENERY.html#errors"); // anchor for future use
-    errorDialog.setHtmlMessage(errorTexts, true /* print to log */);
+    errorDialog.setHtmlMessage(texts, true /* print to log */);
     errorDialog.exec();
   }
 }

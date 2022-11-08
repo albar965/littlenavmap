@@ -18,7 +18,6 @@
 #include "db/databasedialog.h"
 
 #include "common/constants.h"
-#include "db/databasemanager.h"
 #include "fs/fspaths.h"
 #include "gui/dialog.h"
 #include "gui/helphandler.h"
