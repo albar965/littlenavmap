@@ -31,16 +31,64 @@ export XPSDK_BASE=${XPSDK_BASE:-"${APROJECTS}/X-Plane SDK"}
 export DATABASE_BASE=${DATABASE_BASE:-"${APROJECTS}/little_navmap_db"}
 export HELP_BASE=${HELP_BASE:-"${APROJECTS}/little_navmap_help"}
 
-# Defines the used Qt for all builds
-export QMAKE_SHARED=${QMAKE_SHARED:-"qmake"}
+# Defines the used Qt for all builds  - x86 and Qt 5.15
+export QMAKE_SHARED=${QMAKE_SHARED:-"${HOME}/Qt/5.15.2/clang_64/bin/qmake"}
+
+# Defines the used Qt for all the Intel/ARM Xpconnect build - x86 and arm64 and Qt 6.4
+export QMAKE_SHARED_ARM=${QMAKE_SHARED:-"${HOME}/Qt/6.4.0/macos/bin/qmake"}
+
 
 # Do not change the DEPLOY_BASE since some scripts depend on it
 export DEPLOY_BASE="${APROJECTS}/deploy"
 
 export INSTALL_MARBLE_DYLIB=/Users/alex/Projekte/build-marble-release/src/lib/marble/libmarblewidget-qt5.25.dylib
 
+
 # ===========================================================================
-# ========================== atools
+# ========================== atools - x86 and arm64 and Qt 6.4
+rm -rf ${APROJECTS}/build-atools-${CONF_TYPE}
+mkdir -p ${APROJECTS}/build-atools-${CONF_TYPE}
+cd ${APROJECTS}/build-atools-${CONF_TYPE}
+
+export ATOOLS_NO_FS=true
+export ATOOLS_NO_GRIB=true
+export ATOOLS_NO_GUI=true
+export ATOOLS_NO_ROUTING=true
+export ATOOLS_NO_SQL=true
+export ATOOLS_NO_TRACK=true
+export ATOOLS_NO_USERDATA=true
+export ATOOLS_NO_WEATHER=true
+export ATOOLS_NO_WEB=true
+export ATOOLS_NO_WMM=true
+
+${QMAKE_SHARED_ARM} ${APROJECTS}/atools/atools.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=${CONF_TYPE}  'QMAKE_APPLE_DEVICE_ARCHS=x86_64 arm64'
+make -j4
+
+# ===========================================================================
+# ========================== littlexpconnect - x86 and arm64 and Qt 6.4
+rm -rf ${APROJECTS}/build-littlexpconnect-${CONF_TYPE}
+mkdir -p ${APROJECTS}/build-littlexpconnect-${CONF_TYPE}
+cd ${APROJECTS}/build-littlexpconnect-${CONF_TYPE}
+
+${QMAKE_SHARED_ARM} ${APROJECTS}/littlexpconnect/littlexpconnect.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=${CONF_TYPE} 'QMAKE_APPLE_DEVICE_ARCHS=x86_64 arm64'
+make -j4
+make deploy -i -l
+
+mv "${DEPLOY_BASE}/Little Xpconnect" "${DEPLOY_BASE}/Little Xpconnect arm64"
+
+unset ATOOLS_NO_FS=true
+unset ATOOLS_NO_GRIB=true
+unset ATOOLS_NO_GUI=true
+unset ATOOLS_NO_ROUTING=true
+unset ATOOLS_NO_SQL=true
+unset ATOOLS_NO_TRACK=true
+unset ATOOLS_NO_USERDATA=true
+unset ATOOLS_NO_WEATHER=true
+unset ATOOLS_NO_WEB=true
+unset ATOOLS_NO_WMM=true
+
+# ===========================================================================
+# ========================== atools - x86 and Qt 5.15
 rm -rf ${APROJECTS}/build-atools-${CONF_TYPE}
 mkdir -p ${APROJECTS}/build-atools-${CONF_TYPE}
 cd ${APROJECTS}/build-atools-${CONF_TYPE}
@@ -49,14 +97,16 @@ ${QMAKE_SHARED} ${APROJECTS}/atools/atools.pro -spec macx-clang CONFIG+=x86_64 C
 make -j4
 
 # ===========================================================================
-# ========================== littlexpconnect
-rm -rf ${APROJECTS}/build-littlexpconnect-${CONF_TYPE}
-mkdir -p ${APROJECTS}/build-littlexpconnect-${CONF_TYPE}
-cd ${APROJECTS}/build-littlexpconnect-${CONF_TYPE}
+# ========================== littlexpconnect - x86 and Qt 5.15
+rm -rf ${APROJECTS}/build-littlexpconnect-x86-${CONF_TYPE}
+mkdir -p ${APROJECTS}/build-littlexpconnect-x86-${CONF_TYPE}
+cd ${APROJECTS}/build-littlexpconnect-x86-${CONF_TYPE}
 
 ${QMAKE_SHARED} ${APROJECTS}/littlexpconnect/littlexpconnect.pro -spec macx-clang CONFIG+=x86_64 CONFIG+=${CONF_TYPE}
 make -j4
 make deploy -i -l
+
+mv "${DEPLOY_BASE}/Little Xpconnect" "${DEPLOY_BASE}/Little Xpconnect x86"
 
 # ===========================================================================
 # ========================== littlenavconnect
