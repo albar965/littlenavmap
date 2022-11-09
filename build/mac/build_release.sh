@@ -35,13 +35,13 @@ export HELP_BASE=${HELP_BASE:-"${APROJECTS}/little_navmap_help"}
 export QMAKE_SHARED=${QMAKE_SHARED:-"${HOME}/Qt/5.15.2/clang_64/bin/qmake"}
 
 # Defines the used Qt for all the Intel/ARM Xpconnect build - x86 and arm64 and Qt 6.4
-export QMAKE_SHARED_ARM=${QMAKE_SHARED:-"${HOME}/Qt/6.4.0/macos/bin/qmake"}
+export QMAKE_SHARED_ARM=${QMAKE_SHARED_ARM:-"${HOME}/Qt/6.4.0/macos/bin/qmake"}
 
 
 # Do not change the DEPLOY_BASE since some scripts depend on it
 export DEPLOY_BASE="${APROJECTS}/deploy"
 
-export INSTALL_MARBLE_DYLIB=/Users/alex/Projekte/build-marble-release/src/lib/marble/libmarblewidget-qt5.25.dylib
+export INSTALL_MARBLE_DYLIB=$APROJECTS/build-marble-release/src/lib/marble/libmarblewidget-qt5.25.dylib
 
 
 # ===========================================================================
@@ -74,18 +74,19 @@ ${QMAKE_SHARED_ARM} ${APROJECTS}/littlexpconnect/littlexpconnect.pro -spec macx-
 make -j4
 make deploy -i -l
 
+rm -rf "${DEPLOY_BASE}/Little Xpconnect arm64"
 mv "${DEPLOY_BASE}/Little Xpconnect" "${DEPLOY_BASE}/Little Xpconnect arm64"
 
-unset ATOOLS_NO_FS=true
-unset ATOOLS_NO_GRIB=true
-unset ATOOLS_NO_GUI=true
-unset ATOOLS_NO_ROUTING=true
-unset ATOOLS_NO_SQL=true
-unset ATOOLS_NO_TRACK=true
-unset ATOOLS_NO_USERDATA=true
-unset ATOOLS_NO_WEATHER=true
-unset ATOOLS_NO_WEB=true
-unset ATOOLS_NO_WMM=true
+unset ATOOLS_NO_FS
+unset ATOOLS_NO_GRIB
+unset ATOOLS_NO_GUI
+unset ATOOLS_NO_ROUTING
+unset ATOOLS_NO_SQL
+unset ATOOLS_NO_TRACK
+unset ATOOLS_NO_USERDATA
+unset ATOOLS_NO_WEATHER
+unset ATOOLS_NO_WEB
+unset ATOOLS_NO_WMM
 
 # ===========================================================================
 # ========================== atools - x86 and Qt 5.15
@@ -106,6 +107,7 @@ ${QMAKE_SHARED} ${APROJECTS}/littlexpconnect/littlexpconnect.pro -spec macx-clan
 make -j4
 make deploy -i -l
 
+rm -rf "${DEPLOY_BASE}/Little Xpconnect x86"
 mv "${DEPLOY_BASE}/Little Xpconnect" "${DEPLOY_BASE}/Little Xpconnect x86"
 
 # ===========================================================================
