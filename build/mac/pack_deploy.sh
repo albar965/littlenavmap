@@ -33,6 +33,9 @@ export SSH_DEPLOY_TARGET=${SSH_DEPLOY_TARGET:-"sol:/data/alex/Public/Releases"}
 
   rm -rfv LittleNavmap.zip LittleNavconnect.zip LittleXpconnect.zip
 
+  cp -avf "Little Xpconnect arm64/README.txt" README-LittleXpconnect.txt
+  cp -avf "Little Xpconnect arm64/CHANGELOG.txt" CHANGELOG-LittleXpconnect.txt
+
   zip -r -y -9 LittleNavmap.zip "Little Navmap.app" "Little Navconnect.app" "Little Xpconnect arm64" "Little Xpconnect x86" \
          LICENSE.txt README-LittleNavconnect.txt CHANGELOG-LittleNavconnect.txt \
          README-LittleNavmap.txt CHANGELOG-LittleNavmap.txt \
