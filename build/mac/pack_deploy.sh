@@ -36,6 +36,7 @@ export SSH_DEPLOY_TARGET=${SSH_DEPLOY_TARGET:-"sol:/data/alex/Public/Releases"}
   zip -r -y -9 LittleNavmap.zip "Little Navmap.app" "Little Navconnect.app" "Little Xpconnect arm64" "Little Xpconnect x86" \
          LICENSE.txt README-LittleNavconnect.txt CHANGELOG-LittleNavconnect.txt \
          README-LittleNavmap.txt CHANGELOG-LittleNavmap.txt \
+         README-LittleXpconnect.txt CHANGELOG-LittleXpconnect.txt \
          revision-LittleNavmap.txt version-LittleNavmap.txt
 
 #  zip -r -y -9 LittleXpconnect.zip "Little Xpconnect"
