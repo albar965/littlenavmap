@@ -1,14 +1,14 @@
 ### Little Navmap Downloads
 
-* [**Windows** (LittleNavmap-win-2.6.6.zip)](https://github.com/albar965/littlenavmap/releases/download/v2.6.6/LittleNavmap-win-2.6.6.zip)
-* [**macOS** (LittleNavmap-macOS-2.6.6.zip)](https://github.com/albar965/littlenavmap/releases/download/v2.6.6/LittleNavmap-macOS-2.6.6.zip)
-* [**Linux** - 64 bit, based on Ubuntu 20.04 (LittleNavmap-linux-20.04-2.6.6.tar.gz)](https://github.com/albar965/littlenavmap/releases/download/v2.6.6/LittleNavmap-linux-20.04-2.6.6.tar.gz)
-* [**Linux** - 64 bit, based on Ubuntu 16.04 (LittleNavmap-linux-16.04-2.6.6.tar.gz)](https://github.com/albar965/littlenavmap/releases/download/v2.6.6/LittleNavmap-linux-16.04-2.6.6.tar.gz)
+* [**Windows** (LittleNavmap-win-2.6.19.zip)](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-win-2.6.19.zip)
+* [**macOS** (LittleNavmap-macOS-2.6.19.zip)](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-macOS-2.6.19.zip)
+* [**Linux** - 64 bit, based on Ubuntu 22.04 (LittleNavmap-linux-22.04-2.6.19.tar.gz)](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-linux-22.04-2.6.19.tar.gz)
+* [**Linux** - 64 bit, based on Ubuntu 20.04 (LittleNavmap-linux-20.04-2.6.19.tar.gz)](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-linux-20.04-2.6.19.tar.gz)
+* [**Linux** - 64 bit, based on Ubuntu 18.04 (LittleNavmap-linux-18.04-2.6.19.tar.gz)](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-linux-18.04-2.6.19.tar.gz)
 
-**Alternative download locations:**
-* **[Dropbox](https://www.dropbox.com/sh/eh446yent4rz3uq/AACg8vMEmX8AxY_5Hjpt90kWa)**
-* **[Mega.nz](https://mega.nz/#F!iOZHlIab!65qqRGToUUCxiSMmzbab1w)**
-* **[OneDrive](https://1drv.ms/u/s!AoWYKlNEZds9auvFMliyQ3HK-lY?e=42ud1g)**
+### Alternative Download Locations
+
+**►** [**Box**](https://app.box.com/s/8c9x2f91enpkn41cmc4b5tkzlil9ouhy) / [**Dropbox**](https://www.dropbox.com/sh/eh446yent4rz3uq/AACg8vMEmX8AxY_5Hjpt90kWa) / [**Mega.nz**](https://mega.nz/#F!iOZHlIab!65qqRGToUUCxiSMmzbab1w) / [**OneDrive**](https://1drv.ms/u/s!AoWYKlNEZds9auvFMliyQ3HK-lY?e=42ud1g).
 
 ### Little Navmap Links
 
