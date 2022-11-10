@@ -2,7 +2,6 @@
 
 * [**Windows** (LittleNavmap-win-2.6.19.zip)](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-win-2.6.19.zip)
 * [**macOS** (LittleNavmap-macOS-2.6.19.zip)](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-macOS-2.6.19.zip)
-* [**Linux** - 64 bit, based on Ubuntu 22.04 (LittleNavmap-linux-22.04-2.6.19.tar.gz)](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-linux-22.04-2.6.19.tar.gz)
 * [**Linux** - 64 bit, based on Ubuntu 20.04 (LittleNavmap-linux-20.04-2.6.19.tar.gz)](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-linux-20.04-2.6.19.tar.gz)
 * [**Linux** - 64 bit, based on Ubuntu 18.04 (LittleNavmap-linux-18.04-2.6.19.tar.gz)](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-linux-18.04-2.6.19.tar.gz)
 
