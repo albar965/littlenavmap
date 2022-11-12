@@ -24,10 +24,11 @@
 #include "geo/linestring.h"
 #include "geo/pos.h"
 #include "gui/dialog.h"
-#include "geo/calculations.h"
+#include "atools.h"
 
 #include <marble/GeoDataCoordinates.h>
 #include <marble/ElevationModel.h>
+
 
 /* Limt altitude to this value */
 static Q_DECL_CONSTEXPR float ALTITUDE_LIMIT_METER = 8800.f;

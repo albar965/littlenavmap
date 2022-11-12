@@ -240,7 +240,8 @@ private:
   QPoint toScreen(const QPointF& pt) const;
   QPolygon toScreen(const QPolygonF& leg) const;
 
-  QPoint destinationAirportScreenPos() const;
+  /* Screen position of the destination airport if valid or aircraft distance plus ahead */
+  QPoint destinationAirportScreenPos(bool& destUsed, float distanceAhead) const;
 
   void hideRubberBand();
 
@@ -275,6 +276,9 @@ private:
 
   /* Shows the display options dialog */
   void showDisplayOptions();
+
+  /* Center aircraft or zoom to aircraft and destination depending on distance to destination. */
+  void centerAircraft();
 
   /* User aircraft data */
   atools::fs::sc::SimConnectData simData, lastSimData;

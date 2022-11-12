@@ -71,7 +71,7 @@ public:
   void centerAircraft(const QPoint& aircraftScreenPoint, float verticalSpeed, bool force);
 
   /* Adjust zoom to have aircraft and destination available */
-  void centerAircraftAndDest(const QPoint& aircraftScreenPoint, const QPoint& destScreenPoint, bool zoomVertically, bool force);
+  void centerRect(const QPoint& leftScreenPoint, const QPoint& rightScreenPoint, bool zoomVertically, bool force);
 
   bool isPointVisible(const QPoint& point);
 

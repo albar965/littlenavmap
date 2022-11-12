@@ -70,10 +70,13 @@ static const int ELEVATION_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS = 100;
 
 // Defines a rectangle where five points are sampled and the maximum altitude is used.
 // Results in a sample rectangle with ELEVATION_SAMPLE_RADIUS_NM * ELEVATION_SAMPLE_RADIUS_NM size
-static const float ELEVATION_SAMPLE_RADIUS_NM = 0.25f;
+static const float ELEVATION_SAMPLE_RADIUS_NM = 0.1f;
 
 /* Do not calculate a profile for legs longer than this value */
 static const int ELEVATION_MAX_LEG_NM = 2000;
+
+/* Zoom to aircraft + 100 NM or to aircraft to destination */
+static const float ZOOM_DESTINATION_MAX_AHEAD = 100.f;
 
 /* Maximum delta values depending on update rate in options */
 // int manhattanLengthDelta;
@@ -251,7 +254,6 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
   if(databaseLoadStatus || !simulatorData.getUserAircraftConst().isValid())
     return;
 
-  Ui::MainWindow *ui = NavApp::getMainUi();
   bool updateWidget = false;
 
   // Need route with update active leg and aircraft position
@@ -328,21 +330,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
             updateScreenCoords();
 
           if(!jumpBack->isActive())
-          {
-            // Vertical zoom only in descent phase
-            bool zoomVertically = route.getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE &&
-                                  aircraftDistanceFromStart > route.getTopOfDescentDistance();
-
-            // Probably center aircraft on scroll area
-            if(ui->actionProfileCenterAircraft->isChecked())
-            {
-              if(ui->actionProfileZoomAircraft->isChecked())
-                scrollArea->centerAircraftAndDest(currentScreenPoint, destinationAirportScreenPos(), zoomVertically, false /* force */);
-              else
-                scrollArea->centerAircraft(currentScreenPoint, simData.getUserAircraftConst().getVerticalSpeedFeetPerMin(),
-                                           false /* force */);
-            }
-          }
+            centerAircraft();
 
           // Aircraft position has changed enough
           updateWidget = true;
@@ -356,6 +344,36 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
 
   if(widgetVisible)
     updateLabel();
+}
+
+void ProfileWidget::centerAircraft()
+{
+  // Need route with update active leg and aircraft position
+  Ui::MainWindow *ui = NavApp::getMainUi();
+
+  // Probably center aircraft on scroll area
+  if(ui->actionProfileCenterAircraft->isChecked())
+  {
+    QPoint currentScreenPoint = toScreen(QPointF(aircraftDistanceFromStart, aircraftAlt(simData.getUserAircraftConst())));
+    bool destUsed;
+    QPoint zoomScreenPoint = destinationAirportScreenPos(destUsed, ZOOM_DESTINATION_MAX_AHEAD);
+    if(ui->actionProfileZoomAircraft->isChecked() && destUsed)
+    {
+      // Vertical zoom only in descent phase
+      const Route& route = NavApp::getRouteConst();
+      bool zoomVertically = route.getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE &&
+                            aircraftDistanceFromStart > route.getTopOfDescentDistance();
+
+      // Destination in range - zoom to aircraft and destination rectangle
+      scrollArea->centerRect(currentScreenPoint, zoomScreenPoint, zoomVertically, false /* force */);
+#ifdef DEBUG_INFORMATION
+      qDebug() << Q_FUNC_INFO << "destUsed" << destUsed << "zoomVertically" << zoomVertically;
+#endif
+    }
+    else
+      // Destination not in range - zoom normally, keep aircraft visible and keep zoom value
+      scrollArea->centerAircraft(currentScreenPoint, simData.getUserAircraftConst().getVerticalSpeedFeetPerMin(), false /* force */);
+  }
 }
 
 void ProfileWidget::connectedToSimulator()
@@ -555,18 +573,20 @@ QPolygon ProfileWidget::toScreen(const QPolygonF& leg) const
   return retval;
 }
 
-QPoint ProfileWidget::destinationAirportScreenPos() const
+QPoint ProfileWidget::destinationAirportScreenPos(bool& destUsed, float distanceAhead) const
 {
   const Route& route = NavApp::getRouteConst();
 
   int destIdx = route.getDestinationAirportLegIndex();
   if(destIdx != map::INVALID_INDEX_VALUE)
   {
-    float destAlt = route.getAltitudeLegAt(destIdx).getWaypointAltitude();
-    float distanceFromStart = route.getAltitudeLegAt(destIdx).getDistanceFromStart();
+    float dist = map::INVALID_DISTANCE_VALUE, alt = map::INVALID_ALTITUDE_VALUE;
+    destUsed = aircraftDistanceFromStart + distanceAhead > route.getAltitudeLegAt(destIdx).getDistanceFromStart();
+    alt = route.getAltitudeLegAt(destIdx).getWaypointAltitude();
+    dist = route.getAltitudeLegAt(destIdx).getDistanceFromStart();
 
-    if(destAlt < map::INVALID_ALTITUDE_VALUE && distanceFromStart < map::INVALID_DISTANCE_VALUE)
-      return toScreen(QPointF(distanceFromStart, destAlt));
+    if(alt < map::INVALID_ALTITUDE_VALUE && dist < map::INVALID_DISTANCE_VALUE)
+      return toScreen(QPointF(dist, alt));
   }
   return QPoint();
 }
@@ -2665,6 +2685,10 @@ void ProfileWidget::jumpBackToAircraftCancel()
 
 void ProfileWidget::jumpBackToAircraftTimeout()
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO;
+#endif
+
   Ui::MainWindow *ui = NavApp::getMainUi();
   if(ui->actionProfileCenterAircraft->isChecked() && NavApp::isConnectedAndAircraft() &&
      OptionData::instance().getFlags2() & opts2::ROUTE_NO_FOLLOW_ON_MOVE && aircraftDistanceFromStart < map::INVALID_DISTANCE_VALUE)
@@ -2677,19 +2701,7 @@ void ProfileWidget::jumpBackToAircraftTimeout()
       jumpBack->cancel();
 
       if(ui->actionProfileCenterAircraft->isChecked())
-      {
-        // Vertical zoom only in descent phase
-        const Route& route = NavApp::getRouteConst();
-        bool zoomVertically = route.getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE &&
-                              aircraftDistanceFromStart > route.getTopOfDescentDistance();
-
-        QPoint pt = toScreen(QPointF(aircraftDistanceFromStart, aircraftAlt(simData.getUserAircraft())));
-
-        if(ui->actionProfileZoomAircraft->isChecked())
-          scrollArea->centerAircraftAndDest(pt, destinationAirportScreenPos(), zoomVertically, true /* force */);
-        else
-          scrollArea->centerAircraft(pt, simData.getUserAircraftConst().getVerticalSpeedFeetPerMin(), true /* force */);
-      }
+        centerAircraft();
     }
   }
   else
