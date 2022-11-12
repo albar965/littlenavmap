@@ -9,7 +9,7 @@ Please note that this project is released with a [Contributor Code of Conduct][c
 Make sure to clone or fork the right branch before adding changes or issuing a pull request.
 
 - `master` is the unstable branch where all the development is going on. All versions have odd minor numbers like 1.**3**.0.develop or 1.**1**.8.develop.
-- `release/X.X` Is a release branch containing betas, release candidates and the tagged stable releases. Versions have even minor numbers like 1.**4**.0.beta or 1.**6**.3.rc1. These branches are associated with same named branches on Gitbook.
+- `release/X.X` Is a release branch containing betas, release candidates and the tagged stable releases. Versions have even minor numbers like 1.**4**.0.beta or 1.**6**.3.rc1.
 - `feature/translation` A feature branch containing unfinished translations which are cherry picked into `master` from time to time.
 - `feature/YOURFEATURE` A feature branch for separate development.
 
