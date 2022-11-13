@@ -2,7 +2,7 @@
 <dgml xmlns="http://edu.kde.org/marble/dgml/2.0">
   <!-- ================================================================================================
        Documented example DGML file explaining special fields used by Little Navmap.
-       See also https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/MAPTHEMES.html,
+       See also https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/MAPTHEMES.html,
        https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames and
        https://techbase.kde.org/Marble/OSMSlippyMaps for more information.
 
@@ -65,7 +65,7 @@
         <texture expire="1209600" name="mapnik_data">
 
           <!-- Cache folder based on "C:\Users\YOURUSERNAME\AppData\Local\.marble\data" on Windows,
-               for example (see also https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/FILES.html#disk-cache).
+               for example (see also https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/FILES.html#disk-cache).
                Make sure this is unique across all available maps to avoid messing up the cache.
                Adjust format as provided by map service. -->
           <sourcedir format="PNG">earth/example</sourcedir>

@@ -28,14 +28,14 @@ Simulator 2020 and X-Plane 11.
 ------------------------------------------------------------------------------
 
 See the Little Navmap help for more information.
-All online here: https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/
+All online here: https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/
 
 ------------------------------------------------------------------------------
 -- INSTALLATION --------------------------------------------------------------
 ------------------------------------------------------------------------------
 
 See online manual for installation instructions:
-https://www.littlenavmap.org/manuals/littlenavmap/release/2.6/en/INSTALLATION.html
+https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/INSTALLATION.html
 
 ------------------------------------------------------------------------------
 -- OTHER PROGRAMS INCLUDED ---------------------------------------------------

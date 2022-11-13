@@ -34,5 +34,5 @@ WaypointLinePen=#dddddd, 1, Solid
 
 See the online manual for more information how to use these files:
 
-https://www.littlenavmap.org/manuals/littlenavmap/release/2.4/en/CUSTOMIZE.html
+https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/CUSTOMIZE.html
 

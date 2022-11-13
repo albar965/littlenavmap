@@ -680,6 +680,7 @@ OTHER_FILES += \
   $$files(help/*, true) \
   $$files(web/*, true) \
   $$files(marble/*, true) \
+  $$files(.github/*, true) \
   .travis.yml \
   .gitignore \
   *.ts \
