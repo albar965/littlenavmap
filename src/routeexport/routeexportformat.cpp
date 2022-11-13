@@ -224,9 +224,10 @@ void RouteExportFormatMap::initCallbacks(RouteExport *routeExport)
   (*this)[MDR         ].CB(bind(&RouteExport::routeExportMdrMulti,          routeExport, _1));
   (*this)[TFDI        ].CB(bind(&RouteExport::routeExportTfdiMulti,         routeExport, _1));
   (*this)[IFLY        ].CB(bind(&RouteExport::routeExportIflyMulti,         routeExport, _1));
+  (*this)[INIBUILDS   ].CB(bind(&RouteExport::routeExportFms3Multi,         routeExport, _1));
   (*this)[PLNISG      ].CB(bind(&RouteExport::routeExportIsgMulti,          routeExport, _1));
   (*this)[PMS50       ].CB(bind(&RouteExport::routeExportPms50Multi,        routeExport, _1));
-  (*this)[TDSGTNXI    ].CB(bind(&RouteExport::routeExportTdsGtnXi,          routeExport, _1));
+  (*this)[TDSGTNXI    ].CB(bind(&RouteExport::routeExportTdsGtnXiMulti,     routeExport, _1));
   /* *INDENT-ON* */
 
 #undef CB
@@ -314,6 +315,7 @@ void RouteExportFormatMap::init()
   FMT(MDR,          AIRPORTS,         S0 % tr("mdr"),     tr("Aircraft"),  tr("Leonardo Maddog X")                                               );
   FMT(TFDI,         AIRPORTS,         S0 % tr("xml"),     tr("Aircraft"),  tr("TFDi Design 717")                                                 );
   FMT(IFLY,         AIRPORTS,         S0 % tr("route"),   tr("Aircraft"),  tr("iFly Jets Advanced Series")                                       );
+  FMT(INIBUILDS,    AIRPORTS,         S0 % tr("fpl"),     tr("Aircraft"),  tr("IniBuilds Airbus for MSFS")                                       );
   FMT(PLNISG,       AIRPORTS,         S0 % tr("pln"),     tr("FMS"),       tr("ISG Integrated Simavionics gauges")                               );
   FMT(PMS50,        FILEREP|AIRPORTS, tr("fpl.pln"),      tr("Garmin"),    tr("PMS50 GTN750")                                                    );
   FMT(TDSGTNXI,     AIRPORTS,         SU % tr("gfp"),     tr("Garmin"),    tr("TDS GTNXi")                                                       );
@@ -356,10 +358,12 @@ void RouteExportFormatMap::updateDefaultPaths()
     xpFilesPath12 = documents;
 
   // Get MSFS files path (LocalState) ===========================
+  // .../Packages/Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalState/
   QString msfsFilesPath = NavApp::getSimulatorFilesPathBest({FsPaths::MSFS});
   if(msfsFilesPath.isEmpty())
     msfsFilesPath = documents;
 
+  // .../Packages/Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/
   QString msfsBasePath = NavApp::getSimulatorBasePathBest({FsPaths::MSFS});
   if(msfsBasePath.isEmpty())
     msfsBasePath = documents;
@@ -469,6 +473,11 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[MDR         ].DP(fsxP3dBasePath);
   (*this)[TFDI        ].DP(fsxP3dBasePath % SEP % "SimObjects" % SEP % "Airplanes" % SEP % "TFDi_Design_717" % SEP % "Documents" % SEP % "Company Routes");
   (*this)[IFLY        ].DP(documents % SEP % "Prepar3D v5 Add-ons" % SEP % "iFlyData" % SEP % "navdata" % SEP % "FLTPLAN");
+
+  // Steam: C:\Users\yournamehere\AppData\Roaming\Microsoft Flight Simulator\Packages\microsoft-aircraft-a310-300\work
+  // MS Store Users C:\Users\yournamehere\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalState\packages\microsoft-aircraft-a310-300\work
+  (*this)[INIBUILDS   ].DP(msfsFilesPath % SEP % "packages" % SEP % "microsoft-aircraft-a310-300" % SEP % "work");
+
   (*this)[PLNISG      ].DP(fsxP3dBasePath % SEP % "ISG" % SEP % "FlightPlans"); // C:\Program Files\Lockheed Martin\Prepar3D v4\ISG\FlightPlans
   (*this)[PMS50       ].DP(msfsBasePath % SEP % "Community" % SEP % "pms50-instrument-gtn750" % SEP % "fpl" % SEP % "gtn750");
   (*this)[TDSGTNXI    ].DP(tdsGtmGfp);

@@ -47,7 +47,7 @@ public:
    *
    * If procedures is true SIDs, STARs and approaches will be included according to Garmin spec.
    */
-  QString createGfpStringForRoute(const Route& route, bool procedures, bool userWaypointOption) const;
+  QString createGfpStringForRoute(const Route& route, bool procedures, bool userWaypointOption, bool gfpCoordinates) const;
 
 private:
   QStringList createStringForRouteInternal(const Route& routeParam, float speed, rs::RouteStringOptions options) const;
@@ -56,7 +56,7 @@ private:
   QString createGfpStringForRouteInternal(const Route& route, bool userWaypointOption) const;
 
   /* Garming GFP format with procedures */
-  QString createGfpStringForRouteInternalProc(const Route& route, bool userWaypointOption) const;
+  QString createGfpStringForRouteInternalProc(const Route& route, bool userWaypointOption, bool gfpCoordinates) const;
 
 };
 

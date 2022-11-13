@@ -71,13 +71,13 @@ QStringList RouteStringWriter::createStringListForRoute(const Route& route, floa
 #endif
 }
 
-QString RouteStringWriter::createGfpStringForRoute(const Route& route, bool procedures, bool userWaypointOption) const
+QString RouteStringWriter::createGfpStringForRoute(const Route& route, bool procedures, bool userWaypointOption, bool gfpCoordinates) const
 {
   if(route.isEmpty())
     return QString();
 
   return procedures ?
-         createGfpStringForRouteInternalProc(route, userWaypointOption) :
+         createGfpStringForRouteInternalProc(route, userWaypointOption, gfpCoordinates) :
          createGfpStringForRouteInternal(route, userWaypointOption);
 }
 
@@ -91,15 +91,18 @@ QString RouteStringWriter::createGfpStringForRoute(const Route& route, bool proc
  * Flight plan from KSLE to two user waypoints and then returning for the ILS approach to runway 31 via JAIME:
  * FPN/RI:F:KSLE:F:N45223W121419:F:N42568W122067:AA:KSLE:AP:I31.JAIME
  */
-QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& route, bool userWaypointOption) const
+QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& route, bool userWaypointOption, bool gfpCoordinates) const
 {
   QString retval;
 
   rs::RouteStringOptions opts = rs::NONE;
   if(userWaypointOption)
-    opts = rs::GFP | rs::GFP_COORDS | rs::DCT | rs::USR_WPT | rs::NO_AIRWAYS;
+    opts = rs::GFP | rs::DCT | rs::USR_WPT | rs::NO_AIRWAYS;
   else
-    opts = rs::GFP | rs::GFP_COORDS | rs::DCT;
+    opts = rs::GFP | rs::DCT;
+
+  if(gfpCoordinates)
+    opts = rs::GFP_COORDS;
 
   // Get string without start and destination
   QStringList string = createStringForRouteInternal(route, 0, opts);
