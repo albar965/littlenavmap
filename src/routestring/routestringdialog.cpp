@@ -55,18 +55,18 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
 
   // Need to set text programatically since Qt Designer add garbage which messes up formatting on other platforms
   ui->textEditSyntaxHelp->setText(
-    "<p><b><big>Quick Help</big></b><br/>"
-      "<b>Format:</b> FROM[ETD] [SPEEDALT] [SIDTRANS] [ENROUTE] [STARTRANS] TO[ETA] [ALTERNATES]<br/>"
-      "<b>Optional fields</b> are enclosed with <b>&quot;[]&quot;</b>.<br/>"
-      "<b>FROM</b> is the required departure airport. Departure time <b>ETD</b> is ignored.<br/>"
-      "<b>SPEEDALT</b> describes flight plan cruise altitude and speed. See manual for format details.<br/>"
-      "<b>SIDTRANS</b> is a SID and an optional transition which can be given as <b>&quot;SID.TRANS&quot;</b> or <b>&quot;SID TRANS&quot;</b><br/>"
-      "<b>ENROUTE</b> is a space separated list of navaids, navaid/airway/navaid combinations or user defined waypoints as coordinates.<br/>"
-      "<b>STARTRANS</b> is a STAR and an optional transition which can be given as <b>&quot;STAR.TRANS&quot;</b>, "
-        "<b>&quot;STAR TRANS&quot;</b>, <b>&quot;TRANS.STAR&quot;</b> or <b>&quot;TRANS STAR&quot;</b><br/>"
-        "<b>TO</b> is the required destination airport. Arrival time <b>ETA</b> is ignored.<br/>"
-        "<b>ALTERNATES</b> is a list of alternate or enroute airports depending on selected option.<br/>"
-        "<b>Press the help button to open the online manual for more information.</b></p>");
+    tr("<p><b><big>Quick Help</big></b><br/>"
+       "<b>Format:</b> FROM[ETD] [SPEEDALT] [SIDTRANS] [ENROUTE] [STARTRANS] TO[ETA] [ALTERNATES]<br/>"
+       "<b>Optional fields</b> are enclosed with <b>&quot;[]&quot;</b>.<br/>"
+       "<b>FROM</b> is the required departure airport. Departure time <b>ETD</b> is ignored.<br/>"
+       "<b>SPEEDALT</b> describes flight plan cruise altitude and speed. See manual for format details.<br/>"
+       "<b>SIDTRANS</b> is a SID and an optional transition which can be given as <b>&quot;SID.TRANS&quot;</b> or <b>&quot;SID TRANS&quot;</b>.<br/>"
+       "<b>ENROUTE</b> is a space separated list of navaids, navaid/airway/navaid combinations or user defined waypoints as coordinates.<br/>"
+       "<b>STARTRANS</b> is a STAR and an optional transition which can be given as <b>&quot;STAR.TRANS&quot;</b>, "
+         "<b>&quot;STAR TRANS&quot;</b>, <b>&quot;TRANS.STAR&quot;</b> or <b>&quot;TRANS STAR&quot;</b><br/>"
+         "<b>TO</b> is the required destination airport. Arrival time <b>ETA</b> is ignored.<br/>"
+         "<b>ALTERNATES</b> is a list of alternate or en-route airports depending on selected option.<br/>"
+         "<b>Press the help button to open the online manual for more information.</b></p>"));
 
   // Copy main menu actions to allow using shortcuts in the non-modal dialog too
   addActions(NavApp::getMainWindowActions());
@@ -98,7 +98,17 @@ RouteStringDialog::RouteStringDialog(QWidget *parent, const QString& settingsSuf
   ui->plainTextEditRouteString->setFont(fixedFont);
   ui->plainTextEditRouteString->setWordWrapMode(QTextOption::WrapAnywhere);
 
-  ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setText(tr("Create &Flight Plan"));
+  if(nonModal)
+  {
+    // No parent and free floating
+    ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setText(tr("Create &Flight Plan"));
+    ui->buttonBoxRouteString->button(QDialogButtonBox::Apply)->setText(tr("Create &Flight Plan and Close"));
+  }
+  else
+  {
+    ui->buttonBoxRouteString->button(QDialogButtonBox::Ok)->setText(tr("Create &Flight Plan and Close"));
+    ui->buttonBoxRouteString->button(QDialogButtonBox::Apply)->hide();
+  }
 
   // Non-modal dialog has a close button and modal dialog a cancel button
   if(parent == nullptr)
@@ -425,11 +435,18 @@ void RouteStringDialog::buttonBoxClicked(QAbstractButton *button)
   if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Ok))
   {
     if(nonModal)
-      // Create a new flight plan and use undo/redo - keep non-modal dialog open - do not mark plan as changed
+      // Floating window - Create a new flight plan and use undo/redo - keep non-modal dialog open - do not mark plan as changed
       emit routeFromFlightplan(*flightplan, isAltitudeIncluded(), false /* changed */, true /* undo */);
     else
-      // Return QDialog::Accepted and close
+      // Openeded from SimBrief or other dialogs - Return QDialog::Accepted and close
       QDialog::accept();
+  }
+  else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Apply))
+  {
+    // Only in floating window - create a new flight plan and use undo/redo - keep non-modal dialog open - do not mark plan as changed
+    emit routeFromFlightplan(*flightplan, isAltitudeIncluded(), false /* changed */, true /* undo */);
+    // Return QDialog::Accepted and close
+    QDialog::accept();
   }
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Help))
     HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "ROUTEDESCR.html", lnm::helpLanguageOnline());

@@ -269,7 +269,7 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
     if(result.hasAirways())
     {
       if(i == 0)
-        appendWarning(tr("Found airway %1 instead of waypoint as first entry in enroute list. Ignoring.").arg(item));
+        appendWarning(tr("Found airway %1 instead of waypoint as first entry in en-route list. Ignoring.").arg(item));
       else
       {
         // Add all airway waypoints if any were found =================================

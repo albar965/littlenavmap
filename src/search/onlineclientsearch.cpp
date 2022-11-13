@@ -62,7 +62,7 @@ OnlineClientSearch::OnlineClientSearch(QMainWindow *parent, QTableView *tableVie
   append(Column("transponder_code", tr("Transponder\nCode")).hidden()).
   append(Column("flightplan_flight_rules", tr("ICAO Flight\nRules")).hidden()).
   append(Column("flightplan_type_of_flight", tr("ICAO Flight\nType")).hidden()).
-  append(Column("flightplan_enroute_minutes", tr("Enroute\nhh:mm")).hidden()).
+  append(Column("flightplan_enroute_minutes", tr("En-route\nhh:mm")).hidden()).
   append(Column("flightplan_endurance_minutes", tr("Endurance\nhh:mm")).hidden()).
   append(Column("connection_time", tr("Connection\nTime"))).
   append(Column("client_type").hidden()).

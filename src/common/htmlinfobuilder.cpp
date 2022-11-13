@@ -3750,7 +3750,7 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
     double enrouteMin = onlineRec.valueDouble("flightplan_enroute_minutes");
 
     if(enrouteMin > 0.)
-      html.row2(tr("Estimated Enroute time hh:mm:"), formatter::formatMinutesHours(enrouteMin / 60.));
+      html.row2(tr("Estimated en-route time hh:mm:"), formatter::formatMinutesHours(enrouteMin / 60.));
     double enduranceMin = onlineRec.valueDouble("flightplan_endurance_minutes");
     if(enduranceMin > 0.)
       html.row2If(tr("Endurance hh:mm:"), formatter::formatMinutesHours(enduranceMin / 60.));

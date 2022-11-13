@@ -367,7 +367,7 @@ void initTranslateableTexts()
       {"CTL", QObject::tr("Control")},
       {"D", QObject::tr("Departure Control")},
       {"DIR", QObject::tr("Director (Approach Control Radar)")},
-      {"EFS", QObject::tr("Enroute Flight Advisory Service (EFAS)")},
+      {"EFS", QObject::tr("En-route Flight Advisory Service (EFAS)")},
       {"EMR", QObject::tr("Emergency")},
       {"FSS", QObject::tr("Flight Service Station")},
       {"GCO", QObject::tr("Ground Comm Outlet")},

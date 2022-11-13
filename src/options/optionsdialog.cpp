@@ -74,6 +74,14 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   ui->setupUi(this);
 
+  ui->buttonBoxOptions->button(QDialogButtonBox::Ok)->setToolTip(tr("Apply changes and close dialog."));
+  ui->buttonBoxOptions->button(QDialogButtonBox::Cancel)->setToolTip(tr("Discard all changes and close dialog."));
+  ui->buttonBoxOptions->button(QDialogButtonBox::RestoreDefaults)->setToolTip(tr("Reset all settings back to default.\n"
+                                                                                 "Changes only settings that can be done with this dialog."));
+
+  ui->buttonBoxOptions->button(QDialogButtonBox::Apply)->setToolTip(tr("Apply changes.\n"
+                                                                       "Move the dialog aside to see changes in main window or map."));
+
   // Styles cascade to children and mess up UI themes on linux - even if widget is selected by name
 #if !defined(Q_OS_LINUX) || defined(DEBUG_INFORMATION)
   ui->splitterOptions->setStyleSheet(
@@ -182,10 +190,10 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   // User aircraft =====================================================
   QTreeWidgetItem *userAircraft = addTopItem(tr("User Aircraft"), tr("Select text labels and other options for the user aircraft."));
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Registration"), QString(), optsac::ITEM_USER_AIRCRAFT_REGISTRATION);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Registration"), tr("Aircraft registration like \"N1000A\" or \"D-MABC\"."), optsac::ITEM_USER_AIRCRAFT_REGISTRATION);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Type"), tr("Show the aircraft type, like B738, B350 or M20T."), optsac::ITEM_USER_AIRCRAFT_TYPE);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Airline"), QString(), optsac::ITEM_USER_AIRCRAFT_AIRLINE);
-  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Flight Number"), QString(), optsac::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Airline"), tr("Airline like \"Orbit Airlines\"."), optsac::ITEM_USER_AIRCRAFT_AIRLINE);
+  addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Flight Number"), tr("Flight number like \"123\"."), optsac::ITEM_USER_AIRCRAFT_FLIGHT_NUMBER);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Transponder Code"), tr("Transponder code prefixed with \"XPDR\" on the map"), optsac::ITEM_USER_AIRCRAFT_TRANSPONDER_CODE);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Indicated Airspeed"), tr("Value prefixed with \"IAS\" on the map"), optsac::ITEM_USER_AIRCRAFT_IAS);
   addItem<optsac::DisplayOptionsUserAircraft>(userAircraft, displayOptItemIndexUser, tr("Ground Speed"), tr("Value prefixed with \"GS\" on the map"), optsac::ITEM_USER_AIRCRAFT_GS, true);
@@ -201,10 +209,10 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
 
   // AI =====================================================
   QTreeWidgetItem *aiAircraft = addTopItem(tr("AI, Multiplayer and Online Client Aircraft"), tr("Select text labels for the AI, multiplayer and online client aircraft."));
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Registration, Number or Callsign"), QString(), optsac::ITEM_AI_AIRCRAFT_REGISTRATION, true);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Registration, Number or Callsign"), tr("Aircraft registration like \"N1000A\" or \"D-MABC\"."), optsac::ITEM_AI_AIRCRAFT_REGISTRATION, true);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Type"), tr("Show the AI aircraft type, like B738, B350 or M20T."), optsac::ITEM_AI_AIRCRAFT_TYPE, true);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Airline"), QString(), optsac::ITEM_AI_AIRCRAFT_AIRLINE, true);
-  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Flight Number"), QString(), optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Airline"), tr("Airline like \"Orbit Airlines\"."), optsac::ITEM_AI_AIRCRAFT_AIRLINE, true);
+  addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Flight Number"), tr("Flight number like \"123\"."), optsac::ITEM_AI_AIRCRAFT_FLIGHT_NUMBER);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Transponder Code"), tr("Transponder code prefixed with \"XPDR\" on the map"), optsac::ITEM_AI_AIRCRAFT_TRANSPONDER_CODE);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Indicated Airspeed"), tr("Value prefixed with \"IAS\" on the map"), optsac::ITEM_AI_AIRCRAFT_IAS);
   addItem<optsac::DisplayOptionsAiAircraft>(aiAircraft, displayOptItemIndexAi, tr("Ground Speed"), tr("Value prefixed with \"GS\" on the map"), optsac::ITEM_AI_AIRCRAFT_GS, true);
@@ -1304,7 +1312,7 @@ void OptionsDialog::displayOptDataToWidget(const TYPE& type, const QHash<TYPE, Q
 QTreeWidgetItem *OptionsDialog::addTopItem(const QString& text, const QString& description)
 {
   QTreeWidgetItem *item = new QTreeWidgetItem(ui->treeWidgetOptionsDisplayTextOptions->invisibleRootItem(), {text, description});
-  item->setFlags(Qt::ItemIsSelectable /*| Qt::ItemIsUserCheckable*/ /*| Qt::ItemIsAutoTristate*/ | Qt::ItemIsEnabled);
+  item->setFlags(Qt::ItemIsSelectable | Qt::ItemIsUserCheckable | Qt::ItemIsAutoTristate | Qt::ItemIsEnabled);
   item->setToolTip(1, description);
 
   QFont font = item->font(0);

@@ -509,7 +509,7 @@ opening files, modifying the flight plan and other operations.</string>
                <item>
                 <widget class="QCheckBox" name="checkBoxOptionsGuiRaiseDockWindows">
                  <property name="toolTip">
-                  <string>Raises and activates the dock window below the mouse cursor automatically</string>
+                  <string/>
                  </property>
                  <property name="text">
                   <string>Raise and activate &amp;docking windows when moving the mouse over it</string>
@@ -522,7 +522,7 @@ opening files, modifying the flight plan and other operations.</string>
                <item>
                 <widget class="QCheckBox" name="checkBoxOptionsGuiRaiseMainWindow">
                  <property name="toolTip">
-                  <string>Raises and activates the main program window below the mouse cursor automatically</string>
+                  <string/>
                  </property>
                  <property name="text">
                   <string>Raise and activate the &amp;main program window when moving the mouse over it</string>
@@ -1779,8 +1779,8 @@ userpoints and logbook entries when hovering the cursor over the map</string>
                 <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports">
                  <property name="toolTip">
                   <string>Empty airports are not add-ons, have no taxiways, no parking and no aprons.
-These are displayed underneath all other airports, use a gray symbol and
-provide a toolbar button for disabling them if this checkbox is enabled.</string>
+These are displayed underneath all other airports and use a gray symbol.
+The aiports toolbar button can be used to disable them if this checkbox is enabled.</string>
                  </property>
                  <property name="text">
                   <string>&amp;Treat empty airports special</string>
@@ -1794,9 +1794,8 @@ provide a toolbar button for disabling them if this checkbox is enabled.</string
                 <widget class="QCheckBox" name="checkBoxOptionsMapEmptyAirports3D">
                  <property name="toolTip">
                   <string>All X-Plane airports which are not 3D and not add-on
-will be displayed underneath all other airports, use a gray symbol and
-provide a toolbar button for disabling them if this checkbox is enabled
-together with &quot;Treat empty airports special&quot;.</string>
+will be displayed underneath all other airports and use a gray symbol.
+The aiports toolbar button can be used to disable them if this checkbox is enabled.</string>
                  </property>
                  <property name="text">
                   <string>&amp;Consider all X-Plane airports not being 3D empty</string>
@@ -3450,7 +3449,7 @@ Also used in the elevation profile.</string>
                <item row="18" column="2">
                 <widget class="QLabel" name="labelOptionsMapMora">
                  <property name="toolTip">
-                  <string>Thickness of the compass rose lines</string>
+                  <string/>
                  </property>
                  <property name="text">
                   <string>&amp;Minimum altitude grid
@@ -3471,7 +3470,7 @@ Also used in the elevation profile.</string>
                <item row="21" column="2">
                 <widget class="QLabel" name="labelOptionsMapAirportMsa">
                  <property name="toolTip">
-                  <string>Thickness of the compass rose lines</string>
+                  <string/>
                  </property>
                  <property name="text">
                   <string>&amp;MSA sector diagram:</string>
@@ -3508,7 +3507,7 @@ logbook entries:</string>
                <item row="15" column="2" rowspan="2" alignment="Qt::AlignTop">
                 <widget class="QLabel" name="labelOptionsMapCompassRoseThickness">
                  <property name="toolTip">
-                  <string>Thickness of the compass rose lines</string>
+                  <string/>
                  </property>
                  <property name="text">
                   <string>&amp;Compass rose:</string>
@@ -3862,7 +3861,7 @@ Value 0 is opaque and 90 is most transparent.</string>
                <item row="0" column="3">
                 <widget class="QSpinBox" name="spinBoxOptionsDisplayThicknessUserFeature">
                  <property name="toolTip">
-                  <string>Line width</string>
+                  <string>Line width for these user features</string>
                  </property>
                  <property name="suffix">
                   <string> %</string>
@@ -5189,7 +5188,8 @@ put the active leg back on top after the given timeout while flying.</string>
                <item>
                 <widget class="QSpinBox" name="spinBoxSimMaxTrackPoints">
                  <property name="toolTip">
-                  <string>The user aircraft trail will be pruned if it contains more than this number of points. Lower this value to avoid too long tracks and save performance.</string>
+                  <string>The user aircraft trail will be pruned if it contains more than this number of points. 
+Lower this value to avoid too long tracks and avoid stutters in map display.</string>
                  </property>
                  <property name="showGroupSeparator" stdset="0">
                   <bool>true</bool>
@@ -5532,7 +5532,7 @@ Note that this value does not affect flight plan calculation or saving of flight
             <item>
              <widget class="QGroupBox" name="groupBoxOptionsWeatherInfo">
               <property name="toolTip">
-               <string>Define which weather service METARs are to be shown in the information dock window for an airport.</string>
+               <string/>
               </property>
               <property name="title">
                <string>Weather Display in Information Panels</string>
@@ -5553,6 +5553,19 @@ Note that this value does not affect flight plan calculation or saving of flight
                <property name="bottomMargin">
                 <number>2</number>
                </property>
+               <item>
+                <widget class="QLabel" name="label_7">
+                 <property name="text">
+                  <string>Define which weather service METARs are to be shown in the information dock window for an airport.</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
                <item>
                 <widget class="QCheckBox" name="checkBoxOptionsWeatherInfoFs">
                  <property name="toolTip">
@@ -5612,7 +5625,7 @@ Note that this value does not affect flight plan calculation or saving of flight
             <item>
              <widget class="QGroupBox" name="groupBoxOptionsWeatherTooltip">
               <property name="toolTip">
-               <string>Define which weather service METARs are to be shown in the map tooltip of an airport.</string>
+               <string/>
               </property>
               <property name="title">
                <string>Weather Display in Tooltip</string>
@@ -5633,6 +5646,19 @@ Note that this value does not affect flight plan calculation or saving of flight
                <property name="bottomMargin">
                 <number>2</number>
                </property>
+               <item>
+                <widget class="QLabel" name="label_10">
+                 <property name="text">
+                  <string>Define which weather service METARs are to be shown in the map tooltip of an airport.</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="textInteractionFlags">
+                  <set>Qt::LinksAccessibleByMouse|Qt::TextSelectableByMouse</set>
+                 </property>
+                </widget>
+               </item>
                <item>
                 <widget class="QCheckBox" name="checkBoxOptionsWeatherTooltipFs">
                  <property name="toolTip">
@@ -6050,7 +6076,7 @@ If this field is empty, the default Active Sky weather file path will be used wh
                <item row="3" column="2">
                 <widget class="QPushButton" name="pushButtonOptionsWeatherNoaaWindTest">
                  <property name="toolTip">
-                  <string>Send a test request to the NOAA weather service.</string>
+                  <string>Send a test request to the NOAA wind service.</string>
                  </property>
                  <property name="text">
                   <string>&amp;Test</string>
@@ -6061,7 +6087,8 @@ If this field is empty, the default Active Sky weather file path will be used wh
                 <widget class="QLineEdit" name="lineEditOptionsWeatherVatsimUrl">
                  <property name="toolTip">
                   <string>Complete URL of the VATSIM network weather download service.
-Default is &quot;https://metar.vatsim.net/metar.php?id=ALL&quot;.</string>
+There is usually no need to change this URL.
+Entering a wrong value will cause errors when downloading weather reports.</string>
                  </property>
                  <property name="text">
                   <string notr="true">https://metar.vatsim.net/metar.php?id=ALL</string>
@@ -6080,10 +6107,9 @@ Default is &quot;https://metar.vatsim.net/metar.php?id=ALL&quot;.</string>
                <item row="3" column="1">
                 <widget class="QLineEdit" name="lineEditOptionsWeatherNoaaWindUrl">
                  <property name="toolTip">
-                  <string>Base URL of the NOAA weather service.
+                  <string>Base URL of the NOAA wind service.
 There is usually no need to change this URL.
-Entering a wrong value will cause errors when downloading wind reports.
-Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.</string>
+Entering a wrong value will cause errors when downloading wind reports.</string>
                  </property>
                  <property name="text">
                   <string notr="true">https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl</string>
@@ -6133,7 +6159,9 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
                 <widget class="QLineEdit" name="lineEditOptionsWeatherNoaaStationsUrl">
                  <property name="toolTip">
                   <string>Complete URL of the NOAA weather service file.
-&quot;%1&quot; is a placeholder that will be substituted with the current two-digit UTC hour.</string>
+&quot;%1&quot; is a placeholder that will be substituted with the current two-digit UTC hour.
+There is usually no need to change this URL.
+Entering a wrong value will cause errors when downloading weather reports.</string>
                  </property>
                  <property name="text">
                   <string notr="true">https://tgftp.nws.noaa.gov/data/observations/metar/cycles/%1Z.TXT</string>
@@ -6172,7 +6200,7 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
                <item row="3" column="3">
                 <widget class="QPushButton" name="pushButtonOptionsWeatherNoaaWindReset">
                  <property name="toolTip">
-                  <string>Send a test request to the NOAA weather service.</string>
+                  <string>Reset the URL back to default</string>
                  </property>
                  <property name="text">
                   <string>&amp;Reset</string>
@@ -6192,7 +6220,7 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
                <item row="7" column="2">
                 <widget class="QPushButton" name="pushButtonOptionsWeatherIvaoTest">
                  <property name="toolTip">
-                  <string>Test the IVAO download URL</string>
+                  <string>Send a test request to a IVAO weather service.</string>
                  </property>
                  <property name="text">
                   <string>&amp;Test</string>
@@ -6202,7 +6230,7 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
                <item row="5" column="2">
                 <widget class="QPushButton" name="pushButtonOptionsWeatherVatsimTest">
                  <property name="toolTip">
-                  <string>Send a test request to the VATSIM weather service.</string>
+                  <string>Send a test request to a VATSIM weather service.</string>
                  </property>
                  <property name="text">
                   <string>&amp;Test</string>
@@ -6223,7 +6251,8 @@ Default is &quot;https://nomads.ncep.noaa.gov/cgi-bin/filter_gfs_1p00.pl&quot;.<
                 <widget class="QLineEdit" name="lineEditOptionsWeatherIvaoUrl">
                  <property name="toolTip">
                   <string>Download URL for the IVAO weather file.
-Default is &quot;https://api.ivao.aero/v2/airports/all/metar&quot;.</string>
+There is usually no need to change this URL.
+Entering a wrong value will cause errors when downloading weather reports.</string>
                  </property>
                  <property name="text">
                   <string notr="true">https://api.ivao.aero/v2/airports/all/metar</string>
@@ -7258,8 +7287,7 @@ You have to reload the scenery library so that the changes take effect.</string>
    <item>
     <widget class="QDialogButtonBox" name="buttonBoxOptions">
      <property name="toolTip">
-      <string>Reset all settings back to default.
-Changes only settings that can be done with this dialog.</string>
+      <string/>
      </property>
      <property name="orientation">
       <enum>Qt::Horizontal</enum>

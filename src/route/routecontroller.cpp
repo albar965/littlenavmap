@@ -2465,7 +2465,7 @@ void RouteController::routeTableOptions()
   {
     QString textCol1 = Unit::replacePlaceholders(routeColumns.at(col)).replace("\n", " ");
     QString textCol2 = routeColumnDescription.at(col);
-    treeDialog.addItem2(tableItem, col, textCol1, textCol2, QString(), !header->isSectionHidden(col));
+    treeDialog.addItem2(tableItem, col, textCol1, textCol2, !header->isSectionHidden(col));
   }
   treeDialog.restoreState(false /* restoreCheckState */, true /* restoreExpandState */);
 

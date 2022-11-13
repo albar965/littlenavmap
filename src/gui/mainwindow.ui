@@ -240,9 +240,16 @@
      <string>&amp;Map</string>
     </property>
     <addaction name="actionMapShowHome"/>
-    <addaction name="actionMapShowMark"/>
+    <addaction name="actionMapAircraftCenterNow"/>
     <addaction name="actionRouteCenter"/>
+    <addaction name="actionMapShowMark"/>
     <addaction name="actionMapJumpCoordinatesMain"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapAircraftCenter"/>
+    <addaction name="actionMapDeleteAircraftTrack"/>
+    <addaction name="separator"/>
+    <addaction name="actionMapBack"/>
+    <addaction name="actionMapNext"/>
     <addaction name="separator"/>
     <addaction name="actionMapClearAllHighlights"/>
     <addaction name="separator"/>
@@ -251,12 +258,6 @@
     <addaction name="actionMapHideAllPatterns"/>
     <addaction name="actionMapHideAllHoldings"/>
     <addaction name="actionMapHideAllMsa"/>
-    <addaction name="separator"/>
-    <addaction name="actionMapAircraftCenter"/>
-    <addaction name="actionMapDeleteAircraftTrack"/>
-    <addaction name="separator"/>
-    <addaction name="actionMapBack"/>
-    <addaction name="actionMapNext"/>
     <addaction name="separator"/>
     <addaction name="actionMapDetailsMore"/>
     <addaction name="actionMapDetailsDefault"/>
@@ -5587,9 +5588,6 @@ relation to shown airport</string>
         <attribute name="title">
          <string>Userpoints</string>
         </attribute>
-        <attribute name="toolTip">
-         <string>User defined waypoints</string>
-        </attribute>
         <layout class="QVBoxLayout" name="verticalLayout_36">
          <property name="spacing">
           <number>2</number>
@@ -7687,10 +7685,10 @@ relation to shown airport</string>
     <string>Show User &amp;Aircraft</string>
    </property>
    <property name="toolTip">
-    <string>Show simulator aircraft position and data on map</string>
+    <string>Show simulator aircraft symbol on the map</string>
    </property>
    <property name="statusTip">
-    <string>Show simulator aircraft position and data on map</string>
+    <string>Show simulator aircraft symbol on the map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+B</string>
@@ -7753,7 +7751,7 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/aircrafttraildelete.svg</normaloff>:/littlenavmap/resources/icons/aircrafttraildelete.svg</iconset>
    </property>
    <property name="text">
-    <string>Delete Aircraft &amp;Trail</string>
+    <string>Delete User Aircraft &amp;Trail</string>
    </property>
    <property name="toolTip">
     <string>Delete simulator aircraft trail from map and elevation profile</string>
@@ -8053,10 +8051,10 @@ relation to shown airport</string>
     <string>Show &amp;AI and &amp;Multiplayer Aircraft</string>
    </property>
    <property name="toolTip">
-    <string>Show simulator AI and multiplayer aircraft position and data on map</string>
+    <string>Show simulator AI and multiplayer aircraft on the map</string>
    </property>
    <property name="statusTip">
-    <string>Show simulator AI and multiplayer aircraft position and data on map</string>
+    <string>Show simulator AI and multiplayer aircraft on the map</string>
    </property>
   </action>
   <action name="actionPrintMap">
@@ -8593,10 +8591,10 @@ relation to shown airport</string>
     <string>Show AI and &amp;Multiplayer Ships</string>
    </property>
    <property name="toolTip">
-    <string>Show simulator AI and multiplayer ship position and data on map</string>
+    <string>Show simulator AI and multiplayer ships on the map</string>
    </property>
    <property name="statusTip">
-    <string>Show simulator AI and multiplayer ship position and data on map</string>
+    <string>Show simulator AI and multiplayer ships on the map</string>
    </property>
   </action>
   <action name="actionRouteSaveAsGpx">
@@ -11731,10 +11729,10 @@ relation to shown airport</string>
     <string>Show &amp;Online Aircraft</string>
    </property>
    <property name="toolTip">
-    <string>Show online client aircraft position and data on map</string>
+    <string>Show online client aircraft on the map</string>
    </property>
    <property name="statusTip">
-    <string>Show online client aircraft position and data on map</string>
+    <string>Show online client aircraft on the map</string>
    </property>
   </action>
   <action name="actionResetTabs">
