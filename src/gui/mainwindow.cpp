@@ -1963,11 +1963,19 @@ void MainWindow::updateWindowTitle()
 
   atools::util::Version version(NavApp::applicationVersion());
 
+#if defined(WINARCH64)
+  QString applicationVersion = version.getVersionString() + tr(" 64-bit");
+#elif defined(WINARCH32)
+  QString applicationVersion = version.getVersionString() + tr(" 32-bit");
+#else
+  QString applicationVersion = version.getVersionString();
+#endif
+
   // Program version and revision ==========================================
   if(version.isStable() || version.isReleaseCandidate() || version.isBeta())
-    newTitle += tr(" %1").arg(version.getVersionString());
+    newTitle += tr(" %1").arg(applicationVersion);
   else
-    newTitle += tr(" %1 (%2)").arg(version.getVersionString()).arg(GIT_REVISION_LITTLENAVMAP);
+    newTitle += tr(" %1 (%2)").arg(applicationVersion).arg(GIT_REVISION_LITTLENAVMAP);
 
   // Database information  ==========================================
   // Simulator database =========

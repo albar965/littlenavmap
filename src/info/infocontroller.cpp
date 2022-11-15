@@ -189,7 +189,13 @@ QString InfoController::getConnectionTypeText()
   else if(NavApp::isXpConnect())
     return tr("X-Plane");
   else if(NavApp::isSimConnect())
+#if defined(WINARCH64)
+    return tr("MSFS");
+#elif defined(WINARCH32)
+    return tr("FSX or P3D");
+#else
     return tr("FSX, P3D or MSFS");
+#endif
 
   return QString();
 }

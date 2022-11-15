@@ -86,6 +86,8 @@ CONFIG -= debug_and_release debug_and_release_target
 TARGET = littlenavmap
 TEMPLATE = app
 
+win32 { contains(QT_ARCH, i386) { WINARCH = win32 } else { WINARCH = win64 } }
+
 TARGET_NAME=Little Navmap
 
 # =======================================================================
@@ -95,9 +97,11 @@ ATOOLS_LIB_PATH=$$(ATOOLS_LIB_PATH)
 MARBLE_INC_PATH=$$(MARBLE_INC_PATH)
 MARBLE_LIB_PATH=$$(MARBLE_LIB_PATH)
 INSTALL_MARBLE_DYLIB=$$(INSTALL_MARBLE_DYLIB)
-OPENSSL_PATH=$$(OPENSSL_PATH)
 GIT_PATH=$$(ATOOLS_GIT_PATH)
-SIMCONNECT_PATH=$$(ATOOLS_SIMCONNECT_PATH)
+OPENSSL_PATH_WIN32=$$(OPENSSL_PATH_WIN32)
+OPENSSL_PATH_WIN64=$$(OPENSSL_PATH_WIN64)
+SIMCONNECT_PATH_WIN32=$$(ATOOLS_SIMCONNECT_PATH_WIN32)
+SIMCONNECT_PATH_WIN64=$$(ATOOLS_SIMCONNECT_PATH_WIN64)
 DEPLOY_BASE=$$(DEPLOY_BASE)
 DATABASE_BASE=$$(DATABASE_BASE)
 HELP_BASE=$$(HELP_BASE)
@@ -105,6 +109,7 @@ QUIET=$$(ATOOLS_QUIET)
 
 # =======================================================================
 # Fill defaults for unset
+
 
 CONFIG(debug, debug|release) : CONF_TYPE=debug
 CONFIG(release, debug|release) : CONF_TYPE=release
@@ -116,12 +121,12 @@ isEmpty(HELP_BASE) : HELP_BASE=$$PWD/../little_navmap_help
 isEmpty(ATOOLS_INC_PATH) : ATOOLS_INC_PATH=$$PWD/../atools/src
 isEmpty(ATOOLS_LIB_PATH) : ATOOLS_LIB_PATH=$$PWD/../build-atools-$$CONF_TYPE
 
-isEmpty(MARBLE_INC_PATH) : MARBLE_INC_PATH=$$PWD/../Marble-$$CONF_TYPE/include
-isEmpty(MARBLE_LIB_PATH) : MARBLE_LIB_PATH=$$PWD/../Marble-$$CONF_TYPE/lib
+isEmpty(MARBLE_INC_PATH) : MARBLE_INC_PATH=$$PWD/../Marble-$$CONF_TYPE-$$WINARCH/include
+isEmpty(MARBLE_LIB_PATH) : MARBLE_LIB_PATH=$$PWD/../Marble-$$CONF_TYPE-$$WINARCH/lib
 
 # QT_INSTALL_PREFIX: C:/Qt/5.15.2/mingw81_32
 # C:\Qt\Tools\OpenSSL\Win_x86\bin\
-win32: isEmpty(OPENSSL_PATH) : OPENSSL_PATH=$$[QT_INSTALL_PREFIX])\..\..\Tools\OpenSSL\Win_x86\bin\
+# win32: isEmpty(OPENSSL_PATH) : OPENSSL_PATH=$$[QT_INSTALL_PREFIX])\..\..\Tools\OpenSSL\Win_x86\bin\
 
 # =======================================================================
 # Set compiler flags and paths
@@ -142,21 +147,32 @@ unix:!macx {
 }
 
 win32 {
+contains(QT_ARCH, i386) {
+  WINARCH = win32
+  !isEmpty(SIMCONNECT_PATH_WIN32) {
+    DEFINES += SIMCONNECT_BUILD_WIN32 WINARCH32
+    INCLUDEPATH += $$SIMCONNECT_PATH_WIN32"\inc"
+    LIBS += $$SIMCONNECT_PATH_WIN32"\lib\SimConnect.lib"
+    OPENSSL_PATH_WIN=$$(OPENSSL_PATH_WIN32)
+  }
+} else {
+  WINARCH = win64
+  !isEmpty(SIMCONNECT_PATH_WIN64) {
+    DEFINES += SIMCONNECT_BUILD_WIN64 WINARCH64
+    INCLUDEPATH += $$SIMCONNECT_PATH_WIN64"\include"
+    LIBS += $$SIMCONNECT_PATH_WIN64"\lib\SimConnect.lib"
+    OPENSSL_PATH_WIN=$$(OPENSSL_PATH_WIN64)
+  }
+}
+
   WINDEPLOY_FLAGS = --compiler-runtime
   CONFIG(debug, debug|release) : WINDEPLOY_FLAGS += --debug
-#  CONFIG(release, debug|release) : WINDEPLOY_FLAGS += --release
 
   DEFINES += _USE_MATH_DEFINES
 
   CONFIG(debug, debug|release) : LIBS += -L$$MARBLE_LIB_PATH -llibmarblewidget-qt5d
   CONFIG(release, debug|release) : LIBS += -L$$MARBLE_LIB_PATH -llibmarblewidget-qt5
   LIBS += -L$$ATOOLS_LIB_PATH -latools -lz
-
-  !isEmpty(SIMCONNECT_PATH) {
-    DEFINES += SIMCONNECT_BUILD
-    INCLUDEPATH += $$SIMCONNECT_PATH"\inc"
-    LIBS += $$SIMCONNECT_PATH"\lib\SimConnect.lib"
-  }
 }
 
 macx {
@@ -208,11 +224,13 @@ message(VERSION_NUMBER: $$VERSION_NUMBER)
 message(GIT_REVISION: $$GIT_REVISION)
 message(GIT_REVISION_FULL: $$GIT_REVISION_FULL)
 message(GIT_PATH: $$GIT_PATH)
-message(OPENSSL_PATH: $$OPENSSL_PATH)
+message(WINARCH: $$WINARCH)
+message(OPENSSL_PATH_WIN: $$OPENSSL_PATH_WIN)
 message(ATOOLS_INC_PATH: $$ATOOLS_INC_PATH)
 message(ATOOLS_LIB_PATH: $$ATOOLS_LIB_PATH)
 message(MARBLE_INC_PATH: $$MARBLE_INC_PATH)
-message(MARBLE_LIB_PATH: $$MARBLE_LIB_PATH)
+message(SIMCONNECT_PATH_WIN32: $$SIMCONNECT_PATH_WIN32)
+message(SIMCONNECT_PATH_WIN64: $$SIMCONNECT_PATH_WIN64)
 message(DEPLOY_BASE: $$DEPLOY_BASE)
 message(DEFINES: $$DEFINES)
 message(INCLUDEPATH: $$INCLUDEPATH)
@@ -681,6 +699,8 @@ OTHER_FILES += \
   $$files(web/*, true) \
   $$files(marble/*, true) \
   $$files(.github/*, true) \
+  $$files(simconnect/*, true) \
+  $$files(etc/*, true) \
   .travis.yml \
   .gitignore \
   *.ts \
@@ -875,56 +895,63 @@ win32 {
   CONFIG(debug, debug|release) : DLL_SUFFIX=d
   CONFIG(release, debug|release) : DLL_SUFFIX=
 
-  deploy.commands = rmdir /s /q $$p($$DEPLOY_BASE/$$TARGET_NAME) &
-  deploy.commands += mkdir $$p($$DEPLOY_BASE/$$TARGET_NAME/translations) &&
-  deploy.commands += mkdir $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
-  deploy.commands += echo $$VERSION_NUMBER > $$p($$DEPLOY_BASE/$$TARGET_NAME/version.txt) &&
-  deploy.commands += echo $$GIT_REVISION_FULL > $$p($$DEPLOY_BASE/$$TARGET_NAME/revision.txt) &&
-  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libCachePlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
-  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libAtmospherePlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
-  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libCompassFloatItem$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
-  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libGraticulePlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
-  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libKmlPlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
-  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libLatLonPlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
-  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libPn2Plugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
-  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libMapScaleFloatItem$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
-  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libNavigationFloatItem$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
-  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libOverviewMap$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME/plugins) &&
-  deploy.commands += xcopy $$p($$OUT_PWD/littlenavmap.exe) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$PWD/CHANGELOG.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$PWD/README.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$PWD/LICENSE.txt) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += copy $$p($$PWD/desktop/Little Navmap Portable Win.cmd) $$p($$DEPLOY_BASE/$$TARGET_NAME/Little Navmap Portable.cmd) &&
-  deploy.commands += xcopy $$p($$PWD/*.qm) $$p($$DEPLOY_BASE/$$TARGET_NAME/translations) &&
-  deploy.commands += xcopy $$p($$ATOOLS_INC_PATH/../*.qm) $$p($$DEPLOY_BASE/$$TARGET_NAME/translations) &&
-  exists($$DATABASE_BASE) : deploy.commands += xcopy /i /s /e /f /y $$p($$DATABASE_BASE) $$p($$DEPLOY_BASE/$$TARGET_NAME/little_navmap_db) &&
-  exists($$HELP_BASE) : deploy.commands += xcopy /i /s /e /f /y $$p($$HELP_BASE) $$p($$DEPLOY_BASE/$$TARGET_NAME/help) &&
-  deploy.commands += xcopy $$p($$PWD/littlenavmap.exe.simconnect) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/help) $$p($$DEPLOY_BASE/$$TARGET_NAME/help) &&
-  deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/web) $$p($$DEPLOY_BASE/$$TARGET_NAME/web) &&
-  deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/customize) $$p($$DEPLOY_BASE/$$TARGET_NAME/customize) &&
-  deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/marble/data) $$p($$DEPLOY_BASE/$$TARGET_NAME/data) &&
-  deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/etc) $$p($$DEPLOY_BASE/$$TARGET_NAME/etc) &&
-  deploy.commands += del /f /q $$p($$DEPLOY_BASE/$$TARGET_NAME/etc/SimConnect.dll) &&
-  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../libmarblewidget-qt5$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../libastro$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/libgcc*.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/libstdc*.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/libwinpthread*.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$PWD/etc/SimConnect.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$OPENSSL_PATH\libcrypto*.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$OPENSSL_PATH\libssl*.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5Network.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5PrintSupport.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5Qml.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5Sql.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5Quick.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5OpenGL.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5QmlModels.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5Xml.dll) $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += $$p($$[QT_INSTALL_BINS]/windeployqt) $$WINDEPLOY_FLAGS $$p($$DEPLOY_BASE/$$TARGET_NAME) &&
-  deploy.commands += del /f /q $$p($$DEPLOY_BASE/$$TARGET_NAME/sqldrivers/qsqlpsql.dll) &&
-  deploy.commands += del /f /q $$p($$DEPLOY_BASE/$$TARGET_NAME/sqldrivers/qsqlodbc.dll)
+  WIN_TARGET_NAME="$$TARGET_NAME $$WINARCH"
+
+  deploy.commands = rmdir /s /q $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &
+  deploy.commands += mkdir $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/translations) &&
+  deploy.commands += mkdir $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
+  deploy.commands += echo $$VERSION_NUMBER-$$WINARCH > $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/version.txt) &&
+  deploy.commands += echo $$GIT_REVISION_FULL > $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/revision.txt) &&
+  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libCachePlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
+  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libAtmospherePlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
+  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libCompassFloatItem$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
+  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libGraticulePlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
+  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libKmlPlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
+  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libLatLonPlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
+  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libPn2Plugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
+  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libMapScaleFloatItem$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
+  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libNavigationFloatItem$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
+  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libOverviewMap$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
+  deploy.commands += xcopy $$p($$OUT_PWD/littlenavmap.exe) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$PWD/CHANGELOG.txt) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$PWD/README.txt) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$PWD/LICENSE.txt) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += copy $$p($$PWD/desktop/Little Navmap Portable Win.cmd) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/Little Navmap Portable.cmd) &&
+  deploy.commands += xcopy $$p($$PWD/*.qm) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/translations) &&
+  deploy.commands += xcopy $$p($$ATOOLS_INC_PATH/../*.qm) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/translations) &&
+  exists($$DATABASE_BASE) : deploy.commands += xcopy /i /s /e /f /y $$p($$DATABASE_BASE) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/little_navmap_db) &&
+  exists($$HELP_BASE) : deploy.commands += xcopy /i /s /e /f /y $$p($$HELP_BASE) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/help) &&
+  deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/help) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/help) &&
+  deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/web) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/web) &&
+  deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/customize) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/customize) &&
+  deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/marble/data) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/data) &&
+  deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/etc) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/etc) &&
+  deploy.commands += xcopy /i /s /e /f /y $$p($$PWD/simconnect) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/simconnect) &&
+  contains(QT_ARCH, i386) { # 32 Bit build
+    deploy.commands += move /Y $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/simconnect/SimConnect.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  } else { # 64 Bit build
+    deploy.commands += del /f /q $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/simconnect/SimConnect.dll) &&
+    deploy.commands += del /f /q $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/simconnect/simconnect.manifest) &&
+    deploy.commands += xcopy $$p($$SIMCONNECT_PATH_WIN64/lib/SimConnect.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  }
+  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../libmarblewidget-qt5$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../libastro$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/libgcc*.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/libstdc*.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/libwinpthread*.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$OPENSSL_PATH_WIN\libcrypto*.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$OPENSSL_PATH_WIN\libssl*.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5Network.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5PrintSupport.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5Qml.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5Sql.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5Quick.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5OpenGL.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5QmlModels.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += xcopy $$p($$[QT_INSTALL_BINS]/Qt5Xml.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += $$p($$[QT_INSTALL_BINS]/windeployqt) $$WINDEPLOY_FLAGS $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &&
+  deploy.commands += del /f /q $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/sqldrivers/qsqlpsql.dll) &&
+  deploy.commands += del /f /q $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/sqldrivers/qsqlodbc.dll)
 }
 
 # =====================================================================
@@ -937,4 +964,11 @@ all.depends = copydata
 deploy.depends = all
 
 QMAKE_EXTRA_TARGETS += deploy copydata all
+
+DISTFILES += \
+  build/win/build_clean.cmd \
+  build/win/build_release_32.cmd \
+  build/win/build_release_base.cmd \
+  build/win/build_release_xpconnect.cmd \
+  build/win/do_all_32.cmd
 

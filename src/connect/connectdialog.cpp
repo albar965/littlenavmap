@@ -58,6 +58,19 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
                                       "install a FSX SP2 compatible version of SimConnect on your computer.<br/>")) +
                                  ui->labelConnectFsx->text());
   }
+  else
+  {
+
+#if defined(WINARCH64)
+    ui->tabWidgetConnect->setTabText(0, tr("MSFS"));
+    ui->labelConnectFsx->setText(tr("Connect directly to MSFS running on the same computer as "
+                                    "<i>Little Navmap</i>"));
+#elif defined(WINARCH32)
+    ui->tabWidgetConnect->setTabText(0, tr("FSX or Prepar3D"));
+    ui->labelConnectFsx->setText(tr("Connect directly to FSX or Prepar3D running on the same computer as "
+                                    "<i>Little Navmap</i>"));
+#endif
+  }
 #else
   // Remove FSX/P3D tab for non Windows systems
   int idx = ui->tabWidgetConnect->indexOf(ui->tabConnectFsx);

@@ -48,8 +48,7 @@ const static int WEATHER_TIMEOUT_FS_SECS = 15;
 const static int NOT_AVAILABLE_TIMEOUT_FS_SECS = 300;
 
 ConnectClient::ConnectClient(MainWindow *parent)
-  : QObject(parent), mainWindow(parent), metarIdentCache(WEATHER_TIMEOUT_FS_SECS),
-  notAvailableStations(NOT_AVAILABLE_TIMEOUT_FS_SECS)
+  : QObject(parent), mainWindow(parent), metarIdentCache(WEATHER_TIMEOUT_FS_SECS), notAvailableStations(NOT_AVAILABLE_TIMEOUT_FS_SECS)
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   verbose = settings.getAndStoreValue(lnm::OPTIONS_CONNECTCLIENT_DEBUG, false).toBool();
@@ -59,7 +58,8 @@ ConnectClient::ConnectClient(MainWindow *parent)
 
   // Create FSX/P3D handler for SimConnect
   simConnectHandler = new atools::fs::sc::SimConnectHandler(verbose);
-  simConnectHandler->loadSimConnect(QApplication::applicationFilePath() + ".simconnect");
+  simConnectHandler->loadSimConnect(QApplication::applicationDirPath() +
+                                    QDir::separator() + "simconnect" + QDir::separator() + "simconnect.manifest");
 
   // Create X-Plane handler for shared memory
   xpConnectHandler = new atools::fs::sc::XpConnectHandler();
@@ -189,7 +189,16 @@ QString ConnectClient::simName() const
     if(dataReader->getHandler() == xpConnectHandler)
       return tr("X-Plane");
     else if(dataReader->getHandler() == simConnectHandler)
+#if defined(WINARCH64)
+      return tr("MSFS");
+
+#elif defined(WINARCH32)
+      return tr("FSX or Prepar3D");
+
+#else
       return tr("FSX, Prepar3D or MSFS");
+
+#endif
   }
   return QString();
 }
@@ -201,7 +210,18 @@ QString ConnectClient::simShortName() const
     if(dataReader->getHandler() == xpConnectHandler)
       return tr("XP");
     else if(dataReader->getHandler() == simConnectHandler)
+    {
+#if defined(WINARCH64)
+      return tr("MSFS");
+
+#elif defined(WINARCH32)
+      return tr("FSX/P3D");
+
+#else
       return tr("FSX/P3D/MSFS");
+
+#endif
+    }
   }
   return QString();
 }

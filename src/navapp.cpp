@@ -1257,8 +1257,16 @@ void NavApp::initSplashScreen()
 
   processEvents();
 
+#if defined(WINARCH64)
+  QString applicationVersion = QApplication::applicationVersion() + tr(" 64-bit");
+#elif defined(WINARCH32)
+  QString applicationVersion = QApplication::applicationVersion() + tr(" 32-bit");
+#else
+  QString applicationVersion = QApplication::applicationVersion();
+#endif
+
   splashScreen->showMessage(QObject::tr("Version %5 (revision %6)").
-                            arg(Application::applicationVersion()).arg(GIT_REVISION_LITTLENAVMAP),
+                            arg(applicationVersion).arg(GIT_REVISION_LITTLENAVMAP),
                             Qt::AlignRight | Qt::AlignBottom, Qt::black);
 
   processEvents(QEventLoop::ExcludeUserInputEvents);
