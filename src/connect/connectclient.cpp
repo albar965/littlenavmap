@@ -23,9 +23,7 @@
 #include "fs/sc/datareaderthread.h"
 #include "gui/dialog.h"
 #include "online/onlinedatacontroller.h"
-#include "gui/errorhandler.h"
 #include "gui/mainwindow.h"
-#include "gui/widgetstate.h"
 #include "geo/calculations.h"
 #include "settings/settings.h"
 #include "fs/sc/simconnecthandler.h"
@@ -279,8 +277,12 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
       atools::fs::sc::SimConnectUserAircraft& userAircraft = dataPacket.getUserAircraft();
       // Workaround for MSFS sending wrong positions around 0/0 while in menu
       if(!userAircraft.isFullyValid())
+      {
+        if(verbose)
+          qDebug() << Q_FUNC_INFO << "User aircraft not fully valid";
         // Invalidate position at the 0,0 position if no groundspeed
         userAircraft.setCoordinates(atools::geo::EMPTY_POS);
+      }
 
       // Modify AI aircraft and set shadow flag if a online network aircraft is registered as shadowed in the index
       NavApp::getOnlinedataController()->updateAircraftShadowState(dataPacket);
