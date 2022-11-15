@@ -474,9 +474,8 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[TFDI        ].DP(fsxP3dBasePath % SEP % "SimObjects" % SEP % "Airplanes" % SEP % "TFDi_Design_717" % SEP % "Documents" % SEP % "Company Routes");
   (*this)[IFLY        ].DP(documents % SEP % "Prepar3D v5 Add-ons" % SEP % "iFlyData" % SEP % "navdata" % SEP % "FLTPLAN");
 
-  // Steam: C:\Users\yournamehere\AppData\Roaming\Microsoft Flight Simulator\Packages\microsoft-aircraft-a310-300\work
-  // MS Store Users C:\Users\yournamehere\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalState\packages\microsoft-aircraft-a310-300\work
-  (*this)[INIBUILDS   ].DP(msfsFilesPath % SEP % "packages" % SEP % "microsoft-aircraft-a310-300" % SEP % "work");
+  //  ...\Official\OneStore\microsoft-aircraft-a310-300\Data\FMS plans\EDDFEDDM.fpl - does not exist per default
+  (*this)[INIBUILDS   ].DP(msfsBasePath % SEP % "Official" % SEP % "OneStore" % SEP % "microsoft-aircraft-a310-300" % SEP % "Data" % SEP % "FMS plans");
 
   (*this)[PLNISG      ].DP(fsxP3dBasePath % SEP % "ISG" % SEP % "FlightPlans"); // C:\Program Files\Lockheed Martin\Prepar3D v4\ISG\FlightPlans
   (*this)[PMS50       ].DP(msfsBasePath % SEP % "Community" % SEP % "pms50-instrument-gtn750" % SEP % "fpl" % SEP % "gtn750");
