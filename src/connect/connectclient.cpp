@@ -240,8 +240,11 @@ void ConnectClient::disconnectedFromSimulatorDirect()
 {
   qDebug() << Q_FUNC_INFO;
 
+  showTerminalError();
+
   // Try to reconnect if it was not unlinked by using the disconnect button
-  if(!errorState && connectDialog->isAutoConnect() && connectDialog->isAnyConnectDirect() && !manualDisconnect)
+  if(!errorState && connectDialog->isAutoConnect() &&
+     connectDialog->isAnyConnectDirect() && !manualDisconnect)
     connectInternal();
   else
     mainWindow->setConnectionStatusMessageText(tr("Disconnected"), tr("Disconnected from local flight simulator."));
@@ -615,6 +618,24 @@ void ConnectClient::connectInternalAuto()
     connectInternal();
 }
 
+void ConnectClient::showTerminalError()
+{
+  if(dataReader->isFailedTerminally())
+  {
+    if(!terminalErrorShown)
+    {
+      terminalErrorShown = true;
+      QMessageBox::warning(mainWindow, QApplication::applicationName(),
+                           tr("Too many errors when trying to connect to simulator.\n"
+                              "Not matching simulator or other SimConnect problem.\n"
+                              "Make sure to use the right version of %1 with the right simulator:\n"
+                              "%1 32-bit: FSX and P3D\n"
+                              "%1 64-bit: MSFS\n"
+                              "You have to restart %1 to resume.").arg(QApplication::applicationName()));
+    }
+  }
+}
+
 void ConnectClient::connectInternal()
 {
   if(connectDialog->isAnyConnectDirect())
@@ -627,17 +648,25 @@ void ConnectClient::connectInternal()
     if(isXpConnect())
       dataReader->setReconnectRateSec(directReconnectXpSec);
     else if(isSimConnect())
+    {
       dataReader->setReconnectRateSec(directReconnectSimSec);
+      showTerminalError();
+    }
 
     // Copy settings from dialog
     updateRateChanged(connectDialog->getCurrentSimType());
     fetchOptionsChanged(connectDialog->getCurrentSimType());
     aiFetchRadiusChanged(connectDialog->getCurrentSimType());
 
-    dataReader->start();
-
-    mainWindow->setConnectionStatusMessageText(tr("Connecting (%1) ...").arg(simShortName()),
-                                               tr("Trying to connect to local flight simulator (%1).").arg(simName()));
+    if(dataReader->isFailedTerminally())
+      mainWindow->setConnectionStatusMessageText(tr("Error (%1) ...").arg(simShortName()),
+                                                 tr("Too many errors when trying to connect to simulator (%1).").arg(simName()));
+    else
+    {
+      dataReader->start();
+      mainWindow->setConnectionStatusMessageText(tr("Connecting (%1) ...").arg(simShortName()),
+                                                 tr("Trying to connect to local flight simulator (%1).").arg(simName()));
+    }
   }
   else if(socket == nullptr && !connectDialog->getRemoteHostname().isEmpty())
   {
@@ -648,8 +677,7 @@ void ConnectClient::connectInternal()
 
     connect(socket, &QTcpSocket::readyRead, this, &ConnectClient::readFromSocket);
     connect(socket, &QTcpSocket::connected, this, &ConnectClient::connectedToServerSocket);
-    connect(socket,
-            static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
+    connect(socket, static_cast<void (QAbstractSocket::*)(QAbstractSocket::SocketError)>(&QAbstractSocket::error),
             this, &ConnectClient::readFromSocketError);
 
     qDebug() << "Connecting to" << connectDialog->getRemoteHostname() << ":" << connectDialog->getRemotePort();

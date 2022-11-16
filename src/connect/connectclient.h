@@ -146,6 +146,7 @@ private:
   void handleError(atools::fs::sc::SimConnectStatus status, const QString& error, bool xplane, bool network);
 
   void statusPosted(atools::fs::sc::SimConnectStatus status, QString statusText);
+  void showTerminalError();
 
   bool silent = false, manualDisconnect = false;
   ConnectDialog *connectDialog = nullptr;
@@ -180,7 +181,7 @@ private:
   // have to remember state separately to avoid sending signals when autoconnect fails
   bool socketConnected = false;
 
-  bool errorState = false;
+  bool errorState = false, terminalErrorShown = false;
 
   /* Try to reconnect every 10 seconds when network connection is lost */
   int socketReconnectSec = 10;

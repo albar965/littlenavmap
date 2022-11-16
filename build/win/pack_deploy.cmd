@@ -12,6 +12,7 @@ pushd "%APROJECTS%\deploy"
 IF ERRORLEVEL 1 goto :err
 
 rem Get file version number and remove spaces from variable
+rem LittleNavmap-win32-2.8.2.beta.zip
 set /p FILENAMETEMP=<"%APROJECTS%\deploy\Little Navmap %WINARCH%\version.txt"
 set FILENAME_LNM=%FILENAMETEMP: =%
 set FILENAME_LNM_RELEASE=LittleNavmap-%FILENAME_LNM%

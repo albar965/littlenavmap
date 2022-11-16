@@ -121,8 +121,13 @@ isEmpty(HELP_BASE) : HELP_BASE=$$PWD/../little_navmap_help
 isEmpty(ATOOLS_INC_PATH) : ATOOLS_INC_PATH=$$PWD/../atools/src
 isEmpty(ATOOLS_LIB_PATH) : ATOOLS_LIB_PATH=$$PWD/../build-atools-$$CONF_TYPE
 
+win32 {
 isEmpty(MARBLE_INC_PATH) : MARBLE_INC_PATH=$$PWD/../Marble-$$CONF_TYPE-$$WINARCH/include
 isEmpty(MARBLE_LIB_PATH) : MARBLE_LIB_PATH=$$PWD/../Marble-$$CONF_TYPE-$$WINARCH/lib
+} else {
+isEmpty(MARBLE_INC_PATH) : MARBLE_INC_PATH=$$PWD/../Marble-$$CONF_TYPE/include
+isEmpty(MARBLE_LIB_PATH) : MARBLE_LIB_PATH=$$PWD/../Marble-$$CONF_TYPE/lib
+}
 
 # QT_INSTALL_PREFIX: C:/Qt/5.15.2/mingw81_32
 # C:\Qt\Tools\OpenSSL\Win_x86\bin\
@@ -147,15 +152,17 @@ unix:!macx {
 }
 
 win32 {
-contains(QT_ARCH, i386) {
-  WINARCH = win32
-  !isEmpty(SIMCONNECT_PATH_WIN32) {
-    DEFINES += SIMCONNECT_BUILD_WIN32 WINARCH32
-    INCLUDEPATH += $$SIMCONNECT_PATH_WIN32"\inc"
-    LIBS += $$SIMCONNECT_PATH_WIN32"\lib\SimConnect.lib"
-    OPENSSL_PATH_WIN=$$(OPENSSL_PATH_WIN32)
-  }
-} else {
+  contains(QT_ARCH, i386) {
+    # FSX or P3D
+    WINARCH = win32
+    !isEmpty(SIMCONNECT_PATH_WIN32) {
+      DEFINES += SIMCONNECT_BUILD_WIN32 WINARCH32
+      INCLUDEPATH += $$SIMCONNECT_PATH_WIN32"\inc"
+      LIBS += $$SIMCONNECT_PATH_WIN32"\lib\SimConnect.lib"
+      OPENSSL_PATH_WIN=$$(OPENSSL_PATH_WIN32)
+    }
+  } else {
+  # MSFS
   WINARCH = win64
   !isEmpty(SIMCONNECT_PATH_WIN64) {
     DEFINES += SIMCONNECT_BUILD_WIN64 WINARCH64
@@ -900,7 +907,7 @@ win32 {
   deploy.commands = rmdir /s /q $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME) &
   deploy.commands += mkdir $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/translations) &&
   deploy.commands += mkdir $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
-  deploy.commands += echo $$VERSION_NUMBER-$$WINARCH > $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/version.txt) &&
+  deploy.commands += echo $$WINARCH-$$VERSION_NUMBER > $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/version.txt) &&
   deploy.commands += echo $$GIT_REVISION_FULL > $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/revision.txt) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libCachePlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
   deploy.commands += xcopy $$p($$MARBLE_LIB_PATH/../plugins/libAtmospherePlugin$${DLL_SUFFIX}.dll) $$p($$DEPLOY_BASE/$$WIN_TARGET_NAME/plugins) &&
