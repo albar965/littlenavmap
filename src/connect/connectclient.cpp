@@ -626,8 +626,8 @@ void ConnectClient::showTerminalError()
     {
       terminalErrorShown = true;
       QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                           tr("Too many errors when trying to connect to simulator.\n"
-                              "Not matching simulator or other SimConnect problem.\n"
+                           tr("Too many errors when trying to connect to simulator.\n\n"
+                              "Not matching simulator interface or other SimConnect problem.\n\n"
                               "Make sure to use the right version of %1 with the right simulator:\n"
                               "%1 32-bit: FSX and P3D\n"
                               "%1 64-bit: MSFS\n"
