@@ -22,10 +22,14 @@ fi
 (
   cd ${APROJECTS}/deploy
 
-  cp -av "Little Navconnect" "Little Navmap"
-  cp -av "Little Xpconnect" "Little Navmap"
+  rm -rfv "LittleNavmap-linux-${FILENAME_LNM}"
+  rm -fv LittleNavmap-linux-${FILENAME_LNM}.tar.gz
 
   cp -av "Little Navmap" "LittleNavmap-linux-${FILENAME_LNM}"
+
+  cp -av "Little Navconnect" "LittleNavmap-linux-${FILENAME_LNM}"
+  cp -av "Little Xpconnect" "LittleNavmap-linux-${FILENAME_LNM}"
+
 
   tar cfvz LittleNavmap-linux-${FILENAME_LNM}.tar.gz "LittleNavmap-linux-${FILENAME_LNM}"
 )
