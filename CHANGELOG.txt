@@ -14,7 +14,7 @@ This changelog also explains new features. First look here if anything is not cl
 
 **First a big thank you to all who reported bugs and issues!**
 
-**This version is ready for MSFS SU11 and for the X-Plane 12 beta.**
+**This version is ready for MSFS SU11 and for the X-Plane 12 beta. See known issues below.**
 
 **X-Plane users: In any case reinstall Little Xpconnect from this package. Otherwise fuel flow
 calculation or other functions might not work correctly in Little Navmap.**
@@ -24,16 +24,9 @@ so to benefit from new features and bug fixes.**
 
 Note that certain settings and table layouts are reset to default after updating.
 
-**Create a backup of your settings and database folder just in case you'd like to go back to the
-stable release. Backup `ABarthel` in `C:\Users\YOURUSERNAME\AppData\Roaming\ABarthel` on Windows
-and `$HOME/.config/ABarthel` on Linux and macOS.**
-
-Alternatively use one of the scripts `Little Navmap Portable.cmd` (Windows),
+**Use one of the scripts `Little Navmap Portable.cmd` (Windows),
 `Little Navmap Portable.command` (macOS) and `Little Navmap Portable.sh` (Linux) to let
-Little Navmap store all settings, databases and caches in the installation folder (portable mode).
-
-Or see [Multiple Installations](https://www.littlenavmap.org/manuals/littlenavmap/release/2.8/en/INSTALLATION.html#multiple-installations)
-for information how to run the stable and alpha versions in parallel.
+Little Navmap store all settings, databases and caches in the installation folder (portable mode) to try out the program.**
 
 Some features like MSA, vertical paths or en-route holdings require either X-Plane, the included
 AIRAC 1801 database or a Navigraph database newer or equal than AIRAC 2201.
@@ -43,7 +36,7 @@ More issues are solved than publicly known on Github. This changelog lists the m
 
 Please report if something does not work or does not work as expected.
 
-## Known Issues
+## Known Issues MSFS
 
 * **Active pause in MSFS breaks the connection and does not allow to reconnect.
   Use the Escape key for normal pause to avoid problems.**
@@ -53,12 +46,14 @@ Please report if something does not work or does not work as expected.
   after starting your flight if you see problems.**
 * **Little Navconnect can have the same issues as Little Navmap since it always uses
   autconnect. Start the simulator first and then Little Navconnect.**
+
+## Known Issues
+
 * Running Little Navmap with autoconnect for P3D, FSX or MSFS for several hours without starting
   the simulator leaks a small amount of resources. This is mitigated by reducing the connection
   rate automatically after 30 minutes. Disable autoconnect or quit the program to avoid this.
 * En-route holding courses were not correct due to an error in declination calculation. This was
   fixed with AIRAC cycle 2210.
-* Little Xpconnect can upset X-Plane 12 on Linux systems in some rare cases. Currently investigating.
 
 ## Changes from 2.8.1.beta to 2.8.2.beta
 
@@ -81,9 +76,10 @@ as well as the X-Plane plugin (Little Navmap, Little Navconnect and Little Xpcon
 
 ### X-Plane
 
-* Little Xpconnect now adds items in X-Plane plugin menus to set AI fetch and performance options. See README.txt or
+* Little Xpconnect version 1.0.30 now adds items in X-Plane plugin menus to set AI fetch and performance options. See README.txt or
   [Little Navmap User Manual - Little Xpconnect](https://www.littlenavmap.org/manuals/littlenavmap/release/2.8/en/XPCONNECT.html).
 * Internal changes in Little Xpconnect to mitigate probable simulator stutters with X-Plane 12.
+* Change Little Xpconnect build for Linux to use a minimum of dependencies to avoid issues with X-Plane 12.
 * Calculating RNP value now correct for procedures from X-Plane data.
 
 ### MSFS

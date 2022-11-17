@@ -972,10 +972,4 @@ deploy.depends = all
 
 QMAKE_EXTRA_TARGETS += deploy copydata all
 
-DISTFILES += \
-  build/win/build_clean.cmd \
-  build/win/build_release_32.cmd \
-  build/win/build_release_base.cmd \
-  build/win/build_release_xpconnect.cmd \
-  build/win/do_all_32.cmd
 
