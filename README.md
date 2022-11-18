@@ -1,13 +1,22 @@
-### Little Navmap Downloads
+#### Last Beta
 
-* [**Windows** (LittleNavmap-win-2.6.19.zip)](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-win-2.6.19.zip)
-* [**macOS** (LittleNavmap-macOS-2.6.19.zip)](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-macOS-2.6.19.zip)
-* [**Linux** - 64 bit, based on Ubuntu 20.04 (LittleNavmap-linux-20.04-2.6.19.tar.gz)](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-linux-20.04-2.6.19.tar.gz)
-* [**Linux** - 64 bit, based on Ubuntu 18.04 (LittleNavmap-linux-18.04-2.6.19.tar.gz)](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-linux-18.04-2.6.19.tar.gz)
+[**► Windows 64-bit (*MSFS and X-Plane*)** - LittleNavmap-win64-2.8.2.beta.zip](https://github.com/albar965/littlenavmap/releases/download/v2.8.2.beta/LittleNavmap-win64-2.8.2.beta.zip)<br/>
+[**► macOS** - LittleNavmap-macOS-2.8.2.beta.zip](https://github.com/albar965/littlenavmap/releases/download/v2.8.2.beta/LittleNavmap-macOS-2.8.2.beta.zip)<br/>
+[**► Linux \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-22.04-2.8.2.beta.tar.gz](https://github.com/albar965/littlenavmap/releases/download/v2.8.2.beta/LittleNavmap-linux-22.04-2.8.2.beta.tar.gz)
 
-### Alternative Download Locations
+**Other Versions:** [Github - Version 2.8.2.beta](https://github.com/albar965/littlenavmap/releases/tag/v2.8.2.beta)
 
-**►** [**Box**](https://app.box.com/s/8c9x2f91enpkn41cmc4b5tkzlil9ouhy) / [**Dropbox**](https://www.dropbox.com/sh/eh446yent4rz3uq/AACg8vMEmX8AxY_5Hjpt90kWa) / [**Mega.nz**](https://mega.nz/#F!iOZHlIab!65qqRGToUUCxiSMmzbab1w) / [**OneDrive**](https://1drv.ms/u/s!AoWYKlNEZds9auvFMliyQ3HK-lY?e=42ud1g).
+#### Last Stable (*not* for MSFS SU11 and X-Plane 12)
+
+[**► Windows** - LittleNavmap-win-2.6.19.zip](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-win-2.6.19.zip)<br/>
+[**► macOS** - LittleNavmap-macOS-2.6.19.zip](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-macOS-2.6.19.zip)<br/>
+[**► Linux \(64 bit, based on Ubuntu 20.04\)** - LittleNavmap-linux-20.04-2.6.19.tar.gz](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-linux-20.04-2.6.19.tar.gz)<br/>
+[**► Linux \(64 bit, based on Ubuntu 18.04\)** - LittleNavmap-linux-18.04-2.6.19.tar.gz](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-linux-18.04-2.6.19.tar.gz)
+
+#### Alternative Download Locations
+
+[Box](https://app.box.com/s/8c9x2f91enpkn41cmc4b5tkzlil9ouhy), [Dropbox](https://www.dropbox.com/sh/eh446yent4rz3uq/AACg8vMEmX8AxY_5Hjpt90kWa), [Mega.nz](https://mega.nz/#F!iOZHlIab!65qqRGToUUCxiSMmzbab1w) and [OneDrive](https://1drv.ms/u/s!AoWYKlNEZds9auvFMliyQ3HK-lY?e=42ud1g).<br/>
+
 
 ### Little Navmap Links
 
@@ -25,13 +34,11 @@
 
 [► GitHub Profile](https://github.com/albar965) All my projects, releases, source code, issue lists and more.
 
-[► About Translation Packages](https://albar965.github.io/littlenavmaptranslations.html) General information about translation packages.
-
 [**► Support Forum at _Avsim_**](https://www.avsim.com/forum/780-little-navmap-little-navconnect-little-logbook-support-forum) **Support and help for users.**
 
 ### Little Navmap Donations
 
-[![Donate](https://albar965.github.io/assets/images/donate.png)](https://albar965.github.io/donate.html) 
+[![Donate](https://albar965.github.io/assets/images/donate.png)](https://albar965.github.io/donate.html)
 
 **Donate to show your appreciation if you like my programs.**
 **Spenden Sie, um Ihre Wertschätzung zu zeigen, wenn Ihnen  meine Programme gefallen.**
@@ -46,7 +53,7 @@ Help buttons in all relevant areas of the program display corresponding chapters
 
 [![Little Navmap 2.2.2 spherical map projection and elevation profile with flight plan](https://albar965.github.io/assets/images/spherical_small.jpg)](https://albar965.github.io/assets/images/spherical.jpg)
 
-[![Little Navmap 2.2.2 sun shadow on globe](https://albar965.github.io/assets/images/sunshadow_small.jpg)](https://albar965.github.io/assets/images/sunshadow.jpg) 
+[![Little Navmap 2.2.2 sun shadow on globe](https://albar965.github.io/assets/images/sunshadow_small.jpg)](https://albar965.github.io/assets/images/sunshadow.jpg)
 
 A widely configurable **map display** using the OpenStreetMap as a background map which is only one
 option of many online and included offline maps. The map shows airports, navaids, airways,
@@ -55,7 +62,7 @@ taxiways, displaced thresholds, overrun areas, aprons, parking spots and more.
 
 User can place airport traffic patterns or holdings as a visual guidance on the map.
 
-[![Little Navmap 2.4.4 winds aloft](https://albar965.github.io/assets/images/user_features_small.jpg)](https://albar965.github.io/assets/images/user_features.jpg) 
+[![Little Navmap 2.4.4 winds aloft](https://albar965.github.io/assets/images/user_features_small.jpg)](https://albar965.github.io/assets/images/user_features.jpg)
 
 [![Little Navmap 2.4.4 User Features](https://albar965.github.io/assets/images/wind_small.jpg)](https://albar965.github.io/assets/images/wind.jpg)
 
@@ -107,7 +114,7 @@ _Little Navmap_ features its own internal **web server** which allows to follow 
 any device across a network.
 
 **Supported Flight Simulators:** All FSX versions from SP2 up, Flight Simulator - Steam Edition,
-Prepar3D v2, v3, v4, v5, Microsoft Flight Simulator 2020 and X-Plane 11.
+Prepar3D v3, v4, v5, Microsoft Flight Simulator 2020 and X-Plane 11.
 
 **Supported platforms:** Windows 7/8/10, Apple macOS \(10.12 or newer only\) and Linux \(64 bit only\).
 
