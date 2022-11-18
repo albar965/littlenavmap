@@ -1,14 +1,22 @@
-### Little Navmap Downloads
+#### Last Beta
 
-* [**Windows** (LittleNavmap-win-2.6.19.zip)](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-win-2.6.19.zip)
-* [**macOS** (LittleNavmap-macOS-2.6.19.zip)](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-macOS-2.6.19.zip)
-* [**Linux** - 64 bit, based on Ubuntu 22.04 (LittleNavmap-linux-22.04-2.6.19.tar.gz)](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-linux-22.04-2.6.19.tar.gz)
-* [**Linux** - 64 bit, based on Ubuntu 20.04 (LittleNavmap-linux-20.04-2.6.19.tar.gz)](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-linux-20.04-2.6.19.tar.gz)
-* [**Linux** - 64 bit, based on Ubuntu 18.04 (LittleNavmap-linux-18.04-2.6.19.tar.gz)](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-linux-18.04-2.6.19.tar.gz)
+[**► Windows 64-bit (*MSFS and X-Plane*)** - LittleNavmap-win64-2.8.2.beta.zip](https://github.com/albar965/littlenavmap/releases/download/v2.8.2.beta/LittleNavmap-win64-2.8.2.beta.zip)<br/>
+[**► macOS** - LittleNavmap-macOS-2.8.2.beta.zip](https://github.com/albar965/littlenavmap/releases/download/v2.8.2.beta/LittleNavmap-macOS-2.8.2.beta.zip)<br/>
+[**► Linux \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-22.04-2.8.2.beta.tar.gz](https://github.com/albar965/littlenavmap/releases/download/v2.8.2.beta/LittleNavmap-linux-22.04-2.8.2.beta.tar.gz)
 
-### Alternative Download Locations
+**Other Versions:** [Github - Version 2.8.2.beta](https://github.com/albar965/littlenavmap/releases/tag/v2.8.2.beta)
 
-**►** [**Box**](https://app.box.com/s/8c9x2f91enpkn41cmc4b5tkzlil9ouhy) / [**Dropbox**](https://www.dropbox.com/sh/eh446yent4rz3uq/AACg8vMEmX8AxY_5Hjpt90kWa) / [**Mega.nz**](https://mega.nz/#F!iOZHlIab!65qqRGToUUCxiSMmzbab1w) / [**OneDrive**](https://1drv.ms/u/s!AoWYKlNEZds9auvFMliyQ3HK-lY?e=42ud1g).
+#### Last Stable (*not* for MSFS SU11 and X-Plane 12)
+
+[**► Windows** - LittleNavmap-win-2.6.19.zip](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-win-2.6.19.zip)<br/>
+[**► macOS** - LittleNavmap-macOS-2.6.19.zip](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-macOS-2.6.19.zip)<br/>
+[**► Linux \(64 bit, based on Ubuntu 20.04\)** - LittleNavmap-linux-20.04-2.6.19.tar.gz](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-linux-20.04-2.6.19.tar.gz)<br/>
+[**► Linux \(64 bit, based on Ubuntu 18.04\)** - LittleNavmap-linux-18.04-2.6.19.tar.gz](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-linux-18.04-2.6.19.tar.gz)
+
+#### Alternative Download Locations
+
+[Box](https://app.box.com/s/8c9x2f91enpkn41cmc4b5tkzlil9ouhy), [Dropbox](https://www.dropbox.com/sh/eh446yent4rz3uq/AACg8vMEmX8AxY_5Hjpt90kWa), [Mega.nz](https://mega.nz/#F!iOZHlIab!65qqRGToUUCxiSMmzbab1w) and [OneDrive](https://1drv.ms/u/s!AoWYKlNEZds9auvFMliyQ3HK-lY?e=42ud1g).<br/>
+
 
 ### Little Navmap Links
 
@@ -25,8 +33,6 @@
 [**► _Little Navmap_ - Install Navigraph Updates**](https://albar965.github.io/littlenavmap_navigraph.html) Shows how to update the included Navigraph database to the latest cycle.
 
 [► GitHub Profile](https://github.com/albar965) All my projects, releases, source code, issue lists and more.
-
-[► About Translation Packages](https://albar965.github.io/littlenavmaptranslations.html) General information about translation packages.
 
 [**► Support Forum at _Avsim_**](https://www.avsim.com/forum/780-little-navmap-little-navconnect-little-logbook-support-forum) **Support and help for users.**
 
