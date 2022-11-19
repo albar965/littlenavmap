@@ -8681,13 +8681,13 @@ relation to shown airport</string>
      <normaloff>:/littlenavmap/resources/icons/saveasfms.svg</normaloff>:/littlenavmap/resources/icons/saveasfms.svg</iconset>
    </property>
    <property name="text">
-    <string>Export Flight &amp;Plan as X-Plane FMS 11 ...</string>
+    <string>Export Flight &amp;Plan as FMS for X-Plane 11 and 12 ...</string>
    </property>
    <property name="toolTip">
-    <string>Export flight plan as FMS 11 file usable by X-Plane 11.10 and above</string>
+    <string>Export flight plan using FMS format usable by X-Plane 11 and 12</string>
    </property>
    <property name="statusTip">
-    <string>Export flight plan as FMS 11 file usable by X-Plane 11.10 and above</string>
+    <string>Export flight plan using FMS format usable by X-Plane 11 and 12</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Shift+X</string>

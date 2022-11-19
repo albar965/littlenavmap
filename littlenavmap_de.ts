@@ -10516,14 +10516,16 @@ Der beste Track wird automatisch ausgewählt.</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8684"/>
-        <source>Export Flight &amp;Plan as X-Plane FMS 11 ...</source>
-        <translation>Exportiere Flug&amp;plan als X-Plane FMS 11 ...</translation>
+        <source>Export Flight &amp;Plan as FMS for X-Plane 11 and 12 ...</source>
+        <oldsource>Export Flight &amp;Plan as X-Plane FMS 11 ...</oldsource>
+        <translation>Exportiere Flug&amp;plan im FMS Format für X-Plane 11 und 12 ...</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8687"/>
         <location filename="src/gui/mainwindow.ui" line="8690"/>
-        <source>Export flight plan as FMS 11 file usable by X-Plane 11.10 and above</source>
-        <translation>Flugplan als FMS 11 Datei für X-Plane 11.10 und neuer speichern</translation>
+        <source>Export flight plan using FMS format usable by X-Plane 11 and 12</source>
+        <oldsource>Export flight plan as FMS 11 file usable by X-Plane 11.10 and above</oldsource>
+        <translation>Flugplan als FMS-Datei für X-Plane 11 und 12 speichern</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8940"/>

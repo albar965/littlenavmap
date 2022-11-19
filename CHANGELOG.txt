@@ -59,7 +59,7 @@ Please report if something does not work or does not work as expected.
 
 ### Windows Builds
 
-**There are two builds of Little Navmap and Little Navconnect for Windows available now. :**
+**There are two builds of Little Navmap and Little Navconnect for Windows available now:**
 
 * **Windows 64-bit:** For MSFS and all X-Plane versions.
 * **Windows 32-bit:** For FSX and Prepar3D.
