@@ -19,23 +19,17 @@
 #include "ui_perfmergedialog.h"
 
 #include "common/unit.h"
-#include "atools.h"
 #include "common/constants.h"
-#include "geo/calculations.h"
 #include "gui/helphandler.h"
 #include "fs/perf/aircraftperf.h"
 #include "gui/widgetstate.h"
-#include "common/unitstringtool.h"
-#include "settings/settings.h"
-#include "common/formatter.h"
 #include "util/htmlbuilder.h"
 
 #include <QPushButton>
 
 using atools::fs::perf::AircraftPerf;
 
-PerfMergeDialog::PerfMergeDialog(QWidget *parent, const AircraftPerf& sourcePerfLbs, AircraftPerf& destPerf,
-                                 bool showAll)
+PerfMergeDialog::PerfMergeDialog(QWidget *parent, const AircraftPerf& sourcePerfLbs, AircraftPerf& destPerf, bool showAll)
   : QDialog(parent), ui(new Ui::PerfMergeDialog), to(destPerf), showAllWidgets(showAll)
 {
   setWindowFlags(windowFlags() & ~Qt::WindowContextHelpButtonHint);
