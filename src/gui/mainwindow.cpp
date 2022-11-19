@@ -680,7 +680,7 @@ void MainWindow::checkForUpdates()
 
 void MainWindow::showOnlineHelp()
 {
-  HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl, lnm::helpLanguageOnline());
+  HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineMainUrl, lnm::helpLanguageOnline());
 }
 
 void MainWindow::showOnlineTutorials()

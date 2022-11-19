@@ -26,12 +26,15 @@
 #include <QRegularExpression>
 #include <QSettings>
 #include <QDebug>
+#include <QCoreApplication>
+#include <QUrl>
 
 namespace lnm {
 
 static QString supportedLanguageOnline;
 
 QString helpOnlineUrl;
+QString helpOnlineMainUrl;
 QString helpOnlineTutorialsUrl;
 QString helpOnlineDownloadsUrl;
 QString helpOnlineLegendUrl;
@@ -80,16 +83,55 @@ void loadHelpUrls()
 
   QSettings settings(urlsPath, QSettings::IniFormat);
 
-  // [help] - Online help URLs
-  QLatin1String base("https://www.littlenavmap.org/manuals/littlenavmap/release/2.2/${LANG}/");
-  helpOnlineUrl = settings.value("help/base", base).toString();
-  helpOnlineTutorialsUrl = settings.value("help/tutorials", base + "TUTORIALS.html").toString();
-  helpOnlineLegendUrl = settings.value("help/legend", base + "LEGEND.html").toString();
-  helpOnlineInstallRedistUrl = settings.value("help/installredist", base + "INSTALLATION.html#windows").toString();
-  helpOnlineInstallGlobeUrl = settings.value("help/installglobe", base + "OPTIONS.html#cache-elevation").toString();
-  helpOnlineInstallDirUrl = settings.value("help/installdir", base + "FOLDERS.html").toString();
-  helpOnlineNavdatabasesUrl = settings.value("help/navdata", base + "NAVDATA.html").toString();
-  helpOnlineStartUrl = settings.value("help/start", base + "START.html").toString();
+  QSettings optionsettings(atools::settings::Settings::getFilename(), QSettings::IniFormat);
+
+  QString guiLanguage = optionsettings.value(lnm::OPTIONS_DIALOG_LANGUAGE, QLocale().name()).toString();
+  guiLanguage = guiLanguage.section('_', 0, 0);
+
+  // .../help/en/index.html
+  QFileInfo localFile(QCoreApplication::applicationDirPath() + QDir::separator() + "help" + QDir::separator() +
+                      guiLanguage + QDir::separator() + "index.html");
+
+  if(!localFile.exists())
+    // Try English manual
+    localFile.setFile(QCoreApplication::applicationDirPath() + QDir::separator() + "help" + QDir::separator() +
+                      "en" + QDir::separator() + "index.html");
+
+  // Check if local index.html exists
+  if(localFile.exists())
+  {
+    // Use local files for manual
+    QString base = QUrl::fromLocalFile(localFile.path()).toString() + "/";
+    helpOnlineUrl = base;
+    helpOnlineMainUrl = base + "index.html";
+
+    helpOnlineTutorialsUrl = base + "TUTORIALS.html";
+    helpOnlineLegendUrl = base + "LEGEND.html";
+    helpOnlineInstallRedistUrl = base + "INSTALLATION.html#windows";
+    helpOnlineInstallGlobeUrl = base + "OPTIONS.html#cache-elevation";
+    helpOnlineInstallDirUrl = base + "FOLDERS.html";
+    helpOnlineNavdatabasesUrl = base + "NAVDATA.html";
+    helpOnlineStartUrl = base + "START.html";
+  }
+  else
+  {
+    // Use online help links from configuration
+    // [help] - Online help URLs
+    QString base = "https://www.littlenavmap.org/manuals/littlenavmap/release/latest/${LANG}/";
+
+    helpOnlineUrl = settings.value("help/base", base).toString();
+    helpOnlineMainUrl = helpOnlineUrl;
+
+    helpOnlineTutorialsUrl = settings.value("help/tutorials", base + "TUTORIALS.html").toString();
+    helpOnlineLegendUrl = settings.value("help/legend", base + "LEGEND.html").toString();
+    helpOnlineInstallRedistUrl = settings.value("help/installredist", base + "INSTALLATION.html#windows").toString();
+    helpOnlineInstallGlobeUrl = settings.value("help/installglobe", base + "OPTIONS.html#cache-elevation").toString();
+    helpOnlineInstallDirUrl = settings.value("help/installdir", base + "FOLDERS.html").toString();
+    helpOnlineNavdatabasesUrl = settings.value("help/navdata", base + "NAVDATA.html").toString();
+    helpOnlineStartUrl = settings.value("help/start", base + "START.html").toString();
+  }
+
+  qDebug() << Q_FUNC_INFO << "Help URL" << helpOnlineUrl;
 
   helpOnlineDownloadsUrl = settings.value("help/downloads", "https://www.littlenavmap.org/downloads/").toString();
 
