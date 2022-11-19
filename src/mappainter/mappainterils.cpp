@@ -22,7 +22,6 @@
 #include "query/mapquery.h"
 #include "geo/calculations.h"
 #include "common/mapcolors.h"
-#include "mapgui/mapwidget.h"
 #include "util/paintercontextsaver.h"
 #include "route/route.h"
 
@@ -183,9 +182,9 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
         width = -width;
 
       // Rotate to draw the text upwards so it is readable
-      float rotate = ils.heading > 180.f ?
-                     ils.heading + 90.f - width / 2.f :
-                     atools::geo::opposedCourseDeg(ils.heading) + 90.f + width / 2.f;
+      float rotate = ils.localHeading > 180.f ?
+                     ils.localHeading + 90.f - width / 2.f :
+                     atools::geo::opposedCourseDeg(ils.localHeading) + 90.f + width / 2.f;
 
       // get an approximation of the ILS length
       int featherLen = static_cast<int>(std::roundf(scale->getPixelForMeter(nmToMeter(FEATHER_LEN_NM), rotate)));
@@ -205,7 +204,7 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
         text = metrics.elidedText(text, Qt::ElideRight, featherLen);
         int textw = metrics.horizontalAdvance(text);
 
-        int textpos = ils.heading > 180 ? (featherLen - textw) / 2 : -(featherLen + textw) / 2;
+        int textpos = ils.localHeading > 180 ? (featherLen - textw) / 2 : -(featherLen + textw) / 2;
 
         context->painter->rotate(rotate);
         context->painter->drawText(textpos, texth, text);

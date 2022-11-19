@@ -17,14 +17,15 @@
 
 #include "common/maptypesfactory.h"
 
-#include "navapp.h"
 #include "common/maptypes.h"
 #include "fs/common/binarymsageometry.h"
 #include "geo/calculations.h"
 #include "io/binaryutil.h"
 #include "sql/sqlrecord.h"
+#include "fs/util/fsutil.h"
 
 #include <cmath>
+#include <navapp.h>
 
 using namespace atools::geo;
 using atools::sql::SqlRecord;
@@ -578,7 +579,7 @@ void MapTypesFactory::fillMarker(const SqlRecord& record, map::MapMarker& marker
                         record.valueFloat("laty"));
 }
 
-void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils)
+void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils, bool navdata)
 {
   ils.id = record.valueInt("ils_id");
   ils.airportIdent = record.valueStr("loc_airport_ident");
@@ -592,7 +593,7 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils)
   ils.perfIndicator = record.valueStr("perf_indicator", QString());
   ils.provider = record.valueStr("provider", QString());
 
-  ils.heading = atools::geo::normalizeCourse(record.valueFloat("loc_heading"));
+  ils.localHeading = ils.heading = atools::geo::normalizeCourse(record.valueFloat("loc_heading"));
   ils.width = record.isNull("loc_width") ? INVALID_COURSE_VALUE : record.valueFloat("loc_width");
   ils.magvar = record.valueFloat("mag_var");
   ils.slope = record.valueFloat("gs_pitch");
@@ -606,13 +607,37 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils)
   {
     ils.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
 
-    if(!record.isNull("end1_lonx") && !record.isNull("end1_laty") &&
-       !record.isNull("end2_lonx") && !record.isNull("end2_laty") &&
-       !record.isNull("end_mid_lonx") && !record.isNull("end_mid_laty"))
+    if(navdata)
     {
-      ils.pos1 = Pos(record.valueFloat("end1_lonx"), record.valueFloat("end1_laty"));
-      ils.pos2 = Pos(record.valueFloat("end2_lonx"), record.valueFloat("end2_laty"));
-      ils.posmid = Pos(record.valueFloat("end_mid_lonx"), record.valueFloat("end_mid_laty"));
+      // Apply workaround to mitigate alignment issues of ILS with runway in
+      // DFD compiler which provides only full-degree heading and magvar from source data
+
+      // From SQL: l.llz_bearing + l.station_declination = loc_heading, -- Magnetic to true
+      // Remove the full integer value to get magnetic heading again
+      float magHeading = atools::geo::normalizeCourse(ils.heading - ils.magvar);
+
+      // Calculate magvar from WMM
+      float localMagvar = NavApp::getMagVar(ils.position);
+
+      // Now calculate the better aligned heading based on local magvar which is floating point precision
+      // local heading is used to draw the labels
+      ils.localHeading = atools::geo::normalizeCourse(magHeading + localMagvar);
+
+      // Calculate the geometry
+      atools::fs::util::calculateIlsGeometry(ils.position, ils.localHeading, ils.width, atools::fs::util::DEFAULT_FEATHER_LEN_NM,
+                                             ils.pos1, ils.pos2, ils.posmid);
+    }
+    else
+    {
+      // Use pre-calculated geometry
+      if(!record.isNull("end1_lonx") && !record.isNull("end1_laty") &&
+         !record.isNull("end2_lonx") && !record.isNull("end2_laty") &&
+         !record.isNull("end_mid_lonx") && !record.isNull("end_mid_laty"))
+      {
+        ils.pos1 = Pos(record.valueFloat("end1_lonx"), record.valueFloat("end1_laty"));
+        ils.pos2 = Pos(record.valueFloat("end2_lonx"), record.valueFloat("end2_laty"));
+        ils.posmid = Pos(record.valueFloat("end_mid_lonx"), record.valueFloat("end_mid_laty"));
+      }
     }
   }
 

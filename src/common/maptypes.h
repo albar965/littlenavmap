@@ -1085,7 +1085,12 @@ struct MapIls
                       * GLS ground station                  G (only Navigraph and X-Plane)
                       * SBAS/GBAS threshold point           T (only Navigraph and X-Plane) */
 
-  float magvar, slope, heading, width;
+  float magvar, /* from database */
+        slope,
+        heading /* degree true from database */,
+        localHeading /* degree true calculated from WMM for map display */,
+        width /* degree */;
+
   int frequency /* MHz * 1000 */, range /* nm */;
 
   /* MapBase pos is the origin (pointy end) */
