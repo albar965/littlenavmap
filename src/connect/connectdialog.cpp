@@ -61,11 +61,11 @@ ConnectDialog::ConnectDialog(QWidget *parent, bool simConnectAvailable)
   else
   {
 
-#if defined(WINARCH64)
+#if defined(SIMCONNECT_BUILD_WIN64)
     ui->tabWidgetConnect->setTabText(0, tr("MSFS"));
     ui->labelConnectFsx->setText(tr("Connect directly to MSFS running on the same computer as "
                                     "Little Navmap"));
-#elif defined(WINARCH32)
+#elif defined(SIMCONNECT_BUILD_WIN32)
     ui->tabWidgetConnect->setTabText(0, tr("FSX or Prepar3D"));
     ui->labelConnectFsx->setText(tr("Connect directly to FSX or Prepar3D running on the same computer as "
                                     "Little Navmap"));

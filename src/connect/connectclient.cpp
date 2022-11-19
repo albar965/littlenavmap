@@ -187,10 +187,10 @@ QString ConnectClient::simName() const
     if(dataReader->getHandler() == xpConnectHandler)
       return tr("X-Plane");
     else if(dataReader->getHandler() == simConnectHandler)
-#if defined(WINARCH64)
+#if defined(SIMCONNECT_BUILD_WIN64)
       return tr("MSFS");
 
-#elif defined(WINARCH32)
+#elif defined(SIMCONNECT_BUILD_WIN32)
       return tr("FSX or Prepar3D");
 
 #else
@@ -209,10 +209,10 @@ QString ConnectClient::simShortName() const
       return tr("XP");
     else if(dataReader->getHandler() == simConnectHandler)
     {
-#if defined(WINARCH64)
+#if defined(SIMCONNECT_BUILD_WIN64)
       return tr("MSFS");
 
-#elif defined(WINARCH32)
+#elif defined(SIMCONNECT_BUILD_WIN32)
       return tr("FSX/P3D");
 
 #else
