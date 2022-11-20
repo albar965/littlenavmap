@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -107,11 +107,13 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
 
   SqlDatabase::addDatabase(dbtools::DATABASE_TYPE, dbtools::DATABASE_NAME_SIM);
   SqlDatabase::addDatabase(dbtools::DATABASE_TYPE, dbtools::DATABASE_NAME_NAV);
+  SqlDatabase::addDatabase(dbtools::DATABASE_TYPE, dbtools::DATABASE_NAME_NAV_PERM);
   SqlDatabase::addDatabase(dbtools::DATABASE_TYPE, dbtools::DATABASE_NAME_DLG_INFO_TEMP);
   SqlDatabase::addDatabase(dbtools::DATABASE_TYPE, dbtools::DATABASE_NAME_TEMP);
 
   databaseSim = new SqlDatabase(dbtools::DATABASE_NAME_SIM);
   databaseNav = new SqlDatabase(dbtools::DATABASE_NAME_NAV);
+  databaseNavPerm = new SqlDatabase(dbtools::DATABASE_NAME_NAV_PERM);
 
   if(mainWindow != nullptr)
   {
@@ -234,6 +236,9 @@ DatabaseManager::~DatabaseManager()
   qDebug() << Q_FUNC_INFO << "delete databaseNav";
   delete databaseNav;
 
+  qDebug() << Q_FUNC_INFO << "delete databaseNavPerm";
+  delete databaseNavPerm;
+
   qDebug() << Q_FUNC_INFO << "delete databaseUser";
   delete databaseUser;
 
@@ -260,6 +265,7 @@ DatabaseManager::~DatabaseManager()
 
   SqlDatabase::removeDatabase(dbtools::DATABASE_NAME_SIM);
   SqlDatabase::removeDatabase(dbtools::DATABASE_NAME_NAV);
+  SqlDatabase::removeDatabase(dbtools::DATABASE_NAME_NAV_PERM);
   SqlDatabase::removeDatabase(dbtools::DATABASE_NAME_USER);
   SqlDatabase::removeDatabase(dbtools::DATABASE_NAME_TRACK);
   SqlDatabase::removeDatabase(dbtools::DATABASE_NAME_LOGBOOK);
@@ -1017,6 +1023,7 @@ void DatabaseManager::openAllDatabases()
 {
   QString simDbFile = buildDatabaseFileName(currentFsType);
   QString navDbFile = buildDatabaseFileName(FsPaths::NAVIGRAPH);
+  QString navDbFilePerm = navDbFile;
 
   // Airspace databases are independent of switch
   QString simAirspaceDbFile = simDbFile;
@@ -1030,6 +1037,7 @@ void DatabaseManager::openAllDatabases()
 
   dbtools::openDatabaseFile(databaseSim, simDbFile, true /* readonly */, true /* createSchema */);
   dbtools::openDatabaseFile(databaseNav, navDbFile, true /* readonly */, true /* createSchema */);
+  dbtools::openDatabaseFile(databaseNavPerm, navDbFilePerm, true /* readonly */, true /* createSchema */);
 
   dbtools::openDatabaseFile(databaseSimAirspace, simAirspaceDbFile, true /* readonly */, true /* createSchema */);
   dbtools::openDatabaseFile(databaseNavAirspace, navAirspaceDbFile, true /* readonly */, true /* createSchema */);
@@ -1039,28 +1047,9 @@ void DatabaseManager::closeAllDatabases()
 {
   dbtools::closeDatabaseFile(databaseSim);
   dbtools::closeDatabaseFile(databaseNav);
+  dbtools::closeDatabaseFile(databaseNavPerm);
   dbtools::closeDatabaseFile(databaseSimAirspace);
   dbtools::closeDatabaseFile(databaseNavAirspace);
-}
-
-atools::sql::SqlDatabase *DatabaseManager::getDatabaseSim()
-{
-  return databaseSim;
-}
-
-atools::sql::SqlDatabase *DatabaseManager::getDatabaseNav()
-{
-  return databaseNav;
-}
-
-atools::sql::SqlDatabase *DatabaseManager::getDatabaseSimAirspace()
-{
-  return databaseSimAirspace;
-}
-
-atools::sql::SqlDatabase *DatabaseManager::getDatabaseNavAirspace()
-{
-  return databaseNavAirspace;
 }
 
 void DatabaseManager::checkForChangedNavAndSimDatabases()
@@ -1173,11 +1162,6 @@ const atools::fs::db::DatabaseMeta DatabaseManager::databaseMetadata(atools::fs:
   metaSim.deInit();
   dbtools::closeDatabaseFile(&tempDb);
   return metaSim;
-}
-
-void DatabaseManager::checkSceneryOptionsManual()
-{
-  checkSceneryOptions(true /* manualCheck */);
 }
 
 void DatabaseManager::checkSceneryOptions(bool manualCheck)
@@ -1618,16 +1602,6 @@ bool DatabaseManager::isDatabaseCompatible(atools::sql::SqlDatabase *db)
   {
     ATOOLS_HANDLE_UNKNOWN_EXCEPTION;
   }
-}
-
-bool DatabaseManager::hasInstalledSimulators() const
-{
-  return !simulators.getAllInstalled().isEmpty();
-}
-
-bool DatabaseManager::hasSimulatorDatabases() const
-{
-  return !simulators.getAllHavingDatabase().isEmpty();
 }
 
 void DatabaseManager::saveState()

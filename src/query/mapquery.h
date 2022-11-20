@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -53,7 +53,7 @@ public:
    * @param sqlDb database for simulator scenery data
    * @param sqlDbNav for updated navaids
    */
-  MapQuery(atools::sql::SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav,
+  MapQuery(atools::sql::SqlDatabase *sqlDbSim, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbNavPerm,
            atools::sql::SqlDatabase *sqlDbUser);
   ~MapQuery();
 
@@ -167,7 +167,8 @@ public:
    * @param screenDistance maximum distance to coordinates
    * @param result will receive objects based on type
    */
-  void getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, const QSet<int>& shownDetailAirportIds, bool airportDiagram,
+  void getNearestScreenObjects(const CoordinateConverter& conv, const MapLayer *mapLayer, const QSet<int>& shownDetailAirportIds,
+                               bool airportDiagram,
                                map::MapTypes types, int xs, int ys, int screenDistance,
                                map::MapResult& result) const;
 
@@ -270,7 +271,7 @@ private:
                                 const atools::geo::Pos& pos, bool& found) const;
 
   MapTypesFactory *mapTypesFactory;
-  atools::sql::SqlDatabase *dbSim, *dbNav, *dbUser;
+  atools::sql::SqlDatabase *dbSim, *dbNav, *dbNavPerm, *dbUser;
 
   /* Simple bounding rectangle caches */
   bool airportCacheAddonFlag = false; // Keep addon status flag for comparing

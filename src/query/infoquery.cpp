@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,6 +18,7 @@
 #include "query/infoquery.h"
 
 #include "common/constants.h"
+#include "navapp.h"
 #include "query/querytypes.h"
 #include "settings/settings.h"
 #include "sql/sqldatabase.h"
@@ -31,8 +32,9 @@ using atools::sql::SqlRecord;
 using atools::sql::SqlRecordList;
 using atools::sql::SqlUtil;
 
-InfoQuery::InfoQuery(SqlDatabase *sqlDb, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbTrack)
-  : dbSim(sqlDb), dbNav(sqlDbNav), dbTrack(sqlDbTrack)
+InfoQuery::InfoQuery(SqlDatabase *sqlDbSim, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbNavPerm,
+                     atools::sql::SqlDatabase *sqlDbTrack)
+  : dbSim(sqlDbSim), dbNav(sqlDbNav), dbNavPerm(sqlDbNavPerm), dbTrack(sqlDbTrack)
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   airportCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirportCache", 100).toInt());
@@ -258,9 +260,10 @@ void InfoQuery::initQueries()
                     "join scenery_area on bgl_file.scenery_area_id = scenery_area.scenery_area_id "
                     "where vor_id = :id");
 
-  // Same as above for airport MSA table
-  SqlDatabase *msaDb = SqlUtil::getDbWithTableAndRows("airport_msa", {dbNav, dbSim});
-  qDebug() << Q_FUNC_INFO << "Airport MSA database" << (msaDb == nullptr ? "None" : msaDb->databaseName());
+  // Check for holding table in nav (Navigraph) database and then in simulator database (X-Plane only)
+  SqlDatabase *msaDb = NavApp::isNavdataOff() ?
+                       SqlUtil::getDbWithTableAndRows("airport_msa", {dbSim, dbNavPerm}) :
+                       SqlUtil::getDbWithTableAndRows("airport_msa", {dbNavPerm, dbSim});
 
   if(msaDb != nullptr)
   {
@@ -271,10 +274,10 @@ void InfoQuery::initQueries()
                       "where airport_msa_id = :id");
   }
 
-  // Check for holding table in nav (Navigraph) database and then in simulator database (X-Plane only)
-  SqlDatabase *holdingDb = SqlUtil::getDbWithTableAndRows("holding", {dbNav, dbSim});
-  qDebug() << Q_FUNC_INFO << "Holding database" << (holdingDb == nullptr ? "None" : holdingDb->databaseName());
-
+  // Same as above for airport MSA table
+  SqlDatabase *holdingDb = NavApp::isNavdataOff() ?
+                           SqlUtil::getDbWithTableAndRows("holding", {dbSim, dbNavPerm}) :
+                           SqlUtil::getDbWithTableAndRows("holding", {dbNavPerm, dbSim});
   if(holdingDb != nullptr)
   {
     holdingQuery = new SqlQuery(holdingDb);

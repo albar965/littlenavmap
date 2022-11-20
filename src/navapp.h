@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -270,6 +270,9 @@ public:
 
   /* External update from navaids or same as above */
   static atools::sql::SqlDatabase *getDatabaseNav();
+
+  /* Always external */
+  static atools::sql::SqlDatabase *getDatabaseNavPerm();
 
   static atools::fs::userdata::UserdataManager *getUserdataManager();
   static UserdataIcons *getUserdataIcons();

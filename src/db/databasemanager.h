@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -105,10 +105,16 @@ public:
   void saveState();
 
   /* Returns true if there are any flight simulator installations found in the registry */
-  bool hasInstalledSimulators() const;
+  bool hasInstalledSimulators() const
+  {
+    return !simulators.getAllInstalled().isEmpty();
+  }
 
   /* Returns true if there are any flight simulator databases found (probably copied by the user) */
-  bool hasSimulatorDatabases() const;
+  bool hasSimulatorDatabases() const
+  {
+    return !simulators.getAllHavingDatabase().isEmpty();
+  }
 
   /* Opens Sim, Nav and respective airspace Sqlite databases in readonly mode. If the database is new or does not contain a schema
    * an empty schema is created.
@@ -131,17 +137,35 @@ public:
    * Will not return if an exception is caught during opening. */
   void closeAllDatabases();
 
-  /* Get the simulator database. Will return null if not opened before. */
-  atools::sql::SqlDatabase *getDatabaseSim();
+  /* Get the simulator database. Will return null if not opened before. Connection inside is changed depending on settings. */
+  atools::sql::SqlDatabase *getDatabaseSim()
+  {
+    return databaseSim;
+  }
 
-  /* Get navaid database or same as above if it does not exist */
-  atools::sql::SqlDatabase *getDatabaseNav();
+  /* Get navaid database or same as above if it does not exist.Connection inside is changed depending on settings. */
+  atools::sql::SqlDatabase *getDatabaseNav()
+  {
+    return databaseNav;
+  }
+
+  /* Get navaid database. Connection inside is not changed. */
+  atools::sql::SqlDatabase *getDatabaseNavPerm()
+  {
+    return databaseNavPerm;
+  }
 
   /* Get the simulator database for airspaces which is independent of nav data mode. Will return null if not opened before. */
-  atools::sql::SqlDatabase *getDatabaseSimAirspace();
+  atools::sql::SqlDatabase *getDatabaseSimAirspace()
+  {
+    return databaseSimAirspace;
+  }
 
   /* Get the nav database for airspaces which is independent of nav data mode. Will return null if not opened before. */
-  atools::sql::SqlDatabase *getDatabaseNavAirspace();
+  atools::sql::SqlDatabase *getDatabaseNavAirspace()
+  {
+    return databaseNavAirspace;
+  }
 
   /*
    * Insert actions for switching between installed flight simulators.
@@ -244,7 +268,10 @@ public:
   void checkDatabaseVersion();
 
   /* Validate scenery library mode and show warning dialogs which allow to set the recommended mode */
-  void checkSceneryOptionsManual();
+  void checkSceneryOptionsManual()
+  {
+    checkSceneryOptions(true /* manualCheck */);
+  }
 
 signals:
   /* Emitted before opening the scenery database dialog, loading a database or switching to a new simulator database.
@@ -315,8 +342,9 @@ private:
 
   // Need a pointer since it has to be deleted before the destructor is left
   atools::sql::SqlDatabase
-  *databaseSim = nullptr /* Database for simulator content */,
-  *databaseNav = nullptr /* Database for third party navigation data */,
+  *databaseSim = nullptr /* Database for simulator content. Connection inside is exchanged depending on settings. */,
+  *databaseNav = nullptr /* Database for third party navigation data. Connection inside is exchanged depending on settings. */,
+  *databaseNavPerm = nullptr /* Database for third party navigation data. Connection inside is not changed. */,
   *databaseUser = nullptr /* Database for user data */,
   *databaseTrack = nullptr /* Database for tracks like NAT, PACOTS and AUSOTS */,
   *databaseLogbook = nullptr /* Database for logbook */,

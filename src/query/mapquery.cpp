@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -73,8 +73,8 @@ static QLatin1String AIRPORTIDENT_FROM_NDB("select a.ident, n.lonx, n.laty "
                                            "order by (abs(n.lonx - :lonx) + abs(n.laty - :laty)) limit 1");
 static float MAX_AIRPORT_IDENT_DISTANCE_M = atools::geo::nmToMeter(5.f);
 
-MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDb, SqlDatabase *sqlDbNav, SqlDatabase *sqlDbUser)
-  : dbSim(sqlDb), dbNav(sqlDbNav), dbUser(sqlDbUser)
+MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDbSim, SqlDatabase *sqlDbNav, SqlDatabase *sqlDbNavPerm, SqlDatabase *sqlDbUser)
+  : dbSim(sqlDbSim), dbNav(sqlDbNav), dbNavPerm(sqlDbNavPerm), dbUser(sqlDbUser)
 {
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
@@ -1403,12 +1403,15 @@ void MapQuery::initQueries()
   gls = navUtil.hasTableAndColumn("ils", "type") && navUtil.hasRows("ils", "type in ('G', 'T')");
 
   // Check for holding table in nav (Navigraph) database and then in simulator database (X-Plane only)
-  SqlDatabase *holdingDb = SqlUtil::getDbWithTableAndRows("holding", {dbNav, dbSim});
-  qDebug() << Q_FUNC_INFO << "Holding database" << (holdingDb == nullptr ? "None" : holdingDb->databaseName());
+  // Reverse search order depending on scenery library settings
+  SqlDatabase *holdingDb = NavApp::isNavdataOff() ?
+                           SqlUtil::getDbWithTableAndRows("holding", {dbSim, dbNavPerm}) :
+                           SqlUtil::getDbWithTableAndRows("holding", {dbNavPerm, dbSim});
 
   // Same as above for airport MSA table
-  SqlDatabase *msaDb = SqlUtil::getDbWithTableAndRows("airport_msa", {dbNav, dbSim});
-  qDebug() << Q_FUNC_INFO << "Airport MSA database" << (msaDb == nullptr ? "None" : msaDb->databaseName());
+  SqlDatabase *msaDb = NavApp::isNavdataOff() ?
+                       SqlUtil::getDbWithTableAndRows("airport_msa", {dbSim, dbNavPerm}) :
+                       SqlUtil::getDbWithTableAndRows("airport_msa", {dbNavPerm, dbSim});
 
   vorByIdentQuery = new SqlQuery(dbNav);
   vorByIdentQuery->prepare("select " + vorQueryBase + " from vor where " + whereIdentRegion);

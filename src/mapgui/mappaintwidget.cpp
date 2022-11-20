@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -94,7 +94,7 @@ MapPaintWidget::MapPaintWidget(QWidget *parent, bool visible)
   apronGeometryCache = new ApronGeometryCache();
   apronGeometryCache->setViewportParams(viewport());
 
-  mapQuery = new MapQuery(NavApp::getDatabaseSim(), NavApp::getDatabaseNav(), NavApp::getDatabaseUser());
+  mapQuery = new MapQuery(NavApp::getDatabaseSim(), NavApp::getDatabaseNav(), NavApp::getDatabaseNavPerm(), NavApp::getDatabaseUser());
   mapQuery->initQueries();
 
   // Set up airway queries =====================

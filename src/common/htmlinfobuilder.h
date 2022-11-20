@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -333,7 +333,13 @@ private:
                                 float magVar, bool frequencyCol, bool airportCol) const;
 
   /* Add scenery entries and links into table */
-  void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html, bool com, bool ils) const;
+  enum SceneryType
+  {
+    DATASOURCE_COM, DATASOURCE_HOLD, DATASOURCE_MSA, DATASOURCE_NAV
+  };
+
+  void addScenery(const atools::sql::SqlRecord *rec, atools::util::HtmlBuilder& html, SceneryType type) const;
+
   void addAirportSceneryAndLinks(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
   void addAirportFolder(const map::MapAirport& airport, atools::util::HtmlBuilder& html) const;
 

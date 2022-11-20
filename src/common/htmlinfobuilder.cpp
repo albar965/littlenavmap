@@ -743,7 +743,7 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) cons
 
       if(info)
         // Add scenery indicator to clear source - either nav or sim
-        addScenery(nullptr, html, true /* com */, false /* ils */);
+        addScenery(nullptr, html, DATASOURCE_COM);
 
     }
     else
@@ -1276,7 +1276,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
 
   if(info && infoOrTooltip && !procInfo)
     // Add scenery indicator to clear source - either nav or sim
-    addScenery(nullptr, html, false /* com */, true /* ils */);
+    addScenery(nullptr, html, DATASOURCE_NAV);
 
 #ifdef DEBUG_INFORMATION
   if(info && !procInfo)
@@ -1910,7 +1910,7 @@ void HtmlInfoBuilder::airportMsaTextInternal(const map::MapAirportMsa& msa, atoo
   }
 
   if(info && !user)
-    addScenery(infoQuery->getMsaInformation(msa.id), html, false /* com */, false /* ils */);
+    addScenery(infoQuery->getMsaInformation(msa.id), html, DATASOURCE_MSA);
 
   if(info)
     html.br();
@@ -2226,7 +2226,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
     waypointAirwayText(wp, html);
 
   if(rec != nullptr)
-    addScenery(rec, html, false /* com */, false /* ils */);
+    addScenery(rec, html, DATASOURCE_NAV);
 
   if(!info)
     routeWindText(html, NavApp::getRouteConst(), vor.routeIndex);
@@ -2301,7 +2301,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
     waypointAirwayText(wp, html);
 
   if(rec != nullptr)
-    addScenery(rec, html, false /* com */, false /* ils */);
+    addScenery(rec, html, DATASOURCE_NAV);
 
   if(!info)
     routeWindText(html, NavApp::getRouteConst(), ndb.routeIndex);
@@ -2410,7 +2410,7 @@ void HtmlInfoBuilder::holdingTextInternal(const MapHolding& holding, HtmlBuilder
   html.tableEnd();
 
   if(info && !user)
-    addScenery(infoQuery->getHoldingInformation(holding.id), html, false /* com */, false /* ils */);
+    addScenery(infoQuery->getHoldingInformation(holding.id), html, DATASOURCE_HOLD);
 
   if(info)
     html.br();
@@ -2923,7 +2923,7 @@ void HtmlInfoBuilder::waypointText(const MapWaypoint& waypoint, HtmlBuilder& htm
   waypointAirwayText(waypoint, html);
 
   if(rec != nullptr)
-    addScenery(rec, html, false /* com */, false /* ils */);
+    addScenery(rec, html, DATASOURCE_NAV);
 
   if(!info)
     routeWindText(html, NavApp::getRouteConst(), waypoint.routeIndex);
@@ -3189,7 +3189,7 @@ void HtmlInfoBuilder::airspaceText(const MapAirspace& airspace, const atools::sq
     atools::sql::SqlRecord rec = NavApp::getAirspaceController()->getAirspaceInfoRecordById(airspace.combinedId());
 
     if(!rec.isEmpty())
-      addScenery(&rec, html, false /* com */, false /* ils */);
+      addScenery(&rec, html, DATASOURCE_NAV);
   }
 
 #ifdef DEBUG_INFORMATION
@@ -4837,33 +4837,29 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
   html.tableEnd();
 }
 
-void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html, bool com, bool ils) const
+void HtmlInfoBuilder::addScenery(const atools::sql::SqlRecord *rec, HtmlBuilder& html, SceneryType type) const
 {
-  if(com)
+  head(html, tr("Data Source"));
+  html.table();
+
+  switch(type)
   {
-    // COM is used from sim except in Navigraph all
-    head(html, tr("Data Source"));
-    html.table();
-    html.row2(NavApp::isNavdataAll() ? tr("Navigraph") : tr("Simulator"));
-    html.tableEnd();
+    case DATASOURCE_COM:
+      // COM is used from sim except in Navigraph all - no file given
+      html.row2(NavApp::isNavdataAll() ? tr("Navigraph") : tr("Simulator"));
+      break;
+
+    case DATASOURCE_HOLD:
+    case DATASOURCE_MSA:
+    case DATASOURCE_NAV:
+      if(rec != nullptr)
+        html.row2(rec->valueStr("title", QString()), filepathTextShow(rec->valueStr("filepath", QString())), ahtml::NO_ENTITIES);
+      else
+        html.row2(!NavApp::isNavdataOff() ? tr("Navigraph") : tr("Simulator"));
+      break;
   }
-  else if(ils)
-  {
-    // ILS is from navdata except in Navigraph off
-    head(html, tr("Data Source"));
-    html.table();
-    html.row2(!NavApp::isNavdataOff() ? tr("Navigraph") : tr("Simulator"));
-    html.tableEnd();
-  }
-  else if(rec != nullptr)
-  {
-    head(html, tr("Data Source"));
-    html.table();
-    html.row2(rec->valueStr("title", QString()), filepathTextShow(rec->valueStr("filepath", QString())), ahtml::NO_ENTITIES);
-    html.tableEnd();
-  }
-  else
-    head(html, tr("Data Source Unknown"));
+
+  html.tableEnd();
 }
 
 void HtmlInfoBuilder::addAirportFolder(const MapAirport& airport, HtmlBuilder& html) const

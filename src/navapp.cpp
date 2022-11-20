@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -150,7 +150,7 @@ void NavApp::init(MainWindow *mainWindowParam)
   magDecReader = new atools::fs::common::MagDecReader();
   readMagDecFromDatabase();
 
-  moraReader = new atools::fs::common::MoraReader(databaseManager->getDatabaseNav(), databaseManager->getDatabaseSim());
+  moraReader = new atools::fs::common::MoraReader(getDatabaseNavPerm(), getDatabaseSim());
   moraReader->readFromTable();
 
   vehicleIcons = new VehicleIcons();
@@ -181,6 +181,7 @@ void NavApp::init(MainWindow *mainWindowParam)
 
   infoQuery = new InfoQuery(databaseManager->getDatabaseSim(),
                             databaseManager->getDatabaseNav(),
+                            databaseManager->getDatabaseNavPerm(),
                             databaseManager->getDatabaseTrack());
 
   procedureQuery = new ProcedureQuery(databaseManager->getDatabaseNav());
@@ -398,7 +399,7 @@ void NavApp::postDatabaseLoad()
   airportQueryNav->initQueries();
   infoQuery->initQueries();
   procedureQuery->initQueries();
-  moraReader->postDatabaseLoad();
+  moraReader->readFromTable(getDatabaseNavPerm(), getDatabaseSim());
   airspaceController->postDatabaseLoad();
   logdataController->postDatabaseLoad();
   trackController->postDatabaseLoad();
@@ -756,6 +757,11 @@ atools::sql::SqlDatabase *NavApp::getDatabaseSim()
 atools::sql::SqlDatabase *NavApp::getDatabaseNav()
 {
   return getDatabaseManager()->getDatabaseNav();
+}
+
+atools::sql::SqlDatabase *NavApp::getDatabaseNavPerm()
+{
+  return getDatabaseManager()->getDatabaseNavPerm();
 }
 
 atools::fs::userdata::UserdataManager *NavApp::getUserdataManager()

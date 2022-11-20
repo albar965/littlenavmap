@@ -34,6 +34,9 @@ const QString DATABASE_NAME_SIM = "LNMDBSIM";
 /* Navaid database e.g. from Navigraph */
 const QString DATABASE_NAME_NAV = "LNMDBNAV";
 
+/* Navaid database e.g. from Navigraph but not changed by settings. */
+const QString DATABASE_NAME_NAV_PERM = "LNMDBNAVPERM";
+
 /* Userpoint database */
 const QString DATABASE_NAME_USER = "LNMDBUSER";
 
