@@ -579,7 +579,7 @@ void MapTypesFactory::fillMarker(const SqlRecord& record, map::MapMarker& marker
                         record.valueFloat("laty"));
 }
 
-void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils, bool navdata)
+void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils, bool navdata, float runwayHeadingTrue)
 {
   ils.id = record.valueInt("ils_id");
   ils.airportIdent = record.valueStr("loc_airport_ident");
@@ -612,16 +612,20 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils, bool na
       // Apply workaround to mitigate alignment issues of ILS with runway in
       // DFD compiler which provides only full-degree heading and magvar from source data
 
-      // From SQL: l.llz_bearing + l.station_declination = loc_heading, -- Magnetic to true
-      // Remove the full integer value to get magnetic heading again
-      float magHeading = atools::geo::normalizeCourse(ils.heading - ils.magvar);
+      // From SQL: l.llz_bearing + l.station_declination = loc_heading, -- Magnetic to true using full integer
 
-      // Calculate magvar from WMM
-      float localMagvar = NavApp::getMagVar(ils.position);
-
-      // Now calculate the better aligned heading based on local magvar which is floating point precision
-      // local heading is used to draw the labels
-      ils.localHeading = atools::geo::normalizeCourse(magHeading + localMagvar);
+      // Adjust ILS display heading if value is really close to runway heading
+      if(runwayHeadingTrue < map::INVALID_HEADING_VALUE)
+      {
+        float diff = atools::geo::angleAbsDiff(ils.localHeading, runwayHeadingTrue);
+        if(diff < 1.f)
+        {
+#ifdef DEBUG_INFORMATION
+          qDebug() << Q_FUNC_INFO << "Correcting ILS" << ils.ident << "diff" << diff;
+#endif
+          ils.localHeading = runwayHeadingTrue;
+        }
+      }
 
       // Calculate the geometry
       atools::fs::util::calculateIlsGeometry(ils.position, ils.localHeading, ils.width, atools::fs::util::DEFAULT_FEATHER_LEN_NM,

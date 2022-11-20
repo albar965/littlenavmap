@@ -1201,8 +1201,15 @@ const QList<map::MapIls> *MapQuery::getIls(GeoDataLatLonBox rect, const MapLayer
       ilsByRectQuery->exec();
       while(ilsByRectQuery->next())
       {
+        // ILS is always loaded from nav except if all is off
+        bool navdata = !NavApp::isNavdataOff();
+        map::MapRunwayEnd end;
+        if(navdata)
+          // Get the runway end to fix graphical alignment issues in map
+          end = NavApp::getAirportQueryNav()->getRunwayEndById(ilsByRectQuery->valueInt("loc_runway_end_id"));
+
         MapIls ils;
-        mapTypesFactory->fillIls(ilsByRectQuery->record(), ils, !NavApp::isNavdataOff());
+        mapTypesFactory->fillIls(ilsByRectQuery->record(), ils, navdata, end.isFullyValid() ? end.heading : map::INVALID_HEADING_VALUE);
         ilsCache.list.append(ils);
       }
     }
