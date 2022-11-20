@@ -3222,7 +3222,7 @@ void MainWindow::mainWindowShownDelayed()
   }
 
   // Center flight plan after loading - do this delayed to consider window size changes
-  if(OptionData::instance().getFlags() & opts::GUI_CENTER_ROUTE && !NavApp::isRouteEmpty())
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_SHOW_ROUTE) && !NavApp::isRouteEmpty())
     NavApp::getMapPaintWidgetGui()->showRect(routeController->getBoundingRect(), false);
 
   // Set window flag
