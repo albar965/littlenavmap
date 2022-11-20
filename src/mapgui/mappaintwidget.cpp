@@ -504,12 +504,15 @@ void MapPaintWidget::preDatabaseLoad()
 void MapPaintWidget::postDatabaseLoad()
 {
   databaseLoadStatus = false;
+
+  // Update screen index after next paint event
+  screenIndexUpdateReqired = true;
+
   // Reload track into database to catch changed waypoint ids
   airwayTrackQuery->initQueries();
   waypointTrackQuery->initQueries();
   mapQuery->initQueries();
   paintLayer->postDatabaseLoad();
-  screenIndex->updateAllGeometry(getCurrentViewBoundingBox());
   update();
   updateMapVisibleUi();
 }
@@ -1283,6 +1286,12 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
 
     handleHistory();
 
+    changed = true;
+  }
+
+  if(screenIndexUpdateReqired)
+  {
+    screenIndexUpdateReqired = false;
     changed = true;
   }
 

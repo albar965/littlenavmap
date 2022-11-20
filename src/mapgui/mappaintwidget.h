@@ -549,6 +549,9 @@ protected:
   /* Paint copyright note into image */
   bool paintCopyright = true;
 
+  /* Update screen index after painting */
+  bool screenIndexUpdateReqired = false;
+
   /* Map theme id. */
   QString currentThemeId;
 
