@@ -90,6 +90,7 @@
 
         <!-- ILS feathers ================= -->
         <Ils>true</Ils>
+        <IlsDetail>true</IlsDetail>
         <IlsIdent>true</IlsIdent>
         <IlsInfo>true</IlsInfo>
 
@@ -272,6 +273,7 @@
         <AirportSymbolSize>10</AirportSymbolSize>
         <AirwayIdent>false</AirwayIdent>
         <ApproachText>false</ApproachText>
+        <IlsDetail>false</IlsDetail>
         <MaximumTextLengthUserpoint>8</MaximumTextLengthUserpoint>
         <NdbIdent>false</NdbIdent>
         <NdbSymbolSize>12</NdbSymbolSize>

@@ -579,7 +579,7 @@ void MapTypesFactory::fillMarker(const SqlRecord& record, map::MapMarker& marker
                         record.valueFloat("laty"));
 }
 
-void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils, bool navdata, float runwayHeadingTrue)
+void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils, float runwayHeadingTrue)
 {
   ils.id = record.valueInt("ils_id");
   ils.airportIdent = record.valueStr("loc_airport_ident");
@@ -593,7 +593,7 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils, bool na
   ils.perfIndicator = record.valueStr("perf_indicator", QString());
   ils.provider = record.valueStr("provider", QString());
 
-  ils.localHeading = ils.heading = atools::geo::normalizeCourse(record.valueFloat("loc_heading"));
+  ils.displayHeading = ils.heading = atools::geo::normalizeCourse(record.valueFloat("loc_heading"));
   ils.width = record.isNull("loc_width") ? INVALID_COURSE_VALUE : record.valueFloat("loc_width");
   ils.magvar = record.valueFloat("mag_var");
   ils.slope = record.valueFloat("gs_pitch");
@@ -607,7 +607,7 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils, bool na
   {
     ils.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
 
-    if(navdata)
+    if(runwayHeadingTrue < map::INVALID_HEADING_VALUE)
     {
       // Apply workaround to mitigate alignment issues of ILS with runway in
       // DFD compiler which provides only full-degree heading and magvar from source data
@@ -615,25 +615,22 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils, bool na
       // From SQL: l.llz_bearing + l.station_declination = loc_heading, -- Magnetic to true using full integer
 
       // Adjust ILS display heading if value is really close to runway heading
-      if(runwayHeadingTrue < map::INVALID_HEADING_VALUE)
+      float diff = atools::geo::angleAbsDiff(ils.displayHeading, runwayHeadingTrue);
+      if(diff < 1.f)
       {
-        float diff = atools::geo::angleAbsDiff(ils.localHeading, runwayHeadingTrue);
-        if(diff < 1.f)
-        {
 #ifdef DEBUG_INFORMATION
-          qDebug() << Q_FUNC_INFO << "Correcting ILS" << ils.ident << "diff" << diff;
+        qDebug() << Q_FUNC_INFO << "Correcting ILS" << ils.ident << "diff" << diff;
 #endif
-          ils.localHeading = runwayHeadingTrue;
-        }
+        ils.displayHeading = runwayHeadingTrue;
       }
 
       // Calculate the geometry
-      atools::fs::util::calculateIlsGeometry(ils.position, ils.localHeading, ils.width, atools::fs::util::DEFAULT_FEATHER_LEN_NM,
+      atools::fs::util::calculateIlsGeometry(ils.position, ils.displayHeading, ils.width, atools::fs::util::DEFAULT_FEATHER_LEN_NM,
                                              ils.pos1, ils.pos2, ils.posmid);
     }
     else
     {
-      // Use pre-calculated geometry
+      // Use pre-calculated geometry for high level zoom
       if(!record.isNull("end1_lonx") && !record.isNull("end1_laty") &&
          !record.isNull("end2_lonx") && !record.isNull("end2_laty") &&
          !record.isNull("end_mid_lonx") && !record.isNull("end_mid_laty"))
@@ -647,9 +644,7 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils, bool na
 
   ils.hasGeometry = ils.position.isValid() && ils.pos1.isValid() && ils.pos2.isValid() && ils.posmid.isValid();
 
-  ils.bounding = Rect(ils.position);
-  ils.bounding.extend(ils.pos1);
-  ils.bounding.extend(ils.pos2);
+  ils.bounding = Rect(LineString({ils.position, ils.pos1, ils.pos2}));
 }
 
 map::MapType MapTypesFactory::strToType(const QString& navType)

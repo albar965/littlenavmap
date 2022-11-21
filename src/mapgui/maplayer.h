@@ -293,6 +293,11 @@ public:
     return ils;
   }
 
+  bool isIlsDetail() const
+  {
+    return ilsDetail;
+  }
+
   bool isIlsIdent() const
   {
     return ilsIdent;
@@ -611,9 +616,9 @@ private:
   float airportMinorFontScale = 1.f, airportFontScale = 1.f, routeFontScale = 1.f;
 
   bool waypoint = true, waypointName = true, vor = true, vorIdent = true, vorInfo = true, vorLarge = true, ndb = true, ndbIdent = true,
-       ndbInfo = true, marker = true, markerInfo = true, userpointInfo = true, ils = true, ilsIdent = true, ilsInfo = true, airway = true,
-       airwayDetails = true, airwayWaypoint = true, airwayIdent = true, airwayInfo = true, track = true, trackWaypoint = true,
-       trackIdent = true, trackInfo = true, mora = true, holding = true, holdingInfo = true, holdingInfo2 = true;
+       ndbInfo = true, marker = true, markerInfo = true, userpointInfo = true, ils = true, ilsIdent = true, ilsInfo = true,
+       ilsDetail = true, airway = true, airwayDetails = true, airwayWaypoint = true, airwayIdent = true, airwayInfo = true, track = true,
+       trackWaypoint = true, trackIdent = true, trackInfo = true, mora = true, holding = true, holdingInfo = true, holdingInfo2 = true;
 
   bool airportRouteInfo = true;
   bool vorRouteIdent = true, vorRouteInfo = true;

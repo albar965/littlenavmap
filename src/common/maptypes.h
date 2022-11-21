@@ -1088,7 +1088,7 @@ struct MapIls
   float magvar, /* from database */
         slope,
         heading /* degree true from database */,
-        localHeading /* degree true calculated from WMM for map display */,
+        displayHeading /* degree true corrected for map display to align with runway within limits */,
         width /* degree */;
 
   int frequency /* MHz * 1000 */, range /* nm */;

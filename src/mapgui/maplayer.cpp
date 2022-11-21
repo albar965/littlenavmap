@@ -83,7 +83,7 @@ bool MapLayer::hasSameQueryParametersMarker(const MapLayer *other) const
 
 bool MapLayer::hasSameQueryParametersIls(const MapLayer *other) const
 {
-  return ils == other->ils;
+  return ils == other->ils && ilsDetail == other->ilsDetail;
 }
 
 bool MapLayer::hasSameQueryParametersHolding(const MapLayer *other) const
@@ -227,6 +227,8 @@ void MapLayer::loadFromXml(atools::util::XmlStream& xmlStream)
       holdingInfo2 = xmlStream.readElementTextBool();
     else if(reader.name() == "Ils")
       ils = xmlStream.readElementTextBool();
+    else if(reader.name() == "IlsDetail")
+      ilsDetail = xmlStream.readElementTextBool();
     else if(reader.name() == "IlsIdent")
       ilsIdent = xmlStream.readElementTextBool();
     else if(reader.name() == "IlsInfo")
@@ -378,6 +380,7 @@ QDebug operator<<(QDebug out, const MapLayer& record)
   out << "<HoldingInfo>" << record.holdingInfo << "</HoldingInfo>" << endl;
   out << "<HoldingInfo2>" << record.holdingInfo2 << "</HoldingInfo2>" << endl;
   out << "<Ils>" << record.ils << "</Ils>" << endl;
+  out << "<IlsDetail>" << record.ilsDetail << "</IlsDetail>" << endl;
   out << "<IlsIdent>" << record.ilsIdent << "</IlsIdent>" << endl;
   out << "<IlsInfo>" << record.ilsInfo << "</IlsInfo>" << endl;
   out << "<Marker>" << record.marker << "</Marker>" << endl;

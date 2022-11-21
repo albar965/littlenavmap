@@ -261,7 +261,7 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
     // ILS enabled - add from map cache
     bool overflow = false;
     const QList<map::MapIls> *ilsListPtr =
-      mapWidget->getMapQuery()->getIls(curBox, paintLayer->getMapLayer(), false, overflow);
+      mapWidget->getMapQuery()->getIls(curBox, paintLayer->getMapLayer(), false /* lazy */, overflow);
     if(ilsListPtr != nullptr)
     {
       for(const map::MapIls& ils : *ilsListPtr)

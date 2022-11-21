@@ -140,26 +140,34 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
   QPoint p1 = wToS(ils.pos1, size, &visible);
   QPoint p2 = wToS(ils.pos2, size, &visible);
 
-  if(!isIls)
+  if(context->mapLayer->isIlsDetail())
   {
-    context->painter->drawPolygon(QPolygonF({origin, p1, p2, origin}));
-  }
-  else if(ils.hasGlideslope())
-  {
-    context->painter->drawPolygon(QPolygonF({origin, p1, p2, origin}));
-    context->painter->drawPolyline(QPolygonF({p1, pmid, p2}));
+    if(!isIls)
+      context->painter->drawPolygon(QPolygonF({origin, p1, p2, origin}));
+    else if(ils.hasGlideslope())
+    {
+      context->painter->drawPolygon(QPolygonF({origin, p1, p2, origin}));
+      context->painter->drawPolyline(QPolygonF({p1, pmid, p2}));
+    }
+    else
+      context->painter->drawPolygon(QPolygonF({origin, p1, pmid, p2, origin}));
   }
   else
-    context->painter->drawPolygon(QPolygonF({origin, p1, pmid, p2, origin}));
+    // Simplified polygon
+    context->painter->drawPolygon(QPolygonF({origin, p1, p2, origin}));
 
   if(!context->drawFast)
   {
-    context->painter->setPen(centerPen);
+    if(context->mapLayer->isIlsDetail())
+    {
+      // Draw dashed center line
+      context->painter->setPen(centerPen);
 
-    if(isIls)
-      context->painter->drawLine(origin, pmid);
-    else
-      context->painter->drawLine(origin, QLine(p1, p2).center());
+      if(isIls)
+        context->painter->drawLine(origin, pmid);
+      else
+        context->painter->drawLine(origin, QLine(p1, p2).center());
+    }
 
     // Draw ILS text -----------------------------------
     QString text;
@@ -182,9 +190,9 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
         width = -width;
 
       // Rotate to draw the text upwards so it is readable
-      float rotate = ils.localHeading > 180.f ?
-                     ils.localHeading + 90.f - width / 2.f :
-                     atools::geo::opposedCourseDeg(ils.localHeading) + 90.f + width / 2.f;
+      float rotate = ils.displayHeading > 180.f ?
+                     ils.displayHeading + 90.f - width / 2.f :
+                     atools::geo::opposedCourseDeg(ils.displayHeading) + 90.f + width / 2.f;
 
       // get an approximation of the ILS length
       int featherLen = static_cast<int>(std::roundf(scale->getPixelForMeter(nmToMeter(FEATHER_LEN_NM), rotate)));
@@ -204,7 +212,7 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
         text = metrics.elidedText(text, Qt::ElideRight, featherLen);
         int textw = metrics.horizontalAdvance(text);
 
-        int textpos = ils.localHeading > 180 ? (featherLen - textw) / 2 : -(featherLen + textw) / 2;
+        int textpos = ils.displayHeading > 180 ? (featherLen - textw) / 2 : -(featherLen + textw) / 2;
 
         context->painter->rotate(rotate);
         context->painter->drawText(textpos, texth, text);
