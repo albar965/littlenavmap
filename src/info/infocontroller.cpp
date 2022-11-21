@@ -191,10 +191,13 @@ QString InfoController::getConnectionTypeText()
   else if(NavApp::isSimConnect())
 #if defined(SIMCONNECT_BUILD_WIN64)
     return tr("MSFS");
+
 #elif defined(SIMCONNECT_BUILD_WIN32)
     return tr("FSX or P3D");
+
 #else
     return tr("FSX, P3D or MSFS");
+
 #endif
 
   return QString();
@@ -487,6 +490,12 @@ void InfoController::restoreState()
   tabHandlerAircraft->restoreState();
   aircraftProgressConfig->restoreState();
 
+  updateTextEditFontSizes();
+  updateAircraftInfo();
+}
+
+void InfoController::restoreInformation()
+{
   if(OptionData::instance().getFlags() & opts::STARTUP_LOAD_INFO)
   {
     // Go through the string and collect all objects in the MapSearchResult
@@ -515,8 +524,6 @@ void InfoController::restoreState()
 
     showInformationInternal(res, false /* show windows */, false /* scroll to top */, true /* forceUpdate */);
   }
-  updateTextEditFontSizes();
-  updateAircraftInfo();
 }
 
 void InfoController::updateAirport()

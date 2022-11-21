@@ -3351,6 +3351,9 @@ void MainWindow::mainWindowShownDelayed()
 
   // Check for updates once main window is visible
   NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */, false /* forceDebug */);
+
+  // Update the information display later delayed to avoid long loading times due to weather timeout
+  QTimer::singleShot(50, infoController, &InfoController::restoreInformation);
 }
 
 void MainWindow::runDirToolManual()

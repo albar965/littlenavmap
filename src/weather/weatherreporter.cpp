@@ -667,7 +667,10 @@ QString WeatherReporter::getActiveSkyMetar(const QString& airportIcao)
 
 atools::fs::weather::MetarResult WeatherReporter::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
 {
-  return xpWeatherReader->getXplaneMetar(station, pos);
+  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+  atools::fs::weather::MetarResult result = xpWeatherReader->getXplaneMetar(station, pos);
+  QGuiApplication::restoreOverrideCursor();
+  return result;
 }
 
 atools::fs::weather::MetarResult WeatherReporter::getNoaaMetar(const QString& airportIcao, const atools::geo::Pos& pos)

@@ -83,6 +83,9 @@ public:
   void saveState();
   void restoreState();
 
+  /* Reload panel information which might also trigger weather reading or downloads */
+  void restoreInformation();
+
   /* Clear all panels and result set */
   void preDatabaseLoad();
   void postDatabaseLoad();
