@@ -15893,7 +15893,7 @@ Die Schaltfläche wird hervorgehoben, wenn der Detailgrad nicht Standard ist.</t
         <location filename="src/common/htmlinfobuilder.cpp" line="3080"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3219"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="4829"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5117"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5130"/>
         <source>Map</source>
         <translation>Karte</translation>
     </message>
@@ -16130,8 +16130,8 @@ Die Schaltfläche wird hervorgehoben, wenn der Detailgrad nicht Standard ist.</t
         <location filename="src/common/htmlinfobuilder.cpp" line="4523"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="4626"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="4692"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5159"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5164"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5172"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5177"/>
         <source>, </source>
         <translation>, </translation>
     </message>
@@ -17422,6 +17422,8 @@ kHz/MHz</translation>
         <translation>Berichtender Flugplatz: </translation>
     </message>
     <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1990"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1992"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="1994"/>
         <source>Time: </source>
         <translation>Zeit: </translation>
@@ -18063,12 +18065,12 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="3475"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5164"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5177"/>
         <source> and </source>
         <translation> und </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5172"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5185"/>
         <source>%1/%2</source>
         <translation>%1/%2</translation>
     </message>
@@ -18116,6 +18118,12 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="1869"/>
         <source>%1 %2at %3</source>
         <translation>%1 %2at %3</translation>
+    </message>
+    <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1990"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1992"/>
+        <source> (%1 hours old)</source>
+        <translation> (%1 Stunden alt)</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="2125"/>
@@ -18426,6 +18434,8 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="4019"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="4059"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="4197"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5094"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5096"/>
         <source> </source>
         <translation> </translation>
     </message>
@@ -18743,7 +18753,7 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="191"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3412"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3472"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5190"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5203"/>
         <source>Flight Plan Position:</source>
         <translation>Flugplanposition:</translation>
     </message>
@@ -19478,7 +19488,13 @@ kHz/MHz</translation>
         <translation>,&amp;nbsp;&amp;nbsp; </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5189"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5094"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5096"/>
+        <source>(%1 hours old)</source>
+        <translation>(%1 Stunden alt)</translation>
+    </message>
+    <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5202"/>
         <source>Related navaid for procedure</source>
         <translation>Zugehörige Navigationshilfe für Prozedur</translation>
     </message>
@@ -19602,7 +19618,7 @@ kHz/MHz</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="2711"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2744"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="4541"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5117"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5130"/>
         <source>-</source>
         <translation>-</translation>
     </message>
@@ -19821,24 +19837,24 @@ kHz/MHz</translation>
         <translation>SkyVector</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5090"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5103"/>
         <source>(</source>
         <translation>(</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="4769"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5092"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5105"/>
         <source>)</source>
         <translation>)</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5100"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5164"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5113"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5177"/>
         <source>:</source>
         <translation>:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5100"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5113"/>
         <source> METAR:</source>
         <translation> METAR:</translation>
     </message>

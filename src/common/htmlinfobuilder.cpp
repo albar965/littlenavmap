@@ -94,8 +94,9 @@ const float NEAREST_MAX_DISTANCE_NAVAID_NM = 50.f;
 const int NEAREST_MAX_NUM_AIRPORT = 10;
 const int NEAREST_MAX_NUM_NAVAID = 15;
 
-// Print weather time in red if older than this
-const int WEATHER_MAX_AGE_HOURS = 6;
+// Print weather time in red or orange if older than this
+const qint64 WEATHER_MAX_AGE_HOURS_WARN = 3;
+const qint64 WEATHER_MAX_AGE_HOURS_ERR = 6;
 
 // Maximum distance for bearing display to user aircraft
 const int MAX_DISTANCE_FOR_BEARING_METER = ageo::nmToMeter(8000);
@@ -122,8 +123,7 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
 {
   if(!print)
   {
-    html.img(SymbolPainter::createAirportIcon(airport, symbolSizeTitle.height()),
-             QString(), QString(), symbolSizeTitle);
+    html.img(SymbolPainter::createAirportIcon(airport, symbolSizeTitle.height()), QString(), QString(), symbolSizeTitle);
     html.nbsp().nbsp();
   }
 
@@ -1983,15 +1983,15 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
     time.setDate(QDate(parsed.getYear(), parsed.getMonth(), parsed.getDay()));
     time.setTime(QTime(parsed.getHour(), parsed.getMinute()));
 
-    QDateTime oldUtc = QDateTime::currentDateTimeUtc().addSecs(-3600 * WEATHER_MAX_AGE_HOURS);
-    ahtml::Flags flags = ahtml::NONE;
-    QColor color;
-    if(time < oldUtc)
-    {
-      flags |= ahtml::BOLD;
-      color = Qt::red;
-    }
-    html.row2(tr("Time: "), locale.toString(time, QLocale::ShortFormat) % " " % time.timeZoneAbbreviation(), flags, color);
+    QString text = locale.toString(time, QLocale::ShortFormat) % " " % time.timeZoneAbbreviation();
+
+    qint64 secsTo = time.secsTo(QDateTime::currentDateTimeUtc());
+    if(secsTo > WEATHER_MAX_AGE_HOURS_ERR * 3600)
+      html.row2Error(tr("Time: "), text + tr(" (%1 hours old)").arg(secsTo / 3600));
+    else if(secsTo > WEATHER_MAX_AGE_HOURS_WARN * 3600)
+      html.row2Warning(tr("Time: "), text + tr(" (%1 hours old)").arg(secsTo / 3600));
+    else
+      html.row2(tr("Time: "), text);
   }
 
   if(!parsed.getReportTypeString().isEmpty())
@@ -5075,12 +5075,23 @@ void HtmlInfoBuilder::addMetarLine(atools::util::HtmlBuilder& html, const QStrin
   {
     Metar m(metar, station, timestamp, fsMetar);
     const atools::fs::weather::MetarParser& parsed = m.getParsedMetar();
+    QDateTime time;
+    time.setOffsetFromUtc(0);
+    time.setDate(QDate(parsed.getYear(), parsed.getMonth(), parsed.getDay()));
+    time.setTime(QTime(parsed.getHour(), parsed.getMinute()));
 
     if(!parsed.isValid())
       qWarning() << "Metar is not valid";
 
     HtmlBuilder whtml = html.cleared();
+
     whtml.text(fsMetar ? m.getCleanMetar() : metar);
+
+    qint64 secsTo = time.secsTo(QDateTime::currentDateTimeUtc());
+    if(secsTo > WEATHER_MAX_AGE_HOURS_ERR * 3600)
+      whtml.text(tr(" ")).error(tr("(%1 hours old)").arg(secsTo / 3600));
+    else if(secsTo > WEATHER_MAX_AGE_HOURS_WARN * 3600)
+      whtml.text(tr(" ")).warning(tr("(%1 hours old)").arg(secsTo / 3600));
 
     whtml.nbsp().nbsp();
     if(mapDisplay)
