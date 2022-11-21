@@ -11,4 +11,4 @@ rem In normal operation, this is not necessary. Start the program as usual by
 rem double clicking on the file "littlenavmap.exe".
 rem ===========================================================================
 
-start /B littlenavmap -c "Little Navmap Cache" -p "Little Navmap Settings"
+start /B littlenavmap -c "Little Navmap Cache" -p "Little Navmap Settings"  -l "Little Navmap Logs"

@@ -12,4 +12,4 @@
 # double clicking on the file "littlenavmap".
 # ===========================================================================
 
-./littlenavmap -c "Little Navmap Cache" -p "Little Navmap Settings"
+./littlenavmap -c "Little Navmap Cache" -p "Little Navmap Settings" -l "Little Navmap Logs"

@@ -194,8 +194,15 @@ int main(int argc, char *argv[])
                                        QObject::tr("settings-path"));
     parser.addOption(settingsPathOpt);
 
+    QCommandLineOption logPathOpt({"l", "log-path"},
+                                  QObject::tr("Use <log-path> to store log files into the given directory. "
+                                              "<log-path> can be relative or absolute. "
+                                                "Missing directories are created. Path can be on any drive."),
+                                  QObject::tr("settings-path"));
+    parser.addOption(logPathOpt);
+
     QCommandLineOption cachePathOpt({"c", "cache-path"},
-                                    QObject::tr("Use <cache-path> to store tiles from online maps."
+                                    QObject::tr("Use <cache-path> to store tiles from online maps. "
                                                 "Missing directories are created. Path can be on any drive."),
                                     QObject::tr("cache-path"));
     parser.addOption(cachePathOpt);
@@ -228,6 +235,7 @@ int main(int argc, char *argv[])
     // ==============================================
     // Process the actual command line arguments given by the user
     parser.process(*QCoreApplication::instance());
+    QString logPath;
 
     // Settings directory
     if(parser.isSet(settingsDirOpt) && parser.isSet(settingsPathOpt))
@@ -238,6 +246,9 @@ int main(int argc, char *argv[])
 
     if(parser.isSet(settingsPathOpt) && !parser.value(settingsPathOpt).isEmpty())
       Settings::setOverridePath(parser.value(settingsPathOpt));
+
+    if(parser.isSet(logPathOpt) && !parser.value(logPathOpt).isEmpty())
+      logPath = parser.value(logPathOpt);
 
     // File loading
     if(parser.isSet(flightplanOpt) && parser.isSet(flightplanDescrOpt))
@@ -255,17 +266,24 @@ int main(int argc, char *argv[])
     // ==============================================
     // Initialize logging and force logfiles into the system or user temp directory
     // This will prefix all log files with orgranization and application name and append ".log"
-    LoggingHandler::initializeForTemp(atools::settings::Settings::getOverloadedPath(":/littlenavmap/resources/config/logging.cfg"));
+    QString logCfg = Settings::getOverloadedPath(":/littlenavmap/resources/config/logging.cfg");
+    if(logPath.isEmpty())
+      LoggingHandler::initializeForTemp(logCfg);
+    else
+    {
+      QDir().mkpath(logPath);
+      LoggingHandler::initialize(logCfg, logPath);
+    }
 
     // ==============================================
     // Start splash screen
-    if(atools::settings::Settings::instance().valueBool(lnm::OPTIONS_DIALOG_SHOW_SPLASH, true))
+    if(Settings::instance().valueBool(lnm::OPTIONS_DIALOG_SHOW_SPLASH, true))
       NavApp::initSplashScreen();
 
     // ==============================================
     // Set language from command line into options - will be saved
     if(parser.isSet(languageOpt) && !parser.value(languageOpt).isEmpty())
-      atools::settings::Settings::instance().setValue(lnm::OPTIONS_DIALOG_LANGUAGE, parser.value(languageOpt));
+      Settings::instance().setValue(lnm::OPTIONS_DIALOG_LANGUAGE, parser.value(languageOpt));
 
     // ==============================================
     // Print some information which can be useful for debugging
@@ -352,8 +370,7 @@ int main(int argc, char *argv[])
     // Add paths here to allow translation =================================
     Application::addReportPath(QObject::tr("Log files:"), LoggingHandler::getLogFiles());
 
-    Application::addReportPath(QObject::tr("Database directory:"),
-                               {Settings::getPath() + QDir::separator() + lnm::DATABASE_DIR});
+    Application::addReportPath(QObject::tr("Database directory:"), {Settings::getPath() + QDir::separator() + lnm::DATABASE_DIR});
     Application::addReportPath(QObject::tr("Configuration:"), {Settings::getFilename()});
     Application::setEmailAddresses({"alex@littlenavmap.org"});
 

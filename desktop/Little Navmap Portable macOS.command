@@ -13,4 +13,4 @@
 
 cd "`dirname "$0"`"
 
-"./Little Navmap.app/Contents/MacOS/littlenavmap" -c "Little Navmap Cache" -p "Little Navmap Settings" &
+"./Little Navmap.app/Contents/MacOS/littlenavmap" -c "Little Navmap Cache" -p "Little Navmap Settings"  -l "Little Navmap Logs" &
