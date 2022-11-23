@@ -50,6 +50,29 @@ QVector<RouteExportFormat> RouteExportFormatMap::getSelected() const
   return retval;
 }
 
+#ifdef DEBUG_INFORMATION_MULTIEXPORT
+
+void RouteExportFormatMap::setDebugOptions(rexp::RouteExportFormatType type)
+{
+  RouteExportFormat& format = (*this)[type];
+
+  QString defaultPath = QDir::homePath() + "/Temp/Little Navmap Export";
+  QString path = Settings::instance().getAndStoreValue(lnm::OPTIONS_MULTIEXPORT_DEBUG_PATH, defaultPath).toString();
+
+  format.setPath(path + "/" + format.getCategory());
+
+  QDir().mkpath(format.getPath());
+  format.setPattern(QFileInfo(format.getDefaultPattern()).baseName() + " " + format.getComment().replace("/", "-") +
+                    "." + QFileInfo(format.getDefaultPattern()).completeSuffix());
+
+  if(format.isAppendToFile())
+    atools::strToFile(format.getPath() + "/" + format.getPattern(), " XXX  ");
+
+  format.setFlag(rexp::SELECTED, true);
+}
+
+#endif
+
 void RouteExportFormatMap::clearPath(rexp::RouteExportFormatType type)
 {
   (*this)[type].setPath((*this)[type].getDefaultPath());

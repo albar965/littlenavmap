@@ -334,6 +334,7 @@ const QLatin1String OPTIONS_DIALOG_LANGUAGE("OptionsDialog/Language");
 const QLatin1String OPTIONS_DIALOG_FONT("OptionsDialog/Font");
 const QLatin1String OPTIONS_DIALOG_MAP_FONT("OptionsDialog/MapFont");
 const QLatin1String OPTIONS_PIXMAP_CACHE("Options/PixmapCache");
+const QLatin1String OPTIONS_MULTIEXPORT_DEBUG_PATH("Options/MultexporDebugPath");
 const QLatin1String OPTIONS_MARBLE_DEBUG("Options/MarbleDebug");
 const QLatin1String OPTIONS_CONNECTCLIENT_DEBUG("Options/ConnectClientDebug");
 const QLatin1String OPTIONS_MAPWIDGET_DEBUG("Options/MapWidgetDebug");

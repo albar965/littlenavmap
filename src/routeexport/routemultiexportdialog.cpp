@@ -759,6 +759,19 @@ void RouteMultiExportDialog::resetPattern(rexp::RouteExportFormatType type, int 
   updateLabel();
 }
 
+#ifdef DEBUG_INFORMATION_MULTIEXPORT
+
+void RouteMultiExportDialog::resetPathsAndSelectionDebug()
+{
+  resetPathsAndSelection();
+
+  for(auto it = formatMapDialog->constBegin(); it != formatMapDialog->constEnd(); ++it)
+    formatMapDialog->setDebugOptions(it.key());
+  updateModel();
+}
+
+#endif
+
 void RouteMultiExportDialog::resetPathsAndSelection()
 {
   // Ask before resetting user data ==============
@@ -918,11 +931,22 @@ void RouteMultiExportDialog::tableContextMenu(const QPoint&)
   menu.addAction(ui->actionDefaultTextSize);
   menu.addAction(ui->actionDecreaseTextSize);
 
+#ifdef DEBUG_INFORMATION_MULTIEXPORT
+  QAction *debugAction = new QAction("Init debug", &menu);
+  menu.addAction(debugAction);
+  menu.addSeparator();
+  menu.addAction(debugAction);
+#endif
+
   QAction *action = menu.exec(menuPos);
 
   // Handle actions which are not connected to methods
   if(action == ui->actionResetPathsAndSelection)
     resetPathsAndSelection();
+#ifdef DEBUG_INFORMATION_MULTIEXPORT
+  else if(action == debugAction)
+    resetPathsAndSelectionDebug();
+#endif
   else if(action == ui->actionResetView)
   {
     // Reorder columns to match model order

@@ -310,6 +310,12 @@ public:
     return version;
   }
 
+#ifdef DEBUG_INFORMATION_MULTIEXPORT
+
+  void setDebugOptions(rexp::RouteExportFormatType type);
+
+#endif
+
 private:
   friend QDataStream& operator>>(QDataStream& dataStream, RouteExportFormatMap& obj);
 

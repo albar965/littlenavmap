@@ -140,6 +140,11 @@ private:
   void actionSelectExportPathTriggered();
   void actionSelectTriggered();
 
+#ifdef DEBUG_INFORMATION_MULTIEXPORT
+  void resetPathsAndSelectionDebug();
+
+#endif
+
   /* Get elements, indexes and row for current selection or -1 if nothing selected */
   QModelIndex selectedIndex();
   int selectedRow();
