@@ -2670,7 +2670,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   bool saveApproachWp = options.testFlag(rf::SAVE_APPROACH_WP),
        saveSidWp = options.testFlag(rf::SAVE_SIDSTAR_WP), saveStarWp = options.testFlag(rf::SAVE_SIDSTAR_WP),
        replaceCustomWp = options.testFlag(rf::REPLACE_CUSTOM_WP), msfs = options.testFlag(rf::SAVE_MSFS),
-       removeCustom = options.testFlag(rf::REMOVE_CUSTOM_PROC);
+       removeCustom = options.testFlag(rf::REMOVE_RUNWAY_PROC);
 
   // Create copy which allows to modify the plan ==============
   Route route(origRoute);
@@ -2689,31 +2689,34 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     int arrivaLegsOffset = map::INVALID_INDEX_VALUE;
     if(route.arrivalRouteToProcLegs(arrivaLegsOffset))
     {
-      const RouteLeg& routeLeg = route.value(arrivaLegsOffset - 1);
-      RouteLeg& arrivalLeg = route[arrivaLegsOffset];
+      const RouteLeg& arrivalLeg = route[arrivaLegsOffset];
 
-      QString airway = arrivalLeg.getAirwayName();
-      if(airway.isEmpty())
-        airway = plan.getProperties().value(atools::fs::pln::PROCAIRWAY);
-
-      if((!airway.isEmpty() || options.testFlag(rf::FIX_PROC_ENTRY_EXIT_ALWAYS)) &&
-         proc::procedureLegFixAtStart(arrivalLeg.getProcedureLegType()) && !arrivalLeg.isNavaidEqualTo(routeLeg))
+      if(!arrivalLeg.getProcedureLeg().isCustomApproach())
       {
-        FlightplanEntry entry;
-        entryBuilder.buildFlightplanEntry(arrivalLeg.getProcedureLeg(), entry,
-                                          true /* resolve waypoints to VOR and others*/);
-        entry.setAirway(arrivalLeg.getAirwayName());
-        entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
-        entry.setAltitude(altVector.value(arrivaLegsOffset, 0.f));
+        QString airway = arrivalLeg.getAirwayName();
+        if(airway.isEmpty())
+          airway = plan.getProperties().value(atools::fs::pln::PROCAIRWAY);
 
-        RouteLeg newLeg = RouteLeg(&route.flightplan);
-        newLeg.createCopyFromProcedureLeg(arrivaLegsOffset, arrivalLeg, &routeLeg);
-        newLeg.setAirway(arrivalLeg.getAirway());
+        const RouteLeg& routeLeg = route.value(arrivaLegsOffset - 1);
+        if((!airway.isEmpty() || options.testFlag(rf::FIX_PROC_ENTRY_EXIT_ALWAYS)) &&
+           proc::procedureLegFixAtStart(arrivalLeg.getProcedureLegType()) && !arrivalLeg.isNavaidEqualTo(routeLeg))
+        {
+          FlightplanEntry entry;
+          entryBuilder.buildFlightplanEntry(arrivalLeg.getProcedureLeg(), entry,
+                                            true /* resolve waypoints to VOR and others*/);
+          entry.setAirway(arrivalLeg.getAirwayName());
+          entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
+          entry.setAltitude(altVector.value(arrivaLegsOffset, 0.f));
 
-        route.insert(arrivaLegsOffset, newLeg);
-        entries.insert(arrivaLegsOffset, entry);
-        plan.getProperties().remove(atools::fs::pln::PROCAIRWAY);
-        route.updateIndicesAndOffsets();
+          RouteLeg newLeg = RouteLeg(&route.flightplan);
+          newLeg.createCopyFromProcedureLeg(arrivaLegsOffset, arrivalLeg, &routeLeg);
+          newLeg.setAirway(arrivalLeg.getAirway());
+
+          route.insert(arrivaLegsOffset, newLeg);
+          entries.insert(arrivaLegsOffset, entry);
+          plan.getProperties().remove(atools::fs::pln::PROCAIRWAY);
+          route.updateIndicesAndOffsets();
+        }
       }
     }
 
@@ -2723,25 +2726,28 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
     {
       // remove duplicates between end of SID and route: only legs that have the navaid at the end of the leg
       const RouteLeg& departureLeg = route.value(startIndexAfterProcedure - 1);
-      const RouteLeg& routeLeg = route.value(startIndexAfterProcedure);
 
-      if((!routeLeg.getAirwayName().isEmpty() || options.testFlag(rf::FIX_PROC_ENTRY_EXIT_ALWAYS)) &&
-         proc::procedureLegFixAtEnd(departureLeg.getProcedureLegType()) && !departureLeg.isNavaidEqualTo(routeLeg))
+      if(!departureLeg.getProcedureLeg().isCustomDeparture())
       {
-        FlightplanEntry entry;
-        entryBuilder.buildFlightplanEntry(departureLeg.getProcedureLeg(), entry,
-                                          true /* resolve waypoints to VOR and others*/);
-        entry.setAirway(QString());
-        entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
-        entry.setAltitude(altVector.value(startIndexAfterProcedure - 1, 0.f));
+        const RouteLeg& routeLeg = route.value(startIndexAfterProcedure);
+        if((!routeLeg.getAirwayName().isEmpty() || options.testFlag(rf::FIX_PROC_ENTRY_EXIT_ALWAYS)) &&
+           proc::procedureLegFixAtEnd(departureLeg.getProcedureLegType()) && !departureLeg.isNavaidEqualTo(routeLeg))
+        {
+          FlightplanEntry entry;
+          entryBuilder.buildFlightplanEntry(departureLeg.getProcedureLeg(), entry,
+                                            true /* resolve waypoints to VOR and others*/);
+          entry.setAirway(QString());
+          entry.setFlag(atools::fs::pln::entry::PROCEDURE, false);
+          entry.setAltitude(altVector.value(startIndexAfterProcedure - 1, 0.f));
 
-        RouteLeg newLeg = RouteLeg(&route.flightplan);
-        newLeg.createCopyFromProcedureLeg(startIndexAfterProcedure, departureLeg, &routeLeg);
-        newLeg.setAirway(map::MapAirway());
+          RouteLeg newLeg = RouteLeg(&route.flightplan);
+          newLeg.createCopyFromProcedureLeg(startIndexAfterProcedure, departureLeg, &routeLeg);
+          newLeg.setAirway(map::MapAirway());
 
-        route.insert(startIndexAfterProcedure, newLeg);
-        entries.insert(startIndexAfterProcedure, entry);
-        route.updateIndicesAndOffsets();
+          route.insert(startIndexAfterProcedure, newLeg);
+          entries.insert(startIndexAfterProcedure, entry);
+          route.updateIndicesAndOffsets();
+        }
       }
     }
   }
@@ -2754,8 +2760,8 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   }
 
   // Remember value since type is cleared later
-  bool customApproach = route.getApproachLegs().isCustomApproach();
-  bool customDeparture = route.getSidLegs().isCustomDeparture();
+  bool customApproach = route.isCustomApproach();
+  bool customDeparture = route.isCustomDeparture();
 
   if(!removeCustom)
   {

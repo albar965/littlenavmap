@@ -130,6 +130,9 @@ public:
   /* Old X-Plane FMS 3 */
   bool routeExportFms3Multi(const RouteExportFormat& format);
 
+  /* IniBuilds */
+  bool routeExportFms3IniBuildsMulti(const RouteExportFormat& format);
+
   /* Aerosoft airbus FLP */
   bool routeExportFlpMulti(const RouteExportFormat& format);
 

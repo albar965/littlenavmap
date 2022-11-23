@@ -102,7 +102,7 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
     opts = rs::GFP | rs::DCT;
 
   if(gfpCoordinates)
-    opts = rs::GFP_COORDS;
+    opts |= rs::GFP_COORDS;
 
   // Get string without start and destination
   QStringList string = createStringForRouteInternal(route, 0, opts);
@@ -148,11 +148,18 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
   route.getRunwayNames(departureRw, approachRwDummy);
   starRw = route.getStarRunwayName();
 
+  if(route.isCustomDeparture())
+  {
+    sid.clear();
+    sidTrans.clear();
+    departureRw.clear();
+  }
+
   // Departure ===============================
   if(!retval.isEmpty() && !retval.startsWith(":F:"))
     retval.prepend(":F:");
 
-  if(route.hasAnySidProcedure() && !userWaypointOption)
+  if(route.hasAnySidProcedure() && !route.isCustomDeparture() && !userWaypointOption)
   {
     if(!departureRw.isEmpty() && !(departureRw.endsWith("L") || departureRw.endsWith("C") || departureRw.endsWith("R")))
       departureRw.append("O");
@@ -183,7 +190,7 @@ QString RouteStringWriter::createGfpStringForRouteInternalProc(const Route& rout
     }
 
     // Approach ===============================
-    if(route.hasAnyApproachProcedure())
+    if(route.hasAnyApproachProcedure() && !route.isCustomApproach())
     {
       QString apprArinc, apprTrans;
       route.getApproachNames(apprArinc, apprTrans);
@@ -276,7 +283,22 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
   route.getSidStarNames(sid, sidTrans, star, starTrans);
   route.getRunwayNames(depRwy, destRwy);
   route.getApproachNames(approachName, approachTransition);
-  if(route.hasAnyApproachProcedure() && !route.getApproachLegs().type.isEmpty())
+
+  if(route.isCustomApproach())
+  {
+    approachName.clear();
+    approachTransition.clear();
+    destRwy.clear();
+  }
+
+  if(route.isCustomDeparture())
+  {
+    sid.clear();
+    sidTrans.clear();
+    depRwy.clear();
+  }
+
+  if(route.hasAnyApproachProcedure() && !route.getApproachLegs().type.isEmpty() && !route.isCustomApproach())
   {
     // Flight factor specialities - there are probably more to guess
     if(route.getApproachLegs().type == "RNAV")
@@ -410,7 +432,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
     else
       retval.append(star + (starTrans.isEmpty() ? QString() : transSeparator + starTrans));
   }
-  else if(options & rs::SID_STAR_GENERIC)
+  else if(options & rs::SID_STAR_GENERIC && !star.isEmpty())
     retval.append("STAR");
 
   // Remove last DCT for flight factor export
@@ -421,7 +443,7 @@ QStringList RouteStringWriter::createStringForRouteInternal(const Route& routePa
   if(options & rs::START_AND_DEST)
     retval.append(lastId + (gfpCoords ? "," + coords::toGfpFormat(lastPos) : QString()));
 
-  if(!route.getApproachLegs().isCustomApproach()) // Do not add custom approach
+  if(!route.isCustomApproach()) // Do not add custom approach
   {
     if(options & rs::APPROACH && !approachName.isEmpty())
     {

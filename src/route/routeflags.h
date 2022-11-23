@@ -46,7 +46,7 @@ enum RouteAdjustOption
   XPLANE_REPLACE_AIRPORT_IDENTS = 1 << 13, /* Replace airport idents in waypoint list only
                                             * with either ICAO, FAA, IATA or local ones */
 
-  REMOVE_CUSTOM_PROC = 1 << 14, /* Remove custom procedures and their waypoints */
+  REMOVE_RUNWAY_PROC = 1 << 14, /* Remove runway extensions and their waypoints */
 
   /* Export adjust options for most export formats */
   DEFAULT_OPTS = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT,
@@ -56,6 +56,10 @@ enum RouteAdjustOption
 
   /* Always add entry and exit waypoints for procedures. This is used for formats not supporting procedures. */
   DEFAULT_OPTS_NO_PROC = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT_ALWAYS,
+
+  /* Export adjust options for Garmin GFP formats */
+  DEFAULT_OPTS_GFP = rf::DEFAULT_OPTS | rf::REMOVE_RUNWAY_PROC,
+  DEFAULT_OPTS_GFP_NO_PROC = rf::DEFAULT_OPTS_NO_PROC | rf::REMOVE_RUNWAY_PROC,
 
   DEFAULT_OPTS_MSFS_CRJ = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS |
                           FIX_PROC_ENTRY_EXIT_ALWAYS | SAVE_AIRWAY_WP,
