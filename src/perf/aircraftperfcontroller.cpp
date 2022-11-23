@@ -1092,7 +1092,7 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
       if(NavApp::getMainUi()->actionAircraftPerformanceWarnMismatch->isChecked())
       {
         QString model = lastSimData->getUserAircraft().getAirplaneModel();
-        if(!model.isEmpty() && perf->getAircraftType() != model)
+        if(!perf->isDefault() && !model.isEmpty() && perf->getAircraftType() != model)
         {
           QString msg(tr("User aircraft type \"%1\" in simulator is not equal to type \"%2\" used in performance file.\n"
                          "Load the matching aircraft performance file or adapt the field \"Aircraft type\" in the currently loaded file.").
