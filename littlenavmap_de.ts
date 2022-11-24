@@ -2430,22 +2430,22 @@ Currently only OpenAir is supported (*.txt). </oldsource>
         <translation>&amp;Laden</translation>
     </message>
     <message>
-        <location filename="src/db/airspacedialog.cpp" line="102"/>
+        <location filename="src/db/airspacedialog.cpp" line="103"/>
         <source>Select Directory for User Airspaces</source>
         <translation>Wähle Verzeichnis für Nutzerlufträume</translation>
     </message>
     <message>
-        <location filename="src/db/airspacedialog.cpp" line="117"/>
+        <location filename="src/db/airspacedialog.cpp" line="119"/>
         <source>Directory does not exist.</source>
         <translation>Das Verzeichnis existiert nicht.</translation>
     </message>
     <message>
-        <location filename="src/db/airspacedialog.cpp" line="121"/>
+        <location filename="src/db/airspacedialog.cpp" line="125"/>
         <source>Directory is valid.</source>
         <translation>Verzeichnis ist gültig.</translation>
     </message>
     <message>
-        <location filename="src/db/airspacedialog.cpp" line="124"/>
+        <location filename="src/db/airspacedialog.cpp" line="129"/>
         <source>No directory selected.</source>
         <translation>Kein Verzeichnis ausgewählt.</translation>
     </message>
@@ -5444,22 +5444,22 @@ Beachten Sie, dass Sie diese Änderung rückgängig machen können.</translation
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="675"/>
         <source>Removes all entries having a too small flown distance.</source>
-        <translation>Entfernt alle Einträge, die eine zu kurze Flugstrecke haben.</translation>
+        <translation>Entfernt alle Einträge, die eine kurze Flugstrecke haben.</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="676"/>
         <source>&amp;Departure and destination ident equal</source>
-        <translation>&amp;Kennung des Start- und Zielflugplatzes sind leer</translation>
+        <translation>&amp;Gleiche Kennung des Start- und Zielflugplatzes</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="677"/>
         <source>Removes all entries where the idents of departure and destination are the same. E.g. pattern work.</source>
-        <translation>Entfernt alle Einträge, bei denen Start- und Zielflugplatz identisch sind.</translation>
+        <translation>Entfernt alle Einträge, bei denen die Start- und Zielflugplatzkennung identisch sind.</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="678"/>
         <source>&amp;Either departure or destinaion ident empty</source>
-        <translation>&amp;Entweder Start- oder Zielflugplatzkennung leer</translation>
+        <translation>&amp;Entweder leere Start- oder Zielflugplatzkennung</translation>
     </message>
     <message>
         <location filename="src/logbook/logdatacontroller.cpp" line="679"/>
@@ -40417,12 +40417,12 @@ importiert</translation>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen.</translation>
     </message>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="804"/>
+        <location filename="src/weather/weatherreporter.cpp" line="809"/>
         <source>Active Sky weather information updated.</source>
         <translation>Active Sky Wetterinformationsaktualisierung.</translation>
     </message>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="811"/>
+        <location filename="src/weather/weatherreporter.cpp" line="816"/>
         <source>X-Plane weather information updated.</source>
         <translation>X-Plane Wetterinformationsaktualisierung.</translation>
     </message>

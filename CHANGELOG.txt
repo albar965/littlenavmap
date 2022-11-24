@@ -101,6 +101,7 @@ A big thank you to all who reported bugs and issues!
 * Changed X-Plane FMS export menu item for X-Plane 12 to avoid misunderstandings. #949
 * Fixed program freeze when trying to load user airspaces with an empty path or an empty list of
   file extensions.
+* Updated program translations: Brazilian Portuguese by Ricardo, French by Patrick, Italian by Flavio and German.
 
 ### Command Line and Portable Mode
 
