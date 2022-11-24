@@ -226,7 +226,7 @@ int main(int argc, char *argv[])
                                       lnm::STARTUP_AIRCRAFT_PERF);
     parser.addOption(performanceOpt);
 
-    QCommandLineOption languageOpt({"l", "language"},
+    QCommandLineOption languageOpt({"g", "language"},
                                    QObject::tr("Use language code <language> like \"de\" or \"en_US\" for the user interface. "
                                                "The code is not checked for existence or validity and "
                                                "is saved for the next startup."), "language");
