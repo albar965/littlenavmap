@@ -42,6 +42,7 @@ AirspaceDialog::AirspaceDialog(QWidget *parent)
 
   connect(ui->pushButtonAirspacePathSelect, &QPushButton::clicked, this, &AirspaceDialog::airspacePathSelectClicked);
   connect(ui->lineEditAirspacePath, &QLineEdit::textEdited, this, &AirspaceDialog::updateAirspaceStates);
+  connect(ui->lineEditAirspaceExtensions, &QLineEdit::textEdited, this, &AirspaceDialog::updateAirspaceStates);
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &AirspaceDialog::buttonBoxClicked);
 
   restoreState();
@@ -110,6 +111,7 @@ void AirspaceDialog::airspacePathSelectClicked()
 void AirspaceDialog::updateAirspaceStates()
 {
   const QString& path = ui->lineEditAirspacePath->text();
+  bool disableOk = true;
   if(!path.isEmpty())
   {
     QFileInfo fileinfo(path);
@@ -118,8 +120,16 @@ void AirspaceDialog::updateAirspaceStates()
     else if(!fileinfo.isDir())
       ui->labelAirspacePathStatus->setText(atools::util::HtmlBuilder::errorMessage(tr(("Is not a directory."))));
     else
+    {
+      disableOk = false;
       ui->labelAirspacePathStatus->setText(tr("Directory is valid."));
+    }
   }
   else
     ui->labelAirspacePathStatus->setText(tr("No directory selected."));
+
+  if(ui->lineEditAirspaceExtensions->text().isEmpty())
+    disableOk = true;
+
+  ui->buttonBox->button(QDialogButtonBox::Ok)->setDisabled(disableOk);
 }
