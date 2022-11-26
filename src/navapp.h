@@ -286,6 +286,7 @@ public:
   static atools::sql::SqlDatabase *getDatabaseOnline();
 
   static ElevationProvider *getElevationProvider();
+  static bool isGlobeOfflineProvider();
 
   static WeatherReporter *getWeatherReporter();
   static atools::fs::weather::Metar getAirportWeather(const QString& airportIcao, const atools::geo::Pos& airportPos);

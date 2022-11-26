@@ -1931,7 +1931,7 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
   {
     QString text(Unit::coords(pos));
 
-    if(NavApp::getElevationProvider()->isGlobeOfflineProvider() && pos.getAltitude() < map::INVALID_ALTITUDE_VALUE)
+    if(NavApp::isGlobeOfflineProvider() && pos.getAltitude() < map::INVALID_ALTITUDE_VALUE)
       text += tr(" / ") + Unit::altMeter(pos.getAltitude());
 
     float magVar = NavApp::getMagVar(pos);
@@ -3333,7 +3333,7 @@ void MainWindow::mainWindowShownDelayed()
       databaseManager->loadScenery();
   }
 
-  if(!NavApp::getElevationProvider()->isGlobeOfflineProvider())
+  if(!NavApp::isGlobeOfflineProvider())
   {
     QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineInstallGlobeUrl, lnm::helpLanguageOnline());
     QString message = tr(

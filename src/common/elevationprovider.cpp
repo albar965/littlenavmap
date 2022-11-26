@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 #include "common/elevationprovider.h"
 
+#include "geo/calculations.h"
 #include "navapp.h"
 #include "fs/common/globereader.h"
 #include "options/optiondata.h"
@@ -28,7 +29,6 @@
 
 #include <marble/GeoDataCoordinates.h>
 #include <marble/ElevationModel.h>
-
 
 /* Limt altitude to this value */
 static Q_DECL_CONSTEXPR float ALTITUDE_LIMIT_METER = 8800.f;
@@ -75,6 +75,11 @@ float ElevationProvider::getElevationMeter(const atools::geo::Pos& pos, float sa
   }
   else
     return 0.f;
+}
+
+float ElevationProvider::getElevationFt(const atools::geo::Pos& pos, float sampleRadiusMeter)
+{
+  return atools::geo::meterToFeet(getElevationMeter(pos, sampleRadiusMeter));
 }
 
 void ElevationProvider::getElevations(atools::geo::LineString& elevations, const atools::geo::Line& line, float sampleRadiusMeter)

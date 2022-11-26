@@ -228,7 +228,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   }
 
   html.row2If(tr("Country or Area Code:"), country);
-  html.row2(tr("Elevation:"), Unit::altFeet(airport.getPosition().getAltitude()));
+  html.row2(tr("Elevation:"), Unit::altFeet(airport.getAltitude()));
 
   if(verbose)
     html.row2(tr("Magnetic declination:"), map::magvarText(airport.magvar));
@@ -859,7 +859,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
   {
     if(!print)
       airportTitle(airport, html, -1);
-    html.br().br().b(tr("Elevation: ")).text(Unit::altFeet(airport.getPosition().getAltitude())).br();
+    html.br().br().b(tr("Elevation: ")).text(Unit::altFeet(airport.getAltitude())).br();
 
     const SqlRecordList *recVector = infoQuery->getRunwayInformation(airport.id);
     if(recVector != nullptr)
@@ -2209,8 +2209,8 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
   if(info)
     html.row2(tr("Magnetic declination:"), map::magvarText(NavApp::getMagVar(vor.position)));
 
-  if(vor.getPosition().getAltitude() < INVALID_ALTITUDE_VALUE && verbose)
-    html.row2(tr("Elevation:"), Unit::altFeet(vor.getPosition().getAltitude()));
+  if(vor.getAltitude() < INVALID_ALTITUDE_VALUE && verbose)
+    html.row2(tr("Elevation:"), Unit::altFeet(vor.getAltitude()));
   html.row2(tr("Range:"), Unit::distNm(vor.range));
 
   if(verbose)
@@ -2282,8 +2282,8 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
   if(info)
     html.row2(tr("Magnetic declination:"), map::magvarText(ndb.magvar));
 
-  if(ndb.getPosition().getAltitude() < INVALID_ALTITUDE_VALUE && verbose)
-    html.row2(tr("Elevation:"), Unit::altFeet(ndb.getPosition().getAltitude()));
+  if(ndb.getAltitude() < INVALID_ALTITUDE_VALUE && verbose)
+    html.row2(tr("Elevation:"), Unit::altFeet(ndb.getAltitude()));
 
   if(ndb.range > 0)
     html.row2(tr("Range:"), Unit::distNm(ndb.range));

@@ -32,7 +32,6 @@
 #include "query/procedurequery.h"
 #include "route/flightplanentrybuilder.h"
 #include "route/routealtitude.h"
-#include "weather/windreporter.h"
 
 #include <QBitArray>
 #include <QRegularExpression>
@@ -1781,7 +1780,7 @@ void Route::updateDepartureAndDestination()
       // Get position from parking spot
       flightplan.setDepartureParkingName(map::parkingNameForFlightplan(departure.getDepartureParking()));
       flightplan.setDepartureParkingPosition(departure.getDepartureParking().position,
-                                             departure.getPosition().getAltitude(),
+                                             departure.getAltitude(),
                                              departure.getDepartureParking().heading);
       flightplan.setDepartureParkingType(atools::fs::pln::PARKING);
     }
@@ -1790,7 +1789,7 @@ void Route::updateDepartureAndDestination()
       // Get position from start
       flightplan.setDepartureParkingName(departure.getDepartureStart().runwayName);
       flightplan.setDepartureParkingPosition(departure.getDepartureStart().position,
-                                             departure.getPosition().getAltitude(),
+                                             departure.getAltitude(),
                                              departure.getDepartureStart().heading);
 
       // A start can be a runway or a helipad
@@ -2580,12 +2579,12 @@ void Route::removeDuplicateRouteLegs()
     updateIndicesAndOffsets();
 }
 
-const Pos& Route::getPositionAt(int i) const
+const Pos Route::getPositionAt(int i) const
 {
   return value(i).getPosition();
 }
 
-const Pos& Route::getPrevPositionAt(int i) const
+const Pos Route::getPrevPositionAt(int i) const
 {
   if(i > 0)
   {
@@ -2982,7 +2981,7 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
             entry.setIdent(proc::procedureLegFixStr(procedureLeg));
 
             // Leg does not carry altitude in case of procedure points. Take this from the flight plan entry
-            entry.setPosition(leg.getPosition().alt(entry.getPosition().getAltitude()));
+            entry.setPosition(leg.getPosition().alt(entry.getAltitude()));
           }
         } // if(leg.isAnyProcedure())
       } // if((saveApproachWp && (leg.getProcedureType() & proc::PROCEDURE_ARRIVAL)) || ...

@@ -978,6 +978,11 @@ ElevationProvider *NavApp::getElevationProvider()
   return elevationProvider;
 }
 
+bool NavApp::isGlobeOfflineProvider()
+{
+  return elevationProvider->isGlobeOfflineProvider();
+}
+
 WeatherReporter *NavApp::getWeatherReporter()
 {
   return mainWindow != nullptr ? mainWindow->getWeatherReporter() : nullptr;

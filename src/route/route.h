@@ -454,10 +454,10 @@ public:
   }
 
   /* Leg end position - i.e. the waypoint at the end of the leg */
-  const atools::geo::Pos& getPositionAt(int i) const;
+  const atools::geo::Pos getPositionAt(int i) const;
 
   /* Leg start position - i.e. the waypoint at the end of the previous leg */
-  const atools::geo::Pos& getPrevPositionAt(int i) const;
+  const atools::geo::Pos getPrevPositionAt(int i) const;
 
   /* Update distance, course, bounding rect and total distance for route map objects.
    *  Also calculates maximum number of user points. */

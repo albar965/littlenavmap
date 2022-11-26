@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -192,10 +192,10 @@ void TrafficPatternDialog::fillPatternMarker(map::PatternMarker& pattern)
 
   float altFeet = Unit::rev(static_cast<float>(ui->spinBoxTrafficPatternAltitude->value()), Unit::altFeetF);
   qDebug() << Q_FUNC_INFO << "altitude" << ui->spinBoxTrafficPatternAltitude->value()
-           << "airport altitude" << airport.getPosition().getAltitude()
+           << "airport altitude" << airport.getAltitude()
            << "alt feet" << altFeet;
 
-  pos.setAltitude(altFeet + airport.getPosition().getAltitude());
+  pos.setAltitude(altFeet + airport.getAltitude());
   pattern.position = pos;
 
   qDebug() << Q_FUNC_INFO << "pattern.position" << pattern.position;

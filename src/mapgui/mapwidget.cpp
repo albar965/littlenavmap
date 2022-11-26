@@ -740,8 +740,8 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
         emit editUserpointFromMap(result);
       else
       {
-        if(NavApp::getElevationProvider()->isGlobeOfflineProvider())
-          pos.setAltitude(atools::geo::meterToFeet(NavApp::getElevationProvider()->getElevationMeter(pos)));
+        if(NavApp::isGlobeOfflineProvider())
+          pos.setAltitude(NavApp::getElevationProvider()->getElevationFt(pos));
         emit addUserpointFromMap(result, pos);
       }
     }
@@ -1442,7 +1442,7 @@ bool MapWidget::eventFilter(QObject *obj, QEvent *e)
     qreal lon, lat;
     if(geoCoordinates(mouseEvent->pos().x(), mouseEvent->pos().y(), lon, lat, Marble::GeoDataCoordinates::Degree))
     {
-      if(NavApp::getElevationProvider()->isGlobeOfflineProvider())
+      if(NavApp::isGlobeOfflineProvider())
         elevationDisplayTimer.start();
       mainWindow->updateMapPosLabel(Pos(lon, lat, static_cast<double>(map::INVALID_ALTITUDE_VALUE)),
                                     mouseEvent->pos().x(), mouseEvent->pos().y());
@@ -1949,8 +1949,8 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           break;
 
         case mc::USERPOINTADD:
-          if(NavApp::getElevationProvider()->isGlobeOfflineProvider())
-            pos.setAltitude(atools::geo::meterToFeet(NavApp::getElevationProvider()->getElevationMeter(pos)));
+          if(NavApp::isGlobeOfflineProvider())
+            pos.setAltitude(NavApp::getElevationProvider()->getElevationFt(pos));
           emit addUserpointFromMap(result, pos);
           break;
 

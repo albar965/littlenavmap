@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
 #include "symbolpainter.h"
 
 #include "common/maptypes.h"
-#include "query/mapquery.h"
 #include "common/mapcolors.h"
 #include "options/optiondata.h"
 #include "common/unit.h"
@@ -1286,8 +1285,8 @@ QStringList SymbolPainter::airportTexts(optsd::DisplayOptionsAirport dispOpts, t
 
     // bool elevUnit = Unit::getUnitAltStr() != Unit::getUnitShortDistStr();
     if(dispOpts & optsd::ITEM_AIRPORT_RUNWAY)
-      if(airport.longestRunwayLength != 0 || airport.getPosition().getAltitude() != 0.f)
-        texts.append(Unit::altFeet(airport.getPosition().getAltitude(), true /*addUnit*/, true /*narrow*/) % " " %
+      if(airport.longestRunwayLength != 0 || airport.getAltitude() != 0.f)
+        texts.append(Unit::altFeet(airport.getAltitude(), true /*addUnit*/, true /*narrow*/) % " " %
                      (airport.flags.testFlag(map::AP_LIGHT) ? "L " : "- ") %
                      Unit::distShortFeet(airport.longestRunwayLength, true /*addUnit*/, true /*narrow*/) % " ");
   }

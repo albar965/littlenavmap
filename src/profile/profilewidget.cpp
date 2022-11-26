@@ -40,7 +40,6 @@
 #include "common/vehicleicons.h"
 #include "common/jumpback.h"
 #include "weather/windreporter.h"
-#include "grib/windquery.h"
 #include "options/optiondata.h"
 #include "perf/aircraftperfcontroller.h"
 
@@ -461,7 +460,9 @@ void ProfileWidget::updateScreenCoords()
   qDebug() << Q_FUNC_INFO << "==========================================================================";
 #endif
 
+#ifdef DEBUG_INFORMATION_PROFILE
   int num = 0;
+#endif
   for(const ElevationLeg& leg : legList->elevationLegs)
   {
     if(leg.distances.isEmpty() || leg.elevation.isEmpty())
@@ -487,7 +488,9 @@ void ProfileWidget::updateScreenCoords()
         lastPt = pt;
       }
     }
+#ifdef DEBUG_INFORMATION_PROFILE
     num++;
+#endif
   }
 
   // Destination point
@@ -831,12 +834,12 @@ void ProfileWidget::calcLeftMargin()
   if(!legList->route.isEmpty())
   {
     // Calculate departure altitude text size
-    float departAlt = legList->route.getDepartureAirportLeg().getPosition().getAltitude();
+    float departAlt = legList->route.getDepartureAirportLeg().getAltitude();
     if(departAlt < map::INVALID_ALTITUDE_VALUE / 2.f)
       left = std::max(metrics.horizontalAdvance(Unit::altFeet(departAlt)), left);
 
     // Calculate destination altitude text size
-    float destAlt = legList->route.getDestinationAirportLeg().getPosition().getAltitude();
+    float destAlt = legList->route.getDestinationAirportLeg().getAltitude();
     if(destAlt < map::INVALID_ALTITUDE_VALUE / 2.f)
       left = std::max(metrics.horizontalAdvance(Unit::altFeet(destAlt)), left);
     left += 8;
@@ -1583,14 +1586,14 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
     // Departure altitude label =========================================================
     QColor labelColor = mapcolors::profileLabelColor;
-    float departureAlt = legList->route.getDepartureAirportLeg().getPosition().getAltitude();
+    float departureAlt = legList->route.getDepartureAirportLeg().getAltitude();
     int departureAltTextY = TOP + roundToInt(h - departureAlt * verticalScale);
     departureAltTextY = std::min(departureAltTextY, TOP + h - painter.fontMetrics().height() / 2);
     QString startAltStr = Unit::altFeet(departureAlt);
     symPainter.textBox(&painter, {startAltStr}, labelColor, left - 4, departureAltTextY, textatt::BOLD | textatt::RIGHT, 255);
 
     // Destination altitude label =========================================================
-    float destAlt = route.getDestinationAirportLeg().getPosition().getAltitude();
+    float destAlt = route.getDestinationAirportLeg().getAltitude();
     int destinationAltTextY = TOP + static_cast<int>(h - destAlt * verticalScale);
     destinationAltTextY = std::min(destinationAltTextY, TOP + h - painter.fontMetrics().height() / 2);
     QString destAltStr = Unit::altFeet(destAlt);
@@ -1793,7 +1796,7 @@ void ProfileWidget::elevationUpdateAvailable()
 
   // Start thread after long delay to calculate new data
   // Calls ProfileWidget::updateTimeout()
-  updateTimer->start(NavApp::getElevationProvider()->isGlobeOfflineProvider() ?
+  updateTimer->start(NavApp::isGlobeOfflineProvider() ?
                      ELEVATION_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS : ELEVATION_CHANGE_ONLINE_UPDATE_TIMEOUT_MS);
 }
 
@@ -1836,8 +1839,7 @@ void ProfileWidget::routeChanged(bool geometryChanged, bool newFlightPlan)
   {
     // Start thread after short delay to calculate new data
     // Calls ProfileWidget::updateTimeout()
-    updateTimer->start(NavApp::getElevationProvider()->isGlobeOfflineProvider() ?
-                       ROUTE_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS : ROUTE_CHANGE_UPDATE_TIMEOUT_MS);
+    updateTimer->start(NavApp::isGlobeOfflineProvider() ? ROUTE_CHANGE_OFFLINE_UPDATE_TIMEOUT_MS : ROUTE_CHANGE_UPDATE_TIMEOUT_MS);
   }
   else
     update();
@@ -1983,7 +1985,7 @@ ElevationLegList ProfileWidget::fetchRouteElevationsThread(ElevationLegList legs
     double scale = 1.;
 
     // Skip for too long segments when using the marble online provider
-    if(altLeg.getDistanceTo() < ELEVATION_MAX_LEG_NM || NavApp::getElevationProvider()->isGlobeOfflineProvider())
+    if(altLeg.getDistanceTo() < ELEVATION_MAX_LEG_NM || NavApp::isGlobeOfflineProvider())
     {
       LineString geometry = altLeg.getGeoLineString();
 

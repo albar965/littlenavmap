@@ -17,10 +17,8 @@
 
 #include "query/procedurequery.h"
 
-#include "common/constants.h"
 #include "common/proctypes.h"
 #include "common/unit.h"
-#include "fs/pln/flightplan.h"
 #include "fs/util/fsutil.h"
 #include "geo/calculations.h"
 #include "geo/line.h"
@@ -30,6 +28,7 @@
 #include "sql/sqldatabase.h"
 #include "sql/sqlquery.h"
 #include "sql/sqlrecord.h"
+#include "fs/pln/flightplanconstants.h"
 
 #include <QStringBuilder>
 
@@ -826,7 +825,7 @@ proc::MapProcedureLegs *ProcedureQuery::buildProcedureLegs(const map::MapAirport
       legs->runwayEnd = airportQueryNav->getRunwayEndById(runwayEndIdQuery->value("runway_end_id").toInt());
 
       // Add altitude to position since it is needed to display the first point in the SID
-      legs->runwayEnd.position.setAltitude(airport.getPosition().getAltitude());
+      legs->runwayEnd.position.setAltitude(airport.getAltitude());
       runwayFound = true;
     }
   }

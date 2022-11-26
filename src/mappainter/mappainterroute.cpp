@@ -1532,7 +1532,7 @@ void MapPainterRoute::paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, c
 
       proc::MapAltRestriction altRestriction;
       altRestriction.descriptor = proc::MapAltRestriction::AT;
-      altRestriction.alt1 = legs.runwayEnd.getPosition().getAltitude();
+      altRestriction.alt1 = legs.runwayEnd.getAltitude();
       altRestriction.alt2 = 0.f;
       texts.append(proc::altRestrictionTextNarrow(altRestriction));
 
