@@ -68,8 +68,16 @@ void FlightplanEntryBuilder::entryFromUserpoint(const map::MapUserpoint& userpoi
   entry.setPosition(userpoint.position);
   entry.setWaypointType(atools::fs::pln::entry::USER);
 
+  QString ident;
   if(!userpoint.ident.isEmpty())
-    entry.setIdent(userpoint.ident);
+    ident = userpoint.ident;
+  else if(!userpoint.name.isEmpty())
+    ident = userpoint.name.toUpper();
+  else if(!userpoint.type.isEmpty())
+    ident = userpoint.type.toUpper();
+
+  if(!ident.isEmpty())
+    entry.setIdent(ident);
   else
     entry.setIdent("WP" + QString::number(curUserpointNumber++));
 
