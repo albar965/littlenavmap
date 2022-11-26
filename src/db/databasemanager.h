@@ -149,12 +149,6 @@ public:
     return databaseNav;
   }
 
-  /* Get navaid database. Connection inside is not changed. */
-  atools::sql::SqlDatabase *getDatabaseNavPerm()
-  {
-    return databaseNavPerm;
-  }
-
   /* Get the simulator database for airspaces which is independent of nav data mode. Will return null if not opened before. */
   atools::sql::SqlDatabase *getDatabaseSimAirspace()
   {
@@ -344,7 +338,6 @@ private:
   atools::sql::SqlDatabase
   *databaseSim = nullptr /* Database for simulator content. Connection inside is exchanged depending on settings. */,
   *databaseNav = nullptr /* Database for third party navigation data. Connection inside is exchanged depending on settings. */,
-  *databaseNavPerm = nullptr /* Database for third party navigation data. Connection inside is not changed. */,
   *databaseUser = nullptr /* Database for user data */,
   *databaseTrack = nullptr /* Database for tracks like NAT, PACOTS and AUSOTS */,
   *databaseLogbook = nullptr /* Database for logbook */,

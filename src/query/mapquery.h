@@ -53,8 +53,7 @@ public:
    * @param sqlDb database for simulator scenery data
    * @param sqlDbNav for updated navaids
    */
-  MapQuery(atools::sql::SqlDatabase *sqlDbSim, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbNavPerm,
-           atools::sql::SqlDatabase *sqlDbUser);
+  MapQuery(atools::sql::SqlDatabase *sqlDbSim, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbUser);
   ~MapQuery();
 
   MapQuery(const MapQuery& other) = delete;
@@ -271,7 +270,7 @@ private:
                                 const atools::geo::Pos& pos, bool& found) const;
 
   MapTypesFactory *mapTypesFactory;
-  atools::sql::SqlDatabase *dbSim, *dbNav, *dbNavPerm, *dbUser;
+  atools::sql::SqlDatabase *dbSim, *dbNav, *dbUser;
 
   /* Simple bounding rectangle caches */
   bool airportCacheAddonFlag = false; // Keep addon status flag for comparing

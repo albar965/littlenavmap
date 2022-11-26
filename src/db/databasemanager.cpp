@@ -107,13 +107,11 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
 
   SqlDatabase::addDatabase(dbtools::DATABASE_TYPE, dbtools::DATABASE_NAME_SIM);
   SqlDatabase::addDatabase(dbtools::DATABASE_TYPE, dbtools::DATABASE_NAME_NAV);
-  SqlDatabase::addDatabase(dbtools::DATABASE_TYPE, dbtools::DATABASE_NAME_NAV_PERM);
   SqlDatabase::addDatabase(dbtools::DATABASE_TYPE, dbtools::DATABASE_NAME_DLG_INFO_TEMP);
   SqlDatabase::addDatabase(dbtools::DATABASE_TYPE, dbtools::DATABASE_NAME_TEMP);
 
   databaseSim = new SqlDatabase(dbtools::DATABASE_NAME_SIM);
   databaseNav = new SqlDatabase(dbtools::DATABASE_NAME_NAV);
-  databaseNavPerm = new SqlDatabase(dbtools::DATABASE_NAME_NAV_PERM);
 
   if(mainWindow != nullptr)
   {
@@ -236,9 +234,6 @@ DatabaseManager::~DatabaseManager()
   qDebug() << Q_FUNC_INFO << "delete databaseNav";
   delete databaseNav;
 
-  qDebug() << Q_FUNC_INFO << "delete databaseNavPerm";
-  delete databaseNavPerm;
-
   qDebug() << Q_FUNC_INFO << "delete databaseUser";
   delete databaseUser;
 
@@ -265,7 +260,6 @@ DatabaseManager::~DatabaseManager()
 
   SqlDatabase::removeDatabase(dbtools::DATABASE_NAME_SIM);
   SqlDatabase::removeDatabase(dbtools::DATABASE_NAME_NAV);
-  SqlDatabase::removeDatabase(dbtools::DATABASE_NAME_NAV_PERM);
   SqlDatabase::removeDatabase(dbtools::DATABASE_NAME_USER);
   SqlDatabase::removeDatabase(dbtools::DATABASE_NAME_TRACK);
   SqlDatabase::removeDatabase(dbtools::DATABASE_NAME_LOGBOOK);
@@ -1023,7 +1017,6 @@ void DatabaseManager::openAllDatabases()
 {
   QString simDbFile = buildDatabaseFileName(currentFsType);
   QString navDbFile = buildDatabaseFileName(FsPaths::NAVIGRAPH);
-  QString navDbFilePerm = navDbFile;
 
   // Airspace databases are independent of switch
   QString simAirspaceDbFile = simDbFile;
@@ -1037,7 +1030,6 @@ void DatabaseManager::openAllDatabases()
 
   dbtools::openDatabaseFile(databaseSim, simDbFile, true /* readonly */, true /* createSchema */);
   dbtools::openDatabaseFile(databaseNav, navDbFile, true /* readonly */, true /* createSchema */);
-  dbtools::openDatabaseFile(databaseNavPerm, navDbFilePerm, true /* readonly */, true /* createSchema */);
 
   dbtools::openDatabaseFile(databaseSimAirspace, simAirspaceDbFile, true /* readonly */, true /* createSchema */);
   dbtools::openDatabaseFile(databaseNavAirspace, navAirspaceDbFile, true /* readonly */, true /* createSchema */);
@@ -1047,7 +1039,6 @@ void DatabaseManager::closeAllDatabases()
 {
   dbtools::closeDatabaseFile(databaseSim);
   dbtools::closeDatabaseFile(databaseNav);
-  dbtools::closeDatabaseFile(databaseNavPerm);
   dbtools::closeDatabaseFile(databaseSimAirspace);
   dbtools::closeDatabaseFile(databaseNavAirspace);
 }

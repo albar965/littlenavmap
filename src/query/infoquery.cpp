@@ -32,9 +32,8 @@ using atools::sql::SqlRecord;
 using atools::sql::SqlRecordList;
 using atools::sql::SqlUtil;
 
-InfoQuery::InfoQuery(SqlDatabase *sqlDbSim, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbNavPerm,
-                     atools::sql::SqlDatabase *sqlDbTrack)
-  : dbSim(sqlDbSim), dbNav(sqlDbNav), dbNavPerm(sqlDbNavPerm), dbTrack(sqlDbTrack)
+InfoQuery::InfoQuery(SqlDatabase *sqlDbSim, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbTrack)
+  : dbSim(sqlDbSim), dbNav(sqlDbNav), dbTrack(sqlDbTrack)
 {
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   airportCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_INFOQUERY + "AirportCache", 100).toInt());
@@ -262,8 +261,8 @@ void InfoQuery::initQueries()
 
   // Check for holding table in nav (Navigraph) database and then in simulator database (X-Plane only)
   SqlDatabase *msaDb = NavApp::isNavdataOff() ?
-                       SqlUtil::getDbWithTableAndRows("airport_msa", {dbSim, dbNavPerm}) :
-                       SqlUtil::getDbWithTableAndRows("airport_msa", {dbNavPerm, dbSim});
+                       SqlUtil::getDbWithTableAndRows("airport_msa", {dbSim, dbNav}) :
+                       SqlUtil::getDbWithTableAndRows("airport_msa", {dbNav, dbSim});
 
   if(msaDb != nullptr)
   {
@@ -276,8 +275,8 @@ void InfoQuery::initQueries()
 
   // Same as above for airport MSA table
   SqlDatabase *holdingDb = NavApp::isNavdataOff() ?
-                           SqlUtil::getDbWithTableAndRows("holding", {dbSim, dbNavPerm}) :
-                           SqlUtil::getDbWithTableAndRows("holding", {dbNavPerm, dbSim});
+                           SqlUtil::getDbWithTableAndRows("holding", {dbSim, dbNav}) :
+                           SqlUtil::getDbWithTableAndRows("holding", {dbNav, dbSim});
   if(holdingDb != nullptr)
   {
     holdingQuery = new SqlQuery(holdingDb);

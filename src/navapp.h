@@ -271,9 +271,6 @@ public:
   /* External update from navaids or same as above */
   static atools::sql::SqlDatabase *getDatabaseNav();
 
-  /* Always external */
-  static atools::sql::SqlDatabase *getDatabaseNavPerm();
-
   static atools::fs::userdata::UserdataManager *getUserdataManager();
   static UserdataIcons *getUserdataIcons();
   static UserdataSearch *getUserdataSearch();

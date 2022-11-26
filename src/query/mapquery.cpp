@@ -73,8 +73,8 @@ static QLatin1String AIRPORTIDENT_FROM_NDB("select a.ident, n.lonx, n.laty "
                                            "order by (abs(n.lonx - :lonx) + abs(n.laty - :laty)) limit 1");
 static float MAX_AIRPORT_IDENT_DISTANCE_M = atools::geo::nmToMeter(5.f);
 
-MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDbSim, SqlDatabase *sqlDbNav, SqlDatabase *sqlDbNavPerm, SqlDatabase *sqlDbUser)
-  : dbSim(sqlDbSim), dbNav(sqlDbNav), dbNavPerm(sqlDbNavPerm), dbUser(sqlDbUser)
+MapQuery::MapQuery(atools::sql::SqlDatabase *sqlDbSim, SqlDatabase *sqlDbNav, SqlDatabase *sqlDbUser)
+  : dbSim(sqlDbSim), dbNav(sqlDbNav), dbUser(sqlDbUser)
 {
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
@@ -1404,13 +1404,13 @@ void MapQuery::initQueries()
   // Check for holding table in nav (Navigraph) database and then in simulator database (X-Plane only)
   // Reverse search order depending on scenery library settings
   SqlDatabase *holdingDb = NavApp::isNavdataOff() ?
-                           SqlUtil::getDbWithTableAndRows("holding", {dbSim, dbNavPerm}) :
-                           SqlUtil::getDbWithTableAndRows("holding", {dbNavPerm, dbSim});
+                           SqlUtil::getDbWithTableAndRows("holding", {dbSim, dbNav}) :
+                           SqlUtil::getDbWithTableAndRows("holding", {dbNav, dbSim});
 
   // Same as above for airport MSA table
   SqlDatabase *msaDb = NavApp::isNavdataOff() ?
-                       SqlUtil::getDbWithTableAndRows("airport_msa", {dbSim, dbNavPerm}) :
-                       SqlUtil::getDbWithTableAndRows("airport_msa", {dbNavPerm, dbSim});
+                       SqlUtil::getDbWithTableAndRows("airport_msa", {dbSim, dbNav}) :
+                       SqlUtil::getDbWithTableAndRows("airport_msa", {dbNav, dbSim});
 
   vorByIdentQuery = new SqlQuery(dbNav);
   vorByIdentQuery->prepare("select " + vorQueryBase + " from vor where " + whereIdentRegion);

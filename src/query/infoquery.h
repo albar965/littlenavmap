@@ -41,7 +41,7 @@ public:
    * @param sqlDb database for simulator scenery data
    * @param sqlDbNav for updated navaids
    */
-  InfoQuery(atools::sql::SqlDatabase *sqlDbSim, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase* sqlDbNavPerm, atools::sql::SqlDatabase *sqlDbTrack);
+  InfoQuery(atools::sql::SqlDatabase *sqlDbSim, atools::sql::SqlDatabase *sqlDbNav, atools::sql::SqlDatabase *sqlDbTrack);
   ~InfoQuery();
 
   InfoQuery(const InfoQuery& other) = delete;
@@ -102,7 +102,7 @@ private:
 
   QCache<QString, atools::sql::SqlRecordList> airportSceneryCache;
 
-  atools::sql::SqlDatabase *dbSim, *dbNav, *dbNavPerm, *dbTrack;
+  atools::sql::SqlDatabase *dbSim, *dbNav, *dbTrack;
 
   /* Prepared database queries */
   atools::sql::SqlQuery *airportQuery = nullptr, *airportSceneryQuery = nullptr, *vorQuery = nullptr, *msaQuery = nullptr,
