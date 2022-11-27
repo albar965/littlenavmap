@@ -21,7 +21,6 @@
 #include "route/routecommand.h"
 #include "routing/routenetworktypes.h"
 #include "route/route.h"
-#include "common/tabindexes.h"
 
 #include <QTimer>
 
@@ -106,6 +105,9 @@ public:
   bool saveFlightplanLnm();
   bool saveFlightplanLnmAs(const QString& filename);
   bool saveFlightplanLnmAsSelection(const QString& filename);
+
+  /* Save temporary to settings folder or delete temp if plan is empty */
+  void saveFlightplanLnmDefault();
 
   /* Called if export dialog saved an LNMPLN file */
   void saveFlightplanLnmExported(const QString& filename);
@@ -354,7 +356,7 @@ private:
   };
 
   /* Saves flight plan using LNM format */
-  bool saveFlightplanLnmInternal();
+  bool saveFlightplanLnmInternal(const QString& filename, bool silent);
 
   /* Saves flight plan sippet using LNM format to given name. Given range must not contains procedures or alternates. */
   bool saveFlightplanLnmSelectionAs(const QString& filename, int from, int to) const;
@@ -516,7 +518,7 @@ private:
 
   /* Need a workaround since QUndoStack does not report current indices and clean state correctly */
   int undoIndex = 0;
-  /* Clean index of the undo stack or -1 if not clean state exists */
+  /* Clean index of the undo stack or -1 if no clean state exists */
   int undoIndexClean = 0;
 
   /* Network cache for flight plan calculation */
@@ -526,7 +528,7 @@ private:
   Route route; /* real route containing all segments */
 
   /* Current filename of empty if no route - also remember start and dest to avoid accidental overwriting */
-  QString routeFilename, fileDepartureIdent, fileDestinationIdent;
+  QString routeFilename, routeFilenameDefault, fileDepartureIdent, fileDestinationIdent;
 
   /* Same as above for cruise altitude */
   float fileCruiseAltFt;

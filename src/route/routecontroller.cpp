@@ -148,6 +148,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
 {
   airportQuery = NavApp::getAirportQuerySim();
 
+  routeFilenameDefault = atools::settings::Settings::getConfigFilename(".lnmpln");
+
   routeColumns = QList<QString>({
     tr("Ident"),
     tr("Region"),
@@ -1044,6 +1046,37 @@ void RouteController::restoreState()
       QMessageBox::warning(mainWindow, QApplication::applicationName(), message);
     }
   }
+  else
+  {
+    if(atools::checkFile(Q_FUNC_INFO, routeFilenameDefault, false /* warn */))
+    {
+      try
+      {
+        Flightplan fp;
+        atools::fs::pln::FileFormat format = flightplanIO->load(fp, routeFilenameDefault);
+
+        if(format == atools::fs::pln::LNM_PLN)
+          loadFlightplan(fp, format, routeFilenameDefault, true /*changed*/, false /* adjustAltitude */, false /* undo */);
+        else
+          clearFlightplan();
+
+        // Have to reset filename again
+        routeFilename.clear();
+      }
+      catch(atools::Exception& e)
+      {
+        NavApp::closeSplashScreen();
+        atools::gui::ErrorHandler(mainWindow).handleException(e);
+      }
+      catch(...)
+      {
+        NavApp::closeSplashScreen();
+        atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+      }
+    }
+    else
+      clearFlightplan();
+  }
 
   if(route.isEmpty())
     updateFlightplanFromWidgets();
@@ -1185,6 +1218,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
     flightplan.setFlightplanType(NavApp::getMainUi()->comboBoxRouteType->currentIndex() == 0 ? atools::fs::pln::IFR : atools::fs::pln::VFR);
 
   if(changed)
+    // No clean state in stack
     undoIndexClean = -1;
 
   if(!undo)
@@ -1590,11 +1624,23 @@ void RouteController::saveFlightplanLnmExported(const QString& filename)
   NavApp::updateWindowTitle();
 }
 
+void RouteController::saveFlightplanLnmDefault()
+{
+  qDebug() << Q_FUNC_INFO << routeFilenameDefault;
+
+  if(route.isEmpty())
+    // No flight plan - delete to avoid reloading
+    QFile::remove(routeFilenameDefault);
+  else
+    // Save plan to default file
+    saveFlightplanLnmInternal(routeFilenameDefault, true /* silent */);
+}
+
 bool RouteController::saveFlightplanLnmAs(const QString& filename)
 {
   qDebug() << Q_FUNC_INFO << filename;
   routeFilename = filename;
-  return saveFlightplanLnmInternal();
+  return saveFlightplanLnmInternal(routeFilename, false /* silent */);
 }
 
 Route RouteController::getRouteForSelection() const
@@ -1618,7 +1664,7 @@ bool RouteController::saveFlightplanLnmAsSelection(const QString& filename)
 bool RouteController::saveFlightplanLnm()
 {
   qDebug() << Q_FUNC_INFO << routeFilename;
-  return saveFlightplanLnmInternal();
+  return saveFlightplanLnmInternal(routeFilename, false /* silent */);
 }
 
 bool RouteController::saveFlightplanLnmSelectionAs(const QString& filename, int from, int to) const
@@ -1664,8 +1710,9 @@ bool RouteController::saveFlightplanLnmSelectionAs(const QString& filename, int 
   return true;
 }
 
-bool RouteController::saveFlightplanLnmInternal()
+bool RouteController::saveFlightplanLnmInternal(const QString& filename, bool silent)
 {
+  qDebug() << Q_FUNC_INFO << filename << silent;
   try
   {
     // Remember to send out signal
@@ -1683,23 +1730,26 @@ bool RouteController::saveFlightplanLnmInternal()
     {
       qDebug() << Q_FUNC_INFO << "missingProcedures" << missingProcedures;
 
-      // Ask before saving file
-      int result = atools::gui::Dialog(mainWindow).
-                   showQuestionMsgBox(lnm::ACTIONS_SHOW_SAVE_LNMPLN_WARNING,
-                                      tr("<p>One or more procedures in the flight plan are not valid.</p>"
-                                           "<ul><li>%1</li></ul>"
-                                             "<p>These will be dropped when saving.</p>"
-                                               "<p>Save flight plan now and drop invalid procedures?</p>").
-                                      arg(procedureErrors.join(tr("</li><li>"))),
-                                      tr("Do not &show this dialog again and save without warning."),
-                                      QMessageBox::Cancel | QMessageBox::Save, QMessageBox::Cancel, QMessageBox::Save);
-
-      if(result == QMessageBox::Cancel)
-        return false;
-      else if(result == QMessageBox::Help)
+      if(!silent)
       {
-        atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "FLIGHTPLANSAVE.html", lnm::helpLanguageOnline());
-        return false;
+        // Ask before saving file
+        int result = atools::gui::Dialog(mainWindow).
+                     showQuestionMsgBox(lnm::ACTIONS_SHOW_SAVE_LNMPLN_WARNING,
+                                        tr("<p>One or more procedures in the flight plan are not valid.</p>"
+                                             "<ul><li>%1</li></ul>"
+                                               "<p>These will be dropped when saving.</p>"
+                                                 "<p>Save flight plan now and drop invalid procedures?</p>").
+                                        arg(procedureErrors.join(tr("</li><li>"))),
+                                        tr("Do not &show this dialog again and save without warning."),
+                                        QMessageBox::Cancel | QMessageBox::Save, QMessageBox::Cancel, QMessageBox::Save);
+
+        if(result == QMessageBox::Cancel)
+          return false;
+        else if(result == QMessageBox::Help)
+        {
+          atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "FLIGHTPLANSAVE.html", lnm::helpLanguageOnline());
+          return false;
+        }
       }
 
       // Remove all missing procedures and flight plan legs as well as properties in plan
@@ -1735,7 +1785,7 @@ bool RouteController::saveFlightplanLnmInternal()
     flightplanCopy.setCruisingAltitude(atools::roundToInt(route.getCruisingAltitudeFeet()));
 
     // Save LNMPLN - Will throw an exception if something goes wrong
-    flightplanIO->saveLnm(flightplanCopy, routeFilename);
+    flightplanIO->saveLnm(flightplanCopy, filename);
 
     // Set format to original route since it is saved as LNM now
     route.getFlightplan().setLnmFormat(true);

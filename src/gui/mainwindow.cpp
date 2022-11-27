@@ -4209,8 +4209,12 @@ void MainWindow::closeEvent(QCloseEvent *event)
   // close button on the window frame
   qDebug() << Q_FUNC_INFO;
 
-  if(routeController->hasChanged())
+  if(routeController->getRouteFilepath().isEmpty())
+    // No file saved yet - either save to default file in options or delete the default file if plan is empty
+    routeController->saveFlightplanLnmDefault();
+  else if(routeController->hasChanged())
   {
+    // Changed flight plan found - ask for confirmation
     if(!routeCheckForChanges())
     {
       // Do not exit
