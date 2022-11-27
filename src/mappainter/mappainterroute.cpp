@@ -409,7 +409,7 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
     positions.append(route->value(i).getPosition());
 
   painter->save();
-  if(!(context->flags2 & opts2::MAP_ROUTE_TEXT_BACKGROUND))
+  if(!context->flags2.testFlag(opts2::MAP_ROUTE_TEXT_BACKGROUND))
     painter->setBackgroundMode(Qt::TransparentMode);
   else
     painter->setBackgroundMode(Qt::OpaqueMode);
@@ -419,12 +419,16 @@ void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> li
 
   if(context->mapLayerRoute->isRouteTextAndDetail())
   {
+    // Do not draw text on the color/black outline - on center only if transparent line or text background selected
+    bool textOnLineCenter = context->flags2.testFlag(opts2::MAP_ROUTE_TEXT_BACKGROUND) ||
+                            context->flags2.testFlag(opts2::MAP_ROUTE_TRANSPARENT);
+
     // Use a text placement configuration without screen buffer to have labels moving correctly
     TextPlacement textPlacement(painter, this, context->screenRect);
     textPlacement.setMinLengthForText(painter->fontMetrics().averageCharWidth() * 2);
     textPlacement.setDrawFast(context->drawFast);
     textPlacement.setLineWidth(outerlinewidth);
-    textPlacement.setTextOnLineCenter(true);
+    textPlacement.setTextOnLineCenter(textOnLineCenter);
     textPlacement.calculateTextPositions(positions);
     textPlacement.calculateTextAlongLines(lines, routeTexts);
     textPlacement.drawTextAlongLines();
@@ -866,6 +870,11 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
         }
       }
 
+      if(!context->flags2.testFlag(opts2::MAP_ROUTE_TEXT_BACKGROUND))
+        painter->setBackgroundMode(Qt::TransparentMode);
+      else
+        painter->setBackgroundMode(Qt::OpaqueMode);
+
       // Draw text along lines ====================================================
       painter->setBackground(previewAll ? QColor(Qt::transparent) : mapcolors::routeTextBackgroundColor);
       if(previewAll)
@@ -881,10 +890,14 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, const 
         positions.append(dt.line.getPos1());
       }
 
+      // Do not draw text on the color/black outline - on center only if transparent line or text background selected
+      bool textOnLineCenter = context->flags2.testFlag(opts2::MAP_ROUTE_TEXT_BACKGROUND) ||
+                              context->flags2.testFlag(opts2::MAP_ROUTE_TRANSPARENT);
+
       TextPlacement textPlacement(painter, this, context->screenRect);
       textPlacement.setMinLengthForText(painter->fontMetrics().averageCharWidth() * 2);
       textPlacement.setArrowForEmpty(previewAll); // Arrow for empty texts
-      textPlacement.setTextOnLineCenter(true /*previewAll*/); // Place text on top of line
+      textPlacement.setTextOnLineCenter(textOnLineCenter);
       textPlacement.setDrawFast(context->drawFast);
       textPlacement.setTextOnTopOfLine(false);
       textPlacement.setLineWidth(outerlinewidth);
