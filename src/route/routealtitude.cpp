@@ -272,13 +272,13 @@ QVector<float> RouteAltitude::getAltitudes() const
     {
       // Fix departure altitude if airport is valid
       const RouteLeg& first = route->getDepartureAirportLeg();
-      if(first.isRoute() && first.isAirport())
-        retval.replace(0, first.getPosition().getAltitude());
+      if(first.isRoute())
+        retval.replace(0, first.getAltitude());
 
       // Replace the zero altitude of the last dummy segment with the airport altitude
       const RouteLeg& last = route->getDestinationAirportLeg();
-      if(last.isRoute() && last.isAirport())
-        retval.replace(retval.size() - 1, last.getPosition().getAltitude());
+      if(last.isRoute())
+        retval.replace(retval.size() - 1, last.getAltitude());
     }
   }
   else
@@ -289,10 +289,10 @@ QVector<float> RouteAltitude::getAltitudes() const
     {
       const RouteLeg& leg = route->value(i);
 
-      if(i == 0 && leg.isAirport())
-        retval.append(leg.getPosition().getAltitude());
-      else if(i == destinationAirportLegIndex && leg.isAirport())
-        retval.append(leg.getPosition().getAltitude());
+      if(i == 0)
+        retval.append(leg.getAltitude());
+      else if(i == destinationAirportLegIndex)
+        retval.append(leg.getAltitude());
       else
         retval.append(route->getCruisingAltitudeFeet());
     }
@@ -993,17 +993,17 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
     }
 
     const RouteLeg destinationLeg = route->getDestinationAirportLeg();
-    if(!destinationLeg.isValidWaypoint() || destinationLeg.getMapObjectType() != map::AIRPORT)
+    if(!destinationLeg.isValidWaypoint())
     {
-      errors.append(tr("Destination is not valid. Must be an airport."));
+      errors.append(tr("Destination is not valid."));
       qWarning() << Q_FUNC_INFO << "Destination is not valid or neither airport nor runway";
       invalid = true;
     }
 
     const RouteLeg departureLeg = route->getDepartureAirportLeg();
-    if(!departureLeg.isValidWaypoint() || departureLeg.getMapObjectType() != map::AIRPORT)
+    if(!departureLeg.isValidWaypoint())
     {
-      errors.append(tr("Departure is not valid. Must be an airport."));
+      errors.append(tr("Departure is not valid."));
       qWarning() << Q_FUNC_INFO << "Departure is not valid or neither airport nor runway";
       invalid = true;
     }
@@ -1633,9 +1633,9 @@ float RouteAltitude::getDestinationAltitude() const
         // Not valid - start at cruise at a waypoint
         return adjustAltitudeForRestriction(cruiseAltitude, destLeg.getProcedureLegAltRestr());
     }
-    else if(destLeg.isAirport())
+    else
       // Airport altitude
-      return destLeg.getPosition().getAltitude();
+      return destLeg.getAltitude();
   }
 
   // Other leg types (waypoint, VOR, etc.) remain on cruise
@@ -1664,12 +1664,9 @@ float RouteAltitude::getDepartureAltitude() const
       // Not valid - start at cruise at a waypoint
       return adjustAltitudeForRestriction(cruiseAltitude, startLeg.getProcedureLegAltRestr());
   }
-  else if(startLeg.isAirport())
+  else
     // Airport altitude
-    return startLeg.getPosition().getAltitude();
-
-  // Other leg types (waypoint, VOR, etc.) remain on cruise
-  return cruiseAltitude;
+    return startLeg.getAltitude();
 }
 
 float RouteAltitude::distanceForAltitude(const QPointF& leg1, const QPointF& leg2, float altitude)

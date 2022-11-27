@@ -97,11 +97,11 @@ public:
   bool isNavaidEqualTo(const RouteLeg& other) const;
 
   /* Get position of airport or navaid. Source can be flight plan entry or database. */
-  const atools::geo::Pos& getPosition() const;
+  atools::geo::Pos getPosition() const;
   float getAltitude() const;
 
   /* Get the real position of the procedure fix instead of the endpoint. Otherwise like getPosition() */
-  const atools::geo::Pos& getFixPosition() const;
+  const atools::geo::Pos getFixPosition() const;
   const atools::geo::Pos& getRecommendedFixPosition() const;
 
   /* Get ident of airport or navaid. Source can be flight plan entry or database. */
@@ -397,6 +397,9 @@ private:
   void assignRunwayOrHelipad(const QString& name);
   void assignAirport(const map::MapResult& mapobjectResult, atools::fs::pln::FlightplanEntry *flightplanEntry);
   void assignUser(atools::fs::pln::FlightplanEntry *flightplanEntry);
+
+  /* Update altitude in flight plan for waypoints, user wapoints and VOR and NDB having no altitude. */
+  void updateAltitude(atools::fs::pln::FlightplanEntry *flightplanEntry);
 
   /* Parent flight plan */
   atools::fs::pln::Flightplan *flightplan = nullptr;

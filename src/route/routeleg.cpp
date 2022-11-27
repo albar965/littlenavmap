@@ -24,7 +24,7 @@
 #include "common/maptools.h"
 #include "atools.h"
 #include "fs/util/fsutil.h"
-#include "options/optiondata.h"
+#include "common/elevationprovider.h"
 #include "navapp.h"
 #include "common/unit.h"
 
@@ -406,9 +406,30 @@ void RouteLeg::updateMagvar(const RouteLeg *prevLeg)
     magvarStart = magvarEnd;
 }
 
+void RouteLeg::updateAltitude(atools::fs::pln::FlightplanEntry *flightplanEntry)
+{
+  // Update altitude for all waypoint types having no altitude information
+  // Set to ground if not available
+  atools::fs::pln::entry::WaypointType wptype = flightplanEntry->getWaypointType();
+  if(wptype == atools::fs::pln::entry::USER || wptype == atools::fs::pln::entry::WAYPOINT || // These never have altitude
+     // VOR and NDB in MSFS have not altitude assigned
+     ((wptype == atools::fs::pln::entry::VOR || wptype == atools::fs::pln::entry::NDB) && atools::almostEqual(getAltitude(), 0.f)))
+  {
+    if(NavApp::isGlobeOfflineProvider())
+      flightplanEntry->setAltitude(NavApp::getElevationProvider()->getElevationFt(getFlightplanEntry()->getPosition()));
+    else
+      flightplanEntry->setAltitude(0.f);
+  }
+  else
+    flightplanEntry->setAltitude(getAltitude());
+}
+
 void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
 {
   index = entryIndex;
+
+  if(!isAnyProcedure())
+    updateAltitude(getFlightplanEntry());
 
   if(prevLeg != nullptr)
   {
@@ -654,7 +675,7 @@ float RouteLeg::getCourseEndMag() const
   return courseEndTrue < map::INVALID_COURSE_VALUE ? normalizeCourse(courseEndTrue - magvarEnd) : map::INVALID_COURSE_VALUE;
 }
 
-const atools::geo::Pos& RouteLeg::getFixPosition() const
+const atools::geo::Pos RouteLeg::getFixPosition() const
 {
   if(isAnyProcedure())
     return procedureLeg.fixPos;
@@ -670,7 +691,7 @@ const atools::geo::Pos& RouteLeg::getRecommendedFixPosition() const
   return atools::geo::EMPTY_POS;
 }
 
-const atools::geo::Pos& RouteLeg::getPosition() const
+atools::geo::Pos RouteLeg::getPosition() const
 {
   if(isAnyProcedure())
     return procedureLeg.line.getPos2();
@@ -688,11 +709,23 @@ const atools::geo::Pos& RouteLeg::getPosition() const
     if(airport.isValid())
       return airport.position;
     else if(vor.isValid())
-      return vor.position;
+    {
+      if(atools::almostEqual(vor.getAltitude(), 0.f))
+        // Get values which were calculated by RouteLeg::updateAltitude()
+        return vor.position.alt(getFlightplanEntry().getAltitude());
+      else
+        return vor.position; // Return real altitude
+    }
     else if(ndb.isValid())
-      return ndb.position;
+    {
+      if(atools::almostEqual(ndb.getAltitude(), 0.f))
+        // Get values which were calculated by RouteLeg::updateAltitude()
+        return ndb.position.alt(getFlightplanEntry().getAltitude());
+      else
+        return ndb.position; // Return real altitude
+    }
     else if(waypoint.isValid())
-      return waypoint.position;
+      return waypoint.position.alt(getFlightplanEntry().getAltitude());
     else if(ils.isValid())
       return ils.position;
     else if(runwayEnd.isValid())
@@ -708,21 +741,33 @@ float RouteLeg::getAltitude() const
   if(airport.isValid())
     return airport.position.getAltitude();
   else if(vor.isValid())
-    return vor.position.getAltitude();
+  {
+    if(atools::almostEqual(vor.position.getAltitude(), 0.f))
+      // Get values which were calculated by RouteLeg::updateAltitude()
+      return getFlightplanEntry().getAltitude();
+    else
+      return vor.position.getAltitude(); // Return real altitude
+  }
   else if(ndb.isValid())
-    return ndb.position.getAltitude();
+  {
+    if(atools::almostEqual(ndb.position.getAltitude(), 0.f))
+      // Get values which were calculated by RouteLeg::updateAltitude()
+      return getFlightplanEntry().getAltitude();
+    else
+      return ndb.position.getAltitude(); // Return real altitude
+  }
   else if(waypoint.isValid())
-    return 0.f;
+    return getFlightplanEntry().getAltitude();
   else if(ils.isValid())
     return ils.position.getAltitude();
   else if(runwayEnd.isValid())
-    return runwayEnd.getPosition().getAltitude();
+    return runwayEnd.getAltitude();
   else if(!procedureLeg.displayText.isEmpty())
     return 0.f;
   else if(type == map::INVALID)
     return 0.f;
   else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER)
-    return 0.f;
+    return getFlightplanEntry().getAltitude();
   else if(getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::UNKNOWN)
     return 0.f;
   else
