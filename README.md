@@ -1,17 +1,10 @@
 #### Last Beta
 
-[**► Windows 64-bit (*MSFS and X-Plane*)** - LittleNavmap-win64-2.8.3.beta.zip](https://github.com/albar965/littlenavmap/releases/download/v2.8.3.beta/LittleNavmap-win64-2.8.3.beta.zip)<br/>
-[**► macOS** - LittleNavmap-macOS-2.8.3.beta.zip](https://github.com/albar965/littlenavmap/releases/download/v2.8.3.beta/LittleNavmap-macOS-2.8.3.beta.zip)<br/>
-[**► Linux \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-22.04-2.8.3.beta.tar.gz](https://github.com/albar965/littlenavmap/releases/download/v2.8.3.beta/LittleNavmap-linux-22.04-2.8.3.beta.tar.gz)
+[**► Windows 64-bit (*MSFS and X-Plane*)** - LittleNavmap-win64-2.8.4.beta.zip](https://github.com/albar965/littlenavmap/releases/download/v2.8.4.beta/LittleNavmap-win64-2.8.4.beta.zip)<br/>
+[**► macOS** - LittleNavmap-macOS-2.8.4.beta.zip](https://github.com/albar965/littlenavmap/releases/download/v2.8.4.beta/LittleNavmap-macOS-2.8.4.beta.zip)<br/>
+[**► Linux \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-22.04-2.8.4.beta.tar.gz](https://github.com/albar965/littlenavmap/releases/download/v2.8.4.beta/LittleNavmap-linux-22.04-2.8.4.beta.tar.gz)
 
-**Other Versions:** [Github - Version 2.8.3.beta](https://github.com/albar965/littlenavmap/releases/tag/v2.8.3.beta)
-
-#### Last Stable (*not* for MSFS SU11 and X-Plane 12)
-
-[**► Windows** - LittleNavmap-win-2.6.19.zip](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-win-2.6.19.zip)<br/>
-[**► macOS** - LittleNavmap-macOS-2.6.19.zip](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-macOS-2.6.19.zip)<br/>
-[**► Linux \(64 bit, based on Ubuntu 20.04\)** - LittleNavmap-linux-20.04-2.6.19.tar.gz](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-linux-20.04-2.6.19.tar.gz)<br/>
-[**► Linux \(64 bit, based on Ubuntu 18.04\)** - LittleNavmap-linux-18.04-2.6.19.tar.gz](https://github.com/albar965/littlenavmap/releases/download/v2.6.19/LittleNavmap-linux-18.04-2.6.19.tar.gz)
+**Other Versions:** [Github - Version 2.8.4.beta](https://github.com/albar965/littlenavmap/releases/tag/v2.8.4.beta)
 
 #### Alternative Download Locations
 
