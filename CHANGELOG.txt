@@ -4,7 +4,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ==>>=============================================================================
 
-# Version 2.8.3.beta
+# Version 2.8.4.beta
 
 ## Notes
 
@@ -32,8 +32,6 @@ so to benefit from new features and bug fixes.**
 Little Navmap store all settings, databases and caches in the installation folder (portable mode).**
 
 Note that certain settings and table layouts are reset to default after updating.
-Some features like MSA, vertical paths or en-route holdings require either X-Plane, the included
-AIRAC 1801 database or a Navigraph database newer or equal than AIRAC 2201.
 
 See here for a [list of issues done](https://github.com/albar965/littlenavmap/milestone/11?closed=1).
 More issues are solved than publicly known on Github. This changelog lists the most important.
@@ -48,17 +46,40 @@ A big thank you to all who reported bugs and issues!
 * **Some third-party plugins like traffic add-ons might cause connection issues when used together
   with Little Navmap and MSFS.**
 * **The autoconnect function of Little Navmap does not work reliably with MSFS. Connect manually
-  after starting your flight if you see problems.**
-* **Little Navconnect can have the same issues as Little Navmap since it always uses
-  autoconnect. Start the simulator first and then Little Navconnect.**
+  after starting your flight if you see problems. Little Navconnect can have the same issues as
+  Little Navmap since it always uses autoconnect. Start the simulator first and then Little Navconnect.**
 
-## Other Known Issues
+## Changes from 2.8.3.beta to 2.8.4.beta
 
-* Running Little Navmap with autoconnect for P3D, FSX or MSFS for several hours without starting
-  the simulator leaks a small amount of resources. This is mitigated by reducing the connection
-  rate automatically after 30 minutes. Disable autoconnect or quit the program to avoid this.
-* En-route holding courses were not correct due to an error in declination calculation. This was
-  fixed with AIRAC cycle 2210.
+* Flight plan is now saved to a temporary file on exit if created from scratch. This avoids the question
+  dialog when exiting the program after building a new plan. This means: You create a new flight plan from
+  scratch and Little Navmap will not ask to save the plan when exiting. Instead the same plan
+  is reloaded on next startup. Continue editing without saving and the changed plan will be
+  reloaded on next startup. You can still use the `Save` and `Save as` functions as before.
+* Now allowing arbitrary points for departure and destination. This covers all navaids, user points
+  and coordinates which can be used as start or destination points. The elevation profile is now
+  calculated without error messages for these kind of flight plans. Note that you have to install the
+  GLOBE elevation data to get the correct elevations for these points. You have to use the `Add to
+  flight plan` menu item, the `Append to flight plan` menu item, the keyboard shortcut
+  `Ctrl+Alt+Click` (add),  `Shift+Alt+Click` (append) or the drag and drop flight plan editing to add
+  arbitrary points as  departure or destination. Note these flight plans are not supported by all
+  simulators or add-ons.
+* Fixed for label placement on flight plan line. Label is now placed aside if the options
+  `Transparent line` or `Text background` are not used in options on page `Map Display Flight Plan`.
+* Fixed performance issue when loading X-Plane 12 METAR and GRIB (wind) files resulting in temporary
+  program freezes. Now only reading the latest three METAR and the latest GRIB file.
+* Now removing area/country codes from X-Plane country names.
+* Now also taking userpoint names into flight plan waypoint if ident is missing.
+* Reverted change "MSA, holdings and MORA grid are now shown when using MSFS and scenery library
+  mode `Do not use Navigraph Database`". The scenery library mode `Do not use Navigraph Database` now
+  strictly fetches all data from the simulator database which results in certain features being
+  disabled in this mode.
+* Updated Italian translation by Flavio Borgna.
+* More small text, translation and user interface fixes.
+
+==<<=============================================================================
+
+# Version 2.8.3.beta
 
 ## Changes from 2.8.2.beta to 2.8.3.beta
 
@@ -133,7 +154,7 @@ A big thank you to all who reported bugs and issues!
 
 These changes help to make more frequent releases.
 
-==<<=============================================================================
+=================================================================================
 
 ## Changes from 2.8.1.beta to 2.8.2.beta
 
