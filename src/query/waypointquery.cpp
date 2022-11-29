@@ -67,13 +67,21 @@ map::MapWaypoint WaypointQuery::getWaypointById(int id)
   return wp;
 }
 
-MapWaypoint WaypointQuery::getWaypointByNavId(int navId)
+MapWaypoint WaypointQuery::getWaypointByNavId(int navId, map::MapType type)
 {
   map::MapWaypoint wp;
   if(!query::valid(Q_FUNC_INFO, waypointByNavIdQuery))
     return wp;
 
   waypointByNavIdQuery->bindValue(":id", navId);
+
+  if(type == map::VOR)
+    waypointByNavIdQuery->bindValue(":type", "V");
+  else if(type == map::NDB)
+    waypointByNavIdQuery->bindValue(":type", "N");
+  else
+    waypointByNavIdQuery->bindValue(":type", "%");
+
   waypointByNavIdQuery->exec();
   if(waypointByNavIdQuery->next())
     mapTypesFactory->fillWaypoint(waypointByNavIdQuery->record(), wp, trackDatabase);
@@ -279,7 +287,7 @@ void WaypointQuery::initQueries()
   waypointByIdQuery->prepare("select " + waypointQueryBase + " from " + table + " where " + id + " = :id");
 
   waypointByNavIdQuery = new SqlQuery(dbNav);
-  waypointByNavIdQuery->prepare("select " + waypointQueryBase + " from " + table + " where nav_id = :id");
+  waypointByNavIdQuery->prepare("select " + waypointQueryBase + " from " + table + " where nav_id = :id and type like :type");
 
   // Get Waypoint in rect
   waypointRectQuery = new SqlQuery(dbNav);

@@ -2220,7 +2220,7 @@ void HtmlInfoBuilder::vorText(const MapVor& vor, HtmlBuilder& html) const
     addCoordinates(rec, html);
   html.tableEnd();
 
-  MapWaypoint wp = NavApp::getWaypointTrackQueryGui()->getWaypointByNavId(vor.id);
+  MapWaypoint wp = NavApp::getWaypointTrackQueryGui()->getWaypointByNavId(vor.id, map::VOR);
   if(wp.artificial)
     // Artificial waypoints are not shown - display airway list here
     waypointAirwayText(wp, html);
@@ -2295,7 +2295,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
     addCoordinates(rec, html);
   html.tableEnd();
 
-  MapWaypoint wp = NavApp::getWaypointTrackQueryGui()->getWaypointByNavId(ndb.id);
+  MapWaypoint wp = NavApp::getWaypointTrackQueryGui()->getWaypointByNavId(ndb.id, map::NDB);
   if(wp.artificial)
     // Artificial waypoints are not shown - display airway list here
     waypointAirwayText(wp, html);
@@ -2308,7 +2308,7 @@ void HtmlInfoBuilder::ndbText(const MapNdb& ndb, HtmlBuilder& html) const
 
 #ifdef DEBUG_INFORMATION
   if(info)
-    html.small(QString("Database: ndb_id = %1").arg(ndb.getId())).br();
+    html.small(QString("Database: ndb_id = %1 waypoint_id = %2").arg(ndb.getId()).arg(wp.getId())).br();
 #endif
 
   if(info)
