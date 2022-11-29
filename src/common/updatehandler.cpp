@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -126,39 +126,8 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
     // Found updates - fill the HTML text for the dialog =============================
     atools::util::HtmlBuilder html(false);
 
-    html.h3(tr("Update Available"));
-
     // Show only the newest one
     const atools::util::Update& update = updates.constFirst();
-    QString channel;
-    switch(update.channel)
-    {
-      case atools::util::STABLE:
-        channel = tr("Stable Version");
-        break;
-      case atools::util::BETA:
-        channel = tr("Beta/Test Version");
-        break;
-      case atools::util::DEVELOP:
-        channel = tr("Development Version");
-        break;
-    }
-
-    html.b(tr("%1: %2").arg(channel).arg(update.version));
-
-    if(!update.url.isEmpty())
-      html.a(tr("&nbsp;&nbsp;&nbsp;&nbsp;<b>&gt;&gt; Release Information &lt;&lt;</b>"),
-             update.url, html::NO_ENTITIES | html::LINK_NO_UL);
-
-    bool hasDownload = false;
-    if(!update.download.isEmpty())
-    {
-      hasDownload = true;
-      html.a(tr("&nbsp;&nbsp;&nbsp;&nbsp;<b>&gt;&gt; Download in Web Browser &lt;&lt;</b>"),
-             update.download, html::NO_ENTITIES | html::LINK_NO_UL);
-    }
-    else
-      html.p().b(tr("No download available for this operating system.")).pEnd();
 
     if(!update.changelog.isEmpty())
       html.text(update.changelog, atools::util::html::NO_ENTITIES);
@@ -166,8 +135,8 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
     NavApp::closeSplashScreen();
 
     // Show dialog
-    UpdateDialog updateDialog(mainWindow, manual, hasDownload);
-    updateDialog.setMessage(html.getHtml(), update.download);
+    UpdateDialog updateDialog(mainWindow, manual);
+    updateDialog.setMessage(html.getHtml());
 
     // Show dialog
     updateDialog.exec();
