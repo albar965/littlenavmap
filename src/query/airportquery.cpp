@@ -290,7 +290,12 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
     // Try other codes if given as second attempt
     if(airportByIdent.isValid())
       airports.append(airportByIdent);
-    else
+
+    // Sort by distance and remove too far away in case an ident was assigned to a new airport
+    maptools::sortByDistance(airports, airportCopy.position);
+    maptools::removeByDistance(airports, airportCopy.position, MAX_FUZZY_AIRPORT_DISTANCE_METER);
+
+    if(airports.isEmpty())
     {
       // Try ICAO first on all fields (ICAO, not IATA, FAA and local)
       if(airportCopy.icao != airportCopy.ident)
@@ -306,15 +311,14 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
                                  map::AP_QUERY_ICAO | map::AP_QUERY_FAA | map::AP_QUERY_LOCAL);
     }
 
-    // Fall back to coordinate based search and look for centers withing certain distance
+    // Fall back to coordinate based search and look for centers within certain distance
     if(airports.isEmpty() && airportCopy.position.isValid())
     {
       ageo::Rect rect(airportCopy.position, ageo::nmToMeter(10.f));
 
       query::fetchObjectsForRect(rect, airportByPosQuery, [ =, &airports](atools::sql::SqlQuery *query) -> void {
         map::MapAirport obj;
-        mapTypesFactory->fillAirport(query->record(), obj, true /* complete */, navdata,
-                                     NavApp::isAirportDatabaseXPlane(navdata));
+        mapTypesFactory->fillAirport(query->record(), obj, true /* complete */, navdata, NavApp::isAirportDatabaseXPlane(navdata));
         airports.append(obj);
       });
     }
