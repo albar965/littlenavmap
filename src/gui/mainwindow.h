@@ -392,6 +392,7 @@ private:
   void showOnlineTutorials();
   void showOfflineHelp();
   void showOnlineDownloads();
+  void showChangelog();
   void showNavmapLegend();
   bool openInSkyVector();
   void clearProcedureCache();

@@ -693,6 +693,11 @@ void MainWindow::showOnlineDownloads()
   HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineDownloadsUrl, lnm::helpLanguageOnline());
 }
 
+void MainWindow::showChangelog()
+{
+  HelpHandler::openFile(this, QApplication::applicationDirPath() + QDir::separator() + "CHANGELOG.txt");
+}
+
 void MainWindow::showDonationPage()
 {
   HelpHandler::openUrlWeb(this, lnm::helpDonateUrl);
@@ -1352,6 +1357,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionHelpTutorials, &QAction::triggered, this, &MainWindow::showOnlineTutorials);
   connect(ui->actionHelpContentsOffline, &QAction::triggered, this, &MainWindow::showOfflineHelp);
   connect(ui->actionHelpDownloads, &QAction::triggered, this, &MainWindow::showOnlineDownloads);
+  connect(ui->actionHelpChangelog, &QAction::triggered, this, &MainWindow::showChangelog);
   connect(ui->actionHelpAbout, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::about);
   connect(ui->actionHelpAboutQt, &QAction::triggered, helpHandler, &atools::gui::HelpHandler::aboutQt);
   connect(ui->actionHelpCheckUpdates, &QAction::triggered, this, &MainWindow::checkForUpdates);

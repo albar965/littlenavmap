@@ -195,6 +195,8 @@
     <addaction name="actionHelpFaq"/>
     <addaction name="actionHelpDownloads"/>
     <addaction name="separator"/>
+    <addaction name="actionHelpChangelog"/>
+    <addaction name="separator"/>
     <addaction name="actionHelpAbout"/>
     <addaction name="separator"/>
     <addaction name="actionAboutMarble"/>
@@ -11901,6 +11903,21 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Remove invalid logbook entries</string>
+   </property>
+  </action>
+  <action name="actionHelpChangelog">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/help.svg</normaloff>:/littlenavmap/resources/icons/help.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Changelog</string>
+   </property>
+   <property name="toolTip">
+    <string>Open changelog in text editor</string>
+   </property>
+   <property name="statusTip">
+    <string>Open changelog in text editor</string>
    </property>
   </action>
  </widget>
