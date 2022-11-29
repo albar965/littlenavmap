@@ -3110,12 +3110,25 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
       plan.setRouteType(atools::fs::pln::HIGH_ALTITUDE);
   }
 
+  // Update internal structures - remaining tasks do not change order or number
+  route.updateIndicesAndOffsets();
+
+  // Reset airport name to display name for LNMPLN (allow to exchange plans without the internal XP names) and X-Plane FMS
+  if(options.testFlag(rf::SAVE_LNMPLN) || options.testFlag(rf::XPLANE_REPLACE_AIRPORT_IDENTS))
+  {
+    for(int i = 0; i < entries.size(); i++)
+    {
+      FlightplanEntry& entry = entries[i];
+      if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
+        // Use display ident in legs to avoid user confusion
+        entry.setIdent(route.getLegAt(i).getAirport().displayIdent());
+    }
+  }
+
   if(options.testFlag(rf::XPLANE_REPLACE_AIRPORT_IDENTS))
   {
     // Replace X-Plane waypoint idents with official ones for airports
     // XP accepts only internal codes in departure and destination fields
-    route.updateIndicesAndOffsets();
-
     for(int i = 0; i < entries.size(); i++)
     {
       FlightplanEntry& entry = entries[i];
@@ -3123,10 +3136,6 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
       if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
       {
         // All airport idents will be truncated to six characters on export
-
-        // Use display ident in legs to avoid user confusion
-        entry.setIdent(airport.displayIdent());
-
         if(i == 0 || i == entries.size() - 1)
         {
           // Determine ident for departure or destination
@@ -3157,6 +3166,10 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 
           if(ident.size() > 4)
             useAirportKeys = false;
+
+          // Use ADEP/ADES if there are any procedures - X-Plane can load this
+          if((i == 0 && route.hasAnySidProcedure()) || (i == entries.size() - 1 && route.hasAnyArrivalProcedure()))
+            useAirportKeys = true;
 
           if(i == 0)
           {
