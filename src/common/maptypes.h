@@ -1103,7 +1103,9 @@ struct MapIls
                    pos2, /* Position 2 of the feather end */
                    posmid; /* Middle position of the feather end - depends on type ILS or LOC */
   atools::geo::Rect bounding;
-  bool hasDme, hasBackcourse, hasGeometry;
+  bool hasDme, hasBackcourse,
+       hasGeometry, /* Geometry is valid */
+       corrected; /* Heading was aligned with runway due to slight difference */
 
   QString freqMHzOrChannelLocale() const;
   QString freqMHzOrChannel() const;

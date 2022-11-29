@@ -594,7 +594,7 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils, float r
   ils.provider = record.valueStr("provider", QString());
 
   ils.displayHeading = ils.heading = atools::geo::normalizeCourse(record.valueFloat("loc_heading"));
-  ils.width = record.isNull("loc_width") ? INVALID_COURSE_VALUE : record.valueFloat("loc_width");
+  ils.width = record.valueFloat("loc_width");
   ils.magvar = record.valueFloat("mag_var");
   ils.slope = record.valueFloat("gs_pitch");
 
@@ -603,17 +603,18 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils, float r
   ils.hasDme = record.valueInt("dme_range") > 0;
   ils.hasBackcourse = record.valueInt("has_backcourse") > 0;
 
+  if(ils.width < 0.1f)
+    // Update default value which is normally set in the data compiler
+    ils.width = ils.isAnyGlsRnp() ? map::DEFAULT_GLS_RNP_WIDTH_DEG : map::DEFAULT_ILS_WIDTH_DEG;
+
   if(!record.isNull("lonx") && !record.isNull("laty"))
   {
+    ils.corrected = false;
     ils.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
 
+    // Align with runway heading if given and angles are close
     if(runwayHeadingTrue < map::INVALID_HEADING_VALUE)
     {
-      // Apply workaround to mitigate alignment issues of ILS with runway in
-      // DFD compiler which provides only full-degree heading and magvar from source data
-
-      // From SQL: l.llz_bearing + l.station_declination = loc_heading, -- Magnetic to true using full integer
-
       // Adjust ILS display heading if value is really close to runway heading
       float diff = atools::geo::angleAbsDiff(ils.displayHeading, runwayHeadingTrue);
       if(diff < 1.f)
@@ -622,15 +623,17 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils, float r
         qDebug() << Q_FUNC_INFO << "Correcting ILS" << ils.ident << "diff" << diff;
 #endif
         ils.displayHeading = runwayHeadingTrue;
-      }
 
-      // Calculate the geometry
-      atools::fs::util::calculateIlsGeometry(ils.position, ils.displayHeading, ils.width, atools::fs::util::DEFAULT_FEATHER_LEN_NM,
-                                             ils.pos1, ils.pos2, ils.posmid);
+        // Calculate the geometry with slightly corrected angle
+        atools::fs::util::calculateIlsGeometry(ils.position, ils.displayHeading, ils.width, atools::fs::util::DEFAULT_FEATHER_LEN_NM,
+                                               ils.pos1, ils.pos2, ils.posmid);
+        ils.corrected = true;
+      }
     }
-    else
+
+    if(!ils.corrected)
     {
-      // Use pre-calculated geometry for high level zoom
+      // Use pre-calculated geometry for high level zoom since runway heading is not given
       if(!record.isNull("end1_lonx") && !record.isNull("end1_laty") &&
          !record.isNull("end2_lonx") && !record.isNull("end2_laty") &&
          !record.isNull("end_mid_lonx") && !record.isNull("end_mid_laty"))
@@ -639,11 +642,14 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils, float r
         ils.pos2 = Pos(record.valueFloat("end2_lonx"), record.valueFloat("end2_laty"));
         ils.posmid = Pos(record.valueFloat("end_mid_lonx"), record.valueFloat("end_mid_laty"));
       }
+      else
+        // Coordinates are not complete from database
+        atools::fs::util::calculateIlsGeometry(ils.position, ils.displayHeading, ils.width, atools::fs::util::DEFAULT_FEATHER_LEN_NM,
+                                               ils.pos1, ils.pos2, ils.posmid);
     }
   }
 
   ils.hasGeometry = ils.position.isValid() && ils.pos1.isValid() && ils.pos2.isValid() && ils.posmid.isValid();
-
   ils.bounding = Rect(LineString({ils.position, ils.pos1, ils.pos2}));
 }
 

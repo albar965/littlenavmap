@@ -182,10 +182,8 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
       context->painter->setPen(QPen(textColor, 0.5f, Qt::SolidLine, Qt::FlatCap));
       context->painter->translate(origin);
 
-      float defaultWidth = ils.isAnyGlsRnp() ? map::DEFAULT_ILS_WIDTH_DEG * 2 : map::DEFAULT_ILS_WIDTH_DEG;
-      float width = ils.width < map::INVALID_COURSE_VALUE ? ils.width : defaultWidth;
-
       // Position GLS and RNP on the botton and ILS on the top of the feather
+      float width = ils.width;
       if(ils.isAnyGlsRnp())
         width = -width;
 

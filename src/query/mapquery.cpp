@@ -325,7 +325,7 @@ map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float dist
 
         query::fetchObjectsForRect(rect, ilsByRectQuery, [ =, &ilsRes](atools::sql::SqlQuery *query) -> void {
           MapIls obj;
-          mapTypesFactory->fillIls(query->record(), obj, !NavApp::isNavdataOff());
+          mapTypesFactory->fillIls(query->record(), obj);
           ilsRes.append(obj);
         });
         maptools::removeByDistance(ilsRes, pos, atools::geo::nmToMeter(maxIlsDist));
@@ -452,7 +452,7 @@ void MapQuery::mapObjectByIdentInternal(map::MapResult& result, map::MapTypes ty
     while(ilsByIdentQuery->next())
     {
       MapIls ils;
-      mapTypesFactory->fillIls(ilsByIdentQuery->record(), ils, !NavApp::isNavdataOff());
+      mapTypesFactory->fillIls(ilsByIdentQuery->record(), ils);
       result.ils.append(ils);
     }
     maptools::sortByDistance(result.ils, sortByDistancePos);
@@ -594,7 +594,7 @@ map::MapIls MapQuery::getIlsById(int id) const
   ilsByIdQuery->bindValue(":id", id);
   ilsByIdQuery->exec();
   if(ilsByIdQuery->next())
-    mapTypesFactory->fillIls(ilsByIdQuery->record(), ils, !NavApp::isNavdataOff());
+    mapTypesFactory->fillIls(ilsByIdQuery->record(), ils);
   ilsByIdQuery->finish();
   return ils;
 }
@@ -652,7 +652,7 @@ QVector<MapIls> MapQuery::getIlsByAirportAndIdent(const QString& airportIdent, c
   while(ilsQuerySimByAirportAndIdent->next())
   {
     MapIls ils;
-    mapTypesFactory->fillIls(ilsQuerySimByAirportAndIdent->record(), ils, !NavApp::isNavdataOff());
+    mapTypesFactory->fillIls(ilsQuerySimByAirportAndIdent->record(), ils);
     ilsList.append(ils);
   }
   return ilsList;
@@ -670,7 +670,7 @@ QVector<map::MapIls> MapQuery::ilsByAirportAndRunway(const QString& airportIdent
   while(ilsQuerySimByAirportAndRw->next())
   {
     MapIls ils;
-    mapTypesFactory->fillIls(ilsQuerySimByAirportAndRw->record(), ils, !NavApp::isNavdataOff());
+    mapTypesFactory->fillIls(ilsQuerySimByAirportAndRw->record(), ils);
     ilsList.append(ils);
   }
   return ilsList;
