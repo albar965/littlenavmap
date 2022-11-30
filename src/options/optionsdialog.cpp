@@ -779,6 +779,9 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
       for(auto it = defaultOpts.mapThemeKeys.begin(); it != defaultOpts.mapThemeKeys.end(); ++it)
         it.value().clear();
 
+      // Keep the undock map window state to avoid a messed up layout after restart
+      defaultOpts.flags2.setFlag(opts2::MAP_ALLOW_UNDOCK, OptionData::instanceInternal().getFlags2().testFlag(opts2::MAP_ALLOW_UNDOCK));
+
       optionDataToWidgets(defaultOpts);
       updateWidgetStates();
 
