@@ -1004,78 +1004,86 @@ void RouteController::restoreState()
 
   routeLabel->restoreState();
 
-  // Load plan from command line or last used =============================================
-  QString flightplanFile, flightplanDescr;
-  if(!NavApp::getStartupOption(lnm::STARTUP_FLIGHTPLAN).isEmpty())
-    flightplanFile = NavApp::getStartupOption(lnm::STARTUP_FLIGHTPLAN); // Command line file
-  if(!NavApp::getStartupOption(lnm::STARTUP_FLIGHTPLAN_DESCR).isEmpty())
-    flightplanDescr = NavApp::getStartupOption(lnm::STARTUP_FLIGHTPLAN_DESCR); // Command line description
-  else if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_ROUTE))
-    flightplanFile = atools::settings::Settings::instance().valueStr(lnm::ROUTE_FILENAME); // Last used
-
-  if(!flightplanDescr.isEmpty())
-    // Parse from route description ===================================================
-    loadFlightplanRouteStr(flightplanDescr);
-  else if(!flightplanFile.isEmpty())
+  try
   {
-    // Load from file (last used or command line) ===================================================
-    QString message = atools::checkFileMsg(flightplanFile);
-    if(message.isEmpty())
+    // Load plan from command line or last used =============================================
+    QString cmdLineFlightplanFile, cmdLineFlightplanDescr;
+    if(!NavApp::getStartupOption(lnm::STARTUP_FLIGHTPLAN).isEmpty())
+      cmdLineFlightplanFile = NavApp::getStartupOption(lnm::STARTUP_FLIGHTPLAN); // Command line file
+    else if(!NavApp::getStartupOption(lnm::STARTUP_FLIGHTPLAN_DESCR).isEmpty())
+      cmdLineFlightplanDescr = NavApp::getStartupOption(lnm::STARTUP_FLIGHTPLAN_DESCR); // Command line description
+
+    if(!cmdLineFlightplanDescr.isEmpty())
+      // Parse route description from command line ===================================================
+      loadFlightplanRouteStr(cmdLineFlightplanDescr);
+    else if(!cmdLineFlightplanFile.isEmpty())
     {
-      if(atools::fs::pln::FlightplanIO::detectFormat(flightplanFile) != atools::fs::pln::NONE)
+      // Load from file from command line ===================================================
+      QString message = atools::checkFileMsg(cmdLineFlightplanFile);
+      if(message.isEmpty())
       {
-        if(!loadFlightplan(flightplanFile))
-          // Cannot be loaded - clear current filename
+        if(atools::fs::pln::FlightplanIO::detectFormat(cmdLineFlightplanFile) != atools::fs::pln::NONE)
+        {
+          if(!loadFlightplan(cmdLineFlightplanFile))
+            // Cannot be loaded - clear current filename
+            clearFlightplan();
+          // else Centered in MainWindow::mainWindowShownDelayed()
+        }
+        else
+        {
+          // Not a flight plan file
           clearFlightplan();
-        // else Centered in MainWindow::mainWindowShownDelayed()
+          NavApp::closeSplashScreen();
+          QMessageBox::warning(mainWindow, QApplication::applicationName(),
+                               tr("File \"%1\" is a not supported flight plan format or not a flight plan.").arg(cmdLineFlightplanFile));
+        }
       }
       else
       {
-        // Not a flight plan file
+        // No file or not readable
         clearFlightplan();
         NavApp::closeSplashScreen();
-        QMessageBox::warning(mainWindow, QApplication::applicationName(),
-                             tr("File \"%1\" is a not supported flight plan format or not a flight plan.").arg(flightplanFile));
+        QMessageBox::warning(mainWindow, QApplication::applicationName(), message);
       }
     }
     else
     {
-      // No file or not readable
-      clearFlightplan();
-      NavApp::closeSplashScreen();
-      QMessageBox::warning(mainWindow, QApplication::applicationName(), message);
+      // Nothing given on command line ==================================
+      if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_ROUTE))
+      {
+        QString lastUsedFlightplanFile = atools::settings::Settings::instance().valueStr(lnm::ROUTE_FILENAME);
+        QString flightplanToLoad = lastUsedFlightplanFile;
+        bool changed = false;
+
+        if(atools::checkFile(Q_FUNC_INFO, routeFilenameDefault, false /* warn */))
+        {
+          // Default file exists from last save - load it and set new file to changed
+          flightplanToLoad = routeFilenameDefault;
+          changed = true;
+        }
+
+        if(!flightplanToLoad.isEmpty())
+        {
+          Flightplan fp;
+          flightplanIO->load(fp, flightplanToLoad);
+          loadFlightplan(fp, atools::fs::pln::LNM_PLN, flightplanToLoad, changed, false /* adjustAltitude */, false /* undo */);
+
+          routeFilename = lastUsedFlightplanFile;
+        }
+      }
     }
   }
-  else
+  catch(atools::Exception& e)
   {
-    if(atools::checkFile(Q_FUNC_INFO, routeFilenameDefault, false /* warn */))
-    {
-      try
-      {
-        Flightplan fp;
-        atools::fs::pln::FileFormat format = flightplanIO->load(fp, routeFilenameDefault);
-
-        if(format == atools::fs::pln::LNM_PLN)
-          loadFlightplan(fp, format, routeFilenameDefault, true /*changed*/, false /* adjustAltitude */, false /* undo */);
-        else
-          clearFlightplan();
-
-        // Have to reset filename again
-        routeFilename.clear();
-      }
-      catch(atools::Exception& e)
-      {
-        NavApp::closeSplashScreen();
-        atools::gui::ErrorHandler(mainWindow).handleException(e);
-      }
-      catch(...)
-      {
-        NavApp::closeSplashScreen();
-        atools::gui::ErrorHandler(mainWindow).handleUnknownException();
-      }
-    }
-    else
-      clearFlightplan();
+    NavApp::closeSplashScreen();
+    atools::gui::ErrorHandler(mainWindow).handleException(e);
+    clearFlightplan();
+  }
+  catch(...)
+  {
+    NavApp::closeSplashScreen();
+    atools::gui::ErrorHandler(mainWindow).handleUnknownException();
+    clearFlightplan();
   }
 
   if(route.isEmpty())
@@ -1628,12 +1636,15 @@ void RouteController::saveFlightplanLnmDefault()
 {
   qDebug() << Q_FUNC_INFO << routeFilenameDefault;
 
-  if(route.isEmpty())
-    // No flight plan - delete to avoid reloading
-    QFile::remove(routeFilenameDefault);
-  else
+  if(OptionData::instance().getFlags().testFlag(opts::STARTUP_LOAD_ROUTE) && !route.isEmpty() && hasChanged())
     // Save plan to default file
     saveFlightplanLnmInternal(routeFilenameDefault, true /* silent */);
+  else if(QFileInfo::exists(routeFilenameDefault))
+  {
+    // No flight plan - delete to avoid reloading
+    bool deleted = QFile::remove(routeFilenameDefault);
+    qDebug() << Q_FUNC_INFO << "Deleted" << routeFilenameDefault << deleted;
+  }
 }
 
 bool RouteController::saveFlightplanLnmAs(const QString& filename)
