@@ -251,7 +251,7 @@ bool MapPaintLayer::noRender() const
     return viewport->viewLatLonAltBox().width(GeoDataCoordinates::Degree) >= 350.;
   else if(viewport->projection() == Marble::Spherical)
     // Limit drawing to maximum zoom distance
-    return mapWidget->distance() > layer::NO_DRAW_LIMIT_KM;
+    return mapWidget->isDistanceCutOff();
 
   return false;
 }
@@ -505,7 +505,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
       // Ship below other navaids and airports
       mapPainterShip->render();
 
-      if(mapWidget->distance() < layer::DISTANCE_CUT_OFF_LIMIT_KM)
+      if(!mapWidget->isDistanceCutOff())
       {
         if(!context.isObjectOverflow())
           mapPainterAirspace->render();

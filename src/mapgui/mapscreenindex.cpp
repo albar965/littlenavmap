@@ -217,7 +217,7 @@ void MapScreenIndex::updateAirspaceScreenGeometry(const Marble::GeoDataLatLonBox
     return;
 
   // Do not put into index if nothing is drawn
-  if(mapWidget->distance() >= layer::DISTANCE_CUT_OFF_LIMIT_KM)
+  if(mapWidget->isDistanceCutOff())
     return;
 
   // Get geometry from visible airspaces
@@ -239,7 +239,7 @@ void MapScreenIndex::updateIlsScreenGeometry(const Marble::GeoDataLatLonBox& cur
     return;
 
   // Do not put into index if nothing is drawn
-  if(mapWidget->distance() >= layer::DISTANCE_CUT_OFF_LIMIT_KM)
+  if(mapWidget->isDistanceCutOff())
     return;
 
   const MapScale *scale = paintLayer->getMapScale();

@@ -495,7 +495,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
       {
         drawLineString(painter, geo);
 
-        if(context->distanceKm < layer::DISTANCE_CUT_OFF_LIMIT_KM)
+        if(!mapPaintWidget->isDistanceCutOff())
         {
           // Draw waypoint symbols and text for route preview =========
           const QStringList& names = visibleRouteTexts.at(i);
@@ -515,7 +515,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
       }
     }
 
-    if(context->distanceKm < layer::DISTANCE_CUT_OFF_LIMIT_KM)
+    if(!mapPaintWidget->isDistanceCutOff())
     {
       painter->setPen(QPen(routeLogEntryOutlineColor, (outerlinewidth - lineWidth) / 2., Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
       painter->setBrush(Qt::white);
@@ -534,7 +534,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   }
 
   // Draw track ==========================================================================
-  if(context->distanceKm < layer::DISTANCE_CUT_OFF_LIMIT_KM)
+  if(!mapPaintWidget->isDistanceCutOff())
   {
     if(context->objectDisplayTypes & map::LOGBOOK_TRACK && !visibleTrackGeometries.isEmpty())
     {
@@ -587,7 +587,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
     }
 
     // Draw line text ==========================================================================
-    if(context->distanceKm < layer::DISTANCE_CUT_OFF_LIMIT_KM)
+    if(!mapPaintWidget->isDistanceCutOff())
     {
       context->szFont(context->textSizeRangeUserFeature);
       painter->setBackground(mapcolors::routeTextBackgroundColor);
@@ -620,7 +620,7 @@ void MapPainterMark::paintLogEntries(const QList<map::MapLogbookEntry>& entries)
   }
 
   // Draw airport symbols and text always ==========================================================================
-  if(context->distanceKm < layer::DISTANCE_CUT_OFF_LIMIT_KM)
+  if(!mapPaintWidget->isDistanceCutOff())
   {
     float x, y;
     textflags::TextFlags flags = context->airportTextFlagsRoute(false /* draw as route */, true /* draw as log */);

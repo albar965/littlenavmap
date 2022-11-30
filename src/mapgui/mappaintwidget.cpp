@@ -50,6 +50,10 @@ const static double MINIMUM_DISTANCE_KM = 0.05;
 const static double MAXIMUM_DISTANCE_KM = 6000.;
 const static int MAXIMUM_ZOOM = 1120;
 
+/* Do not show anything above this zoom distance except user features */
+constexpr float DISTANCE_CUT_OFF_LIMIT_MERCATOR_KM = 10000.f;
+constexpr float DISTANCE_CUT_OFF_LIMIT_SPHERICAL_KM = 8000.f;
+
 // Placemark files to remove or add
 const static QStringList PLACEMARK_FILES_CACHE({
   "baseplacemarks.cache", "boundaryplacemarks.cache", "cityplacemarks.cache", "elevplacemarks.cache",
@@ -424,6 +428,14 @@ QVector<map::MapObjectRef> *MapPaintWidget::getRouteDrawnNavaids()
 bool MapPaintWidget::isPaintOverflow() const
 {
   return paintLayer->isObjectOverflow() || paintLayer->isQueryOverflow();
+}
+
+bool MapPaintWidget::isDistanceCutOff() const
+{
+  if(projection() == Marble::Spherical)
+    return distance() > DISTANCE_CUT_OFF_LIMIT_SPHERICAL_KM;
+  else
+    return distance() > DISTANCE_CUT_OFF_LIMIT_MERCATOR_KM;
 }
 
 void MapPaintWidget::setShowMapObjects(map::MapTypes type, map::MapTypes mask)

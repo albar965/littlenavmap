@@ -92,7 +92,7 @@ void MapPainterRoute::render()
 
 QString MapPainterRoute::buildLegText(const RouteLeg& leg)
 {
-  if(context->distanceKm > layer::DISTANCE_CUT_OFF_LIMIT_KM)
+  if(mapPaintWidget->isDistanceCutOff())
     return QString();
 
   return leg.buildLegText(context->dOptRoute(optsd::ROUTE_DISTANCE), context->dOptRoute(optsd::ROUTE_MAG_COURSE),
@@ -101,7 +101,7 @@ QString MapPainterRoute::buildLegText(const RouteLeg& leg)
 
 QString MapPainterRoute::buildLegText(float distance, float courseMag, float courseTrue)
 {
-  if(context->distanceKm > layer::DISTANCE_CUT_OFF_LIMIT_KM)
+  if(mapPaintWidget->isDistanceCutOff())
     return QString();
 
   if(!context->dOptRoute(optsd::ROUTE_DISTANCE))
@@ -184,7 +184,7 @@ void MapPainterRoute::paintRoute()
   {
     // Remember last point across procedures to avoid overlaying text
     proc::MapProcedureLeg lastLegPoint;
-    if(context->distanceKm < layer::DISTANCE_CUT_OFF_LIMIT_KM)
+    if(!mapPaintWidget->isDistanceCutOff())
     {
       // Draw in flying order
       const QColor& flightplanProcedureColor = OptionData::instance().getFlightplanProcedureColor();

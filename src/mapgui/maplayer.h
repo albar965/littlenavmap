@@ -28,11 +28,6 @@ class XmlStream;
 
 namespace layer {
 
-/* Do not show anything above this zoom distance except user features */
-constexpr float DISTANCE_CUT_OFF_LIMIT_KM = 4000.f;
-
-/* Stop all drawing, tooltips and interaction above this limit */
-constexpr float NO_DRAW_LIMIT_KM = 8000.f;
 
 /* Ships considered large above this model radius in feet */
 constexpr int LARGE_SHIP_SIZE = 150;

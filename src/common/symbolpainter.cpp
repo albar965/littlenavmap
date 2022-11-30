@@ -248,9 +248,10 @@ void SymbolPainter::drawAirportSymbol(QPainter *painter, const map::MapAirport& 
   if(airport.addon() && addonHighlight)
   {
     // Draw addon underlay ==========================
-    float addonRadius = radius + atools::minmax(3.8f, 4.8f, radius * 0.55f);
     painter->setBrush(mapcolors::addonAirportBackgroundColor);
     painter->setPen(QPen(mapcolors::addonAirportFrameColor));
+
+    float addonRadius = radius + atools::minmax(3.f, 6.f, radius);
     painter->drawEllipse(QPointF(x, y), addonRadius, addonRadius);
   }
 

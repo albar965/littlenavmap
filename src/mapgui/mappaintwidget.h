@@ -417,6 +417,9 @@ public:
   /* Too many objects on map */
   bool isPaintOverflow() const;
 
+  /* Do not show anything above this zoom distance except user features */
+  bool isDistanceCutOff() const;
+
 signals:
   /* Emitted whenever the result exceeds the limit clause in the queries */
   void resultTruncated();
