@@ -546,6 +546,10 @@ void ProcedureSearch::fillProcedureTreeWidget()
       // Collect all procedures from the database
       for(SqlRecord procedureRec : *procedureRecords)
       {
+#ifdef DEBUG_INFORMATION_PROCSEARCH
+        qDebug() << Q_FUNC_INFO << "procedureRec " << procedureRec;
+#endif
+
         proc::MapProcedureTypes type = buildTypeFromProcedureRec(procedureRec);
 
         bool filterOk = false;
@@ -567,8 +571,10 @@ void ProcedureSearch::fillProcedureTreeWidget()
         if(type & proc::PROCEDURE_SID_STAR_ALL)
           atools::fs::util::sidStarMultiRunways(runwayNames, procedureRec.valueStr("arinc_name", QString()), allRunwayText,
                                                 &sidStarRunways, &sidStarArincNames);
+        QString rwName;
+        if(!procedureRec.valueStr("runway_name").isEmpty())
+          rwName = atools::fs::util::runwayBestFit(procedureRec.valueStr("runway_name"), runwayNames);
 
-        QString rwName = atools::fs::util::runwayBestFit(procedureRec.valueStr("runway_name"), runwayNames);
         QString rwNamefilter = ui->comboBoxProcedureRunwayFilter->currentData(Qt::UserRole).toString();
         int rwNameIndex = ui->comboBoxProcedureRunwayFilter->currentIndex();
 
@@ -608,6 +614,10 @@ void ProcedureSearch::fillProcedureTreeWidget()
 
       for(const SqlRecord& recApp : sortedProcedures)
       {
+#ifdef DEBUG_INFORMATION_PROCSEARCH
+        qDebug() << Q_FUNC_INFO << "recApp " << recApp;
+#endif
+
         proc::MapProcedureTypes type = buildTypeFromProcedureRec(recApp);
 
         // Check ident filter ==========================================
