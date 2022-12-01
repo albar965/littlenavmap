@@ -544,7 +544,7 @@ int ProfileWidget::getFlightplanAltY() const
 bool ProfileWidget::hasValidRouteForDisplay() const
 {
   const Route& route = NavApp::getRouteConst();
-  return widgetVisible && !legList->elevationLegs.isEmpty() && route.getSizeWithoutAlternates() >= 2 &&
+  return !legList->elevationLegs.isEmpty() && route.getSizeWithoutAlternates() >= 2 &&
          route.getAltitudeLegs().size() >= 2 &&
          route.size() == route.getAltitudeLegs().size();
 }
@@ -1789,7 +1789,7 @@ QStringList ProfileWidget::textsAndColorForLeg(QColor& color, bool& procSymbol, 
 /* Update signal from Marble elevation model */
 void ProfileWidget::elevationUpdateAvailable()
 {
-  if(!widgetVisible || databaseLoadStatus)
+  if(databaseLoadStatus)
     return;
 
   // Do not terminate thread here since this can lead to starving updates
@@ -1804,7 +1804,7 @@ void ProfileWidget::routeAltitudeChanged(int altitudeFeet)
 {
   Q_UNUSED(altitudeFeet)
 
-  if(!widgetVisible || databaseLoadStatus)
+  if(databaseLoadStatus)
     return;
 
   routeChanged(true, false);
@@ -1827,7 +1827,7 @@ void ProfileWidget::windUpdated()
 
 void ProfileWidget::routeChanged(bool geometryChanged, bool newFlightPlan)
 {
-  if(!widgetVisible || databaseLoadStatus)
+  if(databaseLoadStatus)
     return;
 
   scrollArea->routeChanged(geometryChanged);
@@ -1851,7 +1851,7 @@ void ProfileWidget::routeChanged(bool geometryChanged, bool newFlightPlan)
 /* Called by updateTimer after any route or elevation updates and starts the thread */
 void ProfileWidget::updateTimeout()
 {
-  if(!widgetVisible || databaseLoadStatus)
+  if(databaseLoadStatus)
     return;
 
   // Terminate and wait for thread
@@ -1873,7 +1873,7 @@ void ProfileWidget::updateTimeout()
 /* Called by watcher when the thread is finished */
 void ProfileWidget::updateThreadFinished()
 {
-  if(!widgetVisible || databaseLoadStatus)
+  if(databaseLoadStatus)
     return;
 
   if(!terminateThreadSignal)
@@ -2083,17 +2083,12 @@ void ProfileWidget::showEvent(QShowEvent *)
     resize(ui->scrollAreaProfile->viewport()->size());
 
   widgetVisible = true;
-  // Start update immediately
-  // Calls ProfileWidget::updateTimeout()
-  updateTimer->start(ROUTE_CHANGE_UPDATE_TIMEOUT_MS);
 }
 
 void ProfileWidget::hideEvent(QHideEvent *)
 {
   // Stop all updates
   widgetVisible = false;
-  updateTimer->stop();
-  terminateThread();
 }
 
 atools::geo::Pos ProfileWidget::calculatePos(int x)
