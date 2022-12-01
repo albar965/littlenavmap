@@ -932,10 +932,16 @@ void RouteMultiExportDialog::tableContextMenu(const QPoint&)
   menu.addAction(ui->actionDecreaseTextSize);
 
 #ifdef DEBUG_INFORMATION_MULTIEXPORT
-  QAction *debugAction = new QAction("Init debug", &menu);
-  menu.addAction(debugAction);
   menu.addSeparator();
-  menu.addAction(debugAction);
+
+  QAction *initDebugAction = new QAction("Debug Init", &menu);
+  menu.addAction(initDebugAction);
+
+  QAction *allDebugAction = new QAction("Debug Select all", &menu);
+  menu.addAction(allDebugAction);
+
+  QAction *noneDebugAction = new QAction("Debug Select none", &menu);
+  menu.addAction(noneDebugAction);
 #endif
 
   QAction *action = menu.exec(menuPos);
@@ -944,8 +950,18 @@ void RouteMultiExportDialog::tableContextMenu(const QPoint&)
   if(action == ui->actionResetPathsAndSelection)
     resetPathsAndSelection();
 #ifdef DEBUG_INFORMATION_MULTIEXPORT
-  else if(action == debugAction)
+  else if(action == initDebugAction)
     resetPathsAndSelectionDebug();
+  else if(action == allDebugAction)
+  {
+    for(auto it = selectCheckBoxIndex.begin(); it != selectCheckBoxIndex.end(); ++it)
+      it.value()->setChecked(true);
+  }
+  else if(action == noneDebugAction)
+  {
+    for(auto it = selectCheckBoxIndex.begin(); it != selectCheckBoxIndex.end(); ++it)
+      it.value()->setChecked(false);
+  }
 #endif
   else if(action == ui->actionResetView)
   {
