@@ -167,7 +167,7 @@ atools::geo::Pos RouteAltitude::getTopOfDescentPos() const
 {
   // Avoid any invalid points near destination
   if(isEmpty() || !(distanceTopOfDescent < map::INVALID_DISTANCE_VALUE) ||
-     distanceTopOfDescent > route->getTotalDistance() - 0.2f ||
+     distanceTopOfDescent > route->getTotalDistance() ||
      legIndexTopOfDescent > map::INVALID_INDEX_VALUE / 2)
     return ageo::EMPTY_POS;
   else
@@ -184,7 +184,7 @@ atools::geo::Pos RouteAltitude::getTopOfDescentPos() const
 atools::geo::Pos RouteAltitude::getTopOfClimbPos() const
 {
   // Avoid any invalid points near departure
-  if(isEmpty() || !(distanceTopOfClimb < map::INVALID_DISTANCE_VALUE) || distanceTopOfClimb < 0.2f ||
+  if(isEmpty() || !(distanceTopOfClimb < map::INVALID_DISTANCE_VALUE) || distanceTopOfClimb < 0.f ||
      legIndexTopOfClimb > map::INVALID_INDEX_VALUE / 2)
     return ageo::EMPTY_POS;
   else

@@ -1551,7 +1551,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         if(!optionData.getFlags2().testFlag(opts2::MAP_ROUTE_DIM_PASSED) ||
            activeRouteLeg == map::INVALID_INDEX_VALUE || route.getTopOfClimbLegIndex() > activeRouteLeg - 1)
         {
-          if(tocDist > 0.2f)
+          if(tocDist > 0.f)
           {
             int tocX = distanceX(altitudeLegs.getTopOfClimbDistance());
             if(tocX < map::INVALID_INDEX_VALUE)
@@ -1568,7 +1568,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         if(!optionData.getFlags2().testFlag(opts2::MAP_ROUTE_DIM_PASSED) ||
            activeRouteLeg == map::INVALID_INDEX_VALUE || route.getTopOfDescentLegIndex() > activeRouteLeg - 1)
         {
-          if(todDist < route.getTotalDistance() - 0.2f)
+          if(todDist < route.getTotalDistance())
           {
             int todX = distanceX(altitudeLegs.getTopOfDescentDistance());
             if(todX < map::INVALID_INDEX_VALUE)

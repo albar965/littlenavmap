@@ -431,7 +431,7 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
     {
       // Find destination airport by counting backwards until entry is no alternate
       int destIndex = entries.size() - 1;
-      while(entries.at(destIndex).getFlags().testFlag(atools::fs::pln::entry::ALTERNATE))
+      while(entries.at(destIndex).getFlags().testFlag(atools::fs::pln::entry::ALTERNATE) && destIndex > 0)
         destIndex--;
 
       // Update altitude for departure and destination entries
