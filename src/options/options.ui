@@ -5379,7 +5379,7 @@ The &quot;Save as&quot; dialog will show up instead of overwriting the current f
                   <string>&amp;Avoid overwriting Flight Plan with not matching departure and destination</string>
                  </property>
                  <property name="checked">
-                  <bool>false</bool>
+                  <bool>true</bool>
                  </property>
                 </widget>
                </item>
