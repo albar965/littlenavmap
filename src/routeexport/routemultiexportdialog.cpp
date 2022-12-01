@@ -273,9 +273,11 @@ int RouteMultiExportDialog::exec()
   // Update table
   updateModel();
 
+  // Have to reapply table formatting after fill
+  atools::gui::WidgetState(lnm::ROUTE_EXPORT_DIALOG, false).restore(ui->tableViewRouteExport);
+
   int retval = QDialog::exec();
   formatMapDialog->updatePathErrors();
-  saveDialogState();
   return retval;
 }
 
@@ -303,8 +305,7 @@ void RouteMultiExportDialog::buttonBoxClicked(QAbstractButton *button)
     QDialog::reject();
   }
   else if(button == ui->buttonBoxRouteExport->button(QDialogButtonBox::Help))
-    atools::gui::HelpHandler::openHelpUrlWeb(parentWidget(), lnm::helpOnlineUrl + "ROUTEEXPORTALL.html",
-                                             lnm::helpLanguageOnline());
+    atools::gui::HelpHandler::openHelpUrlWeb(parentWidget(), lnm::helpOnlineUrl + "ROUTEEXPORTALL.html", lnm::helpLanguageOnline());
 
 #ifdef DEBUG_INFORMATION
   for(auto it = formatMapDialog->constBegin(); it != formatMapDialog->constEnd(); ++it)
