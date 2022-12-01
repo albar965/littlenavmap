@@ -94,7 +94,6 @@ void RouteLeg::createCopyFromProcedureLeg(int entryIndex, const RouteLeg& leg, c
 
   updateMagvar(prevLeg);
   updateDistanceAndCourse(entryIndex, prevLeg);
-
 }
 
 void RouteLeg::createFromProcedureLeg(int entryIndex, const proc::MapProcedureLeg& leg, const RouteLeg *prevLeg)
@@ -406,20 +405,15 @@ void RouteLeg::updateMagvar(const RouteLeg *prevLeg)
     magvarStart = magvarEnd;
 }
 
-void RouteLeg::updateAltitude(atools::fs::pln::FlightplanEntry *flightplanEntry)
+void RouteLeg::updateDepartAndDestAltitude(atools::fs::pln::FlightplanEntry *flightplanEntry)
 {
   // Update altitude for all waypoint types having no altitude information
   // Set to ground if not available
   atools::fs::pln::entry::WaypointType wptype = flightplanEntry->getWaypointType();
   if(wptype == atools::fs::pln::entry::USER || wptype == atools::fs::pln::entry::WAYPOINT || // These never have altitude
-     // VOR and NDB in MSFS have not altitude assigned
+     // VOR and NDB in MSFS have no altitude assigned
      ((wptype == atools::fs::pln::entry::VOR || wptype == atools::fs::pln::entry::NDB) && atools::almostEqual(getAltitude(), 0.f)))
-  {
-    if(NavApp::isGlobeOfflineProvider())
-      flightplanEntry->setAltitude(NavApp::getElevationProvider()->getElevationFt(getFlightplanEntry()->getPosition()));
-    else
-      flightplanEntry->setAltitude(0.f);
-  }
+    flightplanEntry->setAltitude(NavApp::getElevationProvider()->getElevationFt(getFlightplanEntry()->getPosition()));
   else
     flightplanEntry->setAltitude(getAltitude());
 }
@@ -429,7 +423,22 @@ void RouteLeg::updateDistanceAndCourse(int entryIndex, const RouteLeg *prevLeg)
   index = entryIndex;
 
   if(!isAnyProcedure())
-    updateAltitude(getFlightplanEntry());
+  {
+    // Update the altitude in the flight plan entry
+    const atools::fs::pln::FlightplanEntryListType& entries = flightplan->getEntries();
+
+    if(!entries.isEmpty())
+    {
+      // Find destination airport by counting backwards until entry is no alternate
+      int destIndex = entries.size() - 1;
+      while(entries.at(destIndex).getFlags().testFlag(atools::fs::pln::entry::ALTERNATE))
+        destIndex--;
+
+      // Update altitude for departure and destination entries
+      if(entryIndex == 0 || entryIndex == destIndex)
+        updateDepartAndDestAltitude(getFlightplanEntry());
+    }
+  }
 
   if(prevLeg != nullptr)
   {

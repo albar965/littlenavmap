@@ -399,7 +399,7 @@ private:
   void assignUser(atools::fs::pln::FlightplanEntry *flightplanEntry);
 
   /* Update altitude in flight plan for waypoints, user wapoints and VOR and NDB having no altitude. */
-  void updateAltitude(atools::fs::pln::FlightplanEntry *flightplanEntry);
+  void updateDepartAndDestAltitude(atools::fs::pln::FlightplanEntry *flightplanEntry);
 
   /* Parent flight plan */
   atools::fs::pln::Flightplan *flightplan = nullptr;

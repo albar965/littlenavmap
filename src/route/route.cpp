@@ -3073,11 +3073,9 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
 
         if(!airportIdent.isEmpty())
           entry.setAirport(airportIdent);
-      }
-    }
-
-    // Airways are updated in route controller
-
+      } // for(FlightplanEntry& entry : entries)
+    } // if(msfs)
+      // Airways are updated in route controller
   } // if(saveApproachWp || saveSidStarWp || msfs)
 
   if(options.testFlag(rf::FIX_CIRCLETOLAND))
@@ -3197,10 +3195,10 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
               // DES
               plan.getProperties().insert(atools::fs::pln::AIRPORT_DESTINATION_NO_AIRPORT, QString());
           }
-        }
-      }
-    }
-  }
+        } // if(i == 0 || i == entries.size() - 1)
+      } // if(entry.getWaypointType() == atools::fs::pln::entry::AIRPORT)
+    } // for(int i = 0; i < entries.size(); i++)
+  } // if(options.testFlag(rf::XPLANE_REPLACE_AIRPORT_IDENTS))
 
   if(options.testFlag(rf::ISG_USER_WP_NAMES))
   {
