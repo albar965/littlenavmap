@@ -662,6 +662,7 @@ void MainWindow::updateClock() const
   timeLabel->setToolTip(tr("Day of month and UTC time.\n%1\nLocal: %2")
                         .arg(QDateTime::currentDateTimeUtc().toString())
                         .arg(QDateTime::currentDateTime().toString()));
+  timeLabel->setMinimumWidth(timeLabel->width());
 }
 
 /* Show map legend and bring information dock to front */
@@ -858,14 +859,11 @@ void MainWindow::setupUi()
 
   // ==============================================================
   // Create labels for the statusbar
-  Qt::AlignmentFlag align = Qt::AlignCenter;
-  QFrame::Shadow shadow = QFrame::Sunken;
-  QFrame::Shape shape = QFrame::StyledPanel;
-
   connectStatusLabel = new QLabel();
   connectStatusLabel->setText(tr("Not connected."));
   connectStatusLabel->setToolTip(tr("Simulator connection status."));
   ui->statusBar->addPermanentWidget(connectStatusLabel);
+  connectStatusLabel->setMinimumWidth(connectStatusLabel->width());
 
   mapVisibleLabel = new QLabel();
   ui->statusBar->addPermanentWidget(mapVisibleLabel);
@@ -891,14 +889,6 @@ void MainWindow::setupUi()
   ui->statusBar->addPermanentWidget(mapMagvarLabel);
 
   timeLabel = new QLabel();
-  timeLabel->setAlignment(align);
-  timeLabel->setFrameShadow(shadow);
-  timeLabel->setFrameShape(shape);
-#ifdef Q_OS_MACOS
-  timeLabel->setMinimumWidth(60);
-#else
-  timeLabel->setMinimumWidth(55);
-#endif
   timeLabel->setToolTip(tr("Day of month and UTC time."));
   ui->statusBar->addPermanentWidget(timeLabel);
 
@@ -957,33 +947,28 @@ void MainWindow::updateStatusBarStyle()
 #endif
 
   connectStatusLabel->setAlignment(align);
-  connectStatusLabel->setMinimumWidth(100);
+  connectStatusLabel->setMinimumWidth(80);
 
   mapVisibleLabel->setAlignment(align);
-  mapVisibleLabel->setMinimumWidth(100);
+  mapVisibleLabel->setMinimumWidth(80);
 
   mapDetailLabel->setAlignment(align);
-  mapDetailLabel->setMinimumWidth(100);
+  mapDetailLabel->setMinimumWidth(80);
 
   mapRenderStatusLabel->setAlignment(align);
-  mapRenderStatusLabel->setMinimumWidth(100);
+  mapRenderStatusLabel->setMinimumWidth(80);
 
   mapDistanceLabel->setAlignment(align);
-  mapDistanceLabel->setMinimumWidth(60);
+  mapDistanceLabel->setMinimumWidth(80);
 
   mapPositionLabel->setAlignment(align);
-  mapPositionLabel->setMinimumWidth(240);
+  mapPositionLabel->setMinimumWidth(80);
 
   mapMagvarLabel->setAlignment(align);
-  mapMagvarLabel->setMinimumWidth(40);
+  mapMagvarLabel->setMinimumWidth(30);
 
   timeLabel->setAlignment(align);
-#ifdef Q_OS_MACOS
-  timeLabel->setMinimumWidth(60);
-#else
-  timeLabel->setMinimumWidth(55);
-#endif
-
+  timeLabel->setMinimumWidth(40);
 }
 
 void MainWindow::clearProcedureCache()
@@ -1833,6 +1818,7 @@ void MainWindow::updateConnectionStatusMessageText()
   else
     connectStatusLabel->setToolTip(tr("Simulator:\n%1\n\nOnline Network:\n%2").
                                    arg(connectionStatusTooltip).arg(onlineConnectionStatusTooltip));
+  connectStatusLabel->setMinimumWidth(connectStatusLabel->width());
 }
 
 /* Updates label and tooltip for objects shown on map */
@@ -1840,6 +1826,7 @@ void MainWindow::setMapObjectsShownMessageText(const QString& text, const QStrin
 {
   mapVisibleLabel->setText(text);
   mapVisibleLabel->setToolTip(tooltipText);
+  mapVisibleLabel->setMinimumWidth(mapVisibleLabel->width());
 }
 
 const ElevationModel *MainWindow::getElevationModel()
@@ -1855,6 +1842,7 @@ void MainWindow::resultTruncated()
                                  "Display might be incomplete.\n"
                                  "Reduce map details in the \"View\" menu.",
                                  "Keep menu item in sync with menu translation"));
+  mapVisibleLabel->setMinimumWidth(mapVisibleLabel->width());
 }
 
 void MainWindow::distanceChanged()
@@ -1875,6 +1863,7 @@ void MainWindow::distanceChanged()
 #endif
 
   mapDistanceLabel->setText(text);
+  mapDistanceLabel->setMinimumWidth(mapDistanceLabel->width());
 }
 
 void MainWindow::renderStatusReset()
@@ -1903,6 +1892,7 @@ void MainWindow::renderStatusUpdateLabel(RenderStatus status, bool forceUpdate)
         break;
     }
     lastRenderStatus = status;
+    mapRenderStatusLabel->setMinimumWidth(mapRenderStatusLabel->width());
   }
 }
 
@@ -1947,16 +1937,19 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
 #endif
 
     mapMagvarLabel->setText(magVarText);
+    mapMagvarLabel->setMinimumWidth(mapMagvarLabel->width());
 
 #ifdef DEBUG_INFORMATION
     text.append(QString(" [%1,%2]").arg(x).arg(y));
 #endif
 
     mapPositionLabel->setText(text);
+    mapPositionLabel->setMinimumWidth(mapPositionLabel->width());
   }
   else
   {
     mapPositionLabel->setText(tr("No position"));
+    mapPositionLabel->setMinimumWidth(mapPositionLabel->width());
     mapMagvarLabel->clear();
   }
 }
@@ -3095,6 +3088,7 @@ void MainWindow::statusMessageChanged(const QString& text)
 void MainWindow::setDetailLabelText(const QString& text)
 {
   mapDetailLabel->setText(text);
+  mapDetailLabel->setMinimumWidth(mapDetailLabel->width());
 }
 
 /* Called by window shown event when the main window is visible the first time */
@@ -3360,6 +3354,17 @@ void MainWindow::mainWindowShownDelayed()
 
   // Update the information display later delayed to avoid long loading times due to weather timeout
   QTimer::singleShot(50, infoController, &InfoController::restoreInformation);
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << "mapDistanceLabel->size()" << mapDistanceLabel->size();
+  qDebug() << "mapPositionLabel->size()" << mapPositionLabel->size();
+  qDebug() << "mapMagvarLabel->size()" << mapMagvarLabel->size();
+  qDebug() << "mapRenderStatusLabel->size()" << mapRenderStatusLabel->size();
+  qDebug() << "mapDetailLabel->size()" << mapDetailLabel->size();
+  qDebug() << "mapVisibleLabel->size()" << mapVisibleLabel->size();
+  qDebug() << "connectStatusLabel->size()" << connectStatusLabel->size();
+  qDebug() << "timeLabel->size()" << timeLabel->size();
+#endif
 }
 
 void MainWindow::runDirToolManual()
