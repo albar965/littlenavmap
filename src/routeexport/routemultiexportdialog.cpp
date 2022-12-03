@@ -273,9 +273,6 @@ int RouteMultiExportDialog::exec()
   // Update table
   updateModel();
 
-  // Have to reapply table formatting after fill
-  atools::gui::WidgetState(lnm::ROUTE_EXPORT_DIALOG, false).restore(ui->tableViewRouteExport);
-
   int retval = QDialog::exec();
   formatMapDialog->updatePathErrors();
   return retval;
@@ -607,9 +604,6 @@ void RouteMultiExportDialog::updateModel()
     row++;
   }
 
-  // Reload layout
-  atools::gui::WidgetState(lnm::ROUTE_EXPORT_DIALOG, false).restore(ui->tableViewRouteExport);
-
   // No moving of first columns
   ui->tableViewRouteExport->horizontalHeader()->setSectionResizeMode(BUTTONS, QHeaderView::ResizeToContents);
 
@@ -622,6 +616,10 @@ void RouteMultiExportDialog::updateModel()
   changingTable = false;
 
   updateTableColors();
+
+  // Reload layout
+  atools::gui::WidgetState(lnm::ROUTE_EXPORT_DIALOG, false).restore(ui->tableViewRouteExport);
+
   updateLabel();
   updateActions();
 }
