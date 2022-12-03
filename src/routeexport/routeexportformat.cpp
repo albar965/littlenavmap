@@ -381,10 +381,12 @@ void RouteExportFormatMap::updateDefaultPaths()
     xpFilesPath12 = documents;
 
   // Get MSFS files path (LocalState) ===========================
-  // .../Packages/Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalState/
-  QString msfsFilesPath = NavApp::getSimulatorFilesPathBest({FsPaths::MSFS});
-  if(msfsFilesPath.isEmpty())
-    msfsFilesPath = documents;
+  // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalState
+  // Steam uses top level as path
+  // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator
+  QString msfsLocalStatePath = NavApp::getSimulatorFilesPathBest({FsPaths::MSFS});
+  if(msfsLocalStatePath.isEmpty())
+    msfsLocalStatePath = documents;
 
   // .../Packages/Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/
   QString msfsBasePath = NavApp::getSimulatorBasePathBest({FsPaths::MSFS});
@@ -449,6 +451,25 @@ void RouteExportFormatMap::updateDefaultPaths()
   atools::settings::Settings& settings = atools::settings::Settings::instance();
   QString lnmplnFiles = settings.valueStr("Route/LnmPlnFileDialogDir", documents);
 
+  // Build IniBuilds export path
+  QString iniBuildsMsfsPath;
+  switch(FsPaths::getMsfsInstallType())
+  {
+    case atools::fs::FsPaths::MSFS_INSTALL_NONE:
+      break;
+
+    case atools::fs::FsPaths::MSFS_INSTALL_ONLINE:
+    case atools::fs::FsPaths::MSFS_INSTALL_BOXED: // Unknown
+      // C:\Users\YOURUSERNAME\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalState\packages\microsoft-aircraft-a310-300\work\flightplans
+      iniBuildsMsfsPath = msfsLocalStatePath % SEP % "packages" % SEP % "microsoft-aircraft-a310-300" % SEP % "work" % SEP % "flightplans";
+      break;
+
+    case atools::fs::FsPaths::MSFS_INSTALL_STEAM:
+      // C:\Users\YOURUSERNAME\AppData\Roaming\Microsoft Flight Simulator\Packages\microsoft-aircraft-a310-300\work\flightplans
+      iniBuildsMsfsPath = msfsLocalStatePath % SEP % "Packages" % SEP % "microsoft-aircraft-a310-300" % SEP % "work" % SEP % "flightplans";
+      break;
+  }
+
   using namespace rexp;
 
 #define DP setDefaultPath
@@ -457,7 +478,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   /* *INDENT-OFF* */
   (*this)[LNMPLN      ].DP(lnmplnFiles);
   (*this)[PLN         ].DP(fsxP3dBasePath);
-  (*this)[PLNMSFS     ].DP(msfsFilesPath);
+  (*this)[PLNMSFS     ].DP(msfsLocalStatePath);
   (*this)[PLNANNOTATED].DP(fsxP3dBasePath);
   (*this)[FMS3        ].DP(xpFilesPath);
   (*this)[FMS11       ].DP(xpFilesPath);
@@ -471,7 +492,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[TXT         ].DP(xpBasePath % SEP % "Aircraft");
   (*this)[TXTJAR      ].DP(xpBasePath % SEP % "Aircraft");
   (*this)[RTE         ].DP(fsxP3dBasePath % SEP % "PMDG" % SEP % "FLIGHTPLANS");
-  (*this)[RTEMSFS     ].DP(msfsFilesPath % SEP % "packages" % SEP % "pmdg-aircraft-737" % SEP % "work" % SEP % "Flightplans");
+  (*this)[RTEMSFS     ].DP(msfsLocalStatePath % SEP % "packages" % SEP % "pmdg-aircraft-737" % SEP % "work" % SEP % "Flightplans");
   (*this)[GPX         ].DP(documents);
   (*this)[HTML        ].DP(documents);
   (*this)[FPR         ].DP(fsxP3dBasePath % SEP % "SimObjects" % SEP % "Airplanes" % SEP % "mjc8q400" % SEP % "nav" % SEP % "routes");
@@ -496,11 +517,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[MDR         ].DP(fsxP3dBasePath);
   (*this)[TFDI        ].DP(fsxP3dBasePath % SEP % "SimObjects" % SEP % "Airplanes" % SEP % "TFDi_Design_717" % SEP % "Documents" % SEP % "Company Routes");
   (*this)[IFLY        ].DP(documents % SEP % "Prepar3D v5 Add-ons" % SEP % "iFlyData" % SEP % "navdata" % SEP % "FLTPLAN");
-
-  //  ...\Official\OneStore\microsoft-aircraft-a310-300\Data\FMS plans\EDDFEDDM.fpl - does not exist per default
-  // C:\Users\profilename\AppData\Roaming\Microsoft Flight Simulator\Packages\microsoft-aircraft-a310-300\work\flightplans
-  (*this)[INIBUILDS   ].DP(msfsBasePath % SEP % "Official" % SEP % "OneStore" % SEP % "microsoft-aircraft-a310-300" % SEP % "Data" % SEP % "FMS plans");
-
+  (*this)[INIBUILDS   ].DP(iniBuildsMsfsPath);
   (*this)[PLNISG      ].DP(fsxP3dBasePath % SEP % "ISG" % SEP % "FlightPlans"); // C:\Program Files\Lockheed Martin\Prepar3D v4\ISG\FlightPlans
   (*this)[PMS50       ].DP(msfsBasePath % SEP % "Community" % SEP % "pms50-instrument-gtn750" % SEP % "fpl" % SEP % "gtn750");
   (*this)[TDSGTNXI    ].DP(tdsGtmGfp);
