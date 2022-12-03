@@ -358,7 +358,7 @@ bool RouteExport::routeExportFms3IniBuildsMulti(const RouteExportFormat& format)
     {
       using namespace std::placeholders;
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_FMS3 | rf::REMOVE_RUNWAY_PROC,
-                         std::bind(&FlightplanIO::saveFms3, flightplanIO, _1, _2)))
+                         std::bind(&FlightplanIO::saveIniBuildsMsfs, flightplanIO, _1, _2)))
       {
         mainWindow->setStatusMessage(tr("Flight plan saved as FMS 3."));
         formatExportedCallback(format, routeFile);

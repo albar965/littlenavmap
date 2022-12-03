@@ -498,6 +498,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[IFLY        ].DP(documents % SEP % "Prepar3D v5 Add-ons" % SEP % "iFlyData" % SEP % "navdata" % SEP % "FLTPLAN");
 
   //  ...\Official\OneStore\microsoft-aircraft-a310-300\Data\FMS plans\EDDFEDDM.fpl - does not exist per default
+  // C:\Users\profilename\AppData\Roaming\Microsoft Flight Simulator\Packages\microsoft-aircraft-a310-300\work\flightplans
   (*this)[INIBUILDS   ].DP(msfsBasePath % SEP % "Official" % SEP % "OneStore" % SEP % "microsoft-aircraft-a310-300" % SEP % "Data" % SEP % "FMS plans");
 
   (*this)[PLNISG      ].DP(fsxP3dBasePath % SEP % "ISG" % SEP % "FlightPlans"); // C:\Program Files\Lockheed Martin\Prepar3D v4\ISG\FlightPlans
