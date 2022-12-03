@@ -140,6 +140,9 @@ private:
   void actionSelectExportPathTriggered();
   void actionSelectTriggered();
 
+  void saveTableLayout();
+  void loadTableLayout();
+
 #ifdef DEBUG_INFORMATION_MULTIEXPORT
   void resetPathsAndSelectionDebug();
 

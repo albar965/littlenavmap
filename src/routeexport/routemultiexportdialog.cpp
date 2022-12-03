@@ -273,8 +273,15 @@ int RouteMultiExportDialog::exec()
   // Update table
   updateModel();
 
+  // Reload layout
+  loadTableLayout();
+
   int retval = QDialog::exec();
   formatMapDialog->updatePathErrors();
+
+  saveDialogState();
+  saveTableLayout();
+
   return retval;
 }
 
@@ -297,7 +304,6 @@ void RouteMultiExportDialog::buttonBoxClicked(QAbstractButton *button)
   }
   else if(button == ui->buttonBoxRouteExport->button(QDialogButtonBox::Cancel))
   {
-    saveDialogState();
     setExportOptions(exportOptions);
     QDialog::reject();
   }
@@ -313,7 +319,7 @@ void RouteMultiExportDialog::buttonBoxClicked(QAbstractButton *button)
 void RouteMultiExportDialog::restoreState()
 {
   atools::gui::WidgetState widgetState(lnm::ROUTE_EXPORT_DIALOG, false);
-  widgetState.restore({this, ui->tableViewRouteExport, ui->comboBoxRouteExportOptions});
+  widgetState.restore({this, ui->comboBoxRouteExportOptions});
 
   // Check if there is no save widget state - fix sorting if not
   firstStart = !widgetState.contains(ui->tableViewRouteExport);
@@ -322,18 +328,20 @@ void RouteMultiExportDialog::restoreState()
   updateTableColors();
   updateLabel();
   updateActions();
+
+  loadTableLayout();
 }
 
 void RouteMultiExportDialog::saveDialogState()
 {
   atools::gui::WidgetState widgetState(lnm::ROUTE_EXPORT_DIALOG, false);
-  widgetState.save({this, ui->tableViewRouteExport});
+  widgetState.save(this);
 }
 
 void RouteMultiExportDialog::saveState()
 {
   atools::gui::WidgetState widgetState(lnm::ROUTE_EXPORT_DIALOG, false);
-  widgetState.save({this, ui->tableViewRouteExport, ui->comboBoxRouteExportOptions});
+  widgetState.save({this, ui->comboBoxRouteExportOptions});
 }
 
 void RouteMultiExportDialog::updateLabel()
@@ -616,10 +624,6 @@ void RouteMultiExportDialog::updateModel()
   changingTable = false;
 
   updateTableColors();
-
-  // Reload layout
-  atools::gui::WidgetState(lnm::ROUTE_EXPORT_DIALOG, false).restore(ui->tableViewRouteExport);
-
   updateLabel();
   updateActions();
 }
@@ -767,6 +771,9 @@ void RouteMultiExportDialog::resetPathsAndSelectionDebug()
   for(auto it = formatMapDialog->constBegin(); it != formatMapDialog->constEnd(); ++it)
     formatMapDialog->setDebugOptions(it.key());
   updateModel();
+
+  // Reload layout
+  loadTableLayout();
 }
 
 #endif
@@ -781,6 +788,9 @@ void RouteMultiExportDialog::resetPathsAndSelection()
 
   if(msgBox.exec() == QMessageBox::Yes)
   {
+    // Save layout before changing table
+    saveTableLayout();
+
     // Reset values in map ========================================
     for(auto it = formatMapDialog->constBegin(); it != formatMapDialog->constEnd(); ++it)
     {
@@ -791,6 +801,9 @@ void RouteMultiExportDialog::resetPathsAndSelection()
 
     // Fill model/view again from table
     updateModel();
+
+    // Reload layout
+    loadTableLayout();
   }
 }
 
@@ -1029,4 +1042,14 @@ void RouteMultiExportDialog::actionEditPatternTriggered()
 void RouteMultiExportDialog::actionSelectTriggered()
 {
   selectForExport(selectedType(), ui->actionSelect->isChecked());
+}
+
+void RouteMultiExportDialog::saveTableLayout()
+{
+  atools::gui::WidgetState(lnm::ROUTE_EXPORT_DIALOG, false).save(ui->tableViewRouteExport);
+}
+
+void RouteMultiExportDialog::loadTableLayout()
+{
+  atools::gui::WidgetState(lnm::ROUTE_EXPORT_DIALOG, false).restore(ui->tableViewRouteExport);
 }
