@@ -4,11 +4,11 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ==>>=============================================================================
 
-# Version 2.8.4.beta
+# Version 2.8.5.rc1
 
 ## Notes
 
-This is a public beta release which is feature complete but might have small issues.
+This is a release candidate for the next major release of Little Navmap.
 
 **This version is ready for MSFS SU11 and for the X-Plane 12 beta. See known issues below for MSFS.**
 
@@ -22,7 +22,7 @@ This is a public beta release which is feature complete but might have small iss
 First look here if anything is not clear or missing.**
 
 **X-Plane users: In any case reinstall Little Xpconnect from this package. Otherwise fuel flow
-calculation or other functions might not work correctly in Little Navmap.**
+calculation, X-Plane weather information or other functions might not work correctly in Little Navmap.**
 
 **Little Navmap probably reminds you to reload scenery library databases after updating. Please do
 so to benefit from new features and bug fixes.**
@@ -48,6 +48,60 @@ A big thank you to all who reported bugs and issues!
 * **The autoconnect function of Little Navmap does not work reliably with MSFS. Connect manually
   after starting your flight if you see problems. Little Navconnect can have the same issues as
   Little Navmap since it always uses autoconnect. Start the simulator first and then Little Navconnect.**
+
+## Changes from 2.8.4.beta to 2.8.5.rc1
+
+### Flight Plan, Export and Procedures
+
+* Update flight plan saving to files. Changes are now kept in a background file without asking for
+  save. This is now also true if a plan was already saved to a file. You can disable this behavior on
+  options page `Startup and Updates` by disabling `Load last used flight plan`. The temporary plan is
+  stored in the settings folder as file `little_navmap.lnmpln` besides `little_navmap.ini`.
+* Corrected export format MSFS IniBuilds A310 and updated default export path.
+* Fixed issues where the table layout in multi export options was lost.
+* `Avoid overwriting Flight Plan with not matching departure and destination` now enabled per
+  default on new installations. You can disable this setting in the options dialog on page `Flight
+  Plan` if needed.
+* Fixed regression where waypoint altitude was missing in X-Plane FMS flight plan export.
+* Fixed safe altitude not updated in flight plan table if elevation profile window is hidden. Now
+  always calculating elevation data in background.
+* Improved airport matching between simulator and navdata. Example: Scandinavian Mountains (ICAO
+  ESKS) was not found since it has an internal X-Plane ident of XESV5 but its ICAO code is equal to the
+  internal X-Plane ident ESKS for the closed Strängnäs Airbase. Now relying more on coordinates.
+* Fixes for flight plan export. Now saving display ident (ICAO, IATA or others) instead of X-Plane
+  internal for airport into LNMPLN files now. This eases exchange of plans with other simulators.
+* Fixed export for X-Plane FMS to use ADEP/ADES keywords when using procedures at airport.
+* Corrected display for procedures usable with all or parallel runways in procedure search tab.
+  The tree display now shows again a list of runways or `All`.
+
+### Map
+
+* Adjusted airport drawing. Corrected size of minor airport symbols at higher zoom levels. Airports
+  are now shown up to zoomlevels of 8000 km for Spherical and 10000 km for Mercator projection.
+* Adjusted display of add-on highlight.
+* Now showing TOC and TOD even if very close to departure or destination.
+
+
+### User Interface
+
+* Fixed wrong display of airways in tooltip or information tab on NDB and VOR having none attached.
+* Changed status bar to avoid growing and shrinking fields. Now keeping maximum size to avoid jitter.
+* Now keeping the undock map window state to avoid a messed up layout after a restart when using
+  `Restore Defaults`. The `Allow to undock the map window` option on page `Map` is now unchanged
+  after resetting settings.
+* Simplified update notification dialog to show only HTML message from server. Removed `Download in
+  Browser` button as well as header information and `Download now`.
+* Added changelog item to help menu
+* Updated French translations by Patrick.
+* Updated Italian translations by Flavio.
+
+### Little Xpconnect Version 1.0.32
+
+* Adapted new weather and environment datarefs to X-Plane 12 changes.
+
+==<<=============================================================================
+
+# Version 2.8.4.beta
 
 ## Changes from 2.8.3.beta to 2.8.4.beta
 
@@ -77,7 +131,7 @@ A big thank you to all who reported bugs and issues!
 * Updated Italian translation by Flavio Borgna.
 * More small text, translation and user interface fixes.
 
-==<<=============================================================================
+=================================================================================
 
 # Version 2.8.3.beta
 
@@ -155,6 +209,8 @@ A big thank you to all who reported bugs and issues!
 These changes help to make more frequent releases.
 
 =================================================================================
+
+# Version 2.8.2.beta
 
 ## Changes from 2.8.1.beta to 2.8.2.beta
 
