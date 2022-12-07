@@ -481,8 +481,9 @@ Auch die Steig- bzw. Sinkfluggeschwindigkeiten in der Flugzeugleistung überprü
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1038"/>
-        <source>Descent fuel flow is higher than cruise fuel flow.</source>
-        <translation>Der Treibstoffdurchsatz im Sinkflug ist höher als im Reiseflug.</translation>
+        <source>Descent fuel flow is much higher than cruise fuel flow.</source>
+        <oldsource>Descent fuel flow is higher than cruise fuel flow.</oldsource>
+        <translation>Der Treibstoffdurchsatz im Sinkflug ist viel höher als im Reiseflug.</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1045"/>
@@ -40459,12 +40460,12 @@ Starten Sie Little Navmap nach der Korrektur neu.</translation>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen.</translation>
     </message>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="830"/>
+        <location filename="src/weather/weatherreporter.cpp" line="831"/>
         <source>Active Sky weather information updated.</source>
         <translation>Active Sky Wetterinformationsaktualisierung.</translation>
     </message>
     <message>
-        <location filename="src/weather/weatherreporter.cpp" line="837"/>
+        <location filename="src/weather/weatherreporter.cpp" line="838"/>
         <source>X-Plane weather information updated.</source>
         <translation>X-Plane Wetterinformationsaktualisierung.</translation>
     </message>

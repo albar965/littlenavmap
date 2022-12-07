@@ -1034,8 +1034,8 @@ void AircraftPerfController::fuelReport(atools::util::HtmlBuilder& html, bool pr
       {
         if(perf->getClimbFuelFlow() >= 0.1f && perf->getClimbFuelFlow() < perf->getCruiseFuelFlow())
           extraErrors.append(tr("Climb fuel flow is smaller than cruise fuel flow."));
-        if(perf->getDescentFuelFlow() >= 0.1f && perf->getDescentFuelFlow() > perf->getCruiseFuelFlow())
-          extraErrors.append(tr("Descent fuel flow is higher than cruise fuel flow."));
+        if(perf->getDescentFuelFlow() >= 0.1f && perf->getDescentFuelFlow() > perf->getCruiseFuelFlow() * 1.2f)
+          extraErrors.append(tr("Descent fuel flow is much higher than cruise fuel flow."));
       }
 
       // Climb and descent fuel speed compared to cruise ==================
