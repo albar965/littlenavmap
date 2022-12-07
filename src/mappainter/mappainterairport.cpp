@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,24 +17,24 @@
 
 #include "mappainter/mappainterairport.h"
 
-#include "common/symbolpainter.h"
-#include "mapgui/mapscale.h"
-#include "mapgui/maplayer.h"
-#include "query/mapquery.h"
-#include "query/airportquery.h"
-#include "geo/calculations.h"
-#include "common/formatter.h"
-#include "common/maptypes.h"
-#include "common/mapcolors.h"
-#include "common/unit.h"
-#include "mapgui/mapwidget.h"
-#include "route/routecontroller.h"
-#include "util/paintercontextsaver.h"
-#include "mapgui/aprongeometrycache.h"
 #include "atools.h"
-#include "navapp.h"
+#include "common/formatter.h"
+#include "common/mapcolors.h"
+#include "common/maptypes.h"
+#include "common/symbolpainter.h"
+#include "common/unit.h"
+#include "geo/calculations.h"
+#include "mapgui/aprongeometrycache.h"
+#include "mapgui/maplayer.h"
+#include "mapgui/mappaintwidget.h"
+#include "mapgui/mapscale.h"
+#include "query/airportquery.h"
+#include "query/mapquery.h"
+#include "route/route.h"
+#include "util/paintercontextsaver.h"
 
 #include <QElapsedTimer>
+#include <QPainterPath>
 #include <QStringBuilder>
 
 #include <marble/GeoPainter.h>
@@ -289,8 +289,7 @@ void MapPainterAirport::drawFsApron(const map::MapApron& apron)
 void MapPainterAirport::drawXplaneApron(const map::MapApron& apron, bool fast)
 {
   // Create the apron boundary or get it from the cache for this zoom distance
-  QPainterPath boundaryPath =
-    mapPaintWidget->getApronGeometryCache()->getApronGeometry(apron, context->zoomDistanceMeter, fast);
+  QPainterPath boundaryPath = mapPaintWidget->getApronGeometryCache()->getApronGeometry(apron, context->zoomDistanceMeter, fast);
 
   if(!boundaryPath.isEmpty())
     context->painter->drawPath(boundaryPath);

@@ -344,10 +344,10 @@
         <RouteFontScale>0.8</RouteFontScale>
         <TrackInfo>false</TrackInfo>
         <Vor>false</Vor>
+        <WindBarbs>2</WindBarbs>
      </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="1800">
-        <WindBarbs>2</WindBarbs>
         <AirportFontScale>0.6</AirportFontScale>
      </Layer>
       <!-- =================================================================================== -->
@@ -368,7 +368,7 @@
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="3600">
-        <WindBarbs>3</WindBarbs>
+        <WindBarbs>4</WindBarbs>
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="4000">
@@ -381,12 +381,14 @@
       </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="6000">
+        <WindBarbs>8</WindBarbs>
         <AirportMinorSymbolSize>2</AirportMinorSymbolSize>
         <AirportSymbolSize>2</AirportSymbolSize>
       </Layer>
       <!-- =================================================================================== -->
       <!-- Distance cutoff limit. -->
       <Layer MaximumRangeKm="10000">
+        <WindBarbs>10</WindBarbs>
         <AiAircraftLarge>false</AiAircraftLarge>
       </Layer>
       <!-- =================================================================================== -->

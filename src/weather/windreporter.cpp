@@ -32,9 +32,9 @@
 #include <QMessageBox>
 #include <QDir>
 
-static double queryRectInflationFactor = 0.2;
-static double queryRectInflationIncrement = 0.1;
-static int queryMaxRows = 5000;
+static const double queryRectInflationFactor = 0.2;
+static const double queryRectInflationIncrement = 0.1;
+static const int queryMaxRowsWind = 80000;
 
 namespace windinternal {
 
@@ -747,8 +747,7 @@ float WindReporter::getManualAltitudeFt() const
     return map::INVALID_ALTITUDE_VALUE;
 }
 
-const atools::grib::WindPosList *WindReporter::getWindForRect(const Marble::GeoDataLatLonBox& rect,
-                                                              const MapLayer *mapLayer, bool lazy, bool& overflow)
+const atools::grib::WindPosList *WindReporter::getWindForRect(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
 {
   // Result is sorted by y and x coordinates
   // Pos(-127.000000,52.000000,11500.000000)
@@ -784,7 +783,6 @@ const atools::grib::WindPosList *WindReporter::getWindForRect(const Marble::GeoD
         cachedLevel = sliderActionAltitude->getAltitudeFt();
       }
     }
-    overflow = windPosCache.validate(queryMaxRows);
     return &windPosCache.list;
   }
   return nullptr;
