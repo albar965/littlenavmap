@@ -226,6 +226,9 @@ private:
   ActiveSkyType activeSkyType = NONE;
   QString asPath, asFlightplanPath;
 
+  // Keep paths that produced a warning dialog to avoid multiple messages
+  QString xp11WarningPath, xp12WarningPath;
+
   /* Update online reports if older than 10 minutes */
   int onlineWeatherTimeoutSecs = 600;
 

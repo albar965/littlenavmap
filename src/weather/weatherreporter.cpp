@@ -235,33 +235,51 @@ void WeatherReporter::initXplane()
 {
   if(atools::fs::FsPaths::isAnyXplane(simType) && !NavApp::getCurrentSimulatorBasePath().isEmpty())
   {
-    QFileInfo base(NavApp::getCurrentSimulatorBasePath());
+    QString msg(tr("\n\nMake sure that your X-Plane base path is correct and\n"
+                   "weather files as well as directories exist.\n\n"
+                   "Click \"Reset paths\" in the Little Navmap dialog \"Load scenery library\"\n"
+                   "to fix the base path after moving a X-Plane installation.\n\n"
+                   "Also check the paths in the Little Navmap options on page \"Weather Files\".\n"
+                   "These path should be empty to use the default.\n\n"
+                   "Restart Little Navmap after correcting the weather paths."));
 
-    if(base.exists() && base.isDir())
+    if(simType == atools::fs::FsPaths::XPLANE_11)
     {
-      if(simType == atools::fs::FsPaths::XPLANE_11)
+      QString path = OptionData::instance().getWeatherXplane11Path();
+      if(path.isEmpty())
+        // Use default base path
+        path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "METAR.rwx";
+
+      QString message = atools::checkFileMsg(path);
+      if(!message.isEmpty() && path != xp11WarningPath)
       {
-        QString path = OptionData::instance().getWeatherXplane11Path();
-        if(path.isEmpty())
-          // Use default base path
-          path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "METAR.rwx";
+        NavApp::closeSplashScreen();
+        QMessageBox::warning(mainWindow, QCoreApplication::applicationName(), message + msg);
+        xp11WarningPath = path;
+        disableXplane();
+      }
+      else
         xpWeatherReader->setWeatherPath(path, atools::fs::weather::WEATHER_XP11);
-      }
-      else if(simType == atools::fs::FsPaths::XPLANE_12)
-      {
-        QString path = OptionData::instance().getWeatherXplane12Path();
-        if(path.isEmpty())
-          // Use default base path
-          path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Output" + QDir::separator() + "real weather";
-        xpWeatherReader->setWeatherPath(path, atools::fs::weather::WEATHER_XP12);
-      }
     }
-    else
+    else if(simType == atools::fs::FsPaths::XPLANE_12)
     {
-      qWarning() << Q_FUNC_INFO << "Base path not valid" << base.filePath();
-      disableXplane();
+      QString path = OptionData::instance().getWeatherXplane12Path();
+      if(path.isEmpty())
+        // Use default base path
+        path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Output" + QDir::separator() + "real weather";
+
+      QString message = atools::checkDirMsg(path);
+      if(!message.isEmpty() && path != xp12WarningPath)
+      {
+        NavApp::closeSplashScreen();
+        QMessageBox::warning(mainWindow, QCoreApplication::applicationName(), message + msg);
+        xp12WarningPath = path;
+        disableXplane();
+      }
+      else
+        xpWeatherReader->setWeatherPath(path, atools::fs::weather::WEATHER_XP12);
     }
-  }
+  } // if(atools::fs::FsPaths::isAnyXplane(simType) &&
   else
     disableXplane();
 }
@@ -742,6 +760,10 @@ void WeatherReporter::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
 {
   if(type != simType)
   {
+    // Enable warning dialogs about wrong paths again
+    xp11WarningPath.clear();
+    xp12WarningPath.clear();
+
     // Simulator has changed - reload files
     simType = type;
     resetErrorState();
