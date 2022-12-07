@@ -251,6 +251,11 @@ void checkAndMigrateSettings()
         removeAndLog("Actions/DeleteTrail");
       }
 
+      if(optionsVersion <= Version("2.8.4.beta"))
+      {
+        removeAndLog(&mapstyleSettings, "MainWindow/Widget_actionAircraftPerformanceWarnMismatch");
+      }
+
       qInfo() << Q_FUNC_INFO << "Clearing all essential messages since version differs";
       messages::resetEssentialMessages();
 
