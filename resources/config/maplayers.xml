@@ -268,6 +268,7 @@
       <Layer MaximumRangeKm="150">
         <AiAircraftTextDetail>false</AiAircraftTextDetail>
         <AirportName>false</AirportName>
+        <AirportMinorFontScale>0.6</AirportMinorFontScale>
         <AirportOverviewRunway>false</AirportOverviewRunway>
         <AirportMinorSymbolSize>9</AirportMinorSymbolSize>
         <AirportSymbolSize>10</AirportSymbolSize>
@@ -347,6 +348,7 @@
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="1800">
         <WindBarbs>2</WindBarbs>
+        <AirportFontScale>0.6</AirportFontScale>
      </Layer>
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="2400">
