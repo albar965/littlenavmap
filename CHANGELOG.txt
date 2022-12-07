@@ -73,14 +73,24 @@ A big thank you to all who reported bugs and issues!
 * Fixed export for X-Plane FMS to use ADEP/ADES keywords when using procedures at airport.
 * Corrected display for procedures usable with all or parallel runways in procedure search tab.
   The tree display now shows again a list of runways or `All`.
+* Adjusted warning for descent fuel flow to allow slightly more fuel flow than in cruise phase.
 
 ### Map
 
 * Adjusted airport drawing. Corrected size of minor airport symbols at higher zoom levels. Airports
   are now shown up to zoomlevels of 8000 km for Spherical and 10000 km for Mercator projection.
+* Smaller fonts for airport labels on large zoom levels.
 * Adjusted display of add-on highlight.
-* Now showing TOC and TOD even if very close to departure or destination.
+* Reduced airport label size for higher zoom distances.
+* Now showing top of climb and top of descent even if very close to departure or destination.
 
+### Weather
+
+* Weather reading for X-Plane 12 fixed which failed to recognize new files if the weather folder
+  was intially empty. This affected METAR and GRIB (winds aloft) files.
+* Added warning message if X-Plane 11 or 12 weather cannot be read due to broken weather paths or
+  wrong simulator base path.
+* Changes in display of wind barbs to avoid flooding the map with symbols.
 
 ### User Interface
 
@@ -91,6 +101,9 @@ A big thank you to all who reported bugs and issues!
   after resetting settings.
 * Simplified update notification dialog to show only HTML message from server. Removed `Download in
   Browser` button as well as header information and `Download now`.
+* Warning for performance file aircraft type mismatch is now reset to off on update since MSFS
+  causes too many issues. You can enable this again in menu `Aircraft` -> `Warning for aircraft type
+  mismatch` if you use another simulator than MSFS.
 * Added changelog item to help menu
 * Updated French translations by Patrick.
 * Updated Italian translations by Flavio.
