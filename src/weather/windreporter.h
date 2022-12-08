@@ -125,7 +125,7 @@ public:
   /* Get a list of wind positions for the given rectangle for painting. Does not use manual wind setting.
    * Result is sorted by y and x coordinates. */
   const atools::grib::WindPosList *getWindForRect(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer,
-                                                  bool lazy);
+                                                  bool lazy, int gridSpacing);
 
   /* Get (interpolated) wind for given position and altitude */
   atools::grib::WindPos getWindForPos(const atools::geo::Pos& pos, float altFeet);

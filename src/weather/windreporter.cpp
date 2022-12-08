@@ -747,7 +747,8 @@ float WindReporter::getManualAltitudeFt() const
     return map::INVALID_ALTITUDE_VALUE;
 }
 
-const atools::grib::WindPosList *WindReporter::getWindForRect(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy)
+const atools::grib::WindPosList *WindReporter::getWindForRect(const Marble::GeoDataLatLonBox& rect, const MapLayer *mapLayer, bool lazy,
+                                                              int gridSpacing)
 {
   // Result is sorted by y and x coordinates
   // Pos(-127.000000,52.000000,11500.000000)
@@ -778,7 +779,7 @@ const atools::grib::WindPosList *WindReporter::getWindForRect(const Marble::GeoD
                                   box.east(Marble::GeoDataCoordinates::Degree), box.south(Marble::GeoDataCoordinates::Degree));
 
         atools::grib::WindPosList windPosList;
-        windQuery->getWindForRect(windPosList, geoRect, getDisplayAltitudeFt());
+        windQuery->getWindForRect(windPosList, geoRect, getDisplayAltitudeFt(), gridSpacing);
         windPosCache.list.append(windPosList);
         cachedLevel = sliderActionAltitude->getAltitudeFt();
       }

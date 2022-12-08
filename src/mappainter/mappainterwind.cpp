@@ -46,7 +46,8 @@ void MapPainterWind::render()
   atools::util::PainterContextSaver saver(context->painter);
 
   const atools::grib::WindPosList *windForRect =
-    NavApp::getWindReporter()->getWindForRect(context->viewport->viewLatLonAltBox(), context->mapLayer, context->lazyUpdate);
+    NavApp::getWindReporter()->getWindForRect(context->viewport->viewLatLonAltBox(), context->mapLayer, context->lazyUpdate,
+                                              context->mapLayer->getWindBarbs());
 
   if(windForRect != nullptr)
   {
