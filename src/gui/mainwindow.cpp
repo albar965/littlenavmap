@@ -2040,6 +2040,8 @@ void MainWindow::setToolTipsEnabledMainMenu(bool enabled)
       kmlFileHistory->updateMenuTooltips();
     if(layoutFileHistory != nullptr)
       layoutFileHistory->updateMenuTooltips();
+    if(NavApp::getAircraftPerfController() != nullptr)
+      NavApp::getAircraftPerfController()->updateMenuTooltips();
   }
 }
 

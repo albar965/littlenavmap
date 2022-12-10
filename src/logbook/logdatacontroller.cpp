@@ -655,7 +655,7 @@ void LogdataController::cleanupLogEntries()
   choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
 
   // Get right value and unit for distance
-  float distNm;
+  float distNm = 5.f;
   switch(Unit::getUnitDist())
   {
     case opts::DIST_NM:

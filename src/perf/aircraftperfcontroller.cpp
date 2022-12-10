@@ -1529,3 +1529,8 @@ QStringList AircraftPerfController::getErrorStrings() const
 
   return errorTooltips;
 }
+
+void AircraftPerfController::updateMenuTooltips()
+{
+  fileHistory->updateMenuTooltips();
+}

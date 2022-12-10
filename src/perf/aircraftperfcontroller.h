@@ -174,6 +174,9 @@ public:
   bool hasErrors() const;
   QStringList getErrorStrings() const;
 
+  /* Update tooltips showing the file path. Set "setToolTipsVisible" for menu always to true */
+  void updateMenuTooltips();
+
 signals:
   /* Sent if performance or wind has changed */
   void aircraftPerformanceChanged(const atools::fs::perf::AircraftPerf *perf);
