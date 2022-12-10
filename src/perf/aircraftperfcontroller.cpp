@@ -111,25 +111,71 @@ void AircraftPerfController::create()
 
   mainWindow->showAircraftPerformance();
 
+  // Initialize with default parameters and set current simulator
   AircraftPerf editPerf;
   editPerf.resetToDefault(NavApp::getCurrentSimulatorShortName());
-  if(editInternal(editPerf, tr("Create"), true /* newPerf */))
+
+  bool edited = false;
+  // Check for saving current profile
+  if(checkForChanges())
   {
-    if(checkForChanges())
+    bool saveClicked = false;
+    if(editInternal(editPerf, tr("Create"), true /* newPerf */, saveClicked))
     {
-      *perf = editPerf;
+      // New profile created
       currentFilepath.clear();
+      *perf = editPerf;
+      edited = true;
       changed = true;
 
-      updateActionStates();
-      updateReport();
-      emit aircraftPerformanceChanged(perf);
-      NavApp::setStatusMessage(tr("Aircraft performance created."));
+      if(saveClicked)
+        save();
     }
+  }
+
+  if(edited)
+    windChangeTimer.stop();
+
+  // Update change flags in tab and window title
+  updateActionStates();
+
+  if(edited)
+  {
+    updateReport();
+    emit aircraftPerformanceChanged(perf);
+    NavApp::setStatusMessage(tr("Aircraft performance created."));
   }
 }
 
-bool AircraftPerfController::editInternal(atools::fs::perf::AircraftPerf& editPerf, const QString& modeText, bool newPerf)
+void AircraftPerfController::edit()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  bool saveClicked = false;
+  bool edited = editInternal(*perf, tr("Edit"), false /* newPerf */, saveClicked);
+
+  if(edited)
+    changed = true;
+
+  if(saveClicked)
+    save();
+
+  if(edited)
+    windChangeTimer.stop();
+
+  // Update change flags in tab and window title
+  updateActionStates();
+
+  if(edited)
+  {
+    updateReport();
+    emit aircraftPerformanceChanged(perf);
+    NavApp::setStatusMessage(tr("Aircraft performance changed."));
+  }
+}
+
+bool AircraftPerfController::editInternal(atools::fs::perf::AircraftPerf& editPerf, const QString& modeText, bool newPerf,
+                                          bool& saveClicked)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -137,27 +183,10 @@ bool AircraftPerfController::editInternal(atools::fs::perf::AircraftPerf& editPe
   if(dialog.exec() == QDialog::Accepted)
   {
     editPerf = dialog.getAircraftPerf();
-    if(dialog.isSaveClicked())
-      save();
+    saveClicked = dialog.isSaveClicked();
     return true;
   }
-  else
-    return false;
-}
-
-void AircraftPerfController::edit()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  if(editInternal(*perf, tr("Edit"), false /* newPerf */))
-  {
-    changed = true;
-    windChangeTimer.stop();
-    updateActionStates();
-    updateReport();
-    emit aircraftPerformanceChanged(perf);
-    NavApp::setStatusMessage(tr("Aircraft performance changed."));
-  }
+  return false;
 }
 
 void AircraftPerfController::loadStr(const QString& string)
@@ -719,6 +748,7 @@ void AircraftPerfController::updateActionStates()
 
   // Update tab title to indicate change ========================================
   updateTabTiltle();
+  NavApp::updateWindowTitle();
 
   ui->actionAircraftPerformanceRestart->setEnabled(perfHandler->hasFlightSegment());
   ui->pushButtonAircraftPerfCollectRestart->setEnabled(perfHandler->hasFlightSegment());

@@ -186,9 +186,11 @@ private:
   /* Create a new performance sheet and opens the edit dialog after asking to save currently unchanged */
   void create();
 
-  /* Opens the edit dialog. */
+  /* Opens the edit dialog asks for changes and saves if needed. */
   void edit();
-  bool editInternal(atools::fs::perf::AircraftPerf& perf, const QString& modeText, bool newPerf);
+
+  /* Opens the edit dialog and returns true if accepted. */
+  bool editInternal(atools::fs::perf::AircraftPerf& perf, const QString& modeText, bool newPerf, bool& saveClicked);
 
   /* Open file dialog and load a new performance file after asking to save currently unchanged */
   void load();
@@ -221,6 +223,7 @@ private:
   /* Create or update HTML report for performance collection */
   void updateReportCurrent();
 
+  /* Update buttons tab title change indication and main window filename and change indication */
   void updateActionStates();
 
   /* Invalidate performance file after an error - state "none loaded" */
