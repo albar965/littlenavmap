@@ -946,29 +946,32 @@ void MainWindow::updateStatusBarStyle()
   }
 #endif
 
+  // Set a minimum width - the labels grow (but do not shrink) with content changes
   connectStatusLabel->setAlignment(align);
-  connectStatusLabel->setMinimumWidth(80);
+  connectStatusLabel->setMinimumWidth(20);
 
   mapVisibleLabel->setAlignment(align);
-  mapVisibleLabel->setMinimumWidth(80);
+  mapVisibleLabel->setMinimumWidth(20);
 
   mapDetailLabel->setAlignment(align);
-  mapDetailLabel->setMinimumWidth(80);
+  mapDetailLabel->setMinimumWidth(20);
 
   mapRenderStatusLabel->setAlignment(align);
-  mapRenderStatusLabel->setMinimumWidth(80);
+  mapRenderStatusLabel->setMinimumWidth(20);
 
   mapDistanceLabel->setAlignment(align);
-  mapDistanceLabel->setMinimumWidth(80);
+  mapDistanceLabel->setMinimumWidth(20);
 
   mapPositionLabel->setAlignment(align);
-  mapPositionLabel->setMinimumWidth(80);
+  mapPositionLabel->setMinimumWidth(20);
+  mapPositionLabel->setText(tr("No position"));
 
   mapMagvarLabel->setAlignment(align);
-  mapMagvarLabel->setMinimumWidth(30);
+  mapMagvarLabel->setMinimumWidth(20);
+  mapMagvarLabel->setText(tr("—"));
 
   timeLabel->setAlignment(align);
-  timeLabel->setMinimumWidth(40);
+  timeLabel->setMinimumWidth(20);
 }
 
 void MainWindow::clearProcedureCache()
@@ -1950,7 +1953,7 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
   {
     mapPositionLabel->setText(tr("No position"));
     mapPositionLabel->setMinimumWidth(mapPositionLabel->width());
-    mapMagvarLabel->clear();
+    mapMagvarLabel->setText(tr("—"));
   }
 }
 
