@@ -12,7 +12,7 @@ This is a release candidate for the next major release of Little Navmap.
 
 **This version is ready for MSFS SU11 and for the X-Plane 12 beta. See known issues below for MSFS.**
 
-**Draft user manual available here:
+**The user manual is available here:
 [Little Navmap - User Manual](https://www.littlenavmap.org/manuals/littlenavmap/release/2.8/en/)**.
 
 **See here for user manual downloads:
@@ -21,17 +21,14 @@ This is a release candidate for the next major release of Little Navmap.
 **This changelog also explains new or moved/changed features.
 First look here if anything is not clear or missing.**
 
-**X-Plane users: In any case reinstall Little Xpconnect from this package. Otherwise fuel flow
+**X-Plane users: Reinstall Little Xpconnect from this package. Otherwise fuel flow
 calculation, X-Plane weather information or other functions might not work correctly in Little Navmap.**
 
 **Little Navmap probably reminds you to reload scenery library databases after updating. Please do
 so to benefit from new features and bug fixes.**
 
-**To try out the program: Use one of the scripts `Little Navmap Portable.cmd` (Windows),
-`Little Navmap Portable.command` (macOS) and `Little Navmap Portable.sh` (Linux) to let
-Little Navmap store all settings, databases and caches in the installation folder (portable mode).**
-
-Note that certain settings and table layouts are reset to default after updating.
+Note that certain settings and table layouts are reset to default after updating. These are
+mentioned in the list of changes below.
 
 See here for a [list of issues done](https://github.com/albar965/littlenavmap/milestone/11?closed=1).
 More issues are solved than publicly known on Github. This changelog lists the most important.
@@ -42,7 +39,7 @@ A big thank you to all who reported bugs and issues!
 ## Known Issues MSFS
 
 * **Active pause in MSFS breaks the connection and does not allow to reconnect.
-  Use the Escape key for normal pause to avoid problems.**
+  Use the key `Esc` for normal pause to avoid problems.**
 * **Some third-party plugins like traffic add-ons might cause connection issues when used together
   with Little Navmap and MSFS.**
 * **The autoconnect function of Little Navmap does not work reliably with MSFS. Connect manually
@@ -57,44 +54,47 @@ A big thank you to all who reported bugs and issues!
   save. This is now also true if a plan was already saved to a file. You can disable this behavior on
   options page `Startup and Updates` by disabling `Load last used flight plan`. The temporary plan is
   stored in the settings folder as file `little_navmap.lnmpln` besides `little_navmap.ini`.
-* Corrected export format MSFS IniBuilds A310 and updated default export path.
-* Fixed issues where the table layout in multi export options was lost.
+* Corrected export format MSFS IniBuilds A310 and updated default export paths.
+* Fixed issues where the table layout in multi export options was lost at times.
 * `Avoid overwriting Flight Plan with not matching departure and destination` now enabled per
   default on new installations. You can disable this setting in the options dialog on page `Flight
   Plan` if needed.
 * Fixed regression where waypoint altitude was missing in X-Plane FMS flight plan export.
 * Fixed safe altitude not updated in flight plan table if elevation profile window is hidden. Now
   always calculating elevation data in background.
-* Improved airport matching between simulator and navdata. Example: Scandinavian Mountains (ICAO
-  ESKS) was not found since it has an internal X-Plane ident of XESV5 but its ICAO code is equal to the
-  internal X-Plane ident ESKS for the closed Strängnäs Airbase. Now relying more on coordinates.
+* Improved airport matching between simulator and navdata when selecting procedures. Example:
+  Scandinavian Mountains (ICAO ESKS) was not found since it has an internal X-Plane ident of XESV5
+  but its ICAO code is equal to the internal X-Plane ident ESKS for the closed Strängnäs Airbase.
+  Now relying more on coordinates when checking for airports using official ids.
 * Fixes for flight plan export. Now saving display ident (ICAO, IATA or others) instead of X-Plane
   internal for airport into LNMPLN files now. This eases exchange of plans with other simulators.
 * Fixed export for X-Plane FMS to use ADEP/ADES keywords when using procedures at airport.
 * Corrected display for procedures usable with all or parallel runways in procedure search tab.
-  The tree display now shows again a list of runways or `All`.
+  The tree display now shows a list of runways or `All` again instead of a wrong single runway.
 * Adjusted warning for descent fuel flow to allow slightly more fuel flow than in cruise phase.
 
 ### Map
 
 * Adjusted airport drawing. Corrected size of minor airport symbols at higher zoom levels. Airports
   are now shown up to zoomlevels of 8000 km for Spherical and 10000 km for Mercator projection.
-* Smaller fonts for airport labels on large zoom levels.
-* Adjusted display of add-on highlight.
-* Reduced airport label size for higher zoom distances.
-* Now showing top of climb and top of descent even if very close to departure or destination.
+* Smaller font for airport labels on large zoom levels.
+* Adjusted size of airport add-on highlight on map.
+* Now showing top of climb and top of descent on map and in elevation profile even if very close to
+  departure or destination.
 
 ### Weather
 
 * Weather reading for X-Plane 12 fixed which failed to recognize new files if the weather folder
   was intially empty. This affected METAR and GRIB (winds aloft) files.
-* Added warning message if X-Plane 11 or 12 weather cannot be read due to broken weather paths or
-  wrong simulator base path.
-* Changes in display of wind barbs to avoid flooding the map with symbols.
+* Added warning message if X-Plane 11 or 12 weather files cannot be read due to broken weather
+  paths or wrong simulator base path in dialog `Load Scenery Library`.
+* Changes in display of wind barbs to avoid flooding the map with symbols. More optimizations to
+  speed up map rendering at high zoom levels.
 
 ### User Interface
 
-* Fixed wrong display of airways in tooltip or information tab on NDB and VOR having none attached.
+* Fixed wrong display of airways in tooltip and information tab on NDB and VOR having no airways
+  attached.
 * Changed status bar to avoid growing and shrinking fields. Now keeping maximum size to avoid jitter.
 * Now keeping the undock map window state to avoid a messed up layout after a restart when using
   `Restore Defaults`. The `Allow to undock the map window` option on page `Map` is now unchanged
@@ -104,6 +104,7 @@ A big thank you to all who reported bugs and issues!
 * Warning for performance file aircraft type mismatch is now reset to off on update since MSFS
   causes too many issues. You can enable this again in menu `Aircraft` -> `Warning for aircraft type
   mismatch` if you use another simulator than MSFS.
+* Corrected logic for edit and save aircraft performance to avoid wrong questions to save file.
 * Added changelog item to help menu.
 * Enabled missing tooltips with full path on aircraft performance recent menu.
 * Updated French translations by Patrick.
