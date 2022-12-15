@@ -2576,8 +2576,7 @@ bool HtmlInfoBuilder::userpointText(MapUserpoint userpoint, HtmlBuilder& html) c
     {
       head(html, tr("File"));
       html.table();
-      html.row2If(tr("Imported from:"), filepathTextShow(rec.valueStr("import_file_path")),
-                  ahtml::NO_ENTITIES | ahtml::SMALL);
+      html.row2If(tr("Imported from:"), filepathTextShow(rec.valueStr("import_file_path")), ahtml::NO_ENTITIES | ahtml::SMALL);
       html.tableEnd();
     }
 
@@ -4958,14 +4957,15 @@ QString HtmlInfoBuilder::filepathTextShow(const QString& filepath, const QString
     return QString();
 
   QFileInfo fileinfo(filepath);
-  QString filepathStr =
-    QDir::toNativeSeparators(QDir::cleanPath(canonical ? atools::canonicalFilePath(fileinfo) : fileinfo.absoluteFilePath()));
 
   if(fileinfo.exists())
+  {
+    QString filepathStr =
+      QDir::toNativeSeparators(QDir::cleanPath(canonical ? atools::canonicalFilePath(fileinfo) : fileinfo.absoluteFilePath()));
     link.small(prefix).a(filepathStr, QString("lnm://show?filepath=%1").arg(filepathStr), ahtml::LINK_NO_UL | ahtml::SMALL);
+  }
   else
-    link.small(prefix).small(filepathStr).
-    text(tr(" (file not found)"), ahtml::SMALL | ahtml::BOLD);
+    link.small(prefix).small(filepath).text(tr(" (file not found)"), ahtml::SMALL | ahtml::BOLD);
   return link.getHtml();
 }
 
