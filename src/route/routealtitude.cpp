@@ -644,6 +644,8 @@ bool RouteAltitude::violatesAltitudeRestriction(QString& errorMessage, int legIn
 
 float RouteAltitude::findApproachMaxAltitude(int index) const
 {
+  float maxAlt = map::INVALID_ALTITUDE_VALUE;
+
   if(index > 1)
   {
     // Avoid crashes
@@ -651,9 +653,14 @@ float RouteAltitude::findApproachMaxAltitude(int index) const
 
     if(index < map::INVALID_INDEX_VALUE)
     {
+      int stopIndex = route->getDestinationIndexBeforeProcedure();
+
       // Check backwards from index for a arrival/STAR leg that limits the maximum altitude
       for(int i = index - 1; i >= 0; i--)
       {
+        if(i < stopIndex)
+          break;
+
         const RouteLeg& leg = route->value(i);
         const RouteLeg& next = route->value(i + 1);
 
@@ -667,25 +674,25 @@ float RouteAltitude::findApproachMaxAltitude(int index) const
 
           if(r.verticalAngleAlt < map::INVALID_ALTITUDE_VALUE)
             // Altitude required by flight path angle
-            return r.verticalAngleAlt;
-          else if(r.forceFinal || atools::contains(r.descriptor, {proc::MapAltRestriction::AT,
-                                                                  proc::MapAltRestriction::AT_OR_BELOW,
-                                                                  proc::MapAltRestriction::BETWEEN,
-                                                                  proc::MapAltRestriction::ILS_AT}))
+            maxAlt = std::min(maxAlt, r.verticalAngleAlt);
+          else if(r.forceFinal || atools::contains(r.descriptor, {proc::MapAltRestriction::AT, proc::MapAltRestriction::AT_OR_BELOW,
+                                                                  proc::MapAltRestriction::BETWEEN, proc::MapAltRestriction::ILS_AT}))
             // Either altitude is forced to lowest restriction value or altitude is limited by a "below", "at" or "between" restriction
             // Forced by FAF, FCAF
-            return r.alt1;
+            maxAlt = std::min(maxAlt, r.alt1);
         }
       }
     }
     else
       qWarning() << Q_FUNC_INFO;
   }
-  return map::INVALID_ALTITUDE_VALUE;
+  return maxAlt;
 }
 
 float RouteAltitude::findDepartureMaxAltitude(int index) const
 {
+  float maxAlt = map::INVALID_ALTITUDE_VALUE;
+
   if(index > 1)
   {
     // Avoid crashes
@@ -697,10 +704,15 @@ float RouteAltitude::findDepartureMaxAltitude(int index) const
       // Search through the whole route
       end = route->size() - 1;
 
+    int stopIndex = route->getLastIndexOfDepartureProcedure();
+
     if(index < map::INVALID_INDEX_VALUE && end < map::INVALID_INDEX_VALUE)
     {
       for(int i = index; i < end; i++)
       {
+        if(i > stopIndex)
+          break;
+
         const RouteLeg& leg = route->value(i);
 
         if(leg.isAnyProcedure() && leg.getProcedureLeg().isAnyDeparture() && leg.getProcedureLegAltRestr().isValid())
@@ -708,20 +720,20 @@ float RouteAltitude::findDepartureMaxAltitude(int index) const
           const proc::MapAltRestriction& r = leg.getProcedureLegAltRestr();
           if(r.verticalAngleAlt < map::INVALID_ALTITUDE_VALUE)
             // Altitude required by flight path angle - might occur when iterating into approach procedure
-            return r.verticalAngleAlt;
-          else if(r.forceFinal || atools::contains(r.descriptor, {proc::MapAltRestriction::AT,
-                                                                  proc::MapAltRestriction::AT_OR_BELOW,
+            maxAlt = std::min(maxAlt, r.verticalAngleAlt);
+          else if(r.forceFinal || atools::contains(r.descriptor, {proc::MapAltRestriction::AT, proc::MapAltRestriction::AT_OR_BELOW,
                                                                   proc::MapAltRestriction::BETWEEN}))
             // Either altitude is forced to lowest restriction value or altitude is limited by a "below", "at" or "between" restriction
             // Forced by FAF, FCAF
-            return r.alt1;
+            maxAlt = std::min(maxAlt, r.alt1);
         }
       }
     }
     else
       qWarning() << Q_FUNC_INFO;
   }
-  return map::INVALID_ALTITUDE_VALUE;
+
+  return maxAlt;
 }
 
 int RouteAltitude::findApproachFirstRestricion() const
