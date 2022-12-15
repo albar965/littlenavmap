@@ -70,12 +70,6 @@ public:
     return verticalAngle > -10.f && verticalAngle < -0.9f;
   }
 
-  /* Altitude restriction from procedures if available. Otherwise invalid. */
-  const proc::MapAltRestriction& getRestriction() const
-  {
-    return restriction;
-  }
-
   /* true if this is a dummy leg without geometry. */
   bool isEmpty() const
   {

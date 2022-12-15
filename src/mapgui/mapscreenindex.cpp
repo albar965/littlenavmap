@@ -910,7 +910,12 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
 
   // Get points of procedure preview
   if(types.testFlag(map::QUERY_PREVIEW_PROC_POINTS))
-    getNearestProcedureHighlights(xs, ys, maxDistance, result, types);
+  {
+    map::MapObjectQueryTypes queryTypes = types | map::QUERY_PROCEDURES | map::QUERY_PROC_POINTS;
+    if(shown.testFlag(map::MISSED_APPROACH))
+      queryTypes |= map::QUERY_PROC_MISSED_POINTS;
+    getNearestProcedureHighlights(xs, ys, maxDistance, result, queryTypes);
+  }
 
   // Get copies from highlightMapObjects and marks (user features)
   getNearestHighlights(xs, ys, maxDistance, result, types);
@@ -1022,6 +1027,9 @@ void MapScreenIndex::nearestProcedureHighlightsInternal(int xs, int ys, int maxD
 
       if(previewAll && leg.isMissed())
         // Multi preview does not include missed
+        continue;
+
+      if(leg.isMissed() && !types.testFlag(map::QUERY_PROC_MISSED_POINTS))
         continue;
 
       proc::MapProcedureRef ref(0 /* airportId */, 0 /* runwayEndId */, leg.procedureId, leg.transitionId, leg.legId, leg.mapType);

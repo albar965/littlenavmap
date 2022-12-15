@@ -1006,10 +1006,12 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 
     for(int routeIndex : indexes)
     {
-      if(route.value(routeIndex).isAnyProcedure() && route.value(routeIndex).getRunwayEnd().isValid())
+      const RouteLeg& leg = route.value(routeIndex);
+
+      if(leg.isAnyProcedure() && leg.getRunwayEnd().isValid())
         continue;
 
-      const proc::MapAltRestriction& restriction = altitudeLegs.value(routeIndex).getRestriction();
+      const proc::MapAltRestriction& restriction = leg.getProcedureLeg().altRestriction;
 
       if(restriction.isValid() && restriction.descriptor != proc::MapAltRestriction::ILS_AT &&
          restriction.descriptor != proc::MapAltRestriction::ILS_AT_OR_ABOVE)

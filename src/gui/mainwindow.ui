@@ -8317,10 +8317,10 @@ relation to shown airport</string>
     <string>Show &amp;Missed Approaches</string>
    </property>
    <property name="toolTip">
-    <string>Show missed approach legs on the map</string>
+    <string>Show missed approach legs of flight plan or procedure preview on the map</string>
    </property>
    <property name="statusTip">
-    <string>Show missed approach legs on the map</string>
+    <string>Show missed approach legs of flight plan or procedure preview on the map</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+Alt+M</string>

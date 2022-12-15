@@ -3567,9 +3567,9 @@ void MainWindow::updateActionStates()
 
   ui->actionRouteCenter->setEnabled(hasFlightplan);
   ui->actionRouteSelectParking->setEnabled(route.hasValidDeparture());
-  ui->actionMapShowRoute->setEnabled(hasFlightplan);
-  ui->actionMapShowTocTod->setEnabled(hasFlightplan && ui->actionMapShowRoute->isChecked());
-  ui->actionInfoApproachShowMissedAppr->setEnabled(hasFlightplan && ui->actionMapShowRoute->isChecked());
+  ui->actionMapShowRoute->setEnabled(true);
+  ui->actionMapShowTocTod->setEnabled(true);
+  ui->actionInfoApproachShowMissedAppr->setEnabled(true);
   ui->actionRouteEditMode->setEnabled(hasFlightplan);
   ui->actionPrintFlightplan->setEnabled(hasFlightplan);
   ui->actionRouteCopyString->setEnabled(hasFlightplan);
