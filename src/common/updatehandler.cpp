@@ -17,15 +17,15 @@
 
 #include "common/updatehandler.h"
 
-#include "gui/updatedialog.h"
-#include "util/updatecheck.h"
-#include "settings/settings.h"
 #include "common/constants.h"
-#include "navapp.h"
+#include "gui/dialog.h"
 #include "gui/mainwindow.h"
+#include "gui/updatedialog.h"
+#include "navapp.h"
+#include "settings/settings.h"
 #include "util/htmlbuilder.h"
 #include "util/updatecheck.h"
-#include "gui/dialog.h"
+#include "util/updatecheck.h"
 
 #include <QDialogButtonBox>
 
@@ -36,17 +36,18 @@ namespace html = atools::util::html;
 UpdateHandler::UpdateHandler(MainWindow *parent)
   : QObject(parent), mainWindow(parent)
 {
-#ifdef DEBUG_UPDATE
-  updateCheck = new UpdateCheck(true);
-#else
-  updateCheck = new UpdateCheck(false);
-#endif
+  updateCheck = new UpdateCheck();
 
   // Get URL from options for debugging otherwise use default
   updateCheck->setUrl(Settings::instance().valueStr(lnm::OPTIONS_UPDATE_URL, lnm::updateDefaultUrl));
 
   connect(updateCheck, &UpdateCheck::updateFound, this, &UpdateHandler::updateFound);
   connect(updateCheck, &UpdateCheck::updateFailed, this, &UpdateHandler::updateFailed);
+
+  // Set timer for regular update check if timeout is expired since last download
+  updateTimer.setInterval(Settings::instance().getAndStoreValue(lnm::OPTIONS_UPDATE_TIMER_SECONDS, 900).toInt() * 1000);
+  updateTimer.setSingleShot(true);
+  connect(&updateTimer, &QTimer::timeout, this, &UpdateHandler::updateCheckTimeout);
 }
 
 UpdateHandler::~UpdateHandler()
@@ -54,71 +55,103 @@ UpdateHandler::~UpdateHandler()
   delete updateCheck;
 }
 
-void UpdateHandler::checkForUpdates(opts::UpdateChannels channelOpts, bool manuallyTriggered, bool force)
+void UpdateHandler::updateCheckTimeout()
 {
-  qDebug() << Q_FUNC_INFO << "channels" << channelOpts << "manual" << manuallyTriggered
-           << "URL" << updateCheck->getUrl();
-  updateCheck->setForceDebug(force);
+  checkForUpdates(UPDATE_REASON_TIMER);
+}
 
-  manual = manuallyTriggered;
-#ifndef DEBUG_UPDATE
-  if(!manuallyTriggered && !force)
+void UpdateHandler::checkForUpdates(UpdateReason reason)
+{
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "channels" << channelOpts << "reason" << reason << "URL" << updateCheck->getUrl();
+#endif
+
+  // Don't do anything if already downloading
+  if(updateCheck->isDownloading())
+    return;
+
+  updateReason = reason;
+
+  bool check = true;
+  // Do not react to timer events if not enabled (connected to sim) or a modal window is showing
+  if(reason == UPDATE_REASON_TIMER && (!enabled || QApplication::modalWindow() != nullptr))
+    check = false;
+
+  // Debug option to test updates
+  updateCheck->setForceDebug(reason == UPDATE_REASON_FORCE);
+
+  // Check timestamp for timer and startup events
+  if(check && updateReason != UPDATE_REASON_MANUAL && updateReason != UPDATE_REASON_FORCE)
   {
     // Check timestamp if automatically triggered on starup
-    qlonglong diff = 0;
+    qint64 diffSeconds = 0;
     switch(OptionData::instance().getUpdateRate())
     {
       case opts::DAILY:
-        diff = 24 * 60 * 60;
+        diffSeconds = 24 * 60 * 60;
         break;
       case opts::WEEKLY:
-        diff = 24 * 60 * 60 * 7;
+        diffSeconds = 24 * 60 * 60 * 7;
         break;
       case opts::NEVER:
-        // Let user check manually
-        return;
+        // User checks manually
+        check = false;
     }
 
-    qlonglong now = QDateTime::currentDateTime().toSecsSinceEpoch();
-    qlonglong timestamp = Settings::instance().valueVar(lnm::OPTIONS_UPDATE_LAST_CHECKED).toLongLong();
-    if(now - timestamp < diff)
-    {
-      qInfo() << "Skipping update check. Difference" << now - timestamp;
-      return;
-    }
-  }
+    QDateTime lastChecked = QDateTime::fromSecsSinceEpoch(Settings::instance().valueVar(lnm::OPTIONS_UPDATE_LAST_CHECKED).toLongLong());
+    qint64 lastDiffSeconds = lastChecked.secsTo(QDateTime::currentDateTime());
+    if(lastDiffSeconds < diffSeconds)
+      check = false;
+
+#ifdef DEBUG_INFORMATION
+    qDebug() << Q_FUNC_INFO << "diffSeconds" << diffSeconds << "lastDiffSeconds" << lastDiffSeconds
+             << "check" << check << "lastChecked" << lastChecked;
 #endif
-
-  QString checked;
-  if(!manuallyTriggered && !force)
-    // Get skipped update
-    checked = Settings::instance().valueStr(lnm::OPTIONS_UPDATE_ALREADY_CHECKED);
-
-  // Copy combo box selection to channel enum
-  atools::util::UpdateChannels channels = atools::util::STABLE;
-  switch(channelOpts)
-  {
-    case opts::STABLE:
-      channels = atools::util::STABLE;
-      break;
-    case opts::STABLE_BETA:
-      channels = atools::util::STABLE | atools::util::BETA;
-      break;
-    case opts::STABLE_BETA_DEVELOP:
-      channels = atools::util::STABLE | atools::util::BETA | atools::util::DEVELOP;
-      break;
   }
 
-  // Async
-  qInfo() << "Checking for updates. Channels" << channels << "already checked" << checked;
-  updateCheck->checkForUpdates(checked, manuallyTriggered /* notifyForEmptyUpdates */, channels);
-  Settings::instance().setValueVar(lnm::OPTIONS_UPDATE_LAST_CHECKED, QDateTime::currentDateTime().toSecsSinceEpoch());
+  if(check)
+  {
+    QString checked;
+    if(updateReason != UPDATE_REASON_MANUAL && updateReason != UPDATE_REASON_FORCE)
+      // Get last skipped update version and skip this and all earlier
+      checked = Settings::instance().valueStr(lnm::OPTIONS_UPDATE_ALREADY_CHECKED);
+
+    // Copy combo box selection to channel enum
+    atools::util::UpdateChannels channels = atools::util::NONE;
+    switch(channelOpts)
+    {
+      case opts::STABLE:
+        channels = atools::util::STABLE;
+        break;
+      case opts::STABLE_BETA:
+        channels = atools::util::STABLE | atools::util::BETA;
+        break;
+      case opts::STABLE_BETA_DEVELOP:
+        channels = atools::util::STABLE | atools::util::BETA | atools::util::DEVELOP;
+        break;
+    }
+
+    qInfo() << Q_FUNC_INFO << "Checking for updates now. Channels" << channels << "already checked" << checked;
+
+    // Async
+    updateCheck->checkForUpdates(checked, updateReason == UPDATE_REASON_MANUAL /* notifyForEmptyUpdates */, channels);
+
+    // Set timestamp for last check
+    Settings::instance().setValueVar(lnm::OPTIONS_UPDATE_LAST_CHECKED, QDateTime::currentDateTime().toSecsSinceEpoch());
+  }
+
+  if(reason == UPDATE_REASON_TIMER || reason == UPDATE_REASON_STARTUP)
+    updateTimer.start();
 }
 
 /* Called by update checker */
 void UpdateHandler::updateFound(atools::util::UpdateList updates)
 {
   qDebug() << Q_FUNC_INFO;
+
+  for(const atools::util::Update& update:updates)
+    qDebug() << Q_FUNC_INFO << update.version;
+
   NavApp::closeSplashScreen();
 
   if(!updates.isEmpty())
@@ -135,13 +168,13 @@ void UpdateHandler::updateFound(atools::util::UpdateList updates)
     NavApp::closeSplashScreen();
 
     // Show dialog
-    UpdateDialog updateDialog(mainWindow, manual);
+    UpdateDialog updateDialog(mainWindow, updateReason == UPDATE_REASON_MANUAL);
     updateDialog.setMessage(html.getHtml());
 
     // Show dialog
     updateDialog.exec();
 
-    if(!manual)
+    if(updateReason != UPDATE_REASON_MANUAL)
     {
       if(updateDialog.isIgnoreThisUpdate())
       {
@@ -167,7 +200,7 @@ void UpdateHandler::updateFailed(QString errorString)
   QString message = tr("Error while checking for updates at\n\"%1\":\n%2").
                     arg(updateCheck->getUrl().toDisplayString()).arg(errorString);
 
-  if(manual)
+  if(updateReason == UPDATE_REASON_MANUAL)
     QMessageBox::warning(mainWindow, QApplication::applicationName(), message);
   else
     atools::gui::Dialog(mainWindow).showWarnMsgBox(lnm::ACTIONS_SHOW_UPDATE_FAILED, message, tr("Do not &show this dialog again."));

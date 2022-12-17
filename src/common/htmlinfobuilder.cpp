@@ -4802,7 +4802,7 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
   QString title3 = aircraft.isOnline() ? NavApp::getOnlineNetworkTranslated() : QString();
 
   if(!aircraft.getAirplaneModel().isEmpty())
-    title2 += (title2.isEmpty() ? "" : ", ") % aircraft.getAirplaneModel();
+    title2 += (title2.isEmpty() ? QString() : tr(", ")) % aircraft.getAirplaneModel();
 
   if(!title2.isEmpty())
     title += tr(" - %1").arg(title2);

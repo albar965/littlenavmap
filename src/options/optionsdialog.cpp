@@ -728,6 +728,7 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
 
     NavApp::getMapThemeHandler()->setMapThemeKeys(OptionData::instanceInternal().mapThemeKeys);
 
+    NavApp::updateChannels(OptionData::instance().getUpdateChannels());
     emit optionsChanged();
 
     // Update dialog internal stuff
@@ -735,7 +736,6 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
 
     updateWebOptionsFromData();
     updateWebServerStatus();
-
   }
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Ok))
   {
@@ -751,7 +751,10 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
 
     NavApp::getMapThemeHandler()->setMapThemeKeys(OptionData::instanceInternal().mapThemeKeys);
 
+    NavApp::updateChannels(OptionData::instance().getUpdateChannels());
     emit optionsChanged();
+
+    // Close dialog
     accept();
   }
   else if(button == ui->buttonBoxOptions->button(QDialogButtonBox::Help))
@@ -793,6 +796,7 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
       resetGuiFontClicked();
       resetMapFontClicked();
       flightplanPatterLongClicked();
+      NavApp::updateChannels(OptionData::instance().getUpdateChannels());
     }
   }
 }
@@ -1341,7 +1345,8 @@ void OptionsDialog::checkUpdateClicked()
   qDebug() << Q_FUNC_INFO;
 
   // Trigger async check and get a dialog even if nothing was found
-  NavApp::checkForUpdates(ui->comboBoxOptionsStartupUpdateChannels->currentIndex(), true /* manually triggered */, false /* forceDebug */);
+  NavApp::checkForUpdates(ui->comboBoxOptionsStartupUpdateChannels->currentIndex(),
+                          true /* manual */, false /* startup */, false /* forceDebug */);
 }
 
 void OptionsDialog::colorButtonClicked(QColor& color)

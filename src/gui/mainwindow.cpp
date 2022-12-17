@@ -83,6 +83,7 @@
 #include "weather/weatherreporter.h"
 #include "weather/windreporter.h"
 #include "web/webcontroller.h"
+#include "common/updatehandler.h"
 
 #include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
@@ -440,6 +441,10 @@ MainWindow::MainWindow()
   QAction *debugAction7 = new QAction("DEBUG - Dump map layers", ui->menuHelp);
   this->addAction(debugAction7);
 
+  QAction *debugAction8 = new QAction("DEBUG - Reset update timestamp to -2 days", ui->menuHelp);
+  this->addAction(debugAction8);
+
+  ui->menuHelp->addSeparator();
   ui->menuHelp->addSeparator();
   ui->menuHelp->addAction(debugAction1);
   ui->menuHelp->addAction(debugAction2);
@@ -448,6 +453,7 @@ MainWindow::MainWindow()
   ui->menuHelp->addAction(debugAction5);
   ui->menuHelp->addAction(debugAction6);
   ui->menuHelp->addAction(debugAction7);
+  ui->menuHelp->addAction(debugAction8);
 
   connect(debugAction1, &QAction::triggered, this, &MainWindow::debugActionTriggered1);
   connect(debugAction2, &QAction::triggered, this, &MainWindow::debugActionTriggered2);
@@ -456,6 +462,7 @@ MainWindow::MainWindow()
   connect(debugAction5, &QAction::triggered, this, &MainWindow::debugActionTriggered5);
   connect(debugAction6, &QAction::triggered, this, &MainWindow::debugActionTriggered6);
   connect(debugAction7, &QAction::triggered, this, &MainWindow::debugActionTriggered7);
+  connect(debugAction8, &QAction::triggered, this, &MainWindow::debugActionTriggered8);
 
 #endif
 
@@ -625,7 +632,7 @@ void MainWindow::debugActionTriggered2()
 
 void MainWindow::debugActionTriggered3()
 {
-  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */, true /* forceDebug */);
+  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manual */, false /* startup */, true /* forceDebug */);
 }
 
 void MainWindow::debugActionTriggered4()
@@ -647,6 +654,11 @@ void MainWindow::debugActionTriggered6()
 void MainWindow::debugActionTriggered7()
 {
   mapWidget->dumpMapLayers();
+}
+
+void MainWindow::debugActionTriggered8()
+{
+  Settings::instance().setValueVar(lnm::OPTIONS_UPDATE_LAST_CHECKED, QDateTime::currentDateTime().toSecsSinceEpoch() - 3600L * 48L);
 }
 
 #endif
@@ -676,7 +688,7 @@ void MainWindow::showNavmapLegend()
 /* Check manually for updates as triggered by the action */
 void MainWindow::checkForUpdates()
 {
-  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), true /* manually triggered */, false /* forceDebug */);
+  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), true /* manual */, false /* startup */, false /* forceDebug */);
 }
 
 void MainWindow::showOnlineHelp()
@@ -1590,6 +1602,10 @@ void MainWindow::connectAllSlots()
 
   connect(connectClient, &ConnectClient::connectedToSimulator, this, &MainWindow::updateActionStates);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, this, &MainWindow::updateActionStates);
+
+  // Do not show update dialogs while connected
+  connect(connectClient, &ConnectClient::connectedToSimulator, NavApp::getUpdateHandler(), &UpdateHandler::disableUpdateCheck);
+  connect(connectClient, &ConnectClient::disconnectedFromSimulator, NavApp::getUpdateHandler(), &UpdateHandler::enableUpdateCheck);
 
   connect(connectClient, &ConnectClient::connectedToSimulator, infoController, &InfoController::connectedToSimulator);
   connect(connectClient, &ConnectClient::disconnectedFromSimulator, infoController,
@@ -3355,7 +3371,7 @@ void MainWindow::mainWindowShownDelayed()
   databaseManager->checkDatabaseVersion();
 
   // Check for updates once main window is visible
-  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manually triggered */, false /* forceDebug */);
+  NavApp::checkForUpdates(OptionData::instance().getUpdateChannels(), false /* manual */, true /* startup */, false /* forceDebug */);
 
   // Update the information display later delayed to avoid long loading times due to weather timeout
   QTimer::singleShot(50, infoController, &InfoController::restoreInformation);

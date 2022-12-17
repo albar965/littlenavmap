@@ -315,9 +315,23 @@ void NavApp::deInit()
   splashScreen = nullptr;
 }
 
-void NavApp::checkForUpdates(int channelOpts, bool manuallyTriggered, bool forceDebug)
+void NavApp::checkForUpdates(int channelOpts, bool manual, bool startup, bool forceDebug)
 {
-  updateHandler->checkForUpdates(static_cast<opts::UpdateChannels>(channelOpts), manuallyTriggered, forceDebug);
+  UpdateHandler::UpdateReason reason = UpdateHandler::UPDATE_REASON_UNKNOWN;
+  if(manual)
+    reason = UpdateHandler::UPDATE_REASON_MANUAL;
+  else if(startup)
+    reason = UpdateHandler::UPDATE_REASON_STARTUP;
+  else if(forceDebug)
+    reason = UpdateHandler::UPDATE_REASON_FORCE;
+
+  updateChannels(channelOpts);
+  updateHandler->checkForUpdates(reason);
+}
+
+void NavApp::updateChannels(int channelOpts)
+{
+  updateHandler->setChannelOpts(static_cast<opts::UpdateChannels>(channelOpts));
 }
 
 void NavApp::optionsChanged()

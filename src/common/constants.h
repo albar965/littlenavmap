@@ -37,12 +37,6 @@
 /* Show database IDs in the information window and tooltips */
 // #define DEBUG_INFORMATION
 
-/* Force updates to always show a notification for testing */
-// #define DEBUG_UPDATE
-
-/* Use local URL for update checks for testing */
-// #define DEBUG_UPDATE_URL
-
 namespace lnm {
 
 // ======== URLs ================================================================
@@ -376,6 +370,7 @@ const QLatin1String OPTIONS_TRACK_AUSOTS_PARAM("Track/AusotsUrlParam");
 const QLatin1String OPTIONS_UPDATE_URL("Update/Url");
 const QLatin1String OPTIONS_UPDATE_ALREADY_CHECKED("Update/AlreadyChecked");
 const QLatin1String OPTIONS_UPDATE_LAST_CHECKED("Update/LastCheckTimestamp");
+const QLatin1String OPTIONS_UPDATE_TIMER_SECONDS("Update/TimerSeconds");
 
 /* Need to update these according to program version */
 const QLatin1String OPTIONS_UPDATE_CHANNELS("OptionsDialog/Widget_comboBoxOptionsStartupUpdateChannels");
