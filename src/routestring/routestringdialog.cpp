@@ -400,12 +400,11 @@ void RouteStringDialog::textChangedDelayed()
   flightplan->clear();
   flightplan->setFlightplanType(atools::fs::pln::NO_TYPE); // Set type to none to take it from GUI when creating plan
 
-  QString errorString;
-  if(!ui->plainTextEditRouteString->toPlainText().isEmpty())
+  QString errorString, routeString(ui->plainTextEditRouteString->toPlainText());
+  if(!routeString.isEmpty())
   {
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-    routeStringReader->createRouteFromString(ui->plainTextEditRouteString->toPlainText(), options | rs::REPORT, flightplan, nullptr,
-                                             &speedKts, &altitudeIncluded);
+    routeStringReader->createRouteFromString(routeString, options | rs::REPORT, flightplan, nullptr, &speedKts, &altitudeIncluded);
     QGuiApplication::restoreOverrideCursor();
 
     // Fill report into widget

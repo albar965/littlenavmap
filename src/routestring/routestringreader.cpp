@@ -229,6 +229,34 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
   qDebug() << Q_FUNC_INFO << "after collecting navaids" << timer.restart();
 #endif
 
+  // Check for wrong inital airways in first and last entry =============================
+  // resultList does not contain start and destination airport or procedures at this point
+  if(!resultList.isEmpty())
+  {
+    ParseEntry& first = resultList.first();
+    if(first.result.hasAirways())
+    {
+      if(first.result.hasNavaids() || first.result.hasAirports())
+        // There are other navaids or airports - clear airway information
+        first.result.airways.clear();
+      else
+        // Only airway found - show message
+        appendWarning(tr("No waypoint before airway %1. Ignoring flight plan segment.").arg(first.result.airways.first().name));
+    }
+
+    ParseEntry& last = resultList.last();
+    if(last.result.hasAirways())
+    {
+      if(last.result.hasNavaids() || last.result.hasAirports())
+        // There are other navaids or airports - clear airway information
+        last.result.airways.clear();
+      else
+        // Only airway found - show message
+        appendWarning(tr("No waypoint after airway %1. Ignoring flight plan segment.").arg(last.result.airways.first().name));
+    }
+  }
+
+  // ==========================================================
   // Create airways - will fill the waypoint list in result with airway points
   // if airway is invalid it will be erased in result
   // Will erase NDB, VOR and adapt waypoint list in result if an airway/waypoint match was found
@@ -1089,8 +1117,11 @@ void RouteStringReader::findIndexesInAirway(const QList<map::MapAirwayWaypoint>&
                                             int lastId, int nextId, int& startIndex, int& endIndex,
                                             const QString& airway)
 {
-  int startFragment = -1, endFragment = -1;
   // TODO handle fragments properly
+
+  // Default value is always 1
+  int startFragment = 1, endFragment = 1;
+
   for(int idx = 0; idx < allAirwayWaypoints.size(); idx++)
   {
     const map::MapAirwayWaypoint& wp = allAirwayWaypoints.at(idx);
