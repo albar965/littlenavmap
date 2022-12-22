@@ -666,7 +666,7 @@
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1068"/>
         <source>Descent fuel flow is much higher than cruise fuel flow.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Le débit de carburant en descente est beaucoup plus élevé que le débit de carburant en croisière.</translation>
     </message>
     <message>
         <location filename="src/perf/aircraftperfcontroller.cpp" line="1127"/>
@@ -7068,7 +7068,7 @@ Voler %dist%%</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="544"/>
         <source>File Toolbar</source>
-        <translation type="unfinished">Barre d&apos;outils Fichiers</translation>
+        <translation type="unfinished">Barre d&apos;outils fichiers</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="1287"/>
@@ -8874,13 +8874,13 @@ La meilleure piste sera sélectionnée automatiquement.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11914"/>
         <source>&amp;Changelog</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Historique des modifi&amp;cations</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11917"/>
         <location filename="src/gui/mainwindow.ui" line="11920"/>
         <source>Open changelog in text editor</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Ouvrir le fichier des modifications dans un éditeur de texte</translation>
     </message>
     <message>
         <source>Show simulator AI and multiplayer aircraft position and data on map</source>
@@ -8950,7 +8950,7 @@ La meilleure piste sera sélectionnée automatiquement.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="9969"/>
         <source>Download wind files from NOAA for fuel report and map display</source>
-        <translation type="unfinished">Téléchargez les fichiers de vent de NOAA pour le rapport sur le carburant et l&apos;affichage de la carte</translation>
+        <translation type="unfinished">Télécharger les fichiers de vent de NOAA pour le rapport sur le carburant et l&apos;affichage de la carte</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="10216"/>
@@ -9647,7 +9647,7 @@ La meilleure piste sera sélectionnée automatiquement.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11003"/>
         <source>&amp;Downloads (Online)</source>
-        <translation type="unfinished">&amp;Téléchargements (connecté)</translation>
+        <translation type="unfinished">&amp;Téléchargements (en ligne)</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="11006"/>
@@ -9993,24 +9993,24 @@ La meilleure piste sera sélectionnée automatiquement.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6827"/>
         <source>&amp;About Little Navmap</source>
-        <translation>&amp;À Propos de Little Navmap</translation>
+        <translation type="unfinished">&amp;A propos de Little Navmap</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6830"/>
         <location filename="src/gui/mainwindow.ui" line="6833"/>
         <source>About Little Navmap</source>
-        <translation>À Propos de Little Navmap</translation>
+        <translation type="unfinished">A propos de Little Navmap</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6845"/>
         <source>About &amp;Qt</source>
-        <translation>À Propos de &amp;Qt</translation>
+        <translation type="unfinished">A propos de &amp;Qt</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6848"/>
         <location filename="src/gui/mainwindow.ui" line="6851"/>
         <source>About Qt</source>
-        <translation>À Propos de Qt</translation>
+        <translation type="unfinished">A propos de Qt</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="6863"/>
@@ -11379,7 +11379,7 @@ La vitesse du vent sera interpolée entre cette altitude et le niveau du sol.</t
         <location filename="src/gui/mainwindow.ui" line="8320"/>
         <location filename="src/gui/mainwindow.ui" line="8323"/>
         <source>Show missed approach legs of flight plan or procedure preview on the map</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Afficher sur la carte les segments d&apos;approche manquée du plan de vol ou de la procédure</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8596"/>
@@ -13232,7 +13232,7 @@ Correspond à tout aéroport visité.</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7624"/>
         <source>A&amp;bout Marble</source>
-        <translation>À propos de Mar&amp;bre</translation>
+        <translation type="unfinished">A propos de Mar&amp;bre</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="7627"/>
@@ -14126,7 +14126,7 @@ par rapport à l&apos;aéroport indiqué</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8650"/>
         <source>Check for &amp;Updates</source>
-        <translation>Vérifier les Mises à Jo&amp;ur</translation>
+        <translation type="unfinished">Vérifier les mises à jo&amp;ur</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8653"/>
@@ -14137,7 +14137,7 @@ par rapport à l&apos;aéroport indiqué</translation>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8668"/>
         <source>&amp;Donate for this Program</source>
-        <translation>Faire un &amp;Don pour ce Programme</translation>
+        <translation type="unfinished">Faire un &amp;don pour ce programme</translation>
     </message>
     <message>
         <location filename="src/gui/mainwindow.ui" line="8671"/>
@@ -33318,12 +33318,12 @@ vitesses de montée et de descente dans les performances de l&apos;aéronef.</tr
     <message>
         <location filename="src/route/routealtitude.cpp" line="1010"/>
         <source>Destination is not valid.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">La destination n&apos;est pas valide.</translation>
     </message>
     <message>
         <location filename="src/route/routealtitude.cpp" line="1018"/>
         <source>Departure is not valid.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Le départ n&apos;est pas valide.</translation>
     </message>
     <message>
         <source>Destination is not valid. Must be an airport.</source>
@@ -40744,7 +40744,18 @@ Also check the paths in the Little Navmap options on page &quot;Weather Files&qu
 These path should be empty to use the default.
 
 Restart Little Navmap after correcting the weather paths.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">
+
+Assurez-vous que le chemin de base de votre X-Plane est correct et que
+les fichiers météo ainsi que les répertoires existent.
+
+Cliquez sur &quot;Réinitialiser les chemins&quot; dans la boîte de dialogue &quot;Charger la bibliothèque de scènes&quot; de Little Navmap
+pour fixer le chemin de base après avoir déplacé une installation X-Plane.
+
+Vérifiez également les chemins dans les options de Little Navmap à la page &quot;Fichiers météo&quot;.
+Ces chemins doivent être vides pour utiliser le chemin par défaut.
+
+Redémarrez Little Navmap après avoir corrigé les chemins météo.</translation>
     </message>
     <message>
         <location filename="src/weather/weatherreporter.cpp" line="614"/>
