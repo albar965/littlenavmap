@@ -1,10 +1,10 @@
-#### Latest Release Candidate
+#### Latest Stable Release
 
-[**► Windows 64-bit (*MSFS and X-Plane*)** - LittleNavmap-win64-2.8.6.rc2.zip](https://github.com/albar965/littlenavmap/releases/download/v2.8.6.rc2/LittleNavmap-win64-2.8.6.rc2.zip)<br/>
-[**► macOS** - LittleNavmap-macOS-2.8.6.rc2.zip](https://github.com/albar965/littlenavmap/releases/download/v2.8.6.rc2/LittleNavmap-macOS-2.8.6.rc2.zip)<br/>
-[**► Linux \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-22.04-2.8.6.rc2.tar.gz](https://github.com/albar965/littlenavmap/releases/download/v2.8.6.rc2/LittleNavmap-linux-22.04-2.8.6.rc2.tar.gz)
+[**► Windows 64-bit (*MSFS and X-Plane*)** - LittleNavmap-win64-2.8.7.zip](https://github.com/albar965/littlenavmap/releases/download/v2.8.7/LittleNavmap-win64-2.8.7.zip)<br/>
+[**► macOS** - LittleNavmap-macOS-2.8.7.zip](https://github.com/albar965/littlenavmap/releases/download/v2.8.7/LittleNavmap-macOS-2.8.7.zip)<br/>
+[**► Linux \(64 bit, based on Ubuntu 22.04\)** - LittleNavmap-linux-22.04-2.8.7.tar.gz](https://github.com/albar965/littlenavmap/releases/download/v2.8.7/LittleNavmap-linux-22.04-2.8.7.tar.gz)
 
-**Other Versions:** [Github - Version 2.8.6.rc2](https://github.com/albar965/littlenavmap/releases/tag/v2.8.6.rc2)
+**Other Versions:** [Github - Version 2.8.7](https://github.com/albar965/littlenavmap/releases/tag/v2.8.7)
 
 #### Alternative Download Locations
 
@@ -14,6 +14,9 @@
 ### Little Navmap Links
 
 [**► Screenshots for _Little Navmap_**](https://albar965.github.io/littlenavmapscreens.html)
+
+[**► Screenshots of new 2.8 Features**](https://albar965.github.io/pages/28/littlenavmapscreens.html)
+
 
 [**► User manuals for _Little Navmap_ and _Little Navconnect_**](https://albar965.github.io/manuals.html)
 
