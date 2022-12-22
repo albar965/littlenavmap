@@ -6,21 +6,23 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 # Version 2.8.7
 
+#### 🎄🎁 Wishing you all a magical holiday season and best wishes for a happy New Year! 🎁🎄
+
 ## Notes
 
-This is a stable release of Little Navmap.
-
-**This version is ready for the latest MSFS and for X-Plane 12. See important known issues below for MSFS.**
-
-**The updated user manual is available here:
-[Little Navmap - User Manual](https://www.littlenavmap.org/manuals/littlenavmap/release/2.8/en/)**.
+**This is a stable release of Little Navmap.**
 
 **See
 [Screenshots of new 2.8 Features](https://albar965.github.io/pages/28/littlenavmapscreens.html)
 for an overview of new features.**
 
-**See here for user manual downloads:
-[User Manuals - Stable Releases](https://albar965.github.io/manuals.html#stable).**
+This version is ready for the latest MSFS and for X-Plane 12. See important known issues below for MSFS.
+
+The updated user manual is available here:
+[Little Navmap - User Manual](https://www.littlenavmap.org/manuals/littlenavmap/release/2.8/en/).
+
+See here for user manual downloads:
+[User Manuals - Stable Releases](https://albar965.github.io/manuals.html#stable).
 
 **This changelog also explains new or moved/changed features.
 First look here if anything is not clear or missing.**
@@ -34,24 +36,22 @@ so to benefit from new features and bug fixes.**
 
 A big thank you to all who reported bugs and issues!
 
-**Happy Holidays!**
-
 ## Known Issues MSFS
 
-**Active pause in MSFS breaks the connection and does not allow to reconnect. Use the key `Esc` for normal pause to avoid problems.**
+**Active pause in MSFS breaks the connection and does not allow to reconnect.
+Use the key `Esc` for normal pause to avoid problems.**
 
 ## Changes from 2.6.19 to 2.8.7
 
 This list describes the most obvious changes. See below for details and changes between the beta
 and candidate releases as well as links to the related user manual chapters.
 
-See
-[Screenshots of new 2.8 Features](https://albar965.github.io/pages/28/littlenavmapscreens.html)
+See [Screenshots of new 2.8 Features](https://albar965.github.io/pages/28/littlenavmapscreens.html)
 for an overview of new features.
 
 ### Help
 
-* Updated English
+* Updated English user manual:
   [Little Navmap - User Manual](https://www.littlenavmap.org/manuals/littlenavmap/release/2.8/en/).
   Adapted to new features and is available online as well as included as PDF
   (see [User Manuals - Stable Releases](https://albar965.github.io/manuals.html#stable)).
@@ -73,6 +73,39 @@ for an overview of new features.
 * **Windows 32-bit:** For FSX and Prepar3D.
 
 See [Little Navmap User Manual - Windows Builds](https://www.littlenavmap.org/manuals/littlenavmap/release/2.8/en/INSTALLATION.html#windows-builds) for details.
+
+### User Interface
+
+* Changed status bar to avoid growing and shrinking fields. Now keeping maximum size to avoid
+  jitter.
+* Added option to hide dock window title bars in menu `Window` -> `Show Dock Window Title Bars`.
+  Uncheck this to get more screen space inside the main window.
+* Added airport transition level for X-Plane and Navigraph data.
+* Resetting flight plan table, airport search result table and navaid search result table view on
+  update now to avoid display of wrong columns or missing table columns.
+* Added introductory dialog for first time users explaining further steps.
+* Swapped `Shift+F11` and `F11` functions. Fullscreen is now `F11` since this is a common shortcut
+  for most applications.
+* All actions for `None` and `All` in toolbar button dropdown menus can now toggle between states
+  none, all and last selected state. Click `All` a second time to revert to the previous selection.
+#762
+* Now checking for base folder structure (`Little Navmap Documents`) only on first startup to avoid
+  issues when changing language. Folder structure can be now be created manually from `Tools` ->
+  `Create Directory Structure`. #782
+* Added warning message when using scenery library with not matching simulator in connect dialog.
+  This shows up when connecting to MSFS with an active X-Plane scenery database, for example.
+* Separated tab bar reset into a new menu item `Reset Tabs to Default` in menu `Window`. Window
+  layout and and tabs can now be reset separately.
+* Added show map cache to menu `Tools` -> `Files`.
+* Changed symbol for nautical miles to correct official `NM`.
+* Fixed issues with macOS aliases. These can now be used in X-Plane `Custom Scenery` to link to
+  add-ons.
+* Default style on macOS after first start is now Fusion and also reset on update since the default
+  macOS style is too clunky.
+* Removed check for wrong macOS version on program startup to avoid false warnings.
+* Raised macOS minimum requirement to 10.13 High Sierra.
+* Updated French translations by Patrick.
+* Updated Italian translations by Flavio.
 
 ### Flight Plan
 
@@ -214,37 +247,6 @@ See [Little Navmap User Manual - Windows Builds](https://www.littlenavmap.org/ma
   is higher than cruise speed` and `Descent speed is much smaller than cruise speed`.
 * Added simulator type to aircraft performance file, edit dialog and display.
 * Added display for average wind at cruise level only in tab `Fuel Report`.
-
-### User Interface
-
-* Changed status bar to avoid growing and shrinking fields. Now keeping maximum size to avoid
-  jitter.
-* Added option to hide dock window title bars in menu `Window` -> `Show Dock Window Title Bars`.
-  Uncheck this to get more screen space inside the main window.
-* Added airport transition level for X-Plane and Navigraph data.
-* Resetting flight plan table, airport search result table and navaid search result table view on
-  update now to avoid display of wrong columns or missing table columns.
-* Added introductory dialog for first time users explaining further steps.
-* Swapped `Shift+F11` and `F11` functions. Fullscreen is now `F11` since this is a common shortcut
-  for most applications.
-* All actions for `None` and `All` in toolbar button dropdown menus can now toggle between states
-  none, all and last selected state. Click `All` a second time to revert to the previous selection.
-#762
-* Now checking for base folder structure (`Little Navmap Documents`) only on first startup to avoid
-  issues when changing language. Folder structure can be now be created manually from `Tools` ->
-  `Create Directory Structure`. #782
-* Added warning message when using scenery library with not matching simulator in connect dialog.
-  This shows up when connecting to MSFS with an active X-Plane scenery database, for example.
-* Separated tab bar reset into a new menu item `Reset Tabs to Default` in menu `Window`. Window
-  layout and and tabs can now be reset separately.
-* Added show map cache to menu `Tools` -> `Files`.
-* Changed symbol for nautical miles to correct official `NM`.
-* Fixed issues with macOS aliases. These can now be used in X-Plane `Custom Scenery` to link to
-  add-ons.
-* Default style on macOS after first start is now Fusion and also reset on update since the default
-  macOS style is too clunky.
-* Removed check for wrong macOS version on program startup to avoid false warnings.
-* Raised macOS minimum requirement to 10.13 High Sierra.
 
 ### Options
 
@@ -544,7 +546,6 @@ for more explanations.
 * Added distance option to zoom in on aircraft touchdown in options on page `Simulator Aircraft`.
 * Added separate timeout to jump back to current active leg for flight plan table on page
   `Simulator Aircraft`.
-
 
 ### Search
 
