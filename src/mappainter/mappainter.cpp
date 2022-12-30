@@ -515,7 +515,16 @@ void MapPainter::drawLineString(Marble::GeoPainter *painter, const atools::geo::
     // Add last point
     geoLineStr << GeoDataCoordinates(splitLines.constLast().getLonX(), splitLines.constLast().getLatY(), 0, DEG);
 
-    painter->drawPolyline(geoLineStr);
+#ifdef DEBUG_INFORMATION_LINERENDER
+    qDebug() << Q_FUNC_INFO << "=========================================";
+    for(const GeoDataCoordinates& c : geoLineStr)
+      qDebug() << Q_FUNC_INFO << "long" << c.longitude(GeoDataCoordinates::Degree) << "lat" << c.latitude(GeoDataCoordinates::Degree);
+#endif
+
+    QVector<GeoDataLineString *> geoLineStrCorrected = geoLineStr.toDateLineCorrected();
+    for(const GeoDataLineString *geoLine: geoLineStrCorrected)
+      painter->drawPolyline(*geoLine);
+    qDeleteAll(geoLineStrCorrected);
   }
 }
 
@@ -570,7 +579,10 @@ void MapPainter::drawLineStringRadial(Marble::GeoPainter *painter, const atools:
     // Add last point
     geoLineStr << GeoDataCoordinates(splitLines.constLast().getLonX(), splitLines.constLast().getLatY(), 0, DEG);
 
-    painter->drawPolyline(geoLineStr);
+    QVector<GeoDataLineString *> geoLineStrCorrected = geoLineStr.toDateLineCorrected();
+    for(const GeoDataLineString *geoLine: geoLineStrCorrected)
+      painter->drawPolyline(*geoLine);
+    qDeleteAll(geoLineStrCorrected);
   }
 }
 
