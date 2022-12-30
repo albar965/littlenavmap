@@ -116,7 +116,12 @@ const QPixmap *VehicleIcons::pixmapFromCache(const internal::PixmapKey& key, int
     if(key.online && !key.user)
       name += "_online";
 
-    name = atools::settings::Settings::getOverloadedPath(name + ".svg");
+    name = atools::settings::Settings::getOverloadedPath(name + ".svg", true /* ignoreMissing */);
+
+    // Check if SVG exists
+    if(name.isEmpty())
+      name = ":/littlenavmap/resources/icons/aircraft_unknown.svg";
+
     QPixmap *newPx = nullptr;
     QPixmap pixmap = QIcon(name).pixmap(QSize(size, size));
     if(rotate == 0)

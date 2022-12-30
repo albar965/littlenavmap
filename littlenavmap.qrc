@@ -322,5 +322,6 @@
         <file>resources/icons/turnpath.svg</file>
         <file>resources/icons/databasecheck.svg</file>
         <file>resources/icons/userpoint_Oil Platform.svg</file>
+        <file>resources/icons/aircraft_unknown.svg</file>
     </qresource>
 </RCC>

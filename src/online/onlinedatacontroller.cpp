@@ -83,10 +83,10 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
   verbose = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_DEBUG, false).toBool();
 
   // Load criteria used to detect shadow aircraft right after download finished
-  maxShadowDistanceNm = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_DIST_NM, 1.0).toFloat();
-  maxShadowAltDiffFt = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_ALT_DIFF_FT, 500.).toFloat();
-  maxShadowGsDiffKts = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_GS_DIFF_KTS, 30.).toFloat();
-  maxShadowHdgDiffDeg = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_HDG_DIFF_DEG, 60.).toFloat();
+  maxShadowDistanceNm = settings.valueFloat(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_DIST_NM, 4.0);
+  maxShadowAltDiffFt = settings.valueFloat(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_ALT_DIFF_FT, 500.);
+  maxShadowGsDiffKts = settings.valueFloat(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_GS_DIFF_KTS, 50.);
+  maxShadowHdgDiffDeg = settings.valueFloat(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_HDG_DIFF_DEG, 90.);
 
   downloader = new atools::util::HttpDownloader(mainWindow, verbose);
 
@@ -715,7 +715,7 @@ OnlineAircraft OnlinedataController::shadowAircraftInternal(const atools::fs::sc
     QVector<OnlineAircraft> nearest;
     onlineAircraftSpatialIndex.getRadius(nearest, simAircraft.getPosition(), atools::geo::nmToMeter(maxShadowDistanceNm));
 
-    if(simAircraft.isUser())
+    if(verbose && simAircraft.isUser())
       qDebug() << Q_FUNC_INFO << "nearest.size()" << nearest.size();
 
     // Filter out all which do not match more non-spatial criteria =================================
@@ -737,20 +737,17 @@ OnlineAircraft OnlinedataController::shadowAircraftInternal(const atools::fs::sc
       return !(altOk && gsOk && hdgOk);
     }), nearest.end());
 
-#ifdef DEBUG_INFORMATION
-    if(simAircraft.isUser())
+    if(verbose && simAircraft.isUser())
       qDebug() << Q_FUNC_INFO << "nearest.size() after filter" << nearest.size();
-#endif
 
     if(!nearest.isEmpty())
     {
       // Sort to get closest by coordinates and altitude to start of list
       maptools::sortByDistanceAndAltitude(nearest, simAircraft.getPosition());
 
-#ifdef DEBUG_INFORMATION
-      if(simAircraft.isUser())
+      if(verbose && simAircraft.isUser())
         qDebug() << Q_FUNC_INFO << "Found" << nearest.first().registrationKey;
-#endif
+
       return nearest.constFirst();
     }
   } // if(!onlineAircraftSpatialIndex.isEmpty())
@@ -824,34 +821,40 @@ void OnlinedataController::updateShadowIndex()
         onlineAircraftSpatialIndex.updateIndex();
 
         const atools::fs::sc::SimConnectUserAircraft& simUserAircraft = currentDataPacket.getUserAircraftConst();
-        const OnlineAircraft onlineUserAircraft = shadowAircraftInternal(simUserAircraft);
-        if(onlineUserAircraft.isValid())
+        if(!simUserAircraft.isAnyBoat())
         {
-          int simId = simUserAircraft.getId();
-          int onlineId = onlineUserAircraft.id;
-          aircraftIdSimToOnline.insert(simId, onlineId);
-          aircraftIdOnlineToSim.insert(onlineId, simId);
+          const OnlineAircraft onlineUserAircraft = shadowAircraftInternal(simUserAircraft);
+          if(onlineUserAircraft.isValid())
+          {
+            int simId = simUserAircraft.getId();
+            int onlineId = onlineUserAircraft.id;
+            aircraftIdSimToOnline.insert(simId, onlineId);
+            aircraftIdOnlineToSim.insert(onlineId, simId);
 
-          if(verbose)
-            qDebug() << Q_FUNC_INFO << "User sim" << simId << simUserAircraft.getAirplaneRegistration() << simUserAircraft.getPosition()
-                     << "online" << onlineId << onlineUserAircraft.registration << onlineUserAircraft.pos;
+            if(verbose)
+              qDebug() << Q_FUNC_INFO << "User sim" << simId << simUserAircraft.getAirplaneRegistration() << simUserAircraft.getPosition()
+                       << "online" << onlineId << onlineUserAircraft.registration << onlineUserAircraft.pos;
+          }
         }
 
         // update an index for currentDataPacket
         for(const SimConnectAircraft& simAircraft : currentDataPacket.getAiAircraftConst())
         {
-          OnlineAircraft onlineAircraft = shadowAircraftInternal(simAircraft);
-
-          if(onlineAircraft.isValid())
+          if(!simAircraft.isAnyBoat())
           {
-            int simId = simAircraft.getId();
-            int onlineId = onlineAircraft.id;
-            aircraftIdSimToOnline.insert(simId, onlineId);
-            aircraftIdOnlineToSim.insert(onlineId, simId);
+            OnlineAircraft onlineAircraft = shadowAircraftInternal(simAircraft);
 
-            if(verbose)
-              qDebug() << Q_FUNC_INFO << "Sim" << simId << simAircraft.getAirplaneRegistration() << simAircraft.getPosition()
-                       << "online" << onlineId << onlineAircraft.registration << onlineAircraft.pos;
+            if(onlineAircraft.isValid())
+            {
+              int simId = simAircraft.getId();
+              int onlineId = onlineAircraft.id;
+              aircraftIdSimToOnline.insert(simId, onlineId);
+              aircraftIdOnlineToSim.insert(onlineId, simId);
+
+              if(verbose)
+                qDebug() << Q_FUNC_INFO << "Sim" << simId << simAircraft.getAirplaneRegistration() << simAircraft.getPosition()
+                         << "online" << onlineId << onlineAircraft.registration << onlineAircraft.pos;
+            }
           }
         }
       }
