@@ -25,10 +25,15 @@ QStringList cleanRouteString(const QString& string)
 {
   static const QRegularExpression REGEXP("[^A-Z0-9/\\.]");
 
-  QString cleanstr = string.toUpper();
-  cleanstr.replace(REGEXP, " ");
+  // Replace all non word characters with space
+#ifdef DEBUG_INFORMATION
+  // Use only first line in debug mode
+  QString str = string.section('\n', 0, 0).toUpper().replace(REGEXP, " ").simplified();
+#else
+  QString str = string.toUpper().replace(REGEXP, " ").simplified();
+#endif
 
-  QStringList list = cleanstr.simplified().split(" ");
+  QStringList list = str.split(' ');
   list.removeAll(QString());
   return list;
 }
