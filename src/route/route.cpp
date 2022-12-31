@@ -3244,12 +3244,13 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
   if(isEmpty())
     return;
 
-  int minAltitude = 0, maxAltitude = 100000;
+  int minAltitudeFt = 0, maxAltitudeFt = 100000;
   for(int i = 1; i < size(); i++)
   {
     RouteLeg& routeLeg = (*this)[i];
     const RouteLeg& prevLeg = value(i - 1);
 
+    // Adjust min and max by airway or track restricitons ============================
     if(!routeLeg.getAirwayName().isEmpty())
     {
       if(i == 1 && prevLeg.getMapObjectType() == map::AIRPORT)
@@ -3265,20 +3266,55 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
                                                                     routeLeg.getIdent());
       map::MapAirway airway = airways.value(0);
       routeLeg.setAirway(airway);
-      minAltitude = std::max(airway.minAltitude, minAltitude);
-      if(airway.maxAltitude > 0)
-        maxAltitude = std::min(airway.maxAltitude, maxAltitude);
+
+      if(adjustRouteAltitude)
+      {
+        minAltitudeFt = std::max(airway.minAltitude, minAltitudeFt);
+        if(airway.maxAltitude > 0)
+          maxAltitudeFt = std::min(airway.maxAltitude, maxAltitudeFt);
+      }
     }
     else
       routeLeg.setAirway(map::MapAirway());
-  }
 
-  // Convert feet to local unit
-  minAltitude = Unit::altFeetI(minAltitude);
-  maxAltitude = Unit::altFeetI(maxAltitude);
+    if(adjustRouteAltitude)
+    {
+      // Adjust min by procedure restrictions ===========================
+      const proc::MapAltRestriction& altRestr = routeLeg.getProcedureLegAltRestr();
+      if(altRestr.isValid())
+      {
+        // Cannot fly cruise lower than procedure restriciton
+        switch(altRestr.descriptor)
+        {
+          case proc::MapAltRestriction::AT: // At alt1
+          case proc::MapAltRestriction::AT_OR_ABOVE: // At or above alt1
+            minAltitudeFt = std::max(atools::roundToInt(altRestr.alt1), minAltitudeFt);
+            break;
+
+          case proc::MapAltRestriction::BETWEEN:
+            // At or above alt2 and at or below alt1
+            minAltitudeFt = std::max(atools::roundToInt(altRestr.alt2), minAltitudeFt);
+            break;
+
+          case proc::MapAltRestriction::AT_OR_BELOW:
+          case proc::MapAltRestriction::NO_ALT_RESTR:
+          case proc::MapAltRestriction::ILS_AT:
+          case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
+            break;
+        }
+      }
+    }
+  }
 
   if(adjustRouteAltitude)
   {
+    if(minAltitudeFt > maxAltitudeFt)
+      maxAltitudeFt = minAltitudeFt;
+
+    // Convert feet to local unit
+    minAltitudeFt = Unit::altFeetI(minAltitudeFt);
+    maxAltitudeFt = Unit::altFeetI(maxAltitudeFt);
+
     // Check airway limits after calculation ===========================
 
     // Add 500 ft/m for VFR
@@ -3288,13 +3324,13 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
     // First round up to next rule adhering altitude independent of flight direction
     // cruisingAltitude = static_cast<int>(std::ceil((cruisingAltitude - offset) / 1000.f) * 1000.f + offset);
 
-    if(cruisingAltitude < minAltitude)
+    if(cruisingAltitude < minAltitudeFt)
       // Below min altitude - use min altitude and round up to next valid level
-      cruisingAltitude = static_cast<int>(std::ceil((minAltitude - offset) / 1000.f) * 1000.f + offset);
+      cruisingAltitude = static_cast<int>(std::ceil((minAltitudeFt - offset) / 1000.f) * 1000.f + offset);
 
-    if(cruisingAltitude > maxAltitude)
+    if(cruisingAltitude > maxAltitudeFt)
       // Above max altitude - use max altitude and round down
-      cruisingAltitude = static_cast<int>(std::floor((maxAltitude - offset) / 1000.f) * 1000.f + offset);
+      cruisingAltitude = static_cast<int>(std::floor((maxAltitudeFt - offset) / 1000.f) * 1000.f + offset);
 
     // Adjust altitude after route calculation ===========================
     if(OptionData::instance().getFlags() & opts::ROUTE_ALTITUDE_RULE)
@@ -3302,13 +3338,15 @@ void Route::updateAirwaysAndAltitude(bool adjustRouteAltitude)
       // Apply simplified east/west or other rule - always rounds up =============================
       int adjusted = getAdjustedAltitude(cruisingAltitude);
 
-      if(adjusted > maxAltitude)
+      if(adjusted > maxAltitudeFt)
         adjusted = getAdjustedAltitude(cruisingAltitude - 1000);
       cruisingAltitude = adjusted;
     }
 
+#ifdef DEBUG_INFORMATION
     qDebug() << Q_FUNC_INFO << "Updating flight plan altitude"
-             << "minAltitude" << minAltitude << "maxAltitude" << maxAltitude << "cruisingAltitude" << cruisingAltitude;
+             << "minAltitude" << minAltitudeFt << "maxAltitude" << maxAltitudeFt << "cruisingAltitude" << cruisingAltitude;
+#endif
 
     flightplan.setCruisingAltitude(cruisingAltitude);
   }

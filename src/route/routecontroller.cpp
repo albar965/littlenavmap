@@ -1196,7 +1196,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 
     // Copy speed, type and altitude from GUI
     updateFlightplanFromWidgets(flightplan);
-    adjustAltitude = true; // Change altitude based on airways later
+    adjustAltitude = true; // Change altitude based on airways and procedures later
   }
   else if(format == atools::fs::pln::FMS11 || format == atools::fs::pln::FMS3 || format == atools::fs::pln::FSC_PLN ||
           format == atools::fs::pln::FLIGHTGEAR || format == atools::fs::pln::GARMIN_FPL)
@@ -1211,7 +1211,7 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
     if(cruiseAlt > 0)
       flightplan.setCruisingAltitude(cruiseAlt);
     else
-      adjustAltitude = true; // Change altitude based on airways later
+      adjustAltitude = true; // Change altitude based on airways and procedures later
   }
 
   if(undo)

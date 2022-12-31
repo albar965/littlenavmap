@@ -40,16 +40,16 @@ struct MapAltRestriction
   enum Descriptor
   {
     NO_ALT_RESTR,
-    AT,
-    AT_OR_ABOVE,
-    AT_OR_BELOW,
+    AT, /* At alt1 */
+    AT_OR_ABOVE, /* At or above alt1 */
+    AT_OR_BELOW, /* At or below alt1 */
     BETWEEN, /* At or above alt2 and at or below alt1 */
-    ILS_AT, /* ILS glideslope altitude at alt1 */
-    ILS_AT_OR_ABOVE /* ILS glideslope altitude at alt1*/
+    ILS_AT, /* ILS glideslope altitude at alt1 - not restricting */
+    ILS_AT_OR_ABOVE /* ILS glideslope altitude at alt1 - not restricting */
   };
 
   Descriptor descriptor = MapAltRestriction::NO_ALT_RESTR;
-  float alt1, alt2,
+  float alt1, alt2, /* Feet */
         verticalAngleAlt = map::INVALID_ALTITUDE_VALUE; /* Forced since calculated from vertical angle */
 
   /* Indicator used to force lowest altitude on final FAF and FACF to avoid arriving above glide slope or VASI.

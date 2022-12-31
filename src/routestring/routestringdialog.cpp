@@ -371,6 +371,11 @@ void RouteStringDialog::restoreState(const QString& routeString)
   else
     plainTextEditRouteStringSet(routeString);
 
+  // Move cursor to top of document
+  QTextCursor cursor = ui->plainTextEditRouteString->textCursor();
+  cursor.movePosition(QTextCursor::Start, QTextCursor::MoveAnchor);
+  ui->plainTextEditRouteString->setTextCursor(cursor);
+
   splitterMoved();
 }
 
@@ -435,7 +440,7 @@ void RouteStringDialog::buttonBoxClicked(QAbstractButton *button)
   {
     if(nonModal)
       // Floating window - Create a new flight plan and use undo/redo - keep non-modal dialog open - do not mark plan as changed
-      emit routeFromFlightplan(*flightplan, isAltitudeIncluded(), false /* changed */, true /* undo */);
+      emit routeFromFlightplan(*flightplan, !isAltitudeIncluded() /* adjustAltitude */, false /* changed */, true /* undo */);
     else
       // Openeded from SimBrief or other dialogs - Return QDialog::Accepted and close
       QDialog::accept();
@@ -443,7 +448,7 @@ void RouteStringDialog::buttonBoxClicked(QAbstractButton *button)
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Apply))
   {
     // Only in floating window - create a new flight plan and use undo/redo - keep non-modal dialog open - do not mark plan as changed
-    emit routeFromFlightplan(*flightplan, isAltitudeIncluded(), false /* changed */, true /* undo */);
+    emit routeFromFlightplan(*flightplan, !isAltitudeIncluded() /* adjustAltitude */, false /* changed */, true /* undo */);
     // Return QDialog::Accepted and close
     QDialog::accept();
   }
