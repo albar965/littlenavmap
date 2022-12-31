@@ -693,9 +693,10 @@ TRANSLATIONS = littlenavmap_fr.ts \
                littlenavmap_it.ts \
                littlenavmap_nl.ts \
                littlenavmap_de.ts \
-               littlenavmap_es.ts \
                littlenavmap_zh.ts \
                littlenavmap_pt_BR.ts
+
+# littlenavmap_es.ts
 
 OTHER_FILES += \
   $$files(build/*, true) \
