@@ -344,12 +344,24 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
         record.setValue("destination_laty", airport.position.getLatY()); // integer,
         record.setValue("destination_alt", airport.position.getAltitude()); // integer,
 
+        QDateTime destinationTime = QDateTime::fromString(atools::currentIsoWithOffset(), Qt::ISODateWithMs);
+        QDateTime destinationTimeSim = aircraft.getZuluTime();
+
+        // Adapt times that are a result of wrong time jumps/warps resulting in one day offset
+        // If the destinationTime is earlier than departure_time, the value returned is negative.
+        if(record.valueDateTime("departure_time").secsTo(destinationTime) < 0)
+          destinationTime = destinationTime.addDays(1);
+
+        // If the destinationTimeSim is earlier than departure_time_sim, the value returned is negative.
+        if(record.valueDateTime("departure_time_sim").secsTo(destinationTimeSim) < 0)
+          destinationTimeSim = destinationTimeSim.addDays(1);
+
         // Sqlite TEXT as ISO8601 strings (2021-05-16T23:55:00.259+02:00).
         // TEXT as ISO8601 strings ("YYYY-MM-DD HH:MM:SS.SSS")
-        record.setValue("destination_time", atools::currentIsoWithOffset()); // varchar(100),
+        record.setValue("destination_time", destinationTime); // varchar(100),
 
         // 2021-05-16T21:50:24.973Z
-        record.setValue("destination_time_sim", aircraft.getZuluTime()); // varchar(100),
+        record.setValue("destination_time_sim", destinationTimeSim); // varchar(100),
 
         // Update flight plan and aircraft performance =========================
         recordFlightplanAndPerf(record);

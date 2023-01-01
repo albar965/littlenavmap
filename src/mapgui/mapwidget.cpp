@@ -3726,7 +3726,7 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
       else
       {
         float distanceFromStart = route.getDistanceFromStart(pos);
-        ground = distanceFromStart<0.5f || distanceFromStart> route.getTotalDistance() - 0.5f;
+        ground = distanceFromStart<0.2f || distanceFromStart> route.getTotalDistance() - 0.2f;
 
         if(route.isActiveAlternate() || route.isActiveMissed())
           ground = false;
