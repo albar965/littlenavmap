@@ -168,6 +168,11 @@ struct MapResult
     return !holdings.isEmpty();
   }
 
+  bool hasParkings() const
+  {
+    return !parkings.isEmpty();
+  }
+
   bool hasUserpointsRoute() const
   {
     return !userpointsRoute.isEmpty();

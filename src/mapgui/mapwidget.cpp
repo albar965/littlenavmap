@@ -2340,10 +2340,7 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
     bool updateAircraft = NavApp::isConnectedAndAircraft() && mapSearchResultTooltip->hasAnyAircraft();
 
     // Update tooltip if bearing is shown
-    bool updateBearing = (mapSearchResultTooltip->hasAirports() || mapSearchResultTooltip->hasVor() || mapSearchResultTooltip->hasNdb() ||
-                          mapSearchResultTooltip->hasWaypoints() || mapSearchResultTooltip->hasIls() ||
-                          mapSearchResultTooltip->hasHoldings() || mapSearchResultTooltip->hasAirportMsa() ||
-                          mapSearchResultTooltip->hasUserpoints()) && NavApp::isConnectedAndAircraft();
+    bool updateBearing = NavApp::isConnectedAndAircraft();
 
     // Aircraft moved away from cursor or nothing in current result
     bool aircraftDisappeared = mapSearchResultTooltip->isEmpty() && mapSearchResultTooltipLast->hasAnyAircraft();
