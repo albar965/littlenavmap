@@ -162,6 +162,22 @@ QColor routeProcedurePointFlyoverColor(Qt::black);
 QColor routeUserPointColor(Qt::darkYellow);
 QColor routeInvalidPointColor(Qt::red);
 
+/* Procedure colors */
+QColor routeProcedureMissedTableColorDark(240, 170, 120);
+QColor routeProcedureMissedTableColor(Qt::darkRed);
+
+QColor routeProcedureTableColorDark(140, 200, 240);
+QColor routeProcedureTableColor(Qt::darkBlue);
+
+/* Alternate airport leg colors */
+QColor routeAlternateTableColor(Qt::darkGray);
+QColor routeAlternateTableColorDark(Qt::gray);
+QColor routeInvalidTableColor(Qt::red);
+QColor routeInvalidTableColorDark(Qt::red);
+
+QColor nextWaypointColor(255, 100, 255);
+QColor nextWaypointColorDark(150, 20, 150);
+
 /* Alternating colors */
 static QColor rowBgColor;
 static QColor rowAltBgColor;
@@ -625,6 +641,19 @@ void syncColors()
 
   QSettings colorSettings(filename, QSettings::IniFormat);
   colorSettings.setValue("Options/Version", QApplication::applicationVersion());
+
+  colorSettings.beginGroup("FlightPlan");
+  syncColor(colorSettings, "RouteProcedureMissedTableColorDark", routeProcedureMissedTableColorDark);
+  syncColor(colorSettings, "RouteProcedureMissedTableColor", routeProcedureMissedTableColor);
+  syncColor(colorSettings, "RouteProcedureTableColorDark", routeProcedureTableColorDark);
+  syncColor(colorSettings, "RouteProcedureTableColor", routeProcedureTableColor);
+  syncColor(colorSettings, "RouteAlternateTableColor", routeAlternateTableColor);
+  syncColor(colorSettings, "RouteAlternateTableColorDark", routeAlternateTableColorDark);
+  syncColor(colorSettings, "RouteInvalidTableColor", routeInvalidTableColor);
+  syncColor(colorSettings, "RouteInvalidTableColorDark", routeInvalidTableColorDark);
+  syncColor(colorSettings, "NextWaypointColor", nextWaypointColor);
+  syncColor(colorSettings, "NextWaypointColorDark", nextWaypointColorDark);
+  colorSettings.endGroup();
 
   colorSettings.beginGroup("Aircraft");
   syncColorArgb(colorSettings, "UserLabelColor", aircraftUserLabelColor);

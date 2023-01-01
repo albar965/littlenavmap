@@ -239,20 +239,18 @@ extern QColor routeUserPointColor;
 extern QColor routeInvalidPointColor;
 
 /* Procedure colors */
-const QColor routeProcedureMissedTableColor = QColor(Qt::darkRed);
-const QColor routeProcedureMissedTableColorDark = QColor(240, 170, 120);
-const QColor routeProcedureTableColor = QColor(Qt::darkBlue);
-const QColor routeProcedureTableColorDark = QColor(140, 200, 240);
+extern QColor routeProcedureMissedTableColor;
+extern QColor routeProcedureMissedTableColorDark;
+extern QColor routeProcedureTableColor;
+extern QColor routeProcedureTableColorDark;
 
 /* Alternate airport leg colors */
-const QColor routeAlternateTableColor = QColor(Qt::darkGray);
-const QColor routeAlternateTableColorDark = QColor(Qt::gray);
-
-const QColor routeInvalidTableColor = QColor(Qt::red);
-const QColor routeInvalidTableColorDark = QColor(Qt::red);
-
-const QColor nextWaypointColor(QColor(255, 100, 255));
-const QColor nextWaypointColorDark(QColor(150, 20, 150));
+extern QColor routeAlternateTableColor;
+extern QColor routeAlternateTableColorDark;
+extern QColor routeInvalidTableColor;
+extern QColor routeInvalidTableColorDark;
+extern QColor nextWaypointColor;
+extern QColor nextWaypointColorDark;
 
 /* Get an icon for the start type (RUNWAY, HELIPAD or WATER) */
 const QIcon& iconForStart(const map::MapStart& start);
