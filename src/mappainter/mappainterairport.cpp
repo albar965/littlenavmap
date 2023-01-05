@@ -326,11 +326,12 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
       painter->setPen(Qt::NoPen);
       for(int i = 0; i < runwayCenters.size(); i++)
       {
-        if(!runways->at(i).shoulder.isEmpty())
+        const MapRunway& runway = runways->at(i);
+        if(!runway.shoulder.isEmpty() && !runway.isWater()) // Do not draw shoulders for water runways
         {
           painter->translate(runwayCenters.at(i));
-          painter->rotate(runways->at(i).heading);
-          painter->setBrush(mapcolors::colorForSurface(runways->at(i).shoulder));
+          painter->rotate(runway.heading);
+          painter->setBrush(mapcolors::colorForSurface(runway.shoulder));
           float width = static_cast<float>(runwayRects.at(i).width()) / 4.f;
           painter->drawRect(QRectF(runwayRects.at(i)).marginsAdded(QMarginsF(width, 0.f, width, 0.f)));
           painter->resetTransform();
