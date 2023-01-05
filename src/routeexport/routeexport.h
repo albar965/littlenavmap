@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -129,6 +129,9 @@ public:
 
   /* Old X-Plane FMS 3 */
   bool routeExportFms3Multi(const RouteExportFormat& format);
+
+  /* X-Plane CIVA Navigation System */
+  bool routeExportCivaFmsMulti(const RouteExportFormat& format);
 
   /* IniBuilds */
   bool routeExportFms3IniBuildsMulti(const RouteExportFormat& format);

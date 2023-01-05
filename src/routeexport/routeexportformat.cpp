@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -211,6 +211,7 @@ void RouteExportFormatMap::initCallbacks(RouteExport *routeExport)
   (*this)[PLNMSFS     ].CB(bind(&RouteExport::routeExportPlnMsfs,            routeExport, _1));
   (*this)[PLNANNOTATED].CB(bind(&RouteExport::routeExportPlnAnnotatedMulti,  routeExport, _1));
   (*this)[FMS3        ].CB(bind(&RouteExport::routeExportFms3Multi,          routeExport, _1));
+  (*this)[CIVAFMS     ].CB(bind(&RouteExport::routeExportCivaFmsMulti,       routeExport, _1));
   (*this)[FMS11       ].CB(bind(&RouteExport::routeExportFms11,              routeExport, _1));
   (*this)[FMS12       ].CB(bind(&RouteExport::routeExportFms11,              routeExport, _1));
   (*this)[FLP         ].CB(bind(&RouteExport::routeExportFlpMulti,           routeExport, _1));
@@ -262,11 +263,13 @@ void RouteExportFormatMap::init()
   namespace ap = atools::fs::pln::pattern;
 
   // All text after the first linefeed is used as tooltip
-  const QString rxptooltip = tr("\nExport navaids and airports as user defined waypoints to avoid locked waypoints due to different AIRAC cycles.\n"
+  const QString rxpTooltip = tr("\nExport navaids and airports as user defined waypoints to avoid locked waypoints due to different AIRAC cycles.\n"
                                 "This saves all waypoints as user defined waypoints when exporting flight plans.\n"
                                 "Note that is not possible to export procedures if this is enabled.");
 
   const QString gpxTooltip = tr("\nExported with aircraft track and flight plan.");
+
+  const QString civaTooltip = tr("\nFlight plan is split up and exported into several numbered files.");
 
   const QString lnmTooltip = tr("\nUse this format to save and backup your plans since it covers all features like remarks and more.\n"
                                 "Note that using this option is the same as using \"Save\" or \"Save as\" in the main menu \"File\".");
@@ -304,12 +307,13 @@ void RouteExportFormatMap::init()
   FMT(FMS3,         AIRPORTS,         SD % tr("fms"),     tr("Simulator"), tr("X-Plane FMS 3\nOld and limited format.")                          );
   FMT(FMS11,        AIRPORTS|CYCLE,   SD % tr("fms"),     tr("Simulator"), tr("X-Plane FMS 11") % mainMenu                                       );
   FMT(FMS12,        AIRPORTS|CYCLE,   SD % tr("fms"),     tr("Simulator"), tr("X-Plane FMS 12") % mainMenu % xp12                                );
+  FMT(CIVAFMS,      AIRPORTS,         S0 % tr("fms"),     tr("FMC"),       tr("X-Plane CIVA Navigation System") % civaTooltip                    );
   FMT(FLP,          AIRPORTS,         S0 % tr("flp"),     tr("Aircraft"),  tr("Aerosoft Airbus and others")                                      );
   FMT(FLPCRJ,       AIRPORTS,         S %  tr("01.flp"),  tr("Aircraft"),  tr("Aerosoft CRJ")                                                    );
   FMT(FLPCRJMSFS,   AIRPORTS,         S %  tr("01.flp"),  tr("Aircraft"),  tr("Aerosoft CRJ for MSFS")                                           );
   FMT(FLIGHTGEAR,   AIRPORTS,         DF % tr("fgfp"),    tr("Simulator"), tr("FlightGear") % mainMenu                                           );
   FMT(GFP,          AIRPORTS,         SD % tr("gfp"),     tr("Garmin"),    tr("Flight1 Garmin GTN 650/750")                                      );
-  FMT(GFPUWP,       AIRPORTS|GARMIN_WP, SD % tr("gfp"),   tr("Garmin"),    tr("Flight1 Garmin GTN 650/750 with user defined waypoints") % rxptooltip);
+  FMT(GFPUWP,       AIRPORTS|GARMIN_WP, SD % tr("gfp"),   tr("Garmin"),    tr("Flight1 Garmin GTN 650/750 with user defined waypoints") % rxpTooltip);
   FMT(TXT,          AIRPORTS,         S0 % tr("txt"),     tr("Aircraft"),  tr("Rotate MD-80, MD-11 and others")                                  );
   FMT(TXTJAR,       AIRPORTS,         S0 % tr("txt"),     tr("Aircraft"),  tr("JARDesign aircraft")                                              );
   FMT(RTE,          AIRPORTS,         S0 % tr("rte"),     tr("Aircraft"),  tr("PMDG aircraft")                                                   );
@@ -320,9 +324,9 @@ void RouteExportFormatMap::init()
   FMT(FPL,          AIRPORTS,         S0 % tr("fpl"),     tr("Aircraft"),  tr("IXEG Boeing 737")                                                 );
   FMT(CORTEIN,      AIRPORTS|FILEAPP, tr("corte.in"),     tr("Aircraft"),  tr("Flight Factor Airbus")                                            );
   FMT(RXPGNS,       AIRPORTS,         S0 % tr("fpl"),     tr("Garmin"),    tr("Reality XP GNS 530W/430W V2")                                     );
-  FMT(RXPGNSUWP,    AIRPORTS|GARMIN_WP, S0 % tr("fpl"),   tr("Garmin"),    tr("Reality XP GNS 530W/430W V2 with user defined waypoints") % rxptooltip);
+  FMT(RXPGNSUWP,    AIRPORTS|GARMIN_WP, S0 % tr("fpl"),   tr("Garmin"),    tr("Reality XP GNS 530W/430W V2 with user defined waypoints") % rxpTooltip);
   FMT(RXPGTN,       AIRPORTS,         SU % tr("gfp"),     tr("Garmin"),    tr("Reality XP GTN 750/650 Touch")                                    );
-  FMT(RXPGTNUWP,    AIRPORTS|GARMIN_WP, SU % tr("gfp"),   tr("Garmin"),    tr("Reality XP GTN 750/650 Touch with user defined waypoints") % rxptooltip);
+  FMT(RXPGTNUWP,    AIRPORTS|GARMIN_WP, SU % tr("gfp"),   tr("Garmin"),    tr("Reality XP GTN 750/650 Touch with user defined waypoints") % rxpTooltip);
   FMT(FLTPLAN,      AIRPORTS,         S0 % tr("fltplan"), tr("Aircraft"),  tr("iFly")                                                            );
   FMT(XFMC,         AIRPORTS,         S0 % tr("fpl"),     tr("FMC"),       tr("X-FMC")                                                           );
   FMT(UFMC,         AIRPORTS,         S0 % tr("ufmc"),    tr("FMC"),       tr("UFMC")                                                            );
@@ -483,6 +487,7 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[FMS3        ].DP(xpFilesPath);
   (*this)[FMS11       ].DP(xpFilesPath);
   (*this)[FMS12       ].DP(xpFilesPath12);
+  (*this)[CIVAFMS     ].DP(xpFilesPath);
   (*this)[FLP         ].DP(documents);
   (*this)[FLPCRJ      ].DP(documents % SEP % "Aerosoft" % SEP % "Digital Aviation CRJ" % SEP % "FlightPlans");
   (*this)[FLPCRJMSFS  ].DP(documents);

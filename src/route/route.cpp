@@ -1426,6 +1426,28 @@ void Route::removeAlternateLegs()
   numAlternateLegs = 0;
 }
 
+void Route::removeMissedLegs()
+{
+  QVector<int> indexes;
+
+  // Collect indexes to delete in reverse order
+  for(int i = size() - 1; i >= 0; i--)
+  {
+    const RouteLeg& routeLeg = value(i);
+    if(routeLeg.getProcedureLeg().isMissed())
+      indexes.append(i);
+  }
+
+  // Delete in route legs and flight plan from the end
+  for(int i = 0; i < indexes.size(); i++)
+  {
+    removeAt(indexes.at(i));
+    flightplan.getEntries().removeAt(indexes.at(i));
+  }
+  alternateLegsOffset = map::INVALID_INDEX_VALUE;
+  numAlternateLegs = 0;
+}
+
 void Route::clearProcedures(proc::MapProcedureTypes type)
 {
   // Clear procedure legs
@@ -2755,6 +2777,13 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
   if(options.testFlag(rf::REMOVE_ALTERNATE))
   {
     route.removeAlternateLegs();
+    route.updateIndicesAndOffsets();
+  }
+
+  // Remove missed approach legs ====================================================
+  if(options.testFlag(rf::REMOVE_MISSED))
+  {
+    route.removeMissedLegs();
     route.updateIndicesAndOffsets();
   }
 

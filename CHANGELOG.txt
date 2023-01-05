@@ -38,8 +38,8 @@ A big thank you to all who reported bugs and issues!
 
 ## Known Issues MSFS
 
-**Active pause in MSFS breaks the connection and does not allow to reconnect.
-Use the key `Esc` for normal pause to avoid problems.**
+**Active pause in MSFS breaks the connection and does not allow to reconnect even when restarting *Little Navmap*.
+This is a MSFS issue. Use the key `Esc` for normal pause or click the toolbar button for pause to avoid problems.**
 
 ## Changes from 2.6.19 to 2.8.7
 

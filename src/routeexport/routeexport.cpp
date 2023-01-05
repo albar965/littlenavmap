@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@
 #include "gui/mainwindow.h"
 #include "io/fileroller.h"
 #include "navapp.h"
-#include "options/optiondata.h"
 #include "route/routealtitude.h"
 #include "route/routecontroller.h"
 #include "routeexport/routeexportdata.h"
@@ -382,6 +381,27 @@ bool RouteExport::routeExportFms3Multi(const RouteExportFormat& format)
       if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_FMS3, std::bind(&FlightplanIO::saveFms3, flightplanIO, _1, _2)))
       {
         mainWindow->setStatusMessage(tr("Flight plan saved as FMS 3."));
+        formatExportedCallback(format, routeFile);
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+bool RouteExport::routeExportCivaFmsMulti(const RouteExportFormat& format)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  if(routeValidateMulti(format))
+  {
+    QString routeFile = exportFileMulti(format);
+    if(!routeFile.isEmpty())
+    {
+      using namespace std::placeholders;
+      if(exportFlighplan(routeFile, rf::DEFAULT_OPTS_CIVA_FMS, std::bind(&FlightplanIO::saveCivaFms, flightplanIO, _1, _2)))
+      {
+        mainWindow->setStatusMessage(tr("Flight plan saved for CIVA Navigation System."));
         formatExportedCallback(format, routeFile);
         return true;
       }

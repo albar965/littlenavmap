@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -47,6 +47,7 @@ enum RouteAdjustOption
                                             * with either ICAO, FAA, IATA or local ones */
 
   REMOVE_RUNWAY_PROC = 1 << 14, /* Remove runway extensions and their waypoints */
+  REMOVE_MISSED = 1 << 15, /* Remove missed approach */
 
   /* Export adjust options for most export formats */
   DEFAULT_OPTS = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | FIX_PROC_ENTRY_EXIT,
@@ -80,6 +81,7 @@ enum RouteAdjustOption
   DEFAULT_OPTS_FMS3 = rf::DEFAULT_OPTS_NO_PROC,
   DEFAULT_OPTS_FMS11 = rf::REPLACE_CUSTOM_WP | rf::REMOVE_ALTERNATE | rf::REMOVE_TRACKS | rf::FIX_CIRCLETOLAND |
                        rf::XPLANE_REPLACE_AIRPORT_IDENTS,
+  DEFAULT_OPTS_CIVA_FMS = rf::DEFAULT_OPTS_NO_PROC | rf::REMOVE_ALTERNATE | rf::REMOVE_RUNWAY_PROC | rf::REMOVE_MISSED,
 
   /* Garmin GPX */
   DEFAULT_OPTS_GPX = rf::DEFAULT_OPTS | rf::SAVE_AIRWAY_WP | rf::SAVE_SIDSTAR_WP | rf::SAVE_APPROACH_WP
