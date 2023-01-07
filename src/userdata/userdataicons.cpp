@@ -36,6 +36,7 @@ void UserdataIcons::initTranslateableTexts()
   typeToTranslatedMap = QHash<QString, QString>(
   {
     {QLatin1String("Airport"), tr("Airport", "UserpointType")},
+    {QLatin1String("Addon"), tr("Addon", "UserpointType")},
     {QLatin1String("Airstrip"), tr("Airstrip", "UserpointType")},
     {QLatin1String("Bookmark"), tr("Bookmark", "UserpointType")},
     {QLatin1String("Building"), tr("Building", "UserpointType")},
@@ -75,6 +76,7 @@ void UserdataIcons::initTranslateableTexts()
   translationToTypeMap = QHash<QString, QString>(
   {
     {tr("Airport", "UserpointType"), QLatin1String("Airport")},
+    {tr("Addon", "UserpointType"), QLatin1String("Addon")},
     {tr("Airstrip", "UserpointType"), QLatin1String("Airstrip")},
     {tr("Bookmark", "UserpointType"), QLatin1String("Bookmark")},
     {tr("Building", "UserpointType"), QLatin1String("Building")},
@@ -158,7 +160,7 @@ QPixmap *UserdataIcons::getIconPixmap(const QString& type, int size, icon::TextP
     // NDB navaids have their label at the bottom - place user NDB on top
     if(type == "NDB")
       *textplacement = icon::ICON_LABEL_TOP;
-    else if(atools::contains(type, {"Airport", "Airstrip", "Closed", "Helipad", "Seaport", "Waypoint"}))
+    else if(atools::contains(type, {"Airport", "Addon", "Airstrip", "Closed", "Helipad", "Seaport", "Waypoint"}))
       // Airports and waypoints have their label at the right - place user at the left
       *textplacement = icon::ICON_LABEL_LEFT;
     // else if(atools::contains(type, {"VOR", "VORTAC", "VORDME", "TACAN", "DME"}))
