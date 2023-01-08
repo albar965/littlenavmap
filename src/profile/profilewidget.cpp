@@ -731,6 +731,14 @@ void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
 
   if(runwayEnd.isValid())
   {
+    const RouteLeg& leg = route.getDestinationLeg();
+    const proc::MapProcedureLeg& procLeg = leg.getProcedureLeg();
+
+    // Do not show VASI if approach leg has a large offset compared to the runway
+    if(procLeg.isValid() && procLeg.calculatedTrueCourse < map::INVALID_COURSE_VALUE &&
+       atools::geo::angleAbsDiff(procLeg.calculatedTrueCourse, runwayEnd.heading) > 45.f)
+      return;
+
     // Get origin on screen
     int x = distanceX(altitudeLegs.getDestinationDistance());
     int y = altitudeY(altitudeLegs.getDestinationAltitude());
