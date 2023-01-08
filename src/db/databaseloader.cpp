@@ -22,7 +22,6 @@
 #include "common/formatter.h"
 #include "db/databaseprogressdialog.h"
 #include "db/dbtools.h"
-#include "exception.h"
 #include "fs/navdatabase.h"
 #include "fs/navdatabaseerrors.h"
 #include "fs/navdatabaseoptions.h"
@@ -197,7 +196,7 @@ void DatabaseLoader::loadScenery()
   // No parent to allow non-modal dialog
   progressDialog = new DatabaseProgressDialog(nullptr, atools::fs::FsPaths::typeToShortName(selectedFsType));
 
-  // Add to dock handler to enable auto raise and closing on exit
+  // Add to dock handler to enable auto raise and closing on exit as well as applying stay-on-top status from main
   NavApp::addDialogToDockHandler(progressDialog);
 
   QString basePath = simulators.value(selectedFsType).basePath;
@@ -501,10 +500,15 @@ void DatabaseLoader::showErrors()
       numScenery++;
     }
 
-    TextDialog errorDialog(progressDialog, tr("%1 - Load Scenery Library Results").arg(QApplication::applicationName()),
+    // Let the error dialog be a child of main to block main window
+    TextDialog errorDialog(NavApp::getQMainWidget(), tr("%1 - Load Scenery Library Results").arg(QApplication::applicationName()),
                            "SCENERY.html#errors"); // anchor for future use
     errorDialog.setHtmlMessage(texts, true /* print to log */);
+    NavApp::setStayOnTop(&errorDialog);
     errorDialog.exec();
+
+    // Raise progress again
+    progressDialog->activateWindow();
   }
 }
 

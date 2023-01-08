@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -3464,12 +3464,20 @@ void MainWindow::fullScreenMapToggle()
     fullScreenOff();
 }
 
+void MainWindow::setStayOnTop(QWidget *widget)
+{
+  dockHandler->setStayOnTop(widget, ui->actionWindowStayOnTop->isChecked());
+}
+
 void MainWindow::stayOnTop()
 {
   qDebug() << Q_FUNC_INFO;
-  dockHandler->setStayOnTop(marbleAboutDialog, ui->actionWindowStayOnTop->isChecked());
-  dockHandler->setStayOnTop(optionsDialog, ui->actionWindowStayOnTop->isChecked());
-  dockHandler->setStayOnTopMain(ui->actionWindowStayOnTop->isChecked());
+
+  bool onTop = ui->actionWindowStayOnTop->isChecked();
+  dockHandler->setStayOnTop(marbleAboutDialog, onTop);
+  dockHandler->setStayOnTop(optionsDialog, onTop);
+  dockHandler->setStayOnTopDialogWidgets(onTop);
+  dockHandler->setStayOnTopMain(onTop);
 }
 
 void MainWindow::allowMovingWindows()

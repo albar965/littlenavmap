@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -262,6 +262,9 @@ public:
   /* Get all actions from main menu which have a text and a shortcut */
   QList<QAction *> getMainWindowActions();
 
+  /* Set on top status according main window top status */
+  void setStayOnTop(QWidget *widget);
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();
@@ -284,6 +287,8 @@ private:
   void hideTitleBar();
   void allowDockingWindows();
   void allowMovingWindows();
+
+  /* Signal from action */
   void stayOnTop();
 
   /* Map dock widget floating state changed */

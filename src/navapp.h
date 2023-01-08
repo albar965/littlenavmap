@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -165,6 +165,8 @@ public:
   /* true if startup is completed and main window is visible */
   static bool isMainWindowVisible();
   static void setMainWindowVisible();
+
+  static void setStayOnTop(QWidget *widget);
 
   static bool isFetchAiAircraft();
   static bool isFetchAiShip();
