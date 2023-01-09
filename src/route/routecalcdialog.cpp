@@ -16,22 +16,22 @@
 *****************************************************************************/
 
 #include "route/routecalcdialog.h"
+
+#include "atools.h"
+#include "common/constants.h"
+#include "common/unit.h"
 #include "common/unitstringtool.h"
+#include "gui/clicktooltiphandler.h"
 #include "gui/helphandler.h"
 #include "gui/widgetstate.h"
-#include "common/constants.h"
-#include "route/routecontroller.h"
-#include "common/unit.h"
 #include "navapp.h"
-#include "atools.h"
 #include "route/route.h"
-#include "util/htmlbuilder.h"
-#include "gui/clicktooltiphandler.h"
-#include "ui_mainwindow.h"
+#include "route/routecontroller.h"
 #include "ui_routecalcdialog.h"
+#include "util/htmlbuilder.h"
 
 // Factor to put on costs for direct connections. Airways <-> Waypoints
-static const float DIRECT_COST_FACTORS[11] = {10.f, 8.f, 6.f, 4.f, 3.f, 2.f, 1.6f, 1.4f, 1.3f, 1.2f, 1.f};
+static const float DIRECT_COST_FACTORS[11] = {10.f, 8.f, 6.f, 4.f, 3.f, 2.f, 1.5f, 1.3f, 1.2f, 1.1f, 1.f};
 
 using atools::util::HtmlBuilder;
 
@@ -105,7 +105,7 @@ void RouteCalcDialog::buttonBoxClicked(QAbstractButton *button)
     updateWidgets();
   }
   else if(button == ui->buttonBox->button(QDialogButtonBox::Help))
-    atools::gui::HelpHandler::openHelpUrlWeb(NavApp::getQMainWindow(), lnm::helpOnlineUrl + "ROUTECALC.html", lnm::helpLanguageOnline());
+    atools::gui::HelpHandler::openHelpUrlWeb(NavApp::getQMainWidget(), lnm::helpOnlineUrl + "ROUTECALC.html", lnm::helpLanguageOnline());
   else if(button == ui->buttonBox->button(QDialogButtonBox::Close))
     QDialog::hide();
 }
