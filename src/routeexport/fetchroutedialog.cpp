@@ -169,16 +169,22 @@ void FetchRouteDialog::startDownload()
   QUrl url(fetcherUrl);
   url.setQuery(query);
 
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "Encoded full URL" << url.toEncoded();
+#endif
+
   {
+    // Remove user information and log encoded query
     QUrlQuery queryLog;
     queryLog.addQueryItem(ui->comboBoxLoginType->currentIndex() == 0 ? "username" : "userid", "XXXXX");
 
     QUrl urlLog(fetcherUrl);
     urlLog.setQuery(queryLog);
 
-    qDebug() << Q_FUNC_INFO << urlLog.toDisplayString();
+    qDebug() << Q_FUNC_INFO << "Encoded URL" << urlLog.toEncoded();
   }
 
+  // Encode to replace spaces with %20
   downloader->setUrl(url.toEncoded());
   downloader->startDownload();
 }

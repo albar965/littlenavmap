@@ -80,6 +80,8 @@ void SimBriefHandler::sendRouteToSimBrief()
                           route.getAlternateIdents().value(0), // Send only first alternate
                           routeString, aircraftType, route.getCruisingAltitudeFeet());
 
+  qDebug() << Q_FUNC_INFO << "Encoded full URL" << url.toEncoded();
+
   if(result == QMessageBox::Yes)
   {
     atools::gui::HelpHandler::openUrl(mainWindow, url);
