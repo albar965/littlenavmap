@@ -1404,6 +1404,8 @@ void DatabaseManager::loadSceneryInternal()
 
   try
   {
+    NavApp::setStayOnTop(databaseDialog);
+
     // Show loading dialog
     int retval = databaseDialog->exec();
 

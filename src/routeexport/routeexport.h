@@ -317,7 +317,7 @@ private:
 
   MainWindow *mainWindow;
   atools::gui::Dialog *dialog;
-  RouteMultiExportDialog *exportAllDialog;
+  RouteMultiExportDialog *multiExportDialog;
   RouteExportFormatMap *exportFormatMap;
   atools::fs::pln::FlightplanIO *flightplanIO;
 

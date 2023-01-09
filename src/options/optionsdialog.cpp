@@ -2882,6 +2882,7 @@ void OptionsDialog::selectMapFontClicked()
 
   buildFontDialog();
   fontDialog->setCurrentFont(font);
+  NavApp::setStayOnTop(fontDialog);
   if(fontDialog->exec())
   {
     mapFont = fontDialog->selectedFont().toString();
@@ -2913,6 +2914,7 @@ void OptionsDialog::selectGuiFontClicked()
 
   buildFontDialog();
   fontDialog->setCurrentFont(font);
+  NavApp::setStayOnTop(fontDialog);
   if(fontDialog->exec())
   {
     QFont selfont = fontDialog->selectedFont();

@@ -51,20 +51,20 @@ RouteExport::RouteExport(MainWindow *parent)
   exportFormatMap = new RouteExportFormatMap;
   flightplanIO = new FlightplanIO;
   dialog = new atools::gui::Dialog(mainWindow);
-  exportAllDialog = new RouteMultiExportDialog(mainWindow, exportFormatMap);
+  multiExportDialog = new RouteMultiExportDialog(mainWindow, exportFormatMap);
 
   // Save now button in list
-  connect(exportAllDialog, &RouteMultiExportDialog::saveNowButtonClicked, this, &RouteExport::exportType);
+  connect(multiExportDialog, &RouteMultiExportDialog::saveNowButtonClicked, this, &RouteExport::exportType);
 
   // Export all selected in button bar
-  connect(exportAllDialog, &RouteMultiExportDialog::saveSelectedButtonClicked, this, &RouteExport::routeMultiExport);
+  connect(multiExportDialog, &RouteMultiExportDialog::saveSelectedButtonClicked, this, &RouteExport::routeMultiExport);
 }
 
 RouteExport::~RouteExport()
 {
   qDebug() << Q_FUNC_INFO << "delete exportAllDialog";
-  delete exportAllDialog;
-  exportAllDialog = nullptr;
+  delete multiExportDialog;
+  multiExportDialog = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete dialog";
   delete dialog;
@@ -88,7 +88,7 @@ void RouteExport::restoreState()
 {
   exportFormatMap->restoreState();
   exportFormatMap->initCallbacks(this);
-  exportAllDialog->restoreState();
+  multiExportDialog->restoreState();
   selected = exportFormatMap->hasSelected();
 }
 
@@ -162,7 +162,8 @@ void RouteExport::routeMultiExport()
 
 void RouteExport::routeMultiExportOptions()
 {
-  int result = exportAllDialog->exec();
+  NavApp::setStayOnTop(multiExportDialog);
+  int result = multiExportDialog->exec();
 
   if(result == QDialog::Accepted)
   {
@@ -195,7 +196,7 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
 
     // Build filename
     QString name = format.getPath() % QDir::separator() % filename;
-    RouteMultiExportDialog::ExportOptions opts = exportAllDialog->getExportOptions();
+    RouteMultiExportDialog::ExportOptions opts = multiExportDialog->getExportOptions();
 
     // Force open of file dialog since this was called from multiexport dialog
     if(format.isFileDialog())

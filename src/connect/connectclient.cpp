@@ -150,6 +150,7 @@ void ConnectClient::connectToServerDialog()
   else if(isXpConnect() && isConnected())
     type = cd::XPLANE;
 
+  NavApp::setStayOnTop(connectDialog);
   int retval = connectDialog->execConnectDialog(type);
   connectDialog->hide();
 

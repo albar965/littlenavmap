@@ -268,6 +268,7 @@ void DatabaseLoader::compileDatabasePost()
   {
     // Show results and wait until user selects ok or cancel
     progressDialog->setFinishedState();
+    NavApp::setStayOnTop(progressDialog);
 
     // Show dialog modal and wait for discard / use database answer
     int result = progressDialog->exec();

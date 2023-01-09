@@ -3040,6 +3040,7 @@ void MainWindow::openOptionsDialog()
     return;
   }
 #endif
+  NavApp::setStayOnTop(optionsDialog);
   optionsDialog->open();
 }
 

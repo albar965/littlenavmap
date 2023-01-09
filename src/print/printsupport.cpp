@@ -66,6 +66,7 @@ void PrintSupport::printMap()
   NavApp::getMapWidgetGui()->showOverlays(false, true /* show scale */);
   QPrintPreviewDialog *print = buildPreviewDialog();
   connect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedMap);
+  NavApp::setStayOnTop(print);
   print->exec();
   disconnect(print, &QPrintPreviewDialog::paintRequested, this, &PrintSupport::paintRequestedMap);
 
@@ -79,6 +80,7 @@ void PrintSupport::printFlightplan()
 
   // Prime weather cache
   fillWeatherCache();
+  NavApp::setStayOnTop(printDialog);
   printDialog->setRouteTableColumns(NavApp::getRouteController()->getAllRouteColumns());
   printDialog->exec();
 }
