@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -98,8 +98,8 @@ public:
   /* Raise and activate progress window */
   void showProgressWindow();
 
-  /* True if background process is loading */
-  bool isLoading();
+  /* true if loading is in process or confirmation dialog is shown */
+  bool isLoadingProgress();
 
   /* Save and restore all paths and current simulator settings */
   void saveState();

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -516,7 +516,7 @@ void DatabaseLoader::showErrors()
 void DatabaseLoader::loadSceneryStop()
 {
   qDebug() << Q_FUNC_INFO << "stopping";
-  if(isLoading())
+  if(future.isRunning())
   {
     {
       QWriteLocker locker(&resultFlagsLock);
@@ -548,9 +548,9 @@ void DatabaseLoader::deleteProgressDialog()
   progressDialog = nullptr;
 }
 
-bool DatabaseLoader::isLoading() const
+bool DatabaseLoader::isLoadingProgress() const
 {
-  return future.isRunning();
+  return progressDialog != nullptr && progressDialog->isVisible();
 }
 
 void DatabaseLoader::showProgressWindow() const

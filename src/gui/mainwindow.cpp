@@ -4285,7 +4285,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
   // Do not ask if user did a reset settings
   if(!NavApp::isRestartProcess())
   {
-    if(NavApp::getDatabaseManager()->isLoading())
+    if(NavApp::getDatabaseManager()->isLoadingProgress())
     {
       // Database compiling in background ==========================
       int result = dialog->showQuestionMsgBox(lnm::ACTIONS_SHOW_QUIT_LOADING,

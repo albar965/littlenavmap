@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1086,8 +1086,8 @@ void DatabaseManager::loadScenery()
 
   Q_ASSERT(databaseLoader != nullptr);
 
-  if(databaseLoader->isLoading())
-    // Already loading - just raise progress window
+  if(databaseLoader->isLoadingProgress())
+    // Already loading or showing confirmation dialog - just raise progress window
     databaseLoader->showProgressWindow();
   else
   {
@@ -1118,9 +1118,9 @@ void DatabaseManager::showProgressWindow()
   databaseLoader->showProgressWindow();
 }
 
-bool DatabaseManager::isLoading()
+bool DatabaseManager::isLoadingProgress()
 {
-  return databaseLoader->isLoading();
+  return databaseLoader->isLoadingProgress();
 }
 
 void DatabaseManager::loadSceneryPost()
