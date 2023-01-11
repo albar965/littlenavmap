@@ -4391,6 +4391,11 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       float hoursRemaining = 0.f, distanceRemaining = 0.f;
       perfController->getEnduranceAverage(hoursRemaining, distanceRemaining);
 
+#ifdef DEBUG_INFORMATION
+      qDebug() << Q_FUNC_INFO << "hoursRemaining" << hoursRemaining;
+      qDebug() << Q_FUNC_INFO << "distanceRemaining" << distanceRemaining;
+#endif
+
       if(hoursRemaining < map::INVALID_TIME_VALUE && distanceRemaining < map::INVALID_DISTANCE_VALUE)
       {
         QString text = formatter::formatMinutesHoursLong(hoursRemaining) % tr(", ") % Unit::distNm(distanceRemaining);

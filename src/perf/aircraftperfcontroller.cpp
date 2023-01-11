@@ -1313,20 +1313,21 @@ void AircraftPerfController::getEnduranceAverage(float& enduranceHours, float& e
 {
   const atools::fs::sc::SimConnectUserAircraft& userAircraft = lastSimData->getUserAircraftConst();
 
+  enduranceHours = map::INVALID_TIME_VALUE;
+  enduranceNm = map::INVALID_DISTANCE_VALUE;
+
   if(userAircraft.isValid() && userAircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT &&
      userAircraft.getFuelFlowPPH() > 1.0f && userAircraft.getGroundSpeedKts() > map::MIN_GROUND_SPEED)
   {
     float fuelFlowPph = 0.f, groundspeedKts = 0.f;
     fuelFlowGroundspeedAverage->getAverages(fuelFlowPph, groundspeedKts);
 
-    float realFuelFlow = fuelFlowPph * perf->getContingencyFuelFactor();
-    enduranceHours = std::max((userAircraft.getFuelTotalWeightLbs() - perf->getReserveFuelLbs()) / realFuelFlow, 0.f);
-    enduranceNm = enduranceHours * groundspeedKts;
-  }
-  else
-  {
-    enduranceHours = map::INVALID_TIME_VALUE;
-    enduranceNm = map::INVALID_DISTANCE_VALUE;
+    if(fuelFlowPph > 0.f && groundspeedKts > 0.f)
+    {
+      float realFuelFlow = fuelFlowPph * perf->getContingencyFuelFactor();
+      enduranceHours = std::max((userAircraft.getFuelTotalWeightLbs() - perf->getReserveFuelLbs()) / realFuelFlow, 0.f);
+      enduranceNm = enduranceHours * groundspeedKts;
+    }
   }
 }
 
@@ -1480,6 +1481,18 @@ void AircraftPerfController::simDataChanged(const atools::fs::sc::SimConnectData
        userAircraft.getFuelFlowPPH() > 1.0f && userAircraft.getGroundSpeedKts() > map::MIN_GROUND_SPEED)
       fuelFlowGroundspeedAverage->addSamples(userAircraft.getFuelFlowPPH(), userAircraft.getGroundSpeedKts(),
                                              userAircraft.getZuluTime().toMSecsSinceEpoch());
+
+#ifdef DEBUG_INFORMATION_PERF_SIMDATA
+    static qint64 lastTime = 0L;
+    qDebug() << Q_FUNC_INFO << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~";
+    qDebug() << Q_FUNC_INFO << "diff"
+             << (userAircraft.getZuluTime().toMSecsSinceEpoch() - lastTime)
+             << userAircraft.getZuluTime().toMSecsSinceEpoch() << lastTime;
+
+    qDebug() << Q_FUNC_INFO << "zulu" << userAircraft.getZuluTime().toString(Qt::ISODateWithMs);
+    lastTime = userAircraft.getZuluTime().toMSecsSinceEpoch();
+    qDebug() << Q_FUNC_INFO << "fuelFlowGroundspeedAverage->size()" << fuelFlowGroundspeedAverage->size();
+#endif
   }
 
   // Update report every second
