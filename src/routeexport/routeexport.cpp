@@ -180,11 +180,19 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
 {
   QString routeFile;
 
+  QString filter;
+  QString suffix = format.getSuffix(); // Get suffix plus dot
+  if(!suffix.isEmpty())
+    // Suffix included in pattern
+    filter = tr("%1 Files %2;;All Files (*)").arg(format.getFormat()).arg(format.getFilter());
+  else
+    // No suffix show only all files filter
+    filter = tr("All Files (*)");
+
   if(format.isManual())
     // Called from menu actions ======================================
-    routeFile = dialog->saveFileDialog(tr("Export for %1").arg(format.getComment()),
-                                       tr("%1 Files %2;;All Files (*)").arg(format.getFormat()).arg(format.getFilter()),
-                                       format.getSuffix(), settingsPrefix, path, filename, dontComfirmOverwrite);
+    routeFile = dialog->saveFileDialog(tr("Export for %1").arg(format.getComment()), filter,
+                                       suffix, settingsPrefix, path, filename, dontComfirmOverwrite);
   else
   {
     // Called from multiexport action or multiexport dialog ======================================
@@ -206,9 +214,8 @@ QString RouteExport::exportFile(const RouteExportFormat& format, const QString& 
     {
       // Show file dialog for all formats selected
       case RouteMultiExportDialog::FILEDIALOG:
-        routeFile = dialog->saveFileDialog(
-          tr("Export for %1").arg(format.getComment()), tr("%1 Files %2;;All Files (*)").arg(format.getFormat()).arg(format.getFilter()),
-          format.getSuffix(), QString() /* settingsPrefix */, format.getPath(), filename, dontComfirmOverwrite);
+        routeFile = dialog->saveFileDialog(tr("Export for %1").arg(format.getComment()), filter,
+                                           suffix, QString() /* settingsPrefix */, format.getPath(), filename, dontComfirmOverwrite);
         break;
 
       case RouteMultiExportDialog::RENAME_EXISTING:

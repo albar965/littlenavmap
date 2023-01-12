@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -681,22 +681,27 @@ void RouteMultiExportDialog::selectPath(rexp::RouteExportFormatType type, int ro
   if(type == rexp::NO_TYPE)
     return;
 
-  const RouteExportFormat fmt = formatMapDialog->value(type);
-  QString filepath;
+  const RouteExportFormat format = formatMapDialog->value(type);
 
-  if(fmt.isAppendToFile())
+  QString filepath, filter;
+  QString suffix = format.getSuffix(); // Get suffix plus dot
+  if(!suffix.isEmpty())
+    filter = tr("%1 Files %2;;All Files (*)").arg(format.getFormat()).arg(format.getFilter());
+  else
+    filter = tr("All Files (*)");
+
+  if(format.isAppendToFile())
     // Format use a file to append plan
-    filepath = atools::gui::Dialog(this).openFileDialog(tr("Select Export File for %1").arg(fmt.getComment()),
-                                                        tr("Flight Plan Files %1;;All Files (*)").
-                                                        arg(fmt.getFilter()), QString(), fmt.getPath());
+    filepath = atools::gui::Dialog(this).openFileDialog(tr("Select Export File for %1").arg(format.getComment()),
+                                                        filter, QString(), format.getPath());
   else
     // Format uses a directory to save a file
     filepath = atools::gui::Dialog(this).openDirectoryDialog(tr("Select Export Directory for %1").
-                                                             arg(fmt.getComment()), QString(), fmt.getPath());
+                                                             arg(format.getComment()), QString(), format.getPath());
 
   if(!filepath.isEmpty())
   {
-    if(fmt.isAppendToFile())
+    if(format.isAppendToFile())
     {
       // Update filename in pattern too
       QFileInfo fi(filepath);

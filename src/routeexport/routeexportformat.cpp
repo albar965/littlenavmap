@@ -306,7 +306,7 @@ void RouteExportFormatMap::init()
   FMT(PLNANNOTATED, AIRPORTS|PARKING, DF % tr("pln"),     tr("Simulator"), tr("FSX and Prepar3D annotated\nOnly for old Little Navmap versions."));
   FMT(FMS3,         AIRPORTS,         SD % tr("fms"),     tr("Simulator"), tr("X-Plane FMS 3\nOld and limited format.")                          );
   FMT(FMS11,        AIRPORTS|CYCLE,   SD % tr("fms"),     tr("Simulator"), tr("X-Plane FMS 11") % mainMenu                                       );
-  FMT(FMS12,        AIRPORTS|CYCLE,   SD % tr("fms"),     tr("Simulator"), tr("X-Plane FMS 12") % mainMenu % xp12                                );
+  FMT(FMS12,        AIRPORTS|CYCLE,   SD % tr("fms"),     tr("Simulator"), tr("X-Plane FMS 12") % xp12                                           );
   FMT(CIVAFMS,      AIRPORTS,         S0 % tr("fms"),     tr("FMC"),       tr("X-Plane CIVA Navigation System") % civaTooltip                    );
   FMT(FLP,          AIRPORTS,         S0 % tr("flp"),     tr("Aircraft"),  tr("Aerosoft Airbus and others")                                      );
   FMT(FLPCRJ,       AIRPORTS,         S %  tr("01.flp"),  tr("Aircraft"),  tr("Aerosoft CRJ")                                                    );
@@ -372,25 +372,22 @@ void RouteExportFormatMap::updateDefaultPaths()
   QString documents = atools::documentsDir();
 
   // Get X-Plane base path - first 12 if available then 11 ===========================
-  QString xpBasePath = NavApp::getSimulatorBasePathBest({FsPaths::XPLANE_12, FsPaths::XPLANE_11});
+  QString xpBasePath12Or11 = NavApp::getSimulatorBasePathBest({FsPaths::XPLANE_12, FsPaths::XPLANE_11});
 
   // Files path for 12 or 11 =============
-  QString xpFilesPath = NavApp::getSimulatorFilesPathBest({FsPaths::XPLANE_12, FsPaths::XPLANE_11});
-  if(xpFilesPath.isEmpty())
-    xpFilesPath = documents;
+  QString xpFilesPath12Or11 = NavApp::getSimulatorFilesPathBest({FsPaths::XPLANE_12, FsPaths::XPLANE_11}, documents);
 
   // Files path for 12 only =============
-  QString xpFilesPath12 = NavApp::getSimulatorFilesPathBest({FsPaths::XPLANE_12});
-  if(xpFilesPath12.isEmpty())
-    xpFilesPath12 = documents;
+  QString xpFilesPath12 = NavApp::getSimulatorFilesPathBest({FsPaths::XPLANE_12}, documents);
+
+  // Files path for 11 only =============
+  QString xpFilesPath11 = NavApp::getSimulatorFilesPathBest({FsPaths::XPLANE_11}, documents);
 
   // Get MSFS files path (LocalState) ===========================
   // C:\Users\USER\AppData\Local\Packages\Microsoft.FlightSimulator_8wekyb3d8bbwe\LocalState
   // Steam uses top level as path
   // C:\Users\USER\AppData\Roaming\Microsoft Flight Simulator
-  QString msfsLocalStatePath = NavApp::getSimulatorFilesPathBest({FsPaths::MSFS});
-  if(msfsLocalStatePath.isEmpty())
-    msfsLocalStatePath = documents;
+  QString msfsLocalStatePath = NavApp::getSimulatorFilesPathBest({FsPaths::MSFS}, documents);
 
   // .../Packages/Microsoft.FlightSimulator_8wekyb3d8bbwe/LocalCache/Packages/
   QString msfsBasePath = NavApp::getSimulatorBasePathBest({FsPaths::MSFS});
@@ -402,13 +399,12 @@ void RouteExportFormatMap::updateDefaultPaths()
 
   // Get for current database selection if not X-Plane or MSFS
   if(curDb != FsPaths::XPLANE_11 && curDb != FsPaths::XPLANE_12 && curDb != FsPaths::MSFS && curDb != FsPaths::NAVIGRAPH)
-    fsxP3dBasePath = NavApp::getSimulatorFilesPathBest({curDb});
+    fsxP3dBasePath = NavApp::getSimulatorFilesPathBest({curDb}, QString());
 
   // Get best installed simulator
   if(fsxP3dBasePath.isEmpty())
-    fsxP3dBasePath = NavApp::getSimulatorFilesPathBest({FsPaths::P3D_V5, FsPaths::P3D_V4, FsPaths::P3D_V3, FsPaths::FSX_SE, FsPaths::FSX});
-  if(fsxP3dBasePath.isEmpty())
-    fsxP3dBasePath = documents;
+    fsxP3dBasePath = NavApp::getSimulatorFilesPathBest({FsPaths::P3D_V5, FsPaths::P3D_V4, FsPaths::P3D_V3, FsPaths::FSX_SE, FsPaths::FSX},
+                                                       documents);
 
   // GNS path ===========================
   QString gns;
@@ -444,9 +440,9 @@ void RouteExportFormatMap::updateDefaultPaths()
   tdsGtmGfp = documents;
 #endif
 
-  // Normalize path endings
-  if(xpBasePath.endsWith('\\') || xpBasePath.endsWith('/'))
-    xpBasePath.chop(1);
+  // Normalize path endings for base paths
+  if(xpBasePath12Or11.endsWith('\\') || xpBasePath12Or11.endsWith('/'))
+    xpBasePath12Or11.chop(1);
   if(fsxP3dBasePath.endsWith('\\') || fsxP3dBasePath.endsWith('/'))
     fsxP3dBasePath.chop(1);
   if(msfsBasePath.endsWith('\\') || msfsBasePath.endsWith('/'))
@@ -484,31 +480,31 @@ void RouteExportFormatMap::updateDefaultPaths()
   (*this)[PLN         ].DP(fsxP3dBasePath);
   (*this)[PLNMSFS     ].DP(msfsLocalStatePath);
   (*this)[PLNANNOTATED].DP(fsxP3dBasePath);
-  (*this)[FMS3        ].DP(xpFilesPath);
-  (*this)[FMS11       ].DP(xpFilesPath);
+  (*this)[FMS3        ].DP(xpFilesPath12Or11);
+  (*this)[FMS11       ].DP(xpFilesPath11);
   (*this)[FMS12       ].DP(xpFilesPath12);
-  (*this)[CIVAFMS     ].DP(xpFilesPath);
+  (*this)[CIVAFMS     ].DP(xpFilesPath12Or11);
   (*this)[FLP         ].DP(documents);
   (*this)[FLPCRJ      ].DP(documents % SEP % "Aerosoft" % SEP % "Digital Aviation CRJ" % SEP % "FlightPlans");
   (*this)[FLPCRJMSFS  ].DP(documents);
   (*this)[FLIGHTGEAR  ].DP(documents);
   (*this)[GFP         ].DP(fsxP3dBasePath % SEP % "F1TGTN" % SEP % "FPL");
   (*this)[GFPUWP      ].DP(fsxP3dBasePath % SEP % "F1TGTN" % SEP % "FPL");
-  (*this)[TXT         ].DP(xpBasePath % SEP % "Aircraft");
-  (*this)[TXTJAR      ].DP(xpBasePath % SEP % "Aircraft");
+  (*this)[TXT         ].DP(xpBasePath12Or11 % SEP % "Aircraft");
+  (*this)[TXTJAR      ].DP(xpBasePath12Or11 % SEP % "Aircraft");
   (*this)[RTE         ].DP(fsxP3dBasePath % SEP % "PMDG" % SEP % "FLIGHTPLANS");
   (*this)[RTEMSFS     ].DP(msfsLocalStatePath % SEP % "packages" % SEP % "pmdg-aircraft-737" % SEP % "work" % SEP % "Flightplans");
   (*this)[GPX         ].DP(documents);
   (*this)[HTML        ].DP(documents);
   (*this)[FPR         ].DP(fsxP3dBasePath % SEP % "SimObjects" % SEP % "Airplanes" % SEP % "mjc8q400" % SEP % "nav" % SEP % "routes");
-  (*this)[FPL         ].DP(xpBasePath % SEP % "Aircraft" % SEP % "X-Aviation" % SEP % "IXEG 737 Classic" % SEP % "coroutes");
-  (*this)[CORTEIN     ].DP(xpBasePath % SEP % "Aircraft");
+  (*this)[FPL         ].DP(xpBasePath12Or11 % SEP % "Aircraft" % SEP % "X-Aviation" % SEP % "IXEG 737 Classic" % SEP % "coroutes");
+  (*this)[CORTEIN     ].DP(xpBasePath12Or11 % SEP % "Aircraft");
   (*this)[RXPGNS      ].DP(gns);
   (*this)[RXPGNSUWP   ].DP(gns);
   (*this)[RXPGTN      ].DP(gtn);
   (*this)[RXPGTNUWP   ].DP(gtn);
   (*this)[FLTPLAN     ].DP(fsxP3dBasePath % SEP % "iFly" % SEP % "737NG" % SEP % "navdata" % SEP % "FLTPLAN");
-  (*this)[XFMC        ].DP(xpFilesPath % SEP % "Resources" % SEP % "plugins" % SEP % "XFMC" % SEP % "FlightPlans");
+  (*this)[XFMC        ].DP(xpFilesPath12Or11 % SEP % "Resources" % SEP % "plugins" % SEP % "XFMC" % SEP % "FlightPlans");
   (*this)[UFMC        ].DP(documents);
   (*this)[PROSIM      ].DP(documents);
   (*this)[BBS         ].DP(fsxP3dBasePath % SEP % "Blackbox Simulation" % SEP % "Company Routes");
@@ -617,7 +613,13 @@ QString RouteExportFormat::getSuffix() const
   if(isAppendToFile() || isReplaceFile())
     return pattern;
   else
-    return pattern.section('.', -1, -1, QString::SectionIncludeLeadingSep);
+  {
+    QString suffix = QFileInfo(pattern).suffix();
+    if(!suffix.isEmpty())
+      suffix.prepend('.');
+
+    return suffix;
+  }
 }
 
 void RouteExportFormat::copyLoadedDataTo(RouteExportFormat& other) const

@@ -576,8 +576,9 @@ QString DatabaseManager::getSimulatorBasePath(atools::fs::FsPaths::SimulatorType
   return simulators.value(type).basePath;
 }
 
-QString DatabaseManager::getSimulatorFilesPathBest(const FsPaths::SimulatorTypeVector& types) const
+QString DatabaseManager::getSimulatorFilesPathBest(const FsPaths::SimulatorTypeVector& types, const QString& defaultPath) const
 {
+  QString path;
   FsPaths::SimulatorType type = simulators.getBestInstalled(types);
   switch(type)
   {
@@ -589,7 +590,8 @@ QString DatabaseManager::getSimulatorFilesPathBest(const FsPaths::SimulatorTypeV
     case atools::fs::FsPaths::P3D_V5:
     case atools::fs::FsPaths::MSFS:
       // Ignore user changes of path for now
-      return FsPaths::getFilesPath(type);
+      path = FsPaths::getFilesPath(type);
+      break;
 
     case atools::fs::FsPaths::XPLANE_11:
     case atools::fs::FsPaths::XPLANE_12:
@@ -597,7 +599,7 @@ QString DatabaseManager::getSimulatorFilesPathBest(const FsPaths::SimulatorTypeV
         // Might change with base path by user
         QString base = getSimulatorBasePath(type);
         if(!base.isEmpty())
-          return atools::buildPathNoCase({base, "Output", "FMS plans"});
+          path = atools::buildPathNoCase({base, "Output", "FMS plans"});
       }
       break;
 
@@ -606,7 +608,7 @@ QString DatabaseManager::getSimulatorFilesPathBest(const FsPaths::SimulatorTypeV
     case atools::fs::FsPaths::NONE:
       break;
   }
-  return QString();
+  return path.isEmpty() ? defaultPath : path;
 }
 
 QString DatabaseManager::getSimulatorBasePathBest(const FsPaths::SimulatorTypeVector& types) const

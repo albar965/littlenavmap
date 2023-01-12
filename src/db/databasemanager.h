@@ -196,7 +196,7 @@ public:
 
   /* Get files path for installed simulators in order of the given list.
    * Also considers probably changed paths by user */
-  QString getSimulatorFilesPathBest(const atools::fs::FsPaths::SimulatorTypeVector& types) const;
+  QString getSimulatorFilesPathBest(const atools::fs::FsPaths::SimulatorTypeVector& types, const QString& defaultPath) const;
 
   /* Same as above but for simulator base path */
   QString getSimulatorBasePathBest(const atools::fs::FsPaths::SimulatorTypeVector& types) const;
