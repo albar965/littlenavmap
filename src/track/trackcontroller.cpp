@@ -50,22 +50,16 @@ TrackController::TrackController(TrackManager *trackManagerParam, MainWindow *ma
   namespace t = atools::track;
   atools::settings::Settings& settings = Settings::instance();
   downloader->setUrl(t::NAT,
-                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_NAT_URL,
-                                               TrackDownloader::URL.value(t::NAT)).toString(),
-                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_NAT_PARAM,
-                                               TrackDownloader::PARAM.value(t::NAT)).toStringList());
+                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_NAT_URL, TrackDownloader::URL.value(t::NAT)).toString(),
+                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_NAT_PARAM, TrackDownloader::PARAM.value(t::NAT)).toStringList());
 
   downloader->setUrl(t::PACOTS,
-                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_PACOTS_URL,
-                                               TrackDownloader::URL.value(t::PACOTS)).toString(),
-                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_PACOTS_PARAM,
-                                               TrackDownloader::PARAM.value(t::PACOTS)).toStringList());
+                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_PACOTS_URL, TrackDownloader::URL.value(t::PACOTS)).toString(),
+                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_PACOTS_PARAM, TrackDownloader::PARAM.value(t::PACOTS)).toStringList());
 
   downloader->setUrl(t::AUSOTS,
-                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_AUSOTS_URL,
-                                               TrackDownloader::URL.value(t::AUSOTS)).toString(),
-                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_AUSOTS_PARAM,
-                                               TrackDownloader::PARAM.value(t::AUSOTS)).toStringList());
+                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_AUSOTS_URL, TrackDownloader::URL.value(t::AUSOTS)).toString(),
+                     settings.getAndStoreValue(lnm::OPTIONS_TRACK_AUSOTS_PARAM, TrackDownloader::PARAM.value(t::AUSOTS)).toStringList());
 #endif
 
   connect(downloader, &TrackDownloader::trackDownloadFinished, this, &TrackController::trackDownloadFinished);

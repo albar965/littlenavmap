@@ -252,8 +252,16 @@ void checkAndMigrateSettings()
       }
 
       if(optionsVersion <= Version("2.8.4.beta"))
-      {
         removeAndLog(&mapstyleSettings, "MainWindow/Widget_actionAircraftPerformanceWarnMismatch");
+
+      if(optionsVersion <= Version("2.8.7"))
+      {
+        removeAndLog(lnm::OPTIONS_TRACK_NAT_URL);
+        removeAndLog(lnm::OPTIONS_TRACK_NAT_PARAM);
+        removeAndLog(lnm::OPTIONS_TRACK_PACOTS_URL);
+        removeAndLog(lnm::OPTIONS_TRACK_PACOTS_PARAM);
+        removeAndLog(lnm::OPTIONS_TRACK_AUSOTS_URL);
+        removeAndLog(lnm::OPTIONS_TRACK_AUSOTS_PARAM);
       }
 
       qInfo() << Q_FUNC_INFO << "Clearing all essential messages since version differs";
