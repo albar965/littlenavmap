@@ -344,10 +344,10 @@ const QLatin1String OPTIONS_PROFILE_JUMP_BACK_DEBUG("Options/ProfileJumpBackDebu
 const QLatin1String OPTIONS_MAP_LAYER_DEBUG("Options/MapLayerDebug");
 
 const QLatin1String OPTIONS_ONLINE_NETWORK_DEBUG("Options/OnlineNetworkDebug");
-const QLatin1String OPTIONS_ONLINE_NETWORK_MAX_SHADOW_DIST_NM("Options/MaxShadowDistNm2");
-const QLatin1String OPTIONS_ONLINE_NETWORK_MAX_SHADOW_ALT_DIFF_FT("Options/MaxShadowAltDiffFt2");
-const QLatin1String OPTIONS_ONLINE_NETWORK_MAX_SHADOW_GS_DIFF_KTS("Options/MaxShadowGsDiffKts2");
-const QLatin1String OPTIONS_ONLINE_NETWORK_MAX_SHADOW_HDG_DIFF_DEG("Options/MaxShadowHdgDiffDeg2");
+const QLatin1String OPTIONS_ONLINE_NETWORK_MAX_SHADOW_DIST_NM("Options/MaxShadowDistNm");
+const QLatin1String OPTIONS_ONLINE_NETWORK_MAX_SHADOW_ALT_DIFF_FT("Options/MaxShadowAltDiffFt");
+const QLatin1String OPTIONS_ONLINE_NETWORK_MAX_SHADOW_GS_DIFF_KTS("Options/MaxShadowGsDiffKts");
+const QLatin1String OPTIONS_ONLINE_NETWORK_MAX_SHADOW_HDG_DIFF_DEG("Options/MaxShadowHdgDiffDeg");
 
 const QLatin1String OPTIONS_TRACK_DEBUG("Options/TrackDebug");
 const QLatin1String OPTIONS_WIND_DEBUG("Options/WindDebug");

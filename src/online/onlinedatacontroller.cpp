@@ -83,10 +83,10 @@ OnlinedataController::OnlinedataController(atools::fs::online::OnlinedataManager
   verbose = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_DEBUG, false).toBool();
 
   // Load criteria used to detect shadow aircraft right after download finished
-  maxShadowDistanceNm = settings.valueFloat(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_DIST_NM, 4.0);
-  maxShadowAltDiffFt = settings.valueFloat(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_ALT_DIFF_FT, 500.);
-  maxShadowGsDiffKts = settings.valueFloat(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_GS_DIFF_KTS, 50.);
-  maxShadowHdgDiffDeg = settings.valueFloat(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_HDG_DIFF_DEG, 90.);
+  maxShadowDistanceNm = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_DIST_NM, 2.0).toFloat();
+  maxShadowAltDiffFt = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_ALT_DIFF_FT, 500.).toFloat();
+  maxShadowGsDiffKts = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_GS_DIFF_KTS, 50.).toFloat();
+  maxShadowHdgDiffDeg = settings.getAndStoreValue(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_HDG_DIFF_DEG, 90.).toFloat();
 
   downloader = new atools::util::HttpDownloader(mainWindow, verbose);
 

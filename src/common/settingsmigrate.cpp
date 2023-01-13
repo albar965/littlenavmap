@@ -262,6 +262,10 @@ void checkAndMigrateSettings()
         removeAndLog(lnm::OPTIONS_TRACK_PACOTS_PARAM);
         removeAndLog(lnm::OPTIONS_TRACK_AUSOTS_URL);
         removeAndLog(lnm::OPTIONS_TRACK_AUSOTS_PARAM);
+        removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_DIST_NM);
+        removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_ALT_DIFF_FT);
+        removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_GS_DIFF_KTS);
+        removeAndLog(lnm::OPTIONS_ONLINE_NETWORK_MAX_SHADOW_HDG_DIFF_DEG);
       }
 
       qInfo() << Q_FUNC_INFO << "Clearing all essential messages since version differs";
