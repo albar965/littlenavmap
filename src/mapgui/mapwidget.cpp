@@ -500,6 +500,10 @@ bool MapWidget::event(QEvent *event)
         // Remember position
         tooltipGlobalPos = helpEvent->globalPos();
 
+#ifdef DEBUG_INFORMATION
+        qDebug() << Q_FUNC_INFO << "tooltipGlobalPos" << tooltipGlobalPos;
+#endif
+
         // Update result set - fetch all near cursor
         updateTooltipResult();
 
@@ -562,32 +566,34 @@ void MapWidget::showTooltip(bool update)
     return;
 
 #ifdef DEBUG_INFORMATION
-  qDebug() << Q_FUNC_INFO << "tooltipPos" << tooltipGlobalPos;
+  qDebug() << Q_FUNC_INFO << "tooltipPos" << tooltipGlobalPos << "update" << update << "QToolTip::isVisible()" << QToolTip::isVisible();
 #endif
 
-  // Try to avoid spurious tooltip events
-  if(update && !QToolTip::isVisible())
-    return;
-
-  atools::geo::Pos pos;
-  qreal lon, lat;
-  QPoint point = mapFromGlobal(tooltipGlobalPos);
-  if(geoCoordinates(point.x(), point.y(), lon, lat))
+  // Do not hide or show anything if position is outside map window
+  // Position is set by MapWidget::event() on tooltip event
+  if(!tooltipGlobalPos.isNull())
   {
-    pos.setLonX(static_cast<float>(lon));
-    pos.setLatY(static_cast<float>(lat));
+    qreal lon, lat;
+    QPoint point = mapFromGlobal(tooltipGlobalPos);
+    if(geoCoordinates(point.x(), point.y(), lon, lat))
+    {
+      // Build a new tooltip HTML for weather changes or aircraft updates
+      QString text;
+
+      if(paintLayer->getMapLayer() != nullptr)
+        text = mapTooltip->buildTooltip(*mapSearchResultTooltip, atools::geo::Pos(lon, lat), NavApp::getRouteConst(),
+                                        paintLayer->getMapLayer()->isAirportDiagram());
+
+      if(!text.isEmpty())
+        QToolTip::showText(tooltipGlobalPos, text, this);
+      else
+        // No text - hide
+        hideTooltip();
+    }
+    else
+      // Outside of globe
+      hideTooltip();
   }
-
-  // Build a new tooltip HTML for weather changes or aircraft updates
-  QString text;
-
-  if(paintLayer->getMapLayer() != nullptr)
-    text = mapTooltip->buildTooltip(*mapSearchResultTooltip, pos, NavApp::getRouteConst(), paintLayer->getMapLayer()->isAirportDiagram());
-
-  if(!text.isEmpty() && !tooltipGlobalPos.isNull())
-    QToolTip::showText(tooltipGlobalPos, text, this);
-  else
-    hideTooltip();
 }
 
 /* Stop all line drag and drop if the map loses focus */

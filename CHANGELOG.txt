@@ -97,6 +97,7 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 * Added userpoint type `Addon` to highlight airports with a yellow ring similar to detected add-on
   airports.
 * Fixed issue where bearing and distance was not updated in tooltips for parking spots.
+* Fixed regression where tooltips disappeared quickly when being connected.
 * Now correcting logbook time if off by one day at arrival due to wrong time and date jumps while
   flying (caused by warp and similar tools). This previously resulted in negative travel times.
 * Corrected logbook and userpoint import functions where first row in CSV files was not recognized

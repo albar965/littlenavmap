@@ -3041,6 +3041,12 @@ bool HtmlInfoBuilder::bearingToUserText(const ageo::Pos& pos, float magVar, Html
                 arg(courseTextFromTrue(normalizeCourse(userAircraft.getPosition().angleDegTo(pos)), magVar)).
                 arg(Unit::distMeter(distance)),
                 ahtml::NO_ENTITIES);
+
+#ifdef DEBUG_INFORMATION
+      static bool heartbeat = false;
+      html.row2(heartbeat ? " X" : " 0");
+      heartbeat = !heartbeat;
+#endif
       return true;
     }
   }
