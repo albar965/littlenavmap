@@ -670,7 +670,7 @@ void MainWindow::updateMap() const
 
 void MainWindow::updateClock() const
 {
-  timeLabel->setText(QDateTime::currentDateTimeUtc().toString("d   HH:mm:ss Z"));
+  timeLabel->setText(QDateTime::currentDateTimeUtc().toString("d   HH:mm:ss UTC "));
   timeLabel->setToolTip(tr("Day of month and UTC time.\n%1\nLocal: %2")
                         .arg(QDateTime::currentDateTimeUtc().toString())
                         .arg(QDateTime::currentDateTime().toString()));
@@ -941,20 +941,35 @@ void MainWindow::updateStatusBarStyle()
   {
     connectStatusLabel->setFrameShadow(shadow);
     connectStatusLabel->setFrameShape(shape);
+    connectStatusLabel->setMargin(1);
+
     mapVisibleLabel->setFrameShadow(shadow);
     mapVisibleLabel->setFrameShape(shape);
+    mapVisibleLabel->setMargin(1);
+
     mapDetailLabel->setFrameShadow(shadow);
     mapDetailLabel->setFrameShape(shape);
+    mapDetailLabel->setMargin(1);
+
     mapRenderStatusLabel->setFrameShadow(shadow);
     mapRenderStatusLabel->setFrameShape(shape);
+    mapRenderStatusLabel->setMargin(1);
+
     mapDistanceLabel->setFrameShadow(shadow);
     mapDistanceLabel->setFrameShape(shape);
+    mapDistanceLabel->setMargin(1);
+
     mapPositionLabel->setFrameShadow(shadow);
     mapPositionLabel->setFrameShape(shape);
+    mapPositionLabel->setMargin(1);
+
     mapMagvarLabel->setFrameShadow(shadow);
     mapMagvarLabel->setFrameShape(shape);
+    mapMagvarLabel->setMargin(1);
+
     timeLabel->setFrameShadow(shadow);
     timeLabel->setFrameShape(shape);
+    timeLabel->setMargin(1);
   }
 #endif
 

@@ -104,6 +104,7 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
   if using quoted names.
 * Wind functions now more tolerant for invalid coordinates to avoid crashes.
 * Fix for wrong names in options dialog. #965
+* Corrections to statusbar and time. Time now correctly suffixed with `UTC`.
 * Updated program translation for Brazilian Portuguese by Ricardo.
 * Disabled Spanish translation since it did not receive updates for a long time and has other issues.
 * Reverted workaround for MSFS unreliable on-ground indication for user aircraft.
