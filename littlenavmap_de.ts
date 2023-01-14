@@ -32642,12 +32642,12 @@ Basiert auf der Berechnung mit dem Flugzeugleistungsprofil.</translation>
         <translation>LOC</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="662"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="668"/>
         <source>Error reading multiexport configuration: Invalid magic number. Not a multiexport configuration.</source>
         <translation>Fehler beim Lesen der Multiexport-Konfiguration: Ungültige magische Nummer. Keine gültige Multiexport-Konfiguration.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexportformat.cpp" line="672"/>
+        <location filename="src/routeexport/routeexportformat.cpp" line="678"/>
         <source>Error reading multiexport configuration: Invalid version. Incompatible multiexport configuration.</source>
         <translation>Fehler beim Lesen der Multiexport-Konfiguration: Ungültige Version. Inkompatible Multiexport-Konfiguration.</translation>
     </message>
@@ -35406,12 +35406,12 @@ Anmerkungen zum Flugplan.</translation>
         <translation type="vanished">GPX-Dateien %1;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1260"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1259"/>
         <source>Flight plan saved as GPX.</source>
         <translation>Flugplan als GPX gespeichert.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1262"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1261"/>
         <source>Flight plan and track saved as GPX.</source>
         <translation>Flugplan und Kurs als GPX gespeichert.</translation>
     </message>
@@ -35439,8 +35439,8 @@ Anmerkungen zum Flugplan.</translation>
         <translation>%1 Flugpläne exportiert.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="195"/>
-        <location filename="src/routeexport/routeexport.cpp" line="218"/>
+        <location filename="src/routeexport/routeexport.cpp" line="194"/>
+        <location filename="src/routeexport/routeexport.cpp" line="217"/>
         <source>Export for %1</source>
         <translation>Export für %1</translation>
     </message>
@@ -35449,12 +35449,12 @@ Anmerkungen zum Flugplan.</translation>
         <translation type="vanished">%1 Dateien %2</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="348"/>
+        <location filename="src/routeexport/routeexport.cpp" line="347"/>
         <source>Flight plan saved as %1PLN.</source>
         <translation>Flugplan als %1PLN gespeichert.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="349"/>
+        <location filename="src/routeexport/routeexport.cpp" line="348"/>
         <source>annotated </source>
         <translation>annotiert </translation>
     </message>
@@ -35463,12 +35463,12 @@ Anmerkungen zum Flugplan.</translation>
         <translation type="obsolete">Flugplan als FMS gespeichert.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1289"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1288"/>
         <source>Flight plan saved as HTML.</source>
         <translation>Flugplan als HTML-Seite gespeichert.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1336"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1335"/>
         <source>
 
 Really continue?</source>
@@ -35477,7 +35477,7 @@ Really continue?</source>
 Wirklich fortfahren?</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1388"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1387"/>
         <source>Select Start &amp;Position</source>
         <translation>Start&amp;position auswählen</translation>
     </message>
@@ -35486,19 +35486,19 @@ Wirklich fortfahren?</translation>
         <translation type="vanished">Der Flugplan muss einen gültigen Flugplatz als Start und Ziel haben, sonst ist er im Simulator nicht nutzbar.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1335"/>
-        <location filename="src/routeexport/routeexport.cpp" line="1402"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1334"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1401"/>
         <source>Do not &amp;show this dialog again and save Flight Plan.</source>
         <oldsource>Do &amp;not show this dialog again and save Flight Plan in the future.</oldsource>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen und den Flugplan speichern.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1347"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1346"/>
         <source>Flight Plan must have a valid airport as start and destination and might not be usable by the simulator.</source>
         <translation>Der Flugplan muss einen gültigen Flugplatz als Start und Ziel haben, sonst ist er im Simulator nicht nutzbar.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1365"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1364"/>
         <source>One or more of the selected export formats require a valid AIRAC cycle.
 
 </source>
@@ -35507,7 +35507,7 @@ Wirklich fortfahren?</translation>
 </translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1367"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1366"/>
         <source>The export format requires a valid AIRAC cycle.
 
 </source>
@@ -35516,14 +35516,14 @@ Wirklich fortfahren?</translation>
 </translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1369"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1368"/>
         <source>The selected scenery database does not contain AIRAC cycle information.
 This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery.</source>
         <translation>Die ausgewählte Szeneriedatenbank enthält keine Informationen zum AIRAC-Zyklus.
 Dies kann passieren, wenn Sie einen auf FSX-, Prepar3D- oder MSFS-Szenerie basierenden Flugplan speichern.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1389"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1388"/>
         <source>Show &amp;Departure on Map</source>
         <translation>Zeige &amp;Abflug auf Karte</translation>
     </message>
@@ -35532,12 +35532,12 @@ Dies kann passieren, wenn Sie einen auf FSX-, Prepar3D- oder MSFS-Szenerie basie
         <translation type="vanished">Der Startflugplatz hat Parkpositionen, aber es wurde keine für diesen Flugplan ausgewählt</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1344"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1343"/>
         <source>Flight Plan must have a valid airport as start and destination and might not be usable for the selected export formats.</source>
         <translation>Der Flugplan muss einen gültigen Flugplatz als Start und Ziel haben, sonst ist er für die ausgewählten Exportformate nicht nutzbar.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1333"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1332"/>
         <source>Do not &amp;show this dialog again and export all files.</source>
         <oldsource>Do &amp;not show this dialog again and export all files in the future.</oldsource>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen und alle Dateien exportieren.</translation>
@@ -35552,33 +35552,33 @@ Dies kann passieren, wenn Sie einen auf FSX-, Prepar3D- oder MSFS-Szenerie basie
         <translation>Kein Flugplan exportiert.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="188"/>
+        <location filename="src/routeexport/routeexport.cpp" line="187"/>
         <source>%1 Files %2;;All Files (*)</source>
         <translation>%1 Dateien %2;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="191"/>
+        <location filename="src/routeexport/routeexport.cpp" line="190"/>
         <source>All Files (*)</source>
         <translation>Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="371"/>
-        <location filename="src/routeexport/routeexport.cpp" line="392"/>
+        <location filename="src/routeexport/routeexport.cpp" line="370"/>
+        <location filename="src/routeexport/routeexport.cpp" line="391"/>
         <source>Flight plan saved as FMS 3.</source>
         <translation>Flugplan als FMS 3 gespeichert.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="413"/>
+        <location filename="src/routeexport/routeexport.cpp" line="412"/>
         <source>Flight plan saved for CIVA Navigation System.</source>
         <translation>Flugplan für das CIVA Navigationssystem gespeichert.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="448"/>
+        <location filename="src/routeexport/routeexport.cpp" line="447"/>
         <source>Flight plan saved as FMS 11.</source>
         <translation>Flugplan als FMS 11 gespeichert.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1395"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1394"/>
         <source>One or more of the selected export formats support setting a parking spot as a start position.
 
 </source>
@@ -35587,53 +35587,53 @@ Dies kann passieren, wenn Sie einen auf FSX-, Prepar3D- oder MSFS-Szenerie basie
 </translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1398"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1397"/>
         <source>The departure airport has parking spots but no parking was selected for this Flight Plan.</source>
         <translation>Der Startflugplatz hat Parkpositionen, aber es wurde keine für diesen Flugplan ausgewählt</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1438"/>
-        <location filename="src/routeexport/routeexport.cpp" line="1549"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1437"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1548"/>
         <source>While saving GFP file:</source>
         <translation>Während des Speicherns der GFP-Datei:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1459"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1458"/>
         <source>While saving TXT or FPL file:</source>
         <translation>Während des Speicherns der TXT- oder FPL-Datei:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1502"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1501"/>
         <source>While saving UFMC file:</source>
         <translation>Während des Speicherns der UFMC-Datei:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1632"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1631"/>
         <source>While saving VFP file:</source>
         <translation>Während des Speicherns der VFP-Datei:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1761"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1760"/>
         <source>While saving FPL file:</source>
         <translation>Während des Speicherns der FPL-Datei:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1816"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1815"/>
         <source>While reading file &quot;%1&quot;:</source>
         <translation>Während des Dateilesens &quot;%1&quot;:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1848"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1847"/>
         <source>While saving to file &quot;%1&quot;:</source>
         <translation>Während des Dateischreibens &quot;%1&quot;:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="2060"/>
+        <location filename="src/routeexport/routeexport.cpp" line="2059"/>
         <source>&lt;p&gt;Note that saving flight plans with one or more enabled options in menu &quot;File&quot; -&gt; &quot;Export Options&quot; can cause unexpected issues:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Procedure and/or airway information will be missing when reloading the exported flight plans.&lt;/li&gt;&lt;li&gt;Several approach procedure leg types like holds and turns cannot be shown properly in simulators or aircraft.&lt;/li&gt;&lt;li&gt;Speed and altitude restrictions are not included in the exported flight plan.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;This does not apply to the the native LNMPLN file format.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normally you should not use these export options.&lt;/b&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;Beachten Sie, dass das Speichern von Flugplänen mit einer oder mehreren aktivierten Optionen im Menü &quot;Datei&quot; -&gt; &quot;Exporteinstellungen&quot; zu unerwarteten Problemen führen kann:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Beim Neuladen der exportierten Flugpläne fehlen Prozedur- und/oder Luftstraßeninformationen.&lt;/li&gt;&lt;li&gt;Mehrere Arten von Anflugprozeduren wie Halten und Wenden können in Simulatoren oder Flugzeugen nicht richtig dargestellt werden.&lt;/li&gt;&lt;li&gt;Geschwindigkeits- und Höhenbeschränkungen sind im exportierten Flugplan nicht enthalten.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Dies gilt nicht für das native LNMPLN-Dateiformat.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normalerweise sollten Sie diese Exporteinstellungen nicht verwenden.&lt;/b&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="2070"/>
+        <location filename="src/routeexport/routeexport.cpp" line="2069"/>
         <source>Do not &amp;show this dialog again.</source>
         <oldsource>Do &amp;not show this dialog again.</oldsource>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen.</translation>
@@ -35647,12 +35647,12 @@ Dies kann passieren, wenn Sie einen auf FSX-, Prepar3D- oder MSFS-Szenerie basie
         <translation type="vanished">Während des Speicherns der corte.in-Datei:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1894"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1893"/>
         <source>While reading from companyroutes.xml file:</source>
         <translation>Während des Lesens der companyroutes.xml-Datei:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1951"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1950"/>
         <source>While saving to companyroutes.xml file:</source>
         <translation>Während des Speicherns der companyroutes.xml-Datei:</translation>
     </message>
@@ -37257,31 +37257,40 @@ Falls nicht anwendbar, wird die beste Schätzung aus den installierten Simulator
     </message>
     <message>
         <location filename="src/routeexport/routemultiexportdialog.cpp" line="689"/>
+        <source>%1 Files %2;;All Files (*)</source>
+        <translation>%1 Dateien %2;;Alle Dateien (*)</translation>
+    </message>
+    <message>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="691"/>
+        <source>All Files (*)</source>
+        <translation>Alle Dateien (*)</translation>
+    </message>
+    <message>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="695"/>
         <source>Select Export File for %1</source>
         <translation>Wähle Exportdatei für %1 aus</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="690"/>
         <source>Flight Plan Files %1;;All Files (*)</source>
-        <translation>Flugplandateien %1;;Alle Dateien (*)</translation>
+        <translation type="vanished">Flugplandateien %1;;Alle Dateien (*)</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="694"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="699"/>
         <source>Select Export Directory for %1</source>
         <translation>Wähle Exportverzeichnis für %1 aus</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="786"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="791"/>
         <source>Reset selection, paths and filename patterns back to default?</source>
         <translation>Exportpfade, Dateinamensmuster und Exportauswahl auf Standard zurücksetzen?</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="919"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="924"/>
         <source>&amp;Enable Export for %1</source>
         <translation>%1 für &amp;Export vorsehen</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routemultiexportdialog.cpp" line="921"/>
+        <location filename="src/routeexport/routemultiexportdialog.cpp" line="926"/>
         <source>&amp;Enable for Export</source>
         <translation>Für &amp;Export vorsehen</translation>
     </message>

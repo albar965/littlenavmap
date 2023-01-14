@@ -102,13 +102,14 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 * Corrected logbook and userpoint import functions where first row in CSV files was not recognized
   if using quoted names.
 * Wind functions now more tolerant for invalid coordinates to avoid crashes.
-* Disabled Spanish translation since it did not receive updates for a long time and has quality
-  issues.
 * Fix for wrong names in options dialog. #965
+* Updated program translation for Brazilian Portuguese by Ricardo.
+* Disabled Spanish translation since it did not receive updates for a long time and has other issues.
 * Reverted workaround for MSFS unreliable on-ground indication for user aircraft.
 * Updated SimConnect.dll to latest from SDK version 0.20.5.0.
 * Corrected SSL library in Linux deployment to fix SSL handshake errors. Now adding correct OpenSSL
   version 1.1 to the folder `lib` to avoid loading of the wrong system library version 3. #974
+
 
 ### X-Plane and Little Xpconnect
 
