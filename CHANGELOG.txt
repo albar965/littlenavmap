@@ -56,14 +56,14 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 ### Flight Plan Route Description
 
 * Corrected reading of a flight plan having SID and STAR with the same transition waypoint
-  resulting in incomplete plans from SimBrief import. Example: MUHA EPMAR3 MAXIM SNDBR2 KMIA KMCO.
+  resulting in incomplete plans from SimBrief import. Example: MUHA EPMAR3 MAXIM SNDBR2 KMIA KMCO. #975
 * Fixed crash while typing when entering incomplete route description strings.
 * Flight plan cruise altitude is now adjusted to adhere to airway and procedure altitude
   restrictions to avoid creating new plans with restriction errors.
 
 ### Map Display and Elevation Profile
 
-* Fixed issue with disappearing aircraft trail and other map lines near anti-meridian.
+* Fixed issue with disappearing aircraft trail and other map lines near anti-meridian. #976
 * Now suppressing VASI display in elevation profile if approach has a large offset course compared
   to the runway. The VASI slope cannot be used in these cases.
 * Omitting wrong X-Plane runway shoulders for water runways on map.
@@ -71,7 +71,7 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 
 ### Online Flying
 
-* Fixed crash because of missing icon for unknown aircraft types.
+* Fixed crash because of missing icon for unknown aircraft types. #973
 * Added white aircraft icon with question mark for invalid aircraft types like online boats.
 * Now ignoring boat traffic in aircraft shadow resolution.
 * Adjusted shadow aircraft detection online vs. simulator to better resolve duplicate aircraft when
@@ -86,7 +86,7 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 * Corrected behavior when clicking `Load Scenery Database` which could open the loading dialog
   again and crash while still waiting for confirmation on database usage.
 * Fixed issue with mapped drives on Windows where add-on airports were not detected if having MSFS
-  installed on a mapped drive.
+  installed on a mapped drive. #967
 
 ### User Interface and Other
 
@@ -104,6 +104,8 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
   if using quoted names.
 * Wind functions now more tolerant for invalid coordinates to avoid crashes.
 * Fix for wrong names in options dialog. #965
+* Fixes to avoid crash with duplicate ids when adding userpoints or logbook entries after import. #985
+* Solved issue with crash when doing undo or redo quickly using keyboard shortcut repeats.
 * Corrections to statusbar and time. Time now correctly suffixed with `UTC`.
 * Updated program translation for Brazilian Portuguese by Ricardo.
 * Disabled Spanish translation since it did not receive updates for a long time and has other issues.
@@ -111,7 +113,6 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 * Updated SimConnect.dll to latest from SDK version 0.20.5.0.
 * Corrected SSL library in Linux deployment to fix SSL handshake errors. Now adding correct OpenSSL
   version 1.1 to the folder `lib` to avoid loading of the wrong system library version 3. #974
-
 
 ### X-Plane and Little Xpconnect
 
