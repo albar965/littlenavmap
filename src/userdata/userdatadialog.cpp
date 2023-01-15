@@ -24,7 +24,6 @@
 #include "common/dialogrecordhelper.h"
 #include "common/constants.h"
 #include "common/formatter.h"
-#include "gui/mainwindow.h"
 #include "fs/util/coordinates.h"
 #include "common/unit.h"
 #include "gui/helphandler.h"
@@ -202,7 +201,7 @@ void UserdataDialog::acceptClicked()
 {
   // Copy widget data to record
   dialogToRecord();
-  qDebug() << Q_FUNC_INFO << record;
+  qDebug() << Q_FUNC_INFO << *record;
 
   QDialog::accept();
 }
@@ -244,15 +243,9 @@ void UserdataDialog::updateWidgets()
 
     // Disable dialog OK button if nothing is checked
     ui->buttonBoxUserdata->button(QDialogButtonBox::Ok)->setEnabled(
-      ui->checkBoxUserdataAltitude->isChecked() |
-      ui->checkBoxUserdataDescription->isChecked() |
-      ui->checkBoxUserdataRegion->isChecked() |
-      ui->checkBoxUserdataIdent->isChecked() |
-      ui->checkBoxUserdataName->isChecked() |
-      ui->checkBoxUserdataTags->isChecked() |
-      ui->checkBoxUserdataType->isChecked() |
-      ui->checkBoxUserdataVisible->isChecked()
-      );
+      ui->checkBoxUserdataAltitude->isChecked() || ui->checkBoxUserdataDescription->isChecked() ||
+      ui->checkBoxUserdataRegion->isChecked() || ui->checkBoxUserdataIdent->isChecked() || ui->checkBoxUserdataName->isChecked() ||
+      ui->checkBoxUserdataTags->isChecked() || ui->checkBoxUserdataType->isChecked() || ui->checkBoxUserdataVisible->isChecked());
   }
 }
 

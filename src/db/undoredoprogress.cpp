@@ -48,7 +48,6 @@ void UndoRedoProgress::stop()
 bool UndoRedoProgress::callback(int totalNumber, int currentNumber)
 {
   qDebug() << Q_FUNC_INFO << totalNumber << currentNumber;
-  QApplication::processEvents();
   progress->setMaximum(totalNumber);
   progress->setValue(currentNumber);
   canceled = progress->wasCanceled();

@@ -275,6 +275,7 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
     {
       // Build record for new logbook entry =======================================
       SqlRecord record = manager->getEmptyRecord();
+      record.setNull("logbook_id"); // Set to null to avoid unique constraint mismatches - select id automatically
       record.setValue("aircraft_name", aircraft.getAirplaneType()); // varchar(250),
       record.setValue("aircraft_type", aircraft.getAirplaneModel()); // varchar(250),
       record.setValue("aircraft_registration", aircraft.getAirplaneRegistration()); // varchar(50),
@@ -637,7 +638,14 @@ void LogdataController::addLogEntry()
 
     // Add to database
     SqlTransaction transaction(manager->getDatabase());
-    manager->insertOneRecord(dlg.getRecord());
+
+    SqlRecord newRec = dlg.getRecord();
+
+    // Set id to null to avoid unique constraint mismatches - select id automatically
+    if(newRec.contains("logbook_id"))
+      newRec.setNull("logbook_id");
+
+    manager->insertOneRecord(newRec);
     transaction.commit();
 
     logChanged(false /* load all */, false /* keep selection */);

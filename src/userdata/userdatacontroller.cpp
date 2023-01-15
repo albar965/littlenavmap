@@ -527,6 +527,10 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
     qDebug() << Q_FUNC_INFO << rec;
 #endif
 
+    // Set id to null to let userdata manager select id
+    if(lastAddedRecord->contains("userdata_id"))
+      lastAddedRecord->setNull("userdata_id");
+
     // Add to database
     SqlTransaction transaction(manager->getDatabase());
     manager->insertOneRecord(*lastAddedRecord);
@@ -589,9 +593,8 @@ void UserdataController::importCsv()
   qDebug() << Q_FUNC_INFO;
   try
   {
-    QStringList files = dialog->openFileDialogMulti(
-      tr("Open Userpoint CSV File(s)"),
-      tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV), "Userdata/Csv");
+    QStringList files = dialog->openFileDialogMulti(tr("Open Userpoint CSV File(s)"),
+                                                    tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV), "Userdata/Csv");
 
     QGuiApplication::setOverrideCursor(Qt::WaitCursor);
     int numImported = 0;
