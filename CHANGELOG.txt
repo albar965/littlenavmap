@@ -50,16 +50,16 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
   case of invalid coordinates to avoid crash.
 * Adjustments for flight plan calculation for better results with less airway usage at the right of
   the slider `Prefer`.
-* Corrected NAT track download address to new `www.notams.faa.gov/common/nat.html` to avoid error
-  messages on download.
+* Updated NAT track download address to new `https://www.notams.faa.gov/common/nat.html` to avoid error
+  messages on download. Addresses can be changed in `little_navmap.ini` in section `[Track]`.
 
 ### Flight Plan Route Description
 
 * Corrected reading of a flight plan having SID and STAR with the same transition waypoint
   resulting in incomplete plans from SimBrief import. Example: MUHA EPMAR3 MAXIM SNDBR2 KMIA KMCO. #975
-* Fixed crash while typing when entering incomplete route description strings.
+* Fixed crash while typing when entering incomplete route description texts.
 * Flight plan cruise altitude is now adjusted to adhere to airway and procedure altitude
-  restrictions to avoid creating new plans with restriction errors.
+  restrictions. This avoids creating new plans with initial restriction errors.
 
 ### Map Display and Elevation Profile
 
@@ -86,38 +86,39 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 * Corrected behavior when clicking `Load Scenery Database` which could open the loading dialog
   again and crash while still waiting for confirmation on database usage.
 * Fixed issue with mapped drives on Windows where add-on airports were not detected if having MSFS
-  installed on a mapped drive. #967
+  installed on such a drive. #967
 
 ### User Interface and Other
 
 * Corrected window order when using `Keep in Foreground` to avoid blocked or hidden dialogs after
   loading scenery library.
 * The `Keep in Foreground` status is now applied to all non-blocking dialog windows like 'Flight
-  Plan Calculation' and 'Flight Plan Route Description' to avoid windows being blocked by main window.
+  Plan Calculation' and 'Flight Plan Route Description' to avoid windows being blocked and hidden 
+  by main window.
 * Added userpoint type `Addon` to highlight airports with a yellow ring similar to detected add-on
   airports.
-* Fixed issue where bearing and distance was not updated in tooltips for parking spots.
-* Fixed regression where tooltips disappeared quickly when being connected.
+* Fixed issue where bearing and distance to user aircraft was not updated in tooltips for parking spots.
+* Fixed regression where tooltips disappeared quickly when being connected to a simulator.
 * Now correcting logbook time if off by one day at arrival due to wrong time and date jumps while
-  flying (caused by warp and similar tools). This previously resulted in negative travel times.
-* Corrected logbook and userpoint import functions where first row in CSV files was not recognized
+  flying (caused by warp or similar tools). This previously resulted in negative travel times.
+* Corrected logbook and userpoint import functions where first row in CSV files caused an error message
   if using quoted names.
-* Wind functions now more tolerant for invalid coordinates to avoid crashes.
 * Fix for wrong names in options dialog. #965
 * Fixes to avoid crash with duplicate ids when adding userpoints or logbook entries after import. #985
 * Solved issue with crash when doing undo or redo quickly using keyboard shortcut repeats.
+* Wind calculation functions are now more tolerant for invalid coordinates to avoid crashes.
 * Corrections to statusbar and time. Time now correctly suffixed with `UTC`.
 * Updated program translation for Brazilian Portuguese by Ricardo.
 * Disabled Spanish translation since it did not receive updates for a long time and has other issues.
 * Reverted workaround for MSFS unreliable on-ground indication for user aircraft.
 * Updated SimConnect.dll to latest from SDK version 0.20.5.0.
-* Corrected SSL library in Linux deployment to fix SSL handshake errors. Now adding correct OpenSSL
-  version 1.1 to the folder `lib` to avoid loading of the wrong system library version 3. #974
+* Corrected SSL library in Linux package to fix SSL handshake errors. Now adding correct OpenSSL
+  version 1.1 to the folder `lib` to avoid loading of a wrong system library version 3. #974
 
 ### X-Plane and Little Xpconnect
 
 * Fixed wrong date and timezone calculation in Little Xpconnect 1.0.34 which resulted in wrong or
-  jittering endurance and turn anticipation display.
+  jumping endurance and turn anticipation display.
 
 ==<<=============================================================================
 
