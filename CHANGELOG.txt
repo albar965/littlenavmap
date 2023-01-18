@@ -52,6 +52,7 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
   the slider `Prefer`.
 * Updated NAT track download address to new `https://www.notams.faa.gov/common/nat.html` to avoid error
   messages on download. Addresses can be changed in `little_navmap.ini` in section `[Track]`.
+* Fixed wrong flight plan read while importing from SimBrief and changing plan with download dialog open.
 
 ### Flight Plan Route Description
 

@@ -193,6 +193,9 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
 {
   qDebug() << Q_FUNC_INFO;
 
+  routeString.clear();
+  flightplan->clear();
+
   // Read downloaded XML ==================================================================
   atools::util::XmlStream xmlStream(atools::zip::gzipDecompressIf(data, Q_FUNC_INFO));
   QXmlStreamReader& reader = xmlStream.getReader();
