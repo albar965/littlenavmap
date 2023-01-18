@@ -58,8 +58,11 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 * Corrected reading of a flight plan having SID and STAR with the same transition waypoint
   resulting in incomplete plans from SimBrief import. Example: MUHA EPMAR3 MAXIM SNDBR2 KMIA KMCO. #975
 * Fixed crash while typing when entering incomplete route description texts.
+* Fixed several issues when reading and writing a route description using space separated transitions.
+  This avoids error messages when reading flight plans from SimBrief.
 * Flight plan cruise altitude is now adjusted to adhere to airway and procedure altitude
   restrictions. This avoids creating new plans with initial restriction errors.
+* Tear off drop down menu in route description dialog can now be reopened again after closing dialog.
 
 ### Map Display and Elevation Profile
 
@@ -93,7 +96,7 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 * Corrected window order when using `Keep in Foreground` to avoid blocked or hidden dialogs after
   loading scenery library.
 * The `Keep in Foreground` status is now applied to all non-blocking dialog windows like 'Flight
-  Plan Calculation' and 'Flight Plan Route Description' to avoid windows being blocked and hidden 
+  Plan Calculation' and 'Flight Plan Route Description' to avoid windows being blocked and hidden
   by main window.
 * Added userpoint type `Addon` to highlight airports with a yellow ring similar to detected add-on
   airports.

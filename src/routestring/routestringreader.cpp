@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -186,8 +186,12 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
 
     if(sidTransWp == starTransWp && !cleanItems.isEmpty() && cleanItems.first() == sidTransWp)
       // Item was appended and consumed for SID an STAR transition
-      // Example: MUHA EPMAR3 MAXIM AVERA CANOA MAXIM SNDBR2 KMIA
+      // Example: "MAXIM" in "MUHA EPMAR3 MAXIM SNDBR2 KMIA"
       cleanItems.removeFirst();
+    else if(!starTransWp.isEmpty())
+      // Add STAR transition waypoint in case of airway presence
+      // Example: "ZZIPR" in "7L2 UFFDA Q156 ZZIPR FYTTE7 KORD"
+      cleanItems.append(starTransWp);
 
     lastPos = fp->getDeparturePosition();
   }
@@ -215,6 +219,9 @@ bool RouteStringReader::createRouteFromString(const QString& routeString, rs::Ro
                 arg(cleanItems.isEmpty() ? QString() : cleanItems.constFirst()));
     return false;
   }
+
+  // Remove consecutive duplicates ===========================
+  cleanItems.erase(std::unique(cleanItems.begin(), cleanItems.end()), cleanItems.end());
 
   // Collect all navaids, airports and coordinates into MapSearchResults =============================
 
@@ -490,9 +497,7 @@ void RouteStringReader::addReport(atools::fs::pln::Flightplan *flightplan, const
 
   int insertIndex = 0;
   insertMessage(tr("Route description: <b>%1</b>.").arg(rs::cleanRouteString(rawRouteString).join(" ")), insertIndex++);
-
   insertMessage(tr("Flight plan from <b>%1</b> to <b>%2</b>.").arg(from).arg(to), insertIndex++);
-
   insertMessage(tr("Distance without procedures: <b>%1</b>.").arg(Unit::distNm(flightplan->getDistanceNm())), insertIndex++);
 
   QStringList idents;

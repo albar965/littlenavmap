@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -442,7 +442,7 @@ void RouteStringDialog::buttonBoxClicked(QAbstractButton *button)
       // Floating window - Create a new flight plan and use undo/redo - keep non-modal dialog open - do not mark plan as changed
       emit routeFromFlightplan(*flightplan, !isAltitudeIncluded() /* adjustAltitude */, false /* changed */, true /* undo */);
     else
-      // Openeded from SimBrief or other dialogs - Return QDialog::Accepted and close
+      // Opened from SimBrief or other dialogs - Return QDialog::Accepted and close
       QDialog::accept();
   }
   else if(button == ui->buttonBoxRouteString->button(QDialogButtonBox::Apply))
@@ -505,5 +505,7 @@ void RouteStringDialog::showEvent(QShowEvent *)
 
 void RouteStringDialog::hideEvent(QHideEvent *)
 {
+  // Hide tear off menu - otherwise it cannot be opened again
+  ui->toolButtonRouteStringOptions->menu()->hideTearOffMenu();
   position = geometry().topLeft();
 }
