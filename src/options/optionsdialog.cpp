@@ -161,8 +161,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
                                                                                                     "Ident can be internal, ICAO, FAA, IATA or local depending on avilability."), optsd::ITEM_AIRPORT_NAME, true);
   addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Tower Frequency"), QString(), optsd::ITEM_AIRPORT_TOWER, true);
   addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("ATIS / ASOS / AWOS Frequency"), QString(), optsd::ITEM_AIRPORT_ATIS, true);
-  addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Runway Information"), tr("Show runway length, width and light indicator text."), optsd::ITEM_AIRPORT_RUNWAY, true);
-  // addItem(ap, tr("Wind Pointer"), optsd::ITEM_AIRPORT_WIND_POINTER);
+  addItem<optsd::DisplayOptionsAirport>(airport, displayOptItemIndexAirport, tr("Runway Information"), tr("Show runway elevation, light indicator \"L\" and length text."), optsd::ITEM_AIRPORT_RUNWAY, true);
 
   // Airport details =====================================================
   QTreeWidgetItem *airportDetails = addTopItem(tr("Airport Details"), tr("Select airport diagram elements."));
