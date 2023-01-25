@@ -686,6 +686,11 @@ bool NavApp::hasSimulator(atools::fs::FsPaths::SimulatorType type)
   return atools::fs::FsPaths::hasSimulator(type);
 }
 
+bool NavApp::hasInstalledSimulator(atools::fs::FsPaths::SimulatorType type)
+{
+  return databaseManager->hasInstalledSimulator(type);
+}
+
 bool NavApp::hasAnyMsSimulator()
 {
   return atools::fs::FsPaths::hasAnyMsSimulator();

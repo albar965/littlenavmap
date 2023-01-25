@@ -17,37 +17,26 @@
 
 #include "weather/weatherreporter.h"
 
-#include "gui/mainwindow.h"
-#include "settings/settings.h"
-#include "options/optiondata.h"
-#include "common/constants.h"
-#include "fs/weather/xpweatherreader.h"
-#include "navapp.h"
 #include "atools.h"
-#include "fs/weather/weathernetdownload.h"
-#include "fs/weather/noaaweatherdownloader.h"
-#include "fs/sc/simconnecttypes.h"
-#include "fs/util/fsutil.h"
-#include "query/mapquery.h"
-#include "query/airportquery.h"
-#include "fs/weather/metar.h"
-#include "util/filesystemwatcher.h"
+#include "common/constants.h"
 #include "connect/connectclient.h"
+#include "fs/weather/metar.h"
 #include "fs/weather/metarparser.h"
+#include "fs/weather/noaaweatherdownloader.h"
+#include "fs/weather/weathernetdownload.h"
+#include "fs/weather/xpweatherreader.h"
 #include "gui/dialog.h"
+#include "gui/mainwindow.h"
+#include "navapp.h"
+#include "options/optiondata.h"
+#include "query/airportquery.h"
+#include "settings/settings.h"
+#include "util/filesystemwatcher.h"
 
-#include <QDebug>
 #include <QDir>
-#include <QFile>
-#include <QFileInfo>
-#include <QNetworkRequest>
 #include <QStandardPaths>
-#include <QNetworkReply>
 #include <QTimer>
 #include <QRegularExpression>
-#include <QEventLoop>
-#include <functional>
-#include <QProcess>
 
 // Checks the first line of an ASN file if it has valid content
 static const QRegularExpression ASN_VALIDATE_REGEXP("^[A-Z0-9]{3,4}::[A-Z0-9]{3,4} .+$");
@@ -65,6 +54,20 @@ using atools::settings::Settings;
 WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::SimulatorType type)
   : QObject(parentWindow), simType(type), mainWindow(parentWindow)
 {
+  xplaneFileWarningMsg = QString(tr("\n\nMake sure that your X-Plane base path is correct and\n"
+                                    "weather files as well as directories exist.\n\n"
+                                    "Click \"Reset paths\" in the Little Navmap dialog \"Load scenery library\"\n"
+                                    "to fix the base path after moving a X-Plane installation.\n\n"
+                                    "Also check the paths in the Little Navmap options on page \"Weather Files\".\n"
+                                    "These path should be empty to use the default.\n\n"
+                                    "Restart Little Navmap after correcting the weather paths."));
+
+  xplaneMissingWarningMsg = QString(tr("Cannot access weather files.\n"
+                                       "X-Plane is not installed on this computer.\n\n"
+                                       "If you use this as a remote installation:\n"
+                                       "Share the weather files on the flying computer and\n"
+                                       "adapt the X-Plane weather path in \"Options\" on page \"Weather Files\" to point to the network share."));
+
   onlineWeatherTimeoutSecs = atools::settings::Settings::instance().valueInt(lnm::OPTIONS_WEATHER_UPDATE, 600);
 
   verbose = Settings::instance().getAndStoreValue(lnm::OPTIONS_WEATHER_DEBUG, false).toBool();
@@ -235,53 +238,83 @@ void WeatherReporter::initXplane()
 {
   if(atools::fs::FsPaths::isAnyXplane(simType) && !NavApp::getCurrentSimulatorBasePath().isEmpty())
   {
-    QString msg(tr("\n\nMake sure that your X-Plane base path is correct and\n"
-                   "weather files as well as directories exist.\n\n"
-                   "Click \"Reset paths\" in the Little Navmap dialog \"Load scenery library\"\n"
-                   "to fix the base path after moving a X-Plane installation.\n\n"
-                   "Also check the paths in the Little Navmap options on page \"Weather Files\".\n"
-                   "These path should be empty to use the default.\n\n"
-                   "Restart Little Navmap after correcting the weather paths."));
-
     if(simType == atools::fs::FsPaths::XPLANE_11)
     {
       QString path = OptionData::instance().getWeatherXplane11Path();
-      if(path.isEmpty())
-        // Use default base path
+      if(path.isEmpty() && NavApp::hasInstalledSimulator(simType))
+        // Use default base path if simulator installation was found
         path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "METAR.rwx";
 
-      QString message = atools::checkFileMsg(path);
-      if(!message.isEmpty() && path != xp11WarningPath)
-      {
-        NavApp::closeSplashScreen();
-        QMessageBox::warning(mainWindow, QCoreApplication::applicationName(), message + msg);
-        xp11WarningPath = path;
-        disableXplane();
-      }
-      else
-        xpWeatherReader->setWeatherPath(path, atools::fs::weather::WEATHER_XP11);
+      // Set path but do not start watching - loading starts on first access
+      xpWeatherReader->setWeatherPath(path, atools::fs::weather::WEATHER_XP11);
     }
     else if(simType == atools::fs::FsPaths::XPLANE_12)
     {
       QString path = OptionData::instance().getWeatherXplane12Path();
-      if(path.isEmpty())
-        // Use default base path
+      if(path.isEmpty() && NavApp::hasInstalledSimulator(simType))
+        // Use default base path if simulator installation was found
         path = NavApp::getCurrentSimulatorBasePath() + QDir::separator() + "Output" + QDir::separator() + "real weather";
 
-      QString message = atools::checkDirMsg(path);
-      if(!message.isEmpty() && path != xp12WarningPath)
-      {
-        NavApp::closeSplashScreen();
-        QMessageBox::warning(mainWindow, QCoreApplication::applicationName(), message + msg);
-        xp12WarningPath = path;
-        disableXplane();
-      }
-      else
-        xpWeatherReader->setWeatherPath(path, atools::fs::weather::WEATHER_XP12);
+      // Set path but do not start watching - loading starts on first access
+      xpWeatherReader->setWeatherPath(path, atools::fs::weather::WEATHER_XP12);
     }
   } // if(atools::fs::FsPaths::isAnyXplane(simType) &&
   else
     disableXplane();
+}
+
+bool WeatherReporter::checkXplanePaths()
+{
+  bool valid = false;
+  bool xp11 = xpWeatherReader->getWeatherType() == atools::fs::weather::WEATHER_XP11;
+  bool& warningShown = xp11 ? xp11WarningPathShown : xp12WarningPathShown;
+
+  // Check only if warning was not already shown and dialog is not open
+  if(!showingXplaneFileWarning && !warningShown)
+  {
+    if(atools::fs::FsPaths::isAnyXplane(simType))
+    {
+      // Validate path
+      QString path = xpWeatherReader->getWeatherPath();
+      QString message = xp11 ? atools::checkFileMsg(path, 80, false /* warn */) : atools::checkDirMsg(path, 80, false /* warn */);
+      valid = message.isEmpty();
+
+      if(!valid && !warningShown)
+      {
+        // Call dialog in background since this function might be called from a draw handler
+        QTimer::singleShot(0, this, std::bind(&WeatherReporter::showXpWarningDialog, this, message));
+        warningShown = true;
+      }
+    }
+  }
+
+  if(!valid)
+    disableXplane();
+
+  return valid;
+}
+
+void WeatherReporter::showXpWarningDialog(const QString& message)
+{
+  // Avoid repeated entry
+  showingXplaneFileWarning = true;
+
+  NavApp::closeSplashScreen();
+
+  if(NavApp::hasInstalledSimulator(simType))
+    // Path not valid ==========
+    atools::gui::Dialog(mainWindow).showWarnMsgBox(
+      xpWeatherReader->getWeatherType() == atools::fs::weather::WEATHER_XP11 ?
+      lnm::ACTIONS_SHOW_XP11_WEATHER_FILE_INVALID : lnm::ACTIONS_SHOW_XP12_WEATHER_FILE_INVALID,
+      message + xplaneFileWarningMsg, tr("Do not &show this dialog again."));
+  else
+    // X-Plane is not installed ==========
+    atools::gui::Dialog(mainWindow).showWarnMsgBox(
+      xpWeatherReader->getWeatherType() == atools::fs::weather::WEATHER_XP11 ?
+      lnm::ACTIONS_SHOW_XP11_WEATHER_FILE_NO_SIM : lnm::ACTIONS_SHOW_XP12_WEATHER_FILE_NO_SIM,
+      xplaneMissingWarningMsg, tr("Do not &show this dialog again."));
+
+  showingXplaneFileWarning = false;
 }
 
 void WeatherReporter::initActiveSkyNext()
@@ -685,12 +718,19 @@ QString WeatherReporter::getActiveSkyMetar(const QString& airportIcao)
 
 atools::fs::weather::MetarResult WeatherReporter::getXplaneMetar(const QString& station, const atools::geo::Pos& pos)
 {
-  if(xpWeatherReader->needsLoading())
+  if(xpWeatherReader->getWeatherPath().isEmpty())
+    // Display warnings if path is empty
+    checkXplanePaths();
+  else if(xpWeatherReader->needsLoading())
   {
-    // Loading takes longer - show wait cursor
-    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-    xpWeatherReader->load();
-    QGuiApplication::restoreOverrideCursor();
+    // Check paths and show warning dialog if invalid
+    if(checkXplanePaths())
+    {
+      // Loading takes longer - show wait cursor
+      QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+      xpWeatherReader->load();
+      QGuiApplication::restoreOverrideCursor();
+    }
   }
 
   return xpWeatherReader->getXplaneMetar(station, pos);
@@ -761,8 +801,7 @@ void WeatherReporter::postDatabaseLoad(atools::fs::FsPaths::SimulatorType type)
   if(type != simType)
   {
     // Enable warning dialogs about wrong paths again
-    xp11WarningPath.clear();
-    xp12WarningPath.clear();
+    xp11WarningPathShown = xp12WarningPathShown = false;
 
     // Simulator has changed - reload files
     simType = type;
@@ -778,6 +817,9 @@ void WeatherReporter::optionsChanged()
   vatsimWeather->setRequestUrl(OptionData::instance().getWeatherVatsimUrl());
   noaaWeather->setRequestUrl(OptionData::instance().getWeatherNoaaUrl());
   ivaoWeather->setRequestUrl(OptionData::instance().getWeatherIvaoUrl());
+
+  // Enable warning dialogs about wrong paths again
+  xp11WarningPathShown = xp12WarningPathShown = false;
 
   resetErrorState();
   updateTimeouts();

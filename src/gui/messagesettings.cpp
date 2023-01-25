@@ -88,4 +88,8 @@ void messages::resetEssentialMessages()
   settings.setValue(lnm::ACTIONS_SHOW_DATABASE_CYCLE_MATCH, true);
   settings.setValue(lnm::ACTIONS_SHOW_FILE_EXPORT_OPTIONS_WARN, true);
   settings.setValue(lnm::ACTIONS_SHOW_FILE_EXPORT_OPTIONS_WARN_EXP, true);
+  settings.setValue(lnm::ACTIONS_SHOW_XP11_WEATHER_FILE_INVALID, true);
+  settings.setValue(lnm::ACTIONS_SHOW_XP12_WEATHER_FILE_INVALID, true);
+  settings.setValue(lnm::ACTIONS_SHOW_XP11_WEATHER_FILE_NO_SIM, true);
+  settings.setValue(lnm::ACTIONS_SHOW_XP12_WEATHER_FILE_NO_SIM, true);
 }

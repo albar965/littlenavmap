@@ -110,6 +110,12 @@ public:
     return !simulators.getAllInstalled().isEmpty();
   }
 
+  /* Returns true if there is an installation for the given sim found */
+  bool hasInstalledSimulator(atools::fs::FsPaths::SimulatorType type) const
+  {
+    return simulators.value(type).isInstalled;
+  }
+
   /* Returns true if there are any flight simulator databases found (probably copied by the user) */
   bool hasSimulatorDatabases() const
   {

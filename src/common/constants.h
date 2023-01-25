@@ -93,6 +93,10 @@ const QLatin1String ACTIONS_SHOW_SEND_SIMBRIEF("Actions/SendSimBrief");
 const QLatin1String ACTIONS_SHOW_MAPTHEME_REQUIRES_KEY("Actions/MapThemeRequiresKey");
 const QLatin1String ACTIONS_SHOW_FILE_EXPORT_OPTIONS_WARN("Actions/FileExportOptionsWarn");
 const QLatin1String ACTIONS_SHOW_FILE_EXPORT_OPTIONS_WARN_EXP("Actions/FileExportOptionsWarnExp");
+const QLatin1String ACTIONS_SHOW_XP11_WEATHER_FILE_INVALID("Actions/Xplane11WeatherFileInvalid");
+const QLatin1String ACTIONS_SHOW_XP12_WEATHER_FILE_INVALID("Actions/Xplane12WeatherFileInvalid");
+const QLatin1String ACTIONS_SHOW_XP11_WEATHER_FILE_NO_SIM("Actions/Xplane11WeatherFileNoSim");
+const QLatin1String ACTIONS_SHOW_XP12_WEATHER_FILE_NO_SIM("Actions/Xplane12WeatherFileNoSim");
 
 const QLatin1String ACTIONS_SHOW_DATABASE_OLD("Actions/DatabaseOld");
 const QLatin1String ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH("Actions/DatabaseMsfsNavigraph");

@@ -201,6 +201,12 @@ private:
   /* Reset the error timer in all weather downloaders */
   void resetErrorState();
 
+  /* Check if currently selected X-Plane paths exist and return true if valid */
+  bool checkXplanePaths();
+
+  /* Show warning dialog in main loop to avoid issues when being called from draw handler */
+  void showXpWarningDialog(const QString& message);
+
   atools::geo::Pos fetchAirportCoordinates(const QString& airportIdent);
 
   /* Update IVAO and NOAA timeout periods - timeout is disable if weather services are not used */
@@ -226,8 +232,12 @@ private:
   ActiveSkyType activeSkyType = NONE;
   QString asPath, asFlightplanPath;
 
-  // Keep paths that produced a warning dialog to avoid multiple messages
-  QString xp11WarningPath, xp12WarningPath;
+  // Remember warnings shown for database and session
+  bool xp11WarningPathShown = false, xp12WarningPathShown = false;
+  QString xplaneFileWarningMsg, xplaneMissingWarningMsg;
+
+  // Warning dialog is currently open
+  bool showingXplaneFileWarning = false;
 
   /* Update online reports if older than 10 minutes */
   int onlineWeatherTimeoutSecs = 600;
