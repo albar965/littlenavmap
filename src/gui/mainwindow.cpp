@@ -3632,7 +3632,7 @@ void MainWindow::updateActionStates()
 #else
   ui->actionMapShowAircraft->setEnabled(NavApp::isConnected());
   ui->actionMapAircraftCenter->setEnabled(NavApp::isConnected());
-  ui->actionMapAircraftCenterNow->setEnabled(NavApp::isConnected());
+  ui->actionMapAircraftCenterNow->setEnabled(NavApp::isConnectedAndAircraft());
 
   // AI, multiplayer or online clients
   ui->actionMapShowAircraftAi->setEnabled(NavApp::isConnected() && NavApp::isFetchAiAircraft());
