@@ -799,8 +799,8 @@ unix:!macx {
   deploy.commands += cp -vf $$PWD/LICENSE.txt $$DEPLOY_DIR &&
   deploy.commands += cp -vf $$PWD/resources/icons/littlenavmap.svg $$DEPLOY_DIR &&
   deploy.commands += cp -vf \"$$PWD/desktop/Little Navmap.desktop\" $$DEPLOY_DIR &&
-  deploy.commands += cp -vfaL /usr/lib/x86_64-linux-gnu/libssl.so.1.1 $$DEPLOY_DIR_LIB &&
-  deploy.commands += cp -vfaL /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 $$DEPLOY_DIR_LIB &&
+  exists(/usr/lib/x86_64-linux-gnu/libssl.so.1.1) : deploy.commands += cp -vfaL /usr/lib/x86_64-linux-gnu/libssl.so.1.1 $$DEPLOY_DIR_LIB &&
+  exists(/usr/lib/x86_64-linux-gnu/libcrypto.so.1.1) : deploy.commands += cp -vfaL /usr/lib/x86_64-linux-gnu/libcrypto.so.1.1 $$DEPLOY_DIR_LIB &&
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/iconengines/libqsvgicon.so*  $$DEPLOY_DIR_LIB/iconengines &&
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/imageformats/libqgif.so*  $$DEPLOY_DIR_LIB/imageformats &&
   deploy.commands += cp -vfa $$[QT_INSTALL_PLUGINS]/imageformats/libqjpeg.so*  $$DEPLOY_DIR_LIB/imageformats &&
