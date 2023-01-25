@@ -38,6 +38,10 @@
 #include <QTimer>
 #include <QRegularExpression>
 
+#if defined(Q_OS_WIN32)
+#include <QProcessEnvironment>
+#endif
+
 // Checks the first line of an ASN file if it has valid content
 static const QRegularExpression ASN_VALIDATE_REGEXP("^[A-Z0-9]{3,4}::[A-Z0-9]{3,4} .+$");
 static const QRegularExpression ASN_VALIDATE_FLIGHTPLAN_REGEXP("^DepartureMETAR=.+$");
