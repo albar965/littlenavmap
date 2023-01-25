@@ -19,16 +19,22 @@
 #define MAPACTIONSCONTROLLER_H
 
 #include "webapi/abstractlnmactionscontroller.h"
-#include "web/webmapcontroller.h"
-#include "mapgui/maplayersettings.h"
-
-#include "web/webflags.h"
-
-#include "geo/rect.h"
 #include <QPixmap>
+#include "mapgui/maplayersettings.h"
 
 class QPixmap;
 class MapPaintWidget;
+class WebApiRequest;
+class WebApiResponse;
+class AbstractInfoBuilder;
+class MapPixmap;
+
+namespace atools {
+namespace geo {
+class Rect;
+}
+}
+
 /**
  * @brief Map actions controller implementation.
  */

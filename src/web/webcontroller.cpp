@@ -23,10 +23,7 @@
 #include "webapi/webapicontroller.h"
 #include "web/webapp.h"
 #include "gui/helphandler.h"
-
-#include "templateengine/templatecache.h"
 #include "httpserver/httplistener.h"
-#include "httpserver/httpsessionstore.h"
 #include "common/htmlinfobuilder.h"
 #include "common/constants.h"
 

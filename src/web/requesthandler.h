@@ -23,6 +23,8 @@
 #include "web/webflags.h"
 #include "web/webmapcontroller.h"
 #include "webapi/webapicontroller.h"
+#include "webapi/webapirequest.h"
+#include "webapi/webapiresponse.h"
 
 #include <QPixmap>
 

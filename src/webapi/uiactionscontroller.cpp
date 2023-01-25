@@ -4,8 +4,6 @@
 #include "common/infobuildertypes.h"
 #include "common/abstractinfobuilder.h"
 #include "navapp.h"
-#include "web/webcontroller.h"
-#include "web/webmapcontroller.h"
 
 using InfoBuilderTypes::UiInfoData;
 
@@ -17,8 +15,6 @@ UiActionsController::UiActionsController(QObject *parent, bool verboseParam, Abs
     if(verbose)
         qDebug() << Q_FUNC_INFO;
 }
-
-#include <QDebug>
 
 WebApiResponse UiActionsController::infoAction(WebApiRequest request){
 Q_UNUSED(request)

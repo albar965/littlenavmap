@@ -19,7 +19,6 @@
 #include "common/infobuildertypes.h"
 
 #include "sql/sqlrecord.h"
-#include "common/unit.h"
 
 using InfoBuilderTypes::AirportInfoData;
 

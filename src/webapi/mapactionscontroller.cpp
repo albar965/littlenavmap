@@ -30,6 +30,7 @@
 #include "mapgui/mapwidget.h"
 #include "navapp.h"
 #include "common/mapresult.h"
+#include "web/webmapcontroller.h"
 
 #include <QDebug>
 #include <QBuffer>
