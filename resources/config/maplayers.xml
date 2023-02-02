@@ -206,7 +206,6 @@
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="10">
         <AiAircraftTextDetail3>false</AiAircraftTextDetail3>
-        <AirportDiagram>false</AirportDiagram>
         <AirportMinorSymbolSize>18</AirportMinorSymbolSize>
         <AirportMsaSymbolScale>4</AirportMsaSymbolScale>
         <AirportSymbolSize>18</AirportSymbolSize>
@@ -221,6 +220,7 @@
       <!-- =================================================================================== -->
       <Layer MaximumRangeKm="25">
         <AiAircraftGround>false</AiAircraftGround>
+        <AirportDiagram>false</AirportDiagram>
         <AirportMsaDetails>false</AirportMsaDetails>
         <NdbSymbolSize>22</NdbSymbolSize>
         <UserpointSymbolSize>24</UserpointSymbolSize>
