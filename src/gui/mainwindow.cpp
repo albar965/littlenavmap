@@ -85,15 +85,12 @@
 #include "web/webcontroller.h"
 #include "common/updatehandler.h"
 
-#include <marble/LegendWidget.h>
 #include <marble/MarbleAboutDialog.h>
 #include <marble/MarbleModel.h>
 #include <marble/HttpDownloadManager.h>
 #include <marble/MarbleDirs.h>
 
-#include <QDebug>
 #include <QCloseEvent>
-#include <QDesktopServices>
 #include <QScreen>
 #include <QWindow>
 #include <QSslSocket>
@@ -1582,10 +1579,6 @@ void MainWindow::connectAllSlots()
   connect(databaseManager, &DatabaseManager::preDatabaseLoad, this, &MainWindow::preDatabaseLoad);
   connect(databaseManager, &DatabaseManager::postDatabaseLoad, this, &MainWindow::postDatabaseLoad);
 
-  // Not needed. All properties removed from legend since they are not persistent
-  // connect(legendWidget, &Marble::LegendWidget::propertyValueChanged,
-  // mapWidget, &MapWidget::setPropertyValue);
-
   connect(ui->actionAboutMarble, &QAction::triggered, marbleAboutDialog, &Marble::MarbleAboutDialog::exec);
 
   // Connect menu ========================================================================
@@ -1807,10 +1800,7 @@ void MainWindow::weatherUpdateTimeout()
 /* Menu item */
 void MainWindow::showDatabaseFiles()
 {
-  QUrl url = QUrl::fromLocalFile(NavApp::getDatabaseManager()->getDatabaseDirectory());
-
-  if(!QDesktopServices::openUrl(url))
-    atools::gui::Dialog::warning(this, tr("Error opening database files directory \"%1\"").arg(url.toDisplayString()));
+  helpHandler->openFile(NavApp::getDatabaseManager()->getDatabaseDirectory());
 }
 
 /* Menu item */
@@ -1818,10 +1808,7 @@ void MainWindow::showShowMapCache()
 {
   // Windows: C:\Users\YOURUSERNAME\AppData\Local\.marble\data
   // Linux and macOS: $HOME/.local/share/marble
-  QUrl url = QUrl::fromLocalFile(Marble::MarbleDirs::localPath() % QDir::separator() % "maps" % QDir::separator() % "earth");
-
-  if(!QDesktopServices::openUrl(url))
-    atools::gui::Dialog::warning(this, tr("Error opening map cache directory \"%1\"").arg(url.toDisplayString()));
+  helpHandler->openFile(Marble::MarbleDirs::localPath() % QDir::separator() % "maps" % QDir::separator() % "earth");
 }
 
 /* Updates label and tooltip for connection status */

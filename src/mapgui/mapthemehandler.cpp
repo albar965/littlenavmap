@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -36,8 +36,6 @@
 #include <QRegularExpression>
 #include <QDataStream>
 #include <QActionGroup>
-
-#include <marble/LegendWidget.h>
 
 const static quint64 KEY = 0x19CB0467EBD391CC;
 const static QLatin1String FILENAME("mapthemekeys.bin");

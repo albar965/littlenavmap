@@ -50,7 +50,6 @@ class WeatherReporter;
 class WindReporter;
 
 namespace Marble {
-class LegendWidget;
 class MarbleAboutDialog;
 class RenderState;
 class ElevationModel;
