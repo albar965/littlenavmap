@@ -1294,6 +1294,7 @@ void MainWindow::connectAllSlots()
   connect(ui->actionValidateSceneryLibrarySettings, &QAction::triggered, databaseManager, &DatabaseManager::checkSceneryOptionsManual);
   connect(ui->actionDatabaseFiles, &QAction::triggered, this, &MainWindow::showDatabaseFiles);
   connect(ui->actionShowMapCache, &QAction::triggered, this, &MainWindow::showShowMapCache);
+  connect(ui->actionShowMapInstallation, &QAction::triggered, this, &MainWindow::showShowMapInstallation);
 
   connect(ui->actionOptions, &QAction::triggered, this, &MainWindow::openOptionsDialog);
   connect(ui->actionResetMessages, &QAction::triggered, this, &MainWindow::resetMessages);
@@ -1809,6 +1810,13 @@ void MainWindow::showShowMapCache()
   // Windows: C:\Users\YOURUSERNAME\AppData\Local\.marble\data
   // Linux and macOS: $HOME/.local/share/marble
   helpHandler->openFile(Marble::MarbleDirs::localPath() % QDir::separator() % "maps" % QDir::separator() % "earth");
+}
+
+/* Menu item */
+void MainWindow::showShowMapInstallation()
+{
+  // .../Little Navmap/data/maps/earth
+  helpHandler->openFile(MarbleDirs::marbleDataPath() % QDir::separator() % "maps" % QDir::separator() % "earth");
 }
 
 /* Updates label and tooltip for connection status */

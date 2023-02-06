@@ -50,7 +50,7 @@ public:
   {
   }
 
-  /* Checks for fs installtions and databases and populates the hash map */
+  /* Checks for fs installations and databases and populates the hash map */
   void fillDefault();
 
   /* Get the latest/newest simulator from all installed ones or databases found */
