@@ -1240,7 +1240,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
     if(endId > 0)
     {
       // Get assigned runway end =====================
-      end = airportQuerySim->getRunwayEndById(endId);
+      end = airportQueryNav->getRunwayEndById(endId); // ILS are sourced from navdatabase
       if(end.isValid())
       {
         // The maximum angular offset for a LOC is 3° for FAA and 5° for ICAO.

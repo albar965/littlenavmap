@@ -532,9 +532,7 @@ void MapQuery::getMapObjectById(map::MapResult& result, map::MapTypes type, map:
   }
   else if(type == map::RUNWAYEND)
   {
-    map::MapRunwayEnd end = (airportFromNavDatabase ?
-                             NavApp::getAirportQueryNav() :
-                             NavApp::getAirportQuerySim())->getRunwayEndById(id);
+    map::MapRunwayEnd end = (airportFromNavDatabase ? NavApp::getAirportQueryNav() : NavApp::getAirportQuerySim())->getRunwayEndById(id);
     if(end.isValid())
       result.runwayEnds.append(end);
   }
