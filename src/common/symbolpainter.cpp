@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1239,15 +1239,15 @@ void SymbolPainter::drawAirportText(QPainter *painter, const map::MapAirport& ai
     if(airport.closed())
       atts |= textatt::STRIKEOUT;
 
-    if(flags & textflags::ROUTE_TEXT)
+    if(flags.testFlag(textflags::ROUTE_TEXT))
       atts |= textatt::ROUTE_BG_COLOR;
 
-    if(flags & textflags::LOG_TEXT)
+    if(flags.testFlag(textflags::LOG_TEXT))
       atts |= textatt::LOG_BG_COLOR;
 
     int transparency = diagram ? 180 : 255;
     // No background for empty airports except if they are part of the route or log
-    if(airport.emptyDraw() && !(flags & textflags::ROUTE_TEXT) && !(flags & textflags::LOG_TEXT))
+    if(airport.emptyDraw() && !flags.testFlag(textflags::ROUTE_TEXT) && !flags.testFlag(textflags::LOG_TEXT))
       transparency = 0;
 
     if(!flags.testFlag(textflags::ABS_POS))
@@ -1316,14 +1316,22 @@ void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const Q
   textBoxF(painter, texts, textPen, x, y, atts, transparency, backgroundColor);
 }
 
-void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, QPen textPen, float x, float y, textatt::TextAttributes atts,
+void SymbolPainter::textBoxF(QPainter *painter, QStringList texts, QPen textPen, float x, float y, textatt::TextAttributes atts,
                              int transparency, const QColor& backgroundColor)
 {
+  // Added margins to background retangle
+  const static QMarginsF TEXT_MARGINS(2.f, 0.f, 2.f, 0.f);
+  const static QMarginsF TEXT_MARGINS_UNDERLINE(2.f, 0.f, 2.f, 2.f);
+
+  // Remove empty lines
+  texts.removeAll(QString());
+
   if(texts.isEmpty())
     return;
 
   atools::util::PainterContextSaver saver(painter);
 
+  // Determine background and text colors ======================
   QColor backColor(backgroundColor);
   if(!backColor.isValid())
   {
@@ -1348,6 +1356,8 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, QPen t
     transparency = 255;
   }
 
+  // Determine fill ======================
+  bool fill = false;
   if(transparency != 255)
   {
     if(transparency == 0) // Do not fill at all
@@ -1362,15 +1372,19 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, QPen t
       backColor.setAlpha(transparency);
       painter->setBrush(backColor);
       painter->setBackground(backColor);
+      fill = true;
     }
   }
-  else // Fill background
+  else
   {
+    // Fill background
     painter->setBackgroundMode(Qt::OpaqueMode);
     painter->setBrush(backColor);
     painter->setBackground(backColor);
+    fill = true;
   }
 
+  // Text attributes =============================================
   if(atts.testFlag(textatt::ITALIC) || atts.testFlag(textatt::BOLD) || atts.testFlag(textatt::UNDERLINE) ||
      atts.testFlag(textatt::OVERLINE) || atts.testFlag(textatt::STRIKEOUT))
   {
@@ -1394,36 +1408,29 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, QPen t
     painter->setFont(f);
   }
 
-  // Draw the text
+  // Calculate font sizes =========================
   QFontMetricsF metrics = painter->fontMetrics();
   float height = static_cast<float>(metrics.height()) - 1.f;
   float totalHeight = height * texts.size();
   float yoffset = 0.f;
 
+  // Calculate vertical reference point ====================
   if(atts.testFlag(textatt::VTOP))
-  {
     // Reference point at top to place text below an icon
-    yoffset = static_cast<float>(metrics.descent()) + totalHeight;
-
-  }
+    yoffset = 0;
   else if(atts.testFlag(textatt::VBOTTOM))
-  {
     // Reference point at bottom of text stack to place text on top of an icon
-    yoffset = -static_cast<float>(metrics.descent());
-  }
+    yoffset = -totalHeight;
   else
     // Center text vertically
-    yoffset = totalHeight / 2.f - static_cast<float>(metrics.descent());
+    yoffset = -totalHeight / 2.f;
 
-  painter->setPen(textPen);
+  // Draw background rectangle if and calculate text positions ===================
+  painter->setPen(Qt::NoPen);
 
-  // Draw text in reverse order to avoid undercut
-  for(int i = texts.size() - 1; i >= 0; i--)
+  QVector<QPointF> textPt;
+  for(const QString& text : texts)
   {
-    const QString& text = texts.at(i);
-    if(text.isEmpty())
-      continue;
-
     float w = static_cast<float>(metrics.horizontalAdvance(text));
     float newx = x;
     if(atts.testFlag(textatt::RIGHT))
@@ -1433,9 +1440,26 @@ void SymbolPainter::textBoxF(QPainter *painter, const QStringList& texts, QPen t
       newx -= w / 2.f;
     // else LEFT  Reference point is at the left of the text (left-aligned) to place text at the right of an icon
 
-    painter->drawText(QPointF(newx, y + yoffset), text);
-    yoffset -= height;
+    QPointF pt(newx, y + yoffset);
+    textPt.append(pt);
+
+    if(fill)
+    {
+      QRectF boundingRect = metrics.boundingRect(text);
+      boundingRect.moveTo(pt);
+      painter->drawRect(boundingRect.marginsAdded(atts.testFlag(textatt::UNDERLINE) ? TEXT_MARGINS_UNDERLINE : TEXT_MARGINS));
+    }
+    yoffset += height;
   }
+
+  painter->setBackgroundMode(Qt::TransparentMode);
+  painter->setBrush(Qt::NoBrush);
+  painter->setPen(textPen);
+
+  // Draw texts =================================
+  QPointF ascent(0., metrics.ascent());
+  for(int i = 0; i < texts.size(); i++)
+    painter->drawText(textPt.at(i) + ascent, texts.at(i));
 }
 
 QRect SymbolPainter::textBoxSize(QPainter *painter, const QStringList& texts, textatt::TextAttributes atts)
