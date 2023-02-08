@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -184,6 +184,7 @@ private:
   void helpPressedOnlineClient();
   void helpPressedOnlineCenter();
   void helpPressedLogdata();
+  void dockVisibilityChanged(bool visible);
 
   MapQuery *mapQuery;
 
@@ -199,6 +200,9 @@ private:
   QMainWindow *mainWindow = nullptr;
   QTabWidget *tabWidgetSearch = nullptr;
   QList<AbstractSearch *> allSearchTabs;
+
+  // Have to remember dock widget visibility since it cannot be determined from QWidget::isVisisble()
+  bool dockVisible = false;
 
   atools::gui::TabWidgetHandler *tabHandlerSearch = nullptr;
 };

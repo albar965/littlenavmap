@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,7 +28,6 @@
 #include "mapgui/mapwidget.h"
 #include "navapp.h"
 #include "gui/mainwindow.h"
-#include "options/optiondata.h"
 #include "search/airportsearch.h"
 #include "search/logdatasearch.h"
 #include "search/navsearch.h"
@@ -48,27 +47,21 @@ using atools::gui::HelpHandler;
 SearchController::SearchController(QMainWindow *parent, QTabWidget *tabWidgetSearchParam)
   : mapQuery(NavApp::getMapQueryGui()), mainWindow(parent), tabWidgetSearch(tabWidgetSearchParam)
 {
-  connect(NavApp::getMainUi()->pushButtonAirportHelpSearch, &QPushButton::clicked,
-          this, &SearchController::helpPressed);
-  connect(NavApp::getMainUi()->pushButtonNavHelpSearch, &QPushButton::clicked,
-          this, &SearchController::helpPressed);
-  connect(NavApp::getMainUi()->pushButtonProcedureHelpSearch, &QPushButton::clicked,
-          this, &SearchController::helpPressedProcedure);
-
-  connect(NavApp::getMainUi()->pushButtonUserdataHelp, &QPushButton::clicked,
-          this, &SearchController::helpPressedUserdata);
-
-  connect(NavApp::getMainUi()->pushButtonLogdataHelp, &QPushButton::clicked,
-          this, &SearchController::helpPressedLogdata);
-
-  connect(NavApp::getMainUi()->pushButtonOnlineClientHelpSearch, &QPushButton::clicked,
-          this, &SearchController::helpPressedOnlineClient);
-  connect(NavApp::getMainUi()->pushButtonOnlineCenterHelpSearch, &QPushButton::clicked,
-          this, &SearchController::helpPressedOnlineCenter);
-
   Ui::MainWindow *ui = NavApp::getMainUi();
-  tabHandlerSearch = new atools::gui::TabWidgetHandler(ui->tabWidgetSearch,
-                                                       QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
+  connect(ui->pushButtonAirportHelpSearch, &QPushButton::clicked, this, &SearchController::helpPressed);
+  connect(ui->pushButtonNavHelpSearch, &QPushButton::clicked, this, &SearchController::helpPressed);
+  connect(ui->pushButtonProcedureHelpSearch, &QPushButton::clicked, this, &SearchController::helpPressedProcedure);
+
+  connect(ui->pushButtonUserdataHelp, &QPushButton::clicked, this, &SearchController::helpPressedUserdata);
+
+  connect(ui->pushButtonLogdataHelp, &QPushButton::clicked, this, &SearchController::helpPressedLogdata);
+
+  connect(ui->pushButtonOnlineClientHelpSearch, &QPushButton::clicked, this, &SearchController::helpPressedOnlineClient);
+  connect(ui->pushButtonOnlineCenterHelpSearch, &QPushButton::clicked, this, &SearchController::helpPressedOnlineCenter);
+
+  connect(ui->dockWidgetSearch, &QDockWidget::visibilityChanged, this, &SearchController::dockVisibilityChanged);
+
+  tabHandlerSearch = new atools::gui::TabWidgetHandler(ui->tabWidgetSearch, QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
                                                        tr("Open or close tabs"));
   tabHandlerSearch->init(si::TabSearchIds, lnm::SEARCHTAB_WIDGET_TABS);
 
@@ -134,6 +127,15 @@ void SearchController::styleChanged()
     search->styleChanged();
 }
 
+void SearchController::dockVisibilityChanged(bool visible)
+{
+  // Have to remember dock widget visibility since it cannot be determined from QWidget::isVisisble()
+  dockVisible = visible;
+
+  // Show or remove marks
+  tabChanged(getCurrentSearchTabId());
+}
+
 void SearchController::helpPressed()
 {
   HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "SEARCH.html", lnm::helpLanguageOnline());
@@ -146,26 +148,22 @@ void SearchController::helpPressedProcedure()
 
 void SearchController::helpPressedUserdata()
 {
-  HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "USERPOINT.html#userpoints-search",
-                              lnm::helpLanguageOnline());
+  HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "USERPOINT.html#userpoints-search", lnm::helpLanguageOnline());
 }
 
 void SearchController::helpPressedLogdata()
 {
-  HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "LOGBOOK.html#logbook-search",
-                              lnm::helpLanguageOnline());
+  HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "LOGBOOK.html#logbook-search", lnm::helpLanguageOnline());
 }
 
 void SearchController::helpPressedOnlineClient()
 {
-  HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "ONLINENETWORKS.html#search-client",
-                              lnm::helpLanguageOnline());
+  HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "ONLINENETWORKS.html#search-client", lnm::helpLanguageOnline());
 }
 
 void SearchController::helpPressedOnlineCenter()
 {
-  HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "ONLINENETWORKS.html#search-center",
-                              lnm::helpLanguageOnline());
+  HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl + "ONLINENETWORKS.html#search-center", lnm::helpLanguageOnline());
 }
 
 /* Forces an emit of selection changed signal if the active tab changes */
@@ -176,11 +174,12 @@ void SearchController::tabChanged(int index)
 
   for(int i = 0; i < allSearchTabs.size(); i++)
   {
-    if(i != index)
+    if(i != index || !dockVisible)
+      // Deactivate all if dock is not visible or all except current
       allSearchTabs.at(i)->tabDeactivated();
   }
 
-  allSearchTabs.at(index)->updateTableSelection(true /* No follow */);
+  allSearchTabs.at(index)->updateTableSelection(true /* noFollow */);
 }
 
 void SearchController::saveState()
@@ -484,7 +483,11 @@ void SearchController::searchSelectionChanged(const SearchBaseTable *source, int
   }
 
   map::MapResult result;
-  getSelectedMapObjects(result);
+
+  // Leave result empty if dock window is not visible/close or hidden in stack
+  if(dockVisible)
+    getSelectedMapObjects(result);
+
   NavApp::getMapWidgetGui()->changeSearchHighlights(result, updateAirspace, updateLogEntries);
   NavApp::getMainWindow()->updateHighlightActionStates();
 }

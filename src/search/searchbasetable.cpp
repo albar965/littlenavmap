@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -664,18 +664,18 @@ void SearchBaseTable::reconnectSelectionModel()
 /* Slot for table selection changed */
 void SearchBaseTable::tableSelectionChanged(const QItemSelection&, const QItemSelection&)
 {
-  tableSelectionChangedInternal(false /* follow selection */);
+  tableSelectionChangedInternal(false /* noFollow */);
 }
 
 /* Update highlights if dock is hidden or shown (does not change for dock tab stacks) */
 void SearchBaseTable::dockVisibilityChanged(bool)
 {
-  tableSelectionChangedInternal(true /* do not follow selection */);
+  tableSelectionChangedInternal(true /* noFollow */);
 }
 
 void SearchBaseTable::fetchedMore()
 {
-  tableSelectionChangedInternal(true /* do not follow selection */);
+  tableSelectionChangedInternal(true /* noFollow */);
 }
 
 void SearchBaseTable::tableSelectionChangedInternal(bool noFollow)
@@ -693,10 +693,7 @@ void SearchBaseTable::tableSelectionChangedInternal(bool noFollow)
   // Follow selection =======================
   if(!noFollow)
   {
-    if(sm != nullptr &&
-       sm->currentIndex().isValid() &&
-       sm->isSelected(sm->currentIndex()) &&
-       followModeAction() != nullptr &&
+    if(sm != nullptr && sm->currentIndex().isValid() && sm->isSelected(sm->currentIndex()) && followModeAction() != nullptr &&
        followModeAction()->isChecked())
       showRow(sm->currentIndex().row(), false /* show info */);
   }
@@ -729,14 +726,14 @@ void SearchBaseTable::refreshData(bool loadAll, bool keepSelection)
 {
   controller->refreshData(loadAll, keepSelection);
 
-  tableSelectionChangedInternal(true /* do not follow selection */);
+  tableSelectionChangedInternal(true /* noFollow */);
 }
 
 void SearchBaseTable::refreshView()
 {
   controller->refreshView();
 
-  tableSelectionChangedInternal(true /* do not follow selection */);
+  tableSelectionChangedInternal(true /* noFollow */);
 }
 
 int SearchBaseTable::getVisibleRowCount() const
