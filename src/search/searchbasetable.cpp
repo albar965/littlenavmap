@@ -998,6 +998,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   const Column *columnDescriptor = nullptr;
   QString objectText, navaidRangeText;
   map::MapResult result, msaResult;
+
   if(index.isValid())
   {
     columnDescriptor = columns->getColumn(index.column());
@@ -1013,20 +1014,17 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       // Get position to display range rings
       position = atools::geo::Pos(controller->getRawData(index.row(), "lonx"), controller->getRawData(index.row(), "laty"));
 
-    // get airport, VOR, NDB or waypoint id from model row
+    // get airport, VOR, NDB or waypoint id from model row ===========================
     getNavTypeAndId(index.row(), mapObjType, id);
 
     map::MapAirspaceSource airspaceSrc = tabIndex == si::SEARCH_ONLINE_CENTER ? map::AIRSPACE_SRC_ONLINE : map::AIRSPACE_SRC_NONE;
     mapQuery->getMapObjectById(result, mapObjType, airspaceSrc, id, mapObjType != map::AIRPORT);
 
+    // Fill result with map objects ===========================
     std::initializer_list<map::MapTypes> msaTypeList = {map::AIRPORT, map::VOR, map::NDB, map::WAYPOINT};
     if(result.hasTypes(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT))
       NavApp::getMapQueryGui()->getMapObjectByIdent(msaResult, map::AIRPORT_MSA, result.getIdent(msaTypeList),
                                                     result.getRegion(msaTypeList), QString(), result.getPosition(msaTypeList));
-
-    objectText = result.objectText(mapObjType, NAVAID_NAMES_ELIDE);
-    if((result.hasVor() && result.vors.constFirst().range > 0) || (result.hasNdb() && result.ndbs.constFirst().range > 0))
-      navaidRangeText = objectText;
 
     if(mapObjType == map::AIRPORT && result.hasAirports())
       airport = result.airports.constFirst();
@@ -1051,6 +1049,14 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       else
         qWarning() << Q_FUNC_INFO << "No airport found";
     }
+
+    // Get text for menu items ===========================
+    if(mapObjType == map::AIRPORT && airport.isValid())
+      objectText = map::airportTextShort(airport, NAVAID_NAMES_ELIDE, true /* includeIdent */);
+    else
+      objectText = result.objectText(mapObjType, NAVAID_NAMES_ELIDE);
+    if((result.hasVor() && result.vors.constFirst().range > 0) || (result.hasNdb() && result.ndbs.constFirst().range > 0))
+      navaidRangeText = objectText;
   }
   else
     qDebug() << "Invalid index at" << pos;

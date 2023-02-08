@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1570,8 +1570,8 @@ map::MapAirwayTrackType  airwayTrackTypeFromString(const QString& typeStr);
 map::MapAirwayRouteType  airwayRouteTypeFromString(const QString& typeStr);
 QString comTypeName(const QString& type);
 
-QString airportText(const map::MapAirport& airport, int elideName = 100);
-QString airportTextShort(const map::MapAirport& airport, int elideName = 100);
+QString airportText(const map::MapAirport& airport, int elideName = 100, bool includeIdent = false);
+QString airportTextShort(const map::MapAirport& airport, int elideName = 100, bool includeIdent = false);
 
 QString airportMsaText(const map::MapAirportMsa& airportMsa, bool user);
 QString airportMsaTextShort(const map::MapAirportMsa& airportMsa);

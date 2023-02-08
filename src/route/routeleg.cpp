@@ -603,7 +603,7 @@ QString RouteLeg::getMapObjectTypeNameShort() const
 QString RouteLeg::getDisplayText(int elideName) const
 {
   if(getMapObjectType() == map::AIRPORT)
-    return tr("%1 (%2)").arg(atools::elideTextShort(getName(), elideName)).arg(getIdent());
+    return tr("%1 (%2)").arg(atools::elideTextShort(getName(), elideName)).arg(airport.displayIdent());
   else
   {
     QStringList texts;

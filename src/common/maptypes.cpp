@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1647,22 +1647,28 @@ QString airwayAltTextShort(const MapAirway& airway, bool addUnit, bool narrow)
     return QString();
 }
 
-QString airportText(const MapAirport& airport, int elideName)
+QString airportText(const MapAirport& airport, int elideName, bool includeIdent)
 {
   if(!airport.isValid())
     return QObject::tr("Airport");
   else
-    return QObject::tr("Airport %1").arg(airportTextShort(airport, elideName));
+    return QObject::tr("Airport %1").arg(airportTextShort(airport, elideName), includeIdent);
 }
 
-QString airportTextShort(const MapAirport& airport, int elideName)
+QString airportTextShort(const MapAirport& airport, int elideName, bool includeIdent)
 {
+  QString displayIdent = airport.displayIdent();
+
+  if(includeIdent && airport.ident != displayIdent)
+    // Show internal ident first if it differs from display ident (airport search context menu)
+    displayIdent = QObject::tr("%1, %2").arg(airport.ident).arg(displayIdent);
+
   if(!airport.isValid())
     return QObject::tr("Airport");
   else if(airport.name.isEmpty())
-    return airport.displayIdent();
+    return displayIdent;
   else
-    return QObject::tr("%1 (%2)").arg(atools::elideTextShort(airport.name, elideName)).arg(airport.displayIdent());
+    return QObject::tr("%1 (%2)").arg(atools::elideTextShort(airport.name, elideName)).arg(displayIdent);
 }
 
 QString airportMsaTextShort(const MapAirportMsa& airportMsa)
