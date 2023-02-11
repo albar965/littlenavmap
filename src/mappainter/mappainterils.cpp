@@ -26,6 +26,7 @@
 #include "route/route.h"
 
 #include <QElapsedTimer>
+#include <QStringBuilder>
 
 #include <marble/GeoPainter.h>
 
@@ -178,6 +179,9 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
 
     if(!text.isEmpty())
     {
+      // Add space at start and end to avoid letters touching the background rectangle border
+      text = " " % text % " ";
+
       context->szFont(context->textSizeNavaid);
       context->painter->setPen(QPen(textColor, 0.5f, Qt::SolidLine, Qt::FlatCap));
       context->painter->translate(origin);

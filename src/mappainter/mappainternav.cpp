@@ -292,7 +292,6 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
   // Draw texts ----------------------------------------
   if(!textlist.isEmpty())
   {
-    int i = 0;
     painter->setPen(mapcolors::airwayTextColor);
     if(fill)
     {
@@ -308,7 +307,8 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
       float textBearing;
 
       // First find text position with incomplete text
-      QString text = place.texts.join(tr(", "));
+      // Add space at start and end to avoid letters touching the background rectangle border
+      QString text = " " % place.texts.join(tr(", ")) % " ";
       Line line(airway.from, airway.to);
       if(textPlacement.findTextPos(line, line.lengthMeter(), metrics.horizontalAdvance(text), metrics.height(), 20, xt, yt, &textBearing))
       {
@@ -322,7 +322,9 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
             // Turn arrow depending on text angle, direction and depending if text segment is reversed compared to first
             txt.prepend(((textBearing < 180.f) ^ place.positionReversed.at(j) ^ (aw.direction == map::DIR_FORWARD)) ? tr("◄ ") : tr("► "));
         }
-        text = place.texts.join(tr(", "));
+
+        // Add space at start and end to avoid letters touching the background rectangle border
+        text = " " % place.texts.join(tr(", ")) % " ";
 
         painter->translate(xt, yt);
         painter->rotate(textBearing > 180.f ? textBearing + 90.f : textBearing - 90.f);
@@ -330,7 +332,6 @@ void MapPainterNav::paintAirways(const QList<map::MapAirway> *airways, bool fast
                                   -painter->fontMetrics().descent() - linewidthAirway), text);
         painter->resetTransform();
       }
-      i++;
     }
   }
 }

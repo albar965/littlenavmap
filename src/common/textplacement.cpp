@@ -28,6 +28,7 @@
 #endif
 
 #include <QPainter>
+#include <QStringBuilder>
 
 using atools::geo::Line;
 using atools::geo::LineString;
@@ -39,7 +40,6 @@ TextPlacement::TextPlacement(QPainter *painterParam, const CoordinateConverter *
 {
   arrowRight = tr(" ►");
   arrowLeft = tr("◄ ");
-
   screenRect = screenRectParam;
 }
 
@@ -128,11 +128,10 @@ QString TextPlacement::elideText(const QString& text, const QString& arrow, floa
   return metrics.elidedText(text, Qt::ElideRight, lineLength - metrics.horizontalAdvance(arrow) - metrics.height() * 2);
 }
 
-void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing, const QPointF& textCoord, float textLineLength) const
+void TextPlacement::drawTextAlongOneLine(QString text, float bearing, const QPointF& textCoord, float textLineLength) const
 {
   if(!text.isEmpty() || arrowForEmpty)
   {
-    QString newText(text);
     // Cut text right or left depending on direction
     float rotate;
     QString arrow;
@@ -151,14 +150,18 @@ void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing, con
     }
 
     // Draw text
-    QFontMetricsF metrics = painter->fontMetrics();
+    QFontMetricsF metrics(painter->font());
 
-    newText = elideText(newText, arrow, textLineLength);
+    text = elideText(text, arrow, textLineLength);
 
     if(bearing < 180.)
-      newText += arrow;
+      text += arrow;
     else
-      newText = arrow + newText;
+      text = arrow + text;
+
+    // Add space at start and end to avoid letters touching the border
+    text.prepend(" ");
+    text.append(" ");
 
     double yoffset = 0.;
     if(textOnLineCenter)
@@ -175,9 +178,9 @@ void TextPlacement::drawTextAlongOneLine(const QString& text, float bearing, con
     painter->translate(textCoord.x(), textCoord.y());
     painter->rotate(rotate);
 
-    QPointF textPos(-static_cast<float>(metrics.horizontalAdvance(newText)) / 2.f, yoffset);
+    QPointF textPos(-static_cast<float>(metrics.horizontalAdvance(text)) / 2.f, yoffset);
 
-    painter->drawText(textPos, newText);
+    painter->drawText(textPos, text);
     painter->resetTransform();
   }
 }

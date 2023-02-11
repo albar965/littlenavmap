@@ -59,7 +59,7 @@ public:
   void drawTextAlongLines();
   void clearLineTextData();
 
-  void drawTextAlongOneLine(const QString& text, float bearing, const QPointF& textCoord, float textLineLength) const;
+  void drawTextAlongOneLine(QString text, float bearing, const QPointF& textCoord, float textLineLength) const;
 
   /* Find text position along a great circle route
    *  @param x,y resulting text position

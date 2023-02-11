@@ -1319,9 +1319,10 @@ void SymbolPainter::textBox(QPainter *painter, const QStringList& texts, const Q
 void SymbolPainter::textBoxF(QPainter *painter, QStringList texts, QPen textPen, float x, float y, textatt::TextAttributes atts,
                              int transparency, const QColor& backgroundColor)
 {
-  // Added margins to background retangle
-  const static QMarginsF TEXT_MARGINS(2.f, 0.f, 2.f, 0.f);
-  const static QMarginsF TEXT_MARGINS_UNDERLINE(2.f, 0.f, 2.f, 2.f);
+  // Added margins to background retangle to avoid letters touching the border
+  const static QMarginsF TEXT_MARGINS(2., 0., 2., 0.);
+  const static QMarginsF TEXT_MARGINS_SMALL(-2., 1., -2., 1.); // Margins for small fonts
+  const static QMarginsF TEXT_MARGINS_UNDERLINE(2., 0., 2., 2.); // Margins for unterlined text
 
   // Remove empty lines
   texts.removeAll(QString());
@@ -1409,10 +1410,10 @@ void SymbolPainter::textBoxF(QPainter *painter, QStringList texts, QPen textPen,
   }
 
   // Calculate font sizes =========================
-  QFontMetricsF metrics = painter->fontMetrics();
-  float height = static_cast<float>(metrics.height()) - 1.f;
-  float totalHeight = height * texts.size();
-  float yoffset = 0.f;
+  QFontMetricsF metrics(painter->font());
+  double height = metrics.height() - 1.;
+  double totalHeight = height * texts.size();
+  double yoffset = 0.;
 
   // Calculate vertical reference point ====================
   if(atts.testFlag(textatt::VTOP))
@@ -1431,8 +1432,9 @@ void SymbolPainter::textBoxF(QPainter *painter, QStringList texts, QPen textPen,
   QVector<QPointF> textPt;
   for(const QString& text : texts)
   {
-    float w = static_cast<float>(metrics.horizontalAdvance(text));
-    float newx = x;
+    QRectF boundingRect = metrics.boundingRect(text);
+    double w = boundingRect.width();
+    double newx = x;
     if(atts.testFlag(textatt::RIGHT))
       // Reference point is at the right of the text (right-aligned) to place text at the left of an icon
       newx -= w;
@@ -1445,9 +1447,14 @@ void SymbolPainter::textBoxF(QPainter *painter, QStringList texts, QPen textPen,
 
     if(fill)
     {
-      QRectF boundingRect = metrics.boundingRect(text);
       boundingRect.moveTo(pt);
-      painter->drawRect(boundingRect.marginsAdded(atts.testFlag(textatt::UNDERLINE) ? TEXT_MARGINS_UNDERLINE : TEXT_MARGINS));
+
+      if(boundingRect.height() < 14)
+        // Use smaller margins for small fonts
+        painter->drawRect(boundingRect.marginsRemoved(TEXT_MARGINS_SMALL));
+      else
+        // Extend bottom margin for underlined letters
+        painter->drawRect(boundingRect.marginsAdded(atts.testFlag(textatt::UNDERLINE) ? TEXT_MARGINS_UNDERLINE : TEXT_MARGINS));
     }
     yoffset += height;
   }
