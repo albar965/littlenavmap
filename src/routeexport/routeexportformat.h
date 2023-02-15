@@ -223,6 +223,9 @@ public:
   /* Update error state and message for missing folders and others */
   void updatePathError();
 
+  /* Fix pattern if empty or if extension is missing */
+  void correctPattern();
+
 private:
   friend QDataStream& operator>>(QDataStream& dataStream, RouteExportFormat& obj);
   friend QDataStream& operator<<(QDataStream& dataStream, const RouteExportFormat& obj);

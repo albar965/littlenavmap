@@ -117,7 +117,7 @@ void RouteExportFormatMap::restoreState()
   // Update simulator dependent default paths
   updateDefaultPaths();
 
-  // Load selection status and user updated paths from settings
+  // Load selection status and user updated paths from settings file ==================================================
   atools::settings::Settings& settings = Settings::instance();
   RouteExportFormatMap loadedFormats;
   try
@@ -135,6 +135,7 @@ void RouteExportFormatMap::restoreState()
     atools::gui::ErrorHandler(NavApp::getQMainWidget()).handleUnknownException();
   }
 
+  // Copy loaded states into stock formats ==================================================
   for(const RouteExportFormat& loadedFmt : loadedFormats)
   {
     if(contains(loadedFmt.getType()))
@@ -169,6 +170,7 @@ void RouteExportFormatMap::restoreState()
         }
       }
 
+      stockFmt.correctPattern();
       stockFmt.updatePathError();
     }
     else
@@ -539,11 +541,7 @@ void RouteExportFormatMap::updateDefaultPaths()
 bool RouteExportFormat::isPatternValid(QString *errorMessage) const
 {
   QString errors;
-
-  if(!pattern.isEmpty())
-    atools::fs::pln::Flightplan::getFilenamePatternExample(pattern, QString(), false /* html */, &errors);
-  else
-    errors.append(tr("Pattern is empty."));
+  atools::fs::pln::Flightplan::getFilenamePatternExample(pattern, QFileInfo(defaultPattern).suffix(), false /* html */, &errors);
 
   if(errorMessage != nullptr)
     *errorMessage = errors;
@@ -584,6 +582,12 @@ void RouteExportFormat::updatePathError()
       pathError = tr("Expected directory but \"%1\" is a file.").
                   arg(atools::elideTextShortLeft(QDir::toNativeSeparators(QDir::cleanPath(dir.absoluteFilePath())), 100));
   }
+}
+
+void RouteExportFormat::correctPattern()
+{
+  if(pattern.simplified().isEmpty())
+    pattern = defaultPattern;
 }
 
 void RouteExportFormat::setPath(const QString& value)

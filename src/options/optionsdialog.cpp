@@ -2806,8 +2806,8 @@ void OptionsDialog::updateFlightplanExample()
   if(!ui->lineEditOptionsRouteFilename->text().isEmpty())
   {
     QString errorMsg;
-    QString example = atools::fs::pln::Flightplan::getFilenamePatternExample(ui->lineEditOptionsRouteFilename->text(), ".lnmpln",
-                                                                             true /* html */, &errorMsg);
+    QString example = atools::fs::pln::Flightplan::getFilenamePatternExample(ui->lineEditOptionsRouteFilename->text() + ".lnmpln",
+                                                                             ".lnmpln", true /* html */, &errorMsg);
 
     QString text = tr("Example: \"%1\"").arg(example);
 

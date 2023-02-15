@@ -98,29 +98,30 @@ void TableItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem& opt
   const RouteExportFormat& format = (*formats)[static_cast<rexp::RouteExportFormatType>(index.data(FORMAT_TYPE_ROLE).toInt())];
   QStyleOptionViewItem styleItem(option);
 
+  bool invalid = false;
+
+  if(index.column() == PATTERN && !format.isPatternValid())
+    // Pattern is invalid - draw dark red for selection and light red warning for normal state in background
+    invalid = true;
+
   if(format.isSelected())
   {
     // Set whole row to bold if selected for multiexport =========================
     styleItem.font.setBold(true);
 
-    bool invalid = false;
-    if(index.column() == PATTERN && !format.isPatternValid())
-      // Pattern is invalid - draw dark red for selection and light red warning for normal state in background
-      invalid = true;
-
     if(index.column() == PATH && !format.isPathValid())
       // Path is invalid - draw dark red for selection and light red warning for normal state in background
       invalid = true;
+  }
 
-    if(invalid)
-    {
-      styleItem.palette.setColor(QPalette::Highlight, QColor(Qt::red).darker(130));
-      styleItem.palette.setColor(QPalette::HighlightedText, Qt::white);
-      styleItem.palette.setColor(QPalette::Text, Qt::white);
+  if(invalid)
+  {
+    styleItem.palette.setColor(QPalette::Highlight, QColor(Qt::red).darker(130));
+    styleItem.palette.setColor(QPalette::HighlightedText, Qt::white);
+    styleItem.palette.setColor(QPalette::Text, Qt::white);
 
-      // Delegate does not paint background
-      painter->fillRect(option.rect, Qt::red);
-    }
+    // Delegate does not paint background
+    painter->fillRect(option.rect, Qt::red);
   }
 
   QStyledItemDelegate::paint(painter, styleItem, index);
@@ -358,7 +359,9 @@ void RouteMultiExportDialog::updateLabel()
 
     // Collect pattern errors and generate example
     QString patternMsg;
-    QString example = atools::fs::pln::Flightplan::getFilenamePatternExample(format.getPattern(), QString(), true /* html */, &patternMsg);
+    QString example = atools::fs::pln::Flightplan::getFilenamePatternExample(format.getPattern(),
+                                                                             QFileInfo(format.getDefaultPattern()).suffix(),
+                                                                             true /* html */, &patternMsg);
     QString errorMsg = pathMsg % patternMsg;
 
     // Get header / short description
@@ -455,11 +458,13 @@ void RouteMultiExportDialog::updateTableColors()
       {
         if(col == PATTERN)
         {
-          // Add tooltips to path column
+          // Add tooltips to pattern column - errors also for not selected rows
           QString errorMessage;
-          if(fmt.isSelected() && !fmt.isPatternValid(&errorMessage))
+          if(!fmt.isPatternValid(&errorMessage))
+            // Not valid
             item->setToolTip(tr("Error: %1\nPress F2 or double click to edit filename pattern.\n\n%2").arg(errorMessage).arg(patternHelp));
           else if(fmt.isSelected())
+            // Selected and valid
             item->setToolTip(tr("Format selected for export.\n"
                                 "Press F2 or double click to edit filename pattern.\n\n%1").arg(patternHelp));
           else
