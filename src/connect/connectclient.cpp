@@ -83,8 +83,7 @@ ConnectClient::ConnectClient(MainWindow *parent)
   connect(dataReader, &DataReaderThread::postSimConnectData, this, &ConnectClient::postSimConnectData);
   connect(dataReader, &DataReaderThread::postStatus, this, &ConnectClient::statusPosted);
   connect(dataReader, &DataReaderThread::connectedToSimulator, this, &ConnectClient::connectedToSimulatorDirect);
-  connect(dataReader, &DataReaderThread::disconnectedFromSimulator, this,
-          &ConnectClient::disconnectedFromSimulatorDirect);
+  connect(dataReader, &DataReaderThread::disconnectedFromSimulator, this, &ConnectClient::disconnectedFromSimulatorDirect);
 
   connectDialog = new ConnectDialog(mainWindow, simConnectHandler->isLoaded());
   connect(connectDialog, &ConnectDialog::updateRateChanged, this, &ConnectClient::updateRateChanged);
@@ -314,6 +313,20 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
                                  idx.getName(ac.getAirplaneAirline()),
                                  idx.getName(ac.getAirplaneTitle()),
                                  idx.getName(ac.getAirplaneModel()));
+      }
+
+      // Fix incorrect on-ground status which appears from some traffic tools =======================
+      for(atools::fs::sc::SimConnectAircraft& ac : dataPacket.getAiAircraft())
+      {
+        // Ground speed given and too high for ground operations
+        bool gsFlying = ac.getGroundSpeedKts() < map::INVALID_SPEED_VALUE && ac.getGroundSpeedKts() > 40.f;
+
+        // Vertical speed given and too high for ground
+        bool vsFlying = ac.getVerticalSpeedFeetPerMin() < map::INVALID_SPEED_VALUE &&
+                        (ac.getVerticalSpeedFeetPerMin() > 100.f || ac.getVerticalSpeedFeetPerMin() < -100.f);
+
+        if(ac.isOnGround() && (gsFlying || vsFlying))
+          ac.setFlag(atools::fs::sc::ON_GROUND);
       }
 
       emit dataPacketReceived(dataPacket);
