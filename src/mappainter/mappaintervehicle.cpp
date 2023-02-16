@@ -253,7 +253,7 @@ void MapPainterVehicle::paintTextLabelAi(float x, float y, float size, const Sim
     if(detail2)
     {
       // Speeds ====================================================================================
-      if(aircraft.getGroundSpeedKts() > 30)
+      if(aircraft.getGroundSpeedKts() > 1.f)
         appendSpeedText(texts, aircraft,
                         context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_IAS) && flying && detail3,
                         context->dOptAiAc(optsac::ITEM_AI_AIRCRAFT_GS),
@@ -359,13 +359,11 @@ void MapPainterVehicle::paintTextLabelUser(float x, float y, int size, const Sim
 {
   QStringList texts;
 
-  if(aircraft.getGroundSpeedKts() > 30)
-  {
+  if(aircraft.getGroundSpeedKts() > 1.f)
     appendSpeedText(texts, aircraft,
-                    context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_IAS),
+                    context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_IAS) && !aircraft.isOnGround(),
                     context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_GS),
-                    context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_TAS));
-  }
+                    context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_TAS) && !aircraft.isOnGround());
 
   if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_HEADING) &&
      aircraft.getHeadingDegMag() < atools::fs::sc::SC_INVALID_FLOAT)

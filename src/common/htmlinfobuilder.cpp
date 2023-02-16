@@ -3587,14 +3587,13 @@ void HtmlInfoBuilder::aircraftText(const atools::fs::sc::SimConnectAircraft& air
     else if(aircraft.getIndicatedAltitudeFt() < atools::fs::sc::SC_INVALID_FLOAT)
       texts.append(tr("<b>Ind. Altitude</b>&nbsp;%1").arg(Unit::altFeet(aircraft.getIndicatedAltitudeFt())));
 
-    if(!aircraft.isOnGround())
-    {
-      // Ground or indicated speed
-      if(aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
-        texts.append(tr("<b>Groundspeed</b>&nbsp;%1").arg(Unit::speedKts(aircraft.getGroundSpeedKts())));
-      else if(aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
-        texts.append(tr("<b>Ind. Speed</b>&nbsp;%1").arg(Unit::speedKts(aircraft.getIndicatedSpeedKts())));
-    }
+    // Ground speed always
+    if(aircraft.getGroundSpeedKts() > 1.f && aircraft.getGroundSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
+      texts.append(tr("<b>Groundspeed</b>&nbsp;%1").arg(Unit::speedKts(aircraft.getGroundSpeedKts())));
+
+    // Indicated speed if flying
+    if(!aircraft.isOnGround() && aircraft.getIndicatedSpeedKts() < atools::fs::sc::SC_INVALID_FLOAT)
+      texts.append(tr("<b>Ind. Speed</b>&nbsp;%1").arg(Unit::speedKts(aircraft.getIndicatedSpeedKts())));
 
     html.p(atools::strJoin(texts, tr(", ")), ahtml::NO_ENTITIES);
   }
