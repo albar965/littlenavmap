@@ -43,12 +43,12 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 
 ### Map Display
 
-* Changed speed display for AI and user aircraft. Now showing GS on ground in map display labels
-  and progress tab for AI if user and AI aircraft are moving. Disabled wrong IAS and TAS display
-  labels for user on ground.
 * AI aircraft with unreliable on-ground status injected by third party traffic tools are now
   corrected if there is a vertical speed ot GS is too high. This helps to avoid flying aircraft
   hidden wrongly on the map.
+* Changed speed display for AI and user aircraft. Now showing GS on ground in map display labels
+  and progress tab for AI if user and AI aircraft are moving. Disabled wrong IAS and TAS display
+  labels for user on ground.
 * Added margins to background rectangles for map display labels to improve readability.
 * Fixed issue where map highlights remained after putting a dock widget like search to the bottom
   of dock stack.
@@ -59,32 +59,36 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 
 ### Flight Plan and Export
 
-* Better error checking for flight plan export file pattern. Added validation and error messages
-  for export file patterns and file extensions. Pattern is not always highlighted red even if not
-  selected for export.
-* Now resetting empty file patterns in multiexport to default values on loading to fix issues where
-  configuration was not migrated correctly from earlier versions.
+* Better error checking for flight plan export file pattern in multi export options. Added
+  validation and error messages for export file patterns and file extensions. A file pattern with
+  errors is now always highlighted red even if not selected for export.
+* Now resetting empty file patterns in multiexport to default values on loading. This fixes issues where
+  the configuration was not migrated correctly from earlier versions and exported files used a flight
+  plan name without file extension.
 * Fixed crash when loading X-Plane FMS files with negative airport elevation. Made flight plan
   loading more robust in general.
 
 ### User Interface
 
-* Fixed issue where wrong runways were fetched for ILS. As a result all ILS were declared
-  `Offset to Runway` showing a wrong runway heading.
+* Fixed issue where wrong runways were fetched for ILS in information and tooltips. As a result all
+  ILS were declared `Offset to Runway` showing a wrong runway heading.
 * Corrected airport ident to use display value in context menus to avoid confusing mismatches
   between map and context menu. Now additionally showing display ident and internal ident in
   airport search context menu.
 * Several small text fixes.
 * Added menu item `Tools` -> `Files and Directories` -> `Show Map Installation Directory`
   to ease installation of new map themes.
-* Fixed several issues with warning dialog for missing X-Plane weather files. Now warning
-  if simulator is not installed and wrong weather files. Dialogs can be disabled.
+* Fixed several issues with warning dialog for X-Plane weather files. Now warning
+  if simulator is not installed as well as if weather files are missing. Dialogs can be disabled.
 * Changed reading of MSFS scenery library. Now also reading content type `AIRCRAFT` since
   aircraft add-ons may contain airports as well.
 
-### X-Plane and Little Xpconnect Version 1.0.36 and 1.0.35
+### X-Plane and Little Xpconnect Version 1.0.36
 
 * Fixed ground speed used wrongly as true airspeed for X-Plane AI aircraft. GS is now correctly shown.
+
+### X-Plane and Little Xpconnect 1.0.35
+
 * Added fix from Max Hille (https://github.com/maxhille) to avoid X-Plane 12 issues
   with light colors and ignored exclusion regions on Linux after installing plugin. #983
 
