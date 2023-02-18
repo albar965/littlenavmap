@@ -380,7 +380,7 @@ MainWindow::MainWindow()
     // Enable or disable tooltips - call later since it needs the map window
     optionsDialog->updateTooltipOption();
 
-    // Update clock every second =====================
+    // Update clock =====================
     clockTimer.setInterval(1000);
     connect(&clockTimer, &QTimer::timeout, this, &MainWindow::updateClock);
     clockTimer.start();
@@ -988,7 +988,7 @@ void MainWindow::updateStatusBarStyle()
 
   mapPositionLabel->setAlignment(align);
   mapPositionLabel->setMinimumWidth(20);
-  mapPositionLabel->setText(tr("No position"));
+  mapPositionLabel->setText(tr("—"));
 
   mapMagvarLabel->setAlignment(align);
   mapMagvarLabel->setMinimumWidth(20);
@@ -1977,7 +1977,7 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
   }
   else
   {
-    mapPositionLabel->setText(tr("No position"));
+    mapPositionLabel->setText(tr("—"));
     mapPositionLabel->setMinimumWidth(mapPositionLabel->width());
     mapMagvarLabel->setText(tr("—"));
   }
