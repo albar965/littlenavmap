@@ -79,21 +79,21 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
   ident and internal ident in airport search context menu.
 * Added menu item `Tools` -> `Files and Directories` -> `Show Map Installation Directory`
   to ease installation of new map themes.
-* Fixed several issues with warnings about X-Plane weather files. Now warning
-  if simulator is not installed and if weather files are missing. Dialogs can be disabled.
-* Adapted to read new winds aloft file names from X-Plane which were was introduced with version 12.04b2.
-* Changed reading of MSFS scenery library. Now also reading manigest content type `AIRCRAFT` since
+* Changed reading of MSFS scenery library. Now also reading manifest content type `AIRCRAFT` since
   aircraft add-ons may contain airports as well.
 * Updated user manual for customization and map theme installation.
 * Several small text fixes.
 
-### X-Plane and Little Xpconnect Version 1.0.36
+### Weather
+
+* Fixed several issues with warnings about X-Plane weather files. Now warning
+  if simulator is not installed and if weather files are missing. Dialogs can be disabled.
+* Adapted to read new winds aloft file names from X-Plane which were introduced with version 12.04b2.
+
+### X-Plane and Little Xpconnect Version 1.0.35 and 1.0.36
 
 * Fixed ground speed used wrongly as true airspeed for X-Plane AI and multiplayer aircraft.
   Ground speed is now correctly shown.
-
-### X-Plane and Little Xpconnect 1.0.35
-
 * Added fix from Max Hille (https://github.com/maxhille) to avoid X-Plane 12 issues
   with light colors and ignored exclusion regions on Linux after installing plugin. #983
 
