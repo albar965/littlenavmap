@@ -81,6 +81,7 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
   to ease installation of new map themes.
 * Fixed several issues with warnings about X-Plane weather files. Now warning
   if simulator is not installed and if weather files are missing. Dialogs can be disabled.
+* Adapted to read new winds aloft file names from X-Plane which were was introduced with version 12.04b2.
 * Changed reading of MSFS scenery library. Now also reading manigest content type `AIRCRAFT` since
   aircraft add-ons may contain airports as well.
 * Updated user manual for customization and map theme installation.
