@@ -124,6 +124,11 @@ public:
     return pattern;
   }
 
+  const QString& getPatternOrDefault() const
+  {
+    return pattern.isEmpty() ? defaultPattern : pattern;
+  }
+
   rexp::RouteExportFormatFlags getFlags() const
   {
     return flags;

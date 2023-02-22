@@ -1980,7 +1980,7 @@ bool RouteExport::exportFlightplanAsGpx(const QString& filename)
 QString RouteExport::buildDefaultFilename(const RouteExportFormat& format, bool normalize)
 {
   // No suffix since pattern includes it
-  QString name = NavApp::getRouteConst().buildDefaultFilename(format.getPattern(), QString(), true /* clean */);
+  QString name = NavApp::getRouteConst().buildDefaultFilename(format.getPatternOrDefault(), QString(), true /* clean */);
   return normalize ? atools::normalizeStr(name) : name;
 }
 

@@ -46,7 +46,7 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 * AI aircraft with unreliable on-ground status injected by third party traffic tools are now
   corrected if there is a vertical speed or GS is too high. This helps to avoid flying aircraft
   hidden wrongly on the map.
-* Changed speed display for AI and user aircraft. Now showing ground speed on ground in map display 
+* Changed speed display for AI and user aircraft. Now showing ground speed on ground in map display
   labels and progress tab for AI if user and AI aircraft are moving. Disabled wrong IAS and TAS display
   labels for user on ground.
 * Added margins to map display text labels to improve readability.
@@ -65,6 +65,8 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 * Now resetting empty file patterns in multiexport to default values on loading. This fixes issues where
   the configuration was not migrated correctly from earlier versions and exported files used a flight
   plan name without file extension.
+* Now falling back to correct default file pattern on flight plan export if the pattern in the
+  multi export options dialog is empty.
 * Fixed crash when loading X-Plane FMS files with negative airport elevation. Made flight plan
   loading more robust in general.
 
@@ -86,7 +88,7 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 
 ### X-Plane and Little Xpconnect Version 1.0.36
 
-* Fixed ground speed used wrongly as true airspeed for X-Plane AI and multiplayer aircraft. 
+* Fixed ground speed used wrongly as true airspeed for X-Plane AI and multiplayer aircraft.
   Ground speed is now correctly shown.
 
 ### X-Plane and Little Xpconnect 1.0.35
