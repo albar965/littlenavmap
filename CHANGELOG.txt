@@ -69,6 +69,7 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
   multi export options dialog is empty.
 * Fixed crash when loading X-Plane FMS files with negative airport elevation. Made flight plan
   loading more robust in general.
+* Increased maximum length for user waypoint names to 80 characters in MSFS PLN flight plan file export.
 
 ### User Interface
 
@@ -81,6 +82,7 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
   to ease installation of new map themes.
 * Changed reading of MSFS scenery library. Now also reading manifest content type `AIRCRAFT` since
   aircraft add-ons may contain airports as well.
+* Fix for stacked dock windows appearing in the wrong order after un-minimizing main window. #1000
 * Updated user manual for customization and map theme installation.
 * Several small text fixes.
 
