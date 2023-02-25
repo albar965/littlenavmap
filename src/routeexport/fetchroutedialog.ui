@@ -63,7 +63,7 @@
      </property>
      <item>
       <property name="text">
-       <string>Username:</string>
+       <string>Alias (Username):</string>
       </property>
      </item>
      <item>
