@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -2160,12 +2160,13 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
 
   QGuiApplication::restoreOverrideCursor();
   if(!found && !canceled)
-    atools::gui::Dialog(mainWindow).showInfoMsgBox(lnm::ACTIONS_SHOW_ROUTE_ERROR,
-                                                   tr("Cannot calculate flight plan.\n\n"
-                                                      "Try another calculation type,\n"
-                                                      "change the cruise altitude or\n"
-                                                      "create the flight plan manually."),
-                                                   tr("Do not &show this dialog again."));
+    // Use routeCalcDialog as parent to avoid main raising in front
+    atools::gui::Dialog(routeCalcDialog).showInfoMsgBox(lnm::ACTIONS_SHOW_ROUTE_ERROR,
+                                                        tr("Cannot calculate flight plan.\n\n"
+                                                           "Try another calculation type,\n"
+                                                           "change the cruise altitude or\n"
+                                                           "create the flight plan manually."),
+                                                        tr("Do not &show this dialog again."));
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << route;
 #endif

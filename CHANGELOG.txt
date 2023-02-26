@@ -70,6 +70,9 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 * Fixed crash when loading X-Plane FMS files with negative airport elevation. Made flight plan
   loading more robust in general.
 * Increased maximum length for user waypoint names to 80 characters in MSFS PLN flight plan file export.
+* Corrected loading of flight plan routing network which was incomplete due to new MSFS RNAV waypoint type.
+  This resulted in calculated flight plans using too many direct-to instead of airways when using
+  `Do not use Navigraph Database` in the scenery library menu. #1001
 
 ### User Interface
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -100,6 +100,7 @@ void RouteCalcDialog::buttonBoxClicked(QAbstractButton *button)
   {
     calculating = true;
     updateWidgets();
+    QApplication::processEvents(QEventLoop::ExcludeUserInputEvents);
     emit calculateClicked();
     calculating = false;
     updateWidgets();
@@ -157,11 +158,14 @@ void RouteCalcDialog::updateWidgets()
 {
   bool airway = ui->radioButtonRouteCalcAirway->isChecked();
   if(calculating)
-    setDisabled(true);
+  {
+    ui->buttonBox->button(QDialogButtonBox::Apply)->setEnabled(false);
+    ui->buttonBox->button(QDialogButtonBox::Close)->setEnabled(false);
+    ui->pushButtonRouteCalcDirect->setEnabled(false);
+    ui->pushButtonRouteCalcReverse->setEnabled(false);
+  }
   else
   {
-    setDisabled(false);
-
     ui->checkBoxRouteCalcRadioNdb->setEnabled(!airway);
     ui->radioButtonRouteCalcAirwayAll->setEnabled(airway);
     ui->radioButtonRouteCalcAirwayJet->setEnabled(airway);
@@ -176,6 +180,7 @@ void RouteCalcDialog::updateWidgets()
     bool canCalcRoute = NavApp::getRouteConst().canCalcRoute();
     ui->pushButtonRouteCalcAdjustAltitude->setEnabled(canCalcRoute);
     ui->buttonBox->button(QDialogButtonBox::Apply)->setEnabled(isCalculateSelection() ? canCalculateSelection : canCalcRoute);
+    ui->buttonBox->button(QDialogButtonBox::Close)->setEnabled(true);
 
     ui->pushButtonRouteCalcDirect->setEnabled(canCalcRoute && NavApp::getRouteConst().hasEntries());
     ui->pushButtonRouteCalcReverse->setEnabled(canCalcRoute);
