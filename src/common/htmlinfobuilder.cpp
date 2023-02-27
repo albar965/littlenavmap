@@ -2383,6 +2383,9 @@ void HtmlInfoBuilder::holdingTextInternal(const MapHolding& holding, HtmlBuilder
     }
   }
 
+  if(verbose || info)
+    html.row2If(tr("Turn:"), holding.turnLeft ? tr("Left") : tr("Right"));
+
   bool estimated = false;
   float dist = holding.distance(&estimated);
   html.row2If(estimated ? tr("Estimated length:") : tr("Length:"), Unit::distNm(dist));

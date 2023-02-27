@@ -695,7 +695,7 @@ void MapTypesFactory::fillHolding(const atools::sql::SqlRecord& record, map::Map
 
   holding.courseTrue = atools::geo::normalizeCourse(record.valueFloat("course") + holding.magvar);
 
-  holding.turnLeft = record.valueStr("name") == "L";
+  holding.turnLeft = record.valueStr("turn_direction") == "L";
   holding.length = record.valueFloat("leg_length");
   holding.time = record.valueFloat("leg_time");
   holding.minAltititude = record.valueFloat("minimum_altitude");
