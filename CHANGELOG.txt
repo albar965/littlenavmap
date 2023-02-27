@@ -1,4 +1,4 @@
-Numbers (#) refer to GitHub issues.
+﻿Numbers (#) refer to GitHub issues.
 For example: #3 is https://github.com/albar965/littlenavmap/issues/3.
 This text is partially Markdown, hence sometimes strange formatting.
 
@@ -32,10 +32,14 @@ Special thanks to Max Hille for finding the issue with Xpconnect on Linux and X-
 ## Known Issues MSFS
 
 **Active pause in MSFS breaks the connection and does not allow to reconnect even when restarting *Little Navmap*.
-This is a MSFS issue. Use the key `Esc` for normal pause or click the toolbar button for pause to avoid problems.**
-
-**Note that you can also start active pause the usual way (keyboard or joystick) but end it with the MSFS toolbar button.
+This is a MSFS issue. Use the key `Esc` for normal pause or click the toolbar button for pause to avoid problems.
+Note that you can also start active pause the usual way (keyboard or joystick) but end it with the MSFS toolbar button.
 This keeps the connection intact.**
+
+**The active pause problem was fixed with the MSFS SU12 Beta version.**
+
+**Loading a flight plan containing user defined points (coordinates) results in some positions of the plan
+placed at the North Pole. Note this was fixed with the MSFS SU12 Beta.**
 
 See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html#problems-msfs) in the FAQ.
 
@@ -44,21 +48,27 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 ### Map Display
 
 * AI aircraft with unreliable on-ground status injected by third party traffic tools are now
-  corrected if there is a vertical speed or GS is too high. This helps to avoid flying aircraft
+  corrected if there is vertical speed or ground speed. This helps to avoid flying aircraft
   hidden wrongly on the map.
 * Changed speed display for AI and user aircraft. Now showing ground speed on ground in map display
   labels and progress tab for AI if user and AI aircraft are moving. Disabled wrong IAS and TAS display
-  labels for user on ground.
-* Added margins to map display text labels to improve readability.
+  labels for user aircraft on ground.
+* Fixed en-route holdings drawn with the wrong turn direction.
+* Added turn direction for en-route holding tooltips and information window.
 * Fixed issue where map highlights remained after putting a dock widget like search to the bottom
   of dock stack.
+* Added margins to map display text labels to improve readability.
 * Airport diagrams now shown earlier on map when zooming in.
 * Updated map themes on [Little Navmap Downloads - Map Themes](https://www.littlenavmap.org/downloads/Map%20Themes/).
 * Removed unneeded Marble map theme legend files.
+* Increased maximum number of entries in map position history.
 * More adjustments for better drawing.
 
 ### Flight Plan and Export
 
+* Corrected loading of flight plan routing network which was incomplete due to new MSFS RNAV waypoint type.
+  This resulted in calculated flight plans using too many direct-to instead of airways when using
+  `Do not use Navigraph Database` in the scenery library menu. #1001
 * Better error checking for flight plan export file pattern in multi export options. Added
   validation and error messages for export file patterns and file extensions. A file pattern with
   errors is now always highlighted red also if not selected for export.
@@ -69,31 +79,31 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
   multi export options dialog is empty.
 * Fixed crash when loading X-Plane FMS files with negative airport elevation. Made flight plan
   loading more robust in general.
-* Increased maximum length for user waypoint names to 80 characters in MSFS PLN flight plan file export.
-* Corrected loading of flight plan routing network which was incomplete due to new MSFS RNAV waypoint type.
-  This resulted in calculated flight plans using too many direct-to instead of airways when using
-  `Do not use Navigraph Database` in the scenery library menu. #1001
+* Increased maximum length for user waypoint names to 80 characters in MSFS PLN flight plan file export
+  to allow descriptions.
 
 ### User Interface
 
 * Fixed issue where the wrong runways were fetched for ILS in information and tooltips. As a
   result ILS were declared `Offset to Runway` showing the wrong runway heading.
 * Corrected airport ident to use displayed value from map and flight plan table in context menus
-  to avoid confusing mismatches between map and context menu. Now additionally showing display
-  ident and internal ident in airport search context menu.
+  to avoid confusing mismatches of airport idents between map and context menu. Now additionally
+  showing display ident and internal ident in airport search context menu.
 * Added menu item `Tools` -> `Files and Directories` -> `Show Map Installation Directory`
   to ease installation of new map themes.
 * Changed reading of MSFS scenery library. Now also reading manifest content type `AIRCRAFT` since
   aircraft add-ons may contain airports as well.
 * Fix for stacked dock windows appearing in the wrong order after un-minimizing main window. #1000
-* Updated user manual for customization and map theme installation.
-* Several small text fixes.
+* Updated user manual for customization, map theme installation, SimBrief changes and cold weather
+  altitude correction.
+* Several other small text fixes.
 
 ### Weather
 
 * Fixed several issues with warnings about X-Plane weather files. Now warning
-  if simulator is not installed and if weather files are missing. Dialogs can be disabled.
+  if simulator is not installed or weather files are missing. Dialogs can be disabled.
 * Adapted to read new winds aloft file names from X-Plane which were introduced with version 12.04b2.
+* Made reading of GRIB wind files more error tolerant. Checking for wrong or empty files now.
 
 ### X-Plane and Little Xpconnect Version 1.0.35 and 1.0.36
 
