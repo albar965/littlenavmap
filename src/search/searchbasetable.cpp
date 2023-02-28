@@ -333,7 +333,6 @@ void SearchBaseTable::updateTableSelection(bool noFollow)
 
 void SearchBaseTable::searchMarkChanged(const atools::geo::Pos& mark)
 {
-  qDebug() << "new mark" << mark;
   if(columns->isDistanceCheckBoxChecked() && mark.isValid())
     updateDistanceSearch();
 }

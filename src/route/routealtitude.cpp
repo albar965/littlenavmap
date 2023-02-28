@@ -964,7 +964,9 @@ void RouteAltitude::collectErrors(const QStringList& altRestrErrors)
 
 void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, float cruiseAltitudeFt)
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << perf.getAircraftType() << cruiseAltitudeFt;
+#endif
 
   // Get default climb speed
   climbSpeedWindCorrected = perf.getClimbSpeed();
@@ -1083,8 +1085,9 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
   qDebug() << "validProfile" << validProfile << "unflyableLegs" << unflyableLegs;
   qDebug() << "climbRateWindFtPerNm" << climbRateWindFtPerNm << "descentRateWindFtPerNm" << descentRateWindFtPerNm
            << "cruiseAltitide" << cruiseAltitude;
+
+  qDebug() << Q_FUNC_INFO << "exit";
 #endif
-  qDebug() << Q_FUNC_INFO;
 }
 
 void RouteAltitude::calculate(QStringList& altRestErrors)

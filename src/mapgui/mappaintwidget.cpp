@@ -905,7 +905,9 @@ void MapPaintWidget::changeRouteHighlights(const QList<int>& routeHighlight)
 
 void MapPaintWidget::routeChanged(bool geometryChanged)
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
+#endif
 
   if(geometryChanged)
   {

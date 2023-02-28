@@ -206,7 +206,9 @@ void UserdataIcons::loadIcon(const QFileInfo& entry)
     if(!typeMap.contains(type))
     {
       typeMap.insert(type, entry.filePath());
+#ifdef DEBUG_INFORMATION
       qDebug() << Q_FUNC_INFO << "Added icon" << entry.filePath() << "for type" << type;
+#endif
     }
   }
   else

@@ -143,7 +143,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     openWriteableDatabase(databaseUser, "userdata", "user", true /* backup */);
     userdataManager = new atools::fs::userdata::UserdataManager(databaseUser);
     if(!userdataManager->hasSchema())
-      userdataManager->createSchema();
+      userdataManager->createSchema(false /* verboseLogging */);
     else
       userdataManager->updateSchema();
 
@@ -151,7 +151,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     openWriteableDatabase(databaseLogbook, "logbook", "logbook", true /* backup */);
     logdataManager = new atools::fs::userdata::LogdataManager(databaseLogbook);
     if(!logdataManager->hasSchema())
-      logdataManager->createSchema();
+      logdataManager->createSchema(false /* verboseLogging */);
     else
       logdataManager->updateSchema();
 
@@ -168,7 +168,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     // Open track database =================================
     openWriteableDatabase(databaseTrack, "track", "track", false /* backup */);
     trackManager = new TrackManager(databaseTrack, databaseNav);
-    trackManager->createSchema();
+    trackManager->createSchema(false /* verboseLogging */);
     // trackManager->initQueries();
 
     // Open online network database ==============================
@@ -200,25 +200,39 @@ DatabaseManager::~DatabaseManager()
   // Delete simulator switch actions
   freeActions();
 
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "delete databaseLoader";
+#endif
   delete databaseLoader;
 
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "delete databaseDialog";
+#endif
   delete databaseDialog;
 
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "delete dialog";
+#endif
   delete dialog;
 
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "delete userdataManager";
+#endif
   delete userdataManager;
 
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "delete trackManager";
+#endif
   delete trackManager;
 
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "delete logdataManager";
+#endif
   delete logdataManager;
 
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "delete onlinedataManager";
+#endif
   delete onlinedataManager;
 
   closeAllDatabases();

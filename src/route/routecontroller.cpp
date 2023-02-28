@@ -844,7 +844,9 @@ void RouteController::aircraftPerformanceChanged()
 
 void RouteController::windUpdated()
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
+#endif
 
   if(!route.isEmpty())
   {
@@ -4655,7 +4657,9 @@ void RouteController::updateTableModel()
 
 void RouteController::updateModelTimeFuelWindAlt()
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
+#endif
 
   // Check if model is already initailized
   if(model->rowCount() == 0)

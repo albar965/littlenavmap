@@ -487,7 +487,7 @@ QList<QFileInfo> MapThemeHandler::findMapThemes()
       {
         if(atools::checkFile(Q_FUNC_INFO, themeFile, true /* warn */))
         {
-          qInfo() << Q_FUNC_INFO << "Found map theme file <<" << themeFile.absoluteFilePath();
+          qInfo() << "MapThemeHandler::findMapThemes(): Found map theme file" << themeFile.absoluteFilePath();
           dgmlFileInfos.append(themeFile);
           found++;
         }

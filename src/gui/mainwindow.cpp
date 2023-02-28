@@ -3567,7 +3567,9 @@ void MainWindow::updateHighlightActionStates()
 /* Enable or disable actions */
 void MainWindow::updateActionStates()
 {
+#ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO;
+#endif
 
   if(NavApp::isShuttingDown())
     return;
