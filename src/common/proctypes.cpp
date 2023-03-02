@@ -609,6 +609,12 @@ QDebug operator<<(QDebug out, const MapProcedureLeg& leg)
   return out;
 }
 
+float MapProcedureLeg::calculatedMagCourse() const
+{
+  return calculatedTrueCourse < map::INVALID_COURSE_VALUE ?
+         atools::geo::normalizeCourse(calculatedTrueCourse - magvar) : map::INVALID_COURSE_VALUE;
+}
+
 bool MapProcedureLeg::hasErrorRef() const
 {
   // Check for required recommended fix - required as it is used here, not by ARINC definition
@@ -692,9 +698,10 @@ proc::LegSpecialType specialType(const QString& arincDescrCode)
   return proc::NONE;
 }
 
-bool MapProcedureLeg::noCourseDisplay() const
+bool MapProcedureLeg::noCalcCourseDisplay() const
 {
-  return isCircular() || type == proc::DIRECT_TO_FIX;
+  return isCircular() || type == proc::DIRECT_TO_FIX || atools::almostEqual(calculatedDistance, 0.f) ||
+         !(calculatedTrueCourse < map::INVALID_COURSE_VALUE);
 }
 
 bool MapProcedureLeg::noIdentDisplay() const
@@ -824,8 +831,8 @@ const MapProcedureLeg *proc::MapProcedureLegs::procedureLegById(int legId) const
 
 QString procedureLegCourse(const MapProcedureLeg& leg)
 {
-  if(!leg.noCourseDisplay() && leg.calculatedDistance > 0.f && leg.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
-    return QLocale().toString(atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar), 'f', 0);
+  if(!leg.noCalcCourseDisplay())
+    return QLocale().toString(leg.calculatedMagCourse(), 'f', 0);
   else
     return QString();
 }

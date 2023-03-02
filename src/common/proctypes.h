@@ -220,6 +220,10 @@ struct MapProcedureLeg
 
        malteseCross = false; /* Draw Maltese cross for either FAF or FACF depending on ILS altitude restriction */
 
+  /* Magnetic course value or INVALID_COURSE_VALUE if not applicable.
+   * Check noCourseDisplay() to before to avoid invalid. */
+  float calculatedMagCourse() const;
+
   bool isValid() const
   {
     return type != INVALID_LEG_TYPE;
@@ -370,8 +374,8 @@ struct MapProcedureLeg
   /* Do not display distance e.g. for course to altitude */
   bool noDistanceDisplay() const;
 
-  /* No course display for e.g. arc legs */
-  bool noCourseDisplay() const;
+  /* No calculated course display for e.g. arc legs */
+  bool noCalcCourseDisplay() const;
 
   /* No ident at end of manual legs */
   bool noIdentDisplay() const;

@@ -4277,9 +4277,17 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           // No course for arcs
           if(routeLeg.isRoute() || !routeLeg.getProcedureLeg().isCircular())
           {
-            html.id(pid::NEXT_LEG_COURSE).row2If(tr("Leg Start Course:"),
-                                                 courseText(routeLeg.getCourseStartMag(), routeLeg.getCourseStartTrue(),
-                                                            true), ahtml::NO_ENTITIES);
+            if(routeLeg.isAnyProcedure())
+            {
+              if(!procLeg.noCalcCourseDisplay())
+                html.id(pid::NEXT_LEG_COURSE).row2If(tr("Leg Course") + tr(":"), // TODO avoid breaking translation temporarily
+                                                     courseText(procLeg.calculatedMagCourse(),
+                                                                procLeg.calculatedTrueCourse, true /* magBold */), ahtml::NO_ENTITIES);
+            }
+            else
+              html.id(pid::NEXT_LEG_COURSE).row2If(tr("Leg Start Course:"),
+                                                   courseText(routeLeg.getCourseStartMag(), routeLeg.getCourseStartTrue(),
+                                                              true), ahtml::NO_ENTITIES);
 
             if(userAircraft != nullptr && userAircraft->isFlying() && courseToWptTrue < INVALID_COURSE_VALUE)
             {

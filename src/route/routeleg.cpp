@@ -641,8 +641,8 @@ map::MapUserpointRoute RouteLeg::getUserpointRoute() const
 QStringList RouteLeg::buildLegText(bool dist, bool magCourse, bool trueCourse, bool narrow) const
 {
   float distance = noDistanceDisplay() || !dist ? map::INVALID_DISTANCE_VALUE : getDistanceTo();
-  float courseMag = noCourseDisplay() || !magCourse ? map::INVALID_COURSE_VALUE : getCourseStartMag();
-  float courseTrue = noCourseDisplay() || !trueCourse ? map::INVALID_COURSE_VALUE : getCourseStartTrue();
+  float courseMag = noCalcCourseDisplay() || !magCourse ? map::INVALID_COURSE_VALUE : getCourseStartMag();
+  float courseTrue = noCalcCourseDisplay() || !trueCourse ? map::INVALID_COURSE_VALUE : getCourseStartTrue();
 
   return buildLegText(distance, courseMag, courseTrue, narrow);
 }

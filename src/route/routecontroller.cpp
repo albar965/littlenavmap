@@ -4533,13 +4533,29 @@ void RouteController::updateTableModel()
     bool parkingToDeparture = route.hasAnySidProcedure() && i == 0;
 
     if(row > 0 && !afterArrivalAirport && !parkingToDeparture && leg.getDistanceTo() < map::INVALID_DISTANCE_VALUE &&
-       leg.getDistanceTo() > 0.f && !leg.noCourseDisplay())
+       leg.getDistanceTo() > 0.f)
     {
-      // Use start course of leg for display
-      if(leg.getCourseStartMag() < map::INVALID_COURSE_VALUE)
-        itemRow[rcol::COURSE] = new QStandardItem(QLocale().toString(leg.getCourseStartMag(), 'f', 0));
-      if(leg.getCourseStartTrue() < map::INVALID_COURSE_VALUE)
-        itemRow[rcol::COURSETRUE] = new QStandardItem(QLocale().toString(leg.getCourseStartTrue(), 'f', 0));
+      float courseMag = map::INVALID_COURSE_VALUE, courseTrue = map::INVALID_COURSE_VALUE;
+      if(leg.isAnyProcedure())
+      {
+        // Calculate the same way as in procedure map display to avoid discrepancies
+        if(!leg.noCalcCourseDisplay())
+        {
+          courseMag = leg.getProcedureLeg().calculatedMagCourse();
+          courseTrue = leg.getProcedureLeg().calculatedTrueCourse;
+        }
+      }
+      else
+      {
+        // Use start course of leg for display
+        courseMag = leg.getCourseStartMag();
+        courseTrue = leg.getCourseStartTrue();
+      }
+
+      if(courseMag < map::INVALID_COURSE_VALUE)
+        itemRow[rcol::COURSE] = new QStandardItem(QLocale().toString(courseMag, 'f', 0));
+      if(courseTrue < map::INVALID_COURSE_VALUE)
+        itemRow[rcol::COURSETRUE] = new QStandardItem(QLocale().toString(courseTrue, 'f', 0));
     }
 
     // Distance =====================

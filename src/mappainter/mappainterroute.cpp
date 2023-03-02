@@ -850,21 +850,16 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, QSet<m
             if(drawTextLines.at(i).distance && context->dOptRoute(optsd::ROUTE_DISTANCE))
               dist = leg.calculatedDistance;
 
-            if(drawTextLines.at(i).course)
+            if(drawTextLines.at(i).course && !leg.noCalcCourseDisplay())
             {
-              if(leg.calculatedTrueCourse < map::INVALID_COURSE_VALUE)
-              {
-                if(context->dOptRoute(optsd::ROUTE_MAG_COURSE))
-                  // Use same values for mag - does not make a difference at the small values in procedures
-                  courseMag = atools::geo::normalizeCourse(leg.calculatedTrueCourse - leg.magvar);
-              }
-
               if(context->dOptRoute(optsd::ROUTE_MAG_COURSE))
+                // Use same values for mag - does not make a difference at the small values in procedures
+                courseMag = leg.calculatedMagCourse();
+
+              if(context->dOptRoute(optsd::ROUTE_TRUE_COURSE))
                 courseTrue = leg.calculatedTrueCourse;
             }
 
-            if(leg.noCourseDisplay())
-              courseMag = courseTrue = map::INVALID_COURSE_VALUE;
             if(leg.noDistanceDisplay())
               dist = map::INVALID_DISTANCE_VALUE;
             approachTexts.append(buildLegText(dist, courseMag, courseTrue));

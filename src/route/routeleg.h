@@ -335,9 +335,9 @@ public:
   }
 
   /* No course display for e.g. arc legs */
-  bool noCourseDisplay() const
+  bool noCalcCourseDisplay() const
   {
-    return procedureLeg.isValid() && procedureLeg.noCourseDisplay();
+    return procedureLeg.isValid() && procedureLeg.noCalcCourseDisplay();
   }
 
   /* No ident at end of manual legs */
