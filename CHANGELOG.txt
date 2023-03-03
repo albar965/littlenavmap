@@ -97,6 +97,7 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 * Fix for stacked dock windows appearing in the wrong order after un-minimizing main window. #1000
 * Updated user manual for customization, map theme installation, SimBrief changes and cold weather
   altitude correction.
+* Fixed elevation profile losing display reverting to a gray area when resetting view after vertical zoom.
 * Fixed issues with dock windows moved to the wrong screen on multi screen configurations.
 * Several other small text fixes.
 

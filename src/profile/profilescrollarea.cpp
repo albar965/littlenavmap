@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -38,6 +38,9 @@
 #include <QWidget>
 #include <QToolTip>
 #include "ui_mainwindow.h"
+
+// Need to use fixed value for minimum since Qt arbitrarily resets min to 0
+const static int PROFILE_SLIDER_MINIMUM = 1;
 
 ProfileScrollArea::ProfileScrollArea(ProfileWidget *parent, QScrollArea *scrollAreaParam)
   : QObject(parent), profileWidget(parent),
@@ -131,8 +134,7 @@ ProfileScrollArea::~ProfileScrollArea()
 
 void ProfileScrollArea::helpClicked()
 {
-  atools::gui::HelpHandler::openHelpUrlWeb(scrollArea, lnm::helpOnlineUrl + "PROFILE.html",
-                                           lnm::helpLanguageOnline());
+  atools::gui::HelpHandler::openHelpUrlWeb(scrollArea, lnm::helpOnlineUrl + "PROFILE.html", lnm::helpLanguageOnline());
 }
 
 void ProfileScrollArea::expandWidget()
@@ -146,8 +148,10 @@ void ProfileScrollArea::expandWidget()
 
   // Resize widget temporarily and then switch it off again
   scrollArea->setWidgetResizable(true);
-  ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->minimum());
-  ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->minimum());
+  ui->horizontalSliderProfileZoom->setValue(PROFILE_SLIDER_MINIMUM);
+  ui->horizontalSliderProfileZoom->setMinimum(PROFILE_SLIDER_MINIMUM);
+  ui->verticalSliderProfileZoom->setValue(PROFILE_SLIDER_MINIMUM);
+  ui->verticalSliderProfileZoom->setMinimum(PROFILE_SLIDER_MINIMUM);
   scrollArea->setWidgetResizable(false);
 }
 
@@ -335,8 +339,10 @@ void ProfileScrollArea::updateWidgets()
   if(!routeValid)
   {
     // Reset zoom sliders
-    ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->minimum());
-    ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->minimum());
+    ui->horizontalSliderProfileZoom->setValue(PROFILE_SLIDER_MINIMUM);
+    ui->horizontalSliderProfileZoom->setMinimum(PROFILE_SLIDER_MINIMUM);
+    ui->verticalSliderProfileZoom->setValue(PROFILE_SLIDER_MINIMUM);
+    ui->verticalSliderProfileZoom->setMinimum(PROFILE_SLIDER_MINIMUM);
     lastVertScrollPos = 0.5;
     lastHorizScrollPos = 0.5;
   }
@@ -442,8 +448,8 @@ bool ProfileScrollArea::keyEvent(QKeyEvent *event)
   else if(event->key() == Qt::Key_0 || event->key() == Qt::Key_Insert)
   {
     // Reset using 0 or 0/Ins on numpad
-    ui->horizontalSliderProfileZoom->setValue(ui->horizontalSliderProfileZoom->minimum());
-    ui->verticalSliderProfileZoom->setValue(ui->verticalSliderProfileZoom->minimum());
+    ui->horizontalSliderProfileZoom->setValue(PROFILE_SLIDER_MINIMUM);
+    ui->verticalSliderProfileZoom->setValue(PROFILE_SLIDER_MINIMUM);
     consumed = true;
   }
 
