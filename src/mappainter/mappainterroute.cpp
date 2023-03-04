@@ -586,7 +586,7 @@ void MapPainterRoute::paintInboundOutboundTexts(const TextPlacement& textPlaceme
     double inboundTextLength = metrics.horizontalAdvance(inboundText) + arrowWidth;
 
     // Check if texts fit along line
-    if(outboundTextLength + inboundTextLength < lineLength * 0.75)
+    if(outboundTextLength + inboundTextLength < lineLength * (vor ? 0.75 : 0.5))
     {
       // Outbound from lastLeg navaid  =================================
       if(!outboundText.isEmpty() && vor == lastLeg.isCalibratedVor() && firstVisible1)
