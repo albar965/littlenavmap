@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -850,7 +850,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, QSet<m
             if(drawTextLines.at(i).distance && context->dOptRoute(optsd::ROUTE_DISTANCE))
               dist = leg.calculatedDistance;
 
-            if(drawTextLines.at(i).course && !leg.noCalcCourseDisplay())
+            if(drawTextLines.at(i).course && leg.calculatedTrueCourse < map::INVALID_COURSE_VALUE && !leg.noCalcCourseDisplay())
             {
               if(context->dOptRoute(optsd::ROUTE_MAG_COURSE))
                 // Use same values for mag - does not make a difference at the small values in procedures

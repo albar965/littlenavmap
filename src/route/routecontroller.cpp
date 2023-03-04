@@ -4532,25 +4532,10 @@ void RouteController::updateTableModel()
     bool afterArrivalAirport = route.isAirportAfterArrival(i);
     bool parkingToDeparture = route.hasAnySidProcedure() && i == 0;
 
-    if(row > 0 && !afterArrivalAirport && !parkingToDeparture && leg.getDistanceTo() < map::INVALID_DISTANCE_VALUE &&
-       leg.getDistanceTo() > 0.f)
+    if(row > 0 && !afterArrivalAirport && !parkingToDeparture)
     {
       float courseMag = map::INVALID_COURSE_VALUE, courseTrue = map::INVALID_COURSE_VALUE;
-      if(leg.isAnyProcedure())
-      {
-        // Calculate the same way as in procedure map display to avoid discrepancies
-        if(!leg.noCalcCourseDisplay())
-        {
-          courseMag = leg.getProcedureLeg().calculatedMagCourse();
-          courseTrue = leg.getProcedureLeg().calculatedTrueCourse;
-        }
-      }
-      else
-      {
-        // Use start course of leg for display
-        courseMag = leg.getCourseStartMag();
-        courseTrue = leg.getCourseStartTrue();
-      }
+      leg.getMagTrueRealCourse(courseMag, courseTrue);
 
       if(courseMag < map::INVALID_COURSE_VALUE)
         itemRow[rcol::COURSE] = new QStandardItem(QLocale().toString(courseMag, 'f', 0));

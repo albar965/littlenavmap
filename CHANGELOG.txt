@@ -81,7 +81,9 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
   loading more robust in general.
 * Increased maximum length for user waypoint names to 80 characters in MSFS PLN flight plan file export
   to allow descriptions.
-* Fixed differences for course display in flight plan leg in table, aircraft progress and on the map.
+* Fixed inconsistencies for course display in flight plan leg in table, aircraft progress,
+  elevation profile and the map.
+* Removed not applicable inbound and outbound VOR course display in aircraft progress at procedure legs.
 
 ### User Interface
 

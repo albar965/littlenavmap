@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -638,13 +638,15 @@ map::MapUserpointRoute RouteLeg::getUserpointRoute() const
   return user;
 }
 
-QStringList RouteLeg::buildLegText(bool dist, bool magCourse, bool trueCourse, bool narrow) const
+QStringList RouteLeg::buildLegText(bool dist, bool magCourseFlag, bool trueCourseFlag, bool narrow) const
 {
   float distance = noDistanceDisplay() || !dist ? map::INVALID_DISTANCE_VALUE : getDistanceTo();
-  float courseMag = noCalcCourseDisplay() || !magCourse ? map::INVALID_COURSE_VALUE : getCourseStartMag();
-  float courseTrue = noCalcCourseDisplay() || !trueCourse ? map::INVALID_COURSE_VALUE : getCourseStartTrue();
+  float courseMag = map::INVALID_COURSE_VALUE, courseTrue = map::INVALID_COURSE_VALUE;
+  getMagTrueRealCourse(courseMag, courseTrue);
 
-  return buildLegText(distance, courseMag, courseTrue, narrow);
+  return buildLegText(distance,
+                      magCourseFlag ? courseMag : map::INVALID_COURSE_VALUE,
+                      trueCourseFlag ? courseTrue : map::INVALID_COURSE_VALUE, narrow);
 }
 
 QStringList RouteLeg::buildLegText(float distance, float courseMag, float courseTrue, bool narrow)
@@ -849,6 +851,39 @@ bool RouteLeg::isNavdata() const
 bool RouteLeg::isUser() const
 {
   return getFlightplanEntry().getWaypointType() == atools::fs::pln::entry::USER;
+}
+
+void RouteLeg::getMagTrueRealCourse(float& courseMag, float& courseTrue, bool *procedure) const
+{
+  // Default is no course
+  courseMag = courseTrue = map::INVALID_COURSE_VALUE;
+
+  if(procedure != nullptr)
+    *procedure = false;
+
+  // Check procedures only of distance and course available - otherwise fall back to flight plan
+  if(isAnyProcedure() && procedureLeg.calculatedTrueCourse < map::INVALID_COURSE_VALUE &&
+     distanceTo < map::INVALID_DISTANCE_VALUE && distanceTo > 0.f)
+  {
+    // Ignore if calculated course is missing and use default to next.
+    // For example for initial fix from en-route.
+
+    // Calculate the same way as in procedure map display to avoid discrepancies
+    if(!procedureLeg.noCalcCourseDisplay())
+    {
+      courseMag = procedureLeg.calculatedMagCourse();
+      courseTrue = procedureLeg.calculatedTrueCourse;
+      if(procedure != nullptr)
+        *procedure = true;
+    }
+    // else no course for legs which are circular or direct to fix
+  }
+  else
+  {
+    // Use start course of leg for display
+    courseMag = getCourseStartMag();
+    courseTrue = getCourseStartTrue();
+  }
 }
 
 QString RouteLeg::getRegion() const

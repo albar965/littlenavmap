@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -340,6 +340,10 @@ public:
     return procedureLeg.isValid() && procedureLeg.noCalcCourseDisplay();
   }
 
+  /* Get start course from leg or procedure calculated course if applicable.
+   * Procedure is true if the values were taken from a procedure. */
+  void getMagTrueRealCourse(float& courseMag, float& courseTrue, bool *procedure = nullptr) const;
+
   /* No ident at end of manual legs */
   bool noIdentDisplay() const
   {
@@ -383,7 +387,7 @@ public:
   atools::fs::pln::FlightplanEntry *getFlightplanEntry();
 
   /* Build leg labels also depending on procedure flags. Uses start course and normal declination (not VOR) */
-  QStringList buildLegText(bool dist, bool magCourse, bool trueCourse, bool narrow) const;
+  QStringList buildLegText(bool dist, bool magCourseFlag, bool trueCourseFlag, bool narrow) const;
   static QStringList buildLegText(float distance, float courseMag, float courseTrue, bool narrow);
 
 private:

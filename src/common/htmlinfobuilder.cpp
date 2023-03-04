@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -4250,8 +4250,13 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
 
             if(routeLegIndex > lastDepartureLegIdx || routeLegIndex <= lastRouteLegIdx)
             {
-              if(lastRouteLeg.isCalibratedVor())
+              bool procedureEntry = lastRouteLeg.isRoute() && routeLeg.isAnyProcedure();
+              bool procedureExit = lastRouteLeg.isAnyProcedure() && routeLeg.isRoute();
+              bool enroute = lastRouteLeg.isRoute() && routeLeg.isRoute();
+
+              if(lastRouteLeg.isCalibratedVor() && (enroute || procedureExit))
               {
+                // Last leg is VOR and en-route - show course from calibrated VOR
                 float outboundCourseMag, dummy;
                 route.getOutboundCourse(routeLegIndex, outboundCourseMag, dummy);
                 html.id(pid::NEXT_COURSE_FROM_VOR).
@@ -4259,8 +4264,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
                      courseText(outboundCourseMag, map::INVALID_COURSE_VALUE), ahtml::NO_ENTITIES);
               }
 
-              if(routeLeg.isCalibratedVor())
+              if(routeLeg.isCalibratedVor() && (enroute || procedureEntry))
               {
+                // This leg is VOR and this or last leg is en-route - show course to calibrated VOR
                 float inboundCourseMag, dummy;
                 route.getInboundCourse(routeLegIndex, inboundCourseMag, dummy);
                 html.id(pid::NEXT_COURSE_TO_VOR).
@@ -4277,17 +4283,13 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
           // No course for arcs
           if(routeLeg.isRoute() || !routeLeg.getProcedureLeg().isCircular())
           {
-            if(routeLeg.isAnyProcedure())
-            {
-              if(!procLeg.noCalcCourseDisplay())
-                html.id(pid::NEXT_LEG_COURSE).row2If(tr("Leg Course") + tr(":"), // TODO avoid breaking translation temporarily
-                                                     courseText(procLeg.calculatedMagCourse(),
-                                                                procLeg.calculatedTrueCourse, true /* magBold */), ahtml::NO_ENTITIES);
-            }
-            else
-              html.id(pid::NEXT_LEG_COURSE).row2If(tr("Leg Start Course:"),
-                                                   courseText(routeLeg.getCourseStartMag(), routeLeg.getCourseStartTrue(),
-                                                              true), ahtml::NO_ENTITIES);
+            float courseMag = map::INVALID_COURSE_VALUE, courseTrue = map::INVALID_COURSE_VALUE;
+            bool procedure = false;
+            routeLeg.getMagTrueRealCourse(courseMag, courseTrue, &procedure);
+
+            // TODO avoid breaking translation temporarily
+            QString text = procedure ? tr("Leg Course") + tr(":") : tr("Leg Start Course:");
+            html.id(pid::NEXT_LEG_COURSE).row2If(text, courseText(courseMag, courseTrue, true /* magBold */), ahtml::NO_ENTITIES);
 
             if(userAircraft != nullptr && userAircraft->isFlying() && courseToWptTrue < INVALID_COURSE_VALUE)
             {
