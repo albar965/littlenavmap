@@ -4936,6 +4936,9 @@ void HtmlInfoBuilder::addAirportSceneryAndLinks(const MapAirport& airport, HtmlB
 
   if(airportNav.isValid() && airportNav.navdata)
   {
+    links.append(html.cleared().a(tr("AirNav.com"),
+                                  QString("https://www.airnav.com/airport/%1").arg(airportNav.displayIdent()), flags).getHtml());
+
     links.append(html.cleared().a(tr("ChartFox"), QString("https://chartfox.org/%1").arg(airportNav.displayIdent()), flags).
                  text(tr("&nbsp;(needs&nbsp;login)"), ahtml::SMALL | ahtml::NO_ENTITIES).getHtml());
 
