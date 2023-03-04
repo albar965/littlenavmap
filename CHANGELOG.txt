@@ -102,6 +102,7 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 * Fixed elevation profile losing display reverting to a gray area when resetting view after vertical zoom.
 * Fixed issues with dock windows moved to the wrong screen on multi screen configurations.
 * Added AirNav.com to airport link list.
+* Fixed regression where red warning text for empty database was missing in status bar.
 * Several other small text fixes.
 
 ### Weather

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,21 +17,21 @@
 
 #include "mapgui/mapvisible.h"
 
-#include "mapgui/maplayer.h"
-#include "mappainter/mappaintlayer.h"
 #include "airspace/airspacecontroller.h"
-#include "fs/common/morareader.h"
-#include "navapp.h"
 #include "atools.h"
-#include "query/mapquery.h"
-#include "util/htmlbuilder.h"
-#include "gui/mainwindow.h"
-#include "weather/windreporter.h"
-#include "mapgui/mapmarkhandler.h"
-#include "mapgui/mapairporthandler.h"
 #include "common/maptypes.h"
-#include "userdata/userdatacontroller.h"
 #include "common/unit.h"
+#include "fs/common/morareader.h"
+#include "gui/mainwindow.h"
+#include "mapgui/mapairporthandler.h"
+#include "mapgui/maplayer.h"
+#include "mapgui/mapmarkhandler.h"
+#include "mappainter/mappaintlayer.h"
+#include "navapp.h"
+#include "query/mapquery.h"
+#include "userdata/userdatacontroller.h"
+#include "util/htmlbuilder.h"
+#include "weather/windreporter.h"
 
 #include <QStringBuilder>
 
@@ -58,9 +58,6 @@ void MapVisible::updateVisibleObjectsStatusBar()
            "or press <code>Ctrl+Shift+L</code>.<br/>"
            "Then choose the simulator and press \"Load\".</p>",
          "Keep instructions in sync with translated menus and shortcuts"));
-
-    NavApp::getMainWindow()->setMapObjectsShownMessageText(
-      tr("—"), tr("Database is empty. Reload scenery library database to see map features."));
   }
   else
   {
