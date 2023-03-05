@@ -86,20 +86,21 @@ private:
   void paintWaypoint(float x, float y, const map::MapWaypoint& obj, bool preview);
   void paintWaypoint(const QColor& col, float x, float y, bool preview);
 
-  void paintProcedure(proc::MapProcedureLeg& lastLegPoint, QSet<map::MapObjectRef>& idMap, const proc::MapProcedureLegs& legs, int legsRouteOffset, const QColor& color,
-                      bool preview, bool previewAll);
-  void paintWaypointText(float x, float y, const map::MapWaypoint& obj, bool drawTextDetails, bool drawAsRoute,
+  void paintProcedure(proc::MapProcedureLeg& lastLegPoint, QSet<map::MapObjectRef>& idMap, const proc::MapProcedureLegs& legs,
+                      int legsRouteOffset, const QColor& color, bool preview, bool previewAll);
+  void paintWaypointText(float x, float y, const map::MapWaypoint& obj, bool drawTextDetails,
                          const QStringList *additionalText);
-  void paintNdbText(float x, float y, const map::MapNdb& obj, bool drawTextDetails, bool drawAsRoute, const QStringList *additionalText);
-  void paintVorText(float x, float y, const map::MapVor& obj, bool drawTextDetails, bool drawAsRoute, const QStringList *additionalText);
-  void paintAirportText(float x, float y, const map::MapAirport& obj, bool drawAsRoute);
-  void paintText(const QColor& color, float x, float y, bool drawTextDetails, QStringList texts, bool drawAsRoute,
+  void paintNdbText(float x, float y, const map::MapNdb& obj, bool drawTextDetails, const QStringList *additionalText);
+  void paintVorText(float x, float y, const map::MapVor& obj, bool drawTextDetails, const QStringList *additionalText);
+  void paintAirportText(float x, float y, const map::MapAirport& obj);
+  void paintText(const QColor& color, float x, float y, bool drawTextDetails, QStringList texts,
                  textatt::TextAttributes atts = textatt::NONE);
   void paintUserpoint(float x, float y, const map::MapUserpointRoute& obj, bool preview);
-  void paintProcedurePoint(float x, float y, bool preview);
 
-  void paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, QSet<map::MapObjectRef>& idMap, const proc::MapProcedureLegs& legs, int index, bool preview,
-                           bool previewAll, bool drawTextFlag);
+  void paintProcedurePoint(float x, float y, bool preview);
+  void paintProcedurePoint(proc::MapProcedureLeg& lastLegPoint, QSet<map::MapObjectRef>& idMap, const proc::MapProcedureLegs& legs,
+                           int index, bool preview, bool previewAll, bool drawTextFlag);
+  void paintProcedurePointText(float x, float y, bool drawTextDetails, const QStringList& texts);
 
   void drawSymbols(const QBitArray& visibleStartPoints, const QList<QPointF>& startPoints, bool preview);
 

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -504,8 +504,8 @@ enum TextAttribute
   CENTER = 0x0080,
 
   /* Vertical alignment */
-  VTOP = 0x1000, /* Reference point at top to place text below an icon */
-  VBOTTOM = 0x2000, /* Reference point at bottom to place text on top of an icon */
+  VERT_BELOW = 0x1000, /* Reference point at top to place text below an icon */
+  VERT_ABOVE = 0x2000, /* Reference point at bottom to place text on top of an icon */
 
   /* Color attributes */
   ROUTE_BG_COLOR = 0x0100, /* Use light yellow background for route objects */

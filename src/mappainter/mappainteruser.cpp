@@ -111,7 +111,7 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
           {
             case icon::ICON_LABEL_TOP:
               // NDB - place on top
-              textatts = textatt::VBOTTOM | textatt::CENTER;
+              textatts = textatt::VERT_ABOVE | textatt::CENTER;
               ypos = y - offset;
               break;
 
@@ -123,7 +123,7 @@ void MapPainterUser::paintUserpoints(const QList<MapUserpoint>& userpoints, bool
 
             case icon::ICON_LABEL_BOTTOM:
               // Place on bottom
-              textatts = textatt::VTOP | textatt::CENTER;
+              textatts = textatt::VERT_BELOW | textatt::CENTER;
               ypos = y + offset;
               break;
 

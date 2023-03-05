@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -76,7 +76,7 @@ void MapPainterMark::render()
       QString("Layer route %1").arg(context->mapLayerRoute->getMaxRange()),
       QString("Airport sym %1").arg(context->mapLayer->getAirportSymbolSize()),
       QString("Min RW %1").arg(context->mapLayer->getMinRunwayLength())},
-                           mapcolors::routeLogEntryOutlineColor, 1, 1, textatt::ROUTE_BG_COLOR | textatt::VTOP);
+                           mapcolors::routeLogEntryOutlineColor, 1, 1, textatt::ROUTE_BG_COLOR | textatt::VERT_BELOW);
   }
 #endif
 

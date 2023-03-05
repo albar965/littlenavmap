@@ -62,7 +62,7 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 * Updated map themes on [Little Navmap Downloads - Map Themes](https://www.littlenavmap.org/downloads/Map%20Themes/).
 * Removed unneeded Marble map theme legend files.
 * Increased maximum number of entries in map position history.
-* More adjustments for better drawing.
+* More adjustments and fixes for better drawing.
 
 ### Flight Plan and Export
 

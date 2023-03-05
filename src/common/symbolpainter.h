@@ -126,8 +126,7 @@ public:
   void drawNdbText(QPainter *painter, const map::MapNdb& ndb, float x, float y, textflags::TextFlags flags,
                    float size, bool fill, const QStringList *addtionalText = nullptr);
 
-  void drawMarkerSymbol(QPainter *painter, const map::MapMarker& marker, float x, float y, int size,
-                        bool fast);
+  void drawMarkerSymbol(QPainter *painter, const map::MapMarker& marker, float x, float y, float size, bool fast);
 
   static void drawHelipadSymbol(QPainter *painter, const map::MapHelipad& helipad, float x, float y, float w, float h, bool fast);
 
@@ -158,7 +157,7 @@ public:
                 int transparency = 255, const QColor& backgroundColor = QColor());
 
   /* Get dimensions of a custom text box */
-  QRect textBoxSize(QPainter *painter, const QStringList& texts, textatt::TextAttributes atts);
+  QRectF textBoxSize(QPainter *painter, const QStringList& texts, textatt::TextAttributes atts);
 
   /* Upper level winds */
   void drawWindBarbs(QPainter *painter, float wind, float gust, float dir, float x, float y, float size,

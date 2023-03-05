@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1304,6 +1304,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     // Calculate symbol sizes
     float sizeScaleSymbol = 1.f;
     int waypointSize = roundToInt((optionData.getDisplayTextSizeFlightplanProfile() * sizeScaleSymbol / 100.) * 8.);
+    int procPointSize = roundToInt((optionData.getDisplayTextSizeFlightplanProfile() * sizeScaleSymbol / 100.) * 8.) + 3;
     int navaidSize = roundToInt((optionData.getDisplayTextSizeFlightplanProfile() * sizeScaleSymbol / 100.) * 12.);
     int airportSize = roundToInt((optionData.getDisplayTextSizeFlightplanProfile() * sizeScaleSymbol / 100.) * 10.);
 
@@ -1339,7 +1340,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
         int interceptY = altitudeY(route.getAltitudeForDistance(route.getTotalDistance() - distanceFromStart));
 
         // Draw symbol and label for intercept position
-        symPainter.drawProcedureSymbol(&painter, interceptX, interceptY, waypointSize, true);
+        symPainter.drawProcedureSymbol(&painter, interceptX, interceptY, procPointSize, true);
         QStringList displayText = atools::elidedTexts(painter.fontMetrics(), procedureLeg.displayText, Qt::ElideRight,
                                                       legScreenWidth); // TODO legScreenWidth is not correct due to offset
         symPainter.textBox(&painter, displayText, color, interceptX + 5, std::min(interceptY + 14, h), textatt::ROUTE_BG_COLOR, 255);
@@ -1362,10 +1363,10 @@ void ProfileWidget::paintEvent(QPaintEvent *)
           symPainter.drawWaypointSymbol(&painter, mapcolors::routeInvalidPointColor, symPt.x(), symPt.y(), 9, true);
         else if(type == map::PROCEDURE)
           // Missed is not included
-          symPainter.drawProcedureSymbol(&painter, symPt.x(), symPt.y(), waypointSize, true);
+          symPainter.drawProcedureSymbol(&painter, symPt.x(), symPt.y(), procPointSize, true);
       }
       else
-        symPainter.drawProcedureSymbol(&painter, symPt.x(), symPt.y(), waypointSize, true);
+        symPainter.drawProcedureSymbol(&painter, symPt.x(), symPt.y(), procPointSize, true);
 
       // Procedure symbols ========================================================
       if(routeIndex >= activeRouteLeg - 1 && leg.isAnyProcedure())
@@ -1690,7 +1691,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     textatt::TextAttributes att = textatt::NONE;
     float textx = acx, texty = acy + 20.f;
 
-    QRect rect = symPainter.textBoxSize(&painter, texts, att);
+    QRectF rect = symPainter.textBoxSize(&painter, texts, att);
     if(textx + rect.right() > left + w)
       // Move text to the left when approaching the right corner
       att |= textatt::RIGHT;
@@ -1698,7 +1699,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
     att |= textatt::ROUTE_BG_COLOR;
 
     if(acy - rect.height() > scrollArea->getOffset().y() + TOP)
-      texty -= rect.bottom() + 20.f; // Text at top
+      texty -= static_cast<float>(rect.bottom() + 20.); // Text at top
 
     symPainter.textBoxF(&painter, texts, QPen(Qt::black), textx, texty, att, 255);
   }

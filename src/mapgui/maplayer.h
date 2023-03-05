@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -27,7 +27,6 @@ class XmlStream;
 }
 
 namespace layer {
-
 
 /* Ships considered large above this model radius in feet */
 constexpr int LARGE_SHIP_SIZE = 150;
@@ -351,6 +350,11 @@ public:
   int getWaypointSymbolSize() const
   {
     return waypointSymbolSize;
+  }
+
+  int getProcedurePointSymbolSize() const
+  {
+    return waypointSymbolSize + 3;
   }
 
   int getVorSymbolSize() const

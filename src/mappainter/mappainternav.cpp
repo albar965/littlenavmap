@@ -419,10 +419,11 @@ void MapPainterNav::paintNdbs(const QHash<int, map::MapNdb>& ndbs, bool drawFast
 {
   bool fill = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND;
 
-  int size = context->sz(context->symbolSizeNavaid, context->mapLayer->getNdbSymbolSize());
+  float size = context->szF(context->symbolSizeNavaid, context->mapLayer->getNdbSymbolSize());
 
   // Use margins for text placed on the bottom of the object to avoid disappearing at the top screen border
-  QMargins margins(size, std::max(size, 50), size, size);
+  int sizeInt = static_cast<int>(size);
+  QMargins margins(sizeInt, std::max(sizeInt, 50), sizeInt, sizeInt);
 
   for(const MapNdb& ndb : ndbs)
   {
@@ -453,8 +454,9 @@ void MapPainterNav::paintMarkers(const QList<map::MapMarker> *markers, bool draw
 {
   int transparency = context->flags2 & opts2::MAP_NAVAID_TEXT_BACKGROUND ? 255 : 0;
 
-  int size = context->sz(context->symbolSizeNavaid, context->mapLayer->getMarkerSymbolSize());
-  QMargins margins(size, size, size, size);
+  float size = context->szF(context->symbolSizeNavaid, context->mapLayer->getMarkerSymbolSize());
+  int sizeInt = static_cast<int>(size);
+  QMargins margins(sizeInt, sizeInt, sizeInt, sizeInt);
 
   for(const MapMarker& marker : *markers)
   {
@@ -472,9 +474,8 @@ void MapPainterNav::paintMarkers(const QList<map::MapMarker> *markers, bool draw
       {
         QString type = marker.type.toLower();
         type[0] = type.at(0).toUpper();
-        x -= size / 2 + 2;
-        symbolPainter->textBoxF(context->painter, {type}, mapcolors::markerSymbolColor, x, y,
-                                textatt::RIGHT, transparency);
+        x -= size / 2.f + 2.f;
+        symbolPainter->textBoxF(context->painter, {type}, mapcolors::markerSymbolColor, x, y, textatt::RIGHT, transparency);
       }
     }
   }
