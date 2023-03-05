@@ -3785,7 +3785,8 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
 
       pos.setAltitude(alt);
       SimConnectData data = SimConnectData::buildDebugForPosition(pos, lastPos, ground, vertSpeed, tas, fuelflow, totalFuel, ice,
-                                                                  route.getCruisingAltitudeFeet(), NavApp::getMagVar(pos));
+                                                                  route.getCruisingAltitudeFeet(), NavApp::getMagVar(pos),
+                                                                  perf.isJetFuel());
       data.setPacketId(packetId++);
 
       emit NavApp::getConnectClient()->dataPacketReceived(data);
