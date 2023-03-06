@@ -110,8 +110,8 @@ _Little Navmap_ features its own internal **web server** which allows to follow 
 any device across a network.
 
 **Supported Flight Simulators:** All FSX versions from SP2 up, Flight Simulator - Steam Edition,
-Prepar3D v3, v4, v5, Microsoft Flight Simulator 2020 and X-Plane 11.
+Prepar3D v3, v4, v5, Microsoft Flight Simulator 2020, X-Plane 11 and X-Plane 12.
 
-**Supported platforms:** Windows 7/8/10, Apple macOS \(10.12 or newer only\) and Linux \(64 bit only\).
+**Supported platforms:** Windows 7/8/10/11, Apple macOS \(10.12 or newer only\) and Linux \(64 bit only\).
 
 [![Little Navmap](https://albar965.github.io/assets/images/Tipp_FSMagazin_D_Neu_2014_50.png)](https://www.facebook.com/FSMAGAZIN/posts/1349379408450042)
