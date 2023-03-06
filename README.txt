@@ -22,8 +22,8 @@ criteria also including a spatial search.
 
 The program can generate an route description string from flight plans and vice versa.
 
-Little Navmap supports FSX, FSX Steam Edition, Prepar3d Versions 2, 3, 4, 5, Microsoft Flight
-Simulator 2020 and X-Plane 11.
+Little Navmap supports FSX, FSX Steam Edition, Prepar3d Versions 3, 4, 5, Microsoft Flight
+Simulator 2020, X-Plane 11 and X-Plane 12.
 
 ------------------------------------------------------------------------------
 
