@@ -629,6 +629,7 @@ void AirportSearch::getSelectedMapObjects(map::MapResult& result) const
   rec.appendField(idColumnName, QVariant::Int);
   rec.appendField("lonx", QVariant::Double);
   rec.appendField("laty", QVariant::Double);
+  rec.appendField("rating", QVariant::Int);
 
   MapTypesFactory factory;
 
@@ -646,13 +647,13 @@ void AirportSearch::getSelectedMapObjects(map::MapResult& result) const
         rec.setValue(0, idVar);
         rec.setValue(1, controller->getRawData(row, "lonx"));
         rec.setValue(2, controller->getRawData(row, "laty"));
+        rec.setValue(3, controller->getRawData(row, "rating"));
 
 #ifdef DEBUG_INFORMATION_SELECTION
         qDebug() << Q_FUNC_INFO << "range" << range << "row" << row << rec;
 #endif
         // Not fully populated
-        factory.fillAirport(rec, ap, false /* complete */, false /* nav */,
-                            NavApp::isAirportDatabaseXPlane(false /* navdata */));
+        factory.fillAirport(rec, ap, false /* complete */, false /* nav */, NavApp::isAirportDatabaseXPlane(false /* navdata */));
         result.airports.append(ap);
       }
       else

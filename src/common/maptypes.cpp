@@ -995,23 +995,20 @@ bool MapAirport::emptyDraw() const
     return false;
 
   const OptionData& od = OptionData::instance();
-  bool empty3dFlag = od.getFlags2().testFlag(opts2::MAP_EMPTY_AIRPORTS_3D);
-  bool emptyFlag = od.getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS);
-
-  return emptyDraw(emptyFlag, empty3dFlag);
+  return emptyDraw(od.getFlags().testFlag(opts::MAP_EMPTY_AIRPORTS), od.getFlags2().testFlag(opts2::MAP_EMPTY_AIRPORTS_3D));
 }
 
-bool MapAirport::emptyDraw(bool emptyFlag, bool empty3dFlag) const
+bool MapAirport::emptyDraw(bool emptyOptsFlag, bool emptyOpts3dFlag) const
 {
   if(NavApp::isNavdataAll())
     return false;
 
-  if(emptyFlag)
+  if(emptyOptsFlag)
   {
-    if(empty3dFlag && xplane)
+    if(emptyOpts3dFlag && xplane)
       return !is3d() && !addon() && !waterOnly();
     else
-      return empty() && !waterOnly();
+      return rating == 0 && !waterOnly();
   }
   else
     return false;
@@ -1038,15 +1035,6 @@ int MapAirport::paintPriority(bool forceAddonFlag, bool emptyOptsFlag, bool empt
 
   // Define higher airports with hard runways by runway length
   return longestRunwayLength;
-}
-
-bool MapAirport::empty() const
-{
-  if(rating == -1)
-    // Not calculated
-    return !parking() && !taxiway() && !apron() && !addon() && !helipad();
-  else
-    return rating == 0;
 }
 
 bool MapAirport::addon() const

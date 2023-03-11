@@ -41,8 +41,7 @@ MapTypesFactory::~MapTypesFactory()
 
 }
 
-void MapTypesFactory::fillAirport(const SqlRecord& record, map::MapAirport& airport, bool complete, bool nav,
-                                  bool xplane)
+void MapTypesFactory::fillAirport(const SqlRecord& record, map::MapAirport& airport, bool complete, bool nav, bool xplane)
 {
   fillAirportBase(record, airport, complete);
   airport.navdata = nav;
@@ -58,9 +57,7 @@ void MapTypesFactory::fillAirport(const SqlRecord& record, map::MapAirport& airp
     airport.awosFrequency = record.valueInt("awos_frequency");
     airport.asosFrequency = record.valueInt("asos_frequency");
     airport.unicomFrequency = record.valueInt("unicom_frequency");
-
     airport.position = Pos(record.valueFloat("lonx"), record.valueFloat("laty"), record.valueFloat("altitude"));
-
     airport.region = record.valueStr("region", QString());
   }
   else
@@ -145,6 +142,7 @@ void MapTypesFactory::fillRunwayEnd(const atools::sql::SqlRecord& record, MapRun
 void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& ap, bool complete)
 {
   ap.id = record.valueInt("airport_id");
+  ap.rating = record.valueInt("rating");
 
   if(complete)
   {
@@ -155,7 +153,6 @@ void MapTypesFactory::fillAirportBase(const SqlRecord& record, map::MapAirport& 
     ap.faa = record.valueStr("faa", QString());
     ap.local = record.valueStr("local", QString());
     ap.name = record.valueStr("name");
-    ap.rating = record.valueInt("rating", -1);
     ap.type = static_cast<map::MapAirportType>(record.valueInt("type", map::AP_TYPE_NONE));
     ap.longestRunwayLength = record.valueInt("longest_runway_length");
     ap.longestRunwayHeading = static_cast<int>(std::round(record.valueFloat("longest_runway_heading")));

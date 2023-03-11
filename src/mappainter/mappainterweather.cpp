@@ -112,7 +112,7 @@ void MapPainterWeather::render()
     visibleAirportWeather.erase(std::remove_if(visibleAirportWeather.begin(), visibleAirportWeather.end(),
                                                [](const PaintAirportType& ap) -> bool
     {
-      return ap.airport->empty() || !ap.airport->hard() || ap.airport->closed();
+      return ap.airport->emptyDraw() || !ap.airport->hard() || ap.airport->closed();
     }), visibleAirportWeather.end());
 
     std::sort(visibleAirportWeather.begin(), visibleAirportWeather.end(),

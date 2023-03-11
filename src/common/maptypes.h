@@ -379,7 +379,7 @@ struct MapAirport
            name, /* Full name */
            region; /* Two letter region code */
 
-  int longestRunwayLength = 0, longestRunwayHeading = 0, rating = -1,
+  int longestRunwayLength = 0, longestRunwayHeading = 0, rating = 0, // Rating is always set
       flatten; /* X-Plane flatten flag. -1 if not set */
 
   float transitionAltitude = 0.f, /* Feet. Transition Altitude is the altitude when flying where you are required to change from a
@@ -435,19 +435,19 @@ struct MapAirport
 
   /* Check if airport should be drawn empty */
   bool emptyDraw() const;
-  bool emptyDraw(bool emptyFlag, bool empty3dFlag) const;
 
   /* Drawing order. Lower number are drawn first i.e. below all others  */
   int paintPriority(bool forceAddonFlag, bool emptyOptsFlag, bool empty3dOptsFlag) const;
-
-  /* Check if airport has any scenery elements */
-  bool empty() const;
 
   /*
    * @param objectTypes Map display configuration flags
    * @return true if this airport is visible on map
    */
   bool isVisible(map::MapTypes types, int minRunwayFt, const MapLayer *layer) const;
+
+private:
+  /* Check if airport should be drawn empty */
+  bool emptyDraw(bool emptyOptsFlag, bool emptyOpts3dFlag) const;
 
 };
 
