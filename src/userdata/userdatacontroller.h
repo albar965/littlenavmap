@@ -165,7 +165,7 @@ private:
   /* Copy class state to actions and vice versa */
   void typesToActions();
   void actionsToTypes();
-  void addUserpointInternal(int id, const atools::geo::Pos& pos, const atools::sql::SqlRecord& prefillRec, bool enableCategory);
+  void addUserpointInternal(int id, const atools::geo::Pos& pos, const atools::sql::SqlRecord& prefillRec);
   bool exportSelectedQuestion(bool& selected, bool& append, bool& header, bool& xp12, bool appendAllowed, bool headerAllowed, bool xplane);
 
   /* Get default X-Plane path to user_fix.dat file */
@@ -177,6 +177,7 @@ private:
   void undoTriggered();
   void redoTriggered();
 
+  /* Enable userpoint category  for added or change userpoints */
   void enableCategoryOnMap(const QString& category);
 
   /* Currently in actions selected types */

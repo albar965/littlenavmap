@@ -216,12 +216,9 @@ void SearchController::createUserdataSearch(QTableView *tableView)
   postCreateSearch(userdataSearch);
 
   // Get edit and delete signals from user search action and pushbuttons
-  connect(userdataSearch, &UserdataSearch::editUserpoints,
-          NavApp::getUserdataController(), &UserdataController::editUserpoints);
-  connect(userdataSearch, &UserdataSearch::deleteUserpoints,
-          NavApp::getUserdataController(), &UserdataController::deleteUserpoints);
-  connect(userdataSearch, &UserdataSearch::addUserpoint,
-          NavApp::getUserdataController(), &UserdataController::addUserpoint);
+  connect(userdataSearch, &UserdataSearch::editUserpoints, NavApp::getUserdataController(), &UserdataController::editUserpoints);
+  connect(userdataSearch, &UserdataSearch::deleteUserpoints, NavApp::getUserdataController(), &UserdataController::deleteUserpoints);
+  connect(userdataSearch, &UserdataSearch::addUserpoint, NavApp::getUserdataController(), &UserdataController::addUserpoint);
 }
 
 void SearchController::createLogdataSearch(QTableView *tableView)

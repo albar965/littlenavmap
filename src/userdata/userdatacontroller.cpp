@@ -151,6 +151,10 @@ QString UserdataController::getDefaultType(const QString& type)
 
 void UserdataController::enableCategoryOnMap(const QString& category)
 {
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "category" << category;
+#endif
+
   if(icons->hasType(category))
   {
     if(!selectedTypes.contains(category))
@@ -348,7 +352,7 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
 
   if(result.isEmpty(map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT))
     // No prefill start empty dialog of with last added data
-    addUserpointInternal(-1, pos, SqlRecord(), true /* enableCategory */);
+    addUserpointInternal(-1, pos, SqlRecord());
   else
   {
     // Prepare the dialog prefill data
@@ -420,7 +424,7 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
 
     prefillRec.appendFieldAndValue("altitude", pos.getAltitude());
 
-    addUserpointInternal(-1, pos, prefillRec, true /* enableCategory */);
+    addUserpointInternal(-1, pos, prefillRec);
   }
 }
 
@@ -472,10 +476,10 @@ void UserdataController::editUserpointFromMap(const map::MapResult& result)
 
 void UserdataController::addUserpoint(int id, const atools::geo::Pos& pos)
 {
-  addUserpointInternal(id, pos, SqlRecord(), false /* enableCategory */);
+  addUserpointInternal(id, pos, SqlRecord());
 }
 
-void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& pos, const SqlRecord& prefillRec, bool enableCategory)
+void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& pos, const SqlRecord& prefillRec)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -536,8 +540,8 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
     manager->insertOneRecord(*lastAddedRecord);
     transaction.commit();
 
-    if(enableCategory)
-      enableCategoryOnMap(lastAddedRecord->valueStr("type"));
+    // Enable category on map for new type
+    enableCategoryOnMap(lastAddedRecord->valueStr("type"));
 
     emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
     emit userdataChanged();
@@ -562,8 +566,14 @@ void UserdataController::editUserpoints(const QVector<int>& ids)
     {
       // Change modified columns for all given ids
       SqlTransaction transaction(manager->getDatabase());
-      manager->updateRecords(dlg.getRecord(), ids);
+
+      const atools::sql::SqlRecord& editedRec = dlg.getRecord();
+      manager->updateRecords(editedRec, ids);
       transaction.commit();
+
+      // Enable category on map if the type has changed
+      if(editedRec.contains("type"))
+        enableCategoryOnMap(editedRec.valueStr("type"));
 
       emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
       emit userdataChanged();
