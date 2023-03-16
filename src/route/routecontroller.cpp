@@ -875,6 +875,9 @@ void RouteController::routeAltChanged()
   // Get type, speed and cruise altitude from widgets
   updateFlightplanFromWidgets();
 
+  // Transfer cruise altitude from flight plan window to calculation window
+  routeCalcDialog->setCruisingAltitudeFt(route.getCruisingAltitudeFeet());
+
   postChange(undoCommand);
 
   routeLabel->updateHeaderLabel();
@@ -1876,10 +1879,13 @@ void RouteController::calculateRouteWindowShow()
 {
   qDebug() << Q_FUNC_INFO;
 
-  // Always show - do no toggle
+  // Always show - do not toggle
   routeCalcDialog->show();
   routeCalcDialog->raise();
   routeCalcDialog->activateWindow();
+
+  // Transfer cruise altitude from flight plan window to calculation window
+  routeCalcDialog->setCruisingAltitudeFt(route.getCruisingAltitudeFeet());
 }
 
 void RouteController::calculateRoute()
