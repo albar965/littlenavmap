@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 #include "common/htmlinfobuilder.h"
 #include "common/mapcolors.h"
 #include "common/maptools.h"
+#include "gui/helphandler.h"
 #include "gui/mainwindow.h"
 #include "gui/tabwidgethandler.h"
 #include "gui/tools.h"
@@ -61,17 +62,25 @@ InfoController::InfoController(MainWindow *parent)
   // Get base font size for widgets
   Ui::MainWindow *ui = NavApp::getMainUi();
 
-  tabHandlerInfo = new atools::gui::TabWidgetHandler(ui->tabWidgetInformation,
+  QPushButton *pushButtonInfoHelp = new QPushButton(QIcon(":/littlenavmap/resources/icons/help.svg"), QString(), ui->tabWidgetInformation);
+  pushButtonInfoHelp->setToolTip(tr("Show help for the flight plan window"));
+  pushButtonInfoHelp->setStatusTip(tr("Show help for the flight plan window"));
+
+  tabHandlerInfo = new atools::gui::TabWidgetHandler(ui->tabWidgetInformation, {pushButtonInfoHelp},
                                                      QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
                                                      tr("Open or close tabs"));
   tabHandlerInfo->init(ic::TabInfoIds, lnm::INFOWINDOW_WIDGET_TABS);
 
-  tabHandlerAirportInfo = new atools::gui::TabWidgetHandler(ui->tabWidgetAirport,
+  tabHandlerAirportInfo = new atools::gui::TabWidgetHandler(ui->tabWidgetAirport, {},
                                                             QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
                                                             tr("Open or close tabs"));
   tabHandlerAirportInfo->init(ic::TabAirportInfoIds, lnm::INFOWINDOW_WIDGET_AIRPORT_TABS);
 
-  tabHandlerAircraft = new atools::gui::TabWidgetHandler(ui->tabWidgetAircraft,
+  QPushButton *pushButtonAircraftHelp = new QPushButton(QIcon(":/littlenavmap/resources/icons/help.svg"), QString(), ui->tabWidgetAircraft);
+  pushButtonAircraftHelp->setToolTip(tr("Show help for the aircraft window"));
+  pushButtonAircraftHelp->setStatusTip(tr("Show help for the aircraft window"));
+
+  tabHandlerAircraft = new atools::gui::TabWidgetHandler(ui->tabWidgetAircraft, {pushButtonAircraftHelp},
                                                          QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
                                                          tr("Open or close tabs"));
   tabHandlerAircraft->init(ic::TabAircraftIds, lnm::INFOWINDOW_WIDGET_AIRCRAFT_TABS);
@@ -156,6 +165,22 @@ InfoController::InfoController(MainWindow *parent)
 
   connect(ui->dockWidgetAircraft, &QDockWidget::visibilityChanged, this, &InfoController::visibilityChangedAircraft);
   connect(ui->dockWidgetInformation, &QDockWidget::visibilityChanged, this, &InfoController::visibilityChangedInfo);
+
+  connect(pushButtonInfoHelp, &QPushButton::clicked, this, &InfoController::helpInfoClicked);
+  connect(pushButtonAircraftHelp, &QPushButton::clicked, this, &InfoController::helpAircraftClicked);
+}
+
+void InfoController::helpInfoClicked()
+{
+  // https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/INFO.html
+  atools::gui::HelpHandler::openHelpUrlWeb(
+    NavApp::getMainUi()->dockWidgetInformation, lnm::helpOnlineUrl + "INFO.html", lnm::helpLanguageOnline());
+}
+
+void InfoController::helpAircraftClicked()
+{
+  atools::gui::HelpHandler::openHelpUrlWeb(
+    NavApp::getMainUi()->dockWidgetAircraft, lnm::helpOnlineUrl + "INFO.html#simulator-aircraft-dock-window", lnm::helpLanguageOnline());
 }
 
 InfoController::~InfoController()

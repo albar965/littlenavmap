@@ -555,16 +555,14 @@ void AircraftPerfController::helpClickedPerf() const
 {
   qDebug() << Q_FUNC_INFO;
 
-  atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl % "AIRCRAFTPERF.html",
-                                           lnm::helpLanguageOnline());
+  atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl % "AIRCRAFTPERF.html", lnm::helpLanguageOnline());
 }
 
 void AircraftPerfController::helpClickedPerfCollect() const
 {
   qDebug() << Q_FUNC_INFO;
 
-  atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl % "AIRCRAFTPERFCOLL.html",
-                                           lnm::helpLanguageOnline());
+  atools::gui::HelpHandler::openHelpUrlWeb(mainWindow, lnm::helpOnlineUrl % "AIRCRAFTPERFCOLL.html", lnm::helpLanguageOnline());
 }
 
 bool AircraftPerfController::checkForChanges()

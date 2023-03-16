@@ -61,7 +61,7 @@ SearchController::SearchController(QMainWindow *parent, QTabWidget *tabWidgetSea
 
   connect(ui->dockWidgetSearch, &QDockWidget::visibilityChanged, this, &SearchController::dockVisibilityChanged);
 
-  tabHandlerSearch = new atools::gui::TabWidgetHandler(ui->tabWidgetSearch, QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
+  tabHandlerSearch = new atools::gui::TabWidgetHandler(ui->tabWidgetSearch, {}, QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
                                                        tr("Open or close tabs"));
   tabHandlerSearch->init(si::TabSearchIds, lnm::SEARCHTAB_WIDGET_TABS);
 

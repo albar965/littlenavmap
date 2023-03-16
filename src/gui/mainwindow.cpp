@@ -3684,8 +3684,7 @@ void MainWindow::resetAllSettings()
     close();
   }
   else if(retval == QMessageBox::Help)
-    atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "MENUS.html#reset-and-restart",
-                                             lnm::helpLanguageOnline());
+    atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "MENUS.html#reset-and-restart", lnm::helpLanguageOnline());
 }
 
 void MainWindow::resetWindowLayout()
