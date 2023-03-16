@@ -2045,21 +2045,26 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
   }
 
   // Temperature  =============================================================
-  float temp = parsed.getTemperatureC();
-  if(temp < INVALID_METAR_VALUE)
-    html.row2(tr("Temperature:"), locale.toString(atools::roundToInt(temp)) % tr("°C, ") %
-              locale.toString(atools::roundToInt(ageo::degCToDegF(temp))) % tr("°F"));
+  float temperature = parsed.getTemperatureC();
+  if(temperature < INVALID_METAR_VALUE)
+    html.row2(tr("Temperature:"), locale.toString(atools::roundToInt(temperature)) % tr("°C, ") %
+              locale.toString(atools::roundToInt(ageo::degCToDegF(temperature))) % tr("°F"));
 
-  temp = parsed.getDewpointDegC();
-  if(temp < INVALID_METAR_VALUE)
-    html.row2(tr("Dewpoint:"), locale.toString(atools::roundToInt(temp)) % tr("°C, ") %
-              locale.toString(atools::roundToInt(ageo::degCToDegF(temp))) % tr("°F"));
+  float dewpoint = parsed.getDewpointDegC();
+  if(dewpoint < INVALID_METAR_VALUE)
+    html.row2(tr("Dewpoint:"), locale.toString(atools::roundToInt(dewpoint)) % tr("°C, ") %
+              locale.toString(atools::roundToInt(ageo::degCToDegF(dewpoint))) % tr("°F"));
 
   // Pressure  =============================================================
-  float slp = parsed.getPressureMbar();
-  if(slp < INVALID_METAR_VALUE)
-    html.row2(tr("Pressure:"), locale.toString(slp, 'f', 0) % tr(" hPa, ") %
-              locale.toString(ageo::mbarToInHg(slp), 'f', 2) % tr(" inHg"));
+  float seaLevelPressureMbar = parsed.getPressureMbar();
+  if(seaLevelPressureMbar < INVALID_METAR_VALUE)
+  {
+    html.row2(tr("Pressure:"), locale.toString(seaLevelPressureMbar, 'f', 0) % tr(" hPa, ") %
+              locale.toString(ageo::mbarToInHg(seaLevelPressureMbar), 'f', 2) % tr(" inHg"));
+
+    if(temperature < INVALID_METAR_VALUE)
+      html.row2(tr("Density Altitude:"), Unit::altFeet(ageo::densityAltitudeFt(temperature, airport.getAltitude(), seaLevelPressureMbar)));
+  }
 
   // Visibility =============================================================
   const atools::fs::weather::MetarVisibility& minVis = parsed.getMinVisibility();
@@ -2071,9 +2076,7 @@ void HtmlInfoBuilder::decodedMetar(HtmlBuilder& html, const map::MapAirport& air
 
   const atools::fs::weather::MetarVisibility& maxVis = parsed.getMaxVisibility();
   if(maxVis.getVisibilityMeter() < INVALID_METAR_VALUE)
-    visiblity.append(tr(" %1 %2").
-                     arg(maxVis.getModifierString()).
-                     arg(Unit::distMeter(maxVis.getVisibilityMeter())));
+    visiblity.append(tr(" %1 %2").arg(maxVis.getModifierString()).arg(Unit::distMeter(maxVis.getVisibilityMeter())));
 
   if(!visiblity.isEmpty())
     html.row2(tr("Visibility: "), visiblity);
