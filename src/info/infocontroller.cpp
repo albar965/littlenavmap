@@ -336,6 +336,14 @@ void InfoController::anchorClicked(const QUrl& url)
     // Internal link like "show on map"
     QUrlQuery query(url);
     MapWidget *mapWidget = NavApp::getMapWidgetGui();
+
+    map::MapTypes type(map::NONE);
+    int id = -1;
+    if(query.hasQueryItem("type"))
+      type = query.queryItemValue("type").toULongLong();
+    if(query.hasQueryItem("id"))
+      id = query.queryItemValue("id").toInt();
+
     if(url.host() == "do")
     {
       if(query.hasQueryItem("hideairspaces") || query.hasQueryItem("hideonlineairspaces"))
@@ -378,12 +386,9 @@ void InfoController::anchorClicked(const QUrl& url)
 
         emit showPos(atools::geo::Pos(query.queryItemValue("lonx"), query.queryItemValue("laty")), distanceKm, false /* doubleClick */);
       }
-      else if(query.hasQueryItem("id") && query.hasQueryItem("type"))
+      else if(id != -1 && type != map::NONE)
       {
         // Zoom to an map object =========================================
-        map::MapTypes type(query.queryItemValue("type").toULongLong());
-        int id = query.queryItemValue("id").toInt();
-
         if(type == map::AIRPORT)
           // Show airport by id ================================================
           emit showRect(airportQuery->getAirportById(id).bounding, false);
@@ -447,6 +452,12 @@ void InfoController::anchorClicked(const QUrl& url)
       else
         qWarning() << Q_FUNC_INFO << "Unknwown URL" << url;
     }
+    else if(url.host() == "showprocsdepart" && id != -1 && type != map::NONE)
+      emit showProcedures(airportQuery->getAirportById(id), true /* departureFilter */, false /* arrivalFilter */);
+    else if(url.host() == "showprocsarrival" && id != -1 && type != map::NONE)
+      emit showProcedures(airportQuery->getAirportById(id), false /* departureFilter */, true /* arrivalFilter */);
+    else if(url.host() == "showprocs" && id != -1 && type != map::NONE)
+      emit showProcedures(airportQuery->getAirportById(id), false /* departureFilter */, false /* arrivalFilter */);
   }
 }
 
@@ -552,14 +563,17 @@ void InfoController::restoreInformation()
 
 void InfoController::updateAirport()
 {
-  updateAirportInternal(false /* new */, false /* bearing change*/, false /* scroll to top */,
-                        false /* force weather update */);
+  updateAirportInternal(false /* new */, false /* bearing change*/, false /* scroll to top */, false /* force weather update */);
 }
 
 void InfoController::updateAirportWeather()
 {
-  updateAirportInternal(false /* new */, false /* bearing change*/, false /* scroll to top */,
-                        true /* force weather update */);
+  updateAirportInternal(false /* new */, false /* bearing change*/, false /* scroll to top */, true /* force weather update */);
+}
+
+void InfoController::routeChanged(bool, bool)
+{
+  updateAirportInternal(false /* new */, true /* bearing change*/, false /* scroll to top */, false /* force weather update */);
 }
 
 void InfoController::updateProgress()

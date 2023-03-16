@@ -119,7 +119,7 @@ HtmlInfoBuilder::~HtmlInfoBuilder()
   delete morse;
 }
 
-void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html, int rating) const
+void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html, int rating, bool procedures) const
 {
   if(!print)
   {
@@ -145,10 +145,40 @@ void HtmlInfoBuilder::airportTitle(const MapAirport& airport, HtmlBuilder& html,
   if(info)
   {
     if(!print)
+    {
       // Add link to map
-      html.a(tr("Map"),
-             QString("lnm://show?id=%1&type=%2").arg(airport.id).arg(map::AIRPORT),
-             ahtml::BOLD | ahtml::LINK_NO_UL);
+      html.a(tr("Map"), QString("lnm://show?id=%1&type=%2").arg(airport.id).arg(map::AIRPORT), ahtml::BOLD | ahtml::LINK_NO_UL);
+
+      if(procedures)
+      {
+        bool departure = false, destination = false, arrivalProc = false, departureProc = false;
+        proc::procedureFlags(NavApp::getRouteConst(), &airport, &departure, &destination, nullptr, nullptr, &arrivalProc, &departureProc);
+
+        QString linkText, link;
+        if(departure && departureProc)
+        {
+          // Is departure airport and has procedures
+          linkText = tr("Departure Procedures");
+          link = "showprocsdepart";
+        }
+        else if(destination && arrivalProc)
+        {
+          // Is destination airport and has procedures
+          linkText = tr("Arrival Procedures");
+          link = "showprocsarrival";
+        }
+        else if(arrivalProc || departureProc)
+        {
+          // Neiter departure nor arrival and has any procedures
+          linkText = tr("Procedures");
+          link = "showprocs";
+        }
+
+        if(!link.isEmpty())
+          html.text(tr(", ")).a(linkText, QString("lnm://%1?id=%2&type=%3").
+                                arg(link).arg(airport.id).arg(map::AIRPORT), ahtml::BOLD | ahtml::LINK_NO_UL);
+      }
+    }
   }
   else
   {
@@ -175,7 +205,7 @@ void HtmlInfoBuilder::airportText(const MapAirport& airport, const map::WeatherC
   if(rec != nullptr)
     rating = rec->valueInt("rating");
 
-  airportTitle(airport, html, rating);
+  airportTitle(airport, html, rating, true /* procedures */);
 
   html.table();
   if(!info && route != nullptr && !route->isEmpty() && airport.routeIndex != -1)
@@ -567,7 +597,7 @@ void HtmlInfoBuilder::nearestText(const MapAirport& airport, HtmlBuilder& html) 
   if(info && airport.isValid())
   {
     if(!print)
-      airportTitle(airport, html, -1);
+      airportTitle(airport, html, -1, false /* procedures */);
 
     // Get nearest airports that have procedures ====================================
     MapResultIndex *nearestAirports = airportQueryNav->getNearestAirportsProc(airport,
@@ -712,7 +742,7 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) cons
   if(info && infoQuery != nullptr)
   {
     if(!print)
-      airportTitle(airport, html, -1);
+      airportTitle(airport, html, -1, false /* procedures */);
 
     const SqlRecordList *recVector = infoQuery->getComInformation(airport.id);
     if(recVector != nullptr)
@@ -858,7 +888,7 @@ void HtmlInfoBuilder::runwayText(const MapAirport& airport, HtmlBuilder& html, b
   if(info && infoQuery != nullptr)
   {
     if(!print)
-      airportTitle(airport, html, -1);
+      airportTitle(airport, html, -1, true /* procedures */);
     html.br().br().b(tr("Elevation: ")).text(Unit::altFeet(airport.getAltitude())).br();
 
     const SqlRecordList *recVector = infoQuery->getRunwayInformation(airport.id);
@@ -1442,7 +1472,7 @@ void HtmlInfoBuilder::procedureText(const MapAirport& airport, HtmlBuilder& html
     MapAirport navAirport = mapQuery->getAirportNav(airport);
 
     if(!print)
-      airportTitle(airport, html, -1);
+      airportTitle(airport, html, -1, true /* procedures */);
 
     const SqlRecordList *recAppVector = infoQuery->getApproachInformation(navAirport.id);
     if(recAppVector != nullptr)
@@ -1725,7 +1755,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
   if(info)
   {
     if(!print)
-      airportTitle(airport, html, -1);
+      airportTitle(airport, html, -1, false /* procedures */);
 
     MapQuery *mapQuery = mapWidget->getMapQuery();
 

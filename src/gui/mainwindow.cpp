@@ -1113,6 +1113,7 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::addAirportMsa, mapWidget, &MapWidget::addMsaMark);
 
   connect(routeController, &RouteController::routeChanged, NavApp::updateWindowTitle);
+  connect(routeController, &RouteController::routeChanged, infoController, &InfoController::routeChanged);
 
   // Add departure and dest runway actions separately to windows since their shortcuts overlap with context menu shortcuts
   QList<QAction *> actions({ui->actionShowDepartureCustom, ui->actionShowApproachCustom});
@@ -1131,8 +1132,7 @@ void MainWindow::connectAllSlots()
   connect(airportSearch, &SearchBaseTable::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(airportSearch, &SearchBaseTable::changeSearchMark, mapWidget, &MapWidget::changeSearchMark);
   connect(airportSearch, &SearchBaseTable::showInformation, infoController, &InfoController::showInformation);
-  connect(airportSearch, &SearchBaseTable::showProcedures,
-          searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
+  connect(airportSearch, &SearchBaseTable::showProcedures, searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
   connect(airportSearch, &SearchBaseTable::showCustomApproach, routeController, &RouteController::showCustomApproach);
   connect(airportSearch, &SearchBaseTable::showCustomDeparture, routeController, &RouteController::showCustomDeparture);
   connect(airportSearch, &SearchBaseTable::routeSetDeparture, routeController, &RouteController::routeSetDeparture);
@@ -1249,16 +1249,12 @@ void MainWindow::connectAllSlots()
   // Clear cache and update map widget
   connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
           NavApp::getAirspaceController(), &AirspaceController::onlineClientAndAtcUpdated);
-  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
-          mapWidget, &MapPaintWidget::onlineClientAndAtcUpdated);
-  connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
-          mapWidget, &MapPaintWidget::onlineNetworkChanged);
+  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated, mapWidget, &MapPaintWidget::onlineClientAndAtcUpdated);
+  connect(onlinedataController, &OnlinedataController::onlineNetworkChanged, mapWidget, &MapPaintWidget::onlineNetworkChanged);
 
   // Update info
-  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated,
-          infoController, &InfoController::onlineClientAndAtcUpdated);
-  connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
-          infoController, &InfoController::onlineNetworkChanged);
+  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated, infoController, &InfoController::onlineClientAndAtcUpdated);
+  connect(onlinedataController, &OnlinedataController::onlineNetworkChanged, infoController, &InfoController::onlineNetworkChanged);
 
   connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
           NavApp::getAirspaceController(), &AirspaceController::updateButtonsAndActions);
@@ -1281,6 +1277,7 @@ void MainWindow::connectAllSlots()
 
   connect(infoController, &InfoController::showPos, mapWidget, &MapPaintWidget::showPos);
   connect(infoController, &InfoController::showRect, mapWidget, &MapPaintWidget::showRect);
+  connect(infoController, &InfoController::showProcedures, searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
 
   // Use this event to show scenery library dialog on first start after main windows is shown
   connect(this, &MainWindow::windowShown, this, &MainWindow::mainWindowShown, Qt::QueuedConnection);

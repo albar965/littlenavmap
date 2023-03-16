@@ -355,7 +355,7 @@ private:
 
   void navaidTitle(atools::util::HtmlBuilder& html, const QString& text, bool noEntities = false) const;
 
-  void airportTitle(const map::MapAirport& airport, atools::util::HtmlBuilder& html, int rating) const;
+  void airportTitle(const map::MapAirport& airport, atools::util::HtmlBuilder& html, int rating, bool procedures) const;
 
   void airportMsaTextInternal(const map::MapAirportMsa& msa, atools::util::HtmlBuilder& html, bool user) const;
   void holdingTextInternal(const map::MapHolding& holding, atools::util::HtmlBuilder& html, bool user) const;

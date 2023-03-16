@@ -79,6 +79,9 @@ public:
   /* Updates all online related information and does not raise windows */
   void onlineNetworkChanged();
 
+  /* Route has changed */
+  void routeChanged(bool, bool = false);
+
   /* Save ids of the objects shown in the tabs to content can be restored on startup */
   void saveState();
   void restoreState();
@@ -122,6 +125,7 @@ signals:
   /* Emitted when the user clicks on the "Map" link in the text browsers */
   void showPos(const atools::geo::Pos& pos, float zoom, bool doubleClick);
   void showRect(const atools::geo::Rect& rect, bool doubleClick);
+  void showProcedures(const map::MapAirport& airport, bool departureFilter, bool arrivalFilter);
 
 private:
   /* Do not update aircraft progress more than every 0.5 seconds */
