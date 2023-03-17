@@ -626,7 +626,7 @@ bool RouteExport::routeExportTdsGtnXiMulti(const RouteExportFormat& format)
     QString routeFile = exportFileMulti(format);
     if(!routeFile.isEmpty())
     {
-      if(exportFlighplanAsGfp(routeFile, format.getFlags().testFlag(rexp::GARMIN_WP), false /* procedures */, false /* gfpCoordinates */))
+      if(exportFlighplanAsGfp(routeFile, format.getFlags().testFlag(rexp::GARMIN_WP), true /* procedures */, true /* gfpCoordinates */))
       {
         formatExportedCallback(format, routeFile);
         return true;

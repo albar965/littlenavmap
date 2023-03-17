@@ -59,6 +59,7 @@ enum RouteExportFormatType : quint16
   GFPUWP = 34, /* Garmin GFP Format with user defined waypoints */
   PMS50 = 39, /* Garmin PMS50 GTN750  */
   TDSGTNXI = 43, /* TDS GTNXi - GFP format */
+  TDSGTNXIWP = 46, /* TDS GTNXi - GFP format */
 
   /* Online ================ */
   VFP = 9, /* vPilot or xPilot VATSIM */
@@ -97,7 +98,7 @@ enum RouteExportFormatType : quint16
   GPX = 28, /* Garmin exchange format. Not a flight plan format.  */
   HTML = 29, /* Export as HTML page */
 
-  // Next = 46
+  // Next = 47
 };
 
 /* Flags for export format. Some flags are saved to the configuration,
