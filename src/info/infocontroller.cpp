@@ -63,8 +63,8 @@ InfoController::InfoController(MainWindow *parent)
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   QPushButton *pushButtonInfoHelp = new QPushButton(QIcon(":/littlenavmap/resources/icons/help.svg"), QString(), ui->tabWidgetInformation);
-  pushButtonInfoHelp->setToolTip(tr("Show help for the flight plan window"));
-  pushButtonInfoHelp->setStatusTip(tr("Show help for the flight plan window"));
+  pushButtonInfoHelp->setToolTip(tr("Show help for the information window"));
+  pushButtonInfoHelp->setStatusTip(tr("Show help for the information window"));
 
   tabHandlerInfo = new atools::gui::TabWidgetHandler(ui->tabWidgetInformation, {pushButtonInfoHelp},
                                                      QIcon(":/littlenavmap/resources/icons/tabbutton.svg"),
