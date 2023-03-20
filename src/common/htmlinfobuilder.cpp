@@ -4284,15 +4284,12 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
             int lastDepartureLegIdx = route.getLastIndexOfDepartureProcedure();
             int lastRouteLegIdx = route.getDestinationIndexBeforeProcedure();
 
-            if(routeLegIndex > lastDepartureLegIdx || routeLegIndex <= lastRouteLegIdx)
+            if((routeLegIndex > lastDepartureLegIdx || routeLegIndex <= lastRouteLegIdx) &&
+               (lastRouteLeg.isRoute() || routeLeg.isRoute()))
             {
-              bool procedureEntry = lastRouteLeg.isRoute() && routeLeg.isAnyProcedure();
-              bool procedureExit = lastRouteLeg.isAnyProcedure() && routeLeg.isRoute();
-              bool enroute = lastRouteLeg.isRoute() && routeLeg.isRoute();
-
-              if(lastRouteLeg.isCalibratedVor() && (enroute || procedureExit))
+              if(lastRouteLeg.isCalibratedVor())
               {
-                // Last leg is VOR and en-route - show course from calibrated VOR
+                // Last leg is FROM VOR and en-route - show course from calibrated VOR
                 float outboundCourseMag, dummy;
                 route.getOutboundCourse(routeLegIndex, outboundCourseMag, dummy);
                 html.id(pid::NEXT_COURSE_FROM_VOR).
@@ -4300,9 +4297,9 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
                      courseText(outboundCourseMag, map::INVALID_COURSE_VALUE), ahtml::NO_ENTITIES);
               }
 
-              if(routeLeg.isCalibratedVor() && (enroute || procedureEntry))
+              if(routeLeg.isCalibratedVor())
               {
-                // This leg is VOR and this or last leg is en-route - show course to calibrated VOR
+                // This leg is TO VOR and this or last leg is en-route - show course to calibrated VOR
                 float inboundCourseMag, dummy;
                 route.getInboundCourse(routeLegIndex, inboundCourseMag, dummy);
                 html.id(pid::NEXT_COURSE_TO_VOR).
