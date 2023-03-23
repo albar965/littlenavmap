@@ -890,6 +890,8 @@ void DatabaseManager::switchNavFromMainMenu()
       navDatabaseStatus = dbstat::NAVDATABASE_OFF;
       text = tr("Disabled %1.");
     }
+    simulators[currentFsType].navdatabaseStatus = navDatabaseStatus;
+
     qDebug() << Q_FUNC_INFO << "usingNavDatabase" << navDatabaseStatus;
 
     openAllDatabases();
@@ -923,6 +925,10 @@ void DatabaseManager::switchSimFromMainMenu()
 
     // Set new simulator
     currentFsType = action->data().value<atools::fs::FsPaths::SimulatorType>();
+
+    if(simulators.value(currentFsType).navdatabaseStatus != dbstat::NAVDATABASE_UNKNOWN)
+      navDatabaseStatus = simulators.value(currentFsType).navdatabaseStatus;
+
     openAllDatabases();
     loadLanguageIndex();
 
@@ -1633,6 +1639,9 @@ void DatabaseManager::restoreState()
   readInactive = s.valueBool(lnm::DATABASE_LOAD_INACTIVE, false);
   readAddOnXml = s.valueBool(lnm::DATABASE_LOAD_ADDONXML, true);
   navDatabaseStatus = static_cast<dbstat::NavdatabaseStatus>(s.valueInt(lnm::DATABASE_USE_NAV, dbstat::NAVDATABASE_MIXED));
+
+  if(simulators.value(currentFsType).navdatabaseStatus != dbstat::NAVDATABASE_UNKNOWN)
+    navDatabaseStatus = simulators.value(currentFsType).navdatabaseStatus;
 }
 
 /* Updates metadata, version and object counts in the scenery loading dialog */

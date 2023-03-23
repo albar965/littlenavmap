@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -122,7 +122,7 @@ const QLatin1String ACTIONS_SHOW_ZOOM_WARNING("Actions/ShowZoomsWarning");
 /* Other setting key names */
 const QLatin1String DATABASE_BASEPATH("Database/BasePath");
 const QLatin1String DATABASE_LOADINGSIMULATOR("Database/LoadingSimulator");
-const QLatin1String DATABASE_PATHS("Database/Paths");
+const QLatin1String DATABASE_PATHS("Database/Paths2");
 const QLatin1String DATABASE_USE_NAV("Database/UseNav");
 const QLatin1String DATABASE_SCENERYCONFIG("Database/SceneryConfig");
 const QLatin1String DATABASE_SIMULATOR("Database/Simulator");

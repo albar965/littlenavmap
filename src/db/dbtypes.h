@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,17 @@
 #include <QString>
 #include <QObject>
 
+namespace dbstat {
+enum NavdatabaseStatus : quint8
+{
+  NAVDATABASE_UNKNOWN,
+  NAVDATABASE_ALL, /* Only third party nav database */
+  NAVDATABASE_MIXED, /* Airports from simulator rest from nav database */
+  NAVDATABASE_OFF /* Only simulator database */
+};
+
+}
+
 /* Combines path and scenery information for a flight simulator type */
 struct FsPathType
 {
@@ -31,6 +42,7 @@ struct FsPathType
           sceneryCfg /* full path and name of scenery.cfg file */;
   bool hasDatabase = false, /* true if a database was found in the configuration Directory */
        isInstalled = false /* True if the simulator is installed on the system */;
+  dbstat::NavdatabaseStatus navdatabaseStatus = dbstat::NAVDATABASE_UNKNOWN;
 };
 
 QDebug operator<<(QDebug out, const FsPathType& record);

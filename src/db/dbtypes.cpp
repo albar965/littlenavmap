@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -117,16 +117,18 @@ QDebug operator<<(QDebug out, const FsPathType& record)
 
 QDataStream& operator<<(QDataStream& out, const FsPathType& obj)
 {
-  out << obj.basePath << obj.sceneryCfg;
+  out << obj.basePath << obj.sceneryCfg << static_cast<quint8>(obj.navdatabaseStatus);
   return out;
 }
 
 QDataStream& operator>>(QDataStream& in, FsPathType& obj)
 {
-  in >> obj.basePath >> obj.sceneryCfg;
+  quint8 navStatus;
+  in >> obj.basePath >> obj.sceneryCfg >> navStatus;
 
   obj.basePath = QDir::toNativeSeparators(obj.basePath);
   obj.sceneryCfg = QDir::toNativeSeparators(obj.sceneryCfg);
+  obj.navdatabaseStatus = static_cast<dbstat::NavdatabaseStatus>(navStatus);
 
   return in;
 }

@@ -58,16 +58,6 @@ class MainWindow;
 class TrackManager;
 class DatabaseLoader;
 
-namespace dbstat {
-enum NavdatabaseStatus
-{
-  NAVDATABASE_ALL, /* Only third party nav database */
-  NAVDATABASE_MIXED, /* Airports from simulator rest from nav database */
-  NAVDATABASE_OFF /* Only simulator database */
-};
-
-}
-
 /*
  * Takes care of all scenery database management. Switching between flight simulators, loading of scenery
  * databases, validation of databases and comparing versions.
