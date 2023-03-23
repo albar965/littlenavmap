@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -73,7 +73,7 @@ struct PaintContext
   bool lazyUpdate; /* postpone reloading until map is still */
   bool darkMap; /* CartoDark or similar. Not Night mode */
   map::MapTypes objectTypes; /* Object types that should be drawn */
-  map::MapObjectDisplayTypes objectDisplayTypes; /* Object types that should be drawn */
+  map::MapDisplayTypes objectDisplayTypes; /* Object types that should be drawn */
   map::MapAirspaceFilter airspaceFilterByLayer; /* Airspaces */
   atools::geo::Rect viewportRect; /* Rectangle of current viewport */
   QRect screenRect; /* Screen coordinate rect */

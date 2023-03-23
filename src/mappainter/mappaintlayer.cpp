@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -19,12 +19,11 @@
 
 #include "common/constants.h"
 #include "common/mapcolors.h"
-#include "connect/connectclient.h"
 #include "geo/calculations.h"
 #include "mapgui/maplayersettings.h"
 #include "mapgui/mapscale.h"
-#include "mapgui/mapwidget.h"
 #include "mapgui/mapthemehandler.h"
+#include "mapgui/mappaintwidget.h"
 #include "mappainter/mappainteraircraft.h"
 #include "mappainter/mappainterairport.h"
 #include "mappainter/mappainterairspace.h"
@@ -144,7 +143,7 @@ void MapPaintLayer::setShowMapObject(map::MapTypes type, bool show)
     objectTypes &= ~type;
 }
 
-void MapPaintLayer::setShowMapObjectDisplay(map::MapObjectDisplayTypes type, bool show)
+void MapPaintLayer::setShowMapObjectDisplay(map::MapDisplayTypes type, bool show)
 {
   if(show)
     objectDisplayTypes |= type;

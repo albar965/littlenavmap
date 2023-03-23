@@ -225,11 +225,11 @@ public:
   /* Define which airport or navaid types are shown on the map. Updates screen index on demand. */
   void setShowMapObject(map::MapTypes type, bool show);
   void setShowMapObjects(map::MapTypes type, map::MapTypes mask);
-  void setShowMapObjectDisplay(map::MapObjectDisplayTypes type, bool show);
+  void setShowMapObjectDisplay(map::MapDisplayTypes type, bool show);
   void setShowMapAirspaces(map::MapAirspaceFilter types);
 
-  map::MapTypes getShownMapFeatures() const;
-  map::MapObjectDisplayTypes getShownMapFeaturesDisplay() const;
+  map::MapTypes getShownMapTypes() const;
+  map::MapDisplayTypes getShownMapDisplayTypes() const;
   map::MapAirspaceFilter getShownAirspaces() const;
   map::MapAirspaceFilter getShownAirspaceTypesByLayer() const;
 
@@ -500,7 +500,7 @@ protected:
 
   virtual void resizeEvent(QResizeEvent *event) override;
 
-  void updateGeometryIndex(map::MapTypes oldTypes, map::MapObjectDisplayTypes oldDisplayTypes);
+  void updateGeometryIndex(map::MapTypes oldTypes, map::MapDisplayTypes oldDisplayTypes);
 
   /* If width and height of a bounding rect are smaller than this: Use show point */
   static constexpr float POS_IS_POINT_EPSILON_DEG = 0.0001f;

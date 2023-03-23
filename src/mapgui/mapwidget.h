@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -188,8 +188,7 @@ public:
   void addRangeMark(const atools::geo::Pos& pos, bool showDialog);
 
   /* Add radio navaid range ring. Falls back to normal range rings if range is 0. */
-  void addNavRangeMark(const atools::geo::Pos& pos, map::MapTypes type, const QString& displayIdent,
-                       const QString& frequency, float range);
+  void addNavRangeMark(const atools::geo::Pos& pos, map::MapTypes type, const QString& displayIdent, const QString& frequency, float range);
 
   /* Remove range rings on index, print message and update map */
   void removeRangeMark(int id);
@@ -377,8 +376,7 @@ private:
   void updateRoute(QPoint newPoint, int leg, int point, bool fromClickAdd, bool fromClickAppend);
 
   /* Show menu to allow selection of a map feature below the cursor */
-  bool showFeatureSelectionMenu(int& id, map::MapTypes& type, const map::MapResult& result,
-                                const QString& menuText);
+  bool showFeatureSelectionMenu(int& id, map::MapTypes& type, const map::MapResult& result, const QString& menuText);
 
   /* MapPaintWidget overrides for UI updates mostly ============================================================ */
   virtual void optionsChanged() override;

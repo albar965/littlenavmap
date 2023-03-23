@@ -1300,7 +1300,7 @@ void InfoController::updateAiAircraftText()
           int numAi = lastSimData.getAiAircraftConst().size();
           QString text;
 
-          if(!(NavApp::getShownMapFeatures() & map::AIRCRAFT_AI))
+          if(!(NavApp::getShownMapTypes() & map::AIRCRAFT_AI))
             text = tr("<b>AI and multiplayer aircraft are not shown on map.</b><br/>");
 
           text += tr("No AI or multiplayer aircraft selected.<br/>"

@@ -336,7 +336,7 @@ void MapPaintWidget::setShowMapSunShading(bool show)
 
 void MapPaintWidget::weatherUpdated()
 {
-  if(paintLayer->getShownMapObjectDisplayTypes().testFlag(map::AIRPORT_WEATHER))
+  if(paintLayer->getShownMapDisplayTypes().testFlag(map::AIRPORT_WEATHER))
     update();
 
   updateMapVisibleUi();
@@ -344,8 +344,8 @@ void MapPaintWidget::weatherUpdated()
 
 void MapPaintWidget::windDisplayUpdated()
 {
-  if(paintLayer->getShownMapObjectDisplayTypes().testFlag(map::WIND_BARBS) ||
-     paintLayer->getShownMapObjectDisplayTypes().testFlag(map::WIND_BARBS_ROUTE))
+  if(paintLayer->getShownMapDisplayTypes().testFlag(map::WIND_BARBS) ||
+     paintLayer->getShownMapDisplayTypes().testFlag(map::WIND_BARBS_ROUTE))
     update();
 
   updateMapVisibleUi();
@@ -384,11 +384,11 @@ void MapPaintWidget::setShowMapPois(bool show)
   setShowTerrain(show);
 }
 
-void MapPaintWidget::updateGeometryIndex(map::MapTypes oldTypes, map::MapObjectDisplayTypes oldDisplayTypes)
+void MapPaintWidget::updateGeometryIndex(map::MapTypes oldTypes, map::MapDisplayTypes oldDisplayTypes)
 {
   // Update screen coordinate caches if display options have changed
-  map::MapTypes types = getShownMapFeatures();
-  map::MapObjectDisplayTypes displayTypes = getShownMapFeaturesDisplay();
+  map::MapTypes types = getShownMapTypes();
+  map::MapDisplayTypes displayTypes = getShownMapDisplayTypes();
 
   if(((types& map::AIRWAY_ALL) != (oldTypes & map::AIRWAY_ALL)) || types.testFlag(map::TRACK) || oldTypes.testFlag(map::TRACK))
     screenIndex->updateAirwayScreenGeometry(getCurrentViewBoundingBox());
@@ -448,7 +448,7 @@ void MapPaintWidget::setShowMapObject(map::MapTypes type, bool show)
   paintLayer->setShowMapObject(type, show);
 }
 
-void MapPaintWidget::setShowMapObjectDisplay(map::MapObjectDisplayTypes type, bool show)
+void MapPaintWidget::setShowMapObjectDisplay(map::MapDisplayTypes type, bool show)
 {
   paintLayer->setShowMapObjectDisplay(type, show);
 }
@@ -476,14 +476,14 @@ bool MapPaintWidget::checkPos(const atools::geo::Pos&)
   // No-op
 }
 
-map::MapTypes MapPaintWidget::getShownMapFeatures() const
+map::MapTypes MapPaintWidget::getShownMapTypes() const
 {
-  return paintLayer->getShownMapObjects();
+  return paintLayer->getShownMapTypes();
 }
 
-map::MapObjectDisplayTypes MapPaintWidget::getShownMapFeaturesDisplay() const
+map::MapDisplayTypes MapPaintWidget::getShownMapDisplayTypes() const
 {
-  return paintLayer->getShownMapObjectDisplayTypes();
+  return paintLayer->getShownMapDisplayTypes();
 }
 
 map::MapAirspaceFilter MapPaintWidget::getShownAirspaces() const

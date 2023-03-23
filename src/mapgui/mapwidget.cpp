@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -525,7 +525,7 @@ void MapWidget::updateTooltipResult()
                                         map::QUERY_MARK_MSA | map::QUERY_MARK_DISTANCE | map::QUERY_MARK_RANGE |
                                         map::QUERY_PREVIEW_PROC_POINTS | map::QUERY_PROC_RECOMMENDED;
 
-  if(getShownMapFeatures().testFlag(map::MISSED_APPROACH))
+  if(getShownMapTypes().testFlag(map::MISSED_APPROACH))
     queryTypes |= map::QUERY_PROC_MISSED_POINTS;
 
   // Load tooltip data into mapSearchResultTooltip
@@ -2378,9 +2378,9 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   {
     // Check if any AI aircraft are visible
     bool aiVisible = false;
-    if(paintLayer->getShownMapObjects() & map::AIRCRAFT_AI ||
-       paintLayer->getShownMapObjects() & map::AIRCRAFT_AI_SHIP ||
-       paintLayer->getShownMapObjects() & map::AIRCRAFT_ONLINE)
+    if(paintLayer->getShownMapTypes() & map::AIRCRAFT_AI ||
+       paintLayer->getShownMapTypes() & map::AIRCRAFT_AI_SHIP ||
+       paintLayer->getShownMapTypes() & map::AIRCRAFT_ONLINE)
     {
       for(const atools::fs::sc::SimConnectAircraft& ai : simulatorData.getAiAircraftConst())
       {
@@ -3179,8 +3179,8 @@ void MapWidget::updateMapObjectsShown()
   setShowMapPois(ui->actionMapShowCities->isChecked());
   setShowGrid(ui->actionMapShowGrid->isChecked());
 
-  map::MapTypes oldTypes = getShownMapFeatures();
-  map::MapObjectDisplayTypes oldDisplayTypes = getShownMapFeaturesDisplay();
+  map::MapTypes oldTypes = getShownMapTypes();
+  map::MapDisplayTypes oldDisplayTypes = getShownMapDisplayTypes();
 
   setShowMapObject(map::AIRWAYV, ui->actionMapShowVictorAirways->isChecked());
   setShowMapObject(map::AIRWAYJ, ui->actionMapShowJetAirways->isChecked());
@@ -3233,7 +3233,7 @@ void MapWidget::updateMapObjectsShown()
 
   mapVisible->updateVisibleObjectsStatusBar();
 
-  emit shownMapFeaturesChanged(paintLayer->getShownMapObjects());
+  emit shownMapFeaturesChanged(paintLayer->getShownMapTypes());
 
   // Update widget
   update();

@@ -65,8 +65,8 @@ void MapVisible::updateVisibleObjectsStatusBar()
 
     if(layer != nullptr && !paintLayer->noRender())
     {
-      map::MapTypes shown = paintLayer->getShownMapObjects();
-      map::MapObjectDisplayTypes shownDispTypes = paintLayer->getShownMapObjectDisplayTypes();
+      map::MapTypes shown = paintLayer->getShownMapTypes();
+      map::MapDisplayTypes shownDispTypes = paintLayer->getShownMapDisplayTypes();
 
       QStringList airportShortLabel;
       atools::util::HtmlBuilder tooltip(false);

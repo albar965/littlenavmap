@@ -918,7 +918,7 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   setFont(optionData.getMapFont());
 
   optsp::DisplayOptionsProfile displayOptions = profileOptions->getDisplayOptions();
-  map::MapObjectDisplayTypes mapFeaturesDisplay = NavApp::getMapWidgetGui()->getShownMapFeaturesDisplay();
+  map::MapDisplayTypes mapFeaturesDisplay = NavApp::getMapWidgetGui()->getShownMapDisplayTypes();
 
   // Fill background sky blue ====================================================
   painter.setRenderHint(QPainter::Antialiasing);
@@ -2514,7 +2514,7 @@ void ProfileWidget::updateLabel()
         fixedLabelText = tr("<b>Alternate: %1.</b>&nbsp;&nbsp;").arg(Unit::distNm(nearestLegDistance));
       else
       {
-        if(NavApp::getMapWidgetGui()->getShownMapFeaturesDisplay().testFlag(map::FLIGHTPLAN_TOC_TOD) &&
+        if(NavApp::getMapWidgetGui()->getShownMapDisplayTypes().testFlag(map::FLIGHTPLAN_TOC_TOD) &&
            curRoute.getTopOfDescentDistance() < map::INVALID_DISTANCE_VALUE)
         {
           // Fuel and time calculated or estimated

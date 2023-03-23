@@ -160,7 +160,7 @@ QDebug operator<<(QDebug out, const map::MapTypes& type);
 
 /* Type that is used only for flags to determine what should be drawn.
  * Rarely used in other contexts and not as types in map::MapBase. */
-enum MapObjectDisplayType
+enum MapDisplayType
 {
   DISPLAY_TYPE_NONE = 0,
   AIRPORT_WEATHER = 1 << 0, /* Airport weather icons */
@@ -179,7 +179,7 @@ enum MapObjectDisplayType
   FLIGHTPLAN = 1 << 9, /* Flight plan */
   FLIGHTPLAN_TOC_TOD = 1 << 10, /* Top of climb and top of descent */
 
-  GLS = 1 << 13, /* GLS approaches or GBAS paths - only display flag. Object is stored with type ILS. */
+  GLS = 1 << 13, /* RNV approach, GLS approache or GBAS path - only display flag. Object is stored with type ILS. */
   AIRCRAFT_TRACK = 1 << 17, /* Simulator aircraft track. Not an object type. */
 
   AIRCRAFT_ENDURANCE = 1 << 18, /* Range ring for current aircraft endurance. */
@@ -190,10 +190,10 @@ enum MapObjectDisplayType
   LOGBOOK_ALL = LOGBOOK_DIRECT | LOGBOOK_ROUTE | LOGBOOK_TRACK
 };
 
-Q_DECLARE_FLAGS(MapObjectDisplayTypes, MapObjectDisplayType);
-Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapObjectDisplayTypes);
+Q_DECLARE_FLAGS(MapDisplayTypes, MapDisplayType);
+Q_DECLARE_OPERATORS_FOR_FLAGS(map::MapDisplayTypes);
 
-QDebug operator<<(QDebug out, const map::MapObjectDisplayTypes& type);
+QDebug operator<<(QDebug out, const map::MapDisplayTypes& type);
 
 /* Query type for all getNearest and other functions. Covers all what is not included in MapObjectTypes */
 enum MapObjectQueryType

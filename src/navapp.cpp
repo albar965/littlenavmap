@@ -1226,9 +1226,14 @@ bool NavApp::isAircraftTrackEmpty()
   return getAircraftTrack().isEmpty();
 }
 
-map::MapTypes NavApp::getShownMapFeatures()
+map::MapTypes NavApp::getShownMapTypes()
 {
-  return mainWindow->getMapWidget()->getShownMapFeatures();
+  return mainWindow->getMapWidget()->getShownMapTypes();
+}
+
+map::MapDisplayTypes NavApp::getShownMapDisplayTypes()
+{
+  return mainWindow->getMapWidget()->getShownMapDisplayTypes();
 }
 
 map::MapAirspaceFilter NavApp::getShownMapAirspaces()

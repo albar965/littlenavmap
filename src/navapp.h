@@ -196,7 +196,8 @@ public:
 
   static const QVector<atools::fs::sc::SimConnectAircraft>& getAiAircraft();
 
-  static map::MapTypes getShownMapFeatures();
+  static map::MapTypes getShownMapTypes();
+  static map::MapDisplayTypes getShownMapDisplayTypes();
   static map::MapAirspaceFilter getShownMapAirspaces();
 
   static AirportQuery *getAirportQuerySim();
