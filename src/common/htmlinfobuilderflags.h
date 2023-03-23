@@ -110,6 +110,7 @@ enum ProgressConfId
   ENV_SEA_LEVEL_PRESS,
   ENV_CONDITIONS,
   ENV_VISIBILITY,
+  ENV_DENSITY_ALTITUDE,
 
   // "Position" =================================
   POS_COORDINATES = 200,

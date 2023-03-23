@@ -4711,9 +4711,14 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
       isaDeviation = 0.f;
     html.id(pid::ENV_ISA_DEV).row2(tr("ISA Deviation:"), locale.toString(isaDeviation, 'f', 0) % tr(" °C"));
 
-    float slp = userAircraft->getSeaLevelPressureMbar();
-    html.id(pid::ENV_SEA_LEVEL_PRESS).row2(tr("Sea Level Pressure:"), locale.toString(slp, 'f', 0) % tr(" hPa, ") %
-                                           locale.toString(ageo::mbarToInHg(slp), 'f', 2) % tr(" inHg"));
+    float seaLevelPressureMbar = userAircraft->getSeaLevelPressureMbar();
+    html.id(pid::ENV_SEA_LEVEL_PRESS).row2(tr("Sea Level Pressure:"), locale.toString(seaLevelPressureMbar, 'f', 0) % tr(" hPa, ") %
+                                           locale.toString(ageo::mbarToInHg(seaLevelPressureMbar), 'f', 2) % tr(" inHg"));
+
+    // Not above 5000 ft AGL - use odd value to avoid on/off at 5000 ft
+    if(userAircraft->getAltitudeAboveGroundFt() < 5250.f)
+      html.id(pid::ENV_DENSITY_ALTITUDE).
+      row2(tr("Density Altitude:"), Unit::altFeet(ageo::densityAltitudeFt(sat, aircraft.getActualAltitudeFt(), seaLevelPressureMbar)));
 
     QStringList precip;
     // if(data.getFlags() & atools::fs::sc::IN_CLOUD) // too unreliable

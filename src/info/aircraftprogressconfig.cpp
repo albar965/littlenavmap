@@ -41,7 +41,7 @@ const static QVector<pid::ProgressConfId> ALLIDS({
   pid::ALT_AUTOPILOT_ALT, pid::SPEED_INDICATED, pid::SPEED_INDICATED_OTHER, pid::SPEED_GROUND, pid::SPEED_GROUND_OTHER, pid::SPEED_TRUE,
   pid::SPEED_MACH, pid::SPEED_VERTICAL, pid::SPEED_VERTICAL_OTHER, pid::DESCENT_DEVIATION, pid::DESCENT_ANGLE_SPEED,
   pid::DESCENT_VERT_ANGLE_NEXT, pid::ENV_WIND_DIR_SPEED, pid::ENV_TAT, pid::ENV_SAT, pid::ENV_ISA_DEV, pid::ENV_SEA_LEVEL_PRESS,
-  pid::ENV_CONDITIONS, pid::ENV_VISIBILITY, pid::POS_COORDINATES});
+  pid::ENV_DENSITY_ALTITUDE, pid::ENV_CONDITIONS, pid::ENV_VISIBILITY, pid::POS_COORDINATES});
 
 // Default ids which are enabled without settings
 const static QVector<pid::ProgressConfId> DEFAULTIDS({
@@ -198,17 +198,19 @@ void AircraftProgressConfig::progressConfiguration()
 
   // Environment ==========================================================================================================
   QTreeWidgetItem *envItem = treeDialog.addTopItem1(tr("Environment"));
-  treeDialog.addItem2(envItem, pid::ENV_WIND_DIR_SPEED,  tr("Wind Direction and Speed"), tr("Wind direction and speed at aircraft.\n"
+  treeDialog.addItem2(envItem, pid::ENV_WIND_DIR_SPEED,   tr("Wind Direction and Speed"), tr("Wind direction and speed at aircraft.\n"
                                                                                             "Second line shows headwind indicated by ▼ and tailwind by ▲\n"
                                                                                             "as well as crosswind (► or ◄)."));
-  treeDialog.addItem2(envItem, pid::ENV_TAT,             tr("Total Air Temperature"), tr("Total air temperature (TAT).\n"
+  treeDialog.addItem2(envItem, pid::ENV_TAT,              tr("Total Air Temperature"), tr("Total air temperature (TAT).\n"
                                                                                          "Also indicated air temperature (IAT) or ram air temperature."));
-  treeDialog.addItem2(envItem, pid::ENV_SAT,             tr("Static Air Temperature"), tr("Static air temperature (SAT).\n"
+  treeDialog.addItem2(envItem, pid::ENV_SAT,              tr("Static Air Temperature"), tr("Static air temperature (SAT).\n"
                                                                                           "Also outside air temperature (OAT) or true air temperature."));
-  treeDialog.addItem2(envItem, pid::ENV_ISA_DEV,         tr("ISA Deviation"), tr("Deviation from standard temperature model."));
-  treeDialog.addItem2(envItem, pid::ENV_SEA_LEVEL_PRESS, tr("Sea Level Pressure"), tr("Barometric pressure at sea level."));
-  treeDialog.addItem2(envItem, pid::ENV_CONDITIONS,      tr("Conditions"), tr("Rain, snow or other weather conditions."));
-  treeDialog.addItem2(envItem, pid::ENV_VISIBILITY,      tr("Visibility"), tr("Horizontal visibility at aircraft."));
+  treeDialog.addItem2(envItem, pid::ENV_ISA_DEV,          tr("ISA Deviation"), tr("Deviation from standard temperature model."));
+  treeDialog.addItem2(envItem, pid::ENV_SEA_LEVEL_PRESS,  tr("Sea Level Pressure"), tr("Barometric pressure at sea level."));
+  treeDialog.addItem2(envItem, pid::ENV_DENSITY_ALTITUDE, tr("Density Altitude"), tr("Air density depending on pressure and temperature.\n"
+                                                                                     "Not shown when more than 5000 ft above ground."));
+  treeDialog.addItem2(envItem, pid::ENV_CONDITIONS,       tr("Conditions"), tr("Rain, snow or other weather conditions."));
+  treeDialog.addItem2(envItem, pid::ENV_VISIBILITY,       tr("Visibility"), tr("Horizontal visibility at aircraft."));
 
   // Coordinates ==========================================================================================================
   treeDialog.addItem2(rootItem, pid::POS_COORDINATES, tr("Coordinates"), tr("Aircraft coordinates."));
