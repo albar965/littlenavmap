@@ -1571,8 +1571,8 @@ void MainWindow::connectAllSlots()
   connect(mapWidget, &MapWidget::routeAdd, routeController, &RouteController::routeAdd);
   connect(mapWidget, &MapWidget::routeReplace, routeController, &RouteController::routeReplace);
 
-  // Messages about database query result status
-  connect(mapWidget, &MapPaintWidget::resultTruncated, this, &MainWindow::resultTruncated);
+  // Messages about database query result status - use queued to avoid blocking paint
+  connect(mapWidget, &MapPaintWidget::resultTruncated, this, &MainWindow::resultTruncated, Qt::QueuedConnection);
 
   connect(databaseManager, &DatabaseManager::preDatabaseLoad, this, &MainWindow::preDatabaseLoad);
   connect(databaseManager, &DatabaseManager::postDatabaseLoad, this, &MainWindow::postDatabaseLoad);

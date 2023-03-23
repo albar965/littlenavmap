@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -1272,69 +1272,77 @@ void MapPaintWidget::paintEvent(QPaintEvent *paintEvent)
     qDebug() << Q_FUNC_INFO << "currentViewBoundingBox" << currentViewBoundingBox.toString(GeoDataCoordinates::Degree);
   }
 
-  if(!active)
+  if(!painting)
   {
-    // No map yet - clear area
-    QPainter painter(this);
-    painter.fillRect(paintEvent->rect(), QGuiApplication::palette().color(QPalette::Window));
-    return;
-  }
-
-  bool changed = false;
-  const GeoDataLatLonBox visibleLatLonBox = getCurrentViewBoundingBox();
+    painting = true;
+    if(!active)
+    {
+      // No map yet - clear area
+      QPainter painter(this);
+      painter.fillRect(paintEvent->rect(), QGuiApplication::palette().color(QPalette::Window));
+    }
+    else
+    {
+      bool changed = false;
+      const GeoDataLatLonBox visibleLatLonBox = getCurrentViewBoundingBox();
 
 #ifdef DEBUG_INFORMATION_PAINT
-  qDebug() << Q_FUNC_INFO << "distance"
-           << atools::geo::kmToNm(distance()) << "NM" << distance() << "KM zoom" << zoom()
-           << "step" << zoomStep();
+      qDebug() << Q_FUNC_INFO << "distance"
+               << atools::geo::kmToNm(distance()) << "NM" << distance() << "KM zoom" << zoom()
+               << "step" << zoomStep();
 #endif
 
-  if(viewContext() == Marble::Still && (zoom() != currentZoom || visibleLatLonBox != currentViewBoundingBox))
-  {
-    // This paint event has changed zoom or the visible bounding box
-    currentZoom = zoom();
-    currentViewBoundingBox = visibleLatLonBox;
+      if(viewContext() == Marble::Still && (zoom() != currentZoom || visibleLatLonBox != currentViewBoundingBox))
+      {
+        // This paint event has changed zoom or the visible bounding box
+        currentZoom = zoom();
+        currentViewBoundingBox = visibleLatLonBox;
 
-    // qDebug() << "paintEvent map view has changed zoom" << currentZoom
-    // << "distance" << distance() << " (" << meterToNm(distance() * 1000.) << " km)";
+        // qDebug() << "paintEvent map view has changed zoom" << currentZoom
+        // << "distance" << distance() << " (" << meterToNm(distance() * 1000.) << " km)";
 
-    handleHistory();
+        handleHistory();
 
-    changed = true;
-  }
+        changed = true;
+      }
 
-  if(screenIndexUpdateReqired)
-  {
-    screenIndexUpdateReqired = false;
-    changed = true;
-  }
+      if(screenIndexUpdateReqired)
+      {
+        screenIndexUpdateReqired = false;
+        changed = true;
+      }
 
-  // Erase map window to avoid black rectangle but do a dummy draw call to have everything initialized
-  MarbleWidget::paintEvent(paintEvent);
-  if(!NavApp::isMainWindowVisible())
-  {
-    QPainter painter(this);
-    painter.fillRect(paintEvent->rect(), QGuiApplication::palette().color(QPalette::Window));
-  }
+      // Erase map window to avoid black rectangle but do a dummy draw call to have everything initialized
+      MarbleWidget::paintEvent(paintEvent);
 
-  if(changed)
-  {
-    // Major change - update index and visible objects
-    updateMapVisibleUi();
-    screenIndex->updateAllGeometry(currentViewBoundingBox);
-  }
+      if(!NavApp::isMainWindowVisible())
+        QPainter(this).fillRect(paintEvent->rect(), QGuiApplication::palette().color(QPalette::Window));
 
-  if(paintLayer->isObjectOverflow() || paintLayer->isQueryOverflow())
-  {
+      if(changed)
+      {
+        // Major change - update index and visible objects
+        updateMapVisibleUi();
+        screenIndex->updateAllGeometry(currentViewBoundingBox);
+      }
+
+      if(paintLayer->isObjectOverflow() || paintLayer->isQueryOverflow())
+      {
 #ifdef DEBUG_INFORMATION
-    qDebug() << Q_FUNC_INFO
-             << "isObjectOverflow" << paintLayer->isObjectOverflow()
-             << "getObjectCount" << paintLayer->getObjectCount()
-             << "isQueryOverflow" << paintLayer->isQueryOverflow();
+        qDebug() << Q_FUNC_INFO
+                 << "isObjectOverflow" << paintLayer->isObjectOverflow()
+                 << "getObjectCount" << paintLayer->getObjectCount()
+                 << "isQueryOverflow" << paintLayer->isQueryOverflow();
 #endif
 
-    emit resultTruncated();
-  }
+        // Passed by queued connection - execute later in event loop
+        emit resultTruncated();
+      }
+    } // if(!active) ... else ...
+
+    painting = false;
+  } // if(!painting)
+  else
+    qWarning() << Q_FUNC_INFO << "Recursive call to paint";
 }
 
 bool MapPaintWidget::loadKml(const QString& filename, bool center)

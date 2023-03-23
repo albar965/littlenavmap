@@ -19,6 +19,7 @@
 #define MAPACTIONSCONTROLLER_H
 
 #include "webapi/abstractlnmactionscontroller.h"
+#include <QMutex>
 #include <QPixmap>
 #include "mapgui/maplayersettings.h"
 
@@ -80,6 +81,8 @@ protected:
     MapPixmap getPixmapRect(int width, int height, atools::geo::Rect rect, int detailFactor = MapLayerSettings::MAP_DEFAULT_DETAIL_LEVEL, const QString& errorCase = tr("Invalid rectangle"));
 
     MapPaintWidget *mapPaintWidget = nullptr;
+    QMutex mapPaintWidgetMutex;
+
     QWidget *parentWidget;
     bool verbose = false;
 };
