@@ -1253,7 +1253,8 @@ void MainWindow::connectAllSlots()
   connect(onlinedataController, &OnlinedataController::onlineNetworkChanged, mapWidget, &MapPaintWidget::onlineNetworkChanged);
 
   // Update info
-  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated, infoController, &InfoController::onlineClientAndAtcUpdated);
+  connect(onlinedataController, &OnlinedataController::onlineClientAndAtcUpdated, infoController,
+          &InfoController::onlineClientAndAtcUpdated);
   connect(onlinedataController, &OnlinedataController::onlineNetworkChanged, infoController, &InfoController::onlineNetworkChanged);
 
   connect(onlinedataController, &OnlinedataController::onlineNetworkChanged,
@@ -1413,8 +1414,6 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowVor, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowNdb, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowWp, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
-  connect(ui->actionMapShowIls, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
-  connect(ui->actionMapShowGls, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowHolding, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowAirportMsa, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowVictorAirways, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
@@ -1422,6 +1421,13 @@ void MainWindow::connectAllSlots()
   connect(ui->actionMapShowTracks, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowRoute, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
   connect(ui->actionMapShowTocTod, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+
+  connect(ui->actionMapShowIls, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  connect(ui->actionMapShowGls, &QAction::toggled, this, &MainWindow::updateMapObjectsShown);
+  /* *INDENT-OFF* */
+  connect(ui->actionMapShowIls,  &QAction::toggled, profileWidget, &ProfileWidget::showIlsChanged);
+  connect(ui->actionMapShowGls,  &QAction::toggled, profileWidget, &ProfileWidget::showIlsChanged);
+  /* *INDENT-ON* */
 
   // MARK_RANGE  MARK_DISTANCE MARK_HOLDING  MARK_PATTERNS MARK_MSA
   connect(ui->actionMapHideAllRangeRings, &QAction::triggered, mapMarkHandler, &MapMarkHandler::clearRangeRings);

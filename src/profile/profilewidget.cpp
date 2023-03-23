@@ -404,6 +404,13 @@ float ProfileWidget::getGroundBufferForLegFt(int legIndex)
     return map::INVALID_ALTITUDE_VALUE;
 }
 
+void ProfileWidget::showIlsChanged()
+{
+  NavApp::getRoute().updateApproachIls();
+  legList->route.updateApproachIls();
+  update();
+}
+
 float ProfileWidget::calcGroundBufferFt(float maxElevationFt)
 {
   if(maxElevationFt < map::INVALID_ALTITUDE_VALUE)
@@ -641,6 +648,9 @@ void ProfileWidget::paintVerticalPath(QPainter& painter, const Route& route)
 
 void ProfileWidget::paintIls(QPainter& painter, const Route& route)
 {
+  if(!NavApp::getMainUi()->actionProfileShowIls->isChecked())
+    return;
+
   const QVector<map::MapIls>& ilsVector = route.getDestRunwayIlsProfile();
   if(!ilsVector.isEmpty())
   {
@@ -726,6 +736,9 @@ void ProfileWidget::paintIls(QPainter& painter, const Route& route)
 
 void ProfileWidget::paintVasi(QPainter& painter, const Route& route)
 {
+  if(!NavApp::getMainUi()->actionProfileShowVasi->isChecked())
+    return;
+
   const RouteAltitude& altitudeLegs = route.getAltitudeLegs();
   const map::MapRunwayEnd& runwayEnd = route.getDestRunwayEnd();
 
@@ -859,6 +872,9 @@ void ProfileWidget::paintEvent(QPaintEvent *)
 {
   // Show only ident in labels
   static const textflags::TextFlags TEXTFLAGS = textflags::IDENT | textflags::ROUTE_TEXT | textflags::ABS_POS;
+
+  if(!active)
+    return;
 
   // Saved route that was used to create the geometry
   const Route& route = legList->route;
@@ -1087,11 +1103,8 @@ void ProfileWidget::paintEvent(QPaintEvent *)
   // Draw ILS or VASI guidance ============================
   mapcolors::scaleFont(&painter, 0.95f);
 
-  if(NavApp::getMainUi()->actionProfileShowVasi->isChecked())
-    paintVasi(painter, route);
-
-  if(NavApp::getMainUi()->actionProfileShowIls->isChecked())
-    paintIls(painter, route);
+  paintVasi(painter, route);
+  paintIls(painter, route);
 
   // Get active route leg but ignore alternate legs
   const Route& curRoute = NavApp::getRouteConst();
@@ -1841,6 +1854,7 @@ void ProfileWidget::routeChanged(bool geometryChanged, bool newFlightPlan)
   if(databaseLoadStatus)
     return;
 
+  showIlsChanged();
   scrollArea->routeChanged(geometryChanged);
 
   if(newFlightPlan)
@@ -1873,6 +1887,7 @@ void ProfileWidget::updateTimeout()
   // Start the computation in background
   ElevationLegList legs;
   legs.route = NavApp::getRouteConst();
+  legs.route.updateApproachIls();
 
   // Start thread
   future = QtConcurrent::run(this, &ProfileWidget::fetchRouteElevationsThread, legs);
@@ -2649,6 +2664,7 @@ void ProfileWidget::mainWindowShown()
   updateScreenCoords();
   scrollArea->routeChanged(true);
   scrollArea->expandWidget();
+  active = true;
   update();
 }
 

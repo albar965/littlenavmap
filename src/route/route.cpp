@@ -836,7 +836,7 @@ void Route::updateApproachIls()
   // Get recommended for flight plan table
   destRunwayEnd = map::MapRunwayEnd();
   destRunwayIlsFlightPlanTable.clear();
-  updateApproachRunwayEndAndIls(destRunwayIlsFlightPlanTable, &destRunwayEnd, true /* recommended */, false /* map */, false);
+  updateApproachRunwayEndAndIls(destRunwayIlsFlightPlanTable, &destRunwayEnd, true /* recommended */, false /* map */, false /* profile */);
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "destRunwayEnd" << destRunwayEnd;
@@ -845,7 +845,7 @@ void Route::updateApproachIls()
 
   // Get ILS and runway from route for map
   destRunwayIlsMap.clear();
-  updateApproachRunwayEndAndIls(destRunwayIlsMap, &destRunwayEnd, false /* recommended */, true /* map */, false);
+  updateApproachRunwayEndAndIls(destRunwayIlsMap, &destRunwayEnd, false /* recommended */, true /* map */, false /* profile */);
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "destRunwayIlsMap" << destRunwayIlsMap;
@@ -853,7 +853,7 @@ void Route::updateApproachIls()
 
   // ILS for profile - has to match runway heading
   destRunwayIlsProfile.clear();
-  updateApproachRunwayEndAndIls(destRunwayIlsProfile, &destRunwayEnd, false /* recommended */, false /* map */, true);
+  updateApproachRunwayEndAndIls(destRunwayIlsProfile, &destRunwayEnd, false /* recommended */, false /* map */, true /* profile */);
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << "destRunwayIlsProfile" << destRunwayIlsProfile;
@@ -918,6 +918,10 @@ void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::
       } // for(int i = approachLegs.approachLegs.size() - 1; i >= 0; i--)
 
       // Remove all approach aids which do not fit into the approach by type ============================================
+
+      // Make a copy before clearing out not applicable navaids
+      QHash<int, map::MapIls> ilsMapComplete(ilsMapAll);
+
       auto it = ilsMapAll.begin();
       while(it != ilsMapAll.end())
       {
@@ -958,13 +962,39 @@ void Route::updateApproachRunwayEndAndIls(QVector<map::MapIls>& ilsVector, map::
           ilsMapAll.clear();
           ilsMapAll.insert(ils.id, ils); // Keep only the matching one
         }
-
-        ilsVector = QVector<map::MapIls>::fromList(ilsMapAll.values());
       }
       else
-        ilsVector = QVector<map::MapIls>::fromList(ilsMapRecommended.values());
-    } // if(approachLegs.runwayEnd.isValid())
-  } // if(!approachLegs.runwayEnd.name.isEmpty() && approachLegs.runwayEnd.name != "RW")
+        // For ILS approaches use the recommended
+        ilsMapAll = ilsMapRecommended;
+
+      // Force display of applicable navaids (by runway) if enabled for map display
+      if(profile)
+      {
+        if(NavApp::getShownMapTypes().testFlag(map::ILS))
+        {
+          // Add all ILS again
+          for(auto ilsIter = ilsMapComplete.begin(); ilsIter != ilsMapComplete.end(); ++ilsIter)
+          {
+            if(!ilsIter->isAnyGlsRnp())
+              ilsMapAll.insert(ilsIter->id, *ilsIter);
+          }
+        }
+
+        if(NavApp::getShownMapDisplayTypes().testFlag(map::GLS))
+        {
+          // Add GLS/RNV again
+          for(auto glsRnvIter = ilsMapComplete.begin(); glsRnvIter != ilsMapComplete.end(); ++glsRnvIter)
+          {
+            if(glsRnvIter->isAnyGlsRnp())
+              ilsMapAll.insert(glsRnvIter->id, *glsRnvIter);
+          }
+        }
+      }
+
+      ilsVector = QVector<map::MapIls>::fromList(ilsMapAll.values());
+
+    } // if(approachLegs.runwayEnd.isFullyValid())
+  } // if(approachLegs.runwayEnd.isFullyValid())
 
   // No runway for approach found - circling - collect recommended independent of runway ============================================
   if(ilsVector.isEmpty())

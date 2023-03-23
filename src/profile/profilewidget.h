@@ -179,6 +179,8 @@ public:
 
   float getGroundBufferForLegFt(int legIndex);
 
+  void showIlsChanged();
+
 signals:
   /* Emitted when the mouse cursor hovers over the map profile.
    * @param pos Position on the map display.
@@ -305,6 +307,7 @@ private:
   bool terminateThreadSignal = false;
 
   bool databaseLoadStatus = false;
+  bool active = false;
 
   QRubberBand *rubberBand = nullptr;
 
