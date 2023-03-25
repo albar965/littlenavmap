@@ -443,6 +443,7 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
 
       if(context.mapLayerRoute->isApproach())
       {
+        // Procedure legs from "show all" function ======================================
         for(const proc::MapProcedureLegs& procedure : mapWidget->getProcedureHighlights())
         {
           for(int i = 0; i < procedure.size(); i++)
@@ -457,18 +458,22 @@ bool MapPaintLayer::render(GeoPainter *painter, ViewportParams *viewport, const 
           }
         }
 
+        // Procedure legs from selected procedures ======================================
         const proc::MapProcedureLegs& procedure = mapWidget->getProcedureHighlight();
         for(int i = 0; i < procedure.size(); i++)
         {
-          const map::MapResult& navaids = procedure.at(i).navaids;
-          if(navaids.hasWaypoints())
-            context.routeProcIdMap.insert({navaids.waypoints.constFirst().id, map::WAYPOINT});
-          if(navaids.hasVor())
-            context.routeProcIdMap.insert({navaids.vors.constFirst().id, map::VOR});
-          if(navaids.hasNdb())
-            context.routeProcIdMap.insert({navaids.ndbs.constFirst().id, map::NDB});
+          if(!procedure.at(i).isMissed() || context.objectTypes & map::MISSED_APPROACH)
+          {
+            const map::MapResult& navaids = procedure.at(i).navaids;
+            if(navaids.hasWaypoints())
+              context.routeProcIdMap.insert({navaids.waypoints.constFirst().id, map::WAYPOINT});
+            if(navaids.hasVor())
+              context.routeProcIdMap.insert({navaids.vors.constFirst().id, map::VOR});
+            if(navaids.hasNdb())
+              context.routeProcIdMap.insert({navaids.ndbs.constFirst().id, map::NDB});
+          }
         }
-      }
+      } // if(context.mapLayerRoute->isApproach())
 
       // ====================================
       // Get airports from logbook highlight to avoid duplicate drawing

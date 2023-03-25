@@ -304,9 +304,9 @@ void MapPainterRoute::paintRecommended(int passedRouteLeg, QSet<map::MapObjectRe
             }
           }
         }
-      }
-    }
-  }
+      } // if(!routeLeg.getProcedureLeg().isMissed() || context->objectTypes.testFlag(map::MISSED_APPROACH))
+    } // if(type == map::PROCEDURE)
+  } // for(int i = passedRouteLeg; i < route.size(); i++)
 }
 
 void MapPainterRoute::drawRouteInternal(QStringList routeTexts, QVector<Line> lines, int passedRouteLeg)
