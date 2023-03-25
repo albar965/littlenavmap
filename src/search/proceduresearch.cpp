@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -17,31 +17,28 @@
 
 #include "search/proceduresearch.h"
 
-#include "common/unit.h"
-#include "navapp.h"
-#include "route/route.h"
-#include "common/mapcolors.h"
-#include "query/infoquery.h"
-#include "query/procedurequery.h"
-#include "sql/sqlrecord.h"
-#include "ui_mainwindow.h"
-#include "gui/actiontextsaver.h"
-#include "gui/actionstatesaver.h"
 #include "common/constants.h"
+#include "common/mapcolors.h"
+#include "common/unit.h"
+#include "fs/util/fsutil.h"
+#include "gui/actionstatesaver.h"
+#include "gui/actiontextsaver.h"
+#include "gui/dialog.h"
+#include "gui/griddelegate.h"
+#include "gui/itemviewzoomhandler.h"
+#include "gui/widgetstate.h"
+#include "navapp.h"
+#include "query/airportquery.h"
+#include "query/infoquery.h"
+#include "query/mapquery.h"
+#include "query/procedurequery.h"
+#include "route/route.h"
+#include "route/route.h"
 #include "search/searchcontroller.h"
 #include "settings/settings.h"
-#include "gui/widgetstate.h"
-#include "query/mapquery.h"
-#include "query/airportquery.h"
-#include "common/htmlinfobuilder.h"
+#include "sql/sqlrecord.h"
+#include "ui_mainwindow.h"
 #include "util/htmlbuilder.h"
-#include "common/symbolpainter.h"
-#include "gui/itemviewzoomhandler.h"
-#include "route/route.h"
-#include "gui/griddelegate.h"
-#include "geo/calculations.h"
-#include "gui/dialog.h"
-#include "fs/util/fsutil.h"
 
 #include <QMenu>
 #include <QMouseEvent>
@@ -354,9 +351,8 @@ void ProcedureSearch::updateWidgets()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();
   ui->pushButtonProcedureShowAll->setDisabled(itemIndex.isEmpty());
-  ui->pushButtonProcedureSearchClearSelection->setDisabled(treeWidget->selectedItems().isEmpty() ||
-                                                           NavApp::getSearchController()->getCurrentSearchTabId() != tabIndex);
-
+  ui->pushButtonProcedureSearchClearSelection->setEnabled(!treeWidget->selectedItems().isEmpty() ||
+                                                          ui->pushButtonProcedureShowAll->isChecked());
 }
 
 void ProcedureSearch::updateHeaderLabel()
@@ -951,10 +947,13 @@ void ProcedureSearch::showAllToggled(bool checked)
     emit proceduresSelected(QVector<proc::MapProcedureRef>());
   else
     emit proceduresSelected(itemIndex);
+
+  updateWidgets();
 }
 
 void ProcedureSearch::clearSelectionClicked()
 {
+  NavApp::getMainUi()->pushButtonProcedureShowAll->setChecked(false);
   treeWidget->clearSelection();
 
   emit procedureSelected(proc::MapProcedureRef());
@@ -992,7 +991,7 @@ void ProcedureSearch::contextMenu(const QPoint& pos)
 
   QTreeWidgetItem *item = treeWidget->itemAt(pos);
 
-  ui->actionInfoApproachClear->setEnabled(treeWidget->selectionModel()->hasSelection());
+  ui->actionInfoApproachClear->setEnabled(hasSelection());
   ui->actionSearchResetSearch->setEnabled(treeWidget->topLevelItemCount() > 0);
   ui->actionInfoApproachShow->setDisabled(item == nullptr);
 
@@ -1589,11 +1588,13 @@ void ProcedureSearch::updateTableSelection(bool noFollow)
 void ProcedureSearch::clearSelection()
 {
   treeWidget->clearSelection();
+  NavApp::getMainUi()->pushButtonProcedureShowAll->setChecked(false);
+  updateWidgets();
 }
 
 bool ProcedureSearch::hasSelection() const
 {
-  return treeWidget->selectionModel()->hasSelection();
+  return treeWidget->selectionModel()->hasSelection() || NavApp::getMainUi()->pushButtonProcedureShowAll->isChecked();
 }
 
 /* Update highlights if dock is hidden or shown (does not change for dock tab stacks) */
