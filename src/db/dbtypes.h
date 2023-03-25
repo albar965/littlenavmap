@@ -42,7 +42,7 @@ struct FsPathType
           sceneryCfg /* full path and name of scenery.cfg file */;
   bool hasDatabase = false, /* true if a database was found in the configuration Directory */
        isInstalled = false /* True if the simulator is installed on the system */;
-  dbstat::NavdatabaseStatus navdatabaseStatus = dbstat::NAVDATABASE_UNKNOWN;
+  dbstat::NavdatabaseStatus navdatabaseStatus = dbstat::NAVDATABASE_MIXED;
 };
 
 QDebug operator<<(QDebug out, const FsPathType& record);
@@ -63,7 +63,7 @@ public:
   }
 
   /* Checks for fs installations and databases and populates the hash map */
-  void fillDefault();
+  void fillDefault(dbstat::NavdatabaseStatus navDatabaseStatus);
 
   /* Get the latest/newest simulator from all installed ones or databases found */
   atools::fs::FsPaths::SimulatorType getBest() const;
@@ -98,7 +98,7 @@ private:
 
   friend QDataStream& operator>>(QDataStream& in, SimulatorTypeMap& obj);
 
-  void fillOneDefault(atools::fs::FsPaths::SimulatorType type);
+  void fillOneDefault(atools::fs::FsPaths::SimulatorType type, dbstat::NavdatabaseStatus navDatabaseStatus);
 
 };
 

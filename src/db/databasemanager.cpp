@@ -82,8 +82,11 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     // Set to off if not database found
     navDatabaseStatus = dbstat::NAVDATABASE_OFF;
 
-  // Find simulators by default registry entries
-  simulators.fillDefault();
+  // Find simulators by default registry entries and pre-fill the navDatabaseStatus if the list is empty (i.e. new)
+  simulators.fillDefault(simulators.isEmpty() ? navDatabaseStatus : dbstat::NAVDATABASE_UNKNOWN);
+
+  // Take navdatabase status from current sim selection
+  navDatabaseStatus = simulators[currentFsType].navdatabaseStatus;
 
   // Find any stale databases that do not belong to a simulator and update installed and has database flags
   updateSimulatorFlags();
@@ -926,8 +929,7 @@ void DatabaseManager::switchSimFromMainMenu()
     // Set new simulator
     currentFsType = action->data().value<atools::fs::FsPaths::SimulatorType>();
 
-    if(simulators.value(currentFsType).navdatabaseStatus != dbstat::NAVDATABASE_UNKNOWN)
-      navDatabaseStatus = simulators.value(currentFsType).navdatabaseStatus;
+    navDatabaseStatus = simulators.value(currentFsType).navdatabaseStatus;
 
     openAllDatabases();
     loadLanguageIndex();
@@ -1621,27 +1623,24 @@ bool DatabaseManager::isDatabaseCompatible(atools::sql::SqlDatabase *db)
 
 void DatabaseManager::saveState()
 {
-  Settings& s = Settings::instance();
-  s.setValueVar(lnm::DATABASE_PATHS, QVariant::fromValue(simulators));
-  s.setValue(lnm::DATABASE_SIMULATOR, atools::fs::FsPaths::typeToShortName(currentFsType));
-  s.setValue(lnm::DATABASE_LOADINGSIMULATOR, atools::fs::FsPaths::typeToShortName(selectedFsType));
-  s.setValue(lnm::DATABASE_LOAD_INACTIVE, readInactive);
-  s.setValue(lnm::DATABASE_LOAD_ADDONXML, readAddOnXml);
-  s.setValue(lnm::DATABASE_USE_NAV, static_cast<int>(navDatabaseStatus));
+  Settings& settings = Settings::instance();
+  settings.setValueVar(lnm::DATABASE_PATHS, QVariant::fromValue(simulators));
+  settings.setValue(lnm::DATABASE_SIMULATOR, atools::fs::FsPaths::typeToShortName(currentFsType));
+  settings.setValue(lnm::DATABASE_LOADINGSIMULATOR, atools::fs::FsPaths::typeToShortName(selectedFsType));
+  settings.setValue(lnm::DATABASE_LOAD_INACTIVE, readInactive);
+  settings.setValue(lnm::DATABASE_LOAD_ADDONXML, readAddOnXml);
+  settings.setValue(lnm::DATABASE_USE_NAV, static_cast<int>(navDatabaseStatus));
 }
 
 void DatabaseManager::restoreState()
 {
-  Settings& s = Settings::instance();
-  simulators = s.valueVar(lnm::DATABASE_PATHS).value<SimulatorTypeMap>();
-  currentFsType = atools::fs::FsPaths::stringToType(s.valueStr(lnm::DATABASE_SIMULATOR, QString()));
-  selectedFsType = atools::fs::FsPaths::stringToType(s.valueStr(lnm::DATABASE_LOADINGSIMULATOR));
-  readInactive = s.valueBool(lnm::DATABASE_LOAD_INACTIVE, false);
-  readAddOnXml = s.valueBool(lnm::DATABASE_LOAD_ADDONXML, true);
-  navDatabaseStatus = static_cast<dbstat::NavdatabaseStatus>(s.valueInt(lnm::DATABASE_USE_NAV, dbstat::NAVDATABASE_MIXED));
-
-  if(simulators.value(currentFsType).navdatabaseStatus != dbstat::NAVDATABASE_UNKNOWN)
-    navDatabaseStatus = simulators.value(currentFsType).navdatabaseStatus;
+  const Settings& settings = Settings::instance();
+  simulators = settings.valueVar(lnm::DATABASE_PATHS).value<SimulatorTypeMap>();
+  currentFsType = atools::fs::FsPaths::stringToType(settings.valueStr(lnm::DATABASE_SIMULATOR, QString()));
+  selectedFsType = atools::fs::FsPaths::stringToType(settings.valueStr(lnm::DATABASE_LOADINGSIMULATOR));
+  readInactive = settings.valueBool(lnm::DATABASE_LOAD_INACTIVE, false);
+  readAddOnXml = settings.valueBool(lnm::DATABASE_LOAD_ADDONXML, true);
+  navDatabaseStatus = static_cast<dbstat::NavdatabaseStatus>(settings.valueInt(lnm::DATABASE_USE_NAV, dbstat::NAVDATABASE_MIXED));
 }
 
 /* Updates metadata, version and object counts in the scenery loading dialog */

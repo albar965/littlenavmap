@@ -23,10 +23,10 @@
 
 using atools::fs::FsPaths;
 
-void SimulatorTypeMap::fillDefault()
+void SimulatorTypeMap::fillDefault(dbstat::NavdatabaseStatus navDatabaseStatus)
 {
   for(FsPaths::SimulatorType type : FsPaths::getAllSimulatorTypes())
-    fillOneDefault(type);
+    fillOneDefault(type, navDatabaseStatus);
 }
 
 atools::fs::FsPaths::SimulatorType SimulatorTypeMap::getBest() const
@@ -90,7 +90,7 @@ QList<FsPaths::SimulatorType> SimulatorTypeMap::getAllHavingDatabase() const
   return retval;
 }
 
-void SimulatorTypeMap::fillOneDefault(FsPaths::SimulatorType type)
+void SimulatorTypeMap::fillOneDefault(FsPaths::SimulatorType type, dbstat::NavdatabaseStatus navDatabaseStatus)
 {
   // Simulator is installed - create a new entry or update the present one
   FsPathType& path = (*this)[type];
@@ -98,6 +98,8 @@ void SimulatorTypeMap::fillOneDefault(FsPaths::SimulatorType type)
     path.basePath = FsPaths::getBasePath(type);
   if(path.sceneryCfg.isEmpty())
     path.sceneryCfg = FsPaths::getSceneryLibraryPath(type);
+  if(navDatabaseStatus != dbstat::NAVDATABASE_UNKNOWN)
+    path.navdatabaseStatus = navDatabaseStatus;
 
   // If already present or not - this one has a registry entry or an installation file for X-Plane
   path.isInstalled = FsPaths::hasSimulator(type);
