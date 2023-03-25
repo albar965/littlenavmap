@@ -317,7 +317,6 @@
     <addaction name="menuViewAirspaceSource"/>
     <addaction name="actionLoadAirspaces"/>
     <addaction name="separator"/>
-    <addaction name="actionValidateSceneryLibrarySettings"/>
     <addaction name="actionReloadScenery"/>
    </widget>
    <widget class="QMenu" name="menuUserdata">
@@ -6365,8 +6364,10 @@ relation to shown airport</string>
    <attribute name="toolBarBreak">
     <bool>false</bool>
    </attribute>
-   <addaction name="actionConnectSimulator"/>
    <addaction name="actionReloadScenery"/>
+   <addaction name="actionValidateSceneryLibrarySettings"/>
+   <addaction name="separator"/>
+   <addaction name="actionConnectSimulator"/>
    <addaction name="actionOptions"/>
   </widget>
   <widget class="QToolBar" name="toolBarView">
