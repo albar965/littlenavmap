@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2021 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -208,7 +208,7 @@ void AircraftProgressConfig::progressConfiguration()
   treeDialog.addItem2(envItem, pid::ENV_ISA_DEV,          tr("ISA Deviation"), tr("Deviation from standard temperature model."));
   treeDialog.addItem2(envItem, pid::ENV_SEA_LEVEL_PRESS,  tr("Sea Level Pressure"), tr("Barometric pressure at sea level."));
   treeDialog.addItem2(envItem, pid::ENV_DENSITY_ALTITUDE, tr("Density Altitude"), tr("Air density depending on pressure and temperature.\n"
-                                                                                     "Not shown when more than 5000 ft above ground."));
+                                                                                     "Only shown on ground."));
   treeDialog.addItem2(envItem, pid::ENV_CONDITIONS,       tr("Conditions"), tr("Rain, snow or other weather conditions."));
   treeDialog.addItem2(envItem, pid::ENV_VISIBILITY,       tr("Visibility"), tr("Horizontal visibility at aircraft."));
 

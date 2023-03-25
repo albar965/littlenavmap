@@ -4715,8 +4715,8 @@ void HtmlInfoBuilder::aircraftProgressText(const atools::fs::sc::SimConnectAircr
     html.id(pid::ENV_SEA_LEVEL_PRESS).row2(tr("Sea Level Pressure:"), locale.toString(seaLevelPressureMbar, 'f', 0) % tr(" hPa, ") %
                                            locale.toString(ageo::mbarToInHg(seaLevelPressureMbar), 'f', 2) % tr(" inHg"));
 
-    // Not above 5000 ft AGL - use odd value to avoid on/off at 5000 ft
-    if(userAircraft->getAltitudeAboveGroundFt() < 5250.f)
+    // Not in air
+    if(userAircraft->isOnGround())
       html.id(pid::ENV_DENSITY_ALTITUDE).
       row2(tr("Density Altitude:"), Unit::altFeet(ageo::densityAltitudeFt(sat, aircraft.getActualAltitudeFt(), seaLevelPressureMbar)));
 
