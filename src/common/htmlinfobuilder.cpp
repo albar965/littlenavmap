@@ -597,7 +597,7 @@ void HtmlInfoBuilder::nearestText(const MapAirport& airport, HtmlBuilder& html) 
   if(info && airport.isValid())
   {
     if(!print)
-      airportTitle(airport, html, -1, false /* procedures */);
+      airportTitle(airport, html, -1, true /* procedures */);
 
     // Get nearest airports that have procedures ====================================
     MapResultIndex *nearestAirports = airportQueryNav->getNearestAirportsProc(airport,
@@ -742,7 +742,7 @@ void HtmlInfoBuilder::comText(const MapAirport& airport, HtmlBuilder& html) cons
   if(info && infoQuery != nullptr)
   {
     if(!print)
-      airportTitle(airport, html, -1, false /* procedures */);
+      airportTitle(airport, html, -1, true /* procedures */);
 
     const SqlRecordList *recVector = infoQuery->getComInformation(airport.id);
     if(recVector != nullptr)
@@ -1758,7 +1758,7 @@ void HtmlInfoBuilder::weatherText(const map::WeatherContext& context, const MapA
   if(info)
   {
     if(!print)
-      airportTitle(airport, html, -1, false /* procedures */);
+      airportTitle(airport, html, -1, true /* procedures */);
 
     MapQuery *mapQuery = mapWidget->getMapQuery();
 
