@@ -187,7 +187,7 @@ void MapPainterIls::drawIlsSymbol(const map::MapIls& ils, bool fast)
       context->painter->translate(origin);
 
       // Position GLS and RNP on the botton and ILS on the top of the feather
-      float width = ils.width;
+      float width = ils.localizerWidth();
       if(ils.isAnyGlsRnp())
         width = -width;
 

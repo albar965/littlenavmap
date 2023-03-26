@@ -1266,9 +1266,9 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
   map::MapRunwayEnd end;
   if(!ils.isAnyGlsRnp())
   {
-#ifdef DEBUG_INFORMATION
-    html.row2("[loc_width]:", ils.width, 3);
-#endif
+    if(ils.width > 0.1f && info)
+      html.row2(tr("Width:"), locale.toString(ils.localizerWidth(), 'f', 2) % tr("°"));
+
     int endId = ils.runwayEndId;
     if(endId > 0)
     {

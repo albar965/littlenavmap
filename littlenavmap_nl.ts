@@ -15978,6 +15978,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="496"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1270"/>
         <source>Width:</source>
         <translation>Breedte:</translation>
     </message>
@@ -16531,6 +16532,7 @@ kHz/MHz</translation>
         <translation type="vanished">Richting en Breedte Localizer:</translation>
     </message>
     <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1270"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="1298"/>
         <source>°</source>
         <translation>°</translation>

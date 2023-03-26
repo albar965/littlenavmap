@@ -1113,6 +1113,15 @@ struct MapIls
   QString freqMHzLocale() const;
   QString freqMHz() const;
 
+  float localizerWidth() const
+  {
+    if(width < 0.1f)
+      // Update default value which is normally set in the data compiler
+      return isAnyGlsRnp() ? map::DEFAULT_GLS_RNP_WIDTH_DEG : map::DEFAULT_ILS_WIDTH_DEG;
+    else
+      return width;
+  }
+
   bool isGls() const
   {
     return type == GLS_GROUND_STATION;

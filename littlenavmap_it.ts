@@ -16403,6 +16403,7 @@ Il pulsante è evidenziato se il livello di dettaglio non è quello predefinito.
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="496"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1270"/>
         <source>Width:</source>
         <translation>Larghezza:</translation>
     </message>
@@ -16886,6 +16887,7 @@ Il pulsante è evidenziato se il livello di dettaglio non è quello predefinito.
         <translation type="vanished">Prua e Larghezza Localizzatore:</translation>
     </message>
     <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1270"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="1298"/>
         <source>°</source>
         <translation>°</translation>

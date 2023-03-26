@@ -600,10 +600,6 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils, float r
   ils.hasDme = record.valueInt("dme_range") > 0;
   ils.hasBackcourse = record.valueInt("has_backcourse") > 0;
 
-  if(ils.width < 0.1f)
-    // Update default value which is normally set in the data compiler
-    ils.width = ils.isAnyGlsRnp() ? map::DEFAULT_GLS_RNP_WIDTH_DEG : map::DEFAULT_ILS_WIDTH_DEG;
-
   if(!record.isNull("lonx") && !record.isNull("laty"))
   {
     ils.corrected = false;
@@ -622,8 +618,8 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils, float r
         ils.displayHeading = runwayHeadingTrue;
 
         // Calculate the geometry with slightly corrected angle
-        atools::fs::util::calculateIlsGeometry(ils.position, ils.displayHeading, ils.width, atools::fs::util::DEFAULT_FEATHER_LEN_NM,
-                                               ils.pos1, ils.pos2, ils.posmid);
+        atools::fs::util::calculateIlsGeometry(ils.position, ils.displayHeading, ils.localizerWidth(),
+                                               atools::fs::util::DEFAULT_FEATHER_LEN_NM, ils.pos1, ils.pos2, ils.posmid);
         ils.corrected = true;
       }
     }
@@ -641,8 +637,8 @@ void MapTypesFactory::fillIls(const SqlRecord& record, map::MapIls& ils, float r
       }
       else
         // Coordinates are not complete from database
-        atools::fs::util::calculateIlsGeometry(ils.position, ils.displayHeading, ils.width, atools::fs::util::DEFAULT_FEATHER_LEN_NM,
-                                               ils.pos1, ils.pos2, ils.posmid);
+        atools::fs::util::calculateIlsGeometry(ils.position, ils.displayHeading, ils.localizerWidth(),
+                                               atools::fs::util::DEFAULT_FEATHER_LEN_NM, ils.pos1, ils.pos2, ils.posmid);
     }
   }
 

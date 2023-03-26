@@ -15459,6 +15459,7 @@ Button is highlighted if detail level is not default.</source>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="496"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1270"/>
         <source>Width:</source>
         <translation>宽度：</translation>
     </message>
@@ -16042,6 +16043,7 @@ kHz/MHz</translation>
         <translation>信标台航向：</translation>
     </message>
     <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1270"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="1298"/>
         <source>°</source>
         <translation>°</translation>
