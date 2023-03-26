@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -2437,9 +2437,11 @@ void OptionsDialog::updateActiveSkyPathStatus()
       case WeatherReporter::NONE:
         text = tr("No Active Sky weather snapshot found. Active Sky METARs are not available.");
         break;
+
       case WeatherReporter::MANUAL:
         text = tr("Will use default weather snapshot after confirming change.");
         break;
+
       case WeatherReporter::ASN:
         text = tr("No Active Sky weather snapshot file selected. "
                   "Using default for Active Sky Next for %1.").arg(sim);
@@ -2454,9 +2456,19 @@ void OptionsDialog::updateActiveSkyPathStatus()
                   "Using default for ASP4 for %1.").arg(sim);
         break;
 
-      case WeatherReporter::ASXPL:
+      case WeatherReporter::ASP5:
         text = tr("No Active Sky weather snapshot file selected. "
-                  "Using default for Active Sky XP for %1.").arg(sim);
+                  "Using default for ASP5 for %1.").arg(sim);
+        break;
+
+      case WeatherReporter::ASXPL11:
+        text = tr("No Active Sky weather snapshot file selected. "
+                  "Using default for Active Sky XP 11 for %1.").arg(sim);
+        break;
+
+      case WeatherReporter::ASXPL12:
+        text = tr("No Active Sky weather snapshot file selected. "
+                  "Using default for Active Sky XP 12 for %1.").arg(sim);
         break;
     }
 

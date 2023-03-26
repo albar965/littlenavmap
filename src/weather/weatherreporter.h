@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -129,11 +129,13 @@ public:
   enum ActiveSkyType
   {
     NONE, /* not found */
-    MANUAL, /* Snapshot file is manually selected */
+    MANUAL, /* Snapshot file is manually selected for all simulators */
     ASN, /* Active Sky Next */
     AS16,
     ASP4, /* Active Sky for Prepar3D v4 */
-    ASXPL /* Active Sky for X-Plane */
+    ASP5, /* Active Sky for Prepar3D v5 */
+    ASXPL11, /* Active Sky for X-Plane 11 */
+    ASXPL12 /* Active Sky for X-Plane 12 */
   };
 
   /* Get type of active sky weather snapshot that was found */
