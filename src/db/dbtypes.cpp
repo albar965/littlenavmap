@@ -96,10 +96,17 @@ void SimulatorTypeMap::fillOneDefault(FsPaths::SimulatorType type, dbstat::Navda
   FsPathType& path = (*this)[type];
   if(path.basePath.isEmpty())
     path.basePath = FsPaths::getBasePath(type);
+
   if(path.sceneryCfg.isEmpty())
     path.sceneryCfg = FsPaths::getSceneryLibraryPath(type);
+
+  // Assign status if passed to this function
   if(navDatabaseStatus != dbstat::NAVDATABASE_UNKNOWN)
     path.navdatabaseStatus = navDatabaseStatus;
+
+  // Reset to mixed if invalid
+  if(path.navdatabaseStatus == dbstat::NAVDATABASE_UNKNOWN)
+    path.navdatabaseStatus = dbstat::NAVDATABASE_MIXED;
 
   // If already present or not - this one has a registry entry or an installation file for X-Plane
   path.isInstalled = FsPaths::hasSimulator(type);
