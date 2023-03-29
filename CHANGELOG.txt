@@ -8,13 +8,13 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ## Notes
 
-**This is a stable release of *Little Navmap* which fixes crashes and small bugs as well as adding small improvements.**
+**This is a stable release of *Little Navmap* which fixes small bugs, crashes and adds small improvements.**
 
 **X-Plane: Update your Little Xpconnect installation as well with the included version 1.0.37 to
 fix issues with AI injection tools.**
 
-**macOS users: Keep in mind that you have to clear the quarantine flag for Little Xpconnect on update. See
-[Clearing the Quarantine Flag on macOS] (https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
+**macOS users: Keep in mind that you have to clear the quarantine flag when upating Little Xpconnect. See
+[Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
 
 The online user manual is available here:
 [Little Navmap - User Manual](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/).
@@ -30,79 +30,72 @@ Special thanks to Max Hille for finding the issue with Xpconnect on Linux and X-
 
 **The active pause problem was fixed with the MSFS version SU12.**
 
-**Loading a flight plan with user-defined points placed at the
-at the North Pole has been fixed with MSFS version SU12.**
+**Loading a flight plan with user-defined points placed at the at the North Pole has been fixed
+with MSFS version SU12.**
 
 See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html#problems-msfs) in the FAQ.
 
 ## Changes from 2.8.9 to 2.8.10
 
-* ILS and GLS/RNP slopes in elevation profile can now be forced to display. Disable ILS or GLS/RNP on the toolbar or in the menu `View` -> `Navaids` to see only flight plan related navaids on the map and approach related navaids in the elevation profile. This means you won't see an ILS slope for a VOR approach, for example. Enable ILS or GLS/RNP  to see slopes in elevation profile independent of approach type. A destination runway or an approach has to be selected to see the slope.
-* Navigraph selection is now remembered for each simulator selection and automatically changed when switching between simulators. Simulator selection is reset on update.
-* Density altitude now shown in airport weather report.
-* Added density altitude to aircraft progress if on ground. This is disabled per default.
-* Fixed crash when using the MSFS toolbar plugin or other web services in *Little Navmap*.
-* Fixed issue where VOR to/from courses were omitted before or after procedures
-* Fixed issues with Italian translation using wrong units in search window. #1012
-* Changed flight plan export for TDS GTN to add waypoint coordinates for disambiguation as well as procedures.
-* Added TDS GTN export using waypoints only.
-* Now copying flight plan cruise altitude to route calculation window when opening or changing it in flight plan window to avoid confusion.
-* Added show procedure link besides link `Map` to related airport information tabs.
-* Added help buttons to information and aircraft progress windows linking to the related user manual chapters.
-* Fixed userpoints category not enabled after assigning a new type to a userpoint.
-* Adjusted airport rating calculation for MSFS. Now setting airports having only apron snippets to zero rating equal to empty.
-* Now using correct localizer width in map. #1011
-* Clear all highlights now also clears procedure preview
-* Added scenery library settings validation to toolbar
-* Other fixes to map drawing of procedures and selected legs.
+* Navigraph selection is now remembered for each simulator selection separately. This means that
+  the Navigraph selection is automatically changed when switching between simulators. The simulator
+  and Navigraph selection is reset on the first startup on update. Use the menu item
+  `Scenery Library` -> `Validate Scenery Library Settings` to check your settings.
+* Created a clone of the scenery library settings validation menu item `Scenery Library` ->
+  `Validate Scenery Library Settings` on the toolbar.
+* Added support for ActiveSky for X-Plane 12. *Little Navmap* detects the ASX 12 files
+  automatically when selecting the X-Plane 12 scenery library.
+* Changed flight plan export for TDS GTNXi to add waypoint coordinates for disambiguation as well
+  as procedures. This should help with flight loading issues due to navdata cycle mismatches.
+* Added TDS GTNXi export using waypoints only.
+* Density altitude added to airport weather report in window `Information` on tabs
+  `Airport` -> `Weather`.
+* Added density altitude to aircraft progress if aircraft is on ground. This is disabled per
+  default and can be enabled in the menu `Tools` -> `Aircraft Progress Display Options` by checking
+  `Density Altitude` in branch `Environment`.
+* ILS, GLS and RNP approch slopes in elevation profile can now be forced to display for all
+  approach types:
+    * Disable ILS or GLS/RNP on the toolbar or in the menu `View` -> `Navaids` to see only flight
+      plan related navaids on the map and approach related navaids in the elevation profile. This means
+      you won't see an ILS slope for a VOR approach, for example.
+    * Enable ILS to see slopes in the elevation profile independent of the approach type. A
+      destination runway or an approach has to be selected to see the slope.
+* Menu item `Map` -> `Remove all Highlights and Selections` (shortcut `Ctrl+H`) now also clears
+  the multi procedure preview (`Preview all Procedures` in procedure search context menu).
+* Added link `Show Procedures` besides link `Map` to related airport information tabs to avoid
+  context menu use for departure or destination airport.
+* Now copying flight plan cruise altitude over to the flight plan calculation window when opening
+  or changing it in flight plan window.
+* Added blue question mark help buttons to information and aircraft progress windows linking to the
+  related user manual chapters.
+* Fixed userpoints category not being enabled after assigning a new type to a userpoint.
+  This avoids the confusing disappearance of a userpoint after changing the type.
+* Added workaround for missing translations in MSFS for AI or multiplayer aircraft. Needs a reload
+  of the scenery library.
+* Adjusted airport rating calculation for MSFS. Now setting airports having only automatically
+  generated apron snippets to zero rating which equal to `Empty Airport`. Fix needs reloading
+  the scenery library.
+* Now using correct localizer width in map for Navigraph and MSFS navaids. Localizer width added to
+  ILS information display in tab `Navaids` and map display depiction. Note that this is only
+  available for FSX, P3D, MSFS and future Navigraph databases. Needs a reload of the scenery
+  library. #1011
+* Corrected VOR to/from courses which were omitted before or after procedures.
+* Fixed crash when using the MSFS toolbar plugin or other web services of *Little Navmap*.
+* Fixed issue with Italian translation using wrong units in search window. #1012
+* Issue with disappearing navaids being part of missed approch selection fixed.
+* Other corrections to map drawing of procedures and selected legs.
+* Updated user manual for functionality changes.
 
+### Little Xpconnect X-Plane plugin Version 1.0.37
 
-# Xpconnect Version 1.0.37
-
-* Added fetching of aircraft registrations for AI and online aircraft.
-* Better logic to read AI aircraft from add-ons where some use the new TCAS interface and some the old muliplayer interface..
-* Added version number to *Little Xpconnect* menu item.
+* Fixed fetching of aircraft registrations/tailnumbers for AI and online aircraft.
+* Better logic to read AI aircraft from add-ons where some use the new TCAS interface and some the
+  old muliplayer interface..
+* Added version number to menu item `Little Xpconnect`.
 
 ==<<=============================================================================
 
 # Version 2.8.9
-
-## Notes
-
-**This is a stable release of Little Navmap fixing crashes and other bugs.**
-
-**X-Plane: Update your Little Xpconnect installation as well with the included version 1.0.34 to
-fix wrong TAS and GS speeds.**
-
-**macOS users: Keep in mind that you have to clear the quarantine flag for Little Xpconnect on update. See
-[Clearing the Quarantine Flag on macOS]
-(https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
-
-This version is ready for the latest MSFS and for X-Plane 12. See important known issues below for MSFS.
-
-The online user manual is available here:
-[Little Navmap - User Manual](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/).
-
-See here for user manual downloads:
-[User Manuals - Stable Releases](https://albar965.github.io/manuals.html#stable).
-
-A big thank you to all who reported bugs and issues!
-
-Special thanks to Max Hille for finding the issue with Xpconnect on Linux and X-Plane 12!
-
-## Known Issues MSFS
-
-**Active pause in MSFS breaks the connection and does not allow to reconnect even when restarting *Little Navmap*.
-This is a MSFS issue. Use the key `Esc` for normal pause or click the toolbar button for pause to avoid problems.
-Note that you can also start active pause the usual way (keyboard or joystick) but end it with the MSFS toolbar button.
-This keeps the connection intact.**
-
-**The active pause problem was fixed with the MSFS SU12 Beta version.**
-
-**Loading a flight plan containing user defined points (coordinates) results in some positions of the plan
-placed at the North Pole. Note this was fixed with the MSFS SU12 Beta.**
-
-See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html#problems-msfs) in the FAQ.
 
 ## Changes from 2.8.8 to 2.8.9
 

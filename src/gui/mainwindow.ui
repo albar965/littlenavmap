@@ -317,6 +317,7 @@
     <addaction name="menuViewAirspaceSource"/>
     <addaction name="actionLoadAirspaces"/>
     <addaction name="separator"/>
+    <addaction name="actionValidateSceneryLibrarySettings"/>
     <addaction name="actionReloadScenery"/>
    </widget>
    <widget class="QMenu" name="menuUserdata">
