@@ -97,7 +97,7 @@ public:
                           float x, float y, float size, bool windPointer, bool windBarbs, bool fast);
 
   /* Wind arrow */
-  void drawWindPointer(QPainter *painter, float x, float y, int size, float dir);
+  void drawWindPointer(QPainter *painter, float x, float y, float size, float dir);
 
   /* Draw large symbol with sectors and labels. MSA circle with bearings and altitude */
   void drawAirportMsa(QPainter *painter, const map::MapAirportMsa& airportMsa, float x, float y, float size, float symbolScale, bool header,

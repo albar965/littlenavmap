@@ -72,13 +72,11 @@ protected:
                        bool tas);
   void climbSinkPointer(QString& upDown, const atools::fs::sc::SimConnectAircraft& aircraft);
 
-  void paintWindPointer(const atools::fs::sc::SimConnectUserAircraft& aircraft, int x, int y);
-  void paintTextLabelWind(int x, int y, int size, const atools::fs::sc::SimConnectUserAircraft& aircraft);
+  void paintWindPointer(const atools::fs::sc::SimConnectUserAircraft& aircraft, float x, float y);
+  void paintTextLabelWind(float x, float y, float size, const atools::fs::sc::SimConnectUserAircraft& aircraft);
 
   /* Calculate rotation for aircraft icon */
   float calcRotation(const atools::fs::sc::SimConnectAircraft& aircraft);
-
-  static Q_DECL_CONSTEXPR int WIND_POINTER_SIZE = 40;
 };
 
 #endif // LITTLENAVMAP_MAPPAINTERVECHICLE_H

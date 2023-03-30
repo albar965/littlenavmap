@@ -79,6 +79,7 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
   ILS information display in tab `Navaids` and map display depiction. Note that this is only
   available for FSX, P3D, MSFS and future Navigraph databases. Needs a reload of the scenery
   library. #1011
+* Wind pointer size on top of map now depends on set font size.
 * Corrected VOR to/from courses which were omitted before or after procedures.
 * Fixed crash when using the MSFS toolbar plugin or other web services of *Little Navmap*.
 * Fixed issue with Italian translation using wrong units in search window. #1012

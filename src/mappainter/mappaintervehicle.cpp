@@ -495,23 +495,24 @@ void MapPainterVehicle::appendSpeedText(QStringList& texts, const SimConnectAirc
     texts.append(line.join(tr(", ")));
 }
 
-void MapPainterVehicle::paintWindPointer(const atools::fs::sc::SimConnectUserAircraft& aircraft, int x, int y)
+void MapPainterVehicle::paintWindPointer(const atools::fs::sc::SimConnectUserAircraft& aircraft, float x, float y)
 {
   if(aircraft.getWindDirectionDegT() < atools::fs::sc::SC_INVALID_FLOAT)
   {
-    if(aircraft.getWindSpeedKts() >= 1.f)
-      symbolPainter->drawWindPointer(context->painter, x, y, WIND_POINTER_SIZE, aircraft.getWindDirectionDegT());
+    // Use standard font size since there is no separate size setting
     context->szFont(1.f);
-    paintTextLabelWind(x, y, WIND_POINTER_SIZE, aircraft);
+    float windPointerSize = static_cast<float>(QFontMetricsF(context->painter->font()).height()) * 2.f * 1.25f;
+    if(aircraft.getWindSpeedKts() >= 1.f)
+      symbolPainter->drawWindPointer(context->painter, x, y, windPointerSize, aircraft.getWindDirectionDegT());
+    paintTextLabelWind(x, y, windPointerSize, aircraft);
   }
 }
 
-void MapPainterVehicle::paintTextLabelWind(int x, int y, int size,
-                                           const SimConnectUserAircraft& aircraft)
+void MapPainterVehicle::paintTextLabelWind(float x, float y, float size, const SimConnectUserAircraft& aircraft)
 {
   if(aircraft.getWindDirectionDegT() < atools::fs::sc::SC_INVALID_FLOAT)
   {
-    int xs, ys;
+    float xs, ys;
     QStringList texts;
 
     textatt::TextAttributes atts = textatt::ROUTE_BG_COLOR;
@@ -519,21 +520,20 @@ void MapPainterVehicle::paintTextLabelWind(int x, int y, int size,
     {
       if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_WIND))
       {
-        texts.append(tr("%1 °M").arg(QString::number(atools::geo::normalizeCourse(
-                                                       aircraft.getWindDirectionDegT() - aircraft.getMagVarDeg()),
-                                                     'f', 0)));
+        texts.append(tr("%1 °M").
+                     arg(QString::number(atools::geo::normalizeCourse(aircraft.getWindDirectionDegT() - aircraft.getMagVarDeg()), 'f', 0)));
 
         texts.append(tr("%2").arg(Unit::speedKts(aircraft.getWindSpeedKts())));
       }
-      xs = x + size / 2 + 4;
-      ys = y + size / 2;
+      xs = x + size / 2.f + 4.f;
+      ys = y + size / 2.f;
     }
     else
     {
-      atts |= textatt::CENTER;
+      atts |= textatt::CENTER | textatt::VERT_BELOW;
       texts.append(tr("No wind"));
       xs = x;
-      ys = y + size / 2;
+      ys = y;
     }
 
     // Draw text label

@@ -160,5 +160,5 @@ void MapPainterAircraft::render()
 
   // Wind display depends only on option
   if(context->dOptUserAc(optsac::ITEM_USER_AIRCRAFT_WIND_POINTER) && userAircraft.isValid())
-    paintWindPointer(userAircraft, context->painter->device()->width() / 2, 0);
+    paintWindPointer(userAircraft, context->screenRect.width() / 2.f, 2.f);
 }

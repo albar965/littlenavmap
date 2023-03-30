@@ -636,14 +636,14 @@ QVector<int> SymbolPainter::calculateWindBarbs(float& lineLength, float lineWidt
   return barbs;
 }
 
-void SymbolPainter::drawWindPointer(QPainter *painter, float x, float y, int size, float dir)
+void SymbolPainter::drawWindPointer(QPainter *painter, float x, float y, float size, float dir)
 {
   atools::util::PainterContextSaver saver(painter);
   painter->setBackgroundMode(Qt::TransparentMode);
 
-  painter->translate(x, y + size / 2);
+  painter->translate(x, y + size / 2.f);
   painter->rotate(atools::geo::normalizeCourse(dir + 180.f));
-  painter->drawPixmap(-size / 2, -size / 2, *windPointerFromCache(size));
+  painter->drawPixmap(QPointF(-size / 2.f, -size / 2.f), *windPointerFromCache(atools::roundToInt(size)));
   painter->resetTransform();
 }
 
