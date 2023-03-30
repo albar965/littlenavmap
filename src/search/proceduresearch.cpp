@@ -50,7 +50,7 @@
 
 enum TreeColumnIndex
 {
-  /* Column order for approch overview (tree view) */
+  /* Column order for approach overview (tree view) */
   COL_DESCRIPTION = 0,
   COL_IDENT = 1,
   COL_RESTR = 2,

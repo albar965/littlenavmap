@@ -53,7 +53,7 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 * Added density altitude to aircraft progress if aircraft is on ground. This is disabled per
   default and can be enabled in the menu `Tools` -> `Aircraft Progress Display Options` by checking
   `Density Altitude` in branch `Environment`.
-* ILS, GLS and RNP approch slopes in elevation profile can now be forced to display for all
+* ILS, GLS and RNP approach slopes in elevation profile can now be forced to display for all
   approach types:
     * Disable ILS or GLS/RNP on the toolbar or in the menu `View` -> `Navaids` to see only flight
       plan related navaids on the map and approach related navaids in the elevation profile. This means
@@ -82,7 +82,7 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 * Corrected VOR to/from courses which were omitted before or after procedures.
 * Fixed crash when using the MSFS toolbar plugin or other web services of *Little Navmap*.
 * Fixed issue with Italian translation using wrong units in search window. #1012
-* Issue with disappearing navaids being part of missed approch selection fixed.
+* Issue with disappearing navaids being part of missed approach selection fixed.
 * Other corrections to map drawing of procedures and selected legs.
 * Updated user manual for functionality changes.
 
@@ -754,7 +754,7 @@ See also
 * Logbook entry dialog is now pre-filled with all data (flight plan, performance and trail) from
   current session. This can be removed by pressing reset.
 * Added cleanup function for logbook which removes invalid logbook entries that can result from
-  pattern work or repeated approches. Main menu `Logbook` -> `Cleanup Logbook Entries` or logbook
+  pattern work or repeated approaches. Main menu `Logbook` -> `Cleanup Logbook Entries` or logbook
   table context menu.
 
 ### Flying and User Aircraft
@@ -1169,7 +1169,7 @@ as well as the X-Plane plugin (Little Navmap, Little Navconnect and Little Xpcon
 * Added zoom out on takeoff option. See `Options` on page `Simulator Aircraft` checkbox `Zoom out
   on takeoff`.
 * Added cleanup function for logbook which removes invalid logbook entries that can result from
-  pattern work or repeated approches. Main menu `Logbook` -> `Cleanup Logbook Entries` or logbook
+  pattern work or repeated approaches. Main menu `Logbook` -> `Cleanup Logbook Entries` or logbook
   table context menu.
 * Added menu item `Aircraft` -> `Warning for Aircraft Type Mismatch` which is enabled per default.
   This allows to disable the warnings for aircraft types which are often wrong from the simulator.
