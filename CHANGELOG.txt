@@ -13,7 +13,7 @@ This text is partially Markdown, hence sometimes strange formatting.
 **X-Plane: Update your Little Xpconnect installation as well with the included version 1.0.37 to
 fix issues with AI injection tools.**
 
-**macOS users: Keep in mind that you have to clear the quarantine flag when upating Little Xpconnect. See
+**macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
 [Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
 
 The online user manual is available here:
@@ -79,11 +79,12 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
   ILS information display in tab `Navaids` and map display depiction. Note that this is only
   available for FSX, P3D, MSFS and future Navigraph databases. Needs a reload of the scenery
   library. #1011
-* Wind pointer size on top of map now depends on set font size.
+* Wind pointer size on top of map now depends on set font size for map.
 * Corrected VOR to/from courses which were omitted before or after procedures.
 * Fixed crash when using the MSFS toolbar plugin or other web services of *Little Navmap*.
 * Fixed issue with Italian translation using wrong units in search window. #1012
 * Issue with disappearing navaids being part of missed approach selection fixed.
+* Updated included SimConnect.dll in 64-bit build for MSFS to SDK 0.21.0.0.
 * Other corrections to map drawing of procedures and selected legs.
 * Updated user manual for functionality changes.
 
@@ -91,7 +92,7 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
 
 * Fixed fetching of aircraft registrations/tailnumbers for AI and online aircraft.
 * Better logic to read AI aircraft from add-ons where some use the new TCAS interface and some the
-  old muliplayer interface..
+  old multiplayer interface.
 * Added version number to menu item `Little Xpconnect`.
 
 ==<<=============================================================================
