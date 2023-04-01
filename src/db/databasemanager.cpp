@@ -928,7 +928,6 @@ void DatabaseManager::switchSimFromMainMenu()
 
     // Set new simulator
     currentFsType = action->data().value<atools::fs::FsPaths::SimulatorType>();
-
     navDatabaseStatus = simulators.value(currentFsType).navdatabaseStatus;
 
     openAllDatabases();
@@ -1545,6 +1544,7 @@ void DatabaseManager::loadSceneryInternalPost()
 
     // Syncronize display with loaded database
     currentFsType = selectedFsType;
+    navDatabaseStatus = simulators[currentFsType].navdatabaseStatus;
 
     openAllDatabases();
     loadLanguageIndex();
@@ -1804,14 +1804,23 @@ void DatabaseManager::correctSimulatorType()
 {
   if(currentFsType == atools::fs::FsPaths::NONE ||
      (!simulators.value(currentFsType).hasDatabase && !simulators.value(currentFsType).isInstalled))
+  {
     currentFsType = simulators.getBest();
+    navDatabaseStatus = simulators[currentFsType].navdatabaseStatus;
+  }
 
   if(currentFsType == atools::fs::FsPaths::NONE)
+  {
     currentFsType = simulators.getBestInstalled();
+    navDatabaseStatus = simulators[currentFsType].navdatabaseStatus;
+  }
 
   // Correct if loading simulator is invalid - get the best installed
   if(selectedFsType == atools::fs::FsPaths::NONE || !simulators.getAllInstalled().contains(selectedFsType))
+  {
     selectedFsType = simulators.getBestInstalled();
+    navDatabaseStatus = simulators[currentFsType].navdatabaseStatus;
+  }
 }
 
 const atools::fs::db::DatabaseMeta DatabaseManager::metaFromFile(const QString& file)
