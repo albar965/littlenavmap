@@ -66,6 +66,7 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
   context menu use for departure or destination airport.
 * Now copying flight plan cruise altitude over to the flight plan calculation window when opening
   or changing it in flight plan window.
+* More accuracy for flight plan calculation preference slider.
 * Added blue question mark help buttons to information and aircraft progress windows linking to the
   related user manual chapters.
 * Fixed userpoints category not being enabled after assigning a new type to a userpoint.

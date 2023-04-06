@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -126,8 +126,11 @@ public:
 
   float getAirwayPreferenceCostFactor() const;
 
+  /* Min and max values including for ui->horizontalSliderRouteCalcAirwayPreference.
+   * Sync with DIRECT_COST_FACTORS */
   static constexpr int AIRWAY_WAYPOINT_PREF_MIN = 0;
-  static constexpr int AIRWAY_WAYPOINT_PREF_MAX = 10;
+  static constexpr int AIRWAY_WAYPOINT_PREF_MAX = 14;
+  static constexpr int AIRWAY_WAYPOINT_PREF_CENTER = (AIRWAY_WAYPOINT_PREF_MAX - AIRWAY_WAYPOINT_PREF_MIN) / 2;
 
 signals:
   /* Use clicked calculate flight plan button */

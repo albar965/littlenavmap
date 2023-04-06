@@ -31,7 +31,10 @@
 #include "util/htmlbuilder.h"
 
 // Factor to put on costs for direct connections. Airways <-> Waypoints
-static const float DIRECT_COST_FACTORS[11] = {10.f, 8.f, 6.f, 4.f, 3.f, 2.f, 1.5f, 1.3f, 1.2f, 1.1f, 1.f};
+// Sync withAIRWAY_WAYPOINT_PREF_MIN and AIRWAY_WAYPOINT_PREF_MAX
+static const QVector<float> DIRECT_COST_FACTORS({10.00f, 09.00f, 08.00f, 07.00f, 06.00f, 04.00f, 03.00f,
+                                                 02.00f, // Center/both
+                                                 01.50f, 01.30f, 01.20f, 01.15f, 01.10f, 01.05f, 01.00f});
 
 using atools::util::HtmlBuilder;
 
@@ -49,18 +52,25 @@ RouteCalcDialog::RouteCalcDialog(QWidget *parent)
   preferenceTexts = QStringList({
     tr("Airways and tracks only.\nFastest calculation."),
     tr("More airways and few direct."),
+    tr("More airways and few direct."),
+    tr("More airways and less direct."),
     tr("More airways and less direct."),
     tr("Airways and less direct."),
     tr("Airways and direct."),
-    tr("Airways and direct."),
+    tr("Airways and direct."), // Center / both
     tr("Airways and direct."),
     tr("Airways and more direct."),
     tr("Less airways and more direct."),
+    tr("Less airways and more direct."),
+    tr("Few airways and more direct."),
     tr("Few airways and more direct."),
     tr("Direct using waypoints only.")
   });
 
-  widgets = {ui->horizontalSliderRouteCalcAirwayPreference, ui->labelRouteCalcAirwayPreferWaypoint,
+  Q_ASSERT(preferenceTexts.size() == DIRECT_COST_FACTORS.size());
+  Q_ASSERT(DIRECT_COST_FACTORS.size() == AIRWAY_WAYPOINT_PREF_MAX - AIRWAY_WAYPOINT_PREF_MIN + 1);
+
+  widgets = {ui->horizontalSliderRouteCalcAirwayPref, ui->labelRouteCalcAirwayPreferWaypoint,
              ui->radioButtonRouteCalcAirwayJet, ui->spinBoxRouteCalcCruiseAltitude, ui->radioButtonRouteCalcAirwayAll,
              ui->checkBoxRouteCalcAirwayNoRnav, ui->checkBoxRouteCalcAirwayTrack, ui->radioButtonRouteCalcRadio,
              ui->radioButtonRouteCalcAirwayVictor, ui->radioButtonRouteCalcAirway, ui->checkBoxRouteCalcRadioNdb};
@@ -75,16 +85,13 @@ RouteCalcDialog::RouteCalcDialog(QWidget *parent)
   connect(ui->radioButtonRouteCalcRadio, &QRadioButton::clicked, this, &RouteCalcDialog::updateWidgets);
   connect(ui->radioButtonRouteCalcFull, &QRadioButton::toggled, this, &RouteCalcDialog::updateWidgets);
   connect(ui->radioButtonRouteCalcSelection, &QRadioButton::toggled, this, &RouteCalcDialog::updateWidgets);
-  connect(ui->horizontalSliderRouteCalcAirwayPreference, &QSlider::valueChanged, this, &RouteCalcDialog::updatePreferenceLabel);
+  connect(ui->horizontalSliderRouteCalcAirwayPref, &QSlider::valueChanged, this, &RouteCalcDialog::updatePreferenceLabel);
 
   units = new UnitStringTool();
   units->init({ui->spinBoxRouteCalcCruiseAltitude});
 
   // Show error messages in tooltip on click ========================================
   ui->labelRouteCalcHeader->installEventFilter(new atools::gui::ClickToolTipHandler(ui->labelRouteCalcHeader));
-
-  Q_ASSERT(ui->horizontalSliderRouteCalcAirwayPreference->minimum() == AIRWAY_WAYPOINT_PREF_MIN);
-  Q_ASSERT(ui->horizontalSliderRouteCalcAirwayPreference->maximum() == AIRWAY_WAYPOINT_PREF_MAX);
 
   connect(ui->buttonBox, &QDialogButtonBox::clicked, this, &RouteCalcDialog::buttonBoxClicked);
 }
@@ -172,7 +179,7 @@ void RouteCalcDialog::updateWidgets()
     ui->radioButtonRouteCalcAirwayVictor->setEnabled(airway);
     ui->checkBoxRouteCalcAirwayNoRnav->setEnabled(airway && NavApp::hasRouteTypeInDatabase());
     ui->checkBoxRouteCalcAirwayTrack->setEnabled(airway && NavApp::hasTracks());
-    ui->horizontalSliderRouteCalcAirwayPreference->setEnabled(airway);
+    ui->horizontalSliderRouteCalcAirwayPref->setEnabled(airway);
     ui->groupBoxRouteCalcAirwayPrefer->setEnabled(airway);
     ui->labelRouteCalcAirwayPreferAirway->setEnabled(airway);
     ui->labelRouteCalcAirwayPreferWaypoint->setEnabled(airway);
@@ -205,7 +212,11 @@ void RouteCalcDialog::updateWidgets()
 
 void RouteCalcDialog::updatePreferenceLabel()
 {
-  ui->labelRouteCalcPreference->setText(preferenceTexts.at(ui->horizontalSliderRouteCalcAirwayPreference->value()));
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << "horizontalSliderRouteCalcAirwayPreference->value()" << ui->horizontalSliderRouteCalcAirwayPref->value();
+#endif
+
+  ui->labelRouteCalcPreference->setText(preferenceTexts.at(ui->horizontalSliderRouteCalcAirwayPref->value()));
 }
 
 void RouteCalcDialog::updateHeader()
@@ -274,6 +285,14 @@ void RouteCalcDialog::restoreState()
   atools::gui::WidgetState state(lnm::ROUTE_CALC_DIALOG);
   state.restore(this);
   state.restore(widgets);
+
+  if(!state.contains(ui->horizontalSliderRouteCalcAirwayPref))
+    // Correct value to center if settings file is new
+    ui->horizontalSliderRouteCalcAirwayPref->setValue(AIRWAY_WAYPOINT_PREF_CENTER);
+
+  // Adjust slider to new values since they might be restored from settings
+  ui->horizontalSliderRouteCalcAirwayPref->setMinimum(AIRWAY_WAYPOINT_PREF_MIN);
+  ui->horizontalSliderRouteCalcAirwayPref->setMaximum(AIRWAY_WAYPOINT_PREF_MAX);
 }
 
 void RouteCalcDialog::saveState()
@@ -331,7 +350,7 @@ bool RouteCalcDialog::isUseTracks() const
 
 int RouteCalcDialog::getAirwayWaypointPreference() const
 {
-  return ui->horizontalSliderRouteCalcAirwayPreference->value();
+  return ui->horizontalSliderRouteCalcAirwayPref->value();
 }
 
 bool RouteCalcDialog::isRadionavNdb() const
@@ -346,7 +365,7 @@ bool RouteCalcDialog::isCalculateSelection() const
 
 float RouteCalcDialog::getAirwayPreferenceCostFactor() const
 {
-  return DIRECT_COST_FACTORS[ui->horizontalSliderRouteCalcAirwayPreference->value()];
+  return DIRECT_COST_FACTORS.at(ui->horizontalSliderRouteCalcAirwayPref->value());
 }
 
 void RouteCalcDialog::adjustAltitudePressed()
