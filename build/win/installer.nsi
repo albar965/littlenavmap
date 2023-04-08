@@ -34,6 +34,10 @@
   ; This will make the logo of the installer
   !define MUI_ICON "$%APROJECTS%\littlenavmap\resources\icons\littlenavmap.ico"
 
+  !define MUI_FINISHPAGE_RUN
+  !define MUI_FINISHPAGE_RUN_TEXT "Start Little Navmap"
+  !define MUI_FINISHPAGE_RUN_FUNCTION "StartLNM"
+
 ;--------------------------------
 ;Pages
   !insertmacro MUI_PAGE_WELCOME
@@ -49,8 +53,6 @@
   !insertmacro MUI_UNPAGE_INSTFILES
 
   !insertmacro MUI_PAGE_FINISH
-
-;TODO Start LNM option (checkbox) at end of installation
 
 ;--------------------------------
 ;Languages
@@ -112,6 +114,19 @@ Section "Uninstall"
 
   Delete "$INSTDIR\uninstall.exe"
 
+  ;Asks the user if they want to delete settings and the cache
+  MessageBox MB_YESNO "Do you want to delete the settings and the cache too?" IDYES delete_settings_and_cache 
+
+  ;If the user selected no, continue with the uninstall
+  Goto continue_uninstall
+
+  ;Delete settings and cache
+  delete_settings_and_cache:
+    ; !!! TO ADD REMOVAL OF SETTINGS AND CACHE FILES !!!
+
+
+  continue_uninstall:
+
   ;TODO This will remove the whole programs folder if user selected the wrong installation folder, for example
   ;Solve by using a list of installed files and remove only these
   RMDir /r "$INSTDIR"
@@ -125,3 +140,9 @@ Section "Uninstall"
   DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\Little Navmap"
 
 SectionEnd
+
+;--------------------------------
+;Run application at end of installation
+Function StartLNM
+  ExecShell "open" "$INSTDIR\littlenavmap.exe"
+FunctionEnd
