@@ -645,7 +645,7 @@ opening files, modifying the flight plan and other operations.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-79</y>
+             <y>0</y>
              <width>556</width>
              <height>537</height>
             </rect>
@@ -1469,7 +1469,7 @@ Also affects labels at holds and traffic patterns.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-66</y>
+             <y>0</y>
              <width>556</width>
              <height>524</height>
             </rect>
@@ -2267,7 +2267,7 @@ Smaller values will allow a finer selection.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-53</y>
+             <y>0</y>
              <width>556</width>
              <height>511</height>
             </rect>
@@ -3412,7 +3412,7 @@ Also used in the elevation profile.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-68</y>
+             <y>0</y>
              <width>556</width>
              <height>526</height>
             </rect>
@@ -4765,7 +4765,7 @@ airspace filename has to match the callsign of the online center.</string>
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-70</y>
+             <y>0</y>
              <width>556</width>
              <height>528</height>
             </rect>
@@ -5751,7 +5751,7 @@ Note that this value does not affect flight plan calculation or saving of flight
            <property name="geometry">
             <rect>
              <x>0</x>
-             <y>-183</y>
+             <y>0</y>
              <width>556</width>
              <height>641</height>
             </rect>
@@ -6815,7 +6815,7 @@ Little Navmap GIT repository.
             <item>
              <widget class="QGroupBox" name="groupBox_2">
               <property name="title">
-               <string>Map Display</string>
+               <string>Map Display Cache</string>
               </property>
               <layout class="QGridLayout" name="gridLayout_15">
                <property name="leftMargin">
@@ -6833,13 +6833,17 @@ Little Navmap GIT repository.
                <property name="spacing">
                 <number>2</number>
                </property>
-               <item row="1" column="0">
-                <widget class="QLabel" name="labelOptionsCacheDisk">
+               <item row="0" column="2">
+                <widget class="QPushButton" name="pushButtonOptionsCacheClearMemory">
                  <property name="text">
-                  <string>Maximum size of &amp;disk cache:</string>
+                  <string>&amp;Clear Memory Cache</string>
                  </property>
-                 <property name="buddy">
-                  <cstring>spinBoxOptionsCacheDiskSize</cstring>
+                </widget>
+               </item>
+               <item row="2" column="0" colspan="2">
+                <widget class="QLabel" name="labelOptionsCacheDiskExpiration">
+                 <property name="text">
+                  <string>Items in the disk cache expire after two weeks.</string>
                  </property>
                 </widget>
                </item>
@@ -6865,30 +6869,13 @@ Little Navmap GIT repository.
                  </property>
                 </widget>
                </item>
-               <item row="0" column="2">
-                <widget class="QPushButton" name="pushButtonOptionsCacheClearMemory">
+               <item row="1" column="0">
+                <widget class="QLabel" name="labelOptionsCacheDisk">
                  <property name="text">
-                  <string>&amp;Clear Memory Cache</string>
+                  <string>Maximum size of &amp;disk cache:</string>
                  </property>
-                </widget>
-               </item>
-               <item row="1" column="2">
-                <widget class="QPushButton" name="pushButtonOptionsCacheClearDisk">
-                 <property name="toolTip">
-                  <string>Clears the disk cache. This process will run in background and take some time.</string>
-                 </property>
-                 <property name="text">
-                  <string>C&amp;lear Disk Cache</string>
-                 </property>
-                </widget>
-               </item>
-               <item row="2" column="2">
-                <widget class="QPushButton" name="pushButtonOptionsCacheShow">
-                 <property name="toolTip">
-                  <string>Opens the cache directory in a file manager.</string>
-                 </property>
-                 <property name="text">
-                  <string>&amp;Show Disk Cache in File Manager</string>
+                 <property name="buddy">
+                  <cstring>spinBoxOptionsCacheDiskSize</cstring>
                  </property>
                 </widget>
                </item>
@@ -6924,10 +6911,77 @@ Little Navmap GIT repository.
                  </property>
                 </widget>
                </item>
-               <item row="2" column="0" colspan="2">
-                <widget class="QLabel" name="labelOptionsCacheDiskExpiration">
+               <item row="1" column="2">
+                <widget class="QPushButton" name="pushButtonOptionsCacheShow">
+                 <property name="toolTip">
+                  <string>Opens the cache directory in a file manager.</string>
+                 </property>
                  <property name="text">
-                  <string>Items in the disk cache expire after two weeks.</string>
+                  <string>&amp;Show Disk Cache in File Manager</string>
+                 </property>
+                </widget>
+               </item>
+              </layout>
+             </widget>
+            </item>
+            <item>
+             <widget class="QGroupBox" name="groupBox_18">
+              <property name="title">
+               <string>Map Display Themes</string>
+              </property>
+              <layout class="QGridLayout" name="gridLayout_49">
+               <property name="leftMargin">
+                <number>2</number>
+               </property>
+               <property name="topMargin">
+                <number>2</number>
+               </property>
+               <property name="rightMargin">
+                <number>2</number>
+               </property>
+               <property name="bottomMargin">
+                <number>2</number>
+               </property>
+               <property name="spacing">
+                <number>2</number>
+               </property>
+               <item row="1" column="1">
+                <widget class="QLineEdit" name="lineEditCacheMapThemeDir">
+                 <property name="toolTip">
+                  <string>Select a directoy to search for additional map themes.</string>
+                 </property>
+                 <property name="placeholderText">
+                  <string>No themes directory selected.</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="0">
+                <widget class="QLabel" name="labelOptionsMapThemeDir">
+                 <property name="text">
+                  <string>Directory for additional &amp;map themes:</string>
+                 </property>
+                 <property name="buddy">
+                  <cstring>lineEditCacheMapThemeDir</cstring>
+                 </property>
+                </widget>
+               </item>
+               <item row="1" column="2">
+                <widget class="QPushButton" name="pushButtonCacheMapThemeDir">
+                 <property name="text">
+                  <string>Select &amp;Themes Directory ...</string>
+                 </property>
+                </widget>
+               </item>
+               <item row="2" column="1">
+                <widget class="QLabel" name="labelCacheMapThemeDir">
+                 <property name="text">
+                  <string>Valid</string>
+                 </property>
+                 <property name="wordWrap">
+                  <bool>true</bool>
+                 </property>
+                 <property name="margin">
+                  <number>5</number>
                  </property>
                 </widget>
                </item>
@@ -7550,8 +7604,6 @@ You have to reload the scenery library so that the changes take effect.</string>
   <tabstop>spinBoxOptionsCacheMemorySize</tabstop>
   <tabstop>pushButtonOptionsCacheClearMemory</tabstop>
   <tabstop>spinBoxOptionsCacheDiskSize</tabstop>
-  <tabstop>pushButtonOptionsCacheClearDisk</tabstop>
-  <tabstop>pushButtonOptionsCacheShow</tabstop>
   <tabstop>radioButtonCacheUseOnlineElevation</tabstop>
   <tabstop>radioButtonCacheUseOffineElevation</tabstop>
   <tabstop>lineEditCacheOfflineDataPath</tabstop>

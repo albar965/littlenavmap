@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -124,7 +124,6 @@ private:
   void selectXplane12PathClicked();
   void weatherXplane11WindPathSelectClicked();
   void clearMemCachedClicked();
-  void clearDiskCachedClicked();
   void updateWeatherButtonState();
   void updateActiveSkyPathStatus();
   void updateXplane11PathStatus();
@@ -196,7 +195,9 @@ private:
   void updateGuiFontLabel();
   void updateButtonColors();
   void updateCacheElevationStates();
+  void updateCacheMapThemeDir();
   void offlineDataSelectClicked();
+  void mapThemeDirSelectClicked();
   void checkUpdateClicked();
   void mapEmptyAirportsClicked(bool state);
   int displayOnlineRangeToData(const QSpinBox *spinBox, const QCheckBox *checkButton);

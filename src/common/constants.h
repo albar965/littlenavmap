@@ -298,7 +298,6 @@ const QLatin1String OPTIONS_DIALOG_AS_FILE_DLG("OptionsDialog/WeatherFileDialogA
 const QLatin1String OPTIONS_DIALOG_XPLANE_DLG("OptionsDialog/WeatherFileDialogXplane");
 const QLatin1String OPTIONS_DIALOG_XPLANE12_DLG("OptionsDialog/WeatherFileDialogXplane12");
 const QLatin1String OPTIONS_DIALOG_XPLANE_WIND_FILE_DLG("OptionsDialog/WeatherFileDialogXplaneWind");
-const QLatin1String OPTIONS_DIALOG_GLOBE_FILE_DLG("OptionsDialog/CacheFileDialogGlobe");
 const QLatin1String OPTIONS_DIALOG_DB_DIR_DLG("OptionsDialog/DatabaseDirDialog");
 const QLatin1String OPTIONS_DIALOG_DB_PROGRESS_DLG("OptionsDialog/DatabaseProgressDialog");
 const QLatin1String OPTIONS_DIALOG_DB_FILE_DLG("OptionsDialog/DatabaseFilesDialog");

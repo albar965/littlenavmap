@@ -3190,7 +3190,7 @@ void MainWindow::mainWindowShown()
   if(ui->actionRunWebserver->isChecked())
   {
     NavApp::getWebController()->startServer();
-    updateMapKeys(); // Update API keys in web map widget
+    updateMapKeys(); // Update API keys and theme dir in web map widget
   }
   webserverStatusChanged(NavApp::getWebController()->isRunning());
 
@@ -3863,18 +3863,22 @@ void MainWindow::optionsChanged()
   dockHandler->setAutoRaiseWindows(OptionData::instance().getFlags2().testFlag(opts2::RAISE_DOCK_WINDOWS));
   dockHandler->setAutoRaiseMainWindow(OptionData::instance().getFlags2().testFlag(opts2::RAISE_MAIN_WINDOW));
 
-  updateMapKeys();
+  if(mapThemeHandler != nullptr)
+    mapThemeHandler->optionsChanged();
 }
 
 void MainWindow::updateMapKeys()
 {
-  // Is null on startup
-  if(mapWidget != nullptr)
-    mapWidget->setKeys(mapThemeHandler->getMapThemeKeysHash());
+  if(mapThemeHandler != nullptr)
+  {
+    // Is null on startup
+    if(mapWidget != nullptr)
+      mapWidget->setKeys(mapThemeHandler->getMapThemeKeysHash());
 
-  // Might be null if not started
-  if(NavApp::getMapPaintWidgetWeb() != nullptr)
-    NavApp::getMapPaintWidgetWeb()->setKeys(mapThemeHandler->getMapThemeKeysHash());
+    // Might be null if not started
+    if(NavApp::getMapPaintWidgetWeb() != nullptr)
+      NavApp::getMapPaintWidgetWeb()->setKeys(mapThemeHandler->getMapThemeKeysHash());
+  }
 }
 
 void MainWindow::saveStateNow()
