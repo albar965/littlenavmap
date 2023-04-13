@@ -1278,7 +1278,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
       {
         // The maximum angular offset for a LOC is 3° for FAA and 5° for ICAO.
         // Everything else is named either LDA (FAA) or IGS (ICAO).
-        if(ageo::angleAbsDiff(end.heading, ageo::normalizeCourse(ils.heading)) > 2.5f)
+        if(ageo::angleAbsDiff(end.heading, ageo::normalizeCourse(ils.heading)) > 2.f)
         {
           // Get airport for consistent magnetic variation =====================
           map::MapAirport airport = airportQuerySim->getAirportByIdent(ils.airportIdent);
