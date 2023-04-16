@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -657,8 +657,7 @@ void AirportSearch::getSelectedMapObjects(map::MapResult& result) const
         result.airports.append(ap);
       }
       else
-        qWarning() << Q_FUNC_INFO << "Invalid selection: range" << range
-                   << "row" << row << "col" << idColumnName << idVar;
+        qWarning() << Q_FUNC_INFO << "Invalid selection: range" << range << "row" << row << "col" << idColumnName << idVar;
     }
     range++;
   }
@@ -709,16 +708,13 @@ void AirportSearch::updateButtonMenu()
                                           atools::gui::util::anyWidgetChanged(
                                             {ui->gridLayoutAirportExtSearch, ui->horizontalLayoutAirportRatingSearch}));
   atools::gui::util::changeStarIndication(ui->actionAirportSearchShowFuelParkOptions,
-                                          atools::gui::util::anyWidgetChanged(
-                                            {ui->gridLayoutAirportSearchParking}));
+                                          atools::gui::util::anyWidgetChanged({ui->gridLayoutAirportSearchParking}));
 
   atools::gui::util::changeStarIndication(ui->actionAirportSearchShowRunwayOptions,
-                                          atools::gui::util::anyWidgetChanged(
-                                            {ui->gridLayoutAirportSearchRunway}));
+                                          atools::gui::util::anyWidgetChanged({ui->gridLayoutAirportSearchRunway}));
 
   atools::gui::util::changeStarIndication(ui->actionAirportSearchShowAltOptions,
-                                          atools::gui::util::anyWidgetChanged(
-                                            {ui->horizontalLayoutAirportAltitudeSearch}));
+                                          atools::gui::util::anyWidgetChanged({ui->horizontalLayoutAirportAltitudeSearch}));
 
   bool distanceSearchChanged = false;
   if(ui->checkBoxAirportDistSearch->isChecked())
@@ -727,8 +723,7 @@ void AirportSearch::updateButtonMenu()
   atools::gui::util::changeStarIndication(ui->actionAirportSearchShowDistOptions, distanceSearchChanged);
 
   atools::gui::util::changeStarIndication(ui->actionAirportSearchShowSceneryOptions,
-                                          atools::gui::util::anyWidgetChanged(
-                                            {ui->horizontalLayoutAirportScenerySearch}));
+                                          atools::gui::util::anyWidgetChanged({ui->horizontalLayoutAirportScenerySearch}));
 }
 
 void AirportSearch::updatePushButtons()
