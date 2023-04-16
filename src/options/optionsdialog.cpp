@@ -735,7 +735,6 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
 
     // Update dialog internal stuff
     updateWidgetStates();
-
     updateWebOptionsFromData();
     updateWebServerStatus();
   }
@@ -748,7 +747,6 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     saveState();
     updateWidgetUnits();
     updateWebOptionsFromData();
-
     updateTooltipOption();
 
     NavApp::getMapThemeHandler()->setMapThemeKeys(OptionData::instanceInternal().mapThemeKeys);
@@ -2763,7 +2761,7 @@ void OptionsDialog::startStopWebServerClicked()
     if(webController->isRunning())
       webController->stopServer();
     else
-      // Update options from page before starting
+      // Update options from page before starting and restart
       updateWebOptionsFromGui();
 
     updateWebServerStatus();
@@ -2772,28 +2770,40 @@ void OptionsDialog::startStopWebServerClicked()
 
 void OptionsDialog::updateWebOptionsFromData()
 {
+  qDebug() << Q_FUNC_INFO;
   WebController *webController = NavApp::getWebController();
   if(webController != nullptr)
   {
     OptionData& data = OptionData::instanceInternal();
 
-    webController->setDocumentRoot(QDir::fromNativeSeparators(QFileInfo(data.getWebDocumentRoot()).canonicalFilePath()));
-    webController->setPort(data.getWebPort());
-    webController->setEncrypted(data.isWebEncrypted());
-    webController->restartServer(false /* force */);
+    // Detect changed parameters
+    QString root = QDir::fromNativeSeparators(QFileInfo(data.getWebDocumentRoot()).canonicalFilePath());
+    int port = data.getWebPort();
+    bool encrypted = data.isWebEncrypted();
+    bool changed = root != webController->getDocumentRoot() || port != webController->getPort() ||
+                   encrypted != webController->isEncrypted();
+
+    webController->setDocumentRoot(root);
+    webController->setPort(port);
+    webController->setEncrypted(encrypted);
+
+    // Restart if it is running and any paramters were changed
+    if(changed && webController->isRunning())
+      webController->restartServer(false /* force */);
   }
 }
 
 void OptionsDialog::updateWebOptionsFromGui()
 {
+  qDebug() << Q_FUNC_INFO;
+
   WebController *webController = NavApp::getWebController();
   if(webController != nullptr)
   {
-    webController->setDocumentRoot(QDir::fromNativeSeparators(QFileInfo(ui->lineEditOptionsWebDocroot->text()).
-                                                              canonicalFilePath()));
+    webController->setDocumentRoot(QDir::fromNativeSeparators(QFileInfo(ui->lineEditOptionsWebDocroot->text()).canonicalFilePath()));
     webController->setPort(ui->spinBoxOptionsWebPort->value());
     webController->setEncrypted(ui->checkBoxOptionsWebEncrypted->isChecked());
-    webController->restartServer(true /* force */);
+    webController->restartServer(true /* force */); // Restart always
   }
 }
 

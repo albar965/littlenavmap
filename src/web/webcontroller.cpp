@@ -218,6 +218,8 @@ void WebController::stopServer()
 
 void WebController::restartServer(bool force)
 {
+  qDebug() << Q_FUNC_INFO << "isRunning()" << isRunning() << "force" << force;
+
   if(isRunning() || force)
   {
     stopServer();
@@ -296,9 +298,9 @@ QString WebController::getDefaultDocumentRoot() const
   return QFileInfo(QCoreApplication::applicationDirPath() + QDir::separator() + "web").canonicalFilePath();
 }
 
-
-WebMapController *WebController::getWebMapController() const{
-    return mapController;
+WebMapController *WebController::getWebMapController() const
+{
+  return mapController;
 
 }
 
