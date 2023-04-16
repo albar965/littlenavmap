@@ -94,8 +94,14 @@ QString MapPainterRoute::buildLegText(const RouteLeg& leg)
   if(mapPaintWidget->isDistanceCutOff())
     return QString();
 
-  return leg.buildLegText(context->dOptRoute(optsd::ROUTE_DISTANCE), context->dOptRoute(optsd::ROUTE_MAG_COURSE),
-                          context->dOptRoute(optsd::ROUTE_TRUE_COURSE), true /* narrow */).join(tr(" / "));
+  QStringList texts;
+  if(context->dOptRoute(optsd::ROUTE_AIRWAY) && !leg.getAirwayName().isEmpty())
+    texts.append(leg.getAirwayName());
+
+  texts.append(leg.buildLegText(context->dOptRoute(optsd::ROUTE_DISTANCE), context->dOptRoute(optsd::ROUTE_MAG_COURSE),
+                                context->dOptRoute(optsd::ROUTE_TRUE_COURSE), true /* narrow */));
+
+  return texts.join(tr(" / "));
 }
 
 QString MapPainterRoute::buildLegText(float distance, float courseMag, float courseTrue)

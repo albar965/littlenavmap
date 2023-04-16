@@ -175,6 +175,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   QTreeWidgetItem *route = addTopItem(tr("Flight Plan"), tr("Select display options for the flight plan line."));
   addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Distance"), tr("Show distance along flight plan leg.\n"
                                                                                           "The label moves to keep it visible while scrolling."), optsd::ROUTE_DISTANCE, true);
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Airway"), tr("Show airway.\n"
+                                                                                        "The label moves to keep it visible while scrolling."), optsd::ROUTE_AIRWAY);
   addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic Course"), tr("Show great circle magnetic start course at flight plan leg.\n"
                                                                                                  "Does not consider VOR calibrated declination.\n"
                                                                                                  "The label moves to keep it visible while scrolling."), optsd::ROUTE_MAG_COURSE);

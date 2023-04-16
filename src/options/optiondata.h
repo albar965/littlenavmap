@@ -554,7 +554,8 @@ enum DisplayOptionRoute
   ROUTE_MAG_COURSE = 1 << 1,
   ROUTE_TRUE_COURSE = 1 << 2,
   ROUTE_INITIAL_FINAL_MAG_COURSE = 1 << 3,
-  ROUTE_INITIAL_FINAL_TRUE_COURSE = 1 << 4
+  ROUTE_INITIAL_FINAL_TRUE_COURSE = 1 << 4,
+  ROUTE_AIRWAY = 1 << 5
 };
 
 Q_DECLARE_FLAGS(DisplayOptionsRoute, DisplayOptionRoute);
