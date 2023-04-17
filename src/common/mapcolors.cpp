@@ -35,9 +35,8 @@ namespace mapcolors {
 /* Colors that are updated from confguration file */
 
 QPen taxiwayLinePen(QColor(200, 200, 0), 1.5, Qt::DashLine, Qt::FlatCap);
-QColor taxiwayNameColor(Qt::black);
-
 QColor taxiwayNameBackgroundColor(255, 255, 120);
+QColor taxiwayNameColor(Qt::black);
 
 QColor airportDetailBackColor(255, 255, 255);
 QColor airportEmptyColor(130, 130, 130);
@@ -130,6 +129,9 @@ QColor routeHighlightBackColor(Qt::black);
 
 /* Objects highlighted because of selection in route profile */
 QColor profileHighlightBackColor(Qt::black);
+
+QColor distanceMarkerTextColor(Qt::black);
+QColor distanceMarkerTextBackgroundColor(255, 255, 255, 220);
 
 QPen markEndurancePen(Qt::black, 2., Qt::DotLine, Qt::FlatCap, Qt::MiterJoin);
 QPen markSelectedAltitudeRangePen(Qt::darkGreen, 1.5, Qt::SolidLine, Qt::FlatCap);
@@ -726,6 +728,8 @@ void syncColors()
   syncPen(colorSettings, "SelectedAltitudeRangePen", markSelectedAltitudeRangePen);
   syncPen(colorSettings, "TurnPathPen", markTurnPathPen);
   syncColorArgb(colorSettings, "TouchRegionFillColor", touchRegionFillColor);
+  syncColor(colorSettings, "DistanceMarkerTextColor", distanceMarkerTextColor);
+  syncColorArgb(colorSettings, "DistanceMarkerTextBackgroundColor", distanceMarkerTextBackgroundColor);
   colorSettings.endGroup();
 
   colorSettings.beginGroup("Highlight");

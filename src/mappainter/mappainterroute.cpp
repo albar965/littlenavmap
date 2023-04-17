@@ -905,7 +905,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, QSet<m
       textPlacement.setArrowForEmpty(previewAll); // Arrow for empty texts
       textPlacement.setTextOnLineCenter(textOnLineCenter);
       textPlacement.setDrawFast(context->drawFast);
-      textPlacement.setTextOnTopOfLine(false);
+      textPlacement.setTextOnTopOfLine(false); // Allow text below line to avoid cluttering up procedures
       textPlacement.setLineWidth(outerlinewidth);
       textPlacement.setColors(textColors);
       textPlacement.calculateTextPositions(positions);

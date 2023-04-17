@@ -905,6 +905,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
           else if(mouseState.testFlag(mw::DRAG_DIST_CHANGE_END) || mouseState.testFlag(mw::DRAG_DIST_NEW_END))
             // New or end was moved - update coordinates only
             screenIndex->updateDistanceMarkerToPos(currentDistanceMarkerId, pos);
+          currentDistanceMarkerId = -1;
         }
       }
       else if(mouseState & mw::DRAG_POST_CANCEL)

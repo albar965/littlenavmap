@@ -235,6 +235,12 @@ public:
 
   void resetTakeoffLandingDetection();
 
+  /* Currently dragging measurement line */
+  int getCurrentDistanceMarkerId() const
+  {
+    return currentDistanceMarkerId;
+  }
+
 signals:
   /* Fuel flow started or stopped */
   void aircraftEngineStarted(const atools::fs::sc::SimConnectUserAircraft& aircraft);
@@ -350,10 +356,11 @@ private:
   /* Start a line measurement after context menu selection or click+modifier */
   void addDistanceMarker(const atools::geo::Pos& pos, const map::MapResult& result);
   void addDistanceMarker(const atools::geo::Pos& pos, const map::MapAirport *airport, const map::MapVor *vor,
-                         const map::MapNdb *ndb, const map::MapWaypoint *waypoint, const map::MapUserpoint* userpoint);
+                         const map::MapNdb *ndb, const map::MapWaypoint *waypoint, const map::MapUserpoint *userpoint);
   void fillDistanceMarker(map::DistanceMarker& distanceMarker, const atools::geo::Pos& pos, const map::MapResult& result);
   void fillDistanceMarker(map::DistanceMarker& distanceMarker, const atools::geo::Pos& pos, const map::MapAirport *airport,
-                          const map::MapVor *vor, const map::MapNdb *ndb, const map::MapWaypoint *waypoint, const map::MapUserpoint* userpoint);
+                          const map::MapVor *vor, const map::MapNdb *ndb, const map::MapWaypoint *waypoint,
+                          const map::MapUserpoint *userpoint);
 
   /* Show the given object in the search search window with filters and selection set */
   void showResultInSearch(const map::MapBase *base);
