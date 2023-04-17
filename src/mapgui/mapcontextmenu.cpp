@@ -661,7 +661,7 @@ void MapContextMenu::insertMeasureMenu(QMenu& menu)
     };
 
   insertMenuOrAction(menu, mc::MEASURE, MapResultIndex().
-                     addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT).
+                     addRef(*result, map::AIRPORT | map::VOR | map::NDB | map::WAYPOINT | map::USERPOINT).
                      sort(DEFAULT_TYPE_SORT, alphaSort),
                      tr("&Measure Distance from %1"), tr("Measure great circle distance on the map"),
                      tr("Ctrl+Click"), QIcon(":/littlenavmap/resources/icons/distancemeasure.svg"), true /* allowNoMapObject */, callback);
@@ -1150,7 +1150,7 @@ bool MapContextMenu::exec(QPoint menuPos, QPoint point)
   }
 
   // Get objects near position =============================================================
-  screenIndex->getAllNearest(point.x(), point.y(), screenSearchDist, *result,
+  screenIndex->getAllNearest(point, screenSearchDist, *result,
                              map::QUERY_MARK | map::QUERY_PREVIEW_PROC_POINTS | map::QUERY_PROC_RECOMMENDED);
 
   result->moveOnlineAirspacesToFront();

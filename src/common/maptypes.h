@@ -1447,7 +1447,8 @@ QDataStream& operator<<(QDataStream& dataStream, const map::RangeMarker& obj);
 struct DistanceMarker
   : public MapBase
 {
-  DistanceMarker() : MapBase(map::MARK_DISTANCE)
+  DistanceMarker()
+    : MapBase(map::MARK_DISTANCE)
   {
   }
 
@@ -1462,9 +1463,14 @@ struct DistanceMarker
     return from.isValid();
   }
 
-  const atools::geo::Pos& getPosition() const
+  const atools::geo::Pos& getPositionTo() const
   {
     return to;
+  }
+
+  const atools::geo::Pos& getPositionFrom() const
+  {
+    return from;
   }
 
   float getDistanceMeter() const
@@ -1600,6 +1606,7 @@ QString waypointText(const map::MapWaypoint& waypoint);
 
 QString userpointRouteText(const map::MapUserpointRoute& userpoint);
 QString userpointText(const MapUserpoint& userpoint, int elideName = 100);
+QString userpointShortText(const MapUserpoint& userpoint, int elideName = 100);
 QString logEntryText(const MapLogbookEntry& logEntry);
 QString airwayText(const map::MapAirway& airway);
 
@@ -1632,7 +1639,7 @@ QIcon mapBaseIcon(const map::MapBase *base, int size);
 /* Get a number for surface quality to get the best runway. Higher numbers are better surface. */
 int surfaceQuality(const QString& surface);
 
-/* Assign artificial ids to measurement and range rings which allow to identify them */
+/* Assign artificial ids to measurement and range rings which allow to identify them. Not thread safe. */
 int getNextUserFeatureId();
 
 } // namespace map
