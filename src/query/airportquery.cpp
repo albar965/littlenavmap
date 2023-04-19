@@ -451,8 +451,7 @@ map::MapRunway AirportQuery::getRunwayByEndId(int airportId, int runwayEndId)
   return map::MapRunway();
 }
 
-void AirportQuery::getRunwayEndByNames(map::MapResult& result, const QString& runwayName,
-                                       const QString& airportIdent)
+void AirportQuery::getRunwayEndByNames(map::MapResult& result, const QString& runwayName, const QString& airportIdent)
 {
   for(const QString& rname : atools::fs::util::runwayNameZeroPrefixVariants(runwayName))
   {
@@ -462,8 +461,7 @@ void AirportQuery::getRunwayEndByNames(map::MapResult& result, const QString& ru
   }
 }
 
-void AirportQuery::runwayEndByNames(map::MapResult& result, const QString& runwayName,
-                                    const QString& airportIdent)
+void AirportQuery::runwayEndByNames(map::MapResult& result, const QString& runwayName, const QString& airportIdent)
 {
   if(!query::valid(Q_FUNC_INFO, runwayEndByNameQuery))
     return;
@@ -598,8 +596,7 @@ const QList<map::MapStart> *AirportQuery::getStartPositionsForAirport(int airpor
   }
 }
 
-void AirportQuery::getStartByNameAndPos(map::MapStart& start, int airportId,
-                                        const QString& runwayEndName, const ageo::Pos& position)
+void AirportQuery::getStartByNameAndPos(map::MapStart& start, int airportId, const QString& runwayEndName, const ageo::Pos& position)
 {
   for(const QString& rname : atools::fs::util::runwayNameZeroPrefixVariants(runwayEndName))
   {
@@ -609,8 +606,7 @@ void AirportQuery::getStartByNameAndPos(map::MapStart& start, int airportId,
   }
 }
 
-void AirportQuery::startByNameAndPos(map::MapStart& start, int airportId,
-                                     const QString& runwayEndName, const ageo::Pos& position)
+void AirportQuery::startByNameAndPos(map::MapStart& start, int airportId, const QString& runwayEndName, const ageo::Pos& position)
 {
   // Get runway number for the first part of the query fetching start positions (before union)
   int number = runwayEndName.toInt();
