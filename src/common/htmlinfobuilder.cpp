@@ -1096,7 +1096,11 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
 
   if(closed)
     html.row2(tr("Closed"), QString());
-  html.row2(tr("Heading:", "runway heading"), courseTextFromTrue(hdgPrimTrue, airport.magvar, true), ahtml::NO_ENTITIES);
+
+  bool forceBoth = std::abs(airport.magvar) > 90.f;
+  html.row2(tr("Heading:", "runway heading"),
+            courseTextFromTrue(hdgPrimTrue, airport.magvar, true /* magBold */, true /* trueSmall */, false /* narrow */, forceBoth),
+            ahtml::NO_ENTITIES);
 
   float threshold = rec->valueFloat("offset_threshold");
   if(threshold > 1.f)

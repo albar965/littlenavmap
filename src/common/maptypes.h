@@ -465,7 +465,8 @@ struct MapRunway
   QString surface, shoulder, primaryName, secondaryName, edgeLight;
   float length /* ft */;
   int primaryEndId, secondaryEndId;
-  float heading, patternAlt,
+  float heading, /* true degrees of primary */
+        patternAlt,
         smoothness /* 0 (smooth) to 1 (very rough). Default is 0.25. X-Plane only. -1.f if not set */;
   float width,
         primaryOffset, secondaryOffset, /* part of the runway length */
