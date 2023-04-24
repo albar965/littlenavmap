@@ -1818,8 +1818,14 @@ void MainWindow::showShowMapCache()
 /* Menu item */
 void MainWindow::showShowMapInstallation()
 {
-  // .../Little Navmap/data/maps/earth
-  helpHandler->openFile(MarbleDirs::marbleDataPath() % QDir::separator() % "maps" % QDir::separator() % "earth");
+  QString cacheMapThemeDir = OptionData::instance().getCacheMapThemeDir();
+
+  QString msg = atools::checkDirMsg(cacheMapThemeDir);
+  if(msg.isEmpty())
+    helpHandler->openFile(cacheMapThemeDir);
+  else
+    QMessageBox::warning(this, QApplication::applicationName(),
+                         msg + tr("\n\nSet the path to additional map themes in options on page \"Cache and Files\""));
 }
 
 /* Updates label and tooltip for connection status */
