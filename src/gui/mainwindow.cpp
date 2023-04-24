@@ -3404,17 +3404,18 @@ void MainWindow::mainWindowShownDelayed()
 
 void MainWindow::runDirToolManual()
 {
-  runDirTool(true);
+  runDirTool(true /* manual */);
 }
 
 void MainWindow::runDirTool(bool manual)
 {
+  bool alreadyComplete, created;
   DirTool dirTool(this, atools::documentsDir(), QApplication::applicationName(), lnm::ACTIONS_SHOW_INSTALL_DIRS);
-  bool hasDirs = dirTool.runIfMissing();
+  dirTool.runIfMissing(manual, alreadyComplete, created);
 
-  qDebug() << Q_FUNC_INFO << "hasDirs" << hasDirs << "manual" << manual;
+  qDebug() << Q_FUNC_INFO << "alreadyComplete" << alreadyComplete << "manual" << manual << "created" << created;
 
-  if(hasDirs && manual)
+  if(alreadyComplete && manual && !created)
     QMessageBox::information(this, QApplication::applicationName(),
                              tr("<p>Directory structure for Little Navmap files is already complete.</p>"
                                   "<p>Base directory is<br/>\"%1\"</p>").arg(dirTool.getApplicationDir()));
@@ -3481,6 +3482,11 @@ void MainWindow::fullScreenMapToggle()
 void MainWindow::setStayOnTop(QWidget *widget)
 {
   dockHandler->setStayOnTop(widget, ui->actionWindowStayOnTop->isChecked());
+}
+
+void MainWindow::setLnmplnExportDir(const QString& dir)
+{
+  routeExport->setLnmplnExportDir(dir);
 }
 
 void MainWindow::stayOnTop()

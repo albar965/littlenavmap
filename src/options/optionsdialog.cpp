@@ -688,6 +688,32 @@ void OptionsDialog::styleChanged()
   gridDelegate->styleChanged();
 }
 
+void OptionsDialog::setCacheMapThemeDir(const QString& mapThemesDir)
+{
+  // Assign value if current is empty and passed value is valid
+  QString& cacheMapThemeDir = OptionData::instanceInternal().cacheMapThemeDir;
+  if(cacheMapThemeDir.isEmpty() && atools::checkDir(Q_FUNC_INFO, mapThemesDir, true /* warn */))
+  {
+    Settings::instance().setValue("OptionsDialog/Widget_lineEditCacheMapThemeDir", mapThemesDir);
+    Settings::syncSettings();
+    cacheMapThemeDir = mapThemesDir;
+    ui->lineEditCacheMapThemeDir->setText(mapThemesDir);
+  }
+}
+
+void OptionsDialog::setCacheOfflineDataPath(const QString& globeDir)
+{
+  // Assign value if current is empty and passed value is valid
+  QString& cacheOfflineElevationPath = OptionData::instanceInternal().cacheOfflineElevationPath;
+  if(cacheOfflineElevationPath.isEmpty() && atools::checkDir(Q_FUNC_INFO, globeDir, true /* warn */))
+  {
+    Settings::instance().setValue("OptionsDialog/Widget_lineEditCacheOfflineDataPath", globeDir);
+    Settings::syncSettings();
+    cacheOfflineElevationPath = globeDir;
+    ui->lineEditCacheOfflineDataPath->setText(globeDir);
+  }
+}
+
 void OptionsDialog::open()
 {
   qDebug() << Q_FUNC_INFO;

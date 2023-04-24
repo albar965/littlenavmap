@@ -89,6 +89,10 @@ public:
 
   void styleChanged();
 
+  /* Set by DirTool if line edit is empty and dir is valid */
+  void setCacheMapThemeDir(const QString& mapThemesDir);
+  void setCacheOfflineDataPath(const QString& globeDir);
+
 signals:
   /* Emitted whenever OK or Apply is pressed on the dialog window */
   void optionsChanged();

@@ -410,6 +410,8 @@ const QLatin1String DATABASE_PREFIX("little_navmap_");
 const QLatin1String DATABASE_SUFFIX(".sqlite");
 const QLatin1String DATABASE_BACKUP_SUFFIX("-backup");
 
+const QLatin1String ROUTE_LNMPLN_EXPORTDIR("Route/LnmPlnFileDialogDir");
+
 /* This is the default configuration file for reading the scenery library.
  * It can be overridden by placing a  file with the same name into
  * the configuration directory. */
