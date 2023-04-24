@@ -944,6 +944,11 @@ bool MapAirport::closed() const
   return flags.testFlag(AP_CLOSED);
 }
 
+bool MapAirport::military() const
+{
+  return flags.testFlag(AP_MIL);
+}
+
 bool MapAirport::hard() const
 {
   return flags.testFlag(AP_HARD);
@@ -1144,6 +1149,9 @@ bool MapAirport::isVisible(map::MapTypes types, int minRunwayFt, const MapLayer 
     return false;
 
   if(closed() && !types.testFlag(map::AIRPORT_CLOSED))
+    return false;
+
+  if(military() && !types.testFlag(map::AIRPORT_MILITARY))
     return false;
 
   return true;

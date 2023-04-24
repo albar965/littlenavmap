@@ -149,6 +149,12 @@ void MapVisible::updateVisibleObjectsStatusBar()
           apShort.append(tr("C"));
         }
 
+        if(shown.testFlag(map::AIRPORT_MILITARY))
+        {
+          features.append(tr("military (M)"));
+          apShort.append(tr("M"));
+        }
+
         if(shown.testFlag(map::AIRPORT_ADDON))
         {
           features.append(tr("add-on display forced (A)"));

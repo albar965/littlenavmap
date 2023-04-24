@@ -329,6 +329,10 @@ void MapAirportHandler::addToolbarButton()
                          tr("Show airports with at least one hard surface runway"), QKeySequence(tr("Ctrl+Alt+J")));
   actionSoft = addAction(":/littlenavmap/resources/icons/airportsoft.svg", tr("&Soft surface"),
                          tr("Show airports with soft runway surfaces only"), QKeySequence(tr("Ctrl+Alt+S")));
+
+  ui->menuViewAirport->addSeparator();
+  buttonMenu->addSeparator();
+
   actionWater = addAction(":/littlenavmap/resources/icons/airportwater.svg", tr("&Seaplane Bases"),
                           tr("Show airports having only water runways"), QKeySequence(tr("Ctrl+Alt+U")));
   actionHelipad = addAction(":/littlenavmap/resources/icons/airporthelipad.svg", tr("&Heliports"),
@@ -340,8 +344,11 @@ void MapAirportHandler::addToolbarButton()
   actionNoProcedures = addAction(":/littlenavmap/resources/icons/airportproc.svg", tr("&No procedure"),
                                  tr("Show airports having no SID, STAR or approach procedure"), QKeySequence());
   actionClosed = addAction(":/littlenavmap/resources/icons/airportclosed.svg", tr("&Closed"), tr("Show closed airports"), QKeySequence());
+  actionMil = addAction(":/littlenavmap/resources/icons/airportmil.svg", tr("&Military"), tr("Show military airports"), QKeySequence());
 
+  ui->menuViewAirport->addSeparator();
   toolButton->menu()->addSeparator();
+
   actionAddon = addAction(":/littlenavmap/resources/icons/airportaddon.svg", tr("&Add-on"),
                           tr("Force visibility of add-on airports for all zoom distances"), QKeySequence(tr("Ctrl+Alt+O")));
 
@@ -399,7 +406,7 @@ void MapAirportHandler::toolbarActionTriggered()
 void MapAirportHandler::flagsToActions()
 {
   atools::gui::SignalBlocker blocker({NavApp::getMainUi()->actionMapShowAirports, actionHard, actionSoft, actionWater, actionHelipad,
-                                      actionAddon, actionUnlighted, actionNoProcedures, actionClosed, actionEmpty});
+                                      actionAddon, actionUnlighted, actionNoProcedures, actionClosed, actionMil, actionEmpty});
 
   NavApp::getMainUi()->actionMapShowAirports->setChecked(airportTypes.testFlag(map::AIRPORT));
   actionHard->setChecked(airportTypes.testFlag(map::AIRPORT_HARD));
@@ -410,6 +417,7 @@ void MapAirportHandler::flagsToActions()
   actionUnlighted->setChecked(airportTypes.testFlag(map::AIRPORT_UNLIGHTED));
   actionNoProcedures->setChecked(airportTypes.testFlag(map::AIRPORT_NO_PROCS));
   actionClosed->setChecked(airportTypes.testFlag(map::AIRPORT_CLOSED));
+  actionMil->setChecked(airportTypes.testFlag(map::AIRPORT_MILITARY));
   actionEmpty->setChecked(airportTypes.testFlag(map::AIRPORT_EMPTY));
 }
 
@@ -443,6 +451,9 @@ void MapAirportHandler::actionsToFlags()
 
   if(actionClosed->isChecked())
     airportTypes |= map::AIRPORT_CLOSED;
+
+  if(actionMil->isChecked())
+    airportTypes |= map::AIRPORT_MILITARY;
 
   if(actionEmpty->isChecked())
     airportTypes |= map::AIRPORT_EMPTY;

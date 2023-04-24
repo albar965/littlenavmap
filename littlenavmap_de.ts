@@ -15251,103 +15251,113 @@ Die Schaltfläche ist hervorgehoben, wenn ein Filter ausgewählt ist.</translati
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapairporthandler.cpp" line="332"/>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="336"/>
         <source>&amp;Seaplane Bases</source>
         <translation>&amp;Wasserflugzeugbasen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapairporthandler.cpp" line="333"/>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="337"/>
         <source>Show airports having only water runways</source>
         <translation>Flugplätze mit Wasserlandebahnen anzeigen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapairporthandler.cpp" line="333"/>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="337"/>
         <source>Ctrl+Alt+U</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapairporthandler.cpp" line="334"/>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="338"/>
         <source>&amp;Heliports</source>
         <translation>&amp;Helikopterlandeplätze</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapairporthandler.cpp" line="335"/>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="339"/>
         <source>Show airports having only helipads</source>
         <translation>Flugplätze anzeigen, die nur Helikopterlandeplätze haben</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapairporthandler.cpp" line="335"/>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="339"/>
         <source>Ctrl+Alt+X</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapairporthandler.cpp" line="336"/>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="340"/>
         <source>&amp;Empty</source>
         <translation>&amp;Leer</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapairporthandler.cpp" line="337"/>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="341"/>
         <source>Show airports having no special features</source>
         <translation>Flugplätze ohne besondere Merkmale anzeigen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapairporthandler.cpp" line="337"/>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="341"/>
         <source>Ctrl+Alt+E</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapairporthandler.cpp" line="338"/>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="342"/>
         <source>&amp;Not lighted</source>
         <translation>&amp;Unbeleuchtet</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapairporthandler.cpp" line="339"/>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="343"/>
         <source>Show unlighted airports</source>
         <translation>Zeige unbeleuchtete Flugplätze</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapairporthandler.cpp" line="340"/>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="344"/>
         <source>&amp;No procedure</source>
         <translation>&amp;Keine Prozedur</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapairporthandler.cpp" line="341"/>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="345"/>
         <source>Show airports having no SID, STAR or approach procedure</source>
         <oldsource>Show airports having no SID, STAR or approach apprprocedure</oldsource>
         <translation>Flugplätze ohne SID, STAR oder Anflugprozedur anzeigen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapairporthandler.cpp" line="342"/>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="346"/>
         <source>&amp;Closed</source>
         <translation>&amp;Geschlossen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapairporthandler.cpp" line="342"/>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="346"/>
         <source>Show closed airports</source>
         <translation>Zeige geschlossene Flugplätze</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapairporthandler.cpp" line="345"/>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="347"/>
+        <source>&amp;Military</source>
+        <translation>&amp;Militärisch</translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="347"/>
+        <source>Show military airports</source>
+        <translation>Militärische Flugplätze anzeigen</translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="352"/>
         <source>&amp;Add-on</source>
         <translation>&amp;Add-on</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapairporthandler.cpp" line="346"/>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="353"/>
         <source>Force visibility of add-on airports for all zoom distances</source>
         <translation>Erzwinge Sichtbarkeit Add-on Flugplätzen für alle Zoomdistanzen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapairporthandler.cpp" line="346"/>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="353"/>
         <source>Ctrl+Alt+O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapairporthandler.cpp" line="475"/>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="486"/>
         <source>Minimum runway length %1.</source>
         <translation>Minimale Runwaylänge %1.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapairporthandler.cpp" line="476"/>
+        <location filename="src/mapgui/mapairporthandler.cpp" line="487"/>
         <source>No runway length limit.</source>
         <translation>Keine Begrenzung der Runwaylänge.</translation>
     </message>
@@ -20982,39 +20992,39 @@ kHz/MHz</translation>
         <translation type="vanished">Leere Flugplätze (E) ohne Bewertung</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="170"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="176"/>
         <source>V</source>
         <translation>V</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="171"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="177"/>
         <source>VOR (V)</source>
         <translation>VOR (V)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="176"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="182"/>
         <source>N</source>
         <translation>N</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="177"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="183"/>
         <source>NDB (N)</source>
         <translation>NDB (N)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="188"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="194"/>
         <source>I</source>
         <translation>I</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="189"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="195"/>
         <source>ILS (I)</source>
         <translation>ILS (I)</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="104"/>
-        <location filename="src/mapgui/mapvisible.cpp" line="182"/>
-        <location filename="src/mapgui/mapvisible.cpp" line="379"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="188"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="385"/>
         <source>W</source>
         <translation>W</translation>
     </message>
@@ -21025,8 +21035,8 @@ kHz/MHz</translation>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Die aktuell ausgewählte Szeneriedatenbank für den Simulator ist leer.&lt;br/&gt;Gehen Sie zum Hauptmenü -&amp;gt; &quot;Szeneriebibliothek&quot; -&amp;gt; &quot;Szeneriebibliothek laden&quot; oder drücken &lt;code&gt;Strg+Umschalt+L&lt;/code&gt;.&lt;br/&gt;Wählen Sie dann den Simulator aus und drücken Sie auf &quot;Laden&quot;.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="430"/>
         <location filename="src/mapgui/mapvisible.cpp" line="436"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="442"/>
         <source>—</source>
         <translation>—</translation>
     </message>
@@ -21041,7 +21051,7 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="92"/>
-        <location filename="src/mapgui/mapvisible.cpp" line="218"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="224"/>
         <source>H</source>
         <translation>H</translation>
     </message>
@@ -21067,15 +21077,15 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="107"/>
-        <location filename="src/mapgui/mapvisible.cpp" line="158"/>
-        <location filename="src/mapgui/mapvisible.cpp" line="406"/>
-        <location filename="src/mapgui/mapvisible.cpp" line="411"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="164"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="412"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="417"/>
         <source>, </source>
         <translation>, </translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="107"/>
-        <location filename="src/mapgui/mapvisible.cpp" line="158"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="164"/>
         <source> and </source>
         <translation> und </translation>
     </message>
@@ -21153,138 +21163,148 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapvisible.cpp" line="154"/>
+        <source>military (M)</source>
+        <translation>Militärisch (M)</translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapvisible.cpp" line="155"/>
+        <source>M</source>
+        <translation>M</translation>
+    </message>
+    <message>
+        <location filename="src/mapgui/mapvisible.cpp" line="160"/>
         <source>add-on display forced (A)</source>
         <translation>Add-On Flugplätze (A)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="155"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="161"/>
         <source>A</source>
         <translation>A</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="158"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="164"/>
         <source>Showing </source>
         <translation>Zeige </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="158"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="164"/>
         <source>.</source>
         <translation>.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="164"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="170"/>
         <source>No airports</source>
         <translation>Kein Flugplätze</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="183"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="189"/>
         <source>Waypoints (W)</source>
         <translation>Wegpunkte (W)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="194"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="200"/>
         <source>G</source>
         <translation>G</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="195"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="201"/>
         <source>GLS (G)</source>
         <translation>GLS (G)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="206"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="212"/>
         <source>JA</source>
         <translation>JA</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="207"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="213"/>
         <source>Jet Airways (JA)</source>
         <translation>Jet Luftstraßen (JA)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="212"/>
-        <location filename="src/mapgui/mapvisible.cpp" line="397"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="218"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="403"/>
         <source>T</source>
         <translation>T</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="213"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="219"/>
         <source>Tracks (T)</source>
         <translation>Tracks (T)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="363"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="369"/>
         <source>Airport weather source (AW): </source>
         <translation>Quelle für Flugplatzwetter (AW): </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="367"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="373"/>
         <source>AW</source>
         <translation>AW</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="375"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="381"/>
         <source>Wind shown (W): </source>
         <translation>Angezeigter Wind (W): </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="433"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="439"/>
         <source>/</source>
         <translation>/</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="436"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="442"/>
         <source>Nothing shown. Zoom in to see map features.</source>
         <translation>Nichts angezeigt. Näher Zoomen, um Kartenobjekte zu sehen.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="200"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="206"/>
         <source>VA</source>
         <translation>VA</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="201"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="207"/>
         <source>Victor Airways (VA)</source>
         <translation>Victor Luftstraßen (VA)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="219"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="225"/>
         <source>Holdings (H)</source>
         <translation>Warteschleifen (H)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="224"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="230"/>
         <source>MSA</source>
         <translation>MSA</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="225"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="231"/>
         <source>MSA Sectors (MSA)</source>
         <oldsource>Airport MSA (MSA)</oldsource>
         <translation>MSA Sektoren (MSA)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="230"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="236"/>
         <source>MORA</source>
         <translation>MORA</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="231"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="237"/>
         <source>MORA Grid (MORA)</source>
         <translation>MORA Gitter (MORA)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="250"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="256"/>
         <source>ICAO</source>
         <translation>ICAO</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="251"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="257"/>
         <source>Class A-E (ICAO)</source>
         <translation>Klasse A-E (ICAO)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="256"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="262"/>
         <source>F,G</source>
         <oldsource>FIR</oldsource>
         <translation>F,G</translation>
@@ -21294,42 +21314,42 @@ kHz/MHz</translation>
         <translation type="vanished">Flight Information Region, Klasse F bzw. G (FIR)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="268"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="274"/>
         <source>RSTR</source>
         <translation>RSTR</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="269"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="275"/>
         <source>Restricted (RSTR)</source>
         <translation>Beschränkt (RSTR)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="274"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="280"/>
         <source>SPEC</source>
         <translation>SPEC</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="275"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="281"/>
         <source>Special (SPEC)</source>
         <translation>Spezial (SPEC)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="280"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="286"/>
         <source>OTR</source>
         <translation>OTR</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="281"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="287"/>
         <source>Centers and others (OTR)</source>
         <translation>Kontrollzentren und Andere (OTR)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="288"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="294"/>
         <source>Navaids: </source>
         <translation>Navigationshilfen: </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="290"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="296"/>
         <source>No navaids</source>
         <translation>Keine Navigationshilfen</translation>
     </message>
@@ -21350,28 +21370,28 @@ kHz/MHz</translation>
         <translation type="vanished">Online Centergruppen: </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="296"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="302"/>
         <source>Airspace Groups: </source>
         <translation>Luftraumgruppen: </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="352"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="358"/>
         <source>%1 Clients / Aircraft</source>
         <translation>%1 Clients / Flugzeuge</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="355"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="361"/>
         <source>AI / Multiplayer / online client: </source>
         <oldsource>AI / multiplayer / online client: </oldsource>
         <translation>KI / Mehrspieler / Online Client: </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="357"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="363"/>
         <source>No AI / Multiplayer / online client</source>
         <translation>Kein KI / Mehrspieler / Online Client: </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="295"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="301"/>
         <source>Airspaces: </source>
         <translation>Lufträume: </translation>
     </message>
@@ -21385,52 +21405,52 @@ kHz/MHz</translation>
         <translation type="vanished">Add-On Flugplätze</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="257"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="263"/>
         <source>Class F and/or G</source>
         <translation>Klasse F bzw. G</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="262"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="268"/>
         <source>FIR,UIR</source>
         <translation>FIR,UIR</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="263"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="269"/>
         <source>Flight and/or Upper Information Regions</source>
         <translation>Fluginformationsregionen, Klasse F bzw. G (FIR)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="297"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="303"/>
         <source>Airspace Sources: </source>
         <translation>Luftraumquellen: </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="307"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="313"/>
         <source>No airspaces</source>
         <translation>Keine Lufträume</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="320"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="326"/>
         <source>Aircraft &gt; %1 ft</source>
         <translation>Flugzeug &gt; %1 ft</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="325"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="331"/>
         <source>Aircraft</source>
         <translation>Flugzeug</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="331"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="337"/>
         <source> on ground</source>
         <translation> auf dem Boden</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="341"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="347"/>
         <source>Ships &gt; %1 ft</source>
         <translation>Schiffe &gt; %1 ft</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="346"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="352"/>
         <source>Ships</source>
         <translation>Schiffe</translation>
     </message>
@@ -21439,7 +21459,7 @@ kHz/MHz</translation>
         <translation type="vanished">Quelle für Flugplatzwetter:</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="370"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="376"/>
         <source>No airport weather shown</source>
         <translation>Kein Flugplatzwetter angezeigt</translation>
     </message>
@@ -21448,53 +21468,53 @@ kHz/MHz</translation>
         <translation type="vanished">Angezeigter Wind: </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="376"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="382"/>
         <source> Wind source: </source>
         <translation> Wind-Quelle: </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="382"/>
-        <location filename="src/mapgui/mapvisible.cpp" line="392"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="388"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="398"/>
         <source>No wind shown</source>
         <translation>Kein Wind angezeigt</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="388"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="394"/>
         <source>Flight plan (F)</source>
         <translation>Flugplan (F)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="389"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="395"/>
         <source>F</source>
         <translation>F</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="396"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="402"/>
         <source>Aircraft track (T)</source>
         <translation>Flugzeugpfad (T)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="400"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="406"/>
         <source>No aircraft track shown</source>
         <translation>Kein Flugzeugpfad angezeigt</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="406"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="412"/>
         <source>Userpoints: </source>
         <translation>Nutzerpunkte: </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="411"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="417"/>
         <source>User features: </source>
         <translation>Nutzerobjekte: </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapvisible.cpp" line="417"/>
-        <location filename="src/mapgui/mapvisible.cpp" line="419"/>
-        <location filename="src/mapgui/mapvisible.cpp" line="421"/>
         <location filename="src/mapgui/mapvisible.cpp" line="423"/>
         <location filename="src/mapgui/mapvisible.cpp" line="425"/>
         <location filename="src/mapgui/mapvisible.cpp" line="427"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="429"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="431"/>
+        <location filename="src/mapgui/mapvisible.cpp" line="433"/>
         <source>,</source>
         <translation>,</translation>
     </message>
@@ -29338,9 +29358,9 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
         <translation type="vanished">%1 m</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2180"/>
-        <location filename="src/common/maptypes.cpp" line="2182"/>
-        <location filename="src/common/maptypes.cpp" line="2198"/>
+        <location filename="src/common/maptypes.cpp" line="2188"/>
+        <location filename="src/common/maptypes.cpp" line="2190"/>
+        <location filename="src/common/maptypes.cpp" line="2206"/>
         <source>%L1</source>
         <translation>%L1</translation>
     </message>
@@ -29453,10 +29473,10 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
         <location filename="src/common/formatter.cpp" line="262"/>
         <location filename="src/common/maptypes.cpp" line="784"/>
         <location filename="src/common/maptypes.cpp" line="877"/>
-        <location filename="src/common/maptypes.cpp" line="1954"/>
-        <location filename="src/common/maptypes.cpp" line="2088"/>
-        <location filename="src/common/maptypes.cpp" line="2278"/>
-        <location filename="src/common/maptypes.cpp" line="2544"/>
+        <location filename="src/common/maptypes.cpp" line="1962"/>
+        <location filename="src/common/maptypes.cpp" line="2096"/>
+        <location filename="src/common/maptypes.cpp" line="2286"/>
+        <location filename="src/common/maptypes.cpp" line="2552"/>
         <location filename="src/search/proceduresearch.cpp" line="1397"/>
         <source>, </source>
         <translation>, </translation>
@@ -29722,7 +29742,7 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
     <message>
         <location filename="src/common/maptypes.cpp" line="121"/>
         <location filename="src/common/maptypes.cpp" line="135"/>
-        <location filename="src/common/maptypes.cpp" line="1771"/>
+        <location filename="src/common/maptypes.cpp" line="1779"/>
         <location filename="src/common/proctypes.cpp" line="302"/>
         <source>Medium</source>
         <translation>Mittel</translation>
@@ -29993,8 +30013,8 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="228"/>
-        <location filename="src/common/maptypes.cpp" line="1186"/>
-        <location filename="src/common/maptypes.cpp" line="1739"/>
+        <location filename="src/common/maptypes.cpp" line="1194"/>
+        <location filename="src/common/maptypes.cpp" line="1747"/>
         <source>P</source>
         <translation>P</translation>
     </message>
@@ -30045,8 +30065,8 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="238"/>
-        <location filename="src/common/maptypes.cpp" line="1299"/>
-        <location filename="src/common/maptypes.cpp" line="1759"/>
+        <location filename="src/common/maptypes.cpp" line="1307"/>
+        <location filename="src/common/maptypes.cpp" line="1767"/>
         <source>D</source>
         <translation>D</translation>
     </message>
@@ -30142,7 +30162,7 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="257"/>
-        <location filename="src/common/maptypes.cpp" line="2069"/>
+        <location filename="src/common/maptypes.cpp" line="2077"/>
         <location filename="src/common/proctypes.cpp" line="409"/>
         <source>GS</source>
         <translation>GS</translation>
@@ -30187,31 +30207,31 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
         <location filename="src/common/maptypes.cpp" line="273"/>
         <location filename="src/common/maptypes.cpp" line="293"/>
         <location filename="src/common/maptypes.cpp" line="297"/>
-        <location filename="src/common/maptypes.cpp" line="1302"/>
+        <location filename="src/common/maptypes.cpp" line="1310"/>
         <source>H</source>
         <translation>H</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="271"/>
         <location filename="src/common/maptypes.cpp" line="274"/>
-        <location filename="src/common/maptypes.cpp" line="1580"/>
-        <location filename="src/common/maptypes.cpp" line="1585"/>
-        <location filename="src/common/maptypes.cpp" line="1592"/>
-        <location filename="src/common/maptypes.cpp" line="1595"/>
+        <location filename="src/common/maptypes.cpp" line="1588"/>
+        <location filename="src/common/maptypes.cpp" line="1593"/>
+        <location filename="src/common/maptypes.cpp" line="1600"/>
+        <location filename="src/common/maptypes.cpp" line="1603"/>
         <source>L</source>
         <translation>L</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="272"/>
         <location filename="src/common/maptypes.cpp" line="275"/>
-        <location filename="src/common/maptypes.cpp" line="1314"/>
+        <location filename="src/common/maptypes.cpp" line="1322"/>
         <source>T</source>
         <translation>T</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="281"/>
         <location filename="src/common/maptypes.cpp" line="284"/>
-        <location filename="src/common/maptypes.cpp" line="1773"/>
+        <location filename="src/common/maptypes.cpp" line="1781"/>
         <location filename="src/common/proctypes.cpp" line="304"/>
         <source>High</source>
         <translation>Hoch</translation>
@@ -30219,7 +30239,7 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
     <message>
         <location filename="src/common/maptypes.cpp" line="282"/>
         <location filename="src/common/maptypes.cpp" line="285"/>
-        <location filename="src/common/maptypes.cpp" line="1769"/>
+        <location filename="src/common/maptypes.cpp" line="1777"/>
         <location filename="src/common/proctypes.cpp" line="300"/>
         <source>Low</source>
         <translation>Niedrig</translation>
@@ -30256,7 +30276,7 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="306"/>
-        <location filename="src/common/maptypes.cpp" line="1280"/>
+        <location filename="src/common/maptypes.cpp" line="1288"/>
         <source>Track</source>
         <translation>Track</translation>
     </message>
@@ -30268,8 +30288,8 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
     <message>
         <location filename="src/common/maptypes.cpp" line="308"/>
         <location filename="src/common/maptypes.cpp" line="323"/>
-        <location filename="src/common/maptypes.cpp" line="1471"/>
-        <location filename="src/common/maptypes.cpp" line="1493"/>
+        <location filename="src/common/maptypes.cpp" line="1479"/>
+        <location filename="src/common/maptypes.cpp" line="1501"/>
         <location filename="src/common/proctypes.cpp" line="73"/>
         <location filename="src/common/proctypes.cpp" line="85"/>
         <source>VOR</source>
@@ -30278,7 +30298,7 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
     <message>
         <location filename="src/common/maptypes.cpp" line="309"/>
         <location filename="src/common/maptypes.cpp" line="327"/>
-        <location filename="src/common/maptypes.cpp" line="1792"/>
+        <location filename="src/common/maptypes.cpp" line="1800"/>
         <location filename="src/common/proctypes.cpp" line="74"/>
         <location filename="src/common/proctypes.cpp" line="86"/>
         <source>NDB</source>
@@ -30296,45 +30316,45 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="320"/>
-        <location filename="src/common/maptypes.cpp" line="1469"/>
-        <location filename="src/common/maptypes.cpp" line="1491"/>
+        <location filename="src/common/maptypes.cpp" line="1477"/>
+        <location filename="src/common/maptypes.cpp" line="1499"/>
         <location filename="src/common/proctypes.cpp" line="91"/>
         <source>VORDME</source>
         <translation>VORDME</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="321"/>
-        <location filename="src/common/maptypes.cpp" line="1454"/>
-        <location filename="src/common/maptypes.cpp" line="1487"/>
+        <location filename="src/common/maptypes.cpp" line="1462"/>
+        <location filename="src/common/maptypes.cpp" line="1495"/>
         <source>VORTAC</source>
         <translation>VORTAC</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="322"/>
-        <location filename="src/common/maptypes.cpp" line="1452"/>
+        <location filename="src/common/maptypes.cpp" line="1460"/>
         <source>DME only VORTAC</source>
         <translation>DME nur VORTAC</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="324"/>
-        <location filename="src/common/maptypes.cpp" line="1467"/>
-        <location filename="src/common/maptypes.cpp" line="1489"/>
-        <location filename="src/common/maptypes.cpp" line="2027"/>
-        <location filename="src/common/maptypes.cpp" line="2071"/>
+        <location filename="src/common/maptypes.cpp" line="1475"/>
+        <location filename="src/common/maptypes.cpp" line="1497"/>
+        <location filename="src/common/maptypes.cpp" line="2035"/>
+        <location filename="src/common/maptypes.cpp" line="2079"/>
         <source>DME</source>
         <translation>DME</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="325"/>
-        <location filename="src/common/maptypes.cpp" line="1461"/>
-        <location filename="src/common/maptypes.cpp" line="1483"/>
+        <location filename="src/common/maptypes.cpp" line="1469"/>
+        <location filename="src/common/maptypes.cpp" line="1491"/>
         <location filename="src/common/proctypes.cpp" line="100"/>
         <source>TACAN</source>
         <translation>TACAN</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="326"/>
-        <location filename="src/common/maptypes.cpp" line="1459"/>
+        <location filename="src/common/maptypes.cpp" line="1467"/>
         <source>DME only TACAN</source>
         <translation>DME nur TACAN</translation>
     </message>
@@ -30346,8 +30366,8 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="334"/>
-        <location filename="src/common/maptypes.cpp" line="1816"/>
-        <location filename="src/common/maptypes.cpp" line="1936"/>
+        <location filename="src/common/maptypes.cpp" line="1824"/>
+        <location filename="src/common/maptypes.cpp" line="1944"/>
         <source>None</source>
         <translation>Keine</translation>
     </message>
@@ -30428,7 +30448,7 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="367"/>
-        <location filename="src/common/maptypes.cpp" line="1262"/>
+        <location filename="src/common/maptypes.cpp" line="1270"/>
         <source>Control</source>
         <translation>Kontrolle</translation>
     </message>
@@ -30737,57 +30757,57 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
         <translation>Onlinebeobachter</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1660"/>
+        <location filename="src/common/maptypes.cpp" line="1668"/>
         <source>%1, %2</source>
         <translation>%1, %2</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2511"/>
+        <location filename="src/common/maptypes.cpp" line="2519"/>
         <source>Pitot&amp;nbsp;%L1</source>
         <translation>Staurohr&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2514"/>
+        <location filename="src/common/maptypes.cpp" line="2522"/>
         <source>Struct %L1</source>
         <translation>Strukt. %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2514"/>
+        <location filename="src/common/maptypes.cpp" line="2522"/>
         <source>Structure&amp;nbsp;%L1</source>
         <translation>Struktur&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2521"/>
+        <location filename="src/common/maptypes.cpp" line="2529"/>
         <source>Inlet&amp;nbsp;%L1</source>
         <translation>Einlass&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2524"/>
+        <location filename="src/common/maptypes.cpp" line="2532"/>
         <source>Prop&amp;nbsp;%L1</source>
         <translation>Prop.&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2527"/>
+        <location filename="src/common/maptypes.cpp" line="2535"/>
         <source>Static&amp;nbsp;%L1</source>
         <translation>Static&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2530"/>
+        <location filename="src/common/maptypes.cpp" line="2538"/>
         <source>Wind %L1</source>
         <translation>Fenst. %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2530"/>
+        <location filename="src/common/maptypes.cpp" line="2538"/>
         <source>Window&amp;nbsp;%L1</source>
         <translation>Fenster&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2533"/>
+        <location filename="src/common/maptypes.cpp" line="2541"/>
         <source>Carb %L1</source>
         <translation>Verg. %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2533"/>
+        <location filename="src/common/maptypes.cpp" line="2541"/>
         <source>Carb.&amp;nbsp;%L1</source>
         <translation>Vergaser&amp;nbsp;%L1</translation>
     </message>
@@ -31054,17 +31074,17 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
         <translation>Helikopterlandeplatz</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1192"/>
+        <location filename="src/common/maptypes.cpp" line="1200"/>
         <source>V</source>
         <translation>V</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1195"/>
+        <location filename="src/common/maptypes.cpp" line="1203"/>
         <source>J</source>
         <translation>J</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1198"/>
+        <location filename="src/common/maptypes.cpp" line="1206"/>
         <location filename="src/common/proctypes.cpp" line="424"/>
         <location filename="src/common/proctypes.cpp" line="429"/>
         <location filename="src/common/proctypes.cpp" line="515"/>
@@ -31072,318 +31092,318 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
         <translation>B</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1212"/>
+        <location filename="src/common/maptypes.cpp" line="1220"/>
         <source>NAT</source>
         <translation>NAT</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1215"/>
+        <location filename="src/common/maptypes.cpp" line="1223"/>
         <source>PACOTS</source>
         <translation>PACOTS</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1218"/>
+        <location filename="src/common/maptypes.cpp" line="1226"/>
         <source>AUSOTS</source>
         <translation>AUSOTS</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1221"/>
+        <location filename="src/common/maptypes.cpp" line="1229"/>
         <source>Victor</source>
         <translation>Victor</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1224"/>
+        <location filename="src/common/maptypes.cpp" line="1232"/>
         <source>Jet</source>
         <translation>Jet</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1227"/>
+        <location filename="src/common/maptypes.cpp" line="1235"/>
         <source>Both</source>
         <translation>Beide</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1259"/>
+        <location filename="src/common/maptypes.cpp" line="1267"/>
         <source>Airline</source>
         <translation>Fluggesellschaft</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1265"/>
+        <location filename="src/common/maptypes.cpp" line="1273"/>
         <source>Direct</source>
         <translation>Direkt</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1268"/>
+        <location filename="src/common/maptypes.cpp" line="1276"/>
         <source>Helicopter</source>
         <translation>Helikopter</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1271"/>
+        <location filename="src/common/maptypes.cpp" line="1279"/>
         <source>Official</source>
         <translation>Official</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1277"/>
+        <location filename="src/common/maptypes.cpp" line="1285"/>
         <source>Undesignated</source>
         <translation>Unbestimmt</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1296"/>
+        <location filename="src/common/maptypes.cpp" line="1304"/>
         <source>C</source>
         <translation>C</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1305"/>
+        <location filename="src/common/maptypes.cpp" line="1313"/>
         <source>O</source>
         <translation>O</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1308"/>
-        <location filename="src/common/maptypes.cpp" line="1580"/>
-        <location filename="src/common/maptypes.cpp" line="1585"/>
-        <location filename="src/common/maptypes.cpp" line="1592"/>
-        <location filename="src/common/maptypes.cpp" line="1595"/>
+        <location filename="src/common/maptypes.cpp" line="1316"/>
+        <location filename="src/common/maptypes.cpp" line="1588"/>
+        <location filename="src/common/maptypes.cpp" line="1593"/>
+        <location filename="src/common/maptypes.cpp" line="1600"/>
+        <location filename="src/common/maptypes.cpp" line="1603"/>
         <source>R</source>
         <translation>R</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1512"/>
+        <location filename="src/common/maptypes.cpp" line="1520"/>
         <source>%1 %2 (%3)</source>
         <translation>%1 %2 (%3)</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1523"/>
+        <location filename="src/common/maptypes.cpp" line="1531"/>
         <source>NDB %1 (%2)</source>
         <translation>NDB %1 (%2)</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1533"/>
+        <location filename="src/common/maptypes.cpp" line="1541"/>
         <source>Waypoint %1</source>
         <translation>Wegpunkt %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1554"/>
+        <location filename="src/common/maptypes.cpp" line="1562"/>
         <source>Logbook Entry %1 to %2</source>
         <translation>Logbucheintrag %1 nach %2</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1560"/>
+        <location filename="src/common/maptypes.cpp" line="1568"/>
         <source>Range Rings</source>
         <translation>Distanzkreise</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1562"/>
+        <location filename="src/common/maptypes.cpp" line="1570"/>
         <source>Range Rings %1</source>
         <translation>Distanzkreise %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1571"/>
+        <location filename="src/common/maptypes.cpp" line="1579"/>
         <source>Measurement %1</source>
         <translation>Messlinie %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1573"/>
+        <location filename="src/common/maptypes.cpp" line="1581"/>
         <source>Measurement %1 %2</source>
         <translation>Messlinie %1 %2</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1579"/>
+        <location filename="src/common/maptypes.cpp" line="1587"/>
         <source>User Holding %1 %2</source>
         <translation>Nutzerwarteschleife %1 %2</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1583"/>
+        <location filename="src/common/maptypes.cpp" line="1591"/>
         <source>User Holding %1 %2 %3</source>
         <translation>Nutzerwarteschleife %1 %2 %3</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1592"/>
+        <location filename="src/common/maptypes.cpp" line="1600"/>
         <source>Traffic Pattern %1 RW %2</source>
         <translation>Platzrunde %1 RW %2</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1594"/>
+        <location filename="src/common/maptypes.cpp" line="1602"/>
         <source>Traffic Pattern %1 %2 RW %3</source>
         <translation>Platzrunde %1 %2 RW %3</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1610"/>
+        <location filename="src/common/maptypes.cpp" line="1618"/>
         <source>Airway %1</source>
         <translation>Luftstraße %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1621"/>
+        <location filename="src/common/maptypes.cpp" line="1629"/>
         <source>Min </source>
         <translation>Min </translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1627"/>
+        <location filename="src/common/maptypes.cpp" line="1635"/>
         <source> to </source>
         <translation> zu </translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1629"/>
+        <location filename="src/common/maptypes.cpp" line="1637"/>
         <source>Max </source>
         <translation>Max </translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1673"/>
-        <location filename="src/common/maptypes.cpp" line="1682"/>
+        <location filename="src/common/maptypes.cpp" line="1681"/>
+        <location filename="src/common/maptypes.cpp" line="1690"/>
         <source>MSA</source>
         <translation>MSA</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1682"/>
+        <location filename="src/common/maptypes.cpp" line="1690"/>
         <source>User MSA</source>
         <translation>Nutzer MSA</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1686"/>
+        <location filename="src/common/maptypes.cpp" line="1694"/>
         <source>%1 at %2</source>
         <translation>%1 bei %2</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1688"/>
+        <location filename="src/common/maptypes.cpp" line="1696"/>
         <source>%1 at %2 (%3)</source>
         <translation>%1 bei %2 (%3)</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2039"/>
+        <location filename="src/common/maptypes.cpp" line="2047"/>
         <source>RNP</source>
         <translation>RNP</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2062"/>
+        <location filename="src/common/maptypes.cpp" line="2070"/>
         <source> CAT I</source>
         <translation> CAT I</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2064"/>
+        <location filename="src/common/maptypes.cpp" line="2072"/>
         <source> CAT II</source>
         <translation> CAT II</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2066"/>
+        <location filename="src/common/maptypes.cpp" line="2074"/>
         <source> CAT III</source>
         <translation> CAT III</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2088"/>
+        <location filename="src/common/maptypes.cpp" line="2096"/>
         <source>%1 %2</source>
         <translation>%1 %2</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2095"/>
+        <location filename="src/common/maptypes.cpp" line="2103"/>
         <source>User holding at %1</source>
         <translation>Nutzerwarteschleife bei %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2098"/>
+        <location filename="src/common/maptypes.cpp" line="2106"/>
         <source>Holding at %1</source>
         <translation>Warteschleife bei %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2102"/>
+        <location filename="src/common/maptypes.cpp" line="2110"/>
         <source>, %1 min</source>
         <translation>, %1 min</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2105"/>
-        <location filename="src/common/maptypes.cpp" line="2108"/>
+        <location filename="src/common/maptypes.cpp" line="2113"/>
+        <location filename="src/common/maptypes.cpp" line="2116"/>
         <source>, %1:</source>
         <translation>, %1:</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2111"/>
+        <location filename="src/common/maptypes.cpp" line="2119"/>
         <source>, max %1</source>
         <translation>, max %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2114"/>
+        <location filename="src/common/maptypes.cpp" line="2122"/>
         <source>, A%1</source>
         <translation>, A%1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2221"/>
+        <location filename="src/common/maptypes.cpp" line="2229"/>
         <source>Airspace %1 (%2)</source>
         <translation>Luftraum %1 (%2)</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2235"/>
+        <location filename="src/common/maptypes.cpp" line="2243"/>
         <source> Vehicle</source>
         <translation> Fahrzeug</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2239"/>
+        <location filename="src/common/maptypes.cpp" line="2247"/>
         <source> Ship</source>
         <translation> Schiff</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2242"/>
+        <location filename="src/common/maptypes.cpp" line="2250"/>
         <source> Carrier</source>
         <translation> Flugzeugträger</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2245"/>
+        <location filename="src/common/maptypes.cpp" line="2253"/>
         <source> Frigate</source>
         <translation> Fregatte</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2248"/>
+        <location filename="src/common/maptypes.cpp" line="2256"/>
         <source> Aircraft</source>
         <translation> Flugzeug</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2251"/>
+        <location filename="src/common/maptypes.cpp" line="2259"/>
         <source> Helicopter</source>
         <translation> Helikopter</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2269"/>
+        <location filename="src/common/maptypes.cpp" line="2277"/>
         <source>User %1</source>
         <translation>Nutzer %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2271"/>
+        <location filename="src/common/maptypes.cpp" line="2279"/>
         <source>Online Client</source>
         <translation>Online Client</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2273"/>
+        <location filename="src/common/maptypes.cpp" line="2281"/>
         <source>AI / Multiplayer %1</source>
         <translation>KI / Mehrspieler %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2283"/>
+        <location filename="src/common/maptypes.cpp" line="2291"/>
         <source>Helipad %1</source>
         <translation>Helikopterlandeplatz %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2511"/>
+        <location filename="src/common/maptypes.cpp" line="2519"/>
         <source>Pitot %L1</source>
         <translation>Staurohr %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2518"/>
+        <location filename="src/common/maptypes.cpp" line="2526"/>
         <source>AOA %L1</source>
         <translation>AOA %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2518"/>
+        <location filename="src/common/maptypes.cpp" line="2526"/>
         <source>AOA&amp;nbsp;%L1</source>
         <translation>AOA&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2521"/>
+        <location filename="src/common/maptypes.cpp" line="2529"/>
         <source>Inlt %L1</source>
         <translation>Einl. %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2524"/>
+        <location filename="src/common/maptypes.cpp" line="2532"/>
         <source>Prop %L1</source>
         <translation>Prop %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2527"/>
+        <location filename="src/common/maptypes.cpp" line="2535"/>
         <source>Static %L1</source>
         <translation>Static %L1</translation>
     </message>
@@ -31416,39 +31436,39 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
         <translation type="vanished">, GS </translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1518"/>
-        <location filename="src/common/maptypes.cpp" line="1528"/>
-        <location filename="src/common/maptypes.cpp" line="1667"/>
-        <location filename="src/common/maptypes.cpp" line="1677"/>
+        <location filename="src/common/maptypes.cpp" line="1526"/>
+        <location filename="src/common/maptypes.cpp" line="1536"/>
+        <location filename="src/common/maptypes.cpp" line="1675"/>
+        <location filename="src/common/maptypes.cpp" line="1685"/>
         <location filename="src/common/proctypes.cpp" line="287"/>
         <location filename="src/common/proctypes.cpp" line="346"/>
         <source>%1 (%2)</source>
         <translation>%1 (%2)</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1716"/>
+        <location filename="src/common/maptypes.cpp" line="1724"/>
         <source>0°</source>
         <translation>0°</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1183"/>
-        <location filename="src/common/maptypes.cpp" line="1741"/>
+        <location filename="src/common/maptypes.cpp" line="1191"/>
+        <location filename="src/common/maptypes.cpp" line="1749"/>
         <source>N</source>
         <translation>N</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1743"/>
+        <location filename="src/common/maptypes.cpp" line="1751"/>
         <source>NE</source>
         <translation>NO</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1649"/>
-        <location filename="src/common/maptypes.cpp" line="1663"/>
+        <location filename="src/common/maptypes.cpp" line="1657"/>
+        <location filename="src/common/maptypes.cpp" line="1671"/>
         <source>Airport</source>
         <translation>Flugplatz</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1651"/>
+        <location filename="src/common/maptypes.cpp" line="1659"/>
         <source>Airport %1</source>
         <translation>Flugplatz %1</translation>
     </message>
@@ -31473,22 +31493,22 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
         <translation type="obsolete">,</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1938"/>
+        <location filename="src/common/maptypes.cpp" line="1946"/>
         <source>All</source>
         <translation>Alle</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1945"/>
+        <location filename="src/common/maptypes.cpp" line="1953"/>
         <source>Navigraph</source>
         <translation>Navigraph</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1948"/>
+        <location filename="src/common/maptypes.cpp" line="1956"/>
         <source>Online</source>
         <translation>Online</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1951"/>
+        <location filename="src/common/maptypes.cpp" line="1959"/>
         <source>User</source>
         <translation>Nutzer</translation>
     </message>
@@ -31505,81 +31525,81 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
         <translation type="vanished"> / DME</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1714"/>
-        <location filename="src/common/maptypes.cpp" line="1745"/>
+        <location filename="src/common/maptypes.cpp" line="1722"/>
+        <location filename="src/common/maptypes.cpp" line="1753"/>
         <source>E</source>
         <translation>O</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1747"/>
+        <location filename="src/common/maptypes.cpp" line="1755"/>
         <source>SE</source>
         <translation>SO</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1311"/>
-        <location filename="src/common/maptypes.cpp" line="1749"/>
+        <location filename="src/common/maptypes.cpp" line="1319"/>
+        <location filename="src/common/maptypes.cpp" line="1757"/>
         <source>S</source>
         <translation>S</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1751"/>
+        <location filename="src/common/maptypes.cpp" line="1759"/>
         <source>SW</source>
         <translation>SW</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1711"/>
-        <location filename="src/common/maptypes.cpp" line="1753"/>
+        <location filename="src/common/maptypes.cpp" line="1719"/>
+        <location filename="src/common/maptypes.cpp" line="1761"/>
         <source>W</source>
         <translation>W</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1539"/>
-        <location filename="src/common/maptypes.cpp" line="1541"/>
+        <location filename="src/common/maptypes.cpp" line="1547"/>
+        <location filename="src/common/maptypes.cpp" line="1549"/>
         <source>Userpoint %1</source>
         <translation>Nutzerpunkt %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1605"/>
+        <location filename="src/common/maptypes.cpp" line="1613"/>
         <source>Position %1</source>
         <translation>Position %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1637"/>
+        <location filename="src/common/maptypes.cpp" line="1645"/>
         <source>%1-%2</source>
         <translation>%1-%2</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2015"/>
-        <location filename="src/common/maptypes.cpp" line="2029"/>
+        <location filename="src/common/maptypes.cpp" line="2023"/>
+        <location filename="src/common/maptypes.cpp" line="2037"/>
         <source> / </source>
         <translation> / </translation>
     </message>
     <message>
         <location filename="src/common/formatter.cpp" line="349"/>
-        <location filename="src/common/maptypes.cpp" line="2021"/>
+        <location filename="src/common/maptypes.cpp" line="2029"/>
         <source>%1°M</source>
         <translation>%1°M</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2024"/>
+        <location filename="src/common/maptypes.cpp" line="2032"/>
         <source>GP %1°</source>
         <translation>GP %1°</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2024"/>
+        <location filename="src/common/maptypes.cpp" line="2032"/>
         <source>GS %1°</source>
         <translation>GS %1°</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2172"/>
-        <location filename="src/common/maptypes.cpp" line="2174"/>
-        <location filename="src/common/maptypes.cpp" line="2190"/>
+        <location filename="src/common/maptypes.cpp" line="2180"/>
+        <location filename="src/common/maptypes.cpp" line="2182"/>
+        <location filename="src/common/maptypes.cpp" line="2198"/>
         <source>%1</source>
         <translation>%1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1711"/>
-        <location filename="src/common/maptypes.cpp" line="1714"/>
+        <location filename="src/common/maptypes.cpp" line="1719"/>
+        <location filename="src/common/maptypes.cpp" line="1722"/>
         <source>%1°%2</source>
         <translation>%1°%2</translation>
     </message>
@@ -31614,59 +31634,59 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
         <translation>Zeige Lufträume, innerhalb der minimalen und maximalen Höhe</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1711"/>
+        <location filename="src/common/maptypes.cpp" line="1719"/>
         <source> West</source>
         <translation> West</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1714"/>
+        <location filename="src/common/maptypes.cpp" line="1722"/>
         <source> East</source>
         <translation> Ost</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1755"/>
+        <location filename="src/common/maptypes.cpp" line="1763"/>
         <source>NW</source>
         <translation>NW</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1781"/>
+        <location filename="src/common/maptypes.cpp" line="1789"/>
         <location filename="src/common/proctypes.cpp" line="312"/>
         <source>Left</source>
         <translation>Links</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1783"/>
+        <location filename="src/common/maptypes.cpp" line="1791"/>
         <location filename="src/common/proctypes.cpp" line="314"/>
         <source>Right</source>
         <translation>Rechts</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1500"/>
+        <location filename="src/common/maptypes.cpp" line="1508"/>
         <source>VORTAC (%1)</source>
         <translation>VORTAC (%1)</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1502"/>
+        <location filename="src/common/maptypes.cpp" line="1510"/>
         <source>DME (%1)</source>
         <translation>DME (%1)</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1504"/>
+        <location filename="src/common/maptypes.cpp" line="1512"/>
         <source>VORDME (%1)</source>
         <translation>VORDME (%1)</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1506"/>
+        <location filename="src/common/maptypes.cpp" line="1514"/>
         <source>VOR (%1)</source>
         <translation>VOR (%1)</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1791"/>
+        <location filename="src/common/maptypes.cpp" line="1799"/>
         <source>CL</source>
         <translation>CL</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1792"/>
+        <location filename="src/common/maptypes.cpp" line="1800"/>
         <source>NDB (%1)</source>
         <translation>NDB (%1)</translation>
     </message>
@@ -31749,19 +31769,19 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
         <translation>GPS</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2041"/>
+        <location filename="src/common/maptypes.cpp" line="2049"/>
         <location filename="src/common/proctypes.cpp" line="87"/>
         <source>ILS</source>
         <translation>ILS</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2049"/>
+        <location filename="src/common/maptypes.cpp" line="2057"/>
         <location filename="src/common/proctypes.cpp" line="89"/>
         <source>SDF</source>
         <translation>SDF</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2047"/>
+        <location filename="src/common/maptypes.cpp" line="2055"/>
         <location filename="src/common/proctypes.cpp" line="90"/>
         <source>LDA</source>
         <translation>LDA</translation>
@@ -31773,7 +31793,7 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="311"/>
-        <location filename="src/common/maptypes.cpp" line="1274"/>
+        <location filename="src/common/maptypes.cpp" line="1282"/>
         <location filename="src/common/proctypes.cpp" line="93"/>
         <source>RNAV</source>
         <translation>RNAV</translation>
@@ -31789,13 +31809,13 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
         <translation>FMS</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2045"/>
+        <location filename="src/common/maptypes.cpp" line="2053"/>
         <location filename="src/common/proctypes.cpp" line="98"/>
         <source>IGS</source>
         <translation>IGS</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2037"/>
+        <location filename="src/common/maptypes.cpp" line="2045"/>
         <location filename="src/common/proctypes.cpp" line="99"/>
         <source>GLS</source>
         <translation>GLS</translation>
@@ -32155,8 +32175,8 @@ Wird nur im Sinkflug am Benutzerflugzeugsymbol mit dem Zusatz &quot;N&quot; geze
         <translation>Zweimotorig</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1189"/>
-        <location filename="src/common/maptypes.cpp" line="1293"/>
+        <location filename="src/common/maptypes.cpp" line="1197"/>
+        <location filename="src/common/maptypes.cpp" line="1301"/>
         <location filename="src/common/proctypes.cpp" line="420"/>
         <location filename="src/common/proctypes.cpp" line="428"/>
         <location filename="src/common/proctypes.cpp" line="512"/>
@@ -32764,38 +32784,38 @@ Basiert auf der Berechnung mit dem Flugzeugleistungsprofil.</translation>
         <translation>Diesen Dialog &amp;nicht mehr anzeigen.</translation>
     </message>
     <message>
-        <location filename="src/common/mapflags.cpp" line="190"/>
+        <location filename="src/common/mapflags.cpp" line="192"/>
         <source>Disabled</source>
         <translation>Deaktiviert</translation>
     </message>
     <message>
-        <location filename="src/common/mapflags.cpp" line="193"/>
-        <location filename="src/common/maptypes.cpp" line="1942"/>
+        <location filename="src/common/mapflags.cpp" line="195"/>
+        <location filename="src/common/maptypes.cpp" line="1950"/>
         <source>Simulator</source>
         <translation>Simulator</translation>
     </message>
     <message>
-        <location filename="src/common/mapflags.cpp" line="196"/>
+        <location filename="src/common/mapflags.cpp" line="198"/>
         <source>ActiveSky</source>
         <translation>ActiveSky</translation>
     </message>
     <message>
-        <location filename="src/common/mapflags.cpp" line="199"/>
+        <location filename="src/common/mapflags.cpp" line="201"/>
         <source>NOAA</source>
         <translation>NOAA</translation>
     </message>
     <message>
-        <location filename="src/common/mapflags.cpp" line="202"/>
+        <location filename="src/common/mapflags.cpp" line="204"/>
         <source>VATSIM</source>
         <translation>VATSIM</translation>
     </message>
     <message>
-        <location filename="src/common/mapflags.cpp" line="205"/>
+        <location filename="src/common/mapflags.cpp" line="207"/>
         <source>IVAO</source>
         <translation>IVAO</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2043"/>
+        <location filename="src/common/maptypes.cpp" line="2051"/>
         <source>LOC</source>
         <translation>LOC</translation>
     </message>

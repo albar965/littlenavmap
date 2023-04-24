@@ -407,6 +407,7 @@ struct MapAirport
   const QString& displayIdentIcao() const;
 
   bool closed() const;
+  bool military() const;
   bool hard() const;
   bool soft() const;
   bool water() const;
