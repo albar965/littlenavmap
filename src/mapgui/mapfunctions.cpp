@@ -24,10 +24,11 @@
 
 namespace mapfunc {
 
-bool aircraftVisible(const atools::fs::sc::SimConnectAircraft& ac, const MapLayer *layer)
+bool aircraftVisible(const atools::fs::sc::SimConnectAircraft& ac, const MapLayer *layer, bool hideAiOnGround)
 {
   bool show = true;
-  if(ac.isOnGround())
+  if(ac.isOnGround() && hideAiOnGround)
+    // Hide on ground if flag is set - otherwise use normal logic
     show &= layer->isAiAircraftGround();
   else
   {

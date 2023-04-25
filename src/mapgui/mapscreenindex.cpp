@@ -846,6 +846,7 @@ void MapScreenIndex::getAllNearest(const QPoint& point, int maxDistance, map::Ma
 
   bool onlineEnabled = shown.testFlag(map::AIRCRAFT_ONLINE) && NavApp::isOnlineNetworkActive();
   bool aiEnabled = shown.testFlag(map::AIRCRAFT_AI) && NavApp::isConnected();
+  bool hideAiOnGround = OptionData::instance().getFlags().testFlag(opts::MAP_AI_HIDE_GROUND);
 
   // Add AI or injected multiplayer aircraft ======================================
   for(const atools::fs::sc::SimConnectAircraft& ac : mapWidget->getAiAircraft())
@@ -862,7 +863,7 @@ void MapScreenIndex::getAllNearest(const QPoint& point, int maxDistance, map::Ma
     if(!aiEnabled && !ac.isOnlineShadow())
       continue;
 
-    if(ac.isValid() && !ac.isAnyBoat() && mapfunc::aircraftVisible(ac, mapLayer))
+    if(ac.isValid() && !ac.isAnyBoat() && mapfunc::aircraftVisible(ac, mapLayer, hideAiOnGround))
     {
       if(conv.wToS(ac.getPosition(), x, y))
       {
@@ -884,7 +885,7 @@ void MapScreenIndex::getAllNearest(const QPoint& point, int maxDistance, map::Ma
     // Add online clients ======================================
     for(const atools::fs::sc::SimConnectAircraft& obj : *NavApp::getOnlinedataController()->getAircraftFromCache())
     {
-      if(mapfunc::aircraftVisible(obj, mapLayer))
+      if(mapfunc::aircraftVisible(obj, mapLayer, hideAiOnGround))
       {
         if(obj.isValid() && conv.wToS(obj.getPosition(), x, y))
           if((atools::geo::manhattanDistance(x, y, xs, ys)) < maxDistance)

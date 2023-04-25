@@ -69,10 +69,11 @@ enum Flag
    * ui->checkBoxOptionsRouteEastWestRule */
   ROUTE_ALTITUDE_RULE = 1 << 9,
 
-  // ui->checkBoxOptionsOnlineRemoveShadow
+  /* ui->checkBoxOptionsOnlineRemoveShadow */
   ONLINE_REMOVE_SHADOW = 1 << 10,
 
-  // Old options removed
+  /* ui->checkBoxOptionsMapAiAircraftHideGround */
+  MAP_AI_HIDE_GROUND = 1 << 11,
 
   /* No box mode when moving map.
    * ui->checkBoxOptionsSimUpdatesConstant */

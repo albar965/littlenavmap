@@ -125,11 +125,12 @@ void MapPainterAircraft::render()
         return ai1.distanceLateralMeter < ai2.distanceLateralMeter;
       });
 
+      bool hideAiOnGround = OptionData::instance().getFlags().testFlag(opts::MAP_AI_HIDE_GROUND);
       int num = 0;
       for(const AiDistType& adt : aiSorted)
       {
         const SimConnectAircraft& ac = *adt.aircraft;
-        if(mapfunc::aircraftVisible(ac, context->mapLayer))
+        if(mapfunc::aircraftVisible(ac, context->mapLayer, hideAiOnGround))
         {
           bool forceLabelNearby = num++ < maxNearestAiLabels &&
                                   adt.distanceLateralMeter < maxNearestAiLabelsDistNm &&
