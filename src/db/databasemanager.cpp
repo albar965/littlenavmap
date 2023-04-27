@@ -1702,6 +1702,10 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
 
   const OptionData& options = OptionData::instance();
   QStringList optionsHeader;
+  if(!options.getDatabaseInclude().isEmpty())
+    optionsHeader.append(tr("%1 %2 included for loading").
+                         arg(options.getDatabaseInclude().size()).
+                         arg(options.getDatabaseInclude().size() > 1 ? tr("extra directories are") : tr("extra directory is")));
   if(!options.getDatabaseExclude().isEmpty())
     optionsHeader.append(tr("%1 %2 excluded from loading").
                          arg(options.getDatabaseExclude().size()).
@@ -1714,7 +1718,8 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
   if(!optionsHeader.isEmpty())
   {
     optionsHeader = QStringList(atools::strJoin(tr("<b>Note:</b> "), optionsHeader, tr(", "), tr(" and "), tr(".")));
-    optionsHeader.append(tr("Excluded directories can be changed in options on page \"Scenery Library Database\".").arg(tableText));
+    optionsHeader.append(tr("Included and excluded directories can be changed in options on page \"Scenery Library Database\".").
+                         arg(tableText));
   }
 
   databaseDialog->setHeader(metaText +

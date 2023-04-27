@@ -708,16 +708,22 @@ public:
     return weatherIvaoUrl;
   }
 
-  /* List of directories that excludes paths from being recognized as add-ons. Only for scenery database loading. */
-  const QStringList& getDatabaseAddonExclude() const
+  /* Folders that are included in scanning */
+  const QStringList& getDatabaseInclude() const
   {
-    return databaseAddonExclude;
+    return databaseInclude;
   }
 
   /* List of directories and files that are excluded from scenery database loading */
   const QStringList& getDatabaseExclude() const
   {
     return databaseExclude;
+  }
+
+  /* List of directories that excludes paths from being recognized as add-ons. Only for scenery database loading. */
+  const QStringList& getDatabaseAddonExclude() const
+  {
+    return databaseAddonExclude;
   }
 
   opts::MapScrollDetail getMapScrollDetail() const
@@ -1325,11 +1331,14 @@ private:
   // Initialized by widget
   QString flightplanPattern;
 
-  // ui->listWidgetOptionsDatabaseAddon
-  QStringList databaseAddonExclude;
+  // ui->tableWidgetOptionsDatabaseInclude
+  QStringList databaseInclude;
 
-  // ui->listWidgetOptionsDatabaseExclude
+  // ui->tableWidgetOptionsDatabaseExclude
   QStringList databaseExclude;
+
+  // ui->tableWidgetOptionsDatabaseAddon
+  QStringList databaseAddonExclude;
 
   opts::MapScrollDetail mapScrollDetail = opts::DETAIL_NORMAL;
   opts::MapNavigation mapNavigation = opts::MAP_NAV_CLICK_DRAG_MOVE;

@@ -40,6 +40,7 @@ class QListWidgetItem;
 class QListWidget;
 class QFontDialog;
 class QTableWidgetItem;
+class QTableWidget;
 
 namespace atools {
 namespace gui {
@@ -136,12 +137,20 @@ private:
   void updateFlightPlanColorWidgets();
   void updateHighlightWidgets();
 
+  void addDatabaseIncludeDirClicked();
+  void removeDatabaseIncludePathClicked();
+
   void addDatabaseExcludeDirClicked();
   void addDatabaseExcludeFileClicked();
 
   void removeDatabaseExcludePathClicked();
   void addDatabaseAddOnExcludePathClicked();
   void removeDatabaseAddOnExcludePathClicked();
+
+  void addDatabaseTableItem(QTableWidget *widget, const QString& path);
+  void addDatabaseTableItems(QTableWidget *widget, const QStringList& strings);
+  void removeSelectedDatabaseTableItems(QTableWidget *widget);
+
   void updateWhileFlyingWidgets(bool);
 
   void showDiskCacheClicked();
@@ -283,7 +292,10 @@ private:
 
   QFontDialog *fontDialog = nullptr;
 
-  atools::gui::ItemViewZoomHandler *zoomHandlerLabelTree = nullptr, *zoomHandlerMapThemeKeysTable = nullptr;
+  atools::gui::ItemViewZoomHandler *zoomHandlerLabelTree = nullptr, *zoomHandlerMapThemeKeysTable = nullptr,
+                                   *zoomHandlerDatabaseInclude = nullptr, *zoomHandlerDatabaseExclude = nullptr,
+                                   *zoomHandlerDatabaseAddonExclude = nullptr;
+
   atools::gui::GridDelegate *gridDelegate = nullptr;
 };
 

@@ -181,13 +181,17 @@ void DatabaseLoader::loadScenery()
   // Add exclude paths from option dialog ===================
   const OptionData& optionData = OptionData::instance();
 
-  // Add add-on excludes for files and directories ================================================
-  for(const QString& path : optionData.getDatabaseAddonExclude())
-    navDatabaseOpts->addAddonExcludeGui(path);
+  // Add include directories ================================================
+  for(const QString& path : optionData.getDatabaseInclude())
+    navDatabaseOpts->addIncludeGui(path);
 
   // Add excludes for files and directories ================================================
   for(const QString& path : optionData.getDatabaseExclude())
     navDatabaseOpts->addExcludeGui(path);
+
+  // Add add-on excludes for files and directories ================================================
+  for(const QString& path : optionData.getDatabaseAddonExclude())
+    navDatabaseOpts->addAddonExcludeGui(path);
 
   // Select simulator db to load
   navDatabaseOpts->setSimulatorType(selectedFsType);
