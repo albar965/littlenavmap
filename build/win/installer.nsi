@@ -151,12 +151,12 @@ Section "Little Navmap" SecDummy
   ; Create start menu shortcuts
   ; C:\Users\USERNAME\AppData\Roaming\Microsoft\Windows\Start Menu\Programs\Little Navmap
   ${CreateDirectory} "$SMPROGRAMS\Little Navmap"
-  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Little Navmap.lnk"  "$INSTDIR\littlenavmap.exe"
-  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Little Navconnect.lnk" "$INSTDIR\Little Navconnect\littlenavconnect.exe"
-  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Little Navmap User Manual Online.lnk" "$INSTDIR\help\Little Navmap User Manual Online.url"
-  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Little Navmap User Manual Local PDF.lnk" "$INSTDIR\help\little-navmap-user-manual-en.pdf"
-  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Little Navmap Changelog.lnk" "$INSTDIR\CHANGELOG.txt"
-  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Uninstall Little Navmap.lnk" "$INSTDIR\uninstall.exe"
+  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Little Navmap.lnk" "$INSTDIR\littlenavmap.exe" "" "" ""
+  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Little Navconnect.lnk" "$INSTDIR\Little Navconnect\littlenavconnect.exe" "" "" ""
+  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Little Navmap User Manual Online.lnk" "$INSTDIR\help\Little Navmap User Manual Online.url" "" "" ""
+  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Little Navmap User Manual Local PDF.lnk" "$INSTDIR\help\little-navmap-user-manual-en.pdf" "" "" ""
+  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Little Navmap Changelog.lnk" "$INSTDIR\CHANGELOG.txt" "" "" "" 
+  ${CreateShortcut} "$SMPROGRAMS\Little Navmap\Uninstall Little Navmap.lnk" "$INSTDIR\uninstall.exe" "" "" ""
 
   !insertmacro MUI_STARTMENU_WRITE_END
 
