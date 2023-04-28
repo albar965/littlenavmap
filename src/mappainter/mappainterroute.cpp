@@ -94,8 +94,14 @@ QString MapPainterRoute::buildLegText(const RouteLeg& leg)
   if(mapPaintWidget->isDistanceCutOff())
     return QString();
 
-  return leg.buildLegText(context->dOptRoute(optsd::ROUTE_DISTANCE), context->dOptRoute(optsd::ROUTE_MAG_COURSE),
-                          context->dOptRoute(optsd::ROUTE_TRUE_COURSE), true /* narrow */).join(tr(" / "));
+  QStringList texts;
+  if(context->dOptRoute(optsd::ROUTE_AIRWAY) && !leg.getAirwayName().isEmpty())
+    texts.append(leg.getAirwayName());
+
+  texts.append(leg.buildLegText(context->dOptRoute(optsd::ROUTE_DISTANCE), context->dOptRoute(optsd::ROUTE_MAG_COURSE),
+                                context->dOptRoute(optsd::ROUTE_TRUE_COURSE), true /* narrow */));
+
+  return texts.join(tr(" / "));
 }
 
 QString MapPainterRoute::buildLegText(float distance, float courseMag, float courseTrue)
@@ -899,7 +905,7 @@ void MapPainterRoute::paintProcedure(proc::MapProcedureLeg& lastLegPoint, QSet<m
       textPlacement.setArrowForEmpty(previewAll); // Arrow for empty texts
       textPlacement.setTextOnLineCenter(textOnLineCenter);
       textPlacement.setDrawFast(context->drawFast);
-      textPlacement.setTextOnTopOfLine(false);
+      textPlacement.setTextOnTopOfLine(false); // Allow text below line to avoid cluttering up procedures
       textPlacement.setLineWidth(outerlinewidth);
       textPlacement.setColors(textColors);
       textPlacement.calculateTextPositions(positions);

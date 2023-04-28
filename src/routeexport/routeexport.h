@@ -235,6 +235,9 @@ public:
   /* Warning dialog when changing export options */
   void warnExportOptionsFromMenu(bool checked);
 
+  /* Set current and default path for the LNMPLN export */
+  void setLnmplnExportDir(const QString& dir);
+
 signals:
   /* Show airport on map to allow parking selection */
   void showRect(const atools::geo::Rect& rect, bool doubleClick);

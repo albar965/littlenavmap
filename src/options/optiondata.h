@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -554,7 +554,8 @@ enum DisplayOptionRoute
   ROUTE_MAG_COURSE = 1 << 1,
   ROUTE_TRUE_COURSE = 1 << 2,
   ROUTE_INITIAL_FINAL_MAG_COURSE = 1 << 3,
-  ROUTE_INITIAL_FINAL_TRUE_COURSE = 1 << 4
+  ROUTE_INITIAL_FINAL_TRUE_COURSE = 1 << 4,
+  ROUTE_AIRWAY = 1 << 5
 };
 
 Q_DECLARE_FLAGS(DisplayOptionsRoute, DisplayOptionRoute);
@@ -1261,6 +1262,11 @@ public:
     return highlightProfileColor;
   }
 
+  const QString& getCacheMapThemeDir() const
+  {
+    return cacheMapThemeDir;
+  }
+
 private:
   friend class OptionsDialog;
 
@@ -1313,6 +1319,7 @@ private:
   QString weatherXplaneWind;
 
   QString cacheOfflineElevationPath;
+  QString cacheMapThemeDir;
 
   // Initialized by widget
   QString flightplanPattern;

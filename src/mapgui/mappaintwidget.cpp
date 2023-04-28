@@ -211,13 +211,14 @@ void MapPaintWidget::copyView(const MapPaintWidget& other)
   currentViewBoundingBox = other.viewport()->viewLatLonAltBox();
 }
 
-void MapPaintWidget::setTheme(const QString& theme, const QString& themeId)
+void MapPaintWidget::setTheme(const QString& themePath, const QString& themeId)
 {
-  qDebug() << "setting map theme to" << themeId << theme;
+  // themeId: "google-maps-def",  themePath: "earth/google-maps-def/google-maps-def.dgml" or full path
+  qDebug() << Q_FUNC_INFO << "setting map theme to" << themeId << themePath;
 
   currentThemeId = themeId;
 
-  setThemeInternal(theme);
+  setThemeInternal(themePath);
 }
 
 bool MapPaintWidget::noRender() const
@@ -225,14 +226,14 @@ bool MapPaintWidget::noRender() const
   return paintLayer->noRender();
 }
 
-void MapPaintWidget::setThemeInternal(const QString& theme)
+void MapPaintWidget::setThemeInternal(const QString& themePath)
 {
   // Ignore any overlay state signals the widget sends while switching theme
   ignoreOverlayUpdates = true;
 
   updateThemeUi(currentThemeId);
 
-  setMapThemeId(theme);
+  setMapThemeId(themePath);
   setShowClouds(false);
 
   if(NavApp::getMapThemeHandler()->hasPlacemarks(currentThemeId))

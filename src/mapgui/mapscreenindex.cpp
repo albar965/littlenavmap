@@ -608,7 +608,12 @@ void MapScreenIndex::clearAllMarkers(map::MapTypes types)
     msaMarks.clear();
 }
 
-void MapScreenIndex::updateDistanceMarkerTo(int id, const atools::geo::Pos& pos)
+void MapScreenIndex::updateDistanceMarkerFromPos(int id, const atools::geo::Pos& pos)
+{
+  distanceMarks[id].from = pos;
+}
+
+void MapScreenIndex::updateDistanceMarkerToPos(int id, const atools::geo::Pos& pos)
 {
   distanceMarks[id].to = distanceMarks[id].position = pos;
 }
@@ -789,7 +794,7 @@ void MapScreenIndex::updateRouteScreenGeometry(const Marble::GeoDataLatLonBox& c
   }
 }
 
-void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const
+void MapScreenIndex::getAllNearest(const QPoint& point, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const
 {
   using maptools::insertSortedByDistance;
   const MapLayer *mapLayer = paintLayer->getMapLayer();
@@ -797,6 +802,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
   if(mapLayer == nullptr)
     return;
 
+  int xs = point.x(), ys = point.y();
   CoordinateConverter conv(mapWidget->viewport());
 
   map::MapTypes shown = paintLayer->getShownMapTypes();
@@ -969,6 +975,7 @@ void MapScreenIndex::getAllNearest(int xs, int ys, int maxDistance, map::MapResu
 void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::MapResult& result, map::MapObjectQueryTypes types) const
 {
   using maptools::insertSorted;
+  using maptools::insertSortedFromTo;
   CoordinateConverter conv(mapWidget->viewport());
 
   insertSorted(conv, xs, ys, searchHighlights->airports, result.airports, &result.airportIds, maxDistance);
@@ -998,7 +1005,7 @@ void MapScreenIndex::getNearestHighlights(int xs, int ys, int maxDistance, map::
     insertSorted(conv, xs, ys, rangeMarks.values(), result.rangeMarks, nullptr, maxDistance);
 
   if(types & map::QUERY_MARK_DISTANCE && NavApp::getMapMarkHandler()->getMarkTypes().testFlag(map::MARK_DISTANCE))
-    insertSorted(conv, xs, ys, distanceMarks.values(), result.distanceMarks, nullptr, maxDistance);
+    insertSortedFromTo(conv, xs, ys, distanceMarks.values(), result.distanceMarks, nullptr, maxDistance);
 }
 
 void MapScreenIndex::getNearestProcedureHighlights(int xs, int ys, int maxDistance, map::MapResult& result,
@@ -1100,12 +1107,35 @@ int MapScreenIndex::getNearestRangeMarkId(int xs, int ys, int maxDistance) const
     return -1;
 }
 
-int MapScreenIndex::getNearestDistanceMarkId(int xs, int ys, int maxDistance) const
+int MapScreenIndex::getNearestDistanceMarkId(int xs, int ys, int maxDistance, bool *origin) const
 {
   if(NavApp::getMapMarkHandler()->getMarkTypes() & map::MARK_DISTANCE)
-    return getNearestId(xs, ys, maxDistance, distanceMarks);
-  else
-    return -1;
+  {
+    CoordinateConverter conv(mapWidget->viewport());
+    int x, y;
+    for(const map::DistanceMarker& type : distanceMarks)
+    {
+      // Look for endpoints first
+      if(conv.wToS(type.getPositionTo(), x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < maxDistance)
+      {
+        if(origin != nullptr)
+          *origin = false;
+        return type.id;
+      }
+    }
+
+    for(const map::DistanceMarker& type : distanceMarks)
+    {
+      // Look for origin points second
+      if(conv.wToS(type.getPositionFrom(), x, y) && atools::geo::manhattanDistance(x, y, xs, ys) < maxDistance)
+      {
+        if(origin != nullptr)
+          *origin = true;
+        return type.id;
+      }
+    }
+  }
+  return -1;
 }
 
 template<typename TYPE>

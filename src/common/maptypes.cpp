@@ -1541,6 +1541,14 @@ QString userpointText(const MapUserpoint& userpoint, int elideName)
     return QObject::tr("Userpoint %1").arg(atools::elideTextShort(userpoint.ident.isEmpty() ? userpoint.name : userpoint.ident, elideName));
 }
 
+QString userpointShortText(const MapUserpoint& userpoint, int elideName)
+{
+  if(userpoint.ident.isEmpty() && userpoint.name.isEmpty())
+    return atools::elideTextShort(userpoint.type, elideName);
+  else
+    return atools::elideTextShort(userpoint.ident.isEmpty() ? userpoint.name : userpoint.ident, elideName);
+}
+
 QString logEntryText(const MapLogbookEntry& logEntry)
 {
   return QObject::tr("Logbook Entry %1 to %2").arg(logEntry.departureIdent).arg(logEntry.destinationIdent);

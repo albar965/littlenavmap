@@ -123,8 +123,10 @@ extern QPen profileLandOutlinePen;
 extern QPen profileWaypointLinePen;
 extern QPen profileSafeAltLinePen;
 extern QPen profileSafeAltLegLinePen;
-
 extern QPen profileElevationScalePen;
+
+extern QColor distanceMarkerTextColor;
+extern QColor distanceMarkerTextBackgroundColor;
 
 /* Objects highlighted because of selection in search */
 extern QColor highlightBackColor;

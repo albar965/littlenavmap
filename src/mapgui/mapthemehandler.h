@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ public:
   /* true if not default constructed and has a valid id */
   bool isValid() const
   {
-    return !id.isEmpty() && index >= 0;
+    return !dgmlFilepath.isEmpty() && index >= 0;
   }
 
   /* Use bright colors for MORA and other texts on map */
@@ -67,12 +67,6 @@ public:
   int getIndex() const
   {
     return index;
-  }
-
-  /* Passed to Marble to load the theme. Filename based on folder maps like "earth/opentopomap/opentopomap.dgml" */
-  const QString& getId() const
-  {
-    return id;
   }
 
   /* Full absolute path to DGML file */
@@ -163,7 +157,7 @@ private:
   friend QDebug operator<<(QDebug out, const MapTheme& theme);
 
   int index = -1;
-  QString id, dgmlFilepath, name, copyright, theme, target, urlName, urlRef, sourceDir;
+  QString dgmlFilepath, name, copyright, theme, target, urlName, urlRef, sourceDir;
   QStringList keys;
   bool textureLayer = false, geodataLayer = false, discrete = false, visible = false, online = false;
 };
@@ -249,23 +243,25 @@ public:
 
   /* Called by the actions after key updates */
   void changeMapTheme();
-
   void changeMapProjection();
+
+  /* Reload themes and rebuild menu */
+  void optionsChanged();
 
 private:
   /* Get theme by internal index */
   const MapTheme& themeByIndex(int themeIndex) const;
 
   /* Look for directories with a valid DGML file in the earth dir */
-  QList<QFileInfo> findMapThemes();
+  QList<QFileInfo> findMapThemes(const QStringList& paths);
 
   /* Briefly read the most important data from a DGML file needed to build a MapTheme object */
   MapTheme loadTheme(const QFileInfo& dgml);
 
   void changeMapThemeActions(const QString& themeId);
 
-  /* Base folder appdir/data/maps/earth */
-  QDir earthDir;
+  void restoreKeyfile();
+  void saveKeyfile();
 
   /* Sorted list of all loaded themes */
   QVector<MapTheme> themes;

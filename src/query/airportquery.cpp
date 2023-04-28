@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -128,8 +128,7 @@ void AirportQuery::getAirportById(map::MapAirport& airport, int airportId)
     airportByIdQuery->bindValue(":id", airportId);
     airportByIdQuery->exec();
     if(airportByIdQuery->next())
-      mapTypesFactory->fillAirport(airportByIdQuery->record(), *ap, true /* complete */, navdata,
-                                   NavApp::isAirportDatabaseXPlane(navdata));
+      mapTypesFactory->fillAirport(airportByIdQuery->record(), *ap, true /* complete */, navdata, NavApp::isAirportDatabaseXPlane(navdata));
     airportByIdQuery->finish();
 
     airport = *ap;
@@ -452,8 +451,7 @@ map::MapRunway AirportQuery::getRunwayByEndId(int airportId, int runwayEndId)
   return map::MapRunway();
 }
 
-void AirportQuery::getRunwayEndByNames(map::MapResult& result, const QString& runwayName,
-                                       const QString& airportIdent)
+void AirportQuery::getRunwayEndByNames(map::MapResult& result, const QString& runwayName, const QString& airportIdent)
 {
   for(const QString& rname : atools::fs::util::runwayNameZeroPrefixVariants(runwayName))
   {
@@ -463,8 +461,7 @@ void AirportQuery::getRunwayEndByNames(map::MapResult& result, const QString& ru
   }
 }
 
-void AirportQuery::runwayEndByNames(map::MapResult& result, const QString& runwayName,
-                                    const QString& airportIdent)
+void AirportQuery::runwayEndByNames(map::MapResult& result, const QString& runwayName, const QString& airportIdent)
 {
   if(!query::valid(Q_FUNC_INFO, runwayEndByNameQuery))
     return;
@@ -599,8 +596,7 @@ const QList<map::MapStart> *AirportQuery::getStartPositionsForAirport(int airpor
   }
 }
 
-void AirportQuery::getStartByNameAndPos(map::MapStart& start, int airportId,
-                                        const QString& runwayEndName, const ageo::Pos& position)
+void AirportQuery::getStartByNameAndPos(map::MapStart& start, int airportId, const QString& runwayEndName, const ageo::Pos& position)
 {
   for(const QString& rname : atools::fs::util::runwayNameZeroPrefixVariants(runwayEndName))
   {
@@ -610,8 +606,7 @@ void AirportQuery::getStartByNameAndPos(map::MapStart& start, int airportId,
   }
 }
 
-void AirportQuery::startByNameAndPos(map::MapStart& start, int airportId,
-                                     const QString& runwayEndName, const ageo::Pos& position)
+void AirportQuery::startByNameAndPos(map::MapStart& start, int airportId, const QString& runwayEndName, const ageo::Pos& position)
 {
   // Get runway number for the first part of the query fetching start positions (before union)
   int number = runwayEndName.toInt();
@@ -782,8 +777,7 @@ map::MapResultIndex *AirportQuery::nearestAirportsProcInternal(const map::MapAir
 
     query::fetchObjectsForRect(rect, airportByRectAndProcQuery, [ =, &res](atools::sql::SqlQuery *query) -> void {
       map::MapAirport obj;
-      mapTypesFactory->fillAirport(query->record(), obj, true /* complete */, navdata,
-                                   NavApp::isAirportDatabaseXPlane(navdata));
+      mapTypesFactory->fillAirport(query->record(), obj, true /* complete */, navdata, NavApp::isAirportDatabaseXPlane(navdata));
       if(obj.ident != airport.ident)
         res.airports.append(obj);
     });

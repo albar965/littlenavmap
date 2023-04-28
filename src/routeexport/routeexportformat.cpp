@@ -188,6 +188,12 @@ void RouteExportFormatMap::updatePathErrors()
   }
 }
 
+void RouteExportFormatMap::setLnmplnExportDir(const QString& dir)
+{
+  (*this)[rexp::LNMPLN].setPath(dir);
+  (*this)[rexp::LNMPLN].setDefaultPath(dir);
+}
+
 bool RouteExportFormatMap::hasSelected() const
 {
   for(const RouteExportFormat& fmt : (*this))
@@ -453,7 +459,7 @@ void RouteExportFormatMap::updateDefaultPaths()
     msfsBasePath.chop(1);
 
   atools::settings::Settings& settings = atools::settings::Settings::instance();
-  QString lnmplnFiles = settings.valueStr("Route/LnmPlnFileDialogDir", documents);
+  QString lnmplnFiles = settings.valueStr(lnm::ROUTE_LNMPLN_EXPORTDIR, documents);
 
   // Build IniBuilds export path
   QString iniBuildsMsfsPath;

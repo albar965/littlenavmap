@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -28,11 +28,11 @@
 #include "navapp.h"
 #include "route/routecontroller.h"
 #include "routestring/routestringreader.h"
+#include "settings/settings.h"
 #include "util/htmlbuilder.h"
 #include "util/httpdownloader.h"
 #include "util/xmlstream.h"
 #include "zip/gzip.h"
-#include "settings/settings.h"
 
 #include <QPushButton>
 #include <QTimer>
@@ -41,6 +41,7 @@
 #include <QStringBuilder>
 
 using atools::util::HttpDownloader;
+namespace apln = atools::fs::pln;
 
 FetchRouteDialog::FetchRouteDialog(QWidget *parent) :
   QDialog(parent),
@@ -55,7 +56,7 @@ FetchRouteDialog::FetchRouteDialog(QWidget *parent) :
                                                                "https://www.simbrief.com/api/xml.fetcher.php");
 
   downloader = new HttpDownloader(this);
-  flightplan = new atools::fs::pln::Flightplan;
+  flightplan = new apln::Flightplan;
 
   // Connect signals ============================================
   connect(downloader, &HttpDownloader::downloadFailed, this, &FetchRouteDialog::downloadFailed);
@@ -101,7 +102,7 @@ void FetchRouteDialog::buttonBoxClicked(QAbstractButton *button)
     QDialog::accept();
 
     // Use always IFR for SimBrief plans
-    flightplan->setFlightplanType(atools::fs::pln::IFR);
+    flightplan->setFlightplanType(apln::IFR);
 
     emit routeNewFromFlightplan(*flightplan, false /* adjustAltitude */, true /* changed */, false /* undo */);
   }
@@ -200,14 +201,16 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
   atools::util::XmlStream xmlStream(atools::zip::gzipDecompressIf(data, Q_FUNC_INFO));
   QXmlStreamReader& reader = xmlStream.getReader();
 
-  QString departure, destination, alternate, route;
+  QString departure, departureRunway, destination, destinationRunway, alternate, route;
   xmlStream.readUntilElement("OFP");
 
+  // http://www.simbrief.com/ofp/flightplans/xml/1681767414_1A4303D4A7.xml
   // . ...
   // . <origin>
   // .   <icao_code>EDDF</icao_code>
   // .   <iata_code>FRA</iata_code>
   // .   <faa_code/>
+  // .   <plan_rwy>22R</plan_rwy>
   // . ...
   // . <destination>
   // .   <icao_code>LIRF</icao_code>
@@ -216,6 +219,7 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
   // .   <elevation>14</elevation>
   // .   <pos_lat>41.800278</pos_lat>
   // .   <pos_long>12.238889</pos_long>
+  // .    <plan_rwy>04R</plan_rwy>
   // . ...
   // . <alternate>
   // .   <icao_code>LIRN</icao_code>
@@ -241,6 +245,8 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
       {
         if(reader.name() == "icao_code")
           departure = reader.readElementText();
+        else if(reader.name() == "plan_rwy")
+          departureRunway = reader.readElementText();
         else
           xmlStream.skipCurrentElement(false /* warn */);
       }
@@ -251,6 +257,8 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
       {
         if(reader.name() == "icao_code")
           destination = reader.readElementText();
+        else if(reader.name() == "plan_rwy")
+          destinationRunway = reader.readElementText();
         else
           xmlStream.skipCurrentElement(false /* warn */);
       }
@@ -291,6 +299,25 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
   RouteStringReader routeStringReader(NavApp::getRouteController()->getFlightplanEntryBuilder());
   bool ok = routeStringReader.createRouteFromString(routeString, rs::SIMBRIEF_READ_DEFAULTS, flightplan);
 
+  // Assign runways to procedures ====================================================
+  QHash<QString, QString>& properties = flightplan->getProperties();
+  if(!departureRunway.isEmpty())
+  {
+    // Assign to SID - wrong runways will be replaced
+    if(!properties.value(apln::SID).isEmpty())
+      properties.insert(apln::SIDRW, departureRunway);
+    else
+    {
+      // Use as start parking - position will be calculated automatically when reading flight plan
+      flightplan->setDepartureParkingName(departureRunway);
+      flightplan->setDepartureParkingType(apln::RUNWAY);
+    }
+  }
+
+  if(!destinationRunway.isEmpty())
+    // Assign to STAR - wrong runways will be replaced
+    properties.insert(apln::STARRW, destinationRunway);
+
   QString message(tr("<p>Flight successfully downloaded. Reading of route description %1.").arg(ok ? tr("successful") : tr("failed")));
 
   // Add any information/warning/error messages from parsing
@@ -305,7 +332,9 @@ void FetchRouteDialog::downloadFinished(const QByteArray& data, QString)
 
   ui->textEditResult->setText(message);
 
-  qDebug() << Q_FUNC_INFO << "departure" << departure << "destination" << destination << "alternate" << alternate << "route" << route;
+  qDebug() << Q_FUNC_INFO << "departure" << departure << "departureRunway" << departureRunway
+           << "destination" << destination << "destinationRunway" << destinationRunway
+           << "alternate" << alternate << "route" << route;
 
 #ifdef DEBUG_INFORMATION
   qDebug() << Q_FUNC_INFO << *flightplan;

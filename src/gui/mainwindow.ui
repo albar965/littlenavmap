@@ -11672,13 +11672,13 @@ relation to shown airport</string>
   </action>
   <action name="actionCreateDirStructure">
    <property name="text">
-    <string>&amp;Create Directory Structure</string>
+    <string>&amp;Create Directory Structure for saving Files</string>
    </property>
    <property name="toolTip">
-    <string>Create the recommended directory structure for saving files</string>
+    <string>Create the recommended directory structure for saving and loading files</string>
    </property>
    <property name="statusTip">
-    <string>Create the recommended directory structure for saving files</string>
+    <string>Create the recommended directory structure for saving and loading files</string>
    </property>
   </action>
   <action name="actionProfileDisplayOptions">
@@ -11919,7 +11919,7 @@ relation to shown airport</string>
   </action>
   <action name="actionShowMapInstallation">
    <property name="text">
-    <string>Show Map &amp;Installation Directory</string>
+    <string>Show Map Theme &amp;Installation Directory</string>
    </property>
    <property name="toolTip">
     <string>Open the Little Navmap map installation directory for additional maps</string>

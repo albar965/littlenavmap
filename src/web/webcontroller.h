@@ -88,9 +88,19 @@ public:
     documentRoot = value;
   }
 
+  const QString& getDocumentRoot() const
+  {
+    return documentRoot;
+  }
+
   void setPort(int value)
   {
     port = value;
+  }
+
+  int getPort() const
+  {
+    return port;
   }
 
   QString getDefaultDocumentRoot() const;

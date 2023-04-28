@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -21,12 +21,24 @@
 #include "common/unit.h"
 #include "fs/perf/aircraftperf.h"
 #include "geo/calculations.h"
-#include "grib/windquery.h"
 #include "navapp.h"
 #include "route/route.h"
 #include "weather/windreporter.h"
 
 #include <QLineF>
+
+// Altitude resuling from vertical angle is adjusted to restriction if close with this limit
+const float VERT_ANGLE_ALT_ADJUST_LIMIT_FT = 100.f;
+
+// Tolerance when checking vertical angle with restrictions
+const float VERT_ANGLE_ALT_TOLERANCE_FT = 50.f;
+
+// Tolerance when comparing altitude to restrictions
+const float AT_RESTRICTION_TOLERANCE_FT = 10.f;
+
+// Minimums for flight plan to avoid errors
+const float MIN_CRUISE_ALTITUDE_FT = 100.f;
+const float MIN_FLIGHTPLAN_DIST_NM = 0.5f;
 
 using atools::interpolate;
 namespace ageo = atools::geo;
@@ -341,13 +353,13 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
           // Convert units
           if(perf.useFuelAsVolume())
           {
-            result.fuelLbsToDest = atools::geo::fromGalToLbs(perf.isJetFuel(), fuelToDest);
+            result.fuelLbsToDest = ageo::fromGalToLbs(perf.isJetFuel(), fuelToDest);
             result.fuelGalToDest = fuelToDest;
           }
           else
           {
             result.fuelLbsToDest = fuelToDest;
-            result.fuelGalToDest = atools::geo::fromLbsToGal(perf.isJetFuel(), fuelToDest);
+            result.fuelGalToDest = ageo::fromLbsToGal(perf.isJetFuel(), fuelToDest);
           }
         }
 
@@ -373,13 +385,13 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
 
             if(perf.useFuelAsVolume())
             {
-              result.fuelLbsToTod = atools::geo::fromGalToLbs(perf.isJetFuel(), fuelToTod);
+              result.fuelLbsToTod = ageo::fromGalToLbs(perf.isJetFuel(), fuelToTod);
               result.fuelGalToTod = fuelToTod;
             }
             else
             {
               result.fuelLbsToTod = fuelToTod;
-              result.fuelGalToTod = atools::geo::fromLbsToGal(perf.isJetFuel(), fuelToTod);
+              result.fuelGalToTod = ageo::fromLbsToGal(perf.isJetFuel(), fuelToTod);
             }
           }
 
@@ -406,13 +418,13 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
 
             if(perf.useFuelAsVolume())
             {
-              result.fuelLbsToToc = atools::geo::fromGalToLbs(perf.isJetFuel(), fuelToToc);
+              result.fuelLbsToToc = ageo::fromGalToLbs(perf.isJetFuel(), fuelToToc);
               result.fuelGalToToc = fuelToToc;
             }
             else
             {
               result.fuelLbsToToc = fuelToToc;
-              result.fuelGalToToc = atools::geo::fromLbsToGal(perf.isJetFuel(), fuelToToc);
+              result.fuelGalToToc = ageo::fromLbsToGal(perf.isJetFuel(), fuelToToc);
             }
           }
 
@@ -433,13 +445,13 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
 
         if(perf.useFuelAsVolume())
         {
-          result.fuelLbsToNext = atools::geo::fromGalToLbs(perf.isJetFuel(), fuelToNext);
+          result.fuelLbsToNext = ageo::fromGalToLbs(perf.isJetFuel(), fuelToNext);
           result.fuelGalToNext = fuelToNext;
         }
         else
         {
           result.fuelLbsToNext = fuelToNext;
-          result.fuelGalToNext = atools::geo::fromLbsToGal(perf.isJetFuel(), fuelToNext);
+          result.fuelGalToNext = ageo::fromLbsToGal(perf.isJetFuel(), fuelToNext);
         }
       }
 
@@ -518,12 +530,6 @@ void RouteAltitude::calculateFuelAndTimeTo(FuelTimeResult& result, float distanc
   }
 }
 
-void RouteAltitude::adjustAltitudeForRestriction(RouteAltitudeLeg& leg) const
-{
-  if(!leg.isEmpty())
-    leg.setY2(adjustAltitudeForRestriction(leg.y2(), leg.restriction));
-}
-
 float RouteAltitude::adjustAltitudeForRestriction(float altitude, const proc::MapAltRestriction& restriction) const
 {
   bool forceFinal = restriction.forceFinal;
@@ -554,29 +560,20 @@ float RouteAltitude::adjustAltitudeForRestriction(float altitude, const proc::Ma
 
     case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
       // Do not consider ILS_AT_OR_ABOVE a restriction if overridden by vertical path
-      if(!(restriction.verticalAngleAlt < map::INVALID_ALTITUDE_VALUE))
-      {
-        if(forceFinal)
-          // Stick to lowest altitude on FAF or FACF
-          altitude = restriction.alt1;
-        else if(altitude < restriction.alt1)
-          altitude = restriction.alt1;
-      }
+      if(!(restriction.verticalAngleAlt < map::INVALID_ALTITUDE_VALUE) && (forceFinal || altitude < restriction.alt1))
+        // Stick to lowest altitude on FAF or FACF
+        altitude = restriction.alt1;
       break;
 
     case proc::MapAltRestriction::AT_OR_ABOVE:
-      if(forceFinal)
+      if(forceFinal || altitude < restriction.alt1)
         // Stick to lowest altitude on FAF or FACF
-        altitude = restriction.alt1;
-      else if(altitude < restriction.alt1)
         altitude = restriction.alt1;
       break;
 
     case proc::MapAltRestriction::AT_OR_BELOW:
-      if(forceFinal)
+      if(forceFinal || altitude > restriction.alt1)
         // Stick to lowest altitude on FAF or FACF
-        altitude = restriction.alt1;
-      else if(altitude > restriction.alt1)
         altitude = restriction.alt1;
       break;
 
@@ -597,6 +594,34 @@ float RouteAltitude::adjustAltitudeForRestriction(float altitude, const proc::Ma
   return altitude;
 }
 
+void RouteAltitude::adjustVertAngleAltForRestriction(proc::MapAltRestriction& restriction) const
+{
+  if(!(restriction.verticalAngleAlt < map::INVALID_ALTITUDE_VALUE))
+    return;
+
+  switch(restriction.descriptor)
+  {
+    case proc::MapAltRestriction::NO_ALT_RESTR:
+      break;
+
+    case proc::MapAltRestriction::AT:
+    case proc::MapAltRestriction::ILS_AT:
+    case proc::MapAltRestriction::ILS_AT_OR_ABOVE:
+    case proc::MapAltRestriction::AT_OR_ABOVE:
+    case proc::MapAltRestriction::AT_OR_BELOW:
+      if(atools::almostEqual(restriction.verticalAngleAlt, restriction.alt1, VERT_ANGLE_ALT_ADJUST_LIMIT_FT))
+        restriction.verticalAngleAlt = restriction.alt1;
+      break;
+
+    case proc::MapAltRestriction::BETWEEN:
+      if(atools::almostEqual(restriction.verticalAngleAlt, restriction.alt1, VERT_ANGLE_ALT_ADJUST_LIMIT_FT))
+        restriction.verticalAngleAlt = restriction.alt1;
+      if(atools::almostEqual(restriction.verticalAngleAlt, restriction.alt2, VERT_ANGLE_ALT_ADJUST_LIMIT_FT))
+        restriction.verticalAngleAlt = restriction.alt2;
+      break;
+  }
+}
+
 bool RouteAltitude::violatesAltitudeRestriction(QString& errorMessage, int legIndex) const
 {
   const RouteAltitudeLeg& leg = value(legIndex);
@@ -613,7 +638,7 @@ bool RouteAltitude::violatesAltitudeRestriction(QString& errorMessage, int legIn
         break;
 
       case proc::MapAltRestriction::AT:
-        retval = atools::almostNotEqual(legAlt, leg.restriction.alt1, 10.f);
+        retval = atools::almostNotEqual(legAlt, leg.restriction.alt1, AT_RESTRICTION_TOLERANCE_FT);
         break;
 
       case proc::MapAltRestriction::AT_OR_ABOVE:
@@ -631,7 +656,7 @@ bool RouteAltitude::violatesAltitudeRestriction(QString& errorMessage, int legIn
 
     if(!retval && leg.restriction.verticalAngleAlt < map::INVALID_ALTITUDE_VALUE)
       // Take altitude calculated from vertical angle and check it against restriction
-      retval = atools::almostNotEqual(legAlt, leg.restriction.verticalAngleAlt, 50.f);
+      retval = atools::almostNotEqual(legAlt, leg.restriction.verticalAngleAlt, VERT_ANGLE_ALT_TOLERANCE_FT);
 
     if(retval)
       errorMessage = tr("Leg number %1, %2 (%3) at %4 violates altitude restriction \"%5\".").
@@ -992,14 +1017,14 @@ void RouteAltitude::calculateAll(const atools::fs::perf::AircraftPerf& perf, flo
   // Check again if there is a plan ===============================================
   if(!invalid)
   {
-    if(route->getTotalDistance() < 0.5f)
+    if(route->getTotalDistance() < MIN_FLIGHTPLAN_DIST_NM)
     {
       errors.append(tr("Flight plan is too short."));
       qWarning() << Q_FUNC_INFO << "Flight plan too short";
       invalid = true;
     }
 
-    if(cruiseAltitude < 100.f)
+    if(cruiseAltitude < MIN_CRUISE_ALTITUDE_FT)
     {
       errors.append(tr("Cruise altitude is too low."));
       qWarning() << Q_FUNC_INFO << "Cruise altitude is too low";
@@ -1427,10 +1452,15 @@ void RouteAltitude::calculateArrival()
 
       // Point of this leg
       if(lastAltLeg != nullptr && lastAltLeg->isVerticalProcAngleValid())
+      {
         // Calculate next altitude from vertical angle and use this as new altitude
         // tan(alpha)=a/b - looking for b
-        newAltitude = alt.restriction.verticalAngleAlt =
-          lastAlt + atools::geo::nmToFeet(atools::geo::tanDeg(-lastAltLeg->verticalAngle) * distFromRight);
+        alt.restriction.verticalAngleAlt = lastAlt + ageo::nmToFeet(ageo::tanDeg(-lastAltLeg->verticalAngle) * distFromRight);
+
+        // Correct calculated verticalAngleAlt since there might be small differences causing validation errors
+        adjustVertAngleAltForRestriction(alt.restriction);
+        newAltitude = alt.restriction.verticalAngleAlt;
+      }
       else
       {
         // Use a default value of 3 nm per 1000 ft if performance is not available
@@ -1551,13 +1581,13 @@ void RouteAltitude::calculateGeoAngles()
     for(int i = 1; i < leg.geometry.size(); i++)
     {
       // Leg length
-      double xdiff = atools::geo::nmToFeet(leg.geometry.at(i).x() - leg.geometry.at(i - 1).x()); // Always positive
+      double xdiff = ageo::nmToFeet(leg.geometry.at(i).x() - leg.geometry.at(i - 1).x()); // Always positive
 
       // Altitude difference
       double ydiff = leg.geometry.at(i).y() - leg.geometry.at(i - 1).y();
 
       if(std::abs(xdiff) > 0.f && std::abs(ydiff) > 0.f)
-        leg.angles.append(static_cast<float>(atools::geo::atan2Deg(ydiff, xdiff)));
+        leg.angles.append(static_cast<float>(ageo::atan2Deg(ydiff, xdiff)));
       else
         leg.angles.append(0.f);
     }
@@ -1596,7 +1626,7 @@ void RouteAltitude::fillGeometry()
         if(altLeg.isAnyProcedure())
         {
           // Get full procedure geometry
-          for(const atools::geo::Pos& pos : routeLeg.getProcedureLeg().geometry)
+          for(const ageo::Pos& pos : routeLeg.getProcedureLeg().geometry)
             altLeg.geoLine.append(pos.alt(altLeg.y1()));
         }
 
@@ -1757,7 +1787,7 @@ void RouteAltitude::calculateTrip(const atools::fs::perf::AircraftPerf& perf)
       // Beginning and end of this leg
       float startDistLeg = leg.getDistanceFromStart() - leg.getDistanceTo();
       float endDistLeg = leg.getDistanceFromStart();
-      const atools::geo::LineString& legLine = leg.getLineString();
+      const ageo::LineString& legLine = leg.getLineString();
 
       // Reset all variables
       float climbDist = 0.f, cruiseDist = 0.f, descentDist = 0.f;

@@ -1818,8 +1818,14 @@ void MainWindow::showShowMapCache()
 /* Menu item */
 void MainWindow::showShowMapInstallation()
 {
-  // .../Little Navmap/data/maps/earth
-  helpHandler->openFile(MarbleDirs::marbleDataPath() % QDir::separator() % "maps" % QDir::separator() % "earth");
+  QString cacheMapThemeDir = OptionData::instance().getCacheMapThemeDir();
+
+  QString msg = atools::checkDirMsg(cacheMapThemeDir);
+  if(msg.isEmpty())
+    helpHandler->openFile(cacheMapThemeDir);
+  else
+    QMessageBox::warning(this, QApplication::applicationName(),
+                         msg + tr("\n\nSet the path to additional map themes in options on page \"Cache and Files\""));
 }
 
 /* Updates label and tooltip for connection status */
@@ -3190,7 +3196,7 @@ void MainWindow::mainWindowShown()
   if(ui->actionRunWebserver->isChecked())
   {
     NavApp::getWebController()->startServer();
-    updateMapKeys(); // Update API keys in web map widget
+    updateMapKeys(); // Update API keys and theme dir in web map widget
   }
   webserverStatusChanged(NavApp::getWebController()->isRunning());
 
@@ -3404,17 +3410,18 @@ void MainWindow::mainWindowShownDelayed()
 
 void MainWindow::runDirToolManual()
 {
-  runDirTool(true);
+  runDirTool(true /* manual */);
 }
 
 void MainWindow::runDirTool(bool manual)
 {
+  bool alreadyComplete, created;
   DirTool dirTool(this, atools::documentsDir(), QApplication::applicationName(), lnm::ACTIONS_SHOW_INSTALL_DIRS);
-  bool hasDirs = dirTool.runIfMissing();
+  dirTool.runIfMissing(manual, alreadyComplete, created);
 
-  qDebug() << Q_FUNC_INFO << "hasDirs" << hasDirs << "manual" << manual;
+  qDebug() << Q_FUNC_INFO << "alreadyComplete" << alreadyComplete << "manual" << manual << "created" << created;
 
-  if(hasDirs && manual)
+  if(alreadyComplete && manual && !created)
     QMessageBox::information(this, QApplication::applicationName(),
                              tr("<p>Directory structure for Little Navmap files is already complete.</p>"
                                   "<p>Base directory is<br/>\"%1\"</p>").arg(dirTool.getApplicationDir()));
@@ -3481,6 +3488,11 @@ void MainWindow::fullScreenMapToggle()
 void MainWindow::setStayOnTop(QWidget *widget)
 {
   dockHandler->setStayOnTop(widget, ui->actionWindowStayOnTop->isChecked());
+}
+
+void MainWindow::setLnmplnExportDir(const QString& dir)
+{
+  routeExport->setLnmplnExportDir(dir);
 }
 
 void MainWindow::stayOnTop()
@@ -3863,18 +3875,22 @@ void MainWindow::optionsChanged()
   dockHandler->setAutoRaiseWindows(OptionData::instance().getFlags2().testFlag(opts2::RAISE_DOCK_WINDOWS));
   dockHandler->setAutoRaiseMainWindow(OptionData::instance().getFlags2().testFlag(opts2::RAISE_MAIN_WINDOW));
 
-  updateMapKeys();
+  if(mapThemeHandler != nullptr)
+    mapThemeHandler->optionsChanged();
 }
 
 void MainWindow::updateMapKeys()
 {
-  // Is null on startup
-  if(mapWidget != nullptr)
-    mapWidget->setKeys(mapThemeHandler->getMapThemeKeysHash());
+  if(mapThemeHandler != nullptr)
+  {
+    // Is null on startup
+    if(mapWidget != nullptr)
+      mapWidget->setKeys(mapThemeHandler->getMapThemeKeysHash());
 
-  // Might be null if not started
-  if(NavApp::getMapPaintWidgetWeb() != nullptr)
-    NavApp::getMapPaintWidgetWeb()->setKeys(mapThemeHandler->getMapThemeKeysHash());
+    // Might be null if not started
+    if(NavApp::getMapPaintWidgetWeb() != nullptr)
+      NavApp::getMapPaintWidgetWeb()->setKeys(mapThemeHandler->getMapThemeKeysHash());
+  }
 }
 
 void MainWindow::saveStateNow()

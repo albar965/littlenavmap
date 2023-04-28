@@ -900,23 +900,24 @@ void MapPainterAirport::drawAirportDiagram(const map::MapAirport& airport)
         QString textSec;
 
         float rotate;
+        bool forceBoth = std::abs(airport.magvar) > 90.f;
         if(runway.heading > 180.f)
         {
           // This case is rare (eg. LTAI) - probably primary in the wrong place
           rotate = runway.heading + 90.f;
           textPrim = tr("► ") % formatter::courseTextFromTrue(opposedCourseDeg(runway.heading), airport.magvar,
-                                                              false /* magBold */, false /* trueSmall */, true /* narrow */);
+                                                              false /* magBold */, false /* trueSmall */, true /* narrow */, forceBoth);
 
           textSec = formatter::courseTextFromTrue(runway.heading, airport.magvar,
-                                                  false /* magBold */, false /* trueSmall */, true /* narrow */) % tr(" ◄");
+                                                  false /* magBold */, false /* trueSmall */, true /* narrow */, forceBoth) % tr(" ◄");
         }
         else
         {
           rotate = runway.heading - 90.f;
           textPrim = tr("► ") % formatter::courseTextFromTrue(runway.heading, airport.magvar,
-                                                              false /* magBold */, false /* trueSmall */, true /* narrow */);
+                                                              false /* magBold */, false /* trueSmall */, true /* narrow */, forceBoth);
           textSec = formatter::courseTextFromTrue(opposedCourseDeg(runway.heading), airport.magvar,
-                                                  false /* magBold */, false /* trueSmall */, true /* narrow */) % tr(" ◄");
+                                                  false /* magBold */, false /* trueSmall */, true /* narrow */, forceBoth) % tr(" ◄");
         }
 
         QRectF textRectPrim = rwHdgMetrics.boundingRect(textPrim).marginsAdded(RUNWAY_HEADING_MARGINS);

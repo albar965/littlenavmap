@@ -109,6 +109,7 @@ struct PaintContext
   bool paintCopyright = true;
   int mimimumRunwayLengthFt = -1;
   QVector<map::MapObjectRef> *routeDrawnNavaids; /* All navaids drawn for route and procedures. Points to vector in MapScreenIndex */
+  int currentDistanceMarkerId = -1;
 
   /* Text sizes and line thickness in percent / 100 as set in options dialog */
   float textSizeAircraftAi = 1.f;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -484,14 +484,11 @@ QString AircraftPerfController::saveAsFileDialog(const QString& filepath, bool *
     nameFilter = tr("Aircraft Performance Files %1;;Aircraft Performance Files old Format %2;;All Files (*)").
                  arg(lnm::FILE_PATTERN_AIRCRAFT_PERF).arg(lnm::FILE_PATTERN_AIRCRAFT_PERF_INI);
   else
-    nameFilter = tr("Aircraft Performance Files %1;;All Files (*)").
-                 arg(lnm::FILE_PATTERN_AIRCRAFT_PERF);
+    nameFilter = tr("Aircraft Performance Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_AIRCRAFT_PERF);
 
   int nameFilterIndex = 0;
   QString file = atools::gui::Dialog(mainWindow).saveFileDialog(
-    tr("Save Aircraft Performance File"),
-    nameFilter,
-    "lnmperf", "AircraftPerformance/",
+    tr("Save Aircraft Performance File"), nameFilter, "lnmperf", "AircraftPerformance/",
     QString(), filepath, false /* confirm overwrite */, false /* autoNumberFilename */, &nameFilterIndex);
 
   if(oldFormat != nullptr)

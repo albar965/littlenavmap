@@ -54,23 +54,25 @@ namespace mw {
 /* State of click, drag and drop actions on the map */
 enum MouseState
 {
-  NONE = 0x0000, /* Nothing */
+  NONE = 0, /* Nothing */
 
-  DRAG_DISTANCE = 0x0001, /* A new distance measurement line is dragged */
-  DRAG_CHANGE_DISTANCE = 0x0002, /* A present distance measurement line is changed dragging */
+  DRAG_DIST_NEW_END = 1 << 0, /* A new distance measurement line is dragged moving the endpoint */
+  DRAG_DIST_CHANGE_START = 1 << 1, /* A present distance measurement line is changed dragging the origin */
+  DRAG_DIST_CHANGE_END = 1 << 2, /* A present distance measurement line is changed dragging the endpoint */
 
-  DRAG_ROUTE_LEG = 0x0004, /* Changing a flight plan leg by adding a new point */
-  DRAG_ROUTE_POINT = 0x0008, /* Changing the flight plan by replacing a present waypoint */
+  DRAG_ROUTE_LEG = 1 << 3, /* Changing a flight plan leg by adding a new point */
+  DRAG_ROUTE_POINT = 1 << 4, /* Changing the flight plan by replacing a present waypoint */
 
-  DRAG_USER_POINT = 0x0010, /* Moving a userpoint around */
+  DRAG_USER_POINT = 1 << 5, /* Moving a userpoint around */
 
-  DRAG_POST = 0x0020, /* Mouse released - all done */
-  DRAG_POST_MENU = 0x0040, /* A menu is opened after selecting multiple objects.
+  DRAG_POST = 1 << 6, /* Mouse released - all done */
+  DRAG_POST_MENU = 1 << 7, /* A menu is opened after selecting multiple objects.
                             * Avoid cancelling all drag when loosing focus */
-  DRAG_POST_CANCEL = 0x0080, /* Right mousebutton clicked - cancel all actions */
+  DRAG_POST_CANCEL = 1 << 8, /* Right mousebutton clicked - cancel all actions */
 
   /* Used to check if any interaction is going on */
-  DRAG_ALL = mw::DRAG_DISTANCE | mw::DRAG_CHANGE_DISTANCE | mw::DRAG_ROUTE_LEG | mw::DRAG_ROUTE_POINT |
+  DRAG_ALL = mw::DRAG_DIST_NEW_END | mw::DRAG_DIST_CHANGE_START | mw::DRAG_DIST_CHANGE_END |
+             mw::DRAG_ROUTE_LEG | mw::DRAG_ROUTE_POINT |
              mw::DRAG_USER_POINT
 };
 
@@ -233,6 +235,12 @@ public:
 
   void resetTakeoffLandingDetection();
 
+  /* Currently dragging measurement line */
+  int getCurrentDistanceMarkerId() const
+  {
+    return currentDistanceMarkerId;
+  }
+
 signals:
   /* Fuel flow started or stopped */
   void aircraftEngineStarted(const atools::fs::sc::SimConnectUserAircraft& aircraft);
@@ -346,9 +354,13 @@ private:
   void elevationDisplayTimerTimeout();
 
   /* Start a line measurement after context menu selection or click+modifier */
-  void addMeasurement(const atools::geo::Pos& pos, const map::MapResult& result);
-  void addMeasurement(const atools::geo::Pos& pos, const map::MapAirport *airport, const map::MapVor *vor,
-                      const map::MapNdb *ndb, const map::MapWaypoint *waypoint);
+  void addDistanceMarker(const atools::geo::Pos& pos, const map::MapResult& result);
+  void addDistanceMarker(const atools::geo::Pos& pos, const map::MapAirport *airport, const map::MapVor *vor,
+                         const map::MapNdb *ndb, const map::MapWaypoint *waypoint, const map::MapUserpoint *userpoint);
+  void fillDistanceMarker(map::DistanceMarker& distanceMarker, const atools::geo::Pos& pos, const map::MapResult& result);
+  void fillDistanceMarker(map::DistanceMarker& distanceMarker, const atools::geo::Pos& pos, const map::MapAirport *airport,
+                          const map::MapVor *vor, const map::MapNdb *ndb, const map::MapWaypoint *waypoint,
+                          const map::MapUserpoint *userpoint);
 
   /* Show the given object in the search search window with filters and selection set */
   void showResultInSearch(const map::MapBase *base);
@@ -373,7 +385,7 @@ private:
 
   /* Update the flight plan from a drag and drop result. Show a menu if multiple objects are
    * found at the button release position. */
-  void updateRoute(QPoint newPoint, int leg, int point, bool fromClickAdd, bool fromClickAppend);
+  void updateRoute(const QPoint& point, int leg, int pointIndex, bool fromClickAdd, bool fromClickAppend);
 
   /* Show menu to allow selection of a map feature below the cursor */
   bool showFeatureSelectionMenu(int& id, map::MapTypes& type, const map::MapResult& result, const QString& menuText);

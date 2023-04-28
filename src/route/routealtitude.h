@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -415,7 +415,7 @@ private:
 
   /* Adjust the altitude to fit into the restriction. I.e. raise if it is below an at or above restriction */
   float adjustAltitudeForRestriction(float altitude, const proc::MapAltRestriction& restriction) const;
-  void adjustAltitudeForRestriction(RouteAltitudeLeg& leg) const;
+  void adjustVertAngleAltForRestriction(proc::MapAltRestriction& restriction) const;
 
   /* Find the maximum allowed altitude for approach/STAR beginning from index going backward ( i-- )*/
   float findApproachMaxAltitude(int index) const;

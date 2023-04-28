@@ -264,6 +264,9 @@ public:
   /* Set on top status according main window top status */
   void setStayOnTop(QWidget *widget);
 
+  /* Set current and default path for the LNMPLN export */
+  void setLnmplnExportDir(const QString& dir);
+
 signals:
   /* Emitted when window is shown the first time */
   void windowShown();

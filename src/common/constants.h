@@ -298,7 +298,6 @@ const QLatin1String OPTIONS_DIALOG_AS_FILE_DLG("OptionsDialog/WeatherFileDialogA
 const QLatin1String OPTIONS_DIALOG_XPLANE_DLG("OptionsDialog/WeatherFileDialogXplane");
 const QLatin1String OPTIONS_DIALOG_XPLANE12_DLG("OptionsDialog/WeatherFileDialogXplane12");
 const QLatin1String OPTIONS_DIALOG_XPLANE_WIND_FILE_DLG("OptionsDialog/WeatherFileDialogXplaneWind");
-const QLatin1String OPTIONS_DIALOG_GLOBE_FILE_DLG("OptionsDialog/CacheFileDialogGlobe");
 const QLatin1String OPTIONS_DIALOG_DB_DIR_DLG("OptionsDialog/DatabaseDirDialog");
 const QLatin1String OPTIONS_DIALOG_DB_PROGRESS_DLG("OptionsDialog/DatabaseProgressDialog");
 const QLatin1String OPTIONS_DIALOG_DB_FILE_DLG("OptionsDialog/DatabaseFilesDialog");
@@ -410,6 +409,8 @@ const QLatin1String DATABASE_DIR("little_navmap_db");
 const QLatin1String DATABASE_PREFIX("little_navmap_");
 const QLatin1String DATABASE_SUFFIX(".sqlite");
 const QLatin1String DATABASE_BACKUP_SUFFIX("-backup");
+
+const QLatin1String ROUTE_LNMPLN_EXPORTDIR("Route/LnmPlnFileDialogDir");
 
 /* This is the default configuration file for reading the scenery library.
  * It can be overridden by placing a  file with the same name into

@@ -262,30 +262,30 @@ QString windInformation(float headWind, float crossWind)
   return windTxt.join(QObject::tr(", "));
 }
 
-QString courseTextFromTrue(float trueCourse, float magvar, bool magBold, bool trueSmall, bool narrow)
+QString courseTextFromTrue(float trueCourse, float magvar, bool magBold, bool trueSmall, bool narrow, bool forceBoth)
 {
   // true to magnetic
-  return courseText(atools::geo::normalizeCourse(trueCourse - magvar), trueCourse, magBold, trueSmall, narrow);
+  return courseText(atools::geo::normalizeCourse(trueCourse - magvar), trueCourse, magBold, trueSmall, narrow, forceBoth);
 }
 
-QString courseTextFromMag(float magCourse, float magvar, bool magBold, bool trueSmall, bool narrow)
+QString courseTextFromMag(float magCourse, float magvar, bool magBold, bool trueSmall, bool narrow, bool forceBoth)
 {
   // magnetic to true
-  return courseText(magCourse, atools::geo::normalizeCourse(magCourse + magvar), magBold, trueSmall, narrow);
+  return courseText(magCourse, atools::geo::normalizeCourse(magCourse + magvar), magBold, trueSmall, narrow, forceBoth);
 }
 
 QString courseSuffix()
 {
-  return OptionData::instance().getFlags2() & opts2::UNIT_TRUE_COURSE ? QObject::tr("°M/T") : QObject::tr("°M");
+  return OptionData::instance().getFlags2().testFlag(opts2::UNIT_TRUE_COURSE) ? QObject::tr("°M/T") : QObject::tr("°M");
 }
 
-QString courseText(float magCourse, float trueCourse, bool magBold, bool trueSmall, bool narrow)
+QString courseText(float magCourse, float trueCourse, bool magBold, bool trueSmall, bool narrow, bool forceBoth)
 {
   QString magStr, trueStr;
   if(magCourse < map::INVALID_COURSE_VALUE / 2.f)
     magStr = QLocale().toString(magCourse, 'f', 0);
 
-  if(OptionData::instance().getFlags2() & opts2::UNIT_TRUE_COURSE)
+  if(forceBoth || OptionData::instance().getFlags2().testFlag(opts2::UNIT_TRUE_COURSE) || magStr.isEmpty())
   {
     if(trueCourse < map::INVALID_COURSE_VALUE / 2.f)
       trueStr = QLocale().toString(trueCourse, 'f', 0);

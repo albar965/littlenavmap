@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -41,8 +41,7 @@ AirportIconDelegate::~AirportIconDelegate()
   delete mapTypesFactory;
 }
 
-void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option,
-                                const QModelIndex& index) const
+void AirportIconDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
   QModelIndex idx(index);
   const SqlModel *sqlModel = dynamic_cast<const SqlModel *>(index.model());

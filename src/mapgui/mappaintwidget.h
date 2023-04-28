@@ -208,11 +208,8 @@ public:
   /* Update map */
   void postDatabaseLoad();
 
-  /* Set map theme.
-   * @param theme filename of the map theme
-   * @param index MapThemeComboIndex
-   */
-  void setTheme(const QString& theme, const QString& themeId);
+  /* Set map theme. * themeId: "google-maps-def",  themePath: "earth/google-maps-def/google-maps-def.dgml" or full path */
+  void setTheme(const QString& themePath, const QString& themeId);
 
   /* Show points of interest and other labels for certain map themes */
   void setShowMapPois(bool show);
@@ -555,15 +552,15 @@ protected:
   /* Update screen index after painting */
   bool screenIndexUpdateReqired = false;
 
-  /* Map theme id. */
+  /* Map theme id like "google-maps-def". */
   QString currentThemeId;
 
   /* Trail/track of user aircraft */
   AircraftTrack *aircraftTrack = nullptr, *aircraftTrackLogbook = nullptr;
 
 private:
-  /* Set map theme and adjust properties accordingly */
-  void setThemeInternal(const QString& theme);
+  /* Set map theme and adjust properties accordingly. themePath is the full path to the DGML */
+  void setThemeInternal(const QString& themePath);
 
   /* Override widget events */
   virtual void paintEvent(QPaintEvent *paintEvent) override;

@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -36,9 +36,13 @@ class Pos;
 }
 
 class QPainter;
+class QFontMetricsF;
 class CoordinateConverter;
 
-/* Contains methods for text placement along line strings. */
+/* Contains methods for text placement along line strings.
+ * Texts can be separated by '\n' which will be considered as line break.
+ * A text separator '\\' divides text parts that have to be swapped depending on orientation.
+ */
 class TextPlacement
 {
   Q_DECLARE_TR_FUNCTIONS(TextPlacement)
@@ -47,15 +51,16 @@ public:
   TextPlacement(QPainter *painterParam, const CoordinateConverter *coordinateConverter, const QRect& screenRectParam);
 
   /* Prepare for drawTextAlongLines and also fills data for getVisibleStartPoints and getStartPoints.
-   * Lines do not have to form a connected linestring. */
-  void calculateTextAlongLines(const QVector<atools::geo::Line>& lines, const QStringList& routeTexts);
+   *  Lines do not have to form a connected linestring. */
+  void calculateTextAlongLines(const QVector<atools::geo::Line>& lines, const QStringList& lineTexts);
+  void calculateTextAlongLine(const atools::geo::Line& line, const QString& lineText);
 
-  /* Calculate point coordinates and visibility */
+  /* Calculate point coordinates and visibility. */
   void calculateTextPositions(const atools::geo::LineString& points);
 
   /* Draw text after calling calculateTextAlongLines. Text is aligned with lines and kept in an
    * upwards readable position. Arrows are optionally added to end or start.
-   *  the tree methods drawTextAlongLines, calculateTextAlongScreenLines and clearLineTextData work with a class state */
+   * the tree methods drawTextAlongLines, calculateTextAlongScreenLines and clearLineTextData work with a class state */
   void drawTextAlongLines();
   void clearLineTextData();
 
@@ -143,9 +148,10 @@ public:
     maximumPoints = value;
   }
 
-  float getTextLineLength(int index) const
+  /* Used to replace backslash in sections */
+  void setSectionSeparator(const QString& value)
   {
-    return textLineLengths.value(index);
+    sectionSeparator = value;
   }
 
 private:
@@ -155,8 +161,11 @@ private:
   int findClosestInternal(const QVector<int>& fullyVisibleValid, const QVector<int>& pointsIdxValid, const QPolygonF& points,
                           const QVector<QPointF>& neighbors) const;
 
-  /* Elide text with a buffer depending on font height */
-  QString elideText(const QString& text, const QString& arrow, float lineLength) const;
+  /* Elide text with a buffer depending on font height. Elides separate lines in text split with '\n'. */
+  QString elideText(const QString& text, const QString& arrow, const QFontMetricsF& metrics, float lineLength) const;
+
+  /* Calculate maximum text width for a text separated with '\n' denoting lines. */
+  float horizontalAdvance(const QString& text, const QFontMetricsF& metrics) const;
 
   QList<QPointF> textCoords;
   QList<float> textBearings;
@@ -175,7 +184,7 @@ private:
   bool fast = false, textOnTopOfLine = true, textOnLineCenter = false, arrowForEmpty = false;
   QPainter *painter = nullptr;
   const CoordinateConverter *converter = nullptr;
-  QString arrowRight, arrowLeft;
+  QString arrowRight, arrowLeft, sectionSeparator;
   float lineWidth = 10.f;
   QVector<QColor> colors;
   QVector<QColor> colors2;

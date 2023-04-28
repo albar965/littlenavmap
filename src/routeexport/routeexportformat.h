@@ -318,6 +318,9 @@ public:
     return version;
   }
 
+  /* Set current and default path for the LNMPLN export */
+  void setLnmplnExportDir(const QString& dir);
+
 #ifdef DEBUG_INFORMATION_MULTIEXPORT
 
   void setDebugOptions(rexp::RouteExportFormatType type);

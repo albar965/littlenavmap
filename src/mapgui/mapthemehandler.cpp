@@ -28,6 +28,7 @@
 #include "ui_mainwindow.h"
 #include "gui/dialog.h"
 #include "gui/widgetstate.h"
+#include "options/optiondata.h"
 
 #include <QCoreApplication>
 #include <QDebug>
@@ -56,19 +57,19 @@ MapThemeHandler::~MapThemeHandler()
 
 void MapThemeHandler::loadThemes()
 {
-  earthDir = QDir(atools::buildPath({QCoreApplication::applicationDirPath(), "data", "maps", "earth"}));
-
-  // Check if the base folder exists and throw an exception if not
-  QString msg = atools::checkDirMsg(earthDir.path());
+  // Check if the default base folder exists in the installation folder and throw an exception if not
+  QString earthDir = QCoreApplication::applicationDirPath() +
+                     QDir::separator() + "data" + QDir::separator() + "maps" + QDir::separator() + "earth";
+  QString msg = atools::checkDirMsg(earthDir);
   if(!msg.isEmpty())
-    throw atools::Exception(tr("Base path \"%1\" for map themes not found. %2").arg(earthDir.path()).arg(msg));
+    throw atools::Exception(tr("Base path \"%1\" for map themes not found. %2").arg(earthDir).arg(msg));
 
   // Load all these from folder
   themes.clear();
   themeIdToIndexMap.clear();
   QSet<QString> ids, sourceDirs;
   QStringList errors;
-  for(const QFileInfo& dgml : findMapThemes())
+  for(const QFileInfo& dgml : findMapThemes({earthDir, OptionData::instance().getCacheMapThemeDir()}))
   {
     MapTheme theme = loadTheme(dgml);
 
@@ -210,10 +211,8 @@ void MapThemeHandler::setMapThemeKeys(const QMap<QString, QString>& keys)
   mapThemeKeys = keys;
 }
 
-void MapThemeHandler::saveState()
+void MapThemeHandler::saveKeyfile()
 {
-  qDebug() << Q_FUNC_INFO;
-
   // Save keys ===================================================
   QFile keyFile(atools::settings::Settings::getPath() + QDir::separator() + FILENAME);
   if(keyFile.open(QIODevice::WriteOnly))
@@ -256,6 +255,13 @@ void MapThemeHandler::saveState()
     qWarning() << Q_FUNC_INFO << "Cannot open for writing" << keyFile.fileName() << "error" << keyFile.errorString();
     throw atools::Exception(tr("Cannot open file for writing %1. Reason: %2").arg(keyFile.fileName()).arg(keyFile.errorString()));
   }
+}
+
+void MapThemeHandler::saveState()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  saveKeyfile();
 
   // Save current theme ===================================================
   atools::settings::Settings& settings = atools::settings::Settings::instance();
@@ -269,6 +275,25 @@ void MapThemeHandler::restoreState()
 {
   qDebug() << Q_FUNC_INFO;
 
+  restoreKeyfile();
+
+  atools::settings::Settings& settings = atools::settings::Settings::instance();
+
+  // Load Current theme ===================================================
+  QString themeId = defaultTheme.getThemeId();
+  if(settings.contains(lnm::MAP_THEME) && getTheme(settings.valueStr(lnm::MAP_THEME)).isValid())
+    // Restore map theme selection
+    themeId = settings.valueStr(lnm::MAP_THEME);
+
+  // Check related action
+  changeMapThemeActions(themeId);
+
+  atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET_MAPTHEME);
+  widgetState.restore(mapProjectionActionGroup);
+}
+
+void MapThemeHandler::restoreKeyfile()
+{
   // Load keys ===================================================
   QFile keyFile(atools::settings::Settings::getPath() + QDir::separator() + FILENAME);
 
@@ -295,8 +320,8 @@ void MapThemeHandler::restoreState()
 
       if(keyFile.error() != QFileDevice::NoError)
       {
-        qWarning() << Q_FUNC_INFO << "Failed writing" << keys.size() << "keys to" << keyFile.fileName() << "error" << keyFile.errorString();
-        throw atools::Exception(tr("Failed writing to %1. Reason: %2").arg(keyFile.fileName()).arg(keyFile.errorString()));
+        qWarning() << Q_FUNC_INFO << "Failed reading" << keys.size() << "keys to" << keyFile.fileName() << "error" << keyFile.errorString();
+        throw atools::Exception(tr("Failed reading from %1. Reason: %2").arg(keyFile.fileName()).arg(keyFile.errorString()));
       }
 
       keyFile.close();
@@ -309,20 +334,6 @@ void MapThemeHandler::restoreState()
   }
   else
     qDebug() << Q_FUNC_INFO << "File does not exist" << keyFile.fileName();
-
-  atools::settings::Settings& settings = atools::settings::Settings::instance();
-
-  // Load Current theme ===================================================
-  QString themeId = getDefaultTheme().getThemeId();
-  if(settings.contains(lnm::MAP_THEME) && getTheme(settings.valueStr(lnm::MAP_THEME)).isValid())
-    // Restore map theme selection
-    themeId = settings.valueStr(lnm::MAP_THEME);
-
-  // Check related action
-  changeMapThemeActions(themeId);
-
-  atools::gui::WidgetState widgetState(lnm::MAINWINDOW_WIDGET_MAPTHEME);
-  widgetState.restore(mapProjectionActionGroup);
 }
 
 MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
@@ -384,7 +395,7 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
         theme.dgmlFilepath = dgml.filePath();
 
         // Create a new entry with path relative to "earth"
-        theme.id = QString("earth") + QDir::separator() + earthDir.relativeFilePath(dgml.absoluteFilePath());
+        theme.dgmlFilepath = dgml.canonicalFilePath();
       }
       // map ====================================================================
       else if(reader.name() == "map")
@@ -468,44 +479,53 @@ MapTheme MapThemeHandler::loadTheme(const QFileInfo& dgml)
   return theme;
 }
 
-QList<QFileInfo> MapThemeHandler::findMapThemes()
+QList<QFileInfo> MapThemeHandler::findMapThemes(const QStringList& paths)
 {
   QList<QFileInfo> dgmlFileInfos;
 
-  // Get all folders from "earth"
-  for(const QFileInfo& themeDirInfo : earthDir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
+  for(const QString& path : paths)
   {
-    // Check if folder is accessible
-    if(atools::checkDir(Q_FUNC_INFO, themeDirInfo, true /* warn */))
-    {
-      // Theme folder
-      QDir themeDir(themeDirInfo.absoluteFilePath());
+    if(path.isEmpty())
+      continue;
 
-      // Get all DGML files in folder - should be only one
-      int found = 0;
-      for(const QFileInfo& themeFile : themeDir.entryInfoList({"*.dgml"}, QDir::Files | QDir::NoDotAndDotDot))
+    QDir dir(path);
+    if(dir.exists())
+    {
+      // Get all folders from "earth"
+      for(const QFileInfo& themeDirInfo : dir.entryInfoList(QDir::Dirs | QDir::NoDotAndDotDot))
       {
-        if(atools::checkFile(Q_FUNC_INFO, themeFile, true /* warn */))
+        // Check if folder is accessible
+        if(atools::checkDir(Q_FUNC_INFO, themeDirInfo, true /* warn */))
         {
-          qInfo() << "MapThemeHandler::findMapThemes(): Found map theme file" << themeFile.absoluteFilePath();
-          dgmlFileInfos.append(themeFile);
-          found++;
+          // Theme folder
+          QDir themeDir(themeDirInfo.absoluteFilePath());
+
+          // Get all DGML files in folder - should be only one
+          int found = 0;
+          for(const QFileInfo& themeFile : themeDir.entryInfoList({"*.dgml"}, QDir::Files | QDir::NoDotAndDotDot))
+          {
+            if(atools::checkFile(Q_FUNC_INFO, themeFile, true /* warn */))
+            {
+              qInfo() << "MapThemeHandler::findMapThemes(): Found map theme file" << themeFile.absoluteFilePath();
+              dgmlFileInfos.append(themeFile);
+              found++;
+            }
+          }
+
+          if(found == 0)
+            qWarning() << Q_FUNC_INFO << "No DGML file found in folder" << themeDirInfo.absoluteFilePath();
+          else if(found > 1)
+            qWarning() << Q_FUNC_INFO << "More than one DGML file found in folder" << themeDirInfo.absoluteFilePath();
         }
       }
-
-      if(found == 0)
-        qWarning() << Q_FUNC_INFO << "No DGML file found in folder" << themeDirInfo.absoluteFilePath();
-      else if(found > 1)
-        qWarning() << Q_FUNC_INFO << "More than one DGML file found in folder" << themeDirInfo.absoluteFilePath();
-    }
-  }
+    } // if(dir.exists())
+  } // for(const QString& path : paths)
   return dgmlFileInfos;
 }
 
 QDebug operator<<(QDebug out, const MapTheme& theme)
 {
   out << "MapTheme("
-      << "id" << theme.id
       << "index" << theme.index
       << "urlName" << theme.urlName
       << "urlRef" << theme.urlRef
@@ -558,6 +578,16 @@ void MapThemeHandler::setupMapThemesUi()
   buttonMenu->setTearOffEnabled(true);
 
   // Theme menu items ===============================
+  if(actionGroupMapTheme != nullptr)
+  {
+    // Delete all actions from the menu
+    for(QAction *action : actionGroupMapTheme->actions())
+    {
+      actionGroupMapTheme->removeAction(action);
+      delete action;
+    }
+  }
+
   delete actionGroupMapTheme;
   actionGroupMapTheme = new QActionGroup(ui->menuViewTheme);
   actionGroupMapTheme->setObjectName("actionGroupMapTheme");
@@ -699,7 +729,7 @@ void MapThemeHandler::changeMapTheme()
 
   qDebug() << Q_FUNC_INFO << themeId << theme;
 
-  mapWidget->setTheme(theme.getId(), themeId);
+  mapWidget->setTheme(theme.getDgmlFilepath(), themeId);
 
   NavApp::setStatusMessage(tr("Map theme changed to %1.").arg(actionGroupMapTheme->checkedAction()->text()));
 }
@@ -728,4 +758,34 @@ void MapThemeHandler::changeMapProjection()
   mapWidget->setProjection(projection);
 
   NavApp::setStatusMessage(tr("Map projection changed to %1.").arg(projectionText));
+}
+
+void MapThemeHandler::optionsChanged()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  // Remember current theme id like "openstreetmap"
+  QString currentThemeId = getCurrentThemeId();
+
+  // Save key to avoid deletion
+  saveKeyfile();
+
+  // Now load all themes from all available folders
+  loadThemes();
+
+  // Reload keys and apply them to the themes
+  restoreKeyfile();
+
+  // Rebuild menu
+  setupMapThemesUi();
+
+  if(!getTheme(currentThemeId).isValid())
+  {
+    // Assign the default theme if the current one was removed
+    currentThemeId = defaultTheme.getThemeId();
+    NavApp::getMapWidgetGui()->setTheme(defaultTheme.getDgmlFilepath(), currentThemeId);
+  }
+
+  // Check the theme action
+  changeMapThemeActions(currentThemeId);
 }

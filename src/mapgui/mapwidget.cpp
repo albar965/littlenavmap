@@ -352,8 +352,7 @@ void MapWidget::handleInfoClick(QPoint point)
 #endif
 
   mapSearchResultInfoClick->clear();
-  getScreenIndexConst()->getAllNearest(point.x(), point.y(), screenSearchDistance, *mapSearchResultInfoClick,
-                                       map::QUERY_NONE /* For double click */);
+  getScreenIndexConst()->getAllNearest(point, screenSearchDistance, *mapSearchResultInfoClick, map::QUERY_NONE /* For double click */);
 
   // Removes the online aircraft from onlineAircraft which also have a simulator shadow in simAircraft
   NavApp::getOnlinedataController()->removeOnlineShadowedAircraft(mapSearchResultInfoClick->onlineAircraft,
@@ -530,8 +529,7 @@ void MapWidget::updateTooltipResult()
 
   // Load tooltip data into mapSearchResultTooltip
   *mapSearchResultTooltip = map::MapResult();
-  QPoint pos = mapFromGlobal(tooltipGlobalPos);
-  getScreenIndexConst()->getAllNearest(pos.x(), pos.y(), screenSearchDistanceTooltip, *mapSearchResultTooltip, queryTypes);
+  getScreenIndexConst()->getAllNearest(mapFromGlobal(tooltipGlobalPos), screenSearchDistanceTooltip, *mapSearchResultTooltip, queryTypes);
 
   NavApp::getOnlinedataController()->removeOnlineShadowedAircraft(mapSearchResultTooltip->onlineAircraft,
                                                                   mapSearchResultTooltip->aiAircraft);
@@ -670,7 +668,7 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
 
     // Look for navaids or airports nearby click
     map::MapResult result;
-    getScreenIndexConst()->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, result, map::QUERY_NONE);
+    getScreenIndexConst()->getAllNearest(event->pos(), screenSearchDistance, result, map::QUERY_NONE);
 
     // Range rings =======================================================================
     if(event->modifiers() == Qt::ShiftModifier)
@@ -761,7 +759,7 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
         removeDistanceMark(id);
       else
         // Add measurement line for Ctrl+Click or Alt+Click into center
-        addMeasurement(pos, result);
+        addDistanceMarker(pos, result);
       return true;
     }
   }
@@ -863,6 +861,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
   int mouseMoveTolerance = 4;
   bool mouseMove = (event->pos() - mouseMoved).manhattanLength() >= mouseMoveTolerance;
   bool touchArea = touchAreaClicked(event);
+  MapScreenIndex *screenIndex = getScreenIndex();
 
   if(mouseState & mw::DRAG_ROUTE_POINT || mouseState & mw::DRAG_ROUTE_LEG)
   {
@@ -882,19 +881,32 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
     setViewContext(Marble::Still);
     update();
   }
-  else if(mouseState & mw::DRAG_DISTANCE || mouseState & mw::DRAG_CHANGE_DISTANCE)
+  else if(mouseState.testFlag(mw::DRAG_DIST_NEW_END) || mouseState.testFlag(mw::DRAG_DIST_CHANGE_START) ||
+          mouseState.testFlag(mw::DRAG_DIST_CHANGE_END))
   {
-    // End distance marker dragging
-    if(!getScreenIndexConst()->getDistanceMarks().isEmpty())
+    // Either new measurement line which is fixed at origin and dragged at end or one of the ends is dragged
+    if(!screenIndex->getDistanceMarks().isEmpty())
     {
       setCursor(Qt::ArrowCursor);
-      if(mouseState & mw::DRAG_POST)
+      if(mouseState.testFlag(mw::DRAG_POST))
       {
         qreal lon, lat;
         bool visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
+        Pos pos(lon, lat);
         if(visible)
-          // Update distance measurement line
-          getScreenIndex()->updateDistanceMarkerTo(currentDistanceMarkerId, Pos(lon, lat));
+        {
+          if(mouseState.testFlag(mw::DRAG_DIST_CHANGE_START))
+          {
+            // Update origin of distance measurement line - check if navaid or airport is the new origin and assign label if
+            map::MapResult result;
+            screenIndex->getAllNearest(event->pos(), screenSearchDistance, result, map::QUERY_NONE);
+            fillDistanceMarker(screenIndex->getDistanceMark(currentDistanceMarkerId), pos, result);
+          }
+          else if(mouseState.testFlag(mw::DRAG_DIST_CHANGE_END) || mouseState.testFlag(mw::DRAG_DIST_NEW_END))
+            // New or end was moved - update coordinates only
+            screenIndex->updateDistanceMarkerToPos(currentDistanceMarkerId, pos);
+          currentDistanceMarkerId = -1;
+        }
       }
       else if(mouseState & mw::DRAG_POST_CANCEL)
         cancelDragDistance();
@@ -939,12 +951,13 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
   else if(event->button() == Qt::LeftButton && !mouseMove)
   {
     // Start all dragging if left button was clicked and mouse was not moved ==========================
-    currentDistanceMarkerId = getScreenIndexConst()->getNearestDistanceMarkId(event->pos().x(), event->pos().y(), screenSearchDistance);
+    bool origin; // true if origin was clicked
+    currentDistanceMarkerId = screenIndex->getNearestDistanceMarkId(event->pos().x(), event->pos().y(), screenSearchDistance, &origin);
     if(currentDistanceMarkerId != -1)
     {
       // Found an end - create a backup and start dragging
-      mouseState = mw::DRAG_CHANGE_DISTANCE;
-      *distanceMarkerBackup = getScreenIndexConst()->getDistanceMarks().value(currentDistanceMarkerId);
+      mouseState = origin ? mw::DRAG_DIST_CHANGE_START : mw::DRAG_DIST_CHANGE_END; // Either change end or origin
+      *distanceMarkerBackup = screenIndex->getDistanceMarks().value(currentDistanceMarkerId);
       setContextMenuPolicy(Qt::PreventContextMenu);
     }
     else
@@ -957,8 +970,8 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
         {
           // Make distance a bit larger to prefer points
           int routePoint =
-            getScreenIndexConst()->getNearestRoutePointIndex(event->pos().x(), event->pos().y(),
-                                                             screenSearchDistance * 4 / 3, true /* editableOnly */);
+            screenIndex->getNearestRoutePointIndex(event->pos().x(), event->pos().y(), screenSearchDistance * 4 / 3,
+                                                   true /* editableOnly */);
           if(routePoint != -1)
           {
             // Drag a waypoint ==============================================
@@ -1000,8 +1013,7 @@ void MapWidget::mouseReleaseEvent(QMouseEvent *event)
           else
           {
             // Drag a route leg ===================================================
-            int routeLeg = getScreenIndexConst()->getNearestRouteLegIndex(event->pos().x(),
-                                                                          event->pos().y(), screenSearchDistance);
+            int routeLeg = screenIndex->getNearestRouteLegIndex(event->pos().x(), event->pos().y(), screenSearchDistance);
             if(routeLeg != -1)
             {
               routeDragLeg = routeLeg;
@@ -1099,7 +1111,7 @@ void MapWidget::mouseDoubleClickEvent(QMouseEvent *event)
     mapSearchResultInfoClick->clear();
   }
   else
-    getScreenIndexConst()->getAllNearest(event->pos().x(), event->pos().y(), screenSearchDistance, mapSearchResult,
+    getScreenIndexConst()->getAllNearest(event->pos(), screenSearchDistance, mapSearchResult,
                                          map::QUERY_MARK_HOLDINGS | map::QUERY_MARK_PATTERNS | map::QUERY_MARK_RANGE);
 
   if(mapSearchResult.userAircraft.isValid())
@@ -1528,11 +1540,11 @@ void MapWidget::cancelDragDistance()
   if(cursor().shape() != Qt::ArrowCursor)
     setCursor(Qt::ArrowCursor);
 
-  if(mouseState & mw::DRAG_DISTANCE)
-    // Remove new one
+  if(mouseState.testFlag(mw::DRAG_DIST_NEW_END))
+    // Remove new distance measurement line
     getScreenIndex()->removeDistanceMark(currentDistanceMarkerId);
-  else if(mouseState & mw::DRAG_CHANGE_DISTANCE)
-    // Replace modified one with backup
+  else if(mouseState.testFlag(mw::DRAG_DIST_CHANGE_END) || mouseState.testFlag(mw::DRAG_DIST_CHANGE_START))
+    // Replace modified line with backup
     getScreenIndex()->updateDistanceMarker(currentDistanceMarkerId, *distanceMarkerBackup);
   currentDistanceMarkerId = -1;
 }
@@ -1559,6 +1571,7 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
   debugMovingPlane(event);
 #endif
 
+  const MapScreenIndex *screenIndex = getScreenIndexConst();
   qreal lon = 0., lat = 0.;
   bool visible = false;
   // Change cursor and keep aircraft from centering if moving in any drag and drop mode ================
@@ -1573,22 +1586,28 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
     visible = geoCoordinates(event->pos().x(), event->pos().y(), lon, lat);
   }
 
-  if(mouseState & mw::DRAG_DISTANCE || mouseState & mw::DRAG_CHANGE_DISTANCE)
+  if(mouseState.testFlag(mw::DRAG_DIST_NEW_END) || mouseState.testFlag(mw::DRAG_DIST_CHANGE_START) ||
+     mouseState.testFlag(mw::DRAG_DIST_CHANGE_END))
   {
     // Changing or adding distance measurement line ==========================================
     // Position is valid update the distance mark continuously
-    if(visible && !getScreenIndexConst()->getDistanceMarks().isEmpty())
-      getScreenIndex()->updateDistanceMarkerTo(currentDistanceMarkerId, Pos(lon, lat));
+    if(visible && !screenIndex->getDistanceMarks().isEmpty())
+    {
+      if(mouseState.testFlag(mw::DRAG_DIST_CHANGE_START))
+        getScreenIndex()->updateDistanceMarkerFromPos(currentDistanceMarkerId, Pos(lon, lat));
+      else if(mouseState.testFlag(mw::DRAG_DIST_CHANGE_END) || mouseState.testFlag(mw::DRAG_DIST_NEW_END))
+        getScreenIndex()->updateDistanceMarkerToPos(currentDistanceMarkerId, Pos(lon, lat));
+    }
 
   }
-  else if(mouseState & mw::DRAG_ROUTE_LEG || mouseState & mw::DRAG_ROUTE_POINT)
+  else if(mouseState.testFlag(mw::DRAG_ROUTE_LEG) || mouseState.testFlag(mw::DRAG_ROUTE_POINT))
   {
     // Dragging route leg or waypoint ==========================================
     if(visible)
       // Update current point
       routeDragCur = QPoint(event->pos().x(), event->pos().y());
   }
-  else if(mouseState & mw::DRAG_USER_POINT)
+  else if(mouseState.testFlag(mw::DRAG_USER_POINT))
   {
     // Moving userpoint ==========================================
     if(visible)
@@ -1626,28 +1645,28 @@ void MapWidget::mouseMoveEvent(QMouseEvent *event)
 
         // Make distance a bit larger to prefer points
         if(routeEditMode &&
-           getScreenIndexConst()->getNearestRoutePointIndex(event->pos().x(), event->pos().y(), screenSearchDistance * 4 / 3,
-                                                            true /* editableOnly */) != -1 && route.size() > 1)
+           screenIndex->getNearestRoutePointIndex(event->pos().x(), event->pos().y(), screenSearchDistance * 4 / 3,
+                                                  true /* editableOnly */) != -1 && route.size() > 1)
           // Change cursor at one route point
           cursorShape = Qt::SizeAllCursor;
         else if(routeEditMode &&
-                getScreenIndexConst()->getNearestRouteLegIndex(event->pos().x(), event->pos().y(), screenSearchDistance) != -1 &&
+                screenIndex->getNearestRouteLegIndex(event->pos().x(), event->pos().y(), screenSearchDistance) != -1 &&
                 route.size() > 1)
           // Change cursor above a route line
           cursorShape = Qt::CrossCursor;
-        else if(getScreenIndexConst()->getNearestDistanceMarkId(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
+        else if(screenIndex->getNearestDistanceMarkId(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
           // Change cursor at the end of an marker
           cursorShape = Qt::CrossCursor;
-        else if(getScreenIndexConst()->getNearestTrafficPatternId(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
+        else if(screenIndex->getNearestTrafficPatternId(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
           // Change cursor at the active position
           cursorShape = Qt::PointingHandCursor;
-        else if(getScreenIndexConst()->getNearestHoldId(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
+        else if(screenIndex->getNearestHoldId(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
           // Change cursor at the active position
           cursorShape = Qt::PointingHandCursor;
-        else if(getScreenIndexConst()->getNearestAirportMsaId(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
+        else if(screenIndex->getNearestAirportMsaId(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
           // Change cursor at the active position
           cursorShape = Qt::PointingHandCursor;
-        else if(getScreenIndexConst()->getNearestRangeMarkId(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
+        else if(screenIndex->getNearestRangeMarkId(event->pos().x(), event->pos().y(), screenSearchDistance) != -1)
           // Change cursor at the end of an marker
           cursorShape = Qt::PointingHandCursor;
 
@@ -1682,77 +1701,106 @@ void MapWidget::resetPaintForDrag()
   }
 }
 
-void MapWidget::addMeasurement(const atools::geo::Pos& pos, const map::MapResult& result)
+void MapWidget::fillDistanceMarker(map::DistanceMarker& distanceMarker, const atools::geo::Pos& pos, const map::MapResult& result)
 {
-  addMeasurement(pos, atools::constFirstOrNull(result.airports),
-                 atools::constFirstOrNull(result.vors),
-                 atools::constFirstOrNull(result.ndbs),
-                 atools::constFirstOrNull(result.waypoints));
+  fillDistanceMarker(distanceMarker, pos,
+                     atools::constFirstOrNull(result.airports),
+                     atools::constFirstOrNull(result.vors),
+                     atools::constFirstOrNull(result.ndbs),
+                     atools::constFirstOrNull(result.waypoints),
+                     atools::constFirstOrNull(result.userpoints));
 }
 
-void MapWidget::addMeasurement(const atools::geo::Pos& pos, const map::MapAirport *airport,
-                               const map::MapVor *vor, const map::MapNdb *ndb, const map::MapWaypoint *waypoint)
+void MapWidget::fillDistanceMarker(map::DistanceMarker& distanceMarker, const atools::geo::Pos& pos, const map::MapAirport *airport,
+                                   const map::MapVor *vor, const map::MapNdb *ndb, const map::MapWaypoint *waypoint,
+                                   const map::MapUserpoint *userpoint)
+{
+  distanceMarker.flags = map::DIST_MARK_NONE;
+  distanceMarker.color = QColor();
+  distanceMarker.text.clear();
+
+  // Build distance line depending on selected airport or navaid (color, magvar, etc.)
+  if(userpoint != nullptr && userpoint->isValid())
+  {
+    distanceMarker.text = map::userpointShortText(*userpoint, 20);
+    distanceMarker.from = userpoint->position;
+    distanceMarker.magvar = NavApp::getMagVar(userpoint->position, 0.f);
+  }
+  else if(airport != nullptr && airport->isValid())
+  {
+    distanceMarker.text = airport->displayIdent();
+    distanceMarker.from = airport->position;
+    distanceMarker.magvar = airport->magvar;
+    distanceMarker.color = mapcolors::colorForAirport(*airport);
+  }
+  else if(vor != nullptr && vor->isValid())
+  {
+    if(vor->tacan)
+      distanceMarker.text = tr("%1 %2").arg(vor->ident).arg(vor->channel);
+    else
+      distanceMarker.text = tr("%1 %2").arg(vor->ident).arg(QLocale().toString(vor->frequency / 1000., 'f', 2));
+    distanceMarker.from = vor->position;
+    distanceMarker.magvar = vor->magvar;
+    distanceMarker.color = mapcolors::vorSymbolColor;
+
+    if(!vor->dmeOnly)
+      distanceMarker.flags |= map::DIST_MARK_RADIAL; // Also TACAN
+
+    if(vor->isCalibratedVor())
+      distanceMarker.flags |= map::DIST_MARK_MAGVAR; // Only VOR, VORDME and VORTAC
+  }
+  else if(ndb != nullptr && ndb->isValid())
+  {
+    distanceMarker.text = tr("%1 %2").arg(ndb->ident).arg(QLocale().toString(ndb->frequency / 100., 'f', 2));
+    distanceMarker.from = ndb->position;
+    distanceMarker.magvar = ndb->magvar;
+    distanceMarker.color = mapcolors::ndbSymbolColor;
+    distanceMarker.flags = map::DIST_MARK_RADIAL;
+  }
+  else if(waypoint != nullptr && waypoint->isValid())
+  {
+    distanceMarker.text = waypoint->ident;
+    distanceMarker.from = waypoint->position;
+    distanceMarker.magvar = waypoint->magvar;
+    distanceMarker.color = mapcolors::waypointSymbolColor;
+  }
+  else
+  {
+    distanceMarker.magvar = NavApp::getMagVar(pos, 0.f);
+    distanceMarker.from = pos;
+  }
+}
+
+void MapWidget::addDistanceMarker(const atools::geo::Pos& pos, const map::MapResult& result)
+{
+  addDistanceMarker(pos,
+                    atools::constFirstOrNull(result.airports),
+                    atools::constFirstOrNull(result.vors),
+                    atools::constFirstOrNull(result.ndbs),
+                    atools::constFirstOrNull(result.waypoints),
+                    atools::constFirstOrNull(result.userpoints));
+}
+
+void MapWidget::addDistanceMarker(const atools::geo::Pos& pos, const map::MapAirport *airport,
+                                  const map::MapVor *vor, const map::MapNdb *ndb, const map::MapWaypoint *waypoint,
+                                  const map::MapUserpoint *userpoint)
 {
   // Enable display of user feature
   NavApp::getMapMarkHandler()->showMarkTypes(map::MARK_DISTANCE);
 
   // Distance line
-  map::DistanceMarker dm;
-  dm.id = map::getNextUserFeatureId();
-  dm.position = dm.to = pos;
+  map::DistanceMarker distanceMarker;
+  distanceMarker.id = map::getNextUserFeatureId();
+  distanceMarker.position = distanceMarker.to = pos;
 
-  // Build distance line depending on selected airport or navaid (color, magvar, etc.)
-  if(airport != nullptr && airport->isValid())
-  {
-    dm.text = tr("%1 (%2)").arg(airport->name).arg(airport->displayIdent());
-    dm.from = airport->position;
-    dm.magvar = airport->magvar;
-    dm.color = mapcolors::colorForAirport(*airport);
-  }
-  else if(vor != nullptr && vor->isValid())
-  {
-    if(vor->tacan)
-      dm.text = tr("%1 %2").arg(vor->ident).arg(vor->channel);
-    else
-      dm.text = tr("%1 %2").arg(vor->ident).arg(QLocale().toString(vor->frequency / 1000., 'f', 2));
-    dm.from = vor->position;
-    dm.magvar = vor->magvar;
-    dm.color = mapcolors::vorSymbolColor;
+  fillDistanceMarker(distanceMarker, pos, airport, vor, ndb, waypoint, userpoint);
 
-    if(!vor->dmeOnly)
-      dm.flags |= map::DIST_MARK_RADIAL; // Also TACAN
-
-    if(vor->isCalibratedVor())
-      dm.flags |= map::DIST_MARK_MAGVAR; // Only VOR, VORDME and VORTAC
-  }
-  else if(ndb != nullptr && ndb->isValid())
-  {
-    dm.text = tr("%1 %2").arg(ndb->ident).arg(QLocale().toString(ndb->frequency / 100., 'f', 2));
-    dm.from = ndb->position;
-    dm.magvar = ndb->magvar;
-    dm.color = mapcolors::ndbSymbolColor;
-    dm.flags = map::DIST_MARK_RADIAL;
-  }
-  else if(waypoint != nullptr && waypoint->isValid())
-  {
-    dm.text = waypoint->ident;
-    dm.from = waypoint->position;
-    dm.magvar = waypoint->magvar;
-    dm.color = mapcolors::waypointSymbolColor;
-  }
-  else
-  {
-    dm.magvar = NavApp::getMagVar(pos, 0.f);
-    dm.from = pos;
-    // dm.color Leave uninitalized to allow override from options
-  }
-
-  getScreenIndex()->addDistanceMark(dm);
+  getScreenIndex()->addDistanceMark(distanceMarker);
 
   // Start mouse dragging and disable context menu so we can catch the right button click as cancel
-  mouseState = mw::DRAG_DISTANCE;
+  mouseState = mw::DRAG_DIST_NEW_END;
   setContextMenuPolicy(Qt::PreventContextMenu);
-  currentDistanceMarkerId = dm.id;
+  currentDistanceMarkerId = distanceMarker.id;
 }
 
 void MapWidget::contextMenuEvent(QContextMenuEvent *event)
@@ -1897,7 +1945,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           break;
 
         case mc::MEASURE:
-          addMeasurement(pos, &airport, &vor, &ndb, &waypoint);
+          addDistanceMarker(pos, &airport, &vor, &ndb, &waypoint, &userpoint);
           break;
 
         case mc::NAVAIDRANGE:
@@ -2000,18 +2048,18 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
   contextMenuActive = false;
 }
 
-void MapWidget::updateRoute(QPoint newPoint, int leg, int point, bool fromClickAdd, bool fromClickAppend)
+void MapWidget::updateRoute(const QPoint& point, int leg, int pointIndex, bool fromClickAdd, bool fromClickAppend)
 {
-  qDebug() << "End route drag" << newPoint << "leg" << leg << "point" << point;
+  qDebug() << "End route drag" << point << "leg" << leg << "point" << pointIndex;
 
   // Get all objects where the mouse button was released
   map::MapResult result;
-  getScreenIndexConst()->getAllNearest(newPoint.x(), newPoint.y(), screenSearchDistance, result, map::QUERY_NONE);
+  getScreenIndexConst()->getAllNearest(point, screenSearchDistance, result, map::QUERY_NONE);
 
   // Allow only airports for alternates
-  if(point >= 0)
+  if(pointIndex >= 0)
   {
-    if(NavApp::getRouteConst().value(point).isAlternate())
+    if(NavApp::getRouteConst().value(pointIndex).isAlternate())
       result.clear(map::MapType(~map::AIRPORT));
   }
 
@@ -2054,7 +2102,7 @@ void MapWidget::updateRoute(QPoint newPoint, int leg, int point, bool fromClickA
   Pos pos = atools::geo::EMPTY_POS;
   if(type == map::USERPOINTROUTE)
     // Get position for new user point from from screen
-    pos = CoordinateConverter(viewport()).sToW(newPoint.x(), newPoint.y());
+    pos = CoordinateConverter(viewport()).sToW(point.x(), point.y());
 
   if((id != -1 && type != map::NONE) || type == map::USERPOINTROUTE)
   {
@@ -2067,8 +2115,8 @@ void MapWidget::updateRoute(QPoint newPoint, int leg, int point, bool fromClickA
       // From drag
       if(leg != -1)
         emit routeAdd(id, pos, type, leg);
-      else if(point != -1)
-        emit routeReplace(id, pos, type, point);
+      else if(pointIndex != -1)
+        emit routeReplace(id, pos, type, pointIndex);
     }
   }
 }

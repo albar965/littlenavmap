@@ -175,6 +175,8 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   QTreeWidgetItem *route = addTopItem(tr("Flight Plan"), tr("Select display options for the flight plan line."));
   addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Distance"), tr("Show distance along flight plan leg.\n"
                                                                                           "The label moves to keep it visible while scrolling."), optsd::ROUTE_DISTANCE, true);
+  addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Airway"), tr("Show airway.\n"
+                                                                                        "The label moves to keep it visible while scrolling."), optsd::ROUTE_AIRWAY);
   addItem<optsd::DisplayOptionsRoute>(route, displayOptItemIndexRoute, tr("Magnetic Course"), tr("Show great circle magnetic start course at flight plan leg.\n"
                                                                                                  "Does not consider VOR calibrated declination.\n"
                                                                                                  "The label moves to keep it visible while scrolling."), optsd::ROUTE_MAG_COURSE);
@@ -343,6 +345,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->radioButtonCacheUseOffineElevation,
      ui->radioButtonCacheUseOnlineElevation,
      ui->lineEditCacheOfflineDataPath,
+     ui->lineEditCacheMapThemeDir,
      ui->lineEditOptionsRouteFilename,
 
      ui->spinBoxOptionsGuiInfoText,
@@ -561,7 +564,6 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   // ===========================================================================
   // Cache
   connect(ui->pushButtonOptionsCacheClearMemory, &QPushButton::clicked, this, &OptionsDialog::clearMemCachedClicked);
-  connect(ui->pushButtonOptionsCacheClearDisk, &QPushButton::clicked, this, &OptionsDialog::clearDiskCachedClicked);
   connect(ui->pushButtonOptionsCacheShow, &QPushButton::clicked, this, &OptionsDialog::showDiskCacheClicked);
 
   connect(ui->checkBoxOptionsSimUpdatesConstant, &QCheckBox::toggled, this, &OptionsDialog::updateWhileFlyingWidgets);
@@ -595,7 +597,9 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->radioButtonCacheUseOffineElevation, &QRadioButton::clicked, this, &OptionsDialog::updateCacheElevationStates);
   connect(ui->radioButtonCacheUseOnlineElevation, &QRadioButton::clicked, this, &OptionsDialog::updateCacheElevationStates);
   connect(ui->lineEditCacheOfflineDataPath, &QLineEdit::textEdited, this, &OptionsDialog::updateCacheElevationStates);
+  connect(ui->lineEditCacheMapThemeDir, &QLineEdit::textEdited, this, &OptionsDialog::updateCacheMapThemeDir);
   connect(ui->pushButtonCacheOfflineDataSelect, &QPushButton::clicked, this, &OptionsDialog::offlineDataSelectClicked);
+  connect(ui->pushButtonCacheMapThemeDir, &QPushButton::clicked, this, &OptionsDialog::mapThemeDirSelectClicked);
 
   connect(ui->pushButtonOptionsStartupCheckUpdate, &QPushButton::clicked, this, &OptionsDialog::checkUpdateClicked);
 
@@ -684,6 +688,32 @@ void OptionsDialog::styleChanged()
   gridDelegate->styleChanged();
 }
 
+void OptionsDialog::setCacheMapThemeDir(const QString& mapThemesDir)
+{
+  // Assign value if current is empty and passed value is valid
+  QString& cacheMapThemeDir = OptionData::instanceInternal().cacheMapThemeDir;
+  if(cacheMapThemeDir.isEmpty() && atools::checkDir(Q_FUNC_INFO, mapThemesDir, true /* warn */))
+  {
+    Settings::instance().setValue("OptionsDialog/Widget_lineEditCacheMapThemeDir", mapThemesDir);
+    Settings::syncSettings();
+    cacheMapThemeDir = mapThemesDir;
+    ui->lineEditCacheMapThemeDir->setText(mapThemesDir);
+  }
+}
+
+void OptionsDialog::setCacheOfflineDataPath(const QString& globeDir)
+{
+  // Assign value if current is empty and passed value is valid
+  QString& cacheOfflineElevationPath = OptionData::instanceInternal().cacheOfflineElevationPath;
+  if(cacheOfflineElevationPath.isEmpty() && atools::checkDir(Q_FUNC_INFO, globeDir, true /* warn */))
+  {
+    Settings::instance().setValue("OptionsDialog/Widget_lineEditCacheOfflineDataPath", globeDir);
+    Settings::syncSettings();
+    cacheOfflineElevationPath = globeDir;
+    ui->lineEditCacheOfflineDataPath->setText(globeDir);
+  }
+}
+
 void OptionsDialog::open()
 {
   qDebug() << Q_FUNC_INFO;
@@ -692,6 +722,7 @@ void OptionsDialog::open()
 
   optionDataToWidgets(OptionData::instanceInternal());
   updateCacheElevationStates();
+  updateCacheMapThemeDir();
   updateDatabaseButtonState();
   updateNavOptions();
   updateGuiWidgets();
@@ -732,7 +763,6 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
 
     // Update dialog internal stuff
     updateWidgetStates();
-
     updateWebOptionsFromData();
     updateWebServerStatus();
   }
@@ -745,7 +775,6 @@ void OptionsDialog::buttonBoxClicked(QAbstractButton *button)
     saveState();
     updateWidgetUnits();
     updateWebOptionsFromData();
-
     updateTooltipOption();
 
     NavApp::getMapThemeHandler()->setMapThemeKeys(OptionData::instanceInternal().mapThemeKeys);
@@ -1749,6 +1778,7 @@ void OptionsDialog::widgetsToOptionData()
 
   data.flightplanPattern = ui->lineEditOptionsRouteFilename->text();
   data.cacheOfflineElevationPath = ui->lineEditCacheOfflineDataPath->text();
+  data.cacheMapThemeDir = ui->lineEditCacheMapThemeDir->text();
 
   data.displayTooltipOptions.setFlag(optsd::TOOLTIP_VERBOSE, ui->checkBoxOptionsMapTooltipVerbose->isChecked());
 
@@ -2040,6 +2070,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
 
   ui->lineEditOptionsRouteFilename->setText(data.flightplanPattern);
   ui->lineEditCacheOfflineDataPath->setText(data.cacheOfflineElevationPath);
+  ui->lineEditCacheMapThemeDir->setText(data.cacheMapThemeDir);
 
   ui->checkBoxOptionsMapTooltipVerbose->setChecked(data.displayTooltipOptions.testFlag(optsd::TOOLTIP_VERBOSE));
   ui->checkBoxOptionsMapTooltipUserAircraft->setChecked(data.displayTooltipOptions.testFlag(optsd::TOOLTIP_AIRCRAFT_USER));
@@ -2343,14 +2374,42 @@ void OptionsDialog::fromFlags2(const OptionData& data, QRadioButton *radioButton
   radioButton->setChecked(data.flags2 & flag);
 }
 
+void OptionsDialog::mapThemeDirSelectClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  QString path = atools::gui::Dialog(this).
+                 openDirectoryDialog(tr("Select directory for map themes"), QString(), ui->lineEditCacheMapThemeDir->text());
+
+  if(!path.isEmpty())
+    ui->lineEditCacheMapThemeDir->setText(QDir::toNativeSeparators(path));
+
+  updateCacheMapThemeDir();
+}
+
+void OptionsDialog::updateCacheMapThemeDir()
+{
+  const QString& path = ui->lineEditCacheMapThemeDir->text();
+  if(!path.isEmpty())
+  {
+    QFileInfo fileinfo(path);
+    if(!fileinfo.exists())
+      ui->labelCacheMapThemeDir->setText(HtmlBuilder::errorMessage(tr("Directory does not exist.")));
+    else if(!fileinfo.isDir())
+      ui->labelCacheMapThemeDir->setText(HtmlBuilder::errorMessage(tr(("Is not a directory."))));
+    else
+      ui->labelCacheMapThemeDir->setText(tr("Directory is valid."));
+  }
+  else
+    ui->labelCacheMapThemeDir->setText(tr("No directory selected."));
+}
+
 void OptionsDialog::offlineDataSelectClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
   QString path = atools::gui::Dialog(this).
-                 openDirectoryDialog(tr("Open GLOBE data directory"),
-                                     QString() /* lnm::OPTIONS_DIALOG_GLOBE_FILE_DLG */,
-                                     ui->lineEditCacheOfflineDataPath->text());
+                 openDirectoryDialog(tr("Open GLOBE data directory"), QString(), ui->lineEditCacheOfflineDataPath->text());
 
   if(!path.isEmpty())
     ui->lineEditCacheOfflineDataPath->setText(QDir::toNativeSeparators(path));
@@ -2626,27 +2685,6 @@ void OptionsDialog::clearMemCachedClicked()
   NavApp::setStatusMessage(tr("Memory cache cleared."));
 }
 
-void OptionsDialog::clearDiskCachedClicked()
-{
-  qDebug() << Q_FUNC_INFO;
-
-  QMessageBox::StandardButton result =
-    QMessageBox::question(this, QApplication::applicationName(),
-                          tr("Clear the disk cache?\n"
-                             "All files in the directory \"%1\" will be deleted.\n"
-                             "This process will run in background and can take a while.").
-                          arg(Marble::MarbleDirs::localPath()),
-                          QMessageBox::No | QMessageBox::Yes, QMessageBox::No);
-
-  if(result == QMessageBox::Yes)
-  {
-    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-    NavApp::getMapWidgetGui()->model()->clearPersistentTileCache();
-    NavApp::setStatusMessage(tr("Disk cache cleared."));
-    QGuiApplication::restoreOverrideCursor();
-  }
-}
-
 /* Opens the disk cache in explorer, finder, whatever */
 void OptionsDialog::showDiskCacheClicked()
 {
@@ -2751,7 +2789,7 @@ void OptionsDialog::startStopWebServerClicked()
     if(webController->isRunning())
       webController->stopServer();
     else
-      // Update options from page before starting
+      // Update options from page before starting and restart
       updateWebOptionsFromGui();
 
     updateWebServerStatus();
@@ -2760,28 +2798,40 @@ void OptionsDialog::startStopWebServerClicked()
 
 void OptionsDialog::updateWebOptionsFromData()
 {
+  qDebug() << Q_FUNC_INFO;
   WebController *webController = NavApp::getWebController();
   if(webController != nullptr)
   {
     OptionData& data = OptionData::instanceInternal();
 
-    webController->setDocumentRoot(QDir::fromNativeSeparators(QFileInfo(data.getWebDocumentRoot()).canonicalFilePath()));
-    webController->setPort(data.getWebPort());
-    webController->setEncrypted(data.isWebEncrypted());
-    webController->restartServer(false /* force */);
+    // Detect changed parameters
+    QString root = QDir::fromNativeSeparators(QFileInfo(data.getWebDocumentRoot()).canonicalFilePath());
+    int port = data.getWebPort();
+    bool encrypted = data.isWebEncrypted();
+    bool changed = root != webController->getDocumentRoot() || port != webController->getPort() ||
+                   encrypted != webController->isEncrypted();
+
+    webController->setDocumentRoot(root);
+    webController->setPort(port);
+    webController->setEncrypted(encrypted);
+
+    // Restart if it is running and any paramters were changed
+    if(changed && webController->isRunning())
+      webController->restartServer(false /* force */);
   }
 }
 
 void OptionsDialog::updateWebOptionsFromGui()
 {
+  qDebug() << Q_FUNC_INFO;
+
   WebController *webController = NavApp::getWebController();
   if(webController != nullptr)
   {
-    webController->setDocumentRoot(QDir::fromNativeSeparators(QFileInfo(ui->lineEditOptionsWebDocroot->text()).
-                                                              canonicalFilePath()));
+    webController->setDocumentRoot(QDir::fromNativeSeparators(QFileInfo(ui->lineEditOptionsWebDocroot->text()).canonicalFilePath()));
     webController->setPort(ui->spinBoxOptionsWebPort->value());
     webController->setEncrypted(ui->checkBoxOptionsWebEncrypted->isChecked());
-    webController->restartServer(true /* force */);
+    webController->restartServer(true /* force */); // Restart always
   }
 }
 

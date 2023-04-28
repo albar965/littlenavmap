@@ -1096,7 +1096,11 @@ void HtmlInfoBuilder::runwayEndText(HtmlBuilder& html, const MapAirport& airport
 
   if(closed)
     html.row2(tr("Closed"), QString());
-  html.row2(tr("Heading:", "runway heading"), courseTextFromTrue(hdgPrimTrue, airport.magvar, true), ahtml::NO_ENTITIES);
+
+  bool forceBoth = std::abs(airport.magvar) > 90.f;
+  html.row2(tr("Heading:", "runway heading"),
+            courseTextFromTrue(hdgPrimTrue, airport.magvar, true /* magBold */, true /* trueSmall */, false /* narrow */, forceBoth),
+            ahtml::NO_ENTITIES);
 
   float threshold = rec->valueFloat("offset_threshold");
   if(threshold > 1.f)
@@ -1278,7 +1282,7 @@ void HtmlInfoBuilder::ilsTextInternal(const map::MapIls& ils, atools::util::Html
       {
         // The maximum angular offset for a LOC is 3° for FAA and 5° for ICAO.
         // Everything else is named either LDA (FAA) or IGS (ICAO).
-        if(ageo::angleAbsDiff(end.heading, ageo::normalizeCourse(ils.heading)) > 2.5f)
+        if(ageo::angleAbsDiff(end.heading, ageo::normalizeCourse(ils.heading)) > 2.f)
         {
           // Get airport for consistent magnetic variation =====================
           map::MapAirport airport = airportQuerySim->getAirportByIdent(ils.airportIdent);

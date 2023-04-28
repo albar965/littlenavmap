@@ -2049,6 +2049,11 @@ void RouteExport::warnExportOptionsFromMenu(bool checked)
     warnExportOptions();
 }
 
+void RouteExport::setLnmplnExportDir(const QString& dir)
+{
+  multiExportDialog->setLnmplnExportDir(dir);
+}
+
 void RouteExport::warnExportOptions()
 {
   Ui::MainWindow *ui = NavApp::getMainUi();

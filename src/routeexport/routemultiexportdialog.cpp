@@ -1063,3 +1063,8 @@ void RouteMultiExportDialog::loadTableLayout()
 {
   atools::gui::WidgetState(lnm::ROUTE_EXPORT_DIALOG, false).restore(ui->tableViewRouteExport);
 }
+
+void RouteMultiExportDialog::setLnmplnExportDir(const QString& dir)
+{
+  formatMapSystem->setLnmplnExportDir(dir);
+}
