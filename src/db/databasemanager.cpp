@@ -1718,8 +1718,7 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
   if(!optionsHeader.isEmpty())
   {
     optionsHeader = QStringList(atools::strJoin(tr("<b>Note:</b> "), optionsHeader, tr(", "), tr(" and "), tr(".")));
-    optionsHeader.append(tr("Included and excluded directories can be changed in options on page \"Scenery Library Database\".").
-                         arg(tableText));
+    optionsHeader.append(tr("Included and excluded directories can be changed in options on page \"Scenery Library Database\"."));
   }
 
   databaseDialog->setHeader(metaText +

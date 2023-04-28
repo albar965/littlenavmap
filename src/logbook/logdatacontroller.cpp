@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -539,7 +539,7 @@ void LogdataController::editLogEntries(const QVector<int>& ids)
     {
       // Change modified columns for all given ids
       SqlTransaction transaction(manager->getDatabase());
-      manager->updateRecords(dlg.getRecord(), ids);
+      manager->updateRecords(dlg.getRecord(), QSet<int>(ids.constBegin(), ids.constEnd()));
       transaction.commit();
 
       logChanged(false /* load all */, true /* keep selection */);
@@ -657,7 +657,7 @@ void LogdataController::addLogEntry()
 
 void LogdataController::cleanupLogEntries()
 {
-  enum Choice
+  enum
   {
     SHORT_DISTANCE,
     DEPARTURE_AND_DESTINATION_EQUAL,
@@ -698,16 +698,20 @@ void LogdataController::cleanupLogEntries()
   choiceDialog.addCheckBox(DEPARTURE_OR_DESTINATION_EMPTY, tr("&Either departure or destinaion ident empty"),
                            tr("Removes incomplete entries where the flight was terminated early, for example."));
 
+  // Disable ok button if not at least one of these is checked
+  choiceDialog.setRequiredChecked({SHORT_DISTANCE, DEPARTURE_AND_DESTINATION_EQUAL, DEPARTURE_OR_DESTINATION_EMPTY});
   choiceDialog.restoreState();
 
   if(choiceDialog.exec() == QDialog::Accepted)
   {
     // Dialog ok. Remove entries.
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
     SqlTransaction transaction(manager->getDatabase());
     int removed = manager->cleanupLogEntries(choiceDialog.isChecked(DEPARTURE_AND_DESTINATION_EQUAL),
                                              choiceDialog.isChecked(DEPARTURE_OR_DESTINATION_EMPTY),
                                              choiceDialog.isChecked(SHORT_DISTANCE) ? distNm : -1.f);
     transaction.commit();
+    QGuiApplication::restoreOverrideCursor();
 
     if(removed > 0)
       logChanged(false /* load all */, false /* keep selection */);
@@ -715,7 +719,7 @@ void LogdataController::cleanupLogEntries()
   }
 }
 
-void LogdataController::deleteLogEntries(const QVector<int>& ids)
+void LogdataController::deleteLogEntries(const QSet<int>& ids)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -822,7 +826,6 @@ void LogdataController::importCsv()
 
 void LogdataController::exportCsv()
 {
-
   qDebug() << Q_FUNC_INFO;
   try
   {

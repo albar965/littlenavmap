@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -568,7 +568,7 @@ void UserdataController::editUserpoints(const QVector<int>& ids)
       SqlTransaction transaction(manager->getDatabase());
 
       const atools::sql::SqlRecord& editedRec = dlg.getRecord();
-      manager->updateRecords(editedRec, ids);
+      manager->updateRecords(editedRec, QSet<int>(ids.constBegin(), ids.constEnd()));
       transaction.commit();
 
       // Enable category on map if the type has changed
@@ -590,7 +590,7 @@ void UserdataController::deleteUserpoints(const QVector<int>& ids)
   qDebug() << Q_FUNC_INFO;
 
   SqlTransaction transaction(manager->getDatabase());
-  manager->deleteRows(ids);
+  manager->deleteRows(QSet<int>(ids.constBegin(), ids.constEnd()));
   transaction.commit();
 
   emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
@@ -766,7 +766,8 @@ void UserdataController::exportXplaneUserFixDat()
         QVector<int> ids;
         if(selected)
           ids = NavApp::getUserdataSearch()->getSelectedIds();
-        int numExported = manager->exportXplane(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE, xp12);
+        int numExported = manager->exportXplane(file, ids, append ? atools::fs::userdata::APPEND : atools::fs::userdata::NONE,
+                                                xp12);
         mainWindow->setStatusMessage(tr("%n userpoint(s) exported.", "", numExported));
       }
     }

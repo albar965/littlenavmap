@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -160,8 +160,7 @@ void LogdataSearch::connectSearchSlots()
   Ui::MainWindow *ui = NavApp::getMainUi();
 
   // Small push buttons on top
-  connect(ui->pushButtonLogdataClearSelection, &QPushButton::clicked,
-          this, &SearchBaseTable::nothingSelectedTriggered);
+  connect(ui->pushButtonLogdataClearSelection, &QPushButton::clicked, this, &SearchBaseTable::nothingSelectedTriggered);
   connect(ui->pushButtonLogdataReset, &QPushButton::clicked, this, &SearchBaseTable::resetSearch);
 
   // Install filter for cursor down action
@@ -224,7 +223,8 @@ void LogdataSearch::editLogEntriesTriggered()
 
 void LogdataSearch::deleteLogEntriesTriggered()
 {
-  emit deleteLogEntries(getSelectedIds());
+  QVector<int> selectedIds = getSelectedIds();
+  emit deleteLogEntries(QSet<int>(selectedIds.constBegin(), selectedIds.constEnd()));
 }
 
 void LogdataSearch::saveState()
