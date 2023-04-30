@@ -697,9 +697,10 @@ void LogdataController::cleanupLogEntries()
                            tr("Removes all entries where the idents of departure and destination are the same. E.g. pattern work."));
   choiceDialog.addCheckBox(DEPARTURE_OR_DESTINATION_EMPTY, tr("&Either departure or destinaion ident empty"),
                            tr("Removes incomplete entries where the flight was terminated early, for example."));
+  choiceDialog.addSpacer();
 
   // Disable ok button if not at least one of these is checked
-  choiceDialog.setRequiredChecked({SHORT_DISTANCE, DEPARTURE_AND_DESTINATION_EQUAL, DEPARTURE_OR_DESTINATION_EMPTY});
+  choiceDialog.setRequiredAnyChecked({SHORT_DISTANCE, DEPARTURE_AND_DESTINATION_EQUAL, DEPARTURE_OR_DESTINATION_EMPTY});
   choiceDialog.restoreState();
 
   if(choiceDialog.exec() == QDialog::Accepted)
