@@ -61,6 +61,7 @@ signals:
   void addUserpoint(int id, const atools::geo::Pos& pos);
   void editUserpoints(const QVector<int>& ids);
   void deleteUserpoints(const QVector<int>& ids);
+  void cleanupUserdata();
 
 private:
   virtual void updateButtonMenu() override;

@@ -151,6 +151,9 @@ public:
   /* Fill structure for user point id */
   map::MapUserpoint getUserpointById(int id);
 
+  /* Show choice dialog with options to remove empty or duplicate userpoints */
+  void cleanupUserdata();
+
 signals:
   /* Sent after database modification to update the search result table */
   void refreshUserdataSearch(bool loadAll, bool keepSelection);

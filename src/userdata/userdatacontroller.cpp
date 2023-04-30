@@ -535,6 +535,8 @@ void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& po
     if(lastAddedRecord->contains("userdata_id"))
       lastAddedRecord->setNull("userdata_id");
 
+    lastAddedRecord->setEmptyStringsToNull();
+
     // Add to database
     SqlTransaction transaction(manager->getDatabase());
     manager->insertOneRecord(*lastAddedRecord);
@@ -565,9 +567,10 @@ void UserdataController::editUserpoints(const QVector<int>& ids)
     if(retval == QDialog::Accepted)
     {
       // Change modified columns for all given ids
-      SqlTransaction transaction(manager->getDatabase());
+      SqlRecord editedRec = dlg.getRecord();
+      editedRec.setEmptyStringsToNull();
 
-      const atools::sql::SqlRecord& editedRec = dlg.getRecord();
+      SqlTransaction transaction(manager->getDatabase());
       manager->updateRecords(editedRec, QSet<int>(ids.constBegin(), ids.constEnd()));
       transaction.commit();
 
@@ -951,4 +954,88 @@ bool UserdataController::exportSelectedQuestion(bool& selected, bool& append, bo
   }
   else
     return false;
+}
+
+void UserdataController::cleanupUserdata()
+{
+  qDebug() << Q_FUNC_INFO;
+
+  enum
+  {
+    COMPARE, // Ident, Name, and Type
+    REGION,
+    DESCRIPTION,
+    TAGS,
+    COORDINATES,
+    EMPTY
+  };
+
+  // Create a dialog with tree checkboxes =====================
+  atools::gui::ChoiceDialog choiceDialog(mainWindow, QApplication::applicationName() + tr(" - Cleanup Userpoints"),
+                                         tr("Select criteria for cleanup.\nNote that you can undo this change."),
+                                         lnm::SEARCHTAB_USERDATA_CLEAN_DIALOG, "USERPOINT.html#userpoint-cleanup");
+
+  choiceDialog.setHelpOnlineUrl(lnm::helpOnlineUrl);
+  choiceDialog.setHelpLanguageOnline(lnm::helpLanguageOnline());
+
+  choiceDialog.addCheckBox(EMPTY, tr("Delete userpoints having no information\n"
+                                     "except coordinates and type."), QString(), true);
+  choiceDialog.addLine();
+
+  choiceDialog.addLabel(tr("Remove duplicates using the additional fields below as criteria.\n"
+                           "A userpoint will considered a duplicate to another if\n"
+                           "all selected fields are equal."));
+  choiceDialog.addCheckBox(COMPARE, tr("&Ident, Name, and Type"));
+  choiceDialog.addCheckBox(REGION, tr("&Region"));
+  choiceDialog.addCheckBox(DESCRIPTION, tr("&Remarks"));
+  choiceDialog.addCheckBox(TAGS, tr("&Tags"));
+  choiceDialog.addCheckBox(COORDINATES, tr("&Coordinates (similar)"));
+  choiceDialog.addSpacer();
+
+  // Disable duplicate cleanup parameters is top box is off
+  connect(&choiceDialog, &atools::gui::ChoiceDialog::checkBoxToggled, [&choiceDialog](int id, bool checked) {
+    if(id == COMPARE)
+    {
+      choiceDialog.getCheckBox(REGION)->setEnabled(checked);
+      choiceDialog.getCheckBox(DESCRIPTION)->setEnabled(checked);
+      choiceDialog.getCheckBox(TAGS)->setEnabled(checked);
+      choiceDialog.getCheckBox(COORDINATES)->setEnabled(checked);
+    }
+  });
+
+  // Disable ok button if not at least one of these is checked
+  choiceDialog.setRequiredAnyChecked({COMPARE, EMPTY});
+
+  choiceDialog.restoreState();
+
+  if(choiceDialog.exec() == QDialog::Accepted)
+  {
+    // type name ident region description tags
+    QStringList columns;
+    if(choiceDialog.isChecked(COMPARE))
+    {
+      columns << "type" << "ident" << "name";
+
+      if(choiceDialog.isChecked(REGION))
+        columns.append("region");
+      if(choiceDialog.isChecked(DESCRIPTION))
+        columns.append("description");
+      if(choiceDialog.isChecked(TAGS))
+        columns.append("tags");
+    }
+
+    // Dialog ok. Remove entries.
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    SqlTransaction transaction(manager->getDatabase());
+    int removed = manager->cleanupUserdata(columns, choiceDialog.isChecked(COORDINATES), choiceDialog.isChecked(EMPTY));
+    transaction.commit();
+    QGuiApplication::restoreOverrideCursor();
+
+    if(removed > 0)
+      emit userdataChanged();
+    mainWindow->setStatusMessage(tr("%1 %2 deleted.").arg(removed).arg(removed == 1 ? tr("userpoint") : tr("userpoints")));
+
+    emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
+    emit userdataChanged();
+  }
 }

@@ -1275,6 +1275,9 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addAction(ui->actionUserdataEdit);
     menu.addAction(ui->actionUserdataDelete);
     menu.addSeparator();
+
+    menu.addAction(ui->actionUserdataCleanup);
+    menu.addSeparator();
   } // if(tabIndex == si::SEARCH_USER)
 
   if(atools::contains(tabIndex, {si::SEARCH_AIRPORT}))

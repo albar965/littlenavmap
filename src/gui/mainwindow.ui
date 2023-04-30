@@ -329,6 +329,8 @@
     <addaction name="actionSearchUserpointUndo"/>
     <addaction name="actionSearchUserpointRedo"/>
     <addaction name="separator"/>
+    <addaction name="actionUserdataCleanup"/>
+    <addaction name="separator"/>
     <addaction name="actionUserdataImportCSV"/>
     <addaction name="actionUserdataImportUserfixDat"/>
     <addaction name="actionUserdataImportGarminGTN"/>
@@ -11926,6 +11928,17 @@ relation to shown airport</string>
    </property>
    <property name="statusTip">
     <string>Open the Little Navmap map installation directory for additional maps</string>
+   </property>
+  </action>
+  <action name="actionUserdataCleanup">
+   <property name="text">
+    <string>&amp;Cleanup Userpoints ...</string>
+   </property>
+   <property name="iconText">
+    <string>Delete duplicates and invalid userpoint from database</string>
+   </property>
+   <property name="toolTip">
+    <string>Delete duplicates and invalid userpoint from database</string>
    </property>
   </action>
  </widget>

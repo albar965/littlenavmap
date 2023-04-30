@@ -226,7 +226,10 @@ const QLatin1String SEARCHTAB_AIRPORT_VIEW_WIDGET("SearchPaneAirport/WidgetView"
 const QLatin1String SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET("SearchPaneAirport/WidgetDistView");
 const QLatin1String SEARCHTAB_NAV_VIEW_WIDGET("SearchPaneNav/WidgetView");
 const QLatin1String SEARCHTAB_NAV_VIEW_DIST_WIDGET("SearchPaneNav/WidgetDistView");
+
 const QLatin1String SEARCHTAB_USERDATA_VIEW_WIDGET("SearchPaneUserdata/WidgetView");
+const QLatin1String SEARCHTAB_USERDATA_CLEAN_DIALOG("SearchPaneUserdata/CleanupDialog");
+
 const QLatin1String SEARCHTAB_LOGDATA_VIEW_WIDGET("SearchPaneLogdata/WidgetView");
 const QLatin1String SEARCHTAB_LOGDATA_CLEAN_DIALOG("SearchPaneLogdata/CleanupDialog");
 

@@ -133,8 +133,9 @@ void UserdataSearch::connectSearchSlots()
   ui->actionUserdataEdit->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionUserdataAdd->setShortcutContext(Qt::WidgetWithChildrenShortcut);
   ui->actionUserdataDelete->setShortcutContext(Qt::WidgetWithChildrenShortcut);
+  ui->actionUserdataCleanup->setShortcutContext(Qt::WidgetWithChildrenShortcut);
 
-  ui->tableViewUserdata->addActions({ui->actionUserdataEdit, ui->actionUserdataAdd, ui->actionUserdataDelete});
+  ui->tableViewUserdata->addActions({ui->actionUserdataEdit, ui->actionUserdataAdd, ui->actionUserdataDelete, ui->actionUserdataCleanup});
 
   connect(ui->pushButtonUserdataEdit, &QPushButton::clicked, this, &UserdataSearch::editUserpointsTriggered);
   connect(ui->actionUserdataEdit, &QAction::triggered, this, &UserdataSearch::editUserpointsTriggered);
@@ -144,6 +145,8 @@ void UserdataSearch::connectSearchSlots()
 
   connect(ui->pushButtonUserdataAdd, &QPushButton::clicked, this, &UserdataSearch::addUserpointTriggered);
   connect(ui->actionUserdataAdd, &QAction::triggered, this, &UserdataSearch::addUserpointTriggered);
+
+  connect(ui->actionUserdataCleanup, &QAction::triggered, this, &UserdataSearch::cleanupUserdata);
 }
 
 void UserdataSearch::addUserpointTriggered()
