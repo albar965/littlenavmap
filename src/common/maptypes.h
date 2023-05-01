@@ -809,6 +809,11 @@ struct MapUserpoint
   {
   }
 
+  bool isAddon() const
+  {
+    return type == "Addon";
+  }
+
   QString name, ident, region, type, description, tags;
   bool temp = false;
 };

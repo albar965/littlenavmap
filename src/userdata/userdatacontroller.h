@@ -137,7 +137,7 @@ public:
   }
 
   /* Add userpoint from map and prefill with result data */
-  void addUserpointFromMap(const map::MapResult& result, atools::geo::Pos pos);
+  void addUserpointFromMap(const map::MapResult& result, atools::geo::Pos pos, bool airportAddon);
   void editUserpointFromMap(const map::MapResult& result);
   void deleteUserpointFromMap(int id);
   void moveUserpointFromMap(const map::MapUserpoint& userpoint);
@@ -169,6 +169,7 @@ private:
   void typesToActions();
   void actionsToTypes();
   void addUserpointInternal(int id, const atools::geo::Pos& pos, const atools::sql::SqlRecord& prefillRec);
+  void addUserpointInternalAddon(const atools::geo::Pos& pos, const atools::sql::SqlRecord& rec);
   bool exportSelectedQuestion(bool& selected, bool& append, bool& header, bool& xp12, bool appendAllowed, bool headerAllowed, bool xplane);
 
   /* Get default X-Plane path to user_fix.dat file */

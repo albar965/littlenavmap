@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,7 @@ void UserdataIcons::initTranslateableTexts()
   typeToTranslatedMap = QHash<QString, QString>(
   {
     {QLatin1String("Airport"), tr("Airport", "UserpointType")},
-    {QLatin1String("Addon"), tr("Addon", "UserpointType")},
+    {QLatin1String("Addon"), tr("Addon", "UserpointType")}, // Keep in syc with map::MapUserPoint.isAddon()
     {QLatin1String("Airstrip"), tr("Airstrip", "UserpointType")},
     {QLatin1String("Bookmark"), tr("Bookmark", "UserpointType")},
     {QLatin1String("Building"), tr("Building", "UserpointType")},

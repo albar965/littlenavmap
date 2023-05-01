@@ -11935,10 +11935,10 @@ relation to shown airport</string>
     <string>&amp;Cleanup Userpoints ...</string>
    </property>
    <property name="iconText">
-    <string>Delete duplicates and invalid userpoint from database</string>
+    <string>Delete duplicates and invalid userpoints from database</string>
    </property>
    <property name="toolTip">
-    <string>Delete duplicates and invalid userpoint from database</string>
+    <string>Delete duplicates and invalid userpoints from database</string>
    </property>
   </action>
  </widget>

@@ -272,7 +272,7 @@ signals:
   void showInformation(const map::MapResult& result);
 
   /* Add user point and pass result to it so it can prefill the dialog */
-  void addUserpointFromMap(const map::MapResult& result, const atools::geo::Pos& pos);
+  void addUserpointFromMap(const map::MapResult& result, const atools::geo::Pos& pos, bool airportAddon);
   void editUserpointFromMap(const map::MapResult& result);
   void deleteUserpointFromMap(int id);
 

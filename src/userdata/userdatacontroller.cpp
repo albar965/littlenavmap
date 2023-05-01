@@ -346,7 +346,7 @@ QStringList UserdataController::getAllTypes() const
   return icons->getAllTypes();
 }
 
-void UserdataController::addUserpointFromMap(const map::MapResult& result, atools::geo::Pos pos)
+void UserdataController::addUserpointFromMap(const map::MapResult& result, atools::geo::Pos pos, bool airportAddon)
 {
   qDebug() << Q_FUNC_INFO;
 
@@ -360,10 +360,16 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
     if(result.hasAirports())
     {
       const map::MapAirport& ap = result.airports.constFirst();
-      prefillRec.appendFieldAndValue("ident", ap.displayIdent())
-      .appendFieldAndValue("name", ap.name)
-      .appendFieldAndValue("type", "Airport")
-      .appendFieldAndValue("region", ap.region);
+
+      prefillRec.appendFieldAndValue("ident", ap.displayIdent()).appendFieldAndValue("name", ap.name).
+      appendFieldAndValue("region", ap.region);
+
+      if(airportAddon)
+        // Addon type to highlight add-on airports
+        prefillRec.appendFieldAndValue("type", "Addon").appendFieldAndValue("visible_from", 5000);
+      else
+        prefillRec.appendFieldAndValue("type", "Airport");
+
       pos = ap.position;
     }
     else if(result.hasVor())
@@ -424,7 +430,10 @@ void UserdataController::addUserpointFromMap(const map::MapResult& result, atool
 
     prefillRec.appendFieldAndValue("altitude", pos.getAltitude());
 
-    addUserpointInternal(-1, pos, prefillRec);
+    if(airportAddon)
+      addUserpointInternalAddon(pos, prefillRec);
+    else
+      addUserpointInternal(-1, pos, prefillRec);
   }
 }
 
@@ -477,6 +486,45 @@ void UserdataController::editUserpointFromMap(const map::MapResult& result)
 void UserdataController::addUserpoint(int id, const atools::geo::Pos& pos)
 {
   addUserpointInternal(id, pos, SqlRecord());
+}
+
+void UserdataController::addUserpointInternalAddon(const atools::geo::Pos& pos, const SqlRecord& rec)
+{
+  qDebug() << Q_FUNC_INFO;
+
+#ifdef DEBUG_INFORMATION
+  qDebug() << Q_FUNC_INFO << rec;
+#endif
+
+  *lastAddedRecord = rec;
+
+  // Set id to null to let userdata manager select id
+  if(lastAddedRecord->contains("userdata_id"))
+    lastAddedRecord->setNull("userdata_id");
+
+  lastAddedRecord->setEmptyStringsToNull();
+
+  lastAddedRecord->appendFieldAndValue("last_edit_timestamp", QDateTime::currentDateTime());
+
+  if(pos.isValid())
+  {
+    // Take coordinates for prefill if given
+    lastAddedRecord->appendFieldAndValue("lonx", pos.getLonX()).appendFieldAndValue("laty", pos.getLatY());
+    if(pos.getAltitude() < map::INVALID_ALTITUDE_VALUE)
+      lastAddedRecord->appendFieldAndValue("altitude", pos.getAltitude());
+  }
+
+  // Add to database
+  SqlTransaction transaction(manager->getDatabase());
+  manager->insertOneRecord(*lastAddedRecord);
+  transaction.commit();
+
+  // Enable category on map for new type
+  enableCategoryOnMap(lastAddedRecord->valueStr("type"));
+
+  emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
+  emit userdataChanged();
+  mainWindow->setStatusMessage(tr("Addon Userpoint added."));
 }
 
 void UserdataController::addUserpointInternal(int id, const atools::geo::Pos& pos, const SqlRecord& prefillRec)

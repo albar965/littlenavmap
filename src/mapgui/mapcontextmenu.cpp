@@ -190,6 +190,9 @@ void MapContextMenu::buildMainMenu()
   insertRemoveMarkMenu(mapMenu);
   mapMenu.addSeparator();
 
+  insertMarkAddonAirportMenu(mapMenu);
+  mapMenu.addSeparator();
+
   QMenu *sub = mapMenu.addMenu(QIcon(":/littlenavmap/resources/icons/userdata.svg"), tr("&Userpoints"));
   sub->setToolTipsVisible(mapMenu.toolTipsVisible());
   if(visibleOnMap)
@@ -990,6 +993,23 @@ void MapContextMenu::insertEditRouteUserpointMenu(QMenu& menu)
   insertMenuOrAction(menu, mc::EDITROUTEUSERPOINT, index,
                      tr("Edit Flight Plan &Position %1 ..."), tr("Edit remark, name or coordinate of flight plan position"),
                      QString(), QIcon(":/littlenavmap/resources/icons/routestring.svg"), false /* allowNoMapObject */, callback);
+}
+
+void MapContextMenu::insertMarkAddonAirportMenu(QMenu& menu)
+{
+  ActionCallback callback =
+    [ = ](const map::MapBase *base, QString&, QIcon&, bool& disable, bool) -> void
+    {
+      disable = !visibleOnMap || base == nullptr;
+    };
+
+  insertMenuOrAction(menu, mc::MARKAIRPORTADDON,
+                     MapResultIndex().
+                     addRef(*result, map::AIRPORT).
+                     sort(DEFAULT_TYPE_SORT, alphaSort),
+                     tr("&Mark %1 as Add-on ..."), tr("Create a userpoint highlighting the airport as add-on"),
+                     QString(), QIcon(":/littlenavmap/resources/icons/airportaddon.svg"), false /* allowNoMapObject */,
+                     callback);
 }
 
 void MapContextMenu::insertUserpointAddMenu(QMenu& menu)
