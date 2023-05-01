@@ -89,11 +89,11 @@ public:
   void importCsv();
   void exportCsv();
 
-  /* Import and export user_fix.dat file from X-Plane */
+  /* Import and export user_fix.dat file from X-Plane. Import does not commit. */
   void importXplaneUserFixDat();
   void exportXplaneUserFixDat();
 
-  /* Import and export Garmin GTN user waypoint database */
+  /* Import and export Garmin GTN user waypoint database. Import does not commit. */
   void importGarmin();
   void exportGarmin();
 

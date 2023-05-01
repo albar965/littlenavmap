@@ -86,11 +86,11 @@ public:
   /* Show message box and delete entries with the given ids */
   void deleteLogEntries(const QSet<int>& ids);
 
-  /* Import and export from a predefined CSV format */
+  /* Import and export from a predefined CSV format. Import does not commit. */
   void importCsv();
   void exportCsv();
 
-  /* Import X-Plane text logbook */
+  /* Import X-Plane text logbook - does not commit. */
   void importXplane();
 
   /* Show search tab and raise window */

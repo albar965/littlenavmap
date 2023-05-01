@@ -461,7 +461,9 @@ void UserdataController::moveUserpointFromMap(const map::MapUserpoint& userpoint
 
 void UserdataController::clearTemporary()
 {
+  SqlTransaction transaction(manager->getDatabase());
   manager->clearTemporary();
+  transaction.commit();
   manager->updateUndoRedoActions();
 }
 
@@ -656,22 +658,23 @@ void UserdataController::importCsv()
   {
     QStringList files = dialog->openFileDialogMulti(tr("Open Userpoint CSV File(s)"),
                                                     tr("CSV Files %1;;All Files (*)").arg(lnm::FILE_PATTERN_USERDATA_CSV), "Userdata/Csv");
-
-    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-    int numImported = 0;
-    for(const QString& file:files)
-    {
-      if(!file.isEmpty())
-        numImported += manager->importCsv(file, atools::fs::userdata::NONE, ',', '"');
-    }
-    QGuiApplication::restoreOverrideCursor();
+    files.removeAll(QString());
 
     if(!files.isEmpty())
     {
-      mainWindow->showUserpointSearch();
+      QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+      SqlTransaction transaction(manager->getDatabase());
+      int numImported = manager->importCsv(files, atools::fs::userdata::NONE, ',', '"');
+      transaction.commit();
+      QGuiApplication::restoreOverrideCursor();
+
       mainWindow->setStatusMessage(tr("%n userpoint(s) imported.", "", numImported));
-      manager->updateUndoRedoActions();
-      emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
+      if(numImported > 0)
+      {
+        mainWindow->showUserpointSearch();
+        manager->updateUndoRedoActions();
+        emit refreshUserdataSearch(false /* load all */, false /* keep selection */);
+      }
     }
   }
   catch(atools::Exception& e)
@@ -701,7 +704,9 @@ void UserdataController::importXplaneUserFixDat()
     if(!file.isEmpty())
     {
       QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+      SqlTransaction transaction(manager->getDatabase());
       int numImported = manager->importXplane(file);
+      transaction.commit();
       QGuiApplication::restoreOverrideCursor();
 
       mainWindow->showUserpointSearch();
@@ -737,7 +742,9 @@ void UserdataController::importGarmin()
     if(!file.isEmpty())
     {
       QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+      SqlTransaction transaction(manager->getDatabase());
       int numImported = manager->importGarmin(file);
+      transaction.commit();
       QGuiApplication::restoreOverrideCursor();
 
       mainWindow->showUserpointSearch();

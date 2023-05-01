@@ -757,7 +757,9 @@ void LogdataController::importXplane()
     if(!file.isEmpty())
     {
       QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+      SqlTransaction transaction(manager->getDatabase());
       numImported += manager->importXplane(file, fetchAirportCoordinates);
+      transaction.commit();
       QGuiApplication::restoreOverrideCursor();
 
       mainWindow->setStatusMessage(tr("Imported %1 %2 X-Plane logbook.").arg(numImported).
@@ -802,7 +804,9 @@ void LogdataController::importCsv()
     if(!file.isEmpty())
     {
       QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+      SqlTransaction transaction(manager->getDatabase());
       numImported += manager->importCsv(file);
+      transaction.commit();
       QGuiApplication::restoreOverrideCursor();
 
       mainWindow->setStatusMessage(tr("Imported %1 %2 from CSV file.").arg(numImported).
