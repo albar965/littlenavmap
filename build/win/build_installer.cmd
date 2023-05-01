@@ -1,5 +1,8 @@
 @echo off
 
+set APROJECTS=C:\Projects
+set WINARCH=win64
+
 setlocal enableextensions
 
 if defined APROJECTS ( echo %APROJECTS% ) else ( echo APROJECTS not set && exit /b 1 )
@@ -12,8 +15,8 @@ set FILENAME_LNM=%FILENAMETEMP: =%
 set FILENAME_LNM_RELEASE=LittleNavmap-%FILENAME_LNM%
 
 rem variables used in installer.nsi
-set INSTALLER_SOURCE=C:\Projekte\deploy\%FILENAME_LNM_RELEASE%
-set INSTALLER_TARGET=C:\Projekte\deploy\%FILENAME_LNM_RELEASE%-Install.exe
+set INSTALLER_SOURCE=C:\Projects\deploy\%FILENAME_LNM_RELEASE%
+set INSTALLER_TARGET=C:\Projects\deploy\%FILENAME_LNM_RELEASE%-Install.exe
 
 xcopy /Y "%APROJECTS%\littlenavmap\build\win\Little Navmap User Manual Online.url" "%INSTALLER_SOURCE%"\help
 
