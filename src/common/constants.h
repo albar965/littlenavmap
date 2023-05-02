@@ -177,7 +177,7 @@ const QLatin1String MAP_TRAFFICPATTERNS("Map/TrafficPatt1ns1");
 const QLatin1String MAP_HOLDINGS("Map/Holdings1");
 const QLatin1String MAP_AIRPORT_MSA("Map/AirportMsa1");
 const QLatin1String MAP_MARK_DISPLAY("Map/MarkDisplay1");
-const QLatin1String MAP_AIRPORT("Map/Airports");
+const QLatin1String MAP_AIRPORT("Map/Airports2");
 const QLatin1String MAP_AIRPORT_RUNWAY_LENGTH("Map/AirportsRunwayLength");
 const QLatin1String MAP_DETAIL_LEVEL("Map/DetailLevel");
 
@@ -226,7 +226,10 @@ const QLatin1String SEARCHTAB_AIRPORT_VIEW_WIDGET("SearchPaneAirport/WidgetView"
 const QLatin1String SEARCHTAB_AIRPORT_VIEW_DIST_WIDGET("SearchPaneAirport/WidgetDistView");
 const QLatin1String SEARCHTAB_NAV_VIEW_WIDGET("SearchPaneNav/WidgetView");
 const QLatin1String SEARCHTAB_NAV_VIEW_DIST_WIDGET("SearchPaneNav/WidgetDistView");
+
 const QLatin1String SEARCHTAB_USERDATA_VIEW_WIDGET("SearchPaneUserdata/WidgetView");
+const QLatin1String SEARCHTAB_USERDATA_CLEAN_DIALOG("SearchPaneUserdata/CleanupDialog");
+
 const QLatin1String SEARCHTAB_LOGDATA_VIEW_WIDGET("SearchPaneLogdata/WidgetView");
 const QLatin1String SEARCHTAB_LOGDATA_CLEAN_DIALOG("SearchPaneLogdata/CleanupDialog");
 
@@ -302,6 +305,7 @@ const QLatin1String OPTIONS_DIALOG_DB_DIR_DLG("OptionsDialog/DatabaseDirDialog")
 const QLatin1String OPTIONS_DIALOG_DB_PROGRESS_DLG("OptionsDialog/DatabaseProgressDialog");
 const QLatin1String OPTIONS_DIALOG_DB_FILE_DLG("OptionsDialog/DatabaseFilesDialog");
 const QLatin1String OPTIONS_DIALOG_DB_EXCLUDE("OptionsDialog/DatabaseExclude");
+const QLatin1String OPTIONS_DIALOG_DB_INCLUDE("OptionsDialog/DatabaseInclude");
 const QLatin1String OPTIONS_DIALOG_DB_ADDON_EXCLUDE("OptionsDialog/DatabaseAddonExclude");
 const QLatin1String OPTIONS_DIALOG_FLIGHTPLAN_COLOR("OptionsDialog/FlightplanColor");
 const QLatin1String OPTIONS_DIALOG_FLIGHTPLAN_OUTLINE_COLOR("OptionsDialog/FlightplanOutlineColor");

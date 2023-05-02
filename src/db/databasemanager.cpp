@@ -1700,7 +1700,30 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
   else
     tableText = databaseInfoText.arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0).arg(0);
 
-  databaseDialog->setHeader(metaText + tr("<p><big>Currently Loaded:</big></p><p>%1</p>").arg(tableText));
+  const OptionData& options = OptionData::instance();
+  QStringList optionsHeader;
+  if(!options.getDatabaseInclude().isEmpty())
+    optionsHeader.append(tr("%1 %2 included for loading").
+                         arg(options.getDatabaseInclude().size()).
+                         arg(options.getDatabaseInclude().size() > 1 ? tr("extra directories are") : tr("extra directory is")));
+  if(!options.getDatabaseExclude().isEmpty())
+    optionsHeader.append(tr("%1 %2 excluded from loading").
+                         arg(options.getDatabaseExclude().size()).
+                         arg(options.getDatabaseExclude().size() > 1 ? tr("directories are") : tr("directory is")));
+  if(!options.getDatabaseAddonExclude().isEmpty())
+    optionsHeader.append(tr("%1 %2 excluded from add-on detection").
+                         arg(options.getDatabaseAddonExclude().size()).
+                         arg(options.getDatabaseAddonExclude().size() > 1 ? tr("directories are") : tr("directory is")));
+
+  if(!optionsHeader.isEmpty())
+  {
+    optionsHeader = QStringList(atools::strJoin(tr("<b>Note:</b> "), optionsHeader, tr(", "), tr(" and "), tr(".")));
+    optionsHeader.append(tr("Included and excluded directories can be changed in options on page \"Scenery Library Database\"."));
+  }
+
+  databaseDialog->setHeader(metaText +
+                            atools::strJoin(tr("<p>"), optionsHeader, tr("<br/>"), tr("<br/>"), tr("</p>")) +
+                            tr("<p><big>Currently Loaded:</big></p><p>%1</p>").arg(tableText));
 
   if(tempDb.isOpen())
     tempDb.close();

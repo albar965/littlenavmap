@@ -407,6 +407,7 @@ struct MapAirport
   const QString& displayIdentIcao() const;
 
   bool closed() const;
+  bool military() const;
   bool hard() const;
   bool soft() const;
   bool water() const;
@@ -806,6 +807,11 @@ struct MapUserpoint
 {
   MapUserpoint() : MapBase(map::USERPOINT)
   {
+  }
+
+  bool isAddon() const
+  {
+    return type == "Addon";
   }
 
   QString name, ident, region, type, description, tags;

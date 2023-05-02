@@ -120,19 +120,23 @@ enum MapType : unsigned long long
   AIRPORT_UNLIGHTED =    0x0000'0400'0000'0000, /* Filter flag. Show airports having no lighting */
   AIRPORT_NO_PROCS =     0x0000'0800'0000'0000, /* Filter flag. Show airports without approach procedure */
   AIRPORT_CLOSED =       0x0000'1000'0000'0000, /* Filter flag. Show closed airports */
+  AIRPORT_MILITARY =     0x0000'4000'0000'0000, /* Filter flag. Show military airports */
 
   /* Procedure flags ================================  */
   PROCEDURE_POINT =      0x0000'2000'0000'0000, /* Type flag for map base and context menu */
+
+  // NEXT = 0x0000'8000'0000'0000
 
   /* =============================================================================================== */
   /* Pure visibiliy flags. Nothing is shown if not at least one of these is set */
   AIRPORT_ALL_VISIBLE = AIRPORT_HARD | AIRPORT_SOFT | AIRPORT_WATER | AIRPORT_HELIPAD,
 
   /* All available filters in drop down button */
-  AIRPORT_FILTER_ALL = AIRPORT_ALL_VISIBLE | AIRPORT_EMPTY | AIRPORT_UNLIGHTED | AIRPORT_NO_PROCS | AIRPORT_CLOSED | AIRPORT_ADDON,
+  AIRPORT_FILTER_ALL = AIRPORT_ALL_VISIBLE | AIRPORT_EMPTY | AIRPORT_UNLIGHTED | AIRPORT_NO_PROCS |
+                       AIRPORT_CLOSED | AIRPORT_MILITARY | AIRPORT_ADDON,
 
   /* Visible and filter flags */
-  AIRPORT_ALL = AIRPORT_ALL_VISIBLE | AIRPORT | AIRPORT_EMPTY | AIRPORT_UNLIGHTED | AIRPORT_NO_PROCS | AIRPORT_CLOSED,
+  AIRPORT_ALL = AIRPORT_ALL_VISIBLE | AIRPORT | AIRPORT_EMPTY | AIRPORT_UNLIGHTED | AIRPORT_NO_PROCS | AIRPORT_CLOSED | AIRPORT_MILITARY,
 
   /* Also default value on first start */
   AIRPORT_ALL_AND_ADDON = AIRPORT_ALL | AIRPORT_ADDON,

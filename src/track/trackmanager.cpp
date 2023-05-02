@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -44,7 +44,7 @@ using atools::track::Track;
 
 TrackManager::TrackManager(SqlDatabase *trackDatabase, SqlDatabase *navDatabase)
   : atools::sql::DataManagerBase(trackDatabase, "track", "track_id",
-                                 ":/atools/resources/sql/fs/track/create_track_schema.sql",
+                                 {":/atools/resources/sql/fs/track/create_track_schema.sql"},
                                  QString(), /* undoSqlScript */
                                  ":/atools/resources/sql/fs/track/drop_track_schema.sql"),
   dbNav(navDatabase)

@@ -219,6 +219,7 @@ void SearchController::createUserdataSearch(QTableView *tableView)
   connect(userdataSearch, &UserdataSearch::editUserpoints, NavApp::getUserdataController(), &UserdataController::editUserpoints);
   connect(userdataSearch, &UserdataSearch::deleteUserpoints, NavApp::getUserdataController(), &UserdataController::deleteUserpoints);
   connect(userdataSearch, &UserdataSearch::addUserpoint, NavApp::getUserdataController(), &UserdataController::addUserpoint);
+  connect(userdataSearch, &UserdataSearch::cleanupUserdata, NavApp::getUserdataController(), &UserdataController::cleanupUserdata);
 }
 
 void SearchController::createLogdataSearch(QTableView *tableView)

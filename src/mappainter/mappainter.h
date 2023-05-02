@@ -23,9 +23,8 @@
 #include "options/optiondata.h"
 #include "geo/rect.h"
 
-#include <marble/MarbleWidget.h>
 #include <QPen>
-#include <QCoreApplication>
+#include <QFont>
 
 namespace atools {
 namespace geo {
@@ -241,7 +240,6 @@ struct PaintContext
   textflags::TextFlags airportTextFlags() const;
   textflags::TextFlags airportTextFlagsMinor() const;
   textflags::TextFlags airportTextFlagsRoute(bool drawAsRoute, bool drawAsLog) const;
-
 };
 
 /* Used to collect airports for drawing. Needs to copy airport since it might be removed from the cache. */

@@ -119,6 +119,8 @@ QDebug operator<<(QDebug out, const map::MapTypes& type)
       flags.append("AIRPORT_NO_PROCS");
     if(type.testFlag(AIRPORT_CLOSED))
       flags.append("AIRPORT_CLOSED");
+    if(type.testFlag(AIRPORT_MILITARY))
+      flags.append("AIRPORT_MILITARY");
   }
 
   out.nospace().noquote() << flags.join("|");

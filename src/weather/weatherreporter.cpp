@@ -70,7 +70,7 @@ WeatherReporter::WeatherReporter(MainWindow *parentWindow, atools::fs::FsPaths::
                                        "X-Plane is not installed on this computer.\n\n"
                                        "If you use this as a remote installation:\n"
                                        "Share the weather files on the flying computer and\n"
-                                       "adapt the X-Plane weather path in \"Options\" on page \"Weather Files\" to point to the network share."));
+                                       "adapt the X-Plane weather path in options on page \"Weather Files\" to point to the network share."));
 
   onlineWeatherTimeoutSecs = atools::settings::Settings::instance().valueInt(lnm::OPTIONS_WEATHER_UPDATE, 600);
 

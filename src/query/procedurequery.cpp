@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -2253,10 +2253,12 @@ int ProcedureQuery::getStarTransitionId(map::MapAirport destination, const QStri
 }
 
 void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airportSim,
-                                          const map::MapRunwayEnd& runwayEndSim, float distance, float altitude, float offsetAngle)
+                                          const map::MapRunwayEnd& runwayEndSim, float finalLegDistance, float entryAltitude,
+                                          float offsetAngle)
 {
   float finalCourseTrue = runwayEndSim.heading + offsetAngle;
-  Pos initialFixPos = runwayEndSim.position.endpoint(ageo::nmToMeter(distance), ageo::opposedCourseDeg(finalCourseTrue));
+  float airportAltitude = airportSim.position.getAltitude();
+  Pos initialFixPos = runwayEndSim.position.endpoint(ageo::nmToMeter(finalLegDistance), ageo::opposedCourseDeg(finalCourseTrue));
 
   // Create procedure ========================================
   procedure.ref.runwayEndId = runwayEndSim.id;
@@ -2268,9 +2270,9 @@ void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, con
   procedure.runwayEnd = runwayEndSim;
   procedure.runway = runwayEndSim.name;
   procedure.mapType = proc::PROCEDURE_APPROACH;
-  procedure.procedureDistance = distance;
-  procedure.customDistance = distance;
-  procedure.customAltitude = altitude;
+  procedure.procedureDistance = finalLegDistance;
+  procedure.customDistance = finalLegDistance;
+  procedure.customAltitude = entryAltitude;
   procedure.customOffset = offsetAngle;
   procedure.gpsOverlay = procedure.hasError = procedure.hasHardError =
     procedure.circleToLand = procedure.verticalAngle = procedure.rnp = false;
@@ -2281,13 +2283,13 @@ void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, con
   // Create an initial fix leg at the given distance =======================
   proc::MapProcedureLeg startLeg;
   startLeg.fixType = "CST";
-  startLeg.fixIdent = QObject::tr("RW%1+%2").arg(runwayEndSim.name).arg(atools::roundToInt(distance));
+  startLeg.fixIdent = QObject::tr("RW%1+%2").arg(runwayEndSim.name).arg(atools::roundToInt(finalLegDistance));
   startLeg.fixRegion = airportSim.region;
   startLeg.fixPos = initialFixPos;
   startLeg.line = Line(initialFixPos);
   startLeg.geometry = LineString(initialFixPos);
   startLeg.altRestriction.descriptor = proc::MapAltRestriction::AT;
-  startLeg.altRestriction.alt1 = airportSim.position.getAltitude() + altitude;
+  startLeg.altRestriction.alt1 = atools::roundToNearest(airportAltitude, 10.f) + entryAltitude; // Round approach to nearest 10 ft / meter
   startLeg.type = proc::CUSTOM_APP_START;
   startLeg.mapType = proc::PROCEDURE_APPROACH;
   startLeg.course = 0.f;
@@ -2310,12 +2312,12 @@ void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, con
   runwayLeg.geometry = LineString(initialFixPos, runwayEndSim.position);
   runwayLeg.navaids.runwayEnds.append(runwayEndSim);
   runwayLeg.altRestriction.descriptor = proc::MapAltRestriction::AT;
-  runwayLeg.altRestriction.alt1 = airportSim.position.getAltitude();
+  runwayLeg.altRestriction.alt1 = airportAltitude;
   runwayLeg.type = proc::CUSTOM_APP_RUNWAY;
   runwayLeg.mapType = proc::PROCEDURE_APPROACH;
   runwayLeg.course = ageo::normalizeCourse(finalCourseTrue - airportSim.magvar);
   runwayLeg.calculatedTrueCourse = finalCourseTrue;
-  runwayLeg.distance = runwayLeg.calculatedDistance = distance;
+  runwayLeg.distance = runwayLeg.calculatedDistance = finalLegDistance;
   runwayLeg.time = 0.f;
   runwayLeg.theta = map::INVALID_COURSE_VALUE;
   runwayLeg.rho = map::INVALID_DISTANCE_VALUE;
@@ -2396,13 +2398,13 @@ void ProcedureQuery::createCustomDeparture(proc::MapProcedureLegs& procedure, co
 }
 
 void ProcedureQuery::createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airport,
-                                          const QString& runwayEnd, float distance, float altitude, float offsetAngle)
+                                          const QString& runwayEnd, float finalLegDistance, float entryAltitude, float offsetAngle)
 {
   // Custom approaches use the simulator airport
   map::MapResult result;
   runwayEndByNameSim(result, runwayEnd, airport);
   if(!result.runwayEnds.isEmpty())
-    createCustomApproach(procedure, airport, result.runwayEnds.constFirst(), distance, altitude, offsetAngle);
+    createCustomApproach(procedure, airport, result.runwayEnds.constFirst(), finalLegDistance, entryAltitude, offsetAngle);
 }
 
 void ProcedureQuery::createCustomDeparture(proc::MapProcedureLegs& procedure, const map::MapAirport& airport,

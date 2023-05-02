@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -89,11 +89,11 @@ public:
   void importCsv();
   void exportCsv();
 
-  /* Import and export user_fix.dat file from X-Plane */
+  /* Import and export user_fix.dat file from X-Plane. Import does not commit. */
   void importXplaneUserFixDat();
   void exportXplaneUserFixDat();
 
-  /* Import and export Garmin GTN user waypoint database */
+  /* Import and export Garmin GTN user waypoint database. Import does not commit. */
   void importGarmin();
   void exportGarmin();
 
@@ -137,7 +137,7 @@ public:
   }
 
   /* Add userpoint from map and prefill with result data */
-  void addUserpointFromMap(const map::MapResult& result, atools::geo::Pos pos);
+  void addUserpointFromMap(const map::MapResult& result, atools::geo::Pos pos, bool airportAddon);
   void editUserpointFromMap(const map::MapResult& result);
   void deleteUserpointFromMap(int id);
   void moveUserpointFromMap(const map::MapUserpoint& userpoint);
@@ -150,6 +150,9 @@ public:
 
   /* Fill structure for user point id */
   map::MapUserpoint getUserpointById(int id);
+
+  /* Show choice dialog with options to remove empty or duplicate userpoints */
+  void cleanupUserdata();
 
 signals:
   /* Sent after database modification to update the search result table */
@@ -166,6 +169,7 @@ private:
   void typesToActions();
   void actionsToTypes();
   void addUserpointInternal(int id, const atools::geo::Pos& pos, const atools::sql::SqlRecord& prefillRec);
+  void addUserpointInternalAddon(const atools::geo::Pos& pos, const atools::sql::SqlRecord& rec);
   bool exportSelectedQuestion(bool& selected, bool& append, bool& header, bool& xp12, bool appendAllowed, bool headerAllowed, bool xplane);
 
   /* Get default X-Plane path to user_fix.dat file */

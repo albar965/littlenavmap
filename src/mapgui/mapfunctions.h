@@ -37,7 +37,7 @@ namespace mapfunc {
  */
 
 /* True if aircraft is visible for current layer and aicraft properties */
-bool aircraftVisible(const atools::fs::sc::SimConnectAircraft& ac, const MapLayer *layer);
+bool aircraftVisible(const atools::fs::sc::SimConnectAircraft& ac, const MapLayer *layer, bool hideAiOnGround);
 
 /* True if wind barb is shown at confluence point */
 bool windBarbVisible(const atools::geo::Pos& pos, const MapLayer *layer, bool sphericalProjection);

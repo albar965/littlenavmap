@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -127,7 +127,7 @@ public:
 
   /* Creates a user defined VFR procedure procedure */
   void createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airportSim,
-                            const map::MapRunwayEnd& runwayEndSim, float distance, float altitude, float offsetAngle);
+                            const map::MapRunwayEnd& runwayEndSim, float finalLegDistance, float entryAltitude, float offsetAngle);
   void createCustomDeparture(proc::MapProcedureLegs& procedure, const map::MapAirport& airportSim,
                              const map::MapRunwayEnd& runwayEndSim, float distance);
 
@@ -156,7 +156,7 @@ private:
   void buildLegEntry(atools::sql::SqlQuery *query, proc::MapProcedureLeg& leg, const map::MapAirport& airport);
 
   void createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airport, const QString& runwayEnd,
-                            float distance, float altitude, float offsetAngle);
+                            float finalLegDistance, float entryAltitude, float offsetAngle);
   void createCustomDeparture(proc::MapProcedureLegs& procedure, const map::MapAirport& airport, const QString& runwayEnd,
                              float distance);
 

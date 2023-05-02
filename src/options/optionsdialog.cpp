@@ -105,8 +105,11 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   }
 
   zoomHandlerMapThemeKeysTable = new atools::gui::ItemViewZoomHandler(ui->tableWidgetOptionsMapKeys);
-
   zoomHandlerLabelTree = new atools::gui::ItemViewZoomHandler(ui->treeWidgetOptionsDisplayTextOptions);
+  zoomHandlerDatabaseInclude = new atools::gui::ItemViewZoomHandler(ui->tableWidgetOptionsDatabaseInclude);
+  zoomHandlerDatabaseExclude = new atools::gui::ItemViewZoomHandler(ui->tableWidgetOptionsDatabaseExclude);
+  zoomHandlerDatabaseAddonExclude = new atools::gui::ItemViewZoomHandler(ui->tableWidgetOptionsDatabaseExcludeAddon);
+
   gridDelegate = new atools::gui::GridDelegate(ui->treeWidgetOptionsDisplayTextOptions);
   ui->treeWidgetOptionsDisplayTextOptions->setItemDelegate(gridDelegate);
 
@@ -321,8 +324,10 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->lineEditOptionsWeatherXplaneWind,
      ui->lineEditOptionsWeatherNoaaWindUrl,
 
-     ui->listWidgetOptionsDatabaseAddon,
-     ui->listWidgetOptionsDatabaseExclude,
+     ui->tableWidgetOptionsDatabaseInclude,
+     ui->tableWidgetOptionsDatabaseExclude,
+     ui->tableWidgetOptionsDatabaseExcludeAddon,
+
      ui->comboBoxMapScrollZoomDetails,
      ui->radioButtonOptionsSimUpdateFast,
      ui->radioButtonOptionsSimUpdateLow,
@@ -395,6 +400,7 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
      ui->checkBoxOptionsMapAirwayText,
      ui->checkBoxOptionsMapUserAircraftText,
      ui->checkBoxOptionsMapAiAircraftText,
+     ui->checkBoxOptionsMapAiAircraftHideGround,
      ui->spinBoxOptionsDisplayTextSizeAirway,
      ui->spinBoxOptionsDisplayThicknessAirway,
 
@@ -550,16 +556,21 @@ OptionsDialog::OptionsDialog(QMainWindow *parentWindow)
   connect(ui->pushButtonOptionsMapboxUser, &QPushButton::clicked, this, &OptionsDialog::mapboxUserMapClicked);
 
   // ===========================================================================
+  // Database include path
+  connect(ui->pushButtonOptionsDatabaseAddIncludeDir, &QPushButton::clicked, this, &OptionsDialog::addDatabaseIncludeDirClicked);
+  connect(ui->pushButtonOptionsDatabaseRemoveInclude, &QPushButton::clicked, this, &OptionsDialog::removeDatabaseIncludePathClicked);
+  connect(ui->tableWidgetOptionsDatabaseInclude, &QTableWidget::itemSelectionChanged, this, &OptionsDialog::updateDatabaseButtonState);
+
   // Database exclude path
   connect(ui->pushButtonOptionsDatabaseAddExcludeDir, &QPushButton::clicked, this, &OptionsDialog::addDatabaseExcludeDirClicked);
   connect(ui->pushButtonOptionsDatabaseAddExcludeFile, &QPushButton::clicked, this, &OptionsDialog::addDatabaseExcludeFileClicked);
   connect(ui->pushButtonOptionsDatabaseRemoveExclude, &QPushButton::clicked, this, &OptionsDialog::removeDatabaseExcludePathClicked);
-  connect(ui->listWidgetOptionsDatabaseExclude, &QListWidget::currentRowChanged, this, &OptionsDialog::updateDatabaseButtonState);
+  connect(ui->tableWidgetOptionsDatabaseExclude, &QTableWidget::itemSelectionChanged, this, &OptionsDialog::updateDatabaseButtonState);
 
   // Database addon exclude path
   connect(ui->pushButtonOptionsDatabaseAddAddon, &QPushButton::clicked, this, &OptionsDialog::addDatabaseAddOnExcludePathClicked);
   connect(ui->pushButtonOptionsDatabaseRemoveAddon, &QPushButton::clicked, this, &OptionsDialog::removeDatabaseAddOnExcludePathClicked);
-  connect(ui->listWidgetOptionsDatabaseAddon, &QListWidget::currentRowChanged, this, &OptionsDialog::updateDatabaseButtonState);
+  connect(ui->tableWidgetOptionsDatabaseExcludeAddon, &QTableWidget::itemSelectionChanged, this, &OptionsDialog::updateDatabaseButtonState);
 
   // ===========================================================================
   // Cache
@@ -660,6 +671,18 @@ OptionsDialog::~OptionsDialog()
   qDebug() << Q_FUNC_INFO << "delete zoomHandlerLabelTree";
   delete zoomHandlerLabelTree;
   zoomHandlerLabelTree = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete zoomHandlerDatabaseInclude";
+  delete zoomHandlerDatabaseInclude;
+  zoomHandlerDatabaseInclude = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete zoomHandlerDatabaseExclude";
+  delete zoomHandlerDatabaseExclude;
+  zoomHandlerDatabaseExclude = nullptr;
+
+  qDebug() << Q_FUNC_INFO << "delete zoomHandlerDatabaseAddonExclude";
+  delete zoomHandlerDatabaseAddonExclude;
+  zoomHandlerDatabaseAddonExclude = nullptr;
 
   qDebug() << Q_FUNC_INFO << "delete zoomHandlerMapThemeKeysTable";
   delete zoomHandlerMapThemeKeysTable;
@@ -1073,13 +1096,18 @@ void OptionsDialog::saveState()
 
   // Save the path lists
   QStringList paths;
-  for(int i = 0; i < ui->listWidgetOptionsDatabaseExclude->count(); i++)
-    paths.append(ui->listWidgetOptionsDatabaseExclude->item(i)->text());
+  for(int row = 0; row < ui->tableWidgetOptionsDatabaseInclude->rowCount(); row++)
+    paths.append(ui->tableWidgetOptionsDatabaseInclude->item(row, 0)->text());
+  settings.setValue(lnm::OPTIONS_DIALOG_DB_INCLUDE, paths);
+
+  paths.clear();
+  for(int row = 0; row < ui->tableWidgetOptionsDatabaseExclude->rowCount(); row++)
+    paths.append(ui->tableWidgetOptionsDatabaseExclude->item(row, 0)->text());
   settings.setValue(lnm::OPTIONS_DIALOG_DB_EXCLUDE, paths);
 
   paths.clear();
-  for(int i = 0; i < ui->listWidgetOptionsDatabaseAddon->count(); i++)
-    paths.append(ui->listWidgetOptionsDatabaseAddon->item(i)->text());
+  for(int row = 0; row < ui->tableWidgetOptionsDatabaseExcludeAddon->rowCount(); row++)
+    paths.append(ui->tableWidgetOptionsDatabaseExcludeAddon->item(row, 0)->text());
   settings.setValue(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE, paths);
 
   settings.setValueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_COLOR, flightplanColor);
@@ -1161,10 +1189,9 @@ void OptionsDialog::restoreState()
 
   ui->splitterOptions->setHandleWidth(6);
 
-  if(settings.contains(lnm::OPTIONS_DIALOG_DB_EXCLUDE))
-    ui->listWidgetOptionsDatabaseExclude->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_EXCLUDE));
-  if(settings.contains(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE))
-    ui->listWidgetOptionsDatabaseAddon->addItems(settings.valueStrList(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE));
+  addDatabaseTableItems(ui->tableWidgetOptionsDatabaseInclude, settings.valueStrList(lnm::OPTIONS_DIALOG_DB_INCLUDE));
+  addDatabaseTableItems(ui->tableWidgetOptionsDatabaseExclude, settings.valueStrList(lnm::OPTIONS_DIALOG_DB_EXCLUDE));
+  addDatabaseTableItems(ui->tableWidgetOptionsDatabaseExcludeAddon, settings.valueStrList(lnm::OPTIONS_DIALOG_DB_ADDON_EXCLUDE));
 
   flightplanColor = settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_COLOR, QColor(Qt::yellow)).value<QColor>();
   flightplanOutlineColor = settings.valueVar(lnm::OPTIONS_DIALOG_FLIGHTPLAN_OUTLINE_COLOR, QColor(Qt::black)).value<QColor>();
@@ -1550,21 +1577,33 @@ void OptionsDialog::resetWeatherNoaaWindUrlClicked()
   ui->lineEditOptionsWeatherNoaaWindUrl->setText(OptionData::WEATHER_NOAA_WIND_BASE_DEFAULT_URL);
 }
 
+/* Show directory dialog to add add-on exclude path */
+void OptionsDialog::addDatabaseIncludeDirClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+  QString path = atools::gui::Dialog(this).openDirectoryDialog(tr("Open Directory to include"), lnm::OPTIONS_DIALOG_DB_DIR_DLG,
+                                                               NavApp::getCurrentSimulatorBasePath());
+
+  addDatabaseTableItem(ui->tableWidgetOptionsDatabaseInclude, path);
+  updateDatabaseButtonState();
+}
+
+void OptionsDialog::removeDatabaseIncludePathClicked()
+{
+  qDebug() << Q_FUNC_INFO;
+  removeSelectedDatabaseTableItems(ui->tableWidgetOptionsDatabaseInclude);
+  updateDatabaseButtonState();
+}
+
 /* Show directory dialog to add exclude path */
 void OptionsDialog::addDatabaseExcludeDirClicked()
 {
   qDebug() << Q_FUNC_INFO;
+  QString path = atools::gui::Dialog(this).openDirectoryDialog(tr("Open Directory to exclude from Scenery Loading"),
+                                                               lnm::OPTIONS_DIALOG_DB_DIR_DLG, NavApp::getCurrentSimulatorBasePath());
 
-  QString path = atools::gui::Dialog(this).openDirectoryDialog(
-    tr("Open Directory to exclude from Scenery Loading"),
-    lnm::OPTIONS_DIALOG_DB_DIR_DLG,
-    NavApp::getCurrentSimulatorBasePath());
-
-  if(!path.isEmpty())
-  {
-    ui->listWidgetOptionsDatabaseExclude->addItem(QDir::toNativeSeparators(path));
-    updateDatabaseButtonState();
-  }
+  addDatabaseTableItem(ui->tableWidgetOptionsDatabaseExclude, path);
+  updateDatabaseButtonState();
 }
 
 /* Show directory dialog to add exclude path */
@@ -1572,32 +1611,19 @@ void OptionsDialog::addDatabaseExcludeFileClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
-  QStringList paths = atools::gui::Dialog(this).openFileDialogMulti(
-    tr("Open Files to exclude from Scenery Loading"),
-    QString(), // filter
-    lnm::OPTIONS_DIALOG_DB_FILE_DLG,
-    NavApp::getCurrentSimulatorBasePath());
+  QStringList paths = atools::gui::Dialog(this).openFileDialogMulti(tr("Open Files to exclude from Scenery Loading"),
+                                                                    QString(), // filter lnm::OPTIONS_DIALOG_DB_FILE_DLG,
+                                                                    NavApp::getCurrentSimulatorBasePath());
 
-  paths.removeAll(QString());
-
-  if(!paths.isEmpty())
-  {
-    for(const QString& path : paths)
-      ui->listWidgetOptionsDatabaseExclude->addItem(QDir::toNativeSeparators(path));
-    updateDatabaseButtonState();
-  }
+  for(const QString& path : paths)
+    addDatabaseTableItem(ui->tableWidgetOptionsDatabaseExclude, path);
+  updateDatabaseButtonState();
 }
 
 void OptionsDialog::removeDatabaseExcludePathClicked()
 {
   qDebug() << Q_FUNC_INFO;
-
-  // Create list in reverse order so that deleting can start at the bottom of the list
-  for(int idx : atools::gui::util::getSelectedIndexesInDeletionOrder(
-        ui->listWidgetOptionsDatabaseExclude->selectionModel()))
-    // Item removes itself from the list when deleted
-    delete ui->listWidgetOptionsDatabaseExclude->item(idx);
-
+  removeSelectedDatabaseTableItems(ui->tableWidgetOptionsDatabaseExclude);
   updateDatabaseButtonState();
 }
 
@@ -1606,13 +1632,10 @@ void OptionsDialog::addDatabaseAddOnExcludePathClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
-  QString path = atools::gui::Dialog(this).openDirectoryDialog(
-    tr("Open Directory to exclude from Add-On Recognition"),
-    lnm::OPTIONS_DIALOG_DB_DIR_DLG,
-    NavApp::getCurrentSimulatorBasePath());
+  QString path = atools::gui::Dialog(this).openDirectoryDialog(tr("Open Directory to exclude from Add-On Recognition"),
+                                                               lnm::OPTIONS_DIALOG_DB_DIR_DLG, NavApp::getCurrentSimulatorBasePath());
 
-  if(!path.isEmpty())
-    ui->listWidgetOptionsDatabaseAddon->addItem(QDir::toNativeSeparators(path));
+  addDatabaseTableItem(ui->tableWidgetOptionsDatabaseExcludeAddon, path);
   updateDatabaseButtonState();
 }
 
@@ -1620,21 +1643,15 @@ void OptionsDialog::removeDatabaseAddOnExcludePathClicked()
 {
   qDebug() << Q_FUNC_INFO;
 
-  // Create list in reverse order so that deleting can start at the bottom of the list
-  for(int idx : atools::gui::util::getSelectedIndexesInDeletionOrder(
-        ui->listWidgetOptionsDatabaseAddon->selectionModel()))
-    // Item removes itself from the list when deleted
-    delete ui->listWidgetOptionsDatabaseAddon->item(idx);
-
+  removeSelectedDatabaseTableItems(ui->tableWidgetOptionsDatabaseExcludeAddon);
   updateDatabaseButtonState();
 }
 
 void OptionsDialog::updateDatabaseButtonState()
 {
-  ui->pushButtonOptionsDatabaseRemoveExclude->setEnabled(
-    ui->listWidgetOptionsDatabaseExclude->currentRow() != -1);
-  ui->pushButtonOptionsDatabaseRemoveAddon->setEnabled(
-    ui->listWidgetOptionsDatabaseAddon->currentRow() != -1);
+  ui->pushButtonOptionsDatabaseRemoveInclude->setEnabled(ui->tableWidgetOptionsDatabaseInclude->selectionModel()->hasSelection());
+  ui->pushButtonOptionsDatabaseRemoveExclude->setEnabled(ui->tableWidgetOptionsDatabaseExclude->selectionModel()->hasSelection());
+  ui->pushButtonOptionsDatabaseRemoveAddon->setEnabled(ui->tableWidgetOptionsDatabaseExcludeAddon->selectionModel()->hasSelection());
 }
 
 void OptionsDialog::mapEmptyAirportsClicked(bool state)
@@ -1758,6 +1775,7 @@ void OptionsDialog::widgetsToOptionData()
   toFlags2(ui->checkBoxOptionsMapFlightplanText, opts2::MAP_ROUTE_TEXT_BACKGROUND);
   toFlags2(ui->checkBoxOptionsMapUserAircraftText, opts2::MAP_USER_TEXT_BACKGROUND);
   toFlags2(ui->checkBoxOptionsMapAiAircraftText, opts2::MAP_AI_TEXT_BACKGROUND);
+  toFlags(ui->checkBoxOptionsMapAiAircraftHideGround, opts::MAP_AI_HIDE_GROUND);
   toFlags2(ui->checkBoxOptionsMapHighlightTransparent, opts2::MAP_HIGHLIGHT_TRANSPARENT);
 
   toFlags2(ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
@@ -1807,13 +1825,17 @@ void OptionsDialog::widgetsToOptionData()
   data.weatherVatsimUrl = ui->lineEditOptionsWeatherVatsimUrl->text();
   data.weatherIvaoUrl = ui->lineEditOptionsWeatherIvaoUrl->text();
 
-  data.databaseAddonExclude.clear();
-  for(int i = 0; i < ui->listWidgetOptionsDatabaseAddon->count(); i++)
-    data.databaseAddonExclude.append(ui->listWidgetOptionsDatabaseAddon->item(i)->text());
+  data.databaseInclude.clear();
+  for(int row = 0; row < ui->tableWidgetOptionsDatabaseInclude->rowCount(); row++)
+    data.databaseInclude.append(ui->tableWidgetOptionsDatabaseInclude->item(row, 0)->text());
 
   data.databaseExclude.clear();
-  for(int i = 0; i < ui->listWidgetOptionsDatabaseExclude->count(); i++)
-    data.databaseExclude.append(ui->listWidgetOptionsDatabaseExclude->item(i)->text());
+  for(int row = 0; row < ui->tableWidgetOptionsDatabaseExclude->rowCount(); row++)
+    data.databaseExclude.append(ui->tableWidgetOptionsDatabaseExclude->item(row, 0)->text());
+
+  data.databaseAddonExclude.clear();
+  for(int row = 0; row < ui->tableWidgetOptionsDatabaseExcludeAddon->rowCount(); row++)
+    data.databaseAddonExclude.append(ui->tableWidgetOptionsDatabaseExcludeAddon->item(row, 0)->text());
 
   data.mapScrollDetail = static_cast<opts::MapScrollDetail>(ui->comboBoxMapScrollZoomDetails->currentIndex());
 
@@ -2048,6 +2070,7 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   fromFlags2(data, ui->checkBoxOptionsMapAirwayText, opts2::MAP_AIRWAY_TEXT_BACKGROUND);
   fromFlags2(data, ui->checkBoxOptionsMapUserAircraftText, opts2::MAP_USER_TEXT_BACKGROUND);
   fromFlags2(data, ui->checkBoxOptionsMapAiAircraftText, opts2::MAP_AI_TEXT_BACKGROUND);
+  fromFlags(data, ui->checkBoxOptionsMapAiAircraftHideGround, opts::MAP_AI_HIDE_GROUND);
   fromFlags2(data, ui->checkBoxOptionsMapHighlightTransparent, opts2::MAP_HIGHLIGHT_TRANSPARENT);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanText, opts2::MAP_ROUTE_TEXT_BACKGROUND);
   fromFlags2(data, ui->checkBoxOptionsMapFlightplanDimPassed, opts2::MAP_ROUTE_DIM_PASSED);
@@ -2094,13 +2117,9 @@ void OptionsDialog::optionDataToWidgets(const OptionData& data)
   ui->lineEditOptionsWeatherVatsimUrl->setText(data.weatherVatsimUrl);
   ui->lineEditOptionsWeatherIvaoUrl->setText(data.weatherIvaoUrl);
 
-  ui->listWidgetOptionsDatabaseAddon->clear();
-  for(const QString& str : data.databaseAddonExclude)
-    ui->listWidgetOptionsDatabaseAddon->addItem(str);
-
-  ui->listWidgetOptionsDatabaseExclude->clear();
-  for(const QString& str : data.databaseExclude)
-    ui->listWidgetOptionsDatabaseExclude->addItem(str);
+  addDatabaseTableItems(ui->tableWidgetOptionsDatabaseInclude, data.databaseInclude);
+  addDatabaseTableItems(ui->tableWidgetOptionsDatabaseExclude, data.databaseExclude);
+  addDatabaseTableItems(ui->tableWidgetOptionsDatabaseExcludeAddon, data.databaseAddonExclude);
 
   ui->comboBoxMapScrollZoomDetails->setCurrentIndex(data.mapScrollDetail);
 
@@ -2257,9 +2276,9 @@ void OptionsDialog::mapThemeKeyEdited(QTableWidgetItem *item)
 void OptionsDialog::widgetToMapThemeKeys(OptionData& data)
 {
   data.mapThemeKeys.clear();
-  for(int i = 0; i < ui->tableWidgetOptionsMapKeys->rowCount(); i++)
-    data.mapThemeKeys.insert(ui->tableWidgetOptionsMapKeys->item(i, 0)->text().trimmed(),
-                             ui->tableWidgetOptionsMapKeys->item(i, 1)->text().trimmed());
+  for(int row = 0; row < ui->tableWidgetOptionsMapKeys->rowCount(); row++)
+    data.mapThemeKeys.insert(ui->tableWidgetOptionsMapKeys->item(row, 0)->text().trimmed(),
+                             ui->tableWidgetOptionsMapKeys->item(row, 1)->text().trimmed());
 }
 
 void OptionsDialog::mapThemeKeysToWidget(const OptionData& data)
@@ -3103,4 +3122,35 @@ void OptionsDialog::mapboxUserMapClicked()
   else
     QMessageBox::warning(this, QApplication::applicationName(), tr("One or more Mapbox keys are missing. "
                                                                    "Installation might be incomplete since map themes are missing."));
+}
+
+void OptionsDialog::removeSelectedDatabaseTableItems(QTableWidget *widget)
+{
+  // Create list in reverse order so that deleting can start at the bottom of the list
+  for(int row : atools::gui::util::getSelectedIndexesInDeletionOrder(widget->selectionModel()))
+    // Item removes itself from the list when deleted
+    widget->removeRow(row);
+
+  widget->resizeColumnToContents(0);
+}
+
+void OptionsDialog::addDatabaseTableItem(QTableWidget *widget, const QString& path)
+{
+  if(!path.isEmpty())
+  {
+    widget->insertRow(widget->rowCount());
+    widget->setItem(widget->rowCount() - 1, 0, new QTableWidgetItem(QDir::toNativeSeparators(path)));
+    widget->resizeColumnToContents(0);
+  }
+}
+
+void OptionsDialog::addDatabaseTableItems(QTableWidget *widget, const QStringList& strings)
+{
+  widget->clear();
+  widget->setRowCount(strings.size());
+  widget->setColumnCount(1);
+
+  for(int row = 0; row < strings.size(); row++)
+    widget->setItem(row, 0, new QTableWidgetItem(strings.at(row)));
+  widget->resizeColumnToContents(0);
 }

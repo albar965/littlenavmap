@@ -66,53 +66,54 @@ const static int UPDATE_RATE_MS = 250;
 DatabaseLoader::DatabaseLoader(QObject *parent)
   : QObject(parent)
 {
-  databaseInfoText = QObject::tr("<table>"
-                                   "<tbody>"
-                                     "<tr> "
-                                       "<td width=\"60\"><b>Files:</b>"
-                                       "</td>    "
-                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L6"
-                                       "</td> "
-                                       "<td width=\"60\"><b>VOR:</b>"
-                                       "</td> "
-                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L8"
-                                       "</td> "
-                                       "<td width=\"60\"><b>Markers:</b>"
-                                       "</td>     "
-                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L11"
-                                       "</td>"
-                                     "</tr>"
-                                     "<tr> "
-                                       "<td width=\"60\"><b>Airports:</b>"
-                                       "</td> "
-                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L7"
-                                       "</td> "
-                                       "<td width=\"60\"><b>ILS:</b>"
-                                       "</td> "
-                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L9"
-                                       "</td> "
-                                       "<td width=\"60\"><b>Waypoints:</b>"
-                                       "</td>  "
-                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L12"
-                                       "</td>"
-                                     "</tr>"
-                                     "<tr> "
-                                       "<td width=\"60\">"
-                                       "</td>"
-                                       "<td width=\"60\">"
-                                       "</td>"
-                                       "<td width=\"60\"><b>NDB:</b>"
-                                       "</td> "
-                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L10"
-                                       "</td> "
-                                       "<td width=\"60\"><b>Airspaces:</b>"
-                                       "</td>  "
-                                       "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L13"
-                                       "</td>"
-                                     "</tr>"
-                                   "</tbody>"
-                                 "</table>"
-                                 );
+  databaseInfoText = QObject::tr(
+    "<table>"
+      "<tbody>"
+        "<tr> "
+          "<td width=\"60\"><b>Files:</b>"
+          "</td>    "
+          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L6"
+          "</td> "
+          "<td width=\"60\"><b>VOR:</b>"
+          "</td> "
+          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L8"
+          "</td> "
+          "<td width=\"60\"><b>Markers:</b>"
+          "</td>     "
+          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L11"
+          "</td>"
+        "</tr>"
+        "<tr> "
+          "<td width=\"60\"><b>Airports:</b>"
+          "</td> "
+          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L7"
+          "</td> "
+          "<td width=\"60\"><b>ILS:</b>"
+          "</td> "
+          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L9"
+          "</td> "
+          "<td width=\"60\"><b>Waypoints:</b>"
+          "</td>  "
+          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L12"
+          "</td>"
+        "</tr>"
+        "<tr> "
+          "<td width=\"60\">"
+          "</td>"
+          "<td width=\"60\">"
+          "</td>"
+          "<td width=\"60\"><b>NDB:</b>"
+          "</td> "
+          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L10"
+          "</td> "
+          "<td width=\"60\"><b>Airspaces:</b>"
+          "</td>  "
+          "<td width=\"60\">&nbsp;&nbsp;&nbsp;&nbsp;%L13"
+          "</td>"
+        "</tr>"
+      "</tbody>"
+    "</table>"
+    );
 
   databaseTimeText = QObject::tr(
     "<b>%1</b><br/>" // Scenery:
@@ -180,13 +181,17 @@ void DatabaseLoader::loadScenery()
   // Add exclude paths from option dialog ===================
   const OptionData& optionData = OptionData::instance();
 
-  // Add add-on excludes for files and directories ================================================
-  for(const QString& path : optionData.getDatabaseAddonExclude())
-    navDatabaseOpts->addAddonExcludeGui(path);
+  // Add include directories ================================================
+  for(const QString& path : optionData.getDatabaseInclude())
+    navDatabaseOpts->addIncludeGui(path);
 
   // Add excludes for files and directories ================================================
   for(const QString& path : optionData.getDatabaseExclude())
     navDatabaseOpts->addExcludeGui(path);
+
+  // Add add-on excludes for files and directories ================================================
+  for(const QString& path : optionData.getDatabaseAddonExclude())
+    navDatabaseOpts->addAddonExcludeGui(path);
 
   // Select simulator db to load
   navDatabaseOpts->setSimulatorType(selectedFsType);

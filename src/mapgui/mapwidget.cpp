@@ -746,7 +746,7 @@ bool MapWidget::mousePressCheckModifierActions(QMouseEvent *event)
       {
         if(NavApp::isGlobeOfflineProvider())
           pos.setAltitude(NavApp::getElevationProvider()->getElevationFt(pos));
-        emit addUserpointFromMap(result, pos);
+        emit addUserpointFromMap(result, pos, false /* airportAddon */);
       }
     }
     // Measurement =======================================================================
@@ -2002,10 +2002,16 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
           NavApp::getRouteController()->editUserWaypointName(contextMenu.getSelectedRouteIndex());
           break;
 
+        case mc::MARKAIRPORTADDON:
+          if(NavApp::isGlobeOfflineProvider())
+            pos.setAltitude(NavApp::getElevationProvider()->getElevationFt(pos));
+          emit addUserpointFromMap(result, pos, true /* airportAddon */);
+          break;
+
         case mc::USERPOINTADD:
           if(NavApp::isGlobeOfflineProvider())
             pos.setAltitude(NavApp::getElevationProvider()->getElevationFt(pos));
-          emit addUserpointFromMap(result, pos);
+          emit addUserpointFromMap(result, pos, false /* airportAddon */);
           break;
 
         case mc::USERPOINTEDIT:

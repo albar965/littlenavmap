@@ -27,7 +27,6 @@
 #include "gui/dialog.h"
 #include "gui/itemviewzoomhandler.h"
 #include "logbook/logdatacontroller.h"
-#include "mapgui/mapmarkhandler.h"
 #include "mapgui/mapwidget.h"
 #include "navapp.h"
 #include "options/optiondata.h"
@@ -1236,9 +1235,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   int selectedRows = getSelectedRowCount();
   QMenu menu;
   menu.setToolTipsVisible(NavApp::isMenuToolTipsVisible());
-  if(atools::contains(tabIndex,
-                      {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_LOG, si::SEARCH_ONLINE_CENTER,
-                       si::SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(tabIndex, {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_LOG, si::SEARCH_ONLINE_CENTER,
+                                 si::SEARCH_ONLINE_CLIENT}))
   {
     menu.addAction(ui->actionSearchShowInformation);
     menu.addAction(ui->actionSearchShowOnMap);
@@ -1276,6 +1274,9 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addAction(ui->actionUserdataAdd);
     menu.addAction(ui->actionUserdataEdit);
     menu.addAction(ui->actionUserdataDelete);
+    menu.addSeparator();
+
+    menu.addAction(ui->actionUserdataCleanup);
     menu.addSeparator();
   } // if(tabIndex == si::SEARCH_USER)
 
@@ -1321,7 +1322,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addSeparator();
   }
 
-  if(atools::contains(tabIndex, {si::SEARCH_LOG}))
+  if(tabIndex == si::SEARCH_LOG)
   {
     menu.addAction(ui->actionLogdataAdd);
     menu.addAction(ui->actionLogdataEdit);
@@ -1358,10 +1359,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     filesSub->addSeparator();
     filesSub->addAction(ui->actionSearchLogdataSaveGpxAs);
     menu.addSeparator();
-  }
 
-  if(tabIndex == si::SEARCH_LOG)
-  {
     if(selectedRows > 1)
     {
       ui->actionLogdataEdit->setText(tr("&Edit Logbook Entries ..."));
@@ -1433,11 +1431,10 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
       ui->actionLogdataPerfLoad->setText(ui->actionLogdataPerfLoad->text().arg(QString()));
   } // if(tabIndex == si::SEARCH_LOG)
 
-  if(atools::contains(tabIndex,
-                      {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_LOG, si::SEARCH_ONLINE_CENTER,
-                       si::SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(tabIndex, {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_LOG, si::SEARCH_ONLINE_CENTER,
+                                 si::SEARCH_ONLINE_CLIENT}))
   {
-    if(atools::contains(tabIndex, {si::SEARCH_LOG}))
+    if(tabIndex == si::SEARCH_LOG)
     {
       // Logbook display options menu =======================
       QMenu *sub = menu.addMenu(tr("&View Options"));
@@ -1457,9 +1454,8 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     menu.addSeparator();
   }
 
-  if(atools::contains(tabIndex,
-                      {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_LOG, si::SEARCH_ONLINE_CENTER,
-                       si::SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(tabIndex, {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_LOG, si::SEARCH_ONLINE_CENTER,
+                                 si::SEARCH_ONLINE_CLIENT}))
   {
     menu.addAction(followModeAction());
     menu.addSeparator();
@@ -1473,9 +1469,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   menu.addAction(ui->actionSearchResetView);
   menu.addSeparator();
 
-  if(atools::contains(tabIndex,
-                      {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER,
-                       si::SEARCH_ONLINE_CLIENT}))
+  if(atools::contains(tabIndex, {si::SEARCH_AIRPORT, si::SEARCH_NAV, si::SEARCH_USER, si::SEARCH_ONLINE_CENTER, si::SEARCH_ONLINE_CLIENT}))
     menu.addAction(ui->actionSearchSetMark);
 
   QAction *action = menu.exec(menuPos);

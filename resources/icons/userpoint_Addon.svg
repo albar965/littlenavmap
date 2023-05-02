@@ -75,16 +75,16 @@
      id="layer1"
      transform="translate(0,-263.13332)">
     <circle
-       style="fill:none;fill-opacity:1;stroke:#010000;stroke-width:6.51012;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="fill:none;fill-opacity:1;stroke:#010000;stroke-width:7.95018;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path5166-3"
        cx="16.809282"
        cy="280.11539"
-       r="13.292035" />
+       r="12.481197" />
     <circle
-       style="opacity:1;fill:none;fill-opacity:1;stroke:#ffff00;stroke-width:3.72007;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+       style="opacity:1;fill:none;fill-opacity:1;stroke:#ffff00;stroke-width:4.47198;stroke-linecap:square;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="path5166"
-       cx="16.904463"
-       cy="280.05389"
-       r="13.292035" />
+       cx="16.898657"
+       cy="280.05765"
+       r="12.481197" />
   </g>
 </svg>
