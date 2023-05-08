@@ -56,7 +56,7 @@ void MapVisible::updateVisibleObjectsStatusBar()
       tr("<p style='white-space:pre'>The currently selected scenery database for the simulator is empty.<br/>Go to: "
            "Main menu -&gt; \"Scenery Library\" -&gt; \"Load Scenery Library\" "
            "or press <code>Ctrl+Shift+L</code>.<br/>"
-           "Then choose the simulator and press \"Load\".</p>",
+           "Then select the simulator and press \"Load\".</p>",
          "Keep instructions in sync with translated menus and shortcuts"));
   }
   else

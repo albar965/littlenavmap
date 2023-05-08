@@ -114,7 +114,7 @@ InfoController::InfoController(MainWindow *parent)
   notConnectedText = tr("Not connected to simulator.\n\n"
                         "Go to the main menu -> \"Tools\" -> \"Connect to Flight Simulator\" "
                         "or press \"Ctrl+Shift+C\".\n"
-                        "Then choose the simulator and click \"Connect\".\n",
+                        "Then select the simulator and click \"Connect\".\n",
                         "Keep instructions in sync with translated menus and shortcuts");
 
   aircraftProgressConfig = new AircraftProgressConfig(mainWindow);

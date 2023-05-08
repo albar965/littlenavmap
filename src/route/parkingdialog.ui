@@ -65,7 +65,7 @@
    <item>
     <widget class="QTableWidget" name="tableWidgetSelectParking">
      <property name="toolTip">
-      <string>Choose a start position for the departure airport.</string>
+      <string>Select a start position for the departure airport.</string>
      </property>
      <property name="editTriggers">
       <set>QAbstractItemView::NoEditTriggers</set>

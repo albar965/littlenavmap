@@ -179,7 +179,7 @@ void ElevationProvider::updateReader()
                                    tr("GLOBE elevation data directory is not valid:<br/>\"%1\"<br/><br/>"
                                       "Go to main menu -&gt; \"Tools\" -&gt; \"Options\" and then<br/>"
                                       "to page \"Cache and Files\". Then click \"Select GLOBE Directory\" and<br/>"
-                                      "choose the correct place with the GLOBE elevation files.",
+                                      "select the correct place with the GLOBE elevation files.",
                                       "Keep instructions in sync with translated menus").arg(path));
     }
     else
