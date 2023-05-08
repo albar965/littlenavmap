@@ -99,12 +99,14 @@ const QLatin1String ACTIONS_SHOW_XP11_WEATHER_FILE_NO_SIM("Actions/Xplane11Weath
 const QLatin1String ACTIONS_SHOW_XP12_WEATHER_FILE_NO_SIM("Actions/Xplane12WeatherFileNoSim");
 
 const QLatin1String ACTIONS_SHOW_DATABASE_OLD("Actions/DatabaseOld");
-const QLatin1String ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH("Actions/DatabaseMsfsNavigraph");
-const QLatin1String ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_OFF("Actions/DatabaseMsfsNavigraphOff");
-const QLatin1String ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL("Actions/DatabaseMsfsNavigraphAll");
-const QLatin1String ACTIONS_SHOW_DATABASE_CYCLE_MISMATCH("Actions/DatabaseCycleMismatch");
-const QLatin1String ACTIONS_SHOW_DATABASE_CYCLE_MATCH("Actions/DatabaseCycleMatch");
+const QLatin1String ACTIONS_SHOW_CORRECT_MSFS_HAS_NAVIGRAPH("Actions/DatabaseMsfsNavigraph");
+const QLatin1String ACTIONS_SHOW_CORRECT_MSFS_NO_NAVIGRAPH("Actions/DatabaseMsfsNavigraphOff");
+const QLatin1String ACTIONS_SHOW_CORRECT_XP_CYCLE_NAV_SMALLER("Actions/DatabaseCycleMismatch");
+const QLatin1String ACTIONS_SHOW_CORRECT_XP_CYCLE_NAV_EQUAL("Actions/DatabaseCycleMatch");
+const QLatin1String ACTIONS_SHOW_CORRECT_FSX_P3D_UPDATED("Actions/DatabaseFsxP3dUpdated");
+const QLatin1String ACTIONS_SHOW_CORRECT_FSX_P3D_OUTDATED("Actions/DatabaseFsxP3dOutdated");
 const QLatin1String ACTIONS_SHOW_DATABASE_BACKGROUND_HINT("Actions/DatabaseBackgroundHint");
+const QLatin1String ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL("Actions/DatabaseMsfsNavigraphAll");
 
 const QLatin1String ACTIONS_SHOW_SSL_WARNING_ONLINE("Actions/SslWarningOnline");
 const QLatin1String ACTIONS_SHOW_SSL_WARNING_WIND("Actions/SslWarningWind");
@@ -123,7 +125,8 @@ const QLatin1String ACTIONS_SHOW_ZOOM_WARNING("Actions/ShowZoomsWarning");
 const QLatin1String DATABASE_BASEPATH("Database/BasePath");
 const QLatin1String DATABASE_LOADINGSIMULATOR("Database/LoadingSimulator");
 const QLatin1String DATABASE_PATHS("Database/Paths2");
-const QLatin1String DATABASE_USE_NAV("Database/UseNav");
+const QLatin1String DATABASE_NAVDB_STATUS("Database/UseNav");
+const QLatin1String DATABASE_NAVDB_AUTO("Database/NavDbAuto");
 const QLatin1String DATABASE_SCENERYCONFIG("Database/SceneryConfig");
 const QLatin1String DATABASE_SIMULATOR("Database/Simulator");
 const QLatin1String DATABASE_LOAD_INACTIVE("Database/LoadInactive");

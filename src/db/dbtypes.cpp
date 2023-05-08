@@ -23,7 +23,7 @@
 
 using atools::fs::FsPaths;
 
-void SimulatorTypeMap::fillDefault(dbstat::NavdatabaseStatus navDatabaseStatus)
+void SimulatorTypeMap::fillDefault(navdb::Status navDatabaseStatus)
 {
   for(FsPaths::SimulatorType type : FsPaths::getAllSimulatorTypes())
     fillOneDefault(type, navDatabaseStatus);
@@ -90,7 +90,7 @@ QList<FsPaths::SimulatorType> SimulatorTypeMap::getAllHavingDatabase() const
   return retval;
 }
 
-void SimulatorTypeMap::fillOneDefault(FsPaths::SimulatorType type, dbstat::NavdatabaseStatus navDatabaseStatus)
+void SimulatorTypeMap::fillOneDefault(FsPaths::SimulatorType type, navdb::Status navDatabaseStatus)
 {
   // Simulator is installed - create a new entry or update the present one
   FsPathType& path = (*this)[type];
@@ -101,12 +101,12 @@ void SimulatorTypeMap::fillOneDefault(FsPaths::SimulatorType type, dbstat::Navda
     path.sceneryCfg = FsPaths::getSceneryLibraryPath(type);
 
   // Assign status if passed to this function
-  if(navDatabaseStatus != dbstat::NAVDATABASE_UNKNOWN)
-    path.navdatabaseStatus = navDatabaseStatus;
+  if(navDatabaseStatus != navdb::UNKNOWN)
+    path.navDatabaseStatus = navDatabaseStatus;
 
   // Reset to mixed if invalid
-  if(path.navdatabaseStatus == dbstat::NAVDATABASE_UNKNOWN)
-    path.navdatabaseStatus = dbstat::NAVDATABASE_MIXED;
+  if(path.navDatabaseStatus == navdb::UNKNOWN)
+    path.navDatabaseStatus = navdb::MIXED;
 
   // If already present or not - this one has a registry entry or an installation file for X-Plane
   path.isInstalled = FsPaths::hasSimulator(type);
@@ -126,7 +126,7 @@ QDebug operator<<(QDebug out, const FsPathType& record)
 
 QDataStream& operator<<(QDataStream& out, const FsPathType& obj)
 {
-  out << obj.basePath << obj.sceneryCfg << static_cast<quint8>(obj.navdatabaseStatus);
+  out << obj.basePath << obj.sceneryCfg << static_cast<quint8>(obj.navDatabaseStatus);
   return out;
 }
 
@@ -137,7 +137,7 @@ QDataStream& operator>>(QDataStream& in, FsPathType& obj)
 
   obj.basePath = QDir::toNativeSeparators(obj.basePath);
   obj.sceneryCfg = QDir::toNativeSeparators(obj.sceneryCfg);
-  obj.navdatabaseStatus = static_cast<dbstat::NavdatabaseStatus>(navStatus);
+  obj.navDatabaseStatus = static_cast<navdb::Status>(navStatus);
 
   return in;
 }

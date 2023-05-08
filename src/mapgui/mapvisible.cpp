@@ -49,7 +49,7 @@ MapVisible::~MapVisible()
 /* Update the visible objects indication in the status bar. */
 void MapVisible::updateVisibleObjectsStatusBar()
 {
-  if(!NavApp::hasDataInDatabase())
+  if(simDbEmpty)
   {
     NavApp::getMainWindow()->setMapObjectsShownMessageText(
       atools::util::HtmlBuilder::errorMessage(tr("Database is empty")),
@@ -441,4 +441,10 @@ void MapVisible::updateVisibleObjectsStatusBar()
     else
       NavApp::getMainWindow()->setMapObjectsShownMessageText(tr("—"), tr("Nothing shown. Zoom in to see map features."));
   } // if(!NavApp::hasDataInDatabase()) ... else
+}
+
+void MapVisible::postDatabaseLoad()
+{
+  // Remember value since call is expensive
+  simDbEmpty = !NavApp::hasDataInSimDatabase();
 }

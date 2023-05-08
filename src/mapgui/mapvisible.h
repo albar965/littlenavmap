@@ -34,8 +34,11 @@ public:
 
   void updateVisibleObjectsStatusBar();
 
+  void postDatabaseLoad();
+
 private:
   MapPaintLayer *paintLayer;
+  bool simDbEmpty = false;
 };
 
 #endif // MAPVISIBLEOBJECTSTATUS_H

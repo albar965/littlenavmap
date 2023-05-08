@@ -49,12 +49,12 @@
 #include <QDir>
 
 using atools::sql::SqlUtil;
-using atools::fs::FsPaths;
 using atools::fs::NavDatabase;
 using atools::settings::Settings;
 using atools::sql::SqlDatabase;
 using atools::sql::SqlTransaction;
 using atools::fs::db::DatabaseMeta;
+using atools::fs::FsPaths;
 
 // Maximum age of database before showing a warning dialog
 const static int MAX_AGE_DAYS = 60;
@@ -70,7 +70,7 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   // Keeps MSFS translations from table "translation" in memory
   languageIndex = new atools::fs::scenery::LanguageJson;
 
-  // Also loads list of simulators
+  // Also loads list of simulators from settings ======================================
   restoreState();
 
   databaseDirectory = Settings::getPath() + QDir::separator() + lnm::DATABASE_DIR;
@@ -80,13 +80,13 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
   QString name = buildDatabaseFileName(FsPaths::NAVIGRAPH);
   if(name.isEmpty() && !QFile::exists(name))
     // Set to off if not database found
-    navDatabaseStatus = dbstat::NAVDATABASE_OFF;
+    navDatabaseStatus = navdb::OFF;
 
   // Find simulators by default registry entries and pre-fill the navDatabaseStatus if the list is empty (i.e. new)
-  simulators.fillDefault(simulators.isEmpty() ? navDatabaseStatus : dbstat::NAVDATABASE_UNKNOWN);
+  simulators.fillDefault(simulators.isEmpty() ? navDatabaseStatus : navdb::UNKNOWN);
 
   // Take navdatabase status from current sim selection
-  navDatabaseStatus = simulators[currentFsType].navdatabaseStatus;
+  navDatabaseStatus = simulators[currentFsType].navDatabaseStatus;
 
   // Find any stale databases that do not belong to a simulator and update installed and has database flags
   updateSimulatorFlags();
@@ -191,10 +191,14 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
     }
   }
 
+  // Run if instantiated from the GUI
   if(mainWindow != nullptr)
   {
     databaseLoader = new DatabaseLoader(mainWindow);
     connect(databaseLoader, &DatabaseLoader::loadingFinished, this, &DatabaseManager::loadSceneryInternalPost);
+
+    // Correct navdata selection automatically if enabled
+    assignSceneryCorrection();
   }
 }
 
@@ -427,7 +431,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
   if(QFile::exists(appDb))
   {
     // Database in application directory
-    const DatabaseMeta appMeta = metaFromFile(appDb);
+    const DatabaseMeta appMeta = databaseMetadataFromFile(appDb);
     appLastLoad = appMeta.getLastLoadTime();
     appCycle = appMeta.getAiracCycle();
     appSource = appMeta.getDataSource();
@@ -437,7 +441,7 @@ void DatabaseManager::checkCopyAndPrepareDatabases()
   if(QFile::exists(settingsDb))
   {
     // Database in settings directory
-    const DatabaseMeta settingsMeta = metaFromFile(settingsDb);
+    const DatabaseMeta settingsMeta = databaseMetadataFromFile(settingsDb);
     settingsLastLoad = settingsMeta.getLastLoadTime();
     settingsCycle = settingsMeta.getAiracCycle();
     settingsSource = settingsMeta.getDataSource();
@@ -577,10 +581,10 @@ bool DatabaseManager::isAirportDatabaseXPlane(bool navdata) const
 {
   if(navdata)
     // Fetch from navdatabase - X-Plane airport only if navdata is not used
-    return atools::fs::FsPaths::isAnyXplane(currentFsType) && navDatabaseStatus == dbstat::NAVDATABASE_OFF;
+    return atools::fs::FsPaths::isAnyXplane(currentFsType) && navDatabaseStatus == navdb::OFF;
   else
     // Fetch from sim database - X-Plane airport only if navdata is not used for all
-    return atools::fs::FsPaths::isAnyXplane(currentFsType) && navDatabaseStatus != dbstat::NAVDATABASE_ALL;
+    return atools::fs::FsPaths::isAnyXplane(currentFsType) && navDatabaseStatus != navdb::ALL;
 }
 
 QString DatabaseManager::getCurrentSimulatorBasePath() const
@@ -708,15 +712,15 @@ void DatabaseManager::insertSimSwitchActions()
     ui->actionReloadScenery->setText(tr("Load Scenery Library (no simulator)"));
 
   // Noting to select if there is only one option ========================
-  if(actions.size() == 1)
-    actions.constFirst()->setDisabled(true);
+  if(simDbActions.size() == 1)
+    simDbActions.constFirst()->setDisabled(true);
 
   // Insert Navigraph menu ==================================
   QString file = buildDatabaseFileName(FsPaths::NAVIGRAPH);
 
   if(!file.isEmpty())
   {
-    const atools::fs::db::DatabaseMeta meta = metaFromFile(file);
+    const DatabaseMeta meta = databaseMetadataFromFile(file);
     QString cycle = meta.getAiracCycle();
     QString suffix;
 
@@ -737,23 +741,30 @@ void DatabaseManager::insertSimSwitchActions()
     navDbSubMenu->setToolTipsVisible(NavApp::isMenuToolTipsVisible());
     navDbGroup = new QActionGroup(navDbSubMenu);
 
+    navDbActionAuto = new QAction(tr("&Select Automatically").arg(dbname), navDbSubMenu);
+    navDbActionAuto->setCheckable(true);
+    navDbActionAuto->setChecked(navDatabaseAuto);
+    navDbActionAuto->setStatusTip(tr("Select best navdata mode for simulator").arg(dbname));
+    navDbSubMenu->addAction(navDbActionAuto);
+    navDbSubMenu->addSeparator();
+
     navDbActionAll = new QAction(tr("Use %1 for &all Features").arg(dbname), navDbSubMenu);
     navDbActionAll->setCheckable(true);
-    navDbActionAll->setChecked(navDatabaseStatus == dbstat::NAVDATABASE_ALL);
+    navDbActionAll->setChecked(navDatabaseStatus == navdb::ALL);
     navDbActionAll->setStatusTip(tr("Use all of %1 database features").arg(dbname));
     navDbActionAll->setActionGroup(navDbGroup);
     navDbSubMenu->addAction(navDbActionAll);
 
-    navDbActionBlend = new QAction(tr("Use %1 for &Navaids and Procedures").arg(dbname), navDbSubMenu);
-    navDbActionBlend->setCheckable(true);
-    navDbActionBlend->setChecked(navDatabaseStatus == dbstat::NAVDATABASE_MIXED);
-    navDbActionBlend->setStatusTip(tr("Use only navaids, airways, airspaces and procedures from %1 database").arg(dbname));
-    navDbActionBlend->setActionGroup(navDbGroup);
-    navDbSubMenu->addAction(navDbActionBlend);
+    navDbActionMixed = new QAction(tr("Use %1 for &Navaids and Procedures").arg(dbname), navDbSubMenu);
+    navDbActionMixed->setCheckable(true);
+    navDbActionMixed->setChecked(navDatabaseStatus == navdb::MIXED);
+    navDbActionMixed->setStatusTip(tr("Use only navaids, airways, airspaces and procedures from %1 database").arg(dbname));
+    navDbActionMixed->setActionGroup(navDbGroup);
+    navDbSubMenu->addAction(navDbActionMixed);
 
     navDbActionOff = new QAction(tr("Do &not use %1 database").arg(dbname), navDbSubMenu);
     navDbActionOff->setCheckable(true);
-    navDbActionOff->setChecked(navDatabaseStatus == dbstat::NAVDATABASE_OFF);
+    navDbActionOff->setChecked(navDatabaseStatus == navdb::OFF);
     navDbActionOff->setStatusTip(tr("Do not use %1 database").arg(dbname));
     navDbActionOff->setActionGroup(navDbGroup);
     navDbSubMenu->addAction(navDbActionOff);
@@ -761,9 +772,14 @@ void DatabaseManager::insertSimSwitchActions()
     ui->menuDatabase->insertMenu(ui->menuViewAirspaceSource->menuAction(), navDbSubMenu);
     menuNavDbSeparator = ui->menuDatabase->insertSeparator(ui->menuViewAirspaceSource->menuAction());
 
+    // triggered() does not send signal on programmatic change
+    connect(navDbActionAuto, &QAction::triggered, this, &DatabaseManager::switchNavAutoFromMainMenu);
     connect(navDbActionAll, &QAction::triggered, this, &DatabaseManager::switchNavFromMainMenu);
-    connect(navDbActionBlend, &QAction::triggered, this, &DatabaseManager::switchNavFromMainMenu);
+    connect(navDbActionMixed, &QAction::triggered, this, &DatabaseManager::switchNavFromMainMenu);
     connect(navDbActionOff, &QAction::triggered, this, &DatabaseManager::switchNavFromMainMenu);
+
+    // Enable nav selection menu items depending on automatic state
+    updateNavMenuStatus();
   }
 }
 
@@ -778,13 +794,13 @@ void DatabaseManager::insertSimSwitchAction(atools::fs::FsPaths::SimulatorType t
     action->setActionGroup(simDbGroup);
 
     menu->insertAction(before, action);
-    actions.append(action);
+    simDbActions.append(action);
   }
   else
   {
     QString suffix;
     QStringList atts;
-    const atools::fs::db::DatabaseMeta meta = metaFromFile(buildDatabaseFileName(type));
+    const DatabaseMeta meta = databaseMetadataFromFile(buildDatabaseFileName(type));
     if(atools::fs::FsPaths::isAnyXplane(type))
     {
       QString cycle = meta.getAiracCycle();
@@ -829,16 +845,36 @@ void DatabaseManager::insertSimSwitchAction(atools::fs::FsPaths::SimulatorType t
     menu->insertAction(before, action);
 
     connect(action, &QAction::triggered, this, &DatabaseManager::switchSimFromMainMenu);
-    actions.append(action);
+    simDbActions.append(action);
   }
 }
 
-/* User changed simulator in main menu */
+void DatabaseManager::updateNavMenuStatus()
+{
+  navDbActionAll->setDisabled(navDatabaseAuto);
+  navDbActionMixed->setDisabled(navDatabaseAuto);
+  navDbActionOff->setDisabled(navDatabaseAuto);
+}
+
+/* User changed nav auto main menu */
+void DatabaseManager::switchNavAutoFromMainMenu()
+{
+  qDebug() << Q_FUNC_INFO;
+  navDatabaseAuto = navDbActionAuto->isChecked();
+  updateNavMenuStatus();
+  switchSimInternal(currentFsType);
+}
+
+/* User changed navdatabase in main menu */
 void DatabaseManager::switchNavFromMainMenu()
 {
   qDebug() << Q_FUNC_INFO;
 
+  if(navDatabaseAuto) // Should never appear here
+    return;
+
   bool switchDatabase = true;
+
   if(navDbActionAll->isChecked())
   {
     QUrl url = atools::gui::HelpHandler::getHelpUrlWeb(lnm::helpOnlineNavdatabasesUrl, lnm::helpLanguageOnline());
@@ -859,10 +895,10 @@ void DatabaseManager::switchNavFromMainMenu()
     if(result == QMessageBox::No)
     {
       // Revert to previous mode
-      atools::gui::SignalBlocker blocker({navDbActionBlend, navDbActionOff, navDbActionAll});
+      atools::gui::SignalBlocker blocker({navDbActionMixed, navDbActionOff, navDbActionAll});
       navDbActionAll->setChecked(false);
-      navDbActionBlend->setChecked(navDatabaseStatus == dbstat::NAVDATABASE_MIXED);
-      navDbActionOff->setChecked(navDatabaseStatus == dbstat::NAVDATABASE_OFF);
+      navDbActionMixed->setChecked(navDatabaseStatus == navdb::MIXED);
+      navDbActionOff->setChecked(navDatabaseStatus == navdb::OFF);
       switchDatabase = false;
     }
   }
@@ -880,20 +916,22 @@ void DatabaseManager::switchNavFromMainMenu()
     QString text;
     if(navDbActionAll->isChecked())
     {
-      navDatabaseStatus = dbstat::NAVDATABASE_ALL;
+      navDatabaseStatus = navdb::ALL;
       text = tr("Enabled all features for %1.");
     }
-    else if(navDbActionBlend->isChecked())
+    else if(navDbActionMixed->isChecked())
     {
-      navDatabaseStatus = dbstat::NAVDATABASE_MIXED;
+      navDatabaseStatus = navdb::MIXED;
       text = tr("Enabled navaids, airways, airspaces and procedures for %1.");
     }
     else if(navDbActionOff->isChecked())
     {
-      navDatabaseStatus = dbstat::NAVDATABASE_OFF;
+      navDatabaseStatus = navdb::OFF;
       text = tr("Disabled %1.");
     }
-    simulators[currentFsType].navdatabaseStatus = navDatabaseStatus;
+
+    // Remember nav selection value for simulator
+    simulators[currentFsType].navDatabaseStatus = navDatabaseStatus;
 
     qDebug() << Q_FUNC_INFO << "usingNavDatabase" << navDatabaseStatus;
 
@@ -916,37 +954,53 @@ void DatabaseManager::switchSimFromMainMenu()
 
   qDebug() << Q_FUNC_INFO << (action != nullptr ? action->text() : "null");
 
-  if(action != nullptr && currentFsType != action->data().value<atools::fs::FsPaths::SimulatorType>())
+  if(action != nullptr)
   {
-    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
-
-    // Disconnect all queries
-    emit preDatabaseLoad();
-
-    clearLanguageIndex();
-    closeAllDatabases();
-
-    // Set new simulator
-    currentFsType = action->data().value<atools::fs::FsPaths::SimulatorType>();
-    navDatabaseStatus = simulators.value(currentFsType).navdatabaseStatus;
-
-    openAllDatabases();
-    loadLanguageIndex();
-
-    QGuiApplication::restoreOverrideCursor();
-
-    // Reopen all with new database
-    emit postDatabaseLoad(currentFsType);
-    mainWindow->setStatusMessage(tr("Switched to %1.").arg(FsPaths::typeToDisplayName(currentFsType)));
-
-    saveState();
-    checkDatabaseVersion();
+    atools::fs::FsPaths::SimulatorType type = action->data().value<atools::fs::FsPaths::SimulatorType>();
+    if(currentFsType != type)
+      // Switch only if changed
+      switchSimInternal(type);
   }
+}
+
+void DatabaseManager::switchSimInternal(atools::fs::FsPaths::SimulatorType type)
+{
+  qDebug() << Q_FUNC_INFO;
+
+  QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+
+  // Disconnect all queries
+  emit preDatabaseLoad();
+
+  clearLanguageIndex();
+  closeAllDatabases();
+
+  // Set new simulator
+  currentFsType = type;
+
+  if(navDatabaseAuto)
+    // Correct navdata selection automatically if enabled
+    assignSceneryCorrection();
+  else
+    // Assign navdata status from remembered value from simulator
+    navDatabaseStatus = simulators.value(currentFsType).navDatabaseStatus;
+
+  openAllDatabases();
+  loadLanguageIndex();
+
+  QGuiApplication::restoreOverrideCursor();
+
+  // Reopen all with new database
+  emit postDatabaseLoad(currentFsType);
+  mainWindow->setStatusMessage(tr("Switched to %1.").arg(FsPaths::typeToDisplayName(currentFsType)));
+
+  saveState();
+  checkDatabaseVersion();
 
   {
     // Check and uncheck manually since the QActionGroup is unreliable
-    atools::gui::SignalBlocker blocker(actions);
-    for(QAction *act : actions)
+    atools::gui::SignalBlocker blocker(simDbActions);
+    for(QAction *act : simDbActions)
       act->setChecked(act->data().value<atools::fs::FsPaths::SimulatorType>() == currentFsType);
   }
 }
@@ -1045,9 +1099,9 @@ void DatabaseManager::openAllDatabases()
   QString simAirspaceDbFile = simDbFile;
   QString navAirspaceDbFile = navDbFile;
 
-  if(navDatabaseStatus == dbstat::NAVDATABASE_ALL)
+  if(navDatabaseStatus == navdb::ALL)
     simDbFile = navDbFile;
-  else if(navDatabaseStatus == dbstat::NAVDATABASE_OFF)
+  else if(navDatabaseStatus == navdb::OFF)
     navDbFile = simDbFile;
   // else if(usingNavDatabase == MIXED)
 
@@ -1165,191 +1219,286 @@ void DatabaseManager::loadSceneryPost()
 #endif
 }
 
-const atools::fs::db::DatabaseMeta DatabaseManager::databaseMetadata(atools::fs::FsPaths::SimulatorType type)
+const atools::fs::db::DatabaseMeta DatabaseManager::databaseMetadataFromType(atools::fs::FsPaths::SimulatorType type) const
 {
-  // Get simulator database independent of settings in menu which might result in nav and sim using the same files =======
-
-  // Open temporary database and read metadata
-  SqlDatabase tempDb(dbtools::DATABASE_NAME_TEMP);
-  dbtools::openDatabaseFile(&tempDb, buildDatabaseFileName(type), true /* readonly */, false /* createSchema */);
-  DatabaseMeta metaSim(tempDb);
-  metaSim.deInit();
-  dbtools::closeDatabaseFile(&tempDb);
-  return metaSim;
+  return databaseMetadataFromFile(buildDatabaseFileName(type));
 }
 
-void DatabaseManager::checkSceneryOptions(bool manualCheck)
+const atools::fs::db::DatabaseMeta DatabaseManager::databaseMetadataFromFile(const QString& file) const
 {
-  bool corrected = false, foundIssues = false;
-
   // Get simulator database independent of settings in menu which might result in nav and sim using the same files =======
-  const atools::fs::db::DatabaseMeta metaSim = databaseMetadata(currentFsType);
+  // Open temporary database and read metadata
+  SqlDatabase tempDb(dbtools::DATABASE_NAME_TEMP);
+  dbtools::openDatabaseFile(&tempDb, file, true /* readonly */, false /* createSchema */);
+  DatabaseMeta meta(tempDb);
+  meta.deInit();
+  dbtools::closeDatabaseFile(&tempDb);
+  return meta;
+}
 
-  if(currentFsType == atools::fs::FsPaths::MSFS)
+void DatabaseManager::assignSceneryCorrection()
+{
+  if(navDatabaseAuto)
   {
-    // ======================================================================================================
-    // Notify user and correct scenery mode after loading MSFS ==============================================
-    bool hasNavigraphUpdate = metaSim.hasProperty(atools::fs::db::PROPERTYNAME_MSFS_NAVIGRAPH_FOUND);
-
-    if(hasNavigraphUpdate || databaseLoader->getResultFlags().testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND))
+    navdb::Correction correction = getSceneryCorrection(navDatabaseStatus, currentFsType);
+    switch(correction)
     {
-      if(navDatabaseStatus != dbstat::NAVDATABASE_MIXED)
-      {
-        foundIssues = true;
-        // Navigraph update for MSFS used - Use Navigraph for Navaids and Procedures ================================
-        int result =
-          dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH,
-                                     tr("<p style='white-space:pre'>You are using MSFS with the Navigraph navdata update.</p>"
-                                          "<p>You should update the Little Navmap navdata with the "
-                                            "Navigraph FMS Data Manager as well and use the right scenery library mode "
-                                            "\"Use Navigraph for Navaids and Procedures\" "
-                                            "to avoid issues with airport information in Little Navmap.</p>"
-                                            "<p style='white-space:pre'>You can change the mode manually in the menu<br/>"
-                                            "\"Scenery Library\" -> \"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
-                                            "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
-                                     manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
-                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
+      case navdb::CORRECT_ALL:
+      case navdb::CORRECT_MSFS_HAS_NAVIGRAPH:
+      case navdb::CORRECT_XP_CYCLE_NAV_EQUAL:
+      case navdb::CORRECT_FSX_P3D_UPDATED:
+        // Assign value to simulator too to remember value
+        simulators[currentFsType].navDatabaseStatus = navDatabaseStatus = navdb::MIXED;
+        break;
 
-        if(result == QMessageBox::Yes)
-        {
-          corrected = true;
-          navDbActionBlend->setChecked(true);
-          switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
-        }
+      case navdb::CORRECT_MSFS_NO_NAVIGRAPH:
+      case navdb::CORRECT_XP_CYCLE_NAV_SMALLER:
+      case navdb::CORRECT_FSX_P3D_OUTDATED:
+        // Assign value to simulator too to remember value
+        simulators[currentFsType].navDatabaseStatus = navDatabaseStatus = navdb::OFF;
+        break;
+
+      case navdb::CORRECT_EMPTY:
+        // Assign value to simulator too to remember value
+        simulators[currentFsType].navDatabaseStatus = navDatabaseStatus = navdb::ALL;
+        break;
+
+      case navdb::CORRECT_NONE:
+        // Nothing to correct
+        break;
+    }
+
+    qDebug() << Q_FUNC_INFO << navDatabaseStatus;
+  }
+}
+
+navdb::Correction DatabaseManager::getSceneryCorrection(const navdb::Status& navDbStatus, atools::fs::FsPaths::SimulatorType simType) const
+{
+  // Get simulator database independent of settings in menu which might result in nav and sim using the same files =======
+  const DatabaseMeta metaSim = databaseMetadataFromType(simType);
+  const DatabaseMeta metaNav = databaseMetadataFromType(FsPaths::NAVIGRAPH);
+  navdb::Correction correction = navdb::CORRECT_NONE;
+
+  if(metaSim.hasData())
+  {
+    if(simType == atools::fs::FsPaths::MSFS)
+    {
+      // ======================================================================================================
+      // Correct scenery mode for MSFS ==============================================
+      bool hasNavigraphUpdate = metaSim.hasProperty(atools::fs::db::PROPERTYNAME_MSFS_NAVIGRAPH_FOUND);
+
+      if(hasNavigraphUpdate || databaseLoader->getResultFlags().testFlag(atools::fs::COMPILE_MSFS_NAVIGRAPH_FOUND))
+      {
+        if(navDbStatus != navdb::MIXED)
+          correction = navdb::CORRECT_MSFS_HAS_NAVIGRAPH;
+      }
+      else if(navDbStatus != navdb::OFF)
+        correction = navdb::CORRECT_MSFS_NO_NAVIGRAPH;
+    }
+    else if(FsPaths::isAnyXplane(simType))
+    {
+      // =========================================================================================================
+      // Correct scenery mode for X-Plane ==============================================
+      int cycleNav = metaNav.getAiracCycleInt();
+      int cycleSim = metaSim.getAiracCycleInt();
+
+      // Both airac cycles available
+      if(cycleSim > 0 && cycleNav > 0)
+      {
+        // Recommend use mixed database if cycles are equal ====================================
+        if(cycleNav == cycleSim && navDbStatus != navdb::MIXED)
+          correction = navdb::CORRECT_XP_CYCLE_NAV_EQUAL;
+        else if(cycleNav < cycleSim && navDbStatus != navdb::OFF)
+          correction = navdb::CORRECT_XP_CYCLE_NAV_SMALLER;
       }
     }
     else
     {
-      if(navDatabaseStatus != dbstat::NAVDATABASE_OFF)
-      {
-        foundIssues = true;
-        // Navigraph update for MSFS no installed - Do not use Navigraph Database ================================
-        int result =
-          dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_OFF,
-                                     tr("<p style='white-space:pre'>You are using MSFS without the Navigraph navdata update.</p>"
-                                          "<p>You should use the scenery library mode \"Do not use Navigraph Database\" "
-                                            "to avoid issues with airport information in Little Navmap.</p>"
-                                            "<p style='white-space:pre'>You can change the mode manually in the menu<br/>"
-                                            "\"Scenery Library\" -> \"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
-                                            "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
-                                     manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
-                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
-
-        if(result == QMessageBox::Yes)
-        {
-          corrected = true;
-          navDbActionOff->setChecked(true);
-          switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
-        }
-      }
+      // ======================================================================================================
+      // Correct scenery mode for FSX or P3D ==============================================
+      if(!metaNav.isIncludedAiracCycle() && navDbStatus != navdb::MIXED)
+        // Updated but ignoring new navdatabase or mode all
+        correction = navdb::CORRECT_FSX_P3D_UPDATED;
+      else if(metaNav.isIncludedAiracCycle() && navDbStatus != navdb::OFF)
+        // Old database being used - suggest off
+        correction = navdb::CORRECT_FSX_P3D_OUTDATED;
     }
-  } // if(currentFsType == atools::fs::FsPaths::MSFS)
-  else if(FsPaths::isAnyXplane(currentFsType))
-  {
-    // =========================================================================================================
-    // Notify user and correct scenery mode after loading X-Plane ==============================================
 
-    // Get navdatabase =================
-    const atools::fs::db::DatabaseMeta metaNav = databaseMetadata(FsPaths::NAVIGRAPH);
-    int cycleNav = metaNav.getAiracCycleInt();
-    int cycleSim = metaSim.getAiracCycleInt();
+    // Check for wrong mode navdata for all if it was not corrected before ===========================================
+    if(navDbStatus == navdb::ALL && correction == navdb::CORRECT_NONE)
+      correction = navdb::CORRECT_ALL;
+  }
+  else
+    correction = navdb::CORRECT_EMPTY;
 
-    // Both airac cycles available
-    if(cycleSim > 0 && cycleNav > 0)
-    {
-      // Recommend use mixed database if cycles are equal ====================================
-      if(cycleNav == cycleSim && navDatabaseStatus != dbstat::NAVDATABASE_MIXED)
-      {
-        foundIssues = true;
-
-        // Cycles are equal but user uses the wrong mode ===============================================
-        int result =
-          dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_DATABASE_CYCLE_MATCH,
-                                     tr("<p style='white-space:pre'>The AIRAC cycle %1 of your navigation data is "
-                                          "equal to the simulator cycle.<p>"
-                                          "<p>This means you ignore the updated Navigraph navdata for Little Navmap.</p>"
-                                            "<p>You should use the scenery library mode \"Use Navigraph for Navaids and Procedures\" "
-                                              "to fetch airports from the simulator and navdata from the update.</p>"
-                                              "<p style='white-space:pre'>You can change this manually in the menu<br/>"
-                                              "\"Scenery Library\" -> \"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
-                                              "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items").
-                                     arg(metaNav.getAiracCycle()),
-                                     manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
-                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
-
-        if(result == QMessageBox::Yes)
-        {
-          corrected = true;
-          navDbActionBlend->setChecked(true);
-          switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
-        }
-      }
-      else if(cycleNav < cycleSim && navDatabaseStatus != dbstat::NAVDATABASE_OFF)
-      {
-        // Recommend use no Navigraph database if navdata is older ====================================
-        foundIssues = true;
-
-        // Navdata uses a lower cycle - user should ignore it ===============================================
-        int result =
-          dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_DATABASE_CYCLE_MISMATCH,
-                                     tr("<p style='white-space:pre'>The AIRAC cycle %1 of your navigation data is "
-                                          "older than the simulator cycle %2.</p>"
-                                          "<p>This can result warning messages when loading flight plans in X-Plane.</p>"
-                                            "<p>Update the Little Navmap navdata to use the same cycle as the X-Plane "
-                                              "navdata with the Navigraph FMS Data Manager to fix this.</p>"
-                                              "<p>You can also use the scenery library mode \"Do not use Navigraph Database\" "
-                                                "to fetch all data from the simulator.</p>"
-                                                "<p style='white-space:pre'>You can change this manually in the menu<br/>"
-                                                "\"Scenery Library\" -> \"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
-                                                "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items").
-                                     arg(metaNav.getAiracCycle()).arg(metaSim.getAiracCycle()),
-                                     manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
-                                     QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
-
-        if(result == QMessageBox::Yes)
-        {
-          corrected = true;
-          navDbActionOff->setChecked(true);
-          switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
-        }
-      }
-    } // if(cycleSim > 0 && cycleNav > 0)
-  } // else if(FsPaths::isAnyXplane(currentFsType))
-
-  // Check for wrong mode navdata for all if it was not corrected before ===========================================
-  if(!corrected && navDatabaseStatus == dbstat::NAVDATABASE_ALL)
-  {
-    foundIssues = true;
-
-    // Notify user and correct scenery mode use navdata for all ==============================================
-    int result =
-      dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL,
-                                 tr("<p style='white-space:pre'>Your current scenery library mode is "
-                                      "\"Use Navigraph for all Features\".</p>"
-                                      "<p>All information from the simulator scenery library is ignored in this mode.</p>"
-                                        "<p>Note that airport information is limited in this mode. "
-                                          "This means that aprons, taxiways, parking positions, runway surfaces and more are not available, "
-                                          "smaller airports will be missing and the runway layout might not match the one in the simulator.</p>"
-                                          "<p style='white-space:pre'>You can change this manually in the menu<br/>"
-                                          "\"Scenery Library\" -> \"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
-                                          "<p><b>Normally you should not use this mode.</b></p>"
-                                            "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
-                                 manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
-                                 QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes);
-
-    if(result == QMessageBox::Yes)
-    {
-      navDbActionBlend->setChecked(true);
-      switchNavFromMainMenu(); // Need to call manually since triggered does not signal on programmatic activation
-    }
-  } // else if(navDatabaseStatus == dbstat::NAVDATABASE_ALL)
-
-  if(!foundIssues && manualCheck)
-    QMessageBox::information(mainWindow, tr("%1 - Validate Scenery Library Settings").arg(QApplication::applicationName()),
-                             tr("No issues found."));
+  return correction;
 }
 
-bool DatabaseManager::checkValidBasePaths()
+void DatabaseManager::correctSceneryOptions(navdb::Correction& correction)
+{
+  qDebug() << Q_FUNC_INFO << "correction" << correction;
+
+  switch(correction)
+  {
+    case navdb::CORRECT_ALL:
+    case navdb::CORRECT_FSX_P3D_UPDATED:
+    case navdb::CORRECT_MSFS_HAS_NAVIGRAPH:
+    case navdb::CORRECT_XP_CYCLE_NAV_EQUAL:
+      navDbActionMixed->setChecked(true);
+      switchNavFromMainMenu();
+      break;
+
+    case navdb::CORRECT_FSX_P3D_OUTDATED:
+    case navdb::CORRECT_MSFS_NO_NAVIGRAPH:
+    case navdb::CORRECT_XP_CYCLE_NAV_SMALLER:
+      navDbActionOff->setChecked(true);
+      switchNavFromMainMenu();
+      break;
+
+    case navdb::CORRECT_EMPTY:
+      navDbActionAll->setChecked(true);
+      switchNavFromMainMenu();
+      break;
+
+    case navdb::CORRECT_NONE:
+      break;
+  }
+
+}
+
+void DatabaseManager::checkSceneryOptions(bool manualCheck)
+{
+  navdb::Correction correction = getSceneryCorrection(navDatabaseStatus, currentFsType);
+  const DatabaseMeta metaSim = databaseMetadataFromType(currentFsType);
+  const DatabaseMeta metaNav = databaseMetadataFromType(FsPaths::NAVIGRAPH);
+
+  qDebug() << Q_FUNC_INFO << "manualCheck" << manualCheck << "correction" << correction;
+
+  switch(correction)
+  {
+    case navdb::CORRECT_NONE:
+      if(manualCheck)
+        QMessageBox::information(mainWindow, tr("%1 - Validate Scenery Library Settings").arg(QApplication::applicationName()),
+                                 tr("No issues found."));
+      break;
+
+    case navdb::CORRECT_EMPTY:
+      if(manualCheck)
+        QMessageBox::information(mainWindow, tr("%1 - Validate Scenery Library Settings").arg(QApplication::applicationName()),
+                                 tr("Showing Navigraph airports since simulator database is empty.\n\n"
+                                    "You can load the simulator scenery library database in the menu\n"
+                                    "\"Scenery Library\" -> \"Load Scenery Library\"."));
+      break;
+
+    case navdb::CORRECT_MSFS_HAS_NAVIGRAPH:
+      if(dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_MSFS_HAS_NAVIGRAPH,
+                                    tr("<p style='white-space:pre'>You are using MSFS with the Navigraph navdata update.</p>"
+                                         "<p>You should update the Little Navmap navdata with the "
+                                           "Navigraph FMS Data Manager as well and use the right scenery library mode "
+                                           "\"Use Navigraph for Navaids and Procedures\" "
+                                           "to avoid issues with airport information in Little Navmap.</p>"
+                                           "<p style='white-space:pre'>You can change the mode manually in the menu<br/>"
+                                           "\"Scenery Library\" -> \"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
+                                           "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
+                                    manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
+                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes) == QMessageBox::Yes)
+        correctSceneryOptions(correction);
+      break;
+
+    case navdb::CORRECT_MSFS_NO_NAVIGRAPH:
+      if(dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_MSFS_NO_NAVIGRAPH,
+                                    tr("<p style='white-space:pre'>You are using MSFS without the Navigraph navdata update.</p>"
+                                         "<p>You should use the scenery library mode \"Do not use Navigraph Database\" "
+                                           "to avoid issues with airport information in Little Navmap.</p>"
+                                           "<p style='white-space:pre'>You can change the mode manually in the menu<br/>"
+                                           "\"Scenery Library\" -> \"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
+                                           "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
+                                    manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
+                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes) == QMessageBox::Yes)
+        correctSceneryOptions(correction);
+      break;
+
+    case navdb::CORRECT_XP_CYCLE_NAV_EQUAL:
+      if(dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_XP_CYCLE_NAV_EQUAL,
+                                    tr("<p style='white-space:pre'>The AIRAC cycle %1 of your navigation data is "
+                                         "equal to the simulator cycle.<p>"
+                                         "<p>You should use the scenery library mode \"Use Navigraph for Navaids and Procedures\" "
+                                           "to fetch airports from the simulator and navdata from the update.</p>"
+                                           "<p style='white-space:pre'>You can change this manually in the menu<br/>"
+                                           "\"Scenery Library\" -> \"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
+                                           "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items").
+                                    arg(metaNav.getAiracCycle()),
+                                    manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
+                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes) == QMessageBox::Yes)
+        correctSceneryOptions(correction);
+      break;
+
+    case navdb::CORRECT_XP_CYCLE_NAV_SMALLER:
+      if(dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_XP_CYCLE_NAV_SMALLER,
+                                    tr("<p style='white-space:pre'>The AIRAC cycle %1 of your navigation data is "
+                                         "older than the simulator cycle %2.</p>"
+                                         "<p>This can result in warning messages when loading flight plans in X-Plane.</p>"
+                                           "<p>Update the Little Navmap navdata to use the same cycle as the X-Plane "
+                                             "navdata with the Navigraph FMS Data Manager to fix this.</p>"
+                                             "<p>You can also use the scenery library mode \"Do not use Navigraph Database\" "
+                                               "to fetch all data from the simulator.</p>"
+                                               "<p style='white-space:pre'>You can change this manually in the menu<br/>"
+                                               "\"Scenery Library\" -> \"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
+                                               "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items").
+                                    arg(metaNav.getAiracCycle()).arg(metaSim.getAiracCycle()),
+                                    manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
+                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes) == QMessageBox::Yes)
+        correctSceneryOptions(correction);
+      break;
+
+    case navdb::CORRECT_FSX_P3D_OUTDATED:
+      if(dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_FSX_P3D_OUTDATED,
+                                    tr("<p style='white-space:pre'>Your navdata based on AIRAC cycle %1 is outdated.</p>"
+                                         "<p>This can result in warning messages when loading flight plans.</p>"
+                                           "<p>Update the Little Navmap navdata with the Navigraph FMS Data Manager to fix this.</p>"
+                                             "<p>You can also use the scenery library mode \"Do not use Navigraph Database\" "
+                                               "to fetch all data from the simulator.</p>"
+                                               "<p style='white-space:pre'>You can change this manually in the menu<br/>"
+                                               "\"Scenery Library\" -> \"Navigraph\" -> \"Do not use Navigraph Database\".</p>"
+                                               "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items").
+                                    arg(DatabaseMeta::getDbIncludedNavdataCycle()),
+                                    manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
+                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes) == QMessageBox::Yes)
+        correctSceneryOptions(correction);
+      break;
+
+    case navdb::CORRECT_FSX_P3D_UPDATED:
+      if(dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_CORRECT_FSX_P3D_UPDATED,
+                                    tr("<p style='white-space:pre'>"
+                                         "<p>You are using an updated Navigraph database with a not optimal scenery library mode.</p>"
+                                           "<p style='white-space:pre'>You can fix this in the menu<br/>"
+                                           "\"Scenery Library\" -> \"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
+                                           "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
+                                    manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
+                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes) == QMessageBox::Yes)
+        correctSceneryOptions(correction);
+      break;
+
+    case navdb::CORRECT_ALL:
+      if(dialog->showQuestionMsgBox(manualCheck ? QString() : lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL,
+                                    tr("<p style='white-space:pre'>Your current scenery library mode is "
+                                         "\"Use Navigraph for all Features\".</p>"
+                                         "<p>All information from the simulator scenery library is ignored in this mode.</p>"
+                                           "<p>Note that airport information is limited in this mode. "
+                                             "This means that aprons, taxiways, parking positions, runway surfaces and more are not available, "
+                                             "smaller airports will be missing and the runway layout might not match the one in the simulator.</p>"
+                                             "<p style='white-space:pre'>You can change this manually in the menu<br/>"
+                                             "\"Scenery Library\" -> \"Navigraph\" -> \"Use Navigraph for Navaids and Procedures\".</p>"
+                                             "<p><b>Normally you should not use this mode.</b></p>"
+                                               "<p>Correct the scenery library mode now?</p>", "Sync texts with menu items"),
+                                    manualCheck ? QString() : tr("Do not &show this dialog again and always correct mode after loading."),
+                                    QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes, QMessageBox::Yes) == QMessageBox::Yes)
+        correctSceneryOptions(correction);
+      break;
+  }
+}
+
+bool DatabaseManager::checkValidBasePaths() const
 {
   using atools::gui::Dialog;
 
@@ -1374,8 +1523,7 @@ bool DatabaseManager::checkValidBasePaths()
       Dialog::warning(databaseDialog,
                       tr("<p style='white-space:pre'>Cannot read base path \"%1\".<br/><br/>"
                          "Reason:<br/>"
-                         "%2</p>%3").
-                      arg(databaseDialog->getBasePath()).arg(errors.join("<br/>")).arg(resetPath));
+                         "%2</p>%3").arg(databaseDialog->getBasePath()).arg(errors.join("<br/>")).arg(resetPath));
     }
     configValid = false;
   }
@@ -1394,8 +1542,7 @@ bool DatabaseManager::checkValidBasePaths()
                            "Reason:<br/>"
                            "%2<br/><br/>"
                            "Enable the option \"Read inactive or disabled Scenery Entries\"<br/>"
-                           "or start X-Plane once to create the file.</p>").
-                        arg(filepath).arg(errors.join("<br/>")));
+                           "or start X-Plane once to create the file.</p>").arg(filepath).arg(errors.join("<br/>")));
         configValid = false;
       }
     }
@@ -1410,8 +1557,7 @@ bool DatabaseManager::checkValidBasePaths()
         Dialog::warning(databaseDialog,
                         tr("<p style='white-space:pre'>Cannot read scenery configuration \"%1\".<br/><br/>"
                            "Reason:<br/>"
-                           "%2</p>").
-                        arg(databaseDialog->getSceneryConfigFile()).arg(errors.join("<br/>")));
+                           "%2</p>").arg(databaseDialog->getSceneryConfigFile()).arg(errors.join("<br/>")));
         configValid = false;
       }
     }
@@ -1544,7 +1690,13 @@ void DatabaseManager::loadSceneryInternalPost()
 
     // Syncronize display with loaded database
     currentFsType = selectedFsType;
-    navDatabaseStatus = simulators[currentFsType].navdatabaseStatus;
+
+    if(navDatabaseAuto)
+      // Correct navdata selection automatically if enabled
+      assignSceneryCorrection();
+    else
+      // Assign navdata status from remembered value from simulator
+      navDatabaseStatus = simulators.value(currentFsType).navDatabaseStatus;
 
     openAllDatabases();
     loadLanguageIndex();
@@ -1587,8 +1739,13 @@ void DatabaseManager::simulatorChangedFromComboBox(FsPaths::SimulatorType value)
   updateDialogInfo(selectedFsType);
 }
 
+bool DatabaseManager::hasDataInSimDatabase()
+{
+  return databaseMetadataFromType(currentFsType).hasData();
+}
+
 /* Checks if the current database contains data. Exits program if this fails */
-bool DatabaseManager::hasData(atools::sql::SqlDatabase *db)
+bool DatabaseManager::hasData(atools::sql::SqlDatabase *db) const
 {
   try
   {
@@ -1605,7 +1762,7 @@ bool DatabaseManager::hasData(atools::sql::SqlDatabase *db)
 }
 
 /* Checks if the current database is compatible with this program. Exits program if this fails */
-bool DatabaseManager::isDatabaseCompatible(atools::sql::SqlDatabase *db)
+bool DatabaseManager::isDatabaseCompatible(atools::sql::SqlDatabase *db) const
 {
   try
   {
@@ -1629,7 +1786,8 @@ void DatabaseManager::saveState()
   settings.setValue(lnm::DATABASE_LOADINGSIMULATOR, atools::fs::FsPaths::typeToShortName(selectedFsType));
   settings.setValue(lnm::DATABASE_LOAD_INACTIVE, readInactive);
   settings.setValue(lnm::DATABASE_LOAD_ADDONXML, readAddOnXml);
-  settings.setValue(lnm::DATABASE_USE_NAV, static_cast<int>(navDatabaseStatus));
+  settings.setValue(lnm::DATABASE_NAVDB_STATUS, static_cast<int>(navDatabaseStatus));
+  settings.setValue(lnm::DATABASE_NAVDB_AUTO, navDatabaseAuto);
 }
 
 void DatabaseManager::restoreState()
@@ -1640,7 +1798,8 @@ void DatabaseManager::restoreState()
   selectedFsType = atools::fs::FsPaths::stringToType(settings.valueStr(lnm::DATABASE_LOADINGSIMULATOR));
   readInactive = settings.valueBool(lnm::DATABASE_LOAD_INACTIVE, false);
   readAddOnXml = settings.valueBool(lnm::DATABASE_LOAD_ADDONXML, true);
-  navDatabaseStatus = static_cast<dbstat::NavdatabaseStatus>(settings.valueInt(lnm::DATABASE_USE_NAV, dbstat::NAVDATABASE_MIXED));
+  navDatabaseStatus = static_cast<navdb::Status>(settings.valueInt(lnm::DATABASE_NAVDB_STATUS, navdb::MIXED));
+  navDatabaseAuto = settings.valueBool(lnm::DATABASE_NAVDB_AUTO, true);
 }
 
 /* Updates metadata, version and object counts in the scenery loading dialog */
@@ -1730,7 +1889,7 @@ void DatabaseManager::updateDialogInfo(atools::fs::FsPaths::SimulatorType value)
 }
 
 /* Create database name including simulator short name */
-QString DatabaseManager::buildDatabaseFileName(atools::fs::FsPaths::SimulatorType type)
+QString DatabaseManager::buildDatabaseFileName(atools::fs::FsPaths::SimulatorType type) const
 {
   return databaseDirectory +
          QDir::separator() + lnm::DATABASE_PREFIX +
@@ -1738,7 +1897,7 @@ QString DatabaseManager::buildDatabaseFileName(atools::fs::FsPaths::SimulatorTyp
 }
 
 /* Create database name including simulator short name in application directory */
-QString DatabaseManager::buildDatabaseFileNameAppDir(atools::fs::FsPaths::SimulatorType type)
+QString DatabaseManager::buildDatabaseFileNameAppDir(atools::fs::FsPaths::SimulatorType type) const
 {
   return QCoreApplication::applicationDirPath() +
          QDir::separator() + lnm::DATABASE_DIR +
@@ -1746,7 +1905,7 @@ QString DatabaseManager::buildDatabaseFileNameAppDir(atools::fs::FsPaths::Simula
          atools::fs::FsPaths::typeToShortName(type).toLower() + lnm::DATABASE_SUFFIX;
 }
 
-QString DatabaseManager::buildCompilingDatabaseFileName()
+QString DatabaseManager::buildCompilingDatabaseFileName() const
 {
   return databaseDirectory + QDir::separator() + lnm::DATABASE_PREFIX + "compiling" + lnm::DATABASE_SUFFIX;
 }
@@ -1773,10 +1932,10 @@ void DatabaseManager::freeActions()
     navDbActionAll->deleteLater();
     navDbActionAll = nullptr;
   }
-  if(navDbActionBlend != nullptr)
+  if(navDbActionMixed != nullptr)
   {
-    navDbActionBlend->deleteLater();
-    navDbActionBlend = nullptr;
+    navDbActionMixed->deleteLater();
+    navDbActionMixed = nullptr;
   }
   if(navDbActionOff != nullptr)
   {
@@ -1793,9 +1952,9 @@ void DatabaseManager::freeActions()
     navDbGroup->deleteLater();
     navDbGroup = nullptr;
   }
-  for(QAction *action : actions)
+  for(QAction *action : simDbActions)
     action->deleteLater();
-  actions.clear();
+  simDbActions.clear();
 }
 
 /* Uses the simulator map copy from the dialog to update the changed paths */
@@ -1829,40 +1988,27 @@ void DatabaseManager::correctSimulatorType()
      (!simulators.value(currentFsType).hasDatabase && !simulators.value(currentFsType).isInstalled))
   {
     currentFsType = simulators.getBest();
-    navDatabaseStatus = simulators[currentFsType].navdatabaseStatus;
+    navDatabaseStatus = simulators[currentFsType].navDatabaseStatus;
   }
 
   if(currentFsType == atools::fs::FsPaths::NONE)
   {
     currentFsType = simulators.getBestInstalled();
-    navDatabaseStatus = simulators[currentFsType].navdatabaseStatus;
+    navDatabaseStatus = simulators[currentFsType].navDatabaseStatus;
   }
 
   // Correct if loading simulator is invalid - get the best installed
   if(selectedFsType == atools::fs::FsPaths::NONE || !simulators.getAllInstalled().contains(selectedFsType))
   {
     selectedFsType = simulators.getBestInstalled();
-    navDatabaseStatus = simulators[currentFsType].navdatabaseStatus;
+    navDatabaseStatus = simulators[currentFsType].navDatabaseStatus;
   }
-}
-
-const atools::fs::db::DatabaseMeta DatabaseManager::metaFromFile(const QString& file)
-{
-  SqlDatabase tempDb(dbtools::DATABASE_NAME_TEMP);
-  tempDb.setDatabaseName(file);
-  tempDb.setReadonly();
-  tempDb.open();
-
-  DatabaseMeta meta(tempDb);
-  meta.deInit(); // Detach from database
-  dbtools::closeDatabaseFile(&tempDb);
-  return meta;
 }
 
 void DatabaseManager::checkDatabaseVersion()
 {
-  const atools::fs::db::DatabaseMeta *databaseMetaSim = NavApp::getDatabaseMetaSim();
-  if(navDatabaseStatus != dbstat::NAVDATABASE_ALL && databaseMetaSim != nullptr && databaseMetaSim->hasData())
+  const DatabaseMeta *databaseMetaSim = NavApp::getDatabaseMetaSim();
+  if(navDatabaseStatus != navdb::ALL && databaseMetaSim != nullptr && databaseMetaSim->hasData())
   {
     QStringList msg;
     if(databaseMetaSim->getDatabaseVersion() < DatabaseMeta::getApplicationVersion())
@@ -1884,8 +2030,8 @@ void DatabaseManager::checkDatabaseVersion()
                                                      "after installing new add-on scenery or after a flight simulator update to "
                                                      "enable new features or benefit from bug fixes.</p>"
                                                      "<p>You can do this in menu \"Scenery Library\" -> "
-                                                       "\"Reload Scenery Library\".</p>"
-                                                       "<p>Open the \"Reload Scenery Library\" dialog window now?</p>").
+                                                       "\"Load Scenery Library\".</p>"
+                                                       "<p>Open the \"Load Scenery Library\" dialog window now?</p>").
                                               arg(msg.join(tr("<br/>"))),
                                               tr("Do not &show this dialog again."), QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes,
                                               QMessageBox::No);

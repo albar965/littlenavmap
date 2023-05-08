@@ -267,6 +267,7 @@ public:
   static bool hasSidStarInDatabase();
   static bool hasRouteTypeInDatabase();
   static bool hasDataInDatabase();
+  static bool hasDataInSimDatabase();
 
   static void logDatabaseMeta();
 

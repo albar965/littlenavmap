@@ -3016,6 +3016,7 @@ void MapWidget::restoreState()
     paintLayer->setShowAirspaces(map::MapAirspaceFilter());
 
   history.restoreState(atools::settings::Settings::getConfigFilename(".history"));
+  updateMapVisibleUiPostDatabaseLoad();
 }
 
 void MapWidget::sunShadingToUi(map::MapSunShading sunShading)
@@ -3199,6 +3200,12 @@ void MapWidget::updateThemeUi(const QString& themeId)
 
 void MapWidget::updateMapVisibleUi() const
 {
+  mapVisible->updateVisibleObjectsStatusBar();
+}
+
+void MapWidget::updateMapVisibleUiPostDatabaseLoad() const
+{
+  mapVisible->postDatabaseLoad();
   mapVisible->updateVisibleObjectsStatusBar();
 }
 

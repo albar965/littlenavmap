@@ -714,17 +714,17 @@ bool NavApp::hasXplane12Simulator()
 
 bool NavApp::isNavdataAll()
 {
-  return databaseManager->getNavDatabaseStatus() == dbstat::NAVDATABASE_ALL;
+  return databaseManager->getNavDatabaseStatus() == navdb::ALL;
 }
 
 bool NavApp::isNavdataMixed()
 {
-  return databaseManager->getNavDatabaseStatus() == dbstat::NAVDATABASE_MIXED;
+  return databaseManager->getNavDatabaseStatus() == navdb::MIXED;
 }
 
 bool NavApp::isNavdataOff()
 {
-  return databaseManager->getNavDatabaseStatus() == dbstat::NAVDATABASE_OFF;
+  return databaseManager->getNavDatabaseStatus() == navdb::OFF;
 }
 
 OptionsDialog *NavApp::getOptionsDialog()
@@ -755,6 +755,11 @@ bool NavApp::hasRouteTypeInDatabase()
 bool NavApp::hasDataInDatabase()
 {
   return databaseMetaSim != nullptr ? databaseMetaSim->hasData() : false;
+}
+
+bool NavApp::hasDataInSimDatabase()
+{
+  return databaseManager->hasDataInSimDatabase();
 }
 
 void NavApp::logDatabaseMeta()

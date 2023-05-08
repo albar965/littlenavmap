@@ -397,6 +397,7 @@ private:
 
   virtual void updateThemeUi(const QString& themeId) override;
   virtual void updateMapVisibleUi() const override;
+  virtual void updateMapVisibleUiPostDatabaseLoad() const override;
 
   /* Called at start of user interaction like moving or scrolling */
   virtual void jumpBackToAircraftStart() override;

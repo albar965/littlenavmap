@@ -197,7 +197,7 @@ public:
   /* Same as above but for simulator base path */
   QString getSimulatorBasePathBest(const atools::fs::FsPaths::SimulatorTypeVector& types) const;
 
-  dbstat::NavdatabaseStatus getNavDatabaseStatus() const
+  navdb::Status getNavDatabaseStatus() const
   {
     return navDatabaseStatus;
   }
@@ -263,6 +263,9 @@ public:
     checkSceneryOptions(true /* manualCheck */);
   }
 
+  /* Checks the simulator database independent of scenery library settings. Expensive since it opens the file */
+  bool hasDataInSimDatabase();
+
 signals:
   /* Emitted before opening the scenery database dialog, loading a database or switching to a new simulator database.
    * Recipients have to close all database connections and clear all caches. The database instance itself is not changed
@@ -277,8 +280,11 @@ signals:
 private:
   void restoreState();
 
-  bool isDatabaseCompatible(atools::sql::SqlDatabase *db);
-  bool hasData(atools::sql::SqlDatabase *db);
+  bool isDatabaseCompatible(atools::sql::SqlDatabase *db) const;
+  bool hasData(atools::sql::SqlDatabase *db) const;
+
+  /* Correct navdata selection according to simulator, AIRAC cycle and other. Updates simulators and navDatabaseStatus */
+  void assignSceneryCorrection();
 
   void simulatorChangedFromComboBox(atools::fs::FsPaths::SimulatorType value);
   void loadSceneryInternal();
@@ -292,39 +298,52 @@ private:
   void updateDialogInfo(atools::fs::FsPaths::SimulatorType value);
 
   /* Database stored in settings directory */
-  QString buildDatabaseFileName(atools::fs::FsPaths::SimulatorType currentFsType);
+  QString buildDatabaseFileName(atools::fs::FsPaths::SimulatorType currentFsType) const;
 
   /* Database stored in application directory */
-  QString buildDatabaseFileNameAppDir(atools::fs::FsPaths::SimulatorType type);
+  QString buildDatabaseFileNameAppDir(atools::fs::FsPaths::SimulatorType type) const;
 
   /* Temporary name stored in settings directory */
-  QString buildCompilingDatabaseFileName();
+  QString buildCompilingDatabaseFileName() const;
 
   /* Simulator changed from main menu */
   void switchSimFromMainMenu();
+  void switchSimInternal(atools::fs::FsPaths::SimulatorType type);
 
   /* Navdatabase mode change from main menu */
   void switchNavFromMainMenu();
+
+  /* Navdatabase auto mode changed from main menu */
+  void switchNavAutoFromMainMenu();
+
+  /* Set menus according to correction */
+  void correctSceneryOptions(navdb::Correction& correction);
 
   void freeActions();
   void insertSimSwitchAction(atools::fs::FsPaths::SimulatorType type, QAction *before, QMenu *menu, int index);
   void updateSimulatorFlags();
   void updateSimulatorPathsFromDialog();
+
+  /* Checks for missing files and assigns a new simulator if needed */
   void correctSimulatorType();
+  navdb::Correction getSceneryCorrection(const navdb::Status& navDbStatus, atools::fs::FsPaths::SimulatorType simType) const;
 
   /* Get cycle metadata from a database file */
-  const atools::fs::db::DatabaseMeta metaFromFile(const QString& file);
+  const atools::fs::db::DatabaseMeta databaseMetadataFromFile(const QString& file) const;
 
   void clearLanguageIndex();
 
-  bool checkValidBasePaths();
+  bool checkValidBasePaths() const;
+
+  /* Disable or enable nav menu items depending on auto status */
+  void updateNavMenuStatus();
 
   /* Validate scenery library mode and show warning dialogs which allow to set the recommended mode.
    * manualCheck shows an "Ok" button if all is valid and ignores "do not show again" state. */
   void checkSceneryOptions(bool manualCheck);
 
-  // Get metadata independent of scenery library settings
-  const atools::fs::db::DatabaseMeta databaseMetadata(atools::fs::FsPaths::SimulatorType type);
+  /* Get metadata independent of scenery library settings from the database files */
+  const atools::fs::db::DatabaseMeta databaseMetadataFromType(atools::fs::FsPaths::SimulatorType type) const;
 
   atools::gui::Dialog *dialog;
   DatabaseDialog *databaseDialog = nullptr;
@@ -348,10 +367,11 @@ private:
 
   /* Switch simulator actions */
   QActionGroup *simDbGroup = nullptr, *navDbGroup = nullptr;
-  QList<QAction *> actions;
-  QAction *navDbActionOff = nullptr, *navDbActionBlend = nullptr, *navDbActionAll = nullptr,
-          *menuDbSeparator = nullptr, *menuNavDbSeparator = nullptr;
+  QList<QAction *> simDbActions;
+
   QMenu *navDbSubMenu = nullptr;
+  QAction *navDbActionOff = nullptr, *navDbActionMixed = nullptr, *navDbActionAll = nullptr, *navDbActionAuto = nullptr,
+          *menuDbSeparator = nullptr, *menuNavDbSeparator = nullptr;
 
   atools::fs::FsPaths::SimulatorType
   /* Currently selected simulator which will be used in the map, search, etc. */
@@ -360,7 +380,8 @@ private:
     selectedFsType = atools::fs::FsPaths::NONE;
 
   /* Using Navigraph update or not */
-  dbstat::NavdatabaseStatus navDatabaseStatus = dbstat::NAVDATABASE_OFF;
+  navdb::Status navDatabaseStatus = navdb::OFF;
+  bool navDatabaseAuto = true;
 
   DatabaseLoader *databaseLoader = nullptr;
 

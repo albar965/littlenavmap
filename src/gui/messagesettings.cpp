@@ -81,11 +81,13 @@ void messages::resetEssentialMessages()
   settings.setValue(lnm::ACTIONS_SHOW_TRACK_DOWNLOAD_FAIL, true);
   settings.setValue(lnm::ACTIONS_SHOW_WEATHER_DOWNLOAD_FAIL, true);
   settings.setValue(lnm::ACTIONS_SHOW_MISSING_SIMULATORS, true);
-  settings.setValue(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH, true);
-  settings.setValue(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_OFF, true);
+  settings.setValue(lnm::ACTIONS_SHOW_CORRECT_MSFS_HAS_NAVIGRAPH, true);
+  settings.setValue(lnm::ACTIONS_SHOW_CORRECT_MSFS_NO_NAVIGRAPH, true);
+  settings.setValue(lnm::ACTIONS_SHOW_CORRECT_XP_CYCLE_NAV_SMALLER, true);
+  settings.setValue(lnm::ACTIONS_SHOW_CORRECT_XP_CYCLE_NAV_EQUAL, true);
+  settings.setValue(lnm::ACTIONS_SHOW_CORRECT_FSX_P3D_UPDATED, true);
+  settings.setValue(lnm::ACTIONS_SHOW_CORRECT_FSX_P3D_OUTDATED, true);
   settings.setValue(lnm::ACTIONS_SHOW_DATABASE_MSFS_NAVIGRAPH_ALL, true);
-  settings.setValue(lnm::ACTIONS_SHOW_DATABASE_CYCLE_MISMATCH, true);
-  settings.setValue(lnm::ACTIONS_SHOW_DATABASE_CYCLE_MATCH, true);
   settings.setValue(lnm::ACTIONS_SHOW_FILE_EXPORT_OPTIONS_WARN, true);
   settings.setValue(lnm::ACTIONS_SHOW_FILE_EXPORT_OPTIONS_WARN_EXP, true);
   settings.setValue(lnm::ACTIONS_SHOW_XP11_WEATHER_FILE_INVALID, true);

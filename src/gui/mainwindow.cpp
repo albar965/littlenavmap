@@ -1996,7 +1996,7 @@ void MainWindow::updateMapPosLabel(const atools::geo::Pos& pos, int x, int y)
 void MainWindow::updateWindowTitle()
 {
   QString newTitle = mainWindowTitle;
-  dbstat::NavdatabaseStatus navDbStatus = NavApp::getDatabaseManager()->getNavDatabaseStatus();
+  navdb::Status navDbStatus = NavApp::getDatabaseManager()->getNavDatabaseStatus();
 
   atools::util::Version version(NavApp::applicationVersion());
 
@@ -2016,7 +2016,7 @@ void MainWindow::updateWindowTitle()
 
   // Database information  ==========================================
   // Simulator database =========
-  if(navDbStatus == dbstat::NAVDATABASE_ALL)
+  if(navDbStatus == navdb::ALL)
     newTitle += tr(" - (%1)").arg(NavApp::getCurrentSimulatorShortName());
   else
   {
@@ -2027,14 +2027,14 @@ void MainWindow::updateWindowTitle()
   }
 
   // Nav database =========
-  if(navDbStatus == dbstat::NAVDATABASE_ALL)
+  if(navDbStatus == navdb::ALL)
     newTitle += tr(" / N");
-  else if(navDbStatus == dbstat::NAVDATABASE_MIXED)
+  else if(navDbStatus == navdb::MIXED)
     newTitle += tr(" / N");
-  else if(navDbStatus == dbstat::NAVDATABASE_OFF)
+  else if(navDbStatus == navdb::OFF)
     newTitle += tr(" / (N)");
 
-  if((navDbStatus == dbstat::NAVDATABASE_ALL || navDbStatus == dbstat::NAVDATABASE_MIXED) &&
+  if((navDbStatus == navdb::ALL || navDbStatus == navdb::MIXED) &&
      !NavApp::getDatabaseAiracCycleNav().isEmpty())
     newTitle += tr(" %1").arg(NavApp::getDatabaseAiracCycleNav());
 
@@ -3333,7 +3333,7 @@ void MainWindow::mainWindowShownDelayed()
                                   "simulator scenery into the Little Navmap database.<br/>"
                                   "This process runs in the background.<br/>"
                                   "You can start this manually in the menu<br/>"
-                                  "\"Scenery Library\" -> \"Reload Scenery Library\".</li>"
+                                  "\"Scenery Library\" -> \"Load Scenery Library\".</li>"
                                   "<li>The connection dialog window opens allowing to attach Little Navmap<br/>"
                                   "to a simulator while flying.<br/>"
                                   "Do this manually in menu \"Tools\" -> \"Connect to Flight Simulator\".</li>"

@@ -466,6 +466,11 @@ void MapPaintWidget::updateMapVisibleUi() const
   // No-op
 }
 
+void MapPaintWidget::updateMapVisibleUiPostDatabaseLoad() const
+{
+  // No-op
+}
+
 void MapPaintWidget::updateMapObjectsShown()
 {
   // No-op
@@ -527,7 +532,7 @@ void MapPaintWidget::postDatabaseLoad()
   mapQuery->initQueries();
   paintLayer->postDatabaseLoad();
   update();
-  updateMapVisibleUi();
+  updateMapVisibleUiPostDatabaseLoad();
 }
 
 // {

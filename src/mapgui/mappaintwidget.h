@@ -487,6 +487,7 @@ protected:
 
   /* Update toolbar state for visible features - default is no-op */
   virtual void updateMapVisibleUi() const;
+  virtual void updateMapVisibleUiPostDatabaseLoad() const;
 
   /* Update internal values for visible map objects based on menus - default is no-op */
   virtual void updateMapObjectsShown();
