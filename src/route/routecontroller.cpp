@@ -2626,7 +2626,7 @@ void RouteController::tableContextMenu(const QPoint& pos)
                             ui->actionRouteSaveSelection, ui->actionRouteCalcSelected, ui->actionMapRangeRings, ui->actionMapNavaidRange,
                             ui->actionMapTrafficPattern, ui->actionMapHold, ui->actionMapAirportMsa, ui->actionRouteTableCopy,
                             ui->actionRouteTableSelectAll, ui->actionRouteTableSelectNothing, ui->actionRouteResetView,
-                            ui->actionRouteDisplayOptions, ui->actionRouteSetMark});
+                            ui->actionRouteDisplayOptions, ui->actionRouteSetMark, ui->actionRouteMarkAddon});
 
   // Save text which will be changed below - Re-enable actions on exit to allow keystrokes
   atools::gui::ActionTool actionTool(actions);
@@ -2680,14 +2680,14 @@ void RouteController::tableContextMenu(const QPoint& pos)
   ui->actionRouteShowApproaches->setEnabled(false);
   ui->actionRouteEditUserWaypoint->setEnabled(false);
   ui->actionRouteShowInformation->setEnabled(false);
+  ui->actionRouteMarkAddon->setEnabled(false);
 
   // Collect information for selected leg =======================================================================
   // Menu above a row
   map::MapResult msaResult;
   if(routeLeg != nullptr)
   {
-    if(routeLeg->getVor().isValid() || routeLeg->getNdb().isValid() || routeLeg->getWaypoint().isValid() ||
-       routeLeg->isAirport())
+    if(routeLeg->getVor().isValid() || routeLeg->getNdb().isValid() || routeLeg->getWaypoint().isValid() || routeLeg->isAirport())
       NavApp::getMapQueryGui()->getMapObjectByIdent(msaResult, map::AIRPORT_MSA, routeLeg->getIdent(),
                                                     routeLeg->getRegion(), QString(), routeLeg->getPosition());
 
@@ -2720,6 +2720,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
 
     if(routeLeg->isValidWaypoint() && routeLeg->getMapObjectType() == map::AIRPORT)
     {
+      ui->actionRouteMarkAddon->setEnabled(true);
+      ActionTool::setText(ui->actionRouteMarkAddon, true, objectText);
+
       bool departureFilter, arrivalFilter, hasDeparture, hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip;
       route.getAirportProcedureFlags(routeLeg->getAirport(), row, departureFilter, arrivalFilter, hasDeparture, hasAnyArrival,
                                      airportDeparture, airportDestination, airportRoundTrip);
@@ -2929,6 +2932,9 @@ void RouteController::tableContextMenu(const QPoint& pos)
   menu.addAction(ui->actionMapAirportMsa);
   menu.addSeparator();
 
+  menu.addAction(ui->actionRouteMarkAddon);
+  menu.addSeparator();
+
   menu.addAction(ui->actionRouteFollowSelection);
   menu.addSeparator();
 
@@ -3015,6 +3021,16 @@ void RouteController::tableContextMenu(const QPoint& pos)
     // editUserWaypointName(index.row());
     // else if(action == ui->actionRouteTableAppend) // Done by signal from action
     // emit routeAppend();
+    else if(action == ui->actionRouteMarkAddon)
+    {
+      QModelIndex curIndex = tableViewRoute->currentIndex();
+      if(curIndex.isValid())
+      {
+        map::MapAirport airport = route.value(curIndex.row()).getAirport();
+        if(airport.isValid())
+          emit addUserpointFromMap(map::MapResult::createFromMapBase(&airport), airport.position, true /* airportAddon */);
+      }
+    }
     else if(action == ui->actionMapAirportMsa)
       emit addAirportMsa(msaResult.airportMsa.value(0));
     else if(action == ui->actionRouteInsert)

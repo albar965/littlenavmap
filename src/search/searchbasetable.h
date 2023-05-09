@@ -178,6 +178,8 @@ signals:
 
   void addAirportMsa(const map::MapAirportMsa& airportMsa);
 
+  void addUserpointFromMap(const map::MapResult& result, const atools::geo::Pos& pos, bool airportAddon);
+
 protected:
   /* Update the hamburger menu button. Add * for change and check/uncheck actions */
   virtual void updateButtonMenu() = 0;

@@ -1007,7 +1007,7 @@ void MapContextMenu::insertMarkAddonAirportMenu(QMenu& menu)
                      MapResultIndex().
                      addRef(*result, map::AIRPORT).
                      sort(DEFAULT_TYPE_SORT, alphaSort),
-                     tr("&Mark %1 as Add-on ..."), tr("Create a userpoint highlighting the airport as add-on"),
+                     tr("&Mark %1 as Add-on"), tr("Create a userpoint highlighting the airport as add-on"),
                      QString(), QIcon(":/littlenavmap/resources/icons/airportaddon.svg"), false /* allowNoMapObject */,
                      callback);
 }

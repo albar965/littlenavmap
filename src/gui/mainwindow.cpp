@@ -1050,18 +1050,18 @@ void MainWindow::connectAllSlots()
   // Style handler ===================================================================
   // Save complete state due to crashes in Qt
   AircraftPerfController *perfController = NavApp::getAircraftPerfController();
-
-  connect(NavApp::getStyleHandler(), &StyleHandler::preStyleChange, this, &MainWindow::saveStateNow);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, mapcolors::styleChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, infoController, &InfoController::optionsChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, routeController, &RouteController::styleChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, searchController, &SearchController::styleChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, mapWidget, &MapPaintWidget::styleChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, profileWidget, &ProfileWidget::styleChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, perfController, &AircraftPerfController::optionsChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, infoController, &InfoController::styleChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, optionsDialog, &OptionsDialog::styleChanged);
-  connect(NavApp::getStyleHandler(), &StyleHandler::styleChanged, this, &MainWindow::updateStatusBarStyle);
+  const StyleHandler *styleHandler = NavApp::getStyleHandler();
+  connect(styleHandler, &StyleHandler::preStyleChange, this, &MainWindow::saveStateNow);
+  connect(styleHandler, &StyleHandler::styleChanged, mapcolors::styleChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, infoController, &InfoController::optionsChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, routeController, &RouteController::styleChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, searchController, &SearchController::styleChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, mapWidget, &MapPaintWidget::styleChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, profileWidget, &ProfileWidget::styleChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, perfController, &AircraftPerfController::optionsChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, infoController, &InfoController::styleChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, optionsDialog, &OptionsDialog::styleChanged);
+  connect(styleHandler, &StyleHandler::styleChanged, this, &MainWindow::updateStatusBarStyle);
 
   // WindReporter ===================================================================================
   // Wind has to be calculated first - receive routeChanged signal first
@@ -1097,9 +1097,9 @@ void MainWindow::connectAllSlots()
   connect(routeController, &RouteController::routeAltitudeChanged, mapWidget, &MapPaintWidget::routeAltitudeChanged);
   connect(routeController, &RouteController::preRouteCalc, profileWidget, &ProfileWidget::preRouteCalc);
   connect(routeController, &RouteController::showInformation, infoController, &InfoController::showInformation);
-
-  connect(routeController, &RouteController::showProcedures, searchController->getProcedureSearch(),
-          &ProcedureSearch::showProcedures);
+  connect(routeController, &RouteController::addUserpointFromMap,
+          NavApp::getUserdataController(), &UserdataController::addUserpointFromMap);
+  connect(routeController, &RouteController::showProcedures, searchController->getProcedureSearch(), &ProcedureSearch::showProcedures);
 
   // Update rubber band in map window if user hovers over profile
   connect(profileWidget, &ProfileWidget::highlightProfilePoint, mapWidget, &MapPaintWidget::changeProfileHighlight);
@@ -1141,6 +1141,7 @@ void MainWindow::connectAllSlots()
   connect(airportSearch, &SearchBaseTable::routeAdd, routeController, &RouteController::routeAdd);
   connect(airportSearch, &SearchBaseTable::selectionChanged, searchController, &SearchController::searchSelectionChanged);
   connect(airportSearch, &SearchBaseTable::addAirportMsa, mapWidget, &MapWidget::addMsaMark);
+  connect(airportSearch, &SearchBaseTable::addUserpointFromMap, NavApp::getUserdataController(), &UserdataController::addUserpointFromMap);
 
   // Nav search ===================================================================================
   NavSearch *navSearch = searchController->getNavSearch();

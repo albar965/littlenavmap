@@ -34,7 +34,7 @@
      <x>0</x>
      <y>0</y>
      <width>1261</width>
-     <height>20</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -5876,7 +5876,7 @@ relation to shown airport</string>
             <property name="geometry">
              <rect>
               <x>0</x>
-              <y>30</y>
+              <y>0</y>
               <width>228</width>
               <height>86</height>
              </rect>
@@ -11939,6 +11939,36 @@ relation to shown airport</string>
    </property>
    <property name="toolTip">
     <string>Delete duplicates and invalid userpoints from database</string>
+   </property>
+  </action>
+  <action name="actionRouteMarkAddon">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportaddon.svg</normaloff>:/littlenavmap/resources/icons/airportaddon.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Mark %1 as Add-on</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a userpoint highlighting the airport as add-on</string>
+   </property>
+   <property name="statusTip">
+    <string>Create a userpoint highlighting the airport as add-on</string>
+   </property>
+  </action>
+  <action name="actionSearchMarkAddon">
+   <property name="icon">
+    <iconset resource="../../littlenavmap.qrc">
+     <normaloff>:/littlenavmap/resources/icons/airportaddon.svg</normaloff>:/littlenavmap/resources/icons/airportaddon.svg</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Mark %1 as Add-on</string>
+   </property>
+   <property name="toolTip">
+    <string>Create a userpoint highlighting the airport as add-on</string>
+   </property>
+   <property name="statusTip">
+    <string>Create a userpoint highlighting the airport as add-on</string>
    </property>
   </action>
  </widget>

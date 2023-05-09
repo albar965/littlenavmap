@@ -344,6 +344,8 @@ signals:
 
   void addAirportMsa(map::MapAirportMsa airportMsa);
 
+  void addUserpointFromMap(const map::MapResult& result, const atools::geo::Pos& pos, bool airportAddon);
+
 private:
   friend class RouteCommand;
 

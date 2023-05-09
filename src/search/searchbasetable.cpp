@@ -954,7 +954,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
                          ui->actionSearchShowApproaches, ui->actionSearchShowApproachCustom, ui->actionSearchShowDepartureCustom,
                          ui->actionSearchShowInformation, ui->actionSearchShowOnMap, ui->actionSearchTableCopy,
                          ui->actionSearchTableSelectAll, ui->actionSearchTableSelectNothing, ui->actionUserdataAdd,
-                         ui->actionUserdataDelete, ui->actionUserdataEdit});
+                         ui->actionUserdataDelete, ui->actionUserdataEdit, ui->actionSearchMarkAddon});
 
   bool columnCanFilter = false, columnCanFilterBuilder = false;
   atools::geo::Pos position;
@@ -1093,6 +1093,7 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionSearchLogRouteAirportDest->setDisabled(disableDestination);
   ui->actionSearchLogRouteAirportAlternate->setDisabled(disableAlternate);
 
+  ui->actionSearchMarkAddon->setEnabled(airport.isValid());
   ui->actionSearchLogShowOnMapAirport->setEnabled(airport.isValid());
   ui->actionSearchLogShowInformationAirport->setEnabled(airport.isValid());
 
@@ -1105,9 +1106,13 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
   ui->actionSearchShowApproaches->setEnabled(false);
   ui->actionSearchShowApproachCustom->setEnabled(false);
   ui->actionSearchShowDepartureCustom->setEnabled(false);
+  ui->actionSearchMarkAddon->setEnabled(false);
 
   if(mapObjType == map::AIRPORT && airport.isValid())
   {
+    ui->actionSearchMarkAddon->setEnabled(true);
+    ActionTool::setText(ui->actionSearchMarkAddon, true, objectText);
+
     bool departureFilter, arrivalFilter, hasDeparture, hasAnyArrival, airportDeparture, airportDestination, airportRoundTrip;
     route.getAirportProcedureFlags(airport, -1, departureFilter, arrivalFilter, hasDeparture, hasAnyArrival, airportDeparture,
                                    airportDestination, airportRoundTrip);
@@ -1320,6 +1325,12 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     if(atools::contains(tabIndex, {si::SEARCH_AIRPORT, si::SEARCH_NAV}))
       menu.addAction(ui->actionMapAirportMsa);
     menu.addSeparator();
+
+    if(atools::contains(tabIndex, {si::SEARCH_AIRPORT}))
+    {
+      menu.addAction(ui->actionSearchMarkAddon);
+      menu.addSeparator();
+    }
   }
 
   if(tabIndex == si::SEARCH_LOG)
@@ -1532,6 +1543,11 @@ void SearchBaseTable::contextMenu(const QPoint& pos)
     // NavApp::getMapWidget()->clearRangeRingsAndDistanceMarkers(); // Connected directly
     else if(action == ui->actionMapAirportMsa)
       emit addAirportMsa(msaResult.airportMsa.value(0));
+    else if(action == ui->actionSearchMarkAddon)
+    {
+      for(const map::MapAirport& ap : result.airports)
+        emit addUserpointFromMap(map::MapResult::createFromMapBase(&ap), ap.position, true /* airportAddon */);
+    }
     else if(action == ui->actionRouteAddPos)
       emit routeAdd(id, atools::geo::EMPTY_POS, mapObjType, -1);
     else if(action == ui->actionRouteAppendPos)
