@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -29,20 +29,51 @@
 #include "logdatacontroller.h"
 #include "navapp.h"
 #include "sql/sqldatabase.h"
-#include "ui_mainwindow.h"
 #include "util/htmlbuilder.h"
 
-#include <QDateTime>
 #include <QSqlError>
-#include <QDebug>
-#include <QSqlQueryModel>
 #include <QPushButton>
 #include <QMimeData>
 #include <QClipboard>
+#include <QStringBuilder>
 
-LogStatsDelegate::LogStatsDelegate()
+// ============================================================================================
+
+/* Contains information about selected query in combo box */
+class Query
 {
-}
+public:
+  Query(const QString& labelParam, const QStringList& headerParam, const QVector<Qt::Alignment>& alignParam,
+        const QStringList& colParam, int sortColumnParam, Qt::SortOrder sortCrderParam, const QString& queryParam)
+    : label(labelParam), query(queryParam), cols(colParam), header(headerParam), align(alignParam),
+    defaultSortColumn(sortColumnParam), defaultSortCrder(sortCrderParam)
+  {
+    Q_ASSERT_X(headerParam.size() == alignParam.size(), labelParam.toLatin1().constData(), query.toLatin1().constData());
+    Q_ASSERT_X(headerParam.size() == colParam.size(), labelParam.toLatin1().constData(), query.toLatin1().constData());
+    Q_ASSERT_X(defaultSortColumn < colParam.size(), labelParam.toLatin1().constData(), query.toLatin1().constData());
+  }
+
+  QString label, /* Combo box label */ query; /* SQL query */
+  QStringList cols, header; /* SQL columns and Result table headers - must be equal to query columns */
+  QVector<Qt::Alignment> align; /* Column alignment - must be equal to query columns */
+
+  int defaultSortColumn; /* Index into list cols */
+  Qt::SortOrder defaultSortCrder;
+};
+
+// ============================================================================================
+
+/* Delegate to change table column data alignment */
+class LogStatsDelegate
+  : public QStyledItemDelegate
+{
+public:
+  QVector<Qt::Alignment> align;
+
+private:
+  virtual void paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const override;
+
+};
 
 void LogStatsDelegate::paint(QPainter *painter, const QStyleOptionViewItem& option, const QModelIndex& index) const
 {
@@ -55,16 +86,83 @@ void LogStatsDelegate::paint(QPainter *painter, const QStyleOptionViewItem& opti
 
 // ============================================================================================
 
-LogStatsSqlModel::LogStatsSqlModel()
+/* Overrides data method for local sensitive number formatting and sorting by SQL query */
+class LogStatsSqlModel :
+  public QSqlQueryModel
 {
+public:
+  LogStatsSqlModel(QObject *parent, const QSqlDatabase *db)
+    : QSqlQueryModel(parent), database(db)
+  {
 
-}
+  }
+
+  void setLogStatQuery(const Query *queryParam)
+  {
+    if(queryParam != query)
+    {
+      // Update all to defaults if different
+      query = queryParam;
+      sortColumn = query->defaultSortColumn;
+      sortOrder = query->defaultSortCrder;
+    }
+
+    // Calculate the conversion factor for distances which will be set into the SQL query
+    nmToUnitFactor = 1.f;
+    switch(Unit::getUnitDist())
+    {
+      case opts::DIST_NM:
+        nmToUnitFactor = 1.f;
+        break;
+
+      case opts::DIST_KM:
+        nmToUnitFactor = atools::geo::nmToKm(1.f);
+        break;
+
+      case opts::DIST_MILES:
+        nmToUnitFactor = atools::geo::nmToMi(1.f);
+        break;
+    }
+
+    setQuery(buildQuery(), *database);
+  }
+
+private:
+  virtual QVariant data(const QModelIndex& index, int role) const override;
+
+  virtual void sort(int column, Qt::SortOrder order) override
+  {
+    if(query != nullptr)
+    {
+      // Reset with new non default sort order and update query
+      sortColumn = column;
+      sortOrder = order;
+      setQuery(buildQuery(), *database);
+    }
+  }
+
+  QString buildQuery()
+  {
+    // Build query with current ordering, unit placeholders and conversion factor
+    QString str = query->query;
+    if(str.contains("%1"))
+      str = str.arg(nmToUnitFactor);
+    return str % " order by " % query->cols.at(sortColumn) % (sortOrder == Qt::DescendingOrder ? " desc" : " asc");
+  }
+
+  QLocale locale;
+  float nmToUnitFactor = 1.f;
+  const QSqlDatabase *database = nullptr;
+  const Query *query = nullptr;
+  int sortColumn = 0;
+  Qt::SortOrder sortOrder = Qt::DescendingOrder;
+};
 
 QVariant LogStatsSqlModel::data(const QModelIndex& index, int role) const
 {
   if(role == Qt::DisplayRole)
   {
-    // Apply locale formatting for numeric values - not compatible with sorting
+    // Apply locale formatting for numeric values
     QVariant dataValue = QSqlQueryModel::data(index, Qt::DisplayRole);
     QVariant::Type type = dataValue.type();
 
@@ -104,18 +202,18 @@ LogStatisticsDialog::LogStatisticsDialog(QWidget *parent, LogdataController *log
   button->setToolTip(tr("Copies overview as formatted text or table as CSV to clipboard"));
 
   // Fill query labels into combo box ==============================
-  for(const Query& q : QUERIES)
+  for(const Query& q : queries)
     ui->comboBoxLogStatsGrouped->addItem(q.label, q.query);
 
   // Create and set delegate ==============================
   delegate = new LogStatsDelegate;
   ui->tableViewLogStatsGrouped->setItemDelegate(delegate);
+  ui->tableViewLogStatsGrouped->setSortingEnabled(true);
 
   // Resize widget to get rid of the too large default margins
   zoomHandler = new atools::gui::ItemViewZoomHandler(ui->tableViewLogStatsGrouped);
 
-  connect(ui->comboBoxLogStatsGrouped, static_cast<void (QComboBox::*)(int)>(&QComboBox::currentIndexChanged),
-          this, &LogStatisticsDialog::groupChanged);
+  connect(ui->comboBoxLogStatsGrouped, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &LogStatisticsDialog::groupChanged);
   connect(ui->buttonBoxLogStats, &QDialogButtonBox::clicked, this, &LogStatisticsDialog::buttonBoxClicked);
 
   restoreState();
@@ -179,6 +277,10 @@ void LogStatisticsDialog::buttonBoxClicked(QAbstractButton *button)
     }
     else
     {
+      // Need to load whole table
+      while(model->canFetchMore())
+        model->fetchMore(QModelIndex());
+
       // Copy CSV from table to clipboard
       QString csv;
       int exported = CsvExporter::tableAsCsv(ui->tableViewLogStatsGrouped, true /* header */, csv);
@@ -188,15 +290,14 @@ void LogStatisticsDialog::buttonBoxClicked(QAbstractButton *button)
     }
   }
   else if(buttonType == QDialogButtonBox::Help)
-    atools::gui::HelpHandler::openHelpUrlWeb(
-      this, lnm::helpOnlineUrl + "LOGBOOK.html#statistics", lnm::helpLanguageOnline());
+    atools::gui::HelpHandler::openHelpUrlWeb(this, lnm::helpOnlineUrl + "LOGBOOK.html#statistics", lnm::helpLanguageOnline());
 }
 
 void LogStatisticsDialog::clearModel()
 {
-  QItemSelectionModel *m = ui->tableViewLogStatsGrouped->selectionModel();
+  QItemSelectionModel *selectionModel = ui->tableViewLogStatsGrouped->selectionModel();
   ui->tableViewLogStatsGrouped->setModel(nullptr);
-  delete m;
+  delete selectionModel;
 
   delete model;
   model = nullptr;
@@ -206,11 +307,13 @@ void LogStatisticsDialog::setModel()
 {
   clearModel();
 
-  model = new LogStatsSqlModel;
+  model = new LogStatsSqlModel(this, &logdataController->getDatabase()->getQSqlDatabase());
 
-  QItemSelectionModel *m = ui->tableViewLogStatsGrouped->selectionModel();
+  QItemSelectionModel *selectionModel = ui->tableViewLogStatsGrouped->selectionModel();
   ui->tableViewLogStatsGrouped->setModel(model);
-  delete m;
+  delete selectionModel;
+
+  groupChanged(ui->comboBoxLogStatsGrouped->currentIndex());
 }
 
 void LogStatisticsDialog::saveState()
@@ -231,33 +334,15 @@ void LogStatisticsDialog::groupChanged(int index)
   if(index == -1)
     return;
 
-  if(index > QUERIES.size() - 1)
-    index = QUERIES.size() - 1;
+  if(index > queries.size() - 1)
+    index = queries.size() - 1;
 
-  // Calculate the conversion factor for distances which will be set into the SQL query
-  float nmToUnit = 1.f;
-  opts::UnitDist unitDist = Unit::getUnitDist();
-  switch(unitDist)
-  {
-    case opts::DIST_NM:
-      nmToUnit = 1.f;
-      break;
-
-    case opts::DIST_KM:
-      nmToUnit = atools::geo::nmToKm(1.f);
-      break;
-
-    case opts::DIST_MILES:
-      nmToUnit = atools::geo::nmToMi(1.f);
-      break;
-  }
-
-  Query query = QUERIES.at(index);
-  QString queryText = Unit::replacePlaceholders(query.query).arg(nmToUnit);
-  model->setQuery(queryText, logdataController->getDatabase()->getQSqlDatabase());
+  const Query& query = queries.at(index);
+  model->setLogStatQuery(&query);
+  ui->tableViewLogStatsGrouped->sortByColumn(query.defaultSortColumn, query.defaultSortCrder);
 
   if(model->lastError().type() != QSqlError::NoError)
-    qWarning() << Q_FUNC_INFO << "Error executing" << queryText << model->lastError().text();
+    qWarning() << Q_FUNC_INFO << "Error executing" << query.query << model->lastError().text();
 
   // Set headers
   for(int i = 0; i < query.header.size(); i++)
@@ -359,117 +444,105 @@ void LogStatisticsDialog::updateStatisticsText()
 
 void LogStatisticsDialog::initQueries()
 {
-  QUERIES = {
+  const static Qt::AlignmentFlag RIGHT = Qt::AlignRight;
+  const static Qt::AlignmentFlag LEFT = Qt::AlignLeft;
 
-    Query{
-      // Combox box entry
-      tr("Top airports"),
+  queries = {
 
-      // Tables headers - allows variables like %dist%
-      {tr("Number of\nvisits"), tr("ICAO"), tr("Name")},
+    Query(tr("Top airports"), // Combox box entry
+          {tr("Number of\nvisits"), tr("ICAO"), tr("Name")}, // Tables headers - allows variables like %dist%
+          {RIGHT, RIGHT, LEFT}, // Column alignment
+          {"cnt", "ident", "name"}, 0, Qt::DescendingOrder, // Columns, default order column and default order direction
+          // Query - allows variables like %dist% and %1 is replacement for distance factor for conversion
+          "select count(1) as cnt, ident, name from ( "
+          "select logbook_id, departure_ident as ident, departure_name as name from logbook where departure_ident is not null "
+          "union "
+          "select logbook_id, destination_ident as ident, destination_name as name from logbook where destination_ident is not null) "
+          "group by ident, name"),
 
-      // Column alignment
-      {Qt::AlignRight, Qt::AlignRight, Qt::AlignLeft},
+    Query(tr("Top departure airports"),
+          {tr("Number of\ndepartures"), tr("Ident"), tr("Name")},
+          {RIGHT, RIGHT, LEFT},
+          {"cnt", "departure_ident", "departure_name"}, 0, Qt::DescendingOrder,
+          "select count(1) as cnt, departure_ident, departure_name from logbook group by departure_ident, departure_name"),
 
-      // Query - allows variables like %dist% and %1 is replacement for distance factor for conversion
-      "select count(1), ident, name from ( "
-      "select logbook_id, departure_ident as ident, departure_name as name from logbook where departure_ident is not null "
-      "union "
-      "select logbook_id, destination_ident as ident, destination_name as name from logbook where destination_ident is not null) "
-      "group by ident, name order by count(1) desc limit 1000"
-    },
+    Query(tr("Top destination airports"),
+          {tr("Number of\ndestinations"), tr("Ident"), tr("Name")},
+          {RIGHT, RIGHT, LEFT},
+          {"cnt", "destination_ident", "destination_name"}, 0, Qt::DescendingOrder,
+          "select count(1) as cnt, destination_ident, destination_name from logbook group by destination_ident, destination_name"),
 
-    Query{
-      tr("Top departure airports"),
-      {tr("Number of\ndepartures"), tr("Ident"), tr("Name")},
-      {Qt::AlignRight, Qt::AlignRight, Qt::AlignLeft},
-      "select count(1), departure_ident, departure_name "
-      "from logbook group by departure_ident, departure_name order by count(1) desc limit 1000"
-    },
+    Query(tr("Longest flights by distance"),
+          {tr("Flight Plan\nDistance %dist%"), tr("From ICAO"), tr("From Name"), tr("To ICAO"), tr("To Name"),
+           tr("Simulator"), tr("Aircraft\nModel"), tr("Aircraft\nType"), tr("Aircraft\nRegistration")},
+          {RIGHT, RIGHT, LEFT, RIGHT, LEFT, LEFT, LEFT, LEFT, LEFT},
+          {"dist", "departure_ident", "departure_name", "destination_ident", "destination_name", "simulator", "aircraft_name",
+           "aircraft_type", "aircraft_registration"}, 0, Qt::DescendingOrder,
+          "select cast(distance * %1 as int) as dist, departure_ident, departure_name, destination_ident, destination_name, "
+          "simulator, aircraft_name, aircraft_type, aircraft_registration from logbook"),
 
-    Query{
-      tr("Top destination airports"),
-      {tr("Number of\ndestinations"), tr("Ident"), tr("Name")},
-      {Qt::AlignRight, Qt::AlignRight, Qt::AlignLeft},
-      "select count(1), destination_ident, destination_name "
-      "from logbook group by destination_ident, destination_name order by count(1) desc limit 1000"
-    },
+    Query(tr("Longest flights by simulator time"),
+          {tr("Simulator time\nhours"), tr("From Airport\nICAO"), tr("From Airport\nName"), tr("To Airport\nICAO"), tr("To Airport\nName"),
+           tr("Simulator"), tr("Aircraft\nModel"), tr("Aircraft\nType"), tr("Aircraft\nRegistration")},
+          {RIGHT, RIGHT, LEFT, RIGHT, LEFT, LEFT, LEFT, LEFT, LEFT},
+          {"simtime", "departure_ident", "departure_name", "destination_ident", "destination_name", "simulator", "aircraft_name",
+           "aircraft_type", "aircraft_registration"}, 0, Qt::DescendingOrder,
+          "select cast((strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim)) / 3600. as double) as simtime, "
+          "departure_ident, departure_name, destination_ident, destination_name, "
+          "simulator, aircraft_name, aircraft_type, aircraft_registration from logbook where simtime > 0 "),
 
-    Query{
-      tr("Longest flights by distance"),
-      {tr("Flight Plan\nDistance %dist%"), tr("From ICAO"), tr("From Name"), tr("To ICAO"), tr("To Name"),
-       tr("Simulator"), tr("Aircraft\nModel"), tr("Aircraft\nType"), tr("Aircraft\nRegistration")},
-      {Qt::AlignRight, Qt::AlignRight, Qt::AlignLeft, Qt::AlignRight, Qt::AlignLeft, Qt::AlignLeft, Qt::AlignLeft,
-       Qt::AlignLeft, Qt::AlignLeft},
-      "select cast(distance * %1 as int), departure_ident, departure_name, destination_ident, destination_name, "
-      "simulator, aircraft_name, aircraft_type, aircraft_registration "
-      "from logbook order by distance desc limit 1000"
-    },
+    Query(tr("Longest flights by real time"),
+          {tr("Real time\nhours"), tr("From Airport\nICAO"), tr("From Airport\nName"),
+           tr("To Airport\nICAO"), tr("To Airport\nName"),
+           tr("Simulator"), tr("Aircraft\nModel"), tr("Aircraft\nType"), tr("Aircraft\nRegistration")},
+          {RIGHT, RIGHT, LEFT, RIGHT, LEFT, LEFT, LEFT, LEFT, LEFT},
+          {"time", "departure_ident", "departure_name", "destination_ident", "destination_name", "simulator", "aircraft_name",
+           "aircraft_type", "aircraft_registration"}, 0, Qt::DescendingOrder,
+          "select cast((strftime('%s', destination_time) - strftime('%s', departure_time)) / 3600. as double) as time, "
+          "departure_ident, departure_name, destination_ident, destination_name, "
+          "simulator, aircraft_name, aircraft_type, aircraft_registration from logbook"),
 
-    Query{
-      tr("Longest flights by simulator time"),
-      {tr("Simulator time\nhours"), tr("From Airport\nICAO"), tr("From Airport\nName"),
-       tr("To Airport\nICAO"), tr("To Airport\nName"),
-       tr("Simulator"), tr("Aircraft\nModel"), tr("Aircraft\nType"), tr("Aircraft\nRegistration")},
-      {Qt::AlignRight, Qt::AlignRight, Qt::AlignLeft, Qt::AlignRight, Qt::AlignLeft, Qt::AlignLeft, Qt::AlignLeft,
-       Qt::AlignLeft, Qt::AlignLeft},
-      "select cast((strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim)) / 3600. as double), "
-      "departure_ident, departure_name, destination_ident, destination_name, "
-      "simulator, aircraft_name, aircraft_type, aircraft_registration "
-      "from logbook "
-      "where strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim) > 0 "
-      "order by strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim) desc limit 1000"
-    },
+    Query(tr("Aircraft usage"),
+          {tr("Number of\nflights"), tr("Simulator"), tr("Total flight\nplan distance %dist%"),
+           tr("Total simulator time\nhours"), tr("Total realtime\nhours"), tr("Model"), tr("Type"), tr(
+             "Registration")},
+          {RIGHT, LEFT, RIGHT, RIGHT, RIGHT, LEFT, LEFT, LEFT},
+          {"cnt", "simulator", "dist", "time", "simtime", "aircraft_name", "aircraft_type", "aircraft_registration"}, 0, Qt::DescendingOrder,
+          "select count(1) as cnt, simulator, cast(round(sum(distance) * %1) as int) as dist, "
+          "cast(sum((strftime('%s', destination_time) - strftime('%s', departure_time)) / 3600.) as double) as time, "
+          "cast(sum(max(strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim), 0) / 3600.) as double) as simtime, "
+          "aircraft_name, aircraft_type, aircraft_registration "
+          "from logbook group by simulator, aircraft_name, aircraft_type, aircraft_registration"),
 
-    Query{
-      tr("Longest flights by real time"),
-      {tr("Real time\nhours"), tr("From Airport\nICAO"), tr("From Airport\nName"),
-       tr("To Airport\nICAO"), tr("To Airport\nName"),
-       tr("Simulator"), tr("Aircraft\nModel"), tr("Aircraft\nType"), tr("Aircraft\nRegistration")},
-      {Qt::AlignRight, Qt::AlignRight, Qt::AlignLeft, Qt::AlignRight, Qt::AlignLeft, Qt::AlignLeft, Qt::AlignLeft,
-       Qt::AlignLeft, Qt::AlignLeft},
-      "select cast((strftime('%s', destination_time) - strftime('%s', departure_time)) / 3600. as double), "
-      "departure_ident, departure_name, destination_ident, destination_name, "
-      "simulator, aircraft_name, aircraft_type, aircraft_registration "
-      "from logbook order by strftime('%s', destination_time) - strftime('%s', departure_time) desc limit 1000"
-    },
+    Query(tr("Aircraft usage by type"),
+          {tr("Number of\nflights"), tr("Simulator"), tr("Total flight\nplan distance %dist%"), tr("Total realtime\nhours"),
+           tr("Total simulator time\nhours"), tr("Type")},
+          {RIGHT, LEFT, RIGHT, RIGHT, RIGHT, LEFT},
+          {"cnt", "simulator", "dist", "time", "simtime", "aircraft_type"}, 0, Qt::DescendingOrder,
+          "select count(1) as cnt, simulator, cast(round(sum(distance) * %1) as int) as dist, "
+          "cast(sum((strftime('%s', destination_time) - strftime('%s', departure_time)) / 3600.) as double) as time, "
+          "cast(sum(max(strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim), 0) / 3600.) as double) as simtime, "
+          "aircraft_type from logbook group by simulator, aircraft_type"),
 
-    Query{
-      tr("Aircraft usage"),
-      {tr("Number of\nflights"), tr("Simulator"), tr("Total flight\nplan distance %dist%"),
-       tr("Total simulator time\nhours"), tr("Total realtime\nhours"), tr("Model"), tr("Type"), tr("Registration")},
-      {Qt::AlignRight, Qt::AlignLeft, Qt::AlignRight, Qt::AlignRight, Qt::AlignRight, Qt::AlignLeft, Qt::AlignLeft,
-       Qt::AlignLeft},
-      "select count(1), simulator, cast(round(sum(distance) * %1) as int), "
-      "cast(sum((strftime('%s', destination_time) - strftime('%s', departure_time)) / 3600.) as double), "
-      "cast(sum(max(strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim), 0) / 3600.) as double), "
-      "aircraft_name, aircraft_type, aircraft_registration "
-      "from logbook group by simulator, aircraft_name, aircraft_type, aircraft_registration order by count(1) desc limit 1000"
-    },
+    Query(tr("Aircraft usage by registration"),
+          {tr("Number of\nflights"), tr("Simulator"), tr("Total flight\nplan distance %dist%"), tr("Total realtime\nhours"),
+           tr("Total simulator time\nhours"), tr("Type")},
+          {RIGHT, LEFT, RIGHT, RIGHT, RIGHT, LEFT},
+          {"cnt", "simulator", "dist", "time", "simtime", "aircraft_registration"}, 0, Qt::DescendingOrder,
+          "select count(1) as cnt, simulator, cast(round(sum(distance) * %1) as int) as dist, "
+          "cast(sum((strftime('%s', destination_time) - strftime('%s', departure_time)) / 3600.) as double) as time, "
+          "cast(sum(max(strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim), 0) / 3600.) as double) as simtime, "
+          "aircraft_registration from logbook group by simulator, aircraft_registration"),
 
-    Query{
-      tr("Aircraft usage by type"),
-      {tr("Number of\nflights"), tr("Simulator"), tr("Total flight\nplan distance %dist%"), tr("Total realtime\nhours"),
-       tr("Total simulator time\nhours"), tr("Type")},
-      {Qt::AlignRight, Qt::AlignLeft, Qt::AlignRight, Qt::AlignRight, Qt::AlignRight, Qt::AlignLeft},
-      "select count(1), simulator, cast(round(sum(distance) * %1) as int), "
-      "cast(sum((strftime('%s', destination_time) - strftime('%s', departure_time)) / 3600.) as double), "
-      "cast(sum(max(strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim), 0) / 3600.) as double), "
-      "aircraft_type "
-      "from logbook group by simulator, aircraft_type order by count(1) desc limit 1000"
-    },
-
-    Query{
-      tr("Aircraft usage by registration"),
-      {tr("Number of\nflights"), tr("Simulator"), tr("Total flight\nplan distance %dist%"), tr("Total realtime\nhours"),
-       tr("Total simulator time\nhours"), tr("Type")},
-      {Qt::AlignRight, Qt::AlignLeft, Qt::AlignRight, Qt::AlignRight, Qt::AlignRight, Qt::AlignLeft},
-      "select count(1), simulator, cast(round(sum(distance) * %1) as int), "
-      "cast(sum((strftime('%s', destination_time) - strftime('%s', departure_time)) / 3600.) as double), "
-      "cast(sum(max(strftime('%s', destination_time_sim) - strftime('%s', departure_time_sim), 0) / 3600.) as double), "
-      "aircraft_registration "
-      "from logbook group by simulator, aircraft_registration order by count(1) desc limit 1000"
-    }
+    Query(tr("Aircraft hours flown"),
+          {tr("Hours flown"), tr("Aircraft name"), tr("Aircraft type")},
+          {RIGHT, LEFT, LEFT},
+          {"total_hours", "aircraft_name", "aircraft_type"}, 0, Qt::DescendingOrder,
+          "select sum(hours_flown) as total_hours, aircraft_name, aircraft_type from ("
+          "select logbook_id, aircraft_name, aircraft_type, "
+          "  cast ((julianday(destination_time) - julianday(departure_time)) * 24 AS REAL) as hours_flown "
+          "from logbook where departure_time is not null and destination_time is not null) "
+          "group by aircraft_name, aircraft_type")
   };
 }
 
