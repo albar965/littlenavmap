@@ -1855,7 +1855,7 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
 
     // Selected map object
     const map::MapBase *base = contextMenu.getSelectedBase();
-    map::MapAirport airport = base != nullptr ? base->asObj<map::MapAirport>(map::AIRPORT) : map::MapAirport();
+    map::MapAirport airport = base != nullptr ? base->asObj<map::MapAirport>() : map::MapAirport();
 
     bool departureFilter, arrivalFilter;
     NavApp::getRouteConst().getAirportProcedureFlags(airport, -1, departureFilter, arrivalFilter);
@@ -1893,12 +1893,12 @@ void MapWidget::contextMenuEvent(QContextMenuEvent *event)
       {
         id = base->id;
         type = base->objType;
-        vor = base->asObj<map::MapVor>(map::VOR);
-        ndb = base->asObj<map::MapNdb>(map::NDB);
-        waypoint = base->asObj<map::MapWaypoint>(map::WAYPOINT);
-        userpoint = base->asObj<map::MapUserpoint>(map::USERPOINT);
+        vor = base->asObj<map::MapVor>();
+        ndb = base->asObj<map::MapNdb>();
+        waypoint = base->asObj<map::MapWaypoint>();
+        userpoint = base->asObj<map::MapUserpoint>();
 
-        const map::MapProcedurePoint *procpoint = base->asPtr<map::MapProcedurePoint>(map::PROCEDURE_POINT);
+        const map::MapProcedurePoint *procpoint = base->asPtr<map::MapProcedurePoint>();
         if(procpoint != nullptr)
         {
           const proc::MapProcedureLeg& leg = procpoint->getLeg();

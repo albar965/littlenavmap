@@ -111,7 +111,7 @@ void RouteLeg::createFromProcedureLeg(int entryIndex, const proc::MapProcedureLe
     ndb = procedureLeg.navaids.ndbs.constFirst();
   if(procedureLeg.navaids.hasIls())
     ils = procedureLeg.navaids.ils.constFirst();
-  if(procedureLeg.navaids.hasRunwayEnd())
+  if(procedureLeg.navaids.hasRunwayEnds())
     runwayEnd = procedureLeg.navaids.runwayEnds.constFirst();
 
   updateMagvar(prevLeg);

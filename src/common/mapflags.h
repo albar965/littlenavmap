@@ -67,8 +67,8 @@ enum MapType : unsigned long long
 {
   NONE =             0,
   AIRPORT =          1 << 0, /* Master switch for airport display */
-  // 1 << 1, Unused
-  // 1 << 2,
+  RUNWAY =           1 << 1, /* Stores runways for queries */
+  // 1 << 2, UNUSED
   // 1 << 3,
   // 1 << 4,
   VOR =              1 << 5, /* Also: DME, VORDME, VORTAC and TACAN */

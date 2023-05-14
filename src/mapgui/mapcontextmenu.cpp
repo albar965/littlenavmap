@@ -397,13 +397,13 @@ void MapContextMenu::insertInformationMenu(QMenu& menu)
   for(const map::MapBase *base : index)
   {
     // Check shadowed AI aircraft
-    const map::MapAiAircraft *ai = base->asPtr<map::MapAiAircraft>(map::AIRCRAFT_AI);
+    const map::MapAiAircraft *ai = base->asPtr<map::MapAiAircraft>();
     if(ai != nullptr && ai->getAircraft().isOnlineShadow())
       refs.insert(map::MapObjectRef(onlineDataController->getShadowedOnlineAircraft(ai->getAircraft()).getId(), map::AIRCRAFT_ONLINE));
     else
     {
       // Check shadowed user aircraft
-      const map::MapUserAircraft *user = base->asPtr<map::MapUserAircraft>(map::AIRCRAFT);
+      const map::MapUserAircraft *user = base->asPtr<map::MapUserAircraft>();
       if(user != nullptr && user->getAircraft().isOnlineShadow())
         refs.insert(map::MapObjectRef(onlineDataController->getShadowedOnlineAircraft(user->getAircraft()).getId(), map::AIRCRAFT_ONLINE));
     }

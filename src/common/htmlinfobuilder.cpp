@@ -696,7 +696,7 @@ bool HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuild
         break;
 
       // Airport ======================================
-      const map::MapAirport *ap = base->asPtr<map::MapAirport>(map::AIRPORT);
+      const map::MapAirport *ap = base->asPtr<map::MapAirport>();
       if(ap != nullptr)
       {
         // Convert navdatabase airport to simulator
@@ -708,24 +708,24 @@ bool HtmlInfoBuilder::nearestMapObjectsText(const MapAirport& airport, HtmlBuild
                                    QString(), &simAp, simAp.magvar, frequencyCol, airportCol);
       }
 
-      const map::MapVor *vor = base->asPtr<map::MapVor>(map::VOR);
+      const map::MapVor *vor = base->asPtr<map::MapVor>();
       if(vor != nullptr)
         nearestMapObjectsTextRow(airport, html, map::vorType(*vor), vor->ident, vor->name,
                                  locale.toString(vor->frequency / 1000., 'f',
                                                  2), vor, vor->magvar, frequencyCol, airportCol);
 
-      const map::MapNdb *ndb = base->asPtr<map::MapNdb>(map::NDB);
+      const map::MapNdb *ndb = base->asPtr<map::MapNdb>();
       if(ndb != nullptr)
         nearestMapObjectsTextRow(airport, html, tr("NDB"), ndb->ident, ndb->name,
                                  locale.toString(ndb->frequency / 100., 'f',
                                                  1), ndb, ndb->magvar, frequencyCol, airportCol);
 
-      const map::MapWaypoint *waypoint = base->asPtr<map::MapWaypoint>(map::WAYPOINT);
+      const map::MapWaypoint *waypoint = base->asPtr<map::MapWaypoint>();
       if(waypoint != nullptr)
         nearestMapObjectsTextRow(airport, html, tr("Waypoint"), waypoint->ident, QString(),
                                  QString(), waypoint, waypoint->magvar, frequencyCol, airportCol);
 
-      const map::MapIls *ils = base->asPtr<map::MapIls>(map::ILS);
+      const map::MapIls *ils = base->asPtr<map::MapIls>();
       if(ils != nullptr && !ils->isAnyGlsRnp())
         nearestMapObjectsTextRow(airport, html, map::ilsType(*ils, true /* gs */, true /* dme */, tr(", ")),
                                  ils->ident, ils->name,

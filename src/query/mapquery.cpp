@@ -1475,9 +1475,8 @@ void MapQuery::initQueries()
 
   // Runways > 4000 feet for simplyfied runway overview
   runwayOverviewQuery = new SqlQuery(dbSim);
-  runwayOverviewQuery->prepare(
-    "select length, heading, lonx, laty, primary_lonx, primary_laty, secondary_lonx, secondary_laty "
-    "from runway where airport_id = :airportId and length > 4000 " + whereLimit);
+  runwayOverviewQuery->prepare("select runway_id, length, heading, lonx, laty, primary_lonx, primary_laty, secondary_lonx, secondary_laty "
+                               "from runway where airport_id = :airportId and length > 4000 " + whereLimit);
 
   vorsByRectQuery = new SqlQuery(dbNav);
   vorsByRectQuery->prepare("select " + vorQueryBase + " from vor where " + whereRect + " " + whereLimit);

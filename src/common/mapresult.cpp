@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2020 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,6 @@
 #include "common/mapresult.h"
 
 #include "geo/calculations.h"
-#include "options/optiondata.h"
-#include "common/maptools.h"
 
 namespace map {
 
@@ -69,6 +67,9 @@ MapResult& MapResult::clear(const MapTypes& types)
 
   if(types.testFlag(map::RUNWAYEND))
     runwayEnds.clear();
+
+  if(types.testFlag(map::RUNWAY))
+    runways.clear();
 
   if(types.testFlag(map::ILS))
     ils.clear();
@@ -189,6 +190,9 @@ MapResult& MapResult::clearAllButFirst(const MapTypes& types)
 
   if(types.testFlag(map::RUNWAYEND))
     clearAllButFirst(runwayEnds);
+
+  if(types.testFlag(map::RUNWAY))
+    clearAllButFirst(runways);
 
   if(types.testFlag(map::ILS))
     clearAllButFirst(ils);
@@ -391,6 +395,7 @@ void MapResult::removeInvalid()
 {
   removeInvalid(airports, &airportIds);
   removeInvalid(runwayEnds);
+  removeInvalid(runways);
   removeInvalid(towers);
   removeInvalid(parkings);
   removeInvalid(helipads);
@@ -458,6 +463,8 @@ const atools::geo::Pos& MapResult::getPosition(const std::initializer_list<MapTy
         return airways.constFirst().getPosition();
       else if(type == map::RUNWAYEND)
         return runwayEnds.constFirst().getPosition();
+      else if(type == map::RUNWAY)
+        return runways.constFirst().getPosition();
       else if(type == map::ILS)
         return ils.constFirst().getPosition();
       else if(type == map::HOLDING)
@@ -514,6 +521,8 @@ QString MapResult::getIdent(const std::initializer_list<MapTypes>& types) const
         return airways.constFirst().name;
       else if(type == map::RUNWAYEND)
         return runwayEnds.constFirst().name;
+      else if(type == map::RUNWAY)
+        return runways.constFirst().primaryName + "/" + runways.constFirst().secondaryName;
       else if(type == map::ILS)
         return ils.constFirst().ident;
       else if(type == map::HOLDING)
@@ -599,6 +608,8 @@ bool MapResult::getIdAndType(int& id, MapTypes& type, const std::initializer_lis
         id = airways.constFirst().getId();
       else if(t == map::RUNWAYEND)
         id = runwayEnds.constFirst().getId();
+      else if(t == map::RUNWAY)
+        id = runways.constFirst().getId();
       else if(t == map::ILS)
         id = ils.constFirst().getId();
       else if(t == map::HOLDING)
@@ -658,6 +669,8 @@ MapResult& MapResult::addFromMapBase(const MapBase *base)
       airways.append(base->asObj<map::MapAirway>());
     else if(base->getType().testFlag(map::RUNWAYEND))
       runwayEnds.append(base->asObj<map::MapRunwayEnd>());
+    else if(base->getType().testFlag(map::RUNWAY))
+      runways.append(base->asObj<map::MapRunway>());
     else if(base->getType().testFlag(map::ILS))
       ils.append(base->asObj<map::MapIls>());
     else if(base->getType().testFlag(map::HOLDING))
@@ -707,6 +720,7 @@ int MapResult::size(const MapTypes& types) const
   totalSize += types.testFlag(map::NDB) ? ndbs.size() : 0;
   totalSize += types.testFlag(map::AIRWAY) ? airways.size() : 0;
   totalSize += types.testFlag(map::RUNWAYEND) ? runwayEnds.size() : 0;
+  totalSize += types.testFlag(map::RUNWAY) ? runways.size() : 0;
   totalSize += types.testFlag(map::ILS) ? ils.size() : 0;
   totalSize += types.testFlag(map::HOLDING) ? holdings.size() : 0;
   totalSize += types.testFlag(map::AIRSPACE) ? airspaces.size() : 0;
@@ -749,6 +763,13 @@ QDebug operator<<(QDebug out, const map::MapResult& record)
     out << "RunwayEnd[";
     for(const map::MapRunwayEnd& obj :  record.runwayEnds)
       out << obj.name << ",";
+    out << "]";
+  }
+  if(!record.runways.isEmpty())
+  {
+    out << "Runway[";
+    for(const map::MapRunway& obj :  record.runways)
+      out << obj.primaryName << "/" << obj.secondaryName << ",";
     out << "]";
   }
   if(!record.parkings.isEmpty())
@@ -862,6 +883,11 @@ MapResultIndex& MapResultIndex::add(const MapResult& resultParam, const MapTypes
   {
     result.runwayEnds.append(resultParam.runwayEnds);
     addAll(result.runwayEnds);
+  }
+  if(types.testFlag(RUNWAY))
+  {
+    result.runways.append(resultParam.runways);
+    addAll(result.runways);
   }
   if(types.testFlag(PARKING))
   {
@@ -990,6 +1016,8 @@ MapResultIndex& MapResultIndex::addRef(const MapResult& resultParam, const MapTy
     addAll(resultParam.airportMsa);
   if(types.testFlag(RUNWAYEND))
     addAll(resultParam.runwayEnds);
+  if(types.testFlag(RUNWAY))
+    addAll(resultParam.runways);
   if(types.testFlag(PARKING))
     addAll(resultParam.parkings);
   if(types.testFlag(HELIPAD))
@@ -1077,16 +1105,40 @@ MapResultIndex& MapResultIndex::sort(const QVector<MapTypes>& types, const MapRe
 
 MapResultIndex& MapResultIndex::sort(const atools::geo::Pos& pos, bool sortNearToFar)
 {
-  if(isEmpty() || !pos.isValid())
+  if(size() <= 1 || !pos.isValid())
     // Nothing to sort
     return *this;
 
-  std::sort(begin(), end(),
-            [pos, sortNearToFar](const MapBase *obj1, const MapBase *obj2) -> bool
+  std::sort(begin(), end(), [pos, sortNearToFar](const MapBase *obj1, const MapBase *obj2) -> bool
     {
-      bool res = obj1->getPosition().distanceMeterTo(pos) < obj2->getPosition().distanceMeterTo(pos);
-      return sortNearToFar ? res : !res;
+      float dist1, dist2;
+      atools::geo::LineDistance lineDist;
+
+      const map::MapRunway *rw = obj1->asPtr<map::MapRunway>();
+      if(rw != nullptr)
+      {
+        // Distance to runway line
+        pos.distanceMeterToLine(rw->primaryPosition, rw->secondaryPosition, lineDist);
+        dist1 = std::abs(lineDist.distance);
+      }
+      else
+        // Distance to center position
+        dist1 = obj1->getPosition().distanceMeterTo(pos);
+
+      rw = obj2->asPtr<map::MapRunway>();
+      if(rw != nullptr)
+      {
+        // Distance to runway line
+        pos.distanceMeterToLine(rw->primaryPosition, rw->secondaryPosition, lineDist);
+        dist2 = std::abs(lineDist.distance);
+      }
+      else
+        // Distance to center position
+        dist2 = obj2->getPosition().distanceMeterTo(pos);
+
+      return sortNearToFar ? dist1<dist2 : dist1> dist2;
     });
+
   return *this;
 }
 

@@ -71,6 +71,8 @@ QDebug operator<<(QDebug out, const map::MapTypes& type)
       flags.append("PARKING");
     if(type.testFlag(RUNWAYEND))
       flags.append("RUNWAYEND");
+    if(type.testFlag(RUNWAY))
+      flags.append("RUNWAY");
     if(type.testFlag(INVALID))
       flags.append("INVALID");
     if(type.testFlag(MISSED_APPROACH))
@@ -208,7 +210,5 @@ QString mapWeatherSourceString(MapWeatherSource source)
   }
   return QString();
 }
-
-
 
 } // namespace map

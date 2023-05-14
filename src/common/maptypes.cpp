@@ -1104,8 +1104,7 @@ bool MapAirport::waterOnly() const
 
 bool MapAirport::helipadOnly() const
 {
-  return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) &&
-         !flags.testFlag(AP_WATER) && flags.testFlag(AP_HELIPAD);
+  return !flags.testFlag(AP_HARD) && !flags.testFlag(AP_SOFT) && !flags.testFlag(AP_WATER) && flags.testFlag(AP_HELIPAD);
 }
 
 bool MapAirport::noRunways() const
@@ -1896,6 +1895,8 @@ QString mapObjectTypeToString(MapTypes type)
       str.append("PROCEDURE_POINT");
     if(type.testFlag(map::RUNWAYEND))
       str.append("RUNWAYEND");
+    if(type.testFlag(map::RUNWAY))
+      str.append("RUNWAY");
     if(type.testFlag(map::TRACK))
       str.append("TRACK");
     if(type.testFlag(map::USERPOINT))
@@ -2578,14 +2579,14 @@ QStringList MapRunwayEnd::uniqueVasiTypeStr() const
 }
 
 MapProcedurePoint::MapProcedurePoint()
-  : MapBase(map::PROCEDURE_POINT)
+  : MapBase(staticType())
 {
   legs = new proc::MapProcedureLegs();
 }
 
 MapProcedurePoint::MapProcedurePoint(const proc::MapProcedureLegs& legsParam, int legIndexParam, int routeIndexParam, bool previewParam,
                                      bool previewAllParam)
-  : map::MapBase(map::PROCEDURE_POINT)
+  : map::MapBase(staticType())
 {
   legs = new proc::MapProcedureLegs();
   *legs = legsParam;

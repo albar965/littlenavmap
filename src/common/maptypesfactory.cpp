@@ -76,9 +76,10 @@ void MapTypesFactory::fillAirportForOverview(const SqlRecord& record, map::MapAi
 
 void MapTypesFactory::fillRunway(const atools::sql::SqlRecord& record, map::MapRunway& runway, bool overview)
 {
+  runway.id = record.valueInt("runway_id");
+
   if(!overview)
   {
-    runway.id = record.valueInt("runway_id");
     runway.surface = record.valueStr("surface");
     runway.shoulder = record.valueStr("shoulder", QString()); // Optional X-Plane field
     runway.primaryName = record.valueStr("primary_name");
