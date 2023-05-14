@@ -1704,11 +1704,11 @@ void MapWidget::resetPaintForDrag()
 void MapWidget::fillDistanceMarker(map::DistanceMarker& distanceMarker, const atools::geo::Pos& pos, const map::MapResult& result)
 {
   fillDistanceMarker(distanceMarker, pos,
-                     atools::constFirstOrNull(result.airports),
-                     atools::constFirstOrNull(result.vors),
-                     atools::constFirstOrNull(result.ndbs),
-                     atools::constFirstOrNull(result.waypoints),
-                     atools::constFirstOrNull(result.userpoints));
+                     atools::constFirstPtrOrNull(result.airports),
+                     atools::constFirstPtrOrNull(result.vors),
+                     atools::constFirstPtrOrNull(result.ndbs),
+                     atools::constFirstPtrOrNull(result.waypoints),
+                     atools::constFirstPtrOrNull(result.userpoints));
 }
 
 void MapWidget::fillDistanceMarker(map::DistanceMarker& distanceMarker, const atools::geo::Pos& pos, const map::MapAirport *airport,
@@ -1774,11 +1774,11 @@ void MapWidget::fillDistanceMarker(map::DistanceMarker& distanceMarker, const at
 void MapWidget::addDistanceMarker(const atools::geo::Pos& pos, const map::MapResult& result)
 {
   addDistanceMarker(pos,
-                    atools::constFirstOrNull(result.airports),
-                    atools::constFirstOrNull(result.vors),
-                    atools::constFirstOrNull(result.ndbs),
-                    atools::constFirstOrNull(result.waypoints),
-                    atools::constFirstOrNull(result.userpoints));
+                    atools::constFirstPtrOrNull(result.airports),
+                    atools::constFirstPtrOrNull(result.vors),
+                    atools::constFirstPtrOrNull(result.ndbs),
+                    atools::constFirstPtrOrNull(result.waypoints),
+                    atools::constFirstPtrOrNull(result.userpoints));
 }
 
 void MapWidget::addDistanceMarker(const atools::geo::Pos& pos, const map::MapAirport *airport,
