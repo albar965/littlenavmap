@@ -1094,7 +1094,7 @@ void MapPainter::paintHoldingMarks(const QList<map::MapHolding>& holdings, bool 
     if(context->mapLayer->isApproach() && distPixel > 10.f)
     {
       // Calculcate approximate rectangle
-      Rect rect(holding.position, atools::geo::nmToMeter(dist) * 2.f);
+      Rect rect(holding.position, atools::geo::nmToMeter(dist) * 2.f, true /* fast */);
 
       if(context->viewportRect.overlaps(rect))
       {

@@ -656,7 +656,7 @@ void ProcedureQuery::updateBounding(proc::MapProcedureLegs& legs) const
       // Simply extend bounding by a rectangle with the radius of hold distance - assume 250 kts if time is used
       legs.bounding.extend(Rect(leg.fixPos, leg.distance > 0 ?
                                 nmToMeter(leg.distance * 2.f) :
-                                nmToMeter(leg.time > 0.f ? leg.time / 60.f * 250.f : 10.f)));
+                                nmToMeter(leg.time > 0.f ? leg.time / 60.f * 250.f : 10.f), true /* fast */));
       legs.bounding.extend(leg.holdLine.boundingRect());
     }
     else if(leg.isProcedureTurn())

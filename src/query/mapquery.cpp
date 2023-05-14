@@ -277,7 +277,7 @@ map::MapResultIndex *MapQuery::nearestNavaidsInternal(const Pos& pos, float dist
     map::MapResult res;
 
     // Create a rectangle that roughly covers the requested region
-    atools::geo::Rect rect(pos, atools::geo::nmToMeter(distanceNm));
+    atools::geo::Rect rect(pos, atools::geo::nmToMeter(distanceNm), true /* fast */);
 
     if(type & map::VOR)
     {
@@ -1299,7 +1299,7 @@ const QList<map::MapRunway> *MapQuery::getRunwaysForOverview(int airportId)
     while(runwayOverviewQuery->next())
     {
       map::MapRunway runway;
-      mapTypesFactory->fillRunway(runwayOverviewQuery->record(), runway, true);
+      mapTypesFactory->fillRunway(runwayOverviewQuery->record(), runway, true /* overview */);
       rws->append(runway);
     }
     runwayOverwiewCache.insert(airportId, rws);

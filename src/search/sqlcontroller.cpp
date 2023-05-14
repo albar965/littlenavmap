@@ -296,7 +296,7 @@ void SqlController::filterByDistance(const atools::geo::Pos& center, sqlmodeltyp
     view->clearSelection();
 
     currentDistanceCenter = center;
-    atools::geo::Rect rect(center, atools::geo::nmToMeter(maxDistance));
+    atools::geo::Rect rect(center, atools::geo::nmToMeter(maxDistance), true /* fast */);
 
     bool proxyWasNull = false;
     if(proxyModel == nullptr)
@@ -357,7 +357,7 @@ void SqlController::filterByDistanceUpdate(sqlmodeltypes::SearchDirection dir, f
   {
     view->clearSelection();
     // Create new bounding rectangle for first stage search
-    atools::geo::Rect rect(currentDistanceCenter, atools::geo::nmToMeter(maxDistance));
+    atools::geo::Rect rect(currentDistanceCenter, atools::geo::nmToMeter(maxDistance), true /* fast */);
 
     // Update proxy second stage filter
     proxyModel->setDistanceFilter(currentDistanceCenter, dir, minDistance, maxDistance);

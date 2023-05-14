@@ -124,7 +124,7 @@ void WaypointQuery::getWaypointsRect(QVector<map::MapWaypoint>& waypoints, const
   if(!query::valid(Q_FUNC_INFO, waypointRectQuery))
     return;
 
-  for(Rect r : Rect(pos, nmToMeter(distanceNm)).splitAtAntiMeridian())
+  for(Rect r : Rect(pos, nmToMeter(distanceNm), true /* fast */).splitAtAntiMeridian())
   {
     query::bindRect(r, waypointRectQuery);
     waypointRectQuery->exec();
