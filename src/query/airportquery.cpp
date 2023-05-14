@@ -29,6 +29,8 @@
 #include "sql/sqlutil.h"
 #include "fs/util/fsutil.h"
 
+#include <QStringBuilder>
+
 using namespace Marble;
 using namespace atools::sql;
 using map::MapAirport;
@@ -72,15 +74,15 @@ AirportQuery::AirportQuery(atools::sql::SqlDatabase *sqlDb, bool nav)
   mapTypesFactory = new MapTypesFactory();
   atools::settings::Settings& settings = atools::settings::Settings::instance();
 
-  runwayCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "RunwayCache", 2000).toInt());
-  apronCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "ApronCache", 1000).toInt());
-  taxipathCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "TaxipathCache", 1000).toInt());
-  parkingCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "ParkingCache", 1000).toInt());
-  startCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "StartCache", 1000).toInt());
-  helipadCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "HelipadCache", 1000).toInt());
-  airportIdCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirportIdCache", 1000).toInt());
-  airportFuzzyIdCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirportFuzzyIdCache", 1000).toInt());
-  airportIdentCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY + "AirportIdentCache", 1000).toInt());
+  runwayCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "RunwayCache", 2000).toInt());
+  apronCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "ApronCache", 1000).toInt());
+  taxipathCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "TaxipathCache", 1000).toInt());
+  parkingCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "ParkingCache", 1000).toInt());
+  startCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "StartCache", 1000).toInt());
+  helipadCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "HelipadCache", 1000).toInt());
+  airportIdCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "AirportIdCache", 1000).toInt());
+  airportFuzzyIdCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "AirportFuzzyIdCache", 1000).toInt());
+  airportIdentCache.setMaxCost(settings.getAndStoreValue(lnm::SETTINGS_MAPQUERY % "AirportIdentCache", 1000).toInt());
 }
 
 AirportQuery::~AirportQuery()
@@ -1107,7 +1109,7 @@ void AirportQuery::initQueries()
 {
   // Common where clauses
   static const QString whereRect("lonx between :leftx and :rightx and laty between :bottomy and :topy");
-  static const QString whereLimit("limit " + QString::number(map::MAX_MAP_OBJECTS));
+  static const QString whereLimit(" limit " % QString::number(map::MAX_MAP_OBJECTS));
 
   const QStringList airportQueryBase = airportColumns(db);
   const QStringList airportQueryBaseOverview = airportOverviewColumns(db);
@@ -1120,7 +1122,7 @@ void AirportQuery::initQueries()
   deInitQueries();
 
   airportByIdQuery = new SqlQuery(db);
-  airportByIdQuery->prepare("select " + airportQueryBase.join(", ") + " from airport where airport_id = :id ");
+  airportByIdQuery->prepare("select " % airportQueryBase.join(", ") % " from airport where airport_id = :id ");
 
   airportAdminByIdQuery = new SqlQuery(db);
   airportAdminByIdQuery->prepare("select city, state, country from airport where airport_id = :id ");
@@ -1129,27 +1131,24 @@ void AirportQuery::initQueries()
   airportProcByIdQuery->prepare("select 1 from approach where airport_id = :id limit 1");
 
   procArrivalByAirportIdQuery = new SqlQuery(db);
-  procArrivalByAirportIdQuery->prepare("select 1 from approach  "
-                                       "where airport_id = :id and  "
+  procArrivalByAirportIdQuery->prepare("select 1 from approach where airport_id = :id and  "
                                        "((type = 'GPS' and suffix = 'A') or (suffix <> 'D' or suffix is null)) limit 1");
 
   procDepartureByAirportIdQuery = new SqlQuery(db);
-  procDepartureByAirportIdQuery->prepare("select 1 from approach "
-                                         "where airport_id = :id and type = 'GPS' and suffix = 'D' limit 1");
+  procDepartureByAirportIdQuery->prepare("select 1 from approach where airport_id = :id and type = 'GPS' and suffix = 'D' limit 1");
 
   airportByIdentQuery = new SqlQuery(db);
-  airportByIdentQuery->prepare("select " + airportQueryBase.join(", ") + " from airport where ident = :ident ");
+  airportByIdentQuery->prepare("select " % airportQueryBase.join(", ") % " from airport where ident = :ident ");
 
   airportsByTruncatedIdentQuery = new SqlQuery(db);
-  airportsByTruncatedIdentQuery->prepare("select " + airportQueryBase.join(", ") +
-                                         " from airport where ident like :ident ");
+  airportsByTruncatedIdentQuery->prepare("select " % airportQueryBase.join(", ") % " from airport where ident like :ident ");
 
   icaoCol = airportQueryBase.contains("icao");
   iataCol = airportQueryBase.contains("iata");
   faaCol = airportQueryBase.contains("faa");
   localCol = airportQueryBase.contains("local");
 
-  QString sql("select " + airportQueryBase.join(", ") + " from airport where ");
+  QString sql("select " % airportQueryBase.join(", ") % " from airport where ");
 
   QStringList idents(" ident like :ident ");
   if(icaoCol)
@@ -1165,19 +1164,17 @@ void AirportQuery::initQueries()
     idents += " local like :local ";
 
   airportByOfficialQuery = new SqlQuery(db);
-  airportByOfficialQuery->prepare(sql + idents.join(" or "));
+  airportByOfficialQuery->prepare(sql % idents.join(" or "));
 
   airportByPosQuery = new SqlQuery(db);
-  airportByPosQuery->prepare("select " + airportQueryBase.join(", ") +
-                             " from airport  where " +
-                             whereRect + " " + whereLimit);
+  airportByPosQuery->prepare("select " % airportQueryBase.join(", ") % " from airport  where " % whereRect % whereLimit);
 
   airportCoordsByIdentQuery = new SqlQuery(db);
   airportCoordsByIdentQuery->prepare("select lonx, laty from airport where ident = :ident ");
 
   airportByRectAndProcQuery = new SqlQuery(db);
-  airportByRectAndProcQuery->prepare("select " + airportQueryBase.join(", ") + " from airport where " + whereRect +
-                                     " and num_approach > 0 " + whereLimit);
+  airportByRectAndProcQuery->prepare("select " % airportQueryBase.join(", ") % " from airport where " % whereRect %
+                                     " and num_approach > 0 " % whereLimit);
 
   QString runwayEndQueryBase("e.runway_end_id, e.end_type, e.name, e.heading, e.left_vasi_pitch, e.right_vasi_pitch, e.is_pattern, "
                              "e.left_vasi_type, e.right_vasi_type, e.lonx, e.laty ");
@@ -1185,55 +1182,50 @@ void AirportQuery::initQueries()
     runwayEndQueryBase.append(", e.altitude ");
 
   runwayEndByIdQuery = new SqlQuery(db);
-  runwayEndByIdQuery->prepare("select " + runwayEndQueryBase + " from runway_end e where e.runway_end_id = :id");
+  runwayEndByIdQuery->prepare("select " % runwayEndQueryBase % " from runway_end e where e.runway_end_id = :id");
 
   runwayEndByNameQuery = new SqlQuery(db);
   runwayEndByNameQuery->prepare(
-    "select " + runwayEndQueryBase +
+    "select " % runwayEndQueryBase %
     "from runway r join runway_end e on (r.primary_end_id = e.runway_end_id or r.secondary_end_id = e.runway_end_id) "
-    "join airport a on r.airport_id = a.airport_id "
-    "where e.name = :name and a.ident = :airport");
+    "join airport a on r.airport_id = a.airport_id where e.name = :name and a.ident = :airport");
 
   // Runways > 4000 feet for simplyfied runway overview
   runwayOverviewQuery = new SqlQuery(db);
   runwayOverviewQuery->prepare(
     "select length, heading, lonx, laty, primary_lonx, primary_laty, secondary_lonx, secondary_laty "
-    "from runway where airport_id = :airportId and length > 4000 " + whereLimit);
+    "from runway where airport_id = :airportId and length > 4000 " % whereLimit);
 
   apronQuery = new SqlQuery(db);
-  apronQuery->prepare(
-    "select * from apron where airport_id = :airportId");
+  apronQuery->prepare("select * from apron where airport_id = :airportId");
 
   parkingQuery = new SqlQuery(db);
-  parkingQuery->prepare("select " + parkingQueryBase + " from parking where airport_id = :airportId");
+  parkingQuery->prepare("select " % parkingQueryBase % " from parking where airport_id = :airportId");
 
   // Start positions ordered by type (runway, helipad) and name
   startQuery = new SqlQuery(db);
-  startQuery->prepare(
-    "select s.start_id, s.airport_id, s.type, s.heading, s.number, s.runway_name, s.altitude, s.lonx, s.laty "
-    "from start s where s.airport_id = :airportId "
-    "order by s.type desc, s.runway_name");
+  startQuery->prepare("select s.start_id, s.airport_id, s.type, s.heading, s.number, s.runway_name, s.altitude, s.lonx, s.laty "
+                      "from start s where s.airport_id = :airportId order by s.type desc, s.runway_name");
 
   startByIdQuery = new SqlQuery(db);
-  startByIdQuery->prepare(
-    "select start_id, airport_id, type, heading, number, runway_name, altitude, lonx, laty "
-    "from start s where start_id = :id");
+  startByIdQuery->prepare("select start_id, airport_id, type, heading, number, runway_name, altitude, lonx, laty "
+                          "from start s where start_id = :id");
 
   parkingTypeNumberQuery = new SqlQuery(db);
-  parkingTypeNumberQuery->prepare("select " + parkingQueryBase +
+  parkingTypeNumberQuery->prepare("select " % parkingQueryBase %
                                   " from parking where airport_id = :airportId and name like :name and number = :number "
                                   " order by radius desc");
 
   if(parkingHasSuffix)
   {
     parkingTypeNumberSuffixQuery = new SqlQuery(db);
-    parkingTypeNumberSuffixQuery->prepare("select " + parkingQueryBase +
+    parkingTypeNumberSuffixQuery->prepare("select " % parkingQueryBase %
                                           " from parking where airport_id = :airportId and name like :name and number = :number and "
                                           " suffix = :suffix order by radius desc");
   }
 
   parkingNameQuery = new SqlQuery(db);
-  parkingNameQuery->prepare("select " + parkingQueryBase + " from parking where airport_id = :airportId and name like :name"
+  parkingNameQuery->prepare("select " % parkingQueryBase % " from parking where airport_id = :airportId and name like :name"
                                                            " order by radius desc");
 
   helipadQuery = new SqlQuery(db);
