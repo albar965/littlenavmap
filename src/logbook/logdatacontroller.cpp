@@ -258,13 +258,11 @@ void LogdataController::createTakeoffLanding(const atools::fs::sc::SimConnectUse
     // Get nearest airport on takeoff/landing and runway
     map::MapRunwayEnd runwayEnd;
     map::MapAirport airport;
-    if(!NavApp::getAirportQuerySim()->getBestRunwayEndForPosAndCourse(runwayEnd, airport,
-                                                                      aircraft.getPosition(),
-                                                                      aircraft.getTrackDegTrue()))
+    if(!NavApp::getAirportQuerySim()->getBestRunwayEndForPosAndCourse(runwayEnd, airport, aircraft.getPosition(),
+                                                                      aircraft.getTrackDegTrue(), aircraft.isHelicopter()))
     {
       // Not even an airport was found
-      qWarning() << Q_FUNC_INFO << "No runway found for aircraft"
-                 << aircraft.getPosition() << aircraft.getTrackDegTrue();
+      qWarning() << Q_FUNC_INFO << "No runway found for aircraft" << aircraft.getPosition() << aircraft.getTrackDegTrue();
       return;
     }
 

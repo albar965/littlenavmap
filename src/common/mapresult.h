@@ -301,11 +301,41 @@ struct MapResultIndex
   MapResultIndex& remove(const atools::geo::Pos& pos, float maxDistanceNm);
 
 private:
+  /* Last index is including */
   template<typename TYPE>
-  void addAll(const QList<TYPE>& list)
+  void addToIndex(const QList<TYPE>& list, int firstIndex = 0, int lastIndex = -1)
   {
-    for(const TYPE& obj : list)
-      append(&obj);
+    if(lastIndex == -1)
+      lastIndex = list.size() - 1;
+
+    for(int i = firstIndex; i <= lastIndex; i++)
+      // Add object pointer to this
+      append(&list.at(i));
+  }
+
+  template<typename TYPE>
+  void addToIndexIf(const QList<TYPE>& list, const MapTypes& types)
+  {
+    if(types.testFlag(TYPE::staticType()))
+    {
+      for(const TYPE& obj : list)
+        append(&obj);
+    }
+  }
+
+  template<typename TYPE>
+  void addToIndexRangeIf(const QList<TYPE>& from, QList<TYPE>& to, const MapTypes& types)
+  {
+    if(types.testFlag(TYPE::staticType()))
+    {
+      int startIndex = to.size();
+
+      // Add whole list to target
+      to.append(from);
+
+      // Add object pointers from target list to this
+      addToIndex(to, startIndex);
+    }
   }
 
   map::MapResult result;

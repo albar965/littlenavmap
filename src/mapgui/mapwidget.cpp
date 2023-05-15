@@ -3765,6 +3765,7 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
   if(event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier) ||
      event->modifiers() == (Qt::ControlModifier | Qt::ShiftModifier | Qt::AltModifier))
   {
+    bool helicopter = event->modifiers().testFlag(Qt::AltModifier);
     const Route& route = NavApp::getRouteConst();
     if(QPoint(lastPoint - event->pos()).manhattanLength() > 20)
     {
@@ -3793,8 +3794,9 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
       }
       else
       {
+        float maxDist = helicopter ? 0.5f : 2.f;
         float distanceFromStart = route.getDistanceFromStart(pos);
-        ground = distanceFromStart<3.f || distanceFromStart> route.getTotalDistance() - 3.f;
+        ground = distanceFromStart<maxDist || distanceFromStart> route.getTotalDistance() - maxDist;
 
         if(route.isActiveAlternate() || route.isActiveMissed())
           ground = false;
@@ -3845,7 +3847,6 @@ void MapWidget::debugMovingPlane(QMouseEvent *event)
       if(!(alt < map::INVALID_ALTITUDE_VALUE))
         alt = route.getCruisingAltitudeFeet();
 
-      bool helicopter = event->modifiers().testFlag(Qt::AltModifier);
       pos.setAltitude(alt);
       SimConnectData data = SimConnectData::buildDebugForPosition(pos, lastPos, ground, vertSpeed, tas, fuelflow, totalFuel, ice,
                                                                   route.getCruisingAltitudeFeet(), NavApp::getMagVar(pos),

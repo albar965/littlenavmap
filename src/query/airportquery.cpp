@@ -40,14 +40,20 @@ using map::MapHelipad;
 namespace ageo = atools::geo;
 
 /* Key for nearestCache combining all query parameters */
-struct NearestCacheKeyAirport
+class NearestCacheKeyAirport
 {
+public:
+  NearestCacheKeyAirport(const atools::geo::Pos& posParam, float distanceNmParam)
+    : pos(posParam), distanceNm(distanceNmParam)
+  {
+  }
+
   atools::geo::Pos pos;
   float distanceNm;
 
   bool operator==(const NearestCacheKeyAirport& other) const
   {
-    return pos == other.pos && std::abs(distanceNm - other.distanceNm) < 0.01;
+    return pos.almostEqual(other.pos) && atools::almostEqual(distanceNm, other.distanceNm, 0.01f);
   }
 
   bool operator!=(const NearestCacheKeyAirport& other) const
@@ -63,8 +69,12 @@ inline uint qHash(const NearestCacheKeyAirport& key)
 }
 
 /* maximum difference in angle for aircraft to recognize the right runway */
-const static float MAX_HEADING_RUNWAY_DEVIATION = 20.f;
-const static float MAX_RUNWAY_DISTANCE_FT = 5000.f;
+const static float MAX_HEADING_RUNWAY_DEVIATION_DEG = 20.f;
+const static float MAX_HEADING_RUNWAY_DEVIATION_DEG_2 = 45.f;
+const static float MAX_HEADING_RUNWAY_DEVIATION_DEG_3 = map::INVALID_HEADING_VALUE; // Ignore heading and get nearest runway end
+const static float MAX_RUNWAY_DISTANCE_METER = 150.f; // First iteration
+const static float MAX_RUNWAY_DISTANCE_METER_2 = 2000.f; // Second iteration if first failed
+const static float MAX_RUNWAY_DISTANCE_METER_3 = 10000.f; // Third iteration if second failed
 
 const static float MAX_FUZZY_AIRPORT_DISTANCE_METER = 5000.f;
 
@@ -315,7 +325,7 @@ void AirportQuery::getAirportFuzzy(map::MapAirport& airport, const map::MapAirpo
     // Fall back to coordinate based search and look for centers within certain distance
     if(airports.isEmpty() && airportCopy.position.isValid())
     {
-      ageo::Rect rect(airportCopy.position, ageo::nmToMeter(10.f));
+      ageo::Rect rect(airportCopy.position, ageo::nmToMeter(10.f), true /* fast */);
 
       query::fetchObjectsForRect(rect, airportByPosQuery, [ =, &airports](atools::sql::SqlQuery *query) -> void {
         map::MapAirport obj;
@@ -757,17 +767,17 @@ const QList<map::MapHelipad> *AirportQuery::getHelipads(int airportId)
   }
 }
 
-map::MapResultIndex *AirportQuery::getNearestAirportsProc(const map::MapAirport& airport, float distanceNm)
+const map::MapResultIndex *AirportQuery::getNearestProcAirports(const atools::geo::Pos& pos, const QString& ident, float distanceNm)
 {
-  map::MapResultIndex *nearest = nearestAirportsProcInternal(airport, distanceNm);
+  const map::MapResultIndex *nearest = nearestProcAirportsInternal(pos, ident, distanceNm);
   if(nearest == nullptr || nearest->size() < 5)
-    nearest = nearestAirportsProcInternal(airport, distanceNm * 4.f);
+    nearest = nearestProcAirportsInternal(pos, ident, distanceNm * 4.f);
   return nearest;
 }
 
-map::MapResultIndex *AirportQuery::nearestAirportsProcInternal(const map::MapAirport& airport, float distanceNm)
+const map::MapResultIndex *AirportQuery::nearestProcAirportsInternal(const atools::geo::Pos& pos, const QString& ident, float distanceNm)
 {
-  NearestCacheKeyAirport key = {airport.position, distanceNm};
+  const NearestCacheKeyAirport key(pos, distanceNm);
 
   map::MapResultIndex *result = nearestAirportCache.object(key);
 
@@ -775,12 +785,12 @@ map::MapResultIndex *AirportQuery::nearestAirportsProcInternal(const map::MapAir
   {
     map::MapResult res;
     // Create a rectangle that roughly covers the requested region
-    ageo::Rect rect(airport.position, ageo::nmToMeter(distanceNm));
+    ageo::Rect rect(pos, ageo::nmToMeter(distanceNm), true /* fast */);
 
     query::fetchObjectsForRect(rect, airportByRectAndProcQuery, [ =, &res](atools::sql::SqlQuery *query) -> void {
       map::MapAirport obj;
       mapTypesFactory->fillAirport(query->record(), obj, true /* complete */, navdata, NavApp::isAirportDatabaseXPlane(navdata));
-      if(obj.ident != airport.ident)
+      if(obj.ident != ident)
         res.airports.append(obj);
     });
 
@@ -788,90 +798,147 @@ map::MapResultIndex *AirportQuery::nearestAirportsProcInternal(const map::MapAir
     result->add(res);
 
     // Remove all that are too far away
-    result->remove(airport.position, distanceNm);
+    result->remove(pos, distanceNm);
 
     // Sort the rest by distance
-    result->sort(airport.position, true /*sortNearToFar*/);
+    result->sort(pos, true /*sortNearToFar*/);
 
     nearestAirportCache.insert(key, result);
   }
   return result;
 }
 
-void AirportQuery::getBestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
-                                              const QVector<map::MapRunway>& runways, const ageo::Pos& pos,
-                                              float heading, float maxRwDistance, float maxHeadingDeviation)
+void AirportQuery::bestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
+                                           const map::MapResultIndex& runwayAirports, const ageo::Pos& pos, float heading,
+                                           float maxDistanceMeter, float maxHeadingDeviationDeg)
 {
-  if(!runways.isEmpty())
+  map::MapRunway runway;
+  ageo::LineDistance result;
+
+  // Loop through the mixed list of distance ordered runways and airports - nearest is first
+  for(const map::MapBase *base : runwayAirports)
   {
-    map::MapRunway runway;
-    ageo::LineDistance result;
+    float distanceMeter = 0.f;
 
-    // Loop through the list of distance ordered runways from getRunways
-    for(const map::MapRunway& rw : runways)
+    // Check if runway exceeds maximum distance ==========================
+    const map::MapRunway *rw = base->asPtr<map::MapRunway>();
+    if(rw != nullptr)
     {
-      ageo::Line(rw.primaryPosition, rw.secondaryPosition).distanceMeterToLine(pos, result);
-      if(std::abs(result.distance) > ageo::feetToMeter(maxRwDistance))
-        continue;
+      pos.distanceMeterToLine(rw->primaryPosition, rw->secondaryPosition, result);
+      distanceMeter = std::abs(result.distance);
 
-      map::MapRunwayEnd primaryEnd = getRunwayEndById(rw.primaryEndId);
-      map::MapRunwayEnd secondaryEnd = getRunwayEndById(rw.secondaryEndId);
-
-      // Check if either primary or secondary end matches by heading
-      if(ageo::angleAbsDiff(heading, primaryEnd.heading) < maxHeadingDeviation)
+      if(distanceMeter < maxDistanceMeter)
       {
-        runwayEnd = primaryEnd;
-        runway = rw;
+        // Get best matching runway end =========================
+        map::MapRunwayEnd primaryEnd = getRunwayEndById(rw->primaryEndId);
+        map::MapRunwayEnd secondaryEnd = getRunwayEndById(rw->secondaryEndId);
+
+        if(maxHeadingDeviationDeg < map::INVALID_HEADING_VALUE)
+        {
+          // Check if either primary or secondary end matches by heading for fixed wing aircraft
+          if(ageo::angleAbsDiff(heading, primaryEnd.heading) < maxHeadingDeviationDeg)
+            runwayEnd = primaryEnd;
+          else if(ageo::angleAbsDiff(heading, secondaryEnd.heading) < maxHeadingDeviationDeg)
+            runwayEnd = secondaryEnd;
+        }
+        else
+          // Ignore heading and look for nearest runway end for this runway
+          runwayEnd = primaryEnd.position.distanceMeterTo(pos) < secondaryEnd.position.distanceMeterTo(pos) ? primaryEnd : secondaryEnd;
+
+        if(runwayEnd.isValid())
+        {
+          // Distance is within limits and runway end found
+          runway = *rw;
+          qDebug() << Q_FUNC_INFO << "Found" << runwayEnd.name << runwayEnd << atools::geo::meterToNm(distanceMeter) << "NM";
+          break;
+        }
+      }
+      else
+      {
+        // Maximum distance exceeded - everything else (either airport or runway) is more far away
+        qDebug() << Q_FUNC_INFO << "Distance exceeded"
+                 << atools::geo::meterToNm(distanceMeter) << "<" << atools::geo::meterToNm(maxDistanceMeter);
         break;
       }
-      else if(ageo::angleAbsDiff(heading, secondaryEnd.heading) < maxHeadingDeviation)
+
+    } // if(rw != nullptr)
+    else if(!(maxHeadingDeviationDeg < map::INVALID_HEADING_VALUE))
+    {
+      // Heading not given look for airports as well
+      // Check if airport exceeds maximum distance ==========================
+      const map::MapAirport *ap = base->asPtr<map::MapAirport>();
+      if(ap != nullptr)
       {
-        runwayEnd = secondaryEnd;
-        runway = rw;
-        break;
+        // Check airports for helicopters - list contains only runway-less airports
+        distanceMeter = ap->position.distanceMeterTo(pos);
+        if(distanceMeter < maxDistanceMeter)
+        {
+          // Distance is within limits and airport found
+          airport = *ap;
+          qDebug() << Q_FUNC_INFO << "Found" << airport.ident << airport << atools::geo::meterToNm(distanceMeter) << "NM";
+          break;
+        }
+        else
+        {
+          // Maximum distance exceeded - everything else (airport or runway) is more far away
+          qDebug() << Q_FUNC_INFO << "Distance exceeded"
+                   << atools::geo::meterToNm(distanceMeter) << "<" << atools::geo::meterToNm(maxDistanceMeter);
+          break;
+        }
       }
     }
+  } // for(const map::MapBase *base : runwayAirports)
 
-    if(runwayEnd.isValid())
-      getAirportById(airport, runway.airportId);
-    else
-    {
-      // No runway end found - get at least the nearest airport
-      getAirportById(airport, runways.constFirst().airportId);
-      runwayEnd = map::MapRunwayEnd();
-    }
-  }
+  if(runwayEnd.isValid())
+    // Get airport for runway end
+    getAirportById(airport, runway.airportId);
+  else if(airport.isValid())
+    // No runway end but airport found - make airport object complete
+    getAirportById(airport, airport.id);
 }
 
-void AirportQuery::getRunways(QVector<map::MapRunway>& runways, const ageo::Rect& rect, const ageo::Pos& pos)
+void AirportQuery::getRunwaysAndAirports(map::MapResultIndex& runwayAirports, const ageo::Rect& rect, const ageo::Pos& pos, bool helicopter)
 {
+  // Get runways within rectangle =====================
   SqlQuery query(db);
   query.prepare("select * from runway where lonx between :leftx and :rightx and laty between :bottomy and :topy");
 
   for(const ageo::Rect& r : rect.splitAtAntiMeridian())
   {
-    query.bindValue(":leftx", r.getWest());
-    query.bindValue(":rightx", r.getEast());
-    query.bindValue(":bottomy", r.getSouth());
-    query.bindValue(":topy", r.getNorth());
+    query::bindRect(r, &query);
     query.exec();
 
     while(query.next())
     {
       map::MapRunway runway;
-      mapTypesFactory->fillRunway(query.record(), runway, true /*overview*/);
-      runways.append(runway);
+      mapTypesFactory->fillRunway(query.record(), runway, true /* overview */);
+      runwayAirports.add(map::MapResult::createFromMapBase(&runway));
     }
   }
 
-  // Now sort the list of runways by distance to aircraft position and put the closest to the beginning of the list
-  std::sort(runways.begin(), runways.end(), [pos](const map::MapRunway& r1, const map::MapRunway& r2) -> bool
+  // Get airports without runways within rectangle too for helicopter =====================
+  if(helicopter)
   {
-    ageo::LineDistance result1, result2;
-    ageo::Line(r1.primaryPosition, r1.secondaryPosition).distanceMeterToLine(pos, result1);
-    ageo::Line(r2.primaryPosition, r2.secondaryPosition).distanceMeterToLine(pos, result2);
-    return std::abs(result1.distance) < std::abs(result2.distance);
-  });
+    query.prepare("select " % airportOverviewColumns(db).join(", ") % " from airport " %
+                  "where lonx between :leftx and :rightx and laty between :bottomy and :topy and longest_runway_length = 0");
+
+    bool xp = NavApp::isAirportDatabaseXPlane(navdata /* navdata */);
+    for(const ageo::Rect& r : rect.splitAtAntiMeridian())
+    {
+      query::bindRect(r, &query);
+      query.exec();
+
+      while(query.next())
+      {
+        map::MapAirport airport;
+        mapTypesFactory->fillAirport(query.record(), airport, false /* complete */, navdata, xp);
+        runwayAirports.add(map::MapResult::createFromMapBase(&airport));
+      }
+    }
+  }
+
+  // Sort by distance to airport or runway line nearest at beginning of list
+  runwayAirports.sort(pos, true /* sortNearToFar */);
 }
 
 const QList<map::MapTaxiPath> *AirportQuery::getTaxiPaths(int airportId)
@@ -893,8 +960,7 @@ const QList<map::MapTaxiPath> *AirportQuery::getTaxiPaths(int airportId)
       map::MapTaxiPath tp;
       tp.closed = taxiparthQuery->value("type").toString() == "CLOSED";
       tp.drawSurface = taxiparthQuery->value("is_draw_surface").toInt() > 0;
-      tp.start =
-        ageo::Pos(taxiparthQuery->value("start_lonx").toFloat(), taxiparthQuery->value("start_laty").toFloat());
+      tp.start = ageo::Pos(taxiparthQuery->value("start_lonx").toFloat(), taxiparthQuery->value("start_laty").toFloat());
       tp.end = ageo::Pos(taxiparthQuery->value("end_lonx").toFloat(), taxiparthQuery->value("end_laty").toFloat());
       tp.surface = taxiparthQuery->value("surface").toString();
       tp.name = taxiparthQuery->value("name").toString();
@@ -978,35 +1044,56 @@ map::MapRunwayEnd AirportQuery::runwayEndByName(int airportId, const QString& ru
   return map::MapRunwayEnd();
 }
 
-bool AirportQuery::getBestRunwayEndForPosAndCourse(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport,
-                                                   const ageo::Pos& pos, float trackTrue)
+bool AirportQuery::getBestRunwayEndForPosAndCourse(map::MapRunwayEnd& runwayEnd, map::MapAirport& airport, const ageo::Pos& pos,
+                                                   float trackTrue, bool helicopter)
 {
-  qDebug() << Q_FUNC_INFO << "pos" << pos << "trackTrue" << trackTrue;
+  qDebug() << Q_FUNC_INFO << "pos" << pos << "trackTrue" << trackTrue << "helicopter" << helicopter;
 
-  QVector<map::MapRunway> runways;
+  runwayEnd.reset();
+  airport.reset();
 
-  // Use inflated rectangle for query based on a radius or 5 NM
-  ageo::Rect rect(pos, ageo::nmToMeter(5.f));
+  // Get all airports and runways nearby ordered by distance between pos and runway line
+  // Additional runway-less airport for helicopters, if
+  // Use inflated rectangle for query
+  map::MapResultIndex runwayAirports;
+  getRunwaysAndAirports(runwayAirports, ageo::Rect(pos, MAX_RUNWAY_DISTANCE_METER_3, true /* fast */), pos, helicopter);
+  qDebug() << Q_FUNC_INFO << "Found" << runwayAirports.size() << "runways and/or airports";
 
-  // Get all runways nearby ordered by distance between pos and runway line
-  getRunways(runways, rect, pos);
-
-  qDebug() << Q_FUNC_INFO << "Found" << runways.size() << "runways";
-
-  // Get closest runway that matches heading
-  getBestRunwayEndAndAirport(runwayEnd, airport, runways, pos, trackTrue, MAX_RUNWAY_DISTANCE_FT, MAX_HEADING_RUNWAY_DEVIATION);
-
-  if(!runwayEnd.isValid())
+  if(!runwayAirports.isEmpty())
   {
-    qDebug() << Q_FUNC_INFO << "No runway end found. Doing second iteration.";
-    getBestRunwayEndAndAirport(runwayEnd, airport, runways, pos, trackTrue, MAX_RUNWAY_DISTANCE_FT * 4.f,
-                               MAX_HEADING_RUNWAY_DEVIATION * 2.f);
-  }
+    // Get closest airport and runway that matches heading closely - first iteration
+    // Heading is ignored for helicopter
+    // Airport is also returned if runway end was found
+    bestRunwayEndAndAirport(runwayEnd, airport, runwayAirports, pos, trackTrue,
+                            MAX_RUNWAY_DISTANCE_METER, helicopter ? map::INVALID_HEADING_VALUE : MAX_HEADING_RUNWAY_DEVIATION_DEG);
 
-  if(!airport.isValid())
-    qWarning() << Q_FUNC_INFO << "No runways or airports found for takeoff/landing";
-  else
-    qDebug() << Q_FUNC_INFO << "Found airport" << airport.ident << "runway" << runwayEnd.name;
+    if(!airport.isValid())
+    {
+      // Get closest airport and runway that matches heading with larger distance and tolerances - second iteration
+      qDebug() << Q_FUNC_INFO << "No airport found. Second iteration.";
+      runwayEnd.reset();
+      airport.reset();
+      bestRunwayEndAndAirport(runwayEnd, airport, runwayAirports, pos, trackTrue,
+                              MAX_RUNWAY_DISTANCE_METER_2, helicopter ? map::INVALID_HEADING_VALUE : MAX_HEADING_RUNWAY_DEVIATION_DEG_2);
+    }
+
+    if(!airport.isValid())
+    {
+      // Get closest airport and runway that matches heading with largest distance - third iteration
+      // Ignore heading value and get closest runway end
+      qDebug() << Q_FUNC_INFO << "No airport found. Third iteration.";
+      runwayEnd.reset();
+      airport.reset();
+      bestRunwayEndAndAirport(runwayEnd, airport, runwayAirports, pos, trackTrue,
+                              MAX_RUNWAY_DISTANCE_METER_3, helicopter ? map::INVALID_HEADING_VALUE : MAX_HEADING_RUNWAY_DEVIATION_DEG_3);
+    }
+
+    if(airport.isValid())
+      qDebug() << Q_FUNC_INFO << "Found airport" << airport.ident << airport;
+
+    if(runwayEnd.isValid())
+      qDebug() << Q_FUNC_INFO << "Found runway end" << runwayEnd.name << runwayEnd;
+  }
 
   return airport.isValid();
 }

@@ -600,23 +600,18 @@ void HtmlInfoBuilder::nearestText(const MapAirport& airport, HtmlBuilder& html) 
       airportTitle(airport, html, -1, true /* procedures */);
 
     // Get nearest airports that have procedures ====================================
-    MapResultIndex *nearestAirports = airportQueryNav->getNearestAirportsProc(airport,
-                                                                              NEAREST_MAX_DISTANCE_AIRPORT_NM);
-    if(!nearestMapObjectsText(airport, html, nearestAirports, tr("Nearest Airports with Procedures"), false, true,
-                              NEAREST_MAX_NUM_AIRPORT))
-      html.p().b(tr("No airports with procedures within a radius of %1.").
-                 arg(Unit::distNm(NEAREST_MAX_DISTANCE_AIRPORT_NM * 4.f))).pEnd();
+    const MapResultIndex *nearestAirports =
+            airportQueryNav->getNearestProcAirports(airport.position, airport.ident, NEAREST_MAX_DISTANCE_AIRPORT_NM);
+    if(!nearestMapObjectsText(airport, html, nearestAirports, tr("Nearest Airports with Procedures"), false, true, NEAREST_MAX_NUM_AIRPORT))
+      html.p().b(tr("No airports with procedures within a radius of %1.").arg(Unit::distNm(NEAREST_MAX_DISTANCE_AIRPORT_NM * 4.f))).pEnd();
 
     // Get nearest VOR and NDB ====================================
     MapResultIndex *nearestNavaids =
       mapWidget->getMapQuery()->getNearestNavaids(airport.position, NEAREST_MAX_DISTANCE_NAVAID_NM,
-                                                  map::VOR | map::NDB | map::ILS, 3 /* max ILS */,
-                                                  4.f /* max ILS dist NM */);
+                                                  map::VOR | map::NDB | map::ILS, 3 /* max ILS */, 4.f /* max ILS dist NM */);
 
-    if(!nearestMapObjectsText(airport, html, nearestNavaids, tr("Nearest Radio Navaids"), true, false,
-                              NEAREST_MAX_NUM_NAVAID))
-      html.p().b(tr("No navaids within a radius of %1.").
-                 arg(Unit::distNm(NEAREST_MAX_DISTANCE_NAVAID_NM * 4.f))).pEnd();
+    if(!nearestMapObjectsText(airport, html, nearestNavaids, tr("Nearest Radio Navaids"), true, false, NEAREST_MAX_NUM_NAVAID))
+      html.p().b(tr("No navaids within a radius of %1.").arg(Unit::distNm(NEAREST_MAX_DISTANCE_NAVAID_NM * 4.f))).pEnd();
   }
 }
 
