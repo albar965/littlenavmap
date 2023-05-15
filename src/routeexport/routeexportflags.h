@@ -120,6 +120,8 @@ enum RouteExportFormatFlag : quint16
 
   FILEREP = 1 << 8, /* Select folder or file and program creates or overwrites file on export. */
 
+  NDALL = 1 << 9,     /* Show warning if mode is all navdata. */
+
   SAVED_FLAGS = SELECTED /* Saved to configuration. */
 };
 

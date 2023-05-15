@@ -3211,12 +3211,9 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
             // No ICAO and no FAA - ok to use ADEP/ADES keywords if local code is present and the same
             useAirportKeys = airport.local == airport.ident;
 
-          if(useAirportKeys)
-          {
-            // ADEP and ADES cannot be used if an airport is not stock but only add-on in X-Plane
-            if(NavApp::getInfoQuery()->isAirportXplaneCustomOnly(airport.ident))
-              useAirportKeys = false;
-          }
+          // ADEP and ADES cannot be used if an airport is not stock but only add-on in X-Plane
+          if(useAirportKeys && NavApp::getInfoQuery()->isAirportXplaneCustomOnly(airport.ident))
+            useAirportKeys = false;
 
           // Use display ident for DEP/DES since it does not matter in this configuration
           QString ident = useAirportKeys ? airport.ident : airport.displayIdent();
@@ -3224,8 +3221,10 @@ Route Route::adjustedToOptions(const Route& origRoute, rf::RouteAdjustOptions op
           if(ident.size() > 4)
             useAirportKeys = false;
 
-          // Use ADEP/ADES if there are any procedures - X-Plane can load this
-          if((i == 0 && route.hasAnySidProcedure()) || (i == entries.size() - 1 && route.hasAnyArrivalProcedure()))
+          // Use ADEP/ADES if there are any procedures in the flight plan or airport has procedures in general - X-Plane can load this
+          if(airport.procedure() || // By XP database
+             NavApp::getMapQueryGui()->hasProcedures(airport) || // Checks navdatabase
+             (i == 0 && route.hasAnySidProcedure()) || (i == entries.size() - 1 && route.hasAnyArrivalProcedure()))
             useAirportKeys = true;
 
           if(i == 0)

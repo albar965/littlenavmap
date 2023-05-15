@@ -408,7 +408,7 @@ enum MapAirportFlag
   AP_LIGHT = 1 << 1, /* Has at least one lighted runway */
   AP_TOWER = 1 << 2, /* Has a tower frequency */
   AP_ILS = 1 << 3, /* At least one runway end has ILS */
-  AP_PROCEDURE = 1 << 4, /* At least one runway end has an approach */
+  AP_PROCEDURE = 1 << 4, /* At least one runway end has a procedure in the sim data */
   AP_MIL = 1 << 5,
   AP_CLOSED = 1 << 6, /* All runways are closed */
   AP_AVGAS = 1 << 7,

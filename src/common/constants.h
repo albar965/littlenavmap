@@ -73,6 +73,7 @@ const QLatin1String ACTIONS_SHOW_ROUTE_PARKING_WARNING("Actions/ShowRouteParking
 const QLatin1String ACTIONS_SHOW_ROUTE_WARNING("Actions/ShowRouteWarning");
 const QLatin1String ACTIONS_SHOW_ROUTE_WARNING_MULTI("Actions/ShowRouteWarningMulti");
 const QLatin1String ACTIONS_SHOW_ROUTE_NO_CYCLE_WARNING("Actions/ShowRouteNoCycleWarning");
+const QLatin1String ACTIONS_SHOW_ROUTE_NAVDATA_ALL_WARNING("Actions/ShowRouteNavdataAllWarning");
 const QLatin1String ACTIONS_SHOW_ROUTE_ERROR("Actions/ShowRouteError");
 const QLatin1String ACTIONS_SHOW_ROUTE_ALTERNATE_ERROR("Actions/ShowRouteAlternateError");
 const QLatin1String ACTIONS_SHOW_ROUTE_START_CHANGED("Actions/ShowRouteStartChanged");

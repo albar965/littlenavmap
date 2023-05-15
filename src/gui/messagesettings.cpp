@@ -52,6 +52,7 @@ void messages::resetAllMessages()
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_ALTERNATE_ERROR, true);
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_ERROR, true);
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_NO_CYCLE_WARNING, true);
+  settings.setValue(lnm::ACTIONS_SHOW_ROUTE_NAVDATA_ALL_WARNING, true);
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_PARKING_WARNING, true);
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_START_CHANGED, true);
   settings.setValue(lnm::ACTIONS_SHOW_ROUTE_WARNING, true);
