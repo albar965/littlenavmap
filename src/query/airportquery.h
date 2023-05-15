@@ -220,7 +220,7 @@ private:
   /* Get a list of runways of all airports inside rectangle sorted by distance to pos.
    * Airport objects are not complete. */
   void getRunwaysAndAirports(map::MapResultIndex& runwayAirports, const atools::geo::Rect& rect, const atools::geo::Pos& pos,
-                             bool helicopter);
+                             bool noRunway);
 
   /* true if third party navdata */
   bool navdata;

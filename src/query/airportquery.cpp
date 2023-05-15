@@ -897,7 +897,7 @@ void AirportQuery::bestRunwayEndAndAirport(map::MapRunwayEnd& runwayEnd, map::Ma
     getAirportById(airport, airport.id);
 }
 
-void AirportQuery::getRunwaysAndAirports(map::MapResultIndex& runwayAirports, const ageo::Rect& rect, const ageo::Pos& pos, bool helicopter)
+void AirportQuery::getRunwaysAndAirports(map::MapResultIndex& runwayAirports, const ageo::Rect& rect, const ageo::Pos& pos, bool noRunway)
 {
   // Get runways within rectangle =====================
   SqlQuery query(db);
@@ -916,8 +916,8 @@ void AirportQuery::getRunwaysAndAirports(map::MapResultIndex& runwayAirports, co
     }
   }
 
-  // Get airports without runways within rectangle too for helicopter =====================
-  if(helicopter)
+  // Get airports without runways within rectangle too =====================
+  if(noRunway)
   {
     query.prepare("select " % airportOverviewColumns(db).join(", ") % " from airport " %
                   "where lonx between :leftx and :rightx and laty between :bottomy and :topy and longest_runway_length = 0");
@@ -1052,11 +1052,10 @@ bool AirportQuery::getBestRunwayEndForPosAndCourse(map::MapRunwayEnd& runwayEnd,
   runwayEnd.reset();
   airport.reset();
 
-  // Get all airports and runways nearby ordered by distance between pos and runway line
-  // Additional runway-less airport for helicopters, if
+  // Get all airports without runways and runways nearby ordered by distance between pos and runway line
   // Use inflated rectangle for query
   map::MapResultIndex runwayAirports;
-  getRunwaysAndAirports(runwayAirports, ageo::Rect(pos, MAX_RUNWAY_DISTANCE_METER_3, true /* fast */), pos, helicopter);
+  getRunwaysAndAirports(runwayAirports, ageo::Rect(pos, MAX_RUNWAY_DISTANCE_METER_3, true /* fast */), pos, true /* noRunway */);
   qDebug() << Q_FUNC_INFO << "Found" << runwayAirports.size() << "runways and/or airports";
 
   if(!runwayAirports.isEmpty())
