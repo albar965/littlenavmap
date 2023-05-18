@@ -136,6 +136,7 @@ void NavApp::init(MainWindow *mainWindowParam)
   databaseManager = new DatabaseManager(mainWindow);
   databaseManager->openAllDatabases(); // Only readonly databases
   databaseManager->loadLanguageIndex(); // MSFS translations from table "translation"
+  databaseManager->loadAircraftIndex(); // MSFS aircraft.cfg properties
 
   userdataController = new UserdataController(databaseManager->getUserdataManager(), mainWindow);
   logdataController = new LogdataController(databaseManager->getLogdataManager(), mainWindow);
@@ -1169,6 +1170,11 @@ DatabaseManager *NavApp::getDatabaseManager()
 const atools::fs::scenery::LanguageJson& NavApp::getLanguageIndex()
 {
   return databaseManager->getLanguageIndex();
+}
+
+atools::fs::scenery::AircraftIndex& NavApp::getAircraftIndex()
+{
+  return databaseManager->getAircraftIndex();
 }
 
 ConnectClient *NavApp::getConnectClient()

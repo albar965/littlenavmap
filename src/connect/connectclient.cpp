@@ -29,6 +29,7 @@
 #include "fs/sc/simconnecthandler.h"
 #include "fs/sc/xpconnecthandler.h"
 #include "fs/scenery/languagejson.h"
+#include "fs/scenery/aircraftindex.h"
 
 #include <QDataStream>
 #include <QTcpSocket>
@@ -290,7 +291,7 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
       // Modify AI aircraft and set shadow flag if a online network aircraft is registered as shadowed in the index
       NavApp::getOnlinedataController()->updateAircraftShadowState(dataPacket);
 
-      // Update the MSFS translated aircraft names and types =============
+      // Update the MSFS translated aircraft names and types ===================================
       /* Mooney, Boeing, Actually aircraft model. */
       // const QString& getAirplaneType() const
       // const QString& getAirplaneAirline() const
@@ -298,22 +299,28 @@ void ConnectClient::postSimConnectData(atools::fs::sc::SimConnectData dataPacket
       // const QString& getAirplaneTitle() const
       /* Short ICAO code MD80, BE58, etc. Actually type designator. */
       // const QString& getAirplaneModel() const
-      const atools::fs::scenery::LanguageJson& idx = NavApp::getLanguageIndex();
-      if(!idx.isEmpty())
+      const atools::fs::scenery::LanguageJson& languageIndex = NavApp::getLanguageIndex();
+      if(!languageIndex.isEmpty())
       {
         // Change user aircraft names
-        userAircraft.updateAircraftNames(idx.getName(userAircraft.getAirplaneType()),
-                                         idx.getName(userAircraft.getAirplaneAirline()),
-                                         idx.getName(userAircraft.getAirplaneTitle()),
-                                         idx.getName(userAircraft.getAirplaneModel()));
+        userAircraft.updateAircraftNames(languageIndex.getName(userAircraft.getAirplaneType()),
+                                         languageIndex.getName(userAircraft.getAirplaneAirline()),
+                                         languageIndex.getName(userAircraft.getAirplaneTitle()),
+                                         languageIndex.getName(userAircraft.getAirplaneModel()));
 
         // Change AI names
         for(atools::fs::sc::SimConnectAircraft& ac : dataPacket.getAiAircraft())
-          ac.updateAircraftNames(idx.getName(ac.getAirplaneType()),
-                                 idx.getName(ac.getAirplaneAirline()),
-                                 idx.getName(ac.getAirplaneTitle()),
-                                 idx.getName(ac.getAirplaneModel()));
+          ac.updateAircraftNames(languageIndex.getName(ac.getAirplaneType()),
+                                 languageIndex.getName(ac.getAirplaneAirline()),
+                                 languageIndex.getName(ac.getAirplaneTitle()),
+                                 languageIndex.getName(ac.getAirplaneModel()));
       }
+
+      // Update ICAO aircraft designator from aircraft.cfg for MSFS ===================================
+      QString aircraftCfgKey = userAircraft.getProperties().value(atools::fs::sc::PROP_AIRCRAFT_CFG).getValueString();
+      if(!aircraftCfgKey.isEmpty())
+        // Has property - fetch from index by loaded aircraft.cfg values
+        userAircraft.setAirplaneModel(NavApp::getAircraftIndex().getIcaoTypeDesignator(aircraftCfgKey));
 
       // Fix incorrect on-ground status which appears from some traffic tools =======================
       for(atools::fs::sc::SimConnectAircraft& ac : dataPacket.getAiAircraft())

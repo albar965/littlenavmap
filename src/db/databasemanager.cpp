@@ -26,6 +26,7 @@
 #include "fs/db/databasemeta.h"
 #include "fs/navdatabase.h"
 #include "fs/online/onlinedatamanager.h"
+#include "fs/scenery/aircraftindex.h"
 #include "fs/scenery/languagejson.h"
 #include "fs/userdata/logdatamanager.h"
 #include "fs/userdata/userdatamanager.h"
@@ -69,6 +70,9 @@ DatabaseManager::DatabaseManager(MainWindow *parent)
 
   // Keeps MSFS translations from table "translation" in memory
   languageIndex = new atools::fs::scenery::LanguageJson;
+
+  // Aircraft config read from MSFS folders to get more user aircraft details
+  aircraftIndex = new atools::fs::scenery::AircraftIndex;
 
   // Also loads list of simulators from settings ======================================
   restoreState();
@@ -278,6 +282,9 @@ DatabaseManager::~DatabaseManager()
 
   qDebug() << Q_FUNC_INFO << "delete languageIndex";
   delete languageIndex;
+
+  qDebug() << Q_FUNC_INFO << "delete aircraftIndex";
+  delete aircraftIndex;
 
   SqlDatabase::removeDatabase(dbtools::DATABASE_NAME_SIM);
   SqlDatabase::removeDatabase(dbtools::DATABASE_NAME_NAV);
@@ -937,6 +944,7 @@ void DatabaseManager::switchNavFromMainMenu()
 
     openAllDatabases();
     loadLanguageIndex();
+    loadAircraftIndex();
 
     QGuiApplication::restoreOverrideCursor();
 
@@ -987,6 +995,7 @@ void DatabaseManager::switchSimInternal(atools::fs::FsPaths::SimulatorType type)
 
   openAllDatabases();
   loadLanguageIndex();
+  loadAircraftIndex();
 
   QGuiApplication::restoreOverrideCursor();
 
@@ -1088,6 +1097,20 @@ void DatabaseManager::loadLanguageIndex()
 {
   if(SqlUtil(databaseSim).hasTableAndRows("translation"))
     languageIndex->readFromDb(databaseSim, OptionData::instance().getLanguage());
+}
+
+void DatabaseManager::clearAircraftIndex()
+{
+  aircraftIndex->clear();
+}
+
+void DatabaseManager::loadAircraftIndex()
+{
+  if(currentFsType == FsPaths::MSFS)
+  {
+    QString basePath = simulators.value(FsPaths::MSFS).basePath;
+    aircraftIndex->loadIndex({FsPaths::getMsfsCommunityPath(basePath), FsPaths::getMsfsOfficialPath(basePath)});
+  }
 }
 
 void DatabaseManager::openAllDatabases()
@@ -1699,7 +1722,12 @@ void DatabaseManager::loadSceneryInternalPost()
       navDatabaseStatus = simulators.value(currentFsType).navDatabaseStatus;
 
     openAllDatabases();
+
+    clearLanguageIndex();
     loadLanguageIndex();
+
+    clearAircraftIndex();
+    loadAircraftIndex();
 
     // Notify all objects in program on change
     emit postDatabaseLoad(currentFsType);

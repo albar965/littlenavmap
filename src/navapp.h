@@ -83,6 +83,7 @@ namespace fs {
 
 namespace scenery {
 class LanguageJson;
+class AircraftIndex;
 }
 
 namespace perf {
@@ -323,6 +324,9 @@ public:
 
   /* MSFS translations from table "translation" */
   static const atools::fs::scenery::LanguageJson& getLanguageIndex();
+
+  /* Aircraft config read from MSFS folders to get more user aircraft details */
+  static atools::fs::scenery::AircraftIndex& getAircraftIndex();
 
   static ConnectClient *getConnectClient();
 

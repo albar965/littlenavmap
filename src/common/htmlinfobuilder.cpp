@@ -601,7 +601,7 @@ void HtmlInfoBuilder::nearestText(const MapAirport& airport, HtmlBuilder& html) 
 
     // Get nearest airports that have procedures ====================================
     const MapResultIndex *nearestAirports =
-            airportQueryNav->getNearestProcAirports(airport.position, airport.ident, NEAREST_MAX_DISTANCE_AIRPORT_NM);
+      airportQueryNav->getNearestProcAirports(airport.position, airport.ident, NEAREST_MAX_DISTANCE_AIRPORT_NM);
     if(!nearestMapObjectsText(airport, html, nearestAirports, tr("Nearest Airports with Procedures"), false, true, NEAREST_MAX_NUM_AIRPORT))
       html.p().b(tr("No airports with procedures within a radius of %1.").arg(Unit::distNm(NEAREST_MAX_DISTANCE_AIRPORT_NM * 4.f))).pEnd();
 
@@ -3815,7 +3815,7 @@ void HtmlInfoBuilder::aircraftOnlineText(const atools::fs::sc::SimConnectAircraf
     html.row2If(tr("Persons on Board:"), onlineRec.valueInt("flightplan_persons_on_board"));
     html.tableEnd();
 
-    if(info && aircraft.getPosition().isValid())
+    if(info && aircraft.isValid())
     {
       head(html, tr("Position"));
       html.table();
@@ -4882,7 +4882,7 @@ void HtmlInfoBuilder::aircraftTitle(const atools::fs::sc::SimConnectAircraft& ai
 
   if(info && !print)
   {
-    if(aircraft.getPosition().isValid())
+    if(aircraft.isValid())
     {
       html.nbsp().nbsp();
       html.a(tr("Map"), QString("lnm://show?lonx=%1&laty=%2").

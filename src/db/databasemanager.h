@@ -33,6 +33,7 @@ namespace db {
 class DatabaseMeta;
 }
 namespace scenery {
+class AircraftIndex;
 class LanguageJson;
 }
 
@@ -120,6 +121,9 @@ public:
 
   /* Load MSFS translations for current language */
   void loadLanguageIndex();
+
+  /* Load MSFS aircraft.cfg files from paths */
+  void loadAircraftIndex();
 
   /* Open a writeable database for userpoints or online network data. Automatic transactions are off.  */
   void openWriteableDatabase(atools::sql::SqlDatabase *database, const QString& name, const QString& displayName, bool backup);
@@ -250,6 +254,12 @@ public:
     return *languageIndex;
   }
 
+  /* MSFS translations from table "translation" */
+  atools::fs::scenery::AircraftIndex& getAircraftIndex() const
+  {
+    return *aircraftIndex;
+  }
+
   /* Checks if size and last modification time have changed on the readonly nav and sim databases.
    * Shows an error dialog if this is the case */
   void checkForChangedNavAndSimDatabases();
@@ -333,6 +343,8 @@ private:
 
   void clearLanguageIndex();
 
+  void clearAircraftIndex();
+
   bool checkValidBasePaths() const;
 
   /* Disable or enable nav menu items depending on auto status */
@@ -399,6 +411,7 @@ private:
 
   /* MSFS translations from table "translation" */
   atools::fs::scenery::LanguageJson *languageIndex = nullptr;
+  atools::fs::scenery::AircraftIndex *aircraftIndex = nullptr;
 
   /* Show hint dialog only once per session */
   bool backgroundHintShown = false;
