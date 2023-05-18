@@ -1,5 +1,5 @@
 /*****************************************************************************
-* Copyright 2015-2022 Alexander Barthel alex@littlenavmap.org
+* Copyright 2015-2023 Alexander Barthel alex@littlenavmap.org
 *
 * This program is free software: you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -33,7 +33,7 @@ bool ProfileOptions::showOptions()
 {
   qDebug() << Q_FUNC_INFO;
 
-  atools::gui::TreeDialog treeDialog(parentWidget, QApplication::applicationName() + tr(" - Elevation Profile"),
+  atools::gui::TreeDialog treeDialog(parentWidget, QCoreApplication::applicationName() + tr(" - Elevation Profile"),
                                      tr("Select options for Elevation Profile."),
                                      lnm::PROFILE_DISPLAY_OPTIONS_DIALOG, "PROFILE.html#profile-options",
                                      true /* showExpandCollapse */);
