@@ -225,6 +225,7 @@ void MapPainterVehicle::paintAircraftTrack()
   {
     context->painter->setPen(mapcolors::aircraftTrailPen(context->sz(context->thicknessTrail, 2)));
 
+    // Draw with simple precision
     for(const LineString& line : aircraftTrack.getLineStrings())
       drawLineString(context->painter, line);
   }

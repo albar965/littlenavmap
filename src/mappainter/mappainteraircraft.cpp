@@ -143,16 +143,18 @@ void MapPainterAircraft::render()
     // Draw user aircraft ====================================================================
     if(context->objectTypes.testFlag(map::AIRCRAFT))
     {
-      if(userPos.isValid())
+      // Use higher accuracy - falls back to normal position if not set
+        atools::geo::PosD pos = userAircraft.getPositionD();
+      if(pos.isValid())
       {
         bool hidden = false;
-        float x, y;
-        if(wToS(userPos, x, y, DEFAULT_WTOS_SIZE, &hidden))
+        double x, y;
+        if(wToS(pos, x, y, DEFAULT_WTOS_SIZE, &hidden))
         {
           if(!hidden)
           {
             paintTurnPath(userAircraft);
-            paintUserAircraft(userAircraft, x, y);
+            paintUserAircraft(userAircraft, static_cast<float>(x), static_cast<float>(y));
           }
         }
       }

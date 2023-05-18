@@ -178,6 +178,23 @@ bool CoordinateConverter::wToS(const atools::geo::Pos& coords, double& x, double
   return visible && !hidden;
 }
 
+bool CoordinateConverter::wToS(const atools::geo::PosD& coords, double& x, double& y, const QSize& size, bool *isHidden) const
+{
+  if(!coords.isValid())
+  {
+    x = y = 0.;
+    if(isHidden != nullptr)
+      *isHidden = true;
+    return false;
+  }
+
+  bool hidden;
+  bool visible = wToS(Marble::GeoDataCoordinates(coords.getLonX(), coords.getLatY(), 0, DEG), x, y, size, &hidden);
+  if(isHidden != nullptr)
+    *isHidden = hidden;
+  return visible && !hidden;
+}
+
 bool CoordinateConverter::wToS(const Marble::GeoDataCoordinates& coords, double& x, double& y, const QSize& size, bool *isHidden) const
 {
   return wToSInternal(coords, x, y, size, isHidden);

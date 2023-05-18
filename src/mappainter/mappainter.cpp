@@ -479,9 +479,9 @@ void MapPainter::drawLineString(Marble::GeoPainter *painter, const atools::geo::
     Pos& p1(splitLines[i]);
     Pos& p2(splitLines[i + 1]);
 
-    if(atools::almostEqual(p1.getLatY(), p2.getLatY()))
+    if(atools::almostEqual(p1.getLatY(), p2.getLatY()) && std::abs(p1.getLonX() - p2.getLonX()) > 0.5f)
     {
-      // Move latitude a bit up and down if equal
+      // Move latitude a bit up and down if equal and more than half a degree apart
       p1.setLatY(p1.getLatY() + LATY_CORRECTION);
       p2.setLatY(p2.getLatY() - LATY_CORRECTION);
     }
