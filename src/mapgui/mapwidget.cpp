@@ -89,7 +89,9 @@ struct SimUpdateDelta
 
 Q_DECLARE_TYPEINFO(SimUpdateDelta, Q_PRIMITIVE_TYPE);
 
-// Update rates defined by delta values
+const static qreal SIM_UPDATE_CLOSE_KM = 1.;
+
+// Update rates defined by delta values for higher zoom distances
 const static QHash<opts::SimUpdateRate, SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
 {
   // manhattanLengthDelta; headingDelta; speedDelta; altitudeDelta; timeDeltaMs;
@@ -97,10 +99,26 @@ const static QHash<opts::SimUpdateRate, SimUpdateDelta> SIM_UPDATE_DELTA_MAP(
     opts::FAST, {0.5f, 1.f, 1.f, 1.f, 75}
   },
   {
-    opts::MEDIUM, {1, 1.f, 10.f, 10.f, 250}
+    opts::MEDIUM, {1.f, 1.f, 10.f, 10.f, 250}
   },
   {
-    opts::LOW, {2, 4.f, 10.f, 100.f, 550}
+    opts::LOW, {2.f, 4.f, 10.f, 100.f, 550}
+  }
+});
+
+// Update rates defined by delta values for close zoom distance < SIM_UPDATE_CLOSE_KM
+// Update more often to avoid jumping on ground
+const static QHash<opts::SimUpdateRate, SimUpdateDelta> SIM_UPDATE_DELTA_MAP_CLOSE(
+{
+  // manhattanLengthDelta; headingDelta; speedDelta; altitudeDelta; timeDeltaMs;
+  {
+    opts::FAST, {0.1f, 0.5f, 1.f, 1.f, 75}
+  },
+  {
+    opts::MEDIUM, {0.2f, 0.75f, 2.f, 5.f, 100}
+  },
+  {
+    opts::LOW, {1.f, 2.f, 5.f, 10.f, 200}
   }
 });
 
@@ -2322,8 +2340,10 @@ void MapWidget::resetTakeoffLandingDetection()
 
 void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorData)
 {
-  const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraftConst();
+  using atools::almostNotEqual;
+  using atools::geo::angleAbsDiff;
 
+  const atools::fs::sc::SimConnectUserAircraft& aircraft = simulatorData.getUserAircraftConst();
   getScreenIndex()->updateSimData(simulatorData);
 
   if(databaseLoadStatus || !aircraft.isValid())
@@ -2425,7 +2445,8 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
   bool centerAircraftChecked = mainWindow->getUi()->actionMapAircraftCenter->isChecked();
 
   // Get delta values for update rate
-  const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(od.getSimUpdateRate());
+  opts::SimUpdateRate rate = od.getSimUpdateRate();
+  SimUpdateDelta deltas = distance() < SIM_UPDATE_CLOSE_KM ? SIM_UPDATE_DELTA_MAP_CLOSE.value(rate) : SIM_UPDATE_DELTA_MAP.value(rate);
 
   // Limit number of updates per second =================================================
   if(now - lastSimUpdateMs > deltas.timeDeltaMs)
@@ -2448,13 +2469,9 @@ void MapWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulatorDa
       }
     }
 
-    using atools::almostNotEqual;
-
     // Check if position has changed significantly
     bool posHasChanged = !last.isValid() || // No previous position
                          aircraftPointDiff.manhattanLength() >= deltas.manhattanLengthDelta; // Screen position has changed
-
-    using atools::geo::angleAbsDiff;
 
     // Check if any data like heading has changed which requires a redraw
     bool dataHasChanged = posHasChanged ||
