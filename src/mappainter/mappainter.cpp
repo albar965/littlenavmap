@@ -1023,7 +1023,7 @@ void MapPainter::paintMsaMarks(const QList<map::MapAirportMsa>& airportMsa, bool
           // Draw altitude labels ===================================================================
           for(int i = 0; i < msa.altitudes.size(); i++)
           {
-            const atools::geo::Pos& labelPos = msa.labelPositions.value(i);
+            const atools::geo::Pos labelPos = msa.labelPositions.value(i);
 
             float xp, yp;
             bool visible = wToS(labelPos, xp, yp, scale->getScreeenSizeForRect(msa.bounding));

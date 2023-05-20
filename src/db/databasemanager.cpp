@@ -689,7 +689,7 @@ void DatabaseManager::insertSimSwitchActions()
   // Add real simulators first
   for(atools::fs::FsPaths::SimulatorType type : keys)
   {
-    const FsPathType& pathType = simulators.value(type);
+    const FsPathType pathType = simulators.value(type);
 
     if(pathType.isInstalled || pathType.hasDatabase)
       // Create an action for each simulator installation or database found

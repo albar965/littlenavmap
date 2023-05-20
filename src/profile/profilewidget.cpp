@@ -304,7 +304,7 @@ void ProfileWidget::simDataChanged(const atools::fs::sc::SimConnectData& simulat
 
       if(widgetVisible)
       {
-        const SimUpdateDelta& deltas = SIM_UPDATE_DELTA_MAP.value(OptionData::instance().getSimUpdateRate());
+        const SimUpdateDelta deltas = SIM_UPDATE_DELTA_MAP.value(OptionData::instance().getSimUpdateRate());
 
         using atools::almostNotEqual;
         // Get point (NM/ft) from last update
