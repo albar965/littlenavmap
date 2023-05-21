@@ -366,11 +366,8 @@ RouteController::RouteController(QMainWindow *parentWindow, QTableView *tableVie
                               ui->actionRouteActivateLeg, ui->actionRouteResetView, ui->actionRouteSetMark,
                               ui->actionRouteEditUserWaypoint});
 
-  void (RouteController::*selChangedPtr)(const QItemSelection& selected, const QItemSelection& deselected) =
-    &RouteController::tableSelectionChanged;
-
   if(tableViewRoute->selectionModel() != nullptr)
-    connect(tableViewRoute->selectionModel(), &QItemSelectionModel::selectionChanged, this, selChangedPtr);
+    connect(tableViewRoute->selectionModel(), &QItemSelectionModel::selectionChanged, this, &RouteController::tableSelectionChanged);
 
   // Connect actions - actions without shortcut key are used in the context menu method directly
   connect(ui->actionRouteTableCopy, &QAction::triggered, this, &RouteController::tableCopyClipboard);
@@ -3232,8 +3229,7 @@ void RouteController::tableSelectionChanged(const QItemSelection& selected, cons
 
   updateCleanupTimer();
 
-  if(NavApp::getMainUi()->actionRouteFollowSelection->isChecked() && sm->currentIndex().isValid() &&
-     sm->isSelected(sm->currentIndex()))
+  if(NavApp::getMainUi()->actionRouteFollowSelection->isChecked() && sm->currentIndex().isValid() && sm->isSelected(sm->currentIndex()))
     emit showPos(route.value(sm->currentIndex().row()).getPosition(), map::INVALID_DISTANCE_VALUE, false);
 }
 
