@@ -1069,8 +1069,8 @@ void RouteController::restoreState()
         if(!flightplanToLoad.isEmpty())
         {
           Flightplan fp;
-          flightplanIO->load(fp, flightplanToLoad);
-          loadFlightplan(fp, atools::fs::pln::LNM_PLN, flightplanToLoad, changed, false /* adjustAltitude */, false /* undo */);
+          atools::fs::pln::FileFormat format = flightplanIO->load(fp, flightplanToLoad);
+          loadFlightplan(fp, format, flightplanToLoad, changed, false /* adjustAltitude */, false /* undo */);
 
           routeFilename = lastUsedFlightplanFile;
         }
@@ -1251,7 +1251,8 @@ void RouteController::loadFlightplan(atools::fs::pln::Flightplan flightplan, ato
 
   // test and error after undo/redo and switch
 
-  loadProceduresFromFlightplan(false /* clear old procedure properties */);
+  loadProceduresFromFlightplan(false /* clearOldProcedureProperties */, false /* cleanupRoute */,
+                               format == atools::fs::pln::MSFS_PLN /* autoresolveTransition */);
   loadAlternateFromFlightplan();
   route.updateAll(); // Removes alternate property if not resolvable
 
@@ -1296,7 +1297,7 @@ void RouteController::loadAlternateFromFlightplan()
   atools::fs::pln::Flightplan& fp = route.getFlightplan();
   QHash<QString, QString>& props = fp.getProperties();
 
-  QStringList alternates = props.value(pln::ALTERNATES).split("#");
+  QStringList alternates = props.value(pln::ALTERNATES).split(atools::fs::pln::PROPERTY_LIST_SEP);
   QStringList notFound;
 
   const RouteLeg *lastLeg = route.isEmpty() ? nullptr : &route.getLastLeg();
@@ -1331,7 +1332,7 @@ void RouteController::loadAlternateFromFlightplan()
   alternateErrors = notFound;
 }
 
-void RouteController::loadProceduresFromFlightplan(bool clearOldProcedureProperties)
+void RouteController::loadProceduresFromFlightplan(bool clearOldProcedureProperties, bool cleanupRoute, bool autoresolveTransition)
 {
   if(route.isEmpty())
     return;
@@ -1343,7 +1344,7 @@ void RouteController::loadProceduresFromFlightplan(bool clearOldProcedurePropert
   NavApp::getProcedureQuery()->getLegsForFlightplanProperties(route.getFlightplan().getProperties(),
                                                               route.getDepartureAirportLeg().getAirport(),
                                                               route.getDestinationAirportLeg().getAirport(),
-                                                              arrival, star, departure, errors);
+                                                              arrival, star, departure, errors, autoresolveTransition);
   errors.removeDuplicates();
   procedureErrors = errors;
 
@@ -1351,7 +1352,7 @@ void RouteController::loadProceduresFromFlightplan(bool clearOldProcedurePropert
   route.setSidProcedureLegs(departure);
   route.setStarProcedureLegs(star);
   route.setArrivalProcedureLegs(arrival);
-  route.updateProcedureLegs(entryBuilder, clearOldProcedureProperties, false /* cleanup route */);
+  route.updateProcedureLegs(entryBuilder, clearOldProcedureProperties, cleanupRoute);
 }
 
 bool RouteController::loadFlightplanLnmStr(const QString& string)
@@ -1573,7 +1574,7 @@ bool RouteController::insertFlightplan(const QString& filename, int insertBefore
     route.createRouteLegsFromFlightplan();
 
     // Load procedures and add legs
-    loadProceduresFromFlightplan(true /* clear old procedure properties */);
+    loadProceduresFromFlightplan(true /* clearOldProcedureProperties */, false /* cleanupRoute */, false /* autoresolveTransition */);
     loadAlternateFromFlightplan();
     route.updateAll();
     route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
@@ -1771,11 +1772,11 @@ bool RouteController::saveFlightplanLnmInternal(const QString& filename, bool si
       route.removeProcedureLegs(missingProcedures);
 
       // Reload from database also to update the error message
-      loadProceduresFromFlightplan(true /* Clear procedure properties */);
+      loadProceduresFromFlightplan(true /* Clear procedure properties */, false /* cleanupRoute */, false /* autoresolveTransition */);
 
       // Copy loaded procedures back to properties to ensure that only valid ones are saved
       // Additionally remove duplicate waypoints
-      route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */, true /* cleanup route */);
+      route.updateProcedureLegs(entryBuilder, true /* clearOldProcedureProperties */, true /* cleanup route */);
 
       // Have to rebuild all after modification above
       route.updateAll();
@@ -2123,7 +2124,7 @@ bool RouteController::calculateRouteInternal(atools::routing::RouteFinder *route
       route.createRouteLegsFromFlightplan();
 
       // Reload procedures from properties
-      loadProceduresFromFlightplan(true /* clear old procedure properties */);
+      loadProceduresFromFlightplan(true /* clearOldProcedureProperties */, false /* cleanupRoute */, false /* autoresolveTransition */);
       loadAlternateFromFlightplan();
       QGuiApplication::restoreOverrideCursor();
 
@@ -2294,7 +2295,7 @@ void RouteController::postDatabaseLoad()
   route.clearProcedureLegs(proc::PROCEDURE_ALL);
 
   route.createRouteLegsFromFlightplan();
-  loadProceduresFromFlightplan(false /* clear old procedure properties */);
+  loadProceduresFromFlightplan(false /* clearOldProcedureProperties */, false /* cleanupRoute */, false /* autoresolveTransition */);
   loadAlternateFromFlightplan(); // Alternate dummy legs already removed above
   route.updateAll(); // Removes alternate property if it cannot be resolved
 
@@ -3265,7 +3266,7 @@ void RouteController::changeRouteUndoRedo(const atools::fs::pln::Flightplan& new
 
   // Change format in plan according to last saved format
   route.createRouteLegsFromFlightplan();
-  loadProceduresFromFlightplan(false /* clear old procedure properties */);
+  loadProceduresFromFlightplan(false /* clearOldProcedureProperties */, false /* cleanupRoute */, false /* autoresolveTransition */);
   loadAlternateFromFlightplan();
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);
@@ -3505,7 +3506,7 @@ void RouteController::deleteSelectedLegsInternal(const QList<int>& rows)
       route.reloadProcedures(procs);
 
       // Reload legs from procedures
-      route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */, true /* cleanup route */);
+      route.updateProcedureLegs(entryBuilder, true /* clearOldProcedureProperties */, true /* cleanup route */);
     }
 
     route.updateIndicesAndOffsets();
@@ -4143,7 +4144,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
     if(legs.mapType & proc::PROCEDURE_APPROACH_ALL_MISSED)
       route.setArrivalProcedureLegs(legs);
 
-    route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */, true /* cleanup route */);
+    route.updateProcedureLegs(entryBuilder, true /* clearOldProcedureProperties */, true /* cleanup route */);
   }
   else if(legs.mapType & proc::PROCEDURE_DEPARTURE)
   {
@@ -4161,7 +4162,7 @@ void RouteController::routeAddProcedure(proc::MapProcedureLegs legs)
     route.setSidProcedureLegs(legs);
 
     // Will take care of the flight plan entries too
-    route.updateProcedureLegs(entryBuilder, true /* clear old procedure properties */, true /* cleanup route */);
+    route.updateProcedureLegs(entryBuilder, true /* clearOldProcedureProperties */, true /* cleanup route */);
   }
   route.updateAll();
   route.updateAirwaysAndAltitude(false /* adjustRouteAltitude */);

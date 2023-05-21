@@ -95,8 +95,8 @@ public:
    * Procedures are partially resolved in a fuzzy way. */
   void getLegsForFlightplanProperties(const QHash<QString, QString> properties,
                                       const map::MapAirport& departure, const map::MapAirport& destination,
-                                      proc::MapProcedureLegs& procedureLegs, proc::MapProcedureLegs& starLegs,
-                                      proc::MapProcedureLegs& sidLegs, QStringList& errors);
+                                      proc::MapProcedureLegs& approachLegs, proc::MapProcedureLegs& starLegs,
+                                      proc::MapProcedureLegs& sidLegs, QStringList& errors, bool autoresolveTransition);
 
   /* Get dot-separated SID/STAR and the respective transition from the properties */
   static QString getSidAndTransition(QHash<QString, QString>& properties);
@@ -115,15 +115,25 @@ public:
                                                       const proc::MapProcedureLegs& sidLegs);
 
   /* Removes properties from the given map based on given types */
-  static void clearFlightplanProcedureProperties(QHash<QString, QString>& properties,
-                                                 const proc::MapProcedureTypes& type);
+  static void clearFlightplanProcedureProperties(QHash<QString, QString>& properties, const proc::MapProcedureTypes& type);
 
+  /* Get SID id optionally looking for runway. Returns -1 if not found.  */
   int getSidId(map::MapAirport departure, const QString& sid, const QString& runway = QString(), bool strict = false);
+
+  /* Get a transition for a SID */
   int getSidTransitionId(map::MapAirport departure, const QString& sidTrans, int sidId, bool strict = false);
 
-  int getStarId(map::MapAirport destination, const QString& star, const QString& runway = QString(),
-                bool strict = false);
+  /* Get a SID transition by last known waypoint ident. */
+  int getSidTransitionIdByWp(map::MapAirport departure, const QString& transWaypoint, int sidId, bool strict = false);
+
+  /* Get STAR id optionally looking for runway. Returns -1 if not found.  */
+  int getStarId(map::MapAirport destination, const QString& star, const QString& runway = QString(), bool strict = false);
+
+  /* Get a transition for a STAR */
   int getStarTransitionId(map::MapAirport destination, const QString& starTrans, int starId, bool strict = false);
+
+  /* Get a STAR or approach transition by first known waypoint ident. */
+  int getApprOrStarTransitionIdByWp(map::MapAirport destination, const QString& transWaypoint, int starId, bool strict = false);
 
   /* Creates a user defined VFR procedure procedure */
   void createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airportSim,
@@ -157,8 +167,7 @@ private:
 
   void createCustomApproach(proc::MapProcedureLegs& procedure, const map::MapAirport& airport, const QString& runwayEnd,
                             float finalLegDistance, float entryAltitude, float offsetAngle);
-  void createCustomDeparture(proc::MapProcedureLegs& procedure, const map::MapAirport& airport, const QString& runwayEnd,
-                             float distance);
+  void createCustomDeparture(proc::MapProcedureLegs& procedure, const map::MapAirport& airport, const QString& runwayEnd, float distance);
 
   /* See comments in postProcessLegs about the steps below */
   void postProcessLegs(const map::MapAirport& airport, proc::MapProcedureLegs& legs, bool addArtificialLegs) const;
@@ -188,7 +197,7 @@ private:
   void assignType(proc::MapProcedureLegs& procedure) const;
 
   /* Check if procedure has hard errors. Fills error list if any and resets id to -1*/
-  bool procedureValid(const proc::MapProcedureLegs *legs, QStringList& errors);
+  bool procedureValid(const proc::MapProcedureLegs *legs, QStringList *errors);
 
   /* Create artificial legs, i.e. legs which are not official ones */
   proc::MapProcedureLeg createRunwayLeg(const proc::MapProcedureLeg& leg,
@@ -198,15 +207,13 @@ private:
 
   proc::MapProcedureLegs *buildProcedureLegs(const map::MapAirport& airport, int procedureId);
   proc::MapProcedureLegs *fetchProcedureLegs(const map::MapAirport& airport, int procedureId);
-  proc::MapProcedureLegs *fetchTransitionLegs(const map::MapAirport& airport, int procedureId,
-                                              int transitionId);
+  proc::MapProcedureLegs *fetchTransitionLegs(const map::MapAirport& airport, int procedureId, int transitionId);
   int procedureIdForTransitionId(int transitionId);
   void mapObjectByIdent(map::MapResult& result, map::MapTypes type, const QString& ident,
                         const QString& region, const QString& airport,
                         const atools::geo::Pos& sortByDistancePos);
 
-  int findTransitionId(const map::MapAirport& airport, atools::sql::SqlQuery *query,
-                       bool strict);
+  int findTransitionId(const map::MapAirport& airport, atools::sql::SqlQuery *query, bool strict);
   int findProcedureId(const map::MapAirport& airport, atools::sql::SqlQuery *query, const QString& suffix,
                       const QString& runway, bool strict);
   int findProcedureLegId(const map::MapAirport& airport, atools::sql::SqlQuery *query,
@@ -234,8 +241,9 @@ private:
   atools::sql::SqlQuery *procedureLegQuery = nullptr, *transitionLegQuery = nullptr,
                         *transitionIdForLegQuery = nullptr, *procedureIdForTransQuery = nullptr,
                         *runwayEndIdQuery = nullptr, *transitionQuery = nullptr, *procedureQuery = nullptr,
-                        *transitionIdByNameQuery = nullptr, *procedureIdByNameQuery = nullptr,
-                        *procedureIdByArincNameQuery = nullptr, *transitionIdsForProcedureQuery = nullptr;
+                        *transitionIdByNameQuery = nullptr, *sidTransIdByWpQuery = nullptr, *starTransIdByWpQuery = nullptr,
+                        *procedureIdByNameQuery = nullptr, *procedureIdByArincNameQuery = nullptr,
+                        *transitionIdsForProcedureQuery = nullptr;
 
   /* approach ID and transition ID to full lists
    * The procedure also has to be stored for transitions since the handover can modify procedure legs (CI legs, etc.) */
@@ -262,7 +270,6 @@ private:
 
   /* Base id for artificial start legs */
   Q_DECL_CONSTEXPR static int START_LEG_ID_BASE = 500000000;
-
 };
 
 #endif // LITTLENAVMAP_PROCEDUREQUERY_H

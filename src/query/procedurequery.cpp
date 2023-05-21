@@ -1984,6 +1984,17 @@ void ProcedureQuery::initQueries()
   transitionIdByNameQuery->prepare("select transition_id from transition where fix_ident like :fixident and "
                                    "type like :type and approach_id = :apprid");
 
+  // Get transition from given SID/STAR/approach by last or first waypoint ident
+  QString transQueryStr("select tl.transition_id from transition_leg tl where tl.transition_leg_id in "
+                        "(select %1(transition_leg_id) "
+                        " from transition_leg l join transition t on t.transition_id = l.transition_id "
+                        " where t.approach_id = :apprid group by t.transition_id) and tl.fix_ident like :fixident");
+  sidTransIdByWpQuery = new SqlQuery(dbNav);
+  sidTransIdByWpQuery->prepare(transQueryStr.arg("max"));
+
+  starTransIdByWpQuery = new SqlQuery(dbNav);
+  starTransIdByWpQuery->prepare(transQueryStr.arg("min"));
+
   transitionIdsForProcedureQuery = new SqlQuery(dbNav);
   transitionIdsForProcedureQuery->prepare("select transition_id from transition where approach_id = :id");
 }
@@ -2025,6 +2036,12 @@ void ProcedureQuery::deInitQueries()
   delete transitionIdByNameQuery;
   transitionIdByNameQuery = nullptr;
 
+  delete sidTransIdByWpQuery;
+  sidTransIdByWpQuery = nullptr;
+
+  delete starTransIdByWpQuery;
+  starTransIdByWpQuery = nullptr;
+
   delete transitionIdsForProcedureQuery;
   transitionIdsForProcedureQuery = nullptr;
 }
@@ -2040,7 +2057,10 @@ void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>&
   }
 
   if(type & proc::PROCEDURE_SID_TRANSITION)
+  {
     properties.remove(pln::SIDTRANS);
+    properties.remove(pln::SIDTRANSWP);
+  }
 
   if(type & proc::PROCEDURE_STAR)
   {
@@ -2049,7 +2069,10 @@ void ProcedureQuery::clearFlightplanProcedureProperties(QHash<QString, QString>&
   }
 
   if(type & proc::PROCEDURE_STAR_TRANSITION)
+  {
     properties.remove(pln::STARTRANS);
+    properties.remove(pln::STARTRANSWP);
+  }
 
   if(type & proc::PROCEDURE_TRANSITION)
   {
@@ -2084,7 +2107,10 @@ void ProcedureQuery::fillFlightplanProcedureProperties(QHash<QString, QString>& 
     }
 
     if(!sidLegs.transitionFixIdent.isEmpty())
+    {
       properties.insert(pln::SIDTRANS, sidLegs.transitionFixIdent);
+      properties.remove(pln::SIDTRANSWP); // Remove waypoint since transition name is now known
+    }
 
     if(!sidLegs.approachFixIdent.isEmpty())
       properties.insert(pln::SID, sidLegs.approachFixIdent);
@@ -2096,7 +2122,10 @@ void ProcedureQuery::fillFlightplanProcedureProperties(QHash<QString, QString>& 
   if(!starLegs.isEmpty())
   {
     if(!starLegs.transitionFixIdent.isEmpty())
+    {
       properties.insert(pln::STARTRANS, starLegs.transitionFixIdent);
+      properties.remove(pln::STARTRANSWP); // Remove waypoint since transition name is now known
+    }
 
     if(!starLegs.isEmpty() && !starLegs.approachFixIdent.isEmpty())
     {
@@ -2143,14 +2172,14 @@ proc::MapProcedureTypes ProcedureQuery::getMissingProcedures(QHash<QString, QStr
     if(!properties.value(pln::SID).isEmpty() && sidLegs.procedureLegs.isEmpty())
       missing |= proc::PROCEDURE_SID;
 
-    if(!properties.value(pln::SIDTRANS).isEmpty() && sidLegs.transitionLegs.isEmpty())
+    if((!properties.value(pln::SIDTRANS).isEmpty() || !properties.value(pln::SIDTRANSWP).isEmpty()) && sidLegs.transitionLegs.isEmpty())
       missing |= proc::PROCEDURE_SID_TRANSITION;
   }
 
   if(!properties.value(pln::STAR).isEmpty() && starLegs.procedureLegs.isEmpty())
     missing |= proc::PROCEDURE_STAR;
 
-  if(!properties.value(pln::STARTRANS).isEmpty() && starLegs.transitionLegs.isEmpty())
+  if((!properties.value(pln::STARTRANS).isEmpty() || !properties.value(pln::STARTRANSWP).isEmpty()) && starLegs.transitionLegs.isEmpty())
     missing |= proc::PROCEDURE_STAR_TRANSITION;
 
   if(!procedureLegs.isCustomApproach())
@@ -2209,6 +2238,25 @@ int ProcedureQuery::getSidTransitionId(map::MapAirport departure, const QString&
   return sidTransId;
 }
 
+int ProcedureQuery::getSidTransitionIdByWp(map::MapAirport departure, const QString& transWaypoint, int sidId, bool strict)
+{
+  NavApp::getMapQueryGui()->getAirportNavReplace(departure);
+
+  int sidTransId = -1;
+  // Get a SID transition id =================================================================
+  if(!transWaypoint.isEmpty() && sidId != -1)
+  {
+    sidTransIdByWpQuery->bindValue(":fixident", transWaypoint);
+    sidTransIdByWpQuery->bindValue(":apprid", sidId);
+
+    sidTransId = findTransitionId(departure, sidTransIdByWpQuery, strict);
+    if(sidTransId == -1)
+      qWarning() << "Loading of SID transition by waypoint" << transWaypoint << "failed";
+  }
+
+  return sidTransId;
+}
+
 int ProcedureQuery::getStarId(map::MapAirport destination, const QString& star, const QString& runway, bool strict)
 {
   NavApp::getMapQueryGui()->getAirportNavReplace(destination);
@@ -2248,6 +2296,24 @@ int ProcedureQuery::getStarTransitionId(map::MapAirport destination, const QStri
     starTransId = findTransitionId(destination, transitionIdByNameQuery, strict);
     if(starTransId == -1)
       qWarning() << "Loading of STAR transition" << starTrans << "failed";
+  }
+  return starTransId;
+}
+
+int ProcedureQuery::getApprOrStarTransitionIdByWp(map::MapAirport destination, const QString& transWaypoint, int starId, bool strict)
+{
+  NavApp::getMapQueryGui()->getAirportNavReplace(destination);
+
+  int starTransId = -1;
+  // Get a STAR transition id =================================================================
+  if(!transWaypoint.isEmpty() && starId != -1)
+  {
+    starTransIdByWpQuery->bindValue(":fixident", transWaypoint);
+    starTransIdByWpQuery->bindValue(":apprid", starId);
+
+    starTransId = findTransitionId(destination, starTransIdByWpQuery, strict);
+    if(starTransId == -1)
+      qWarning() << "Loading of STAR transition by waypoint" << transWaypoint << "failed";
   }
   return starTransId;
 }
@@ -2448,12 +2514,10 @@ QString ProcedureQuery::runwayErrorString(const QString& runway)
 }
 
 void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString> properties,
-                                                    const map::MapAirport& departure,
-                                                    const map::MapAirport& destination,
-                                                    proc::MapProcedureLegs& procedureLegs,
-                                                    proc::MapProcedureLegs& starLegs,
-                                                    proc::MapProcedureLegs& sidLegs,
-                                                    QStringList& errors)
+                                                    const map::MapAirport& departure, const map::MapAirport& destination,
+                                                    proc::MapProcedureLegs& approachLegs,
+                                                    proc::MapProcedureLegs& starLegs, proc::MapProcedureLegs& sidLegs,
+                                                    QStringList& errors, bool autoresolveTransition)
 {
   errors.clear();
   MapQuery *mapQuery = NavApp::getMapQueryGui();
@@ -2461,16 +2525,18 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   map::MapAirport destinationNav = mapQuery->getAirportNav(destination);
 
   // Fetch ids by various (fuzzy) queries from database ==========================================================
-  int sidApprId = -1, sidTransId = -1, procedureId = -1, starId = -1, starTransId = -1, transitionId = -1;
+  int sidId = -1, sidTransId = -1, approachId = -1, starId = -1, starTransId = -1, transitionId = -1;
 
+  // SID procedure ================================================================================================
   if(properties.contains(pln::DEPARTURE_CUSTOM_DISTANCE) && properties.value(pln::SIDTYPE) == "CUSTOMDEPART")
   {
+    // Departure runway procedure
     map::MapAirport departureSim = mapQuery->getAirportSim(departure);
 
     if(departureSim.isValid())
       createCustomDeparture(sidLegs, departureSim, properties.value(pln::SIDRW),
                             properties.value(pln::DEPARTURE_CUSTOM_DISTANCE).toFloat());
-    sidApprId = sidLegs.isEmpty() ? -1 : CUSTOM_DEPARTURE_ID;
+    sidId = sidLegs.isEmpty() ? -1 : CUSTOM_DEPARTURE_ID;
   }
   else
   {
@@ -2479,30 +2545,36 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     if(properties.contains(pln::SID))
     {
       if(departureNav.isValid())
-        sidApprId = getSidId(departureNav, properties.value(pln::SID), properties.value(pln::SIDRW), true);
+        sidId = getSidId(departureNav, properties.value(pln::SID), properties.value(pln::SIDRW), true);
 
-      if(sidApprId == -1)
-      {
-        qWarning() << "Loading of SID" << properties.value(pln::SID) << "failed";
-        errors.append(tr("SID %1 from %2").
-                      arg(properties.value(pln::SID)).
-                      arg(runwayErrorString(properties.value(pln::SIDRW))));
-      }
+      if(sidId == -1)
+        errors.append(tr("SID %1 from %2").arg(properties.value(pln::SID)).arg(runwayErrorString(properties.value(pln::SIDRW))));
     }
 
     // Get a SID transition id =================================================================
-    if(properties.contains(pln::SIDTRANS) && sidApprId != -1)
+    if(sidId != -1)
     {
+      QString ident;
       if(departureNav.isValid())
-        sidTransId = getSidTransitionId(departureNav, properties.value(pln::SIDTRANS), sidApprId, true);
-      if(sidTransId == -1)
       {
-        qWarning() << Q_FUNC_INFO << "Loading of SID transition" << properties.value(pln::SIDTRANS) << "failed";
-        errors.append(tr("SID transition %1").arg(properties.value(pln::SIDTRANS)));
+        if(properties.contains(pln::SIDTRANS))
+        {
+          ident = properties.value(pln::SIDTRANS); // Transition name
+          sidTransId = getSidTransitionId(departureNav, ident, sidId, true);
+        }
+        else if(autoresolveTransition && properties.contains(pln::SIDTRANSWP))
+        {
+          ident = properties.value(pln::SIDTRANSWP); // Name of last SID transition waypoint
+          sidTransId = getSidTransitionIdByWp(departureNav, ident, sidId, true);
+        }
       }
+
+      if(sidTransId == -1)
+        errors.append(tr("SID transition %1").arg(ident));
     }
   }
 
+  // Approach procedure ================================================================================================
   // Get an procedure id by ARINC name =================================================================
   if(properties.contains(pln::APPROACH_ARINC) && !properties.value(pln::APPROACH_ARINC).isEmpty() &&
      procedureIdByArincNameQuery != nullptr)
@@ -2514,10 +2586,9 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
 
     if(destinationNav.isValid())
     {
-      procedureId = findProcedureId(destinationNav, procedureIdByArincNameQuery,
-                                    QString(), properties.value(pln::APPROACHRW), false);
+      approachId = findProcedureId(destinationNav, procedureIdByArincNameQuery, QString(), properties.value(pln::APPROACHRW), false);
 
-      if(procedureId == -1)
+      if(approachId == -1)
       {
         // Try again with variants of the ARINC approach name in case the runway was renamed
         QStringList variants = atools::fs::util::arincNameNameVariants(arincName);
@@ -2530,24 +2601,19 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
         {
           procedureIdByArincNameQuery->bindValue(":arincname", variant);
 
-          procedureId = findProcedureId(destinationNav, procedureIdByArincNameQuery,
-                                        QString(), properties.value(pln::APPROACHRW), false);
-          if(procedureId != -1)
+          approachId = findProcedureId(destinationNav, procedureIdByArincNameQuery, QString(), properties.value(pln::APPROACHRW), false);
+          if(approachId != -1)
             break;
         }
       }
     }
 
-    if(procedureId == -1)
-    {
-      qWarning() << Q_FUNC_INFO << "Loading of approach by ARINC name" << properties.value(pln::APPROACH_ARINC) << "failed";
-      errors.append(tr("Approach %1 to %2").
-                    arg(properties.value(pln::APPROACH_ARINC)).
+    if(approachId == -1)
+      errors.append(tr("Approach %1 to %2").arg(properties.value(pln::APPROACH_ARINC)).
                     arg(runwayErrorString(properties.value(pln::APPROACHRW))));
-    }
   }
 
-  if(procedureId == -1 && (properties.contains(pln::APPROACH) || properties.contains(pln::APPROACHTYPE)))
+  if(approachId == -1 && (properties.contains(pln::APPROACH) || properties.contains(pln::APPROACHTYPE)))
   {
     // Nothing found by ARINC id but type and fix name given try this next
 
@@ -2557,14 +2623,15 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     QString type = properties.value(pln::APPROACHTYPE);
     if(type == "CUSTOM")
     {
+      // Arrival runway procedure
       map::MapAirport destinationSim = mapQuery->getAirportSim(destination);
 
       if(destinationSim.isValid())
-        createCustomApproach(procedureLegs, destinationSim, properties.value(pln::APPROACHRW),
+        createCustomApproach(approachLegs, destinationSim, properties.value(pln::APPROACHRW),
                              properties.value(pln::APPROACH_CUSTOM_DISTANCE).toFloat(),
                              properties.value(pln::APPROACH_CUSTOM_ALTITUDE).toFloat(),
                              properties.value(pln::APPROACH_CUSTOM_OFFSET).toFloat());
-      procedureId = procedureLegs.isEmpty() ? -1 : CUSTOM_APPROACH_ID;
+      approachId = approachLegs.isEmpty() ? -1 : CUSTOM_APPROACH_ID;
     }
     else
     {
@@ -2581,74 +2648,85 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
       procedureIdByNameQuery->bindValue(":apident", destinationNav.ident);
 
       if(destinationNav.isValid())
-        procedureId = findProcedureId(destinationNav, procedureIdByNameQuery,
-                                      properties.value(pln::APPROACHSUFFIX),
-                                      properties.value(pln::APPROACHRW), false);
+        approachId = findProcedureId(destinationNav, procedureIdByNameQuery,
+                                     properties.value(pln::APPROACHSUFFIX),
+                                     properties.value(pln::APPROACHRW), false);
     }
 
-    if(procedureId == -1)
-    {
-      qWarning() << Q_FUNC_INFO << "Loading of approach" << properties.value(pln::APPROACH) << "failed";
-      errors.append(tr("Approach %1 to %2").
-                    arg(properties.value(pln::APPROACH)).
-                    arg(runwayErrorString(properties.value(pln::APPROACHRW))));
-
-    }
+    if(approachId == -1)
+      errors.append(tr("Approach %1 to %2").arg(properties.value(pln::APPROACH)).arg(runwayErrorString(properties.value(pln::APPROACHRW))));
   }
 
   // Get a transition id =================================================================
-  if(properties.contains(pln::TRANSITION) && procedureId != -1)
+  if(properties.contains(pln::TRANSITION) && approachId != -1)
   {
     QString type = properties.value(pln::TRANSITIONTYPE);
     if(type.isEmpty())
       type = "%";
     transitionIdByNameQuery->bindValue(":fixident", properties.value(pln::TRANSITION));
     transitionIdByNameQuery->bindValue(":type", type);
-    transitionIdByNameQuery->bindValue(":apprid", procedureId);
+    transitionIdByNameQuery->bindValue(":apprid", approachId);
 
     if(destinationNav.isValid())
       transitionId = findTransitionId(destinationNav, transitionIdByNameQuery, false);
     if(transitionId == -1)
-    {
-      qWarning() << "Loading of transition" << properties.value(pln::TRANSITION) << "failed";
       errors.append(tr("Transition %1").arg(properties.value(pln::TRANSITION)));
-    }
   }
 
+  // STAR ================================================================================================
   // Get a STAR id =================================================================
   if(properties.contains(pln::STAR))
   {
     if(destinationNav.isValid())
       starId = getStarId(destinationNav, properties.value(pln::STAR), properties.value(pln::STARRW), false);
-    if(starId == -1)
-    {
-      qWarning() << "Loading of STAR " << properties.value(pln::STAR) << "failed";
-      errors.append(tr("STAR %1 to %2").
-                    arg(properties.value(pln::STAR)).
-                    arg(runwayErrorString(properties.value(pln::STARRW))));
 
-    }
+    if(starId == -1)
+      errors.append(tr("STAR %1 to %2").arg(properties.value(pln::STAR)).arg(runwayErrorString(properties.value(pln::STARRW))));
   }
 
   // Get a STAR transition id =================================================================
-  if(properties.contains(pln::STARTRANS) && starId != -1)
+  if(starId != -1)
   {
     if(destinationNav.isValid())
-      starTransId = getStarTransitionId(destinationNav, properties.value(pln::STARTRANS), starId);
-    if(starTransId == -1)
     {
-      qWarning() << "Loading of STAR transition" << properties.value(pln::STARTRANS) << "failed";
-      errors.append(tr("STAR transition %1").arg(properties.value(pln::STARTRANS)));
+      QString ident;
+      if(properties.contains(pln::STARTRANS))
+      {
+        ident = properties.value(pln::STARTRANS);
+        starTransId = getStarTransitionId(destinationNav, ident, starId);
+      }
+      else if(autoresolveTransition && properties.contains(pln::STARTRANSWP))
+      {
+        ident = properties.value(pln::STARTRANSWP);
+        for(const QString& transWp : ident.split(atools::fs::pln::PROPERTY_LIST_SEP))
+        {
+          starTransId = getApprOrStarTransitionIdByWp(destinationNav, transWp, starId);
+          if(starTransId != -1)
+            break;
+        }
+      }
+
     }
+    if(starTransId == -1)
+      errors.append(tr("STAR transition %1").arg(properties.value(pln::STARTRANS)));
   }
 
+  // Get approach transition if missing and requested - have STAR and approach but no approach transition
+  if(autoresolveTransition && starId != -1 && transitionId == -1 && approachId != -1)
+  {
+    const proc::MapProcedureLegs *tempStarLegs = getProcedureLegs(destinationNav, starId);
+    if(procedureValid(tempStarLegs, &errors))
+      transitionId = getApprOrStarTransitionIdByWp(destinationNav, tempStarLegs->constLast().fixIdent, approachId);
+  }
+
+  // =================================================================================================
   // Fetch procedure structures by id from database  =============================================
 
   // Fetch SID and  transition ========================================================================
   if(sidTransId != -1) // Fetch and copy SID and transition together (here from cache)
   {
     const proc::MapProcedureLegs *legs = getTransitionLegs(departureNav, sidTransId);
-    if(procedureValid(legs, errors))
+    if(procedureValid(legs, &errors))
     {
       sidLegs = *legs;
       // Assign runway to the legs copy if procedure has parallel or all runway reference
@@ -2657,42 +2735,42 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     else
       qWarning() << Q_FUNC_INFO << "legs not found for" << departureNav.id << sidTransId;
   }
-  else if(sidApprId != -1 && sidApprId != CUSTOM_DEPARTURE_ID) // Fetch and copy SID only from cache
+  else if(sidId != -1 && sidId != CUSTOM_DEPARTURE_ID) // Fetch and copy SID only from cache
   {
-    const proc::MapProcedureLegs *legs = getProcedureLegs(departureNav, sidApprId);
-    if(procedureValid(legs, errors))
+    const proc::MapProcedureLegs *legs = getProcedureLegs(departureNav, sidId);
+    if(procedureValid(legs, &errors))
     {
       sidLegs = *legs;
       // Assign runway to the legs copy if procedure has parallel or all runway reference
       insertSidStarRunway(sidLegs, properties.value(pln::SIDRW));
     }
     else
-      qWarning() << Q_FUNC_INFO << "legs not found for" << departureNav.id << sidApprId;
+      qWarning() << Q_FUNC_INFO << "legs not found for" << departureNav.id << sidId;
   }
 
   // Fetch Approach and  transition ========================================================================
   if(transitionId != -1) // Fetch and copy transition together with approach (here from cache)
   {
     const proc::MapProcedureLegs *legs = getTransitionLegs(destinationNav, transitionId);
-    if(procedureValid(legs, errors))
-      procedureLegs = *legs;
+    if(procedureValid(legs, &errors))
+      approachLegs = *legs;
     else
       qWarning() << Q_FUNC_INFO << "legs not found for" << destinationNav.id << transitionId;
   }
-  else if(procedureId != -1 && procedureId != CUSTOM_APPROACH_ID) // Fetch and copy approach only from cache
+  else if(approachId != -1 && approachId != CUSTOM_APPROACH_ID) // Fetch and copy approach only from cache
   {
-    const proc::MapProcedureLegs *legs = getProcedureLegs(destinationNav, procedureId);
-    if(procedureValid(legs, errors))
-      procedureLegs = *legs;
+    const proc::MapProcedureLegs *legs = getProcedureLegs(destinationNav, approachId);
+    if(procedureValid(legs, &errors))
+      approachLegs = *legs;
     else
-      qWarning() << Q_FUNC_INFO << "legs not found for" << destinationNav.id << procedureId;
+      qWarning() << Q_FUNC_INFO << "legs not found for" << destinationNav.id << approachId;
   }
 
   // Fetch STAR and transition ========================================================================
   if(starTransId != -1)
   {
     const proc::MapProcedureLegs *legs = getTransitionLegs(destinationNav, starTransId);
-    if(procedureValid(legs, errors))
+    if(procedureValid(legs, &errors))
     {
       starLegs = *legs;
       // Assign runway if procedure has parallel or all runway reference
@@ -2704,7 +2782,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   else if(starId != -1)
   {
     const proc::MapProcedureLegs *legs = getProcedureLegs(destinationNav, starId);
-    if(procedureValid(legs, errors))
+    if(procedureValid(legs, &errors))
     {
       starLegs = *legs;
       // Assign runway if procedure has parallel or all runway reference
@@ -2713,21 +2791,29 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     else
       qWarning() << Q_FUNC_INFO << "legs not found for" << destinationNav.id << starId;
   }
+
+  if(!errors.isEmpty())
+    qWarning() << Q_FUNC_INFO << errors;
 }
 
-bool ProcedureQuery::procedureValid(const proc::MapProcedureLegs *legs, QStringList& errors)
+bool ProcedureQuery::procedureValid(const proc::MapProcedureLegs *legs, QStringList *errors)
 {
   if(legs != nullptr)
   {
     if(legs->hasHardError)
-      errors.append(tr("Procedure %1 %2 in scenery library has errors").
-                    arg(legs->type).arg(legs->approachFixIdent));
+    {
+      if(errors != nullptr)
+        errors->append(tr("Procedure %1 %2 in scenery library has errors").arg(legs->type).arg(legs->approachFixIdent));
+    }
     else
       // Usable
       return true;
   }
   else
-    errors.append(tr("Procedure not found in scenery library"));
+  {
+    if(errors != nullptr)
+      errors->append(tr("Procedure not found in scenery library"));
+  }
   return false;
 }
 
@@ -2902,9 +2988,7 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
     // Compare the suffix manually since the ifnull function makes the query unstable (did not work with undo)
     if(!transition && (suffix != query->value("suffix").toString() ||
                        // Runway will be compared directly to the approach and not the airport runway
-                       !doesRunwayMatch(runway,
-                                        query->valueStr("runway_name"),
-                                        query->valueStr("arinc_name", QString()),
+                       !doesRunwayMatch(runway, query->valueStr("runway_name"), query->valueStr("arinc_name", QString()),
                                         airportRunways, false /* Match empty rw */)))
       continue;
 
@@ -2922,9 +3006,7 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
       {
         // Compare the suffix manually since the ifnull function makes the query unstable (did not work with undo)
         if(!transition && // Runway will be compared directly to the approach and not the airport runway
-           !doesRunwayMatch(runway,
-                            query->valueStr("runway_name"),
-                            query->valueStr("arinc_name"),
+           !doesRunwayMatch(runway, query->valueStr("runway_name"), query->valueStr("arinc_name"),
                             airportRunways, false /* Match empty rw */))
           continue;
 
@@ -2945,9 +3027,7 @@ int ProcedureQuery::findProcedureLegId(const map::MapAirport& airport, atools::s
       if(!transition && (suffix != query->value("suffix").toString() ||
                          // Runway will be compared directly to the approach and not the airport runway
                          // The method will check here if the runway in the query result is empty
-                         !doesRunwayMatch(runway,
-                                          query->valueStr("runway_name"),
-                                          query->valueStr("arinc_name", QString()),
+                         !doesRunwayMatch(runway, query->valueStr("runway_name"), query->valueStr("arinc_name", QString()),
                                           airportRunways, true /* Match empty rw */)))
         continue;
 
@@ -2978,7 +3058,7 @@ void ProcedureQuery::processAltRestrictions(proc::MapProcedureLegs& procedure) c
     // Start at end of procedure (runway)
     for(int i = procedure.procedureLegs.size() - 1; i >= 0; i--)
     {
-      const MapProcedureLeg& next = procedure.procedureLegs.value(i + 1);
+      const MapProcedureLeg next = procedure.procedureLegs.value(i + 1);
       MapProcedureLeg& leg = procedure.procedureLegs[i];
       if(next.isValid() && next.isVerticalAngleValid())
         // Do not force altitude if next (right) leg has a required vertical angle

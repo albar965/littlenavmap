@@ -1549,7 +1549,7 @@ void Route::updateAlternateProperties()
   {
     QStringList alternates = getAlternateIdents();
     if(!alternates.isEmpty())
-      getFlightplan().getProperties().insert(atools::fs::pln::ALTERNATES, alternates.join("#"));
+      getFlightplan().getProperties().insert(atools::fs::pln::ALTERNATES, alternates.join(atools::fs::pln::PROPERTY_LIST_SEP));
     else
       getFlightplan().getProperties().remove(atools::fs::pln::ALTERNATES);
   }

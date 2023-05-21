@@ -456,7 +456,7 @@ private:
   void updateModelHighlights();
 
   /* Fill the route procedure legs structures with data based on the procedure properties in the flight plan */
-  void loadProceduresFromFlightplan(bool clearOldProcedureProperties);
+  void loadProceduresFromFlightplan(bool clearOldProcedureProperties, bool cleanupRoute, bool autoresolveTransition);
 
   void loadAlternateFromFlightplan();
 

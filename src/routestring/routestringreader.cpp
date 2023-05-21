@@ -907,7 +907,7 @@ bool RouteStringReader::addDestination(atools::fs::pln::Flightplan *flightplan, 
 
       if(!alternateIdents.isEmpty())
       {
-        flightplan->getProperties().insert(atools::fs::pln::ALTERNATES, alternateIdents.join("#"));
+        flightplan->getProperties().insert(atools::fs::pln::ALTERNATES, alternateIdents.join(atools::fs::pln::PROPERTY_LIST_SEP));
 
         if(options.testFlag(rs::REPORT))
           appendMessage(tr("Found alternate %1 <b>%2</b>.").
