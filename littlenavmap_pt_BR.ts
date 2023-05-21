@@ -2557,57 +2557,57 @@ Atualmente, apenas o OpenAir é suportado (* .txt). </translation>
 <context>
     <name>ConnectClient</name>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="756"/>
+        <location filename="src/connect/connectclient.cpp" line="763"/>
         <source>
 Will retry to connect.</source>
         <translation>
 Tente conectar novamente.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="607"/>
+        <location filename="src/connect/connectclient.cpp" line="614"/>
         <source>Autoconnect switched off.</source>
         <translation>Conexão automática desligada.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="191"/>
-        <location filename="src/connect/connectclient.cpp" line="213"/>
+        <location filename="src/connect/connectclient.cpp" line="192"/>
+        <location filename="src/connect/connectclient.cpp" line="214"/>
         <source>MSFS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="197"/>
+        <location filename="src/connect/connectclient.cpp" line="198"/>
         <source>FSX, Prepar3D or MSFS</source>
         <translation>FSX, Prepar3D ou MSFS</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="216"/>
+        <location filename="src/connect/connectclient.cpp" line="217"/>
         <source>FSX/P3D</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="219"/>
+        <location filename="src/connect/connectclient.cpp" line="220"/>
         <source>FSX/P3D/MSFS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="234"/>
-        <location filename="src/connect/connectclient.cpp" line="878"/>
+        <location filename="src/connect/connectclient.cpp" line="235"/>
+        <location filename="src/connect/connectclient.cpp" line="885"/>
         <source>Connected to simulator.</source>
         <translation>Conectado ao simulador.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="261"/>
-        <location filename="src/connect/connectclient.cpp" line="824"/>
+        <location filename="src/connect/connectclient.cpp" line="262"/>
+        <location filename="src/connect/connectclient.cpp" line="831"/>
         <source>Disconnected from simulator.</source>
         <translation>Desconectado do simulador.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="388"/>
+        <location filename="src/connect/connectclient.cpp" line="395"/>
         <source>Little Xpconnect</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="390"/>
+        <location filename="src/connect/connectclient.cpp" line="397"/>
         <source>Little Navconnect</source>
         <translation></translation>
     </message>
@@ -2617,7 +2617,7 @@ Tente conectar novamente.</translation>
         <translation type="vanished">Atualize &lt;i&gt;%1&lt;/i&gt; para a versão mais recente.&lt;br/&gt;A versão instalada de &lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;não é compatível com esta versão do Little Navmap.&lt;br/&gt; &lt;br/&gt;Instale a versão mais recente de &lt;i&gt;%1&lt;/i&gt;.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="408"/>
+        <location filename="src/connect/connectclient.cpp" line="415"/>
         <source>The connection is not reliable.&lt;br/&gt;&lt;br/&gt;Check your network or installation.</source>
         <translation>A conexão não é confiável.&lt;br/&gt;&lt;br/&gt;Verifique sua conexão ou instalação.</translation>
     </message>
@@ -2626,37 +2626,37 @@ Tente conectar novamente.</translation>
         <translation type="vanished">&lt;p&gt;Erro ao receber dados de &lt;i&gt;%1&lt;/i&gt;:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;&lt;p&gt;%3&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="804"/>
+        <location filename="src/connect/connectclient.cpp" line="811"/>
         <source>Connect Error</source>
         <translation>Erro de Conexão</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="869"/>
+        <location filename="src/connect/connectclient.cpp" line="876"/>
         <source>Connected</source>
         <translation>Conectado</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="231"/>
+        <location filename="src/connect/connectclient.cpp" line="232"/>
         <source>Connected (%1)</source>
         <translation>Conectado (%1)</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="232"/>
+        <location filename="src/connect/connectclient.cpp" line="233"/>
         <source>Connected to local flight simulator (%1).</source>
         <translation>Conectado com o flight simulator na rede (%1).</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="399"/>
+        <location filename="src/connect/connectclient.cpp" line="406"/>
         <source>Update %1 to the latest version.&lt;br/&gt;The installed version of %1&lt;br/&gt;is not compatible with this version of Little Navmap.&lt;br/&gt;&lt;br/&gt;Install the latest version of %1 which you can always find in the Little Navmap installation directory.</source>
         <translation>Atualize %1 para a versão mais recente.&lt;br/&gt;A versão instalada de %1&lt;br/&gt;não é compatível com esta versão do Little Navmap.&lt;br/&gt;&lt;br/&gt;Instale a versão mais recente de %1 que você pode encontre sempre no diretório de instalação do Little Navmap.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="414"/>
+        <location filename="src/connect/connectclient.cpp" line="421"/>
         <source>&lt;p&gt;Error receiving data from %1:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;&lt;p&gt;%3&lt;/p&gt;</source>
         <translation>&lt;p&gt;Erro ao receber dados de %1:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;&lt;p&gt;%3&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="643"/>
+        <location filename="src/connect/connectclient.cpp" line="650"/>
         <source>Too many errors when trying to connect to simulator.
 
 Not matching simulator interface or other SimConnect problem.
@@ -2675,62 +2675,62 @@ Certifique-se de usar a versão correta de %1 com o simulador correto:
 Você precisa reiniciar %1 para continuar.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="676"/>
+        <location filename="src/connect/connectclient.cpp" line="683"/>
         <source>Error (%1) ...</source>
         <translation>Erro (%1)...</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="677"/>
+        <location filename="src/connect/connectclient.cpp" line="684"/>
         <source>Too many errors when trying to connect to simulator (%1).</source>
         <translation>Muitos erros ao tentar conectar ao simulador (%1).</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="870"/>
+        <location filename="src/connect/connectclient.cpp" line="877"/>
         <source>Connected to remote flight simulator on &quot;%1&quot;.</source>
         <translation>Conectado remotamente com o flight simulator em &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="681"/>
+        <location filename="src/connect/connectclient.cpp" line="688"/>
         <source>Connecting (%1) ...</source>
         <oldsource>Connecting (%1)...</oldsource>
         <translation>Conectando (%1) ...</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="700"/>
-        <location filename="src/connect/connectclient.cpp" line="798"/>
+        <location filename="src/connect/connectclient.cpp" line="707"/>
+        <location filename="src/connect/connectclient.cpp" line="805"/>
         <source>Connecting ...</source>
         <oldsource>Connecting...</oldsource>
         <translation>Conectando ...</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="250"/>
-        <location filename="src/connect/connectclient.cpp" line="607"/>
-        <location filename="src/connect/connectclient.cpp" line="791"/>
+        <location filename="src/connect/connectclient.cpp" line="251"/>
+        <location filename="src/connect/connectclient.cpp" line="614"/>
+        <location filename="src/connect/connectclient.cpp" line="798"/>
         <source>Disconnected</source>
         <translation>Disconectado</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="250"/>
+        <location filename="src/connect/connectclient.cpp" line="251"/>
         <source>Disconnected from local flight simulator.</source>
         <translation>Disconectado do flight simulator local.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="792"/>
+        <location filename="src/connect/connectclient.cpp" line="799"/>
         <source>Disconnected from remote flight simulator on &quot;%1&quot;.</source>
         <translation>Disconectado da conexão remota com o flight simulator &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="749"/>
+        <location filename="src/connect/connectclient.cpp" line="756"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>Não &amp;mostre este diálogo novamente.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="805"/>
+        <location filename="src/connect/connectclient.cpp" line="812"/>
         <source>Error in server connection to &quot;%1&quot;: %2 (%3)</source>
         <translation>Erro no servidor para se conectar com &quot;%1&quot;: %2 (%3)</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="753"/>
+        <location filename="src/connect/connectclient.cpp" line="760"/>
         <source>Error in server connection: %1 (%2).%3</source>
         <translation>Erro na conexão com o servidor: %1 (%2).%3</translation>
     </message>
@@ -2739,34 +2739,34 @@ Você precisa reiniciar %1 para continuar.</translation>
         <translation type="vanished">Erro na leitura dos dados do Little Navconnect: %1.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="799"/>
+        <location filename="src/connect/connectclient.cpp" line="806"/>
         <source>Error while trying to connect to &quot;%1&quot;: %2 (%3).
 Will retry.</source>
         <translation>Erro enquanto tentava se conectar com &quot;%1&quot;: %2 (%3).
 Tente novamente.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="851"/>
+        <location filename="src/connect/connectclient.cpp" line="858"/>
         <source>Error writing reply to Little Navconnect: %1.</source>
         <translation>Erro enquanto tentava entregar uma resposta para Little Navconnect: %1.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="194"/>
+        <location filename="src/connect/connectclient.cpp" line="195"/>
         <source>FSX or Prepar3D</source>
         <translation>FSX ou Prepar3D</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="748"/>
+        <location filename="src/connect/connectclient.cpp" line="755"/>
         <source>Remote end closed connection.</source>
         <translation>Conexão remota fechada e encerrada.</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="682"/>
+        <location filename="src/connect/connectclient.cpp" line="689"/>
         <source>Trying to connect to local flight simulator (%1).</source>
         <translation>Tentando se conectar com o flight simulator (%1).</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="701"/>
+        <location filename="src/connect/connectclient.cpp" line="708"/>
         <source>Trying to connect to remote flight simulator on &quot;%1&quot;.</source>
         <translation>Tentando fazer uma conexão remota com o flight simulator &quot;%1&quot;.</translation>
     </message>
@@ -2775,12 +2775,12 @@ Tente novamente.</translation>
         <translation type="vanished">Aviso</translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="188"/>
+        <location filename="src/connect/connectclient.cpp" line="189"/>
         <source>X-Plane</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/connect/connectclient.cpp" line="209"/>
+        <location filename="src/connect/connectclient.cpp" line="210"/>
         <source>XP</source>
         <translation></translation>
     </message>
@@ -3470,8 +3470,8 @@ Para MSFS, isso deve apontar para o diretório que contém &amp;quot;Comunidade 
 <context>
     <name>DatabaseManager</name>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="728"/>
-        <location filename="src/db/databasemanager.cpp" line="808"/>
+        <location filename="src/db/databasemanager.cpp" line="735"/>
+        <location filename="src/db/databasemanager.cpp" line="815"/>
         <source> - AIRAC Cycle %1</source>
         <translation> - Ciclo Airac %1</translation>
     </message>
@@ -3480,12 +3480,12 @@ Para MSFS, isso deve apontar para o diretório que contém &amp;quot;Comunidade 
         <translation type="vanished">%1 - Carregando %2</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="369"/>
+        <location filename="src/db/databasemanager.cpp" line="376"/>
         <source>&amp;Erase</source>
         <translation>&amp;Apagar</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="368"/>
+        <location filename="src/db/databasemanager.cpp" line="375"/>
         <source>&amp;No and Exit Application</source>
         <translation>&amp;Não e Sair do Aplicativo</translation>
     </message>
@@ -3517,165 +3517,165 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation type="vanished">&lt;b&gt;Arquivo:&lt;/b&gt; &quot;%1&quot;&lt;br/&gt;&lt;b&gt;Erro:&lt;/b&gt; %2&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="470"/>
+        <location filename="src/db/databasemanager.cpp" line="477"/>
         <source>Your current navdata is older than the navdata included in the Little Navmap download archive.&lt;br/&gt;&lt;br/&gt;Overwrite the current navdata file with the new one?&lt;hr/&gt;Current file to overwrite:&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;br/&gt;&lt;br/&gt;%2, cycle %3, compiled on %4&lt;/i&gt;&lt;hr/&gt;New file:&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%5&lt;br/&gt;&lt;br/&gt;%6, cycle %7, compiled on %8&lt;/i&gt;&lt;hr/&gt;&lt;br/&gt;</source>
         <translation>Seus navdata atuais são mais antigos que os navdata incluídos no arquivo de download do Little Navmap.&lt;br/&gt;&lt;br/&gt;Substituir o arquivo navdata atual pelo novo?&lt;hr/&gt;Arquivo atual a ser substituído:&lt;br/&gt;&lt;br/ &gt;&lt;i&gt;%1&lt;br/&gt;&lt;br/&gt;%2, ciclo %3, compilado em %4&lt;/i&gt;&lt;hr/&gt;Novo arquivo:&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%5&lt; br/&gt;&lt;br/&gt;%6, ciclo %7, compilado em %8&lt;/i&gt;&lt;hr/&gt;&lt;br/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="487"/>
+        <location filename="src/db/databasemanager.cpp" line="494"/>
         <source>Do not &amp;show this dialog again and skip copying.</source>
         <translation>Não &amp;mostre esta caixa de diálogo novamente e pule a cópia.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="710"/>
+        <location filename="src/db/databasemanager.cpp" line="717"/>
         <source>&amp;Load Scenery Library ...</source>
         <translation>&amp;Carregar a biblioteca de Cenários...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="712"/>
+        <location filename="src/db/databasemanager.cpp" line="719"/>
         <source>Load Scenery Library (no simulator)</source>
         <translation>Carregar Biblioteca de Cenários (sem simulador)</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="730"/>
+        <location filename="src/db/databasemanager.cpp" line="737"/>
         <source> - No AIRAC Cycle</source>
         <translation> - Sem Ciclo AIRAC</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="733"/>
+        <location filename="src/db/databasemanager.cpp" line="740"/>
         <source> (database is empty)</source>
         <translation> (o banco de dados está vazio)</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="740"/>
+        <location filename="src/db/databasemanager.cpp" line="747"/>
         <source>&amp;%1%2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="744"/>
+        <location filename="src/db/databasemanager.cpp" line="751"/>
         <source>&amp;Select Automatically</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="747"/>
+        <location filename="src/db/databasemanager.cpp" line="754"/>
         <source>Select best navdata mode for simulator</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="790"/>
+        <location filename="src/db/databasemanager.cpp" line="797"/>
         <source>No Scenery Library and no Simulator found</source>
         <translation>Nenhuma Biblioteca de Cenários e nenhum Simulador encontrado</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="791"/>
+        <location filename="src/db/databasemanager.cpp" line="798"/>
         <source>No scenery library database and no simulator found</source>
         <translation>Nenhum banco de dados de biblioteca de cenários e nenhum simulador encontrado</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="813"/>
+        <location filename="src/db/databasemanager.cpp" line="820"/>
         <source>empty</source>
         <translation>vazio</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="817"/>
+        <location filename="src/db/databasemanager.cpp" line="824"/>
         <source>prev. version - reload advised</source>
         <translation>versão anterior - novo carregamento é aconselhado</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="821"/>
+        <location filename="src/db/databasemanager.cpp" line="828"/>
         <source>%1 days old - reload advised</source>
         <translation>%1 dias de idade - recarregamento recomendado</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="826"/>
+        <location filename="src/db/databasemanager.cpp" line="833"/>
         <source>no simulator</source>
         <translation>sem simulador</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="829"/>
+        <location filename="src/db/databasemanager.cpp" line="836"/>
         <source> (%1)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="829"/>
-        <location filename="src/db/databasemanager.cpp" line="1879"/>
+        <location filename="src/db/databasemanager.cpp" line="836"/>
+        <location filename="src/db/databasemanager.cpp" line="1907"/>
         <source>, </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="831"/>
+        <location filename="src/db/databasemanager.cpp" line="838"/>
         <source>&amp;%1 %2%3</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1865"/>
+        <location filename="src/db/databasemanager.cpp" line="1893"/>
         <source>%1 %2 included for loading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1867"/>
+        <location filename="src/db/databasemanager.cpp" line="1895"/>
         <source>extra directories are</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1867"/>
+        <location filename="src/db/databasemanager.cpp" line="1895"/>
         <source>extra directory is</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1869"/>
+        <location filename="src/db/databasemanager.cpp" line="1897"/>
         <source>%1 %2 excluded from loading</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1871"/>
-        <location filename="src/db/databasemanager.cpp" line="1875"/>
+        <location filename="src/db/databasemanager.cpp" line="1899"/>
+        <location filename="src/db/databasemanager.cpp" line="1903"/>
         <source>directories are</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1871"/>
-        <location filename="src/db/databasemanager.cpp" line="1875"/>
+        <location filename="src/db/databasemanager.cpp" line="1899"/>
+        <location filename="src/db/databasemanager.cpp" line="1903"/>
         <source>directory is</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1873"/>
+        <location filename="src/db/databasemanager.cpp" line="1901"/>
         <source>%1 %2 excluded from add-on detection</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1879"/>
+        <location filename="src/db/databasemanager.cpp" line="1907"/>
         <source>&lt;b&gt;Note:&lt;/b&gt; </source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1879"/>
+        <location filename="src/db/databasemanager.cpp" line="1907"/>
         <source> and </source>
         <translation type="unfinished"> e </translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1879"/>
+        <location filename="src/db/databasemanager.cpp" line="1907"/>
         <source>.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1880"/>
+        <location filename="src/db/databasemanager.cpp" line="1908"/>
         <source>Included and excluded directories can be changed in options on page &quot;Scenery Library Database&quot;.</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1884"/>
+        <location filename="src/db/databasemanager.cpp" line="1912"/>
         <source>&lt;p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1884"/>
+        <location filename="src/db/databasemanager.cpp" line="1912"/>
         <source>&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="2028"/>
+        <location filename="src/db/databasemanager.cpp" line="2056"/>
         <source>&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;It is advised to reload the scenery library database after each Little Navmap update, after installing new add-on scenery or after a flight simulator update to enable new features or benefit from bug fixes.&lt;/p&gt;&lt;p&gt;You can do this in menu &quot;Scenery Library&quot; -&gt; &quot;Load Scenery Library&quot;.&lt;/p&gt;&lt;p&gt;Open the &quot;Load Scenery Library&quot; dialog window now?&lt;/p&gt;</source>
         <translation type="unfinished"></translation>
     </message>
@@ -3688,7 +3688,7 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation type="vanished">&lt;p&gt;Observe que as informações do aeroporto são limitadas neste modo.&lt;br/&gt;Isso significa que pátios, pistas de táxi, posições de estacionamento, informações da superfície da pista e outras informações não estão disponíveis.&lt;br/&gt;Aeroportos menores podem estar ausentes e o layout da pista pode estar ausente não correspondem ao layout da pista no simulador.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Clique aqui para obter mais informações no manual online do Little Navmap&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1149"/>
+        <location filename="src/db/databasemanager.cpp" line="1172"/>
         <source>&amp;quot;&lt;br/&gt;&amp;quot;</source>
         <translation></translation>
     </message>
@@ -3698,13 +3698,13 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation type="vanished">&lt;p&gt;Você está usando MSFS com a atualização de dados de navegação do Navigraph.&lt;/p&gt;&lt;p&gt;Você precisa atualizar os dados de navegação do Little Navmap com o Navigraph FMS Data Manager e usar o modo de biblioteca de cenário correto &quot;Usar Navigraph para Navaids e Procedimentos&quot; para evite problemas com as informações do aeroporto no Little Navmap.&lt;/p&gt;&lt;p&gt;Você pode alterar o modo manualmente no menu &quot;Biblioteca de dados&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Usar Navigraph para Navaids e Procedimentos&quot;.&lt;/p&gt;&lt; p&gt;Corrigir o modo da biblioteca de dados agora?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1403"/>
-        <location filename="src/db/databasemanager.cpp" line="1416"/>
-        <location filename="src/db/databasemanager.cpp" line="1431"/>
-        <location filename="src/db/databasemanager.cpp" line="1449"/>
-        <location filename="src/db/databasemanager.cpp" line="1465"/>
-        <location filename="src/db/databasemanager.cpp" line="1477"/>
-        <location filename="src/db/databasemanager.cpp" line="1494"/>
+        <location filename="src/db/databasemanager.cpp" line="1426"/>
+        <location filename="src/db/databasemanager.cpp" line="1439"/>
+        <location filename="src/db/databasemanager.cpp" line="1454"/>
+        <location filename="src/db/databasemanager.cpp" line="1472"/>
+        <location filename="src/db/databasemanager.cpp" line="1488"/>
+        <location filename="src/db/databasemanager.cpp" line="1500"/>
+        <location filename="src/db/databasemanager.cpp" line="1517"/>
         <source>Do not &amp;show this dialog again and always correct mode after loading.</source>
         <translation>Não &amp;mostre esta caixa de diálogo novamente e sempre corrija o modo após o carregamento.</translation>
     </message>
@@ -3714,17 +3714,17 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation type="vanished">&lt;p&gt;Seu modo de biblioteca de dados atual é &quot;Usar Navigraph para todos os recursos&quot;.&lt;/p&gt;&lt;p&gt;Observe que as informações do aeroporto são limitadas neste modo. Isso significa que pátios, pistas de táxi, posições de estacionamento, superfícies de pista e muito mais não estão disponíveis, aeroportos menores estarão ausentes e o layout da pista pode não corresponder ao do simulador.&lt;/p&gt;&lt;p&gt;Você pode alterar isso manualmente no menu &quot;Biblioteca de dados&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Usar Navigraph para Navaids e Procedimentos&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo de biblioteca de dados agora?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1509"/>
+        <location filename="src/db/databasemanager.cpp" line="1532"/>
         <source>&lt;p&gt;Click &quot;Reset paths&quot; in the dialog &quot;Load Scenery Library&quot; for a possible fix.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Clique em &quot;Redefinir caminhos&quot; na caixa de diálogo &quot;Carregar biblioteca de cenários&quot; para uma possível correção.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1514"/>
+        <location filename="src/db/databasemanager.cpp" line="1537"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read base path &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Either the &quot;OneStore&quot; or the &quot;Steam&quot; paths have to exist.&lt;br/&gt;The path &quot;Community&quot; is always needed for add-ons.&lt;/p&gt;%3</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Não é possível ler o caminho base &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Razão:&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Ou o &quot;OneStore&quot; ou os caminhos &quot;Steam&quot; devem existir.&lt;br/&gt;O caminho &quot;Community&quot; é sempre necessário para complementos.&lt;/p&gt;%3</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1524"/>
+        <location filename="src/db/databasemanager.cpp" line="1547"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read base path &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;/p&gt;%3</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Não é possível ler o caminho base &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Razão:&lt;br/&gt;%2&lt;/p&gt;%3</translation>
     </message>
@@ -3737,12 +3737,12 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation type="vanished">&lt;b&gt;Mais arquivos ...&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="2015"/>
+        <location filename="src/db/databasemanager.cpp" line="2043"/>
         <source>The scenery library database was created using a previous version of Little Navmap.</source>
         <translation>O banco de dados da biblioteca de cenários foi criado usando uma versão anterior do Little Navmap.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="2020"/>
+        <location filename="src/db/databasemanager.cpp" line="2048"/>
         <source>Scenery library database was not reloaded for more than %1 days.</source>
         <translation>O banco de dados da biblioteca de cenários não foi recarregado por mais de %1 dias.</translation>
     </message>
@@ -3751,14 +3751,14 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation type="vanished">&lt;p&gt;%1&lt;/p&gt;&lt;p&gt;Recomenda-se recarregar o banco de dados da biblioteca de cenários após cada atualização do Little Navmap, após a instalação de um novo cenário adicional ou após uma atualização do simulador de voo para habilitar novos recursos ou se beneficiar de correções de bugs. &lt;/p&gt;&lt;p&gt;Você pode fazer isso no menu &quot;Biblioteca de dados&quot; -&gt; &quot;Recarregar biblioteca de cenário&quot;.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1884"/>
-        <location filename="src/db/databasemanager.cpp" line="2035"/>
+        <location filename="src/db/databasemanager.cpp" line="1912"/>
+        <location filename="src/db/databasemanager.cpp" line="2063"/>
         <source>&lt;br/&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1628"/>
-        <location filename="src/db/databasemanager.cpp" line="2036"/>
+        <location filename="src/db/databasemanager.cpp" line="1651"/>
+        <location filename="src/db/databasemanager.cpp" line="2064"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>Não &amp;mostre este diálogo novamente.</translation>
     </message>
@@ -3767,7 +3767,7 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation type="vanished">&lt;b&gt;Mais entradas de cenário ...&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1144"/>
+        <location filename="src/db/databasemanager.cpp" line="1167"/>
         <source>&lt;p style=&quot;white-space:pre&quot;&gt;Detected a modification of one or more database files:&lt;br/&gt;&lt;br/&gt;&amp;quot;%1&amp;quot;&lt;br/&gt;&lt;br/&gt;Always close &lt;i&gt;%2&lt;/i&gt; before copying, overwriting or updating scenery library databases.&lt;/p&gt;</source>
         <oldsource>&lt;p style=&quot;white-space:pre&quot;&gt;Detected a modification of one or more database files:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Always close %2 before copying, overwriting or updating scenery library databases.&lt;/p&gt;</oldsource>
         <translation>&lt;p style=&quot;white-space:pre&quot;&gt;Foi detectado uma modificação em um ou mais arquivos do banco de dados:&lt;br/&gt;&lt;br/&gt;&amp;quot;%1&amp;quot;&lt;br/&gt;&lt;br/&gt;Sempre fechar &lt;i&gt;%2&lt;/i&gt; antes de copiar, sobrescrever ou atualizar os bancos de dados da biblioteca de cenários.&lt;/p&gt;</translation>
@@ -3781,12 +3781,12 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation type="vanished">&lt;p style=&apos;white-space:pre&apos;&gt;Não é possível ler o caminho de base &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Razão:&lt;br/&gt;%2&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1541"/>
+        <location filename="src/db/databasemanager.cpp" line="1564"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read scenery configuration &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Enable the option &quot;Read inactive or disabled Scenery Entries&quot;&lt;br/&gt;or start X-Plane once to create the file.&lt;/p&gt;</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Não é possível ler a configuração do cenário &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Razão:&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Habilite a opção &quot;Ler entradas de cenários inativos ou desabilitados&quot;&lt;br/&gt;ou inicie o X-Plane uma vez para criar o arquivo.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1558"/>
+        <location filename="src/db/databasemanager.cpp" line="1581"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Cannot read scenery configuration &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Reason:&lt;br/&gt;%2&lt;/p&gt;</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Não é possível ler a configuração do cenário &quot;%1&quot;.&lt;br/&gt;&lt;br/&gt;Razão:&lt;br/&gt;%2&lt;/p&gt;</translation>
     </message>
@@ -3807,7 +3807,7 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation type="vanished">&lt;hr/&gt;Alguns arquivos ou diretórios do cenário não podem ser lidos.&lt;br/&gt; Você deve verificar se os aeroportos dos cenários afetados são exibidos corretamente e mostram as informações corretas.&lt;hr/&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1885"/>
+        <location filename="src/db/databasemanager.cpp" line="1913"/>
         <source>&lt;p&gt;&lt;big&gt;Currently Loaded:&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;big&gt;Carregado Atualmente:&lt;/big&gt;&lt;/p&gt;&lt;p&gt;%1&lt;/p&gt;</translation>
     </message>
@@ -3816,13 +3816,13 @@ Ative a opção &quot;Ler entradas de cenários inativos ou desativados&quot; ou
         <translation type="vanished">Tabela de limites do espaço aéreo não encontrada no banco de dados atualmente selecionado</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="547"/>
+        <location filename="src/db/databasemanager.cpp" line="554"/>
         <source>Cannot copy database&lt;br/&gt;&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;&lt;br/&gt;to&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;.</source>
         <oldsource>Cannot copy database&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;to&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%2&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;.</oldsource>
         <translation>Não é possível copiar o banco de dados&lt;br/&gt;&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;&lt;br/&gt;para&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1037"/>
+        <location filename="src/db/databasemanager.cpp" line="1046"/>
         <source>Cannot open %1 database. Reason:&lt;br/&gt;&lt;br/&gt;%2&lt;br/&gt;&lt;br/&gt;Is another instance of &lt;i&gt;%3&lt;/i&gt; running?&lt;br/&gt;&lt;br/&gt;Exiting now.</source>
         <oldsource>Cannot open %1 database. Reason:
 
@@ -3842,34 +3842,34 @@ Exiting now.</oldsource>
         <translation type="vanished">Copiou %1 espaços aéreos para o banco de dados do cenário do X-Plane.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="379"/>
+        <location filename="src/db/databasemanager.cpp" line="386"/>
         <source>Deleting ...</source>
         <translation>Deletando ...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="407"/>
-        <location filename="src/db/databasemanager.cpp" line="542"/>
+        <location filename="src/db/databasemanager.cpp" line="414"/>
+        <location filename="src/db/databasemanager.cpp" line="549"/>
         <source>Deleting of database&lt;br/&gt;&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;&lt;br/&gt;failed.&lt;br/&gt;&lt;br/&gt;Remove the database file manually and restart the program.</source>
         <oldsource>Deleting of database&lt;br/&gt;&lt;br/&gt;&lt;i&gt;%1&lt;/i&gt;&lt;br/&gt;&lt;br/&gt;failed.&lt;br/&gt;&lt;br/&gt;Remove the database file manually and restart the program.</oldsource>
         <translation>Exclusão do banco de dados&lt;br/&gt;&lt;br/&gt;&quot;%1&quot;&lt;br/&gt;&lt;br/&gt;falhou.&lt;br/&gt;&lt;br/&gt;Remova o arquivo do banco de dados manualmente e reinicie o programa.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="882"/>
+        <location filename="src/db/databasemanager.cpp" line="889"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;The scenery mode &quot;%1&quot; ignores all airports of the simulator.&lt;p/&gt;&lt;p&gt;Airport information is limited in this mode.&lt;br/&gt;This means that aprons, taxiways, parking positions, runway surface information and other information is not available.&lt;br/&gt;Smaller airports might be missing and runway layout might not match the runway layout in the simulator.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normally you should not use this mode.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Really switch to mode &quot;%1&quot; now?&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Click here for more information in the Little Navmap online manual&lt;/a&gt;&lt;/p&gt;</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;O modo cenário &quot;%1&quot; ignora todos os aeroportos do simulador.&lt;p/&gt;&lt;p&gt;As informações do aeroporto são limitadas neste modo.&lt;br/&gt;Isso significa que pátios, pistas de táxi, posições de estacionamento, informações da superfície da pista e outras informações não estão disponíveis.&lt;br/&gt;Aeroportos menores podem estar faltando e o layout da pista pode não corresponder ao layout da pista no simulador.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normalmente você deve não usar este modo.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Realmente mudar para o modo &quot;%1&quot; agora?&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Clique aqui para mais informações no Little Manual on-line Navmap&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="892"/>
+        <location filename="src/db/databasemanager.cpp" line="899"/>
         <source>Do not &amp;show this dialog again and switch the mode.</source>
         <translation>Não &amp;mostre esta caixa de diálogo novamente e alterne o modo.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="930"/>
+        <location filename="src/db/databasemanager.cpp" line="937"/>
         <source>Disabled %1.</source>
         <translation>Desativado %1.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="765"/>
+        <location filename="src/db/databasemanager.cpp" line="772"/>
         <source>Do &amp;not use %1 database</source>
         <translation>&amp;Não use o banco de dados da %1</translation>
     </message>
@@ -3878,7 +3878,7 @@ Exiting now.</oldsource>
         <translation type="vanished">Não &amp;mostre esta caixa de diálogo novamente e ignore no futuro.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="768"/>
+        <location filename="src/db/databasemanager.cpp" line="775"/>
         <source>Do not use %1 database</source>
         <translation>Não use %1 banco de dados</translation>
     </message>
@@ -3887,28 +3887,28 @@ Exiting now.</oldsource>
         <translation type="vanished">&lt;p&gt;Observe que as informações do aeroporto são limitadas neste modo.&lt;br/&gt; Isso significa que aprons, parking, pista, informações da superfície da pista e outras informações não estão disponíveis.&lt;/p&gt;&lt;p&gt;Além disso, aeroportos menores podem estar faltando.&lt;/p&gt;&lt;p&gt;O layout da pista de decolagem pode não corresponder ao layout da pista no simulador se você usar ações ou cenários de aeroportos mais antigos.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Clique no link abaixo para mais informações:&lt;br/&gt;&lt;br/&gt;&lt;a href=&quot;%1&quot;&gt;Online Manual - Navigation Databases&lt;/a&gt;&lt;/b&gt;&lt;br/&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="920"/>
+        <location filename="src/db/databasemanager.cpp" line="927"/>
         <source>Enabled all features for %1.</source>
         <translation>Habilitar todos os recursos para %1.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="925"/>
+        <location filename="src/db/databasemanager.cpp" line="932"/>
         <source>Enabled navaids, airways, airspaces and procedures for %1.</source>
         <translation>Habilitar navaids, aerovias,espaços aéreos e procedimentos para %1.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="385"/>
+        <location filename="src/db/databasemanager.cpp" line="392"/>
         <source>Erasing database for %1 ...</source>
         <translation>Apagando banco de dados para %1 ...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1395"/>
+        <location filename="src/db/databasemanager.cpp" line="1418"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;You are using MSFS with the Navigraph navdata update.&lt;/p&gt;&lt;p&gt;You should update the Little Navmap navdata with the Navigraph FMS Data Manager as well and use the right scenery library mode &quot;Use Navigraph for Navaids and Procedures&quot; to avoid issues with airport information in Little Navmap.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change the mode manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for Navaids and Procedures&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Você está usando MSFS com a atualização Navigraph navdata.&lt;/p&gt;&lt;p&gt;Você deve atualizar o Little Navmap navdata com o Navigraph FMS Data Manager também e usar a biblioteca de cenário correta mode &quot;Use Navigraph for Navaids and Procedures&quot; para evitar problemas com as informações do aeroporto no Little Navmap.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode alterar o modo manualmente no menu&lt;br/&gt;&quot;Biblioteca de Dados&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Usar Navigraph para navaids e procedimentos&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo de biblioteca de cenários agora?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1410"/>
+        <location filename="src/db/databasemanager.cpp" line="1433"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;You are using MSFS without the Navigraph navdata update.&lt;/p&gt;&lt;p&gt;You should use the scenery library mode &quot;Do not use Navigraph Database&quot; to avoid issues with airport information in Little Navmap.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change the mode manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Do not use Navigraph Database&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Você está usando o MSFS sem a atualização de dados de navegação do Navigraph.&lt;/p&gt;&lt;p&gt;Você deve usar o modo de biblioteca de cenário &quot;Não usar o banco de dados da Navigraph&quot; para evitar problemas com as informações do aeroporto em Little Navmap.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode alterar o modo manualmente no menu&lt;br/&gt;&quot;Biblioteca de Dados&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Não use o banco de dados Navigraph&quot; .&lt;/p&gt;&lt;p&gt;Corrigir o modo de biblioteca de cenário agora?&lt;/p&gt;</translation>
@@ -3924,24 +3924,24 @@ Exiting now.</oldsource>
         <translation type="vanished">&lt;p style=&apos;white-space:pre&apos;&gt;O ciclo AIRAC %1 de seus dados de navegação é mais antigo que o ciclo simulador %2.&lt;/p&gt;&lt;p&gt;Isso pode resultar em mensagens de aviso ao carregar planos de voo no X-Plane .&lt;/p&gt;&lt;p&gt;Atualize o Little Navmap navdata para usar o mesmo ciclo que o X-Plane navdata com o Navigraph FMS Data Manager para corrigir isso.&lt;/p&gt;&lt;p&gt;Você também pode usar o modo de biblioteca de cenários &quot; Não use o Navigraph Database&quot; para obter todos os dados do simulador.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;Você pode alterar isso manualmente no menu&lt;br/&gt;&quot;Biblioteca de Dados&quot; -&gt; &quot;Navigraph &quot; -&gt; &quot;Não usar banco de dados Navigraph&quot;.&lt;/p&gt;&lt;p&gt;Corrigir o modo de biblioteca de cenário agora?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1484"/>
+        <location filename="src/db/databasemanager.cpp" line="1507"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Your current scenery library mode is &quot;Use Navigraph for all Features&quot;.&lt;/p&gt;&lt;p&gt;All information from the simulator scenery library is ignored in this mode.&lt;/p&gt;&lt;p&gt;Note that airport information is limited in this mode. This means that aprons, taxiways, parking positions, runway surfaces and more are not available, smaller airports will be missing and the runway layout might not match the one in the simulator.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change this manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for Navaids and Procedures&quot;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normally you should not use this mode.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;Seu modo de biblioteca de cenários atual é &quot;Usar Navigraph para todos os recursos&quot;.&lt;/p&gt;&lt;p&gt;Todas as informações da biblioteca de cenários do simulador são ignoradas neste modo.&lt;/p&gt; &lt;p&gt;Observe que as informações do aeroporto são limitadas neste modo. Isso significa que pátios, pistas de táxi, posições de estacionamento, superfícies de pista e muito mais não estão disponíveis, aeroportos menores estarão ausentes e o layout da pista pode não corresponder ao do simulador.&lt;/p&gt;&lt;p style=&apos;white-space:pre &apos;&gt;Você pode alterar isso manualmente no menu&lt;br/&gt;&quot;Biblioteca de dados&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Usar Navigraph para navaids e procedimentos&quot;.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normalmente, você não deve usar isso modo.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Corrigir o modo de biblioteca de cenário agora?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1381"/>
-        <location filename="src/db/databasemanager.cpp" line="1387"/>
+        <location filename="src/db/databasemanager.cpp" line="1404"/>
+        <location filename="src/db/databasemanager.cpp" line="1410"/>
         <source>%1 - Validate Scenery Library Settings</source>
         <translation>%1 - Validar configurações da biblioteca de cenários</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1382"/>
+        <location filename="src/db/databasemanager.cpp" line="1405"/>
         <source>No issues found.</source>
         <translation>Nenhum problema encontrado.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1388"/>
+        <location filename="src/db/databasemanager.cpp" line="1411"/>
         <source>Showing Navigraph airports since simulator database is empty.
 
 You can load the simulator scenery library database in the menu
@@ -3949,59 +3949,59 @@ You can load the simulator scenery library database in the menu
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1423"/>
+        <location filename="src/db/databasemanager.cpp" line="1446"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;The AIRAC cycle %1 of your navigation data is equal to the simulator cycle.&lt;p&gt;&lt;p&gt;You should use the scenery library mode &quot;Use Navigraph for Navaids and Procedures&quot; to fetch airports from the simulator and navdata from the update.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change this manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for Navaids and Procedures&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1438"/>
+        <location filename="src/db/databasemanager.cpp" line="1461"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;The AIRAC cycle %1 of your navigation data is older than the simulator cycle %2.&lt;/p&gt;&lt;p&gt;This can result in warning messages when loading flight plans in X-Plane.&lt;/p&gt;&lt;p&gt;Update the Little Navmap navdata to use the same cycle as the X-Plane navdata with the Navigraph FMS Data Manager to fix this.&lt;/p&gt;&lt;p&gt;You can also use the scenery library mode &quot;Do not use Navigraph Database&quot; to fetch all data from the simulator.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change this manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Do not use Navigraph Database&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1456"/>
+        <location filename="src/db/databasemanager.cpp" line="1479"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;Your navdata based on AIRAC cycle %1 is outdated.&lt;/p&gt;&lt;p&gt;This can result in warning messages when loading flight plans.&lt;/p&gt;&lt;p&gt;Update the Little Navmap navdata with the Navigraph FMS Data Manager to fix this.&lt;/p&gt;&lt;p&gt;You can also use the scenery library mode &quot;Do not use Navigraph Database&quot; to fetch all data from the simulator.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can change this manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Do not use Navigraph Database&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1472"/>
+        <location filename="src/db/databasemanager.cpp" line="1495"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;p&gt;You are using an updated Navigraph database with a not optimal scenery library mode.&lt;/p&gt;&lt;p style=&apos;white-space:pre&apos;&gt;You can fix this in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot; -&gt; &quot;Use Navigraph for Navaids and Procedures&quot;.&lt;/p&gt;&lt;p&gt;Correct the scenery library mode now?&lt;/p&gt;</source>
         <comment>Sync texts with menu items</comment>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1626"/>
+        <location filename="src/db/databasemanager.cpp" line="1649"/>
         <source>Note that you can put the scenery library loading window into the background and continue working with Little Navmap while it is loading.</source>
         <translation>Observe que você pode colocar a janela de carregamento da biblioteca de cenários em segundo plano e continuar trabalhando com o Little Navmap durante o carregamento.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="1829"/>
-        <location filename="src/db/databasemanager.cpp" line="1837"/>
-        <location filename="src/db/databasemanager.cpp" line="1842"/>
+        <location filename="src/db/databasemanager.cpp" line="1857"/>
+        <location filename="src/db/databasemanager.cpp" line="1865"/>
+        <location filename="src/db/databasemanager.cpp" line="1870"/>
         <source>None</source>
         <translation>Nenhum</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="495"/>
-        <location filename="src/db/databasemanager.cpp" line="556"/>
+        <location filename="src/db/databasemanager.cpp" line="502"/>
+        <location filename="src/db/databasemanager.cpp" line="563"/>
         <source>Preparing %1 Database ...</source>
         <translation>Preparando Banco de Dados %1 ...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="530"/>
+        <location filename="src/db/databasemanager.cpp" line="537"/>
         <source>Preparing %1 Database: Analyzing ...</source>
         <translation>Preparando Banco de Dados %1: Analisando ...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="510"/>
+        <location filename="src/db/databasemanager.cpp" line="517"/>
         <source>Preparing %1 Database: Copying file ...</source>
         <translation>Preparando Banco de Dados %1: Copiando arquivos ...</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="523"/>
+        <location filename="src/db/databasemanager.cpp" line="530"/>
         <source>Preparing %1 Database: Creating indexes ...</source>
         <translation>Preparando Banco de Dados %1: Criando índices ...</translation>
     </message>
@@ -4014,52 +4014,52 @@ You can load the simulator scenery library database in the menu
 </translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="832"/>
+        <location filename="src/db/databasemanager.cpp" line="839"/>
         <source>Switch to %1 database</source>
         <translation>Mude para %1 banco de dados</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="995"/>
+        <location filename="src/db/databasemanager.cpp" line="1004"/>
         <source>Switched to %1.</source>
         <translation>Mudou para %1.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="350"/>
+        <location filename="src/db/databasemanager.cpp" line="357"/>
         <source>The database for the simulator below is not compatible with this program version or was incompletly loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase it?&lt;br/&gt;&lt;br/&gt;%2</source>
         <translation>O banco de dados para o simulador abaixo não é compatível com esta versão do programa ou foi carregado de forma incompleta:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Apague-o?&lt;br/&gt;&lt;br/&gt;%2</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="65"/>
+        <location filename="src/db/databasemanager.cpp" line="66"/>
         <source>&lt;p&gt;&lt;big&gt;Last Update: %1. Database Version: %2. Program Version: %3.%4&lt;/big&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;big&gt;Última atualização: %1. Versão do banco de dados: %2. Versão do programa: %3.%4&lt;/big&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="66"/>
+        <location filename="src/db/databasemanager.cpp" line="67"/>
         <source> AIRAC Cycle %1.</source>
         <translation> Ciclo Airac %1.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="357"/>
+        <location filename="src/db/databasemanager.cpp" line="364"/>
         <source>The databases for the simulators below are not compatible with this program version or were incompletly loaded:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Erase them?&lt;br/&gt;&lt;br/&gt;%2</source>
         <translation>Os bancos de dados para os simuladores abaixo não são compatíveis com esta versão do programa ou foram carregados de forma incompleta:&lt;br/&gt;&lt;br/&gt;%1&lt;br/&gt;&lt;br/&gt;Apague-os?&lt;br/&gt;&lt;br/&gt;%2</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="758"/>
+        <location filename="src/db/databasemanager.cpp" line="765"/>
         <source>Use %1 for &amp;Navaids and Procedures</source>
         <translation>Usar %1 para &amp;Navaids e Procedimentos</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="751"/>
+        <location filename="src/db/databasemanager.cpp" line="758"/>
         <source>Use %1 for &amp;all Features</source>
         <translation>Usar %1 para &amp;todos os Recursos</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="754"/>
+        <location filename="src/db/databasemanager.cpp" line="761"/>
         <source>Use all of %1 database features</source>
         <translation>Usar para todos os %1 recursos do banco de dados</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="761"/>
+        <location filename="src/db/databasemanager.cpp" line="768"/>
         <source>Use only navaids, airways, airspaces and procedures from %1 database</source>
         <translation>Use somente navaids, aerovia, espaço aéreo e procedimentos para %1 banco de dados</translation>
     </message>
@@ -4072,12 +4072,12 @@ You can load the simulator scenery library database in the menu
         <translation type="vanished">O banco de dados do X-Plane não tem tabela de limites do espaço aéreo.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="353"/>
+        <location filename="src/db/databasemanager.cpp" line="360"/>
         <source>You can reload the Scenery Library Database again after erasing.</source>
         <translation>Você pode recarregar o banco de dados da biblioteca do cenário novamente após o apagamento.</translation>
     </message>
     <message>
-        <location filename="src/db/databasemanager.cpp" line="360"/>
+        <location filename="src/db/databasemanager.cpp" line="367"/>
         <source>You can reload these Scenery Library Databases again after erasing.</source>
         <translation>Você pode recarregar estes Bancos de Dados da Biblioteca de Cenários novamente após o apagamento.</translation>
     </message>
@@ -5043,146 +5043,146 @@ Em seguida, escolha o simulador e clique em &quot;Conectar&quot;.
         <translation>Consultas agrupadas</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="103"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="201"/>
         <source>&amp;Copy to Clipboard</source>
         <translation>&amp;Copiar para Área de Transferência</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="104"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="202"/>
         <source>Copies overview as formatted text or table as CSV to clipboard</source>
         <translation>Copia a visão geral como texto ou tabela formatada em CSV para a área de transferência</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="178"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="276"/>
         <source>Copied text to clipboard.</source>
         <translation>Texto copiado para a área de transferência.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="187"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="289"/>
         <source>Copied %1 rows from table as CSV to clipboard.</source>
         <translation>Copiou %1 linhas da tabela como CSV para a área de transferência.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="339"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="424"/>
         <source>Departure Times</source>
         <translation>Horários de Decolagem</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="343"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="428"/>
         <source>Earliest:</source>
         <translation>Primeiro(s):</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="343"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="346"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="349"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="352"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="428"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="431"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="434"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="437"/>
         <source>%1 %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="346"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="431"/>
         <source>Earliest in Simulator:</source>
         <translation>Primeiro no Simulador:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="349"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="434"/>
         <source>Latest:</source>
         <translation>Mais recentes:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="352"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="437"/>
         <source>Latest in Simulator:</source>
         <translation>Últimas no simulador:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="301"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="386"/>
         <source>Flight Plan Distances</source>
         <translation>Distâncias do Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="288"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="295"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="305"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="373"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="380"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="390"/>
         <source>Total:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="290"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="297"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="306"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="375"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="382"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="391"/>
         <source>Maximum:</source>
         <translation>Máximo:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="289"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="296"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="307"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="374"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="381"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="392"/>
         <source>Average:</source>
         <translation>Média:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="286"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="371"/>
         <source>Flight Time Real</source>
         <translation>Tempo de Voo Real</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="293"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="378"/>
         <source>Flight Time Simulator</source>
         <translation>Tempo de Voo no Simulador</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="310"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="395"/>
         <source>Simulators</source>
         <translation>Simuladores</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="315"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="400"/>
         <source>%1:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="315"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="400"/>
         <source>Unknown</source>
         <translation>Desconhecido</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="316"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="401"/>
         <source>%1 flights</source>
         <translation>%1 Voos</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="320"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="405"/>
         <source>Used Aircraft</source>
         <translation>Aeronaves Usadas</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="324"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="409"/>
         <source>Number of distinct types:</source>
         <translation>Número de tipos distintos:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="325"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="410"/>
         <source>Number of distinct registrations:</source>
         <translation>Número de registros distintos:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="326"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="411"/>
         <source>Number of distinct names:</source>
         <translation>Número de nomes distintos:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="330"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="415"/>
         <source>Visited Airports</source>
         <translation>Aeroportos visitados</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="334"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="419"/>
         <source>Distinct departures:</source>
         <translation>Decolagens distintas:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="335"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="420"/>
         <source>Distinct destinations:</source>
         <translation>Destinos distintos:</translation>
     </message>
@@ -5199,307 +5199,327 @@ Em seguida, escolha o simulador e clique em &quot;Conectar&quot;.
         <translation type="vanished">Média no simulador:</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="366"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="452"/>
         <source>Top airports</source>
         <translation>Principais aeroportos</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="369"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="453"/>
         <source>Number of
 visits</source>
         <translation>Número de
 visitas</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="369"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="453"/>
         <source>ICAO</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="369"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="384"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="392"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="453"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="464"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="470"/>
         <source>Name</source>
         <translation>Nome</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="383"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="463"/>
         <source>Top departure airports</source>
         <translation>Principais aeroportos de partida</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="384"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="464"/>
         <source>Number of
 departures</source>
         <translation>Número de
 decolagens</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="384"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="392"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="464"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="470"/>
         <source>Ident</source>
         <translation>Identificação</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="391"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="469"/>
         <source>Top destination airports</source>
         <translation>Principais aeroportos de destino</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="392"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="470"/>
         <source>Number of
 destinations</source>
         <translation>Número de
 destinos</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="399"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="475"/>
         <source>Longest flights by distance</source>
         <translation>Voos mais longos por distância</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="400"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="476"/>
         <source>Flight Plan
 Distance %dist%</source>
         <translation>Plano de Voo
 Distância %dist%</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="400"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="476"/>
         <source>From ICAO</source>
         <translation>Do ICAO</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="400"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="476"/>
         <source>From Name</source>
         <translation>Do Nome</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="400"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="476"/>
         <source>To ICAO</source>
         <translation>Para o ICAO</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="400"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="476"/>
         <source>To Name</source>
         <translation>Para o Nome</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="401"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="413"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="428"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="439"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="452"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="464"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="477"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="486"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="497"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="506"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="518"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="528"/>
         <source>Simulator</source>
         <translation>Simulador</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="401"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="413"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="428"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="477"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="486"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="497"/>
         <source>Aircraft
 Model</source>
         <translation>Aeronave
 Modelo</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="401"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="413"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="428"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="477"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="486"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="497"/>
         <source>Aircraft
 Type</source>
         <translation>Aeronave
 Tipo</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="401"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="413"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="428"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="477"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="486"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="497"/>
         <source>Aircraft
 Registration</source>
         <translation>Aeronave
 Registro</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="410"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="484"/>
         <source>Longest flights by simulator time</source>
         <translation>Voos mais longos por hora do simulador</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="411"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="485"/>
         <source>Simulator time
 hours</source>
         <translation>Tempo do simulador
 Horas</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="411"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="426"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="485"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="495"/>
         <source>From Airport
 ICAO</source>
         <translation>Do Aeroporto
 ICAO</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="411"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="426"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="485"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="495"/>
         <source>From Airport
 Name</source>
         <translation>Do Aeroporto
 Nome</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="412"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="427"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="485"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="496"/>
         <source>To Airport
 ICAO</source>
         <translation>Para o Aeroporto
 ICAO</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="412"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="427"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="485"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="496"/>
         <source>To Airport
 Name</source>
         <translation>Para o Aeroporto
 Nome</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="425"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="494"/>
         <source>Longest flights by real time</source>
         <translation>Voos mais longos em tempo real</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="426"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="495"/>
         <source>Real time
 hours</source>
         <translation>Tempo Real
 horas</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="438"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="505"/>
         <source>Aircraft usage</source>
         <translation>Uso de aeronaves</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="439"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="452"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="464"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="506"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="518"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="528"/>
         <source>Number of
 flights</source>
         <translation>Número de
 voos</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="439"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="452"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="464"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="506"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="518"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="528"/>
         <source>Total flight
 plan distance %dist%</source>
         <translation>Voo total
 distância do plano %dist%</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="440"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="453"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="465"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="507"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="519"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="529"/>
         <source>Total simulator time
 hours</source>
         <translation>Tempo total do simulador
 horas</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="440"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="452"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="464"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="507"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="518"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="528"/>
         <source>Total realtime
 hours</source>
         <translation>Tempo real total
 horas</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="440"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="507"/>
         <source>Model</source>
         <translation>Modelo</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="440"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="453"/>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="465"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="507"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="519"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="529"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="440"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="507"/>
         <source>Registration</source>
         <translation>Registração</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="451"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="517"/>
         <source>Aircraft usage by type</source>
         <translation>Uso de aeronaves por tipo</translation>
     </message>
     <message>
-        <location filename="src/logbook/logstatisticsdialog.cpp" line="463"/>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="527"/>
         <source>Aircraft usage by registration</source>
         <translation>Uso de aeronaves por registro</translation>
+    </message>
+    <message>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="537"/>
+        <source>Aircraft hours flown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="538"/>
+        <source>Hours flown</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="538"/>
+        <source>Aircraft name</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/logbook/logstatisticsdialog.cpp" line="538"/>
+        <source>Aircraft type</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
     <name>LogdataController</name>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="271"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="269"/>
         <source>Departure</source>
         <translation>Saída</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="271"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="269"/>
         <source>Arrival</source>
         <translation>Chegada</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="272"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="270"/>
         <source> runway %1</source>
         <translation> pista %1</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="326"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="324"/>
         <source>Logbook Entry for %1 at %2%3 added.</source>
         <translation>Entrada do Logbook para %1 em %2%3 adicionado.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="394"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="392"/>
         <source>Logbook Entry for %1 at %2%3 updated.</source>
         <translation>Entrada do Logbook para %1 em %2%3 atualizou.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="547"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="545"/>
         <source>%1 logbook %2 updated.</source>
         <translation>%1 logbook %2 atualizou.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="547"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="719"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="727"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="766"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="813"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="896"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="545"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="717"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="725"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="764"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="811"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="894"/>
         <source>entry</source>
         <translation>entrada</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="547"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="719"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="727"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="766"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="813"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="896"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="545"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="717"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="725"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="764"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="811"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="894"/>
         <source>entries</source>
         <translation>entradas</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="653"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="651"/>
         <source>Logbook entry added.</source>
         <translation>Entrada no logbook adicionado.</translation>
     </message>
@@ -5548,102 +5568,102 @@ Isto não pode ser desfeito.</translation>
         <translation>Refazendo alterações...</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="670"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="668"/>
         <source> - Cleanup Logbook</source>
         <translation> - Limpeza do Logbook</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="671"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="669"/>
         <source>Select criteria for cleanup.
 Note that you can undo this change.</source>
         <translation>Selecione critérios para limpeza.
 Observe que você pode desfazer essa alteração.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="694"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="692"/>
         <source>&amp;Shorter than %1</source>
         <translation>&amp;Menor que %1</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="695"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="693"/>
         <source>Removes all entries having a too small flown distance.</source>
         <translation>Remove todas as entradas com uma distância voada muito pequena.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="696"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="694"/>
         <source>&amp;Departure and destination ident equal</source>
         <translation>&amp;Identidade de partida e destino iguais</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="697"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="695"/>
         <source>Removes all entries where the idents of departure and destination are the same. E.g. pattern work.</source>
         <translation>Remove todas as entradas onde os idents de partida e destino são os mesmos. Por exemplo. tráfego padrão.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="698"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="696"/>
         <source>&amp;Either departure or destinaion ident empty</source>
         <translation>&amp;Identidade de partida ou destino vazia</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="699"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="697"/>
         <source>Removes incomplete entries where the flight was terminated early, for example.</source>
         <translation>Remove entradas incompletas onde o voo foi encerrado antecipadamente, por exemplo.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="719"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="734"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="717"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="732"/>
         <source>%1 logbook %2 deleted.</source>
         <translation>%1 logbook %2 deletado.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="752"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="750"/>
         <source>Open X-Plane Logbook File</source>
         <translation>Abrir Arquivo de Logbook do X-Plane</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="753"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="751"/>
         <source>X-Plane Logbook Files %1;;All Files (*)</source>
         <translation>Arquivos de Logbook do X-Plane %1;;All Files (*)</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="765"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="763"/>
         <source>Imported %1 %2 X-Plane logbook.</source>
         <translation>Importou %1 %2 do logbook do X-Plane.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="776"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="774"/>
         <source>*Imported from X-Plane logbook*</source>
         <extracomment>The text &quot;Imported from X-Plane logbook&quot; has to match the one in atools::fs::userdata::LogdataManager::importXplane</extracomment>
         <translation>*Importado do logbook do X-Plane*</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="800"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="798"/>
         <source>Open Logbook CSV File</source>
         <translation>Abrir Arquivo CSV do Logbook</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="801"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="880"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="799"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="878"/>
         <source>CSV Files %1;;All Files (*)</source>
         <translation>Arquivos CSV %1;;Todos os Arquivos (*)</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="812"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="810"/>
         <source>Imported %1 %2 from CSV file.</source>
         <translation>Importou %1 %2 do arquivo CSV.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="844"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="842"/>
         <source> - Logbook Export</source>
         <translation> -  Exportar Logbook</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="845"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="843"/>
         <source>Select export options for logbook</source>
         <translation>Selecione as opções de exportação para logbook</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="850"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="848"/>
         <source>Content of attached file will be added to the exported CSV if selected.
 Note that not all programs will be able to read this.
 Columns will be empty on export if disabled.</source>
@@ -5652,38 +5672,38 @@ Observe que nem todos os programas serão capazes de ler isso.
 As colunas ficarão vazias na exportação se desativadas.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="855"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="853"/>
         <source>&amp;Append to an already present file</source>
         <translation>&amp;Anexar a um arquivo já presente</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="856"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="854"/>
         <source>File header will be ignored if this is enabled.</source>
         <oldsource>File header will be ignore if this is enabled.</oldsource>
         <translation>O cabeçalho do arquivo será ignorado se estiver habilitado.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="857"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="855"/>
         <source>Export &amp;selected entries only</source>
         <translation>Exportar &amp;somente as entradas selecionadas</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="861"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="859"/>
         <source>&amp;Flight plan in LNMPLN format</source>
         <translation>&amp;Plano de voo no formato LNMPLN</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="862"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="860"/>
         <source>&amp;Aircraft performance</source>
         <translation>&amp;Performance de Aeronaves</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="863"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="861"/>
         <source>&amp;GPX file containing flight plan points and trail</source>
         <translation>&amp;Arquivo GPX contendo pontos do plano de voo e trilha</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="859"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="857"/>
         <source>Add a &amp;header to the first line</source>
         <translation>Adicione um &amp;cabeçalho à primeira linha</translation>
     </message>
@@ -5696,53 +5716,53 @@ As colunas ficarão vazias na exportação se desativadas.</translation>
         <translation type="vanished"> Entradas do logbook</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="879"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="877"/>
         <source>Export Logbook Entry CSV File</source>
         <translation>Exportar Arquivo CSV da Entrada do Logbook</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="895"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="893"/>
         <source>%1 logbook %2 exported.</source>
         <translation>%1 logbook %2 exportado.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="917"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="915"/>
         <source>This will convert all userpoints of type &quot;Logbook&quot; to logbook entries.&lt;br/&gt;&lt;br/&gt;This works best if you did not modify the field &quot;Description&quot; in the userpoints and if you did not insert entries manually.&lt;br/&gt;&lt;br/&gt;Note that not all fields can be converted automatically.&lt;br/&gt;&lt;br/&gt;The created log entries can be found by searchingfor&lt;br/&gt;&quot;*Converted from userdata*&quot;&lt;br/&gt;in the field &amp;quot;Remarks&amp;quot;.&lt;br/&gt;&lt;br/&gt;Continue?</source>
         <translation>Isso converterá todos os userpoints do tipo &quot;Logbook&quot; em entradas do diário de bordo.&lt;br/&gt;&lt;br/&gt;Isso funciona melhor se você não modificou o campo &quot;Descrição&quot; nos userpoints e se não inseriu as entradas manualmente.&lt;br/ &gt;&lt;br/&gt;Observe que nem todos os campos podem ser convertidos automaticamente.&lt;br/&gt;&lt;br/&gt;As entradas de registro criadas podem ser encontradas pesquisando&lt;br/&gt;&quot;*Convertido de dados do usuário*&quot;&lt;br/&gt;no campo &amp;quot;Comentários&amp;quot;.&lt;br/&gt;&lt;br/&gt;Continuar?</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="927"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="925"/>
         <source>Do not &amp;show this dialog again and run the conversion.</source>
         <translation>Não &amp;mostre esta caixa de diálogo novamente e execute a conversão.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="1120"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="1118"/>
         <source>Open GPX</source>
         <translation>Abrir GPX</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="1121"/>
-        <location filename="src/logbook/logdatacontroller.cpp" line="1198"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="1119"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="1196"/>
         <source>GPX Files %1;;All Files (*)</source>
         <translation>Arquivos GPX %1;;Todos os Arquivos (*)</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="1138"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="1136"/>
         <source>Cannot load file.</source>
         <translation>Não pode carregar o arquivo.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="1173"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="1171"/>
         <source>Empty Flightplan</source>
         <translation>Plano de Voo Vazio</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="1197"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="1195"/>
         <source>Save GPX</source>
         <translation>Salve GPX</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="1213"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="1211"/>
         <source>Cannot save file.</source>
         <translation>Não é possível salvar o arquivo.</translation>
     </message>
@@ -5752,7 +5772,7 @@ As colunas ficarão vazias na exportação se desativadas.</translation>
         <translation type="vanished">Isso vai converter todos os tipos de userpoints &lt;code&gt;Logbook&lt;/code&gt; em entradas do logbook.&lt;br/&gt;&lt;br/&gt;Isso funcionará melhor se você não modificou o campo &lt;code&gt;Descrição&lt;/code&gt; nos userpoint e se você não inseriu entradas manualmente.&lt;br/&gt;&lt;br/&gt;Observe que nem todos os campos podem ser convertidos automaticamente.&lt;br/&gt;&lt;br/&gt;As entradas de log criadas, podem ser encontradas pesquisando&lt;br/&gt;&lt;code&gt;*Convertido de dados do usuário*&lt;/code&gt;&lt;br/&gt;no campo de descrição.&lt;br/&gt;&lt;br/&gt;Continuar?</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="981"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="979"/>
         <source>*Converted from userdata*</source>
         <extracomment>The text &quot;Converted from userdata&quot; has to match the one in LogdataConverter::convertFromUserdata</extracomment>
         <translation>*Convertido de dados do usuário*</translation>
@@ -5766,27 +5786,27 @@ As colunas ficarão vazias na exportação se desativadas.</translation>
         <translation type="vanished">Isso vai converter todos os tipos de userpoints &lt;code&gt;Logbook&lt;/code&gt; em entradas do logbook.&lt;br/&gt;&lt;br/&gt;Isso funcionará melhor se você não modificou o campo &lt;code&gt;Descrição&lt;/code&gt; nos userpoint e se você não inseriu entradas manualmente.&lt;br/&gt;&lt;br/&gt;Observe que nem todos os campos podem ser convertidos automaticamente.&lt;br/&gt;&lt;br/&gt;As entradas de log criadas, podem ser encontradas pesquisando&lt;br/&gt;&lt;code&gt;*Convertido de dados do usuário*&lt;/code&gt;&lt;br/&gt;no campo de &amp;quot;Observações&amp;quot;.&lt;br/&gt;&lt;br/&gt;Continuar?</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="940"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="938"/>
         <source>Created %1 log entries.</source>
         <translation>Criada %1 entradas de log.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="947"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="945"/>
         <source>Logbook Conversion</source>
         <translation>Conversão de Logbook</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="951"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="949"/>
         <source>Conversion Errors/Warnings</source>
         <translation>Conversão Erros/Avisos</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="952"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="950"/>
         <source>Some warnings might appear because of terminated flights, repeated langings and/or takeoffs. These can be ignored.</source>
         <translation>Alguns avisos podem aparecer devido a voos terminados, pousos repetidos e / ou decolagens. Estes podem ser ignorados.</translation>
     </message>
     <message>
-        <location filename="src/logbook/logdatacontroller.cpp" line="959"/>
+        <location filename="src/logbook/logdatacontroller.cpp" line="957"/>
         <source> - Conversion Errors</source>
         <translation> - Erros de Conversão</translation>
     </message>
@@ -6682,14 +6702,14 @@ Voada %dist%</translation>
         <translation type="vanished">&lt;p&gt;O formato FlightGear não permite salvar:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Procedimentos (apenas SID, STAR e as respectivas transições)&lt;/li&gt;&lt;li&gt;Nomes de posição&lt;/li&gt;&lt;li&gt;Altitude de Cruzeiro&lt;/li&gt;&lt;li&gt;Ground Speed&lt;/li&gt;&lt;li&gt;Posição de estacionamento de decolagem&lt;/li&gt;&lt;li&gt;Tipos (IFR/VFR, Baixa Alt/Alta Alt)&lt;/li&gt;&lt;li&gt;Aeroportos de destino alternativo&lt;/li&gt;&lt;li&gt;Abordagens definidas pelo usuário/personalizadas&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Essas informações ou partes delas, podem ser perdidas ao recarregar o arquivo.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Salve uma cópia adicional usando o formato PLN padrão para manter todas as informações.&lt;/b&gt;&lt;/p&gt;&lt;p&gt;Deseja realmente salvar como arquivo FGFP?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2045"/>
-        <location filename="src/gui/mainwindow.cpp" line="2053"/>
+        <location filename="src/gui/mainwindow.cpp" line="2046"/>
+        <location filename="src/gui/mainwindow.cpp" line="2054"/>
         <source> *</source>
         <translation> como</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2047"/>
-        <location filename="src/gui/mainwindow.cpp" line="2055"/>
+        <location filename="src/gui/mainwindow.cpp" line="2048"/>
+        <location filename="src/gui/mainwindow.cpp" line="2056"/>
         <source> - *</source>
         <translation></translation>
     </message>
@@ -6723,12 +6743,12 @@ Voada %dist%</translation>
         <translation type="vanished">Erro ao abrir o diretório de cache do mapa &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1852"/>
+        <location filename="src/gui/mainwindow.cpp" line="1853"/>
         <source>%1/%2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1857"/>
+        <location filename="src/gui/mainwindow.cpp" line="1858"/>
         <source>Simulator:
 %1
 
@@ -6819,7 +6839,7 @@ O simulador pode não conseguir carregar o plano de voo.</translation>
         <translation type="vanished">Não mostre este diálogo novamente e salve o Plano de Voo no futuro como FGFP.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1969"/>
+        <location filename="src/gui/mainwindow.cpp" line="1970"/>
         <source> / </source>
         <translation></translation>
     </message>
@@ -6828,17 +6848,17 @@ O simulador pode não conseguir carregar o plano de voo.</translation>
         <translation type="vanished">Deseja excluir trilha feita pelas aeronaves?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2100"/>
+        <location filename="src/gui/mainwindow.cpp" line="2101"/>
         <source>Aircraft track removed from map.</source>
         <translation>Trilha da aeronave removida do mapa.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2337"/>
+        <location filename="src/gui/mainwindow.cpp" line="2338"/>
         <source>Insert info Flight Plan</source>
         <translation>Inserir informação do Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2348"/>
+        <location filename="src/gui/mainwindow.cpp" line="2349"/>
         <source>Flight plan inserted.</source>
         <translation>Plano de voo inserido.</translation>
     </message>
@@ -6870,41 +6890,41 @@ O simulador pode não conseguir carregar o plano de voo.</translation>
     <message>
         <location filename="src/gui/mainwindow.cpp" line="991"/>
         <location filename="src/gui/mainwindow.cpp" line="995"/>
-        <location filename="src/gui/mainwindow.cpp" line="1989"/>
-        <location filename="src/gui/mainwindow.cpp" line="1991"/>
+        <location filename="src/gui/mainwindow.cpp" line="1990"/>
+        <location filename="src/gui/mainwindow.cpp" line="1992"/>
         <source>—</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1828"/>
+        <location filename="src/gui/mainwindow.cpp" line="1829"/>
         <source>
 
 Set the path to additional map themes in options on page &quot;Cache and Files&quot;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2004"/>
+        <location filename="src/gui/mainwindow.cpp" line="2005"/>
         <source> 64-bit</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2006"/>
+        <location filename="src/gui/mainwindow.cpp" line="2007"/>
         <source> 32-bit</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2092"/>
+        <location filename="src/gui/mainwindow.cpp" line="2093"/>
         <source>Delete user aircraft trail?</source>
         <translation>Excluir trilha da aeronave do usuário?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2152"/>
+        <location filename="src/gui/mainwindow.cpp" line="2153"/>
         <source>Note that you can put the flight plan route description window in the background and modify the flight plan on the map or flight plan table in parallel.</source>
         <translation>Observe que você pode colocar a janela de descrição da rota do plano de voo em segundo plano e modificar o plano de voo no mapa ou na tabela do plano de voo em paralelo.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2518"/>
-        <location filename="src/gui/mainwindow.cpp" line="2540"/>
+        <location filename="src/gui/mainwindow.cpp" line="2519"/>
+        <location filename="src/gui/mainwindow.cpp" line="2541"/>
         <source>Cannot load file. Reason:
 
 %1</source>
@@ -6913,87 +6933,87 @@ Set the path to additional map themes in options on page &quot;Cache and Files&q
 %1</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2545"/>
-        <location filename="src/gui/mainwindow.cpp" line="2560"/>
+        <location filename="src/gui/mainwindow.cpp" line="2546"/>
+        <location filename="src/gui/mainwindow.cpp" line="2561"/>
         <source>Window Layout</source>
         <translation>Layout de janela</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2546"/>
-        <location filename="src/gui/mainwindow.cpp" line="2561"/>
+        <location filename="src/gui/mainwindow.cpp" line="2547"/>
+        <location filename="src/gui/mainwindow.cpp" line="2562"/>
         <source>Window Layout Files %1;;All Files (*)</source>
         <translation>Arquivos de Layout da Janela %1;;Todos os arquivos (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2570"/>
+        <location filename="src/gui/mainwindow.cpp" line="2571"/>
         <source>Window layout saved.</source>
         <translation>Layout da janela salvo.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2606"/>
+        <location filename="src/gui/mainwindow.cpp" line="2607"/>
         <source>Window layout loaded and restored.</source>
         <translation>Layout da janela carregado e restaurado.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2662"/>
+        <location filename="src/gui/mainwindow.cpp" line="2663"/>
         <source>Waiting up to %1 seconds for map download ...
 </source>
         <translation>Aguardando até %1 segundos para fazer o download do mapa ...
 </translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2663"/>
+        <location filename="src/gui/mainwindow.cpp" line="2664"/>
         <source>&amp;Ignore Downloads and Continue</source>
         <translation>&amp;Ignorar Downloads e Continuar</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2674"/>
+        <location filename="src/gui/mainwindow.cpp" line="2675"/>
         <source>%1 downloads active and %2 downloads queued.</source>
         <translation>%1 downloads ativos e %2 enfileirados.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2712"/>
+        <location filename="src/gui/mainwindow.cpp" line="2713"/>
         <source> - Save Map as Image</source>
         <translation> - Salvar Mapa como Imagem</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2720"/>
+        <location filename="src/gui/mainwindow.cpp" line="2721"/>
         <source>Little Navmap Map %1.jpg</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2744"/>
-        <location filename="src/gui/mainwindow.cpp" line="2802"/>
+        <location filename="src/gui/mainwindow.cpp" line="2745"/>
+        <location filename="src/gui/mainwindow.cpp" line="2803"/>
         <source>Map image saved.</source>
         <translation>Imagem do mapa salva.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2755"/>
+        <location filename="src/gui/mainwindow.cpp" line="2756"/>
         <source> - Save Map as Image for AviTab</source>
         <translation> - Salvar Mapa como Imagem para AviTab</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2762"/>
+        <location filename="src/gui/mainwindow.cpp" line="2763"/>
         <source>LittleNavmap_%1.png</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2769"/>
+        <location filename="src/gui/mainwindow.cpp" line="2770"/>
         <source>Save Map as Image for AviTab</source>
         <translation>Salvar Mapa como Imagem para AviTab</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3318"/>
+        <location filename="src/gui/mainwindow.cpp" line="3319"/>
         <source>&lt;html&gt;&lt;head&gt;&lt;style&gt;body { font-size: large; white-space: pre; }&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;h2&gt;Welcome to Little Navmap&lt;/h2&gt;&lt;p&gt;This seems to be the first time you are installing the program.&lt;/p&gt;&lt;p&gt;In the following several dialog windows and a web page will&lt;br/&gt;open to guide you through the first steps:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Web page in the online user manual showing&lt;br/&gt;important information for first time users.&lt;/li&gt;&lt;li&gt;A dialog window which allows to create a&lt;br/&gt;directory structure to save your files.&lt;br/&gt;You can do this later in menu &quot;Tools&quot; -&gt; &quot;Create Directory Structure&quot;.&lt;br/&gt;This step is optional.&lt;/li&gt;&lt;li&gt;The dialog window &quot;Load Scenery Library&quot; opens to load the&lt;br/&gt;simulator scenery into the Little Navmap database.&lt;br/&gt;This process runs in the background.&lt;br/&gt;You can start this manually in the menu&lt;br/&gt;&quot;Scenery Library&quot; -&gt; &quot;Load Scenery Library&quot;.&lt;/li&gt;&lt;li&gt;The connection dialog window opens allowing to attach Little Navmap&lt;br/&gt;to a simulator while flying.&lt;br/&gt;Do this manually in menu &quot;Tools&quot; -&gt; &quot;Connect to Flight Simulator&quot;.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;You can also skip all these steps and run them later.&lt;/p&gt;&lt;p&gt;See the help menu to access the online user manual and tutorials.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3683"/>
+        <location filename="src/gui/mainwindow.cpp" line="3684"/>
         <source>&lt;b&gt;This will reset all options, window layout, dialog layout, aircraft trail, map position history and file histories back to default and restart %1.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;User features like range rings or patterns as well as scenery, logbook and userpoint databases are not affected.&lt;br/&gt;&lt;br/&gt;A copy of the settings file&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;will be created in the folder&lt;br/&gt;&lt;br/&gt;&quot;%3&quot;&lt;br/&gt;&lt;br/&gt;which allows you to undo this change.</source>
         <translation>&lt;b&gt;Isso redefinirá todas as opções, layout da janela, layout da caixa de diálogo, trilha da aeronave, histórico de posição do mapa e histórico de arquivos de volta ao padrão e reiniciará %1.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;Recursos do usuário, como anéis de alcance ou padrões, bem como cenários, logbook e bancos de dados de userpoints não são afetados.&lt;br/&gt;&lt;br/&gt;Uma cópia do arquivo de configurações&lt;br/&gt;&lt;br/&gt;&quot;%2&quot;&lt;br/&gt;&lt;br/&gt;será criado na pasta&lt;br/&gt;&lt;br/&gt;&quot;%3&quot;&lt;br/&gt;&lt;br/&gt;que permite desfazer esta alteração.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4322"/>
+        <location filename="src/gui/mainwindow.cpp" line="4323"/>
         <source>%1 is loading the scenery library database in the background.
 Really quit and cancel the loading process?</source>
         <translatorcomment>%1 está carregando o banco de dados da biblioteca de cenários em segundo plano.
@@ -7001,17 +7021,17 @@ Realmente sair e cancelar o processo de carregamento?</translatorcomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4324"/>
+        <location filename="src/gui/mainwindow.cpp" line="4325"/>
         <source>Do not &amp;show this dialog again and cancel loading.</source>
         <translation>Não &amp;mostre esta caixa de diálogo novamente e cancele o carregamento.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4339"/>
+        <location filename="src/gui/mainwindow.cpp" line="4340"/>
         <source>Really quit?</source>
         <translation>Deseja Realmente Encerrar?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="4340"/>
+        <location filename="src/gui/mainwindow.cpp" line="4341"/>
         <source>Do not &amp;show this dialog again and quit.</source>
         <translation>Não &amp;mostre esta caixa de diálogo novamente e saia.</translation>
     </message>
@@ -7020,36 +7040,36 @@ Realmente sair e cancelar o processo de carregamento?</translatorcomment>
         <translation type="vanished">Arquivos Imagem AviTab %1;;Todos os Arquivos (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2793"/>
+        <location filename="src/gui/mainwindow.cpp" line="2794"/>
         <source>Error saving image.
 Only JPG and PNG are allowed.</source>
         <translation>Erro em salvar imagem.
 Somente JPG e PNG estão disponíveis.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2805"/>
+        <location filename="src/gui/mainwindow.cpp" line="2806"/>
         <source>Error saving JSON.</source>
         <translation>Erro ao salvar em JSON.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2811"/>
+        <location filename="src/gui/mainwindow.cpp" line="2812"/>
         <source>Map does not cover window.
 Ensure that the map fills the window completely.</source>
         <translation>O mapa não cobre a janela.
 Verifique se o mapa preenche completamente a janela.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2817"/>
+        <location filename="src/gui/mainwindow.cpp" line="2818"/>
         <source>You have to switch to the Mercator map projection before saving the image.</source>
         <translation>Você tem que mudar para a projeção do mapa em &quot;Mercator&quot; antes de salvar a imagem.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2823"/>
+        <location filename="src/gui/mainwindow.cpp" line="2824"/>
         <source> - Copy Map Image to Clipboard</source>
         <translation> - Copiar a Imagem do Mapa para Área de Transferência</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2829"/>
+        <location filename="src/gui/mainwindow.cpp" line="2830"/>
         <source>Map image copied to clipboard.</source>
         <translation>Imagem do mapa copiado para a área de transferência.</translation>
     </message>
@@ -7058,62 +7078,62 @@ Verifique se o mapa preenche completamente a janela.</translation>
         <translation type="vanished"> Ultima Atualização: %1</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3030"/>
+        <location filename="src/gui/mainwindow.cpp" line="3031"/>
         <source>Map settings reset.</source>
         <translation>Redefinir configurações do mapa.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3058"/>
+        <location filename="src/gui/mainwindow.cpp" line="3059"/>
         <source>Close other dialog boxes before opening preferences</source>
         <translation>Feche as outras caixas de diálogo antes de abrir as preferências</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3096"/>
+        <location filename="src/gui/mainwindow.cpp" line="3097"/>
         <source>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;Messages:&lt;/b&gt;</source>
         <translation>&lt;p style=&apos;white-space:pre&apos;&gt;&lt;b&gt;Menssages:&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3100"/>
+        <location filename="src/gui/mainwindow.cpp" line="3101"/>
         <source>...</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3103"/>
+        <location filename="src/gui/mainwindow.cpp" line="3104"/>
         <source>%1: %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3103"/>
+        <location filename="src/gui/mainwindow.cpp" line="3104"/>
         <source>hh:mm:ss</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3105"/>
+        <location filename="src/gui/mainwindow.cpp" line="3106"/>
         <source>&lt;br/&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3105"/>
+        <location filename="src/gui/mainwindow.cpp" line="3106"/>
         <source>&lt;/p&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3121"/>
+        <location filename="src/gui/mainwindow.cpp" line="3122"/>
         <source>No Messages</source>
         <translation>Sem Mensagens</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3123"/>
+        <location filename="src/gui/mainwindow.cpp" line="3124"/>
         <source>%1 %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3125"/>
+        <location filename="src/gui/mainwindow.cpp" line="3126"/>
         <source>Messages</source>
         <translation>Mensagens</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3125"/>
+        <location filename="src/gui/mainwindow.cpp" line="3126"/>
         <source>Message</source>
         <translation>Mensagem</translation>
     </message>
@@ -7135,7 +7155,7 @@ Verifique se o mapa preenche completamente a janela.</translation>
         <translation type="vanished">Erro ao calcular o perfil.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2399"/>
+        <location filename="src/gui/mainwindow.cpp" line="2400"/>
         <source>Flight plan cruise altitude is zero.
 A simulator might not be able to load the flight plan.</source>
         <translation>Altitude de cruzeiro do plano de voo é zero.
@@ -7153,27 +7173,27 @@ O layout pode não ser restaurado corretamente.
 Aplicar o layout da janela carregado mesmo assim?</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1878"/>
+        <location filename="src/gui/mainwindow.cpp" line="1879"/>
         <source>Too many objects</source>
         <translation>Muitos objetos</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1920"/>
+        <location filename="src/gui/mainwindow.cpp" line="1921"/>
         <source>Done</source>
         <translation>Feito</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1923"/>
+        <location filename="src/gui/mainwindow.cpp" line="1924"/>
         <source>Updating</source>
         <translation>Atualizando</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1926"/>
+        <location filename="src/gui/mainwindow.cpp" line="1927"/>
         <source>Loading</source>
         <translation>Carregando</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1929"/>
+        <location filename="src/gui/mainwindow.cpp" line="1930"/>
         <source>Incomplete</source>
         <translation>Incompleto</translation>
     </message>
@@ -7186,79 +7206,79 @@ Aplicar o layout da janela carregado mesmo assim?</translation>
         <translation type="vanished">Remova todos os anéis de alcance, linhas de medição de distância, padrões de tráfego e diagramas MSA dos aeroportos no mapa</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2013"/>
-        <location filename="src/gui/mainwindow.cpp" line="2026"/>
-        <location filename="src/gui/mainwindow.cpp" line="2039"/>
+        <location filename="src/gui/mainwindow.cpp" line="2014"/>
+        <location filename="src/gui/mainwindow.cpp" line="2027"/>
+        <location filename="src/gui/mainwindow.cpp" line="2040"/>
         <source> %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2015"/>
+        <location filename="src/gui/mainwindow.cpp" line="2016"/>
         <source> %1 (%2)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2020"/>
+        <location filename="src/gui/mainwindow.cpp" line="2021"/>
         <source> - (%1)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2023"/>
-        <location filename="src/gui/mainwindow.cpp" line="2058"/>
+        <location filename="src/gui/mainwindow.cpp" line="2024"/>
+        <location filename="src/gui/mainwindow.cpp" line="2059"/>
         <source> - %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2031"/>
-        <location filename="src/gui/mainwindow.cpp" line="2033"/>
+        <location filename="src/gui/mainwindow.cpp" line="2032"/>
+        <location filename="src/gui/mainwindow.cpp" line="2034"/>
         <source> / N</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2035"/>
+        <location filename="src/gui/mainwindow.cpp" line="2036"/>
         <source> / (N)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2043"/>
-        <location filename="src/gui/mainwindow.cpp" line="2051"/>
+        <location filename="src/gui/mainwindow.cpp" line="2044"/>
+        <location filename="src/gui/mainwindow.cpp" line="2052"/>
         <source> - %1%2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2114"/>
+        <location filename="src/gui/mainwindow.cpp" line="2115"/>
         <source>Flight Plan has been changed.
 There are changes which can be restored by using undo.</source>
         <translation>O plano de voo foi alterado.
 Há alterações que podem ser restauradas usando desfazer.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2235"/>
+        <location filename="src/gui/mainwindow.cpp" line="2236"/>
         <source>Created new flight plan with departure and destination airport.</source>
         <translation>Criei novo plano de voo com aeroporto de partida e destino.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2409"/>
+        <location filename="src/gui/mainwindow.cpp" line="2410"/>
         <source>Save &amp;as LNMPLN ...</source>
         <translation>Salvar &amp;como LNMPLN ...</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2416"/>
+        <location filename="src/gui/mainwindow.cpp" line="2417"/>
         <source>&lt;p&gt;You cannot save this file directly.&lt;br/&gt;Use the export function instead.&lt;/p&gt;&lt;p&gt;Save using the LNMPLN format now?&lt;/p&gt;</source>
         <translation>&lt;p&gt;Você não pode salvar este arquivo diretamente.&lt;br/&gt;Use a função de exportação.&lt;/p&gt;&lt;p&gt;Salvar usando o formato LNMPLN agora?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2453"/>
+        <location filename="src/gui/mainwindow.cpp" line="2454"/>
         <source>Save Flight Plan as LNMPLN Format</source>
         <translation>Salvar Plano de Voo em formato LNMPLN</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2718"/>
+        <location filename="src/gui/mainwindow.cpp" line="2719"/>
         <source>JPG Image Files (*.jpg *.jpeg);;PNG Image Files (*.png);;BMP Image Files (*.bmp);;All Files (*)</source>
         <translation>Arquivos de Imagem JPG (*.jpg *.jpeg);;Arquivos de Imagem PNG (*.png);Arquivos de Imagem BMP (*.bmp);;Todos os Arquivos (*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2770"/>
+        <location filename="src/gui/mainwindow.cpp" line="2771"/>
         <source>JPG Image Files (*.jpg *.jpeg);;PNG Image Files (*.png);;All Files (*)</source>
         <translation>Arquivos de Imagem JPG (*.jpg *.jpeg);;Arquivos de Imagem PNG (*.png);;Todos os Arquivos (*)</translation>
     </message>
@@ -7267,18 +7287,18 @@ Há alterações que podem ser restauradas usando desfazer.</translation>
         <translation type="vanished">%1 de %2 %3 selecionado, %4 visível.%5</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3163"/>
+        <location filename="src/gui/mainwindow.cpp" line="3164"/>
         <source>&lt;p&gt;Error initializing SSL subsystem.&lt;/p&gt;&lt;p&gt;The program will not be able to use encrypted network connections&lt;br/&gt;(i.e. HTTPS) that are needed to check for updates or&lt;br/&gt;to load online maps.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Erro ao inicializar o subsistema SSL.&lt;/p&gt;&lt;p&gt;O programa não poderá usar conexões de rede criptografadas&lt;br/&gt;(ou seja, HTTPS) necessárias para verificar atualizações ou&lt;br/&gt;para carregar os mapas online .&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3170"/>
-        <location filename="src/gui/mainwindow.cpp" line="3306"/>
+        <location filename="src/gui/mainwindow.cpp" line="3171"/>
+        <location filename="src/gui/mainwindow.cpp" line="3307"/>
         <source>&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Click here for more information in the Little Navmap online manual&lt;/a&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Clique aqui para obter mais informações no manual on-line do Little Navmap&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3301"/>
+        <location filename="src/gui/mainwindow.cpp" line="3302"/>
         <source>&lt;p&gt;Could not find a simulator installation on this computer. Also, no scenery library databases were found.&lt;/p&gt;&lt;p&gt;You can copy a Little Navmap scenery library database from another computer if you wish to run this Little Navmap instance on a remote across a network.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Não foi possível encontrar uma instalação do simulador neste computador. Além disso, nenhum banco de dados da biblioteca de cenários foi encontrado.&lt;/p&gt;&lt;p&gt;Você pode copiar um banco de dados da biblioteca de cenários do Little Navmap de outro computador se desejar executar esta instância do Little Navmap em um controle remoto através de uma rede.&lt;/p&gt;</translation>
     </message>
@@ -7287,18 +7307,18 @@ Há alterações que podem ser restauradas usando desfazer.</translation>
         <translation type="vanished">&lt;html&gt;&lt;head&gt;&lt;style&gt;body { font-size: large; white-space: pre; }&lt;/style&gt;&lt;/head&gt;&lt;body&gt;&lt;h2&gt;Bem-vindo ao Little Navmap&lt;/h2&gt;&lt;p&gt;Esta parece ser a primeira vez que você está instalando o programa.&lt;/p&gt;&lt;p&gt;A seguir, várias janelas de diálogo e uma página da Web &lt;br/&gt;abrirão para guiá-lo através das primeiras etapas:&lt;/p&gt;&lt;ol&gt;&lt;li&gt;Página da Web no manual do usuário on-line mostrando&lt;br/&gt;informações importantes para usuários iniciantes.&lt;/li&gt;&lt;li&gt;Uma janela de diálogo que permite criar um&lt;br/&gt;estrutura de diretórios para salvar seus arquivos.&lt;br/&gt;Você pode fazer isso mais tarde no menu &quot;Configurações&quot; -&gt; &quot;Criar estrutura de diretórios&quot;.&lt;br/&gt;Esta etapa é opcional.&lt;/li&gt;&lt;li&gt;A caixa de diálogo a janela &quot;Carregar Biblioteca de Cenários&quot; é aberta para carregar o&lt;br/&gt;cenário do simulador no banco de dados Little Navmap.&lt;br/&gt;Este processo é executado em segundo plano.&lt;br/&gt;Você pode iniciar manualmente no menu&lt;br/&gt;&quot; Biblioteca de dados&quot; -&gt; &quot;Recarregar biblioteca de cenários&quot;.&lt;/li&gt;&lt;li&gt;A janela de diálogo de conexão é aberta, permitindo anexar o Little Navmap&lt;br/&gt;um simulador durante o voo.&lt;br/&gt;Faça isso manualmente no menu &quot;Configurações&quot; -&gt; &quot;Conectar ao Flight Simulator&quot;.&lt;/li&gt;&lt;/ol&gt;&lt;p&gt;Você também pode pular todas essas etapas e executar em mais tarde.&lt;/p&gt;&lt;p&gt;Consulte o menu de ajuda para acessar o manual do usuário on-line e os tutoriais.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3346"/>
+        <location filename="src/gui/mainwindow.cpp" line="3347"/>
         <source>%1 - Introduction</source>
         <translation>%1. Introdução</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3380"/>
+        <location filename="src/gui/mainwindow.cpp" line="3381"/>
         <source>&lt;p&gt;The online elevation data which is used by default for the elevation profile is limited and has a lot of errors.&lt;br/&gt;Therefore, it is recommended to download and use the offline GLOBE elevation data which provides world wide coverage.&lt;/p&gt;&lt;p&gt;Go to the main menu -&amp;gt; &quot;Tools&quot; -&amp;gt; &quot;Options&quot; and then to page &quot;Cache and files&quot; to add the GLOBE data.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Click here for more information in the Little Navmap online manual&lt;/a&gt;&lt;/p&gt;</source>
         <comment>Keep instructions in sync with translated menus</comment>
         <translation>&lt;p&gt;Os dados de elevação online que são usados por padrão para o perfil de elevação são limitados e possuem muitos erros.&lt;br/&gt;Portanto, é recomendável baixar e usar os dados de elevação offline do GLOBE, que fornecem cobertura mundial.&lt;/p&gt;&lt;p&gt;vá ao menu principal -&amp;gt; &quot;Configurações&quot; -&amp;gt; &quot;e, em seguida, para a página &quot;Cache e arquivos&quot; para adicionar os dados GLOBE.&lt;/p&gt;&lt;p&gt;&lt;a href=&quot;%1&quot;&gt;Clique aqui para mais informações no manual online do Little Navmap&lt;/a&gt;&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3426"/>
+        <location filename="src/gui/mainwindow.cpp" line="3427"/>
         <source>&lt;p&gt;Directory structure for Little Navmap files is already complete.&lt;/p&gt;&lt;p&gt;Base directory is&lt;br/&gt;&quot;%1&quot;&lt;/p&gt;</source>
         <translation>&lt;p&gt;A estrutura do diretório para os arquivos Little Navmap já está completa.&lt;/p&gt;&lt;p&gt;O diretório base é&lt;br/&gt;&quot;%1&quot;&lt;/p&gt;</translation>
     </message>
@@ -8088,7 +8108,7 @@ Há alterações que podem ser restauradas usando desfazer.</translation>
         <translation>Todos os Waypoints em Aerovias</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3079"/>
+        <location filename="src/gui/mainwindow.cpp" line="3080"/>
         <source>All message dialogs reset.</source>
         <translation>Todos os diálogos de mesagem foram resetados.</translation>
     </message>
@@ -8192,7 +8212,7 @@ Há alterações que podem ser restauradas usando desfazer.</translation>
         <translation>Acrescentar %1 para o Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2314"/>
+        <location filename="src/gui/mainwindow.cpp" line="2315"/>
         <source>Append Flight Plan</source>
         <translation>Anexar Plano de Voo</translation>
     </message>
@@ -9515,6 +9535,20 @@ A velocidade do vento será interpolada entre esta altitude e a nível do solo.<
         <location filename="src/gui/mainwindow.ui" line="11938"/>
         <location filename="src/gui/mainwindow.ui" line="11941"/>
         <source>Delete duplicates and invalid userpoints from database</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.ui" line="11950"/>
+        <location filename="src/gui/mainwindow.ui" line="11965"/>
+        <source>&amp;Mark %1 as Add-on</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/gui/mainwindow.ui" line="11953"/>
+        <location filename="src/gui/mainwindow.ui" line="11956"/>
+        <location filename="src/gui/mainwindow.ui" line="11968"/>
+        <location filename="src/gui/mainwindow.ui" line="11971"/>
+        <source>Create a userpoint highlighting the airport as add-on</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -12513,12 +12547,12 @@ O melhor track será selecionado automaticamente.</translation>
         <translation type="vanished">Crie um novo plano de voo a partir da inserção de uma rota</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2220"/>
+        <location filename="src/gui/mainwindow.cpp" line="2221"/>
         <source>Created new empty flight plan.</source>
         <translation>Criar um novo plano de voo vazio.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2208"/>
+        <location filename="src/gui/mainwindow.cpp" line="2209"/>
         <source>Created new flight plan.</source>
         <translation>Criar um novo plano de voo.</translation>
     </message>
@@ -12918,12 +12952,12 @@ Local: %2</translation>
         <translation type="vanished">Não &amp;mostre esta caixa de diálogo novamente e salve no futuro.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2092"/>
-        <location filename="src/gui/mainwindow.cpp" line="2154"/>
-        <location filename="src/gui/mainwindow.cpp" line="2401"/>
-        <location filename="src/gui/mainwindow.cpp" line="3175"/>
-        <location filename="src/gui/mainwindow.cpp" line="3308"/>
-        <location filename="src/gui/mainwindow.cpp" line="3387"/>
+        <location filename="src/gui/mainwindow.cpp" line="2093"/>
+        <location filename="src/gui/mainwindow.cpp" line="2155"/>
+        <location filename="src/gui/mainwindow.cpp" line="2402"/>
+        <location filename="src/gui/mainwindow.cpp" line="3176"/>
+        <location filename="src/gui/mainwindow.cpp" line="3309"/>
+        <location filename="src/gui/mainwindow.cpp" line="3388"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>Não &amp;mostre esse diálogo novamente.</translation>
     </message>
@@ -12984,7 +13018,7 @@ Local: %2</translation>
         <translation type="vanished">Erro em abrir o site de ajuda &quot;%1&quot;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1879"/>
+        <location filename="src/gui/mainwindow.cpp" line="1880"/>
         <source>Too many objects to show on map.
 Display might be incomplete.
 Reduce map details in the &quot;View&quot; menu.</source>
@@ -12998,13 +13032,13 @@ Reduza os detalhes do mapa no menu &quot;Visão&quot;.</translation>
         <translation type="vanished">&lt;p&gt;Você não pode salvar este arquivo diretamente.&lt;br/&gt;Em vez disso, use a função de exportação.&lt;/p&gt;&lt;p&gt;Salvar usando o novo formato LNMPLN agora?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2419"/>
+        <location filename="src/gui/mainwindow.cpp" line="2420"/>
         <source>Do not &amp;show this dialog again and save as LNMPLN.</source>
         <oldsource>Do not show this dialog again and save as LNMPLN.</oldsource>
         <translation>Não &amp;mostre este diálogo novamente e salve como LNMPLN.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2742"/>
+        <location filename="src/gui/mainwindow.cpp" line="2743"/>
         <source>Error saving image.
 Only JPG, PNG and BMP are allowed.</source>
         <translation>Erro em salvar imagem
@@ -13150,7 +13184,7 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
         <translation>Tipos de Facilidades</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2374"/>
+        <location filename="src/gui/mainwindow.cpp" line="2375"/>
         <source>File &quot;%1&quot; does not exist</source>
         <translation>Arquivo &quot;%1&quot; não existe</translation>
     </message>
@@ -13210,10 +13244,10 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
         <translation>Perfil de Elevação do Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2249"/>
-        <location filename="src/gui/mainwindow.cpp" line="2315"/>
-        <location filename="src/gui/mainwindow.cpp" line="2338"/>
-        <location filename="src/gui/mainwindow.cpp" line="2454"/>
+        <location filename="src/gui/mainwindow.cpp" line="2250"/>
+        <location filename="src/gui/mainwindow.cpp" line="2316"/>
+        <location filename="src/gui/mainwindow.cpp" line="2339"/>
+        <location filename="src/gui/mainwindow.cpp" line="2455"/>
         <source>Flight Plan Files %1;;All Files (*)</source>
         <translation>Arquivo de Plano de Voo %1;;Todos os Arquivos (*)</translation>
     </message>
@@ -13223,7 +13257,7 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
         <translation>Barra de Menu do Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2116"/>
+        <location filename="src/gui/mainwindow.cpp" line="2117"/>
         <source>Flight Plan has been changed.</source>
         <translation>O Plano de voo foi alterado.</translation>
     </message>
@@ -13236,7 +13270,7 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
         <translation type="vanished">Altitude do plano de voo, que também é usada para calcular um plano de voo com base na altitude</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2327"/>
+        <location filename="src/gui/mainwindow.cpp" line="2328"/>
         <source>Flight plan appended.</source>
         <translation>Plano de voo anexado.</translation>
     </message>
@@ -13245,9 +13279,9 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
         <translation type="vanished">Plano de voo exportado.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2269"/>
-        <location filename="src/gui/mainwindow.cpp" line="2285"/>
-        <location filename="src/gui/mainwindow.cpp" line="2366"/>
+        <location filename="src/gui/mainwindow.cpp" line="2270"/>
+        <location filename="src/gui/mainwindow.cpp" line="2286"/>
+        <location filename="src/gui/mainwindow.cpp" line="2367"/>
         <source>Flight plan opened.</source>
         <translation>Plano de voo Aberto.</translation>
     </message>
@@ -13260,14 +13294,14 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
         <translation type="vanished">Plano de voo salvo em FMS.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2303"/>
-        <location filename="src/gui/mainwindow.cpp" line="2442"/>
-        <location filename="src/gui/mainwindow.cpp" line="2468"/>
+        <location filename="src/gui/mainwindow.cpp" line="2304"/>
+        <location filename="src/gui/mainwindow.cpp" line="2443"/>
+        <location filename="src/gui/mainwindow.cpp" line="2469"/>
         <source>Flight plan saved.</source>
         <translation>Plano de voo salvo.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="1955"/>
+        <location filename="src/gui/mainwindow.cpp" line="1956"/>
         <source>Flight plan shown on map.</source>
         <translation>Plano de voo mostrado no mapa.</translation>
     </message>
@@ -13305,23 +13339,23 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
         <translation>Avance para próxima posição do mapa</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2499"/>
+        <location filename="src/gui/mainwindow.cpp" line="2500"/>
         <source>Google Earth KML</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2500"/>
+        <location filename="src/gui/mainwindow.cpp" line="2501"/>
         <source>Google Earth KML %1;;All Files (*)</source>
         <translation>Google Earth KML %1;;Todos os Arquivos(*)</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2510"/>
-        <location filename="src/gui/mainwindow.cpp" line="2530"/>
+        <location filename="src/gui/mainwindow.cpp" line="2511"/>
+        <location filename="src/gui/mainwindow.cpp" line="2531"/>
         <source>Google Earth KML file opened.</source>
         <translation>Arquivo Google Earth KML está aberto.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2492"/>
+        <location filename="src/gui/mainwindow.cpp" line="2493"/>
         <source>Google Earth KML files removed from map.</source>
         <translation>Removido arquivos Google Earth KML do mapa.</translation>
     </message>
@@ -13907,7 +13941,7 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
         <translation>Somente VORTAC</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2248"/>
+        <location filename="src/gui/mainwindow.cpp" line="2249"/>
         <source>Open Flight Plan</source>
         <translation>Abrir Plano de Voo</translation>
     </message>
@@ -13966,8 +14000,8 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
         <translation type="vanished">Legenda aberta no mapa de navegação.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2513"/>
-        <location filename="src/gui/mainwindow.cpp" line="2535"/>
+        <location filename="src/gui/mainwindow.cpp" line="2514"/>
+        <location filename="src/gui/mainwindow.cpp" line="2536"/>
         <source>Opening Google Earth KML file failed.</source>
         <translation>Abertura do arquivo Google Earth KML falhou.</translation>
     </message>
@@ -14046,7 +14080,7 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
         <translation type="vanished">Pronto.</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="3682"/>
+        <location filename="src/gui/mainwindow.cpp" line="3683"/>
         <source>Reset all Settings </source>
         <translation>Redefinir todas as Configurações </translation>
     </message>
@@ -14230,7 +14264,7 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
         <translation>Salvar Mapa como &amp;Imagem ...</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2717"/>
+        <location filename="src/gui/mainwindow.cpp" line="2718"/>
         <source>Save Map as Image</source>
         <translation>Salvar Mapa como Imagem</translation>
     </message>
@@ -14243,7 +14277,7 @@ Somente JPG, PNG and BMP estão disponíveis.</translation>
         <translation type="vanished">Salvar Waypoints para &amp;SID e STAR</translation>
     </message>
     <message>
-        <location filename="src/gui/mainwindow.cpp" line="2117"/>
+        <location filename="src/gui/mainwindow.cpp" line="2118"/>
         <source>Save changes?</source>
         <translation>Salvar mudanças?</translation>
     </message>
@@ -15836,7 +15870,8 @@ O botão é realçado se algum filtro for selecionado.</translation>
     </message>
     <message>
         <location filename="src/mapgui/mapcontextmenu.cpp" line="1010"/>
-        <source>&amp;Mark %1 as Add-on ...</source>
+        <source>&amp;Mark %1 as Add-on</source>
+        <oldsource>&amp;Mark %1 as Add-on ...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -15984,31 +16019,31 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
 <context>
     <name>MapHtmlInfoBuilder</name>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1194"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1906"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3878"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3882"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3886"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3890"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3905"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4006"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4066"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4106"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4244"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5160"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5162"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1189"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1901"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3873"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3877"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3881"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3885"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3900"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4001"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4061"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4101"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4239"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5155"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5157"/>
         <source> </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2116"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2111"/>
         <source> %1 %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1442"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3109"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4876"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1437"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3104"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4871"/>
         <source> (%1)</source>
         <translation></translation>
     </message>
@@ -16017,58 +16052,58 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished"> (Sem posição inicial)</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2571"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2566"/>
         <source> (Temporary)</source>
         <translation> (Temporário)</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1034"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1029"/>
         <source> (Transparent)</source>
         <translation> (Transparente)</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4138"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4133"/>
         <source> - Approach</source>
         <translation> - Aproximação</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1846"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1841"/>
         <source> - Departure</source>
         <translation> - Saída</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1844"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1839"/>
         <source> - Departure and Destination</source>
         <translation> - Saída e Destino</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1848"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4132"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1843"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4127"/>
         <source> - Destination</source>
         <translation> - Destino</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4142"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4137"/>
         <source> - Missed Approach</source>
         <translation> - Aproximação Perdida</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1509"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1504"/>
         <source> - Runway </source>
         <translation> - Pista </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4140"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4135"/>
         <source> - Transition</source>
         <translation> - Transição</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4608"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4603"/>
         <source> &lt;b&gt;▲&lt;/b&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4610"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4605"/>
         <source> &lt;b&gt;▼&lt;/b&gt;</source>
         <translation></translation>
     </message>
@@ -16089,87 +16124,87 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="obsolete">Aeroportos</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2832"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4935"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2827"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4930"/>
         <source>Files</source>
         <translation>Arquivos</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3346"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3341"/>
         <source>%1 UTC to&lt;br/&gt;%2 UTC%3</source>
         <translation>%1 UTC para&lt;br/&gt;%2 UTC%3</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3350"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3345"/>
         <source>&lt;br/&gt;&lt;b&gt;Track is now valid.&lt;/b&gt;</source>
         <translation>&lt;br/&gt;&lt;b&gt;A track agora é válida.&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4462"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4457"/>
         <source>Endurance (critical):</source>
         <translation>Alcance (crítico):</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4464"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4459"/>
         <source>Endurance (low):</source>
         <translation>Alcance (baixo):</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4525"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4520"/>
         <source>Autopilot Selected:</source>
         <translation>Piloto Automático Selecionado:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4542"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4537"/>
         <source>Indicated (speed limit):</source>
         <translation>Indicada (limite de velocidade):</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4631"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4626"/>
         <source>Descent Path</source>
         <translation>Perfil de Descida</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4648"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4643"/>
         <source>Deviation:</source>
         <translation>Desvio:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4657"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4652"/>
         <source>Required Angle and Speed:</source>
         <translation>Ângulo e velocidade necessários:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4657"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4652"/>
         <source>Angle and Speed:</source>
         <translation>Angulo e Velocidade:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4658"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4667"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4653"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4662"/>
         <source>%L1°, %L2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4739"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4734"/>
         <source>Rain or Snow</source>
         <translation>Chuva ou Neve</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4906"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4956"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4901"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4951"/>
         <source>Data Source</source>
         <translation>Fonte de dados</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4913"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4922"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4908"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4917"/>
         <source>Navigraph</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4913"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4922"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4908"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4917"/>
         <source>Simulator</source>
         <translation>Simulador</translation>
     </message>
@@ -16178,22 +16213,22 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Fonte de Dados Desconhecida</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4939"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4934"/>
         <source>Path:</source>
         <translation>Caminho:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4943"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4938"/>
         <source>Files:</source>
         <translation>Arquivos:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4956"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4951"/>
         <source>Data Sources</source>
         <translation>Fontes de dados</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4964"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4959"/>
         <source>X-Plane</source>
         <translation></translation>
     </message>
@@ -16206,39 +16241,39 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Gateway de Cenário do X-Plane</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4990"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4985"/>
         <source>FlightAware</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4993"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4988"/>
         <source>OpenNav</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5013"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5008"/>
         <source>Links</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5036"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5031"/>
         <source> (file not found)</source>
         <oldsource> (File not found)</oldsource>
         <translation> (arquivo não encotrado)</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5169"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5164"/>
         <source>(</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4833"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5171"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4828"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5166"/>
         <source>)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5179"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5174"/>
         <source> METAR:</source>
         <translation></translation>
     </message>
@@ -16248,14 +16283,14 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="519"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="521"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="523"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="760"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1246"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1648"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1706"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1716"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2237"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3215"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3413"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="755"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1241"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1643"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1701"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1711"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2232"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3210"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3408"/>
         <source> MHz</source>
         <translation></translation>
     </message>
@@ -16268,104 +16303,104 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished"> Desconhecido</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2099"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4719"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2094"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4714"/>
         <source> hPa, </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2100"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4720"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2095"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4715"/>
         <source> inHg</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1743"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2321"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1738"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2316"/>
         <source> kHz</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3548"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3543"/>
         <source> min</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2060"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2055"/>
         <source> to </source>
         <translation> para </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="914"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1031"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="909"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1026"/>
         <source> x </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3295"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3290"/>
         <source> ► </source>
         <translation></translation>
     </message>
     <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1128"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="1133"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1138"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1140"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1144"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1135"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1139"/>
         <source>%1</source>
         <translation></translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="448"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1797"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1792"/>
         <source>%1 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1887"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1893"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1895"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1897"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1899"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2110"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2414"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2421"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2477"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2766"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2774"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2794"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2801"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4354"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1882"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1888"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1890"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1892"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1894"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2105"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2409"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2416"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2472"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2761"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2769"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2789"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2796"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4349"/>
         <source>%1 %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1697"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2242"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1692"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2237"/>
         <source>%1 (%2 MHz)</source>
         <translation></translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="139"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="185"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2591"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2586"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3765"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="3770"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3775"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4837"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4832"/>
         <source>%1 (%2)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2008"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2003"/>
         <source>%1 (%2), %3, %4</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1973"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1968"/>
         <source>%1 Nearest Weather - %2</source>
         <translation>%1 Tempo mais próximo - %2</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1963"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1958"/>
         <source>%1 Station Weather</source>
         <translation>Estação de Tempo %1</translation>
     </message>
@@ -16374,13 +16409,13 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">%1%2 - %3 de %4 Veículos</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3523"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5243"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3518"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5238"/>
         <source> and </source>
         <translation> e </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5251"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5246"/>
         <source>%1/%2</source>
         <translation></translation>
     </message>
@@ -16400,24 +16435,24 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation>%1Estação</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1803"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1798"/>
         <source>%1Station Weather</source>
         <translation>Estação de Tempo%1</translation>
     </message>
     <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1129"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="1134"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1139"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1141"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1136"/>
         <source>%1°</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1833"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1828"/>
         <source>%2Interpolated Weather - %1</source>
         <translation>%2Tempo Interpolado - %1</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1813"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1808"/>
         <source>%2Nearest Weather - %1</source>
         <translation>%2Tempo mais próximo - %1</translation>
     </message>
@@ -16426,43 +16461,43 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="398"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="424"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="500"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="730"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="855"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="878"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="971"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1070"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1155"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1217"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1442"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1631"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1780"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2055"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2477"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3001"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3023"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3215"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3295"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3320"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3327"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3523"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3578"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3625"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3641"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3808"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3983"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4154"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4207"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4220"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4427"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4456"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4476"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4546"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4582"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4685"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4756"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4870"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="725"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="850"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="873"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="966"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1065"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1150"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1212"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1437"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1626"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1775"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2050"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2472"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2996"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3018"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3210"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3290"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3315"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3322"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3518"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3573"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3620"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3636"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3803"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3978"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4149"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4202"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4215"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4422"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4451"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4471"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4541"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4577"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4680"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4751"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4865"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5233"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="5238"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5243"/>
         <source>, </source>
         <translation></translation>
     </message>
@@ -16475,18 +16510,18 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">, abaixo &lt;b&gt;▼&lt;/b&gt;</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2059"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2054"/>
         <source>, variable </source>
         <translation>, variável </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1447"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2661"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2662"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2753"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2786"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4600"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5196"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1442"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2656"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2657"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2748"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2781"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4595"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5191"/>
         <source>-</source>
         <translation></translation>
     </message>
@@ -16496,29 +16531,29 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4328"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5179"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5243"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4323"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5174"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5238"/>
         <source>:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4351"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4346"/>
         <source>&lt;b&gt;►&lt;/b&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4349"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4344"/>
         <source>&lt;b&gt;◄&lt;/b&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4759"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4754"/>
         <source>&gt; 20 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4862"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4857"/>
         <source>AI / Multiplayer Vehicle</source>
         <translation>AI / Multiplayer Veículos</translation>
     </message>
@@ -16528,7 +16563,7 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1144"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1139"/>
         <source>ALS Type:</source>
         <translation>Tipo ALS:</translation>
     </message>
@@ -16542,18 +16577,18 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Classificação ATC:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="765"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="760"/>
         <source>ATIS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3227"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3222"/>
         <source>ATIS Time:</source>
         <translation>Horário ATIS:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="517"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3226"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3221"/>
         <source>ATIS:</source>
         <translation></translation>
     </message>
@@ -16563,17 +16598,17 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4519"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4514"/>
         <source>Above Ground:</source>
         <translation>Acima do Solo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3790"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3785"/>
         <source>Actual Departure Time:</source>
         <translation>Tempo Real de Partida:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4513"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4508"/>
         <source>Actual:</source>
         <translation>Atual:</translation>
     </message>
@@ -16583,67 +16618,67 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2181"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2176"/>
         <source>Additional information:</source>
         <translation>Informações Adicionais:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4413"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4408"/>
         <source>Aircraft</source>
         <translation>Aeronave</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3438"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3433"/>
         <source>Airline Codes: </source>
         <translation>Código da Linha Aérea: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3686"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3681"/>
         <source>Airline:</source>
         <translation>Linha Aérea:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="780"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="775"/>
         <source>Airport has no COM Frequency.</source>
         <translation>Aeroportos que não tem Frequências COM.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1671"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1666"/>
         <source>Airport has no approach.</source>
         <translation>Aeroporto não tem aproximação.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1045"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1040"/>
         <source>Airport has no helipad.</source>
         <translation>Aeroporto não tem heliporto.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1000"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="995"/>
         <source>Airport has no runway.</source>
         <translation>O aeroporto não tem nenhuma pista.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1080"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1075"/>
         <source>Airport has no start position.</source>
         <translation>O aeroporto não possui uma posição inicial.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3113"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3108"/>
         <source>Airspace</source>
         <translation>Espaço Aéreo</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3121"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3116"/>
         <source>Airspace: </source>
         <translation>Espaço Aéreo: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3259"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3254"/>
         <source>Airway: </source>
         <translation>Aerovias: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3007"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3002"/>
         <source>Airways:</source>
         <translation>Aerovias:</translation>
     </message>
@@ -16652,60 +16687,60 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Aerovias: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="956"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="951"/>
         <source>Alternate Fixed Distance</source>
         <translation>Distância Fixa Alternativa</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="960"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="955"/>
         <source>Alternate Precision</source>
         <translation>Precisão Alternativa</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="954"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="949"/>
         <source>Alternate Threshold</source>
         <translation>Limiar Alternativa</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="958"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="953"/>
         <source>Alternate Touchdown</source>
         <translation>Touchdown Alternativo</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3808"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3803"/>
         <source>Alternate:</source>
         <translation>Alternar:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3808"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3803"/>
         <source>Alternates:</source>
         <translation>Alternados:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4488"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4483"/>
         <source>Altitude</source>
         <translation>Altitude</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3561"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3556"/>
         <source>Altitude Restriction:</source>
         <translation>Altitude de Restrição:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3313"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3308"/>
         <source>Altitude for this segment:</source>
         <translation>Altitude para este segmento:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2436"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2446"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4262"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4513"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2431"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2441"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4257"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4508"/>
         <source>Altitude:</source>
         <translation>Altitude:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1519"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1514"/>
         <source>Approach %1 %2 %3 %4</source>
         <translation>Aproximação %1 %2 %3 %4</translation>
     </message>
@@ -16728,7 +16763,7 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1114"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1109"/>
         <source>Blast Pad:</source>
         <translation></translation>
     </message>
@@ -16737,7 +16772,7 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Cerca de Fronteira</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2164"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2159"/>
         <source>CAVOK:</source>
         <translation></translation>
     </message>
@@ -16747,17 +16782,17 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation>Frequências COM</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3215"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3210"/>
         <source>COM Frequency:</source>
         <translation>Frequência COM:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3195"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3190"/>
         <source>COM Type:</source>
         <translation>Tipo de COM:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3194"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3189"/>
         <source>COM:</source>
         <translation></translation>
     </message>
@@ -16767,14 +16802,14 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation>Carga:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="927"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="922"/>
         <source>Center Lights:</source>
         <translation>Luzes de Centro:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1244"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2240"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2242"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1239"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2235"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2237"/>
         <source>Channel:</source>
         <translation>Canal:</translation>
     </message>
@@ -16786,12 +16821,12 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="346"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="417"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1098"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1093"/>
         <source>Closed</source>
         <translation>Fechado</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2145"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2140"/>
         <source>Clouds</source>
         <translation>Nuvens</translation>
     </message>
@@ -16800,19 +16835,19 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Classificação combinada:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2139"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4756"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2134"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4751"/>
         <source>Conditions:</source>
         <translation>Condições:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3228"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3751"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3223"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3746"/>
         <source>Connection Time:</source>
         <translation>Tempo de conexão:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5059"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5054"/>
         <source>Coordinates:</source>
         <translation>Coordenadas:</translation>
     </message>
@@ -16822,76 +16857,76 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation>País ou Código da Área:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2507"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3551"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2502"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3546"/>
         <source>Course:</source>
         <translation>Curso:</translation>
     </message>
     <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4348"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="4353"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4358"/>
         <source>Cross Track Distance:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3775"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3777"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3770"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3772"/>
         <source>Cruising Level:</source>
         <translation>Nível de Cruzeiro:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3770"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3772"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3765"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3767"/>
         <source>Cruising Speed</source>
         <translation>Velocidade de Cruzeiro</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1651"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1646"/>
         <source>DME Channel:</source>
         <translation>DME Canal:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1637"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1632"/>
         <source>DME Distance:</source>
         <translation>DME Distância:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1647"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1642"/>
         <source>DME Frequency:</source>
         <translation>DME Frequência:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1631"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1626"/>
         <source>DME Ident and Region:</source>
         <translation>DME Ident e Região:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1653"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1648"/>
         <source>DME Morse:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1652"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1647"/>
         <source>DME Range:</source>
         <translation>DME Alcance:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1645"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1640"/>
         <source>DME Type:</source>
         <translation>DME Tipo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1656"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1651"/>
         <source>DME data not found for %1/%2.</source>
         <translation>Dados DME não encontrados para %1/%2.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2224"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2219"/>
         <source>DME only</source>
         <translation>Somente DME</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="943"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="938"/>
         <source>Dashes</source>
         <translation>Traços</translation>
     </message>
@@ -16905,7 +16940,7 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation>Aeroporto de Saída</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3785"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3780"/>
         <source>Departure Time:</source>
         <translation>Horário de Decolagem:</translation>
     </message>
@@ -16918,7 +16953,7 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Descrição:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3980"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3975"/>
         <source>Destination</source>
         <translation>Destino</translation>
     </message>
@@ -16932,7 +16967,7 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Destino: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2092"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2087"/>
         <source>Dewpoint:</source>
         <translation>Ponto de Orvalho:</translation>
     </message>
@@ -16945,24 +16980,24 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Distância, Curso e Tempo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2499"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3545"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3994"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2494"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3540"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3989"/>
         <source>Distance:</source>
         <translation>Distância:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="925"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="920"/>
         <source>Edge Lights:</source>
         <translation>Luzes de Borda:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="949"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="944"/>
         <source>Edge Pavement</source>
         <translation>Pavimento de Borda</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="935"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="930"/>
         <source>Edges</source>
         <translation>Bordas</translation>
     </message>
@@ -16972,27 +17007,27 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="261"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1038"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2253"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2326"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2601"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1033"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2248"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2321"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2596"/>
         <source>Elevation:</source>
         <translation>Elevação:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3860"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3855"/>
         <source>Empty Weight:</source>
         <translation>Peso vazio:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3803"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3798"/>
         <source>Endurance hh:mm:</source>
         <oldsource>Endurance hh:mm</oldsource>
         <translation>Duração hh:mm:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4466"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4469"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4461"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4464"/>
         <source>Endurance:</source>
         <translation>Duração:</translation>
     </message>
@@ -17002,7 +17037,7 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Estimativa de duração da rota hh:mm:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4679"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4674"/>
         <source>Environment</source>
         <translation>Meio Ambiente</translation>
     </message>
@@ -17017,41 +17052,41 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation>Facilidades:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3224"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3219"/>
         <source>Facility Type:</source>
         <translation>Tipos de Facilidades:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2620"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2615"/>
         <source>File</source>
         <translation>Arquivo</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1682"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1684"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1730"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1732"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1677"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1679"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1725"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1727"/>
         <source>Fix Type:</source>
         <translation>Tipo de Fixo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3531"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3526"/>
         <source>Fix:</source>
         <translation>Fixo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="939"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="934"/>
         <source>Fixed Distance</source>
         <translation>Distância Fixa</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3688"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3683"/>
         <source>Flight Number:</source>
         <translation>Número do Voo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3756"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4401"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3751"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4396"/>
         <source>Flight Plan</source>
         <translation>Plano de Voo</translation>
     </message>
@@ -17068,42 +17103,42 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Posição do Plano de Voo: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2044"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3779"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2039"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3774"/>
         <source>Flight Rules:</source>
         <translation>Regras de Voo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3554"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4191"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3549"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4186"/>
         <source>Fly over</source>
         <translation>Voar sobre</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="752"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="747"/>
         <source>Frequency</source>
         <translation>Frequência</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1246"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2237"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2321"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1241"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2232"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2316"/>
         <source>Frequency:</source>
         <translation>Frequência:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4435"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4430"/>
         <source>Fuel Flow:</source>
         <translation>Fluxo de Combustível:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3869"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4023"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4031"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4077"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4117"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4274"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4438"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3864"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4018"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4026"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4072"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4112"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4269"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4433"/>
         <source>Fuel:</source>
         <translation>Combustível:</translation>
     </message>
@@ -17118,63 +17153,63 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1301"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1296"/>
         <source>Glideslope:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2781"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2805"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3850"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3856"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4037"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4441"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2776"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2800"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3845"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3851"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4032"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4436"/>
         <source>Gross Weight:</source>
         <translation>Peso Bruto:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4522"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4517"/>
         <source>Ground Elevation:</source>
         <translation>Elevação do Solo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4584"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4579"/>
         <source>Ground:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4584"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4579"/>
         <source>Groundspeed:</source>
         <translation>Velocidade em relação ao Solo:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="411"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="856"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="851"/>
         <source>Hard</source>
         <translation>Estruturadas</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1259"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1254"/>
         <source>Has Backcourse</source>
         <translation>Tem Backcourse</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1529"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1524"/>
         <source>Has GPS Overlay</source>
         <translation>Tem GPS em Sobreposição</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3430"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3425"/>
         <source>Has Jetway</source>
         <translation>Tem Jetway</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1120"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1115"/>
         <source>Has STOL Markings</source>
         <translation>Possui marcas de STOL</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="929"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="924"/>
         <source>Has red Center Lights</source>
         <translation>Tem luzes vermelhas do Centro</translation>
     </message>
@@ -17183,17 +17218,17 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Proa:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1063"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1058"/>
         <source>Helipad %1</source>
         <translation>Heliporto %1</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1015"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1010"/>
         <source>Helipad%1</source>
         <translation>Heliporto%1</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1335"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1330"/>
         <source>Helipad%1:</source>
         <translation>Heliporto%1:</translation>
     </message>
@@ -17213,23 +17248,23 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1569"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1592"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1564"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1587"/>
         <source>ILS data not found</source>
         <translation>Dados ILS não encontrado</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1572"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1567"/>
         <source>ILS data runway not found</source>
         <translation>Dados ILS da pista não encontrado</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4716"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4711"/>
         <source>ISA Deviation:</source>
         <translation>Desvio ISA:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1863"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1858"/>
         <source>IVAO</source>
         <translation></translation>
     </message>
@@ -17244,40 +17279,40 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation>Estação IVAO</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4476"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4471"/>
         <source>Ice:</source>
         <translation>Gelo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="679"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="945"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="674"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="940"/>
         <source>Ident</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2593"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2588"/>
         <source>Ident:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2622"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2617"/>
         <source>Imported from:</source>
         <translation>Importado de:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4500"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4542"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4495"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4537"/>
         <source>Indicated:</source>
         <translation>Indicação:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4203"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4198"/>
         <source>Instructions:</source>
         <translation>Instruções:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1027"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1340"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1022"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1335"/>
         <source>Is Closed</source>
         <translation>Está fechado</translation>
     </message>
@@ -17306,34 +17341,34 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation>Rampa Maior:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2610"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2605"/>
         <source>Last Change:</source>
         <translation>Última Mudança:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="963"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="958"/>
         <source>Leading Zero Ident</source>
         <translation>Conduzindo Zero Ident</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2427"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2542"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3570"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2422"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2537"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3565"/>
         <source>Left</source>
         <translation>Esquerda</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1139"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1134"/>
         <source>Left VASI Pitch:</source>
         <translation>Pitch VASI Esquerdo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1138"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1133"/>
         <source>Left VASI Type:</source>
         <translation>Tipo VASI esquerdo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3574"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3569"/>
         <source>Left or right</source>
         <translation>Esquerda ou direita</translation>
     </message>
@@ -17342,14 +17377,14 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Curso do Fixo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3542"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4187"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3537"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4182"/>
         <source>Leg Type:</source>
         <translation>Tipo de Fixo:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="493"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2431"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2426"/>
         <source>Length:</source>
         <translation>Comprimento:</translation>
     </message>
@@ -17359,7 +17394,7 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation>Iluminado</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1149"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1144"/>
         <source>Lights</source>
         <translation>Luzes</translation>
     </message>
@@ -17372,7 +17407,7 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Curso do Localizador e Largura:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1266"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1261"/>
         <source>Localizer Heading:</source>
         <translation>Curso do Localizador:</translation>
     </message>
@@ -17387,58 +17422,58 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation>Maior Pista por Comprimento:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4598"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4600"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4593"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4595"/>
         <source>Mach:</source>
         <translation></translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="264"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1250"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1922"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2250"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2323"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2605"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2958"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1245"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1917"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2245"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2318"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2600"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2953"/>
         <source>Magnetic declination:</source>
         <translation>Declinação Magnética:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="150"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1023"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1209"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1822"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1912"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1982"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2209"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2299"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2577"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2913"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3128"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3267"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4893"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5196"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1018"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1204"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1817"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1907"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1977"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2204"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2294"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2572"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2908"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3123"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3262"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4888"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5191"/>
         <source>Map</source>
         <translation>Mapa</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3401"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3396"/>
         <source>Marker: %1</source>
         <translation>Marcador: %1</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3403"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3398"/>
         <source>Marker: %1 (%2)</source>
         <translation>Marcador: %1 (%2)</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3847"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3842"/>
         <source>Max Gross Weight:</source>
         <translation>Peso Bruto Máximo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2451"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3190"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2446"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3185"/>
         <source>Max altitude:</source>
         <translation>Altitude Max:</translation>
     </message>
@@ -17458,59 +17493,59 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation>Combate Militar:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2449"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3178"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3180"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2444"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3173"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3175"/>
         <source>Min altitude:</source>
         <translation>Altitude Min:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3697"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3692"/>
         <source>Model:</source>
         <translation>Modelo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1257"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2257"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2332"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1252"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2252"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2327"/>
         <source>Morse:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="719"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1730"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1897"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2379"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="714"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1725"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1892"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2374"/>
         <source>NDB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1743"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1738"/>
         <source>NDB Frequency:</source>
         <translation>Frequência NDB:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1748"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1743"/>
         <source>NDB Morse:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1746"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1741"/>
         <source>NDB Range:</source>
         <translation>Alcance do NDB:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1742"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1737"/>
         <source>NDB Type:</source>
         <translation>Tipo de NDB:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2293"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2288"/>
         <source>NDB: </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1857"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1852"/>
         <source>NOAA</source>
         <translation></translation>
     </message>
@@ -17525,8 +17560,8 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation>Estação NOAA</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="680"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="753"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="675"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="748"/>
         <source>Name</source>
         <translation>Nome</translation>
     </message>
@@ -17535,10 +17570,10 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Nome e Tipo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2596"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3222"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3463"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3749"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2591"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3217"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3458"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3744"/>
         <source>Name:</source>
         <translation>Nome:</translation>
     </message>
@@ -17547,7 +17582,7 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Próximo Waypoint</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3672"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3667"/>
         <source>No %2 shown on map.</source>
         <translation>Nenhum %2 mostrado no mapa.</translation>
     </message>
@@ -17560,7 +17595,7 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Nenhum Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="966"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="961"/>
         <source>No Threshold End Arrows</source>
         <translation>Sem setas finais</translation>
     </message>
@@ -17569,17 +17604,17 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Nenhuma nuvem abaixo de 5,000 ft (1,500m), visibilidade de 10 km (6 nm) ou mais</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2124"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2119"/>
         <source>No clouds</source>
         <translation>Nenhuma nuvem</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2121"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2116"/>
         <source>No visibility report</source>
         <translation>Nenhuma visibilidade reportada</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2127"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2122"/>
         <source>No wind</source>
         <translation>Nenhum vento</translation>
     </message>
@@ -17587,53 +17622,53 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <location filename="src/common/htmlinfobuilder.cpp" line="396"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="422"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="566"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="969"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4687"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="964"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4682"/>
         <source>None</source>
         <translation>Nenhum</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4358"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4353"/>
         <source>Not along Track</source>
         <translation>Não ao Longo do Track</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1838"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1833"/>
         <source>Not connected to simulator.</source>
         <translation>Não conectado com o simulador.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3684"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3679"/>
         <source>Number:</source>
         <translation>Número:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1108"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1103"/>
         <source>Offset Threshold:</source>
         <translation>Limite de deslocamento:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3654"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3649"/>
         <source>Online Client</source>
         <translation>Cliente Online</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4860"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4855"/>
         <source>Online Client (%1)</source>
         <translation>Cliente Online (%1)</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3746"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3741"/>
         <source>Online Information</source>
         <translation>Informações Online</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3819"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3814"/>
         <source>Other Information:</source>
         <translation>Outras Informações:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1118"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1113"/>
         <source>Overrun:</source>
         <translation>Superação:</translation>
     </message>
@@ -17686,7 +17721,7 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="361"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3416"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3411"/>
         <source>Tower Viewpoint</source>
         <translation>Ponto de Vista da Torre</translation>
     </message>
@@ -17697,78 +17732,78 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation>Estacionamento</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="825"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="820"/>
         <source>Best runway for wind</source>
         <translation>A melhor pista em uso de acordo com o vento</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="825"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="820"/>
         <source>Best runways for wind</source>
         <translation>As melhores pistas em uso de acordo com o vento</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="877"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="872"/>
         <source> Prefers runway: </source>
         <translation> Preferência de pista: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="877"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="872"/>
         <source> Prefers runways: </source>
         <translation> Preferência de pistas: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="892"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="887"/>
         <source>Elevation: </source>
         <translation>Elevação: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="921"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="916"/>
         <source>Pattern Altitude:</source>
         <translation>Altitude Padrão:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1013"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1008"/>
         <source> (no Start Position)</source>
         <translation> (sem Posição Inicial)</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1095"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1090"/>
         <source>Uses true course</source>
         <translation>Usa curso verdadeiro</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1109"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1104"/>
         <source>Available Distance for Landing:</source>
         <translation>Distância Disponível para Pouso:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1127"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1122"/>
         <source>Pattern:</source>
         <translation>Padronizar:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1266"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1261"/>
         <source>Heading:</source>
         <comment>localizer heading</comment>
         <translation>Proa:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1301"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1296"/>
         <source>Glidepath:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1307"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1302"/>
         <source>Performance:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1308"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1303"/>
         <source>Provider:</source>
         <translation>Provedor:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1367"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1362"/>
         <source>%2, %3, %4</source>
         <translation></translation>
     </message>
@@ -17781,168 +17816,168 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Nenhuma exibição meteorológica selecionada no diálogo de opções na página &quot;Tempo&quot;.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2073"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2068"/>
         <source>Speed not valid</source>
         <translation>Velocidade não é válida</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2134"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2129"/>
         <source> of in </source>
         <translation> de dentro </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2134"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2129"/>
         <source> in </source>
         <translation> dentro </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2666"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2661"/>
         <source>From:</source>
         <translation>De:</translation>
     </message>
     <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2664"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2669"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2674"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4511"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4582"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4617"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4506"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4577"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4612"/>
         <source>, %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2671"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2666"/>
         <source>To:</source>
         <translation>Para:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2686"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2681"/>
         <source>Aircraft type:</source>
         <translation>Tipo de Aeronave:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2688"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2683"/>
         <source>Aircraft model:</source>
         <translation>Modelo da Aeronave:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2690"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2685"/>
         <source>Aircraft model and type:</source>
         <translation>Modelo e tipo de aeronave:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1237"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2690"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3083"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1232"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2685"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3078"/>
         <source>%1, %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1385"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1380"/>
         <source>Wind (%1):</source>
         <translation>Vento (%1):</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1429"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1424"/>
         <source>flight plan waypoint and cruise</source>
         <translation>waypoint e cruzeiro do plano de voo</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1431"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1426"/>
         <source>flight plan waypoint</source>
         <translation>waypoint do plano de voo</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1433"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1428"/>
         <source>flight plan cruise</source>
         <translation>plano de voo cruzeiro</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1436"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1431"/>
         <source>wind barbs</source>
         <translation>farpas de vento</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1438"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1433"/>
         <source>manual layer</source>
         <translation>camada manual</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1906"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1901"/>
         <source>%1 %2at %3</source>
         <translation>%1 %2em %3</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1906"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1901"/>
         <source>User MSA Diagram</source>
         <translation>Diagrama MSA do usuário</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1906"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1901"/>
         <source>MSA</source>
         <translation>MSA</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2476"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2471"/>
         <source>Radii:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2476"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2471"/>
         <source>Radius</source>
         <translation>Raio</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2503"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2498"/>
         <source>Start Course:</source>
         <translation>Iniciar Curso:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2504"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2499"/>
         <source>End Course:</source>
         <translation>Fim do curso:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2695"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2690"/>
         <source>Aircraft registration:</source>
         <translation>Registro da Aeronave:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2696"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2691"/>
         <source>Flight number:</source>
         <translation>Número do voo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2706"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2701"/>
         <source>Flight</source>
         <translation>Voo</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2711"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2706"/>
         <source>Flight plan cruise altitude:</source>
         <translation>Altitude de cruzeiro do plano de voo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2713"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2708"/>
         <source>Flight plan distance:</source>
         <translation>Distância do plano de voo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2724"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2719"/>
         <source>Distance flown:</source>
         <translation>Distância voada:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2728"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2723"/>
         <source>Great circle distance:</source>
         <translation>Grande distância do círculo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2736"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2731"/>
         <source>Travel time:</source>
         <translation>Tempo de viagem:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2740"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2735"/>
         <source>Average ground speed:</source>
         <translation>Velocidade média do solo(GS):</translation>
     </message>
@@ -17951,21 +17986,21 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="obsolete">Saída</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2541"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2756"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2789"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2536"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2751"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2784"/>
         <source>Runway:</source>
         <translation>Pista:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2765"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2794"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2760"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2789"/>
         <source>Real time:</source>
         <translation>Tempo real:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2773"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2801"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2768"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2796"/>
         <source>Simulator time:</source>
         <translation>Horário do Simulador:</translation>
     </message>
@@ -17975,7 +18010,7 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="370"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2814"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2809"/>
         <source>Fuel</source>
         <translation>Combustível</translation>
     </message>
@@ -17984,12 +18019,12 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="obsolete">Viagem:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2834"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2829"/>
         <source>Flight plan:</source>
         <translation>Plano de Voo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2839"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2834"/>
         <source>Aircraft performance:</source>
         <translation>Performance das aeronaves:</translation>
     </message>
@@ -17998,9 +18033,9 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Descrição</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1235"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2540"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2891"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1230"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2535"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2886"/>
         <source>Airport:</source>
         <translation>Aeroporto:</translation>
     </message>
@@ -18009,22 +18044,22 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Rolamento e distância:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3148"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3143"/>
         <source>Active continuously, excluding holidays</source>
         <translation>Ativo continuamente, exceto feriados</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3150"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3145"/>
         <source>Active not continuously</source>
         <translation>Ativo não continuamente</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3152"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3147"/>
         <source>Active times announced by NOTAM</source>
         <translation>Horários ativos anunciados por NOTAM</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3170"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3165"/>
         <source>Designation:</source>
         <translation>Designação:</translation>
     </message>
@@ -18033,24 +18068,24 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Classificação Administrativa:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2697"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3752"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2692"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3747"/>
         <source>Simulator:</source>
         <translation>Simulador:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3795"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3790"/>
         <source>Estimated Arrival Time:</source>
         <translation>Tempo de chegada estimado:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3820"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3815"/>
         <source>Persons on Board:</source>
         <translation>Pessoas a bordo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4052"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4092"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4047"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4087"/>
         <source>Not valid.</source>
         <translation>Não é válido.</translation>
     </message>
@@ -18059,34 +18094,34 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation type="vanished">Ângulo de caranguejo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5000"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4995"/>
         <source>SkyVector</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1466"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5063"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1461"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5058"/>
         <source>Pos:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3825"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4768"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3820"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4763"/>
         <source>Position</source>
         <translation>Posição</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3453"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3448"/>
         <source>Position: </source>
         <translation>Posição: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="947"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="942"/>
         <source>Precision</source>
         <translation>Precisão</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2099"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2094"/>
         <source>Pressure:</source>
         <translation>Pressão:</translation>
     </message>
@@ -18097,110 +18132,110 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation>Procedimentos</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4741"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4747"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4736"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4742"/>
         <source>Rain</source>
         <translation>Chuva</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1255"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2254"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2329"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1250"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2249"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2324"/>
         <source>Range:</source>
         <translation>Alcance:</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="249"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1240"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2234"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2319"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2595"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2957"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3462"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1235"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2229"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2314"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2590"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2952"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3457"/>
         <source>Region:</source>
         <translation>Região:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3694"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3689"/>
         <source>Registration:</source>
         <translation>Registro:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3578"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4207"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3573"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4202"/>
         <source>Related Navaid:</source>
         <translation>Navaid relatada:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2168"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3464"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2163"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3459"/>
         <source>Remarks:</source>
         <translation>Observações:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2174"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2169"/>
         <source>Report is not valid. Raw and clean METAR were:</source>
         <translation>O relatório não é válido. O resultado do Metar foi limpo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2035"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2030"/>
         <source>Report type: </source>
         <translation>Tipo de Reportagem: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2008"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2003"/>
         <source>Reporting airport: </source>
         <translation>Reportando do aeroporto: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4222"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4217"/>
         <source>Restriction:</source>
         <translation>Restrição:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4220"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4215"/>
         <source>Restrictions:</source>
         <translation>Restrições:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2427"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2542"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3572"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2422"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2537"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3567"/>
         <source>Right</source>
         <translation>Direita</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1141"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1136"/>
         <source>Right VASI Pitch:</source>
         <translation>Pitch VASI Direito:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1140"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1135"/>
         <source>Right VASI Type:</source>
         <translation>Tipo VASI Direito:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3818"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3813"/>
         <source>Route:</source>
         <translation>Rota:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="908"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="903"/>
         <source>Runway </source>
         <translation>Pista </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1061"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1056"/>
         <source>Runway %1</source>
         <translation>Pista %1</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1155"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1150"/>
         <source>Runway End Lights:</source>
         <translation>Luzes Final da Pista:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="971"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="966"/>
         <source>Runway Markings:</source>
         <translation>Marcações da pista:</translation>
     </message>
@@ -18211,9 +18246,9 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="221"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3460"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3520"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5269"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3455"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3515"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5264"/>
         <source>Flight Plan Position:</source>
         <translation>Posição do Plano de Voo:</translation>
     </message>
@@ -18274,7 +18309,7 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="404"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="827"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="822"/>
         <source>Runways</source>
         <translation>Pistas</translation>
     </message>
@@ -18295,8 +18330,8 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="500"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1036"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1101"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1031"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1096"/>
         <source>Heading:</source>
         <comment>runway heading</comment>
         <translation>Proa:</translation>
@@ -18312,51 +18347,51 @@ O botão é realçado se o nível de detalhe não for padrão.</translation>
         <translation>Aeroportos mais Próximos com Procedimentos</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="607"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="606"/>
         <source>No airports with procedures within a radius of %1.</source>
         <translation>Nenhum aeroporto com procedimentos dentro de um raio de %1.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="616"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="613"/>
         <source>Nearest Radio Navaids</source>
         <translation>Rádio Navaids mais Próximos</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="618"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="614"/>
         <source>No navaids within a radius of %1.</source>
         <translation>Sem Navaids dentro de um raio de %1.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="684"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="679"/>
         <source>Frequency
 kHz/MHz</source>
         <translation>Frequência
 kHz/MHz</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="686"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="681"/>
         <source>Bearing
 %1</source>
         <translation>Rumo
 %1</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="687"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="682"/>
         <source>Distance
 %1</source>
         <translation>Distância
 %1</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="725"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1893"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2381"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="720"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1888"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2376"/>
         <source>Waypoint</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="827"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1899"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="822"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1894"/>
         <source>Runway</source>
         <translation>Pista</translation>
     </message>
@@ -18365,27 +18400,27 @@ kHz/MHz</translation>
         <translation type="vanished">Melhor %1 em uso de acordo com o vento</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="828"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="823"/>
         <source>Surface</source>
         <translation>Superfície</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="828"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="823"/>
         <source>Length</source>
         <translation>Comprimento</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="828"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="823"/>
         <source>Headwind</source>
         <translation>Vento de Proa</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="828"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="823"/>
         <source>Crosswind</source>
         <translation>Vento Cruzado</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="849"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="844"/>
         <source>%1-%2</source>
         <translation></translation>
     </message>
@@ -18394,52 +18429,52 @@ kHz/MHz</translation>
         <translation type="vanished"> Preferência %1: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="883"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="878"/>
         <source>All runways good for landing or takeoff.</source>
         <translation>Todas as pistas estão boas para pouso ou decolagem.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1237"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1232"/>
         <source>Airport and runway:</source>
         <translation>Aeroporto e pista:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1292"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1287"/>
         <source>Offset localizer.</source>
         <translation>Localizador de deslocamento(Offset).</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1293"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1288"/>
         <source>Runway heading:</source>
         <translation>Proa da pista:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1367"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1362"/>
         <source>Flight Plan wind (%1)</source>
         <translation>Vento do Plano de Voo (%1)</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1379"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1374"/>
         <source>Wind (%1)</source>
         <translation>Vento (%1)</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1453"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1448"/>
         <source>0</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1458"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1453"/>
         <source>Ground</source>
         <translation>Solo</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1515"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1510"/>
         <source>SID %1 %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1517"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1512"/>
         <source>STAR %1 %2</source>
         <translation></translation>
     </message>
@@ -18448,13 +18483,13 @@ kHz/MHz</translation>
         <translation type="vanished">Nenhuma exibição de tempo selecionado na caixa de diálogo das opções.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4703"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4710"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4698"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4705"/>
         <source> °C, </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2247"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2242"/>
         <source>Calibrated declination:</source>
         <translation>Declinação calibrada:</translation>
     </message>
@@ -18467,9 +18502,9 @@ kHz/MHz</translation>
         <translation type="vanished">Orbitando</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1887"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1903"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2375"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1882"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1898"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2370"/>
         <source>Airport</source>
         <translation>Aeroporto</translation>
     </message>
@@ -18490,12 +18525,12 @@ kHz/MHz</translation>
         <translation type="vanished">minutos</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2467"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2462"/>
         <source>Range Rings</source>
         <translation>Anéis de Escala</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2467"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2462"/>
         <source>Range Ring</source>
         <translation>Anel de Alcance</translation>
     </message>
@@ -18512,7 +18547,7 @@ kHz/MHz</translation>
         <translation type="vanished">Distância: %1 %2</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2537"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2532"/>
         <source>Traffic Pattern</source>
         <translation>Padrão de tráfego</translation>
     </message>
@@ -18529,91 +18564,91 @@ kHz/MHz</translation>
         <translation type="vanished">Altitude Padrão %1</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2660"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2655"/>
         <source>Logbook Entry: %1 to %2</source>
         <translation>Entrada do Logbook: %1 para %2</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2702"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2697"/>
         <source>Route Description:</source>
         <translation>Descrição da Rota:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2743"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2738"/>
         <source>Average fuel flow:</source>
         <translation>Fluxo de médio de combustível:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2753"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2748"/>
         <source>Departure (%1)</source>
         <translation>Saída (%1)</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2786"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2781"/>
         <source>Destination (%1)</source>
         <translation>Destino (%1)</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2818"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2813"/>
         <source>Trip from plan:</source>
         <translation>Viagem do plano:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2819"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2814"/>
         <source>Block from plan:</source>
         <translation>Block do plano:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2820"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2815"/>
         <source>Used from takeoff to landing:</source>
         <translation>Usado da decolagem até o pouso:</translation>
     </message>
     <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2830"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2835"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2840"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2844"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2839"/>
         <source>Attached</source>
         <translation>Em anexo</translation>
     </message>
     <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2831"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2836"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2841"/>
         <source>Referenced: </source>
         <translation>Referenciado: </translation>
     </message>
     <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2832"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2837"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2842"/>
         <source>&lt;br/&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2844"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2839"/>
         <source>Aircraft trail:</source>
         <translation>Trilha da aeronavea:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2871"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2866"/>
         <source>Remarks</source>
         <translation>Observações</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3025"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3020"/>
         <source>Airway</source>
         <translation>Aerovia</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3025"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3020"/>
         <source>Track</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3041"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3036"/>
         <source>Connections:</source>
         <translation>Conexões:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3043"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3038"/>
         <source>Connections: </source>
         <translation>Conexões: </translation>
     </message>
@@ -18626,167 +18661,167 @@ kHz/MHz</translation>
         <translation type="vanished">Rumo e distância até o usuário:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3162"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3157"/>
         <source>Airspace has no geometry and cannot be shown on the map.</source>
         <translation>O Espaço Aéreo não tem geometria e não pode ser mostrado no mapa.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3215"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3210"/>
         <source>COM Frequencies:</source>
         <translation>Frequências COM:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3261"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3256"/>
         <source>Track: </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3279"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3274"/>
         <source>Route type:</source>
         <translation>Tipo de Rota:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3282"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3277"/>
         <source>Track type:</source>
         <translation>Tipo de Track:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3305"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3300"/>
         <source>%1%2%3</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3320"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3315"/>
         <source>Track levels East:</source>
         <translation>Track níveis Leste:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3327"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3322"/>
         <source>Track levels West:</source>
         <translation>Track níveis Oeste:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3346"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3353"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3341"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3348"/>
         <source>Track valid:</source>
         <translation>Track válido:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3353"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3348"/>
         <source>No validity period</source>
         <translation>Sem período de validade</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3355"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3350"/>
         <source>Track downloaded:</source>
         <translation>Track baixado:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3468"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3463"/>
         <source>Flight Plan Position: </source>
         <translation>Posição do Plano de Voo: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3648"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3643"/>
         <source>User %1 / Online Client</source>
         <translation>Usuário %1 / Cliente Online</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3650"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3645"/>
         <source>User %1</source>
         <translation>Usuário %1</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3652"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3647"/>
         <source>AI / Multiplayer %1 / Online Client</source>
         <translation>AI / Multiplayer %1 / Cliente Online</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3656"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3651"/>
         <source>AI / Multiplayer %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3667"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3662"/>
         <source>%1 - %2 of %3</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3704"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3699"/>
         <source>Deck height:</source>
         <translation>Altura do convés:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3759"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3754"/>
         <source>State:</source>
         <translation>Estado:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3903"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3898"/>
         <source>Flown:</source>
         <translation>Voado:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3903"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3898"/>
         <source>%1 since takoff at %2</source>
         <translation>%1 Desde a decolagem em %2</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3960"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3955"/>
         <source>Flight plan not valid. Fuel and time estimated.</source>
         <translation>Plano de voo inválido. Combustível e tempo estimado.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3964"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3959"/>
         <source>Aircraft performance not valid. Fuel and time estimated.</source>
         <translation>Performance de Aeronave inválido. Combustível e tempo estimado.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3966"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3961"/>
         <source>Aircraft performance not valid. Fuel estimated.</source>
         <translation>Performance da aeronave inválido. Combustível estimado.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3968"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3963"/>
         <source>Aircraft performance not valid. Time estimated.</source>
         <translation>Performance da aeronave inválido. Tempo estimado.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3980"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3975"/>
         <source>Alternate</source>
         <translation>Alternativo</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3983"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4167"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3978"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4162"/>
         <source> - </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3994"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3989"/>
         <source>Distance, Time and Arrival:</source>
         <translation>Distância, Hora e Chegada:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4048"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4043"/>
         <source>Top of Descent%1</source>
         <translation>Ponto de Descida %1</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4048"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4088"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4043"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4083"/>
         <source> (passed)</source>
         <translation> (passou)</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4058"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4098"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4233"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4053"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4093"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4228"/>
         <source>Distance</source>
         <translation>Distância</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1388"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1383"/>
         <source>Direction</source>
         <translation>Direção</translation>
     </message>
@@ -18801,166 +18836,166 @@ kHz/MHz</translation>
         <translation type="unfinished">Procedimentos de Chegada</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1455"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1450"/>
         <source>%L1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1610"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1605"/>
         <source>GLS data not found</source>
         <translation>Dados GLS não encontrados</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1774"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1769"/>
         <source>Altitude %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1776"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1771"/>
         <source>Level %1 (FL%2)</source>
         <translation>Nível %1 (FL%2)</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1780"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1775"/>
         <source>Transition: </source>
         <translation>Transição: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1866"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1861"/>
         <source>No weather display selected in options dialog on page &quot;Weather&quot;.</source>
         <translation>Nenhuma exibição de clima selecionada na caixa de diálogo de opções na página &quot;Clima&quot;.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1903"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1898"/>
         <source> (%1 %2)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1916"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1911"/>
         <source>Radius:</source>
         <translation>Raio:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1919"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1914"/>
         <source>Bearing and alt. units:</source>
         <translation>Rolamento e unidades de altitude:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1919"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1914"/>
         <source>°T, </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1919"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1914"/>
         <source>°M, </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1924"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1919"/>
         <source>No altitude</source>
         <translation>Nenhuma altitude</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1926"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1921"/>
         <source>Minimum altitude:</source>
         <translation>Altitude Mínima:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1929"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1924"/>
         <source>Diagram added by user</source>
         <translation>Diagrama adicionado pelo usuário</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2027"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2029"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2022"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2024"/>
         <source> (%1 hours old)</source>
         <translation> (%1 hours passadas)</translation>
     </message>
     <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2082"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2087"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2092"/>
         <source>°C, </source>
         <translation></translation>
     </message>
     <message>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2083"/>
         <location filename="src/common/htmlinfobuilder.cpp" line="2088"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2093"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4704"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4711"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4699"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4706"/>
         <source>°F</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2103"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4725"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2098"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4720"/>
         <source>Density Altitude:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2165"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2160"/>
         <source>No cloud below 5,000 ft (1,500 m), visibility of 10 km (6 NM) or more</source>
         <translation>Nenhuma nuvem abaixo de 5.000 pés (1.500 m), visibilidade de 10 km (6 NM) ou mais</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2383"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2378"/>
         <source>Userpoint</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2388"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2383"/>
         <source>User </source>
         <translation>Usuário </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2393"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2388"/>
         <source>Holding at %1 %2, %3</source>
         <translation>Orbita em %1 %2, %3</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2398"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2393"/>
         <source>Holding %1</source>
         <translation>Orbitando %1</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2415"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2422"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2410"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2417"/>
         <source>Minute</source>
         <translation>Minuto</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2415"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2422"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2410"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2417"/>
         <source>Minutes</source>
         <translation>Minutos</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2421"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2416"/>
         <source>Total time to complete:</source>
         <translation>Tempo total para concluir:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2431"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2426"/>
         <source>Estimated length:</source>
         <translation>Comprimento estimado:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2438"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2433"/>
         <source>Speed:</source>
         <translation>Velocidade:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2443"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2438"/>
         <source>Speed limit:</source>
         <translation>Limite de velocidade:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2446"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2441"/>
         <source>%1 to %2</source>
         <translation>%1 para %2</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2470"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2497"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2465"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2492"/>
         <source>Label:</source>
         <translation>Rótulo:</translation>
     </message>
@@ -18969,13 +19004,13 @@ kHz/MHz</translation>
         <translation type="vanished">Distâncias:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2487"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2482"/>
         <source>Distance Measurement</source>
         <translation>Medição de Distância</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2492"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2493"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2487"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2488"/>
         <source>%L1°M, %L2°T</source>
         <translation></translation>
     </message>
@@ -18988,336 +19023,336 @@ kHz/MHz</translation>
         <translation type="vanished">Curso Final:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2543"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2538"/>
         <source>Heading at final:</source>
         <translation>Proa na final:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2544"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2539"/>
         <source>Pattern altitude:</source>
         <translation>Altitude padrão:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2765"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2760"/>
         <source>Departure real time:</source>
         <translation>Partida em tempo real:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2773"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2768"/>
         <source>Departure simulator time:</source>
         <translation>Partida no horário do simulador:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2929"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2924"/>
         <source>Type description:</source>
         <translation>Descrição do tipo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2950"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2945"/>
         <source>Radial and dist. to related:</source>
         <translation>Radial e dist. para relacionado:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3004"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2999"/>
         <source> ...</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3053"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3048"/>
         <source>...</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3067"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3062"/>
         <source>To last flight plan leg:</source>
         <translation>Para o último fixo do plano de voo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3082"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3077"/>
         <source>Bearing and distance to user aircraft:</source>
         <translation>Rumo e distância até a aeronave do usuário:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3193"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3188"/>
         <source>Multiple code:</source>
         <translation>Código múltiplo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3523"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3518"/>
         <source>First and last Fix:</source>
         <translation>Primeira e última correção:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3533"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3528"/>
         <source>%1:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3600"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3595"/>
         <source>Simulator aircraft for online client %1.</source>
         <translation>Simulador de aeronave para cliente online %1.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3606"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3601"/>
         <source>Online client related to simulator aircraft %1.</source>
         <translation>Cliente online relacionado ao simulador de aeronave %1.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3625"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3620"/>
         <source>&lt;b&gt;Heading&lt;/b&gt;&amp;nbsp;%1</source>
         <translation>&lt;b&gt;Proa&lt;/b&gt;&amp;nbsp;%1</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3629"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3624"/>
         <source>&lt;b&gt;Act. Altitude&lt;/b&gt;&amp;nbsp;%1</source>
         <translation>&lt;b&gt;Altitude Atual&lt;/b&gt;&amp;nbsp;%1</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3631"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3626"/>
         <source>&lt;b&gt;Ind. Altitude&lt;/b&gt;&amp;nbsp;%1</source>
         <translation>&lt;b&gt;Altitude. Ind&lt;/b&gt;&amp;nbsp;%1</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3635"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3630"/>
         <source>&lt;b&gt;Groundspeed&lt;/b&gt;&amp;nbsp;%1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3639"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3634"/>
         <source>&lt;b&gt;Ind. Speed&lt;/b&gt;&amp;nbsp;%1</source>
         <translation>&lt;b&gt;Velocidade. Ind&lt;/b&gt;&amp;nbsp;%1</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3675"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3670"/>
         <source>No online aircraft shown on map.</source>
         <translation>Nenhuma aeronave online mostrada no mapa.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3800"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3795"/>
         <source>Estimated en-route time hh:mm:</source>
         <translation>Estimativa de duração da rota hh:mm:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3854"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3849"/>
         <source>&lt;br/&gt;%1 % of max gross weight</source>
         <translation>&lt;br/&gt;%1% do peso bruto máximo</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3877"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3872"/>
         <source>Real Date and Time:</source>
         <translation>Data e hora reais:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3881"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3876"/>
         <source>Real Local Time:</source>
         <translation>Horário Local Real:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3885"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3880"/>
         <source>Simulator Date and Time:</source>
         <translation>Data e Hora do Simulador:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3889"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3884"/>
         <source>Simulator Local Time:</source>
         <translation>Hora Local do Simulador:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4023"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4018"/>
         <source>Insufficient</source>
         <translation>Insuficiente</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4027"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4022"/>
         <source>Fuel (low):</source>
         <translation>Combustível (baixo):</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4035"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4030"/>
         <source>Fuel (estimated):</source>
         <translation>Combustível (estimado):</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4063"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4103"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4240"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4058"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4098"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4235"/>
         <source>Time</source>
         <translation>Tempo</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4067"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4107"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4246"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4062"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4102"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4241"/>
         <source>Arrival</source>
         <translation>Chegada</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4088"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4083"/>
         <source>Top of Climb%1</source>
         <translation>Ponto de Subida%1</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4122"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4117"/>
         <source>From Departure:</source>
         <translation>Da partida:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4130"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4125"/>
         <source> - Alternate</source>
         <translation> - Alternativo</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4162"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4157"/>
         <source> - to </source>
         <translation> - para </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4164"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4159"/>
         <source> - from </source>
         <translation> - de </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4170"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4165"/>
         <source>Next Waypoint%1%2%3</source>
         <translation>Próximo Waypoint%1%2%3</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4284"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4279"/>
         <source>Course to waypoint:</source>
         <translation>Curso para o waypoint:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4300"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4295"/>
         <source>Leg course from %1 %2:</source>
         <translation>Curso do fixo de %1 %2:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4310"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4305"/>
         <source>Leg course to %1 %2:</source>
         <translation>Curso do fixo para %1 %2:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4328"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4323"/>
         <source>Leg Course</source>
         <translation type="unfinished">Curso do Fixo</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4328"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4323"/>
         <source>Leg Start Course:</source>
         <translation>Fixo de Curso Inicial:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4337"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4332"/>
         <source>Heading:</source>
         <comment>heading to next</comment>
         <translation>Proa:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4369"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4364"/>
         <source>Waypoint Remarks</source>
         <translation>Observações do Waypoint</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4381"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4376"/>
         <source>No Active Flight Plan Leg. Too far from flight plan.</source>
         <translation>Nenhum Fixo do Plano de Voo ativo. Muito afastado do plano de voo.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4383"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4378"/>
         <source>No Active Flight Plan Leg.</source>
         <translation>Nenhum Fixo do Plano de Voo Ativo.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4391"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4386"/>
         <source>No Flight Plan.</source>
         <translation>Nenhum Plano de Voo.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4404"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4399"/>
         <source>Departure:</source>
         <translation>Saída:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4405"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4400"/>
         <source>Destination:</source>
         <translation>Destino:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4427"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4422"/>
         <source>Heading:</source>
         <comment>aircraft heading</comment>
         <translation>Proa:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4476"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4471"/>
         <source>&amp;nbsp;%</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4498"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4546"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4493"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4541"/>
         <source>, &lt;b&gt;%1&lt;/b&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4644"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4639"/>
         <source>, above ▼</source>
         <translation>, acima ▼</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4646"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4641"/>
         <source>, below ▲</source>
         <translation>, abaixo ▲</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4660"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4669"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4655"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4664"/>
         <source> ▼</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4667"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4662"/>
         <source>Angle and Speed to Next:</source>
         <translation>Ângulo e velocidade para o próximo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4981"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4976"/>
         <source>AirNav.com</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4984"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4979"/>
         <source>ChartFox</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4985"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4980"/>
         <source>&amp;nbsp;(needs&amp;nbsp;login)</source>
         <translation>&amp;nbsp;(precisa&amp;nbsp;login)</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4987"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4982"/>
         <source>FltPlan</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5006"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5001"/>
         <source>X-Plane&amp;nbsp;Scenery&amp;nbsp;Gateway</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5015"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5010"/>
         <source>,&amp;nbsp;&amp;nbsp; </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5160"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5162"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5155"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5157"/>
         <source>(%1 hours old)</source>
         <translation>(%1 horas passadas)</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="5268"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="5263"/>
         <source>Related navaid for procedure</source>
         <translation>Navaid relacionada para o procedimento</translation>
     </message>
@@ -19330,32 +19365,32 @@ kHz/MHz</translation>
         <translation type="vanished">Janelas </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4716"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4711"/>
         <source> °C</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4831"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4826"/>
         <source>%1 (</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4852"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4847"/>
         <source>User Vehicle / Online Client (%1)</source>
         <translation>Veículo do Usuário/ Cliente Online (%1)</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4857"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4852"/>
         <source>AI / Multiplayer / Online Client (%1)</source>
         <translation>AI / Multiplayer / Cliente Online (%1)</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4873"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4868"/>
         <source> - %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3053"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3048"/>
         <source>More</source>
         <translation>Mais</translation>
     </message>
@@ -19368,77 +19403,77 @@ kHz/MHz</translation>
         <translation type="vanished">Cenário</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4719"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4714"/>
         <source>Sea Level Pressure:</source>
         <translation>Nível de pressão do Mar:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3308"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3303"/>
         <source>Segment One-way:</source>
         <translation>Seguimento de Um caminho:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3331"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3326"/>
         <source>Segment length:</source>
         <translation>Comprimento do segmento:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3276"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3271"/>
         <source>Segment type:</source>
         <translation>Tipo de Segmento:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3310"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3305"/>
         <source>Segment:</source>
         <translation>Segmento:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3223"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3750"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3218"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3745"/>
         <source>Server:</source>
         <translation>Servidor:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="951"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="946"/>
         <source>Single End</source>
         <translation>Extremidade Única</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="913"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1030"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3702"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="908"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1025"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3697"/>
         <source>Size:</source>
         <translation>Tamanho:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4737"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4750"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4732"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4745"/>
         <source>Snow</source>
         <translation>Neve</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="413"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="856"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="851"/>
         <source>Soft</source>
         <translation>Macia</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2188"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2183"/>
         <source>Source: %1</source>
         <translation>Fonte: %1</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4537"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4532"/>
         <source>Speed</source>
         <translation>Velocidade</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3564"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3559"/>
         <source>Speed Restriction:</source>
         <translation>Velocidade de Restrição:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1052"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1047"/>
         <source>Start Positions</source>
         <translation>Posição Inicial</translation>
     </message>
@@ -19448,12 +19483,12 @@ kHz/MHz</translation>
         <translation>Estado ou Província:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4710"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4705"/>
         <source>Static Air Temperature:</source>
         <translation>Temperatura Estática do AR:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1151"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1146"/>
         <source>Strobes</source>
         <translation></translation>
     </message>
@@ -19463,28 +19498,28 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="502"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="917"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1033"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="912"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1028"/>
         <source>Surface:</source>
         <translation>Superfície:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1336"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1331"/>
         <source>Surface: </source>
         <translation>Superfície: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1697"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1692"/>
         <source>TACAN Channel:</source>
         <translation>Canal TACAN:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1701"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1696"/>
         <source>TACAN Range:</source>
         <translation>Alcance TACAN:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2598"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2593"/>
         <source>Tags:</source>
         <translation></translation>
     </message>
@@ -19494,50 +19529,50 @@ kHz/MHz</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2087"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2082"/>
         <source>Temperature:</source>
         <translation>Temperatura:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1732"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1727"/>
         <source>Terminal NDB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1684"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1679"/>
         <source>Terminal VOR</source>
         <translation>VOR Terminal</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="937"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="932"/>
         <source>Threshold</source>
         <translation>Limite</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2414"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3548"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2409"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3543"/>
         <source>Time:</source>
         <translation>Tempo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2027"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2029"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2031"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2022"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2024"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2026"/>
         <source>Time: </source>
         <translation>Tempo: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3682"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3677"/>
         <source>Title:</source>
         <translation>Título:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4082"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4077"/>
         <source>To Destination:</source>
         <translation>Para o Destino:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3997"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3992"/>
         <source>To End of Missed Approach:</source>
         <translation>Ao final do procedimento de Aproximação Perdida:</translation>
     </message>
@@ -19546,23 +19581,23 @@ kHz/MHz</translation>
         <translation type="vanished">Ponto de Descida</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4703"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4698"/>
         <source>Total Air Temperature:</source>
         <translation>Temperatura Total do AR:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3865"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3860"/>
         <source>Total Payload:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="941"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1153"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="936"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1148"/>
         <source>Touchdown</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3416"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3411"/>
         <source>Tower</source>
         <translation>Torre</translation>
     </message>
@@ -19573,17 +19608,17 @@ kHz/MHz</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="515"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3411"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3406"/>
         <source>Tower:</source>
         <translation>Torre:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4432"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4427"/>
         <source>Track:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1625"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1620"/>
         <source>Transition </source>
         <translation>Transição </translation>
     </message>
@@ -19593,79 +19628,79 @@ kHz/MHz</translation>
         <translation>Altitude de Transição:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3690"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3685"/>
         <source>Transponder Code:</source>
         <translation>Código Transponder:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4590"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4585"/>
         <source>True Airspeed:</source>
         <translation>Velocidade Relativa Verdadeira (TAS):</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4196"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4191"/>
         <source>Turn Left</source>
         <translation>Vire à Esquerda</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4200"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4195"/>
         <source>Turn Left or right</source>
         <translation>Vire à Esquerda ou direita</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4198"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4193"/>
         <source>Turn Right</source>
         <translation>Vire à Direita</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2427"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2542"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3570"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3572"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3574"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2422"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2537"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3565"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3567"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3569"/>
         <source>Turn:</source>
         <translation>Vire:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="677"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="751"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="672"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="746"/>
         <source>Type</source>
         <translation>Tipo</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3780"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3775"/>
         <source>Type of Flight:</source>
         <translation>Tipo de Voo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1035"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2224"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2227"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2311"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2589"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2591"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2817"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2926"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2935"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3173"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3692"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1030"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2219"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2222"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2306"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2584"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2586"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2812"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2921"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2930"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3168"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3687"/>
         <source>Type:</source>
         <translation>Tipo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1217"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1337"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1212"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1332"/>
         <source>Type: </source>
         <translation>Tipo: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3178"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3184"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3173"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3179"/>
         <source>Unknown</source>
         <translation>Desconhecido</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3186"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3181"/>
         <source>Unlimited</source>
         <translation>Ilimitado</translation>
     </message>
@@ -19674,18 +19709,18 @@ kHz/MHz</translation>
         <translation type="vanished">Aeronave do Usuário</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4855"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4850"/>
         <source>User Vehicle</source>
         <translation>Veículos do Usuário</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3662"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3923"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3657"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3918"/>
         <source>User aircraft is not shown on map.</source>
         <translation>A aeronave do usuário não é mostrada no mapa.</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2571"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2566"/>
         <source>Userpoint%1</source>
         <translation></translation>
     </message>
@@ -19695,17 +19730,17 @@ kHz/MHz</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1134"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1129"/>
         <source>VASI Pitch:</source>
         <translation>Inclinação VASI:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1133"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1128"/>
         <source>VASI Type:</source>
         <translation>VASI Tipo:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1860"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1855"/>
         <source>VATSIM</source>
         <translation></translation>
     </message>
@@ -19714,95 +19749,95 @@ kHz/MHz</translation>
         <translation type="vanished">Tempo VATSIM</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3221"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3748"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3216"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3743"/>
         <source>VID:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1682"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1677"/>
         <source>VOR</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1716"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1711"/>
         <source>VOR Frequency:</source>
         <translation>Frequência VOR:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1719"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1714"/>
         <source>VOR Morse:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1718"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1713"/>
         <source>VOR Range:</source>
         <translation>Alcance do VOR:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1715"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1710"/>
         <source>VOR Type:</source>
         <translation>Tipo de VOR:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1708"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1703"/>
         <source>VORTAC Channel:</source>
         <translation>Canal VORTAC:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1706"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1701"/>
         <source>VORTAC Frequency:</source>
         <translation>Frequência VORTAC:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1711"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1706"/>
         <source>VORTAC Morse:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1710"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1705"/>
         <source>VORTAC Range:</source>
         <translation>Alcance VORTAC:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1705"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1700"/>
         <source>VORTAC Type:</source>
         <translation>Tipo VORTAC:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2062"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2057"/>
         <source>Variable, </source>
         <translation>Variável, </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4619"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4614"/>
         <source>Vertical Speed:</source>
         <translation>Velocidade Vertical:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4619"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4614"/>
         <source>Vertical:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4759"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4761"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4754"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4756"/>
         <source>Visibility:</source>
         <translation>Visibilidade:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2119"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2114"/>
         <source>Visibility: </source>
         <translation>Visibilidade: </translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2608"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2603"/>
         <source>Visible from:</source>
         <oldsource>Visible from :</oldsource>
         <translation>Visibilidade de:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3225"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3220"/>
         <source>Visual Range:</source>
         <oldsource>Visual Range</oldsource>
         <translation>Alcance Visual:</translation>
@@ -19813,17 +19848,17 @@ kHz/MHz</translation>
         <translation>Água</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1065"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1060"/>
         <source>Water %1</source>
         <translation>Água %1</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2907"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2902"/>
         <source>Waypoint: </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3377"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3372"/>
         <source>Waypoints Ident/Region:</source>
         <translation>Waypoints Ident/Região:</translation>
     </message>
@@ -19833,46 +19868,46 @@ kHz/MHz</translation>
         <translation>Tempo</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3841"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3836"/>
         <source>Weight and Fuel</source>
         <translation>Peso e Combustível</translation>
     </message>
     <message>
         <location filename="src/common/htmlinfobuilder.cpp" line="496"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1274"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1269"/>
         <source>Width:</source>
         <translation>Largura:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4684"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="4687"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4679"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="4682"/>
         <source>Wind Direction and Speed:</source>
         <translation>Direção do Vento e Velocidade:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2081"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2076"/>
         <source>Wind gusts:</source>
         <translation>Rajadas de Vento:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2070"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="2073"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2065"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="2068"/>
         <source>Wind:</source>
         <translation>Vento:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3707"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3702"/>
         <source>Wingspan:</source>
         <translation>Envergadura:</translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="3862"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="3857"/>
         <source>Zero Fuel Weight:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1274"/>
-        <location filename="src/common/htmlinfobuilder.cpp" line="1302"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1269"/>
+        <location filename="src/common/htmlinfobuilder.cpp" line="1297"/>
         <source>°</source>
         <translation></translation>
     </message>
@@ -20176,7 +20211,7 @@ kHz/MHz</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="429"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="430"/>
         <source> ▲</source>
         <translation></translation>
     </message>
@@ -20188,26 +20223,26 @@ kHz/MHz</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="431"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="432"/>
         <source> ▼</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="523"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="524"/>
         <source>%1 °M</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="526"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="527"/>
         <source>%2</source>
         <translation></translation>
     </message>
     <message>
         <location filename="src/mappainter/mappainternav.cpp" line="311"/>
         <location filename="src/mappainter/mappainternav.cpp" line="327"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="304"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="390"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="495"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="305"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="391"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="496"/>
         <source>, </source>
         <translation></translation>
     </message>
@@ -20234,7 +20269,7 @@ kHz/MHz</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="301"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="302"/>
         <source>ALT %1%2</source>
         <translation></translation>
     </message>
@@ -20249,18 +20284,18 @@ kHz/MHz</translation>
         <translation>Combustível</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="489"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="490"/>
         <source>GS %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="283"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="370"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="284"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="371"/>
         <source>HDG %3°M</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="268"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="269"/>
         <source>%1 to %2</source>
         <translation>%1 para %2</translation>
     </message>
@@ -20294,18 +20329,18 @@ kHz/MHz</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="293"/>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="381"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="294"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="382"/>
         <source>IND %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="384"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="385"/>
         <source>ALT %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="387"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="388"/>
         <source>AGL %1</source>
         <translation></translation>
     </message>
@@ -20314,39 +20349,39 @@ kHz/MHz</translation>
         <translation type="vanished">GELO %</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="269"/>
         <location filename="src/mappainter/mappaintervehicle.cpp" line="270"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="271"/>
         <source>Unknown</source>
         <translation>Desconhecido</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="317"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="318"/>
         <source>From User %1 %2°M</source>
         <translation>Do usuário %1 %2°M</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="413"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="414"/>
         <source>Ice %</source>
         <translation>Gelo %</translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="471"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="472"/>
         <source>XPDR %1</source>
         <oldsource>TCAS %1</oldsource>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="486"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="487"/>
         <source>IAS %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="492"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="493"/>
         <source>TAS %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mappainter/mappaintervehicle.cpp" line="534"/>
+        <location filename="src/mappainter/mappaintervehicle.cpp" line="535"/>
         <source>No wind</source>
         <translation>Nenhum vento</translation>
     </message>
@@ -21291,12 +21326,12 @@ kHz/MHz</translation>
         <translation type="vanished">Adicionar </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3604"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3621"/>
         <source>Added range rings for %1.</source>
         <translation>Círculos de alcance adicionados para %1.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3640"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3657"/>
         <source>Added range rings for position.</source>
         <translation>Círculos de alcance adicionados para posição.</translation>
     </message>
@@ -21317,23 +21352,23 @@ kHz/MHz</translation>
         <translation type="vanished">Chegada </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2199"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2217"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3489"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3506"/>
         <source>MSA sector diagram removed from map.</source>
         <translation>Diagrama do setor MSA removido do mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3546"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3563"/>
         <source>Showing coordinates.</source>
         <translatorcomment>Mostrando coordenadas.</translatorcomment>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3565"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3582"/>
         <source>Changed home position.</source>
         <translation>Mudou a posição inicial.</translation>
     </message>
@@ -21342,12 +21377,12 @@ kHz/MHz</translation>
         <translation type="vanished">Saída </translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3715"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3732"/>
         <source>Detail %1</source>
         <translation>Detalhe %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3557"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3574"/>
         <source>Distance search center position changed.</source>
         <translation>A posição do centro de busca de distância mudou.</translation>
     </message>
@@ -21356,43 +21391,43 @@ kHz/MHz</translation>
         <translation type="vanished">Heliporto %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="477"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="495"/>
         <source>Jumped back to aircraft.</source>
         <translation>Pulou de volta para a aeronave.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3716"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3733"/>
         <source>Map detail level changed.</source>
         <translation>Nível de detalhe do Mapa mudou.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="338"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="356"/>
         <source>Map position history back.</source>
         <translation>Retorne o histórico de posição do mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="322"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="340"/>
         <source>Map position history next.</source>
         <translation>Histórico de posições do mapa em seguida.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3044"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3061"/>
         <source>&lt;p&gt;Cannot zoom to a position nearby the poles in Mercator projection.&lt;br/&gt;Use Spherical instead.&lt;/p&gt;</source>
         <translation>&lt;p&gt;Não é possível aplicar zoom a uma posição próxima aos pólos na projeção de Mercator.&lt;br/&gt;Em vez disso, use o esférico.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3047"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3064"/>
         <source>Do not &amp;show this dialog again.</source>
         <oldsource>Do not show this dialog again.</oldsource>
         <translation>Não &amp;mostre este diálogo novamente.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3447"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3464"/>
         <source>Added hold.</source>
         <translation>Adicionado Orbita.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3458"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3475"/>
         <source>Holding removed from map.</source>
         <translation>Orbita removida do mapa.</translation>
     </message>
@@ -21401,12 +21436,12 @@ kHz/MHz</translation>
         <translation type="vanished">&lt;p&gt;&lt;b&gt;Observe que os temas de mapas online, como o OpenStreetMap, não podem ser usados no modo offline.&lt;/b&gt;&lt;br/&gt;&lt;br/&gt;Você pode ver mapas difusos ou em blocos.&lt;/p&gt;&lt;p&gt;Use um tema de mapa offline ou desative&lt;code&gt;o Funcionamento Offline&lt;code/&gt;.&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3697"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3714"/>
         <source>Measurement line removed from map.</source>
         <translation>Linha de medição removida do mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3708"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3725"/>
         <source>Normal</source>
         <translation></translation>
     </message>
@@ -21419,12 +21454,12 @@ kHz/MHz</translation>
         <translation type="vanished">Aeronave dos Clientes Online %1</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2192"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2210"/>
         <source>Position</source>
         <translation>Posição</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3689"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3706"/>
         <source>Range ring removed from map.</source>
         <translation>Faixa de círculo removido do mapa.</translation>
     </message>
@@ -21439,22 +21474,22 @@ Ensure that the map fills the window completely.</source>
 Assegure-se de que o mapa preencha a janela completamente.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2096"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2114"/>
         <source>Add %1 to Flight Plan</source>
         <translation>Adicionar %1 para o Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2098"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2116"/>
         <source>Insert %1 to Flight Plan</source>
         <translation>Inserir %1 para o Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2100"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2118"/>
         <source>Append %1 to Flight Plan</source>
         <translation>Acrescentar %1 para o Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="2175"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="2193"/>
         <source>More ...</source>
         <translation>Mais ...</translation>
     </message>
@@ -21463,7 +21498,7 @@ Assegure-se de que o mapa preencha a janela completamente.</translation>
         <translation type="vanished">Espaço Aéreo</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1157"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1175"/>
         <source>Showing on map.</source>
         <translation>Mostrando no mapa.</translation>
     </message>
@@ -21500,57 +21535,57 @@ Assegure-se de que o mapa preencha a janela completamente.</translation>
         <translation type="vanished"> (escondido no mapa)</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3414"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3431"/>
         <source>Added airport traffic pattern for %1.</source>
         <translation>Adicionado padrão de tráfego do aeroporto para %1.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3425"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3442"/>
         <source>Traffic pattern removed from map.</source>
         <translation>Padrão de tráfego removido do mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1125"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1143"/>
         <source>Showing AI / multiplayer aircraft on map.</source>
         <translation>Mostrando AI/ aeronaves do multiplayer no mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="270"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="288"/>
         <source>Exit fullscreen mode</source>
         <translation>Sair do modo Fullscreen</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="271"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="289"/>
         <source>Leave fullscreen mode and restore normal window layout</source>
         <translation>Saia do modo de tela fullscreen e restaure o layout normal da janela</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1135"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1153"/>
         <source>Showing airport on map.</source>
         <translation>Mostrando aeroportos no mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1739"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="1741"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="1754"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3584"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3586"/>
-        <location filename="src/mapgui/mapwidget.cpp" line="3589"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1757"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1759"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1772"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3601"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3603"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3606"/>
         <source>%1 %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1877"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1895"/>
         <source>Coordinates copied to clipboard.</source>
         <translation>Coordenadas copiadas para a área de transferência.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3478"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3495"/>
         <source>Added MSA diagram.</source>
         <translation>Adicionado diagrama MSA.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3730"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3747"/>
         <source>User features removed from map.</source>
         <translation>Recursos do usuário removidos do mapa.</translation>
     </message>
@@ -21559,12 +21594,12 @@ Assegure-se de que o mapa preencha a janela completamente.</translation>
         <translation type="vanished">Aeroporto MSA removido do mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3510"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3527"/>
         <source>Showing distance search center.</source>
         <translation>Mostrando a distância do centro de buscas.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="3529"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="3546"/>
         <source>Showing home position.</source>
         <translation>Mostrando posição inicial.</translation>
     </message>
@@ -21573,12 +21608,12 @@ Assegure-se de que o mapa preencha a janela completamente.</translation>
         <translation type="vanished">Mostrando navaid ou userpoint no mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1130"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1148"/>
         <source>Showing online client aircraft on map.</source>
         <translation>Mostrando aeronave do cliente no mapa.</translation>
     </message>
     <message>
-        <location filename="src/mapgui/mapwidget.cpp" line="1120"/>
+        <location filename="src/mapgui/mapwidget.cpp" line="1138"/>
         <source>Showing user aircraft on map.</source>
         <translation>Mostrando aeronave do usuário no mapa.</translation>
     </message>
@@ -21598,18 +21633,18 @@ Assegure-se de que o mapa preencha a janela completamente.</translation>
 <context>
     <name>NavApp</name>
     <message>
-        <location filename="src/navapp.cpp" line="354"/>
-        <location filename="src/navapp.cpp" line="360"/>
+        <location filename="src/navapp.cpp" line="355"/>
+        <location filename="src/navapp.cpp" line="361"/>
         <source>While reading magnetic declination from database:</source>
         <translation>Ao ler a declinação magnética do banco de dados:</translation>
     </message>
     <message>
-        <location filename="src/navapp.cpp" line="1300"/>
+        <location filename="src/navapp.cpp" line="1306"/>
         <source> 64-bit</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/navapp.cpp" line="1302"/>
+        <location filename="src/navapp.cpp" line="1308"/>
         <source> 32-bit</source>
         <translation></translation>
     </message>
@@ -28173,39 +28208,39 @@ Observe que a ordem das colunas é a selecionada na tabela do plano de voo.</tra
         <translation>Fixo</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2447"/>
+        <location filename="src/query/procedurequery.cpp" line="2513"/>
         <source>no runway</source>
         <translation>nenhuma pista</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2447"/>
+        <location filename="src/query/procedurequery.cpp" line="2513"/>
         <source>runway %1</source>
         <translation>pista %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2487"/>
+        <location filename="src/query/procedurequery.cpp" line="2551"/>
         <source>SID %1 from %2</source>
         <translation>SID %1 de %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2544"/>
-        <location filename="src/query/procedurequery.cpp" line="2592"/>
+        <location filename="src/query/procedurequery.cpp" line="2612"/>
+        <location filename="src/query/procedurequery.cpp" line="2657"/>
         <source>Approach %1 to %2</source>
         <translation>Approach %1 para %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2626"/>
+        <location filename="src/query/procedurequery.cpp" line="2684"/>
         <source>STAR %1 to %2</source>
         <translation>STAR %1 para %2</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2723"/>
+        <location filename="src/query/procedurequery.cpp" line="2806"/>
         <source>Procedure %1 %2 in scenery library has errors</source>
         <translatorcomment>O procedimento %1 %2 na biblioteca de cenários contém erros</translatorcomment>
         <translation>Procedure %1 %2 in scenery library has errors</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2730"/>
+        <location filename="src/query/procedurequery.cpp" line="2815"/>
         <source>Procedure not found in scenery library</source>
         <translation>Procedimento não encontrado na biblioteca de cenários</translation>
     </message>
@@ -28230,7 +28265,7 @@ Observe que a ordem das colunas é a selecionada na tabela do plano de voo.</tra
         <translation>Sozinho</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2501"/>
+        <location filename="src/query/procedurequery.cpp" line="2573"/>
         <source>SID transition %1</source>
         <translation>Transição da SID %1</translation>
     </message>
@@ -28239,12 +28274,12 @@ Observe que a ordem das colunas é a selecionada na tabela do plano de voo.</tra
         <translation type="vanished">Aproximação %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2614"/>
+        <location filename="src/query/procedurequery.cpp" line="2673"/>
         <source>Transition %1</source>
         <translation>Transição %1</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2641"/>
+        <location filename="src/query/procedurequery.cpp" line="2711"/>
         <source>STAR transition %1</source>
         <translation>Transição da STAR %1</translation>
     </message>
@@ -29066,12 +29101,12 @@ Mostrado na descida apenas no símbolo da aeronave do usuário com o sufixo &quo
         <translation type="vanished"> Ciclo Airac %1.</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1722"/>
+        <location filename="src/common/maptypes.cpp" line="1721"/>
         <source> East</source>
         <translation> Leste</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1719"/>
+        <location filename="src/common/maptypes.cpp" line="1718"/>
         <source> West</source>
         <translation> Oeste</translation>
     </message>
@@ -29081,20 +29116,20 @@ Mostrado na descida apenas no símbolo da aeronave do usuário com o sufixo &quo
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1635"/>
+        <location filename="src/common/maptypes.cpp" line="1634"/>
         <source> to </source>
         <translation> para </translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1520"/>
+        <location filename="src/common/maptypes.cpp" line="1519"/>
         <source>%1 %2 (%3)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1526"/>
-        <location filename="src/common/maptypes.cpp" line="1536"/>
-        <location filename="src/common/maptypes.cpp" line="1675"/>
-        <location filename="src/common/maptypes.cpp" line="1685"/>
+        <location filename="src/common/maptypes.cpp" line="1525"/>
+        <location filename="src/common/maptypes.cpp" line="1535"/>
+        <location filename="src/common/maptypes.cpp" line="1674"/>
+        <location filename="src/common/maptypes.cpp" line="1684"/>
         <location filename="src/common/proctypes.cpp" line="287"/>
         <location filename="src/common/proctypes.cpp" line="346"/>
         <source>%1 (%2)</source>
@@ -29201,31 +29236,31 @@ Os espaços são substituídos por sublinhados.</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1719"/>
-        <location filename="src/common/maptypes.cpp" line="1722"/>
+        <location filename="src/common/maptypes.cpp" line="1718"/>
+        <location filename="src/common/maptypes.cpp" line="1721"/>
         <source>%1°%2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2023"/>
-        <location filename="src/common/maptypes.cpp" line="2037"/>
+        <location filename="src/common/maptypes.cpp" line="2024"/>
+        <location filename="src/common/maptypes.cpp" line="2038"/>
         <source> / </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2032"/>
+        <location filename="src/common/maptypes.cpp" line="2033"/>
         <source>GP %1°</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2032"/>
+        <location filename="src/common/maptypes.cpp" line="2033"/>
         <source>GS %1°</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2188"/>
-        <location filename="src/common/maptypes.cpp" line="2190"/>
-        <location filename="src/common/maptypes.cpp" line="2206"/>
+        <location filename="src/common/maptypes.cpp" line="2189"/>
+        <location filename="src/common/maptypes.cpp" line="2191"/>
+        <location filename="src/common/maptypes.cpp" line="2207"/>
         <source>%L1</source>
         <translation></translation>
     </message>
@@ -29273,10 +29308,10 @@ Os espaços são substituídos por sublinhados.</translation>
         <location filename="src/common/formatter.cpp" line="262"/>
         <location filename="src/common/maptypes.cpp" line="784"/>
         <location filename="src/common/maptypes.cpp" line="877"/>
-        <location filename="src/common/maptypes.cpp" line="1962"/>
-        <location filename="src/common/maptypes.cpp" line="2096"/>
-        <location filename="src/common/maptypes.cpp" line="2286"/>
-        <location filename="src/common/maptypes.cpp" line="2552"/>
+        <location filename="src/common/maptypes.cpp" line="1963"/>
+        <location filename="src/common/maptypes.cpp" line="2097"/>
+        <location filename="src/common/maptypes.cpp" line="2287"/>
+        <location filename="src/common/maptypes.cpp" line="2553"/>
         <location filename="src/search/proceduresearch.cpp" line="1397"/>
         <source>, </source>
         <translation></translation>
@@ -29321,7 +29356,7 @@ Os espaços são substituídos por sublinhados.</translation>
     </message>
     <message>
         <location filename="src/common/formatter.cpp" line="349"/>
-        <location filename="src/common/maptypes.cpp" line="2029"/>
+        <location filename="src/common/maptypes.cpp" line="2030"/>
         <source>%1°M</source>
         <translation></translation>
     </message>
@@ -29336,7 +29371,7 @@ Os espaços são substituídos por sublinhados.</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1724"/>
+        <location filename="src/common/maptypes.cpp" line="1723"/>
         <source>0°</source>
         <translation></translation>
     </message>
@@ -29391,8 +29426,8 @@ Os espaços são substituídos por sublinhados.</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1197"/>
-        <location filename="src/common/maptypes.cpp" line="1301"/>
+        <location filename="src/common/maptypes.cpp" line="1196"/>
+        <location filename="src/common/maptypes.cpp" line="1300"/>
         <location filename="src/common/proctypes.cpp" line="420"/>
         <location filename="src/common/proctypes.cpp" line="428"/>
         <location filename="src/common/proctypes.cpp" line="512"/>
@@ -29473,7 +29508,7 @@ Os espaços são substituídos por sublinhados.</translation>
         <translation>Área de serviço de radar do aeroporto (ARSA)</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1618"/>
+        <location filename="src/common/maptypes.cpp" line="1617"/>
         <source>Airway %1</source>
         <translation>Aerovias %1</translation>
     </message>
@@ -29561,7 +29596,7 @@ Procedimento</translation>
         <translation>Evite ou prossiga com cautela.</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1206"/>
+        <location filename="src/common/maptypes.cpp" line="1205"/>
         <location filename="src/common/proctypes.cpp" line="424"/>
         <location filename="src/common/proctypes.cpp" line="429"/>
         <location filename="src/common/proctypes.cpp" line="515"/>
@@ -29597,7 +29632,7 @@ Procedimento</translation>
         <translation>Betuminoso</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1235"/>
+        <location filename="src/common/maptypes.cpp" line="1234"/>
         <source>Both</source>
         <translation>Ambos</translation>
     </message>
@@ -29607,7 +29642,7 @@ Procedimento</translation>
         <translation>Tijolo</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1799"/>
+        <location filename="src/common/maptypes.cpp" line="1798"/>
         <source>CL</source>
         <translation></translation>
     </message>
@@ -29719,7 +29754,7 @@ Procedimento</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="367"/>
-        <location filename="src/common/maptypes.cpp" line="1270"/>
+        <location filename="src/common/maptypes.cpp" line="1269"/>
         <source>Control</source>
         <translation>Controle</translation>
     </message>
@@ -30042,34 +30077,34 @@ Procedimento</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="238"/>
-        <location filename="src/common/maptypes.cpp" line="1307"/>
-        <location filename="src/common/maptypes.cpp" line="1767"/>
+        <location filename="src/common/maptypes.cpp" line="1306"/>
+        <location filename="src/common/maptypes.cpp" line="1766"/>
         <source>D</source>
         <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="324"/>
-        <location filename="src/common/maptypes.cpp" line="1475"/>
-        <location filename="src/common/maptypes.cpp" line="1497"/>
-        <location filename="src/common/maptypes.cpp" line="2035"/>
-        <location filename="src/common/maptypes.cpp" line="2079"/>
+        <location filename="src/common/maptypes.cpp" line="1474"/>
+        <location filename="src/common/maptypes.cpp" line="1496"/>
+        <location filename="src/common/maptypes.cpp" line="2036"/>
+        <location filename="src/common/maptypes.cpp" line="2080"/>
         <source>DME</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1510"/>
+        <location filename="src/common/maptypes.cpp" line="1509"/>
         <source>DME (%1)</source>
         <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="326"/>
-        <location filename="src/common/maptypes.cpp" line="1467"/>
+        <location filename="src/common/maptypes.cpp" line="1466"/>
         <source>DME only TACAN</source>
         <translation>DME somente TACAN</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="322"/>
-        <location filename="src/common/maptypes.cpp" line="1460"/>
+        <location filename="src/common/maptypes.cpp" line="1459"/>
         <source>DME only VORTAC</source>
         <translation>DME somente VORTAC</translation>
     </message>
@@ -30135,8 +30170,8 @@ Procedimento</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1722"/>
-        <location filename="src/common/maptypes.cpp" line="1753"/>
+        <location filename="src/common/maptypes.cpp" line="1721"/>
+        <location filename="src/common/maptypes.cpp" line="1752"/>
         <source>E</source>
         <translation></translation>
     </message>
@@ -30289,7 +30324,7 @@ Procedimento</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="306"/>
-        <location filename="src/common/maptypes.cpp" line="1288"/>
+        <location filename="src/common/maptypes.cpp" line="1287"/>
         <source>Track</source>
         <translation></translation>
     </message>
@@ -30504,291 +30539,291 @@ Procedimento</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1220"/>
+        <location filename="src/common/maptypes.cpp" line="1219"/>
         <source>NAT</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1223"/>
+        <location filename="src/common/maptypes.cpp" line="1222"/>
         <source>PACOTS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1226"/>
+        <location filename="src/common/maptypes.cpp" line="1225"/>
         <source>AUSOTS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1267"/>
+        <location filename="src/common/maptypes.cpp" line="1266"/>
         <source>Airline</source>
         <translation>Linha Aérea</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1273"/>
+        <location filename="src/common/maptypes.cpp" line="1272"/>
         <source>Direct</source>
         <translation>Direto</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1276"/>
+        <location filename="src/common/maptypes.cpp" line="1275"/>
         <source>Helicopter</source>
         <translation>Helicóptero</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1279"/>
+        <location filename="src/common/maptypes.cpp" line="1278"/>
         <source>Official</source>
         <translation>Oficial</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1285"/>
+        <location filename="src/common/maptypes.cpp" line="1284"/>
         <source>Undesignated</source>
         <translation>Não designado</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1304"/>
+        <location filename="src/common/maptypes.cpp" line="1303"/>
         <source>C</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1313"/>
+        <location filename="src/common/maptypes.cpp" line="1312"/>
         <source>O</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1316"/>
-        <location filename="src/common/maptypes.cpp" line="1588"/>
-        <location filename="src/common/maptypes.cpp" line="1593"/>
-        <location filename="src/common/maptypes.cpp" line="1600"/>
-        <location filename="src/common/maptypes.cpp" line="1603"/>
+        <location filename="src/common/maptypes.cpp" line="1315"/>
+        <location filename="src/common/maptypes.cpp" line="1587"/>
+        <location filename="src/common/maptypes.cpp" line="1592"/>
+        <location filename="src/common/maptypes.cpp" line="1599"/>
+        <location filename="src/common/maptypes.cpp" line="1602"/>
         <source>R</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1562"/>
+        <location filename="src/common/maptypes.cpp" line="1561"/>
         <source>Logbook Entry %1 to %2</source>
         <translation>Entrada do Logbook %1 para %2</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1568"/>
+        <location filename="src/common/maptypes.cpp" line="1567"/>
         <source>Range Rings</source>
         <translation>Anéis de Alcance</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1570"/>
+        <location filename="src/common/maptypes.cpp" line="1569"/>
         <source>Range Rings %1</source>
         <translation>Anéis de Alcance %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1579"/>
+        <location filename="src/common/maptypes.cpp" line="1578"/>
         <source>Measurement %1</source>
         <translation>Medição %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1581"/>
+        <location filename="src/common/maptypes.cpp" line="1580"/>
         <source>Measurement %1 %2</source>
         <translation>Medição %1 %2</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1587"/>
+        <location filename="src/common/maptypes.cpp" line="1586"/>
         <source>User Holding %1 %2</source>
         <translation>Órbita do usuário %1 %2</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1591"/>
+        <location filename="src/common/maptypes.cpp" line="1590"/>
         <source>User Holding %1 %2 %3</source>
         <translation>Órbita do usuário %1 %2 %3</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1600"/>
+        <location filename="src/common/maptypes.cpp" line="1599"/>
         <source>Traffic Pattern %1 RW %2</source>
         <translation>Padrão de Tráfego %1 RW %2</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1602"/>
+        <location filename="src/common/maptypes.cpp" line="1601"/>
         <source>Traffic Pattern %1 %2 RW %3</source>
         <translation>Padrão de Tráfego %1 %2 RW %3</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1645"/>
+        <location filename="src/common/maptypes.cpp" line="1644"/>
         <source>%1-%2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1657"/>
-        <location filename="src/common/maptypes.cpp" line="1671"/>
+        <location filename="src/common/maptypes.cpp" line="1656"/>
+        <location filename="src/common/maptypes.cpp" line="1670"/>
         <source>Airport</source>
         <translation>Aeroporto</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1659"/>
+        <location filename="src/common/maptypes.cpp" line="1658"/>
         <source>Airport %1</source>
         <translation>Aeroporto %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1668"/>
+        <location filename="src/common/maptypes.cpp" line="1667"/>
         <source>%1, %2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1681"/>
-        <location filename="src/common/maptypes.cpp" line="1690"/>
+        <location filename="src/common/maptypes.cpp" line="1680"/>
+        <location filename="src/common/maptypes.cpp" line="1689"/>
         <source>MSA</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1690"/>
+        <location filename="src/common/maptypes.cpp" line="1689"/>
         <source>User MSA</source>
         <translation>Usuário MSA</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1694"/>
+        <location filename="src/common/maptypes.cpp" line="1693"/>
         <source>%1 at %2</source>
         <translation>%1 em %2</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1696"/>
+        <location filename="src/common/maptypes.cpp" line="1695"/>
         <source>%1 at %2 (%3)</source>
         <translation>%1 em %2 (%3)</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2519"/>
+        <location filename="src/common/maptypes.cpp" line="2520"/>
         <source>Pitot&amp;nbsp;%L1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2522"/>
+        <location filename="src/common/maptypes.cpp" line="2523"/>
         <source>Struct %L1</source>
         <translation>Estrutura %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2522"/>
+        <location filename="src/common/maptypes.cpp" line="2523"/>
         <source>Structure&amp;nbsp;%L1</source>
         <translation>Estrutura&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2529"/>
+        <location filename="src/common/maptypes.cpp" line="2530"/>
         <source>Inlet&amp;nbsp;%L1</source>
         <translation>Entrada&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2532"/>
+        <location filename="src/common/maptypes.cpp" line="2533"/>
         <source>Prop&amp;nbsp;%L1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2535"/>
+        <location filename="src/common/maptypes.cpp" line="2536"/>
         <source>Static&amp;nbsp;%L1</source>
         <translation>Estático&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2538"/>
+        <location filename="src/common/maptypes.cpp" line="2539"/>
         <source>Wind %L1</source>
         <translation>Vento %L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2538"/>
+        <location filename="src/common/maptypes.cpp" line="2539"/>
         <source>Window&amp;nbsp;%L1</source>
         <translation>Janela&amp;nbsp;%L1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2541"/>
+        <location filename="src/common/maptypes.cpp" line="2542"/>
         <source>Carb %L1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2541"/>
+        <location filename="src/common/maptypes.cpp" line="2542"/>
         <source>Carb.&amp;nbsp;%L1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2047"/>
+        <location filename="src/common/maptypes.cpp" line="2048"/>
         <source>RNP</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2070"/>
+        <location filename="src/common/maptypes.cpp" line="2071"/>
         <source> CAT I</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2072"/>
+        <location filename="src/common/maptypes.cpp" line="2073"/>
         <source> CAT II</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2074"/>
+        <location filename="src/common/maptypes.cpp" line="2075"/>
         <source> CAT III</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2096"/>
+        <location filename="src/common/maptypes.cpp" line="2097"/>
         <source>%1 %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2103"/>
+        <location filename="src/common/maptypes.cpp" line="2104"/>
         <source>User holding at %1</source>
         <translation>Órbita do Usuário em %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2106"/>
+        <location filename="src/common/maptypes.cpp" line="2107"/>
         <source>Holding at %1</source>
         <translation>Orbitando em %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2110"/>
+        <location filename="src/common/maptypes.cpp" line="2111"/>
         <source>, %1 min</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2113"/>
-        <location filename="src/common/maptypes.cpp" line="2116"/>
+        <location filename="src/common/maptypes.cpp" line="2114"/>
+        <location filename="src/common/maptypes.cpp" line="2117"/>
         <source>, %1:</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2119"/>
+        <location filename="src/common/maptypes.cpp" line="2120"/>
         <source>, max %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2122"/>
+        <location filename="src/common/maptypes.cpp" line="2123"/>
         <source>, A%1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2180"/>
-        <location filename="src/common/maptypes.cpp" line="2182"/>
-        <location filename="src/common/maptypes.cpp" line="2198"/>
+        <location filename="src/common/maptypes.cpp" line="2181"/>
+        <location filename="src/common/maptypes.cpp" line="2183"/>
+        <location filename="src/common/maptypes.cpp" line="2199"/>
         <source>%1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2519"/>
+        <location filename="src/common/maptypes.cpp" line="2520"/>
         <source>Pitot %L1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2526"/>
+        <location filename="src/common/maptypes.cpp" line="2527"/>
         <source>AOA %L1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2526"/>
+        <location filename="src/common/maptypes.cpp" line="2527"/>
         <source>AOA&amp;nbsp;%L1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2529"/>
+        <location filename="src/common/maptypes.cpp" line="2530"/>
         <source>Inlt %L1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2532"/>
+        <location filename="src/common/maptypes.cpp" line="2533"/>
         <source>Prop %L1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2535"/>
+        <location filename="src/common/maptypes.cpp" line="2536"/>
         <source>Static %L1</source>
         <translation>Estático %L1</translation>
     </message>
@@ -30797,57 +30832,57 @@ Procedimento</translation>
         <translation type="obsolete">Marcador</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2229"/>
+        <location filename="src/common/maptypes.cpp" line="2230"/>
         <source>Airspace %1 (%2)</source>
         <translation>Espaço Aéreo %1 (%2)</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2243"/>
+        <location filename="src/common/maptypes.cpp" line="2244"/>
         <source> Vehicle</source>
         <translation> Veículo</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2247"/>
+        <location filename="src/common/maptypes.cpp" line="2248"/>
         <source> Ship</source>
         <translation> Navio</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2250"/>
+        <location filename="src/common/maptypes.cpp" line="2251"/>
         <source> Carrier</source>
         <translation> Transportadora</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2253"/>
+        <location filename="src/common/maptypes.cpp" line="2254"/>
         <source> Frigate</source>
         <translation> Fragata</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2256"/>
+        <location filename="src/common/maptypes.cpp" line="2257"/>
         <source> Aircraft</source>
         <translation> Aeronave</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2259"/>
+        <location filename="src/common/maptypes.cpp" line="2260"/>
         <source> Helicopter</source>
         <translation> Helicóptero</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2277"/>
+        <location filename="src/common/maptypes.cpp" line="2278"/>
         <source>User %1</source>
         <translation>Usuário %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2279"/>
+        <location filename="src/common/maptypes.cpp" line="2280"/>
         <source>Online Client</source>
         <translation>Cliente Online</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2281"/>
+        <location filename="src/common/maptypes.cpp" line="2282"/>
         <source>AI / Multiplayer %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2291"/>
+        <location filename="src/common/maptypes.cpp" line="2292"/>
         <source>Helipad %1</source>
         <translation>Heliporto %1</translation>
     </message>
@@ -30871,27 +30906,27 @@ Procedimento</translation>
         <translation type="obsolete">Espaço Aéreo</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1946"/>
+        <location filename="src/common/maptypes.cpp" line="1947"/>
         <source>All</source>
         <translation>Tudo</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1953"/>
+        <location filename="src/common/maptypes.cpp" line="1954"/>
         <source>Navigraph</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1956"/>
+        <location filename="src/common/maptypes.cpp" line="1957"/>
         <source>Online</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1959"/>
+        <location filename="src/common/maptypes.cpp" line="1960"/>
         <source>User</source>
         <translation>Usuário</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2045"/>
+        <location filename="src/common/maptypes.cpp" line="2046"/>
         <location filename="src/common/proctypes.cpp" line="99"/>
         <source>GLS</source>
         <translation>GLS</translation>
@@ -30923,7 +30958,7 @@ Procedimento</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="257"/>
-        <location filename="src/common/maptypes.cpp" line="2077"/>
+        <location filename="src/common/maptypes.cpp" line="2078"/>
         <location filename="src/common/proctypes.cpp" line="409"/>
         <source>GS</source>
         <translation></translation>
@@ -31158,7 +31193,7 @@ Procedimento</translation>
         <location filename="src/common/maptypes.cpp" line="273"/>
         <location filename="src/common/maptypes.cpp" line="293"/>
         <location filename="src/common/maptypes.cpp" line="297"/>
-        <location filename="src/common/maptypes.cpp" line="1310"/>
+        <location filename="src/common/maptypes.cpp" line="1309"/>
         <source>H</source>
         <translation></translation>
     </message>
@@ -31218,7 +31253,7 @@ Procedimento</translation>
     <message>
         <location filename="src/common/maptypes.cpp" line="281"/>
         <location filename="src/common/maptypes.cpp" line="284"/>
-        <location filename="src/common/maptypes.cpp" line="1781"/>
+        <location filename="src/common/maptypes.cpp" line="1780"/>
         <location filename="src/common/proctypes.cpp" line="304"/>
         <source>High</source>
         <translation>Alto</translation>
@@ -31244,13 +31279,13 @@ Procedimento</translation>
         <translation>Mantenha a terminação manual</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2053"/>
+        <location filename="src/common/maptypes.cpp" line="2054"/>
         <location filename="src/common/proctypes.cpp" line="98"/>
         <source>IGS</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2049"/>
+        <location filename="src/common/maptypes.cpp" line="2050"/>
         <location filename="src/common/proctypes.cpp" line="87"/>
         <source>ILS</source>
         <translation></translation>
@@ -31296,27 +31331,27 @@ Procedimento</translation>
         <translation type="vanished">Data inválida</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1203"/>
+        <location filename="src/common/maptypes.cpp" line="1202"/>
         <source>J</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1232"/>
+        <location filename="src/common/maptypes.cpp" line="1231"/>
         <source>Jet</source>
         <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="271"/>
         <location filename="src/common/maptypes.cpp" line="274"/>
-        <location filename="src/common/maptypes.cpp" line="1588"/>
-        <location filename="src/common/maptypes.cpp" line="1593"/>
-        <location filename="src/common/maptypes.cpp" line="1600"/>
-        <location filename="src/common/maptypes.cpp" line="1603"/>
+        <location filename="src/common/maptypes.cpp" line="1587"/>
+        <location filename="src/common/maptypes.cpp" line="1592"/>
+        <location filename="src/common/maptypes.cpp" line="1599"/>
+        <location filename="src/common/maptypes.cpp" line="1602"/>
         <source>L</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2055"/>
+        <location filename="src/common/maptypes.cpp" line="2056"/>
         <location filename="src/common/proctypes.cpp" line="90"/>
         <source>LDA</source>
         <translation></translation>
@@ -31327,7 +31362,7 @@ Procedimento</translation>
         <translation>Amplo</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1789"/>
+        <location filename="src/common/maptypes.cpp" line="1788"/>
         <location filename="src/common/proctypes.cpp" line="312"/>
         <source>Left</source>
         <translation>Esquerda</translation>
@@ -31357,7 +31392,7 @@ hh:mm</translation>
     <message>
         <location filename="src/common/maptypes.cpp" line="282"/>
         <location filename="src/common/maptypes.cpp" line="285"/>
-        <location filename="src/common/maptypes.cpp" line="1777"/>
+        <location filename="src/common/maptypes.cpp" line="1776"/>
         <location filename="src/common/proctypes.cpp" line="300"/>
         <source>Low</source>
         <translation>Baixo</translation>
@@ -31390,14 +31425,14 @@ hh:mm</translation>
         <translation>Orbita obrigatória</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1637"/>
+        <location filename="src/common/maptypes.cpp" line="1636"/>
         <source>Max </source>
         <translation>Máximo(Max) </translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="121"/>
         <location filename="src/common/maptypes.cpp" line="135"/>
-        <location filename="src/common/maptypes.cpp" line="1779"/>
+        <location filename="src/common/maptypes.cpp" line="1778"/>
         <location filename="src/common/proctypes.cpp" line="302"/>
         <source>Medium</source>
         <translation>Médio</translation>
@@ -31413,7 +31448,7 @@ hh:mm</translation>
         <translation>Área de operações militares. Precisa de autorização para IFR se estiver ativo. Verifique os avisos de tráfico.</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1629"/>
+        <location filename="src/common/maptypes.cpp" line="1628"/>
         <source>Min </source>
         <translation></translation>
     </message>
@@ -31433,8 +31468,8 @@ hh:mm</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1191"/>
-        <location filename="src/common/maptypes.cpp" line="1749"/>
+        <location filename="src/common/maptypes.cpp" line="1190"/>
+        <location filename="src/common/maptypes.cpp" line="1748"/>
         <source>N</source>
         <translation></translation>
     </message>
@@ -31446,19 +31481,19 @@ hh:mm</translation>
     <message>
         <location filename="src/common/maptypes.cpp" line="309"/>
         <location filename="src/common/maptypes.cpp" line="327"/>
-        <location filename="src/common/maptypes.cpp" line="1800"/>
+        <location filename="src/common/maptypes.cpp" line="1799"/>
         <location filename="src/common/proctypes.cpp" line="74"/>
         <location filename="src/common/proctypes.cpp" line="86"/>
         <source>NDB</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1531"/>
+        <location filename="src/common/maptypes.cpp" line="1530"/>
         <source>NDB %1 (%2)</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1800"/>
+        <location filename="src/common/maptypes.cpp" line="1799"/>
         <source>NDB (%1)</source>
         <translation></translation>
     </message>
@@ -31468,7 +31503,7 @@ hh:mm</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1751"/>
+        <location filename="src/common/maptypes.cpp" line="1750"/>
         <source>NE</source>
         <translation></translation>
     </message>
@@ -31494,7 +31529,7 @@ hh:mm</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1763"/>
+        <location filename="src/common/maptypes.cpp" line="1762"/>
         <source>NW</source>
         <translation></translation>
     </message>
@@ -31554,8 +31589,8 @@ hh:mm</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="334"/>
-        <location filename="src/common/maptypes.cpp" line="1824"/>
-        <location filename="src/common/maptypes.cpp" line="1944"/>
+        <location filename="src/common/maptypes.cpp" line="1823"/>
+        <location filename="src/common/maptypes.cpp" line="1945"/>
         <source>None</source>
         <translation>Nenhum</translation>
     </message>
@@ -31581,8 +31616,8 @@ hh:mm</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="228"/>
-        <location filename="src/common/maptypes.cpp" line="1194"/>
-        <location filename="src/common/maptypes.cpp" line="1747"/>
+        <location filename="src/common/maptypes.cpp" line="1193"/>
+        <location filename="src/common/maptypes.cpp" line="1746"/>
         <source>P</source>
         <translation></translation>
     </message>
@@ -31604,7 +31639,7 @@ hh:mm</translation>
         <translation>Pranchas</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1613"/>
+        <location filename="src/common/maptypes.cpp" line="1612"/>
         <source>Position %1</source>
         <translation>Posição %1</translation>
     </message>
@@ -31632,7 +31667,7 @@ de Procedimento</translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="311"/>
-        <location filename="src/common/maptypes.cpp" line="1282"/>
+        <location filename="src/common/maptypes.cpp" line="1281"/>
         <location filename="src/common/proctypes.cpp" line="93"/>
         <source>RNAV</source>
         <translation></translation>
@@ -31965,7 +32000,7 @@ Calculado com base no perfil de performance da aeronave.</translation>
 %alt%/%speed%</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1791"/>
+        <location filename="src/common/maptypes.cpp" line="1790"/>
         <location filename="src/common/proctypes.cpp" line="314"/>
         <source>Right</source>
         <translation>Direita</translation>
@@ -31977,8 +32012,8 @@ Calculado com base no perfil de performance da aeronave.</translation>
         <translation>Pista</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1319"/>
-        <location filename="src/common/maptypes.cpp" line="1757"/>
+        <location filename="src/common/maptypes.cpp" line="1318"/>
+        <location filename="src/common/maptypes.cpp" line="1756"/>
         <source>S</source>
         <translation></translation>
     </message>
@@ -31988,13 +32023,13 @@ Calculado com base no perfil de performance da aeronave.</translation>
         <translation>Estacionamento S</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2057"/>
+        <location filename="src/common/maptypes.cpp" line="2058"/>
         <location filename="src/common/proctypes.cpp" line="89"/>
         <source>SDF</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1755"/>
+        <location filename="src/common/maptypes.cpp" line="1754"/>
         <source>SE</source>
         <translation></translation>
     </message>
@@ -32036,7 +32071,7 @@ Calculado com base no perfil de performance da aeronave.</translation>
         <translation>Transição STAR</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1759"/>
+        <location filename="src/common/maptypes.cpp" line="1758"/>
         <source>SW</source>
         <translation></translation>
     </message>
@@ -32094,14 +32129,14 @@ Calculado com base no perfil de performance da aeronave.</translation>
     <message>
         <location filename="src/common/maptypes.cpp" line="272"/>
         <location filename="src/common/maptypes.cpp" line="275"/>
-        <location filename="src/common/maptypes.cpp" line="1322"/>
+        <location filename="src/common/maptypes.cpp" line="1321"/>
         <source>T</source>
         <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="325"/>
-        <location filename="src/common/maptypes.cpp" line="1469"/>
-        <location filename="src/common/maptypes.cpp" line="1491"/>
+        <location filename="src/common/maptypes.cpp" line="1468"/>
+        <location filename="src/common/maptypes.cpp" line="1490"/>
         <location filename="src/common/proctypes.cpp" line="100"/>
         <source>TACAN</source>
         <translation></translation>
@@ -32262,53 +32297,53 @@ Calculado com base no perfil de performance da aeronave.</translation>
         <translation type="vanished">Use &lt;settings-directory&gt; em vez de &quot;%1&quot;.</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1547"/>
-        <location filename="src/common/maptypes.cpp" line="1549"/>
+        <location filename="src/common/maptypes.cpp" line="1546"/>
+        <location filename="src/common/maptypes.cpp" line="1548"/>
         <source>Userpoint %1</source>
         <translation>Userpoint %1</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1200"/>
+        <location filename="src/common/maptypes.cpp" line="1199"/>
         <source>V</source>
         <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="308"/>
         <location filename="src/common/maptypes.cpp" line="323"/>
-        <location filename="src/common/maptypes.cpp" line="1479"/>
-        <location filename="src/common/maptypes.cpp" line="1501"/>
+        <location filename="src/common/maptypes.cpp" line="1478"/>
+        <location filename="src/common/maptypes.cpp" line="1500"/>
         <location filename="src/common/proctypes.cpp" line="73"/>
         <location filename="src/common/proctypes.cpp" line="85"/>
         <source>VOR</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1514"/>
+        <location filename="src/common/maptypes.cpp" line="1513"/>
         <source>VOR (%1)</source>
         <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="320"/>
-        <location filename="src/common/maptypes.cpp" line="1477"/>
-        <location filename="src/common/maptypes.cpp" line="1499"/>
+        <location filename="src/common/maptypes.cpp" line="1476"/>
+        <location filename="src/common/maptypes.cpp" line="1498"/>
         <location filename="src/common/proctypes.cpp" line="91"/>
         <source>VORDME</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1512"/>
+        <location filename="src/common/maptypes.cpp" line="1511"/>
         <source>VORDME (%1)</source>
         <translation></translation>
     </message>
     <message>
         <location filename="src/common/maptypes.cpp" line="321"/>
-        <location filename="src/common/maptypes.cpp" line="1462"/>
-        <location filename="src/common/maptypes.cpp" line="1495"/>
+        <location filename="src/common/maptypes.cpp" line="1461"/>
+        <location filename="src/common/maptypes.cpp" line="1494"/>
         <source>VORTAC</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1508"/>
+        <location filename="src/common/maptypes.cpp" line="1507"/>
         <source>VORTAC (%1)</source>
         <translation></translation>
     </message>
@@ -32320,12 +32355,12 @@ Calculado com base no perfil de performance da aeronave.</translation>
         <translation>Veículos</translation>
     </message>
     <message>
-        <location filename="src/navapp.cpp" line="1307"/>
+        <location filename="src/navapp.cpp" line="1313"/>
         <source>Version %5 (revision %6)</source>
         <translation>Versão %5 (revisão %6)</translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1229"/>
+        <location filename="src/common/maptypes.cpp" line="1228"/>
         <source>Victor</source>
         <translation></translation>
     </message>
@@ -32336,8 +32371,8 @@ Calculado com base no perfil de performance da aeronave.</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1719"/>
-        <location filename="src/common/maptypes.cpp" line="1761"/>
+        <location filename="src/common/maptypes.cpp" line="1718"/>
+        <location filename="src/common/maptypes.cpp" line="1760"/>
         <source>W</source>
         <translation></translation>
     </message>
@@ -32374,7 +32409,7 @@ Calculado com base no perfil de performance da aeronave.</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="1541"/>
+        <location filename="src/common/maptypes.cpp" line="1540"/>
         <source>Waypoint %1</source>
         <translation></translation>
     </message>
@@ -32436,38 +32471,38 @@ Calculado com base no perfil de performance da aeronave.</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/mapflags.cpp" line="192"/>
+        <location filename="src/common/mapflags.cpp" line="194"/>
         <source>Disabled</source>
         <translation>Desativado</translation>
     </message>
     <message>
-        <location filename="src/common/mapflags.cpp" line="195"/>
-        <location filename="src/common/maptypes.cpp" line="1950"/>
+        <location filename="src/common/mapflags.cpp" line="197"/>
+        <location filename="src/common/maptypes.cpp" line="1951"/>
         <source>Simulator</source>
         <translation>Simulador</translation>
     </message>
     <message>
-        <location filename="src/common/mapflags.cpp" line="198"/>
+        <location filename="src/common/mapflags.cpp" line="200"/>
         <source>ActiveSky</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/mapflags.cpp" line="201"/>
+        <location filename="src/common/mapflags.cpp" line="203"/>
         <source>NOAA</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/mapflags.cpp" line="204"/>
+        <location filename="src/common/mapflags.cpp" line="206"/>
         <source>VATSIM</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/mapflags.cpp" line="207"/>
+        <location filename="src/common/mapflags.cpp" line="209"/>
         <source>IVAO</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/common/maptypes.cpp" line="2051"/>
+        <location filename="src/common/maptypes.cpp" line="2052"/>
         <source>LOC</source>
         <translation></translation>
     </message>
@@ -32482,8 +32517,8 @@ Calculado com base no perfil de performance da aeronave.</translation>
         <translation>Erro ao ler a configuração multiexport: Versão inválida. Configuração multiexport incompatível.</translation>
     </message>
     <message>
-        <location filename="src/query/procedurequery.cpp" line="2286"/>
-        <location filename="src/query/procedurequery.cpp" line="2380"/>
+        <location filename="src/query/procedurequery.cpp" line="2352"/>
+        <location filename="src/query/procedurequery.cpp" line="2446"/>
         <source>RW%1+%2</source>
         <translation></translation>
     </message>
@@ -32742,7 +32777,7 @@ Clique ou recarregue para continuar.</translation>
         <translation> (não encontrado)</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3534"/>
+        <location filename="src/route/route.cpp" line="3533"/>
         <source>EMPTY</source>
         <translatorcomment>VAZIO</translatorcomment>
         <translation></translation>
@@ -32756,7 +32791,7 @@ Clique ou recarregue para continuar.</translation>
         <translation type="vanished">Aproximação</translation>
     </message>
     <message>
-        <location filename="src/route/route.cpp" line="3513"/>
+        <location filename="src/route/route.cpp" line="3512"/>
         <source>Empty Flightplan</source>
         <translation>Plano de Voo Vazio</translation>
     </message>
@@ -33681,7 +33716,7 @@ Mostrado com ident de auxílio navegação, frequência de auxílio navegação,
         <translation type="obsolete">Gire instruções, viaduto ou navaid relacionado para os fixos do procedimento.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="410"/>
+        <location filename="src/route/routecontroller.cpp" line="407"/>
         <source>No flight plan.
 
 Right-click the center of an airport symbol on the map and select it as departure/destination from the context menu, or use the airport search (press &quot;F4&quot;) to select departure/destination from the context menu of the search result table.</source>
@@ -33690,88 +33725,88 @@ Right-click the center of an airport symbol on the map and select it as departur
 Clique com o botão direito do mouse no centro de um símbolo de aeroporto no mapa e selecione-o como partida/destino no menu de contexto ou use a pesquisa de aeroporto (pressione &quot;F4&quot;) para selecionar partida/destino no menu de contexto da tabela de resultados da pesquisa.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="513"/>
+        <location filename="src/route/routecontroller.cpp" line="510"/>
         <source>Copied %1 entries as CSV to clipboard.</source>
         <translation>Copiado %1 entradas como CSV para a área de transferência.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="654"/>
-        <location filename="src/route/routecontroller.cpp" line="708"/>
+        <location filename="src/route/routecontroller.cpp" line="651"/>
+        <location filename="src/route/routecontroller.cpp" line="705"/>
         <source>Flight Plan Remarks</source>
         <translation>Observações sobre o Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="676"/>
+        <location filename="src/route/routecontroller.cpp" line="673"/>
         <source>%1 - %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="682"/>
+        <location filename="src/route/routecontroller.cpp" line="679"/>
         <source>%1 Version %2 (revision %3) on %4 </source>
         <translation>%1 Versão %2 (revisão %3) em %4 </translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1424"/>
+        <location filename="src/route/routecontroller.cpp" line="1422"/>
         <source>FMS flight plan has no intermediate waypoints.&lt;br/&gt;&lt;br/&gt;Can therefore not determine the cruising altitude.&lt;br/&gt;Adjust it manually.</source>
         <translation>Plano de voo FMS não tem waypoints intermediários.&lt;br/&gt;&lt;br/&gt;Portanto, não é possível determinar a altitude de cruzeiro.&lt;br/&gt;Ajuste manualmente.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1753"/>
+        <location filename="src/route/routecontroller.cpp" line="1751"/>
         <source>&lt;p&gt;One or more procedures in the flight plan are not valid.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;These will be dropped when saving.&lt;/p&gt;&lt;p&gt;Save flight plan now and drop invalid procedures?&lt;/p&gt;</source>
         <translation>&lt;p&gt;Um ou mais procedimentos no plano de voo não são válidos.&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Eles serão descartados ao salvar.&lt;/p&gt;&lt; p&gt;Salvar plano de voo agora e descartar procedimentos inválidos?&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1757"/>
+        <location filename="src/route/routecontroller.cpp" line="1755"/>
         <source>&lt;/li&gt;&lt;li&gt;</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1758"/>
+        <location filename="src/route/routecontroller.cpp" line="1756"/>
         <source>Do not &amp;show this dialog again and save without warning.</source>
         <translation>Não &amp;mostre esta caixa de diálogo novamente e salve sem aviso.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1910"/>
+        <location filename="src/route/routecontroller.cpp" line="1908"/>
         <source>Airway Flight Plan Calculation</source>
         <translation>Cálculo do plano de voo em aerovias</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1915"/>
+        <location filename="src/route/routecontroller.cpp" line="1913"/>
         <source>Low altitude airway Flight Plan Calculation</source>
         <translation>Cálculo do plano de voo em aerovias de baixa altitude</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1920"/>
+        <location filename="src/route/routecontroller.cpp" line="1918"/>
         <source>High altitude airway Flight Plan Calculation</source>
         <translation>Cálculo do plano de voo em aerovias de alta altitude</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1975"/>
+        <location filename="src/route/routecontroller.cpp" line="1973"/>
         <source>Calculated flight plan.</source>
         <translation>Plano de voo calculado.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2022"/>
+        <location filename="src/route/routecontroller.cpp" line="2020"/>
         <source>Calculating Flight Plan ...</source>
         <translation>Calculando Plano de Voo ...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2022"/>
+        <location filename="src/route/routecontroller.cpp" line="2020"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2023"/>
+        <location filename="src/route/routecontroller.cpp" line="2021"/>
         <source>Little Navmap - Calculating Flight Plan</source>
         <translation>Little Navmap - Calculando Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2490"/>
+        <location filename="src/route/routecontroller.cpp" line="2488"/>
         <source> - Flight Plan Table</source>
         <translation> - Tabela de Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5129"/>
+        <location filename="src/route/routecontroller.cpp" line="5142"/>
         <source>Download oceanic tracks in menu &quot;Flight Plan&quot;
 or calculate the flight plan again if the flight plan uses tracks.</source>
         <comment>Keep in sync with menu names</comment>
@@ -33779,29 +33814,29 @@ or calculate the flight plan again if the flight plan uses tracks.</source>
 ou calcule o plano de voo novamente se o plano de voo usar trilhas.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5354"/>
+        <location filename="src/route/routecontroller.cpp" line="5367"/>
         <source>Aircraft Performance: </source>
         <translation>Perfomance de Aeronaves: </translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5365"/>
-        <location filename="src/route/routecontroller.cpp" line="5368"/>
+        <location filename="src/route/routecontroller.cpp" line="5378"/>
+        <location filename="src/route/routecontroller.cpp" line="5381"/>
         <source>%1%2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5365"/>
-        <location filename="src/route/routecontroller.cpp" line="5368"/>
+        <location filename="src/route/routecontroller.cpp" line="5378"/>
+        <location filename="src/route/routecontroller.cpp" line="5381"/>
         <source> cycle %1</source>
         <translation> ciclo %1</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5374"/>
+        <location filename="src/route/routecontroller.cpp" line="5387"/>
         <source>Scenery data: </source>
         <translation>Dados do cenário: </translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5402"/>
+        <location filename="src/route/routecontroller.cpp" line="5415"/>
         <source>No flight plan.
 
 Remarks for the flight plan.</source>
@@ -33826,38 +33861,38 @@ Observações para o plano de voo.</translation>
         <translation type="vanished"> (escondido no mapa)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3076"/>
+        <location filename="src/route/routecontroller.cpp" line="3090"/>
         <source>Waypoint Change</source>
         <translation>Mudança de Waypoint</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3089"/>
+        <location filename="src/route/routecontroller.cpp" line="3103"/>
         <source>Changed waypoint in flight plan.</source>
         <translation>Waypoint alterado no plano de voo.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3828"/>
+        <location filename="src/route/routecontroller.cpp" line="3841"/>
         <source>Add Alternate</source>
         <translation>Adicionar Alternativa</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3860"/>
+        <location filename="src/route/routecontroller.cpp" line="3873"/>
         <source>Alternate %1 added.</source>
         <translation>Alternativa %1 adicionada.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4029"/>
-        <location filename="src/route/routecontroller.cpp" line="4030"/>
-        <location filename="src/route/routecontroller.cpp" line="4033"/>
+        <location filename="src/route/routecontroller.cpp" line="4042"/>
         <location filename="src/route/routecontroller.cpp" line="4043"/>
-        <location filename="src/route/routecontroller.cpp" line="4044"/>
-        <location filename="src/route/routecontroller.cpp" line="4047"/>
+        <location filename="src/route/routecontroller.cpp" line="4046"/>
+        <location filename="src/route/routecontroller.cpp" line="4056"/>
+        <location filename="src/route/routecontroller.cpp" line="4057"/>
+        <location filename="src/route/routecontroller.cpp" line="4060"/>
         <source> *</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2509"/>
-        <location filename="src/route/routecontroller.cpp" line="4454"/>
+        <location filename="src/route/routecontroller.cpp" line="2507"/>
+        <location filename="src/route/routecontroller.cpp" line="4467"/>
         <source>Departure</source>
         <translation>Saída</translation>
     </message>
@@ -33958,331 +33993,331 @@ ou comentários inseridos pelo usuário.</translation>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1042"/>
+        <location filename="src/route/routecontroller.cpp" line="1039"/>
         <source>File &quot;%1&quot; is a not supported flight plan format or not a flight plan.</source>
         <translation>O arquivo &quot;%1&quot; é um formato de plano de voo não suportado ou não é um plano de voo.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1162"/>
+        <location filename="src/route/routecontroller.cpp" line="1159"/>
         <source>Flight Plan Changed</source>
         <translation>Plano de Voo Alterado</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1405"/>
+        <location filename="src/route/routecontroller.cpp" line="1403"/>
         <source>&lt;p&gt;Errors reading flight plan route description&lt;br/&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;from command line:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;</source>
         <translation>&lt;p&gt;Erros ao ler a descrição da rota do plano de voo&lt;br/&gt;&lt;b&gt;%1&lt;/b&gt;&lt;br/&gt;a partir da linha de comando:&lt;/p&gt;&lt;p&gt;%2&lt;/p&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2491"/>
+        <location filename="src/route/routecontroller.cpp" line="2489"/>
         <source>Select header lines and flight plan table columns to show.
 You can move and resize columns by clicking into the flight plan column headers.</source>
         <translation>Selecione as linhas de cabeçalho e as colunas da tabela do plano de voo para mostrar.
 Você pode mover e redimensionar as colunas clicando nos cabeçalhos das colunas do plano de voo.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2498"/>
+        <location filename="src/route/routecontroller.cpp" line="2496"/>
         <source>Column Name</source>
         <translation>Nome da coluna</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2498"/>
+        <location filename="src/route/routecontroller.cpp" line="2496"/>
         <source>Description</source>
         <translation>Descrição</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2501"/>
+        <location filename="src/route/routecontroller.cpp" line="2499"/>
         <source>Flight Plan Table Header</source>
         <translation>Cabeçalho da Tabela do Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2502"/>
+        <location filename="src/route/routecontroller.cpp" line="2500"/>
         <source>Airports</source>
         <translation>Aeroportos</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2503"/>
+        <location filename="src/route/routecontroller.cpp" line="2501"/>
         <source>Departure and destination airports as links to show them on the map and in information.</source>
         <translation>Aeroportos de partida e destino como links para mostrá-los no mapa e nas informações.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2506"/>
+        <location filename="src/route/routecontroller.cpp" line="2504"/>
         <source>Takeoff Runway</source>
         <translation>Pista de Decolagem</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2507"/>
+        <location filename="src/route/routecontroller.cpp" line="2505"/>
         <source>Departure runway heading and length.</source>
         <translation>Proa e comprimento da pista de partida.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2510"/>
+        <location filename="src/route/routecontroller.cpp" line="2508"/>
         <source>SID information.</source>
         <translation>Informações da SID.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2512"/>
+        <location filename="src/route/routecontroller.cpp" line="2510"/>
         <source>Arrival</source>
         <translation>Chegada</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2513"/>
+        <location filename="src/route/routecontroller.cpp" line="2511"/>
         <source>STAR and approach procedure information.</source>
         <translation>STAR e informações do procedimento de aproximação.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2515"/>
+        <location filename="src/route/routecontroller.cpp" line="2513"/>
         <source>Landing Runway</source>
         <translation>Pista de Pouso</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2516"/>
+        <location filename="src/route/routecontroller.cpp" line="2514"/>
         <source>Destination runway heading, available distance for landing, elevation and facilities.</source>
         <translation>Direção da pista de destino, distância disponível para pouso, elevação e instalações.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2519"/>
+        <location filename="src/route/routecontroller.cpp" line="2517"/>
         <source>Distance and Time</source>
         <translation>Distância e Tempo</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2519"/>
+        <location filename="src/route/routecontroller.cpp" line="2517"/>
         <source>Flight plan total distance and flight time.</source>
         <translation>Distância total do plano de voo e tempo de voo.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2523"/>
+        <location filename="src/route/routecontroller.cpp" line="2521"/>
         <source>Flight Plan Table Footer</source>
         <translation>Rodapé da Tabela do Plano de Voo</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2524"/>
+        <location filename="src/route/routecontroller.cpp" line="2522"/>
         <source>Selected Flight Plan Legs</source>
         <translation>Fixos do Plano de Voo Selecionados</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2525"/>
+        <location filename="src/route/routecontroller.cpp" line="2523"/>
         <source>Show distance, time and fuel for selected flight plan legs.</source>
         <translation>Mostrar distância, tempo e combustível para fixos do plano de voo selecionados.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2526"/>
+        <location filename="src/route/routecontroller.cpp" line="2524"/>
         <source>Error Messages</source>
         <translation>Mensagens de Erro</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2527"/>
+        <location filename="src/route/routecontroller.cpp" line="2525"/>
         <source>Show error messages for flight plan elements like missing airports and more.
 It is strongly recommended to keep the error label enabled.</source>
         <translation>Mostre mensagens de erro para elementos do plano de voo, como aeroportos ausentes e muito mais.
 É altamente recomendável manter o rótulo de erro ativado.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2531"/>
+        <location filename="src/route/routecontroller.cpp" line="2529"/>
         <source>Flight plan table columns</source>
         <translation>Colunas da tabela do plano de voo</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2733"/>
+        <location filename="src/route/routecontroller.cpp" line="2734"/>
         <source>Show Departure &amp;Procedures for %1</source>
         <translation>Mostrar &amp;Procedimentos de Saída para %1</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2737"/>
+        <location filename="src/route/routecontroller.cpp" line="2738"/>
         <source>Show procedures (no departure procedure)</source>
         <translation>Mostrar procedimentos (sem procedimento de partida)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2743"/>
+        <location filename="src/route/routecontroller.cpp" line="2744"/>
         <source>Show Arrival &amp;Procedures for %1</source>
         <translation>Mostrar Procedimentos de &amp;Chegada para %1</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2747"/>
+        <location filename="src/route/routecontroller.cpp" line="2748"/>
         <source>Show &amp;Procedures (no arrival procedure)</source>
         <translation>Mostrar &amp;procedimentos (sem procedimento de chegada)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2751"/>
+        <location filename="src/route/routecontroller.cpp" line="2752"/>
         <source>Show Procedures for %1</source>
         <translation>Mostrar Procedimentos para %1</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2756"/>
+        <location filename="src/route/routecontroller.cpp" line="2757"/>
         <source>Show Procedures (no procedure)</source>
         <translation>Mostrar procedimentos (sem procedimento)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2760"/>
-        <location filename="src/route/routecontroller.cpp" line="2783"/>
+        <location filename="src/route/routecontroller.cpp" line="2761"/>
+        <location filename="src/route/routecontroller.cpp" line="2784"/>
         <source>Select Destination &amp;Runway for %1 ...</source>
         <translation>Selecione a &amp;pista de destino para %1...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2765"/>
+        <location filename="src/route/routecontroller.cpp" line="2766"/>
         <source>Select &amp;Runway and use %1 as Destination ...</source>
         <translation>Selecione a &amp;Pista e use %1 como Destino...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2771"/>
-        <location filename="src/route/routecontroller.cpp" line="2784"/>
+        <location filename="src/route/routecontroller.cpp" line="2772"/>
+        <location filename="src/route/routecontroller.cpp" line="2785"/>
         <source>Select &amp;Departure Runway for %1 ...</source>
         <translation>Selecione &amp;Pista de Decolagem para %1...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2776"/>
+        <location filename="src/route/routecontroller.cpp" line="2777"/>
         <source>Select Runway and use %1 as &amp;Departure ...</source>
         <translation>Selecione Pista e use %1 como &amp;Partida...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2789"/>
-        <location filename="src/route/routecontroller.cpp" line="2884"/>
+        <location filename="src/route/routecontroller.cpp" line="2790"/>
+        <location filename="src/route/routecontroller.cpp" line="2885"/>
         <source> (no runway)</source>
         <translation> (nenhuma pista)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2832"/>
+        <location filename="src/route/routecontroller.cpp" line="2833"/>
         <source>Edit &amp;Position or Remarks ...</source>
         <translation>Editar &amp;posição ou observações...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2838"/>
+        <location filename="src/route/routecontroller.cpp" line="2839"/>
         <source>&amp;Edit %1 ...</source>
         <translation>&amp;Editar%1...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2845"/>
+        <location filename="src/route/routecontroller.cpp" line="2846"/>
         <source>Edit &amp;Remarks for %1 ...</source>
         <translation>Editar &amp;comentários para %1 ...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2877"/>
+        <location filename="src/route/routecontroller.cpp" line="2878"/>
         <source>selected Navaids</source>
         <translation>Auxílio Navegação Selecionado</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3595"/>
+        <location filename="src/route/routecontroller.cpp" line="3608"/>
         <source>Set Start Position to Airport</source>
         <translation>Definir a Posição inicial para o Aeroporto</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3620"/>
+        <location filename="src/route/routecontroller.cpp" line="3633"/>
         <source>Start postition set to airport.</source>
         <translation>Posição inicial definida como aeroporto.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3664"/>
+        <location filename="src/route/routecontroller.cpp" line="3677"/>
         <source>Start position set to %1 parking %2.</source>
         <translation>Posição inicial definida para %1 estacionamento %2.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3713"/>
+        <location filename="src/route/routecontroller.cpp" line="3726"/>
         <source>Start position set to %1 position %2.</source>
         <translation>Posição inicial definida para %1 posição %2.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3913"/>
-        <location filename="src/route/routecontroller.cpp" line="3959"/>
+        <location filename="src/route/routecontroller.cpp" line="3926"/>
+        <location filename="src/route/routecontroller.cpp" line="3972"/>
         <source>Select runway for destination:</source>
         <translation>Selecione a pista para o destino:</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3920"/>
-        <location filename="src/route/routecontroller.cpp" line="3996"/>
+        <location filename="src/route/routecontroller.cpp" line="3933"/>
+        <location filename="src/route/routecontroller.cpp" line="4009"/>
         <source>Select runway for departure:</source>
         <translation>Selecione a pista para partida:</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3961"/>
+        <location filename="src/route/routecontroller.cpp" line="3974"/>
         <source>Select runway and use airport as destination:</source>
         <translation>Selecione a pista e use o aeroporto como destino:</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3998"/>
+        <location filename="src/route/routecontroller.cpp" line="4011"/>
         <source>Select runway and use airport as departure:</source>
         <translation>Selecione a pista e use o aeroporto como partida:</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4079"/>
+        <location filename="src/route/routecontroller.cpp" line="4092"/>
         <source>All</source>
         <translation>Tudo</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4456"/>
+        <location filename="src/route/routecontroller.cpp" line="4469"/>
         <source>Destination</source>
         <translation>Destino</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4458"/>
+        <location filename="src/route/routecontroller.cpp" line="4471"/>
         <source>Alternate</source>
         <translation>Alternativa</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4472"/>
+        <location filename="src/route/routecontroller.cpp" line="4485"/>
         <source>Track %1</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4486"/>
-        <location filename="src/route/routecontroller.cpp" line="4577"/>
+        <location filename="src/route/routecontroller.cpp" line="4499"/>
+        <location filename="src/route/routecontroller.cpp" line="4590"/>
         <source> / </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4815"/>
+        <location filename="src/route/routecontroller.cpp" line="4828"/>
         <source>%1 %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5047"/>
+        <location filename="src/route/routecontroller.cpp" line="5060"/>
         <source>Waypoint &quot;%1&quot; not found.</source>
         <translation>Waypoint &quot;%1&quot; não encontrado.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5082"/>
+        <location filename="src/route/routecontroller.cpp" line="5095"/>
         <source>
 </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5117"/>
-        <location filename="src/route/routecontroller.cpp" line="5124"/>
+        <location filename="src/route/routecontroller.cpp" line="5130"/>
+        <location filename="src/route/routecontroller.cpp" line="5137"/>
         <source>Cannot load %1: %2</source>
         <translation>Não pôde carregar %1: %2</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5118"/>
+        <location filename="src/route/routecontroller.cpp" line="5131"/>
         <source>procedures</source>
         <translation>procedimentos</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5118"/>
+        <location filename="src/route/routecontroller.cpp" line="5131"/>
         <source>procedure</source>
         <translation>procedimento</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4493"/>
-        <location filename="src/route/routecontroller.cpp" line="4494"/>
-        <location filename="src/route/routecontroller.cpp" line="4504"/>
-        <location filename="src/route/routecontroller.cpp" line="4572"/>
-        <location filename="src/route/routecontroller.cpp" line="5119"/>
-        <location filename="src/route/routecontroller.cpp" line="5126"/>
-        <location filename="src/route/routecontroller.cpp" line="5352"/>
-        <location filename="src/route/routecontroller.cpp" line="5374"/>
+        <location filename="src/route/routecontroller.cpp" line="4506"/>
+        <location filename="src/route/routecontroller.cpp" line="4507"/>
+        <location filename="src/route/routecontroller.cpp" line="4517"/>
+        <location filename="src/route/routecontroller.cpp" line="4585"/>
+        <location filename="src/route/routecontroller.cpp" line="5132"/>
+        <location filename="src/route/routecontroller.cpp" line="5139"/>
+        <location filename="src/route/routecontroller.cpp" line="5365"/>
+        <location filename="src/route/routecontroller.cpp" line="5387"/>
         <source>, </source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5120"/>
+        <location filename="src/route/routecontroller.cpp" line="5133"/>
         <source>Save and reload flight plan or select new procedures to fix this.</source>
         <translation>Salve e recarregue o plano de voo ou selecione novos procedimentos para corrigir isso.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5125"/>
+        <location filename="src/route/routecontroller.cpp" line="5138"/>
         <source>alternates</source>
         <translation>alternados</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5125"/>
+        <location filename="src/route/routecontroller.cpp" line="5138"/>
         <source>alternate</source>
         <translation>alternativo</translation>
     </message>
@@ -34326,7 +34361,7 @@ ou calcule o plano de voo novamente se o seu plano usar tracks.</translation>
         <translation type="vanished">%1 do início da descida ao destino</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5323"/>
+        <location filename="src/route/routecontroller.cpp" line="5336"/>
         <source>Remarks changed</source>
         <translation>Observações alteradas</translation>
     </message>
@@ -34335,7 +34370,7 @@ ou calcule o plano de voo novamente se o seu plano usar tracks.</translation>
         <translation type="vanished">Nenhum plano de voo.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="5407"/>
+        <location filename="src/route/routecontroller.cpp" line="5420"/>
         <source>Remarks for the flight plan.</source>
         <translation>Observações para o plano de voo.</translation>
     </message>
@@ -34364,37 +34399,37 @@ ou calcule o plano de voo novamente se o seu plano usar tracks.</translation>
         <translation type="vanished">&lt;br/&gt;&lt;span style=&quot;color: #ff0000; font-weight:bold&quot;&gt;Incompatibilidade de pista: %1 &amp;ne; %2.&lt;/span&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4104"/>
+        <location filename="src/route/routecontroller.cpp" line="4117"/>
         <source>Add Procedure</source>
         <translation>Adicionar Procedimento</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4183"/>
+        <location filename="src/route/routecontroller.cpp" line="4196"/>
         <source>Add Waypoint</source>
         <translation>Adicionar Waypoint</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4168"/>
+        <location filename="src/route/routecontroller.cpp" line="4181"/>
         <source>Added procedure to flight plan.</source>
         <translation>Procedimento adicionado ao plano de voo.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4231"/>
+        <location filename="src/route/routecontroller.cpp" line="4244"/>
         <source>Added waypoint to flight plan.</source>
         <translation>Adicionado waypoint ao plano de voo.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2199"/>
+        <location filename="src/route/routecontroller.cpp" line="2197"/>
         <source>Adjust altitude</source>
         <translation>Ajustar a altitude</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2215"/>
+        <location filename="src/route/routecontroller.cpp" line="2213"/>
         <source>Adjusted flight plan altitude.</source>
         <translation>Altura ajustada do plano de voo.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1466"/>
+        <location filename="src/route/routecontroller.cpp" line="1464"/>
         <source>Append</source>
         <translation>Anexar</translation>
     </message>
@@ -34411,7 +34446,7 @@ ou calcule o plano de voo novamente se o seu plano usar tracks.</translation>
         <translation type="vanished">Calcule para os fixos &amp;selecionados</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1853"/>
+        <location filename="src/route/routecontroller.cpp" line="1851"/>
         <source>Calculated direct flight plan.</source>
         <translation>Plano de voo calculado direto.</translation>
     </message>
@@ -34442,7 +34477,7 @@ Tente outro tipo de rota ou crie o plano de voo manualmente.</translation>
         <translation type="vanished">Não é possível carregar procedimentos no plano de voo.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="873"/>
+        <location filename="src/route/routecontroller.cpp" line="870"/>
         <source>Change Altitude</source>
         <translation>Alterar Altitude</translation>
     </message>
@@ -34451,12 +34486,12 @@ Tente outro tipo de rota ou crie o plano de voo manualmente.</translation>
         <translation type="vanished">Alterar Velocidade</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="914"/>
+        <location filename="src/route/routecontroller.cpp" line="911"/>
         <source>Change Type</source>
         <translation>Alterar Tipo</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4245"/>
+        <location filename="src/route/routecontroller.cpp" line="4258"/>
         <source>Change Waypoint</source>
         <translation>Mudar Waypoint</translation>
     </message>
@@ -34469,12 +34504,12 @@ Tente outro tipo de rota ou crie o plano de voo manualmente.</translation>
         <translation type="vanished">Deletar</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3464"/>
+        <location filename="src/route/routecontroller.cpp" line="3477"/>
         <source>Delete Procedure</source>
         <translation>Deletar Procedimento</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3464"/>
+        <location filename="src/route/routecontroller.cpp" line="3477"/>
         <source>Delete Waypoints</source>
         <translation>Deletar Waypoints</translation>
     </message>
@@ -34495,12 +34530,12 @@ Tente outro tipo de rota ou crie o plano de voo manualmente.</translation>
         <translation type="vanished">&lt;p&gt;Não é possível carregar procedimentos no plano de voo:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;%1&lt;/li&gt;&lt;/ul&gt;</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1466"/>
+        <location filename="src/route/routecontroller.cpp" line="1464"/>
         <source>Insert</source>
         <translation>Inserir</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2172"/>
+        <location filename="src/route/routecontroller.cpp" line="2170"/>
         <source>Cannot calculate flight plan.
 
 Try another calculation type,
@@ -34541,12 +34576,12 @@ crie o plano de voo manualmente.</translation>
         <translation type="vanished">Saída definida para %1 posição inicial %2.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3746"/>
+        <location filename="src/route/routecontroller.cpp" line="3759"/>
         <source>Departure set to %1.</source>
         <translation>Saída definida para %1.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3815"/>
+        <location filename="src/route/routecontroller.cpp" line="3828"/>
         <source>Destination set to %1.</source>
         <translation>Destino definido como %1.</translation>
     </message>
@@ -34585,14 +34620,14 @@ to select departure and destination.</oldsource>
         <translation type="vanished">Direto</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1841"/>
+        <location filename="src/route/routecontroller.cpp" line="1839"/>
         <source>Direct Calculation</source>
         <translation>Cálculo direto</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1199"/>
-        <location filename="src/route/routecontroller.cpp" line="1427"/>
-        <location filename="src/route/routecontroller.cpp" line="2176"/>
+        <location filename="src/route/routecontroller.cpp" line="1196"/>
+        <location filename="src/route/routecontroller.cpp" line="1425"/>
+        <location filename="src/route/routecontroller.cpp" line="2174"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>Não &amp;mostre este diálogo novamente.</translation>
     </message>
@@ -34601,12 +34636,12 @@ to select departure and destination.</oldsource>
         <translation type="vanished">Editar posição</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="819"/>
+        <location filename="src/route/routecontroller.cpp" line="816"/>
         <source>Flight plan string to clipboard.</source>
         <translation>Sequência do plano de voo para a área de transferência.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="927"/>
+        <location filename="src/route/routecontroller.cpp" line="924"/>
         <source>Flight plan type changed to %1.</source>
         <translation>Tipo de Plano de Voo mudou para %1.</translation>
     </message>
@@ -34623,7 +34658,7 @@ to select departure and destination.</oldsource>
         <translation type="vanished">Criar uma &amp;Aproximação e utilizar o Aeroporto como Destino</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2782"/>
+        <location filename="src/route/routecontroller.cpp" line="2783"/>
         <source>Show &amp;Procedures</source>
         <oldsource>Create &amp;approach</oldsource>
         <translation>Mostrar &amp;Procedimentos</translation>
@@ -34633,17 +34668,17 @@ to select departure and destination.</oldsource>
         <translation type="vanished">Editar &amp;Posição do Plano de Voo ou Observações ...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4799"/>
+        <location filename="src/route/routecontroller.cpp" line="4812"/>
         <source>%1 / %2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4812"/>
+        <location filename="src/route/routecontroller.cpp" line="4825"/>
         <source>▼</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4814"/>
+        <location filename="src/route/routecontroller.cpp" line="4827"/>
         <source>▲</source>
         <translation></translation>
     </message>
@@ -34664,7 +34699,7 @@ to select departure and destination.</oldsource>
         <translation type="vanished">Inválido</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1191"/>
+        <location filename="src/route/routecontroller.cpp" line="1188"/>
         <source>Loading of FLP flight plan failed:&lt;br/&gt;&lt;br/&gt;</source>
         <translation>Carregamento do Plano de Voo FLP falhou:&lt;br/&gt;&lt;br/&gt;</translation>
     </message>
@@ -34681,12 +34716,12 @@ to select departure and destination.</oldsource>
         <translation type="vanished">Plano de voo em baixa altitude</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3376"/>
+        <location filename="src/route/routecontroller.cpp" line="3389"/>
         <source>Move Waypoints</source>
         <translation>Mover Waypoints</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3440"/>
+        <location filename="src/route/routecontroller.cpp" line="3453"/>
         <source>Moved flight plan legs.</source>
         <translation>Fixos do plano de voo movidos.</translation>
     </message>
@@ -34695,7 +34730,7 @@ to select departure and destination.</oldsource>
         <translation type="vanished">Nenhum Plano de Voo carregado</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1977"/>
+        <location filename="src/route/routecontroller.cpp" line="1975"/>
         <source>No route found.</source>
         <translation>Nenhuma rota encontrada.</translation>
     </message>
@@ -34704,17 +34739,17 @@ to select departure and destination.</oldsource>
         <translation type="vanished">Rádio nav</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1943"/>
+        <location filename="src/route/routecontroller.cpp" line="1941"/>
         <source>Radionnav Flight Plan Calculation</source>
         <translation>Cálculo em Radionnav</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="485"/>
+        <location filename="src/route/routecontroller.cpp" line="482"/>
         <source>Redo flight plan change.</source>
         <translation>Refazer Plano de Voo.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3530"/>
+        <location filename="src/route/routecontroller.cpp" line="3543"/>
         <source>Removed flight plan legs.</source>
         <translation>Fixos do plano de voo removidos.</translation>
     </message>
@@ -34723,17 +34758,17 @@ to select departure and destination.</oldsource>
         <translation type="vanished">Waypoint removido do plano de voo.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="4301"/>
+        <location filename="src/route/routecontroller.cpp" line="4314"/>
         <source>Replaced waypoint in flight plan.</source>
         <translation>Waypoint substituído no plano de voo.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2223"/>
+        <location filename="src/route/routecontroller.cpp" line="2221"/>
         <source>Reverse</source>
         <translation>Reverso</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2264"/>
+        <location filename="src/route/routecontroller.cpp" line="2262"/>
         <source>Reversed flight plan.</source>
         <translation>Plano de voo Reverso.</translation>
     </message>
@@ -34742,7 +34777,7 @@ to select departure and destination.</oldsource>
         <translation type="vanished">Editar &amp;Posição do Plano de Voo ...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2839"/>
+        <location filename="src/route/routecontroller.cpp" line="2840"/>
         <source>Edit name and coordinates of user defined flight plan position</source>
         <translation>Editar nome e coordenadas da posição do plano de voo definido pelo usuário</translation>
     </message>
@@ -34751,17 +34786,17 @@ to select departure and destination.</oldsource>
         <translation type="vanished">Editar Observações de &amp;Posição do Plano de Voo ...</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2846"/>
+        <location filename="src/route/routecontroller.cpp" line="2847"/>
         <source>Edit remarks for selected flight plan leg</source>
         <translation>Editar observações para o trecho do plano de voo selecionado</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3725"/>
+        <location filename="src/route/routecontroller.cpp" line="3738"/>
         <source>Set Departure</source>
         <translation>Definir saída</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3794"/>
+        <location filename="src/route/routecontroller.cpp" line="3807"/>
         <source>Set Destination</source>
         <translation>Definir Destino</translation>
     </message>
@@ -34770,8 +34805,8 @@ to select departure and destination.</oldsource>
         <translation type="vanished">Ajustar Estacionamento</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="3629"/>
-        <location filename="src/route/routecontroller.cpp" line="3673"/>
+        <location filename="src/route/routecontroller.cpp" line="3642"/>
+        <location filename="src/route/routecontroller.cpp" line="3686"/>
         <source>Set Start Position</source>
         <translation>Definir a posição inicial</translation>
     </message>
@@ -34796,17 +34831,17 @@ to select departure and destination.</oldsource>
         <translation type="vanished">Mostrar procedimentos (aeroporto não tem procedimento)</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2480"/>
+        <location filename="src/route/routecontroller.cpp" line="2478"/>
         <source>Showing airport on map.</source>
         <translation>Mostrando aeroportos no mapa.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2482"/>
+        <location filename="src/route/routecontroller.cpp" line="2480"/>
         <source>Showing navaid on map.</source>
         <translation>Mostrando navaid no mapa.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="2968"/>
+        <location filename="src/route/routecontroller.cpp" line="2972"/>
         <source>Table view reset to defaults.</source>
         <translation>A exibição da tabela foi redefinida para os padrões.</translation>
     </message>
@@ -34825,7 +34860,7 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation type="vanished">Para a pista.</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="480"/>
+        <location filename="src/route/routecontroller.cpp" line="477"/>
         <source>Undo flight plan change.</source>
         <translation>Desfazer plano de voo.</translation>
     </message>
@@ -34834,7 +34869,7 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation type="vanished">Desconhecido</translation>
     </message>
     <message>
-        <location filename="src/route/routecontroller.cpp" line="1197"/>
+        <location filename="src/route/routecontroller.cpp" line="1194"/>
         <source>Warnings while loading FLP flight plan file:&lt;br/&gt;&lt;br/&gt;</source>
         <translation>Avisos durante o carregamento do arquivo de plano de voo FLP:&lt;br/&gt;&lt;br/&gt;</translation>
     </message>
@@ -35034,7 +35069,7 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation>Plano de voo salvo como HTML.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1387"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1409"/>
         <source>Select Start &amp;Position</source>
         <translation>Selecione &amp;Posição Inicial</translation>
     </message>
@@ -35075,18 +35110,46 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation>Plano de voo salvo como FMS 11.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1332"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1334"/>
         <source>Do not &amp;show this dialog again and export all files.</source>
         <translation>Não &amp;mostre esta caixa de diálogo novamente e exporte todos os arquivos.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1334"/>
-        <location filename="src/routeexport/routeexport.cpp" line="1401"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1336"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1420"/>
         <source>Do not &amp;show this dialog again and save Flight Plan.</source>
         <translation>Não &amp;mostre esta caixa de diálogo novamente e salve o Plano de Voo.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1388"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1367"/>
+        <source>One or more of the selected export formats are for X-Plane and
+&quot;Use Navigraph for Navaids and Procedures&quot; is selected in the menu &quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot;.
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/routeexport/routeexport.cpp" line="1370"/>
+        <source>&quot;Use Navigraph for Navaids and Procedures&quot; is selected in the menu &quot;Scenery Library&quot; -&gt; &quot;Navigraph&quot;.
+</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/routeexport/routeexport.cpp" line="1372"/>
+        <source>This can result in issues loading the flight plan into the GPS or FMS since airports might not match.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/routeexport/routeexport.cpp" line="1387"/>
+        <source>One or more of the selected export formats require a valid AIRAC cycle.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/routeexport/routeexport.cpp" line="1389"/>
+        <source>The export format requires a valid AIRAC cycle.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="src/routeexport/routeexport.cpp" line="1410"/>
         <source>Show &amp;Departure on Map</source>
         <translation>Mostrar &amp;Partida no Mapa</translation>
     </message>
@@ -35103,13 +35166,13 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation type="vanished">Arquivos UFMC %1;; Todos os Arquivos (*)</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1893"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1912"/>
         <source>While reading from companyroutes.xml file:</source>
         <translation>Durante a leitura do arquivo companyroutes.xml:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1437"/>
-        <location filename="src/routeexport/routeexport.cpp" line="1548"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1456"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1567"/>
         <source>While saving GFP file:</source>
         <translation>Ao salvar o arquivo GFP:</translation>
     </message>
@@ -35240,7 +35303,7 @@ A posição inicial está agora configurada para a pista principal mais longa do
         <translation type="obsolete">Plano de voo salvo em FMS.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1335"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1337"/>
         <source>
 
 Really continue?</source>
@@ -35249,42 +35312,40 @@ Really continue?</source>
 Deseja continuar?</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1343"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1345"/>
         <source>Flight Plan must have a valid airport as start and destination and might not be usable for the selected export formats.</source>
         <translation>O plano de voo deve ter um aeroporto válido com partida e destino e pode não ser utilizável para os formatos de exportação selecionados.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1346"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1348"/>
         <source>Flight Plan must have a valid airport as start and destination and might not be usable by the simulator.</source>
         <translation>O Plano de Voo deve ter um aeroporto válido com partida e destino e pode não ser utilizável pelo simulador.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1364"/>
         <source>One or more of the selected export formats require a valid AIRAC cycle.
 
 </source>
-        <translation>Um ou mais dos formatos de exportação selecionados requerem um ciclo AIRAC válido.
+        <translation type="vanished">Um ou mais dos formatos de exportação selecionados requerem um ciclo AIRAC válido.
 
 </translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1366"/>
         <source>The export format requires a valid AIRAC cycle.
 
 </source>
-        <translation>O formato de exportação requer um ciclo AIRAC válido.
+        <translation type="vanished">O formato de exportação requer um ciclo AIRAC válido.
 
 </translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1368"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1391"/>
         <source>The selected scenery database does not contain AIRAC cycle information.
 This can happen if you save a flight plan based on FSX, Prepar3D or MSFS scenery.</source>
         <translation>O banco de dados de cenário selecionado não contém informações sobre o ciclo AIRAC.
 Isso pode acontecer se você salvar um plano de voo baseado no cenário FSX, Prepar3D ou MSFS.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1394"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1416"/>
         <source>One or more of the selected export formats support setting a parking spot as a start position.
 
 </source>
@@ -35293,47 +35354,47 @@ Isso pode acontecer se você salvar um plano de voo baseado no cenário FSX, Pre
 </translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1397"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1418"/>
         <source>The departure airport has parking spots but no parking was selected for this Flight Plan.</source>
         <translation>O aeroporto de partida tem vagas de estacionamento, mas nenhum estacionamento foi selecionado para este Plano de Voo.</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1458"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1477"/>
         <source>While saving TXT or FPL file:</source>
         <translation>Ao salvar o arquivo TXT ou FPL:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1501"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1520"/>
         <source>While saving UFMC file:</source>
         <translation>Ao salvar o arquivo UFMC:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1631"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1650"/>
         <source>While saving VFP file:</source>
         <translation>Ao salvar o arquivo VFP:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1760"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1779"/>
         <source>While saving FPL file:</source>
         <translation>Ao salvar o arquivo FPL:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1815"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1834"/>
         <source>While reading file &quot;%1&quot;:</source>
         <translation>Ao ler o arquivo &quot;%1&quot;:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1847"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1866"/>
         <source>While saving to file &quot;%1&quot;:</source>
         <translation>Ao salvar no arquivo &quot;%1&quot;:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="2064"/>
+        <location filename="src/routeexport/routeexport.cpp" line="2083"/>
         <source>&lt;p&gt;Note that saving flight plans with one or more enabled options in menu &quot;File&quot; -&gt; &quot;Export Options&quot; can cause unexpected issues:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;Procedure and/or airway information will be missing when reloading the exported flight plans.&lt;/li&gt;&lt;li&gt;Several approach procedure leg types like holds and turns cannot be shown properly in simulators or aircraft.&lt;/li&gt;&lt;li&gt;Speed and altitude restrictions are not included in the exported flight plan.&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;This does not apply to the the native LNMPLN file format.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normally you should not use these export options.&lt;/b&gt;&lt;/p&gt;</source>
         <translation>&lt;p&gt;Observe que salvar planos de voo com uma ou mais opções ativadas no menu &quot;Arquivo&quot; -&gt; &quot;Opções de exportação&quot; pode causar problemas inesperados:&lt;/p&gt;&lt;ul&gt;&lt;li&gt;O procedimento e/ou as informações das vias aéreas estarão ausentes quando recarregar os planos de voo exportados.&lt;/li&gt;&lt;li&gt;Vários tipos de trechos de procedimentos de aproximação, como orbitas e curvas, não podem ser mostrados adequadamente em simuladores ou aeronaves.&lt;/li&gt;&lt;li&gt;As restrições de velocidade e altitude não estão incluídas no plano de voo exportado .&lt;/li&gt;&lt;/ul&gt;&lt;p&gt;Isso não se aplica ao formato de arquivo nativo LNMPLN.&lt;/p&gt;&lt;p&gt;&lt;b&gt;Normalmente, você não deve usar essas opções de exportação.&lt;/b&gt;&lt;/p &gt;</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="2074"/>
+        <location filename="src/routeexport/routeexport.cpp" line="2093"/>
         <source>Do not &amp;show this dialog again.</source>
         <translation>Não &amp;mostre este diálogo novamente.</translation>
     </message>
@@ -35342,7 +35403,7 @@ Isso pode acontecer se você salvar um plano de voo baseado no cenário FSX, Pre
         <translation type="vanished">Ao ler o arquivo corte.in:</translation>
     </message>
     <message>
-        <location filename="src/routeexport/routeexport.cpp" line="1950"/>
+        <location filename="src/routeexport/routeexport.cpp" line="1969"/>
         <source>While saving to companyroutes.xml file:</source>
         <translation>Ao salvar no arquivo companyroutes.xml:</translation>
     </message>
@@ -37755,7 +37816,7 @@ Clique com o botão direito do mouse no mapa e selecione
         <translation type="vanished">&amp;Editar Userpoints</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1266"/>
+        <location filename="src/search/searchbasetable.cpp" line="1271"/>
         <source>&amp;Delete Userpoints</source>
         <translation>&amp;Deletar Userpoints</translation>
     </message>
@@ -37772,7 +37833,7 @@ Clique com o botão direito do mouse no mapa e selecione
         <translation type="vanished">&amp;Editar Entradas do Logbook</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1366"/>
+        <location filename="src/search/searchbasetable.cpp" line="1377"/>
         <source>&amp;Delete Logbook Entries</source>
         <translation>&amp;Deletar Entradas no Logbook</translation>
     </message>
@@ -37785,12 +37846,12 @@ Clique com o botão direito do mouse no mapa e selecione
         <translation type="vanished">&amp;Deletar Entrada no Logbook</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1746"/>
+        <location filename="src/search/searchbasetable.cpp" line="1762"/>
         <source>Showing NDB on map.</source>
         <translation>Mostrando NDB no mapa.</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1741"/>
+        <location filename="src/search/searchbasetable.cpp" line="1757"/>
         <source>Showing VOR on map.</source>
         <translation>Mostrando VOR no mapa.</translation>
     </message>
@@ -37842,7 +37903,7 @@ Clique com o botão direito do mouse no mapa e selecione
         <translation type="vanished">Adicionar como Plano de Voo &amp;Alternativo</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1185"/>
+        <location filename="src/search/searchbasetable.cpp" line="1190"/>
         <source>(Airport not found)</source>
         <translation>(Aeroporto não encontrado)</translation>
     </message>
@@ -37867,12 +37928,12 @@ Clique com o botão direito do mouse no mapa e selecione
         <translation type="vanished">Adicionar %1 como Plano de Voo &amp;Alternativo</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1338"/>
+        <location filename="src/search/searchbasetable.cpp" line="1349"/>
         <source>&amp;Airport</source>
         <translation>&amp;Aeroporto</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1265"/>
+        <location filename="src/search/searchbasetable.cpp" line="1270"/>
         <source>&amp;Edit Userpoints ...</source>
         <translation>&amp;Editar Userpoints ...</translation>
     </message>
@@ -37881,7 +37942,7 @@ Clique com o botão direito do mouse no mapa e selecione
         <translation type="vanished">&amp;Editar Userpoint ...</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1365"/>
+        <location filename="src/search/searchbasetable.cpp" line="1376"/>
         <source>&amp;Edit Logbook Entries ...</source>
         <translation>&amp;Editar Entrada no Logbook ...</translation>
     </message>
@@ -37890,131 +37951,131 @@ Clique com o botão direito do mouse no mapa e selecione
         <translation type="vanished">&amp;Editar Entrada no Logbook ...</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1381"/>
-        <location filename="src/search/searchbasetable.cpp" line="1382"/>
-        <location filename="src/search/searchbasetable.cpp" line="1391"/>
         <location filename="src/search/searchbasetable.cpp" line="1392"/>
-        <location filename="src/search/searchbasetable.cpp" line="1398"/>
+        <location filename="src/search/searchbasetable.cpp" line="1393"/>
+        <location filename="src/search/searchbasetable.cpp" line="1402"/>
+        <location filename="src/search/searchbasetable.cpp" line="1403"/>
+        <location filename="src/search/searchbasetable.cpp" line="1409"/>
         <source> (no attachment)</source>
         <translation> (Nenhum anexo)</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1412"/>
-        <location filename="src/search/searchbasetable.cpp" line="1428"/>
+        <location filename="src/search/searchbasetable.cpp" line="1423"/>
+        <location filename="src/search/searchbasetable.cpp" line="1439"/>
         <source>(file not found)</source>
         <oldsource>(File not found)</oldsource>
         <translation>(arquivo não encotrado)</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1349"/>
+        <location filename="src/search/searchbasetable.cpp" line="1360"/>
         <source>&amp;Files</source>
         <translation>&amp;Arquivos</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1121"/>
+        <location filename="src/search/searchbasetable.cpp" line="1126"/>
         <source>Show Departure &amp;Procedures for %1</source>
         <translation>Mostrar &amp;Procedimentos de Saída para %1</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1125"/>
+        <location filename="src/search/searchbasetable.cpp" line="1130"/>
         <source>Show procedures (no departure procedure)</source>
         <translation>Mostrar procedimentos (sem procedimento de partida)</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1131"/>
+        <location filename="src/search/searchbasetable.cpp" line="1136"/>
         <source>Show Arrival &amp;Procedures for %1</source>
         <translation>Mostrar Procedimentos de &amp;Chegada para %1</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1135"/>
+        <location filename="src/search/searchbasetable.cpp" line="1140"/>
         <source>Show procedures (no arrival procedure)</source>
         <translation>Mostrar procedimentos (sem procedimento de chegada)</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1141"/>
+        <location filename="src/search/searchbasetable.cpp" line="1146"/>
         <source>Show Procedures (no procedure)</source>
         <translation>Mostrar Procedimentos (sem procedimento)</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1145"/>
+        <location filename="src/search/searchbasetable.cpp" line="1150"/>
         <source>Select Destination &amp;Runway for %1 ...</source>
         <translation>Selecione a &amp;Pista de Destino para %1...</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1150"/>
+        <location filename="src/search/searchbasetable.cpp" line="1155"/>
         <source>Select &amp;Runway and use %1 as Destination ...</source>
         <translation>Selecione a &amp;Pista e use %1 como Destino ...</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1156"/>
+        <location filename="src/search/searchbasetable.cpp" line="1161"/>
         <source>Select &amp;Departure Runway for %1 ...</source>
         <translation>Selecione &amp;Pista de Decolagem para %1 ...</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1161"/>
+        <location filename="src/search/searchbasetable.cpp" line="1166"/>
         <source>Select Runway and use %1 as &amp;Departure ...</source>
         <translation>Selecione Pista e use %1 como &amp;Partida...</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1166"/>
+        <location filename="src/search/searchbasetable.cpp" line="1171"/>
         <source>Show &amp;Procedures</source>
         <translation>Mostrar &amp;Procedimentos</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1170"/>
-        <location filename="src/search/searchbasetable.cpp" line="1171"/>
-        <location filename="src/search/searchbasetable.cpp" line="1215"/>
+        <location filename="src/search/searchbasetable.cpp" line="1175"/>
+        <location filename="src/search/searchbasetable.cpp" line="1176"/>
+        <location filename="src/search/searchbasetable.cpp" line="1220"/>
         <source> (no runway)</source>
         <translation> (nenhuma pista)</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1270"/>
+        <location filename="src/search/searchbasetable.cpp" line="1275"/>
         <source>&amp;Edit Userpoint %1 ...</source>
         <translation>&amp;Editar Userpoint %1 ...</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1271"/>
+        <location filename="src/search/searchbasetable.cpp" line="1276"/>
         <source>&amp;Delete Userpoint %1</source>
         <translation>&amp;Deletar Userpoint %1</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1370"/>
+        <location filename="src/search/searchbasetable.cpp" line="1381"/>
         <source>&amp;Edit Logbook Entry %1 ...</source>
         <translation>&amp;Editar Entrada no Logbook %1 ...</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1371"/>
+        <location filename="src/search/searchbasetable.cpp" line="1382"/>
         <source>&amp;Delete Logbook Entry %1</source>
         <translation>&amp;Deletar Entrada no Logbook %1</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1440"/>
+        <location filename="src/search/searchbasetable.cpp" line="1451"/>
         <source>&amp;View Options</source>
         <translation>&amp;Opções de Visualização</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1544"/>
-        <location filename="src/search/searchbasetable.cpp" line="1731"/>
+        <location filename="src/search/searchbasetable.cpp" line="1560"/>
+        <location filename="src/search/searchbasetable.cpp" line="1747"/>
         <source>Showing airport on map.</source>
         <translation>Mostrando aeroporto no mapa.</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1736"/>
+        <location filename="src/search/searchbasetable.cpp" line="1752"/>
         <source>Showing airspace on map.</source>
         <translation>Mostrando espaço aéreo no mapa.</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1761"/>
+        <location filename="src/search/searchbasetable.cpp" line="1777"/>
         <source>Showing logbook entry on map.</source>
         <translation>Mostrando a entrada do logbook no mapa.</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1766"/>
+        <location filename="src/search/searchbasetable.cpp" line="1782"/>
         <source>Showing online client/aircraft on map.</source>
         <translation>Mostrando aeronave/cliente no mapa.</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1756"/>
+        <location filename="src/search/searchbasetable.cpp" line="1772"/>
         <source>Showing userpoint on map.</source>
         <translation>Mostrando userpoint no mapa.</translation>
     </message>
@@ -38031,7 +38092,7 @@ Clique com o botão direito do mouse no mapa e selecione
         <translation type="vanished">Adicionar &amp;Orbita ...</translation>
     </message>
     <message>
-        <location filename="src/search/searchbasetable.cpp" line="1751"/>
+        <location filename="src/search/searchbasetable.cpp" line="1767"/>
         <source>Showing waypoint on map.</source>
         <translation>Mostrando waypoint no mapa.</translation>
     </message>
@@ -38559,7 +38620,7 @@ Viagens Totais: %1.</translation>
 <context>
     <name>UndoRedoProgress</name>
     <message>
-        <location filename="src/db/undoredoprogress.cpp" line="25"/>
+        <location filename="src/db/undoredoprogress.cpp" line="26"/>
         <source>Cancel</source>
         <translation>Cancelar</translation>
     </message>
