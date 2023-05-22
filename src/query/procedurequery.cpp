@@ -2554,23 +2554,33 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
     // Get a SID transition id =================================================================
     if(sidId != -1)
     {
-      QString ident;
       if(departureNav.isValid())
       {
         if(properties.contains(pln::SIDTRANS))
         {
-          ident = properties.value(pln::SIDTRANS); // Transition name
-          sidTransId = getSidTransitionId(departureNav, ident, sidId, true);
+          // Load by transition name
+          sidTransId = getSidTransitionId(departureNav, properties.value(pln::SIDTRANS), sidId, true);
+          if(sidTransId == -1)
+            errors.append(tr("SID transition %1").arg(properties.value(pln::SIDTRANS)));
         }
         else if(autoresolveTransition && properties.contains(pln::SIDTRANSWP))
         {
-          ident = properties.value(pln::SIDTRANSWP); // Name of last SID transition waypoint
-          sidTransId = getSidTransitionIdByWp(departureNav, ident, sidId, true);
+          // SIDTRANSWP is a potential transition waypoint
+          // Need to check here since flight plan loader cannot distinguish between SID or transition wp
+          const QString transWp = properties.value(pln::SIDTRANSWP);
+
+          // Check if last waypoint is already a part of the procedure - otherwise look for matching transition
+          const proc::MapProcedureLegs *tempSidLegs = getProcedureLegs(departureNav, sidId);
+          if(procedureValid(tempSidLegs, nullptr) && !tempSidLegs->isEmpty() && tempSidLegs->constLast().fixIdent != transWp)
+          {
+            sidTransId = getSidTransitionIdByWp(departureNav, transWp, sidId, true);
+
+            if(sidTransId == -1)
+              // Do not warn user
+              qWarning() << Q_FUNC_INFO << "Error loading SID transition waypoint" << transWp;
+          }
         }
       }
-
-      if(sidTransId == -1)
-        errors.append(tr("SID transition %1").arg(ident));
     }
   }
 
@@ -2669,6 +2679,7 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
 
     if(destinationNav.isValid())
       transitionId = findTransitionId(destinationNav, transitionIdByNameQuery, false);
+
     if(transitionId == -1)
       errors.append(tr("Transition %1").arg(properties.value(pln::TRANSITION)));
   }
@@ -2689,33 +2700,37 @@ void ProcedureQuery::getLegsForFlightplanProperties(const QHash<QString, QString
   {
     if(destinationNav.isValid())
     {
-      QString ident;
       if(properties.contains(pln::STARTRANS))
       {
-        ident = properties.value(pln::STARTRANS);
-        starTransId = getStarTransitionId(destinationNav, ident, starId);
+        // Get STAR by name
+        starTransId = getStarTransitionId(destinationNav, properties.value(pln::STARTRANS), starId);
+        if(starTransId == -1)
+          errors.append(tr("STAR transition %1").arg(properties.value(pln::STARTRANS)));
       }
       else if(autoresolveTransition && properties.contains(pln::STARTRANSWP))
       {
-        ident = properties.value(pln::STARTRANSWP);
-        for(const QString& transWp : ident.split(atools::fs::pln::PROPERTY_LIST_SEP))
+        // Try to get STAR by a list of potential starting points to workaround wrong PLN files
+        const proc::MapProcedureLegs *legs = getProcedureLegs(departureNav, starId);
+        for(const QString& transWp : properties.value(pln::STARTRANSWP).split(atools::fs::pln::PROPERTY_LIST_SEP))
         {
-          starTransId = getApprOrStarTransitionIdByWp(destinationNav, transWp, starId);
+          if(procedureValid(legs, nullptr) && !legs->isEmpty() && legs->constFirst().fixIdent != transWp)
+            starTransId = getApprOrStarTransitionIdByWp(destinationNav, transWp, starId);
+
           if(starTransId != -1)
             break;
         }
+        if(starTransId == -1)
+          // Do not warn user
+          qWarning() << Q_FUNC_INFO << "Error loading STAR transition waypoint(s)" << properties.value(pln::STARTRANSWP);
       }
-
     }
-    if(starTransId == -1)
-      errors.append(tr("STAR transition %1").arg(properties.value(pln::STARTRANS)));
   }
 
   // Get approach transition if missing and requested - have STAR and approach but no approach transition
   if(autoresolveTransition && starId != -1 && transitionId == -1 && approachId != -1)
   {
     const proc::MapProcedureLegs *tempStarLegs = getProcedureLegs(destinationNav, starId);
-    if(procedureValid(tempStarLegs, &errors))
+    if(procedureValid(tempStarLegs, &errors) && !tempStarLegs->isEmpty() && !tempStarLegs->constLast().fixIdent.isEmpty())
       transitionId = getApprOrStarTransitionIdByWp(destinationNav, tempStarLegs->constLast().fixIdent, approachId);
   }
 
