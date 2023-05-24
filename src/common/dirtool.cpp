@@ -199,7 +199,7 @@ bool DirTool::hasDir(const QString& dir)
 
 QString DirTool::d(const QString& dir)
 {
-  return documentsDir + SEP + applicationDir + SEP + dir;
+  return QDir::toNativeSeparators(documentsDir + SEP + applicationDir + SEP + dir);
 }
 
 bool DirTool::hasAllDirs()
