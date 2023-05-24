@@ -4,6 +4,151 @@ This text is partially Markdown, hence sometimes strange formatting.
 
 ==>>=============================================================================
 
+# Version 2.8.11
+
+## Notes
+
+**This is a stable release of *Little Navmap* which fixes bugs, adds improvements and a few new features.**
+
+**macOS users: Keep in mind that you have to clear the quarantine flag when updating Little Xpconnect. See
+[Clearing the Quarantine Flag on macOS](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/XPCONNECT.html#clearing-the-quarantine-flag-on-macos).**
+
+The updated online user manual is available here:
+[Little Navmap - User Manual](https://www.littlenavmap.org/manuals/littlenavmap/release/latest/en/).
+
+See here for user manual downloads:
+[User Manuals - Stable Releases](https://albar965.github.io/manuals.html#stable).
+
+A big thank you to all who reported bugs and issues!
+
+# Version 2.8.11
+
+## Changes from 2.8.10 to 2.8.11
+
+>>>>>>>>>>>>> TODO installer
+>>>>>>>>>>>>> TODO Update manual
+
+### Flight Plan and Export
+
+* Now recognizing runway assignments from SimBrief when downloading flight plans. This fixes the
+  random runway assignment after import.
+* Now resolving SID and STAR transitions when loading MSFS PLN flight plan files. This also works
+  for the SimBrief exported plans where the STAR name is omitted on the first waypoint. Note that
+  this is not 100 percent reliable due to deficits in the MSFS PLN file format design.
+* Trying to resolve approach transitions for matching STAR waypoint similar as MSFS if an approach 
+  procedure is selected when importing MSFS PLN files.
+* Improved X-Plane FMS export. Airports with procedures are now always saved with keywords `ADEP` or
+  `ADES` to allow manual departure or arrival procedure selection in the GPS or FMS.
+* Added warning if the scenery library mode `Use Navigraph for all Features` is enabled when
+  exporting X-Plane FMS files to avoid departure and destination exported with the wrong keywords.
+  As a result no procedures could be selected in the GPS or FMS:
+* Fixed wrong error message when calculating elevation profile due to required vertical angle
+  conflicting with an altitude restriction. Example: Airport LTFM with approach I17LX and other 
+  ILS at LTFM. Vertical angle is now ignored in such cases.
+
+### Scenery Library
+
+* Added optional automatic navdata selection depending on simulator and AIRAC cycle. The new option in
+  menu `Scenery Library` -> `Navigraph` -> `Select Automatically` is enabled per default and selects
+  the right navdata mode when switching between simulators or after compiling the database. The
+  selected mode can be seen in the disabled menu items in menu `Navigraph` or in the window title bar.
+* The mode `Use Navigraph for all Features` is now enabled per default to have airports available if
+  the simulator database is empty. This happens after a fresh installation, for example. This is
+  independent of the AIRAC cycle.
+* Added option to include extra directories for scenery library scanning. Extra folders extending
+  MSFS `Community` or X-Plane `Custom Scenery` can be added in options on page `Scenery Library
+  Database` in the top list. #959
+* Added message in dialog window `Load Scenery Library` indicating excluded folders. This is a
+  hint since wrong and unintended exclusions can often cause issues.
+* More cleanup for MSFS airport names. Now removing leading and trailing space from all names to
+  allow search since some airport names are entered wrongly with spaces.
+* Fixed issue where MSFS navdata update was recognized despite having its folders excluded.
+* Fixed country names appearing as language keys when compiling MSFS. Names are now empty again
+  since MSFS does not provide these.
+* Corrected detection and reading of Navigraph navdata update in MSFS. Now reading airports from
+  update. Navdata and procedures are omitted. Wrongly excluded package is now read. Speed up for
+  reading scenery library by ignoring unused procedures from navdata update. #1019
+* Workaround for missing aircraft model translations since MSFS SU12.
+* Now adding start positions for runways and parking spots in Navigraph navdata compiler to allow
+  departure parking selection for runways as well when using mode `Use Navigraph for all Features`.
+  This change will appear with future Navigraph navdata updates.
+* X-Plane 12 manually corrected localizers file is now read.
+* Updated included Navigraph cycle 1801 to include database changes.
+
+### Userpoints
+
+* Added quick `Mark Airport as Add-on` function in all related context menus in map, flight plan
+  table and airport search result table. This inserts a userpoint of type `Addon` without additional
+  editing. The labels of this userpoint type (yellow ring) are not shown on map to avoid overlap
+  with the airport labels.
+* Added cleanup function for userpoints to remove empty or duplicates by several criteria. See menu
+  `Userpoints` -> `Cleanup Userpoints` or the context menu in the userpoint search result table.
+* Userpoint CSV import is now one undo step for all selected files to avoid confusion after 
+  selecting more than one file for import.
+
+### Logbook
+
+* Fixed takeoff and landing detection in logbook for airports without runways like heliports.
+  These are now always registered in the logbook. Now falling back to any nearest airport on
+  takeoff or landing if no runways were found.
+* Reworked logbook statistics dialog. Enabled sorting for all columns (click on the column header)
+  and removed 1000 rows limit. The view loads more rows when scrolling down.
+* Added query `Aircraft hours flown` to logbook statistics. #1026
+
+### Map Display
+
+* Added option to read map themes outside the installation folder. You can select a map theme
+  folder in options on page `Cache and Files` below `Map Display Themes`. This is empty and thus
+  disabled per default. Put the map folders like `google-maps-sat` or `us-vfr-sectionals` directly
+  into the selected folder and restart Little Navmap to detect the new map themes.
+  This helps to avoid the re-installation of map themes after each update.
+* Removed not working `Clear Cache` from page `Cache and Files`. Clear the map cache by going
+  directly to the folders using menu `Tools` -> `Files and directories` -> `Show map cache`.
+  Delete folders for related map themes there to clear the cache. #619
+* Added airport filter to hide military airports. Airport filters are reset on update.
+* Smoother aircraft movement when zoomed in close to an airport and increased precision when
+  drawing aircraft and track.
+* Fixed potential issue with steps effect when drawing lines like the aircraft trail.
+* Now adding runway true heading to labels if declination is excessive as in Antarctica.
+* Now rounding the entry altitude for destination runways to nearest 10 feet or meter to avoid
+  confusing single digit values.
+* Added option to hide AI on ground on options page `Map Display`. Enabled per default. This can help
+  to avoid hidden AI if traffic tools do not update the on-ground status of aircraft properly.
+* Improved measurement line drawing. Added new measurement line label text colors to configuration
+  file `little_navmap_mapstyle.ini` (look for `DistanceMarker`).
+* Measurement label now aligned with line.
+* Avoiding flickering course values while dragging measurement line.
+* Better measurement line handling: Tooltip and hotspot for measurement lines is now origin and end.
+  The line can be moved from both ends.
+* Measurement lines can now be the origin of a userpoint showing its label.
+* Added option for airway display at flight plan legs in options on page `Map Display Labels` in
+  branch `Flight Plan`. This is disabled per default.
+* Adjusted settings for offset localizer to also detect slightly offset KJFK 22R. This is indicated
+  by `Offset Localizer` in the tooltip.
+
+### User Interface
+
+* Reading correct ICAO aircraft designator from MSFS `aircraft.cfg` files for user aircraft now.
+  This allows to get the right ICAO aircraft designator like `B738` or `C172` which is used to
+  match the aircraft performance to the used simulator aircraft and show a warning in case of mismatch.
+  You might need to adapt the aircraft performance files in some cases to avoid the warning message like
+  `User aircraft type "BE58" in simulator is not equal to type "EPIC" used in performance file`.
+  Adapt performance and menu `Aircraft` -> `Edit Aircraft Performance`. Change the field `Aircraft type`
+  on the tab `Aircraft` accordingly.
+* Fixed several issues in dialog window and when creating folder structure for user files from
+  menu `Tools` -> `Create Directory Structure for saving Files`.
+* The web server is now only restarted on parameter change in options. This avoids the hanging due
+  to unneeded restart on exit or cancel. #1019
+* Now allowing comma separated coordinates for decimal coordinate formats like `50,07477,8,54053` or
+  `50.07477,8.54053`. Spaces before and after the comma are allowed.
+* Fixed issue where a search for userpoint type was not applied on startup.
+
+### User Manual
+
+* Adapted included and online user manual to changes.
+
+==<<=============================================================================
+
 # Version 2.8.10
 
 ## Notes
@@ -96,7 +241,7 @@ See also [MSFS Common Problems](https://albar965.github.io/littlenavmap-faq.html
   old multiplayer interface.
 * Added version number to menu item `Little Xpconnect`.
 
-==<<=============================================================================
+=================================================================================
 
 # Version 2.8.9
 
